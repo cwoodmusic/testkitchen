@@ -1,0 +1,283 @@
+#pianoroom.piano-lab{position:fixed;inset:0;z-index:95;overflow:auto;display:block;color:#f6f0ff;background:radial-gradient(ellipse at 28% 0,#263e67 0,#161b35 46%,#100f23 100%);font:15px/1.5 system-ui,sans-serif;padding:24px;box-sizing:border-box}
+#pianoroom.piano-lab[hidden]{display:none}
+.piano-lab *{box-sizing:border-box}.piano-room-shell{max-width:1220px;margin:auto}.piano-room-heading{position:static!important;display:flex!important;align-items:center;justify-content:space-between;gap:20px;background:transparent!important;border:0!important;padding:0 0 24px!important;height:auto!important;flex-wrap:wrap;box-shadow:none!important}.piano-room-heading h1{font-size:clamp(26px,4vw,42px);line-height:1.1;margin:4px 0 8px;color:#b2fff2;text-shadow:0 0 20px #28bcb65c;letter-spacing:2px}.piano-room-heading p{margin:0;color:#bbb9d6}.piano-eyebrow{font-size:11px;letter-spacing:2px;color:#e8c27d}.piano-lab button,.piano-lab select{font:inherit;color:#f6f0ff;background:#292842;border:1px solid #766a98;border-radius:6px;padding:10px 13px;cursor:pointer}.piano-lab button:hover{background:#383454;border-color:#b6a2d6}.piano-lab button:disabled{opacity:.5;cursor:default}.piano-lab :focus-visible{outline:3px solid #91ffed;outline-offset:3px}.piano-room-heading button small{margin-left:8px;color:#aaa5c7}.piano-workspace{display:grid;grid-template-columns:minmax(0,1fr) 300px;gap:24px;align-items:start}.piano-stage{position:relative;overflow:hidden;padding:32px 22px 18px;background:linear-gradient(155deg,#1b1b31,#26223c);border:1px solid #665582;border-top:3px solid #9d87bf;border-radius:12px;box-shadow:0 18px 45px #0006,inset 0 1px #d5baff33}.piano-stage-lights{display:flex;justify-content:space-around;height:40px;margin:-25px 0 20px;pointer-events:none}.piano-stage-lights i{display:block;width:55px;height:9px;background:#6ff5e5;box-shadow:0 0 20px #6ff5e566}.piano-stage-lights i:nth-child(2){background:#f4a0e8;box-shadow:0 0 20px #f4a0e866}.piano-instrument-name{font-size:25px;font-weight:800;letter-spacing:7px;text-align:center;color:#ffe6b5}.piano-instrument-name span{display:block;font-size:9px;letter-spacing:3px;font-weight:500;margin:4px 0 26px;color:#aba2bd}.piano-display{display:flex;align-items:center;justify-content:space-between;gap:12px;min-height:59px;padding:12px 18px;border:1px solid #53636b;background:#0a2329;box-shadow:inset 0 0 18px #0006;margin-bottom:18px;border-radius:5px;font-family:monospace;color:#a4ffde}#pianoModeDisplay{font-size:10px;letter-spacing:1px;color:#6aa69d;text-align:right}.piano-keyboard-scroll{overflow-x:auto;padding:4px 3px 10px;touch-action:pan-x}.piano-keyboard{--key-width:42px;position:relative;width:calc(var(--white-keys) * var(--key-width));min-width:100%;height:190px;touch-action:none}.piano-lab .piano-key{position:absolute;top:0;left:calc(var(--key-position) * (100% / var(--white-keys)));width:calc(100% / var(--white-keys));height:180px;border:1px solid #303046;border-radius:0 0 5px 5px;display:flex;flex-direction:column;align-items:center;justify-content:flex-end;gap:5px;padding:0 1px 9px;line-height:1;font-family:system-ui,sans-serif;font-size:10px;user-select:none;-webkit-user-select:none;touch-action:none}.piano-lab .piano-white{background:linear-gradient(#fffefa,#ece9ed);box-shadow:inset 0 -7px #b0adb8,0 3px 2px #0008;color:#58556c}.piano-lab .piano-black{width:calc(100% / var(--white-keys) * .62);height:110px;z-index:2;background:linear-gradient(90deg,#141422,#3c394d 50%,#171622);box-shadow:inset 0 -7px #11111d,1px 4px 4px #0009;color:#d2c7df;border-color:#070711}.piano-key kbd{font-family:inherit;font-size:10px;background:none;color:inherit;padding:0;border:0}.piano-lab .piano-white:hover{background:#e5f8ef}.piano-lab .piano-black:hover{background:#454455}.piano-lab .piano-key.is-next{background:linear-gradient(#befaef,#6bcdbc);box-shadow:inset 0 -7px #397b74,0 0 10px #62e7c755}.piano-lab .piano-black.is-next{background:linear-gradient(#388a81,#183b39);color:#c5fff3}.piano-lab .piano-key.is-playing{background:linear-gradient(#edb2ed,#c976c2);box-shadow:inset 0 -3px #85508e;transform:translateY(3px);color:#4d2850}.piano-shortcuts{font-size:12px;color:#b3acc6;margin:12px 0 18px;line-height:1.8}.piano-shortcuts kbd{font:11px system-ui,sans-serif;background:#373249;border:1px solid #5c526f;border-radius:3px;padding:2px 4px;white-space:nowrap}.piano-controls{display:flex;flex-wrap:wrap;align-items:end;gap:12px;border-top:1px solid #54465e;padding-top:16px}.piano-controls label{font-size:12px;color:#c2b8d1;display:flex;flex-direction:column;gap:5px;flex:1;min-width:120px}.piano-controls select{font-size:12px;width:100%;min-height:44px;padding:8px}.piano-controls input{accent-color:#98f5dc;width:100%;min-height:44px}.piano-controls button{font-size:12px;min-height:44px;padding:8px 10px}.piano-controls button[aria-pressed=true]{background:#315e56;border-color:#9ae8cc}.piano-activities{display:flex;flex-direction:column;gap:17px}.piano-activities section{padding:18px;background:#25223a;border:1px solid #5d4d76;border-radius:9px}.piano-activities h2{margin:0 0 8px;color:#e3caef;font-size:17px}.piano-activities p,.piano-activities label{font-size:12px;line-height:1.6;color:#b9afcb}.piano-activities select{width:100%;font-size:12px;margin-top:6px}.piano-record-actions{display:flex;gap:6px;flex-wrap:wrap}.piano-record-actions button{font-size:12px;padding:8px 10px}#pianoRecord[aria-pressed=true]{border-color:#f3abc3;background:#73384d}.piano-lesson-progress{display:flex;gap:5px;flex-wrap:wrap;margin:14px 0}.piano-lesson-progress span{font:11px monospace;border:1px solid #665576;border-radius:4px;padding:4px;color:#a69ab6}.piano-lesson-progress .is-current{border-color:#85edd4;background:#2b514d;color:#d6fff1}.piano-lesson-progress .is-done{color:#f3d2e7;background:#57405d;border-color:#96658e}#pianoLessonRestart{font-size:12px;padding:6px 9px}.piano-message{padding:12px 15px;background:#183b3d;border:1px solid #527678;border-radius:7px;color:#c3f9e5!important;margin:0;min-height:65px}
+.piano-walk-room{margin:0 0 24px;border:2px solid #6c5687;border-radius:10px;overflow:hidden;background:#11182b;box-shadow:0 18px 45px #0006,0 0 22px #72449f22}.piano-walk-room canvas{display:block;width:100%;height:auto;max-height:68vh;object-fit:contain;image-rendering:pixelated;background:#0f172b;touch-action:none}.piano-room-instructions{display:flex;flex-wrap:wrap;justify-content:space-between;gap:10px;padding:10px 15px;background:#272239;color:#cbc3d8;font-size:12px}.piano-room-instructions label{display:flex;align-items:center;gap:7px;color:#bbefdd}.piano-room-instructions input{accent-color:#8ae9ce}.piano-wall-note{margin:0;padding:0 15px 9px;background:#272239;color:#b5c6d5;font:12px monospace}#pianoTalkChopin,#pianoStartInterval,#pianoFreePlay{font-size:12px;margin:5px 0 13px;padding:8px 10px}.piano-activities label[for=pianoInterval]{display:block;margin-top:15px}.piano-lesson-progress{max-height:130px;overflow:auto}.piano-key-name[hidden]{display:none!important}
+@media(max-width:1000px){.piano-workspace{grid-template-columns:minmax(0,1fr)}.piano-activities{display:grid;grid-template-columns:1fr 1fr}.piano-message{grid-column:1/-1}.piano-stage{padding:26px 16px 16px}}
+@media(max-width:600px){#pianoroom.piano-lab{padding:16px 12px}.piano-room-heading{gap:14px;padding-bottom:18px!important}.piano-room-heading button{padding:9px 11px;font-size:12px}.piano-activities{display:flex}.piano-stage{padding:24px 10px 14px}.piano-display{padding:10px;font-size:12px}.piano-keyboard{--key-width:34px;height:165px}.piano-lab .piano-key{height:156px}.piano-lab .piano-black{height:98px}.piano-shortcuts kbd{white-space:normal}.piano-controls{gap:9px}.piano-controls label{min-width:110px}.piano-stage-lights{margin-bottom:8px}}
+@media(prefers-reduced-motion:reduce){.piano-lab *{scroll-behavior:auto!important;animation:none!important;transition:none!important}}
+
+/* One focused room view at a time keeps the phone piano within reach. */
+.piano-tool-menu,.piano-mobile-feedback,.piano-mobile-swipe,.room-return-short{display:none}
+@media(max-width:760px),(pointer:coarse){
+ #pianoroom.piano-lab{padding:max(8px,env(safe-area-inset-top)) max(12px,env(safe-area-inset-right)) max(20px,env(safe-area-inset-bottom)) max(12px,env(safe-area-inset-left));overscroll-behavior:contain;scroll-padding-top:110px}
+ #pianoroom.piano-lab[data-mobile-view="room"]{padding-bottom:calc(var(--coda-touch-controls-height,174px) + env(safe-area-inset-bottom) + 12px)}
+ .piano-room-shell,.piano-workspace,.piano-activities,.piano-stage{min-width:0}
+ .piano-room-heading{position:sticky!important;top:0;z-index:4;display:grid!important;grid-template-columns:minmax(0,1fr) auto;gap:10px;padding:6px 0!important;margin:0!important;background:#171a30f5!important;min-height:56px;backdrop-filter:blur(12px)}
+ .piano-room-heading h1{font-size:25px;margin:0;letter-spacing:1px}
+ .piano-eyebrow,.piano-room-heading p,.piano-room-heading small,.room-return-full{display:none}
+ .room-return-short{display:inline}
+ .piano-lab button,.piano-lab select,.piano-lab input:not([type="checkbox"]){min-height:44px;font-size:16px}
+ .piano-room-heading button{font-size:13px;min-width:90px;padding:8px!important}
+ .piano-tool-menu{position:sticky;top:56px;z-index:3;display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:5px;padding:6px 0 8px;background:#171a30f5;backdrop-filter:blur(12px)}
+ .piano-tool-menu button{min-width:0;padding:7px 3px;font-size:12px;line-height:1.2;border-color:#6a5984}
+ .piano-tool-menu button[aria-pressed="true"]{background:#205250;border-color:#8fe7d1;color:#dcfff6}
+ .piano-walk-room{margin-bottom:12px;border-radius:8px;scroll-margin-top:110px}
+ .piano-walk-room canvas{max-height:none;width:100%;height:auto;outline-offset:-4px}
+ .piano-room-instructions{padding:9px 11px;gap:5px;font-size:11px}
+ .piano-room-instructions>span{line-height:1.5}
+ .piano-room-instructions label{min-height:44px;font-size:13px;line-height:1.3}
+ .piano-room-instructions input[type="checkbox"]{width:22px;height:22px;flex:none;margin:0 5px 0 0}
+ .piano-wall-note{font-size:12px;padding:0 11px 8px}
+ .piano-mobile-feedback{display:block;min-height:35px;margin:0;padding:8px 11px;background:#173a3d;color:#d3f7e9;font-size:12px;line-height:1.5}
+ .piano-workspace{display:block}
+ .piano-activities{display:flex;gap:12px}
+ .piano-activities section{padding:15px;min-width:0}
+ .piano-activities h2{font-size:20px}
+ .piano-activities p,.piano-activities label{font-size:14px}
+ .piano-activities select{font-size:16px;width:100%;min-width:0}
+ #pianoTalkChopin,#pianoStartInterval,#pianoFreePlay,#pianoLessonRestart{font-size:14px;min-height:44px;max-width:100%}
+ .piano-stage{margin-bottom:12px;padding:18px 10px 14px}
+ .piano-stage-lights,.piano-instrument-name,.piano-shortcuts{display:none}
+ .piano-display{font-size:14px;min-height:50px;margin-bottom:10px;overflow-wrap:anywhere}
+ .piano-mobile-swipe{display:block;font-size:12px;line-height:1.4;color:#c5bed4;margin:6px 0}
+ .piano-keyboard-scroll{padding:3px 0 14px;overscroll-behavior-x:contain;touch-action:pan-x;-webkit-overflow-scrolling:touch}
+ .piano-keyboard{--key-width:72px;min-width:0;width:calc(var(--white-keys) * var(--key-width));height:195px;touch-action:pan-x}
+ .piano-lab .piano-key{min-width:44px;height:184px;font-size:13px;touch-action:pan-x}
+ .piano-lab .piano-black{height:112px}
+ .piano-key kbd{display:none}
+ .piano-controls{gap:10px}
+ .piano-controls label{font-size:13px;min-width:calc(50% - 10px)}
+ .piano-controls select,.piano-controls button{font-size:14px;min-height:44px}
+ .piano-controls input{min-height:44px}
+ .piano-message{font-size:13px!important;min-height:44px;margin-top:12px}
+ .piano-record-actions button{font-size:14px;min-height:44px}
+ .piano-lesson-progress{max-height:110px}
+ #pianoroom[data-mobile-view="room"] .piano-workspace{display:none}
+ #pianoroom:not([data-mobile-view="room"]) .piano-walk-room{display:none}
+ #pianoroom[data-mobile-view="games"] .piano-stage,#pianoroom[data-mobile-view="games"] #pianoRecordingPanel{display:none}
+ #pianoroom[data-mobile-view="keyboard"] #pianoRecordingPanel,#pianoroom[data-mobile-view="keyboard"] #pianoChallengePanel{display:none}
+ #pianoroom[data-mobile-view="recording"] #pianoChallengePanel{display:none}
+}
+@media(pointer:coarse) and (orientation:landscape) and (max-height:550px){
+ #pianoroom.piano-lab{padding-top:max(3px,env(safe-area-inset-top));padding-left:max(8px,env(safe-area-inset-left));padding-right:max(8px,env(safe-area-inset-right))}
+ .piano-room-heading{min-height:46px;padding:1px 0!important}
+ .piano-room-heading h1{font-size:21px}
+ .piano-tool-menu{top:46px;padding:2px 0 5px;grid-template-columns:repeat(4,minmax(0,130px));justify-content:center}
+ .piano-tool-menu button{min-height:44px}
+ .piano-walk-room{margin:0}
+ .piano-walk-room canvas{width:auto;max-width:100%;height:max(150px,calc(100dvh - 170px));aspect-ratio:1000/620;margin:auto}
+ .piano-room-instructions{padding:2px 8px;justify-content:center}
+ .piano-room-instructions>span{display:none}
+ .piano-room-instructions label{min-height:44px;font-size:12px}
+ .piano-wall-note{position:absolute;width:1px;height:1px;overflow:hidden;clip-path:inset(50%);padding:0}
+ .piano-mobile-feedback{font-size:11px;min-height:0;padding:4px 8px;text-align:center}
+}
+.room-touch-hint{display:none}
+@media(max-width:760px),(pointer:coarse){.room-keyboard-hint{display:none}.room-touch-hint{display:inline}}
+
+/* Native-scale room play on touch screens; the editor keeps its own fit view. */
+.piano-room-canvas-viewport{position:relative}
+.piano-key-names-short{display:none}
+.piano-camera-controls[hidden]{display:none!important}
+.piano-camera-controls{position:absolute;right:8px;top:8px;display:flex;gap:3px;padding:3px;border:1px solid #82d8cc;border-radius:8px;background:#132d3ce8;z-index:2}
+.piano-lab .piano-camera-controls button{min-width:44px;min-height:44px;padding:6px;font-size:14px;border:0;background:#25414e}
+.piano-lab .piano-camera-controls button:nth-child(2){min-width:56px;font-size:12px;color:#b9ffed}
+@media(max-width:760px),(pointer:coarse){
+ #pianoroom.piano-follow-camera[data-mobile-view="room"]:not(.room-developer-open){padding-bottom:0;overflow:hidden}
+ #pianoroom.piano-follow-camera[data-mobile-view="room"]:not(.room-developer-open) .piano-walk-room{position:relative;margin:0;border-radius:9px}
+ #pianoroom.piano-follow-camera[data-mobile-view="room"]:not(.room-developer-open) .piano-room-canvas-viewport{--coda-room-cover:1;height:max(180px,calc(100dvh - 166px - var(--coda-touch-room-controls-height,var(--coda-touch-controls-height,220px)) - env(safe-area-inset-bottom,0px)));overflow:hidden}
+ #pianoroom.piano-follow-camera[data-mobile-view="room"]:not(.room-developer-open) #pianoRoomCanvas{position:absolute;left:50%;top:50%;transform:translate(-50%,-50%);max-width:none;max-height:none;min-width:0;margin:0;object-fit:fill;outline-offset:-4px}
+ #pianoroom.piano-follow-camera[data-mobile-view="room"]:not(.room-developer-open) .piano-room-instructions{position:absolute;left:8px;bottom:8px;z-index:2;padding:0;border:1px solid #786b93;border-radius:7px;background:#211d35eb}
+ #pianoroom.piano-follow-camera[data-mobile-view="room"]:not(.room-developer-open) .piano-room-instructions>span{display:none}
+ #pianoroom.piano-follow-camera[data-mobile-view="room"]:not(.room-developer-open) .piano-room-instructions label{min-height:44px;margin:0;padding:4px 8px;font-size:13px}
+ #pianoroom.piano-follow-camera[data-mobile-view="room"]:not(.room-developer-open) .piano-key-names-full{display:none}
+ #pianoroom.piano-follow-camera[data-mobile-view="room"]:not(.room-developer-open) .piano-key-names-short{display:inline}
+ #pianoroom.piano-follow-camera[data-mobile-view="room"]:not(.room-developer-open) #pianoWallNote{position:absolute;left:8px;top:8px;z-index:2;width:auto;height:auto;clip-path:none;max-width:calc(100% - 180px);padding:7px 9px;border:1px solid #71b5b3;border-radius:7px;background:#102e39ed;color:#c1ffec;font:700 14px/1.3 system-ui,sans-serif;pointer-events:none}
+ #pianoroom.piano-follow-camera[data-mobile-view="room"]:not(.room-developer-open) #pianoRoomMessage{height:44px;min-height:44px;max-height:44px;overflow:auto;padding:5px 9px;font-size:12px;line-height:1.4}
+ #pianoroom.room-developer-open .piano-room-canvas-viewport{height:auto;min-height:0;--coda-room-cover:0;overflow:visible}
+ #pianoroom.room-developer-open #pianoRoomCanvas{position:static!important;transform:none!important;width:100%!important;height:auto!important;max-width:100%;max-height:none}
+ #pianoroom.room-developer-open .piano-camera-controls{display:none!important}
+}
+@media(pointer:coarse) and (orientation:landscape) and (max-height:550px){
+ #pianoroom.piano-follow-camera[data-mobile-view="room"]:not(.room-developer-open) .piano-walk-room{width:calc(100% - 320px);margin-left:214px;margin-right:106px;min-width:240px}
+ #pianoroom.piano-follow-camera[data-mobile-view="room"]:not(.room-developer-open) .piano-room-canvas-viewport{height:max(180px,calc(100dvh - 104px));width:100%}
+ #pianoroom.piano-follow-camera[data-mobile-view="room"]:not(.room-developer-open) .piano-camera-controls{right:5px;top:5px;padding:1px;gap:1px}
+ #pianoroom.piano-follow-camera[data-mobile-view="room"]:not(.room-developer-open) .piano-camera-controls button{min-width:44px;padding:3px}
+ #pianoroom.piano-follow-camera[data-mobile-view="room"]:not(.room-developer-open) .piano-camera-controls button:nth-child(2){min-width:50px}
+ #pianoroom.piano-follow-camera[data-mobile-view="room"]:not(.room-developer-open) #pianoWallNote{left:5px;top:5px;max-width:calc(100% - 154px);font-size:12px;padding:5px 6px}
+ #pianoroom.piano-follow-camera[data-mobile-view="room"]:not(.room-developer-open) .piano-room-instructions{left:5px;bottom:5px}
+ #pianoroom.piano-follow-camera[data-mobile-view="room"]:not(.room-developer-open) .piano-room-instructions label{font-size:11px;padding:2px 5px}
+ #pianoroom.piano-follow-camera[data-mobile-view="room"]:not(.room-developer-open) #pianoRoomMessage{display:none}
+}
+/* Match the larger shared movement controls without shrinking the room again. */
+@media(max-width:760px),(pointer:coarse){
+ .piano-room-heading{min-height:64px}
+ .piano-room-heading button{min-height:52px;font-size:14px}
+ .piano-tool-menu{top:64px}
+ .piano-tool-menu button{min-height:52px;font-size:13px}
+ #pianoroom.piano-follow-camera[data-mobile-view="room"]:not(.room-developer-open) .piano-room-canvas-viewport{height:max(180px,calc(100dvh - 182px - var(--coda-touch-room-controls-height,var(--coda-touch-controls-height,220px)) - env(safe-area-inset-bottom,0px)))}
+ .piano-lab .piano-camera-controls button{min-width:52px;min-height:52px;font-size:16px}
+ .piano-lab .piano-camera-controls button:nth-child(2){min-width:60px;font-size:13px}
+ #pianoroom.piano-follow-camera[data-mobile-view="room"]:not(.room-developer-open) #pianoWallNote{max-width:calc(100% - 200px);font-size:16px}
+ #pianoroom.piano-follow-camera[data-mobile-view="room"]:not(.room-developer-open) .piano-room-instructions label{min-height:52px;font-size:15px}
+}
+@media(pointer:coarse) and (orientation:landscape) and (max-height:550px){
+ .piano-room-heading{min-height:54px}
+ .piano-tool-menu{top:54px;padding:2px 0 5px}
+ .piano-tool-menu button{min-height:52px}
+ #pianoroom.piano-follow-camera[data-mobile-view="room"]:not(.room-developer-open) .piano-walk-room{width:calc(100% - (var(--coda-joystick-size,226px) + 24px) - (var(--coda-touch-actions-width,128px) + 24px));margin-left:calc(var(--coda-joystick-size,226px) + 24px);margin-right:calc(var(--coda-touch-actions-width,128px) + 24px);min-width:0}
+ #pianoroom.piano-follow-camera[data-mobile-view="room"]:not(.room-developer-open) .piano-room-canvas-viewport{height:max(180px,calc(100dvh - 116px))}
+ #pianoroom.piano-follow-camera[data-mobile-view="room"]:not(.room-developer-open) .piano-camera-controls button{min-width:52px;min-height:52px;font-size:15px}
+ #pianoroom.piano-follow-camera[data-mobile-view="room"]:not(.room-developer-open) .piano-camera-controls button:nth-child(2){min-width:56px;font-size:13px}
+ #pianoroom.piano-follow-camera[data-mobile-view="room"]:not(.room-developer-open) #pianoWallNote{max-width:calc(100% - 180px);font-size:16px}
+ #pianoroom.piano-follow-camera[data-mobile-view="room"]:not(.room-developer-open) .piano-room-instructions label{min-height:52px;font-size:13px}
+}
+@media(max-width:370px){.piano-room-heading h1{font-size:22px}.piano-room-heading button{min-width:80px;font-size:12px}}
+
+/* Keep the room in view; instruments and settings live in the room menu. */
+#pianoroom.piano-lab{padding:10px 16px;overflow:hidden}
+#pianoroom.piano-lab .piano-room-shell{max-width:1560px;height:100%;display:grid;grid-template-rows:52px minmax(0,1fr);gap:0;min-height:0}
+#pianoroom.piano-lab .piano-room-heading{position:relative!important;top:auto;min-height:52px;height:52px!important;display:flex!important;flex-wrap:nowrap;gap:12px;padding:0 0 8px!important;background:transparent!important;backdrop-filter:none}
+#pianoroom.piano-lab .piano-room-heading h1{font-size:24px;line-height:1.1;margin:0;letter-spacing:1px;white-space:nowrap}
+#pianoroom.piano-lab .piano-room-heading .piano-eyebrow,#pianoroom.piano-lab .piano-room-heading p,#pianoroom.piano-lab .piano-room-heading small{display:none}
+#pianoroom.piano-lab .piano-room-heading-actions{display:flex;align-items:center;justify-content:flex-end;gap:7px;margin-left:auto;flex:none}
+#pianoroom.piano-lab .piano-room-heading button{min-width:0;min-height:44px;padding:7px 12px!important;font-size:14px;white-space:nowrap}
+#pianoroom.piano-lab #pianoMenuButton{background:#20524e;border-color:#83decb;color:#e0fff5}
+#pianoroom.piano-lab .piano-walk-room{display:flex;flex-direction:column;align-items:center;align-self:start;width:100%;min-height:0;max-height:100%;margin:0;border-radius:9px}
+#pianoroom.piano-lab .piano-room-canvas-viewport{position:relative;flex:none;width:min(100%,calc((100dvh - 116px) * 1000 / 620));height:auto;aspect-ratio:1000/620;overflow:hidden;--coda-room-cover:0}
+#pianoroom.piano-lab #pianoRoomCanvas{position:static;display:block;width:100%;height:auto;max-width:none;max-height:none;transform:none;object-fit:fill;margin:0}
+#pianoroom.piano-lab #pianoWallNote{position:absolute;left:10px;top:10px;z-index:2;width:auto;height:auto;clip-path:none;max-width:calc(100% - 20px);margin:0;padding:6px 10px;border:1px solid #71b5b3;border-radius:7px;background:#102e39ed;color:#c1ffec;font:700 14px/1.35 system-ui,sans-serif;pointer-events:none}
+#pianoroom.piano-lab #pianoRoomMessage{display:block;align-self:stretch;height:36px;min-height:36px;max-height:36px;overflow:auto;margin:0;padding:6px 10px;text-align:left;background:#173a3d;color:#d3f7e9;font-size:12px;line-height:1.4}
+#pianoroom.piano-lab .piano-menu-backdrop,#pianoroom.piano-lab .piano-dialogue-backdrop{position:fixed;inset:0;z-index:20;display:flex;align-items:center;justify-content:center;padding:max(16px,env(safe-area-inset-top)) max(16px,env(safe-area-inset-right)) max(16px,env(safe-area-inset-bottom)) max(16px,env(safe-area-inset-left));background:#050b1ed1;backdrop-filter:blur(5px);overscroll-behavior:contain}
+#pianoroom.piano-lab .piano-menu-backdrop[hidden],#pianoroom.piano-lab .piano-dialogue-backdrop[hidden]{display:none!important}
+#pianoroom.piano-lab .piano-menu-panel{display:flex;flex-direction:column;width:min(900px,100%);max-height:calc(100dvh - 32px - env(safe-area-inset-top,0px) - env(safe-area-inset-bottom,0px));min-height:0;overflow:hidden;padding:18px;border:1px solid #9985b9;border-radius:14px;background:linear-gradient(145deg,#232840,#19192f);box-shadow:0 22px 80px #0009,0 0 28px #9a80c526}
+#pianoroom.piano-lab .piano-menu-heading,#pianoroom.piano-lab .piano-dialogue-heading{position:relative!important;display:flex!important;align-items:center;justify-content:space-between;gap:12px;flex:none;height:auto!important;min-height:44px;margin:0 0 12px;padding:0!important;background:none!important;border:0!important;box-shadow:none!important}
+#pianoroom.piano-lab .piano-menu-heading h2,#pianoroom.piano-lab .piano-dialogue-heading h2{font-size:22px;line-height:1.2;color:#c0fff0;margin:0}
+#pianoroom.piano-lab #pianoMenuClose,#pianoroom.piano-lab #pianoDialogueClose{min-width:44px;min-height:44px;padding:8px 12px;font-size:15px;flex:none}
+#pianoroom.piano-lab .piano-menu-panel .piano-tool-menu{position:static;top:auto;z-index:auto;display:grid;grid-template-columns:repeat(5,minmax(0,1fr));gap:6px;padding:0 0 14px;margin:0;background:none;backdrop-filter:none;flex:none}
+#pianoroom.piano-lab .piano-menu-panel .piano-tool-menu button{min-width:0;min-height:44px;padding:7px 5px;font-size:13px;line-height:1.2}
+#pianoroom.piano-lab .piano-menu-panel .piano-tool-menu button[aria-pressed="true"]{background:#205250;border-color:#8fe7d1;color:#dcfff6}
+#pianoroom.piano-lab .piano-menu-panel .piano-workspace{display:block;min-height:0;min-width:0;overflow:auto;overscroll-behavior:contain;scrollbar-color:#8875a6 #19192f;padding:2px 4px 4px 0}
+#pianoroom.piano-lab .piano-menu-panel .piano-activities{display:contents}
+#pianoroom.piano-lab .piano-menu-panel .piano-stage{padding:16px;margin:0;border-radius:9px}
+#pianoroom.piano-lab .piano-menu-panel .piano-stage-lights,#pianoroom.piano-lab .piano-menu-panel .piano-instrument-name{display:none}
+#pianoroom.piano-lab .piano-menu-panel .piano-activities section{padding:16px;margin:0;border-radius:9px}
+#pianoroom.piano-lab .piano-menu-panel .piano-activities h2{font-size:19px}
+#pianoroom.piano-lab .piano-menu-panel .piano-activities p,#pianoroom.piano-lab .piano-menu-panel .piano-activities label{font-size:14px;line-height:1.55}
+#pianoroom.piano-lab .piano-menu-panel select,#pianoroom.piano-lab .piano-menu-panel button,#pianoroom.piano-lab .piano-dialogue-panel button{min-height:44px;max-width:100%}
+#pianoroom.piano-lab .piano-menu-panel select{font-size:16px;min-width:0}
+#pianoroom.piano-lab .piano-menu-panel #pianoKeyboardPanel,#pianoroom.piano-lab .piano-menu-panel #pianoRecordingPanel,#pianoroom.piano-lab .piano-menu-panel #pianoChallengePanel,#pianoroom.piano-lab .piano-menu-panel #pianoSettingsPanel{display:none}
+#pianoroom.piano-lab[data-mobile-view="keyboard"] .piano-menu-panel #pianoKeyboardPanel,#pianoroom.piano-lab[data-mobile-view="recording"] .piano-menu-panel #pianoRecordingPanel,#pianoroom.piano-lab[data-mobile-view="games"] .piano-menu-panel #pianoChallengePanel,#pianoroom.piano-lab[data-mobile-view="settings"] .piano-menu-panel #pianoSettingsPanel{display:block}
+#pianoroom.piano-lab .piano-menu-panel .piano-message{min-height:0;margin:12px 0 0;padding:9px 12px;font-size:13px!important}
+#pianoroom.piano-lab #pianoSettingsPanel .piano-controls{border:0;margin:0;padding:0;gap:14px}
+#pianoroom.piano-lab #pianoSettingsPanel .piano-controls label{font-size:14px;min-width:180px}
+#pianoroom.piano-lab #pianoSettingsPanel .piano-controls select,#pianoroom.piano-lab #pianoSettingsPanel .piano-controls button{font-size:15px}
+#pianoroom.piano-lab #pianoSettingsPanel label:has(#pianoKeyNames){display:flex;align-items:center;gap:10px;min-height:44px;margin:16px 0;font-size:15px;color:#d3f7e9}
+#pianoroom.piano-lab #pianoKeyNames{width:22px;height:22px;accent-color:#91e6ce;flex:none}
+#pianoroom.piano-lab #pianoSettingsPanel .piano-key-names-full{display:inline}
+#pianoroom.piano-lab #pianoSettingsPanel .piano-key-names-short{display:none}
+#pianoroom.piano-lab #pianoSettingsPanel .piano-camera-controls{position:static;display:inline-flex;margin:0 10px 12px 0;gap:5px;vertical-align:middle}
+#pianoroom.piano-lab #pianoSettingsPanel [data-room-dev-open]{min-height:44px;margin:0 0 12px;font-size:14px}
+#pianoroom.piano-lab .piano-dialogue-backdrop{z-index:25;align-items:flex-end}
+#pianoroom.piano-lab .piano-dialogue-panel{width:min(660px,100%);max-height:calc(100dvh - 48px - env(safe-area-inset-top,0px) - env(safe-area-inset-bottom,0px));overflow:auto;padding:18px;border:2px solid #b0dbd4;border-radius:13px;background:linear-gradient(145deg,#223d46,#1c233a);box-shadow:0 18px 65px #000a;overscroll-behavior:contain}
+#pianoroom.piano-lab #pianoDialogueText{margin:0 0 16px;color:#effff9;font-size:17px;line-height:1.6;white-space:pre-line}
+#pianoroom.piano-lab .piano-dialogue-actions{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:9px}
+#pianoroom.piano-lab .piano-dialogue-actions button{padding:10px 13px;text-align:left;line-height:1.4;font-size:15px;background:#2e4057;border-color:#8195ad;overflow-wrap:anywhere}
+#pianoroom.piano-lab .piano-dialogue-actions button:hover{background:#3b5964;border-color:#c3ffee}
+#pianoroom.piano-lab .piano-dialogue-actions button:only-child{grid-column:1/-1}
+#pianoroom.piano-lab.room-developer-open{overflow:auto}
+#pianoroom.piano-lab.room-developer-open .piano-room-shell{height:auto;display:block}
+#pianoroom.piano-lab.room-developer-open .piano-walk-room{display:block;width:100%;max-height:none;aspect-ratio:auto}
+#pianoroom.piano-lab.room-developer-open .piano-room-canvas-viewport{display:block;width:100%;height:auto;aspect-ratio:1000/620;--coda-room-cover:0}
+#pianoroom.piano-lab.room-developer-open #pianoRoomCanvas{position:static!important;transform:none!important;width:100%!important;height:auto!important}
+@media(max-width:760px),(pointer:coarse){
+ #pianoroom.piano-lab{padding:max(8px,env(safe-area-inset-top)) max(12px,env(safe-area-inset-right)) 0 max(12px,env(safe-area-inset-left));scroll-padding-top:60px}
+ #pianoroom.piano-lab[data-mobile-view="room"]{padding-bottom:0}
+ #pianoroom.piano-lab .piano-room-heading h1{font-size:22px}
+ #pianoroom.piano-lab .piano-room-heading button{min-width:0;min-height:44px;font-size:13px;padding:7px 10px!important}
+ #pianoroom.piano-lab .room-return-full{display:none}
+ #pianoroom.piano-lab .room-return-short{display:inline}
+ #pianoroom.piano-lab.piano-follow-camera:not(.room-developer-open) .piano-walk-room{display:flex;width:100%;margin:0;min-width:0}
+ #pianoroom.piano-lab.piano-follow-camera:not(.room-developer-open) .piano-room-canvas-viewport{width:100%;height:max(180px,calc(100dvh - 116px - var(--coda-touch-room-controls-height,var(--coda-touch-controls-height,220px)) - env(safe-area-inset-bottom,0px)));aspect-ratio:auto;--coda-room-cover:1}
+ #pianoroom.piano-lab.piano-follow-camera:not(.room-developer-open) #pianoRoomCanvas{position:absolute;left:50%;top:50%;transform:translate(-50%,-50%);max-width:none;max-height:none;min-width:0;margin:0;object-fit:fill;outline-offset:-4px}
+ #pianoroom.piano-lab.piano-follow-camera:not(.room-developer-open) #pianoWallNote{left:8px;top:8px;max-width:calc(100% - 16px);font-size:14px;padding:6px 9px}
+ #pianoroom.piano-lab.piano-follow-camera:not(.room-developer-open) #pianoRoomMessage{height:36px;min-height:36px;max-height:36px;padding:5px 8px;font-size:12px;display:block}
+ #pianoroom.piano-lab .piano-menu-backdrop,#pianoroom.piano-lab .piano-dialogue-backdrop{padding:max(8px,env(safe-area-inset-top)) max(8px,env(safe-area-inset-right)) max(8px,env(safe-area-inset-bottom)) max(8px,env(safe-area-inset-left))}
+ #pianoroom.piano-lab .piano-menu-panel{padding:12px;max-height:calc(100dvh - 16px - env(safe-area-inset-top,0px) - env(safe-area-inset-bottom,0px));border-radius:11px}
+ #pianoroom.piano-lab .piano-menu-panel .piano-tool-menu{grid-template-columns:repeat(3,minmax(0,1fr));padding-bottom:12px;gap:5px}
+ #pianoroom.piano-lab .piano-menu-panel .piano-tool-menu button{font-size:13px;min-height:44px}
+ #pianoroom.piano-lab .piano-menu-heading h2,#pianoroom.piano-lab .piano-dialogue-heading h2{font-size:20px}
+ #pianoroom.piano-lab .piano-menu-panel .piano-stage,#pianoroom.piano-lab .piano-menu-panel .piano-activities section{padding:12px}
+ #pianoroom.piano-lab .piano-dialogue-panel{padding:14px;max-height:calc(100dvh - 24px - env(safe-area-inset-top,0px) - env(safe-area-inset-bottom,0px))}
+ #pianoroom.piano-lab #pianoDialogueText{font-size:16px;line-height:1.55}
+ #pianoroom.piano-lab .piano-dialogue-actions button{font-size:14px;padding:10px}
+}
+@media(pointer:coarse) and (orientation:landscape) and (max-height:550px){
+ #pianoroom.piano-lab{padding-top:max(4px,env(safe-area-inset-top));padding-left:max(8px,env(safe-area-inset-left));padding-right:max(8px,env(safe-area-inset-right))}
+ #pianoroom.piano-lab .piano-room-shell{grid-template-rows:48px minmax(0,1fr)}
+ #pianoroom.piano-lab .piano-room-heading{min-height:48px;height:48px!important;padding-bottom:4px!important}
+ #pianoroom.piano-lab .piano-room-heading h1{font-size:21px}
+ #pianoroom.piano-lab.piano-follow-camera:not(.room-developer-open) .piano-walk-room{width:calc(100% - (var(--coda-joystick-size,226px) + 24px) - (var(--coda-touch-actions-width,128px) + 24px));margin-left:calc(var(--coda-joystick-size,226px) + 24px);margin-right:calc(var(--coda-touch-actions-width,128px) + 24px)}
+ #pianoroom.piano-lab.piano-follow-camera:not(.room-developer-open) .piano-room-canvas-viewport{height:max(180px,calc(100dvh - 100px))}
+ #pianoroom.piano-lab.piano-follow-camera:not(.room-developer-open) #pianoRoomMessage{display:block;height:30px;min-height:30px;max-height:30px;font-size:11px;padding:5px 8px}
+ #pianoroom.piano-lab .piano-menu-panel{width:min(820px,100%);padding:10px 14px}
+ #pianoroom.piano-lab .piano-menu-heading{min-height:44px;margin-bottom:6px}
+ #pianoroom.piano-lab .piano-menu-panel .piano-tool-menu{grid-template-columns:repeat(5,minmax(0,1fr));padding-bottom:8px}
+ #pianoroom.piano-lab .piano-dialogue-panel{width:min(650px,100%);padding:12px 16px}
+ #pianoroom.piano-lab #pianoDialogueText{margin-bottom:10px;font-size:15px}
+}
+@media(max-width:350px){
+ #pianoroom.piano-lab{padding-left:6px;padding-right:6px}
+ #pianoroom.piano-lab .piano-room-heading{gap:7px}
+ #pianoroom.piano-lab .piano-room-heading h1{font-size:19px}
+ #pianoroom.piano-lab .piano-room-heading-actions{gap:5px}
+ #pianoroom.piano-lab .piano-room-heading button{font-size:12px;padding-inline:8px!important}
+ #pianoroom.piano-lab .piano-dialogue-actions{grid-template-columns:1fr}
+}
+#pianoroom.piano-lab #pianoSettingsPanel .piano-controls .piano-letter-setting{flex-direction:row;align-items:center;flex-basis:100%;gap:10px;margin:0}
+#pianoroom.piano-lab .piano-room-tools{display:flex;align-items:center;flex-wrap:wrap;gap:8px;margin-top:14px;padding-top:14px;border-top:1px solid #5a5872}
+/* The arcade page stacks generic headers on phones; room bars stay in one row. */
+#pianoroom.piano-lab .piano-room-heading,#pianoroom.piano-lab .piano-menu-heading,#pianoroom.piano-lab .piano-dialogue-heading{flex-direction:row;align-items:center}
+#pianoroom.piano-lab .piano-menu-heading h2,#pianoroom.piano-lab .piano-dialogue-heading h2{min-width:0;flex:1}
+#pianoroom.piano-lab #pianoChallengePanel>label{display:block;margin:12px 0 5px}
+#pianoroom.piano-lab #pianoTalkChopin{display:block;margin:0 0 10px}
+#pianoroom.piano-lab #pianoSettingsPanel .piano-controls .piano-letter-setting{margin:0!important}
+#pianoroom.piano-lab #pianoSettingsPanel #pianoKeyNames{min-height:22px;max-height:22px}
+
+/* A compact copy of the back-wall score stays readable when the room camera
+   follows the player down onto the piano. It never takes touch input. */
+#pianoroom.piano-lab #pianoWallStaff{position:absolute;left:50%;top:7px;z-index:3;transform:translateX(-50%);display:block;width:min(428px,calc(100% - 16px));height:auto;max-height:25%;object-fit:contain;pointer-events:none;border-radius:7px;box-shadow:0 2px 10px #07131e99}
+#pianoroom.piano-lab #pianoWallStaff[hidden]{display:none!important}
+#pianoroom.piano-lab .piano-key.is-next{outline:4px solid #f5ff8c;outline-offset:-4px;background:linear-gradient(#c1fff0,#45e2bd);box-shadow:inset 0 -6px #178a79,0 0 17px #65ffd8a6;color:#123c3b;animation:pianoKeyBeacon 1.5s ease-in-out infinite}
+#pianoroom.piano-lab .piano-black.is-next{background:linear-gradient(#77f9dd,#209c8e);color:#082f36}
+#pianoroom.piano-lab .piano-key.is-playing{outline:4px solid #fff4fc;outline-offset:-4px;background:linear-gradient(#ffc4f0,#e784cf);box-shadow:inset 0 -4px #9e4186,0 0 19px #ffa7e9a6;color:#542149}
+@keyframes pianoKeyBeacon{0%,100%{filter:brightness(1)}50%{filter:brightness(1.16)}}
+@media(prefers-reduced-motion:reduce){#pianoroom.piano-lab .piano-key.is-next{animation:none;filter:none}}
+
+/* Only the instrument remains below the room header. Tool navigation lives
+   inside Menu, and status announcements stay available to screen readers. */
+#pianoroom.piano-lab #pianoRoomMessage{position:absolute!important;width:1px!important;height:1px!important;min-height:0!important;max-height:none!important;overflow:hidden!important;clip-path:inset(50%)!important;white-space:nowrap!important;margin:0!important;padding:0!important;border:0!important}
+#pianoroom.piano-lab .piano-menu-backdrop[hidden],#pianoroom.piano-lab .piano-dialogue-backdrop[hidden],#pianoroom.piano-lab .piano-menu-panel [hidden]{display:none!important}
+#pianoroom.piano-lab .piano-room-canvas-viewport{width:min(100%,calc((100dvh - 80px) * 1000 / 620))}
+#pianoroom.piano-lab .piano-menu-panel .piano-tool-menu{position:static;display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:8px;margin:0;padding:0 0 14px;background:none;flex:none}
+#pianoroom.piano-lab .piano-tool-menu button{min-height:48px;font-size:16px}
+#pianoroom.piano-lab.coda-room-viewport-fullscreen,#pianoroom.piano-lab.coda-room-native-fullscreen{position:fixed;inset:0;width:100vw;height:100dvh;max-width:none;max-height:none;margin:0;box-sizing:border-box}
+#pianoroom.piano-lab.coda-room-viewport-fullscreen{z-index:180}
+#pianoroom.piano-lab:fullscreen{background:radial-gradient(ellipse at 50% 0,#304457,#151626 75%)}
+@media(max-width:760px),(pointer:coarse){
+ #pianoroom.piano-lab .piano-room-heading h1{font-size:20px;letter-spacing:0;white-space:normal}
+ #pianoroom.piano-lab .piano-room-heading-actions{gap:4px}
+ #pianoroom.piano-lab .piano-room-heading button{font-size:12px;padding:7px 8px!important}
+ #pianoroom.piano-lab.piano-follow-camera:not(.room-developer-open) .piano-room-canvas-viewport{width:100%;height:max(180px,calc(100dvh - 80px - var(--coda-touch-room-controls-height,var(--coda-touch-controls-height,220px)) - env(safe-area-inset-bottom,0px)))}
+ #pianoroom.piano-lab .piano-menu-panel .piano-tool-menu{grid-template-columns:repeat(2,minmax(0,1fr))}
+}
+@media(orientation:landscape) and (max-height:600px){
+ #pianoroom.piano-lab.piano-follow-camera:not(.room-developer-open) .piano-room-canvas-viewport{height:calc(100dvh - 72px);min-height:140px}
+ #pianoroom.piano-lab .piano-menu-panel .piano-tool-menu{grid-template-columns:repeat(4,minmax(0,1fr))}
+}
+@media(max-width:360px){#pianoroom.piano-lab .piano-room-heading>div:first-child{position:absolute;width:1px;height:1px;overflow:hidden;clip-path:inset(50%)}#pianoroom.piano-lab .piano-room-heading-actions{margin-left:auto}}
+
+/* Keep room editing one click away without covering the instrument. */
+#pianoroom.piano-lab .piano-room-heading-actions [data-room-dev-open]{background:#324a42;border-color:#9ce7b9;color:#e1ffed}
+#pianoroom.piano-lab .piano-room-heading-actions [data-room-dev-open][aria-expanded=true]{background:#365f50;border-color:#c9ffe6}
+@media(max-width:480px){#pianoroom.piano-lab .piano-room-heading>div:first-child{position:absolute;width:1px;height:1px;overflow:hidden;clip-path:inset(50%)}#pianoroom.piano-lab .piano-room-heading-actions{width:100%;margin-left:0;justify-content:space-between;gap:4px}}

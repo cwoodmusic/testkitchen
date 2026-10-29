@@ -1,0 +1,48 @@
+/* Phone layout keeps the existing world coordinates and clips its viewport. */
+#worldLegacyShortcuts[hidden]{display:none!important}
+#mobilePinchHint[hidden]{display:none!important}
+:root{--coda-world-header-height:58px}
+#worldStage{display:contents}#worldMenuBtn,#worldMenuScrim{display:none}
+.coda-mobile-world{--coda-world-pad-height:0px;overflow:hidden;overscroll-behavior:none;max-width:100vw}
+.coda-mobile-world>header{position:relative;z-index:75;display:flex;flex-direction:row;align-items:center;justify-content:space-between;gap:10px;min-height:56px;padding:calc(7px + env(safe-area-inset-top,0px)) max(12px,env(safe-area-inset-right,0px)) 7px max(12px,env(safe-area-inset-left,0px));border-bottom:1px solid #6a527f}
+.coda-mobile-world>header>b{font-size:15px;letter-spacing:1px;color:#b8fff0;white-space:nowrap}
+.coda-mobile-world #worldMenuBtn{display:block;min-width:76px;min-height:44px;padding:8px 12px;font-size:14px;background:#47345d;border-color:#b4a4d0}
+.coda-mobile-world #worldMenu{display:none;position:absolute;top:100%;left:8px;right:8px;z-index:75;max-height:calc(100dvh - var(--coda-world-header-height) - 20px);overflow:auto;overscroll-behavior:contain;grid-template-columns:repeat(2,minmax(0,1fr));gap:8px;padding:12px;background:#211c35;border:1px solid #bba0d5;border-radius:0 0 12px 12px;box-shadow:0 15px 35px #0009}
+.coda-mobile-world.world-menu-open #worldMenu{display:grid}.coda-mobile-world #worldMenu>button,.coda-mobile-world #worldMenu>a{min-width:0;min-height:46px;width:100%;padding:10px;font-size:13px;text-align:center;overflow-wrap:anywhere;display:flex;align-items:center;justify-content:center;white-space:normal;border-radius:6px}
+.coda-mobile-world #worldMenu>a{grid-column:1/-1}.coda-mobile-world #worldMenu>span{grid-column:1/-1;justify-content:center}.coda-mobile-world #cameraTools button{min-height:44px;min-width:54px}.coda-mobile-world #worldMenuScrim{position:fixed;inset:0;z-index:74;background:#0708199c;border:0;border-radius:0;margin:0;padding:0}.coda-mobile-world.world-menu-open #worldMenuScrim{display:block}
+.coda-mobile-world #worldStage{display:block;position:relative;width:100vw;height:max(180px,calc(100dvh - var(--coda-world-header-height)));overflow:hidden;isolation:isolate;background:#060b19}
+.coda-mobile-world #view{position:absolute;left:50%;top:50%;transform:translate(-50%,-50%);width:max(100vw,calc((100dvh - var(--coda-world-header-height)) * 1.776834));max-width:none;height:auto;margin:0;touch-action:none;outline-offset:-3px}
+.coda-mobile-world>footer{position:fixed;left:12px;right:12px;bottom:calc(var(--coda-touch-controls-height) + env(safe-area-inset-bottom,0px) + 6px);z-index:2;display:block;height:28px;min-height:0;padding:5px 10px;border-radius:8px;background:#171b31a8;pointer-events:none;font-size:11px;line-height:18px}.coda-mobile-world>footer>span:first-child{display:none}.coda-mobile-world #status{display:block;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+.coda-mobile-world #panel{width:calc(100vw - 16px);max-height:calc(100dvh - 16px - env(safe-area-inset-top,0px) - env(safe-area-inset-bottom,0px));padding:14px;overscroll-behavior:contain}.coda-mobile-world .panelHead{position:sticky;top:-14px;z-index:5;background:#231c3b;padding:9px 0;border-bottom:1px solid #5f4c7c;gap:10px}.coda-mobile-world #panelClose{min-width:76px;min-height:44px;flex-shrink:0}.coda-mobile-world #panel button,.coda-mobile-world #panel select,.coda-mobile-world #panel input:not([type=color]){min-height:44px}.coda-mobile-world #panel input,.coda-mobile-world #panel select{font-size:16px}.coda-mobile-world .panelRow{flex-wrap:wrap}.coda-mobile-world .panelRow>div{min-width:0;flex:1}.coda-mobile-world #panelTitle{min-width:0;overflow-wrap:anywhere}
+.coda-mobile-world #dialog{z-index:91;bottom:calc(var(--coda-touch-controls-height) + env(safe-area-inset-bottom,0px) + 8px);width:calc(100vw - 18px);max-height:calc(100dvh - var(--coda-world-header-height) - var(--coda-touch-controls-height) - 32px);overflow:auto;padding:15px;font-size:14px}.coda-mobile-world #dialog button{min-height:44px}.coda-mobile-world .musician-choices{display:grid;grid-template-columns:1fr;gap:7px}
+.coda-mobile-world #gameoverlay{padding-top:env(safe-area-inset-top,0px);padding-bottom:env(safe-area-inset-bottom,0px);height:100dvh}.coda-mobile-world .gamebar{gap:6px;padding:6px 8px;flex-wrap:wrap}.coda-mobile-world #returnworld{min-height:44px;padding:8px;font-size:13px;flex:0 0 auto}.coda-mobile-world #activegame{font-size:13px;flex:1;min-width:0}.coda-mobile-world #gameiframe{min-height:0;flex:1;width:100%}
+.coda-mobile-world.asset-console-open{overflow-y:auto}.coda-mobile-world.asset-console-open #worldStage{height:calc(100dvh - var(--coda-world-header-height));min-height:180px}.coda-mobile-world.asset-console-open>footer{position:static;height:auto;min-height:30px}.coda-mobile-world.asset-console-open #assetStudio input,.coda-mobile-world.asset-console-open #assetStudio select{font-size:16px;min-height:44px}.coda-mobile-world.asset-console-open #assetStudio button{min-height:40px}
+@media(orientation:landscape){.coda-mobile-world{--coda-world-pad-height:0px}.coda-mobile-world>header{min-height:48px;padding-top:3px;padding-bottom:3px}.coda-mobile-world #worldStage{height:calc(100dvh - var(--coda-world-header-height))}.coda-mobile-world #view{width:max(100vw,calc((100dvh - var(--coda-world-header-height)) * 1.776834))}.coda-mobile-world>footer{left:calc(var(--coda-joystick-size) + 30px + env(safe-area-inset-left,0px));right:calc(184px + env(safe-area-inset-right,0px));bottom:8px;height:26px;padding:3px 8px;text-align:center;background:#17182bbd}.coda-mobile-world #worldMenu{left:auto;right:max(8px,env(safe-area-inset-right,0px));width:min(600px,calc(100vw - 16px))}.coda-mobile-world #dialog{left:50%;width:min(480px,calc(100vw - 440px));bottom:12px;max-height:calc(100dvh - var(--coda-world-header-height) - 28px);padding:12px}.coda-mobile-world #dialog p{margin:7px 0;line-height:1.45}}
+@media(max-width:370px){.coda-mobile-world>header>b{font-size:13px}.coda-mobile-world #panel{padding:10px}.coda-mobile-world .panelHead{top:-10px}.coda-mobile-world #worldMenu{grid-template-columns:repeat(2,minmax(0,1fr))}}
+/* Conversation choices stay between the larger thumb controls. */
+@media(orientation:landscape){
+ .coda-mobile-world #dialog{left:calc(var(--coda-joystick-size) + 30px + env(safe-area-inset-left,0px));right:calc(var(--coda-touch-actions-width) + 24px + env(safe-area-inset-right,0px));width:auto;max-width:none;transform:none}
+}
+/* Destinations are reached in the world; the header holds essentials only. */
+body>header{position:relative;z-index:75;gap:10px}
+body>header>b{font-size:15px;letter-spacing:1px;white-space:nowrap}
+.world-quick-actions{display:flex;align-items:center;justify-content:flex-end;gap:7px;margin-left:auto}
+.world-quick-actions button,#worldMenuBtn{min-height:44px;font-size:13px;padding:8px 11px;white-space:nowrap}
+#worldMenuBtn{display:block}
+#worldMenu{display:none!important;position:absolute;top:100%;right:12px;left:auto;width:min(380px,calc(100vw - 24px));max-height:calc(100dvh - var(--coda-world-header-height) - 18px);overflow:auto;z-index:75;grid-template-columns:repeat(2,minmax(0,1fr));gap:8px;padding:12px;border:1px solid #bba0d5;border-radius:0 0 12px 12px;background:#211c35;box-shadow:0 15px 35px #0009}
+body.world-menu-open #worldMenu{display:grid!important}
+#worldMenu>button{min-height:44px;white-space:normal}
+#worldMenu>span{grid-column:1/-1;justify-content:center}
+#cameraTools button{min-height:44px;min-width:54px}
+#worldMenuScrim{position:fixed;inset:0;z-index:74;background:#0708199c;border:0;border-radius:0;margin:0;padding:0}
+body.world-menu-open #worldMenuScrim{display:block}
+.coda-mobile-world>header{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:5px;padding-inline:max(6px,env(safe-area-inset-left,0px))}
+.coda-mobile-world>header>b{grid-column:1/-1;text-align:center;font-size:13px}
+.coda-mobile-world .world-quick-actions{display:contents}
+.coda-mobile-world .world-quick-actions button,.coda-mobile-world #worldMenuBtn{min-width:0;width:100%;font-size:12px;padding:6px 2px}
+.coda-mobile-world #levelBtn{font-size:0}
+.coda-mobile-world #levelBtn::before{content:'Profile';font-size:12px}
+.coda-mobile-world #musicBtn{font-size:11px}
+.coda-mobile-world #worldMenu{left:auto;right:6px;width:min(380px,calc(100vw - 12px))}
+@media(orientation:landscape){.coda-mobile-world>header{display:flex;gap:8px}.coda-mobile-world>header>b{text-align:left}.coda-mobile-world .world-quick-actions{display:flex;margin-left:auto}.coda-mobile-world .world-quick-actions button,.coda-mobile-world #worldMenuBtn{width:auto;min-width:72px;padding:6px 9px}}
+@media(orientation:portrait){.coda-mobile-world:not(.asset-console-open)>footer{top:calc(var(--coda-world-header-height) + 6px);bottom:auto}}

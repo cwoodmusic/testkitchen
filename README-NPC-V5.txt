@@ -1,0 +1,1 @@
+NPC behaviors v5: Visitors spawn at the main entrance/exit, walk to cabinets, visit lounge seats or dance floor, then return and despawn. Lounge chat bubbles use editable npcDialogue in neon-world.js. Avatar renderer now honors individual NPC profiles and emotes. No changes to Song Machine or Firebase.

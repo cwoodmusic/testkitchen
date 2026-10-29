@@ -1,0 +1,156 @@
+.music-classroom{position:fixed;inset:0;z-index:96;overflow:auto;background:radial-gradient(ellipse at 50% 0,#304457,#151626 75%);color:#f4eaff;padding:20px;font:15px system-ui;overscroll-behavior:contain}.music-classroom button{font:inherit;background:#3c3457;color:#fff4ff;border:1px solid #9a86b7;border-radius:6px;padding:9px 12px;cursor:pointer}.music-classroom button:hover{background:#55466e}.music-classroom button:disabled{opacity:.45;cursor:default}.music-classroom[hidden]{display:none}.classroom-shell{max-width:1150px;margin:auto}.classroom-heading{display:flex;justify-content:space-between;gap:20px;align-items:center;padding:0;background:none;margin-bottom:16px}.classroom-eyebrow{font:11px monospace;letter-spacing:2px;color:#a8e5de}.classroom-heading h1{font-size:30px;margin:5px 0;color:#fff1c2}.classroom-heading p{margin:4px 0;color:#c6c4de}.classroom-heading button small{display:block;color:#c8d4df}.classroom-room{border:2px solid #9b7bc1;border-radius:10px;background:#0b1326;overflow:hidden;box-shadow:0 12px 35px #0007}.classroom-room canvas{display:block;width:min(100%,100dvh);height:auto;margin:0 auto;object-fit:contain;image-rendering:pixelated;touch-action:none;outline-offset:-5px}.classroom-room-controls{padding:12px 16px;display:flex;justify-content:space-between;align-items:center;flex-wrap:wrap;gap:12px;background:#232038}.classroom-room-controls p{margin:0;font-size:13px;color:#d9cee9}.classroom-room-controls button{padding:7px 10px}.classroom-room-controls div{display:flex;gap:6px;flex-wrap:wrap}.classroom-library{display:grid;grid-template-columns:minmax(200px,260px) 1fr;gap:20px;margin-top:22px}.classroom-library nav{background:#211f35;border:1px solid #5b557b;border-radius:10px;padding:16px;align-self:start}.classroom-library nav h2{font-size:18px;margin:0 0 12px;color:#c9f3e9}.classroom-search{display:grid;gap:6px;font-size:13px;color:#ded2ef}.classroom-search input{width:100%;min-width:0;padding:9px;background:#13162b;color:#fff;border:1px solid #9d87ba;border-radius:5px;font:inherit}.classroom-topic-list{display:grid;gap:7px;margin-top:12px}.classroom-topic-list button{text-align:left;padding:10px 11px;line-height:1.35}.classroom-topic-list button[aria-current=true]{background:#34575c;border-color:#9be7d6;color:#edfff6}.classroom-topic-list small{display:block;color:#d0c1df;font-size:11px;margin-top:3px}.classroom-no-results{font-size:13px;color:#c8c0d5}.classroom-book{background:#f3ebd8;color:#312b3e;border:4px solid #8b6b8a;border-radius:7px;padding:25px 28px;box-shadow:7px 7px #0e12234d;min-width:0;line-height:1.65}.classroom-book:focus{outline:3px solid #9ae7e1;outline-offset:4px}.classroom-book h2{color:#57395b;margin:0 0 6px;font-size:26px;line-height:1.3}.classroom-book h3{font-size:17px;color:#594462;margin-top:23px;margin-bottom:7px}.classroom-book p{margin:10px 0}.classroom-book ul,.classroom-book ol{padding-left:23px}.classroom-book li{margin:6px 0}.classroom-book table{border-collapse:collapse;width:100%;font-size:14px;margin:12px 0;line-height:1.4}.classroom-book th,.classroom-book td{padding:8px 9px;border:1px solid #b9abb7;text-align:left}.classroom-book th{background:#e0d3df}.classroom-book .classroom-book-kicker{font:12px monospace;letter-spacing:1px;color:#6b5a70}.classroom-book .classroom-example{padding:12px 15px;background:#e5dcec;border-left:4px solid #9b73a4;border-radius:3px}.classroom-book button{background:#584568;color:white;border-color:#8b6e9d}.classroom-book button:hover{background:#715380}.classroom-listen{display:flex;gap:8px;flex-wrap:wrap;margin:14px 0}.classroom-check{padding:16px;border:1px solid #b4a0b3;background:#fffaf0;border-radius:7px;margin-top:24px}.classroom-check h3{margin-top:0}.classroom-answers{display:flex;gap:8px;flex-wrap:wrap}.classroom-answers button{min-width:70px}.classroom-feedback{min-height:25px;font-size:14px;font-weight:600}.classroom-feedback[data-correct=true]{color:#22634a}.classroom-feedback[data-correct=false]{color:#8f3758}.classroom-professor-message{color:#d8f4dd;min-height:25px;font-size:14px;margin:14px 3px 0}.music-classroom button:focus-visible,.music-classroom input:focus-visible{outline:3px solid #b8fff2;outline-offset:3px}.classroom-book button:focus-visible{outline-color:#664981}@media(max-width:720px){.music-classroom{padding:12px}.classroom-heading{align-items:flex-start;gap:12px}.classroom-heading h1{font-size:25px}.classroom-heading p{font-size:13px}.classroom-heading button{font-size:12px;padding:8px}.classroom-library{grid-template-columns:1fr;gap:14px}.classroom-library nav{padding:12px}.classroom-topic-list{grid-template-columns:repeat(2,minmax(0,1fr));gap:6px}.classroom-topic-list button{font-size:12px}.classroom-book{padding:20px 17px}.classroom-book table{font-size:12px}.classroom-book th,.classroom-book td{padding:6px}.classroom-room-controls{padding:10px;font-size:12px}.classroom-room canvas{max-height:none}}
+
+.classroom-mobile-nav{display:none}
+@media(max-width:760px),(pointer:coarse){
+ .music-classroom{padding:max(8px,env(safe-area-inset-top)) max(12px,env(safe-area-inset-right)) max(20px,env(safe-area-inset-bottom)) max(12px,env(safe-area-inset-left));scroll-padding-top:115px}
+ .music-classroom[data-mobile-view="room"]{padding-bottom:calc(var(--coda-touch-controls-height,174px) + env(safe-area-inset-bottom) + 12px)}
+ .classroom-shell,.classroom-library,.classroom-library nav{min-width:0}
+ .classroom-heading{position:sticky!important;top:0;z-index:4;display:grid!important;grid-template-columns:minmax(0,1fr) auto;gap:9px;align-items:center;margin:0!important;padding:6px 0!important;background:#181b2df5!important;min-height:56px;backdrop-filter:blur(12px)}
+ .classroom-heading h1{font-size:22px;line-height:1.2;margin:0;letter-spacing:0}
+ .classroom-eyebrow,.classroom-heading p,.classroom-heading small,.classroom-heading .room-return-full{display:none}
+ .classroom-heading .room-return-short{display:inline}
+ .music-classroom button,.music-classroom input{min-height:44px;font-size:16px}
+ .classroom-heading button{font-size:13px;min-width:90px;padding:8px}
+ .classroom-mobile-nav{position:sticky;top:56px;z-index:3;display:grid;grid-template-columns:1fr 1fr;gap:6px;padding:6px 0 8px;background:#181b2df5;backdrop-filter:blur(12px)}
+ .classroom-mobile-nav button{font-size:14px;padding:8px}
+ .classroom-mobile-nav button[aria-pressed="true"]{background:#31585a;border-color:#a8e8d7;color:#e2fff8}
+ .classroom-room{border-radius:8px}
+ .classroom-room canvas{width:100%;max-height:none;outline-offset:-4px}
+ .classroom-room-controls{padding:9px 10px;gap:8px;font-size:12px}
+ .classroom-room-controls p{font-size:11px;line-height:1.5}
+ .classroom-room-controls div{display:grid;grid-template-columns:1fr 1fr;gap:7px;width:100%}
+ .classroom-room-controls button{font-size:13px;line-height:1.25;min-width:0;padding:8px 6px}
+ .classroom-professor-message{font-size:13px;line-height:1.5;margin:9px 2px}
+ .classroom-library{grid-template-columns:minmax(0,1fr);gap:12px;margin-top:0}
+ .classroom-library nav{padding:12px}
+ .classroom-library nav h2{font-size:18px;margin:0 0 9px}
+ .classroom-search{font-size:13px}
+ .classroom-search input{font-size:16px;min-height:44px}
+ .classroom-topic-list{display:flex;gap:7px;overflow-x:auto;overscroll-behavior-x:contain;padding-bottom:6px;scroll-snap-type:x proximity;-webkit-overflow-scrolling:touch}
+ .classroom-topic-list button{flex:0 0 165px;min-width:0;min-height:66px;font-size:13px;scroll-snap-align:start;line-height:1.35}
+ .classroom-topic-list small{font-size:11px}
+ .classroom-book{padding:18px 14px;font-size:15px;scroll-margin-top:115px;box-shadow:none;overflow-wrap:anywhere}
+ .classroom-book h2{font-size:23px}
+ .classroom-book h3{font-size:18px}
+ .classroom-book table{display:block;max-width:100%;overflow-x:auto;font-size:13px;overscroll-behavior-x:contain}
+ .classroom-book th,.classroom-book td{padding:7px}
+ .classroom-book button{min-height:44px;font-size:14px;max-width:100%}
+ .classroom-listen{gap:7px}
+ .classroom-check{padding:12px}
+ .classroom-answers button{min-width:70px}
+ .music-classroom[data-mobile-view="room"] .classroom-library{display:none}
+ .music-classroom[data-mobile-view="books"] .classroom-room,.music-classroom[data-mobile-view="books"] .classroom-professor-message{display:none}
+}
+@media(pointer:coarse) and (orientation:landscape) and (max-height:550px){
+ .music-classroom{padding-top:max(3px,env(safe-area-inset-top));padding-left:max(8px,env(safe-area-inset-left));padding-right:max(8px,env(safe-area-inset-right))}
+ .classroom-heading{min-height:46px;padding:1px 0!important}
+ .classroom-heading h1{font-size:21px}
+ .classroom-mobile-nav{top:46px;padding:2px 0 5px;grid-template-columns:repeat(2,minmax(0,180px));justify-content:center}
+ .classroom-mobile-nav button{min-height:44px}
+ .classroom-room canvas{width:auto;max-width:100%;height:max(145px,calc(100dvh - 170px));aspect-ratio:1000/600;margin:auto}
+ .classroom-room-controls{padding:4px 8px;justify-content:center}
+ .classroom-room-controls p{display:none}
+ .classroom-room-controls div{display:flex;width:auto;justify-content:center}
+ .classroom-room-controls button{font-size:12px;min-height:44px;padding:5px 9px}
+ .classroom-professor-message{text-align:center;font-size:11px;margin:5px 0}
+}
+.classroom-heading .room-return-short,.classroom-room .room-touch-hint{display:none}
+@media(max-width:760px),(pointer:coarse){.classroom-heading .room-return-short{display:inline}.classroom-room .room-keyboard-hint{display:none}.classroom-room .room-touch-hint{display:inline}}
+
+@media(max-width:760px),(pointer:coarse){.classroom-lesson-shortcuts button:last-child:nth-child(odd){grid-column:1/-1}}
+.classroom-staff-example{margin:18px 0}.classroom-staff-example figcaption{font-size:13px;line-height:1.5;color:#5c4861}
+/* Beginner lessons lead; the searchable shelves remain a reference. */
+.music-classroom .classroom-learning-path{margin:18px 0;padding:18px;border:2px solid #86cdbd;border-radius:12px;background:linear-gradient(125deg,#243f48,#252d46);scroll-margin-top:115px}
+.music-classroom .classroom-learning-path[hidden]{display:none!important}
+.classroom-learning-path h2{margin:0 0 8px;color:#c8ffe9;font-size:24px}
+.classroom-learning-path>p{margin:0;color:#d3e6e5;line-height:1.5;max-width:62ch}
+.music-classroom .classroom-learning-path .classroom-lesson-shortcuts{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:12px;margin:16px 0 0}
+.music-classroom .classroom-learning-path .classroom-lesson-shortcuts button{display:flex;flex-direction:column;align-items:flex-start;justify-content:center;gap:8px;min-height:108px;padding:15px;text-align:left;background:#254d50;border:2px solid #91d5c3;border-radius:9px}
+.classroom-learning-path button strong{font-size:18px;color:#eefff3}
+.classroom-learning-path button span{font-size:14px;font-weight:400;line-height:1.45;color:#cde4e2}
+.classroom-learning-path button:focus-visible,.music-classroom .classroom-all-lessons:focus-visible{outline:3px solid #ffe4a3;outline-offset:3px}
+.music-classroom .classroom-all-lessons{min-height:48px;margin:0 0 16px;background:#e8e5df;color:#35404e;border-color:#7a879a;font-size:15px}
+.classroom-reference-help{margin:0 0 14px;line-height:1.5;color:#d4c8e0;font-size:14px}
+@media(max-width:760px),(pointer:coarse){.music-classroom .classroom-learning-path{padding:14px}.music-classroom .classroom-learning-path .classroom-lesson-shortcuts{grid-template-columns:minmax(0,1fr);gap:10px}.music-classroom .classroom-learning-path .classroom-lesson-shortcuts button{min-height:94px;grid-column:auto}.classroom-learning-path h2{font-size:22px}}
+
+/* The scroll container already reserves the sticky mobile heading. */
+@media(max-width:760px),(pointer:coarse){.music-classroom{scroll-padding-top:128px}.music-classroom .classroom-book,.music-classroom .classroom-learning-path{scroll-margin-top:0}}
+@media(pointer:coarse) and (orientation:landscape) and (max-height:550px){.music-classroom{scroll-padding-top:110px}}
+
+/* Room zoom lives in Settings, leaving the lesson pages at their normal size. */
+.classroom-heading-actions{display:flex;align-items:center;gap:8px;flex:0 0 auto}
+.classroom-canvas-viewport{position:relative;overflow:hidden;background:#0b1326}
+.classroom-settings-backdrop{position:fixed;inset:0;z-index:30;display:flex;align-items:center;justify-content:center;padding:16px;background:#060b18c9;backdrop-filter:blur(4px)}
+.classroom-settings-backdrop[hidden]{display:none!important}
+.classroom-settings-panel{width:min(440px,100%);max-height:calc(100dvh - 32px);overflow:auto;padding:20px;background:#202b42;border:2px solid #9edfd0;border-radius:12px;box-shadow:0 18px 55px #0009;line-height:1.5}
+.classroom-settings-heading{display:flex;align-items:center;justify-content:space-between;gap:12px}
+.classroom-settings-heading h2{margin:0;color:#d1fff0;font-size:22px;line-height:1.2}
+.classroom-settings-panel p{color:#d4e4e5}
+.classroom-camera-controls{display:flex;justify-content:center;gap:8px;padding:10px;border:1px solid #79b9b1;border-radius:8px;background:#17353f}
+.classroom-camera-controls[hidden]{display:none!important}
+.music-classroom .classroom-camera-controls button{min-width:62px;min-height:48px;font-size:17px}
+.music-classroom .classroom-settings-panel button{min-height:44px}
+@media(max-width:760px),(pointer:coarse){
+ .classroom-heading-actions{gap:5px}
+ .classroom-heading-actions button{min-width:0;padding:8px!important;font-size:12px}
+ .classroom-settings-panel{padding:16px}
+ .classroom-settings-heading h2{font-size:20px}
+}
+
+/* Room and learning are separate screens. No catalogue or toolbar sits below
+   the classroom floor; Haydn and the shelves open the learning screen. */
+.music-classroom .classroom-books[hidden],.music-classroom .classroom-room[hidden],.music-classroom .classroom-book[hidden],.music-classroom [hidden]{display:none!important}
+.music-classroom{padding:10px 16px;overflow:hidden}
+.music-classroom .classroom-shell{max-width:1560px;height:100%;display:grid;grid-template-rows:52px minmax(0,1fr);gap:0;min-height:0}
+.music-classroom .classroom-heading{position:relative!important;top:auto;display:flex!important;align-items:center;justify-content:space-between;flex-wrap:nowrap;height:52px;min-height:52px;gap:10px;padding:0 0 8px!important;margin:0!important;background:none!important;box-shadow:none!important;backdrop-filter:none}
+.music-classroom .classroom-heading h1{font-size:24px;line-height:1.1;margin:0;white-space:nowrap;letter-spacing:0}
+.music-classroom .classroom-heading-actions{display:flex;gap:6px;align-items:center;flex:none}
+.music-classroom .classroom-heading-actions button{min-height:44px;padding:7px 10px!important;font-size:14px;white-space:nowrap}
+.music-classroom .classroom-professor-message,.music-classroom .classroom-lesson-context{position:absolute!important;width:1px!important;height:1px!important;overflow:hidden!important;clip-path:inset(50%)!important;white-space:nowrap!important;padding:0!important;margin:0!important;border:0!important}
+.music-classroom .classroom-room{display:flex;align-self:start;width:100%;min-height:0;max-height:100%;justify-content:center;align-items:center}
+.music-classroom .classroom-canvas-viewport{width:min(100%,calc((100dvh - 76px) * 1000 / 600));height:auto;aspect-ratio:1000/600;--coda-room-cover:0}
+.music-classroom #classroomCanvas{display:block;width:100%;height:auto;max-width:none;max-height:none;margin:0;touch-action:none}
+.music-classroom .classroom-books{overflow:auto;min-width:0;min-height:0;padding:10px 2px 24px;overscroll-behavior:contain;scrollbar-color:#8b7da4 #181c30}
+.music-classroom .classroom-learning-path{width:min(900px,100%);margin:0 auto;padding:22px;border:1px solid #7a9c9b;border-radius:12px;background:#1e3940}
+.music-classroom .classroom-learning-path h2{font-size:30px;margin:0 0 10px}.music-classroom .classroom-learning-path>p{font-size:20px;margin:0 0 16px}
+.music-classroom .classroom-lesson-shortcuts{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:12px;margin:0 0 18px}
+.music-classroom .classroom-lesson-shortcuts button{min-height:72px;font-size:22px;padding:16px;text-align:left}
+.music-classroom #classroomBrowseBooks{font-size:18px;min-height:48px}
+.music-classroom .classroom-library{display:block;margin:0 auto;width:min(1120px,100%)}
+.music-classroom .classroom-library>nav{display:none}
+.music-classroom[data-reference-open="true"] .classroom-library>nav{display:block;margin:auto;width:min(840px,100%)}
+.music-classroom .classroom-book{margin:0;min-height:0}
+.music-classroom[data-lesson-active="true"] .classroom-book{padding:0;border:0;background:none;box-shadow:none;color:#f4eaff;overflow:visible}
+.music-classroom[data-lesson-active="true"] .classroom-library{width:min(1120px,100%)}
+.music-classroom #classroomAllLessons{display:block;font-size:16px;min-height:44px;padding:8px 12px;margin:0 0 12px}
+.music-classroom[data-lesson-active="false"][data-reference-open="false"] .classroom-library>nav{display:none}
+.music-classroom.coda-room-viewport-fullscreen,.music-classroom.coda-room-native-fullscreen{position:fixed;inset:0;width:100vw;height:100dvh;max-width:none;max-height:none;margin:0;box-sizing:border-box}
+.music-classroom.coda-room-viewport-fullscreen{z-index:180}
+.music-classroom:fullscreen{background:radial-gradient(ellipse at 50% 0,#304457,#151626 75%)}
+@media(max-width:760px),(pointer:coarse){
+ .music-classroom{padding:max(8px,env(safe-area-inset-top)) max(12px,env(safe-area-inset-right)) 0 max(12px,env(safe-area-inset-left));scroll-padding-top:0}
+ .music-classroom[data-mobile-view="room"]{padding-bottom:0}
+ .music-classroom .classroom-heading h1{font-size:19px;white-space:normal;max-width:112px}
+ .music-classroom .classroom-heading-actions{gap:4px}.music-classroom .classroom-heading-actions button{font-size:12px;padding:7px!important}
+ .music-classroom .classroom-canvas-viewport{width:100%;height:max(160px,calc(100dvh - 76px - var(--coda-touch-room-controls-height,var(--coda-touch-controls-height,220px)) - env(safe-area-inset-bottom,0px)));aspect-ratio:auto;--coda-room-cover:1}
+ .music-classroom #classroomCanvas{position:absolute;left:50%;top:50%;transform:translate(-50%,-50%);width:auto;max-width:none;max-height:none;outline-offset:-4px}
+ .music-classroom .classroom-learning-path{padding:18px 14px}.music-classroom .classroom-learning-path h2{font-size:26px}.music-classroom .classroom-lesson-shortcuts{grid-template-columns:1fr}.music-classroom .classroom-lesson-shortcuts button{font-size:21px;min-height:62px}
+ .music-classroom .classroom-book{padding:18px 14px}.music-classroom[data-lesson-active="true"] .classroom-book{padding:0}
+}
+@media(orientation:landscape) and (max-height:600px){
+ .music-classroom .classroom-room{width:calc(100% - var(--coda-joystick-size,216px) - var(--coda-touch-actions-width,128px) - 44px);margin-left:calc(var(--coda-joystick-size,216px) + 16px)}
+ .music-classroom .classroom-canvas-viewport{width:100%;height:calc(100dvh - 72px);min-height:140px;--coda-room-cover:1}
+ .music-classroom .classroom-heading h1{white-space:nowrap;max-width:none}.music-classroom .classroom-heading-actions button{font-size:12px}
+}
+@media(max-width:360px){.music-classroom .classroom-heading>div:first-child{position:absolute;width:1px;height:1px;overflow:hidden;clip-path:inset(50%)}.music-classroom .classroom-heading-actions{margin-left:auto}}
+.music-classroom,.music-classroom *{box-sizing:border-box}
+
+/* The focused activity has one top navigation row, never an overlapping
+   second back-button row. Explicit direction beats the arcade's phone header. */
+.music-classroom .classroom-heading{flex-direction:row!important}
+.music-classroom .classroom-heading-actions #classroomAllLessons{display:inline-flex;align-items:center;justify-content:center;margin:0;font-size:14px;padding:7px 10px!important}
+@media(max-width:760px),(pointer:coarse){
+ .music-classroom[data-mobile-view="books"]:not([data-topic="welcome"]) .classroom-heading>div:first-child{position:absolute;width:1px;height:1px;overflow:hidden;clip-path:inset(50%)}
+ .music-classroom[data-mobile-view="books"]:not([data-topic="welcome"]) .classroom-heading-actions{width:100%;justify-content:space-between;margin-left:0;gap:5px}
+ .music-classroom .classroom-heading-actions #classroomAllLessons{font-size:12px;padding:7px!important}
+}

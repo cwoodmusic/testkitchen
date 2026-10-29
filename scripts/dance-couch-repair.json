@@ -1,0 +1,89 @@
+{
+  "description": "Repair the right dance-room sofa only; keep the original world, atlas coordinates, student layouts and surrounding artwork.",
+  "worldSize": [
+    1672,
+    941
+  ],
+  "source": "assets/world/dance-right-couch-repair-source.png",
+  "sourceSize": [
+    1195,
+    1316
+  ],
+  "target": [
+    600,
+    580,
+    116,
+    132
+  ],
+  "polygon": [
+    [
+      637,
+      602
+    ],
+    [
+      643,
+      603
+    ],
+    [
+      704,
+      635
+    ],
+    [
+      706,
+      639
+    ],
+    [
+      706,
+      691
+    ],
+    [
+      703,
+      697
+    ],
+    [
+      691,
+      704
+    ],
+    [
+      618,
+      671
+    ],
+    [
+      615,
+      661
+    ],
+    [
+      615,
+      635
+    ],
+    [
+      618,
+      631
+    ],
+    [
+      634,
+      623
+    ],
+    [
+      634,
+      608
+    ]
+  ],
+  "foreground": {
+    "name": "dance_right_couch",
+    "bounds": [
+      544,
+      595,
+      162,
+      109
+    ],
+    "atlas": [
+      1231,
+      3,
+      162,
+      109
+    ]
+  },
+  "outsideWorldSha256": "004c228c41e22135f03e6725f439f699f0620a3d14be105111fdfc314a5b9f55",
+  "outsideAtlasSha256": "4d0eb794281513d196194222d8724913b96235dd027151f40feb5b72a09bfc33"
+}

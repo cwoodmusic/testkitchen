@@ -1,0 +1,12 @@
+/* A compact tug-of-war illustration below catch progress, above the staff. */
+.fishing-battle{position:relative;height:146px;margin:12px 0 0;border:1px solid #496b80;border-radius:8px;overflow:hidden;background:#11283c;isolation:isolate;pointer-events:none}
+.fishing-battle .fishing-battle-canvas{display:block;width:100%;height:100%;min-height:0;image-rendering:pixelated}
+.fishing-battle .fishing-battle-caption{position:absolute;left:10px;bottom:6px;max-width:calc(100% - 20px);color:#d7eee9;background:#11283cd9;border-radius:4px;padding:2px 6px;font:600 11px/1.5 system-ui,sans-serif;text-shadow:0 1px #102032}
+.fishing-battle .fishing-battle-announcement{position:absolute;z-index:2;left:50%;top:8px;transform:translateX(-50%);width:max-content;max-width:calc(100% - 18px);padding:7px 18px;border:1px solid #98f0e7;border-radius:7px;box-shadow:0 5px 22px #06151f99;background:#123b49ed;color:#cafff1;text-align:center;font:700 13px/1.2 system-ui,sans-serif;letter-spacing:1.1px}
+.fishing-battle .fishing-battle-announcement[data-rarity=epic]{border-color:#d7a4ff;background:#37224fed;color:#eed9ff}
+.fishing-battle .fishing-battle-announcement[data-rarity=legendary]{border-color:#ffe39a;background:#4c3825ed;color:#fff0bd}
+.fishing-battle .fishing-battle-announcement strong,.fishing-battle .fishing-battle-announcement span{display:block;overflow-wrap:anywhere}
+.fishing-battle .fishing-battle-announcement span{font-size:10px;font-weight:500;letter-spacing:.1px;margin-top:3px}
+.fishing-battle .fishing-battle-announcement[hidden]{display:none!important}
+@media(max-width:760px),(pointer:coarse){.fishing-battle{height:96px;margin-top:8px}.fishing-battle .fishing-battle-caption{font-size:10px;bottom:4px;left:6px}.fishing-battle .fishing-battle-announcement{top:5px;padding:5px 12px;font-size:12px}.fishing-battle .fishing-battle-announcement span{font-size:9px}}
+@media(max-height:550px) and (orientation:landscape){.fishing-battle{height:64px;margin-top:5px}.fishing-battle .fishing-battle-caption{font-size:9px;padding:0 4px;bottom:3px}.fishing-battle .fishing-battle-announcement{top:4px;font-size:10px;padding:4px 10px}.fishing-battle .fishing-battle-announcement span{display:none}}

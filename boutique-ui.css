@@ -1,0 +1,35 @@
+.boutique-panel .boutique-field input[type=color]{height:38px;padding:3px;cursor:pointer}
+.boutique-swatches{display:flex;flex-wrap:wrap;gap:6px;margin:4px 0 8px}
+.boutique-swatches button{width:26px;height:26px;min-height:0;padding:0;border:2px solid #a38ab6;border-radius:6px;box-shadow:inset 0 0 0 1px #ffffff20}
+.boutique-swatches button:hover{border-color:#d7fff2;transform:translateY(-1px)}
+.boutique-swatches button:focus-visible{outline:2px solid #adffe3;outline-offset:2px}
+.boutique-actions{display:flex;gap:8px;flex-wrap:wrap;margin-top:18px;position:sticky;bottom:-20px;background:#231c3bf5;padding:10px 0;border-top:1px solid #66517f}
+.boutique-actions button{flex:1}
+.boutique-actions #boutiqueSave{background:#2d5e58;border-color:#8de5c8}
+.boutique-actions .panelMsg{flex:1 0 100%;margin:0;min-height:0;font-size:12px}
+.boutique-field input[readonly]{opacity:.8;border-style:dashed;cursor:default}
+.boutique-panel .boutique-note{line-height:1.5}
+.boutique-panel .avatar-preview-views canvas{width:auto;max-width:100%;max-height:104px}
+.boutique-panel .avatar-live-preview>.formRow{display:flex;align-items:center;gap:10px;margin:6px 0 0;font-size:12px}
+.boutique-panel .avatar-live-preview>.formRow select{flex:1;min-width:0}
+.boutique-catalog{padding:12px;border:1px solid #705d8b;border-radius:10px;background:#19172d;margin:16px 0}
+.boutique-catalog h3{margin:0 0 7px;color:#ffe0a2;font-size:16px}
+.boutique-catalog>p{font-size:12px;line-height:1.45;margin:7px 0}
+.boutique-categories{display:flex;gap:5px;flex-wrap:wrap;margin:10px 0}
+.boutique-categories button{font:inherit;padding:6px 9px;font-size:12px}
+.boutique-categories button[aria-pressed=true]{background:#365f5b;border-color:#9aead5}
+.boutique-catalog-count{color:#bfe9d8;min-height:18px}
+.boutique-catalog-results{display:grid;grid-template-columns:repeat(auto-fill,minmax(87px,1fr));gap:7px;max-height:292px;overflow-y:auto;padding:3px}
+.boutique-catalog-results .boutique-item{display:flex;flex-direction:column;align-items:center;justify-content:flex-end;gap:5px;min-width:0;padding:6px;border:1px solid #65557c;background:#29223d;font:12px system-ui;line-height:1.25}
+.boutique-item canvas{width:72px;height:84px;image-rendering:pixelated;background:#17162b;border-radius:4px;pointer-events:none}
+.boutique-catalog-results .boutique-item[aria-pressed=true]{border-color:#9bf1d5;background:#304c49;box-shadow:0 0 0 1px #9bf1d5}
+.boutique-item span{text-align:center;overflow-wrap:anywhere}
+.boutique-item small{font-size:10px;color:#e9c489}
+.boutique-item:focus-visible,.boutique-categories button:focus-visible{outline:2px solid #a6f1d7;outline-offset:2px}
+@media(max-width:450px){.boutique-catalog{padding:9px}.boutique-catalog-results{grid-template-columns:repeat(3,minmax(0,1fr));max-height:280px}.boutique-item canvas{width:58px;height:68px}}
+/* Locked styles are future rewards, never wearable drafts. */
+.boutique-catalog-results .boutique-item.is-locked,.boutique-catalog-results .boutique-item.is-locked:hover{background:#292933;border-color:#55535f;color:#aaa9b4;filter:grayscale(1);opacity:1;cursor:not-allowed;box-shadow:none}
+.boutique-item.is-locked small{color:#c4c3cd;font-size:12px;line-height:1.35}
+.boutique-locked-art{display:flex;align-items:center;justify-content:center;width:72px;height:80px;border-radius:5px;background:#1e1e29;color:#b6b5c0;font-size:32px;line-height:1;pointer-events:none}
+.boutique-panel select option.boutique-option-locked{color:#90909d;background:#282835}
+@media(max-width:450px){.boutique-locked-art{width:58px;height:65px}.boutique-item.is-locked small{font-size:11px}}

@@ -1,0 +1,12 @@
+{
+  "$schema": "https://raw.githubusercontent.com/cloudflare/workers-sdk/main/packages/wrangler/config-schema.json",
+  "name": "coda-arcade-site",
+  "main": "worker.mjs",
+  "compatibility_date": "2026-10-26",
+  "workers_dev": false,
+  "observability": {"enabled": false},
+  "routes": [
+    {"pattern": "www.coda-arcade.com", "custom_domain": true},
+    {"pattern": "coda-arcade.com", "custom_domain": true}
+  ]
+}

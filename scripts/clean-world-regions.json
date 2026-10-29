@@ -1,0 +1,339 @@
+{
+  "version": 1,
+  "width": 1672,
+  "height": 941,
+  "feather": 5,
+  "padding": 16,
+  "regions": [
+    {
+      "id": "lounge_sofa_orange",
+      "room": "lounge",
+      "bounds": [
+        280,
+        148,
+        42,
+        68
+      ]
+    },
+    {
+      "id": "lounge_sofa_blue",
+      "room": "lounge",
+      "bounds": [
+        361,
+        162,
+        43,
+        66
+      ]
+    },
+    {
+      "id": "lounge_west_brown",
+      "room": "lounge",
+      "bounds": [
+        146,
+        222,
+        42,
+        63
+      ]
+    },
+    {
+      "id": "lounge_pink",
+      "room": "lounge",
+      "bounds": [
+        210,
+        255,
+        43,
+        71
+      ]
+    },
+    {
+      "id": "lounge_east_brown",
+      "room": "lounge",
+      "bounds": [
+        365,
+        244,
+        43,
+        66
+      ]
+    },
+    {
+      "id": "boutique_attendant",
+      "room": "boutique",
+      "bounds": [
+        492,
+        365,
+        47,
+        60
+      ]
+    },
+    {
+      "id": "cabinet_pitch_customer",
+      "room": "arcade",
+      "bounds": [
+        709,
+        258,
+        41,
+        70
+      ]
+    },
+    {
+      "id": "cabinet_triad_customer",
+      "room": "arcade",
+      "bounds": [
+        824,
+        258,
+        43,
+        72
+      ]
+    },
+    {
+      "id": "cabinet_rhythm_customer",
+      "room": "arcade",
+      "bounds": [
+        941,
+        257,
+        44,
+        73
+      ]
+    },
+    {
+      "id": "cabinet_song_customer",
+      "room": "arcade",
+      "bounds": [
+        1059,
+        258,
+        45,
+        74
+      ]
+    },
+    {
+      "id": "piano_landing_visitor",
+      "room": "piano_landing",
+      "bounds": [
+        1287,
+        130,
+        45,
+        65
+      ]
+    },
+    {
+      "id": "hall_of_fame_visitor",
+      "room": "arcade",
+      "bounds": [
+        1471,
+        273,
+        44,
+        68
+      ]
+    },
+    {
+      "id": "arcade_floor_east_cap",
+      "room": "arcade",
+      "bounds": [
+        1187,
+        309,
+        43,
+        68
+      ]
+    },
+    {
+      "id": "arcade_floor_center_cap",
+      "room": "arcade",
+      "bounds": [
+        892,
+        348,
+        44,
+        70
+      ]
+    },
+    {
+      "id": "arcade_floor_center_pink",
+      "room": "arcade",
+      "bounds": [
+        739,
+        370,
+        43,
+        67
+      ]
+    },
+    {
+      "id": "arcade_floor_center_blue",
+      "room": "arcade",
+      "bounds": [
+        1058,
+        375,
+        45,
+        71
+      ]
+    },
+    {
+      "id": "reception_attendant",
+      "room": "arcade",
+      "bounds": [
+        1328,
+        443,
+        49,
+        58
+      ]
+    },
+    {
+      "id": "arcade_floor_south_pink",
+      "room": "arcade",
+      "bounds": [
+        1201,
+        714,
+        46,
+        72
+      ]
+    },
+    {
+      "id": "arcade_floor_south_blue",
+      "room": "arcade",
+      "bounds": [
+        1320,
+        704,
+        48,
+        73
+      ]
+    },
+    {
+      "id": "dance_dj",
+      "room": "dance",
+      "bounds": [
+        369,
+        584,
+        49,
+        51
+      ]
+    },
+    {
+      "id": "dance_northwest_cap",
+      "room": "dance",
+      "bounds": [
+        202,
+        649,
+        43,
+        68
+      ]
+    },
+    {
+      "id": "dance_northwest_brown",
+      "room": "dance",
+      "bounds": [
+        275,
+        668,
+        44,
+        69
+      ]
+    },
+    {
+      "id": "dance_center_purple",
+      "room": "dance",
+      "bounds": [
+        380,
+        685,
+        46,
+        73
+      ]
+    },
+    {
+      "id": "dance_northeast_cap",
+      "room": "dance",
+      "bounds": [
+        475,
+        666,
+        47,
+        66
+      ]
+    },
+    {
+      "id": "dance_northeast_pink",
+      "room": "dance",
+      "bounds": [
+        549,
+        667,
+        46,
+        65
+      ]
+    },
+    {
+      "id": "dance_east_purple",
+      "room": "dance",
+      "bounds": [
+        638,
+        691,
+        45,
+        67
+      ]
+    },
+    {
+      "id": "dance_west_pink",
+      "room": "dance",
+      "bounds": [
+        106,
+        714,
+        44,
+        65
+      ]
+    },
+    {
+      "id": "dance_west_orange",
+      "room": "dance",
+      "bounds": [
+        190,
+        707,
+        45,
+        68
+      ]
+    },
+    {
+      "id": "dance_center_brown",
+      "room": "dance",
+      "bounds": [
+        276,
+        739,
+        46,
+        68
+      ]
+    },
+    {
+      "id": "dance_south_green",
+      "room": "dance",
+      "bounds": [
+        380,
+        760,
+        47,
+        74
+      ]
+    },
+    {
+      "id": "dance_south_pink",
+      "room": "dance",
+      "bounds": [
+        477,
+        731,
+        47,
+        73
+      ]
+    },
+    {
+      "id": "dance_southeast_brown",
+      "room": "dance",
+      "bounds": [
+        603,
+        730,
+        45,
+        73
+      ]
+    },
+    {
+      "id": "dance_southwest_black_hair",
+      "room": "dance",
+      "bounds": [
+        209,
+        775,
+        45,
+        66
+      ]
+    }
+  ]
+}

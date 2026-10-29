@@ -1,0 +1,126 @@
+/* One picture, one small instruction, and one next action. */
+.classroom-tutorial{font:400 22px/1.4 system-ui,sans-serif;color:#f6f4ff;background:#1c2840;border:1px solid #61758b;border-radius:14px;padding:clamp(14px,3vw,26px);margin:0 auto;max-width:960px;box-sizing:border-box}
+.classroom-tutorial *{box-sizing:border-box}
+.classroom-tutorial .lesson-topline{display:flex;align-items:center;justify-content:space-between;gap:12px;margin-bottom:8px}
+.classroom-tutorial .lesson-step-label{font:700 18px/1.3 system-ui;color:#c2d8e5}
+.classroom-tutorial>progress{display:block;width:100%;height:8px;margin:0 0 20px;accent-color:#91e7cc}
+.classroom-tutorial .lesson-content{display:flex;flex-direction:column;align-items:center;gap:14px;min-width:0}
+.classroom-tutorial .lesson-content>*{max-width:100%}
+.classroom-tutorial .lesson-action-cue{width:100%;padding:0;margin:0 0 6px;border:0;background:transparent;text-align:center}
+.classroom-tutorial .lesson-action-cue h3{font:750 clamp(24px,3.6vw,32px)/1.25 system-ui;color:#f0fff4;margin:0 auto;max-width:29ch;letter-spacing:0}
+.classroom-tutorial p{font-size:22px;line-height:1.4;margin:0}
+.classroom-tutorial button,.classroom-tutorial summary{font:700 21px/1.25 system-ui;min-height:52px;border:2px solid #a8c8d0;border-radius:10px;background:#29485b;color:#f5ffff;padding:11px 18px;cursor:pointer;touch-action:manipulation}
+.classroom-tutorial button:hover{background:#386475}
+.classroom-tutorial button:disabled{opacity:.45;cursor:default}
+.classroom-tutorial button:focus-visible,.classroom-tutorial summary:focus-visible{outline:4px solid #fff1a1;outline-offset:3px}
+.classroom-tutorial [data-lesson-try],.classroom-tutorial [data-tutorial-next],.classroom-tutorial [data-check-rhythm],.classroom-tutorial .lesson-primary{background:#247767;border-color:#b4f5d2;color:#fff;min-width:180px;max-width:100%}
+.classroom-tutorial .lesson-naming-example{width:min(100%,550px);margin:0;text-align:center}
+.classroom-tutorial .lesson-example-keyboard{display:block;width:100%;height:auto;max-height:250px;margin:auto}
+.classroom-tutorial .lesson-model-label{font:750 24px/1.3 system-ui;text-align:center;color:#ffe6a8;margin:10px 0 0}
+.classroom-tutorial .lesson-read-direction{font-size:22px;text-align:center;color:#ffe6a8}
+.classroom-tutorial .lesson-staff-wrap{width:min(100%,520px)}
+.classroom-tutorial .lesson-staff,.classroom-tutorial .lesson-grand-staff{display:block;width:100%;height:auto;max-height:36dvh;margin:0 auto}
+.classroom-tutorial .lesson-keyboard-scroll{width:min(100%,520px);padding:3px 4px 10px;overflow:visible}
+.classroom-tutorial .lesson-keyboard{position:relative;min-width:0;width:100%;height:180px}
+.classroom-tutorial .lesson-white-key{position:absolute;top:0;bottom:0;min-width:0;padding:0 0 14px;display:flex;align-items:flex-end;justify-content:center;background:linear-gradient(#fffef8,#e2e4e9);border:1px solid #22354c;border-radius:0 0 8px 8px;box-shadow:inset 0 -7px #adb3c1;color:#223c4e}
+.classroom-tutorial .lesson-white-key:hover,.classroom-tutorial .lesson-white-key.is-hint{background:#a9f1da;border:3px solid #ffe29b;box-shadow:inset 0 -7px #598d83}
+.classroom-tutorial .lesson-white-key:disabled{opacity:1}
+.classroom-tutorial .lesson-key-name{font-size:26px;font-weight:800}
+.classroom-tutorial .lesson-key-name[hidden]{display:none!important}
+.classroom-tutorial .lesson-black-key{position:absolute;top:0;z-index:2;height:106px;background:linear-gradient(90deg,#11172b,#3c455b,#11172b);border:1px solid #070c1a;border-radius:0 0 5px 5px;box-shadow:inset 0 -7px #080d19,2px 3px 3px #0006;pointer-events:none}
+.classroom-tutorial .lesson-name-toggle{display:flex;align-items:center;gap:12px;min-height:48px;font-size:20px;cursor:pointer}
+.classroom-tutorial .lesson-name-toggle input{width:24px;height:24px;accent-color:#86e6c6}
+.classroom-tutorial .lesson-letter-answers{display:grid;grid-template-columns:repeat(7,minmax(48px,1fr));gap:8px;width:min(100%,620px)}
+.classroom-tutorial .lesson-letter-answers button{font-size:26px;min-height:58px;padding:10px}
+.classroom-tutorial .lesson-answer-letter{font:800 34px/1 system-ui;color:#a6f4cd}
+.classroom-tutorial .lesson-actions,.classroom-tutorial .lesson-number-answers{display:flex;justify-content:center;gap:10px;flex-wrap:wrap;width:100%}
+.classroom-tutorial .lesson-help-actions button{min-width:100px;font-size:20px;background:#273c56}
+.classroom-tutorial .lesson-number-answers button{font-size:30px;min-width:80px;min-height:64px}
+.classroom-tutorial .tutorial-feedback{font-size:22px;font-weight:700;color:#ffe8b2;text-align:center;max-width:30ch}
+.classroom-tutorial .tutorial-feedback:empty{display:none}
+.classroom-tutorial .tutorial-feedback[data-correct=true]{color:#b2f5cc}
+.classroom-tutorial .tutorial-feedback[data-correct=false]{color:#ffe0bc}
+.classroom-tutorial .lesson-split-picture{display:flex;align-items:center;justify-content:center;gap:clamp(8px,2vw,20px);margin:6px 0;min-height:102px}
+.classroom-tutorial .lesson-split-picture svg{display:block;width:clamp(52px,11vw,78px);height:clamp(64px,14vw,94px)}
+.classroom-tutorial .lesson-split-children{display:flex;align-items:center;justify-content:center;gap:12px}
+.classroom-tutorial .lesson-split-arrow{font-size:38px;color:#f1d59b}
+.classroom-tutorial .lesson-split-picture .is-playing{background:#317866;border-radius:10px;outline:3px solid #ffe6a5}
+.classroom-tutorial .lesson-tree-caption{font:750 24px/1.3 system-ui;color:#b7f6dd;text-align:center}
+.classroom-tutorial .lesson-rhythm-example{display:flex;align-items:center;justify-content:center;gap:16px;min-height:110px;font-size:34px;color:#f4dfb7;width:min(100%,540px)}
+.classroom-tutorial .lesson-rhythm-example svg{display:block;width:70px;height:88px;max-width:23%}
+.classroom-tutorial .lesson-recipe-example{gap:12px}
+.classroom-tutorial .lesson-bar-drawing{width:min(100%,600px)}
+.classroom-tutorial .lesson-pattern{display:flex;flex-wrap:wrap;align-items:center;justify-content:center;gap:6px;width:100%;min-height:96px;border:2px dashed #9fbac7;border-radius:12px;padding:8px;background:#172236}
+.classroom-tutorial .lesson-pattern-note{display:flex;align-items:center;justify-content:center;flex:0 0 48px;min-width:0;min-height:76px;border-radius:8px;background:#2b4c5a}
+.classroom-tutorial .lesson-pattern-note svg{width:48px;height:72px;max-width:100%}
+.classroom-tutorial .lesson-pattern-note.is-playing{background:#357b66;outline:3px solid #ffe6a5}
+.classroom-tutorial .lesson-pattern-space{display:flex;align-items:center;justify-content:center;font-size:22px;color:#b3cada;min-width:0}
+.classroom-tutorial .lesson-bar-count{font-size:24px;font-weight:750;text-align:center;color:#b7f6dd}
+.classroom-tutorial .lesson-bar-picker{display:flex;flex-direction:column;align-items:center;gap:14px;width:min(100%,600px)}
+.classroom-tutorial .lesson-value-buttons{display:flex;gap:10px;justify-content:center;flex-wrap:wrap;width:100%}
+.classroom-tutorial .lesson-value-buttons button{display:flex;align-items:center;justify-content:center;gap:12px;font-size:22px;min-height:64px}
+.classroom-tutorial .lesson-value-buttons svg{width:32px;height:46px}
+.classroom-tutorial .lesson-all-values{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));width:min(100%,600px)}
+.classroom-tutorial .lesson-all-values button{gap:8px;padding:8px;min-width:0;min-height:78px;text-align:left}
+.classroom-tutorial .lesson-all-values svg{flex:0 0 30px;width:30px}
+.classroom-tutorial .lesson-value-label{display:flex;flex-direction:column;min-width:0}
+.classroom-tutorial .lesson-value-beats{font-weight:500;color:#d2eee4}
+.classroom-tutorial .lesson-extra-notes{width:min(100%,600px);border:0;margin:0;padding:0;text-align:center}
+.classroom-tutorial .lesson-extra-notes summary{display:inline-block;list-style:none;min-height:48px;font-size:19px;border-color:transparent;background:transparent;color:#c5dae6;padding:10px}
+.classroom-tutorial .lesson-extra-notes[open]{padding:10px;border:1px solid #708a9b;border-radius:10px}
+.classroom-tutorial .lesson-extra-notes .lesson-value-buttons{margin:10px 0}
+.classroom-tutorial [hidden]{display:none!important}
+@media(max-width:600px){.classroom-tutorial{padding:14px 10px}.classroom-tutorial .lesson-action-cue h3{font-size:24px}.classroom-tutorial .lesson-letter-answers{grid-template-columns:repeat(4,minmax(48px,1fr))}.classroom-tutorial .lesson-keyboard{height:174px}.classroom-tutorial .lesson-black-key{height:104px}.classroom-tutorial .lesson-rhythm-example{gap:10px}.classroom-tutorial .lesson-all-values{grid-template-columns:repeat(2,minmax(0,1fr))}}
+@media(max-width:370px){.classroom-tutorial .lesson-all-values button{flex-direction:column;gap:2px;text-align:center}.classroom-tutorial .lesson-all-values svg{flex-basis:40px;height:40px}}
+@media(orientation:landscape) and (max-height:500px){
+ .classroom-tutorial{padding:12px 18px}.classroom-tutorial>progress{margin-bottom:12px}.classroom-tutorial .lesson-content[data-kind=note],.classroom-tutorial .lesson-content[data-kind=tree],.classroom-tutorial .lesson-content[data-kind=rhythm]{display:grid;grid-template-columns:minmax(0,1fr) minmax(0,1fr);gap:10px 24px;align-items:center}
+ .classroom-tutorial .lesson-content[data-kind]>*{grid-column:1;min-width:0}
+ .classroom-tutorial .lesson-content[data-kind]>.lesson-naming-example,.classroom-tutorial .lesson-content[data-kind]>.lesson-staff-wrap,.classroom-tutorial .lesson-content[data-kind]>.lesson-keyboard-scroll,.classroom-tutorial .lesson-content[data-kind]>.lesson-split-picture,.classroom-tutorial .lesson-content[data-kind]>.lesson-rhythm-example,.classroom-tutorial .lesson-content[data-kind]>.lesson-pattern{grid-column:2;grid-row:1/span 4}
+ .classroom-tutorial .lesson-content[data-kind=tree]>.lesson-tree-caption{grid-column:2;grid-row:5}
+ .classroom-tutorial .lesson-content.lesson-bar-builder>.lesson-action-cue{grid-column:1/-1}
+ .classroom-tutorial .lesson-content.lesson-bar-builder>.lesson-bar-picker{grid-column:1;grid-row:2;align-self:start}
+ .classroom-tutorial .lesson-content.lesson-bar-builder .lesson-all-values{grid-template-columns:repeat(2,minmax(0,1fr))}
+ .classroom-tutorial .lesson-content.lesson-bar-builder>.lesson-bar-drawing{grid-column:2;grid-row:2;align-self:start}
+ .classroom-tutorial .lesson-content.lesson-bar-builder>.lesson-actions{grid-column:2;grid-row:3}
+ .classroom-tutorial .lesson-content.lesson-bar-builder>[data-check-rhythm],.classroom-tutorial .lesson-content.lesson-bar-builder>[data-tutorial-next]{grid-column:2;grid-row:4}
+ .classroom-tutorial .lesson-content.lesson-bar-builder>.tutorial-feedback{grid-column:2;grid-row:5}
+ .classroom-tutorial .lesson-content.lesson-bar-builder .lesson-actions{gap:6px}.classroom-tutorial .lesson-content.lesson-bar-builder .lesson-actions button{padding:8px 10px}
+ .classroom-tutorial .lesson-action-cue h3{font-size:24px}.classroom-tutorial .lesson-staff,.classroom-tutorial .lesson-grand-staff{max-height:46dvh}.classroom-tutorial .lesson-keyboard{height:150px}.classroom-tutorial .lesson-black-key{height:90px}.classroom-tutorial .lesson-model-label{font-size:22px}
+}
+@media(prefers-reduced-motion:reduce){.classroom-tutorial *{scroll-behavior:auto!important;transition:none!important}}
+.classroom-tutorial .lesson-keys-picture{width:min(100%,660px);margin:0;display:flex;flex-direction:column;gap:14px;text-align:center}
+.classroom-tutorial .lesson-key-example{display:flex;flex-direction:column;gap:8px;align-items:center}
+.classroom-tutorial .lesson-key-example-label{font-size:20px;color:#d9e0ff}
+.classroom-tutorial .lesson-key-note-row{display:flex;flex-wrap:wrap;justify-content:center;gap:7px;width:100%}
+.classroom-tutorial .lesson-key-note{display:flex;align-items:center;justify-content:center;min-width:44px;min-height:48px;padding:6px 9px;border-radius:9px;background:#2d3f5d;border:1px solid #7895ad;font:750 23px/1.2 system-ui;color:#f2f5ff}
+.classroom-tutorial .lesson-key-note.is-home{background:#215f56;border:2px solid #b3ffdb;color:#dcfff1;box-shadow:0 0 14px #6bdeb42c}
+.classroom-tutorial .lesson-key-caption{font-size:20px;line-height:1.4;color:#ffe6a8;max-width:35ch;align-self:center}
+.classroom-tutorial .lesson-key-sounds button{min-width:44px;font-size:19px}
+.classroom-tutorial .lesson-key-answers{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:10px;width:min(100%,680px)}
+.classroom-tutorial .lesson-key-answers button{font-size:21px;min-width:0;min-height:60px;overflow-wrap:anywhere}
+@media(max-width:600px){.classroom-tutorial .lesson-key-answers{grid-template-columns:1fr}.classroom-tutorial .lesson-key-sounds{flex-direction:column}.classroom-tutorial .lesson-key-sounds button{width:100%}.classroom-tutorial .lesson-key-note-row{gap:5px}.classroom-tutorial .lesson-key-note{font-size:21px;padding:5px 8px}.classroom-tutorial .lesson-key-caption{font-size:19px}}
+.classroom-tutorial .lesson-expression-picture{display:flex;flex-direction:column;gap:14px;align-items:center;text-align:center;width:min(100%,660px);margin:0}
+.classroom-tutorial .lesson-expression-symbols{display:flex;align-items:center;justify-content:center;flex-wrap:wrap;gap:12px;width:100%;min-height:66px;color:#ffe6a8}
+.classroom-tutorial .lesson-dynamic-symbol{font:normal 54px/1.25 CodaBravura;display:inline-flex;align-items:center;justify-content:center;min-width:48px;min-height:66px;padding:0 8px;background:#283e59;border-radius:10px}
+.classroom-tutorial .lesson-tempo-word{font:750 clamp(20px,3.5vw,27px)/1.3 system-ui;overflow-wrap:anywhere;max-width:100%;padding:8px 12px;background:#283e59;border-radius:10px}
+.classroom-tutorial .lesson-hairpin{width:min(100%,330px)}
+.classroom-tutorial .lesson-hairpin svg{display:block;width:100%;height:auto}
+.classroom-tutorial .lesson-expression-caption{font-size:21px;line-height:1.4;max-width:36ch;color:#d9f2ed}
+.classroom-tutorial .lesson-expression-sounds button{font-size:20px;min-width:44px;max-width:100%}
+.classroom-tutorial .lesson-expression-pulse{display:flex;align-items:center;justify-content:center;width:44px;height:44px;border:2px solid #819caf;border-radius:50%;color:#c7d8df;font:700 22px/1 system-ui}
+.classroom-tutorial .lesson-expression-pulse.is-playing{background:#327861;border-color:#fff0ad;color:#fff}
+.classroom-tutorial .lesson-expression-answers{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:10px;width:min(100%,680px)}
+.classroom-tutorial .lesson-expression-answers button{font-size:21px;min-width:0;min-height:60px;overflow-wrap:anywhere}
+@media(max-width:600px){.classroom-tutorial .lesson-expression-answers{grid-template-columns:1fr}.classroom-tutorial .lesson-expression-sounds{flex-direction:column}.classroom-tutorial .lesson-expression-sounds button{width:100%}.classroom-tutorial .lesson-expression-symbols{gap:6px}.classroom-tutorial .lesson-dynamic-symbol{font-size:46px;min-width:40px;padding:0 5px}.classroom-tutorial .lesson-expression-caption{font-size:20px}}
+@media(orientation:landscape) and (max-height:500px){
+ .classroom-tutorial .lesson-content[data-kind=expression]{display:grid;grid-template-columns:minmax(0,1fr) minmax(0,1fr);gap:10px 24px}
+ .classroom-tutorial .lesson-content[data-kind=expression]>.lesson-expression-picture{grid-column:2;grid-row:1/span 3;align-self:center}
+ .classroom-tutorial .lesson-content[data-kind=expression]>.lesson-expression-answers{grid-template-columns:1fr}
+ .classroom-tutorial .lesson-content[data-kind=expression]>.lesson-expression-pulse{grid-column:2;grid-row:4;justify-self:center}
+ .classroom-tutorial .lesson-expression-sounds button{font-size:19px;padding:8px 12px}
+}
+
+.classroom-tutorial .lesson-note-reminder-picture{width:min(100%,650px);margin:0;text-align:center}.classroom-tutorial .lesson-note-reminder-picture svg{display:block;width:100%;height:auto;max-height:42dvh}.classroom-tutorial [data-note-reminder-next]{background:#247767;border-color:#b4f5d2;min-width:180px}.classroom-tutorial [data-note-reminders]{font-size:18px;padding:9px 14px;background:#263d55}
+.classroom-tutorial [data-note-reminder]>.lesson-read-direction{max-width:34em;font-size:22px;line-height:1.45}
+.classroom-tutorial [data-note-reminder] .lesson-model-label{max-width:32em;margin:12px auto 0;font-size:21px;line-height:1.4}
+@media(max-width:600px){.classroom-tutorial [data-note-reminder]>.lesson-read-direction{font-size:20px}.classroom-tutorial [data-note-reminder] .lesson-model-label{font-size:20px}}

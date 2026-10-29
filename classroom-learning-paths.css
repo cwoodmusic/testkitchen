@@ -1,0 +1,26 @@
+.classroom-learning-paths{display:flex;flex-direction:column;gap:20px;width:100%;min-width:0;color:#f4f5ff;font:400 21px/1.45 system-ui,sans-serif}
+.classroom-learning-paths .learning-path-title{font-size:clamp(25px,4vw,32px);line-height:1.25;margin:0;color:#fff0c7}
+.classroom-learning-paths .learning-path-intro{font-size:21px;max-width:40ch;margin:0;color:#d9e7ed}
+.classroom-learning-paths .learning-path-nav{display:flex;justify-content:space-between;gap:12px;flex-wrap:wrap}
+.classroom-learning-paths button{min-height:50px;max-width:100%;border:2px solid #a5d1d2;border-radius:9px;padding:11px 16px;background:#29485d;color:#f3ffff;font:700 20px/1.3 system-ui,sans-serif;cursor:pointer;touch-action:manipulation;overflow-wrap:anywhere}
+.classroom-learning-paths button:focus-visible{outline:3px solid #ffed9d;outline-offset:4px}
+.classroom-learning-paths button:hover:not(:disabled){background:#3c6272}
+.classroom-learning-paths button:disabled{opacity:.5;cursor:default}
+.classroom-learning-paths .learning-path-group{padding:18px;border:1px solid #8ca4bf;border-radius:12px;background:#24344f;min-width:0}
+.classroom-learning-paths .learning-path-group h4{font-size:23px;margin:0 0 15px;color:#bff0df}
+.classroom-learning-paths [data-path-tier=advanced]{background:#302c48}
+.classroom-learning-paths [data-path-tier=advanced] h4{color:#ead3ff}
+.classroom-learning-paths .learning-path-list{margin:0 0 16px;padding-left:27px;display:flex;flex-direction:column;gap:12px}
+.classroom-learning-paths .learning-path-list li{padding-left:4px;min-width:0}
+.classroom-learning-paths .learning-path-section{display:flex;flex-direction:column;align-items:flex-start;gap:5px;text-align:left;width:100%;background:#294459}
+.classroom-learning-paths .learning-path-section span{font-size:16px;font-weight:400;color:#d5e7eb}
+.classroom-learning-paths .learning-path-section[data-completed=true]{border-color:#9ce0b9}
+.classroom-learning-paths .learning-path-quiz{background:#246454;border-color:#b0ecd0;width:100%}
+.classroom-learning-paths .learning-path-help{font-size:18px;color:#e0d7e8;margin:0 0 14px}
+.classroom-learning-paths .learning-path-status{font-size:20px;margin:0;padding:14px;border:2px solid #e5bca7;border-radius:8px;background:#4b3544;color:#fff1dd}
+.classroom-learning-paths .learning-path-success{color:#bff3d4;font-size:22px;margin:0}
+.classroom-learning-paths .learning-path-activity{min-width:0;width:100%}
+.classroom-learning-paths .learning-note-parts{width:min(100%,450px);height:auto}
+.classroom-learning-paths .exam-study-visual:has(.lesson-tree-picture){display:block;overflow-x:auto;padding-bottom:8px}
+.classroom-learning-paths .lesson-tree-picture{width:100%;min-width:var(--lesson-tree-min-width,320px);max-height:none!important}
+@media(max-width:600px){.classroom-learning-paths{gap:16px;font-size:20px}.classroom-learning-paths .learning-path-group{padding:14px}.classroom-learning-paths .learning-path-intro{font-size:20px}.classroom-learning-paths .learning-path-nav button{font-size:17px;padding:9px 12px}.classroom-learning-paths .learning-path-list{padding-left:22px}.classroom-learning-paths .learning-path-section{font-size:20px}.classroom-learning-paths .learning-path-section span{font-size:16px}}

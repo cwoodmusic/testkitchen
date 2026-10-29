@@ -1,0 +1,28 @@
+/* A question is its own small screen. Answers become one short reminder. */
+.classroom-tutorial .classroom-quiz{min-width:0;max-width:760px;margin:auto;padding:4px 0 8px;scroll-margin-top:10px}
+.classroom-quiz-topline{display:flex;justify-content:space-between;gap:16px;color:#cbffeb;font:700 22px/1.3 system-ui}
+.classroom-quiz progress{display:block;width:100%;height:10px;margin:14px 0 20px;accent-color:#9bf2cf}
+.classroom-tutorial .classroom-quiz-question,.classroom-tutorial .classroom-quiz-result-title{margin:0 0 20px;color:#fff0c6;font:750 clamp(25px,3.2vw,32px)/1.3 system-ui}
+.classroom-quiz-visual{display:flex;align-items:center;justify-content:center;min-height:115px;margin:0 auto 20px;max-width:480px;padding:12px;border:2px solid #8199ae;border-radius:14px;background:#142a3b}
+.classroom-quiz-visual>svg:not(.coda-note-symbol){display:block;width:100%;height:auto;max-height:205px}
+.classroom-quiz-visual>svg.lesson-grand-staff{max-height:260px}
+.classroom-quiz-visual .coda-note-symbol{width:76px;height:94px}
+.classroom-quiz-visual canvas{width:108px;height:100px}
+.classroom-quiz-middle-pair{gap:10px}
+.classroom-quiz-middle-pair>svg{width:calc(50% - 5px)!important}
+.classroom-quiz-answers{display:grid;gap:12px}
+.classroom-tutorial .classroom-quiz-answers button{min-height:60px;padding:14px 18px;white-space:normal;text-align:center;font:700 23px/1.3 system-ui;background:#34465f;border:2px solid #8aa5ba;border-radius:12px;color:#fff;touch-action:manipulation}
+.classroom-tutorial .classroom-quiz-answers button:hover{background:#456277;border-color:#c2ffe3}
+.classroom-quiz-choice-notes{display:flex;justify-content:center;align-items:center;gap:8px}
+.classroom-quiz-choice-notes svg{width:36px;height:50px;max-width:14%}
+.classroom-tutorial .classroom-quiz-feedback{padding:14px 18px;margin:0 0 18px;font:650 24px/1.4 system-ui;border-radius:12px;background:#314653;color:#fff0cf}
+.classroom-quiz-feedback[data-correct=true]{background:#29574d;color:#d8ffe4}
+.classroom-tutorial [data-quiz-next],.classroom-tutorial [data-quiz-finish]{display:block;width:100%;min-height:58px;padding:12px 18px;margin:14px 0 0;font:750 24px/1.25 system-ui;background:#2b665b;border:2px solid #b5f3d5;border-radius:12px;color:#f3fff7}
+.classroom-tutorial [data-quiz-retry],.classroom-tutorial [data-quiz-save]{min-height:54px;padding:12px 16px;margin-top:14px;font:650 22px/1.3 system-ui;border-radius:10px}
+.classroom-quiz button:focus-visible,.classroom-quiz h3:focus-visible{outline:3px solid #ffe2a0;outline-offset:4px}
+.classroom-tutorial .classroom-quiz-score{font:800 42px/1.2 system-ui;color:#c7ffe0;margin:18px 0}
+.classroom-tutorial .classroom-quiz-result-copy{font:650 24px/1.4 system-ui;margin:16px 0}
+.classroom-quiz-save-help{padding:14px;border:2px solid #e9c082;border-radius:12px;background:#554437;color:#fff1d5}
+.classroom-quiz-save-help p{font:600 22px/1.4 system-ui;margin:0}
+@media(max-width:500px){.classroom-quiz-visual{padding:8px}.classroom-tutorial .classroom-quiz-answers button{font-size:22px;padding:12px}.classroom-quiz-choice-notes{gap:5px}.classroom-quiz-middle-pair{flex-direction:column}.classroom-quiz-middle-pair>svg{width:100%!important;max-height:155px!important}}
+@media(orientation:landscape) and (max-height:550px){.classroom-tutorial .classroom-quiz{display:grid;grid-template-columns:minmax(0,1fr) minmax(0,1fr);gap:12px 22px}.classroom-quiz-topline,.classroom-quiz progress,.classroom-tutorial .classroom-quiz-question{grid-column:1/-1;margin:0}.classroom-quiz progress{height:8px}.classroom-quiz-visual{width:100%;margin:0;align-self:center;min-height:115px}.classroom-quiz-visual>svg:not(.coda-note-symbol){max-height:145px}.classroom-quiz-answers{gap:8px}.classroom-tutorial .classroom-quiz-answers button{min-height:50px;padding:9px;font-size:22px}.classroom-tutorial .classroom-quiz-feedback{margin:0;font-size:22px}.classroom-tutorial [data-quiz-next]{grid-column:2;align-self:end;margin:0}.classroom-quiz-result-title,.classroom-quiz-score,.classroom-quiz-result-copy,.classroom-quiz-save-help{grid-column:1/-1}.classroom-tutorial [data-quiz-retry]{margin:0}.classroom-quiz-middle-pair{gap:6px}}

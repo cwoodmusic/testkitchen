@@ -1,0 +1,65 @@
+/* The developer console edits world data; game menus retain their own styles. */
+#assetStudio.dev-console { width:min(380px,calc(100vw - 24px)); top:90px; max-height:calc(100dvh - 108px); }
+.dev-tabs { display:grid; grid-template-columns:repeat(4,minmax(0,1fr)); gap:4px; margin:10px 0; }
+#assetStudio.dev-console .dev-tabs button{min-height:44px;min-width:0;padding:7px 4px}
+#assetStudio .dev-tabs button[aria-selected="true"] { background:#476251; border-color:#9bffcc; }
+#assetStudio .dev-pane[hidden], #assetStudio .dev-original[hidden] { display:none; }
+#assetStudio .dev-toolbar { display:flex; gap:5px; flex-wrap:wrap; margin:8px 0; }
+#assetStudio .dev-toolbar button { flex:1; }
+#assetStudio .dev-note { padding:8px; background:#282137; border-left:2px solid #c5a1e8; line-height:1.5; }
+#assetStudio .dev-status { color:#aaf5d4; min-height:2.5em; overflow-wrap:anywhere; }
+#assetStudio #devCatalog { max-width:100%; }
+#assetStudio .dev-preview { width:100%; height:85px; background:#121021; image-rendering:pixelated; object-fit:contain; }
+#assetStudio .dev-heading { color:#ffdfa0; margin:10px 0 5px; }
+#assetStudio label { overflow-wrap:anywhere; }
+#assetStudio [aria-pressed="true"] { border-color:#9bffcc; background:#365746; }
+#assetStudio.dev-playtest .dev-pane { opacity:.55; pointer-events:none; }
+#assetStudio .dev-warning { color:#ffcf9d; }
+#assetStudio .studioHead { position:sticky; top:-13px; z-index:3; background:#171529; padding:8px 0; }
+#assetStudio .dev-tabs { position:sticky; top:22px; z-index:3; background:#171529; padding:6px 0; }
+#assetStudio > :last-child { position:sticky; bottom:-13px; background:#171529; padding:4px 0; border-top:1px solid #655374; }
+#assetStudio .dev-status { margin:4px 0; font-size:11px; }
+#assetStudio .collision-editor-fields label { display:grid; gap:6px; margin:10px 0; }
+@media(max-width:650px) { #assetStudio.dev-console { top:155px; max-height:calc(100dvh - 170px); } }
+/* A floating panel covers the entire map on portrait phones. Put its controls
+ * below the map instead, so scrolling never leaves an overlay intercepting paint. */
+@media(max-width:650px) and (orientation:portrait) {
+  #assetStudio.dev-console {
+    position:relative; inset:auto!important; width:calc(100vw - 24px);
+    max-height:none; overflow:visible; margin:12px auto;
+  }
+  #assetStudio .studioHead, #assetStudio .dev-tabs, #assetStudio > :last-child { position:static; }
+  #assetStudio .studioHead button[aria-label="Move console to the other side"] { display:none; }
+}
+/* Seven tabs use two desktop rows and one short-landscape row, keeping the
+ * existing sticky camera and editable canvas clear of the navigation. */
+/* Keep an editable area between the sticky controls on short landscape screens. */
+@media(max-height:550px) and (orientation:landscape) {
+  #assetStudio.dev-console { top:8px; max-height:calc(100dvh - 16px); }
+  #assetStudio .studioHead { min-height:40px; padding:4px 0; }
+  #assetStudio .dev-tabs { grid-template-columns:repeat(7,minmax(0,1fr)); top:29px; gap:3px; margin:6px 0; padding:4px 0; }
+  #assetStudio.dev-console .dev-tabs button { padding:4px 2px; font-size:10px; }
+  #assetStudio > :last-child { padding:2px 0; }
+  #assetStudio > :last-child .dev-toolbar { margin:4px 0; }
+  #assetStudio .dev-status { min-height:2em; max-height:32px; overflow:auto; font-size:10px; }
+}
+
+/* The editor camera stays available in every tab. Its scale never resizes the
+ * DOM canvas, so paint coordinates and fine brushes remain in world pixels. */
+#assetStudio .dev-camera { display:grid;grid-template-columns:44px minmax(66px,1fr) 44px 86px;gap:4px;position:sticky;top:128px;z-index:3;background:#171529;padding:5px 0; }
+#assetStudio .dev-camera button { min-height:40px;min-width:0;padding:6px; }
+#assetStudio .dev-camera small { grid-column:1/-1;font-size:10px;line-height:1.35;color:#c9b9d6; }
+#view.dev-pan-ready { cursor:grab;touch-action:none; }
+#view.dev-panning { cursor:grabbing;touch-action:none; }
+@media(max-width:650px) and (orientation:portrait) { #assetStudio .dev-camera { position:static; } }
+@media(max-height:550px) and (orientation:landscape) { #assetStudio .dev-camera { top:85px;grid-template-columns:36px minmax(55px,1fr) 36px 70px; }#assetStudio .dev-camera button { min-height:32px; }#assetStudio .dev-camera small { font-size:9px; } }
+
+/* Keep the same map framing when entering the phone editor. A compact camera
+ * strip stays on the map while the remaining tools live below it. */
+.coda-mobile-world.asset-console-open #assetStudio .dev-camera { position:fixed;top:calc(var(--coda-world-header-height) + 5px);left:50%;transform:translateX(-50%);width:min(338px,calc(100vw - 20px));padding:5px 8px;background:#171529f5;border:1px solid #786b9a;border-radius:8px;box-shadow:0 5px 16px #0008; }
+.coda-mobile-world.asset-console-open #assetStudio { backdrop-filter:none; }
+#assetStudio .dev-overlays{display:grid;grid-template-columns:1fr 1fr;gap:6px;margin:8px 0}
+#assetStudio .dev-overlays button{min-height:44px;font-size:12px;font-weight:650}
+#assetStudio .dev-overlay-legend{grid-column:1/-1;font:11px/1.5 system-ui;margin:0;padding:7px;background:#101b2b;border:1px solid #635a79;border-radius:6px}
+#assetStudio .dev-overlay-legend[hidden]{display:none}
+.dev-key-blocked{color:#ff8aa1}.dev-key-walkable{color:#8bf2bb}.dev-key-background{color:#8fc8ff}.dev-key-depth{color:#ffdc84}.dev-key-foreground{color:#8bffda}

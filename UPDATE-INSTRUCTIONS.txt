@@ -1,0 +1,8 @@
+THE CODA ARCADE — DIRECTIONAL AVATAR
+
+Extract this ZIP and upload the website files to the ROOT of the existing arcade GitHub repository, replacing matching files. Include the NEW avatar-sprites.js file. Keep index.html at the root.
+No Firebase changes and no game repository updates are required.
+After Pages deployment, hard-refresh with Ctrl+Shift+R.
+
+Features: front/left/back/right views, walking gait, direction retained while idle, directional hairstyles/outfits/shoes/accessories, directional emotes, preview turning controls. Works with keyboard, tap-to-walk, jumping, and both rooms. Existing profile fields and unlock conditions are preserved.
+Checked: 116 accessory direction variants and 768 hair/outfit/shoe/direction combinations; walk cycle frames, keyboard-facing changes, retained idle direction, preview turn controls, and game-progress regression tests. Directional art reviewed using code-rendered contact sheets. Live browser visual testing was not available.

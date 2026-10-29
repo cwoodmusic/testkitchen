@@ -1,0 +1,72 @@
+<!doctype html>
+<html lang="en">
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
+<script src="account-config.js?v=profiles-57"></script>
+<script src="arcade-host.js?v=freeze-104"></script>
+<script src="classroom-profile-data.js?v=play-97"></script>
+<script src="classroom-storage.js?v=guest-100"></script>
+<script src="classroom-service.js?v=session-94"></script>
+<script src="vendor/qrcode-generator.js?v=classroom-54"></script>
+<script src="classroom-pass-qr.js?v=classroom-54"></script>
+<link rel="stylesheet" href="classroom-ui.css?v=roster-58">
+<script src="classroom-ui.js?v=logout-88"></script>
+<script src="classroom-boot.js?v=guest-100"></script>
+<title>The Coda Arcade • Insert curiosity</title>
+<meta name="description" content="Explore a pixel arcade, customize your character, and play four music games.">
+<link rel="stylesheet" href="style.css?v=games-67">
+<link rel="stylesheet" href="mobile-controls.css?v=controls-81">
+<body class="landing-page">
+<header class="landing-header">
+  <a class="brand" href="./">♫ <span>THE CODA<br>ARCADE</span></a>
+  <button id="landingMenuToggle" type="button" aria-expanded="false" aria-controls="landingNav">☰ Menu</button>
+  <nav id="landingNav" aria-label="Arcade menu">
+    <button id="wardrobe">Your avatar</button>
+    <button id="badges">Achievements <span id="count">0/3</span></button>
+    <button id="fame">Hall of Fame</button>
+    <button id="account" class="guest">◉ Guest player</button>
+  </nav>
+</header>
+<main>
+  <div class="intro">
+    <div><p class="eyebrow">TUNE IN. POWER UP. PLAY ON.</p><h1>Welcome to<br><em>The Coda Arcade.</em></h1></div>
+    <p class="welcome">Neon nights. Pixel beats. Musical adventures.<br>Pick a cabinet. Find your frequency.</p>
+  </div>
+  <a id="connectedWorldLink" class="connected-world-launch" href="world-preview.html?v=world-94"><span>Explore the connected world</span><small>Piano Lab · Music classroom · Notes shop · Missions</small><b aria-hidden="true">→</b></a>
+  <section class="arcade" aria-label="Original arcade floor">
+    <div class="roomtop"><span><i></i> FREE PLAY · 4 CABINETS</span><span id="roomlabel">THE ARCADE / FLOOR 01</span></div>
+    <canvas id="room" width="1000" height="800" tabindex="0" aria-label="Walkable music arcade. Use arrow keys or WASD to walk, E to play, Space to jump. On phones, use the joystick and action buttons, or hold the floor and slide to steer. Lift to stop."></canvas>
+    <div id="landingTouchControls"></div>
+    <div class="roomfoot">
+      <p class="keyboard-help"><kbd>W A S D</kbd> or <kbd>↑ ← ↓ →</kbd> Move <b>·</b> <kbd>E</kbd> Play <b>·</b> <kbd>Space</kbd> Jump <b>·</b> <kbd>Q</kbd> Emote</p>
+      <div class="landing-primary-actions"><button id="interact">Choose a cabinet</button><button id="emotebutton">♫ Emote · Q</button></div>
+      <details id="landingRoomOptions"><summary>Rooms &amp; settings</summary><div class="landing-room-options">
+        <button id="roomswitch">Piano room →</button><button id="loungeswitch">☕ Lounge</button><button id="danceswitch">✦ Dance Floor</button><button id="jukebutton">♫ Jukebox</button>
+        <button id="motiontoggle" aria-pressed="true">Animations: On</button><button id="arcadefullscreen" title="Expand the arcade to fullscreen">⛶ Fullscreen</button>
+      </div></details>
+      <span class="floor-tap-hint">Click the floor to walk</span>
+    </div>
+  </section>
+  <div class="below"><p><span class="dot"></span> <span id="playername">Guest</span> · <span id="status">Make yourself at home.</span></p><span>NO COINS. JUST CURIOSITY.</span></div>
+  <section class="games" aria-label="Game cabinets">
+    <button data-game="0"><small>01 / NOTE READING</small><strong>Pitch Race ↗</strong><span>Fast notes. Faster thinking.</span></button>
+    <button data-game="1"><small>02 / STRATEGY</small><strong>Music Triad ↗</strong><span>Make your next move a musical one.</span></button>
+    <button data-game="2"><small>03 / RHYTHM</small><strong>Rhythm Room ↗</strong><span>Listen. Tap. Find your groove.</span></button>
+    <button data-game="3"><small>04 / COMPOSITION</small><strong>Song Machine ↗</strong><span>Create your own music.</span></button>
+  </section>
+  <footer>BUILT FOR PLAY. POWERED BY MUSIC.<span>Guest progress stays on this browser</span></footer>
+</main>
+<dialog id="modal" aria-label="Arcade menu"><button class="close" aria-label="Close dialog">×</button><div id="modalbody"></div></dialog>
+<section id="gameview" hidden aria-label="Open music game"><div class="gametop"><button id="back">← Return to arcade</button><strong id="gametitle"></strong><span id="cabinetstatus" role="status"></span></div><iframe id="gameframe" title="Music game" allow="autoplay; fullscreen" allowfullscreen></iframe></section>
+<div id="toast" role="status"></div>
+<script src="mobile-controls.js?v=joystick-41"></script>
+<script src="finger-follow.js?v=student-29"></script>
+<script src="app.js?v=song-89"></script>
+<script src="jukebox.js?v=direction1"></script>
+<script src="rooms.js?v=neon-npc-v5"></script>
+<script src="neon-world.js?v=neon-npc-v5"></script>
+<script src="avatar-sprites.js?v=direction1"></script>
+<script src="accounts.js?v=domains-71"></script>
+<script src="game-progress.js?v=direction1"></script>
+<script type="module" src="song-cloud.js?v=song-89"></script>
+</body></html>

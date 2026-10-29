@@ -1,0 +1,19 @@
+{
+  "arcadeProfiles": {
+    ".read": false,
+    ".write": false,
+    "$uid": {
+      ".read": "auth != null && auth.uid === $uid && auth.token.firebase.sign_in_provider === 'google.com'",
+      ".write": "auth != null && auth.uid === $uid && auth.token.firebase.sign_in_provider === 'google.com'",
+      ".validate": "newData.hasChildren(['profile', 'updatedAt', 'schemaVersion'])",
+      "profile": {
+        ".validate": "newData.hasChildren(['name', 'skin', 'hair', 'shirt'])",
+        "name": {".validate": "newData.isString() && newData.val().length <= 18"},
+        "$field": {".validate": "$field === 'name' || $field === 'skin' || $field === 'hair' || $field === 'shirt' || $field === 'hairstyle' || $field === 'outfit' || $field === 'accessory' || $field === 'shoes' || $field === 'emote' || $field === 'walked' || $field === 'jumps' || $field === 'emotesUsed' || $field === 'visited' || $field === 'hat' || $field === 'customized'"}
+      },
+      "updatedAt": {".validate": "newData.isNumber() && newData.val() <= now"},
+      "schemaVersion": {".validate": "newData.val() === 1"},
+      "$other": {".validate": false}
+    }
+  }
+}

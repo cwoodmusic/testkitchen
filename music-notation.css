@@ -1,0 +1,4 @@
+/* Bravura 1.482, Copyright Steinberg Media Technologies GmbH, SIL OFL 1.1. */
+@font-face{font-family:CodaBravura;src:url('assets/fonts/bravura/Bravura.woff2') format('woff2');font-style:normal;font-weight:400;font-display:block}
+.coda-music-glyph{font-family:CodaBravura!important;font-style:normal;font-weight:400;font-synthesis:none;letter-spacing:0;text-rendering:geometricPrecision}
+.coda-notated-staff{overflow:visible}.coda-note-symbol{overflow:visible;vertical-align:middle}

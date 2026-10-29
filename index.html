@@ -1,0 +1,49 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
+  <meta name="theme-color" content="#111029">
+  <meta name="description" content="A world of music is waiting. Play, make music, meet musicians, and go on adventures in the Coda Arcade.">
+  <title>The Coda Arcade · Let’s play</title>
+  <link rel="stylesheet" href="title-screen.css?v=guest-100">
+  <script src="account-config.js?v=profiles-57"></script>
+<script src="arcade-host.js?v=freeze-104"></script>
+  <script src="classroom-profile-data.js?v=history-1"></script>
+  <script src="classroom-storage.js?v=guest-100"></script>
+  <script src="classroom-service.js?v=session-94"></script>
+  <script src="title-screen.js?v=freeze-104" defer></script>
+</head>
+<body>
+  <div class="arcade-scene" aria-hidden="true"></div>
+  <div class="arcade-grid" aria-hidden="true"></div>
+  <header class="title-header">
+    <a class="title-brand" href="index.html" aria-label="The Coda Arcade home"><span aria-hidden="true">♫</span> CODA ARCADE</a>
+    <button id="titleMotion" type="button" aria-pressed="true" hidden><span aria-hidden="true">✧</span> Motion: On</button>
+  </header>
+  <main class="title-stage" id="titleStage">
+    <section class="title-intro" aria-labelledby="arcadeTitle">
+      <p class="title-eyebrow"><span aria-hidden="true">✦</span> YOUR NEXT ADVENTURE SOUNDS GOOD</p>
+      <h1 id="arcadeTitle"><span class="title-the">THE</span><span class="title-coda">CODA</span><span class="title-arcade">ARCADE</span></h1>
+      <p class="title-tagline">A whole world of music.<br>Come out and play.</p>
+      <div class="title-adventures" aria-label="Play, create, explore"><span><b aria-hidden="true">♫</b> Play</span><span><b aria-hidden="true">✎</b> Create</span><span><b aria-hidden="true">✦</b> Explore</span></div>
+    </section>
+    <section class="start-panel" aria-labelledby="startTitle">
+      <div class="panel-topline" aria-hidden="true"><i></i><span>PLAYER ONE · READY?</span><i></i></div>
+      <span class="panel-note" aria-hidden="true">♪</span>
+      <h2 id="startTitle">Let’s play.</h2>
+      <p id="titleGreeting" class="start-greeting">Your adventure starts here.</p>
+      <p id="titleSessionStatus" class="title-session-status" role="status" aria-live="polite">Checking sign-in…</p>
+      <nav class="start-actions" aria-label="Start playing">
+        <a id="titleProfile" class="start-button profile-button" href="world-preview.html?v=freeze-104&amp;profile=student"><span class="button-icon" aria-hidden="true">▣</span><span><strong>Open my profile</strong><small>Use your picture card</small></span><b aria-hidden="true">→</b></a>
+        <a id="titleGuest" class="start-button guest-button is-primary" href="world-preview.html?v=freeze-104&amp;guest=1"><span class="button-icon" aria-hidden="true">▶</span><span><strong>Play as guest</strong><small>Jump in and explore</small></span><b aria-hidden="true">→</b></a>
+      </nav>
+      <p id="titleProfileHint" class="start-hint" role="status">Your teacher can help with a profile card.</p>
+      <a id="titleTeacher" class="teacher-link" href="world-preview.html?v=freeze-104&amp;profile=admin"><span aria-hidden="true">♧</span> For teachers <span aria-hidden="true">↗</span></a>
+      <div class="panel-bottomline" aria-hidden="true"><span>NO COINS.</span><span>JUST CURIOSITY.</span></div>
+    </section>
+  </main>
+  <footer class="title-footer"><span>Music games. Big adventures.</span><a id="titleClassic" href="classic-arcade.html?v=guest-100">Original arcade <span aria-hidden="true">↗</span></a></footer>
+  <noscript><p class="script-notice">Turn on JavaScript in your browser to play the arcade.</p></noscript>
+</body>
+</html>

@@ -1,0 +1,10 @@
+{
+  "phase": "7.8",
+  "base": "7.7",
+  "smoke_passed": 40,
+  "smoke_failed": 0,
+  "marked_passed": 26,
+  "marked_failed": 0,
+  "javascript_syntax": "passed",
+  "browser_visual_review": "8 foreground on/off positions"
+}

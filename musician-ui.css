@@ -1,0 +1,14 @@
+#dialog .musician-description{color:#b8f5ee;font-size:12px;line-height:1.45;margin:7px 0}
+#dialog .musician-choices{display:flex;flex-wrap:wrap;gap:7px;margin:12px 0}
+#dialog .musician-choices button{float:none;flex:1;padding:8px;font-size:12px}
+#dialog>small{display:block;margin:10px 0;color:#bbaccd;font-size:11px}
+#dialog #close{float:none;margin-top:8px}
+.musician-card{display:grid;grid-template-columns:64px 1fr auto;align-items:center;gap:12px;padding:12px 0;border-bottom:1px solid #645075}
+.musician-card canvas{width:64px;height:auto;image-rendering:pixelated;background:#17152c;border-radius:7px}
+.musician-card strong{color:#ffe5b2}.musician-card p{font-size:12px;line-height:1.4;margin:5px 0}.musician-card small{color:#a2f3d7}
+.musician-card button{padding:8px;font-size:12px}
+.avatar-live-preview{position:sticky;top:-20px;z-index:2;background:#16152a;padding:12px;border:1px solid #8d72a8;border-radius:8px;margin:14px 0}
+.avatar-preview-views{display:grid;grid-template-columns:repeat(4,1fr);gap:6px}.avatar-preview-views figure{margin:0;text-align:center;color:#c9b7e7;font-size:11px}
+.avatar-preview-views canvas{display:block;width:100%;max-width:100px;height:auto;image-rendering:pixelated;background:linear-gradient(#231e39,#17182b);border-radius:6px;margin:0 auto 5px}
+.formRow input[type=color]{height:38px;padding:3px}
+@media(max-width:500px){.musician-card{grid-template-columns:52px 1fr}.musician-card canvas{width:52px;height:auto}.musician-card button{grid-column:2;justify-self:start}.avatar-live-preview{position:static}}

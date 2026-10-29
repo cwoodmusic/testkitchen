@@ -1,0 +1,20 @@
+/* Shared staff pictures and the developer's notation tools. */
+.education-score{display:block;width:100%;height:auto;min-width:0;max-width:100%;color:#603576;font-family:CodaBravura}
+.education-notation-editor{display:grid;gap:12px;padding:14px;background:#171a30;border:1px solid #58627f;border-radius:10px;color:#f0f4ff;min-width:0}
+.education-notation-editor [hidden]{display:none!important}
+.education-notation-toolbar,.education-notation-actions{display:flex;flex-wrap:wrap;gap:10px;align-items:end}
+.education-notation-editor .education-notation-field{display:grid;gap:5px;margin:0;flex:1 1 125px;min-width:0;font:600 13px/1.4 system-ui,sans-serif}
+.education-notation-field span{color:#cbd6ed}
+.education-notation-editor select,.education-notation-editor button{min-height:42px;border:1px solid #64708f;border-radius:6px;background:#282e48;color:#f7f6ff;padding:8px 10px;font:500 13px/1.3 system-ui,sans-serif;max-width:100%}
+.education-notation-editor button{cursor:pointer;min-width:70px}.education-notation-editor button:hover{background:#39415f}
+.education-notation-editor :is(button,select):focus-visible,.education-notation-canvas:focus-visible{outline:3px solid #8ee9f4;outline-offset:3px}
+.education-notation-editor button:disabled,.education-notation-editor select:disabled{opacity:.45;cursor:default}
+.education-notation-canvas{width:100%;min-width:0;overflow:auto;border:1px solid #c7b2cb;border-radius:8px;background:#fff9e9;touch-action:pan-x;overscroll-behavior:contain}
+.education-notation-canvas .education-score{min-width:var(--education-score-width,480px);max-width:none;width:max(100%,var(--education-score-width,480px));user-select:none;-webkit-user-select:none;touch-action:none}
+/* Question pictures keep the same readable symbol scale as the editor. */
+:is(.education-editor-preview-staff,.final-exam-visual,.classroom-quiz-visual,.lesson-authored-notation,.signature-visual):has(>.education-score){display:block;min-width:0;max-width:100%;overflow-x:auto;overscroll-behavior-x:contain}
+:is(.education-editor-preview-staff,.final-exam-visual,.classroom-quiz-visual,.lesson-authored-notation,.signature-visual)>.education-score{min-width:var(--education-score-width,480px);width:max(100%,var(--education-score-width,480px));max-width:none;height:auto;max-height:none}
+.education-notation-canvas [data-notation-item]{cursor:grab}.education-notation-canvas [data-notation-item]:active{cursor:grabbing}
+.education-notation-editor .education-notation-status,.education-notation-editor .education-notation-hint{margin:0;color:#cad3e7;font:400 13px/1.5 system-ui,sans-serif}
+.education-notation-editor .education-notation-hint{font-size:12px;color:#b7c5df}
+@media(max-width:600px){.education-notation-editor{padding:10px;gap:10px}.education-notation-editor .education-notation-field{flex-basis:110px}.education-notation-editor select,.education-notation-editor button{min-height:44px}.education-notation-actions{display:grid;grid-template-columns:repeat(2,minmax(0,1fr))}.education-notation-actions button{min-width:0}}

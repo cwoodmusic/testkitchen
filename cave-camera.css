@@ -1,0 +1,12 @@
+.fishing-cave-scene .cave-camera-controls{position:absolute;right:9px;bottom:9px;display:flex;align-items:center;gap:3px;padding:3px;border:1px solid #83c7c7;border-radius:8px;background:#142638df;box-shadow:0 3px 12px #0007;z-index:2}
+.fishing-cave-scene .cave-camera-controls[hidden]{display:none!important}
+.rhythm-fishing .cave-camera-controls button{min-width:44px;min-height:44px;padding:6px;font-size:14px;background:#233f50;border:0;border-radius:5px}
+.rhythm-fishing .cave-camera-controls button:nth-child(2){min-width:60px;color:#b8fff0;font-size:12px}
+.rhythm-fishing .cave-camera-controls button:disabled{opacity:.4}
+.room-developer-open .cave-camera-controls{display:none!important}
+@media(max-width:760px),(pointer:coarse){
+ .fishing-cave-scene .cave-camera-controls{top:8px;right:8px;bottom:auto}
+ .rhythm-fishing .cave-camera-controls button{min-width:52px;min-height:52px;font-size:16px}
+ .rhythm-fishing .cave-camera-controls button:nth-child(2){min-width:68px;font-size:14px}
+ .rhythm-fishing[data-mobile-view=room]:not(.room-developer-open) .fishing-location-badge{max-width:calc(100% - 200px);white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+}

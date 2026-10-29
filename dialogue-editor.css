@@ -1,0 +1,18 @@
+/* The dialogue pane shares the world editor's project controls. */
+#assetStudio .dialogue-field{display:grid;gap:6px;margin:12px 0;font-weight:600;line-height:1.4}
+#assetStudio .dialogue-field textarea,#assetStudio .dialogue-field input,#assetStudio .dialogue-field select{display:block;box-sizing:border-box;width:100%;min-width:0;min-height:44px;border:1px solid #9c86ba;border-radius:6px;padding:9px;background:#151326;color:#fbf2ff;font:14px/1.5 system-ui;resize:vertical}
+#assetStudio .dialogue-field textarea:focus-visible,#assetStudio .dialogue-field input:focus-visible,#assetStudio .dialogue-field select:focus-visible{outline:3px solid #9affdc;outline-offset:2px}
+#assetStudio .dialogue-list{margin:16px 0;padding-top:8px;border-top:1px solid #675576}
+#assetStudio .dialogue-list h4,#assetStudio .dialogue-editor h4{color:#d9f4dd;font-size:13px;margin:8px 0}
+#assetStudio .dialogue-entry{padding:0 10px 8px;margin:10px 0;background:#252039;border:1px solid #6a577e;border-radius:7px}
+#assetStudio .dialogue-preview{padding:12px;background:#172d38;border:1px solid #82c8c3;border-radius:8px;overflow-wrap:anywhere}
+#assetStudio .dialogue-preview strong{color:#ffe5ab}
+#assetStudio .dialogue-preview p{font-size:13px;line-height:1.5;white-space:pre-wrap;margin:8px 0}
+#assetStudio .dialogue-preview-description{color:#bbd8da}
+#assetStudio .dialogue-preview-choices{display:grid;gap:7px}
+#assetStudio .dialogue-status{font-size:12px;line-height:1.5;color:#b9ffdd;min-height:3em}
+#assetStudio .dialogue-status[data-error="true"]{color:#ffd0b1}
+#assetStudio.dev-console .dialogue-editor button{min-height:44px;min-width:44px;padding:8px;font-size:12px;line-height:1.3}
+#assetStudio .dialogue-editor>.dev-toolbar{align-items:center}
+#assetStudio .dialogue-editor>.dev-toolbar h4{flex:1}
+@media(max-width:650px){#assetStudio .dialogue-field textarea,#assetStudio .dialogue-field input,#assetStudio .dialogue-field select{font-size:16px}}
