@@ -1,8 +1,10 @@
+from profile_menu_helpers import show_profile_page
 """Level rewards, musician quests and atmosphere in the assembled arcade.
 
 Use disposable profiles and route public static requests to this checkout.
 Piano quest completion comes from playing the real room's keyboard.
 """
+from settings_menu_helpers import settings_page
 import importlib.util
 from pathlib import Path
 import sys
@@ -69,14 +71,14 @@ class LevelsQuestsVibesTests(_world.WorldBrowserCase):
         self.assertEqual(self.page.evaluate('CodaPlayerProgression.prizesForLevel(50).find(prize=>prize.kind==="notes").amount'),6000)
 
     def test_vibe_settings_show_locks_stay_open_and_follow_the_current_players_level(self):
-        open_settings(self.page)
+        settings_page(self.page, 'screen')
         glow=self.page.locator('button[data-arcade-vibe="glowstick"]')
         self.assertEqual(glow.get_attribute('aria-disabled'),'true')
         glow.dispatch_event('click')
         self.assertTrue(self.page.locator('.arcade-vibe-controls').is_visible())
         self.assertIn('Level 20',self.page.locator('.arcade-vibe-status').inner_text())
         self.assertEqual(self.page.evaluate('CodaArcadeQA.vibes().active'),'classic')
-        self.reach_level(20);open_settings(self.page)
+        self.reach_level(20);settings_page(self.page, 'screen')
         glow.click()
         self.assertTrue(self.page.locator('.arcade-vibe-controls').is_visible(),'Choosing a vibe must leave Settings open')
         self.assertEqual(self.page.evaluate('CodaArcadeQA.vibes().active'),'glowstick')
@@ -92,12 +94,14 @@ class LevelsQuestsVibesTests(_world.WorldBrowserCase):
         quest=self.page.locator('[data-mission-id="nina-piano-melody"]')
         quest.get_by_role('button',name='Accept mission',exact=True).click()
         self.page.locator('#panelClose').click();self.page.locator('#levelBtn').click()
+        show_profile_page(self.page, 'missions')
         profile_quest=self.page.locator('.profile-missions [data-mission-id="nina-piano-melody"]')
         profile_quest.get_by_role('button',name='Open Your First Encore mission',exact=True).click()
         self.assertEqual(self.page.locator('.musician-mission-card[data-selected="true"]').get_attribute('data-mission-id'),'nina-piano-melody')
         enter_room(self.page,'piano')
         self.page.locator('#pianoMenuButton').click();self.page.locator('[data-piano-view="games"]').click()
-        self.page.locator('#pianoLesson').select_option('mary');self.page.locator('[data-piano-dialogue-action="play"]').click()
+        self.page.locator('[data-piano-challenge="melodies"]').click()
+        self.page.locator('#pianoLesson').select_option('mary');self.page.locator('#pianoLearnMelody').click()
         if not self.page.evaluate('CodaArcadeQA.piano().menuOpen'):self.page.locator('#pianoMenuButton').click()
         self.page.locator('[data-piano-view="keyboard"]').click()
         self.page.evaluate('''offsets=>{for(const offset of offsets){
@@ -140,7 +144,7 @@ class LevelsQuestsVibesTests(_world.WorldBrowserCase):
         song.locator('#simpleStop').click();song.locator('#simplePlay').click()
         self.assertEqual(self.page.evaluate('CodaArcadeQA.notes().balance'),before+1500)
         song.locator('#simpleStop').click();self.page.locator('#returnworld').click()
-        open_settings(self.page);self.page.locator('button[data-arcade-vibe="glowstick"]').click()
+        settings_page(self.page, 'screen');self.page.locator('button[data-arcade-vibe="glowstick"]').click()
         self.assertEqual(self.page.evaluate('CodaArcadeQA.vibes().active'),'glowstick')
         self.load();self.assertEqual(self.page.evaluate('CodaArcadeQA.notes().balance'),before+1500)
         self.assertEqual(self.page.evaluate('CodaArcadeQA.progression().level'),20)

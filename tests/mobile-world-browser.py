@@ -1,4 +1,6 @@
 """Real phone touch, camera, pinch, room routing and saved-world checks."""
+from settings_menu_helpers import settings_page
+from shop_menu_helpers import browse_shop
 import functools
 from http.server import SimpleHTTPRequestHandler, ThreadingHTTPServer
 from pathlib import Path
@@ -310,7 +312,7 @@ class MobileWorldTests(unittest.TestCase):
         self.assertIsNone(self.page.evaluate('CodaArcadeQA.characters().player.destination'))
         self.assertEqual(self.touch()['held'],[]);self.assert_avatar_visible()
         self.load();self.assertEqual(self.page.evaluate('CodaArcadeQA.camera().targetZoom'),final_zoom)
-        self.page.locator('#worldMenuBtn').tap()
+        settings_page(self.page, 'screen')
         self.assertTrue(self.page.locator('#mobilePinchHint').is_visible())
         self.assertIn('pinch two fingers to zoom',self.page.locator('#mobilePinchHint').inner_text())
 
@@ -347,7 +349,7 @@ class MobileWorldTests(unittest.TestCase):
         self.touches('touchEnd');self.assert_finger_stopped();self.assertEqual(self.touch()['held'],[])
 
     def test_touch_menu_purchases_and_text_entry_preserve_outfit_currency_and_position(self):
-        self.menu('shop');self.page.wait_for_function('!CodaArcadeQA.touch().visible')
+        self.menu('shop');self.page.wait_for_function('!CodaArcadeQA.touch().visible');browse_shop(self.page)
         self.page.locator('[data-shop-item="witch"] button').tap()
         self.assertEqual(self.page.evaluate('CodaArcadeQA.notes().balance'),70)
         self.assertNotEqual(self.page.evaluate('CodaArcadeQA.characters().player.appearance.headwear'),'witch')
@@ -375,7 +377,7 @@ class MobileWorldTests(unittest.TestCase):
         self.assertTrue(self.page.locator('#codaTouchControls [data-action="jump"]').is_hidden())
         self.page.locator('#classroomCanvas').focus();self.page.keyboard.down('w');self.page.wait_for_timeout(900);self.page.keyboard.up('w')
         self.page.keyboard.press('e');self.page.wait_for_function('!CodaArcadeQA.touch().visible')
-        self.page.locator('#classroomBrowseBooks').tap()
+        self.page.locator('[data-classroom-menu="reference"]').tap()
         self.page.locator('#classroomSearch').fill('interval');self.page.locator('[data-topic="intervals"]').tap()
         self.assertIn('Intervals',self.page.locator('#classroomBookTitle').inner_text())
         self.page.locator('#classroomClose').tap();self.page.wait_for_function('CodaArcadeQA.touch().context==="world"')

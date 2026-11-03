@@ -29,10 +29,14 @@ class PianoMobileTests(_world.WorldBrowserCase):
 
     def state(self):return self.page.evaluate('CodaArcadeQA.piano()')
 
-    def menu(self,view):
+    def menu(self,view,challenge=None):
         if self.state()['dialogueOpen']:self.page.locator('#pianoDialogueClose').tap()
         if not self.state()['menuOpen']:self.page.locator('#pianoMenuButton').tap()
         self.page.locator(f'[data-piano-view="{view}"]').tap();self.page.clock.run_for(64)
+        if view=='games' and challenge:
+            card=self.page.locator(f'[data-piano-challenge="{challenge}"]')
+            if not card.is_visible():self.page.locator('#pianoChallengeBack').tap()
+            card.tap();self.page.clock.run_for(64)
 
     def close_menu(self):
         self.page.locator('#pianoMenuClose').tap();self.page.clock.run_for(64)
@@ -120,9 +124,10 @@ class PianoMobileTests(_world.WorldBrowserCase):
         self.assertTrue(self.state()['dialogueOpen']);self.assertIsNone(self.state()['lesson'])
         self.assertTrue(self.page.locator('#pianoDialogueText').is_visible())
         self.assertFalse(self.page.evaluate('CodaArcadeQA.touch().visible'))
-        self.page.locator('[data-piano-dialogue-action="melodies"]').tap()
-        self.page.locator('[data-piano-melody="mary"]').tap()
-        self.page.locator('[data-piano-dialogue-action="play"]').tap();self.page.clock.run_for(64)
+        self.page.locator('[data-piano-dialogue-action="challenges"]').tap()
+        self.page.locator('[data-piano-challenge="melodies"]').tap()
+        self.page.locator('[data-piano-song="mary"]').tap()
+        self.page.locator('#pianoLearnMelody').tap();self.page.clock.run_for(64)
         self.assertEqual(self.state()['lesson'],'mary');self.assertEqual(self.state()['challengeMode'],'melody')
         self.assertFalse(self.state()['dialogueOpen']);self.assertTrue(self.page.evaluate('CodaArcadeQA.touch().visible'))
         self.menu('games');self.assertTrue(self.state()['menuOpen'])

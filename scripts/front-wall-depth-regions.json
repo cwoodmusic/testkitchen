@@ -1,0 +1,21 @@
+{
+  "description": "Use the approved deep exterior artwork for complete front-wall faces, beginning at the dark underside of the unchanged blue caps. This removes partial-course grid jogs and diagonal source joins while preserving neon rails, interior floors, stairs, entrance artwork and the building outline.",
+  "worldSize": [1672,941],
+  "source": "assets/environment/source/front-wall-depth.png",
+  "sourceSize": [2169,725],
+  "sourceRect": [0,243,2169,228],
+  "sourcePlacement": [35,775,1600,166],
+  "output": "assets/environment/v1/empty-arcade.png",
+  "preserveProject": true,
+  "polygons": [
+    [[49,830],[68,847],[111,847],[115,848],[120,852],[125,856],[130,861],[135,864],[140,870],[145,874],[150,879],[154,883],[244,883],[244,897],[305,897],[305,941],[49,941]],
+    [[445,897],[480,897],[493,890],[498,886],[542,886],[550,883],[560,877],[568,873],[813,873],[820,867],[830,857],[840,849],[850,842],[858,837],[858,941],[445,941]],
+    [[445,909],[493,909],[562,883],[782,883],[816,863],[858,837],[858,941],[445,941]],
+    [[858,834],[861,831],[1616,831],[1616,941],[858,941]]
+  ],
+  "protectedPolygons": [
+    [[305,843],[445,843],[445,941],[305,941]],
+    [[1419,767],[1535,767],[1535,813],[1419,813]],
+    [[169,665],[204,665],[237,664],[271,664],[305,664],[339,664],[374,664],[408,664],[442,664],[477,664],[511,664],[545,664],[579,665],[618,665],[628,693],[639,723],[651,753],[662,784],[674,814],[685,845],[117,845],[125,814],[134,784],[143,753],[152,723],[161,693]]
+  ]
+}

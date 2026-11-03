@@ -37,7 +37,7 @@ test('nine historical musical personalities have distinct conversations, safe sp
   const npcs=IDS.map((id,look)=>({id,x:1450,y:752,look})),env=setup({npcs,games:[0,1,2,3].map(index=>({...GAME(),index,x:700+index*100,npcX:700+index*100,npcY:323}))});
   assert.equal(env.engine.snapshot().length,9);
   assert.equal(new Set(npcs.map(p=>p.x+':'+p.y)).size,9);
-  for(const p of npcs){assert.equal(env.inside(p.x,p.y),true);assert.equal(p.hidden,false);const data=env.engine.getConversation(p.id);assert.equal(data.fictional,true);assert.ok(data.description.length>50);assert.equal(data.choices.length,4);}
+  for(const p of npcs){assert.equal(env.inside(p.x,p.y),true);assert.equal(p.hidden,false);const data=env.engine.getConversation(p.id);assert.equal(data.fictional,true);assert.ok(data.description.length>50);assert.equal(data.choices.length,1);}
   assert.match(env.engine.say('bach','music'),/counterpoint/i);
   assert.match(env.engine.say('miles','music'),/Kind of Blue.*1959/);
   assert.match(env.engine.say('ella','music'),/Scat singing/);

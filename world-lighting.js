@@ -72,7 +72,11 @@
     }
     function lanternState() {
       const t = quiet() ? 0 : time(), beat = api.getBeat?.() || {}, bass = beat.on ? Math.exp(-clamp(finite(beat.phase), 0, 1) * 5) : 0;
-      return LANTERNS.map((lamp, i) => ({...lamp, intensity: quiet() ? .65 : clamp(.48 + .43 * Math.sin(t * 1.65 + i * .79) + bass * .09, .10, 1)}));
+      const supplied=api.getLanterns?.();
+      return (supplied||LANTERNS).map((lamp, i) => {
+        const position=api.getLanternPosition?.(lamp.id);
+        return {...lamp,x:finite(position?.x,lamp.x),y:finite(position?.y,lamp.y),intensity:quiet() ? .65 : clamp(.48 + .43 * Math.sin(t * 1.65 + i * .79) + bass * .09, .10, 1)};
+      }).filter(lamp=>lamp.visible!==false&&(lamp.opacity??1)>0&&api.isLanternVisible?.(lamp.id)!==false);
     }
     function getGeometry() {
       const q = quality(), now = time(), reduced = quiet(), source = api.getBallStates?.() || [];
@@ -200,21 +204,30 @@
       if (quality() === 'off') return;
       ctx.save(); ctx.shadowBlur = 0;
       const lamps=lanternState();
+      const paint=(lamp,draw)=>{
+        ctx.save();if(lamp.matrix)ctx.transform(...lamp.matrix);
+        const x=lamp.matrix?lamp.sourceX:lamp.x,y=lamp.matrix?lamp.sourceY:lamp.y;
+        draw(x,y,lamp.opacity??1);ctx.restore();
+      };
       // Batch blend modes: alternating multiply/screen for each lamp forces
       // repeated destination reads on software Canvas.
       ctx.globalCompositeOperation='multiply';ctx.fillStyle='#84602d';
       for (const lamp of lamps) {
         // The source lamp is nearly white already. A gentle glass-only
         // multiply pass makes the pulse visible in the actual lamp interior.
-        ctx.globalAlpha = (1 - lamp.intensity) * .53;
-        ctx.fillRect(Math.round(lamp.x - lamp.w / 2), Math.round(lamp.y - lamp.h / 2), lamp.w, lamp.h);
+        paint(lamp,(x,y,opacity)=>{
+          ctx.globalAlpha = (1 - lamp.intensity) * .53*opacity;
+          ctx.fillRect(Math.round(x - lamp.w / 2), Math.round(y - lamp.h / 2), lamp.w, lamp.h);
+        });
       }
       ctx.globalCompositeOperation='screen';ctx.fillStyle='#fff2b0';
       for (const lamp of lamps) {
-        ctx.globalAlpha = .10 + lamp.intensity * .20;
-        ctx.fillRect(Math.round(lamp.x - lamp.w / 2 + 1), Math.round(lamp.y - lamp.h / 2 + 1), lamp.w - 2, lamp.h - 2);
-        const image = glow('#ffb650'); ctx.globalAlpha = .13 + lamp.intensity * .24;
-        if (image) ctx.drawImage(image, lamp.x - 33, lamp.y - 38, 66, 76);
+        paint(lamp,(x,y,opacity)=>{
+          ctx.globalAlpha = (.10 + lamp.intensity * .20)*opacity;
+          ctx.fillRect(Math.round(x - lamp.w / 2 + 1), Math.round(y - lamp.h / 2 + 1), lamp.w - 2, lamp.h - 2);
+          const image = glow('#ffb650'); ctx.globalAlpha = (.13 + lamp.intensity * .24)*opacity;
+          if (image) ctx.drawImage(image, x - 40, y - 45, 80, 90);
+        });
       }
       ctx.restore();
     }

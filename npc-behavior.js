@@ -1,4 +1,4 @@
-/* Original, imagined arcade conversations inspired by musical history.
+/* Historical quotations alongside original arcade teaching conversations.
  * The state machine shares the game's navigation map; it never bypasses walls. */
 (function () {
   'use strict';
@@ -17,6 +17,7 @@
     {id:'vivaldi',name:'Antonio Vivaldi',description:'Venetian Baroque composer, violinist, and teacher whose concertos often contrast soloists with an ensemble.',favorite:0,speed:75,sequence:['wander','cabinet','dance','lounge'],greetings:['Can you imagine a bird, a storm, or a dance in a few notes?','A small musical picture can grow into a whole concerto.'],music:'The Four Seasons is a set of four violin concertos. Its music suggests scenes such as birdsong, storms, and winter cold.',advice:'Choose a scene from nature. Try making its movement or mood with a short rhythm.',games:'Pitch Race keeps the notes moving. Song Machine lets us sketch a little musical scene.'}
   ];
   if(Array.isArray(window.CodaNPCVisitors?.profiles))PROFILES.push(...window.CodaNPCVisitors.profiles);
+  const quotations=window.CodaMusicianQuotes;
   const SEEDS=[[1150,365],[350,280],[1050,430],[250,300],[410,740],[550,735],[1340,650],[1340,725],[970,650]];
   const DESTINATIONS={
     lounge:[[225,250],[350,278],[260,316],[360,315]],
@@ -27,8 +28,8 @@
   const ARRIVAL=12,PERSON_SPACE=23,PLAYER_SPACE=44,PLAYER_YIELD=50,PLAYER_GOAL_SPACE=PLAYER_YIELD+ARRIVAL;
   window.CodaMusicianCast=Object.freeze(PROFILES.map(profile=>Object.freeze({id:profile.id,name:profile.name,...(profile.unlockItem?{unlockItem:profile.unlockItem,appearance:profile.appearance,fictional:true}:{})})));
   window.CodaNPCDialogueDefaults=Object.freeze(Object.fromEntries(PROFILES.map(profile=>[profile.id,Object.freeze({
-    description:profile.description,greetings:Object.freeze(profile.greetings.slice()),
-    choices:Object.freeze([{id:'music',label:'Tell me about your music',reply:profile.music},{id:'activity',label:'What are you doing?',reply:''},{id:'advice',label:'Give me a musical tip',reply:profile.advice},{id:'games',label:'Which game do you like?',reply:profile.games}].map(Object.freeze))
+    description:profile.description,greetings:Object.freeze(quotations?.get(profile.id)?[quotations.line(profile.id)]:profile.greetings.slice()),
+    choices:Object.freeze([Object.freeze({id:'advice',label:'Advice',reply:quotations?.advice(profile.id)||profile.advice})])
   })])));
 
   window.createCodaNPCBehavior=function (api) {
@@ -260,7 +261,8 @@
 
     function getConversation(value){
       const p=find(value);if(!p)return null;const state=states.get(p),dialogue=dialogueFor(p);
-      return {id:p.id,name:p.name,description:dialogue.description,activity:p.activity,fictional:true,original:!!state.profile.unlockItem,line:state.lastLine||dialogue.greetings[0],choices:dialogue.choices.map(choice=>({id:choice.id,label:choice.label}))};
+      const line=state.lastLine||dialogue.greetings[0],quotation=quotations?.get(state.profile.id);
+      return {id:p.id,name:p.name,description:dialogue.description,activity:p.activity,fictional:true,original:!!state.profile.unlockItem,line,quotation:quotation?.kind==='quotation'&&(line===quotations.line(state.profile.id)||line===quotation.text)?quotation:null,choices:dialogue.choices.map(choice=>({id:choice.id,label:choice.label}))};
     }
     function say(value,topic='greeting'){
       const p=find(value);if(!p)return '';const state=states.get(p),dialogue=dialogueFor(p),profile={...state.profile};

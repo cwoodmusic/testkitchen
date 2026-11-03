@@ -11,7 +11,9 @@ def advance_world(page,milliseconds=96):
 
 
 def close_settings(page):
-    if page.locator('body').evaluate("node=>node.classList.contains('world-menu-open')"):
+    for _ in range(2):
+        if not page.locator('body').evaluate("node=>node.classList.contains('world-menu-open')"):
+            return
         page.keyboard.press('Escape');advance_world(page,32)
 
 

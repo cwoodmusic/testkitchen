@@ -43,6 +43,7 @@ window.createCodaCharacterRenderer=function(api){
     ella:{name:'Ella Fitzgerald',skin:'#a06c50',hair:'#342333',shirt:'#974e93',lowerColor:'#6b3c72',hairstyle:'curly',outfit:'gown',shoes:'heels',accessory:'microphone',hairDetail:'ella-coiffure',neckwear:'pearls',gownStyle:'satin',earrings:true,bodyScaleX:1.16,bodyScaleY:.98,headWidth:22,faceDetail:'ella'},
     nina:{name:'Nina Simone',skin:'#754a35',hair:'#221c26',shirt:'#bd813b',lowerColor:'#795235',hairstyle:'bald',outfit:'dress',shoes:'sandals',headwear:'headwrap',headwearColor:'#247d87',neckwear:'statement',dressShape:'column',earrings:true,bodyScaleX:.9,bodyScaleY:1.12,headWidth:17,faceDetail:'nina'},
     miles:{name:'Miles Davis',skin:'#885c43',hair:'#211e28',shirt:'#28384e',lowerColor:'#243344',hairstyle:'undercut',outfit:'leather',shoes:'chelsea',eyewear:'sunglasses',accessory:'trumpet',hairDetail:'miles-close',neckwear:'open',bodyScaleX:.88,bodyScaleY:1.04,headWidth:17,faceDetail:'miles'},
+    scholar:{name:'The Scholar',skin:'#9a6b52',hair:'#b6b3a8',shirt:'#4f715f',lowerColor:'#4a453d',hairstyle:'curly',outfit:'waistcoat',shoes:'oxfords',eyewear:'round',accessory:'book',neckwear:'tie',bodyScaleX:1.02,bodyScaleY:1,headWidth:20,faceDetail:'scholar'},
     dj:{name:'DJ Coda',skin:'#a56d4b',hair:'#23192e',shirt:'#cf4aa5',lowerColor:'#253c66',hairstyle:'undercut',outfit:'tracksuit',shoes:'neon',eyewear:'cybervisor',accessory:'headphones',bodyScaleX:1.02,bodyScaleY:1.02,headWidth:19,faceDetail:'dj'}
   };
   const appearances=Object.fromEntries(Object.entries(historical).map(([id,p])=>[id,Object.freeze({...normalizeProfile(p),...p,id})]));
@@ -518,7 +519,7 @@ window.createCodaCharacterRenderer=function(api){
     q(0,-2,w,4,'#655044');sole('#302938');q(1,-2,w-2,1,'#aa7b5a');
     if(back){q(1,-1,4,1,'#4b3a38');q(2,-2,2,3,'#8d6651');}else q(side?4:2,-1,side?4:3,1,'#e2ba76');
   }
-  const pixelTargets=['player','bach','schoenberg','handel','vivaldi','mozart','beethoven','clara','joplin','ellington','ella','nina','miles','dj','chopin','captain-cadence','haydn','riff','pip','vee-jay','zizi','metronome'];
+  const pixelTargets=['player','scholar','bach','schoenberg','handel','vivaldi','mozart','beethoven','clara','joplin','ellington','ella','nina','miles','dj','chopin','captain-cadence','haydn','riff','pip','vee-jay','zizi','metronome'];
   let pixelEdits={},pixelTops={},pixelSurface=null;
   const pixelCopy=value=>JSON.parse(JSON.stringify(value));
   function validPixelEdits(data){
@@ -761,7 +762,7 @@ window.createCodaCharacterRenderer=function(api){
     if(own(custom,'hairstyle')&&custom.hairstyle!==base.hairstyle)delete appearance.hairDetail;
     if(own(custom,'outfit')&&custom.outfit!==base.outfit)delete appearance.neckwear;
     if(own(custom,'accessory'))appearance.earrings=custom.accessory==='earrings';
-    const activity=p.activity||'',emote=activity==='dancing'?'dance':activity==='chatting'||p.conversation?'talk':activity==='playing'?'playing':activity==='relaxing'?'sit':p.emote;
+    const activity=p.activity||'',emote=activity==='dancing'?(EMOTES.includes(p.danceStyle)?p.danceStyle:'dance'):activity==='chatting'||p.conversation?'talk':activity==='playing'?'playing':activity==='relaxing'?'sit':p.emote;
     const seed=String(base.id).split('').reduce((a,c)=>a+c.charCodeAt(0),0);
     const pose={x:p.x,y:p.y,facing:p.facing,walking:p.walking,phase:p.phase,emote,emoteTime:p.emoteTime,seed};render(ctx,appearance,pose,time,pixelPoints(p.id||base.id,pose));return true;
   }

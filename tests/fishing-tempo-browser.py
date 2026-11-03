@@ -305,7 +305,7 @@ class FishingTempoTests(_upgrade._fish._world.WorldBrowserCase):
         self.fishing_meter('4/4')
         self.fishing_action('#fishingCast');self.page.clock.run_for(1400)
         beginner = self.state()['challenge']
-        self.assertEqual(beginner['tempo']['currentQuarterBpm'],76)
+        self.assertEqual(beginner['tempo']['currentQuarterBpm'],72)
         self.assertEqual(beginner['tempo']['change'],'steady')
         self.cancel()
 

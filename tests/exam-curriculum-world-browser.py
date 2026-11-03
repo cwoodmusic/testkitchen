@@ -4,6 +4,7 @@ All lesson navigation, study checks, staff rendering, save/reload, end quizzes,
 and XP awards remain production code. The browser profile is disposable and
 external services are blocked; no real classroom profiles are used.
 """
+from classroom_menu_helpers import choose_classroom_lesson, choose_classroom_exam
 import importlib.util
 from pathlib import Path
 import sys
@@ -70,7 +71,7 @@ class ExamCurriculumWorldTests(_world.WorldBrowserCase):
 
     def exam_study(self, lesson):
         self.talk_to_haydn()
-        self.page.locator('#classroomFinalExam').click()
+        choose_classroom_exam(self.page)
         self.assertEqual(self.page.locator('[data-exam-study]').count(), 8)
         self.page.locator('[data-exam-study="' + lesson + '"]').click()
         self.assertEqual(self.active()['id'], lesson)
@@ -178,7 +179,7 @@ class ExamCurriculumWorldTests(_world.WorldBrowserCase):
 
     def test_normal_activity_then_study_then_quiz_awards_the_lesson_once(self):
         self.talk_to_haydn()
-        self.page.locator('[data-start-lesson="note-naming"]').click()
+        choose_classroom_lesson(self.page, 'note-naming')
         for letter in ['C', 'F', 'D', 'A', 'E', 'F', 'G', 'A', 'B', 'C']:
             finish_note_reminders(self.page)
             self.page.locator('[data-lesson-try]').click()
@@ -201,7 +202,7 @@ class ExamCurriculumWorldTests(_world.WorldBrowserCase):
         self.assertEqual(self.xp(), 50)
         self.load()
         self.talk_to_haydn()
-        self.page.locator('[data-start-lesson="note-naming"]').click()
+        choose_classroom_lesson(self.page, 'note-naming')
         self.assertEqual(self.active()['phase'], 'complete')
         self.assertEqual(self.xp(), 50)
 
@@ -230,7 +231,7 @@ class ExamCurriculumWorldTests(_world.WorldBrowserCase):
         }''')
         self.load()
         self.talk_to_haydn()
-        self.page.locator('[data-start-lesson="note-naming"]').click()
+        choose_classroom_lesson(self.page, 'note-naming')
         self.assertEqual(self.active()['phase'], 'complete')
         self.assertEqual(self.xp(), 50)
         self.page.locator('[data-tutorial-study]').click()

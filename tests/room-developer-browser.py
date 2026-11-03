@@ -398,7 +398,8 @@ class RoomDeveloperTests(_world.WorldBrowserCase):
             for _ in range(35):
                 self.page.clock.run_for(100);p=self.room_state('fishing')['player']
                 if math.hypot(p['x']-x,p['y']-y)<7:break
-        walk(135,285);walk(218,380)
+        landing=self.room_state('fishing')['shore']['spawn'];pier=self.room_state('fishing')['boardingPoint']
+        walk(landing['x'],landing['y']);walk(pier['x'],pier['y'])
         self.canvas('fishing').focus();self.page.keyboard.press('e');self.page.clock.run_for(32)
         self.assertEqual(self.room_state('fishing')['phase'],'explore')
         self.open_editor('fishing')

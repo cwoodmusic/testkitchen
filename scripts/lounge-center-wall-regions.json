@@ -1,0 +1,16 @@
+{
+  "description": "Flatten only the center purple LOUNGE facade into a regular south-facing tile plane. Preserve the exact original sign and glow, blue top cap, both angled side walls, lamps and floor.",
+  "worldSize": [1672, 941],
+  "before": "assets/environment/source/passage-lantern-before-cleanup.png",
+  "beforeSha256": "0cfab3fc6941b1e09c94e47555649091a4c44652d9a3dd3ad2c7c5360c795305",
+  "source": "assets/environment/source/lounge-center-flat.png",
+  "sourcePlacement": [160, 5, 300, 180],
+  "output": "assets/environment/v1/empty-arcade.png",
+  "reviewedProjectSha256": "90b0319e0102c454c0f3217576c0ac5e157101952136a9584b4b4ae8d33a5b2b",
+  "polygons": [
+    [[233,33],[361,33],[361,147],[233,147]]
+  ],
+  "protectedPolygons": [
+    [[235,36],[355,36],[355,95],[235,95]]
+  ]
+}

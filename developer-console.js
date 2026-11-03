@@ -11,19 +11,34 @@ window.createCodaDeveloperConsole = function (api) {
   const $ = id => document.getElementById(id);
   const clone = value => JSON.parse(JSON.stringify(value));
   const makeCanvas = (w,h) => Object.assign(document.createElement('canvas'), {width:w,height:h});
-  let tab = 'objects', playtest = false, loading = true, strokeBefore = null, saveTimer;
+  let tab = 'objects', playtest = false, loading = true, strokeBefore = null, saveTimer, fullscreen = false;
   let pickSample = false, baseCache = null, baseKey = '', cleanupCache = null, loadFailed = false, pan = null;
   let publishedProject = null, publishedError = null, loadError = null, projectSource = 'base';
-  let dialogue={}, sprites={}, artwork={}, dialogueEditor=null, pixelEditor=null, artworkEditor=null, artworkTools=null,educationEditor=null;
+  let scenery, dialogue={}, sprites={}, artwork={}, dialogueEditor=null, pixelEditor=null, artworkEditor=null, artworkTools=null,educationEditor=null;
+  let floorPaletteCompat=null,pathwayFloorFill=null;
+  const wallReflections=window.CodaWallReflections?.create({document,getQuality:api.getReflectionQuality});
+  let characters={},characterEditor=null,layerSelecting=false,layerSelection=null;
+  let decorLibrary=null,floodAdding=false,floodImageData=null,notesRugAdding=false,notesRugData=null;
+  const emptyHistoryContent=()=>({version:2,facts:{},quizzes:{}});
+  let musicHistoryContent=emptyHistoryContent(),musicFactsEditor=null;
   let panTool=false, spaceHeld=false,collisionOverlay=false,layerOverlay=false,layerMaskSource=null,layerMaskTint=null,layerMaskKey='';
   const dialogueDefaults=api.dialogueDefaults||window.CodaNPCDialogueDefaults||{};
-  const TABS=['objects','collision','layers','artwork','dialogue','pixels','education','project'];
+  const TABS=['objects','collision','layers','artwork','dialogue','pixels','education','facts','history','project'];
   const pictures = new Map();
-  const maskedLayers = new WeakMap();
+  let maskedLayers = new WeakMap();
+  const refreshedScenery=()=>scenery==='environment-v1';
+  function previousSceneryNotice(){return ['local','legacy'].includes(projectSource)&&!refreshedScenery()&&publishedProject?.scenery==='environment-v1'?' Your saved project uses the previous scenery. Export a backup, then Reset project to use the refreshed environment.':'';}
+  function environmentReady(){const environment=api.environmentArt;return !!environment&&environment.isReady?.()===true&&!!environment.background?.();}
+  function backgroundSource(){return refreshedScenery()?api.environmentArt?.background?.():baseCache||worldArt;}
+  // A new art set is optional for legacy local projects. Keep its rejection
+  // observed without replacing it: refreshed projects still await and reject it.
+  api.environmentArt?.ready?.catch?.(()=>{});
   const panel = $('assetStudio');
   panel.classList.add('dev-console');
   const head = panel.querySelector('.studioHead');
   head.querySelector('strong').textContent = '⌘ DEVELOPER CONSOLE';
+  panel.setAttribute('aria-label','Developer console');
+  $('assetClose').setAttribute('aria-label','Close developer console');
   $('assetToggle').textContent = '⌘ Developer';
   $('assetToggle').title = 'Open developer console (F2 or Shift+A)';
   const objects = document.createElement('section');
@@ -33,8 +48,11 @@ window.createCodaDeveloperConsole = function (api) {
   const dock=document.createElement('button');dock.type='button';dock.textContent='⇄';dock.title='Move console to the other side';dock.setAttribute('aria-label','Move console to the other side');
   head.insertBefore(dock,$('assetClose'));
   dock.onclick=()=>{const right=panel.style.right!=='12px';panel.style.left=right?'auto':'12px';panel.style.right=right?'12px':'auto';};
+  const fullscreenButton=document.createElement('button');fullscreenButton.type='button';fullscreenButton.id='devFullscreen';fullscreenButton.textContent='Fullscreen';fullscreenButton.setAttribute('aria-label','Make developer console fullscreen');fullscreenButton.setAttribute('aria-pressed','false');
+  head.insertBefore(fullscreenButton,$('assetClose'));
+  fullscreenButton.onclick=()=>setFullscreen(!fullscreen);
   const nav = document.createElement('div'); nav.className = 'dev-tabs'; nav.setAttribute('role','tablist'); nav.setAttribute('aria-label','Developer tools');
-  nav.innerHTML = TABS.map(name => `<button type="button" role="tab" id="devTab-${name}" aria-controls="dev-${name}">${name==='education'?'Lessons & exams':name==='pixels'?'Sprites':name==='artwork'?'Pixel editor':name[0].toUpperCase()+name.slice(1)}</button>`).join('');
+  nav.innerHTML = TABS.map(name => `<button type="button" role="tab" id="devTab-${name}" aria-controls="dev-${name}">${name==='education'?'Lessons & exams':name==='facts'?'Music facts':name==='history'?'History progression':name==='pixels'?'Sprites':name==='artwork'?'Pixel editor':name[0].toUpperCase()+name.slice(1)}</button>`).join('');
   head.after(nav);
   const cameraTools=document.createElement('div');cameraTools.className='dev-camera';
   cameraTools.setAttribute('role','group');cameraTools.setAttribute('aria-label','Editor camera');
@@ -43,6 +61,10 @@ window.createCodaDeveloperConsole = function (api) {
   const overlays=document.createElement('div');overlays.className='dev-overlays';overlays.setAttribute('role','group');overlays.setAttribute('aria-label','Editor overlays');
   overlays.innerHTML='<button id="devShowCollision" type="button" aria-pressed="false">Show collision</button><button id="devShowLayers" type="button" aria-pressed="false">Show layers</button><p id="devOverlayLegend" class="dev-overlay-legend" hidden><span class="dev-key-blocked">Red: blocked</span> · <span class="dev-key-walkable">Green: walkable</span><br><span class="dev-key-background">Blue: background</span> · <span class="dev-key-depth">Gold: actor depth</span> · <span class="dev-key-foreground">Mint: foreground</span></p>';
   cameraTools.after(overlays);
+  const selectionOrder=document.createElement('div');selectionOrder.id='devSelectionOrder';selectionOrder.setAttribute('role','group');selectionOrder.setAttribute('aria-label','Selected object order');
+  selectionOrder.innerHTML='<strong id="devOrderSelection" aria-live="polite">Select an object or NPC</strong><div class="dev-toolbar"></div>';
+  selectionOrder.querySelector('.dev-toolbar').append($('assetBack'),$('assetFront'));overlays.after(selectionOrder);
+  $('assetBack').title='Move the selected object or NPC backward';$('assetFront').title='Move the selected object or NPC forward';
   function refreshCamera(){
     const camera=api.getCamera?.()||{targetZoom:1,min:1,max:8,step:.25};
     $('devZoomReset').textContent=Math.round(camera.targetZoom*100)+'%';
@@ -54,7 +76,7 @@ window.createCodaDeveloperConsole = function (api) {
   }
   function zoomBy(direction){const camera=api.getCamera?.();if(camera)api.setCameraZoom?.(direction===0?1:camera.targetZoom+direction*camera.step);refreshCamera();}
   $('devZoomOut').onclick=()=>zoomBy(-1);$('devZoomIn').onclick=()=>zoomBy(1);$('devZoomReset').onclick=()=>zoomBy(0);
-  $('devPan').onclick=()=>{finishGesture();panTool=!panTool;refreshCamera();c.focus({preventScroll:true});};
+  $('devPan').onclick=()=>{finishGesture({preserveLayerSelection:tab==='layers'&&layerSelecting});panTool=!panTool;refreshCamera();c.focus({preventScroll:true});};
   objects.id = 'dev-objects';
   objects.querySelector('.studioTip').textContent = 'Select an existing object, lift a region, or add artwork. Drag objects and gold handles to move, resize and rotate.';
   const catalogUI = document.createElement('div'); catalogUI.className = 'dev-original';
@@ -63,6 +85,42 @@ window.createCodaDeveloperConsole = function (api) {
     <div class="dev-toolbar"><button type="button" id="devLift">Edit existing object</button><button type="button" id="devLiftRegion">Lift a region</button></div>
     <p class="studioTip">Click an original object on the map to select it, or choose its name here. Lift a region for artwork outside this catalog.</p>`;
   objects.children[0].after(catalogUI);
+  const libraryHost=document.createElement('section');catalogUI.before(libraryHost);
+  function createDecorAsset(item,position){
+    const asset=api.prototype(item.name,'image'),camera=api.getCamera?.()||{x:0,y:0,zoom:1};
+    Object.assign(asset,{data:item.data,w:item.width,h:item.height,x:position?.x??Math.round(camera.x+W/(camera.zoom||1)/2),y:position?.y??Math.round(camera.y+H/(camera.zoom||1)/2),layer:item.category==='rug'?'back':'world',anim:'none',ignoreBackgroundMasks:true});
+    return asset;
+  }
+  if(window.CodaDecorLibrary)decorLibrary=window.CodaDecorLibrary.mount({host:libraryHost,canEdit:()=>canEditArtwork()&&tab==='objects',onAdd:item=>{
+    if(!canEditArtwork()||tab!=='objects')return false;const asset=createDecorAsset(item);return api.add(asset)!==false;
+  }});
+  const floodButton=document.createElement('button');floodButton.type='button';floodButton.id='devAddFloodRig';floodButton.textContent='Add DJ floodlights';
+  const libraryDetails=libraryHost.querySelector('details')||libraryHost;libraryDetails.append(floodButton);
+  async function embeddedDecorImage(name){
+    const image=new Image();image.src='assets/decor/v1/'+name+'.png';await image.decode();
+    if(!image.naturalWidth||!image.naturalHeight||image.naturalWidth>8192||image.naturalHeight>8192)throw Error('Library artwork could not load.');
+    const source=makeCanvas(image.naturalWidth,image.naturalHeight);source.getContext('2d').drawImage(image,0,0);return source.toDataURL('image/png');
+  }
+  floodButton.onclick=async()=>{
+    if(floodAdding||!canEditArtwork()||tab!=='objects')return;floodAdding=true;floodButton.disabled=true;
+    try{
+      if(!floodImageData)floodImageData=await embeddedDecorImage('dj-flood-rig');
+      if(!canEditArtwork()||tab!=='objects')return;
+      const position=api.getFloodRigPosition?.()||{x:393.5,y:490},asset=createDecorAsset({name:'DJ color-changing floodlights',width:210,height:48,data:floodImageData},position);
+      asset.layer='front';asset.floodLights=window.CodaDJFloodlights.defaults();api.add(asset);
+    }catch(error){message(error.message||'Floodlights could not load.');}finally{floodAdding=false;floodButton.disabled=!canEditArtwork()||tab!=='objects';}
+  };
+  const notesRugButton=document.createElement('button');notesRugButton.type='button';notesRugButton.id='devAddNotesRug';notesRugButton.textContent='Place Notes shop rug';libraryDetails.append(notesRugButton);
+  notesRugButton.onclick=async()=>{
+    if(notesRugAdding||!canEditArtwork()||tab!=='objects')return;notesRugAdding=true;notesRugButton.disabled=true;
+    try{
+      if(!notesRugData)notesRugData=await embeddedDecorImage('rug-notes-rectangle');
+      if(!canEditArtwork()||tab!=='objects')return;
+      const placement=api.getNotesRugPlacement?.()||{x:1350,y:640,width:360,height:112,rotation:0};
+      const asset=createDecorAsset({name:'Notes shop arcade rug',category:'rug',width:placement.width,height:placement.height,data:notesRugData},placement);
+      asset.rotation=placement.rotation||0;if(placement.flipX)asset.flipX=true;if(placement.flipY)asset.flipY=true;api.add(asset);
+    }catch(error){message(error.message||'The Notes shop rug could not load.');}finally{notesRugAdding=false;notesRugButton.disabled=!canEditArtwork()||tab!=='objects';}
+  };
   const groups = new Map();
   for (const part of catalog) {
     const label=part.group || 'Furniture, plants & walls';
@@ -74,9 +132,9 @@ window.createCodaDeveloperConsole = function (api) {
     <div class="dev-toolbar"><button id="devReplace" type="button">Replace image</button><button id="devRestore" type="button">Restore original</button></div>
     <input type="file" id="devReplaceFile" accept="image/png,image/jpeg,image/webp,image/gif,image/apng" hidden>
     <div id="devDisco" hidden><label class="studioField">Disco ball spin speed<input id="devDiscoSpin" type="number" min="0" max="4" step="0.05"></label><label class="studioCheck"><input id="devDiscoRays" type="checkbox">Project disco light rays</label></div>
-    <div id="devSource" hidden><p class="studioTip">The room is a flattened PNG. A clone patch covers the old silhouette. Pick a clean floor sample to improve the patch; hidden artwork cannot be recovered automatically.</p>
-      <div class="studioGrid"><label class="studioField">Floor sample X<input type="number" id="devSampleX" min="0" step="1"></label><label class="studioField">Floor sample Y<input type="number" id="devSampleY" min="0" step="1"></label></div>
-      <button type="button" id="devPickSample">Pick floor sample on map</button>
+    <div id="devSource" hidden><p id="devSourceTip" class="studioTip">The room is a flattened PNG. A clone patch covers the old silhouette. Pick a clean floor sample to improve the patch; hidden artwork cannot be recovered automatically.</p>
+      <div id="devLegacyRepair"><div class="studioGrid"><label class="studioField">Floor sample X<input type="number" id="devSampleX" min="0" step="1"></label><label class="studioField">Floor sample Y<input type="number" id="devSampleY" min="0" step="1"></label></div>
+      <button type="button" id="devPickSample">Pick floor sample on map</button></div>
       <label class="studioCheck"><input id="devRelease" type="checkbox">Open collision at original position</label>
     </div>
     <label class="studioCheck"><input id="devSolid" type="checkbox">Solid collision footprint</label>
@@ -85,13 +143,27 @@ window.createCodaDeveloperConsole = function (api) {
       <label class="studioField">Width %<input id="devColW" type="number" min="1" max="200"></label><label class="studioField">Height %<input id="devColH" type="number" min="1" max="200"></label></div></div>`;
   $('assetSelection').append(extra);
   pane('collision', '<h3 class="dev-heading">Walking & collision</h3><p class="dev-note">Drag to block or open cells. Restore returns cells to the original map. Changes affect player movement and NPC routes, including original walls.</p><div id="devCollisionTools"></div>');
-  pane('layers', `<h3 class="dev-heading">Foreground & background</h3><p class="dev-note">Paint promotes existing room pixels in front of actors. Erase sends them behind actors. For moved objects, choose Background, Actor depth, or Foreground in Objects.</p>
+  pane('layers', `<h3 class="dev-heading">Foreground & background</h3><p class="dev-note">Select an area, then Fill selection to send all its pixels to the chosen layer. Paint promotes existing room pixels in front of actors. Send to background removes their foreground coverage. Use Objects to arrange individual sprites and props.</p>
     <label class="studioField">Brush tool<select id="devLayerTool"><option value="paint">Paint foreground</option><option value="erase">Send to background / erase mask</option></select></label>
+    <div class="dev-toolbar"><button id="devLayerSelect" type="button" aria-pressed="false">Select area</button><button id="devLayerFillSelection" type="button" disabled>Fill selection</button></div>
+    <label class="studioField">Selection shape<select id="devLayerSelectionShape"><option value="rectangle">Rectangle · drag an area</option><option value="manual">Manual shape · click its corners</option></select></label>
+    <div class="dev-toolbar"><button id="devLayerFinishSelection" type="button" disabled>Finish selection</button><button id="devLayerClearSelection" type="button" disabled>Clear selection</button></div>
+    <p id="devLayerSelectionStatus" class="studioTip" aria-live="polite">Select an area to fill its foreground or background coverage.</p>
     <label class="studioField">Stroke shape<select id="devLayerShape"><option value="pen">Freehand</option><option value="line">Line · drag a straight line</option></select></label>
     <label class="studioField">Brush size<select id="devLayerSize"><option>1</option><option>2</option><option selected>4</option><option>8</option><option>16</option></select></label>
     <label class="studioField">Paint placement<select id="devLayerPlacement"><option value="front">Foreground · above characters</option><option value="depth">Actor depth · use offset</option></select></label>
     <label class="studioField">Depth offset (px)<input id="devLayerDepth" type="number" min="-120" max="120" step="5" value="0"></label>
     <label class="studioCheck"><input id="devMasks" type="checkbox">Show foreground masks</label>`);
+  layerSelection=window.CodaLayerSelection?.create({width:W,height:H,onChange:syncLayerSelection});
+  function syncLayerSelection(){
+    const state=layerSelection?.getState(),selection=state?.selection,editable=canEditArtwork()&&tab==='layers';
+    $('devLayerSelect').setAttribute('aria-pressed',String(layerSelecting));layer.selecting=layerSelecting;
+    $('devLayerFillSelection').disabled=!editable||!selection||!!state.draft;
+    $('devLayerFinishSelection').disabled=!editable||state?.shape!=='manual'||!state.draft?.length;
+    $('devLayerClearSelection').disabled=!editable||!selection&&!state?.draft;
+    $('devLayerSelectionStatus').textContent=state?.draft?(state.shape==='manual'?state.draft.length+' corners · Double-click, press Enter, or choose Finish selection. Right-drag pans without clearing corners.':'Drag to select; release to finish.'):
+      selection?selection.width+' × '+selection.height+' pixels · Fill selection applies '+(layer.tool==='erase'?'Background':'Foreground')+'.':layerSelecting?'Drag a rectangle, or choose Manual shape and click its corners.':'Select an area to fill its foreground or background coverage.';
+  }
   const dialoguePane=pane('dialogue','');
   if(window.CodaDialogueEditor)dialogueEditor=window.CodaDialogueEditor.mount({host:dialoguePane,defaults:dialogueDefaults,people:window.CodaMusicianCast||[],getData:()=>dialogue,
     onApply:(id,entry)=>{const before=snapshot();dialogue[id]=clone(entry);changed(before);message('Applied musician dialogue. Save or export the project to keep a backup.');return true;},
@@ -101,8 +173,43 @@ window.createCodaDeveloperConsole = function (api) {
   function mountEducation(){
     if(educationEditor||!studio.active||playtest||tab!=='education')return;
     if(!window.CodaEducationEditor||!window.CodaEducationContent?.getStore?.()){educationPane.textContent='Lesson editing tools could not load. Reload the page to try again.';return;}
-    educationPane.replaceChildren();educationEditor=window.CodaEducationEditor.mount({host:educationPane,initialKind:'study',canEdit:canEditArtwork,onExit:()=>{setTab('objects');c.focus({preventScroll:true});}});
+    educationPane.replaceChildren();educationEditor=window.CodaEducationEditor.mount({host:educationPane,initialKind:'study',canEdit:canEditArtwork,onExit:()=>{setTab('objects');(fullscreen?fullscreenButton:c).focus({preventScroll:true});}});
   }
+  const factsPane=pane('facts','');
+  function canEditMusicFacts(){return canEditArtwork()&&!loadFailed;}
+  function mountMusicFacts(){
+    if(musicFactsEditor||!studio.active||playtest||loading||tab!=='facts')return;
+    if(!window.CodaMusicHistoryEditor){factsPane.textContent='Music-facts tools could not load. Refresh to try again.';return;}
+    factsPane.replaceChildren();musicFactsEditor=window.CodaMusicHistoryEditor.mount({host:factsPane,getData:()=>musicHistoryContent,canEdit:canEditMusicFacts,
+      onApply:next=>{
+        if(!canEditMusicFacts())return false;
+        const normalized=window.CodaMusicHistoryContent?.normalize(next);if(!normalized)return false;
+        const before=snapshot();musicHistoryContent=normalized;changed(before);journalFallback();message('Applied music-history content. Save or export the project to keep these edits.');return true;
+      }});
+  }
+  const historyPane=pane('history','');historyPane.dataset.historyDeveloper='';
+  const historyToolbar=document.createElement('div');historyToolbar.className='dev-toolbar';
+  const historyRefresh=document.createElement('button');historyRefresh.type='button';historyRefresh.textContent='Refresh progression';historyRefresh.id='devHistoryRefresh';historyToolbar.append(historyRefresh);
+  const historyContent=document.createElement('div');historyContent.id='devHistoryContent';historyPane.append(historyToolbar,historyContent);
+  let historyController=null,historyView=null,historyMounted=false,historyNeedsRender=true;
+  function releaseHistory(){
+    try{historyView?.dispose?.();}catch{/* An optional preview cannot stop the console. */}
+    historyView=null;historyMounted=false;historyNeedsRender=true;
+  }
+  function mountHistory(force=false){
+    if(!studio.active||playtest||tab!=='history')return;
+    let controller=null;try{controller=api.historyProgress?.();}catch{}
+    if(!controller?.renderDeveloper){
+      if(historyMounted)releaseHistory();historyController=null;
+      if(historyContent.dataset.ready!=='false'){historyContent.replaceChildren();historyContent.textContent='History progression is loading. Reopen this tab or choose Refresh progression when the game is ready.';historyContent.dataset.ready='false';}
+      return;
+    }
+    if(!force&&historyMounted&&!historyNeedsRender&&historyController===controller)return;
+    releaseHistory();historyController=controller;historyContent.replaceChildren();historyContent.dataset.ready='true';
+    try{historyView=controller.renderDeveloper(historyContent)||null;historyMounted=true;historyNeedsRender=false;}
+    catch{historyController=null;historyContent.textContent='History progression could not open. Choose Refresh progression to try again.';historyContent.dataset.ready='false';}
+  }
+  historyRefresh.onclick=()=>mountHistory(true);
   const pixelPane=pane('pixels','');
   if(window.CodaPixelEditor&&api.renderer)pixelEditor=window.CodaPixelEditor.mount({host:pixelPane,renderer:api.renderer,getData:()=>sprites,getProfile:api.getPixelProfile,getTargets:api.getPixelTargets,canEdit:canEditArtwork,openArtwork:id=>{open('artwork');artworkEditor?.selectTarget(id);},
     onChange:next=>{if(!window.CodaPixelEditor.validate(next))return false;const before=snapshot();sprites=clone(next);api.renderer.setPixelEdits(sprites);changed(before);message('Applied pixel edits. Save or export the project to keep a backup.');return true;}});
@@ -112,8 +219,9 @@ window.createCodaDeveloperConsole = function (api) {
     getTargets:api.getArtworkCharacters||api.getPixelTargets,getProfile:api.getPixelProfile,canEdit:canEditArtwork});
   if(window.CodaArtworkEditor&&window.createCodaWorldArtworkTools){
     artworkTools=window.createCodaWorldArtworkTools({width:W,height:H,catalog,getAssets:()=>studio.assets,getRootData:()=>artwork,
+      resolveTexture:(id,patch)=>refreshedScenery()?floorPaletteCompat?.resolveTexture(id,patch)||patch:patch,
       getObjectSource:name=>{const part=catalog.find(p=>p.name===name);return part?sourcePicture({name,bounds:part.bounds}):null;},
-      getAssetSource:api.getAssetArtworkSource,getBackgroundSource:()=>baseCache||worldArt,getClassroomSource:api.getClassroomArtworkSource,drawAssetPreview:api.drawArtworkAssetPreview,
+      getAssetSource:api.getAssetArtworkSource,getBackgroundSource:backgroundSource,getClassroomSource:api.getClassroomArtworkSource,drawAssetPreview:api.drawArtworkAssetPreview,
       getRoomEditors:api.getArtworkRooms,characters:characterArtwork,canEdit:canEditArtwork,onExit:()=>setTab('objects'),onUndo:()=>undoRedo(true),onRedo:()=>undoRedo(false),getHistory:()=>({undo:studio.undo.length,redo:studio.redo.length}),applyRootData:applyArtworkData});
     artworkEditor=artworkTools.mount(artworkPane);
     const editPixels=document.createElement('button');editPixels.type='button';editPixels.id='devEditPixels';editPixels.textContent='Edit selected asset pixels';
@@ -141,7 +249,7 @@ window.createCodaDeveloperConsole = function (api) {
     }
     changed(before);journalFallback();message('Applied artwork pixels. Undo or export your complete project.');return true;
   }
-  pane('project', `<h3 class="dev-heading">Complete world project</h3><p class="dev-note">Save or export objects, embedded images, floor patches, collision, foreground brush edits, musician dialogue and character sprite edits and pixel artwork together. Edits are local to this browser until you export and publish them.</p>
+  pane('project', `<h3 class="dev-heading">Complete world project</h3><p id="devSceneryNotice" class="dev-note" hidden></p><p class="dev-note">Save or export objects, embedded images, floor patches, collision, foreground brush edits, musician dialogue and character sprite edits, pixel artwork, music facts and linked quiz questions together. Edits are local to this browser until you export and publish them.</p>
     <div class="dev-toolbar"><button id="devSave" type="button">Save project</button><button id="devExport" type="button">Export project JSON</button></div>
     <div class="dev-toolbar"><button id="devImport" type="button">Import project JSON</button><button id="devReset" type="button">Reset project</button></div>
     <input id="devImportFile" type="file" accept="application/json,.json" hidden>
@@ -149,6 +257,11 @@ window.createCodaDeveloperConsole = function (api) {
   const bottom = document.createElement('div');
   bottom.innerHTML = `<div class="dev-toolbar"><button id="devUndo" type="button">↶ Undo</button><button id="devRedo" type="button">↷ Redo</button><button id="devPlaytest" type="button" aria-pressed="false">▶ Playtest</button></div><p class="dev-status" id="devStatus" role="status">Loading saved world project…</p>`;
   panel.append(bottom);
+  // Preserve the same controls and drafts while giving the full-window view
+  // its own scrolling workspace, below the always-visible header and tabs.
+  const content=document.createElement('div');content.className='dev-content';
+  for(const child of [...panel.children])if(child!==head&&child!==nav&&child!==bottom)content.append(child);
+  bottom.before(content);
   if(window.CodaDeveloperTestMode){
     const test=document.createElement('button');test.type='button';test.id='devTestUnlocks';test.textContent=window.CodaDeveloperTestMode.isEnabled()?'Exit test mode':'Test all unlocks';
     test.title='Try level 50 rewards in a temporary game. Your real player and world edits stay unchanged.';
@@ -163,10 +276,109 @@ window.createCodaDeveloperConsole = function (api) {
   const collision = window.createCodaCollisionEditor({W,H,cell:api.cell,gridWidth:api.gridWidth,gridHeight:api.gridHeight,navGrid:api.navGrid,baseGrid:api.baseGrid,toWorld:api.toWorld,invalidateRoutes:api.invalidateRoutes});
   let collisionBefore;
   collision.mount($('devCollisionTools'),{beforeChange:()=>{collisionBefore=snapshot();},afterChange:()=>{api.record(collisionBefore);}});
+  if(window.CodaWorldCharacterEditor&&api.getEditorCharacters){
+    const characterHost=document.createElement('section');characterHost.className='dev-characters';catalogUI.after(characterHost);
+    characterEditor=window.CodaWorldCharacterEditor.create({host:characterHost,canvas:c,width:W,height:H,toWorld:api.toWorld,
+      getData:()=>clone(characters),getStates:api.getEditorCharacters,canEdit:()=>canEditArtwork()&&tab==='objects',focusWorld:api.focusWorld,
+      onSelect:()=>{studio.selected=null;api.refresh();refresh();},onStatus:message,
+      setData:next=>{if(!canEditArtwork()||!window.CodaWorldCharacterEditor.validate(next,W,H))return false;const before=snapshot();characters=clone(next);changed(before);return true;},
+      editPixels:id=>{open('artwork');artworkEditor?.selectTarget('character.'+id+'.down');}});
+  }
+  const orderTools=document.createElement('section');orderTools.className='dev-order';
+  const transformTools=document.createElement('div');transformTools.className='dev-toolbar dev-transform-tools';transformTools.setAttribute('role','group');transformTools.setAttribute('aria-label','Asset flip and rotation');
+  transformTools.innerHTML='<button id="devAssetFlipX" type="button" aria-pressed="false">Flip horizontal</button><button id="devAssetFlipY" type="button" aria-pressed="false">Flip vertical</button><button id="devAssetRotateLeft" type="button">Rotate left 90°</button><button id="devAssetRotateRight" type="button">Rotate right 90°</button>';
+  $('assetSelection').querySelector('.studioGrid').after(transformTools);
+  for(const [id,key]of [['devAssetFlipX','flipX'],['devAssetFlipY','flipY']])$(id).onclick=()=>{if(canEditArtwork()&&tab==='objects')editSelected(a=>{if(a[key]===true)delete a[key];else a[key]=true;});};
+  for(const [id,degrees]of [['devAssetRotateLeft',-90],['devAssetRotateRight',90]])$(id).onclick=()=>{if(canEditArtwork()&&tab==='objects')editSelected(a=>{a.rotation=((a.rotation+degrees+180)%360+360)%360-180;});};
+  orderTools.innerHTML='<h3 class="dev-heading">Asset order</h3><label class="studioCheck"><input id="devIgnoreBackgroundMasks" type="checkbox">Draw in front of background masks</label><p class="studioTip">Keep this asset at its chosen depth where Send to background masks overlap.</p><label class="studioField">Depth offset (px)<input id="devAssetDepth" type="number" step="1"></label><p class="studioTip">Actor depth uses the bottom edge plus this offset. Higher depth appears in front.</p><label class="studioField">Arrange relative to<select id="devOrderTarget" aria-label="Arrange relative to"></select></label><div class="dev-toolbar"><button id="devOrderBehind" type="button">Place behind</button><button id="devOrderInFront" type="button">Place in front</button></div>';
+  $('assetSelection').append(orderTools);$('devAssetDepth').min=-H;$('devAssetDepth').max=H;
+  const floodControls=document.createElement('section');floodControls.id='devFloodSettings';floodControls.hidden=true;
+  floodControls.innerHTML='<h3 class="dev-heading">DJ floodlights</h3><label class="studioCheck"><input id="devFloodEnabled" type="checkbox">Lights enabled</label><label class="studioField">Color cycle speed<input id="devFloodSpeed" type="number" min="0" max="4" step="0.1"></label><label class="studioField">Brightness %<input id="devFloodIntensity" type="number" min="0" max="100" step="1"></label><label class="studioField">Beam length (px)<input id="devFloodLength" type="number" min="20" max="500" step="5"></label><p class="studioTip">Move, resize, rotate or duplicate this rig like any image. Set speed to 0 to pause the color cycle. Visual effects Off hides its live lights.</p>';
+  $('assetSelection').append(floodControls);
+  for(const [id,key,min,max]of [['devFloodSpeed','speed',0,4],['devFloodIntensity','intensity',0,100],['devFloodLength','beamLength',20,500]])$(id).onchange=e=>{if(canEditArtwork()&&tab==='objects')editSelected(a=>{if(a.floodLights)a.floodLights[key]=api.bound(e.target.value,min,max,a.floodLights[key]);});};
+  $('devFloodEnabled').onchange=e=>{if(canEditArtwork()&&tab==='objects')editSelected(a=>{if(a.floodLights)a.floodLights.enabled=e.target.checked;});};
+  function arrangeSelected(inFront){
+    if(!canEditArtwork())return;finishGesture();const a=api.selected(),value=$('devOrderTarget').value;if(!a||!value)return;
+    const key=value.startsWith('character.')?value:'asset.'+value,step=inFront?1:-1;
+    const entries=(api.getSceneOrderEntries?.(key)||[]).filter(entry=>entry.key!=='asset.'+a.id),target=entries.find(entry=>entry.key===key);
+    if(!target)return;let patch;
+    if(target.layer==='world'){
+      const offset=target.depth+step-(a.y+a.h/2);
+      if(Math.abs(offset)>H){message('The required depth exceeds this map. Choose a Background or Foreground layer.');return;}
+      patch={layer:'world',depthOffset:offset};
+    }else{
+      const peers=entries.filter(entry=>entry.layer===target.layer),index=peers.findIndex(entry=>entry.key===key);
+      const order=betweenOrder(peers,index,step);
+      if(Math.abs(order)>1000000){message('The layer order limit has been reached.');return;}
+      patch={layer:target.layer,layerOrder:order};
+    }
+    const before=snapshot();Object.assign(a,patch);changed(before);message('Updated asset order. Undo is available.');
+  }
+  $('devOrderBehind').onclick=()=>arrangeSelected(false);$('devOrderInFront').onclick=()=>arrangeSelected(true);
+  $('devIgnoreBackgroundMasks').onchange=e=>{if(!canEditArtwork()||tab!=='objects')return;editSelected(a=>{if(e.target.checked)a.ignoreBackgroundMasks=true;else delete a.ignoreBackgroundMasks;});};
+  $('devAssetDepth').onchange=e=>{if(canEditArtwork())editSelected(a=>{a.depthOffset=api.bound(e.target.value,-H,H,0);});};
+  function orderSelection(){
+    const asset=api.selected();if(asset)return {key:'asset.'+asset.id,kind:'asset',id:asset.id,name:asset.name,layer:asset.layer,bottom:asset.y+asset.h/2,asset};
+    const id=characterEditor?.getSelected(),person=api.getEditorCharacters?.().find(person=>person.id===id);
+    return person?{key:'character.'+id,kind:'character',id,name:person.name,layer:person.layer,bottom:person.y}:null;
+  }
+  function betweenOrder(entries,index,step){
+    const target=entries[index],next=entries[index+step],value=target.order;
+    return next&&step*(next.order-value)>0?(value+next.order)/2:value+step;
+  }
+  function orderLayerEdge(selection,layer,step,entries){
+    const peers=entries.filter(entry=>entry.layer===layer&&entry.key!==selection.key);
+    if(layer==='world'){
+      const depths=peers.map(entry=>entry.depth),edge=depths.length?(step>0?Math.min(...depths)-1:Math.max(...depths)+1):selection.bottom;
+      return {layer,depthOffset:Math.max(-H,Math.min(H,edge-selection.bottom))};
+    }
+    const orders=peers.map(entry=>entry.order);return {layer,layerOrder:orders.length?(step>0?Math.min(...orders)-1:Math.max(...orders)+1):0};
+  }
+  function moveSelectionOrder(step){
+    if(![-1,1].includes(step)||!canEditArtwork()||tab!=='objects')return false;
+    finishGesture();const selected=orderSelection();if(!selected)return false;
+    const entries=api.getSceneOrderEntries?.(selected.key)||[],index=entries.findIndex(entry=>entry.key===selected.key),target=entries[index+step];
+    const layers=['back','world','front'],rank=layers.indexOf(selected.layer);let patch;
+    if(index>=0&&target?.layer===selected.layer){
+      if(selected.layer==='world'){
+        const next=entries[index+step*2],depth=target.depth+(next?.layer==='world'&&step*(next.depth-target.depth)>0?Math.min(1,Math.abs(next.depth-target.depth)/2):1)*step;
+        const offset=depth-selected.bottom;
+        patch=Math.abs(offset)<=H?{layer:'world',depthOffset:offset}:orderLayerEdge(selected,layers[rank+step],step,entries);
+      }else patch={layer:selected.layer,layerOrder:betweenOrder(entries,index+step,step)};
+    }else if(rank+step>=0&&rank+step<layers.length)patch=orderLayerEdge(selected,layers[rank+step],step,entries);
+    if(!patch){message('The selection is already at the '+(step>0?'front.':'back.'));return false;}
+    if(patch.layerOrder!==undefined&&Math.abs(patch.layerOrder)>1000000){message('The layer order limit has been reached.');return false;}
+    const before=snapshot();if(selected.kind==='asset')Object.assign(selected.asset,patch);else characters[selected.id]={...(characters[selected.id]||{}),...patch};
+    changed(before);message((step>0?'Brought forward: ':'Sent back: ')+selected.name+'. Undo is available.');return true;
+  }
+  $('assetBack').onclick=()=>moveSelectionOrder(-1);$('assetFront').onclick=()=>moveSelectionOrder(1);
 
   function pane(name, html) { const el=document.createElement('section'); el.id='dev-'+name; el.className='dev-pane'; el.hidden=true; el.setAttribute('role','tabpanel');el.setAttribute('aria-labelledby','devTab-'+name);el.innerHTML=html; panel.append(el); return el; }
   function message(text) { $('devStatus').textContent=text; }
-  function snapshot() { const rooms=api.getRooms?.();return JSON.stringify({assets:studio.assets,collision:collision.get(),strokes:layer.actions,...(Object.keys(dialogue).length?{dialogue}:{}),...(Object.keys(sprites).length?{sprites}:{}),...(Object.keys(artwork).length?{artwork}:{}),...(rooms&&Object.keys(rooms).length?{rooms}:{})}); }
+  function childExpanded(){return artworkEditor?.getState().expanded||educationEditor?.getState().expanded;}
+  function setFullscreen(value,focus=true){
+    value=!!value&&studio.active&&!playtest;if(value===fullscreen)return;
+    finishGesture();spaceHeld=false;
+    const scroll=fullscreen?content.scrollTop:panel.scrollTop;
+    fullscreen=value;panel.classList.toggle('dev-fullscreen',value);document.documentElement.classList.toggle('coda-dev-fullscreen',value);
+    dock.hidden=value;fullscreenButton.textContent=value?'Restore window':'Fullscreen';fullscreenButton.setAttribute('aria-pressed',String(value));fullscreenButton.setAttribute('aria-label',value?'Restore developer console window':'Make developer console fullscreen');fullscreenButton.title=value?'Return to the floating console (Escape)':'Fill the browser window with the developer console';
+    if(value){panel.setAttribute('role','dialog');panel.setAttribute('aria-modal','true');panel.scrollTop=0;content.scrollTop=scroll;}
+    else{panel.removeAttribute('role');panel.removeAttribute('aria-modal');content.scrollTop=0;panel.scrollTop=scroll;}
+    if(focus&&!childExpanded()&&!panel.contains(document.activeElement))fullscreenButton.focus({preventScroll:true});
+    refreshCamera();
+  }
+  function fullscreenKey(event){
+    if(!fullscreen||childExpanded())return false;
+    if(event.key==='Escape'){event.preventDefault();event.stopImmediatePropagation();setFullscreen(false);return true;}
+    if(event.key!=='Tab')return false;
+    const targets=[...panel.querySelectorAll('button,input,select,textarea,a[href],summary,[tabindex]')].filter(element=>!element.disabled&&element.tabIndex>=0&&element.getClientRects().length&&getComputedStyle(element).visibility!=='hidden');
+    const first=targets[0],last=targets.at(-1),focused=document.activeElement;
+    if(first&&(!panel.contains(focused)||event.shiftKey&&focused===first||!event.shiftKey&&focused===last)){
+      event.preventDefault();event.stopImmediatePropagation();(event.shiftKey?last:first).focus();return true;
+    }
+    return false;
+  }
+  function snapshot() { const rooms=api.getRooms?.();return JSON.stringify({...(scenery?{scenery}:{}),assets:studio.assets,collision:collision.get(),strokes:layer.actions,...(Object.keys(characters).length?{characters}:{}),...(Object.keys(dialogue).length?{dialogue}:{}),...(Object.keys(sprites).length?{sprites}:{}),...(Object.keys(artwork).length?{artwork}:{}),...(Object.keys(musicHistoryContent.facts).length||Object.keys(musicHistoryContent.quizzes).length||Object.keys(musicHistoryContent.archivedQuizzes||{}).length?{musicHistoryContent}:{}),...(rooms&&Object.keys(rooms).length?{rooms}:{})}); }
   function documentData() { return {format:FORMAT,version:VERSION,world:{width:W,height:H},...JSON.parse(snapshot())}; }
   function changed(before) { api.record(before); }
   function recordRoomChange(id,before) {
@@ -189,7 +401,7 @@ window.createCodaDeveloperConsole = function (api) {
   function recordChange(before) {
     if (before !== snapshot()) { studio.undo.push(before); if(studio.undo.length>40)studio.undo.shift();studio.redo=[];projectSource='local'; }
     let layersChanged=true;
-    try {const previous=JSON.parse(before);layersChanged=JSON.stringify(previous.strokes)!==JSON.stringify(layer.actions)||JSON.stringify(previous.artwork||{})!==JSON.stringify(artwork);}catch{}
+    try {const previous=JSON.parse(before);layersChanged=previous.scenery!==scenery||JSON.stringify(previous.strokes)!==JSON.stringify(layer.actions)||JSON.stringify(previous.artwork||{})!==JSON.stringify(artwork);}catch{}
     studio.dirty=true; invalidate(layersChanged); api.refresh(); refresh(); scheduleSave();
   }
   function undoRedo(undo) {
@@ -199,35 +411,44 @@ window.createCodaDeveloperConsole = function (api) {
     studio.dirty=true; scheduleSave(); message(undo?'Undid last edit.':'Redid last edit.');
   }
   function applyState(data,options={}) {
-    pixelEditor?.cancelGesture?.();artworkEditor?.cancelGesture?.();
-    artwork=clone(data.artwork||{});
+    pixelEditor?.cancelGesture?.();artworkEditor?.cancelGesture?.();characterEditor?.cancelGesture();layerSelection?.cancel();
+    if(scenery!==data.scenery){
+      scenery=data.scenery;pictures.clear();maskedLayers=new WeakMap();baseCache=null;baseKey='';cleanupCache=null;layerMaskSource=null;layerMaskTint=null;layerMaskKey='';
+      api.onSceneryChange?.(scenery);
+    }
+    artwork=clone(data.artwork||{});characters=clone(data.characters||{});
+    musicHistoryContent=window.CodaMusicHistoryContent?.normalize(data.musicHistoryContent||emptyHistoryContent())||emptyHistoryContent();
     dialogue=clone(data.dialogue||{});sprites=clone(data.sprites||{});api.renderer?.setPixelEdits?.(sprites);
     if(data.rooms!==undefined||options.clearRooms)api.applyRooms?.(clone(data.rooms||{}),{published:options.published===true});
     studio.assets=clone(data.assets); layer.actions=clone(data.strokes); layer.redo=[]; layer.drawing=null; layer.dirty=true;
     collision.apply(data.collision); studio.nextId=Math.max(1,...studio.assets.map(a=>Number(a.id.match(/^asset-(\d+)$/)?.[1]||0)+1));
-    if(!studio.assets.some(a=>a.id===studio.selected))studio.selected=studio.assets.at(-1)?.id||null;
+    if(!studio.assets.some(a=>a.id===studio.selected))studio.selected=characterEditor?.getSelected()?null:studio.assets.at(-1)?.id||null;
     invalidate(); api.refresh(); refresh();
   }
   function setTab(name) {
     name=name==='sprites'?'pixels':TABS.includes(name)?name:'objects';
     if(name!=='education'||!studio.active||playtest)educationEditor?.setActive(false);
+    if(tab==='history'&&(name!=='history'||!studio.active||playtest))releaseHistory();if(name==='history')historyNeedsRender=true;
     finishGesture();if(name!==tab){if(tab==='pixels')pixelEditor?.cancelGesture();artworkEditor?.cancelPaste?.(false);artworkEditor?.setExpanded(false);} tab=name; pickSample=false; studio.capturing=null;
     if(name==='collision')collisionOverlay=true;if(name==='layers')layerOverlay=true;
     for(const name of TABS) { $('dev-'+name).hidden=name!==tab; $('devTab-'+name).setAttribute('aria-selected',String(name===tab)); }
     layer.active=studio.active&&tab==='layers'&&!playtest;if(layer.active)api.showForeground?.(); layer.preview=false;
     collision.setActive(studio.active&&tab==='collision'&&!playtest);
     studio.showGuides=tab==='objects'&&!playtest&&$('assetGuides').checked;
-    c.classList.toggle('layer-editing',layer.active);panel.scrollTop=0; refreshCamera();refresh();
+    c.classList.toggle('layer-editing',layer.active);panel.scrollTop=0;content.scrollTop=0; refreshCamera();refresh();
     if(tab==='artwork'&&studio.active&&!playtest)artworkEditor?.setExpanded(true);
     if(tab==='education'&&studio.active&&!playtest){mountEducation();educationEditor?.setActive(true);educationEditor?.setExpanded(true);}
   }
-  function open(name='objects') { api.toggle(true); setTab(name); if(!artworkEditor?.getState().expanded&&!educationEditor?.getState().expanded)c.focus({preventScroll:true}); }
+  function open(name='objects') { api.toggle(true); setTab(name); if(!childExpanded())(fullscreen?fullscreenButton:c).focus({preventScroll:true}); }
   function onToggle() {
-    if(!studio.active) { pixelEditor?.cancelGesture();artworkEditor?.cancelPaste?.(false);artworkEditor?.setExpanded(false); spaceHeld=false; playtest=false; panel.classList.remove('dev-playtest'); $('devPlaytest').textContent='▶ Playtest'; $('devPlaytest').setAttribute('aria-pressed','false'); }
+    if(!studio.active) { releaseHistory();pixelEditor?.cancelGesture();artworkEditor?.cancelPaste?.(false);artworkEditor?.setExpanded(false);setFullscreen(false,false); spaceHeld=false; playtest=false; panel.classList.remove('dev-playtest'); $('devPlaytest').textContent='▶ Playtest'; $('devPlaytest').setAttribute('aria-pressed','false'); }
+    fullscreenButton.disabled=playtest;
     setTab(tab); if(studio.active)message(loadFailed&&loadError?loadError:'Developer console active. Changes save locally; export a project backup.'+(publishedError?' '+publishedError:''));
   }
   function togglePlaytest() {
+    if(!playtest)setFullscreen(false);
     finishGesture();pixelEditor?.cancelGesture();artworkEditor?.cancelPaste?.(false);if(!playtest)artworkEditor?.setExpanded(false); spaceHeld=false; playtest=!playtest; panel.classList.toggle('dev-playtest',playtest); $('devPlaytest').setAttribute('aria-pressed',String(playtest)); $('devPlaytest').textContent=playtest?'■ Stop playtest':'▶ Playtest';
+    fullscreenButton.disabled=playtest;
     api.invalidateRoutes(); setTab(tab); message(playtest?'Playtest: WASD or click the world to walk. Stop playtest to continue editing.':'Editing resumed.'); c.focus();
   }
   function defaultSample(bounds) {
@@ -240,7 +461,20 @@ window.createCodaDeveloperConsole = function (api) {
     return [Math.min(W-16,Math.max(0,x)),Math.min(H-16,y+h+8)];
   }
   function sourcePicture(origin) {
-    const key=JSON.stringify([origin.name,origin.bounds]); if(pictures.has(key))return pictures.get(key);
+    if(!refreshedScenery()&&catalog.find(part=>part.name===origin.name)?.type==='wall-fixture')return null;
+    const key=JSON.stringify([scenery||'legacy',origin.name,origin.bounds]); if(pictures.has(key))return pictures.get(key);
+    if(refreshedScenery()){
+      const environment=api.environmentArt;
+      if(/^region-/.test(origin.name)){
+        if(!environmentReady())return null;
+        const [x,y,width,height]=origin.bounds,background=artworkTools?.compose('background.world',environment.background())||environment.background();
+        const region=makeCanvas(width,height);region.getContext('2d').drawImage(background,x,y,width,height,0,0,width,height);pictures.set(key,region);return region;
+      }
+      const part=catalog.find(p=>p.name===origin.name);
+      const refreshed=environment?.object?.(origin.name)||part&&['wall','wall-mask'].includes(part.type)&&environment?.structural?.(part);
+      if(refreshed){pictures.set(key,refreshed);return refreshed;}
+      if(environment?.has?.(origin.name))return null;
+    }
     const native=api.getObjectPicture?.(origin.name);if(native){pictures.set(key,native);return native;}
     // PNG headers expose naturalWidth before loading and pixel decoding finish.
     if(!worldArt.complete||!worldArt.naturalWidth||!foregroundArt.complete||!foregroundArt.naturalWidth)return null;
@@ -269,19 +503,21 @@ window.createCodaDeveloperConsole = function (api) {
   worldArt.addEventListener('load',catalogPreview);
   foregroundArt.addEventListener('load',catalogPreview);
   function lift(origin, focus=true) {
+    if(!refreshedScenery()&&catalog.find(part=>part.name===origin.name)?.type==='wall-fixture'){message('Separate wall decorations belong to the refreshed arcade scenery. Export your current project before resetting to that scenery.');return null;}
     const existing=studio.assets.find(a=>a.origin?.name===origin.name);
     if(existing) { studio.selected=existing.id;api.refresh();refresh();message('Selected '+existing.name);return existing; }
     const a=makeOriginalAsset(origin);
-    if(api.add(a)) { if(focus)api.focusWorld(a.x,a.y);refresh();message('Original object lifted. Tune the floor sample if its old position needs cleanup.');return a; }
+    if(api.add(a)) { if(focus)api.focusWorld(a.x,a.y);refresh();message(refreshedScenery()?(/^region-/.test(origin.name)?'Copied background artwork. The complete room background stays underneath.':'Original object lifted. Its previous position reveals the finished room background.'):'Original object lifted. Tune the floor sample if its old position needs cleanup.');return a; }
   }
   function makeOriginalAsset(origin){
     const part=catalog.find(p=>p.name===origin.name);
     const [x,y,w,h]=origin.bounds,a=api.prototype(part?.label || origin.name.replaceAll('_',' '),'builtin');
     a.ref='foreground'; a.crop=[0,0,w,h]; a.origin={...origin,sample:defaultSample(origin.bounds)};
-    a.x=x+w/2;a.y=y+h/2;a.w=w;a.h=h;a.anim='none';a.depthOffset=(part?.sortY??y+h)-(y+h);a.layer=part?.layer || 'world';
+    a.x=x+w/2;a.y=y+h/2;a.w=w;a.h=h;a.anim='none';a.depthOffset=((part?api.depthForPart?.(part):undefined)??part?.sortY??(y+h))-(y+h);a.layer=part?.layer || 'world';
     if(part?.sample)a.origin.sample=part.sample.slice();
     if(part?.collision){const [cx,cy,cw,ch]=part.collision;a.releaseCollision=true;a.collider={x:(cx-a.x)/w*100,y:(cy-a.y)/h*100,w:cw/w*100,h:ch/h*100};}
     if(part?.ballIndex!==undefined){a.discoSpin=part.spin;a.discoRays=true;}
+    if(part?.type==='wall-fixture')a.wallFixture=part.name;
     return a;
   }
   function suppressOriginal(name) { return studio.assets.some(a=>a.origin?.name===name); }
@@ -302,13 +538,22 @@ window.createCodaDeveloperConsole = function (api) {
   function drawUnliftedPixels(g, image, x, y) {g.drawImage(unliftedPicture(image,x,y),x,y);}
   function cabinetDisplaced(a) {
     const [x,y,w,h]=a.origin.bounds;
-    return !a.visible||a.opacity<100||a.anim!=='none'||a.x!==x+w/2||a.y!==y+h/2||a.w!==w||a.h!==h||a.rotation!==0;
+    return !a.visible||a.opacity<100||a.anim!=='none'||a.x!==x+w/2||a.y!==y+h/2||a.w!==w||a.h!==h||a.rotation!==0||a.flipX===true||a.flipY===true;
   }
   function cabinetFloor(a,repair) {
     const bounds=a.origin.bounds,bottom=cabinetDisplaced(a)?repair.reflectionBottom:bounds[1]+bounds[3];
     return arcadeFloor.cabinet(bounds,bottom);
   }
   function renderBase(g) {
+    if(refreshedScenery()){
+      if(!environmentReady())return;
+      baseCache=api.environmentArt.background();baseKey='environment-v1';cleanupCache=null;
+      // Reviewed deleted structure reveals glass behind the raw alpha cutout.
+      // Keep that cutout transparent in foreground fragments so actors stay visible.
+      pathwayFloorFill?.draw(g,baseCache);
+      const composed=artworkTools?.compose('background.world',baseCache)||baseCache;
+      g.drawImage(composed,0,0,W,H);wallReflections?.draw(g,composed);return;
+    }
     if(!worldArt.complete||!worldArt.naturalWidth)return;
     if(arcadeFloor?.isReady&&!arcadeFloor.isReady()){g.drawImage(worldArt,0,0,W,H);return;}
     const originals=studio.assets.filter(a=>a.origin&&!catalog.find(part=>part.name===a.origin.name)?.procedural);
@@ -353,7 +598,7 @@ window.createCodaDeveloperConsole = function (api) {
     }
     g.drawImage(artworkTools?.compose('background.world',baseCache)||baseCache,0,0);
   }
-  function renderCleanup(g) {if(cleanupCache&&studio.assets.some(a=>a.origin))g.drawImage(artworkTools?.fragment(cleanupCache,0,0)||cleanupCache,0,0);}
+  function renderCleanup(g) {if(!refreshedScenery()&&cleanupCache&&studio.assets.some(a=>a.origin))g.drawImage(artworkTools?.fragment(cleanupCache,0,0)||cleanupCache,0,0);}
   function validateOrigin(o) {
     if(!o||typeof o.name!=='string'||!Array.isArray(o.bounds)||o.bounds.length!==4||!o.bounds.every(Number.isInteger))return false;
     const [x,y,w,h]=o.bounds;if(x<0||y<0||w<3||h<3||x+w>W||y+h>H)return false;
@@ -363,17 +608,22 @@ window.createCodaDeveloperConsole = function (api) {
     return Array.isArray(o.sample)&&o.sample.length===2&&o.sample.every(Number.isInteger)&&o.sample[0]>=0&&o.sample[0]<=W-16&&o.sample[1]>=0&&o.sample[1]<=H-16;
   }
   function validateAssetExtension(a) {
+    if(a.wallFixture!==undefined&&!window.CodaWallFixtures?.has(a.wallFixture))return false;
     if(a.artwork!==undefined&&!window.CodaArtworkEditor?.validateTexture(a.artwork))return false;
     if(a.origin!==undefined&&!validateOrigin(a.origin))return false;
     if(a.releaseCollision!==undefined&&typeof a.releaseCollision!=='boolean')return false;
     if(a.discoSpin!==undefined&&(!Number.isFinite(a.discoSpin)||a.discoSpin<0||a.discoSpin>4))return false;
     if(a.discoRays!==undefined&&typeof a.discoRays!=='boolean')return false;
     if(a.depthOffset!==undefined&&(!Number.isFinite(a.depthOffset)||Math.abs(a.depthOffset)>H))return false;
+    if(a.ignoreBackgroundMasks!==undefined&&typeof a.ignoreBackgroundMasks!=='boolean')return false;
+    if(a.flipX!==undefined&&typeof a.flipX!=='boolean'||a.flipY!==undefined&&typeof a.flipY!=='boolean')return false;
+    if(a.floodLights!==undefined&&(a.kind!=='image'||window.CodaDJFloodlights?.validate(a.floodLights)!==true))return false;
+    if(a.layerOrder!==undefined&&(!Number.isFinite(a.layerOrder)||Math.abs(a.layerOrder)>1000000))return false;
     if(a.collider!==undefined) { const b=a.collider;if(!b||!['x','y','w','h'].every(k=>Number.isFinite(b[k])))return false;if(b.x< -100||b.x>100||b.y< -100||b.y>100||b.w<1||b.w>200||b.h<1||b.h>200)return false; }
     return true;
   }
   function validate(data) {
-    return data?.format===FORMAT&&data.version===VERSION&&data.world?.width===W&&data.world?.height===H&&Array.isArray(data.assets)&&data.assets.length<=api.maxAssets&&data.assets.every(a=>api.validAsset(a)&&validateAssetExtension(a))&&new Set(data.assets.map(a=>a.id)).size===data.assets.length&&new Set(data.assets.filter(a=>a.origin).map(a=>a.origin.name)).size===data.assets.filter(a=>a.origin).length&&collision.validate(data.collision)&&Array.isArray(data.strokes)&&data.strokes.length<=1000&&data.strokes.every(api.validStroke)&&(data.dialogue===undefined||window.CodaDialogueEditor?.validate(data.dialogue,dialogueDefaults))&&(data.sprites===undefined||window.CodaPixelEditor?.validate(data.sprites))&&(data.rooms===undefined||api.validateRooms?.(data.rooms)===true)&&(data.artwork===undefined||validateArtwork(data.artwork));
+    return data?.format===FORMAT&&data.version===VERSION&&(data.scenery===undefined||data.scenery==='environment-v1')&&data.world?.width===W&&data.world?.height===H&&Array.isArray(data.assets)&&data.assets.length<=api.maxAssets&&data.assets.every(a=>api.validAsset(a)&&validateAssetExtension(a))&&new Set(data.assets.map(a=>a.id)).size===data.assets.length&&new Set(data.assets.filter(a=>a.origin).map(a=>a.origin.name)).size===data.assets.filter(a=>a.origin).length&&collision.validate(data.collision)&&Array.isArray(data.strokes)&&data.strokes.length<=1000&&data.strokes.every(api.validStroke)&&(data.characters===undefined||window.CodaWorldCharacterEditor?.validate(data.characters,W,H)===true)&&(data.dialogue===undefined||window.CodaDialogueEditor?.validate(data.dialogue,dialogueDefaults))&&(data.sprites===undefined||window.CodaPixelEditor?.validate(data.sprites))&&(data.rooms===undefined||api.validateRooms?.(data.rooms)===true)&&(data.artwork===undefined||validateArtwork(data.artwork))&&(data.musicHistoryContent===undefined||window.CodaMusicHistoryContent?.validate(data.musicHistoryContent)===true);
   }
   function validateArtwork(data){
     if(!window.CodaArtworkEditor?.validate(data))return false;
@@ -390,7 +640,7 @@ window.createCodaDeveloperConsole = function (api) {
       const b=a.collider, angle=a.rotation*Math.PI/180, cs=Math.cos(angle), sn=Math.sin(angle);
       const absC=Math.abs(cs), absS=Math.abs(sn);
       const halfW=b.w*a.w/200, halfH=b.h*a.h/200;
-      const localX=(b.x+b.w/2)*a.w/100, localY=(b.y+b.h/2)*a.h/100;
+      const localX=(b.x+b.w/2)*a.w/100*(a.flipX===true?-1:1), localY=(b.y+b.h/2)*a.h/100*(a.flipY===true?-1:1);
       const centerX=a.x+localX*cs-localY*sn, centerY=a.y+localX*sn+localY*cs;
       const extentX=absC*halfW+absS*halfH, extentY=absS*halfW+absC*halfH;
       const minX=Math.max(0,Math.floor((centerX-extentX)/api.cell));
@@ -451,6 +701,15 @@ window.createCodaDeveloperConsole = function (api) {
     return localValue&&(!databaseValue||(localValue.savedAt||0)>(databaseValue.savedAt||0))?localValue:databaseValue;
   }
   async function decodeProjectImages(data) {
+    if(data.scenery==='environment-v1'){
+      const environment=api.environmentArt;if(!environment)throw Error('The refreshed environment artwork is unavailable.');
+      if(!floorPaletteCompat&&window.CodaFloorPaletteCompat)floorPaletteCompat=window.CodaFloorPaletteCompat.create({url:api.paletteCompatUrl});
+      if(!pathwayFloorFill&&window.CodaPathwayFloorFill)pathwayFloorFill=window.CodaPathwayFloorFill.create({url:api.pathwayFloorFillUrl,document});
+      await Promise.all([floorPaletteCompat?.ready,pathwayFloorFill?.ready]);
+      await (typeof environment.ready==='function'?environment.ready():environment.ready);
+      const background=environment.background?.();
+      if(!environmentReady()||(background.naturalWidth||background.width)!==W||(background.naturalHeight||background.height)!==H)throw Error('The refreshed environment artwork is unavailable or has incorrect dimensions.');
+    }else await arcadeFloor?.ready?.();
     if(data.artwork?.['background.classroom']){const source=await api.getClassroomArtworkSource?.(),patch=data.artwork['background.classroom'];if(!source||!window.CodaArtworkEditor.validateTexture(patch,source.naturalWidth||source.width,source.naturalHeight||source.height))throw Error('Classroom pixel artwork dimensions do not match its background.');}
     for(const [id,room]of Object.entries(data.rooms||{})){const editor=(api.getArtworkRooms?.()||[]).find(editor=>editor.getArtworkTargets().some(target=>target.id==='background.'+id));if(editor?.validateArtworkProject&&await editor.validateArtworkProject(room)===false)throw Error('Room pixel artwork dimensions do not match its source.');}
     for(const asset of data.assets)if(asset.artwork){const source=await api.getAssetArtworkSource(asset);if(!source||!window.CodaArtworkEditor.validateTexture(asset.artwork,source.naturalWidth||source.width,source.naturalHeight||source.height))throw Error('Asset pixel artwork dimensions do not match its source.');}
@@ -471,41 +730,45 @@ window.createCodaDeveloperConsole = function (api) {
       if(!response.ok)throw Error('HTTP '+response.status);
       const data=await response.json();
       if(!validate(data))throw Error('Unsupported project data');
-      await decodeProjectImages(data);
+      // Metadata can load while an existing local project keeps its own art.
+      // Decode only the chosen project, or on an explicit Reset/import.
       return {project:clone(data),error:null};
     }catch(error){return {project:null,error:'Published layout could not load: '+(error.name==='AbortError'?'request timed out':error.message)+'.'};}
     finally{clearTimeout(timeout);}
   }
   async function load() {
     try {
-      const [publication,data]=await Promise.all([published(),stored(STORE),arcadeFloor?.ready?.()]);
+      const [publication,data]=await Promise.all([published(),stored(STORE)]);
       publishedProject=publication.project;publishedError=publication.error;
       if(data) {
         if(!validate(data))throw Error('Saved project is invalid; it has been preserved. Import a valid backup.');
         await decodeProjectImages(data);applyState(data);projectSource='local';
-        message('Restored complete world project.'+(publication.error?' '+publication.error+' Your saved edits are intact.':''));
+        message('Restored complete world project.'+(publication.error?' '+publication.error+' Your saved edits are intact.':'')+previousSceneryNotice());
       }else {
         const legacy=await stored(api.legacyStore),hasLegacy=legacy&&api.validLegacy(legacy);
         const hasLocalEdits=hasLegacy||studio.assets.length>0||layer.actions.length>0||(api.legacyCollision?.length||0)>0;
         if(hasLocalEdits){
+          await arcadeFloor?.ready?.();
           if(hasLegacy)studio.assets=clone(legacy.assets);
           collision.apply(api.legacyCollision||[]);invalidate();api.refresh();projectSource='legacy';
-          message('Ready. Existing assets, collision and foreground edits preserved.'+(publication.error?' '+publication.error:''));
+          message('Ready. Existing assets, collision and foreground edits preserved.'+(publication.error?' '+publication.error:'')+previousSceneryNotice());
         }else if(publishedProject){
+          await decodeProjectImages(publishedProject);
           applyState(publishedProject,{published:true});projectSource='published';
           message('Loaded the published world layout. New edits save only in this browser.');
         }else{
+          await arcadeFloor?.ready?.();
           collision.apply([]);invalidate();api.refresh();
           loadFailed=!!publication.error;
           loadError=publication.error?publication.error+' Showing the original map; export edits before reloading.':null;
           message(loadError||'Ready. Existing assets, collision and foreground edits preserved.');
         }
       }
-    }catch(err){loadFailed=true;loadError=err.message;message(loadError);}
+    }catch(err){loadFailed=true;loadError=err.message;if(!refreshedScenery())try{await arcadeFloor?.ready?.();}catch{}message(loadError);}
     loading=false;studio.ready=true; refresh();catalogPreview();
   }
   function exportProject() {
-    finishGesture(); const blob=new Blob([JSON.stringify(documentData(),null,2)],{type:'application/json'}),url=URL.createObjectURL(blob),link=document.createElement('a');link.href=url;link.download='coda-world-project.json';link.click();setTimeout(()=>URL.revokeObjectURL(url),5000);message('Exported the complete world, artwork pixels, musician dialogue and character sprite edits.');
+    finishGesture(); const blob=new Blob([JSON.stringify(documentData(),null,2)],{type:'application/json'}),url=URL.createObjectURL(blob),link=document.createElement('a');link.href=url;link.download='coda-world-project.json';link.click();setTimeout(()=>URL.revokeObjectURL(url),5000);message('Exported the complete world, artwork pixels, musician dialogue, music facts, quiz questions and character sprite edits.');
   }
   async function importFile(file) {
     if(!file)return;
@@ -519,11 +782,31 @@ window.createCodaDeveloperConsole = function (api) {
     }catch(err){message('Import failed: '+err.message);}
   }
   function refresh() {
+    syncLayerSelection();
+    decorLibrary?.refresh();floodButton.disabled=floodAdding||!canEditArtwork()||tab!=='objects';notesRugButton.disabled=notesRugAdding||!canEditArtwork()||tab!=='objects';
+    if(api.selected()&&characterEditor?.getSelected())characterEditor.clearSelection();characterEditor?.refresh();
+    const orderSelected=orderSelection();selectionOrder.hidden=!studio.active||playtest||tab!=='objects';
+    $('devOrderSelection').textContent=orderSelected?'Selected: '+orderSelected.name+' · '+({back:'Background',world:'Actor depth',front:'Foreground'}[orderSelected.layer]):'Select an object or NPC';
+    $('assetBack').disabled=$('assetFront').disabled=!orderSelected||!canEditArtwork()||tab!=='objects';
+    const sceneryNotice=previousSceneryNotice().trim();$('devSceneryNotice').textContent=sceneryNotice;$('devSceneryNotice').hidden=!sceneryNotice;
+    $('devLiftRegion').textContent=refreshedScenery()?'Copy background region':'Lift a region';$('devLegacyRepair').hidden=refreshedScenery();extra.querySelector('summary').textContent=refreshedScenery()?'Artwork & collision':'Artwork, source patch & collision';
+    $('devSourceTip').textContent=refreshedScenery()?'This scene has a complete background beneath its props. Moving a prop reveals that finished artwork.':'The room is a flattened PNG. A clone patch covers the old silhouette. Pick a clean floor sample to improve the patch; hidden artwork cannot be recovered automatically.';
     dialogueEditor?.refresh();pixelEditor?.refresh();if(tab==='artwork')artworkEditor?.refresh();
     if(tab==='education'&&studio.active&&!playtest)educationEditor?.refresh();
+    mountMusicFacts();musicFactsEditor?.refresh();
+    mountHistory();
     for(const [id,shown,label]of [['devShowCollision',collisionOverlay,'collision'],['devShowLayers',layerOverlay,'layers']]){$(id).setAttribute('aria-pressed',String(shown));$(id).textContent=(shown?'Hide ':'Show ')+label;$(id).disabled=playtest;}
     $('devOverlayLegend').hidden=playtest||!collisionOverlay&&!layerOverlay;$('devMasks').checked=layerOverlay;layer.maskView=layerOverlay;$('devMasks').disabled=playtest;
     const a=api.selected(); $('devUndo').disabled=!studio.undo.length;$('devRedo').disabled=!studio.redo.length;
+    for(const [id,key]of [['devAssetFlipX','flipX'],['devAssetFlipY','flipY']]){$(id).setAttribute('aria-pressed',String(a?.[key]===true));$(id).disabled=!a||!canEditArtwork();}
+    for(const id of ['devAssetRotateLeft','devAssetRotateRight'])$(id).disabled=!a||!canEditArtwork();
+    floodControls.hidden=!a?.floodLights;if(a?.floodLights){$('devFloodEnabled').checked=a.floodLights.enabled;for(const [id,key]of [['devFloodSpeed','speed'],['devFloodIntensity','intensity'],['devFloodLength','beamLength']])$(id).value=a.floodLights[key];}
+    $('devIgnoreBackgroundMasks').checked=a?.ignoreBackgroundMasks===true;$('devIgnoreBackgroundMasks').disabled=!a||!canEditArtwork();
+    $('devAssetDepth').value=a?.depthOffset||0;$('devAssetDepth').disabled=!a||a.layer!=='world';
+    const orderValue=$('devOrderTarget').value,orderChoices=studio.assets.filter(asset=>asset.id!==a?.id).map(asset=>[asset.id,asset.name]);
+    for(const person of api.getEditorCharacters?.()||[])orderChoices.push(['character.'+person.id,person.name]);
+    const orderKey=JSON.stringify(orderChoices);if($('devOrderTarget').dataset.choices!==orderKey){$('devOrderTarget').replaceChildren(...orderChoices.map(([id,name])=>new Option(name,id)));$('devOrderTarget').dataset.choices=orderKey;if(orderChoices.some(([id])=>id===orderValue))$('devOrderTarget').value=orderValue;}
+    $('devOrderBehind').disabled=$('devOrderInFront').disabled=!a||!orderChoices.length;
     const part=catalog.find(p=>p.name===a?.origin?.name);$('devDisco').hidden=part?.ballIndex===undefined;
     if(part?.ballIndex!==undefined){$('devDiscoSpin').value=a.discoSpin??part.spin;$('devDiscoRays').checked=a.discoRays!==false;}
     $('devSource').hidden=!a?.origin;$('devRestore').disabled=!a?.origin;
@@ -532,7 +815,7 @@ window.createCodaDeveloperConsole = function (api) {
     if(a?.collider)for(const [field,key]of [['X','x'],['Y','y'],['W','w'],['H','h']])$('devCol'+field).value=a.collider[key];
   }
   function editSelected(fn) {const a=api.selected();if(!a)return;const before=snapshot();fn(a);changed(before);api.refresh();refresh();}
-  function finishGesture() {artworkEditor?.finishGesture();
+  function finishGesture(options={}) {artworkEditor?.finishGesture();if(!options.preserveLayerSelection)layerSelection?.cancel();characterEditor?.finishGesture();
     pixelEditor?.finishGesture?.();
     endPan();
     if(studio.drag||studio.capturing?.start)api.assetPointerEnd();
@@ -547,11 +830,17 @@ window.createCodaDeveloperConsole = function (api) {
     if(!studio.active||playtest)return false;
     if(loading){message('Wait for the saved project to load.');return true;}
     if(pan)return true;
-    if(e.button===1||e.button===2||e.button===0&&(panTool||spaceHeld)){finishGesture();e.preventDefault();c.focus({preventScroll:true});pan={x:e.clientX,y:e.clientY,id:e.pointerId};try{c.setPointerCapture(e.pointerId);}catch{}refreshCamera();return true;}
+    if(e.button===1||e.button===2||e.button===0&&(panTool||spaceHeld)){finishGesture({preserveLayerSelection:tab==='layers'&&layerSelecting});e.preventDefault();c.focus({preventScroll:true});pan={x:e.clientX,y:e.clientY,id:e.pointerId};try{c.setPointerCapture(e.pointerId);}catch{}refreshCamera();return true;}
     if(tab==='collision')return collision.pointerDown(e);
-    if(tab==='layers'){strokeBefore=snapshot();api.layerPointerDown(e);return true;}
+    if(tab==='layers'){
+      if(layerSelecting){if(e.button===0){e.preventDefault();c.focus({preventScroll:true});const p=api.toWorld(e.clientX,e.clientY);layerSelection?.down([p.x,p.y]);try{c.setPointerCapture(e.pointerId);}catch{}}return true;}
+      strokeBefore=snapshot();api.layerPointerDown(e);return true;
+    }
     if(tab!=='objects')return true;
     const p=api.toWorld(e.clientX,e.clientY);
+    if(api.selected()&&api.nearHandle(api.selected(),p))return false;
+    if(!studio.capturing&&!pickSample&&characterEditor?.pointerDown(e))return true;
+    characterEditor?.clearSelection();
     if(pickSample) {pickSample=false;editSelected(a=>{if(a.origin)a.origin.sample=[Math.max(0,Math.min(W-16,Math.floor(p.x))),Math.max(0,Math.min(H-16,Math.floor(p.y)))];});message('Floor sample updated.');return true;}
     if(studio.capturing?.which==='lift')return false;
     if(!studio.capturing) {
@@ -564,10 +853,12 @@ window.createCodaDeveloperConsole = function (api) {
     }
     return false;
   }
-  function pointerMove(e) {if(!studio.active||playtest)return; if(pan){if(e.pointerId!==pan.id)return;api.panByScreen(pan.x-e.clientX,pan.y-e.clientY);pan.x=e.clientX;pan.y=e.clientY;return;}if(tab==='collision')collision.pointerMove(e);if(tab==='layers')api.layerPointerMove(e);}
-  function pointerEnd(e) {if(pan){if(e&&e.pointerId!==pan.id)return;endPan();return;}if(!studio.active||playtest)return; if(tab==='collision')collision.pointerEnd();if(tab==='layers'&&strokeBefore!==null){api.layerPointerEnd();const before=strokeBefore;strokeBefore=null;changed(before);}}
+  function pointerMove(e) {if(!studio.active||playtest)return; if(pan){if(e.pointerId!==pan.id)return;api.panByScreen(pan.x-e.clientX,pan.y-e.clientY);pan.x=e.clientX;pan.y=e.clientY;return;}if(tab==='collision')collision.pointerMove(e);if(tab==='layers'){if(layerSelecting){const p=api.toWorld(e.clientX,e.clientY);layerSelection?.move([p.x,p.y]);}else api.layerPointerMove(e);}if(tab==='objects')characterEditor?.pointerMove(e);}
+  function pointerEnd(e) {if(pan){if(e&&e.pointerId!==pan.id)return;endPan();return;}if(!studio.active||playtest)return; if(tab==='collision')collision.pointerEnd();if(tab==='objects'){if(e?.type==='pointercancel')characterEditor?.cancelGesture();else characterEditor?.pointerEnd(e);}if(tab==='layers'){if(layerSelecting){if(e?.type==='pointercancel')layerSelection?.cancel();else layerSelection?.end();}else if(strokeBefore!==null){api.layerPointerEnd();const before=strokeBefore;strokeBefore=null;changed(before);}}}
   function drawOverlay(g,cam) {
     if(!studio.active||playtest)return;
+    if(tab==='layers')layerSelection?.draw(g,(cam?.zoom||1)*c.getBoundingClientRect().width/W);
+    if(tab==='objects')characterEditor?.drawOverlay(g,(cam?.zoom||1)*c.getBoundingClientRect().width/W);
     if(layerOverlay){
       g.save();g.fillStyle='#58a9ff1f';g.fillRect(0,0,W,H);
       const source=api.getForegroundMask?.(),maskKey=JSON.stringify(studio.assets.filter(a=>a.origin).map(a=>[a.origin.name,a.origin.bounds]));
@@ -580,14 +871,14 @@ window.createCodaDeveloperConsole = function (api) {
       g.save();for(let y=y0;y<y1;y++){let start=x0;while(start<x1){const value=!!api.navGrid[y*cols+start];let end=start+1;while(end<x1&&!!api.navGrid[y*cols+end]===value)end++;g.fillStyle=value?'#32eba03d':'#fa41643d';g.fillRect(start*cell,y*cell,Math.min(W,end*cell)-start*cell,Math.min(cell,H-y*cell));start=end;}}
       g.lineWidth=1.5/zoom;for(const [index,value]of collision.get()){const x=index%cols*cell,y=Math.floor(index/cols)*cell;if(x+cell<cam.x||y+cell<cam.y||x>(cam.x+W/zoom)||y>(cam.y+H/zoom))continue;g.strokeStyle=value?'#75ffd0':'#ff8094';g.strokeRect(x+.5/zoom,y+.5/zoom,cell-1/zoom,cell-1/zoom);}g.restore();
     }
-    if(tab==='objects'){const a=api.selected();if(a?.collider){const b=a.collider;g.save();g.translate(a.x,a.y);g.rotate(a.rotation*Math.PI/180);g.fillStyle='#ff56764d';g.strokeStyle='#ff8aab';g.lineWidth=2/cam.zoom;g.fillRect(b.x*a.w/100,b.y*a.h/100,b.w*a.w/100,b.h*a.h/100);g.strokeRect(b.x*a.w/100,b.y*a.h/100,b.w*a.w/100,b.h*a.h/100);g.restore();}}
+    if(tab==='objects'){const a=api.selected();if(a?.collider){const b=a.collider;g.save();g.translate(a.x,a.y);g.rotate(a.rotation*Math.PI/180);g.scale(a.flipX===true?-1:1,a.flipY===true?-1:1);g.fillStyle='#ff56764d';g.strokeStyle='#ff8aab';g.lineWidth=2/cam.zoom;g.fillRect(b.x*a.w/100,b.y*a.h/100,b.w*a.w/100,b.h*a.h/100);g.strokeRect(b.x*a.w/100,b.y*a.h/100,b.w*a.w/100,b.h*a.h/100);g.restore();}}
   }
   function liftedRegion(bounds) { return lift({name:'region-'+Date.now().toString(36)+'-'+Math.random().toString(36).slice(2,8),bounds}); }
   for(const name of TABS)$('devTab-'+name).onclick=()=>setTab(name);
   $('devCatalog').onchange=catalogPreview;$('devLift').onclick=()=>{const part=catalog.find(p=>p.name===$('devCatalog').value);lift({name:part.name,bounds:part.bounds.slice()});};
   $('devDiscoSpin').onchange=()=>editSelected(a=>{a.discoSpin=api.bound($('devDiscoSpin').value,0,4,1);});
   $('devDiscoRays').onchange=()=>editSelected(a=>{a.discoRays=$('devDiscoRays').checked;});
-  $('devLiftRegion').onclick=()=>{studio.capturing={which:'lift',start:null,end:null};message('Drag a rectangle around existing artwork to lift it. Its old position receives a floor patch.');c.focus();};
+  $('devLiftRegion').onclick=()=>{studio.capturing={which:'lift',start:null,end:null};message(refreshedScenery()?'Drag a rectangle to copy finished background artwork. Select individual props to move them.':'Drag a rectangle around existing artwork to lift it. Its old position receives a floor patch.');c.focus();};
   $('devSampleX').max=W-16;$('devSampleY').max=H-16;
   for(const [id,index]of [['devSampleX',0],['devSampleY',1]])$(id).onchange=()=>editSelected(a=>{if(a.origin)a.origin.sample[index]=Math.round(api.bound($(id).value,0,index?H-16:W-16,a.origin.sample[index]));});
   $('devPickSample').onclick=()=>{pickSample=true;message('Click a clean floor area on the map to use as the source patch.');c.focus();};
@@ -599,26 +890,45 @@ window.createCodaDeveloperConsole = function (api) {
   $('devReplaceFile').onchange=async e=>{const file=e.target.files?.[0],id=studio.selected;e.target.value='';if(!file)return;try{if(!/^image\/(png|jpeg|webp|gif|apng)$/.test(file.type)||file.size>8*1024*1024)throw Error('Choose a supported image up to 8 MB.');const data=await api.fileData(file),[w,h]=await api.imageDimensions(data);if(w>8192||h>8192)throw Error('Image exceeds 8192 pixels.');if(studio.selected!==id)throw Error('Selection changed. Select the object and try again.');editSelected(a=>{a.kind='image';a.data=data;a.ref=null;a.crop=null;a.cols=a.rows=a.frames=1;a.fps=0;});message('Replaced selected artwork; size, placement and source cleanup preserved.');}catch(err){message(err.message);}};
   function setOverlay(name,value){if(!studio.active||playtest)return;finishGesture();if(name==='collision')collisionOverlay=!!value;else layerOverlay=!!value;refresh();message((name==='collision'?'Collision map':'Foreground / background layers')+(value?' shown.':' hidden.')+' Project edits are unchanged.');}
   $('devShowCollision').onclick=()=>setOverlay('collision',!collisionOverlay);$('devShowLayers').onclick=()=>setOverlay('layers',!layerOverlay);
-  $('devLayerTool').onchange=e=>{layer.tool=e.target.value;};$('devLayerShape').onchange=e=>{layer.shape=e.target.value;};$('devLayerSize').onchange=e=>{layer.size=Number(e.target.value);};$('devLayerPlacement').onchange=e=>{layer.placement=e.target.value;};$('devLayerDepth').onchange=e=>{layer.offset=api.bound(e.target.value,-120,120,0);layer.placement='depth';$('devLayerPlacement').value='depth';};$('devMasks').onchange=e=>setOverlay('layers',e.target.checked);
+  $('devLayerSelect').onclick=()=>{finishGesture();layerSelecting=!layerSelecting;syncLayerSelection();if(fullscreen)setFullscreen(false);c.focus({preventScroll:true});};
+  $('devLayerSelectionShape').onchange=e=>{finishGesture();layerSelection?.setShape(e.target.value);layerSelecting=true;syncLayerSelection();};
+  $('devLayerFinishSelection').onclick=()=>{if(!layerSelection?.finish())message('Choose at least three corners around an area.');syncLayerSelection();};
+  $('devLayerClearSelection').onclick=()=>{layerSelection?.clear();syncLayerSelection();};
+  $('devLayerFillSelection').onclick=()=>{
+    if(!canEditArtwork()||tab!=='layers'||layerSelection?.getState().draft)return;
+    const selection=layerSelection?.getSelection();if(!selection)return;const before=snapshot();
+    if(!api.fillLayerSelection?.(selection)){message('Selection could not be filled. The 1,000 stroke limit may be full.');return;}
+    changed(before);message('Filled selection to '+(layer.tool==='erase'?'Background':'Foreground')+'. Undo is available.');
+  };
+  $('devLayerTool').onchange=e=>{finishGesture();layer.tool=e.target.value;syncLayerSelection();};$('devLayerShape').onchange=e=>{finishGesture();layer.shape=e.target.value;layerSelecting=false;syncLayerSelection();};$('devLayerSize').onchange=e=>{layer.size=Number(e.target.value);};$('devLayerPlacement').onchange=e=>{layer.placement=e.target.value;};$('devLayerDepth').onchange=e=>{layer.offset=api.bound(e.target.value,-120,120,0);layer.placement='depth';$('devLayerPlacement').value='depth';};$('devMasks').onchange=e=>setOverlay('layers',e.target.checked);
   $('devUndo').onclick=()=>undoRedo(true);$('devRedo').onclick=()=>undoRedo(false);$('devPlaytest').onclick=togglePlaytest;
   $('devSave').onclick=save;$('devExport').onclick=exportProject;$('assetExport').onclick=exportProject;
   $('devImport').onclick=$('assetImport').onclick=()=>$('devImportFile').click();
   $('devImportFile').onchange=e=>{const file=e.target.files?.[0];e.target.value='';importFile(file);};
-  $('devReset').onclick=()=>{
+  $('devReset').onclick=async()=>{
     if(api.publishedProjectUrl&&!publishedProject){message('The published layout is unavailable. Your current project has been kept. Reload to retry before resetting.');return;}
+    if(publishedProject)try{await decodeProjectImages(publishedProject);}catch(error){message('Published layout could not load: '+error.message+'. Your current project has been kept.');return;}
     if(!confirm(publishedProject?'Reset your local project to the published world layout? Undo is available.':'Reset all objects, collision and local foreground edits? Published artwork stays intact. Undo is available.'))return;
     const before=snapshot();applyState({... (publishedProject||{assets:[],collision:[],strokes:[]}),...(api.getRooms?{rooms:publishedProject?.rooms||{}}:{})});loadFailed=false;loadError=null;changed(before);
     message(publishedProject?'Restored the published world layout. Undo is available.':'Restored the original world layout. Undo is available.');
   };
   $('editorToggle').onclick=()=>open('layers');
   window.addEventListener('keydown',e=>{
+    if(fullscreenKey(e))return;
+    if(e.target?.closest?.('[data-history-developer]')&&!['F2','Escape'].includes(e.key)){e.stopImmediatePropagation();return;}
     if(e.target?.closest?.('[data-education-editor]')&&e.key!=='F2')return;
     if(e.target?.closest?.('[data-artwork-editor]')&&e.key!=='F2')return;
     if(e.target?.closest?.('.pixel-editor')&&e.key!=='F2'&&(!(e.ctrlKey||e.metaKey)||!['z','y'].includes(e.key.toLowerCase())))return;
     const typing=['INPUT','SELECT','TEXTAREA'].includes(e.target?.tagName)||e.target?.isContentEditable;
     if(e.key==='F2'&&!typing){e.preventDefault();e.stopImmediatePropagation();api.toggle(!studio.active);return;}
     if(!studio.active)return;
+    if(!playtest&&tab==='layers'&&!typing&&!e.ctrlKey&&!e.metaKey&&!e.altKey){
+      if(e.key==='Escape'&&(layerSelection?.getState().draft||layerSelection?.getSelection())){e.preventDefault();e.stopImmediatePropagation();if(!layerSelection.cancel())layerSelection.clear();return;}
+      if(e.key==='Enter'&&layerSelection?.getState().shape==='manual'&&layerSelection.getState().draft&&!e.target?.closest?.('button')){e.preventDefault();e.stopImmediatePropagation();if(!layerSelection.finish())message('Choose at least three corners around an area.');return;}
+    }
+    if(e.key==='Tab')return;
     if(typing){e.stopImmediatePropagation();return;}
+    if(panel.contains(e.target)&&e.target.closest?.('button,a,[role=button],summary')&&['Enter',' '].includes(e.key)){e.stopImmediatePropagation();return;}
     if(!playtest&&tab==='pixels'&&e.target?.id==='pixelEditCanvas'&&[' ','Enter','ArrowLeft','ArrowRight','ArrowUp','ArrowDown'].includes(e.key))return;
     if(!playtest&&!e.ctrlKey&&!e.metaKey&&!e.altKey){
       const key=e.key.toLowerCase();
@@ -643,15 +953,28 @@ window.createCodaDeveloperConsole = function (api) {
     }
   },true);
   window.addEventListener('keyup',e=>{if(e.key===' '||e.code==='Space'){spaceHeld=false;refreshCamera();}},true);
-  window.addEventListener('blur',()=>{spaceHeld=false;endPan();});
-  document.addEventListener('visibilitychange',()=>{if(document.hidden){spaceHeld=false;endPan();}});
-  c.addEventListener('lostpointercapture',e=>{if(pan&&e.pointerId===pan.id){pan=null;refreshCamera();}});
+  function cancelTransientEdits(){spaceHeld=false;endPan();layerSelection?.cancel();characterEditor?.cancelGesture();}
+  window.addEventListener('blur',cancelTransientEdits);
+  document.addEventListener('visibilitychange',()=>{if(document.hidden)cancelTransientEdits();});
+  c.addEventListener('lostpointercapture',e=>{if(pan&&e.pointerId===pan.id){pan=null;refreshCamera();}if(layerSelection?.getState().dragging)layerSelection.cancel();if(characterEditor?.getState().dragging)characterEditor.cancelGesture();});
   c.addEventListener('contextmenu',e=>{if(studio.active&&!playtest)e.preventDefault();});
-  panel.addEventListener('click',e=>{if(loading){e.preventDefault();e.stopImmediatePropagation();message('Wait for project restoration to finish.');}},true);
+  c.addEventListener('dblclick',e=>{
+    if(e.button!==0||!canEditArtwork()||tab!=='layers'||!layerSelecting||panTool||spaceHeld||pan)return;
+    const state=layerSelection?.getState();if(state?.shape!=='manual'||!state.draft?.length)return;
+    e.preventDefault();e.stopImmediatePropagation();
+    if(!layerSelection.finish())message('Choose at least three corners around an area.');
+  });
+  panel.addEventListener('click',e=>{
+    if(loading){e.preventDefault();e.stopImmediatePropagation();message('Wait for project restoration to finish.');return;}
+    // Actions that ask for a point or gesture on the map must reveal it first.
+    if(fullscreen&&e.target.closest?.('#devPan,#devLiftRegion,#devPickSample,#assetCapture,#assetCaptureFG'))setFullscreen(false);
+  },true);
   setTab('objects');load();
-  return {snapshot,recordChange,recordRoomChange,setSprites,undoRedo,save,refresh,refreshCamera,onToggle,open,renderBase,renderCleanup,suppressOriginal,drawUnliftedPixels,unliftedPicture,originalPicture:a=>a.origin?picture(a.origin):null,assetArtwork:(a,raw)=>artworkTools?.assetImage(a,raw)||raw,backgroundArtwork:(id,source)=>artworkTools?.compose(id,source)||source,objectArtwork:(name,source)=>artworkTools?.objectImage(name,source)||source,getArtworkEditor:()=>artworkEditor,objectEffectClip:name=>artworkTools?.effectClip(name)||null,validateAssetExtension,walkableOverride,pointerDown,pointerMove,pointerEnd,drawOverlay,liftedRegion,finishGesture,isPlaytest:()=>playtest,isEditing:()=>studio.active&&!playtest,exportProject,loadReady:()=>!loading&&(!arcadeFloor?.isReady||arcadeFloor.isReady()),validate,
+  return {snapshot,recordChange,recordRoomChange,setSprites,undoRedo,save,refresh,refreshCamera,onToggle,open,renderBase,renderCleanup,suppressOriginal,drawUnliftedPixels,unliftedPicture,originalPicture:a=>a.origin?picture(a.origin):null,assetArtwork:(a,raw)=>artworkTools?.assetImage(a,raw)||raw,backgroundArtwork:(id,source)=>artworkTools?.compose(id,source)||source,objectArtwork:(name,source)=>artworkTools?.objectImage(name,source)||source,getArtworkEditor:()=>artworkEditor,objectEffectClip:name=>artworkTools?.effectClip(name)||null,validateAssetExtension,walkableOverride,pointerDown,pointerMove,pointerEnd,drawOverlay,liftedRegion,finishGesture,moveSelectionOrder,isPlaytest:()=>playtest,isEditing:()=>studio.active&&!playtest,exportProject,loadReady:()=>!loading&&(refreshedScenery()?environmentReady():!arcadeFloor?.isReady||arcadeFloor.isReady()),validate,
     // Data-only inspection supports repeatable browser integration checks.
     floorGrid:()=>arcadeFloor?.snapshot()||null,
+    getScenery:()=>scenery,isRefreshedScenery:refreshedScenery,environmentReady,
+    getCharacters:()=>{const result=clone(characters);for(const id of ['scholar','riff','pip']){const preview=characterEditor?.getPreview(id);if(preview)result[id]={...(result[id]||{}),...preview};}return result;},
     getProject:()=>clone(documentData()),getPublishedProject:()=>publishedProject?clone(publishedProject):null,getProjectSource:()=>projectSource,
-    getDialogue:id=>id===undefined?clone(dialogue):dialogue[id]?clone(dialogue[id]):null,getSprites:()=>clone(sprites),getEducationEditor:()=>educationEditor,getState:()=>({artwork:artworkEditor?.getState()||null,education:educationEditor?.getState()||null,open:studio.active,editing:studio.active&&!playtest,playtest,tab,overlays:{collision:collisionOverlay,layers:layerOverlay,visible:studio.active&&!playtest}})};
+    getMusicHistoryContent:()=>clone(musicHistoryContent),getMusicFactsEditor:()=>musicFactsEditor,getDialogue:id=>id===undefined?clone(dialogue):dialogue[id]?clone(dialogue[id]):null,getSprites:()=>clone(sprites),getEducationEditor:()=>educationEditor,getState:()=>({wallReflections:wallReflections?.getState()||null,pathwayFloorFill:pathwayFloorFill?.getState()||null,paletteCompatibility:floorPaletteCompat?.getState()||null,layerSelection:layerSelection?{...layerSelection.getState(),selecting:layerSelecting}:null,characters:characterEditor?.getState()||null,scenery:scenery||null,artwork:artworkEditor?.getState()||null,education:educationEditor?.getState()||null,open:studio.active,editing:studio.active&&!playtest,playtest,tab,fullscreen,overlays:{collision:collisionOverlay,layers:layerOverlay,visible:studio.active&&!playtest}})};
 };

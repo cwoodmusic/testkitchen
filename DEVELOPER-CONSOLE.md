@@ -19,7 +19,7 @@ Each room has its own **Developer** button. **F2** opens or closes the console f
 - **Objects:** move Chopin or Captain Cadence, lift a rectangular region of existing room art, or add an image. Move and resize artwork with its handles or numeric fields, choose its background/actor-depth/foreground layer, and adjust the clean source sample used to cover its original position.
 - **Fish:** in the cave’s Objects tab, click a fish shadow or choose a numbered fish from the character/fish list. Change its species, position, size, body/accent colors, or visibility. Drag its gold corner to resize. Editing freezes swimming. Species labels show meter requirements; a placed fish appears in gameplay only in its allowed meter, while switching meters preserves its authored placement and colors. The edited species is the one used by its fishing challenge; changing appearance does not grant catches or rewards. Restore returns a fish to its defaults.
 - **Collision:** paint red blocking cells, green open cells, or restore original cells. Piano walking and cave walking/boating use these edits during playtest and after closing the console. The cave retains the distinction between shore and boat water.
-- **Layers:** paint room pixels in front of characters, erase their foreground coverage, and inspect the mask. Artwork layers and collision are separate controls.
+- **Layers:** select a rectangle or manual shape and fill its foreground/background coverage, paint individual strokes, and inspect the mask. Artwork layers and collision are separate controls.
 - **Sprites:** edit your avatar or the room’s musician pixel by pixel. These details use the shared character sprite journal, so avatar changes follow you between rooms and complete world exports include them.
 - **Project:** save, export/import the room, reset its edits, undo/redo, and playtest. The arcade’s complete world export also includes edited rooms and their fish. Older world files without room data preserve existing local room edits.
 
@@ -53,11 +53,29 @@ Route smoothing checks every crossed collision cell and prevents shortcuts throu
 
 Object art and collision are separate. For an edited original, **Open collision at original position** releases its old rectangular source area. Enable **Solid collision footprint** to add a footprint that follows the object's position, size, and rotation; its left/top/width/height fields use percentages of the object's dimensions. Explicit collision paint takes priority over object footprints and released source areas. Restore removes painted overrides and returns those cells to the original map.
 
+## Decor library and DJ floodlights
+
+Open **Objects → Asset library** to browse 91 assets: 16 floor pieces, 22 tabletop pieces, 19 wall decorations, 11 rugs, and 23 furniture pieces. Search or filter, choose a preview, then **Add to layout**. Browsing does not place anything. Each added item is a separate image asset with its source PNG embedded, so it supports moving, resizing, rotation, duplication, pixel editing, image replacement, ordering, background-mask overrides, undo, and project export/import. New items appear in the centre of the editor camera. Rugs use the Background layer so characters and furniture remain above them. Set a solid footprint if a floor decoration should block walking.
+
+The published layout places a large **Notes shop arcade rug** in front of the Notes counter and a four-head **DJ color-changing floodlights** rig above the DJ. Other rug designs remain in the library. For an existing saved layout, **Asset library → Place Notes shop rug** places the rectangle in front of the current counter without resetting your edits. Existing saved layouts remain intact; **Asset library → Add DJ floodlights** places a rig above the current DJ console without resetting your project. Select the rig to adjust **Lights enabled**, **Color cycle speed**, **Brightness %**, and **Beam length (px)**. Moving, resizing, rotation, opacity, and visibility apply to the light emitters too. Duplicate a rig to add more, or delete it like any other asset. Color transitions are smooth; reduced motion uses steady colors and FX Off hides live lights.
+
+## Moving NPC sprites and arranging assets
+
+In the main arcade’s **Objects** tab, **NPC sprites → Select NPC** lists **The Scholar**, **Riff · Notes Shop**, and **Pip · Avatar Boutique**. Select one here or click their sprite on the map, then drag or edit NPC X/Y. They stay independent when their couch or counter moves or is hidden. Their conversation/shop interaction points move with them. Set facing, visibility, NPC layer, and depth offset individually; **Edit NPC sprite pixels** opens that character in the Pixel editor. **Reset NPC position** returns only their position to its default. These edits support undo, saving, and complete project export/import.
+
+**Flip horizontal** and **Flip vertical** mirror a selected asset. **Rotate left 90°** and **Rotate right 90°** provide quick quarter turns; the existing **Rotation °** field and gold rotation handle allow other angles. The source PNG stays intact. Flips, rotation, masks, local collision footprints, linked cabinet approach points, and attached lights follow the same transform, with undo and save/export support. Room asset controls offer the same flip and rotation actions.
+
+For a selected prop or uploaded image, **Depth layer** chooses Background, Actor depth, or Foreground. **Asset order → Arrange relative to** lists other placed assets and the three NPCs; choose a target, then **Place behind** or **Place in front**. The prop stays at its physical position. **Depth offset (px)** adjusts its sorting boundary; higher values place it in front. **Bring forward** and **Send back** are shared controls near the top of Objects. They act on the selected prop or NPC, whether selected on the map or from a list, and keep its position fixed. They cross other items in the current layer and move between Background, Actor depth, and Foreground at layer boundaries. NPCs and props can be interleaved within Background and Foreground. Undo restores each step, and saving/exporting keeps the order.
+
 ## Foreground and background masks
 
 Open **Layers**, or press **Shift+L**. **Paint foreground** promotes pixels from the existing room artwork to an occluding layer. **Send to background / erase mask** removes foreground coverage while retaining the room art beneath actors. Adjust brush size and depth offset. **Stroke shape → Line** makes a straight stroke: drag from its first pixel to its last, then release to commit one undoable edit. The brush preview covers exactly the quantized pixels that will change at the current zoom. **Show foreground masks** helps inspect coverage. Use object layer controls when changing the depth of a moved or newly added object.
 
+**Select area** enables selection instead of brush painting. Choose **Rectangle** and drag, or choose **Manual shape** and click its corners, then double-click the last corner, choose **Finish selection**, or press Enter. Choose **Paint foreground** or **Send to background**, then **Fill selection** to apply that layer to the entire selected shape. Each fill is one undoable edit and is included in saved/exported projects. **Clear selection** removes the outline; Escape cancels a draft or clears a finished selection. Toggle Select area off, or choose a Stroke shape, to return to brush painting. Right-drag, middle-drag, or hold Space and drag to pan while keeping a finished selection or the corners of an unfinished manual shape. Continue clicking corners after panning. The Piano Lab and fishing cave offer the same selection and fill controls.
+
 Erasing foreground also works on lifted original objects and their animated screens or disco spheres: erased pixels render behind characters, while the rest retains the object's selected layer. Brush strokes stay at their world coordinates. Moving, resizing, or rotating an object recomputes its intersection with those strokes; the resulting split follows the object's animation.
+
+**Objects → Asset order → Draw in front of background masks** lets a selected asset keep its chosen draw depth where **Send to background** masks overlap. This applies to uploaded images, lifted originals, and note props; it supports undo, save, and project export/import. Other assets continue to follow the mask. Use **Depth layer** and forward/back controls to choose the asset’s position relative to characters and other objects. The same checkbox is available in room asset controls.
 
 Layer painting changes occlusion, not walking collision. Painting existing room pixels also does not create or redraw an object; use Objects for that.
 
@@ -85,7 +103,7 @@ Undo and redo apply to complete project edits, including objects, collision, lay
 
 Edits save locally in this browser and origin. The Project tab's **Save project** reports storage success or failure. **Export project JSON** backs up the whole project, including embedded uploaded images, source cleanup patches, collision overrides, local foreground strokes, dialogue, and sprite details. **Import project JSON** validates a backup before replacing the current project and can be undone. **Reset project** replaces the current layout with the shared published layout and saves that copy locally; it can also be undone. Individual object and collision **Restore original** tools still return to the underlying original artwork or collision cells.
 
-Fresh browsers load `published-world-project.json` as the shared default. The checked-in file uses the latest supplied version-1 export, including 8 lifted objects, 1,085 collision overrides, and 99 foreground strokes. The dance-passage plant is hidden with a cleanup silhouette covering its leaves, trunk, and pot. Its floor repair preserves the corridor's horizontal grid rows and adjoining wall. The other seven objects and all uploaded collision and layer edits are preserved; the corridor's existing green cells already permit NPC passage, while the neighboring red wall cells remain solid.
+Fresh browsers load `published-world-project.json` as the shared default. The refreshed main arcade has a complete empty-room background and independent furniture, plants and fixtures, including the large curved lounge couch. The current published export contains 59 placed assets, 2,106 collision overrides, 26 foreground layer strokes, character placements and pixel artwork, with Piano Lab and fishing edits preserved. The previous main-world pixel repairs and 793 brush strokes are archived in `assets/environment/legacy-world-project.json`. See [Environment artwork](ENVIRONMENT-ART.md) for source files and compatibility.
 
 Valid local projects, including deliberately empty projects, take priority; legacy local asset, collision, and layer edits are also preserved. Use **Project → Reset project** to replace those local edits with the current published layout. Merely visiting the world does not save a local override, so browsers without local edits receive later published updates. Movement waits for the layout to finish loading. If the shared file fails to load or validate, existing local edits remain intact and the editor reports the failure.
 
@@ -109,6 +127,9 @@ node --test tests/room-developer-editor.test.cjs
 python3 tests/dialogue-editor-browser.py
 python3 tests/pixel-editor-browser.py
 python3 tests/published-world-browser.py
+python3 tests/artwork-selection-edit-browser.py
+node --test tests/artwork-feather.test.cjs
+python3 tests/artwork-feather-browser.py
 python3 tests/collision-integration-browser.py
 python3 tests/dance-passage-browser.py
 python3 tests/world-features-browser.py
@@ -127,3 +148,76 @@ The art checks require Pillow and verify that pixels outside the 33 repair regio
 Learning rooms, Notes, missions, levels, the interactive dance floor, and the permanently repaired four-plant area are documented in [LEARNING-WORLD.md](LEARNING-WORLD.md). The permanent repair remains clear even in older editor projects containing the former passage-plant asset.
 
 The main world, Piano Lab, and cave consoles have **Show collision** and **Show layers** controls above the tool tabs. Collision shows the base walking boundary as well as painted overrides. Layer overlays tint foreground masks and outline background, actor-depth, and foreground assets with a color legend. They can stay visible independently while you select objects or pan. Room Layers also offers a straight Line tool and a pixel-exact brush preview. **C** toggles the Collision tool; **L** or **Shift+L** toggles Layers. Press the same shortcut again to return to Objects. Zoom and pan stay in place. Debug overlays disappear during Playtest and after closing the editor; authored collision and layer edits continue to work.
+
+## Feather asset edges
+
+In **Pixel editor**, choose the asset under **Background, asset or character**,
+then choose **Tool → Feather edges**. Brush across its coloured/transparent
+boundary to soften the cut-out against the background. **Brush radius** controls
+the area and fade width; **Strength %** controls how much each stroke blends.
+Transparent pixels near the edge gain a faint matching colour while the solid
+edge fades, without dark fringes. Fully opaque interior details stay sharp.
+A fully cropped image also fades at its canvas boundary.
+
+Selections restrict the brush and painted protection masks preserve details.
+**Show assets** can help preview neighbouring artwork when editing a background;
+choose the actual asset to blend its edges into the world underneath. Each stroke
+is one Undo/Redo step; Escape cancels an unfinished stroke. Feathered alpha saves
+with project JSON and Export PNG. **Smooth gradients** continues to blend colours
+while preserving opacity.
+
+## Fill and move selected pixels
+
+In **Pixel editor**, choose **Select** and mark a rectangle or finish a manual
+shape. **Fill selection** colours every pixel inside it with the selected
+RGBA colour, across colour boundaries. **Fill connected colour** remains the
+bucket tool for filling a connected region.
+
+With **Select** active, drag inside the finished selection to cut and move its
+pixels. The **Move selection** button also enables dragging. The vacated pixels
+become transparent; overlapping moves preserve the original selected pixels,
+including their transparency. Manual shapes move only their selected pixels.
+The selection follows the move and stays within the image. Shift-drag starts a
+new selection inside the existing one; dragging outside also selects a new area.
+
+Release to apply a move, or press **Escape** to cancel it. Each fill or completed
+move is one Undo/Redo step and saves with the complete world project. The same
+tools work on backgrounds, objects, room artwork, and character artwork.
+
+## Music facts
+
+Open **F2 → Music facts** to read and edit all 180 facts across the 18 musicians (10 each).
+Locked discoveries are visible here for authoring. Choose a musician and fact
+number, or use **Search all facts** to search the entire catalog. The fact list
+shows the full text; selecting one opens its editor.
+
+Choose **Apply fact** to use edited text in this browser. **Revert draft** returns
+to the applied text; **Restore default fact** removes that fact's override. Drafts
+stay available when switching musicians. Linked quiz questions appear beneath
+the fact, with editable questions, answer choices, and the correct answer. Use
+**Apply quiz question** after reviewing those changes.
+
+Applied facts and quiz questions use the console's Undo/Redo and save with the
+complete world project. Choose **Project → Save project** and **Export project
+JSON** for a portable backup or publication. Reimporting an older project without
+music-history content restores the original facts and questions. Authored content
+uses the optional `musicHistoryContent` project field; player discoveries,
+friendship points, quiz eligibility, and reward records stay separate. An active
+quiz keeps the questions and answers it had when it started.
+
+## History progression
+
+Open **F2 → History progression** to inspect each musician's friendship points,
+ready/carried/recorded facts, active quest and quiz eligibility. This view is
+read-only for a normal player. Choose **Open temporary progression test** to
+use the existing isolated test player; then use the same tab to unlock a fact,
+put it in the pouch, prepare a full record for a quiz, or reset that friendship.
+Test progress stays in memory and is excluded from world-project exports.
+
+## Gradient smoothing and masks
+
+In **Pixel editor**, choose **Smooth gradients** (**U**) for a soft brush with
+radius and strength controls. Paint **Mask protected areas** to preserve detail,
+or use **Select → Manual shape** and **Protect selection** for a precise mask.
+Clear the active selection to smooth around it. See
+[the pixel artwork guide](docs/pixel-artwork.md) for masking and custom outlines.

@@ -1,0 +1,11 @@
+{
+  "description": "Square off the reviewed boutique lamp wall and replace its former diagonal return and black cutout with continuous navy glass. This later architectural edit supersedes older pathway journals only inside these polygons.",
+  "worldSize": [1672,941],
+  "source": "assets/environment/source/boutique-rectangle.png",
+  "before": "assets/environment/source/boutique-before-rectangle.png",
+  "output": "assets/environment/v1/empty-arcade.png",
+  "polygons": [
+    [[386,316],[466,316],[466,426],[434,426],[434,472],[316,472],[316,351],[358,351],[358,324],[386,324]],
+    [[270,424],[466,424],[466,506],[270,506]]
+  ]
+}

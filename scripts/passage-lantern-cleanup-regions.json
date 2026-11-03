@@ -1,0 +1,15 @@
+{
+  "description": "Remove the lower dance-passage lantern, suspension hardware and glow, restoring the warmed cap face to the surrounding unlit blue masonry.",
+  "worldSize": [1672, 941],
+  "before": "assets/environment/source/passage-lantern-before-cleanup.png",
+  "beforeSha256": "0cfab3fc6941b1e09c94e47555649091a4c44652d9a3dd3ad2c7c5360c795305",
+  "source": "assets/environment/source/passage-lantern-clean.png",
+  "sourcePlacement": [780, 570, 125, 205],
+  "output": "assets/environment/v1/empty-arcade.png",
+  "reviewedProjectSha256": "90b0319e0102c454c0f3217576c0ac5e157101952136a9584b4b4ae8d33a5b2b",
+  "preserveAuthoredOverlap": true,
+  "polygons": [
+    [[825,598],[861,598],[861,620],[872,625],[875,642],[875,660],[868,677],[861,687],[861,711],[825,711],[825,691],[817,681],[811,667],[810,637],[816,622],[825,616]]
+  ],
+  "protectedPolygons": []
+}

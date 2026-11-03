@@ -32,11 +32,9 @@ class PianoScaleMemoryTests(unittest.TestCase):
     choose_melody = _piano.PianoLabTests.choose_melody
 
     def start_scale(self, identifier, play=True):
-        self.menu('games')
+        self.menu('games','scales')
         self.page.locator('#pianoScale').select_option(identifier)
         self.page.locator('#pianoStartScale').click()
-        if play:
-            self.page.locator('[data-piano-dialogue-action="play"]').click()
         return self.state()['lessonPitches']
 
     def test_every_scale_requires_the_whole_ascent_and_descent(self):
@@ -75,8 +73,8 @@ class PianoScaleMemoryTests(unittest.TestCase):
 
     def test_scale_memory_hides_answers_tracks_mistakes_and_pays_once_across_visits(self):
         pitches = self.start_scale('c-minor')
-        self.menu('games')
-        self.assertTrue(self.page.locator('#pianoMemoryStart').is_disabled())
+        self.menu('games','scales')
+        self.assertTrue(self.page.locator('#pianoScaleMemory').is_disabled())
         self.play_sequence(pitches)
         self.assertEqual(self.page.evaluate('rewards'), [{'id':'piano-scale:c-minor','amount':35}])
         self.assertTrue(self.page.locator('[data-piano-dialogue-action="memory"]').is_visible())
@@ -117,8 +115,8 @@ class PianoScaleMemoryTests(unittest.TestCase):
         self.assertEqual(self.page.evaluate('rewards'), [])
         self.assertNotIn('piano-scale:g-major', self.state()['completed'])
         self.assertEqual(self.page.locator('[data-piano-dialogue-action="memory"]').count(), 0)
-        self.menu('games')
-        self.assertTrue(self.page.locator('#pianoMemoryStart').is_disabled())
+        self.menu('games','scales')
+        self.assertTrue(self.page.locator('#pianoScaleMemory').is_disabled())
         self.page.evaluate("rewardMode='success'")
         self.start_scale('g-major')
         self.play_sequence(pitches)
@@ -130,7 +128,7 @@ class PianoScaleMemoryTests(unittest.TestCase):
         self.page.clock.pause_at(self.page.evaluate('Date.now()/1000')+5)
         pitches = self.start_scale('c-major', play=False)
         run = self.state()['challengeRun']['runId']
-        self.page.locator('[data-piano-dialogue-action="listen"]').click()
+        self.menu('games','scales');self.page.locator('#pianoScaleListen').click()
         self.assertTrue(self.state()['listening'])
         self.page.clock.run_for(20000)
         self.assertFalse(self.state()['listening'])
@@ -138,12 +136,12 @@ class PianoScaleMemoryTests(unittest.TestCase):
         self.assertEqual(self.state()['challengeRun']['runId'], run)
         self.assertEqual(self.page.evaluate('rewards'), [])
         self.assertEqual(self.page.evaluate('challengeCompletions'), [])
-        self.page.locator('[data-piano-dialogue-action="play"]').click()
+        self.page.locator('#pianoMenuClose').click()
         self.play_sequence(pitches)
         self.begin_memory()
         memory_run = self.state()['challengeRun']['runId']
-        self.menu('games')
-        self.page.locator('#pianoListenMelody').click()
+        self.menu('games','scales')
+        self.page.locator('#pianoScaleListen').click()
         self.page.clock.run_for(20000)
         self.assertEqual(self.state()['melodyMode'], 'memory')
         self.assertEqual(self.state()['challengeRun']['runId'], memory_run)
@@ -218,7 +216,8 @@ class PianoScaleFloorMemoryTests(_floor._world.WorldBrowserCase):
             if index == 7:
                 self.assertNotIn('piano-scale:b-major', self.state()['completed'])
         self.assertIn('piano-scale:b-major', self.state()['completed'])
-        self.assertEqual(self.totals(), {'notes':before['notes']+35,'xp':before['xp']+100})
+        self.assertEqual(self.totals(), {'notes':before['notes']+35,'xp':before['xp']+150})
+        self.assertIn('achievement:piano-first-scale', self.page.evaluate('CodaArcadeQA.progression().recent.map(event=>event.id)'))
         self.assertGreater(self.state()['voiceCount'], 0,
                            'The final floor-key E release must preserve its completion tail')
 

@@ -3,6 +3,8 @@
 Starts a temporary server and uses disposable Chromium profiles. Requires the
 environment's Python Playwright package and Chromium; no external service access.
 """
+from settings_menu_helpers import settings_page
+from boutique_menu_helpers import browse_boutique, boutique_field, boutique_presets
 import functools
 from http.server import SimpleHTTPRequestHandler, ThreadingHTTPServer
 from pathlib import Path
@@ -43,7 +45,7 @@ class SpriteBoutiqueTests(unittest.TestCase):
         self.page.on('response',lambda response:self.local_failures.append(response.url) if response.status>=400 and '127.0.0.1' in response.url and not response.url.endswith('favicon.ico') else None)
         self.load()
         # The shipped FX switch keeps expensive room lights out of visual checks.
-        open_settings(self.page)
+        settings_page(self.page, 'screen')
         for _ in range(3):
             if self.page.locator('#fxBtn').inner_text().endswith('Off'):
                 break
@@ -66,7 +68,7 @@ class SpriteBoutiqueTests(unittest.TestCase):
         return self.page.evaluate('''id=>{const characters=CodaArcadeQA.characters();return id==='player'?characters.player.appearance:characters.npcs.find(p=>p.id===id).appearance}''',target)
 
     def set_color(self,label,value):
-        self.page.get_by_label(label,exact=True).evaluate('(input,value)=>{input.value=value;input.dispatchEvent(new Event("input",{bubbles:true}));}',value)
+        boutique_field(self.page, label).evaluate('(input,value)=>{input.value=value;input.dispatchEvent(new Event("input",{bubbles:true}));}',value)
 
     def buy_fixture_items(self,*items):
         self.page.evaluate('''ids=>{
@@ -89,7 +91,7 @@ class SpriteBoutiqueTests(unittest.TestCase):
         self.page.locator('#avatarPreviewMode').select_option('idle')
 
     def try_catalog_item(self,category,item):
-        self.page.get_by_role('button',name='Browse '+category,exact=True).click()
+        browse_boutique(self.page, category)
         self.page.get_by_label('Search wardrobe',exact=True).fill(item)
         self.page.locator('.boutique-item[data-item-id="'+item+'"]').click()
 
@@ -137,7 +139,7 @@ class SpriteBoutiqueTests(unittest.TestCase):
                          'Filtering choices must not replace the current hat')
         self.page.locator('.boutique-item[data-item-id="witch"]').click()
         self.assertEqual(self.page.get_by_label('Hats',exact=True).input_value(),'witch')
-        self.page.get_by_label('Hats',exact=True).select_option('wizard')
+        boutique_field(self.page, 'Hats').select_option('wizard')
         self.page.get_by_label('Search wardrobe',exact=True).fill('wizard')
         self.assertEqual(self.page.locator('.boutique-item[data-item-id="wizard"]').get_attribute('aria-pressed'),'true')
         self.page.get_by_label('Search wardrobe',exact=True).fill('no-such-style')
@@ -188,7 +190,7 @@ class SpriteBoutiqueTests(unittest.TestCase):
           headwear:"cap",eyewear:"sunglasses",accessory:"headphones",shoes:"boots",emote:"dance"}))''')
         self.load();before=self.appearance();raw_before=self.page.evaluate('localStorage.getItem("musicArcadeV1")')
         self.assertEqual(before['headwear'],'cap','A deliberate saved cap must survive the default migration')
-        self.open_boutique();self.page.get_by_role('button',name='Plain base avatar',exact=True).click()
+        self.open_boutique();boutique_presets(self.page);self.page.get_by_role('button',name='Plain base avatar',exact=True).click()
         for label,value in {'Hairstyle':'bald','Hats':'none','Glasses':'none','Accessories':'none','Outfit':'pants','Outfit color':'#999ca6','Lower clothing color':'#626875','Shoes':'sneakers'}.items():
             self.assertEqual(self.page.get_by_label(label,exact=True).input_value(),value,label)
         self.assertEqual(self.appearance(),before,'The plain base remains a draft before Save')
@@ -221,6 +223,7 @@ class SpriteBoutiqueTests(unittest.TestCase):
         self.page.wait_for_function('''()=>{const canvas=document.querySelector('.avatar-preview-views canvas');
           return canvas.getContext('2d').getImageData(0,0,canvas.width,canvas.height).data.some((value,index)=>index%4===3&&value>0)}''')
         before_pixels=preview.evaluate('(canvas)=>canvas.toDataURL()')
+        boutique_presets(self.page)
         self.page.get_by_role('button',name='Classic cap look',exact=True).click()
         self.page.wait_for_function('''before=>document.querySelector('.avatar-preview-views canvas').toDataURL()!==before''',arg=before_pixels)
         for label,value in {'Hairstyle':'short','Hair color':'#171424','Skin color':'#e5ad75','Outfit':'pants','Outfit color':'#e94038',
@@ -242,11 +245,11 @@ class SpriteBoutiqueTests(unittest.TestCase):
         self.page.evaluate('localStorage.setItem("musicArcadeV1",JSON.stringify({name:"Guest",walked:600,collectedTokens:7}))')
         self.load();before=self.appearance();self.open_boutique()
         self.page.get_by_label('Arcade nickname',exact=True).fill('Layered Player')
-        self.page.get_by_label('Hairstyle',exact=True).select_option('buns')
-        self.page.get_by_label('Outfit',exact=True).select_option('overalls')
-        self.page.get_by_label('Hats',exact=True).select_option('cap')
-        self.page.get_by_label('Glasses',exact=True).select_option('sunglasses')
-        self.page.get_by_label('Accessories',exact=True).select_option('headphones')
+        boutique_field(self.page, 'Hairstyle').select_option('buns')
+        boutique_field(self.page, 'Outfit').select_option('overalls')
+        boutique_field(self.page, 'Hats').select_option('cap')
+        boutique_field(self.page, 'Glasses').select_option('sunglasses')
+        boutique_field(self.page, 'Accessories').select_option('headphones')
         self.set_color('Skin color','#704633');self.set_color('Hair color','#ece4d6')
         self.set_color('Outfit color','#4678ab');self.set_color('Lower clothing color','#334c72')
         self.assertEqual(self.appearance(),before,'Draft equipment must not apply before Save')
@@ -266,10 +269,10 @@ class SpriteBoutiqueTests(unittest.TestCase):
         player_before=self.appearance();self.open_boutique('miles')
         self.assertFalse(self.page.get_by_label('Arcade nickname',exact=True).is_editable())
         self.assertEqual(self.page.get_by_label('Arcade nickname',exact=True).input_value(),'Miles Davis')
-        self.page.get_by_label('Outfit',exact=True).select_option('coat')
-        self.page.get_by_label('Hats',exact=True).select_option('beanie')
-        self.page.get_by_label('Glasses',exact=True).select_option('partyglasses')
-        self.page.get_by_label('Accessories',exact=True).select_option('headphones')
+        boutique_field(self.page, 'Outfit').select_option('coat')
+        boutique_field(self.page, 'Hats').select_option('beanie')
+        boutique_field(self.page, 'Glasses').select_option('partyglasses')
+        boutique_field(self.page, 'Accessories').select_option('headphones')
         self.set_color('Outfit color','#91558d');self.set_color('Lower clothing color','#273f59')
         self.page.get_by_role('button',name='Save NPC look',exact=True).click()
         saved=self.appearance('miles')
@@ -291,12 +294,12 @@ class SpriteBoutiqueTests(unittest.TestCase):
         before=self.appearance();npc_before=self.appearance('miles')
         raw_before=self.page.evaluate('localStorage.getItem("musicArcadeV1")')
         self.open_boutique(developer=True)
-        self.page.get_by_label('Hats',exact=True).select_option('crown')
-        self.page.get_by_label('Glasses',exact=True).select_option('glasses')
+        boutique_field(self.page, 'Hats').select_option('crown')
+        boutique_field(self.page, 'Glasses').select_option('glasses')
         self.set_color('Skin color','#52372a')
-        self.page.get_by_label('Customize',exact=True).select_option('miles')
-        self.page.get_by_label('Outfit',exact=True).select_option('dress')
-        self.page.get_by_label('Customize',exact=True).select_option('player')
+        boutique_field(self.page, 'Customize').select_option('miles')
+        boutique_field(self.page, 'Outfit').select_option('dress')
+        boutique_field(self.page, 'Customize').select_option('player')
         self.assertEqual(self.page.get_by_label('Hats',exact=True).input_value(),before['headwear'])
         self.page.get_by_role('button',name='Cancel',exact=True).click()
         self.assertFalse(self.page.locator('#panel').is_visible())

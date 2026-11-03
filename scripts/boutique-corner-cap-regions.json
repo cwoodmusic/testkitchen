@@ -1,0 +1,13 @@
+{
+  "description": "Finish the two right-angle bends and continuous neon trim of the existing blue wall cap beside the boutique path. Preserve its position, surrounding glass, architecture, fixtures and collision.",
+  "worldSize": [1672,941],
+  "source": "assets/environment/source/boutique-corner-cap.png",
+  "sourceSize": [996,1578],
+  "sourcePlacement": [220,350,120,190],
+  "output": "assets/environment/v1/empty-arcade.png",
+  "polygons": [
+    [[220,371],[272,371],[272,388],[220,388]],
+    [[247,373],[272,373],[272,526],[247,526]],
+    [[247,504],[306,504],[306,527],[247,527]]
+  ]
+}

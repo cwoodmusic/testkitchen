@@ -1,0 +1,15 @@
+{
+  "description": "Replace the dance-room diagonal corner with a flat south-facing wall, two front-facing music plaques, and glass beneath the removed return. Preserve every painted dance tile and all independent furniture.",
+  "worldSize": [1672,941],
+  "sourceSize": [1671,941],
+  "source": "assets/environment/source/stage-wall.png",
+  "before": "assets/environment/source/stage-before-flat-wall.png",
+  "output": "assets/environment/v1/empty-arcade.png",
+  "polygons": [
+    [[596,506],[807,506],[807,806],[596,806]]
+  ],
+  "floorFeather": {"right":[789,807],"bottom":[770,806],"leftBelow":[596,618,649]},
+  "protectedPolygons": [
+    [[169,665],[204,665],[237,664],[271,664],[305,664],[339,664],[374,664],[408,664],[442,664],[477,664],[511,664],[545,664],[579,665],[618,665],[628,693],[639,723],[651,753],[662,784],[674,814],[685,845],[117,845],[125,814],[134,784],[143,753],[152,723],[161,693]]
+  ]
+}

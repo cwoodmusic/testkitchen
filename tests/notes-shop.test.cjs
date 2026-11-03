@@ -76,6 +76,7 @@ test('a browser wallet looks up progression when granting rather than requiring 
  const sandbox={window:{}};vm.runInNewContext(fs.readFileSync(path.join(__dirname,'../notes-shop.js'),'utf8'),sandbox);
  const disk=storage(),wallet=sandbox.window.CodaNotesShop.createWallet({storage:disk});levelProof(disk,60950);
  assert.equal(wallet.grantReward('level-prize:50',6000).ok,false);
+ vm.runInNewContext(fs.readFileSync(path.join(__dirname,'../dance-campaign.js'),'utf8'),sandbox);
  vm.runInNewContext(fs.readFileSync(path.join(__dirname,'../player-progression.js'),'utf8'),sandbox);
  assert.equal(wallet.grantReward('level-prize:50',6000).ok,true);assert.equal(wallet.snapshot().balance,6150);
 });
@@ -154,7 +155,7 @@ test('the shop buys without changing the avatar, then explicitly equips the owne
       openPanel(){body.replaceChildren();},openWardrobe(){wardrobe++;},applyAvatar(next){Object.assign(avatar,next);saved++;return true;}});
     const all=()=>{const result=[];function visit(node){result.push(node);node.children.forEach(visit);}visit(body);return result;};
     const label=name=>all().find(node=>node.attributes['aria-label']===name);
-    ui.open();label('Search shop').value='witch';label('Search shop').oninput();
+    ui.open();const beforeBrowse=wallet.snapshot();label('Browse the shop').onclick();label('Shop everything').onclick();assert.deepEqual(wallet.snapshot(),beforeBrowse);label('Search shop').value='witch';label('Search shop').oninput();
     label('Buy Crooked witch hat for 80 Notes').onclick();assert.equal(wallet.snapshot().balance,70);
     assert.equal(avatar.headwear,'none');assert.equal(saved,0);
     label('Wear Crooked witch hat').onclick();assert.equal(avatar.headwear,'witch');assert.equal(saved,1);
@@ -184,7 +185,7 @@ test('Notes shop lists only priced stock, keeping expensive purchases and exclud
   const wallet=createWallet({storage:storage()}),body=new Element('div');
   const ui=createShopUI({wallet,panelBody:body,renderer:{drawPlayer(){},catalog:{headwear:[{id:'triadchampion',label:'Triad champion crown'}]}},getAvatar:()=>({}),
    achievementRewards:[{id:'triadchampion',label:'Triad champion crown',achievement:'triad-hard',requirement:'Win on Hard'}],openPanel(){body.replaceChildren();},openWardrobe(){}});
-  ui.open();const all=[];function visit(node){all.push(node);node.children.forEach(visit);}visit(body);
+  ui.open();const findLabel=(label)=>{const matches=[];function walk(node){if(node.attributes['aria-label']===label)matches.push(node);node.children.forEach(walk);}walk(body);return matches[0];};findLabel('Browse the shop').onclick();findLabel('Shop everything').onclick();const all=[];function visit(node){all.push(node);node.children.forEach(visit);}visit(body);
   assert.equal(all.some(node=>node.attributes['aria-label']==='Shop mastery rewards'),false);
   const cards=all.filter(node=>node.attributes['data-shop-item']);assert.ok(cards.length>0);assert.equal(cards.some(node=>node.attributes['data-shop-item']==='triadchampion'),false);
   for(const card of cards){const item=wallet.stock.find(item=>item.id===card.attributes['data-shop-item']);assert.ok(item&&item.price>0);}

@@ -1,0 +1,46 @@
+{
+  "description": "Rounded-angular beveled neon ocean biome fishing screen; runtime actors and fish are separate.",
+  "scene": "tidegate-inlet",
+  "source": "assets/world/source/tidegate-inlet-source.png",
+  "sourceSize": [
+    1591,
+    989
+  ],
+  "output": "assets/world/fishing/tidegate-inlet.png",
+  "outputSize": [
+    1592,
+    988
+  ],
+  "normalization": "Full-frame Canvas drawImage with imageSmoothingEnabled=false; no crop/letterbox.",
+  "logicalWorldSize": [
+    1000,
+    620
+  ],
+  "waterExits": [
+    "west",
+    "south"
+  ],
+  "openingGeometry": {
+    "west": {
+      "y": [
+        300,
+        400
+      ],
+      "center": [
+        0,
+        350
+      ]
+    },
+    "south": {
+      "x": [
+        500,
+        600
+      ],
+      "center": [
+        550,
+        620
+      ]
+    }
+  },
+  "outputSha256": "893dab593a39a87c36032627aab47bdfc26c3f1cc1eb574791c1c8b30caacb47"
+}

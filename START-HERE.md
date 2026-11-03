@@ -34,8 +34,8 @@ the preview is reloaded; it does not copy authentication into the test player
 or require new cookies.
 
 A saved profile opens through a brief loading screen. Profile choices live in
-**Settings → Profile options**, or **Profile → Classroom profile**.
-Choose **Log out** in Settings or the profile options to save progress, end the
+**Settings → My player → Profile options**, or **Profile → Classroom profile**.
+Choose **Log out** in **Settings → My player** or the profile options to save progress, end the
 student/teacher session, and return to the title screen. If saving cannot finish,
 the game keeps your profile open and offers another try.
 
@@ -43,8 +43,22 @@ The **Motion** setting uses the same saved animation preference as the original
 arcade and respects the device's reduced-motion setting. The title screen loads
 existing arcade artwork without starting gameplay, music, or Firebase SDKs.
 
+Conversations use larger text and reveal each line letter by letter. Choose
+**Settings → Sound & reading → Text speed** (Slow, Normal, Fast, or Instant); the same preference
+is available in room menus and saves on this device. Click the dialogue to show
+the full line immediately. In arcade conversations, press **E** once to reveal
+the line and again to close; **Escape** always closes. Reduced motion defaults
+to instant text until you choose a speed. Journal entries and quizzes remain
+fully visible.
+
+The main arcade now uses a complete empty-room background with separate clean
+furniture and plants. The large curved lounge couch stays in place. Moving or
+hiding an object reveals finished floors and walls. Existing local editor
+projects keep their previous art; export a backup and choose **Project → Reset
+project** to adopt the refreshed environment. See [Environment artwork](ENVIRONMENT-ART.md).
+
 The original arcade remains available at `classic-arcade.html`, linked from the
-title screen. In the connected world's **Settings**, **Title screen** returns
+title screen. In the connected world's **Settings → My player**, **Title screen** returns
 to the front door. Direct world links and existing picture-card links still work.
 The main game's internal filename is still `world-preview.html`; it serves the
 main Coda Arcade, not a separate preview build.
@@ -58,7 +72,7 @@ Disco-ball rays and small reflection trails circle using elapsed time, so their
 motion stays visible when rendering slows down. Motion Off keeps them still;
 FX Off disables them.
 
-Press **P** to open **Play notes**, or use **Settings → Play notes**. Jot down
+Press **P** to open **Play notes**, or use **Settings → Help & updates → Play notes**. Jot down
 bugs and future ideas; notes autosave in this browser and can be copied or
 downloaded. The pad also has a **Changelog** tab. Notes stay local to the active
 player and are never included in classroom cloud saves. Developer test notes
@@ -105,6 +119,8 @@ school roster rather than entering them in the arcade.
 See [Private classroom profiles](README-CLASSROOM-PROFILES.md) for activation,
 the allowed progress data, printable cards, and lost-card recovery. The rules
 fragment must be merged into a backup of the full live rules before deployment.
+
+Talk to Chopin and choose **See challenges**, or open **Menu → Challenges**, for the same four large choices: **Note Rush**, **Melodies**, **Scales**, and **Intervals**. Each opens a short setup with a clear Play button. In Melodies, choose a song, hear it first, or choose **Learn this song**. Browsing and previews do not start attempts or award progress. **Play from memory** unlocks for each learned song or scale. **Back to challenges** returns to the choices; **Back to Piano Lab** resumes the room. Keyboard, recording, and settings remain separate menu tabs.
 
 For local development, run `python3 -m http.server 8000 --bind 127.0.0.1` from
 the repository. This is a static site; no application installation or build
@@ -306,11 +322,22 @@ routines. Walking into an NPC no longer traps it in place. Conversations and
 explicitly placed characters keep their intended positions, and routes continue
 to respect the edited collision map.
 
-## Music History Journal (testkitchen)
+## The Scholar and music history
 
-Walk to a musician and choose **Tell me some music history** to discover a short
-fact. Open **Settings → Music History Journal** to browse your collection.
-All 540 entries start locked, with 30 for each of 18 characters. Undiscovered
-text stays hidden, including in search. Shop and boutique attendants and Captain
-Cadence are excluded. Discoveries save for the active player on this device;
-they do not sync across devices. See [the journal guide](docs/music-history.md).
+Find **The Scholar** on the lounge couch, or choose **Settings → Find the
+scholar**. Musicians' **Music history & friendship** prompts offer friendship
+quests. Each completed quest earns one friendship point and unlocks one fact.
+A **!** marks a new fact ready to learn.
+Carry discoveries to the scholar for Notes and the historian's record.
+Record 10 facts from a character to unlock their 10-question quiz; 80% passes
+and earns a one-time 2,000-Note prize. Repeated clicks do not produce facts.
+Use **F2 → History progression** to inspect progress and enter an isolated
+preview for testing. **Developer → Music facts** lets you browse and edit all
+180 facts, including locked entries, and their linked quiz questions. Apply edits,
+then use **Project → Export project JSON** to back them up for publication.
+See [the scholar guide](docs/music-history.md).
+
+The **Pixel editor** now includes **Smooth gradients** (**U**) with radius and
+strength controls, protection masks, and **Select → Manual shape** for custom
+outlines. Choose **Clear selection** after protecting a shape to smooth around
+it. See [Pixel artwork tools](docs/pixel-artwork.md).

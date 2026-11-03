@@ -7,12 +7,12 @@ const score=(lesson,step=0,extra={})=>wall.createScore({events:lesson.events,ste
 test('automatic melody registers reach every actual pitch without wrapping the lower Frère bell',()=>{
  for(const lesson of LESSONS){
   const register=fitMelodyRegister(lesson);assert.ok(register,lesson.id);
-  assert.ok(register.notes.every(offset=>offset>=0&&offset<=21));
+  assert.ok(register.notes.every(offset=>offset>=0&&offset<=23));
   assert.deepEqual(register.notes.map(offset=>register.baseMidi+offset),lesson.events.filter(event=>!event.rest).map(event=>event.midi));
  }
  const bell=fitMelodyRegister(lessonFor('frere-jacques'));
- assert.equal(bell.baseMidi,48);assert.equal(bell.octave,3);assert.equal(bell.first,60);
- assert.deepEqual(bell.pitches.slice(-6),[60,55,60,60,55,60]);
+ assert.equal(bell.baseMidi,60);assert.equal(bell.octave,4);assert.equal(bell.first,72);
+ assert.deepEqual(bell.pitches.slice(-6),[72,67,72,72,67,72]);
  assert.deepEqual(bell.notes.slice(-6),[12,7,12,12,7,12]);
  assert.equal(fitMelodyRegister({notes:[-20,30]}),null,'An impossible range is rejected instead of clipped');
 });

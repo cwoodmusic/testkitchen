@@ -1,0 +1,26 @@
+{
+  "description": "Finish the northwest dance corner as one continuous south-facing wall and dark-glass lane, with a matching segmented red neon rail. Preserve the exterior negative space, outer posts, left lamp, painted dance tiles and existing southwest turn outside the reviewed floor polygon.",
+  "worldSize": [1672,941],
+  "source": "assets/environment/source/dance-northwest-finish.png",
+  "sourceSize": [995,1580],
+  "sourcePlacement": [35,495,227,360],
+  "before": "assets/environment/source/dance-northwest-finish-before.png",
+  "tileEdgeFeather": {"points":[[169,665],[161,693],[152,723],[143,753],[134,784],[125,814],[117,845]],"width":8},
+  "output": "assets/environment/v1/empty-arcade.png",
+  "preserveProject": true,
+  "polygons": [
+    [[69,505],[247,505],[247,665],[69,665]],
+    [[69,649],[87,649],[87,815],[69,815]],
+    [[87,649],[185,649],[185,839],[119,839],[87,810]]
+  ],
+  "protectedPolygons": [
+    [[79,503],[89,503],[89,530],[79,530]],
+    [[72,528],[98,528],[98,571],[72,571]],
+    [[177,665],[204,665],[237,664],[271,664],[305,664],[339,664],[374,664],[408,664],[442,664],[477,664],[511,664],[545,664],[579,665],[618,665],[628,693],[639,723],[651,753],[662,784],[674,814],[685,845],[125,845],[133,814],[142,784],[151,753],[160,723],[169,693]]
+  ],
+  "sourceCopies": [
+    [81,640,166,15,88,641,159,17],
+    [67,655,13,160,69,658,18,157],
+    [67,640,14,15,69,641,19,17]
+  ]
+}

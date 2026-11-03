@@ -1,4 +1,5 @@
 """Build real four-count rhythm bars, including every duration and mobile layout."""
+from classroom_menu_helpers import choose_classroom_lesson
 import functools
 import importlib.util
 from http.server import ThreadingHTTPServer
@@ -70,7 +71,7 @@ class RhythmBarTests(unittest.TestCase):
             self.page.locator('#classroomAllLessons').click()
         if not self.page.locator('#classroomStart').is_visible():
             self.page.evaluate("roomUI.selectTopic('welcome',true)")
-        self.page.locator('[data-start-lesson="rhythm-tree"]').click()
+        choose_classroom_lesson(self.page, 'rhythm-tree')
 
     def try_step(self):
         self.page.locator('[data-lesson-try]').click()

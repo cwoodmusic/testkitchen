@@ -1,0 +1,315 @@
+{
+  "version": 1,
+  "alphaThreshold": 8,
+  "sources": [
+    {
+      "path": "assets/environment/source/sofa-south-source.png",
+      "sha256": "30f4255eca4366febb93e69040882fe03de2362a18da6c6ed168883066d6a741"
+    },
+    {
+      "path": "assets/environment/source/lounge-sofa-south-source.png",
+      "sha256": "fb4eafb4d0060cbc5320d3888970100beb398912232d61ac992bf259d50a8e5c"
+    },
+    {
+      "path": "assets/environment/v1/main-counter.png",
+      "sha256": "acbd11c434715584d16ca7f8f6266a12aba358b021de60bf8da8280773dc68b7"
+    },
+    {
+      "path": "assets/environment/v1/boutique-counter.png",
+      "sha256": "8509eb829b2be5cbbc41325708b43c37a6b636864e330450d416fa8954e556d1"
+    },
+    {
+      "path": "assets/environment/v1/dj-console.png",
+      "sha256": "f6a54f7db77244d91cf50438d3ca672bc6353063ef62e398c3a329e158cdc88c"
+    },
+    {
+      "path": "assets/environment/v1/table.png",
+      "sha256": "7c05972e4756afd8c3d784a784a1f9b63a17f006f563576ebff9ca06270a4fa6"
+    }
+  ],
+  "items": [
+    {
+      "id": "sofa-south",
+      "name": "South-facing sofa",
+      "width": 164,
+      "height": 131,
+      "mode": "bottom",
+      "source": "assets/environment/source/sofa-south-source.png",
+      "sourceSize": [
+        1653,
+        951
+      ],
+      "sourceCrop": [
+        44,
+        108,
+        1565,
+        733
+      ],
+      "placement": {
+        "x": 12,
+        "y": 66,
+        "width": 139,
+        "height": 65
+      },
+      "visibleBounds": {
+        "x": 12,
+        "y": 66,
+        "width": 139,
+        "height": 65
+      },
+      "corners": [
+        0,
+        0,
+        0,
+        0
+      ],
+      "outputs": [
+        "assets/environment/v1/dance-couch-left-south.png",
+        "assets/decor/v1/sofa-south.png"
+      ],
+      "sha256": "b4c759e205df0d4c51815a01842d3fe23b3c51154b4764a659f07dacd8969920"
+    },
+    {
+      "id": "sofa-compact-south",
+      "name": "Compact south-facing sofa",
+      "width": 162,
+      "height": 109,
+      "mode": "bottom",
+      "source": "assets/environment/source/sofa-south-source.png",
+      "sourceSize": [
+        1653,
+        951
+      ],
+      "sourceCrop": [
+        44,
+        108,
+        1565,
+        733
+      ],
+      "placement": {
+        "x": 20,
+        "y": 52,
+        "width": 121,
+        "height": 57
+      },
+      "visibleBounds": {
+        "x": 20,
+        "y": 52,
+        "width": 121,
+        "height": 57
+      },
+      "corners": [
+        0,
+        0,
+        0,
+        0
+      ],
+      "outputs": [
+        "assets/environment/v1/dance-couch-right-south.png",
+        "assets/decor/v1/sofa-compact-south.png"
+      ],
+      "sha256": "9c104b183de2b3bed654fa633ad6a4f49f6f0eecd1321a91cab12f4203cbf321"
+    },
+    {
+      "id": "sofa-lounge-south",
+      "name": "South-facing lounge sofa",
+      "width": 288,
+      "height": 105,
+      "mode": "bottom",
+      "source": "assets/environment/source/lounge-sofa-south-source.png",
+      "sourceSize": [
+        2058,
+        764
+      ],
+      "sourceCrop": [
+        9,
+        142,
+        2040,
+        518
+      ],
+      "placement": {
+        "x": 13,
+        "y": 38,
+        "width": 262,
+        "height": 67
+      },
+      "visibleBounds": {
+        "x": 13,
+        "y": 38,
+        "width": 262,
+        "height": 67
+      },
+      "corners": [
+        0,
+        0,
+        0,
+        0
+      ],
+      "outputs": [
+        "assets/environment/v1/lounge-couch-south.png",
+        "assets/decor/v1/sofa-lounge-south.png"
+      ],
+      "sha256": "92dc71147d299cef80bdc25bbfaae0b7ded31e863d6f884eb05e99655bac5671"
+    },
+    {
+      "id": "counter-jade-south",
+      "name": "South-facing jade counter",
+      "width": 361,
+      "height": 142,
+      "mode": "center",
+      "source": "assets/environment/v1/main-counter.png",
+      "sourceSize": [
+        560,
+        238
+      ],
+      "sourceCrop": [
+        0,
+        0,
+        560,
+        238
+      ],
+      "placement": {
+        "x": 13,
+        "y": 0,
+        "width": 334,
+        "height": 142
+      },
+      "visibleBounds": {
+        "x": 15,
+        "y": 2,
+        "width": 331,
+        "height": 139
+      },
+      "corners": [
+        0,
+        0,
+        0,
+        0
+      ],
+      "outputs": [
+        "assets/decor/v1/counter-jade-south.png"
+      ],
+      "sha256": "3e4bce306a7093ebda73de4b7301cbece6f522bf03a1344f146045a5f2567f98"
+    },
+    {
+      "id": "counter-boutique-south",
+      "name": "South-facing boutique counter",
+      "width": 127,
+      "height": 81,
+      "mode": "center",
+      "source": "assets/environment/v1/boutique-counter.png",
+      "sourceSize": [
+        313,
+        285
+      ],
+      "sourceCrop": [
+        0,
+        0,
+        313,
+        285
+      ],
+      "placement": {
+        "x": 19,
+        "y": 0,
+        "width": 89,
+        "height": 81
+      },
+      "visibleBounds": {
+        "x": 20,
+        "y": 1,
+        "width": 88,
+        "height": 79
+      },
+      "corners": [
+        0,
+        0,
+        0,
+        0
+      ],
+      "outputs": [
+        "assets/decor/v1/counter-boutique-south.png"
+      ],
+      "sha256": "046450f9bfb20c0c1fd670af9d9410c47234c9c1d8caa3c16516b7623331a94f"
+    },
+    {
+      "id": "desk-dj-south",
+      "name": "South-facing DJ desk",
+      "width": 121,
+      "height": 62,
+      "mode": "center",
+      "source": "assets/environment/v1/dj-console.png",
+      "sourceSize": [
+        465,
+        247
+      ],
+      "sourceCrop": [
+        0,
+        0,
+        465,
+        247
+      ],
+      "placement": {
+        "x": 2,
+        "y": 0,
+        "width": 117,
+        "height": 62
+      },
+      "visibleBounds": {
+        "x": 3,
+        "y": 1,
+        "width": 115,
+        "height": 60
+      },
+      "corners": [
+        0,
+        0,
+        0,
+        0
+      ],
+      "outputs": [
+        "assets/decor/v1/desk-dj-south.png"
+      ],
+      "sha256": "c5202339b9e8d98f85c10294ffe0c94b18313cbd7d4a0658a75becab1087e376"
+    },
+    {
+      "id": "table-candle-south",
+      "name": "South-facing candle table",
+      "width": 86,
+      "height": 70,
+      "mode": "center",
+      "source": "assets/environment/v1/table.png",
+      "sourceSize": [
+        363,
+        325
+      ],
+      "sourceCrop": [
+        0,
+        0,
+        363,
+        325
+      ],
+      "placement": {
+        "x": 4,
+        "y": 0,
+        "width": 78,
+        "height": 70
+      },
+      "visibleBounds": {
+        "x": 5,
+        "y": 0,
+        "width": 77,
+        "height": 70
+      },
+      "corners": [
+        0,
+        0,
+        0,
+        0
+      ],
+      "outputs": [
+        "assets/decor/v1/table-candle-south.png"
+      ],
+      "sha256": "ec7045a3d643b74ff33c4da9de7d3fa72442ac27d2e81a1114778de888290e27"
+    }
+  ]
+}

@@ -1,7 +1,7 @@
 /* Validate portable songs before replacing the editor or scheduling audio. */
 (function(root,factory){const api=factory();if(typeof module==='object'&&module.exports)module.exports=api;if(root)root.CodaSongComposition=api;})(typeof window==='undefined'?null:window,function(){
  'use strict';
- const METERS=Object.freeze(['4/4','2/4','3/4','5/4','6/8','9/8','12/8']);
+ const METERS=Object.freeze(['4/4','2/2','7/8','2/4','3/4','5/4','6/8','9/8','12/8']);
  const SCALES=Object.freeze(['chromatic','major','minor','majorPent','minorPent']);
  const MAX_NOTES=8192,MAX_FILE_BYTES=2*1024*1024;
  const object=value=>!!value&&typeof value==='object'&&!Array.isArray(value);

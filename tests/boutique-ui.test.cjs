@@ -179,3 +179,16 @@ test('preview fallbacks are revalidated after an unlock or developer privilege i
  dev.label('Hats').value='crown';assert.equal(dev.preview.headwear,'crown');options.developer=false;dev.ui.refresh();
  assert.equal(dev.preview.headwear,'none');dev.button('Save NPC look').onclick();assert.equal(dev.calls.length,0);
 });
+
+
+test('moving between boutique menu groups keeps the complete draft until Save or Cancel',()=>{
+ const env=setup(),before=JSON.stringify(env.profiles.player);env.ui.open();
+ const page=id=>env.all().find(node=>node.attributes['data-boutique-page']===id).onclick();
+ const back=()=>env.all().find(node=>Object.hasOwn(node.attributes,'data-boutique-back')).onclick();
+ page('extras');env.label('Try Baseball cap').onclick();back();
+ page('hair');env.label('Hair color').value='#112233';back();
+ page('clothes');env.label('Outfit').value='dress';env.label('Outfit').onchange();back();
+ assert.equal(env.preview.headwear,'cap');assert.equal(env.preview.hair,'#112233');assert.equal(env.preview.outfit,'dress');
+ assert.equal(env.calls.length,0);assert.equal(JSON.stringify(env.profiles.player),before);
+ env.button('Cancel').onclick();env.ui.open();assert.equal(env.preview.headwear,'none');assert.equal(env.preview.outfit,'pants');
+});

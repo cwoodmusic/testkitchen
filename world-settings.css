@@ -1,0 +1,50 @@
+/* A focused settings panel; the existing world and header stay in place. */
+body #worldMenu.world-settings{box-sizing:border-box;width:min(760px,calc(100vw - 24px));grid-template-columns:minmax(0,1fr);padding:22px;border:1px solid #8398c0;border-radius:0 0 18px 18px;background:linear-gradient(145deg,#202d4d,#131b34);color:#f8f8ff;line-height:1.45;box-shadow:0 18px 48px #0009}
+body #worldMenu.world-settings[hidden]{display:none!important}
+#worldMenu.world-settings .world-settings-shell{display:block;min-width:0;width:100%}
+#worldMenu.world-settings [hidden]{display:none!important}
+#worldMenu.world-settings .world-settings-bar{display:flex;align-items:center;justify-content:space-between;gap:12px;margin:0 0 16px;min-height:44px}
+#worldMenu.world-settings .world-settings-bar .kids-menu-back{margin:0}
+#worldMenu.world-settings .world-settings-done{margin-left:auto;min-height:44px;min-width:80px;padding:9px 16px;border:1px solid #b2ecd0;border-radius:10px;background:#b1f0d0;color:#183a33;font:inherit;font-size:17px;font-weight:750;cursor:pointer}
+#worldMenu.world-settings .kids-menu-head{margin-bottom:18px}
+#worldMenu.world-settings .kids-menu-grid{gap:14px}
+#worldMenu.world-settings .kids-menu-card{min-height:154px}
+#worldMenu.world-settings .world-settings-page{display:grid;grid-template-columns:minmax(0,1fr);gap:16px;min-width:0;margin:0;padding:0}
+#worldMenu.world-settings .world-settings-page>button,#worldMenu.world-settings .world-settings-page>a{display:flex;justify-content:center;align-items:center;min-height:48px;min-width:0;width:100%;padding:11px 15px;white-space:normal;text-align:center;font:inherit;font-size:18px;line-height:1.35;border:1px solid #8296b7;border-radius:10px;background:#2b3b59;color:#f4f7ff;cursor:pointer;text-decoration:none}
+#worldMenu.world-settings .world-settings-page>button:hover,#worldMenu.world-settings .world-settings-page>a:hover{background:#354d6c;border-color:#bfd5f0}
+#worldMenu.world-settings .world-settings-page>span{display:block;min-width:0;font-size:17px;line-height:1.5;white-space:normal}
+#worldMenu.world-settings .world-settings-music{display:flex;align-items:center;flex-wrap:wrap;gap:12px;padding:16px;background:#183c43;border:1px solid #7eb7b0;border-radius:12px}
+#worldMenu.world-settings #worldSettingsMusic{min-width:145px;min-height:48px;font-size:17px}
+#worldMenu.world-settings .world-settings-music-status{flex:1;min-width:100px;margin:0;color:#e2fff1;font-size:17px;line-height:1.45}
+#worldMenu.world-settings .dialogue-text-settings{display:grid;grid-template-columns:minmax(0,1fr) minmax(130px,1fr);align-items:center;gap:14px;padding:16px;border:1px solid #758bab;border-radius:12px;background:#243653;font-size:18px;line-height:1.4;color:#f4f7ff}
+#worldMenu.world-settings .dialogue-text-speed{min-height:48px;min-width:0;width:100%;padding:9px 12px;font:inherit;font-size:17px;background:#1d2b44;border:1px solid #9fb6ce;border-radius:8px;color:#fff}
+#worldMenu.world-settings #cameraTools{display:flex;flex-wrap:wrap;justify-content:center;gap:10px;padding:14px;border:1px solid #7f96b7;border-radius:12px;background:#243653}
+#worldMenu.world-settings #cameraTools button{min-width:66px;min-height:48px;padding:9px 14px;font:inherit;font-size:18px;border-radius:9px}
+#worldMenu.world-settings #mobilePinchHint{color:#d6e6f4;font-size:16px;line-height:1.5}
+#worldMenu.world-settings .arcade-vibe-controls{box-sizing:border-box;min-width:0;width:100%;margin:0;padding:16px;border-color:#839aba;border-radius:12px;background:#243653;color:#edf5ff;font-size:17px}
+#worldMenu.world-settings .arcade-vibe-controls legend{padding:0 7px;color:#ffda81;font-size:19px;font-weight:750}
+#worldMenu.world-settings .arcade-vibe-controls button{min-height:44px;font-size:16px;line-height:1.35;white-space:normal}
+#worldMenu.world-settings .arcade-vibe-options{min-width:0}
+#worldMenu.world-settings .arcade-vibe-level,#worldMenu.world-settings .arcade-vibe-status{font-size:16px;line-height:1.45}
+#worldMenu.world-settings a:focus-visible{outline:3px solid #ffda81;outline-offset:3px}
+@media(max-width:760px),(pointer:coarse){
+ body #worldMenu.world-settings{right:6px;left:auto;width:min(760px,calc(100vw - 12px));padding:18px 16px;gap:0}
+ #worldMenu.world-settings .kids-menu-head h2{font-size:30px}
+ #worldMenu.world-settings .kids-menu-card{min-height:145px}
+ #worldMenu.world-settings .kids-menu-title{font-size:22px}
+}
+@media(max-width:420px){
+ body #worldMenu.world-settings{padding:16px 14px}
+ #worldMenu.world-settings .world-settings-bar{margin-bottom:16px}
+ #worldMenu.world-settings .kids-menu-head{margin-bottom:18px}
+ #worldMenu.world-settings .kids-menu-head h2{font-size:28px}
+ #worldMenu.world-settings .kids-menu-card{min-height:104px;padding:14px;gap:5px 12px}
+ #worldMenu.world-settings .kids-menu-title{font-size:21px}
+ #worldMenu.world-settings .dialogue-text-settings{grid-template-columns:minmax(0,1fr);gap:10px;font-size:18px}
+ #worldMenu.world-settings .world-settings-music{align-items:stretch}
+ #worldMenu.world-settings #worldSettingsMusic{width:100%}
+}
+@media(min-width:761px) and (max-height:820px){
+ #worldMenu.world-settings .kids-menu-card{min-height:145px;padding:14px;gap:7px}
+ #worldMenu.world-settings .kids-menu-head h2{font-size:32px}
+}

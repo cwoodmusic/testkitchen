@@ -2,11 +2,11 @@
 (function(root,factory){const notation=typeof module==='object'&&module.exports?require('./music-notation.js'):root?.CodaMusicNotation;const api=factory(notation);if(typeof module==='object'&&module.exports)module.exports=api;if(root)root.CodaRhythmBeaming=api;})(typeof window==='undefined'?null:window,function(notation){
  'use strict';
  const EPSILON=1e-7;
- const METERS=Object.freeze({'4/4':{pulseBeats:1,barBeats:4},'6/8':{pulseBeats:1.5,barBeats:3},'2/2':{pulseBeats:2,barBeats:4}});
+ const METERS=Object.freeze({'4/4':{pulseBeats:1,barBeats:4},'6/8':{pulseBeats:1.5,barBeats:3},'2/2':{pulseBeats:2,barBeats:4},'2/4':{pulseBeats:1,barBeats:2},'3/4':{pulseBeats:1,barBeats:3},'5/4':{pulseBeats:1,barBeats:5},'7/8':{pulseBeats:1,barBeats:3.5},'9/8':{pulseBeats:1.5,barBeats:4.5},'12/8':{pulseBeats:1.5,barBeats:6}});
  const finite=(value,fallback)=>Number.isFinite(value)?value:fallback;
  function meterInfo(options={}){
   const id=options.meter==='cut'||options.meter==='cut-time'?'2/2':options.meter||options.meterInfo?.id||'4/4',base=METERS[id]||METERS['4/4'];
-  return {id:Object.hasOwn(METERS,id)?id:'4/4',pulseBeats:finite(options.pulseBeats,finite(options.meterInfo?.pulseBeats,base.pulseBeats)),barBeats:finite(options.barBeats,finite(options.meterInfo?.barBeats,base.barBeats))};
+  return {id:Object.hasOwn(METERS,id)?id:'4/4',pulseBeats:finite(options.pulseBeats,finite(options.meterInfo?.pulseBeats,base.pulseBeats)),barBeats:finite(options.barBeats,finite(options.meterInfo?.barBeats,base.barBeats)),pulses:id==='7/8'?[0,1,2]:null};
  }
  function levels(note){
   if(!note||note.rest||!Number.isFinite(note.duration)||note.duration<=0)return 0;
@@ -43,7 +43,7 @@
    else if(pending.length)singles.push(pending[0]);pending=[];
   };
   for(const item of ordered){
-   const bar=Math.floor((item.onset+EPSILON)/meter.barBeats),local=item.onset-bar*meter.barBeats,pulse=Math.floor((local+EPSILON)/meter.pulseBeats),end=bar*meter.barBeats+Math.min(meter.barBeats,(pulse+1)*meter.pulseBeats);
+   const bar=Math.floor((item.onset+EPSILON)/meter.barBeats),local=item.onset-bar*meter.barBeats,pulse=meter.pulses?Math.max(0,meter.pulses.findLastIndex(at=>at<=local+EPSILON)):Math.floor((local+EPSILON)/meter.pulseBeats),end=bar*meter.barBeats+(meter.pulses?(meter.pulses[pulse+1]??meter.barBeats):Math.min(meter.barBeats,(pulse+1)*meter.pulseBeats));
    item.bar=bar;item.pulse=pulse;
    if(!item.levels||item.onset+item.note.duration>end+EPSILON){flush();singles.push(item);continue;}
    const last=pending[pending.length-1];

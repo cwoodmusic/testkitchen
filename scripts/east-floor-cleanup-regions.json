@@ -1,0 +1,20 @@
+{
+  "description": "Remove the baked blue wall-cap continuation and rectangular wash from the bare glass east of the dance-room wall.",
+  "worldSize": [1672, 941],
+  "before": "assets/environment/source/east-floor-before-cleanup.png",
+  "source": "assets/environment/source/east-floor-clean.png",
+  "sourcePlacement": [650, 600, 215, 220],
+  "output": "assets/environment/v1/empty-arcade.png",
+  "reviewedProjectSha256": "90b0319e0102c454c0f3217576c0ac5e157101952136a9584b4b4ae8d33a5b2b",
+  "passes": [
+    {
+      "id": "dance-east-cap-ghost",
+      "repairBounds": [725, 628, 82, 178],
+      "floorFeather": {
+        "leftBelow": [725, 728, 628],
+        "right": [799, 807],
+        "bottom": [794, 806]
+      }
+    }
+  ]
+}

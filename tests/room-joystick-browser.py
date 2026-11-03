@@ -149,7 +149,8 @@ class RoomJoystickTests(unittest.TestCase):
 
     def test_cave_boat_uses_analog_angle_and_water_collision(self):
         self.open_room('cave')
-        for x, y in [(178, 342), (218, 380)]:
+        landing=self.state()['shore']['spawn'];pier=self.state()['boardingPoint']
+        for x, y in [(pier['x'],landing['y']),(pier['x'],pier['y'])]:
             for _ in range(100):
                 state = self.state()['player']
                 dx, dy = x - state['x'], y - state['y']
@@ -161,9 +162,13 @@ class RoomJoystickTests(unittest.TestCase):
                 self.page.clock.run_for(48)
             self.move(0, 0)
             self.assertLess(distance, 3)
+        if not self.page.locator('#fishingBoatBoard').is_visible():
+            self.page.locator('#fishingMenuButton').tap()
         self.page.locator('#fishingBoatBoard').tap()
         self.page.clock.run_for(32)
         self.assertEqual(self.state()['phase'], 'explore')
+        self.move(0, 1);self.page.clock.run_for(160);self.move(0, 0)
+        self.page.clock.run_for(32)
         before = self.state()['boat']
         self.move(.6, -.2)
         self.page.clock.run_for(192)

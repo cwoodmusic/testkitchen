@@ -2,6 +2,7 @@
 
 Requires the environment's Python Playwright package and Chromium. No npm setup.
 """
+from settings_menu_helpers import settings_page
 import base64
 import functools
 from http.server import SimpleHTTPRequestHandler, ThreadingHTTPServer
@@ -64,7 +65,7 @@ class WorldEditorTests(unittest.TestCase):
             raise AssertionError({'errors':self.errors,'failures':self.local_failures,'initialization':self.page.evaluate('({developer:typeof CodaDeveloperConsole,qa:typeof CodaArcadeQA,renderer:typeof createCodaCharacterRenderer})')}) from error
         self.page.wait_for_function('window.CodaArcadeQA?.foregroundPixelAlpha("dance_right_couch",625,650)!==null')
         # Use the shipped FX control to keep pixel assertions and CI timing stable.
-        open_settings(self.page);self.page.locator('#fxBtn').click()
+        settings_page(self.page, 'screen');self.page.locator('#fxBtn').click()
         self.page.locator('#fxBtn').click();close_settings(self.page)
         self.page.keyboard.press('F2')
 
@@ -281,7 +282,7 @@ class WorldEditorTests(unittest.TestCase):
         self.assertGreater(sum(a!=b for a,b in zip(before,after)),500,'Moving a disco ball must clear its original sphere')
         self.page.locator('#devDiscoRays').check()
         # Exercise the actual transformed light/sphere renderers at the shipped Lite setting.
-        open_settings(self.page);self.page.locator('#fxBtn').click();self.page.locator('#fxBtn').click();close_settings(self.page)
+        settings_page(self.page, 'screen');self.page.locator('#fxBtn').click();self.page.locator('#fxBtn').click();close_settings(self.page)
         self.page.wait_for_timeout(150)
         self.page.locator('#assetVisible').uncheck()
         state=self.page.evaluate('CodaArcadeQA.worldObjects().find(o=>o.name==="disco_ball_dance")')
@@ -331,7 +332,7 @@ class WorldEditorTests(unittest.TestCase):
           const canvas=document.createElement('canvas');canvas.width=1672;canvas.height=941;
           const reference=canvas.getContext('2d');reference.drawImage(image,0,0);
           const game=document.querySelector('#view').getContext('2d'),floor=CodaArcadeQA.floorGrid();
-          const characters=CodaArcadeQA.characters(),dj=CodaArcadeQA.dj(),actors=[characters.player,...characters.npcs.filter(p=>!p.hidden),...(dj.visible?[dj]:[]),...CodaArcadeQA.shopkeepers().filter(p=>p.visible)];
+          const characters=CodaArcadeQA.characters(),dj=CodaArcadeQA.dj(),scholar=CodaArcadeQA.scholar(),actors=[characters.player,...characters.npcs.filter(p=>!p.hidden),...(dj.visible?[dj]:[]),...(scholar.visible?[scholar]:[]),...CodaArcadeQA.shopkeepers().filter(p=>p.visible)];
           return samples.filter(([x,y])=>!actors.some(p=>Math.abs(p.x-x)<45&&y>p.y-90&&y<p.y+8)).flatMap(([x,y])=>{
             const rebuilt=floor.maskAt(x,y)>0,a=game.getImageData(x,y,1,1).data,
               b=rebuilt?floor.pixelAt(x,y):reference.getImageData(x,y,1,1).data;
@@ -359,8 +360,8 @@ class WorldEditorTests(unittest.TestCase):
         self.assertTrue(self.page.evaluate('CodaArcadeQA.characters().npcs.every(p=>p.hidden||CodaArcadeQA.walkable(p.x,p.y))'))
         talk_to_musician(self.page,'miles')
         self.assertEqual(self.page.locator('#who').inner_text(),'Miles Davis')
-        self.assertTrue(self.page.locator('.musician-description').inner_text())
-        self.assertTrue(self.page.locator('.musician-choices').get_by_role('button',name='mission',exact=False).is_visible())
+        self.assertFalse(self.page.locator('.musician-description').is_visible())
+        self.assertTrue(self.page.locator('[data-history-owner-prompt="miles"]').is_visible())
         self.page.keyboard.press('Escape')
         self.assertFalse(self.page.evaluate('CodaArcadeQA.conversation().open'))
 
@@ -369,10 +370,9 @@ class WorldEditorTests(unittest.TestCase):
         talk_to_musician(self.page,'miles')
         self.assertEqual(self.page.locator('#who').inner_text(),'Miles Davis')
         self.assertTrue(self.page.locator('#dialog').is_visible())
-        self.assertIn('Imagined dialogue',self.page.locator('#dialog').inner_text())
-        self.page.get_by_role('button',name='Tell me about your music',exact=True).click()
-        self.assertIn('Kind of Blue',self.page.locator('#words').inner_text())
-        self.assertIn('1959',self.page.locator('#words').inner_text())
+        self.assertEqual(self.page.locator('#words').inner_text(),self.page.evaluate("CodaMusicianQuotes.line('miles')"))
+        self.page.get_by_role('button',name='Advice',exact=True).click()
+        self.assertIn('Improvising',self.page.locator('#words').inner_text())
         start=self.page.evaluate('CodaArcadeQA.characters().npcs')
         self.page.wait_for_timeout(600)
         end=self.page.evaluate('CodaArcadeQA.characters().npcs')
@@ -380,8 +380,15 @@ class WorldEditorTests(unittest.TestCase):
         self.assertEqual((a['x'],a['y'],a['phase']),(b['x'],b['y'],b['phase']))
         self.assertEqual(b['activity'],'chatting')
         self.assertTrue(any(abs(x['x']-y['x'])+abs(x['y']-y['y'])>1 for x,y in zip(start,end) if x['id']!='miles'))
-        self.page.get_by_role('button',name='Give me a musical tip',exact=True).click()
-        self.assertIn('pause',self.page.locator('#words').inner_text())
+        self.page.get_by_role('button',name='Advice',exact=True).click()
+        self.assertIn('Stop and listen',self.page.locator('#words').inner_text())
+        # E completes the animated line before a second E closes the dialogue.
+        # Check whether animation is active so this also works if the line
+        # happened to finish naturally before the first keypress.
+        if self.page.locator('#words [style*="opacity: 0"]').count():
+            self.page.keyboard.press('e')
+            self.assertTrue(self.page.locator('#dialog').is_visible())
+            self.assertEqual(self.page.locator('#words [style*="opacity: 0"]').count(),0)
         self.page.keyboard.press('e')
         self.assertFalse(self.page.locator('#dialog').is_visible())
         self.assertIsNone(self.page.evaluate('CodaArcadeQA.conversation().id'))

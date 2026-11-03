@@ -1,0 +1,66 @@
+{
+  "description": "Overhead SNES-era 16-bit ocean cavern screen with flat navy water, clustered pixel ripples, dark outlined blue reef tiles and cyan/violet coral accents; actors and fish remain runtime sprites.",
+  "scene": "tidegate-inlet",
+  "style": "Top-down 2D pixel art; chunky square clusters, limited navy/cobalt/teal palette and flat 2-3-tone shading.",
+  "source": "assets/world/source/snes-tidegate-inlet-source.png",
+  "sourceSize": [
+    1591,
+    989
+  ],
+  "output": "assets/world/fishing/tidegate-inlet.png",
+  "outputSize": [
+    1592,
+    988
+  ],
+  "normalization": "Full-frame Canvas drawImage with imageSmoothingEnabled=false; no crop, letterbox or layout transformation.",
+  "logicalWorldSize": [
+    1000,
+    620
+  ],
+  "waterExits": [
+    "west",
+    "south"
+  ],
+  "openingGeometry": {
+    "west": {
+      "y": [
+        300,
+        400
+      ],
+      "center": [
+        0,
+        350
+      ]
+    },
+    "south": {
+      "x": [
+        500,
+        600
+      ],
+      "center": [
+        550,
+        620
+      ]
+    }
+  },
+  "clearNavigationBasin": {
+    "shape": "ellipse",
+    "center": [
+      550,
+      350
+    ],
+    "radii": [
+      360,
+      185
+    ]
+  },
+  "outputSha256": "fea5a377f73c747ff5da071abc7c7f481ced8daa2a712c70fef00d5ca377801c",
+  "sourceSha256": "67ef4dce962eead47e1ac16fbc801bc37edf1b325302ad97b5bee8b33bf2c125",
+  "generator": "image_gen",
+  "generatedAt": "2026-11-01",
+  "referenceSources": [
+    "assets/world/fishing/tidegate-inlet.png (pre-restyle)",
+    "assets/world/fishing/tidegate-inlet.png (pre-restyle)"
+  ],
+  "visualGeometryReview": "Confirmed full water footprint at west (26,350) and south (550,594); edge channel continues visibly to image boundary. Other edge directions closed by reef. Central basin has no obstacles."
+}

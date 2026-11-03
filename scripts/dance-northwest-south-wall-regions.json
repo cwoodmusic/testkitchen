@@ -1,0 +1,17 @@
+{
+  "description": "Replace only the reviewed dance-room northwest angle with a south-facing wall and an inner cap aligned to the existing straight north wall. Expose glass below the removed diagonal while preserving both lamp bodies, painted dance tiles and all independent furniture.",
+  "worldSize": [1672,941],
+  "source": "assets/environment/source/dance-northwest-south-wall.png",
+  "sourceSize": [1254,1254],
+  "sourcePlacement": [0,430,320,310],
+  "output": "assets/environment/v1/empty-arcade.png",
+  "polygons": [
+    [[45,450],[272,450],[272,710],[45,710]]
+  ],
+  "protectedPolygons": [
+    [[0,0],[50,0],[50,941],[0,941]],
+    [[72,537],[95,537],[95,568],[72,568]],
+    [[195,482],[219,482],[219,507],[195,507]],
+    [[169,665],[204,665],[237,664],[271,664],[305,664],[339,664],[374,664],[408,664],[442,664],[477,664],[511,664],[545,664],[579,665],[618,665],[628,693],[639,723],[651,753],[662,784],[674,814],[685,845],[117,845],[125,814],[134,784],[143,753],[152,723],[161,693]]
+  ]
+}

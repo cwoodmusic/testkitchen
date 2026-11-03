@@ -1,0 +1,57 @@
+{
+  "description": "Top-down SNES-era 16-bit underground swamp screen with crisp pixel clusters, low moss/root banks, calm murky green water, reeds, luminous mushrooms and subtle fog. Runtime actors, boats and fish remain separate.",
+  "source": "assets/world/source/snes-mistfen-channel-source.png",
+  "sourceSize": [
+    1591,
+    988
+  ],
+  "output": "assets/world/fishing/mistfen-channel.png",
+  "outputSize": [
+    1592,
+    988
+  ],
+  "logicalWorldSize": [
+    1000,
+    620
+  ],
+  "exits": [
+    "west",
+    "east",
+    "south"
+  ],
+  "exitCorridors": {
+    "west": {
+      "y": [
+        300,
+        400
+      ]
+    },
+    "east": {
+      "y": [
+        300,
+        400
+      ]
+    },
+    "south": {
+      "x": [
+        500,
+        600
+      ]
+    }
+  },
+  "navigationEllipse": {
+    "center": [
+      550,
+      350
+    ],
+    "radii": [
+      360,
+      185
+    ]
+  },
+  "geometryReview": "West/east edges are open water throughout y300\u2013400; vertical passage is open at x500\u2013600. Boat footprints at edge witnesses are clear. Opposite vertical edge remains closed.",
+  "normalization": "Full-frame Canvas drawImage with imageSmoothingEnabled=false, preserving native room-artwork dimensions.",
+  "previousImageSha256": "2a60d74d10be97539b1b038cdedb55362101663655d4b23d83d40d2c385f86ec",
+  "sourceSha256": "00a472e50e50e6a1a4ddd8a9af43500796fb1ff6509864e93bed5dc9152287e0",
+  "outputSha256": "f7cf0d591f73401b3622ed15694f159e2fb00aab5833f0fabc576333e05f4081"
+}

@@ -1,0 +1,41 @@
+{
+  "description": "Glowstone Narrows restyled as a top-down SNES-era pixel-art crystal cave lake. Calm open water, compact outlined cave tiles and north/east water passages; no baked-in actors, boats, fish, dock or ladder.",
+  "source": "assets/world/source/snes-glowstone-narrows-source.png",
+  "sourceSize": [
+    1591,
+    989
+  ],
+  "output": "assets/world/fishing/glowstone-narrows.png",
+  "outputSize": [
+    1592,
+    988
+  ],
+  "logicalWorldSize": [
+    1000,
+    620
+  ],
+  "exits": [
+    "north",
+    "east"
+  ],
+  "navigation": {
+    "basin": {
+      "cx": 550,
+      "cy": 350,
+      "rx": 360,
+      "ry": 185
+    },
+    "northWaterTrigger": [
+      550,
+      26
+    ],
+    "eastWaterTrigger": [
+      974,
+      350
+    ]
+  },
+  "normalization": "Full-frame browser Canvas drawImage, imageSmoothingEnabled=false; preserves room-artwork native dimensions without smoothing pixel clusters.",
+  "sourceSha256": "5c31b8728ddf5f1c78173ddb7cf38185ea4dd0fe73d6cd7e5e7133c041958fb6",
+  "previousImageSha256": "33c5dddac18abfdb78484af1cf98ccd0fc7010894c93a532fe9fd75e6978972a",
+  "outputSha256": "217f6a1453a4a66c624951be52772997cc148cc6645527a6153cdf6851d0275e"
+}

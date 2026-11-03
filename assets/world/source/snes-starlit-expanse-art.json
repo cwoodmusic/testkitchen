@@ -1,0 +1,66 @@
+{
+  "description": "Overhead SNES-era 16-bit ocean cavern screen with flat navy water, clustered pixel ripples, dark outlined blue reef tiles and cyan/violet coral accents; actors and fish remain runtime sprites.",
+  "scene": "starlit-expanse",
+  "style": "Top-down 2D pixel art; chunky square clusters, limited navy/cobalt/teal palette and flat 2-3-tone shading.",
+  "source": "assets/world/source/snes-starlit-expanse-source.png",
+  "sourceSize": [
+    1591,
+    988
+  ],
+  "output": "assets/world/fishing/starlit-expanse.png",
+  "outputSize": [
+    1592,
+    988
+  ],
+  "normalization": "Full-frame Canvas drawImage with imageSmoothingEnabled=false; no crop, letterbox or layout transformation.",
+  "logicalWorldSize": [
+    1000,
+    620
+  ],
+  "waterExits": [
+    "west",
+    "north"
+  ],
+  "openingGeometry": {
+    "west": {
+      "y": [
+        300,
+        400
+      ],
+      "center": [
+        0,
+        350
+      ]
+    },
+    "north": {
+      "x": [
+        500,
+        600
+      ],
+      "center": [
+        550,
+        0
+      ]
+    }
+  },
+  "clearNavigationBasin": {
+    "shape": "ellipse",
+    "center": [
+      550,
+      350
+    ],
+    "radii": [
+      360,
+      185
+    ]
+  },
+  "outputSha256": "d11c7fe306c3541fdd9c8bb91d45ec1439fcd10ed5fe323811e12b03a51fc386",
+  "sourceSha256": "772d1cb2898dddb5f11ab68d16e6807831a1d0645b1de97165a9d02989ecbb64",
+  "generator": "image_gen",
+  "generatedAt": "2026-11-01",
+  "referenceSources": [
+    "assets/world/source/snes-tidegate-inlet-source.png",
+    "assets/world/fishing/starlit-expanse.png (pre-restyle)"
+  ],
+  "visualGeometryReview": "Confirmed full water footprint at west (26,350) and north (550,26); edge channel continues visibly to image boundary. Other edge directions closed by reef. Central basin has no obstacles."
+}

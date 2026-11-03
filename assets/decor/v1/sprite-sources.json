@@ -1,0 +1,799 @@
+[
+  {
+    "name": "neon-jukebox",
+    "source": "decor-01",
+    "group": "floor",
+    "cell": [
+      0,
+      0,
+      474,
+      493
+    ],
+    "crop": [
+      81,
+      47,
+      324,
+      419
+    ],
+    "width": 324,
+    "height": 419
+  },
+  {
+    "name": "rocket-statue",
+    "source": "decor-01",
+    "group": "floor",
+    "cell": [
+      474,
+      0,
+      427,
+      493
+    ],
+    "crop": [
+      544,
+      45,
+      275,
+      422
+    ],
+    "width": 275,
+    "height": 422
+  },
+  {
+    "name": "gumball-machine",
+    "source": "decor-01",
+    "group": "floor",
+    "cell": [
+      901,
+      0,
+      411,
+      493
+    ],
+    "crop": [
+      984,
+      46,
+      257,
+      413
+    ],
+    "width": 257,
+    "height": 413
+  },
+  {
+    "name": "star-pedestal",
+    "source": "decor-01",
+    "group": "floor",
+    "cell": [
+      1312,
+      0,
+      462,
+      493
+    ],
+    "crop": [
+      1384,
+      69,
+      321,
+      402
+    ],
+    "width": 321,
+    "height": 402
+  },
+  {
+    "name": "mini-cabinet",
+    "source": "decor-01",
+    "group": "tabletop",
+    "cell": [
+      0,
+      493,
+      486,
+      394
+    ],
+    "crop": [
+      86,
+      515,
+      335,
+      337
+    ],
+    "width": 335,
+    "height": 337
+  },
+  {
+    "name": "cube-lamp",
+    "source": "decor-01",
+    "group": "tabletop",
+    "cell": [
+      486,
+      493,
+      412,
+      394
+    ],
+    "crop": [
+      551,
+      529,
+      271,
+      319
+    ],
+    "width": 271,
+    "height": 319
+  },
+  {
+    "name": "succulent",
+    "source": "decor-01",
+    "group": "tabletop",
+    "cell": [
+      898,
+      493,
+      401,
+      394
+    ],
+    "crop": [
+      974,
+      529,
+      276,
+      309
+    ],
+    "width": 276,
+    "height": 309
+  },
+  {
+    "name": "vinyl-headphones",
+    "source": "decor-01",
+    "group": "tabletop",
+    "cell": [
+      1299,
+      493,
+      475,
+      394
+    ],
+    "crop": [
+      1349,
+      547,
+      385,
+      292
+    ],
+    "width": 385,
+    "height": 292
+  },
+  {
+    "name": "alien-statue",
+    "source": "decor-02",
+    "group": "floor",
+    "cell": [
+      0,
+      0,
+      443,
+      444
+    ],
+    "crop": [
+      94,
+      11,
+      255,
+      430
+    ],
+    "width": 255,
+    "height": 430
+  },
+  {
+    "name": "prize-capsule-machine",
+    "source": "decor-02",
+    "group": "floor",
+    "cell": [
+      443,
+      0,
+      442,
+      444
+    ],
+    "crop": [
+      537,
+      8,
+      254,
+      426
+    ],
+    "width": 254,
+    "height": 426
+  },
+  {
+    "name": "record-pedestal",
+    "source": "decor-02",
+    "group": "floor",
+    "cell": [
+      885,
+      0,
+      454,
+      444
+    ],
+    "crop": [
+      980,
+      44,
+      262,
+      391
+    ],
+    "width": 262,
+    "height": 391
+  },
+  {
+    "name": "neon-cactus",
+    "source": "decor-02",
+    "group": "floor",
+    "cell": [
+      1339,
+      0,
+      435,
+      444
+    ],
+    "crop": [
+      1436,
+      17,
+      250,
+      418
+    ],
+    "width": 250,
+    "height": 418
+  },
+  {
+    "name": "arcade-trophy-pedestal",
+    "source": "decor-02",
+    "group": "floor",
+    "cell": [
+      0,
+      444,
+      447,
+      443
+    ],
+    "crop": [
+      89,
+      447,
+      265,
+      430
+    ],
+    "width": 265,
+    "height": 430
+  },
+  {
+    "name": "neon-arrow-sign",
+    "source": "decor-02",
+    "group": "floor",
+    "cell": [
+      447,
+      444,
+      416,
+      443
+    ],
+    "crop": [
+      541,
+      461,
+      259,
+      409
+    ],
+    "width": 259,
+    "height": 409
+  },
+  {
+    "name": "planet-sculpture",
+    "source": "decor-02",
+    "group": "floor",
+    "cell": [
+      863,
+      444,
+      508,
+      443
+    ],
+    "crop": [
+      926,
+      513,
+      370,
+      351
+    ],
+    "width": 370,
+    "height": 351
+  },
+  {
+    "name": "pixel-heart-totem",
+    "source": "decor-02",
+    "group": "floor",
+    "cell": [
+      1371,
+      444,
+      403,
+      443
+    ],
+    "crop": [
+      1447,
+      454,
+      233,
+      416
+    ],
+    "width": 233,
+    "height": 416
+  },
+  {
+    "name": "ticket-dispenser",
+    "source": "decor-03",
+    "group": "floor",
+    "cell": [
+      0,
+      0,
+      434,
+      469
+    ],
+    "crop": [
+      61,
+      37,
+      323,
+      415
+    ],
+    "width": 323,
+    "height": 415
+  },
+  {
+    "name": "prize-display",
+    "source": "decor-03",
+    "group": "floor",
+    "cell": [
+      434,
+      0,
+      440,
+      469
+    ],
+    "crop": [
+      485,
+      52,
+      358,
+      401
+    ],
+    "width": 358,
+    "height": 401
+  },
+  {
+    "name": "checker-flag-stand",
+    "source": "decor-03",
+    "group": "floor",
+    "cell": [
+      874,
+      0,
+      464,
+      469
+    ],
+    "crop": [
+      906,
+      85,
+      395,
+      352
+    ],
+    "width": 395,
+    "height": 352
+  },
+  {
+    "name": "boombox-tower",
+    "source": "decor-03",
+    "group": "floor",
+    "cell": [
+      1338,
+      0,
+      436,
+      469
+    ],
+    "crop": [
+      1376,
+      37,
+      330,
+      420
+    ],
+    "width": 330,
+    "height": 420
+  },
+  {
+    "name": "soda-cup",
+    "source": "decor-03",
+    "group": "tabletop",
+    "cell": [
+      0,
+      469,
+      406,
+      418
+    ],
+    "crop": [
+      124,
+      482,
+      192,
+      360
+    ],
+    "width": 192,
+    "height": 360
+  },
+  {
+    "name": "popcorn-tub",
+    "source": "decor-03",
+    "group": "tabletop",
+    "cell": [
+      406,
+      469,
+      461,
+      418
+    ],
+    "crop": [
+      497,
+      505,
+      267,
+      341
+    ],
+    "width": 267,
+    "height": 341
+  },
+  {
+    "name": "token-jar",
+    "source": "decor-03",
+    "group": "tabletop",
+    "cell": [
+      867,
+      469,
+      467,
+      418
+    ],
+    "crop": [
+      970,
+      500,
+      265,
+      344
+    ],
+    "width": 265,
+    "height": 344
+  },
+  {
+    "name": "mini-rocket",
+    "source": "decor-03",
+    "group": "tabletop",
+    "cell": [
+      1334,
+      469,
+      440,
+      418
+    ],
+    "crop": [
+      1434,
+      489,
+      228,
+      357
+    ],
+    "width": 228,
+    "height": 357
+  },
+  {
+    "name": "plasma-orb",
+    "source": "decor-04",
+    "group": "tabletop",
+    "cell": [
+      0,
+      0,
+      438,
+      453
+    ],
+    "crop": [
+      75,
+      48,
+      301,
+      383
+    ],
+    "width": 301,
+    "height": 383
+  },
+  {
+    "name": "trophy",
+    "source": "decor-04",
+    "group": "tabletop",
+    "cell": [
+      438,
+      0,
+      420,
+      453
+    ],
+    "crop": [
+      500,
+      62,
+      330,
+      358
+    ],
+    "width": 330,
+    "height": 358
+  },
+  {
+    "name": "gamepad",
+    "source": "decor-04",
+    "group": "tabletop",
+    "cell": [
+      858,
+      0,
+      499,
+      453
+    ],
+    "crop": [
+      887,
+      112,
+      443,
+      274
+    ],
+    "width": 443,
+    "height": 274
+  },
+  {
+    "name": "headphone-stand",
+    "source": "decor-04",
+    "group": "tabletop",
+    "cell": [
+      1357,
+      0,
+      417,
+      453
+    ],
+    "crop": [
+      1385,
+      40,
+      338,
+      394
+    ],
+    "width": 338,
+    "height": 394
+  },
+  {
+    "name": "boombox",
+    "source": "decor-04",
+    "group": "tabletop",
+    "cell": [
+      0,
+      453,
+      469,
+      434
+    ],
+    "crop": [
+      29,
+      502,
+      418,
+      323
+    ],
+    "width": 418,
+    "height": 323
+  },
+  {
+    "name": "stacked-cassettes",
+    "source": "decor-04",
+    "group": "tabletop",
+    "cell": [
+      469,
+      453,
+      431,
+      434
+    ],
+    "crop": [
+      491,
+      479,
+      365,
+      362
+    ],
+    "width": 365,
+    "height": 362
+  },
+  {
+    "name": "desk-mushroom-lamp",
+    "source": "decor-04",
+    "group": "tabletop",
+    "cell": [
+      900,
+      453,
+      438,
+      434
+    ],
+    "crop": [
+      945,
+      475,
+      327,
+      375
+    ],
+    "width": 327,
+    "height": 375
+  },
+  {
+    "name": "lucky-cat",
+    "source": "decor-04",
+    "group": "tabletop",
+    "cell": [
+      1338,
+      453,
+      436,
+      434
+    ],
+    "crop": [
+      1405,
+      472,
+      325,
+      386
+    ],
+    "width": 325,
+    "height": 386
+  },
+  {
+    "name": "neon-game-over-sign",
+    "source": "decor-05",
+    "group": "wall",
+    "cell": [
+      0,
+      0,
+      467,
+      435
+    ],
+    "crop": [
+      45,
+      87,
+      393,
+      282
+    ],
+    "width": 393,
+    "height": 282
+  },
+  {
+    "name": "neon-high-score-sign",
+    "source": "decor-05",
+    "group": "wall",
+    "cell": [
+      467,
+      0,
+      442,
+      435
+    ],
+    "crop": [
+      497,
+      103,
+      366,
+      255
+    ],
+    "width": 366,
+    "height": 255
+  },
+  {
+    "name": "neon-space-invader",
+    "source": "decor-05",
+    "group": "wall",
+    "cell": [
+      909,
+      0,
+      465,
+      435
+    ],
+    "crop": [
+      956,
+      95,
+      333,
+      289
+    ],
+    "width": 333,
+    "height": 289
+  },
+  {
+    "name": "neon-lightning-bolt",
+    "source": "decor-05",
+    "group": "wall",
+    "cell": [
+      1374,
+      0,
+      400,
+      435
+    ],
+    "crop": [
+      1460,
+      58,
+      221,
+      345
+    ],
+    "width": 221,
+    "height": 345
+  },
+  {
+    "name": "neon-music-note",
+    "source": "decor-05",
+    "group": "wall",
+    "cell": [
+      0,
+      435,
+      428,
+      452
+    ],
+    "crop": [
+      99,
+      484,
+      265,
+      347
+    ],
+    "width": 265,
+    "height": 347
+  },
+  {
+    "name": "wall-vinyl-record",
+    "source": "decor-05",
+    "group": "wall",
+    "cell": [
+      428,
+      435,
+      440,
+      452
+    ],
+    "crop": [
+      493,
+      468,
+      347,
+      363
+    ],
+    "width": 347,
+    "height": 363
+  },
+  {
+    "name": "neon-rainbow",
+    "source": "decor-05",
+    "group": "wall",
+    "cell": [
+      868,
+      435,
+      467,
+      452
+    ],
+    "crop": [
+      896,
+      539,
+      428,
+      238
+    ],
+    "width": 428,
+    "height": 238
+  },
+  {
+    "name": "neon-controller-sign",
+    "source": "decor-05",
+    "group": "wall",
+    "cell": [
+      1335,
+      435,
+      439,
+      452
+    ],
+    "crop": [
+      1346,
+      522,
+      410,
+      289
+    ],
+    "width": 410,
+    "height": 289
+  },
+  {
+    "name": "dj-flood-rig",
+    "source": "dj-flood-rig",
+    "group": "fixture",
+    "cell": [
+      0,
+      0,
+      2172,
+      724
+    ],
+    "crop": [
+      19,
+      99,
+      2135,
+      493
+    ],
+    "width": 2135,
+    "height": 493,
+    "emitters": [
+      [
+        0.170899,
+        0.826589
+      ],
+      [
+        0.390494,
+        0.826968
+      ],
+      [
+        0.607913,
+        0.825301
+      ],
+      [
+        0.828203,
+        0.824741
+      ]
+    ]
+  }
+]

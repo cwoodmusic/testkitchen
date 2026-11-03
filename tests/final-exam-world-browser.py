@@ -1,4 +1,5 @@
 """Take Haydn's exam through the physical classroom and ordinary answer controls."""
+from classroom_menu_helpers import choose_classroom_exam
 import importlib.util
 from pathlib import Path
 import sys
@@ -29,7 +30,7 @@ class FinalExamWorldTests(_world.WorldBrowserCase):
         self.page.wait_for_function('!document.querySelector("#classroomStart").hidden')
 
     def open_exam(self):
-        self.talk_to_haydn();self.page.locator('#classroomFinalExam').click()
+        self.talk_to_haydn();choose_classroom_exam(self.page)
         self.assertEqual(self.page.evaluate('CodaArcadeQA.classroom().topic'),'final-exam')
         self.assertTrue(self.state()['open'])
         self.assertEqual(self.page.locator('.classroom-check').count(),0,'The full exam must not render a reference-book quick check')
@@ -69,7 +70,7 @@ class FinalExamWorldTests(_world.WorldBrowserCase):
 
     def test_default_forty_questions_balance_and_reload_resume_through_haydn(self):
         self.open_exam();self.assertEqual(self.page.get_by_label('Final exam length',exact=True).input_value(),'40')
-        self.assertEqual(self.page.locator('[data-start-lesson]').count(),9)
+        self.assertEqual(self.page.locator('[data-classroom-lesson]').count(),9)
         self.start_exam();self.assertEqual(self.state()['total'],40);self.assert_balanced(5)
         first_ids=self.state()['questionIds'];self.answer_current();self.answer_current()
         self.assertEqual(self.state()['answered'],2);self.assertEqual(self.xp(),0)
@@ -79,8 +80,8 @@ class FinalExamWorldTests(_world.WorldBrowserCase):
         self.page.locator('[data-exam-exit]').click()
         self.assertTrue(self.page.locator('#classroomStart').is_visible())
         self.assertIsNone(self.state())
-        self.page.locator('#classroomBrowseBooks').click();self.page.locator('#classroomSearch').fill('final exam')
-        self.page.locator('[data-topic="final-exam"]').click()
+        # The exam is a challenge under All lessons, outside reference books.
+        choose_classroom_exam(self.page)
         self.assertEqual(self.state()['answered'],2);self.assertEqual(self.state()['questionIds'],first_ids)
         self.page.locator('#classroomBackRoom').click();self.assertFalse(self.state()['open'])
         self.page.keyboard.press('Escape');self.assertFalse(self.page.evaluate('CodaArcadeQA.classroom().open'))
@@ -116,7 +117,7 @@ class FinalExamWorldTests(_world.WorldBrowserCase):
             self.assertTrue(self.page.locator('#classroomSettingsButton').is_hidden())
         self.answer_current();self.assertEqual(self.state()['answered'],1)
         self.page.locator('[data-exam-exit]').click();self.assertTrue(self.page.locator('#classroomStart').is_visible())
-        self.page.locator('#classroomFinalExam').click();self.assertEqual(self.state()['answered'],1)
+        choose_classroom_exam(self.page);self.assertEqual(self.state()['answered'],1)
         self.assertEqual(self.xp(),0)
 
 

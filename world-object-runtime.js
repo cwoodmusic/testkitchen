@@ -8,7 +8,7 @@ window.createCodaWorldObjects = function (api) {
     const asset=getAssets().find(a=>a.origin?.name===name);
     if(!asset)return {definition,asset:null,visible:true,opacity:1,matrix:[1,0,0,1,0,0]};
     const anim=getAnimation(asset),angle=asset.rotation*Math.PI/180+anim.rot;
-    const [x,y,w,h]=definition.bounds,sx=asset.w/w*anim.scale,sy=asset.h/h*anim.scale;
+    const [x,y,w,h]=definition.bounds,sx=asset.w/w*anim.scale*(asset.flipX===true?-1:1),sy=asset.h/h*anim.scale*(asset.flipY===true?-1:1);
     const a=Math.cos(angle)*sx,b=Math.sin(angle)*sx,c=-Math.sin(angle)*sy,d=Math.cos(angle)*sy;
     return {definition,asset,visible:asset.visible,opacity:asset.opacity/100*anim.alpha,
       matrix:[a,b,c,d,asset.x+anim.dx-a*(x+w/2)-c*(y+h/2),asset.y+anim.dy-b*(x+w/2)-d*(y+h/2)]};

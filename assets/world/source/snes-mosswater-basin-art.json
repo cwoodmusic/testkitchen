@@ -1,0 +1,57 @@
+{
+  "description": "Top-down SNES-era 16-bit underground swamp screen with crisp pixel clusters, low moss/root banks, calm murky green water, reeds, luminous mushrooms and subtle fog. Runtime actors, boats and fish remain separate.",
+  "source": "assets/world/source/snes-mosswater-basin-source.png",
+  "sourceSize": [
+    1591,
+    988
+  ],
+  "output": "assets/world/fishing/mosswater-basin.png",
+  "outputSize": [
+    1592,
+    988
+  ],
+  "logicalWorldSize": [
+    1000,
+    620
+  ],
+  "exits": [
+    "west",
+    "east",
+    "north"
+  ],
+  "exitCorridors": {
+    "west": {
+      "y": [
+        300,
+        400
+      ]
+    },
+    "east": {
+      "y": [
+        300,
+        400
+      ]
+    },
+    "north": {
+      "x": [
+        500,
+        600
+      ]
+    }
+  },
+  "navigationEllipse": {
+    "center": [
+      550,
+      350
+    ],
+    "radii": [
+      360,
+      185
+    ]
+  },
+  "geometryReview": "West/east edges are open water throughout y300\u2013400; vertical passage is open at x500\u2013600. Boat footprints at edge witnesses are clear. Opposite vertical edge remains closed.",
+  "normalization": "Full-frame Canvas drawImage with imageSmoothingEnabled=false, preserving native room-artwork dimensions.",
+  "previousImageSha256": "8c3c38c3400dcaf76135a04c71d501a98d746fbe612b71f8792125b28d081649",
+  "sourceSha256": "16360cb939875dcfa1b3d528cd262fe95e87ad289f2f79b091eaa99ad7c11d15",
+  "outputSha256": "ce3ec03688235a6cd4e1c18687ea6332f5fe1c4c40e7929641f031d8de1f6447"
+}

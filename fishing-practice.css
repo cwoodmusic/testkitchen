@@ -1,28 +1,253 @@
-/* Large radio choices keep practice setup usable without a tiny native select. */
-.fishing-practice-backdrop{position:fixed;inset:0;z-index:160;display:grid;place-items:center;padding:12px;background:#07101de8;backdrop-filter:blur(5px);overscroll-behavior:contain}
-.fishing-practice-backdrop[hidden]{display:none!important}
-.fishing-practice-panel{width:min(650px,100%);max-height:calc(100dvh - 24px);overflow:auto;overscroll-behavior:contain;box-sizing:border-box;padding:18px;background:radial-gradient(ellipse at 40% 0,#29444d,#1b2b40 70%);border:2px solid #86c8be;border-radius:14px;box-shadow:0 16px 50px #0009;color:#eefbf5;font:16px/1.4 system-ui,sans-serif}
+/* Practice setup keeps one choice group in view and its next action in reach. */
+.fishing-practice-backdrop{
+ position:fixed;inset:0;z-index:160;display:grid;place-items:center;padding:12px;
+ background:#071421df;backdrop-filter:blur(5px);overscroll-behavior:contain;
+}
+.fishing-practice-backdrop[hidden],.fishing-practice-panel [hidden]{display:none!important}
+.fishing-practice-panel{
+ --practice-mint:#99efd6;--practice-muted:#c5d8e4;
+ display:flex;flex-direction:column;width:min(960px,100%);max-height:calc(100dvh - 24px);
+ min-width:0;overflow:hidden;box-sizing:border-box;padding:0;border:1px solid #749ba7;
+ border-top:3px solid var(--practice-mint);border-radius:18px;
+ background:#1a2f3e;box-shadow:0 24px 80px #0009;color:#f1f8fb;
+ font:18px/1.45 system-ui,sans-serif;
+}
 .fishing-practice-panel *{box-sizing:border-box}
-.fishing-practice-heading{display:flex;align-items:center;justify-content:space-between;gap:12px}
-.fishing-practice-heading h2{margin:0;color:#c3fff0;font-size:26px;line-height:1.2}
-.fishing-practice-panel button{min-height:56px;min-width:72px;padding:10px 16px;background:#2e545c;color:#f1fff8;border:2px solid #8bcbbd;border-radius:9px;font:700 16px/1.2 system-ui;cursor:pointer;touch-action:manipulation}
-.fishing-practice-panel button:hover{background:#3c6b70}
-.fishing-practice-panel button:focus-visible,.fishing-practice-choice input:focus-visible+span{outline:3px solid #e5cc82;outline-offset:3px}
-.fishing-practice-panel>p{margin:12px 0 16px;color:#c9e0df;font-size:15px}
-.fishing-practice-options{display:grid;gap:14px}
-.fishing-practice-options fieldset{margin:0;padding:0;border:0;min-width:0}
-.fishing-practice-options legend{padding:0;margin:0 0 7px;color:#f5e0af;font-size:17px;font-weight:750}
-.fishing-practice-meters,.fishing-practice-tiers{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:8px}
-.fishing-practice-choice{display:block;position:relative;min-width:0;cursor:pointer;touch-action:manipulation}
-.fishing-practice-choice input{position:absolute;left:10px;top:10px;width:1px;height:1px;clip-path:inset(50%);overflow:hidden;opacity:0}
-.fishing-practice-choice>span{display:flex;flex-direction:column;justify-content:center;gap:4px;min-height:80px;height:100%;padding:10px;border:2px solid #607c8f;border-radius:9px;background:#1d3548;color:#e2eef5;transition:background .1s}
-.fishing-practice-choice strong{font-size:17px;line-height:1.2}
-.fishing-practice-choice small{font-size:12px;line-height:1.3;color:#bdd4dd}
-.fishing-practice-choice input:checked+span{border-color:#b8ffe1;background:#2e655f;box-shadow:inset 0 0 0 1px #a2f0cb55}
-.fishing-practice-choice input:checked+span strong{color:#eaffdf}
-.fishing-practice-choice input:checked+span small{color:#d2f2dd}
-.fishing-practice-footer{display:flex;align-items:center;justify-content:space-between;gap:14px;margin-top:16px}
-.fishing-practice-footer p{margin:0;color:#c2d7dc;font-size:13px}
-.fishing-practice-panel #fishingPracticeStart{min-width:180px;min-height:64px;background:linear-gradient(#3b8475,#2a625e);border-color:#b4ffde;font-size:19px}
-@media(max-width:480px){.fishing-practice-panel{padding:14px}.fishing-practice-heading h2{font-size:24px}.fishing-practice-tiers{grid-template-columns:repeat(2,minmax(0,1fr))}.fishing-practice-tiers .fishing-practice-choice:last-child{grid-column:1/-1}.fishing-practice-meters .fishing-practice-choice>span{padding:9px 6px;min-height:82px}.fishing-practice-choice strong{font-size:16px}.fishing-practice-footer{flex-direction:column;align-items:stretch;text-align:center}.fishing-practice-footer p br{display:none}.fishing-practice-footer button{width:100%}}
-@media(orientation:landscape) and (max-height:550px){.fishing-practice-backdrop{padding:8px}.fishing-practice-panel{width:min(820px,100%);max-height:calc(100dvh - 16px);padding:12px 16px}.fishing-practice-heading h2{font-size:23px}.fishing-practice-heading button{min-height:48px}.fishing-practice-panel>p{font-size:13px;margin:6px 0 10px}.fishing-practice-options{grid-template-columns:minmax(0,.95fr) minmax(0,1.4fr);gap:18px}.fishing-practice-options legend{font-size:16px;margin-bottom:5px}.fishing-practice-meters{grid-template-columns:repeat(3,minmax(0,1fr))}.fishing-practice-tiers{grid-template-columns:repeat(3,minmax(0,1fr))}.fishing-practice-choice>span{min-height:60px;padding:7px}.fishing-practice-choice strong{font-size:15px}.fishing-practice-choice small{font-size:11px}.fishing-practice-footer{margin-top:10px}.fishing-practice-panel #fishingPracticeStart{min-height:56px}}
+.fishing-practice-heading{
+ display:flex;align-items:center;justify-content:space-between;gap:18px;flex:none;
+ padding:25px 32px 0;background:linear-gradient(110deg,#233e4b,#1b2f3e);
+}
+.fishing-practice-heading>div{min-width:0}
+.fishing-practice-eyebrow{margin:0 0 10px;color:#a6f3d9;font-size:12px;font-weight:750;line-height:1.3;letter-spacing:1.6px;text-transform:uppercase}
+.fishing-practice-heading h2{
+ min-width:0;margin:0;color:#f2f9fc;font-size:32px;line-height:1.2;letter-spacing:-.4px;
+}
+.fishing-practice-panel button{
+ min-height:56px;min-width:72px;padding:12px 18px;border:1px solid #668391;border-radius:9px;
+ background:#294756;color:#f1fbf8;font:700 17px/1.3 system-ui,sans-serif;
+ cursor:pointer;touch-action:manipulation;
+}
+.fishing-practice-panel button:hover{background:#365b69;border-color:#acd6da}
+.fishing-practice-panel button:focus-visible,
+.fishing-practice-choice input:focus-visible+span{
+ outline:3px solid #fff0a3;outline-offset:4px;
+}
+.fishing-practice-heading #fishingPracticeClose{
+ flex:none;min-height:48px;padding:10px 14px;background:#203746;font-size:15px;
+}
+.fishing-practice-panel #fishingPracticeIntro{
+ flex:none;margin:0;padding:12px 32px 0;color:var(--practice-muted);
+ background:#1d3442;font-size:18px;line-height:1.5;
+}
+.fishing-practice-steps{
+ flex:none;display:flex;align-items:center;gap:24px;list-style:none;margin:0;padding:20px 32px 24px;
+ border-bottom:1px solid #49616f;background:#1d3442;
+}
+.fishing-practice-steps li{
+ display:flex;align-items:center;gap:8px;min-width:0;color:#b5cbd7;font-size:14px;line-height:1.35;
+}
+.fishing-practice-steps li+li:before{
+ content:'';display:block;width:25px;height:1px;flex:none;background:#607d89;margin-right:8px;
+}
+.fishing-step-number{
+ display:grid;place-items:center;flex:none;width:25px;height:25px;
+ border:1px solid #6d919e;border-radius:50%;font-size:12px;font-weight:700;
+}
+.fishing-practice-steps li[aria-current="step"]{color:#b3ffe6;font-weight:700}
+.fishing-practice-steps li[aria-current="step"] .fishing-step-number{
+ background:var(--practice-mint);border-color:var(--practice-mint);color:#143e34;
+}
+.fishing-practice-body{
+ flex:1 1 auto;min-height:0;overflow:auto;overscroll-behavior:contain;
+ scrollbar-gutter:stable;scrollbar-color:#7294a3 #172d3c;padding:25px 32px 28px;
+}
+.fishing-practice-body fieldset{min-width:0;margin:0;padding:0;border:0}
+.fishing-practice-step-title{
+ padding:0;margin:0 0 17px;color:#d8edf2;font-size:19px;font-weight:750;line-height:1.4;
+}
+.fishing-practice-meters{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:14px}
+.fishing-practice-choice{
+ display:block;position:relative;min-width:0;cursor:pointer;touch-action:manipulation;
+}
+.fishing-practice-choice input{
+ position:absolute;left:14px;top:14px;width:1px;height:1px;
+ clip-path:inset(50%);overflow:hidden;opacity:0;
+}
+.fishing-practice-choice>span{
+ position:relative;display:flex;flex-direction:column;justify-content:center;align-items:center;
+ gap:0;min-height:220px;height:100%;padding:24px 16px;border:2px solid #5c7a8a;
+ border-radius:12px;background:#263f50;color:#e9f4f8;transition:background .12s,border-color .12s;
+}
+.fishing-practice-choice:hover>span{background:#305464;border-color:#a4cdd7}
+.fishing-practice-choice strong{font-size:36px;line-height:1.15;text-align:center}
+.fishing-practice-choice small{
+ display:block;margin-top:20px;font-size:18px;line-height:1.4;color:#d6e7ee;text-align:center;
+}
+.fishing-practice-choice .fishing-practice-meter-detail{
+ display:block;min-height:20px;margin-top:7px;color:#c0d7e1;font-size:14px;line-height:1.4;
+}
+.fishing-practice-choice input:checked+span{
+ border-color:var(--practice-mint);background:#244c47;box-shadow:inset 0 0 0 1px #9df0d144;
+}
+.fishing-practice-choice input:checked+span strong{color:#f4fffb}
+.fishing-practice-choice input:checked+span small{color:#e1f6ed}
+.fishing-practice-choice .fishing-practice-selected{
+ position:absolute;top:11px;right:13px;display:none;color:var(--practice-mint);
+ font-size:22px;line-height:1;font-weight:700;
+}
+.fishing-practice-choice input:checked+span .fishing-practice-selected{display:block}
+.fishing-practice-beats{
+ display:flex;align-items:center;justify-content:center;gap:12px;min-height:35px;margin-top:24px;
+}
+.fishing-practice-beat{
+ display:grid;place-items:center;flex:none;width:24px;height:24px;border:2px solid #a9d5e1;
+ border-radius:50%;font-size:12px;font-weight:750;line-height:1;
+}
+.fishing-practice-beat-group{display:flex;align-items:center;gap:4px}
+.fishing-practice-beat-group i{width:6px;height:6px;background:#9dc1ce;border-radius:50%}
+.fishing-practice-challenge-layout{
+ display:grid;grid-template-columns:minmax(0,1.45fr) minmax(210px,.8fr);align-items:start;gap:22px;
+}
+.fishing-practice-tiers{display:flex;flex-direction:column;gap:9px}
+.fishing-practice-tiers .fishing-practice-choice>span{
+ min-height:67px;flex-direction:row;align-items:center;justify-content:flex-start;gap:18px;
+ padding:12px 18px;text-align:left;border-radius:10px;
+}
+.fishing-practice-tiers .fishing-practice-choice strong{font-size:19px;line-height:1.3;text-align:left}
+.fishing-practice-tiers .fishing-practice-choice small{
+ margin:4px 0 0;color:#c4d9e4;font-size:15px;line-height:1.4;text-align:left;
+}
+.fishing-practice-tiers .fishing-practice-selected{
+ position:static;flex:none;align-self:center;margin-left:auto;
+}
+.fishing-practice-tier-dots{display:flex;align-items:center;gap:4px;width:83px;flex:none}
+.fishing-practice-tier-dots i{display:block;width:11px;height:11px;background:#607c8c;border-radius:3px}
+.fishing-practice-tier-dots i.active,
+.fishing-practice-tier-dots i.is-active{background:#b2ecdc}
+.fishing-practice-recommended{
+ display:inline-block;margin-left:10px;vertical-align:middle;padding:4px 8px;border-radius:5px;
+ background:#aff4d8;color:#174239;font-size:12px;line-height:1.35;font-weight:700;white-space:nowrap;
+}
+.fishing-practice-summary{
+ min-width:0;margin:0;padding:22px;border:1px solid #567d88;border-radius:12px;background:#203b48;
+}
+.fishing-practice-summary-label{text-transform:uppercase}
+.fishing-practice-summary-picks{display:flex;align-items:center;gap:8px;flex-wrap:wrap;margin:0 0 18px}
+.fishing-practice-summary-picks #fishingPracticeSummaryRarity{margin:0}
+.fishing-practice-summary h3{margin:0 0 13px;color:#f0f9fc;font-size:25px;line-height:1.3}
+.fishing-practice-summary p{margin:0 0 18px;color:#c8dce6;font-size:17px;line-height:1.5}
+.fishing-practice-summary>p:first-child:has(+h3){font-size:13px;font-weight:750;letter-spacing:1px}
+#fishingPracticeSummaryMeter,#fishingPracticeSummaryRarity{
+ display:inline-block;color:#c0ffe6;font-size:15px;line-height:1.4;
+}
+#fishingPracticeSummaryMeter{padding:8px 10px;border:1px solid #688f8b;border-radius:7px}
+#fishingPracticeSummaryRarity{margin-left:7px}
+.fishing-practice-panel #fishingPracticeNote{
+ margin:20px 0 0;padding:14px 17px;border:1px solid #54747d;border-radius:9px;
+ background:#1a3541;color:#d5e6ec;font-size:16px;line-height:1.5;
+}
+.fishing-practice-panel #fishingPracticeNote strong{color:#f0fbf7;font-size:16px}
+.fishing-practice-footer{
+ flex:none;display:flex;align-items:center;justify-content:space-between;gap:16px;
+ margin:0;padding:20px 32px;border-top:1px solid #496572;background:#142a38;
+}
+.fishing-practice-panel #fishingPracticeBack{
+ border-color:transparent;background:transparent;color:#e3eef5;font-size:17px;padding-left:0;text-align:left;
+}
+.fishing-practice-panel #fishingPracticeBack:hover{color:#adffe5}
+.fishing-practice-panel #fishingPracticeStart,
+.fishing-practice-panel #fishingPracticeNext{
+ min-width:190px;min-height:56px;border:1px solid var(--practice-mint);
+ background:var(--practice-mint);box-shadow:0 3px 0 #4b9f89;color:#153e33;font-size:18px;
+}
+.fishing-practice-panel #fishingPracticeNext:hover,
+.fishing-practice-panel #fishingPracticeStart:hover{background:#b4ffe7;border-color:#b4ffe7}
+@media(max-height:800px) and (min-width:761px){
+ .fishing-practice-heading{padding:18px 28px 0}
+ .fishing-practice-heading h2{font-size:30px}
+ .fishing-practice-panel #fishingPracticeIntro{padding:9px 28px 0;font-size:17px}
+ .fishing-practice-steps{padding:14px 28px 18px}
+ .fishing-practice-body{padding:20px 28px 22px}
+ .fishing-practice-step-title{margin-bottom:12px;font-size:18px}
+ .fishing-practice-choice>span{min-height:200px;padding:20px 14px}
+ .fishing-practice-tiers{gap:7px}
+ .fishing-practice-tiers .fishing-practice-choice>span{min-height:61px;padding:8px 15px;gap:13px}
+ .fishing-practice-tiers .fishing-practice-choice strong{font-size:18px}
+ .fishing-practice-tiers .fishing-practice-choice small{margin-top:3px;font-size:14px}
+ .fishing-practice-summary{padding:19px}
+ .fishing-practice-summary h3{font-size:22px}
+ .fishing-practice-summary p{font-size:16px}
+ .fishing-practice-panel #fishingPracticeNote{margin-top:16px;padding:12px 15px}
+ .fishing-practice-footer{padding:14px 28px}
+}
+@media(max-width:760px){
+ .fishing-practice-backdrop{padding:8px}
+ .fishing-practice-panel{max-height:calc(100dvh - 16px);border-radius:15px}
+ .fishing-practice-heading{gap:12px;padding:20px 20px 0}
+ .fishing-practice-heading h2{font-size:27px}
+ .fishing-practice-heading #fishingPracticeClose{font-size:14px;min-height:48px;padding:10px}
+ .fishing-practice-panel #fishingPracticeIntro{padding:12px 20px 0;font-size:17px}
+ .fishing-practice-steps{gap:10px;padding:17px 20px 20px}
+ .fishing-practice-steps li{font-size:12px;gap:6px}
+ .fishing-practice-steps li+li:before{width:13px;margin-right:3px}
+ .fishing-step-number{width:23px;height:23px;font-size:11px}
+ .fishing-practice-body{padding:20px}
+ .fishing-practice-meters{grid-template-columns:1fr;gap:11px}
+ .fishing-practice-meters .fishing-practice-choice>span{
+  min-height:100px;flex-direction:row;justify-content:flex-start;gap:15px;padding:18px 20px;text-align:left;
+ }
+ .fishing-practice-meters .fishing-practice-choice strong{flex:none;width:74px;font-size:28px;text-align:left;overflow-wrap:normal}
+ .fishing-practice-meters .fishing-practice-choice small{margin:0;max-width:150px;text-align:left;font-size:17px}
+ .fishing-practice-meters .fishing-practice-meter-detail,
+ .fishing-practice-meters .fishing-practice-beats{display:none}
+ .fishing-practice-challenge-layout{grid-template-columns:1fr;gap:16px}
+ .fishing-practice-tiers .fishing-practice-choice>span{min-height:79px;padding:15px 12px;gap:12px}
+ .fishing-practice-tier-dots{width:62px;gap:3px}
+ .fishing-practice-tier-dots i{width:9px;height:9px}
+ .fishing-practice-tiers .fishing-practice-choice strong{font-size:18px}
+ .fishing-practice-tiers .fishing-practice-choice small{font-size:15px}
+ .fishing-practice-recommended{display:block;width:fit-content;margin:6px 0 0;font-size:11px}
+ .fishing-practice-summary{padding:18px}
+ .fishing-practice-summary h3{font-size:22px}
+ .fishing-practice-summary p{font-size:16px}
+ .fishing-practice-panel #fishingPracticeNote{margin-top:18px;padding:13px;font-size:15px}
+ .fishing-practice-footer{gap:10px;padding:15px 20px;flex-wrap:wrap}
+ .fishing-practice-panel #fishingPracticeBack{font-size:15px;min-height:48px;padding:10px 0}
+ .fishing-practice-panel #fishingPracticeStart,
+ .fishing-practice-panel #fishingPracticeNext{font-size:17px;min-width:0;min-height:56px;padding:12px 16px}
+}
+@media(max-width:370px){
+ .fishing-practice-heading h2{font-size:24px}
+ .fishing-practice-heading{padding:17px 16px 0;gap:10px}
+ .fishing-practice-panel #fishingPracticeIntro{padding-inline:16px}
+ .fishing-practice-steps{padding-inline:16px;gap:7px}
+ .fishing-practice-steps li{font-size:11px;gap:5px}
+ .fishing-practice-steps li+li:before{width:10px;margin-right:0}
+ .fishing-practice-body{padding:16px}
+ .fishing-practice-footer{padding:12px 16px}
+ .fishing-practice-meters .fishing-practice-choice>span{gap:10px;padding:17px 14px}
+ .fishing-practice-meters .fishing-practice-choice strong{font-size:25px;width:68px}
+ .fishing-practice-meters .fishing-practice-choice small{font-size:16px}
+}
+@media(orientation:landscape) and (max-height:550px){
+ .fishing-practice-heading{padding:12px 22px 0}
+ .fishing-practice-heading h2{font-size:24px}
+ .fishing-practice-heading #fishingPracticeClose{min-height:44px;padding:8px 12px}
+ .fishing-practice-panel #fishingPracticeIntro{padding:5px 22px 0;font-size:15px}
+ .fishing-practice-steps{padding:10px 22px 12px}
+ .fishing-practice-body{padding:15px 22px 18px}
+ .fishing-practice-meters{grid-template-columns:repeat(3,minmax(0,1fr));gap:12px}
+ .fishing-practice-meters .fishing-practice-choice>span{min-height:145px;padding:16px 12px;gap:0;flex-direction:column;align-items:center;text-align:center}
+ .fishing-practice-meters .fishing-practice-choice strong{width:auto;font-size:27px;text-align:center}
+ .fishing-practice-meters .fishing-practice-choice small{margin-top:12px;font-size:16px;text-align:center}
+ .fishing-practice-meters .fishing-practice-meter-detail{display:none}
+ .fishing-practice-meters .fishing-practice-beats{display:flex;gap:8px;margin-top:14px}
+ .fishing-practice-challenge-layout{grid-template-columns:minmax(0,1.45fr) minmax(190px,.8fr);gap:18px}
+ .fishing-practice-tiers .fishing-practice-choice>span{min-height:62px;padding:8px 13px}
+ .fishing-practice-tiers .fishing-practice-choice strong{font-size:17px}
+ .fishing-practice-tiers .fishing-practice-choice small{font-size:14px}
+ .fishing-practice-recommended{display:inline-block;margin:0 0 0 8px}
+ .fishing-practice-footer{padding:10px 22px;flex-wrap:nowrap}
+ .fishing-practice-panel #fishingPracticeNext,.fishing-practice-panel #fishingPracticeStart{min-height:56px}
+}
+@media(prefers-reduced-motion:reduce){.fishing-practice-choice>span{transition:none}}

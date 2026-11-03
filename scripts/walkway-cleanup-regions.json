@@ -1,0 +1,15 @@
+{
+  "description": "Clean only the marked boutique-to-nightclub floor joins, short blue stub and clipped upper-divider lamp/glow. Generated artwork owns this narrow mask, including the intended architectural repairs; preserve all pixels and project edits elsewhere.",
+  "worldSize": [1672,941],
+  "source": "assets/environment/source/walkway-cleanup.png",
+  "before": "assets/environment/source/walkway-before-cleanup.png",
+  "output": "assets/environment/v1/empty-arcade.png",
+  "protectedShape": "assets/environment/boutique-pathway-shape.json",
+  "polygons": [
+    [[275,430],[318,430],[318,451],[355,464],[397,478],[435,490],[435,504],[398,489],[358,475],[285,475],[275,465]],
+    [[434,478],[714,478],[742,495],[775,513],[774,540],[714,506],[434,506]],
+    [[716,478],[811,478],[811,518],[775,541],[716,508]],
+    [[742,495],[812,495],[812,556],[831,556],[831,601],[790,601],[773,559],[773,536]],
+    [[802,430],[858,430],[858,602],[802,602]]
+  ]
+}

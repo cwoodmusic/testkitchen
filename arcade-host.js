@@ -10,7 +10,7 @@
  const customHosts=new Set([CUSTOM_HOST,'coda-arcade.com','www.coda-aracde.com','coda-aracde.com']);
  const paths=Object.freeze({pitch:'Pitch-Race',triad:'musictriad',rhythm:'rhythmroom'});
  function supports(hostname){return hostname==='cwoodmusic.github.io'||customHosts.has(hostname);}
- function gameURL(game,location,version=game==='pitch'?'freeze-104':'games-92'){
+ function gameURL(game,location,version=game==='pitch'?'endless-flow-20261101-1':'games-92'){
   if(!Object.prototype.hasOwnProperty.call(paths,game))throw new TypeError('Unknown arcade game.');
   // Profiles and embedded games must share this exact host's storage. Keep
   // earlier domain spellings working without moving their existing sessions.

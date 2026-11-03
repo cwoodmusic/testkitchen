@@ -3,6 +3,7 @@
 Run: python3 tests/avatar-rendering-browser.py
 No game saves, network access, credentials, or fixture-only renderer are used.
 """
+from boutique_menu_helpers import browse_boutique
 import importlib.util
 from pathlib import Path
 import sys
@@ -52,7 +53,7 @@ class AvatarRenderingTests(unittest.TestCase):
  def test_real_boutique_tiles_show_hair_under_wizard_alien_and_large_eyewear(self):
   for form in ['human','alien','starlight']:
    self.page.evaluate("form=>{avatarProfile={...avatarBase,form,headwear:'wizard',eyewear:'cybervisor',accessory:'balloon',hairstyle:'long'};boutiqueUI.open();}",form)
-   self.page.get_by_role('button',name='Browse Hair',exact=True).click()
+   browse_boutique(self.page, 'Hair')
    hashes=self.page.locator('.boutique-item').evaluate_all("items=>items.map(item=>({id:item.dataset.itemId,...pixelHash(item.querySelector('canvas'))}))")
    self.assertEqual(len(hashes),17);self.assertEqual(len({x['hash'] for x in hashes}),17,(form,hashes))
    self.assertTrue(all(x['count']>500 for x in hashes))
@@ -60,14 +61,14 @@ class AvatarRenderingTests(unittest.TestCase):
    self.assertEqual(self.page.locator('#boutique-form').input_value(),form)
  def test_real_boutique_shoes_visible_under_gown_and_previews_do_not_mutate_draft(self):
   self.page.evaluate("()=>{avatarProfile={...avatarBase,outfit:'gown',pet:'neondragon',headwear:'wizard',accessory:'balloon'};boutiqueUI.open();}")
-  self.page.get_by_role('button',name='Browse Shoes',exact=True).click()
+  browse_boutique(self.page, 'Shoes')
   result=self.page.locator('.boutique-item').evaluate_all("items=>items.map(item=>({id:item.dataset.itemId,...pixelHash(item.querySelector('canvas'))}))")
   self.assertEqual(len(result),18);self.assertEqual(len({x['hash'] for x in result}),18)
   draft=self.page.evaluate('boutiqueUI.getDraft()');self.assertEqual(draft['outfit'],'gown');self.assertEqual(draft['pet'],'neondragon');self.assertEqual(draft['headwear'],'wizard');self.assertEqual(draft['accessory'],'balloon')
  def test_all_actual_catalog_thumbnail_categories_remain_distinct_in_a_full_costume(self):
   self.page.evaluate("()=>{avatarProfile={...avatarBase,hairstyle:'long',form:'alien',outfit:'gown',headwear:'wizard',eyewear:'cybervisor',accessory:'balloon',shoes:'heels',pet:'neondragon'};boutiqueUI.open();}")
   for category in ['Hats','Glasses','Accessories','Shoes','Emotes','Outfits','Hair','Transformations','Pets']:
-   self.page.get_by_role('button',name='Browse '+category,exact=True).click()
+   browse_boutique(self.page, category)
    tiles=self.page.locator('.boutique-item').evaluate_all("items=>items.map(item=>({id:item.dataset.itemId,...pixelHash(item.querySelector('canvas'))}))")
    hashes={}
    for tile in tiles:

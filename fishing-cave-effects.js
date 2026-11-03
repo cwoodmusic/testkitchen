@@ -9,7 +9,7 @@
   [300,578,59,'#4edddf'],[195,497,65,'#48dedb'],[33,267,62,'#c16ee8'],[17,334,58,'#4ad8e6']
  ].map(([x,y,radius,color],seed)=>Object.freeze({x,y,radius,color,seed})));
  const LANTERNS=Object.freeze([
-  [47,105,35],[76,48,29],[173,90,30],[251,326,43],
+  [47,105,35],[76,48,29],[173,90,30],[294,305,43],
   [527,44,32],[770,34,29],[918,139,35],[971,133,30]
  ].map(([x,y,radius],seed)=>Object.freeze({x,y,radius,seed,color:'#ffbd64'})));
  const finite=(value,fallback=0)=>Number.isFinite(value)?value:fallback;
@@ -77,7 +77,7 @@
     g.strokeStyle='#82f8e91b';
     const lines=cfg.quality==='lite'?7:13;
     for(let line=0;line<lines;line++){g.beginPath();for(let x=48;x<w-12;x+=4){const y=54+line*5.3+Math.sin(x*.115+t*.35+line)*2+Math.sin(x*.05-t*.24)*2;if(x===48)g.moveTo(x,y);else g.lineTo(x,y);}g.stroke();}
-    const reflections=[[212,170,'#5ef4ee'],[246,198,'#c77df5'],[469,172,'#4ee3d8'],[870,255,'#ba7de9'],[915,307,'#7debdc'],[253,395,'#ffd891']];
+    const reflections=[[212,170,'#5ef4ee'],[246,198,'#c77df5'],[469,172,'#4ee3d8'],[870,255,'#ba7de9'],[915,307,'#7debdc'],[294,417,'#ffd891']];
     for(const [rx,ry,color]of reflections)for(let i=0;i<(cfg.quality==='lite'?8:17);i++){
      const yy=ry+i*7,xx=rx+Math.sin(t*.8+i*.73+rx)*9,span=(3+i*.43)*(1+.3*Math.sin(t+i));g.fillStyle=color+(i%2?'28':'1a');g.fillRect((xx-span/2)/cell,yy/cell,span/cell,.4);
     }

@@ -156,65 +156,97 @@
   function createShopUI(api){
     const {wallet,renderer,panelBody:body}=api;
     const collection=(wallet.stock||STOCK).filter(item=>Number.isSafeInteger(item.price)&&item.price>0&&!item.achievement);
-    const groups=[['all','Everything'],['premium','Big goals'],['form','Transformations'],['pet','Pets'],['visitor','Visitors'],['headwear','Hats'],['eyewear','Glasses'],['accessory','Accessories'],['shoes','Shoes'],['emote','Emotes']];
-    let group='all',query='',statusText='',statusBad=false;
+    const groups=[['all','Everything','See all the things in the shop.'],['premium','Big goals','Special things to save up for.'],['headwear','Hats','Find something for your head.'],['eyewear','Glasses','Try a new pair of glasses.'],['accessory','Accessories','Carry something fun.'],['shoes','Shoes','Find your next pair.'],['emote','Moves','Pick a fun way to move.'],['pet','Pets','Meet a new companion.'],['form','Transformations','Try a different character.'],['visitor','Visitors','Invite someone to the arcade.']];
+    let view='home',group='all',itemBack='categories',query='',statusText='',statusBad=false;
     const node=(tag,className,text)=>{const element=document.createElement(tag);if(className)element.className=className;if(text!==undefined)element.textContent=text;return element;};
     const button=(label,action)=>{const element=node('button','',label);element.type='button';element.onclick=action;return element;};
-    let section=null,status=null,balance=null,purse=null,results=null,search=null,categoryButtons=[];
+    const pictures={
+      shop:'<path d="M11 24h42v31H11Z" fill="#beb8ff"/><path d="M7 24 13 9h38l6 15Z" fill="#f8d979"/><path d="M26 34h13v21H26Z" fill="#384969"/><path d="M16 31h6v9h-6m22-9h9v9h-9" fill="#384969"/>',
+      goal:'<path d="m32 6 8 17 19 3-14 14 4 19-17-9-17 9 4-19L5 26l19-3Z" fill="#ffda81"/><path d="m23 33 6 6 13-14" fill="none" stroke="#235a50" stroke-width="5" stroke-linecap="round" stroke-linejoin="round"/>',
+      purse:'<path d="m21 9 11 5 11-5-4 15c14 12 18 30-7 30S11 36 25 24Z" fill="#ffd682"/><path d="M24 24h16" stroke="#8d6638" stroke-width="4" stroke-linecap="round"/><ellipse cx="29" cy="42" rx="6" ry="4" fill="#405475"/><path d="M34 41V29" stroke="#405475" stroke-width="3"/>',
+      shirt:'<path d="m22 10-16 9 9 14 8-5v26h19V28l8 5 9-14-17-9q-9 12-20 0Z" fill="#9be8c3"/><path d="M22 10q10 12 20 0" fill="none" stroke="#294b51" stroke-width="3"/>'
+    };
+    function icon(kind){const image=node('span','kids-menu-icon');image.setAttribute('aria-hidden','true');image.innerHTML='<svg viewBox="0 0 64 64" focusable="false">'+pictures[kind]+'</svg>';return image;}
+    function choice(title,description,kind,action,attribute,value){const item=button('',action);item.className='kids-menu-card';item.setAttribute('aria-label',title);if(attribute)item.setAttribute(attribute,value);item.append(icon(kind),node('strong','kids-menu-title',title),node('span','kids-menu-desc',description));return item;}
+    let section=null,page=null,status=null,balance=null,purse=null,results=null,search=null;
     function message(text,bad=false){statusText=text;statusBad=bad;if(status){status.textContent=text;status.classList.toggle('notes-shop-error',bad);}}
     function render(){
       const value=wallet.snapshot();balance.textContent='♫ '+value.balance+' Notes';
-      purse.replaceChildren();
-      for(const coin of value.purse){
-        const entry=node('div','notes-purse-coin');entry.setAttribute('role','listitem');entry.setAttribute('aria-label',coin.count+' '+coin.label.toLowerCase()+' coin'+(coin.count===1?'':'s')+', '+coin.value+' Note'+(coin.value===1?'':'s')+' each');
-        const image=node('span','notes-coin-icon');image.innerHTML=coinSVG(coin.id);
-        entry.append(image,node('strong','',String(coin.count)),node('small','',coin.value+' Note'+(coin.value===1?'':'s')));purse.append(entry);
-      }
-      const matches=collection.filter(item=>(group==='all'||item.slot===group||group==='premium'&&item.price>=1000)&&(item.label+' '+item.id).toLowerCase().includes(query));
-      for(const entry of categoryButtons)entry.element.setAttribute('aria-pressed',String(entry.id===group));
-      results.replaceChildren();
-      if(!matches.length)results.append(node('p','muted','No matches. Try another search.'));
-      for(const item of matches){
-        const purchased=wallet.owns(item.id),levelUnlocked=!!api.unlocked?.(item.id),owned=purchased||levelUnlocked,card=node('article','notes-shop-card');card.setAttribute('data-shop-item',item.id);
-        const canvas=node('canvas');canvas.width=128;canvas.height=144;canvas.setAttribute('aria-hidden','true');
-        if(renderer?.drawPlayer){
-          const avatar=api.getAvatar(),look=item.slot==='visitor'?{...avatar,form:{'visitor-vee-jay':'tv','visitor-zizi':'alien','visitor-metronome':'robot'}[item.id],hairstyle:'bald',headwear:'none',eyewear:'none',accessory:'none',...globalThis.CodaNPCVisitors?.get?.(item.id)?.appearance,pet:'none'}:renderer.itemPreviewProfile?.(avatar,item.slot,item.id)||{...avatar,[item.slot]:item.id};
-          renderer.drawPlayer(canvas.getContext('2d'),look,{x:54,y:126,scale:1.45,facing:'down',walking:false,emote:item.slot==='emote'?item.id:null,emoteTime:.5,previewPet:true},.5);
+      if(purse){
+        purse.replaceChildren();
+        for(const coin of value.purse){
+          const entry=node('div','notes-purse-coin');entry.setAttribute('role','listitem');entry.setAttribute('aria-label',coin.count+' '+coin.label.toLowerCase()+' coin'+(coin.count===1?'':'s')+', '+coin.value+' Note'+(coin.value===1?'':'s')+' each');
+          const image=node('span','notes-coin-icon');image.innerHTML=coinSVG(coin.id);
+          entry.append(image,node('strong','',String(coin.count)),node('small','',coin.value+' Note'+(coin.value===1?'':'s')));purse.append(entry);
         }
-        const heading=node('h3','',item.label),price=node('p','notes-shop-price',owned?'Owned':item.price+' Notes');
-        const action=button(item.slot==='visitor'&&owned?'Visitor invited':owned?(api.equipInBoutique?'Choose at boutique':'Wear this'):`Buy · ${item.price} Notes`,()=>{
-          if(item.slot==='visitor'&&owned)return;
-          if(owned){
-            if(api.equipInBoutique){api.openWardrobe?.();return;}
-            try{const applied=api.applyAvatar({...api.getAvatar(),[item.slot]:item.id});message(applied===false?'Your look could not be saved. Your purchase is still owned.':'Now wearing '+item.label+'.',applied===false);}catch{message('Your look could not be saved. Your purchase is still owned.',true);}
-          }else{
-            const result=wallet.buy(item.id);
-            if(result.ok){message(item.slot==='visitor'?'Invited '+item.label.replace(/^Invite /,'')+'! They can now visit the arcade.':result.alreadyOwned?'You already own '+item.label+'.':'Bought '+item.label+'! '+(api.equipInBoutique?'Visit the boutique to wear it.':'Choose Wear this to put it on.'));render();results.querySelector('[data-shop-item="'+item.id+'"] button')?.focus({preventScroll:true});}
-            else{message(result.error,true);render();}
-          }
-        });
-        action.setAttribute('aria-label',item.slot==='visitor'&&owned?item.label+' already unlocked':owned?'Wear '+item.label:'Buy '+item.label+' for '+item.price+' Notes');
-        action.disabled=item.slot==='visitor'&&owned||!owned&&(!value.persistent||value.balance<item.price);
-        if(item.price>=1000){const goal=node('p','muted','A long-term reward. Earn Notes from games, quests, and catches.');card.append(canvas,heading,price,goal,action);}else card.append(canvas,heading,price,action);results.append(card);
       }
-      message(statusText||(!value.persistent?'Browser saving is unavailable. Purchases are paused.':'Purchases stay in this browser. No real money is used.'),statusBad||!value.persistent);
+      if(results){
+        const matches=collection.filter(item=>(group==='all'||item.slot===group||group==='premium'&&item.price>=1000)&&(item.label+' '+item.id).toLowerCase().includes(query));
+        results.replaceChildren();
+        if(!matches.length)results.append(node('p','kids-menu-empty','No matches. Try another search.'));
+        for(const item of matches){
+          const purchased=wallet.owns(item.id),levelUnlocked=!!api.unlocked?.(item.id),owned=purchased||levelUnlocked,card=node('article','notes-shop-card');card.setAttribute('data-shop-item',item.id);
+          const canvas=node('canvas');canvas.width=128;canvas.height=144;canvas.setAttribute('aria-hidden','true');
+          if(renderer?.drawPlayer){
+            const avatar=api.getAvatar(),look=item.slot==='visitor'?{...avatar,form:{'visitor-vee-jay':'tv','visitor-zizi':'alien','visitor-metronome':'robot'}[item.id],hairstyle:'bald',headwear:'none',eyewear:'none',accessory:'none',...globalThis.CodaNPCVisitors?.get?.(item.id)?.appearance,pet:'none'}:renderer.itemPreviewProfile?.(avatar,item.slot,item.id)||{...avatar,[item.slot]:item.id};
+            renderer.drawPlayer(canvas.getContext('2d'),look,{x:54,y:126,scale:1.45,facing:'down',walking:false,emote:item.slot==='emote'?item.id:null,emoteTime:.5,previewPet:true},.5);
+          }
+          const heading=node('h3','',item.label),price=node('p','notes-shop-price',owned?'Owned':item.price+' Notes');
+          const action=button(item.slot==='visitor'&&owned?'Visitor invited':owned?(api.equipInBoutique?'Choose at boutique':'Wear this'):`Buy · ${item.price} Notes`,()=>{
+            if(item.slot==='visitor'&&owned)return;
+            if(owned){
+              if(api.equipInBoutique){api.openWardrobe?.();return;}
+              try{const applied=api.applyAvatar({...api.getAvatar(),[item.slot]:item.id});message(applied===false?'Your look could not be saved. Your purchase is still owned.':'Now wearing '+item.label+'.',applied===false);}catch{message('Your look could not be saved. Your purchase is still owned.',true);}
+            }else{
+              const result=wallet.buy(item.id);
+              if(result.ok){message(item.slot==='visitor'?'Invited '+item.label.replace(/^Invite /,'')+'! They can now visit the arcade.':result.alreadyOwned?'You already own '+item.label+'.':'Bought '+item.label+'! '+(api.equipInBoutique?'Visit the boutique to wear it.':'Choose Wear this to put it on.'));render();results.querySelector('[data-shop-item="'+item.id+'"] button')?.focus({preventScroll:true});}
+              else{message(result.error,true);render();}
+            }
+          });
+          action.setAttribute('aria-label',item.slot==='visitor'&&owned?item.label+' already unlocked':owned?'Wear '+item.label:'Buy '+item.label+' for '+item.price+' Notes');
+          action.disabled=item.slot==='visitor'&&owned||!owned&&(!value.persistent||value.balance<item.price);
+          card.append(canvas,heading,price);
+          if(item.price>=1000)card.append(node('p','notes-shop-goal','Save up for this special reward.'));
+          if(!owned&&value.balance<item.price)card.append(node('p','notes-shop-needed',(item.price-value.balance)+' more Notes needed'));
+          card.append(action);results.append(card);
+        }
+      }
+      message(statusText||(!value.persistent?'Browser saving is unavailable. Purchases are paused.':'Notes are earned by playing. No real money is used.'),statusBad||!value.persistent);
     }
+    function show(next='home'){
+      view=next;section.setAttribute('data-shop-view',view);page.replaceChildren();purse=null;results=null;search=null;
+      if(view!=='home'){
+        const backTarget=view==='items'?itemBack:'home',back=button(backTarget==='categories'?'‹ Shop categories':'‹ Shop menu',()=>show(backTarget));
+        back.className='kids-menu-back';back.setAttribute('data-shop-page',backTarget);page.append(back);
+      }
+      const header=node('div','kids-menu-head'),title=node('h2','',view==='home'?'What would you like?':view==='categories'?'What are you looking for?':view==='wallet'?'My Notes':groups.find(entry=>entry[0]===group)?.[1]||'Shop');
+      title.setAttribute('tabindex','-1');title.setAttribute('data-shop-heading','');header.append(node('p','kids-menu-eyebrow','Riff’s Notes Shop'),title);page.append(header);
+      if(view==='home'){
+        const grid=node('div','kids-menu-grid');
+        grid.append(choice('Browse the shop','Find hats, shoes, and more.','shop',()=>show('categories'),'data-shop-page','categories'),choice('Big goals','Find something to save up for.','goal',()=>openItems('premium','home'),'data-shop-page','premium'),choice('My Notes','Check your purse and learn how to earn.','purse',()=>show('wallet'),'data-shop-page','wallet'),choice('Wear my things','Visit the boutique to change your look.','shirt',()=>api.openWardrobe?.(),'data-shop-page','wardrobe'));page.append(grid);
+      }else if(view==='categories'){
+        const categories=node('div','notes-shop-categories kids-menu-grid');categories.setAttribute('role','group');categories.setAttribute('aria-label','Shop categories');
+        for(const [id,label,description] of groups){const element=choice(label,description,id==='premium'?'goal':id==='all'?'shop':'shirt',()=>openItems(id),'data-shop-category',id);element.setAttribute('aria-label','Shop '+(id==='emote'?'emotes':label.toLowerCase()));categories.append(element);}page.append(categories);
+      }else if(view==='wallet'){
+        page.append(node('p','notes-shop-intro','Earn Notes by playing arcade games, helping musicians, finishing Piano Lab challenges, and catching fish.'));
+        const coins=node('h3','','Coins in your purse');page.append(coins,node('p','notes-shop-intro','Each coin is worth a different number of Notes. Together they make your total.'));
+        purse=node('div','notes-purse');purse.setAttribute('role','list');purse.setAttribute('aria-label','Notes coin purse');page.append(purse);
+        const wardrobe=button(api.wardrobeLabel||'Open my wardrobe',()=>api.openWardrobe?.());wardrobe.className='kids-menu-primary';page.append(wardrobe);
+      }else{
+        const label=node('label','notes-shop-search','Find an item'),input=node('input');input.type='search';input.id='notesShopSearch';input.setAttribute('aria-label','Search shop');input.placeholder='Try witch, guitar, or skates';input.oninput=()=>{query=input.value.trim().toLowerCase();render();};label.append(input);search=input;
+        results=node('div','notes-shop-results');results.setAttribute('aria-label','Items for sale');page.append(label,results);
+      }
+      render();(body.closest?.('[role="dialog"]')||body).scrollTop=0;title.focus({preventScroll:true});
+    }
+    function openItems(id,back='categories'){group=id;itemBack=back;query='';show('items');}
     function open(){
-      wallet.refresh();group='all';query='';statusText='';statusBad=false;
-      api.openPanel('Riff · Notes Shop');section=node('section','notes-shop');section.setAttribute('aria-label','Notes accessory shop');
-      const intro=node('p','notes-shop-intro','Welcome! Spend Notes on a new look or invite a special visitor. You start with 150 Notes; play cabinet games and complete musician or Piano Lab quests to earn more.');
-      balance=node('p','notes-shop-balance');balance.setAttribute('aria-label','Notes balance');balance.setAttribute('aria-live','polite');
-      purse=node('div','notes-purse');purse.setAttribute('role','list');purse.setAttribute('aria-label','Notes coin purse');
-      const toolbar=node('div','notes-shop-toolbar'),wardrobe=button(api.wardrobeLabel||'Open my wardrobe',api.openWardrobe);
-      toolbar.append(balance,wardrobe);
-      const categories=node('div','notes-shop-categories');categories.setAttribute('role','group');categories.setAttribute('aria-label','Shop categories');categoryButtons=[];
-      for(const [id,label] of groups){const element=button(label,()=>{group=id;render();});element.setAttribute('aria-label','Shop '+label.toLowerCase());categories.append(element);categoryButtons.push({id,element});}
-      const label=node('label','notes-shop-search','Find an accessory'),input=node('input');input.type='search';input.id='notesShopSearch';input.setAttribute('aria-label','Search shop');input.placeholder='Try witch, guitar, or skates';input.oninput=()=>{query=input.value.trim().toLowerCase();render();};label.append(input);search=input;
-      status=node('p','notes-shop-status');status.setAttribute('role','status');status.setAttribute('aria-live','polite');
-      results=node('div','notes-shop-results');results.setAttribute('aria-label','Accessories for sale');
-      section.append(intro,toolbar,purse,categories,label,status,results);body.append(section);render();search.focus();
+      wallet.refresh();query='';statusText='';statusBad=false;
+      api.openPanel('Riff · Notes Shop',{onBack:()=>{if(view==='home')return false;show(view==='items'?itemBack:'home');return true;}});section=node('section','notes-shop kids-menu');section.setAttribute('aria-label','Notes accessory shop');
+      const toolbar=node('div','notes-shop-toolbar');balance=node('p','notes-shop-balance');balance.setAttribute('aria-label','Notes balance');balance.setAttribute('aria-live','polite');
+      const wardrobe=button(api.wardrobeLabel||'Open my wardrobe',()=>api.openWardrobe?.());wardrobe.className='notes-shop-wardrobe';toolbar.append(balance,wardrobe);
+      status=node('p','notes-shop-status');status.setAttribute('role','status');status.setAttribute('aria-live','polite');page=node('div','notes-shop-page');section.append(toolbar,status,page);body.append(section);show('home');
     }
-    return {open,refresh:()=>{if(section?.isConnected)render();}};
+    return {open,refresh:()=>{if(section?.isConnected)render();},getState:()=>({view,group,query})};
   }
   return Object.freeze({KEY,STOCK,STARTER_NOTES,DENOMINATIONS,denominationBreakdown,coinSVG,stockForCatalog,gameReward,createWallet,createShopUI});
 });

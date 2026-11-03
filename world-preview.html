@@ -1,15 +1,16 @@
-<!doctype html><html lang="en"><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover"><link rel="stylesheet" href="music-history.css?v=history-1"><script src="music-history-data.js?v=composers-2"></script><script src="music-history.js?v=history-1"></script><script src="account-config.js?v=profiles-57"></script>
-<script src="arcade-host.js?v=freeze-104"></script>
-<script src="classroom-profile-data.js?v=history-1"></script>
+<!doctype html><html lang="en"><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover"><link rel="stylesheet" href="music-history.css?v=kids-activities-20261102-1"><script src="music-history-data.js?v=ten-facts-20261029-1"></script><script src="music-history-quiz-data.js?v=ten-facts-20261029-1"></script><script src="music-history-legacy.js?v=ten-facts-20261029-1"></script><script src="music-history-content.js?v=ten-facts-20261029-1"></script><script src="music-history-progress.js?v=dance-tour-20261102-1"></script><script src="music-history.js?v=kids-activities-20261102-1"></script><script src="account-config.js?v=profiles-57"></script>
+<script src="arcade-host.js?v=endless-flow-20261101-1"></script>
+<script src="classroom-profile-data.js?v=dance-tour-20261102-1"></script>
 <script src="classroom-storage.js?v=guest-100"></script>
 <script src="developer-test-mode.js?v=session-85"></script>
+<script src="dialogue-text.js?v=dialogue-1"></script>
 <script src="classroom-service.js?v=session-94"></script>
 <script src="vendor/qrcode-generator.js?v=classroom-54"></script>
 <script src="classroom-pass-qr.js?v=classroom-54"></script>
-<link rel="stylesheet" href="classroom-ui.css?v=roster-58">
-<script src="classroom-ui.js?v=logout-88"></script>
+<link rel="stylesheet" href="classroom-ui.css?v=profile-link-20261101-1">
+<script src="classroom-ui.js?v=profile-link-20261101-1"></script>
 <script src="classroom-boot.js?v=guest-100"></script><title>The Coda Arcade</title><style>
-*{box-sizing:border-box}body{margin:0;background:#10101e;color:#e9def9;font:15px system-ui}header{padding:12px 20px;display:flex;align-items:center;gap:18px;justify-content:space-between;background:#211a37}a{color:#a6eff4}button{background:#392f58;color:white;border:1px solid #ba8fdf;border-radius:6px;padding:9px 12px;cursor:pointer}button:hover{background:#514073}#view{display:block;width:min(100vw,calc((100dvh - 110px) * 1672 / 941));height:auto;aspect-ratio:1672/941;margin:0 auto;image-rendering:pixelated;background:#10101e;touch-action:none}footer{display:flex;align-items:center;justify-content:space-between;gap:10px;padding:8px 16px;min-height:44px;background:#211a37;font-size:12px}#dialog{position:fixed;left:50%;bottom:70px;transform:translateX(-50%);width:min(490px,90vw);padding:20px;background:#261d40;border:2px solid #d8a6f1;box-shadow:0 8px 50px #000b;display:none}#dialog strong{color:#f4c8fa}#dialog p{line-height:1.6}#dialog button{float:right}@media(max-width:650px){header{font-size:12px;padding:8px}#view{width:min(100vw,calc((100dvh - 110px) * 1672 / 941));height:auto}}
+*{box-sizing:border-box}body{margin:0;background:#10101e;color:#e9def9;font:15px system-ui}header{padding:12px 20px;display:flex;align-items:center;gap:18px;justify-content:space-between;background:#211a37}a{color:#a6eff4}button{background:#392f58;color:white;border:1px solid #ba8fdf;border-radius:6px;padding:9px 12px;cursor:pointer}button:hover{background:#514073}#view{display:block;width:min(100vw,calc((100dvh - 110px) * 1672 / 941));height:auto;aspect-ratio:1672/941;margin:0 auto;image-rendering:pixelated;background:#10101e;touch-action:none}footer{display:flex;align-items:center;justify-content:space-between;gap:10px;padding:8px 16px;min-height:44px;background:#211a37;font-size:12px}#dialog{position:fixed;left:50%;bottom:70px;transform:translateX(-50%);width:min(620px,calc(100vw - 24px));max-height:calc(100dvh - 160px);overflow:auto;overscroll-behavior:contain;font-size:20px;line-height:1.55;overflow-wrap:anywhere;padding:20px;background:#261d40;border:2px solid #d8a6f1;box-shadow:0 8px 50px #000b;display:none}#dialog strong{color:#f4c8fa;font-size:22px}#dialog p{line-height:1.6}#dialog button{float:right;font:inherit;font-size:18px;line-height:1.4;min-height:44px;max-width:100%}@media(max-width:650px){header{font-size:12px;padding:8px}#view{width:min(100vw,calc((100dvh - 110px) * 1672 / 941));height:auto}}
 #gameoverlay{position:fixed;inset:0;z-index:100;background:#121327;display:flex;flex-direction:column}#gameoverlay[hidden]{display:none}.gamebar{display:flex;align-items:center;justify-content:space-between;gap:12px;padding:12px 16px;background:#231a3c;border-bottom:2px solid #b583dc}.gamebar strong{color:#f0d7ff}#gameiframe{border:0;width:100%;flex:1;min-height:0;background:#111628}body.game-open{overflow:hidden}@media(max-width:650px){.gamebar{gap:6px}.gamebar strong{font-size:12px}}
 #panel{position:fixed;z-index:90;top:50%;left:50%;transform:translate(-50%,-50%);width:min(570px,94vw);max-height:84dvh;overflow:auto;padding:20px;background:#231c3b;border:2px solid #c69be9;box-shadow:0 0 0 100vmax #05030ab8,0 14px 55px #000c;border-radius:12px}#panel[hidden]{display:none}.panelHead{display:flex;justify-content:space-between;align-items:center;margin-bottom:14px}.panelRow{display:flex;align-items:center;justify-content:space-between;gap:12px;margin:10px 0;padding:10px;border:1px solid #66517f;border-radius:7px}.panelRow small{display:block;opacity:.75}.formRow{display:grid;gap:5px;margin:10px 0}.formRow select,.formRow input{background:#17142c;color:#fff;border:1px solid #a08dbd;padding:9px;border-radius:5px;width:100%}.panelActions{display:flex;gap:8px;flex-wrap:wrap;margin-top:14px}.muted{color:#c1b4d7;font-size:13px}.panelMsg{min-height:22px;color:#9fe9dc}
 
@@ -27,7 +28,7 @@
 #assetStudio{position:fixed;left:12px;top:80px;z-index:65;width:min(334px,calc(100vw - 24px));max-height:calc(100dvh - 99px);overflow:auto;background:#171529f5;border:1px solid #eac17d;box-shadow:0 12px 50px #05010de0,0 0 22px #fdac4a24;border-radius:12px;padding:13px;color:#f8efff;font:12px system-ui;backdrop-filter:blur(9px)}
 #assetStudio[hidden]{display:none}#assetStudio .studioHead{display:flex;align-items:center;justify-content:space-between;color:#ffe4a4;font-size:14px;gap:9px;margin-bottom:7px}#assetStudio .studioActions{display:flex;flex-wrap:wrap;gap:5px;margin:7px 0}#assetStudio button{font:inherit;min-height:28px;padding:5px 7px}#assetStudio .studioActions button{flex:1 0 90px}#assetStudio button:disabled{opacity:.36;cursor:not-allowed}#assetStudio hr{border:0;border-top:1px solid #655374;margin:13px 0}#assetStudio .studioField{display:grid;gap:3px;margin:7px 0}#assetStudio .studioField>label{font-weight:650;color:#dccdf3}#assetStudio input:not([type=checkbox]),#assetStudio select{background:#131024;border:1px solid #866e9b;color:#fff;padding:7px;border-radius:5px;width:100%;font:inherit;min-width:0}#assetStudio input[type=checkbox]{accent-color:#f9c880}#assetStudio .studioGrid{display:grid;grid-template-columns:1fr 1fr;gap:8px}#assetStudio .studioTip{color:#c9b9d6;line-height:1.45;font-size:11px;margin:6px 0}#assetStudio #assetList{height:108px;padding:2px}#assetStudio #assetList option{padding:6px}#assetStudio #assetMessage{color:#bbf5e5;min-height:18px;overflow-wrap:anywhere}#assetStudio #assetSelection[hidden]{display:none}#assetStudio .studioCheck{display:inline-flex;align-items:center;gap:6px;margin:5px 11px 5px 0}#assetStudio .studioCollapsible{border:1px solid #655374;border-radius:7px;padding:8px}#assetStudio summary{cursor:pointer;color:#ffe4b1;font-weight:650}#assetToggle{border-color:#eecc7c}#view.asset-editing{cursor:crosshair;touch-action:none}#assetStudio #assetAdd{background:#675022;border-color:#e8b85c}#assetStudio #assetImport{border-color:#80d3ed}#assetStudio #assetExport{border-color:#80d3ed}#assetStudio #assetHelp{background:#271d3c}#assetStudio .studioHot{color:#ffcfa4}body.asset-console-open #layerEditor{display:none!important}@media(max-width:650px){#assetStudio{top:120px;max-height:calc(100dvh - 138px)}}
 /* DJ unlocks */ #panel .jukebox-track-locked{background:#79788612;border-radius:8px;padding:8px}#panel .jukebox-track-locked strong,#panel .jukebox-track-locked small{color:#a6a6b8}#panel .jukebox-track-locked [data-dj-requirement]{color:#e9d29e}
-</style><link rel="stylesheet" href="mobile-controls.css?v=controls-81"><link rel="stylesheet" href="world-mobile.css?v=games-67"><script src="mobile-controls.js?v=joystick-41"></script><script src="finger-follow.js?v=student-29"></script><link rel="stylesheet" href="reward-notifications.css?v=music-30"><script src="reward-notifications.js?v=music-30"></script><link rel="stylesheet" href="developer-console.css?v=pixels-64"><link rel="stylesheet" href="musician-ui.css?v=mobile-28"><link rel="stylesheet" href="boutique-ui.css?v=avatar-50"><script src="collision-editor.js?v=mobile-28"></script><script src="world-object-catalog.js?v=floor-61"></script><script src="fishing-entrance.js?v=fishing-31"></script><script src="world-object-runtime.js"></script><script src="world-lighting.js?v=dj-96"></script><script src="dance-floor.js?v=mobile-28"></script><script src="dance-rhythm-engine.js?v=play-97"></script><script src="dance-floor-stage.js?v=dance-95"></script><script src="dj-library.js?v=dj-96"></script><link rel="stylesheet" href="dialogue-editor.css?v=music-30"><script src="dialogue-editor.js?v=music-30"></script><link rel="stylesheet" href="pixel-editor.css?v=pixels-103"><script src="pixel-selection.js?v=pixels-103"></script><script src="pixel-editor.js?v=composers-2"></script><script src="world-floor-grid.js?v=flat-75"></script><link rel="stylesheet" href="education-editor.css?v=author-101"><link rel="stylesheet" href="education-visual-editor.css?v=author-101"><script src="education-visual-editor.js?v=author-101"></script><script src="education-editor.js?v=author-101"></script><script src="developer-console.js?v=pixels-103"></script><script src="npc-visitors.js?v=visitors-42"></script><script src="npc-behavior.js?v=composers-2"></script><script src="pet-companion.js?v=premium-42"></script><script src="character-renderer.js?v=composers-2"></script><link rel="stylesheet" href="artwork-editor.css?v=pixels-103"><script src="artwork-editor.js?v=pixels-103"></script><script src="character-artwork-adapter.js?v=pixels-64"></script><script src="world-artwork-tools.js?v=pixels-103"></script><script src="world-layer-renderer.js?v=audit-65"></script><link rel="stylesheet" href="musician-trivia.css?v=music-30"><script src="musician-trivia.js?v=music-30"></script><script src="musician-ui.js?v=history-1"></script><script src="boutique-ui.js?v=classroom-54"></script><link rel="stylesheet" href="notes-shop.css?v=avatar-50"><link rel="stylesheet" href="music-notation.css?v=fishing-31"><script src="music-notation.js?v=fishing-31"></script><link rel="stylesheet" href="education-notation.css?v=education-90"><script src="education-notation.js?v=lessons-93"></script><script src="piano-wall-notation.js?v=learning-48"></script><link rel="stylesheet" href="room-developer-editor.css?v=pixels-64"><script src="room-developer-editor.js?v=pixels-103"></script><link rel="stylesheet" href="rhythm-fishing.css?v=rooms-42"><script src="rhythm-fishing-engine.js?v=fishing-47"></script><script src="fishing-progress.js?v=fishing-31"></script><script src="fishing-cave-layout.js?v=cave-32"></script><script src="fishing-cave-effects.js?v=cave-32"></script><script src="fish-shadow-motion.js?v=cave-32"></script><script src="rhythm-beaming.js?v=fishing-34"></script><link rel="stylesheet" href="dance-rhythm-game.css?v=play-97"><script src="dance-rhythm-game.js?v=play-97"></script><script src="dance-floor-world.js?v=play-97"></script><link rel="stylesheet" href="cave-camera.css?v=mobile-36"><script src="cave-camera.js?v=mobile-36"></script><link rel="stylesheet" href="fishing-battle.css?v=fishing-34"><script src="fishing-battle.js?v=mobile-36"></script><script src="fishing-music.js?v=music-42"></script><script src="fishing-boat.js?v=mobile-36"></script><script src="fishing-rhythm-input.js?v=controls-37"></script><link rel="stylesheet" href="fishing-practice.css?v=controls-37"><script src="fishing-practice.js?v=controls-37"></script><script src="rhythm-fishing.js?v=vibes-83"></script><link rel="stylesheet" href="piano-lab.css?v=console-62"><link rel="stylesheet" href="music-classroom.css?v=learning-48"><script src="notes-shop.js?v=profiles-87"></script><script src="room-fullscreen.js?v=learning-48"></script><script src="piano-melodies.js?v=learning-48"></script><script src="piano-lab.js?v=history-1"></script><link rel="stylesheet" href="classroom-tutorials.css?v=lessons-93"><link rel="stylesheet" href="time-signature-lesson.css?v=lessons-51"><script src="time-signature-lesson.js?v=education-90"></script><link rel="stylesheet" href="classroom-quiz.css?v=learning-48"><script src="classroom-keyboard.js?v=author-101"></script><script src="classroom-quiz-pool.js?v=classroom-97"></script><script src="classroom-quiz.js?v=author-101"></script><script src="final-exam-bank.js?v=exam-86"></script><script src="classroom-curriculum-staff.js?v=keyboard-99"></script><script src="classroom-curriculum-rhythm.js?v=lessons-93"></script><script src="classroom-curriculum-expression.js?v=keyboard-99"></script><script src="classroom-exam-curriculum.js?v=keyboard-99"></script><link rel="stylesheet" href="classroom-exam-study.css?v=lessons-102"><script src="classroom-exam-study.js?v=author-101"></script><script src="classroom-accidentals-lesson.js?v=keyboard-99"></script><script src="classroom-tutorials.js?v=author-101"></script><link rel="stylesheet" href="final-exam.css?v=lessons-93"><script src="classroom-understanding-basics.js?v=classroom-97"></script><script src="classroom-understanding-staff.js?v=classroom-97"></script><script src="classroom-learning-paths-data.js?v=author-101"></script><script src="education-content.js?v=lessons-102"></script><link rel="stylesheet" href="classroom-learning-paths.css?v=lessons-93"><script src="classroom-learning-paths.js?v=author-101"></script><script src="final-exam.js?v=author-101"></script><script src="music-classroom.js?v=author-101"></script><link rel="stylesheet" href="player-progression.css?v=mobile-28"><link rel="stylesheet" href="hall-of-fame.css?v=achievements-89"><link rel="stylesheet" href="arcade-vibes.css?v=vibes-82"><script src="arcade-vibes.js?v=vibes-84"></script><script src="player-progression.js?v=dj-96"></script><script src="achievement-catalog.js?v=dj-96"></script><link rel="stylesheet" href="player-profile.css?v=student-29"><script src="player-profile.js?v=quests-82"></script><script src="hall-of-fame.js?v=achievements-89"></script><script src="musician-missions.js?v=quests-82"></script><script src="song-machine/sound-library.js?v=mobile-28"></script><link rel="stylesheet" href="play-notebook.css?v=play-97"><script src="changelog-data.js?v=freeze-104"></script><script src="play-notebook.js?v=play-97"></script><header><b>♫ CODA ARCADE · CONNECTED WORLD / WORLD BUILDER</b><span><a href="classic-arcade.html">← Original arcade</a> &nbsp; <button id="levelBtn" type="button" aria-label="Your profile">Profile · Level 1</button> <button id="hallFameBtn" type="button">Hall of Fame</button> <button id="notesBtn" type="button" aria-label="Open Notes shop">♫ 150 Notes</button> <button id="pianoLabBtn" type="button">Piano Lab</button> <button id="classroomBtn" type="button">Classroom</button> <button id="fishingBtn" type="button">Rhythm Fishing</button> <button id="accountBtn">◉ Guest</button> <button id="jukeboxBtn">♫ Jukebox</button> <button id="assetToggle" type="button" title="Open Asset Studio (Shift+A)">✥ Assets</button> <button id="editorToggle" type="button" title="Edit pixel foreground layers (Shift+L)">✎ Layers</button> <button id="musicBtn" type="button" aria-pressed="false" title="Play or stop optional original arcade groove">♫ Music: Off</button> <button id="fxBtn" type="button" title="Choose full, lite or off visual effects">✧ FX: Full</button> <span id="cameraTools" role="group" aria-label="Camera zoom controls"><button type="button" id="zoomOut" title="Zoom out (−)" aria-label="Zoom out">−</button><button type="button" id="zoomReset" title="Reset camera zoom (0)" aria-label="Reset zoom to 100%">100%</button><button type="button" id="zoomIn" title="Zoom in (+)" aria-label="Zoom in">+</button></span> <button id="fs">⛶ Fullscreen</button></span></header><main id="worldStage" aria-label="Arcade world"><canvas id="view" width="1672" height="941" tabindex="0" aria-label="Connected arcade. Move with WASD or arrow keys. Press Space to jump and E to interact."></canvas></main><footer><span>WASD / arrows · Walk · Space · Jump · Wheel / + / − Zoom · 0 Reset · F2 Developer console · C Edit collision · Shift+L Edit layers · Right-drag to pan in editor &nbsp; E · Interact &nbsp; Q · Emote · P · Play notes · Click to walk · Touch and drag to steer</span><span id="status">Phase 11 · asset studio · animations · layers · C collision · L layers</span></footer><aside id="layerEditor" hidden aria-label="Foreground layer painting editor">
+</style><link rel="stylesheet" href="mobile-controls.css?v=controls-81"><link rel="stylesheet" href="world-mobile.css?v=dialogue-1"><script src="mobile-controls.js?v=joystick-41"></script><script src="finger-follow.js?v=student-29"></script><link rel="stylesheet" href="reward-notifications.css?v=music-30"><script src="reward-notifications.js?v=music-30"></script><link rel="stylesheet" href="developer-console.css?v=rugs-flip-20261031-1"><link rel="stylesheet" href="musician-ui.css?v=dialogue-1"><link rel="stylesheet" href="boutique-ui.css?v=kids-activities-20261102-1"><script src="collision-editor.js?v=mobile-28"></script><script src="world-object-catalog.js?v=floor-61"></script><script src="wall-fixtures.js?v=independent-20261101-1"></script><script src="arcade-exit.js?v=exit-title-20261031-1"></script><script src="fishing-entrance.js?v=fishing-31"></script><script src="world-object-runtime.js?v=rugs-flip-20261031-1"></script><script src="world-lighting.js?v=moving-lanterns-20261101-1"></script><script src="dj-floodlights.js?v=stage-lights-20261031-1"></script><script src="dance-floor.js?v=aligned-dance-20261031-1"></script><script src="floor-stars.js?v=lounge-glass-20261101-1"></script><script src="dance-campaign.js?v=genres-20261102-2"></script><script src="dance-song-audio.js?v=genres-20261102-2"></script><script src="dance-rhythm-engine.js?v=dance-tour-20261102-1"></script><script src="dance-floor-stage.js?v=dance-tour-20261102-1"></script><script src="dj-library.js?v=genres-20261102-2"></script><script src="dj-menu.js?v=kids-activities-20261102-1"></script><link rel="stylesheet" href="dialogue-editor.css?v=music-30"><script src="dialogue-editor.js?v=music-30"></script><link rel="stylesheet" href="pixel-editor.css?v=pixels-103"><script src="pixel-selection.js?v=smooth-mask-1"></script><script src="layer-selection.js?v=layer-selection-20261030-1"></script><script src="pixel-editor.js?v=smooth-mask-1"></script><script src="world-floor-grid.js?v=flat-75"></script><link rel="stylesheet" href="education-editor.css?v=author-101"><link rel="stylesheet" href="education-visual-editor.css?v=author-101"><script src="education-visual-editor.js?v=author-101"></script><script src="education-editor.js?v=author-101"></script><link rel="stylesheet" href="music-history-editor.css?v=facts-20261029-1"><script src="music-history-editor.js?v=facts-20261029-1"></script><script src="main-counter-palette.js?v=emerald-20261031-1"></script><script src="foreground-floor-compat.js?v=wall-uniform-20261031-1"></script><script src="pixel-style.js?v=east-west-20261101-1"></script><script src="environment-art.js?v=handdrawn-20261101-1"></script><script src="world-character-editor.js?v=selected-order-20261030-1"></script><link rel="stylesheet" href="decor-library.css?v=decor-20261030-1"><script src="decor-library.js?v=east-west-20261101-1"></script><script src="floor-palette-compat.js?v=glass-fringe-20261031-1"></script><script src="pathway-floor-fill.js?v=boutique-pathway-20261031-1"></script><script src="nightclub-wash.js?v=dance-floor-blend-20261101-1"></script><script src="wall-reflections.js?v=NWfinish20261031-1"></script><script src="developer-console.js?v=music-lounge-fixtures-20261101-1"></script><script src="npc-visitors.js?v=visitors-42"></script><script src="npc-quotes.js?v=friendly-20261101-1"></script><script src="npc-behavior.js?v=friendly-20261101-1"></script><script src="pet-companion.js?v=premium-42"></script><script src="character-renderer.js?v=dance-tour-20261102-1"></script><link rel="stylesheet" href="artwork-editor.css?v=selection-edit-20261030-1"><script src="artwork-editor.js?v=feather-20261030-1"></script><script src="character-artwork-adapter.js?v=pixels-64"></script><script src="world-artwork-tools.js?v=glass-fringe-20261031-1"></script><script src="world-layer-renderer.js?v=rugs-flip-20261031-1"></script><link rel="stylesheet" href="musician-trivia.css?v=music-30"><script src="musician-trivia.js?v=music-30"></script><script src="musician-ui.js?v=simple-20261101-1"></script><script src="boutique-ui.js?v=kids-activities-20261102-1"></script><link rel="stylesheet" href="notes-shop.css?v=kids-activities-20261102-1"><link rel="stylesheet" href="music-notation.css?v=fishing-31"><script src="music-notation.js?v=dance-tour-20261102-1"></script><link rel="stylesheet" href="education-notation.css?v=education-90"><script src="education-notation.js?v=lessons-93"></script><script src="piano-wall-notation.js?v=learning-48"></script><link rel="stylesheet" href="room-developer-editor.css?v=pixels-64"><script src="room-developer-editor.js?v=rugs-flip-20261031-1"></script><link rel="stylesheet" href="rhythm-fishing.css?v=simple-games-20261102-1"><script src="fishing-water-regions.js?v=fishing-balance-20261101-1"></script><script src="fishing-water.js?v=fishing-balance-20261101-1"></script><script src="fishing-cave-layout.js?v=fishing-balance-20261101-1"></script><script src="fishing-biomes.js?v=fishing-balance-20261101-1"></script><script src="rhythm-fishing-engine.js?v=rhythm-dialogues-20261102-1"></script><script src="fishing-progress.js?v=fishing-31"></script><script src="fishing-cave-effects.js?v=fishing-snes-20261031-1"></script><script src="fish-shadow-motion.js?v=cave-32"></script><script src="rhythm-beaming.js?v=dance-tour-20261102-1"></script><link rel="stylesheet" href="dance-rhythm-game.css?v=dance-tour-20261102-1"><script src="dance-rhythm-game.js?v=genres-20261102-2"></script><script src="dance-floor-world.js?v=dance-tour-20261102-1"></script><link rel="stylesheet" href="cave-camera.css?v=mobile-36"><script src="cave-camera.js?v=mobile-36"></script><link rel="stylesheet" href="fishing-battle.css?v=fishing-34"><script src="fishing-battle.js?v=mobile-36"></script><script src="fishing-music.js?v=genres-20261102-2"></script><script src="fishing-boat.js?v=fishing-snes-20261031-1"></script><script src="fishing-rhythm-input.js?v=controls-37"></script><link rel="stylesheet" href="fishing-practice.css?v=kids-practice-20261102-1"><script src="fishing-practice.js?v=kids-practice-20261102-1"></script><script src="rhythm-fishing.js?v=genres-20261102-2"></script><link rel="stylesheet" href="piano-lab.css?v=kids-menus-20261102-1"><link rel="stylesheet" href="music-classroom.css?v=kids-classroom-20261102-1"><script src="notes-shop.js?v=kids-activities-20261102-1"></script><script src="room-fullscreen.js?v=learning-48"></script><script src="piano-melodies.js?v=fixed-range-20261102-1"></script><script src="piano-sight-reading.js?v=simple-games-20261102-1"></script><script src="piano-lab.js?v=kids-menus-20261102-2"></script><link rel="stylesheet" href="classroom-tutorials.css?v=lessons-93"><link rel="stylesheet" href="time-signature-lesson.css?v=lessons-51"><script src="time-signature-lesson.js?v=education-90"></script><link rel="stylesheet" href="classroom-quiz.css?v=learning-48"><script src="classroom-keyboard.js?v=author-101"></script><script src="classroom-quiz-pool.js?v=classroom-97"></script><script src="classroom-quiz.js?v=author-101"></script><script src="final-exam-bank.js?v=exam-86"></script><script src="classroom-curriculum-staff.js?v=keyboard-99"></script><script src="classroom-curriculum-rhythm.js?v=lessons-93"></script><script src="classroom-curriculum-expression.js?v=keyboard-99"></script><script src="classroom-exam-curriculum.js?v=keyboard-99"></script><link rel="stylesheet" href="classroom-exam-study.css?v=lessons-102"><script src="classroom-exam-study.js?v=author-101"></script><script src="classroom-accidentals-lesson.js?v=keyboard-99"></script><script src="classroom-tutorials.js?v=author-101"></script><link rel="stylesheet" href="final-exam.css?v=lessons-93"><script src="classroom-understanding-basics.js?v=classroom-97"></script><script src="classroom-understanding-staff.js?v=classroom-97"></script><script src="classroom-learning-paths-data.js?v=author-101"></script><script src="education-content.js?v=lessons-102"></script><link rel="stylesheet" href="classroom-learning-paths.css?v=lessons-93"><script src="classroom-learning-paths.js?v=author-101"></script><script src="final-exam.js?v=author-101"></script><link rel="stylesheet" href="activity-menus.css?v=kids-activities-20261102-1"><link rel="stylesheet" href="world-settings.css?v=kids-profile-settings-20261102-1"><script src="world-settings.js?v=kids-profile-settings-20261102-1"></script><link rel="stylesheet" href="classroom-menus.css?v=kids-classroom-20261102-1"><script src="classroom-menus.js?v=kids-classroom-20261102-1"></script><script src="music-classroom.js?v=kids-classroom-20261102-1"></script><link rel="stylesheet" href="player-progression.css?v=mobile-28"><link rel="stylesheet" href="hall-of-fame.css?v=achievements-89"><link rel="stylesheet" href="arcade-vibes.css?v=vibes-82"><script src="arcade-vibes.js?v=vibes-84"></script><script src="player-progression.js?v=dance-tour-20261102-1"></script><script src="achievement-catalog.js?v=dance-tour-20261102-1"></script><link rel="stylesheet" href="player-profile.css?v=phone-profile-align-1"><script src="player-profile.js?v=kids-profile-settings-20261102-1"></script><script src="hall-of-fame.js?v=achievements-89"></script><script src="musician-missions.js?v=dance-tour-20261102-1"></script><script src="song-machine/sound-library.js?v=mobile-28"></script><link rel="stylesheet" href="play-notebook.css?v=play-97"><script src="changelog-data.js?v=console-fullscreen-20261029-1"></script><script src="play-notebook.js?v=play-97"></script><header><b>♫ CODA ARCADE · CONNECTED WORLD / WORLD BUILDER</b><span><a href="classic-arcade.html">← Original arcade</a> &nbsp; <button id="levelBtn" type="button" aria-label="Your profile">Profile · Level 1</button> <button id="hallFameBtn" type="button">Hall of Fame</button> <button id="notesBtn" type="button" aria-label="Open Notes shop">♫ 150 Notes</button> <button id="pianoLabBtn" type="button">Piano Lab</button> <button id="classroomBtn" type="button">Classroom</button> <button id="fishingBtn" type="button">Rhythm Fishing</button> <button id="accountBtn">◉ Guest</button> <button id="jukeboxBtn">♫ Jukebox</button> <button id="assetToggle" type="button" title="Open Asset Studio (Shift+A)">✥ Assets</button> <button id="editorToggle" type="button" title="Edit pixel foreground layers (Shift+L)">✎ Layers</button> <button id="musicBtn" type="button" aria-pressed="false" title="Play or stop optional original arcade groove">♫ Music: Off</button> <button id="fxBtn" type="button" title="Choose full, lite or off visual effects">Effects: Full</button> <span id="cameraTools" role="group" aria-label="Camera zoom controls"><button type="button" id="zoomOut" title="Zoom out (−)" aria-label="Zoom out">−</button><button type="button" id="zoomReset" title="Reset camera zoom (0)" aria-label="Reset zoom to 100%">100%</button><button type="button" id="zoomIn" title="Zoom in (+)" aria-label="Zoom in">+</button></span> <button id="fs">⛶ Fullscreen</button></span></header><main id="worldStage" aria-label="Arcade world"><canvas id="view" width="1672" height="941" tabindex="0" aria-label="Connected arcade. Move with WASD or arrow keys. Press Space to jump and E to interact."></canvas></main><footer><span>WASD / arrows · Walk · Space · Jump · Wheel / + / − Zoom · 0 Reset · F2 Developer console · C Edit collision · Shift+L Edit layers · Right-drag to pan in editor &nbsp; E · Interact &nbsp; Q · Emote · P · Play notes · Click to walk · Touch and drag to steer</span><span id="status">Phase 11 · asset studio · animations · layers · C collision · L layers</span></footer><aside id="layerEditor" hidden aria-label="Foreground layer painting editor">
   <div class="editorbanner"><b>✎ FOREGROUND EDITOR</b><button id="editClose" type="button">✕</button></div>
   <div class="mini">Paint with pixels from the existing arcade artwork. Erase removes unwanted foreground coverage; the floor stays unchanged.</div>
   <div class="editorline"><button type="button" id="editPaint" class="current">🖌 Paint</button><button type="button" id="editErase">⌫ Erase</button></div>
@@ -87,7 +88,7 @@
  <p id="assetMessage" role="status">Your assets are saved in this browser. Export scene JSON to publish or move them to another computer.</p>
  <details><summary id="assetHelp">Help · shortcuts and storage</summary><p class="studioTip">Shift+A opens/closes. Delete removes. Ctrl/Cmd+Z undo, Ctrl/Cmd+Shift+Z redo. Arrows nudge selected asset (Shift = 8 px). Escape closes. GIF/APNG playback depends on browser support; sprite sheets offer deterministic frame animation. Crop selects a rectangular section of the *original art* (not the whole live canvas). Imported images are embedded in exported JSON. Browser storage is local to this page/origin; GitHub won't receive edits until you publish the export.</p></details>
 </aside><div id="dialog" role="dialog" aria-label="Arcade conversation"><strong id="who"></strong><p id="words"></p><button id="close">Close · E</button></div><section id="gameoverlay" hidden aria-label="Arcade game"><div class="gamebar"><button id="returnworld" type="button">← Return to world</button><strong id="activegame">Arcade game</strong></div><iframe id="gameiframe" title="Arcade game" allow="autoplay; fullscreen" allowfullscreen referrerpolicy="strict-origin-when-cross-origin"></iframe></section><div id="panel" hidden><div class="panelHead"><strong id="panelTitle">Arcade</strong><button id="panelClose">✕ Close</button></div><div id="panelBody"></div></div><section id="pianoroom" hidden aria-label="Piano Lab"></section><section id="musicClassroom" hidden aria-label="Music Classroom"></section><section id="rhythmFishing" hidden aria-label="Rhythm Fishing cave"></section><script>
-(()=>{'use strict';const testMode=window.CodaDeveloperTestMode;if(testMode?.isEnabled()){const prepared=testMode.seedUnlocks({progression:window.CodaPlayerProgression,profileData:window.CodaClassroomProfileData});testMode.mountBanner();if(prepared?.ok===false)return;}let arcadeVibes=null,arcadeLevel=1;const missionRuns={piano:null,fishing:null};let mobileControls=null,fingerWalk=null,rewardNotifications=null,developerConsole=null,worldObjects=null,worldLighting=null,danceFloor=null,npcBrain=null,characterRenderer=null,musicianUI=null,boutiqueUI=null,notesWallet=null,notesShop=null,pianoLab=null,musicClassroom=null,progression=null,missions=null,hallFame=null,playerProfile=null,musicianTrivia=null,fishingRoom=null,fishingProgress=null,fishingDoorPicture=null,songPlayer=null,playerPet=null,playerPhase=0,emoteStarted=0,followedMusician=null,followTimer=0,danceScene=null;const c=document.querySelector('#view'),worldContext=c.getContext('2d',{alpha:false}),status=document.querySelector('#status'),dialog=document.querySelector('#dialog');let avatar={};try{avatar=JSON.parse(localStorage.getItem('musicArcadeV1')||'{}')}catch{}avatar=window.CodaAvatarDefaults.migrate(avatar);const W=1672,H=941,ART_SCALE=1,keys=new Set(),touchKeys=new Set();let worldStick={x:0,y:0};let player={x:1180,y:388},cam={x:0,y:0,zoom:1,targetZoom:1},dest=null,emote=0,near=null,last=0,clock=0,walking=false,facing="down";const rooms=[{id:'lounge',name:'LOUNGE',x:95,y:145,w:350,h:235},{id:'dance',name:'DANCE',x:90,y:505,w:670,h:325},{id:'arcade',name:'ARCADE',x:648,y:220,w:900,h:580}];const bridges=[];const doors=[];const games=[{name:'Pitch Race',x:718,y:313,url:window.CodaArcadeHost.gameURL('pitch',location)},{name:'Music Triad',x:831,y:314,url:window.CodaArcadeHost.gameURL('triad',location)},{name:'Rhythm Room',x:951,y:315,url:window.CodaArcadeHost.gameURL('rhythm',location)},{name:'Song Machine',x:1064,y:315,url:'song-machine/index.html?v=song-89'}];const lines=['Nice place to hang out!','I could stay here all day.','Did you see that?','This is my favorite spot.','Hey! Good to see you.']; // Replace these placeholder lines with your own dialogue later.
+(()=>{'use strict';const testMode=window.CodaDeveloperTestMode;if(testMode?.isEnabled()){const prepared=testMode.seedUnlocks({progression:window.CodaPlayerProgression,profileData:window.CodaClassroomProfileData});testMode.mountBanner();if(prepared?.ok===false)return;}let arcadeVibes=null,arcadeLevel=1;const missionRuns={piano:null,fishing:null};const historyRuns={cabinet:null};let mobileControls=null,fingerWalk=null,rewardNotifications=null,developerConsole=null,worldObjects=null,worldLighting=null,danceFloor=null,floorStars=null,npcBrain=null,characterRenderer=null,musicianUI=null,boutiqueUI=null,notesWallet=null,notesShop=null,pianoLab=null,musicClassroom=null,progression=null,missions=null,hallFame=null,playerProfile=null,musicianTrivia=null,fishingRoom=null,fishingProgress=null,fishingDoorPicture=null,songPlayer=null,playerPet=null,playerPhase=0,emoteStarted=0,followedMusician=null,followTimer=0,danceScene=null;const c=document.querySelector('#view'),worldContext=c.getContext('2d',{alpha:false}),status=document.querySelector('#status'),dialog=document.querySelector('#dialog');let avatar={};try{avatar=JSON.parse(localStorage.getItem('musicArcadeV1')||'{}')}catch{}avatar=window.CodaAvatarDefaults.migrate(avatar);const W=1672,H=941,ART_SCALE=1,keys=new Set(),touchKeys=new Set();let worldStick={x:0,y:0};let player={x:1180,y:388},cam={x:0,y:0,zoom:1,targetZoom:1},dest=null,emote=0,near=null,last=0,clock=0,walking=false,facing="down";const rooms=[{id:'lounge',name:'LOUNGE',x:95,y:145,w:350,h:235},{id:'dance',name:'DANCE',x:90,y:505,w:670,h:325},{id:'arcade',name:'ARCADE',x:648,y:220,w:900,h:580}];const bridges=[];const doors=[];const games=[{name:'Pitch Race',x:718,y:313,url:window.CodaArcadeHost.gameURL('pitch',location)},{name:'Music Triad',x:831,y:314,url:window.CodaArcadeHost.gameURL('triad',location)},{name:'Rhythm Room',x:951,y:315,url:window.CodaArcadeHost.gameURL('rhythm',location)},{name:'Song Machine',x:1064,y:315,url:'song-machine/index.html?v=song-89'}];const lines=['Nice place to hang out!','I could stay here all day.','Did you see that?','This is my favorite spot.','Hey! Good to see you.']; // Replace these placeholder lines with your own dialogue later.
 
 let g=worldContext;
 let classroomRuntime=null,classroomWasPaused=false,playNotebook=null,musicHistory=null;
@@ -211,24 +212,23 @@ function djState(){
  const object=worldObjects?.state('dance_dj_console');
  if(!object)return {id:'dj',name:'DJ Coda',visible:false};
  const point=worldObjects.point(object,393.5,621),approach=worldObjects.point(object,393.5,684);
- const turn=((Math.round(Math.atan2(object.matrix[1],object.matrix[0])/(Math.PI/2))%4)+4)%4;
+ const turn=((Math.round(Math.atan2(-object.matrix[2],object.matrix[3])/(Math.PI/2))%4)+4)%4;
  return {id:'dj',name:'DJ Coda',consoleName:'dance_dj_console',visible:object.visible&&object.opacity>0,
   x:point.x,y:point.y,approachX:approach.x,approachY:approach.y,opacity:object.opacity,
   facing:['down','left','up','right'][turn]};
 }
+function scholarState(){
+ return {...window.CodaWorldCharacterEditor.resolve('scholar',developerConsole?.getCharacters?.()||{},W,H),activity:'relaxing'};
+}
+function canVisitScholar(){const scholar=scholarState();return classroomCanPlay()&&!gameOpen&&!learningRoomOpen()&&scholar.visible&&Math.hypot(scholar.approachX-player.x,scholar.approachY-player.y)<94;}
+function historyPromptLabel(id){return musicHistory?.conversationState(id)?.hasNewFact?'! New history fact':'Music history & friendship';}
+function refreshHistoryPrompts(){for(const button of document.querySelectorAll('[data-history-owner-prompt]')){const label=historyPromptLabel(button.dataset.historyOwnerPrompt),target=button.querySelector('[data-history-prompt-label]')||button;if(target.textContent!==label)target.textContent=label;button.classList.toggle('history-fact-ready',label.startsWith('!'));}}
 const SHOPKEEPERS=[
  {id:'riff',name:'Riff · Notes Shop',counter:'main_counter',foot:[1352,480],approaches:[[1352,430],[1352,610]],type:'notes-shop',appearance:{name:'Riff',skin:'#955e43',hair:'#302133',hairstyle:'locs',shirt:'#2facac',lowerColor:'#3b3158',outfit:'waistcoat',headwear:'beret',headwearColor:'#e7b15b',eyewear:'round',accessory:'necklace',shoes:'oxfords',emote:'wave'}},
  {id:'pip',name:'Pip · Avatar Boutique',counter:'boutique_counter',foot:[513,418],approaches:[[525,485]],type:'shop',appearance:{name:'Pip',skin:'#edb68d',hair:'#ae5d9f',hairstyle:'bob',shirt:'#e187bd',lowerColor:'#3a5369',outfit:'overalls',headwear:'none',eyewear:'none',accessory:'starclip',shoes:'hightops',emote:'wave'}}
 ];
 function shopkeeperStates(){
- return SHOPKEEPERS.map(person=>{
-  const object=worldObjects?.state(person.counter);if(!object)return {...person,visible:false,approaches:[]};
-  const point=worldObjects.point(object,...person.foot),approaches=person.approaches.map(([x,y])=>worldObjects.point(object,x,y));
-  const turn=((Math.round(Math.atan2(object.matrix[1],object.matrix[0])/(Math.PI/2))%4)+4)%4;
-  const depth=object.asset?object.asset.y+object.asset.h/2+(object.asset.depthOffset||0):object.definition.sortY;
-  return {...person,x:point.x,y:point.y,approaches,visible:object.visible&&object.opacity>0,opacity:object.opacity,
-   facing:['down','left','up','right'][turn],sortY:Math.min(point.y,(depth??point.y+1)-1)};
- });
+ return SHOPKEEPERS.map(person=>({...person,...window.CodaWorldCharacterEditor.resolve(person.id,developerConsole?.getCharacters?.()||{},W,H)}));
 }
 const looks=[['#e5b48d','#ed8cbe','#171424','spiky'],['#85543b','#8ddde6','#e3c27d','long'],['#f4cba6','#c9a3f1','#402c4b','buns'],['#a56b48','#f4ae77','#1c172d','short'],['#f3c3a1','#b2f37b','#6c3159','bob'],['#704633','#a8b5fc','#eee6df','curly'],['#f0b79d','#ffd48c','#171424','ponytail']];const npc=window.CodaMusicianCast.map((person,index)=>({...person,x:1450,y:752,goal:index%4,wait:0,look:index}));const sofas=[{x:105,y:135,w:110,h:45},{x:240,y:135,w:110,h:45}];const seats=[{x:158,y:267},{x:370,y:262},{x:190,y:304},{x:390,y:296}];const spot=(p)=>p.mode==='cabinet'?cabinetApproach(p.goal%4):p.mode==='lounge'?seats[p.goal%4]:p.mode==='dance'?{x:205+(p.goal%4)*125,y:718+(p.goal%2)*65}:p.mode==='leave'?{x:1450,y:752}:{x:1450,y:752};const r=(x,y,w,h,color)=>{g.fillStyle=color;g.fillRect(Math.round(x),Math.round(y),w,h)};const t=(s,x,y,size=18,color='#e7e2ff')=>{g.fillStyle=color;g.font=`bold ${size}px monospace`;g.textAlign='center';g.fillText(s,x,y)};function sprite(x,y,look,walk=false,dance=false,scale=1){const [skin,shirt,hair,style]=look;g.save();g.translate(Math.round(x),Math.round(y));g.scale(scale,scale);const bob=dance?Math.sin(clock*8)*5:walk?Math.sin(clock*12)*2:0;r(-10,-38+bob,20,17,hair);if(style==='buns'){r(-15,-39+bob,6,7,hair);r(9,-39+bob,6,7,hair)}if(style==='long')r(-13,-30+bob,26,20,hair);r(-9,-32+bob,18,16,skin);r(-12,-16+bob,24,20,shirt);r(-16,-12+bob,4,13,skin);r(12,-12+bob,4,13,skin);r(-9,4+bob,7,11,'#695d99');r(2,4+bob,7,11,'#695d99');r(-10,14+bob,9,4,'#f8d56b');r(1,14+bob,9,4,'#f8d56b');r(-6,-24+bob,3,3,'#222033');r(4,-24+bob,3,3,'#222033');if(dance){const beat=Math.floor(clock*4+look[0].length)%4,up=beat%2===0;r(-18,-(up?29:13)+bob,5,up?16:11,skin);r(13,-(up?13:29)+bob,5,up?11:16,skin);r(-10+(up?-5:3),14+bob,9,5,'#f8d56b');r(1+(up?4:-4),14+bob,9,5,'#f8d56b')}g.restore()};
 // Phase 7.1: world-coordinate collision, small foot hitboxes, and A* navigation.
@@ -535,14 +535,19 @@ function update(dt){
  const moved=Math.hypot(player.x-before.x,player.y-before.y);walking=moved>.01;if(walking){playerPhase+=moved/14;avatar.walked=(avatar.walked||0)+moved/9;}
  playerPet?.update({...player,facing},dt,'world');npcBrain?.update(dt);recordAvatarAchievements();
  near=null;let distance=Infinity;
- const dj=djState(),fishingDoor=fishingDoorState();
- for(const person of [...runtimeGames().map(q=>({...q,type:'game'})),...npc.filter(q=>!q.hidden).map(q=>({...q,type:'npc'})),...(dj.visible?[{name:dj.name,x:dj.approachX,y:dj.approachY,type:'dj'}]:[]),...shopkeeperStates().filter(person=>person.visible).flatMap(person=>person.approaches.map(point=>({name:person.name,...point,type:person.type}))),{name:'Piano Lab',x:1290,y:185,type:'piano'},{name:'Music Classroom',x:1555,y:415,type:'classroom'},{name:'Hall of Fame',x:1460,y:318,type:'fame'},...(fishingDoor?.visible?[fishingDoor]:[])]){
+ const dj=djState(),scholar=scholarState(),fishingDoor=fishingDoorState(),exitDoor=arcadeExit?.target();
+ for(const person of [...runtimeGames().map(q=>({...q,type:'game'})),...npc.filter(q=>!q.hidden).map(q=>({...q,type:'npc'})),...(dj.visible?[{name:dj.name,x:dj.approachX,y:dj.approachY,type:'dj'}]:[]),...(scholar.visible?[{id:'scholar',name:scholar.name,x:scholar.approachX,y:scholar.approachY,type:'scholar'}]:[]),...shopkeeperStates().filter(person=>person.visible).flatMap(person=>person.approaches.map(point=>({name:person.name,...point,type:person.type}))),{name:'Piano Lab',x:1290,y:185,type:'piano'},{name:'Music Classroom',x:1555,y:415,type:'classroom'},{name:'Hall of Fame',x:1460,y:318,type:'fame'},...(fishingDoor?.visible?[fishingDoor]:[]),...(exitDoor?[exitDoor]:[])]){
   const d=Math.hypot(person.x-player.x,person.y-player.y);if(d<94&&d<distance){near=person;distance=d;}
  }
+ if(exitDoor)near=exitDoor;
  if(followedMusician&&near?.id===followedMusician)followedMusician=null;
- status.textContent=chatting?'E · Finish conversation':near?'E · '+(near.type==='game'?'Play ':near.type==='shop'?'Visit ':near.type==='npc'?'Chat with ':'Open ')+near.name:'Explore · E interact · Q emote · Visit musicians for missions';
+ status.textContent=chatting?'E · Finish conversation':near?'E · '+(near.type==='exit'?'Return to ':near.type==='game'?'Play ':near.type==='shop'?'Visit ':['npc','scholar'].includes(near.type)?'Chat with ':'Open ')+near.name:'Explore · E interact · Q emote · Visit musicians for missions';
 }
 const gameoverlay=document.querySelector('#gameoverlay'),gameiframe=document.querySelector('#gameiframe');let gameOpen=false;
+const arcadeExit=window.CodaArcadeExit?.create({location,getPlayer:()=>player,
+ enabled:()=>classroomCanPlay()&&characterRenderer?.isReady()&&developerConsole?.loadReady()&&!gameOpen&&panel.hidden&&!learningRoomOpen()&&!danceScene?.isOpen()&&!playNotebook?.isOpen()&&!musicHistory?.isOpen()&&!developerConsole?.isEditing()&&dialog.style.display!=='block'&&!document.body.classList.contains('world-menu-open')&&!typingTarget(document.activeElement)&&!document.hidden,
+ beforeLeave:()=>{clearHeldKeys();dest=null;clickPath=[];followedMusician=null;mobileControls?.releaseAll();try{localStorage.setItem('musicArcadeV1',JSON.stringify(avatar));}catch{}}
+});
 // Song Machine writes through this window's guarded storage. That write does
 // not produce a native storage event here, so observe its own saved-XP event
 // and reread the journal rather than accepting progress from event payloads.
@@ -589,12 +594,14 @@ function openCabinet(game){if(!classroomCanPlay())return;danceScene?.close();mus
   clearHeldKeys();dest=null;dialog.style.display='none';
   document.querySelector('#activegame').textContent=game.name;
   const url=classroomGameURL(game.url);
+  const historyGame=['pitch','triad','rhythm'][game.index??games.findIndex(item=>item.name===game.name)];
+  historyRuns.cabinet=historyGame?{game:historyGame,token:musicHistory?.beginRun(historyGame)}:null;
   missions?.attachGame(game,gameiframe);
   gameiframe.src=url;
   gameoverlay.hidden=false;document.body.classList.add('game-open');gameOpen=true;
 }
 function closeCabinet(){
-  missions?.detachGame();
+  historyRuns.cabinet=null;missions?.detachGame();
   gameiframe.src='about:blank';gameoverlay.hidden=true;document.body.classList.remove('game-open');gameOpen=false;
   clearHeldKeys();dest=null;c.focus({preventScroll:true});
 }
@@ -655,8 +662,10 @@ function neonDecoration(){
 }
 function talk(){
  if(!classroomCanPlay()||danceScene?.isOpen())return;
- if(dialog.style.display==='block'){musicianUI.closeConversation();return;}
+ if(dialog.style.display==='block'){if(!window.CodaDialogueText?.finish(document.querySelector('#words')))musicianUI.closeConversation();return;}
  if(!near)return;
+ if(near.type==='exit'){arcadeExit?.interact();return;}
+ if(near.type==='scholar'){musicHistory?.showScholar();return;}
  if(near.type==='game'){openCabinet(near);return;}
  if(near.type==='shop'){openBoutique();return;}
  if(near.type==='notes-shop'){openNotesShop();return;}
@@ -669,10 +678,29 @@ function talk(){
 }
 const floorArt=new Image();floorArt.src='assets/world/arcade-flat-floor-plate.png?v=edges-76';
 const worldArt=new Image();worldArt.src='assets/world/arcade-flat-floor-world.png?v=edges-76';
+const environmentArt=window.CodaEnvironmentArt?.create({document});environmentArt?.ready.catch(()=>{});
 const actorsArt=new Image();actorsArt.src='coda_arcade_phase73_characters.png';
 const characterFrames={"hero_down_0":{"x":16,"y":5,"w":47,"h":69},"hero_down_1":{"x":97,"y":5,"w":45,"h":69},"hero_down_2":{"x":178,"y":5,"w":44,"h":69},"hero_down_3":{"x":259,"y":5,"w":42,"h":69},"hero_down_4":{"x":338,"y":5,"w":44,"h":69},"hero_up_0":{"x":416,"y":6,"w":47,"h":67},"hero_up_1":{"x":497,"y":6,"w":45,"h":67},"hero_up_2":{"x":578,"y":6,"w":44,"h":67},"hero_up_3":{"x":658,"y":6,"w":43,"h":67},"hero_up_4":{"x":739,"y":6,"w":42,"h":67},"hero_left_0":{"x":816,"y":5,"w":47,"h":69},"hero_left_1":{"x":896,"y":5,"w":47,"h":69},"hero_left_2":{"x":16,"y":85,"w":47,"h":69},"hero_left_3":{"x":96,"y":85,"w":47,"h":69},"hero_left_4":{"x":176,"y":85,"w":47,"h":69},"hero_right_0":{"x":256,"y":85,"w":47,"h":69},"hero_right_1":{"x":336,"y":85,"w":47,"h":69},"hero_right_2":{"x":416,"y":85,"w":47,"h":69},"hero_right_3":{"x":496,"y":85,"w":47,"h":69},"hero_right_4":{"x":576,"y":85,"w":47,"h":69},"pink_down_0":{"x":652,"y":84,"w":55,"h":71},"pink_up_0":{"x":735,"y":86,"w":50,"h":67},"pink_left_0":{"x":812,"y":86,"w":55,"h":67},"pink_right_0":{"x":892,"y":84,"w":55,"h":71},"blue_down_0":{"x":12,"y":164,"w":55,"h":71},"blue_up_0":{"x":94,"y":166,"w":52,"h":67},"blue_left_0":{"x":172,"y":166,"w":55,"h":67},"blue_right_0":{"x":252,"y":164,"w":55,"h":71},"brown_down_0":{"x":334,"y":164,"w":51,"h":71},"brown_up_0":{"x":412,"y":164,"w":55,"h":71},"brown_left_0":{"x":492,"y":164,"w":55,"h":71},"brown_right_0":{"x":572,"y":164,"w":55,"h":71},"hat_down_0":{"x":657,"y":164,"w":46,"h":71},"hat_up_0":{"x":732,"y":166,"w":55,"h":67},"hat_left_0":{"x":812,"y":166,"w":55,"h":67},"hat_right_0":{"x":892,"y":164,"w":55,"h":71},"green_down_0":{"x":12,"y":244,"w":55,"h":71},"green_up_0":{"x":92,"y":246,"w":55,"h":67},"green_left_0":{"x":172,"y":246,"w":55,"h":67},"green_right_0":{"x":252,"y":244,"w":55,"h":71},"orange_down_0":{"x":334,"y":244,"w":52,"h":71},"orange_up_0":{"x":412,"y":246,"w":55,"h":67},"orange_left_0":{"x":492,"y":246,"w":55,"h":67},"orange_right_0":{"x":572,"y":244,"w":55,"h":71}};
 const actorsArtReady=()=>actorsArt.complete&&actorsArt.naturalWidth;
 const foregroundArt=new Image();foregroundArt.src='assets/world/arcade-flat-floor-foreground.png?v=edges-76';
+function refreshedEnvironment(){return developerConsole?.isRefreshedScenery?.()===true;}
+function sourceForForeground(part){
+ if(part.type==='wall-fixture'&&!refreshedEnvironment())return null;
+ if(!refreshedEnvironment()||part.permanentlyRemoved||part.name==='dance_passage_plant_leaves'||part.type==='marked-foreground')return null;
+ return environmentArt?.object(part.name)||environmentArt?.structural(part)||null;
+}
+function foregroundDepth(part){
+ if(refreshedEnvironment()&&(/^(dance_front_|obelisk_)/.test(part.name)||part.name==='dance_far_right_palm'))return H+20;
+ return part.sortY??part.y??(part.bounds[1]+part.bounds[3]);
+}
+function drawDefaultCabinetBodies(){
+ if(!refreshedEnvironment())return;
+ for(const part of window.CodaWorldObjectCatalog){
+  if(part.gameIndex===undefined||developerConsole?.suppressOriginal(part.name))continue;
+  const image=developerConsole?.originalPicture({origin:{name:part.name,bounds:part.bounds}});
+  if(image)g.drawImage(image,...part.bounds);
+ }
+}
 
 const foregroundParts=[{"name":"lounge_sofa","bounds":[124,132,288,105],"poly":[[132,174],[155,152],[195,146],[277,133],[350,142],[393,145],[403,165],[403,215],[362,226],[282,220],[237,232],[190,218],[134,212]],"sortY":239,"type":"object","atlas":[3,3,288,105]},{"name":"lounge_center_candle_table","bounds":[255,205,86,70],"poly":[[338,248],[336,255],[330,262],[322,267],[310,271],[298,272],[286,271],[274,267],[266,262],[260,255],[258,248],[260,241],[266,234],[274,229],[286,225],[298,224],[310,225],[322,229],[330,234],[336,241]],"sortY":290,"type":"object","atlas":[295,3,86,70]},{"name":"lounge_northwest_candle_table","bounds":[69,263,63,61],"poly":[[130,292],[129,300],[124,308],[118,314],[110,318],[101,319],[92,318],[84,314],[78,308],[73,300],[72,292],[73,284],[78,276],[84,270],[92,266],[101,265],[110,266],[118,270],[124,276],[129,284]],"sortY":332,"type":"object","atlas":[385,3,63,61]},{"name":"lounge_west_candle_table","bounds":[167,285,52,41],"poly":[[216,305],[215,311],[211,316],[206,320],[199,322],[192,323],[185,322],[178,320],[173,316],[169,311],[168,305],[169,299],[173,294],[178,290],[185,288],[192,287],[199,288],[206,290],[211,294],[215,299]],"sortY":342,"type":"object","atlas":[452,3,52,41]},{"name":"boutique_counter","bounds":[449,381,127,81],"poly":[[451,403],[467,386],[556,383],[569,400],[570,441],[551,461],[454,461]],"sortY":477,"type":"object","atlas":[508,3,127,81]},{"name":"boutique_mirror","bounds":[591,352,55,103],"poly":[[595,378],[598,364],[611,356],[626,359],[642,372],[642,447],[594,447]],"sortY":480,"type":"object","atlas":[639,3,55,103]},{"name":"main_counter","bounds":[1170,441,361,142],"poly":[[1201,465],[1497,461],[1516,471],[1523,516],[1518,556],[1503,573],[1193,574],[1173,557],[1169,507]],"sortY":584,"type":"object","atlas":[698,3,361,142]},{"name":"dance_left_couch","bounds":[76,579,164,131],"poly":[[83,629],[98,600],[138,582],[190,579],[231,598],[237,640],[204,650],[160,679],[104,709],[79,691]],"sortY":727,"type":"object","atlas":[1063,3,164,131]},{"name":"dance_right_couch","bounds":[544,595,162,109],"poly":[[553,633],[581,598],[641,601],[701,628],[703,673],[672,699],[601,692],[555,670]],"sortY":725,"type":"object","atlas":[1231,3,162,109]},{"name":"dance_dj_console","bounds":[333,600,121,62],"poly":[[335,622],[359,602],[432,604],[453,624],[451,653],[337,655]],"sortY":669,"type":"object","atlas":[1397,3,121,62]},{"name":"dance_east_wall","bounds":[808,435,39,273],"poly":[[808,437],[840,434],[845,459],[845,696],[812,695]],"sortY":774,"type":"wall","atlas":[1522,3,39,273]},{"name":"dance_east_lower_wall","bounds":[806,778,41,65],"poly":[[813,780],[840,778],[845,818],[845,842],[810,842]],"sortY":865,"type":"wall","atlas":[1565,3,41,65]},{"name":"dance_lower_wall_left","bounds":[44,790,225,93],"poly":[[48,793],[252,818],[266,865],[256,882],[60,849]],"sortY":892,"type":"wall","atlas":[1610,3,225,93]},{"name":"dance_lower_wall_right","bounds":[464,796,372,98],"poly":[[469,833],[835,799],[834,862],[814,882],[470,890]],"sortY":905,"type":"wall","atlas":[3,280,372,98]},{"name":"obelisk_west","bounds":[146,780,27,66],"poly":[[151,787],[160,783],[169,791],[169,841],[147,841],[148,797]],"sortY":875,"type":"obelisk","atlas":[379,280,27,66]},{"name":"obelisk_middle","bounds":[266,786,25,68],"poly":[[271,794],[279,790],[289,797],[287,848],[268,848],[268,797]],"sortY":875,"type":"obelisk","atlas":[410,280,25,68]},{"name":"obelisk_east","bounds":[461,790,24,65],"poly":[[466,795],[476,791],[484,798],[483,846],[463,847],[461,800]],"sortY":875,"type":"obelisk","atlas":[439,280,24,65]},{"name":"obelisk_far_east","bounds":[537,783,28,72],"poly":[[541,791],[553,787],[563,794],[561,847],[540,847],[538,793]],"sortY":875,"type":"obelisk","atlas":[467,280,28,72]},{"name":"obelisk_corner","bounds":[741,770,35,66],"poly":[[749,775],[762,772],[774,780],[771,825],[748,827],[742,793]],"sortY":875,"type":"obelisk","atlas":[499,280,35,66]},{"name":"lounge_palm_left","bounds":[165,141,58,78],"sortY":230,"type":"plant","atlas":[538,280,58,78]},{"name":"lounge_palm_top","bounds":[428,2,55,98],"sortY":117,"type":"plant","atlas":[600,280,55,98]},{"name":"lounge_palm_south","bounds":[202,303,67,70],"sortY":388,"type":"plant","atlas":[659,280,67,70]},{"name":"boutique_palm_right","bounds":[537,360,67,98],"sortY":488,"type":"plant","atlas":[730,280,67,98]},{"name":"boutique_roof_palm","bounds":[588,267,66,87],"sortY":374,"type":"plant","atlas":[801,280,66,87]},{"name":"boutique_left_palm","bounds":[329,286,58,70],"sortY":377,"type":"plant","atlas":[871,280,58,70]},{"name":"dance_upper_right_palm","bounds":[696,547,67,90],"sortY":681,"type":"plant","atlas":[933,280,67,90]},{"name":"dance_right_palm","bounds":[687,683,72,84],"sortY":782,"type":"plant","atlas":[1004,280,72,84]},{"name":"dance_far_right_palm","bounds":[765,746,67,96],"sortY":867,"type":"plant","atlas":[1080,280,67,96]},{"name":"dance_front_left_palm","bounds":[164,805,75,73],"sortY":893,"type":"plant","atlas":[1151,280,75,73]},{"name":"dance_front_mid_palm","bounds":[259,822,68,69],"sortY":904,"type":"plant","atlas":[1230,280,68,69]},{"name":"dance_front_center_palm","bounds":[418,809,70,73],"sortY":892,"type":"plant","atlas":[1302,280,70,73]},{"name":"dance_front_right_palm","bounds":[484,793,76,85],"sortY":893,"type":"plant","atlas":[1376,280,76,85]},{"name":"dance_front_second_right_palm","bounds":[578,782,68,85],"sortY":883,"type":"plant","atlas":[1456,280,68,85]},{"name":"main_counter_left_palm","bounds":[1144,440,75,89],"sortY":541,"type":"plant","atlas":[1528,280,75,89]},{"name":"main_counter_right_palm","bounds":[1471,441,72,93],"sortY":554,"type":"plant","atlas":[1607,280,72,93]},{"name":"hall_palm_west","bounds":[1340,216,59,77],"sortY":319,"type":"plant","atlas":[1683,280,59,77]},{"name":"hall_palm_east","bounds":[1516,205,62,80],"sortY":303,"type":"plant","atlas":[1746,280,62,80]},{"name":"piano_landing_palm","bounds":[1184,80,80,85],"sortY":182,"type":"plant","atlas":[1812,280,80,85]},{"name":"piano_landing_palm_right","bounds":[1330,71,58,93],"sortY":186,"type":"plant","atlas":[1896,280,58,93]},{"name":"dance_corner_palm","bounds":[67,649,79,88],"sortY":744,"type":"plant","atlas":[1958,280,79,88]}];
 
@@ -680,6 +708,16 @@ foregroundParts.push(...[{"name":"dance_north_wall_west","bounds":[321,472,127,6
 // Purple-painted foreground pixels from the current annotated screenshot.
 foregroundParts.push(...[{"name":"annotated_purple_1","bounds":[70,204,26,51],"sortY":971,"type":"marked-foreground","atlas":[6,528,26,51]},{"name":"annotated_purple_2","bounds":[444,251,47,40],"sortY":971,"type":"marked-foreground","atlas":[41,528,47,40]},{"name":"annotated_purple_3","bounds":[423,272,16,29],"sortY":971,"type":"marked-foreground","atlas":[97,528,16,29]},{"name":"annotated_purple_4","bounds":[259,454,65,32],"sortY":971,"type":"marked-foreground","atlas":[122,528,65,32]},{"name":"annotated_purple_5","bounds":[1535,472,14,21],"sortY":971,"type":"marked-foreground","atlas":[196,528,14,21]},{"name":"annotated_purple_6","bounds":[795,627,13,22],"sortY":971,"type":"marked-foreground","atlas":[219,528,13,22]},{"name":"annotated_purple_7","bounds":[699,782,46,39],"sortY":971,"type":"marked-foreground","atlas":[241,528,46,39]},{"name":"annotated_purple_8","bounds":[471,813,21,24],"sortY":971,"type":"marked-foreground","atlas":[296,528,21,24]}]);
 foregroundParts.push({name:"dance_passage_plant_leaves",bounds:[754,609,65,72],sortY:695,type:"pixel-accurate-leaf-occlusion",atlas:[370,530,65,72]}); // Only the green leaf silhouette from the approved art is elevated to the foreground.
+const legacyForegroundParts=foregroundParts.slice();
+// The lounge rug can overlap this wall's cap. Give the refreshed architecture
+// its own clean silhouette in both live rendering and foreground-paint sampling;
+// otherwise painting the wall samples the rug already drawn over the backdrop.
+// Its depth stays behind the boutique fixtures, which sit against this wall.
+foregroundParts.push({name:'lounge_southeast_wall',bounds:[360,271,323,151],
+ poly:[[364,271],[678,271],[682,275],[682,417],[678,421],[364,421],[360,417],[360,275]],
+ sortY:271,type:'wall',atlas:[360,271,323,151]});
+foregroundParts.push(...window.CodaWallFixtures.CATALOG);
+function sceneForegroundParts(){return refreshedEnvironment()?foregroundParts:legacyForegroundParts;}
 let depthDebug=false,foregroundEnabled=true;
 const greenMaskCache=new Map();
 
@@ -693,12 +731,12 @@ const PUBLISHED_LAYER_STROKES=[{"tool":"erase","size":4,"points":[[830,681],[830
 const LAYER_STORAGE='codaForegroundEditsV3';
 const editorEl=(id)=>document.getElementById(id);
 const editNotice=(message)=>{editorEl('editNotice').textContent=message;};
-function isEditorAction(a){return a&&(a.foreground===undefined||typeof a.foreground==='boolean')&&['paint','erase'].includes(a.tool)&&[1,2,4,8,16].includes(a.size)&&Array.isArray(a.points)&&a.points.length>0&&a.points.length<=30000&&a.points.every(p=>Array.isArray(p)&&p.length===2&&Number.isInteger(p[0])&&Number.isInteger(p[1])&&p[0]>=0&&p[0]<W&&p[1]>=0&&p[1]<H)&&Number.isFinite(a.depth)&&a.depth>=-500&&a.depth<=H+500;}
+function isEditorAction(a){return a&&(a.selection===undefined||window.CodaLayerSelection?.validate(a.selection,W,H)===true)&&(a.foreground===undefined||typeof a.foreground==='boolean')&&['paint','erase'].includes(a.tool)&&[1,2,4,8,16].includes(a.size)&&Array.isArray(a.points)&&a.points.length>0&&a.points.length<=30000&&a.points.every(p=>Array.isArray(p)&&p.length===2&&Number.isInteger(p[0])&&Number.isInteger(p[1])&&p[0]>=0&&p[0]<W&&p[1]>=0&&p[1]<H)&&Number.isFinite(a.depth)&&a.depth>=-500&&a.depth<=H+500;}
 function saveLayerActions(){try{localStorage.setItem(LAYER_STORAGE,JSON.stringify(layerState.actions));editNotice(`${layerState.actions.length} saved strokes · Undo available`);return true}catch(err){editNotice('Browser storage full or blocked. Export JSON to preserve edits.');return false;}}
 // Published strokes apply to every visitor. Keep any *additional* browser edits,
 // but migrate V2/V1 saves without replaying strokes included in this release.
 const sameStroke=(a,b)=>a.tool===b.tool&&a.size===b.size&&a.depth===b.depth&&!!a.foreground===!!b.foreground&&
- a.points.length===b.points.length&&a.points.every((p,i)=>p[0]===b.points[i][0]&&p[1]===b.points[i][1]);
+ JSON.stringify(a.selection)===JSON.stringify(b.selection)&&a.points.length===b.points.length&&a.points.every((p,i)=>p[0]===b.points[i][0]&&p[1]===b.points[i][1]);
 try{
  const current=localStorage.getItem(LAYER_STORAGE);
  if(current!==null){
@@ -715,6 +753,7 @@ try{
  localStorage.setItem(LAYER_STORAGE,JSON.stringify(layerState.actions));
 }catch(err){/* unavailable browser storage is safe; published strokes still render */}
 function eachLayerStamp(stroke,stamp){
+ if(stroke.selection){window.CodaLayerSelection.eachSpan(stroke.selection,stamp);return;}
  const half=Math.floor(stroke.size/2);
  const apply=(x,y)=>{const x0=Math.max(0,x-half),y0=Math.max(0,y-half);stamp(x0,y0,Math.min(stroke.size,W-x0),Math.min(stroke.size,H-y0));};
  let prev=null;
@@ -730,22 +769,24 @@ function makeCanvas(w,h){const canvas=document.createElement('canvas');canvas.wi
 function strokeAutoDepth(x,y){
  // Match nearby existing objects' base depth when painting additional leaves/edges.
  let best=null,dist=Infinity;
- for(const part of foregroundParts){const [bx,by,bw,bh]=part.bounds;
+ for(const part of sceneForegroundParts()){const [bx,by,bw,bh]=part.bounds;
   const dx=Math.max(bx-x,0,x-(bx+bw)),dy=Math.max(by-y,0,y-(by+bh));
   const d=Math.hypot(dx,dy);if(d<dist){dist=d;best=part}
  }
- return Math.round(dist<=24?(best.sortY??(best.bounds[1]+best.bounds[3])):y+30);
+ return Math.round(dist<=24?foregroundDepth(best):y+30);
 }
 function rebuildLayerEdits(){
- if(!layerState.dirty||!worldArt.complete||!worldArt.naturalWidth||!foregroundArt.complete||!foregroundArt.naturalWidth)return;
+ if(!layerState.dirty||!worldArt.complete||!worldArt.naturalWidth||!foregroundArt.complete||!foregroundArt.naturalWidth||refreshedEnvironment()&&!environmentArt?.isReady())return;
  // Permanent base strokes always render, even in a new browser or after Reset.
+ const publishedStrokes=refreshedEnvironment()?[]:PUBLISHED_LAYER_STROKES;
  const all=layerState.drawing
-  ?[...PUBLISHED_LAYER_STROKES,...layerState.actions,layerState.drawing]
-  :[...PUBLISHED_LAYER_STROKES,...layerState.actions];
+  ?[...publishedStrokes,...layerState.actions,layerState.drawing]
+  :[...publishedStrokes,...layerState.actions];
  const owner=new Int32Array(W*H);owner.fill(-1);
  const boxes=all.map(()=>({minX:W,minY:H,maxX:-1,maxY:-1}));
  for(let i=0;i<all.length;i++){
-  const stroke=all[i];penBresenham(stroke,(id,x,y)=>{owner[id]=stroke.tool==='erase'?-2:i;const b=boxes[i];b.minX=Math.min(b.minX,x);b.minY=Math.min(b.minY,y);b.maxX=Math.max(b.maxX,x);b.maxY=Math.max(b.maxY,y)});
+  const stroke=all[i],clipHistoricalFloor=refreshedEnvironment()&&window.CodaForegroundFloorCompat?.isHistoricalWallStroke(stroke);
+  penBresenham(stroke,(id,x,y)=>{if(clipHistoricalFloor&&window.CodaForegroundFloorCompat.isFloor(x+.5,y+.5))return;owner[id]=stroke.tool==='erase'?-2:i;const b=boxes[i];b.minX=Math.min(b.minX,x);b.minY=Math.min(b.minY,y);b.maxX=Math.max(b.maxX,x);b.maxY=Math.max(b.maxY,y)});
  }
  const eraseCanvas=makeCanvas(W,H),eCtx=eraseCanvas.getContext('2d',{willReadFrequently:false});
  const erased=eCtx.createImageData(W,H),data=erased.data;
@@ -755,16 +796,18 @@ function rebuildLayerEdits(){
  layerState.erasedPath=worldLayerRenderer.pathFor(owner,-2,{minX:0,minY:0,maxX:W-1,maxY:H-1});
  layerState.unerasedPath=new Path2D();layerState.unerasedPath.rect(-100000,-100000,200000,200000);layerState.unerasedPath.addPath(layerState.erasedPath);
  layerState.renderParts.clear();
- for(const part of foregroundParts){const [x,y,w,h]=part.bounds,[sx,sy,sw,sh]=part.atlas;
+ for(const part of sceneForegroundParts()){const [x,y,w,h]=part.bounds,[sx,sy,sw,sh]=part.atlas;
+  const refreshed=refreshedEnvironment()?sourceForForeground(part):null;if(refreshedEnvironment()&&!refreshed)continue;
   const out=makeCanvas(w,h),ctx=out.getContext('2d');ctx.imageSmoothingEnabled=false;
-  ctx.drawImage(foregroundArt,sx,sy,sw,sh,0,0,w,h);ctx.globalCompositeOperation='destination-out';ctx.drawImage(eraseCanvas,x,y,w,h,0,0,w,h);ctx.globalCompositeOperation='source-over';
+  if(refreshed)ctx.drawImage(refreshed,0,0,w,h);else ctx.drawImage(foregroundArt,sx,sy,sw,sh,0,0,w,h);
+  ctx.globalCompositeOperation='destination-out';ctx.drawImage(eraseCanvas,x,y,w,h,0,0,w,h);ctx.globalCompositeOperation='source-over';
   layerState.renderParts.set(part.name,out);
  }
  layerState.patches=[];
  for(let i=0;i<all.length;i++){
   const stroke=all[i];if(stroke.tool!=='paint')continue;const b=boxes[i];if(b.maxX<0)continue;
   const x=b.minX,y=b.minY,w=b.maxX-x+1,h=b.maxY-y+1;
-  const canvas=makeCanvas(w,h),ctx=canvas.getContext('2d',{willReadFrequently:true});ctx.drawImage(worldArt,x,y,w,h,0,0,w,h);
+  const canvas=makeCanvas(w,h),ctx=canvas.getContext('2d',{willReadFrequently:true});ctx.drawImage(refreshedEnvironment()?environmentArt.background():worldArt,x,y,w,h,0,0,w,h);
   const im=ctx.getImageData(0,0,w,h),pixels=im.data;let remaining=false;
   for(let yy=0;yy<h;yy++)for(let xx=0;xx<w;xx++){if(owner[(yy+y)*W+(xx+x)]!==i)pixels[(yy*w+xx)*4+3]=0;else remaining=true;}
   if(!remaining)continue;
@@ -804,6 +847,13 @@ editorEl('editZoom').onchange=(e)=>{layerState.zoom=e.target.value;setCameraZoom
 editorEl('editPreview').onclick=()=>{layerState.preview=!layerState.preview;layerState.hover=null;depthDebug=false;refreshLayerToolbar();c.focus({preventScroll:true})};
 editorEl('editMasks').onclick=()=>{layerState.maskView=!layerState.maskView;depthDebug=layerState.maskView;refreshLayerToolbar()};
 function layerHistoryRefresh(){assetForegroundCompositeCache=null;layerState.dirty=true;saveLayerActions();refreshLayerToolbar();}
+function fillLayerSelection(selection){
+ if(!layerState.active||layerState.preview||!window.CodaLayerSelection?.validate(selection,W,H)||layerState.actions.length>=1000)return false;
+ const x=Math.floor(selection.x+(selection.width-1)/2),y=Math.floor(selection.y+(selection.height-1)/2);
+ const action={tool:layerState.tool,size:1,points:[[selection.x,selection.y]],selection:JSON.parse(JSON.stringify(selection)),...(layerState.tool==='paint'&&layerState.placement!=='depth'?{foreground:true}:{}),depth:Math.max(-500,Math.min(H+500,strokeAutoDepth(x,y)+layerState.offset))};
+ if(!isEditorAction(action))return false;
+ layerState.actions.push(action);layerState.redo=[];layerHistoryRefresh();return true;
+}
 editorEl('editUndo').onclick=()=>{if(layerState.actions.length){layerState.redo.push(layerState.actions.pop());layerHistoryRefresh()}};
 editorEl('editRedo').onclick=()=>{if(layerState.redo.length){layerState.actions.push(layerState.redo.pop());layerHistoryRefresh()}};
 editorEl('editSave').onclick=()=>{saveLayerActions();refreshLayerToolbar()};
@@ -833,7 +883,7 @@ function editorPointerEnd(e){if(!layerState.drawing)return;const stroke=layerSta
  if(stroke.points.length){if(layerState.actions.length>=1000){editNotice('1,000 stroke limit reached. Export your JSON before continuing.');return;}layerState.actions.push(stroke);layerState.redo=[];layerHistoryRefresh()}
 }
 function drawEditorOverlay(){if(!layerState.active||layerState.preview)return;
- if(layerState.maskView){g.save();g.globalAlpha=.45;for(const part of foregroundParts){const img=getPartImage(part);if(img){const [x,y,w,h]=part.bounds;g.drawImage(img,x,y,w,h)}}g.restore()}
+ if(layerState.maskView){g.save();g.globalAlpha=.45;for(const part of sceneForegroundParts()){const img=getPartImage(part);if(img){const [x,y,w,h]=part.bounds;g.drawImage(img,x,y,w,h)}}g.restore()}
  // Pixel-exact ghosting: green is added foreground, amber pixels are explicitly erased.
  if(layerState.owner&&layerState.maskView){const pts=layerState.owner;
   // Mask visualization is a small tint drawn at edited pixels only.
@@ -841,7 +891,7 @@ function drawEditorOverlay(){if(!layerState.active||layerState.preview)return;
   for(const patch of layerState.patches)g.drawImage(patch.tint,patch.x,patch.y);
   g.restore();
  }
- if(layerState.hover){
+ if(layerState.hover&&!layerState.selecting){
   const [x,y]=layerState.hover,n=layerState.size,half=Math.floor(n/2),x0=Math.max(0,x-half),y0=Math.max(0,y-half),w=Math.min(n,W-x0),h=Math.min(n,H-y0),line=1/(cam.zoom*c.getBoundingClientRect().width/W);
   g.save();g.fillStyle=g.strokeStyle=layerState.tool==='paint'?'#64ffe0':'#ffcc64';g.globalAlpha=.45;
   // Preview and painting share the same quantized stamps at every zoom.
@@ -864,7 +914,7 @@ function assetForegroundComposite(){
  if(!assetForegroundCompositeCache){
   rebuildLayerEdits();
   const composite=makeCanvas(W,H),ctx=composite.getContext('2d');ctx.imageSmoothingEnabled=false;
-  for(const part of foregroundParts){const img=getPartImage(part);if(img){const [x,y,w,h]=part.bounds;ctx.drawImage(img,x,y,w,h);}}
+  for(const part of sceneForegroundParts()){const img=getPartImage(part);if(img){const [x,y,w,h]=part.bounds;ctx.drawImage(img,x,y,w,h);}}
   for(const patch of layerState.patches)ctx.drawImage(patch.canvas,patch.x,patch.y);
   assetForegroundCompositeCache=composite;
  }
@@ -892,9 +942,10 @@ async function persistAssets(){
 }
 function assetSaveDebounced(){clearTimeout(assetSaveTimer);assetSaveTimer=setTimeout(()=>{if(assetStudio.ready)persistAssets()},400);}
 function assetImageKey(a){return a.kind==='builtin'?'builtin:'+a.ref:a.kind==='note'?'generated-note':a.data;}
-function assetRawPicture(a){if(a.origin&&a.kind==='builtin')return developerConsole?.originalPicture(a);if(a.kind==='note')return null;if(a.kind==='builtin')return (a.ref==='foreground'?assetForegroundComposite():({world:worldArt,characters:actorsArt})[a.ref])||null;
- const key=assetImageKey(a);let image=assetImages.get(key);if(!image){image=new Image();image.decoding='async';image.src=a.data;assetImages.set(key,image)}return image;}
-const assetArtworkSources=new WeakMap();
+const mainCounterPalette=window.CodaMainCounterPalette?.create({enabled:refreshedEnvironment});
+function assetRawPicture(a){if(a.origin&&a.kind==='builtin')return developerConsole?.originalPicture(a);if(a.kind==='note')return null;if(a.kind==='builtin')return (a.ref==='foreground'?assetForegroundComposite():({world:refreshedEnvironment()?environmentArt?.background():worldArt,characters:actorsArt})[a.ref])||null;
+ const key=assetImageKey(a);let image=assetImages.get(key);if(!image){image=new Image();image.decoding='async';image.src=a.data;assetImages.set(key,image)}return mainCounterPalette?.image(a,image)||image;}
+let assetArtworkSources=new WeakMap();
 function assetArtworkSourceNow(a,raw=assetRawPicture(a)){
  if(a.kind==='note'){
   const width=a.artwork?.width||Math.max(1,Math.round(a.w)),height=a.artwork?.height||Math.max(1,Math.round(a.h));
@@ -906,7 +957,7 @@ function assetArtworkSourceNow(a,raw=assetRawPicture(a)){
  const key=JSON.stringify(a.crop),cached=assetArtworkSources.get(a);if(cached?.key===key&&cached.raw===raw)return cached.image;
  const [x,y,width,height]=a.crop,image=makeCanvas(width,height);image.getContext('2d').drawImage(raw,x,y,width,height,0,0,width,height);assetArtworkSources.set(a,{key,raw,image});return image;
 }
-async function getAssetArtworkSource(a){const raw=assetRawPicture(a);if(raw?.decode&&!raw.complete)await raw.decode();return assetArtworkSourceNow(a,raw);}
+async function getAssetArtworkSource(a){let raw=assetRawPicture(a);if(raw?.decode&&!raw.complete)await raw.decode();raw=assetRawPicture(a);return assetArtworkSourceNow(a,raw);}
 function assetPicture(a){const raw=assetRawPicture(a);if(!a.artwork)return raw;const source=assetArtworkSourceNow(a,raw);return source?developerConsole?.assetArtwork(a,source)||source:raw;}
 let layerArtworkRevision=0,layerFrameSurface=null,sceneryGradeVibe=null;
 const layerSourceIds=new WeakMap();let nextLayerSourceId=1;
@@ -914,7 +965,7 @@ function layerSourceIdentity(image){if(!image)return 0;if(!layerSourceIds.has(im
 const worldLayerRenderer=window.createCodaWorldLayerRenderer({width:W,height:H,getStamp:()=>{
  const liveMotion=assetStudio.animate&&assetStudio.assets.some(asset=>asset.visible&&asset.anim!=='none');
  return JSON.stringify([layerArtworkRevision,assetStudio.animate,fxMode,liveMotion?clock:Math.floor(clock*30),
-  assetStudio.assets.map(a=>{const image=assetPicture(a);return[a.id,a.kind,a.x,a.y,a.w,a.h,a.rotation,a.opacity,a.visible,a.layer,a.depthOffset,a.anim,a.speed,a.amplitude,a.discoSpin,a.discoRays,a.origin?.sample,layerSourceIdentity(image),image?.complete!==false,image?.naturalWidth||image?.width||0,...(image?assetBoundsFrame(a,image):[])];})]);
+  assetStudio.assets.map(a=>{const image=assetPicture(a);return[a.id,a.kind,a.x,a.y,a.w,a.h,a.rotation,a.flipX===true,a.flipY===true,a.opacity,a.visible,a.layer,a.depthOffset,a.layerOrder,a.ignoreBackgroundMasks,a.anim,a.speed,a.amplitude,a.discoSpin,a.discoRays,a.floodLights,a.origin?.sample,layerSourceIdentity(image),image?.complete!==false,image?.naturalWidth||image?.width||0,...(image?assetBoundsFrame(a,image):[])];})]);
 },render:renderLayerArtwork});
 // Source-pixel inspection keeps the original atlas coordinates; live artwork
 // uses world-space clips so a one-pixel brush also works on enlarged images.
@@ -923,20 +974,22 @@ function renderLayerArtwork(context){
  const previous=g,previousGrade=sceneryGradeVibe;g=context;sceneryGradeVibe=null;
  try{
   if(developerConsole)developerConsole.renderBase(g);else g.drawImage(worldArt,0,0,W,H);
+ drawDefaultCabinetBodies();
   renderArcadeAtmosphere();developerConsole?.renderCleanup(g);
   if(!developerConsole?.suppressOriginal(window.CodaFishingEntrance.NAME))g.drawImage(developerConsole?.objectArtwork(window.CodaFishingEntrance.NAME,fishingDoorPicture)||fishingDoorPicture,880,728,96,64);
-  for(const asset of assetStudio.assets)if(asset.layer==='back')drawPlacedAsset(asset,'sample');
-  worldLighting?.drawDisco(g);danceFloor?.draw(g);drawClassroomFloorArrow();
-  const artwork=[...foregroundParts.map(part=>({y:part.sortY??part.y,part})),...assetStudio.assets.filter(asset=>asset.layer==='world'&&asset.visible).map(asset=>({y:asset.y+asset.h/2+(asset.depthOffset||0),asset}))].sort((a,b)=>a.y-b.y);
+  for(const item of orderedLayerItems('back'))drawPlacedAsset(item.asset,'sample');
+  danceFloor?.draw(g);djFloodlights?.drawBeams(g);worldLighting?.drawDisco(g);drawClassroomFloorArrow();
+  const artwork=[...sceneForegroundParts().map(part=>({y:foregroundDepth(part),part})),...assetStudio.assets.filter(asset=>asset.layer==='world'&&asset.visible).map(asset=>({y:asset.y+asset.h/2+(asset.depthOffset||0),asset}))].sort((a,b)=>a.y-b.y||Number(!!a.part)-Number(!!b.part));
   for(const item of artwork){
    if(item.asset){drawPlacedAsset(item.asset,'sample');continue;}
    const part=item.part;if(developerConsole?.suppressOriginal(part.name))continue;
    const [x,y,w,h]=part.bounds,[sx,sy,sw,sh]=part.atlas;
-   let image=layerSourceForeground.get(part.name);
+   let image=refreshedEnvironment()?sourceForForeground(part):layerSourceForeground.get(part.name);
+   if(refreshedEnvironment()&&!image)continue;
    if(!image){image=makeCanvas(w,h);image.getContext('2d').drawImage(foregroundArt,sx,sy,sw,sh,0,0,w,h);layerSourceForeground.set(part.name,image);}
    if(developerConsole)developerConsole.drawUnliftedPixels(g,image,x,y);else g.drawImage(image,x,y);
   }
-  for(const asset of assetStudio.assets)if(asset.layer==='front')drawPlacedAsset(asset,'sample');
+  for(const item of orderedLayerItems('front'))drawPlacedAsset(item.asset,'sample');
   drawOriginalDiscoBalls();worldLighting?.drawLanterns(g);drawLearningDoors();
  }finally{g=previous;sceneryGradeVibe=previousGrade;}
 }
@@ -970,9 +1023,9 @@ function assetAnimTransform(a){const progress=assetStudio.animate?clock*a.speed:
  }return out;}
 function drawPlacedAsset(a,pass='above'){if(!a.visible)return;
  const anim=assetAnimTransform(a),p=assetPicture(a);
- if(pass==='behind'&&!layerState.hasErased)return;
- g.save();if(pass!=='sample'&&a.layer!=='back'&&layerState.hasErased)g.clip(pass==='behind'?layerState.erasedPath:layerState.unerasedPath,'evenodd');g.imageSmoothingEnabled=false;g.globalAlpha=(a.opacity/100)*anim.alpha;
- g.translate(a.x+anim.dx,a.y+anim.dy);g.rotate(a.rotation*Math.PI/180+anim.rot);g.scale(anim.scale,anim.scale);
+ if(pass==='behind'&&(a.ignoreBackgroundMasks===true||!layerState.hasErased))return;
+ g.save();if(pass!=='sample'&&a.layer!=='back'&&a.ignoreBackgroundMasks!==true&&layerState.hasErased)g.clip(pass==='behind'?layerState.erasedPath:layerState.unerasedPath,'evenodd');g.imageSmoothingEnabled=false;g.globalAlpha=(a.opacity/100)*anim.alpha;
+ g.translate(a.x+anim.dx,a.y+anim.dy);g.rotate(a.rotation*Math.PI/180+anim.rot);g.scale(anim.scale*(a.flipX===true?-1:1),anim.scale*(a.flipY===true?-1:1));
  if(a.kind==='note'&&a.artwork&&p){g.drawImage(pass!=='sample'&&sceneryGradeVibe?.gradeImage?.(p)||p,-a.w/2,-a.h/2,a.w,a.h);
  }else if(a.kind==='note'){
    g.textAlign='center';g.textBaseline='middle';g.font=`900 ${Math.max(12,Math.round(a.h*.88))}px Georgia,serif`;
@@ -982,7 +1035,7 @@ function drawPlacedAsset(a,pass='above'){if(!a.visible)return;
     const graded=pass!=='sample'&&sceneryGradeVibe?.gradeImage?.(p,{crop:[sx,sy,sw,sh]});
     if(graded)g.drawImage(graded,-a.w/2,-a.h/2,a.w,a.h);else g.drawImage(p,sx,sy,sw,sh,-a.w/2,-a.h/2,a.w,a.h);
    }
- }drawWorldObjectEffects(a);g.restore();}
+ }if(pass!=='behind')djFloodlights?.drawFixture(g,a);drawWorldObjectEffects(a);g.restore();}
 function drawWorldObjectEffects(a){
  if(a.kind!=='builtin'||!a.origin||!effectsOn())return;
  const part=window.CodaWorldObjectCatalog.find(p=>p.name===a.origin.name);if(!part)return;
@@ -993,12 +1046,42 @@ function drawWorldObjectEffects(a){
  if(part.gameIndex!==undefined)drawCabinetScreen(cabinetScreen(part),beatInfo(),assetStudio.animate?clock:0);
  g.restore();
 }
-function renderAssetsOfLayer(layer){for(const a of assetStudio.assets){if(a.layer===layer)drawPlacedAsset(a);}}
+function assetLayerOrder(asset){return asset.layerOrder??assetStudio.assets.indexOf(asset);}
+function orderedLayerItems(layer,characters=[]){
+ const items=assetStudio.assets.filter(asset=>asset.layer===layer).map(asset=>({asset,order:assetLayerOrder(asset)}));
+ for(let index=0;index<characters.length;index++){
+  const person=characters[index];if(person.layer!==layer)continue;
+  items.push({person,order:person.layerOrder??(layer==='back'?-3+index:assetStudio.assets.length+index)});
+ }
+ // Stable ties retain asset list order, followed by the stationary NPC order.
+ return items.sort((left,right)=>left.order-right.order);
+}
+function renderAssetsOfLayer(layer,characters=[]){
+ for(const item of orderedLayerItems(layer,characters)){
+  if(item.asset)drawPlacedAsset(item.asset);else drawIndependentCharacter(item.person);
+ }
+}
+function getSceneOrderEntries(selectedKey){
+ rebuildLayerEdits();
+ const characters=[scholarState(),...shopkeeperStates()],entries=[];
+ const layerEntries=layer=>orderedLayerItems(layer,characters).filter(item=>item.asset?item.asset.visible||'asset.'+item.asset.id===selectedKey:item.person.visible||'character.'+item.person.id===selectedKey).map(item=>item.asset?{key:'asset.'+item.asset.id,kind:'asset',id:item.asset.id,layer,order:item.order}:{key:'character.'+item.person.id,kind:'character',id:item.person.id,layer,order:item.order});
+ entries.push(...layerEntries('back'));
+ const world=[];
+ for(const person of characters)if(person.layer==='world'&&(person.visible||'character.'+person.id===selectedKey))world.push({key:'character.'+person.id,kind:'character',id:person.id,layer:'world',depth:person.sortY});
+ for(const part of sceneForegroundParts()){
+  if(developerConsole?.suppressOriginal(part.name)||refreshedEnvironment()&&!sourceForForeground(part))continue;
+  world.push({key:'original.'+part.name,kind:'original',id:part.name,layer:'world',depth:foregroundDepth(part)});
+ }
+ for(let index=0;index<layerState.patches.length;index++){const patch=layerState.patches[index];world.push({key:'paint.'+index,kind:'paint',id:String(index),layer:'world',depth:patch.sortY});}
+ for(const asset of assetStudio.assets)if(asset.layer==='world'&&(asset.visible||'asset.'+asset.id===selectedKey))world.push({key:'asset.'+asset.id,kind:'asset',id:asset.id,layer:'world',depth:asset.y+asset.h/2+(asset.depthOffset||0)});
+ world.sort((left,right)=>left.depth-right.depth||Number(left.kind==='original')-Number(right.kind==='original'));
+ entries.push(...world,...layerEntries('front'));return entries;
+}
 function drawArtworkAssetPreview(context,{width=W,height=H}={}){
  const previous=g,previousGrade=sceneryGradeVibe;context.save();context.scale(width/W,height/H);g=context;sceneryGradeVibe=null;
  try{
   const rank=asset=>['back','background'].includes(asset.layer)?0:['front','foreground'].includes(asset.layer)?2:1;
-  const assets=assetStudio.assets.filter(asset=>asset.visible).slice().sort((a,b)=>rank(a)-rank(b)||(rank(a)===1?(a.y+a.h/2+(a.depthOffset||0))-(b.y+b.h/2+(b.depthOffset||0)):0));
+  const assets=assetStudio.assets.filter(asset=>asset.visible).slice().sort((a,b)=>rank(a)-rank(b)||(rank(a)===1?(a.y+a.h/2+(a.depthOffset||0))-(b.y+b.h/2+(b.depthOffset||0)):assetLayerOrder(a)-assetLayerOrder(b)));
   for(const asset of assets)drawPlacedAsset(asset,'sample');
  }finally{g=previous;sceneryGradeVibe=previousGrade;context.restore();}
 }
@@ -1007,7 +1090,7 @@ function assetControlPositions(a){const ang=a.rotation*Math.PI/180,cs=Math.cos(a
  return {corner:rotate(a.w/2,a.h/2),rotator:rotate(0,-a.h/2-27)};}
 function assetHit(a,x,y){if(!a.visible||a.locked)return false;const angle=-a.rotation*Math.PI/180,cs=Math.cos(angle),sn=Math.sin(angle),dx=x-a.x,dy=y-a.y;
  const lx=dx*cs-dy*sn,ly=dx*sn+dy*cs;return Math.abs(lx)<=a.w/2&&Math.abs(ly)<=a.h/2;}
-function assetAt(x,y){const groups=['front','world','back'];for(const layer of groups){const list=assetStudio.assets.filter(a=>a.layer===layer);if(layer==='world')list.sort((a,b)=>(a.y+a.h/2+(a.depthOffset||0))-(b.y+b.h/2+(b.depthOffset||0)));list.reverse();for(const a of list)if(assetHit(a,x,y))return a;}return null;}
+function assetAt(x,y){const groups=['front','world','back'];for(const layer of groups){const list=assetStudio.assets.filter(a=>a.layer===layer);if(layer==='world')list.sort((a,b)=>(a.y+a.h/2+(a.depthOffset||0))-(b.y+b.h/2+(b.depthOffset||0)));else list.sort((a,b)=>assetLayerOrder(a)-assetLayerOrder(b));list.reverse();for(const a of list)if(assetHit(a,x,y))return a;}return null;}
 function assetDrawHandles(){if(!assetStudio.active||!assetStudio.showGuides)return;
  const a=assetSelected();if(!a)return;const {corner,rotator}=assetControlPositions(a);
  g.save();g.translate(a.x,a.y);g.rotate(a.rotation*Math.PI/180);g.strokeStyle='#ffe1a1';g.lineWidth=2/cam.zoom;g.setLineDash([6/cam.zoom,4/cam.zoom]);g.strokeRect(-a.w/2,-a.h/2,a.w,a.h);g.setLineDash([]);g.restore();
@@ -1064,10 +1147,30 @@ assetUI('assetUpload').addEventListener('change',async e=>{
 assetUI('assetPreset').onclick=()=>{const a=assetPrototype('Neon music note');a.x=Math.round(player.x+40);a.y=Math.round(player.y-40);a.layer='front';assetNew(a)};
 function assetCaptureMode(which){assetStudio.capturing={which,start:null,end:null};studioMessage('Drag a rectangle on the world to crop '+which+' artwork (Esc cancels).');}
 assetUI('assetCapture').onclick=()=>assetCaptureMode('world');assetUI('assetCaptureFG').onclick=()=>assetCaptureMode('foreground');
-assetUI('assetDuplicate').onclick=()=>{const a=assetSelected();if(!a)return;const b={...JSON.parse(JSON.stringify(a)),id:'asset-'+(assetStudio.nextId++),name:a.name.slice(0,67)+' copy',x:numberBound(a.x+24,-1000,3000,a.x),y:numberBound(a.y+24,-1000,2200,a.y)};delete b.origin;delete b.releaseCollision;if(a.origin&&b.kind==='builtin'){b.data=developerConsole.originalPicture(a)?.toDataURL();b.kind='image';b.ref=null;b.crop=null;}assetNew(b)};
+assetUI('assetDuplicate').onclick=()=>{const a=assetSelected();if(!a)return;const b={...JSON.parse(JSON.stringify(a)),id:'asset-'+(assetStudio.nextId++),name:a.name.slice(0,67)+' copy',x:numberBound(a.x+24,-1000,3000,a.x),y:numberBound(a.y+24,-1000,2200,a.y)};if(a.origin&&window.CodaWallFixtures?.has(a.origin.name))b.wallFixture=a.origin.name;delete b.origin;delete b.releaseCollision;if(a.origin&&b.kind==='builtin'){b.data=developerConsole.originalPicture(a)?.toDataURL();b.kind='image';b.ref=null;b.crop=null;}assetNew(b)};
 assetUI('assetRemove').onclick=()=>{const a=assetSelected();if(!a)return;const before=assetSnapshot();if(a.origin){a.visible=false;assetRecordHistory(before);studioMessage('Original hidden. Restore original removes its source patch; Undo restores visibility.');return;}assetStudio.assets=assetStudio.assets.filter(q=>q.id!==a.id);assetStudio.selected=assetStudio.assets.at(-1)?.id||null;assetRecordHistory(before);studioMessage('Deleted '+a.name+'. Undo is available.');};
-function assetMoveInList(step){const a=assetSelected();if(!a)return;const before=assetSnapshot(),i=assetStudio.assets.indexOf(a),j=i+step;
- if(j<0||j>=assetStudio.assets.length)return;assetStudio.assets.splice(i,1);assetStudio.assets.splice(j,0,a);assetRecordHistory(before);}
+function assetMoveInList(step){
+ if(developerConsole?.moveSelectionOrder)return developerConsole.moveSelectionOrder(step);
+ const a=assetSelected();if(!a||![-1,1].includes(step))return;const before=assetSnapshot();
+ if(a.layer==='world'){
+  // Actor-depth assets sort by their feet and offset, not by their list position.
+  // Step across the next visible asset or original silhouette at its actual depth.
+  const entries=assetStudio.assets.filter(asset=>asset.layer==='world'&&(asset.visible||asset===a)).map(asset=>({asset,depth:asset.y+asset.h/2+(asset.depthOffset||0)}));
+  for(const part of sceneForegroundParts()){
+   if(developerConsole?.suppressOriginal(part.name)||refreshedEnvironment()&&!sourceForForeground(part))continue;
+   entries.push({part,depth:foregroundDepth(part)});
+  }
+  entries.sort((left,right)=>left.depth-right.depth||Number(!!left.part)-Number(!!right.part));
+  const index=entries.findIndex(entry=>entry.asset===a),target=entries[index+step];if(!target)return;
+  const nextOffset=target.depth+step-(a.y+a.h/2);
+  if(Math.abs(nextOffset)>H){studioMessage('Depth limit reached. Choose Background or Foreground to move beyond the actor-depth layer.');return;}
+  a.depthOffset=nextOffset;
+ }else{
+  const peers=assetStudio.assets.filter(asset=>asset.layer===a.layer),index=peers.indexOf(a),target=peers[index+step];if(!target)return;
+  const from=assetStudio.assets.indexOf(a),to=assetStudio.assets.indexOf(target);assetStudio.assets.splice(from,1);assetStudio.assets.splice(to,0,a);
+ }
+ assetRecordHistory(before);
+}
 assetUI('assetBack').onclick=()=>assetMoveInList(-1);assetUI('assetFront').onclick=()=>assetMoveInList(1);
 assetUI('assetSnap').onchange=e=>{assetStudio.snap=Number(e.target.value)||1};
 assetUI('assetPlay').onchange=e=>{assetStudio.animate=e.target.checked};assetUI('assetGuides').onchange=e=>{assetStudio.showGuides=e.target.checked};
@@ -1179,12 +1282,14 @@ function drawActor(name,x,y,w=38,h=52,bob=0){
    Math.round(x-displayWidth/2),Math.round(y-h+bob),Math.round(displayWidth),h);
 }
 function drawForeground(part){
+ if(part.type==='wall-fixture'&&!refreshedEnvironment())return;
  if(developerConsole?.suppressOriginal(part.name))return;
  if(!foregroundArt.complete||!foregroundArt.naturalWidth)return;
  const [x,y,w,h]=part.bounds,[sx,sy,sw,sh]=part.atlas;
  // Alpha masks contain only solid-object pixels. Floors and glows are never foreground.
  // The source rectangle never intersects any other object's pixels.
- let source=getPartImage(part)||layerSourceForeground.get(part.name);
+ const refreshed=refreshedEnvironment()?sourceForForeground(part):null;if(refreshedEnvironment()&&!refreshed)return;
+ let source=getPartImage(part)||refreshed||layerSourceForeground.get(part.name);
  if(!source){source=makeCanvas(w,h);source.getContext('2d').drawImage(foregroundArt,sx,sy,sw,sh,0,0,w,h);layerSourceForeground.set(part.name,source);}
  // Pixel edits and lifted-object masks are part of the final silhouette. Tint
  // that result so those pixels cannot overwrite the atmosphere with raw art.
@@ -1201,7 +1306,7 @@ const fxChoice=['full','lite','off'];
 const reduceMotion=!!window.matchMedia?.('(prefers-reduced-motion: reduce)').matches;
 let fxMode=reduceMotion||window.matchMedia?.('(pointer:coarse)').matches?'lite':'full';
 try{const saved=localStorage.getItem('codaArcadeFXV1');if(fxChoice.includes(saved))fxMode=saved}catch{}
-const musicEngine={ctx:null,gain:null,noise:null,active:false,bpm:110,step:0,next:0,start:0};
+const musicEngine={ctx:null,gain:null,noise:null,active:false,bpm:124,step:0,next:0,start:0,timer:null,generation:0};
 let jukeboxVisual=null;
 const ambientPalette=['#fb50c8','#41e4ff','#f6cf5a','#ab77ff','#59ffad'];
 const glows=new Map();
@@ -1235,14 +1340,19 @@ function thump(beat){return beat.on?Math.exp(-beat.phase*7.5):0}
 function updateAudioButton(){
  const on=musicEngine.active||!!songPlayer;
  musicButton.textContent=on?'♫ Music: On':'♫ Music: Off';musicButton.setAttribute('aria-pressed',String(on));
- musicButton.title=on?'Stop arcade music':'Play original arcade background beat';
+ musicButton.title=on?'Stop arcade music':'Play a 16-bar club groove · 124 BPM';
 }
-function updateFxButton(){effectsButton.textContent='✧ FX: '+fxMode[0].toUpperCase()+fxMode.slice(1)}
+function updateFxButton(){effectsButton.textContent='Effects: '+fxMode[0].toUpperCase()+fxMode.slice(1)}
 function stopAmbientMusic(){
- const ctx=musicEngine.ctx;musicEngine.active=false;musicEngine.ctx=null;musicEngine.gain=null;
+ const ctx=musicEngine.ctx;musicEngine.generation++;clearInterval(musicEngine.timer);musicEngine.timer=null;musicEngine.active=false;musicEngine.ctx=null;musicEngine.gain=null;
  musicEngine.noise=null;musicEngine.next=0;
  if(ctx)try{ctx.close().catch(()=>{})}catch{}
  updateAudioButton();
+}
+function createAmbientOutput(ctx){
+ const gain=ctx.createGain(),compressor=ctx.createDynamicsCompressor();gain.gain.value=.18;
+ compressor.threshold.value=-20;compressor.knee.value=18;compressor.ratio.value=3;compressor.attack.value=.003;compressor.release.value=.15;
+ gain.connect(compressor).connect(ctx.destination);return gain;
 }
 function ambientTone(f,t,d,level,type='sine',endFreq){
  const ctx=musicEngine.ctx;if(!ctx||!musicEngine.gain)return;
@@ -1251,52 +1361,47 @@ function ambientTone(f,t,d,level,type='sine',endFreq){
  if(endFreq)o.frequency.exponentialRampToValueAtTime(Math.max(25,endFreq),t+d);
  v.gain.setValueAtTime(.0001,t);v.gain.exponentialRampToValueAtTime(Math.max(.0002,level),t+.006);
  v.gain.exponentialRampToValueAtTime(.0001,t+d);
- o.connect(v).connect(musicEngine.gain);o.start(t);o.stop(t+d+.02);
+ if(type==='sawtooth'){const filter=ctx.createBiquadFilter();filter.type='lowpass';filter.frequency.setValueAtTime(3200,t);filter.frequency.exponentialRampToValueAtTime(700,t+d);o.connect(filter).connect(v);o.onended=()=>{o.disconnect();filter.disconnect();v.disconnect();};}else{o.connect(v);o.onended=()=>{o.disconnect();v.disconnect();};}v.connect(musicEngine.gain);o.start(t);o.stop(t+d+.02);
 }
 function ambientNoise(t,d,level){
  const ctx=musicEngine.ctx;if(!ctx||!musicEngine.gain||!musicEngine.noise)return;
  const n=ctx.createBufferSource(),filter=ctx.createBiquadFilter(),v=ctx.createGain();
  n.buffer=musicEngine.noise;filter.type='highpass';filter.frequency.value=4200;
  v.gain.setValueAtTime(level,t);v.gain.exponentialRampToValueAtTime(.0001,t+d);
- n.connect(filter).connect(v).connect(musicEngine.gain);n.start(t);n.stop(t+d+.01);
+ n.connect(filter).connect(v).connect(musicEngine.gain);n.onended=()=>{n.disconnect();filter.disconnect();v.disconnect();};n.start(t);n.stop(t+d+.01);
 }
 function audioStep(i,t){
- const six=i%16,step=60/musicEngine.bpm/4;
- if(six===0||six===8)ambientTone(125,t,.16,.8,'sine',43);
- if(six===4||six===12){ambientNoise(t,.13,.27);ambientTone(195,t,.075,.16,'triangle',115)}
- if(six%2===0)ambientNoise(t,.040,six%4===0?.085:.048);
- if([0,6,8,14].includes(six)){
-  const semitone=[0,0,7,5][Math.floor(i/16)%4];
-  const offset=six===6?7:six===14?12:0;
-  ambientTone(55*2**((semitone+offset)/12),t,step*2.0,.32,'triangle');
- }
- if(six===0||six===8){const notes=six===0?[220,261.63,329.63]:[196,246.94,293.66];
-  for(const f of notes)ambientTone(f,t,step*7,.045,'sine');
- }
+ const step=60/musicEngine.bpm/4,six=i%16,bar=Math.floor(i/16)%16,part=Math.floor(bar/4),within=bar%4;
+ const roots=[0,0,0,0,-4,-4,-4,-4,3,3,3,3,-2,-2,-2,-2],root=roots[bar],third=[0,-4].includes(root)?3:4;
+ const base=130.81*2**(root/12),chord=[base,base*2**(third/12),base*2**(7/12)];
+ // A full sixteen-bar club arrangement. The middle pares back the melody,
+ // keeping the pulse; the last four bars return with a bigger synth hook.
+ const stripped=part===2&&within<2;
+ if(six%4===0)ambientTone(150,t,.19,1.15,'sine',43);
+ if(six===4||six===12){ambientNoise(t,.12,.36);ambientNoise(t+.018,.075,.16);}
+ if(six%4===2)ambientNoise(t,part===3?.075:.045,part===3?.15:.11);
+ if((part===1||part===3)&&six%4===0)ambientNoise(t,.026,.045);
+ if(six%2===0){const offbeat=six%4===2;ambientTone(base/2,t+(offbeat?0:.035),step*(offbeat?1.35:1.1),offbeat?.4:.26,'triangle');}
+ if([2,6,10,14].includes(six)&&!stripped)for(const f of chord)ambientTone(f*2,t,step*1.55,.035,'sawtooth');
+ if(six===0)for(const f of chord)ambientTone(f,t,step*13,.028,'sine');
+ const hooks=[[0,2,1,2],[2,1,0,1],[0,1,2,1],[2,0,1,2]],positions=part===3?[0,3,6,8,11,14]:[2,6,10,14];
+ if(!stripped&&positions.includes(six)){const index=positions.indexOf(six),f=chord[hooks[within][index%4]];ambientTone(f*4,t,step*1.4,part===3?.06:.045,'triangle');}
+ if([3,7,11,15].includes(bar)&&[13,14,15].includes(six))ambientNoise(t,.04,.09+(six-13)*.025);
 }
 function tickAmbientMusic(){
  const m=musicEngine;if(!m.active||!m.ctx||m.ctx.state!=='running')return;
  const now=m.ctx.currentTime;
  // Look ahead scheduling tied to AudioContext time, not frame rate.
+ if(m.next<now-.08){m.step=Math.max(m.step,Math.ceil((now-m.start)/(60/m.bpm/4)));m.next=m.start+m.step*60/m.bpm/4;}
  let safety=0;while(m.next<now+.14&&safety++<16){audioStep(m.step++,m.next);m.next+=60/m.bpm/4;}
- if(m.next<now-.3)m.next=now;
 }
 async function startAmbientMusic(){
- if(!classroomCanPlay())return;
- if(musicEngine.active)return;
- if(songPlayer)stopSong();
- const A=window.AudioContext||window.webkitAudioContext;
- if(!A){musicButton.textContent='Audio unavailable';return;}
- try{
-  const ctx=new A();await ctx.resume();
-  const gain=ctx.createGain();gain.gain.value=.105;gain.connect(ctx.destination);
-  const noise=ctx.createBuffer(1,Math.floor(ctx.sampleRate*.25),ctx.sampleRate),data=noise.getChannelData(0);
-  for(let i=0;i<data.length;i++)data[i]=(Math.random()*2-1)*.42;
-  Object.assign(musicEngine,{ctx,gain,noise,active:true,step:0,start:ctx.currentTime+.055,next:ctx.currentTime+.055});
-  updateAudioButton();tickAmbientMusic();
- }catch(e){console.warn('Arcade ambient music unavailable',e);stopAmbientMusic();}
+ if(!classroomCanPlay()||songPlayer||musicEngine.active)return;
+ const track=window.CodaDJLibrary.songs.find(song=>song.id==='neon-afterhours');
+ if(track)return playSong(track.composition,{title:track.title,source:'house',trackId:track.id});
 }
-musicButton.onclick=()=>{if(songPlayer){stopSong();return;}musicEngine.active?stopAmbientMusic():startAmbientMusic();};
+
+musicButton.onclick=()=>{if(songPlayer){stopSong();return;}return musicEngine.active?stopAmbientMusic():startAmbientMusic();};
 effectsButton.onclick=()=>{fxMode=fxChoice[(fxChoice.indexOf(fxMode)+1)%fxChoice.length];try{localStorage.setItem('codaArcadeFXV1',fxMode)}catch{}updateFxButton();pausedBackdrop=false;};
 updateAudioButton();updateFxButton();
 
@@ -1464,11 +1569,23 @@ function pixelMusicNote(x,y,scale,double,color){
  g.drawImage(musicNoteSprite(double,color),-12,-12);
  g.restore();
 }
+function speakerSetsForScene(){
+ if(!refreshedEnvironment())return SPEAKER_SETS.map(sp=>({...sp,opacity:1}));
+ const ids=['asset-17','asset-18','asset-15','asset-16'];
+ return SPEAKER_SETS.flatMap((base,index)=>{
+  const asset=assetStudio.assets.find(item=>item.id===ids[index]);
+  if(!asset?.visible||asset.opacity<=0)return [];
+  const anim=assetAnimTransform(asset),opacity=asset.opacity/100*anim.alpha;if(opacity<=0)return [];
+  return [{...base,x:0,ys:[asset.h*(.34-.5),asset.h*(.74-.5)],r:asset.w*.22,opacity,assetId:asset.id,
+    transform:{x:asset.x+anim.dx,y:asset.y+anim.dy,rotation:asset.rotation*Math.PI/180+anim.rot,scale:anim.scale,scaleX:anim.scale*(asset.flipX===true?-1:1),scaleY:anim.scale*(asset.flipY===true?-1:1)}}];
+ });
+}
 function speakerLife(beat){
  const bass=beat.on?thump(beat):(.18+.12*pulse(clock,3.1));
  const run=beat.on?beat.beat:clock*.75;
- for(let i=0;i<SPEAKER_SETS.length;i++){
-  const sp=SPEAKER_SETS[i];
+ const speakers=speakerSetsForScene();
+ for(let i=0;i<speakers.length;i++){
+  const sp=speakers[i];g.save();if(sp.transform){g.translate(sp.transform.x,sp.transform.y);g.rotate(sp.transform.rotation);g.scale(sp.transform.scaleX,sp.transform.scaleY);}
   // Woofer rings stay concentric with the actual circles in the source art.
   for(const cy of sp.ys){
    g.save();g.globalCompositeOperation='screen';
@@ -1477,7 +1594,7 @@ function speakerLife(beat){
     g.beginPath();g.arc(sp.x,cy,rr,0,Math.PI*2);
     g.lineWidth=1.4-ring*.25+bass*.6;
     g.strokeStyle=ring===0?'#b8f1ff':sp.color;
-    g.globalAlpha=(beat.on?.16:.07)*(1-ring*.38)*bass;
+    g.globalAlpha=(beat.on?.16:.07)*(1-ring*.38)*bass*sp.opacity;
     g.stroke();
    }
    g.restore();
@@ -1492,15 +1609,23 @@ function speakerLife(beat){
    const offX=sp.dir*(15+life*38);
    const px=sp.x+offX+Math.sin(life*6+i+n)*2;
    const py=sp.ys[0]-9-life*38+(n%2)*9+Math.sin(life*8+n)*3;
-   const alpha=peak*(beat.on?.93:.55)*(fxMode==='full'?1:.75);
+   const alpha=peak*(beat.on?.93:.55)*(fxMode==='full'?1:.75)*sp.opacity;
    g.save();g.globalCompositeOperation='screen';g.globalAlpha=alpha;
    pixelMusicNote(px,py,n%3===0?1.04:.88,n%3===2,sp.color);
    g.restore();
   }
+  g.restore();
  }
 }
 
 function neonSigns(beat){
+ if(refreshedEnvironment()){
+  for(const fixture of window.CodaWallFixtures.states(assetStudio.assets,assetAnimTransform)){
+   if(!fixture.visible||fixture.opacity<=0||fixture.kind==='lantern')continue;
+   g.save();g.transform(...fixture.matrix);bloom(fixture.sourceX,fixture.sourceY,fixture.radius,fixture.color,.065*fixture.opacity);g.restore();
+  }
+  return;
+ }
  const activity=beat.on?1.18:1;
  const signs=[
   [270,66,102,'#ff43e0'],[819,55,178,'#f25dff'],[1277,46,94,'#37a3ff'],
@@ -1552,15 +1677,27 @@ function clipPolygon(points){
 function clubHue(rad){return (rad%360+360)%360}
 
 function clubHsl(h,a){return `hsla(${clubHue(h).toFixed(1)},100%,64%,${Math.max(0,Math.min(1,a)).toFixed(3)})`}
+let nightclubWash=null;
+function clubRoomLighting(paint){
+ if(refreshedEnvironment()&&window.CodaNightclubWash){
+  nightclubWash??=window.CodaNightclubWash.create({document,width:W,height:H});
+  nightclubWash.draw(g,ctx=>{const previous=g;try{g=ctx;paint();}finally{g=previous;}});
+  return;
+ }
+ g.save();clubRoomClip();try{paint();}finally{g.restore();}
+}
 function clubRoomClip(){
- g.beginPath();g.moveTo(55,475);g.lineTo(650,475);g.lineTo(737,495);
+ // Refreshed scenery has an open walkway above the stage. Keep the room
+ // haze below its inner wall face instead of tinting that path as a flat band.
+ const top=refreshedEnvironment()?520:475,shoulder=refreshedEnvironment()?540:495;
+ g.beginPath();g.moveTo(55,top);g.lineTo(650,top);g.lineTo(737,shoulder);
  g.lineTo(802,559);g.lineTo(814,805);g.lineTo(725,846);
  g.lineTo(91,846);g.lineTo(49,791);g.lineTo(49,527);g.closePath();g.clip();
 }
 function nightclubColorwash(beat){
  if(!effectsOn())return;
  const baseHue=clock*(beat.on?17:6.5),power=(fxMode==='full'?1:.46)*(beat.on?1:.8);
- g.save();clubRoomClip();g.globalCompositeOperation='screen';
+ clubRoomLighting(()=>{g.globalCompositeOperation='screen';
  // Broad wash touches the DJ stage, sofas, lights, and whole dance room.
  const background=g.createLinearGradient(65,475,790,810);
  background.addColorStop(0,clubHsl(baseHue+8,.079*power));
@@ -1584,10 +1721,11 @@ function nightclubColorwash(beat){
   g.fillStyle=clubHsl(baseHue+75,.008*thump(beat)*power);
   g.fillRect(45,470,790,380);
  }
- g.restore();
+ });
 }
 function gradientFloodlights(beat){
- if(!effectsOn())return;
+ // Refreshed scenery uses the editable four-head rig as its stage-light source.
+ if(!effectsOn()||refreshedEnvironment())return;
  const strength=(fxMode==='full'?1:.46)*(beat.on?1:.63);
  const baseHue=clock*(beat.on?31:10);
  g.save();clubRoomClip();g.globalCompositeOperation='screen';
@@ -1638,17 +1776,18 @@ function neonFlickerPower(idx){
  return 1;
 }
 function flickerSelectedNeon(){
+ if(refreshedEnvironment())return;
  if(!effectsOn())return;
  for(let i=0;i<FLICKER_SIGNS.length;i++){
   const sign=FLICKER_SIGNS[i],brightness=neonFlickerPower(i);
-  if(brightness>=1)continue;
+  if(brightness>=1||refreshedEnvironment()&&sign.name==='Dance')continue;
   g.save();
   g.beginPath();g.rect(sign.x,sign.y,sign.w,sign.h);g.clip();
   // Dim the ARTWORK itself for a believable electrical flicker rather than
   // only reducing the glow while the bright sign remains painted on the map.
   g.globalAlpha=.9;
   g.filter=`brightness(${(brightness*.94).toFixed(3)})`;
-  g.drawImage(worldArt,sign.x,sign.y,sign.w,sign.h,sign.x,sign.y,sign.w,sign.h);
+  g.drawImage(refreshedEnvironment()?environmentArt.background():worldArt,sign.x,sign.y,sign.w,sign.h,sign.x,sign.y,sign.w,sign.h);
   g.restore();
  }
 }
@@ -1656,15 +1795,19 @@ function flickerSelectedNeon(){
 
 
 // ===== PHASE 10.1: WHOLE ROOM AMBIENCE + SUBTLE STEP SPARKS =====
-const OPEN_FLOOR_TWINKLES=[
- [834,338,0],[903,359,1],[980,346,0],[1058,371,1],[1138,349,0],[1218,370,1],[1303,353,0],[1385,370,1],
- [870,430,1],[947,448,0],[1027,429,1],[1108,454,0],[1189,432,1],[1272,454,0],[1354,430,1],[1435,454,0],
- [846,520,0],[928,541,1],[1011,519,0],[1092,542,1],[1174,518,0],[1257,541,1],[1341,519,0],[1423,541,1],
- [874,607,1],[957,628,0],[1038,606,1],[1121,629,0],[1204,607,1],[1286,629,0],[1368,607,1],[1451,628,0],
- [902,695,0],[984,716,1],[1066,694,0],[1147,717,1],[1230,695,0],[1312,717,1],[1394,695,0]
-];
 // PHASE 10.1: one low-amplitude heartbeat envelopes the *whole nightclub*.
 // No separately pulsing tiles, floor zones, or sweeping floor stripes.
+function clubRoomVeil(beat){
+ if(!effectsOn())return;
+ const strength=(fxMode==='full'?.032:.014)*(beat.on?1:.63);
+ clubRoomLighting(()=>{g.globalCompositeOperation='screen';
+  const veil=g.createLinearGradient(40,470,795,820);
+  veil.addColorStop(0,clubHsl(clock*12+25,strength));
+  veil.addColorStop(.50,clubHsl(clock*12+145,strength*1.2));
+  veil.addColorStop(1,clubHsl(clock*12+265,strength));
+  g.fillStyle=veil;g.fillRect(40,460,795,400);
+ });
+}
 function clubRoomHeartbeat(beat,aboveActors=false){
  if(!effectsOn())return;
  const bass=beat.on?thump(beat):(.14+.10*pulse(clock*.65,1));
@@ -1672,44 +1815,17 @@ function clubRoomHeartbeat(beat,aboveActors=false){
  const level=(fxMode==='full'?1:.50)*(aboveActors?.45:1);
  const alpha=(.008+.014*breath+.027*bass)*level;
  const hue=clock*(beat.on?8:3);
- g.save();clubRoomClip();g.globalCompositeOperation='screen';
+ clubRoomLighting(()=>{g.globalCompositeOperation='screen';
  // Warm indirect bounce off the booth, furniture, dancers, walls and ceiling.
  const wash=g.createRadialGradient(393,625,90,396,647,525);
  wash.addColorStop(0,clubHsl(292+hue,alpha));
  wash.addColorStop(.50,clubHsl(211+hue,alpha*.78));
  wash.addColorStop(1,clubHsl(326+hue,alpha*.28));
  g.fillStyle=wash;g.fillRect(42,469,795,394);
- g.restore();
+ });
 }
 
-function openFloorTwinkles(beat){
- if(!effectsOn())return;
- const activity=beat.on?1:.6;
- g.save();
- g.beginPath();
- g.moveTo(823,340); g.lineTo(1548,340); g.lineTo(1548,799); g.lineTo(846,799); g.lineTo(846,466); g.lineTo(823,466); g.closePath();
- g.clip();
- g.globalCompositeOperation='screen';
- for(let i=0;i<OPEN_FLOOR_TWINKLES.length;i++){
-  const [x,y,phaseKind]=OPEN_FLOOR_TWINKLES[i];
-  const tw=Math.pow(pulse(clock*(beat.on?2.7:1.15)+i*.63+(phaseKind?1.7:0),2.9),1.9);
-  const hueBase=phaseKind?202:330; // blue and red-magenta families
-  const hue=hueBase+(phaseKind?22*Math.sin(clock*.7+i):16*Math.sin(clock*.8+i*.4));
-  const alpha=(phaseKind?.12:.11)*activity + tw*(phaseKind?.26:.24)*activity;
-  g.globalAlpha=1; // Reset after the previous pixel's white spark.
-  g.fillStyle=`hsla(${hue.toFixed(1)},100%,68%,${alpha.toFixed(3)})`;
-  const sz=4+(tw>.72?1:0);
-  g.fillRect(Math.round(x-sz/2),Math.round(y-sz/2),sz,sz);
-  // Bloom cache only accepts hex colors. HSL is used above for the tiny color-shifting pixel;
-  // use two stable HEX neon glow sprites instead of invalid CSS gradient color strings.
-  if(tw>.36)bloom(x,y,11+tw*13,phaseKind?'#4faaff':'#ff4aa2',(.035+tw*.07)*activity);
-  if(tw>.82){
-   g.globalAlpha=.24*activity; g.fillStyle='#ffffff';
-   g.fillRect(x-1,y-1,2,2);
-  }
- }
- g.restore();
-}
+function openFloorTwinkles(){floorStars?.draw(g);}
 
 // Broad, soft lighting needs fewer pixels and a slower refresh than moving
 // characters. Composite one cached light surface instead of making the world
@@ -1766,7 +1882,7 @@ function drawLearningDoors(){
  r(1597,373,17,68,'#0b182c');r(1607,376,6,63,'#123245');
  r(1589,364,27,4,'#8e75b7');r(1590,368,3,76,'#58c6dc');
  r(1593,373,2,66,'#b7fff1');r(1595,440,20,4,'#467b9d');r(1591,444,25,3,'#213c5b');
- g.save();g.translate(1628,405);g.rotate(-Math.PI/2);t('CLASSROOM',0,0,10,'#c7f7ff');g.restore();
+ if(!refreshedEnvironment()){g.save();g.translate(1628,405);g.rotate(-Math.PI/2);t('CLASSROOM',0,0,10,'#c7f7ff');g.restore();}
  g.restore();
 }
 function drawClassroomFloorArrow(){
@@ -1804,6 +1920,12 @@ function drawVibeCharacter(x,y,facing,id='player',role='player'){
  if(role==='npc')vibe?.drawCharacterCostume?.(g,actor);
  vibe?.drawCharacterGlow(g,actor);
 }
+function drawIndependentCharacter(person){
+ if(!person.visible)return;g.save();g.globalAlpha=person.opacity;
+ if(person.id==='scholar')characterRenderer.drawNPC(g,{...person,walking:false,appearance:vibeNPCAppearance('scholar',npcLooks.scholar)},clock);
+ else characterRenderer.drawPlayer(g,vibeNPCAppearance(person.id,person.appearance),{x:person.x,y:person.y,facing:person.facing,walking:false,pixelTarget:person.id},clock);
+ drawVibeCharacter(person.x,person.y,person.facing,person.id,'npc');g.restore();
+}
 function draw(){
  sceneryGradeVibe=null;
  // A bad FX frame must not leave a stale clip/opacity/compositing state behind.
@@ -1815,10 +1937,12 @@ function draw(){
  if(developerConsole&&!developerConsole.loadReady()){t(worldLoadingMessage(),W/2,H/2,24,'#9ff9ff');return;}
  g.imageSmoothingEnabled=false;
  rebuildLayerEdits();layerFrameSurface=null;
+ const scholar=scholarState(),shopkeepers=shopkeeperStates(),independentCharacters=[scholar,...shopkeepers];
  // All world art, sprites, glow, debug masks and editor brushes use the same
  // camera transform. Keep it active until the end of this draw pass.
  g.save();g.setTransform(cam.zoom,0,0,cam.zoom,-cam.x*cam.zoom,-cam.y*cam.zoom);
  if(developerConsole)developerConsole.renderBase(g);else g.drawImage(worldArt,0,0,W,H);
+ drawDefaultCabinetBodies();
  // Removed obsolete doorway overlay, revealing the clean original corridor art.
  // The open doorway is already composited into the relocated entrance artwork.
  // Primary lighting is rendered beneath actors and isolated foreground objects.
@@ -1826,8 +1950,8 @@ function draw(){
  renderArcadeAtmosphere();
  developerConsole?.renderCleanup(g);
  if(!developerConsole?.suppressOriginal(window.CodaFishingEntrance.NAME))g.drawImage(developerConsole?.objectArtwork(window.CodaFishingEntrance.NAME,fishingDoorPicture)||fishingDoorPicture,880,728,96,64);
- renderAssetsOfLayer('back');
- worldLighting?.drawDisco(g);danceFloor?.draw(g);
+ renderAssetsOfLayer('back',independentCharacters);
+ danceFloor?.draw(g);djFloodlights?.drawBeams(g);worldLighting?.drawDisco(g);
  drawClassroomFloorArrow();
  // Erasing foreground changes occlusion, not the visible object artwork.
  // Draw erased fragments behind actors, then the remainder at object depth.
@@ -1843,13 +1967,14 @@ function draw(){
   liveActors.push({type:'npc',y:p.y,x:p.x,p});
  }
  const dj=djState();if(dj.visible)liveActors.push({type:'dj',x:dj.x,y:dj.y,p:dj});
- const shopkeepers=shopkeeperStates();for(const person of shopkeepers)if(person.visible)liveActors.push({type:'shopkeeper',x:person.x,y:person.sortY,p:person});
+ if(scholar.visible&&scholar.layer==='world')liveActors.push({type:'scholar',x:scholar.x,y:scholar.sortY,p:scholar});
+ for(const person of shopkeepers)if(person.visible&&person.layer==='world')liveActors.push({type:'shopkeeper',x:person.x,y:person.sortY,p:person});
  liveActors.push({type:'player',y:player.y,x:player.x});const companion=playerPet?.getState();if(companion?.active)liveActors.push({type:'companion',y:companion.y,x:companion.x});
  const scene=[...liveActors];
- for(const part of foregroundParts)scene.push({type:'foreground',y:(part.sortY??part.y),part});
+ for(const part of sceneForegroundParts())scene.push({type:'foreground',y:foregroundDepth(part),part});
  for(const patch of layerState.patches)scene.push({type:'editor-paint',y:patch.sortY,patch});
  for(const a of assetStudio.assets)if(a.layer==='world'&&a.visible)scene.push({type:'placed-asset',y:a.y+a.h/2+(a.depthOffset||0),part:a});
- scene.sort((a,b)=>a.y-b.y||(a.type==='foreground'?1:-1));
+ scene.sort((a,b)=>a.y-b.y||Number(a.type==='foreground')-Number(b.type==='foreground'));
  for(const item of scene){
   if(item.type==='companion'){playerPet.draw(g,clock);continue;}
   if(item.type==='foreground'){
@@ -1858,13 +1983,12 @@ function draw(){
   }
   if(item.type==='editor-paint'){if(foregroundEnabled)drawPaintedForeground(item.patch);continue;}
   if(item.type==='placed-asset'){drawPlacedAsset(item.part);continue;}
-  if(item.type==='shopkeeper'){
-   g.save();g.globalAlpha=item.p.opacity;characterRenderer.drawPlayer(g,vibeNPCAppearance(item.p.id,item.p.appearance),{x:item.p.x,y:item.p.y,facing:item.p.facing,walking:false,pixelTarget:item.p.id},clock);drawVibeCharacter(item.p.x,item.p.y,item.p.facing,item.p.id,'npc');g.restore();continue;
-  }
+  if(item.type==='shopkeeper'){drawIndependentCharacter(item.p);continue;}
   if(item.type==='dj'){
    g.save();g.globalAlpha=item.p.opacity;
    characterRenderer.drawNPC(g,{...item.p,id:'dj',activity:'playing',appearance:vibeNPCAppearance('dj',npcLooks.dj)},clock);drawVibeCharacter(item.p.x,item.p.y,item.p.facing,'dj','npc');g.restore();continue;
   }
+  if(item.type==='scholar'){drawIndependentCharacter(item.p);continue;}
   if(item.type==='player'){
    g.save();g.globalCompositeOperation='screen';g.globalAlpha=.12;
    g.fillStyle='#7aefff';g.beginPath();g.ellipse(player.x,player.y+2,17,5,0,0,Math.PI*2);g.fill();g.restore();
@@ -1873,11 +1997,11 @@ function draw(){
    characterRenderer.drawPlayer(g,avatar,dancePose||{x:player.x,y:player.y,facing,walking,phase:playerPhase,jumpHeight,emote:emote>clock?(avatar.emote||'wave'):null,emoteTime:clock-emoteStarted},clock);drawVibeCharacter(player.x,player.y-(dancePose?.jumpHeight||jumpHeight),dancePose?.facing||facing);g.restore();
   }else{
    const dancePose=danceScene?.pose(item.p.id);
-   g.save();g.globalAlpha=Number.isFinite(item.p.visitorOpacity)?item.p.visitorOpacity:1;if(dancePose)g.translate(0,-dancePose.jumpHeight);
+   g.save();g.globalAlpha=Number.isFinite(item.p.visitorOpacity)?item.p.visitorOpacity:1;if(dancePose){g.translate(item.p.x,item.p.y);g.rotate(dancePose.rotation||0);g.scale(1,dancePose.scaleY||1);g.translate(-item.p.x,-item.p.y-dancePose.jumpHeight);}
    characterRenderer.drawNPC(g,{...item.p,...(dancePose?{...dancePose,activity:'dancing',walking:false}:{}),appearance:vibeNPCAppearance(item.p.id,item.p.appearance)},clock);drawVibeCharacter(item.p.x,item.p.y,dancePose?.facing||item.p.facing,item.p.id,'npc');g.restore();
   }
  }
- renderAssetsOfLayer('front');
+ renderAssetsOfLayer('front',independentCharacters);
  drawVibeEffects();
  drawOriginalDiscoBalls();
  if(arcadeVibes?.getState().active!=='glowstick')worldLighting?.drawLanterns(g);
@@ -1885,14 +2009,7 @@ function draw(){
  // Soft club color haze touches characters too, without changing occlusion order.
  // Skip it while editing or inspecting collision/foreground masks.
  if(effectsOn()&&!collisionDebug&&!depthDebug&&!layerState.active){
-  const b=beatInfo(),strength=(fxMode==='full'?.032:.014)*(b.on?1:.63);
-  g.save();clubRoomClip();g.globalCompositeOperation='screen';
-  const veil=g.createLinearGradient(40,470,795,820);
-  veil.addColorStop(0,clubHsl(clock*12+25,strength));
-  veil.addColorStop(.50,clubHsl(clock*12+145,strength*1.2));
-  veil.addColorStop(1,clubHsl(clock*12+265,strength));
-  g.fillStyle=veil;g.fillRect(40,460,795,400);g.restore();
-  clubRoomHeartbeat(b,true);
+  const b=beatInfo();clubRoomVeil(b);clubRoomHeartbeat(b,true);
  }
  // Don't draw extra characters or arrows from the baked-in artwork.
  g.save();g.shadowColor='#030814';g.shadowBlur=5;
@@ -1903,6 +2020,7 @@ function draw(){
   g.restore();
  }
  for(const person of shopkeepers)if(person.visible&&person.approaches.some(point=>Math.hypot(point.x-player.x,point.y-player.y)<170)){g.save();g.globalAlpha=person.opacity;t(person.name,person.x,person.y-characterRenderer.labelOffset(vibeNPCAppearance(person.id,person.appearance)),11,'#ffe2a5');g.restore();}
+ if(scholar.visible&&Math.hypot(scholar.approachX-player.x,scholar.approachY-player.y)<190)t('THE SCHOLAR',scholar.x,scholar.y-characterRenderer.labelOffset(vibeNPCAppearance('scholar',npcLooks.scholar),'scholar'),11,'#ffe2a2');
  if(dj.visible&&Math.hypot(dj.approachX-player.x,dj.approachY-player.y)<170)t('DJ Coda',dj.x,dj.y-characterRenderer.labelOffset(vibeNPCAppearance('dj',npcLooks.dj),'dj'),11,'#a8ffec');
 
  if(collisionDebug){
@@ -1919,13 +2037,14 @@ function draw(){
   // Green = actual foreground pixel silhouettes. Red = solid structural collisions.
   g.save();g.imageSmoothingEnabled=false;
   if(foregroundArt.complete&&foregroundArt.naturalWidth){
-   for(const part of foregroundParts){
+   for(const part of sceneForegroundParts()){
+    if(refreshedEnvironment()&&!sourceForForeground(part))continue;
     const [x,y,w,h]=part.bounds,[sx,sy,sw,sh]=part.atlas;
     let overlay=greenMaskCache.get(part.name);
     if(!overlay){
       overlay=document.createElement('canvas');overlay.width=w;overlay.height=h;
       const og=overlay.getContext('2d',{willReadFrequently:false});
-      og.imageSmoothingEnabled=false;const modified=getPartImage(part);if(modified)og.drawImage(modified,0,0);else og.drawImage(foregroundArt,sx,sy,sw,sh,0,0,w,h);
+      og.imageSmoothingEnabled=false;const modified=getPartImage(part)||(refreshedEnvironment()?sourceForForeground(part):null);if(modified)og.drawImage(modified,0,0);else if(!refreshedEnvironment())og.drawImage(foregroundArt,sx,sy,sw,sh,0,0,w,h);
       og.globalCompositeOperation='source-in';og.fillStyle='rgba(67,255,132,0.82)';
       og.fillRect(0,0,w,h);og.globalCompositeOperation='source-over';
       greenMaskCache.set(part.name,overlay);
@@ -1945,8 +2064,8 @@ function draw(){
   }
   g.restore();
  }
- if(near&&!layerState.active){const promptY=near.y-(near.type==='npc'?98:93);g.globalAlpha=.91;r(near.x-62,promptY,124,25,'#18132e');g.globalAlpha=1;
-  t('E · '+(near.type==='game'?'PLAY':near.type==='npc'?'CHAT':['piano','classroom','fishing'].includes(near.type)?'ENTER':'INTERACT'),near.x,promptY+17,11,'#c8fff6');}
+ if(near&&!layerState.active){const promptY=near.y-(['npc','scholar'].includes(near.type)?98:93);g.globalAlpha=.91;r(near.x-62,promptY,124,25,'#18132e');g.globalAlpha=1;
+  t('E · '+(near.type==='exit'?'EXIT':near.type==='game'?'PLAY':['npc','scholar'].includes(near.type)?'CHAT':['piano','classroom','fishing'].includes(near.type)?'ENTER':'INTERACT'),near.x,promptY+17,11,'#c8fff6');}
  drawEditorOverlay();
  if(!developerConsole||!developerConsole.isPlaytest())drawAssetEditorOverlay();
  developerConsole?.drawOverlay(g,cam);
@@ -1968,6 +2087,8 @@ window.CodaArcadeQA=Object.freeze({
   joystick:()=>({...worldStick,strength:Math.hypot(worldStick.x,worldStick.y)}),
   rewardNotifications:()=>rewardNotifications?.getState()||null,
   dj:()=>({...djState()}),
+  scholar:()=>({...scholarState()}),
+  history:()=>musicHistory?.snapshot()||null,
   danceGame:()=>danceScene?.getState()||null,
   shopkeepers:()=>shopkeeperStates().map(person=>({...person,appearance:{...person.appearance},approaches:person.approaches.map(point=>({...point}))})),
   notes:()=>notesWallet?.snapshot()||null,
@@ -1985,14 +2106,17 @@ window.CodaArcadeQA=Object.freeze({
   roomEditor:roomEditorById,
   roomProject:id=>roomEditorById(id)?.getProject()||null,
   applyRoomProject:(id,project)=>roomEditorById(id)?.applyProject(project,{persist:true,notify:true})??false,
+  arcadeExit:()=>arcadeExit?.state()||null,
   fishingEntrance:fishingDoorState,
   fishingAchievements:()=>fishingProgress?.getAchievements()||[],
   entrances:()=>[{name:'Piano Lab',x:1290,y:185,approach:{x:1290,y:235}},{name:'Music Classroom',x:1583,y:400,approach:{x:1555,y:415}},...(fishingDoorState()?.visible?[{...fishingDoorState(),approach:{x:fishingDoorState().x,y:fishingDoorState().y}}]:[])],
   lighting:()=>worldLighting?.snapshot()||null,
   danceFloor:()=>danceFloor?.snapshot()||null,
+  floorStars:()=>floorStars?.snapshot()||null,
   jukebox:()=>({playing:!!songPlayer||musicEngine.active,looping:!!songPlayer,cyclesScheduled:songPlayer?.cycles||0,duration:songPlayer?.duration||0,activeVoices:songPlayer?.activeVoices||0,horizonSeconds:songPlayer?.horizonSeconds||0,title:jukeboxTitle,source:jukeboxSource,audioState:songPlayer?.ctx.state||musicEngine.ctx?.state||'closed',bpm:jukeboxVisual?.bpm||musicEngine.bpm}),
   cameraPoint:(x,y)=>({x:cam.x+x/cam.zoom,y:cam.y+y/cam.zoom}),
   setZoom:setCameraZoom,
+  floodLights:()=>djFloodlights?.snapshot()||{quality:fxMode,rigs:[]},
   atmosphere:()=>({quality:fxMode,musicOn:musicEngine.active,jukeboxOn:!!jukeboxVisual,beat:beatInfo().beat,glowsCached:glows.size,musicNotesCached:musicNoteSprites.size,ambientRaster:{width:ambientLightCanvas.width,height:ambientLightCanvas.height,refreshHz:24},vibeRaster:{width:vibeEffectCanvas.width,height:vibeEffectCanvas.height,refreshHz:fxMode==='off'||arcadeVibes?.getState().reducedMotion?0:fxMode==='full'?24:16}}),
   fixLocations:()=>({loungeNorthwestTable:[100,286],clearConnector:[680,455],walkBehindWall:[520,510],wallBase:[520,553]}),
   walkable:(x,y)=>inside(x,y),
@@ -2001,6 +2125,7 @@ window.CodaArcadeQA=Object.freeze({
   setVibe:id=>arcadeVibes?.setVibe(id)||false,
   testMode:()=>testMode?.getState()||{enabled:false},
   floorGrid:()=>developerConsole?.floorGrid?.()||null,
+  environment:()=>({scenery:developerConsole?.getScenery?.()||null,ready:environmentArt?.isReady()||false,speakers:speakerSetsForScene().map(sp=>({assetId:sp.assetId||null,opacity:sp.opacity,transform:sp.transform||null,drivers:sp.ys.map(y=>{const t=sp.transform;if(!t)return {x:sp.x,y};return {x:t.x+sp.x*Math.cos(t.rotation)*t.scaleX-y*Math.sin(t.rotation)*t.scaleY,y:t.y+sp.x*Math.sin(t.rotation)*t.scaleX+y*Math.cos(t.rotation)*t.scaleY};})})),foreground:foregroundParts.filter(part=>!refreshedEnvironment()||!!sourceForForeground(part)).map(part=>({name:part.name,type:part.type,depth:foregroundDepth(part)}))}),
   foregroundRendering:()=>worldLayerRenderer.snapshot(),
   physical:(x,y)=>passablePoint(x,y),
   userMark:(x,y)=>paintMarkAt(x,y,annotatedRed)?'red collision':paintMarkAt(x,y,annotatedBlue)?'blue walkable':'unmarked',
@@ -2009,7 +2134,8 @@ window.CodaArcadeQA=Object.freeze({
   place:(x,y)=>{if(!inside(x,y))return false;player.x=x;player.y=y;jumpHeight=0;jumpVelocity=0;clearHeldKeys();dest=null;clickPath=[];return true;},
   masks:()=>foregroundParts.map(p=>p.name),
   assetStudio:()=>({active:assetStudio.active,count:assetStudio.assets.length,selected:assetStudio.selected}),
-  layerEditor:()=>({active:layerState.active,tool:layerState.tool,shape:layerState.shape,size:layerState.size,hover:layerState.hover?.slice()||null,drawing:layerState.drawing?JSON.parse(JSON.stringify(layerState.drawing)):null,publishedStrokes:PUBLISHED_LAYER_STROKES.length,strokes:layerState.actions.length,redo:layerState.redo.length,paintPatches:layerState.patches.length,editedPixels:layerState.owner?layerState.owner.reduce((a,v)=>a+(v!==-1),0):0}),
+  layerEditor:()=>({active:layerState.active,tool:layerState.tool,shape:layerState.shape,size:layerState.size,hover:layerState.hover?.slice()||null,drawing:layerState.drawing?JSON.parse(JSON.stringify(layerState.drawing)):null,publishedStrokes:refreshedEnvironment()?0:PUBLISHED_LAYER_STROKES.length,strokes:layerState.actions.length,redo:layerState.redo.length,paintPatches:layerState.patches.length,editedPixels:layerState.owner?layerState.owner.reduce((a,v)=>a+(v!==-1),0):0}),
+  layerPixelOwner:(x,y)=>{if(!Number.isInteger(x)||!Number.isInteger(y)||x<0||y<0||x>=W||y>=H)return null;rebuildLayerEdits();return layerState.owner?.[y*W+x]??null;},
   foregroundPixelAlpha:(name,x,y)=>{const part=foregroundParts.find(p=>p.name===name);if(!part)return null;const b=part.bounds;if(x<b[0]||y<b[1]||x>=b[0]+b[2]||y>=b[1]+b[3])return null;const img=getPartImage(part);if(!img)return null;return img.getContext('2d',{willReadFrequently:true}).getImageData(Math.floor(x-b[0]),Math.floor(y-b[1]),1,1).data[3]},
   liftedObjectPixel:(name,x,y,pass='above')=>{const a=assetStudio.assets.find(a=>a.origin?.name===name);if(!a)return null;rebuildLayerEdits();const parts=liftedAssetPictures(a),image=parts[pass],b=a.origin.bounds;if(!image)return [0,0,0,0];if(x<b[0]||y<b[1]||x>=b[0]+b[2]||y>=b[1]+b[3])return null;return Array.from(image.getContext('2d',{willReadFrequently:true}).getImageData(Math.floor(x-b[0]),Math.floor(y-b[1]),1,1).data);},
   editForegroundAt:(x,y,tool='paint',size=4,offset=0)=>{const action={tool,size,points:[[x,y]],depth:strokeAutoDepth(x,y)+offset};if(!isEditorAction(action))return false;layerState.actions.push(action);layerState.redo=[];layerHistoryRefresh();return true;},
@@ -2026,7 +2152,7 @@ function touchWorldMove(x,y){
 function touchWorldKey(key,pressed){
  if(!pressed){touchKeys.delete(key);return;}
  if(!classroomCanPlay()||danceScene?.isOpen()||gameOpen||!panel.hidden||learningRoomOpen()||developerConsole?.isEditing())return;
- if(dialog.style.display==='block'){if(key==='e')musicianUI.closeConversation();return;}
+ if(dialog.style.display==='block'){if(key==='e'&&!window.CodaDialogueText?.finish(document.querySelector('#words')))musicianUI.closeConversation();return;}
  if(!characterRenderer?.isReady()||!developerConsole?.loadReady())return;
  if(touchKeys.has(key))return;touchKeys.add(key);
  if(['w','a','s','d'].includes(key)){fingerWalk?.stop('direction-controls');dest=null;clickPath=[];followedMusician=null;}
@@ -2037,14 +2163,15 @@ function touchWorldKey(key,pressed){
 }
 function installMobileWorld(){
  const header=document.querySelector('body>header'),brand=header.querySelector('b'),fullBrand=brand.textContent;
- const menu=header.querySelector(':scope>span');for(const node of Array.from(menu.childNodes))if(node.nodeType===Node.TEXT_NODE&&!node.textContent.trim())node.remove();menu.id='worldMenu';menu.setAttribute('aria-label','Arcade menu');
+ const menu=header.querySelector(':scope>span');for(const node of Array.from(menu.childNodes))if(node.nodeType===Node.TEXT_NODE&&!node.textContent.trim())node.remove();menu.id='worldMenu';menu.setAttribute('aria-label','Arcade settings');menu.setAttribute('role','dialog');menu.setAttribute('aria-modal','true');menu.setAttribute('aria-hidden','true');menu.hidden=true;menu.inert=true;
  const legacy=document.createElement('div');legacy.id='worldLegacyShortcuts';legacy.hidden=true;legacy.inert=true;document.body.append(legacy);
  for(const id of ['hallFameBtn','notesBtn','pianoLabBtn','classroomBtn','fishingBtn','jukeboxBtn','assetToggle','editorToggle','avatarBtn','musiciansBtn']){const node=document.getElementById(id);if(node)legacy.append(node);}
  const oldArcadeLink=menu.querySelector('a[href="classic-arcade.html"]');if(oldArcadeLink)legacy.append(oldArcadeLink);
  const account=document.querySelector('#accountBtn');account.textContent='Profile options';account.setAttribute('aria-label','Profile options');
  const logOut=document.createElement('button');logOut.id='worldLogOut';logOut.type='button';logOut.textContent='Log out';logOut.hidden=true;logOut.style.display='none';logOut.onclick=()=>classroomRuntime?.logOut?.();account.after(logOut);
  for(const [id,label,tab]of [['worldPlayNotes','Play notes (P)','notes'],['worldChangelog','Changelog','changelog']]){const button=document.createElement('button');button.id=id;button.type='button';button.textContent=label;button.onclick=()=>{closeMenu();playNotebook?.open(tab);};menu.append(button);}
- const historyButton=document.createElement('button');historyButton.id='worldMusicHistory';historyButton.type='button';historyButton.textContent='Music History Journal';historyButton.onclick=()=>{closeMenu();musicHistory?.showJournal();};menu.append(historyButton);
+ const historyButton=document.createElement('button');historyButton.id='worldMusicHistory';historyButton.type='button';historyButton.textContent='Find the scholar';historyButton.onclick=()=>{closeMenu();const scholar=scholarState();if(scholar.visible)guideToLandmark(scholar.approaches[0],'the scholar in the lounge');};menu.append(historyButton);
+ window.CodaDialogueText?.mountSettings(menu);
  const titleLink=document.createElement('a');titleLink.id='worldTitleScreenLink';titleLink.href='index.html?v=world-94';titleLink.textContent='← Title screen';menu.append(titleLink);arcadeVibes?.mountControls(menu);
  const quick=document.createElement('div');quick.className='world-quick-actions';
  const developer=document.createElement('button');developer.id='worldDeveloperBtn';developer.type='button';developer.textContent='Developer';developer.title='Developer console (F2)';developer.onclick=()=>{closeMenu();window.CodaDeveloperConsole.open('objects');};
@@ -2054,26 +2181,40 @@ function installMobileWorld(){
  const host=document.createElement('div');host.id='codaTouchControls';document.body.append(host);
  const pinchHint=document.createElement('span');pinchHint.id='mobilePinchHint';pinchHint.className='muted';pinchHint.textContent='On the map: pinch two fingers to zoom. Lift both fingers before walking.';pinchHint.hidden=true;document.querySelector('#cameraTools').after(pinchHint);
  c.setAttribute('aria-label','Connected arcade. Move with WASD or arrow keys. Press Space to jump and E to interact. On touch screens, use the joystick or drag on the floor to walk. Lift to stop. Pinch two fingers to zoom.');
- function closeMenu(){document.body.classList.remove('world-menu-open');toggle.setAttribute('aria-expanded','false');mobileControls?.refresh();}
- toggle.onclick=()=>{musicianUI?.closeConversation();const opened=document.body.classList.toggle('world-menu-open');toggle.setAttribute('aria-expanded',String(opened));mobileControls?.releaseAll();clearHeldKeys();mobileControls?.refresh();};scrim.onclick=closeMenu;
- menu.addEventListener('click',event=>{const action=event.target.closest('button,a');if(action&&!action.closest('.arcade-vibe-controls')&&!['fxBtn','musicBtn','zoomIn','zoomOut','zoomReset'].includes(action.id))closeMenu();});
+ const settingsMenu=window.CodaWorldSettings.create({host:menu,
+  controls:{reading:[menu.querySelector('.dialogue-text-settings')],screen:[document.querySelector('#fxBtn'),document.querySelector('#fs'),document.querySelector('#cameraTools'),pinchHint,menu.querySelector('.arcade-vibe-controls')],player:[account,logOut,titleLink],help:[document.querySelector('#worldPlayNotes'),document.querySelector('#worldChangelog'),historyButton]},
+  onClose:()=>closeMenu(true),getMusicState:()=>({playing:musicEngine.active||!!songPlayer,disabled:musicButton.disabled,label:musicButton.textContent}),onToggleMusic:()=>{if(!musicButton.disabled)return musicButton.onclick();}
+ });
+ const musicObserver=new MutationObserver(()=>settingsMenu.refreshMusic());musicObserver.observe(musicButton,{childList:true,subtree:true,attributes:true,attributeFilter:['aria-pressed','disabled']});
+ function closeMenu(focus=false){document.body.classList.remove('world-menu-open');toggle.setAttribute('aria-expanded','false');menu.hidden=true;menu.inert=true;menu.setAttribute('aria-hidden','true');mobileControls?.refresh();if(focus)toggle.focus({preventScroll:true});}
+ toggle.onclick=()=>{if(document.body.classList.contains('world-menu-open')){closeMenu(true);return;}if(!panel.hidden)closePanel();musicianUI?.closeConversation();document.body.classList.add('world-menu-open');toggle.setAttribute('aria-expanded','true');menu.hidden=false;menu.inert=false;menu.setAttribute('aria-hidden','false');mobileControls?.releaseAll();clearHeldKeys();mobileControls?.refresh();settingsMenu.show('home');};scrim.onclick=()=>closeMenu(true);
+ menu.addEventListener('click',event=>{const action=event.target.closest('button,a');if(action&&!action.hasAttribute('data-settings-action')&&!action.closest('.arcade-vibe-controls')&&!['fxBtn','musicBtn','zoomIn','zoomOut','zoomReset'].includes(action.id))closeMenu();});
  quick.addEventListener('click',event=>{if(event.target.closest('button'))closeMenu();});
  document.addEventListener('keydown',event=>{
-  if(event.key==='Escape'&&document.body.classList.contains('world-menu-open')){event.preventDefault();event.stopImmediatePropagation();closeMenu();toggle.focus();return;}
+  if(document.body.classList.contains('world-menu-open')){
+   if(event.key==='Escape'){event.preventDefault();event.stopImmediatePropagation();if(!settingsMenu.back())closeMenu(true);return;}
+   if(event.key==='Tab'){
+    const controls=Array.from(menu.querySelectorAll('button:not(:disabled),input:not(:disabled),select:not(:disabled),a[href],summary,[tabindex="0"]')).filter(node=>node.getClientRects().length&&!node.closest('[hidden]'));
+    const first=controls[0],last=controls.at(-1);if(!controls.length){event.preventDefault();return;}
+    if(!menu.contains(document.activeElement)){event.preventDefault();(event.shiftKey?last:first).focus();}
+    else if(event.shiftKey&&document.activeElement===first){event.preventDefault();last.focus();}else if(!event.shiftKey&&document.activeElement===last){event.preventDefault();first.focus();}
+    return;
+   }
+  }
   if(event.key!=='Tab'||event.shiftKey||event.ctrlKey||event.metaKey||event.altKey||gameOpen||!panel.hidden||dialog.style.display==='block'||developerConsole?.isEditing())return;
   if(event.target!==c&&event.target!==document.body&&event.target?.id!=='pianoRoomCanvas'&&event.target?.id!=='classroomCanvas'&&event.target?.id!=='fishingLakeCanvas')return;
   if(pianoLab?.getState().open){event.preventDefault();event.stopImmediatePropagation();pianoLab.setMobileView('settings',true);return;}
   if(fishingRoom?.getState().open){if(['shore','explore'].includes(fishingRoom.getState().phase)){event.preventDefault();event.stopImmediatePropagation();document.querySelector('#fishingMenuButton').click();}return;}
   if(musicClassroom?.getState().open){event.preventDefault();event.stopImmediatePropagation();musicClassroom.openSettings();return;}
-  event.preventDefault();event.stopImmediatePropagation();if(!document.body.classList.contains('world-menu-open'))toggle.click();menu.querySelector('button:not(:disabled)')?.focus({preventScroll:true});
+  event.preventDefault();event.stopImmediatePropagation();if(!document.body.classList.contains('world-menu-open'))toggle.click();else settingsMenu.show('home');
  },true);
  let initialMobile=true;
  mobileControls=window.createCodaMobileControls({host,getContext:()=>{
   if(!classroomCanPlay())return {id:'paused',enabled:false,canJump:false,canEmote:false,release:clearHeldKeys};
-  const fishingControls=fishingRoom?.getControlState();if(fishingControls?.open){const state=fishingControls;return {id:'fishing',enabled:!state.blocked&&!state.editing&&!state.audioSettingsOpen&&!state.practiceSettingsOpen&&!state.pinching&&state.mobileView==='room'&&['shore','explore'].includes(state.phase),canJump:false,canEmote:false,interactLabel:state.near==='ladder'?'Climb':state.near==='captain'?'Talk':state.near==='boat'?'Board boat':state.phase==='shore'?'Interact':'Cast',move:(x,y)=>fishingRoom.controlMove(x,y),key:(key,down)=>fishingRoom.control(key,down),release:()=>fishingRoom.releaseControls()};}
+  const fishingControls=fishingRoom?.getControlState();if(fishingControls?.open){const state=fishingControls;return {id:'fishing',enabled:!state.blocked&&!state.editing&&!state.audioSettingsOpen&&!state.practiceSettingsOpen&&!state.pinching&&state.mobileView==='room'&&['shore','explore'].includes(state.phase),canJump:false,canEmote:false,interactLabel:state.near==='ladder'?'Climb':state.near==='captain'?'Talk':state.near==='dock'?'Leave boat':state.near==='boat'?'Board boat':state.phase==='shore'?'Interact':'Cast',move:(x,y)=>fishingRoom.controlMove(x,y),key:(key,down)=>fishingRoom.control(key,down),release:()=>fishingRoom.releaseControls()};}
   const pianoControls=pianoLab?.getControlState();if(pianoControls?.open){const state=pianoControls;return {id:'piano',enabled:!state.blocked&&!state.editing&&!state.pinching&&(!state.mobileView||state.mobileView==='room'),canJump:true,canEmote:false,interactLabel:state.challengeMode==='free'?'Talk':'Play note',move:(x,y)=>pianoLab.controlMove(x,y),key:(key,down)=>pianoLab.control(key,down),release:()=>pianoLab.releaseControls()};}
   if(musicClassroom?.getState().open){const state=musicClassroom.getState();return {id:'classroom',enabled:!state.blocked&&(!state.mobileView||state.mobileView==='room'),canJump:false,canEmote:false,interactLabel:state.near?.type==='exit'?'Exit':state.near?.type==='professor'?'Talk':'Read',move:(x,y)=>musicClassroom.controlMove(x,y),key:(key,down)=>musicClassroom.control(key,down),release:()=>musicClassroom.releaseControls()};}
-  return {id:'world',enabled:!danceScene?.isOpen()&&!gameOpen&&panel.hidden&&!developerConsole?.isEditing()&&!document.body.classList.contains('world-menu-open'),canJump:dialog.style.display!=='block',canEmote:dialog.style.display!=='block',interactLabel:dialog.style.display==='block'?'Continue':near?(near.type==='game'?'Play':near.type==='npc'?'Chat':['piano','classroom','fishing'].includes(near.type)?'Enter':'Interact'):'Interact',move:touchWorldMove,key:touchWorldKey,release:()=>{touchKeys.clear();worldStick={x:0,y:0};}};
+  return {id:'world',enabled:!danceScene?.isOpen()&&!gameOpen&&panel.hidden&&!developerConsole?.isEditing()&&!document.body.classList.contains('world-menu-open'),canJump:dialog.style.display!=='block',canEmote:dialog.style.display!=='block',interactLabel:dialog.style.display==='block'?'Continue':near?(near.type==='exit'?'Exit':near.type==='game'?'Play':['npc','scholar'].includes(near.type)?'Chat':['piano','classroom','fishing'].includes(near.type)?'Enter':'Interact'):'Interact',move:touchWorldMove,key:touchWorldKey,release:()=>{touchKeys.clear();worldStick={x:0,y:0};}};
  },onMobileChange:active=>{
   document.body.classList.toggle('coda-mobile-world',active);brand.textContent='♫ CODA ARCADE';
   pinchHint.hidden=!active;
@@ -2099,6 +2240,7 @@ let pausedBackdrop=false;
 function frame(ms){const elapsed=Math.max(0,(ms-last)/1000||0),dt=Math.min(.05,elapsed);last=ms;
  if(!document.hidden&&classroomCanPlay()&&!gameOpen)lightingClock+=elapsed;
  if(classroomCanPlay())tickAmbientMusic();
+ if(ms-(frame.historyPromptAt||0)>250){frame.historyPromptAt=ms;refreshHistoryPrompts();}
  const paused=!classroomCanPlay()||playNotebook?.isOpen()||musicHistory?.isOpen()||gameOpen||!document.querySelector('#panel').hidden||learningRoomOpen();
  try{if(!gameOpen)update(dt);
  // Full panels already pause movement. Retain that backdrop instead of
@@ -2111,7 +2253,7 @@ function frame(ms){const elapsed=Math.max(0,(ms-last)/1000||0),dt=Math.min(.05,e
  g.setTransform(1,0,0,1,0,0);g.globalAlpha=1;g.globalCompositeOperation='source-over';
  g.fillStyle='#10142b';g.fillRect(0,0,W,H);
  g.fillStyle='#ffb9e5';g.font='bold 25px monospace';g.fillText('Arcade error: '+err.message,55,110);
- }requestAnimationFrame(frame)}window.addEventListener('keydown',e=>{if(!classroomCanPlay()||e.defaultPrevented||e.isComposing||typingTarget(e.target))return;if(danceScene?.isOpen()||gameOpen||!document.querySelector('#panel').hidden||learningRoomOpen()||document.body.classList.contains('world-menu-open'))return;const k=e.key.toLowerCase();if(developerConsole&&!e.repeat&&!e.ctrlKey&&!e.metaKey&&!e.altKey&&(k==='c'||k==='l'&&e.shiftKey)){e.preventDefault();developerConsole.open(k==='c'?'collision':'layers');return;}if(dialog.style.display==='block'){if((k==='e'||k==='escape')&&!e.repeat){e.preventDefault();musicianUI.closeConversation();}return;}if(k==='a'&&e.shiftKey&&!e.repeat&&!['INPUT','SELECT','TEXTAREA'].includes(e.target?.tagName)){e.preventDefault();toggleAssetStudio();return;}if(assetStudio.active&&!developerConsole?.isPlaytest()){if(k==='escape'){e.preventDefault();if(assetStudio.capturing){assetStudio.capturing=null;studioMessage('Crop cancelled.')}else toggleAssetStudio(false);return;}if((e.ctrlKey||e.metaKey)&&k==='z'&&!['INPUT','SELECT','TEXTAREA'].includes(e.target?.tagName)){e.preventDefault();assetUndoRedo(!e.shiftKey);return;}if((e.ctrlKey||e.metaKey)&&k==='y'&&!['INPUT','SELECT','TEXTAREA'].includes(e.target?.tagName)){e.preventDefault();assetUndoRedo(false);return;}if(['delete','backspace'].includes(k)&&!['INPUT','SELECT','TEXTAREA'].includes(e.target?.tagName)){e.preventDefault();assetUI('assetRemove').click();return;}if(k.startsWith('arrow')&&!['INPUT','SELECT','TEXTAREA'].includes(e.target?.tagName)){e.preventDefault();const a=assetSelected();if(a&&!a.locked){const before=assetSnapshot(),step=e.shiftKey?8:1;a.x=numberBound(a.x+(k==='arrowright'?step:k==='arrowleft'?-step:0),-1000,3000,a.x);a.y=numberBound(a.y+(k==='arrowdown'?step:k==='arrowup'?-step:0),-1000,2200,a.y);assetRecordHistory(before);}return;}if(!['INPUT','SELECT','TEXTAREA'].includes(e.target?.tagName)&&['+','=','-','_','0'].includes(k)){e.preventDefault();setCameraZoom(k==='0'?1:cam.targetZoom+((k==='+'||k==='=')?ZOOM_STEP:-ZOOM_STEP));return;}if(!['INPUT','SELECT','TEXTAREA'].includes(e.target?.tagName))e.preventDefault();return;}if(k==='l'&&e.shiftKey&&!e.repeat){e.preventDefault();developerConsole.open('layers');return;}if(layerState.active&&(e.ctrlKey||e.metaKey)&&k==='z'&&!e.repeat){e.preventDefault();editorEl(e.shiftKey?'editRedo':'editUndo').click();return;}if(layerState.active&&(e.ctrlKey||e.metaKey)&&k==='y'&&!e.repeat){e.preventDefault();editorEl('editRedo').click();return;}if(layerState.active&&k==='escape'&&!e.repeat){e.preventDefault();toggleLayerEditor(false);return;}if(layerState.active&&!layerState.preview){if(['w','a','s','d','arrowup','arrowdown','arrowleft','arrowright','e','q',' '].includes(k))e.preventDefault();return;}if(e.ctrlKey||e.metaKey||e.altKey)return;if(!e.repeat&&['=','+','-','_','0'].includes(k)&&!['INPUT','SELECT','TEXTAREA'].includes(e.target?.tagName)){
+ }requestAnimationFrame(frame)}window.addEventListener('keydown',e=>{if(!classroomCanPlay()||e.defaultPrevented||e.isComposing||typingTarget(e.target))return;if(danceScene?.isOpen()||gameOpen||!document.querySelector('#panel').hidden||learningRoomOpen()||document.body.classList.contains('world-menu-open'))return;const k=e.key.toLowerCase();if(developerConsole&&!e.repeat&&!e.ctrlKey&&!e.metaKey&&!e.altKey&&(k==='c'||k==='l'&&e.shiftKey)){e.preventDefault();developerConsole.open(k==='c'?'collision':'layers');return;}if(dialog.style.display==='block'){if((k==='e'||k==='escape')&&!e.repeat){e.preventDefault();if(k==='escape'||!window.CodaDialogueText?.finish(document.querySelector('#words')))musicianUI.closeConversation();}return;}if(k==='a'&&e.shiftKey&&!e.repeat&&!['INPUT','SELECT','TEXTAREA'].includes(e.target?.tagName)){e.preventDefault();toggleAssetStudio();return;}if(assetStudio.active&&!developerConsole?.isPlaytest()){if(k==='escape'){e.preventDefault();if(assetStudio.capturing){assetStudio.capturing=null;studioMessage('Crop cancelled.')}else toggleAssetStudio(false);return;}if((e.ctrlKey||e.metaKey)&&k==='z'&&!['INPUT','SELECT','TEXTAREA'].includes(e.target?.tagName)){e.preventDefault();assetUndoRedo(!e.shiftKey);return;}if((e.ctrlKey||e.metaKey)&&k==='y'&&!['INPUT','SELECT','TEXTAREA'].includes(e.target?.tagName)){e.preventDefault();assetUndoRedo(false);return;}if(['delete','backspace'].includes(k)&&!['INPUT','SELECT','TEXTAREA'].includes(e.target?.tagName)){e.preventDefault();assetUI('assetRemove').click();return;}if(k.startsWith('arrow')&&!['INPUT','SELECT','TEXTAREA'].includes(e.target?.tagName)){e.preventDefault();const a=assetSelected();if(a&&!a.locked){const before=assetSnapshot(),step=e.shiftKey?8:1;a.x=numberBound(a.x+(k==='arrowright'?step:k==='arrowleft'?-step:0),-1000,3000,a.x);a.y=numberBound(a.y+(k==='arrowdown'?step:k==='arrowup'?-step:0),-1000,2200,a.y);assetRecordHistory(before);}return;}if(!['INPUT','SELECT','TEXTAREA'].includes(e.target?.tagName)&&['+','=','-','_','0'].includes(k)){e.preventDefault();setCameraZoom(k==='0'?1:cam.targetZoom+((k==='+'||k==='=')?ZOOM_STEP:-ZOOM_STEP));return;}if(!['INPUT','SELECT','TEXTAREA'].includes(e.target?.tagName))e.preventDefault();return;}if(k==='l'&&e.shiftKey&&!e.repeat){e.preventDefault();developerConsole.open('layers');return;}if(layerState.active&&(e.ctrlKey||e.metaKey)&&k==='z'&&!e.repeat){e.preventDefault();editorEl(e.shiftKey?'editRedo':'editUndo').click();return;}if(layerState.active&&(e.ctrlKey||e.metaKey)&&k==='y'&&!e.repeat){e.preventDefault();editorEl('editRedo').click();return;}if(layerState.active&&k==='escape'&&!e.repeat){e.preventDefault();toggleLayerEditor(false);return;}if(layerState.active&&!layerState.preview){if(['w','a','s','d','arrowup','arrowdown','arrowleft','arrowright','e','q',' '].includes(k))e.preventDefault();return;}if(e.ctrlKey||e.metaKey||e.altKey)return;if(!e.repeat&&['=','+','-','_','0'].includes(k)&&!['INPUT','SELECT','TEXTAREA'].includes(e.target?.tagName)){
  e.preventDefault();setCameraZoom(k==='0'?1:cam.targetZoom+((k==='+'||k==='=')?ZOOM_STEP:-ZOOM_STEP));return;}
  if(k==='c'&&!e.repeat){if(developerConsole){developerConsole.open('collision');return;}collisionDebug=!collisionDebug;return;}if(k==='l'&&!e.repeat){depthDebug=!depthDebug;return;}if(k==='f'&&!e.repeat){foregroundEnabled=!foregroundEnabled;return;}if(k==='x'&&collisionDebug&&!e.repeat){exportCollision();return;}if(k==='r'&&e.shiftKey&&collisionDebug&&!e.repeat){localStorage.removeItem('codaCollisionEditsV891');window.location.reload();return;}if(k===' '||e.code==='Space'){if(e.target?.closest?.('button,a,[role=button],summary'))return;e.preventDefault();if(!e.repeat&&!keyDown(' ')){keys.add(' ');startJump();}c.focus({preventScroll:true});return;}if(['w','a','s','d','arrowup','arrowdown','arrowleft','arrowright','e','q'].includes(k)){e.preventDefault();keys.add(k);c.focus({preventScroll:true});if(k==='e'&&!e.repeat)talk();if(k==='q'&&!e.repeat){emoteStarted=clock;emote=clock+2.4;avatar.emotesUsed=(avatar.emotesUsed||0)+1;}}});window.addEventListener('keyup',e=>keys.delete(e.code==='Space'?' ':e.key.toLowerCase()));window.addEventListener('blur',clearHeldKeys);document.addEventListener('visibilitychange',()=>{if(document.hidden)clearHeldKeys();});c.addEventListener('pointerdown',e=>{if(!classroomCanPlay())return;if(dialog.style.display==='block')return;if(danceScene?.isOpen()||gameOpen||!document.querySelector('#panel').hidden||learningRoomOpen())return;const b=c.getBoundingClientRect();
  if(developerConsole?.pointerDown(e))return;
@@ -2139,25 +2281,26 @@ function frame(ms){const elapsed=Math.max(0,(ms-last)/1000||0),dt=Math.min(.05,e
 c.addEventListener('pointerup',e=>{developerConsole?.pointerEnd(e);assetPointerEnd(e);if(!developerConsole)editorPointerEnd(e)});
 c.addEventListener('pointercancel',e=>{developerConsole?.pointerEnd(e);assetPointerEnd(e);if(!developerConsole)editorPointerEnd(e)});
 c.addEventListener('pointerleave',()=>{layerState.hover=null});
-document.querySelector('#close').onclick=()=>dialog.style.display='none';document.querySelector('#fs').onclick=async()=>{try{if(document.fullscreenElement)await document.exitFullscreen();else await document.documentElement.requestFullscreen?.();}catch{status.textContent='Fullscreen is unavailable in this browser.';}};// Phase 4.2 account, boutique, and song library bridge (preview only).
+document.querySelector('#close').onclick=()=>{window.CodaDialogueText?.cancel(document.querySelector('#words'));dialog.style.display='none';};document.querySelector('#fs').onclick=async()=>{try{if(document.fullscreenElement)await document.exitFullscreen();else await document.documentElement.requestFullscreen?.();}catch{status.textContent='Fullscreen is unavailable in this browser.';}};// Phase 4.2 account, boutique, and song library bridge (preview only).
 const panel=document.querySelector('#panel'),panelBody=document.querySelector('#panelBody'),panelTitle=document.querySelector('#panelTitle');
-let firebaseApi=null,cloudAuth=null,cloudDb=null,cloudUser=null,profileReady=false,authMessage='Connecting…',songRecords={},songFinishTimer=null,songSerial=0,jukeboxTitle='',jukeboxSource=null;
+let firebaseApi=null,cloudAuth=null,cloudDb=null,cloudUser=null,profileReady=false,authMessage='Connecting…',songRecords={},songFinishTimer=null,songSerial=0,jukeboxTitle='',jukeboxSource=null,panelBackAction=null,jukeboxMenu=null;
 const config=window.ARCADE_ACCOUNTS_CONFIG;
 function msg(s){const el=panelBody.querySelector('.panelMsg');if(el)el.textContent=s}
-function openPanel(title,options={}){danceScene?.close();if(assetStudio.active&&!(options.keepDeveloper&&developerConsole?.getState?.().open===true))toggleAssetStudio(false);musicianUI?.closeConversation();walking=false;clearHeldKeys();dest=null;dialog.style.display='none';panelTitle.textContent=title;panel.hidden=false;panelBody.classList.remove('boutique-panel');panelBody.replaceChildren();panel.scrollTop=0;document.querySelector('#panelClose').focus({preventScroll:true});}
-function closePanel(){panel.hidden=true;clearHeldKeys();c.focus({preventScroll:true})}
+function cancelPanelDialogue(){for(const line of panelBody.querySelectorAll('.world-dialogue-line'))window.CodaDialogueText?.cancel(line);}
+function openPanel(title,options={}){jukeboxMenu?.destroy();jukeboxMenu=null;panelBackAction=typeof options.onBack==='function'?options.onBack:null;cancelPanelDialogue();danceScene?.close();if(assetStudio.active&&!(options.keepDeveloper&&developerConsole?.getState?.().open===true))toggleAssetStudio(false);musicianUI?.closeConversation();walking=false;clearHeldKeys();dest=null;dialog.style.display='none';panelTitle.textContent=title;panel.hidden=false;panelBody.classList.remove('boutique-panel');panelBody.replaceChildren();panel.scrollTop=0;document.querySelector('#panelClose').focus({preventScroll:true});}
+function closePanel(){panelBackAction=null;jukeboxMenu?.destroy();jukeboxMenu=null;cancelPanelDialogue();panel.hidden=true;clearHeldKeys();c.focus({preventScroll:true})}
 document.querySelector('#panelClose').onclick=closePanel;
 // Close the topmost shared dialogue even if a canvas or form kept focus.
 window.addEventListener('keydown',event=>{
  if(playNotebook?.isOpen()||event.key!=='Escape'||document.body.classList.contains('world-menu-open'))return;
- if(!panel.hidden){event.preventDefault();event.stopImmediatePropagation();closePanel();return;}
+ if(!panel.hidden){event.preventDefault();event.stopImmediatePropagation();if(panelBackAction?.()!==true)closePanel();return;}
  if(dialog.style.display==='block'){event.preventDefault();event.stopImmediatePropagation();musicianUI?.closeConversation();c.focus({preventScroll:true});}
 },true);
 panel.setAttribute('role','dialog');panel.setAttribute('aria-modal','true');panel.setAttribute('aria-labelledby','panelTitle');
 panel.addEventListener('keydown',event=>{
- if(event.key==='Escape'){event.preventDefault();event.stopPropagation();closePanel();return;}
+ if(event.key==='Escape'){event.preventDefault();event.stopPropagation();if(panelBackAction?.()!==true)closePanel();return;}
  if(event.key!=='Tab')return;
- const controls=Array.from(panel.querySelectorAll('button:not(:disabled),input:not(:disabled),select:not(:disabled),a[href],[tabindex="0"]')).filter(node=>node.getClientRects().length);
+ const controls=Array.from(panel.querySelectorAll('button:not(:disabled),input:not(:disabled),select:not(:disabled),a[href],summary,[tabindex="0"]')).filter(node=>node.getClientRects().length);
  if(!controls.length)return;const first=controls[0],last=controls[controls.length-1];
  if(event.shiftKey&&document.activeElement===first){event.preventDefault();last.focus();}
  else if(!event.shiftKey&&document.activeElement===last){event.preventDefault();first.focus();}
@@ -2176,7 +2319,7 @@ const NPC_LOOKS_KEY='codaNPCOutfitsV1';
 let npcLooks={};
 function loadNPCLooks(){
  try{const saved=JSON.parse(localStorage.getItem(NPC_LOOKS_KEY)||'{}');
-  if(saved&&typeof saved==='object'&&!Array.isArray(saved))for(const person of [...npc,{id:'dj',name:'DJ Coda'}]){
+  if(saved&&typeof saved==='object'&&!Array.isArray(saved))for(const person of [...npc,{id:'dj',name:'DJ Coda'},{id:'scholar',name:'The Scholar'}]){
    const look=saved[person.id];if(look&&typeof look==='object'&&!Array.isArray(look)){
     npcLooks[person.id]=characterRenderer.normalizeProfile({...characterRenderer.appearanceFor(person.id),...look});person.appearance=npcLooks[person.id];
    }
@@ -2190,7 +2333,7 @@ function applyBoutiqueLook(id,look){
    const next={...avatar,...characterRenderer.normalizeProfile(look),...(classroomAlias()?{name:classroomAlias()}:{}),customized:true,hat:false};
    localStorage.setItem('musicArcadeV1',JSON.stringify(next));avatar=next;syncProfile();
   }else{
-   const person=npc.find(p=>p.id===id)||(id==='dj'?{id:'dj',name:'DJ Coda'}:null);if(!person)return false;
+   const person=npc.find(p=>p.id===id)||(id==='dj'?{id:'dj',name:'DJ Coda'}:id==='scholar'?{id:'scholar',name:'The Scholar'}:null);if(!person)return false;
    const next={...npcLooks,[id]:characterRenderer.normalizeProfile({...look,name:person.name})};
    localStorage.setItem(NPC_LOOKS_KEY,JSON.stringify(next));npcLooks=next;person.appearance=next[id];
   }
@@ -2213,7 +2356,7 @@ function steps(m){const [a,b]=m.split('/').map(Number);return a*16/b}
 function djUnlockState(){
  const value=progression?.refresh?.()||{level:1};
  const achievements=testMode?.isEnabled()?window.CodaAchievements.CATALOG.map(item=>item.id):getArcadeAchievements().items.filter(item=>item.earned).map(item=>item.id);
- return {level:value.level,fishCaught:testMode?.isEnabled()?30:fishingProgress?.snapshot?.().stats.total||0,achievements};
+ return {level:value.level,fishCaught:testMode?.isEnabled()?30:fishingProgress?.snapshot?.().stats.total||0,achievements,danceSongs:value.dance?.songs||[]};
 }
 function refreshJukeboxLocks(){for(const row of panelBody.querySelectorAll('[data-house-track]')){const record=window.CodaDJLibrary.songs.find(item=>item.id===row.dataset.houseTrack);if(!record)continue;const unlocked=window.CodaDJLibrary.isUnlocked(record,djUnlockState());row.classList.toggle('jukebox-track-locked',!unlocked);const button=row.querySelector('button');button.disabled=!unlocked;button.textContent=unlocked?'▶ Play':'🔒 Locked';button.title=unlocked?'Play '+record.title:window.CodaDJLibrary.requirement(record);row.querySelector('strong').textContent=(unlocked?'':'🔒 ')+record.title;row.querySelector('[data-dj-requirement]').textContent=unlocked?'':window.CodaDJLibrary.requirement(record);}}
 async function playSong(song,details={}){
@@ -2237,6 +2380,7 @@ async function playSong(song,details={}){
 
   function note(p,t,d,sound,volume){
    if(volume<=0||voices.length>=128)return;
+   if(house?.style&&window.CodaDanceSongAudio){window.CodaDanceSongAudio.schedule(ctx,{part:'tone',midi:p,sound,volume},t,d,output,house.style,rememberVoice);return;}
    const added=[];if(window.CodaSongSounds?.scheduleTone(ctx,p,t,d,sound,volume,output,added)){for(const voice of added)rememberVoice(voice);return;}
    const o=ctx.createOscillator(),gain=ctx.createGain();
    o.type=['square','triangle','triangle','sine','sawtooth','sawtooth','sine','triangle','square','sawtooth'][sound]||'triangle';
@@ -2248,6 +2392,7 @@ async function playSong(song,details={}){
   const noise=ctx.createBuffer(1,Math.floor(ctx.sampleRate*.2),ctx.sampleRate),data=noise.getChannelData(0);
   for(let i=0;i<data.length;i++)data[i]=(Math.random()*2-1)*.6;
   function drum(row,t,volume){
+   if(house?.style&&window.CodaDanceSongAudio){window.CodaDanceSongAudio.schedule(ctx,{part:'drum',track:row,volume},t,.12,output,house.style,rememberVoice);return;}
    if(volume<=0||voices.length>=128)return;
    const chain=[],gain=ctx.createGain(),voice=row===0?ctx.createOscillator():ctx.createBufferSource();
    const length=row===0?.19:row===1?.14:.055;
@@ -2286,49 +2431,29 @@ async function playSong(song,details={}){
 function importedDJSongs(){
  try{const records=JSON.parse(localStorage.getItem('codaDJLibraryV1')||'[]');return Array.isArray(records)?records.filter(r=>r&&typeof r.title==='string'&&window.CodaDJLibrary.valid(r.composition)).slice(0,12):[];}catch{return [];}
 }
-async function openJukebox(){
- openPanel('DJ Coda · Jukebox');
- addAction('Tell me some music history',()=>musicHistory?.discover('dj'));
- const danceIntro=document.createElement('p');danceIntro.textContent='Ready to dance? Match the arrows to the moving notes while your friends join the line.';panelBody.append(danceIntro);
- const danceStart=addAction('♫ Play DJ Coda’s Line Dance',()=>danceScene?.open());danceStart.dataset.startDance='';
- const intro=document.createElement('p');intro.className='muted';intro.textContent='DJ Coda is on the decks. Pick an original house track, or bring a Song Machine composition. Your selection loops until you stop it or choose another track.';panelBody.append(intro);
- const status=document.createElement('p');status.className='panelMsg';status.setAttribute('role','status');status.textContent=songPlayer?'Now playing: '+jukeboxTitle:'Choose a track to start the set.';panelBody.append(status);
- const stop=addAction('■ Stop playback',()=>{stopAmbientMusic();stopSong();msg('Stopped.');});stop.id='jukeboxStop';
- const house=document.createElement('section'),heading=document.createElement('h3');heading.textContent='House collection';house.append(heading);panelBody.append(house);
- function songRow(parent,record,source,editId){
-  const row=document.createElement('div');row.className='panelRow';const info=document.createElement('div'),title=document.createElement('strong'),small=document.createElement('small');
-  title.textContent=record.title||'Untitled';small.textContent=record.composition.bpm+' BPM · '+record.composition.bars+' bars';info.append(title,small);row.append(info);
-  const play=document.createElement('button');play.type='button';play.textContent='▶ Play';play.setAttribute('aria-label','Play '+title.textContent);play.dataset.jukeboxTrack=record.id||source;
-  play.onclick=()=>playSong(record.composition,{title:title.textContent,source,trackId:record.id});row.append(play);
-  if(source==='house'){row.dataset.houseTrack=record.id;const requirement=document.createElement('p');requirement.dataset.djRequirement='true';requirement.className='muted';requirement.style.margin='6px 0 0';info.append(requirement);if(record.sections?.length){small.textContent+=' · '+record.sections.map(section=>section.label).join(' → ');}}
-  if(editId){const edit=document.createElement('button');edit.type='button';edit.textContent='Edit ↗';edit.onclick=()=>{stopSong();closePanel();openCabinet({...games[3],url:'song-machine/index.html?song='+encodeURIComponent(editId)+'&v=audit-65'})};row.append(edit);}
-  parent.append(row);
- }
- for(const record of window.CodaDJLibrary.songs)songRow(house,record,'house');refreshJukeboxLocks();
- const local=document.createElement('section'),localHeading=document.createElement('h3');localHeading.textContent='Your local compositions';local.append(localHeading);panelBody.append(local);
- for(const record of importedDJSongs())songRow(local,record,'import');
- const file=document.createElement('input');file.type='file';file.accept='application/json,.json';file.hidden=true;file.id='djSongImport';panelBody.append(file);
- const load=addAction('Load Song Machine JSON',()=>file.click());load.id='djSongImportButton';
- file.onchange=async()=>{
-  const selected=file.files?.[0];file.value='';if(!selected)return;
-  try{
-   if(selected.size>2*1024*1024)throw Error('Choose a composition smaller than 2 MB.');
-   const composition=JSON.parse(await selected.text());if(!window.CodaDJLibrary.valid(composition))throw Error('Choose a valid Song Machine composition JSON.');
-   const record={id:'local-'+Date.now(),title:selected.name.replace(/\.json$/i,''),composition};
-   const records=[record,...importedDJSongs()].slice(0,12);
-   try{localStorage.setItem('codaDJLibraryV1',JSON.stringify(records));}catch{msg('Song loaded for this session. Local storage is full.');}
-   songRow(local,record,'import');msg('Loaded '+record.title+'. Press Play when you are ready.');
-  }catch(error){msg('Could not load that song: '+error.message);}
- };
- const cloud=document.createElement('section'),cloudHeading=document.createElement('h3'),cloudStatus=document.createElement('p');cloudHeading.textContent='Cloud song library';cloudStatus.className='muted';cloud.append(cloudHeading,cloudStatus);panelBody.append(cloud);
- if(!cloudUser||!profileReady){cloudStatus.textContent='Sign in to add your saved Song Machine songs to the set. House tracks and local JSON work as a guest.';return;}
- cloudStatus.textContent='Loading saved compositions…';
- try{
-  const snap=await firebaseApi.get(firebaseApi.ref(cloudDb,'songLibrary/'+cloudUser.uid));if(!cloud.isConnected)return;
-  songRecords=snap.val()||{};const songs=Object.entries(songRecords).sort((a,b)=>(b[1].updatedAt||0)-(a[1].updatedAt||0));
-  let count=0;for(const [id,record] of songs)if(window.CodaDJLibrary.valid(record.composition)){songRow(cloud,{...record,id},'cloud',id);count++;}
-  cloudStatus.textContent=count?count+' saved composition(s)':'No saved compositions yet. Visit Song Machine to create one.';
- }catch(error){if(cloud.isConnected)cloudStatus.textContent='Could not load saved songs. The house collection is ready to play.';}
+function openJukebox(){
+ openPanel('DJ Coda',{onBack:()=>jukeboxMenu?.back()===true});
+ jukeboxMenu=window.CodaDJMenu.create({host:panelBody,canUse:classroomCanPlay,getIdentity:currentPlayerIdentity,
+  getPlayback:()=>({playing:!!songPlayer,title:jukeboxTitle}),getHistoryLabel:()=>historyPromptLabel('dj'),
+  onDance:()=>danceScene?.open(),onHistory:()=>musicHistory?.discover('dj'),
+  getHouseSongs:()=>window.CodaDJLibrary.songs,getLocalSongs:importedDJSongs,validSong:window.CodaDJLibrary.valid,
+  onPlay:playSong,onStop:()=>{stopAmbientMusic();stopSong();},onRefreshLocks:refreshJukeboxLocks,
+  saveImported:(composition,title)=>{
+   const record={id:'local-'+Date.now(),title,composition},records=[record,...importedDJSongs()].slice(0,12);let saved=true;
+   try{localStorage.setItem('codaDJLibraryV1',JSON.stringify(records));}catch{saved=false;}
+   return {record,saved};
+  },
+  onEdit:id=>{stopSong();closePanel();openCabinet({...games[3],url:'song-machine/index.html?song='+encodeURIComponent(id)+'&v=audit-65'});},
+  loadCloud:async()=>{
+   if(!cloudUser||!profileReady)return {songs:[],message:'You can add a song file from this device. Signed-in players can also choose their saved Song Machine songs.'};
+   const uid=cloudUser.uid,identity=currentPlayerIdentity(),snap=await firebaseApi.get(firebaseApi.ref(cloudDb,'songLibrary/'+uid));
+   if(cloudUser?.uid!==uid||currentPlayerIdentity()!==identity)return {songs:[],message:'Reopen My songs to see your saved songs.'};
+   songRecords=snap.val()||{};
+   const songs=Object.entries(songRecords).sort((a,b)=>(b[1].updatedAt||0)-(a[1].updatedAt||0)).filter(([,record])=>window.CodaDJLibrary.valid(record.composition)).map(([id,record])=>({...record,id}));
+   return {songs,message:songs.length?songs.length+' saved '+(songs.length===1?'song':'songs'):'No saved songs yet. Make one in Song Machine.'};
+  }
+ });
+ jukeboxMenu.show();
 }
 document.querySelector('#accountBtn').onclick=openAccount;document.querySelector('#jukeboxBtn').onclick=openJukebox;initCloud();
 characterRenderer=window.createCodaCharacterRenderer({reducedMotion:()=>window.matchMedia?.('(prefers-reduced-motion: reduce)').matches===true});
@@ -2338,18 +2463,21 @@ fishingDoorPicture=window.CodaFishingEntrance.createPicture(document);
 worldObjects=window.createCodaWorldObjects({catalog:[...window.CodaWorldObjectCatalog,...foregroundParts.filter(part=>!window.CodaWorldObjectCatalog.some(original=>original.name===part.name))],getAssets:()=>assetStudio.assets,getAnimation:assetAnimTransform});
 worldLighting=window.createCodaWorldLighting({
  width:W,height:H,getTime:()=>lightingClock,getQuality:()=>fxMode,getBeat:beatInfo,isWalkable:inside,getBeamRaster:()=>({width:ambientLightCanvas.width,height:ambientLightCanvas.height,refreshHz:24}),getMapRevision:()=>navigationRevision,reducedMotion:()=>reduceMotion,
+ getLanterns:()=>refreshedEnvironment()?window.CodaWallFixtures.states(assetStudio.assets,assetAnimTransform).filter(fixture=>fixture.kind==='lantern'):null,
  getBallStates:()=>DISCO_BALLS.map((ball,index)=>{
   const part=window.CodaWorldObjectCatalog.find(p=>p.ballIndex===index),object=worldObjects.state(part.name),asset=object.asset;
   return {id:part.name,x:ball.x,y:ball.y,radius:ball.r,spin:asset?.discoSpin??ball.spin,seed:ball.seed,club:ball.club===true,
    visible:object.visible,rays:asset?.discoRays!==false,opacity:object.opacity,matrix:object.matrix,animate:!asset||assetStudio.animate};
  })
 });
-danceFloor=window.createCodaDanceFloor({getPlayer:()=>({...player,jumpHeight}),getTime:()=>clock,reducedMotion:()=>reduceMotion,getQuality:()=>fxMode});
+const djFloodlights=window.CodaDJFloodlights.create({getAssets:()=>assetStudio.assets,getTime:()=>{try{return assetStudio.animate&&localStorage.getItem('arcadeAnimations')!=='off'?lightingClock:0;}catch{return assetStudio.animate?lightingClock:0;}},getQuality:()=>fxMode,reducedMotion:()=>window.matchMedia?.('(prefers-reduced-motion: reduce)').matches===true,getAnimation:assetAnimTransform});
+danceFloor=window.createCodaDanceFloor({getPlayer:()=>({...player,jumpHeight}),getTime:()=>clock,reducedMotion:()=>window.matchMedia?.('(prefers-reduced-motion: reduce)').matches===true,getQuality:()=>fxMode,getAnimation:()=>{try{return assetStudio.animate&&localStorage.getItem('arcadeAnimations')!=='off';}catch{return assetStudio.animate;}}});
+floorStars=window.CodaFloorStars.create({getTime:()=>clock,getQuality:()=>fxMode,reducedMotion:()=>window.matchMedia?.('(prefers-reduced-motion: reduce)').matches===true,getAnimation:()=>{try{return assetStudio.animate&&localStorage.getItem('arcadeAnimations')!=='off';}catch{return assetStudio.animate;}}});
 npcBrain=window.createCodaNPCBehavior({rotation:true,maxVisitors:6,getEntrance:()=>({x:1450,y:752}),isUnlocked:id=>!!notesWallet?.owns(id)||!!progression?.unlocked(id),getMissions:()=>missions?.snapshot().missions||[],isOffscreen:person=>{const viewport=cameraViewport();return person.x<cam.x-40||person.y<cam.y-70||person.x>cam.x+viewport.width/cam.zoom+40||person.y>cam.y+viewport.height/cam.zoom+40;},isPinned:person=>!!person.pinned||person.id===followedMusician||!!person.conversation,npcs:npc,inside,route:pathTo,getGames:runtimeGames,getPlayer:()=>player,getDialogue:id=>developerConsole?.getDialogue(id)||null});
 musicianUI=window.createCodaMusicianUI({
  getVibe:()=>visibleArcadeVibe(),
  onConversationChange:()=>mobileControls?.refresh(),hasTrivia:id=>['bach','mozart','beethoven','clara','joplin','ellington','ella','nina','miles'].includes(id),npcs:npc,getBrain:()=>npcBrain,renderer:characterRenderer,canvas:c,panelBody,
- openHistory:id=>musicHistory?.discover(id),
+ openHistory:id=>musicHistory?.discover(id),historyState:id=>musicHistory?.conversationState(id),
  openTrivia:id=>musicianTrivia?.open(npc.find(person=>person.id===id)||id),
  openPanel,closePanel,openWardrobe:openBoutique,getMission:id=>missions?.get(id),openMissions:id=>missions?.open(npc.find(person=>person.id===id)||id),
  clearInput:()=>{clearHeldKeys();dest=null;clickPath=[];walking=false;},
@@ -2400,22 +2528,34 @@ function guideToLandmark(point,label){
 }
 function findQuestGiver(id){if(!classroomCanPlay())return false;const giver=npc.find(person=>person.id===id);if(!giver||npcBrain?.requestVisit?.(id)===false)return false;closePanel();followedMusician=id;followTimer=0;dest=null;clickPath=[];c.focus({preventScroll:true});}
 function guideToQuestGame(key){
+ if(key==='dance')return guideToLandmark(djState(),'DJ Coda');
  if(key==='piano')return guideToLandmark({x:1290,y:235},'the Piano Lab entrance');
  if(key==='fishing'){const door=fishingDoorState();return door?.visible?guideToLandmark({x:door.x,y:door.y},'the fishing cave trapdoor'):false;}
  const index={pitch:0,triad:1,rhythm:2}[key],game=runtimeGames().find(game=>game.index===index);if(game)return guideToLandmark(cabinetApproach(index),game.name+' cabinet');return false;
 }
-function startMissionActivity(game,event){if(!classroomCanPlay())return;missionRuns[game]={token:missions?.beginActivity(game),runId:event?.runId||event?.id};}
-function finishPianoMission(event){const run=missionRuns.piano;if(!classroomCanPlay()||!run||run.runId!==event?.runId)return;missions?.recordActivity('piano',event,run.token);missionRuns.piano=null;}
+function guideToHistoryQuestGame(key){
+ if(!classroomCanPlay()||!['pitch','triad','rhythm','piano','fishing','dance'].includes(key))return false;
+ // A relationship quest may be accepted inside another room. Return to the
+ // arcade before guiding its player to the selected cabinet or room doorway.
+ pianoLab?.releaseControls();musicClassroom?.releaseControls();fishingRoom?.releaseControls();
+ pianoLab?.close();musicClassroom?.close();fishingRoom?.close();
+ missionRuns.piano=null;missionRuns.fishing=null;
+ if(gameOpen)closeCabinet();
+ clearHeldKeys();dest=null;clickPath=[];walking=false;c.focus({preventScroll:true});
+ return guideToQuestGame(key);
+}
+function startMissionActivity(game,event){if(!classroomCanPlay())return;missionRuns[game]={token:missions?.beginActivity(game),historyToken:musicHistory?.beginRun(game),runId:event?.runId||event?.id};}
+function finishPianoMission(event){if(classroomCanPlay()&&event?.kind==='reading')progression?.recordPianoReading(event);const run=missionRuns.piano;if(!classroomCanPlay()||!run||run.runId!==event?.runId)return;missions?.recordActivity('piano',event,run.token);musicHistory?.recordActivity('piano',event,run.historyToken);missionRuns.piano=null;}
 function achievementTitle(id,reason){const titles={'first-pitch-result':'Your first Pitch Race','first-triad-result':'Your first Music Triad match','first-rhythm-result':'Your first Rhythm Room round','triad-first-win':'Your first Music Triad win','pitch-bass-reader':'Bass clef reader!','pitch-bass-streak':'Bass clef streak!','pitch-grand-reader':'Grand staff reader!','pitch-grand-perfect':'Grand staff mastery!','pitch-ten-correct':'Ten notes right!','pitch-ten-streak':'Ten notes in a row!','pitch-perfect-run':'A perfect Pitch Race run','rhythm-perfect-round':'A perfect rhythm round','classroom-note-naming':'You know your note names!','classroom-bass-clef':'You can read bass clef!','classroom-grand-staff':'You know the grand staff!','classroom-rhythm-tree':'You grew a rhythm tree!'};return (id==='achievement:classroom-time-signatures'?'You know your time signatures!':null)||window.CodaFishingProgress?.ACHIEVEMENTS.find(item=>item.id===id.replace(/^achievement:/,''))?.title||titles[id.replace(/^achievement:/,'')]||window.CodaAchievements.CATALOG.find(item=>item.id===id.replace(/^achievement:/,''))?.title||reason.replace(/^Achievement: /,'');}
 missions=window.CodaMusicianMissions.create({wallet:notesWallet,frame:gameiframe,panelBody,openPanel,canRecord:classroomCanPlay,getLevel:()=>arcadeLevel,
  openGame:guideToQuestGame,
- onVerifiedResult:(game,id,result)=>{if(!classroomCanPlay())return;progression.recordGameEvent(game,id,result);hallFame.record(game,id,result);const bonus=window.CodaNotesShop.gameReward(game,result);if(bonus)notesWallet.grantReward('game:'+game+':'+id,bonus);},
+ onVerifiedResult:(game,id,result)=>{if(!classroomCanPlay())return;const historyRun=historyRuns.cabinet;if(historyRun?.game===game)musicHistory?.recordResult(game,id,result,historyRun.token);progression.recordGameEvent(game,id,result);hallFame.record(game,id,result);const bonus=window.CodaNotesShop.gameReward(game,result);if(bonus)notesWallet.grantReward('game:'+game+':'+id,bonus);},
  canTurnIn:canCollectMission,findQuestGiver:id=>findQuestGiver(id),onVerifiedRhythmStreak:best=>classroomCanPlay()?progression.recordRhythmStreak?.(best):classroomPausedReward(),
  onMissionCompleted:mission=>{if(classroomCanPlay())rewardNotifications?.missionComplete({id:mission.id,title:mission.title,giver:npc.find(person=>person.id===mission.person)?.name,reward:mission.reward,action:{id:'mission:'+mission.id,label:'View mission'}});},
  onMissionRewarded:mission=>{if(!classroomCanPlay())return;const result=progression.recordQuest(mission.id);rewardNotifications?.missionReward({id:mission.id,title:mission.title,notes:mission.reward,xp:result.ok?100:0});},
  onChange:()=>playerProfile?.refresh()
 });
-pianoLab=window.createCodaPianoLab({openHistory:()=>musicHistory?.discover('chopin'),getVibe:()=>arcadeVibes,onChallengeStart:event=>startMissionActivity('piano',event),onChallengeComplete:finishPianoMission,canDevelop:()=>classroomCanPlay()&&!classroomStudent(),onViewChange:()=>mobileControls?.refresh(),onEditorProjectChange:(before,after)=>developerConsole?.recordRoomChange('piano',before,after),getSharedSprites:()=>developerConsole?.getSprites()||{},setSharedSprites:data=>developerConsole?.setSprites(data)??false,host:document.querySelector('#pianoroom'),backgroundUrl:'assets/world/piano-lab-room.png?v=mobile-28',renderer:characterRenderer,getAvatar:()=>avatar,onClose:()=>{missionRuns.piano=null;clearHeldKeys();walking=false;c.focus({preventScroll:true});},onReward:(reason,amount)=>{if(!classroomCanPlay())return classroomPausedReward();const result=notesWallet.grantReward(reason,amount);if(result.ok){if(reason.startsWith('piano-memory:'))progression.recordPianoMemory?.(reason.slice('piano-memory:'.length));else progression.recordQuest(reason);}return result;}});
+pianoLab=window.createCodaPianoLab({openHistory:()=>musicHistory?.discover('chopin'),historyState:()=>musicHistory?.conversationState('chopin'),getVibe:()=>arcadeVibes,onChallengeStart:event=>startMissionActivity('piano',event),onChallengeComplete:finishPianoMission,canDevelop:()=>classroomCanPlay()&&!classroomStudent(),onViewChange:()=>mobileControls?.refresh(),onEditorProjectChange:(before,after)=>developerConsole?.recordRoomChange('piano',before,after),getSharedSprites:()=>developerConsole?.getSprites()||{},setSharedSprites:data=>developerConsole?.setSprites(data)??false,host:document.querySelector('#pianoroom'),backgroundUrl:'assets/world/piano-lab-room.png?v=mobile-28',renderer:characterRenderer,getAvatar:()=>avatar,onClose:()=>{missionRuns.piano=null;clearHeldKeys();walking=false;c.focus({preventScroll:true});},onReward:(reason,amount)=>{if(!classroomCanPlay())return classroomPausedReward();const result=notesWallet.grantReward(reason,amount);if(result.ok){if(reason.startsWith('piano-memory:'))progression.recordPianoMemory?.(reason.slice('piano-memory:'.length));else progression.recordQuest(reason);}return result;}});
 function rewardClassroomLesson(id){
  if(!classroomCanPlay())return classroomPausedReward();
  if(!['note-naming','bass-clef','grand-staff','rhythm-tree','time-signatures','major-minor-keys','dynamics','tempo','accidentals-key-signatures'].includes(id))return {ok:false,error:'Choose a classroom lesson.'};
@@ -2426,12 +2566,12 @@ function rewardFinalExam(id){
  if(id!=='haydn-final-exam')return {ok:false,error:'Choose Haydn’s Final Exam.'};
  const result=progression.awardXP('achievement:haydn-final-exam',200,'Passed Haydn’s Final Exam');playerProfile?.refresh();return result;
 }
-musicClassroom=window.createCodaMusicClassroom({openHistory:()=>musicHistory?.discover('haydn'),educationContentReady,requireExamCurriculum:true,canRecord:classroomCanPlay,onFinalExamComplete:rewardFinalExam,getVibe:()=>arcadeVibes,getArtworkBackground:source=>developerConsole?.backgroundArtwork('background.classroom',source)||source,onViewChange:()=>mobileControls?.refresh(),host:document.querySelector('#musicClassroom'),backgroundSrc:'assets/world/music-classroom-room.png?v=mobile-28',renderer:characterRenderer,getAvatar:()=>avatar,onTutorialComplete:rewardClassroomLesson,onClose:()=>{clearHeldKeys();walking=false;c.focus({preventScroll:true});}});
+musicClassroom=window.createCodaMusicClassroom({openHistory:()=>musicHistory?.discover('haydn'),historyState:()=>musicHistory?.conversationState('haydn'),educationContentReady,requireExamCurriculum:true,canRecord:classroomCanPlay,onFinalExamComplete:rewardFinalExam,getVibe:()=>arcadeVibes,getArtworkBackground:source=>developerConsole?.backgroundArtwork('background.classroom',source)||source,onViewChange:()=>mobileControls?.refresh(),host:document.querySelector('#musicClassroom'),backgroundSrc:'assets/world/music-classroom-room.png?v=mobile-28',renderer:characterRenderer,getAvatar:()=>avatar,onTutorialComplete:rewardClassroomLesson,onClose:()=>{clearHeldKeys();walking=false;c.focus({preventScroll:true});}});
 // Lesson completion and XP are saved separately; restore a missed XP write
 // from an already completed lesson without paying it a second time.
 for(const id of window.CodaClassroomTutorials.readProgress().completed)rewardClassroomLesson(id);
 fishingProgress=window.CodaFishingProgress.create({wallet:notesWallet,progression,catalog:window.CodaRhythmFishing.FISH,getCatches:()=>fishingRoom?.getState().catches||[]});
-fishingRoom=window.createCodaRhythmFishing({getVibe:()=>arcadeVibes,onChallengeStart:event=>startMissionActivity('fishing',event),onViewChange:()=>mobileControls?.refresh(),onEditorProjectChange:(before,after)=>developerConsole?.recordRoomChange('fishing',before,after),getSharedSprites:()=>developerConsole?.getSprites()||{},setSharedSprites:data=>developerConsole?.setSprites(data)??false,host:document.querySelector('#rhythmFishing'),renderer:characterRenderer,getAvatar:()=>avatar,getQuality:()=>fxMode,onCycleQuality:()=>effectsButton.click(),backgroundSrc:'assets/world/rhythm-fishing-cave.png?v=cave-32',getAchievements:()=>fishingProgress.getAchievements(),onCatch:(fish,result)=>{if(!classroomCanPlay())return classroomPausedReward();const award=fishingProgress.reward(fish,result),run=missionRuns.fishing;if(award?.ok&&run&&run.runId===result?.id&&window.CodaFishingProgress.validCatch(result,window.CodaRhythmFishing.FISH)){missions?.recordActivity('fishing',result,run.token);missionRuns.fishing=null;}return award;},onClose:()=>{missionRuns.fishing=null;clearHeldKeys();walking=false;mobileControls?.refresh();c.focus({preventScroll:true});}});
+fishingRoom=window.createCodaRhythmFishing({getVibe:()=>arcadeVibes,onChallengeStart:event=>startMissionActivity('fishing',event),onViewChange:()=>mobileControls?.refresh(),onEditorProjectChange:(before,after)=>developerConsole?.recordRoomChange('fishing',before,after),getSharedSprites:()=>developerConsole?.getSprites()||{},setSharedSprites:data=>developerConsole?.setSprites(data)??false,host:document.querySelector('#rhythmFishing'),renderer:characterRenderer,getAvatar:()=>avatar,getQuality:()=>fxMode,onCycleQuality:()=>effectsButton.click(),backgroundSrc:'assets/world/rhythm-fishing-cave.png?v=fishing-snes-20261031-1',getAchievements:()=>fishingProgress.getAchievements(),onCatch:(fish,result)=>{if(!classroomCanPlay())return classroomPausedReward();const award=fishingProgress.reward(fish,result),run=missionRuns.fishing;if(run&&run.runId===result?.id&&window.CodaFishingProgress.validCatch(result,window.CodaRhythmFishing.FISH)){if(award?.ok)missions?.recordActivity('fishing',result,run.token);musicHistory?.recordActivity('fishing',result,run.historyToken);missionRuns.fishing=null;}return award;},onClose:()=>{missionRuns.fishing=null;clearHeldKeys();walking=false;mobileControls?.refresh();c.focus({preventScroll:true});}});
 playerProfile=window.createCodaPlayerProfile({renderer:characterRenderer,panelBody,openPanel,
  getAvatar:()=>avatar,getClassroomAlias:classroomAlias,openClassroomProfile:openAccount,getProgression:()=>progression.refresh(),getMissions:()=>missions.snapshot(),getNotes:()=>notesWallet.snapshot(),
  getTutorials:()=>musicClassroom.getState().tutorials,getMusicians:()=>npc,
@@ -2442,10 +2582,10 @@ playerProfile=window.createCodaPlayerProfile({renderer:characterRenderer,panelBo
 rewardNotifications=window.createCodaRewardNotifications({getTouchState:()=>mobileControls?.snapshot(),onAction:action=>{if(action.id==='profile'){if(gameOpen)closeCabinet();pianoLab?.close();musicClassroom?.close();fishingRoom?.close();playerProfile?.open();}else if(action.id.startsWith('mission:')){const id=action.id.slice(8);if(gameOpen)closeCabinet();pianoLab?.close();musicClassroom?.close();fishingRoom?.close();missions.open(npc.find(person=>person.id===id)||id);}}});
 document.querySelector('#fishingBtn').onclick=openFishing;document.querySelector('#pianoLabBtn').onclick=openPiano;document.querySelector('#classroomBtn').onclick=openClassroom;
 boutiqueUI=window.createCodaBoutiqueUI({
- renderer:characterRenderer,panelBody,openPanel:title=>openPanel(title,{keepDeveloper:developerConsole?.getState?.().open===true}),closePanel,getPreviewUI:()=>musicianUI,
+ renderer:characterRenderer,panelBody,openPanel:(title,options={})=>openPanel(title,{...options,keepDeveloper:developerConsole?.getState?.().open===true}),closePanel,getPreviewUI:()=>musicianUI,
  refreshUnlocks:()=>{notesWallet.refresh();progression.refresh();},getClassroomAlias:classroomAlias,isDeveloperMode:()=>!classroomStudent()&&developerConsole?.getState?.().open===true,
- getTargets:()=>[{id:'player',label:'Your avatar'},...npc.map(person=>({id:person.id,label:person.name})),{id:'dj',label:'DJ Coda'}],
- getProfile:id=>id==='player'?avatar:{...characterRenderer.appearanceFor(id),...(id==='dj'?npcLooks.dj:npc.find(person=>person.id===id)?.appearance),name:id==='dj'?'DJ Coda':npc.find(person=>person.id===id)?.name},
+ getTargets:()=>[{id:'player',label:'Your avatar'},...npc.map(person=>({id:person.id,label:person.name})),{id:'dj',label:'DJ Coda'},{id:'scholar',label:'The Scholar'}],
+ getProfile:id=>id==='player'?avatar:{...characterRenderer.appearanceFor(id),...(id==='dj'?npcLooks.dj:id==='scholar'?npcLooks.scholar:npc.find(person=>person.id===id)?.appearance),name:id==='dj'?'DJ Coda':id==='scholar'?'The Scholar':npc.find(person=>person.id===id)?.name},
  applyProfile:applyBoutiqueLook,openShop:openNotesShop,
  lockedReason:id=>{const level=window.CodaPlayerProgression.COSMETICS.find(item=>item.id===id)?.level;const requirement=window.CodaPlayerProgression.requirement?.(id);if(requirement)return requirement+(window.CodaPlayerProgression.ACHIEVEMENT_REWARDS.find(item=>item.id===id)?.purchaseAlternative?' Or buy with Notes.':'');return notesWallet.isStock(id)?'Buy with Notes'+(level?' or reach level '+level:''): 'Unlock the achievement'+(level?' or reach level '+level:'');},
  unlocked:id=>{const mastery=window.CodaPlayerProgression.ACHIEVEMENT_REWARDS.find(item=>item.id===id);return mastery?progression.unlocked(id)||mastery.purchaseAlternative===true&&notesWallet.owns(id):progression.unlocked(id)||notesWallet.owns(id)||(!notesWallet.isStock(id)&&(!rewards[id]||!!rewards[id](avatar)));}
@@ -2454,16 +2594,27 @@ for(const id of ['avatarBtn','musiciansBtn'])document.getElementById(id).disable
 characterRenderer.ready.then(()=>{
  for(const id of ['avatarBtn','musiciansBtn'])document.getElementById(id).disabled=false;
 }).catch(error=>{status.textContent='Character renderer unavailable. Reload to retry.';console.error('Character sprite loading failed:',error);});
-developerConsole=window.createCodaDeveloperConsole({
+developerConsole=window.createCodaDeveloperConsole({historyProgress:()=>musicHistory,environmentArt,depthForPart:foregroundDepth,
+ onSceneryChange:()=>{layerArtworkRevision++;layerState.dirty=true;layerSourceForeground.clear();assetForegroundCompositeCache=null;assetArtworkSources=new WeakMap();layerFrameSurface=null;greenMaskCache.clear();worldLayerRenderer.invalidate();pausedBackdrop=false;ambientLightStamp=-1;},
  getRooms:getRoomProjects,applyRooms:applyRoomProjects,validateRooms:validateRoomProjects,
+ getEditorCharacters:()=>[scholarState(),...shopkeeperStates()],getSceneOrderEntries,
  canDevelop:()=>classroomCanPlay()&&!classroomStudent(),getArtworkRooms:()=>['piano','fishing'].map(roomEditorById).filter(Boolean),getClassroomArtworkSource:()=>musicClassroom?.getArtworkSource(),getAssetArtworkSource,drawArtworkAssetPreview,
- getArtworkCharacters:()=>window.CodaPixelEditor.TARGETS.map(id=>({id,name:id==='player'?'Your avatar':id==='haydn'?'Professor Haydn':id==='chopin'?'Frédéric Chopin':id==='captain-cadence'?'Captain Cadence':SHOPKEEPERS.find(p=>p.id===id)?.name||npc.find(p=>p.id===id)?.name||id.replaceAll('-',' ')})),
+ getArtworkCharacters:()=>window.CodaPixelEditor.TARGETS.map(id=>({id,name:id==='player'?'Your avatar':id==='scholar'?'The Scholar':id==='haydn'?'Professor Haydn':id==='chopin'?'Frédéric Chopin':id==='captain-cadence'?'Captain Cadence':SHOPKEEPERS.find(p=>p.id===id)?.name||npc.find(p=>p.id===id)?.name||id.replaceAll('-',' ')})),
+ getFloodRigPosition:()=>{const object=worldObjects?.state('dance_dj_console');return object?worldObjects.point(object,393.5,490):{x:393.5,y:490};},
+ getNotesRugPlacement:()=>{
+  const object=worldObjects?.state('main_counter');if(!object)return {x:1350,y:640,width:360,height:112,rotation:0};
+  const point=worldObjects.point(object,1350,640),asset=object.asset,animation=asset?assetAnimTransform(asset):{rot:0};
+  return {...point,width:360*Math.hypot(object.matrix[0],object.matrix[1]),height:112*Math.hypot(object.matrix[2],object.matrix[3]),rotation:(asset?.rotation||0)+animation.rot*180/Math.PI,flipX:asset?.flipX===true,flipY:asset?.flipY===true};
+ },
  getObjectPicture:name=>name===window.CodaFishingEntrance.NAME?fishingDoorPicture:null,
  dialogueDefaults:window.CodaNPCDialogueDefaults,renderer:characterRenderer,
- getPixelProfile:id=>id==='player'?avatar:{...characterRenderer.appearanceFor(id),...(id==='dj'?npcLooks.dj:SHOPKEEPERS.find(p=>p.id===id)?.appearance||npc.find(person=>person.id===id)?.appearance||window.CodaMusicClassroom?.HAYDN?.id===id&&window.CodaMusicClassroom.HAYDN.appearance||{})},
- getPixelTargets:()=>[{id:'player',name:'Your avatar'},...npc.map(person=>({id:person.id,name:person.name})),{id:'dj',name:'DJ Coda'}],
+ getPixelProfile:id=>id==='player'?avatar:{...characterRenderer.appearanceFor(id),...(id==='dj'?npcLooks.dj:id==='scholar'?npcLooks.scholar:SHOPKEEPERS.find(p=>p.id===id)?.appearance||npc.find(person=>person.id===id)?.appearance||window.CodaMusicClassroom?.HAYDN?.id===id&&window.CodaMusicClassroom.HAYDN.appearance||{})},
+ getPixelTargets:()=>[{id:'player',name:'Your avatar'},...npc.map(person=>({id:person.id,name:person.name})),{id:'dj',name:'DJ Coda'},{id:'scholar',name:'The Scholar'}],
  W,H,c,studio:assetStudio,layer:layerState,getForegroundMask:()=>assetForegroundComposite(),getPaintPaths:()=>layerState.patches.map(patch=>patch.path),parts:foregroundParts,catalog:window.CodaWorldObjectCatalog,worldArt,foregroundArt,floorArt,
- publishedProjectUrl:'published-world-project.json?v=layout-74',
+ getReflectionQuality:()=>fxMode,
+ publishedProjectUrl:'published-world-project.json?v=friendly-greetings-20261101-1',
+ paletteCompatUrl:'assets/environment/floor-palette-compat.json?v=west-neon-20261101-1',
+ pathwayFloorFillUrl:'assets/environment/boutique-pathway-shape.json?v=boutique-pathway-20261031-1',
  cell:COLLISION_CELL,gridWidth:GRID_W,gridHeight:GRID_H,navGrid,baseGrid:defaultNavGrid,
  legacyCollision:[...edits].filter(([i,v])=>Number.isInteger(i)&&i>=0&&i<navGrid.length&&(v===0||v===1)),
  getCamera:()=>({...cam,min:ZOOM_MIN,max:zoomLimit(),step:ZOOM_STEP}),setCameraZoom,
@@ -2471,15 +2622,16 @@ developerConsole=window.createCodaDeveloperConsole({
  toWorld:canvasToWorld,bound:numberBound,record:assetRecordHistory,refresh:studioRefresh,
  toggle:toggleAssetStudio,selected:assetSelected,prototype:assetPrototype,add:assetNew,
  assetAt,nearHandle:(a,p)=>{const ctl=assetControlPositions(a);return Math.min(Math.hypot(p.x-ctl.corner.x,p.y-ctl.corner.y),Math.hypot(p.x-ctl.rotator.x,p.y-ctl.rotator.y))<14/cam.zoom},
- assetPointerEnd,layerPointerDown:editorPointerDown,layerPointerMove:editorPointerMove,layerPointerEnd:editorPointerEnd,
+ assetPointerEnd,layerPointerDown:editorPointerDown,layerPointerMove:editorPointerMove,layerPointerEnd:editorPointerEnd,fillLayerSelection,
  showForeground:()=>{foregroundEnabled=true;},
  invalidateRoutes:()=>{navigationRevision++;ambientLightStamp=-1;clearHeldKeys();dest=null;clickPath=[];npcBrain?.invalidateRoutes();},
  invalidateArtwork:()=>{layerArtworkRevision++;layerState.dirty=true;assetForegroundCompositeCache=null;greenMaskCache.clear()},
  db:assetDB,legacyStore:ASSET_STORE,validLegacy:validScene,validAsset:isValidAsset,validStroke:isEditorAction,
  maxAssets:ASSET_MAX,fileData:dataURLFromFile,imageDimensions:readImageDimensions
 });
-window.CodaDeveloperConsole=Object.freeze({open:(tab)=>{if(!classroomCanPlay()||classroomStudent())return false;const room=activeRoomEditor();if(!document.querySelector('#pianoroom').hidden)return pianoLab?.openDeveloperConsole(tab);if(room)room.open(tab);else developerConsole.open(tab);},getProject:developerConsole.getProject,getPublishedProject:developerConsole.getPublishedProject,getProjectSource:developerConsole.getProjectSource,getDialogue:developerConsole.getDialogue,getSprites:developerConsole.getSprites,ready:developerConsole.loadReady,getState:developerConsole.getState,getArtworkEditor:developerConsole.getArtworkEditor,save:developerConsole.save});
+window.CodaDeveloperConsole=Object.freeze({open:(tab)=>{if(!classroomCanPlay()||classroomStudent())return false;const room=activeRoomEditor();if(!document.querySelector('#pianoroom').hidden)return pianoLab?.openDeveloperConsole(tab);if(room)room.open(tab);else developerConsole.open(tab);},getProject:developerConsole.getProject,getCharacters:developerConsole.getCharacters,getScenery:developerConsole.getScenery,isRefreshedScenery:developerConsole.isRefreshedScenery,environmentReady:developerConsole.environmentReady,getPublishedProject:developerConsole.getPublishedProject,getProjectSource:developerConsole.getProjectSource,getMusicHistoryContent:developerConsole.getMusicHistoryContent,getDialogue:developerConsole.getDialogue,getSprites:developerConsole.getSprites,ready:developerConsole.loadReady,getState:developerConsole.getState,getArtworkEditor:developerConsole.getArtworkEditor,save:developerConsole.save});
 function pauseClassroomWorld(){
+ historyRuns.cabinet=null;missionRuns.piano=null;missionRuns.fishing=null;
  playNotebook?.close('profile');
  musicHistory?.close();
  danceScene?.close('profile');
@@ -2511,13 +2663,14 @@ if(classroomRuntime)reflectClassroomState(classroomRuntime.service.getState());
 danceScene=window.CodaDanceFloorWorld.create({window,player,npcs:npc,isWalkable:inside,reducedMotion:()=>reduceMotion,canvas:c,width:W,height:H,
  canPlay:()=>classroomCanPlay()&&!gameOpen&&!learningRoomOpen()&&!developerConsole?.isEditing(),
  getCamera:()=>cam,setCamera:value=>Object.assign(cam,value),getFacing:()=>facing,setFacing:value=>{facing=value;},getDJ:djState,
- getIdentity:currentPlayerIdentity,
+ getIdentity:currentPlayerIdentity,getProgress:()=>progression.refresh().dance,
+ onStart:event=>startMissionActivity('dance',event),
  onFinish:result=>{
   if(!classroomCanPlay())return classroomPausedReward();
   const earned=id=>progression.unlocked(id)||notesWallet.owns(id),gear=window.CodaPlayerProgression.ACHIEVEMENT_REWARDS;
   const beforeGear=new Set(gear.filter(item=>earned(item.id)).map(item=>item.id));
   const beforeSongs=new Set(window.CodaDJLibrary.songs.filter(song=>window.CodaDJLibrary.isUnlocked(song,djUnlockState())).map(song=>song.id));
-  const award=progression.recordDanceResult(result.runId,result);if(!award.ok)return award;
+  const award=progression.recordDanceResult(result.runId,result);if(!award.ok)return award;const run=missionRuns.dance;if(run&&run.runId===result.runId){const activity={...result,passed:award.passed,scorePercent:award.scorePercent,tourPassed:award.dance?.tiers.find(t=>t.difficulty===result.difficulty)?.passed.length||0};missions?.recordActivity('dance',activity,run.token);musicHistory?.recordActivity('dance',activity,run.historyToken);missionRuns.dance=null;}
   const unlocks=[...gear.filter(item=>!beforeGear.has(item.id)&&earned(item.id)).map(item=>item.label),...window.CodaDJLibrary.songs.filter(song=>!beforeSongs.has(song.id)&&window.CodaDJLibrary.isUnlocked(song,djUnlockState())).map(song=>song.title+' DJ track')];
   playerProfile?.refresh();return {...award,unlocks};
  },
@@ -2531,7 +2684,7 @@ playNotebook=window.CodaPlayNotebook.create({document,canOpen:classroomCanPlay,g
  onOpen:()=>{danceScene?.close('paused');clearHeldKeys();dest=null;clickPath=[];followedMusician=null;near=null;mobileControls?.releaseAll();pianoLab?.releaseControls();musicClassroom?.releaseControls();fishingRoom?.releaseControls();developerConsole?.finishGesture?.();document.body.classList.remove('world-menu-open');document.querySelector('#worldMenuBtn')?.setAttribute('aria-expanded','false');mobileControls?.refresh();pausedBackdrop=false;},
  onClose:()=>{clearHeldKeys();pausedBackdrop=false;mobileControls?.refresh();}
 });
-musicHistory=window.CodaMusicHistory.create({document,canUse:classroomCanPlay,getIdentity:currentPlayerIdentity,
+musicHistory=window.CodaMusicHistory.create({document,getContent:()=>developerConsole?.getMusicHistoryContent(),canUse:classroomCanPlay,getIdentity:currentPlayerIdentity,canVisitScholar,wallet:notesWallet,openGame:guideToHistoryQuestGame,isDeveloperTest:()=>testMode?.isEnabled()===true&&testMode?.getState().isolated===true,
  canTalk:id=>{if(!classroomCanPlay())return false;
   if(id==='chopin'){const state=pianoLab?.getState();return !!state?.open&&state.chopin.visible&&Math.hypot(state.player.x-state.chopin.x,state.player.y-state.chopin.y)<110;}
   if(id==='haydn')return musicClassroom?.canTalkHistory()===true;

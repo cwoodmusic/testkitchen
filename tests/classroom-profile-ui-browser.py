@@ -147,11 +147,16 @@ class ClassroomProfileUITests(unittest.TestCase):
   for ox,oy in [(4,4),(n-3,4),(4,n-3)]:
    for y in range(7):
     for x in range(7):self.assertEqual((ox+x,oy+y) in points,x in (0,6) or y in (0,6) or 2<=x<=4 and 2<=y<=4)
+  link='https://school.example/coda-arcade/world-preview.html#classroom-pass='+code
+  self.assertEqual(self.page.locator('#classpassOpenLink').get_attribute('href'),link)
+  self.assertEqual(self.page.locator('#classpassLink').input_value(),link)
+  self.assertTrue(self.page.locator('#classpassLink').is_editable()==False)
+  self.assertIn('Google Classroom',self.page.locator('.classpass-card').inner_text())
   self.page.locator('#classpassCopy').click();self.assertEqual(self.page.evaluate('__copied')[-1],'https://school.example/coda-arcade/world-preview.html#classroom-pass='+code)
   self.page.emulate_media(media='print');self.page.locator('#classpassPrint').click();self.page.emulate_media(media='screen')
   printed=self.page.evaluate('__printed');self.assertEqual(len(printed),1);self.assertEqual(printed[0]['panelDisplay'],'none');self.assertTrue(printed[0]['hasQR']);self.assertIn(code,printed[0]['card'])
   self.assertEqual(self.page.locator('.classroom-print-sheet').count(),0)
-  self.page.locator('#classpassHide').click();self.assertNotIn(code,self.page.locator('body').inner_text());self.assertFalse(self.page.evaluate('__ui.getState().cardVisible'))
+  self.page.locator('#classpassHide').click();self.assertNotIn(code,self.page.locator('body').inner_text());self.assertFalse(self.page.evaluate('__ui.getState().cardVisible'));self.assertEqual(self.page.locator('#classpassOpenLink,#classpassLink').count(),0)
   self.assertEqual(self.page.locator('.classpass-profile-row').count(),2,'Created profile remains in the roster')
   self.assertNotIn(code,self.page.evaluate('JSON.stringify(localStorage)'));self.assertNotIn(code,self.page.evaluate('JSON.stringify(__ui.getState())'))
 
@@ -182,18 +187,18 @@ class ClassroomProfileUITests(unittest.TestCase):
   self.admin();self.page.evaluate('__holdCreate=true');self.page.locator('#classpassCreateProfile').click()
   self.assertTrue(self.page.locator('#classpassCreateProfile').is_disabled());self.assertEqual(len(self.calls('createProfile')),1)
   self.page.evaluate('__ui.close();__releaseCreate()');self.page.wait_for_timeout(20)
-  self.assertFalse(self.page.evaluate('__ui.getState().cardVisible'));self.assertEqual(self.page.locator('.classpass-pass').count(),0)
+  self.assertFalse(self.page.evaluate('__ui.getState().cardVisible'));self.assertEqual(self.page.locator('#classpassOpenLink,#classpassLink').count(),0);self.assertEqual(self.page.locator('.classpass-pass').count(),0)
   self.assertNotIn('PRIVATE-PASS-',self.page.locator('body').inner_text())
 
  def test_revoked_admin_permission_clears_cards_and_discards_late_private_receipts(self):
   self.card();code=self.page.locator('.classpass-pass').inner_text()
   self.page.evaluate('__emit({admin:{signedIn:true,authorized:false,uid:"teacherSetupUID_123456"}})')
-  self.assertEqual(self.page.locator('.classpass-pass').count(),0);self.assertFalse(self.page.evaluate('__ui.getState().cardVisible'))
+  self.assertEqual(self.page.locator('.classpass-pass').count(),0);self.assertFalse(self.page.evaluate('__ui.getState().cardVisible'));self.assertEqual(self.page.locator('#classpassOpenLink,#classpassLink').count(),0)
   self.assertNotIn(code,self.page.locator('body').inner_text())
   self.page.evaluate('__emit({admin:{signedIn:true,authorized:true,uid:"teacherSetupUID_123456"}})');self.idle()
   self.page.evaluate('__holdCreate=true');self.page.locator('#classpassCreateProfile').click()
   self.page.evaluate('__emit({admin:{signedIn:true,authorized:false}});__releaseCreate()');self.idle()
-  self.assertFalse(self.page.evaluate('__ui.getState().cardVisible'));self.assertEqual(self.page.locator('.classpass-pass').count(),0)
+  self.assertFalse(self.page.evaluate('__ui.getState().cardVisible'));self.assertEqual(self.page.locator('#classpassOpenLink,#classpassLink').count(),0);self.assertEqual(self.page.locator('.classpass-pass').count(),0)
 
  def test_admin_permissions_and_friendly_errors_never_show_backend_details(self):
   self.page.evaluate('__approveAdmin=false');self.page.locator('#classpassTab-admin').click();self.page.locator('#classpassAdminSignIn').click();self.idle()

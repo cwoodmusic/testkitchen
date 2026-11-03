@@ -180,9 +180,9 @@
 #pianoroom.piano-lab #pianoSettingsPanel [data-room-dev-open]{min-height:44px;margin:0 0 12px;font-size:14px}
 #pianoroom.piano-lab .piano-dialogue-backdrop{z-index:25;align-items:flex-end}
 #pianoroom.piano-lab .piano-dialogue-panel{width:min(660px,100%);max-height:calc(100dvh - 48px - env(safe-area-inset-top,0px) - env(safe-area-inset-bottom,0px));overflow:auto;padding:18px;border:2px solid #b0dbd4;border-radius:13px;background:linear-gradient(145deg,#223d46,#1c233a);box-shadow:0 18px 65px #000a;overscroll-behavior:contain}
-#pianoroom.piano-lab #pianoDialogueText{margin:0 0 16px;color:#effff9;font-size:17px;line-height:1.6;white-space:pre-line}
+#pianoroom.piano-lab #pianoDialogueText{margin:0 0 16px;color:#effff9;font-size:20px;line-height:1.6;white-space:pre-line}
 #pianoroom.piano-lab .piano-dialogue-actions{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:9px}
-#pianoroom.piano-lab .piano-dialogue-actions button{padding:10px 13px;text-align:left;line-height:1.4;font-size:15px;background:#2e4057;border-color:#8195ad;overflow-wrap:anywhere}
+#pianoroom.piano-lab .piano-dialogue-actions button{padding:10px 13px;text-align:left;line-height:1.4;font-size:18px;background:#2e4057;border-color:#8195ad;overflow-wrap:anywhere}
 #pianoroom.piano-lab .piano-dialogue-actions button:hover{background:#3b5964;border-color:#c3ffee}
 #pianoroom.piano-lab .piano-dialogue-actions button:only-child{grid-column:1/-1}
 #pianoroom.piano-lab.room-developer-open{overflow:auto}
@@ -209,8 +209,8 @@
  #pianoroom.piano-lab .piano-menu-heading h2,#pianoroom.piano-lab .piano-dialogue-heading h2{font-size:20px}
  #pianoroom.piano-lab .piano-menu-panel .piano-stage,#pianoroom.piano-lab .piano-menu-panel .piano-activities section{padding:12px}
  #pianoroom.piano-lab .piano-dialogue-panel{padding:14px;max-height:calc(100dvh - 24px - env(safe-area-inset-top,0px) - env(safe-area-inset-bottom,0px))}
- #pianoroom.piano-lab #pianoDialogueText{font-size:16px;line-height:1.55}
- #pianoroom.piano-lab .piano-dialogue-actions button{font-size:14px;padding:10px}
+ #pianoroom.piano-lab #pianoDialogueText{font-size:20px;line-height:1.55}
+ #pianoroom.piano-lab .piano-dialogue-actions button{font-size:18px;padding:10px}
 }
 @media(pointer:coarse) and (orientation:landscape) and (max-height:550px){
  #pianoroom.piano-lab{padding-top:max(4px,env(safe-area-inset-top));padding-left:max(8px,env(safe-area-inset-left));padding-right:max(8px,env(safe-area-inset-right))}
@@ -281,3 +281,243 @@
 #pianoroom.piano-lab .piano-room-heading-actions [data-room-dev-open]{background:#324a42;border-color:#9ce7b9;color:#e1ffed}
 #pianoroom.piano-lab .piano-room-heading-actions [data-room-dev-open][aria-expanded=true]{background:#365f50;border-color:#c9ffe6}
 @media(max-width:480px){#pianoroom.piano-lab .piano-room-heading>div:first-child{position:absolute;width:1px;height:1px;overflow:hidden;clip-path:inset(50%)}#pianoroom.piano-lab .piano-room-heading-actions{width:100%;margin-left:0;justify-content:space-between;gap:4px}}
+
+/* Keep the score readable while walking on a zoomed or small-screen piano. */
+.piano-room-canvas-viewport{position:relative}
+.piano-walk-room canvas.piano-wall-staff-mirror{position:absolute;top:6px;left:50%;transform:translateX(-50%);width:min(94%,428px);height:auto;min-height:96px;max-height:none;aspect-ratio:428/120;object-fit:fill;pointer-events:none;border:1px solid #86ecd9;border-radius:5px;z-index:2}
+.piano-wall-staff-mirror[hidden]{display:none!important}
+
+#pianoroom.piano-lab .piano-main-games{display:flex;gap:8px;margin:0 0 8px;flex-wrap:nowrap}
+#pianoroom.piano-lab .piano-main-games button{flex:1;min-width:0;min-height:44px;background:#20524e;border-color:#83decb;color:#e0fff5;font-size:14px}
+#pianoroom.piano-lab .piano-game-choice,#pianoroom.piano-lab .piano-extra-practice{margin:10px 0;padding:12px;border:1px solid #668c94;border-radius:8px;background:#142c38}
+#pianoroom.piano-lab .piano-game-choice summary,#pianoroom.piano-lab .piano-extra-practice summary{cursor:pointer;font-weight:bold;font-size:17px;min-height:32px}
+#pianoroom.piano-lab .piano-extra-practice{background:transparent;border-color:#575b71}
+#pianoroom.piano-lab .piano-extra-practice summary{font-size:13px}
+@media(orientation:landscape) and (max-height:600px){#pianoroom.piano-lab .piano-main-games{margin-bottom:4px}#pianoroom.piano-lab .piano-main-games button{min-height:36px}}
+
+#pianoroom.piano-lab .piano-room-shell{grid-template-rows:52px 52px minmax(0,1fr)}
+#pianoroom.piano-lab .piano-room-canvas-viewport{width:min(100%,calc((100dvh - 132px) * 1000 / 620))}
+@media(max-width:760px),(pointer:coarse){#pianoroom.piano-lab.piano-follow-camera:not(.room-developer-open) .piano-room-canvas-viewport{height:max(140px,calc(100dvh - 132px - var(--coda-touch-room-controls-height,var(--coda-touch-controls-height,220px)) - env(safe-area-inset-bottom,0px)))}}
+@media(orientation:landscape) and (max-height:600px){#pianoroom.piano-lab .piano-room-shell{grid-template-rows:48px 40px minmax(0,1fr)}#pianoroom.piano-lab.piano-follow-camera:not(.room-developer-open) .piano-room-canvas-viewport{height:calc(100dvh - 112px);min-height:100px}}
+
+/* Piano challenges share one readable menu frame. The room and its controls
+   keep their existing layout behind it. */
+#pianoroom.piano-lab #pianoMenuBackdrop{
+ --piano-menu-ink:#f8f7ff;--piano-menu-muted:#c9cadd;--piano-menu-mint:#95f5d9;
+ --piano-menu-line:#4c4e6a;--piano-menu-surface:#1d1f37;
+ color:var(--piano-menu-ink);background:#070b20c9;backdrop-filter:blur(3px);
+}
+#pianoroom.piano-lab #pianoMenuBackdrop .piano-menu-panel{
+ width:min(1024px,100%);padding:0;border:1px solid #777b98;border-top:3px solid var(--piano-menu-mint);
+ border-radius:18px;background:var(--piano-menu-surface);box-shadow:0 26px 90px #0009;
+}
+#pianoroom.piano-lab #pianoMenuBackdrop .piano-menu-heading{
+ padding:20px 28px 14px!important;margin:0;gap:16px;min-height:72px;
+ background:linear-gradient(115deg,#292c47,#20233c)!important;
+}
+#pianoroom.piano-lab #pianoMenuBackdrop .piano-menu-heading h2{
+ color:var(--piano-menu-ink);font-size:25px;line-height:1.2;letter-spacing:0;
+}
+#pianoroom.piano-lab #pianoMenuBackdrop #pianoMenuClose{
+ min-height:48px;max-width:48%;padding:10px 16px;border-color:#666b87;border-radius:9px;
+ background:#30334e;font-size:17px;line-height:1.2;
+}
+#pianoroom.piano-lab #pianoMenuBackdrop .piano-tool-menu{
+ grid-template-columns:repeat(4,minmax(0,1fr));gap:8px;padding:0 28px 16px;margin:0;
+ background:linear-gradient(115deg,#292c47,#20233c);border-bottom:1px solid #41455f;
+}
+#pianoroom.piano-lab #pianoMenuBackdrop .piano-tool-menu button{
+ min-height:48px;padding:10px 12px;border:1px solid #5a607e;border-radius:8px;
+ background:#262b45;font-size:17px;font-weight:650;line-height:1.2;
+}
+#pianoroom.piano-lab #pianoMenuBackdrop .piano-tool-menu button[aria-pressed="true"]{
+ border-color:#8adfc9;background:#294941;color:#d4fff1;
+}
+#pianoroom.piano-lab #pianoMenuBackdrop .piano-workspace{
+ padding:0;min-height:0;overflow:auto;scrollbar-gutter:stable;scrollbar-color:#777d9c #1d1f37;
+}
+#pianoroom.piano-lab #pianoMenuBackdrop #pianoChallengePanel{
+ padding:0;background:none;border:0;border-radius:0;min-width:0;
+}
+#pianoroom.piano-lab #pianoMenuBackdrop .piano-challenge-heading{padding:24px 28px 0}
+#pianoroom.piano-lab #pianoMenuBackdrop #pianoChallengeTitle{
+ margin:0;color:var(--piano-menu-ink);font-size:30px;line-height:1.2;letter-spacing:-.4px;
+}
+#pianoroom.piano-lab #pianoMenuBackdrop #pianoChallengeIntro{
+ margin:10px 0 0;color:var(--piano-menu-muted);font-size:18px;line-height:1.45;
+}
+#pianoroom.piano-lab #pianoMenuBackdrop .piano-challenge-grid{
+ display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:16px;padding:24px 28px 28px;
+}
+#pianoroom.piano-lab #pianoMenuBackdrop .piano-challenge-card{
+ position:relative;display:flex;align-items:center;gap:20px;min-width:0;min-height:142px;
+ padding:22px;text-align:left;border:1px solid #5e627f;border-radius:13px;
+ background:#2a2d49;color:var(--piano-menu-ink);
+}
+#pianoroom.piano-lab #pianoMenuBackdrop .piano-challenge-card:hover{
+ background:#353a58;border-color:#c0c1dd;
+}
+#pianoroom.piano-lab #pianoMenuBackdrop .piano-challenge-card[data-piano-challenge="melodies"]{
+ background:#24403f;border-color:#70baa5;
+}
+#pianoroom.piano-lab #pianoMenuBackdrop .piano-challenge-card[data-piano-challenge="melodies"]:hover{
+ background:#2c5049;border-color:#acf4db;
+}
+#pianoroom.piano-lab #pianoMenuBackdrop .piano-challenge-icon{
+ display:grid;place-items:center;flex:0 0 64px;width:64px;height:64px;
+ border-radius:12px;background:#1b1e35;color:#cbb7ff;
+}
+#pianoroom.piano-lab #pianoMenuBackdrop .piano-challenge-icon svg{display:block;width:44px;height:44px}
+#pianoroom.piano-lab #pianoMenuBackdrop [data-piano-challenge="melodies"] .piano-challenge-icon{background:#17372f;color:#9af2d9}
+#pianoroom.piano-lab #pianoMenuBackdrop [data-piano-challenge="scales"] .piano-challenge-icon{color:#ffcf87}
+#pianoroom.piano-lab #pianoMenuBackdrop [data-piano-challenge="intervals"] .piano-challenge-icon{color:#efa9ce}
+#pianoroom.piano-lab #pianoMenuBackdrop .piano-challenge-copy{display:block;min-width:0;padding-right:8px}
+#pianoroom.piano-lab #pianoMenuBackdrop .piano-challenge-copy strong{
+ display:block;margin:0 0 9px;font-size:23px;line-height:1.2;
+}
+#pianoroom.piano-lab #pianoMenuBackdrop .piano-challenge-copy>span{
+ display:block;color:#d1d3e3;font-size:18px;font-weight:400;line-height:1.4;
+}
+#pianoroom.piano-lab #pianoMenuBackdrop .piano-challenge-arrow{position:absolute;right:16px;top:18px;font-size:25px;color:#c4c6df}
+#pianoroom.piano-lab #pianoMenuBackdrop .piano-challenge-screen{padding:22px 28px 26px;min-width:0}
+#pianoroom.piano-lab #pianoMenuBackdrop .piano-challenge-screen[hidden],
+#pianoroom.piano-lab #pianoMenuBackdrop .piano-challenge-grid[hidden]{display:none!important}
+#pianoroom.piano-lab #pianoMenuBackdrop .piano-challenge-screen label{
+ display:block;margin:0 0 10px;color:#eef0fa;font-size:18px;font-weight:650;line-height:1.35;
+}
+#pianoroom.piano-lab #pianoMenuBackdrop select{
+ min-width:0;max-width:100%;min-height:52px;padding:12px;border:1px solid #6b718f;
+ border-radius:9px;background:#30354f;font-size:18px;line-height:1.3;
+}
+#pianoroom.piano-lab #pianoMenuBackdrop .piano-challenge-screen>p,
+#pianoroom.piano-lab #pianoMenuBackdrop .piano-song-detail>p{
+ color:var(--piano-menu-muted);font-size:18px;line-height:1.45;
+}
+#pianoroom.piano-lab #pianoMenuBackdrop .piano-menu-primary{
+ min-height:54px;padding:13px 22px;border:1px solid var(--piano-menu-mint);border-radius:9px;
+ background:var(--piano-menu-mint);box-shadow:0 3px 0 #4c9e86;color:#163b31;font-size:19px;
+ font-weight:750;line-height:1.3;
+}
+#pianoroom.piano-lab #pianoMenuBackdrop .piano-menu-primary:hover{background:#b1ffe7;border-color:#b1ffe7;color:#15372f}
+#pianoroom.piano-lab #pianoMenuBackdrop .piano-menu-primary:disabled{background:#7b928e;border-color:#8ba49e;color:#172d28;box-shadow:none;opacity:1}
+#pianoroom.piano-lab #pianoMenuBackdrop .piano-song-layout{display:grid;grid-template-columns:minmax(0,1fr) minmax(0,1.12fr);gap:24px;align-items:start}
+#pianoroom.piano-lab #pianoMenuBackdrop .piano-song-picker{min-width:0}
+#pianoroom.piano-lab #pianoMenuBackdrop .piano-song-picker label{margin:0 0 8px;font-size:16px}
+#pianoroom.piano-lab #pianoMenuBackdrop #pianoLesson{width:100%;margin:0 0 12px}
+#pianoroom.piano-lab #pianoMenuBackdrop .piano-song-list{display:flex;flex-direction:column;gap:9px;max-height:300px;min-height:0;overflow:auto;padding:3px 5px 6px 3px;scrollbar-color:#767b9e #1d1f37;scroll-padding:5px}
+#pianoroom.piano-lab #pianoMenuBackdrop .piano-song-list button{
+ display:flex;align-items:center;justify-content:space-between;gap:12px;width:100%;min-height:70px;
+ margin:0;padding:13px 15px;text-align:left;border:1px solid #555c7a;border-radius:9px;
+ background:#2c304b;font-size:18px;font-weight:650;line-height:1.3;
+}
+#pianoroom.piano-lab #pianoMenuBackdrop .piano-song-list button:hover{background:#363d58;border-color:#afb5d2}
+#pianoroom.piano-lab #pianoMenuBackdrop .piano-song-list button[aria-pressed="true"]{
+ border:2px solid var(--piano-menu-mint);padding:12px 14px;background:#284744;
+}
+#pianoroom.piano-lab #pianoMenuBackdrop .piano-song-list button small,
+#pianoroom.piano-lab #pianoMenuBackdrop .piano-song-list .piano-song-status{
+ display:block;margin-top:5px;color:#cbd1e4;font-size:14px;font-weight:400;
+}
+#pianoroom.piano-lab #pianoMenuBackdrop .piano-song-list .piano-song-selected{flex:none;color:var(--piano-menu-mint);font-size:22px}
+#pianoroom.piano-lab #pianoMenuBackdrop .piano-song-detail{
+ min-width:0;padding:24px;border:1px solid #575f7d;border-radius:13px;background:#262b44;
+}
+#pianoroom.piano-lab #pianoMenuBackdrop #pianoSongTitle{margin:0;color:var(--piano-menu-ink);font-size:26px;line-height:1.25;overflow-wrap:anywhere}
+#pianoroom.piano-lab #pianoMenuBackdrop #pianoSongStatus{margin:10px 0;color:#b4f4dd;font-size:16px;line-height:1.35}
+#pianoroom.piano-lab #pianoMenuBackdrop #pianoLessonDescription{margin:12px 0 16px;color:var(--piano-menu-muted);font-size:18px;line-height:1.45}
+#pianoroom.piano-lab #pianoMenuBackdrop .piano-challenge-actions{display:flex;flex-direction:column;align-items:stretch;gap:10px}
+#pianoroom.piano-lab #pianoMenuBackdrop .piano-challenge-actions button{min-height:48px;padding:10px 14px;font-size:18px;line-height:1.3;border-radius:9px}
+#pianoroom.piano-lab #pianoMenuBackdrop #pianoListenMelody{align-self:flex-start;padding-left:0;background:none;border-color:transparent;color:var(--piano-menu-mint);text-align:left}
+#pianoroom.piano-lab #pianoMenuBackdrop #pianoMemoryStart{background:transparent;border-color:#676b88;color:#e2d5ff}
+#pianoroom.piano-lab #pianoMenuBackdrop #pianoMemoryStart:disabled{color:#b9bed3;border-color:#545b74;opacity:1}
+#pianoroom.piano-lab #pianoMenuBackdrop #pianoMemoryHint{margin:10px 0 0;color:#c2c7da;font-size:15px;line-height:1.4}
+#pianoroom.piano-lab #pianoMenuBackdrop #pianoLessonRestart{margin:10px 0 0;min-height:48px;padding:10px 14px;font-size:17px}
+#pianoroom.piano-lab #pianoMenuBackdrop #pianoLessonProgress{max-height:82px;margin:14px 0 0;gap:6px}
+#pianoroom.piano-lab #pianoMenuBackdrop #pianoLessonProgress:empty{display:none}
+#pianoroom.piano-lab #pianoMenuBackdrop #pianoLessonProgress span{font-size:14px;padding:5px 7px}
+#pianoroom.piano-lab #pianoMenuBackdrop .piano-challenge-footer{
+ position:sticky;bottom:0;z-index:2;display:flex;align-items:center;justify-content:space-between;
+ flex-wrap:wrap;gap:12px;margin:0;padding:16px 28px;border-top:1px solid #414761;
+ background:#191d32;
+}
+#pianoroom.piano-lab #pianoMenuBackdrop .piano-challenge-footer button{min-height:48px;margin:0;padding:10px 14px;font-size:17px;line-height:1.25;border-radius:8px}
+#pianoroom.piano-lab #pianoMenuBackdrop #pianoChallengeBack{padding-left:0;border-color:transparent;background:transparent;color:#edf0ff;font-weight:650}
+#pianoroom.piano-lab #pianoMenuBackdrop #pianoChallengeHelp{margin-left:auto;border-color:transparent;background:transparent;color:#d3d7e9;text-decoration:underline;text-underline-offset:4px}
+#pianoroom.piano-lab #pianoMenuBackdrop #pianoFreePlay{border-color:#5c6783;background:#253c45;color:#d3f9ed}
+#pianoroom.piano-lab #pianoMenuBackdrop #pianoGameInstructions{margin:18px 0 0;color:var(--piano-menu-muted);font-size:17px;line-height:1.45}
+#pianoroom.piano-lab #pianoMenuBackdrop .piano-message{margin:0;padding:10px 28px;background:#183b3d;border:0;border-top:1px solid #426767;border-radius:0;color:#d1f4e7;font-size:15px!important;line-height:1.4}
+#pianoroom.piano-lab #pianoMenuBackdrop #pianoKeyboardPanel,
+#pianoroom.piano-lab #pianoMenuBackdrop #pianoRecordingPanel,
+#pianoroom.piano-lab #pianoMenuBackdrop #pianoSettingsPanel{margin:20px 24px 24px;padding:20px;border-radius:12px;min-width:0}
+#pianoroom.piano-lab #pianoMenuBackdrop #pianoRecordingPanel h2,
+#pianoroom.piano-lab #pianoMenuBackdrop #pianoSettingsPanel h2{font-size:25px;color:var(--piano-menu-ink)}
+#pianoroom.piano-lab #pianoMenuBackdrop #pianoRecordingPanel p,
+#pianoroom.piano-lab #pianoMenuBackdrop #pianoSettingsPanel label,
+#pianoroom.piano-lab #pianoMenuBackdrop #pianoSettingsPanel p{font-size:18px;line-height:1.45}
+#pianoroom.piano-lab #pianoMenuBackdrop #pianoRecordingPanel button,
+#pianoroom.piano-lab #pianoMenuBackdrop #pianoSettingsPanel button{min-height:48px;font-size:17px;padding:10px 14px}
+#pianoroom.piano-lab #pianoMenuBackdrop :focus-visible{outline:3px solid #fff19b;outline-offset:4px}
+
+@media(max-height:800px) and (min-width:761px){
+ #pianoroom.piano-lab #pianoMenuBackdrop .piano-menu-heading{padding:14px 26px 10px!important;min-height:62px}
+ #pianoroom.piano-lab #pianoMenuBackdrop .piano-tool-menu{padding:0 26px 12px}
+ #pianoroom.piano-lab #pianoMenuBackdrop .piano-challenge-heading{padding:18px 26px 0}
+ #pianoroom.piano-lab #pianoMenuBackdrop #pianoChallengeTitle{font-size:28px}
+ #pianoroom.piano-lab #pianoMenuBackdrop #pianoChallengeIntro{margin-top:7px}
+ #pianoroom.piano-lab #pianoMenuBackdrop .piano-challenge-grid{padding:18px 26px 22px;gap:14px}
+ #pianoroom.piano-lab #pianoMenuBackdrop .piano-challenge-card{min-height:120px;padding:18px;gap:16px}
+ #pianoroom.piano-lab #pianoMenuBackdrop .piano-challenge-icon{width:54px;height:54px;flex-basis:54px}
+ #pianoroom.piano-lab #pianoMenuBackdrop .piano-challenge-icon svg{width:38px;height:38px}
+ #pianoroom.piano-lab #pianoMenuBackdrop .piano-challenge-copy strong{font-size:22px;margin-bottom:7px}
+ #pianoroom.piano-lab #pianoMenuBackdrop .piano-challenge-screen{padding:18px 26px 20px}
+ #pianoroom.piano-lab #pianoMenuBackdrop .piano-song-list{max-height:256px}
+ #pianoroom.piano-lab #pianoMenuBackdrop .piano-song-detail{padding:18px}
+ #pianoroom.piano-lab #pianoMenuBackdrop #pianoSongTitle{font-size:24px}
+ #pianoroom.piano-lab #pianoMenuBackdrop #pianoSongStatus{margin:7px 0}
+ #pianoroom.piano-lab #pianoMenuBackdrop #pianoLessonDescription{margin:9px 0 12px;font-size:17px}
+ #pianoroom.piano-lab #pianoMenuBackdrop .piano-challenge-actions{gap:8px}
+ #pianoroom.piano-lab #pianoMenuBackdrop #pianoLessonProgress{max-height:58px;margin-top:10px}
+ #pianoroom.piano-lab #pianoMenuBackdrop .piano-challenge-footer{padding:12px 26px}
+}
+@media(max-width:760px){
+ #pianoroom.piano-lab #pianoMenuBackdrop{align-items:center;padding:max(8px,env(safe-area-inset-top)) max(8px,env(safe-area-inset-right)) max(8px,env(safe-area-inset-bottom)) max(8px,env(safe-area-inset-left))}
+ #pianoroom.piano-lab #pianoMenuBackdrop .piano-menu-panel{border-radius:13px}
+ #pianoroom.piano-lab #pianoMenuBackdrop .piano-menu-heading{padding:16px 18px 12px!important;gap:12px}
+ #pianoroom.piano-lab #pianoMenuBackdrop .piano-menu-heading h2{font-size:22px}
+ #pianoroom.piano-lab #pianoMenuBackdrop #pianoMenuClose{font-size:15px;padding:10px;min-height:48px}
+ #pianoroom.piano-lab #pianoMenuBackdrop .piano-tool-menu{grid-template-columns:repeat(2,minmax(0,1fr));gap:7px;padding:0 18px 14px}
+ #pianoroom.piano-lab #pianoMenuBackdrop .piano-tool-menu button{min-height:48px;padding:10px 8px;font-size:17px;line-height:1.2;overflow-wrap:normal}
+ #pianoroom.piano-lab #pianoMenuBackdrop .piano-challenge-heading{padding:20px 18px 0}
+ #pianoroom.piano-lab #pianoMenuBackdrop #pianoChallengeTitle{font-size:27px}
+ #pianoroom.piano-lab #pianoMenuBackdrop #pianoChallengeIntro{font-size:18px;margin-top:9px}
+ #pianoroom.piano-lab #pianoMenuBackdrop .piano-challenge-grid{gap:12px;padding:18px 16px 20px}
+ #pianoroom.piano-lab #pianoMenuBackdrop .piano-challenge-card{flex-direction:column;align-items:flex-start;gap:14px;min-height:196px;padding:17px 15px}
+ #pianoroom.piano-lab #pianoMenuBackdrop .piano-challenge-icon{width:48px;height:48px;flex-basis:48px}
+ #pianoroom.piano-lab #pianoMenuBackdrop .piano-challenge-icon svg{width:34px;height:34px}
+ #pianoroom.piano-lab #pianoMenuBackdrop .piano-challenge-copy{padding-right:0}
+ #pianoroom.piano-lab #pianoMenuBackdrop .piano-challenge-copy strong{font-size:21px;margin-bottom:8px}
+ #pianoroom.piano-lab #pianoMenuBackdrop .piano-challenge-copy>span{font-size:18px;line-height:1.4}
+ #pianoroom.piano-lab #pianoMenuBackdrop .piano-challenge-arrow{right:13px;top:15px}
+ #pianoroom.piano-lab #pianoMenuBackdrop .piano-challenge-screen{padding:20px 18px}
+ #pianoroom.piano-lab #pianoMenuBackdrop .piano-song-layout{grid-template-columns:minmax(0,1fr);gap:18px}
+ #pianoroom.piano-lab #pianoMenuBackdrop .piano-song-list{max-height:210px}
+ #pianoroom.piano-lab #pianoMenuBackdrop .piano-song-list button{min-height:68px;font-size:18px}
+ #pianoroom.piano-lab #pianoMenuBackdrop .piano-song-detail{padding:20px}
+ #pianoroom.piano-lab #pianoMenuBackdrop #pianoSongTitle{font-size:25px}
+ #pianoroom.piano-lab #pianoMenuBackdrop .piano-challenge-footer{padding:12px 16px;gap:8px}
+ #pianoroom.piano-lab #pianoMenuBackdrop .piano-challenge-footer button{font-size:16px;padding:10px 8px}
+ #pianoroom.piano-lab #pianoMenuBackdrop #pianoChallengeBack{padding-left:0}
+ #pianoroom.piano-lab #pianoMenuBackdrop .piano-message{padding:10px 18px;font-size:15px!important}
+ #pianoroom.piano-lab #pianoMenuBackdrop #pianoKeyboardPanel,
+ #pianoroom.piano-lab #pianoMenuBackdrop #pianoRecordingPanel,
+ #pianoroom.piano-lab #pianoMenuBackdrop #pianoSettingsPanel{margin:18px 14px;padding:16px}
+ #pianoroom.piano-lab #pianoMenuBackdrop #pianoSettingsPanel .piano-controls label{min-width:min(180px,100%);flex-basis:100%}
+}
+@media(orientation:landscape) and (max-height:550px){
+ #pianoroom.piano-lab #pianoMenuBackdrop .piano-menu-heading{padding:10px 18px 8px!important;min-height:58px}
+ #pianoroom.piano-lab #pianoMenuBackdrop .piano-tool-menu{grid-template-columns:repeat(4,minmax(0,1fr));padding:0 18px 10px}
+ #pianoroom.piano-lab #pianoMenuBackdrop .piano-challenge-heading{padding:14px 18px 0}
+ #pianoroom.piano-lab #pianoMenuBackdrop .piano-challenge-card{min-height:110px}
+ #pianoroom.piano-lab #pianoMenuBackdrop .piano-challenge-grid{padding:16px 18px 18px}
+ #pianoroom.piano-lab #pianoMenuBackdrop .piano-challenge-footer{padding:10px 18px}
+}

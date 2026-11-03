@@ -1,0 +1,18 @@
+{
+  "description": "Use one continuous masonry grid across the boutique wall face while preserving the original brand plate, authored shirt emblem, lamp, caps and surrounding floor. All project data remains authoritative.",
+  "worldSize": [1672,941],
+  "source": "assets/environment/source/boutique-wall-uniform.png",
+  "sourceSize": [1829,860],
+  "sourcePlacement": [359,272,323,154],
+  "output": "assets/environment/v1/empty-arcade.png",
+  "preserveProject": true,
+  "polygons": [
+    [[375,288],[668,288],[668,416],[375,416]]
+  ],
+  "protectedPolygons": [
+    [[481,337],[595,337],[595,366],[481,366]],
+    [[521,305],[541,305],[541,325],[521,325]],
+    [[389,336],[406,336],[406,379],[389,379]],
+    [[395,288],[399,288],[399,341],[395,341]]
+  ]
+}

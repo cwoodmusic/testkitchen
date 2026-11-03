@@ -4,6 +4,7 @@ The classroom, curriculum, grading, local profile scope and developer editor
 remain production code. Requests outside the checkout are blocked; no live
 student accounts or records are used.
 """
+from classroom_menu_helpers import choose_classroom_lesson
 import importlib.util
 from pathlib import Path
 import sys
@@ -52,9 +53,13 @@ class ClassroomLearningPathsWorldTests(_world.WorldBrowserCase):
 
     def open_category(self, lesson):
         self.talk_to_haydn()
-        self.page.locator('[data-start-lesson="' + lesson + '"]').click()
+        choose_classroom_lesson(self.page, lesson)
         self.page.wait_for_function('CodaArcadeQA.classroom().learningPath!==null')
         self.assertEqual(self.path_state()['id'], lesson)
+        # Continue opens the saved section. These category tests inspect the
+        # existing lesson list and its gates after returning from that section.
+        if self.path_state()['phase'] != 'menu':
+            self.page.locator('[data-path-menu]').click()
 
     def finish_section(self, lesson, section_id, wrong=False):
         category = self.category(lesson)

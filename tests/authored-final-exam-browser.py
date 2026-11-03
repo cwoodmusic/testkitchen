@@ -22,7 +22,7 @@ class Handler(SimpleHTTPRequestHandler):
 <script src="/music-notation.js"></script><script src="/education-notation.js"></script>
 <script src="/classroom-quiz.js"></script><script src="/time-signature-lesson.js"></script>
 <script src="/classroom-tutorials.js"></script><script src="/final-exam-bank.js"></script>
-<script src="/education-content.js"></script><script src="/final-exam.js"></script><script src="/player-progression.js"></script>
+<script src="/education-content.js"></script><script src="/final-exam.js"></script><script src="/dance-campaign.js"></script><script src="/dance-rhythm-engine.js"></script><script src="/player-progression.js"></script>
 <script>
 window.content=CodaEducationContent.setStore(CodaEducationContent.createStore({storage:localStorage,canEdit:()=>true}));
 if(!content.getState().hasDraft){

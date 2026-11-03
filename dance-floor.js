@@ -1,4 +1,4 @@
-/* Footstep lights for the measured quadrilateral tiles in the painted club.
+/* Color-changing panels and footstep lights for the measured club tiles.
  * Vertices follow the original grout, whose columns fan out toward the viewer.
  * No world collision cells or rectangular sprite grid are used here. */
 (function (root, factory) {
@@ -7,18 +7,21 @@
   if (root) root.createCodaDanceFloor = exported.createCodaDanceFloor;
 })(typeof window !== 'undefined' ? window : globalThis, function () {
   'use strict';
+  // Measured from the refreshed environment backdrop at native resolution.
+  // The legacy floor seams were 8–15 pixels left of this painted grid.
   const VERTEX_ROWS = [
-    [[171,667],[204,667],[237,666],[271,666],[305,666],[339,666],[374,666],[408,666],[442,666],[477,666],[511,666],[545,666],[579,667],[612,667]],
-    [[163,693],[197,693],[232,693],[267,693],[302,693],[337,693],[373,693],[409,693],[445,693],[481,693],[517,693],[553,693],[589,693],[624,693]],
-    [[154,723],[190,723],[226,723],[262,723],[299,723],[335,723],[372,723],[409,723],[447,723],[484,723],[522,723],[560,723],[598,723],[637,723]],
-    [[145,753],[183,753],[220,753],[258,753],[296,753],[334,753],[372,753],[410,753],[449,753],[488,753],[527,753],[567,753],[607,753],[649,753]],
-    [[136,784],[175,784],[214,784],[254,784],[293,784],[332,784],[371,784],[411,784],[451,784],[492,784],[533,784],[574,784],[616,784],[660,784]],
-    [[127,814],[168,814],[208,814],[249,814],[289,814],[331,814],[371,814],[412,814],[454,814],[496,814],[538,814],[580,814],[623,814],[672,814]],
-    [[119,843],[161,843],[203,843],[245,843],[287,843],[329,843],[370,843],[413,843],[457,843],[500,843],[543,843],[586,843],[630,843],[683,843]]
+    [[181,668],[214,668],[245,668],[280,668],[313,668],[347,668],[383,668],[416,668],[450,668],[483,668],[516,668],[551,668],[582,668],[615,668]],
+    [[173,695],[208,695],[241,695],[276,695],[311,695],[346,695],[383,695],[418,695],[452,695],[487,695],[520,695],[557,695],[590,695],[626,695]],
+    [[165,724],[202,724],[236,724],[272,724],[309,724],[345,724],[383,724],[419,724],[454,724],[490,724],[526,724],[564,724],[598,724],[637,724]],
+    [[156,754],[195,754],[231,754],[268,754],[307,754],[345,754],[383,754],[420,754],[457,754],[494,754],[531,754],[571,754],[607,754],[648,754]],
+    [[147,784],[189,784],[227,784],[264,784],[305,784],[344,784],[382,784],[421,784],[459,784],[498,784],[536,784],[577,784],[616,784],[660,784]],
+    [[138,814],[183,814],[222,814],[260,814],[302,814],[343,814],[382,814],[423,814],[461,814],[502,814],[542,814],[584,814],[625,814],[671,814]],
+    [[129,845],[176,845],[217,845],[256,845],[300,845],[342,845],[382,845],[424,845],[464,845],[505,845],[547,845],[591,845],[634,845],[683,845]]
   ];
   VERTEX_ROWS.forEach(row => { row.forEach(Object.freeze); Object.freeze(row); }); Object.freeze(VERTEX_ROWS);
-  const COLORS = ['#70eaff','#ffe997','#ff83ed','#fff6b2','#a2ffff','#8aaaff','#ffb5e9'];
-  const DECAY = .72, INSET = 1.5;
+  const COLORS = ['#20d9d2','#ffbd45','#ff6b79','#6aee9b','#a68cff','#ff974f','#ed73db'];
+  const DECAY = .72, INSET = 2.25, COLOR_SECONDS = 1;
+  const RGB = COLORS.map(color=>[1,3,5].map(index=>parseInt(color.slice(index,index+2),16)));
   const finite = (value, fallback = 0) => Number.isFinite(value) ? value : fallback;
   const cross = (a, b) => a[0] * b[1] - a[1] * b[0];
   function pointInPolygon(x, y, polygon) {
@@ -56,9 +59,33 @@
     }
   }
   Object.freeze(TILES);
-  function tileAt(x, y) { return TILES.find(tile => pointInPolygon(x, y, tile.polygon)) || null; }
+  // The foreground rail clips the last row's two corners; those pixels are
+  // architecture, not extra dance panels. Keep color and contact off the rail.
+  const FLOOR_OUTLINE = Object.freeze([[181,668],[615,668],[679,834],[561,834],
+    [548,845],[171,845],[138,817]].map(Object.freeze));
+  function insideFloor(x,y) {
+    if (!Number.isFinite(x)||!Number.isFinite(y)) return false;
+    let inside=false;
+    for(let i=0,j=FLOOR_OUTLINE.length-1;i<FLOOR_OUTLINE.length;j=i++){
+      const [xi,yi]=FLOOR_OUTLINE[i],[xj,yj]=FLOOR_OUTLINE[j];
+      if((yi>y)!==(yj>y)&&x<(xj-xi)*(y-yi)/(yj-yi)+xi)inside=!inside;
+    }
+    return inside;
+  }
+  function tileAt(x, y) { return insideFloor(x,y)?TILES.find(tile => pointInPolygon(x, y, tile.polygon)) || null:null; }
+  function panelColor(tile, time) {
+    // Adjacent panels trade palette positions in a slow diagonal wave. Only
+    // their color changes; measured vertices and grout never move or flash.
+    const progress = Math.max(0,time) / COLOR_SECONDS + tile.row * .13 + tile.column * .07;
+    const step = Math.floor(progress), fraction = progress - step;
+    const mix = fraction * fraction * (3 - 2 * fraction);
+    const index = (tile.column + tile.row * 3 + step) % COLORS.length;
+    const first=RGB[index], next=RGB[(index+1)%COLORS.length];
+    return 'rgb('+first.map((value,i)=>Math.round(value+(next[i]-value)*mix)).join(',')+')';
+  }
   function createCodaDanceFloor(api = {}) {
     const lit = new Map(); let current = null, lastTime = 0;
+    function animated() { return api.getQuality?.() !== 'off' && !api.reducedMotion?.() && api.getAnimation?.() !== false; }
     function update() {
       const time = Math.max(0, finite(api.getTime?.(), lastTime));
       if (time < lastTime) lit.clear(); lastTime = time;
@@ -83,15 +110,25 @@
       return remaining * remaining;
     }
     function draw(ctx) {
-      const time = update(); if (!ctx || !lit.size) return;
+      const time = update(); if (!ctx) return;
       const quality = api.getQuality?.() || 'full', quiet = !!api.reducedMotion?.();
-      ctx.save(); ctx.shadowBlur = 0; ctx.globalCompositeOperation = 'screen';
+      const colorTime = animated() ? time : 0;
+      ctx.save();trace(ctx,FLOOR_OUTLINE);ctx.clip();
+      ctx.shadowBlur=0; ctx.globalCompositeOperation='source-over';
+      ctx.globalAlpha=quality==='lite'?.64:.72;
+      for (const tile of TILES) {
+        ctx.fillStyle=panelColor(tile,colorTime);
+        trace(ctx,tile.inset);ctx.fill();
+      }
+      ctx.restore();
+      ctx.save();trace(ctx,FLOOR_OUTLINE);ctx.clip();
+      ctx.shadowBlur = 0; ctx.globalCompositeOperation = 'screen';
       for (const light of lit.values()) {
         const tile = light.tile, brightness = intensity(light, time);
-        ctx.fillStyle = tile.color; ctx.globalAlpha = .28 * brightness;
+        ctx.fillStyle = '#fff5de'; ctx.globalAlpha = .52 * brightness;
         trace(ctx, tile.inset); ctx.fill();
         // The rim follows each measured skewed edge, safely inside its grout.
-        ctx.strokeStyle = '#eaffff'; ctx.lineWidth = 1; ctx.globalAlpha = .46 * brightness;
+        ctx.strokeStyle = '#fff7de'; ctx.lineWidth = 1; ctx.globalAlpha = .74 * brightness;
         trace(ctx, insetPolygon(tile.polygon, INSET + .5)); ctx.stroke();
         // A small crisp glint, with no blur textures or full-canvas offscreen pass.
         if (quality !== 'off') {
@@ -105,11 +142,12 @@
     }
     function snapshot() {
       const time = update();
-      return {columns: 13, rows: 6, tileCount: TILES.length, current, decaySeconds: DECAY,
-        tiles: TILES.map(tile => ({id:tile.id,row:tile.row,column:tile.column,polygon:tile.polygon.map(p=>p.slice()),inset:tile.inset.map(p=>p.slice()),center:tile.center.slice()})),
+      const moving=animated();
+      return {columns: 13, rows: 6, tileCount: TILES.length, current, decaySeconds: DECAY, animated:moving, colorCycleSeconds:COLOR_SECONDS,
+        tiles: TILES.map(tile => ({id:tile.id,row:tile.row,column:tile.column,color:panelColor(tile,moving?time:0),polygon:tile.polygon.map(p=>p.slice()),inset:tile.inset.map(p=>p.slice()),center:tile.center.slice()})),
         active: Array.from(lit.values(), light=>({id:light.tile.id,row:light.tile.row,column:light.tile.column,intensity:intensity(light,time),entered:light.entered}))};
     }
     return {draw, snapshot, tileAt: (x,y) => {const tile=tileAt(x,y);return tile?{id:tile.id,row:tile.row,column:tile.column,polygon:tile.polygon.map(p=>p.slice())}:null;}};
   }
-  return {createCodaDanceFloor, tileAt, pointInPolygon, insetPolygon, VERTEX_ROWS, TILES};
+  return {createCodaDanceFloor, tileAt, pointInPolygon, insetPolygon, VERTEX_ROWS, TILES, FLOOR_OUTLINE};
 });

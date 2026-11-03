@@ -41,9 +41,9 @@ function hit(tracker,current,index){current.taps.push({target:index,hit:true,err
 function extra(tracker,current){current.taps.push({target:0,hit:false,error:.5});current.extras++;tracker.tap(current,{hit:false,error:.5});}
 
 test('the original nine musicians have stable missions plus twenty level-gated challenges',()=>{
-  assert.equal(DEFINITIONS.length,29);assert.equal(new Set(DEFINITIONS.map(item=>item.person)).size,9);
-  assert.equal(new Set(DEFINITIONS.map(item=>item.id)).size,29);
-  assert.equal(DEFINITIONS.filter(item=>item.minLevel===1).length,9);
+  assert.equal(DEFINITIONS.length,35);assert.equal(new Set(DEFINITIONS.map(item=>item.person)).size,9);
+  assert.equal(new Set(DEFINITIONS.map(item=>item.id)).size,35);
+  assert.equal(DEFINITIONS.filter(item=>item.minLevel===1).length,11);
   assert.deepEqual([...new Set(DEFINITIONS.filter(item=>item.minLevel>1).map(item=>item.minLevel))],[3,5,10,15,20]);
   assert.ok(DEFINITIONS.some(item=>item.kind==='triad-win'));
   assert.ok(DEFINITIONS.some(item=>item.kind==='rhythm-streak'&&item.target===50));
@@ -331,7 +331,7 @@ test('quest tiers lock acceptance and unlock new missions while preserving old r
   assert.equal(f.manager.get('bach-piano-major').status,'available');
   level=20;assert.equal(f.manager.get('miles-fish-legendary').status,'available');
   const levels=new Map();for(const mission of DEFINITIONS.filter(m=>m.minLevel>1))levels.set(mission.minLevel,(levels.get(mission.minLevel)||0)+1);
-  assert.deepEqual([...levels],[[3,4],[5,4],[10,4],[15,4],[20,4]]);
+  assert.deepEqual([...levels],[[3,6],[5,6],[10,4],[15,4],[20,4]]);
 });
 
 test('fishing quests count fresh accepted catches once, and reward only at their own musician',()=>{
@@ -435,4 +435,11 @@ test('fresh local activity tokens reject old sessions, malformed evidence and re
   const fresh=f.manager.beginActivity('fishing');assert.equal(f.manager.recordActivity('fishing',caught('first'),fresh),false);
   assert.equal(f.manager.get('ella-fish-five').progress,1);
   assert.equal(f.manager.beginActivity('unrecognized'),null);
+});
+
+test('Note Rush and Line Dance missions use fresh native completions and reject watching',()=>{
+ const f=fixture({api:{getLevel:()=>20}});f.manager.accept('nina-note-rush-ten');
+ let token=f.manager.beginActivity('piano');assert.equal(f.manager.recordActivity('piano',{runId:'rush',kind:'reading',complete:true,correct:10,mistakes:1,clef:'treble'},token),true);assert.equal(f.manager.get('nina-note-rush-ten').status,'complete');
+ f.manager.accept('joplin-dance-pass');token=f.manager.beginActivity('dance');const event={version:2,runId:'tour-stage',complete:true,bars:16,difficulty:'normal',passed:true,scorePercent:90};assert.equal(f.manager.recordActivity('dance',{...event,watching:true},token),false);assert.equal(f.manager.recordActivity('dance',event,token),true);assert.equal(f.manager.get('joplin-dance-pass').status,'complete');assert.equal(f.manager.recordActivity('dance',event,token),false);
+ f.manager.accept('miles-dance-tour');token=f.manager.beginActivity('dance');assert.equal(f.manager.recordActivity('dance',{...event,runId:'tour-final',tourPassed:10},token),true);assert.equal(f.manager.get('miles-dance-tour').status,'complete');
 });

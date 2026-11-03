@@ -1,0 +1,12 @@
+{
+  "description": "Make only the green Notes-counter tabletop matte; preserve gold trim, luminous front, alpha silhouette, icon assets and user data.",
+  "size": [560, 238],
+  "before": "assets/environment/source/main-counter-before-matte.png",
+  "source": "assets/environment/source/main-counter-matte-source.png",
+  "output": "assets/environment/v1/main-counter.png",
+  "polygons": [[[20,45],[60,12],[111,12],[111,25],[114,25],[120,29],[520,29],[530,32],[540,45],[540,54],[530,62],[520,65],[40,65],[30,61],[20,53]]],
+  "libraryBefore": "assets/decor/source/counter-jade-before-matte.png",
+  "libraryOutput": "assets/decor/v1/counter-jade-south.png",
+  "furnitureManifestBefore": "assets/environment/source/south-facing-furniture-before-matte.json",
+  "furnitureManifest": "assets/environment/south-facing-furniture.json"
+}

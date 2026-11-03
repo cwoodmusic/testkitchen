@@ -1,7 +1,8 @@
 /* Original house music and the Song Machine JSON format, playable as a guest. */
 (function(root){
  'use strict';
- const meters=['4/4','2/4','3/4','5/4','6/8','9/8','12/8'];
+ const campaign=typeof module==='object'&&module.exports?require('./dance-campaign.js'):root.CodaDanceCampaign;
+ const meters=['4/4','2/2','2/4','3/4','5/4','6/8','9/8','12/8','7/8'];
  function valid(song){
   if(!song||!Number.isFinite(song.bpm)||song.bpm<40||song.bpm>240||!Number.isInteger(song.bars)||song.bars<1||song.bars>16||!meters.includes(song.meter))return false;
   if(!Array.isArray(song.tracks)||song.tracks.length>12||!Array.isArray(song.drums)||song.drums.length!==3)return false;
@@ -29,6 +30,7 @@
  const min=root=>({root,third:3}),maj=root=>({root,third:4});
  function house(id,title,bpm,tonic,hook,sound,progressions,style){
   const b=builder(bpm,'4/4',[['Lead',sound,sound===0?.27:.34],['Bass',7,.35],['Harmony',style==='lounge'?2:4,.12],['Counter melody',style==='lounge'?3:8,.10]]);
+  if(style!=='lounge'){b.drums[0].volume=.35;b.drums[1].volume=.20;b.drums[2].volume=.085;}
   const opening=progressions[0][0],openingPalette=[0,opening.third,7,12,14,opening.third+12],firstPitch=tonic+opening.root+12+openingPalette[hook[0]];
   for(let bar=0;bar<16;bar++){
    const part=Math.floor(bar/4),within=bar%4,chord=progressions[part][within],root=tonic+chord.root,palette=[0,chord.third,7,12,14,chord.third+12];
@@ -95,6 +97,7 @@
   house('velvet-lounge','Velvet Lounge',86,57,[1,2,4,2,3,2,1,0],6,[[min(0),min(5),maj(-4),maj(7)],[maj(3),maj(-2),min(5),maj(7)],[min(0),maj(-4),min(5),maj(7)],[min(0),min(5),maj(-4),maj(7)]],'lounge'),
   house('mirrorball-bounce','Mirrorball Bounce',124,62,[0,3,2,4,1,2,3,2],1,[[min(0),maj(3),maj(-2),maj(7)],[min(5),maj(-4),min(0),maj(7)],[min(0),maj(3),min(5),maj(7)],[min(0),maj(3),min(5),maj(7)]],'bounce'),
   shanty(),waltz(),
+  ...campaign.STAGES.map(stage=>({id:'dance-'+stage.id,title:stage.title,style:stage.style.id,description:stage.style.label+' · Original 16-bar '+stage.meter+' Line Dance song.',sections:sections(['Theme','Answer','Breakdown','Return']),composition:stage.composition,unlock:{kind:'dance',stageId:stage.id}})),
   {...house('first-steps','First Steps',88,60,[0,1,2,3,2,1,0,4],8,[[maj(0),maj(5),min(9),maj(7)],[min(2),maj(5),maj(0),maj(7)],[min(9),min(2),maj(5),maj(7)],[maj(0),maj(5),min(9),maj(7)]],'neon'),description:'A bright plucked melody, an easygoing dance groove, and a joyful return to celebrate your first complete dance.',unlock:Object.freeze({kind:'achievement',id:'dance-first-finish',label:'First Steps'})},
   {...house('midnight-headliner','Midnight Headliner',100,57,[0,3,5,2,4,3,1,2],3,[[min(0),maj(3),maj(5),maj(7)],[maj(8),maj(3),min(0),maj(7)],[min(5),maj(8),maj(3),maj(7)],[min(0),maj(5),maj(3),maj(7)]],'bounce'),description:'Celebratory bell hooks and a bouncing bass answer build through a quiet middle into a sparkling headliner finale.',unlock:Object.freeze({kind:'achievement',id:'dance-hard-groove',label:'DJ Coda’s Headliner'})}
  ].map(record=>Object.freeze(record)));
@@ -102,12 +105,13 @@
  function isUnlocked(value,progress={}){
   const record=recordFor(value);if(!record||typeof record!=='object')return false;progress=progress&&typeof progress==='object'?progress:{};
   const rule=record.unlock;if(!rule)return true;
+  if(rule.kind==='dance')return Array.isArray(progress.danceSongs)&&progress.danceSongs.includes(rule.stageId);
   if(rule.kind==='fish')return Number.isSafeInteger(progress.fishCaught)&&progress.fishCaught>=rule.count;
   if(rule.kind==='level')return Number.isSafeInteger(progress.level)&&progress.level>=rule.level;
   if(rule.kind==='achievement')return (Array.isArray(progress.achievements)?progress.achievements:progress.achievements instanceof Set?[...progress.achievements]:[]).includes(rule.id);
   return false;
  }
- function requirement(value){const rule=recordFor(value)?.unlock;if(!rule)return '';if(rule.kind==='fish')return 'Catch '+rule.count+' fish to unlock this sea shanty.';if(rule.kind==='level')return 'Reach musician level '+rule.level+' to unlock this waltz.';if(rule.kind==='achievement')return 'Earn '+(rule.label||rule.id)+' to unlock this track.';return 'Keep exploring to unlock this track.';}
+ function requirement(value){const rule=recordFor(value)?.unlock;if(!rule)return '';if(rule.kind==='dance')return 'Earn a perfect score on '+campaign.stageFor(rule.stageId).title+' in DJ Line Dance.';if(rule.kind==='fish')return 'Catch '+rule.count+' fish to unlock this sea shanty.';if(rule.kind==='level')return 'Reach musician level '+rule.level+' to unlock this waltz.';if(rule.kind==='achievement')return 'Earn '+(rule.label||rule.id)+' to unlock this track.';return 'Keep exploring to unlock this track.';}
  const library=Object.freeze({songs,valid,isUnlocked,requirement});
  if(typeof module==='object'&&module.exports)module.exports=library;
  else root.CodaDJLibrary=library;

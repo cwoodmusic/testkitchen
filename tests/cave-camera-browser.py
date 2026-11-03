@@ -18,6 +18,8 @@ class CaveCameraTests(_fish._world.WorldBrowserCase):
     walk_to=_fish.FishingWorldTests.walk_to
     board=_fish.FishingWorldTests.board
     approach_shadow=_fish.FishingWorldTests.approach_shadow
+    fishing_action=_fish.FishingWorldTests.fishing_action
+    fishing_option=_fish.FishingWorldTests.fishing_option
 
     def load(self):
         # The camera remains optional in older isolated room fixtures.
@@ -62,7 +64,10 @@ class CaveCameraTests(_fish._world.WorldBrowserCase):
         position=self.state()['player'];self.page.clock.run_for(500);self.assertEqual(self.state()['player'],position)
 
     def test_zoomed_boat_steering_and_casting_use_world_coordinates_and_pinch_cannot_cast_phone(self):
-        self.enter();self.board();self.approach_shadow();before=self.state()['boat'];client,_=self.begin_pinch()
+        self.enter();self.board()
+        self.page.locator('#fishingLakeCanvas').focus();self.page.keyboard.down('s')
+        self.page.clock.run_for(160);self.page.keyboard.up('s');self.page.clock.run_for(32)
+        self.approach_shadow();before=self.state()['boat'];client,_=self.begin_pinch()
         self.page.locator('#fishingCast').evaluate('(button)=>button.click()');self.page.clock.run_for(400)
         self.assertEqual(self.state()['phase'],'explore');self.assertEqual(self.state()['boat'],before)
         client.send('Input.dispatchTouchEvent',{'type':'touchEnd','touchPoints':[]});client.detach();self.page.clock.run_for(64)

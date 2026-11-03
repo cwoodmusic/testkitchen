@@ -44,6 +44,7 @@ class ArtworkStampTests(unittest.TestCase):
   self.assertTrue(self.state()['stampReady']);self.assertEqual(self.page.evaluate('artworkChanges.length'),0)
   self.assertEqual(self.page.evaluate('Array.from(CodaPixelSelection.clipboard.get().pixels)'),[1,2,3,4])
   self.control('stamp-width').fill('4');self.control('stamp-height').fill('4')
+  self.page.get_by_role('button',name='Clear selection',exact=True).click()
   self.assertEqual(self.state()['stampSize'],{'width':4,'height':4})
   self.click(40,30);self.click(48,30)
   expected=[source[(y//2)*2+x//2] for y in range(4) for x in range(4)]
@@ -57,6 +58,7 @@ class ArtworkStampTests(unittest.TestCase):
   self.control('picker').click();self.click(30,20)
   self.assertEqual(self.state()['tool'],'stamp');self.assertEqual(self.page.evaluate('artworkChanges.length'),2)
   self.click(54,30);self.assertEqual(self.page.evaluate('artworkChanges.length'),3)
+  self.select_rectangle((30,20),(31,21));self.control('stamp').click()
   self.click(30,20,True);self.assertEqual(self.state()['stampSize'],{'width':4,'height':4},'Explicit output size survives recapture')
   self.page.locator('[data-artwork-canvas]').focus();self.page.keyboard.press('Escape')
   self.assertFalse(self.state()['stampReady'])
@@ -64,6 +66,7 @@ class ArtworkStampTests(unittest.TestCase):
   self.load_fixture();self.control('stamp').click();self.click(10,10,True)
   self.assertFalse(self.state()['stampReady']);self.assertEqual(self.page.evaluate('artworkChanges.length'),0)
   self.select_rectangle((30,20),(31,21));self.control('stamp').click();self.click(30,20,True)
+  self.page.get_by_role('button',name='Clear selection',exact=True).click()
   self.page.mouse.move(**self.point(40,30));self.frames()
   self.assertEqual(self.page.evaluate('artworkData'),{})
   with self.page.expect_download() as pending:self.control('export').click()

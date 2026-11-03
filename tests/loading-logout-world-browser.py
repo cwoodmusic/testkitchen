@@ -3,6 +3,7 @@
 Uses production UI/Boot/service and disposable loopback Firebase Auth/Database
 emulators. Only SDK configuration and a deliberate network pause are fixtures.
 """
+from settings_menu_helpers import settings_page
 import importlib.util
 from pathlib import Path
 import unittest
@@ -20,7 +21,7 @@ class LoadingLogoutWorldTests(_world.ClassroomWorldBrowserTests):
         if page.locator('#panel').is_visible():page.locator('#panelClose').click()
 
     def settings(self,page):
-        self.close_panel(page);open_settings(page)
+        self.close_panel(page);settings_page(page, 'player')
         expect(page.locator('#accountBtn')).to_be_visible()
         expect(page.locator('#worldLogOut')).to_be_visible()
 

@@ -1,4 +1,5 @@
 from exam_study_helpers import finish_note_reminders, finish_exam_study
+from classroom_menu_helpers import choose_classroom_lesson
 """Child-friendly classroom steps and uncluttered, fullscreen music rooms.
 
 Run with Python Playwright and Chromium. The production origin is routed to
@@ -68,7 +69,7 @@ class KidsLearningTests(_world.WorldBrowserCase):
         all_lessons=self.page.locator('#classroomAllLessons')
         if all_lessons.is_visible():all_lessons.click()
         if not self.page.locator('#classroomStart').is_visible():self.talk_to_haydn()
-        self.page.locator('[data-start-lesson="'+lesson+'"]').click()
+        choose_classroom_lesson(self.page, lesson)
         self.assertEqual(self.state()['active']['id'],lesson)
         self.assertFalse(self.page.locator('.classroom-library nav').is_visible(), 'Reference books stay out of a guided lesson')
 
@@ -204,7 +205,7 @@ class KidsLearningTests(_world.WorldBrowserCase):
             self.assertFalse(self.room(name)['fullscreen']['active'])
             self.page.locator('#'+close).click()
         enter_room(self.page,'classroom');self.talk_to_haydn()
-        self.page.locator('[data-start-lesson="note-naming"]').click()
+        choose_classroom_lesson(self.page, 'note-naming')
         self.page.locator('#classroomFullscreen').click()
         self.page.wait_for_function('CodaArcadeQA.classroom().fullscreen.active')
         self.page.keyboard.press('Escape')

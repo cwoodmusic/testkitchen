@@ -11,7 +11,7 @@ _world=importlib.util.module_from_spec(_spec);_spec.loader.exec_module(_world)
 
 class DJUnlockTests(_world.WorldBrowserCase):
  def dj(self):
-  open_destination(self.page,'dj');self.page.wait_for_selector('[data-house-track="lanternwake-shanty"]')
+  open_destination(self.page,'dj');self.page.locator('[data-dj-action="music"]').click();self.page.wait_for_selector('[data-house-track="lanternwake-shanty"]')
  def state(self):return self.page.evaluate('CodaArcadeQA.jukebox()')
  def button(self,id):return self.page.locator('[data-jukebox-track="'+id+'"]')
  def row(self,id):return self.page.locator('[data-house-track="'+id+'"]')
@@ -27,7 +27,7 @@ class DJUnlockTests(_world.WorldBrowserCase):
   self.load()
  def test_new_player_sees_three_free_tracks_and_four_clear_locked_requirements(self):
   before=self.totals();self.dj()
-  self.assertEqual(self.page.locator('[data-house-track]').count(),7)
+  self.assertEqual(self.page.locator('[data-house-track]').count(),17)
   for id in ['neon-afterhours','velvet-lounge','mirrorball-bounce']:
    self.assertFalse(self.button(id).is_disabled());self.assertNotIn('jukebox-track-locked',self.row(id).get_attribute('class'))
   for id,requirement in [('lanternwake-shanty','Catch 5 fish'),('starlight-waltz','level 4'),('first-steps','Earn First Steps'),('midnight-headliner','Earn DJ Coda’s Headliner')]:

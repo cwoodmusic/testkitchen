@@ -1,0 +1,96 @@
+/* Classroom menus share the arcade's navy and mint activity palette. */
+.music-classroom .classroom-menu-screen{width:min(900px,100%);margin:0 auto;padding:24px;border:1px solid #7c91bb;border-radius:22px;background:linear-gradient(145deg,#202d4d,#131b34);box-shadow:0 18px 48px #060a1638}
+.classroom-kids-menu{color:#f8f8ff;font-family:system-ui,-apple-system,BlinkMacSystemFont,"Segoe UI",sans-serif;line-height:1.4}
+.classroom-kids-menu *{box-sizing:border-box}
+.classroom-kids-menu .classroom-menu-header{display:block;position:static;width:100%;max-width:none;margin:0 0 20px;padding:0;background:none;box-shadow:none;min-height:0;text-align:left}
+.classroom-kids-menu .classroom-menu-header>button{display:inline-flex;margin:0 0 14px;border:0;background:transparent;color:#e3eaff;padding:8px 0;min-height:44px;font-size:17px}
+.classroom-kids-menu .classroom-menu-eyebrow{margin:0 0 8px;color:#ffda81;font-size:15px;font-weight:800;letter-spacing:.1em;text-transform:uppercase}
+.classroom-kids-menu h2{margin:0;color:#faf9ff;font-size:clamp(29px,3.2vw,42px);font-weight:800;line-height:1.15}
+.classroom-kids-menu .classroom-menu-subtitle{margin:9px 0 0;font-size:20px;color:#dde6fa}
+.classroom-kids-menu button{min-height:48px;border:1px solid #7b8bb5;border-radius:12px;background:#293858;color:#faf9ff;font:inherit;font-weight:700;cursor:pointer;touch-action:manipulation;white-space:normal}
+.classroom-kids-menu button:hover{border-color:#c2d4ff;background:#344767}
+.classroom-kids-menu button:focus-visible{outline:3px solid #ffdc84;outline-offset:4px}
+.classroom-kids-menu h2:focus{outline:none}
+.classroom-kids-menu .classroom-menu-grid{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:16px}
+.classroom-kids-menu .classroom-menu-choice{display:flex;flex-direction:column;align-items:flex-start;justify-content:flex-start;gap:8px;min-width:0;min-height:178px;padding:18px;text-align:left;border:2px solid #7383b4;border-radius:18px;background:linear-gradient(145deg,#2d3a60,#222e4c)}
+.classroom-kids-menu .classroom-menu-choice strong{font-size:25px;line-height:1.15;color:#fff}
+.classroom-kids-menu .classroom-menu-description{display:block;font-size:17px;font-weight:400;color:#e0e7f7;line-height:1.4;overflow-wrap:anywhere}
+.classroom-kids-menu .classroom-menu-featured{border:3px solid #9ef3c6;background:linear-gradient(145deg,#214c51,#17383f);padding:17px}
+.classroom-kids-menu .classroom-menu-featured:hover{background:#245b56;border-color:#c4ffdc}
+.classroom-kids-menu .classroom-menu-icon{display:inline-flex;align-items:center;justify-content:center;width:64px;height:64px;flex:0 0 64px;border-radius:14px;background:#d8e8ff}
+.classroom-kids-menu .classroom-menu-icon svg{display:block;width:58px;height:58px}
+.classroom-kids-menu .classroom-menu-choice .classroom-menu-icon{width:55px;height:55px;flex-basis:55px;background:transparent}
+.classroom-kids-menu .classroom-menu-choice .classroom-menu-icon svg{width:55px;height:55px}
+.classroom-kids-menu .classroom-menu-badge{display:inline-flex;align-items:center;align-self:flex-start;gap:5px;max-width:100%;border-radius:20px;padding:4px 12px;font-size:14px;line-height:1.3;font-weight:800;color:#172443;background:#d3defb}
+.classroom-kids-menu .classroom-menu-badge-progress{background:#a4f1c5;color:#113a31}
+.classroom-kids-menu .classroom-menu-badge-finished{background:#b3f0c8;color:#153a2a}
+.classroom-kids-menu .classroom-menu-footer{display:flex;position:static;align-items:center;justify-content:flex-start;gap:15px;width:100%;max-width:none;min-height:0;margin:22px 0 0;padding:0;background:none;box-shadow:none;font-size:inherit}
+.classroom-kids-menu .classroom-menu-footer>button{padding:10px 18px;font-size:17px}
+.classroom-kids-menu .classroom-menu-lessons{display:grid;gap:14px}
+.classroom-kids-menu .classroom-menu-lesson{display:flex;align-items:center;gap:18px;width:100%;min-width:0;min-height:123px;padding:17px;text-align:left;border:2px solid #7383b4;border-radius:17px;background:linear-gradient(120deg,#2c3b60,#202c4a)}
+.classroom-kids-menu .classroom-menu-lesson[data-status=progress]{border-color:#9ef3c6;background:linear-gradient(120deg,#214c51,#17383f)}
+.classroom-kids-menu .classroom-menu-lesson-body{display:flex;flex:1 1 auto;flex-direction:column;align-items:flex-start;gap:5px;min-width:0}
+.classroom-kids-menu .classroom-menu-lesson-body>strong{font-size:24px;color:#fafaff;line-height:1.2}
+.classroom-kids-menu .classroom-menu-action{display:inline-flex;justify-content:center;align-items:center;flex:0 0 auto;min-width:104px;min-height:48px;padding:10px 16px;border-radius:12px;background:#d7f4e6;color:#142d32;font-size:18px;font-weight:800}
+.classroom-kids-menu .classroom-menu-lesson[data-status=progress] .classroom-menu-action{background:#9ef3c6}
+.classroom-kids-menu .classroom-menu-lesson-footer{display:flex;flex-direction:column;align-items:stretch;gap:18px}
+.classroom-kids-menu .classroom-menu-lesson-footer>button{align-self:center;background:transparent;border-color:transparent;font-size:20px}
+.classroom-kids-menu .classroom-menu-flow{display:flex;justify-content:center;align-items:center;gap:18px;margin:0;padding:18px 0 0;border-top:1px solid #7786ac;font-size:19px;font-weight:750;text-align:center}
+.classroom-kids-menu .classroom-menu-flow-arrow{color:#ffda81}
+.classroom-kids-menu .classroom-menu-exam{padding:18px;border:1px solid #849ab5;border-radius:14px;background:#253653}
+.classroom-kids-menu .classroom-menu-exam>strong{font-size:22px}
+.classroom-kids-menu .classroom-menu-exam p{margin:7px 0 12px;color:#dde6fa;font-size:17px}
+.classroom-kids-menu .classroom-menu-exam button{padding:10px 16px;background:#d7f4e6;color:#142d32}
+.classroom-kids-menu .classroom-menu-progress-list{display:grid;gap:12px}
+.classroom-kids-menu .classroom-menu-progress-row{display:flex;align-items:center;gap:16px;padding:16px;background:#263653;border:1px solid #7187a7;border-radius:15px}
+.classroom-kids-menu .classroom-menu-progress-body{flex:1;min-width:0}
+.classroom-kids-menu .classroom-menu-progress-body h3{margin:0 0 6px;color:#fbf9ff;font-size:21px;line-height:1.2}
+.classroom-kids-menu .classroom-menu-progress-body p{margin:8px 0 0;color:#dfe8f8;font-size:16px}
+.classroom-kids-menu .classroom-menu-progress-row>button{padding:10px 14px;background:#d7f4e6;color:#142d32}
+.classroom-kids-menu .classroom-menu-progress-help{font-size:16px;color:#dfe8f8;margin:18px 0 0}
+.music-classroom .classroom-menu-screen>details{margin-top:18px;padding-top:14px;border-top:1px solid #7786ac;color:#dfe8f8}
+.music-classroom .classroom-menu-screen>details summary{cursor:pointer;min-height:44px;padding:10px 0;font-size:16px;font-weight:700}
+.music-classroom .classroom-menu-screen>details button{min-height:44px;margin:6px 8px 6px 0}
+@media(min-width:761px) and (max-height:820px) and (pointer:fine){
+ .music-classroom .classroom-menu-screen{padding:20px}
+ .classroom-kids-menu .classroom-menu-header{margin-bottom:16px}
+ .classroom-kids-menu h2{font-size:36px}
+ .classroom-kids-menu .classroom-menu-subtitle{font-size:18px}
+ .classroom-kids-menu .classroom-menu-choice{min-height:170px;padding:16px;gap:6px}
+ .classroom-kids-menu .classroom-menu-featured{padding:15px}
+ .classroom-kids-menu .classroom-menu-choice .classroom-menu-icon,.classroom-kids-menu .classroom-menu-choice .classroom-menu-icon svg{width:48px;height:48px;flex-basis:48px}
+ .classroom-kids-menu .classroom-menu-choice strong{font-size:23px}
+ .classroom-kids-menu .classroom-menu-description{font-size:16px}
+ .classroom-kids-menu .classroom-menu-badge{font-size:13px}
+ .classroom-kids-menu .classroom-menu-footer{margin-top:18px}
+}
+@media(max-width:760px),(pointer:coarse){
+ .music-classroom .classroom-menu-screen{padding:20px 16px;border-radius:17px}
+ .classroom-kids-menu .classroom-menu-header{margin-bottom:18px}
+ .classroom-kids-menu .classroom-menu-grid{gap:12px}
+ .classroom-kids-menu .classroom-menu-choice{padding:15px;min-height:200px;gap:8px}
+ .classroom-kids-menu .classroom-menu-choice strong{font-size:21px}
+ .classroom-kids-menu .classroom-menu-description{font-size:16px}
+ .classroom-kids-menu .classroom-menu-featured{padding:14px}
+ .classroom-kids-menu .classroom-menu-lesson{gap:13px;padding:14px;flex-wrap:wrap}
+ .classroom-kids-menu .classroom-menu-lesson-body>strong{font-size:22px}
+ .classroom-kids-menu .classroom-menu-lesson .classroom-menu-action{margin-left:77px;min-width:100px;flex:1 1 auto}
+ .classroom-kids-menu .classroom-menu-lesson-body{flex-basis:calc(100% - 80px)}
+ .classroom-kids-menu .classroom-menu-flow{gap:10px;font-size:16px}
+ .classroom-kids-menu .classroom-menu-progress-row{flex-wrap:wrap;gap:12px;padding:14px}
+ .classroom-kids-menu .classroom-menu-progress-body{flex-basis:calc(100% - 80px)}
+ .classroom-kids-menu .classroom-menu-progress-row>button{margin-left:76px;flex:1}
+}
+@media(max-width:420px){
+ .classroom-kids-menu .classroom-menu-grid{grid-template-columns:1fr}
+ .classroom-kids-menu .classroom-menu-choice{display:grid;grid-template-columns:56px minmax(0,1fr);align-items:center;gap:5px 13px;min-height:122px;padding:14px}
+ .classroom-kids-menu .classroom-menu-featured{padding:13px}
+ .classroom-kids-menu .classroom-menu-choice .classroom-menu-icon{grid-row:1/4;width:56px;height:56px}
+ .classroom-kids-menu .classroom-menu-choice .classroom-menu-icon svg{width:54px;height:54px}
+ .classroom-kids-menu .classroom-menu-choice .classroom-menu-description,.classroom-kids-menu .classroom-menu-choice .classroom-menu-badge{grid-column:2}
+ .classroom-kids-menu .classroom-menu-choice strong{font-size:22px}
+ .classroom-kids-menu .classroom-menu-subtitle{font-size:18px}
+ .classroom-kids-menu .classroom-menu-badge{font-size:13px;padding:4px 10px}
+ .classroom-kids-menu .classroom-menu-flow{gap:7px;font-size:15px}
+}
+@media(prefers-reduced-motion:no-preference){.classroom-kids-menu button{transition:background-color .12s,border-color .12s}}

@@ -25,14 +25,18 @@ class WorldNavigationTests(_world.WorldBrowserCase):
             self.assertEqual(self.page.locator('#worldLegacyShortcuts button:visible').count(),0)
             self.assertLessEqual(self.page.evaluate('document.documentElement.scrollWidth'),width)
             open_settings(self.page)
+            self.page.locator('[data-settings-action="screen"]').click()
             self.assertTrue(self.page.locator('#zoomIn').is_visible())
             self.assertTrue(self.page.locator('#fxBtn').is_visible())
-            self.assertTrue(self.page.locator('#accountBtn').is_visible())
             self.assertTrue(self.page.locator('#fs').is_visible())
             previous=self.page.evaluate('CodaArcadeQA.camera().targetZoom')
             self.page.locator('#zoomIn').click()
             self.assertGreater(self.page.evaluate('CodaArcadeQA.camera().targetZoom'),previous)
-            self.page.locator('#zoomReset').click();close_settings(self.page)
+            self.page.locator('#zoomReset').click()
+            self.page.locator('[data-settings-action="home"]').click()
+            self.page.locator('[data-settings-action="player"]').click()
+            self.assertTrue(self.page.locator('#accountBtn').is_visible())
+            close_settings(self.page)
             self.assertEqual(set(self.visible_header_buttons()),expected)
         self.page.locator('#view').focus();self.page.keyboard.press('Tab')
         self.assertEqual(self.page.locator('#worldMenuBtn').get_attribute('aria-expanded'),'true')
@@ -74,7 +78,7 @@ class WorldNavigationTests(_world.WorldBrowserCase):
         self.assertIn(visitor['id'],self.page.evaluate('CodaArcadeQA.visitors().onsite'))
 
     def test_boutique_notes_shop_dj_and_hall_open_from_their_physical_interaction_points(self):
-        for destination,title in [('boutique','Boutique'),('shop','Notes Shop'),('dj','Jukebox'),('fame','Hall of Fame')]:
+        for destination,title in [('boutique','Boutique'),('shop','Notes Shop'),('dj','DJ Coda'),('fame','Hall of Fame')]:
             open_destination(self.page,destination)
             self.assertIn(title,self.page.locator('#panelTitle').inner_text())
             self.assertEqual(set(self.visible_header_buttons()),{'levelBtn','worldDeveloperBtn','musicBtn','worldMenuBtn'})

@@ -13,7 +13,8 @@
  const copyPoint=point=>({x:point.x,y:point.y});
  function create(api={}){
   const player=api.player,npcs=Array.isArray(api.npcs)?api.npcs:[];
-  let active=false,elapsed=0,actors=[],watchers=[];
+  let active=false,elapsed=0,actors=[],watchers=[],style=0,musicBeat=0;
+  const styles=['dance','robot','curtsy','disco','moonwalk','clap','spin','airguitar','cheer','breakdance'];
   function reduced(){try{return typeof api.reducedMotion==='function'?api.reducedMotion()===true:api.reducedMotion===true;}catch{return true;}}
   function walkable(x,y){try{return (!api.isWalkable||api.isWalkable(x,y)!==false)&&inside({x,y});}catch{return false;}}
   function clearMove(from,x,y){const pieces=Math.max(1,Math.ceil(Math.hypot(x-from.x,y-from.y)/2));for(let at=1;at<=pieces;at++)if(!walkable(from.x+(x-from.x)*at/pieces,from.y+(y-from.y)*at/pieces))return false;return true;}
@@ -32,7 +33,7 @@
   function entry(actor,id,base,isPlayer){
    return {actor,id,base:copyPoint(base),isPlayer,snapshot:{x:actor.x,y:actor.y,facing:actor.facing,activity:actor.activity},direction:'down',stepAt:-Infinity,fallAt:-Infinity,fallSign:1,offsetX:0,offsetY:0,phase:0,steps:0};
   }
-  function start(){
+  function start(options={}){
    if(active)return true;if(!finitePoint(player))return false;
    const visible=npcs.filter(person=>person&&person!==player&&finitePoint(person)&&!person.hidden),fixed=person=>person.pinned||person.conversation||person.userPlaced||person.authoredPosition||person.id==='dj'||person.role==='dj'||person.isDJ;
    const usedIds=new Set(['player']),selected=shuffled(visible.filter(person=>!fixed(person))).filter(person=>{const id=person.id||'npc-'+npcs.indexOf(person);if(usedIds.has(id))return false;usedIds.add(id);return true;}).slice(0,3);
@@ -53,7 +54,7 @@
     const point=spot(NPC_SPOTS[prepared.length-1],reserved);if(!point)return false;
     prepared.push(entry(person,id,point,false));reserved.push(point);used.add(id);
    }
-   actors=prepared;watchers=relocated;elapsed=0;active=true;
+   actors=prepared;watchers=relocated;elapsed=0;active=true;style=Math.max(0,Math.min(9,options.style||0));musicBeat=0;
    for(const actor of actors){actor.actor.x=actor.base.x;actor.actor.y=actor.base.y;}
    for(const watcher of watchers){watcher.actor.x=watcher.base.x;watcher.actor.y=watcher.base.y;}
    return true;
@@ -74,10 +75,10 @@
   function pose(id='player'){
    if(!active)return null;const actor=actors.find(value=>value.id===(typeof id==='object'?id?.id:id));if(!actor)return null;
    const age=elapsed-actor.stepAt,fallAge=elapsed-actor.fallAt,falling=actor.isPlayer&&fallAge>=0&&fallAge<FALL_SECONDS,simple=reduced(),lift=age>=0&&age<STEP_SECONDS?Math.sin(age/STEP_SECONDS*Math.PI):0,fall=falling?Math.sin(fallAge/FALL_SECONDS*Math.PI):0;
-   return {x:actor.actor.x,y:actor.actor.y,facing:'down',walking:!falling&&Math.hypot(actor.offsetX,actor.offsetY)>.35,phase:actor.phase,emote:'dance',jumpHeight:simple||falling?0:Math.max(0,lift)*6,rotation:simple||!fall?0:fall*1.3*actor.fallSign,scaleY:simple?1:1-fall*.17,falling,direction:actor.direction};
+   return {x:actor.actor.x,y:actor.actor.y,facing:'down',walking:!falling&&Math.hypot(actor.offsetX,actor.offsetY)>.35,phase:actor.phase,emote:styles[style],danceStyle:styles[style],emoteTime:musicBeat*Math.PI*2/7,jumpHeight:simple||falling?0:Math.max(0,lift)*[6,2,3,5,1,4,7,3,12,2][style],rotation:simple?0:fall?fall*1.3*actor.fallSign:Math.sin(musicBeat*Math.PI*2)*[.03,.08,.12,.06,.02,.04,.18,.09,.05,.23][style],scaleY:simple?1:1-fall*.17-Math.max(0,lift)*[0,.04,.12,.02,0,.05,0,.02,.06,.18][style],falling,direction:actor.direction};
   }
   function update(dt){
-   if(!active||!Number.isFinite(dt)||dt<=0)return;dt=Math.min(dt,.25);elapsed+=dt;const simple=reduced(),distance=simple?3:18,follow=1-Math.exp(-dt*30);
+   if(!active||!Number.isFinite(dt)||dt<=0)return;dt=Math.min(dt,.25);elapsed+=dt;const simple=reduced(),distance=simple?3:[18,12,10,20,22,13,16,19,14,11][style],follow=1-Math.exp(-dt*30);
    for(const actor of actors){
     const age=elapsed-actor.stepAt,envelope=age>=0&&age<STEP_SECONDS?Math.sin(age/STEP_SECONDS*Math.PI):0,vector=VECTORS[actor.direction],wantedX=vector.x*distance*envelope,wantedY=vector.y*distance*envelope;
     let offsetX=actor.offsetX+(wantedX-actor.offsetX)*follow,offsetY=actor.offsetY+(wantedY-actor.offsetY)*follow;
@@ -93,8 +94,8 @@
    for(const watcher of watchers){watcher.actor.x=watcher.snapshot.x;watcher.actor.y=watcher.snapshot.y;}
    active=false;actors=[];watchers=[];elapsed=0;
   }
-  function getState(){return {active,elapsed,bounds:{...STAGE_BOUNDS},floorBounds:{...FLOOR_BOUNDS},dancers:actors.map(actor=>({id:actor.id,name:actor.actor.name||actor.id,isPlayer:actor.isPlayer,base:copyPoint(actor.base),steps:actor.steps})),watchers:watchers.map(person=>({id:person.id,name:person.actor.name||person.id,...copyPoint(person.actor),base:copyPoint(person.base)})),poses:Object.fromEntries(actors.map(actor=>[actor.id,pose(actor.id)]))};}
-  return Object.freeze({start,update,step,hit:direction=>step(direction),cue:direction=>step(direction,{actorId:'npcs'}),miss,pose,close,destroy:close,getState});
+  function getState(){return {active,elapsed,style:styles[style],musicBeat,bounds:{...STAGE_BOUNDS},floorBounds:{...FLOOR_BOUNDS},dancers:actors.map(actor=>({id:actor.id,name:actor.actor.name||actor.id,isPlayer:actor.isPlayer,base:copyPoint(actor.base),steps:actor.steps})),watchers:watchers.map(person=>({id:person.id,name:person.actor.name||person.id,...copyPoint(person.actor),base:copyPoint(person.base)})),poses:Object.fromEntries(actors.map(actor=>[actor.id,pose(actor.id)]))};}
+  return Object.freeze({start,transport:beat=>{if(Number.isFinite(beat))musicBeat=beat;},update,step,hit:direction=>step(direction),cue:direction=>step(direction,{actorId:'npcs'}),miss,pose,close,destroy:close,getState});
  }
  return Object.freeze({FLOOR_BOUNDS,STAGE_BOUNDS,PLAYER_SPOT,NPC_SPOTS,WATCHER_SPOTS,STEP_SECONDS,FALL_SECONDS,create});
 });

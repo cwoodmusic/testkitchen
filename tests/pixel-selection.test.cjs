@@ -92,3 +92,62 @@ test('browser and CommonJS exports share the API and accept cross-realm RGBA byt
  const clip=context.window.CodaPixelSelection.clipboard.get();
  assert.deepEqual(selection.stampPixels(clip,1,1,0,0),[[0,0,'#05060708']]);
 });
+
+test('manual polygons use pixel centres and include clicked corners and boundary pixels',()=>{
+ const triangle=selection.polygonSelection([[1,1],[4,1],[1,4],[1,1]],6,6);
+ assert.deepEqual(triangle,{x:1,y:1,width:4,height:4,points:[[1,1],[4,1],[1,4]]});
+ for(const p of [[1,1],[4,1],[1,4],[2,2],[3,2]])assert.equal(selection.containsSelection(triangle,...p),true,String(p));
+ for(const p of [[0,1],[4,2],[3,3],[2,4],[1,5]])assert.equal(selection.containsSelection(triangle,...p),false,String(p));
+ const rectangle=selection.rectangle([1,1],[4,4],6,6);assert.equal(selection.containsSelection(rectangle,4,4),true);assert.equal(selection.containsSelection(rectangle,5,4),false);
+ const clipped=selection.polygonSelection([[-10,-10],[9,-10],[9,9],[-10,9]],5,4);
+ assert.deepEqual(clipped,{x:0,y:0,width:5,height:4,points:[[0,0],[4,0],[4,3],[0,3]]});
+ for(const points of [[],[[1,1]],[[1,1],[2,2]],[[1,1],[2,2],[3,3]],[[1,1],[1,1],[1,1]],[[1.2,1],[4,1],[1,4]],[[NaN,1],[4,1],[1,4]],[[Infinity,1],[4,1],[1,4]],Array(513).fill([1,1])])assert.equal(selection.polygonSelection(points,6,6),null);
+ assert.equal(selection.polygonSelection([[1,1],[4,1],[1,4]],0,6),null);
+});
+
+test('concave and reversed polygon selections preserve notches rather than their bounding rectangle',()=>{
+ const points=[[0,0],[4,0],[4,1],[1,1],[1,4],[0,4]],shape=selection.polygonSelection(points,5,5),reverse=selection.polygonSelection(points.slice().reverse(),5,5);
+ for(let y=0;y<5;y++)for(let x=0;x<5;x++){
+  const expected=y<=1||x<=1;assert.equal(selection.containsSelection(shape,x,y),expected,x+','+y);assert.equal(selection.containsSelection(reverse,x,y),expected);
+ }
+});
+
+test('shaped copies paste transparent selected pixels but never erase pixels outside the shape',()=>{
+ const rgba=new Uint8ClampedArray(5*5*4);for(let y=0;y<5;y++)for(let x=0;x<5;x++)rgba.set([x+1,y+1,20,255],(y*5+x)*4);
+ rgba.set([77,88,99,0],(1*5+1)*4);
+ const shape=selection.polygonSelection([[0,0],[3,0],[0,3]],5,5),clip=selection.copyPixels(rgba,5,5,shape);
+ assert.deepEqual({width:clip.width,height:clip.height},{width:4,height:4});
+ assert.equal(clip.mask.length,16);assert.equal(clip.mask[3*4+3],0);assert.deepEqual(Array.from(clip.pixels.slice((3*4+3)*4,(3*4+3)*4+4)),[0,0,0,0]);
+ assert.equal(clip.mask[1*4+1],1);assert.deepEqual(Array.from(clip.pixels.slice((1*4+1)*4,(1*4+1)*4+4)),[77,88,99,0]);
+ const destination=new Map(Array.from({length:25},(_,i)=>[i,'#ffffffff']));for(const [x,y,value]of selection.stampPixels(clip,5,5,1,1))destination.set(y*5+x,value);
+ assert.equal(destination.get(2*5+2),'#4d586300','Selected transparent pixels retain exact hidden RGB and clear the destination');
+ assert.equal(destination.get(4*5+4),'#ffffffff','Outside corners of the bounding rectangle must stay untouched');
+ assert.equal(selection.stampPixels(clip,5,5,0,0).length,10);
+});
+
+test('scanline copy masks match manual membership for diagonal, concave and crossing outlines',()=>{
+ const rgba=new Uint8ClampedArray(9*9*4).fill(90);
+ for(const points of [[[0,0],[8,2],[3,8]],[[1,1],[7,1],[7,3],[3,3],[3,7],[1,7]],[[0,0],[8,8],[0,8],[8,0]],[[0,0],[8,3],[1,8]]]){
+  const shape=selection.polygonSelection(points,9,9),clip=selection.copyPixels(rgba,9,9,shape);
+  for(let y=0;y<clip.height;y++)for(let x=0;x<clip.width;x++)assert.equal(clip.mask[y*clip.width+x],Number(selection.containsSelection(shape,x+shape.x,y+shape.y)),JSON.stringify(points)+' at '+x+','+y);
+ }
+});
+
+test('shaped clipboard and resized stamps keep an independent nearest-pixel mask',()=>{
+ const source={width:2,height:2,pixels:new Uint8ClampedArray([11,22,33,255,44,55,66,0,77,88,99,128,100,110,120,255]),mask:new Uint8Array([1,1,1,0])};
+ const normalized=selection.normalizeClip(source);assert.notStrictEqual(normalized.pixels,source.pixels);assert.notStrictEqual(normalized.mask,source.mask);
+ assert.equal(selection.clipboard.set(source),true);source.mask.fill(0);source.pixels.fill(0);const saved=selection.clipboard.get();assert.deepEqual(Array.from(saved.mask),[1,1,1,0]);assert.equal(saved.pixels[0],11);
+ saved.mask.fill(0);assert.deepEqual(Array.from(selection.clipboard.get().mask),[1,1,1,0]);
+ const large=selection.resizeClip(selection.clipboard.get(),4,4);assert.deepEqual(Array.from(large.mask),[1,1,1,1,1,1,1,1,1,1,0,0,1,1,0,0]);
+ assert.equal(selection.stampPixels(large,4,4,0,0).length,12);assert.ok(selection.stampPixels(large,4,4,0,0).some(p=>p[2]==='#2c374200'),'Selected transparency survives resizing');
+ assert.deepEqual(Array.from(selection.resizeClip(large,2,2).mask),[1,1,1,0]);
+ const ordinary={width:1,height:1,pixels:new Uint8ClampedArray([1,2,3,4])};assert.equal(Object.hasOwn(selection.normalizeClip(ordinary),'mask'),false,'Ordinary rectangular clips keep their original shape');
+});
+
+test('malformed protection masks are rejected without replacing a valid clipboard selection',()=>{
+ const clip={width:2,height:1,pixels:new Uint8ClampedArray([1,2,3,4,5,6,7,8]),mask:new Uint8Array([1,0])};selection.clipboard.set(clip);
+ for(const mask of [null,[],[1],[1,2],[1,-1],[1,NaN],new Int8Array([1,0]),new Float32Array([1,0])]){
+  const bad={...clip,mask};assert.equal(selection.validClip(bad),false);assert.equal(selection.normalizeClip(bad),null);assert.equal(selection.clipboard.set(bad),false);assert.equal(selection.resizeClip(bad,2,2),null);assert.deepEqual(selection.stampPixels(bad,2,1,0,0),[]);
+ }
+ assert.deepEqual(Array.from(selection.clipboard.get().mask),[1,0]);
+});

@@ -37,7 +37,7 @@
   if(!ctx)return;const size=Math.max(12,finite(options.fontSize,56)),x=finite(options.x,0),y=finite(options.y,0),meter=options.meter||'4/4';
   ctx.save();ctx.font=size+'px "'+FAMILY+'"';ctx.textAlign='center';ctx.textBaseline='alphabetic';ctx.fillStyle=options.color||'#f9efff';
   if(meter==='2/2'||meter==='cut')ctx.fillText(glyph('timeSigCutCommon'),x,y);
-  else{const parts=meter==='6/8'?[6,8]:[4,4];ctx.fillText(String.fromCodePoint(0xe080+parts[0]),x,y-size*.285);ctx.fillText(String.fromCodePoint(0xe080+parts[1]),x,y+size*.285);}
+  else{const parts=/^\d+\/\d+$/.test(meter)?meter.split('/'):['4','4'],digits=value=>String(value).split('').map(digit=>String.fromCodePoint(0xe080+Number(digit))).join('');ctx.fillText(digits(parts[0]),x,y-size*.285);ctx.fillText(digits(parts[1]),x,y+size*.285);}
   ctx.restore();
  }
  function glyphSVG(beats,options={}){

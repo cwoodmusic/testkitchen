@@ -187,8 +187,8 @@
    try{
     if(win.navigator.clipboard?.writeText)await win.navigator.clipboard.writeText(value);
     else{const area=element('textarea');area.value=value;area.className='classpass-copy-buffer';doc.body.append(area);area.select();const copied=doc.execCommand?.('copy');area.remove();if(!copied)throw Error('copy');}
-    if(opened&&card){setMessage('Pass link copied.');render();}
-   }catch{if(opened){setMessage('Copy was not available. Select the pass below to copy it.','error');render();}}
+    if(opened&&card){setMessage('Sign-in link copied. Send it privately to this student in Google Classroom.');render();}
+   }catch{if(opened){setMessage('Copy was not available. Select the sign-in link below and copy it.','error');render();}}
   }
   async function copySetupID(uid){
    try{await win.navigator.clipboard.writeText(uid);if(opened){setMessage('Setup ID copied.');render();}}
@@ -201,6 +201,11 @@
    article.append(qr,element('p','classpass-card-instruction','Scan this card to open your profile.'));
    const pass=element('code','classpass-pass',card.pass);pass.setAttribute('aria-label','Private Profile Pass code');pass.tabIndex=0;article.append(pass);
    article.append(element('p','classpass-card-private','Keep your card private. If it is lost, ask your teacher for a new one.'));
+   if(!printing){
+    const link=element('a','classpass-profile-link','Open '+card.alias+'’s profile');link.id='classpassOpenLink';link.href=card.link;link.target='_blank';link.rel='noopener noreferrer';link.referrerPolicy='no-referrer';
+    const label=element('label','classpass-field','Student sign-in link'),url=element('input');url.id='classpassLink';url.type='url';url.readOnly=true;url.value=card.link;url.setAttribute('aria-label','Student sign-in link');url.addEventListener('click',()=>url.select());label.append(url);
+    article.append(link,label,element('p','classpass-help','Copy this link and send it privately to this student in Google Classroom. Clicking it opens this profile without a Google sign-in.'));
+   }
    if(!printing)article.append(element('p','classpass-once','This pass is shown now. After you close this card, a replacement is needed to print a new one.'));
    return article;
   }
@@ -209,8 +214,8 @@
    try{win.print();}catch{cleanupPrint();setMessage('Printing could not open. Copy the pass link instead.','error');render();}
   }
   function renderCard(){
-   section.append(element('h2','','Your new Profile Pass'),element('p','classpass-lead','Print this picture card. You do not need to memorize its code.'),makeCard());
-   const actions=element('div','classpass-actions');actions.append(button('Print card',printCard,'classpassPrint','is-primary'),button('Copy pass link',copyLink,'classpassCopy'),button('Done · hide pass',()=>{clearCard();setMessage('Card hidden. A lost card can be replaced by a teacher.');render();},'classpassHide'));section.append(actions);
+   section.append(element('h2','','Student profile sign-in link'),element('p','classpass-lead','Send the student their sign-in link, or print their picture card. They do not need to type a code.'),makeCard());
+   const actions=element('div','classpass-actions');actions.append(button('Copy sign-in link',copyLink,'classpassCopy','is-primary'),button('Print card',printCard,'classpassPrint'),button('Done · hide pass',()=>{clearCard();setMessage('Card hidden. A lost card can be replaced by a teacher.');render();},'classpassHide'));section.append(actions);
   }
   function renderConfirmation(){
    const pending=confirmation,box=element('section','classpass-confirm');box.setAttribute('role','alertdialog');box.setAttribute('aria-labelledby','classpassConfirmTitle');box.setAttribute('aria-describedby','classpassConfirmText');
@@ -331,7 +336,7 @@
    if(!classes.length){section.append(element('p','classpass-empty','Create a class to make your first picture card.'));return;}
    const classLabel=element('label','classpass-select-label','Choose a class');classLabel.htmlFor='classpassClass';const choose=element('select');choose.id='classpassClass';choose.disabled=!!busy;
    for(const item of classes){const option=element('option','',item.label);option.value=item.classId;choose.append(option);}choose.value=selectedClass;choose.onchange=()=>{selectClass(choose.value);act('Loading profiles',async()=>({ok:true}),(_,token)=>readProfiles(token));};section.append(classLabel,choose);
-   const tools=element('div','classpass-actions');tools.append(button('Make a new profile card',()=>act('Making a profile',()=>service.createProfile(selectedClass),async(result,token)=>{if(!receipt(result))showError({code:'qr-unavailable'});await readProfiles(token);}), 'classpassCreateProfile','is-primary'));
+   const tools=element('div','classpass-actions');tools.append(button('Create student profile',()=>act('Making a profile',()=>service.createProfile(selectedClass),async(result,token)=>{if(!receipt(result))showError({code:'qr-unavailable'});await readProfiles(token);}), 'classpassCreateProfile','is-primary'));
    tools.append(button('Delete class',()=>requestConfirmation({kind:'delete-class',classId:selectedClass}),'classpassDeleteClass','is-danger'));section.append(tools,element('p','classpass-help','Every profile gets a generated alias and picture. Replacing a lost card keeps its progress.'));
    renderProfileBrowser(state);
   }

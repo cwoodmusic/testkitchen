@@ -19,12 +19,12 @@
    return path;
   }
   function split(asset,raw,frame,erased){
-   if(!raw||asset.layer==='back'||!erased)return {raw,above:raw,behind:null};
+   if(!raw||asset.layer==='back'||asset.ignoreBackgroundMasks===true||!erased)return {raw,above:raw,behind:null};
    const [sx,sy,sw,sh]=frame;if(sw<=0||sh<=0||asset.w<=0||asset.h<=0)return {raw,above:raw,behind:null};
-   const key=JSON.stringify([asset.x,asset.y,asset.w,asset.h,asset.rotation,...frame]),cached=partitions.get(asset);
+   const key=JSON.stringify([asset.x,asset.y,asset.w,asset.h,asset.rotation,asset.flipX===true,asset.flipY===true,...frame]),cached=partitions.get(asset);
    if(cached&&cached.key===key&&cached.raw===raw&&cached.erased===erased)return cached;
    const mask=make(raw.naturalWidth||raw.width,raw.naturalHeight||raw.height),mg=mask.getContext('2d',{willReadFrequently:true});mg.imageSmoothingEnabled=false;
-   mg.translate(sx+sw/2,sy+sh/2);mg.scale(sw/asset.w,sh/asset.h);mg.rotate(-asset.rotation*Math.PI/180);mg.translate(-asset.x,-asset.y);mg.drawImage(erased,0,0);
+   mg.translate(sx+sw/2,sy+sh/2);mg.scale(sw/asset.w*(asset.flipX===true?-1:1),sh/asset.h*(asset.flipY===true?-1:1));mg.rotate(-asset.rotation*Math.PI/180);mg.translate(-asset.x,-asset.y);mg.drawImage(erased,0,0);
    const pixels=mg.getImageData(0,0,mask.width,mask.height);let any=false;
    for(let at=3;at<pixels.data.length;at+=4){const alpha=pixels.data[at]>=128?255:0;pixels.data[at]=alpha;if(alpha)any=true;}
    let above=raw,behind=null;

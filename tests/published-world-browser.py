@@ -1,8 +1,9 @@
-"""Shared world defaults, local-save priority, and lifted-object layer masks.
+"""Legacy world compatibility, local-save priority, and lifted-object layer masks.
 
 Runs against disposable browser contexts and the checked-in project export.
 No account credentials, external services, or existing browser saves are used.
 """
+from settings_menu_helpers import settings_page
 import copy
 import functools
 import hashlib
@@ -15,7 +16,7 @@ import unittest
 from playwright.sync_api import sync_playwright
 
 ROOT=Path(__file__).resolve().parents[1]
-EXPORT_FINGERPRINT='cdfe297b883c232077fc75cc10e1f0f83b2148433dc1ab023f6c721361844038'
+EXPORT_FINGERPRINT='44c02ace21664ba33164f2d1c6c38e51fd7915b54bbe5b1f64eecceb58e2c336'
 BLANK={'format':'CodaArcadeWorldProject','version':1,
        'world':{'width':1672,'height':941},'assets':[],'collision':[],'strokes':[]}
 
@@ -28,7 +29,7 @@ class QuietHandler(SimpleHTTPRequestHandler):
 class PublishedWorldTests(unittest.TestCase):
     @classmethod
     def setUpClass(cls):
-        cls.published=json.loads((ROOT/'published-world-project.json').read_text())
+        cls.published=json.loads((ROOT/'assets/environment/legacy-world-project.json').read_text())
         cls.server=ThreadingHTTPServer(('127.0.0.1',0),
             functools.partial(QuietHandler,directory=str(ROOT)))
         threading.Thread(target=cls.server.serve_forever,daemon=True).start()
@@ -45,6 +46,8 @@ class PublishedWorldTests(unittest.TestCase):
     def setUp(self):
         self.context=self.browser.new_context(viewport={'width':1600,'height':1000})
         self.context.route('https://**/*',lambda route:route.abort())
+        self.context.route('**/published-world-project.json*',lambda route:route.fulfill(
+            status=200,content_type='application/json',body=json.dumps(self.published)))
         self.context.add_init_script('''(()=>{
           localStorage.setItem('codaArcadeFXV1','off');
           window.publishFrames=count=>new Promise(resolve=>{
@@ -113,7 +116,7 @@ class PublishedWorldTests(unittest.TestCase):
                          'Keep the uploaded main-arcade and Piano Lab edits')
         self.load();self.assertEqual(self.project(),self.published)
         self.assertEqual((len(self.published['assets']),len(self.published['collision']),
-                          len(self.published['strokes'])),(13,1394,763))
+                          len(self.published['strokes'])),(14,1451,793))
         games=self.page.evaluate('''()=>CodaArcadeQA.worldObjects().filter(x=>x.game).map(x=>({
           name:x.game.name,walkable:CodaArcadeQA.walkable(x.game.npcX??x.game.x,x.game.npcY??x.game.y),
           route:CodaArcadeQA.route(1180,388,x.game.x,x.game.y).length
@@ -324,7 +327,7 @@ class PublishedWorldTests(unittest.TestCase):
                     self.page.locator(selector).click()
             self.page.mouse.move(1500,900)
         def set_fx(label):
-            self.page.locator('#worldMenuBtn').click()
+            settings_page(self.page, 'screen')
             for _ in range(3):
                 if self.page.locator('#fxBtn').inner_text().endswith(label):break
                 self.page.locator('#fxBtn').click()

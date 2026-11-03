@@ -37,6 +37,7 @@
  const INTERVALS=[1,2,3,4,5,7,12].flatMap(n=>['up-'+n,'down-'+n]);
  const PIANO_REWARDS=[...MELODIES.flatMap(id=>['piano-lesson:'+id,'piano-memory:'+id]),...SCALES.flatMap(id=>['piano-scale:'+id,'piano-scale-memory:'+id]),...INTERVALS.map(id=>'piano-interval:'+id)];
  const MISSION_TARGETS={
+  'nina-note-rush-ten':10,'clara-note-rush-bass':20,'joplin-dance-pass':1,'ellington-dance-perfect':1,'ella-dance-hard':1,'miles-dance-tour':10,
   'bach-triad-win':1,'mozart-triad-capture':3,'beethoven-pitch-win':1,'clara-pitch-streak':20,'joplin-rhythm-streak':20,'ellington-rhythm-streak':50,'ella-rhythm-perfect':1,'nina-pitch-notes':15,'miles-triad-comeback':1,
   'ella-fish-five':5,'nina-piano-melody':1,'mozart-pitch-thirty':30,'joplin-rhythm-perfect-three':3,'clara-fish-compound':1,
   'bach-piano-major':1,'ellington-triad-three':3,'miles-pitch-bass-ten':10,'beethoven-fish-epic':1,'nina-piano-minor':1,

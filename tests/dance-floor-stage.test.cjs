@@ -95,3 +95,12 @@ test('short visitor lists, duplicate IDs and invalid directions stay safe and br
  const window={};vm.runInNewContext(fs.readFileSync(require.resolve('../dance-floor-stage.js'),'utf8'),{window});assert.equal(typeof window.CodaDanceFloorStage.create,'function');assert.deepEqual(JSON.parse(JSON.stringify(window.CodaDanceFloorStage.FLOOR_BOUNDS)),stageModule.FLOOR_BOUNDS);
  assert.equal(stageModule.create({}).start(),false);
 });
+
+test('all ten songs have distinct animation styles and share the music beat',()=>{
+ const signatures=new Set();
+ for(let style=0;style<10;style++){
+  const f=fixture();assert.equal(f.stage.start({style}),true);f.stage.transport(.125);f.stage.step('left');advance(f.stage,.12);
+  const pose=f.stage.pose('player');assert.equal(pose.emoteTime,.125*Math.PI*2/7);signatures.add(JSON.stringify([pose.danceStyle,pose.jumpHeight,pose.rotation,pose.scaleY]));assert.ok(pose.x>=stageModule.FLOOR_BOUNDS.x);f.stage.close();
+ }
+ assert.equal(signatures.size,10);
+});

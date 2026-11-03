@@ -27,8 +27,10 @@ class FishingPracticeWorldTests(_upgrade._fish._world.WorldBrowserCase):
         self.page.clock.pause_at(self.page.evaluate('Date.now()/1000')+5)
         self.page.wait_for_function('!!window.createCodaFishingPractice')
 
-    def start_exploring(self,meter='4/4'):
-        self.enter();self.fishing_meter(meter);self.board()
+    def start_exploring(self):
+        # Connected waters select wild rhythms by biome. Keep Lantern Lake's
+        # 4/4 and choose a different practice meter to verify restoration.
+        self.enter();self.board()
         self.assertEqual(self.state()['phase'],'explore')
 
     def rewards(self):
@@ -43,6 +45,7 @@ class FishingPracticeWorldTests(_upgrade._fish._world.WorldBrowserCase):
         self.fishing_action('#fishingPractice')
         self.assertTrue(self.state()['practiceSettingsOpen'])
         self.page.locator('input[name="fishingPracticeMeter"][value="'+meter+'"]').check(force=True)
+        self.page.locator('#fishingPracticeNext').click(force=True)
         self.page.locator('input[name="fishingPracticeRarity"][value="'+rarity+'"]').check(force=True)
         self.page.locator('#fishingPracticeStart').click(force=True)
         self.page.clock.run_for(32)
@@ -72,6 +75,29 @@ class FishingPracticeWorldTests(_upgrade._fish._world.WorldBrowserCase):
         self.assertEqual(state['mobileView'],'room')
         return state
 
+    def test_browsing_and_canceling_practice_preserve_the_lake_and_wild_fish(self):
+        self.start_exploring()
+        before=self.rewards();slots=self.fish_slots()
+        self.fishing_action('#fishingPractice')
+        self.page.locator('input[name="fishingPracticeMeter"][value="6/8"]').check(force=True)
+        self.page.locator('#fishingPracticeNext').click(force=True)
+        self.page.locator('input[name="fishingPracticeRarity"][value="legendary"]').check(force=True)
+        self.page.clock.run_for(64)
+        state=self.state()
+        self.assertTrue(state['practiceSettingsOpen'])
+        self.assertFalse(state['practice']);self.assertIsNone(state['challenge'])
+        self.assertEqual((state['phase'],state['meter']),('explore','4/4'))
+        self.page.locator('#fishingPracticeBack').click(force=True)
+        self.page.clock.run_for(32)
+        self.assertTrue(self.state()['practiceSettingsOpen'])
+        self.assertTrue(self.page.locator('#fishingPracticeRhythms').is_visible())
+        self.page.locator('#fishingPracticeClose').click(force=True)
+        self.page.clock.run_for(32)
+        state=self.state()
+        self.assertFalse(state['practiceSettingsOpen']);self.assertFalse(state['practice'])
+        self.assertEqual((state['phase'],state['meter']),('explore','4/4'))
+        self.assertEqual(self.rewards(),before);self.assertEqual(self.fish_slots(),slots)
+
     def test_meter_and_difficulty_choices_start_real_practice_and_restore_shore(self):
         self.enter();before=self.rewards();slots=self.fish_slots()
         for meter,rarity in [('4/4','common'),('6/8','uncommon'),('2/2','rare'),('4/4','epic'),('6/8','legendary')]:
@@ -81,8 +107,8 @@ class FishingPracticeWorldTests(_upgrade._fish._world.WorldBrowserCase):
             self.assertEqual(self.fish_slots(),slots,'Practice must not hook, replace, or hide a wild fish')
 
     def test_practice_keeps_playing_at_zero_and_full_progress_without_rewards_then_normal_cast_works(self):
-        self.start_exploring('2/2');before=self.rewards();slots=self.fish_slots()
-        self.choose_practice('4/4','common')
+        self.start_exploring();before=self.rewards();slots=self.fish_slots()
+        self.choose_practice('6/8','common')
         self.page.clock.run_for(35000)
         zero=self.state();self.assertEqual(zero['challenge']['progress'],0)
         self.assertEqual(zero['phase'],'rhythm');self.assertIsNone(zero['challenge']['result'])
@@ -104,12 +130,12 @@ class FishingPracticeWorldTests(_upgrade._fish._world.WorldBrowserCase):
         self.assertEqual(ongoing['phase'],'rhythm');self.assertTrue(ongoing['practice'])
         self.assertIsNone(ongoing['challenge']['result']);self.assertGreater(ongoing['challenge']['hits'],hits)
         self.assertEqual(self.rewards(),before);self.assertEqual(self.fish_slots(),slots)
-        self.end_practice('explore','2/2')
+        self.end_practice('explore','4/4')
         self.assertEqual(self.rewards(),before);self.assertEqual(self.fish_slots(),slots)
         self.place_single_fish('silver-minnow');self.fishing_action('#fishingCast')
         self.page.clock.run_for(1400)
         normal=self.state();self.assertFalse(normal['practice']);self.assertFalse(normal['challenge']['practice'])
-        self.assertEqual(normal['phase'],'rhythm');self.assertEqual(normal['meter'],'2/2')
+        self.assertEqual(normal['phase'],'rhythm');self.assertEqual(normal['meter'],'4/4')
         self.assertEqual(self.page.locator('#fishingCancel').inner_text(),'Let it go')
         initial=normal['challenge']['progress'];self.play_pending_note()
         self.assertGreater(self.state()['challenge']['progress'],initial)
@@ -124,6 +150,7 @@ class FishingPracticeWorldTests(_upgrade._fish._world.WorldBrowserCase):
             self.assertGreaterEqual(box['x'],0);self.assertGreaterEqual(box['y'],0)
             self.assertLessEqual(box['x']+box['width'],size['width']+1)
             self.assertLessEqual(box['y']+box['height'],size['height']+1)
+            self.page.locator('#fishingPracticeNext').tap();self.page.clock.run_for(16)
             self.page.locator('#fishingPracticeStart').tap();self.page.clock.run_for(32)
             self.assertTrue(self.state()['challenge']['practice'])
             button=self.page.locator('#fishingCancel').bounding_box()

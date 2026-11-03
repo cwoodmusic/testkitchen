@@ -14,3 +14,5 @@
 .classpass-profile-row .classpass-actions>.classpass-button{flex-basis:110px}
 @media(min-width:680px){.classpass-profile-row{grid-template-columns:minmax(0,1fr) 260px;align-items:center}.classpass-profile-row .classpass-actions{flex-wrap:nowrap}.classpass-profile-identity{gap:10px}.classpass-profile-identity .classpass-picture{width:48px;height:48px}.classpass-profile-row strong{font-size:19px}}
 @media(max-width:420px){.classpass-search-field{grid-template-columns:minmax(0,1fr)}.classpass-search-field>.classpass-button{justify-self:end}.classpass-pagination{gap:6px}.classpass-page-number{font-size:15px}}
+
+.classpass-card .classpass-profile-link{display:inline-block;color:#174e78;font-weight:750;padding:10px;min-height:44px}.classpass-card .classpass-field{display:block;width:100%;color:#183348}.classpass-card .classpass-help{color:#365266}

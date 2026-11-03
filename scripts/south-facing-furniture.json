@@ -1,0 +1,69 @@
+{
+  "version": 1,
+  "alphaThreshold": 8,
+  "manifest": "assets/environment/south-facing-furniture.json",
+  "items": [
+    {
+      "id": "sofa-south",
+      "name": "South-facing sofa",
+      "source": "assets/environment/source/sofa-south-source.png",
+      "mode": "bottom",
+      "width": 164,
+      "height": 131,
+      "maxWidth": 139,
+      "environmentOutput": "assets/environment/v1/dance-couch-left-south.png"
+    },
+    {
+      "id": "sofa-compact-south",
+      "name": "Compact south-facing sofa",
+      "source": "assets/environment/source/sofa-south-source.png",
+      "mode": "bottom",
+      "width": 162,
+      "height": 109,
+      "maxWidth": 121,
+      "environmentOutput": "assets/environment/v1/dance-couch-right-south.png"
+    },
+    {
+      "id": "sofa-lounge-south",
+      "name": "South-facing lounge sofa",
+      "source": "assets/environment/source/lounge-sofa-south-source.png",
+      "mode": "bottom",
+      "width": 288,
+      "height": 105,
+      "maxWidth": 262,
+      "environmentOutput": "assets/environment/v1/lounge-couch-south.png"
+    },
+    {
+      "id": "counter-jade-south",
+      "name": "South-facing jade counter",
+      "source": "assets/environment/v1/main-counter.png",
+      "mode": "center",
+      "width": 361,
+      "height": 142
+    },
+    {
+      "id": "counter-boutique-south",
+      "name": "South-facing boutique counter",
+      "source": "assets/environment/v1/boutique-counter.png",
+      "mode": "center",
+      "width": 127,
+      "height": 81
+    },
+    {
+      "id": "desk-dj-south",
+      "name": "South-facing DJ desk",
+      "source": "assets/environment/v1/dj-console.png",
+      "mode": "center",
+      "width": 121,
+      "height": 62
+    },
+    {
+      "id": "table-candle-south",
+      "name": "South-facing candle table",
+      "source": "assets/environment/v1/table.png",
+      "mode": "center",
+      "width": 86,
+      "height": 70
+    }
+  ]
+}

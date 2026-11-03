@@ -7,7 +7,7 @@
 })(typeof window==='undefined'?null:window,function(){
   'use strict';
   const KEY='codaMusicianMissionsV1';
-  const GAMES=Object.freeze({pitch:'Pitch Race',triad:'Music Triad',rhythm:'Rhythm Room',fishing:'Rhythm Fishing',piano:'Piano Lab'});
+  const GAMES=Object.freeze({pitch:'Pitch Race',triad:'Music Triad',rhythm:'Rhythm Room',fishing:'Rhythm Fishing',piano:'Piano Lab',dance:'DJ Line Dance'});
   const DEFINITIONS=Object.freeze([
     {id:'bach-triad-win',person:'bach',title:'Counterpoint Champion',game:'triad',goal:'Win a Music Triad match against the computer.',kind:'triad-win',target:1,reward:90},
     {id:'mozart-triad-capture',person:'mozart',title:'A Clever Turn',game:'triad',goal:'Capture at least 3 opposing cards in one completed Music Triad computer match.',kind:'triad-captures',target:3,reward:80},
@@ -37,7 +37,13 @@
     {id:'miles-fish-legendary',person:'miles',title:'Legend of the Deep',game:'fishing',goal:'Catch a legendary fish, then return to Miles Davis for your reward.',kind:'fish-legendary',target:1,reward:850,minLevel:20},
     {id:'beethoven-pitch-level-thirty',person:'beethoven',title:'Climb to Thirty',game:'pitch',goal:'Pass Level 30 or higher in Pitch Race Level Challenge.',kind:'pitch-level',target:30,reward:650,minLevel:20},
     {id:'joplin-rhythm-hundred',person:'joplin',title:'One Hundred in the Pocket',game:'rhythm',goal:'Match 100 notes in a row in Tap Practice. Keep the loop running; misses and extra taps reset the streak.',kind:'rhythm-streak',target:100,reward:700,minLevel:20},
-    {id:'bach-triad-hard-advanced',person:'bach',title:'The Counterpoint Master',game:'triad',goal:'Win a Hard Music Triad computer match using Advanced rules.',kind:'triad-hard-advanced',target:1,reward:800,minLevel:20}
+    {id:'bach-triad-hard-advanced',person:'bach',title:'The Counterpoint Master',game:'triad',goal:'Win a Hard Music Triad computer match using Advanced rules.',kind:'triad-hard-advanced',target:1,reward:800,minLevel:20},
+    {id:'nina-note-rush-ten',person:'nina',title:'Read and React',game:'piano',goal:'Play ten correct pitches in one completed Note Rush run.',kind:'piano-reading',target:10,reward:150,minLevel:1},
+    {id:'clara-note-rush-bass',person:'clara',title:'A Bass-Clef Sprint',game:'piano',goal:'Play twenty correct pitches in a bass-clef Note Rush run.',kind:'piano-reading-bass',target:20,reward:250,minLevel:3},
+    {id:'joplin-dance-pass',person:'joplin',title:'Take It to the Floor',game:'dance',goal:'Pass one sixteen-bar Line Dance stage with at least 80% of the points.',kind:'dance-pass',target:1,reward:160,minLevel:1},
+    {id:'ellington-dance-perfect',person:'ellington',title:'A Perfect Set',game:'dance',goal:'Earn a perfect score on a Line Dance stage to unlock its song.',kind:'dance-perfect',target:1,reward:300,minLevel:3},
+    {id:'miles-dance-tour',person:'miles',title:'Ten-Stage Set',game:'dance',goal:'Pass all ten Normal Line Dance stages, then finish a passed Normal stage after accepting this mission.',kind:'dance-tour',target:10,reward:450,minLevel:5},
+    {id:'ella-dance-hard',person:'ella',title:'The Next Tour',game:'dance',goal:'Pass a Hard or Extreme Line Dance stage.',kind:'dance-hard',target:1,reward:350,minLevel:5}
   ].map(item=>Object.freeze({minLevel:1,...item})));
   const byId=new Map(DEFINITIONS.map(item=>[item.id,item]));
   const byPerson=new Map();for(const item of DEFINITIONS){if(!byPerson.has(item.person))byPerson.set(item.person,[]);byPerson.get(item.person).push(item);}
@@ -77,14 +83,22 @@
   }
   const additive=new Set(['triad-wins','rhythm-perfect-count','fish-catches']);
   function validActivity(game,event){
-    if(!event||typeof event!=='object'||Array.isArray(event)||event.practice===true)return false;
+    if(!event||typeof event!=='object'||Array.isArray(event)||(event.practice===true||event.watching===true))return false;
     const id=game==='fishing'?event.id:event.runId;
     if(typeof id!=='string'||!/^[a-z0-9:_-]{1,128}$/i.test(id))return false;
+    if(game==='dance')return event.version===2&&event.complete===true&&event.bars===16&&['normal','hard','extreme'].includes(event.difficulty)&&Number.isFinite(event.scorePercent)&&event.scorePercent>=80&&event.scorePercent<=100&&event.passed===true;
+    if(game==='piano'&&event.kind==='reading')return event.complete===true&&['treble','bass'].includes(event.clef)&&integer(event.correct)&&event.correct>=1&&integer(event.mistakes,10000);
     if(game==='piano')return ['melody','scale','interval'].includes(event.kind)&&['guided','memory'].includes(event.mode)&&integer(event.mistakes,10000)&&(event.kind!=='scale'||['major','minor'].includes(event.scaleType));
     return game==='fishing'&&typeof event.fishId==='string'&&/^[a-z0-9-]{1,80}$/i.test(event.fishId)&&['common','uncommon','rare','epic','legendary'].includes(event.rarity)&&['4/4','6/8','2/2'].includes(event.meter)&&event.caught===true&&event.outcome==='caught'&&(event.reason===undefined||event.reason===null)&&integer(event.hits)&&event.hits>0&&integer(event.misses)&&integer(event.extras)&&typeof event.perfect==='boolean'&&event.perfect===(event.misses===0&&event.extras===0);
   }
   function activityProgress(mission,event){
     switch(mission.kind){
+      case 'piano-reading':return event.kind==='reading'?event.correct:0;
+      case 'piano-reading-bass':return event.kind==='reading'&&event.clef==='bass'?event.correct:0;
+      case 'dance-tour':return event.difficulty==='normal'&&integer(event.tourPassed,10)?event.tourPassed:0;
+      case 'dance-pass':return event.passed?1:0;
+      case 'dance-perfect':return event.scorePercent===100?1:0;
+      case 'dance-hard':return event.passed&&['hard','extreme'].includes(event.difficulty)?1:0;
       case 'fish-catches':return 1;
       case 'fish-compound':return event.meter==='6/8'?1:0;
       case 'fish-epic':return ['epic','legendary'].includes(event.rarity)?1:0;
@@ -293,7 +307,7 @@
       frame.addEventListener?.('load',session.loaded);connectFrame();return true;
     }
     function beginActivity(game){
-      if(!canRecord()||!['fishing','piano'].includes(game)||disposed)return null;
+      if(!canRecord()||!['fishing','piano','dance'].includes(game)||disposed)return null;
       const token='activity-'+(++activitySerial)+'-'+now().toString(36);
       activities.set(game,{token,eligible:new Set(DEFINITIONS.filter(mission=>mission.game===game&&unlocked(mission)&&state.missions[mission.id]&&!state.missions[mission.id].completedAt).map(mission=>mission.id))});return token;
     }

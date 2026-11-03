@@ -1,0 +1,12 @@
+{
+  "description": "Complete the approved emerald masonry immediately right of the Coda Arcade plaque, using the existing approved green source. Keep the plaque, frame, blue roof caps and lamp fixtures unchanged.",
+  "worldSize": [1672,941],
+  "source": "assets/environment/source/green-back-wall.png",
+  "sourceSize": [1672,941],
+  "output": "assets/environment/v1/empty-arcade.png",
+  "preserveProject": true,
+  "polygons": [
+    [[1058,43],[1090,43],[1090,115],[1058,115]]
+  ],
+  "protectedPolygons": []
+}

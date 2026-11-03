@@ -29,7 +29,7 @@ test('early release breaks a hold once and never awards it later',()=>{
  const released=game.release(note.time+note.durationSeconds*.3,'key:Space');
  assert.equal(released.kind,'hold-break');assert.equal(released.state.lastJudgement.kind,'hold-break');
  assert.equal(released.state.lastJudgement.resultKind,'miss');assert.equal(released.state.hits,0);
- assert.equal(released.state.misses,1);assert.equal(released.state.progress,38);
+ assert.equal(released.state.misses,1);assert.equal(released.state.progress,40);
  assert.deepEqual(released.state.activeHolds,[]);assert.deepEqual(released.state.pressedSources,[]);
  game.update(note.holdEndTime);assert.equal(game.getState().misses,1);assert.equal(game.getState().hits,0);
  assert.equal(game.release(note.holdEndTime,'key:Space').accepted,false);
@@ -203,7 +203,8 @@ test('release grace has an exact boundary and missed or assistive holds grant no
   else game.tap(held.time);
   const before=game.getState();
   assert.equal(game.getState().notes.find(note=>note.id===following.id).lateWindow,following.window);
-  const outcome=game.press(following.time+(following.window+following.transitionLateWindow)/2,'pointer:1');assert.equal(outcome.kind,'extra');
+  const lateOffset=following.transitionLateWindow>following.window?(following.window+following.transitionLateWindow)/2:following.window+.00001;
+  const outcome=game.press(following.time+lateOffset,'pointer:1');assert.equal(outcome.kind,'extra');
   assert.equal(outcome.state.hits,before.hits);assert.equal(outcome.state.misses,before.misses+1);
   assert.equal(outcome.state.extras,before.extras+1);
  }

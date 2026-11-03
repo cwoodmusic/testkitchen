@@ -1,7 +1,7 @@
-#dialog .musician-description{color:#b8f5ee;font-size:12px;line-height:1.45;margin:7px 0}
+#dialog .musician-description{color:#b8f5ee;font-size:17px;line-height:1.5;margin:7px 0}
 #dialog .musician-choices{display:flex;flex-wrap:wrap;gap:7px;margin:12px 0}
-#dialog .musician-choices button{float:none;flex:1;padding:8px;font-size:12px}
-#dialog>small{display:block;margin:10px 0;color:#bbaccd;font-size:11px}
+#dialog .musician-choices button{float:none;flex:1 1 160px;min-width:0;padding:10px;font-size:18px;line-height:1.4;overflow-wrap:anywhere}
+#dialog>small{display:block;margin:10px 0;color:#bbaccd;font-size:14px}
 #dialog #close{float:none;margin-top:8px}
 .musician-card{display:grid;grid-template-columns:64px 1fr auto;align-items:center;gap:12px;padding:12px 0;border-bottom:1px solid #645075}
 .musician-card canvas{width:64px;height:auto;image-rendering:pixelated;background:#17152c;border-radius:7px}

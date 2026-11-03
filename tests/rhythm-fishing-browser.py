@@ -168,7 +168,7 @@ class RhythmFishingTests(unittest.TestCase):
         if self.page.locator('#fishingBoatBoard').is_disabled():
             landing=self.state().get('shore',{}).get('spawn',{'x':135,'y':285})
             self.walk_to(landing['x'],landing['y'])
-        pier=self.state().get('boardingPoint',{'x':218,'y':380})
+        pier=self.state().get('boardingPoint',{'x':270,'y':395})
         self.walk_to(pier['x'],pier['y'])
         self.assertFalse(self.page.locator('#fishingBoatBoard').is_disabled(),
                          'Walking to the pier should make the boat reachable')
@@ -219,7 +219,8 @@ class RhythmFishingTests(unittest.TestCase):
 
     def test_challenge_start_fires_once_for_real_bites_and_never_for_practice(self):
         self.assertEqual(self.page.evaluate('challengeStarts'),[])
-        self.page.locator('#fishingMenuButton').click();self.page.locator('#fishingPractice').click()
+        self.page.locator('#fishingPractice').click()
+        self.page.locator('#fishingPracticeNext').click(force=True)
         self.page.locator('#fishingPracticeStart').click(force=True);self.page.clock.run_for(64)
         self.assertTrue(self.state()['practice']);self.assertEqual(self.page.evaluate('challengeStarts'),[])
         self.page.locator('#fishingCancel').click(force=True);self.page.clock.run_for(32)

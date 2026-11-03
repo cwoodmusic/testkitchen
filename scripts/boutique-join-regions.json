@@ -1,0 +1,9 @@
+{
+  "description": "Canonicalize the reviewed boutique pathway's left post and straight nightclub cap from the actual FX-off composed background. This removes the stale native rectangle without changing the accepted visible path or any objects, walls or collision elsewhere.",
+  "worldSize": [1672,941],
+  "source": "assets/environment/source/boutique-join-composed.png",
+  "output": "assets/environment/v1/empty-arcade.png",
+  "polygons": [
+    [[240,427],[500,427],[500,527],[240,527]]
+  ]
+}

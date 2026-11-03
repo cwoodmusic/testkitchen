@@ -82,7 +82,7 @@ test('every authored mission keeps its exact bounded target in the private cloud
  const targets=Object.fromEntries(Object.entries(schema.properties).map(([id,value])=>[id,value.properties.progress.maximum]));
  assert.deepEqual(targets,Object.fromEntries(DEFINITIONS.map(mission=>[mission.id,mission.target])));
  assert.deepEqual(schema.required,[],'New mission fields are optional for existing profiles');
- assert.equal(Object.keys(targets).length,29);
+ assert.equal(Object.keys(targets).length,35);
  for(const value of Object.values(schema.properties))assert.deepEqual(Object.keys(value.properties),['acceptedAt','progress','completedAt','rewardedAt']);
 });
 

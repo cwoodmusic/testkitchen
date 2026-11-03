@@ -1,1 +1,47 @@
-.music-history{box-sizing:border-box;color:#eeeafa;background:#191d32;border:2px solid #8ae0d0;border-radius:16px;width:min(860px,94vw);max-height:88dvh;padding:22px;overflow:auto;font:16px/1.6 system-ui,sans-serif;box-shadow:0 12px 70px #0009}.music-history::backdrop{background:#090c19c9}.music-history header{display:flex;align-items:center;justify-content:space-between;gap:15px}.music-history h2{font-size:1.35rem;margin:0}.music-history button,.music-history select,.music-history input{box-sizing:border-box;min-height:44px;font:inherit;border-radius:8px;border:1px solid #8e90b9;padding:8px 12px;background:#30364f;color:#fff;max-width:100%}.music-history button{cursor:pointer}.music-history :focus-visible{outline:3px solid #ffe19a;outline-offset:3px}.history-filters{display:flex;flex-wrap:wrap;gap:12px;margin:18px 0}.history-filters label{display:grid;flex:1;min-width:180px}.music-history details{border-top:1px solid #585876;padding:12px 0}.music-history summary{min-height:44px;cursor:pointer;font-weight:700;align-content:center}.history-grid{list-style:none;margin:8px 0;padding:0;display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:12px}.history-fact{padding:16px;background:#30354e;border:1px solid #727c9a;border-radius:10px}.history-fact p{margin:8px 0 0;overflow-wrap:anywhere}.history-fact.locked{background:#24283b;color:#c5c8d6;border-style:dashed}.history-story{font-size:1.25rem;padding:20px;background:#30354e;border-left:4px solid #8ae0d0;border-radius:8px}.history-actions{display:flex;flex-wrap:wrap;gap:10px}.music-history-open{overflow:hidden}@media(max-width:600px){.music-history{padding:14px;width:96vw;max-height:92dvh}.history-grid{grid-template-columns:1fr}.music-history header{align-items:flex-start}.music-history h2{font-size:1.12rem}}
+.music-history{box-sizing:border-box;color:#eeeafa;background:#191d32;border:2px solid #8ae0d0;border-radius:16px;width:min(860px,94vw);max-height:88dvh;padding:22px;overflow:auto;font:18px/1.6 system-ui,sans-serif;box-shadow:0 12px 70px #0009}.music-history::backdrop{background:#090c19c9}.music-history .history-dialog-heading{display:flex;align-items:center;justify-content:space-between;gap:15px}.music-history h2{font-size:1.35rem;margin:0}.music-history button,.music-history select,.music-history input{box-sizing:border-box;min-height:44px;font:inherit;border-radius:8px;border:1px solid #8e90b9;padding:8px 12px;background:#30364f;color:#fff;max-width:100%}.music-history button{cursor:pointer}.music-history :focus-visible{outline:3px solid #ffe19a;outline-offset:3px}.history-filters{display:flex;flex-wrap:wrap;gap:12px;margin:18px 0}.history-filters label{display:grid;flex:1;min-width:180px}.music-history details{border-top:1px solid #585876;padding:12px 0}.music-history summary{min-height:44px;cursor:pointer;font-weight:700;align-content:center}.history-grid{list-style:none;margin:8px 0;padding:0;display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:12px}.history-fact{padding:16px;background:#30354e;border:1px solid #727c9a;border-radius:10px}.history-fact p{margin:8px 0 0;overflow-wrap:anywhere}.history-fact.locked{background:#24283b;color:#c5c8d6;border-style:dashed}.history-story{font-size:22px;padding:20px;background:#30354e;border-left:4px solid #8ae0d0;border-radius:8px}.history-actions{display:flex;flex-wrap:wrap;gap:10px}.music-history-open{overflow:hidden}@media(max-width:600px){.music-history{padding:14px;width:96vw;max-height:92dvh}.history-grid{grid-template-columns:1fr}.music-history .history-dialog-heading{align-items:flex-start}.music-history h2{font-size:1.12rem}}
+.history-quest{padding:16px;margin:14px 0;border:1px solid #727c9a;border-radius:10px;background:#242a42}.history-quest h3{margin:0 0 8px}.history-quest button{margin:6px 8px 0 0}.history-relationship{font-weight:700;color:#a5efdd}.history-quiz-question{border:1px solid #7e86a4;border-radius:10px;padding:14px;margin:20px 0;min-width:0}.history-quiz-question legend{font-weight:700;padding:0 6px;max-width:100%}.history-quiz-question label{display:flex;align-items:center;gap:12px;min-height:48px;padding:8px;border-radius:7px;cursor:pointer}.history-quiz-question label:has(input:checked){background:#355357}.history-quiz-question input{width:20px;min-height:20px;height:20px;flex:none}.music-history nav.history-actions{margin:16px 0}.music-history button:disabled{cursor:default;opacity:.65}#dev-history label{display:grid;gap:8px}#dev-history button{min-height:44px;margin:6px 8px 6px 0}#dev-history p{line-height:1.6}
+.history-fact-ready{border-color:#ffe29a!important;box-shadow:0 0 0 1px #ffe29a60!important}
+
+/* The Scholar offers one clear choice before opening a collection or quiz. */
+.music-history{padding:22px;line-height:1.5;background:linear-gradient(145deg,#202d4d,#131b34);border-color:#7c91bb;border-radius:22px;color:#f7f8ff;scroll-padding-top:76px}
+.music-history,.music-history *{box-sizing:border-box}
+.music-history .history-dialog-heading{position:sticky;z-index:2;top:-22px;margin:-4px 0 20px;padding:8px 0 12px;background:#202d4d;border-bottom:1px solid #637599;display:flex;flex-direction:row;align-items:center;justify-content:space-between;gap:12px}
+.music-history .history-dialog-heading h2{font-size:22px;line-height:1.2;color:#ffdc8e}
+.music-history .history-dialog-heading>button{flex:none;min-height:44px;padding:8px 16px;background:#2d3b59;border-color:#8299c0}
+.music-history h2:focus,.music-history h3[tabindex]:focus{outline:none}
+.music-history .history-home .kids-menu-head{margin-bottom:22px}
+.music-history .history-home .kids-menu-head h3{font-size:34px;line-height:1.2;margin:6px 0 10px;color:#f9f9ff;letter-spacing:-.02em}
+.music-history .history-home .kids-menu-head>p:last-child{font-size:19px;line-height:1.45;margin:0;color:#dce6fb;min-height:2.9em}
+.music-history .history-home .kids-menu-grid{margin:0}
+.music-history .history-home .kids-menu-card{min-height:180px}
+.music-history .history-home .kids-menu-title{font-size:24px}
+.music-history .history-home .kids-menu-desc{font-size:17px;line-height:1.4}
+.music-history .history-back{margin:0 0 16px;background:transparent;border-color:#7485aa;font-size:17px}
+.music-history .history-help-steps{padding:0;list-style:none;counter-reset:scholar-step;display:grid;gap:14px}
+.music-history .history-help-steps li{counter-increment:scholar-step;position:relative;padding:18px 18px 18px 64px;background:#293958;border:1px solid #7188b0;border-radius:14px}
+.music-history .history-help-steps li::before{content:counter(scholar-step);position:absolute;left:18px;top:18px;width:30px;height:30px;display:grid;place-items:center;border-radius:50%;background:#a5f0cf;color:#173c37;font-weight:800}
+.music-history .history-help-steps h3{margin:0 0 8px;font-size:22px;line-height:1.25;color:#f4f9ff}
+.music-history .history-help-steps p{margin:0;line-height:1.5;color:#e0e9fa}
+.music-history .history-rewards{margin-top:20px}
+.music-history button.kids-menu-primary{background:#a5f0cf;color:#173c37;border-color:#c7ffe4;font-weight:800}
+.music-history .history-filters input,.music-history .history-filters select{width:100%;min-width:0}
+.music-history .history-filters label{min-width:min(180px,100%)}
+@media(max-width:600px){
+ .music-history{padding:16px;width:96vw;max-height:92dvh;border-radius:17px;font-size:17px}
+ .music-history .history-dialog-heading{top:-16px;margin-bottom:18px;padding:5px 0 10px}
+ .music-history .history-dialog-heading h2{font-size:20px}
+ .music-history .history-home .kids-menu-head h3{font-size:29px}
+ .music-history .history-home .kids-menu-head>p:last-child{font-size:18px}
+ .music-history .history-home .kids-menu-title{font-size:22px}
+ .music-history .history-home .kids-menu-desc{font-size:16px}
+ .music-history .history-help-steps li{padding:16px 14px 16px 54px}
+ .music-history .history-help-steps li::before{left:14px;top:15px;width:28px;height:28px}
+ .music-history .history-help-steps h3{font-size:20px}
+}
+@media(max-width:420px){.music-history .history-home .kids-menu-card{min-height:120px}}
+@media(min-width:761px) and (max-height:820px){
+ .music-history{padding:18px;max-height:92dvh}
+ .music-history .history-dialog-heading{top:-18px;margin-bottom:16px}
+ .music-history .history-home .kids-menu-head h3{font-size:31px}
+ .music-history .history-home .kids-menu-card{min-height:166px}
+}

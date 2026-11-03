@@ -3,6 +3,7 @@
 Runs the production editor in disposable Chromium profiles. All image sources
 and game files are local; external services and classroom accounts are blocked.
 """
+from settings_menu_helpers import settings_page
 import copy
 import functools
 from http.server import SimpleHTTPRequestHandler, ThreadingHTTPServer
@@ -53,6 +54,12 @@ window.fixturePixel=(id,x,y)=>{
  return Array.from(image.getContext('2d').getImageData(x,y,1,1).data);
 };
 </script>'''
+
+
+def reveal_editor_controls(case):
+    if case.state().get('expanded') and case.state().get('controlsVisible') is False:
+        case.control('controls-toggle').click()
+        case.frames()
 
 
 class Handler(SimpleHTTPRequestHandler):
@@ -161,17 +168,20 @@ class ArtworkEditorBrowserTests(unittest.TestCase):
         self.select(target)
 
     def select(self, target):
+        reveal_editor_controls(self)
         self.control('target').select_option(target)
         self.page.wait_for_function(
             f'()=>{{const s={self.editor()}.getState();return s.target==={json.dumps(target)}&&!s.loading;}}')
         self.frames()
 
     def zoom(self, value):
+        reveal_editor_controls(self)
         self.control('zoom').select_option(str(value))
         self.frames()
         self.assertEqual(self.state()['zoom'], value)
 
     def colour(self, value):
+        reveal_editor_controls(self)
         control = self.control('hex')
         bounds = control.bounding_box()
         host_bounds = self.host().bounding_box()
@@ -185,6 +195,11 @@ class ArtworkEditorBrowserTests(unittest.TestCase):
         self.assertEqual(self.state()['color'], value.lower() if len(value) == 9 else value.lower() + 'ff')
 
     def center(self, x, y):
+        viewport = self.page.viewport_size
+        if (self.state().get('expanded') and self.state().get('controlsVisible')
+                and viewport['width'] < 700 and viewport['height'] > viewport['width']):
+            self.control('controls-toggle').click()
+            self.frames()
         self.control('canvas').scroll_into_view_if_needed()
         state = self.state()
         box = self.control('canvas').bounding_box()
@@ -323,6 +338,7 @@ class ArtworkEditorBrowserTests(unittest.TestCase):
         self.control('copy').click()
         self.assertEqual(self.page.evaluate('artworkChanges.length'), 0)
         before = self.page.evaluate('JSON.stringify(artworkData)')
+        self.page.get_by_role('button', name='Clear selection', exact=True).click()
         self.control('paste').click()
         self.center(42, 26)
         self.page.mouse.move(**self.point(42, 26))
@@ -462,7 +478,7 @@ class ArtworkEditorBrowserTests(unittest.TestCase):
         self.page.once('dialog', lambda dialog: dialog.accept())
         self.page.locator('#devReset').click()
         self.frames()
-        self.assertNotIn('artwork', self.project())
+        self.assertEqual(self.project(), original, 'Reset restores the published artwork as well as the layout')
         self.page.once('dialog', lambda dialog: dialog.accept())
         self.page.locator('#devImportFile').set_input_files({
             'name': 'painted-world.json', 'mimeType': 'application/json',
@@ -606,7 +622,7 @@ class ArtworkEditorBrowserTests(unittest.TestCase):
         self.assertEqual(baseline, [[18, 52, 86, 255]] * 25)
 
         def set_fx(label):
-            self.page.locator('#worldMenuBtn').click()
+            settings_page(self.page, 'screen')
             for _ in range(3):
                 if self.page.locator('#fxBtn').inner_text().endswith(label):
                     break
@@ -692,6 +708,8 @@ class ArtworkEditorBrowserTests(unittest.TestCase):
                 self.page.keyboard.press('ControlOrMeta+C')
                 self.assertTrue(self.state()['clipboard'])
                 self.assertEqual(self.project(),selected,'Copy never paints or changes the world history')
+                self.page.get_by_role('button', name='Clear selection', exact=True).click()
+                self.control('canvas').focus()
                 self.page.keyboard.press('ControlOrMeta+V')
                 self.assertTrue(self.state()['pasting'],'The parent console must delegate paste shortcuts to the pixel editor')
                 self.page.mouse.move(**self.point(22,21))
@@ -793,6 +811,7 @@ class ArtworkEditorBrowserTests(unittest.TestCase):
         self.paint(1252, 650)
         painted = self.project()
         self.assertNotEqual(painted, before)
+        reveal_editor_controls(self)
         self.control('undo').click()
         self.ready('background.world')
         self.assertEqual(self.project(), before,

@@ -1,0 +1,14 @@
+{
+  "description": "Fill the boutique's two recessed shoulders under one horizontal roof, preserving the central icon/sign journals and existing lamp, mirror, counter and floor.",
+  "worldSize": [1672,941],
+  "source": "assets/environment/source/boutique-flat-top.png",
+  "before": "assets/environment/source/boutique-before-flat-top.png",
+  "output": "assets/environment/v1/empty-arcade.png",
+  "polygons": [
+    [[358,272],[452,272],[452,338],[358,338]],
+    [[588,272],[682,272],[682,338],[588,338]],
+    [[358,272],[682,272],[682,288],[358,288]],
+    [[358,272],[375,272],[375,426],[358,426]],
+    [[668,272],[682,272],[682,426],[668,426]]
+  ]
+}

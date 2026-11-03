@@ -1,0 +1,29 @@
+{
+  "description": "Remove the remaining baked magenta streaks from the glass beside the dance panels, preserving all architecture, neon and panel pixels.",
+  "worldSize": [1672, 941],
+  "before": "assets/environment/source/dance-reflections-before-cleanup.png",
+  "source": "assets/environment/source/dance-reflections-clean.png",
+  "sourcePlacement": [40, 500, 820, 390],
+  "output": "assets/environment/v1/empty-arcade.png",
+  "reviewedProjectSha256": "90b0319e0102c454c0f3217576c0ac5e157101952136a9584b4b4ae8d33a5b2b",
+  "passes": [
+    {
+      "id": "dance-west-glass",
+      "repairBounds": [94, 659, 57, 147],
+      "floorFeather": {
+        "leftBelow": [94, 102, 659],
+        "right": [143, 151],
+        "bottom": [794, 806]
+      }
+    },
+    {
+      "id": "dance-east-glass",
+      "repairBounds": [685, 649, 122, 157],
+      "floorFeather": {
+        "leftBelow": [685, 693, 649],
+        "right": [797, 807],
+        "bottom": [794, 806]
+      }
+    }
+  ]
+}

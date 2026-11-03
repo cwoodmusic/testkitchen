@@ -9,8 +9,7 @@ _spec = importlib.util.spec_from_file_location('piano_song_scale_support', Path(
 _scale = importlib.util.module_from_spec(_spec)
 _spec.loader.exec_module(_scale)
 
-FRERE = [60,62,64,60,60,62,64,60,64,65,67,64,65,67,
-         67,69,67,65,64,60,67,69,67,65,64,60,60,55,60,60,55,60]
+FRERE = [72, 74, 76, 72, 72, 74, 76, 72, 76, 77, 79, 76, 77, 79, 79, 81, 79, 77, 76, 72, 79, 81, 79, 77, 76, 72, 72, 67, 72, 72, 67, 72]
 
 RHYTHM_PROBE = r"""(()=>{
  window.__pianoRhythmInk=[];window.__pianoSongTones=[];
@@ -45,9 +44,9 @@ class PianoSongNotationTests(_scale._world.WorldBrowserCase):
         self.page.evaluate(RHYTHM_PROBE)
 
     def start_song(self, identifier):
-        self.menu('games')
+        self.menu('games','melodies')
         self.page.locator('#pianoLesson').select_option(identifier)
-        self.page.locator('[data-piano-dialogue-action="play"]').click()
+        self.page.locator('#pianoLearnMelody').click()
         self.page.clock.run_for(48)
         self.assertEqual(self.state()['lesson'], identifier)
         self.assertEqual(self.state()['challengeMode'], 'melody')
@@ -60,11 +59,11 @@ class PianoSongNotationTests(_scale._world.WorldBrowserCase):
         before = self.totals()
         initial = self.start_song('frere-jacques')
         self.assertEqual(initial['lessonPitches'], FRERE)
-        self.assertEqual(initial['octave'], 3)
-        self.assertEqual(initial['melodyRegister'], {'baseMidi':48,'lowest':55,'highest':69,'first':60})
-        self.assertEqual(min(key['midi'] for key in initial['floorKeys']), 48)
+        self.assertEqual(initial['octave'], 4)
+        self.assertEqual(initial['melodyRegister'], {'baseMidi':60,'lowest':67,'highest':81,'first':72})
+        self.assertEqual(min(key['midi'] for key in initial['floorKeys']), 60)
         self.assertTrue(set(FRERE).issubset({key['midi'] for key in initial['floorKeys']}))
-        self.floor_key(59)
+        self.floor_key(71)
         self.assertEqual(self.state()['lessonStep'], 0, 'Walking across keys never answers a pitch challenge')
         self.page.keyboard.press('e');self.page.clock.run_for(16)
         self.assertEqual(self.state()['lessonStep'], 0, 'The wrong concert pitch does not advance')
@@ -86,12 +85,13 @@ class PianoSongNotationTests(_scale._world.WorldBrowserCase):
             self.assertEqual(self.state()['lessonStep'], index+1,
                              'Only the next pitch matters; no long-note hold or rhythmic timing is required')
             if index == 27:
-                self.assertEqual(self.state()['lastWallNote'],55, 'The closing bell drops below the opening C')
+                self.assertEqual(self.state()['lastWallNote'],67, 'The closing bell drops below the opening C')
                 self.page.screenshot(path='/tmp/music48-piano-frere-low-g.png')
         complete = self.state()
         self.assertIn('piano-lesson:frere-jacques', complete['completed'])
         self.assertTrue(complete['dialogueOpen'])
-        self.assertEqual(self.totals(), {'notes':before['notes']+35,'xp':before['xp']+100})
+        self.assertEqual(self.totals(), {'notes':before['notes']+35,'xp':before['xp']+150})
+        self.assertIn('achievement:piano-first-melody', self.page.evaluate('CodaArcadeQA.progression().recent.map(event=>event.id)'))
 
     def test_written_rests_dots_and_barlines_do_not_add_timed_or_rest_input(self):
         self.start_song('jingle-bells')
@@ -133,7 +133,7 @@ class PianoSongNotationTests(_scale._world.WorldBrowserCase):
         self.assertEqual([note['midi'] for note in score['notes']], [64])
         self.assertFalse(any(note['midi']==62 for note in score['notes']), 'The next melody answer remains hidden')
         self.play_keyboard(65);self.assertEqual(self.state()['lessonStep'],0)
-        self.start_song('frere-jacques');self.assertEqual(self.state()['octave'],3)
+        self.start_song('frere-jacques');self.assertEqual(self.state()['octave'],4)
         self.start_scale('c-major')
         state = self.state();self.assertEqual(state['octave'],4)
         self.assertEqual(state['lessonPitches'],[60,62,64,65,67,69,71,72,71,69,67,65,64,62,60])
@@ -151,8 +151,8 @@ class PianoSongNotationTests(_scale._world.WorldBrowserCase):
         self.page.screenshot(path='/tmp/piano-score-frere-beams.png')
         for midi in FRERE[14:28]:self.play_keyboard(midi)
         self.close_panels()
-        self.assertEqual(self.state()['lastWallNote'],55)
-        self.assertTrue(self.page.evaluate('__pianoSongTones.some(f=>Math.abs(f-195.99771799)<.01)'),
+        self.assertEqual(self.state()['lastWallNote'],67)
+        self.assertTrue(self.page.evaluate('__pianoSongTones.some(f=>Math.abs(f-391.99543598)<.01)'),
                         'The closing G actually sounds in the octave below the opening C')
         self.page.screenshot(path='/tmp/piano-score-frere-low-g.png')
         self.start_song('jingle-bells')
@@ -181,7 +181,7 @@ class PianoSongNotationTests(_scale._world.WorldBrowserCase):
         self.page.locator('#pianoFullscreen').click();self.page.clock.run_for(48)
         self.assertEqual(self.state()['fullscreen']['mode'],'viewport')
         self.assertTrue(self.page.evaluate('document.querySelector("#pianoroom").contains(document.querySelector(".coda-touch-controls"))'))
-        self.floor_key(60)
+        self.floor_key(self.state()['lessonPitches'][0])
         play = self.page.locator('.coda-touch-interact')
         self.assertTrue(play.is_visible());self.assertGreaterEqual(play.bounding_box()['height'],64)
         self.assertEqual(self.state()['lessonStep'],0)

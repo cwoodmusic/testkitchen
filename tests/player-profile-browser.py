@@ -11,16 +11,16 @@ class Handler(SimpleHTTPRequestHandler):
     def log_message(self,*args):pass
     def do_GET(self):
         if self.path!='/profile-fixture':return super().do_GET()
-        html='''<!doctype html><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><link rel="stylesheet" href="/player-profile.css">
+        html='''<!doctype html><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><link rel="stylesheet" href="/activity-menus.css"><link rel="stylesheet" href="/player-profile.css">
 <style>body{margin:0;background:#101526;color:#eee;font:15px system-ui}button{color:#fff;background:#413253;border:1px solid #aaa;padding:9px;border-radius:6px}#panel{width:min(540px,calc(100vw - 16px));box-sizing:border-box;margin:8px auto;padding:12px;border:1px solid #7d678e;background:#211c36;max-height:calc(100dvh - 16px);overflow:auto}#panel[hidden]{display:none}</style>
 <button id="openProfile">Open profile</button><section id="panel" hidden role="dialog" aria-labelledby="panelTitle"><h1 id="panelTitle"></h1><button id="closeProfile">Close profile</button><div id="panelBody"></div></section>
-<script src="/character-renderer.js"></script><script src="/player-progression.js"></script><script src="/notes-shop.js"></script><script src="/musician-missions.js"></script><script src="/player-profile.js"></script><script>
+<script src="/character-renderer.js"></script><script src="/dance-campaign.js"></script><script src="/dance-rhythm-engine.js"></script><script src="/player-progression.js"></script><script src="/notes-shop.js"></script><script src="/musician-missions.js"></script><script src="/player-profile.js"></script><script>
 window.fixtureMissions=CodaMusicianMissions.DEFINITIONS.map(m=>({...m,status:m.id==='ellington-rhythm-streak'?'active':'available',progress:m.id==='ellington-rhythm-streak'?12:0}));
 window.fixtureTutorials={version:1,lessons:[{id:'note-naming',title:'Note naming',step:4,total:4,completed:true},{id:'rhythm-tree',title:'The rhythm tree',step:1,total:5,completed:false}],completed:['note-naming']};
 window.calls=[];window.progression=CodaPlayerProgression.create();window.wallet=CodaNotesShop.createWallet();
 if(!localStorage.musicArcadeV1)localStorage.musicArcadeV1=JSON.stringify({name:'Melody',hairstyle:'bald',shirt:'#999ca6',lowerColor:'#626875',headwear:'none'});
-window.profile=createCodaPlayerProfile({panelBody,renderer:createCodaCharacterRenderer(),openPanel:title=>{panel.hidden=false;panelTitle.textContent=title;panelBody.replaceChildren();},getAvatar:()=>JSON.parse(localStorage.musicArcadeV1),getClassroomAlias:()=>window.fixtureClassroomAlias||null,getProgression:()=>progression.refresh(),getNotes:()=>wallet.snapshot(),getMissions:()=>({missions:fixtureMissions}),getTutorials:()=>fixtureTutorials,openWardrobe:()=>calls.push('wardrobe'),openMission:id=>calls.push('mission:'+id),openGame:id=>calls.push('game:'+id),openLevels:()=>calls.push('levels'),openMusicians:()=>calls.push('musicians'),openClassroom:()=>calls.push('classroom'),openClassroomProfile:()=>calls.push('classroom-profile')});
-openProfile.onclick=()=>profile.open();closeProfile.onclick=()=>panel.hidden=true;
+window.profile=createCodaPlayerProfile({panelBody,renderer:createCodaCharacterRenderer(),openPanel:(title,options={})=>{panel.hidden=false;panelTitle.textContent=title;panelBody.replaceChildren();window.profileBack=options.onBack;},getAvatar:()=>JSON.parse(localStorage.musicArcadeV1),getClassroomAlias:()=>window.fixtureClassroomAlias||null,getProgression:()=>progression.refresh(),getNotes:()=>wallet.snapshot(),getMissions:()=>({missions:fixtureMissions}),getTutorials:()=>fixtureTutorials,openWardrobe:()=>calls.push('wardrobe'),openMission:id=>calls.push('mission:'+id),openGame:id=>calls.push('game:'+id),openLevels:()=>calls.push('levels'),openMusicians:()=>calls.push('musicians'),openClassroom:()=>calls.push('classroom'),openClassroomProfile:()=>calls.push('classroom-profile')});
+openProfile.onclick=()=>profile.open();closeProfile.onclick=()=>panel.hidden=true;document.addEventListener('keydown',event=>{if(event.key==='Escape'&&!panel.hidden){event.preventDefault();if(profileBack?.()!==true)panel.hidden=true;}});
 </script>'''
         self.send_response(200);self.send_header('Content-Type','text/html; charset=utf-8');self.end_headers();self.wfile.write(html.encode())
 
@@ -37,19 +37,34 @@ class PlayerProfileTests(unittest.TestCase):
         self.url=f'http://127.0.0.1:{self.server.server_port}/profile-fixture';self.page.goto(self.url);self.page.locator('#openProfile').click()
     def tearDown(self):
         self.page.evaluate('profile.dispose()');self.context.close();self.assertEqual(self.errors,[])
+    def open_page(self, page):
+        if self.page.locator('.player-profile').get_attribute('data-profile-page') == page:
+            return
+        home = self.page.locator('[data-profile-action="home"]')
+        if home.is_visible():
+            home.click()
+        if page != 'home':
+            self.page.locator('[data-profile-action="' + page + '"]').click()
+
     def test_saved_avatar_exact_xp_next_prizes_and_live_progress(self):
         self.assertEqual(self.page.locator('.profile-identity h2').inner_text(),'Melody')
         self.assertEqual(self.page.locator('.profile-xp-to-go').inner_text(),'80 XP to go!')
+        self.open_page('prizes')
         self.assertEqual(self.page.locator('.profile-prize strong').all_inner_texts(),['Pocket watch chain','Crystal Harp'])
+        self.open_page('home')
         pixels=self.page.locator('.profile-portrait-frame>canvas').evaluate('(canvas)=>Array.from(canvas.getContext("2d").getImageData(0,0,canvas.width,canvas.height).data).filter((value,index)=>index%4===3&&value>0).length')
         self.assertGreater(pixels,1500)
         self.page.evaluate("progression.awardXP('quest:profile-test',130,'A musical mission')")
         self.assertEqual(self.page.locator('.profile-level').inner_text(),'Level 2')
         self.assertEqual(self.page.locator('.profile-xp-to-go').inner_text(),'50 XP to go!')
-        self.assertEqual(self.page.locator('.profile-prize strong').all_inner_texts(),['Artist beret','Neon Marimba','4 new quests at Level 3'])
+        self.open_page('prizes')
+        self.assertEqual(self.page.locator('.profile-prize strong').all_inner_texts(),['Artist beret','Neon Marimba','6 new quests at Level 3'])
+        self.open_page('learning')
         self.assertIn('Note naming · Finished',self.page.locator('.profile-lessons').inner_text())
         self.assertIn('1 / 5 steps',self.page.locator('.profile-lessons').inner_text())
+        self.open_page('home')
         self.assertIn('XP means experience points',self.page.locator('.profile-experience .profile-help').inner_text())
+        self.open_page('learning')
         self.page.get_by_role('button',name='Practice in the classroom',exact=True).click();self.assertEqual(self.page.evaluate('calls.at(-1)'),'classroom')
         self.page.locator('#closeProfile').click();self.page.reload();self.page.locator('#openProfile').click()
         self.assertEqual(self.page.locator('.profile-level').inner_text(),'Level 2')
@@ -63,6 +78,7 @@ class PlayerProfileTests(unittest.TestCase):
         self.assertEqual(self.page.evaluate('({avatar:localStorage.musicArcadeV1,progress:localStorage.codaPlayerProgressV1})'),before)
         self.page.evaluate('fixtureClassroomAlias=null;profile.refresh()');self.assertEqual(self.page.locator('.profile-identity h2').inner_text(),'Melody')
     def test_real_mission_fields_actions_and_pending_reward_states(self):
+        self.open_page('missions')
         card=self.page.locator('[data-mission-id="ellington-rhythm-streak"]')
         self.assertIn('50 notes in a row',card.inner_text());self.assertIn('12 / 50',card.inner_text());self.assertIn('160 Notes',card.inner_text())
         card.get_by_role('button',name='Open In the Pocket mission',exact=True).click();self.assertEqual(self.page.evaluate('calls.at(-1)'),'mission:ellington-rhythm-streak')
@@ -82,7 +98,9 @@ class PlayerProfileTests(unittest.TestCase):
               }
               profile.refresh();
             }''',next_level)
+            self.open_page('home')
             self.assertEqual(self.page.locator('.profile-level').inner_text(),'Level '+str(next_level-1))
+            self.open_page('prizes')
             notes=self.page.locator('[data-prize-kind="notes"]');self.assertEqual(notes.count(),1)
             self.assertIn('Notes to spend in the shop',notes.inner_text())
             self.assertEqual(self.page.locator('[data-prize-kind="vibe"] strong').inner_text(),vibe)
@@ -96,6 +114,7 @@ class PlayerProfileTests(unittest.TestCase):
            {id:'tier-five',person:'miles',title:'Later five',game:'triad',goal:'Keep learning.',minLevel:5,status:'locked',unlocked:false,target:1,progress:0,reward:150}
           ];profile.refresh();
         }''')
+        self.open_page('missions')
         preview=self.page.locator('.profile-upcoming-preview')
         self.assertFalse(preview.evaluate('node=>node.open'))
         self.assertIn('6 new quests open at Level 3',self.page.locator('.profile-upcoming-missions').inner_text())
@@ -104,8 +123,10 @@ class PlayerProfileTests(unittest.TestCase):
         self.assertEqual(preview.locator('[data-mission-id="tier-five"]').count(),0,'Only the nearest future tier is previewed')
         preview.locator('summary').click();self.assertIn('Unlocks at Level 3',preview.inner_text());self.assertIn('60 Notes',preview.inner_text());self.assertIn('Plus 2 more quests',preview.inner_text())
         self.page.evaluate("progression.awardXP('quest:tier-prize',80,'Practice');profile.refresh()")
+        self.open_page('prizes')
         self.assertEqual(self.page.locator('[data-prize-kind="quest"] strong').inner_text(),'6 new quests at Level 3')
         self.assertIn('New challenges from the musicians',self.page.locator('[data-prize-kind="quest"]').inner_text())
+        self.open_page('missions')
         before=self.page.evaluate('localStorage.codaPlayerProgressV1');self.page.set_viewport_size({'width':390,'height':844})
         self.assertLessEqual(self.page.locator('.player-profile').evaluate('e=>e.scrollWidth'),390)
         self.page.locator('.profile-upcoming-preview summary').click();self.assertEqual(self.page.evaluate('localStorage.codaPlayerProgressV1'),before)
@@ -119,6 +140,7 @@ class PlayerProfileTests(unittest.TestCase):
            {id:'miles-collected',person:'miles',title:'Earlier win',game:'triad',goal:'Win a round.',status:'rewarded',target:1,progress:1,reward:75}
           ];profile.refresh();
         }''')
+        self.open_page('missions')
         easy=self.page.locator('[data-mission-id="miles-easy"]');easy.get_by_role('button',name='Open Easy win mission',exact=True).click()
         self.assertEqual(self.page.evaluate('calls.at(-1)'),'mission:miles-easy')
         easy.get_by_role('button',name='Play Music Triad for Easy win',exact=True).click();self.assertEqual(self.page.evaluate('calls.at(-1)'),'game:triad')
@@ -143,5 +165,23 @@ class PlayerProfileTests(unittest.TestCase):
         self.assertEqual(self.page.locator('.profile-prize').count(),0)
         before=self.page.evaluate('localStorage.codaPlayerProgressV1');self.page.get_by_role('button',name='View character from right',exact=True).click();self.page.get_by_role('button',name='Change your look',exact=True).click()
         self.assertEqual(self.page.evaluate('localStorage.codaPlayerProgressV1'),before);self.assertEqual(self.page.evaluate('calls.at(-1)'),'wardrobe')
+
+    def test_menu_pages_keep_current_progress_without_awarding_or_writing(self):
+        before=self.page.evaluate('({avatar:localStorage.musicArcadeV1,progress:localStorage.codaPlayerProgressV1,notes:localStorage.codaNotesWalletV1})')
+        self.assertEqual(self.page.locator('[data-profile-action]').count(),4)
+        self.open_page('missions')
+        self.page.evaluate("fixtureMissions.find(m=>m.person==='ellington').progress=20;profile.refresh()")
+        self.assertEqual(self.page.locator('.player-profile').get_attribute('data-profile-page'),'missions')
+        self.assertIn('20 / 50',self.page.locator('[data-mission-id="ellington-rhythm-streak"]').inner_text())
+        self.page.keyboard.press('Escape')
+        self.assertEqual(self.page.locator('.player-profile').get_attribute('data-profile-page'),'home')
+        for page in ['prizes','learning','activity']:
+            self.open_page(page)
+            self.assertEqual(self.page.locator('.player-profile').get_attribute('data-profile-page'),page)
+            self.assertTrue(self.page.locator('[data-profile-action="home"]').is_visible())
+        self.assertEqual(self.page.evaluate('({avatar:localStorage.musicArcadeV1,progress:localStorage.codaPlayerProgressV1,notes:localStorage.codaNotesWalletV1})'),before)
+        self.page.keyboard.press('Escape')
+        self.page.keyboard.press('Escape')
+        self.assertTrue(self.page.locator('#panel').is_hidden())
 
 if __name__=='__main__':unittest.main(verbosity=2)

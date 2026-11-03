@@ -67,7 +67,7 @@ class AnimationPerformanceTests(unittest.TestCase):
         self.assertEqual(self.errors, [])
 
     def test_full_lighting_reuses_small_glowing_note_and_soft_light_surfaces(self):
-        self.assertEqual(self.page.locator('#fxBtn').inner_text(), '✧ FX: Full')
+        self.assertEqual(self.page.locator('#fxBtn').inner_text(), 'Effects: Full')
         self.page.evaluate('displayFrames(24)')
         self.page.evaluate('renderWork.blurredWorldRects=0')
         self.page.evaluate('displayFrames(24)')

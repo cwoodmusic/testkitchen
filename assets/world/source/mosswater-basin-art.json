@@ -1,0 +1,25 @@
+{
+  "description": "Arcade-style rounded-angular fishing biome screen, with open water corridors for NES-style screen-edge travel. Runtime characters, boats and fish remain separate.",
+  "source": "assets/world/source/mosswater-basin-source.png",
+  "sourceSize": [
+    1591,
+    988
+  ],
+  "output": "assets/world/fishing/mosswater-basin.png",
+  "outputSize": [
+    1592,
+    988
+  ],
+  "logicalWorldSize": [
+    1000,
+    620
+  ],
+  "exits": [
+    "west",
+    "east",
+    "north"
+  ],
+  "normalization": "Full-frame Canvas drawImage, imageSmoothingEnabled=false, preserving room-artwork native dimensions.",
+  "sourceSha256": "076c2ad1fcfb2df92a12303b92e48bfe0f1b17d1b69a3465bc592f447dcb3550",
+  "outputSha256": "8c3c38c3400dcaf76135a04c71d501a98d746fbe612b71f8792125b28d081649"
+}

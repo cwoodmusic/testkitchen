@@ -1,0 +1,3926 @@
+{
+  "version": 1,
+  "style": "hand-drawn pixel art",
+  "sources": [
+    {
+      "path": "assets/decor/source/handdrawn-audio-register.png",
+      "sha256": "84868c0e275c0d4b4e1c5507ccd0d57a4081bb21cf591485f7b16ce276849a2d"
+    },
+    {
+      "path": "assets/decor/source/handdrawn-floor-a.png",
+      "sha256": "e03b370557d0edc140a6d8aba3a9aaf59255e6a0fdf38291eecc1b690da5a1a1"
+    },
+    {
+      "path": "assets/decor/source/handdrawn-floor-b.png",
+      "sha256": "59a4346f3dee207c12974e5a1185c1ae9d4df2fa56113ce9bffdbc3474a9f23a"
+    },
+    {
+      "path": "assets/decor/source/handdrawn-tabletop-a.png",
+      "sha256": "873cd3575a655fa87c836902c54dbff5e9b24c15d5ae9e6e3bb2f71d2f3dd6af"
+    },
+    {
+      "path": "assets/decor/source/handdrawn-tabletop-b.png",
+      "sha256": "69e0e6833b3d2d6fd509a18a8596f6cba9feab4e52f6761e0c46139dc8a14870"
+    },
+    {
+      "path": "assets/decor/source/handdrawn-wall-a.png",
+      "sha256": "5e20e8937385f6c4b5a40cc973d61a7f2cbb46304f0e893240407ded8168f7b4"
+    },
+    {
+      "path": "assets/decor/source/handdrawn-furniture-a.png",
+      "sha256": "98bfbc5f86e614de2056d4347e3bea11a3a30f01aea4a7bdccc39d091a551e01"
+    },
+    {
+      "path": "assets/decor/source/handdrawn-furniture-b.png",
+      "sha256": "703e46d2683ad007d1f08252364af1e1ca434b42890b61bff187b687d05959e6"
+    },
+    {
+      "path": "assets/decor/source/handdrawn-wall-b.png",
+      "sha256": "033ec5c8c27e213983ec838585e719aa91609f65f96a78fa367dc5858c88bba5"
+    },
+    {
+      "path": "assets/decor/source/handdrawn-rugs-a.png",
+      "sha256": "9de6123b14495bfbbfe5732c66b0199d6ff730f1fe0784e4fa268500fae58f6c"
+    },
+    {
+      "path": "assets/decor/source/handdrawn-rugs-b.png",
+      "sha256": "4a2fe157ec7b798554dc6fc2288705d2ed52803fa53bcf273fd8f7387c6f3c59"
+    },
+    {
+      "path": "assets/decor/source/handdrawn-east-west-furniture.png",
+      "sha256": "982b2ffe7aea3429a7036ac53e038817fbfbccdf4f51a3ae32848d19cf868ac6"
+    }
+  ],
+  "items": [
+    {
+      "id": "boombox",
+      "name": "Mini boombox",
+      "category": "tabletop",
+      "width": 34,
+      "height": 24,
+      "source": "assets/decor/source/handdrawn-audio-register.png",
+      "sourceSize": [
+        2172,
+        724
+      ],
+      "cell": [
+        0,
+        0,
+        735,
+        724
+      ],
+      "crop": [
+        71,
+        204,
+        581,
+        428
+      ],
+      "placement": [
+        3,
+        2,
+        27,
+        20
+      ],
+      "visibleBounds": [
+        3,
+        2,
+        27,
+        20
+      ],
+      "corners": [
+        0,
+        0,
+        0,
+        0
+      ],
+      "output": "assets/decor/handdrawn/v1/boombox.png",
+      "facing": "south",
+      "sha256": "df0218e30d6082a09b7797d142d2909d1c4a1d96b2f77bf43281818126bd8724"
+    },
+    {
+      "id": "boombox-tower",
+      "name": "Boombox tower",
+      "category": "floor",
+      "width": 64,
+      "height": 96,
+      "source": "assets/decor/source/handdrawn-audio-register.png",
+      "sourceSize": [
+        2172,
+        724
+      ],
+      "cell": [
+        735,
+        0,
+        703,
+        724
+      ],
+      "crop": [
+        819,
+        58,
+        534,
+        610
+      ],
+      "placement": [
+        2,
+        25,
+        60,
+        69
+      ],
+      "visibleBounds": [
+        2,
+        25,
+        60,
+        69
+      ],
+      "corners": [
+        0,
+        0,
+        0,
+        0
+      ],
+      "output": "assets/decor/handdrawn/v1/boombox-tower.png",
+      "facing": "south",
+      "sha256": "3348906b52545b3f10a21f8564cccbc8f21811d118d41c04a509713337e17242"
+    },
+    {
+      "id": "notes-register",
+      "name": "Notes counter register",
+      "category": "tabletop",
+      "width": 36,
+      "height": 32,
+      "source": "assets/decor/source/handdrawn-audio-register.png",
+      "sourceSize": [
+        2172,
+        724
+      ],
+      "cell": [
+        1438,
+        0,
+        734,
+        724
+      ],
+      "crop": [
+        1524,
+        183,
+        571,
+        445
+      ],
+      "placement": [
+        2,
+        3,
+        32,
+        25
+      ],
+      "visibleBounds": [
+        2,
+        3,
+        32,
+        25
+      ],
+      "corners": [
+        0,
+        0,
+        0,
+        0
+      ],
+      "output": "assets/decor/handdrawn/v1/notes-register.png",
+      "facing": "north",
+      "sha256": "e6ffe11861393f862d621006dc0cbf54f2958e03469dd488c86610e0760f1550"
+    },
+    {
+      "id": "neon-jukebox",
+      "name": "Neon jukebox",
+      "category": "floor",
+      "width": 64,
+      "height": 96,
+      "source": "assets/decor/source/handdrawn-floor-a.png",
+      "sourceSize": [
+        1536,
+        1024
+      ],
+      "cell": [
+        0,
+        0,
+        435,
+        530
+      ],
+      "crop": [
+        63,
+        90,
+        306,
+        388
+      ],
+      "placement": [
+        2,
+        18,
+        60,
+        76
+      ],
+      "visibleBounds": [
+        2,
+        18,
+        60,
+        75
+      ],
+      "corners": [
+        0,
+        0,
+        0,
+        0
+      ],
+      "output": "assets/decor/handdrawn/v1/neon-jukebox.png",
+      "facing": "south",
+      "sha256": "d10c29003cca61b046ddbeaeb1a6c63e6d78cb202c3db9ad064c58d5b9a8aac4"
+    },
+    {
+      "id": "rocket-statue",
+      "name": "Rocket statue",
+      "category": "floor",
+      "width": 58,
+      "height": 100,
+      "source": "assets/decor/source/handdrawn-floor-a.png",
+      "sourceSize": [
+        1536,
+        1024
+      ],
+      "cell": [
+        435,
+        0,
+        351,
+        530
+      ],
+      "crop": [
+        501,
+        111,
+        216,
+        366
+      ],
+      "placement": [
+        2,
+        6,
+        54,
+        92
+      ],
+      "visibleBounds": [
+        3,
+        7,
+        53,
+        90
+      ],
+      "corners": [
+        0,
+        0,
+        0,
+        0
+      ],
+      "output": "assets/decor/handdrawn/v1/rocket-statue.png",
+      "facing": "south",
+      "sha256": "d503891f71c338a0955d450e8b3a9377c4e4d474bffe22b0ab6ef1bf7207f49a"
+    },
+    {
+      "id": "gumball-machine",
+      "name": "Gumball machine",
+      "category": "floor",
+      "width": 58,
+      "height": 90,
+      "source": "assets/decor/source/handdrawn-floor-a.png",
+      "sourceSize": [
+        1536,
+        1024
+      ],
+      "cell": [
+        786,
+        0,
+        386,
+        530
+      ],
+      "crop": [
+        855,
+        92,
+        248,
+        391
+      ],
+      "placement": [
+        2,
+        3,
+        54,
+        85
+      ],
+      "visibleBounds": [
+        2,
+        3,
+        54,
+        85
+      ],
+      "corners": [
+        0,
+        0,
+        0,
+        0
+      ],
+      "output": "assets/decor/handdrawn/v1/gumball-machine.png",
+      "facing": "south",
+      "sha256": "1a0b089c7d6492af2776d1abc3d03beea15de8ae296a4397f9534dc42811bc2c"
+    },
+    {
+      "id": "star-pedestal",
+      "name": "Neon star pedestal",
+      "category": "floor",
+      "width": 70,
+      "height": 94,
+      "source": "assets/decor/source/handdrawn-floor-a.png",
+      "sourceSize": [
+        1536,
+        1024
+      ],
+      "cell": [
+        1172,
+        0,
+        364,
+        530
+      ],
+      "crop": [
+        1242,
+        132,
+        223,
+        351
+      ],
+      "placement": [
+        6,
+        2,
+        57,
+        90
+      ],
+      "visibleBounds": [
+        7,
+        3,
+        55,
+        88
+      ],
+      "corners": [
+        0,
+        0,
+        0,
+        0
+      ],
+      "output": "assets/decor/handdrawn/v1/star-pedestal.png",
+      "facing": "south",
+      "sha256": "d60f85e11945576b5bea978134446c6ad94d20c93d897de41fb6357b3dbc2078"
+    },
+    {
+      "id": "alien-statue",
+      "name": "Alien statue",
+      "category": "floor",
+      "width": 60,
+      "height": 96,
+      "source": "assets/decor/source/handdrawn-floor-a.png",
+      "sourceSize": [
+        1536,
+        1024
+      ],
+      "cell": [
+        0,
+        530,
+        396,
+        494
+      ],
+      "crop": [
+        85,
+        592,
+        262,
+        371
+      ],
+      "placement": [
+        2,
+        15,
+        56,
+        79
+      ],
+      "visibleBounds": [
+        2,
+        15,
+        56,
+        79
+      ],
+      "corners": [
+        0,
+        0,
+        0,
+        0
+      ],
+      "output": "assets/decor/handdrawn/v1/alien-statue.png",
+      "facing": "south",
+      "sha256": "c9194a0b900e26017644d1865067363ebcef5a50237a162c97e34537ad7f5fb0"
+    },
+    {
+      "id": "prize-capsule-machine",
+      "name": "Prize capsule machine",
+      "category": "floor",
+      "width": 64,
+      "height": 96,
+      "source": "assets/decor/source/handdrawn-floor-a.png",
+      "sourceSize": [
+        1536,
+        1024
+      ],
+      "cell": [
+        396,
+        530,
+        385,
+        494
+      ],
+      "crop": [
+        446,
+        577,
+        273,
+        383
+      ],
+      "placement": [
+        2,
+        10,
+        60,
+        84
+      ],
+      "visibleBounds": [
+        2,
+        10,
+        60,
+        84
+      ],
+      "corners": [
+        0,
+        0,
+        0,
+        0
+      ],
+      "output": "assets/decor/handdrawn/v1/prize-capsule-machine.png",
+      "facing": "south",
+      "sha256": "1f1037f42d1cdb15f7f496b8b54ec50607b3f7f91bd5f6c9974165659265a444"
+    },
+    {
+      "id": "record-pedestal",
+      "name": "Record display pedestal",
+      "category": "floor",
+      "width": 64,
+      "height": 94,
+      "source": "assets/decor/source/handdrawn-floor-a.png",
+      "sourceSize": [
+        1536,
+        1024
+      ],
+      "cell": [
+        781,
+        530,
+        377,
+        494
+      ],
+      "crop": [
+        844,
+        629,
+        255,
+        335
+      ],
+      "placement": [
+        2,
+        13,
+        60,
+        79
+      ],
+      "visibleBounds": [
+        2,
+        13,
+        60,
+        79
+      ],
+      "corners": [
+        0,
+        0,
+        0,
+        0
+      ],
+      "output": "assets/decor/handdrawn/v1/record-pedestal.png",
+      "facing": "south",
+      "sha256": "63ffb53ea36267c2b57b9c15a766b8de246b0a028da7225aa7c2ec7cd8f1c262"
+    },
+    {
+      "id": "neon-cactus",
+      "name": "Neon cactus",
+      "category": "floor",
+      "width": 70,
+      "height": 94,
+      "source": "assets/decor/source/handdrawn-floor-a.png",
+      "sourceSize": [
+        1536,
+        1024
+      ],
+      "cell": [
+        1158,
+        530,
+        378,
+        494
+      ],
+      "crop": [
+        1217,
+        587,
+        265,
+        377
+      ],
+      "placement": [
+        3,
+        2,
+        63,
+        90
+      ],
+      "visibleBounds": [
+        3,
+        2,
+        63,
+        90
+      ],
+      "corners": [
+        0,
+        0,
+        0,
+        0
+      ],
+      "output": "assets/decor/handdrawn/v1/neon-cactus.png",
+      "facing": "south",
+      "sha256": "7d709909dd75b44798a8d6df7497dfcc69c6f9f74bdc616c18fbf3b84acf2c25"
+    },
+    {
+      "id": "arcade-trophy-pedestal",
+      "name": "Arcade trophy pedestal",
+      "category": "floor",
+      "width": 60,
+      "height": 100,
+      "source": "assets/decor/source/handdrawn-floor-b.png",
+      "sourceSize": [
+        1536,
+        1024
+      ],
+      "cell": [
+        0,
+        0,
+        396,
+        529
+      ],
+      "crop": [
+        69,
+        125,
+        278,
+        355
+      ],
+      "placement": [
+        2,
+        26,
+        56,
+        72
+      ],
+      "visibleBounds": [
+        2,
+        26,
+        56,
+        72
+      ],
+      "corners": [
+        0,
+        0,
+        0,
+        0
+      ],
+      "output": "assets/decor/handdrawn/v1/arcade-trophy-pedestal.png",
+      "facing": "south",
+      "sha256": "d6985b245c7694628a28d201a57fb4f0587e42401c7c7f2bb83f0228da169986"
+    },
+    {
+      "id": "neon-arrow-sign",
+      "name": "Neon arrow stand",
+      "category": "floor",
+      "width": 76,
+      "height": 90,
+      "source": "assets/decor/source/handdrawn-floor-b.png",
+      "sourceSize": [
+        1536,
+        1024
+      ],
+      "cell": [
+        396,
+        0,
+        382,
+        529
+      ],
+      "crop": [
+        446,
+        136,
+        290,
+        342
+      ],
+      "placement": [
+        2,
+        3,
+        72,
+        85
+      ],
+      "visibleBounds": [
+        2,
+        3,
+        72,
+        85
+      ],
+      "corners": [
+        0,
+        0,
+        0,
+        0
+      ],
+      "output": "assets/decor/handdrawn/v1/neon-arrow-sign.png",
+      "facing": "south",
+      "sha256": "dde20d07c69254af58a0dc1de7938611f3e0ede69b4e3420c93ba6456984ed2c"
+    },
+    {
+      "id": "planet-sculpture",
+      "name": "Planet sculpture",
+      "category": "floor",
+      "width": 78,
+      "height": 94,
+      "source": "assets/decor/source/handdrawn-floor-b.png",
+      "sourceSize": [
+        1536,
+        1024
+      ],
+      "cell": [
+        778,
+        0,
+        406,
+        529
+      ],
+      "crop": [
+        820,
+        133,
+        311,
+        346
+      ],
+      "placement": [
+        2,
+        10,
+        74,
+        82
+      ],
+      "visibleBounds": [
+        2,
+        11,
+        74,
+        81
+      ],
+      "corners": [
+        0,
+        0,
+        0,
+        0
+      ],
+      "output": "assets/decor/handdrawn/v1/planet-sculpture.png",
+      "facing": "south",
+      "sha256": "88799639283981125368dd94d05fb3375eb05c9ba5b25fb2406bba4e43201478"
+    },
+    {
+      "id": "pixel-heart-totem",
+      "name": "Pixel heart totem",
+      "category": "floor",
+      "width": 62,
+      "height": 100,
+      "source": "assets/decor/source/handdrawn-floor-b.png",
+      "sourceSize": [
+        1536,
+        1024
+      ],
+      "cell": [
+        1184,
+        0,
+        352,
+        529
+      ],
+      "crop": [
+        1237,
+        97,
+        216,
+        389
+      ],
+      "placement": [
+        4,
+        2,
+        53,
+        96
+      ],
+      "visibleBounds": [
+        4,
+        2,
+        53,
+        96
+      ],
+      "corners": [
+        0,
+        0,
+        0,
+        0
+      ],
+      "output": "assets/decor/handdrawn/v1/pixel-heart-totem.png",
+      "facing": "south",
+      "sha256": "7a31b18432180ab6271242e48e9025ddfcee30d78fe90da959afed7e66fb98f5"
+    },
+    {
+      "id": "ticket-dispenser",
+      "name": "Ticket dispenser",
+      "category": "floor",
+      "width": 58,
+      "height": 94,
+      "source": "assets/decor/source/handdrawn-floor-b.png",
+      "sourceSize": [
+        1536,
+        1024
+      ],
+      "cell": [
+        0,
+        529,
+        375,
+        495
+      ],
+      "crop": [
+        48,
+        573,
+        289,
+        371
+      ],
+      "placement": [
+        2,
+        23,
+        54,
+        69
+      ],
+      "visibleBounds": [
+        2,
+        23,
+        54,
+        69
+      ],
+      "corners": [
+        0,
+        0,
+        0,
+        0
+      ],
+      "output": "assets/decor/handdrawn/v1/ticket-dispenser.png",
+      "facing": "south",
+      "sha256": "916a8efe17d59fcbaf7f1ad71a92729ce3e3f4592754c3d42bee27c3338f64b0"
+    },
+    {
+      "id": "prize-display",
+      "name": "Prize display",
+      "category": "floor",
+      "width": 76,
+      "height": 100,
+      "source": "assets/decor/source/handdrawn-floor-b.png",
+      "sourceSize": [
+        1536,
+        1024
+      ],
+      "cell": [
+        375,
+        529,
+        372,
+        495
+      ],
+      "crop": [
+        413,
+        573,
+        314,
+        361
+      ],
+      "placement": [
+        2,
+        15,
+        72,
+        83
+      ],
+      "visibleBounds": [
+        2,
+        15,
+        72,
+        83
+      ],
+      "corners": [
+        0,
+        0,
+        0,
+        0
+      ],
+      "output": "assets/decor/handdrawn/v1/prize-display.png",
+      "facing": "south",
+      "sha256": "701d3d527032eaa31255b132148188f5b028c33db934e948ea9051e127f99678"
+    },
+    {
+      "id": "checker-flag-stand",
+      "name": "Checkered flag stand",
+      "category": "floor",
+      "width": 72,
+      "height": 96,
+      "source": "assets/decor/source/handdrawn-floor-b.png",
+      "sourceSize": [
+        1536,
+        1024
+      ],
+      "cell": [
+        747,
+        529,
+        430,
+        495
+      ],
+      "crop": [
+        768,
+        592,
+        386,
+        341
+      ],
+      "placement": [
+        2,
+        34,
+        68,
+        60
+      ],
+      "visibleBounds": [
+        2,
+        35,
+        68,
+        59
+      ],
+      "corners": [
+        0,
+        0,
+        0,
+        0
+      ],
+      "output": "assets/decor/handdrawn/v1/checker-flag-stand.png",
+      "facing": "south",
+      "sha256": "91501c35a039af1e8b0b4be793e22ffd1ccb4e3250c7e36b56e70896e1c74b07"
+    },
+    {
+      "id": "mini-cabinet",
+      "name": "Mini arcade cabinet",
+      "category": "tabletop",
+      "width": 26,
+      "height": 30,
+      "source": "assets/decor/source/handdrawn-floor-b.png",
+      "sourceSize": [
+        1536,
+        1024
+      ],
+      "cell": [
+        1177,
+        529,
+        359,
+        495
+      ],
+      "crop": [
+        1200,
+        592,
+        288,
+        344
+      ],
+      "placement": [
+        2,
+        2,
+        22,
+        26
+      ],
+      "visibleBounds": [
+        2,
+        2,
+        22,
+        26
+      ],
+      "corners": [
+        0,
+        0,
+        0,
+        0
+      ],
+      "output": "assets/decor/handdrawn/v1/mini-cabinet.png",
+      "facing": "south",
+      "sha256": "18935676e21f07dd5a90fcb316e74d20febda491581cbfa485fe01c6f4e55fb3"
+    },
+    {
+      "id": "cube-lamp",
+      "name": "Neon cube lamp",
+      "category": "tabletop",
+      "width": 26,
+      "height": 26,
+      "source": "assets/decor/source/handdrawn-tabletop-a.png",
+      "sourceSize": [
+        1536,
+        1024
+      ],
+      "cell": [
+        0,
+        0,
+        375,
+        518
+      ],
+      "crop": [
+        81,
+        132,
+        230,
+        345
+      ],
+      "placement": [
+        5,
+        2,
+        15,
+        22
+      ],
+      "visibleBounds": [
+        5,
+        2,
+        15,
+        22
+      ],
+      "corners": [
+        0,
+        0,
+        0,
+        0
+      ],
+      "output": "assets/decor/handdrawn/v1/cube-lamp.png",
+      "facing": "south",
+      "sha256": "75750e1c33fc0976387276ef220c8a829de962b7b6b1309f016231cf5fe0affe"
+    },
+    {
+      "id": "succulent",
+      "name": "Potted succulent",
+      "category": "tabletop",
+      "width": 26,
+      "height": 28,
+      "source": "assets/decor/source/handdrawn-tabletop-a.png",
+      "sourceSize": [
+        1536,
+        1024
+      ],
+      "cell": [
+        375,
+        0,
+        345,
+        518
+      ],
+      "crop": [
+        439,
+        143,
+        252,
+        335
+      ],
+      "placement": [
+        4,
+        2,
+        18,
+        24
+      ],
+      "visibleBounds": [
+        4,
+        2,
+        18,
+        24
+      ],
+      "corners": [
+        0,
+        0,
+        0,
+        0
+      ],
+      "output": "assets/decor/handdrawn/v1/succulent.png",
+      "facing": "south",
+      "sha256": "8c09ade0613d8e1055ab37d608d32f73fcad792aed0a0b716d63fdfd97b389fe"
+    },
+    {
+      "id": "vinyl-headphones",
+      "name": "Vinyl and headphones",
+      "category": "tabletop",
+      "width": 36,
+      "height": 24,
+      "source": "assets/decor/source/handdrawn-tabletop-a.png",
+      "sourceSize": [
+        1536,
+        1024
+      ],
+      "cell": [
+        720,
+        0,
+        487,
+        518
+      ],
+      "crop": [
+        750,
+        129,
+        427,
+        339
+      ],
+      "placement": [
+        5,
+        2,
+        25,
+        20
+      ],
+      "visibleBounds": [
+        5,
+        2,
+        25,
+        20
+      ],
+      "corners": [
+        0,
+        0,
+        0,
+        0
+      ],
+      "output": "assets/decor/handdrawn/v1/vinyl-headphones.png",
+      "facing": "south",
+      "sha256": "a84574150c1b22042474c2024fbc27f5d944ff12b962e4d472359b3b58641874"
+    },
+    {
+      "id": "soda-cup",
+      "name": "Arcade soda cup",
+      "category": "tabletop",
+      "width": 18,
+      "height": 28,
+      "source": "assets/decor/source/handdrawn-tabletop-a.png",
+      "sourceSize": [
+        1536,
+        1024
+      ],
+      "cell": [
+        1207,
+        0,
+        329,
+        518
+      ],
+      "crop": [
+        1237,
+        66,
+        232,
+        412
+      ],
+      "placement": [
+        2,
+        2,
+        14,
+        24
+      ],
+      "visibleBounds": [
+        2,
+        2,
+        14,
+        24
+      ],
+      "corners": [
+        0,
+        0,
+        0,
+        0
+      ],
+      "output": "assets/decor/handdrawn/v1/soda-cup.png",
+      "facing": "south",
+      "sha256": "ab548351215cd449da8c4366a6e2f566bfe11d7073e404adb310d85e27be8921"
+    },
+    {
+      "id": "popcorn-tub",
+      "name": "Popcorn tub",
+      "category": "tabletop",
+      "width": 24,
+      "height": 26,
+      "source": "assets/decor/source/handdrawn-tabletop-a.png",
+      "sourceSize": [
+        1536,
+        1024
+      ],
+      "cell": [
+        0,
+        518,
+        397,
+        506
+      ],
+      "crop": [
+        49,
+        559,
+        302,
+        365
+      ],
+      "placement": [
+        3,
+        2,
+        18,
+        22
+      ],
+      "visibleBounds": [
+        3,
+        2,
+        18,
+        22
+      ],
+      "corners": [
+        0,
+        0,
+        0,
+        0
+      ],
+      "output": "assets/decor/handdrawn/v1/popcorn-tub.png",
+      "facing": "south",
+      "sha256": "c3dc8759b436475d6351cb64083149c7816a643bf1c1c68c181cd478350b902a"
+    },
+    {
+      "id": "token-jar",
+      "name": "Token jar",
+      "category": "tabletop",
+      "width": 24,
+      "height": 28,
+      "source": "assets/decor/source/handdrawn-tabletop-a.png",
+      "sourceSize": [
+        1536,
+        1024
+      ],
+      "cell": [
+        397,
+        518,
+        364,
+        506
+      ],
+      "crop": [
+        444,
+        577,
+        264,
+        347
+      ],
+      "placement": [
+        3,
+        2,
+        18,
+        24
+      ],
+      "visibleBounds": [
+        3,
+        2,
+        18,
+        24
+      ],
+      "corners": [
+        0,
+        0,
+        0,
+        0
+      ],
+      "output": "assets/decor/handdrawn/v1/token-jar.png",
+      "facing": "south",
+      "sha256": "5da3c4c31f9865f6c2e10234a653638afb48bf705047924a249ca9dc54ecef42"
+    },
+    {
+      "id": "mini-rocket",
+      "name": "Mini rocket",
+      "category": "tabletop",
+      "width": 18,
+      "height": 30,
+      "source": "assets/decor/source/handdrawn-tabletop-a.png",
+      "sourceSize": [
+        1536,
+        1024
+      ],
+      "cell": [
+        761,
+        518,
+        378,
+        506
+      ],
+      "crop": [
+        815,
+        600,
+        277,
+        324
+      ],
+      "placement": [
+        2,
+        7,
+        14,
+        16
+      ],
+      "visibleBounds": [
+        2,
+        7,
+        14,
+        16
+      ],
+      "corners": [
+        0,
+        0,
+        0,
+        0
+      ],
+      "output": "assets/decor/handdrawn/v1/mini-rocket.png",
+      "facing": "south",
+      "sha256": "c4ceba287096cb03670016518b7d62ac4cbcd60febf2c526d6424836ceba3e43"
+    },
+    {
+      "id": "plasma-orb",
+      "name": "Plasma orb",
+      "category": "tabletop",
+      "width": 28,
+      "height": 30,
+      "source": "assets/decor/source/handdrawn-tabletop-a.png",
+      "sourceSize": [
+        1536,
+        1024
+      ],
+      "cell": [
+        1139,
+        518,
+        397,
+        506
+      ],
+      "crop": [
+        1187,
+        571,
+        282,
+        353
+      ],
+      "placement": [
+        3,
+        2,
+        21,
+        26
+      ],
+      "visibleBounds": [
+        3,
+        2,
+        21,
+        26
+      ],
+      "corners": [
+        0,
+        0,
+        0,
+        0
+      ],
+      "output": "assets/decor/handdrawn/v1/plasma-orb.png",
+      "facing": "south",
+      "sha256": "5a9f256d8bd412b21f8b48882565f0555f33e5f5f575050531aaf261d0ce05d0"
+    },
+    {
+      "id": "trophy",
+      "name": "Arcade trophy",
+      "category": "tabletop",
+      "width": 24,
+      "height": 30,
+      "source": "assets/decor/source/handdrawn-tabletop-b.png",
+      "sourceSize": [
+        1536,
+        1024
+      ],
+      "cell": [
+        0,
+        0,
+        365,
+        525
+      ],
+      "crop": [
+        40,
+        153,
+        303,
+        313
+      ],
+      "placement": [
+        2,
+        4,
+        20,
+        21
+      ],
+      "visibleBounds": [
+        2,
+        4,
+        20,
+        21
+      ],
+      "corners": [
+        0,
+        0,
+        0,
+        0
+      ],
+      "output": "assets/decor/handdrawn/v1/trophy.png",
+      "facing": "south",
+      "sha256": "b3f84b15cb87ede735561326df5564ae15f67db26f34c0f54ac7d5a9b1208b39"
+    },
+    {
+      "id": "gamepad",
+      "name": "Game controller",
+      "category": "tabletop",
+      "width": 32,
+      "height": 20,
+      "source": "assets/decor/source/handdrawn-tabletop-b.png",
+      "sourceSize": [
+        1536,
+        1024
+      ],
+      "cell": [
+        365,
+        0,
+        434,
+        525
+      ],
+      "crop": [
+        388,
+        189,
+        397,
+        270
+      ],
+      "placement": [
+        4,
+        2,
+        24,
+        16
+      ],
+      "visibleBounds": [
+        4,
+        2,
+        24,
+        16
+      ],
+      "corners": [
+        0,
+        0,
+        0,
+        0
+      ],
+      "output": "assets/decor/handdrawn/v1/gamepad.png",
+      "facing": "south",
+      "sha256": "cdb370d55f92e7157e229ca9c5465870cbc97515ab25f0a25908f84cd269a439"
+    },
+    {
+      "id": "headphone-stand",
+      "name": "Headphone stand",
+      "category": "tabletop",
+      "width": 26,
+      "height": 32,
+      "source": "assets/decor/source/handdrawn-tabletop-b.png",
+      "sourceSize": [
+        1536,
+        1024
+      ],
+      "cell": [
+        799,
+        0,
+        374,
+        525
+      ],
+      "crop": [
+        813,
+        109,
+        334,
+        371
+      ],
+      "placement": [
+        2,
+        4,
+        22,
+        24
+      ],
+      "visibleBounds": [
+        2,
+        4,
+        22,
+        24
+      ],
+      "corners": [
+        0,
+        0,
+        0,
+        0
+      ],
+      "output": "assets/decor/handdrawn/v1/headphone-stand.png",
+      "facing": "south",
+      "sha256": "0331d49b08a9b4af0ad02eb6e64e23fba8dea01e9087b3a9001096f50c4bb05c"
+    },
+    {
+      "id": "stacked-cassettes",
+      "name": "Stacked cassettes",
+      "category": "tabletop",
+      "width": 30,
+      "height": 20,
+      "source": "assets/decor/source/handdrawn-tabletop-b.png",
+      "sourceSize": [
+        1536,
+        1024
+      ],
+      "cell": [
+        1173,
+        0,
+        363,
+        525
+      ],
+      "crop": [
+        1200,
+        172,
+        312,
+        294
+      ],
+      "placement": [
+        6,
+        2,
+        17,
+        16
+      ],
+      "visibleBounds": [
+        6,
+        2,
+        17,
+        16
+      ],
+      "corners": [
+        0,
+        0,
+        0,
+        0
+      ],
+      "output": "assets/decor/handdrawn/v1/stacked-cassettes.png",
+      "facing": "south",
+      "sha256": "23384e940319069c991f4044072c91d6f0dd56200c5fdd3780335258bc241cf2"
+    },
+    {
+      "id": "desk-mushroom-lamp",
+      "name": "Mushroom desk lamp",
+      "category": "tabletop",
+      "width": 28,
+      "height": 30,
+      "source": "assets/decor/source/handdrawn-tabletop-b.png",
+      "sourceSize": [
+        1536,
+        1024
+      ],
+      "cell": [
+        0,
+        525,
+        388,
+        499
+      ],
+      "crop": [
+        28,
+        571,
+        325,
+        362
+      ],
+      "placement": [
+        2,
+        2,
+        23,
+        26
+      ],
+      "visibleBounds": [
+        2,
+        2,
+        23,
+        26
+      ],
+      "corners": [
+        0,
+        0,
+        0,
+        0
+      ],
+      "output": "assets/decor/handdrawn/v1/desk-mushroom-lamp.png",
+      "facing": "south",
+      "sha256": "2d526a3c2225a578b95fd18dd6a59eafbb9e26efcdd9c5ec02fa0715d17ab425"
+    },
+    {
+      "id": "lucky-cat",
+      "name": "Lucky cat",
+      "category": "tabletop",
+      "width": 24,
+      "height": 30,
+      "source": "assets/decor/source/handdrawn-tabletop-b.png",
+      "sourceSize": [
+        1536,
+        1024
+      ],
+      "cell": [
+        388,
+        525,
+        380,
+        499
+      ],
+      "crop": [
+        424,
+        588,
+        314,
+        351
+      ],
+      "placement": [
+        2,
+        4,
+        20,
+        22
+      ],
+      "visibleBounds": [
+        2,
+        4,
+        20,
+        22
+      ],
+      "corners": [
+        0,
+        0,
+        0,
+        0
+      ],
+      "output": "assets/decor/handdrawn/v1/lucky-cat.png",
+      "facing": "south",
+      "sha256": "83313e463d31eaf261355a944b374073b2dad0205091be238c109e7469492533"
+    },
+    {
+      "id": "neon-game-over-sign",
+      "name": "Game Over neon sign",
+      "category": "wall",
+      "width": 86,
+      "height": 36,
+      "source": "assets/decor/source/handdrawn-tabletop-b.png",
+      "sourceSize": [
+        1536,
+        1024
+      ],
+      "cell": [
+        768,
+        525,
+        393,
+        499
+      ],
+      "crop": [
+        798,
+        627,
+        332,
+        289
+      ],
+      "placement": [
+        24,
+        2,
+        37,
+        32
+      ],
+      "visibleBounds": [
+        24,
+        2,
+        37,
+        32
+      ],
+      "corners": [
+        0,
+        0,
+        0,
+        0
+      ],
+      "output": "assets/decor/handdrawn/v1/neon-game-over-sign.png",
+      "facing": "south",
+      "sha256": "fa92d8c2c19124f1c52f6c02ee51a0e53ea81a71a9398220d2b2500d7375fa75"
+    },
+    {
+      "id": "neon-high-score-sign",
+      "name": "High Score neon sign",
+      "category": "wall",
+      "width": 90,
+      "height": 38,
+      "source": "assets/decor/source/handdrawn-tabletop-b.png",
+      "sourceSize": [
+        1536,
+        1024
+      ],
+      "cell": [
+        1161,
+        525,
+        375,
+        499
+      ],
+      "crop": [
+        1193,
+        628,
+        319,
+        288
+      ],
+      "placement": [
+        26,
+        2,
+        38,
+        34
+      ],
+      "visibleBounds": [
+        26,
+        2,
+        38,
+        34
+      ],
+      "corners": [
+        0,
+        0,
+        0,
+        0
+      ],
+      "output": "assets/decor/handdrawn/v1/neon-high-score-sign.png",
+      "facing": "south",
+      "sha256": "82811e6492f0945da9c44ae5c86c083c0fd5f6378cb62a8ed7ed7afecddb319b"
+    },
+    {
+      "id": "neon-space-invader",
+      "name": "Pixel alien neon sign",
+      "category": "wall",
+      "width": 64,
+      "height": 44,
+      "source": "assets/decor/source/handdrawn-wall-a.png",
+      "sourceSize": [
+        1536,
+        1024
+      ],
+      "cell": [
+        0,
+        0,
+        420,
+        560
+      ],
+      "crop": [
+        55,
+        122,
+        301,
+        375
+      ],
+      "placement": [
+        16,
+        2,
+        32,
+        40
+      ],
+      "visibleBounds": [
+        16,
+        2,
+        32,
+        40
+      ],
+      "corners": [
+        0,
+        0,
+        0,
+        0
+      ],
+      "output": "assets/decor/handdrawn/v1/neon-space-invader.png",
+      "facing": "south",
+      "sha256": "fa1d36dd855328198d5a4e9c3a3a9a4b851cc8548d41e82016213907e2ffa069"
+    },
+    {
+      "id": "neon-lightning-bolt",
+      "name": "Lightning bolt neon sign",
+      "category": "wall",
+      "width": 40,
+      "height": 54,
+      "source": "assets/decor/source/handdrawn-wall-a.png",
+      "sourceSize": [
+        1536,
+        1024
+      ],
+      "cell": [
+        420,
+        0,
+        341,
+        560
+      ],
+      "crop": [
+        485,
+        151,
+        247,
+        369
+      ],
+      "placement": [
+        3,
+        2,
+        33,
+        50
+      ],
+      "visibleBounds": [
+        3,
+        2,
+        33,
+        50
+      ],
+      "corners": [
+        0,
+        0,
+        0,
+        0
+      ],
+      "output": "assets/decor/handdrawn/v1/neon-lightning-bolt.png",
+      "facing": "south",
+      "sha256": "4868bed7f67eacfca0a6b85a4854b2e76d549a19a3e38aca21d9441c5bfa03bd"
+    },
+    {
+      "id": "neon-music-note",
+      "name": "Music note neon sign",
+      "category": "wall",
+      "width": 48,
+      "height": 54,
+      "source": "assets/decor/source/handdrawn-wall-a.png",
+      "sourceSize": [
+        1536,
+        1024
+      ],
+      "cell": [
+        761,
+        0,
+        382,
+        560
+      ],
+      "crop": [
+        790,
+        120,
+        325,
+        395
+      ],
+      "placement": [
+        3,
+        2,
+        41,
+        50
+      ],
+      "visibleBounds": [
+        3,
+        2,
+        41,
+        50
+      ],
+      "corners": [
+        0,
+        0,
+        0,
+        0
+      ],
+      "output": "assets/decor/handdrawn/v1/neon-music-note.png",
+      "facing": "south",
+      "sha256": "06047e3d7ca9b4c2b7fe1c6ab2900988873a536d87c7c22e515e4e0e3e43f231"
+    },
+    {
+      "id": "wall-vinyl-record",
+      "name": "Wall vinyl record",
+      "category": "wall",
+      "width": 48,
+      "height": 48,
+      "source": "assets/decor/source/handdrawn-wall-a.png",
+      "sourceSize": [
+        1536,
+        1024
+      ],
+      "cell": [
+        1143,
+        0,
+        393,
+        560
+      ],
+      "crop": [
+        1171,
+        187,
+        332,
+        324
+      ],
+      "placement": [
+        2,
+        2,
+        44,
+        43
+      ],
+      "visibleBounds": [
+        2,
+        2,
+        44,
+        43
+      ],
+      "corners": [
+        0,
+        0,
+        0,
+        0
+      ],
+      "output": "assets/decor/handdrawn/v1/wall-vinyl-record.png",
+      "facing": "south",
+      "sha256": "66d53bdd98f9e83627a24a936f0e5de3a41fe8f5c650b0f9937d0d6dec054184"
+    },
+    {
+      "id": "neon-rainbow",
+      "name": "Neon rainbow",
+      "category": "wall",
+      "width": 78,
+      "height": 44,
+      "source": "assets/decor/source/handdrawn-wall-a.png",
+      "sourceSize": [
+        1536,
+        1024
+      ],
+      "cell": [
+        0,
+        560,
+        401,
+        464
+      ],
+      "crop": [
+        27,
+        606,
+        347,
+        285
+      ],
+      "placement": [
+        14,
+        2,
+        49,
+        40
+      ],
+      "visibleBounds": [
+        14,
+        2,
+        49,
+        40
+      ],
+      "corners": [
+        0,
+        0,
+        0,
+        0
+      ],
+      "output": "assets/decor/handdrawn/v1/neon-rainbow.png",
+      "facing": "south",
+      "sha256": "a1c7e6425d252ede1b66f399ba1296fc31aa5518da4f7c3d46d25c141a6b3add"
+    },
+    {
+      "id": "neon-controller-sign",
+      "name": "Controller neon sign",
+      "category": "wall",
+      "width": 78,
+      "height": 46,
+      "source": "assets/decor/source/handdrawn-wall-a.png",
+      "sourceSize": [
+        1536,
+        1024
+      ],
+      "cell": [
+        401,
+        560,
+        395,
+        464
+      ],
+      "crop": [
+        428,
+        627,
+        353,
+        265
+      ],
+      "placement": [
+        11,
+        2,
+        56,
+        42
+      ],
+      "visibleBounds": [
+        11,
+        2,
+        56,
+        42
+      ],
+      "corners": [
+        0,
+        0,
+        0,
+        0
+      ],
+      "output": "assets/decor/handdrawn/v1/neon-controller-sign.png",
+      "facing": "south",
+      "sha256": "540ea318908d1507fd3ec16005962a899a3f72003028ea671383124f6b324f93"
+    },
+    {
+      "id": "wall-art-orbit",
+      "name": "Framed orbit wall art",
+      "category": "wall",
+      "width": 68,
+      "height": 68,
+      "source": "assets/decor/source/handdrawn-wall-a.png",
+      "sourceSize": [
+        1536,
+        1024
+      ],
+      "cell": [
+        796,
+        560,
+        364,
+        464
+      ],
+      "crop": [
+        812,
+        602,
+        311,
+        295
+      ],
+      "placement": [
+        2,
+        3,
+        64,
+        61
+      ],
+      "visibleBounds": [
+        2,
+        3,
+        64,
+        61
+      ],
+      "corners": [
+        0,
+        0,
+        0,
+        0
+      ],
+      "output": "assets/decor/handdrawn/v1/wall-art-orbit.png",
+      "facing": "south",
+      "sha256": "d88fc7f099ed6248e88276c537209fc929ad52b1d35d0250eee55a414353643f"
+    },
+    {
+      "id": "wall-art-equalizer",
+      "name": "Framed equalizer wall art",
+      "category": "wall",
+      "width": 56,
+      "height": 56,
+      "source": "assets/decor/source/handdrawn-wall-a.png",
+      "sourceSize": [
+        1536,
+        1024
+      ],
+      "cell": [
+        1160,
+        560,
+        376,
+        464
+      ],
+      "crop": [
+        1197,
+        600,
+        309,
+        300
+      ],
+      "placement": [
+        2,
+        3,
+        52,
+        50
+      ],
+      "visibleBounds": [
+        2,
+        3,
+        52,
+        50
+      ],
+      "corners": [
+        0,
+        0,
+        0,
+        0
+      ],
+      "output": "assets/decor/handdrawn/v1/wall-art-equalizer.png",
+      "facing": "south",
+      "sha256": "94eb0b3311cf062f37998cc5b6d4a92b3cbb55a3615bdac76b472033cb88df09"
+    },
+    {
+      "id": "sofa-south",
+      "name": "South-facing sofa",
+      "category": "furniture",
+      "width": 164,
+      "height": 131,
+      "source": "assets/decor/source/handdrawn-furniture-a.png",
+      "sourceSize": [
+        1774,
+        887
+      ],
+      "cell": [
+        0,
+        0,
+        417,
+        448
+      ],
+      "crop": [
+        48,
+        161,
+        341,
+        229
+      ],
+      "placement": [
+        2,
+        22,
+        160,
+        107
+      ],
+      "visibleBounds": [
+        3,
+        23,
+        158,
+        105
+      ],
+      "corners": [
+        0,
+        0,
+        0,
+        0
+      ],
+      "output": "assets/decor/handdrawn/v1/sofa-south.png",
+      "facing": "south",
+      "sha256": "f97d549c17f6f3b353ab7cef0c079bd5883139929c7f77cb47e8025d6a7dbc3e"
+    },
+    {
+      "id": "sofa-compact-south",
+      "name": "South-facing compact sofa",
+      "category": "furniture",
+      "width": 162,
+      "height": 109,
+      "source": "assets/decor/source/handdrawn-furniture-a.png",
+      "sourceSize": [
+        1774,
+        887
+      ],
+      "cell": [
+        417,
+        0,
+        388,
+        448
+      ],
+      "crop": [
+        446,
+        177,
+        346,
+        213
+      ],
+      "placement": [
+        2,
+        10,
+        158,
+        97
+      ],
+      "visibleBounds": [
+        3,
+        11,
+        156,
+        95
+      ],
+      "corners": [
+        0,
+        0,
+        0,
+        0
+      ],
+      "output": "assets/decor/handdrawn/v1/sofa-compact-south.png",
+      "facing": "south",
+      "sha256": "6bf26e44898d4a76214a4ad379868f2a45388f58093deb6a3a83605565b64175"
+    },
+    {
+      "id": "sofa-lounge-south",
+      "name": "South-facing lounge sofa",
+      "category": "furniture",
+      "width": 288,
+      "height": 105,
+      "source": "assets/decor/source/handdrawn-furniture-a.png",
+      "sourceSize": [
+        1774,
+        887
+      ],
+      "cell": [
+        805,
+        0,
+        516,
+        448
+      ],
+      "crop": [
+        819,
+        182,
+        488,
+        208
+      ],
+      "placement": [
+        25,
+        2,
+        237,
+        101
+      ],
+      "visibleBounds": [
+        26,
+        3,
+        235,
+        99
+      ],
+      "corners": [
+        0,
+        0,
+        0,
+        0
+      ],
+      "output": "assets/decor/handdrawn/v1/sofa-lounge-south.png",
+      "facing": "south",
+      "sha256": "b82e4f18e8beff36717d7182319638445eb407e292b42e7b010f061a09c91c5f"
+    },
+    {
+      "id": "counter-jade-south",
+      "name": "South-facing jade counter",
+      "category": "furniture",
+      "width": 361,
+      "height": 142,
+      "source": "assets/decor/source/handdrawn-furniture-a.png",
+      "sourceSize": [
+        1774,
+        887
+      ],
+      "cell": [
+        1321,
+        0,
+        453,
+        448
+      ],
+      "crop": [
+        1336,
+        204,
+        392,
+        182
+      ],
+      "placement": [
+        32,
+        2,
+        297,
+        138
+      ],
+      "visibleBounds": [
+        34,
+        4,
+        293,
+        134
+      ],
+      "corners": [
+        0,
+        0,
+        0,
+        0
+      ],
+      "output": "assets/decor/handdrawn/v1/counter-jade-south.png",
+      "facing": "south",
+      "sha256": "cd6573e2d93f824436d3c82c7b377e488be956ad797b8063ae6177553e126348"
+    },
+    {
+      "id": "counter-boutique-south",
+      "name": "South-facing boutique counter",
+      "category": "furniture",
+      "width": 127,
+      "height": 81,
+      "source": "assets/decor/source/handdrawn-furniture-a.png",
+      "sourceSize": [
+        1774,
+        887
+      ],
+      "cell": [
+        0,
+        448,
+        481,
+        439
+      ],
+      "crop": [
+        58,
+        591,
+        382,
+        199
+      ],
+      "placement": [
+        2,
+        15,
+        123,
+        64
+      ],
+      "visibleBounds": [
+        3,
+        16,
+        121,
+        62
+      ],
+      "corners": [
+        0,
+        0,
+        0,
+        0
+      ],
+      "output": "assets/decor/handdrawn/v1/counter-boutique-south.png",
+      "facing": "south",
+      "sha256": "b20c4c16286a8a68b44b4c9811ca96fdf95cbe8ee5266d22417fcfaaa8ea4617"
+    },
+    {
+      "id": "desk-dj-south",
+      "name": "South-facing DJ desk",
+      "category": "furniture",
+      "width": 121,
+      "height": 62,
+      "source": "assets/decor/source/handdrawn-furniture-a.png",
+      "sourceSize": [
+        1774,
+        887
+      ],
+      "cell": [
+        481,
+        448,
+        503,
+        439
+      ],
+      "crop": [
+        522,
+        563,
+        417,
+        227
+      ],
+      "placement": [
+        7,
+        2,
+        107,
+        58
+      ],
+      "visibleBounds": [
+        8,
+        3,
+        105,
+        56
+      ],
+      "corners": [
+        0,
+        0,
+        0,
+        0
+      ],
+      "output": "assets/decor/handdrawn/v1/desk-dj-south.png",
+      "facing": "south",
+      "sha256": "043e75248f5cd5d42a1e38db9162ff507fd8dcf49289dc1b4cdebfd33e8081e4"
+    },
+    {
+      "id": "table-candle-south",
+      "name": "South-facing candle table",
+      "category": "furniture",
+      "width": 86,
+      "height": 70,
+      "source": "assets/decor/source/handdrawn-furniture-a.png",
+      "sourceSize": [
+        1774,
+        887
+      ],
+      "cell": [
+        984,
+        448,
+        347,
+        439
+      ],
+      "crop": [
+        1029,
+        506,
+        231,
+        285
+      ],
+      "placement": [
+        16,
+        2,
+        53,
+        66
+      ],
+      "visibleBounds": [
+        16,
+        2,
+        53,
+        66
+      ],
+      "corners": [
+        0,
+        0,
+        0,
+        0
+      ],
+      "output": "assets/decor/handdrawn/v1/table-candle-south.png",
+      "facing": "south",
+      "sha256": "2d95e1a94300e5c969f0e44e19cd02b169a8be5a295a53d68a14233373fa168e"
+    },
+    {
+      "id": "wall-art-keyboard",
+      "name": "Framed keyboard wall art",
+      "category": "wall",
+      "width": 60,
+      "height": 60,
+      "source": "assets/decor/source/handdrawn-furniture-a.png",
+      "sourceSize": [
+        1774,
+        887
+      ],
+      "cell": [
+        1331,
+        448,
+        443,
+        439
+      ],
+      "crop": [
+        1403,
+        530,
+        282,
+        260
+      ],
+      "placement": [
+        2,
+        4,
+        56,
+        52
+      ],
+      "visibleBounds": [
+        2,
+        4,
+        56,
+        52
+      ],
+      "corners": [
+        0,
+        0,
+        0,
+        0
+      ],
+      "output": "assets/decor/handdrawn/v1/wall-art-keyboard.png",
+      "facing": "south",
+      "sha256": "b418da39cb61cc7bf52506435940de893d209432a9352c02669d63f04c86260b"
+    },
+    {
+      "id": "clothes-rack-south",
+      "name": "South-facing clothes rack",
+      "category": "furniture",
+      "width": 132,
+      "height": 94,
+      "source": "assets/decor/source/handdrawn-furniture-b.png",
+      "sourceSize": [
+        1536,
+        1024
+      ],
+      "cell": [
+        0,
+        0,
+        430,
+        532
+      ],
+      "crop": [
+        62,
+        167,
+        344,
+        281
+      ],
+      "placement": [
+        11,
+        2,
+        110,
+        90
+      ],
+      "visibleBounds": [
+        12,
+        3,
+        108,
+        88
+      ],
+      "corners": [
+        0,
+        0,
+        0,
+        0
+      ],
+      "output": "assets/decor/handdrawn/v1/clothes-rack-south.png",
+      "facing": "south",
+      "sha256": "17ee8471c18d79f9544dbd6120d87a7e71e91cda40dc85a17d813b54e308bf26"
+    },
+    {
+      "id": "wardrobe-south",
+      "name": "South-facing wardrobe",
+      "category": "furniture",
+      "width": 112,
+      "height": 132,
+      "source": "assets/decor/source/handdrawn-furniture-b.png",
+      "sourceSize": [
+        1536,
+        1024
+      ],
+      "cell": [
+        430,
+        0,
+        317,
+        532
+      ],
+      "crop": [
+        454,
+        148,
+        273,
+        313
+      ],
+      "placement": [
+        2,
+        6,
+        108,
+        124
+      ],
+      "visibleBounds": [
+        3,
+        7,
+        106,
+        122
+      ],
+      "corners": [
+        0,
+        0,
+        0,
+        0
+      ],
+      "output": "assets/decor/handdrawn/v1/wardrobe-south.png",
+      "facing": "south",
+      "sha256": "76cce0255d1676a0699c393cd05e59f92413efad39289706d86e6d5cd628ed98"
+    },
+    {
+      "id": "table-rectangle-south",
+      "name": "South-facing rectangular table",
+      "category": "furniture",
+      "width": 156,
+      "height": 66,
+      "source": "assets/decor/source/handdrawn-furniture-b.png",
+      "sourceSize": [
+        1536,
+        1024
+      ],
+      "cell": [
+        747,
+        0,
+        417,
+        532
+      ],
+      "crop": [
+        767,
+        259,
+        381,
+        199
+      ],
+      "placement": [
+        18,
+        2,
+        119,
+        62
+      ],
+      "visibleBounds": [
+        19,
+        3,
+        117,
+        60
+      ],
+      "corners": [
+        0,
+        0,
+        0,
+        0
+      ],
+      "output": "assets/decor/handdrawn/v1/table-rectangle-south.png",
+      "facing": "south",
+      "sha256": "86ff5f60855cd7b6a434ee23dd09c5af3291372f3e04f5cc12d9c99670998646"
+    },
+    {
+      "id": "wall-art-sunset",
+      "name": "Framed sunset wall art",
+      "category": "wall",
+      "width": 68,
+      "height": 68,
+      "source": "assets/decor/source/handdrawn-furniture-b.png",
+      "sourceSize": [
+        1536,
+        1024
+      ],
+      "cell": [
+        1164,
+        0,
+        372,
+        532
+      ],
+      "crop": [
+        1181,
+        176,
+        292,
+        282
+      ],
+      "placement": [
+        2,
+        3,
+        64,
+        62
+      ],
+      "visibleBounds": [
+        2,
+        3,
+        64,
+        62
+      ],
+      "corners": [
+        0,
+        0,
+        0,
+        0
+      ],
+      "output": "assets/decor/handdrawn/v1/wall-art-sunset.png",
+      "facing": "south",
+      "sha256": "9585c9d6235eaa968f9cfa645d34e791a656c7b614dd2186564d13526699eeee"
+    },
+    {
+      "id": "table-lounge-walnut",
+      "name": "Rectangular walnut lounge table",
+      "category": "furniture",
+      "width": 156,
+      "height": 66,
+      "source": "assets/decor/source/handdrawn-furniture-b.png",
+      "sourceSize": [
+        1536,
+        1024
+      ],
+      "cell": [
+        0,
+        532,
+        509,
+        492
+      ],
+      "crop": [
+        41,
+        670,
+        454,
+        197
+      ],
+      "placement": [
+        6,
+        2,
+        143,
+        62
+      ],
+      "visibleBounds": [
+        7,
+        3,
+        141,
+        60
+      ],
+      "corners": [
+        0,
+        0,
+        0,
+        0
+      ],
+      "output": "assets/decor/handdrawn/v1/table-lounge-walnut.png",
+      "facing": "south",
+      "sha256": "1d9842e1320293b71f309b3a5015ceb599248dddaafc060ab6a78216177ca356"
+    },
+    {
+      "id": "wall-art-treble-clef",
+      "name": "Framed treble clef",
+      "category": "wall",
+      "width": 54,
+      "height": 76,
+      "source": "assets/decor/source/handdrawn-furniture-b.png",
+      "sourceSize": [
+        1536,
+        1024
+      ],
+      "cell": [
+        509,
+        532,
+        318,
+        492
+      ],
+      "crop": [
+        524,
+        603,
+        276,
+        276
+      ],
+      "placement": [
+        2,
+        13,
+        50,
+        50
+      ],
+      "visibleBounds": [
+        2,
+        13,
+        50,
+        50
+      ],
+      "corners": [
+        0,
+        0,
+        0,
+        0
+      ],
+      "output": "assets/decor/handdrawn/v1/wall-art-treble-clef.png",
+      "facing": "south",
+      "sha256": "676dc7a2dd193edced4113c3eaf089e66bf4b3c5bb96d1e0ec963dfb50a36a39"
+    },
+    {
+      "id": "wall-art-bass-clef",
+      "name": "Framed bass clef",
+      "category": "wall",
+      "width": 54,
+      "height": 66,
+      "source": "assets/decor/source/handdrawn-furniture-b.png",
+      "sourceSize": [
+        1536,
+        1024
+      ],
+      "cell": [
+        827,
+        532,
+        337,
+        492
+      ],
+      "crop": [
+        855,
+        603,
+        282,
+        277
+      ],
+      "placement": [
+        2,
+        8,
+        50,
+        49
+      ],
+      "visibleBounds": [
+        2,
+        8,
+        50,
+        49
+      ],
+      "corners": [
+        0,
+        0,
+        0,
+        0
+      ],
+      "output": "assets/decor/handdrawn/v1/wall-art-bass-clef.png",
+      "facing": "south",
+      "sha256": "839b2406792ef7dbd737cbb7728549669a8166266566f9f15b01b567878c4cb8"
+    },
+    {
+      "id": "wall-art-grand-staff",
+      "name": "Framed grand staff sheet music",
+      "category": "wall",
+      "width": 76,
+      "height": 76,
+      "source": "assets/decor/source/handdrawn-furniture-b.png",
+      "sourceSize": [
+        1536,
+        1024
+      ],
+      "cell": [
+        1164,
+        532,
+        372,
+        492
+      ],
+      "crop": [
+        1191,
+        603,
+        286,
+        277
+      ],
+      "placement": [
+        2,
+        3,
+        72,
+        70
+      ],
+      "visibleBounds": [
+        3,
+        4,
+        70,
+        68
+      ],
+      "corners": [
+        0,
+        0,
+        0,
+        0
+      ],
+      "output": "assets/decor/handdrawn/v1/wall-art-grand-staff.png",
+      "facing": "south",
+      "sha256": "2977e72dffa6adc0d048fa613997ccdb827188540ab69e15565892b6a18c3ba5"
+    },
+    {
+      "id": "wall-art-gold-record",
+      "name": "Gold record award",
+      "category": "wall",
+      "width": 68,
+      "height": 80,
+      "source": "assets/decor/source/handdrawn-wall-b.png",
+      "sourceSize": [
+        2172,
+        724
+      ],
+      "cell": [
+        0,
+        0,
+        543,
+        724
+      ],
+      "crop": [
+        24,
+        103,
+        494,
+        511
+      ],
+      "placement": [
+        2,
+        7,
+        64,
+        66
+      ],
+      "visibleBounds": [
+        2,
+        7,
+        64,
+        66
+      ],
+      "corners": [
+        0,
+        0,
+        0,
+        0
+      ],
+      "output": "assets/decor/handdrawn/v1/wall-art-gold-record.png",
+      "facing": "south",
+      "sha256": "a4604bd3763a2193bce8fda7ecf99610eb19258f07cd7e23815862970a166062"
+    },
+    {
+      "id": "wall-art-saxophone",
+      "name": "Framed golden saxophone",
+      "category": "wall",
+      "width": 64,
+      "height": 80,
+      "source": "assets/decor/source/handdrawn-wall-b.png",
+      "sourceSize": [
+        2172,
+        724
+      ],
+      "cell": [
+        543,
+        0,
+        544,
+        724
+      ],
+      "crop": [
+        569,
+        103,
+        493,
+        511
+      ],
+      "placement": [
+        2,
+        9,
+        60,
+        62
+      ],
+      "visibleBounds": [
+        2,
+        9,
+        60,
+        62
+      ],
+      "corners": [
+        0,
+        0,
+        0,
+        0
+      ],
+      "output": "assets/decor/handdrawn/v1/wall-art-saxophone.png",
+      "facing": "south",
+      "sha256": "8d110cbdd8165e3a961259daab19dc87364a13a8048e1bcaf6454988e97d1fee"
+    },
+    {
+      "id": "wall-art-electric-guitars",
+      "name": "Crossed electric guitars wall art",
+      "category": "wall",
+      "width": 72,
+      "height": 80,
+      "source": "assets/decor/source/handdrawn-wall-b.png",
+      "sourceSize": [
+        2172,
+        724
+      ],
+      "cell": [
+        1087,
+        0,
+        543,
+        724
+      ],
+      "crop": [
+        1112,
+        103,
+        493,
+        511
+      ],
+      "placement": [
+        2,
+        5,
+        68,
+        70
+      ],
+      "visibleBounds": [
+        2,
+        5,
+        68,
+        70
+      ],
+      "corners": [
+        0,
+        0,
+        0,
+        0
+      ],
+      "output": "assets/decor/handdrawn/v1/wall-art-electric-guitars.png",
+      "facing": "south",
+      "sha256": "f5a77656047754dc7c06e36e5d0c5d993e14bae4928408bae8038ed507f3f8b3"
+    },
+    {
+      "id": "wall-art-drum-kit",
+      "name": "Framed drum kit",
+      "category": "wall",
+      "width": 74,
+      "height": 80,
+      "source": "assets/decor/source/handdrawn-wall-b.png",
+      "sourceSize": [
+        2172,
+        724
+      ],
+      "cell": [
+        1630,
+        0,
+        542,
+        724
+      ],
+      "crop": [
+        1655,
+        103,
+        493,
+        511
+      ],
+      "placement": [
+        2,
+        3,
+        70,
+        73
+      ],
+      "visibleBounds": [
+        2,
+        3,
+        70,
+        73
+      ],
+      "corners": [
+        0,
+        0,
+        0,
+        0
+      ],
+      "output": "assets/decor/handdrawn/v1/wall-art-drum-kit.png",
+      "facing": "south",
+      "sha256": "6a7a3d4e1a2f879cbb29774638ee9fe5eba2864c51980bcfd5fabda6a74ba9c0"
+    },
+    {
+      "id": "rug-notes-rectangle",
+      "name": "Notes shop arcade rug",
+      "category": "rug",
+      "width": 360,
+      "height": 140,
+      "source": "assets/decor/source/handdrawn-rugs-a.png",
+      "sourceSize": [
+        1536,
+        1024
+      ],
+      "cell": [
+        0,
+        0,
+        486,
+        538
+      ],
+      "crop": [
+        14,
+        204,
+        466,
+        264
+      ],
+      "placement": [
+        60,
+        2,
+        240,
+        136
+      ],
+      "visibleBounds": [
+        61,
+        3,
+        238,
+        134
+      ],
+      "corners": [
+        0,
+        0,
+        0,
+        0
+      ],
+      "output": "assets/decor/handdrawn/v1/rug-notes-rectangle.png",
+      "facing": "top",
+      "sha256": "d0ff940890deb870e6affaf55efc3c575834577e579fa8b416977b99658e8961"
+    },
+    {
+      "id": "rug-neon-oval",
+      "name": "Sunset oval rug",
+      "category": "rug",
+      "width": 180,
+      "height": 90,
+      "source": "assets/decor/source/handdrawn-rugs-a.png",
+      "sourceSize": [
+        1536,
+        1024
+      ],
+      "cell": [
+        486,
+        0,
+        406,
+        538
+      ],
+      "crop": [
+        492,
+        192,
+        396,
+        277
+      ],
+      "placement": [
+        28,
+        2,
+        123,
+        86
+      ],
+      "visibleBounds": [
+        29,
+        3,
+        121,
+        84
+      ],
+      "corners": [
+        0,
+        0,
+        0,
+        0
+      ],
+      "output": "assets/decor/handdrawn/v1/rug-neon-oval.png",
+      "facing": "top",
+      "sha256": "011bb58425b8b4cd856a4b86528b508893003b8f0ebc9025885975dc13cefba3"
+    },
+    {
+      "id": "rug-pixel-round",
+      "name": "Pixel maze round rug",
+      "category": "rug",
+      "width": 120,
+      "height": 100,
+      "source": "assets/decor/source/handdrawn-rugs-a.png",
+      "sourceSize": [
+        1536,
+        1024
+      ],
+      "cell": [
+        892,
+        0,
+        335,
+        538
+      ],
+      "crop": [
+        896,
+        167,
+        319,
+        318
+      ],
+      "placement": [
+        12,
+        2,
+        96,
+        96
+      ],
+      "visibleBounds": [
+        13,
+        3,
+        94,
+        94
+      ],
+      "corners": [
+        0,
+        0,
+        0,
+        0
+      ],
+      "output": "assets/decor/handdrawn/v1/rug-pixel-round.png",
+      "facing": "top",
+      "sha256": "2340da2a4f183f654c2d73fb3456ac640a32330e9f963795fda9b3f3b408bfc9"
+    },
+    {
+      "id": "rug-checker-square",
+      "name": "Neon checker square rug",
+      "category": "rug",
+      "width": 110,
+      "height": 90,
+      "source": "assets/decor/source/handdrawn-rugs-a.png",
+      "sourceSize": [
+        1536,
+        1024
+      ],
+      "cell": [
+        1227,
+        0,
+        309,
+        538
+      ],
+      "crop": [
+        1240,
+        191,
+        286,
+        274
+      ],
+      "placement": [
+        10,
+        2,
+        90,
+        86
+      ],
+      "visibleBounds": [
+        11,
+        3,
+        88,
+        84
+      ],
+      "corners": [
+        0,
+        0,
+        0,
+        0
+      ],
+      "output": "assets/decor/handdrawn/v1/rug-checker-square.png",
+      "facing": "top",
+      "sha256": "1486df568391afcf6f90c9815e48e4d212fa273c2d7dd95298d0ccc9a6e688ef"
+    },
+    {
+      "id": "rug-lightning-runner",
+      "name": "Lightning runner rug",
+      "category": "rug",
+      "width": 280,
+      "height": 90,
+      "source": "assets/decor/source/handdrawn-rugs-a.png",
+      "sourceSize": [
+        1536,
+        1024
+      ],
+      "cell": [
+        0,
+        538,
+        442,
+        486
+      ],
+      "crop": [
+        14,
+        690,
+        422,
+        169
+      ],
+      "placement": [
+        32,
+        2,
+        215,
+        86
+      ],
+      "visibleBounds": [
+        33,
+        3,
+        213,
+        84
+      ],
+      "corners": [
+        0,
+        0,
+        0,
+        0
+      ],
+      "output": "assets/decor/handdrawn/v1/rug-lightning-runner.png",
+      "facing": "top",
+      "sha256": "80df63e3e39407d1c6898be9404cd631566e522b1134e257a3e44fa127e1e2f3"
+    },
+    {
+      "id": "rug-starburst",
+      "name": "Arcade starburst rug",
+      "category": "rug",
+      "width": 130,
+      "height": 110,
+      "source": "assets/decor/source/handdrawn-rugs-a.png",
+      "sourceSize": [
+        1536,
+        1024
+      ],
+      "cell": [
+        442,
+        538,
+        337,
+        486
+      ],
+      "crop": [
+        449,
+        591,
+        330,
+        330
+      ],
+      "placement": [
+        12,
+        2,
+        106,
+        106
+      ],
+      "visibleBounds": [
+        13,
+        3,
+        104,
+        104
+      ],
+      "corners": [
+        0,
+        0,
+        0,
+        0
+      ],
+      "output": "assets/decor/handdrawn/v1/rug-starburst.png",
+      "facing": "top",
+      "sha256": "ee152741cdc991fc927df532403f750ca99abf591f53507e513463004a4e79ef"
+    },
+    {
+      "id": "rug-controller",
+      "name": "Game controller rug",
+      "category": "rug",
+      "width": 160,
+      "height": 90,
+      "source": "assets/decor/source/handdrawn-rugs-a.png",
+      "sourceSize": [
+        1536,
+        1024
+      ],
+      "cell": [
+        779,
+        538,
+        404,
+        486
+      ],
+      "crop": [
+        779,
+        663,
+        404,
+        238
+      ],
+      "placement": [
+        7,
+        2,
+        146,
+        86
+      ],
+      "visibleBounds": [
+        8,
+        3,
+        144,
+        84
+      ],
+      "corners": [
+        0,
+        0,
+        0,
+        0
+      ],
+      "output": "assets/decor/handdrawn/v1/rug-controller.png",
+      "facing": "top",
+      "sha256": "58b67b66c7376326934c65762338726465be7d4123610707c76a5b50e074a5a9"
+    },
+    {
+      "id": "rug-hex-grid",
+      "name": "Synth grid hexagon rug",
+      "category": "rug",
+      "width": 130,
+      "height": 110,
+      "source": "assets/decor/source/handdrawn-rugs-a.png",
+      "sourceSize": [
+        1536,
+        1024
+      ],
+      "cell": [
+        1183,
+        538,
+        353,
+        486
+      ],
+      "crop": [
+        1184,
+        602,
+        345,
+        319
+      ],
+      "placement": [
+        7,
+        2,
+        115,
+        106
+      ],
+      "visibleBounds": [
+        8,
+        3,
+        113,
+        104
+      ],
+      "corners": [
+        0,
+        0,
+        0,
+        0
+      ],
+      "output": "assets/decor/handdrawn/v1/rug-hex-grid.png",
+      "facing": "top",
+      "sha256": "693d3dce4514b31ba6be11371273a543fa615030d009a8134fc74ceef96eba8b"
+    },
+    {
+      "id": "rug-lounge-constellation",
+      "name": "Lounge constellation rug",
+      "category": "rug",
+      "width": 210,
+      "height": 112,
+      "source": "assets/decor/source/handdrawn-rugs-b.png",
+      "sourceSize": [
+        2172,
+        724
+      ],
+      "cell": [
+        0,
+        0,
+        727,
+        724
+      ],
+      "crop": [
+        26,
+        159,
+        681,
+        397
+      ],
+      "placement": [
+        12,
+        2,
+        185,
+        108
+      ],
+      "visibleBounds": [
+        13,
+        3,
+        183,
+        106
+      ],
+      "corners": [
+        0,
+        0,
+        0,
+        0
+      ],
+      "output": "assets/decor/handdrawn/v1/rug-lounge-constellation.png",
+      "facing": "top",
+      "sha256": "3ff55c6e288677b087752fc515dfd3bb50e459dd1761e8a7d035613d7143906b"
+    },
+    {
+      "id": "rug-lounge-sunset",
+      "name": "Lounge sunset oval rug",
+      "category": "rug",
+      "width": 200,
+      "height": 104,
+      "source": "assets/decor/source/handdrawn-rugs-b.png",
+      "sourceSize": [
+        2172,
+        724
+      ],
+      "cell": [
+        727,
+        0,
+        716,
+        724
+      ],
+      "crop": [
+        748,
+        133,
+        676,
+        454
+      ],
+      "placement": [
+        25,
+        2,
+        149,
+        100
+      ],
+      "visibleBounds": [
+        25,
+        2,
+        149,
+        100
+      ],
+      "corners": [
+        0,
+        0,
+        0,
+        0
+      ],
+      "output": "assets/decor/handdrawn/v1/rug-lounge-sunset.png",
+      "facing": "top",
+      "sha256": "ffb3b2d862a733f4b0ca20b585ee4ffdc1a7ddd56a407a70419a1bda0a50609e"
+    },
+    {
+      "id": "rug-lounge-jade",
+      "name": "Lounge jade geometric rug",
+      "category": "rug",
+      "width": 180,
+      "height": 112,
+      "source": "assets/decor/source/handdrawn-rugs-b.png",
+      "sourceSize": [
+        2172,
+        724
+      ],
+      "cell": [
+        1443,
+        0,
+        729,
+        724
+      ],
+      "crop": [
+        1463,
+        155,
+        682,
+        401
+      ],
+      "placement": [
+        2,
+        4,
+        176,
+        103
+      ],
+      "visibleBounds": [
+        3,
+        5,
+        174,
+        101
+      ],
+      "corners": [
+        0,
+        0,
+        0,
+        0
+      ],
+      "output": "assets/decor/handdrawn/v1/rug-lounge-jade.png",
+      "facing": "top",
+      "sha256": "3fc38dfbf2e9131db08d1ef4fdfdfc9dba0a389dda6caedfaca0377c87f1dba4"
+    },
+    {
+      "id": "couch-coral-east",
+      "name": "East-facing coral two-seater couch",
+      "category": "furniture",
+      "width": 76,
+      "height": 144,
+      "source": "assets/decor/source/handdrawn-east-west-furniture.png",
+      "sourceSize": [
+        1536,
+        1024
+      ],
+      "cell": [
+        0,
+        0,
+        413,
+        352
+      ],
+      "crop": [
+        145,
+        30,
+        194,
+        306
+      ],
+      "placement": [
+        2,
+        28,
+        72,
+        114
+      ],
+      "visibleBounds": [
+        3,
+        29,
+        70,
+        112
+      ],
+      "corners": [
+        0,
+        0,
+        0,
+        0
+      ],
+      "output": "assets/decor/handdrawn/v1/couch-coral-east.png",
+      "facing": "east",
+      "sha256": "c91b80c8fa0e97595e6e54c443666efc6c4c4feb40f23b701e883c5494576954"
+    },
+    {
+      "id": "couch-coral-west",
+      "name": "West-facing coral two-seater couch",
+      "category": "furniture",
+      "width": 76,
+      "height": 144,
+      "source": "assets/decor/source/handdrawn-east-west-furniture.png",
+      "sourceSize": [
+        1536,
+        1024
+      ],
+      "cell": [
+        413,
+        0,
+        341,
+        352
+      ],
+      "crop": [
+        487,
+        30,
+        167,
+        306
+      ],
+      "placement": [
+        2,
+        10,
+        72,
+        132
+      ],
+      "visibleBounds": [
+        3,
+        11,
+        70,
+        130
+      ],
+      "corners": [
+        0,
+        0,
+        0,
+        0
+      ],
+      "output": "assets/decor/handdrawn/v1/couch-coral-west.png",
+      "facing": "west",
+      "sha256": "f84aae5b4cbc9a2f166b2cd371266ec5351ee4d2e8f80ee8b83d0b3dde696708"
+    },
+    {
+      "id": "couch-navy-east",
+      "name": "East-facing navy round-arm two-seater",
+      "category": "furniture",
+      "width": 80,
+      "height": 144,
+      "source": "assets/decor/source/handdrawn-east-west-furniture.png",
+      "sourceSize": [
+        1536,
+        1024
+      ],
+      "cell": [
+        754,
+        0,
+        372,
+        352
+      ],
+      "crop": [
+        855,
+        44,
+        189,
+        292
+      ],
+      "placement": [
+        2,
+        25,
+        76,
+        117
+      ],
+      "visibleBounds": [
+        3,
+        26,
+        74,
+        115
+      ],
+      "corners": [
+        0,
+        0,
+        0,
+        0
+      ],
+      "output": "assets/decor/handdrawn/v1/couch-navy-east.png",
+      "facing": "east",
+      "sha256": "10ac31f5cb77a6ef4cc40d338568af615103a79b6d7a25b1fd218c3437462c16"
+    },
+    {
+      "id": "couch-navy-west",
+      "name": "West-facing navy round-arm two-seater",
+      "category": "furniture",
+      "width": 80,
+      "height": 144,
+      "source": "assets/decor/source/handdrawn-east-west-furniture.png",
+      "sourceSize": [
+        1536,
+        1024
+      ],
+      "cell": [
+        1126,
+        0,
+        410,
+        352
+      ],
+      "crop": [
+        1209,
+        44,
+        189,
+        292
+      ],
+      "placement": [
+        2,
+        25,
+        76,
+        117
+      ],
+      "visibleBounds": [
+        3,
+        26,
+        74,
+        115
+      ],
+      "corners": [
+        0,
+        0,
+        0,
+        0
+      ],
+      "output": "assets/decor/handdrawn/v1/couch-navy-west.png",
+      "facing": "west",
+      "sha256": "cd11e5a5e7295d06dcb9fbc8a788ae02a3cde40ac6e41fd4fa5206aabd7741a7"
+    },
+    {
+      "id": "armchair-amber-east",
+      "name": "East-facing amber club armchair",
+      "category": "furniture",
+      "width": 66,
+      "height": 96,
+      "source": "assets/decor/source/handdrawn-east-west-furniture.png",
+      "sourceSize": [
+        1536,
+        1024
+      ],
+      "cell": [
+        0,
+        352,
+        414,
+        271
+      ],
+      "crop": [
+        146,
+        376,
+        200,
+        230
+      ],
+      "placement": [
+        2,
+        23,
+        62,
+        71
+      ],
+      "visibleBounds": [
+        3,
+        24,
+        60,
+        69
+      ],
+      "corners": [
+        0,
+        0,
+        0,
+        0
+      ],
+      "output": "assets/decor/handdrawn/v1/armchair-amber-east.png",
+      "facing": "east",
+      "sha256": "5ee57cb73fa9948a3023fc9ae5ef465a268ec3f7fd4c3220645d2d763af44297"
+    },
+    {
+      "id": "armchair-amber-west",
+      "name": "West-facing amber club armchair",
+      "category": "furniture",
+      "width": 66,
+      "height": 96,
+      "source": "assets/decor/source/handdrawn-east-west-furniture.png",
+      "sourceSize": [
+        1536,
+        1024
+      ],
+      "cell": [
+        414,
+        352,
+        362,
+        271
+      ],
+      "crop": [
+        482,
+        376,
+        195,
+        230
+      ],
+      "placement": [
+        2,
+        21,
+        62,
+        73
+      ],
+      "visibleBounds": [
+        3,
+        22,
+        60,
+        71
+      ],
+      "corners": [
+        0,
+        0,
+        0,
+        0
+      ],
+      "output": "assets/decor/handdrawn/v1/armchair-amber-west.png",
+      "facing": "west",
+      "sha256": "09f8672cda03a53ebd222c24b7734a89601da777b82068ef7a84f9b1484c32cb"
+    },
+    {
+      "id": "chair-teal-east",
+      "name": "East-facing teal wooden chair",
+      "category": "furniture",
+      "width": 58,
+      "height": 84,
+      "source": "assets/decor/source/handdrawn-east-west-furniture.png",
+      "sourceSize": [
+        1536,
+        1024
+      ],
+      "cell": [
+        776,
+        352,
+        347,
+        271
+      ],
+      "crop": [
+        875,
+        370,
+        168,
+        242
+      ],
+      "placement": [
+        2,
+        4,
+        54,
+        78
+      ],
+      "visibleBounds": [
+        3,
+        5,
+        52,
+        76
+      ],
+      "corners": [
+        0,
+        0,
+        0,
+        0
+      ],
+      "output": "assets/decor/handdrawn/v1/chair-teal-east.png",
+      "facing": "east",
+      "sha256": "1706e8bee443c3d49766fcd96b642d7ee2ab2dac3f8d4c24332cc94cb108bc07"
+    },
+    {
+      "id": "chair-teal-west",
+      "name": "West-facing teal wooden chair",
+      "category": "furniture",
+      "width": 58,
+      "height": 84,
+      "source": "assets/decor/source/handdrawn-east-west-furniture.png",
+      "sourceSize": [
+        1536,
+        1024
+      ],
+      "cell": [
+        1123,
+        352,
+        413,
+        271
+      ],
+      "crop": [
+        1204,
+        369,
+        164,
+        243
+      ],
+      "placement": [
+        2,
+        2,
+        54,
+        80
+      ],
+      "visibleBounds": [
+        3,
+        3,
+        52,
+        78
+      ],
+      "corners": [
+        0,
+        0,
+        0,
+        0
+      ],
+      "output": "assets/decor/handdrawn/v1/chair-teal-west.png",
+      "facing": "west",
+      "sha256": "71d36da6b780cbc1fadf35bb147b20106fa48105fc98896dc813c503ebed0838"
+    },
+    {
+      "id": "counter-jade-east",
+      "name": "East-facing vertical jade counter",
+      "category": "furniture",
+      "width": 72,
+      "height": 164,
+      "source": "assets/decor/source/handdrawn-east-west-furniture.png",
+      "sourceSize": [
+        1536,
+        1024
+      ],
+      "cell": [
+        0,
+        623,
+        411,
+        401
+      ],
+      "crop": [
+        153,
+        634,
+        155,
+        344
+      ],
+      "placement": [
+        2,
+        11,
+        68,
+        151
+      ],
+      "visibleBounds": [
+        3,
+        12,
+        66,
+        149
+      ],
+      "corners": [
+        0,
+        0,
+        0,
+        0
+      ],
+      "output": "assets/decor/handdrawn/v1/counter-jade-east.png",
+      "facing": "east",
+      "sha256": "f6655479b105aa0b81b7bbb4cb0b6346d0d26bb2ffe7a3d45b20a62086d71e3f"
+    },
+    {
+      "id": "counter-jade-west",
+      "name": "West-facing vertical jade counter",
+      "category": "furniture",
+      "width": 72,
+      "height": 164,
+      "source": "assets/decor/source/handdrawn-east-west-furniture.png",
+      "sourceSize": [
+        1536,
+        1024
+      ],
+      "cell": [
+        411,
+        623,
+        358,
+        401
+      ],
+      "crop": [
+        514,
+        634,
+        158,
+        344
+      ],
+      "placement": [
+        2,
+        14,
+        68,
+        148
+      ],
+      "visibleBounds": [
+        3,
+        15,
+        66,
+        146
+      ],
+      "corners": [
+        0,
+        0,
+        0,
+        0
+      ],
+      "output": "assets/decor/handdrawn/v1/counter-jade-west.png",
+      "facing": "west",
+      "sha256": "a42980658aa562a74645eab73e736ae3889a4aafe45695d6ac19cfed10085750"
+    },
+    {
+      "id": "table-lounge-east",
+      "name": "East-facing vertical walnut table",
+      "category": "furniture",
+      "width": 60,
+      "height": 132,
+      "source": "assets/decor/source/handdrawn-east-west-furniture.png",
+      "sourceSize": [
+        1536,
+        1024
+      ],
+      "cell": [
+        769,
+        623,
+        353,
+        401
+      ],
+      "crop": [
+        866,
+        653,
+        176,
+        297
+      ],
+      "placement": [
+        2,
+        35,
+        56,
+        95
+      ],
+      "visibleBounds": [
+        3,
+        36,
+        54,
+        93
+      ],
+      "corners": [
+        0,
+        0,
+        0,
+        0
+      ],
+      "output": "assets/decor/handdrawn/v1/table-lounge-east.png",
+      "facing": "east",
+      "sha256": "7a79d888fb260fc9499458b47d060fb2771c344a6e4af5699b9d91fc5e44618e"
+    },
+    {
+      "id": "table-lounge-west",
+      "name": "West-facing vertical walnut table",
+      "category": "furniture",
+      "width": 60,
+      "height": 132,
+      "source": "assets/decor/source/handdrawn-east-west-furniture.png",
+      "sourceSize": [
+        1536,
+        1024
+      ],
+      "cell": [
+        1122,
+        623,
+        414,
+        401
+      ],
+      "crop": [
+        1203,
+        653,
+        177,
+        297
+      ],
+      "placement": [
+        2,
+        36,
+        56,
+        94
+      ],
+      "visibleBounds": [
+        3,
+        37,
+        54,
+        92
+      ],
+      "corners": [
+        0,
+        0,
+        0,
+        0
+      ],
+      "output": "assets/decor/handdrawn/v1/table-lounge-west.png",
+      "facing": "west",
+      "sha256": "b09da71ee341ffb65d47e2cb44a2373f8b2d13298820d9d23588eef273859656"
+    }
+  ]
+}

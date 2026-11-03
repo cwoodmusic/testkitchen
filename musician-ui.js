@@ -4,20 +4,23 @@ window.createCodaMusicianUI=function(api){
   const $=id=>document.getElementById(id),dialog=$('dialog');
   const details=document.createElement('p');details.className='musician-description';
   const choices=document.createElement('div');choices.className='musician-choices';
-  const credit=document.createElement('small');credit.className='muted';credit.textContent='Imagined dialogue inspired by music history.';
-  $('who').after(details);$('words').after(choices,credit);
+  $('who').after(details);$('words').after(choices);
   let selected=null,preview=null;
-  function closeConversation(){api.getBrain()?.endConversation();selected=null;dialog.style.display='none';api.onConversationChange?.();api.clearInput();api.canvas.focus();}
+  function say(text){
+    if(window.CodaDialogueText)window.CodaDialogueText.show($('words'),text);else $('words').textContent=text;
+    dialog.scrollTop=0;
+  }
+  function closeConversation(){window.CodaDialogueText?.cancel($('words'));api.getBrain()?.endConversation();selected=null;dialog.style.display='none';api.onConversationChange?.();api.clearInput();api.canvas.focus();}
   function talk(npc){
     const data=api.getBrain()?.beginConversation(npc);if(!data)return;
     const person=api.npcs.find(person=>person.id===data.id);if(person)api.faceTo?.(person);
-    selected=data.id;api.clearInput();dialog.style.display='block';api.onConversationChange?.();credit.textContent=data.original?'Original Coda Arcade character and dialogue.':'Imagined dialogue inspired by music history.';$('who').textContent=data.name;details.textContent=data.description;$('words').textContent=data.line;
+    selected=data.id;api.clearInput();dialog.style.display='block';api.onConversationChange?.();$('who').textContent=data.name;details.textContent=data.description;details.hidden=true;say(data.line);
     choices.replaceChildren();
-    for(const choice of data.choices){const button=document.createElement('button');button.type='button';button.textContent=choice.label;button.onclick=()=>{$('words').textContent=api.getBrain().say(selected,choice.id);};choices.append(button);}
-    if(api.openMissions&&api.getMission?.(selected)){const mission=document.createElement('button');mission.type='button';const entry=api.getMission?.(selected);mission.textContent=entry?.status==='complete'?'I finished your mission · Collect reward':entry?.status==='active'?'My mission · Check progress':'Any missions for me? · Earn Notes';mission.onclick=()=>{const id=selected;closeConversation();api.openMissions(id);};choices.append(mission);}
-    if(api.openTrivia&&(!api.hasTrivia||api.hasTrivia(selected))){const trivia=document.createElement('button');trivia.type='button';trivia.textContent='Ask me a music question · Earn Notes';trivia.onclick=()=>{const id=selected;closeConversation();api.openTrivia(id);};choices.append(trivia);}
-    if(api.openHistory){const history=document.createElement('button');history.type='button';history.textContent='Tell me some music history';history.onclick=()=>api.openHistory(selected);choices.append(history);}
-    $('close').textContent='See you around · E';$('close').focus();
+    for(const choice of data.choices){const button=document.createElement('button');button.type='button';button.textContent=choice.label;button.onclick=()=>say(api.getBrain().say(selected,choice.id));choices.append(button);}
+    if(!api.openHistory&&api.openMissions&&api.getMission?.(selected)){const mission=document.createElement('button');mission.type='button';const entry=api.getMission?.(selected);mission.textContent=entry?.status==='complete'?'I finished your mission · Collect reward':entry?.status==='active'?'My mission · Check progress':'Any missions for me? · Earn Notes';mission.onclick=()=>{const id=selected;closeConversation();api.openMissions(id);};choices.append(mission);}
+    if(!api.openHistory&&api.openTrivia&&(!api.hasTrivia||api.hasTrivia(selected))){const trivia=document.createElement('button');trivia.type='button';trivia.textContent='Ask me a music question · Earn Notes';trivia.onclick=()=>{const id=selected;closeConversation();api.openTrivia(id);};choices.append(trivia);}
+    if(api.openHistory){const history=document.createElement('button');history.type='button';history.dataset.historyOwnerPrompt=selected;history.textContent=api.historyState?.(selected)?.hasNewFact?'! New history fact':'Music history & friendship';history.onclick=()=>api.openHistory(selected);choices.append(history);}
+    $('close').textContent='See you around · E';dialog.tabIndex=-1;dialog.scrollTop=0;dialog.focus({preventScroll:true});
   }
   $('close').onclick=closeConversation;
   function openRoster(){

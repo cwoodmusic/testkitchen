@@ -4,6 +4,7 @@ The fixture only switches the production disco draw calls on/off while taking
 same-time snapshots. Endpoint glows are excluded, so animated pin geometry
 alone cannot make a hidden beam pass. No live services or existing saves.
 """
+from settings_menu_helpers import settings_page
 import importlib.util
 import os
 from pathlib import Path
@@ -72,7 +73,7 @@ class DiscoVisibilityTests(unittest.TestCase):
         fixture.PublishedWorldTests.load(self)
 
     def quality(self, value):
-        self.page.locator('#worldMenuBtn').click()
+        settings_page(self.page, 'screen')
         for _ in range(3):
             if self.page.evaluate('CodaArcadeQA.atmosphere().quality') == value:
                 break

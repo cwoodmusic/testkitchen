@@ -22,11 +22,12 @@ test('catalog lists every issued achievement and matches the real cosmetic, fish
   'pitch-ten-correct','pitch-ten-streak','pitch-perfect-run','rhythm-perfect-round',
   ...P.ACHIEVEMENT_REWARDS.map(reward=>reward.achievement),
   ...P.DANCE_ACHIEVEMENTS.map(achievement=>achievement.id),
+  'dance-normal-ten','dance-hard-ten','dance-extreme-ten','dance-song-collector','dance-meter-explorer','piano-first-melody','piano-first-scale','piano-twelve-scales','piano-all-scales','piano-reading-10','piano-reading-30','piano-reading-50','piano-reading-bass',
   ...F.ACHIEVEMENTS.map(achievement=>achievement.id),
   ...Lessons.LESSONS.map(lesson=>'classroom-'+lesson.id),'classroom-accidentals-key-signatures','haydn-final-exam'
  ];
  assert.deepEqual(new Set(A.CATALOG.map(row=>row.id)),new Set(emitted));
- assert.equal(A.CATALOG.length,49);assert.equal(new Set(A.CATALOG.map(row=>row.id)).size,49);
+ assert.equal(A.CATALOG.length,62);assert.equal(new Set(A.CATALOG.map(row=>row.id)).size,62);
  assert.equal(A.CATEGORIES.length,8);
  for(const reward of P.ACHIEVEMENT_REWARDS)assert.ok(A.CATALOG.find(row=>row.id===reward.achievement).rewards.includes('Unlock: '+reward.label));
  for(const source of F.ACHIEVEMENTS){const row=A.CATALOG.find(row=>row.id===source.id);assert.equal(row.xp,source.xp);assert.equal(row.target,source.target);assert.equal(row.description,source.description);}
@@ -64,7 +65,7 @@ test('saved full DJ dance results earn the six listed Dance achievements with ma
  assert.equal(snapshot({progression:{version:1,xp:99999,events:[]},dance:{perfect:true,bestStreak:100}}).items.filter(row=>row.category==='dance'&&row.earned).length,0);
  assert.equal(player.recordDanceResult('hard-set',result).ok,true);
  assert.equal(player.recordDanceResult('normal-set',{...result,difficulty:'normal'}).ok,true);
- const raw=JSON.parse(saved.getItem(P.KEY)),state=snapshot({progression:raw}),rows=state.items.filter(row=>row.category==='dance');
+ const raw=JSON.parse(saved.getItem(P.KEY)),state=snapshot({progression:raw}),rows=state.items.filter(row=>row.category==='dance'&&P.DANCE_ACHIEVEMENTS.some(d=>d.id===row.id));
  assert.equal(rows.length,6);assert.equal(rows.filter(row=>row.earned).length,6);
  assert.equal(state.categories.find(category=>category.id==='dance').label,'DJ Line Dance');
  for(const row of rows){assert.equal(raw.events.find(event=>event.id==='achievement:'+row.id).xp,row.xp);assert.ok(row.rewards.includes(row.xp+' XP'));}
@@ -127,7 +128,7 @@ test('snapshots are independent, do not mutate player data, and run in a browser
  const input={progression:journal([event('starclip')]),avatar:{jumps:10}},before=JSON.stringify(input),first=snapshot(input);
  first.items[0].rewards.push('not a real reward');first.items[0].title='Changed';first.categories[0].label='Changed';
  assert.equal(JSON.stringify(input),before);assert.equal(snapshot().earned,0);assert.equal(snapshot(input).items[0].title,'Your Own Style');
- assert.equal(snapshot(null).total,49);
+ assert.equal(snapshot(null).total,62);
  const win={};Object.defineProperty(win,'localStorage',{get(){throw Error('No storage reads are permitted');}});win.fetch=()=>{throw Error('No network');};
  const context=vm.createContext({window:win});vm.runInContext(fs.readFileSync(require.resolve('../achievement-catalog.js'),'utf8'),context);
  assert.equal(JSON.stringify(win.CodaAchievements.buildSnapshot(input)),JSON.stringify(snapshot(input)));

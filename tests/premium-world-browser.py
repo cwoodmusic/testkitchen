@@ -1,4 +1,6 @@
 """Buy and wear long-term rewards, and follow between rooms."""
+from shop_menu_helpers import browse_shop, close_shop
+from boutique_menu_helpers import boutique_field
 import importlib.util
 import math
 from pathlib import Path
@@ -45,7 +47,7 @@ class PremiumWorldTests(_world.WorldBrowserCase):
         self.assertIn(item,self.wallet()['owned'])
 
     def test_starter_cannot_buy_premium_and_mastery_unlocks_never_equip_automatically(self):
-        open_destination(self.page,'shop')
+        open_destination(self.page,'shop');browse_shop(self.page)
         for item,price in [('alien',12000),('cosmiccat',6000),('neondragon',9000)]:
             card=self.page.locator('[data-shop-item="'+item+'"]')
             self.assertIn(str(price),card.inner_text());self.assertTrue(card.get_by_role('button').is_disabled())
@@ -53,7 +55,7 @@ class PremiumWorldTests(_world.WorldBrowserCase):
             self.assertEqual(self.page.locator('[data-shop-item="'+item+'"]').count(),0,'Mastery rewards belong in the boutique, not the Notes shop')
         self.assertEqual(self.wallet()['balance'],150)
         self.assertEqual(self.avatar()['form'],'human');self.assertEqual(self.avatar()['pet'],'none')
-        self.page.keyboard.press('Escape');self.assertFalse(self.page.locator('#panel').is_visible())
+        close_shop(self.page);self.assertFalse(self.page.locator('#panel').is_visible())
         self.page.evaluate('''()=>{
           const wallet=CodaNotesShop.createWallet({catalog:createCodaCharacterRenderer().catalog});
           for(const id of CodaPlayerProgression.PIANO_MEMORIES)wallet.grantReward('piano-memory:'+id,60);
@@ -64,12 +66,12 @@ class PremiumWorldTests(_world.WorldBrowserCase):
         open_destination(self.page,'boutique')
         option=self.page.locator('#boutique-pet option[value="pianophoenix"]')
         self.assertNotIn('🔒',option.inner_text())
-        self.page.locator('#boutique-pet').select_option('pianophoenix')
+        boutique_field(self.page, 'Companion').select_option('pianophoenix')
         self.page.locator('#boutiqueSave').click();self.page.clock.run_for(96)
         self.assertEqual(self.avatar()['pet'],'pianophoenix');self.assertTrue(self.companion()['active'])
 
     def test_actual_shop_purchase_wear_and_following_survive_doors_and_reload(self):
-        self.fund();open_destination(self.page,'shop')
+        self.fund();open_destination(self.page,'shop');browse_shop(self.page)
         self.buy('alien');self.buy('cosmiccat')
         self.assertEqual(self.wallet()['balance'],12150)
         self.assertEqual(self.avatar()['form'],'human');self.assertEqual(self.avatar()['pet'],'none')
@@ -81,7 +83,7 @@ class PremiumWorldTests(_world.WorldBrowserCase):
             action.click();self.page.clock.run_for(64)
             self.assertTrue(self.page.locator('#panel').is_visible())
         self.assertEqual(self.wallet()['balance'],12150,'Wearing owned rewards is free')
-        self.page.keyboard.press('Escape');self.page.clock.run_for(128)
+        close_shop(self.page);self.page.clock.run_for(128)
         self.assertEqual(self.avatar()['form'],'alien');self.assertEqual(self.avatar()['pet'],'cosmiccat')
         self.assertEqual(self.page.evaluate('JSON.parse(localStorage.musicArcadeV1).pet'),'cosmiccat')
         self.assertTrue(self.page.evaluate('CodaArcadeQA.place(1225,675)'));self.page.clock.run_for(64)
@@ -109,13 +111,13 @@ class PremiumWorldTests(_world.WorldBrowserCase):
         self.assertEqual(self.wallet()['balance'],12150);self.assertEqual(self.avatar()['form'],'alien')
         self.assertEqual(self.companion()['id'],'cosmiccat');self.assertTrue(self.companion()['active'])
         # Unequipping is explicit and restores the original human customization.
-        open_destination(self.page,'boutique');self.page.locator('#boutique-form').select_option('human')
-        self.page.locator('#boutique-pet').select_option('none');self.page.locator('#boutiqueSave').click();self.page.clock.run_for(96)
+        open_destination(self.page,'boutique');boutique_field(self.page, 'Transformation').select_option('human')
+        boutique_field(self.page, 'Companion').select_option('none');self.page.locator('#boutiqueSave').click();self.page.clock.run_for(96)
         self.assertEqual(self.avatar()['form'],'human');self.assertFalse(self.companion()['active'])
         self.assertIn('alien',self.wallet()['owned']);self.assertIn('cosmiccat',self.wallet()['owned'])
 
     def test_failed_premium_purchase_does_not_spend_or_unlock(self):
-        self.fund();open_destination(self.page,'shop')
+        self.fund();open_destination(self.page,'shop');browse_shop(self.page)
         self.page.evaluate('''()=>{
           const original=Storage.prototype.setItem;
           Storage.prototype.setItem=function(key,value){if(key==='codaNotesWalletV1')throw Error('fixture quota');return original.call(this,key,value);};

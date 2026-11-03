@@ -4,6 +4,7 @@ Jumping lifts the drawing while the player's walking position remains subject
 to the same collision map. Tests use disposable browser profiles and real key
 events; no network services or repository dependencies are needed.
 """
+from settings_menu_helpers import settings_page
 import functools
 from http.server import SimpleHTTPRequestHandler, ThreadingHTTPServer
 import math
@@ -58,7 +59,7 @@ class PlayerControlTests(unittest.TestCase):
         self.page.goto(f'http://127.0.0.1:{self.server.server_port}/world-preview.html',
                        wait_until='domcontentloaded')
         self.page.wait_for_function('window.CodaDeveloperConsole?.ready() && CodaArcadeQA?.characters().spriteState.ready')
-        open_settings(self.page)
+        settings_page(self.page, 'screen')
         for _ in range(3):
             if self.page.locator('#fxBtn').inner_text().endswith('Off'):
                 break

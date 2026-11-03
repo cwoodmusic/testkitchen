@@ -93,7 +93,7 @@ window.createCodaBoutiqueUI=function(api){
     for(const shade of presets){const button=document.createElement('button');button.type='button';button.style.backgroundColor=shade;button.title=shade;button.setAttribute('aria-label',label+' '+shade);button.onclick=()=>{control.value=shade;control.dispatchEvent(new Event('input',{bubbles:true}));};swatches.append(button);}
     control.parentElement.append(swatches);return control;
   }
-  function wardrobeBrowser(controls,draft,isPlayer){
+  function wardrobeBrowser(controls,draft,isPlayer,onGroupChange){
     const section=document.createElement('section');section.className='boutique-catalog';section.setAttribute('aria-label','Wardrobe collection');
     const title=document.createElement('h3');title.textContent='Find your next look';
     const intro=document.createElement('p');intro.className='muted';intro.textContent='Choose an unlocked item to try it on. Grey items show what you can earn next.';
@@ -102,7 +102,7 @@ window.createCodaBoutiqueUI=function(api){
     const search=document.createElement('input');search.type='search';search.id='boutiqueSearch';search.setAttribute('aria-label','Search wardrobe');searchLabel.append(search);
     const count=document.createElement('p');count.className='boutique-catalog-count';count.setAttribute('role','status');
     const results=document.createElement('div');results.className='boutique-catalog-results';results.setAttribute('aria-label','Wardrobe items');
-    let group=browseGroups[0];const groupButtons=[];
+    let group=browseGroups[0],visibleKeys=browseGroups.map(item=>item.key);const groupButtons=[];
     const previewEmote=()=>{
       const mode=document.getElementById?.('avatarPreviewMode');
       if(mode){mode.value='emote';mode.dispatchEvent(new Event('change',{bubbles:true}));}
@@ -111,7 +111,7 @@ window.createCodaBoutiqueUI=function(api){
       const query=search.value.trim().toLocaleLowerCase(),all=catalog(group.catalog);
       const matches=all.filter(item=>(item.label+' '+item.id).toLocaleLowerCase().includes(query));
       search.placeholder='Search '+group.label.toLowerCase();
-      for(const entry of groupButtons)entry.button.setAttribute('aria-pressed',String(entry.group===group));
+      for(const entry of groupButtons){entry.button.hidden=!visibleKeys.includes(entry.group.key);entry.button.setAttribute('aria-pressed',String(entry.group===group));}onGroupChange?.(group.key);
       count.textContent=matches.length+' of '+all.length+' '+group.label.toLowerCase()+(matches.length?' · unlocked items can be tried on':' · try another search');
       results.replaceChildren();
       for(const item of matches){
@@ -150,24 +150,24 @@ window.createCodaBoutiqueUI=function(api){
     }
     search.oninput=render;
     section.append(title,intro,categories,searchLabel,count,results);render();
-    return {section,refresh:render};
+    return {section,refresh:render,setGroups(keys){visibleKeys=keys;group=browseGroups.find(item=>keys.includes(item.key))||browseGroups[0];search.value='';render();}};
   }
   function open(id='player'){
     api.refreshUnlocks?.();
     const available=targets();targetId=available.some(item=>item.id===id)?id:available[0].id;
     const target=available.find(item=>item.id===targetId),isPlayer=targetId==='player';
     const source=getProfile(targetId)||{},profile=migrateProfile(isPlayer?window.CodaAvatarDefaults.migrate(source):source);
-    api.openPanel(isPlayer?'Pip · Pixel Boutique':'Boutique · '+target.label);
+    api.openPanel(isPlayer?'Pip · Pixel Boutique':'Boutique · '+target.label,{onBack:()=>{if(current?.getPage&&current.getPage()!=='home'){current.showPage('home');return true;}return false;}});
     body.classList.add('boutique-panel');
-    const intro=document.createElement('p');intro.className='muted';intro.textContent=isPlayer?
-      (api.openShop?'Mix hats, glasses, accessories, shoes, and moves into your own look. Choose unlocked styles here. Buy shop items with Notes to unlock them. Achievement rewards are marked.':'Mix hats, glasses, accessories, shoes, and moves into your own look. Everyday and fantasy styles are available to guests; achievement rewards are marked.'):
-      'Developer styling for '+target.label+'. Their name, musical identity, and behavior stay the same.';body.append(intro);
+    const intro=document.createElement('p');intro.className='muted boutique-intro';intro.textContent=isPlayer?
+      'Try on a look. Press Save my look when you are ready.':
+      'Style '+target.label+' without changing their musical identity.';body.append(intro);
     if(isPlayer&&typeof api.openShop==='function'){
       const shop=document.createElement('button');shop.type='button';shop.id='boutiqueOpenShop';shop.textContent='♫ Shop with Notes';
       shop.setAttribute('aria-label','Shop accessories with Notes');shop.onclick=()=>api.openShop();body.append(shop);
     }
     const targetControl=field('Customize','target','select',targetId,available.map(item=>({id:item.id,label:item.label})),false);targetControl.disabled=available.length===1;
-    targetControl.onchange=()=>open(targetControl.value);
+    targetControl.onchange=()=>open(targetControl.value);targetControl.parentElement.hidden=!developerMode();
     const alias=isPlayer?classroomAlias():null;
     const name=field(alias?'Classroom alias':'Arcade nickname','name','text',isPlayer?(alias||profile.name):(source.name||target.label),null,isPlayer);name.maxLength=alias?80:18;name.readOnly=!isPlayer||!!alias;
     if(alias){const note=document.createElement('p');note.className='muted boutique-alias-note';note.textContent='Your class alias stays the same when you change your look.';name.parentElement.append(note);}
@@ -208,19 +208,56 @@ window.createCodaBoutiqueUI=function(api){
     // The preview getter also checks ownership: a stale or programmatically
     // selected disabled option can never put a locked item on the avatar.
     const draft=()=>{const next=rawDraft();for(const group of browseGroups){const value=next[group.key];if(canEquip(value,isPlayer))allowedValues[group.key]=value;else next[group.key]=allowedValues[group.key]=fallbackFor(group);}return next;};
-    const browser=wardrobeBrowser(controls,draft,isPlayer);body.insertBefore(browser.section,hairstyle.parentElement);
+    const pages={
+      clothes:{title:'Clothes & shoes',description:'Find an outfit and choose its colors.',keys:['outfit','shoes'],icon:'shirt'},
+      hair:{title:'Hair & colors',description:'Choose your hair and skin colors.',keys:['hairstyle'],icon:'hair'},
+      extras:{title:'Hats & extras',description:'Add a hat, glasses, accessories, or a move.',keys:['headwear','eyewear','accessory','emote'],icon:'hat'},
+      pets:{title:'Pets & magic',description:'Meet companions and magical forms.',keys:['pet','form'],icon:'star'}
+    };
+    let page='home';
+    const colorKeys={outfit:['shirt','lowerColor'],hairstyle:['hair','skin'],headwear:['headwearColor'],eyewear:['eyewearColor']};
+    function showFields(key){for(const [fieldKey,control]of Object.entries(controls))control.parentElement.hidden=page==='home'||!(fieldKey===key||(colorKeys[key]||[]).includes(fieldKey));}
+    const browser=wardrobeBrowser(controls,draft,isPlayer,showFields);body.insertBefore(browser.section,hairstyle.parentElement);
     api.getPreviewUI().addPreview(draft);
     const livePreview=body.querySelector?.('.avatar-live-preview');
-    if(livePreview){body.insertBefore(targetControl.parentElement,livePreview);livePreview.after(browser.section);browser.section.after(name.parentElement);}
+    const menu=document.createElement('div');menu.className='kids-menu boutique-menu';menu.setAttribute('data-boutique-menu','home');
+    const head=document.createElement('div');head.className='kids-menu-head';
+    const eyebrow=document.createElement('p');eyebrow.className='kids-menu-eyebrow';eyebrow.textContent='Pip’s boutique';
+    const heading=document.createElement('h2');heading.id='boutiqueMenuTitle';heading.tabIndex=-1;heading.textContent='Make it your look';
+    const help=document.createElement('p');help.className='boutique-menu-help';help.textContent='What would you like to try on?';head.append(eyebrow,heading,help);menu.append(head);
+    const homeGrid=document.createElement('div');homeGrid.className='kids-menu-grid';menu.append(homeGrid);
+    const back=document.createElement('button');back.type='button';back.className='kids-menu-back';back.textContent='‹ Boutique menu';back.setAttribute('data-boutique-back','');menu.append(back);
+    const iconPaths={shirt:'<path d="m20 12-13 9 9 13 7-5v25h26V29l7 5 9-13-13-9-8 7H28Z" fill="#a7e9da" stroke="#2a5265" stroke-width="3"/>',hair:'<circle cx="32" cy="36" r="20" fill="#e8ba96"/><path d="M12 37V26C12 3 53 3 53 27v12L43 27 29 23 17 34Z" fill="#aa87cd"/><path d="M24 44q8 7 16 0" fill="none" stroke="#734f60" stroke-width="3"/>',hat:'<path d="M17 37 21 12h25l6 25" fill="#bba6ef"/><ellipse cx="33" cy="42" rx="27" ry="9" fill="#a2d5e6"/><path d="M20 32h29" stroke="#354f79" stroke-width="5"/>',star:'<path d="m32 5 8 17 19 3-14 14 4 19-17-9-17 9 4-19L5 25l19-3Z" fill="#ffd779"/><path d="m24 31 6 7 13-14" fill="none" stroke="#3b8077" stroke-width="4"/>'};
+    for(const [id,entry]of Object.entries(pages)){
+      const card=document.createElement('button');card.type='button';card.className='kids-menu-card';card.setAttribute('data-boutique-page',id);
+      const icon=document.createElement('span');icon.className='kids-menu-icon';icon.setAttribute('aria-hidden','true');icon.innerHTML='<svg viewBox="0 0 70 64" focusable="false">'+iconPaths[entry.icon]+'</svg>';
+      const title=document.createElement('strong');title.className='kids-menu-title';title.textContent=entry.title;
+      const description=document.createElement('span');description.className='kids-menu-desc';description.textContent=entry.description;card.append(icon,title,description);card.onclick=()=>showPage(id);homeGrid.append(card);
+    }
+    const fields=document.createElement('div');fields.className='boutique-focused-fields';
+    for(const control of Object.values(controls))fields.append(control.parentElement);
+    body.append(menu,browser.section,fields);
+    if(livePreview)menu.insertBefore(livePreview,homeGrid);
+    body.insertBefore(menu,body.firstChild||null);
+    function showPage(next,focus=true){
+      page=pages[next]?next:'home';const home=page==='home';menu.setAttribute('data-boutique-menu',page);homeGrid.hidden=!home;back.hidden=home;
+      heading.textContent=home?'Make it your look':pages[page].title;help.textContent=home?'What would you like to try on?':'Choose a style to see it on your avatar.';
+      browser.section.hidden=home;fields.hidden=home;name.parentElement.hidden=!home;intro.hidden=!home;
+      if(!home)browser.setGroups(pages[page].keys);else showFields(null);
+      if(current?.menuOptions)current.menuOptions.hidden=!home;
+      if(focus){body.closest?.('#panel')?.scrollTo?.({top:0});heading.focus?.({preventScroll:true});}
+    }
+    menu.insertBefore(back,head);back.onclick=()=>showPage('home');
     const note=document.createElement('p');note.className='muted boutique-note';note.textContent=isPlayer?
-      'Try unlocked styles. Save applies the complete look; closing leaves your saved look unchanged. '+(api.openShop?'Buy marked shop items with Notes. Other rewards unlock through arcade achievements.':'Locked rewards unlock through arcade achievements.'):
+      'Save my look keeps your changes. Cancel keeps your saved look.':
       'Developer NPC costume changes are saved separately from your avatar.';body.append(note);
+    const menuOptions=document.createElement('details');menuOptions.className='boutique-more-options';const moreTitle=document.createElement('summary');moreTitle.textContent='More looks';menuOptions.append(moreTitle);body.append(menuOptions);
     const actions=document.createElement('div');actions.className='boutique-actions';
     if(isPlayer){
       for(const [text,id,look]of [['Plain base avatar','boutiqueBaseLook',window.CodaAvatarDefaults.plain],['Classic cap look','boutiqueOriginalLook',window.CodaAvatarDefaults.classic]]){
         const preset=document.createElement('button');preset.type='button';preset.textContent=text;preset.id=id;
         preset.onclick=()=>{for(const [key,value]of Object.entries(look))controls[key].value=value;browser.refresh();message('');};
-        actions.append(preset);
+        menuOptions.append(preset);
       }
     }
     const save=document.createElement('button');save.type='button';save.textContent=isPlayer?'Save my look':'Save NPC look';save.id='boutiqueSave';
@@ -235,7 +272,7 @@ window.createCodaBoutiqueUI=function(api){
       for(const group of browseGroups){const control=controls[group.key];for(const option of control.children){const item=catalog(group.catalog).find(item=>item.id===option.value);if(!item)continue;const locked=!canEquip(item.id,isPlayer);option.disabled=locked;option.className=locked?'boutique-option-locked':'';option.setAttribute('aria-disabled',String(locked));option.textContent=(locked?'🔒 ':'')+item.label+(locked?' · '+lockedReason(item.id):'');option.title=locked?item.label+' — '+lockedReason(item.id):item.label;}}
       browser.refresh();
     }
-    current={targetId,source,draft,status,save,refresh:refreshLocks};refreshLocks();
+    current={targetId,source,draft,status,save,refresh:refreshLocks,menuOptions,showPage,getPage:()=>page};refreshLocks();showPage('home',false);
     save.onclick=()=>{
       if(!isPlayer&&!developerMode()){message('Developer mode is required to style NPCs.');return;}
       const next=rawDraft();

@@ -4,6 +4,7 @@ The shared world fixture routes the public origin to this checkout, blocks
 external services, and uses disposable browser storage. No notebook or game
 shortcut is added to production code.
 """
+from settings_menu_helpers import settings_page
 import importlib.util
 from pathlib import Path
 import sys
@@ -73,7 +74,7 @@ class WorldPlayNotebookTests(fixture.WorldBrowserCase):
 
     def test_settings_changelog_shows_the_bundled_current_release_and_notes_button(self):
         before_journal = self.journal()
-        open_settings(self.page)
+        settings_page(self.page, 'help')
         self.page.get_by_role('button', name='Changelog', exact=True).click()
         self.assertTrue(self.notebook().is_visible())
         self.assertEqual(self.page.locator('[data-notebook-tab="changelog"]').get_attribute('aria-selected'), 'true')
@@ -88,7 +89,7 @@ class WorldPlayNotebookTests(fixture.WorldBrowserCase):
         self.page.keyboard.press('Escape')
 
         self.page.set_viewport_size({'width':390,'height':844})
-        open_settings(self.page)
+        settings_page(self.page, 'help')
         menu=self.page.locator('#worldMenu').bounding_box()
         self.assertGreaterEqual(menu['x'],0)
         self.assertLessEqual(menu['x']+menu['width'],390)

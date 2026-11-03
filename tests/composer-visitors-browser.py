@@ -106,17 +106,17 @@ class ComposerVisitorsBrowserTests(_world.WorldBrowserCase):
 
         talk_to_musician(self.page, 'schoenberg')
         self.assertEqual(self.page.locator('#who').inner_text(), 'Arnold Schoenberg')
-        self.page.locator('.musician-choices').get_by_role(
-            'button', name='Tell me some music history', exact=True).click()
-        journal = self.page.locator('.music-history')
-        self.assertIn('born in Vienna in 1874', journal.inner_text())
-        self.assertEqual(journal.locator('[data-discovered-fact]').get_attribute('data-discovered-fact'),
-                         'schoenberg-01')
-        journal.get_by_role('button', name='Open Music History Journal', exact=True).click()
-        self.assertEqual(journal.locator('.history-fact:not(.locked)').count(), 1)
-        self.assertEqual(journal.locator('.history-fact.locked').count(), 29)
-        self.assertIn('1 / 540', journal.inner_text())
-        self.page.screenshot(path='/tmp/testkitchen-schoenberg-history.png')
+        self.page.locator('[data-history-owner-prompt="schoenberg"]').click()
+        conversation = self.page.locator('.music-history')
+        self.assertIn('No new facts', conversation.inner_text())
+        self.assertEqual(conversation.locator('[data-discovered-fact]').count(), 0)
+        self.assertTrue(conversation.get_by_role('button', name='Accept friendship quest').is_visible())
+        self.assertEqual(self.page.evaluate('CodaArcadeQA.history().count'), 0)
+        history = self.page.evaluate('CodaArcadeQA.history().people.find(person=>person.id==="schoenberg")')
+        self.assertEqual(len(history['facts']), 10)
+        self.assertTrue(all(fact['locked'] for fact in history['facts']))
+        self.assertFalse(history['quiz']['eligible'])
+        self.page.screenshot(path='/tmp/coda-schoenberg-relationship.png')
 
 
 if __name__ == '__main__':

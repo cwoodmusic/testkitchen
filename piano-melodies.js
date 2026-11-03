@@ -90,9 +90,12 @@
     onset+=beats;beatWithinBar+=beats;
    }
   });
+  const originalPitches=events.filter(event=>!event.rest).map(event=>event.midi),shift=[0,12,-12,24,-24].find(value=>originalPitches.every(midi=>midi+value>=60&&midi+value<=83));
+  if(shift===undefined)throw Error(definition.id+' cannot fit C4–B5 without rearranging its melody.');
+  if(shift)for(let i=0;i<events.length;i++)if(!events[i].rest)events[i]=Object.freeze({...events[i],midi:events[i].midi+shift,pitchOffset:events[i].pitchOffset+shift});
   const sounding=events.filter(event=>!event.rest),notes=Object.freeze(sounding.map(event=>event.pitchOffset)),spellings=Object.freeze(sounding.map(event=>event.spelling)),score=Object.freeze(events);
-  const minMidi=Math.min(...sounding.map(event=>event.midi)),maxMidi=Math.max(...sounding.map(event=>event.midi)),floorBaseMidi=12*Math.floor(minMidi/12);
-  if(maxMidi-floorBaseMidi>21)throw Error(definition.id+' cannot fit the painted floor without changing its register.');
+  const minMidi=Math.min(...sounding.map(event=>event.midi)),maxMidi=Math.max(...sounding.map(event=>event.midi)),floorBaseMidi=60;
+  if(minMidi<60||maxMidi>83)throw Error(definition.id+' cannot fit the painted floor without changing its register.');
   return Object.freeze({id:definition.id,name:definition.name,description:definition.description,arrangement:definition.arrangement||'A beginner arrangement of the familiar tune.',meter:definition.meter,timeSignature:definition.meter,quarterBpm:definition.quarterBpm||100,barBeats,bars:definition.bars.length,totalBeats:onset,events:score,score,notes,spellings,range:Object.freeze({min:minMidi,max:maxMidi}),floorBaseMidi,floorOctave:floorBaseMidi/12-1,floorOffsets:Object.freeze(sounding.map(event=>event.midi-floorBaseMidi))});
  }
  const LESSONS=Object.freeze(DEFINITIONS.map(build));

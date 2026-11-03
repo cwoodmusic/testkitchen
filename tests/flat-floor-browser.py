@@ -1,4 +1,5 @@
 """Flat-floor loading gates, animated light effects and mobile guest rendering."""
+from settings_menu_helpers import settings_page
 import importlib.util
 import json
 from pathlib import Path
@@ -19,7 +20,7 @@ class FlatFloorBrowserTests(unittest.TestCase):
     load = fixture.ArcadeFloorGridTests.load
 
     def quality(self, name):
-        self.page.locator('#worldMenuBtn').click()
+        settings_page(self.page, 'screen')
         for _ in range(3):
             if self.page.evaluate('CodaArcadeQA.atmosphere().quality') == name:
                 break

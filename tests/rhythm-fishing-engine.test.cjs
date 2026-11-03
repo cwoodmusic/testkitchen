@@ -119,13 +119,13 @@ test('count-in taps do not hurt progress and paused simulation clocks do not exp
 
 test('a target can be hit only once, correct timing fills progress, and mashing lowers it',()=>{
  const game=session(),first=nextNote(game);assert.equal(game.tap(first.time).kind,'hit');close(game.getState().progress,46.71875);
- assert.equal(game.tap(first.time).kind,'extra');close(game.getState().progress,42.71875);assert.equal(game.getState().hits,1);assert.equal(game.getState().extras,1);
+ assert.equal(game.tap(first.time).kind,'extra');close(game.getState().progress,43.71875);assert.equal(game.getState().hits,1);assert.equal(game.getState().extras,1);
  const next=nextNote(game);assert.equal(game.tap(next.time+.1).kind,'hit');assert.equal(game.getState().hits,2);
 });
 
 test('missed onsets lower the bar exactly once and idle waiting loses the fish',()=>{
  const game=session(),first=nextNote(game),limit=first.time+game.getState().window+.001;
- game.update(limit);assert.equal(game.getState().misses,1);assert.equal(game.getState().progress,38);
+ game.update(limit);assert.equal(game.getState().misses,1);assert.equal(game.getState().progress,40);
  game.update(limit);assert.equal(game.getState().misses,1);
  const final=game.update(1e9);assert.equal(final.phase,'escaped');assert.equal(final.progress,0);assert.equal(final.result.notes,0);assert.equal(final.result.xp,0);assert.equal(final.result.caught,false);assert.equal(final.result.perfect,false);
 });
@@ -202,7 +202,7 @@ test('a missed note or extra tap extends the battle but does not prevent recover
   assert.ok(eighth.progress>45&&eighth.progress<100);
   const final=perfectCatch(game);
   assert.equal(final.result?.caught,true);assert.equal(final.result.perfect,false);
-  assert.ok(final.result.duration>game.timeAtBeat(8*initial.barBeats)-initial.musicStart);
+  assert.ok(final.result.duration+1e-8>=game.timeAtBeat(8*initial.barBeats)-initial.musicStart,'Recovery catches still need at least eight full written bars');
   assert.ok(final.result.duration<game.timeAtBeat(12*initial.barBeats)-initial.musicStart,'One mistake should recover within four additional bars');
  }
 });

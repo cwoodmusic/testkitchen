@@ -1,8 +1,12 @@
 /* Rhythm fishing rules and notation data. The room supplies a paused-aware clock. */
-(function(root,factory){const api=factory();if(typeof module==='object'&&module.exports)module.exports=api;if(root)root.CodaRhythmFishing=api;})(typeof window==='undefined'?null:window,function(){
+(function(root,factory){const common=typeof module==='object'&&module.exports,api=factory(common?require('./fishing-biomes.js'):root?.CodaFishingBiomes);if(common)module.exports=api;if(root)root.CodaRhythmFishing=api;})(typeof window==='undefined'?null:window,function(biomes){
  'use strict';
  const clamp=(value,min,max)=>Math.max(min,Math.min(max,value));
  const copy=value=>JSON.parse(JSON.stringify(value));
+ // Isolated rhythm/practice views can load the engine without the exploration
+ // model. Their legacy rules still work, with the same habitat metadata.
+ const sharedFish=new Set(['silver-minnow','cave-guppy','bluegill']),biomeFor=value=>biomes?.biomeFor?.(value)||null;
+ function fishHabitats(fish){return biomes?.fishHabitats?.(fish)||Object.freeze(sharedFish.has(fish.id)?['cave','swamp','ocean']:[{'4/4':'cave','6/8':'swamp','2/2':'ocean'}[fish.meter]].filter(Boolean));}
  const TARGET_BARS=8,PERFECT_TARGET_BARS=4,START_PROGRESS=45,CLEAN_BAR_GAIN=(100-START_PROGRESS)/TARGET_BARS,MAX_SIXTEENTH_BPM=100;
  const METERS=Object.freeze({
   '4/4':Object.freeze({id:'4/4',timeSignature:'4/4',label:'4/4',numerator:4,denominator:4,barBeats:4,pulseBeats:1,pulsesPerBar:4,pulseUnit:'quarter'}),
@@ -10,13 +14,23 @@
   '2/2':Object.freeze({id:'2/2',timeSignature:'2/2',label:'Cut time',numerator:2,denominator:2,barBeats:4,pulseBeats:2,pulsesPerBar:2,pulseUnit:'half'})
  });
  const meterFor=value=>{let id=typeof value==='string'?value:value?.id;if(['cut','cut-time','cuttime'].includes(id))id='2/2';return Object.prototype.hasOwnProperty.call(METERS,id)?METERS[id]:null;};
+ function countingAt(meter,beat){
+  const id=meterFor(meter)?.id;if(!id||!Number.isFinite(beat)||beat<0)return '';
+  const tick=Math.round(beat*4);
+  if(id==='6/8')return ['1','&','la','&','li','&','2','&','la','&','li','&'][tick%12];
+  if(id==='2/2')return ['1','ta','e','ta','&','ta','a','ta','2','ta','e','ta','&','ta','a','ta'][tick%16];
+  return ['1','e','&','a','2','e','&','a','3','e','&','a','4','e','&','a'][tick%16];
+ }
  const RARITIES=Object.freeze([
-  {id:'common',label:'Common',rank:0,weight:52,bpm:76,window:.19,missLoss:7,extraLoss:4,description:'Quarter notes, eighth-note pairs, and clear rests.'},
-  {id:'uncommon',label:'Uncommon',rank:1,weight:28,bpm:82,window:.185,missLoss:7,extraLoss:4,description:'Eighth notes, longer notes, and eighth through whole-bar rests.'},
-  {id:'rare',label:'Rare',rank:2,weight:13,bpm:104,window:.18,missLoss:6,extraLoss:4,description:'Offbeat entrances, held syncopations, and short sixteenth-note groups.'},
-  {id:'epic',label:'Epic',rank:3,weight:5,bpm:117,window:.175,missLoss:5,extraLoss:3,description:'Dotted notes and short sixteenth groups at a manageable pace.'},
-  {id:'legendary',label:'Legendary',rank:4,weight:2,bpm:132,window:.17,missLoss:5,extraLoss:3,description:'Changing tempos, offbeat rests, and brief sixteenth-note bursts.'}
+  {id:'common',label:'Common',rank:0,weight:52,bpm:72,window:.22,missLoss:5,extraLoss:3,description:'Quarter notes, eighth-note pairs, and clear rests.'},
+  {id:'uncommon',label:'Uncommon',rank:1,weight:28,bpm:76,window:.215,missLoss:5,extraLoss:3,description:'Eighth notes, longer notes, and eighth through whole-bar rests.'},
+  {id:'rare',label:'Rare',rank:2,weight:13,bpm:76,window:.21,missLoss:4,extraLoss:3,description:'Offbeat entrances, held syncopations, and short sixteenth-note groups.'},
+  {id:'epic',label:'Epic',rank:3,weight:5,bpm:80,window:.205,missLoss:3,extraLoss:2,description:'Dotted notes and short sixteenth groups at a manageable pace.'},
+  {id:'legendary',label:'Legendary',rank:4,weight:2,bpm:84,window:.20,missLoss:3,extraLoss:2,description:'Changing tempos, offbeat rests, and brief sixteenth-note bursts.'}
  ].map(Object.freeze));
+ // Complexity still rises with rarity. Gentler speeds and mistake losses
+ // give players room to recover without removing advanced written rhythms.
+ const TEMPO_RANGES=Object.freeze({common:Object.freeze([72,72]),uncommon:Object.freeze([76,76]),rare:Object.freeze([72,80]),epic:Object.freeze([76,84]),legendary:Object.freeze([80,88])});
  const SPECIES=[
   ['silver-minnow','Silver Minnow','common','#a7c8de','#eef9ff','slender',[5,12],4,8],
   ['cave-guppy','Cave Guppy','common','#8db0df','#eab1dd','round',[4,8],4,8],
@@ -59,11 +73,11 @@
   return {marking:'Andante',meaning:'Walking pace'};
  }
  function speciesTempo(rarity,index){
-  const rank=RARITIES.find(value=>value.id===rarity).rank,range=rank===2?[96,112]:rank===3?[108,126]:rank===4?[120,144]:rank===1?[82,82]:[76,76];
+  const rank=RARITIES.find(value=>value.id===rarity).rank,range=TEMPO_RANGES[rarity];
   const change=rank<2?'steady':['accelerando','ritardando','steady','ritardando','steady','accelerando'][index%6],rawStart=change==='ritardando'?range[1]:change==='steady'?(range[0]+range[1])/2:range[0],rawEnd=change==='accelerando'?range[1]:change==='ritardando'?range[0]:rawStart;
   // Every advanced pattern pool includes sixteenth rhythms, including later
-  // practice bars. Scale the entire curve so they never exceed 100 quarter
-  // notes per minute, while accelerando and ritardando still change speed.
+  // practice bars. The gentler authored ranges stay below this safety cap;
+  // keep scaling the whole curve if a future range exceeds 100 quarter BPM.
   const scale=rank<2?1:Math.min(1,MAX_SIXTEENTH_BPM/Math.max(rawStart,rawEnd)),start=rawStart*scale,end=rawEnd*scale;
   return Object.freeze({...tempoMarking(start),initialMarking:tempoMarking(start).marking,endMarking:tempoMarking(end).marking,unit:'quarter',change,startQuarterBpm:start,endQuarterBpm:end,rampAfterBars:1,rampBars:3});
  }
@@ -72,7 +86,8 @@
   color,accent,shape,silhouette:shape,size:Object.freeze(size),notes,reward:notes,rewardNotes:notes,xp,tempo:speciesTempo(rarity,index),patternIndex:index%6,meter:['4/4','6/8','2/2'][index%3],timeSignature:['4/4','6/8','2/2'][index%3],
   // Common/uncommon fish teach every meter. Some rarer species have one
   // meter habitat; others inhabit two. The preferred meter remains valid.
-  meters:Object.freeze(['common','uncommon'].includes(rarity)?Object.keys(METERS):rarity==='legendary'||index%6<3?[['4/4','6/8','2/2'][index%3]]:[['4/4','6/8','2/2'][index%3],['4/4','6/8','2/2'][(index+1)%3]])
+  meters:Object.freeze(['common','uncommon'].includes(rarity)?Object.keys(METERS):rarity==='legendary'||index%6<3?[['4/4','6/8','2/2'][index%3]]:[['4/4','6/8','2/2'][index%3],['4/4','6/8','2/2'][(index+1)%3]]),
+  biomes:fishHabitats({id,meter:['4/4','6/8','2/2'][index%3]})
  })));
  const DURATIONS={h:2,q:1,e:.5,s:.25,dq:1.5,de:.75,rh:2,rq:1,re:.5,rs:.25,rdq:1.5,rw:4};
  const GLYPHS={h:'noteHalfUp',q:'noteQuarterUp',e:'note8thUp',s:'note16thUp',dq:'noteQuarterUp',de:'note8thUp',rh:'restHalf',rq:'restQuarter',re:'rest8th',rs:'rest16th',rdq:'restQuarter',rw:'restWhole'};
@@ -111,10 +126,18 @@
  const fishFor=value=>FISH.find(fish=>fish.id===(typeof value==='string'?value:value?.id))||null;
  function drawRandom(random){const value=Number((typeof random==='function'?random:Math.random)());return Number.isFinite(value)?clamp(value,0,.999999999999):0;}
  function canFishInMeter(value,meter){const fish=fishFor(value),info=meterFor(meter);return !!fish&&!!info&&fish.meters.includes(info.id);}
- function availableFish(meter,rarity){const info=meter===undefined?null:meterFor(meter),rank=rarity===undefined?null:rarityFor(rarity);if(meter!==undefined&&!info||rarity!==undefined&&!rank)return [];return FISH.filter(fish=>(!info||fish.meters.includes(info.id))&&(!rank||fish.rarity===rank.id));}
+ function canFishInBiome(value,biome){const fish=fishFor(value),habitat=biomeFor(biome);return !!fish&&!!habitat&&fish.biomes.includes(habitat.id);}
+ function availableFish(meter,rarity,biome){
+  const habitat=biome===undefined?null:biomeFor(biome),selectedMeter=meter===undefined&&habitat?habitat.meter:meter,info=selectedMeter===undefined?null:meterFor(selectedMeter),rank=rarity===undefined?null:rarityFor(rarity);
+  if(biome!==undefined&&!habitat||selectedMeter!==undefined&&!info||rarity!==undefined&&!rank||habitat&&info&&!habitat.meters.includes(info.id))return [];
+  return FISH.filter(fish=>(!info||fish.meters.includes(info.id))&&(!rank||fish.rarity===rank.id)&&(!habitat||fish.biomes.includes(habitat.id)));
+ }
  function chooseFish(options={}){
+  const habitat=options.biome===undefined?null:biomeFor(options.biome);
+  if(options.biome!==undefined&&!habitat)throw Error('Choose a known fishing biome.');
   if(options.meter!==undefined&&!meterFor(options.meter))throw Error('Choose 4/4, 6/8, or cut time.');
-  const random=options.random||Math.random,eligible=availableFish(options.meter);let rarity=rarityFor(options.rarity);
+  if(habitat&&options.meter!==undefined&&!habitat.meters.includes(meterFor(options.meter).id))throw Error(habitat.name+' fishing uses '+habitat.meter+'.');
+  const random=options.random||Math.random,eligible=availableFish(options.meter,undefined,options.biome);let rarity=rarityFor(options.rarity);
   const availableRarities=RARITIES.filter(candidate=>eligible.some(fish=>fish.rarity===candidate.id));
   if(!rarity){let roll=drawRandom(random)*availableRarities.reduce((sum,value)=>sum+value.weight,0);rarity=availableRarities[availableRarities.length-1];for(const candidate of availableRarities){if(roll<candidate.weight){rarity=candidate;break;}roll-=candidate.weight;}}
   const choices=eligible.filter(fish=>fish.rarity===rarity?.id);if(!choices.length)throw Error('No fish of that rarity live in this time signature.');return choices[Math.floor(drawRandom(random)*choices.length)];
@@ -123,8 +146,12 @@
  function sessionID(){try{if(typeof globalThis.crypto?.randomUUID==='function')return 'fishing-'+globalThis.crypto.randomUUID();}catch{}return 'fishing-'+Date.now().toString(36)+'-'+(++serial).toString(36)+'-'+Math.random().toString(36).slice(2,10);}
  function createSession(options={}){
   const practice=options.practice===true;
+  const habitat=options.biome===undefined?null:biomeFor(options.biome);
+  if(options.biome!==undefined&&!habitat)throw Error('Choose a known fishing biome.');
   const fish=options.fish===undefined?chooseFish(options):fishFor(options.fish);if(!fish)throw Error('Choose a known fish species.');
-  const rarity=rarityFor(fish),meter=meterFor(options.meter||fish.meter);if(!meter)throw Error('Choose 4/4, 6/8, or cut time.');
+  const rarity=rarityFor(fish),meter=meterFor(options.meter||habitat?.meter||fish.meter);if(!meter)throw Error('Choose 4/4, 6/8, or cut time.');
+  if(habitat&&!habitat.meters.includes(meter.id))throw Error(habitat.name+' fishing uses '+habitat.meter+'.');
+  if(habitat&&!canFishInBiome(fish,habitat))throw Error(fish.name+' does not live in '+habitat.name+'.');
   if(!canFishInMeter(fish,meter))throw Error(fish.name+' can only be caught in '+fish.meters.join(' or ')+'.');
   const profile=fish.tempo,q0=profile.startQuarterBpm,q1=profile.endQuarterBpm,startBeat=meter.barBeats*profile.rampAfterBars,endBeat=startBeat+meter.barBeats*profile.rampBars,slope=(q1-q0)/(endBeat-startBeat),changing=Math.abs(slope)>1e-10;
   const initialSecondsPerBeat=60/q0,initialSecondsPerPulse=initialSecondsPerBeat*meter.pulseBeats,countInBeats=meter.pulsesPerBar,countInSeconds=countInBeats*initialSecondsPerPulse;
@@ -167,7 +194,7 @@
    for(const event of events)if(event.judgement==='holding'){event.judgement='canceled';event.heldBy=null;event.holdLatched=false;}
    pressedSources.clear();
    const tempo=tempoState(beatAtTime(finishedAt));
-   result={id,practice,fishId:fish.id,fish:copy(fish),rarity:fish.rarity,outcome,caught:outcome==='caught',reason:reason||null,hits,misses,extras,perfect:!practice&&hits>0&&misses===0&&extras===0,
+   result={id,practice,...(habitat?{biome:habitat.id}:{}),fishId:fish.id,fish:copy(fish),rarity:fish.rarity,outcome,caught:outcome==='caught',reason:reason||null,hits,misses,extras,perfect:!practice&&hits>0&&misses===0&&extras===0,
     notes:!practice&&outcome==='caught'?fish.notes:0,xp:!practice&&outcome==='caught'?fish.xp:0,elapsed:Math.max(0,finishedAt-startTime),duration:Math.max(0,finishedAt-startTime-countInSeconds),bpm:tempo.currentPulseBpm,quarterBpm:tempo.currentQuarterBpm,tempo,meter:meter.id,timeSignature:meter.id,pulseUnit:meter.pulseUnit};
    try{options.onFinish?.(copy(result));}catch{/* Feedback cannot change a completed result. */}
   }
@@ -205,27 +232,35 @@
    if(!Number.isFinite(time)||time<now||finished)return getState();now=time;
    const beat=beatAtTime(now);
    if(beat<0)return getState();phase='playing';
-   for(const event of events){
-    // A delayed frame must catch an already-clean fourth bar before it starts
-    // judging unanswered notes from the fifth bar.
-    if(perfectEligible()&&event.onset>=PERFECT_TARGET_BARS*meter.barBeats&&completeCatch())break;
-    if(event.rest){
-     // Listening through a rest is part of a clean bar. Tapping during its
-     // silence forfeits this credit as well as applying the extra-tap loss.
-     if(!event.restProgressAwarded&&now+1e-9>=timeAtBeat(event.onset+event.duration)){
-      event.restProgressAwarded=true;
-      if(event.restClean)progress=Math.min(100,progress+CLEAN_BAR_GAIN*event.duration/meter.barBeats);
+   let catchingUp=true;
+   while(catchingUp&&!finished){
+    for(const event of events){
+     // A delayed frame must catch an already-clean fourth bar before it starts
+     // judging unanswered notes from the fifth bar.
+     if(perfectEligible()&&event.onset>=PERFECT_TARGET_BARS*meter.barBeats&&completeCatch())break;
+     if(event.rest){
+      // Listening through a rest is part of a clean bar. Tapping during its
+      // silence forfeits this credit as well as applying the extra-tap loss.
+      if(!event.restProgressAwarded&&now+1e-9>=timeAtBeat(event.onset+event.duration)){
+       event.restProgressAwarded=true;
+       if(event.restClean)progress=Math.min(100,progress+CLEAN_BAR_GAIN*event.duration/meter.barBeats);
+      }
+      continue;
      }
-     continue;
+     if(event.judgement==='holding'){
+      if(now+1e-9>=event.holdEndTime){judge('hit',event);if(finished)break;}
+      continue;
+     }
+     if(event.time+lateWindow(event)>=now)break;
+     if(event.judgement==='pending'){judge('miss',event);if(finished)break;}
     }
-    if(event.judgement==='holding'){
-     if(now+1e-9>=event.holdEndTime){judge('hit',event);if(finished)break;}
-     continue;
-    }
-    if(event.time+lateWindow(event)>=now)break;
-    if(event.judgement==='pending'){judge('miss',event);if(finished)break;}
+    completeCatch();
+    // A delayed frame can outlive the generated score. Judge bounded batches
+    // before extending again, so idle fish still escape without allocating an
+    // arbitrarily large future score just to discover those missed notes.
+    if(!practice&&!finished&&bar*meter.barBeats<=beat)makeUntil(Math.min(beat+16,bar*meter.barBeats+16));
+    else catchingUp=false;
    }
-   completeCatch();
    if(!finished)makeUntil(beat+16);
    // Retain the nearby score for rendering; a long session must not grow forever.
    if(events.length>192){const remove=events.findIndex(event=>event.onset>=beat-8);if(remove>0)events.splice(0,remove);}
@@ -293,12 +328,12 @@
   function getState(){const elapsed=Math.max(0,now-startTime),musicTime=now-musicStart,beat=beatAtTime(now),countInRemaining=Math.max(0,musicStart-now),tempo=tempoState(beat),secondsPerBeat=60/tempo.currentQuarterBpm,secondsPerPulse=secondsPerBeat*meter.pulseBeats,pulses=[],barLines=[];
    for(let pulse=Math.max(-meter.pulsesPerBar,Math.floor(beat/meter.pulseBeats)-1);pulse<=Math.ceil((beat+16)/meter.pulseBeats);pulse++){const at=pulse*meter.pulseBeats;pulses.push({id:'pulse-'+pulse,beat:at,time:timeAtBeat(at),strong:((pulse%meter.pulsesPerBar)+meter.pulsesPerBar)%meter.pulsesPerBar===0,countIn:pulse<0});}
    for(let line=Math.max(0,Math.floor(beat/meter.barBeats)-1);line<=Math.ceil((beat+16)/meter.barBeats);line++){const at=line*meter.barBeats;barLines.push({bar:line,beat:at,time:timeAtBeat(at)});}
-   return {id,practice,phase,fish:copy(fish),rarity:copy(rarity),meter:meter.id,timeSignature:meter.id,meterInfo:{...meter},bpm:tempo.currentPulseBpm,displayBpm:tempo.currentPulseBpm,quarterBpm:tempo.currentQuarterBpm,tempo,startTime,musicStart,now,time:now,elapsed,musicTime,beat,secondsPerBeat,secondsPerPulse,pulseBeats:meter.pulseBeats,pulsesPerBar:meter.pulsesPerBar,pulseUnit:meter.pulseUnit,barBeats:meter.barBeats,countInBeats,countInQuarterBeats:meter.barBeats,countInSeconds,
+   return {id,practice,...(habitat?{biome:habitat.id}:{}),phase,fish:copy(fish),rarity:copy(rarity),meter:meter.id,timeSignature:meter.id,meterInfo:{...meter},bpm:tempo.currentPulseBpm,displayBpm:tempo.currentPulseBpm,quarterBpm:tempo.currentQuarterBpm,tempo,startTime,musicStart,now,time:now,elapsed,musicTime,beat,secondsPerBeat,secondsPerPulse,pulseBeats:meter.pulseBeats,pulsesPerBar:meter.pulsesPerBar,pulseUnit:meter.pulseUnit,barBeats:meter.barBeats,countInBeats,countInQuarterBeats:meter.barBeats,countInSeconds,
     countInRemaining,countInBeat:phase==='count-in'?Math.max(1,Math.ceil(countInRemaining/initialSecondsPerPulse-1e-9)):0,pulses,barLines,
     progress:!finished&&beat<TARGET_BARS*meter.barBeats?Math.min(99,progress):progress,targetBars:perfectEligible()?PERFECT_TARGET_BARS:TARGET_BARS,perfectEligible:perfectEligible(),completedBars:result?.caught&&result.perfect?PERFECT_TARGET_BARS:Math.max(0,Math.floor((beat+1e-9)/meter.barBeats)),cleanBarsEquivalent:result?.caught&&result.perfect?PERFECT_TARGET_BARS:Math.max(0,(progress-START_PROGRESS)/CLEAN_BAR_GAIN),hits,misses,extras,window:rarity.window,lastJudgement:lastJudgement?{...lastJudgement}:null,
     pressedSources:Array.from(pressedSources.keys()),activeHolds:events.filter(event=>event.judgement==='holding').map(noteState),
     notes:events.filter(event=>event.onset+event.duration>=beat-8&&event.onset<=beat+16).map(noteState),result:result?copy(result):null};}
   return {update,tap,press,release,releaseAllSources,getState,snapshot:getState,timeAtBeat,beatAtTime,tempoAtBeat,abort(){if(!finished)finish('escaped','aborted');return getState();}};
  }
- return Object.freeze({FISH,RARITIES,METERS,PATTERNS,TARGET_BARS,PERFECT_TARGET_BARS,chooseFish,availableFish,canFishInMeter,fishFor,rarityFor,meterFor,tempoMarking,createSession});
+ return Object.freeze({FISH,RARITIES,METERS,PATTERNS,TARGET_BARS,PERFECT_TARGET_BARS,chooseFish,availableFish,canFishInMeter,canFishInBiome,fishFor,rarityFor,meterFor,countingAt,tempoMarking,createSession});
 });

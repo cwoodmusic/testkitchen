@@ -1,4 +1,6 @@
 """Unlock previews are playable and leave the real tab's private stores intact."""
+from shop_menu_helpers import browse_shop
+from boutique_menu_helpers import browse_boutique
 import importlib.util
 from pathlib import Path
 import sys
@@ -64,13 +66,14 @@ class DeveloperTestModeBrowserTests(_world.WorldBrowserCase):
         self.assertEqual(self.page.evaluate('CodaArcadeQA.vibes().active'),'festival')
         open_destination(self.page,'boutique')
         for category in ['Hats','Glasses','Accessories','Shoes','Emotes','Transformations','Pets']:
-            self.page.get_by_role('button',name='Browse '+category,exact=True).click()
+            browse_boutique(self.page, category)
             self.assertEqual(self.page.locator('.boutique-item:disabled').count(),0,category+' should be fully unlocked')
         self.page.locator('#panelClose').click()
-        open_destination(self.page,'shop')
+        open_destination(self.page,'shop');browse_shop(self.page)
         self.assertGreater(self.page.locator('.notes-shop-card button').filter(has_text='Wear this').count(),20)
         self.page.locator('#panelClose').click()
         open_destination(self.page,'dj')
+        self.page.locator('[data-dj-action="music"]').click()
         self.assertEqual(self.page.locator('[data-house-track] button:disabled').count(),0,'Every built-in DJ track, including the sea shanty, is unlocked')
         self.page.locator('#panelClose').click()
         open_cabinet(self.page,3)

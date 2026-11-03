@@ -1,0 +1,227 @@
+[
+  {
+    "name": "rug-notes-rectangle",
+    "source": "rug-notes-rectangle-source",
+    "cell": [
+      0,
+      0,
+      2021,
+      778
+    ],
+    "crop": [
+      37,
+      78,
+      1948,
+      608
+    ],
+    "width": 960,
+    "height": 304,
+    "worldWidth": 360,
+    "worldHeight": 112,
+    "substantialPixels": 1150728,
+    "corners": [
+      0,
+      0,
+      0,
+      0
+    ],
+    "sourceCrop": [
+      37,
+      78,
+      1948,
+      608
+    ],
+    "outputScale": 0.48973305954825463,
+    "outputPadding": 3,
+    "productionSubstantialPixels": 276481
+  },
+  {
+    "name": "rug-neon-oval",
+    "source": "rugs-01",
+    "cell": [
+      515,
+      0,
+      479,
+      459
+    ],
+    "crop": [
+      528,
+      118,
+      462,
+      320
+    ],
+    "width": 462,
+    "height": 320,
+    "worldWidth": 160,
+    "worldHeight": 100,
+    "substantialPixels": 115598,
+    "corners": [
+      0,
+      0,
+      0,
+      0
+    ]
+  },
+  {
+    "name": "rug-pixel-round",
+    "source": "rugs-01",
+    "cell": [
+      994,
+      0,
+      370,
+      459
+    ],
+    "crop": [
+      999,
+      111,
+      334,
+      337
+    ],
+    "width": 334,
+    "height": 337,
+    "worldWidth": 120,
+    "worldHeight": 120,
+    "substantialPixels": 84925,
+    "corners": [
+      0,
+      0,
+      0,
+      0
+    ]
+  },
+  {
+    "name": "rug-checker-square",
+    "source": "rugs-01",
+    "cell": [
+      1364,
+      0,
+      410,
+      459
+    ],
+    "crop": [
+      1396,
+      111,
+      326,
+      325
+    ],
+    "width": 326,
+    "height": 325,
+    "worldWidth": 120,
+    "worldHeight": 120,
+    "substantialPixels": 101340,
+    "corners": [
+      0,
+      0,
+      0,
+      0
+    ]
+  },
+  {
+    "name": "rug-lightning-runner",
+    "source": "rugs-01",
+    "cell": [
+      0,
+      459,
+      550,
+      428
+    ],
+    "crop": [
+      31,
+      581,
+      508,
+      170
+    ],
+    "width": 508,
+    "height": 170,
+    "worldWidth": 280,
+    "worldHeight": 90,
+    "substantialPixels": 77163,
+    "corners": [
+      0,
+      0,
+      0,
+      0
+    ]
+  },
+  {
+    "name": "rug-starburst",
+    "source": "rugs-01",
+    "cell": [
+      550,
+      459,
+      377,
+      428
+    ],
+    "crop": [
+      562,
+      470,
+      359,
+      348
+    ],
+    "width": 359,
+    "height": 348,
+    "worldWidth": 140,
+    "worldHeight": 140,
+    "substantialPixels": 65362,
+    "corners": [
+      0,
+      0,
+      0,
+      0
+    ]
+  },
+  {
+    "name": "rug-controller",
+    "source": "rugs-01",
+    "cell": [
+      927,
+      459,
+      460,
+      428
+    ],
+    "crop": [
+      933,
+      530,
+      449,
+      262
+    ],
+    "width": 449,
+    "height": 262,
+    "worldWidth": 160,
+    "worldHeight": 105,
+    "substantialPixels": 87662,
+    "corners": [
+      0,
+      0,
+      0,
+      0
+    ]
+  },
+  {
+    "name": "rug-hex-grid",
+    "source": "rugs-01",
+    "cell": [
+      1387,
+      459,
+      387,
+      428
+    ],
+    "crop": [
+      1393,
+      494,
+      354,
+      304
+    ],
+    "width": 354,
+    "height": 304,
+    "worldWidth": 130,
+    "worldHeight": 125,
+    "substantialPixels": 78031,
+    "corners": [
+      0,
+      0,
+      0,
+      0
+    ]
+  }
+]

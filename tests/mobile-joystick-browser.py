@@ -66,8 +66,7 @@ class MobileJoystickTests(unittest.TestCase):
         self.page.clock.run_for(550)
 
     def walk_room(self,expression,x,y,speed):
-        # Follow the pier's diagonal; moving each axis all the way first can
-        # ask the avatar to walk through water beside the slanted dock.
+        # Advance in short steps so room collision remains active throughout.
         for _ in range(120):
             current=self.page.evaluate(expression)
             dx,dy=x-current['x'],y-current['y']
@@ -169,11 +168,16 @@ class MobileJoystickTests(unittest.TestCase):
         after=self.page.evaluate('CodaArcadeQA.fishing().player')
         self.assertGreater(after['x'],before['x']+8);self.assertLess(after['y'],before['y']-1)
         self.up(1);self.page.locator('#fishingLakeCanvas').focus()
-        self.walk_room('CodaArcadeQA.fishing().player',135,315,160)
-        self.walk_room('CodaArcadeQA.fishing().player',178,342,160)
-        self.walk_room('CodaArcadeQA.fishing().player',218,380,160)
+        shore=self.page.evaluate('CodaArcadeQA.fishing().shore.spawn')
+        pier=self.page.evaluate('CodaArcadeQA.fishing().boardingPoint')
+        self.walk_room('CodaArcadeQA.fishing().player',shore['x'],shore['y'],160)
+        self.walk_room('CodaArcadeQA.fishing().player',pier['x'],shore['y'],160)
+        self.walk_room('CodaArcadeQA.fishing().player',pier['x'],pier['y'],160)
         self.page.keyboard.press('e');self.page.clock.run_for(64)
         self.assertEqual(self.page.evaluate('CodaArcadeQA.fishing().phase'),'explore')
+        # Test free-water analog steering after clearing the solid pier piles.
+        self.page.keyboard.down('s');self.page.clock.run_for(160);self.page.keyboard.up('s')
+        self.page.clock.run_for(32)
         before=self.page.evaluate('CodaArcadeQA.fishing().boat')
         self.down(joystick_point(self.page,.9,-.3));self.page.clock.run_for(140)
         after=self.page.evaluate('CodaArcadeQA.fishing().boat')

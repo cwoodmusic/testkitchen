@@ -1,0 +1,28 @@
+/* Library browsing does not place or modify a scene until Add to layout. */
+.decor-library{min-width:0;margin:10px 0;border:1px solid #77648b;border-radius:7px;background:#211b31;color:#eee6ff}
+.decor-library *{box-sizing:border-box}
+.decor-library>summary{min-height:44px;padding:11px 9px;cursor:pointer;font-weight:700;line-height:1.45;color:#ffdfa0}
+.decor-library>.decor-library-help,.decor-library>.decor-library-count,.decor-library>.decor-library-empty,.decor-library>.decor-library-status{margin:8px 10px;font:12px/1.5 system-ui,sans-serif;overflow-wrap:anywhere}
+.decor-library .decor-library-filters{display:grid;grid-template-columns:1fr;gap:8px;margin:9px 10px}
+.decor-library .decor-library-field{display:grid;gap:5px;min-width:0;font:12px/1.4 system-ui,sans-serif}
+#assetStudio .decor-library input,#assetStudio .decor-library select,.decor-library input,.decor-library select{display:block;width:100%;min-height:44px;min-width:0;border:1px solid #9b86b3;border-radius:5px;padding:7px;background:#151326;color:#fbf4ff;font:16px/1.4 system-ui,sans-serif}
+.decor-library .decor-library-count{color:#c7b9dd}
+.decor-library .decor-library-grid{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:6px;max-height:290px;overflow:auto;overscroll-behavior:contain;scrollbar-gutter:stable;margin:8px 10px;padding:2px}
+#assetStudio.dev-console .decor-library button,.decor-library button{min-height:44px;min-width:0;border:1px solid #78658d;border-radius:6px;padding:7px;background:#30273f;color:#f9f2ff;font:12px/1.35 system-ui,sans-serif;cursor:pointer;overflow-wrap:anywhere;white-space:normal}
+.decor-library .decor-library-card{display:grid;grid-template-rows:72px auto;gap:5px;align-items:center;text-align:center}
+.decor-library .decor-library-card img{display:block;width:100%;height:72px;object-fit:contain;image-rendering:pixelated}
+.decor-library .decor-library-card[aria-pressed=true]{border-color:#9affd7;background:#2c5348}
+.decor-library .decor-library-card[hidden],.decor-library .decor-library-preview[hidden],.decor-library .decor-library-empty[hidden]{display:none}
+.decor-library .decor-library-preview{display:grid;grid-template-columns:100px minmax(0,1fr);align-items:center;gap:10px;margin:10px;padding:8px;background:#151223;border:1px solid #685478;border-radius:6px}
+.decor-library .decor-library-preview img{width:100%;height:100px;object-fit:contain;image-rendering:pixelated}
+.decor-library .decor-library-preview strong{font-size:14px;line-height:1.4;color:#c3ffe6}
+.decor-library .decor-library-preview p{font:12px/1.5 system-ui,sans-serif;margin:7px 0;overflow-wrap:anywhere;color:#c7b9dd}
+#assetStudio.dev-console .decor-library .decor-library-add,.decor-library .decor-library-add{display:block;width:calc(100% - 20px);margin:10px;background:#365747;border-color:#91c9ac;font-weight:700}
+.decor-library button:disabled{opacity:.5;cursor:default}
+.decor-library .decor-library-status{min-height:36px;color:#b6f6d8}
+.decor-library .decor-library-status[data-error=true]{color:#ffcca6}
+.decor-library :focus-visible{outline:3px solid #9affdc;outline-offset:2px}
+#assetStudio.dev-fullscreen .decor-library{max-width:760px}
+#assetStudio.dev-fullscreen .decor-library .decor-library-filters{grid-template-columns:1fr 2fr}
+#assetStudio.dev-fullscreen .decor-library .decor-library-grid{grid-template-columns:repeat(auto-fit,minmax(95px,1fr));max-height:390px}
+@media(max-width:340px){.decor-library .decor-library-grid{grid-template-columns:repeat(2,minmax(0,1fr))}.decor-library .decor-library-preview{grid-template-columns:76px minmax(0,1fr)}}

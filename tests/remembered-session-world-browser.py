@@ -4,6 +4,7 @@ Production classroom service, boot, title page and UI remain unchanged. Only
 the Firebase configuration and Google popup credential use the disposable
 loopback emulator fixture; no deployed account or student data is accessed.
 """
+from settings_menu_helpers import settings_page
 import importlib.util
 from pathlib import Path
 import sys
@@ -139,7 +140,7 @@ class RememberedSessionWorldTests(unittest.TestCase):
         page = self.sign_in_teacher_world()
         if page.locator('#panel').is_visible():
             page.locator('#panelClose').click()
-        page.locator('#worldMenuBtn').click()
+        settings_page(page, 'player')
         with page.expect_navigation(wait_until='load'):
             page.locator('#worldLogOut').click()
         page.wait_for_url('**/index.html')

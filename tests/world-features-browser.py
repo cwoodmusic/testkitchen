@@ -3,10 +3,16 @@
 Uses disposable Chromium profiles and the connected world's real published
 layout. No login, network service, or existing browser save is required.
 """
+from settings_menu_helpers import settings_page
+from shop_menu_helpers import browse_shop
+from boutique_menu_helpers import browse_boutique
 import functools
 import json
 from http.server import SimpleHTTPRequestHandler, ThreadingHTTPServer
 from pathlib import Path
+import sys
+
+sys.dont_write_bytecode = True
 from world_navigation_helpers import advance_world, enter_room, open_destination, talk_to_musician, open_settings, close_settings
 import threading
 import unittest
@@ -83,7 +89,7 @@ class WorldFeatureTests(unittest.TestCase):
         }''', [x,y])
 
     def quality(self, name):
-        open_settings(self.page)
+        settings_page(self.page, 'screen')
         for _ in range(3):
             if self.page.evaluate('CodaArcadeQA.atmosphere().quality') == name:
                 close_settings(self.page);self.frames(); return
@@ -155,7 +161,7 @@ class WorldFeatureTests(unittest.TestCase):
         catalog = self.page.evaluate('createCodaCharacterRenderer().catalog')
         for group,minimum in {'headwear':24,'eyewear':14,'accessories':22,'shoes':16,'emotes':16}.items():
             self.assertGreaterEqual(len(catalog[group]),minimum,group)
-        open_destination(self.page,'boutique')
+        open_destination(self.page,'boutique');browse_boutique(self.page, 'Hats')
         self.page.locator('#avatarPreviewMode').select_option('idle')
         hats = self.page.get_by_label('Hats',exact=True)
         ids = self.page.evaluate('''()=>{
@@ -176,10 +182,10 @@ class WorldFeatureTests(unittest.TestCase):
         self.page.get_by_role('button',name='Save my look',exact=True).click()
         self.assertTrue(self.page.locator('#panel').is_visible(),'Unpurchased premium items remain previews')
         self.assertIn('Notes',self.page.locator('.panelMsg').inner_text())
-        open_destination(self.page,'shop')
+        open_destination(self.page,'shop');browse_shop(self.page)
         self.page.locator('[data-shop-item="wizard"] button').click()
         self.assertEqual(self.page.evaluate('CodaArcadeQA.notes().balance'),60)
-        open_destination(self.page,'boutique')
+        open_destination(self.page,'boutique');browse_boutique(self.page, 'Hats')
         self.page.get_by_label('Hats',exact=True).select_option(ids[-1])
         self.page.get_by_role('button',name='Save my look',exact=True).click()
         self.assertTrue(self.page.locator('#panel').is_hidden(),'Purchased fantasy items must be guest-usable')
@@ -195,7 +201,8 @@ class WorldFeatureTests(unittest.TestCase):
                                           [dj['approachX'],dj['approachY']]))
         self.frames(); self.page.locator('#view').focus(); self.page.keyboard.press('e')
         self.page.wait_for_function('!document.querySelector("#panel").hidden')
-        self.assertIn('Jukebox',self.page.locator('#panelTitle').inner_text())
+        self.assertIn('DJ Coda',self.page.locator('#panelTitle').inner_text())
+        self.page.locator('[data-dj-action="music"]').click()
         tracks=self.page.locator('[data-jukebox-track]')
         self.assertGreaterEqual(tracks.count(),3,'The DJ needs playable guest tracks without Google sign-in')
         tracks.first.click()
@@ -209,6 +216,8 @@ class WorldFeatureTests(unittest.TestCase):
         for row in composition['drums']:
             for note in row['notes']:
                 note.pop('p',None)
+        self.page.locator('[data-dj-action="home"]').click()
+        self.page.locator('[data-dj-action="songs"]').click()
         self.page.locator('#djSongImport').set_input_files({
             'name':'classroom-loop.json','mimeType':'application/json',
             'buffer':json.dumps(composition).encode()})
@@ -217,6 +226,7 @@ class WorldFeatureTests(unittest.TestCase):
         self.page.locator('#jukeboxStop').click()
         self.assertFalse(self.page.evaluate('CodaArcadeQA.jukebox().playing'))
         self.page.locator('#panelClose').click();open_destination(self.page,'dj')
+        self.page.locator('[data-dj-action="songs"]').click()
         self.assertEqual(self.page.get_by_role('button',name='Play classroom-loop',exact=True).count(),1)
 
     def test_dj_follows_the_edited_turntable_and_hides_with_it(self):
@@ -241,10 +251,10 @@ class WorldFeatureTests(unittest.TestCase):
           const values=[];
           for(let n=0;n<12;n++){
             await featureFrames(6);const snapshot=CodaArcadeQA.lighting();
-            const lamp=snapshot.lanterns.find(l=>l.id==='dance-passage-lantern');
+            const lamp=snapshot.lanterns.find(l=>l.id==='dance-upper-passage');
             const cam=CodaArcadeQA.camera(),g=view.getContext('2d');
             values.push({intensity:lamp.intensity,pixel:Array.from(g.getImageData(
-              Math.round((843-cam.x)*cam.zoom),Math.round((650-cam.y)*cam.zoom),1,1).data),
+              Math.round((lamp.x-cam.x)*cam.zoom),Math.round((lamp.y-cam.y)*cam.zoom),1,1).data),
               spots:snapshot.spots.map(p=>[Math.round(p.x*100),Math.round(p.y*100)]),
               closed:snapshot.spots.filter(p=>!CodaArcadeQA.walkable(p.x,p.y)).length,
               textures:snapshot.glowTextures});

@@ -61,11 +61,15 @@ class PianoScaleTests(_world.WorldBrowserCase):
             close.click()
         self.fail('Reward notifications should dismiss without opening profile')
 
-    def menu(self, view='games'):
+    def menu(self, view='games', challenge=None):
         self.dismiss_notifications()
         if self.state()['dialogueOpen']:self.page.locator('#pianoDialogueClose').click()
         if not self.state()['menuOpen']:self.page.locator('#pianoMenuButton').click()
         self.page.locator('[data-piano-view="'+view+'"]').click();self.page.clock.run_for(32)
+        if view=='games' and challenge:
+            card=self.page.locator(f'[data-piano-challenge="{challenge}"]')
+            if not card.is_visible():self.page.locator('#pianoChallengeBack').click()
+            card.click();self.page.clock.run_for(32)
 
     def close_panels(self):
         if self.state()['dialogueOpen']:self.page.locator('#pianoDialogueClose').click()
@@ -99,11 +103,12 @@ class PianoScaleTests(_world.WorldBrowserCase):
     def start_scale(self,identifier,via_chopin=False):
         if via_chopin:
             self.close_panels();self.walk(780,306);self.page.keyboard.press('e')
+            self.page.locator('[data-piano-dialogue-action="challenges"]').click()
+            self.page.locator('[data-piano-challenge="scales"]').click()
         else:
-            self.menu();self.page.locator('#pianoTalkChopin').click()
-        self.page.locator('[data-piano-dialogue-action="scales"]').click()
-        self.page.locator('[data-piano-scale="'+identifier+'"]').click()
-        self.page.locator('[data-piano-dialogue-action="play"]').click()
+            self.menu(challenge='scales')
+        self.page.locator('#pianoScale').select_option(identifier)
+        self.page.locator('#pianoStartScale').click()
         self.page.clock.run_for(64)
         state=self.state();self.assertEqual(state['challengeMode'],'scale');self.assertEqual(state['scale'],identifier)
         self.assertFalse(state['dialogueOpen']);self.assertFalse(state['menuOpen'])
@@ -140,13 +145,13 @@ class PianoScaleTests(_world.WorldBrowserCase):
         self.assertTrue(complete['chopinReaction']['active']);self.assertEqual(complete['chopinReaction']['facing'],'down')
         self.assertNotEqual(complete['chopinReaction']['emote'],wrong['chopinReaction']['emote'])
         self.assertIn('piano-scale:d-major',complete['completed'])
-        self.assertEqual(self.totals(),{'notes':before['notes']+35,'xp':before['xp']+100})
+        self.assertEqual(self.totals(),{'notes':before['notes']+35,'xp':before['xp']+150})
 
     def test_natural_minor_uses_correct_pitch_sequence_and_rewards_only_once_after_reload(self):
         before=self.totals();self.start_scale('a-minor')
         for index,midi in enumerate(A_MINOR):
             self.play_keyboard(midi);self.assertEqual(self.state()['scaleStep'],index+1)
-        earned=self.totals();self.assertEqual(earned,{'notes':before['notes']+35,'xp':before['xp']+100})
+        earned=self.totals();self.assertEqual(earned,{'notes':before['notes']+35,'xp':before['xp']+150})
         self.start_scale('a-minor')
         for midi in A_MINOR:self.play_keyboard(midi)
         self.assertEqual(self.totals(),earned)
@@ -178,8 +183,8 @@ class PianoScaleTests(_world.WorldBrowserCase):
         self.page.screenshot(path='/tmp/piano47-scale-staff-desktop.png')
 
     def test_wall_score_covers_melody_memory_and_interval_without_revealing_memory_answers(self):
-        self.menu();self.page.locator('#pianoLesson').select_option('hot-cross-buns')
-        self.page.locator('[data-piano-dialogue-action="play"]').click();self.page.clock.run_for(32)
+        self.menu(challenge='melodies');self.page.locator('#pianoLesson').select_option('hot-cross-buns')
+        self.page.locator('#pianoLearnMelody').click();self.page.clock.run_for(32)
         self.assertEqual(self.state()['challengeMode'],'melody');self.assertTrue(self.state()['wallStaff']['visible'])
         for offset in [4,2,0,4,2,0,0,0,0,0,2,2,2,2,4,2,0]:self.play_keyboard(60+offset)
         self.page.locator('[data-piano-dialogue-action="memory"]').click()
@@ -191,9 +196,8 @@ class PianoScaleTests(_world.WorldBrowserCase):
         self.assertEqual(self.state()['lessonStep'],1)
         self.assertEqual(len(self.state()['wallStaff']['notes']),1,'Only the already-played melody note appears from memory')
         self.play_keyboard(65);self.assertEqual(self.state()['lessonStep'],0)
-        self.menu();self.page.locator('#pianoInterval').select_option('up-7')
-        self.page.locator('#pianoStartInterval').click()
-        self.page.locator('[data-piano-dialogue-action="play"]').click();self.page.clock.run_for(32)
+        self.menu(challenge='intervals');self.page.locator('#pianoInterval').select_option('up-7')
+        self.page.locator('#pianoStartInterval').click();self.page.clock.run_for(32)
         self.assertEqual(self.state()['challengeMode'],'interval');self.assertTrue(self.state()['wallStaff']['visible'])
         self.play_keyboard(60);self.play_keyboard(67)
         self.assertEqual(self.state()['intervalStep'],2)

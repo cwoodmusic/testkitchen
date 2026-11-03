@@ -1,4 +1,5 @@
 """Exercise live fish battles, silent rests, and meter-specific encounters."""
+from settings_menu_helpers import settings_page
 import importlib.util
 import math
 from pathlib import Path
@@ -106,7 +107,9 @@ class FishingUpgradeTests(_fish._world.WorldBrowserCase):
         }''')
 
     def test_battle_fish_and_line_react_to_real_taps_and_pause_with_the_game(self):
+        settings_page(self.page, 'screen')
         self.page.locator('#fxBtn').click()  # Off -> Full, so animated reactions are visible.
+        self.page.locator('#worldMenuBtn').click()
         self.start_exploring();self.place_single_fish(self.fish()['id'])
         before=self.cast_prepared()['battle']
         self.assertTrue(before['active']);self.assertFalse(before['announcementVisible'])

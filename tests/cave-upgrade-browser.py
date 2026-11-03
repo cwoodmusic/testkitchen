@@ -1,10 +1,11 @@
 """Exercise live cave movement, effects, ladder exits, and beamed fishing music."""
+from settings_menu_helpers import settings_page
 import importlib.util
 import math
 from pathlib import Path
 import sys
 import unittest
-from world_navigation_helpers import enter_room
+from world_navigation_helpers import enter_room, close_settings
 
 sys.dont_write_bytecode=True
 _spec=importlib.util.spec_from_file_location('fishing_world_browser',Path(__file__).with_name('fishing-world-browser.py'))
@@ -38,13 +39,16 @@ class CaveUpgradeTests(_fish._world.WorldBrowserCase):
         opened=False
         for _ in range(3):
             if self.page.locator('#fxBtn').inner_text().endswith(label):break
-            if not self.page.locator('#fxBtn').is_visible():self.page.locator('#worldMenuBtn').click();opened=True
+            if not self.page.locator('#fxBtn').is_visible():settings_page(self.page, 'screen');opened=True
             self.page.locator('#fxBtn').click();self.page.clock.run_for(32)
         self.assertTrue(self.page.locator('#fxBtn').inner_text().endswith(label))
-        if opened:self.page.keyboard.press('Escape');self.page.clock.run_for(32)
+        if opened:close_settings(self.page);self.page.clock.run_for(32)
 
     def test_enlarged_stone_landing_gates_the_boat_and_leads_to_a_working_ladder(self):
         self.enter();outside=self.page.evaluate('CodaArcadeQA.position()')
+        berth=self.page.evaluate('CodaFishingCaveLayout.BOAT_DOCK')
+        self.assertEqual(berth,{'x':270,'y':435})
+        self.assertEqual(self.state()['boat']['facing'],'down')
         self.assertTrue(self.page.locator('#fishingBoatBoard').is_disabled(),
                         'The boat is reached by crossing the landing and dock')
         self.walk_to(170,250)
@@ -57,7 +61,26 @@ class CaveUpgradeTests(_fish._world.WorldBrowserCase):
         self.assertTrue(self.page.evaluate('''()=>{
           const p=CodaArcadeQA.fishing().player;return CodaFishingCaveLayout.isShore(p.x,p.y);
         }'''),'A walking avatar must stop at the stone edge')
-        self.walk_to(170,270);self.board();self.assertEqual(self.state()['phase'],'explore')
+        # A real click from the arrival landing must cross the stone/dock seam
+        # and reach the south tip without editor placement or collision edits.
+        landing=self.state()['shore']['spawn'];self.walk_to(landing['x'],landing['y'])
+        pier=self.state()['boardingPoint'];self.walk_to(pier['x'],pier['y'])
+        player=self.state()['player']
+        self.assertLess(math.hypot(player['x']-pier['x'],player['y']-pier['y']),8)
+        self.assertEqual(self.state()['near'],'boat')
+        self.assertEqual(self.state()['phase'],'shore')
+        self.fishing_action('#fishingBoatBoard');self.page.clock.run_for(40)
+        self.assertEqual(self.state()['phase'],'explore')
+        boat=self.state()['boat'];self.assertEqual(boat['facing'],'down')
+        self.assertAlmostEqual(boat['x'],berth['x'],delta=.01)
+        self.assertAlmostEqual(boat['y'],berth['y'],delta=.01)
+        self.page.locator('#fishingLakeCanvas').focus();self.page.keyboard.down('s')
+        self.page.clock.run_for(320);self.page.keyboard.up('s')
+        self.assertGreater(self.state()['boat']['y'],boat['y']+35,
+                           'The boat must leave the south-facing dock into open water')
+        self.assertTrue(self.page.evaluate('''()=>{
+          const b=CodaArcadeQA.fishing().boat;return CodaFishingCaveLayout.isBoatWater(b.x,b.y);
+        }'''))
         self.fishing_action('#fishingMoor');self.assertEqual(self.state()['phase'],'shore')
         pier=self.state()['boardingPoint'];self.assertLess(math.hypot(self.state()['player']['x']-pier['x'],self.state()['player']['y']-pier['y']),8)
         self.walk_to(145,300);ladder=self.state()['ladder'];self.walk_to(ladder['x'],ladder['y'])

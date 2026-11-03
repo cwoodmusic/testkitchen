@@ -92,6 +92,7 @@ class DanceRewardTests(fixture.WorldBrowserCase):
         self.page.clock.pause_at(self.page.evaluate('Date.now()/1000')+1)
         self.assertEqual(self.journal(), saved)
         open_destination(self.page, 'dj')
+        self.page.locator('[data-dj-action="music"]').click()
         for song in ['first-steps','midnight-headliner']:
             self.assertFalse(self.page.locator('[data-jukebox-track="'+song+'"]').is_disabled())
         open_destination(self.page, 'boutique')

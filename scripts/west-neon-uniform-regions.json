@@ -1,0 +1,12 @@
+{
+ "description":"Match the west vertical neon to the north cap's slim continuous tube without changing the reference cap or room layout.",
+ "worldSize":[1672,941],
+ "before":"assets/environment/source/west-neon-before-uniform.png",
+ "beforeSha256":"9281fd551b53d7dd8575e7d5b9d2860ac57c2009a9998b96fe89b4a19c2cd385",
+ "source":"assets/environment/source/west-neon-uniform.png",
+ "sourcePlacement":[40,490,250,355],
+ "sourceCopies":[[69,511,20,304,72,511,13,304],[60,511,4,304,69,511,3,304],[86,511,3,304,85,511,4,304]],
+ "output":"assets/environment/v1/empty-arcade.png",
+ "polygons":[[[69,511],[89,511],[89,815],[69,815]]],
+ "protectedPolygons":[]
+}

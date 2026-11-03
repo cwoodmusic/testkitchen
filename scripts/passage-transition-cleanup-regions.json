@@ -1,0 +1,20 @@
+{
+  "description": "Remove the horizontal passage neon strip, star and its pink floor streak, preserving the bounding caps and the boutique lamp.",
+  "worldSize": [1672, 941],
+  "before": "assets/environment/source/passage-lantern-before-cleanup.png",
+  "beforeSha256": "0cfab3fc6941b1e09c94e47555649091a4c44652d9a3dd3ad2c7c5360c795305",
+  "source": "assets/environment/source/passage-transition-clean.png",
+  "sourcePlacement": [235, 315, 155, 155],
+  "output": "assets/environment/v1/empty-arcade.png",
+  "reviewedProjectSha256": "90b0319e0102c454c0f3217576c0ac5e157101952136a9584b4b4ae8d33a5b2b",
+  "preserveAuthoredOverlap": true,
+  "polygons": [
+    [[269,340],[359,340],[359,457],[269,457]]
+  ],
+  "protectedPolygons": [],
+  "floorFeather": {
+    "leftBelow": [267,269,340],
+    "right": [359,361],
+    "bottom": [445,457]
+  }
+}

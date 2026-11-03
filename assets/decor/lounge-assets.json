@@ -1,0 +1,1080 @@
+{
+  "version": 1,
+  "alphaThreshold": 8,
+  "sources": [
+    {
+      "path": "assets/decor/source/lounge-furnishings.png",
+      "sha256": "9565f637f8c83684041705ed2450e6a60294fe5453d1691424953f82996e0bdb"
+    },
+    {
+      "path": "assets/decor/source/notes-counter-decor.png",
+      "sha256": "559fccb0f4c819ad64601aac4c633952c6c390629e745a76a15ae65921695437"
+    },
+    {
+      "path": "assets/decor/source/lounge-wall-art.png",
+      "sha256": "e154ac9037b11ead838332ebc2de1208aa43c2b4ea176eb86fed0833b4eebf7e"
+    },
+    {
+      "path": "assets/decor/source/music-lounge-additions.png",
+      "sha256": "62446b94a40bdc7e6a17b57d872612981b3897726be00f7b4668d299a128523c"
+    }
+  ],
+  "items": [
+    {
+      "id": "rug-lounge-constellation",
+      "name": "Lounge constellation rug",
+      "category": "rug",
+      "width": 210,
+      "height": 112,
+      "source": "assets/decor/source/lounge-furnishings.png",
+      "sourceSize": [
+        1536,
+        1024
+      ],
+      "cell": [
+        0,
+        0,
+        531,
+        471
+      ],
+      "crop": [
+        50,
+        157,
+        461,
+        262
+      ],
+      "placement": [
+        10,
+        2,
+        190,
+        108
+      ],
+      "visibleBounds": [
+        11,
+        3,
+        188,
+        106
+      ],
+      "corners": [
+        0,
+        0,
+        0,
+        0
+      ],
+      "output": "assets/decor/v1/rug-lounge-constellation.png",
+      "sha256": "109d143d0c50ec83bde54ee2e69a7cf4a39afd28b78d0f13f4a5255b78a4b2fa"
+    },
+    {
+      "id": "rug-lounge-sunset",
+      "name": "Lounge sunset oval rug",
+      "category": "rug",
+      "width": 200,
+      "height": 104,
+      "source": "assets/decor/source/lounge-furnishings.png",
+      "sourceSize": [
+        1536,
+        1024
+      ],
+      "cell": [
+        531,
+        0,
+        477,
+        471
+      ],
+      "crop": [
+        552,
+        155,
+        433,
+        266
+      ],
+      "placement": [
+        18,
+        2,
+        163,
+        100
+      ],
+      "visibleBounds": [
+        19,
+        3,
+        161,
+        98
+      ],
+      "corners": [
+        0,
+        0,
+        0,
+        0
+      ],
+      "output": "assets/decor/v1/rug-lounge-sunset.png",
+      "sha256": "1ca92d29256a40ab5769f4e53dac2d00edde6eb983d4d89c9aba6edab1207196"
+    },
+    {
+      "id": "rug-lounge-jade",
+      "name": "Lounge jade geometric rug",
+      "category": "rug",
+      "width": 180,
+      "height": 112,
+      "source": "assets/decor/source/lounge-furnishings.png",
+      "sourceSize": [
+        1536,
+        1024
+      ],
+      "cell": [
+        1008,
+        0,
+        528,
+        471
+      ],
+      "crop": [
+        1031,
+        155,
+        456,
+        263
+      ],
+      "placement": [
+        2,
+        5,
+        176,
+        102
+      ],
+      "visibleBounds": [
+        3,
+        6,
+        174,
+        100
+      ],
+      "corners": [
+        0,
+        0,
+        0,
+        0
+      ],
+      "output": "assets/decor/v1/rug-lounge-jade.png",
+      "sha256": "3564954f20ec1c34d883f145a9c7b416c895cc4b910c679c2238225b78ee635e"
+    },
+    {
+      "id": "clothes-rack-south",
+      "name": "South-facing clothes rack",
+      "category": "furniture",
+      "width": 132,
+      "height": 94,
+      "source": "assets/decor/source/lounge-furnishings.png",
+      "sourceSize": [
+        1536,
+        1024
+      ],
+      "cell": [
+        0,
+        471,
+        547,
+        553
+      ],
+      "crop": [
+        68,
+        619,
+        430,
+        296
+      ],
+      "placement": [
+        2,
+        3,
+        128,
+        88
+      ],
+      "visibleBounds": [
+        3,
+        4,
+        126,
+        86
+      ],
+      "corners": [
+        0,
+        0,
+        0,
+        0
+      ],
+      "output": "assets/decor/v1/clothes-rack-south.png",
+      "sha256": "8f413bf66881f75e77c71242d2746e97439ad24c12d561d1d5fe0e4e2b081a64"
+    },
+    {
+      "id": "wardrobe-south",
+      "name": "South-facing wardrobe",
+      "category": "furniture",
+      "width": 112,
+      "height": 132,
+      "source": "assets/decor/source/lounge-furnishings.png",
+      "sourceSize": [
+        1536,
+        1024
+      ],
+      "cell": [
+        547,
+        471,
+        428,
+        553
+      ],
+      "crop": [
+        597,
+        521,
+        343,
+        400
+      ],
+      "placement": [
+        2,
+        3,
+        108,
+        126
+      ],
+      "visibleBounds": [
+        3,
+        4,
+        106,
+        124
+      ],
+      "corners": [
+        0,
+        0,
+        0,
+        0
+      ],
+      "output": "assets/decor/v1/wardrobe-south.png",
+      "sha256": "dacb1fe7c229bdb06a4b1ebd3f950af9b050869625aa286f49acd50dc2921bb6"
+    },
+    {
+      "id": "table-rectangle-south",
+      "name": "South-facing rectangular table",
+      "category": "furniture",
+      "width": 156,
+      "height": 66,
+      "source": "assets/decor/source/lounge-furnishings.png",
+      "sourceSize": [
+        1536,
+        1024
+      ],
+      "cell": [
+        975,
+        471,
+        561,
+        553
+      ],
+      "crop": [
+        1010,
+        720,
+        480,
+        196
+      ],
+      "placement": [
+        2,
+        2,
+        152,
+        62
+      ],
+      "visibleBounds": [
+        3,
+        3,
+        150,
+        60
+      ],
+      "corners": [
+        0,
+        0,
+        0,
+        0
+      ],
+      "output": "assets/decor/v1/table-rectangle-south.png",
+      "sha256": "28159df984070b540a1c258e34e4a82b2f6c60177ca34ec8cbe1dc6b4425c31c"
+    },
+    {
+      "id": "notes-register",
+      "name": "Notes counter register",
+      "category": "tabletop",
+      "width": 36,
+      "height": 32,
+      "source": "assets/decor/source/notes-counter-decor.png",
+      "sourceSize": [
+        1536,
+        1024
+      ],
+      "cell": [
+        0,
+        0,
+        558,
+        557
+      ],
+      "crop": [
+        89,
+        110,
+        411,
+        385
+      ],
+      "placement": [
+        3,
+        2,
+        30,
+        28
+      ],
+      "visibleBounds": [
+        3,
+        2,
+        30,
+        28
+      ],
+      "corners": [
+        0,
+        0,
+        0,
+        0
+      ],
+      "output": "assets/decor/v1/notes-register.png",
+      "sha256": "22cfe8f971678e897e1690723e79aed92100617a9c8d6efceec0ddbc91a20f78"
+    },
+    {
+      "id": "notes-receipt-printer",
+      "name": "Notes receipt printer",
+      "category": "tabletop",
+      "width": 30,
+      "height": 26,
+      "source": "assets/decor/source/notes-counter-decor.png",
+      "sourceSize": [
+        1536,
+        1024
+      ],
+      "cell": [
+        558,
+        0,
+        494,
+        557
+      ],
+      "crop": [
+        617,
+        157,
+        338,
+        333
+      ],
+      "placement": [
+        4,
+        2,
+        22,
+        22
+      ],
+      "visibleBounds": [
+        4,
+        2,
+        22,
+        22
+      ],
+      "corners": [
+        0,
+        0,
+        0,
+        0
+      ],
+      "output": "assets/decor/v1/notes-receipt-printer.png",
+      "sha256": "c9de0858a4dce2b6ce328192bcc8846e09b4fea875bbcfc2bf30d1418e93e60d"
+    },
+    {
+      "id": "notes-pen-cup",
+      "name": "Notes pen cup",
+      "category": "tabletop",
+      "width": 20,
+      "height": 28,
+      "source": "assets/decor/source/notes-counter-decor.png",
+      "sourceSize": [
+        1536,
+        1024
+      ],
+      "cell": [
+        1052,
+        0,
+        484,
+        557
+      ],
+      "crop": [
+        1149,
+        111,
+        248,
+        378
+      ],
+      "placement": [
+        2,
+        2,
+        16,
+        24
+      ],
+      "visibleBounds": [
+        2,
+        2,
+        16,
+        24
+      ],
+      "corners": [
+        0,
+        0,
+        0,
+        0
+      ],
+      "output": "assets/decor/v1/notes-pen-cup.png",
+      "sha256": "4f0f696e033afebea15003c87165cb8780cbb0baf3ee9ab412a43d271af6b3f2"
+    },
+    {
+      "id": "notes-ledger",
+      "name": "Notes open ledger",
+      "category": "tabletop",
+      "width": 36,
+      "height": 24,
+      "source": "assets/decor/source/notes-counter-decor.png",
+      "sourceSize": [
+        1536,
+        1024
+      ],
+      "cell": [
+        0,
+        557,
+        600,
+        467
+      ],
+      "crop": [
+        58,
+        620,
+        479,
+        287
+      ],
+      "placement": [
+        2,
+        2,
+        32,
+        19
+      ],
+      "visibleBounds": [
+        2,
+        2,
+        32,
+        19
+      ],
+      "corners": [
+        0,
+        0,
+        0,
+        0
+      ],
+      "output": "assets/decor/v1/notes-ledger.png",
+      "sha256": "c18a442594e1a17b2620bcd74fd9d32b6fa24b7cf18a4b081548a40aaf319d83"
+    },
+    {
+      "id": "notes-price-display",
+      "name": "Notes price display",
+      "category": "tabletop",
+      "width": 30,
+      "height": 30,
+      "source": "assets/decor/source/notes-counter-decor.png",
+      "sourceSize": [
+        1536,
+        1024
+      ],
+      "cell": [
+        600,
+        557,
+        334,
+        467
+      ],
+      "crop": [
+        663,
+        624,
+        200,
+        261
+      ],
+      "placement": [
+        5,
+        2,
+        20,
+        26
+      ],
+      "visibleBounds": [
+        5,
+        2,
+        20,
+        26
+      ],
+      "corners": [
+        0,
+        0,
+        0,
+        0
+      ],
+      "output": "assets/decor/v1/notes-price-display.png",
+      "sha256": "601c2bd1277af3e7b63289bc01cb18640545f27b0e4ca4a7b416c3103f330352"
+    },
+    {
+      "id": "notes-display-tray",
+      "name": "Notes display tray",
+      "category": "tabletop",
+      "width": 36,
+      "height": 22,
+      "source": "assets/decor/source/notes-counter-decor.png",
+      "sourceSize": [
+        1536,
+        1024
+      ],
+      "cell": [
+        934,
+        557,
+        602,
+        467
+      ],
+      "crop": [
+        1006,
+        658,
+        480,
+        219
+      ],
+      "placement": [
+        2,
+        3,
+        32,
+        15
+      ],
+      "visibleBounds": [
+        2,
+        3,
+        32,
+        15
+      ],
+      "corners": [
+        0,
+        0,
+        0,
+        0
+      ],
+      "output": "assets/decor/v1/notes-display-tray.png",
+      "sha256": "c037d24b0e9065824479be238ebb9c39146c2db8f17b51d290493d548141c4ca"
+    },
+    {
+      "id": "wall-art-orbit",
+      "name": "Framed orbit wall art",
+      "category": "wall",
+      "width": 68,
+      "height": 68,
+      "source": "assets/decor/source/lounge-wall-art.png",
+      "sourceSize": [
+        2172,
+        724
+      ],
+      "cell": [
+        0,
+        0,
+        546,
+        724
+      ],
+      "crop": [
+        59,
+        117,
+        439,
+        446
+      ],
+      "placement": [
+        2,
+        2,
+        63,
+        64
+      ],
+      "visibleBounds": [
+        2,
+        2,
+        63,
+        64
+      ],
+      "corners": [
+        0,
+        0,
+        0,
+        0
+      ],
+      "output": "assets/decor/v1/wall-art-orbit.png",
+      "sha256": "0a644f87365aa5502338b616ab590fb6f2e4be422fc7c7ca7dc74b27d112a5cf"
+    },
+    {
+      "id": "wall-art-equalizer",
+      "name": "Framed equalizer wall art",
+      "category": "wall",
+      "width": 56,
+      "height": 56,
+      "source": "assets/decor/source/lounge-wall-art.png",
+      "sourceSize": [
+        2172,
+        724
+      ],
+      "cell": [
+        546,
+        0,
+        540,
+        724
+      ],
+      "crop": [
+        595,
+        116,
+        445,
+        449
+      ],
+      "placement": [
+        2,
+        2,
+        52,
+        52
+      ],
+      "visibleBounds": [
+        2,
+        2,
+        52,
+        52
+      ],
+      "corners": [
+        0,
+        0,
+        0,
+        0
+      ],
+      "output": "assets/decor/v1/wall-art-equalizer.png",
+      "sha256": "09db6ee574c17e79e060eb8059cd60c4b8a89ed4d7368b4d6604706f1d9c1fc7"
+    },
+    {
+      "id": "wall-art-keyboard",
+      "name": "Framed keyboard wall art",
+      "category": "wall",
+      "width": 60,
+      "height": 60,
+      "source": "assets/decor/source/lounge-wall-art.png",
+      "sourceSize": [
+        2172,
+        724
+      ],
+      "cell": [
+        1086,
+        0,
+        540,
+        724
+      ],
+      "crop": [
+        1132,
+        114,
+        449,
+        451
+      ],
+      "placement": [
+        2,
+        2,
+        56,
+        56
+      ],
+      "visibleBounds": [
+        2,
+        2,
+        56,
+        56
+      ],
+      "corners": [
+        0,
+        0,
+        0,
+        0
+      ],
+      "output": "assets/decor/v1/wall-art-keyboard.png",
+      "sha256": "5caf37578c671bc3cf785787fd935431a44116e774326441656f11e9ac2f1a70"
+    },
+    {
+      "id": "wall-art-sunset",
+      "name": "Framed sunset wall art",
+      "category": "wall",
+      "width": 68,
+      "height": 68,
+      "source": "assets/decor/source/lounge-wall-art.png",
+      "sourceSize": [
+        2172,
+        724
+      ],
+      "cell": [
+        1626,
+        0,
+        546,
+        724
+      ],
+      "crop": [
+        1671,
+        113,
+        449,
+        451
+      ],
+      "placement": [
+        2,
+        2,
+        64,
+        64
+      ],
+      "visibleBounds": [
+        2,
+        2,
+        64,
+        64
+      ],
+      "corners": [
+        0,
+        0,
+        0,
+        0
+      ],
+      "output": "assets/decor/v1/wall-art-sunset.png",
+      "sha256": "78f866eb74d826a06f261381a0d2c35577a9a4cc3aad191592a88915d11c2bff"
+    },
+    {
+      "id": "table-lounge-walnut",
+      "name": "Rectangular walnut lounge table",
+      "category": "furniture",
+      "width": 156,
+      "height": 66,
+      "source": "assets/decor/source/music-lounge-additions.png",
+      "sourceSize": [
+        1536,
+        1024
+      ],
+      "cell": [
+        0,
+        0,
+        528,
+        494
+      ],
+      "crop": [
+        43,
+        240,
+        472,
+        194
+      ],
+      "placement": [
+        2,
+        2,
+        151,
+        62
+      ],
+      "visibleBounds": [
+        3,
+        3,
+        149,
+        60
+      ],
+      "corners": [
+        0,
+        0,
+        0,
+        0
+      ],
+      "output": "assets/decor/v1/table-lounge-walnut.png",
+      "sha256": "bfb0a7ed05aec64e7745b64efc36eb8fbfb9d299026a83c39cdeb9613016f497"
+    },
+    {
+      "id": "wall-art-treble-clef",
+      "name": "Framed treble clef",
+      "category": "wall",
+      "width": 54,
+      "height": 76,
+      "source": "assets/decor/source/music-lounge-additions.png",
+      "sourceSize": [
+        1536,
+        1024
+      ],
+      "cell": [
+        528,
+        0,
+        285,
+        494
+      ],
+      "crop": [
+        541,
+        128,
+        243,
+        334
+      ],
+      "placement": [
+        2,
+        3,
+        50,
+        69
+      ],
+      "visibleBounds": [
+        2,
+        3,
+        50,
+        69
+      ],
+      "corners": [
+        0,
+        0,
+        0,
+        0
+      ],
+      "output": "assets/decor/v1/wall-art-treble-clef.png",
+      "sha256": "4ea757a6c2f6ccd655fd0e2d6d792e679a60cbd6a23122a5106223d70f2550b1"
+    },
+    {
+      "id": "wall-art-bass-clef",
+      "name": "Framed bass clef",
+      "category": "wall",
+      "width": 54,
+      "height": 66,
+      "source": "assets/decor/source/music-lounge-additions.png",
+      "sourceSize": [
+        1536,
+        1024
+      ],
+      "cell": [
+        813,
+        0,
+        333,
+        494
+      ],
+      "crop": [
+        843,
+        127,
+        280,
+        335
+      ],
+      "placement": [
+        2,
+        3,
+        50,
+        60
+      ],
+      "visibleBounds": [
+        3,
+        3,
+        49,
+        60
+      ],
+      "corners": [
+        0,
+        0,
+        0,
+        0
+      ],
+      "output": "assets/decor/v1/wall-art-bass-clef.png",
+      "sha256": "deb47ddc96b47b3c4b60a83a4f36af635633a6daf1c9060e3a2e92525f1a3610"
+    },
+    {
+      "id": "wall-art-grand-staff",
+      "name": "Framed grand staff sheet music",
+      "category": "wall",
+      "width": 76,
+      "height": 76,
+      "source": "assets/decor/source/music-lounge-additions.png",
+      "sourceSize": [
+        1536,
+        1024
+      ],
+      "cell": [
+        1146,
+        0,
+        390,
+        494
+      ],
+      "crop": [
+        1169,
+        128,
+        317,
+        335
+      ],
+      "placement": [
+        4,
+        2,
+        68,
+        72
+      ],
+      "visibleBounds": [
+        4,
+        2,
+        68,
+        72
+      ],
+      "corners": [
+        0,
+        0,
+        0,
+        0
+      ],
+      "output": "assets/decor/v1/wall-art-grand-staff.png",
+      "sha256": "1be8839a91a4a4e7eac03d73d753be64f105f7ecdd3243a4c80265d2fb97c05d"
+    },
+    {
+      "id": "wall-art-gold-record",
+      "name": "Gold record award",
+      "category": "wall",
+      "width": 68,
+      "height": 80,
+      "source": "assets/decor/source/music-lounge-additions.png",
+      "sourceSize": [
+        1536,
+        1024
+      ],
+      "cell": [
+        0,
+        494,
+        402,
+        530
+      ],
+      "crop": [
+        53,
+        526,
+        323,
+        379
+      ],
+      "placement": [
+        2,
+        2,
+        64,
+        75
+      ],
+      "visibleBounds": [
+        2,
+        2,
+        64,
+        75
+      ],
+      "corners": [
+        0,
+        0,
+        0,
+        0
+      ],
+      "output": "assets/decor/v1/wall-art-gold-record.png",
+      "sha256": "4c349cada8ee97917345ff050783f7c1af3c7f1dda0f5626c864640bcf2406dc"
+    },
+    {
+      "id": "wall-art-saxophone",
+      "name": "Framed golden saxophone",
+      "category": "wall",
+      "width": 64,
+      "height": 80,
+      "source": "assets/decor/source/music-lounge-additions.png",
+      "sourceSize": [
+        1536,
+        1024
+      ],
+      "cell": [
+        402,
+        494,
+        356,
+        530
+      ],
+      "crop": [
+        429,
+        526,
+        305,
+        379
+      ],
+      "placement": [
+        2,
+        2,
+        60,
+        75
+      ],
+      "visibleBounds": [
+        2,
+        2,
+        59,
+        75
+      ],
+      "corners": [
+        0,
+        0,
+        0,
+        0
+      ],
+      "output": "assets/decor/v1/wall-art-saxophone.png",
+      "sha256": "14f14a77b3fdcc45dabe8a078ce3c362a351b57fbf4f42172a790c48f6f41067"
+    },
+    {
+      "id": "wall-art-electric-guitars",
+      "name": "Crossed electric guitars wall art",
+      "category": "wall",
+      "width": 72,
+      "height": 80,
+      "source": "assets/decor/source/music-lounge-additions.png",
+      "sourceSize": [
+        1536,
+        1024
+      ],
+      "cell": [
+        758,
+        494,
+        371,
+        530
+      ],
+      "crop": [
+        782,
+        526,
+        324,
+        379
+      ],
+      "placement": [
+        3,
+        2,
+        65,
+        76
+      ],
+      "visibleBounds": [
+        3,
+        2,
+        65,
+        76
+      ],
+      "corners": [
+        0,
+        0,
+        0,
+        0
+      ],
+      "output": "assets/decor/v1/wall-art-electric-guitars.png",
+      "sha256": "878783ce324e12691e85a00edd8a0fc1512f4f90fcf619f29df42efb99c4760a"
+    },
+    {
+      "id": "wall-art-drum-kit",
+      "name": "Framed drum kit",
+      "category": "wall",
+      "width": 74,
+      "height": 80,
+      "source": "assets/decor/source/music-lounge-additions.png",
+      "sourceSize": [
+        1536,
+        1024
+      ],
+      "cell": [
+        1129,
+        494,
+        407,
+        530
+      ],
+      "crop": [
+        1152,
+        526,
+        336,
+        379
+      ],
+      "placement": [
+        3,
+        2,
+        67,
+        76
+      ],
+      "visibleBounds": [
+        3,
+        2,
+        67,
+        76
+      ],
+      "corners": [
+        0,
+        0,
+        0,
+        0
+      ],
+      "output": "assets/decor/v1/wall-art-drum-kit.png",
+      "sha256": "25883f239374337854d47b7114d9cc510b3413f96ec3038dd737e0caa3811352"
+    }
+  ]
+}

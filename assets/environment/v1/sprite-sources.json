@@ -1,0 +1,200 @@
+[
+  {
+    "name": "lounge-couch",
+    "source": "furniture-plants",
+    "cell": [
+      0,
+      0,
+      1090,
+      793
+    ],
+    "crop": [
+      46,
+      210,
+      1020,
+      409
+    ],
+    "width": 1020,
+    "height": 409
+  },
+  {
+    "name": "table",
+    "source": "furniture-plants",
+    "cell": [
+      1090,
+      0,
+      420,
+      793
+    ],
+    "crop": [
+      1104,
+      291,
+      363,
+      325
+    ],
+    "width": 363,
+    "height": 325
+  },
+  {
+    "name": "palm",
+    "source": "furniture-plants",
+    "cell": [
+      1510,
+      0,
+      473,
+      793
+    ],
+    "crop": [
+      1538,
+      154,
+      399,
+      493
+    ],
+    "width": 399,
+    "height": 493
+  },
+  {
+    "name": "dance-couch-left",
+    "source": "fixtures",
+    "cell": [
+      0,
+      0,
+      440,
+      445
+    ],
+    "crop": [
+      39,
+      121,
+      315,
+      296
+    ],
+    "width": 315,
+    "height": 296
+  },
+  {
+    "name": "dance-couch-right",
+    "source": "fixtures",
+    "cell": [
+      440,
+      0,
+      380,
+      445
+    ],
+    "crop": [
+      475,
+      121,
+      330,
+      298
+    ],
+    "width": 330,
+    "height": 298
+  },
+  {
+    "name": "boutique-counter",
+    "source": "fixtures",
+    "cell": [
+      820,
+      0,
+      350,
+      445
+    ],
+    "crop": [
+      843,
+      134,
+      313,
+      285
+    ],
+    "width": 313,
+    "height": 285
+  },
+  {
+    "name": "main-counter",
+    "source": "fixtures",
+    "cell": [
+      1170,
+      0,
+      604,
+      445
+    ],
+    "crop": [
+      1183,
+      175,
+      560,
+      238
+    ],
+    "width": 560,
+    "height": 238
+  },
+  {
+    "name": "dj-console",
+    "source": "fixtures",
+    "cell": [
+      0,
+      445,
+      540,
+      442
+    ],
+    "crop": [
+      44,
+      572,
+      465,
+      247
+    ],
+    "width": 465,
+    "height": 247
+  },
+  {
+    "name": "mirror",
+    "source": "fixtures",
+    "cell": [
+      540,
+      445,
+      360,
+      442
+    ],
+    "crop": [
+      590,
+      476,
+      179,
+      344
+    ],
+    "width": 179,
+    "height": 344
+  },
+  {
+    "name": "speaker",
+    "source": "fixtures",
+    "cell": [
+      920,
+      445,
+      400,
+      442
+    ],
+    "crop": [
+      998,
+      510,
+      174,
+      309
+    ],
+    "width": 174,
+    "height": 309
+  },
+  {
+    "name": "bollard",
+    "source": "fixtures",
+    "cell": [
+      1380,
+      445,
+      394,
+      442
+    ],
+    "crop": [
+      1467,
+      493,
+      115,
+      327
+    ],
+    "width": 115,
+    "height": 327
+  }
+]

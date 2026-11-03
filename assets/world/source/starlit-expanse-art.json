@@ -1,0 +1,46 @@
+{
+  "description": "Rounded-angular beveled neon ocean biome fishing screen; runtime actors and fish are separate.",
+  "scene": "starlit-expanse",
+  "source": "assets/world/source/starlit-expanse-source.png",
+  "sourceSize": [
+    1591,
+    989
+  ],
+  "output": "assets/world/fishing/starlit-expanse.png",
+  "outputSize": [
+    1592,
+    988
+  ],
+  "normalization": "Full-frame Canvas drawImage with imageSmoothingEnabled=false; no crop/letterbox.",
+  "logicalWorldSize": [
+    1000,
+    620
+  ],
+  "waterExits": [
+    "west",
+    "north"
+  ],
+  "openingGeometry": {
+    "west": {
+      "y": [
+        300,
+        400
+      ],
+      "center": [
+        0,
+        350
+      ]
+    },
+    "north": {
+      "x": [
+        500,
+        600
+      ],
+      "center": [
+        550,
+        0
+      ]
+    }
+  },
+  "outputSha256": "4ba13e99d150ae37d4c6aeb751163c8ef165fc48e897c1b3b0c745dc26012934"
+}

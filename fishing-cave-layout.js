@@ -1,12 +1,14 @@
-/* Foot positions match the enlarged stone landing and the painted dock. */
-(function(root,factory){const value=factory();if(typeof module==='object'&&module.exports)module.exports=value;if(root)root.CodaFishingCaveLayout=value;})(typeof window==='undefined'?null:window,function(){
+/* Foot positions match the top-down landing and its straight south-facing dock. */
+(function(root,factory){const water=typeof module==='object'&&module.exports?require('./fishing-water.js'):root?.CodaFishingWater;const value=factory(water);if(typeof module==='object'&&module.exports)module.exports=value;if(root)root.CodaFishingCaveLayout=value;})(typeof window==='undefined'?null:window,function(water){
  'use strict';
  const freeze=points=>Object.freeze(points.map(point=>Object.freeze(point)));
- const LAND=freeze([[70,260],[114,244],[180,235],[212,250],[226,274],[206,301],[168,315],[108,305],[70,285]]);
- const DOCK=freeze([[100,306],[143,295],[228,373],[228,392],[159,403],[104,353]]);
+ const LAND=freeze([[70,235],[330,235],[330,355],[70,355]]);
+ const DOCK=freeze([[220,340],[320,340],[320,410],[220,410]]);
  const SPAWN=Object.freeze({x:135,y:285});
  const LADDER=Object.freeze({x:100,y:270,radius:34});
- const BOARDING=Object.freeze({x:218,y:380,radius:55});
+ const BOARDING=Object.freeze({x:270,y:395,radius:40});
+ const BOAT_DOCK=Object.freeze({x:270,y:435});
+ const DEPARTURE_WATER=freeze([[220,350],[400,350],[400,510],[220,510]]);
  const LAKE=Object.freeze({x:550,y:350,rx:360,ry:185});
  function contains(polygon,x,y){
   if(!Number.isFinite(x)||!Number.isFinite(y))return false;let inside=false;
@@ -18,8 +20,9 @@
   return inside;
  }
  const isShore=(x,y)=>contains(LAND,x,y)||contains(DOCK,x,y);
- const isWater=(x,y)=>Number.isFinite(x)&&Number.isFinite(y)&&((x-LAKE.x)/LAKE.rx)**2+((y-LAKE.y)/LAKE.ry)**2<.97&&!isShore(x,y);
- const isBoatWater=(x,y)=>[[0,0],[-18,0],[18,0],[0,-12],[0,12]].every(([dx,dy])=>isWater(x+dx,y+dy));
+ const isWater=(x,y)=>Number.isFinite(x)&&Number.isFinite(y)&&!isShore(x,y)&&(water?.has('lantern-lake')?water.isWater('lantern-lake',x,y):((x-LAKE.x)/LAKE.rx)**2+((y-LAKE.y)/LAKE.ry)**2<.97||contains(DEPARTURE_WATER,x,y));
+ const samples=water?.BOAT_SAMPLES||[[0,0],[-18,0],[18,0],[0,-12],[0,12]];
+ const isBoatWater=(x,y)=>samples.every(([dx,dy])=>isWater(x+dx,y+dy));
  const near=(point,target)=>!!point&&Math.hypot(point.x-target.x,point.y-target.y)<target.radius;
- return {LAND,DOCK,SPAWN,LADDER,BOARDING,LAKE,contains,isShore,isWater,isBoatWater,near};
+ return {LAND,DOCK,SPAWN,LADDER,BOARDING,BOAT_DOCK,DEPARTURE_WATER,LAKE,contains,isShore,isWater,isBoatWater,near};
 });

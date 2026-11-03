@@ -1,0 +1,21 @@
+{
+  "description": "Blend only the exposed glass below the south-facing dance-room wall into the surrounding navy floor. Preserve the wall, colored dance panels, front rail, east wall and authored neon pixels.",
+  "worldSize": [1672,941],
+  "source": "assets/environment/source/dance-floor-blend.png",
+  "sourceSize": [1347,1167],
+  "sourceRect": [0,0,1347,1167],
+  "sourcePlacement": [590,480,450,390],
+  "before": "assets/environment/source/dance-floor-before-blend.png",
+  "output": "assets/environment/v1/empty-arcade.png",
+  "preserveProject": true,
+  "repairBounds": [618,649,189,188],
+  "floorFeather": {
+    "top": [649,677],
+    "right": [789,807],
+    "bottom": [813,837],
+    "leftBelow": [618,638,649]
+  },
+  "protectedPolygons": [
+    [[736,646],[749,646],[749,668],[736,668]]
+  ]
+}

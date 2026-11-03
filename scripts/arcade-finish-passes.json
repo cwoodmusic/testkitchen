@@ -1,0 +1,14 @@
+{
+  "version": 1,
+  "description": "Independent reviewed native finishing regions, composed in sequence while preserving all other backdrop pixels and saved artwork.",
+  "worldSize": [1672, 941],
+  "before": "assets/environment/source/passage-lantern-before-cleanup.png",
+  "beforeSha256": "0cfab3fc6941b1e09c94e47555649091a4c44652d9a3dd3ad2c7c5360c795305",
+  "output": "assets/environment/v1/empty-arcade.png",
+  "metadata": [
+    "scripts/passage-lantern-cleanup-regions.json",
+    "scripts/lounge-center-wall-regions.json",
+    "scripts/passage-transition-cleanup-regions.json",
+    "scripts/northwest-neon-cap-regions.json"
+  ]
+}

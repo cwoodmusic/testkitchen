@@ -1,0 +1,31 @@
+/* Authoring controls stay separate from player discovery and quiz screens. */
+.music-facts-editor{min-width:0;color:#eee7f7}
+.music-facts-editor *{box-sizing:border-box}
+.music-facts-editor .music-facts-filters{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:10px}
+.music-facts-editor .music-facts-filters>.music-facts-field:last-child{grid-column:1/-1}
+.music-facts-editor .music-facts-field{display:grid;gap:6px;min-width:0;margin:9px 0;font-size:13px;line-height:1.4;font-weight:600}
+#assetStudio .music-facts-editor textarea,#assetStudio .music-facts-editor input,#assetStudio .music-facts-editor select,.music-facts-editor textarea,.music-facts-editor input,.music-facts-editor select{display:block;width:100%;min-width:0;min-height:44px;max-width:100%;border:1px solid #9c86ba;border-radius:6px;padding:9px;background:#151326;color:#fbf2ff;font:16px/1.5 system-ui,sans-serif}
+.music-facts-editor textarea{resize:vertical}
+.music-facts-editor textarea[readonly],.music-facts-editor input[readonly]{opacity:.8}
+.music-facts-editor h4{font-size:15px;line-height:1.45;color:#dcf7e9;margin:16px 0 8px;overflow-wrap:anywhere}
+.music-facts-editor .music-facts-browse{border:1px solid #6a597a;border-radius:7px;margin:12px 0;background:#211b31}
+.music-facts-editor summary{min-height:44px;padding:10px;cursor:pointer;line-height:1.5;font-size:13px;font-weight:600}
+.music-facts-editor .music-facts-results{max-height:240px;overflow:auto;overscroll-behavior:contain;list-style:none;margin:0;padding:0 8px 8px;scrollbar-gutter:stable}
+.music-facts-editor .music-facts-results li{padding:0;margin:7px 0}
+#assetStudio.dev-console .music-facts-editor button,.music-facts-editor button{min-width:44px;min-height:44px;max-width:100%;padding:9px;border:1px solid #8f7ba5;border-radius:6px;background:#302842;color:#fff;font:13px/1.45 system-ui,sans-serif;cursor:pointer;overflow-wrap:anywhere;white-space:normal}
+.music-facts-editor button:disabled{opacity:.5;cursor:default}
+.music-facts-editor .music-facts-result{display:grid;gap:5px;width:100%;text-align:left}
+.music-facts-editor .music-facts-result strong{font-size:13px;color:#baf4df}
+.music-facts-editor .music-facts-result span{font-size:14px;line-height:1.5}
+.music-facts-editor .music-facts-result[aria-current=true]{background:#25483e;border-color:#a0e8cd}
+.music-facts-editor .music-facts-empty{padding:10px;font-size:14px}
+.music-facts-editor .music-facts-status{min-height:44px;color:#b9ffdd;font-size:13px;line-height:1.5;overflow-wrap:anywhere}
+.music-facts-editor .music-facts-status[data-error=true],.music-facts-editor .music-facts-readonly{color:#ffd0b1}
+.music-facts-editor .music-facts-counter{font-size:12px;color:#c7b7da;line-height:1.5;margin:5px 0 10px}
+.music-facts-editor .music-facts-actions{display:flex;flex-wrap:wrap;gap:8px;margin:10px 0}
+.music-facts-editor .music-facts-actions button{flex:1 1 110px}
+.music-facts-editor .music-facts-quizzes{margin-top:20px;padding-top:8px;border-top:1px solid #6a597a}
+.music-facts-editor .music-facts-quiz{margin:12px 0;padding:0 10px 10px;background:#242037;border:1px solid #726083;border-radius:8px}
+.music-facts-editor .music-facts-quiz>summary{margin:0 -10px}
+.music-facts-editor :focus-visible{outline:3px solid #9affdc;outline-offset:2px}
+@media(max-width:450px){.music-facts-editor .music-facts-filters{grid-template-columns:minmax(0,1fr)}.music-facts-editor .music-facts-results{max-height:200px}}

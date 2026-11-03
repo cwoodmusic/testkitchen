@@ -1,0 +1,18 @@
+{
+  "description": "Restore continuous dark-blue glass left of the Hall of Fame, removing the stale blue rectangular floor patch and the removed left lamp's orange reflection. Feather only outside the old artifact and preserve the Hall support and frame.",
+  "worldSize": [1672,941],
+  "source": "assets/environment/source/hall-floor-repair.png",
+  "sourceSize": [954,1649],
+  "sourceRect": [0,0,954,1649],
+  "sourcePlacement": [1320,140,110,190],
+  "before": "assets/environment/source/hall-floor-before-repair.png",
+  "output": "assets/environment/v1/empty-arcade.png",
+  "preserveProject": true,
+  "floorFeather": {"right":[1393,1394],"bottom":[309,325],"leftBelow":[1340,1350,155]},
+  "polygons": [
+    [[1340,155],[1394,155],[1394,325],[1340,325]]
+  ],
+  "protectedPolygons": [
+    [[1394,0],[1672,0],[1672,941],[1394,941]]
+  ]
+}

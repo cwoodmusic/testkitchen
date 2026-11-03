@@ -1,11 +1,26 @@
 /* The developer console edits world data; game menus retain their own styles. */
 #assetStudio.dev-console { width:min(380px,calc(100vw - 24px)); top:90px; max-height:calc(100dvh - 108px); }
+#assetStudio .dev-content { display:contents; }
+#assetStudio .studioHead strong { flex:1; min-width:0; font-size:12px; }
+#assetStudio #devFullscreen { flex:none; white-space:nowrap; }
 .dev-tabs { display:grid; grid-template-columns:repeat(4,minmax(0,1fr)); gap:4px; margin:10px 0; }
 #assetStudio.dev-console .dev-tabs button{min-height:44px;min-width:0;padding:7px 4px}
 #assetStudio .dev-tabs button[aria-selected="true"] { background:#476251; border-color:#9bffcc; }
 #assetStudio .dev-pane[hidden], #assetStudio .dev-original[hidden] { display:none; }
 #assetStudio .dev-toolbar { display:flex; gap:5px; flex-wrap:wrap; margin:8px 0; }
 #assetStudio .dev-toolbar button { flex:1; }
+#assetStudio #devAddFloodRig,#assetStudio #devAddNotesRug { display:block;width:calc(100% - 20px);min-height:44px;margin:10px; }
+#assetStudio .dev-transform-tools { display:grid;grid-template-columns:repeat(2,minmax(0,1fr)); }
+#assetStudio .dev-transform-tools button { min-height:44px; }
+#assetStudio #devFloodSettings[hidden] { display:none; }
+#assetStudio #devSelectionOrder { position:sticky;top:198px;z-index:4;padding:8px;background:#171529;border:1px solid #746087;border-radius:6px;margin:8px 0; }
+#assetStudio #devSelectionOrder[hidden] { display:none; }
+#assetStudio #devOrderSelection { display:block;overflow-wrap:anywhere;font-size:12px; }
+#assetStudio #devSelectionOrder .dev-toolbar { margin:6px 0 0; }
+#assetStudio #devSelectionOrder button { min-height:44px; }
+@media(max-width:650px) and (orientation:portrait) { #assetStudio #devSelectionOrder { position:static; } }
+@media(max-height:550px) and (orientation:landscape) { #assetStudio #devSelectionOrder { top:150px;padding:5px; }#assetStudio #devSelectionOrder button { min-height:32px; } }
+#assetStudio.dev-fullscreen #devSelectionOrder { top:0;max-width:520px;margin:8px auto; }
 #assetStudio .dev-note { padding:8px; background:#282137; border-left:2px solid #c5a1e8; line-height:1.5; }
 #assetStudio .dev-status { color:#aaf5d4; min-height:2.5em; overflow-wrap:anywhere; }
 #assetStudio #devCatalog { max-width:100%; }
@@ -63,3 +78,31 @@
 #assetStudio .dev-overlay-legend{grid-column:1/-1;font:11px/1.5 system-ui;margin:0;padding:7px;background:#101b2b;border:1px solid #635a79;border-radius:6px}
 #assetStudio .dev-overlay-legend[hidden]{display:none}
 .dev-key-blocked{color:#ff8aa1}.dev-key-walkable{color:#8bf2bb}.dev-key-background{color:#8fc8ff}.dev-key-depth{color:#ffdc84}.dev-key-foreground{color:#8bffda}
+
+/* Full-window authoring keeps the header, tabs, and save/undo status visible.
+ * Pixel and lesson editors retain their own expanded views above this one. */
+html.coda-dev-fullscreen,html.coda-dev-fullscreen body { overflow:hidden!important; overscroll-behavior:none; }
+#assetStudio.dev-console.dev-fullscreen {
+  position:fixed; inset:0!important; z-index:100000; display:flex; flex-direction:column;
+  box-sizing:border-box; width:100%; height:100dvh; max-width:none; max-height:none;
+  margin:0; border:0; border-radius:0; padding:max(10px,env(safe-area-inset-top)) max(12px,env(safe-area-inset-right)) max(8px,env(safe-area-inset-bottom)) max(12px,env(safe-area-inset-left));
+  overflow:hidden; background:#171529; backdrop-filter:none;
+}
+#assetStudio.dev-fullscreen[hidden] { display:none; }
+#assetStudio.dev-fullscreen .studioHead { position:static; flex:none; min-height:44px; padding:0; margin:0; gap:8px; }
+#assetStudio.dev-fullscreen .studioHead strong { font-size:14px; }
+#assetStudio.dev-console.dev-fullscreen .studioHead button { min-width:44px; min-height:44px; }
+#assetStudio.dev-fullscreen .dev-tabs { position:static; flex:none; grid-template-columns:repeat(10,minmax(0,1fr)); padding:8px 0; margin:0; gap:5px; }
+#assetStudio.dev-console.dev-fullscreen .dev-tabs button { font-size:12px; line-height:1.3; }
+#assetStudio.dev-fullscreen .dev-content { display:block; flex:1; min-height:0; min-width:0; overflow:auto; overscroll-behavior:contain; scrollbar-gutter:stable; padding:0 5px 10px 0; }
+#assetStudio.dev-fullscreen .dev-content > .dev-pane { width:100%; max-width:1200px; margin:0 auto; box-sizing:border-box; }
+#assetStudio.dev-console.dev-fullscreen .dev-camera { position:static; inset:auto; transform:none; width:100%; max-width:520px; box-sizing:border-box; margin:0 auto; border:0; box-shadow:none; }
+#assetStudio.dev-fullscreen .dev-overlays { max-width:520px; margin:8px auto; }
+#assetStudio.dev-fullscreen > :last-child { position:static; flex:none; padding:4px 0 0; }
+#assetStudio.dev-fullscreen > :last-child .dev-toolbar { margin:4px 0; }
+#assetStudio.dev-fullscreen :focus-visible { outline:3px solid #9affdc; outline-offset:2px; }
+@media(max-width:700px) {
+  #assetStudio.dev-fullscreen .dev-tabs { grid-template-columns:repeat(5,minmax(0,1fr)); gap:4px; }
+  #assetStudio.dev-console.dev-fullscreen .dev-tabs button { font-size:11px; padding:6px 3px; }
+  #assetStudio.dev-fullscreen .studioHead strong { font-size:12px; }
+}

@@ -1,0 +1,14 @@
+{
+  "description": "Apply the reviewed emerald masonry through the Piano Lab-side stepped wall and jade counter artwork while retaining the floor, cyan and pink signs, warm lamps, outer caps, gold trim and every object silhouette.",
+  "backdrop": "assets/environment/v1/empty-arcade.png",
+  "backdropBefore": "assets/environment/source/empty-arcade-before-green.png",
+  "backdropSource": "assets/environment/source/green-back-wall.png",
+  "counter": "assets/environment/v1/main-counter.png",
+  "counterBefore": "assets/environment/source/main-counter-before-green.png",
+  "counterSource": "assets/environment/source/jade-counter.png",
+  "counterBaselineSha256": "dc1558ab1f0ae3d82ff4f4a39980d384b063802a942ff4ed5b8b99d6e8e69f38",
+  "worldSize": [1672,941],
+  "wallBounds": [[501,43,694,77],[571,33,117,10],[1195,30,51,125],[1213,10,33,20],[1374,20,12,135],[1386,55,122,89],[1508,107,73,37]],
+  "protectedBounds": [[688,27,402,88],[591,34,33,90],[1130,33,30,91],[1246,18,128,157],[1199,44,33,82],[1408,69,75,75],[1383,60,33,80],[1550,135,45,75]],
+  "counterSize": [560,238]
+}

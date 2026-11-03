@@ -1,0 +1,14 @@
+{
+  "description": "Replace only the lounge's floral carpet and exposed bar-floor patch with the main arcade's quiet navy glass. Preserve every wall, cap, neon border, furniture placement, collision cell and saved artwork entry.",
+  "worldSize": [1672, 941],
+  "before": "assets/environment/source/lounge-floor-before-glass.png",
+  "beforeSha256": "ef8adcc55b8f7cb023c39a7284eb862ad04a83edf8d65f3f1cfb1afda861ff80",
+  "source": "assets/environment/source/lounge-glass-floor.png",
+  "sourcePlacement": [40, 110, 455, 290],
+  "output": "assets/environment/v1/empty-arcade.png",
+  "reviewedProjectSha256": "90b0319e0102c454c0f3217576c0ac5e157101952136a9584b4b4ae8d33a5b2b",
+  "polygons": [
+    [[82,203],[143,185],[181,172],[208,149],[359,149],[438,180],[438,271],[360,271],[360,362],[269,362],[269,314],[82,314]]
+  ],
+  "protectedPolygons": []
+}

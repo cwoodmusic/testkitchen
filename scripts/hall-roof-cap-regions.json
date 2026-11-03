@@ -1,0 +1,19 @@
+{
+  "description": "Follow the final L-shaped Hall roof guide: remove the upper green portrait wall and left lamp into black exterior space, complete the connected left post and horizontal cap above the unchanged gold display, and preserve the Piano Lab outline, right lamp and High Score asset.",
+  "worldSize": [1672,941],
+  "source": "assets/environment/source/hall-roof-cap.png",
+  "sourceSize": [1232,1277],
+  "sourcePlacement": [1350,-12,290,300],
+  "output": "assets/environment/v1/empty-arcade.png",
+  "polygons": [
+    [[1383,5],[1417,5],[1417,154],[1383,154]],
+    [[1390,129],[1616,129],[1616,145],[1390,145]],
+    [[1405,32],[1616,32],[1616,140],[1405,140]],
+    [[1390,155],[1415,155],[1415,230],[1390,230]]
+  ],
+  "protectedPolygons": [
+    [[1350,0],[1383,0],[1383,160],[1350,160]],
+    [[1564,134],[1574,134],[1574,170],[1564,170]],
+    [[1408,144],[1550,144],[1550,304],[1408,304]]
+  ]
+}

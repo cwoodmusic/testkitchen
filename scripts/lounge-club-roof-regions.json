@@ -1,0 +1,22 @@
+{
+  "description": "Follow the final orthogonal blue top-cap guides: replace the lounge's zigzag lip and approved lower carpet strip with a straight cap and deeper exterior face down to the reviewed lower edge near y428, and flatten the club roof. Preserve the carpet north of y305, the black gap above the club, fixtures, lower right post and accepted lower corner outside the explicitly changed roof junction.",
+  "worldSize": [1672,941],
+  "source": "assets/environment/source/lounge-club-roof.png",
+  "sourceSize": [1254,1254],
+  "sourcePlacement": [0,270,300,300],
+  "output": "assets/environment/v1/empty-arcade.png",
+  "polygons": [
+    [[45,305],[272,305],[272,438],[45,438]],
+    [[45,450],[247,450],[247,533],[45,533]],
+    [[247,450],[272,450],[272,470],[247,470]]
+  ],
+  "protectedPolygons": [
+    [[0,0],[435,0],[435,305],[0,305]],
+    [[247,390],[272,390],[272,450],[247,450]],
+    [[247,470],[272,470],[272,526],[247,526]],
+    [[247,504],[306,504],[306,527],[247,527]],
+    [[67,526],[100,526],[100,583],[67,583]],
+    [[202,457],[212,457],[212,477],[202,477]],
+    [[190,472],[224,472],[224,521],[190,521]]
+  ]
+}

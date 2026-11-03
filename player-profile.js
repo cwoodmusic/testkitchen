@@ -31,7 +31,7 @@
  function createCodaPlayerProfile(api={}){
   const body=api.panelBody;if(!body)throw Error('Your profile needs a panel.');
   const doc=body.ownerDocument,win=doc.defaultView||root,catalog=api.progressionCatalog||root?.CodaPlayerProgression||{},renderer=api.renderer;
-  let section=null,model=null,signature='',facing='down',portrait=null,animation=0,disposed=false,startedAt=null;
+  let section=null,model=null,signature='',facing='down',portrait=null,animation=0,disposed=false,startedAt=null,page='home';
   const safely=(getter,fallback)=>{try{return typeof getter==='function'?getter():fallback;}catch{return fallback;}};
   const node=(tag,className,value)=>{const element=doc.createElement(tag);if(className)element.className=className;if(value!==undefined)element.textContent=value;return element;};
   const button=(label,callback)=>{const element=node('button','profile-action',label);element.type='button';element.onclick=callback;return element;};
@@ -89,8 +89,7 @@
    if(api.openClassroom)part.append(button(api.classroomLabel||'Practice in the classroom',()=>api.openClassroom()));
    return part;
   }
-  function render(){
-   if(!visible())return;section.replaceChildren();
+  function renderHero(){
    const hero=node('section','profile-hero'),portraitBox=node('div','profile-portrait-frame');portrait=avatarCanvas(model.avatar);portraitBox.append(portrait);
    const views=node('div','profile-views');views.setAttribute('role','group');views.setAttribute('aria-label','Character views');
    for(const [direction,label,symbol]of [['down','Front','Front'],['left','Left','Left'],['up','Back','Back'],['right','Right','Right']]){const view=button(symbol,()=>{facing=direction;for(const item of views.querySelectorAll('button'))item.setAttribute('aria-pressed',String(item===view));drawPortrait();});view.setAttribute('aria-label','View character from '+label.toLowerCase());view.setAttribute('aria-pressed',String(facing===direction));views.append(view);}
@@ -98,14 +97,21 @@
    const identity=node('div','profile-identity');identity.append(node('p','profile-eyebrow','YOUR MUSICIAN'),node('h2','',model.name),node('p','profile-level','Level '+model.level),node('p','profile-notes',model.notes+' Notes'));
    if(api.openWardrobe)identity.append(button(api.wardrobeLabel||'Change your look',()=>api.openWardrobe()));
    if(typeof api.openClassroomProfile==='function')identity.append(button('Classroom profile',()=>api.openClassroomProfile()));hero.append(identity);section.append(hero);
+   const heading=identity.querySelector('h2');heading.tabIndex=-1;heading.dataset.profileHeading='';
+  }
+  function renderExperience(){
    const experience=node('section','profile-experience');experience.append(node('h3','',model.atMax?'Look how far you’ve come!':'Your next level'),node('p','profile-xp-to-go',model.atMax?'You have earned every current level prize.':model.xpToNext+' XP to go!'));
    experience.append(meter(model.atMax?1:model.levelXP,model.atMax?1:model.levelSize,'Experience toward '+(model.atMax?'all current level prizes':'level '+model.nextLevel)),node('p','profile-xp-detail',model.atMax?model.xp+' total XP':model.levelXP+' / '+model.levelSize+' XP toward level '+model.nextLevel+' · '+model.xp+' total XP'));
-   experience.append(node('p','profile-help','XP means experience points. You earn them by playing games, finishing missions, and learning new music skills.'));section.append(experience);
+   experience.append(node('p','profile-help','XP means experience points. Earn them by playing and learning.'));section.append(experience);
+  }
+  function renderPrizes(){
    const rewards=node('section','profile-next-prizes');rewards.append(node('h3','',model.atMax?'Your level prizes':'Your next prize'+(model.nextPrizes.length===1?'':'s')+' · Level '+model.nextLevel));
    if(model.atMax)rewards.append(node('p','','All current level prizes are unlocked. You can keep playing and earning XP.'));
    else if(model.nextPrizes.length){const cards=node('div','profile-prize-grid');model.nextPrizes.forEach(prize=>cards.append(prizeCard(prize)));rewards.append(cards);}
    else rewards.append(node('p','','Your next musician milestone is on the way.'));
    if(api.openLevels)rewards.append(button('See all level prizes',()=>api.openLevels()));section.append(rewards);
+  }
+  function renderMissions(){
    const missions=node('section','profile-missions');missions.append(node('h3','','Missions in progress'));
    if(model.activeMissions.length)model.activeMissions.forEach(mission=>missions.append(missionCard(mission)));
    else{const empty=node('div','profile-empty');empty.append(node('p','','No missions yet. A musician can give you your next adventure!'));
@@ -123,14 +129,57 @@
     upcoming.append(preview);section.append(upcoming);
    }
    if(model.completedMissions.length){const completed=node('details','profile-completed');completed.append(node('summary','',model.completedMissions.length+' finished mission'+(model.completedMissions.length===1?'':'s')));model.completedMissions.forEach(mission=>completed.append(missionCard(mission,true)));section.append(completed);}
-   const lessons=tutorialSection();if(lessons)section.append(lessons);
-   if(model.recent.length){const activity=node('section','profile-recent');activity.append(node('h3','','Recently earned XP'));for(const item of model.recent)activity.append(node('p','','+'+item.xp+' XP · '+item.reason));section.append(activity);}
-   if(model.error){const warning=node('p','profile-save-note',model.error);warning.setAttribute('role','status');section.append(warning);}startAnimation();
   }
-  function refresh(){if(disposed)return null;model=capture();const next=JSON.stringify(model);if(next!==signature||!portrait){signature=next;render();}return copy(model);}
-  function open(){if(disposed)return;api.openPanel('Your profile');section=node('section','player-profile');section.setAttribute('aria-label','Your musician profile');body.append(section);signature='';portrait=null;facing='down';refresh();}
+  function renderLearning(){
+   const lessons=tutorialSection();
+   if(lessons)section.append(lessons);
+   else{const empty=node('section','profile-lessons profile-empty');empty.append(node('h3','','Your classroom practice'),node('p','','Your music skills will appear here as you learn.'));if(api.openClassroom)empty.append(button(api.classroomLabel||'Practice in the classroom',()=>api.openClassroom()));section.append(empty);}
+  }
+  function renderActivity(){
+   section.append(node('p','profile-help','XP means experience points. You earn them by playing games, finishing missions, and learning new music skills.'));
+   if(model.recent.length){const activity=node('section','profile-recent');activity.append(node('h3','','Recently earned XP'));for(const item of model.recent)activity.append(node('p','','+'+item.xp+' XP · '+item.reason));section.append(activity);}
+   else{const empty=node('section','profile-recent profile-empty');empty.append(node('h3','','Recently earned XP'),node('p','','Your next music adventure can be your first step.'));section.append(empty);}
+  }
+  const pictures={
+   missions:'<path d="M15 8h34v49l-17-9-17 9Z" fill="#b9b2ff"/><path d="m23 29 7 7 13-15" fill="none" stroke="#2e5c59" stroke-width="5" stroke-linecap="round" stroke-linejoin="round"/>',
+   prizes:'<path d="M12 26h40v30H12Zm-5-9h50v13H7Z" fill="#ffda81"/><path d="M28 17h8v39h-8Z" fill="#6aa5ad"/><path d="M32 17C4 17 17-5 32 17Zm0 0C60 17 47-5 32 17Z" fill="none" stroke="#a5e7cb" stroke-width="5"/>',
+   learning:'<path d="M8 15q12-5 24 1 12-6 24-1v34q-12-4-24 1-12-5-24-1Z" fill="#b8dff1"/><path d="M32 17v32M15 25h10m-10 9h10m14-9h10m-10 9h10" fill="none" stroke="#3c4b70" stroke-width="3"/>',
+   activity:'<path d="M10 50h44M17 44V32m15 12V21m15 23V10" fill="none" stroke="#a5e7cb" stroke-width="8" stroke-linecap="round"/><path d="m12 22 15-12 11 4 13-9" fill="none" stroke="#ffda81" stroke-width="4" stroke-linecap="round"/>'
+  };
+  function renderHome(){
+   renderHero();renderExperience();
+   const grid=node('div','kids-menu-grid profile-menu-grid'),ready=model.activeMissions.filter(mission=>mission.status==='complete'&&mission.unlocked).length;
+   const choices=[
+    ['missions','My missions',ready?ready+' '+(ready===1?'reward is':'rewards are')+' ready to collect.':'See your goals and next adventure.'],
+    ['prizes','Level prizes',model.atMax?'See the level prizes you’ve unlocked.':'See what is waiting at your next level.'],
+    ['learning','My learning','See the music skills you’ve practiced.'],
+    ['activity','My activity','Look back at the XP you’ve earned.']
+   ];
+   for(const [id,label,description]of choices){const card=button('',()=>showPage(id));card.className='kids-menu-card';card.dataset.profileAction=id;
+    const icon=node('span','kids-menu-icon');icon.setAttribute('aria-hidden','true');icon.innerHTML='<svg viewBox="0 0 64 64" focusable="false">'+pictures[id]+'</svg>';
+    card.append(icon,node('strong','kids-menu-title',label),node('span','kids-menu-desc',description));grid.append(card);
+   }section.append(grid);
+  }
+  function render(){
+   if(!visible())return;if(animation)win.cancelAnimationFrame(animation);animation=0;portrait=null;section.replaceChildren();section.dataset.profilePage=page;
+   if(page==='home')renderHome();
+   else{
+    const back=button('‹ Profile menu',()=>showPage('home'));back.classList.add('kids-menu-back');back.dataset.profileAction='home';section.append(back);
+    const head=node('div','kids-menu-head');head.append(node('p','kids-menu-eyebrow','Your profile'));
+    const heading=node('h2','',{missions:'My missions',prizes:'Level prizes',learning:'My learning',activity:'My activity'}[page]);heading.tabIndex=-1;heading.dataset.profileHeading='';head.append(heading);section.append(head);
+    if(page==='missions')renderMissions();else if(page==='prizes')renderPrizes();else if(page==='learning')renderLearning();else renderActivity();
+   }
+   if(model.error){const warning=node('p','profile-save-note',model.error);warning.setAttribute('role','status');section.append(warning);}if(portrait)startAnimation();
+  }
+  function showPage(next='home',focus=true){
+   if(disposed||!visible())return;page=['home','missions','prizes','learning','activity'].includes(next)?next:'home';model=capture();signature=JSON.stringify(model);render();
+   const panel=body.closest?.('[role="dialog"]')||body.closest?.('#panel')||body;panel.scrollTop=0;
+   if(focus)section.querySelector('[data-profile-heading]')?.focus({preventScroll:true});
+  }
+  function refresh(){if(disposed)return null;model=capture();const next=JSON.stringify(model);if(next!==signature||!section?.firstChild){signature=next;render();}return copy(model);}
+  function open(){if(disposed)return;api.openPanel('Your profile',{onBack:()=>{if(page==='home')return false;showPage('home');return true;}});section=node('section','player-profile kids-menu');section.setAttribute('aria-label','Your musician profile');body.append(section);signature='';portrait=null;facing='down';page='home';refresh();section.querySelector('[data-profile-heading]')?.focus({preventScroll:true});}
   const onChange=()=>{if(visible())refresh();};win.addEventListener?.('coda-progression-change',onChange);win.addEventListener?.('coda-tutorial-progress',onChange);win.addEventListener?.('storage',onChange);
-  return {open,refresh,getState:()=>({open:visible(),...capture()}),dispose(){if(disposed)return;disposed=true;if(animation)win.cancelAnimationFrame(animation);animation=0;win.removeEventListener?.('coda-progression-change',onChange);win.removeEventListener?.('coda-tutorial-progress',onChange);win.removeEventListener?.('storage',onChange);section?.remove();}};
+  return {open,refresh,getState:()=>({open:visible(),page,...capture()}),dispose(){if(disposed)return;disposed=true;if(animation)win.cancelAnimationFrame(animation);animation=0;win.removeEventListener?.('coda-progression-change',onChange);win.removeEventListener?.('coda-tutorial-progress',onChange);win.removeEventListener?.('storage',onChange);section?.remove();}};
  }
  return {profileModel,createCodaPlayerProfile};
 });

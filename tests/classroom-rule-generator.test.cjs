@@ -118,7 +118,8 @@ test('additional quest targets change only the student and teacher mission valid
  assert.deepEqual(expanded[0],expanded[1],'Both identities validate the same exact quest data');
  for(const rules of expanded){
   const keys=Object.keys(rules).filter(key=>!key.startsWith('.')&&!key.startsWith('$'));
-  assert.equal(keys.length,29);assert.equal(keys.length-legacyIds.length,20);
+  assert.equal(keys.length,35);assert.equal(keys.length-legacyIds.length,26);
+  for(const id of ['nina-note-rush-ten','clara-note-rush-bass','joplin-dance-pass','ellington-dance-perfect','ella-dance-hard','miles-dance-tour'])assert.ok(rules[id],id+' is validated for each identity');
   assert.deepEqual(rules.$other,{'.validate':false});
   for(const id of legacyIds)assert.deepEqual(rules[id],previous[0][id],id+' retains its original contract');
  }

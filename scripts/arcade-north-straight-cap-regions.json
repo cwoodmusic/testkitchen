@@ -1,0 +1,20 @@
+{
+  "description": "Straighten only the arcade's reviewed outer north cap and the former roof seams beneath it, connecting the lounge corner to the Piano Lab post without moving the sign faces or lamp fixtures.",
+  "worldSize": [1672,941],
+  "source": "assets/environment/source/arcade-north-straight-cap.png",
+  "sourceSize": [2172,724],
+  "sourceRect": [0,169,2172,386],
+  "sourcePlacement": [150,0,1120,200],
+  "sourceCopies": [[225,15,50,16,174,15,50,16]],
+  "output": "assets/environment/v1/empty-arcade.png",
+  "polygons": [
+    [[170,5],[1235,5],[1235,45],[170,45]]
+  ],
+  "protectedPolygons": [
+    [[239,40],[355,40],[355,100],[239,100]],
+    [[688,27],[1090,27],[1090,115],[688,115]],
+    [[591,34],[624,34],[624,124],[591,124]],
+    [[1130,33],[1160,33],[1160,124],[1130,124]],
+    [[1214,0],[1235,0],[1235,8],[1214,8]]
+  ]
+}

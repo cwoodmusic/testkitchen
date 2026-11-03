@@ -33,3 +33,60 @@
 .boutique-locked-art{display:flex;align-items:center;justify-content:center;width:72px;height:80px;border-radius:5px;background:#1e1e29;color:#b6b5c0;font-size:32px;line-height:1;pointer-events:none}
 .boutique-panel select option.boutique-option-locked{color:#90909d;background:#282835}
 @media(max-width:450px){.boutique-locked-art{width:58px;height:65px}.boutique-item.is-locked small{font-size:11px}}
+
+/* Try one kind of style at a time; all changes remain a draft until Save. */
+.boutique-panel .boutique-menu{margin:0 0 18px}
+.boutique-panel .boutique-menu-head{margin-bottom:18px}
+.boutique-panel .boutique-menu-help{margin:8px 0 0;font-size:18px;line-height:1.45;color:#dce6f7}
+.boutique-panel .boutique-menu .kids-menu-title{font-size:23px}
+.boutique-panel .boutique-menu .kids-menu-icon svg{display:block;width:58px;height:54px}
+.boutique-panel .boutique-menu .kids-menu-card{min-height:158px}
+.boutique-panel .boutique-menu .kids-menu-head{grid-column:1/-1}
+.boutique-panel .boutique-menu .kids-menu-back{margin:12px 0 0}
+.boutique-panel .boutique-menu[data-boutique-menu=home]{display:grid;grid-template-columns:150px minmax(0,1fr);gap:16px}
+.boutique-panel .boutique-menu[data-boutique-menu=home]>.avatar-live-preview{grid-column:1;grid-row:2;margin:0;position:static}
+.boutique-panel .boutique-menu[data-boutique-menu=home]>.kids-menu-grid{grid-column:2;grid-row:2}
+.boutique-panel .boutique-menu[data-boutique-menu=home] .avatar-preview-views{grid-template-columns:repeat(2,minmax(0,1fr));gap:6px}
+.boutique-panel .boutique-menu[data-boutique-menu=home] .avatar-preview-views canvas{max-height:88px}
+.boutique-panel .boutique-menu[data-boutique-menu=home] .avatar-live-preview>.formRow{display:block}
+.boutique-panel .boutique-menu[data-boutique-menu=home] .avatar-live-preview>.formRow select{display:block;width:100%;margin-top:6px;min-height:44px}
+.boutique-panel .avatar-live-preview{position:static;background:#18243d;border:1px solid #7e95b5;border-radius:14px}
+.boutique-panel .boutique-catalog{margin:12px 0;padding:18px;background:#192640;border:1px solid #718bb0;border-radius:15px}
+.boutique-panel .boutique-catalog h3{font-size:22px}
+.boutique-panel .boutique-catalog>p{font-size:16px}
+.boutique-panel .boutique-categories{gap:8px}
+.boutique-panel .boutique-categories button{min-height:44px;padding:9px 13px;font-size:16px}
+.boutique-panel .boutique-catalog-results{grid-template-columns:repeat(auto-fill,minmax(112px,1fr));max-height:360px;gap:12px;padding:5px}
+.boutique-panel .boutique-catalog-results .boutique-item{min-height:132px;padding:10px;font-size:15px;border-radius:10px}
+.boutique-panel .boutique-item small,.boutique-panel .boutique-item.is-locked small{font-size:13px}
+.boutique-panel .boutique-focused-fields{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:10px 18px;margin:14px 0}
+.boutique-panel .boutique-field{font-size:16px;line-height:1.4;min-width:0}
+.boutique-panel .boutique-field select,.boutique-panel .boutique-field input{min-height:44px;max-width:100%;font-size:16px}
+.boutique-panel .boutique-field input[type=color]{height:44px}
+.boutique-panel .boutique-swatches{gap:8px}
+.boutique-panel .boutique-swatches button{width:44px;height:44px;min-height:44px;border-radius:8px}
+.boutique-panel .boutique-more-options{margin:12px 0;padding:10px 0;border-top:1px solid #687c9e}
+.boutique-panel .boutique-more-options summary{min-height:44px;padding:10px 0;font-size:16px;cursor:pointer}
+.boutique-panel .boutique-more-options button{min-height:44px;margin:8px 10px 0 0}
+.boutique-panel .boutique-actions{bottom:-20px;z-index:4;gap:12px;padding:14px 0;background:#172039f5;border-color:#8298bb}
+.boutique-panel .boutique-actions button{min-height:48px;font-size:18px}
+.boutique-panel .boutique-actions #boutiqueSave{background:#a8f0cb;color:#153e39;border-color:#b6ffdc;font-weight:800}
+.boutique-panel .boutique-actions .panelMsg{font-size:15px;line-height:1.4}
+.boutique-panel [hidden]{display:none!important}
+.boutique-panel summary:focus-visible{outline:3px solid #ffda84;outline-offset:3px}
+@media(max-width:640px){
+ .boutique-panel .boutique-menu[data-boutique-menu=home]{display:block}
+ .boutique-panel .boutique-menu[data-boutique-menu=home]>.avatar-live-preview{margin:0 0 16px}
+ .boutique-panel .boutique-menu[data-boutique-menu=home] .avatar-preview-views{grid-template-columns:repeat(4,minmax(0,1fr))}
+ .boutique-panel .boutique-menu[data-boutique-menu=home] .avatar-preview-views canvas{max-height:80px}
+ .boutique-panel .boutique-menu[data-boutique-menu=home] .avatar-live-preview>.formRow{display:flex}
+ .boutique-panel .boutique-menu .kids-menu-title{font-size:21px}
+ .boutique-panel .boutique-menu .kids-menu-card{min-height:140px}
+ .boutique-panel .boutique-focused-fields{grid-template-columns:minmax(0,1fr)}
+ .boutique-panel .boutique-catalog{padding:12px}
+ .boutique-panel .boutique-catalog-results{grid-template-columns:repeat(3,minmax(0,1fr));gap:8px;max-height:350px}
+ .boutique-panel .boutique-catalog-results .boutique-item{padding:7px;font-size:14px;min-height:122px}
+ .boutique-panel .boutique-item canvas{width:64px;height:75px}
+ .boutique-panel .boutique-item small,.boutique-panel .boutique-item.is-locked small{font-size:12px}
+ .boutique-panel .boutique-actions button{font-size:16px}
+}

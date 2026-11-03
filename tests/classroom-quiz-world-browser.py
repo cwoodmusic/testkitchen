@@ -1,4 +1,6 @@
+from profile_menu_helpers import show_profile_page
 """End quizzes gate new lesson rewards while preserving old classroom progress."""
+from classroom_menu_helpers import choose_classroom_lesson
 import importlib.util
 from pathlib import Path
 import sys
@@ -38,7 +40,7 @@ class ClassroomQuizWorldTests(_world.WorldBrowserCase):
             if room.is_visible():room.click()
             self.page.locator('#classroomCanvas').focus();self.page.keyboard.down('w')
             self.page.wait_for_timeout(850);self.page.keyboard.up('w');self.page.keyboard.press('e')
-        self.page.locator('[data-start-lesson="'+lesson+'"]').click()
+        choose_classroom_lesson(self.page, lesson)
 
     def ready_quiz(self,lesson,legacy=False):
         # Earlier guided-step tests play every teaching activity. Here a real
@@ -75,6 +77,7 @@ class ClassroomQuizWorldTests(_world.WorldBrowserCase):
         self.ready_quiz('note-naming');self.assertEqual(self.xp(),0)
         self.assertNotIn('note-naming',self.state()['completed'])
         self.page.locator('#classroomClose').click();self.page.locator('#levelBtn').click()
+        show_profile_page(self.page, 'learning')
         profile=self.page.locator('.profile-lessons').inner_text()
         self.assertIn('Note naming · Quiz ready',profile)
         self.assertNotIn('Note naming · Finished',profile)

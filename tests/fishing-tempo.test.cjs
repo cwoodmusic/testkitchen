@@ -13,24 +13,23 @@ function advanceAlive(game,target){
  close(game.getState().now,target);assert.equal(game.getState().result,null);
 }
 
-test('species keep sixteenth-note phrases at or below 100 quarter-note BPM',()=>{
+test('gentler rarity tempo ranges preserve steady, accelerating and slowing phrases',()=>{
+ const ranges={common:[72,72],uncommon:[76,76],rare:[72,80],epic:[76,84],legendary:[80,88]};
  for(const fish of fishing.FISH){
   assert.ok(Object.isFrozen(fish.tempo));assert.equal(fish.tempo.unit,'quarter');
-  const tempo=fish.tempo;assert.ok(tempo.startQuarterBpm>=76&&tempo.startQuarterBpm<=100);assert.ok(tempo.endQuarterBpm>=76&&tempo.endQuarterBpm<=100);
-  if(fish.rarityRank<2){assert.equal(tempo.change,'steady');assert.equal(tempo.startQuarterBpm,fish.rarity==='common'?76:82);assert.equal(tempo.startQuarterBpm,tempo.endQuarterBpm);}
-  if(fish.rarityRank>=2){
-   close(Math.max(tempo.startQuarterBpm,tempo.endQuarterBpm),100);
-   assert.equal(tempo.initialMarking,fishing.tempoMarking(tempo.startQuarterBpm).marking);
-   assert.equal(tempo.endMarking,fishing.tempoMarking(tempo.endQuarterBpm).marking);
-   if(tempo.change==='accelerando')assert.ok(tempo.startQuarterBpm<tempo.endQuarterBpm,'The cap preserves an actual acceleration');
-   if(tempo.change==='ritardando')assert.ok(tempo.startQuarterBpm>tempo.endQuarterBpm,'The cap preserves an actual slowdown');
-  }
+  const tempo=fish.tempo,[low,high]=ranges[fish.rarity];
+  assert.ok(tempo.startQuarterBpm>=low&&tempo.startQuarterBpm<=high);assert.ok(tempo.endQuarterBpm>=low&&tempo.endQuarterBpm<=high);
+  if(tempo.change==='steady'){close(tempo.startQuarterBpm,(low+high)/2);close(tempo.startQuarterBpm,tempo.endQuarterBpm);}
+  if(tempo.change==='accelerando'){close(tempo.startQuarterBpm,low);close(tempo.endQuarterBpm,high);}
+  if(tempo.change==='ritardando'){close(tempo.startQuarterBpm,high);close(tempo.endQuarterBpm,low);}
+  assert.equal(tempo.initialMarking,fishing.tempoMarking(tempo.startQuarterBpm).marking);
+  assert.equal(tempo.endMarking,fishing.tempoMarking(tempo.endQuarterBpm).marking);
  }
  for(const rarity of ['rare','epic','legendary'])for(const change of ['steady','accelerando','ritardando'])assert.ok(fishWith(change,rarity),rarity+' '+change);
  for(const meter of Object.keys(fishing.METERS))assert.ok(fishing.availableFish(meter).some(fish=>fish.rarityRank>=2&&fish.tempo.change!=='steady'),meter+' has changing-tempo fish');
  assert.equal(fishing.fishFor('luminous-dragonfish').tempo.change,'accelerando');
- close(fishing.fishFor('luminous-dragonfish').tempo.startQuarterBpm,100*120/144);
- close(fishing.fishFor('luminous-dragonfish').tempo.endQuarterBpm,100);
+ close(fishing.fishFor('luminous-dragonfish').tempo.startQuarterBpm,80);
+ close(fishing.fishFor('luminous-dragonfish').tempo.endQuarterBpm,88);
  assert.equal(fishing.tempoMarking(108).marking,'Moderato');assert.equal(fishing.tempoMarking(120).marking,'Allegro');assert.equal(fishing.tempoMarking(156).marking,'Vivace');assert.equal(fishing.tempoMarking(168).marking,'Presto');
 });
 

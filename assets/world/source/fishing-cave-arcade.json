@@ -1,0 +1,48 @@
+{
+  "description": "Fishing cave with the main arcade rounded beveled geometry and neon palette, plus clear east and south water passages for fixed-screen boat travel. Existing dock, ladder, stone landing and light anchors retained. Runtime actors are separate.",
+  "source": "assets/world/source/fishing-cave-passages-source.png",
+  "sourceSize": [
+    1591,
+    989
+  ],
+  "output": "assets/world/rhythm-fishing-cave.png",
+  "outputSize": [
+    1592,
+    988
+  ],
+  "normalization": "Full-frame Canvas drawImage, imageSmoothingEnabled=false; preserve native room-artwork dimensions.",
+  "logicalWorldSize": [
+    1000,
+    620
+  ],
+  "previousImageSha256": "6cc9fd4f73a90a8385d5e7fe1c1e194c34aa0c2ce2f05b932412d818e4d23411",
+  "outputSha256": "eea6244151a75a73a4b357ed323fee2518d1f0cd5b91a5929521473b730b5ded",
+  "styleSource": "assets/world/source/fishing-cave-arcade-source.png",
+  "styleOutputSha256": "e43ac2b921975e4572a74fad9def5454ff3b952695d03acbd11044717bdd9816",
+  "waterPassages": {
+    "east": {
+      "corridor": [
+        800,
+        300,
+        200,
+        100
+      ],
+      "transition": [
+        974,
+        350
+      ]
+    },
+    "south": {
+      "corridor": [
+        500,
+        450,
+        100,
+        170
+      ],
+      "transition": [
+        550,
+        594
+      ]
+    }
+  }
+}

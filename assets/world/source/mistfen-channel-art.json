@@ -1,0 +1,25 @@
+{
+  "description": "Arcade-style rounded-angular fishing biome screen, with open water corridors for NES-style screen-edge travel. Runtime characters, boats and fish remain separate.",
+  "source": "assets/world/source/mistfen-channel-source.png",
+  "sourceSize": [
+    1591,
+    989
+  ],
+  "output": "assets/world/fishing/mistfen-channel.png",
+  "outputSize": [
+    1592,
+    988
+  ],
+  "logicalWorldSize": [
+    1000,
+    620
+  ],
+  "exits": [
+    "west",
+    "east",
+    "south"
+  ],
+  "normalization": "Full-frame Canvas drawImage, imageSmoothingEnabled=false, preserving room-artwork native dimensions.",
+  "sourceSha256": "345cfa80b70649415c9ed8f3e7c0340f3b18ee7a8cfa5399eb12956c2bc95a14",
+  "outputSha256": "2a60d74d10be97539b1b038cdedb55362101663655d4b23d83d40d2c385f86ec"
+}

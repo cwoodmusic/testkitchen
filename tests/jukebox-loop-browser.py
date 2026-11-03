@@ -50,6 +50,9 @@ class JukeboxLoopTests(_world.WorldBrowserCase):
           contexts:jukeboxAudioProbe.contexts.map(context=>({state:context.state,time:context.currentTime}))})''')
 
     def import_song(self, name='Loop fixture', pitch=60):
+        if self.page.locator('[data-dj-action="home"]').is_visible():
+            self.page.locator('[data-dj-action="home"]').click()
+        self.page.locator('[data-dj-action="songs"]').click()
         song={'bpm':240,'bars':1,'meter':'4/4','root':0,'scale':'chromatic',
               'tracks':[{'id':1,'name':'Loop voice','sound':1,'volume':.3,'mute':False,
                          'notes':[{'p':pitch,'t':0,'d':4},{'p':pitch+7,'t':8,'d':4}]}],
@@ -70,13 +73,16 @@ class JukeboxLoopTests(_world.WorldBrowserCase):
         for first,second in zip(starts[:2],starts[2:4]):
             self.assertAlmostEqual(second['when']-first['when'],state['duration'],delta=1e-8)
             self.assertEqual(second['frequency'],first['frequency'])
-        self.assertIn('Looping',self.page.locator('.panelMsg').inner_text())
+        self.assertIn('Repeats until you stop',self.page.locator('.panelMsg').inner_text())
         self.assertEqual(self.page.locator('#musicBtn').get_attribute('aria-pressed'),'true')
         self.page.locator('#jukeboxStop').click()
 
     def test_escape_keeps_music_playing_and_header_stop_prevents_restart(self):
         self.import_song().click()
         self.page.wait_for_function('CodaArcadeQA.jukebox().looping')
+        self.page.keyboard.press('Escape')
+        self.assertEqual(self.page.locator('.dj-menu').get_attribute('data-dj-page'),'home')
+        self.assertTrue(self.state()['playing'])
         self.page.keyboard.press('Escape')
         self.assertTrue(self.page.locator('#panel').is_hidden())
         self.assertTrue(self.state()['playing'],'Leaving the DJ dialogue must keep its selection playing')
@@ -112,6 +118,7 @@ class JukeboxLoopTests(_world.WorldBrowserCase):
 
     def test_sixteen_bar_house_track_uses_a_small_horizon_and_an_exact_repeating_boundary(self):
         self.page.evaluate('__jukeboxVirtualTime=0')
+        self.page.locator('[data-dj-action="music"]').click()
         self.page.locator('[data-jukebox-track="neon-afterhours"]').click()
         self.page.wait_for_function('CodaArcadeQA.jukebox().cyclesScheduled===1')
         state=self.state();first=self.probe()['starts'][:]

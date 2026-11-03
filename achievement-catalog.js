@@ -54,12 +54,21 @@
   row('first-rhythm-result','rhythm','Your First Rhythm Round','Finish a Tap Practice round in Rhythm Room.'),
   row('rhythm-perfect-round','rhythm','Perfect Rhythm','Match every note in a Tap Practice round with no extra taps.'),
   row('rhythm-hundred-streak','rhythm','One Hundred in Time','Match one hundred notes in a row in Rhythm Room Tap Practice.',250,'Rhythm fox companion'),
-  row('dance-first-finish','dance','First Steps','Finish an eight-bar DJ line dance with at least one correct step.',50,'First Steps DJ track'),
+  row('dance-first-finish','dance','First Steps','Finish an sixteen-bar DJ line dance with at least one correct step.',50,'First Steps DJ track'),
   row('dance-twenty-streak','dance','Find the Groove','Match twenty steps in a row in one completed DJ line dance.',100,'Shutter shades'),
-  row('dance-normal-groove','dance','Dance Floor Regular','Finish a Normal DJ line dance with at least 80% accuracy.',100),
-  row('dance-hard-groove','dance','DJ Coda’s Headliner','Finish a Hard DJ line dance with at least 80% accuracy.',150,'Midnight Headliner DJ track'),
+  row('dance-normal-groove','dance','Dance Floor Regular','Finish a Hard DJ line dance with at least 80% accuracy.',100),
+  row('dance-hard-groove','dance','DJ Coda’s Headliner','Finish an Extreme DJ line dance with at least 80% accuracy.',150,'Midnight Headliner DJ track'),
   row('dance-perfect-set','dance','Mirrorball Master','Match every step in a completed DJ line dance with no wrong or extra arrows.',150,'Roller skates'),
-  row('dance-hard-perfect','dance','Disco Legend','Match every step in a completed Hard DJ line dance with no wrong or extra arrows.',250,'Boombox'),
+  row('dance-hard-perfect','dance','Disco Legend','Match every step in a completed Extreme DJ line dance with no wrong or extra arrows.',250,'Boombox'),
+  ...['normal','hard','extreme'].map(tier=>({...row('dance-'+tier+'-ten','dance',tier[0].toUpperCase()+tier.slice(1)+' Tour','Pass all ten '+tier+' Line Dance stages with scores of at least 80%.',200),tier})),
+  row('dance-song-collector','dance','The Whole DJ Collection','Earn perfect scores to unlock all ten stage songs.',250),
+  row('dance-meter-explorer','dance','Meter Explorer','Pass Line Dance stages in five different meters.',150),
+  row('piano-first-melody','piano','A Familiar Tune','Complete a guided melody in Piano Lab.'),
+  row('piano-first-scale','piano','Musical Ladder','Complete a major or natural minor scale.'),
+  row('piano-twelve-scales','piano','Scale Explorer','Complete twelve different scales.',150),
+  row('piano-all-scales','piano','Every Musical Ladder','Complete all 24 major and natural minor scales.',250),
+  ...[10,30,50].map(target=>({...row('piano-reading-'+target,'piano','Note Rush '+target,'Play '+target+' correct pitches in one completed Note Rush run.',target===50?200:100),target})),
+  row('piano-reading-bass','piano','Bass Clef Rush','Play twenty correct pitches in one completed bass-clef Note Rush run.',150),
   ...FISHING.map(([id,title,description,target,reward])=>({...row(id,'fishing',title,description,50,reward),target})),
   row('piano-memory-master','piano','Melody Memory Master','Complete all nine Piano Lab melodies from memory.',250,'Piano phoenix companion'),
   ...LESSONS.map(([id,title,description])=>row('classroom-'+id,'classroom',title,description)),
@@ -105,6 +114,9 @@
    const progress=saved?.progress||0;
    return {progress,target:def.target,progressLabel:progress+' / '+def.target+(def.id==='fishing-three-meters'?' time signatures':def.id.endsWith('species')?' kinds of fish':' catches')};
   }
+  if(def.tier&&def.category==='dance'){const progress=[...events].filter(id=>id.startsWith('dance-stage:'+def.tier+':')).length;return {progress,target:10,progressLabel:progress+' / 10 stages passed'};}
+  if(def.id==='dance-song-collector'){const progress=[...events].filter(id=>id.startsWith('dance-song:')).length;return {progress,target:10,progressLabel:progress+' / 10 songs unlocked'};}
+  if(def.id==='piano-twelve-scales'||def.id==='piano-all-scales'){const known=['c d-flat d e-flat e f f-sharp g a-flat a b-flat b'.split(' ').map(key=>key+'-major'),'c c-sharp d e-flat e f f-sharp g g-sharp a b-flat b'.split(' ').map(key=>key+'-minor')].flat(),progress=known.filter(id=>events.has('quest:piano-scale:'+id)).length,target=def.id==='piano-all-scales'?24:12;return {progress:Math.min(target,progress),target,progressLabel:progress+' / '+target+' scales completed'};}
   if(def.id==='piano-memory-master'){
    const progress=MEMORIES.filter(id=>events.has('quest:piano-memory:'+id)).length;
    return {progress,target:MEMORIES.length,progressLabel:progress+' / '+MEMORIES.length+' melodies played from memory'};

@@ -3,6 +3,7 @@
 Uses disposable browser profiles and the actual published world project.
 Requires Python Playwright and Chromium; no accounts or external services.
 """
+from settings_menu_helpers import settings_page
 import functools
 from http.server import SimpleHTTPRequestHandler, ThreadingHTTPServer
 from pathlib import Path
@@ -106,7 +107,7 @@ class CollisionIntegrationTests(unittest.TestCase):
         self.assertTrue(self.page.evaluate('CodaArcadeQA.walkable(1205,505)'))
 
     def test_fullscreen_keeps_collision_controls_and_map_in_the_same_view(self):
-        open_settings(self.page);self.page.locator('#fs').click();close_settings(self.page)
+        settings_page(self.page, 'screen');self.page.locator('#fs').click();close_settings(self.page)
         self.page.wait_for_function('document.fullscreenElement')
         self.open_collision()
         self.assertTrue(self.page.evaluate('document.fullscreenElement.contains(assetStudio)'),

@@ -1,4 +1,5 @@
 """Teach and answer the real classroom lessons, including saved/mobile flows."""
+from classroom_menu_helpers import choose_classroom_lesson
 import functools
 from http.server import SimpleHTTPRequestHandler,ThreadingHTTPServer
 from pathlib import Path
@@ -18,7 +19,7 @@ class Handler(SimpleHTTPRequestHandler):
         html='''<!doctype html><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">
 <link rel="stylesheet" href="/music-classroom.css"><link rel="stylesheet" href="/classroom-tutorials.css">
 <button id="enter">Classroom</button><section id="room" hidden></section>
-<script src="/character-renderer.js"></script><link rel="stylesheet" href="/music-notation.css"><script src="/music-notation.js"></script><link rel="stylesheet" href="/time-signature-lesson.css"><script src="/time-signature-lesson.js"></script><link rel="stylesheet" href="/classroom-quiz.css"><script src="/classroom-quiz-pool.js"></script><script src="/classroom-quiz.js"></script><script src="/classroom-tutorials.js"></script><script src="/finger-follow.js"></script><script src="/cave-camera.js"></script><script src="/music-classroom.js"></script>
+<script src="/character-renderer.js"></script><link rel="stylesheet" href="/music-notation.css"><script src="/music-notation.js"></script><link rel="stylesheet" href="/time-signature-lesson.css"><script src="/time-signature-lesson.js"></script><link rel="stylesheet" href="/classroom-quiz.css"><script src="/classroom-quiz-pool.js"></script><script src="/classroom-quiz.js"></script><script src="/classroom-tutorials.js"></script><script src="/finger-follow.js"></script><script src="/cave-camera.js"></script><link rel="stylesheet" href="/classroom-menus.css"><script src="/classroom-menus.js"></script><script src="/music-classroom.js"></script>
 <script>window.writeFail=false;window.writeFailLesson=false;window.writeFailQuiz=false;window.rewards=[];window.calls=[];
 const storage={getItem:key=>localStorage.getItem(key),setItem:(key,value)=>{if(writeFail||(writeFailLesson&&key==='codaClassroomLessonsV1')||(writeFailQuiz&&key==='codaClassroomQuizzesV1'))throw Error('quota');localStorage.setItem(key,value);}};
 window.roomUI=createCodaMusicClassroom({host:room,renderer:createCodaCharacterRenderer(),storage,onTutorialComplete:(id,details)=>{calls.push({id,details});const claimed=JSON.parse(localStorage.getItem('fixtureLessonClaims')||'[]');if(claimed.includes(id))return {ok:true,alreadyAwarded:true,amount:0};claimed.push(id);localStorage.setItem('fixtureLessonClaims',JSON.stringify(claimed));rewards.push({id,amount:50});return {ok:true,amount:50};}});enter.onclick=()=>roomUI.open();</script>'''
@@ -45,7 +46,7 @@ class ClassroomTutorialTests(unittest.TestCase):
     def open_lesson(self,id):
         if self.page.locator('#classroomAllLessons').is_visible():self.page.locator('#classroomAllLessons').click()
         if not self.page.locator('#classroomStart').is_visible():self.page.evaluate("roomUI.selectTopic('welcome',true)")
-        self.page.locator('[data-start-lesson="'+id+'"]').click()
+        choose_classroom_lesson(self.page, id)
     def state(self):return self.page.evaluate('roomUI.getState().tutorials')
     def try_step(self):
         finish_note_reminders(self.page)

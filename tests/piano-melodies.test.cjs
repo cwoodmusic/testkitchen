@@ -10,8 +10,8 @@ test('all nine familiar melody IDs retain complete written measures and immutabl
   assert.deepEqual(lesson.notes,lesson.events.filter(event=>!event.rest).map(event=>event.midi-60));
   assert.deepEqual(lesson.events.filter(event=>!event.rest).map(event=>event.pitchIndex),lesson.notes.map((_,index)=>index));
   assert.ok(lesson.events.filter(event=>event.rest).every(event=>event.midi===null&&event.pitchIndex===null),'Rests never become pitch targets');
-  assert.ok(lesson.range.max-lesson.range.min<=21,lesson.id+' fits a 22-semitone floor register');
-  assert.ok(lesson.floorOffsets.every(offset=>Number.isInteger(offset)&&offset>=0&&offset<=21));
+  assert.ok(lesson.range.min>=60&&lesson.range.max<=83,lesson.id+' fits a 22-semitone floor register');
+  assert.ok(lesson.floorOffsets.every(offset=>Number.isInteger(offset)&&offset>=0&&offset<=23));
   assert.deepEqual(lesson.floorOffsets.map(offset=>offset+lesson.floorBaseMidi),lesson.events.filter(event=>!event.rest).map(event=>event.midi));
   assert.ok(lesson.notes.length>=8);assert.doesNotMatch(lesson.description,/\b[A-G][0-9]\b/);
  }
@@ -19,11 +19,11 @@ test('all nine familiar melody IDs retain complete written measures and immutabl
 
 test('Frère Jacques has both low closing bell pitches and its real quarter/eighth/half rhythm',()=>{
  const lesson=lessonFor('frere-jacques');
- assert.deepEqual(lesson.notes.slice(-6),[0,-5,0,0,-5,0]);
- assert.deepEqual(lesson.events.filter(event=>event.bar>=6).map(event=>event.midi),[60,55,60,60,55,60]);
+ assert.deepEqual(lesson.notes.slice(-6),[12,7,12,12,7,12]);
+ assert.deepEqual(lesson.events.filter(event=>event.bar>=6).map(event=>event.midi),[72,67,72,72,67,72]);
  assert.deepEqual(lesson.events.filter(event=>event.bar===4).map(event=>event.beats),[.5,.5,.5,.5,1,1]);
  assert.deepEqual(lesson.events.filter(event=>event.bar===6).map(event=>event.beats),[1,1,2]);
- assert.equal(lesson.range.min,55);assert.equal(lesson.range.max,69);assert.equal(lesson.floorBaseMidi,48);assert.equal(lesson.floorOctave,3);assert.deepEqual(lesson.floorOffsets.slice(-6),[12,7,12,12,7,12]);
+ assert.equal(lesson.range.min,67);assert.equal(lesson.range.max,81);assert.equal(lesson.floorBaseMidi,60);assert.equal(lesson.floorOctave,4);assert.deepEqual(lesson.floorOffsets.slice(-6),[12,7,12,12,7,12]);
 });
 
 test('compound Row Your Boat and the other familiar openings have their distinctive written rhythms',()=>{

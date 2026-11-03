@@ -1,4 +1,5 @@
 """Invite an original visitor through the physical shop and normal entrance."""
+from shop_menu_helpers import browse_shop, close_shop
 import importlib.util
 import math
 from pathlib import Path
@@ -38,7 +39,7 @@ class NPCVisitorsWorldTests(_world.WorldBrowserCase):
         }''')
         self.load();advance_world(self.page,96);self.assertEqual(self.wallet()['balance'],6150)
         open_destination(self.page,'shop')
-        self.page.get_by_role('button',name='Shop visitors',exact=True).click()
+        browse_shop(self.page,'visitor')
         card=self.page.locator('[data-shop-item="visitor-vee-jay"]')
         self.assertIn('6000',card.inner_text());card.get_by_role('button').click();advance_world(self.page,32)
         self.assertEqual(self.wallet()['balance'],150)
@@ -46,7 +47,7 @@ class NPCVisitorsWorldTests(_world.WorldBrowserCase):
         self.assertTrue(card.get_by_role('button').is_disabled())
         self.assertEqual(self.page.evaluate('CodaArcadeQA.characters().player.appearance.form'),'human','An invitation never equips an avatar transformation')
         self.assertTrue(self.visitor()['hidden'],'Opening the shop pauses physical visitor arrivals')
-        self.page.keyboard.press('Escape');advance_world(self.page,32)
+        close_shop(self.page);advance_world(self.page,32)
         self.assertFalse(self.page.locator('#panel').is_visible())
         self.assertTrue(self.page.evaluate("CodaArcadeQA.findMusician('vee-jay')"))
         for _ in range(240):
@@ -61,9 +62,9 @@ class NPCVisitorsWorldTests(_world.WorldBrowserCase):
         choices=self.page.locator('.musician-choices')
         self.assertEqual(choices.get_by_role('button',name='mission',exact=False).count(),0)
         self.assertEqual(choices.get_by_role('button',name='music question',exact=False).count(),0)
-        choices.get_by_role('button',name='Tell me about your music',exact=True).click()
-        self.assertIn('musical texture',self.page.locator('#words').inner_text())
-        self.assertIn('Original Coda Arcade character',self.page.locator('#dialog small').inner_text())
+        choices.get_by_role('button',name='Advice',exact=True).click()
+        self.assertIn('Add a quiet bass line',self.page.locator('#words').inner_text())
+        self.assertEqual(self.page.locator('#dialog small').count(),0)
         self.page.screenshot(path='/tmp/coda-tv-visitor42-phone.png')
         self.page.keyboard.press('Escape');advance_world(self.page,32)
         self.assertFalse(self.page.locator('#dialog').is_visible())

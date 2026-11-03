@@ -1,0 +1,24 @@
+{
+  "description": "Arcade-style rounded-angular fishing biome screen, with open water corridors for NES-style screen-edge travel. Runtime characters, boats and fish remain separate.",
+  "source": "assets/world/source/glowstone-narrows-source.png",
+  "sourceSize": [
+    1591,
+    988
+  ],
+  "output": "assets/world/fishing/glowstone-narrows.png",
+  "outputSize": [
+    1592,
+    988
+  ],
+  "logicalWorldSize": [
+    1000,
+    620
+  ],
+  "exits": [
+    "north",
+    "east"
+  ],
+  "normalization": "Full-frame Canvas drawImage, imageSmoothingEnabled=false, preserving room-artwork native dimensions.",
+  "sourceSha256": "a6c00f338e53aae209465c1ed5b9905798965c8e9a7b4d0e17b176370fe04121",
+  "outputSha256": "33c5dddac18abfdb78484af1cf98ccd0fc7010894c93a532fe9fd75e6978972a"
+}

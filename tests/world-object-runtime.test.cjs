@@ -85,6 +85,43 @@ test('translated, independently resized and rotated cabinets move game and NPC a
   near(live.npcY-live.y,0,'rotated approach has no remaining vertical offset');
 });
 
+test('asset flips reflect cabinet gameplay and approach points around the animated centre',()=>{
+  const {catalog,runtime,games,lift,animate}=fixture();
+  const part=catalog.find(p=>p.gameIndex===2),[x,y,w,h]=part.bounds;
+  const asset=lift(part.name,{x:1200,y:600,w:w*2,h:h*.5,rotation:30});
+  animate({dx:7,dy:-9,rot:Math.PI/3,scale:1.5});
+  // The animated quarter turn maps the horizontal source basis downward and
+  // the vertical basis leftward. Mirroring reverses the corresponding basis.
+  const centre={x:1207,y:591};
+  for(const [flipX,flipY]of [[false,false],[true,false],[false,true],[true,true]]){
+    asset.flipX=flipX;asset.flipY=flipY;
+    const state=runtime.state(part.name),pivot=runtime.point(state,x+w/2,y+h/2);
+    near(pivot.x,centre.x,'mirroring preserves the animated centre X');
+    near(pivot.y,centre.y,'mirroring preserves the animated centre Y');
+    const expected=(px,py)=>({
+      x:centre.x+(flipY?1:-1)*.75*(py-y-h/2),
+      y:centre.y+(flipX?-1:1)*3*(px-x-w/2)
+    });
+    const live=runtime.games(games).find(game=>game.index===2);
+    const game=expected(games[2].x,games[2].y),approach=expected(games[2].x,323);
+    near(live.x,game.x,'mirrored gameplay X');near(live.y,game.y,'mirrored gameplay Y');
+    near(live.npcX,approach.x,'mirrored approach X');near(live.npcY,approach.y,'mirrored approach Y');
+    assert.equal(live.name,games[2].name);assert.equal(live.url,games[2].url);
+  }
+});
+
+test('turning each flip off restores the original linked artwork anchors',()=>{
+  const {runtime,games,lift}=fixture();
+  const asset=lift('cabinet_music_triad',{x:1020,y:520,rotation:27});
+  const original=JSON.parse(JSON.stringify(runtime.games(games)));
+  asset.flipX=true;asset.flipY=true;
+  assert.notDeepEqual(JSON.parse(JSON.stringify(runtime.games(games))),original);
+  asset.flipX=false;asset.flipY=false;
+  assert.deepEqual(JSON.parse(JSON.stringify(runtime.games(games))),original);
+  delete asset.flipX;delete asset.flipY;
+  assert.deepEqual(JSON.parse(JSON.stringify(runtime.games(games))),original,'Old projects with no flip fields retain their anchors');
+});
+
 test('hidden cabinets stop offering their game and restoring originals restores original anchors',()=>{
   const {assets,runtime,games,lift}=fixture();
   const asset=lift('cabinet_music_triad',{x:1150,y:650,visible:false});

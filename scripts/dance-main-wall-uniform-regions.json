@@ -1,0 +1,20 @@
+{
+  "description": "Use a single masonry grid across the south-facing DJ wall, preserving opaque original plaques and light fixtures while rebuilding their surrounding masonry and glow. Caps, rails and floors remain unchanged.",
+  "worldSize": [1672,941],
+  "source": "assets/environment/source/dance-main-wall-uniform.png",
+  "sourceSize": [2172,724],
+  "sourceRect": [0,23,2172,678],
+  "sourcePlacement": [236,505,500,155],
+  "output": "assets/environment/v1/empty-arcade.png",
+  "preserveProject": true,
+  "polygons": [
+    [[273,526],[724,526],[724,643],[273,643]]
+  ],
+  "protectedPolygons": [
+    [[604,533],[622,533],[622,566],[604,566]],
+    [[610,526],[616,526],[616,538],[610,538]],
+    [[498,532],[519,532],[519,546],[498,546]],
+    [[631,569],[668,569],[668,616],[631,616]],
+    [[682,569],[718,569],[718,616],[682,616]]
+  ]
+}

@@ -126,6 +126,7 @@ class FishingPerfectBarsTests(_tempo._upgrade._fish._world.WorldBrowserCase):
         self.page.screenshot(path='/tmp/fishing47-perfect-counter-phone.png')
         self.page.locator('#fishingCancel').click(force=True)
         self.fishing_action('#fishingPractice')
+        self.page.locator('#fishingPracticeNext').click(force=True)
         self.page.locator('#fishingPracticeStart').click(force=True)
         self.page.clock.run_for(32)
         initial = self.state()['challenge']

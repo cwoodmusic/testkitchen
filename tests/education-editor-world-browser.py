@@ -1,4 +1,5 @@
 from exam_study_helpers import finish_note_reminders, finish_exam_study
+from classroom_menu_helpers import choose_classroom_lesson, choose_classroom_exam
 """Author content in the real developer console, then use it in Haydn's room.
 
 The normal arcade, developer controls, content persistence, notation, classroom,
@@ -164,7 +165,7 @@ class EducationEditorWorldTests(_world.WorldBrowserCase):
         self.load()
         self.assertEqual(self.document(), saved, 'Every authored picture and follow-up survives a reload.')
         self.talk_to_haydn()
-        self.page.locator('[data-start-lesson="note-naming"]').click()
+        choose_classroom_lesson(self.page, 'note-naming')
         self.assertIn('Our editable pitch course', self.page.locator('.classroom-learning-paths').inner_text())
         self.assertIn('Learn these keys with our own examples.', self.page.locator('.classroom-learning-paths').inner_text())
         self.assertIn('Our first piano chapter', self.page.locator('[data-path-section="alphabet-and-keys"]').inner_text())
@@ -275,7 +276,7 @@ class EducationEditorWorldTests(_world.WorldBrowserCase):
         self.load()
         canonical_before = self.page.evaluate('localStorage.getItem(CodaFinalExam.KEY)')
         self.talk_to_haydn()
-        self.page.locator('#classroomFinalExam').click()
+        choose_classroom_exam(self.page)
         self.page.locator('[data-exam-start]').click()
         self.assertTrue(self.exam_state()['custom'])
         self.assertEqual(self.exam_state()['total'], 40)
@@ -324,7 +325,7 @@ class EducationEditorWorldTests(_world.WorldBrowserCase):
           lessons:localStorage.getItem(CodaClassroomTutorials.KEY),
           quizzes:localStorage.getItem(CodaClassroomQuiz.KEY)})''')
         self.talk_to_haydn()
-        self.page.locator('[data-start-lesson="note-naming"]').click()
+        choose_classroom_lesson(self.page, 'note-naming')
         self.page.locator('[data-path-practice]').click()
         tutorial = self.page.locator('.classroom-tutorial')
         self.assertIn('Teacher says: find C beside the two black keys.', tutorial.inner_text())

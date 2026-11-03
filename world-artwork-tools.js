@@ -6,8 +6,9 @@
   let editor=null;const composed=new WeakMap(),fragments=new WeakMap(),effectClips=new WeakMap();
   const rooms=()=>api.getRoomEditors?.()||[],assets=()=>api.getAssets(),originalId=name=>'object.'+name;
   function texture(id){return api.getRootData()[id];}
+  const renderTexture=(id,patch)=>patch?(api.resolveTexture?.(id,patch)||patch):patch;
   function compose(id,source,patch){
-   patch=patch||texture(id);if(!source||!patch)return source;
+   patch=renderTexture(id,patch||texture(id));if(!source||!patch)return source;
    const stamp=patch;let entries=composed.get(source);if(!entries){entries=new Map();composed.set(source,entries);}const cached=entries.get(id);
    if(cached?.stamp===stamp)return cached.canvas;
    const width=source.naturalWidth||source.width,height=source.naturalHeight||source.height;
@@ -62,7 +63,7 @@
    editor=pixels.mount({host,getTargets,getSource,getData,onChange:applyData,canEdit:api.canEdit,hasAssetPreview,drawAssetPreview,onUndo:api.onUndo,onRedo:api.onRedo,getHistory:api.getHistory,onExit:api.onExit,fitOnFirstExpand:true,initialId:'background.world'});return editor;
   }
   function fragment(source,x,y){
-   const patch=texture('background.world');if(!source||!patch)return source;
+   const patch=renderTexture('background.world',texture('background.world'));if(!source||!patch)return source;
    const stamp=patch,cached=fragments.get(source);if(cached?.stamp===stamp&&cached.x===x&&cached.y===y)return cached.canvas;
    const canvas=document.createElement('canvas');canvas.width=source.width;canvas.height=source.height;
    const context=canvas.getContext('2d',{willReadFrequently:true});context.drawImage(source,0,0);const image=context.getImageData(0,0,canvas.width,canvas.height),data=image.data;

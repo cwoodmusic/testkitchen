@@ -1,4 +1,4 @@
-.dance-rhythm-game{position:fixed;z-index:1300;left:50%;top:10px;transform:translateX(-50%);width:min(680px,calc(100vw - 20px));max-height:calc(100dvh - 20px);overflow:auto;box-sizing:border-box;padding:12px 14px;border:2px solid #a1e6e0;border-radius:15px;background:#17223af2;box-shadow:0 8px 35px #050b25a8,0 0 22px #61b9dc42;color:#f5f3ff;font:500 17px/1.4 system-ui,sans-serif;touch-action:manipulation;user-select:none;-webkit-user-select:none;-webkit-touch-callout:none}
+.dance-rhythm-game{position:fixed;z-index:1300;left:50%;top:10px;transform:translateX(-50%);width:min(900px,calc(100vw - 20px));max-height:calc(100dvh - 20px);overflow:auto;box-sizing:border-box;padding:12px 14px;border:2px solid #a1e6e0;border-radius:15px;background:#17223af2;box-shadow:0 8px 35px #050b25a8,0 0 22px #61b9dc42;color:#f5f3ff;font:500 17px/1.4 system-ui,sans-serif;touch-action:manipulation;user-select:none;-webkit-user-select:none;-webkit-touch-callout:none}
 .dance-rhythm-game[hidden]{display:none!important}
 .dance-rhythm-game *{box-sizing:border-box}
 .dance-rhythm-game button{font:700 18px/1.25 system-ui,sans-serif;min-height:44px;border:1px solid #a6d7e0;border-radius:9px;padding:9px 15px;background:#304b6e;color:#fff;cursor:pointer;touch-action:manipulation;user-select:none;-webkit-user-select:none;-webkit-touch-callout:none}
@@ -7,7 +7,7 @@
 .dance-rhythm-help{font-size:18px;margin:12px 0}.dance-rhythm-small{font-size:15px;color:#d4ddea;margin:12px 0 0}
 .dance-rhythm-modes{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:10px}.dance-rhythm-modes button{display:flex;flex-direction:column;align-items:center;gap:7px;padding:14px 10px}.dance-rhythm-modes strong{font-size:22px}.dance-rhythm-modes span{font-size:15px;font-weight:400}
 .dance-rhythm-stats{display:flex;justify-content:space-between;gap:8px;font-size:15px;color:#d3e7ee;margin:2px 0 5px}.dance-rhythm-stats span:last-child{text-transform:capitalize}
-.dance-rhythm-score{position:relative;border:1px solid #718ca6;border-radius:10px;overflow:hidden;background:#101a2c}.dance-rhythm-staff{display:block;width:100%;height:auto;max-height:177px}
+.dance-rhythm-score{position:relative;border:1px solid #718ca6;border-radius:10px;overflow:hidden;background:#101a2c}.dance-rhythm-staff{display:block;width:100%;height:auto;max-height:220px}
 .dance-rhythm-count{position:absolute;inset:0;display:flex;align-items:center;justify-content:center;color:#fff8bddd;font-size:clamp(55px,10vw,83px);font-weight:900;text-shadow:0 0 20px #41399580;pointer-events:none}.dance-rhythm-count[hidden]{display:none}
 .dance-rhythm-status{display:flex;align-items:center;gap:12px;margin-top:6px}.dance-rhythm-feedback{flex:1;min-width:0;font-size:18px;font-weight:700;margin:0;min-height:27px;color:#f3eab8}.dance-rhythm-feedback[data-judgment=hit]{color:#a3ffd1}.dance-rhythm-feedback[data-judgment=miss]{color:#ffc0cb}
 .dance-rhythm-status progress{width:110px;max-width:25%;height:10px;accent-color:#78e8c8}
@@ -23,3 +23,14 @@
 /* The game supplies its own arrow buttons while the floor remains visible. */
 .dance-floor-open #codaTouchControls{display:none!important}
 .dance-floor-open>footer{visibility:hidden}
+
+.dance-rhythm-options{display:flex;flex-wrap:wrap;gap:8px 20px}.dance-rhythm-options label{min-height:44px;display:flex;align-items:center;gap:7px}
+
+/* Keep the real dance floor visible through the active score panel. */
+.dance-rhythm-game.is-playing{background:rgba(12,24,40,.34);box-shadow:0 8px 30px #050b2540}
+.dance-rhythm-game.is-playing .dance-rhythm-score{background:transparent;border-color:#a2d2e690}
+.dance-rhythm-game.is-playing .dance-rhythm-stats,.dance-rhythm-game.is-playing .dance-rhythm-feedback{color:#fff;text-shadow:0 1px 3px #000,0 0 5px #000}
+
+.dance-stage-list{display:grid;gap:8px;margin-top:12px}.dance-stage-row{display:flex;align-items:center;gap:8px;flex-wrap:wrap}.dance-stage-row>[data-dance-stage]{flex:1;text-align:left;min-width:180px;font-size:16px}.dance-rhythm-game button:disabled{opacity:.45;cursor:not-allowed}.dance-song-earned{font-size:12px;color:#baffda}.dance-rhythm-modes button[aria-pressed=true]{border:2px solid #ffe79b}.dance-rhythm-game.is-watching>.dance-rhythm-controls{display:none}.dance-rhythm-game.is-watching{grid-template-columns:minmax(0,1fr)}
+
+.dance-rhythm-game.is-watching .dance-rhythm-score,.dance-rhythm-game.is-watching .dance-rhythm-feedback{display:none}.dance-rhythm-game.is-watching .dance-rhythm-options{grid-row:auto}

@@ -1,8 +1,10 @@
+from profile_menu_helpers import show_profile_page
 """Scale memory rewards and key lessons in the assembled, profile-aware arcade.
 
 All input uses the real room controls in disposable guest browser contexts.
 External accounts and services are blocked by the shared world fixture.
 """
+from classroom_menu_helpers import choose_classroom_lesson
 import importlib.util
 from pathlib import Path
 import sys
@@ -44,12 +46,16 @@ class ScaleKeyWorldTests(_world.WorldBrowserCase):
         self.walk_piano_floor(x,y)
         self.assertEqual(self.page.evaluate('CodaArcadeQA.piano().floorNote'),midi)
 
-    def piano_menu(self,view):
+    def piano_menu(self,view,challenge=None):
         if self.page.locator('#pianoDialogueBackdrop').is_visible():
             self.page.locator('#pianoDialogueClose').click()
         if not self.page.evaluate('CodaArcadeQA.piano().menuOpen'):
             self.page.locator('#pianoMenuButton').click()
         self.page.locator('[data-piano-view="'+view+'"]').click()
+        if view=='games' and challenge:
+            card=self.page.locator(f'[data-piano-challenge="{challenge}"]')
+            if not card.is_visible():self.page.locator('#pianoChallengeBack').click()
+            card.click()
 
     def play_pitches(self,pitches):
         self.piano_menu('keyboard')
@@ -61,16 +67,14 @@ class ScaleKeyWorldTests(_world.WorldBrowserCase):
         }}''',pitches)
 
     def start_scale(self,identifier):
-        self.piano_menu('games')
+        self.piano_menu('games','scales')
         self.page.locator('#pianoScale').select_option(identifier)
         self.page.locator('#pianoStartScale').click()
-        self.page.locator('[data-piano-dialogue-action="play"]').click()
         return self.page.evaluate('CodaArcadeQA.piano().lessonPitches')
 
     def start_memory(self):
-        self.piano_menu('games')
-        self.page.locator('#pianoMemoryStart').click()
-        self.page.locator('[data-piano-dialogue-action="play"]').click()
+        self.piano_menu('games','scales')
+        self.page.locator('#pianoScaleMemory').click()
 
     def capture_valid(self):
         captured=self.page.evaluate('CodaClassroomProfileData.capture(localStorage)')
@@ -89,7 +93,7 @@ class ScaleKeyWorldTests(_world.WorldBrowserCase):
         self.assertFalse(self.page.evaluate('CodaArcadeQA.piano().challengeRun.finished'))
         self.play_pitches(pitches[8:])
         self.assertEqual(self.page.evaluate('CodaArcadeQA.notes().balance'),185)
-        self.assertEqual(self.page.evaluate('CodaArcadeQA.progression().xp'),100)
+        self.assertEqual(self.page.evaluate('CodaArcadeQA.progression().xp'),150)
         self.assertGreater(self.page.evaluate('CodaArcadeQA.piano().voiceCount'),0)
         self.start_memory()
         self.assertTrue(self.page.evaluate('CodaArcadeQA.piano().wallStaff.answerHidden'))
@@ -101,7 +105,7 @@ class ScaleKeyWorldTests(_world.WorldBrowserCase):
         self.assertEqual(self.page.evaluate('CodaArcadeQA.piano().challengeRun.mistakes'),1)
         self.play_pitches(pitches)
         self.assertEqual(self.page.evaluate('CodaArcadeQA.notes().balance'),245)
-        self.assertEqual(self.page.evaluate('CodaArcadeQA.progression().xp'),200)
+        self.assertEqual(self.page.evaluate('CodaArcadeQA.progression().xp'),250)
         captured=self.capture_valid()
         self.assertIn('piano-scale:c-major',captured['piano']['completed'])
         self.assertIn('piano-scale-memory:c-major',captured['piano']['completed'])
@@ -109,7 +113,7 @@ class ScaleKeyWorldTests(_world.WorldBrowserCase):
         self.load();enter_room(self.page,'piano')
         self.start_scale('c-major');self.start_memory();self.play_pitches(pitches)
         self.assertEqual(self.page.evaluate('CodaArcadeQA.notes().balance'),245)
-        self.assertEqual(self.page.evaluate('CodaArcadeQA.progression().xp'),200)
+        self.assertEqual(self.page.evaluate('CodaArcadeQA.progression().xp'),250)
         self.capture_valid()
 
     def test_published_collision_and_layers_allow_every_key_and_the_entire_high_b_scale(self):
@@ -132,7 +136,7 @@ class ScaleKeyWorldTests(_world.WorldBrowserCase):
             if index==7:
                 self.assertNotIn('piano-scale:b-major',self.page.evaluate('CodaArcadeQA.piano().completed'))
         self.assertEqual(self.page.evaluate('CodaArcadeQA.notes().balance'),185)
-        self.assertEqual(self.page.evaluate('CodaArcadeQA.progression().xp'),100)
+        self.assertEqual(self.page.evaluate('CodaArcadeQA.progression().xp'),150)
         self.assertGreater(self.page.evaluate('CodaArcadeQA.piano().voiceCount'),0)
         self.capture_valid()
         self.piano_menu('games');self.page.locator('#pianoFreePlay').click()
@@ -151,7 +155,7 @@ class ScaleKeyWorldTests(_world.WorldBrowserCase):
         self.page.mouse.click(point['x'],point['y'])
         self.page.wait_for_function('CodaArcadeQA.classroom().player.y<420')
         self.page.locator('#classroomCanvas').focus();self.page.keyboard.press('e')
-        self.page.locator('[data-start-lesson="major-minor-keys"]').click()
+        choose_classroom_lesson(self.page, 'major-minor-keys')
 
     def complete_key_steps(self):
         for index,answer in enumerate(KEY_ANSWERS):
@@ -177,6 +181,7 @@ class ScaleKeyWorldTests(_world.WorldBrowserCase):
         self.complete_key_steps();answer_quiz(self.page,'major-minor-keys')
         self.assertEqual(self.page.evaluate('CodaArcadeQA.progression().xp'),50)
         self.load();self.page.locator('#levelBtn').click()
+        show_profile_page(self.page, 'learning')
         self.assertEqual(self.page.locator('.profile-lessons p').count(),6)
         self.assertIn('Major & minor keys',self.page.locator('.profile-lessons').inner_text())
         self.assertEqual(self.page.locator('.profile-lesson-done').count(),1)

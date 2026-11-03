@@ -37,6 +37,13 @@ class BoutiqueLocksTests(_world.WorldBrowserCase):
         self.page.wait_for_function('window.__lastBoutiquePreview')
 
     def browse(self,category,query=''):
+        group = {'Hats':'extras','Glasses':'extras','Accessories':'extras','Emotes':'extras',
+                 'Shoes':'clothes','Outfits':'clothes','Hair':'hair','Pets':'pets','Transformations':'pets'}[category]
+        menu = self.page.locator('.boutique-menu')
+        if menu.get_attribute('data-boutique-menu') != group:
+            back = self.page.locator('[data-boutique-back]')
+            if back.is_visible(): back.click()
+            self.page.locator('[data-boutique-page="'+group+'"]').click()
         self.page.get_by_role('button',name='Browse '+category,exact=True).click()
         self.page.get_by_label('Search wardrobe',exact=True).fill(query)
 
@@ -79,6 +86,8 @@ class BoutiqueLocksTests(_world.WorldBrowserCase):
         self.assertTrue(self.page.locator('[data-item-id="witch"]').is_disabled())
         self.page.get_by_role('button',name='Cancel',exact=True).click()
         open_destination(self.page,'shop')
+        self.page.locator('[data-shop-page="categories"]').click()
+        self.page.locator('[data-shop-category="all"]').click()
         self.page.locator('[data-shop-item="witch"] button').click()
         self.assertEqual(self.page.evaluate('CodaArcadeQA.notes().balance'),70)
         self.assertIn('witch',self.page.evaluate('CodaArcadeQA.notes().owned'))
@@ -86,6 +95,7 @@ class BoutiqueLocksTests(_world.WorldBrowserCase):
         self.assertFalse(self.page.locator('[data-item-id="witch"]').is_disabled())
         self.assertFalse(self.page.locator('#boutique-headwear option[value="witch"]').evaluate('(x)=>x.disabled'))
         self.page.locator('[data-item-id="witch"]').click()
+        self.browse('Glasses')
         self.page.get_by_label('Glasses',exact=True).select_option('sunglasses')
         self.browse('Shoes');self.browse('Hats','witch')
         self.assertEqual(self.page.get_by_label('Hats',exact=True).input_value(),'witch')
@@ -99,7 +109,9 @@ class BoutiqueLocksTests(_world.WorldBrowserCase):
 
     def test_achievement_and_level_unlocks_refresh_the_open_boutique(self):
         self.wardrobe()
+        self.browse('Hats')
         self.page.get_by_label('Hats',exact=True).select_option('cap')
+        self.browse('Glasses')
         self.page.get_by_label('Glasses',exact=True).select_option('sunglasses')
         self.browse('Hats','triadchampion')
         self.assertTrue(self.page.locator('[data-item-id="triadchampion"]').is_disabled())
@@ -135,6 +147,8 @@ class BoutiqueLocksTests(_world.WorldBrowserCase):
                 self.assertIn('buy with Notes',tile.locator('small').inner_text())
         self.page.get_by_role('button',name='Cancel',exact=True).click()
         open_destination(self.page,'shop')
+        self.page.locator('[data-shop-page="categories"]').click()
+        self.page.locator('[data-shop-category="all"]').click()
         for item in ['shutter','rollerskates','boombox']:
             card=self.page.locator('[data-shop-item="'+item+'"]')
             self.assertEqual(card.count(),1)
@@ -202,6 +216,8 @@ class BoutiqueLocksTests(_world.WorldBrowserCase):
 
     def test_notes_shop_only_lists_buyable_stock_and_keeps_expensive_goals(self):
         open_destination(self.page,'shop')
+        self.page.locator('[data-shop-page="categories"]').click()
+        self.page.locator('[data-shop-category="all"]').click()
         stock=self.page.evaluate('CodaNotesShop.stockForCatalog(createCodaCharacterRenderer().catalog).filter(x=>Number.isSafeInteger(x.price)&&x.price>0).map(x=>x.id)')
         visible=self.page.locator('[data-shop-item]').evaluate_all('(xs)=>xs.map(x=>x.dataset.shopItem)')
         self.assertCountEqual(visible,stock)
@@ -210,7 +226,8 @@ class BoutiqueLocksTests(_world.WorldBrowserCase):
             self.assertNotIn(reward,visible)
         alien=self.page.locator('[data-shop-item="alien"]')
         self.assertIn('12000 Notes',alien.inner_text());self.assertTrue(alien.locator('button').is_disabled())
-        self.page.locator('.notes-shop-categories').get_by_role('button',name='Shop big goals',exact=True).click()
+        self.page.locator('[data-shop-page="categories"]').click()
+        self.page.locator('[data-shop-category="premium"]').click()
         self.assertGreater(self.page.locator('[data-shop-item]').count(),0)
         self.assertTrue(self.page.locator('[data-shop-item="alien"]').is_visible())
         self.assertEqual(self.page.evaluate('CodaArcadeQA.notes().balance'),150)
@@ -222,6 +239,7 @@ class BoutiqueLocksTests(_world.WorldBrowserCase):
         self.page.locator('#devPlaytest').click()
         self.wardrobe()
         self.page.get_by_label('Customize',exact=True).select_option('miles')
+        self.browse('Hats')
         self.page.get_by_label('Hats',exact=True).select_option('crown')
         self.page.wait_for_function('window.__lastBoutiquePreview.headwear==="crown"')
         self.page.locator('#panelClose').focus();self.page.keyboard.press('F2')

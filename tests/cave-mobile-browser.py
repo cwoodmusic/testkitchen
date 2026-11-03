@@ -35,31 +35,51 @@ class CaveMobileTests(_fish._world.WorldBrowserCase):
         self.assertTrue(self.page.evaluate('p=>document.elementFromPoint(p.x,p.y)?.id==="fishingLakeCanvas"',point),
             'The actor should stay visible without a control covering its feet')
 
-    def test_mobile_view_is_close_full_height_and_keeps_actor_visible_after_rotation_phone(self):
-        self.enter()
-        for size in [{'width':390,'height':844},{'width':320,'height':780},{'width':844,'height':390}]:
+    def test_mobile_connected_world_fills_height_and_keeps_actor_visible_after_rotation_phone(self):
+        self.enter();saved=self.page.evaluate("localStorage.getItem('codaRhythmFishingV1')")
+        self.assertEqual(self.state()['screen']['id'],'lantern-lake',
+                         'Exercise the connected world that previously forced the cave to a short strip')
+        for size in [{'width':390,'height':844},{'width':360,'height':800},{'width':844,'height':390}]:
             self.page.set_viewport_size(size);self.page.clock.run_for(120)
             scene=self.page.locator('.fishing-cave-scene').bounding_box();canvas=self.page.locator('#fishingLakeCanvas').bounding_box()
-            self.assertGreater(scene['height'],size['height']*.58)
-            self.assertGreater(canvas['width']/1000*self.state()['camera']['zoom'],.7,
-                'Mobile characters must be larger than a shrunken whole-room image')
+            heading=self.page.locator('.fishing-heading').bounding_box()
+            self.assertGreater(scene['height'],size['height']*.75,
+                'The cave must fill the room below its header instead of leaving most of the phone blank')
+            self.assertGreaterEqual(scene['y'],heading['y']+heading['height']-1)
+            self.assertLessEqual(scene['y']+scene['height'],size['height']+1)
+            # Four border pixels plus at most one CSS pixel of clientWidth/
+            # clientHeight rounding are outside the drawable scene interior.
+            self.assertGreaterEqual(canvas['height'],scene['height']-5,
+                'The camera must cover the taller mobile scene with actual cave art')
+            self.assertGreaterEqual(canvas['width'],scene['width']-5)
+            self.assertEqual(self.state()['camera']['zoom'],1,
+                'The connected world retains its base zoom while the viewport scales the canvas to cover')
             self.assertAlmostEqual(canvas['width']/canvas['height'],1000/620,delta=.002)
             self.assertLessEqual(self.page.locator('#rhythmFishing').evaluate('node=>node.scrollWidth'),size['width'])
             self.assertFalse(self.page.locator('#fishingMeter').is_visible())
             self.assertTrue(self.page.locator('#fishingMenuButton').is_visible())
             direction=self.page.locator('.coda-joystick').bounding_box()
-            self.assertGreaterEqual(direction['width'],200 if size['width']>size['height'] else 216)
+            self.assertGreaterEqual(direction['width'],120)
             self.assertAlmostEqual(direction['height'],direction['width'],delta=1)
-            self.assertGreaterEqual(self.page.locator('.coda-joystick-thumb').bounding_box()['width'],88)
-            self.assertGreaterEqual(self.page.locator('.coda-touch-interact').bounding_box()['height'],104)
+            self.assertGreaterEqual(self.page.locator('.coda-joystick-thumb').bounding_box()['width'],44)
+            action=self.page.locator('.coda-touch-interact').bounding_box()
+            self.assertGreaterEqual(action['height'],44)
+            for control in [direction,action]:
+                self.assertGreaterEqual(control['x'],0);self.assertGreaterEqual(control['y'],0)
+                self.assertLessEqual(control['x']+control['width'],size['width'])
+                self.assertLessEqual(control['y']+control['height'],size['height'])
             self.assert_visible_actor('player')
-            self.page.screenshot(path='/tmp/coda-cave37-'+str(size['width'])+'.png')
-        self.page.screenshot(path='/tmp/coda-cave36-mobile.png')
+            self.assertEqual(self.page.evaluate("localStorage.getItem('codaRhythmFishingV1')"),saved)
+            self.page.screenshot(path='/tmp/coda-cave-mobile-fill-'+str(size['width'])+'.png')
 
     def test_close_view_boat_steering_and_pinch_are_correct_and_editor_stays_independent_phone(self):
-        self.enter();self.walk(218,380)
+        self.enter();pier=self.state()['boardingPoint'];self.walk(pier['x'],pier['y'])
         _fish.FishingWorldTests.fishing_action(self,'#fishingBoatBoard');self.page.clock.run_for(32)
-        self.assertEqual(self.state()['phase'],'explore');self.assert_visible_actor('boat')
+        self.assertEqual(self.state()['phase'],'explore')
+        # Row south past the pier piles before testing sideways touch steering.
+        self.page.locator('#fishingLakeCanvas').focus();self.page.keyboard.down('s')
+        self.page.clock.run_for(160);self.page.keyboard.up('s');self.page.clock.run_for(32)
+        self.assert_visible_actor('boat')
         before=self.state()['boat'];point={'id':1,**self.point(before['x']+28,before['y'])}
         client=self.context.new_cdp_session(self.page)
         client.send('Input.dispatchTouchEvent',{'type':'touchStart','touchPoints':[point]});self.page.clock.run_for(180)
@@ -87,8 +107,9 @@ class CaveMobileTests(_fish._world.WorldBrowserCase):
         self.page.locator('#fishingMenuButton').click();self.page.clock.run_for(32)
         self.assertTrue(self.state()['menuOpen']);self.assertFalse(self.page.evaluate('CodaArcadeQA.touch().visible'))
         stopped=self.state()['player'];self.page.clock.run_for(250);self.assertEqual(self.state()['player'],stopped)
-        self.assertTrue(self.page.locator('#fishingMeter').is_visible())
-        for selector in ['#fishingMenuClose','#fishingCollection','#fishingLakeAudio','#fishingPractice','#fishingMeter']:
+        self.assertFalse(self.page.locator('#fishingMeter').is_visible())
+        self.assertEqual(self.state()['meter'],'4/4','The current biome owns the encounter meter')
+        for selector in ['#fishingMenuClose','#fishingCollection','#fishingLakeAudio','#fishingPractice']:
             self.assertGreaterEqual(self.page.locator(selector).bounding_box()['height'],44)
         self.page.screenshot(path='/tmp/coda-fishing-menu42-390.png')
         self.page.keyboard.press('Escape');self.page.clock.run_for(64)

@@ -1,0 +1,97 @@
+{
+  "description": "Lantern Lake redrawn as orthographic SNES-era pixel art with a rectangular stone landing and a straight south-facing pier. No baked boat or actors.",
+  "source": "assets/world/source/snes-lantern-lake-source.png",
+  "sourceSize": [
+    1591,
+    989
+  ],
+  "output": "assets/world/rhythm-fishing-cave.png",
+  "outputSize": [
+    1592,
+    988
+  ],
+  "normalization": "Full-frame Canvas drawImage with imageSmoothingEnabled=false; native editor dimensions retained.",
+  "logicalWorldSize": [
+    1000,
+    620
+  ],
+  "geometryGuide": "assets/world/source/snes-lantern-lake-geometry-guide.png",
+  "landing": [
+    [
+      70,
+      235
+    ],
+    [
+      330,
+      235
+    ],
+    [
+      330,
+      355
+    ],
+    [
+      70,
+      355
+    ]
+  ],
+  "dock": [
+    [
+      220,
+      340
+    ],
+    [
+      320,
+      340
+    ],
+    [
+      320,
+      410
+    ],
+    [
+      220,
+      410
+    ]
+  ],
+  "boardingPoint": [
+    270,
+    395
+  ],
+  "boatBerth": [
+    270,
+    435
+  ],
+  "departureWater": [
+    [
+      220,
+      350
+    ],
+    [
+      400,
+      350
+    ],
+    [
+      400,
+      510
+    ],
+    [
+      220,
+      510
+    ]
+  ],
+  "waterPassages": {
+    "east": {
+      "y": [
+        300,
+        400
+      ]
+    },
+    "south": {
+      "x": [
+        500,
+        600
+      ]
+    }
+  },
+  "previousImageSha256": "eea6244151a75a73a4b357ed323fee2518d1f0cd5b91a5929521473b730b5ded",
+  "outputSha256": "42ed00c94b37fbe0c977ae05e35d8f8c08276bc99a4e99211d2fe1db6ef6b00f"
+}

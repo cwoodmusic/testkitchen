@@ -1,4 +1,6 @@
+from profile_menu_helpers import show_profile_page
 """The world trapdoor, real rhythm catches, and saved fishing rewards work together."""
+from classroom_menu_helpers import choose_classroom_lesson
 import importlib.util
 from pathlib import Path
 import sys
@@ -32,7 +34,7 @@ class FishingWorldTests(_world.WorldBrowserCase):
 
     def test_time_signature_lesson_awards_real_profile_xp_once(self):
         enter_room(self.page,'classroom')
-        self.page.locator('[data-start-lesson="time-signatures"]').click()
+        choose_classroom_lesson(self.page, 'time-signatures')
         steps=self.page.evaluate('CodaTimeSignatureLesson.STEPS')
         self.page.locator('[data-signature-answer="1"]').click()
         self.assertTrue(self.page.locator('#classroomBook [data-tutorial-next]').is_disabled())
@@ -52,6 +54,7 @@ class FishingWorldTests(_world.WorldBrowserCase):
         self.assertEqual(self.page.evaluate('CodaArcadeQA.progression().xp'),50)
         self.assertEqual(self.page.evaluate('CodaArcadeQA.notes().balance'),150)
         self.page.locator('#classroomClose').click();self.page.locator('#levelBtn').click()
+        show_profile_page(self.page, 'learning')
         self.assertIn('Time signatures · Finished',self.page.locator('.profile-lessons').inner_text())
         self.load()
         self.assertEqual(self.page.evaluate('CodaArcadeQA.progression().xp'),50)
@@ -129,7 +132,7 @@ class FishingWorldTests(_world.WorldBrowserCase):
     def board(self):
         if self.page.locator('#fishingBoatBoard').is_disabled():
             landing=self.state().get('shore',{}).get('spawn',{'x':135,'y':285});self.walk_to(landing['x'],landing['y'])
-        pier=self.state().get('boardingPoint',{'x':218,'y':380});self.walk_to(pier['x'],pier['y'])
+        pier=self.state().get('boardingPoint',{'x':270,'y':395});self.walk_to(pier['x'],pier['y'])
         self.assertFalse(self.page.locator('#fishingBoatBoard').is_disabled())
         self.fishing_action('#fishingBoatBoard');self.page.clock.run_for(40)
 

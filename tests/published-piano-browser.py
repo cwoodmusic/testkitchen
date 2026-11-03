@@ -149,7 +149,7 @@ class PublishedPianoTests(unittest.TestCase):
         self.assertEqual(self.project()['collision'], [])
         self.assertEqual(self.project()['strokes'], [])
 
-    def test_publishing_piano_keeps_the_unmentioned_cave_room_save(self):
+    def test_existing_cave_room_save_keeps_priority_over_published_room_defaults(self):
         cave = {'version': 1, 'assets': [], 'collision': [[2712, 0]],
                 'strokes': [{'tool': 'erase', 'size': 1, 'points': [[100, 100]]}], 'entities': {}}
         raw = json.dumps(cave, separators=(',', ':'))
