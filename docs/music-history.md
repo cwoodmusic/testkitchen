@@ -21,7 +21,7 @@ Quests repeat with increasing targets across five tiers; free play, practice
 catches, stale runs, repeated result messages, and clicking conversations do not
 complete quests.
 
-A completed quest unlocks one fact. The character's history prompt displays
+A completed quest unlocks one fact and shows an on-screen notice, even while its game is still open. The notice names the musician to return to. The character's history prompt displays
 **! New history fact**. Return to that character to learn it; the fact enters
 your pouch. Further clicks say there are no new facts rather than replaying
 old information. Complete another quest to earn the next fact.

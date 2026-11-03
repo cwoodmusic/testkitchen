@@ -29,12 +29,14 @@ HARNESS = """<!doctype html>
 <script src="/reward-notifications.js"></script>
 <script>
   window.touchState = { visible: false };
+  window.gameplayState = { active: false };
   window.actionLog = [];
   window.configurePopups = function (options = {}) {
     if (window.popups) window.popups.dispose();
     window.popups = createCodaRewardNotifications({
       duration: options.duration || 5500,
       getTouchState: () => window.touchState,
+      getGameplayState: () => window.gameplayState,
       onAction: (action, item) => window.actionLog.push({ action, item })
     });
   };
@@ -358,6 +360,114 @@ class RewardNotificationBrowserTests(unittest.TestCase):
                          'A delayed completion event cannot follow an already collected reward')
         self.dismiss()
         self.wait_for_current(None)
+
+    def test_native_room_fullscreen_keeps_current_card_visible_and_game_focus(self):
+        self.page.evaluate("""() => {
+          configurePopups({duration:15000});
+          const room=document.createElement('section');room.id='fullscreenRoom';
+          room.style.cssText='position:fixed;inset:0;background:#12344a';
+          room.innerHTML='<button id="roomFullscreen">Make room fullscreen</button>';
+          room.querySelector('button').onclick=()=>room.requestFullscreen();
+          document.body.append(room);
+          popups.achievement({id:'room-first',title:'Room achievement',xp:50});
+        }""")
+        self.page.locator('#roomFullscreen').click()
+        self.page.wait_for_function('document.fullscreenElement?.id === "fullscreenRoom"')
+        self.page.wait_for_function("document.querySelector('.reward-notifications').parentElement.id === 'fullscreenRoom'")
+        self.assertEqual(self.page.evaluate('document.activeElement.id'), 'roomFullscreen')
+        self.assertEqual(self.page.evaluate('popups.getState().current.id'), 'achievement:room-first')
+        self.assertTrue(self.page.locator('.reward-notifications').evaluate('node=>node.matches(":popover-open")'))
+        self.assert_popup_hit_target()
+        self.page.evaluate('document.exitFullscreen()')
+        self.page.wait_for_function('!document.fullscreenElement')
+        self.page.wait_for_function("document.querySelector('.reward-notifications').parentElement === document.body")
+        self.assertEqual(self.page.evaluate('popups.getState().current.id'), 'achievement:room-first')
+        self.dismiss()
+
+    def test_clearing_player_notifications_hides_the_top_layer_and_pending_cards(self):
+        self.page.evaluate("""() => {
+          configurePopups({duration:15000});
+          popups.achievement({id:'old-player',title:'Previous player',xp:50});
+          popups.levelUp({level:2,prizes:['New sound']});
+        }""")
+        self.assertTrue(self.page.locator('.reward-notifications').evaluate('node=>node.matches(":popover-open")'))
+        self.assertEqual(len(self.page.evaluate('popups.getState().queued')),1)
+        self.page.evaluate('popups.clear()')
+        self.assertIsNone(self.page.evaluate('popups.getState().current'))
+        self.assertEqual(self.page.evaluate('popups.getState().queued'),[])
+        self.assertEqual(self.page.locator('.reward-toast').count(),0)
+        self.assertFalse(self.page.locator('.reward-notifications').evaluate('node=>node.matches(":popover-open")'))
+
+    def test_notification_earned_while_already_backgrounded_waits_until_visible(self):
+        self.page.evaluate("""() => {
+          configurePopups({duration:200});window.fixtureHidden=true;
+          Object.defineProperty(document,'hidden',{configurable:true,get:()=>fixtureHidden});
+          document.dispatchEvent(new Event('visibilitychange'));
+          popups.achievement({id:'hidden-tab',title:'Read this when you return',xp:50});
+        }""")
+        self.page.wait_for_timeout(350)
+        self.assertEqual(self.page.evaluate('popups.getState().current.id'),'achievement:hidden-tab')
+        self.assertTrue(self.page.evaluate('popups.getState().paused'))
+        self.page.evaluate("fixtureHidden=false;document.dispatchEvent(new Event('visibilitychange'))")
+        self.wait_for_current(None)
+
+    def assert_popup_hit_target(self):
+        self.assertTrue(self.page.locator('.reward-toast-close').evaluate('''button=>{
+          const box=button.getBoundingClientRect();
+          return document.elementFromPoint(box.x+box.width/2,box.y+box.height/2)===button;
+        }'''), 'The visible toast controls must paint above the active game layer')
+
+    def test_native_iframe_fullscreen_displays_parent_notification_without_exiting_game(self):
+        self.page.evaluate("""() => {
+          configurePopups({duration:15000});
+          const frame=document.createElement('iframe');frame.id='cabinet';
+          frame.allow='fullscreen';frame.allowFullscreen=true;
+          frame.style.cssText='position:fixed;inset:0;width:100%;height:100%;border:0';
+          frame.srcdoc='<body style="margin:0;background:#163b48"><button id="gameFullscreen" onclick="document.documentElement.requestFullscreen()">Play fullscreen</button></body>';
+          document.body.append(frame);gameplayState.active=true;
+        }""")
+        cabinet=self.page.frame_locator('#cabinet')
+        cabinet.locator('#gameFullscreen').click()
+        self.page.wait_for_function('document.fullscreenElement?.id === "cabinet"')
+        self.page.evaluate("popups.levelUp({level:2,prizes:['New music sound']})")
+        self.wait_for_current('level:2')
+        cabinet.locator('.reward-notifications').wait_for(state='visible')
+        self.page.frames[1].wait_for_function("document.querySelector('link[data-coda-reward-styles]')?.sheet !== null && document.querySelector('.reward-notifications')?.matches(':popover-open')")
+        self.assertTrue(cabinet.locator('.reward-toast-close').evaluate('''button=>{
+          const box=button.getBoundingClientRect();
+          return document.elementFromPoint(box.x+box.width/2,box.y+box.height/2)===button;
+        }'''))
+        self.assertEqual(self.page.evaluate('document.activeElement.id'), 'cabinet')
+        self.assertEqual(cabinet.locator('body').evaluate('()=>document.activeElement.id'), 'gameFullscreen')
+        self.assertGreaterEqual(cabinet.locator('.reward-toast').bounding_box()['y'], 64)
+        cabinet.get_by_role('button',name='Dismiss notification',exact=True).click()
+        self.wait_for_current(None)
+        self.assertEqual(self.page.evaluate('document.fullscreenElement.id'), 'cabinet')
+        self.assertEqual(cabinet.locator('body').evaluate('()=>document.activeElement.id'), 'gameFullscreen')
+        self.page.evaluate("popups.achievement({id:'after-frame',title:'Keep playing',xp:50})")
+        self.page.evaluate('document.exitFullscreen()')
+        self.page.wait_for_function("document.querySelector('.reward-notifications')?.parentElement === document.body")
+        self.assertEqual(self.page.evaluate('popups.getState().current.id'),'achievement:after-frame')
+        self.assertEqual(cabinet.locator('link[data-coda-reward-styles]').count(),0)
+        self.dismiss()
+
+    def test_native_modal_keeps_existing_toast_interactive_without_taking_focus(self):
+        self.page.evaluate("""() => {
+          configurePopups({duration:15000});
+          popups.missionComplete({id:'modal-quest',title:'Quest complete',giver:'Bach',reward:90,
+            action:{id:'missions',label:'View mission'}});
+          const modal=document.createElement('dialog');modal.id='activeModal';
+          modal.innerHTML='<button id="modalControl">Keep reading</button>';
+          document.body.append(modal);modal.showModal();
+        }""")
+        self.page.wait_for_function("document.querySelector('.reward-notifications').parentElement.id === 'activeModal'")
+        self.assertEqual(self.page.evaluate('document.activeElement.id'), 'modalControl')
+        self.assert_popup_hit_target()
+        self.page.get_by_role('button',name='View mission',exact=True).click()
+        self.assertEqual(self.page.evaluate('actionLog[0].action.id'), 'missions')
+        self.assertTrue(self.page.evaluate('document.querySelector("#activeModal").open'))
+        self.page.evaluate('document.querySelector("#activeModal").close()')
+        self.page.wait_for_function("document.querySelector('.reward-notifications').parentElement === document.body")
 
 
 if __name__ == '__main__':

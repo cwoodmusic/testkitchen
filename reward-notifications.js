@@ -65,6 +65,10 @@
  function createCodaRewardNotifications(api={}){
   const host=api.host||(api.document||document).body.appendChild((api.document||document).createElement('div')),doc=host.ownerDocument,win=doc.defaultView;
   host.classList.add('reward-notifications');host.setAttribute('aria-label','Game rewards');
+  const home=host.parentNode||doc.body,canPopover=typeof host.showPopover==='function'&&typeof host.hidePopover==='function';
+  const stylesheetURLs=Array.from(doc.querySelectorAll('link[rel="stylesheet"]')).map(link=>link.href).filter(href=>/\/reward-notifications\.css(?:[?#]|$)/.test(href));
+  let childDocument=null,childObserver=null,childStops=[],childStyles=[];
+  if(canPopover)host.setAttribute('popover','manual');
   let rendered=null,card=null,timer=null,remaining=5000,started=0,priorFocus=null,disposed=false;
   const reasons=new Set(),listeners=[];
   const duration=Number.isFinite(api.duration)?Math.max(100,Math.min(15000,api.duration)):5000;
@@ -75,12 +79,49 @@
   function schedule(){if(disposed||!card||reasons.size||timer!==null)return;started=now();timer=win.setTimeout(()=>{timer=null;remaining=0;dismiss(false);},remaining);}
   function pause(reason){if(!reasons.size)clearTimer();reasons.add(reason);}
   function resume(reason){reasons.delete(reason);if(!reasons.size)schedule();}
+  function hidePopover(){if(!canPopover)return;try{if(host.matches(':popover-open'))host.hidePopover();}catch{}}
+  function presentation(){
+   const fullscreen=doc.fullscreenElement||doc.webkitFullscreenElement;
+   if(fullscreen?.tagName==='IFRAME'&&stylesheetURLs.length)try{
+    const child=fullscreen.contentDocument;if(child?.body)return {document:child,frame:fullscreen};
+   }catch{}
+   return {document:doc,frame:null};
+  }
+  function detachChild(){
+   childObserver?.disconnect();childObserver=null;childStops.forEach(stop=>{try{stop();}catch{}});childStops=[];
+   childStyles.forEach(link=>{link.onload=null;link.remove();});childStyles=[];childDocument=null;
+  }
+  function syncChild(activeDocument,frame){
+   if(childDocument===activeDocument||!childDocument&&activeDocument===doc)return;detachChild();if(activeDocument===doc)return;
+   childDocument=activeDocument;
+   for(const href of stylesheetURLs){const link=activeDocument.createElement('link');link.rel='stylesheet';link.href=href;link.dataset.codaRewardStyles='';link.onload=updatePosition;activeDocument.head.append(link);childStyles.push(link);}
+   const listenChild=(target,event,handler)=>{target.addEventListener(event,handler);childStops.push(()=>target.removeEventListener(event,handler));};
+   listenChild(activeDocument.defaultView,'pointerup',()=>resume('pointer'));listenChild(activeDocument.defaultView,'pointercancel',()=>resume('pointer'));
+   const changed=()=>{hidePopover();updatePosition();};listenChild(activeDocument,'fullscreenchange',changed);listenChild(activeDocument,'webkitfullscreenchange',changed);listenChild(frame,'load',changed);
+   if(win.MutationObserver){childObserver=new win.MutationObserver(updatePosition);childObserver.observe(activeDocument.body,{subtree:true,attributes:true,attributeFilter:['open']});}
+  }
+  function syncLayer(){
+   if(disposed)return;
+   const active=presentation(),activeDocument=active.document;syncChild(activeDocument,active.frame);
+   const fullscreen=activeDocument.fullscreenElement||activeDocument.webkitFullscreenElement,base=activeDocument===doc?home:activeDocument.body;
+   let modal=null;try{modal=Array.from(activeDocument.querySelectorAll('dialog[open]')).filter(node=>node.matches(':modal')).at(-1)||null;}catch{}
+   // A toast inside a modal can still be read and dismissed while the rest of
+   // the document is inert. Replaced elements cannot render DOM children.
+   const target=modal||(fullscreen&&!fullscreen.contains(base)&&!/^(IFRAME|VIDEO|CANVAS|IMG|OBJECT|EMBED)$/.test(fullscreen.tagName)?fullscreen:base);
+   if(target&&host.parentNode!==target){const focused=activeDocument.activeElement;if(focused&&focused!==activeDocument.body&&!host.contains(focused))priorFocus=focused;hidePopover();target.appendChild(host);}
+   if(!card||host.hidden){hidePopover();return;}
+   // A manual popover joins the active document's top layer without focusing
+   // itself or making gameplay inert, including inside fullscreen cabinets.
+   if(canPopover)try{if(!host.matches(':popover-open'))host.showPopover();}catch{}
+  }
   function updatePosition(){
-   if(disposed)return;let touch=false,offset=null;
-   try{touch=api.getTouchState?.()?.visible===true;offset=api.getOffset?.();}catch{}
+   if(disposed)return;let touch=false,offset=null,playing=false;
+   try{touch=api.getTouchState?.()?.visible===true;offset=api.getOffset?.();const state=api.getGameplayState?.();playing=state===true||state?.active===true;}catch{}
    host.classList.toggle('has-touch-controls',touch);
+   host.classList.toggle('during-game',playing&&!touch);
    if(Number.isFinite(offset)&&offset>=0)host.style.setProperty('--reward-notice-offset',offset+'px');
    else host.style.removeProperty('--reward-notice-offset');
+   syncLayer();
   }
   function icon(kind){
    const box=node('span','reward-toast-icon');box.setAttribute('aria-hidden','true');
@@ -89,27 +130,30 @@
   }
   function render(state){
    if(disposed||state.current?.id===rendered)return;clearTimer();reasons.clear();
-   if(doc.activeElement&&!host.contains(doc.activeElement))priorFocus=doc.activeElement;
+   const focused=presentation().document.activeElement;if(focused&&!host.contains(focused))priorFocus=focused;
    host.replaceChildren();card=null;rendered=state.current?.id||null;host.hidden=!state.current;
-   if(!state.current)return;const item=state.current;remaining=duration;
+   if(!state.current){syncLayer();return;}const item=state.current;remaining=duration;
    card=node('section','reward-toast is-visible');card.dataset.notificationId=item.id;card.dataset.kind=item.kind;card.setAttribute('role','status');card.setAttribute('aria-live','polite');card.setAttribute('aria-atomic','true');
    const contents=node('div','reward-toast-content'),eyebrow=node('p','reward-toast-eyebrow',item.kind==='achievement'?'ACHIEVEMENT EARNED':item.kind==='mission-complete'?'MISSION COMPLETE':item.kind==='mission-reward'?'REWARD COLLECTED':item.kind==='level'?'LEVEL UP':'CODA ARCADE');
    contents.append(eyebrow,node('strong','reward-toast-title',item.title),node('p','reward-toast-message',item.message));
    if(item.action){const action=node('button','reward-toast-action',item.action.label);action.type='button';action.onclick=()=>{const actionCopy=copy(item.action),itemCopy=copy(item);dismiss(false);api.onAction?.(actionCopy,itemCopy);};contents.append(action);}
    const close=node('button','reward-toast-close','×');close.type='button';close.setAttribute('aria-label','Dismiss notification');close.onclick=()=>dismiss(true);
-   card.append(icon(item.kind),contents,close);host.append(card);updatePosition();schedule();
+   card.append(icon(item.kind),contents,close);host.append(card);updatePosition();if(doc.hidden)reasons.add('hidden');schedule();
   }
   const queue=createNotificationQueue({limit:api.limit,onChange:render});
-  function dismiss(restore=true){const focused=host.contains(doc.activeElement),before=priorFocus;const result=queue.dismiss();if(restore&&focused&&before?.isConnected)before.focus?.({preventScroll:true});return result;}
+  function dismiss(restore=true){const focused=host.contains(host.ownerDocument.activeElement),before=priorFocus;const result=queue.dismiss();if(restore&&focused&&before?.isConnected)before.focus?.({preventScroll:true});return result;}
   function notify(item){if(disposed)return false;return queue.push(item);}
   listen(host,'mouseenter',()=>pause('hover'));listen(host,'mouseleave',()=>resume('hover'));
   listen(host,'pointerdown',()=>pause('pointer'));listen(win,'pointerup',()=>resume('pointer'));listen(win,'pointercancel',()=>resume('pointer'));
   listen(host,'focusin',()=>pause('focus'));listen(host,'focusout',event=>{if(!host.contains(event.relatedTarget))resume('focus');});
   listen(win,'resize',updatePosition);listen(doc,'visibilitychange',()=>{if(doc.hidden)pause('hidden');else resume('hidden');});
+  const fullscreenChange=()=>{hidePopover();updatePosition();};listen(doc,'fullscreenchange',fullscreenChange);listen(doc,'webkitfullscreenchange',fullscreenChange);
+  const layerObserver=win.MutationObserver?new win.MutationObserver(updatePosition):null;
+  layerObserver?.observe(doc.body,{subtree:true,attributes:true,attributeFilter:['open']});
   const poll=win.setInterval(updatePosition,150);host.hidden=true;updatePosition();
-  return {notify,achievement:value=>notify(achievementItem(value)),missionComplete:value=>notify(missionCompleteItem(value)),missionReward:value=>notify(missionRewardItem(value)),levelUp:value=>notify(levelUpItem(value)),dismiss,
+  return {notify,achievement:value=>notify(achievementItem(value)),missionComplete:value=>notify(missionCompleteItem(value)),missionReward:value=>notify(missionRewardItem(value)),levelUp:value=>notify(levelUpItem(value)),dismiss,clear:()=>queue.clear(),
    getState:()=>({...queue.snapshot(),paused:reasons.size>0,remaining:timer===null?remaining:Math.max(0,remaining-(now()-started)),aboveTouchControls:host.classList.contains('has-touch-controls')}),
-   dispose(){if(disposed)return;disposed=true;clearTimer();win.clearInterval(poll);listeners.forEach(stop=>stop());host.remove();}};
+   dispose(){if(disposed)return;disposed=true;clearTimer();win.clearInterval(poll);layerObserver?.disconnect();detachChild();listeners.forEach(stop=>stop());hidePopover();host.remove();}};
  }
  return {normalize,createNotificationQueue,achievementItem,missionCompleteItem,missionRewardItem,levelUpItem,createCodaRewardNotifications};
 });
