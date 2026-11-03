@@ -55,7 +55,9 @@ finishMatch.onclick=()=>CodaBridge.report('reward-triad-run',{mode:'computer',sc
 class GameRewardNotificationTests(_world.WorldBrowserCase):
     def route_checkout(self, route):
         fixture = {'/rhythmroom/': RHYTHM, '/Pitch-Race/': PITCH,
-                   '/musictriad/': TRIAD}.get(urlparse(route.request.url).path)
+                   '/musictriad/': TRIAD, '/coda-arcade/games/rhythm-room/': RHYTHM,
+                   '/coda-arcade/games/pitch-race/': PITCH,
+                   '/coda-arcade/games/music-triad/': TRIAD}.get(urlparse(route.request.url).path)
         if fixture:
             return route.fulfill(status=200, content_type='text/html', body=fixture)
         return super().route_checkout(route)
@@ -178,6 +180,14 @@ class GameRewardNotificationTests(_world.WorldBrowserCase):
         composer.locator('#simpleStop').click()
 
     def test_saved_friendship_goal_notifies_to_learn_a_fact_and_replayed_result_is_silent(self):
+        # This case checks the saved quest/notification pipeline, independently
+        # of the timed six-visitor rotation exercised by the visitor suites.
+        self.context.add_init_script('''(()=>{
+          let create;
+          Object.defineProperty(window,'createCodaNPCBehavior',{configurable:true,
+            get:()=>create,set:factory=>{create=options=>factory({...options,rotation:false});}});
+        })()''')
+        self.load()
         visitor = self.page.evaluate('CodaArcadeQA.characters().npcs.find(p=>p.id==="bach")')
         if visitor['hidden']:
             self.assertTrue(self.page.evaluate('CodaArcadeQA.findMusician("bach")'))

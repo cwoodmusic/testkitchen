@@ -1,0 +1,15 @@
+Acoustic snare: Karoryfer Samples, Frankensnare, 10_basic/top/sn_vl4_rr1.flac.
+Source: https://github.com/sfzinstruments/karoryfer.frankensnare
+License: CC0 1.0 Universal; see LICENSE-Frankensnare.txt.
+Converted to WAV, leading silence removed, tail faded for this app.
+
+Organ C4: Versilian Studios (VSO2), distributed by Nicholaus Brosowsky / tonejs-instruments.
+Source: https://github.com/nbrosowsky/tonejs-instruments/blob/master/samples/organ/C4.mp3
+License: Creative Commons Attribution 3.0, https://creativecommons.org/licenses/by/3.0/
+Sample file unmodified. Playback envelope added in app to match note durations.
+Original source information: organ-source-info.txt
+
+Piano C4: Versilian Studios (VSO2), distributed by Nicholaus Brosowsky / tonejs-instruments.
+Source: https://github.com/nbrosowsky/tonejs-instruments/blob/master/samples/piano/C4.mp3
+License: Creative Commons Attribution 3.0, https://creativecommons.org/licenses/by/3.0/
+Sample unmodified; playback envelope follows written note duration.

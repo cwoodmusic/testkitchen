@@ -4,6 +4,11 @@
 without a player card; **Use my player card** opens the student's picture-card screen, and **For teachers**
 opens the teacher tools. The classroom buttons never start Google sign-in
 automatically. Student profiles use private cards; Google sign-in is for staff.
+
+This Test Kitchen release includes Pitch Race, Music Triad, Rhythm Room, and
+Song Machine in one static package. Cabinet links load the bundled game code
+from the current arcade directory. Existing Firebase services, classes, cards,
+and saves keep their current connections. See [Complete arcade package](docs/bundled-games.md).
 Guest entry also works when another tab or a leftover profile marker owns the
 shared saves. That guest keeps separate progress for the lifetime of its tab,
 including refreshes; it cannot read or change the saved profile's progress.

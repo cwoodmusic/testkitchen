@@ -1,0 +1,33 @@
+/* Count the written rhythm directly below its notes and rests. */
+.practice-toolbar{display:grid;grid-template-columns:minmax(280px,2fr) minmax(150px,1fr) auto;align-items:center;gap:22px;margin:20px 0}
+.practice-slider{min-width:0}.practice-slider label{display:flex;align-items:center;justify-content:space-between;gap:8px;margin:0 0 9px;font-size:15px;color:#d8f5ff}
+.practice-slider label span{color:#9fe7ec;font-size:13px;white-space:nowrap}.practice-slider input[type=range]{width:100%;height:28px;accent-color:#00c8df;margin:0;touch-action:pan-y}
+.tempo-words{display:grid;grid-template-columns:repeat(6,minmax(0,1fr));gap:2px;color:#acc6d2;font-size:11px;line-height:1.5;text-align:center}.tempo-words span:first-child{text-align:left}.tempo-words span:last-child{text-align:right}
+#practice-settings-button{min-height:46px;border-radius:4px;background:#102333;border-color:#38899a;color:#c4f7ff;padding:10px 18px}
+#practice-settings,#meter-menu{max-width:calc(100vw - 28px);width:min(480px,calc(100vw - 28px));max-height:calc(100dvh - 28px);overflow:auto;background:#101d30;color:#effaff;border:1px solid #65adb8;border-radius:8px;padding:20px;box-shadow:0 16px 60px #0009}
+#practice-settings::backdrop,#meter-menu::backdrop{background:#020614aa}
+.rhythm-dialog-heading{display:flex;align-items:center;justify-content:space-between;gap:16px;margin-bottom:18px}.rhythm-dialog-heading h2{font-size:20px;margin:0;line-height:1.35}
+.rhythm-dialog-heading button{font-size:14px;min-height:44px;padding:8px 12px;flex-shrink:0}
+#practice-settings>label:not(.check){font-size:14px;margin:15px 0 7px;color:#d1e9f3}
+#practice-settings select{font-size:15px;min-height:44px;background:#193046;color:#f0fbff;border-color:#526d86;padding:9px}
+#practice-settings .check{font-size:14px;margin:15px 0;color:#d2e3ed;line-height:1.5}#practice-settings .check input{width:22px;height:22px;flex-shrink:0}
+#practice-settings .meter-help,.rhythm-dialog-help{font-size:13px;line-height:1.5;color:#bed4df;margin:15px 0 0}
+.meter-menu-choices{display:grid;gap:10px}.meter-menu-choices button{min-height:48px;padding:12px;text-align:left;background:#18354a;color:#f0fbff;border-color:#4b8397;font-size:16px;line-height:1.35}.meter-menu-choices button[aria-pressed=true]{border-color:#6ee5d7;background:#245044}
+#time-signature-control{cursor:pointer;outline:none}#time-signature-control:hover .time-signature-hit{fill:#a2e5ea33}#time-signature-control:focus-visible .time-signature-hit{fill:#b9e9eb44;stroke:#008fa2;stroke-width:2px}
+.rhythm-count{fill:#354b55;font:700 22px 'Trebuchet MS',Arial,sans-serif;font-variant-numeric:tabular-nums;stroke:none;user-select:none}
+.rhythm-count.is-rest{fill:#7b8288;font-weight:500}
+.rhythm-count.active{fill:#ba650b;font-weight:900;text-decoration:underline;text-underline-offset:4px}
+.rhythm-count.is-rest.active{fill:#6c747b;font-weight:700}
+.card .choice.is-unavailable{opacity:.45;cursor:default}
+.compound-rhythm-family{grid-column:1/-1;min-width:0;padding:14px;margin:0;border:1px solid #b9cbd3;border-radius:5px}
+.compound-rhythm-family legend,.compound-rhythm-family summary{font-weight:800;color:#314f60;font-size:16px;padding:0 5px}
+.compound-rhythm-family summary{cursor:pointer;padding:0;min-height:32px;display:flex;align-items:center;gap:8px}
+.compound-rhythm-family summary:before{content:'▸';font-size:20px}.compound-rhythm-family[open] summary:before{content:'▾'}
+.compound-rhythm-help{color:#527080;font-size:13px;line-height:1.5;margin:6px 0 12px}
+.compound-choice-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(min(220px,100%),1fr));gap:10px}
+.card .choice.compound-choice{display:grid;grid-template-columns:20px minmax(0,1fr);gap:7px 10px;align-items:center;margin:0;min-width:0}
+.choice.compound-choice svg{grid-column:2;width:100%;max-width:240px;height:72px}
+.choice.compound-choice span{font-size:14px;line-height:1.35}
+@media(max-width:600px){.practice-toolbar{grid-template-columns:minmax(0,1fr) auto;gap:15px;margin:16px 0}.tempo-slider{grid-column:1/-1}.tempo-words{font-size:10px}.practice-slider label{font-size:14px}.practice-slider label span{font-size:13px}.practice-slider input[type=range]{height:32px}#practice-settings-button{min-height:46px}}
+@media(max-width:480px){#practice-settings,#meter-menu{padding:16px}.rhythm-dialog-heading h2{font-size:18px}}
+@media(prefers-contrast:more){.rhythm-count{fill:#172632}.rhythm-count.is-rest{fill:#4a5159}.rhythm-count.active{fill:#844300}}

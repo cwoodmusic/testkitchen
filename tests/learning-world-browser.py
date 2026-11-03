@@ -55,7 +55,8 @@ class WorldBrowserCase(unittest.TestCase):
 
     def route_checkout(self,route):
         path=urlparse(route.request.url).path
-        if path=='/musictriad/':return route.fulfill(status=200,content_type='text/html',body=TRIAD)
+        if path in ['/musictriad/','/coda-arcade/games/music-triad/']:
+            return route.fulfill(status=200,content_type='text/html',body=TRIAD)
         relative=path.removeprefix('/coda-arcade/').lstrip('/') or 'index.html'
         file=ROOT/relative
         if file.is_dir():file=file/'index.html'

@@ -1,4 +1,4 @@
-/* Keep custom-domain cabinets on the same origin as their classroom profile. */
+/* Cabinets ship with the arcade and share their parent profile's origin. */
 (function(root,factory){
  const api=factory();
  if(typeof module==='object'&&module.exports)module.exports=api;
@@ -8,14 +8,24 @@
  const CUSTOM_HOST='www.coda-arcade.com',CUSTOM_ORIGIN='https://'+CUSTOM_HOST;
  const GITHUB_ORIGIN='https://cwoodmusic.github.io';
  const customHosts=new Set([CUSTOM_HOST,'coda-arcade.com','www.coda-aracde.com','coda-aracde.com']);
- const paths=Object.freeze({pitch:'Pitch-Race',triad:'musictriad',rhythm:'rhythmroom'});
+ const paths=Object.freeze({pitch:'games/pitch-race/',triad:'games/music-triad/',rhythm:'games/rhythm-room/'});
  function supports(hostname){return hostname==='cwoodmusic.github.io'||customHosts.has(hostname);}
- function gameURL(game,location,version=game==='pitch'?'endless-flow-20261101-1':'games-92'){
+ function packageBase(location){
+  const hostname=location?.hostname,custom=customHosts.has(hostname),github=hostname==='cwoodmusic.github.io',local=['localhost','127.0.0.1','[::1]'].includes(hostname);
+  const fallback=new URL(github||!custom&&!local?GITHUB_ORIGIN+'/coda-arcade/':'https://'+hostname+'/');
+  if(!custom&&!github&&!local)return fallback;
+  try{
+   const current=new URL(location?.href||location?.pathname||fallback.href,fallback);
+   if(current.hostname!==hostname||current.username||current.password||!['http:','https:'].includes(current.protocol))return fallback;
+   if(!local){current.protocol='https:';current.port='';}
+   return new URL('./',current);
+  }catch{return fallback;}
+ }
+ function gameURL(game,location,version='bundled-cabinets-1'){
   if(!Object.prototype.hasOwnProperty.call(paths,game))throw new TypeError('Unknown arcade game.');
-  // Profiles and embedded games must share this exact host's storage. Keep
-  // earlier domain spellings working without moving their existing sessions.
-  const origin=customHosts.has(location?.hostname)?'https://'+location.hostname:GITHUB_ORIGIN;
-  const url=new URL('/'+paths[game]+'/',origin);
+  // Resolve from the current app directory, including GitHub Pages project
+  // prefixes. Test Kitchen loads its own copies instead of live game repos.
+  const url=new URL(paths[game],packageBase(location));
   url.searchParams.set('v',version);return url.href;
  }
  return Object.freeze({CUSTOM_HOST,CUSTOM_ORIGIN,supports,gameURL});
