@@ -1,0 +1,74 @@
+{
+  "hallOfFame": {
+    ".read": false,
+    ".write": false,
+    "global": {
+      ".read": false,
+      ".write": false,
+      "$board": {
+        ".read": "($board.matches(/^(pitch-(classic|endless|levels|multi)|triad-(computer|multiplayer)|rhythm-tap)$/)) && (query.orderByChild === \"rank\") && (query.limitToLast !== null) && (query.limitToLast > 0) && (query.limitToLast <= 50)",
+        ".indexOn": [
+          "rank"
+        ],
+        "$profileId": {
+          ".write": "(((auth !== null && auth.token.firebase.sign_in_provider === \"google.com\") && (root.child(\"classroomV1/admins\").child(auth.uid).val() === true)) && (!newData.exists())) || ((((auth !== null && auth.token.firebase.sign_in_provider === \"anonymous\") && (root.child(\"classroomV1/sessions\").child(auth.uid).child(\"classId\").val() === root.child(\"classroomV1/sessions\").child(auth.uid).child(\"classId\").val()) && (root.child(\"classroomV1/sessions\").child(auth.uid).child(\"profileId\").val() === $profileId) && ((root.child(\"classroomV1/passes\").child(root.child(\"classroomV1/sessions\").child(auth.uid).child(\"passHash\").val()).child(\"classId\").val() === root.child(\"classroomV1/sessions\").child(auth.uid).child(\"classId\").val()) && (root.child(\"classroomV1/passes\").child(root.child(\"classroomV1/sessions\").child(auth.uid).child(\"passHash\").val()).child(\"profileId\").val() === $profileId) && (root.child(\"classroomV1/classes\").child(root.child(\"classroomV1/sessions\").child(auth.uid).child(\"classId\").val()).child(\"profiles\").child($profileId).child(\"meta/passHash\").val() === root.child(\"classroomV1/sessions\").child(auth.uid).child(\"passHash\").val()))) && (root.child(\"classroomV1/classes\").child(root.child(\"classroomV1/sessions\").child(auth.uid).child(\"classId\").val()).child(\"profiles\").child($profileId).child(\"lease\").child(\"uid\").val() === auth.uid) && (root.child(\"classroomV1/classes\").child(root.child(\"classroomV1/sessions\").child(auth.uid).child(\"classId\").val()).child(\"profiles\").child($profileId).child(\"lease\").child(\"expiresAt\").val() > now)) && (newData.exists()))",
+          ".validate": "($profileId.matches(/^[A-Za-z0-9_-]{8,64}$/)) && ($board.matches(/^(pitch-(classic|endless|levels|multi)|triad-(computer|multiplayer)|rhythm-tap)$/)) && (newData.hasChildren([\"alias\",\"score\",\"tiebreak\",\"rank\",\"at\"])) && (newData.child(\"alias\").val() === root.child(\"classroomV1/classes\").child(root.child(\"classroomV1/sessions\").child(auth.uid).child(\"classId\").val()).child(\"profiles\").child($profileId).child(\"meta/alias\").val()) && (($board.matches(/^pitch-(classic|endless|levels|multi)$/) ? newData.child(\"score\").val() <= 100000000 && newData.child(\"tiebreak\").val() <= 1000000 && newData.child(\"score\").val() % 100 === 0 : ($board.matches(/^triad-(computer|multiplayer)$/) ? newData.child(\"score\").val() <= 1600 && newData.child(\"tiebreak\").val() <= 1000 && newData.child(\"score\").val() % 100 === 0 : newData.child(\"score\").val() <= 10000 && newData.child(\"tiebreak\").val() <= 128))) && (newData.child(\"rank\").val() === newData.child(\"score\").val() * 1000001 + newData.child(\"tiebreak\").val()) && (!data.exists() || newData.child(\"rank\").val() >= data.child(\"rank\").val())",
+          "alias": {
+            ".validate": "(newData.isString()) && (newData.val().length >= 1) && (newData.val().length <= 32) && (newData.val().matches(/^(Amber|Blue|Coral|Gold|Green|Lilac|Mint|Pink|Red|Silver|Teal|Violet) (Cat|Fox|Frog|Owl|Otter|Penguin|Rabbit|Turtle) [1-9][0-9]$/))"
+          },
+          "score": {
+            ".validate": "(newData.isNumber()) && (newData.val() % 1 === 0) && (newData.val() >= 0) && (newData.val() <= 100000000)"
+          },
+          "tiebreak": {
+            ".validate": "(newData.isNumber()) && (newData.val() % 1 === 0) && (newData.val() >= 0) && (newData.val() <= 1000000)"
+          },
+          "rank": {
+            ".validate": "(newData.isNumber()) && (newData.val() % 1 === 0) && (newData.val() >= 0) && (newData.val() <= 100000101000000)"
+          },
+          "at": {
+            ".validate": "((newData.isNumber()) && (newData.val() % 1 === 0) && (newData.val() >= 0) && (newData.val() <= now))"
+          },
+          "$other": {
+            ".validate": false
+          }
+        }
+      }
+    },
+    "classes": {
+      ".read": false,
+      ".write": false,
+      "$classId": {
+        ".read": false,
+        ".write": "((auth !== null && auth.token.firebase.sign_in_provider === \"google.com\") && (root.child(\"classroomV1/admins\").child(auth.uid).val() === true)) && (!newData.exists())",
+        "$board": {
+          ".read": "($board.matches(/^(pitch-(classic|endless|levels|multi)|triad-(computer|multiplayer)|rhythm-tap)$/)) && (((auth !== null && auth.token.firebase.sign_in_provider === \"google.com\") && (root.child(\"classroomV1/admins\").child(auth.uid).val() === true)) || ((auth !== null && auth.token.firebase.sign_in_provider === \"anonymous\") && (root.child(\"classroomV1/sessions\").child(auth.uid).child(\"classId\").val() === $classId) && (root.child(\"classroomV1/sessions\").child(auth.uid).child(\"profileId\").val() === root.child(\"classroomV1/sessions\").child(auth.uid).child(\"profileId\").val()) && ((root.child(\"classroomV1/passes\").child(root.child(\"classroomV1/sessions\").child(auth.uid).child(\"passHash\").val()).child(\"classId\").val() === $classId) && (root.child(\"classroomV1/passes\").child(root.child(\"classroomV1/sessions\").child(auth.uid).child(\"passHash\").val()).child(\"profileId\").val() === root.child(\"classroomV1/sessions\").child(auth.uid).child(\"profileId\").val()) && (root.child(\"classroomV1/classes\").child($classId).child(\"profiles\").child(root.child(\"classroomV1/sessions\").child(auth.uid).child(\"profileId\").val()).child(\"meta/passHash\").val() === root.child(\"classroomV1/sessions\").child(auth.uid).child(\"passHash\").val()))))",
+          ".indexOn": [
+            "rank"
+          ],
+          "$profileId": {
+            ".write": "(((auth !== null && auth.token.firebase.sign_in_provider === \"google.com\") && (root.child(\"classroomV1/admins\").child(auth.uid).val() === true)) && (!newData.exists())) || ((((auth !== null && auth.token.firebase.sign_in_provider === \"anonymous\") && (root.child(\"classroomV1/sessions\").child(auth.uid).child(\"classId\").val() === $classId) && (root.child(\"classroomV1/sessions\").child(auth.uid).child(\"profileId\").val() === $profileId) && ((root.child(\"classroomV1/passes\").child(root.child(\"classroomV1/sessions\").child(auth.uid).child(\"passHash\").val()).child(\"classId\").val() === $classId) && (root.child(\"classroomV1/passes\").child(root.child(\"classroomV1/sessions\").child(auth.uid).child(\"passHash\").val()).child(\"profileId\").val() === $profileId) && (root.child(\"classroomV1/classes\").child($classId).child(\"profiles\").child($profileId).child(\"meta/passHash\").val() === root.child(\"classroomV1/sessions\").child(auth.uid).child(\"passHash\").val()))) && (root.child(\"classroomV1/classes\").child($classId).child(\"profiles\").child($profileId).child(\"lease\").child(\"uid\").val() === auth.uid) && (root.child(\"classroomV1/classes\").child($classId).child(\"profiles\").child($profileId).child(\"lease\").child(\"expiresAt\").val() > now)) && (newData.exists()))",
+            ".validate": "($profileId.matches(/^[A-Za-z0-9_-]{8,64}$/)) && ($board.matches(/^(pitch-(classic|endless|levels|multi)|triad-(computer|multiplayer)|rhythm-tap)$/)) && (newData.hasChildren([\"alias\",\"score\",\"tiebreak\",\"rank\",\"at\"])) && (newData.child(\"alias\").val() === root.child(\"classroomV1/classes\").child($classId).child(\"profiles\").child($profileId).child(\"meta/alias\").val()) && (($board.matches(/^pitch-(classic|endless|levels|multi)$/) ? newData.child(\"score\").val() <= 100000000 && newData.child(\"tiebreak\").val() <= 1000000 && newData.child(\"score\").val() % 100 === 0 : ($board.matches(/^triad-(computer|multiplayer)$/) ? newData.child(\"score\").val() <= 1600 && newData.child(\"tiebreak\").val() <= 1000 && newData.child(\"score\").val() % 100 === 0 : newData.child(\"score\").val() <= 10000 && newData.child(\"tiebreak\").val() <= 128))) && (newData.child(\"rank\").val() === newData.child(\"score\").val() * 1000001 + newData.child(\"tiebreak\").val()) && (!data.exists() || newData.child(\"rank\").val() >= data.child(\"rank\").val())",
+            "alias": {
+              ".validate": "(newData.isString()) && (newData.val().length >= 1) && (newData.val().length <= 32) && (newData.val().matches(/^(Amber|Blue|Coral|Gold|Green|Lilac|Mint|Pink|Red|Silver|Teal|Violet) (Cat|Fox|Frog|Owl|Otter|Penguin|Rabbit|Turtle) [1-9][0-9]$/))"
+            },
+            "score": {
+              ".validate": "(newData.isNumber()) && (newData.val() % 1 === 0) && (newData.val() >= 0) && (newData.val() <= 100000000)"
+            },
+            "tiebreak": {
+              ".validate": "(newData.isNumber()) && (newData.val() % 1 === 0) && (newData.val() >= 0) && (newData.val() <= 1000000)"
+            },
+            "rank": {
+              ".validate": "(newData.isNumber()) && (newData.val() % 1 === 0) && (newData.val() >= 0) && (newData.val() <= 100000101000000)"
+            },
+            "at": {
+              ".validate": "((newData.isNumber()) && (newData.val() % 1 === 0) && (newData.val() >= 0) && (newData.val() <= now))"
+            },
+            "$other": {
+              ".validate": false
+            }
+          }
+        }
+      }
+    }
+  }
+}

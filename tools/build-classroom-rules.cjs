@@ -105,6 +105,44 @@ function createdAt(immutable=true){
  return {'.validate':join([integer('newData',0,'now'),immutable&&'!data.exists() || newData.val() === data.val()'])};
 }
 
+// Shared boards contain only generated aliases and bounded numeric results.
+// Neither public rows nor class rows expose a pass, auth UID, or private save.
+const HALL_BOARD_PATTERN='^(pitch-(classic|endless|levels|multi)|triad-(computer|multiplayer)|rhythm-tap)$';
+const HALL_ALIAS_PATTERN='^(Amber|Blue|Coral|Gold|Green|Lilac|Mint|Pink|Red|Silver|Teal|Violet) (Cat|Fox|Frog|Owl|Otter|Penguin|Rabbit|Turtle) [1-9][0-9]$';
+function hallRow(classId){
+ const profile=profileNode(classId,'$profileId'),lease=profile+'.child("lease")';
+ const owner=join([validStudent(classId,'$profileId'),lease+'.child("uid").val() === auth.uid',lease+'.child("expiresAt").val() > now']);
+ const pitch=matches('$board','^pitch-(classic|endless|levels|multi)$'),triad=matches('$board','^triad-(computer|multiplayer)$');
+ const score='newData.child("score")',tie='newData.child("tiebreak")',rank='newData.child("rank")';
+ return closed({
+  '.write':'('+join([admin,'!newData.exists()'])+') || ('+join([owner,'newData.exists()'])+')',
+  '.validate':join([matches('$profileId',ID_PATTERN),matches('$board',HALL_BOARD_PATTERN),
+   'newData.hasChildren(["alias","score","tiebreak","rank","at"])',
+   'newData.child("alias").val() === '+profile+'.child("meta/alias").val()',
+   '('+pitch+' ? '+score+'.val() <= 100000000 && '+tie+'.val() <= 1000000 && '+score+'.val() % 100 === 0 : '+
+    '('+triad+' ? '+score+'.val() <= 1600 && '+tie+'.val() <= 1000 && '+score+'.val() % 100 === 0 : '+score+'.val() <= 10000 && '+tie+'.val() <= 128))',
+   rank+'.val() === '+score+'.val() * 1000001 + '+tie+'.val()',
+   '!data.exists() || '+rank+'.val() >= data.child("rank").val()']),
+  alias:{'.validate':string('newData',1,32,HALL_ALIAS_PATTERN)},
+  score:{'.validate':integer('newData',0,100000000)},
+  tiebreak:{'.validate':integer('newData',0,1000000)},
+  rank:{'.validate':integer('newData',0,100000101000000)},
+  at:createdAt(false)
+ });
+}
+function hallRules(){
+ const board=matches('$board',HALL_BOARD_PATTERN),member=validStudent('$classId',ownSession+'.child("profileId").val()');
+ return {'.read':false,'.write':false,
+  global:{'.read':false,'.write':false,$board:{
+   '.read':join([board,'query.orderByChild === "rank"','query.limitToLast !== null','query.limitToLast > 0','query.limitToLast <= 50']),
+   '.indexOn':['rank'],$profileId:hallRow(ownSession+'.child("classId").val()')
+  }},
+  classes:{'.read':false,'.write':false,$classId:{'.read':false,'.write':join([admin,'!newData.exists()']),$board:{
+   '.read':join([board,'('+admin+') || ('+member+')']),'.indexOn':['rank'],$profileId:hallRow('$classId')
+  }}}
+ };
+}
+
 function buildClassroomRules(schema){
  const student=validStudent(),lease=profileNode('$classId','$profileId')+'.child("lease")';
  const teacher=join([admin,'auth.uid === $uid']);
@@ -174,19 +212,23 @@ function buildClassroomRules(schema){
    '.validate':'newData.hasChildren(["classId","profileId","passHash","createdAt"])',
    classId:{'.validate':string('newData',8,64,ID_PATTERN)},profileId:{'.validate':string('newData',8,64,ID_PATTERN)},
    passHash:{'.validate':string('newData',64,64,HASH_PATTERN)},createdAt:createdAt(false)})},
+  hallOfFame:hallRules(),
   $other:{'.validate':false}
  };
  return {rules:{classroomV1:namespace}};
 }
 
 function renderClassroomRules(schema){return JSON.stringify(buildClassroomRules(schema),null,2)+'\n';}
+function renderHallRules(){return JSON.stringify({hallOfFame:hallRules()},null,2)+'\n';}
 function run(argv){
  if(argv.length>1||argv.length===1&&argv[0]!=='--check')throw Error('Usage: node tools/build-classroom-rules.cjs [--check]');
  const {SCHEMA}=require('../classroom-profile-data.js'),target=path.join(__dirname,'../classroom-database.rules.json'),text=renderClassroomRules(SCHEMA);
+ const hallTarget=path.join(__dirname,'../docs/HALL-OF-FAME-RULES.json'),hallText=renderHallRules();
  if(argv[0]==='--check'){
   if(!fs.existsSync(target)||fs.readFileSync(target,'utf8')!==text)throw Error('classroom-database.rules.json is out of date. Regenerate it from the canonical schema.');
+  if(!fs.existsSync(hallTarget)||fs.readFileSync(hallTarget,'utf8')!==hallText)throw Error('docs/HALL-OF-FAME-RULES.json is out of date. Regenerate the rules.');
   process.stdout.write('Classroom rules match the canonical DTO schema.\n');
- }else{fs.writeFileSync(target,text);process.stdout.write('Generated classroom-database.rules.json ('+Buffer.byteLength(text)+' bytes). No deployment performed.\n');}
+ }else{fs.writeFileSync(target,text);fs.writeFileSync(hallTarget,hallText);process.stdout.write('Generated classroom-database.rules.json ('+Buffer.byteLength(text)+' bytes) and the Hall-only fragment. No deployment performed.\n');}
 }
 if(require.main===module)try{run(process.argv.slice(2));}catch(error){process.stderr.write(error.message+'\n');process.exitCode=1;}
-module.exports={arrayIndexRegex,convertSchema,buildClassroomRules,renderClassroomRules,run};
+module.exports={arrayIndexRegex,convertSchema,buildClassroomRules,renderClassroomRules,renderHallRules,run};

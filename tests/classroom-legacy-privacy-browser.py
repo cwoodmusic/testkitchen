@@ -147,7 +147,8 @@ Object.defineProperty(window,'localStorage',{configurable:true,get:()=>__private
         self.assertEqual(self.page.locator('.fame-public').count(), 0)
         self.assertTrue(self.page.evaluate('''__fame.record('triad','private-run',{
           mode:'computer',score:7,captures:3})'''))
-        self.assertIn('Blue Owl', self.page.locator('#records').inner_text())
+        self.assertIn('7 cards', self.page.locator('#records').inner_text())
+        self.assertEqual(self.page.evaluate('JSON.parse(localStorage.getItem("codaHallOfFameV1")).records["triad:computer"].name'), 'Blue Owl')
         self.assertEqual(self.page.evaluate('JSON.parse(localStorage.getItem("codaHallOfFameV1")).records["triad:computer"].score'), 7)
 
     def test_song_frame_inherits_scoped_storage_before_composition_scripts(self):

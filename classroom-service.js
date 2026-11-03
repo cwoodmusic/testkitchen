@@ -6,6 +6,13 @@
  const ACTIVE_KEY='codaClassroomActiveV1',BACKUP_KEY='codaClassroomGuestBackupV1',PENDING_KEY='codaClassroomPendingV1',ADMIN_KEY='codaClassroomAdminTabV1';
  const COLORS=['Amber','Blue','Coral','Gold','Green','Lilac','Mint','Pink','Red','Silver','Teal','Violet'];
  const ANIMALS=['Cat','Fox','Frog','Owl','Otter','Penguin','Rabbit','Turtle'];
+ const HALL_BOARDS=Object.freeze({
+   'pitch-classic':{score:1000000,tiebreak:1000000},'pitch-endless':{score:1000000,tiebreak:1000000},
+   'pitch-levels':{score:1000000,tiebreak:1000000},'pitch-multi':{score:1000000,tiebreak:1000000},
+   'triad-computer':{score:16,tiebreak:1000},'triad-multiplayer':{score:16,tiebreak:1000},'rhythm-tap':{score:100,tiebreak:128,decimal:true}
+ });
+ const HALL_ALIAS=new RegExp('^(?:'+COLORS.join('|')+') (?:'+ANIMALS.join('|')+') [1-9][0-9]$');
+ const HALL_RANK_FACTOR=1000001;
  const clone=value=>JSON.parse(JSON.stringify(value));
  const stable=value=>JSON.stringify(value,(_,v)=>v&&typeof v==='object'&&!Array.isArray(v)?Object.keys(v).sort().reduce((o,k)=>(o[k]=v[k],o),{}):v);
  const fail=code=>({ok:false,code});
@@ -61,6 +68,7 @@
    let loading=false,locked=false,waitingTakeover=false,code='',status='',destroyed=false,generation=0,inFlightSave=null,transitioning=false,retiredPersonalSave=null,signingOut=false;
    let offset=0,flushTimer=null,leaseTimer=null,queuedPass=null,personalRename=null;
    const pendingJobs=new Set();
+   const pendingHallClassCleanup=new Map();
    const state=()=>({configured,configurationReason,enabled,ready:!!sdk,loading,locked,waitingTakeover,pending,
      profile:active?{classId:active.classId,classLabel:active.classLabel||'Classroom',profileId:active.profileId,alias:active.alias,picture:active.picture,...(personalProfile(active)?{kind:'teacher'}:{})}:null,
      admin:{signedIn:!!adminUid,authorized:adminAuthorized,uid:adminUid||null},
@@ -471,6 +479,91 @@
      if(!active||code!=='unsaved-conflict'||loading)return fail('no-conflict');
      clearPending();loading=true;notify();try{return await activate(active,{reason:'saved-progress-selected'});}catch{return fail('connection-unavailable');}finally{loading=false;notify();}
    }
+   function getHallContext(){
+     const student=!destroyed&&!!active&&!personalProfile(active)&&loaded&&!locked&&ownsWorkspace()&&!!studentUid&&auth?.currentUser?.uid===studentUid;
+     const teacher=!destroyed&&!student&&adminAuthorized&&!!adminUid&&adminAuth?.currentUser?.uid===adminUid;
+     return {identity:generation+':'+(student?'student:'+active.profileId:teacher?'teacher':'guest'),student,teacher,
+       classId:student?active.classId:null,classLabel:student?(active.classLabel||'My class'):null,
+       alias:student&&HALL_ALIAS.test(active.alias)?active.alias:null};
+   }
+   function hallCurrent(owner,identity){return !destroyed&&owner===generation&&getHallContext().identity===identity;}
+   function hallEntry(id,value,board){
+     const limits=HALL_BOARDS[board];
+     if(!limits||!validId(id)||!value||typeof value!=='object'||Array.isArray(value)||Object.keys(value).some(key=>!['alias','score','tiebreak','rank','at'].includes(key)))return null;
+     const {alias,score,tiebreak,rank,at}=value;
+     if(typeof alias!=='string'||!HALL_ALIAS.test(alias)||!Number.isSafeInteger(score)||score<0||score>limits.score*100||!limits.decimal&&score%100!==0||!Number.isSafeInteger(tiebreak)||tiebreak<0||tiebreak>limits.tiebreak||!Number.isSafeInteger(rank)||rank!==score*HALL_RANK_FACTOR+tiebreak||!Number.isSafeInteger(at)||at<1)return null;
+     return {id,alias,score:score/100,tiebreak,at};
+   }
+   function hallRows(raw,board){
+     if(raw===null||raw===undefined)return [];
+     if(typeof raw!=='object'||Array.isArray(raw))throw Error('Invalid Hall response.');
+     return Object.entries(raw).map(([id,value])=>hallEntry(id,value,board)).filter(Boolean)
+       .sort((a,b)=>b.score-a.score||b.tiebreak-a.tiebreak||a.at-b.at||a.id.localeCompare(b.id)).slice(0,20);
+   }
+   function hallPublicURL(board){
+     const configuredURL=config.firebase?.databaseURL;if(typeof configuredURL!=='string'||namespace!==NS)throw Error('Hall is not configured.');
+     const databaseURL=new URL(configuredURL),emulator=config.classroom?.emulators?.database;
+     let url;
+     if(emulator&&(local||options.sdkLoader)&&['127.0.0.1','localhost','[::1]'].includes(emulator.host)&&Number.isSafeInteger(emulator.port)&&emulator.port>0&&emulator.port<=65535){
+       url=new URL('http://'+emulator.host+':'+emulator.port+'/');url.searchParams.set('ns',databaseURL.hostname.split('.')[0]);
+     }else{
+       if(databaseURL.protocol!=='https:'||databaseURL.username||databaseURL.password)throw Error('Invalid Hall database.');
+       url=new URL(databaseURL.origin+'/');
+     }
+     url.pathname='/'+path('hallOfFame/global/'+board)+'.json';url.searchParams.set('orderBy',JSON.stringify('rank'));url.searchParams.set('limitToLast','20');return url.href;
+   }
+   async function loadHallBoard({scope='global',board,classId}={}){
+     if(destroyed)return fail('closed');if(!Object.hasOwn(HALL_BOARDS,board))return fail('invalid-board');
+     if(!['global','class'].includes(scope))return fail('invalid-scope');
+     const owner=generation,context=getHallContext(),identity=context.identity;
+     try{
+       let raw;
+       if(scope==='global'){
+         const fetcher=options.fetch||win?.fetch?.bind(win)||globalThis.fetch;if(typeof fetcher!=='function')return fail('unavailable');
+         // Public rows contain only generated aliases and scores. This request
+         // never initializes Firebase Auth or sends a profile's credentials.
+         const response=await fetcher(hallPublicURL(board),{credentials:'omit',mode:'cors',headers:{Accept:'application/json'}});
+         if(!hallCurrent(owner,identity))return fail('closed');if(!response.ok)return fail('unavailable');
+         raw=await response.json();
+       }else{
+         if(!context.student&&!context.teacher)return fail('sign-in-needed');
+         const selected=classId??context.classId;if(!validId(selected))return fail('invalid-class');
+         if(!context.teacher&&selected!==context.classId)return fail('forbidden');
+         const authority=context.teacher?adminUid:studentUid,database=context.teacher?adminDb:db;
+         if(!sdk||!database)return fail('unavailable');
+         const query=sdk.query(sdk.ref(database,path('hallOfFame/classes/'+selected+'/'+board)),sdk.orderByChild('rank'),sdk.limitToLast(20));
+         const result=await sdk.get(query);
+         if(!hallCurrent(owner,identity)||(context.teacher?adminAuth?.currentUser?.uid!==authority||!adminAuthorized:auth?.currentUser?.uid!==authority))return fail('closed');
+         raw=result.val();
+       }
+       if(!hallCurrent(owner,identity))return fail('closed');
+       return {ok:true,rows:hallRows(raw,board),...(context.student?{ownId:active.profileId}:{})};
+     }catch{return fail(hallCurrent(owner,identity)?'unavailable':'closed');}
+   }
+   async function publishHallRecord(record={}){
+     const context=getHallContext();let test=false;
+     try{test=options.isDeveloperTest?.()===true||win?.CodaDeveloperTestMode?.isEnabled?.()===true;}catch{test=true;}
+     if(!context.student)return fail('sign-in-needed');
+     if(!isWritable())return fail('profile-read-only');if(test)return fail('not-eligible');if(!context.alias)return fail('invalid-alias');
+     if(!record||typeof record!=='object'||typeof record.game!=='string'||typeof record.mode!=='string')return fail('invalid-score');
+     const board=record.game+'-'+record.mode,limits=HALL_BOARDS[board],score=Math.round(record.score*100),tiebreak=record.tiebreak??0;
+     if(!limits||typeof record.score!=='number'||!Number.isFinite(record.score)||record.score<0||record.score>limits.score||!limits.decimal&&!Number.isSafeInteger(record.score)||Math.abs(record.score*100-score)>0.0000001||!Number.isSafeInteger(tiebreak)||tiebreak<0||tiebreak>limits.tiebreak||!Number.isSafeInteger(score*HALL_RANK_FACTOR+tiebreak))return fail('invalid-score');
+     const owner=generation,identity=context.identity,profileId=active.profileId,classId=context.classId,uid=studentUid;
+     const current=()=>hallCurrent(owner,identity)&&getHallContext().student&&isWritable()&&studentUid===uid;
+     const rank=score*HALL_RANK_FACTOR+tiebreak;
+     try{
+       // The class board permits a member to read their own previous best.
+       // An old local backfill must not replace a newer shared record.
+       const previous=await sdk.get(sdk.ref(db,path('hallOfFame/classes/'+classId+'/'+board+'/'+profileId)));
+       if(!current())return fail('closed');
+       const previousValue=previous.val(),best=hallEntry(profileId,previousValue,board);
+       if(best&&previousValue.rank>=rank)return {ok:true,skipped:true};
+       const row={alias:context.alias,score,tiebreak,rank,at:sdk.serverTimestamp()},changes={};
+       changes['global/'+board+'/'+profileId]=row;changes['classes/'+classId+'/'+board+'/'+profileId]=row;
+       await sdk.update(sdk.ref(db,path('hallOfFame')),changes);
+       return current()?{ok:true}:fail('closed');
+     }catch{return fail(current()?'unavailable':'closed');}
+   }
    async function savePersonalPlayer(){
      if(loading||transitioning)return fail('busy');
      if(active&&!personalProfile(active)||sessionMarker()&&sessionMarker().classId!==PERSONAL_CLASS){message('Leave the student profile before saving your own player.','personal-player-student-active');return fail('personal-player-student-active');}
@@ -561,17 +654,31 @@
    }catch{return fail('pass-reissue-failed');}}
    async function sessionsForClass(classId){const snap=await sdk.get(sdk.query(sdk.ref(adminDb,path('sessions')),sdk.orderByChild('classId'),sdk.equalTo(classId)));const rows=[];snap.forEach(child=>rows.push({uid:child.key,...child.val()}));return rows;}
    async function deleteProfile(classId,profileId){const allowed=await staff();if(!allowed.ok)return allowed;if(!validId(classId)||!validId(profileId))return fail('invalid-profile');try{
-     const snap=await sdk.get(sdk.ref(adminDb,path('classes/'+classId+'/profiles/'+profileId+'/meta'))),meta=snap.val();if(!meta)return {ok:true};
+     const snap=await sdk.get(sdk.ref(adminDb,path('classes/'+classId+'/profiles/'+profileId+'/meta'))),meta=snap.val();if(!meta)return {ok:true,hallCleanup:await cleanupHallRows(classId,[profileId])};
      const changes={};changes['classes/'+classId+'/profiles/'+profileId]=null;changes['passes/'+meta.passHash]=null;
      changes['directory/'+classId+'/profiles/'+profileId]=null;
      for(const row of await sessionsForClass(classId))if(row.profileId===profileId)changes['sessions/'+row.uid]=null;
-     await sdk.update(sdk.ref(adminDb,namespace),changes);return {ok:true};
+     await sdk.update(sdk.ref(adminDb,namespace),changes);return {ok:true,hallCleanup:await cleanupHallRows(classId,[profileId])};
    }catch{return fail('profile-delete-failed');}}
+   async function cleanupHallRows(classId,profiles,wholeClass=false){
+     // Hall permissions may not be deployed yet. Never add optional public
+     // cleanup to the private profile deletion's existing atomic write.
+     const changes={};if(wholeClass)changes['hallOfFame/classes/'+classId]=null;
+     for(const profileId of profiles)for(const board of Object.keys(HALL_BOARDS)){
+       changes['hallOfFame/global/'+board+'/'+profileId]=null;
+       if(!wholeClass)changes['hallOfFame/classes/'+classId+'/'+board+'/'+profileId]=null;
+     }
+     try{await sdk.update(sdk.ref(adminDb,namespace),changes);return {ok:true};}
+     catch{return fail('hall-cleanup-unavailable');}
+   }
    async function deleteClass(classId){const allowed=await staff();if(!allowed.ok)return allowed;if(!validId(classId))return fail('invalid-class');try{
      const snap=await sdk.get(sdk.ref(adminDb,path('classes/'+classId+'/profiles'))),changes={};changes['classes/'+classId]=null;changes['directory/'+classId]=null;
-     snap.forEach(child=>{const digest=child.child('meta/passHash').val();if(digest)changes['passes/'+digest]=null;});
+     const profiles=new Set(pendingHallClassCleanup.get(classId)||[]);
+     snap.forEach(child=>{profiles.add(child.key);const digest=child.child('meta/passHash').val();if(digest)changes['passes/'+digest]=null;});
      for(const row of await sessionsForClass(classId))changes['sessions/'+row.uid]=null;
-     await sdk.update(sdk.ref(adminDb,namespace),changes);return {ok:true};
+     await sdk.update(sdk.ref(adminDb,namespace),changes);pendingHallClassCleanup.set(classId,[...profiles]);
+     const hallCleanup=await cleanupHallRows(classId,[...profiles],true);if(hallCleanup.ok)pendingHallClassCleanup.delete(classId);
+     return {ok:true,hallCleanup};
    }catch{return fail('class-delete-failed');}}
    const pageHidden=()=>{if(!win?.document||win.document.visibilityState==='hidden')keepPending();};
    win?.addEventListener?.('pagehide',keepPending);win?.document?.addEventListener?.('visibilitychange',pageHidden);
@@ -580,8 +687,8 @@
    leaseTimer=win?.setInterval?.(async()=>{if(!isWritable())return;try{if(!await lease(false,true))lock('device-changed');}catch{message('Connection paused. Keep this tab open.','connection-unavailable');}},20000);
    // Sessions stay open through inactivity. Explicit logout, revocation, and
    // another device taking the profile still end access through the guards above.
-   function destroy(){keepPending();destroyed=true;generation++;stopSubscriptions();for(const stop of authSubscriptions.splice(0))try{stop();}catch{}if(adminRoleStop){adminRoleStop();adminRoleStop=null;}for(const stop of pendingJobs)try{stop();}catch{}for(const timer of [flushTimer,leaseTimer])if(timer!==null)win?.clearInterval?.(timer);win?.removeEventListener?.('pagehide',keepPending);win?.document?.removeEventListener?.('visibilitychange',pageHidden);listeners.clear();}
-   return {getState:state,subscribe(listener){listeners.add(listener);return()=>listeners.delete(listener);},connect,resume,inspectSession,join,leave,logOut,takeOver,useSavedProgress,adminSignIn,adminSignOut,savePersonalPlayer,renamePersonalPlayer,openPersonalPlayer,listClasses,createClass,listProfiles,createProfile,reissuePass,deleteProfile,deleteClass,flush,isWritable,destroy};
+   function destroy(){keepPending();destroyed=true;generation++;stopSubscriptions();for(const stop of authSubscriptions.splice(0))try{stop();}catch{}if(adminRoleStop){adminRoleStop();adminRoleStop=null;}for(const stop of pendingJobs)try{stop();}catch{}for(const timer of [flushTimer,leaseTimer])if(timer!==null)win?.clearInterval?.(timer);win?.removeEventListener?.('pagehide',keepPending);win?.document?.removeEventListener?.('visibilitychange',pageHidden);listeners.clear();pendingHallClassCleanup.clear();}
+   return {getState:state,getHallContext,loadHallBoard,publishHallRecord,subscribe(listener){listeners.add(listener);return()=>listeners.delete(listener);},connect,resume,inspectSession,join,leave,logOut,takeOver,useSavedProgress,adminSignIn,adminSignOut,savePersonalPlayer,renamePersonalPlayer,openPersonalPlayer,listClasses,createClass,listProfiles,createProfile,reissuePass,deleteProfile,deleteClass,flush,isWritable,destroy};
  }
  return Object.freeze({create,consumeFragment,readSavedSession,parsePass:passCode,formatPass,hashPass});
 });

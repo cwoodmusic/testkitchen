@@ -62,6 +62,94 @@ test('logged-out users and parent listings cannot discover classroom data or pas
  const lookup=await assertSucceeds(read(student,`${ROOT}/passes/${HASH}`));assert.equal(lookup.val().profileId,PROFILE);
 });
 
+const HALL=`${ROOT}/hallOfFame`,HALL_BOARD='pitch-classic';
+const hallRow=(overrides={})=>({alias:'Blue Otter 27',score:12000,tiebreak:12,rank:12000*1000001+12,at:stamp(),...overrides});
+const hallQuery=(database,location)=>ref(database,location).orderByChild('rank').limitToLast(20).get();
+const globalHall=`${HALL}/global/${HALL_BOARD}/${PROFILE}`,classHall=`${HALL}/classes/${CLASS}/${HALL_BOARD}/${PROFILE}`;
+
+test('shared Hall rows publish atomically from completed student records and retain only aliases and numeric scores',async()=>{
+ const owner=anonymous('student_one'),row=hallRow();
+ await assertSucceeds(ref(owner,HALL).update({[`global/${HALL_BOARD}/${PROFILE}`]:row,[`classes/${CLASS}/${HALL_BOARD}/${PROFILE}`]:row}));
+ assert.deepEqual((await assertSucceeds(read(owner,classHall))).val(),row);
+ const global=(await assertSucceeds(hallQuery(env.unauthenticatedContext().database(),`${HALL}/global/${HALL_BOARD}`))).val();
+ assert.deepEqual(global[PROFILE],row);
+ assert.deepEqual(Object.keys(global[PROFILE]).sort(),['alias','at','rank','score','tiebreak']);
+ await assertFails(write(owner,classHall,hallRow({score:11000,rank:11000*1000001+12})));
+ await assertFails(write(owner,globalHall,hallRow({tiebreak:11,rank:12000*1000001+11})));
+ await assertSucceeds(write(owner,classHall,hallRow({tiebreak:13,rank:12000*1000001+13})));
+});
+
+test('global Hall permits bounded rank queries without allowing unrestricted listing or private data reads',async()=>{
+ const guest=env.unauthenticatedContext().database();
+ await assertSucceeds(hallQuery(guest,`${HALL}/global/${HALL_BOARD}`));
+ await assertSucceeds(ref(guest,`${HALL}/global/${HALL_BOARD}`).orderByChild('rank').limitToLast(50).get());
+ for(const location of [HALL,`${HALL}/global`,`${HALL}/global/${HALL_BOARD}`,globalHall,`${HALL}/classes`,`${HALL}/classes/${CLASS}`])await assertFails(read(guest,location));
+ await assertFails(ref(guest,`${HALL}/global/${HALL_BOARD}`).orderByChild('rank').limitToLast(51).get());
+ await assertFails(ref(guest,`${HALL}/global/${HALL_BOARD}`).orderByChild('score').limitToLast(20).get());
+ await assertFails(ref(guest,`${HALL}/global/${HALL_BOARD}`).orderByChild('rank').limitToFirst(20).get());
+ await assertFails(hallQuery(guest,`${HALL}/global/not-a-game`));
+ await assertFails(read(guest,`${PROFILE_PATH}/state`));
+});
+
+test('My class Hall is restricted to current class members and approved school staff',async()=>{
+ const owner=anonymous('student_one'),other=anonymous('student_two'),guest=env.unauthenticatedContext().database();
+ await assertSucceeds(hallQuery(owner,`${HALL}/classes/${CLASS}/${HALL_BOARD}`));
+ await assertSucceeds(hallQuery(staff(),`${HALL}/classes/${CLASS}/${HALL_BOARD}`));
+ await assertFails(hallQuery(owner,`${HALL}/classes/${OTHER_CLASS}/${HALL_BOARD}`));
+ await assertFails(hallQuery(other,`${HALL}/classes/${CLASS}/${HALL_BOARD}`));
+ await assertFails(hallQuery(guest,`${HALL}/classes/${CLASS}/${HALL_BOARD}`));
+ await assertFails(hallQuery(google('ordinary_google'),`${HALL}/classes/${CLASS}/${HALL_BOARD}`));
+ await assertFails(read(owner,`${ROOT}/classes/${CLASS}/profiles`));
+ await assertFails(read(owner,`${OTHER_PATH}/state`));
+});
+
+test('shared Hall rejects spoofed names, identities, modes, private fields, malformed ranks, and unsupported score units',async()=>{
+ const owner=anonymous('student_one');
+ for(const location of [`${HALL}/global/${HALL_BOARD}/${OTHER_PROFILE}`,`${HALL}/classes/${OTHER_CLASS}/${HALL_BOARD}/${PROFILE}`,
+  `${HALL}/global/fake-mode/${PROFILE}`])await assertFails(write(owner,location,hallRow()));
+ for(const row of [hallRow({alias:'Mr. Real Name'}),hallRow({alias:'Blue Fox 27'}),hallRow({email:'child@example.invalid'}),
+  hallRow({classId:CLASS}),hallRow({passHash:HASH}),hallRow({score:12000.5}),hallRow({rank:999999999}),
+  hallRow({score:100000100,rank:100000100*1000001+12}),hallRow({tiebreak:1000001,rank:12000*1000001+1000001}),
+  hallRow({at:stamp()+60000}),hallRow({score:12001,rank:12001*1000001+12})])await assertFails(write(owner,globalHall,row));
+ await assertFails(write(owner,`${HALL}/global/triad-computer/${PROFILE}`,hallRow({score:1700,rank:1700*1000001+12})));
+ await assertFails(write(owner,`${HALL}/global/triad-computer/${PROFILE}`,hallRow({score:750,rank:750*1000001+12})));
+ await assertFails(write(owner,`${HALL}/global/rhythm-tap/${PROFILE}`,hallRow({score:10001,rank:10001*1000001+12})));
+ await assertFails(write(owner,`${HALL}/global/rhythm-tap/${PROFILE}`,hallRow({score:9999,tiebreak:129,rank:9999*1000001+129})));
+ await assertFails(write(staff(),globalHall,hallRow()));
+ await assertFails(write(env.unauthenticatedContext().database(),globalHall,hallRow()));
+});
+
+test('all seven competitive mode boards accept their own bounded score units',async()=>{
+ const owner=anonymous('student_one');
+ for(const board of ['pitch-classic','pitch-endless','pitch-levels','pitch-multi','triad-computer','triad-multiplayer','rhythm-tap']){
+  const score=board.startsWith('triad-')?700:board==='rhythm-tap'?9875:123400,row=hallRow({score,rank:score*1000001+12});
+  await assertSucceeds(ref(owner,HALL).update({[`global/${board}/${PROFILE}`]:row,[`classes/${CLASS}/${board}/${PROFILE}`]:row}));
+ }
+});
+
+test('a revoked card, lost lease, or deleted profile cannot publish new Hall records',async()=>{
+ const owner=anonymous('student_one'),device=anonymous('second_device');
+ await assertFails(write(device,globalHall,hallRow()));
+ await env.withSecurityRulesDisabled(context=>write(context.database(),`${PROFILE_PATH}/lease/expiresAt`,stamp()-1));
+ await assertFails(write(owner,globalHall,hallRow()));
+ await env.withSecurityRulesDisabled(context=>write(context.database(),`${PROFILE_PATH}/lease`,{uid:'student_one',expiresAt:stamp()+60000}));
+ await env.withSecurityRulesDisabled(context=>write(context.database(),`${PROFILE_PATH}/meta/passHash`,NEW_HASH));
+ await assertFails(write(owner,globalHall,hallRow()));
+ await assertFails(hallQuery(owner,`${HALL}/classes/${CLASS}/${HALL_BOARD}`));
+ await env.withSecurityRulesDisabled(context=>remove(context.database(),PROFILE_PATH));
+ await assertFails(write(owner,globalHall,hallRow()));
+});
+
+test('students cannot erase records and staff can remove stale shared rows without publishing a name',async()=>{
+ const owner=anonymous('student_one');await assertSucceeds(write(owner,globalHall,hallRow()));
+ await assertSucceeds(write(owner,classHall,hallRow()));
+ await assertFails(remove(owner,globalHall));await assertFails(remove(owner,classHall));
+ await assertSucceeds(remove(staff(),globalHall));await assertSucceeds(remove(staff(),classHall));
+ await assertSucceeds(write(owner,classHall,hallRow()));
+ await assertFails(remove(owner,`${HALL}/classes/${CLASS}`));
+ await assertSucceeds(remove(staff(),`${HALL}/classes/${CLASS}`));
+});
+
 test('school administration requires both Google provider and the provisioned allowlist',async()=>{
  await assertSucceeds(read(staff(),`${ROOT}/classes`));
  const sessions=await assertSucceeds(ref(staff(),`${ROOT}/sessions`).orderByChild('classId').equalTo(CLASS).get());

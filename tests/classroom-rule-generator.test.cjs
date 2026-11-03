@@ -3,7 +3,7 @@ const assert=require('node:assert/strict');
 const fs=require('node:fs');
 const path=require('node:path');
 const {SCHEMA}=require('../classroom-profile-data.js');
-const {arrayIndexRegex,convertSchema,buildClassroomRules,renderClassroomRules}=require('../tools/build-classroom-rules.cjs');
+const {arrayIndexRegex,convertSchema,buildClassroomRules,renderClassroomRules,renderHallRules}=require('../tools/build-classroom-rules.cjs');
 
 test('piano and major/minor lessons expand only their exact teacher/student validation fields',()=>{
  const previous=JSON.parse(JSON.stringify(SCHEMA)),legacyScales='c-major g-major d-major f-major a-minor c-minor d-minor e-minor'.split(' '),completed=previous.properties.piano.properties.completed;
@@ -83,6 +83,18 @@ test('generated artifact is deterministic and contains only the private namespac
  for(const value of ['dog','https://avatar.example/image','Alice Smith',''])assert.equal(picture.test(value),false);
  assert.deepEqual(space.$other,{'.validate':false});
  assert.equal(renderClassroomRules(SCHEMA),fs.readFileSync(path.join(__dirname,'../classroom-database.rules.json'),'utf8'));
+});
+
+test('the shared Hall installation fragment contains only compact score-board rules',()=>{
+ const shared=JSON.parse(renderHallRules());assert.deepEqual(Object.keys(shared),['hallOfFame']);
+ assert.deepEqual(shared.hallOfFame,buildClassroomRules(SCHEMA).rules.classroomV1.hallOfFame);
+ assert.equal(renderHallRules(),fs.readFileSync(path.join(__dirname,'../docs/HALL-OF-FAME-RULES.json'),'utf8'));
+ const global=shared.hallOfFame.global.$board,row=global.$profileId;
+ assert.match(global['.read'],/query\.orderByChild === "rank"/);
+ assert.match(global['.read'],/query\.limitToLast <= 50/);
+ assert.deepEqual(global['.indexOn'],['rank']);assert.equal(shared.hallOfFame['.read'],false);
+ assert.deepEqual(Object.keys(row).filter(key=>!key.startsWith('.')&&!key.startsWith('$')).sort(),['alias','at','rank','score','tiebreak']);
+ assert.deepEqual(row.$other,{'.validate':false});
 });
 
 test('teacher players are closed exact-owner Google records using the same canonical progress schema',()=>{
