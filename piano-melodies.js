@@ -73,8 +73,8 @@
    q('E4','D4','D4','E4'),[note('D4',2),note('G4',2)]
   ]},
   {id:'old-macdonald',name:'Old MacDonald Had a Farm',meter:'4/4',description:'Play the familiar opening line twice. A quiet breath gives each “E-I-E-I-O” a clear ending.',arrangement:'The four-bar opening line repeats, with a half-note breath at each ending.',bars:[
-   q('C4','C4','C4','G4'),[note('A4'),note('A4'),note('G4',2)],q('E4','E4','D4','D4'),[note('C4',2),rest(2)],
-   q('C4','C4','C4','G4'),[note('A4'),note('A4'),note('G4',2)],q('E4','E4','D4','D4'),[note('C4',2),rest(2)]
+   q('C4','C4','C4','G3'),[note('A3'),note('A3'),note('G3',2)],q('E4','E4','D4','D4'),[note('C4',2),rest(2)],
+   q('C4','C4','C4','G3'),[note('A3'),note('A3'),note('G3',2)],q('E4','E4','D4','D4'),[note('C4',2),rest(2)]
   ]}
  ];
  function build(definition){

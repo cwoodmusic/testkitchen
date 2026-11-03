@@ -26,6 +26,20 @@ test('Frère Jacques has both low closing bell pitches and its real quarter/eigh
  assert.equal(lesson.range.min,67);assert.equal(lesson.range.max,81);assert.equal(lesson.floorBaseMidi,60);assert.equal(lesson.floorOctave,4);assert.deepEqual(lesson.floorOffsets.slice(-6),[12,7,12,12,7,12]);
 });
 
+test('Old MacDonald drops a fourth into the farm phrase and keeps both written endings',()=>{
+ const lesson=lessonFor('old-macdonald'),phrase=[72,72,72,67,69,69,67,76,76,74,74,72];
+ const pitches=lesson.events.filter(event=>!event.rest).map(event=>event.midi);
+ assert.deepEqual(pitches,phrase.concat(phrase));
+ assert.equal(pitches[3]-pitches[2],-5,'The opening C must fall to the lower G');
+ assert.deepEqual(lesson.range,{min:67,max:76});
+ assert.equal(lesson.bars,8);assert.equal(lesson.totalBeats,32);assert.equal(lesson.meter,'4/4');
+ const writtenPhrase=[1,1,1,1,1,1,2,1,1,1,1,2,2];
+ assert.deepEqual(lesson.events.map(event=>event.beats),writtenPhrase.concat(writtenPhrase));
+ assert.deepEqual(lesson.events.filter(event=>event.rest).map(event=>({bar:event.bar,beats:event.beats,onset:event.onset})),[
+  {bar:3,beats:2,onset:14},{bar:7,beats:2,onset:30}
+ ]);
+});
+
 test('compound Row Your Boat and the other familiar openings have their distinctive written rhythms',()=>{
  const row=lessonFor('row-your-boat');assert.equal(row.meter,'6/8');assert.equal(row.barBeats,3);assert.equal(row.bars,8);
  assert.deepEqual(row.events.filter(event=>event.bar===0).map(event=>event.beats),[1.5,1.5]);
