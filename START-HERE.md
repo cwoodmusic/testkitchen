@@ -187,10 +187,15 @@ Foreground plants, sofas, moved objects and painted foreground use the same
 colour grade as the background, including translucent edges. Their depth and
 pixel edits remain intact; luminous glowsticks and live light effects stay bright.
 
+Developer controls appear only for the verified owner accounts and accounts
+they explicitly grant access. Owners manage access under **For teachers →
+Developer access**; see [the setup guide](docs/developer-access.md).
 To try unlockables, open **Developer → Test all unlocks** in the arcade, or the
-room's Developer project tools. Test mode opens a temporary Level 50 player with
+room's Developer project tools. Test mode opens a separate tab with a temporary Level 50 player with
 all customizations, sounds and vibes available, plus test Notes. A visible
-**Exit test mode** button returns you to normal play. Test-mode player progress,
+**Exit test mode** button closes the preview while your original tab stays open.
+Closing that original tab or losing its developer permission closes the preview.
+Test-mode player progress,
 purchases and world edits stay in memory and disappear when you leave or reload;
 the real player's browser data, editor files and cloud saves are not changed.
 Online multiplayer is disabled in this mode. Export any test artwork or world

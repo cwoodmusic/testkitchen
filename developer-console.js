@@ -22,6 +22,10 @@ window.createCodaDeveloperConsole = function (api) {
   const emptyHistoryContent=()=>({version:2,facts:{},quizzes:{}});
   let musicHistoryContent=emptyHistoryContent(),musicFactsEditor=null;
   let panTool=false, spaceHeld=false,collisionOverlay=false,layerOverlay=false,layerMaskSource=null,layerMaskTint=null,layerMaskKey='';
+  let permissionEpoch=0,closing=false,permissionWasGranted=false;
+  const saveTransactions=new Set();
+  function canDevelop(){try{const allowed=api.canDevelop?.()===true;if(allowed)permissionWasGranted=true;return allowed;}catch{return false;}}
+  const stillOwner=epoch=>epoch===permissionEpoch&&canDevelop();
   const dialogueDefaults=api.dialogueDefaults||window.CodaNPCDialogueDefaults||{};
   const TABS=['objects','collision','layers','artwork','dialogue','pixels','education','facts','history','project'];
   const pictures = new Map();
@@ -74,7 +78,7 @@ window.createCodaDeveloperConsole = function (api) {
     c.classList.toggle('dev-pan-ready',studio.active&&!playtest&&(panTool||spaceHeld));
     c.classList.toggle('dev-panning',!!pan);
   }
-  function zoomBy(direction){const camera=api.getCamera?.();if(camera)api.setCameraZoom?.(direction===0?1:camera.targetZoom+direction*camera.step);refreshCamera();}
+  function zoomBy(direction){if(!canDevelop())return false;const camera=api.getCamera?.();if(camera)api.setCameraZoom?.(direction===0?1:camera.targetZoom+direction*camera.step);refreshCamera();}
   $('devZoomOut').onclick=()=>zoomBy(-1);$('devZoomIn').onclick=()=>zoomBy(1);$('devZoomReset').onclick=()=>zoomBy(0);
   $('devPan').onclick=()=>{finishGesture({preserveLayerSelection:tab==='layers'&&layerSelecting});panTool=!panTool;refreshCamera();c.focus({preventScroll:true});};
   objects.id = 'dev-objects';
@@ -102,20 +106,20 @@ window.createCodaDeveloperConsole = function (api) {
     const source=makeCanvas(image.naturalWidth,image.naturalHeight);source.getContext('2d').drawImage(image,0,0);return source.toDataURL('image/png');
   }
   floodButton.onclick=async()=>{
-    if(floodAdding||!canEditArtwork()||tab!=='objects')return;floodAdding=true;floodButton.disabled=true;
+    if(floodAdding||!canEditArtwork()||tab!=='objects')return;const epoch=permissionEpoch;floodAdding=true;floodButton.disabled=true;
     try{
       if(!floodImageData)floodImageData=await embeddedDecorImage('dj-flood-rig');
-      if(!canEditArtwork()||tab!=='objects')return;
+      if(!stillOwner(epoch)||!canEditArtwork()||tab!=='objects')return;
       const position=api.getFloodRigPosition?.()||{x:393.5,y:490},asset=createDecorAsset({name:'DJ color-changing floodlights',width:210,height:48,data:floodImageData},position);
       asset.layer='front';asset.floodLights=window.CodaDJFloodlights.defaults();api.add(asset);
     }catch(error){message(error.message||'Floodlights could not load.');}finally{floodAdding=false;floodButton.disabled=!canEditArtwork()||tab!=='objects';}
   };
   const notesRugButton=document.createElement('button');notesRugButton.type='button';notesRugButton.id='devAddNotesRug';notesRugButton.textContent='Place Notes shop rug';libraryDetails.append(notesRugButton);
   notesRugButton.onclick=async()=>{
-    if(notesRugAdding||!canEditArtwork()||tab!=='objects')return;notesRugAdding=true;notesRugButton.disabled=true;
+    if(notesRugAdding||!canEditArtwork()||tab!=='objects')return;const epoch=permissionEpoch;notesRugAdding=true;notesRugButton.disabled=true;
     try{
       if(!notesRugData)notesRugData=await embeddedDecorImage('rug-notes-rectangle');
-      if(!canEditArtwork()||tab!=='objects')return;
+      if(!stillOwner(epoch)||!canEditArtwork()||tab!=='objects')return;
       const placement=api.getNotesRugPlacement?.()||{x:1350,y:640,width:360,height:112,rotation:0};
       const asset=createDecorAsset({name:'Notes shop arcade rug',category:'rug',width:placement.width,height:placement.height,data:notesRugData},placement);
       asset.rotation=placement.rotation||0;if(placement.flipX)asset.flipX=true;if(placement.flipY)asset.flipY=true;api.add(asset);
@@ -166,19 +170,19 @@ window.createCodaDeveloperConsole = function (api) {
   }
   const dialoguePane=pane('dialogue','');
   if(window.CodaDialogueEditor)dialogueEditor=window.CodaDialogueEditor.mount({host:dialoguePane,defaults:dialogueDefaults,people:window.CodaMusicianCast||[],getData:()=>dialogue,
-    onApply:(id,entry)=>{const before=snapshot();dialogue[id]=clone(entry);changed(before);message('Applied musician dialogue. Save or export the project to keep a backup.');return true;},
-    onReset:id=>{const before=snapshot();delete dialogue[id];changed(before);message('Restored default musician dialogue.');return true;}});
+    onApply:(id,entry)=>{if(!canEditArtwork())return false;const before=snapshot();dialogue[id]=clone(entry);changed(before);message('Applied musician dialogue. Save or export the project to keep a backup.');return true;},
+    onReset:id=>{if(!canEditArtwork())return false;const before=snapshot();delete dialogue[id];changed(before);message('Restored default musician dialogue.');return true;}});
   else dialoguePane.textContent='Dialogue tools could not load. Reload the page to try again.';
   const educationPane=pane('education','');
   function mountEducation(){
-    if(educationEditor||!studio.active||playtest||tab!=='education')return;
+    if(educationEditor||!canDevelop()||!studio.active||playtest||tab!=='education')return;
     if(!window.CodaEducationEditor||!window.CodaEducationContent?.getStore?.()){educationPane.textContent='Lesson editing tools could not load. Reload the page to try again.';return;}
     educationPane.replaceChildren();educationEditor=window.CodaEducationEditor.mount({host:educationPane,initialKind:'study',canEdit:canEditArtwork,onExit:()=>{setTab('objects');(fullscreen?fullscreenButton:c).focus({preventScroll:true});}});
   }
   const factsPane=pane('facts','');
   function canEditMusicFacts(){return canEditArtwork()&&!loadFailed;}
   function mountMusicFacts(){
-    if(musicFactsEditor||!studio.active||playtest||loading||tab!=='facts')return;
+    if(musicFactsEditor||!canDevelop()||!studio.active||playtest||loading||tab!=='facts')return;
     if(!window.CodaMusicHistoryEditor){factsPane.textContent='Music-facts tools could not load. Refresh to try again.';return;}
     factsPane.replaceChildren();musicFactsEditor=window.CodaMusicHistoryEditor.mount({host:factsPane,getData:()=>musicHistoryContent,canEdit:canEditMusicFacts,
       onApply:next=>{
@@ -197,7 +201,7 @@ window.createCodaDeveloperConsole = function (api) {
     historyView=null;historyMounted=false;historyNeedsRender=true;
   }
   function mountHistory(force=false){
-    if(!studio.active||playtest||tab!=='history')return;
+    if(!canDevelop()||!studio.active||playtest||tab!=='history')return;
     let controller=null;try{controller=api.historyProgress?.();}catch{}
     if(!controller?.renderDeveloper){
       if(historyMounted)releaseHistory();historyController=null;
@@ -212,7 +216,7 @@ window.createCodaDeveloperConsole = function (api) {
   historyRefresh.onclick=()=>mountHistory(true);
   const pixelPane=pane('pixels','');
   if(window.CodaPixelEditor&&api.renderer)pixelEditor=window.CodaPixelEditor.mount({host:pixelPane,renderer:api.renderer,getData:()=>sprites,getProfile:api.getPixelProfile,getTargets:api.getPixelTargets,canEdit:canEditArtwork,openArtwork:id=>{open('artwork');artworkEditor?.selectTarget(id);},
-    onChange:next=>{if(!window.CodaPixelEditor.validate(next))return false;const before=snapshot();sprites=clone(next);api.renderer.setPixelEdits(sprites);changed(before);message('Applied pixel edits. Save or export the project to keep a backup.');return true;}});
+    onChange:next=>{if(!canEditArtwork()||!window.CodaPixelEditor.validate(next))return false;const before=snapshot();sprites=clone(next);api.renderer.setPixelEdits(sprites);changed(before);message('Applied pixel edits. Save or export the project to keep a backup.');return true;}});
   else pixelPane.textContent='Sprite tools could not load. Reload the page to try again.';
   const artworkPane=pane('artwork','');
   const characterArtwork=window.CodaCharacterArtworkAdapter?.create({renderer:api.renderer,getSprites:()=>sprites,setSprites,
@@ -228,7 +232,7 @@ window.createCodaDeveloperConsole = function (api) {
     editPixels.onclick=()=>{const asset=api.selected();if(!asset)return;open('artwork');artworkEditor.selectTarget(asset.origin&&asset.kind==='builtin'?'object.'+asset.origin.name:'asset.'+asset.id);};
     $('assetSelection').append(editPixels);
   }
-  function canEditArtwork(){return studio.active&&!playtest&&!loading&&api.canDevelop?.()!==false;}
+  function canEditArtwork(){return canDevelop()&&studio.active&&!playtest&&!loading;}
   function applyArtworkData(next,keys){
     if(!canEditArtwork())return false;const before=snapshot();
     for(const id of keys){
@@ -274,8 +278,8 @@ window.createCodaDeveloperConsole = function (api) {
   $('assetLayer').options[2].textContent = 'Foreground / above actors';
   $('assetHelp').parentElement.querySelector('p').textContent = 'Use Project for complete JSON backups. Images are embedded. Scene edits stay in this browser until exported and published. F2 opens/closes; Ctrl/Cmd+Z undoes; Shift bypasses snapping.';
   const collision = window.createCodaCollisionEditor({W,H,cell:api.cell,gridWidth:api.gridWidth,gridHeight:api.gridHeight,navGrid:api.navGrid,baseGrid:api.baseGrid,toWorld:api.toWorld,invalidateRoutes:api.invalidateRoutes});
-  let collisionBefore;
-  collision.mount($('devCollisionTools'),{beforeChange:()=>{collisionBefore=snapshot();},afterChange:()=>{api.record(collisionBefore);}});
+  let collisionBefore=null;
+  collision.mount($('devCollisionTools'),{beforeChange:()=>{collisionBefore=canDevelop()?snapshot():null;},afterChange:()=>{const before=collisionBefore;collisionBefore=null;if(canDevelop()&&before!==null)changed(before);}});
   if(window.CodaWorldCharacterEditor&&api.getEditorCharacters){
     const characterHost=document.createElement('section');characterHost.className='dev-characters';catalogUI.after(characterHost);
     characterEditor=window.CodaWorldCharacterEditor.create({host:characterHost,canvas:c,width:W,height:H,toWorld:api.toWorld,
@@ -357,7 +361,7 @@ window.createCodaDeveloperConsole = function (api) {
   function message(text) { $('devStatus').textContent=text; }
   function childExpanded(){return artworkEditor?.getState().expanded||educationEditor?.getState().expanded;}
   function setFullscreen(value,focus=true){
-    value=!!value&&studio.active&&!playtest;if(value===fullscreen)return;
+    value=!!value&&canDevelop()&&studio.active&&!playtest;if(value===fullscreen)return;
     finishGesture();spaceHeld=false;
     const scroll=fullscreen?content.scrollTop:panel.scrollTop;
     fullscreen=value;panel.classList.toggle('dev-fullscreen',value);document.documentElement.classList.toggle('coda-dev-fullscreen',value);
@@ -380,9 +384,9 @@ window.createCodaDeveloperConsole = function (api) {
   }
   function snapshot() { const rooms=api.getRooms?.();return JSON.stringify({...(scenery?{scenery}:{}),assets:studio.assets,collision:collision.get(),strokes:layer.actions,...(Object.keys(characters).length?{characters}:{}),...(Object.keys(dialogue).length?{dialogue}:{}),...(Object.keys(sprites).length?{sprites}:{}),...(Object.keys(artwork).length?{artwork}:{}),...(Object.keys(musicHistoryContent.facts).length||Object.keys(musicHistoryContent.quizzes).length||Object.keys(musicHistoryContent.archivedQuizzes||{}).length?{musicHistoryContent}:{}),...(rooms&&Object.keys(rooms).length?{rooms}:{})}); }
   function documentData() { return {format:FORMAT,version:VERSION,world:{width:W,height:H},...JSON.parse(snapshot())}; }
-  function changed(before) { api.record(before); }
+  function changed(before) { if(!canDevelop())return false;api.record(before);return true; }
   function recordRoomChange(id,before) {
-    if(loading||!api.getRooms)return;
+    if(!canDevelop()||loading||!api.getRooms)return false;
     const prior=JSON.parse(snapshot());prior.rooms=prior.rooms||{};
     if(before.assets.length||before.collision.length||before.strokes.length||Object.keys(before.entities).length||before.artwork)prior.rooms[id]=clone(before);else delete prior.rooms[id];
     if(!Object.keys(prior.rooms).length)delete prior.rooms;
@@ -392,19 +396,21 @@ window.createCodaDeveloperConsole = function (api) {
     // that newer room edit with an older complete-project snapshot.
     journalFallback();
   }
-  function journalFallback(){try{localStorage.setItem(STORE,JSON.stringify({...documentData(),savedAt:Date.now()}));}catch{}}
+  function journalFallback(){if(!canDevelop())return false;try{localStorage.setItem(STORE,JSON.stringify({...documentData(),savedAt:Date.now()}));}catch{}}
   function setSprites(next) {
-    if(!window.CodaPixelEditor?.validate(next))return false;
+    if(!canDevelop()||!window.CodaPixelEditor?.validate(next))return false;
     const before=snapshot();sprites=clone(next);api.renderer?.setPixelEdits(sprites);recordChange(before);journalFallback();return true;
   }
   function invalidate(layersChanged=true) { if(layersChanged)api.invalidateArtwork(); syncNavigation(); }
   function recordChange(before) {
+    if(!canDevelop())return false;
     if (before !== snapshot()) { studio.undo.push(before); if(studio.undo.length>40)studio.undo.shift();studio.redo=[];projectSource='local'; }
     let layersChanged=true;
     try {const previous=JSON.parse(before);layersChanged=previous.scenery!==scenery||JSON.stringify(previous.strokes)!==JSON.stringify(layer.actions)||JSON.stringify(previous.artwork||{})!==JSON.stringify(artwork);}catch{}
     studio.dirty=true; invalidate(layersChanged); api.refresh(); refresh(); scheduleSave();
   }
   function undoRedo(undo) {
+    if(!canDevelop())return false;
     finishGesture();
     const from=undo?studio.undo:studio.redo, to=undo?studio.redo:studio.undo;
     if(!from.length)return; to.push(snapshot()); applyState(JSON.parse(from.pop()),{clearRooms:true});
@@ -439,13 +445,15 @@ window.createCodaDeveloperConsole = function (api) {
     if(tab==='artwork'&&studio.active&&!playtest)artworkEditor?.setExpanded(true);
     if(tab==='education'&&studio.active&&!playtest){mountEducation();educationEditor?.setActive(true);educationEditor?.setExpanded(true);}
   }
-  function open(name='objects') { api.toggle(true); setTab(name); if(!childExpanded())(fullscreen?fullscreenButton:c).focus({preventScroll:true}); }
+  function open(name='objects') { if(!canDevelop())return false;api.toggle(true); setTab(name); if(!childExpanded())(fullscreen?fullscreenButton:c).focus({preventScroll:true});return true; }
   function onToggle() {
+    if(studio.active&&!canDevelop())return close();
     if(!studio.active) { releaseHistory();pixelEditor?.cancelGesture();artworkEditor?.cancelPaste?.(false);artworkEditor?.setExpanded(false);setFullscreen(false,false); spaceHeld=false; playtest=false; panel.classList.remove('dev-playtest'); $('devPlaytest').textContent='▶ Playtest'; $('devPlaytest').setAttribute('aria-pressed','false'); }
     fullscreenButton.disabled=playtest;
     setTab(tab); if(studio.active)message(loadFailed&&loadError?loadError:'Developer console active. Changes save locally; export a project backup.'+(publishedError?' '+publishedError:''));
   }
   function togglePlaytest() {
+    if(!canDevelop()||!studio.active)return false;
     if(!playtest)setFullscreen(false);
     finishGesture();pixelEditor?.cancelGesture();artworkEditor?.cancelPaste?.(false);if(!playtest)artworkEditor?.setExpanded(false); spaceHeld=false; playtest=!playtest; panel.classList.toggle('dev-playtest',playtest); $('devPlaytest').setAttribute('aria-pressed',String(playtest)); $('devPlaytest').textContent=playtest?'■ Stop playtest':'▶ Playtest';
     fullscreenButton.disabled=playtest;
@@ -503,6 +511,7 @@ window.createCodaDeveloperConsole = function (api) {
   worldArt.addEventListener('load',catalogPreview);
   foregroundArt.addEventListener('load',catalogPreview);
   function lift(origin, focus=true) {
+    if(!canEditArtwork())return null;
     if(!refreshedScenery()&&catalog.find(part=>part.name===origin.name)?.type==='wall-fixture'){message('Separate wall decorations belong to the refreshed arcade scenery. Export your current project before resetting to that scenery.');return null;}
     const existing=studio.assets.find(a=>a.origin?.name===origin.name);
     if(existing) { studio.selected=existing.id;api.refresh();refresh();message('Selected '+existing.name);return existing; }
@@ -685,14 +694,16 @@ window.createCodaDeveloperConsole = function (api) {
     api.invalidateRoutes();
   }
   async function save(options={}) {
+    if(!canDevelop())return false;
+    const epoch=permissionEpoch;
     if(loading||loadFailed){message('Project loading failed or is incomplete. Export your current work before replacing storage.');return false;}
     if(options.finishGesture!==false){finishGesture();clearTimeout(saveTimer);}
     const payload={...documentData(),savedAt:Date.now()};
     if(!validate(payload)){message('Project contains unsupported data. Export a backup before changing storage.');return false;}
-    try { const db=await api.db();await new Promise((resolve,reject)=>{const tx=db.transaction('layouts','readwrite');tx.objectStore('layouts').put(payload,STORE);tx.oncomplete=resolve;tx.onerror=()=>reject(tx.error);tx.onabort=()=>reject(tx.error);});studio.dirty=false;projectSource='local';message('Complete world project saved in this browser. Export JSON for a portable backup.');return true; }
-    catch(err) { try {localStorage.setItem(STORE,JSON.stringify(payload));studio.dirty=false;projectSource='local';message('Project saved in local storage. Export a backup.');return true;}catch{message('Storage unavailable or full. Export project JSON now to keep your work.');return false;} }
+    try { const db=await api.db();if(!stillOwner(epoch))return false;await new Promise((resolve,reject)=>{const tx=db.transaction('layouts','readwrite');saveTransactions.add(tx);const finish=callback=>{saveTransactions.delete(tx);callback();};tx.oncomplete=()=>finish(resolve);tx.onerror=()=>finish(()=>reject(tx.error));tx.onabort=()=>finish(()=>reject(tx.error));if(!stillOwner(epoch)){tx.abort();return;}tx.objectStore('layouts').put(payload,STORE);});if(!stillOwner(epoch))return false;studio.dirty=false;projectSource='local';message('Complete world project saved in this browser. Export JSON for a portable backup.');return true; }
+    catch(err) { if(!stillOwner(epoch))return false;try {localStorage.setItem(STORE,JSON.stringify(payload));studio.dirty=false;projectSource='local';message('Project saved in local storage. Export a backup.');return true;}catch{message('Storage unavailable or full. Export project JSON now to keep your work.');return false;} }
   }
-  function scheduleSave() {clearTimeout(saveTimer);saveTimer=setTimeout(()=>save({finishGesture:false}),450);}
+  function scheduleSave() {clearTimeout(saveTimer);if(canDevelop())saveTimer=setTimeout(()=>save({finishGesture:false}),450);}
   async function stored(key) {
     let databaseValue=null, localValue=null;
     try {const db=await api.db();databaseValue=await new Promise((resolve,reject)=>{const req=db.transaction('layouts','readonly').objectStore('layouts').get(key);req.onsuccess=()=>resolve(req.result);req.onerror=()=>reject(req.error);});}catch{}
@@ -768,20 +779,25 @@ window.createCodaDeveloperConsole = function (api) {
     loading=false;studio.ready=true; refresh();catalogPreview();
   }
   function exportProject() {
+    if(!canDevelop())return false;
     finishGesture(); const blob=new Blob([JSON.stringify(documentData(),null,2)],{type:'application/json'}),url=URL.createObjectURL(blob),link=document.createElement('a');link.href=url;link.download='coda-world-project.json';link.click();setTimeout(()=>URL.revokeObjectURL(url),5000);message('Exported the complete world, artwork pixels, musician dialogue, music facts, quiz questions and character sprite edits.');
   }
   async function importFile(file) {
-    if(!file)return;
+    if(!file||!canDevelop())return false;
+    const epoch=permissionEpoch;
     try {
       if(file.size>70*1024*1024)throw Error('Project exceeds the 70 MB limit.');
-      const data=JSON.parse(await file.text());if(!validate(data))throw Error('Invalid world project. Current edits are unchanged.');
+      const data=JSON.parse(await file.text());if(!stillOwner(epoch))return false;if(!validate(data))throw Error('Invalid world project. Current edits are unchanged.');
       // Decode all embedded artwork before committing, so a broken image cannot replace a working project.
       await decodeProjectImages(data);
+      if(!stillOwner(epoch))return false;
       if(!confirm('Replace the current complete world project? You can undo this import.'))return;
+      if(!stillOwner(epoch))return false;
       finishGesture();const before=snapshot();applyState(data);loadFailed=false;loadError=null;changed(before);message('Imported complete project. Undo is available.');
     }catch(err){message('Import failed: '+err.message);}
   }
   function refresh() {
+    if(studio.active&&!canDevelop()&&!closing){close();return;}
     syncLayerSelection();
     decorLibrary?.refresh();floodButton.disabled=floodAdding||!canEditArtwork()||tab!=='objects';notesRugButton.disabled=notesRugAdding||!canEditArtwork()||tab!=='objects';
     if(api.selected()&&characterEditor?.getSelected())characterEditor.clearSelection();characterEditor?.refresh();
@@ -814,20 +830,46 @@ window.createCodaDeveloperConsole = function (api) {
     $('devSolid').checked=!!a?.collider; $('devCollider').hidden=!a?.collider;
     if(a?.collider)for(const [field,key]of [['X','x'],['Y','y'],['W','w'],['H','h']])$('devCol'+field).value=a.collider[key];
   }
-  function editSelected(fn) {const a=api.selected();if(!a)return;const before=snapshot();fn(a);changed(before);api.refresh();refresh();}
-  function finishGesture(options={}) {artworkEditor?.finishGesture();if(!options.preserveLayerSelection)layerSelection?.cancel();characterEditor?.finishGesture();
+  function editSelected(fn) {if(!canEditArtwork())return false;const a=api.selected();if(!a)return;const before=snapshot();fn(a);changed(before);api.refresh();refresh();}
+  function finishGesture(options={}) {if(!canDevelop()){cancelPendingGestures();return false;}artworkEditor?.finishGesture();if(!options.preserveLayerSelection)layerSelection?.cancel();characterEditor?.finishGesture();
     pixelEditor?.finishGesture?.();
     endPan();
     if(studio.drag||studio.capturing?.start)api.assetPointerEnd();
     if(strokeBefore!==null){api.layerPointerEnd();const before=strokeBefore;strokeBefore=null;changed(before);}
     collision.pointerEnd();
   }
+  function cancelPendingGestures(){
+    pixelEditor?.cancelGesture?.();artworkEditor?.cancelGesture?.();artworkEditor?.cancelPaste?.(false);characterEditor?.cancelGesture?.();layerSelection?.cancel();
+    if(strokeBefore!==null){
+      try{layer.actions=clone(JSON.parse(strokeBefore).strokes||[]);layer.dirty=true;api.invalidateArtwork();}catch{}
+      strokeBefore=null;
+    }
+    layer.drawing=null;
+    if(collisionBefore!==null){const before=collisionBefore;collisionBefore=null;try{collision.apply(JSON.parse(before).collision||[]);}catch{}}
+    collision.setActive(false);spaceHeld=false;panTool=false;endPan();
+  }
+  function close(){
+    if(closing)return false;closing=true;permissionEpoch++;clearTimeout(saveTimer);saveTimer=null;
+    try{
+      for(const tx of saveTransactions)try{tx.abort();}catch{}
+      saveTransactions.clear();cancelPendingGestures();releaseHistory();
+      artworkEditor?.setExpanded(false);educationEditor?.setActive(false);educationEditor?.setExpanded(false);
+      setFullscreen(false,false);playtest=false;layer.active=false;layer.selecting=false;layerSelecting=false;pickSample=false;
+      collisionOverlay=false;layerOverlay=false;
+      panel.classList.remove('dev-playtest');$('devPlaytest').textContent='▶ Playtest';$('devPlaytest').setAttribute('aria-pressed','false');
+      c.classList.remove('layer-editing','dev-pan-ready','dev-panning');
+      if(studio.active)api.toggle(false);
+      studio.active=false;studio.capturing=null;panel.hidden=true;
+      return true;
+    }finally{if(!canDevelop())permissionWasGranted=false;closing=false;}
+  }
+  function refreshPermissions(){const allowed=canDevelop();if(!allowed&&(permissionWasGranted||studio.active||playtest||fullscreen||strokeBefore!==null||collisionBefore!==null||saveTransactions.size))close();return allowed;}
   function endPan(){
     if(pan){try{if(c.hasPointerCapture(pan.id))c.releasePointerCapture(pan.id);}catch{}}
     pan=null;refreshCamera();
   }
   function pointerDown(e) {
-    if(!studio.active||playtest)return false;
+    if(!canDevelop()||!studio.active||playtest)return false;
     if(loading){message('Wait for the saved project to load.');return true;}
     if(pan)return true;
     if(e.button===1||e.button===2||e.button===0&&(panTool||spaceHeld)){finishGesture({preserveLayerSelection:tab==='layers'&&layerSelecting});e.preventDefault();c.focus({preventScroll:true});pan={x:e.clientX,y:e.clientY,id:e.pointerId};try{c.setPointerCapture(e.pointerId);}catch{}refreshCamera();return true;}
@@ -853,8 +895,8 @@ window.createCodaDeveloperConsole = function (api) {
     }
     return false;
   }
-  function pointerMove(e) {if(!studio.active||playtest)return; if(pan){if(e.pointerId!==pan.id)return;api.panByScreen(pan.x-e.clientX,pan.y-e.clientY);pan.x=e.clientX;pan.y=e.clientY;return;}if(tab==='collision')collision.pointerMove(e);if(tab==='layers'){if(layerSelecting){const p=api.toWorld(e.clientX,e.clientY);layerSelection?.move([p.x,p.y]);}else api.layerPointerMove(e);}if(tab==='objects')characterEditor?.pointerMove(e);}
-  function pointerEnd(e) {if(pan){if(e&&e.pointerId!==pan.id)return;endPan();return;}if(!studio.active||playtest)return; if(tab==='collision')collision.pointerEnd();if(tab==='objects'){if(e?.type==='pointercancel')characterEditor?.cancelGesture();else characterEditor?.pointerEnd(e);}if(tab==='layers'){if(layerSelecting){if(e?.type==='pointercancel')layerSelection?.cancel();else layerSelection?.end();}else if(strokeBefore!==null){api.layerPointerEnd();const before=strokeBefore;strokeBefore=null;changed(before);}}}
+  function pointerMove(e) {if(!canDevelop()){refreshPermissions();return;}if(!studio.active||playtest)return; if(pan){if(e.pointerId!==pan.id)return;api.panByScreen(pan.x-e.clientX,pan.y-e.clientY);pan.x=e.clientX;pan.y=e.clientY;return;}if(tab==='collision')collision.pointerMove(e);if(tab==='layers'){if(layerSelecting){const p=api.toWorld(e.clientX,e.clientY);layerSelection?.move([p.x,p.y]);}else api.layerPointerMove(e);}if(tab==='objects')characterEditor?.pointerMove(e);}
+  function pointerEnd(e) {if(!canDevelop()){refreshPermissions();return;}if(pan){if(e&&e.pointerId!==pan.id)return;endPan();return;}if(!studio.active||playtest)return; if(tab==='collision')collision.pointerEnd();if(tab==='objects'){if(e?.type==='pointercancel')characterEditor?.cancelGesture();else characterEditor?.pointerEnd(e);}if(tab==='layers'){if(layerSelecting){if(e?.type==='pointercancel')layerSelection?.cancel();else layerSelection?.end();}else if(strokeBefore!==null){api.layerPointerEnd();const before=strokeBefore;strokeBefore=null;changed(before);}}}
   function drawOverlay(g,cam) {
     if(!studio.active||playtest)return;
     if(tab==='layers')layerSelection?.draw(g,(cam?.zoom||1)*c.getBoundingClientRect().width/W);
@@ -887,8 +929,8 @@ window.createCodaDeveloperConsole = function (api) {
   for(const [suffix,key]of [['X','x'],['Y','y'],['W','w'],['H','h']])$('devCol'+suffix).onchange=()=>editSelected(a=>{if(a.collider)a.collider[key]=api.bound($('devCol'+suffix).value,key==='w'||key==='h'?1:-100,key==='w'||key==='h'?200:100,a.collider[key]);});
   $('devRestore').onclick=()=>{const a=api.selected();if(!a?.origin)return;const before=snapshot();studio.assets=studio.assets.filter(q=>q!==a);studio.selected=null;changed(before);api.refresh();message('Restored the original artwork and source collision.');};
   $('devReplace').onclick=()=>$('devReplaceFile').click();
-  $('devReplaceFile').onchange=async e=>{const file=e.target.files?.[0],id=studio.selected;e.target.value='';if(!file)return;try{if(!/^image\/(png|jpeg|webp|gif|apng)$/.test(file.type)||file.size>8*1024*1024)throw Error('Choose a supported image up to 8 MB.');const data=await api.fileData(file),[w,h]=await api.imageDimensions(data);if(w>8192||h>8192)throw Error('Image exceeds 8192 pixels.');if(studio.selected!==id)throw Error('Selection changed. Select the object and try again.');editSelected(a=>{a.kind='image';a.data=data;a.ref=null;a.crop=null;a.cols=a.rows=a.frames=1;a.fps=0;});message('Replaced selected artwork; size, placement and source cleanup preserved.');}catch(err){message(err.message);}};
-  function setOverlay(name,value){if(!studio.active||playtest)return;finishGesture();if(name==='collision')collisionOverlay=!!value;else layerOverlay=!!value;refresh();message((name==='collision'?'Collision map':'Foreground / background layers')+(value?' shown.':' hidden.')+' Project edits are unchanged.');}
+  $('devReplaceFile').onchange=async e=>{if(!canDevelop())return false;const epoch=permissionEpoch;const file=e.target.files?.[0],id=studio.selected;e.target.value='';if(!file)return;try{if(!/^image\/(png|jpeg|webp|gif|apng)$/.test(file.type)||file.size>8*1024*1024)throw Error('Choose a supported image up to 8 MB.');const data=await api.fileData(file),[w,h]=await api.imageDimensions(data);if(!stillOwner(epoch))return false;if(w>8192||h>8192)throw Error('Image exceeds 8192 pixels.');if(studio.selected!==id)throw Error('Selection changed. Select the object and try again.');editSelected(a=>{a.kind='image';a.data=data;a.ref=null;a.crop=null;a.cols=a.rows=a.frames=1;a.fps=0;});message('Replaced selected artwork; size, placement and source cleanup preserved.');}catch(err){message(err.message);}};
+  function setOverlay(name,value){if(!canDevelop()||!studio.active||playtest)return;finishGesture();if(name==='collision')collisionOverlay=!!value;else layerOverlay=!!value;refresh();message((name==='collision'?'Collision map':'Foreground / background layers')+(value?' shown.':' hidden.')+' Project edits are unchanged.');}
   $('devShowCollision').onclick=()=>setOverlay('collision',!collisionOverlay);$('devShowLayers').onclick=()=>setOverlay('layers',!layerOverlay);
   $('devLayerSelect').onclick=()=>{finishGesture();layerSelecting=!layerSelecting;syncLayerSelection();if(fullscreen)setFullscreen(false);c.focus({preventScroll:true});};
   $('devLayerSelectionShape').onchange=e=>{finishGesture();layerSelection?.setShape(e.target.value);layerSelecting=true;syncLayerSelection();};
@@ -906,14 +948,18 @@ window.createCodaDeveloperConsole = function (api) {
   $('devImport').onclick=$('assetImport').onclick=()=>$('devImportFile').click();
   $('devImportFile').onchange=e=>{const file=e.target.files?.[0];e.target.value='';importFile(file);};
   $('devReset').onclick=async()=>{
+    if(!canDevelop())return false;const epoch=permissionEpoch;
     if(api.publishedProjectUrl&&!publishedProject){message('The published layout is unavailable. Your current project has been kept. Reload to retry before resetting.');return;}
     if(publishedProject)try{await decodeProjectImages(publishedProject);}catch(error){message('Published layout could not load: '+error.message+'. Your current project has been kept.');return;}
+    if(!stillOwner(epoch))return false;
     if(!confirm(publishedProject?'Reset your local project to the published world layout? Undo is available.':'Reset all objects, collision and local foreground edits? Published artwork stays intact. Undo is available.'))return;
+    if(!stillOwner(epoch))return false;
     const before=snapshot();applyState({... (publishedProject||{assets:[],collision:[],strokes:[]}),...(api.getRooms?{rooms:publishedProject?.rooms||{}}:{})});loadFailed=false;loadError=null;changed(before);
     message(publishedProject?'Restored the published world layout. Undo is available.':'Restored the original world layout. Undo is available.');
   };
   $('editorToggle').onclick=()=>open('layers');
   window.addEventListener('keydown',e=>{
+    if(!canDevelop()){if(studio.active||playtest||fullscreen)refreshPermissions();return;}
     if(fullscreenKey(e))return;
     if(e.target?.closest?.('[data-history-developer]')&&!['F2','Escape'].includes(e.key)){e.stopImmediatePropagation();return;}
     if(e.target?.closest?.('[data-education-editor]')&&e.key!=='F2')return;
@@ -964,17 +1010,26 @@ window.createCodaDeveloperConsole = function (api) {
     e.preventDefault();e.stopImmediatePropagation();
     if(!layerSelection.finish())message('Choose at least three corners around an area.');
   });
+  for(const type of ['click','change','input','pointerdown'])panel.addEventListener(type,e=>{
+    if(!canDevelop()){e.preventDefault();e.stopImmediatePropagation();refreshPermissions();}
+  },true);
   panel.addEventListener('click',e=>{
     if(loading){e.preventDefault();e.stopImmediatePropagation();message('Wait for project restoration to finish.');return;}
     // Actions that ask for a point or gesture on the map must reveal it first.
     if(fullscreen&&e.target.closest?.('#devPan,#devLiftRegion,#devPickSample,#assetCapture,#assetCaptureFG'))setFullscreen(false);
   },true);
+  // Property handlers are also used directly by editor integrations. Check
+  // permission at invocation even when no DOM event capture phase runs.
+  for(const element of [panel,...panel.querySelectorAll('*')])for(const property of ['onclick','onchange','oninput']){
+    const handler=element[property];if(typeof handler!=='function')continue;
+    element[property]=function(...args){if(!canDevelop()){refreshPermissions();return false;}return handler.apply(this,args);};
+  }
   setTab('objects');load();
-  return {snapshot,recordChange,recordRoomChange,setSprites,undoRedo,save,refresh,refreshCamera,onToggle,open,renderBase,renderCleanup,suppressOriginal,drawUnliftedPixels,unliftedPicture,originalPicture:a=>a.origin?picture(a.origin):null,assetArtwork:(a,raw)=>artworkTools?.assetImage(a,raw)||raw,backgroundArtwork:(id,source)=>artworkTools?.compose(id,source)||source,objectArtwork:(name,source)=>artworkTools?.objectImage(name,source)||source,getArtworkEditor:()=>artworkEditor,objectEffectClip:name=>artworkTools?.effectClip(name)||null,validateAssetExtension,walkableOverride,pointerDown,pointerMove,pointerEnd,drawOverlay,liftedRegion,finishGesture,moveSelectionOrder,isPlaytest:()=>playtest,isEditing:()=>studio.active&&!playtest,exportProject,loadReady:()=>!loading&&(refreshedScenery()?environmentReady():!arcadeFloor?.isReady||arcadeFloor.isReady()),validate,
+  return {snapshot,recordChange,recordRoomChange,setSprites,undoRedo,save,refresh,refreshCamera,onToggle,open,close,refreshPermissions,renderBase,renderCleanup,suppressOriginal,drawUnliftedPixels,unliftedPicture,originalPicture:a=>a.origin?picture(a.origin):null,assetArtwork:(a,raw)=>artworkTools?.assetImage(a,raw)||raw,backgroundArtwork:(id,source)=>artworkTools?.compose(id,source)||source,objectArtwork:(name,source)=>artworkTools?.objectImage(name,source)||source,getArtworkEditor:()=>canDevelop()?artworkEditor:null,objectEffectClip:name=>artworkTools?.effectClip(name)||null,validateAssetExtension,walkableOverride,pointerDown,pointerMove,pointerEnd,drawOverlay,liftedRegion,finishGesture,moveSelectionOrder,isPlaytest:()=>canDevelop()&&playtest,isEditing:()=>canDevelop()&&studio.active&&!playtest,exportProject,loadReady:()=>!loading&&(refreshedScenery()?environmentReady():!arcadeFloor?.isReady||arcadeFloor.isReady()),validate,
     // Data-only inspection supports repeatable browser integration checks.
     floorGrid:()=>arcadeFloor?.snapshot()||null,
     getScenery:()=>scenery,isRefreshedScenery:refreshedScenery,environmentReady,
     getCharacters:()=>{const result=clone(characters);for(const id of ['scholar','riff','pip']){const preview=characterEditor?.getPreview(id);if(preview)result[id]={...(result[id]||{}),...preview};}return result;},
     getProject:()=>clone(documentData()),getPublishedProject:()=>publishedProject?clone(publishedProject):null,getProjectSource:()=>projectSource,
-    getMusicHistoryContent:()=>clone(musicHistoryContent),getMusicFactsEditor:()=>musicFactsEditor,getDialogue:id=>id===undefined?clone(dialogue):dialogue[id]?clone(dialogue[id]):null,getSprites:()=>clone(sprites),getEducationEditor:()=>educationEditor,getState:()=>({wallReflections:wallReflections?.getState()||null,pathwayFloorFill:pathwayFloorFill?.getState()||null,paletteCompatibility:floorPaletteCompat?.getState()||null,layerSelection:layerSelection?{...layerSelection.getState(),selecting:layerSelecting}:null,characters:characterEditor?.getState()||null,scenery:scenery||null,artwork:artworkEditor?.getState()||null,education:educationEditor?.getState()||null,open:studio.active,editing:studio.active&&!playtest,playtest,tab,fullscreen,overlays:{collision:collisionOverlay,layers:layerOverlay,visible:studio.active&&!playtest}})};
+    getMusicHistoryContent:()=>clone(musicHistoryContent),getMusicFactsEditor:()=>canDevelop()?musicFactsEditor:null,getDialogue:id=>id===undefined?clone(dialogue):dialogue[id]?clone(dialogue[id]):null,getSprites:()=>clone(sprites),getEducationEditor:()=>canDevelop()?educationEditor:null,getState:()=>({wallReflections:wallReflections?.getState()||null,pathwayFloorFill:pathwayFloorFill?.getState()||null,paletteCompatibility:floorPaletteCompat?.getState()||null,layerSelection:layerSelection?{...layerSelection.getState(),selecting:layerSelecting}:null,characters:characterEditor?.getState()||null,scenery:scenery||null,artwork:artworkEditor?.getState()||null,education:educationEditor?.getState()||null,open:studio.active,editing:canDevelop()&&studio.active&&!playtest,playtest,tab,fullscreen,overlays:{collision:collisionOverlay,layers:layerOverlay,visible:canDevelop()&&studio.active&&!playtest}})};
 };

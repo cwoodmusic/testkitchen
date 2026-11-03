@@ -3331,6 +3331,15 @@
           }
         }
       },
+      "developerAccess": {
+        ".read": "((auth !== null && auth.token.firebase.sign_in_provider === \"google.com\") && (auth.token.email_verified === true) && (auth.token.email !== null)) && ((auth.token.email.toLowerCase() === \"cwood@sanjacinto.k12.ca.us\" || auth.token.email.toLowerCase() === \"cwood.musiced@gmail.com\"))",
+        ".write": false,
+        "$emailKey": {
+          ".read": "((auth !== null && auth.token.firebase.sign_in_provider === \"google.com\") && (auth.token.email_verified === true) && (auth.token.email !== null)) && (auth.token.email.toLowerCase().replace(\".\", \",\") === $emailKey)",
+          ".write": "((auth !== null && auth.token.firebase.sign_in_provider === \"google.com\") && (auth.token.email_verified === true) && (auth.token.email !== null)) && ((auth.token.email.toLowerCase() === \"cwood@sanjacinto.k12.ca.us\" || auth.token.email.toLowerCase() === \"cwood.musiced@gmail.com\"))",
+          ".validate": "($emailKey.length >= 3) && ($emailKey.length <= 254) && ($emailKey.matches(/^[a-z0-9_%+,-]+@[a-z0-9,-]+,[a-z]{2,63}$/)) && (!$emailKey.contains(\",,\")) && (newData.isBoolean()) && (newData.val() === true)"
+        }
+      },
       "$other": {
         ".validate": false
       }

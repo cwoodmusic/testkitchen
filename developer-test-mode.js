@@ -12,12 +12,42 @@
  function create(win){
   let requested=false;try{requested=new URL(win?.location?.href).searchParams.get('dev-test')==='1';}catch{}
   let isolated=false,seeded=false,source='blank',error='',originalName='',local=null,sessions=null,banner=null;
+  let ownerRealm=null,watchTimer=null,stopOwnerSubscription=null;
+  const subscribers=new Set();
+  function verifiedOwner(realm){
+   try{return !!realm&&!realm.closed&&new URL(realm.location.href).origin===new URL(win.location.href).origin&&realm.CodaDeveloperOwnerAccess?.canDevelop?.()===true;}catch{return false;}
+  }
+  function findOwner(){
+   try{if(win.opener&&win.opener!==win&&verifiedOwner(win.opener))return win.opener;}catch{}
+   try{if(win.parent&&win.parent!==win&&verifiedOwner(win.parent))return win.parent;}catch{}
+   return null;
+  }
+  function removeRequest(){try{const url=new URL(win.location.href);url.searchParams.delete('dev-test');win.history?.replaceState(win.history.state,'',url.href);}catch{}}
+  if(requested){ownerRealm=findOwner();if(!ownerRealm){requested=false;removeRequest();}}
+  const ownerVerified=()=>requested&&verifiedOwner(ownerRealm);
   const enabled=()=>requested;
-  const state=()=>({enabled:requested,isolated,seeded,source,error});
+  const state=()=>({enabled:requested,isolated,seeded,source,error,ownerVerified:ownerVerified()});
+  function notify(){const value=state();for(const listener of subscribers)try{listener({...value});}catch{}}
   function cleanURL(test){const url=new URL(win.location.href);url.searchParams.delete('dev-test');url.searchParams.delete('profile');url.hash='';if(test)url.searchParams.set('dev-test','1');return url.href;}
   function restoreName(){if(requested)try{win.name=originalName;}catch{}}
-  function enter(){if(requested)return false;try{win.location.assign(cleanURL(true));return true;}catch{return false;}}
-  function exit(){if(!requested)return false;restoreName();try{win.location.replace(cleanURL(false));return true;}catch{return false;}}
+  function stopWatch(){
+   if(watchTimer!==null)win.clearInterval?.(watchTimer);watchTimer=null;try{stopOwnerSubscription?.();}catch{}stopOwnerSubscription=null;
+   try{ownerRealm?.removeEventListener?.('coda-developer-access-change',checkOwner);ownerRealm?.removeEventListener?.('pagehide',ownerLeaving);}catch{}
+  }
+  function enter(){if(requested||!verifiedOwner(win))return false;try{return !!win.open?.(cleanURL(true),'_blank');}catch{return false;}}
+  function finishPreview(){
+   if(!requested)return false;restoreName();requested=false;stopWatch();banner?.remove?.();banner=null;notify();
+   try{if(ownerRealm&&win.opener===ownerRealm){win.close?.();if(win.closed)return true;}}catch{}
+   try{win.location.replace(cleanURL(false));return true;}catch{return false;}
+  }
+  function exit(){return finishPreview();}
+  function ownerLeaving(){if(requested){error='Developer access is no longer available.';finishPreview();}}
+  function checkOwner(){if(requested&&!ownerVerified())ownerLeaving();}
+  function watchOwner(){
+   try{ownerRealm?.addEventListener?.('coda-developer-access-change',checkOwner);ownerRealm?.addEventListener?.('pagehide',ownerLeaving);stopOwnerSubscription=ownerRealm?.CodaDeveloperOwnerAccess?.subscribe?.(checkOwner)||null;}catch{}
+   if(requested)watchTimer=win.setInterval?.(checkOwner,200)??null;else stopWatch();
+  }
+  function previewLeaving(){restoreName();stopWatch();}
   function configure(){
    const config=win.ARCADE_ACCOUNTS_CONFIG||{},next={...config,enabled:false,mode:'classroom',classroom:{...config.classroom,enabled:false,privacy:true}};
    delete next.firebase;win.ARCADE_ACCOUNTS_CONFIG=next;
@@ -26,12 +56,12 @@
    const doc=win.document;if(!doc?.createElement||!doc.head?.append)return;
    const policy=doc.createElement('meta');policy.httpEquiv='Content-Security-Policy';policy.content="connect-src 'self'; form-action 'none'";policy.dataset.developerTestPolicy='';doc.head.append(policy);
   }
-  function cloneSource(native,nativeSession){
-   const data=win.CodaClassroomProfileData,boundaryAPI=win.CodaClassroomStorage;
+  function cloneSource(native,nativeSession,realm=win){
+   const data=realm.CodaClassroomProfileData,boundaryAPI=realm.CodaClassroomStorage;
    if(!native||!nativeSession||!data?.SCOPED_KEYS||!boundaryAPI?.create)return [];
    const sessionCopy=memoryStorage();
    try{for(const key of [boundaryAPI.TAB_KEY,boundaryAPI.ACTIVE_KEY]){const value=nativeSession.getItem(key);if(value!==null)sessionCopy.setItem(key,value);}}catch{return [];}
-   const shadow={name:originalName,crypto:win.crypto,queueMicrotask:win.queueMicrotask?.bind(win)};let boundary;
+   const shadow={name:realm===win?originalName:String(realm.name||''),crypto:realm.crypto,queueMicrotask:realm.queueMicrotask?.bind(realm)};let boundary;
    try{
     boundary=boundaryAPI.create({window:shadow,storage:native,sessionStorage:sessionCopy,keys:data.SCOPED_KEYS});
     const initial=boundary.getState();if(initial.blocked)return [];
@@ -46,8 +76,12 @@
   }
   function install(){
    try{originalName=String(win.name||'');}catch{}
-   let native=null,nativeSession=null;try{native=win.localStorage;}catch{}try{nativeSession=win.sessionStorage;}catch{}
-   local=memoryStorage(cloneSource(native,nativeSession));sessions=memoryStorage();
+   // The parent keeps its verified Firebase identity. Only a positively owned
+   // player snapshot crosses into this child; credentials and bindings do not.
+   let copied=[];
+   try{if(ownerVerified())copied=cloneSource(ownerRealm.CodaClassroomStorageInstance?.nativeStorage||ownerRealm.localStorage,ownerRealm.sessionStorage,ownerRealm);}catch{}
+   if(!ownerVerified()){requested=false;removeRequest();return;}
+   local=memoryStorage(copied);sessions=memoryStorage();
    configure();protectNetwork();
    const descriptors={};for(const key of ['localStorage','sessionStorage','indexedDB','name'])descriptors[key]=Object.getOwnPropertyDescriptor(win,key);
    // Classroom storage gives its temporary workspace a new tab name. Keep
@@ -61,7 +95,7 @@
     Object.defineProperty(win,'sessionStorage',{configurable:true,enumerable:descriptors.sessionStorage?.enumerable??true,get:()=>sessions});
     Object.defineProperty(win,'indexedDB',{configurable:true,enumerable:descriptors.indexedDB?.enumerable??true,value:Object.freeze({open:denied,deleteDatabase:denied,databases:async()=>[]})});
     Object.defineProperty(win,'name',{configurable:true,enumerable:descriptors.name?.enumerable??true,get:()=>previewName,set:value=>{previewName=String(value);}});
-    isolated=true;win.addEventListener?.('pagehide',restoreName);
+    isolated=true;win.addEventListener?.('pagehide',previewLeaving);
    }catch{
     // The caller must stop gameplay when isolation is unavailable, rather
     // than quietly run an unlock preview against the real browser stores.
@@ -73,7 +107,7 @@
    }
   }
   function seedUnlocks(options={}){
-   if(!requested)return {ok:false,enabled:false};
+   if(!requested||!ownerVerified())return {ok:false,enabled:false};
    if(!isolated)return {ok:false,error:error||'Test mode could not isolate browser storage.'};
    const data=options.profileData||win.CodaClassroomProfileData,catalog=options.progression||win.CodaPlayerProgression;
    if(!data?.blank||!data?.validate||!data?.KEYS||!catalog?.THRESHOLDS?.length){error='Test mode could not load its player tools.';return {ok:false,error};}
@@ -101,7 +135,7 @@
    }catch{error='Your test player could not be prepared safely. Exit test mode and try again.';return {ok:false,error};}
   }
   function mountBanner(host){
-   if(!requested||banner?.isConnected)return banner;
+   if(!requested||!ownerVerified()||banner?.isConnected)return banner;
    const doc=win.document;if(!doc?.createElement)return null;
    banner=doc.createElement('aside');banner.dataset.developerTestBanner='';banner.setAttribute('role','status');banner.setAttribute('aria-label','Developer test mode');
    banner.style.cssText='position:fixed;left:50%;bottom:max(10px,env(safe-area-inset-bottom,0px));transform:translateX(-50%);z-index:2147483600;display:flex;align-items:center;gap:10px;width:max-content;max-width:calc(100vw - 24px);box-sizing:border-box;padding:8px 10px;background:#222f43e8;border:1px solid #9aebd7;border-radius:10px;color:#eafff8;font:700 12px/1.35 system-ui;pointer-events:none;box-shadow:0 3px 20px #0008';
@@ -109,8 +143,8 @@
    const close=doc.createElement('button');close.type='button';close.textContent='Exit test mode';close.dataset.developerTestExit='';close.style.cssText='pointer-events:auto;flex:none;min-height:44px;padding:7px 10px;background:#315d59;border:1px solid #a3eddb;border-radius:7px;color:#fff;font:700 13px system-ui;cursor:pointer';close.onclick=exit;
    banner.append(words,close);(host||doc.body||doc.documentElement)?.append(banner);return banner;
   }
-  if(requested)install();
-  return Object.freeze({isEnabled:enabled,seedUnlocks,enter,exit,mountBanner,getState:state});
+  if(requested){install();if(requested)watchOwner();}
+  return Object.freeze({isEnabled:enabled,seedUnlocks,enter,exit,mountBanner,getState:state,subscribe(listener){subscribers.add(listener);return()=>subscribers.delete(listener);}});
  }
  return Object.freeze({create,memoryStorage,EXTRA_KEYS});
 });

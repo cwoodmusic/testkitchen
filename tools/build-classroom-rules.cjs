@@ -143,6 +143,21 @@ function hallRules(){
  };
 }
 
+// Ownership is independent of the school-admin allowlist. Delegated editors
+// can read only their own grant; only the two verified owners can change it.
+const DEVELOPER_OWNERS=['cwood@sanjacinto.k12.ca.us','cwood.musiced@gmail.com'];
+const DEVELOPER_EMAIL_PATTERN='^[a-z0-9_%+,-]+@[a-z0-9,-]+,[a-z]{2,63}$';
+function developerRules(){
+ const verified=join([google,'auth.token.email_verified === true','auth.token.email !== null']);
+ const email='auth.token.email.toLowerCase()',key=email+'.replace(".", ",")';
+ const owner=join([verified,'('+DEVELOPER_OWNERS.map(value=>email+' === '+literal(value)).join(' || ')+')']);
+ return {'.read':owner,'.write':false,$emailKey:{
+  '.read':join([verified,key+' === $emailKey']),
+  '.write':owner,
+  '.validate':join(['$emailKey.length >= 3','$emailKey.length <= 254',matches('$emailKey',DEVELOPER_EMAIL_PATTERN),'!$emailKey.contains(",,")','newData.isBoolean()','newData.val() === true'])
+ }};
+}
+
 function buildClassroomRules(schema){
  const student=validStudent(),lease=profileNode('$classId','$profileId')+'.child("lease")';
  const teacher=join([admin,'auth.uid === $uid']);
@@ -213,6 +228,7 @@ function buildClassroomRules(schema){
    classId:{'.validate':string('newData',8,64,ID_PATTERN)},profileId:{'.validate':string('newData',8,64,ID_PATTERN)},
    passHash:{'.validate':string('newData',64,64,HASH_PATTERN)},createdAt:createdAt(false)})},
   hallOfFame:hallRules(),
+  developerAccess:developerRules(),
   $other:{'.validate':false}
  };
  return {rules:{classroomV1:namespace}};
@@ -220,15 +236,18 @@ function buildClassroomRules(schema){
 
 function renderClassroomRules(schema){return JSON.stringify(buildClassroomRules(schema),null,2)+'\n';}
 function renderHallRules(){return JSON.stringify({hallOfFame:hallRules()},null,2)+'\n';}
+function renderDeveloperRules(){return JSON.stringify({developerAccess:developerRules()},null,2)+'\n';}
 function run(argv){
  if(argv.length>1||argv.length===1&&argv[0]!=='--check')throw Error('Usage: node tools/build-classroom-rules.cjs [--check]');
  const {SCHEMA}=require('../classroom-profile-data.js'),target=path.join(__dirname,'../classroom-database.rules.json'),text=renderClassroomRules(SCHEMA);
  const hallTarget=path.join(__dirname,'../docs/HALL-OF-FAME-RULES.json'),hallText=renderHallRules();
+ const developerTarget=path.join(__dirname,'../docs/DEVELOPER-ACCESS-RULES.json'),developerText=renderDeveloperRules();
  if(argv[0]==='--check'){
   if(!fs.existsSync(target)||fs.readFileSync(target,'utf8')!==text)throw Error('classroom-database.rules.json is out of date. Regenerate it from the canonical schema.');
   if(!fs.existsSync(hallTarget)||fs.readFileSync(hallTarget,'utf8')!==hallText)throw Error('docs/HALL-OF-FAME-RULES.json is out of date. Regenerate the rules.');
+  if(!fs.existsSync(developerTarget)||fs.readFileSync(developerTarget,'utf8')!==developerText)throw Error('docs/DEVELOPER-ACCESS-RULES.json is out of date. Regenerate the rules.');
   process.stdout.write('Classroom rules match the canonical DTO schema.\n');
- }else{fs.writeFileSync(target,text);fs.writeFileSync(hallTarget,hallText);process.stdout.write('Generated classroom-database.rules.json ('+Buffer.byteLength(text)+' bytes) and the Hall-only fragment. No deployment performed.\n');}
+ }else{fs.writeFileSync(target,text);fs.writeFileSync(hallTarget,hallText);fs.writeFileSync(developerTarget,developerText);process.stdout.write('Generated classroom-database.rules.json ('+Buffer.byteLength(text)+' bytes) and the Hall/developer fragments. No deployment performed.\n');}
 }
 if(require.main===module)try{run(process.argv.slice(2));}catch(error){process.stderr.write(error.message+'\n');process.exitCode=1;}
-module.exports={arrayIndexRegex,convertSchema,buildClassroomRules,renderClassroomRules,renderHallRules,run};
+module.exports={arrayIndexRegex,convertSchema,buildClassroomRules,renderClassroomRules,renderHallRules,renderDeveloperRules,run};

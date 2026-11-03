@@ -29,6 +29,16 @@ profile whose link was not saved, use **Replace pass**; progress stays with the
 same profile, while its old link and signed-in devices are revoked. Printed QR
 cards remain available as an alternative.
 
+Printing a card uses a suggested PDF filename containing the generated alias
+and full unique profile ID, such as `Coda-Card-Blue-Fox-14-profile_….pdf`.
+The private pass and sign-in link stay out of the filename. Closing or cancelling
+printing restores the arcade's normal page title.
+
+Developer controls are limited to the two verified owner Google accounts and
+accounts explicitly granted developer access. Owners manage those grants in
+**For teachers → Developer access**; ordinary classroom administration does not
+grant editing controls. See [Developer access](docs/developer-access.md).
+
 ## Quest validation update — 2026-10-27
 
 The current client supports 29 authored musician quests and level rewards

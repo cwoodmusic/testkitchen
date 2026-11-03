@@ -4,11 +4,11 @@ const {webcrypto}=require('node:crypto');
 const {create,memoryStorage}=require('../developer-test-mode.js');
 const storageAPI=require('../classroom-storage.js'),data=require('../classroom-profile-data.js'),progression=require('../player-progression.js');
 const snap=storage=>Object.fromEntries(Array.from({length:storage.length},(_,index)=>{const key=storage.key(index);return [key,storage.getItem(key)];}));
-function fixture({url='https://www.coda-arcade.com/world-preview.html?dev-test=1',owner=false,guestPrivate=false}={}){
- const local=memoryStorage(),session=memoryStorage(),listeners=new Map(),navigations=[],policies=[],idbCalls=[];
+function fixture({url='https://www.coda-arcade.com/world-preview.html?dev-test=1',owner=false,guestPrivate=false,verified=true,opener=true,parent=false,closeWorks=false}={}){
+ const local=memoryStorage(),session=memoryStorage(),listeners=new Map(),ownerListeners=new Map(),polls=new Set(),navigations=[],policies=[],idbCalls=[];let ownerAllowed=verified;
  const node=()=>({dataset:{},style:{},setAttribute(){},append(){},isConnected:true});
  const win={name:'original-window-name',crypto:webcrypto,CodaClassroomProfileData:data,CodaClassroomStorage:storageAPI,CodaPlayerProgression:progression,ARCADE_ACCOUNTS_CONFIG:{enabled:true,mode:'classroom',classroom:{privacy:true,enabled:true},firebase:{projectId:'private-project',apiKey:'not-a-secret'}},document:{head:{append(n){policies.push(n);}},createElement:node,body:{append(){}},documentElement:{append(){}}},queueMicrotask,
-  location:{href:url,assign(value){navigations.push({method:'assign',url:value});},replace(value){navigations.push({method:'replace',url:value});}},addEventListener(name,fn){if(!listeners.has(name))listeners.set(name,new Set());listeners.get(name).add(fn);}};
+  location:{href:url,assign(value){navigations.push({method:'assign',url:value});},replace(value){navigations.push({method:'replace',url:value});}},history:{state:null,replaceState(_state,_title,value){win.location.href=new URL(value,url).href;navigations.push({method:'replaceState',url:win.location.href});}},closed:false,close(){if(closeWorks)win.closed=true;},open(value,target){navigations.push({method:'open',url:value,target});return {};},setInterval(fn){polls.add(fn);return fn;},clearInterval(fn){polls.delete(fn);},addEventListener(name,fn){if(!listeners.has(name))listeners.set(name,new Set());listeners.get(name).add(fn);},removeEventListener(name,fn){listeners.get(name)?.delete(fn);}};
  Object.defineProperty(win,'localStorage',{configurable:true,enumerable:true,value:local});Object.defineProperty(win,'sessionStorage',{configurable:true,enumerable:true,value:session});
  Object.defineProperty(win,'indexedDB',{configurable:true,value:{open(...args){idbCalls.push(args);},deleteDatabase(...args){idbCalls.push(args);}}});
  if(owner){
@@ -18,7 +18,9 @@ function fixture({url='https://www.coda-arcade.com/world-preview.html?dev-test=1
  }else if(guestPrivate){local.setItem('musicArcadeV1',JSON.stringify({name:'Unbound private name',shirt:'#111111'}));local.setItem('codaDJLibraryV1','private composition');}
  local.setItem('codaWorldProjectV1','{"format":"CodaArcadeWorldProject","map":"own-layout"}');local.setItem('codaArcadeFXV1','lite');local.setItem('codaArcadeVibeV1','{"version":1,"selected":"spooky"}');local.setItem('firebase:authUser:private-project','DO NOT COPY THIS AUTH SECRET');session.setItem('firebase:authUser:admin','DO NOT COPY THIS SESSION SECRET');
  const originalName=win.name,localBefore=snap(local),sessionBefore=snap(session),config=win.ARCADE_ACCOUNTS_CONFIG;
- return {win,local,session,localBefore,sessionBefore,config,originalName,navigations,policies,idbCalls,pagehide(){for(const fn of listeners.get('pagehide')||[])fn();}};
+ const access=Object.freeze({canDevelop:()=>ownerAllowed}),ownerRealm={location:{href:new URL('/world-preview.html',url).href},closed:false,name:originalName,crypto:webcrypto,queueMicrotask,localStorage:local,sessionStorage:session,CodaClassroomProfileData:data,CodaClassroomStorage:storageAPI,CodaDeveloperOwnerAccess:access,addEventListener(name,fn){if(!ownerListeners.has(name))ownerListeners.set(name,new Set());ownerListeners.get(name).add(fn);},removeEventListener(name,fn){ownerListeners.get(name)?.delete(fn);}};
+ win.CodaDeveloperOwnerAccess=access;win.parent=parent?ownerRealm:win;if(opener)win.opener=ownerRealm;
+ return {win,local,session,localBefore,sessionBefore,config,originalName,navigations,policies,idbCalls,ownerRealm,poll(){for(const fn of [...polls])fn();},revoke(){ownerAllowed=false;for(const fn of [...ownerListeners.get('coda-developer-access-change')||[]])fn();},pagehide(){for(const fn of listeners.get('pagehide')||[])fn();}};
 }
 function assertNativeUnchanged(f){assert.deepEqual(snap(f.local),f.localBefore);assert.deepEqual(snap(f.session),f.sessionBefore);}
 
@@ -33,7 +35,7 @@ test('ordinary pages do not read or replace storage, configuration, names or dat
 
 test('an owned player is copied through a shadow boundary without mutating real stores or copying authentication',()=>{
  const f=fixture({owner:true}),mode=create(f.win);
- assert.deepEqual(mode.getState(),{enabled:true,isolated:true,seeded:false,source:'own-player',error:''});assertNativeUnchanged(f);assert.equal(f.win.name,f.originalName);
+ assert.deepEqual(mode.getState(),{enabled:true,isolated:true,seeded:false,source:'own-player',error:'',ownerVerified:true});assertNativeUnchanged(f);assert.equal(f.win.name,f.originalName);
  assert.equal(JSON.parse(f.win.localStorage.getItem('musicArcadeV1')).name,'Own arcade player');assert.equal(f.win.localStorage.getItem('codaWorldProjectV1'),f.local.getItem('codaWorldProjectV1'));assert.equal(f.win.localStorage.getItem('codaArcadeVibeV1'),f.local.getItem('codaArcadeVibeV1'));
  assert.equal(f.win.localStorage.getItem('firebase:authUser:private-project'),null);assert.equal(f.win.sessionStorage.getItem('firebase:authUser:admin'),null);assert.equal(f.win.sessionStorage.length,0);
  f.win.localStorage.setItem('musicArcadeV1','sandbox change');f.win.sessionStorage.setItem('codaClassroomAdminTabV1','sandbox binding');f.win.localStorage.codaWorldProjectV1='changed map';f.win.localStorage.clear();assertNativeUnchanged(f);
@@ -42,7 +44,7 @@ test('an owned player is copied through a shadow boundary without mutating real 
 });
 
 test('blocked workspaces and unbound guest stores never copy cached student progress or compositions',()=>{
- const owner=fixture({owner:true});owner.win.name='another-browsing-context';const blocked=create(owner.win);assert.equal(blocked.getState().source,'blank');assert.equal(owner.win.localStorage.length,0);assert.equal(blocked.seedUnlocks().ok,true);assert.equal(JSON.parse(owner.win.localStorage.musicArcadeV1).name,'Test player');assertNativeUnchanged(owner);
+ const owner=fixture({owner:true});owner.ownerRealm.name='another-browsing-context';const blocked=create(owner.win);assert.equal(blocked.getState().source,'blank');assert.equal(owner.win.localStorage.length,0);assert.equal(blocked.seedUnlocks().ok,true);assert.equal(JSON.parse(owner.win.localStorage.musicArcadeV1).name,'Test player');assertNativeUnchanged(owner);
  const guest=fixture({guestPrivate:true}),mode=create(guest.win);assert.equal(mode.getState().source,'guest');assert.equal(guest.win.localStorage.getItem('musicArcadeV1'),null);assert.equal(guest.win.localStorage.getItem('codaDJLibraryV1'),null);assert.equal(guest.win.localStorage.getItem('codaArcadeFXV1'),'lite');assert.equal(mode.seedUnlocks().ok,true);assert.equal(JSON.parse(guest.win.localStorage.musicArcadeV1).name,'Test player');assertNativeUnchanged(guest);
 });
 
@@ -75,8 +77,8 @@ test('sandbox tab names never write the browser context name that reloads and Go
  boundary.destroy();assertNativeUnchanged(f);
 });
 
-test('enter uses a same-tab clean URL and drops profile actions and pass fragments',()=>{
- const f=fixture({url:'https://www.coda-arcade.com/world-preview.html?v=next&profile=admin#classroom-pass=PRIVATE'}),mode=create(f.win);assert.equal(mode.enter(),true);const nav=f.navigations[0],url=new URL(nav.url);assert.equal(nav.method,'assign');assert.equal(url.origin,'https://www.coda-arcade.com');assert.equal(url.pathname,'/world-preview.html');assert.equal(url.searchParams.get('dev-test'),'1');assert.equal(url.searchParams.get('v'),'next');assert.equal(url.searchParams.has('profile'),false);assert.equal(url.hash,'');assertNativeUnchanged(f);
+test('enter requires a verified owner and opens a separate preview without profile actions or passes',()=>{
+ const f=fixture({url:'https://www.coda-arcade.com/world-preview.html?v=next&profile=admin#classroom-pass=PRIVATE'}),mode=create(f.win);assert.equal(mode.enter(),true);const nav=f.navigations[0],url=new URL(nav.url);assert.equal(nav.method,'open');assert.equal(nav.target,'_blank');assert.equal(url.origin,'https://www.coda-arcade.com');assert.equal(url.pathname,'/world-preview.html');assert.equal(url.searchParams.get('dev-test'),'1');assert.equal(url.searchParams.get('v'),'next');assert.equal(url.searchParams.has('profile'),false);assert.equal(url.hash,'');assertNativeUnchanged(f);
 });
 
 test('unavailable native storage still permits a fresh isolated demo; nonreplaceable stores fail closed',()=>{
@@ -95,4 +97,37 @@ test('a nonreplaceable browser name rolls back the storage overrides and fails c
 
 test('memory Storage supports property and native-method operations without shared references',()=>{
  const memory=memoryStorage([['one','1']]);memory.two=2;assert.equal(memory.getItem('two'),'2');assert.equal(memory.length,2);assert.deepEqual(Object.keys(memory),['one','two']);delete memory.one;assert.equal(memory.key(0),'two');assert.equal(memory.key(-1),null);memory.clear();assert.equal(memory.length,0);
+});
+
+test('direct or unverified preview URLs never isolate storage or grant unlocks',()=>{
+ for(const options of [{opener:false},{verified:false},{opener:false,parent:true,verified:false}]){
+  const f=fixture({...options,url:'https://www.coda-arcade.com/world-preview.html?dev-test=1&profile=student#classroom-pass=fixture'}),database=f.win.indexedDB;
+  const mode=create(f.win);assert.equal(mode.isEnabled(),false);assert.equal(mode.getState().ownerVerified,false);assert.equal(mode.seedUnlocks().ok,false);
+  assert.equal(f.win.localStorage,f.local);assert.equal(f.win.sessionStorage,f.session);assert.equal(f.win.indexedDB,database);assert.equal(f.win.ARCADE_ACCOUNTS_CONFIG,f.config);assert.equal(f.policies.length,0);
+  const url=new URL(f.win.location.href);assert.equal(url.searchParams.has('dev-test'),false);assert.equal(url.searchParams.get('profile'),'student');assert.equal(url.hash,'#classroom-pass=fixture');assertNativeUnchanged(f);
+ }
+});
+
+test('cross-origin bridges and claimed owner flags are not authorization',()=>{
+ const foreign=fixture();foreign.ownerRealm.location.href='https://example.invalid/world-preview.html';assert.equal(create(foreign.win).isEnabled(),false);assertNativeUnchanged(foreign);
+ const flags=fixture();flags.ownerRealm.CodaDeveloperOwnerAccess=Object.freeze({ownerVerified:true,developer:true,canDevelop:()=> 'true'});assert.equal(create(flags.win).isEnabled(),false);assertNativeUnchanged(flags);
+ const throwing=fixture();Object.defineProperty(throwing.ownerRealm,'location',{get(){throw Error('Cross-origin access');}});assert.equal(create(throwing.win).isEnabled(),false);assertNativeUnchanged(throwing);
+ const noOwner=fixture({verified:false,url:'https://www.coda-arcade.com/world-preview.html'});assert.equal(create(noOwner.win).enter(),false);assert.equal(noOwner.navigations.length,0);
+});
+
+test('a verified same-origin parent can host a preview without a stored grant',()=>{
+ const f=fixture({owner:true,opener:false,parent:true}),mode=create(f.win);assert.equal(mode.getState().ownerVerified,true);assert.equal(mode.seedUnlocks().ok,true);assert.equal(f.win.sessionStorage.length,0);assert.equal(mode.exit(),true);assert.equal(f.navigations.at(-1).method,'replace');assertNativeUnchanged(f);
+});
+
+test('revocation notifies consumers before closing the child and leaves the owner session intact',()=>{
+ const f=fixture({owner:true,closeWorks:true}),mode=create(f.win),events=[];mode.subscribe(state=>events.push(state));assert.equal(mode.seedUnlocks().ok,true);
+ f.revoke();assert.equal(mode.isEnabled(),false);assert.equal(mode.getState().ownerVerified,false);assert.equal(f.win.closed,true);assert.equal(events.length,1);assert.equal(events[0].ownerVerified,false);assert.equal(mode.seedUnlocks().ok,false);f.poll();assert.equal(events.length,1);assertNativeUnchanged(f);
+});
+
+test('closing the verified owner realm immediately denies capabilities and the poll exits the preview',()=>{
+ const f=fixture({owner:true}),mode=create(f.win);f.ownerRealm.closed=true;assert.equal(mode.getState().ownerVerified,false);assert.equal(mode.seedUnlocks().ok,false);f.poll();assert.equal(mode.isEnabled(),false);assert.equal(new URL(f.navigations.at(-1).url).searchParams.has('dev-test'),false);assertNativeUnchanged(f);
+});
+
+test('a child reload removes old parent listeners and polling',()=>{
+ const f=fixture({owner:true}),mode=create(f.win),events=[];mode.subscribe(value=>events.push(value));f.pagehide();f.revoke();f.poll();assert.equal(events.length,0);assert.equal(f.navigations.length,0);assertNativeUnchanged(f);
 });

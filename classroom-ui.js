@@ -33,7 +33,11 @@
   'personal-save-failed':'Your player could not save. Check your connection and try again on this device.',
   'personal-open-failed':'Your player could not open. Check your connection and try again.',
   'invalid-nickname':'Choose an arcade nickname with 1–40 characters on one line.',
-  'personal-rename-failed':'Your nickname could not save. Your previous nickname is still in use. Check your connection and try again.'
+  'personal-rename-failed':'Your nickname could not save. Your previous nickname is still in use. Check your connection and try again.',
+  'invalid-developer-email':'Enter a valid Google account email address.',
+  'developer-owner-required':'Only an owner account can change developer access.',
+  'developer-owner-protected':'Owner accounts always keep developer access.',
+  'developer-access-unavailable':'Developer access could not update. Check the access setup and try again.'
  });
  const errorCode=value=>typeof value?.code==='string'?value.code.replace(/^(?:auth|functions)\//,''):typeof value==='string'?value:'';
  const friendlyError=value=>ERRORS[errorCode(value)]||'We could not finish that. Please try again.';
@@ -63,10 +67,12 @@
   const doc=body.ownerDocument,win=doc.defaultView||root;
   let opened=false,disposed=false,view='student',section=null,busy='',message='',messageKind='status',confirmation=null,card=null,printSheet=null,printTimer=null,logoutRetry=false;
   let classes=[],profiles=[],selectedClass='',classDraft='',joinDraft='',profileSearch='',profilePage=0,generation=0,lastAuthorized=false;
-  let nicknameEditing=false,nicknameDraft='',nicknameOwner='';
+  let nicknameEditing=false,nicknameDraft='',nicknameOwner='',printTitle=null;
+  let developerRows=[],developerListState='idle',developerDraft='',developerListGeneration=0,lastDeveloperOwner='';
   const snapshot=()=>{try{return service.getState?.()||{};}catch{return {};}};
   const authorized=()=>snapshot().admin?.authorized===true;
   const canManage=()=>authorized()&&snapshot().enabled!==false;
+  const developerOwner=()=>snapshot().admin?.signedIn===true&&snapshot().admin?.developerOwner===true;
   const element=(tag,className,value)=>{const node=doc.createElement(tag);if(className)node.className=className;if(value!==undefined)node.textContent=value;return node;};
   const button=(label,action,id,kind='')=>{const node=element('button','classpass-button '+kind,label);node.type='button';if(id)node.id=id;node.disabled=!!busy||snapshot().loading===true;node.onclick=action;return node;};
   function configurationNotice(state){
@@ -82,9 +88,9 @@
   function selectClass(value){if(selectedClass!==value){resetBrowser();profiles=[];}selectedClass=value;}
   function showError(result){const code=errorCode(result);setMessage(view==='student'&&['permission-denied','unauthenticated','admin-required'].includes(code)?ERRORS['invalid-pass']:friendlyError(result),'error');}
   function current(token){return opened&&!disposed&&token===generation;}
-  function cleanupPrint(){if(printTimer)win.clearTimeout(printTimer);printTimer=null;printSheet?.remove();printSheet=null;doc.documentElement.classList.remove('coda-classroom-printing');win.removeEventListener('afterprint',cleanupPrint);}
+  function cleanupPrint(){if(printTimer)win.clearTimeout(printTimer);printTimer=null;printSheet?.remove();printSheet=null;if(printTitle!==null){doc.title=printTitle;printTitle=null;}doc.documentElement.classList.remove('coda-classroom-printing');win.removeEventListener('afterprint',cleanupPrint);}
   function clearCard(){if(card){card.pass='';card.link='';}card=null;section?.querySelectorAll('.classpass-card').forEach(node=>node.remove());cleanupPrint();}
-  function close(){opened=false;generation++;busy='';confirmation=null;joinDraft='';classDraft='';clearNickname();resetBrowser();clearCard();section?.remove();section=null;api.closePanel?.();}
+  function close(){opened=false;generation++;developerListGeneration++;developerRows=[];developerListState='idle';developerDraft='';busy='';confirmation=null;joinDraft='';classDraft='';clearNickname();resetBrowser();clearCard();section?.remove();section=null;api.closePanel?.();}
   function receipt(result){
    if(!canManage()||!result||typeof result.pass!=='string'||typeof result.link!=='string'||!result.pass.length||result.pass.length>512)return false;
    let parsed;try{parsed=new URL(result.link,win.location.href);}catch{return false;}
@@ -211,6 +217,9 @@
   }
   function printCard(){
    if(!card||busy)return;cleanupPrint();printSheet=element('div','classroom-print-sheet');printSheet.append(makeCard(true));doc.body.append(printSheet);doc.documentElement.classList.add('coda-classroom-printing');win.addEventListener('afterprint',cleanupPrint,{once:true});printTimer=win.setTimeout(cleanupPrint,60000);
+   const alias=card.alias.replace(/[^A-Za-z0-9]+/g,'-').replace(/^-|-$/g,'').slice(0,64)||'Student';
+   const profileId=card.profileId.replace(/[^A-Za-z0-9_-]/g,'').slice(0,80)||String(Date.now());
+   printTitle=doc.title;doc.title='Coda-Card-'+alias+'-'+profileId;
    try{win.print();}catch{cleanupPrint();setMessage('Printing could not open. Copy the pass link instead.','error');render();}
   }
   function renderCard(){
@@ -316,6 +325,7 @@
   }
   function renderAdmin(state){
    section.append(element('h2','','Teacher class passes'));
+   renderDeveloperAccess(state);
    const uid=text(state.admin?.uid),showSetup=()=>{
     section.append(element('p','classpass-notice',state.admin?.authorized?'Your account is approved. Classroom access is still being finished.':'Ask your school administrator to approve this setup ID.'));
     if(/^[A-Za-z0-9_-]{1,128}$/.test(uid)){const value=element('code','classpass-setup-id',uid);value.setAttribute('aria-label','Administrator setup ID');section.append(value,button('Copy setup ID',()=>copySetupID(uid),'classpassCopySetup'));}
@@ -340,11 +350,46 @@
    tools.append(button('Delete class',()=>requestConfirmation({kind:'delete-class',classId:selectedClass}),'classpassDeleteClass','is-danger'));section.append(tools,element('p','classpass-help','Every profile gets a generated alias and picture. Replacing a lost card keeps its progress.'));
    renderProfileBrowser(state);
   }
+  async function refreshDeveloperAccess(){
+   if(!opened||view!=='admin'||!developerOwner()||typeof service.listDeveloperAccess!=='function')return;
+   const owner=snapshot().admin.uid,token=++developerListGeneration;developerListState='loading';render();
+   try{
+    const result=await service.listDeveloperAccess();
+    if(!opened||view!=='admin'||token!==developerListGeneration||!developerOwner()||snapshot().admin.uid!==owner)return;
+    if(result?.ok===false){developerRows=[];developerListState='error';return;}
+    developerRows=list(result,'developers').filter(item=>typeof item?.email==='string').map(item=>({email:item.email}));developerListState='ready';
+   }catch{if(token===developerListGeneration){developerRows=[];developerListState='error';}}
+   finally{if(opened&&token===developerListGeneration)render();}
+  }
+  function changeDeveloperAccess(email,grant){
+   if(!developerOwner()||busy)return;
+   const owner=snapshot().admin.uid;
+   const method=grant?'grantDeveloperAccess':'revokeDeveloperAccess';if(typeof service[method]!=='function')return;
+   return act(grant?'Granting developer access':'Revoking developer access',()=>service[method](email),async()=>{
+    if(!developerOwner()||snapshot().admin.uid!==owner)return;
+    developerDraft='';setMessage(grant?'Developer access granted.':'Developer access revoked.');await refreshDeveloperAccess();
+   });
+  }
+  function renderDeveloperAccess(state){
+   if(!developerOwner()||typeof service.listDeveloperAccess!=='function')return;
+   const box=element('section','classpass-notice');box.id='classpassDeveloperAccess';box.setAttribute('aria-label','Developer access');
+   box.append(element('h3','','Developer access'),element('p','classpass-help','Owner accounts always keep access. Add another Google account to show its developer controls.'));
+   const form=element('form','classpass-developer-form'),label=element('label','','Google account email');label.htmlFor='classpassDeveloperEmail';
+   const input=element('input');input.id='classpassDeveloperEmail';input.type='email';input.required=true;input.maxLength=254;input.autocomplete='off';input.value=developerDraft;input.disabled=!!busy||state.loading===true;input.oninput=()=>{developerDraft=input.value;};
+   const grant=button('Grant access',()=>{},'classpassDeveloperGrant','is-primary');grant.type='submit';
+   form.append(label,input,grant);form.onsubmit=event=>{event.preventDefault();if(form.reportValidity())void changeDeveloperAccess(developerDraft,true);};box.append(form);
+   box.append(button('Refresh access',()=>void refreshDeveloperAccess(),'classpassDeveloperRefresh'));
+   if(developerListState==='loading')box.append(element('p','classpass-help','Loading developer accounts…'));
+   else if(developerListState==='error')box.append(element('p','classpass-help','The access list could not load. Choose Refresh access to try again.'));
+   else if(developerListState==='ready'&&!developerRows.length)box.append(element('p','classpass-help','No additional developers.'));
+   for(const item of developerRows){const row=element('div','classpass-developer-row');row.append(element('span','',item.email),button('Revoke access',()=>void changeDeveloperAccess(item.email,false),'','is-danger'));box.append(row);}
+   section.append(box);
+  }
   function render(){
    if(!opened||disposed||!section?.isConnected)return;
    const focus=section.contains(doc.activeElement)?doc.activeElement:null,focusId=focus?.id,selection=focus&&typeof focus.selectionStart==='number'?{start:focus.selectionStart,end:focus.selectionEnd}:null;
    section.replaceChildren();const state=snapshot();
-   const tabs=element('nav','classpass-tabs');tabs.setAttribute('aria-label',state.profile?.kind==='teacher'?'Player and teacher pages':'Profile Pass pages');for(const [id,label]of [['student',state.profile?.kind==='teacher'?'My player':'My pass'],['admin','For teachers']]){const tab=button(label,()=>{if(busy)return;clearCard();confirmation=null;view=id;setMessage('');render();if(id==='admin'&&authorized())refreshClasses();},'classpassTab-'+id);tab.setAttribute('aria-pressed',String(view===id));tab.disabled=tab.disabled||!!confirmation||!!card;tabs.append(tab);}section.append(tabs);
+   const tabs=element('nav','classpass-tabs');tabs.setAttribute('aria-label',state.profile?.kind==='teacher'?'Player and teacher pages':'Profile Pass pages');for(const [id,label]of [['student',state.profile?.kind==='teacher'?'My player':'My pass'],['admin','For teachers']]){const tab=button(label,()=>{if(busy)return;clearCard();confirmation=null;view=id;setMessage('');render();if(id==='admin'&&developerOwner())void refreshDeveloperAccess();if(id==='admin'&&authorized())refreshClasses();},'classpassTab-'+id);tab.setAttribute('aria-pressed',String(view===id));tab.disabled=tab.disabled||!!confirmation||!!card;tabs.append(tab);}section.append(tabs);
    if(state.configured===false)section.append(configurationNotice(state));
    if(confirmation)renderConfirmation();else if(card&&canManage())renderCard();else if(view==='admin')renderAdmin(state);else renderStudent(state);
    if(typeof service.logOut==='function'&&(state.profile||state.admin?.signedIn||logoutRetry)){
@@ -357,13 +402,17 @@
   function open(next='student'){
    if(disposed)return;generation++;busy='';clearCard();clearNickname();confirmation=null;message='';joinDraft='';classDraft='';view=next==='admin'?'admin':'student';opened=true;
    api.openPanel?.(view==='admin'?'Teacher class passes':snapshot().profile?.kind==='teacher'?'Your player':'Your Profile Pass');section=element('section','classroom-profile-ui');section.setAttribute('aria-label','Private classroom profiles');body.append(section);render();
+   if(view==='admin'&&developerOwner())void refreshDeveloperAccess();
    if(view==='admin'&&canManage())refreshClasses();else section.querySelector('#classpassJoinInput')?.focus({preventScroll:true});
   }
   const unsubscribe=service.subscribe?.(()=>{
    const state=snapshot();if(nicknameEditing&&(nicknameOwner!==teacherNicknameOwner(state)||(state.readOnly&&!state.loading))){clearNickname();if(busy==='Saving nickname'){generation++;busy='';}}
+   const owner=developerOwner()?text(state.admin.uid):'',ownerChanged=owner!==lastDeveloperOwner;
+   if(!owner||ownerChanged){developerListGeneration++;developerRows=[];developerListState='idle';developerDraft='';if(ownerChanged&&lastDeveloperOwner){generation++;busy='';message='';}}
    const allowed=canManage();if(!allowed){clearCard();classes=[];profiles=[];selectClass('');resetBrowser();classDraft='';if(confirmation&&['reissue','delete-profile','delete-class'].includes(confirmation.kind))confirmation=null;if(lastAuthorized){generation++;busy='';}}
    if(confirmation?.kind==='save-personal'&&(!allowed||studentSelected(snapshot())||snapshot().personal?.available))confirmation=null;
    if(opened){render();if(view==='admin'&&allowed&&!lastAuthorized&&!busy)refreshClasses();}
+   if(opened&&view==='admin'&&owner&&ownerChanged)void refreshDeveloperAccess();lastDeveloperOwner=owner;
    lastAuthorized=allowed;
   });
   const observer=typeof win.MutationObserver==='function'?new win.MutationObserver(()=>{

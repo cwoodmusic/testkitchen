@@ -42,7 +42,7 @@
   const doc=host.ownerDocument,win=doc.defaultView||root,W=api.width||canvas.width,H=api.height||canvas.height,id=api.id||'room';
   const store='codaRoomProjectV1:'+id,COLS=Math.ceil(W/10);let storage=api.storage;
   if(storage===undefined)try{storage=win.localStorage;}catch{}
-  let project=EMPTY(),opened=false,playtest=false,tab='objects',selected=null,mode='select',panTool=false,spaceHeld=false,gesture=null,destroyed=false,layerDirty=true,serial=0,pinching=null,projectRevision=0;
+  let project=EMPTY(),opened=false,playtest=false,tab='objects',selected=null,mode='select',panTool=false,spaceHeld=false,gesture=null,destroyed=false,layerDirty=true,serial=0,pinching=null,projectRevision=0,permissionClosing=false;
   let undo=[],redo=[],maskCanvas=null,erasedCanvas=null,promotedCanvas=null,paintPath=null,erasePath=null,normalPath=null,outsidePaintPath=null,maskImageSource=null,maskImageStamp='',maskBuilds=0,collisionMap=new Map(),entityVersions=new Map(),images=new Map(),loadError='',localProjectPresent=false;
   const camera={x:0,y:0,zoom:1},pointers=new Map(),TABS=['objects','collision','layers','project'];
   let pixelEditor=null,artworkEditor=null,educationEditor=null,backgroundCache=null,assetArtworkCache=new Map(),spriteUndo=[],spriteRedo=[],collisionOverlay=false,layerOverlay=false,brushHover=null;
@@ -69,7 +69,7 @@
    <section data-room-pane="project" hidden><h3>${escapeText(api.name||'Room')} project</h3><p>Room artwork, fish/character changes, collision, and foreground edits save in this browser and travel with the complete world export.</p><div class="room-dev-row"><button type="button" data-room-action="save">Save room</button><button type="button" data-room-action="export">Export room JSON</button></div><div class="room-dev-row"><button type="button" data-room-action="import">Import room JSON</button><button type="button" data-room-action="reset">Reset room edits</button></div><input data-room-field="project-file" type="file" accept="application/json,.json" hidden></section>
    <footer class="room-dev-bottom"><div class="room-dev-row"><button type="button" data-room-action="undo">↶ Undo</button><button type="button" data-room-action="redo">↷ Redo</button><button type="button" data-room-action="playtest" aria-pressed="false">▶ Playtest</button></div><p data-room-status role="status">Room edits save locally.</p></footer>`;
   host.append(panel);
-  if(win.CodaDeveloperTestMode){const test=doc.createElement('button');test.type='button';test.dataset.roomTestUnlocks='';test.textContent=win.CodaDeveloperTestMode.isEnabled()?'Exit test mode':'Test all unlocks';test.title='Try rewards in a temporary game without changing your real player.';test.onclick=()=>win.CodaDeveloperTestMode.isEnabled()?win.CodaDeveloperTestMode.exit():win.CodaDeveloperTestMode.enter();panel.querySelector('[data-room-pane="project"]').append(test);}
+  if(win.CodaDeveloperTestMode){const test=doc.createElement('button');test.type='button';test.dataset.roomTestUnlocks='';test.textContent=win.CodaDeveloperTestMode.isEnabled()?'Exit test mode':'Test all unlocks';test.title='Try rewards in a temporary game without changing your real player.';test.onclick=()=>authorized()&&(win.CodaDeveloperTestMode.isEnabled()?win.CodaDeveloperTestMode.exit():win.CodaDeveloperTestMode.enter());panel.querySelector('[data-room-pane="project"]').append(test);}
   let spritePane=null;
   if(TABS.includes('sprites')){spritePane=doc.createElement('section');spritePane.dataset.roomPane='sprites';spritePane.hidden=true;panel.querySelector('[data-room-pane="project"]').before(spritePane);}
   function mountSprites(){
@@ -106,6 +106,7 @@
    return characterArtwork?.getSource(target)||null;
   }
   function setArtworkData(next,options={}){
+   if(!authorized())return false;
    if(!win.CodaArtworkEditor?.validate(next))return false;
    const bgSource=backgroundBase();if(next[backgroundId]&&bgSource&&!win.CodaArtworkEditor.validateTexture(next[backgroundId],bgSource.naturalWidth||bgSource.width,bgSource.naturalHeight||bgSource.height))return false;
    for(const asset of project.assets){const value=next[assetPrefix+asset.id];if(!value)continue;const source=assetSource(asset);if(source&&!win.CodaArtworkEditor.validateTexture(value,source.naturalWidth||source.width,source.naturalHeight||source.height))return false;}
@@ -122,7 +123,7 @@
   }
   function mountArtwork(){
    if(artworkEditor||!artworkPane||!opened||tab!=='artwork')return;
-   artworkEditor=win.CodaArtworkEditor.mount({host:artworkPane,getTargets:artworkTargets,getSource:getArtworkSource,getData:getArtworkData,hasAssetPreview:hasArtworkAssetPreview,drawAssetPreview:drawArtworkAssetPreview,onChange:next=>active()&&(!api.canEdit||api.canEdit()!==false)&&setArtworkData(next,{characters:true}),onUndo:()=>{if(active()&&(!api.canEdit||api.canEdit()!==false))undoRedo(true);},onRedo:()=>{if(active()&&(!api.canEdit||api.canEdit()!==false))undoRedo(false);},getHistory:()=>({undo:undo.length,redo:redo.length}),canEdit:()=>active()&&(!api.canEdit||api.canEdit()!==false),startExpanded:true,fitOnFirstExpand:true,onExit:()=>setTab('objects'),initialId:selectedAsset()?assetPrefix+selectedAsset().id:backgroundId});
+   artworkEditor=win.CodaArtworkEditor.mount({host:artworkPane,getTargets:artworkTargets,getSource:getArtworkSource,getData:getArtworkData,hasAssetPreview:hasArtworkAssetPreview,drawAssetPreview:drawArtworkAssetPreview,onChange:next=>canMutateUI()&&setArtworkData(next,{characters:true}),onUndo:()=>{if(canMutateUI())undoRedo(true);},onRedo:()=>{if(canMutateUI())undoRedo(false);},getHistory:()=>({undo:undo.length,redo:redo.length}),canEdit:()=>active()&&(!api.canEdit||api.canEdit()!==false),startExpanded:true,fitOnFirstExpand:true,onExit:()=>setTab('objects'),initialId:selectedAsset()?assetPrefix+selectedAsset().id:backgroundId});
   }
   function disposeArtwork(){artworkEditor?.dispose();artworkEditor=null;}
   function characterHistory(){return tab==='sprites';}
@@ -168,8 +169,15 @@
    if(backgroundCache?.source===image&&backgroundCache.texture===project.artwork)return backgroundCache.canvas;
    const canvas=win.CodaArtworkEditor.compose(image,project.artwork);backgroundCache={source:image,texture:project.artwork,canvas};return canvas||image;
   }
-  function active(){return opened&&!playtest;}
-  function canMutateUI(){return active()&&!destroyed&&(!api.canEdit||api.canEdit()!==false);}
+  function authorized(){try{const check=api.canDevelop||api.canEdit;return typeof check==='function'&&check()===true;}catch{return false;}}
+  function editable(){try{return authorized()&&(typeof api.canEdit!=='function'||api.canEdit()===true);}catch{return false;}}
+  function refreshPermissions(){
+   const allowed=!destroyed&&authorized();button.hidden=!allowed;button.disabled=!allowed;button.style.display=allowed?'':'none';
+   if(!allowed&&opened&&!permissionClosing){permissionClosing=true;try{close();}finally{permissionClosing=false;}}
+   return allowed;
+  }
+  function active(){return opened&&!playtest&&authorized();}
+  function canMutateUI(){return active()&&!destroyed&&editable();}
   function getProject(){return copy(project);}
   function getCommittedProject(){
    const before=gesture?.before;if(!before)return getProject();
@@ -217,12 +225,13 @@
   function setTab(name){finishGesture();layerSelection?.cancel();if(tab==='sprites'&&name!=='sprites')pixelEditor?.cancelGesture();if(name!=='artwork')artworkEditor?.cancelPaste?.(false);if(name!=='artwork'&&artworkEditor?.getState().expanded)artworkEditor.setExpanded(false);if(name!=='education'||!active())educationEditor?.setActive(false);brushHover=null;if(!TABS.includes(name))name='objects';tab=name;if(name==='collision')collisionOverlay=true;if(name==='layers')layerOverlay=true;mode='select';for(const node of panel.querySelectorAll('[data-room-pane]'))node.hidden=node.dataset.roomPane!==name;for(const node of panel.querySelectorAll('[data-room-tab]'))node.setAttribute('aria-selected',String(node.dataset.roomTab===name));refresh();if(tab==='artwork'&&active())artworkEditor?.setExpanded(true);if(tab==='education'&&active()){mountEducation();educationEditor?.setActive(true);educationEditor?.setExpanded(true);}}
   function setOverlay(name,value){if(!active())return;finishGesture();if(name==='collision')collisionOverlay=!!value;else layerOverlay=!!value;refresh();status((name==='collision'?'Collision grid':'Foreground layer mask')+(value?' shown.':' hidden.')+' Saved room edits are unchanged.');}
   function toggleTool(name){if(tab===name){if(name==='collision')collisionOverlay=false;else layerOverlay=false;setTab('objects');}else setTab(name);canvas.focus({preventScroll:true});}
-  function open(name='objects'){if(destroyed)return;if(api.canEdit&&api.canEdit()===false){api.onCannotEdit?.();return;}opened=true;playtest=false;panel.hidden=false;host.classList.add('room-developer-open');button.setAttribute('aria-expanded','true');syncEntities();setTab(name);api.onActiveChange?.(true);if(!artworkEditor?.getState().expanded&&!educationEditor?.getState().expanded)canvas.focus({preventScroll:true});status(loadError||'Editing '+(api.name||'room')+'. Wheel zooms; right-drag pans.');}
+  function open(name='objects'){if(!refreshPermissions()||!editable()){api.onCannotEdit?.();return false;}opened=true;playtest=false;panel.hidden=false;host.classList.add('room-developer-open');button.setAttribute('aria-expanded','true');syncEntities();setTab(name);api.onActiveChange?.(true);if(!artworkEditor?.getState().expanded&&!educationEditor?.getState().expanded)canvas.focus({preventScroll:true});status(loadError||'Editing '+(api.name||'room')+'. Wheel zooms; right-drag pans.');return true;}
   function close(){if(!opened)return;finishGesture();layerSelection?.cancel();disposeSprites();disposeArtwork();educationEditor?.setActive(false);opened=false;playtest=false;spaceHeld=false;brushHover=null;pointers.clear();pinching=null;panel.hidden=true;host.classList.remove('room-developer-open');button.setAttribute('aria-expanded','false');canvas.classList.remove('room-dev-panning');api.onActiveChange?.(false);canvas.focus({preventScroll:true});}
   function toggle(){if(opened)close();else open(tab);}
   function selectedEntity(){return selected?.type==='entity'?entities().find(entity=>entity.id===selected.id):null;}
   function selectedAsset(){return selected?.type==='asset'?project.assets.find(asset=>asset.id===selected.id):null;}
   function refresh(){
+   refreshPermissions();
    syncEntities();refreshCamera();refreshLayerSelection();action('show-collision').setAttribute('aria-pressed',String(collisionOverlay));action('show-layers').setAttribute('aria-pressed',String(layerOverlay));action('show-collision').textContent=(collisionOverlay?'Hide':'Show')+' collision';action('show-layers').textContent=(layerOverlay?'Hide':'Show')+' layers';panel.querySelector('.room-dev-overlay-legend').hidden=playtest||!collisionOverlay&&!layerOverlay;action('show-collision').disabled=playtest;action('show-layers').disabled=playtest;field('mask-visible').checked=layerOverlay;field('mask-visible').disabled=playtest;action('undo').disabled=characterHistory()?!spriteUndo.length:!undo.length;action('redo').disabled=characterHistory()?!spriteRedo.length:!redo.length;action('playtest').setAttribute('aria-pressed',String(playtest));action('playtest').textContent=playtest?'■ Stop playtest':'▶ Playtest';panel.classList.toggle('room-dev-playtest',playtest);
    const entity=selectedEntity(),asset=selectedAsset();field('entity').replaceChildren(new win.Option('Select a room character or fish',''),...entities().map(item=>new win.Option(item.name||item.id,item.id)));field('entity').value=entity?.id||'';
    panel.querySelector('[data-room-entity-fields]').hidden=!entity;panel.querySelector('[data-room-fish-fields]').hidden=entity?.kind!=='fish';action('edit-character-artwork').hidden=!entity||entity.kind==='fish'||!characterArtwork?.getTargets().some(target=>target.id==='character.'+entity.id+'.down');
@@ -251,6 +260,7 @@
   function eachStrokePixel(points,size,stamp){const half=Math.floor(size/2);for(let index=0;index<points.length;index++){const previous=(points[index-1]||points[index]).map(Math.floor),next=points[index].map(Math.floor);let [x,y]=previous;const dx=Math.abs(next[0]-x),dy=Math.abs(next[1]-y),sx=x<next[0]?1:-1,sy=y<next[1]?1:-1;let error=dx-dy;for(;;){stamp(x-half,y-half,size,size);if(x===next[0]&&y===next[1])break;const twice=2*error;if(twice>-dy){error-=dy;x+=sx;}if(twice<dx){error+=dx;y+=sy;}}}}
   function brushPreview(){if(!active()||tab!=='layers'||layerSelecting||!brushHover||panTool||spaceHeld||pinching)return null;const size=Number(field('layer-size').value),half=Math.floor(size/2),[x,y]=layerPoint(brushHover);return{x:Math.max(0,x-half),y:Math.max(0,y-half),w:Math.min(W,x-half+size)-Math.max(0,x-half),h:Math.min(H,y-half+size)-Math.max(0,y-half),size,tool:field('layer-tool').value};}
   function begin(event){
+   if(!refreshPermissions())return;
    if(!canMutateUI())return;event.preventDefault();event.stopImmediatePropagation();canvas.focus({preventScroll:true});pointers.set(event.pointerId,{clientX:event.clientX,clientY:event.clientY});try{canvas.setPointerCapture(event.pointerId);}catch{}
    if(pointers.size===2){cancelGesture();const points=[...pointers.values()];pinching={distance:Math.hypot(points[0].clientX-points[1].clientX,points[0].clientY-points[1].clientY),zoom:camera.zoom};return;}
    if(event.button===1||event.button===2||panTool||spaceHeld){gesture={kind:'pan',id:event.pointerId,clientX:event.clientX,clientY:event.clientY};return;}
@@ -264,6 +274,7 @@
    const target=hit(point);selected=target;if(target){const object=target.type==='entity'?selectedEntity():selectedAsset();gesture={kind:target.resize?'resize':'move',id:event.pointerId,before,start:point,origin:copy(object),target};}refresh();
   }
   function move(event){
+   if(!refreshPermissions())return;
    if(!active())return;if(!canMutateUI()){cancelGesture();return;}event.preventDefault();event.stopImmediatePropagation();brushHover=toWorld(event.clientX,event.clientY);if(pointers.has(event.pointerId))pointers.set(event.pointerId,{clientX:event.clientX,clientY:event.clientY});
    if(pinching&&pointers.size===2){const points=[...pointers.values()],distance=Math.hypot(points[0].clientX-points[1].clientX,points[0].clientY-points[1].clientY);zoom(pinching.zoom*distance/Math.max(1,pinching.distance),{clientX:(points[0].clientX+points[1].clientX)/2,clientY:(points[0].clientY+points[1].clientY)/2});return;}
    if(!gesture||gesture.id!==event.pointerId)return;
@@ -298,7 +309,7 @@
    if(previous?.kind==='lift')mode='select';
    refresh();
   }
-  function end(event){if(!active())return;if(!canMutateUI())cancelGesture();event.preventDefault();event.stopImmediatePropagation();pointers.delete(event.pointerId);if(pointers.size<2)pinching=null;if(gesture?.id===event.pointerId)finishGesture();try{if(canvas.hasPointerCapture(event.pointerId))canvas.releasePointerCapture(event.pointerId);}catch{}}
+  function end(event){if(!refreshPermissions()||!active())return;if(!canMutateUI())cancelGesture();event.preventDefault();event.stopImmediatePropagation();pointers.delete(event.pointerId);if(pointers.size<2)pinching=null;if(gesture?.id===event.pointerId)finishGesture();try{if(canvas.hasPointerCapture(event.pointerId))canvas.releasePointerCapture(event.pointerId);}catch{}}
   function cancel(event){
    if(active()){event.preventDefault();event.stopImmediatePropagation();}
    pointers.delete(event.pointerId);if(pointers.size<2)pinching=null;
@@ -308,6 +319,7 @@
   function wheel(event){if(!active())return;event.preventDefault();event.stopImmediatePropagation();finishGesture();zoom(camera.zoom+(event.deltaY<0?.25:-.25),event);}
   function typing(target){return target?.isContentEditable||/^(INPUT|TEXTAREA|SELECT)$/.test(target?.tagName);}
   function keyDown(event){
+   if(!refreshPermissions())return;
    if(event.target?.closest?.('[data-education-editor]')&&event.key!=='F2')return;
    const insideArtwork=event.target?.closest?.('[data-artwork-editor]'),insideSprites=event.target?.closest?.('.pixel-editor');
    if(event.key!=='F2'&&(insideArtwork||insideSprites&&(!(event.ctrlKey||event.metaKey)||!['z','y'].includes(event.key.toLowerCase()))))return;
@@ -392,7 +404,7 @@
     ctx.save();if(clip)ctx.clip(clip,'evenodd');drawAsset(ctx,asset);ctx.restore();
    }
   }
-  function beforeScene(ctx){ctx.save();if(active()){clampCamera();ctx.scale(camera.zoom,camera.zoom);ctx.translate(-camera.x,-camera.y);}}
+  function beforeScene(ctx){refreshPermissions();ctx.save();if(active()){clampCamera();ctx.scale(camera.zoom,camera.zoom);ctx.translate(-camera.x,-camera.y);}}
   function afterBackground(ctx,playerY=H){
    drawPatches(ctx);
    if(!project.strokes.length){drawAssets(ctx,asset=>beforeActor(asset,playerY));return;}
@@ -458,7 +470,7 @@
   try{const raw=storage?.getItem(store);localProjectPresent=raw!==null&&raw!==undefined;if(raw){const saved=JSON.parse(raw);if(validProject(saved,W,H)){if(saved.artwork||saved.assets.some(asset=>asset.artwork)){const revision=projectRevision;validateArtworkProject(saved).then(valid=>{if(destroyed||revision!==projectRevision)return;if(valid)applyProject(saved,{persist:false});else{loadError='Saved pixel artwork dimensions do not match this room. Import a valid backup.';status(loadError);}});}else applyProject(saved,{persist:false});}else loadError='Saved room edits are invalid. Original room kept; import a valid backup.';}}catch{loadError='Saved room edits could not load. Original room kept.';}
   refresh();
   function destroy(){if(destroyed)return;close();educationEditor?.dispose();destroyed=true;canvas.removeEventListener('pointerleave',leave,true);canvas.removeEventListener('pointerdown',begin,true);canvas.removeEventListener('pointermove',move,true);canvas.removeEventListener('pointerup',end,true);canvas.removeEventListener('pointercancel',cancel,true);canvas.removeEventListener('lostpointercapture',cancel,true);canvas.removeEventListener('dblclick',doubleClick,true);canvas.removeEventListener('wheel',wheel,true);canvas.removeEventListener('contextmenu',contextMenu,true);win.removeEventListener('keydown',keyDown,true);win.removeEventListener('keyup',keyUp,true);win.removeEventListener('blur',blur);pixelEditor?.dispose();artworkEditor?.dispose();panel.remove();button.remove();images.clear();}
-  return {open,close,toggle,isOpen:()=>opened,isEditing:active,isPlaytest:()=>opened&&playtest,hasLocalProject:()=>localProjectPresent,getProject,getCommittedProject,applyProject,validateArtworkProject,getBackground:background,getArtworkEditor:()=>artworkEditor,getArtworkTargets:artworkTargets,getArtworkSource,getArtworkData,setArtworkData,hasArtworkAssetPreview,drawArtworkAssetPreview,getBackgroundArtwork:()=>project.artwork?copy(project.artwork):null,setBackgroundArtwork:value=>{const next=getArtworkData();if(value)next[backgroundId]=value;else delete next[backgroundId];return setArtworkData(next);},getEntityOverride:entityId=>copy(project.entities[entityId]||{}),toWorld,walkable,beforeScene,afterBackground,afterScene,destroy,getState:()=>({open:opened,editing:active(),playtest,tab,artwork:artworkEditor?.getState()||null,overlays:{collision:collisionOverlay,layers:layerOverlay,visible:active()},brush:brushPreview(),layerSelection:layerSelection?{...layerSelection.getState(),active:layerSelecting}:null,selected:copy(selected),camera:{...camera},panTool,undo:undo.length,redo:redo.length,renderCache:{maskBuilds},project:getProject()})};
+  return {open,close,toggle,refreshPermissions,isOpen:()=>{refreshPermissions();return opened;},isEditing:active,isPlaytest:()=>opened&&playtest,hasLocalProject:()=>localProjectPresent,getProject,getCommittedProject,applyProject,validateArtworkProject,getBackground:background,getArtworkEditor:()=>artworkEditor,getArtworkTargets:artworkTargets,getArtworkSource,getArtworkData,setArtworkData,hasArtworkAssetPreview,drawArtworkAssetPreview,getBackgroundArtwork:()=>project.artwork?copy(project.artwork):null,setBackgroundArtwork:value=>{const next=getArtworkData();if(value)next[backgroundId]=value;else delete next[backgroundId];return setArtworkData(next);},getEntityOverride:entityId=>copy(project.entities[entityId]||{}),toWorld,walkable,beforeScene,afterBackground,afterScene,destroy,getState:()=>{refreshPermissions();return {open:opened,editing:active(),playtest,tab,artwork:artworkEditor?.getState()||null,overlays:{collision:collisionOverlay,layers:layerOverlay,visible:active()},brush:brushPreview(),layerSelection:layerSelection?{...layerSelection.getState(),active:layerSelecting}:null,selected:copy(selected),camera:{...camera},panTool,undo:undo.length,redo:redo.length,renderCache:{maskBuilds},project:getProject()};}};
  }
  root.createCodaRoomDeveloperEditor=createCodaRoomDeveloperEditor;
  root.CodaRoomDeveloperEditor={validateProject:validProject,emptyProject:EMPTY};

@@ -3,7 +3,7 @@ const assert=require('node:assert/strict');
 const fs=require('node:fs');
 const path=require('node:path');
 const {SCHEMA}=require('../classroom-profile-data.js');
-const {arrayIndexRegex,convertSchema,buildClassroomRules,renderClassroomRules,renderHallRules}=require('../tools/build-classroom-rules.cjs');
+const {arrayIndexRegex,convertSchema,buildClassroomRules,renderClassroomRules,renderHallRules,renderDeveloperRules}=require('../tools/build-classroom-rules.cjs');
 
 test('piano and major/minor lessons expand only their exact teacher/student validation fields',()=>{
  const previous=JSON.parse(JSON.stringify(SCHEMA)),legacyScales='c-major g-major d-major f-major a-minor c-minor d-minor e-minor'.split(' '),completed=previous.properties.piano.properties.completed;
@@ -95,6 +95,22 @@ test('the shared Hall installation fragment contains only compact score-board ru
  assert.deepEqual(global['.indexOn'],['rank']);assert.equal(shared.hallOfFame['.read'],false);
  assert.deepEqual(Object.keys(row).filter(key=>!key.startsWith('.')&&!key.startsWith('$')).sort(),['alias','at','rank','score','tiebreak']);
  assert.deepEqual(row.$other,{'.validate':false});
+});
+
+test('developer access is an isolated true-only registry managed only by the two verified owners',()=>{
+ const value=JSON.parse(renderDeveloperRules()),space=buildClassroomRules(SCHEMA).rules.classroomV1;
+ assert.deepEqual(Object.keys(value),['developerAccess']);assert.deepEqual(value.developerAccess,space.developerAccess);
+ assert.equal(renderDeveloperRules(),fs.readFileSync(path.join(__dirname,'../docs/DEVELOPER-ACCESS-RULES.json'),'utf8'));
+ const rule=value.developerAccess,row=rule.$emailKey;
+ assert.equal(rule['.write'],false);
+ for(const expression of [rule['.read'],row['.write']]){
+  assert.match(expression,/email_verified === true/);assert.match(expression,/sign_in_provider === "google\.com"/);
+  assert.ok(expression.includes('cwood@sanjacinto.k12.ca.us'));assert.ok(expression.includes('cwood.musiced@gmail.com'));
+  assert.doesNotMatch(expression,/classroomV1\/admins/);
+ }
+ assert.match(row['.read'],/toLowerCase\(\)\.replace\("\.", ","\) === \$emailKey/);
+ assert.match(row['.validate'],/newData\.isBoolean\(\)/);assert.match(row['.validate'],/newData\.val\(\) === true/);
+ assert.match(row['.validate'],/length <= 254/);
 });
 
 test('teacher players are closed exact-owner Google records using the same canonical progress schema',()=>{

@@ -13,6 +13,7 @@
  });
  const HALL_ALIAS=new RegExp('^(?:'+COLORS.join('|')+') (?:'+ANIMALS.join('|')+') [1-9][0-9]$');
  const HALL_RANK_FACTOR=1000001;
+ const DEVELOPER_EMAIL=/^[a-z0-9_%+.-]+@[a-z0-9.-]+\.[a-z]{2,63}$/;
  const clone=value=>JSON.parse(JSON.stringify(value));
  const stable=value=>JSON.stringify(value,(_,v)=>v&&typeof v==='object'&&!Array.isArray(v)?Object.keys(v).sort().reduce((o,k)=>(o[k]=v[k],o),{}):v);
  const fail=code=>({ok:false,code});
@@ -63,7 +64,7 @@
    const configured=!configurationReason;
    const enabled=configured&&config.classroom?.enabled===true;
    const listeners=new Set(),subscriptions=[],authSubscriptions=[];
-   let sdk,db,auth,adminDb,adminAuth,connecting,studentUid=null,adminUid=null,adminAuthorized=false,adminRoleStop=null,personalAvailable=false;
+   let sdk,db,auth,adminDb,adminAuth,connecting,studentUid=null,adminUid=null,adminAuthorized=false,developerAuthorized=false,developerOwner=false,developerEmail=null,developerRoleStop=null,developerVersion=0,developerCheckVersion=0,adminRoleStop=null,personalAvailable=false;
    let active=null,leaseOwned=false,loaded=false,baseRevision=0,lastSaved='',pending=false,saving=false;
    let loading=false,locked=false,waitingTakeover=false,code='',status='',destroyed=false,generation=0,inFlightSave=null,transitioning=false,retiredPersonalSave=null,signingOut=false;
    let offset=0,flushTimer=null,leaseTimer=null,queuedPass=null,personalRename=null;
@@ -71,7 +72,7 @@
    const pendingHallClassCleanup=new Map();
    const state=()=>({configured,configurationReason,enabled,ready:!!sdk,loading,locked,waitingTakeover,pending,
      profile:active?{classId:active.classId,classLabel:active.classLabel||'Classroom',profileId:active.profileId,alias:active.alias,picture:active.picture,...(personalProfile(active)?{kind:'teacher'}:{})}:null,
-     admin:{signedIn:!!adminUid,authorized:adminAuthorized,uid:adminUid||null},
+     admin:{signedIn:!!adminUid,authorized:adminAuthorized,uid:adminUid||null,developer:developerSession()&&developerAuthorized,developerOwner:developerSession()&&developerOwner},
      personal:{available:adminAuthorized&&personalAvailable,active:personalProfile(active)},
      role:adminAuthorized?'admin':active?'student':'guest',readOnly:!!active&&!isWritable(),status,code});
    function notify(){const value=state();for(const listener of listeners)try{listener(clone(value));}catch{}return value;}
@@ -112,15 +113,88 @@
      return connecting;
    }
    async function student(){const connected=await connect();if(!connected.ok)return connected;if(!auth.currentUser)await sdk.signInAnonymously(auth);studentUid=auth.currentUser?.uid;return studentUid?{ok:true}:fail('sign-in-unavailable');}
-   async function checkAdmin(){
-     const uid=adminAuth?.currentUser?.uid||null;
-     if(uid!==adminUid){adminAuthorized=false;personalAvailable=false;}adminUid=uid;if(!uid){adminAuthorized=false;return false;}
-     let approved=false;
-     try{const token=await adminAuth.currentUser.getIdTokenResult();if(!token.signInProvider||token.signInProvider==='google.com'){
-       const snap=await sdk.get(sdk.ref(adminDb,path('admins/'+uid)));approved=snap.val()===true;
-     }}catch{}
-     if(adminUid===uid)adminAuthorized=approved;return adminUid===uid&&approved;
+   function developerSession(){const user=adminAuth?.currentUser;return !destroyed&&!signingOut&&!!adminUid&&user?.uid===adminUid&&user.emailVerified===true&&!!developerEmail&&normalizeDeveloperEmail(user.email)===developerEmail;}
+   function resetDeveloperRole(){
+     developerVersion++;if(developerRoleStop){try{developerRoleStop();}catch{}developerRoleStop=null;}
+     developerAuthorized=false;developerOwner=false;developerEmail=null;
    }
+   function clearDeveloperAccess(){developerCheckVersion++;resetDeveloperRole();}
+   function normalizeDeveloperEmail(value){
+     const email=typeof value==='string'?value.trim().toLowerCase():'';
+     return email.length<=254&&DEVELOPER_EMAIL.test(email)&&!email.includes('..')?email:null;
+   }
+   const developerEmailKey=email=>email.replaceAll('.',',');
+   async function ownerDeveloperEmail(email){
+     const expected=config.developer?.ownerEmailSha256,hashes=Array.isArray(expected)?expected:[expected];
+     if(!email||!hashes.some(value=>/^[a-f0-9]{64}$/.test(value||'')))return false;
+     const digest=await crypto.subtle.digest('SHA-256',new TextEncoder().encode('coda-developer-owner:v1:'+email));
+     return hashes.includes([...new Uint8Array(digest)].map(value=>value.toString(16).padStart(2,'0')).join(''));
+   }
+   async function checkDeveloperAccess(user,token,checking){
+     const current=()=>!destroyed&&checking===developerCheckVersion&&adminUid===user?.uid&&adminAuth?.currentUser===user;
+     const email=normalizeDeveloperEmail(token?.claims?.email);
+     if(!email||token?.signInProvider!=='google.com'||token.claims?.email_verified!==true||user?.emailVerified!==true||normalizeDeveloperEmail(user.email)!==email){if(current())resetDeveloperRole();return;}
+     const owner=await ownerDeveloperEmail(email);if(!current())return;
+     let granted=owner,ref=null;
+     if(!owner){
+       ref=sdk.ref(adminDb,path('developerAccess/'+developerEmailKey(email)));
+       try{const snap=await sdk.get(ref);if(!current())return;granted=snap.val()===true;}catch{if(!current())return;granted=false;}
+     }
+     if(!current())return;
+     // Keep the previous verified role live while an identical user's proof is
+     // refreshed. Replace the watcher and permission together without an await.
+     const changed=developerAuthorized!==granted||developerOwner!==owner||developerEmail!==email;
+     resetDeveloperRole();developerEmail=email;developerOwner=owner;developerAuthorized=granted;
+     const version=developerVersion,uid=user.uid;
+     const roleCurrent=()=>!destroyed&&version===developerVersion&&adminUid===uid&&adminAuth?.currentUser?.uid===uid&&adminAuth.currentUser.emailVerified===true&&normalizeDeveloperEmail(adminAuth.currentUser.email)===email;
+     if(!owner&&typeof sdk.onValue==='function'){
+       const update=value=>{if(roleCurrent()){if(developerAuthorized!==value)developerCheckVersion++;developerAuthorized=value;notify();}};
+       try{const stop=sdk.onValue(ref,snap=>update(snap.val()===true),()=>update(false));if(roleCurrent())developerRoleStop=stop;else stop?.();}catch{update(false);}
+     }
+     if(changed)notify();
+   }
+   async function checkAdmin(){
+     const user=adminAuth?.currentUser,uid=user?.uid||null;
+     if(uid!==adminUid){adminAuthorized=false;personalAvailable=false;clearDeveloperAccess();}
+     else if(developerEmail&&(user?.emailVerified!==true||normalizeDeveloperEmail(user.email)!==developerEmail))clearDeveloperAccess();
+     adminUid=uid;if(!uid){adminAuthorized=false;clearDeveloperAccess();return false;}
+     const checking=++developerCheckVersion;let approved=false,token=null;
+     try{token=await user.getIdTokenResult();if(!token.signInProvider||token.signInProvider==='google.com'){
+       try{const snap=await sdk.get(sdk.ref(adminDb,path('admins/'+uid)));approved=snap.val()===true;}catch{}
+     }
+     await checkDeveloperAccess(user,token,checking);
+     }catch{if(checking===developerCheckVersion&&adminUid===uid&&adminAuth?.currentUser===user){resetDeveloperRole();notify();}}
+     if(adminUid===uid&&adminAuth?.currentUser===user&&checking===developerCheckVersion)adminAuthorized=approved;
+     return adminUid===uid&&adminAuth?.currentUser===user&&approved;
+   }
+   async function developerManager(){
+     if(destroyed)return fail('closed');const connected=await connect();if(!connected.ok)return connected;
+     await checkAdmin();return developerSession()&&developerOwner?{ok:true}:fail('developer-owner-required');
+   }
+   async function listDeveloperAccess(){
+     const allowed=await developerManager();if(!allowed.ok)return allowed;
+     const uid=adminUid,version=developerVersion;
+     try{
+       const snap=await sdk.get(sdk.ref(adminDb,path('developerAccess')));
+       if(!developerSession()||!developerOwner||uid!==adminUid||version!==developerVersion)return fail('closed');
+       const raw=snap.val(),developers=raw&&typeof raw==='object'&&!Array.isArray(raw)?Object.entries(raw).flatMap(([key,value])=>{
+         const email=normalizeDeveloperEmail(key.replaceAll(',','.'));return value===true&&email&&developerEmailKey(email)===key?[{email}]:[];
+       }).sort((a,b)=>a.email.localeCompare(b.email)):[];
+       return {ok:true,developers};
+     }catch{return fail('developer-access-unavailable');}
+   }
+   async function changeDeveloperAccess(value,grant){
+     const email=normalizeDeveloperEmail(value);if(!email)return fail('invalid-developer-email');
+     const allowed=await developerManager();if(!allowed.ok)return allowed;
+     const uid=adminUid,version=developerVersion;
+     try{
+       if(await ownerDeveloperEmail(email))return fail('developer-owner-protected');
+       if(!developerSession()||!developerOwner||uid!==adminUid||version!==developerVersion)return fail('closed');
+       await sdk.set(sdk.ref(adminDb,path('developerAccess/'+developerEmailKey(email))),grant?true:null);
+       return developerSession()&&developerOwner&&uid===adminUid&&version===developerVersion?{ok:true,email}:fail('closed');
+     }catch{return fail('developer-access-unavailable');}
+   }
+   const grantDeveloperAccess=email=>changeDeveloperAccess(email,true),revokeDeveloperAccess=email=>changeDeveloperAccess(email,false);
    function watchAdmin(){
      if(adminRoleStop){adminRoleStop();adminRoleStop=null;}if(!adminAuthorized||!adminUid)return;
      const revoked=()=>{adminAuthorized=false;personalAvailable=false;if(personalProfile(active))lock('admin-not-approved');message('This admin account is no longer approved.','admin-not-approved');};
@@ -136,7 +210,7 @@
        const uid=user?.uid||null,previous=administrator?adminUid:studentUid;
        if(!previous||uid===previous)return;
        if(administrator){
-         adminUid=null;adminAuthorized=false;personalAvailable=false;
+         adminUid=null;adminAuthorized=false;clearDeveloperAccess();personalAvailable=false;
          if(adminRoleStop){adminRoleStop();adminRoleStop=null;}
          try{session.removeItem(ADMIN_KEY);}catch{}
          if(personalProfile(active))lock('session-ended');
@@ -164,12 +238,12 @@
      loading=true;notify();try{
      const provider=new sdk.GoogleAuthProvider();provider.setCustomParameters({prompt:'select_account'});await sdk.signInWithPopup(adminAuth,provider);
      session.setItem(ADMIN_KEY,JSON.stringify({version:1,tabId,uid:adminAuth.currentUser?.uid}));
-     await checkAdmin();watchAdmin();message(adminAuthorized?'School admin ready.':'Your school administrator needs to approve this admin account.',adminAuthorized?'':'admin-not-approved');
+     await checkAdmin();watchAdmin();message(adminAuthorized?'School admin ready.':developerAuthorized?'Developer access ready.':'Your school administrator needs to approve this admin account.',adminAuthorized||developerAuthorized?'':'admin-not-approved');
      if(adminAuthorized&&enabled){
        try{if(await refreshPersonal()&&!active&&(!sessionMarker()||sessionMarker().classId===PERSONAL_CLASS))return await activate({kind:'teacher',classId:PERSONAL_CLASS,profileId:adminUid,classLabel:'My player'},{reason:'personal-opened'});}
        catch{message('Your player could not open. Keep this tab open and try again.','personal-open-failed');return fail('personal-open-failed');}
      }
-     return adminAuthorized?{ok:true}:fail('admin-not-approved');
+     return adminAuthorized||developerAuthorized?{ok:true}:fail('admin-not-approved');
    }catch{message('Admin sign-in could not finish. Try again.','admin-sign-in-failed');return fail('admin-sign-in-failed');}finally{loading=false;notify();if(closedPersonal&&!active)identity('left',true);}}
    async function adminSignOut(){
      if(loading||transitioning)return fail('busy');
@@ -189,7 +263,7 @@
        }
        const left=await leave({skipFlush:true,silentIdentity:true,internal:true});if(!left.ok){loading=false;signingOut=false;notify();if(pausedPersonalDatabase)sdk.goOnline?.(adminDb);return left;}closedPersonal=true;loading=true;
      }
-     if(adminRoleStop){adminRoleStop();adminRoleStop=null;}adminUid=null;adminAuthorized=false;personalAvailable=false;try{session.removeItem(ADMIN_KEY);}catch{}notify();if(adminAuth)try{await sdk.signOut(adminAuth);}catch{}finally{if(pausedPersonalDatabase)sdk.goOnline?.(adminDb);}loading=false;signingOut=false;notify();if(closedPersonal||wasSignedIn)identity(closedPersonal?'left':'signed-out',closedPersonal,{exitToTitle:true});return {ok:true};
+     if(adminRoleStop){adminRoleStop();adminRoleStop=null;}adminUid=null;adminAuthorized=false;clearDeveloperAccess();personalAvailable=false;try{session.removeItem(ADMIN_KEY);}catch{}notify();if(adminAuth)try{await sdk.signOut(adminAuth);}catch{}finally{if(pausedPersonalDatabase)sdk.goOnline?.(adminDb);}loading=false;signingOut=false;notify();if(closedPersonal||wasSignedIn)identity(closedPersonal?'left':'signed-out',closedPersonal,{exitToTitle:true});return {ok:true};
    }
    async function staff(){const ready=await connect();if(!ready.ok)return ready;if(!enabled)return fail('classroom-not-enabled');return await checkAdmin()?{ok:true}:fail('admin-not-approved');}
    async function withWorkspace(fn){return storageScope?.withLock?storageScope.withLock(fn):fn();}
@@ -463,14 +537,14 @@
          try{await sdk.signOut(instance);}catch{return cleanupFailure('Log out could not finish. Please try again.');}
        }
        if(auth?.currentUser||adminAuth?.currentUser)return cleanupFailure('Log out could not finish. Please try again.');
-       studentUid=null;adminUid=null;adminAuthorized=false;personalAvailable=false;
+       studentUid=null;adminUid=null;adminAuthorized=false;clearDeveloperAccess();personalAvailable=false;
        message('You are logged out.');identity('signed-out',false,{exitToTitle:true});return {ok:true};
      }catch{
        if(cleanupStarted)return cleanupFailure('Log out could not finish. Please try again.');keepPending();
        message('Log out could not finish. Please try again.','logout-unavailable');return fail('logout-unavailable');
      }finally{
        studentUid=auth?.currentUser?.uid||null;adminUid=adminAuth?.currentUser?.uid||null;
-       if(!adminUid){adminAuthorized=false;personalAvailable=false;}
+       if(!adminUid){adminAuthorized=false;clearDeveloperAccess();personalAvailable=false;}
        loading=false;signingOut=false;notify();
        if(recoveryNeeded)try{options.onLock?.({reason:'logout-unavailable',profile:state().profile,pending,reloadNeeded:false});}catch{}
      }
@@ -687,8 +761,8 @@
    leaseTimer=win?.setInterval?.(async()=>{if(!isWritable())return;try{if(!await lease(false,true))lock('device-changed');}catch{message('Connection paused. Keep this tab open.','connection-unavailable');}},20000);
    // Sessions stay open through inactivity. Explicit logout, revocation, and
    // another device taking the profile still end access through the guards above.
-   function destroy(){keepPending();destroyed=true;generation++;stopSubscriptions();for(const stop of authSubscriptions.splice(0))try{stop();}catch{}if(adminRoleStop){adminRoleStop();adminRoleStop=null;}for(const stop of pendingJobs)try{stop();}catch{}for(const timer of [flushTimer,leaseTimer])if(timer!==null)win?.clearInterval?.(timer);win?.removeEventListener?.('pagehide',keepPending);win?.document?.removeEventListener?.('visibilitychange',pageHidden);listeners.clear();pendingHallClassCleanup.clear();}
-   return {getState:state,getHallContext,loadHallBoard,publishHallRecord,subscribe(listener){listeners.add(listener);return()=>listeners.delete(listener);},connect,resume,inspectSession,join,leave,logOut,takeOver,useSavedProgress,adminSignIn,adminSignOut,savePersonalPlayer,renamePersonalPlayer,openPersonalPlayer,listClasses,createClass,listProfiles,createProfile,reissuePass,deleteProfile,deleteClass,flush,isWritable,destroy};
+   function destroy(){keepPending();destroyed=true;generation++;clearDeveloperAccess();stopSubscriptions();for(const stop of authSubscriptions.splice(0))try{stop();}catch{}if(adminRoleStop){adminRoleStop();adminRoleStop=null;}for(const stop of pendingJobs)try{stop();}catch{}for(const timer of [flushTimer,leaseTimer])if(timer!==null)win?.clearInterval?.(timer);win?.removeEventListener?.('pagehide',keepPending);win?.document?.removeEventListener?.('visibilitychange',pageHidden);listeners.clear();pendingHallClassCleanup.clear();}
+   return {getState:state,listDeveloperAccess,grantDeveloperAccess,revokeDeveloperAccess,getHallContext,loadHallBoard,publishHallRecord,subscribe(listener){listeners.add(listener);return()=>listeners.delete(listener);},connect,resume,inspectSession,join,leave,logOut,takeOver,useSavedProgress,adminSignIn,adminSignOut,savePersonalPlayer,renamePersonalPlayer,openPersonalPlayer,listClasses,createClass,listProfiles,createProfile,reissuePass,deleteProfile,deleteClass,flush,isWritable,destroy};
  }
  return Object.freeze({create,consumeFragment,readSavedSession,parsePass:passCode,formatPass,hashPass});
 });

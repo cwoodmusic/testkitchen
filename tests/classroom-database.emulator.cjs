@@ -30,6 +30,8 @@ const ref=(database,location)=>database.ref(location);
 const read=(database,location)=>ref(database,location).get();
 const write=(database,location,value)=>ref(database,location).set(value);
 const remove=(database,location)=>ref(database,location).remove();
+const developerGoogle=(uid,email,verified=true,provider='google.com')=>env.authenticatedContext(uid,{email,email_verified:verified,firebase:{sign_in_provider:provider}}).database();
+const DEVELOPER_ACCESS=`${ROOT}/developerAccess`,developerKey=email=>email.toLowerCase().replaceAll('.',',');
 
 before(async()=>{
  const fragment=JSON.parse(fs.readFileSync(path.join(__dirname,'../classroom-database.rules.json'),'utf8'));
@@ -53,6 +55,51 @@ beforeEach(async()=>{
  await env.clearDatabase();await env.withSecurityRulesDisabled(context=>write(context.database(),'/',seed));
 });
 after(async()=>{if(env)await env.cleanup();});
+
+test('both verified developer owners can list, grant and revoke without school-admin enrollment',async()=>{
+ const school=developerGoogle('owner-school','cwood@sanjacinto.k12.ca.us'),gmail=developerGoogle('owner-gmail','cwood.musiced@gmail.com');
+ const location=`${DEVELOPER_ACCESS}/${developerKey('a.music.teacher@example.school.org')}`;
+ for(const owner of [school,gmail]){
+  await assertSucceeds(write(owner,location,true));
+  assert.equal((await assertSucceeds(read(owner,location))).val(),true);
+  assert.equal((await assertSucceeds(read(owner,DEVELOPER_ACCESS))).val()[developerKey('a.music.teacher@example.school.org')],true);
+  await assertSucceeds(remove(owner,location));
+  assert.equal((await assertSucceeds(read(owner,location))).val(),null);
+ }
+ await assertFails(read(gmail,`${ROOT}/classes`),'Developer ownership does not grant classroom roster access');
+ await assertFails(write(gmail,`${ROOT}/admins/owner-gmail`,true),'Developer ownership does not self-enroll a school admin');
+});
+
+test('delegated Google users read only their exact email grant, including all periods and case normalization',async()=>{
+ const owner=developerGoogle('owner-gmail','cwood.musiced@gmail.com'),email='a.music.teacher@example.school.org';
+ const own=`${DEVELOPER_ACCESS}/${developerKey(email)}`,other=`${DEVELOPER_ACCESS}/${developerKey('other@example.org')}`;
+ await assertSucceeds(write(owner,own,true));await assertSucceeds(write(owner,other,true));
+ const delegated=developerGoogle('delegated',email.toUpperCase());
+ assert.equal((await assertSucceeds(read(delegated,own))).val(),true);
+ await assertFails(read(delegated,other));await assertFails(read(delegated,DEVELOPER_ACCESS));
+ await assertFails(write(delegated,own,true));await assertFails(remove(delegated,own));await assertFails(write(delegated,other,true));
+ await assertSucceeds(remove(owner,own));assert.equal((await assertSucceeds(read(delegated,own))).val(),null);
+});
+
+test('classroom administration, anonymous identities and unverified owner claims cannot manage developer grants',async()=>{
+ const email='cwood.musiced@gmail.com',own=`${DEVELOPER_ACCESS}/${developerKey(email)}`;
+ for(const database of [env.unauthenticatedContext().database(),anonymous('student_one'),staff(),
+  developerGoogle('school_admin','another.teacher@example.org'),
+  developerGoogle('unverified',email,false),developerGoogle('password-owner',email,true,'password'),
+  developerGoogle('anonymous-owner',email,true,'anonymous')]){
+  await assertFails(read(database,DEVELOPER_ACCESS));await assertFails(read(database,own));
+  await assertFails(write(database,own,true));await assertFails(remove(database,own));
+ }
+});
+
+test('developer grants are bounded true-only leaves and cannot carry private records or nested fields',async()=>{
+ const owner=developerGoogle('owner-school','cwood@sanjacinto.k12.ca.us'),location=`${DEVELOPER_ACCESS}/${developerKey('builder@example.org')}`;
+ for(const value of [false,1,'true',{enabled:true,email:'builder@example.org'},['true']])await assertFails(write(owner,location,value));
+ for(const key of ['missing-at','wrong@domain','blank@,org','a@@example,org','a/b@example,org','a'.repeat(255)+'@example,org'])
+  await assertFails(write(owner,`${DEVELOPER_ACCESS}/${key}`,true));
+ await assertSucceeds(write(owner,location,true));await assertFails(write(owner,location+'/enabled',true));
+ await assertFails(write(owner,`${ROOT}/unrecognizedDeveloperAccess`,{[developerKey('builder@example.org')]:true}));
+});
 
 test('logged-out users and parent listings cannot discover classroom data or pass mappings',async()=>{
  const guest=env.unauthenticatedContext().database(),student=anonymous('new_device');
