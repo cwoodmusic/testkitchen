@@ -21,7 +21,7 @@
  function add(name,label,sprite,bounds,color,kind='sign'){
   fixtures.push(Object.freeze({name:'wall_'+name,label,group:kind==='lantern'?'Wall lanterns':'Neon signs & wall art',
    type:'wall-fixture',source:'world',sprite,bounds,atlas:[0,0,bounds[2],bounds[3]],layer:'world',sortY:bounds[1]+bounds[3],
-   color,kind,light:[bounds[0]+bounds[2]*.5,bounds[1]+bounds[3]*.5]}));
+   color,kind,defaultVisible:name!=='lantern_dance-upper-passage',light:[bounds[0]+bounds[2]*.5,bounds[1]+bounds[3]*.5]}));
  }
  add('lounge_sign','Sign · Lounge','lounge',[230,35,130,65],'#ff43e0');
  add('coda_sign','Sign · The Coda Arcade','coda',[685,25,375,88],'#f25dff');
@@ -52,7 +52,13 @@
     visible:asset?.visible!==false,opacity:(asset?.opacity??100)/100*(anim.alpha??1),matrix,sourceX,sourceY,
     x:a*sourceX+c*sourceY+matrix[4],y:b*sourceX+d*sourceY+matrix[5],w:8,h:15,radius:definition.kind==='lantern'?40:Math.max(w,h)*.55});
   }
-  for(const definition of CATALOG)append(definition,assets.find(asset=>asset.origin?.name===definition.name));
+  for(const definition of CATALOG){
+   const asset=assets.find(asset=>asset.origin?.name===definition.name);
+   // The old passage lantern has no fixture in the current room. Keep it in
+   // the editor catalogue, but do not recreate its floating light by default.
+   if(!asset&&definition.defaultVisible===false)continue;
+   append(definition,asset);
+  }
   for(const asset of assets)if(!asset.origin&&byName.has(asset.wallFixture))append(byName.get(asset.wallFixture),asset);
   return result;
  }
