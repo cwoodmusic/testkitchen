@@ -21,7 +21,7 @@
    return new URL('./',current);
   }catch{return fallback;}
  }
- function gameURL(game,location,version='bundled-cabinets-1'){
+ function gameURL(game,location,version='bundled-profile-names-1'){
   if(!Object.prototype.hasOwnProperty.call(paths,game))throw new TypeError('Unknown arcade game.');
   // Resolve from the current app directory, including GitHub Pages project
   // prefixes. Test Kitchen loads its own copies instead of live game repos.

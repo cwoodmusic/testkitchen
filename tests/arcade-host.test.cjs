@@ -32,7 +32,7 @@ test('local package previews preserve the current server and prefix',()=>{
  const url=new URL(host.gameURL('pitch',location));assert.equal(url.origin,location.origin);assert.equal(url.pathname,'/testkitchen/games/pitch-race/');
 });
 test('untrusted and conflicting host input cannot redirect cabinet traffic',()=>{
- assert.equal(new URL(host.gameURL('pitch',{hostname:'untrusted.example',href:'https://untrusted.example/'})).href,'https://cwoodmusic.github.io/coda-arcade/games/pitch-race/?v=bundled-cabinets-1');
+ assert.equal(new URL(host.gameURL('pitch',{hostname:'untrusted.example',href:'https://untrusted.example/'})).href,'https://cwoodmusic.github.io/coda-arcade/games/pitch-race/?v=bundled-profile-names-1');
  const url=new URL(host.gameURL('pitch',{hostname:host.CUSTOM_HOST,href:'https://untrusted.example/steal/'}));
  assert.equal(url.origin,host.CUSTOM_ORIGIN);assert.equal(url.pathname,'/games/pitch-race/');
 });

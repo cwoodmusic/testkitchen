@@ -32,6 +32,12 @@
         "tests/pitch_browser_support.py": "36194de0c6bdb6f319fd6188c0331e15f1809a2c7e1aa3ed868f0a327c86a45e",
         "tools/merge-multiplayer-rules.cjs": "3a6f22af2521e82c163c5f9a699e88c150bfb35b6ae342bde05f988fe53fb119",
         "tools/test-multiplayer-rules.cjs": "76699905f86d7077eb8eda60ac031ccf485945e3d56f1efc9a7e1e9183da29dd"
+      },
+      "packageEdits": {
+        "index.html": {
+          "sha256": "2c640de90929db2546a99e258d562fdc28594b6ecc0da9c41eedefef30e1b8ef",
+          "reason": "Skip multiplayer initials entry for active signed-in arcade profiles; preserve the legacy three-letter room schema and cancel requests on profile changes."
+        }
       }
     },
     "triad": {

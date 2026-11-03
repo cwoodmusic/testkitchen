@@ -2,14 +2,21 @@
 const test=require('node:test'),assert=require('node:assert/strict');
 const fs=require('node:fs'),path=require('node:path'),crypto=require('node:crypto');
 const root=path.resolve(__dirname,'..'),manifest=require('../bundled-games.json');
-test('all cabinet runtime files match their pinned, current source revisions',()=>{
+test('cabinet runtime files match their pinned source or documented package edits',()=>{
  assert.equal(manifest.schemaVersion,1);assert.deepEqual(Object.keys(manifest.games),['pitch','triad','rhythm']);
  for(const [id,game]of Object.entries(manifest.games)){
   assert.match(game.sourceRevision,/^[a-f0-9]{40}$/);assert.ok(game.sourceRepository.startsWith('cwoodmusic/'));
   assert.equal(game.directory,{pitch:'games/pitch-race',triad:'games/music-triad',rhythm:'games/rhythm-room'}[id]);
-  for(const [name,expected]of Object.entries(game.sourceFiles)){
-   // Browser fixtures use the new nested URL; shipped game code stays exact.
+  const edits=game.packageEdits||{};
+  for(const [name,edit]of Object.entries(edits)){
+   assert.ok(game.sourceFiles[name],id+': package edit must retain a source baseline');
+   assert.match(edit.sha256,/^[a-f0-9]{64}$/);assert.ok(edit.reason?.trim());
+  }
+  for(const [name,sourceHash]of Object.entries(game.sourceFiles)){
+   // Browser fixtures use the new nested URL. Runtime changes retain their
+   // original hashes alongside an explicit, documented package revision.
    if(name.startsWith('tests/'))continue;
+   const expected=edits[name]?.sha256||sourceHash;
    const actual=crypto.createHash('sha256').update(fs.readFileSync(path.join(root,game.directory,name))).digest('hex');
    assert.equal(actual,expected,id+': '+name);
   }
