@@ -1,7 +1,7 @@
 # Start at the Coda Arcade
 
-`index.html` is the title screen. **Play as guest** opens the connected world;
-**Open my profile** opens the student's picture-card screen, and **For teachers**
+`index.html` is the title screen. **Start playing** opens the connected world
+without a player card; **Use my player card** opens the student's picture-card screen, and **For teachers**
 opens the teacher tools. The classroom buttons never start Google sign-in
 automatically. Student profiles use private cards; Google sign-in is for staff.
 Guest entry also works when another tab or a leftover profile marker owns the
@@ -23,12 +23,12 @@ nickname**. Save a nickname of 1–40 characters. Only the teacher-owned nicknam
 metadata changes; game progress and student picture-card aliases stay intact.
 
 When this tab already has a classroom profile, the title screen offers
-**Continue profile** alongside **Play as guest**. Guest play uses separate
+**Continue playing** alongside **Play without my card**. Guest play uses separate
 tab-local saves without restoring the saved login or resetting its progress.
 Use profile options inside the arcade to save and leave a profile before
 choosing a different card.
 Signing out, saving and leaving a classroom profile, or losing an established
-login returns to the title screen. Choosing **Play as guest** still opens the
+login returns to the title screen. Choosing **Start playing** still opens the
 arcade normally. Developer test mode preserves the real tab's login even when
 the preview is reloaded; it does not copy authentication into the test player
 or require new cookies.
@@ -41,7 +41,7 @@ the game keeps your profile open and offers another try.
 
 The **Motion** setting uses the same saved animation preference as the original
 arcade and respects the device's reduced-motion setting. The title screen loads
-existing arcade artwork without starting gameplay, music, or Firebase SDKs.
+a fresh capture of the current arcade without starting gameplay, music, or Firebase SDKs.
 
 Conversations use larger text and reveal each line letter by letter. Choose
 **Settings → Sound & reading → Text speed** (Slow, Normal, Fast, or Instant); the same preference

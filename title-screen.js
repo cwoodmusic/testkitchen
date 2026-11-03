@@ -2,7 +2,7 @@
 (function(win){
  'use strict';
  const doc=win.document,$=id=>doc.getElementById(id),config=win.ARCADE_ACCOUNTS_CONFIG||{};
- const world=new URL('world-preview.html?v=west-neon-20261101-1',win.location.href),guestWorld=new URL(world);guestWorld.searchParams.set('guest','1');
+ const world=new URL('world-preview.html?v=kids-title-1',win.location.href),guestWorld=new URL(world);guestWorld.searchParams.set('guest','1');
  const incoming=win.CodaClassroom?.consumeFragment(win.location,win.history);
  if(incoming!==null&&incoming!==undefined){world.hash=new URLSearchParams({'classroom-pass':incoming}).toString();win.location.replace(world.href);return;}
  let scope=null,storage=null;
@@ -11,28 +11,28 @@
  let inspection=null,inspecting=false,inspectionGeneration=0,identitySignature='',service=null,stopSession=null,authSignature='';
  function savedSession(){try{return win.CodaClassroom?.readSavedSession?.(win.sessionStorage,scope?.tabId)||{teacher:false,profile:false,kind:null};}catch{return {teacher:false,profile:false,kind:null};}}
  function profileOptions(view){const open=new URL(world);open.searchParams.set('profile',view);return open.href;}
- function setSessionStatus(state,text){if(!sessionStatus)return;sessionStatus.dataset.sessionState=state;sessionStatus.textContent=text;}
+ function setSessionStatus(state,text){if(!sessionStatus)return;sessionStatus.dataset.sessionState=state;sessionStatus.textContent=text;sessionStatus.hidden=state==='guest';}
  function renderIdentity(){
    const state=scope?.getState(),owned=state?.owned===true,blocked=state?.blocked===true,enabled=config.classroom?.enabled===true,saved=savedSession(),remembered=!state?.isolatedGuest&&!blocked&&(owned||saved.teacher);
-   profile.classList.toggle('is-primary',remembered||enabled);guest.classList.toggle('is-primary',!remembered&&!enabled);
+   profile.classList.toggle('is-primary',remembered);guest.classList.toggle('is-primary',!remembered);
    profile.classList.toggle('is-unavailable',!remembered&&!enabled);profile.removeAttribute('aria-disabled');
-   $('titleTeacher').innerHTML='<span aria-hidden="true">♧</span> '+(inspection?.signedIn&&inspection.kind==='teacher'?'Teacher tools':'For teachers')+' <span aria-hidden="true">↗</span>';
-   guest.querySelector('strong').textContent='Play as guest';guest.querySelector('small').textContent='Jump in and explore';guest.href=guestWorld.href;
+   $('titleTeacher').querySelector('span').textContent=inspection?.signedIn&&inspection.kind==='teacher'?'Teacher tools':'For teachers';
+   guest.querySelector('strong').textContent=remembered?'Play without my card':'Start playing';guest.querySelector('small').textContent=remembered?'Your saved player stays saved':'Play without a profile card';guest.href=guestWorld.href;
    if(remembered){
-     $('startTitle').textContent='Welcome back.';$('titleGreeting').textContent='Ready for more music?';
+     $('startTitle').textContent='Welcome back!';$('titleGreeting').textContent='Ready for more music?';
      const alias=inspection?.signedIn&&typeof inspection.alias==='string'?inspection.alias.trim().slice(0,40):'';
-     profile.querySelector('strong').textContent=alias?'Continue as '+alias:owned?'Continue profile':'Continue to arcade';
-     profile.querySelector('small').textContent=inspecting?'Checking your saved sign-in…':inspection?.signedIn?'Pick up your adventure':'Reopen your saved sign-in';profile.href=world.href;
+     profile.querySelector('strong').textContent='Continue playing';
+     profile.querySelector('small').textContent='Use your saved player';profile.href=world.href;
      const view=saved.teacher?'admin':'student';
-     if(inspecting){setSessionStatus('checking','Checking sign-in…');hint.textContent='Your profile will be checked before the game opens.';}
-     else if(inspection?.signedIn){setSessionStatus('signed-in',alias?'Signed in as '+alias:inspection.kind==='teacher'?'Signed in · Teacher account':'Signed in · Student profile');hint.textContent='Your sign-in stays ready when you refresh this tab.';}
-     else if(inspection?.ok===false){setSessionStatus('unavailable','Profile saved · Sign-in check unavailable');hint.textContent='Continue to try again. Your profile will be checked in the arcade.';}
-     else{setSessionStatus('signed-out','Sign-in needed');hint.textContent='Open your profile options to sign in again.';profile.href=profileOptions(view);profile.querySelector('small').textContent='Open your profile to sign in';}
+     if(inspecting){setSessionStatus('checking','Finding your saved player…');hint.textContent='Your profile will be checked before the game opens.';}
+     else if(inspection?.signedIn){setSessionStatus('signed-in',alias?'Ready as '+alias:inspection.kind==='teacher'?'Teacher account ready':'Your saved player is ready');hint.textContent='Your sign-in stays ready when you refresh this tab.';}
+     else if(inspection?.ok===false){setSessionStatus('unavailable','Couldn’t check your player. Continue to try again.');hint.textContent='Continue to try again. Your profile will be checked in the arcade.';}
+     else{setSessionStatus('signed-out','Open your saved player to sign in again.');hint.textContent='Open your profile options to sign in again.';profile.href=profileOptions(view);profile.querySelector('small').textContent='Open your saved sign-in';}
    }else{
-     $('startTitle').textContent='Let’s play.';$('titleGreeting').textContent='Your adventure starts here.';
-     profile.querySelector('strong').textContent='Open my profile';profile.querySelector('small').textContent='Use your picture card';profile.href=profileOptions('student');
-     setSessionStatus(blocked?'blocked':'guest',blocked?'Another arcade tab is open':'Playing as guest');
-     hint.textContent=blocked?'Close your other arcade tab before changing players.':enabled?'No card yet? Your teacher can help.':'Profiles are being set up. Guest play is ready.';
+     $('startTitle').textContent='Ready to play?';$('titleGreeting').textContent='Choose how to start.';
+     profile.querySelector('strong').textContent='Use my player card';profile.querySelector('small').textContent='Open your saved classroom player';profile.href=profileOptions('student');
+     setSessionStatus(blocked?'blocked':'guest',blocked?'Your saved player is open in another tab.':'');
+     hint.textContent=blocked?'Use your other tab for your saved player, or start here without a card.':enabled?'Your teacher can help you find your player card.':'Player cards aren’t ready here yet. You can start without one.';
      if(!enabled){profile.setAttribute('aria-disabled','true');profile.querySelector('small').textContent='Cards coming soon';}
    }
  }
