@@ -5,6 +5,24 @@ const path=require('node:path');
 const {SCHEMA}=require('../classroom-profile-data.js');
 const {arrayIndexRegex,convertSchema,buildClassroomRules,renderClassroomRules,renderHallRules,renderDeveloperRules}=require('../tools/build-classroom-rules.cjs');
 
+test('Classroom import mappings add only an exact-owner private subtree with no student names or tokens',()=>{
+ const current=buildClassroomRules(SCHEMA),imports=current.rules.classroomV1.classroomImports;
+ const baseline=JSON.parse(fs.readFileSync(path.join(__dirname,'../classroom-database.rules.json'),'utf8'));
+ delete current.rules.classroomV1.classroomImports;
+ delete baseline.rules.classroomV1.classroomImports;
+ assert.deepEqual(current,baseline,'All existing classroom, developer, Hall, pass, lease and progress permissions remain exact');
+ assert.equal(imports['.read'],false);assert.equal(imports['.write'],false);
+ const owner=imports.$teacherUid,course=owner.$courseId,row=course.students.$googleStudentId;
+ for(const rule of [owner['.read'],course['.write'],course.updatedAt['.write'],row['.write'],course.profileLinks.$profileId['.write']]){
+  assert.match(rule,/auth\.uid === \$teacherUid/);assert.match(rule,/sign_in_provider === "google\.com"/);assert.match(rule,/classroomV1\/admins/);
+ }
+ assert.equal(owner['.write'],false);assert.match(course['.write'],/!data\.exists\(\)/);
+ assert.deepEqual(course.$other,{'.validate':false});assert.deepEqual(row.$other,{'.validate':false});
+ assert.deepEqual(Object.keys(row).filter(key=>!key.startsWith('.')&&!key.startsWith('$')).sort(),['createdAt','profileId']);
+ assert.doesNotMatch(JSON.stringify(imports),/accessToken|studentName|email|passHash/);
+ assert.match(row['.validate'],/profileLinks/);assert.match(course.profileLinks.$profileId['.validate'],/students/);
+});
+
 test('piano and major/minor lessons expand only their exact teacher/student validation fields',()=>{
  const previous=JSON.parse(JSON.stringify(SCHEMA)),legacyScales='c-major g-major d-major f-major a-minor c-minor d-minor e-minor'.split(' '),completed=previous.properties.piano.properties.completed;
  completed.maxItems=40;completed.items.enum=completed.items.enum.filter(id=>!id.startsWith('piano-scale-memory:')&&(!id.startsWith('piano-scale:')||legacyScales.includes(id.slice(12))));

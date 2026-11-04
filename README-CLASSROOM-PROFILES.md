@@ -35,9 +35,12 @@ students, cards, progress, and Hall records keep their IDs. Class names use
 1–40 letters, numbers, spaces, hyphens, or underscores and start with a letter
 or number. **Cancel** leaves the saved name unchanged.
 
-Direct roster import is a separate planned feature. See
-[Google Classroom roster permissions](docs/google-classroom-roster-setup.md)
-for the Google API, consent, and district-approval setup.
+Use **For teachers → Import from Google Classroom** to preview a class roster,
+link students to existing generated profiles, and create newcomers in one batch.
+Print the new cards together and keep the separate private teacher roster key.
+This needs the two read-only Google permissions and one private import-rules
+addition; see [Google Classroom roster import](docs/google-classroom-roster-setup.md)
+for setup and repeat-import/card-recovery details.
 
 Printing a card uses a suggested PDF filename containing the generated alias
 and full unique profile ID, such as `Coda-Card-Blue-Fox-14-profile_….pdf`.

@@ -1,9 +1,8 @@
-# Google Classroom roster permissions
+# Google Classroom roster import
 
-This describes setup for a future **Connect Google Classroom** / roster import
-feature. The arcade currently uses Google sign-in for teacher authentication;
-that sign-in alone does not grant access to Google Classroom. The Rename class
-feature does not request additional Google permissions.
+The teacher tools can connect to Google Classroom, preview a roster, and create
+or link arcade profiles in one import. Students keep using their private cards.
+Teacher sign-in alone does not grant Classroom access: connect explicitly below.
 
 ## 1. Enable the Classroom API
 
@@ -29,10 +28,10 @@ rosters that Google permits that account to view.
 
 If the OAuth app is already in **Testing**, add the school teacher account under
 **Audience → Test users** for a pilot. Keep an existing production app's audience
-and publishing status intact. Adding sensitive scopes for external production
-use can require Google's OAuth app verification; an eligible school-internal app
-has different requirements. Use the Console's verification status to determine
-what applies to this project.
+and publishing status intact. Follow **Verification Center** for any additional
+Google requirements. If it says verification is not required and both scopes
+appear under Data Access, this part is complete. Branding verification is a
+separate setting.
 
 ## 3. Obtain district approval when required
 
@@ -49,24 +48,88 @@ requested Classroom permissions according to district policy.
 
 ## 4. Request the permissions inside the arcade
 
-After the import feature is implemented, a teacher will explicitly choose
-**Connect Google Classroom**, select their school Google account, and approve
-Google's consent screen. Configuring scopes in the Console does not grant
-access by itself. Students can continue using their picture cards.
+Open **For teachers → Import from Google Classroom → Connect Google Classroom**.
+Use the same school Google account that is signed in to the teacher tools, then
+approve Google's consent screen. Configuring scopes in the Console does not
+grant access by itself. Students do not need a Google sign-in.
 
-The connection should request the two scopes only when the teacher connects
-Classroom, keep the short-lived Google access token in memory, and bind results
-to that teacher's current sign-in. It should preserve the active arcade profile
-and leave ordinary teacher/student sign-in unchanged.
+The connection requests the two scopes only at this click. It preserves the
+active arcade player and Firebase UID, keeps the short-lived access token in
+memory, and clears the connection when the teacher disconnects or loses access.
 
-## 5. Import without replacing existing profiles
+## 5. Install the private import rules once
 
-The planned import needs a teacher-only course/student-to-arcade-profile mapping
-and corresponding Firebase rules. Existing profiles must be linked once so
-later imports can skip them and retain their cards and progress. Keep real
-student names in teacher tools and generated aliases in the game and Hall.
-New cards should be printed or downloaded during import, because the arcade
-does not retain raw card passes after their creation session.
+The new links live under `classroomV1/classroomImports`. Each approved teacher
+can read only their own links. Anonymous students and other teachers cannot read
+them. The stored records contain Google course/student IDs, arcade profile IDs,
+and timestamps. Student names, email addresses, access tokens, and raw card
+passes are not saved there.
+
+The [complete prepared rules file](firebase-google-classroom.rules.json) preserves
+every existing rule from the most recent full rules backup supplied for this
+project and adds only `rules.classroomV1.classroomImports`. It is a whole rules
+document, not a fragment. Keep a backup of the currently published rules first.
+If they have changed since that backup, merge the new node into the newer backup
+instead of replacing newer rules.
+
+In **Firebase Console → pitch-race → Build → Realtime Database → Rules**, replace
+the whole editor with that complete file and choose **Publish**. This changes
+permissions, not database records. No classes or profiles are migrated or reset.
+The import fails before creating any profiles while this setup is missing.
+
+For an updated backup, the offline merge command is:
+
+```sh
+node tools/classroom-rules-merge.cjs --base CURRENT-RULES.json --out UPDATED-RULES.json --add-classroom-imports
+```
+
+## 6. Preview, link, import, and print
+
+1. Choose a Google Classroom course and a new or existing arcade class.
+2. Choose **Preview roster**. Nothing is created at this stage.
+3. For students who already play, choose their existing generated profile. This
+   preserves their cards and progress. The importer never guesses a match from
+   real names or generated aliases.
+4. Choose **Create new profile** for newcomers, or **Skip**. Existing nonempty
+   arcade classes start unlinked rows at Skip so duplicates are not created by
+   default. One profile can be linked to only one student in that course.
+5. Review the totals, then import. New profiles, passes, directory rows, and
+   private links save together. Repeating an import recognizes existing links;
+   removing a child from Google Classroom never deletes their arcade profile.
+6. Print the new cards and the **private teacher key**, which matches student
+   names to generated aliases. The student card sheets use generated aliases
+   and pictures. The private key is separate and contains no sign-in passes.
+
+Up to 200 profiles are supported per arcade class. A linked course keeps its
+chosen arcade class. A deleted linked class is not recreated by a later import.
+Print filenames contain the class label and a unique batch suffix, not names,
+email addresses, or private pass codes. Cancelling or failing to print keeps
+the new receipts available until they are explicitly cleared. Save them before
+closing or reloading the tab.
+
+If an import finishes but its new cards are lost, repeating the import keeps
+the same profiles and does not automatically issue new cards. Open that class
+in **For teachers** and explicitly use **Replace pass** for each card needed.
+Replacing a pass preserves progress but invalidates the old card and its active
+devices.
+
+## Hosting and school filtering
+
+The existing Firebase projects and game hosting stay in place. Roster requests
+go to `https://classroom.googleapis.com` and Google consent uses the existing
+Google sign-in flow. Include that API hostname in any district filtering review.
+The import requests only GET access to courses taught by the connected teacher;
+it does not post assignments, change enrollment, write grades, or request Drive.
+
+## Local verification
+
+`node tests/google-classroom.test.cjs` checks the scoped API client;
+`node tests/classroom-roster-import.test.cjs` checks import decisions and writes.
+`python3 -B tests/classroom-google-import-browser.py` checks preview and printing.
+`node tools/test-classroom-service.cjs --google-classroom` runs the actual service
+and Firebase SDK against disposable local emulators with Google responses mocked.
+`node tools/test-classroom-rules.cjs` checks private access and atomic conflicts.
+No automated check accesses a live school roster or creates live student data.
 
 Google references: [Classroom API authorization](https://developers.google.com/workspace/classroom/guides/auth),
 [course listing](https://developers.google.com/workspace/classroom/reference/rest/v1/courses/list),

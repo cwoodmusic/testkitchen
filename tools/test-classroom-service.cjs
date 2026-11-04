@@ -13,6 +13,7 @@ const quote=value=>"'"+value.replace(/'/g,"'\"'\"'")+"'";
 const noProxy=[process.env.NO_PROXY||process.env.no_proxy||'','127.0.0.1','localhost','::1'].filter(Boolean).join(',');
 const selectors={'--remembered-session':'tests/remembered-session-world-browser.py','--loading-logout':'tests/loading-logout-world-browser.py','--logout':'tests/classroom-logout-browser.py','--profile-open':'tests/profile-open-loop-browser.py','--world':'tests/classroom-world-browser.py','--teacher-player':'tests/teacher-player-browser.py','--test-mode':'tests/developer-test-mode-auth-browser.py'};
 selectors['--class-rename']='tests/classroom-rename-service-browser.py';
+selectors['--google-classroom']='tests/google-classroom-import-service-browser.py';
 const selected=selectors[process.argv[2]],arguments_=process.argv.slice(selected?3:2);
 const command=['python3',quote(path.join(root,selected||'tests/classroom-service-browser.py')),...arguments_.map(quote)].join(' ');
 const result=spawnSync(process.execPath,['--require',path.join(root,'tools/firebase-emulator-loopback.cjs'),cli,'emulators:exec','--only','auth,database','--project','demo-coda-classroom-e2e','--config',config,'--non-interactive',command],{cwd:work,stdio:'inherit',env:{...process.env,NO_PROXY:noProxy,no_proxy:noProxy,CODA_FIREBASE_LOOPBACK_PROXY:'1',CODA_FIREBASE_TEST_TOOLS:tools,FIREBASE_EMULATORS_PATH:path.join(tools,'emulator-cache'),XDG_CONFIG_HOME:path.join(tools,'cli-config'),PYTHONDONTWRITEBYTECODE:'1'}});

@@ -1,0 +1,50 @@
+{
+  "classroomImports": {
+    ".read": false,
+    ".write": false,
+    "$teacherUid": {
+      ".read": "((auth !== null && auth.token.firebase.sign_in_provider === \"google.com\") && (root.child(\"classroomV1/admins\").child(auth.uid).val() === true)) && (auth.uid === $teacherUid)",
+      ".write": false,
+      "$courseId": {
+        ".write": "(((auth !== null && auth.token.firebase.sign_in_provider === \"google.com\") && (root.child(\"classroomV1/admins\").child(auth.uid).val() === true)) && (auth.uid === $teacherUid)) && (!data.exists()) && (newData.exists())",
+        ".validate": "($teacherUid.matches(/^[A-Za-z0-9_-]{1,128}$/)) && ($courseId.matches(/^[A-Za-z0-9_-]{1,128}$/)) && (newData.hasChildren([\"classId\",\"createdAt\",\"updatedAt\"])) && (newData.parent().parent().parent().child(\"classes\").child(newData.child(\"classId\").val()).child(\"meta\").exists()) && (newData.parent().parent().parent().child(\"directory\").child(newData.child(\"classId\").val()).child(\"meta\").exists())",
+        "classId": {
+          ".validate": "((newData.isString()) && (newData.val().length >= 8) && (newData.val().length <= 64) && (newData.val().matches(/^[A-Za-z0-9_-]{8,64}$/))) && (!data.exists() || newData.val() === data.val())"
+        },
+        "createdAt": {
+          ".validate": "((newData.isNumber()) && (newData.val() % 1 === 0) && (newData.val() >= 0) && (newData.val() <= now)) && (!data.exists() || newData.val() === data.val())"
+        },
+        "updatedAt": {
+          ".write": "(((auth !== null && auth.token.firebase.sign_in_provider === \"google.com\") && (root.child(\"classroomV1/admins\").child(auth.uid).val() === true)) && (auth.uid === $teacherUid)) && (data.parent().exists()) && (newData.exists())",
+          ".validate": "((newData.isNumber()) && (newData.val() % 1 === 0) && (newData.val() >= 0) && (newData.val() <= now)) && (!data.exists() || newData.val() >= data.val())"
+        },
+        "students": {
+          ".validate": "newData.hasChildren()",
+          "$googleStudentId": {
+            ".write": "(((auth !== null && auth.token.firebase.sign_in_provider === \"google.com\") && (root.child(\"classroomV1/admins\").child(auth.uid).val() === true)) && (auth.uid === $teacherUid)) && (data.parent().parent().exists()) && (newData.exists()) && ((!data.exists() || !root.child(\"classroomV1/classes\").child(root.child(\"classroomV1/classroomImports\").child($teacherUid).child($courseId).child(\"classId\").val()).child(\"profiles\").child(data.child(\"profileId\").val()).child(\"meta\").exists()))",
+            ".validate": "($googleStudentId.matches(/^[A-Za-z0-9_-]{1,128}$/)) && (newData.hasChildren([\"profileId\",\"createdAt\"])) && (newData.parent().parent().parent().parent().parent().child(\"classes\").child(newData.parent().parent().child(\"classId\").val()).child(\"profiles\").child(newData.child(\"profileId\").val()).child(\"meta\").exists()) && (newData.parent().parent().parent().parent().parent().child(\"classes\").child(newData.parent().parent().child(\"classId\").val()).child(\"profiles\").child(newData.child(\"profileId\").val()).child(\"state\").exists()) && (newData.parent().parent().parent().parent().parent().child(\"directory\").child(newData.parent().parent().child(\"classId\").val()).child(\"profiles\").child(newData.child(\"profileId\").val()).exists()) && (newData.parent().parent().child(\"profileLinks\").child(newData.child(\"profileId\").val()).val() === $googleStudentId)",
+            "profileId": {
+              ".validate": "(newData.isString()) && (newData.val().length >= 8) && (newData.val().length <= 64) && (newData.val().matches(/^[A-Za-z0-9_-]{8,64}$/))"
+            },
+            "createdAt": {
+              ".validate": "((newData.isNumber()) && (newData.val() % 1 === 0) && (newData.val() >= 0) && (newData.val() <= now))"
+            },
+            "$other": {
+              ".validate": false
+            }
+          }
+        },
+        "profileLinks": {
+          ".validate": "newData.hasChildren()",
+          "$profileId": {
+            ".write": "(((auth !== null && auth.token.firebase.sign_in_provider === \"google.com\") && (root.child(\"classroomV1/admins\").child(auth.uid).val() === true)) && (auth.uid === $teacherUid)) && (data.parent().parent().exists()) && (newData.exists()) && ((!data.exists() || newData.parent().parent().child(\"students\").child(data.val()).child(\"profileId\").val() !== $profileId))",
+            ".validate": "($profileId.matches(/^[A-Za-z0-9_-]{8,64}$/)) && ((newData.isString()) && (newData.val().length >= 1) && (newData.val().length <= 128) && (newData.val().matches(/^[A-Za-z0-9_-]{1,128}$/))) && (newData.parent().parent().child(\"students\").child(newData.val()).child(\"profileId\").val() === $profileId)"
+          }
+        },
+        "$other": {
+          ".validate": false
+        }
+      }
+    }
+  }
+}

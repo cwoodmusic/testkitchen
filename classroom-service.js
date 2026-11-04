@@ -68,6 +68,7 @@
    let active=null,leaseOwned=false,loaded=false,baseRevision=0,lastSaved='',pending=false,saving=false;
    let loading=false,locked=false,waitingTakeover=false,code='',status='',destroyed=false,generation=0,inFlightSave=null,transitioning=false,retiredPersonalSave=null,signingOut=false;
    let offset=0,flushTimer=null,leaseTimer=null,queuedPass=null,personalRename=null,classRename=null;
+   let googleClassroom=null,rosterImporter=null,googleRoster=null;
    const pendingJobs=new Set();
    const pendingHallClassCleanup=new Map();
    const state=()=>({configured,configurationReason,enabled,ready:!!sdk,loading,locked,waitingTakeover,pending,
@@ -75,7 +76,11 @@
      admin:{signedIn:!!adminUid,authorized:adminAuthorized,uid:adminUid||null,developer:developerSession()&&developerAuthorized,developerOwner:developerSession()&&developerOwner},
      personal:{available:adminAuthorized&&personalAvailable,active:personalProfile(active)},
      role:adminAuthorized?'admin':active?'student':'guest',readOnly:!!active&&!isWritable(),status,code});
-   function notify(){const value=state();for(const listener of listeners)try{listener(clone(value));}catch{}return value;}
+   function notify(){
+     if(googleClassroom&&!googleTeacherSession().authorized)disconnectGoogleClassroom();
+     else pruneGoogleRoster();
+     const value=state();for(const listener of listeners)try{listener(clone(value));}catch{}return value;
+   }
    function message(value,nextCode=''){status=value;code=nextCode;notify();}
    const path=suffix=>namespace+'/'+suffix;
    const validId=id=>typeof id==='string'&&/^[a-zA-Z0-9_-]{6,80}$/.test(id);
@@ -266,6 +271,95 @@
      if(adminRoleStop){adminRoleStop();adminRoleStop=null;}adminUid=null;adminAuthorized=false;clearDeveloperAccess();personalAvailable=false;try{session.removeItem(ADMIN_KEY);}catch{}notify();if(adminAuth)try{await sdk.signOut(adminAuth);}catch{}finally{if(pausedPersonalDatabase)sdk.goOnline?.(adminDb);}loading=false;signingOut=false;notify();if(closedPersonal||wasSignedIn)identity(closedPersonal?'left':'signed-out',closedPersonal,{exitToTitle:true});return {ok:true};
    }
    async function staff(){const ready=await connect();if(!ready.ok)return ready;if(!enabled)return fail('classroom-not-enabled');return await checkAdmin()?{ok:true}:fail('admin-not-approved');}
+   function googleTeacherSession(){
+     const signedIn=!!adminUid&&adminAuth?.currentUser?.uid===adminUid;
+     return {uid:adminUid,signedIn,authorized:enabled&&signedIn&&adminAuthorized&&!destroyed&&!signingOut,
+       identity:JSON.stringify([adminUid,generation])};
+   }
+   function disconnectGoogleClassroom(){
+     googleClassroom?.disconnect();rosterImporter?.clear();
+     if(googleRoster){for(const row of googleRoster.students||[])row.name='';googleRoster.students=[];}googleRoster=null;
+     return {ok:true};
+   }
+   function pruneGoogleRoster(){
+     if(googleRoster&&(googleRoster.identity!==googleTeacherSession().identity||!googleClassroom?.getState().connected)){
+       for(const row of googleRoster.students||[])row.name='';googleRoster.students=[];googleRoster=null;rosterImporter?.clear();
+     }
+   }
+   function googleClient(){
+     if(googleClassroom)return googleClassroom;
+     const api=options.googleClassroomApi||win?.CodaGoogleClassroom;
+     if(!api?.create)return null;
+     googleClassroom=api.create({getSession:googleTeacherSession,fetch:options.fetch||win?.fetch?.bind(win),clock:now,
+       connectGoogle:async({scopes})=>{
+         const before=googleTeacherSession(),user=adminAuth?.currentUser;
+         if(!before.authorized||!user||!sdk?.reauthenticateWithPopup)throw Object.assign(Error('admin-required'),{code:'admin-required'});
+         const provider=new sdk.GoogleAuthProvider();for(const scope of scopes)provider.addScope(scope);
+         provider.setCustomParameters({include_granted_scopes:'true',login_hint:user.email||''});
+         // Reauthentication keeps the existing arcade player and Firebase UID.
+         // The ordinary sign-in method can close a personal player, so it is
+         // deliberately not used to request Classroom permissions.
+         const result=await sdk.reauthenticateWithPopup(user,provider),after=googleTeacherSession();
+         if(!after.authorized||before.identity!==after.identity||adminAuth.currentUser!==user||result.user?.uid!==before.uid)
+           throw Object.assign(Error('session-changed'),{code:'session-changed'});
+         const credential=sdk.GoogleAuthProvider.credentialFromResult(result);
+         if(!credential?.accessToken)throw Object.assign(Error('oauth-denied'),{code:'oauth-denied'});
+         return {uid:before.uid,accessToken:credential.accessToken};
+       }});
+     return googleClassroom;
+   }
+   function connectGoogleClassroom(){
+     if(!googleTeacherSession().authorized)return Promise.resolve(fail('admin-required'));
+     // Keep the popup in the explicit button's user-activation call stack.
+     return googleClient()?.connect()||Promise.resolve(fail('classroom-import-unavailable'));
+   }
+   async function listGoogleClassroomCourses(){
+     if(!googleTeacherSession().authorized)return Promise.resolve(fail('admin-required'));
+     const result=await (googleClient()?.listCourses()||Promise.resolve(fail('classroom-import-unavailable')));pruneGoogleRoster();return result;
+   }
+   async function loadGoogleClassroomRoster(courseId){
+     if(!googleTeacherSession().authorized)return fail('admin-required');
+     pruneGoogleRoster();
+     const client=googleClient();if(!client)return fail('classroom-import-unavailable');
+     const before=googleTeacherSession().identity,result=await client.loadRoster(courseId);
+     if(!googleTeacherSession().authorized||before!==googleTeacherSession().identity)return fail('session-changed');
+     if(result.ok){googleRoster={identity:before,courseId:result.courseId,students:result.students.map(row=>({...row}))};}
+     else googleRoster=null;
+     return result;
+   }
+   function rosterOnline(){
+     return new Promise(resolve=>{
+       let stop=null,finished=false;
+       const finish=value=>{if(finished)return;finished=true;stop?.();pendingJobs.delete(cancel);resolve(value);};
+       const cancel=()=>finish(false);pendingJobs.add(cancel);
+       try{stop=sdk.onValue(sdk.ref(adminDb,'.info/connected'),snap=>finish(snap.val()===true),()=>finish(false));if(finished)stop?.();}
+       catch{finish(false);}
+     });
+   }
+   function rosterClient(){
+     if(rosterImporter)return rosterImporter;
+     const api=options.rosterImportApi||win?.CodaClassroomRosterImport;if(!api?.create)return null;
+     rosterImporter=api.create({getContext:googleTeacherSession,
+       read:async relative=>(await sdk.get(sdk.ref(adminDb,path(relative)))).val(),
+       update:changes=>sdk.update(sdk.ref(adminDb,namespace),changes),online:rosterOnline,
+       random,crypto,hashPass:raw=>hashPass(raw,crypto),blank:()=>dataApi.blank(),
+       receipt,serverTimestamp:()=>sdk.serverTimestamp()});
+     return rosterImporter;
+   }
+   async function rosterRequest(method,request){
+     pruneGoogleRoster();
+     const before=googleTeacherSession();if(!before.authorized)return fail('admin-required');
+     const allowed=await staff();if(!allowed.ok)return allowed;
+     if(!googleTeacherSession().authorized||before.identity!==googleTeacherSession().identity)return fail('session-changed');
+     if(!googleClassroom?.getState().connected||!googleRoster||googleRoster.identity!==before.identity||googleRoster.courseId!==request?.courseId)
+       return fail('roster-required');
+     const importer=rosterClient();if(!importer)return fail('classroom-import-unavailable');
+     // Use the roster actually fetched for this teacher, never names or IDs
+     // supplied by a stale form or a different connected account.
+     return importer[method]({...request,students:googleRoster.students.map(row=>({...row}))});
+   }
+   const previewRosterImport=request=>rosterRequest('previewRosterImport',request);
+   const importRoster=request=>rosterRequest('importRoster',request);
    async function withWorkspace(fn){return storageScope?.withLock?storageScope.withLock(fn):fn();}
    const tabId=storageScope?.tabId||'single-window';
    function readBound(key){try{const value=JSON.parse(session.getItem(key)||'null');return value?.version===1&&value.tabId===tabId?value:null;}catch{return null;}}
@@ -790,8 +884,8 @@
    leaseTimer=win?.setInterval?.(async()=>{if(!isWritable())return;try{if(!await lease(false,true))lock('device-changed');}catch{message('Connection paused. Keep this tab open.','connection-unavailable');}},20000);
    // Sessions stay open through inactivity. Explicit logout, revocation, and
    // another device taking the profile still end access through the guards above.
-   function destroy(){keepPending();destroyed=true;generation++;classRename?.cancel?.();clearDeveloperAccess();stopSubscriptions();for(const stop of authSubscriptions.splice(0))try{stop();}catch{}if(adminRoleStop){adminRoleStop();adminRoleStop=null;}for(const stop of pendingJobs)try{stop();}catch{}for(const timer of [flushTimer,leaseTimer])if(timer!==null)win?.clearInterval?.(timer);win?.removeEventListener?.('pagehide',keepPending);win?.document?.removeEventListener?.('visibilitychange',pageHidden);listeners.clear();pendingHallClassCleanup.clear();}
-   return {getState:state,listDeveloperAccess,grantDeveloperAccess,revokeDeveloperAccess,getHallContext,loadHallBoard,publishHallRecord,subscribe(listener){listeners.add(listener);return()=>listeners.delete(listener);},connect,resume,inspectSession,join,leave,logOut,takeOver,useSavedProgress,adminSignIn,adminSignOut,savePersonalPlayer,renamePersonalPlayer,openPersonalPlayer,listClasses,createClass,renameClass,listProfiles,createProfile,reissuePass,deleteProfile,deleteClass,flush,isWritable,destroy};
+   function destroy(){keepPending();destroyed=true;generation++;disconnectGoogleClassroom();googleClassroom?.destroy();rosterImporter?.destroy();classRename?.cancel?.();clearDeveloperAccess();stopSubscriptions();for(const stop of authSubscriptions.splice(0))try{stop();}catch{}if(adminRoleStop){adminRoleStop();adminRoleStop=null;}for(const stop of pendingJobs)try{stop();}catch{}for(const timer of [flushTimer,leaseTimer])if(timer!==null)win?.clearInterval?.(timer);win?.removeEventListener?.('pagehide',keepPending);win?.document?.removeEventListener?.('visibilitychange',pageHidden);listeners.clear();pendingHallClassCleanup.clear();}
+   return {getState:state,listDeveloperAccess,grantDeveloperAccess,revokeDeveloperAccess,getHallContext,loadHallBoard,publishHallRecord,subscribe(listener){listeners.add(listener);return()=>listeners.delete(listener);},connect,resume,inspectSession,join,leave,logOut,takeOver,useSavedProgress,adminSignIn,adminSignOut,savePersonalPlayer,renamePersonalPlayer,openPersonalPlayer,connectGoogleClassroom,listGoogleClassroomCourses,loadGoogleClassroomRoster,disconnectGoogleClassroom,previewRosterImport,importRoster,listClasses,createClass,renameClass,listProfiles,createProfile,reissuePass,deleteProfile,deleteClass,flush,isWritable,destroy};
  }
  return Object.freeze({create,consumeFragment,readSavedSession,parsePass:passCode,formatPass,hashPass});
 });

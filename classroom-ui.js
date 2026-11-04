@@ -72,6 +72,7 @@
   let classes=[],profiles=[],selectedClass='',classDraft='',joinDraft='',profileSearch='',profilePage=0,generation=0,lastAuthorized=false;
   let nicknameEditing=false,nicknameDraft='',nicknameOwner='',printTitle=null;
   let classRename=null;
+  let googleImport=null;
   let developerRows=[],developerListState='idle',developerDraft='',developerListGeneration=0,lastDeveloperOwner='';
   const snapshot=()=>{try{return service.getState?.()||{};}catch{return {};}};
   const authorized=()=>snapshot().admin?.authorized===true;
@@ -94,7 +95,8 @@
   function current(token){return opened&&!disposed&&token===generation;}
   function cleanupPrint(){if(printTimer)win.clearTimeout(printTimer);printTimer=null;printSheet?.remove();printSheet=null;if(printTitle!==null){doc.title=printTitle;printTitle=null;}doc.documentElement.classList.remove('coda-classroom-printing');win.removeEventListener('afterprint',cleanupPrint);}
   function clearCard(){if(card){card.pass='';card.link='';}card=null;section?.querySelectorAll('.classpass-card').forEach(node=>node.remove());cleanupPrint();}
-  function close(){opened=false;generation++;developerListGeneration++;developerRows=[];developerListState='idle';developerDraft='';busy='';confirmation=null;joinDraft='';classDraft='';clearNickname();clearClassRename();resetBrowser();clearCard();section?.remove();section=null;api.closePanel?.();}
+  function requestClose(){return !googleImport?.getState().open||googleImport.close()!==false;}
+  function close(){if(!requestClose())return false;opened=false;generation++;developerListGeneration++;developerRows=[];developerListState='idle';developerDraft='';busy='';confirmation=null;joinDraft='';classDraft='';clearNickname();clearClassRename();resetBrowser();clearCard();section?.remove();section=null;api.closePanel?.();return true;}
   function receipt(result){
    if(!canManage()||!result||typeof result.pass!=='string'||typeof result.link!=='string'||!result.pass.length||result.pass.length>512)return false;
    let parsed;try{parsed=new URL(result.link,win.location.href);}catch{return false;}
@@ -196,7 +198,7 @@
   }
   function leave(discard=false){const teacher=snapshot().profile?.kind==='teacher';return act('Leaving',()=>service.leave(discard?{discard:true}:undefined),()=>{confirmation=null;joinDraft='';setMessage(teacher?'Your player is closed on this device. It stays saved with your Google account.':'You have left this device. Use your card to return.');api.onProfile?.(null);});}
   function logOut(){
-   if(disposed||busy)return;
+   if(disposed||busy||!requestClose())return;
    if(!opened)open('student');
    confirmation=null;clearCard();logoutRetry=true;
    return act('Logging out',async()=>{const result=await service.logOut();logoutRetry=result?.ok===false;return result;},()=>{classes=[];profiles=[];joinDraft='';setMessage('You are logged out.');api.onProfile?.(null);});
@@ -356,9 +358,22 @@
    }
    section.append(box);
   }
+  function googleImportIdentity(){
+   const state=snapshot();return JSON.stringify([state.admin?.uid,state.profile?.classId,state.profile?.profileId]);
+  }
+  function renderGoogleImport(){
+   const module=win.CodaClassroomGoogleImport;
+   if(!module?.create||typeof service.connectGoogleClassroom!=='function')return;
+   const host=element('div','classpass-google-import-host');section.append(host);
+   if(!googleImport){googleImport=module.create({host,service,
+    canUse:()=>opened&&view==='admin'&&canManage()&&snapshot().admin?.signedIn===true,
+    getIdentity:googleImportIdentity,pictureNode,qr:api.qr||win.CodaClassroomPassQR,
+    onChanged:result=>refreshClasses(result.classId),onOpen:render,onClose:render});}
+   else googleImport.mount(host);
+  }
   function renderAdmin(state){
    section.append(element('h2','','Teacher class passes'));
-   renderDeveloperAccess(state);
+   if(!googleImport?.getState().open)renderDeveloperAccess(state);
    const uid=text(state.admin?.uid),showSetup=()=>{
     section.append(element('p','classpass-notice',state.admin?.authorized?'Your account is approved. Classroom access is still being finished.':'Ask your school administrator to approve this setup ID.'));
     if(/^[A-Za-z0-9_-]{1,128}$/.test(uid)){const value=element('code','classpass-setup-id',uid);value.setAttribute('aria-label','Administrator setup ID');section.append(value,button('Copy setup ID',()=>copySetupID(uid),'classpassCopySetup'));}
@@ -371,8 +386,10 @@
     return;
    }
    if(state.enabled===false){showSetup();section.append(button('Sign out of Google',()=>act('Signing out',()=>service.adminSignOut()),'classpassAdminSignOut'));return;}
+   if(googleImport?.getState().open){renderGoogleImport();return;}
    renderPersonalPlayer(state);
    const actions=element('div','classpass-actions classpass-admin-tools');actions.append(button('Refresh lists',()=>refreshClasses(),'classpassRefresh'),button('Sign out of Google',()=>{clearCard();classes=[];profiles=[];act('Signing out',()=>service.adminSignOut());},'classpassAdminSignOut'));section.append(actions);
+   renderGoogleImport();
    const createForm=element('form','classpass-create-class'),label=element('label','','Class label');label.htmlFor='classpassClassLabel';const input=element('input');input.type='text';input.id='classpassClassLabel';input.maxLength=40;input.value=classDraft;input.placeholder='Blue class';input.disabled=!!busy;input.oninput=()=>{classDraft=input.value;};
    const add=button('Create class',()=>{},'classpassCreateClass');add.type='submit';createForm.append(label,input,add,element('p','classpass-help','Use a group label. Do not enter children’s names.'));
    createForm.onsubmit=event=>{event.preventDefault();const value=classDraft.trim();if(!value){setMessage('Add a short class label, such as Blue class.','error');render();return;}act('Creating class',()=>service.createClass(value),async(result,token)=>{classDraft='';await readClasses(token,result.classId);setMessage('Class created.');});};section.append(createForm);
@@ -424,7 +441,7 @@
    if(!opened||disposed||!section?.isConnected)return;
    const focus=section.contains(doc.activeElement)?doc.activeElement:null,focusId=focus?.id,selection=focus&&typeof focus.selectionStart==='number'?{start:focus.selectionStart,end:focus.selectionEnd}:null;
    section.replaceChildren();const state=snapshot();
-   const tabs=element('nav','classpass-tabs');tabs.setAttribute('aria-label',state.profile?.kind==='teacher'?'Player and teacher pages':'Profile Pass pages');for(const [id,label]of [['student',state.profile?.kind==='teacher'?'My player':'My pass'],['admin','For teachers']]){const tab=button(label,()=>{if(busy)return;clearCard();clearClassRename();confirmation=null;view=id;setMessage('');render();if(id==='admin'&&developerOwner())void refreshDeveloperAccess();if(id==='admin'&&authorized())refreshClasses();},'classpassTab-'+id);tab.setAttribute('aria-pressed',String(view===id));tab.disabled=tab.disabled||!!confirmation||!!card;tabs.append(tab);}section.append(tabs);
+   const tabs=element('nav','classpass-tabs');tabs.setAttribute('aria-label',state.profile?.kind==='teacher'?'Player and teacher pages':'Profile Pass pages');for(const [id,label]of [['student',state.profile?.kind==='teacher'?'My player':'My pass'],['admin','For teachers']]){const tab=button(label,()=>{if(busy||!requestClose())return;clearCard();clearClassRename();confirmation=null;view=id;setMessage('');render();if(id==='admin'&&developerOwner())void refreshDeveloperAccess();if(id==='admin'&&authorized())refreshClasses();},'classpassTab-'+id);tab.setAttribute('aria-pressed',String(view===id));tab.disabled=tab.disabled||!!confirmation||!!card;tabs.append(tab);}section.append(tabs);
    if(state.configured===false)section.append(configurationNotice(state));
    if(confirmation)renderConfirmation();else if(card&&canManage())renderCard();else if(view==='admin')renderAdmin(state);else renderStudent(state);
    if(typeof service.logOut==='function'&&(state.profile||state.admin?.signedIn||logoutRetry)){
@@ -435,7 +452,7 @@
    if(focusId){const restored=doc.getElementById(focusId);if(restored&&section.contains(restored)&&!restored.disabled){restored.focus({preventScroll:true});if(selection&&restored.setSelectionRange)try{restored.setSelectionRange(selection.start,selection.end);}catch{}}}
   }
   function open(next='student'){
-   if(disposed)return;generation++;busy='';clearCard();clearNickname();clearClassRename();confirmation=null;message='';joinDraft='';classDraft='';view=next==='admin'?'admin':'student';opened=true;
+   if(disposed||opened&&!requestClose())return;generation++;busy='';clearCard();clearNickname();clearClassRename();confirmation=null;message='';joinDraft='';classDraft='';view=next==='admin'?'admin':'student';opened=true;
    api.openPanel?.(view==='admin'?'Teacher class passes':snapshot().profile?.kind==='teacher'?'Your player':'Your Profile Pass');section=element('section','classroom-profile-ui');section.setAttribute('aria-label','Private classroom profiles');body.append(section);render();
    if(view==='admin'&&developerOwner())void refreshDeveloperAccess();
    if(view==='admin'&&canManage())refreshClasses();else section.querySelector('#classpassJoinInput')?.focus({preventScroll:true});
@@ -453,10 +470,10 @@
   });
   const observer=typeof win.MutationObserver==='function'?new win.MutationObserver(()=>{
    const wrapper=body.parentElement,hidden=wrapper&&(wrapper.hidden||win.getComputedStyle(wrapper).display==='none');
-   if(opened&&(!section?.isConnected||hidden)){opened=false;generation++;busy='';joinDraft='';confirmation=null;clearNickname();clearClassRename();resetBrowser();clearCard();}
+   if(opened&&(!section?.isConnected||hidden)){googleImport?.close({force:true});opened=false;generation++;busy='';joinDraft='';confirmation=null;clearNickname();clearClassRename();resetBrowser();clearCard();}
   }):null;
   observer?.observe(body.parentElement||body,{subtree:true,childList:true,attributes:true,attributeFilter:['hidden','style','class']});
-  return {open,close,logOut,handleEscape(){if(!opened)return false;if(confirmation){confirmation=null;render();}else close();return true;},getState:()=>({open:opened,view,busy:!!busy,cardVisible:!!card,classId:selectedClass,confirmation:confirmation?.kind||null}),destroy(){disposed=true;opened=false;generation++;clearCard();clearNickname();clearClassRename();joinDraft='';confirmation=null;section?.remove();observer?.disconnect();if(typeof unsubscribe==='function')unsubscribe();}};
+  return {open,close,requestClose,logOut,handleEscape(){if(!opened)return false;if(googleImport?.getState().open){googleImport.close();return true;}if(confirmation){confirmation=null;render();}else close();return true;},getState:()=>({open:opened,view,busy:!!busy,cardVisible:!!card,classId:selectedClass,confirmation:confirmation?.kind||null}),destroy(){googleImport?.destroy();googleImport=null;disposed=true;opened=false;generation++;clearCard();clearNickname();clearClassRename();joinDraft='';confirmation=null;section?.remove();observer?.disconnect();if(typeof unsubscribe==='function')unsubscribe();}};
  }
  return Object.freeze({create,friendlyError,pictureNode});
 });

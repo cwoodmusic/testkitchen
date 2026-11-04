@@ -32,6 +32,12 @@ const write=(database,location,value)=>ref(database,location).set(value);
 const remove=(database,location)=>ref(database,location).remove();
 const developerGoogle=(uid,email,verified=true,provider='google.com')=>env.authenticatedContext(uid,{email,email_verified:verified,firebase:{sign_in_provider:provider}}).database();
 const DEVELOPER_ACCESS=`${ROOT}/developerAccess`,developerKey=email=>email.toLowerCase().replaceAll('.',',');
+const IMPORTS=`${ROOT}/classroomImports`,IMPORT_COURSE=`${IMPORTS}/school_admin/course_1001`;
+function importCourse(students={student_1001:PROFILE},classId=CLASS){
+ const now=stamp(),rows={},links={};
+ for(const [studentId,profileId]of Object.entries(students)){rows[studentId]={profileId,createdAt:now};links[profileId]=studentId;}
+ return {classId,createdAt:now,updatedAt:now,students:rows,profileLinks:links};
+}
 
 before(async()=>{
  const fragment=JSON.parse(fs.readFileSync(path.join(__dirname,'../classroom-database.rules.json'),'utf8'));
@@ -55,6 +61,106 @@ beforeEach(async()=>{
  await env.clearDatabase();await env.withSecurityRulesDisabled(context=>write(context.database(),'/',seed));
 });
 after(async()=>{if(env)await env.cleanup();});
+
+test('Classroom import mappings are visible only to their exact approved Google owner',async()=>{
+ const owner=staff(),location=IMPORT_COURSE;
+ await assertSucceeds(write(owner,location,importCourse()));
+ assert.equal((await assertSucceeds(read(owner,location))).val().students.student_1001.profileId,PROFILE);
+ await assertSucceeds(read(owner,`${IMPORTS}/school_admin`));
+ await assertFails(read(owner,IMPORTS));await assertFails(read(owner,ROOT));
+ for(const database of [env.unauthenticatedContext().database(),anonymous('student_one'),google('other_admin'),google('unapproved_teacher'),
+  env.authenticatedContext('school_admin',{firebase:{sign_in_provider:'password'}}).database()]){
+  await assertFails(read(database,location));await assertFails(read(database,`${IMPORTS}/school_admin`));
+  await assertFails(write(database,location+'/updatedAt',stamp()));
+ }
+ await assertSucceeds(write(google('other_admin'),`${IMPORTS}/other_admin/course_1001`,importCourse()));
+ await assertFails(write(owner,`${IMPORTS}/other_admin/course_2002`,importCourse()));
+ await env.withSecurityRulesDisabled(context=>remove(context.database(),`${ROOT}/admins/school_admin`));
+ await assertFails(read(owner,location));await assertFails(write(owner,location+'/updatedAt',stamp()));
+});
+
+test('Classroom mapping validation rejects private payloads, incomplete targets, and unknown fields',async()=>{
+ const owner=staff();
+ for(const [key,value]of [['studentName','A real name'],['email','private@example.invalid'],['accessToken','private-token'],['rawPass','private-card']]){
+  const record=importCourse();record[key]=value;await assertFails(write(owner,IMPORT_COURSE,record));
+  const row=importCourse();row.students.student_1001[key]=value;await assertFails(write(owner,IMPORT_COURSE,row));
+ }
+ for(const mutate of [record=>{record.classId='missing_class_1234';},record=>{record.students.student_1001.profileId='missing_profile_1234';record.profileLinks={missing_profile_1234:'student_1001'};},
+  record=>{record.profileLinks[PROFILE]='wrong_student';},record=>{delete record.profileLinks;},record=>{delete record.createdAt;},record=>{record.createdAt=Date.now()+60000;},
+  record=>{record.students['invalid key']=record.students.student_1001;},record=>{record.profileLinks[PROFILE]={name:'No free text'};}]){
+  const record=importCourse();mutate(record);await assertFails(write(owner,IMPORT_COURSE,record));
+ }
+ await assertFails(write(owner,`${IMPORTS}/school_admin/${'c'.repeat(129)}`,importCourse()));
+ await env.withSecurityRulesDisabled(context=>remove(context.database(),`${PROFILE_PATH}/state`));
+ await assertFails(write(owner,IMPORT_COURSE,importCourse()));
+});
+
+test('Classroom mapping additions preserve live bindings and prevent concurrent students claiming the same profile',async()=>{
+ const owner=staff();await assertSucceeds(write(owner,IMPORT_COURSE,importCourse()));
+ const before=(await assertSucceeds(read(owner,IMPORT_COURSE))).val();
+ await assertFails(write(owner,IMPORT_COURSE+'/classId',OTHER_CLASS));
+ await assertFails(remove(owner,IMPORT_COURSE));await assertFails(remove(owner,IMPORT_COURSE+'/students/student_1001'));
+ await assertFails(remove(owner,IMPORT_COURSE+'/profileLinks/'+PROFILE));
+ await assertFails(write(owner,IMPORT_COURSE+'/students/student_1001',{profileId:OTHER_PROFILE,createdAt:stamp()}));
+ await assertFails(ref(owner,IMPORT_COURSE).update({
+  'students/student_1002':{profileId:PROFILE,createdAt:stamp()},['profileLinks/'+PROFILE]:'student_1002',updatedAt:stamp()
+ }));
+ assert.deepEqual((await assertSucceeds(read(owner,IMPORT_COURSE))).val(),before);
+ // A second profile is added by ordinary staff tools before linking it.
+ const second='profile_1002',meta={alias:'Amber Fox 14',picture:'fox',createdAt:stamp(),passHash:NEW_HASH};
+ await assertSucceeds(ref(owner,ROOT).update({
+  [`classes/${CLASS}/profiles/${second}`]:{meta,state:state(1)},
+  [`directory/${CLASS}/profiles/${second}`]:{alias:meta.alias,picture:meta.picture},
+  [`passes/${NEW_HASH}`]:{classId:CLASS,profileId:second,createdAt:stamp()}
+ }));
+ const claim=studentId=>ref(owner,IMPORT_COURSE).update({
+  ['students/'+studentId]:{profileId:second,createdAt:stamp()},['profileLinks/'+second]:studentId,updatedAt:stamp()
+ });
+ const results=await Promise.allSettled([claim('student_1002'),claim('student_1003')]);
+ assert.equal(results.filter(result=>result.status==='fulfilled').length,1,'Exactly one atomic reverse claim can win');
+ const stored=(await assertSucceeds(read(owner,IMPORT_COURSE))).val(),winner=stored.profileLinks[second];
+ assert.equal(stored.students[winner].profileId,second);assert.equal(Object.keys(stored.students).length,2);
+});
+
+test('explicit Classroom repair requires a deleted profile and validates both directions atomically',async()=>{
+ const owner=staff(),newProfile='profile_repair_0001',meta={alias:'Amber Fox 14',picture:'fox',createdAt:stamp(),passHash:NEW_HASH};
+ await assertSucceeds(write(owner,IMPORT_COURSE,importCourse()));
+ const repair={
+  [`classes/${CLASS}/profiles/${newProfile}`]:{meta,state:state(1)},
+  [`directory/${CLASS}/profiles/${newProfile}`]:{alias:meta.alias,picture:meta.picture},
+  [`passes/${NEW_HASH}`]:{classId:CLASS,profileId:newProfile,createdAt:stamp()},
+  [`classroomImports/school_admin/course_1001/students/student_1001`]:{profileId:newProfile,createdAt:stamp()},
+  [`classroomImports/school_admin/course_1001/profileLinks/${newProfile}`]:'student_1001',
+  'classroomImports/school_admin/course_1001/updatedAt':stamp()
+ };
+ await assertFails(ref(owner,ROOT).update(repair),'A live profile cannot be replaced by import');
+ await assertSucceeds(remove(owner,PROFILE_PATH));
+ await assertSucceeds(remove(owner,`${ROOT}/directory/${CLASS}/profiles/${PROFILE}`));
+ await assertSucceeds(ref(owner,ROOT).update(repair));
+ const stored=(await assertSucceeds(read(owner,IMPORT_COURSE))).val();
+ assert.equal(stored.students.student_1001.profileId,newProfile);assert.equal(stored.profileLinks[newProfile],'student_1001');
+ assert.equal(stored.profileLinks[PROFILE],'student_1001','An old reverse entry may remain stale without claiming a live profile');
+});
+
+test('atomic Classroom profile creation is idempotent and cannot overwrite saved progress or orphan passes',async()=>{
+ const owner=staff(),profileId='gprofile_deterministic_0001',studentId='student_2001',now=stamp();
+ const meta={alias:'Amber Fox 14',picture:'fox',createdAt:now,passHash:NEW_HASH};
+ const course=importCourse({[studentId]:profileId});
+ const changes={
+  [`classes/${CLASS}/profiles/${profileId}`]:{meta,state:state(1)},
+  [`directory/${CLASS}/profiles/${profileId}`]:{alias:meta.alias,picture:meta.picture},
+  [`passes/${NEW_HASH}`]:{classId:CLASS,profileId,createdAt:now},
+  'classroomImports/school_admin/course_1001':course
+ };
+ await assertSucceeds(ref(owner,ROOT).update(changes));
+ const current=(await assertSucceeds(read(owner,`${ROOT}/classes/${CLASS}/profiles/${profileId}`))).val();
+ const duplicate=clone(changes),otherHash='e'.repeat(64);
+ duplicate[`classes/${CLASS}/profiles/${profileId}`].meta.passHash=otherHash;
+ duplicate[`passes/${otherHash}`]={classId:CLASS,profileId,createdAt:stamp()};delete duplicate[`passes/${NEW_HASH}`];
+ await assertFails(ref(owner,ROOT).update(duplicate));
+ assert.deepEqual((await assertSucceeds(read(owner,`${ROOT}/classes/${CLASS}/profiles/${profileId}`))).val(),current);
+ assert.equal((await assertSucceeds(read(owner,`${ROOT}/passes/${otherHash}`))).val(),null,'Rejected duplicate leaves no pass mapping');
+});
 
 test('both verified developer owners can list, grant and revoke without school-admin enrollment',async()=>{
  const school=developerGoogle('owner-school','cwood@sanjacinto.k12.ca.us'),gmail=developerGoogle('owner-gmail','cwood.musiced@gmail.com');
