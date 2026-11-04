@@ -368,6 +368,30 @@ test('bounded numeric array keys prevent oversized collections and arbitrary tex
  const malicious=state();malicious.data.wallet.rewards={studentEmail:'child@example.invalid'};await assertFails(write(student,`${PROFILE_PATH}/state`,malicious));
 });
 
+test('class renames atomically update both labels while preserving cards, sessions, progress and Hall rows',async()=>{
+ const changes={};changes[`classes/${CLASS}/meta/label`]='Grade 3 Music';changes[`directory/${CLASS}/meta/label`]='Grade 3 Music';
+ await env.withSecurityRulesDisabled(context=>write(context.database(),`${ROOT}/hallOfFame/classes/${CLASS}/pitch-classic/${PROFILE}`,hallRow()));
+ let before,after;await env.withSecurityRulesDisabled(async context=>{before=(await read(context.database(),ROOT)).val();});
+ await assertSucceeds(ref(staff(),ROOT).update(changes));
+ await env.withSecurityRulesDisabled(async context=>{after=(await read(context.database(),ROOT)).val();});
+ before.classes[CLASS].meta.label='Grade 3 Music';before.directory[CLASS].meta.label='Grade 3 Music';assert.deepEqual(after,before);
+ const password=env.authenticatedContext('password_admin',{firebase:{sign_in_provider:'password'}}).database();
+ for(const database of [env.unauthenticatedContext().database(),anonymous('student_one'),google('ordinary_google'),password])
+  await assertFails(ref(database,ROOT).update(changes));
+});
+
+test('renaming a class deleted after its metadata was read cannot recreate it or change its directory',async()=>{
+ const admin=staff(),changes={};changes[`classes/${CLASS}/meta/label`]='Stale rename';changes[`directory/${CLASS}/meta/label`]='Stale rename';
+ assert.ok((await read(admin,`${ROOT}/classes/${CLASS}/meta`)).val());
+ await assertSucceeds(remove(admin,`${ROOT}/classes/${CLASS}`));
+ await assertFails(ref(admin,ROOT).update(changes));
+ assert.equal((await read(admin,`${ROOT}/classes/${CLASS}`)).val(),null);
+ assert.equal((await read(admin,`${ROOT}/directory/${CLASS}/meta/label`)).val(),'Blue group');
+ await assertSucceeds(remove(admin,`${ROOT}/directory/${CLASS}`));
+ await assertFails(ref(admin,ROOT).update(changes));
+ assert.equal((await read(admin,`${ROOT}/directory/${CLASS}`)).val(),null);
+});
+
 test('school admins can atomically create/reissue/delete valid profiles but metadata remains closed',async()=>{
  const admin=staff(),newClass='classroom_0003',newProfile='profile_0003',now=stamp(),newHash='d'.repeat(64);
  await assertSucceeds(ref(admin,ROOT).update({

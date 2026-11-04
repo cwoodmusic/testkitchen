@@ -67,7 +67,7 @@
    let sdk,db,auth,adminDb,adminAuth,connecting,studentUid=null,adminUid=null,adminAuthorized=false,developerAuthorized=false,developerOwner=false,developerEmail=null,developerRoleStop=null,developerVersion=0,developerCheckVersion=0,adminRoleStop=null,personalAvailable=false;
    let active=null,leaseOwned=false,loaded=false,baseRevision=0,lastSaved='',pending=false,saving=false;
    let loading=false,locked=false,waitingTakeover=false,code='',status='',destroyed=false,generation=0,inFlightSave=null,transitioning=false,retiredPersonalSave=null,signingOut=false;
-   let offset=0,flushTimer=null,leaseTimer=null,queuedPass=null,personalRename=null;
+   let offset=0,flushTimer=null,leaseTimer=null,queuedPass=null,personalRename=null,classRename=null;
    const pendingJobs=new Set();
    const pendingHallClassCleanup=new Map();
    const state=()=>({configured,configurationReason,enabled,ready:!!sdk,loading,locked,waitingTakeover,pending,
@@ -701,6 +701,35 @@
    async function createClass(label='Class 1'){const allowed=await staff();if(!allowed.ok)return allowed;
      if(typeof label!=='string'||!/^[A-Za-z0-9][A-Za-z0-9 _-]{0,39}$/.test(label))return fail('invalid-class-label');
      const classId=id('class');try{const meta={ownerUid:adminUid,label,createdAt:sdk.serverTimestamp()},changes={};changes['classes/'+classId+'/meta']=meta;changes['directory/'+classId+'/meta']=meta;await sdk.update(sdk.ref(adminDb,namespace),changes);return {ok:true,classId,label};}catch{return fail('class-create-failed');}}
+   async function renameClass(classId,value){
+     if(destroyed||signingOut)return fail('closed');
+     if(loading||transitioning||classRename)return fail('busy');
+     if(!validId(classId))return fail('invalid-class');
+     const label=typeof value==='string'?value.trim():'';
+     if(!/^[A-Za-z0-9][A-Za-z0-9 _-]{0,39}$/.test(label))return fail('invalid-class-label');
+     const operation={owner:generation,user:adminAuth?.currentUser||null,uid:adminUid};classRename=operation;
+     let uid=null,user=null,stopConnection=null,rejectConnection=null;
+     operation.cancel=()=>{stopConnection?.();stopConnection=null;rejectConnection?.(Error('closed'));rejectConnection=null;};
+     const current=()=>classRename===operation&&operation.owner===generation&&!destroyed&&!signingOut&&!loading&&!transitioning&&adminAuthorized&&adminUid===uid&&adminAuth?.currentUser===user;
+     try{
+       const allowed=await staff();if(!allowed.ok)return allowed;
+       uid=adminUid;user=adminAuth?.currentUser;
+       if(operation.user&&operation.user!==user||operation.uid&&operation.uid!==uid||!current())return fail('closed');
+       const connected=await new Promise((resolve,reject)=>{rejectConnection=reject;stopConnection=sdk.onValue(sdk.ref(adminDb,'.info/connected'),snap=>resolve(snap.val()===true),reject);});rejectConnection=null;
+       stopConnection?.();stopConnection=null;
+       if(!current())return fail('closed');if(!connected)throw Error('offline');
+       const [classMeta,directoryMeta]=await Promise.all(['classes/','directory/'].map(prefix=>sdk.get(sdk.ref(adminDb,path(prefix+classId+'/meta')))));
+       if(!current())return fail('closed');
+       const complete=meta=>meta&&typeof meta.ownerUid==='string'&&typeof meta.label==='string'&&Number.isFinite(meta.createdAt);
+       if(!complete(classMeta.val())||!complete(directoryMeta.val()))return fail('class-not-found');
+       // Only label leaves change. Existing metadata validation also rejects a
+       // rename if the class was deleted while these reads were in flight.
+       const changes={};changes['classes/'+classId+'/meta/label']=label;changes['directory/'+classId+'/meta/label']=label;
+       await sdk.update(sdk.ref(adminDb,namespace),changes);
+       return current()?{ok:true,classId,label}:fail('closed');
+     }catch{return current()?fail('class-rename-failed'):fail('closed');}
+     finally{stopConnection?.();rejectConnection=null;if(classRename===operation)classRename=null;}
+   }
    async function listProfiles(classId){const allowed=await staff();if(!allowed.ok)return allowed;if(!validId(classId))return fail('invalid-class');try{
      const snap=await sdk.get(sdk.ref(adminDb,path('directory/'+classId+'/profiles')));const profiles=[];
      snap.forEach(child=>{const meta=child.val();if(meta)profiles.push({profileId:child.key,alias:meta.alias,picture:meta.picture||'owl'});});return {ok:true,profiles};
@@ -761,8 +790,8 @@
    leaseTimer=win?.setInterval?.(async()=>{if(!isWritable())return;try{if(!await lease(false,true))lock('device-changed');}catch{message('Connection paused. Keep this tab open.','connection-unavailable');}},20000);
    // Sessions stay open through inactivity. Explicit logout, revocation, and
    // another device taking the profile still end access through the guards above.
-   function destroy(){keepPending();destroyed=true;generation++;clearDeveloperAccess();stopSubscriptions();for(const stop of authSubscriptions.splice(0))try{stop();}catch{}if(adminRoleStop){adminRoleStop();adminRoleStop=null;}for(const stop of pendingJobs)try{stop();}catch{}for(const timer of [flushTimer,leaseTimer])if(timer!==null)win?.clearInterval?.(timer);win?.removeEventListener?.('pagehide',keepPending);win?.document?.removeEventListener?.('visibilitychange',pageHidden);listeners.clear();pendingHallClassCleanup.clear();}
-   return {getState:state,listDeveloperAccess,grantDeveloperAccess,revokeDeveloperAccess,getHallContext,loadHallBoard,publishHallRecord,subscribe(listener){listeners.add(listener);return()=>listeners.delete(listener);},connect,resume,inspectSession,join,leave,logOut,takeOver,useSavedProgress,adminSignIn,adminSignOut,savePersonalPlayer,renamePersonalPlayer,openPersonalPlayer,listClasses,createClass,listProfiles,createProfile,reissuePass,deleteProfile,deleteClass,flush,isWritable,destroy};
+   function destroy(){keepPending();destroyed=true;generation++;classRename?.cancel?.();clearDeveloperAccess();stopSubscriptions();for(const stop of authSubscriptions.splice(0))try{stop();}catch{}if(adminRoleStop){adminRoleStop();adminRoleStop=null;}for(const stop of pendingJobs)try{stop();}catch{}for(const timer of [flushTimer,leaseTimer])if(timer!==null)win?.clearInterval?.(timer);win?.removeEventListener?.('pagehide',keepPending);win?.document?.removeEventListener?.('visibilitychange',pageHidden);listeners.clear();pendingHallClassCleanup.clear();}
+   return {getState:state,listDeveloperAccess,grantDeveloperAccess,revokeDeveloperAccess,getHallContext,loadHallBoard,publishHallRecord,subscribe(listener){listeners.add(listener);return()=>listeners.delete(listener);},connect,resume,inspectSession,join,leave,logOut,takeOver,useSavedProgress,adminSignIn,adminSignOut,savePersonalPlayer,renamePersonalPlayer,openPersonalPlayer,listClasses,createClass,renameClass,listProfiles,createProfile,reissuePass,deleteProfile,deleteClass,flush,isWritable,destroy};
  }
  return Object.freeze({create,consumeFragment,readSavedSession,parsePass:passCode,formatPass,hashPass});
 });

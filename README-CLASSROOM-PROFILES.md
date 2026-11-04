@@ -29,6 +29,16 @@ profile whose link was not saved, use **Replace pass**; progress stays with the
 same profile, while its old link and signed-in devices are revoked. Printed QR
 cards remain available as an alternative.
 
+To edit a class's display name, open **For teachers**, choose the class, then
+select **Rename class → Save name**. This updates the existing class; its
+students, cards, progress, and Hall records keep their IDs. Class names use
+1–40 letters, numbers, spaces, hyphens, or underscores and start with a letter
+or number. **Cancel** leaves the saved name unchanged.
+
+Direct roster import is a separate planned feature. See
+[Google Classroom roster permissions](docs/google-classroom-roster-setup.md)
+for the Google API, consent, and district-approval setup.
+
 Printing a card uses a suggested PDF filename containing the generated alias
 and full unique profile ID, such as `Coda-Card-Blue-Fox-14-profile_….pdf`.
 The private pass and sign-in link stay out of the filename. Closing or cancelling

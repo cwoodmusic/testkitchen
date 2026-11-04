@@ -27,6 +27,9 @@
   'session-revoked':'This card has been replaced. Ask your teacher for the new card.',
   'qr-unavailable':'The card picture could not load. You can still copy the pass link.',
   'class-full':'This class has 200 profiles. Create another class to add more.',
+  'invalid-class-label':'Use 1–40 letters, numbers, spaces, hyphens, or underscores. Start the class name with a letter or number.',
+  'class-not-found':'This class is no longer available. Refresh the class list and try again.',
+  'class-rename-failed':'The class name could not save. Your students and their progress are unchanged. Check your connection and try again.',
   'personal-player-unavailable':'This Google account has no saved player yet. Save your player from the device with your latest progress first.',
   'personal-player-exists':'This Google account already has a saved player. Choose Open my player to continue.',
   'personal-player-student-active':'Leave the student profile before saving your own player.',
@@ -68,6 +71,7 @@
   let opened=false,disposed=false,view='student',section=null,busy='',message='',messageKind='status',confirmation=null,card=null,printSheet=null,printTimer=null,logoutRetry=false;
   let classes=[],profiles=[],selectedClass='',classDraft='',joinDraft='',profileSearch='',profilePage=0,generation=0,lastAuthorized=false;
   let nicknameEditing=false,nicknameDraft='',nicknameOwner='',printTitle=null;
+  let classRename=null;
   let developerRows=[],developerListState='idle',developerDraft='',developerListGeneration=0,lastDeveloperOwner='';
   const snapshot=()=>{try{return service.getState?.()||{};}catch{return {};}};
   const authorized=()=>snapshot().admin?.authorized===true;
@@ -85,12 +89,12 @@
   }
   function setMessage(value,kind='status'){message=value;messageKind=kind;}
   function resetBrowser(){profileSearch='';profilePage=0;}
-  function selectClass(value){if(selectedClass!==value){resetBrowser();profiles=[];}selectedClass=value;}
+  function selectClass(value){if(selectedClass!==value){clearClassRename();resetBrowser();profiles=[];if(busy==='Saving class name'){generation++;busy='';}}selectedClass=value;}
   function showError(result){const code=errorCode(result);setMessage(view==='student'&&['permission-denied','unauthenticated','admin-required'].includes(code)?ERRORS['invalid-pass']:friendlyError(result),'error');}
   function current(token){return opened&&!disposed&&token===generation;}
   function cleanupPrint(){if(printTimer)win.clearTimeout(printTimer);printTimer=null;printSheet?.remove();printSheet=null;if(printTitle!==null){doc.title=printTitle;printTitle=null;}doc.documentElement.classList.remove('coda-classroom-printing');win.removeEventListener('afterprint',cleanupPrint);}
   function clearCard(){if(card){card.pass='';card.link='';}card=null;section?.querySelectorAll('.classpass-card').forEach(node=>node.remove());cleanupPrint();}
-  function close(){opened=false;generation++;developerListGeneration++;developerRows=[];developerListState='idle';developerDraft='';busy='';confirmation=null;joinDraft='';classDraft='';clearNickname();resetBrowser();clearCard();section?.remove();section=null;api.closePanel?.();}
+  function close(){opened=false;generation++;developerListGeneration++;developerRows=[];developerListState='idle';developerDraft='';busy='';confirmation=null;joinDraft='';classDraft='';clearNickname();clearClassRename();resetBrowser();clearCard();section?.remove();section=null;api.closePanel?.();}
   function receipt(result){
    if(!canManage()||!result||typeof result.pass!=='string'||typeof result.link!=='string'||!result.pass.length||result.pass.length>512)return false;
    let parsed;try{parsed=new URL(result.link,win.location.href);}catch{return false;}
@@ -123,6 +127,35 @@
    await readProfiles(token);
   }
   function refreshClasses(select=''){if(!canManage())return;return act('Loading classes',async()=>({ok:true}),(_,token)=>readClasses(token,select));}
+  function classRenameOwner(){const state=snapshot();return canManage()&&state.admin?.signedIn===true?text(state.admin.uid):'';}
+  function canRenameClass(){return !!classRenameOwner()&&typeof service.renameClass==='function'&&classes.some(item=>item.classId===selectedClass);}
+  function clearClassRename(){classRename=null;}
+  function beginClassRename(){
+   if(busy||snapshot().loading||!canRenameClass())return;
+   const selected=classes.find(item=>item.classId===selectedClass);
+   classRename={classId:selectedClass,owner:classRenameOwner(),draft:selected.label};setMessage('');render();section?.querySelector('#classpassClassNameInput')?.focus({preventScroll:true});
+  }
+  function saveClassRename(event){
+   event.preventDefault();const edit=classRename;
+   if(busy||!edit||!canRenameClass()||edit.owner!==classRenameOwner()||edit.classId!==selectedClass)return;
+   const label=edit.draft.trim();
+   if(!/^[A-Za-z0-9][A-Za-z0-9 _-]{0,39}$/.test(label)){showError({code:'invalid-class-label'});render();return;}
+   return act('Saving class name',()=>service.renameClass(edit.classId,label),result=>{
+    if(classRename!==edit||!canRenameClass()||edit.owner!==classRenameOwner()||selectedClass!==edit.classId)return;
+    classes=classes.map(item=>item.classId===edit.classId?{...item,label:text(result?.label,label)}:item).sort((a,b)=>aliasOrder.compare(a.label,b.label)||aliasOrder.compare(a.classId,b.classId));
+    clearClassRename();setMessage('Class name saved.');
+   });
+  }
+  function renderClassRename(){
+   if(!classRename||!canRenameClass()||classRename.classId!==selectedClass||classRename.owner!==classRenameOwner())return;
+   const edit=classRename,form=element('form','classpass-rename-class');form.id='classpassClassNameForm';form.noValidate=true;
+   const label=element('label','','Class name');label.htmlFor='classpassClassNameInput';
+   const input=element('input');input.id='classpassClassNameInput';input.type='text';input.maxLength=40;input.required=true;input.autocomplete='off';input.value=edit.draft;input.disabled=!!busy||snapshot().loading===true;input.oninput=()=>{if(classRename===edit)edit.draft=input.value;};input.setAttribute('aria-describedby','classpassClassNameHelp');
+   const save=button('Save name',()=>{},'classpassClassNameSave','is-primary');save.type='submit';
+   const cancel=button('Cancel',()=>{if(busy)return;clearClassRename();setMessage('');render();section?.querySelector('#classpassRenameClass')?.focus({preventScroll:true});},'classpassClassNameCancel');
+   const help=element('p','classpass-help','Only the class name changes. Student profiles, cards, and progress stay the same.');help.id='classpassClassNameHelp';
+   const actions=element('div','classpass-actions');actions.append(save,cancel);form.append(label,input,help,actions);form.onsubmit=saveClassRename;section.append(form);
+  }
   function requestConfirmation(value){confirmation=value;setMessage('');render();section?.querySelector('#classpassCancel')?.focus({preventScroll:true});}
   const studentSelected=state=>!!state.profile&&state.profile.kind!=='teacher';
   function localPlayerName(){try{const profile=JSON.parse(win.localStorage.getItem('musicArcadeV1')||'null');return text(profile?.name).trim().slice(0,40);}catch{return '';}}
@@ -346,7 +379,9 @@
    if(!classes.length){section.append(element('p','classpass-empty','Create a class to make your first picture card.'));return;}
    const classLabel=element('label','classpass-select-label','Choose a class');classLabel.htmlFor='classpassClass';const choose=element('select');choose.id='classpassClass';choose.disabled=!!busy;
    for(const item of classes){const option=element('option','',item.label);option.value=item.classId;choose.append(option);}choose.value=selectedClass;choose.onchange=()=>{selectClass(choose.value);act('Loading profiles',async()=>({ok:true}),(_,token)=>readProfiles(token));};section.append(classLabel,choose);
+   renderClassRename();
    const tools=element('div','classpass-actions');tools.append(button('Create student profile',()=>act('Making a profile',()=>service.createProfile(selectedClass),async(result,token)=>{if(!receipt(result))showError({code:'qr-unavailable'});await readProfiles(token);}), 'classpassCreateProfile','is-primary'));
+   if(canRenameClass()&&!classRename)tools.append(button('Rename class',beginClassRename,'classpassRenameClass'));
    tools.append(button('Delete class',()=>requestConfirmation({kind:'delete-class',classId:selectedClass}),'classpassDeleteClass','is-danger'));section.append(tools,element('p','classpass-help','Every profile gets a generated alias and picture. Replacing a lost card keeps its progress.'));
    renderProfileBrowser(state);
   }
@@ -389,7 +424,7 @@
    if(!opened||disposed||!section?.isConnected)return;
    const focus=section.contains(doc.activeElement)?doc.activeElement:null,focusId=focus?.id,selection=focus&&typeof focus.selectionStart==='number'?{start:focus.selectionStart,end:focus.selectionEnd}:null;
    section.replaceChildren();const state=snapshot();
-   const tabs=element('nav','classpass-tabs');tabs.setAttribute('aria-label',state.profile?.kind==='teacher'?'Player and teacher pages':'Profile Pass pages');for(const [id,label]of [['student',state.profile?.kind==='teacher'?'My player':'My pass'],['admin','For teachers']]){const tab=button(label,()=>{if(busy)return;clearCard();confirmation=null;view=id;setMessage('');render();if(id==='admin'&&developerOwner())void refreshDeveloperAccess();if(id==='admin'&&authorized())refreshClasses();},'classpassTab-'+id);tab.setAttribute('aria-pressed',String(view===id));tab.disabled=tab.disabled||!!confirmation||!!card;tabs.append(tab);}section.append(tabs);
+   const tabs=element('nav','classpass-tabs');tabs.setAttribute('aria-label',state.profile?.kind==='teacher'?'Player and teacher pages':'Profile Pass pages');for(const [id,label]of [['student',state.profile?.kind==='teacher'?'My player':'My pass'],['admin','For teachers']]){const tab=button(label,()=>{if(busy)return;clearCard();clearClassRename();confirmation=null;view=id;setMessage('');render();if(id==='admin'&&developerOwner())void refreshDeveloperAccess();if(id==='admin'&&authorized())refreshClasses();},'classpassTab-'+id);tab.setAttribute('aria-pressed',String(view===id));tab.disabled=tab.disabled||!!confirmation||!!card;tabs.append(tab);}section.append(tabs);
    if(state.configured===false)section.append(configurationNotice(state));
    if(confirmation)renderConfirmation();else if(card&&canManage())renderCard();else if(view==='admin')renderAdmin(state);else renderStudent(state);
    if(typeof service.logOut==='function'&&(state.profile||state.admin?.signedIn||logoutRetry)){
@@ -400,13 +435,14 @@
    if(focusId){const restored=doc.getElementById(focusId);if(restored&&section.contains(restored)&&!restored.disabled){restored.focus({preventScroll:true});if(selection&&restored.setSelectionRange)try{restored.setSelectionRange(selection.start,selection.end);}catch{}}}
   }
   function open(next='student'){
-   if(disposed)return;generation++;busy='';clearCard();clearNickname();confirmation=null;message='';joinDraft='';classDraft='';view=next==='admin'?'admin':'student';opened=true;
+   if(disposed)return;generation++;busy='';clearCard();clearNickname();clearClassRename();confirmation=null;message='';joinDraft='';classDraft='';view=next==='admin'?'admin':'student';opened=true;
    api.openPanel?.(view==='admin'?'Teacher class passes':snapshot().profile?.kind==='teacher'?'Your player':'Your Profile Pass');section=element('section','classroom-profile-ui');section.setAttribute('aria-label','Private classroom profiles');body.append(section);render();
    if(view==='admin'&&developerOwner())void refreshDeveloperAccess();
    if(view==='admin'&&canManage())refreshClasses();else section.querySelector('#classpassJoinInput')?.focus({preventScroll:true});
   }
   const unsubscribe=service.subscribe?.(()=>{
    const state=snapshot();if(nicknameEditing&&(nicknameOwner!==teacherNicknameOwner(state)||(state.readOnly&&!state.loading))){clearNickname();if(busy==='Saving nickname'){generation++;busy='';}}
+   if(classRename&&(classRename.owner!==classRenameOwner()||classRename.classId!==selectedClass)){clearClassRename();if(busy==='Saving class name'){generation++;busy='';message='';}}
    const owner=developerOwner()?text(state.admin.uid):'',ownerChanged=owner!==lastDeveloperOwner;
    if(!owner||ownerChanged){developerListGeneration++;developerRows=[];developerListState='idle';developerDraft='';if(ownerChanged&&lastDeveloperOwner){generation++;busy='';message='';}}
    const allowed=canManage();if(!allowed){clearCard();classes=[];profiles=[];selectClass('');resetBrowser();classDraft='';if(confirmation&&['reissue','delete-profile','delete-class'].includes(confirmation.kind))confirmation=null;if(lastAuthorized){generation++;busy='';}}
@@ -417,10 +453,10 @@
   });
   const observer=typeof win.MutationObserver==='function'?new win.MutationObserver(()=>{
    const wrapper=body.parentElement,hidden=wrapper&&(wrapper.hidden||win.getComputedStyle(wrapper).display==='none');
-   if(opened&&(!section?.isConnected||hidden)){opened=false;generation++;busy='';joinDraft='';confirmation=null;clearNickname();resetBrowser();clearCard();}
+   if(opened&&(!section?.isConnected||hidden)){opened=false;generation++;busy='';joinDraft='';confirmation=null;clearNickname();clearClassRename();resetBrowser();clearCard();}
   }):null;
   observer?.observe(body.parentElement||body,{subtree:true,childList:true,attributes:true,attributeFilter:['hidden','style','class']});
-  return {open,close,logOut,handleEscape(){if(!opened)return false;if(confirmation){confirmation=null;render();}else close();return true;},getState:()=>({open:opened,view,busy:!!busy,cardVisible:!!card,classId:selectedClass,confirmation:confirmation?.kind||null}),destroy(){disposed=true;opened=false;generation++;clearCard();clearNickname();joinDraft='';confirmation=null;section?.remove();observer?.disconnect();if(typeof unsubscribe==='function')unsubscribe();}};
+  return {open,close,logOut,handleEscape(){if(!opened)return false;if(confirmation){confirmation=null;render();}else close();return true;},getState:()=>({open:opened,view,busy:!!busy,cardVisible:!!card,classId:selectedClass,confirmation:confirmation?.kind||null}),destroy(){disposed=true;opened=false;generation++;clearCard();clearNickname();clearClassRename();joinDraft='';confirmation=null;section?.remove();observer?.disconnect();if(typeof unsubscribe==='function')unsubscribe();}};
  }
  return Object.freeze({create,friendlyError,pictureNode});
 });
