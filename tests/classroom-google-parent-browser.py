@@ -14,6 +14,10 @@ spec = importlib.util.spec_from_file_location('google_parent_profile_fixture',
 fixture = importlib.util.module_from_spec(spec)
 spec.loader.exec_module(fixture)
 base = fixture.ClassroomProfileUITests
+component_spec = importlib.util.spec_from_file_location('google_parent_component_fixture',
+    Path(__file__).with_name('classroom-google-import-browser.py'))
+component_fixture = importlib.util.module_from_spec(component_spec)
+component_spec.loader.exec_module(component_fixture)
 
 
 class GoogleClassroomParentUITests(unittest.TestCase):
@@ -33,14 +37,14 @@ class GoogleClassroomParentUITests(unittest.TestCase):
             window.__import=module.create(options);return window.__import;
           }};
           window.__googleStudents=[{userId:'student-1',name:'Alice Example'},{userId:'student-2',name:'Ben Example'}];
-          window.__holdImport=false;
+          window.__holdImport=false;window.__googleLinks={};
           Object.assign(__service,{
             async connectGoogleClassroom(){__record('connectGoogleClassroom');return {ok:true};},
             async listGoogleClassroomCourses(){__record('listGoogleClassroomCourses');return {ok:true,courses:[{id:'course-1',name:'Music 3',section:'Room 14'}]};},
             async loadGoogleClassroomRoster(courseId){__record('loadGoogleClassroomRoster',courseId);return {ok:true,courseId,students:__googleStudents};},
             async previewRosterImport(value){
-              __record('previewRosterImport',value);return {ok:true,courseId:value.courseId,classId:value.classId||'class-imported',label:value.classId?'Blue class':'',newClass:!value.classId,
-                profiles:__profiles[value.classId]||[],students:__googleStudents.map(student=>({userId:student.userId,status:'unlinked'}))};
+              __record('previewRosterImport',value);return {ok:true,courseId:value.courseId,classId:value.classId||'class-imported',label:__classes.find(item=>item.classId===value.classId)?.label||'',newClass:!value.classId,
+                profiles:__profiles[value.classId]||[],students:__googleStudents.map(student=>({userId:student.userId,status:__googleLinks[student.userId]?'existing':'unlinked',...(__googleLinks[student.userId]||{})}))};
             },
             async importRoster(value){
               __record('importRoster',value);
@@ -50,9 +54,10 @@ class GoogleClassroomParentUITests(unittest.TestCase):
               const cards=value.choices.filter(choice=>choice.action==='create').map(choice=>{
                 const receipt=__receipt('profile-imported-'+choice.userId);
                 __profiles[classId].push({profileId:receipt.profileId,alias:receipt.alias,picture:receipt.picture});
+                __googleLinks[choice.userId]={profileId:receipt.profileId,alias:receipt.alias,picture:receipt.picture};
                 return {...receipt,userId:choice.userId,name:__googleStudents.find(student=>student.userId===choice.userId).name};
               });
-              return {ok:true,classId,label,cards,created:cards.length,linked:0,existing:0,skipped:value.choices.filter(choice=>choice.action==='skip').length};
+              return {ok:true,classId,label,cards,created:cards.length,linked:0,existing:__googleStudents.filter(student=>__googleLinks[student.userId]&&!cards.some(card=>card.userId===student.userId)).length,skipped:value.choices.filter(choice=>choice.action==='skip').length};
             },
             async logOut(){__record('logOut');__emit({profile:null,admin:{signedIn:false,authorized:false,uid:null}});return {ok:true};},
             disconnectGoogleClassroom(){__record('disconnectGoogleClassroom');}
@@ -147,6 +152,45 @@ class GoogleClassroomParentUITests(unittest.TestCase):
         self.assertNotIn('PRIVATE-PASS', self.page.locator('body').inner_text())
         self.assertNotIn('Alice Example', self.page.locator('body').inner_text())
         self.assertEqual(self.page.locator('#googleRosterOpen,#googleRosterConnect').count(), 0)
+
+    def test_private_posts_and_append_keep_parent_cards_and_current_class(self):
+        self.page.evaluate(component_fixture.PUBLISHING_FIXTURE)
+        self.import_cards()
+        self.assertEqual(self.page.evaluate('__publishCalls.length'), 0, 'Importing profiles must not request posting permission')
+        self.page.locator('#googleRosterPreparePosts').click(); self.idle()
+        self.assertEqual(self.page.evaluate('__posts.length'), 0, 'Preparing a delivery plan must not publish')
+        self.page.locator('#googleRosterPublishPosts').click(); self.idle()
+        self.assertEqual(self.page.evaluate('__posts.length'), 2)
+        self.assertTrue(self.page.locator('#googleRosterCardsSaved').is_checked())
+        self.page.evaluate("__googleStudents.push({userId:'student-3',name:'Claire Example'})")
+        self.page.locator('#googleRosterRefresh').click(); self.idle()
+        self.assertEqual(self.page.locator('#googleRosterTarget').input_value(), 'class-imported')
+        self.assertEqual(self.page.locator('#googleRosterChoice-0,#googleRosterChoice-1').count(), 0)
+        self.assertEqual(self.page.locator('#googleRosterChoice-2').input_value(), 'create')
+        self.page.locator('#googleRosterImport').click(); self.idle()
+        self.assertEqual(self.page.evaluate('__ui.getState().classId'), 'class-imported')
+        self.assertEqual(self.page.evaluate('__import.getState().cardCount'), 1)
+        self.page.locator('#googleRosterPreparePosts').click(); self.idle()
+        self.assertEqual(self.page.evaluate("__publishCalls.filter(item=>item.method==='preview').at(-1).value.cards.map(card=>card.userId)"), ['student-3'])
+        self.page.locator('#googleRosterPublishPosts').click(); self.idle()
+        self.assertEqual(self.page.evaluate('__posts.map(post=>post.userId)'), ['student-1','student-2','student-3'])
+        self.assertEqual(self.page.evaluate("__profiles['class-imported'].length"), 3)
+
+    def test_parent_close_and_logout_are_blocked_during_pending_publish(self):
+        self.page.evaluate(component_fixture.PUBLISHING_FIXTURE)
+        self.import_cards(); self.page.locator('#googleRosterCardsSaved').check()
+        self.page.locator('#googleRosterPreparePosts').click(); self.idle()
+        self.page.evaluate("__publishHold='publish'")
+        self.page.locator('#googleRosterPublishPosts').click()
+        self.page.wait_for_function('typeof __releasePublishing==="function"')
+        self.assertFalse(self.page.evaluate('__ui.requestClose()'))
+        self.assertFalse(self.page.evaluate('__ui.close()'))
+        self.page.locator('#classpassLogOut').click()
+        self.assertEqual(self.calls('logOut'), [])
+        self.assertTrue(self.page.evaluate('__ui.handleEscape()'))
+        self.assertTrue(self.page.evaluate('__ui.getState().open&&__import.getState().open'))
+        self.page.evaluate('__releasePublishing()'); self.idle()
+        self.assertTrue(self.page.evaluate('__ui.requestClose()'))
 
 
 del base

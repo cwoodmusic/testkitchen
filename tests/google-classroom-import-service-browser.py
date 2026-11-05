@@ -10,6 +10,7 @@ import json
 from pathlib import Path
 import sys
 import unittest
+import urllib.parse
 
 sys.dont_write_bytecode = True
 spec = importlib.util.spec_from_file_location('google_import_service_fixture',
@@ -21,6 +22,7 @@ SCOPES = [
     'https://www.googleapis.com/auth/classroom.courses.readonly',
     'https://www.googleapis.com/auth/classroom.rosters.readonly',
 ]
+PUBLISH_SCOPE = 'https://www.googleapis.com/auth/classroom.courseworkmaterials'
 COURSE = 'course_101'
 STUDENTS = [
     {'userId': 'student_101', 'name': 'Avery Private Student'},
@@ -36,7 +38,11 @@ GOOGLE_FIXTURE = r'''()=>{
   {userId:'student_103',name:'Morgan Private Student'}
  ];
  window.googleHoldRoster=false;
+ window.googleHoldMaterialBeforeSend=false;window.googleHoldMaterialResponse=false;
  window.googleImportErrors=[];
+ const classroom=CodaClassroom;
+ window.CodaClassroom={...classroom,create:options=>classroom.create({...options,
+  location:new URL('https://www.coda-arcade.com/world-preview.html')})};
  const importer=CodaClassroomRosterImport;
  window.CodaClassroomRosterImport={create:options=>{
   const wrapped={...options};
@@ -48,13 +54,14 @@ GOOGLE_FIXTURE = r'''()=>{
   }
   return importer.create(wrapped);
  }};
- const token='test-only-classroom-access-token';
  const originalCredential=fixtureSDK.GoogleAuthProvider.credentialFromResult;
  fixtureSDK.GoogleAuthProvider.credentialFromResult=result=>result?.googleTestCredential||originalCredential(result);
  fixtureSDK.reauthenticateWithPopup=async(user,provider)=>{
   const scopes=provider.scopes||provider._scopes||provider.getScopes?.()||[];
   googlePopupCalls.push({uid:user.uid,scopes:[...scopes]});
   if(window.googlePopupError)throw {code:window.googlePopupError};
+  const token=scopes.includes('https://www.googleapis.com/auth/classroom.courseworkmaterials')
+   ?'test-only-classroom-publishing-token':'test-only-classroom-access-token';
   return {user,googleTestCredential:{accessToken:token},_tokenResponse:{oauthAccessToken:token,expiresIn:'3600'}};
  };
  const nativeFetch=window.fetch.bind(window);
@@ -63,6 +70,19 @@ GOOGLE_FIXTURE = r'''()=>{
   if(url.hostname!=='classroom.googleapis.com')return nativeFetch(value,options);
   const headers=new Headers(options.headers||{});
   googleRequests.push({url:url.href,method:options.method||'GET',authorization:headers.get('Authorization'),credentials:options.credentials});
+  if(url.pathname.includes('/courseWorkMaterials')){
+   const hold=key=>new Promise((resolve,reject)=>{
+    window[key]=resolve;
+    if(options.signal?.aborted)return reject(new DOMException('Aborted','AbortError'));
+    options.signal?.addEventListener('abort',()=>reject(new DOMException('Aborted','AbortError')),{once:true});
+   });
+   const posting=(options.method||'GET')==='POST';
+   if(posting&&googleHoldMaterialBeforeSend)await hold('googleReleaseMaterialSend');
+   const result=await googleMaterialServer({url:url.href,method:options.method||'GET',body:options.body?JSON.parse(options.body):null});
+   if(posting&&googleHoldMaterialResponse)await hold('googleReleaseMaterialResponse');
+   if(result.loseResponse)throw new TypeError('Simulated response loss after successful Google create');
+   return new Response(JSON.stringify(result.body),{status:result.status,headers:{'Content-Type':'application/json'}});
+  }
   const students=url.pathname.endsWith('/students');
   if(students&&googleHoldRoster){
    await new Promise((resolve,reject)=>{
@@ -91,16 +111,55 @@ GOOGLE_FIXTURE = r'''()=>{
 class GoogleClassroomImportServiceTests(unittest.TestCase):
     setUpClass = classmethod(fixture.ClassroomServiceBrowserTests.setUpClass.__func__)
     tearDownClass = classmethod(fixture.ClassroomServiceBrowserTests.tearDownClass.__func__)
-    setUp = fixture.ClassroomServiceBrowserTests.setUp
     tearDown = fixture.ClassroomServiceBrowserTests.tearDown
-    device = fixture.ClassroomServiceBrowserTests.device
     call = fixture.ClassroomServiceBrowserTests.call
     assert_ok = fixture.ClassroomServiceBrowserTests.assert_ok
     join = fixture.ClassroomServiceBrowserTests.join
     cloud = fixture.ClassroomServiceBrowserTests.cloud
 
+    def setUp(self):
+        self.google_materials = []
+        self.google_posts = []
+        self.google_material_contexts = set()
+        self.google_lose_post_responses = 0
+        fixture.ClassroomServiceBrowserTests.setUp(self)
+
+    def device(self, context=None):
+        page = fixture.ClassroomServiceBrowserTests.device(self, context)
+        key = id(page.context)
+        if key not in self.google_material_contexts:
+            page.context.expose_binding('googleMaterialServer', lambda _source, request: self.material_request(request))
+            self.google_material_contexts.add(key)
+        return page
+
+    def material_request(self, request):
+        """A shared fake Google server, including across real browser contexts."""
+        parsed = urllib.parse.urlsplit(request['url'])
+        self.assertEqual(parsed.hostname, 'classroom.googleapis.com')
+        self.assertNotIn('access_token', parsed.query)
+        query = urllib.parse.parse_qs(parsed.query)
+        if request['method'] == 'POST':
+            body = copy.deepcopy(request['body'])
+            self.google_posts.append(body)
+            item = {**body, 'id': 'material_'+str(len(self.google_materials)+1), 'courseId': COURSE}
+            self.google_materials.append(item)
+            lost = self.google_lose_post_responses > 0
+            if lost:
+                self.google_lose_post_responses -= 1
+            return {'status': 200, 'body': item, 'loseResponse': lost}
+        self.assertEqual(request['method'], 'GET')
+        if '/courseWorkMaterials/' in parsed.path:
+            material_id = parsed.path.rsplit('/', 1)[1]
+            item = next((row for row in self.google_materials if row['id'] == material_id), None)
+            return {'status': 200 if item else 404, 'body': item or {'error': {'code': 404}}}
+        start = int(query.get('pageToken', ['0'])[0])
+        body = {'courseWorkMaterial': copy.deepcopy(self.google_materials[start:start+2])}
+        if start+2 < len(self.google_materials):
+            body['nextPageToken'] = str(start+2)
+        return {'status': 200, 'body': body}
+
     def start(self, page, enabled=True):
-        for name in ['google-classroom.js', 'classroom-roster-import.js']:
+        for name in ['google-classroom.js', 'classroom-roster-import.js', 'classroom-material-publisher.js']:
             page.add_script_tag(path=str(fixture.ROOT/name))
         page.evaluate(GOOGLE_FIXTURE)
         fixture.ClassroomServiceBrowserTests.start(self, page, enabled)
@@ -134,8 +193,246 @@ class GoogleClassroomImportServiceTests(unittest.TestCase):
     def assert_private_storage(self, page):
         stored = page.evaluate('JSON.stringify({local:localStorage,session:sessionStorage,state:fixtureService.getState()})')
         self.assertNotIn('test-only-classroom-access-token', stored)
+        self.assertNotIn('test-only-classroom-publishing-token', stored)
         for row in STUDENTS:
             self.assertNotIn(row['name'], stored)
+
+    def import_initial_roster(self):
+        self.connect()
+        self.roster()
+        result = self.call(self.admin, 'importRoster', self.request(choices=self.create_choices()))
+        self.assertTrue(result.get('ok'), {'result': result, 'errors': self.admin.evaluate('googleImportErrors')})
+        self.assertEqual(self.google_posts, [], 'Importing profiles never publishes to Google')
+        return result
+
+    def posting_plan(self, cards, page=None):
+        page = page or self.admin
+        self.assert_ok(self.call(page, 'connectGoogleClassroomPublishing'))
+        result = self.call(page, 'previewClassroomPosts', {'courseId': COURSE, 'cards': cards})
+        self.assert_ok(result)
+        return result
+
+    def publish_plan(self, plan, page=None):
+        result = self.call(page or self.admin, 'publishClassroomPosts', {'planId': plan['planId'], 'confirmed': True})
+        self.assert_ok(result)
+        return result
+
+    def material(self, card, **changes):
+        value = {'id': 'manual_'+card['userId'], 'courseId': COURSE, 'title': 'Your Coda Arcade profile',
+                 'state': 'PUBLISHED', 'assigneeMode': 'INDIVIDUAL_STUDENTS',
+                 'individualStudentsOptions': {'studentIds': [card['userId']]},
+                 'materials': [{'link': {'url': card['link']}}]}
+        value.update(changes)
+        return value
+
+    def assert_personal_posts(self, cards):
+        targets = {card['userId']: card['link'] for card in cards}
+        for body in self.google_posts:
+            self.assertEqual(body['state'], 'PUBLISHED')
+            self.assertEqual(body['assigneeMode'], 'INDIVIDUAL_STUDENTS')
+            ids = body['individualStudentsOptions']['studentIds']
+            self.assertEqual(len(ids), 1)
+            self.assertIn(ids[0], targets)
+            self.assertEqual(len(body['materials']), 1)
+            self.assertEqual(body['materials'][0]['link']['url'], targets[ids[0]])
+            self.assertTrue(body['materials'][0]['link']['url'].startswith('https://www.coda-arcade.com/world-preview.html#classroom-pass='))
+
+    def test_explicit_personal_posting_and_reload_reconcile_without_duplicates(self):
+        imported = self.import_initial_roster()
+        before = fixture.database('classroomV1')
+        plan = self.posting_plan(imported['cards'])
+        self.assertEqual(plan['ready'], 3)
+        self.assertEqual(self.google_posts, [])
+        self.assertEqual(fixture.database('classroomV1'), before, 'Posting preview cannot write a delivery ledger')
+        result = self.publish_plan(plan)
+        self.assertEqual(result['posted'], 3, result)
+        self.assertEqual(len(self.google_posts), 3)
+        self.assert_personal_posts(imported['cards'])
+        recipients = [body['individualStudentsOptions']['studentIds'][0] for body in self.google_posts]
+        self.assertEqual(set(recipients), {row['userId'] for row in STUDENTS})
+        ledger = fixture.database(f'classroomV1/classroomImports/{self.teacher_uid}/{COURSE}/deliveries')
+        for card in imported['cards']:
+            entries = ledger[card['userId']]
+            self.assertEqual(len(entries), 1)
+            digest, entry = next(iter(entries.items()))
+            self.assertEqual(len(digest), 64)
+            self.assertEqual(entry['state'], 'posted')
+            self.assertEqual(entry['profileId'], card['profileId'])
+            self.assertTrue(entry['materialId'])
+        persisted = json.dumps(fixture.database('classroomV1'))
+        for card in imported['cards']:
+            self.assertNotIn(card['link'], persisted)
+            self.assertNotIn(card['pass'], persisted)
+        again = self.posting_plan([])
+        self.assertEqual(again['ready'], 0)
+        self.assertEqual(again['alreadyPosted'], 3)
+        self.assertEqual(self.publish_plan(again)['posted'], 0)
+        self.assertEqual(len(self.google_posts), 3)
+        self.admin.reload()
+        self.admin.wait_for_function('window.fixtureReady')
+        self.start(self.admin)
+        self.assert_ok(self.call(self.admin, 'adminSignIn'))
+        self.connect()
+        self.roster()
+        after_reload = self.posting_plan([])
+        self.assertEqual(after_reload['ready'], 0)
+        self.assertEqual(after_reload['alreadyPosted'], 3)
+        self.assertEqual(self.publish_plan(after_reload)['posted'], 0)
+        self.assertEqual(len(self.google_posts), 3)
+        self.assert_private_storage(self.admin)
+
+    def test_append_new_students_keeps_old_profiles_cards_progress_and_posts_unchanged(self):
+        imported = self.import_initial_roster()
+        self.assertEqual(self.publish_plan(self.posting_plan(imported['cards']))['posted'], 3)
+        student = self.device()
+        self.join(student, imported['cards'][0])
+        student.evaluate('fixtureProgress(640,350)')
+        self.assert_ok(self.call(student, 'flush'))
+        class_id = imported['classId']
+        profiles_before = copy.deepcopy(fixture.database('classroomV1/classes/'+class_id+'/profiles'))
+        passes_before = copy.deepcopy(fixture.database('classroomV1/passes'))
+        materials_before = copy.deepcopy(self.google_materials)
+        added = [{'userId': 'student_104', 'name': 'Riley Private Student'},
+                 {'userId': 'student_105', 'name': 'Skyler Private Student'}]
+        roster = STUDENTS+added
+        self.admin.evaluate('value=>{googleTestStudents=value;}', roster)
+        loaded = self.call(self.admin, 'loadGoogleClassroomRoster', COURSE)
+        self.assert_ok(loaded)
+        self.assertEqual(loaded['students'], roster)
+        request = self.request(students=roster, choices=[{'userId': row['userId'], 'action': 'create'} for row in roster])
+        preview = self.call(self.admin, 'previewRosterImport', request)
+        self.assert_ok(preview)
+        self.assertEqual(sum(row['status'] == 'existing' for row in preview['students']), 3)
+        appended = self.call(self.admin, 'importRoster', request)
+        self.assert_ok(appended)
+        self.assertEqual(appended['classId'], class_id)
+        self.assertEqual(appended['created'], 2)
+        self.assertEqual(appended['existing'], 3)
+        self.assertEqual({card['userId'] for card in appended['cards']}, {row['userId'] for row in added})
+        profiles_after = fixture.database('classroomV1/classes/'+class_id+'/profiles')
+        self.assertEqual(len(profiles_after), 5)
+        for profile_id, profile in profiles_before.items():
+            self.assertEqual(profiles_after[profile_id], profile)
+        for digest, binding in passes_before.items():
+            self.assertEqual(fixture.database('classroomV1/passes/'+digest), binding)
+        self.assertEqual(self.google_materials, materials_before)
+        self.assertTrue(self.call(student, 'isWritable'))
+        plan = self.posting_plan(appended['cards'])
+        self.assertEqual(plan['ready'], 2)
+        self.assertEqual(plan['alreadyPosted'], 3)
+        self.assertEqual(self.publish_plan(plan)['posted'], 2)
+        self.assertEqual(self.google_materials[:3], materials_before)
+        self.assertEqual(len(self.google_posts), 5)
+        self.assert_personal_posts(imported['cards']+appended['cards'])
+        recipients = [body['individualStudentsOptions']['studentIds'][0] for body in self.google_posts]
+        self.assertEqual(len(recipients), len(set(recipients)))
+
+    def test_successful_post_with_lost_response_is_reconciled_before_retry(self):
+        imported = self.import_initial_roster()
+        plan = self.posting_plan(imported['cards'])
+        self.google_lose_post_responses = 1
+        first = self.call(self.admin, 'publishClassroomPosts', {'planId': plan['planId'], 'confirmed': True})
+        self.assertTrue(first.get('ok'), first)
+        self.assertEqual(len(self.google_posts), 1)
+        self.assertEqual(first['uncertain'], 1)
+        self.assertEqual(first['failed'], 2)
+        paused = [row for row in first['rows'] if row['status'] == 'failed']
+        self.assertTrue(all(row.get('code') == 'posting-paused' for row in paused))
+        retry_plan = self.posting_plan(imported['cards'])
+        self.assertEqual(retry_plan['alreadyPosted'], 1)
+        self.assertEqual(retry_plan['ready'], 2)
+        retried = self.publish_plan(retry_plan)
+        self.assertEqual(retried['posted'], 2)
+        self.assertEqual(retried['alreadyPosted'], 1)
+        self.assertEqual(len(self.google_posts), 3)
+        self.assertEqual(len(self.google_materials), 3)
+        recipients = [body['individualStudentsOptions']['studentIds'][0] for body in self.google_posts]
+        self.assertEqual(len(recipients), len(set(recipients)))
+        self.assert_personal_posts(imported['cards'])
+        final = self.posting_plan([])
+        self.assertEqual(final['alreadyPosted'], 3)
+        self.assertEqual(final['ready'], 0)
+
+    def test_manual_material_matching_requires_one_recipient_and_current_private_pass(self):
+        imported = self.import_initial_roster()
+        first, second, third = imported['cards']
+        self.google_materials = [
+            self.material(first),
+            self.material(second, id='manual_broad', assigneeMode='ALL_STUDENTS', individualStudentsOptions={}),
+            self.material(second, id='manual_multiple', individualStudentsOptions={'studentIds': [second['userId'], third['userId']]}),
+            self.material(third, id='manual_stale', materials=[{'link': {'url': first['link']}}]),
+        ]
+        before = fixture.database('classroomV1')
+        plan = self.posting_plan(imported['cards'])
+        self.assertEqual(plan['alreadyPosted'], 1)
+        rows = {row['userId']: row for row in plan['rows']}
+        self.assertEqual(rows[first['userId']]['status'], 'already-posted')
+        self.assertNotEqual(rows[second['userId']]['status'], 'already-posted')
+        self.assertNotEqual(rows[third['userId']]['status'], 'already-posted')
+        self.assertEqual(self.google_posts, [])
+        self.assertEqual(fixture.database('classroomV1'), before)
+
+    def test_revocation_after_one_post_stops_remaining_posts_and_ledger_updates(self):
+        imported = self.import_initial_roster()
+        plan = self.posting_plan(imported['cards'])
+        self.admin.evaluate('''planId=>{
+          googleHoldMaterialResponse=true;
+          window.googlePendingPublish=fixtureService.publishClassroomPosts({planId,confirmed:true});
+        }''', plan['planId'])
+        self.admin.wait_for_function('typeof googleReleaseMaterialResponse==="function"')
+        self.assertEqual(len(self.google_posts), 1)
+        fixture.database('classroomV1/admins/'+self.teacher_uid, False, 'PUT')
+        self.admin.wait_for_function('!fixtureService.getState().admin.authorized')
+        before_release = fixture.database('classroomV1')
+        self.admin.evaluate('googleReleaseMaterialResponse()')
+        result = self.admin.evaluate('googlePendingPublish')
+        self.assertFalse(result['ok'], result)
+        self.assertEqual(len(self.google_posts), 1)
+        self.assertEqual(fixture.database('classroomV1'), before_release)
+        self.assert_private_storage(self.admin)
+
+    def test_two_teacher_tabs_share_a_claim_before_any_google_post(self):
+        imported = self.import_initial_roster()
+        first_plan = self.posting_plan(imported['cards'][:1])
+        second = self.device()
+        self.assert_ok(self.call(second, 'adminSignIn'))
+        self.connect(second)
+        self.roster(second)
+        self.admin.evaluate('''planId=>{
+          googleHoldMaterialBeforeSend=true;
+          window.googlePendingPublish=fixtureService.publishClassroomPosts({planId,confirmed:true});
+        }''', first_plan['planId'])
+        self.admin.wait_for_function('typeof googleReleaseMaterialSend==="function"')
+        second_plan = self.posting_plan(imported['cards'][:1], second)
+        self.assertEqual(second_plan['ready'], 0)
+        self.publish_plan(second_plan, second)
+        self.assertEqual(self.google_posts, [])
+        self.admin.evaluate('googleReleaseMaterialSend()')
+        first_result = self.admin.evaluate('googlePendingPublish')
+        self.assertTrue(first_result.get('ok'), first_result)
+        self.assertEqual(len(self.google_posts), 1)
+        self.assertEqual(self.google_posts[0]['individualStudentsOptions']['studentIds'], [imported['cards'][0]['userId']])
+        self.assert_personal_posts(imported['cards'])
+
+    def test_additional_publishing_consent_preserves_teacher_player_and_only_adds_material_scope(self):
+        self.admin.evaluate('fixtureProgress(830,420)')
+        self.assert_ok(self.call(self.admin, 'savePersonalPlayer'))
+        self.connect()
+        self.roster()
+        before = self.call(self.admin, 'getState')
+        cloud_before = fixture.database('classroomV1/teacherPlayers/'+self.teacher_uid)
+        self.assert_ok(self.call(self.admin, 'connectGoogleClassroomPublishing'))
+        after = self.call(self.admin, 'getState')
+        self.assertEqual(after['profile'], before['profile'])
+        self.assertEqual(after['admin']['uid'], before['admin']['uid'])
+        self.assertTrue(self.call(self.admin, 'isWritable'))
+        self.assertEqual(fixture.database('classroomV1/teacherPlayers/'+self.teacher_uid), cloud_before)
+        popups = self.admin.evaluate('googlePopupCalls')
+        self.assertEqual(len(popups), 2)
+        self.assertEqual(set(scope for scope in popups[0]['scopes'] if 'classroom.' in scope), set(SCOPES))
+        self.assertEqual(set(scope for scope in popups[1]['scopes'] if 'classroom.' in scope), set(SCOPES)|{PUBLISH_SCOPE})
+        self.assertEqual(self.google_posts, [])
+        self.assert_private_storage(self.admin)
 
     def test_readonly_connection_preserves_teacher_player_and_uses_paginated_bearer_gets(self):
         self.admin.evaluate('fixtureProgress(830,420)')

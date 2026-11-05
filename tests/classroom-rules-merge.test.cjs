@@ -5,8 +5,36 @@ const fs=require('node:fs');
 const os=require('node:os');
 const path=require('node:path');
 const {spawnSync}=require('node:child_process');
-const {mergeClassroomRules,mergeClassroomImportRules}=require('../tools/classroom-rules-merge.cjs');
+const {mergeClassroomRules,mergeClassroomImportRules,mergeClassroomDeliveryRules}=require('../tools/classroom-rules-merge.cjs');
 const fragment={rules:{classroomV1:{'.read':false,'.write':false,admins:{'.write':false}}}};
+
+test('delivery-only upgrade preserves prior import rules and every other namespace',()=>{
+ const node=JSON.parse(fs.readFileSync(path.join(__dirname,'../docs/GOOGLE-CLASSROOM-IMPORT-RULES.json'),'utf8'));
+ const oldNode=JSON.parse(JSON.stringify(node.classroomImports));delete oldNode.$teacherUid.$courseId.deliveries;
+ const base={rules:{'.read':false,'.write':false,rooms:{'.read':'roomPermission'},classroomV1:{'.read':false,'.write':false,classes:{'.write':'staff'},classroomImports:oldNode,$other:{'.validate':false}}}};
+ const before=JSON.stringify(base),candidate=mergeClassroomDeliveryRules(base,node);
+ assert.equal(JSON.stringify(base),before);
+ const delivery=candidate.rules.classroomV1.classroomImports.$teacherUid.$courseId.deliveries;
+ delete candidate.rules.classroomV1.classroomImports.$teacherUid.$courseId.deliveries;
+ assert.deepEqual(candidate,base);assert.deepEqual(delivery,node.classroomImports.$teacherUid.$courseId.deliveries);
+ const final=mergeClassroomDeliveryRules(base,node);assert.deepEqual(mergeClassroomDeliveryRules(final,node),final);
+ const absent=JSON.parse(before);delete absent.rules.classroomV1.classroomImports;
+ assert.deepEqual(mergeClassroomDeliveryRules(absent,node),mergeClassroomImportRules(absent,node));
+ const unknown=JSON.parse(before);unknown.rules.classroomV1.classroomImports.$teacherUid.$courseId.classId['.validate']='changed';
+ assert.throws(()=>mergeClassroomDeliveryRules(unknown,node),/outside the delivery ledger/);
+ const existing=JSON.parse(JSON.stringify(final));existing.rules.classroomV1.classroomImports.$teacherUid.$courseId.deliveries['.read']=true;
+ assert.throws(()=>mergeClassroomDeliveryRules(existing,node),/different permissions/);
+ const grant=JSON.parse(before);grant.rules.classroomV1['.read']=true;
+ assert.throws(()=>mergeClassroomDeliveryRules(grant,node),/inherited import access/);
+ const dir=fs.mkdtempSync(path.join(os.tmpdir(),'coda-delivery-rules-merge-'));
+ try{
+  const backup=path.join(dir,'backup.json'),out=path.join(dir,'candidate.json');fs.writeFileSync(backup,before);
+  const result=spawnSync(process.execPath,[path.join(__dirname,'../tools/classroom-rules-merge.cjs'),'--base',backup,'--out',out,'--add-classroom-deliveries'],{encoding:'utf8'});
+  assert.equal(result.status,0,result.stderr);const report=JSON.parse(result.stdout);
+  assert.equal(report.deployed,false);assert.match(report.changedNamespace,/\/deliveries$/);
+  assert.deepEqual(JSON.parse(fs.readFileSync(out,'utf8')),final);
+ }finally{fs.rmSync(dir,{recursive:true,force:true});}
+});
 
 test('additive Classroom import merge preserves every existing rule and refuses unsafe ancestors or unreviewed replacement',()=>{
  const node=JSON.parse(fs.readFileSync(path.join(__dirname,'../docs/GOOGLE-CLASSROOM-IMPORT-RULES.json'),'utf8'));

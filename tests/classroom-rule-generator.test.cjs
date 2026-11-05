@@ -19,7 +19,7 @@ test('Classroom import mappings add only an exact-owner private subtree with no 
  assert.equal(owner['.write'],false);assert.match(course['.write'],/!data\.exists\(\)/);
  assert.deepEqual(course.$other,{'.validate':false});assert.deepEqual(row.$other,{'.validate':false});
  assert.deepEqual(Object.keys(row).filter(key=>!key.startsWith('.')&&!key.startsWith('$')).sort(),['createdAt','profileId']);
- assert.doesNotMatch(JSON.stringify(imports),/accessToken|studentName|email|passHash/);
+ assert.doesNotMatch(JSON.stringify(imports),/accessToken|studentName|email|rawPass|signInLink/);
  assert.match(row['.validate'],/profileLinks/);assert.match(course.profileLinks.$profileId['.validate'],/students/);
 });
 

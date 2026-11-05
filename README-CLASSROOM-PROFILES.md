@@ -38,9 +38,13 @@ or number. **Cancel** leaves the saved name unchanged.
 Use **For teachers → Import from Google Classroom** to preview a class roster,
 link students to existing generated profiles, and create newcomers in one batch.
 Print the new cards together and keep the separate private teacher roster key.
-This needs the two read-only Google permissions and one private import-rules
-addition; see [Google Classroom roster import](docs/google-classroom-roster-setup.md)
-for setup and repeat-import/card-recovery details.
+**Prepare Classroom posts** lets you review and publish one individually assigned
+Classwork material per new profile link. **Check for new students** appends a
+later roster batch without replacing old profiles, cards, progress, or posts.
+Roster importing needs two read-only Google permissions; optional posting adds
+the Classwork materials permission and private delivery rules. See
+[Google Classroom roster import](docs/google-classroom-roster-setup.md) for setup,
+the updated complete rules file, append/retry behavior, and card recovery.
 
 Printing a card uses a suggested PDF filename containing the generated alias
 and full unique profile ID, such as `Coda-Card-Blue-Fox-14-profile_….pdf`.

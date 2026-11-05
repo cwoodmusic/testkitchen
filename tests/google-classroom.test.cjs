@@ -3,10 +3,10 @@ const test=require('node:test'),assert=require('node:assert/strict');
 const api=require('../google-classroom.js');
 const UID='teacher_12345678';
 const deferred=()=>{let resolve,reject;const promise=new Promise((a,b)=>{resolve=a;reject=b;});return {promise,resolve,reject};};
-function fixture({responses=[],connect,fetch}={}){
+function fixture({responses=[],connect,fetch,requestTimeoutMs}={}){
  let now=1000,session={uid:UID,identity:'sign-in-1',signedIn:true,authorized:true};
  const calls=[],oauth=[],queue=[...responses];
- const client=api.create({getSession:()=>session,clock:()=>now,
+ const client=api.create({getSession:()=>session,clock:()=>now,requestTimeoutMs,
   connectGoogle:options=>{oauth.push(options);return connect?connect(options):Promise.resolve({uid:UID,accessToken:'test-only-secret-token',expiresAt:100000});},
   fetch:async(url,options)=>{
    calls.push({url,options});if(fetch)return fetch(url,options);
@@ -18,7 +18,7 @@ function fixture({responses=[],connect,fetch}={}){
 const response=(body,status=200)=>({body,status});
 
 test('only an explicit teacher connect requests the two read-only scopes',async()=>{
- const f=fixture();assert.deepEqual(f.client.getState(),{connected:false,loading:false,courseCount:0,studentCount:0,code:''});
+ const f=fixture();assert.deepEqual(f.client.getState(),{connected:false,loading:false,courseCount:0,studentCount:0,canPublish:false,code:''});
  assert.equal((await f.client.listCourses()).code,'connect-required');assert.equal((await f.client.loadRoster('123')).code,'connect-required');assert.equal(f.oauth.length,0);
  const pending=f.client.connect();assert.equal(f.oauth.length,1,'The popup starts before any await to retain click activation');
  assert.deepEqual(f.oauth[0],{scopes:[...api.SCOPES]});assert.equal(api.SCOPES.length,2);
@@ -44,7 +44,7 @@ test('course pagination uses teacher-owned active courses and credential-free fi
   assert.equal(call.options.method,'GET');assert.equal(call.options.credentials,'omit');assert.equal(call.options.cache,'no-store');assert.equal(call.options.redirect,'error');
   assert.equal(call.options.headers.Authorization,'Bearer test-only-secret-token');assert.ok(!call.url.includes('secret'));assert.ok(call.options.signal);
  }
- assert.deepEqual(f.client.getState(),{connected:true,loading:false,courseCount:2,studentCount:0,code:''});
+ assert.deepEqual(f.client.getState(),{connected:true,loading:false,courseCount:2,studentCount:0,canPublish:false,code:''});
  f.client.disconnect();assert.equal(result.courses.length,0,'Previously exposed previews are cleared on disconnect');
 });
 test('student pagination returns only stable IDs and bounded display names, never email or photos',async()=>{
@@ -114,4 +114,80 @@ test('concurrent operations are rejected and destruction permanently disables ac
 test('disconnect still clears credentials if a caller has frozen a returned preview',async()=>{
  const f=fixture({responses:[response({courses:[{id:'123',name:'Class'}]})]});await f.client.connect();const result=await f.client.listCourses();Object.freeze(result.courses[0]);Object.freeze(result.courses);
  assert.doesNotThrow(()=>f.client.disconnect());assert.equal(f.client.getState().connected,false);assert.equal((await f.client.listCourses()).code,'connect-required');
+});
+const PRIVATE_LINK='https://www.coda-arcade.com/world-preview.html#classroom-pass=CODA-AAAA-AAAA-AAAA-AAAA-AAAA-AAAA-AA';
+const publication=extra=>({courseId:'course_123',userId:'student_456',link:PRIVATE_LINK,title:'Your Coda Arcade card',...extra});
+test('publishing permission is a separate explicit incremental consent and preserves roster previews',async()=>{
+ const f=fixture({responses:[response({students:[{userId:'001',profile:{name:{fullName:'Private student'}}}]})],connect:async({scopes})=>({uid:UID,accessToken:scopes.includes(api.PUBLISH_SCOPE)?'write-token':'read-token',grantedScopes:scopes})});
+ await f.client.connect();const preview=await f.client.loadRoster('course_123');
+ assert.equal(f.client.getState().canPublish,false);
+ assert.deepEqual(await f.client.createProfileMaterial(publication()),{ok:false,code:'publishing-permission-required',uncertain:false});assert.equal(f.calls.length,1);
+ assert.equal((await f.client.listProfileMaterials('course_123')).code,'publishing-permission-required');
+ const upgrade=f.client.connect({publish:true});assert.equal(f.oauth.length,2,'Incremental popup starts synchronously from the explicit click');assert.deepEqual(f.oauth[1].scopes,[...api.SCOPES,api.PUBLISH_SCOPE]);
+ assert.deepEqual(await upgrade,{ok:true});assert.equal(f.client.getState().canPublish,true);assert.equal(preview.students[0].name,'Private student');
+ await f.client.connect();await f.client.connect({publish:true});assert.equal(f.oauth.length,2);assert.ok(!JSON.stringify(f.client.getState()).includes('write-token'));
+});
+test('cancelled or withheld write grants preserve the existing read connection and previews',async()=>{
+ for(const result of ['cancel','withhold']){
+  let count=0;const f=fixture({responses:[response({courses:[{id:'123',name:'Existing class'}]}),response({courses:[]})],connect:async({scopes})=>{
+   if(++count===1)return {uid:UID,accessToken:'original-read-token'};
+   if(result==='cancel')throw {code:'auth/popup-closed-by-user'};
+   return {uid:UID,accessToken:'new-but-not-write-token',grantedScopes:[...api.SCOPES]};
+  }});
+  await f.client.connect();const preview=await f.client.listCourses();
+  assert.equal((await f.client.connect({publish:true})).code,result==='cancel'?'oauth-denied':'publishing-permission-required');
+  assert.equal(f.client.getState().connected,true);assert.equal(f.client.getState().canPublish,false);assert.equal(preview.courses[0].name,'Existing class');
+  assert.equal((await f.client.listCourses()).ok,true);assert.equal(f.calls[1].options.headers.Authorization,'Bearer original-read-token');
+ }
+});
+test('material listing uses the singular Google response field, scans all states and preserves attachment counts',async()=>{
+ const f=fixture({responses:[response({courseWorkMaterial:[{id:'material_1',state:'PUBLISHED',title:'Card',assigneeMode:'INDIVIDUAL_STUDENTS',individualStudentsOptions:{studentIds:['student_456']},materials:[{link:{url:PRIVATE_LINK}},{driveFile:{id:'not-requested'}}]}],nextPageToken:'p2'}),response({courseWorkMaterial:[{id:'material_2',state:'DRAFT',title:'Draft',assigneeMode:'ALL_STUDENTS',materials:[]}]})]});
+ await f.client.connect({publish:true});const result=await f.client.listProfileMaterials('course_123');
+ assert.equal(result.ok,true);assert.equal(result.materials.length,2);assert.deepEqual(result.materials[0].materials,[{link:{url:PRIVATE_LINK}},{}]);assert.equal(result.materials[1].state,'DRAFT');
+ assert.deepEqual(result.materials[1].individualStudentsOptions,{studentIds:[]});
+ for(const call of f.calls){const url=new URL(call.url);assert.equal(url.pathname,'/v1/courses/course_123/courseWorkMaterials');assert.deepEqual(url.searchParams.getAll('courseWorkMaterialStates'),['PUBLISHED','DRAFT','DELETED']);assert.equal(call.options.method,'GET');assert.ok(url.searchParams.get('fields').includes('courseWorkMaterial('));assert.ok(!call.url.includes('CODA-'));}
+ assert.ok(!JSON.stringify(f.client.getState()).includes('material_1'));assert.ok(!JSON.stringify(f.client.getState()).includes('classroom-pass'));
+ const link=result.materials[0].materials[0].link;f.client.disconnect();assert.deepEqual(link,{});assert.equal(result.materials.length,0);assert.equal(f.client.getState().canPublish,false);
+});
+test('material creation always posts one individual student and one link regardless of caller extras',async()=>{
+ const f=fixture({responses:[response({id:'material_created'},201)]});await f.client.connect({publish:true});
+ const result=await f.client.createProfileMaterial(publication({assigneeMode:'ALL_STUDENTS',individualStudentsOptions:{studentIds:['other','students']},state:'DRAFT',materials:[{link:{url:'https://unrelated.invalid'}}]}));
+ assert.deepEqual(result,{ok:true,materialId:'material_created'});assert.equal(f.calls.length,1);
+ const call=f.calls[0],url=new URL(call.url);assert.equal(url.origin,'https://classroom.googleapis.com');assert.equal(url.pathname,'/v1/courses/course_123/courseWorkMaterials');assert.equal(url.searchParams.get('fields'),'id');
+ assert.equal(call.options.method,'POST');assert.equal(call.options.headers['Content-Type'],'application/json');assert.equal(call.options.credentials,'omit');assert.equal(call.options.redirect,'error');
+ assert.deepEqual(JSON.parse(call.options.body),{title:'Your Coda Arcade card',state:'PUBLISHED',assigneeMode:'INDIVIDUAL_STUDENTS',individualStudentsOptions:{studentIds:['student_456']},materials:[{link:{url:PRIVATE_LINK}}]});
+});
+test('invalid recipients and private profile URLs fail before any POST',async()=>{
+ const f=fixture();await f.client.connect({publish:true});
+ for(const value of [publication({userId:['001','002']}),publication({userId:'../student'}),publication({courseId:'course/bad'}),publication({link:'javascript:alert(1)'}),publication({link:'https://school.example/no-private-pass'}),publication({link:'https://user:password@school.example/#classroom-pass=private'}),publication({title:''})]){
+  assert.deepEqual(await f.client.createProfileMaterial(value),{ok:false,code:'invalid-profile-material',uncertain:false});
+ }
+ assert.equal(f.calls.length,0);
+});
+test('withheld granular material permission disables publishing while retaining the read connection',async()=>{
+ const f=fixture({responses:[response({students:[{userId:'001',profile:{name:{fullName:'Private student'}}}]}),response({error:{details:[{reason:'ACCESS_TOKEN_SCOPE_INSUFFICIENT'}]}},403)]});
+ await f.client.connect();const preview=await f.client.loadRoster('course_123');await f.client.connect({publish:true});
+ assert.equal((await f.client.listProfileMaterials('course_123')).code,'oauth-denied');assert.equal(f.client.getState().canPublish,false);assert.equal(f.client.getState().connected,true);assert.equal(preview.students[0].name,'Private student');
+});
+test('authoritative material HTTP failures are definitive and are never retried automatically',async()=>{
+ for(const [status,body,code]of [[400,{error:{message:'PRIVATE backend'}},'material-publish-failed'],[401,{error:{}},'expired'],[403,{error:{details:[{reason:'ACCESS_TOKEN_SCOPE_INSUFFICIENT'}]}},'oauth-denied'],[429,{error:{}},'classroom-rate-limited']]){
+  const f=fixture({responses:[response(body,status)]});await f.client.connect({publish:true});
+  assert.deepEqual(await f.client.createProfileMaterial(publication()),{ok:false,code,uncertain:false});assert.equal(f.calls.length,1);assert.ok(!JSON.stringify(f.client.getState()).includes('PRIVATE'));
+  if(status===403){assert.equal(f.client.getState().connected,true);assert.equal(f.client.getState().canPublish,false);}
+ }
+});
+test('network, server and malformed material success responses are uncertain with no automatic retry',async()=>{
+ for(const next of [new TypeError('PRIVATE network failure'),response({error:{message:'PRIVATE server'}},500),response({},201)]){
+  const f=fixture({responses:[next]});await f.client.connect({publish:true});const result=await f.client.createProfileMaterial(publication());
+  assert.equal(result.ok,false);assert.equal(result.uncertain,true);assert.equal(f.calls.length,1);assert.ok(!JSON.stringify(result).includes('PRIVATE'));
+ }
+ const f=fixture({fetch:async()=>({ok:true,status:201,json:async()=>{throw Error('PRIVATE body')}})});await f.client.connect({publish:true});assert.equal((await f.client.createProfileMaterial(publication())).uncertain,true);assert.equal(f.calls.length,1);
+});
+test('disconnect after dispatch makes the material outcome uncertain and clears publishing permission',async()=>{
+ const f=fixture({fetch:()=>new Promise(()=>{})});await f.client.connect({publish:true});const pending=f.client.createProfileMaterial(publication());
+ assert.equal(f.calls.length,1);f.client.disconnect();assert.deepEqual(await pending,{ok:false,code:'session-changed',uncertain:true});assert.equal(f.calls[0].options.signal.aborted,true);assert.equal(f.client.getState().canPublish,false);
+});
+test('material request timeout aborts a hung POST within the configured bound without retry',async()=>{
+ const f=fixture({requestTimeoutMs:10,fetch:()=>new Promise(()=>{})});await f.client.connect({publish:true});
+ assert.deepEqual(await f.client.createProfileMaterial(publication()),{ok:false,code:'classroom-timeout',uncertain:true});assert.equal(f.calls.length,1);assert.equal(f.calls[0].options.signal.aborted,true);
 });

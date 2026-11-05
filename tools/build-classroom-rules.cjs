@@ -161,6 +161,49 @@ function developerRules(){
 // Google Classroom identifiers stay in an exact-owner private index. Imported
 // profiles still use the existing alias/pass/progress contract. The reverse
 // index prevents two students from concurrently claiming the same profile.
+function classroomDeliveryRules(teacher,key,course){
+ const profile=profileNode(course+'.child("classId").val()','newData.child("profileId").val()');
+ const state='newData.child("state").val()',oldState='data.child("state").val()';
+ const sameAttempt='newData.child("attemptId").val() === data.child("attemptId").val()';
+ const newAttempt='newData.child("attemptId").val() !== data.child("attemptId").val()';
+ const oldLease='data.child("leaseUntil").val()',lease='newData.child("leaseUntil").val()';
+ const postedNoop=join([oldState+' === "posted"',state+' === "posted"',sameAttempt,
+  'newData.child("materialId").val() === data.child("materialId").val()',lease+' === '+oldLease,
+  'newData.child("updatedAt").val() === data.child("updatedAt").val()']);
+ const transitions=[
+  join(['!data.exists()',state+' === "claimed"']),
+  join(['!data.exists()',state+' === "posted"',lease+' === 0']),
+  join([oldState+' === "claimed"',state+' === "claimed"','(('+sameAttempt+' && '+oldLease+' > now) || ('+newAttempt+' && '+oldLease+' <= now))']),
+  join([oldState+' === "claimed"',state+' === "sending"',sameAttempt,oldLease+' > now']),
+  join([oldState+' === "claimed"',state+' === "posted"',sameAttempt]),
+  join([oldState+' === "sending"',sameAttempt,'('+state+' === "posted" || '+state+' === "uncertain" || '+state+' === "failed")']),
+  join([oldState+' === "uncertain"',sameAttempt,'('+state+' === "posted" || '+state+' === "uncertain")']),
+  join([oldState+' === "failed"','(('+state+' === "claimed" && '+newAttempt+') || ('+state+' === "posted" && '+sameAttempt+'))']),
+  postedNoop
+ ];
+ return {'.validate':objectCondition,$googleStudentId:{'.validate':matches('$googleStudentId',key),$passHash:closed({
+  '.write':join([teacher,'newData.exists()']),
+  '.validate':join([matches('$passHash',HASH_PATTERN),
+   'newData.hasChildren(["profileId","attemptId","state","leaseUntil","createdAt","updatedAt"])',
+   'newData.child("profileId").val() === '+course+'.child("students").child($googleStudentId).child("profileId").val()',
+   course+'.child("profileLinks").child(newData.child("profileId").val()).val() === $googleStudentId',
+   profile+'.child("meta/passHash").val() === $passHash',
+   rootAt('classroomV1/passes')+'.child($passHash).child("classId").val() === '+course+'.child("classId").val()',
+   rootAt('classroomV1/passes')+'.child($passHash).child("profileId").val() === newData.child("profileId").val()',
+   '!data.exists() || newData.child("profileId").val() === data.child("profileId").val()',
+   '('+transitions.map(value=>'('+value+')').join(' || ')+')',
+   '('+state+' === "claimed" || '+state+' === "sending" ? '+lease+' > now : true)',
+   '('+state+' === "posted" ? newData.child("materialId").exists() : !newData.child("materialId").exists())']),
+  profileId:{'.validate':string('newData',8,64,ID_PATTERN)},
+  attemptId:{'.validate':string('newData',32,32,'^[a-f0-9]{32}$')},
+  state:{'.validate':string('newData',6,9,'^(claimed|sending|posted|uncertain|failed)$')},
+  leaseUntil:{'.validate':integer('newData',0,'now + 120000')},
+  createdAt:createdAt(),
+  updatedAt:{'.validate':join([integer('newData',0,'now'),'!data.exists() || newData.val() >= data.val()'])},
+  materialId:{'.validate':string('newData',1,128,key)}
+ })}};
+}
+
 function classroomImportRules(){
  const teacher=join([admin,'auth.uid === $teacherUid']);
  const key='^[A-Za-z0-9_-]{1,128}$';
@@ -199,7 +242,8 @@ function classroomImportRules(){
      '(!data.exists() || '+oldClaim+' !== $profileId)']),
     '.validate':join([matches('$profileId',ID_PATTERN),string('newData',1,128,key),
      pendingCourse+'.child("students").child(newData.val()).child("profileId").val() === $profileId'])
-   }}
+   }},
+   deliveries:classroomDeliveryRules(teacher,key,oldCourse)
   })
  }};
 }

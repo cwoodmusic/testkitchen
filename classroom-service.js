@@ -68,8 +68,9 @@
    let active=null,leaseOwned=false,loaded=false,baseRevision=0,lastSaved='',pending=false,saving=false;
    let loading=false,locked=false,waitingTakeover=false,code='',status='',destroyed=false,generation=0,inFlightSave=null,transitioning=false,retiredPersonalSave=null,signingOut=false;
    let offset=0,flushTimer=null,leaseTimer=null,queuedPass=null,personalRename=null,classRename=null;
-   let googleClassroom=null,rosterImporter=null,googleRoster=null;
+   let googleClassroom=null,rosterImporter=null,googleRoster=null,materialPublisher=null,classroomPostPlan=null;
    const pendingJobs=new Set();
+   const materialDeliveryWatches=new Map();
    const pendingHallClassCleanup=new Map();
    const state=()=>({configured,configurationReason,enabled,ready:!!sdk,loading,locked,waitingTakeover,pending,
      profile:active?{classId:active.classId,classLabel:active.classLabel||'Classroom',profileId:active.profileId,alias:active.alias,picture:active.picture,...(personalProfile(active)?{kind:'teacher'}:{})}:null,
@@ -277,13 +278,13 @@
        identity:JSON.stringify([adminUid,generation])};
    }
    function disconnectGoogleClassroom(){
-     googleClassroom?.disconnect();rosterImporter?.clear();
+     googleClassroom?.disconnect();rosterImporter?.clear();materialPublisher?.clear();clearMaterialWatches();classroomPostPlan=null;
      if(googleRoster){for(const row of googleRoster.students||[])row.name='';googleRoster.students=[];}googleRoster=null;
      return {ok:true};
    }
    function pruneGoogleRoster(){
      if(googleRoster&&(googleRoster.identity!==googleTeacherSession().identity||!googleClassroom?.getState().connected)){
-       for(const row of googleRoster.students||[])row.name='';googleRoster.students=[];googleRoster=null;rosterImporter?.clear();
+       for(const row of googleRoster.students||[])row.name='';googleRoster.students=[];googleRoster=null;rosterImporter?.clear();materialPublisher?.clear();clearMaterialWatches();classroomPostPlan=null;
      }
    }
    function googleClient(){
@@ -313,6 +314,11 @@
      // Keep the popup in the explicit button's user-activation call stack.
      return googleClient()?.connect()||Promise.resolve(fail('classroom-import-unavailable'));
    }
+   function connectGoogleClassroomPublishing(){
+     if(!googleTeacherSession().authorized)return Promise.resolve(fail('admin-required'));
+     // Only the teacher's explicit preparation button requests posting access.
+     return googleClient()?.connect({publish:true})||Promise.resolve(fail('classroom-import-unavailable'));
+   }
    async function listGoogleClassroomCourses(){
      if(!googleTeacherSession().authorized)return Promise.resolve(fail('admin-required'));
      const result=await (googleClient()?.listCourses()||Promise.resolve(fail('classroom-import-unavailable')));pruneGoogleRoster();return result;
@@ -320,6 +326,7 @@
    async function loadGoogleClassroomRoster(courseId){
      if(!googleTeacherSession().authorized)return fail('admin-required');
      pruneGoogleRoster();
+     materialPublisher?.clear();clearMaterialWatches();classroomPostPlan=null;
      const client=googleClient();if(!client)return fail('classroom-import-unavailable');
      const before=googleTeacherSession().identity,result=await client.loadRoster(courseId);
      if(!googleTeacherSession().authorized||before!==googleTeacherSession().identity)return fail('session-changed');
@@ -360,6 +367,78 @@
    }
    const previewRosterImport=request=>rosterRequest('previewRosterImport',request);
    const importRoster=request=>rosterRequest('importRoster',request);
+   function parseProfileLink(value){
+     if(typeof value!=='string'||value.length>2024)return null;
+     try{
+       const url=new URL(value),local=['localhost','127.0.0.1','[::1]'].includes(url.hostname)&&url.origin===location?.origin;
+       const supported=win?.CodaArcadeHost?.supports(url.hostname)??['cwoodmusic.github.io','www.coda-arcade.com','coda-arcade.com','www.coda-aracde.com','coda-aracde.com'].includes(url.hostname);
+       if(url.username||url.password||url.search||(!local&&(!supported||url.protocol!=='https:'||url.port)))return null;
+       if(local&&!['http:','https:'].includes(url.protocol))return null;
+       const paths=['/world-preview.html','/coda-arcade/world-preview.html','/testkitchen/world-preview.html'];
+       if(local)paths.push(new URL('world-preview.html',location.href).pathname);
+       if(!paths.includes(url.pathname)||url.hostname==='cwoodmusic.github.io'&&!['/coda-arcade/world-preview.html','/testkitchen/world-preview.html'].includes(url.pathname))return null;
+       const params=new URLSearchParams(url.hash.slice(1));if([...params.keys()].length!==1||!params.has('classroom-pass'))return null;
+       const rawPass=passCode(params.get('classroom-pass'));return rawPass?{rawPass,link:url.href}:null;
+     }catch{return null;}
+   }
+   function clearMaterialWatches(){
+     for(const entry of materialDeliveryWatches.values()){entry.stop?.();entry.cancel();}
+     materialDeliveryWatches.clear();
+   }
+   function materialDeliveryReference(relative){
+     const existing=materialDeliveryWatches.get(relative);if(existing)return existing.ready;
+     const reference=sdk.ref(adminDb,path(relative));let resolveReady,rejectReady,settled=false;
+     const ready=new Promise((resolve,reject)=>{resolveReady=resolve;rejectReady=reject;});
+     const entry={ready,stop:null,cancel(){if(!settled){settled=true;rejectReady(Object.assign(Error('closed'),{code:'session-changed'}));}}};
+     materialDeliveryWatches.set(relative,entry);
+     try{
+       // Keep a listener through successive transactions. Without it the SDK
+       // can evict an applyLocally:false claim and offer null to the following
+       // sending-state updater, which must not be treated as an empty claim.
+       entry.stop=sdk.onValue(reference,()=>{if(!settled){settled=true;resolveReady(reference);}},error=>{
+         entry.stop?.();materialDeliveryWatches.delete(relative);if(!settled){settled=true;rejectReady(error);}
+       });
+     }catch(error){materialDeliveryWatches.delete(relative);settled=true;rejectReady(error);}
+     return ready;
+   }
+   function classroomPublisher(){
+     if(materialPublisher)return materialPublisher;
+     const api=options.materialPublisherApi||win?.CodaClassroomMaterialPublisher;if(!api?.create)return null;
+     materialPublisher=api.create({getContext:googleTeacherSession,
+       read:async relative=>(await sdk.get(sdk.ref(adminDb,path(relative)))).val(),
+       transaction:async(relative,updater)=>{
+         const reference=await materialDeliveryReference(relative);
+         const result=await sdk.runTransaction(reference,current=>{
+           const next=updater(current);return next===undefined?undefined:JSON.parse(JSON.stringify(next));
+         },{applyLocally:false});return {committed:result.committed,snapshot:result.snapshot.val()};
+       },online:rosterOnline,google:googleClient(),parseProfileLink,
+       hashPass:raw=>hashPass(raw,crypto),clock:()=>now()+offset,random,
+       serverTimestamp:()=>sdk.serverTimestamp()});
+     return materialPublisher;
+   }
+   async function previewClassroomPosts(request){
+     pruneGoogleRoster();classroomPostPlan=null;
+     const before=googleTeacherSession();if(!before.authorized)return fail('admin-required');
+     const allowed=await staff();if(!allowed.ok)return allowed;
+     if(!googleTeacherSession().authorized||before.identity!==googleTeacherSession().identity)return fail('session-changed');
+     if(!googleClassroom?.getState().canPublish)return fail('publishing-connect-required');
+     if(!googleRoster||googleRoster.identity!==before.identity||googleRoster.courseId!==request?.courseId)return fail('roster-required');
+     const publisher=classroomPublisher();if(!publisher)return fail('classroom-import-unavailable');
+     const result=await publisher.previewPosts({...request,students:googleRoster.students.map(row=>({...row}))});
+     if(result.ok&&googleTeacherSession().authorized&&before.identity===googleTeacherSession().identity)
+       classroomPostPlan={planId:result.planId,courseId:request.courseId,identity:before.identity};
+     return result;
+   }
+   async function publishClassroomPosts(request){
+     pruneGoogleRoster();const before=googleTeacherSession();if(!before.authorized)return fail('admin-required');
+     if(request?.confirmed!==true)return fail('publication-confirmation-required');
+     const allowed=await staff();if(!allowed.ok)return allowed;
+     if(!googleTeacherSession().authorized||before.identity!==googleTeacherSession().identity)return fail('session-changed');
+     if(!googleClassroom?.getState().canPublish)return fail('publishing-connect-required');
+     if(!classroomPostPlan||classroomPostPlan.planId!==request.planId||classroomPostPlan.identity!==before.identity||!googleRoster||googleRoster.courseId!==classroomPostPlan.courseId)
+       return fail('publication-plan-stale');
+     return classroomPublisher().publishPosts(request);
+   }
    async function withWorkspace(fn){return storageScope?.withLock?storageScope.withLock(fn):fn();}
    const tabId=storageScope?.tabId||'single-window';
    function readBound(key){try{const value=JSON.parse(session.getItem(key)||'null');return value?.version===1&&value.tabId===tabId?value:null;}catch{return null;}}
@@ -884,8 +963,8 @@
    leaseTimer=win?.setInterval?.(async()=>{if(!isWritable())return;try{if(!await lease(false,true))lock('device-changed');}catch{message('Connection paused. Keep this tab open.','connection-unavailable');}},20000);
    // Sessions stay open through inactivity. Explicit logout, revocation, and
    // another device taking the profile still end access through the guards above.
-   function destroy(){keepPending();destroyed=true;generation++;disconnectGoogleClassroom();googleClassroom?.destroy();rosterImporter?.destroy();classRename?.cancel?.();clearDeveloperAccess();stopSubscriptions();for(const stop of authSubscriptions.splice(0))try{stop();}catch{}if(adminRoleStop){adminRoleStop();adminRoleStop=null;}for(const stop of pendingJobs)try{stop();}catch{}for(const timer of [flushTimer,leaseTimer])if(timer!==null)win?.clearInterval?.(timer);win?.removeEventListener?.('pagehide',keepPending);win?.document?.removeEventListener?.('visibilitychange',pageHidden);listeners.clear();pendingHallClassCleanup.clear();}
-   return {getState:state,listDeveloperAccess,grantDeveloperAccess,revokeDeveloperAccess,getHallContext,loadHallBoard,publishHallRecord,subscribe(listener){listeners.add(listener);return()=>listeners.delete(listener);},connect,resume,inspectSession,join,leave,logOut,takeOver,useSavedProgress,adminSignIn,adminSignOut,savePersonalPlayer,renamePersonalPlayer,openPersonalPlayer,connectGoogleClassroom,listGoogleClassroomCourses,loadGoogleClassroomRoster,disconnectGoogleClassroom,previewRosterImport,importRoster,listClasses,createClass,renameClass,listProfiles,createProfile,reissuePass,deleteProfile,deleteClass,flush,isWritable,destroy};
+   function destroy(){keepPending();destroyed=true;generation++;disconnectGoogleClassroom();googleClassroom?.destroy();rosterImporter?.destroy();materialPublisher?.destroy();classRename?.cancel?.();clearDeveloperAccess();stopSubscriptions();for(const stop of authSubscriptions.splice(0))try{stop();}catch{}if(adminRoleStop){adminRoleStop();adminRoleStop=null;}for(const stop of pendingJobs)try{stop();}catch{}for(const timer of [flushTimer,leaseTimer])if(timer!==null)win?.clearInterval?.(timer);win?.removeEventListener?.('pagehide',keepPending);win?.document?.removeEventListener?.('visibilitychange',pageHidden);listeners.clear();pendingHallClassCleanup.clear();}
+   return {getState:state,listDeveloperAccess,grantDeveloperAccess,revokeDeveloperAccess,getHallContext,loadHallBoard,publishHallRecord,subscribe(listener){listeners.add(listener);return()=>listeners.delete(listener);},connect,resume,inspectSession,join,leave,logOut,takeOver,useSavedProgress,adminSignIn,adminSignOut,savePersonalPlayer,renamePersonalPlayer,openPersonalPlayer,connectGoogleClassroom,connectGoogleClassroomPublishing,previewClassroomPosts,publishClassroomPosts,listGoogleClassroomCourses,loadGoogleClassroomRoster,disconnectGoogleClassroom,previewRosterImport,importRoster,listClasses,createClass,renameClass,listProfiles,createProfile,reissuePass,deleteProfile,deleteClass,flush,isWritable,destroy};
  }
  return Object.freeze({create,consumeFragment,readSavedSession,parsePass:passCode,formatPass,hashPass});
 });

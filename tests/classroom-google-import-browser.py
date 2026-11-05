@@ -49,6 +49,47 @@ FIXTURE = r'''()=>{
   onChanged:value=>{window.__changed=value;},qr:CodaClassroomPassQR});
 }'''
 
+PUBLISHING_FIXTURE = r'''()=>{
+ window.__publishCalls=[];window.__posts=[];window.__postPlans=new Map();window.__deliveryByLink=new Map();window.__postExtras=[];
+ window.__publishSequence=0;window.__postMode='success';window.__publishHold='';window.__publishError='';
+ const call=async(method,value)=>{
+  __publishCalls.push({method,value});
+  if(__publishHold===method)await new Promise(resolve=>window.__releasePublishing=resolve);
+  if(__publishError){const code=__publishError;__publishError='';return {ok:false,code};}
+  return null;
+ };
+ const count=(rows,status)=>rows.filter(row=>row.status===status).length;
+ Object.assign(__service,{
+  async connectGoogleClassroomPublishing(){return await call('permission')||{ok:true};},
+  async previewClassroomPosts(value){
+   const error=await call('preview',value);if(error)return error;
+   const planId='private-plan-'+(++__publishSequence);
+   const rows=[...__postExtras,...value.cards.map(card=>({userId:card.userId,name:card.name,alias:card.alias,status:__deliveryByLink.get(card.link)||'ready'}))];
+   __postPlans.set(planId,{cards:value.cards,rows});
+   return {ok:true,planId,rows,ready:count(rows,'ready'),alreadyPosted:count(rows,'already-posted'),uncertain:count(rows,'uncertain'),busy:count(rows,'busy'),unavailable:count(rows,'link-unavailable')};
+  },
+  async publishClassroomPosts(value){
+   const error=await call('publish',value);if(error)return error;
+   if(value.confirmed!==true)return {ok:false,code:'publish-confirmation-required'};
+   const plan=__postPlans.get(value.planId);if(!plan)return {ok:false,code:'publish-plan-required'};
+   let index=0;
+   const rows=plan.rows.map(row=>{
+    if(row.status!=='ready')return {...row};
+    const card=plan.cards.find(card=>card.userId===row.userId);
+    if(!card)return {...row,status:'link-unavailable'};
+    let status=__deliveryByLink.get(card.link);
+    if(status!=='already-posted'&&status!=='uncertain'){
+     status=index++===0?'posted':__postMode==='partial'?'failed':__postMode==='uncertain'?'uncertain':'posted';
+     if(status==='posted'){__posts.push({userId:card.userId,link:card.link});__deliveryByLink.set(card.link,'already-posted');}
+     else if(status==='uncertain')__deliveryByLink.set(card.link,'uncertain');
+    }
+    return {...row,status};
+   });
+   return {ok:true,planId:value.planId,rows,posted:count(rows,'posted'),alreadyPosted:count(rows,'already-posted'),failed:count(rows,'failed'),uncertain:count(rows,'uncertain'),busy:count(rows,'busy'),unavailable:count(rows,'link-unavailable')};
+  }
+ });
+}'''
+
 
 class GoogleClassroomImportUITests(unittest.TestCase):
     @classmethod
@@ -97,6 +138,18 @@ class GoogleClassroomImportUITests(unittest.TestCase):
 
     def create_cards(self):
         self.preview(); self.page.locator('#googleRosterImport').click(); self.idle()
+
+    def enable_publishing(self):
+        self.page.evaluate(PUBLISHING_FIXTURE)
+
+    def publishing_calls(self, method):
+        return self.page.evaluate('method=>__publishCalls.filter(item=>item.method===method)', method)
+
+    def prepare_posts(self):
+        self.page.locator('#googleRosterPreparePosts').click(); self.idle()
+
+    def publish_posts(self):
+        self.page.locator('#googleRosterPublishPosts').click(); self.idle()
 
     def test_connection_and_roster_preview_are_explicit_and_never_create_profiles(self):
         self.assertEqual(self.calls('connect'), [])
@@ -252,6 +305,10 @@ class GoogleClassroomImportUITests(unittest.TestCase):
         self.page.evaluate("()=>{const replacement=document.createElement('div');replacement.id='newHost';document.body.append(replacement);__import.mount(replacement);}")
         self.assertEqual(self.page.evaluate('__import.getState().cardCount'), 2)
         self.assertTrue(self.page.locator('#newHost #googleRosterPrintCards').is_visible())
+        before = len(self.calls('disconnect'))
+        self.page.evaluate("__identity='another_teacher';__import.mount(document.querySelector('#newHost'))")
+        self.assertEqual(self.page.evaluate('__import.getState().cardCount'), 0)
+        self.assertGreater(len(self.calls('disconnect')), before)
 
     def test_phone_roster_paginates_and_keeps_actions_reachable_without_overflow(self):
         self.page.set_viewport_size({'width':360,'height':800})
@@ -263,6 +320,145 @@ class GoogleClassroomImportUITests(unittest.TestCase):
         self.assertEqual(self.page.locator('#googleRosterImport').inner_text(), 'Import 41 students')
         self.assertTrue(self.page.evaluate('document.documentElement.scrollWidth<=innerWidth'))
         self.assertGreaterEqual(self.page.locator('#googleRosterImport').bounding_box()['height'],48)
+
+    def test_posting_requires_permission_preview_and_explicit_publish_with_only_new_recipients(self):
+        self.enable_publishing(); self.create_cards()
+        self.page.evaluate("__postExtras=Array.from({length:23},(_,index)=>({userId:'old-'+index,name:'Existing Student '+index,alias:'Blue Owl 27',status:index%2?'already-posted':'link-unavailable'}))")
+        self.assertEqual(self.publishing_calls('permission'), [])
+        self.assertEqual(self.publishing_calls('publish'), [])
+        self.prepare_posts()
+        self.assertEqual(len(self.publishing_calls('permission')), 1)
+        self.assertEqual(len(self.publishing_calls('preview')), 1)
+        self.assertEqual(self.publishing_calls('publish'), [])
+        self.assertEqual(self.page.locator('#googleRosterPublishPosts').inner_text(), 'Publish 2 profile links')
+        self.assertEqual(self.page.locator('.google-post-row').count(), 2)
+        submitted = self.publishing_calls('preview')[0]['value']['cards']
+        self.assertEqual([card['userId'] for card in submitted], ['student-1','student-2'])
+        self.assertTrue(all('pass' not in card for card in submitted))
+        self.assertNotIn('private-plan', self.page.evaluate('JSON.stringify(__import.getState())'))
+        self.publish_posts()
+        self.assertEqual(self.publishing_calls('publish')[0]['value']['confirmed'], True)
+        self.assertEqual(self.page.evaluate('__posts.map(item=>item.userId)'), ['student-1','student-2'])
+        self.assertTrue(self.page.locator('#googleRosterCardsSaved').is_checked())
+        self.assertFalse(self.page.locator('#googleRosterRefresh').is_disabled())
+        self.assertEqual(self.page.locator('#googleRosterPublishPosts').count(), 0)
+
+    def test_partial_posting_retries_only_unsent_receipts_and_keeps_printable_cards(self):
+        self.enable_publishing(); self.create_cards(); self.page.evaluate("__postMode='partial'")
+        self.prepare_posts(); self.publish_posts()
+        self.assertEqual(self.page.evaluate('__posts.length'), 1)
+        self.assertEqual(self.page.evaluate('__import.getState().cardCount'), 2)
+        self.assertFalse(self.page.locator('#googleRosterCardsSaved').is_checked())
+        self.assertTrue(self.page.locator('#googleRosterRefresh').is_disabled())
+        self.assertTrue(self.page.locator('#googleRosterPrintCards').is_visible())
+        self.page.evaluate("__postMode='success'")
+        self.prepare_posts()
+        self.assertEqual([card['userId'] for card in self.publishing_calls('preview')[-1]['value']['cards']], ['student-2'])
+        self.assertEqual(self.page.evaluate('__posts.length'), 1, 'Preparing a retry must never publish')
+        self.assertEqual(self.page.locator('#googleRosterPublishPosts').inner_text(), 'Publish 1 profile link')
+        self.publish_posts()
+        self.assertEqual(self.page.evaluate('__posts.map(item=>item.userId)'), ['student-1','student-2'])
+        self.assertTrue(self.page.locator('#googleRosterCardsSaved').is_checked())
+
+    def test_uncertain_delivery_is_not_automatically_resent(self):
+        self.enable_publishing(); self.create_cards(); self.page.evaluate("__postMode='uncertain'")
+        self.prepare_posts(); self.publish_posts()
+        self.assertEqual(self.page.evaluate('__posts.length'), 1)
+        self.assertIn('will not resend', self.page.locator('.google-posting').inner_text())
+        self.assertFalse(self.page.locator('#googleRosterCardsSaved').is_checked())
+        self.prepare_posts()
+        self.assertEqual(self.page.locator('#googleRosterPublishPosts').count(), 0)
+        self.assertEqual(len(self.publishing_calls('publish')), 1)
+        self.assertEqual(self.page.evaluate('__posts.length'), 1)
+        self.assertTrue(self.page.locator('#googleRosterPrintCards').is_visible())
+
+    def test_declining_posting_permission_keeps_the_new_cards_without_writing(self):
+        self.enable_publishing(); self.create_cards(); self.page.evaluate("__publishError='oauth-denied'")
+        self.prepare_posts()
+        self.assertEqual(self.publishing_calls('preview'), [])
+        self.assertEqual(self.publishing_calls('publish'), [])
+        self.assertEqual(self.page.evaluate('__import.getState().cardCount'), 2)
+        self.assertTrue(self.page.locator('#googleRosterPrintCards').is_visible())
+        self.assertFalse(self.page.locator('#googleRosterCardsSaved').is_checked())
+
+    def test_a_failed_new_posting_preview_invalidates_the_previous_confirmation(self):
+        self.enable_publishing(); self.create_cards(); self.prepare_posts()
+        self.assertTrue(self.page.locator('#googleRosterPublishPosts').is_visible())
+        self.page.evaluate("__publishError='oauth-denied'")
+        self.prepare_posts()
+        self.assertEqual(self.page.locator('#googleRosterPublishPosts').count(), 0)
+        self.assertEqual(self.publishing_calls('publish'), [])
+        self.assertEqual(self.page.evaluate('__import.getState().cardCount'), 2)
+
+    def test_pending_publish_blocks_close_and_unload_even_after_cards_were_printed(self):
+        self.enable_publishing(); self.create_cards()
+        self.page.locator('#googleRosterCardsSaved').check(); self.prepare_posts()
+        self.page.evaluate("__publishHold='publish'")
+        self.page.locator('#googleRosterPublishPosts').click()
+        self.page.wait_for_function('typeof __releasePublishing==="function"')
+        self.assertFalse(self.page.evaluate('__import.close()'))
+        self.assertTrue(self.page.evaluate("()=>{const event=new Event('beforeunload',{cancelable:true});dispatchEvent(event);return event.defaultPrevented}"))
+        self.page.evaluate('__releasePublishing()'); self.idle()
+        self.assertTrue(self.page.evaluate('__import.close()'))
+
+    def test_refresh_adds_only_new_unlinked_students_to_the_same_created_class(self):
+        self.preview(); self.page.locator('#googleRosterChoice-1').select_option('skip')
+        self.page.locator('#googleRosterImport').click(); self.idle()
+        self.assertTrue(self.page.locator('#googleRosterRefresh').is_disabled())
+        self.page.locator('#googleRosterCardsSaved').check()
+        self.page.evaluate("""()=>{
+          __status={'student-1':{status:'existing',profileId:'profile-new-1',alias:'Gold Owl 21'}};
+          __students.push({userId:'student-3',name:'Claire Example'});
+        }""")
+        self.page.locator('#googleRosterRefresh').click(); self.idle()
+        self.assertEqual(self.calls('preview')[-1]['value']['classId'], 'class-created')
+        self.assertEqual(self.page.locator('#googleRosterTarget').input_value(), 'class-created')
+        self.assertEqual(self.page.locator('#googleRosterChoice-0').count(), 0)
+        self.assertEqual(self.page.locator('#googleRosterChoice-1').input_value(), 'skip', 'Previously skipped students stay skipped')
+        self.assertEqual(self.page.locator('#googleRosterChoice-2').input_value(), 'create')
+        self.assertEqual(self.page.locator('#googleRosterImport').inner_text(), 'Add 1 new profile')
+        self.page.locator('#googleRosterImport').click(); self.idle()
+        request = self.calls('import')[-1]['value']
+        self.assertEqual(request['classId'], 'class-created')
+        self.assertEqual(request['choices'], [{'userId':'student-1','action':'skip'},{'userId':'student-2','action':'skip'},{'userId':'student-3','action':'create'}])
+        self.assertEqual(self.page.evaluate('__import.getState().cardCount'), 1)
+
+    def test_fresh_existing_class_can_select_unlinked_students_without_touching_missing_profiles(self):
+        self.page.evaluate("""()=>{
+          __students.push({userId:'student-3',name:'Claire Example'});
+          __status={'student-1':{status:'existing',profileId:'profile-one',alias:'Blue Owl 27'},'student-3':{status:'missing'}};
+        }""")
+        self.preview(existing=True)
+        self.assertEqual(self.page.locator('#googleRosterChoice-1').input_value(), 'skip')
+        self.page.locator('#googleRosterSelectUnlinked').click()
+        self.assertEqual(self.page.locator('#googleRosterChoice-0').count(), 0)
+        self.assertEqual(self.page.locator('#googleRosterChoice-1').input_value(), 'create')
+        self.assertEqual(self.page.locator('#googleRosterChoice-2').input_value(), 'skip')
+        self.assertEqual(self.page.locator('#googleRosterImport').inner_text(), 'Add 1 new profile')
+
+    def test_repaired_profile_link_for_same_google_student_is_not_skipped_as_an_old_post(self):
+        self.enable_publishing(); self.create_cards(); self.prepare_posts(); self.publish_posts()
+        self.page.locator('#googleRosterDone').click()
+        self.page.evaluate("__students=[{userId:'student-1',name:'Alice Example'}];__status={'student-1':{status:'missing'}}")
+        self.preview(existing=True)
+        self.page.locator('#googleRosterChoice-0').select_option('create')
+        self.page.locator('#googleRosterImport').click(); self.idle()
+        self.prepare_posts()
+        self.assertEqual([card['userId'] for card in self.publishing_calls('preview')[-1]['value']['cards']], ['student-1'])
+        self.assertTrue(self.page.locator('#googleRosterPublishPosts').is_visible())
+        self.publish_posts()
+        posts = self.page.evaluate('__posts')
+        self.assertEqual([post['userId'] for post in posts], ['student-1','student-2','student-1'])
+        self.assertNotEqual(posts[0]['link'], posts[2]['link'])
+
+    def test_an_unreviewed_ready_recipient_prevents_publishing_the_plan(self):
+        self.enable_publishing(); self.create_cards()
+        self.page.evaluate("__postExtras=[{userId:'unexpected-student',name:'Wrong recipient',alias:'Blue Owl 27',status:'ready'}]")
+        self.prepare_posts()
+        self.assertEqual(self.page.locator('#googleRosterPublishPosts').count(), 0)
+        self.assertEqual(self.publishing_calls('publish'), [])
+        self.assertEqual(self.page.evaluate('__posts.length'), 0)
+        self.assertEqual(self.page.evaluate('__import.getState().cardCount'), 2)
 
 
 if __name__ == '__main__':

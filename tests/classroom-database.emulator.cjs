@@ -38,6 +38,12 @@ function importCourse(students={student_1001:PROFILE},classId=CLASS){
  for(const [studentId,profileId]of Object.entries(students)){rows[studentId]={profileId,createdAt:now};links[profileId]=studentId;}
  return {classId,createdAt:now,updatedAt:now,students:rows,profileLinks:links};
 }
+const DELIVERY=`${IMPORT_COURSE}/deliveries/student_1001/${HASH}`;
+const ATTEMPT_A='a'.repeat(32),ATTEMPT_B='b'.repeat(32);
+function delivery(stateName='claimed',attemptId=ATTEMPT_A){
+ const now=stamp();return {profileId:PROFILE,attemptId,state:stateName,leaseUntil:stateName==='claimed'||stateName==='sending'?now+90000:0,createdAt:now,updatedAt:now,
+  ...(stateName==='posted'?{materialId:'material_1001'}:{})};
+}
 
 before(async()=>{
  const fragment=JSON.parse(fs.readFileSync(path.join(__dirname,'../classroom-database.rules.json'),'utf8'));
@@ -61,6 +67,102 @@ beforeEach(async()=>{
  await env.clearDatabase();await env.withSecurityRulesDisabled(context=>write(context.database(),'/',seed));
 });
 after(async()=>{if(env)await env.cleanup();});
+
+test('private Classroom delivery claims allow only their current mapped owner and card hash',async()=>{
+ const owner=staff();await assertSucceeds(write(owner,IMPORT_COURSE,importCourse()));
+ await assertSucceeds(write(owner,DELIVERY,delivery()));
+ assert.equal((await assertSucceeds(read(owner,DELIVERY))).val().state,'claimed');
+ for(const database of [env.unauthenticatedContext().database(),anonymous('student_one'),google('other_admin'),google('unapproved_teacher'),
+  env.authenticatedContext('school_admin',{firebase:{sign_in_provider:'password'}}).database()]){
+  await assertFails(read(database,DELIVERY));await assertFails(write(database,DELIVERY,delivery()));
+ }
+ await assertFails(read(owner,IMPORTS));await assertFails(remove(owner,DELIVERY));
+ const another=delivery();another.profileId=OTHER_PROFILE;
+ await assertFails(write(owner,`${IMPORT_COURSE}/deliveries/student_1002/${HASH}`,another));
+ await assertFails(write(owner,`${IMPORT_COURSE}/deliveries/student_1001/${OTHER_HASH}`,delivery()));
+ await env.withSecurityRulesDisabled(context=>remove(context.database(),`${ROOT}/admins/school_admin`));
+ await assertFails(read(owner,DELIVERY));await assertFails(write(owner,DELIVERY,delivery()));
+});
+
+test('Classroom delivery requires the global pass mapping to resolve to the same class and profile',async()=>{
+ const owner=staff();await assertSucceeds(write(owner,IMPORT_COURSE,importCourse()));
+ for(const binding of [{classId:OTHER_CLASS,profileId:PROFILE,createdAt:stamp()},
+  {classId:CLASS,profileId:OTHER_PROFILE,createdAt:stamp()},null]){
+  await env.withSecurityRulesDisabled(context=>write(context.database(),`${ROOT}/passes/${HASH}`,binding));
+  await assertFails(write(owner,DELIVERY,delivery()),'Matching profile passHash alone must not allow a wrong or absent global binding');
+ }
+ await env.withSecurityRulesDisabled(context=>write(context.database(),`${ROOT}/passes/${HASH}`,{classId:CLASS,profileId:PROFILE,createdAt:stamp()}));
+ const claim=delivery();await assertSucceeds(write(owner,DELIVERY,claim));
+ await env.withSecurityRulesDisabled(context=>write(context.database(),`${ROOT}/passes/${HASH}`,{classId:CLASS,profileId:OTHER_PROFILE,createdAt:stamp()}));
+ await assertFails(write(owner,DELIVERY,{...claim,state:'sending',updatedAt:stamp()}));
+});
+
+test('concurrent Classroom delivery attempts have one claim winner and only that attempt can start sending',async()=>{
+ const owner=staff();await assertSucceeds(write(owner,IMPORT_COURSE,importCourse()));
+ const a=delivery('claimed',ATTEMPT_A),b=delivery('claimed',ATTEMPT_B);
+ const results=await Promise.allSettled([write(owner,DELIVERY,a),write(owner,DELIVERY,b)]);
+ assert.equal(results.filter(result=>result.status==='fulfilled').length,1);
+ const winner=(await assertSucceeds(read(owner,DELIVERY))).val(),loser=winner.attemptId===ATTEMPT_A?ATTEMPT_B:ATTEMPT_A;
+ await assertFails(write(owner,DELIVERY,{...winner,attemptId:loser,state:'sending',updatedAt:stamp()}));
+ await assertSucceeds(write(owner,DELIVERY,{...winner,state:'sending',updatedAt:stamp()}));
+ await assertFails(write(owner,DELIVERY,{...winner,state:'claimed',attemptId:loser,leaseUntil:stamp()+90000,updatedAt:stamp()}));
+});
+
+test('Classroom delivery states reconcile to terminal posted records without reopening sending or uncertain rows',async()=>{
+ const owner=staff();await assertSucceeds(write(owner,IMPORT_COURSE,importCourse()));
+ const claim=delivery();await assertSucceeds(write(owner,DELIVERY,claim));
+ const sending={...claim,state:'sending',updatedAt:stamp()};await assertSucceeds(write(owner,DELIVERY,sending));
+ const uncertain={...sending,state:'uncertain',leaseUntil:0,updatedAt:stamp()};await assertSucceeds(write(owner,DELIVERY,uncertain));
+ for(const attemptId of [ATTEMPT_A,ATTEMPT_B])await assertFails(write(owner,DELIVERY,{...uncertain,state:'claimed',attemptId,leaseUntil:stamp()+90000,updatedAt:stamp()}));
+ await assertFails(write(owner,DELIVERY,{...uncertain,state:'failed',updatedAt:stamp()}));
+ const posted={...uncertain,state:'posted',materialId:'material_1001',updatedAt:stamp()};
+ await assertSucceeds(write(owner,DELIVERY,posted));await assertSucceeds(write(owner,DELIVERY,posted));
+ for(const change of [{state:'claimed',leaseUntil:stamp()+90000},{state:'uncertain'},{materialId:'another_material'},{leaseUntil:1},{attemptId:ATTEMPT_B}])
+  await assertFails(write(owner,DELIVERY,{...posted,...change}));
+});
+
+test('Classroom delivery retry requires a failed attempt or an expired unused claim and keeps creation history',async()=>{
+ const owner=staff();await assertSucceeds(write(owner,IMPORT_COURSE,importCourse()));
+ const expired={...delivery(),createdAt:stamp()-5000,updatedAt:stamp()-5000,leaseUntil:stamp()-1};
+ await env.withSecurityRulesDisabled(context=>write(context.database(),DELIVERY,expired));
+ await assertFails(write(owner,DELIVERY,{...expired,state:'sending',updatedAt:stamp(),leaseUntil:stamp()+90000}));
+ await assertFails(write(owner,DELIVERY,{...expired,state:'claimed',updatedAt:stamp(),leaseUntil:stamp()+90000}));
+ const retry={...expired,state:'claimed',attemptId:ATTEMPT_B,updatedAt:stamp(),leaseUntil:stamp()+90000};
+ await assertSucceeds(write(owner,DELIVERY,retry));
+ const sending={...retry,state:'sending',updatedAt:stamp()};await assertSucceeds(write(owner,DELIVERY,sending));
+ const failed={...sending,state:'failed',leaseUntil:0,updatedAt:stamp()};await assertSucceeds(write(owner,DELIVERY,failed));
+ await assertFails(write(owner,DELIVERY,{...failed,state:'claimed',leaseUntil:stamp()+90000,updatedAt:stamp()}));
+ await assertSucceeds(write(owner,DELIVERY,{...failed,state:'claimed',attemptId:ATTEMPT_A,leaseUntil:stamp()+90000,updatedAt:stamp()}));
+ assert.equal((await assertSucceeds(read(owner,DELIVERY))).val().createdAt,expired.createdAt);
+});
+
+test('Classroom delivery reconciliation can record an already existing material without claiming permission to post',async()=>{
+ const owner=staff();await assertSucceeds(write(owner,IMPORT_COURSE,importCourse()));
+ for(const stateName of ['sending','uncertain','failed'])await assertFails(write(owner,DELIVERY,delivery(stateName)));
+ const posted=delivery('posted');await assertSucceeds(write(owner,DELIVERY,posted));
+ await assertFails(write(owner,DELIVERY,{...posted,state:'claimed',attemptId:ATTEMPT_B,leaseUntil:stamp()+90000,updatedAt:stamp()}));
+ await env.withSecurityRulesDisabled(context=>remove(context.database(),DELIVERY));
+ const claim=delivery();await assertSucceeds(write(owner,DELIVERY,claim));
+ await assertSucceeds(write(owner,DELIVERY,{...claim,state:'posted',leaseUntil:0,materialId:'manual_material_1001',updatedAt:stamp()}));
+});
+
+test('Classroom delivery ledger rejects private links, invalid leases, stale cards, and changed bindings',async()=>{
+ const owner=staff();await assertSucceeds(write(owner,IMPORT_COURSE,importCourse()));
+ for(const mutate of [row=>{row.accessToken='secret';},row=>{row.link='https://example.invalid/#classroom-pass=secret';},row=>{row.rawPass='secret';},
+  row=>{row.studentName='Private name';},row=>{row.leaseUntil=stamp()+121000;},row=>{row.leaseUntil=0;},row=>{row.createdAt=stamp()+60000;},
+  row=>{row.attemptId='invalid';},row=>{row.materialId='unexpected';},row=>{row.profileId=OTHER_PROFILE;}]){
+  const row=delivery();mutate(row);await assertFails(write(owner,DELIVERY,row));
+ }
+ const noId=delivery('posted');delete noId.materialId;await assertFails(write(owner,DELIVERY,noId));
+ const badId=delivery('posted');badId.materialId='bad material id';await assertFails(write(owner,DELIVERY,badId));
+ const claim=delivery();await assertSucceeds(write(owner,DELIVERY,claim));
+ await env.withSecurityRulesDisabled(context=>ref(context.database(),ROOT).update({
+  [`classes/${CLASS}/profiles/${PROFILE}/meta/passHash`]:NEW_HASH,
+  [`passes/${NEW_HASH}`]:{classId:CLASS,profileId:PROFILE,createdAt:stamp()}
+ }));
+ await assertFails(write(owner,DELIVERY,{...claim,state:'sending',updatedAt:stamp()}));
+ await assertSucceeds(write(owner,`${IMPORT_COURSE}/deliveries/student_1001/${NEW_HASH}`,delivery()));
+});
 
 test('Classroom import mappings are visible only to their exact approved Google owner',async()=>{
  const owner=staff(),location=IMPORT_COURSE;

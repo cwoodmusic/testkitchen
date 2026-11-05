@@ -3562,6 +3562,40 @@
         ".validate": "($profileId.matches(/^[A-Za-z0-9_-]{8,64}$/)) && ((newData.isString()) && (newData.val().length >= 1) && (newData.val().length <= 128) && (newData.val().matches(/^[A-Za-z0-9_-]{1,128}$/))) && (newData.parent().parent().child(\"students\").child(newData.val()).child(\"profileId\").val() === $profileId)"
        }
       },
+      "deliveries": {
+       ".validate": "newData.hasChildren()",
+       "$googleStudentId": {
+        ".validate": "$googleStudentId.matches(/^[A-Za-z0-9_-]{1,128}$/)",
+        "$passHash": {
+         ".write": "(((auth !== null && auth.token.firebase.sign_in_provider === \"google.com\") && (root.child(\"classroomV1/admins\").child(auth.uid).val() === true)) && (auth.uid === $teacherUid)) && (newData.exists())",
+         ".validate": "($passHash.matches(/^[a-f0-9]{64}$/)) && (newData.hasChildren([\"profileId\",\"attemptId\",\"state\",\"leaseUntil\",\"createdAt\",\"updatedAt\"])) && (newData.child(\"profileId\").val() === root.child(\"classroomV1/classroomImports\").child($teacherUid).child($courseId).child(\"students\").child($googleStudentId).child(\"profileId\").val()) && (root.child(\"classroomV1/classroomImports\").child($teacherUid).child($courseId).child(\"profileLinks\").child(newData.child(\"profileId\").val()).val() === $googleStudentId) && (root.child(\"classroomV1/classes\").child(root.child(\"classroomV1/classroomImports\").child($teacherUid).child($courseId).child(\"classId\").val()).child(\"profiles\").child(newData.child(\"profileId\").val()).child(\"meta/passHash\").val() === $passHash) && (root.child(\"classroomV1/passes\").child($passHash).child(\"classId\").val() === root.child(\"classroomV1/classroomImports\").child($teacherUid).child($courseId).child(\"classId\").val()) && (root.child(\"classroomV1/passes\").child($passHash).child(\"profileId\").val() === newData.child(\"profileId\").val()) && (!data.exists() || newData.child(\"profileId\").val() === data.child(\"profileId\").val()) && ((((!data.exists()) && (newData.child(\"state\").val() === \"claimed\")) || ((!data.exists()) && (newData.child(\"state\").val() === \"posted\") && (newData.child(\"leaseUntil\").val() === 0)) || ((data.child(\"state\").val() === \"claimed\") && (newData.child(\"state\").val() === \"claimed\") && (((newData.child(\"attemptId\").val() === data.child(\"attemptId\").val() && data.child(\"leaseUntil\").val() > now) || (newData.child(\"attemptId\").val() !== data.child(\"attemptId\").val() && data.child(\"leaseUntil\").val() <= now)))) || ((data.child(\"state\").val() === \"claimed\") && (newData.child(\"state\").val() === \"sending\") && (newData.child(\"attemptId\").val() === data.child(\"attemptId\").val()) && (data.child(\"leaseUntil\").val() > now)) || ((data.child(\"state\").val() === \"claimed\") && (newData.child(\"state\").val() === \"posted\") && (newData.child(\"attemptId\").val() === data.child(\"attemptId\").val())) || ((data.child(\"state\").val() === \"sending\") && (newData.child(\"attemptId\").val() === data.child(\"attemptId\").val()) && ((newData.child(\"state\").val() === \"posted\" || newData.child(\"state\").val() === \"uncertain\" || newData.child(\"state\").val() === \"failed\"))) || ((data.child(\"state\").val() === \"uncertain\") && (newData.child(\"attemptId\").val() === data.child(\"attemptId\").val()) && ((newData.child(\"state\").val() === \"posted\" || newData.child(\"state\").val() === \"uncertain\"))) || ((data.child(\"state\").val() === \"failed\") && (((newData.child(\"state\").val() === \"claimed\" && newData.child(\"attemptId\").val() !== data.child(\"attemptId\").val()) || (newData.child(\"state\").val() === \"posted\" && newData.child(\"attemptId\").val() === data.child(\"attemptId\").val())))) || ((data.child(\"state\").val() === \"posted\") && (newData.child(\"state\").val() === \"posted\") && (newData.child(\"attemptId\").val() === data.child(\"attemptId\").val()) && (newData.child(\"materialId\").val() === data.child(\"materialId\").val()) && (newData.child(\"leaseUntil\").val() === data.child(\"leaseUntil\").val()) && (newData.child(\"updatedAt\").val() === data.child(\"updatedAt\").val())))) && ((newData.child(\"state\").val() === \"claimed\" || newData.child(\"state\").val() === \"sending\" ? newData.child(\"leaseUntil\").val() > now : true)) && ((newData.child(\"state\").val() === \"posted\" ? newData.child(\"materialId\").exists() : !newData.child(\"materialId\").exists()))",
+         "profileId": {
+          ".validate": "(newData.isString()) && (newData.val().length >= 8) && (newData.val().length <= 64) && (newData.val().matches(/^[A-Za-z0-9_-]{8,64}$/))"
+         },
+         "attemptId": {
+          ".validate": "(newData.isString()) && (newData.val().length >= 32) && (newData.val().length <= 32) && (newData.val().matches(/^[a-f0-9]{32}$/))"
+         },
+         "state": {
+          ".validate": "(newData.isString()) && (newData.val().length >= 6) && (newData.val().length <= 9) && (newData.val().matches(/^(claimed|sending|posted|uncertain|failed)$/))"
+         },
+         "leaseUntil": {
+          ".validate": "(newData.isNumber()) && (newData.val() % 1 === 0) && (newData.val() >= 0) && (newData.val() <= now + 120000)"
+         },
+         "createdAt": {
+          ".validate": "((newData.isNumber()) && (newData.val() % 1 === 0) && (newData.val() >= 0) && (newData.val() <= now)) && (!data.exists() || newData.val() === data.val())"
+         },
+         "updatedAt": {
+          ".validate": "((newData.isNumber()) && (newData.val() % 1 === 0) && (newData.val() >= 0) && (newData.val() <= now)) && (!data.exists() || newData.val() >= data.val())"
+         },
+         "materialId": {
+          ".validate": "(newData.isString()) && (newData.val().length >= 1) && (newData.val().length <= 128) && (newData.val().matches(/^[A-Za-z0-9_-]{1,128}$/))"
+         },
+         "$other": {
+          ".validate": false
+         }
+        }
+       }
+      },
       "$other": {
        ".validate": false
       }
