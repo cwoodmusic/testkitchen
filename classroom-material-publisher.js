@@ -191,7 +191,7 @@
       if(!await transition(current,row,lease,'sending',op)){row.status='busy';continue;}
       op.guard();
       dispatched=true;
-      const response=await options.google.createProfileMaterial({courseId:current.courseId,userId:row.userId,link:row.link,title:'Your Coda Arcade profile · '+row.alias});op.guard();
+      const response=await options.google.createProfileMaterial({courseId:current.courseId,userId:row.userId,link:row.link,title:'Your Coda Arcade Profile: '+row.alias});op.guard();
       if(response?.ok===true&&validId(response.materialId)){
        try{const saved=await transition(current,row,lease,'posted',op,response.materialId);row.status=saved?'posted':'uncertain';row.materialId=response.materialId;}
        catch(cause){if(!op.current())throw cause;row.status='uncertain';row.code='delivery-unconfirmed';}

@@ -59,7 +59,7 @@ test('only an explicit matching confirmed plan publishes and only ledger records
  for(const card of f.cards){const ledger=read(f.tree,f.path(card));assert.equal(ledger.state,'posted');assert.match(ledger.attemptId,/^[a-f0-9]{32}$/);assert.equal(ledger.profileId,card.profileId);assert.equal(ledger.leaseUntil,0);}
  assert.deepEqual(f.transactions.map(row=>row.next.state),['claimed','sending','posted','claimed','sending','posted']);
  const stored=JSON.stringify(f.tree);assert.doesNotMatch(stored,/https:|PRIVATE-PASS|PRIVATE STUDENT/);
- assert.deepEqual(f.posts.map(row=>row.userId),f.students.map(row=>row.userId));assert.ok(f.posts.every(row=>row.title.startsWith('Your Coda Arcade profile')));
+ assert.deepEqual(f.posts.map(row=>row.userId),f.students.map(row=>row.userId));assert.ok(f.posts.every(row=>/^Your Coda Arcade Profile: [A-Za-z]+ [A-Za-z]+ [1-9][0-9]$/.test(row.title)));
 });
 test('a later append posts only the newcomer and leaves prior materials and profile state untouched',async()=>{
  const f=fixture();assert.equal((await f.publish()).posted,2);const oldMaterials=clone(f.materials),oldProfiles=clone(f.tree.classes),oldLedger=clone(read(f.tree,'classroomImports/teacher_fixture_1/course_fixture_1/deliveries'));
