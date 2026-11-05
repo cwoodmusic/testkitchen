@@ -1,1 +1,0 @@
-Neon Nights v4: aligned continuous main floor, removed pink mid-floor line and stray keyboard, NPCs rendered with player avatar art and showcase accessories, NPC room visits and emotes, native fullscreen button. Future camera-scrolling map not yet implemented. Replace root files in GitHub; song-machine/index.html unchanged. Test in browser after deployment.

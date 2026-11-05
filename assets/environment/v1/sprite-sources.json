@@ -162,24 +162,6 @@
     "height": 344
   },
   {
-    "name": "speaker",
-    "source": "fixtures",
-    "cell": [
-      920,
-      445,
-      400,
-      442
-    ],
-    "crop": [
-      998,
-      510,
-      174,
-      309
-    ],
-    "width": 174,
-    "height": 309
-  },
-  {
     "name": "bollard",
     "source": "fixtures",
     "cell": [

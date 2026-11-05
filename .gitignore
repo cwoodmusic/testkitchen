@@ -1,0 +1,22 @@
+# Python browser-test caches
+__pycache__/
+*.py[cod]
+.pytest_cache/
+
+# Local dependencies and browser-test reports
+node_modules/
+playwright-report/
+test-results/
+
+# Local editor and operating-system files
+.DS_Store
+Thumbs.db
+*~
+*.swp
+*.swo
+
+# Local Firebase CLI/emulator output
+.firebase/
+firebase-debug.log*
+database-debug.log*
+ui-debug.log*

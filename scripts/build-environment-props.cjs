@@ -4,7 +4,7 @@ const fs=require('node:fs/promises'),path=require('node:path'),http=require('nod
 const parts=[
  ['lounge-couch','furniture-plants',[0,0,1090,793]],['table','furniture-plants',[1090,0,420,793]],['palm','furniture-plants',[1510,0,473,793]],
  ['dance-couch-left','fixtures',[0,0,440,445]],['dance-couch-right','fixtures',[440,0,380,445]],['boutique-counter','fixtures',[820,0,350,445]],['main-counter','fixtures',[1170,0,604,445]],
- ['dj-console','fixtures',[0,445,540,442]],['mirror','fixtures',[540,445,360,442]],['speaker','fixtures',[920,445,400,442]],['bollard','fixtures',[1380,445,394,442]]
+ ['dj-console','fixtures',[0,445,540,442]],['mirror','fixtures',[540,445,360,442]],['bollard','fixtures',[1380,445,394,442]]
 ];
 async function main(){
  const root=path.resolve(__dirname,'..'),output=path.join(root,'assets/environment/v1'),profile=await fs.mkdtemp(path.join(os.tmpdir(),'coda-environment-build-'));
