@@ -11,8 +11,8 @@
 <script src="arcade-host.js?v=bundled-profile-names-1"></script>
   <script src="classroom-profile-data.js?v=history-1"></script>
   <script src="classroom-storage.js?v=guest-100"></script>
-  <script src="classroom-service.js?v=classroom-posts-1"></script>
-  <script src="title-screen.js?v=classroom-post-titles-1" defer></script>
+  <script src="classroom-service.js?v=classroom-class-rebuild-1"></script>
+  <script src="title-screen.js?v=classroom-class-rebuild-1" defer></script>
 </head>
 <body>
   <div class="arcade-scene" aria-hidden="true"></div>
@@ -30,12 +30,12 @@
       <h2 id="startTitle">Ready to play?</h2>
       <p id="titleGreeting" class="start-greeting">Choose how to start.</p>
       <nav class="start-actions" aria-label="Start playing">
-        <a id="titleGuest" class="start-button guest-button is-primary" href="world-preview.html?v=classroom-post-titles-1&amp;guest=1"><span class="button-icon" aria-hidden="true"><svg viewBox="0 0 48 48" focusable="false"><rect x="5" y="5" width="38" height="38" rx="11" fill="currentColor" opacity=".16"/><path d="m19 14 15 10-15 10Z" fill="currentColor"/></svg></span><span><strong>Start playing</strong><small>Play without a profile card</small></span><b aria-hidden="true"><svg width="20" height="20" viewBox="0 0 24 24" aria-hidden="true" focusable="false"><path d="M5 12h14m-6-6 6 6-6 6" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"/></svg></b></a>
-        <a id="titleProfile" class="start-button profile-button" href="world-preview.html?v=classroom-post-titles-1&amp;profile=student"><span class="button-icon" aria-hidden="true"><svg viewBox="0 0 48 48" focusable="false"><rect x="4" y="9" width="40" height="31" rx="5" fill="none" stroke="currentColor" stroke-width="3"/><circle cx="17" cy="21" r="5" fill="currentColor"/><path d="M9 34c0-10 16-10 16 0m5-15h8m-8 8h8" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round"/></svg></span><span><strong>Use my player card</strong><small>Open your saved classroom player</small></span><b aria-hidden="true"><svg width="20" height="20" viewBox="0 0 24 24" aria-hidden="true" focusable="false"><path d="M5 12h14m-6-6 6 6-6 6" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"/></svg></b></a>
+        <a id="titleGuest" class="start-button guest-button is-primary" href="world-preview.html?v=classroom-class-rebuild-1&amp;guest=1"><span class="button-icon" aria-hidden="true"><svg viewBox="0 0 48 48" focusable="false"><rect x="5" y="5" width="38" height="38" rx="11" fill="currentColor" opacity=".16"/><path d="m19 14 15 10-15 10Z" fill="currentColor"/></svg></span><span><strong>Start playing</strong><small>Play without a profile card</small></span><b aria-hidden="true"><svg width="20" height="20" viewBox="0 0 24 24" aria-hidden="true" focusable="false"><path d="M5 12h14m-6-6 6 6-6 6" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"/></svg></b></a>
+        <a id="titleProfile" class="start-button profile-button" href="world-preview.html?v=classroom-class-rebuild-1&amp;profile=student"><span class="button-icon" aria-hidden="true"><svg viewBox="0 0 48 48" focusable="false"><rect x="4" y="9" width="40" height="31" rx="5" fill="none" stroke="currentColor" stroke-width="3"/><circle cx="17" cy="21" r="5" fill="currentColor"/><path d="M9 34c0-10 16-10 16 0m5-15h8m-8 8h8" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round"/></svg></span><span><strong>Use my player card</strong><small>Open your saved classroom player</small></span><b aria-hidden="true"><svg width="20" height="20" viewBox="0 0 24 24" aria-hidden="true" focusable="false"><path d="M5 12h14m-6-6 6 6-6 6" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"/></svg></b></a>
       </nav>
       <p id="titleSessionStatus" class="title-session-status" data-session-state="guest" role="status" aria-live="polite" hidden></p>
       <p id="titleProfileHint" class="start-hint" role="status">Your teacher can help you find your player card.</p>
-      <a id="titleTeacher" class="teacher-link" href="world-preview.html?v=classroom-post-titles-1&amp;profile=admin"><span>For teachers</span><svg width="16" height="16" viewBox="0 0 24 24" aria-hidden="true" focusable="false"><path d="M6 18 18 6M6 6h12v12" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg></a>
+      <a id="titleTeacher" class="teacher-link" href="world-preview.html?v=classroom-class-rebuild-1&amp;profile=admin"><span>For teachers</span><svg width="16" height="16" viewBox="0 0 24 24" aria-hidden="true" focusable="false"><path d="M6 18 18 6M6 6h12v12" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg></a>
     </section>
   </main>
   <footer class="title-footer"><span>Music games. Big adventures.</span><a id="titleClassic" href="classic-arcade.html?v=guest-100">Original arcade <svg width="16" height="16" viewBox="0 0 24 24" aria-hidden="true" focusable="false"><path d="M6 18 18 6M6 6h12v12" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg></a></footer>

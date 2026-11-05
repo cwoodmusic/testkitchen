@@ -110,7 +110,7 @@ node tools/classroom-rules-merge.cjs --base CURRENT-RULES.json --out UPDATED-RUL
    and pictures. The private key is separate and contains no sign-in passes.
 
 Up to 200 profiles are supported per arcade class. A linked course keeps its
-chosen arcade class. A deleted linked class is not recreated by a later import.
+chosen arcade class. A deleted linked class is not recreated automatically.
 Print filenames contain the class label and a unique batch suffix, not names,
 email addresses, or private pass codes. Cancelling or failing to print keeps
 the new receipts available until they are explicitly cleared. Save them before
@@ -121,6 +121,23 @@ the same profiles and does not automatically issue new cards. Open that class
 in **For teachers** and explicitly use **Replace pass** for each card needed.
 Replacing a pass preserves progress but invalidates the old card and its active
 devices.
+
+### Rebuild a deleted linked class
+
+If you deleted an arcade class in teacher tools, preview its Google Classroom
+course again. When both arcade class records are completely absent, the preview
+offers **Rebuild empty class**. Confirm the class name to recreate only the empty
+class at its original linked ID. No Firebase rules update is needed.
+
+Review the roster after rebuilding, then explicitly import the selected students
+to create fresh profiles and cards. Rebuilding does not restore deleted profiles,
+saved progress, or old cards. Other classes and existing Classroom materials are
+preserved. Publish the new links after importing; old materials still contain
+invalid old links and can be removed manually in Classroom.
+
+Rebuilding is unavailable if either class record still contains data. A missing
+class without a saved course connection instead offers **Refresh arcade classes**
+so you can remove a stale selection and preview again.
 
 ## 7. Post private profile links
 

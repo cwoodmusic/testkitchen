@@ -600,6 +600,38 @@ test('renaming a class deleted after its metadata was read cannot recreate it or
  assert.equal((await read(admin,`${ROOT}/directory/${CLASS}`)).val(),null);
 });
 
+test('an explicit metadata-only rebuild preserves the deleted class binding and all other records under existing rules',async()=>{
+ const admin=staff();await assertSucceeds(write(admin,IMPORT_COURSE,importCourse()));
+ await assertSucceeds(ref(admin,ROOT).update({
+  [`classes/${CLASS}`]:null,[`directory/${CLASS}`]:null,[`passes/${HASH}`]:null,
+  'sessions/student_one':null,'sessions/second_device':null
+ }));
+ let before,after;await env.withSecurityRulesDisabled(async context=>{before=(await read(context.database(),ROOT)).val();});
+ const meta={ownerUid:'school_admin',label:'Grade 5 Music',createdAt:{'.sv':'timestamp'}};
+ const changes={[`classes/${CLASS}/meta`]:meta,[`directory/${CLASS}/meta`]:meta};
+ const password=env.authenticatedContext('school_admin',{firebase:{sign_in_provider:'password'}}).database();
+ for(const database of [env.unauthenticatedContext().database(),anonymous('student_one'),google('unapproved_teacher'),password])
+  await assertFails(ref(database,ROOT).update(changes));
+ await assertSucceeds(ref(admin,ROOT).update(changes));
+ const rebuilt=(await read(admin,`${ROOT}/classes/${CLASS}/meta`)).val();
+ assert.equal(rebuilt.ownerUid,'school_admin');assert.equal(rebuilt.label,'Grade 5 Music');assert.equal(typeof rebuilt.createdAt,'number');
+ assert.deepEqual((await read(admin,`${ROOT}/directory/${CLASS}/meta`)).val(),rebuilt);
+ await env.withSecurityRulesDisabled(async context=>{after=(await read(context.database(),ROOT)).val();});
+ const expected=clone(before);expected.classes[CLASS]={meta:rebuilt};expected.directory[CLASS]={meta:rebuilt};
+ assert.deepEqual(after,expected,'Rebuild changes only two metadata leaves; profiles, passes, sessions and progress are not restored.');
+ assert.deepEqual((await read(admin,IMPORT_COURSE)).val(),before.classroomImports.school_admin.course_1001);
+ await assertFails(ref(admin,ROOT).update({
+  [`classes/${CLASS}/meta`]:{...rebuilt,createdAt:rebuilt.createdAt-1},
+  [`directory/${CLASS}/meta`]:{...rebuilt,createdAt:rebuilt.createdAt-1}
+ }),'A stale rebuild cannot replace an existing class creation timestamp.');
+ await assertFails(ref(google('other_admin'),ROOT).update({
+  [`classes/${CLASS}/meta`]:{...rebuilt,ownerUid:'other_admin'},
+  [`directory/${CLASS}/meta`]:{...rebuilt,ownerUid:'other_admin'}
+ }),'Approved staff cannot overwrite the existing metadata owner.');
+ await env.withSecurityRulesDisabled(async context=>{after=(await read(context.database(),ROOT)).val();});
+ assert.deepEqual(after,expected);
+});
+
 test('school admins can atomically create/reissue/delete valid profiles but metadata remains closed',async()=>{
  const admin=staff(),newClass='classroom_0003',newProfile='profile_0003',now=stamp(),newHash='d'.repeat(64);
  await assertSucceeds(ref(admin,ROOT).update({

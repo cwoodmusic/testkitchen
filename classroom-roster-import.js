@@ -8,7 +8,7 @@
  const fail=code=>({ok:false,code}),record=value=>value&&typeof value==='object'&&!Array.isArray(value),own=(object,key)=>Object.prototype.hasOwnProperty.call(object,key);
  const reservedKeys=new Set([...Object.getOwnPropertyNames(Object.prototype),'prototype']);
  const googleId=value=>typeof value==='string'&&GOOGLE_ID.test(value)&&!reservedKeys.has(value),profileId=value=>typeof value==='string'&&PROFILE_ID.test(value)&&!reservedKeys.has(value),dictionary=()=>Object.create(null);
- const CODES=new Set(['admin-required','busy','session-changed','invalid-course','invalid-roster','invalid-class','invalid-class-label','invalid-profile','invalid-import-state','invalid-import-choices','roster-setup-required','offline','class-not-found','class-full','import-target-conflict','import-conflict','profile-already-linked','no-students-selected','import-failed']);
+ const CODES=new Set(['admin-required','busy','session-changed','invalid-course','invalid-roster','invalid-class','invalid-class-label','invalid-profile','invalid-import-state','invalid-import-choices','roster-setup-required','offline','class-not-found','class-full','import-target-conflict','import-conflict','profile-already-linked','no-students-selected','import-failed','rebuild-confirmation-required','class-rebuild-unavailable','class-rebuild-failed']);
  const error=code=>Object.assign(Error(code),{code});
  function encode(bytes){let bits=0,value=0,result='';for(const byte of bytes){value=(value<<8)|byte;bits+=8;while(bits>=5){result+=ALPHABET[(value>>>(bits-5))&31];bits-=5;}}if(bits)result+=ALPHABET[(value<<(5-bits))&31];return result;}
  function studentsFrom(value){
@@ -38,6 +38,13 @@
   const classIdFor=async(uid,courseId)=>'gclass_'+(await hash('coda-classroom-import-class:v1:'+uid+'\n'+courseId)).slice(0,40);
   const profileIdFor=async(uid,courseId,userId)=>'gprofile_'+(await hash('coda-classroom-import-profile:v1:'+uid+'\n'+courseId+'\n'+userId)).slice(0,40);
   async function read(path,op){const value=await options.read(path);op.guard();return value;}
+  async function importMapping(courseId,op){
+   let mapping;
+   try{mapping=await read('classroomImports/'+op.uid+'/'+courseId,op);}
+   catch(cause){if(!op.current())throw error('session-changed');if(/permission[-_ ]denied|PERMISSION_DENIED/i.test(cause?.code||cause?.message||''))throw error('roster-setup-required');throw cause;}
+   if(mapping!==null&&mapping!==undefined&&(!record(mapping)||!profileId(mapping.classId)||!Number.isFinite(mapping.createdAt)))throw error('invalid-import-state');
+   return mapping;
+  }
   function metadata(value){return record(value)&&typeof value.ownerUid==='string'&&typeof value.label==='string'&&Number.isFinite(value.createdAt);}
   async function profileMetadata(classId,ids,op){
    const result=dictionary(),queue=[...ids];
@@ -48,20 +55,22 @@
     }
    }));return result;
   }
-  async function inspect(request,op){
+  async function inspect(request,op,recoveryPreview=false){
    if(!record(request)||!googleId(request.courseId))throw error('invalid-course');
    const students=studentsFrom(request.students),courseId=request.courseId;
    if(request.classId!==undefined&&request.classId!==''&&!profileId(request.classId))throw error('invalid-class');
    op.guard();if(await options.online()!==true)throw error('offline');op.guard();
-   let mapping;
-   try{mapping=await read('classroomImports/'+op.uid+'/'+courseId,op);}
-   catch(cause){if(!op.current())throw error('session-changed');if(/permission[-_ ]denied|PERMISSION_DENIED/i.test(cause?.code||cause?.message||''))throw error('roster-setup-required');throw cause;}
-   if(mapping!==null&&mapping!==undefined&&(!record(mapping)||!profileId(mapping.classId)||!Number.isFinite(mapping.createdAt)))throw error('invalid-import-state');
+   const mapping=await importMapping(courseId,op);
    if(mapping&&request.classId&&mapping.classId!==request.classId)throw error('import-target-conflict');
    const classId=mapping?.classId||request.classId||await classIdFor(op.uid,courseId);op.guard();
    const [meta,directory]=await Promise.all([read('classes/'+classId+'/meta',op),read('directory/'+classId,op)]);op.guard();
    const exists=metadata(meta)&&record(directory)&&metadata(directory.meta);
-   if(!exists&&(mapping||request.classId))throw error('class-not-found');
+   if(!exists&&(mapping||request.classId)){
+    // A missing metadata row alone does not prove a class was deleted. Only
+    // offer an explicit rebuild when neither root has any remaining data.
+    if(recoveryPreview&&mapping&&meta==null&&directory==null&&await read('classes/'+classId,op)==null)throw Object.assign(error('class-not-found'),{canRebuild:true,classId,courseId});
+    throw error('class-not-found');
+   }
    if(!exists&&(meta!==null&&meta!==undefined||directory!==null&&directory!==undefined))throw error('class-not-found');
    if(exists&&!mapping&&!request.classId)throw error('import-target-conflict');
    const directoryProfiles=record(directory?.profiles)?directory.profiles:{};
@@ -82,7 +91,29 @@
   function friendly(cause,fallback){return fail(CODES.has(cause?.code)?cause.code:fallback);}
   async function previewRosterImport(request){
    if(activeImport)return fail('busy');
-   try{const op=operation(),value=await inspect(request,op);op.guard();return publicPreview(value);}catch(cause){return friendly(cause,'roster-unavailable');}
+   try{const op=operation(),value=await inspect(request,op,true);op.guard();return publicPreview(value);}catch(cause){const result=friendly(cause,'roster-unavailable');return result.code==='class-not-found'&&cause?.canRebuild===true?{...result,canRebuild:true,classId:cause.classId,courseId:cause.courseId}:result;}
+  }
+  async function rebuildDeletedClass(request){
+   if(activeImport)return fail('busy');const owner={};activeImport=owner;
+   try{
+    const op=operation();
+    if(!record(request)||!googleId(request.courseId))throw error('invalid-course');
+    if(request.confirmed!==true)throw error('rebuild-confirmation-required');
+    const label=typeof request.label==='string'?request.label.trim():'';
+    if(!LABEL.test(label))throw error('invalid-class-label');
+    op.guard();if(await options.online()!==true)throw error('offline');op.guard();
+    const mapping=await importMapping(request.courseId,op);if(!mapping)throw error('class-not-found');
+    const classId=mapping.classId,[classNode,directory]=await Promise.all([read('classes/'+classId,op),read('directory/'+classId,op)]);op.guard();
+    if(classNode!=null||directory!=null)throw error('class-rebuild-unavailable');
+    op.guard();if(await options.online()!==true)throw error('offline');op.guard();
+    const meta={ownerUid:op.uid,label,createdAt:options.serverTimestamp()};
+    // Preserve the immutable private course binding and every other namespace.
+    // Leaf writes also leave any concurrent profile creation untouched; existing
+    // metadata timestamps and owners remain protected by the database rules.
+    await options.update({['classes/'+classId+'/meta']:meta,['directory/'+classId+'/meta']:meta});op.guard();
+    return {ok:true,classId,label,rebuilt:true};
+   }catch(cause){return friendly(cause,'class-rebuild-failed');}
+   finally{if(activeImport===owner)activeImport=null;}
   }
   function chooseAlias(used){
    for(let count=0;count<32;count++){const bytes=options.random(3),picture=ANIMALS[bytes[1]%ANIMALS.length],alias=COLORS[bytes[0]%COLORS.length]+' '+picture+' '+String(10+bytes[2]%90);if(!used.has(alias)){used.add(alias);return {alias,picture:picture.toLowerCase()};}}
@@ -154,7 +185,7 @@
   }
   function clear(){generation++;activeImport=null;}
   function destroy(){clear();destroyed=true;}
-  return Object.freeze({previewRosterImport,importRoster,clear,destroy,getState:()=>({busy:!!activeImport})});
+  return Object.freeze({previewRosterImport,importRoster,rebuildDeletedClass,clear,destroy,getState:()=>({busy:!!activeImport})});
  }
  return Object.freeze({create});
 });

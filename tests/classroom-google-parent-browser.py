@@ -192,6 +192,38 @@ class GoogleClassroomParentUITests(unittest.TestCase):
         self.page.evaluate('__releasePublishing()'); self.idle()
         self.assertTrue(self.page.evaluate('__ui.requestClose()'))
 
+    def test_deleted_bound_class_rebuild_keeps_parent_target_and_waits_for_profile_import(self):
+        self.page.evaluate('''()=>{
+          __classes=[];__profiles={};window.__boundClassDeleted=true;
+          const preview=__service.previewRosterImport;
+          __service.previewRosterImport=async value=>{
+            if(__boundClassDeleted){__record('previewRosterImport',value);return {ok:false,code:'class-not-found',canRebuild:true,courseId:'course-1',classId:'class-imported'};}
+            const result=await preview(value);result.students=__googleStudents.map(student=>({userId:student.userId,status:'missing',profileId:'old-'+student.userId}));return result;
+          };
+          __service.rebuildDeletedClassroomClass=async value=>{
+            __record('rebuildDeletedClassroomClass',value);__boundClassDeleted=false;
+            __classes.push({classId:'class-imported',label:value.label});__profiles['class-imported']=[];
+            return {ok:true,classId:'class-imported',label:value.label,rebuilt:true};
+          };
+        }''')
+        self.preview()
+        self.assertTrue(self.page.locator('#googleRosterRebuildForm').is_visible())
+        self.assertEqual(self.calls('rebuildDeletedClassroomClass'), [])
+        self.assertEqual(self.calls('importRoster'), [])
+        self.page.locator('#googleRosterRebuildLabel').fill('Fifth grade music')
+        self.page.locator('#googleRosterRebuildConfirm').click(); self.idle()
+        self.assertEqual(self.calls('rebuildDeletedClassroomClass')[0]['args'],
+                         [{'courseId':'course-1','label':'Fifth grade music','confirmed':True}])
+        self.assertEqual(self.page.evaluate('__ui.getState().classId'), 'class-imported')
+        self.assertEqual(self.page.locator('#googleRosterTarget').input_value(), 'class-imported')
+        self.assertEqual(self.page.evaluate("__profiles['class-imported']"), [])
+        self.assertEqual(self.calls('importRoster'), [])
+        self.assertEqual([self.page.locator('#googleRosterChoice-'+str(index)).input_value() for index in [0,1]], ['create','create'])
+        self.page.locator('#googleRosterImport').click(); self.idle()
+        self.assertEqual(self.calls('importRoster')[0]['args'][0]['classId'], 'class-imported')
+        self.assertEqual(self.page.evaluate('__import.getState().cardCount'), 2)
+        self.assertEqual(self.page.evaluate('__ui.getState().classId'), 'class-imported')
+
 
 del base
 

@@ -18,6 +18,10 @@ function fixture(){
    for(const path of Object.keys(changes)){
     if(/^classes\/[^/]+\/profiles\/[^/]+$/.test(path)&&read(f.tree,path))throw Object.assign(Error('existing revision'),{code:'PERMISSION_DENIED'});
     if(/^classroomImports\/[^/]+\/[^/]+$/.test(path)&&read(f.tree,path))throw Object.assign(Error('existing course'),{code:'PERMISSION_DENIED'});
+    if(/^(classes|directory)\/[^/]+\/meta$/.test(path)){
+     const before=read(f.tree,path),after=changes[path];
+     if(before&&(before.ownerUid!==after.ownerUid||before.createdAt!==after.createdAt))throw Object.assign(Error('immutable metadata'),{code:'PERMISSION_DENIED'});
+    }
    }
    for(const [path,value]of Object.entries(changes))write(next,path,value);
    f.tree=next;f.commits.push(clone(changes));
@@ -32,6 +36,13 @@ function fixture(){
  return f;
 }
 function request(students=roster){return {courseId:'course_fixture_1',students,label:'Music Class',choices:choices(students)};}
+function rebuildRequest(overrides={}){return {courseId:'course_fixture_1',label:'Fifth Grade',confirmed:true,...overrides};}
+async function deletedClass(){
+ const f=fixture(),first=await f.client.importRoster(request());
+ delete f.tree.classes[first.classId];delete f.tree.directory[first.classId];
+ for(const card of first.cards){const passHash=await f.options.hashPass(card.pass.slice(5));delete f.tree.passes[passHash];}
+ f.first=first;f.reads=[];f.writes=[];f.commits=[];return f;
+}
 
 test('a new class, cards, aliases and private IDs commit once without storing names or raw passes',async()=>{
  const f=fixture(),preview=await f.client.previewRosterImport(request());
@@ -77,6 +88,85 @@ test('deleted linked profiles need an explicit choice; deleted classes are never
  const repaired=await f.client.importRoster(request(roster.slice(0,1)));assert.equal(repaired.ok,true);assert.equal(repaired.created,1);assert.equal(repaired.cards[0].profileId,card.profileId);
  delete f.tree.classes[first.classId];delete f.tree.directory[first.classId];const before=clone(f.tree);
  assert.equal((await f.client.importRoster(request())).code,'class-not-found');assert.deepEqual(f.tree,before);
+});
+test('only an explicitly bound, entirely absent class offers a read-only rebuild preview',async()=>{
+ const live=fixture(),first=await live.client.importRoster(request());live.reads=[];
+ assert.equal((await live.client.previewRosterImport(request())).ok,true);assert.ok(!live.reads.includes('classes/'+first.classId));
+ const f=await deletedClass(),before=clone(f.tree),expected={ok:false,code:'class-not-found',canRebuild:true,classId:f.first.classId,courseId:'course_fixture_1'};
+ assert.deepEqual(await f.client.previewRosterImport(request()),expected);assert.deepEqual(f.tree,before);assert.deepEqual(f.writes,[]);assert.ok(f.reads.includes('classes/'+f.first.classId));
+ assert.deepEqual(await f.client.importRoster(request()),{ok:false,code:'class-not-found'});assert.deepEqual(f.tree,before);assert.deepEqual(f.writes,[]);
+ for(const section of ['classes','directory']){
+  write(f.tree,section+'/'+f.first.classId,{profiles:{profile_leftover:{state:{revision:9,data:{xp:6000}}}}});
+  assert.deepEqual(await f.client.previewRosterImport(request()),{ok:false,code:'class-not-found'});delete f.tree[section][f.first.classId];
+ }
+ const unbound=fixture();assert.deepEqual(await unbound.client.previewRosterImport({...request(),classId:'class_deleted'}),{ok:false,code:'class-not-found'});assert.deepEqual(unbound.writes,[]);
+});
+test('confirmed deleted-class rebuild restores exactly two metadata leaves at the bound ID and preserves all other data',async()=>{
+ const f=await deletedClass(),classId=f.first.classId,otherId=f.addClass('class_other_1234','Other class');f.addProfile(otherId);
+ const mappingPath='classroomImports/'+f.context.uid+'/course_fixture_1';write(f.tree,mappingPath+'/deliveries',{google_student_1:{old_pass_hash:{state:'posted',materialId:'old_material'}}});
+ const before=clone(f.tree),meta={ownerUid:f.context.uid,label:'Fifth Grade',createdAt:1000},expected=clone(before);
+ write(expected,'classes/'+classId+'/meta',meta);write(expected,'directory/'+classId+'/meta',meta);
+ assert.deepEqual(await f.client.rebuildDeletedClass(rebuildRequest({label:'  Fifth Grade  '})),{ok:true,classId,label:'Fifth Grade',rebuilt:true});
+ assert.deepEqual(f.commits,[{['classes/'+classId+'/meta']:meta,['directory/'+classId+'/meta']:meta}]);assert.deepEqual(f.tree,expected);
+ assert.deepEqual(read(f.tree,mappingPath),read(before,mappingPath));assert.deepEqual(f.client.getState(),{busy:false});
+ const preview=await f.client.previewRosterImport(request());assert.equal(preview.newClass,false);assert.deepEqual(preview.students.map(row=>row.status),['missing','missing']);assert.deepEqual(preview.profiles,[]);
+ const skipped=await f.client.importRoster({...request(),choices:[]});assert.equal(skipped.created,0);assert.deepEqual(skipped.cards,[]);assert.equal(f.commits.length,1);
+ const repaired=await f.client.importRoster(request());assert.equal(repaired.created,2);assert.notEqual(repaired.cards[0].pass,f.first.cards[0].pass);
+ for(const card of repaired.cards){assert.deepEqual(read(f.tree,'classes/'+classId+'/profiles/'+card.profileId+'/state/data'),f.options.blank());assert.equal(read(f.tree,'classroomImports/'+f.context.uid+'/course_fixture_1/students/'+card.userId).profileId,card.profileId);}
+});
+test('rebuild refuses existing, partial and malformed class roots without changing profiles or mappings',async()=>{
+ for(const section of ['classes','directory'])for(const value of [{},{meta:{ownerUid:'other_teacher_1234',label:'Existing',createdAt:1}},{profiles:{profile_leftover:{state:{revision:9,data:{xp:6000}}}}}]){
+  const f=await deletedClass();write(f.tree,section+'/'+f.first.classId,value);const before=clone(f.tree);
+  assert.deepEqual(await f.client.rebuildDeletedClass(rebuildRequest()),{ok:false,code:'class-rebuild-unavailable'});assert.deepEqual(f.tree,before);assert.deepEqual(f.writes,[]);
+ }
+ const f=fixture(),first=await f.client.importRoster(request()),before=clone(f.tree);f.writes=[];
+ assert.deepEqual(await f.client.rebuildDeletedClass(rebuildRequest()),{ok:false,code:'class-rebuild-unavailable'});assert.deepEqual(f.tree,before);assert.deepEqual(f.writes,[]);assert.equal(read(f.tree,'classes/'+first.classId+'/profiles/'+first.cards[0].profileId+'/state').revision,1);
+});
+test('rebuild requires teacher authorization, explicit confirmation, a valid label and an existing private binding',async()=>{
+ for(const state of [{signedIn:false},{authorized:false},{uid:'bad/teacher'}]){
+  const f=fixture();Object.assign(f.context,state);assert.deepEqual(await f.client.rebuildDeletedClass(rebuildRequest()),{ok:false,code:'admin-required'});assert.deepEqual(f.reads,[]);assert.deepEqual(f.writes,[]);
+ }
+ for(const confirmed of [undefined,false,'true',1]){
+  const f=fixture();assert.deepEqual(await f.client.rebuildDeletedClass(rebuildRequest({confirmed})),{ok:false,code:'rebuild-confirmation-required'});assert.deepEqual(f.reads,[]);assert.deepEqual(f.writes,[]);
+ }
+ for(const label of [undefined,'','   ','A'.repeat(41),'Fifth/Grade','<script>','_Fifth']){
+  const f=fixture();assert.deepEqual(await f.client.rebuildDeletedClass(rebuildRequest({label})),{ok:false,code:'invalid-class-label'});assert.deepEqual(f.reads,[]);assert.deepEqual(f.writes,[]);
+ }
+ const absent=fixture();assert.deepEqual(await absent.client.rebuildDeletedClass(rebuildRequest()),{ok:false,code:'class-not-found'});assert.deepEqual(absent.writes,[]);
+ const invalid=fixture();write(invalid.tree,'classroomImports/'+invalid.context.uid+'/course_fixture_1',{classId:'bad/path',createdAt:1});assert.deepEqual(await invalid.client.rebuildDeletedClass(rebuildRequest()),{ok:false,code:'invalid-import-state'});assert.deepEqual(invalid.writes,[]);
+ const badCourse=fixture();assert.deepEqual(await badCourse.client.rebuildDeletedClass(rebuildRequest({courseId:'bad/course'})),{ok:false,code:'invalid-course'});assert.deepEqual(badCourse.writes,[]);
+});
+test('rebuild offline, old rules and transport failures return safe errors without committed metadata',async()=>{
+ const offline=fixture();offline.controls.online=false;assert.deepEqual(await offline.client.rebuildDeletedClass(rebuildRequest()),{ok:false,code:'offline'});assert.deepEqual(offline.reads,[]);assert.deepEqual(offline.writes,[]);
+ const switched=await deletedClass();let checks=0;switched.options.online=async()=>++checks===1;const switchedBefore=clone(switched.tree);
+ assert.deepEqual(await switched.client.rebuildDeletedClass(rebuildRequest()),{ok:false,code:'offline'});assert.deepEqual(switched.tree,switchedBefore);assert.deepEqual(switched.writes,[]);
+ const old=fixture();old.controls.denyMappings=true;assert.deepEqual(await old.client.rebuildDeletedClass(rebuildRequest()),{ok:false,code:'roster-setup-required'});assert.deepEqual(old.writes,[]);
+ const rejected=await deletedClass(),before=clone(rejected.tree);rejected.controls.rejectWrite=true;assert.deepEqual(await rejected.client.rebuildDeletedClass(rebuildRequest()),{ok:false,code:'class-rebuild-failed'});assert.deepEqual(rejected.tree,before);assert.deepEqual(rejected.commits,[]);
+});
+test('rebuild guards blocked reads against identity changes, revocation, clear and destroy',async()=>{
+ for(const change of [f=>f.context.identity='teacher-epoch-2',f=>f.context.uid='other_teacher_5678',f=>f.context.authorized=false,f=>f.client.clear(),f=>f.client.destroy()]){
+  const f=await deletedClass(),entered=deferred(),gate=deferred(),before=clone(f.tree);
+  f.controls.beforeRead=async path=>{if(path==='classes/'+f.first.classId){entered.resolve();await gate.promise;}};
+  const pending=f.client.rebuildDeletedClass(rebuildRequest());await entered.promise;change(f);gate.resolve();
+  assert.deepEqual(await pending,{ok:false,code:'session-changed'});assert.deepEqual(f.tree,before);assert.deepEqual(f.writes,[]);
+ }
+});
+test('rebuild and roster import share one busy guard, and an invalidated rebuild cannot release a newer import',async()=>{
+ const f=await deletedClass(),entered=deferred(),gate=deferred();f.controls.beforeRead=async path=>{if(path==='classes/'+f.first.classId){entered.resolve();await gate.promise;}};
+ const pending=f.client.rebuildDeletedClass(rebuildRequest());await entered.promise;
+ assert.deepEqual(await f.client.rebuildDeletedClass(rebuildRequest()),{ok:false,code:'busy'});assert.deepEqual(await f.client.importRoster(request()),{ok:false,code:'busy'});assert.deepEqual(await f.client.previewRosterImport(request()),{ok:false,code:'busy'});
+ f.client.clear();const newEntered=deferred(),newGate=deferred();f.controls.beforeRead=async path=>{if(path.endsWith('/course_fixture_2')){newEntered.resolve();await newGate.promise;}};
+ const newer=f.client.importRoster({...request(),courseId:'course_fixture_2'});await newEntered.promise;
+ assert.deepEqual(await f.client.rebuildDeletedClass(rebuildRequest()),{ok:false,code:'busy'});
+ gate.resolve();assert.deepEqual(await pending,{ok:false,code:'session-changed'});assert.deepEqual(f.client.getState(),{busy:true});
+ newGate.resolve();assert.equal((await newer).ok,true);assert.deepEqual(f.client.getState(),{busy:false});
+});
+test('metadata-only rebuild cannot delete concurrent profile progress and existing metadata races reject atomically',async()=>{
+ const f=await deletedClass(),classId=f.first.classId,progress={revision:12,data:{xp:8000}};
+ f.controls.beforeUpdate=()=>{write(f.tree,'classes/'+classId+'/profiles/profile_concurrent/state',progress);};
+ assert.equal((await f.client.rebuildDeletedClass(rebuildRequest())).ok,true);assert.deepEqual(read(f.tree,'classes/'+classId+'/profiles/profile_concurrent/state'),progress);assert.ok(Object.keys(f.commits[0]).every(path=>path.endsWith('/meta')));
+ const raced=await deletedClass(),racedId=raced.first.classId;raced.controls.beforeUpdate=()=>{const meta={ownerUid:raced.context.uid,label:'Other window',createdAt:999};write(raced.tree,'classes/'+racedId+'/meta',meta);write(raced.tree,'directory/'+racedId+'/meta',meta);};
+ assert.deepEqual(await raced.client.rebuildDeletedClass(rebuildRequest()),{ok:false,code:'class-rebuild-failed'});assert.deepEqual(raced.commits,[]);assert.equal(read(raced.tree,'classes/'+racedId+'/meta').label,'Other window');
 });
 test('bound courses cannot silently change target and raw or malformed IDs are rejected before writes',async()=>{
  const f=fixture();await f.client.importRoster(request());const count=f.writes.length;

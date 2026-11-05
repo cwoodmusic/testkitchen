@@ -32,6 +32,10 @@
   'courses-unavailable':'Your Google Classroom classes could not load. Check your connection and try again.',
   'invalid-class-label':'Use 1–40 letters, numbers, spaces, hyphens, or underscores. Start the class name with a letter or number.',
   'class-not-found':'The arcade class is no longer available. Refresh the class list before trying again.',
+  'class-rebuild-failed':'The empty class could not be rebuilt. Check your connection and try again.',
+  'class-rebuild-unavailable':'This class still has data or was rebuilt elsewhere. Refresh arcade classes before trying again.',
+  'rebuild-confirmation-required':'Review the recovery information, then choose Rebuild empty class.',
+  'class-already-available':'The arcade class is available again. Refresh the class list and preview its roster.',
   'import-target-conflict':'This Google Classroom class is already linked to another arcade class. Choose that arcade class to continue.',
   'profile-already-linked':'Each student needs their own profile. Choose a different profile for repeated links.',
   'class-full':'An arcade class can hold up to 200 profiles. Choose another class or import fewer students.',
@@ -68,13 +72,26 @@
   let connected=false,courses=[],classes=[],courseId='',target=NEW_CLASS,newLabel='',roster=[],preview=null,choices=new Map(),page=0;
   let result=null,cards=[],keyRows=[],cardsSaved=false,closeWarning=false,printSheet=null,printTitle=null,printTimer=null,printSequence=0,unsubscribe=null;
   let appendMode=false,knownStudents=new Set(),needsReconnect=false,postPlan=null,postRows=[],postedStudents=new Set(),uncertainStudents=new Set();
+  let recovery=null,missingClass=false;
   const button=(label,action,id,primary=false)=>{const node=element('button','google-import-button'+(primary?' is-primary':''),label);node.type='button';if(id)node.id=id;node.disabled=!!busy;node.onclick=action;return node;};
   function say(value,error=false){message=value;isError=error;}
-  function fail(value){const error=code(value);if(['expired','revoked','connect-required','oauth-expired','oauth-revoked','not-connected','session-changed','closed','oauth-denied','account-mismatch'].includes(error)){if(cards.length||result)needsReconnect=true;else{connected=false;courses=[];courseId='';clearPreview();}}else if(['roster-required','import-conflict'].includes(error)&&!cards.length&&!result)clearPreview();say(ERRORS[error]||'We could not finish that. Check your connection and try again.',true);}
+  function fail(value){
+   const error=code(value);
+   if(error==='class-not-found'){
+    const previous=recovery,students=Array.isArray(value.recoveryStudents)?value.recoveryStudents:roster;
+    if(!cards.length||cardsSaved){clearCards();clearPreview();}
+    const recoverable=value.canRebuild===true&&typeof value.classId==='string'&&!!value.classId&&value.courseId===courseId&&typeof service.rebuildDeletedClassroomClass==='function';
+    recovery=recoverable?{courseId,classId:value.classId,label:previous?.courseId===courseId&&previous.classId===value.classId?previous.label:safeLabel(newLabel||selectedCourse()?.name),students:students.map(student=>({userId:student.userId,name:student.name}))}:null;
+    missingClass=!recoverable;
+   }
+   if(['expired','revoked','connect-required','oauth-expired','oauth-revoked','not-connected','session-changed','closed','oauth-denied','account-mismatch'].includes(error)){if(cards.length||result)needsReconnect=true;else{connected=false;courses=[];courseId='';clearPreview();}}else if(['roster-required','import-conflict'].includes(error)&&!cards.length&&!result)clearPreview();
+   if(error==='class-already-available'||error==='class-rebuild-unavailable'){recovery=null;missingClass=true;}
+   say(error==='class-not-found'&&recovery?'The saved connection points to a deleted arcade class. Rebuild the empty class to continue.':ERRORS[error]||'We could not finish that. Check your connection and try again.',true);
+  }
   function cleanupPrint(){if(printTimer)win.clearTimeout(printTimer);printTimer=null;printSheet?.remove();printSheet=null;if(printTitle!==null){doc.title=printTitle;printTitle=null;}doc.documentElement.classList.remove('coda-google-roster-printing');win.removeEventListener('afterprint',cleanupPrint);}
   function clearPosting(){postPlan=null;postRows=[];postedStudents.clear();uncertainStudents.clear();}
   function clearCards(){for(const card of cards){card.pass='';card.link='';card.name='';}cards=[];keyRows=[];result=null;cardsSaved=false;clearPosting();cleanupPrint();}
-  function clearPreview(){roster=[];preview=null;choices.clear();page=0;appendMode=false;}
+  function clearPreview(){roster=[];preview=null;choices.clear();page=0;appendMode=false;recovery=null;missingClass=false;}
   function erase(){serial++;busy='';connected=false;courses=[];classes=[];courseId='';target=NEW_CLASS;newLabel='';knownStudents.clear();needsReconnect=false;clearPreview();clearCards();closeWarning=false;message='';isError=false;}
   function accessCurrent(){return !disposed&&canUse()&&owner===identity();}
   function resetAccess(){erase();owner='';opened=false;try{service.disconnectGoogleClassroom?.();}catch{}render();}
@@ -119,7 +136,7 @@
    return run('Loading class roster',async valid=>{
     const loaded=await service.loadGoogleClassroomRoster(captured.courseId);if(!valid()||loaded?.ok===false)return loaded;
     const students=(loaded?.students||[]).filter(item=>typeof item?.userId==='string').map(item=>({userId:item.userId,name:text(item.name,'Student')}));
-    const value=await service.previewRosterImport({...captured,students});if(value?.ok===false)return value;return {ok:true,students,value};
+    const value=await service.previewRosterImport({...captured,students});if(value?.ok===false)return {...value,recoveryStudents:students};return {ok:true,students,value};
    },loaded=>{
     roster=loaded.students;preview=loaded.value;page=0;
     if(preview?.newClass===false&&typeof preview.classId==='string')rememberClass(preview.classId,preview.label);
@@ -131,6 +148,32 @@
    for(const student of roster){const row=preview.students?.find(item=>item.userId===student.userId);if(row?.status==='unlinked')choices.set(student.userId,{action:'create'});}
    appendMode=true;say('Review the selected students before adding their new profiles. Existing and missing profiles are unchanged.');render();
   }
+  function refreshArcadeClasses(){
+   return run('Refreshing arcade classes',()=>service.listClasses(),value=>{
+    classes=(value?.classes||[]).filter(item=>typeof item?.classId==='string').map(item=>({classId:item.classId,label:text(item.label,'Arcade class')}));
+    if(target!==NEW_CLASS&&!classes.some(item=>item.classId===target)){target=NEW_CLASS;newLabel=safeLabel(newLabel||selectedCourse()?.name);}
+    clearPreview();say('Arcade classes refreshed. Choose a class and preview the roster again.');options.onChanged?.({classId:target===NEW_CLASS?'':target});
+   });
+  }
+  function rebuildDeletedClass(event){
+   event?.preventDefault();const edit=recovery;
+   if(!edit||busy||!accessCurrent()||edit.courseId!==courseId)return;
+   const label=edit.label.trim();
+   if(!/^[A-Za-z0-9][A-Za-z0-9 _-]{0,39}$/.test(label)){fail({code:'invalid-class-label'});render();return;}
+   return run('Rebuilding empty class',async valid=>{
+    const rebuilt=await service.rebuildDeletedClassroomClass({courseId:edit.courseId,label,confirmed:true});if(!valid()||rebuilt?.ok===false)return rebuilt;
+    if(rebuilt?.classId!==edit.classId)return {ok:false,code:'import-target-conflict'};
+    const [classResult,value]=await Promise.all([service.listClasses(),service.previewRosterImport({courseId:edit.courseId,classId:rebuilt.classId,students:edit.students})]);
+    if(!valid())return {ok:false,code:'session-changed'};
+    if(classResult?.ok===false)return classResult;if(value?.ok===false)return {...value,recoveryStudents:edit.students};
+    return {ok:true,rebuilt,classes:classResult?.classes||[],value};
+   },loaded=>{
+    recovery=null;missingClass=false;clearCards();classes=loaded.classes.filter(item=>typeof item?.classId==='string').map(item=>({classId:item.classId,label:text(item.label,'Arcade class')}));
+    roster=edit.students;preview=loaded.value;page=0;appendMode=false;rememberClass(loaded.rebuilt.classId,loaded.rebuilt.label||label);
+    choices=new Map(roster.map(student=>{const row=preview?.students?.find(item=>item.userId===student.userId);return [student.userId,{action:row?.status==='existing'?'existing':row?.status==='missing'||row?.status==='unlinked'?'create':'skip'}];}));
+    say('The empty class is rebuilt. Review the roster, then import the selected students to make new profiles and cards.');options.onChanged?.({classId:loaded.rebuilt.classId,label:loaded.rebuilt.label||label,created:0,linked:0});
+   });
+  }
   function refreshRoster(){
    if(!result||busy||cards.length&&!cardsSaved||!accessCurrent())return;
    postPlan=null;
@@ -138,7 +181,7 @@
    return run('Checking for new students',async valid=>{
     const loaded=await service.loadGoogleClassroomRoster(captured.courseId);if(!valid()||loaded?.ok===false)return loaded;
     const students=(loaded?.students||[]).filter(item=>typeof item?.userId==='string').map(item=>({userId:item.userId,name:text(item.name,'Student')}));
-    const value=await service.previewRosterImport({courseId:captured.courseId,classId:captured.classId,students});if(value?.ok===false)return value;return {ok:true,students,value};
+    const value=await service.previewRosterImport({courseId:captured.courseId,classId:captured.classId,students});if(value?.ok===false)return {...value,recoveryStudents:students};return {ok:true,students,value};
    },loaded=>{
     clearCards();roster=loaded.students;preview=loaded.value;page=0;appendMode=true;needsReconnect=false;rememberClass(preview.classId||captured.classId,preview.label||captured.label);defaultChoices();
     say('The roster is up to date. Only newly seen, unlinked students are selected for new profiles. Review the choices before adding them.');
@@ -271,6 +314,7 @@
   function renderSetup(){
    section.append(element('h3','','Import from Google Classroom'),element('p','google-import-help','Choose a school class, check its roster, and make arcade profiles together. Student names stay in teacher tools; the game keeps generated aliases.'));
    if(!connected){section.append(button('Connect Google Classroom',connect,'googleRosterConnect',true));return;}
+   if(missingClass)section.append(button('Refresh arcade classes',refreshArcadeClasses,'googleRosterRefreshClasses'));
    const form=element('form','google-import-settings');form.onsubmit=event=>{event.preventDefault();loadPreview();};
    const courseLabel=element('label','','Google Classroom class');courseLabel.htmlFor='googleRosterCourse';
    const select=element('select');select.id='googleRosterCourse';select.disabled=!!busy;const empty=element('option','','Choose a class');empty.value='';select.append(empty);
@@ -283,6 +327,14 @@
    if(target===NEW_CLASS){const label=element('label','','New arcade class name');label.htmlFor='googleRosterLabel';const input=element('input');input.id='googleRosterLabel';input.type='text';input.maxLength=40;input.value=newLabel;input.disabled=!!busy;input.oninput=()=>{newLabel=input.value;};form.append(label,input);}
    const previewButton=button('Preview roster',()=>{},'googleRosterPreview',true);previewButton.type='submit';previewButton.disabled=previewButton.disabled||!courseId;form.append(previewButton);section.append(form);
    if(preview)renderPreview();
+  }
+  function renderRecovery(){
+   const edit=recovery,form=element('form','google-import-rebuild');form.id='googleRosterRebuildForm';form.noValidate=true;form.setAttribute('aria-label','Deleted arcade class recovery');
+   form.append(element('h3','','Rebuild deleted arcade class'),element('p','','This arcade class was deleted. Rebuild it to start fresh with new profiles and cards.'),element('p','google-import-rebuild-warning','This creates an empty class. Deleted profiles, old cards, and saved progress are not restored.'));
+   const label=element('label','','Arcade class name');label.htmlFor='googleRosterRebuildLabel';const input=element('input');input.type='text';input.id='googleRosterRebuildLabel';input.maxLength=40;input.required=true;input.autocomplete='off';input.value=edit.label;input.disabled=!!busy;input.oninput=()=>{if(recovery===edit)edit.label=input.value;};
+   const actions=element('div','google-import-actions'),confirm=button('Rebuild empty class',()=>{},'googleRosterRebuildConfirm',true);confirm.type='submit';
+   const cancel=button('Cancel',()=>{if(busy)return;recovery=null;missingClass=true;say('Choose another class or refresh the arcade class list.');render();section.querySelector('#googleRosterCourse')?.focus({preventScroll:true});},'googleRosterRebuildCancel');
+   actions.append(confirm,cancel);form.append(label,input,actions);form.onsubmit=rebuildDeletedClass;section.append(form);
   }
   function renderPreview(){
    const {counts,duplicate}=summary();section.append(element('h4','','Review student profiles'));
@@ -350,7 +402,7 @@
    if(closeWarning){const warning=element('div','google-import-warning');warning.setAttribute('role','alertdialog');warning.setAttribute('aria-label','Save the new cards before closing');warning.append(element('h3','','Save the new cards before closing'),element('p','','This window keeps the new cards only until it closes. Return to save, print, or post the links, or close and clear the private passes.'));
     const actions=element('div','google-import-actions');actions.append(button('Back to cards',()=>{closeWarning=false;render();section.querySelector('#googleRosterPrintCards')?.focus({preventScroll:true});},'googleRosterKeepCards',true),button('Close and clear cards',()=>close({force:true}),'googleRosterDiscardCards'));warning.append(actions);section.append(warning);section.querySelector('#googleRosterKeepCards')?.focus({preventScroll:true});return;}
    const header=element('div','google-import-header');header.append(element('span','google-import-private','TEACHER TOOLS'),button('Close import',()=>close(),'googleRosterClose'));section.append(header);
-   if(result)renderResult();else renderSetup();
+   if(recovery)renderRecovery();else if(result)renderResult();else renderSetup();
    const status=element('p','google-import-status'+(isError?' is-error':''),busy||message);status.id='googleRosterStatus';status.setAttribute('role',isError?'alert':'status');status.setAttribute('aria-live','polite');section.append(status);
    if(focusId){const restored=section.querySelector('#'+focusId);if(restored&&!restored.disabled){restored.focus({preventScroll:true});if(selection&&restored.setSelectionRange)try{restored.setSelectionRange(selection.start,selection.end);}catch{}}}
   }
@@ -359,7 +411,7 @@
   win.addEventListener('beforeunload',beforeUnload);
   unsubscribe=service.subscribe?.(()=>{if(opened&&!accessCurrent())resetAccess();else if(!opened)render();});
   mount();
-  return {mount,open,close,render,getState:()=>({open:opened,busy:!!busy,connected,courseCount:courses.length,rosterCount:roster.length,cardCount:cards.length,hasUnprintedCards:cards.length>0&&!cardsSaved,stage:closeWarning?'close-warning':result?'cards':preview?'preview':connected?'classes':'connect'}),destroy(){if(disposed)return;close({force:true});disposed=true;serial++;cleanupPrint();section.remove();win.removeEventListener('beforeunload',beforeUnload);if(typeof unsubscribe==='function')unsubscribe();unsubscribe=null;}};
+  return {mount,open,close,render,getState:()=>({open:opened,busy:!!busy,connected,courseCount:courses.length,rosterCount:roster.length,cardCount:cards.length,hasUnprintedCards:cards.length>0&&!cardsSaved,stage:closeWarning?'close-warning':recovery?'rebuild':result?'cards':preview?'preview':connected?'classes':'connect'}),destroy(){if(disposed)return;close({force:true});disposed=true;serial++;cleanupPrint();section.remove();win.removeEventListener('beforeunload',beforeUnload);if(typeof unsubscribe==='function')unsubscribe();unsubscribe=null;}};
  }
  return Object.freeze({create});
 });

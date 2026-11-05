@@ -41,6 +41,9 @@ Print the new cards together and keep the separate private teacher roster key.
 **Prepare Classroom posts** lets you review and publish one individually assigned
 Classwork material per new profile link. **Check for new students** appends a
 later roster batch without replacing old profiles, cards, progress, or posts.
+If a linked arcade class was deleted, preview its course and choose **Rebuild
+empty class**, then review and import fresh profiles. This does not restore
+deleted progress or old cards and requires no additional Firebase rules update.
 Roster importing needs two read-only Google permissions; optional posting adds
 the Classwork materials permission and private delivery rules. See
 [Google Classroom roster import](docs/google-classroom-roster-setup.md) for setup,

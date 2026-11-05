@@ -14,7 +14,7 @@ FIXTURE = r'''()=>{
  window.__classes=[{classId:'class-existing',label:'Blue group'}];
  window.__profiles=[{profileId:'profile-one',alias:'Blue Owl 27',picture:'owl'},{profileId:'profile-two',alias:'Mint Fox 43',picture:'fox'}];
  window.__students=[{userId:'student-1',name:'Alice Example'},{userId:'student-2',name:'Ben Example'}];
- window.__status={};window.__hold='';window.__error='';window.__serial=0;
+ window.__status={};window.__hold='';window.__error='';window.__serial=0;window.__previewFailure=null;
  window.__emit=()=>{for(const callback of __subscribers)callback();};
  const called=async(method,value)=>{__calls.push({method,value});if(__hold===method)await new Promise(resolve=>window.__release=resolve);if(__error){const value={ok:false,code:__error};__error='';return value;}return null;};
  window.__service={
@@ -25,7 +25,7 @@ FIXTURE = r'''()=>{
   async listClasses(){return await called('classes')||{ok:true,classes:__classes};},
   async loadGoogleClassroomRoster(courseId){return await called('roster',courseId)||{ok:true,courseId,students:__students};},
   async previewRosterImport(value){
-   return await called('preview',value)||{ok:true,courseId:value.courseId,classId:value.classId||'class-reserved',label:value.classId?'Blue group':'',newClass:!value.classId,
+   return await called('preview',value)||__previewFailure||{ok:true,courseId:value.courseId,classId:value.classId||'class-reserved',label:value.classId?'Blue group':'',newClass:!value.classId,
     profiles:value.classId?__profiles:[],students:__students.map(student=>({userId:student.userId,status:'unlinked',...(__status[student.userId]||{})}))};
   },
   async importRoster(value){
@@ -150,6 +150,22 @@ class GoogleClassroomImportUITests(unittest.TestCase):
 
     def publish_posts(self):
         self.page.locator('#googleRosterPublishPosts').click(); self.idle()
+
+    def enable_rebuild(self):
+        self.page.evaluate('''()=>{
+          __previewFailure={ok:false,code:'class-not-found',canRebuild:true,classId:'class-deleted',courseId:'course-1'};
+          window.__rebuildError='';window.__rebuildConcurrent=false;
+          __service.rebuildDeletedClassroomClass=async value=>{
+            __calls.push({method:'rebuild',value});const owner=__identity;
+            if(__hold==='rebuild')await new Promise(resolve=>window.__releaseRebuild=resolve);
+            if(!__allowed||owner!==__identity)return {ok:false,code:'session-changed'};
+            if(__rebuildError)return {ok:false,code:__rebuildError};
+            __previewFailure=null;__classes.push({classId:'class-deleted',label:value.label});__profiles=[];
+            __status=Object.fromEntries(__students.map(student=>[student.userId,{status:'missing',profileId:'old-'+student.userId}]));
+            if(__rebuildConcurrent){__profiles.push({profileId:'profile-restored',alias:'Mint Fox 43',picture:'fox'});__status['student-1']={status:'existing',profileId:'profile-restored',alias:'Mint Fox 43',picture:'fox'};}
+            return {ok:true,classId:'class-deleted',label:value.label,rebuilt:true};
+          };
+        }''')
 
     def test_connection_and_roster_preview_are_explicit_and_never_create_profiles(self):
         self.assertEqual(self.calls('connect'), [])
@@ -459,6 +475,87 @@ class GoogleClassroomImportUITests(unittest.TestCase):
         self.assertEqual(self.publishing_calls('publish'), [])
         self.assertEqual(self.page.evaluate('__posts.length'), 0)
         self.assertEqual(self.page.evaluate('__import.getState().cardCount'), 2)
+
+    def test_deleted_bound_class_requires_explicit_rebuild_then_profile_review(self):
+        self.enable_rebuild(); self.preview()
+        self.assertTrue(self.page.locator('#googleRosterRebuildForm').is_visible())
+        self.assertIn('saved progress are not restored', self.page.locator('#googleRosterRebuildForm').inner_text())
+        self.assertEqual(self.page.locator('#googleRosterRebuildLabel').input_value(), 'Music 3')
+        self.assertEqual(self.calls('rebuild'), []); self.assertEqual(self.calls('import'), [])
+        self.assertNotIn('class-deleted', self.page.locator('#host').inner_text())
+        self.assertNotIn('class-deleted', self.page.evaluate('JSON.stringify(__import.getState())'))
+        self.page.locator('#googleRosterRebuildLabel').fill('Fifth grade music')
+        self.page.locator('#googleRosterRebuildConfirm').click(); self.idle()
+        self.assertEqual(self.calls('rebuild')[0]['value'], {'courseId':'course-1','label':'Fifth grade music','confirmed':True})
+        self.assertEqual(self.calls('import'), [], 'Rebuilding metadata must not create profiles')
+        self.assertEqual(self.calls('preview')[-1]['value']['classId'], 'class-deleted')
+        self.assertEqual(self.page.locator('#googleRosterTarget').input_value(), 'class-deleted')
+        self.assertEqual([self.page.locator('#googleRosterChoice-'+str(index)).input_value() for index in [0,1]], ['create','create'])
+        self.assertTrue(self.page.locator('#googleRosterImport').is_visible())
+        self.page.locator('#googleRosterImport').click(); self.idle()
+        self.assertEqual(self.calls('import')[0]['value']['classId'], 'class-deleted')
+        self.assertEqual(self.page.evaluate('__import.getState().cardCount'), 2)
+
+    def test_rebuild_cancel_validation_and_failure_leave_profile_data_untouched(self):
+        self.enable_rebuild(); self.preview()
+        self.page.locator('#googleRosterRebuildCancel').click()
+        self.assertEqual(self.page.locator('#googleRosterRebuildForm').count(), 0)
+        self.assertTrue(self.page.locator('#googleRosterCourse').is_visible())
+        self.assertEqual(self.calls('rebuild'), [])
+        self.page.locator('#googleRosterPreview').click(); self.idle()
+        self.page.locator('#googleRosterRebuildLabel').fill('Invalid!')
+        self.page.locator('#googleRosterRebuildConfirm').click(); self.idle()
+        self.assertEqual(self.calls('rebuild'), [])
+        self.assertIn('1–40', self.page.locator('#googleRosterStatus').inner_text())
+        self.page.locator('#googleRosterRebuildLabel').fill('Fifth grade')
+        self.page.evaluate("__rebuildError='class-rebuild-failed'")
+        self.page.locator('#googleRosterRebuildConfirm').click(); self.idle()
+        self.assertEqual(self.page.locator('#googleRosterRebuildLabel').input_value(), 'Fifth grade')
+        self.assertIn('could not be rebuilt', self.page.locator('#googleRosterStatus').inner_text())
+        self.assertEqual(self.calls('import'), [])
+
+    def test_rebuild_preview_keeps_a_concurrently_restored_profile_existing(self):
+        self.enable_rebuild(); self.preview(); self.page.evaluate('__rebuildConcurrent=true')
+        self.page.locator('#googleRosterRebuildConfirm').click(); self.idle()
+        self.assertEqual(self.page.locator('#googleRosterChoice-0').count(), 0)
+        self.assertIn('Mint Fox 43', self.page.locator('.google-roster-linked').inner_text())
+        self.assertEqual(self.page.locator('#googleRosterChoice-1').input_value(), 'create')
+        self.page.locator('#googleRosterImport').click(); self.idle()
+        self.assertEqual(self.calls('import')[0]['value']['choices'][0], {'userId':'student-1','action':'skip'})
+
+    def test_generic_missing_target_refreshes_classes_without_hidden_rebuild(self):
+        self.enable_rebuild(); self.connect()
+        self.page.locator('#googleRosterTarget').select_option('class-existing')
+        self.page.evaluate("__previewFailure={ok:false,code:'class-not-found'};__classes=[]")
+        self.page.locator('#googleRosterPreview').click(); self.idle()
+        self.assertEqual(self.page.locator('#googleRosterRebuildForm').count(), 0)
+        self.assertTrue(self.page.locator('#googleRosterRefreshClasses').is_visible())
+        self.page.locator('#googleRosterRefreshClasses').click(); self.idle()
+        self.assertEqual(self.page.locator('#googleRosterTarget').input_value(), '__new__')
+        self.assertEqual(self.page.locator('#googleRosterTarget option').count(), 1)
+        self.assertEqual(self.calls('rebuild'), []); self.assertEqual(self.calls('import'), [])
+
+    def test_rebuild_unavailable_offers_refresh_instead_of_overwriting_existing_data(self):
+        self.enable_rebuild(); self.preview()
+        self.page.evaluate("__rebuildError='class-rebuild-unavailable'")
+        self.page.locator('#googleRosterRebuildConfirm').click(); self.idle()
+        self.assertEqual(self.page.locator('#googleRosterRebuildForm').count(), 0)
+        self.assertTrue(self.page.locator('#googleRosterRefreshClasses').is_visible())
+        self.assertIn('still has data', self.page.locator('#googleRosterStatus').inner_text())
+        self.assertEqual(self.calls('import'), [])
+
+    def test_account_loss_during_rebuild_clears_recovery_and_ignores_late_results(self):
+        self.enable_rebuild(); self.preview(); self.page.evaluate("__hold='rebuild'")
+        self.page.locator('#googleRosterRebuildConfirm').click()
+        self.page.wait_for_function('typeof __releaseRebuild==="function"')
+        self.assertFalse(self.page.evaluate('__import.close()'))
+        before = len(self.calls('preview'))
+        self.page.evaluate("__allowed=false;__identity='another_teacher';__emit();__releaseRebuild()")
+        self.idle()
+        self.assertTrue(self.page.locator('.classroom-google-import').is_hidden())
+        self.assertEqual(self.page.locator('#googleRosterRebuildForm').count(), 0)
+        self.assertEqual(len(self.calls('preview')), before)
+        self.assertEqual(self.calls('import'), [])
 
 
 if __name__ == '__main__':

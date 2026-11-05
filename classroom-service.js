@@ -367,6 +367,7 @@
    }
    const previewRosterImport=request=>rosterRequest('previewRosterImport',request);
    const importRoster=request=>rosterRequest('importRoster',request);
+   const rebuildDeletedClassroomClass=request=>rosterRequest('rebuildDeletedClass',request);
    function parseProfileLink(value){
      if(typeof value!=='string'||value.length>2024)return null;
      try{
@@ -964,7 +965,7 @@
    // Sessions stay open through inactivity. Explicit logout, revocation, and
    // another device taking the profile still end access through the guards above.
    function destroy(){keepPending();destroyed=true;generation++;disconnectGoogleClassroom();googleClassroom?.destroy();rosterImporter?.destroy();materialPublisher?.destroy();classRename?.cancel?.();clearDeveloperAccess();stopSubscriptions();for(const stop of authSubscriptions.splice(0))try{stop();}catch{}if(adminRoleStop){adminRoleStop();adminRoleStop=null;}for(const stop of pendingJobs)try{stop();}catch{}for(const timer of [flushTimer,leaseTimer])if(timer!==null)win?.clearInterval?.(timer);win?.removeEventListener?.('pagehide',keepPending);win?.document?.removeEventListener?.('visibilitychange',pageHidden);listeners.clear();pendingHallClassCleanup.clear();}
-   return {getState:state,listDeveloperAccess,grantDeveloperAccess,revokeDeveloperAccess,getHallContext,loadHallBoard,publishHallRecord,subscribe(listener){listeners.add(listener);return()=>listeners.delete(listener);},connect,resume,inspectSession,join,leave,logOut,takeOver,useSavedProgress,adminSignIn,adminSignOut,savePersonalPlayer,renamePersonalPlayer,openPersonalPlayer,connectGoogleClassroom,connectGoogleClassroomPublishing,previewClassroomPosts,publishClassroomPosts,listGoogleClassroomCourses,loadGoogleClassroomRoster,disconnectGoogleClassroom,previewRosterImport,importRoster,listClasses,createClass,renameClass,listProfiles,createProfile,reissuePass,deleteProfile,deleteClass,flush,isWritable,destroy};
+   return {getState:state,listDeveloperAccess,grantDeveloperAccess,revokeDeveloperAccess,getHallContext,loadHallBoard,publishHallRecord,subscribe(listener){listeners.add(listener);return()=>listeners.delete(listener);},connect,resume,inspectSession,join,leave,logOut,takeOver,useSavedProgress,adminSignIn,adminSignOut,savePersonalPlayer,renamePersonalPlayer,openPersonalPlayer,connectGoogleClassroom,connectGoogleClassroomPublishing,previewClassroomPosts,publishClassroomPosts,listGoogleClassroomCourses,loadGoogleClassroomRoster,disconnectGoogleClassroom,previewRosterImport,importRoster,rebuildDeletedClassroomClass,listClasses,createClass,renameClass,listProfiles,createProfile,reissuePass,deleteProfile,deleteClass,flush,isWritable,destroy};
  }
  return Object.freeze({create,consumeFragment,readSavedSession,parsePass:passCode,formatPass,hashPass});
 });
