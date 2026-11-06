@@ -1,5 +1,6 @@
 import { packColor, unpackColor } from './model.js';
-import { selectionBounds, pointInSelection, imageDataToPixels } from './viewport.js';
+import { selectionBounds, pointInSelection, imageDataToPixels } from './viewport.js?v=materials-1';
+import { smartSelection, combineSelections } from './smart-select.js?v=materials-1';
 
 const MAX_EDIT_PIXELS = 16 * 1024 * 1024;
 const clamp = (v, a, b) => Math.min(b, Math.max(a, v));
@@ -38,6 +39,8 @@ export function createTools({ canvas, store, viewport, getSettings, onSelection 
   let drag = null, space = false, clipboard = null, destroyed = false, busy = false, transactionOwned = false;
   canvas.style.touchAction = 'none'; if (canvas.tabIndex < 0) canvas.tabIndex = 0;
   const settings = () => getSettings() || {};
+  // Internal readers never mutate a selection. Avoid copying large masks for every brush sample.
+  const selection = () => viewport.getSelection({ copy: false });
   const currentScene = () => store.getProject().scenes.find(scene => scene.id === store.getState().activeSceneId);
   const activeLayer = () => currentScene()?.layers.find(layer => layer.id === store.getState().activeLayerId);
   const statusError = error => onStatus(error?.message || String(error));
@@ -50,10 +53,29 @@ export function createTools({ canvas, store, viewport, getSettings, onSelection 
   const cancelTransaction = () => { if (transactionOwned && store.getState().inTransaction) store.cancel(); transactionOwned = false; };
   const commitTransaction = () => { if (transactionOwned) { store.commit(); transactionOwned = false; } };
 
-  function* brushPixels(points, color, size = 1, selection = viewport.getSelection()) {
+  function selectSmart(p, event) {
+    const scene = currentScene(), layer = activeLayer(), previous = selection();
+    if (layer?.type !== 'raster') throw new Error('Smart Select reads a paint layer. Choose a pixel layer, or use Edit pixels on an asset first.');
+    const large = scene.width * scene.height > MAX_EDIT_PIXELS;
+    if (large && !previous) throw new Error('Use Select to mark an area up to 16 million pixels first, then click inside it with Smart Select.');
+    // Resolve sparse tiles once. Color probes then avoid allocating tile-key strings per pixel.
+    const tiles = new Map(Object.entries(layer.tiles).map(([key, tile]) => {
+      const [tx, ty] = key.split(',').map(Number); return [ty * 128 + tx, tile];
+    }));
+    const next = smartSelection({ width: scene.width, height: scene.height, x: p.x, y: p.y,
+      tolerance: settings().tolerance, bounds: large ? selectionBounds(previous) : undefined,
+      contains: large ? (x, y) => pointInSelection(previous, x, y) : undefined,
+      readPixel: (x, y) => tiles.get((y >> 6) * 128 + (x >> 6))?.[(y & 63) * 64 + (x & 63)] ?? layer.baseColor });
+    const operation = event.altKey ? 'subtract' : event.shiftKey ? 'add' : 'replace';
+    const selected = combineSelections(previous, next, operation);
+    chooseObject(null); setSelection(selected);
+    onStatus(selected ? `${selected.count.toLocaleString()} pixels selected on “${layer.name}”. Shift adds; Alt removes. Effects and tile fills follow this shape.` : 'Selection cleared.');
+  }
+
+  function* brushPixels(points, color, size = 1, mask = selection()) {
     const scene = currentScene(), width = clamp(Math.round(size), 1, 256), offset = Math.floor(width / 2);
     for (const [px, py] of points) for (let y = py - offset; y < py - offset + width; y++) for (let x = px - offset; x < px - offset + width; x++) {
-      if (x >= 0 && y >= 0 && x < scene.width && y < scene.height && pointInSelection(selection, x, y)) yield [x, y, color];
+      if (x >= 0 && y >= 0 && x < scene.width && y < scene.height && pointInSelection(mask, x, y)) yield [x, y, color];
     }
   }
   function paint(points, color, size) { const scene = currentScene(), layer = editable(); store.writePixels(scene.id, layer.id, brushPixels(points, color, size)); }
@@ -62,12 +84,13 @@ export function createTools({ canvas, store, viewport, getSettings, onSelection 
 
   function collisionPaint(a, b) {
     const scene = currentScene(), cellSize = scene.collision.cellSize, radius = clamp(Math.round(settings().collisionSize || 1), 1, 32), value = settings().collisionValue === null ? null : Number(settings().collisionValue) === 1 ? 1 : 0;
+    const mask = selection();
     function* cells() {
       for (const [x, y] of linePoints(Math.floor(a.x / cellSize), Math.floor(a.y / cellSize), Math.floor(b.x / cellSize), Math.floor(b.y / cellSize))) {
         for (let dy = 0; dy < radius; dy++) for (let dx = 0; dx < radius; dx++) {
           const cx = x + dx - Math.floor(radius / 2), cy = y + dy - Math.floor(radius / 2);
           if (cx < 0 || cy < 0 || cx * cellSize >= scene.width || cy * cellSize >= scene.height) continue;
-          if (pointInSelection(viewport.getSelection(), cx * cellSize + cellSize / 2, cy * cellSize + cellSize / 2)) yield [cx, cy, value];
+          if (pointInSelection(mask, cx * cellSize + cellSize / 2, cy * cellSize + cellSize / 2)) yield [cx, cy, value];
         }
       }
     }
@@ -75,18 +98,18 @@ export function createTools({ canvas, store, viewport, getSettings, onSelection 
   }
 
   function floodFill(p, color) {
-    const scene = currentScene(), layer = editable(), selection = viewport.getSelection();
-    if (!pointInSelection(selection, p.x, p.y)) return;
+    const scene = currentScene(), layer = editable(), mask = selection();
+    if (!pointInSelection(mask, p.x, p.y)) return;
     const target = store.readPixel(scene.id, layer.id, p.x, p.y), tolerance = clamp(Number(settings().tolerance) || 0, 0, 255);
     if (target === color && tolerance === 0) return;
-    if (!selection && !Object.keys(layer.tiles).length) { store.fillLayer(scene.id, layer.id, color); return; }
-    const bounds = clippedRect(selectionBounds(selection) || { x: 0, y: 0, w: scene.width, h: scene.height });
+    if (!mask && !Object.keys(layer.tiles).length) { store.fillLayer(scene.id, layer.id, color); return; }
+    const bounds = clippedRect(selectionBounds(mask) || { x: 0, y: 0, w: scene.width, h: scene.height });
     const visited = new Uint8Array(Math.ceil(bounds.w * bounds.h / 8)), stack = [p.y * scene.width + p.x];
     let count = 0, batch = [];
     const marked = (x, y) => { const i = (y - bounds.y) * bounds.w + x - bounds.x; return !!(visited[i >> 3] & 1 << (i & 7)); };
     const mark = (x, y) => { const i = (y - bounds.y) * bounds.w + x - bounds.x; visited[i >> 3] |= 1 << (i & 7); };
     const match = (x, y) => {
-      if (x < bounds.x || y < bounds.y || x >= bounds.x + bounds.w || y >= bounds.y + bounds.h || marked(x, y) || !pointInSelection(selection, x, y)) return false;
+      if (x < bounds.x || y < bounds.y || x >= bounds.x + bounds.w || y >= bounds.y + bounds.h || marked(x, y) || !pointInSelection(mask, x, y)) return false;
       const value = store.readPixel(scene.id, layer.id, x, y);
       return [0, 8, 16, 24].every(shift => Math.abs((value >>> shift & 255) - (target >>> shift & 255)) <= tolerance);
     };
@@ -122,7 +145,7 @@ export function createTools({ canvas, store, viewport, getSettings, onSelection 
     const scene = currentScene(), layer = editable();
     if (!selection) { store.clearLayer(scene.id, layer.id); return; }
     const rect = clippedRect(selectionBounds(selection));
-    if (!selection.points?.length) { store.fillRect(scene.id, layer.id, rect, 0); return; }
+    if (!selection.points?.length && !selection.mask) { store.fillRect(scene.id, layer.id, rect, 0); return; }
     function* pixels() { for (let y = rect.y; y < rect.y + rect.h; y++) for (let x = rect.x; x < rect.x + rect.w; x++) if (pointInSelection(selection, x, y)) yield [x, y, 0]; }
     store.writePixels(scene.id, layer.id, pixels());
   }
@@ -151,7 +174,9 @@ export function createTools({ canvas, store, viewport, getSettings, onSelection 
   async function pointerDown(event) {
     if (destroyed || drag || busy || event.button > 1 && event.button !== 2) return;
     canvas.focus({ preventScroll: true });
-    const p = point(event), s = { ...settings() }, tool = space || event.button === 1 ? 'hand' : s.tool;
+    const s = { ...settings() }, tool = space || event.button === 1 ? 'hand' : s.tool;
+    const rawPoint = tool === 'smart-select' ? viewport.worldPoint(event) : null;
+    const p = rawPoint ? { x: Math.floor(rawPoint.x), y: Math.floor(rawPoint.y) } : point(event);
     if (viewport.getState().walk?.enabled && tool !== 'hand') return;
     if (tool !== 'hand' && !inside(p)) return;
     event.preventDefault();
@@ -162,6 +187,7 @@ export function createTools({ canvas, store, viewport, getSettings, onSelection 
         else { const sample = await viewport.renderRegion({ sceneId: currentScene().id, rect: { x: p.x, y: p.y, w: 1, h: 1 } }); const d = sample.getContext('2d').getImageData(0, 0, 1, 1).data; onColor(unpackColor(((d[0] << 24) | (d[1] << 16) | (d[2] << 8) | d[3]) >>> 0)); } return;
       }
       if (tool === 'stamp') { busy = true; await stamp(p); busy = false; return; }
+      if (tool === 'smart-select') { selectSmart(p, event); return; }
       if (tool === 'fill') { editable(); begin('Flood fill'); try { floodFill(p, packColor(event.button === 2 ? s.secondary : s.color)); commitTransaction(); } catch (error) { cancelTransaction(); throw error; } return; }
       drag = { tool, pointerId: event.pointerId, start: p, last: p, clientX: event.clientX, clientY: event.clientY, settings: s, color: packColor(event.button === 2 ? s.secondary : s.color), originalSelection: viewport.getSelection(), points: [[p.x, p.y]] };
       canvas.setPointerCapture(event.pointerId);

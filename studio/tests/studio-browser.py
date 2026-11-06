@@ -218,7 +218,7 @@ class StudioBrowserTests(unittest.TestCase):
         self.page.locator(f'#tab-{name}').click()
 
     def new_project(self, preset='asset', name='Browser QA', kind=None, four_facings=False,
-                    width=None, height=None, add_scene=False):
+                    width=None, height=None, add_scene=False, room_template=None):
         old_id = self.state()['activeSceneId'] if add_scene else self.project()['id']
         self.page.locator('#addScene' if add_scene else '#newProject').click()
         self.page.locator('#projectDialog').wait_for(state='visible')
@@ -231,6 +231,8 @@ class StudioBrowserTests(unittest.TestCase):
             self.field('#projectHeight', height)
         if four_facings:
             self.page.locator('#projectFourFacings').check()
+        if room_template is not None:
+            self.page.locator('#interiorTemplate').set_checked(room_template)
         self.page.locator('#createProjectButton').click()
         expression = 'studio.store.getState().activeSceneId' if add_scene else 'studio.store.getProject().id'
         self.page.wait_for_function(f'(old)=>{expression}!==old', arg=old_id)
@@ -311,6 +313,11 @@ class StudioBrowserTests(unittest.TestCase):
     def download(self, action, filename):
         with self.page.expect_download(timeout=90000) as info:
             self.action(action).click()
+            if action == 'save-project':
+                self.page.locator('#saveWorkDialog').wait_for(state='visible')
+                self.page.locator('#saveWorkName').fill(self.project()['name'])
+                self.page.locator('#saveWorkFormat').select_option('project')
+                self.page.locator('#confirmSaveWork').click()
         target = OUT / filename
         info.value.save_as(str(target))
         return target
@@ -339,8 +346,9 @@ class StudioBrowserTests(unittest.TestCase):
         project = self.project()
         self.assertEqual(project['format'], 'CodaPixelStudio')
         self.assertEqual((self.scene()['width'], self.scene()['height']), (960, 720))
-        self.assertGreaterEqual(len(project['assets']), 4)
-        self.assertGreaterEqual(sum(len(l['objects']) for l in self.scene()['layers']), 4)
+        self.assertEqual(len(project['assets']), 0)
+        self.assertEqual(sum(len(l['objects']) for l in self.scene()['layers']), 0)
+        self.assertEqual([layer['name'] for layer in self.scene()['layers']], ['Floor', 'Walls'])
         self.assertLess(self.state()['rasterBytes'], 4 * 1024 * 1024)
         self.assertLessEqual(self.state()['historyBytes'], 64 * 1024 * 1024)
         self.screenshot('studio-desktop')

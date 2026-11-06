@@ -1,11 +1,13 @@
 import { createProject, createStore, packColor, unpackColor } from './model.js';
-import { createViewport } from './viewport.js';
-import { createTools } from './tools.js';
-import { createUI } from './ui.js?v=asset-create-1';
+import { createViewport, pointInSelection } from './viewport.js?v=materials-1';
+import { createTools } from './tools.js?v=materials-1';
+import { createUI } from './ui.js?v=materials-1';
 import { applyEffect, transform } from './image-ops.js';
-import { openPhotoDialog } from './photo-dialog.js';
+import { openPhotoDialog } from './photo-dialog.js?v=materials-1';
+import { openTileDialog } from './tile-dialog.js?v=materials-1';
+import { createInteriorProject, applySceneResize } from './workspace-ops.js?v=materials-1';
 import { readProject, readImage, downloadProject, exportPNG, exportBundle,
-  createAutosave } from './io.js';
+  createAutosave, downloadBlob, safeName } from './io.js';
 
 const settings = { tool: 'pencil', color: '#efbb78ff', secondary: '#172831ff',
   size: 1, tolerance: 0, filled: false, snap: 1, assetId: null,
@@ -15,6 +17,7 @@ const store = createStore(createProject({ name: 'My Coda workshop',
 let ui, viewport, tools, autosave, panelFrame = 0, statusText = 'Opening your workshop…';
 let selectedAssetId = null, savedProjects = [], pendingImport = 0, starterToken = 0;
 let assetCreationPending = false;
+let materialDialogPending = false;
 
 function current() {
   const state = store.getState(), project = store.getProject();
@@ -82,15 +85,7 @@ function imagePixels(image, x = 0, y = 0, mask = null) {
   })();
 }
 function insideSelection(selection, x, y) {
-  if (x < selection.x || y < selection.y || x >= selection.x + selection.w || y >= selection.y + selection.h) return false;
-  if (!selection.points?.length) return true;
-  let inside = false;
-  for (let i = 0, j = selection.points.length - 1; i < selection.points.length; j = i++) {
-    const [ax, ay] = selection.points[i], [bx, by] = selection.points[j];
-    if ((ay > y + .5) !== (by > y + .5) &&
-      x + .5 < (bx - ax) * (y + .5 - ay) / (by - ay) + ax) inside = !inside;
-  }
-  return inside;
+  return pointInSelection(selection, x, y);
 }
 function imageDataURL(image) {
   const canvas = document.createElement('canvas'); canvas.width = image.width; canvas.height = image.height;
@@ -102,8 +97,8 @@ function selectionRect(scene) {
   const selection = viewport.getSelection();
   const raw = selection || { x: 0, y: 0, w: scene.width, h: scene.height };
   const x = Math.max(0, Math.floor(raw.x)), y = Math.max(0, Math.floor(raw.y));
-  return { x, y, w: Math.max(1, Math.min(scene.width, Math.ceil(raw.x + raw.w)) - x),
-    h: Math.max(1, Math.min(scene.height, Math.ceil(raw.y + raw.h)) - y) };
+  return { x, y, w: Math.max(0, Math.min(scene.width, Math.ceil(raw.x + raw.w)) - x),
+    h: Math.max(0, Math.min(scene.height, Math.ceil(raw.y + raw.h)) - y) };
 }
 function resetView() {
   tools.clearSelection(); viewport.setSelectedObject(null); viewport.setWalkTest(false);
@@ -146,6 +141,7 @@ async function convertPhoto(file) {
       height: result.height, dataURL: result.dataURL || imageDataURL(result),
       anchor: result.anchor || { x: result.width / 2, y: result.height }, collision: [], tags: ['photo', 'pixel-art'] });
     settings.assetId = selectedAssetId; ensureLayer('objects'); settings.tool = 'stamp';
+    ui.showAssets();
     status('Pixel asset created. Click the canvas to place it, or choose Edit asset to paint its pixels.');
   } else {
     transaction('Create editable pixel image', () => {
@@ -220,12 +216,19 @@ async function makeAsset() {
   } finally { assetCreationPending = false; }
 }
 function prepareAssetPixels(canvas, rect, selection) {
-  const context = canvas.getContext('2d'), points = selection?.points;
+  const context = canvas.getContext('2d'), points = selection?.points, masked = !!selection?.mask;
   let visible = false;
   // Work in small strips so large artwork does not need a second full-size pixel buffer.
   for (let top = 0; top < canvas.height; top += 64) {
     const image = context.getImageData(0, top, canvas.width, Math.min(64, canvas.height - top));
-    if (points?.length) {
+    if (masked) {
+      for (let row = 0; row < image.height; row++) for (let col = 0; col < canvas.width; col++) {
+        if (!insideSelection(selection, rect.x + col, rect.y + top + row)) {
+          const offset = (row * canvas.width + col) * 4;
+          image.data.fill(0, offset, offset + 4);
+        }
+      }
+    } else if (points?.length) {
       for (let row = 0; row < image.height; row++) {
         const centerY = rect.y + top + row + .5, crossings = [];
         for (let i = 0, j = points.length - 1; i < points.length; j = i++) {
@@ -242,14 +245,195 @@ function prepareAssetPixels(canvas, rect, selection) {
         }
         image.data.fill(0, offset + last * 4, offset + canvas.width * 4);
       }
-      context.putImageData(image, 0, top);
     }
+    if (masked || points?.length) context.putImageData(image, 0, top);
     if (!visible) for (let i = 3; i < image.data.length; i += 4) {
       if (image.data[i]) { visible = true; break; }
     }
-    if (visible && !points?.length) break;
+    if (visible && !points?.length && !masked) break;
   }
   return visible;
+}
+async function artworkPixels(scene, selection) {
+  const raw = selection || { x: 0, y: 0, w: scene.width, h: scene.height };
+  const x = Math.max(0, Math.floor(raw.x)), y = Math.max(0, Math.floor(raw.y));
+  const rect = { x, y, w: Math.min(scene.width, Math.ceil(raw.x + raw.w)) - x,
+    h: Math.min(scene.height, Math.ceil(raw.y + raw.h)) - y };
+  if (rect.w < 1 || rect.h < 1 || rect.w * rect.h > 16 * 1024 * 1024)
+    throw Error('Use Select to mark a smaller area of artwork, up to 16 million pixels.');
+  const canvas = await viewport.renderRegion({ sceneId: scene.id, rect, scale: 1, objects: true });
+  try {
+    if (!prepareAssetPixels(canvas, rect, selection)) throw Error('Paint some artwork or upload an image to make a tile.');
+    return canvas.getContext('2d').getImageData(0, 0, canvas.width, canvas.height);
+  } finally { canvas.width = canvas.height = 0; }
+}
+async function makeTile() {
+  if (materialDialogPending) return;
+  const { project, scene, state } = current(), assetId = selectedAssetId || settings.assetId;
+  if (state.inTransaction) throw Error('Finish your current stroke before making a tile.');
+  const selection = structuredClone(viewport.getSelection());
+  const checkContext = () => {
+    if (store.getProject() !== project || current().scene.id !== scene.id || store.getState().inTransaction)
+      throw Error('The project changed. Close this window and try again.');
+  };
+  materialDialogPending = true;
+  try {
+    const result = await openTileDialog({ onStatus: status, validate: result => { checkContext(); checkAssetCapacity(result.dataURL); },
+      getArtwork: async () => { checkContext(); const image = await artworkPixels(scene, selection); checkContext(); return image; },
+      getAsset: async () => {
+        checkContext();
+        if (!assetId) throw Error('Select an asset in your library before opening the tile maker.');
+        const image = await viewport.getAssetPixels(assetId); checkContext();
+        if (!image) throw Error('That asset is unavailable. Select another asset and try again.');
+        return image;
+      } });
+    if (!result) return;
+    checkContext();
+    selectedAssetId = store.addAsset({ name: result.name, width: result.width, height: result.height,
+      dataURL: result.dataURL, tags: result.tags, collision: [], anchor: { x: result.width / 2, y: result.height } });
+    settings.assetId = selectedAssetId; ui.showAssets(); schedulePanels();
+    status('“' + result.name + '” is ready. Select an area, then choose Fill area with tile.');
+  } finally { materialDialogPending = false; }
+}
+async function fillTile(id = selectedAssetId || settings.assetId) {
+  if (materialDialogPending) return;
+  const { project, scene, state } = current(), asset = project.assets.find(value => value.id === id);
+  if (!asset) throw Error('Choose an asset or make a floor / wallpaper tile first.');
+  if (state.inTransaction) throw Error('Finish your current stroke before filling an area.');
+  const selection = structuredClone(viewport.getSelection()), rect = selectionRect(scene);
+  const checkContext = () => {
+    if (store.getProject() !== project || current().scene.id !== scene.id || store.getState().inTransaction)
+      throw Error('The project changed before filling. Choose your area and try again.');
+  };
+  materialDialogPending = true;
+  try {
+    let error = '', image;
+    const tileColumns = Math.ceil((rect.x + rect.w) / 64) - Math.floor(rect.x / 64);
+    const tileRows = Math.ceil((rect.y + rect.h) / 64) - Math.floor(rect.y / 64);
+    if (rect.w < 1 || rect.h < 1) error = 'Select an area inside the canvas to fill.';
+    else if (rect.w * rect.h > 8 * 1024 * 1024) error = 'Select a smaller area to fill, up to 8 million pixels, so Undo stays available.';
+    else if (scene.layers.length >= 128) error = 'This scene already has 128 layers. Remove an unused layer before filling.';
+    else if (state.rasterBytes + tileColumns * tileRows * 64 * 64 * 4 > 256 * 1024 * 1024)
+      error = 'This project has room for a smaller fill. Select a smaller area or remove an unused paint layer.';
+    else try { image = await viewport.getAssetPixels(id); if (!image) throw Error('The tile image could not be loaded. Choose another asset.'); }
+    catch (failure) { error = failure.message; }
+    checkContext();
+    const confirmed = await ui.promptTileFill({ assetName: asset.name, width: rect.w, height: rect.h, selection: !!selection, error });
+    if (!confirmed || error) return;
+    checkContext();
+    transaction('Fill area with tile', () => {
+      const layerId = store.addLayer(scene.id, { name: (asset.name + ' · ' + (asset.tags.includes('wallpaper') ? 'wallpaper' : 'tile fill')).slice(0, 160),
+        type: 'raster', role: 'world' });
+      store.writePixels(scene.id, layerId, (function* () {
+        for (let row = 0; row < rect.h; row++) for (let col = 0; col < rect.w; col++) {
+          const x = rect.x + col, y = rect.y + row;
+          if (selection && !insideSelection(selection, x, y)) continue;
+          const offset = ((row % image.height) * image.width + col % image.width) * 4, d = image.data;
+          if (!d[offset + 3]) continue;
+          yield [x, y, ((d[offset] << 24) | (d[offset + 1] << 16) | (d[offset + 2] << 8) | d[offset + 3]) >>> 0];
+        }
+      })());
+      store.setActiveLayer(layerId);
+    });
+    viewport.invalidate(); schedulePanels();
+    status('Filled ' + (selection ? 'the selection' : 'the canvas') + ' with “' + asset.name + '” on a new paint layer. Undo is available.');
+  } finally { materialDialogPending = false; }
+}
+async function downloadAsset(id = selectedAssetId || settings.assetId) {
+  const asset = store.getProject().assets.find(value => value.id === id);
+  if (!asset) throw Error('Select an asset to download.');
+  const image = await viewport.getAssetPixels(id);
+  if (!image) throw Error('The asset image could not be loaded.');
+  const canvas = document.createElement('canvas'); canvas.width = image.width; canvas.height = image.height;
+  try {
+    canvas.getContext('2d').putImageData(new ImageData(new Uint8ClampedArray(image.data), image.width, image.height), 0, 0);
+    const blob = await new Promise(resolve => canvas.toBlob(resolve, 'image/png'));
+    if (!blob) throw Error('The PNG could not be prepared.');
+    downloadBlob(blob, safeName(asset.name) + '-' + image.width + 'x' + image.height + '.png');
+    status('Downloaded “' + asset.name + '” as a native-size PNG.');
+  } finally { canvas.width = canvas.height = 0; }
+}
+function checkAssetCapacity(dataURL, existingId = null) {
+  const assets = store.getProject().assets;
+  if (!existingId && assets.length >= 512) throw Error('Your library has 512 assets. Remove an unused asset, or download an editable project instead.');
+  if (dataURL.length > 32 * 1024 * 1024 * 4 / 3 + 128) throw Error('Select a smaller area for this image, under 32 MB.');
+  if (assets.reduce((sum, asset) => sum + (asset.id === existingId ? 0 : asset.dataURL.length * .75), dataURL.length * .75) > 64 * 1024 * 1024)
+    throw Error('The asset library is full. Remove an unused asset, or download an editable project instead.');
+}
+async function saveWork(kind) {
+  if (materialDialogPending) return;
+  const { project, scene, state } = current();
+  if (state.inTransaction) throw Error('Finish the current stroke before saving.');
+  const assetId = selectedAssetId || settings.assetId, selectedAsset = project.assets.find(value => value.id === assetId);
+  const selection = structuredClone(viewport.getSelection()), rect = selectionRect(scene);
+  const assetSource = !!kind && kind !== 'interior' && scene.kind !== 'asset' && selectedAsset &&
+    (kind === 'asset' || selectedAsset.tags.includes(kind));
+  let options = { kind: kind || (scene.kind === 'interior' || scene.kind === 'map' ? 'interior' : 'asset'),
+    name: assetSource ? selectedAsset.name : project.name, source: assetSource ? 'asset' : 'canvas',
+    hasAsset: !!selectedAsset, assetName: selectedAsset?.name,
+    sceneWidth: scene.width, sceneHeight: scene.height, selectionWidth: selection ? rect.w : null, selectionHeight: selection ? rect.h : null };
+  const checkContext = () => {
+    if (store.getProject() !== project || current().scene.id !== scene.id || store.getState().inTransaction)
+      throw Error('The project changed. Close this window and save again.');
+  };
+  materialDialogPending = true;
+  try {
+    while (true) {
+      const choice = await ui.promptSaveWork(options); if (!choice) return;
+      try {
+        checkContext();
+        const snapshot = store.serialize(); snapshot.name = choice.name;
+        const fileStore = { serialize: () => snapshot, getProject: () => snapshot,
+          getState: () => store.getState(), markSaved: () => store.markSaved() };
+        if (choice.format === 'project') {
+          const result = await downloadProject(fileStore);
+          await autosave.saveNow(); void refreshSavedProjects();
+          status('Saved ' + result.filename + '. This editable file includes every layer, asset and collision edit.');
+        } else if (choice.format === 'bundle') {
+          const result = await exportBundle({ store: fileStore, viewport });
+          status('Saved ' + result.filename + ' with editable artwork and game integration files.');
+        } else if (choice.kind === 'interior') {
+          snapshot.scenes.find(value => value.id === scene.id).name = choice.name;
+          const result = await exportPNG({ store: fileStore, viewport, sceneId: scene.id });
+          status('Saved ' + result.filename + '. Choose Editable project to keep layers and collision too.');
+        } else {
+          const revision = store.getState().revision;
+          const image = choice.source === 'asset' ? await viewport.getAssetPixels(assetId) : await artworkPixels(scene, selection);
+          checkContext();
+          if (store.getState().revision !== revision) throw Error('The artwork changed while preparing the PNG. Save again after finishing your edit.');
+          if (!image) throw Error('Choose an asset or some visible artwork to save.');
+          const dataURL = choice.source === 'asset' ? selectedAsset.dataURL : imageDataURL(image);
+          const existing = choice.source === 'asset' ? selectedAsset : project.assets.find(value => value.name === choice.name && value.dataURL === dataURL);
+          const tags = [...new Set([...(existing?.tags || ['created', 'pixel-art']).filter(value => !['floor', 'wallpaper', 'tile', 'repeat'].includes(value)),
+            ...(choice.kind === 'floor' || choice.kind === 'wallpaper' ? ['tile', choice.kind, 'repeat'] : [])])];
+          checkAssetCapacity(dataURL, existing?.id);
+          if (existing) { store.updateAsset(existing.id, { name: choice.name, tags }); selectedAssetId = existing.id; }
+          else selectedAssetId = store.addAsset({ name: choice.name, width: image.width, height: image.height, dataURL,
+            anchor: { x: image.width / 2, y: image.height }, collision: [], tags });
+          settings.assetId = selectedAssetId; ui.showAssets(); schedulePanels();
+          await downloadAsset(selectedAssetId); await autosave.saveNow(); void refreshSavedProjects();
+          status('Saved “' + choice.name + '” as a PNG and in your asset library.');
+        }
+        return;
+      } catch (error) { options = { ...options, ...choice, error: error.message || 'The file could not be saved. Try another format.' }; }
+    }
+  } finally { materialDialogPending = false; }
+}
+async function resizeImage() {
+  if (materialDialogPending) return;
+  const { project, scene } = current();
+  let options = { width: scene.width, height: scene.height, mode: 'canvas' };
+  materialDialogPending = true;
+  try {
+    while (true) {
+      const choice = await ui.promptResize(options); if (!choice) return;
+      try {
+        if (store.getProject() !== project || current().scene.id !== scene.id) throw Error('The project changed. Close this window and try again.');
+        applySceneResize(store, scene.id, choice); tools.clearSelection(); viewport.setSelectedObject(null); viewport.fit();
+        status('Resized to ' + choice.width + ' × ' + choice.height + ' pixels. Undo restores the previous size and artwork.'); return;
+      } catch (error) { options = { ...choice, error: error.message || 'Choose a smaller image size.' }; }
+    }
+  } finally { materialDialogPending = false; }
 }
 async function applyImageChange(name, options = {}, isTransform = false) {
   const { scene, layer, project } = current(), objectSelection = selectedObject();
@@ -281,7 +465,7 @@ async function applyImageChange(name, options = {}, isTransform = false) {
     data: canvas.getContext('2d').getImageData(0, 0, canvas.width, canvas.height).data };
   canvas.width = canvas.height = 0;
   let transformedMask = null;
-  if (isTransform && mask?.points?.length) {
+  if (isTransform && (mask?.points?.length || mask?.mask)) {
     const maskData = new Uint8ClampedArray(input.width * input.height * 4);
     for (let y = 0; y < input.height; y++) for (let x = 0; x < input.width; x++) {
       const index = (y * input.width + x) * 4;
@@ -309,7 +493,14 @@ async function applyImageChange(name, options = {}, isTransform = false) {
       })());
     } else store.writePixels(scene.id, layer.id, imagePixels(output, rect.x, rect.y, isTransform ? null : mask));
   });
-  if (isTransform && mask) viewport.setSelection({ x: rect.x, y: rect.y, w: output.width, h: output.height });
+  if (isTransform && mask) {
+    const next = { x: rect.x, y: rect.y, w: output.width, h: output.height };
+    if (transformedMask) {
+      next.mask = new Uint8Array(output.width * output.height);
+      for (let i = 0; i < next.mask.length; i++) next.mask[i] = transformedMask.data[i * 4 + 3] ? 1 : 0;
+    }
+    viewport.setSelection(next);
+  }
   if (isTransform && !mask && scene.kind === 'asset' && scene.layers.length === 1) viewport.fit();
   viewport.invalidate(); status('Applied ' + name + '. Undo is available.');
 }
@@ -349,14 +540,19 @@ async function action(name, payload) {
       case 'new-project': {
         const spec = payload?.kind ? payload : await ui.promptProject(); if (!spec) return;
         await autosave.saveNow(); pendingImport++; starterToken++;
-        replaceProject(createProject(spec)); selectedAssetId = settings.assetId = null;
+        replaceProject(spec.kind === 'interior' && spec.roomTemplate !== false ? createInteriorProject(spec) : createProject(spec)); selectedAssetId = settings.assetId = null;
         resetView(); status('New ' + spec.kind + ' canvas ready.'); break;
       }
       case 'open-project': ui.els.projectFile.click(); break;
       case 'open-project-file': if (payload) await openNative(payload); break;
-      case 'save-project': {
-        const result = await downloadProject(store); status('Downloaded ' + (result?.filename || 'your editable project') + '.');
-        await autosave.saveNow(); void refreshSavedProjects(); break;
+      case 'save-project': await saveWork(); break;
+      case 'save-work': await saveWork(payload?.kind); break;
+      case 'resize-image': await resizeImage(); break;
+      case 'blank-selection': {
+        if (!viewport.getSelection()) throw Error('Use Select or Smart Select to choose the area to clear.');
+        if (layer.type !== 'raster' || layer.locked) throw Error('Choose an unlocked paint layer, or use Edit pixels on your image first.');
+        viewport.setSelectedObject(null); tools.deleteSelection();
+        status('Cleared the selected area to transparent. Undo restores it.'); break;
       }
       case 'export-png': {
         status('Rendering PNG artwork…'); const result = await exportPNG({ store, viewport, sceneId: scene.id });
@@ -389,7 +585,8 @@ async function action(name, payload) {
       case 'clear-layer': store.clearLayer(scene.id, layer.id); break;
       case 'add-scene': {
         const spec = payload?.kind ? payload : await ui.promptProject(); if (!spec) return;
-        const id = store.addScene(spec); store.setActiveScene(id); resetView(); break;
+        const sceneSpec = spec.kind === 'interior' && spec.roomTemplate !== false ? createInteriorProject(spec).scenes[0] : spec;
+        const id = store.addScene(sceneSpec); store.setActiveScene(id); resetView(); break;
       }
       case 'select-scene': store.setActiveScene(payload); resetView(); break;
       case 'rename-scene': store.updateScene(payload.id || scene.id, { name: payload.name }); break;
@@ -407,6 +604,9 @@ async function action(name, payload) {
       case 'edit-asset': await editAsset(typeof payload === 'string' ? payload : selectedAssetId); break;
       case 'delete-asset': store.removeAsset(payload || selectedAssetId); selectedAssetId = settings.assetId = null; break;
       case 'make-asset': await makeAsset(); break;
+      case 'make-tile': await makeTile(); break;
+      case 'fill-tile': await fillTile(typeof payload === 'string' ? payload : undefined); break;
+      case 'export-asset': await downloadAsset(typeof payload === 'string' ? payload : undefined); break;
       case 'photo': await convertPhoto(payload instanceof File ? payload : undefined); break;
       case 'effect': await applyImageChange(payload.name || payload, payload.options || {}); break;
       case 'transform': await applyImageChange('transform', payload, true); break;
@@ -475,7 +675,7 @@ ui.els.canvas.addEventListener('pointerleave', () => {
 });
 
 const shortcuts = { b: 'pencil', e: 'eraser', g: 'fill', l: 'line', r: 'rectangle',
-  u: 'ellipse', o: 'ellipse', m: 'select', q: 'lasso', v: 'move', s: 'stamp', i: 'eyedropper', c: 'collision', h: 'hand' };
+  u: 'ellipse', o: 'ellipse', m: 'select', q: 'lasso', w: 'smart-select', v: 'move', s: 'stamp', i: 'eyedropper', c: 'collision', h: 'hand' };
 window.addEventListener('keydown', event => {
   if (event.defaultPrevented || event.target.closest?.('input,textarea,select,[contenteditable="true"]') || document.querySelector('dialog[open]')) return;
   const key = event.key.toLowerCase(), command = event.ctrlKey || event.metaKey;
@@ -494,41 +694,9 @@ window.addEventListener('pagehide', () => { void autosave.saveNow(); });
 window.studio = Object.freeze({ store, viewport, tools, settings, autosave });
 
 async function starterRoom() {
-  const projectId = store.getProject().id, token = ++starterToken;
-  const samples = [
-    ['Walnut table', 'table-lounge-walnut', 385, 330],
-    ['Coda sofa', 'sofa-compact-south', 210, 160],
-    ['Succulent', 'succulent', 635, 195],
-    ['Teal chair', 'chair-teal-east', 595, 350]
-  ];
-  const images = await Promise.all(samples.map(async ([name, id, x, y]) => {
-    const response = await fetch(new URL('./assets/' + id + '.png', import.meta.url));
-    if (!response.ok) throw Error('Starter artwork could not load.');
-    const blob = await response.blob(), image = await readImage(new File([blob], id + '.png', { type: 'image/png' }));
-    return { ...image, name, x, y };
-  }));
-  if (token !== starterToken || store.getProject().id !== projectId || store.getState().revision !== 0) return;
-  transaction('Starter room', () => {
-    const { scene } = current(), floor = ensureLayer('raster');
-    store.fillLayer(scene.id, floor.id, packColor('#b8a08aff'));
-    store.fillRect(scene.id, floor.id, { x: 0, y: 0, w: scene.width, h: 112 }, packColor('#495b61ff'));
-    const seams = [];
-    for (let y = 144; y < scene.height; y += 32) for (let x = 0; x < scene.width; x++) seams.push([x, y, packColor('#967f6cff')]);
-    for (let x = 0; x < scene.width; x++) seams.push([x, 111, packColor('#e8c47dff')]);
-    store.writePixels(scene.id, floor.id, seams);
-    const objects = ensureLayer('objects');
-    for (const image of images) {
-      const assetId = store.addAsset({ name: image.name, width: image.width, height: image.height,
-        dataURL: image.dataURL, anchor: { x: image.width / 2, y: image.height },
-        collision: [{ x: image.width * .12, y: image.height * .76, w: image.width * .76, h: Math.max(5, image.height * .2) }], tags: ['coda', 'starter'] });
-      const objectId = store.addObject(scene.id, objects.id, { assetId, x: image.x, y: image.y,
-        w: image.width, h: image.height, anchor: { x: .5, y: 1 } });
-      const placed = current().scene.layers.find(value => value.id === objects.id).objects.find(value => value.id === objectId);
-      blockFootprint(placed, objects);
-    }
-    viewport.setOptions({ collision: false }); store.setActiveLayer(floor.id);
-  });
-  viewport.fit(); status('Your workshop is ready. Paint a layer, place an asset, or start a new map.');
+  if (store.getState().revision !== 0) return;
+  replaceProject(createInteriorProject({ name: 'My interior' }));
+  resetView(); status('Your empty room is ready. Floor and Walls are separate layers. Start painting, pixelify an image, or make flooring.');
   await autosave.saveNow(); void refreshSavedProjects();
 }
 

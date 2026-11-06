@@ -1,4 +1,5 @@
 import { TILE_SIZE, unpackColor } from './model.js';
+import { selectionContains } from './smart-select.js?v=materials-1';
 
 const MAX_OUTPUT_PIXELS = 16 * 1024 * 1024;
 const MAX_CACHE_BYTES = 32 * 1024 * 1024;
@@ -12,16 +13,7 @@ export function selectionBounds(selection) {
 }
 
 export function pointInSelection(selection, x, y) {
-  if (!selection) return true;
-  if (x < selection.x || y < selection.y || x >= selection.x + selection.w || y >= selection.y + selection.h) return false;
-  if (!selection.points?.length) return true;
-  let inside = false;
-  const px = x + .5, py = y + .5, points = selection.points;
-  for (let i = 0, j = points.length - 1; i < points.length; j = i++) {
-    const [xi, yi] = points[i], [xj, yj] = points[j];
-    if ((yi > py) !== (yj > py) && px < (xj - xi) * (py - yi) / (yj - yi) + xi) inside = !inside;
-  }
-  return inside;
+  return selectionContains(selection, x, y);
 }
 
 export function* imageDataToPixels(image, x = 0, y = 0, selection = null) {
@@ -64,6 +56,7 @@ export function createViewport({ canvas, store, onStatus = () => {} }) {
   const walk = { enabled: false, x: 0, y: 0, blocked: false, radius: 10, width: 80, height: 96 };
   const keys = new Set();
   let lastTime = 0;
+  let maskGeometry = null;
   const scene = id => store.getProject().scenes.find(item => item.id === (id || store.getState().activeSceneId));
   const assetFor = id => store.getProject().assets.find(item => item.id === id);
 
@@ -201,6 +194,36 @@ export function createViewport({ canvas, store, onStatus = () => {} }) {
     if (!fitted && cssWidth > 1 && cssHeight > 1) fit();
   }
 
+  function selectionGeometry() {
+    if (!selection?.mask) return null;
+    const { mask, w, h } = selection;
+    if (maskGeometry?.mask === mask) return maskGeometry;
+    const clip = new Path2D(), edge = new Path2D();
+    for (let y = 0; y < h; y++) {
+      const offset = y * w;
+      for (let x = 0; x < w;) {
+        if (!mask[offset + x]) { x++; continue; }
+        const start = x;
+        while (x < w && mask[offset + x]) x++;
+        clip.rect(start, y, x - start, 1);
+        edge.moveTo(start, y); edge.lineTo(start, y + 1);
+        edge.moveTo(x, y); edge.lineTo(x, y + 1);
+        // Only exposed edges are outlined, including holes inside a selection.
+        for (const dy of [-1, 1]) {
+          let edgeStart = -1;
+          for (let sx = start; sx <= x; sx++) {
+            const exposed = sx < x && (y + dy < 0 || y + dy >= h || !mask[(y + dy) * w + sx]);
+            if (exposed && edgeStart < 0) edgeStart = sx;
+            else if (!exposed && edgeStart >= 0) {
+              const ey = y + (dy > 0 ? 1 : 0); edge.moveTo(edgeStart, ey); edge.lineTo(sx, ey); edgeStart = -1;
+            }
+          }
+        }
+      }
+    }
+    maskGeometry = { mask, clip, edge }; return maskGeometry;
+  }
+
   function drawOverlay(ctx, current) {
     const rect = { x: -panX / zoom, y: -panY / zoom, w: cssWidth / zoom, h: cssHeight / zoom };
     if (grid && zoom >= 6) {
@@ -227,10 +250,14 @@ export function createViewport({ canvas, store, onStatus = () => {} }) {
     if (preview) {
       ctx.save(); ctx.globalAlpha = .75; ctx.fillStyle = preview.color || '#7be5c5'; ctx.strokeStyle = preview.color || '#7be5c5'; ctx.lineWidth = (preview.size || 1);
       if (selection && !preview.image) {
-        ctx.beginPath();
-        if (selection.points?.length) { selection.points.forEach(([x, y], i) => i ? ctx.lineTo(x, y) : ctx.moveTo(x, y)); ctx.closePath(); }
-        else ctx.rect(selection.x, selection.y, selection.w, selection.h);
-        ctx.clip();
+        const geometry = selectionGeometry();
+        if (geometry) { ctx.translate(selection.x, selection.y); ctx.clip(geometry.clip); ctx.translate(-selection.x, -selection.y); }
+        else {
+          ctx.beginPath();
+          if (selection.points?.length) { selection.points.forEach(([x, y], i) => i ? ctx.lineTo(x, y) : ctx.moveTo(x, y)); ctx.closePath(); }
+          else ctx.rect(selection.x, selection.y, selection.w, selection.h);
+          ctx.clip();
+        }
       }
       if (preview.image) ctx.drawImage(preview.image, preview.x, preview.y);
       else if (preview.pixels) for (const [x, y] of preview.pixels) ctx.fillRect(x, y, 1, 1);
@@ -240,10 +267,19 @@ export function createViewport({ canvas, store, onStatus = () => {} }) {
       ctx.restore();
     }
     if (selection) {
-      ctx.save(); ctx.strokeStyle = '#fff'; ctx.lineWidth = 1 / zoom; ctx.setLineDash([4 / zoom, 4 / zoom]); ctx.beginPath();
-      if (selection.points?.length) { selection.points.forEach(([x, y], i) => i ? ctx.lineTo(x, y) : ctx.moveTo(x, y)); ctx.closePath(); }
-      else ctx.rect(selection.x, selection.y, selection.w, selection.h);
-      ctx.stroke(); ctx.strokeStyle = '#172336'; ctx.lineDashOffset = 4 / zoom; ctx.stroke(); ctx.restore();
+      ctx.save(); ctx.strokeStyle = '#fff'; ctx.lineWidth = 1 / zoom;
+      const geometry = selectionGeometry();
+      if (geometry) {
+        ctx.translate(selection.x, selection.y); ctx.fillStyle = '#71dcc627'; ctx.fill(geometry.clip);
+        ctx.setLineDash([4 / zoom, 4 / zoom]); ctx.stroke(geometry.edge);
+        ctx.strokeStyle = '#172336'; ctx.lineDashOffset = 4 / zoom; ctx.stroke(geometry.edge);
+      } else {
+        ctx.setLineDash([4 / zoom, 4 / zoom]); ctx.beginPath();
+        if (selection.points?.length) { selection.points.forEach(([x, y], i) => i ? ctx.lineTo(x, y) : ctx.moveTo(x, y)); ctx.closePath(); }
+        else ctx.rect(selection.x, selection.y, selection.w, selection.h);
+        ctx.stroke(); ctx.strokeStyle = '#172336'; ctx.lineDashOffset = 4 / zoom; ctx.stroke();
+      }
+      ctx.restore();
     }
     const selected = getSelectedObject();
     if (selected) { ctx.save(); ctx.translate(selected.x + selected.w / 2, selected.y + selected.h / 2); ctx.rotate((selected.rotation || 0) * Math.PI / 180); ctx.strokeStyle = '#80f2d1'; ctx.lineWidth = 2 / zoom; ctx.strokeRect(-selected.w / 2, -selected.h / 2, selected.w, selected.h); ctx.restore(); }
@@ -393,7 +429,7 @@ export function createViewport({ canvas, store, onStatus = () => {} }) {
   const observer = new ResizeObserver(() => { resize(); invalidate(); }); observer.observe(canvas);
   const unsubscribe = store.subscribe(() => {
     tileCache.clear(); cacheBytes = 0;
-    if (currentSceneId !== store.getState().activeSceneId) { currentSceneId = store.getState().activeSceneId; selection = null; selectedObjectId = null; preview = null; setWalkTest(false); fit(); }
+    if (currentSceneId !== store.getState().activeSceneId) { currentSceneId = store.getState().activeSceneId; selection = null; maskGeometry = null; selectedObjectId = null; preview = null; setWalkTest(false); fit(); }
     invalidate();
   });
   resize(); invalidate();
@@ -401,10 +437,11 @@ export function createViewport({ canvas, store, onStatus = () => {} }) {
     worldPoint, fit, zoomAt, panBy(dx, dy) { panX += dx; panY += dy; invalidate(); }, invalidate, renderRegion, getAssetPixels, getObjectAt,
     getState: () => ({ zoom, panX, panY, grid, collision, onionSkin, background, cacheBytes, selection, selectedObjectId, walk: { ...walk } }),
     setOptions(options) { if ('grid' in options) grid = !!options.grid; if ('collision' in options) collision = !!options.collision; if ('onionSkin' in options) onionSkin = !!options.onionSkin; if (options.background) background = options.background; invalidate(); },
-    setSelection(value) { selection = value ? structuredClone(value) : null; invalidate(); }, getSelection: () => selection ? structuredClone(selection) : null,
+    setSelection(value) { selection = value ? structuredClone(value) : null; maskGeometry = null; invalidate(); },
+    getSelection: ({ copy = true } = {}) => selection ? copy ? structuredClone(selection) : selection : null,
     setPreview(value) { preview = value; invalidate(); }, getSelectedObject,
     setSelectedObject(id) { selectedObjectId = id || null; invalidate(); }, setWalkTest,
-    destroy() { destroyed = true; walk.enabled = false; unsubscribe(); observer.disconnect(); cancelAnimationFrame(frame); canvas.removeEventListener('wheel', wheel); window.removeEventListener('keydown', downKey); window.removeEventListener('keyup', upKey); window.removeEventListener('blur', blur); tileCache.clear(); imageCache.clear(); }
+    destroy() { destroyed = true; walk.enabled = false; maskGeometry = null; unsubscribe(); observer.disconnect(); cancelAnimationFrame(frame); canvas.removeEventListener('wheel', wheel); window.removeEventListener('keydown', downKey); window.removeEventListener('keyup', upKey); window.removeEventListener('blur', blur); tileCache.clear(); imageCache.clear(); }
   };
 }
 

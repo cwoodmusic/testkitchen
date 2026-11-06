@@ -1,10 +1,12 @@
-import { pixelate, applyEffect } from './image-ops.js';
+import { pixelifyImage, PIXELIFY_STYLES } from './coda-style.js?v=materials-1';
 
 const MAX_PIXELS = 16_777_216;
 const MAX_FILE_BYTES = 24 * 1024 * 1024;
 const PRESETS = {
   character: { width: 80, height: 96, anchor: { x: 40, y: 80 } },
   tile: { width: 128, height: 128 },
+  floor: { width: 32, height: 32 },
+  wallpaper: { width: 32, height: 64 },
   asset: { width: 512, height: 512 },
   map: { width: 1672, height: 941 },
 };
@@ -72,23 +74,6 @@ async function decode(file) {
   }
 }
 
-// This function is also serialized into the local module worker below.
-function convert(image, settings) {
-  const block = settings.block;
-  let result = pixelate(image, {
-    width: Math.max(1, Math.ceil(settings.width / block)), height: Math.max(1, Math.ceil(settings.height / block)),
-    fit: settings.fit, colors: 0,
-    brightness: settings.brightness, contrast: settings.contrast, saturation: settings.saturation, hue: settings.hue,
-  });
-  if (settings.grayscale) result = applyEffect(result, 'grayscale');
-  if (settings.invert) result = applyEffect(result, 'invert');
-  if (settings.outline) result = applyEffect(result, 'outline', { size: settings.outline, color: settings.outlineColor });
-  if (settings.sharpen) result = applyEffect(result, 'sharpen', { amount: settings.sharpen });
-  result = pixelate(result, { colors: settings.colors, dither: settings.dither });
-  if (result.width !== settings.width || result.height !== settings.height) result = pixelate(result, { width: settings.width, height: settings.height, colors: 0 });
-  return result;
-}
-
 function element(tag, props = {}, children = []) {
   const el = document.createElement(tag);
   for (const [key, value] of Object.entries(props)) {
@@ -108,10 +93,10 @@ export function openPhotoDialog({ file, onStatus = () => {} } = {}) {
     let source = null, converted = null, sourceName = 'Pixel photo', closed = false, timer, worker, workerURL, revision = 0, loadRevision = 0;
     let previewFrame = 0, previewObserver;
     const previewDimensions = new WeakMap();
-    const dialog = element('dialog', { class: 'photo-dialog', 'aria-label': 'Photo to pixel art' });
-    const heading = element('h2', { text: 'Photo → editable pixels' });
+    const dialog = element('dialog', { class: 'photo-dialog', 'aria-label': 'Pixelify image' });
+    const heading = element('h2', { text: 'Pixelify image' });
     const close = element('button', { type: 'button', text: '×', class: 'photo-close', 'aria-label': 'Close photo conversion' });
-    const intro = element('p', { class: 'photo-intro', text: 'Convert a local PNG, JPEG, or WebP into editable pixels. Coda uses source pixels: choose a real canvas size, then adjust detail and color. Palette reduction preserves photographed shapes; drawing tools refine the result.' });
+    const intro = element('p', { class: 'photo-intro', text: 'Upload an image, choose a Coda style, and preview it as pixel art. Shared game colors and simpler detail help your assets fit together. Conversion keeps the image’s shapes; use the drawing tools to refine them.' });
     const upload = element('input', { type: 'file', accept: 'image/png,image/jpeg,image/webp', dataset: { photo: 'file' } });
     const fileLabel = element('label', { class: 'photo-upload', text: 'Choose image (up to 24 MB)' }, [upload]);
     const fileInfo = element('p', { class: 'photo-file-info', text: 'Your image stays in this browser.' });
@@ -136,16 +121,19 @@ export function openPhotoDialog({ file, onStatus = () => {} } = {}) {
       input.parentElement.append(output); input.addEventListener('input', () => { output.value = input.value; });
       return input;
     }
-    field('preset', 'Coda size', select([['tile', 'Tile / small asset · 128 × 128'], ['character', 'Character · 80 × 96 · anchor 40,80'], ['asset', 'Large asset · 512 × 512'], ['map', 'Original map · 1672 × 941'], ['custom', 'Custom dimensions']], 'tile'));
+    field('style', 'Style preset', select(Object.entries(PIXELIFY_STYLES).map(([key, value]) => [key, value.label]), 'coda'), 'Choosing a style applies its palette, detail, and color adjustments.');
+    field('palette', 'Color palette', select([['coda', 'Coda arcade · game colors'], ['cozy', 'Cozy interiors · warm colors'], ['image', 'Original image colors']], 'coda'), 'Coda palettes use colors sampled from existing game artwork.');
+    field('preset', 'Coda size', select([['tile', 'Small asset · 128 × 128'], ['floor', 'Floor tile · 32 × 32'], ['wallpaper', 'Wallpaper tile · 32 × 64'], ['character', 'Character · 80 × 96 · anchor 40,80'], ['asset', 'Large asset · 512 × 512'], ['map', 'Original map · 1672 × 941'], ['custom', 'Custom dimensions']], 'tile'));
     field('width', 'Width (source pixels)', number(128, 1, 8192));
     field('height', 'Height (source pixels)', number(128, 1, 8192));
     field('fit', 'Image fitting', select([['contain', 'Fit inside · transparent edges'], ['cover', 'Fill canvas · crop edges'], ['stretch', 'Stretch to canvas']], 'contain'));
     range('block', 'Pixel block size', 1, 1, 16, 1, '1 = native Coda pixels. Larger blocks give coarser detail within this canvas.');
-    field('colors', 'Palette colors', number(32, 2, 256));
+    range('simplify', 'Simplify photo detail', 1, 0, 3, 1, 'Group small color speckles while keeping sharp silhouettes and transparency.');
+    field('colors', 'Maximum palette colors', number(32, 2, 256), 'Fixed game palettes choose a matching subset up to this limit.');
     field('dither', 'Dithering', select([['none', 'None · flat color'], ['ordered', 'Ordered · regular texture'], ['floyd-steinberg', 'Floyd–Steinberg · fine texture']], 'none'));
     range('brightness', 'Brightness', 0, -100, 100);
-    range('contrast', 'Contrast', 0, -100, 100);
-    range('saturation', 'Saturation', 0, -100, 100);
+    range('contrast', 'Contrast', 8, -100, 100);
+    range('saturation', 'Saturation', 5, -100, 100);
     range('hue', 'Hue (degrees)', 0, -180, 180);
     range('outline', 'Outline (sample pixels)', 0, 0, 4);
     field('outlineColor', 'Outline color', element('input', { type: 'color', value: '#24223a' }));
@@ -161,9 +149,9 @@ export function openPhotoDialog({ file, onStatus = () => {} } = {}) {
     const previewZoom = select([['fit', 'Fit preview'], ['1', '1× source pixels'], ['2', '2× source pixels'], ['4', '4× source pixels'], ['8', '8× source pixels']], 'fit');
     const previewControls = element('label', { class: 'photo-preview-zoom', text: 'Preview scale' }, [previewZoom]);
     const status = element('p', { class: 'photo-status', text: 'Choose an image to begin.', role: 'status', 'aria-live': 'polite' });
-    const apply = element('button', { type: 'button', text: 'Use editable pixels', disabled: true, class: 'photo-apply', dataset: { photo: 'apply' } });
+    const apply = element('button', { type: 'button', text: 'Add pixel asset', disabled: true, class: 'photo-apply', dataset: { photo: 'apply' } });
     const cancel = element('button', { type: 'button', text: 'Cancel' });
-    const reset = element('button', { type: 'button', text: 'Reset adjustments' });
+    const reset = element('button', { type: 'button', text: 'Reset style adjustments' });
     const actions = element('div', { class: 'photo-actions' }, [reset, cancel, apply]);
     dialog.append(element('div', { class: 'photo-heading' }, [heading, close]), intro, fileLabel, fileInfo, element('div', { class: 'photo-workspace' }, [form, element('div', { class: 'photo-preview-column' }, [previewControls, previews, status])]), actions);
     document.body.append(dialog);
@@ -221,7 +209,8 @@ export function openPhotoDialog({ file, onStatus = () => {} } = {}) {
     function showResult(result, ownRevision, settings) {
       if (closed || ownRevision !== revision) return;
       converted = result; drawPreview(after, result); apply.disabled = false;
-      announce(`${result.width} × ${result.height} editable pixels · ${settings.colors} color limit · ${settings.block}px blocks. Alpha is preserved; outlines stay within the canvas.`);
+      const paletteLabel = settings.palette === 'image' ? 'image colors' : settings.palette === 'cozy' ? 'Cozy palette' : 'Coda palette';
+      announce(`${result.width} × ${result.height} editable pixels · ${paletteLabel} · up to ${settings.colors} colors · ${settings.block}px blocks. Transparency is retained. Use Tiles & wallpaper for a repeating surface.`);
     }
     function process() {
       if (!source || closed) return;
@@ -233,13 +222,13 @@ export function openPhotoDialog({ file, onStatus = () => {} } = {}) {
         // Worker-free browsers retain the same bounded conversion and output validation.
         setTimeout(() => {
           if (closed || ownRevision !== revision) return;
-          try { showResult(convert(source, settings), ownRevision, settings); } catch (error) { announce(error.message, true); }
+          try { showResult(pixelifyImage(source, settings), ownRevision, settings); } catch (error) { announce(error.message, true); }
         }, 0);
       };
       if (typeof Worker !== 'function') { fallback(); return; }
       try {
-        const moduleURL = new URL('./image-ops.js', import.meta.url).href;
-        const script = `import {pixelate,applyEffect} from ${JSON.stringify(moduleURL)};const convert=${convert.toString()};self.onmessage=({data})=>{try{const result=convert(data.image,data.settings);self.postMessage({result},[result.data.buffer])}catch(error){self.postMessage({error:error.message})}};`;
+        const moduleURL = new URL('./coda-style.js?v=materials-1', import.meta.url).href;
+        const script = `import {pixelifyImage} from ${JSON.stringify(moduleURL)};self.onmessage=({data})=>{try{const result=pixelifyImage(data.image,data.settings);self.postMessage({result},[result.data.buffer])}catch(error){self.postMessage({error:error.message})}};`;
         workerURL = URL.createObjectURL(new Blob([script], { type: 'text/javascript' }));
         worker = new Worker(workerURL, { type: 'module' });
         worker.onmessage = ({ data }) => {
@@ -259,6 +248,12 @@ export function openPhotoDialog({ file, onStatus = () => {} } = {}) {
     async function load(selectedFile) {
       if (!selectedFile) return;
       const ownLoad = ++loadRevision;
+      revision++; source = converted = null; apply.disabled = true; clearTimeout(timer); stopWorker();
+      for (const canvas of [before, after]) {
+        previewDimensions.delete(canvas);
+        canvas.getContext('2d').clearRect(0, 0, canvas.width, canvas.height);
+      }
+      fileInfo.textContent = `${selectedFile.name || 'Image'} · reading locally`;
       announce('Reading image locally…');
       try {
         const image = await decode(selectedFile);
@@ -269,19 +264,28 @@ export function openPhotoDialog({ file, onStatus = () => {} } = {}) {
       } catch (error) { if (!closed && ownLoad === loadRevision) announce(`Image not loaded: ${error.message}`, true); }
     }
     upload.addEventListener('change', () => { load(upload.files?.[0]); upload.value = ''; });
+    function applyStyle() {
+      const preset = PIXELIFY_STYLES[fields.style.value];
+      if (!preset) return;
+      for (const [key, value] of Object.entries(preset)) if (fields[key]) {
+        fields[key].value = value;
+        const output = fields[key].parentElement.querySelector('output');
+        if (output) output.value = String(value);
+      }
+      fields.grayscale.checked = fields.invert.checked = false; fields.dither.value = 'none';
+      schedule();
+    }
+    fields.style.addEventListener('change', applyStyle);
+    fields.asAsset.addEventListener('change', () => { apply.textContent = fields.asAsset.checked ? 'Add pixel asset' : 'Create editable scene'; });
     fields.preset.addEventListener('change', () => {
       const preset = PRESETS[fields.preset.value];
       if (preset) { fields.width.value = preset.width; fields.height.value = preset.height; }
       schedule();
     });
     for (const key of ['width', 'height']) fields[key].addEventListener('input', () => { fields.preset.value = 'custom'; });
-    for (const [key, control] of Object.entries(fields)) if (key !== 'preset' && key !== 'asAsset') control.addEventListener('input', schedule);
+    for (const [key, control] of Object.entries(fields)) if (!['preset', 'asAsset', 'style'].includes(key)) control.addEventListener('input', schedule);
     previewZoom.addEventListener('change', resizePreviews);
-    reset.addEventListener('click', () => {
-      for (const key of ['brightness', 'contrast', 'saturation', 'hue', 'outline', 'sharpen']) { fields[key].value = 0; fields[key].dispatchEvent(new Event('input')); }
-      fields.grayscale.checked = fields.invert.checked = false; fields.colors.value = 32; fields.dither.value = 'none'; fields.block.value = 1;
-      fields.block.dispatchEvent(new Event('input')); schedule();
-    });
+    reset.addEventListener('click', applyStyle);
     for (const button of [close, cancel]) button.addEventListener('click', () => finish());
     dialog.addEventListener('cancel', event => { event.preventDefault(); finish(); });
     dialog.addEventListener('close', () => finish());
