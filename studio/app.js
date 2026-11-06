@@ -1,7 +1,7 @@
 import { createProject, createStore, packColor, unpackColor } from './model.js';
 import { createViewport } from './viewport.js';
 import { createTools } from './tools.js';
-import { createUI } from './ui.js';
+import { createUI } from './ui.js?v=asset-create-1';
 import { applyEffect, transform } from './image-ops.js';
 import { openPhotoDialog } from './photo-dialog.js';
 import { readProject, readImage, downloadProject, exportPNG, exportBundle,
@@ -14,6 +14,7 @@ const store = createStore(createProject({ name: 'My Coda workshop',
   kind: 'interior', width: 960, height: 720 }));
 let ui, viewport, tools, autosave, panelFrame = 0, statusText = 'Opening your workshop…';
 let selectedAssetId = null, savedProjects = [], pendingImport = 0, starterToken = 0;
+let assetCreationPending = false;
 
 function current() {
   const state = store.getState(), project = store.getProject();
@@ -173,13 +174,82 @@ async function editAsset(id = selectedAssetId) {
   status('Editing an asset copy. Export its PNG, or use Make asset to add your painted version to the library.');
 }
 async function makeAsset() {
-  const { scene, project } = current(), rect = selectionRect(scene);
-  const canvas = await viewport.renderRegion({ sceneId: scene.id, rect, scale: 1, objects: true });
-  if (project.id !== store.getProject().id) { canvas.width = canvas.height = 0; return; }
-  const dataURL = canvas.toDataURL('image/png'); canvas.width = canvas.height = 0;
-  selectedAssetId = store.addAsset({ name: scene.name + ' asset', width: rect.w, height: rect.h,
-    dataURL, anchor: { x: rect.w / 2, y: rect.h }, collision: [], tags: ['created'] });
-  settings.assetId = selectedAssetId; schedulePanels(); status('Artwork added to your reusable asset library.');
+  if (assetCreationPending) return;
+  const { state, scene, project } = current();
+  if (state.inTransaction) throw Error('Finish your current stroke before making an asset.');
+  const selection = structuredClone(viewport.getSelection());
+  const raw = selection || { x: 0, y: 0, w: scene.width, h: scene.height };
+  const x = Math.max(0, Math.floor(raw.x)), y = Math.max(0, Math.floor(raw.y));
+  const rect = { x, y, w: Math.min(scene.width, Math.ceil(raw.x + raw.w)) - x,
+    h: Math.min(scene.height, Math.ceil(raw.y + raw.h)) - y };
+  const checkContext = () => {
+    if (store.getProject() !== project || current().scene.id !== scene.id || store.getState().inTransaction)
+      throw Error('The artwork changed while preparing this asset. Close this window and try again.');
+  };
+  assetCreationPending = true;
+  try {
+    const result = await ui.promptAsset({ suggestedName: (scene.name + ' asset').slice(0, 80),
+      prepare: async () => {
+        checkContext();
+        if (rect.w < 1 || rect.h < 1) throw Error('Select artwork inside the canvas, then try again.');
+        if (rect.w * rect.h > 16 * 1024 * 1024)
+          throw Error('One asset can contain up to 16 million pixels. Use Select to mark a smaller area, then choose Make asset from artwork again.');
+        if (project.assets.length >= 512) throw Error('This library already has 512 assets. Remove an unused asset before making another.');
+        let canvas;
+        try {
+          canvas = await viewport.renderRegion({ sceneId: scene.id, rect, scale: 1, objects: true });
+          checkContext();
+          if (!prepareAssetPixels(canvas, rect, selection))
+            throw Error('There is no visible artwork in this area. Paint something or choose a different selection, then try again.');
+          const dataURL = canvas.toDataURL('image/png');
+          if (dataURL.length > 32 * 1024 * 1024 * 4 / 3 + 128)
+            throw Error('This asset image is too large. Select a smaller area, then try again.');
+          if (project.assets.reduce((sum, asset) => sum + asset.dataURL.length * .75, dataURL.length * .75) > 64 * 1024 * 1024)
+            throw Error('This project’s asset library is full. Remove an unused asset or make a smaller selection.');
+          return { dataURL, width: rect.w, height: rect.h,
+            description: selection ? 'Selected artwork · visible layers' : 'Whole canvas · visible layers' };
+        } finally { if (canvas) canvas.width = canvas.height = 0; }
+      } });
+    if (!result) return;
+    checkContext();
+    const { prepared, name } = result;
+    selectedAssetId = store.addAsset({ name, width: prepared.width, height: prepared.height,
+      dataURL: prepared.dataURL, anchor: { x: prepared.width / 2, y: prepared.height }, collision: [], tags: ['created'] });
+    settings.assetId = selectedAssetId; ui.showAssets(); schedulePanels();
+    status('“' + name + '” added to your asset library. Choose Place asset to use it.');
+  } finally { assetCreationPending = false; }
+}
+function prepareAssetPixels(canvas, rect, selection) {
+  const context = canvas.getContext('2d'), points = selection?.points;
+  let visible = false;
+  // Work in small strips so large artwork does not need a second full-size pixel buffer.
+  for (let top = 0; top < canvas.height; top += 64) {
+    const image = context.getImageData(0, top, canvas.width, Math.min(64, canvas.height - top));
+    if (points?.length) {
+      for (let row = 0; row < image.height; row++) {
+        const centerY = rect.y + top + row + .5, crossings = [];
+        for (let i = 0, j = points.length - 1; i < points.length; j = i++) {
+          const [ax, ay] = points[i], [bx, by] = points[j];
+          if ((ay > centerY) !== (by > centerY)) crossings.push(ax + (centerY - ay) * (bx - ax) / (by - ay));
+        }
+        crossings.sort((a, b) => a - b);
+        const offset = row * canvas.width * 4;
+        let last = 0;
+        for (let i = 0; i + 1 < crossings.length; i += 2) {
+          const left = Math.max(0, Math.min(canvas.width, Math.ceil(crossings[i] - rect.x - .5)));
+          const right = Math.max(left, Math.min(canvas.width, Math.ceil(crossings[i + 1] - rect.x - .5)));
+          image.data.fill(0, offset + last * 4, offset + left * 4); last = right;
+        }
+        image.data.fill(0, offset + last * 4, offset + canvas.width * 4);
+      }
+      context.putImageData(image, 0, top);
+    }
+    if (!visible) for (let i = 3; i < image.data.length; i += 4) {
+      if (image.data[i]) { visible = true; break; }
+    }
+    if (visible && !points?.length) break;
+  }
+  return visible;
 }
 async function applyImageChange(name, options = {}, isTransform = false) {
   const { scene, layer, project } = current(), objectSelection = selectedObject();

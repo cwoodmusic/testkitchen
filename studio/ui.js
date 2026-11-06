@@ -131,12 +131,14 @@ export function createUI({onAction}) {
     <input type="file" id="projectFile" accept=".json,.zip,.coda,.coda-studio,application/json,application/zip" hidden><input type="file" id="imageFile" accept="image/png,image/jpeg,image/webp" multiple hidden>
   </main>
   <dialog class="dialog" id="projectDialog" aria-labelledby="projectDialogTitle"><form id="projectForm"><header class="dialog-header"><div><p class="dialog-eyebrow">A fresh canvas</p><h2 id="projectDialogTitle">Create a project</h2></div><button type="button" class="icon-button quiet" data-ui="cancel-project" aria-label="Close project dialog" title="Close">${icon('close')}</button></header><div class="dialog-body"><label class="field"><span>Project name</span><input id="projectName" name="name" value="Untitled project" maxlength="120" required autocomplete="off" aria-label="Project name"></label><div class="project-kind-grid" aria-label="Project kind">${[['map','Map','map'],['interior','Interior','interior'],['asset','Asset','image'],['customization','Character','character']].map(([id,label,s])=>`<button type="button" class="project-kind" data-kind="${id}" id="kind-${id}" aria-pressed="${id==='map'}" title="Create ${label.toLowerCase()} artwork">${icon(s)}${label}</button>`).join('')}</div><label class="field"><span>Coda size preset</span><select id="projectPreset" aria-label="Project size preset"><option value="map">Original Coda world · 1672 × 941</option><option value="village">Village world · 6800 × 5100</option><option value="interior">Interior workspace · 960 × 720</option><option value="asset">Reusable asset · 128 × 128</option><option value="customization">Coda character · 80 × 96</option><option value="custom">Custom dimensions</option></select></label><div class="field-row"><label class="field"><span>Width · source pixels</span><input type="number" id="projectWidth" name="width" value="1672" min="1" max="8192" required aria-label="Project width"></label><label class="field"><span>Height · source pixels</span><input type="number" id="projectHeight" name="height" value="941" min="1" max="8192" required aria-label="Project height"></label></div><label class="inline-check" id="fourFacingRow" hidden><input type="checkbox" id="projectFourFacings" title="Create down, left, up and right facing scenes">Create four facing scenes</label><p class="compact-note" id="projectPresetNote">Original Coda world dimensions. Native bundles carry editable artwork and metadata for later integration.</p><p class="dialog-error" id="projectError" role="alert"></p></div><footer class="dialog-footer"><button type="button" data-ui="cancel-project" title="Cancel project creation">Cancel</button><button type="submit" class="primary" id="createProjectButton" title="Create project">Create project</button></footer></form></dialog>
+  <dialog class="dialog asset-dialog" id="assetDialog" aria-labelledby="assetDialogTitle" aria-describedby="assetDialogDescription"><form id="assetForm" novalidate><header class="dialog-header"><div><p class="dialog-eyebrow">Keep your artwork handy</p><h2 id="assetDialogTitle">Make an asset</h2></div><button type="button" class="icon-button quiet" data-ui="cancel-asset" aria-label="Close asset dialog" title="Close">${icon('close')}</button></header><div class="dialog-body"><p class="asset-dialog-description" id="assetDialogDescription">Preview your artwork and give the reusable asset a name.</p><label class="field" for="assetName"><span>Asset name</span><input type="text" id="assetName" name="name" minlength="1" maxlength="80" required autocomplete="off" aria-describedby="assetNameHint"></label><p class="compact-note asset-name-hint" id="assetNameHint">Use 1–80 characters.</p><div class="asset-preparation-status" id="assetPreparationStatus" role="status" aria-live="polite"></div><figure class="asset-preview" id="assetPreview" aria-busy="true"><img id="assetPreviewImage" alt="Artwork preview" hidden><span class="asset-preview-placeholder" id="assetPreviewPlaceholder">Your artwork preview will appear here.</span></figure><div class="asset-preview-details" id="assetPreviewDetails" hidden><p id="assetDimensions"></p><p id="assetSource"></p></div><p class="dialog-error asset-dialog-error" id="assetError" role="alert" hidden></p></div><footer class="dialog-footer"><button type="button" data-ui="cancel-asset" title="Cancel asset creation">Cancel</button><button type="submit" class="primary" id="createAssetButton" disabled>Create asset</button></footer></form></dialog>
   <dialog class="dialog" id="renameSceneDialog" aria-labelledby="renameSceneTitle"><form id="renameSceneForm"><header class="dialog-header"><div><p class="dialog-eyebrow">Keep your workspace organized</p><h2 id="renameSceneTitle">Rename scene</h2></div><button type="button" class="icon-button quiet" data-ui="cancel-rename" aria-label="Cancel scene rename" title="Cancel">${icon('close')}</button></header><div class="dialog-body"><label class="field"><span>Scene name</span><input type="text" id="renameSceneName" maxlength="120" required autocomplete="off" aria-label="Scene name"></label></div><footer class="dialog-footer"><button type="button" data-ui="cancel-rename" title="Cancel scene rename">Cancel</button><button type="submit" class="primary" title="Rename scene">Rename scene</button></footer></form></dialog>
   <dialog class="dialog" id="helpDialog" aria-labelledby="helpTitle"><header class="dialog-header"><div><p class="dialog-eyebrow">Make yourself at home</p><h2 id="helpTitle">Tools & shortcuts</h2></div><button type="button" class="icon-button quiet" data-ui="close-help" aria-label="Close help" title="Close">${icon('close')}</button></header><div class="dialog-body"><div class="help-grid">${[['Pencil / eraser','B / E'],['Fill / line','G / L'],['Rectangle / ellipse','R / U'],['Select / lasso','M / Q'],['Move / stamp','V / S'],['Picker / collision','I / C'],['Pan','H / hold Space'],['Undo','Ctrl/⌘ Z'],['Redo','Ctrl/⌘ Shift Z'],['Copy / cut / paste','Ctrl/⌘ C / X / V'],['Select all','Ctrl/⌘ A'],['Delete selected pixels','Delete / Backspace'],['Cancel current gesture','Esc'],['Save project','Ctrl/⌘ S']].map(([a,b])=>`<div class="shortcut"><span>${a}</span><kbd>${b}</kbd></div>`).join('')}</div><p class="help-section">Scroll to zoom around the pointer. Use the hand tool or hold Space to pan. Draw a selection to constrain pixel edits and effects. Choose Move to select a placed object; its numeric controls appear in Properties.</p><p class="help-section">Paint blocked or open cells with the Collision tool, then turn on Walk test to check paths with the arrow keys or WASD. Turn Walk test off to resume editing.</p><p class="help-section">Projects save locally in this browser. Download a native project or export an editable bundle for a portable backup. Photo conversion runs on your device.</p></div><footer class="dialog-footer"><button type="button" class="primary" data-ui="close-help" title="Close help and return to studio">Back to the canvas</button></footer></dialog>`;
   const $=id=>host.querySelector(`#${id}`);
   const els={canvas:$('studioCanvas'),projectFile:$('projectFile'),imageFile:$('imageFile'),coords:$('studioCoords'),zoom:$('studioZoom'),status:$('studioStatus'),canvasArea:$('canvasArea'),projectDialog:$('projectDialog')};
   const studio=host.querySelector('.studio');
-  let current={}, projectResolver=null, projectKind='map', projectMode='project', renameSceneId=null, selectedObjectId=null, lastTool=null, destroyed=false;
+  let current={}, projectResolver=null, assetPrompt=null, projectKind='map', projectMode='project', renameSceneId=null, selectedObjectId=null, lastTool=null, destroyed=false;
+  let renderedProjectId=null, renderedAssetIds=new Set(), pendingAssetReveal=null, assetRevealFrame=null;
   const controller=new AbortController();
   const listen=(el,type,fn)=>el.addEventListener(type,fn,{signal:controller.signal});
   const emit=(action,payload)=>{if(!destroyed) onAction(action,payload);};
@@ -149,11 +151,29 @@ export function createUI({onAction}) {
   function setProjectKind(kind){projectKind=kind;host.querySelectorAll('[data-kind]').forEach(b=>b.setAttribute('aria-pressed',String(b.dataset.kind===kind)));$('fourFacingRow').hidden=kind!=='customization'||projectMode==='scene';$('projectPreset').value=kind;applyPreset(kind);}
   function applyPreset(preset){const dims={map:[1672,941],village:[6800,5100],interior:[960,720],asset:[128,128],customization:[80,96]};if(dims[preset]){[$('projectWidth').value,$('projectHeight').value]=dims[preset];}const notes={map:'Original Coda world dimensions. Native bundles carry editable artwork and metadata for later integration.',village:'Large village workspace. Sparse layers keep large scenes practical; export a native bundle for integration.',interior:'A flexible interior art workspace. Room integration uses a separate game schema.',asset:'A reusable artwork canvas. Place the result in a map or interior as an editable object.',customization:'Coda character canvas with ground anchor at (40, 80). Optional four facing scenes.',custom:'Choose source dimensions from 1 to 8192 pixels. Custom sizes export as native studio scenes.'};$('projectPresetNote').textContent=notes[preset]||notes.custom;}
   function finishProject(value){const resolve=projectResolver;projectResolver=null;if($('projectDialog').open)$('projectDialog').close();resolve?.(value);}
+  function finishAsset(value){const prompt=assetPrompt;assetPrompt=null;if($('assetDialog').open)$('assetDialog').close();prompt?.resolve(value);}
+  function updateAssetConfirmation(){const name=$('assetName').value.trim();$('createAssetButton').disabled=!assetPrompt?.prepared||name.length<1||name.length>80;}
+  function revealAsset(){
+    if(assetRevealFrame!==null||!pendingAssetReveal)return;
+    assetRevealFrame=requestAnimationFrame(()=>{
+      assetRevealFrame=null;
+      if(destroyed||!pendingAssetReveal||$('panel-assets').hidden)return;
+      const id=pendingAssetReveal;
+      if((current.selectedAssetId||current.settings?.assetId)!==id){pendingAssetReveal=null;return;}
+      const card=Array.from($('assetGrid').children).find(el=>el.dataset.id===id);
+      if(!card)return;
+      const scroller=host.querySelector('.panel-content'),bounds=scroller.getBoundingClientRect(),rect=card.getBoundingClientRect();
+      if(rect.top<bounds.top)scroller.scrollTop-=bounds.top-rect.top+8;
+      else if(rect.bottom>bounds.bottom)scroller.scrollTop+=rect.bottom-bounds.bottom+8;
+      pendingAssetReveal=null;
+    });
+  }
+  function showAssets(){panel('assets');revealAsset();}
   function effectPayload(){const options={};$('effectControls').querySelectorAll('input,select').forEach(i=>options[i.dataset.effectOption]=i.type==='checkbox'?i.checked:i.type==='number'?Number(i.value):i.type==='color'?`${i.value}ff`:i.value);return {name:$('effectName').value,options};}
   listen(host,'click',event=>{
     const target=event.target.closest('button');if(!target||target.disabled)return;
     if(target.dataset.panel){panel(target.dataset.panel);return;}
-    if(target.dataset.ui){const a=target.dataset.ui;if(a==='toggle-panels')setPanels(!studio.classList.contains('panels-open'));if(a==='close-panels')setPanels(false);if(a==='cancel-project')finishProject(null);if(a==='close-help')$('helpDialog').close();if(a==='cancel-rename')$('renameSceneDialog').close();return;}
+    if(target.dataset.ui){const a=target.dataset.ui;if(a==='toggle-panels')setPanels(!studio.classList.contains('panels-open'));if(a==='close-panels')setPanels(false);if(a==='cancel-project')finishProject(null);if(a==='cancel-asset')finishAsset(null);if(a==='close-help')$('helpDialog').close();if(a==='cancel-rename')$('renameSceneDialog').close();return;}
     if(target.dataset.kind){setProjectKind(target.dataset.kind);return;}
     if(target.dataset.tool){emit('tool',target.dataset.tool);if(target.dataset.tool==='stamp')panel('assets',false);return;}
     if(target.dataset.color){emit('color',`${target.dataset.color}ff`);return;}
@@ -192,6 +212,10 @@ export function createUI({onAction}) {
   listen($('objectOpacity'),'input',()=>{$('objectOpacityValue').textContent=`${$('objectOpacity').value}%`;});
   listen($('projectForm'),'submit',event=>{event.preventDefault();const width=Number($('projectWidth').value),height=Number($('projectHeight').value),name=$('projectName').value.trim();if(!name||!Number.isInteger(width)||!Number.isInteger(height)||width<1||height<1||width>8192||height>8192){$('projectError').textContent='Enter a name and whole pixel dimensions from 1 to 8192.';return;}finishProject({name,kind:projectKind,width,height,preset:$('projectPreset').value,fourFacings:projectMode!=='scene'&&projectKind==='customization'&&$('projectFourFacings').checked});});
   listen($('projectDialog'),'cancel',event=>{event.preventDefault();finishProject(null);});
+  listen($('assetName'),'input',updateAssetConfirmation);
+  listen($('assetForm'),'submit',event=>{event.preventDefault();const name=$('assetName').value.trim();if(!assetPrompt?.prepared||!name||name.length>80)return;finishAsset({name,prepared:assetPrompt.prepared});});
+  listen($('assetDialog'),'cancel',event=>{event.preventDefault();finishAsset(null);});
+  listen($('assetDialog'),'close',()=>{if(!$('assetDialog').open&&assetPrompt)finishAsset(null);});
   listen($('renameSceneForm'),'submit',event=>{event.preventDefault();const name=$('renameSceneName').value.trim();if(!name)return;emit('rename-scene',{id:renameSceneId,name});$('renameSceneDialog').close();});
   let dropDepth=0;
   listen(els.canvasArea,'dragenter',event=>{if(event.dataTransfer?.types.includes('Files')){event.preventDefault();dropDepth++;els.canvasArea.classList.add('drop-active');}});
@@ -221,6 +245,9 @@ export function createUI({onAction}) {
     $('layerProperties').hidden=!l;if(l){setValue($('layerName'),l.name);setValue($('layerOpacity'),Math.round(l.opacity*100));$('layerOpacityValue').textContent=`${Math.round(l.opacity*100)}%`;setValue($('layerBlend'),l.blend);setValue($('layerRole'),l.role);$('layerUp').disabled=layers.indexOf(l)>=layers.length-1;$('layerDown').disabled=layers.indexOf(l)<=0;$('deleteLayer').disabled=layers.length<=1;$('fillLayer').disabled=l.type!=='raster'||l.locked;$('clearLayer').disabled=l.type!=='raster'||l.locked;}
     const assets=p?.assets||[],assetId=current.selectedAssetId||settings.assetId;$('assetCount').textContent=`${assets.length} asset${assets.length===1?'':'s'}`;$('assetEmpty').hidden=assets.length>0;$('assetActions').hidden=!assets.some(a=>a.id===assetId);
     syncChildren($('assetGrid'),assets,x=>x.id,()=>{const b=document.createElement('button');b.type='button';b.className='asset-card';b.dataset.action='select-asset';b.innerHTML='<span class="asset-image"><img alt=""></span><span class="asset-name"></span><span class="asset-size"></span>';return b;},(b,a)=>{b.dataset.id=a.id;b.classList.toggle('selected',a.id===assetId);b.setAttribute('aria-pressed',String(a.id===assetId));b.title=`Select ${a.name} (${a.width} × ${a.height})`;b.setAttribute('aria-label',b.title);b.querySelector('.asset-name').textContent=a.name;b.querySelector('.asset-size').textContent=`${a.width} × ${a.height}`;const img=b.querySelector('img');if(img.getAttribute('src')!==a.dataURL)img.src=a.dataURL;});
+    if(p?.id===renderedProjectId&&assetId&&!renderedAssetIds.has(assetId)&&assets.some(a=>a.id===assetId)){pendingAssetReveal=assetId;revealAsset();}
+    else if(p?.id!==renderedProjectId)pendingAssetReveal=null;
+    renderedProjectId=p?.id;renderedAssetIds=new Set(assets.map(a=>a.id));
     $('sceneType').textContent=s?({map:'Map',interior:'Interior',asset:'Asset',customization:'Character'}[s.kind]||s.kind):'—';$('sceneSize').textContent=s?`${s.width} × ${s.height} px`:'—';$('collisionCellSize').textContent=`${s?.collision?.cellSize||10} × ${s?.collision?.cellSize||10} px`;$('objectProperties').hidden=!selected;$('objectEmpty').hidden=!!selected;$('propertiesHeading').textContent=selected?'Object properties':'Scene properties';
     if(selected?.id&&selected.id!==selectedObjectId&&settings.tool==='move')panel('properties',false);selectedObjectId=selected?.id||null;
     if(selected){$('objectAssetName').textContent=assets.find(a=>a.id===selected.assetId)?.name||'Object';host.querySelectorAll('[data-object]').forEach(input=>{const v=selected[input.dataset.object];if(input.type==='checkbox')input.checked=!!v;else setValue(input,v??0);});setValue($('objectOpacity'),Math.round((selected.opacity??1)*100));$('objectOpacityValue').textContent=`${Math.round((selected.opacity??1)*100)}%`;}
@@ -231,7 +258,38 @@ export function createUI({onAction}) {
   }
   function status(text){els.status.textContent=String(text||'Ready.');els.status.title=String(text||'Ready.');}
   function promptProject(options={}){if(projectResolver)finishProject(null);projectMode=options.mode||'project';$('projectDialogTitle').textContent=projectMode==='scene'?'Add a scene':'Create a project';$('createProjectButton').textContent=projectMode==='scene'?'Add scene':'Create project';$('projectName').value=options.name||(projectMode==='scene'?'New scene':'Untitled project');$('projectError').textContent='';$('projectFourFacings').checked=false;setProjectKind(options.kind||'map');$('projectDialog').showModal();queueMicrotask(()=>{$('projectName').focus();$('projectName').select();});return new Promise(resolve=>{projectResolver=resolve;});}
+  function promptAsset({suggestedName='Artwork asset',prepare}={}){
+    if(destroyed)return Promise.resolve(null);
+    if(assetPrompt)finishAsset(null);
+    const result=new Promise(resolve=>{assetPrompt={resolve,prepared:null};}),prompt=assetPrompt;
+    $('assetName').value=String(suggestedName||'Artwork asset').slice(0,80);
+    $('assetPreparationStatus').textContent='Preparing artwork…';$('assetPreparationStatus').classList.add('preparing');
+    $('assetError').textContent='';$('assetError').hidden=true;$('assetPreviewImage').hidden=true;$('assetPreviewImage').removeAttribute('src');
+    $('assetPreviewPlaceholder').hidden=false;$('assetPreviewPlaceholder').textContent='Your artwork preview will appear here.';
+    $('assetPreview').setAttribute('aria-busy','true');$('assetPreviewDetails').hidden=true;$('assetDimensions').textContent='';$('assetSource').textContent='';
+    updateAssetConfirmation();$('assetDialog').showModal();
+    queueMicrotask(()=>{if(assetPrompt===prompt){$('assetName').focus();$('assetName').select();}});
+    // Let the modal paint before preparing potentially large artwork.
+    requestAnimationFrame(()=>setTimeout(async()=>{
+      if(assetPrompt!==prompt||destroyed)return;
+      try{
+        const prepared=await prepare();
+        if(assetPrompt!==prompt||destroyed)return;
+        if(!prepared?.dataURL||!Number.isInteger(prepared.width)||prepared.width<1||!Number.isInteger(prepared.height)||prepared.height<1)throw new Error('The artwork preview could not be prepared.');
+        prompt.prepared=prepared;$('assetPreviewImage').src=prepared.dataURL;$('assetPreviewImage').hidden=false;$('assetPreviewPlaceholder').hidden=true;
+        $('assetDimensions').textContent=`${prepared.width} × ${prepared.height} px`;$('assetSource').textContent=prepared.description||'Visible artwork';$('assetPreviewDetails').hidden=false;
+        $('assetPreparationStatus').textContent='Artwork ready. Choose Create asset to add it to your library.';
+      }catch(error){
+        if(assetPrompt!==prompt||destroyed)return;
+        $('assetPreparationStatus').textContent='Artwork could not be prepared.';$('assetPreviewPlaceholder').textContent='Preview unavailable.';
+        $('assetError').textContent=error?.message||'The artwork could not be prepared. Try again with a smaller selection.';$('assetError').hidden=false;
+      }finally{
+        if(assetPrompt===prompt&&!destroyed){$('assetPreparationStatus').classList.remove('preparing');$('assetPreview').setAttribute('aria-busy','false');updateAssetConfirmation();}
+      }
+    },0));
+    return result;
+  }
   function showHelp(){if(!$('helpDialog').open)$('helpDialog').showModal();}
   showEffects();
-  return {els,render,status,promptProject,showHelp,destroy(){destroyed=true;controller.abort();finishProject(null);host.replaceChildren();}};
+  return {els,render,status,promptProject,promptAsset,showAssets,showHelp,destroy(){destroyed=true;controller.abort();if(assetRevealFrame!==null)cancelAnimationFrame(assetRevealFrame);finishProject(null);finishAsset(null);host.replaceChildren();}};
 }

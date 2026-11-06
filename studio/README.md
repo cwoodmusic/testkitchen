@@ -32,6 +32,14 @@ is one Undo step. Selections constrain painting and effects. Copy, cut, paste,
 flips, quarter-turn rotations, and **Make asset** turn painted work into reusable
 pieces. **Edit asset** opens an editable copy in a new scene.
 
+Choose **Make asset from artwork** in Assets (or **Make asset** in Layers) to
+preview the visible artwork, enter a name, and choose **Create asset**. The new
+asset appears selected in the library; choose **Place asset** to reuse it.
+A selection captures only that area, including a lasso's shape. Without a
+selection, the whole canvas is captured. For large maps, select an area under
+16 million pixels first. Transparent or oversized areas show an explanation
+in the preview window and leave the project unchanged.
+
 The layer panel provides order, visibility, locking, opacity, blend mode, and
 background/world/foreground roles. Object layers keep placed assets editable:
 position, size, rotation, flips, and depth offset can be changed independently.
