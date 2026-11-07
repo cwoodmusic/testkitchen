@@ -1,6 +1,6 @@
 import test from 'node:test';
 import assert from 'node:assert/strict';
-import {residents,allHomes,landmarks,START,ARCHITECTURES,roomPlan,atInteriorExit,interiorSolid,insideFootprint,bridges,water,solid,canEnter,nearest,W,H,paths,landStairs,canStep,canTravel,elevation,baseElevation,accessPath,townTrees,lakeShore,riverHalfWidth} from './model.mjs';
+import {residents,allHomes,landmarks,START,ARCHITECTURES,roomPlan,atInteriorExit,interiorSolid,insideFootprint,bridges,water,solid,canEnter,nearest,W,H,paths,landStairs,canStep,canTravel,elevation,baseElevation,accessPath,townTrees,lakeShore,riverHalfWidth,MUSIC_SQUARE,terraces} from './model.mjs';
 test('architectures have real wings, varied sizes and matching indoor/outdoor footprints',()=>{
  assert.equal(residents.length,18);assert.equal(new Set(residents.map(r=>r.id)).size,18);
  assert.equal(new Set(allHomes.map(h=>h.architecture)).size,5);
@@ -44,4 +44,8 @@ test('every home is reachable from the arcade through real stairs and crossings'
  const step=32,cols=W/step,rows=H/step,seen=new Uint8Array(cols*rows),queue=new Int32Array(cols*rows),startX=Math.round(START.x/step),startY=Math.round(START.y/step),start=startY*cols+startX;let head=0,tail=1;queue[0]=start;seen[start]=1;
  while(head<tail){const index=queue[head++],ix=index%cols,iy=Math.floor(index/cols),from={x:ix*step,y:iy*step};for(const [dx,dy] of [[1,0],[-1,0],[0,1],[0,-1]]){const nx=ix+dx,ny=iy+dy;if(nx<0||ny<0||nx>=cols||ny>=rows)continue;const next=ny*cols+nx;if(!seen[next]&&canTravel(from,{x:nx*step,y:ny*step})){seen[next]=1;queue[tail++]=next;}}}
  for(const home of allHomes){const x=Math.round(home.door.x/step),y=Math.round((home.door.y+14)/step);let reached=false;for(let dx=-1;dx<=1;dx++)for(let dy=-1;dy<=1;dy++)if(seen[(y+dy)*cols+x+dx]&&canTravel({x:(x+dx)*step,y:(y+dy)*step},{x:home.door.x,y:home.door.y+14}))reached=true;assert.ok(reached,home.id+' must have a route to its elevated front door');}
+});
+
+test('Music Square has one centered fountain with clear circulation around it',()=>{
+ const s=MUSIC_SQUARE;assert.equal(s.fountain.x,s.x+s.w/2);assert.equal(s.fountain.y,s.y+s.h/2);assert.ok(solid(s.center.x,s.center.y));for(const [dx,dy] of [[300,0],[-300,0],[0,240],[0,-240]])assert.ok(!solid(s.center.x+dx,s.center.y+dy));assert.ok(terraces.find(t=>t.id==='orchard').height>=240);
 });

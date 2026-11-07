@@ -60,7 +60,7 @@ class TownTests(unittest.TestCase):
         f.locator('#world').press('e');self.page.wait_for_timeout(150)
         self.assertEqual(f.locator('#district').inner_text(),'Organ loft')
         self.page.evaluate('setPoints(0)');self.page.wait_for_timeout(150)
-        self.assertEqual(f.locator('#district').inner_text(),'Coda Commons')
+        self.assertEqual(f.locator('#district').inner_text(),'Music Square')
 
     def test_mobile_map_and_controls(self):
         self.context.close()
@@ -77,11 +77,11 @@ class TownTests(unittest.TestCase):
         self.context.route('**/town/town.mjs',lambda r:r.fulfill(body=source,content_type='text/javascript'))
         self.page.goto(self.base+'/town/')
         world=self.page.locator('#world')
-        expect(world).to_have_attribute('data-ground-height','96')
+        expect(world).to_have_attribute('data-ground-height','240')
         world.focus();self.page.keyboard.down('w');self.page.wait_for_timeout(1900);self.page.keyboard.up('w')
-        expect(world).to_have_attribute('data-ground-height','144')
+        expect(world).to_have_attribute('data-ground-height','288')
         self.page.keyboard.down('s');self.page.wait_for_timeout(2200);self.page.keyboard.up('s')
-        expect(world).to_have_attribute('data-ground-height','96')
+        expect(world).to_have_attribute('data-ground-height','240')
 
     def test_cliff_cannot_be_walked_through(self):
         source=(ROOT/'town/town.mjs').read_text().replace('player={...START}','player={x:3000,y:3340}')

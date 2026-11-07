@@ -1,6 +1,7 @@
 // All lengths use the arcade character renderer's native world pixels.
 export const SCALE=1,W=16000,H=12000,HOME_FRIENDSHIP=5;
-export const START={x:7000,y:7400};
+export const START={x:7100,y:7400};
+export const MUSIC_SQUARE={x:5900,y:7080,w:2400,h:1600,center:{x:7100,y:7880},fountain:{x:7100,y:7880,rx:250,ry:200}};
 export const HOME={width:880,depth:760,wall:24,backWall:92};
 export const ARCHITECTURES={
  cottage:{label:'Moderate cottage',core:{x:0,y:0,w:880,h:760},annexes:[]},
@@ -41,8 +42,8 @@ const plans=['cottage','sidewing','pavilion','rearwing','rearwing','cottage','si
 export const residents=homes.map(([id,name,x,y,color,title,street,style],i)=>({id,name,color,title,style,street,description:title+' is '+name+'’s '+ARCHITECTURES[plans[i]].label.toLowerCase()+', with a private garden and raised porch.',...homeGeometry(x,y,i,plans[i])}));
 export const landmarks=[
  {id:'player',name:'Your cottage',title:'Your cottage',kind:'player',style:4,color:'#9a8063',street:8800,description:'Your own home overlooking the sheltered garden terrace.',...homeGeometry(4300,7240,2,'rearwing')},
- {id:'arcade',name:'Coda Arcade',kind:'arcade',x:6400,y:6100,w:1200,h:900,style:0,description:'The heart of town. Return to the arcade and your current player.'},
- {id:'bandstand',name:'The bandstand',kind:'bandstand',x:6100,y:7660,w:500,h:340,style:3,description:'A sheltered stage beside the town square.'},
+ {id:'arcade',name:'Coda Arcade',kind:'arcade',x:6500,y:6100,w:1200,h:900,style:0,description:'The heart of town. Return to the arcade and your current player.'},
+ {id:'bandstand',name:'The bandstand',kind:'bandstand',x:5300,y:7400,w:500,h:340,style:3,description:'A sheltered stage beside the town square.'},
  {id:'glasshouse',name:'The glasshouse',kind:'glasshouse',x:2700,y:7100,w:800,h:620,style:3,description:'Herbs and seedlings grow on the protected garden terrace.'},
  {id:'lookout',name:'Old lookout',kind:'lookout',x:14780,y:6700,w:320,h:360,style:5,description:'The ridge looks down over the river and the lower town.'},
  {id:'tree',name:'The wishing tree',kind:'tree',x:1100,y:10300,w:0,h:0,description:'A venerable willow in a quiet woodland hollow.'},
@@ -55,7 +56,8 @@ export const terraces=[
  {id:'ridge',name:'Bluebird Ridge',x:10400,y:1600,w:4800,h:6000,height:64,tone:'ridge'},
  {id:'garden',name:'Willow Gardens',x:900,y:6600,w:4700,h:2600,height:64,tone:'garden'},
  {id:'lantern',name:'Lantern Terrace',x:10300,y:8500,w:4200,h:2100,height:64,tone:'lantern'}
-];
+].map(t=>({...t,height:t.height*2.5}));
+terraces.push({id:'civic',name:'Music Square',x:5900,y:5900,w:2400,h:2780,height:128,tone:'garden'});
 export const landStairs=[
  {id:'orchard-south',x:3880,y:3160,w:240,h:480,axis:'y',from:96,to:0},
  {id:'orchard-east',x:7440,y:2880,w:480,h:240,axis:'x',from:96,to:0},
@@ -66,14 +68,15 @@ export const landStairs=[
  {id:'garden-south',x:3880,y:9040,w:240,h:480,axis:'y',from:64,to:0},
  {id:'lantern-north',x:12880,y:8340,w:240,h:480,axis:'y',from:0,to:64},
  {id:'lantern-west',x:10140,y:10280,w:480,h:240,axis:'x',from:0,to:64}
-];
-export const districts=[['Orchard Heights',4100,650],['Willow Quarter',3500,3700],['Coda Commons',7000,7850],['Bluebird Ridge',12500,1550],['Lantern Terrace',12400,8450],['Wildflower Fields',4200,11600],['Moonwater',10500,11620]];
+].map(s=>({...s,from:s.from*2.5,to:s.to*2.5}));
+landStairs.push({id:'civic-north',x:6020,y:5740,w:240,h:480,axis:'y',from:0,to:128},{id:'civic-south',x:6980,y:8680,w:240,h:480,axis:'y',from:128,to:0},{id:'civic-west',x:5480,y:7760,w:620,h:240,axis:'x',from:160,to:128});
+export const districts=[['Orchard Heights',4100,650],['Willow Quarter',3500,3700],['Music Square',7100,7880],['Bluebird Ridge',12500,1550],['Lantern Terrace',12400,8450],['Wildflower Fields',4200,11600],['Moonwater',10500,11620]];
 export const paths=[
  [[1150,2400],[7500,2400]],[[4000,2400],[4000,11400]],
  [[4000,3000],[13000,3000]],[[900,5600],[14900,5600]],
  [[13000,3000],[13000,10400]],[[10800,7200],[14900,7200]],
  [[1300,8800],[5400,8800]],[[4000,9600],[7600,9600],[7600,10400],[14900,10400]],
- [[1000,11400],[7600,11400]],[[7000,5600],[7000,7600]]
+ [[1000,11400],[7600,11400]],[[7100,5600],[7100,8680]],[[6140,5600],[6140,7040]],[[7100,9160],[7100,9600]]
 ];
 export function accessPath(home){return [[home.door.x,home.stairs.y+home.stairs.h],[home.door.x,home.street]];}
 export const riverX=y=>8500+Math.sin(y/1100)*220+Math.sin(y/370)*45;
@@ -87,7 +90,10 @@ export function stairHeight(s,x,y){const t=Math.max(0,Math.min(1,s.axis==='x'?(x
 export function baseElevation(x,y){const stairs=landStairs.find(s=>inRect(x,y,s));if(stairs)return stairHeight(stairs,x,y);return terraces.find(t=>inRect(x,y,t))?.height||0;}
 export function stairAt(x,y){const land=landStairs.find(s=>inRect(x,y,s));if(land)return land;return allHomes.map(h=>h.stairs).find(s=>inRect(x,y,s))||null;}
 export function elevation(x,y){for(const h of allHomes){if(inRect(x,y,h.stairs))return baseElevation(h.door.x,h.porch.y)+stairHeight(h.stairs,x,y);if(inRect(x,y,h.porch))return baseElevation(h.door.x,h.porch.y)+h.porch.rise;}return baseElevation(x,y);}
-export function solid(x,y){if(x<160||y<160||x>W-160||y>H-160)return true;if(water(x,y)&&!bridges.some(b=>inRect(x,y,{x:b.x-b.w/2,y:b.y-b.h/2,w:b.w,h:b.h})))return true;return trunkSolid(x,y)||[...residents,...landmarks.filter(l=>l.w)].some(h=>h.parts?insideFootprint(x-h.x,y-h.y,h):inRect(x,y,h));}
+export const estateFences=allHomes.map(h=>({x:h.x-180,y:h.y-84,w:h.w+360,h:8}));
+export const squareFurniture=[[185,390,200,150],[1210,390,170,160],[185,705,210,160],[1205,705,175,160],[300,120,200,115],[1040,120,200,115]].map(([x,y,w,h])=>({x:MUSIC_SQUARE.x+x/1536*MUSIC_SQUARE.w,y:MUSIC_SQUARE.y+y/1024*MUSIC_SQUARE.h,w:w/1536*MUSIC_SQUARE.w,h:h/1024*MUSIC_SQUARE.h}));
+export function squareWall(x,y){const s=MUSIC_SQUARE;if(x<s.x||x>s.x+s.w||y<s.y||y>s.y+s.h)return false;return (y<s.y+75||y>s.y+s.h-75)&&Math.abs(x-s.center.x)>240||(x<s.x+75||x>s.x+s.w-75)&&Math.abs(y-s.center.y)>180;}
+export function solid(x,y){if(estateFences.some(r=>inRect(x,y,r)))return true;if(squareWall(x,y))return true;if(squareFurniture.some(r=>inRect(x,y,r)))return true;if(((x-MUSIC_SQUARE.fountain.x)/MUSIC_SQUARE.fountain.rx)**2+((y-MUSIC_SQUARE.fountain.y)/MUSIC_SQUARE.fountain.ry)**2<1)return true;if(x<160||y<160||x>W-160||y>H-160)return true;if(water(x,y)&&!bridges.some(b=>inRect(x,y,{x:b.x-b.w/2,y:b.y-b.h/2,w:b.w,h:b.h})))return true;return trunkSolid(x,y)||[...residents,...landmarks.filter(l=>l.w)].some(h=>h.parts?insideFootprint(x-h.x,y-h.y,h):inRect(x,y,h));}
 export function canStep(from,to){return !solid(to.x,to.y)&&Math.abs(elevation(to.x,to.y)-elevation(from.x,from.y))<=4.1;}
 export function biomeAt(x,y){if(y>10800&&x>7800)return 'marsh';if(x<700||x>15100||y<500||x<2800&&y>9300)return 'forest';return terraces.find(t=>inRect(x,y,t))?.tone||(x<6000&&y>9500?'meadow':'lawn');}
 const seed=(x,y)=>{const n=Math.sin(x*127.1+y*311.7)*43758.5453;return n-Math.floor(n);};
@@ -107,6 +113,7 @@ for(const [gi,grove] of groves.entries())for(let y=grove.y+120;y<grove.y+grove.h
 for(const h of allHomes)for(const side of [-1,1]){const x=h.x+(side<0?-240:h.w+240),y=h.y+h.h-120;if(plantingClear(x,y))townTrees.push({x,y,size:1.05,type:h.style===4?4:h.style===2?1:0,tone:biomeAt(x,y),radius:30});}
 for(let y=1100;y<2100;y+=280)for(let x=1900;x<2400;x+=280)if(plantingClear(x,y))townTrees.push({x,y,size:.85,type:4,tone:'orchard',radius:24});
 townTrees.push({x:1100,y:10300,size:2,type:2,tone:'forest',radius:50});
+
 const trunkGrid=new Map();for(const t of townTrees){const key=Math.floor(t.x/256)+','+Math.floor(t.y/256);if(!trunkGrid.has(key))trunkGrid.set(key,[]);trunkGrid.get(key).push(t);}
 function trunkSolid(x,y){const gx=Math.floor(x/256),gy=Math.floor(y/256);for(let dx=-1;dx<=1;dx++)for(let dy=-1;dy<=1;dy++)for(const t of trunkGrid.get((gx+dx)+','+(gy+dy))||[])if(Math.hypot(x-t.x,(y-t.y)*1.5)<t.radius)return true;return false;}
 export function canTravel(from,to){const count=Math.max(1,Math.ceil(Math.hypot(to.x-from.x,to.y-from.y)/8));let p=from;for(let i=1;i<=count;i++){const q={x:from.x+(to.x-from.x)*i/count,y:from.y+(to.y-from.y)*i/count};if(!canStep(p,q))return false;p=q;}return true;}

@@ -11,13 +11,13 @@ The town is 16000 × 12000 native world pixels, nearly three times the area of
 the earlier 9600 × 7200 layout. Characters use the arcade's own renderer and
 retain the same scale and zoom outdoors and indoors.
 
-Straight streets, right-angle turns, and private approaches connect four raised
+Straight streets, right-angle turns, and private approaches connect five raised
 terraces, three river bridges, the commons, orchard, woodland, gardens, and
 southern wetlands. Each neighborhood uses a different restrained material and
 lighting palette. Mature trees grow in authored groves and property plantings;
 their trunks have collision and their canopies cast ground shade.
 
-Terraces have actual elevation, visible retaining walls, and nine stair routes.
+Terraces have actual elevation, visible retaining walls, and twelve stair routes.
 Porches rise by 32, 48, 72, or 96 pixels, with varied deck depths, stone or wood
 surfaces, railings, and individual stairs. Movement follows stair height and
 slows while climbing. Cliff and porch edges cannot be crossed as flat ground.
@@ -47,8 +47,8 @@ Homes unlock at **Trusted friend**, five earned history friendship points.
 The parent provides the current avatar and musician relationship counts. Town
 exploration never writes friendship, rewards, or unscoped player storage.
 Identity changes close the town; revoked invitations remove the player from
-an interior. Friendship quests remain in the arcade. Town villagers currently
-stay near their homes; daily schedules are not implemented.
+an interior. Friendship quests remain in the arcade. Most villagers stay near their homes. Ella, Joplin and Mozart stroll around
+Music Square and pause when approached; complete daily schedules are not implemented.
 
 ## Controls and implementation
 
@@ -85,10 +85,12 @@ walking up and down porch stairs, and blocked cliff movement. Synthetic starting
 positions are confined to intercepted browser-test sources; production contains
 no teleport control.
 
-The reference-art pass adds `shore.mjs`: one shared authored shoreline controls
-both water collision and the lake/river artwork. Banks use original rock,
-grass-overhang, reed and cutbank sprites; cliff faces add roots and exposed-rock
-layers. Musical details include European ironwork, violin signs, lyre stained
-glass, luthiers' benches, score notices and a cello monument. These are original
-Coda Town assets in `landscape-details.png` and `music-details.png`. See
-`docs/town-preview/README.md` for application screenshots.
+The current visual benchmark is the approved, cohesive Music Square artwork in
+`assets/music-square.png`. Its fountain is centered, its perimeter furniture has
+collision, and its entrances connect to the civic terrace and working stairs.
+European house modules and ground materials were redrawn in that style.
+`shore.mjs` uses connected, unrotated terrain edge tiles with `terrain-tiles.mjs`;
+it no longer stamps decorative images around the river. Cliff elevations were
+increased, property fences enlarged, and three musicians now walk the square.
+See `ART-DIRECTION.md` and `docs/town-preview/README.md` for the style and actual
+application captures.

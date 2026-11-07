@@ -1,12 +1,14 @@
 import {W,H,paths,allHomes,residents,landmarks,terraces,landStairs,accessPath,riverX,bridges,baseElevation,biomeAt,townTrees,groves,inRect} from './model.mjs';
 import {noise,rect,ellipse,flower,fence,bench,lamp,material,fountain,planter,musicalDetail,environmentDetail} from './art.mjs';
+import {rockFace,grassLip} from './terrain-tiles.mjs';
+import {drawMusicSquare} from './square.mjs';
 import {drawNaturalWater} from './shore.mjs';
 const CHUNK=1024,OVERVIEW_W=3200,OVERVIEW_H=2400;
 const canvas=(w,h)=>{const c=document.createElement('canvas');c.width=w;c.height=h;return c;};
 const intersects=(a,b)=>a.x<b.x+b.w&&a.x+a.w>b.x&&a.y<b.y+b.h&&a.y+a.h>b.y;
 const segments=paths.flatMap(p=>p.slice(1).map((b,i)=>({a:p[i],b,width:220,kind:1}))).concat(allHomes.map(h=>{const [a,b]=accessPath(h);return {a,b,width:128,kind:2};}));
 function segmentRect(s){const [ax,ay]=s.a,[bx,by]=s.b;return {x:Math.min(ax,bx)-s.width/2,y:Math.min(ay,by)-s.width/2,w:Math.abs(ax-bx)+s.width,h:Math.abs(ay-by)+s.width};}
-function fillMaterial(c,index,tone,r){c.fillStyle=c.createPattern(material(index,tone),'repeat');c.fillRect(r.x,r.y,r.w,r.h);}
+function fillMaterial(c,index,tone,r){const pattern=c.createPattern(material(index,tone),'repeat');if(index===1)pattern.setTransform(new DOMMatrix().scale(.5));c.fillStyle=pattern;c.fillRect(r.x,r.y,r.w,r.h);}
 function drawStairs(c,s,base=0){const n=Math.max(4,Math.ceil(Math.abs(s.from-s.to)/6)),rise=(s.to-s.from)/n;for(let i=n-1;i>=0;i--){const t=i/n,z=base+s.from+rise*i,x=s.x+(s.axis==='x'?s.w*t:0),y=s.y+(s.axis==='y'?s.h*t:0)-z,w=s.axis==='x'?s.w/n+2:s.w,h=s.axis==='y'?s.h/n+Math.abs(rise)+2:s.h;rect(c,x,y,w,h,'#766f5a');fillMaterial(c,1,'ridge',{x:x+2,y:y+2,w:w-4,h:Math.max(2,h-4)});rect(c,x+2,y+2,w-4,Math.max(2,h-4),'#9e967c70');rect(c,x,y,w,3,'#d0c3a0');if(s.axis==='x'){rect(c,x,y,3,h,'#d2c39d');rect(c,x+w-3,y,3,h,'#4a5043');}else rect(c,x,y+h-4,w,4,'#454c3e');}
  const high=Math.max(s.from,s.to)+base;for(const side of [0,1]){const x=s.axis==='y'?s.x+side*s.w:s.x,y=s.axis==='y'?s.y-high:s.y+side*s.h-high;rect(c,x-5,y,10,32,'#8e8a70');rect(c,x-7,y-4,14,6,'#c0b99a');}}
 function drawPorch(c,h){const p=h.porch,base=baseElevation(h.door.x,h.porch.y),top=base+p.rise,fy=p.y+p.h;
@@ -16,24 +18,12 @@ function drawPorch(c,h){const p=h.porch,base=baseElevation(h.door.x,h.porch.y),t
  if(p.material==='stone')fillMaterial(c,1,'ridge',{x:p.x,y:p.y-top,w:p.w,h:p.h});
  else{rect(c,p.x,p.y-top,p.w,p.h,'#5e5542');for(let y=p.y-top;y<fy-top;y+=14){rect(c,p.x+3,y+1,p.w-6,11,'#8b7956');rect(c,p.x+4,y+2,p.w-8,1,'#b29a6c');for(let x=p.x+10;x<p.x+p.w;x+=94)rect(c,x,y+3,1,7,'#60543e');}}
  // Side rails and a clear central stair opening make the height legible.
- fence(c,p.x,p.y-top+12,110);fence(c,p.x+p.w-110,p.y-top+12,110);fence(c,p.x,fy-top,p.w/2-106);fence(c,p.x+p.w/2+106,fy-top,p.w/2-106);
- for(const x of [p.x,p.x+p.w]){rect(c,x-3,p.y-top-25,6,p.h,'#a08c65');rect(c,x-3,p.y-top-25,2,p.h,'#d0b98a');for(let y=p.y;y<=fy;y+=48){rect(c,x-4,y-top-30,8,36,'#685f49');rect(c,x-4,y-top-30,2,35,'#b8a27a');}}
+ fence(c,p.x,p.y-top+12,110,{height:42});fence(c,p.x+p.w-110,p.y-top+12,110,{height:42});fence(c,p.x,fy-top,p.w/2-106,{height:42});fence(c,p.x+p.w/2+106,fy-top,p.w/2-106,{height:42});
+ for(const x of [p.x,p.x+p.w]){rect(c,x-5,p.y-top-38,10,p.h,'#a08c65');rect(c,x-5,p.y-top-38,3,p.h,'#d0b98a');for(let y=p.y;y<=fy;y+=48){rect(c,x-7,y-top-46,14,52,'#685f49');rect(c,x-6,y-top-46,3,50,'#b8a27a');}}
  drawStairs(c,h.stairs,base);
- if(h.style===1||h.style===4)musicalDetail(c,4,p.x+p.w+34,p.y-top+20,170,130);
  planter(c,p.x+90,fy-top-26,100);planter(c,p.x+p.w-90,fy-top-26,100);
 }
-function drawTerrace(c,t){const south=t.y+t.h,top=south-t.height;
- // Cast shadow, exposed stone face, grass lip, and buttresses give real relief.
- const shadow=c.createLinearGradient(0,south,0,south+180);shadow.addColorStop(0,'#10291f80');shadow.addColorStop(1,'#10291f00');c.fillStyle=shadow;c.fillRect(t.x-24,south,t.w+70,180);
- fillMaterial(c,1,'forest',{x:t.x,y:top,w:t.w,h:t.height});
- rect(c,t.x,top,t.w,9,'#a6a083');rect(c,t.x,top+9,t.w,5,'#3a4c39');
- for(let x=t.x+20;x<t.x+t.w;x+=64){rect(c,x,top+18,2,t.height-21,'#293e31');rect(c,x+2,top+17,1,t.height-24,'#77816a');}
- if(t.id==='orchard'||t.id==='ridge'){for(let x=t.x;x<t.x+t.w;x+=46){const n=noise(x,t.y),w=42+n*20,y=top+14+n*12;c.beginPath();c.moveTo(x,y);c.lineTo(x+w*.6,y-9);c.lineTo(x+w,y+10);c.lineTo(x+w*.82,south-4);c.lineTo(x+6,south-2-n*8);c.closePath();c.fillStyle=['#5a6652','#6d745b','#7c8064','#4b5d4d'][Math.floor(n*4)];c.fill();rect(c,x+9,y+3,w*.55,3,'#a6a48a');rect(c,x+8,south-12,w*.62,4,'#263f3255');}}
- fillMaterial(c,0,t.tone,{x:t.x,y:t.y-t.height,w:t.w,h:t.h});
- for(let x=t.x;x<t.x+t.w;x+=190){const n=noise(x,t.y);environmentDetail(c,0,x-24,top-25,246,t.height+55);if(n>.74)environmentDetail(c,4,x-15,top-55,100,85);}
- // Narrow north/east returns keep the plateau silhouette connected to its face.
- rect(c,t.x+t.w-9,t.y-t.height,9,t.h,'#283f322a');
- for(let x=t.x+18;x<t.x+t.w;x+=22){const y=top-3,n=noise(x,t.y);rect(c,x,y,2,8+n*12,'#65784d');rect(c,x+3,y+2,1,5,'#a3ab73');if(n>.72){for(let j=0;j<5;j++){rect(c,x+j%2*4,y+8+j*7,3,9,'#345d40');rect(c,x+j%2*4+2,y+10+j*7,4,3,'#6c8a50');}}}}
+function drawTerrace(c,t){const south=t.y+t.h,top=south-t.height;const shadow=c.createLinearGradient(0,south,0,south+160);shadow.addColorStop(0,'#16232b88');shadow.addColorStop(1,'#16232b00');c.fillStyle=shadow;c.fillRect(t.x,south,t.w+40,160);rockFace(c,t.x,top,t.w,t.height,t.x);fillMaterial(c,0,t.tone,{x:t.x,y:t.y-t.height,w:t.w,h:t.h});grassLip(c,t.x,top,t.w,t.x);rect(c,t.x+t.w-8,t.y-t.height,8,t.h,'#21343b44');}
 function drawRoad(c,s,pass){const [ax,ay]=s.a,[bx,by]=s.b,vertical=ax===bx,len=Math.abs(bx-ax)+Math.abs(by-ay),n=Math.max(1,Math.ceil(len/120));for(let i=0;i<n;i++){const t=i/n,u=(i+1)/n,x=ax+(bx-ax)*t,y=ay+(by-ay)*t,xx=ax+(bx-ax)*u,yy=ay+(by-ay)*u,z=baseElevation((x+xx)/2,(y+yy)/2),first=i===0?s.width/2:0,last=i===n-1?s.width/2:0;
  const r=vertical?{x:ax-s.width/2,y:Math.min(y,yy)-z-(ay<by?first:last),w:s.width,h:Math.abs(yy-y)+first+last+1}:{x:Math.min(x,xx)-(ax<bx?first:last),y:ay-s.width/2-z,w:Math.abs(xx-x)+first+last+1,h:s.width};
  if(pass===0){const border=vertical?{x:r.x-7,y:r.y,w:r.w+14,h:r.h}:{x:r.x,y:r.y-7,w:r.w,h:r.h+14};rect(c,border.x,border.y,border.w,border.h,'#8d8b70');}
@@ -51,7 +41,7 @@ export function bakeTerrain(){
   // Private lots sit within their neighborhood, with a quiet lawn and a planted edge.
   for(const h of allHomes){const z=baseElevation(h.door.x,h.porch.y),lot={x:h.x-180,y:h.y-160-z,w:h.w+360,h:h.h+h.porch.h+h.stairs.h+340};if(!intersects(lot,view))continue;fence(c,lot.x,lot.y+80,lot.w);for(let j=0;j<4;j++){rect(c,h.x-118,h.y+180+j*76-z,74,38,'#3a4230');for(let k=0;k<10;k++)flower(c,h.x-112+k*6,h.y+196+j*76-z,['#b0aa7d','#8e9c83','#8b8194','#ac8b76'][j]);}}
   for(const pass of [0,1])for(const s of segments)if(intersects({...segmentRect(s),y:segmentRect(s).y-180,h:segmentRect(s).h+200},view))drawRoad(c,s,pass);
-  const square={x:6100,y:7080,w:1900,h:820};if(intersects(square,view)){fillMaterial(c,1,'ridge',square);rect(c,square.x,square.y,square.w,8,'#b0a78c');musicalDetail(c,5,7490,7270,220,250);musicalDetail(c,3,6860,7640,150,200);musicalDetail(c,1,6030,7430,220,220);for(const [x,y] of [[6260,7260],[6260,7790],[7860,7250],[7860,7780]])planter(c,x,y,140);for(const [x,y] of [[7230,7750],[7700,7750],[6500,7330]])bench(c,x,y);for(let i=0;i<5;i++)rect(c,7100,7540+i*12,320,2,'#b4a47780');c.fillStyle='#bca875';c.font='42px Georgia';c.fillText('♫',7210,7582);c.fillStyle='#d8caad';c.font='38px Georgia';c.fillText('CODA TOWN',7140,7870);}
+  drawMusicSquare(c);
   drawNaturalWater(c,view);
   for(const b of bridges)if(intersects({x:b.x-b.w/2,y:b.y-b.h/2,w:b.w,h:b.h},view))drawBridge(c,b);
   for(const s of landStairs)if(intersects({x:s.x,y:s.y-160,w:s.w,h:s.h+160},view))drawStairs(c,s);

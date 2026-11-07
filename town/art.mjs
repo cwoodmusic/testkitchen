@@ -1,3 +1,4 @@
+import {pixelPalette,FENCE} from './pixel-style.mjs';
 import {baseElevation,entryConnectors,annexFurniture,roomPlan,interiorWalls,interiorFurniture} from './model.mjs';
 export const noise=(x,y,s=0)=>{const n=Math.sin(x*127.1+y*311.7+s*74.7)*43758.5453;return n-Math.floor(n);};
 export function rect(c,x,y,w,h,color){c.fillStyle=color;c.fillRect(Math.round(x),Math.round(y),Math.round(w),Math.round(h));}
@@ -6,15 +7,15 @@ const load=src=>new Promise((resolve,reject)=>{const i=new Image();i.onload=()=>
 // Discover the opaque bounds in each equal atlas cell. This keeps the south
 // threshold aligned to the real door rather than to transparent image margins.
 function cells(image,columns=3,rows=2){const result=[];for(let i=0;i<columns*rows;i++){const ox=Math.floor(i%columns*image.width/columns),oy=Math.floor(Math.floor(i/columns)*image.height/rows),cw=Math.floor((i%columns+1)*image.width/columns)-ox,ch=Math.floor((Math.floor(i/columns)+1)*image.height/rows)-oy,c=document.createElement('canvas');c.width=cw;c.height=ch;const cx=c.getContext('2d',{willReadFrequently:true});cx.drawImage(image,ox,oy,cw,ch,0,0,cw,ch);const pixels=cx.getImageData(0,0,cw,ch).data;let left=cw,top=ch,right=0,bottom=0;for(let y=0;y<ch;y++)for(let x=0;x<cw;x++)if(pixels[(y*cw+x)*4+3]>40){left=Math.min(left,x);right=Math.max(right,x);top=Math.min(top,y);bottom=Math.max(bottom,y);}result.push({image,sx:ox+left,sy:oy+top,sw:right-left+1,sh:bottom-top+1});}return result;}
-const [houses,foliage,props,furniture,ground,music,landscape]=await Promise.all([load('assets/houses.png'),load('assets/foliage.png'),load('assets/props.png'),load('assets/furniture.png'),load('assets/ground.png'),load('assets/music-details.png'),load('assets/landscape-details.png')]);
+const [houses,foliage,props,furniture,ground,music,landscape,squarePlate]=await Promise.all([load('assets/houses.png'),load('assets/foliage.png'),load('assets/props.png'),load('assets/furniture.png'),load('assets/ground.png'),load('assets/music-details.png'),load('assets/landscape-details.png'),load('assets/music-square.png')]);
 const houseCells=cells(houses),treeCells=cells(foliage),propCells=cells(props),furnitureCells=cells(furniture,3,3),musicCells=cells(music),landscapeCells=cells(landscape);
 export const materials=Array.from({length:4},(_,i)=>{const c=document.createElement('canvas');c.width=c.height=512;const g=c.getContext('2d');g.drawImage(ground,i%2*ground.width/2,Math.floor(i/2)*ground.height/2,ground.width/2,ground.height/2,0,0,512,512);return c;});
-const tones={lawn:'saturate(.25) brightness(.84)',forest:'saturate(.32) brightness(.55)',orchard:'saturate(.3) sepia(.45) brightness(.9)',ridge:'saturate(.3) hue-rotate(12deg) brightness(.79)',garden:'saturate(.35) brightness(.83)',lantern:'saturate(.3) hue-rotate(25deg) brightness(.66)',meadow:'saturate(.25) sepia(.6) brightness(.95)',marsh:'saturate(.12) hue-rotate(38deg) brightness(.65)'};
+const tones={lawn:'saturate(.85) brightness(.96)',forest:'saturate(.7) brightness(.65)',orchard:'saturate(.8) sepia(.15) brightness(.98)',ridge:'saturate(.75) hue-rotate(6deg) brightness(.9)',garden:'saturate(.95) brightness(1)',lantern:'saturate(.75) hue-rotate(12deg) brightness(.8)',meadow:'saturate(.85) sepia(.2) brightness(1.03)',marsh:'saturate(.6) hue-rotate(16deg) brightness(.78)'};
 const filtered=new Map();
-function variant(image,tone){if(!tone)return image;const key=(image.src||'canvas')+tone;if(!filtered.has(key)){const c=document.createElement('canvas');c.width=image.width;c.height=image.height;const g=c.getContext('2d');g.filter=tones[tone]||tone;g.drawImage(image,0,0);filtered.set(key,c);}return filtered.get(key);}
-export function material(index,tone='lawn'){const key='material:'+index+':'+tone;if(!filtered.has(key)){const c=document.createElement('canvas');c.width=c.height=512;const g=c.getContext('2d');g.filter=tones[tone]||tone;g.drawImage(materials[index],0,0);filtered.set(key,c);}return filtered.get(key);}
+function variant(image,tone){tone=tone||'none';const key=(image.src||'canvas')+tone;if(!filtered.has(key)){const c=document.createElement('canvas');c.width=image.width;c.height=image.height;const g=c.getContext('2d');g.filter=tones[tone]||tone;g.drawImage(image,0,0);pixelPalette(c);filtered.set(key,c);}return filtered.get(key);}
+export function material(index,tone='lawn'){const key='material:'+index+':'+tone;if(!filtered.has(key)){const c=document.createElement('canvas');c.width=c.height=512;const g=c.getContext('2d');g.filter=tones[tone]||tone;g.drawImage(materials[index],0,0);pixelPalette(c);filtered.set(key,c);}return filtered.get(key);}
 function sprite(c,cell,x,y,w,h,tone){c.drawImage(variant(cell.image,tone),cell.sx,cell.sy,cell.sw,cell.sh,x,y,w,h);}
-function buildingPart(c,cell,x,y,w,h,annex=false){const image=variant(cell.image,'saturate(.72) brightness(.88)'),roof=cell.sh*.7,front=cell.sh-roof;
+function buildingPart(c,cell,x,y,w,h,annex=false){const image=cell.image,roof=cell.sh*.7,front=cell.sh-roof;
  // Roof depth is drawn over the actual floor area; the south wall is a short
  // vertical projection, not a tall facade standing in for the entire house.
  c.drawImage(image,cell.sx,cell.sy,cell.sw,roof,x,y-100,w,h);
@@ -22,15 +23,20 @@ function buildingPart(c,cell,x,y,w,h,annex=false){const image=variant(cell.image
  else{for(let dx=0;dx<w;dx+=220){const ww=Math.min(220,w-dx);c.drawImage(image,cell.sx+cell.sw*.055,cell.sy+roof,cell.sw*.32,front,x+dx,y+h-100,ww,100);}}
  rect(c,x,y+h-100,w,4,'#26342d88');
 }
-export function housePart(c,h,p){const z=baseElevation(h.door?.x??h.x+h.w/2,h.porch?.y??h.y+h.h)+(h.porch?.rise||0),x=h.x+p.x,y=h.y+p.y-z;ellipse(c,x+p.w*.55,y+p.h+20,p.w*.54,32,'#10272455');buildingPart(c,houseCells[h.kind==='glasshouse'?3:h.style??0],x,y,p.w,p.h,p!==h.core&&!!h.core);if(p===h.core){musicalDetail(c,0,x+p.w*.27,y+p.h-112,66,90);if(h.style%2===0)musicalDetail(c,2,x+p.w*.73,y+p.h-88,52,52);}}
+export function housePart(c,h,p){const z=baseElevation(h.door?.x??h.x+h.w/2,h.porch?.y??h.y+h.h)+(h.porch?.rise||0),x=h.x+p.x,y=h.y+p.y-z;ellipse(c,x+p.w*.55,y+p.h+20,p.w*.54,32,'#10272455');buildingPart(c,houseCells[h.kind==='glasshouse'?3:h.style??0],x,y,p.w,p.h,p!==h.core&&!!h.core);}
 export function house(c,h){if(h.kind==='bandstand'){const z=baseElevation(h.x+h.w/2,h.y+h.h);sprite(c,propCells[4],h.x,h.y-z-100,h.w,h.h+100,'saturate(.55) brightness(.8)');return;}for(const p of [...(h.parts||[{x:0,y:0,w:h.w,h:h.h}])].sort((a,b)=>a.y+a.h-b.y-b.h))housePart(c,h,p);}
 export function environmentDetail(c,index,x,y,w,h){sprite(c,landscapeCells[index],x,y,w,h,'saturate(.65) brightness(.85)');}
 export function musicalDetail(c,index,x,y,w,h){sprite(c,musicCells[index],x,y,w,h,'saturate(.7) brightness(.9)');}
-export function fountain(c,x,y){sprite(c,propCells[0],x-95,y-165,190,200);}
+export function squareScene(c,x,y,w,h){c.drawImage(squarePlate,x,y,w,h);}
+export function fountain(c,x,y){sprite(c,propCells[0],x-180,y-270,360,360);}
 export function planter(c,x,y,w=110){const cell=propCells[3];sprite(c,cell,x-w/2,y-w*cell.sh/cell.sw,w,w*cell.sh/cell.sw);}
 export function tree(c,x,y,size=1,type=0,tone='lawn'){const cell=treeCells[type%6],w=(type===5?180:480)*size,h=w*cell.sh/cell.sw;ellipse(c,x+25,y+10,w*.42,25*size,'#10272055');sprite(c,cell,x-w/2,y-h,w,h,tone);}
 export function flower(c,x,y,color){rect(c,x,y,1,9,'#2a623c');rect(c,x-2,y-3,5,4,'#284e3b');rect(c,x-1,y-4,4,4,color);rect(c,x,y-3,1,1,'#ffe3a4');rect(c,x-3,y+3,3,2,'#528e48');}
-export function fence(c,x,y,w){for(let dx=0;dx<w;dx+=28){rect(c,x+dx+2,y-28,7,34,'#3b4131');rect(c,x+dx,y-29,6,31,'#af996d');rect(c,x+dx+1,y-28,2,30,'#e0cc94');rect(c,x+dx-1,y-31,8,3,'#c8b17a');}for(const dy of [-19,-5]){rect(c,x,y+dy,w,5,'#756a4d');rect(c,x,y+dy,w,1,'#c2b382');}}
+export function fence(c,x,y,w,options={}){const height=options.height||FENCE.height,bay=FENCE.bay;
+ // Substantial posts and complete bays, sized against the arcade character.
+ for(const dy of [-height*.72,-height*.32]){rect(c,x,y+dy+2,w,10,'#493b36');rect(c,x,y+dy,w,7,'#b08e60');rect(c,x,y+dy,w,2,'#e0c695');}
+ for(let dx=0;dx<w;dx+=20){rect(c,x+dx,y-height+9,8,height-7,'#94754f');rect(c,x+dx,y-height+9,2,height-8,'#c8aa77');}
+ const positions=[];for(let dx=0;dx<w;dx+=bay)positions.push(dx);positions.push(Math.max(0,w-FENCE.postWidth));for(const dx of positions){rect(c,x+dx+3,y-height+3,16,height+8,'#21343b66');rect(c,x+dx,y-height,FENCE.postWidth,height+6,'#7b6146');rect(c,x+dx+2,y-height+2,3,height+2,'#d1bea2');rect(c,x+dx-3,y-height-6,FENCE.postWidth+6,7,'#b1a18a');rect(c,x+dx-2,y-height-6,FENCE.postWidth+4,2,'#e8d6b3');}}
 export function bench(c,x,y){const cell=propCells[1];sprite(c,cell,x,y-45,110,75);}
 export function lamp(c,x,y){const cell=propCells[2];sprite(c,cell,x-24,y-155,48,160);}
 const shade=['#755739','#b39463','#d2b17a','#edcf91'];
