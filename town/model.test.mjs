@@ -1,6 +1,6 @@
 import test from 'node:test';
 import assert from 'node:assert/strict';
-import {residents,allHomes,landmarks,START,ARCHITECTURES,roomPlan,atInteriorExit,interiorSolid,insideFootprint,bridges,water,solid,canEnter,nearest,W,H,paths,landStairs,canStep,canTravel,elevation,baseElevation,accessPath,townTrees} from './model.mjs';
+import {residents,allHomes,landmarks,START,ARCHITECTURES,roomPlan,atInteriorExit,interiorSolid,insideFootprint,bridges,water,solid,canEnter,nearest,W,H,paths,landStairs,canStep,canTravel,elevation,baseElevation,accessPath,townTrees,lakeShore,riverHalfWidth} from './model.mjs';
 test('architectures have real wings, varied sizes and matching indoor/outdoor footprints',()=>{
  assert.equal(residents.length,18);assert.equal(new Set(residents.map(r=>r.id)).size,18);
  assert.equal(new Set(allHomes.map(h=>h.architecture)).size,5);
@@ -23,6 +23,12 @@ test('porches require their stairway and have different physical heights',()=>{
 test('river bridges work and open water blocks walking',()=>{
  for(const b of bridges){assert.ok(water(b.x,b.y));assert.ok(!solid(b.x,b.y));}
  assert.ok(solid(1950,6100));
+});
+test('the lake has real dry inlets and the river has variable banks',()=>{
+ assert.ok(lakeShore.length>20);
+ assert.equal(water(1760,5830),false,'the northern inlet is dry ground, unlike the old oval');
+ assert.equal(water(1950,6100),true,'the central basin remains water');
+ assert.ok(Math.abs(riverHalfWidth(1000)-riverHalfWidth(2200))>30);
 });
 test('home invitations remain tied to the active musician friendship',()=>{
  assert.equal(canEnter([], 'bach'),false);assert.equal(canEnter([{id:'bach',relationship:{count:4}}],'bach'),false);assert.equal(canEnter([{id:'bach',relationship:{count:5}}],'bach'),true);assert.equal(canEnter([{id:'bach',relationship:{count:10}}],'mozart'),false);assert.equal(canEnter([{id:'bach',relationship:{count:'5'}}],'bach'),false);

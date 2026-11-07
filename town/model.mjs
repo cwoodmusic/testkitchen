@@ -76,10 +76,13 @@ export const paths=[
  [[1000,11400],[7600,11400]],[[7000,5600],[7000,7600]]
 ];
 export function accessPath(home){return [[home.door.x,home.stairs.y+home.stairs.h],[home.door.x,home.street]];}
-export const riverX=y=>8500+Math.sin(y/1400)*140+Math.sin(y/440)*36;
+export const riverX=y=>8500+Math.sin(y/1100)*220+Math.sin(y/370)*45;
+export const riverHalfWidth=y=>210+Math.sin(y/530)*48+Math.sin(y/173)*27;
+export const lakeShore=[[1440,5930],[1520,5830],[1690,5810],[1760,5860],[1900,5770],[2050,5790],[2110,5860],[2310,5830],[2450,5920],[2500,6070],[2430,6150],[2480,6270],[2370,6390],[2150,6400],[2010,6470],[1880,6400],[1690,6440],[1560,6340],[1410,6310],[1370,6170],[1430,6100],[1390,6010]];
+export function inPolygon(x,y,points){let inside=false;for(let i=0,j=points.length-1;i<points.length;j=i++){const [ax,ay]=points[i],[bx,by]=points[j];if((ay>y)!==(by>y)&&x<(bx-ax)*(y-ay)/(by-ay)+ax)inside=!inside;}return inside;}
 export const bridges=[3000,5600,10400].map(y=>({x:riverX(y),y,w:960,h:240}));
 export const inRect=(x,y,r,margin=0)=>x>=r.x-margin&&x<=r.x+r.w+margin&&y>=r.y-margin&&y<=r.y+r.h+margin;
-export function water(x,y){return Math.abs(x-riverX(y))<210||((x-1950)/620)**2+((y-6100)/380)**2<1||y>11240+Math.sin(x/850)*90&&x>8200;}
+export function water(x,y){return Math.abs(x-riverX(y))<riverHalfWidth(y)||x>1300&&x<2600&&y>5700&&y<6550&&inPolygon(x,y,lakeShore)||y>11240+Math.sin(x/850)*90&&x>8200;}
 export function stairHeight(s,x,y){const t=Math.max(0,Math.min(1,s.axis==='x'?(x-s.x)/s.w:(y-s.y)/s.h));return s.from+(s.to-s.from)*t;}
 export function baseElevation(x,y){const stairs=landStairs.find(s=>inRect(x,y,s));if(stairs)return stairHeight(stairs,x,y);return terraces.find(t=>inRect(x,y,t))?.height||0;}
 export function stairAt(x,y){const land=landStairs.find(s=>inRect(x,y,s));if(land)return land;return allHomes.map(h=>h.stairs).find(s=>inRect(x,y,s))||null;}

@@ -84,3 +84,11 @@ exercise arcade entry/return, map, mobile controls, invitations, revocation,
 walking up and down porch stairs, and blocked cliff movement. Synthetic starting
 positions are confined to intercepted browser-test sources; production contains
 no teleport control.
+
+The reference-art pass adds `shore.mjs`: one shared authored shoreline controls
+both water collision and the lake/river artwork. Banks use original rock,
+grass-overhang, reed and cutbank sprites; cliff faces add roots and exposed-rock
+layers. Musical details include European ironwork, violin signs, lyre stained
+glass, luthiers' benches, score notices and a cello monument. These are original
+Coda Town assets in `landscape-details.png` and `music-details.png`. See
+`docs/town-preview/README.md` for application screenshots.
