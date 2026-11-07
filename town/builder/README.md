@@ -15,3 +15,5 @@ Validation: `node --test town/builder/model.test.mjs town/model.test.mjs`; `pyth
 The editor and playable authored maps both use `town/world/` for the asset catalog, renderer, pixel resolution, project format, collision, spawn placement, movement, gates and camera height. Walk test uses those same functions. Editor guides (selection, grid, collision highlights and ghosts) are intentionally excluded from gameplay. Pixel comparison tests verify that static scenes match exactly with equal camera and viewport settings. The original handcrafted town remains a separate map; placed NPC home interiors are still not connected.
 
 Additional validation: `node --test town/world/physics.test.mjs`; `python3 town/world/browser.py`.
+
+Use **Select land** and drag a rectangle to select terrain tiles. The Land selection panel shows the selected size. **Raise selected land +1** and **Lower selected land −1** change the whole selection by one level while preserving its surfaces and relative heights (within the 0–8 limits). Each click is one undoable action. **Clear selection** or Escape clears the highlight. Selection itself does not alter or save terrain.

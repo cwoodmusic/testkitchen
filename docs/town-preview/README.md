@@ -56,3 +56,9 @@ The builder starts with grass only and preserves the approved Music Square as a 
 **Play this town** saves the editor map and opens it in the actual town route. The builder and authored-map gameplay now share their renderer, assets, pixel resolution and collision/movement rules. Static scene pixel parity is checked in the browser tests. The original handcrafted town remains available separately.
 
 ![Authored map in gameplay — actual browser capture](builder-play.png)
+
+### Land region selection
+
+Choose **Select land**, drag a rectangle, then **Raise selected land +1** or **Lower selected land −1**. Each action is undoable; Clear selection or Escape removes the highlight.
+
+![Land selection in the builder](land-selection.png)
