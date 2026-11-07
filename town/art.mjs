@@ -1,4 +1,4 @@
-import {HOME,roomPlan,interiorWalls,interiorFurniture} from './model.mjs';
+import {baseElevation,entryConnectors,annexFurniture,roomPlan,interiorWalls,interiorFurniture} from './model.mjs';
 export const noise=(x,y,s=0)=>{const n=Math.sin(x*127.1+y*311.7+s*74.7)*43758.5453;return n-Math.floor(n);};
 export function rect(c,x,y,w,h,color){c.fillStyle=color;c.fillRect(Math.round(x),Math.round(y),Math.round(w),Math.round(h));}
 export function ellipse(c,x,y,rx,ry,color){c.fillStyle=color;c.beginPath();c.ellipse(x,y,rx,ry,0,0,Math.PI*2);c.fill();}
@@ -9,18 +9,37 @@ function cells(image,columns=3,rows=2){const result=[];for(let i=0;i<columns*row
 const [houses,foliage,props,furniture,ground]=await Promise.all([load('assets/houses.png'),load('assets/foliage.png'),load('assets/props.png'),load('assets/furniture.png'),load('assets/ground.png')]);
 const houseCells=cells(houses),treeCells=cells(foliage),propCells=cells(props),furnitureCells=cells(furniture,3,3);
 export const materials=Array.from({length:4},(_,i)=>{const c=document.createElement('canvas');c.width=c.height=512;const g=c.getContext('2d');g.drawImage(ground,i%2*ground.width/2,Math.floor(i/2)*ground.height/2,ground.width/2,ground.height/2,0,0,512,512);return c;});
-function sprite(c,cell,x,y,w,h){c.drawImage(cell.image,cell.sx,cell.sy,cell.sw,cell.sh,x,y,w,h);}
-export function house(c,h){ellipse(c,h.x+h.w*.55,h.y+h.h-5,h.w*.57,35,'#102f2970');if(h.kind==='bandstand'){sprite(c,propCells[4],h.x,h.y-120,h.w,h.h+120);return;}sprite(c,houseCells[h.kind==='glasshouse'?3:h.style??0],h.x,h.y-100,h.w,h.h+100);}
+const tones={lawn:'saturate(.25) brightness(.84)',forest:'saturate(.32) brightness(.55)',orchard:'saturate(.3) sepia(.45) brightness(.9)',ridge:'saturate(.3) hue-rotate(12deg) brightness(.79)',garden:'saturate(.35) brightness(.83)',lantern:'saturate(.3) hue-rotate(25deg) brightness(.66)',meadow:'saturate(.25) sepia(.6) brightness(.95)',marsh:'saturate(.12) hue-rotate(38deg) brightness(.65)'};
+const filtered=new Map();
+function variant(image,tone){if(!tone)return image;const key=(image.src||'canvas')+tone;if(!filtered.has(key)){const c=document.createElement('canvas');c.width=image.width;c.height=image.height;const g=c.getContext('2d');g.filter=tones[tone]||tone;g.drawImage(image,0,0);filtered.set(key,c);}return filtered.get(key);}
+export function material(index,tone='lawn'){const key='material:'+index+':'+tone;if(!filtered.has(key)){const c=document.createElement('canvas');c.width=c.height=512;const g=c.getContext('2d');g.filter=tones[tone]||tone;g.drawImage(materials[index],0,0);filtered.set(key,c);}return filtered.get(key);}
+function sprite(c,cell,x,y,w,h,tone){c.drawImage(variant(cell.image,tone),cell.sx,cell.sy,cell.sw,cell.sh,x,y,w,h);}
+function buildingPart(c,cell,x,y,w,h,annex=false){const image=variant(cell.image,'saturate(.72) brightness(.88)'),roof=cell.sh*.7,front=cell.sh-roof;
+ // Roof depth is drawn over the actual floor area; the south wall is a short
+ // vertical projection, not a tall facade standing in for the entire house.
+ c.drawImage(image,cell.sx,cell.sy,cell.sw,roof,x,y-100,w,h);
+ if(!annex)c.drawImage(image,cell.sx,cell.sy+roof,cell.sw,front,x,y+h-100,w,100);
+ else{for(let dx=0;dx<w;dx+=220){const ww=Math.min(220,w-dx);c.drawImage(image,cell.sx+cell.sw*.055,cell.sy+roof,cell.sw*.32,front,x+dx,y+h-100,ww,100);}}
+ rect(c,x,y+h-100,w,4,'#26342d88');
+}
+export function housePart(c,h,p){const z=baseElevation(h.door?.x??h.x+h.w/2,h.porch?.y??h.y+h.h)+(h.porch?.rise||0),x=h.x+p.x,y=h.y+p.y-z;ellipse(c,x+p.w*.55,y+p.h+20,p.w*.54,32,'#10272455');buildingPart(c,houseCells[h.kind==='glasshouse'?3:h.style??0],x,y,p.w,p.h,p!==h.core&&!!h.core);}
+export function house(c,h){if(h.kind==='bandstand'){const z=baseElevation(h.x+h.w/2,h.y+h.h);sprite(c,propCells[4],h.x,h.y-z-100,h.w,h.h+100,'saturate(.55) brightness(.8)');return;}for(const p of [...(h.parts||[{x:0,y:0,w:h.w,h:h.h}])].sort((a,b)=>a.y+a.h-b.y-b.h))housePart(c,h,p);}
 export function fountain(c,x,y){sprite(c,propCells[0],x-95,y-165,190,200);}
 export function planter(c,x,y,w=110){const cell=propCells[3];sprite(c,cell,x-w/2,y-w*cell.sh/cell.sw,w,w*cell.sh/cell.sw);}
-export function tree(c,x,y,size=1,type=0){const cell=treeCells[type%6],w=(type===5?180:230)*size,h=w*cell.sh/cell.sw;ellipse(c,x+10,y,w*.38,13*size,'#11352c45');sprite(c,cell,x-w/2,y-h,w,h);}
+export function tree(c,x,y,size=1,type=0,tone='lawn'){const cell=treeCells[type%6],w=(type===5?180:480)*size,h=w*cell.sh/cell.sw;ellipse(c,x+25,y+10,w*.42,25*size,'#10272055');sprite(c,cell,x-w/2,y-h,w,h,tone);}
 export function flower(c,x,y,color){rect(c,x,y,1,9,'#2a623c');rect(c,x-2,y-3,5,4,'#284e3b');rect(c,x-1,y-4,4,4,color);rect(c,x,y-3,1,1,'#ffe3a4');rect(c,x-3,y+3,3,2,'#528e48');}
 export function fence(c,x,y,w){for(let dx=0;dx<w;dx+=28){rect(c,x+dx+2,y-28,7,34,'#3b4131');rect(c,x+dx,y-29,6,31,'#af996d');rect(c,x+dx+1,y-28,2,30,'#e0cc94');rect(c,x+dx-1,y-31,8,3,'#c8b17a');}for(const dy of [-19,-5]){rect(c,x,y+dy,w,5,'#756a4d');rect(c,x,y+dy,w,1,'#c2b382');}}
 export function bench(c,x,y){const cell=propCells[1];sprite(c,cell,x,y-45,110,75);}
 export function lamp(c,x,y){const cell=propCells[2];sprite(c,cell,x-24,y-155,48,160);}
 const shade=['#755739','#b39463','#d2b17a','#edcf91'];
 function wood(c,x,y,w,h){rect(c,x,y,w,h,shade[0]);for(let row=0;row<h;row+=12){rect(c,x,y+row,w,10,shade[1]);rect(c,x,y+row,w,1,shade[2]);for(let i=0;i<w;i+=38){const xx=x+i+(row%24?16:0);rect(c,xx,y+row,1,10,'#826641');rect(c,xx+5,y+row+4,14,1,'#bd9f6b');}}}
-export function drawInterior(c,home){
+export function drawInterior(c,home){const core=home.core||{x:0,y:0,w:home.w,h:home.h};c.save();c.beginPath();for(const p of home.parts||[core])c.rect(p.x,p.y,p.w,p.h);c.clip();
+ for(const r of home.annexes||[]){wood(c,r.x+12,r.y+12,r.w-24,r.h-24);rect(c,r.x,r.y,r.w,24,'#96876b');rect(c,r.x,r.y,16,r.h,'#716c55');rect(c,r.x+r.w-16,r.y,16,r.h,'#716c55');rect(c,r.x,r.y+r.h-16,r.w,16,'#716c55');c.fillStyle='#c6b592';c.font='16px Georgia';c.textAlign='center';c.fillText(r.name,r.x+r.w/2,r.y+50);}
+ c.save();c.translate(core.x,core.y);c.scale(core.w/640,core.h/560);drawInteriorBase(c,{...home,core:undefined,annexes:undefined,w:640,h:560,interior:{width:640,depth:560}});c.restore();
+ for(const d of entryConnectors(home)){wood(c,d.x,d.y,d.w,d.h);if(d.axis==='x'){rect(c,d.x,d.y-4,d.w,6,'#b2a07a');rect(c,d.x,d.y+d.h-2,d.w,6,'#b2a07a');}else{rect(c,d.x-4,d.y,6,d.h,'#b2a07a');rect(c,d.x+d.w-2,d.y,6,d.h,'#b2a07a');}}
+ const indices={piano:0,sofa:1};for(const f of annexFurniture(home)){if(f.kind==='bookcase'){wood(c,f.x,f.y,f.w,f.h);for(let x=f.x+5;x<f.x+f.w-8;x+=9){rect(c,x,f.y-16,7,40,['#8c6153','#697a69','#8a8194','#b09a6d'][Math.floor(x/9)%4]);rect(c,x+1,f.y-12,5,2,'#d9c9a2');rect(c,x+2,f.y+12,3,1,'#d9c9a2');}rect(c,f.x,f.y+f.h-3,f.w,4,'#b49a6b');}else if(f.kind==='desk'){wood(c,f.x,f.y,f.w,f.h-8);rect(c,f.x+8,f.y+f.h-8,5,12,'#675137');rect(c,f.x+f.w-13,f.y+f.h-8,5,12,'#675137');rect(c,f.x+24,f.y+15,58,28,'#e6d7b4');for(let j=0;j<5;j++)rect(c,f.x+30,f.y+20+j*4,43,1,'#8a7d61');ellipse(c,f.x+f.w-27,f.y+24,12,7,'#d6c29a');ellipse(c,f.x+f.w-27,f.y+22,8,4,'#655139');}else sprite(c,furnitureCells[indices[f.kind]??0],f.x,f.y,f.w,f.h);}
+ c.restore();}
+function drawInteriorBase(c,home){
  const w=home.interior.width,h=home.interior.depth,mid=w/2;
  rect(c,0,0,w,h,'#243c34');wood(c,16,64,w-32,h-80);
  // Wet spaces share a plumbing wall; private rooms open to the entry hall.

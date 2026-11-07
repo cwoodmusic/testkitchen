@@ -1,42 +1,67 @@
-import {W,H,SCALE,paths,residents,landmarks,bridges,water,riverX,solid} from './model.mjs';
-import {noise as rand,rect,ellipse,flower,fence,house,tree,bench,lamp,materials,fountain,planter} from './art.mjs';
-const TILE=8,COLS=W/TILE,ROWS=H/TILE;
-function canvas(w,h){const c=document.createElement('canvas');c.width=w;c.height=h;return c;}
-// Catmull–Rom samples give the lanes continuous bends rather than straight
-// connector strokes. Both surfaces and verge planting use this same raster.
-export function curve(points){const out=[];for(let i=0;i<points.length-1;i++){const p0=points[Math.max(0,i-1)],p1=points[i],p2=points[i+1],p3=points[Math.min(points.length-1,i+2)],steps=Math.max(1,Math.ceil(Math.hypot(p2[0]-p1[0],p2[1]-p1[1])/12));for(let j=0;j<=steps;j++){const t=j/steps,t2=t*t,t3=t2*t;out.push([0,1].map(k=>.5*(2*p1[k]+(-p0[k]+p2[k])*t+(2*p0[k]-5*p1[k]+4*p2[k]-p3[k])*t2+(-p0[k]+3*p1[k]-3*p2[k]+p3[k])*t3)));}}return out;}
-function closest(point,samples){let target=samples[0],distance=Infinity;for(const q of samples){const d=Math.hypot(point[0]-q[0],point[1]-q[1]);if(d<distance){target=q;distance=d;}}return target;}
-export function bakeTerrain(){const terrain=canvas(W,H),g=terrain.getContext('2d'),trees=[],road=new Uint8Array(COLS*ROWS);
- g.fillStyle=g.createPattern(materials[0],'repeat');g.fillRect(0,0,W,H);g.fillStyle='#20352a14';g.fillRect(0,0,W,H);
- // Broad irregular patches add soil, moss and sunlit grass at landscape scale.
- for(let i=0;i<2200;i++){const x=rand(i,6)*W,y=rand(i,7)*H;ellipse(g,x,y,20+rand(i,8)*100,12+rand(i,9)*65,i%2?'#8f9f4b0b':'#1648330d');}
- const publicCurves=paths.map(curve),publicPoints=publicCurves.flat();
- function stamp(samples,width,material=1){for(const [x,y] of samples){const radius=width*(.88+.1*Math.sin(x/130)+.07*Math.sin(y/93)),left=Math.max(0,Math.floor((x-radius)/TILE)),right=Math.min(COLS-1,Math.ceil((x+radius)/TILE)),top=Math.max(0,Math.floor((y-radius)/TILE)),bottom=Math.min(ROWS-1,Math.ceil((y+radius)/TILE));for(let yy=top;yy<=bottom;yy++)for(let xx=left;xx<=right;xx++){const px=xx*TILE+4,py=yy*TILE+4,edge=radius+Math.sin(xx*1.3+yy*.7)*3;if(Math.hypot(px-x,py-y)<edge&&!water(px,py))road[yy*COLS+xx]=Math.max(road[yy*COLS+xx],material);}}}
- for(const lane of publicCurves)stamp(lane,56);
- for(const h of [...residents,...landmarks.filter(l=>l.kind==='player')]){const start=[h.door.x,h.door.y+25],target=closest(start,publicPoints);const direction=Math.sign(target[0]-start[0])||1;stamp(curve([start,[start[0],start[1]+75],[start[0]+direction*65,(start[1]+target[1])/2+35],target]),29,2);}
- // A civic square follows the river bank rather than drawing a rectangle over it.
- for(let yy=493;yy<533;yy++)for(let xx=455;xx<600;xx++){const x=xx*TILE,y=yy*TILE;if(!water(x,y))road[yy*COLS+xx]=3;}
- for(let y=0;y<ROWS;y++)for(let x=0;x<COLS;x++){const index=y*COLS+x,mat=road[index];if(!mat)continue;const px=x*TILE,py=y*TILE,r=rand(x,y),edge=!road[index-1]||!road[index+1]||!road[index-COLS]||!road[index+COLS];
- const surface=materials[mat===1?2:1];g.drawImage(surface,px%512,py%512,8,8,px,py,8,8);
- if(edge){for(let j=0;j<4;j++){const xx=px+Math.floor(rand(j,x+y)*8),yy=py+Math.floor(rand(j,y+x)*8);rect(g,xx,yy,1,3,'#477c35');rect(g,xx+1,yy+1,1,2,'#7e9e46');}if(r>.5)rect(g,px,py,2+Math.floor(r*3),3,'#3c6c36');}}
- // Water uses fine caustics and a broken moss-and-pebble bank, with no grid gaps.
- for(let y=0;y<H;y+=8)for(let x=0;x<W;x+=8){const wet=water(x+4,y+4);if(wet){const edge=[[12,0],[-12,0],[0,12],[0,-12]].some(([dx,dy])=>!water(x+dx,y+dy));g.drawImage(materials[3],x%512,y%512,8,8,x,y,8,8);if(edge)rect(g,x,y,8,2,'#b6c99188');}else if([[12,0],[-12,0],[0,12],[0,-12]].some(([dx,dy])=>water(x+dx,y+dy))){rect(g,x,y,8,8,'#718561');for(let j=0;j<3;j++){rect(g,x+rand(x,j)*6,y+rand(y,j)*6,2,2,['#a0ac86','#536f51','#bdc19a'][j]);}}}
- for(const b of bridges){const x=b.x-330,y=b.y-82;rect(g,x-5,y,670,164,'#3a4d3d');for(let dx=0;dx<660;dx+=13){rect(g,x+dx,y+4,11,156,['#9a8159','#ac9369','#bba177'][Math.floor(rand(dx,y)*3)]);rect(g,x+dx+1,y+4,1,156,'#d5bc86');for(let k=0;k<5;k++)rect(g,x+dx+3,y+15+k*27,1,11,'#806d4b');}for(const dy of [0,163]){rect(g,x-10,y+dy-10,680,9,'#566147');rect(g,x-10,y+dy-10,680,2,'#b9ac79');for(let dx=0;dx<=660;dx+=65){rect(g,x+dx,y+dy-29,9,43,'#5d6248');rect(g,x+dx,y+dy-29,3,43,'#b3a172');rect(g,x+dx-3,y+dy-32,15,5,'#d0bb83');}}}
- for(let y=6370;y<6840;y+=12){rect(g,5740,y,520,10,'#a88f62');rect(g,5740,y,520,1,'#d3bc88');for(let x=5743;x<6260;x+=80)rect(g,x,y+2,1,5,'#695e45');}
- // Dense leaf litter and wildflower banks follow real landscape pockets.
- for(let i=0;i<4800;i++){const x=rand(i,60)*W,y=rand(i,61)*H,index=Math.floor(y/TILE)*COLS+Math.floor(x/TILE);if(road[index]||water(x,y)||solid(x,y))continue;if(i%3===0)flower(g,x,y,['#f0cc79','#d4a7d1','#f2dfbe','#9fbedd'][i%4]);else{rect(g,x,y,1,6,'#759b53');rect(g,x-2,y+2,1,4,'#486f40');rect(g,x+2,y+3,1,3,'#9baa59');}}
- for(const h of residents){fence(g,h.x-36,h.y+h.h+145,h.w*.35);fence(g,h.x+h.w*.65,h.y+h.h+145,h.w*.43);for(let row=0;row<4;row++){rect(g,h.x-84,h.y+150+row*30,62,24,'#4a4835');for(let i=0;i<10;i++)flower(g,h.x-79+i*6,h.y+156+row*30,['#d69db9','#afc584','#d8c285','#b5b0d9'][row]);}trees.push({x:h.x+h.w+85,y:h.y+h.h-10,size:.55,type:5});if(h.style%2===0)bench(g,h.x-132,h.y+h.h+56);lamp(g,h.x+h.w+40,h.y+h.h+75);}
- const vacant=(x,y,margin=95)=>!water(x,y)&&!road[Math.floor(y/TILE)*COLS+Math.floor(x/TILE)]&&!residents.some(h=>x>h.x-margin&&x<h.x+h.w+margin&&y>h.y-150&&y<h.y+h.h+190)&&!landmarks.some(h=>h.w&&x>h.x-margin&&x<h.x+h.w+margin&&y>h.y-100&&y<h.y+h.h+130);
- for(let i=0;i<1500;i++){const x=130+rand(i,3)*(W-260),y=180+rand(i,9)*(H-360);if(!vacant(x,y))continue;const wild=x<550||x>8700||y<700||y>6200||x>7000&&y<1500;if(wild||rand(i,4)>.50)trees.push({x,y,size:.7+rand(i,8)*.55,type:x>7000||y<700?1:i%11===0?3:i%13===0?2:0});else if(i%3===0)trees.push({x,y,size:.35+rand(i,8)*.3,type:5});}
- for(let y=880;y<2320;y+=260)for(let x=620;x<1390;x+=240)if(vacant(x,y,20))trees.push({x,y,size:.7,type:4});
- for(let x=140;x<W-150;x+=50){if(Math.abs(x-riverX(260))<400)continue;const y=220+Math.round(Math.sin(x/440)*48);for(let row=0;row<4;row++)for(let col=0;col<4;col++){rect(g,x+col*12+(row%2)*5,y+row*14,11,13,['#667662','#7c8a70','#8e977a','#596f5c'][Math.floor(rand(x+col,row)*4)]);rect(g,x+col*12+(row%2)*5,y+row*14,11,2,'#acb18b');}trees.push({x,y:y-30,size:.45,type:5});}
- fountain(g,4070,4070);for(const [x,y] of [[3840,4190],[4300,4200],[4740,4040],[3700,3990]])planter(g,x,y,110);
- // Communal seats, riverside lamps, lilies and the old wishing tree.
- for(const [x,y] of [[3700,4220],[4250,4260],[6060,3400],[7320,2660],[2140,3960],[4360,5720]])bench(g,x,y);
- for(let y=1600;y<6000;y+=480)lamp(g,riverX(y)-250,y);
- for(let i=0;i<35;i++){const a=i*2.4,x=1820+Math.cos(a)*360,y=3660+Math.sin(a)*220;ellipse(g,x,y,13,6,'#336b4b');rect(g,x-5,y-4,7,2,'#7f9e63');if(i%3===0)flower(g,x,y-3,'#ecc2d5');}
- trees.push({x:1800,y:6080,size:2,type:2});
- // Ground shadows belong to the terrain; building sprites are depth-sorted at runtime.
- for(const h of [...residents,...landmarks.filter(l=>l.w)])ellipse(g,h.x+h.w*.54,h.y+h.h,h.w*.56,28,'#12332c45');
- return {terrain,trees,road};
+import {W,H,paths,allHomes,residents,landmarks,terraces,landStairs,accessPath,riverX,bridges,baseElevation,biomeAt,townTrees,groves,inRect} from './model.mjs';
+import {noise,rect,ellipse,flower,fence,bench,lamp,material,fountain,planter} from './art.mjs';
+const CHUNK=1024,OVERVIEW_W=3200,OVERVIEW_H=2400;
+const canvas=(w,h)=>{const c=document.createElement('canvas');c.width=w;c.height=h;return c;};
+const intersects=(a,b)=>a.x<b.x+b.w&&a.x+a.w>b.x&&a.y<b.y+b.h&&a.y+a.h>b.y;
+const segments=paths.flatMap(p=>p.slice(1).map((b,i)=>({a:p[i],b,width:220,kind:1}))).concat(allHomes.map(h=>{const [a,b]=accessPath(h);return {a,b,width:128,kind:2};}));
+function segmentRect(s){const [ax,ay]=s.a,[bx,by]=s.b;return {x:Math.min(ax,bx)-s.width/2,y:Math.min(ay,by)-s.width/2,w:Math.abs(ax-bx)+s.width,h:Math.abs(ay-by)+s.width};}
+function fillMaterial(c,index,tone,r){c.fillStyle=c.createPattern(material(index,tone),'repeat');c.fillRect(r.x,r.y,r.w,r.h);}
+function drawStairs(c,s,base=0){const n=Math.max(4,Math.ceil(Math.abs(s.from-s.to)/6)),rise=(s.to-s.from)/n;for(let i=n-1;i>=0;i--){const t=i/n,z=base+s.from+rise*i,x=s.x+(s.axis==='x'?s.w*t:0),y=s.y+(s.axis==='y'?s.h*t:0)-z,w=s.axis==='x'?s.w/n+2:s.w,h=s.axis==='y'?s.h/n+Math.abs(rise)+2:s.h;rect(c,x,y,w,h,'#766f5a');fillMaterial(c,1,'ridge',{x:x+2,y:y+2,w:w-4,h:Math.max(2,h-4)});rect(c,x+2,y+2,w-4,Math.max(2,h-4),'#9e967c70');rect(c,x,y,w,3,'#d0c3a0');if(s.axis==='x'){rect(c,x,y,3,h,'#d2c39d');rect(c,x+w-3,y,3,h,'#4a5043');}else rect(c,x,y+h-4,w,4,'#454c3e');}
+ const high=Math.max(s.from,s.to)+base;for(const side of [0,1]){const x=s.axis==='y'?s.x+side*s.w:s.x,y=s.axis==='y'?s.y-high:s.y+side*s.h-high;rect(c,x-5,y,10,32,'#8e8a70');rect(c,x-7,y-4,14,6,'#c0b99a');}}
+function drawPorch(c,h){const p=h.porch,base=baseElevation(h.door.x,h.porch.y),top=base+p.rise,fy=p.y+p.h;
+ rect(c,p.x+12,fy-base+10,p.w+38,22,'#10292045');
+ fillMaterial(c,1,'forest',{x:p.x,y:fy-top,w:p.w,h:p.rise});
+ rect(c,p.x,fy-top,p.w,4,'#b4aa8b');
+ if(p.material==='stone')fillMaterial(c,1,'ridge',{x:p.x,y:p.y-top,w:p.w,h:p.h});
+ else{rect(c,p.x,p.y-top,p.w,p.h,'#5e5542');for(let y=p.y-top;y<fy-top;y+=14){rect(c,p.x+3,y+1,p.w-6,11,'#8b7956');rect(c,p.x+4,y+2,p.w-8,1,'#b29a6c');for(let x=p.x+10;x<p.x+p.w;x+=94)rect(c,x,y+3,1,7,'#60543e');}}
+ // Side rails and a clear central stair opening make the height legible.
+ fence(c,p.x,p.y-top+12,110);fence(c,p.x+p.w-110,p.y-top+12,110);fence(c,p.x,fy-top,p.w/2-106);fence(c,p.x+p.w/2+106,fy-top,p.w/2-106);
+ for(const x of [p.x,p.x+p.w]){rect(c,x-3,p.y-top-25,6,p.h,'#a08c65');rect(c,x-3,p.y-top-25,2,p.h,'#d0b98a');for(let y=p.y;y<=fy;y+=48){rect(c,x-4,y-top-30,8,36,'#685f49');rect(c,x-4,y-top-30,2,35,'#b8a27a');}}
+ drawStairs(c,h.stairs,base);
+ planter(c,p.x+90,fy-top-26,100);planter(c,p.x+p.w-90,fy-top-26,100);
+}
+function drawTerrace(c,t){const south=t.y+t.h,top=south-t.height;
+ // Cast shadow, exposed stone face, grass lip, and buttresses give real relief.
+ const shadow=c.createLinearGradient(0,south,0,south+180);shadow.addColorStop(0,'#10291f80');shadow.addColorStop(1,'#10291f00');c.fillStyle=shadow;c.fillRect(t.x-24,south,t.w+70,180);
+ fillMaterial(c,1,'forest',{x:t.x,y:top,w:t.w,h:t.height});
+ rect(c,t.x,top,t.w,9,'#a6a083');rect(c,t.x,top+9,t.w,5,'#3a4c39');
+ for(let x=t.x+20;x<t.x+t.w;x+=64){rect(c,x,top+18,2,t.height-21,'#293e31');rect(c,x+2,top+17,1,t.height-24,'#77816a');}
+ fillMaterial(c,0,t.tone,{x:t.x,y:t.y-t.height,w:t.w,h:t.h});
+ // Narrow north/east returns keep the plateau silhouette connected to its face.
+ rect(c,t.x+t.w-9,t.y-t.height,9,t.h,'#283f325a');rect(c,t.x,t.y-t.height,t.w,5,'#839068');
+ for(let x=t.x+18;x<t.x+t.w;x+=34){const y=top-3;rect(c,x,y,2,8,'#65784d');rect(c,x+3,y+2,1,5,'#a3ab73');}}
+function drawWater(c){
+ c.beginPath();for(let y=0;y<=H;y+=64)c.lineTo(riverX(y)-232,y);for(let y=H;y>=0;y-=64)c.lineTo(riverX(y)+232,y);c.closePath();c.fillStyle='#6a806e';c.fill();
+ c.save();c.beginPath();for(let y=0;y<=H;y+=64)c.lineTo(riverX(y)-210,y);for(let y=H;y>=0;y-=64)c.lineTo(riverX(y)+210,y);c.closePath();c.clip();fillMaterial(c,3,'marsh',{x:7900,y:0,w:1300,h:H});c.restore();
+ ellipse(c,1950,6100,640,400,'#73856a');c.save();c.beginPath();c.ellipse(1950,6100,620,380,0,0,Math.PI*2);c.clip();fillMaterial(c,3,'ridge',{x:1300,y:5650,w:1300,h:900});c.restore();
+ c.save();c.beginPath();c.moveTo(8200,H);c.lineTo(8200,11240+Math.sin(8200/850)*90);for(let x=8200;x<=W;x+=64)c.lineTo(x,11240+Math.sin(x/850)*90);c.lineTo(W,H);c.closePath();c.clip();fillMaterial(c,3,'marsh',{x:8200,y:11000,w:W-8200,h:1000});c.restore();
+}
+function drawRoad(c,s,pass){const [ax,ay]=s.a,[bx,by]=s.b,vertical=ax===bx,len=Math.abs(bx-ax)+Math.abs(by-ay),n=Math.max(1,Math.ceil(len/120));for(let i=0;i<n;i++){const t=i/n,u=(i+1)/n,x=ax+(bx-ax)*t,y=ay+(by-ay)*t,xx=ax+(bx-ax)*u,yy=ay+(by-ay)*u,z=baseElevation((x+xx)/2,(y+yy)/2),first=i===0?s.width/2:0,last=i===n-1?s.width/2:0;
+ const r=vertical?{x:ax-s.width/2,y:Math.min(y,yy)-z-(ay<by?first:last),w:s.width,h:Math.abs(yy-y)+first+last+1}:{x:Math.min(x,xx)-(ax<bx?first:last),y:ay-s.width/2-z,w:Math.abs(xx-x)+first+last+1,h:s.width};
+ if(pass===0){const border=vertical?{x:r.x-7,y:r.y,w:r.w+14,h:r.h}:{x:r.x,y:r.y-7,w:r.w,h:r.h+14};rect(c,border.x,border.y,border.w,border.h,'#8d8b70');}
+ else fillMaterial(c,s.kind===1?2:1,s.kind===1?'garden':'ridge',r);
+ }}
+function drawBridge(c,b){const x=b.x-b.w/2,y=b.y-b.h/2;rect(c,x-8,y+10,b.w+28,b.h+18,'#18382c55');rect(c,x,y,b.w,b.h,'#554e3b');for(let dx=0;dx<b.w;dx+=16){rect(c,x+dx+1,y+3,13,b.h-6,'#91805b');rect(c,x+dx+2,y+3,1,b.h-6,'#c0ad7d');}for(const dy of [0,b.h]){fence(c,x,y+dy,b.w);for(const dx of [0,b.w])lamp(c,x+dx,y+dy);}}
+export function bakeTerrain(){
+ const cache=new Map();let overview=null;
+ function paint(c,view,detail=true){fillMaterial(c,0,'lawn',view);
+  // Biomes are authored areas, so brightness and color describe the landscape.
+  for(const grove of groves)if(intersects(grove,view))fillMaterial(c,0,'forest',grove);
+  const meadow={x:2800,y:9500,w:4800,h:2400};if(intersects(meadow,view)){c.save();c.beginPath();c.moveTo(2900,10300);c.bezierCurveTo(3000,9700,4000,9700,4800,9750);c.bezierCurveTo(5700,9450,7000,9900,7470,10600);c.bezierCurveTo(7820,11600,6600,11850,5400,11780);c.bezierCurveTo(4200,12000,2700,11700,2900,10300);c.closePath();c.clip();fillMaterial(c,0,'meadow',meadow);c.restore();}
+  const marsh={x:9000,y:10700,w:6600,h:1200};if(intersects(marsh,view))fillMaterial(c,0,'marsh',marsh);
+  for(const t of terraces)if(intersects({x:t.x,y:t.y-t.height,w:t.w,h:t.h+t.height+200},view))drawTerrace(c,t);
+  // Private lots sit within their neighborhood, with a quiet lawn and a planted edge.
+  for(const h of allHomes){const z=baseElevation(h.door.x,h.porch.y),lot={x:h.x-180,y:h.y-160-z,w:h.w+360,h:h.h+h.porch.h+h.stairs.h+340};if(!intersects(lot,view))continue;fence(c,lot.x,lot.y+80,lot.w);for(let j=0;j<4;j++){rect(c,h.x-118,h.y+180+j*76-z,74,38,'#3a4230');for(let k=0;k<10;k++)flower(c,h.x-112+k*6,h.y+196+j*76-z,['#b0aa7d','#8e9c83','#8b8194','#ac8b76'][j]);}}
+  for(const pass of [0,1])for(const s of segments)if(intersects({...segmentRect(s),y:segmentRect(s).y-180,h:segmentRect(s).h+200},view))drawRoad(c,s,pass);
+  const square={x:6100,y:7080,w:1900,h:820};if(intersects(square,view)){fillMaterial(c,1,'ridge',square);rect(c,square.x,square.y,square.w,8,'#b0a78c');fountain(c,7600,7490);for(const [x,y] of [[6260,7260],[6260,7790],[7860,7250],[7860,7780]])planter(c,x,y,140);for(const [x,y] of [[7230,7750],[7700,7750],[6500,7330]])bench(c,x,y);}
+  drawWater(c);
+  for(const b of bridges)if(intersects({x:b.x-b.w/2,y:b.y-b.h/2,w:b.w,h:b.h},view))drawBridge(c,b);
+  for(const s of landStairs)if(intersects({x:s.x,y:s.y-160,w:s.w,h:s.h+160},view))drawStairs(c,s);
+  for(const h of allHomes){const p=h.porch,z=baseElevation(h.door.x,h.porch.y)+p.rise;if(intersects({x:p.x-40,y:p.y-z-50,w:p.w+80,h:p.h+h.stairs.h+z+80},view))drawPorch(c,h);}
+  if(detail){for(const t of townTrees){if(!intersects({x:t.x-300,y:t.y-150,w:700,h:300},view))continue;const z=baseElevation(t.x,t.y),shadow=c.createRadialGradient(t.x+90,t.y-z+30,20,t.x+90,t.y-z+30,280*t.size);shadow.addColorStop(0,'#102b2380');shadow.addColorStop(1,'#102b2300');c.fillStyle=shadow;c.fillRect(t.x-230,t.y-z-160,660,390);}}
+ }
+ function chunk(cx,cy){const key=cx+','+cy;if(cache.has(key)){const c=cache.get(key);cache.delete(key);cache.set(key,c);return c;}const c=canvas(CHUNK,CHUNK),g=c.getContext('2d');g.imageSmoothingEnabled=false;g.translate(-cx*CHUNK,-cy*CHUNK);paint(g,{x:cx*CHUNK,y:cy*CHUNK,w:CHUNK,h:CHUNK});cache.set(key,c);if(cache.size>32)cache.delete(cache.keys().next().value);return c;}
+ function draw(c,view){const x0=Math.max(0,Math.floor(view.x/CHUNK)),x1=Math.min(Math.ceil(W/CHUNK)-1,Math.floor((view.x+view.w)/CHUNK)),y0=Math.max(0,Math.floor(view.y/CHUNK)),y1=Math.min(Math.ceil(H/CHUNK)-1,Math.floor((view.y+view.h)/CHUNK));for(let y=y0;y<=y1;y++)for(let x=x0;x<=x1;x++)c.drawImage(chunk(x,y),x*CHUNK,y*CHUNK);}
+ function drawOverview(c){if(!overview){overview=canvas(OVERVIEW_W,OVERVIEW_H);const g=overview.getContext('2d');g.scale(OVERVIEW_W/W,OVERVIEW_H/H);paint(g,{x:0,y:0,w:W,h:H},false);}c.drawImage(overview,0,0,OVERVIEW_W,OVERVIEW_H,0,0,W,H);}
+ return {draw,drawOverview,trees:townTrees,cacheSize:()=>cache.size};
 }
