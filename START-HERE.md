@@ -1,5 +1,13 @@
 # Start at the Coda Arcade
 
+**Explore town** in the connected arcade opens Coda Town: a large outdoor
+valley with seven neighborhoods, river crossings, garden paths, 18 musician
+homes, and your own cottage. Walk with WASD/arrows, interact with E, and use M
+for the town map. Musician homes open at Trusted friend (five earned friendship
+points from their existing quests). The town stays inside the active arcade tab
+and returns to the same player when you choose **Back to arcade**. See
+[Coda Town](town/README.md) for controls, scope, and validation.
+
 `index.html` is the title screen. **Start playing** opens the connected world
 without a player card; **Use my player card** opens the student's picture-card screen, and **For teachers**
 opens the teacher tools. The classroom buttons never start Google sign-in
