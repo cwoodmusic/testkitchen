@@ -44,3 +44,9 @@ rotated fringe images have been removed.
 The approved square is the benchmark for subsequent visual work. Movement
 checks verify functionality; they do not establish that every part of the town
 has reached the same artistic quality.
+
+## Town Builder
+
+The builder starts with grass only and preserves the approved Music Square as a placeable scene. Includes connected fences/walls, multiple trees and house footprints, terrain, stairs, water, bridges, collision walk testing and portable project/asset downloads.
+
+![Town Builder — actual browser capture](builder.png)

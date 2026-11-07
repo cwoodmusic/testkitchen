@@ -23,7 +23,7 @@ function buildingPart(c,cell,x,y,w,h,annex=false){const image=cell.image,roof=ce
  else{for(let dx=0;dx<w;dx+=220){const ww=Math.min(220,w-dx);c.drawImage(image,cell.sx+cell.sw*.055,cell.sy+roof,cell.sw*.32,front,x+dx,y+h-100,ww,100);}}
  rect(c,x,y+h-100,w,4,'#26342d88');
 }
-export function housePart(c,h,p){const z=baseElevation(h.door?.x??h.x+h.w/2,h.porch?.y??h.y+h.h)+(h.porch?.rise||0),x=h.x+p.x,y=h.y+p.y-z;ellipse(c,x+p.w*.55,y+p.h+20,p.w*.54,32,'#10272455');buildingPart(c,houseCells[h.kind==='glasshouse'?3:h.style??0],x,y,p.w,p.h,p!==h.core&&!!h.core);}
+export function housePart(c,h,p){const z=Number.isFinite(h.renderElevation)?h.renderElevation:baseElevation(h.door?.x??h.x+h.w/2,h.porch?.y??h.y+h.h)+(h.porch?.rise||0),x=h.x+p.x,y=h.y+p.y-z;ellipse(c,x+p.w*.55,y+p.h+20,p.w*.54,32,'#10272455');buildingPart(c,houseCells[h.kind==='glasshouse'?3:h.style??0],x,y,p.w,p.h,p!==h.core&&!!h.core);}
 export function house(c,h){if(h.kind==='bandstand'){const z=baseElevation(h.x+h.w/2,h.y+h.h);sprite(c,propCells[4],h.x,h.y-z-100,h.w,h.h+100,'saturate(.55) brightness(.8)');return;}for(const p of [...(h.parts||[{x:0,y:0,w:h.w,h:h.h}])].sort((a,b)=>a.y+a.h-b.y-b.h))housePart(c,h,p);}
 export function environmentDetail(c,index,x,y,w,h){sprite(c,landscapeCells[index],x,y,w,h,'saturate(.65) brightness(.85)');}
 export function musicalDetail(c,index,x,y,w,h){sprite(c,musicCells[index],x,y,w,h,'saturate(.7) brightness(.9)');}
@@ -78,3 +78,6 @@ function drawInteriorBase(c,home){
  c.font='11px Georgia';c.textAlign='center';c.fillStyle='#6a624b';
  rect(c,mid-27,h-16,54,16,'#d2bb87');rect(c,mid-25,h-15,50,1,'#f4dfae');c.fillStyle='#d6c69b';c.font='12px Georgia';c.fillText('Outside ↓',mid,h-22);
 }
+
+// Shared, unfiltered source cells for the town builder and portable asset packs.
+export function townArtSources(){return {houses:houseCells,trees:treeCells,props:propCells,furniture:furnitureCells,music:musicCells,landscape:landscapeCells,ground:materials,square:squarePlate};}

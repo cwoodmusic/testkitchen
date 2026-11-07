@@ -44,3 +44,7 @@ Capture the running square, fences beside a character, cliff face, shoreline,
 and a whole-town overview when reviewing a visual change. Compare those views
 to the approved square before claiming a major graphical improvement. Keep
 source-art previews and actual application screenshots clearly distinguished.
+
+### User-directed town building
+
+Keep the approved Music Square intact and available as a complete placeable scene. New editor maps start as grass, with no predetermined streets or buildings. Offer multiple tree species and sizes, connected wood/iron fencing, stone/brick/plaster walls, terrain stair finishes, and foliage overlays above fences. House variants retain their actual floor-area footprints. Keep the original playable town available while the builder develops independently.
