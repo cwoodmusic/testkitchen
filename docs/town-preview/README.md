@@ -62,3 +62,14 @@ The builder starts with grass only and preserves the approved Music Square as a 
 Choose **Select land**, drag a rectangle, then **Raise selected land +1** or **Lower selected land −1**. Each action is undoable; Clear selection or Escape removes the highlight.
 
 ![Land selection in the builder](land-selection.png)
+
+## Detailed estates, terraces and elevation tools
+
+Actual browser captures of the updated shared game artwork:
+
+- [Full home-and-yard asset library — 19 properties](home-estates-library.png)
+- [Your home and garden at placement scale](home-estate.png)
+- [Detailed connected walls, stair flights, foliage and cliff faces](terraces-detail.png)
+- [Numbered elevation plan and large-area selection](elevation-plan.png)
+
+Open the **home estates** category to place whole properties. Use the canvas toolbar for **Select land region**, **Select whole map**, **Height colors**, or **Elevation plan**. Music Square and water retain their existing artwork.

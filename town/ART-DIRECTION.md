@@ -52,3 +52,11 @@ Keep the approved Music Square intact and available as a complete placeable scen
 ### Editor/game parity
 
 All builder-authored maps must use `town/world/` in both the builder and playable town route (`?map=builder`). Keep one asset catalog, renderer, terrain/asset collision implementation, movement, gate interaction, and pixel scale. Editor guides may overlay the scene; they must not alter the underlying game artwork. Changes to shared graphics apply to both views. Preserve saved version-1 editor projects. The original handcrafted town is available separately while authored-map NPC interiors remain future work.
+
+### Detailed estate and construction pass
+
+User approved Music Square and water as the visual benchmark, and rejected the procedural stairs, walls, sparse vines, and flat cliff pattern. Construction must use the matching detailed painted kit (`construction-detail.png`), botanical overlays (`foliage-detail.png`) and continuous rock/grass cliff rendering, with shared piers at fence corners. Do not return to diagonal gate-like braces on every fence cell, flat strip stairs, or isolated rock decals stamped across cliff faces.
+
+There are 19 distinct full-resolution residential scenes (`home-estate-*.png`), one for every resident and the player, not enlarged atlas thumbnails. Each is a complete home and planted yard with a large roof footprint, musical details, deep porch, stairs, thick walls and an open entry. Keep the individual house pieces available as well. Preserve the approved Music Square and water source files. Estate scenes are visual parcels with house/wall collision; actual NPC door/interior binding remains a separate feature.
+
+Editor tools must include obvious regional selection and a numbered, color-coded elevation plan so large level changes can be understood before returning to the game artwork view. The plan is a guide, not a replacement art style.

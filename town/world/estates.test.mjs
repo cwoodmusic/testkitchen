@@ -1,0 +1,5 @@
+import {test} from 'node:test';import assert from 'node:assert/strict';
+import {residents} from '../model.mjs';import {estateDefinitions,estateBoxes} from './estates.mjs';
+import {blank,blocked,parseProject} from './model.mjs';
+test('every resident and the player has a distinct portable estate',()=>{assert.deepEqual(new Set(estateDefinitions.map(a=>a.id)),new Set([...residents.map(a=>a.id),'player']));assert.equal(estateDefinitions.length,19);assert(new Set(estateDefinitions.map(a=>a.size)).size>=3);});
+test('all estates have solid houses and walls, with clear garden entrances',()=>{for(const a of estateDefinitions){const boxes=estateBoxes(a),catalog=new Map([[`estate-${a.id}`,{w:a.size,h:a.size,boxes}]]),d=blank(),x=8192,y=8192,s=a.size;d.objects.push({asset:`estate-${a.id}`,x,y,scale:1,rotation:0,collision:true,layer:'ground'});assert(blocked(d,x,y-s*.6,catalog),a.id+' house');assert(blocked(d,x-s*.46,y-s*.2,catalog),a.id+' boundary wall');assert(!blocked(d,x,y-s*.1,catalog),a.id+' open entrance');assert(!blocked(d,x,y-s*.25,catalog),a.id+' central yard');assert.doesNotThrow(()=>parseProject(JSON.stringify(d),new Set(catalog.keys())));}});

@@ -1,4 +1,4 @@
-import {catalog,render,resizeSurface,findStart,movePlayer,toggleGate,follow} from './runtime.mjs';
+import {catalog,render,resizeSurface,findStart,movePlayer,toggleGate,follow} from './runtime.mjs?v=estate-detail-1';
 import {loadProject} from './storage.mjs';
 const canvas=document.getElementById('world');
 // Reuse the town route and arcade session bridge; replace the editor chrome
