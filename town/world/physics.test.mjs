@@ -1,0 +1,6 @@
+import {test} from 'node:test';import assert from 'node:assert/strict';
+import {blank} from './model.mjs';import {findStart,movePlayer,toggleGate,follow} from './physics.mjs';
+const catalog=new Map();
+test('shared movement stops at water and crosses bridges',()=>{const d=blank();d.cells['3,2']={surface:'water',level:0};const p={x:170,y:160},keys=new Set(['d']);for(let i=0;i<40;i++)movePlayer(d,p,keys,.02,catalog);assert(p.x<192);d.cells['3,2'].bridge='ew';for(let i=0;i<40;i++)movePlayer(d,p,keys,.02,catalog);assert(p.x>256);});
+test('shared gates and collision agree before and after opening',()=>{const d=blank();d.edges['v:3:2']={style:'iron',gate:true,open:false};const p={x:160,y:160},keys=new Set(['d']);for(let i=0;i<20;i++)movePlayer(d,p,keys,.02,catalog);assert(p.x<180);assert(toggleGate(d,p));for(let i=0;i<20;i++)movePlayer(d,p,keys,.02,catalog);assert(p.x>210);});
+test('shared spawn fallback and camera use authored height',()=>{const d=blank();d.spawn={x:160,y:160};d.cells['2,2']={surface:'water',level:0};const p=findStart(d,catalog);assert.notDeepEqual(p,d.spawn);d.cells['1,1']={surface:'grass',level:2};const cam={};follow(cam,{x:96,y:96},d);assert.deepEqual(cam,{x:96,y:0});});

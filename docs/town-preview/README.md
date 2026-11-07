@@ -50,3 +50,9 @@ has reached the same artistic quality.
 The builder starts with grass only and preserves the approved Music Square as a placeable scene. Includes connected fences/walls, multiple trees and house footprints, terrain, stairs, water, bridges, collision walk testing and portable project/asset downloads.
 
 ![Town Builder — actual browser capture](builder.png)
+
+### Playable authored maps
+
+**Play this town** saves the editor map and opens it in the actual town route. The builder and authored-map gameplay now share their renderer, assets, pixel resolution and collision/movement rules. Static scene pixel parity is checked in the browser tests. The original handcrafted town remains available separately.
+
+![Authored map in gameplay — actual browser capture](builder-play.png)

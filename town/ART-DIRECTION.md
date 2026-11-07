@@ -48,3 +48,7 @@ source-art previews and actual application screenshots clearly distinguished.
 ### User-directed town building
 
 Keep the approved Music Square intact and available as a complete placeable scene. New editor maps start as grass, with no predetermined streets or buildings. Offer multiple tree species and sizes, connected wood/iron fencing, stone/brick/plaster walls, terrain stair finishes, and foliage overlays above fences. House variants retain their actual floor-area footprints. Keep the original playable town available while the builder develops independently.
+
+### Editor/game parity
+
+All builder-authored maps must use `town/world/` in both the builder and playable town route (`?map=builder`). Keep one asset catalog, renderer, terrain/asset collision implementation, movement, gate interaction, and pixel scale. Editor guides may overlay the scene; they must not alter the underlying game artwork. Changes to shared graphics apply to both views. Preserve saved version-1 editor projects. The original handcrafted town is available separately while authored-map NPC interiors remain future work.
