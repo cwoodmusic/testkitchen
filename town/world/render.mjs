@@ -1,14 +1,14 @@
-import {drawSelection} from './selection-view.mjs?v=builder-tools-1';
-import {drawTerrain} from './terrain-render.mjs?v=builder-tools-1';
-import {mountPose} from './cliff-mount.mjs?v=builder-tools-1';
-import {elevationView} from './elevation-view.mjs?v=builder-tools-1';
-import {barrierRuns,drawBarrierRun,barrierPosts,drawPost} from './construction.mjs?v=builder-tools-1';
-import {TILE,RISE,COLS,ROWS,cell,height,segment} from './model.mjs?v=builder-tools-1';
-import {catalog} from './catalog.mjs?v=builder-tools-1';
-import {assetMapImage} from './asset-lawn.mjs?v=builder-tools-1';
-import {renderCityNight} from './city-night.mjs?v=builder-tools-1';
-import {setWaterTime} from './water-motion.mjs?v=builder-tools-1';
-import {drawFountainMotion} from './fountain-motion.mjs?v=builder-tools-1';
+import {drawSelection} from './selection-view.mjs?v=straight-entrances-1';
+import {drawTerrain} from './terrain-render.mjs?v=straight-entrances-1';
+import {mountPose} from './cliff-mount.mjs?v=straight-entrances-1';
+import {elevationView} from './elevation-view.mjs?v=straight-entrances-1';
+import {barrierRuns,drawBarrierRun,barrierPosts,drawPost} from './construction.mjs?v=straight-entrances-1';
+import {TILE,RISE,COLS,ROWS,cell,height,segment} from './model.mjs?v=straight-entrances-1';
+import {catalog} from './catalog.mjs?v=straight-entrances-1';
+import {assetMapImage} from './asset-lawn.mjs?v=straight-entrances-1';
+import {renderCityNight} from './city-night.mjs?v=straight-entrances-1';
+import {setWaterTime} from './water-motion.mjs?v=straight-entrances-1';
+import {drawFountainMotion} from './fountain-motion.mjs?v=straight-entrances-1';
 function drawBrush(c,d,brush,zoom){
  const radius=brush.size/2,color=brush.blend?'#b7eddf':'#ffe2a1';
  c.save();

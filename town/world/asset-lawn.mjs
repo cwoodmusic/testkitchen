@@ -1,4 +1,4 @@
-import {assetImage} from './asset-color.mjs?v=builder-tools-1';
+import {assetImage} from './asset-color.mjs?v=straight-entrances-1';
 
 const cache=new WeakMap();
 export const supportsLawnReveal=a=>a.id==='music-square'||a.id.startsWith('estate-');

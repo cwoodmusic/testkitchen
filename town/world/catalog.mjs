@@ -1,14 +1,15 @@
-import {configureMusicWallArt,registerMusicWallAssets} from './music-wall-art.mjs?v=builder-tools-1';
-import {musicSquareWalls} from './music-wall-geometry.mjs?v=builder-tools-1';
-import {registerDecor} from './decor-pack.mjs?v=builder-tools-1';
-import {arcadeGeometry,drawArcade} from './arcade.mjs?v=builder-tools-1';
-import {constructionArt,stairArt,stairTreadBounds,overgrowthArt,estateArt,cliffDecorArt} from './detail-art.mjs?v=builder-tools-1';
-import {estateDefinitions,estateBoxes} from './estates.mjs?v=builder-tools-1';
-import {townArtSources,house} from '../art.mjs?v=builder-tools-1';
+import {configureMusicWallArt,registerMusicWallAssets} from './music-wall-art.mjs?v=straight-entrances-1';
+import {musicSquareWalls} from './music-wall-geometry.mjs?v=straight-entrances-1';
+import {drawMusicSquareScene} from './music-square-entrances.mjs?v=straight-entrances-1';
+import {registerDecor} from './decor-pack.mjs?v=straight-entrances-1';
+import {arcadeGeometry,drawArcade} from './arcade.mjs?v=straight-entrances-1';
+import {constructionArt,stairArt,stairTreadBounds,overgrowthArt,estateArt,cliffDecorArt} from './detail-art.mjs?v=straight-entrances-1';
+import {estateDefinitions,estateBoxes} from './estates.mjs?v=straight-entrances-1';
+import {townArtSources,house} from '../art.mjs?v=straight-entrances-1';
 import {homeGeometry,ARCHITECTURES} from '../model.mjs';
-import {registerUrbanDetails} from './urban-kit.mjs?v=builder-tools-1';
-import {registerUrbanRoads} from './urban-roads.mjs?v=builder-tools-1';
-import {registerRoadLights} from './road-light-art.mjs?v=builder-tools-1';
+import {registerUrbanDetails} from './urban-kit.mjs?v=straight-entrances-1';
+import {registerUrbanRoads} from './urban-roads.mjs?v=straight-entrances-1';
+import {registerRoadLights} from './road-light-art.mjs?v=straight-entrances-1';
 export const sources=townArtSources(),catalog=new Map();
 function add(id,name,group,w,h,draw,boxes=[],layer='objects'){const a={id,name,group,w:Math.ceil(w),h:Math.ceil(h),boxes,layer};a.draw=draw;let cached;Object.defineProperty(a,'canvas',{get(){if(!cached){cached=document.createElement('canvas');cached.width=a.w;cached.height=a.h;draw(cached.getContext('2d'));}return cached;}});catalog.set(id,a);return a;}
 function sprite(group,i,name,w,boxes,layer){const s=sources[group][i],h=w*s.sh/s.sw;return add(`${group}-${i}-${w}`,name,group,w,h,c=>c.drawImage(s.image,s.sx,s.sy,s.sw,s.sh,0,0,w,h),boxes?.(w,h)||[],layer);}
@@ -19,7 +20,7 @@ sprite('trees',5,'Flowering shrubs',200);
 ['Violin sign','Musical gate decoration','Lyre window','Notice board','Luthier bench','Cello monument'].forEach((n,i)=>sprite('music',i,n,[130,240,120,180,210,220][i]));
 ['Grass cliff cap','Mossy boulders','Reeds','Overhanging grass','Fern overgrowth','Rock outcrop'].forEach((n,i)=>sprite('landscape',i,n,[240,240,160,240,240,300][i],null,[2,3,4].includes(i)?'overgrowth':'objects'));
 for(const [plan,p]of Object.entries(ARCHITECTURES))for(let style=0;style<6;style++){const h=homeGeometry(0,100,style,plan);h.style=style;h.renderElevation=0;add(`house-${plan}-${style}`,`${p.label} · ${['Slate','Rose','Stone','Sage','Ochre','Blue'][style]}`,'houses',h.w,h.h+100,c=>house(c,h),h.parts.map(r=>({x:r.x,y:r.y+100,w:r.w,h:r.h})));}
-const square=add('music-square','Music Square · complete piazza','landmarks',2400,1600,c=>c.drawImage(sources.square,0,0,2400,1600),[{x:950,y:580,w:500,h:400}],'ground');square.scene=true;square.pavingSource=sources.square;
+const square=add('music-square','Music Square · complete piazza','landmarks',2400,1600,c=>drawMusicSquareScene(c,sources.square),[{x:950,y:580,w:500,h:400}],'ground');square.scene=true;square.pavingSource=sources.square;
 configureMusicWallArt(sources.square,constructionArt[7]);
 for(const s of musicSquareWalls({x:1200,y:1600,scale:1,rotation:0})){const half=s.width/2;square.boxes.push({x:s.x-(s.dy?half:0),y:s.y-(s.dx?half:0),w:s.dx||s.width,h:s.dy||s.width});}
 registerMusicWallAssets(add);

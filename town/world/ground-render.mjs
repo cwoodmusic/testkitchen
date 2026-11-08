@@ -1,9 +1,9 @@
-import {PAINT_GRID,PAINT_STEP,readPaint,materialKey} from './ground-paint.mjs?v=builder-tools-1';
-import {sources,catalog} from './catalog.mjs?v=builder-tools-1';
-import {cell,height} from './model.mjs?v=builder-tools-1';
-import {drawPaving,drawPavingMaterial} from './paving.mjs?v=builder-tools-1';
-import {groundTextures} from './ground-textures.mjs?v=builder-tools-1';
-import {drawAnimatedWater} from './water-motion.mjs?v=builder-tools-1';
+import {PAINT_GRID,PAINT_STEP,readPaint,materialKey} from './ground-paint.mjs?v=straight-entrances-1';
+import {sources,catalog} from './catalog.mjs?v=straight-entrances-1';
+import {cell,height} from './model.mjs?v=straight-entrances-1';
+import {drawPaving,drawPavingMaterial} from './paving.mjs?v=straight-entrances-1';
+import {groundTextures} from './ground-textures.mjs?v=straight-entrances-1';
+import {drawAnimatedWater} from './water-motion.mjs?v=straight-entrances-1';
 
 const tiles=new WeakMap(),fields=new WeakMap(),legacyFields=new Map();
 function canvas(size){const c=document.createElement('canvas');c.width=c.height=size;return c;}

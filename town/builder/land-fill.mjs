@@ -1,5 +1,5 @@
-import {groundMaterials} from '../world/ground-paint.mjs?v=builder-tools-1';
-import {planTerrainFill} from './water-fill.mjs?v=builder-tools-1';
+import {groundMaterials} from '../world/ground-paint.mjs?v=straight-entrances-1';
+import {planTerrainFill} from './water-fill.mjs?v=straight-entrances-1';
 
 // Replace the clicked material on its connected physical floor. The same
 // bucket can repaint dry land or reclaim water without crossing its shore.
