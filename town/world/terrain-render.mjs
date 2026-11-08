@@ -1,17 +1,15 @@
-import {shadeLowerGround,drawTerrainRims} from './edge-shading.mjs?v=urban-assets-2';
-import {drawRoundUnder,drawRoundCliff} from './round-render.mjs?v=urban-assets-2';
-import {clipCurves} from './round-geometry.mjs?v=urban-assets-2';
-import {drawGround,groundFrameKey} from './ground-render.mjs?v=urban-assets-2';
-import {drawCliff,drawStairs} from './construction.mjs?v=urban-assets-2';
-import {RISE,COLS,ROWS,cell} from './model.mjs?v=urban-assets-2';
-import {sources} from './catalog.mjs?v=urban-assets-2';
+import {shadeLowerGround,drawTerrainRims} from './edge-shading.mjs?v=music-walls-1';
+import {drawRoundUnder,drawRoundCliff} from './round-render.mjs?v=music-walls-1';
+import {clipCurves} from './round-geometry.mjs?v=music-walls-1';
+import {drawGround,groundFrameKey} from './ground-render.mjs?v=music-walls-1';
+import {drawCliff,drawStairs} from './construction.mjs?v=music-walls-1';
+import {RISE,COLS,ROWS,cell} from './model.mjs?v=music-walls-1';
+import {sources} from './catalog.mjs?v=music-walls-1';
+import {waterRimSegments} from './water-rim.mjs?v=music-walls-1';
 const lawns=new WeakMap();
 function drawWaterRim(c,d,x,y,X,Y){
  c.strokeStyle='#97b9a1';c.lineWidth=5;
- for(const[dx,dy]of [[0,-1],[0,1],[-1,0],[1,0]])if(cell(d,x+dx,y+dy).surface!=='water'){
-  c.beginPath();if(dx){c.moveTo(X+(dx>0?64:0),Y);c.lineTo(X+(dx>0?64:0),Y+64);}
-  else{c.moveTo(X,Y+(dy>0?64:0));c.lineTo(X+64,Y+(dy>0?64:0));}c.stroke();
- }
+ const z=y*64-Y;for(const s of waterRimSegments(d,x,y)){c.beginPath();c.moveTo(s.x,s.y-z);c.lineTo(s.x+s.dx,s.y+s.dy-z);c.stroke();}
 }
 function drawBridge(c,d,a,x,y,X,Y){
  c.fillStyle=a.finish==='stone'?'#a4a08a':'#9a7b50';c.fillRect(X,Y,64,64);c.strokeStyle='#544d3c';

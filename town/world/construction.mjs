@@ -1,6 +1,7 @@
-import {cell,height,segment,RISE,stairProfile} from './model.mjs?v=urban-assets-2';
-import {wallArt,constructionArt,stairArt,stairTreadBounds,cliffArt} from './detail-art.mjs?v=urban-assets-2';
-export const barrierHeight=style=>style==='iron'?144:style==='wood'||style==='rail'?136:160;
+import {MUSIC_WALL_HEIGHT,drawMusicWallRun,drawMusicWallPost} from './music-wall-art.mjs?v=music-walls-1';
+import {cell,height,segment,RISE,stairProfile} from './model.mjs?v=music-walls-1';
+import {wallArt,constructionArt,stairArt,stairTreadBounds,cliffArt} from './detail-art.mjs?v=music-walls-1';
+export const barrierHeight=style=>style==='music-square'?MUSIC_WALL_HEIGHT:style==='iron'?144:style==='wood'||style==='rail'?136:160;
 function piece(c,img,sx,sy,sw,sh,x,y,w,h){if(sw>0&&sh>0&&w>0&&h>0)c.drawImage(img,sx,sy,sw,sh,x,y,w,h);}
 // Clip one continuous rock field to the heights on BOTH sides of an edge.
 // The southern side can be a slope, so a midpoint rectangle leaves gaps.
@@ -69,8 +70,8 @@ export function drawStairs(c,d,x,y){const a=cell(d,x,y);if(!a.stairs)return;cons
  }
  c.restore();
 }
-export function barrierRuns(d){const groups=new Map();for(const[k,e]of Object.entries(d.edges)){const s=segment(k),axis=s.dx?'h':'v',z=height(d,s.x+2,s.y+2),fixed=axis==='h'?s.y:s.x,t=axis==='h'?s.x:s.y,g=[axis,fixed,z,e.style,!!e.gate,!!e.open].join(':');if(!groups.has(g))groups.set(g,[]);groups.get(g).push({s,e,t,z,axis});}const runs=[];for(const group of groups.values()){group.sort((a,b)=>a.t-b.t);let current;for(const p of group){if(!current||p.t!==current.end||p.e.gate){current={...p,start:p.t,end:p.t+64};runs.push(current);}else current.end+=64;}}return runs;}
-export function drawBarrierRun(c,run){const {s,e,z,axis,start,end}=run,h=barrierHeight(e.style),length=end-start,img=wallArt[e.style]||wallArt.wood,X=s.x,Y=s.y-z;c.save();c.translate(X,Y);
+export function barrierRuns(d){const groups=new Map();for(const[k,e]of Object.entries(d.edges)){const s=segment(k),axis=s.dx?'h':'v',z=height(d,s.x+2,s.y+2),fixed=axis==='h'?s.y:s.x,t=axis==='h'?s.x:s.y,g=[axis,fixed,z,e.style,!!e.gate,!!e.open,e.wallScale||1].join(':');if(!groups.has(g))groups.set(g,[]);groups.get(g).push({s,e,t,z,axis});}const runs=[];for(const group of groups.values()){group.sort((a,b)=>a.t-b.t);let current;for(const p of group){const length=p.s.dx||p.s.dy;if(!current||p.t>current.end+.0001||p.e.gate){current={...p,start:p.t,end:p.t+length};runs.push(current);}else current.end=Math.max(current.end,p.t+length);}}return runs;}
+export function drawBarrierRun(c,run){if(run.e.style==='music-square'){drawMusicWallRun(c,run);return;}const {s,e,z,axis,start,end}=run,h=barrierHeight(e.style),length=end-start,img=wallArt[e.style]||wallArt.wood,X=s.x,Y=s.y-z;c.save();c.translate(X,Y);
  if(e.open){c.globalAlpha=.95;const ph=h+12;piece(c,img,0,0,img.width*.23,img.height,-21,-ph,42,ph);c.restore();return;}
  c.fillStyle='#15221d38';if(axis==='h')c.fillRect(0,0,length+12,13);else c.fillRect(-18,-h,length?40:0,length+h+10);
  if(axis==='h'){
@@ -82,6 +83,13 @@ export function drawBarrierRun(c,run){const {s,e,z,axis,start,end}=run,h=barrier
  }
  if(e.gate&&axis==='h')piece(c,constructionArt[7],constructionArt[7].width*.23,0,constructionArt[7].width*.54,constructionArt[7].height,0,-h,length,h);
  c.restore();}
-export function barrierPosts(d){const nodes=new Map();for(const[k,e]of Object.entries(d.edges)){const s=segment(k),axis=s.dx?'h':'v';for(const [x,y]of [[s.x,s.y],[s.x+s.dx,s.y+s.dy]]){const k=`${x},${y}`;if(!nodes.has(k))nodes.set(k,{x,y,e,axes:new Set(),degree:0,gate:false});const p=nodes.get(k);p.axes.add(axis);p.degree++;p.gate||=e.gate;}}
- return [...nodes.values()].filter(p=>p.degree!==2||p.axes.size>1||p.axes.has('h')&&p.x%256===0||p.axes.has('v')&&p.y%256===0||p.gate);}
-export function drawPost(c,p,d){const img=wallArt[p.e.style]||wallArt.wood,h=barrierHeight(p.e.style)+18,z=height(d,p.x+2,p.y+2),w=p.gate?28:p.e.style==='wood'||p.e.style==='rail'?44:64;piece(c,img,0,0,img.width*.23,img.height,p.x-w/2,p.y-z-h,w,h+8);}
+export function barrierPosts(d){
+ const nodes=new Map(),rounded=v=>Math.round(v*10000)/10000;
+ function node(x,y,e){x=rounded(x);y=rounded(y);const k=`${x},${y}`;if(!nodes.has(k))nodes.set(k,{x,y,e,axes:new Set(),degree:0,gate:false});const p=nodes.get(k);if(e.style==='music-square')p.e=e;return p;}
+ for(const[k,e]of Object.entries(d.edges)){const s=segment(k),axis=s.dx?'h':'v';for(const[x,y]of [[s.x,s.y],[s.x+s.dx,s.y+s.dy]]){const p=node(x,y,e);p.axes.add(axis);p.degree++;p.gate||=e.gate;}}
+ // Music Square's grid can be offset from the terrain. Pillars are spaced
+ // along the actual run rather than requiring absolute multiples of256.
+ for(const run of barrierRuns(d))if(run.e.style==='music-square'&&!run.e.gate){const step=256*(run.e.wallScale||1);for(let t=run.start+step;t<run.end-.0001;t+=step){const p=node(run.axis==='h'?t:run.s.x,run.axis==='v'?t:run.s.y,run.e);p.periodic=true;p.axes.add(run.axis);}}
+ return [...nodes.values()].filter(p=>p.periodic||p.degree!==2||p.axes.size>1||p.gate||p.e.style!=='music-square'&&(p.axes.has('h')&&p.x%256===0||p.axes.has('v')&&p.y%256===0));
+}
+export function drawPost(c,p,d){if(p.e.style==='music-square'){drawMusicWallPost(c,p,d);return;}const img=wallArt[p.e.style]||wallArt.wood,h=barrierHeight(p.e.style)+18,z=height(d,p.x+2,p.y+2),w=p.gate?28:p.e.style==='wood'||p.e.style==='rail'?44:64;piece(c,img,0,0,img.width*.23,img.height,p.x-w/2,p.y-z-h,w,h+8);}

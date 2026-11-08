@@ -7,3 +7,5 @@
 #libraryShortcuts{display:grid;grid-template-columns:1fr 1fr;gap:6px}#urbanKit{border-color:#c3a66a;color:#f2d69d}#urbanKitHelp{font-size:11px;margin:9px 0}
 
 #urbanPack{grid-column:1/-1}
+
+#organicSettings{border:1px solid #6b805d;border-radius:6px;padding:1px 9px 7px;background:#294334}#organicSettings output{float:right;color:#f0d58d}#organicSettings input[type=range]{padding:0;accent-color:#d3b971}#organicSettings p{font-size:11px;margin:7px 0}

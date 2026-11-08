@@ -1,6 +1,6 @@
 // One shared material field supplies roads, pavements and the terrain brush.
 // Keep the connectivity geometry usable by project validation without a DOM.
-const urbanTextures=typeof document==='undefined'?null:(await import('./urban-materials.mjs?v=urban-assets-2')).urbanTextures;
+const urbanTextures=typeof document==='undefined'?null:(await import('./urban-materials.mjs?v=music-walls-1')).urbanTextures;
 export const ROAD_SIZE=1024,ROAD_MARGIN=128,ROAD_WIDTH=768;
 const directions=['north','east','south','west'];
 const definition=(id,name,open)=>Object.freeze({id:'urban-road-'+id,name,w:ROAD_SIZE,h:ROAD_SIZE,open:Object.freeze(open)});
@@ -87,8 +87,8 @@ export function registerUrbanRoads(add){
  if(!urbanTextures)throw Error('Street artwork needs a browser canvas.');
  for(const def of roadDefinitions){const a=add(def.id,def.name,'urban roads',1024,1024,c=>drawRoad(c,def),[],'ground');properties(a,{snap:512,roadOpen:[...def.open],road:{open:[...def.open],width:768,sidewalk:128}});}
  const sidewalk=(id,name,w,h,draw)=>properties(add(id,name,'urban sidewalks',w,h,draw,[],'ground'));
- sidewalk('urban-sidewalk-panel','Sidewalk · square paving panel',512,512,c=>material(c,'sidewalk',0,0,512,512,256,512));
- sidewalk('urban-sidewalk-strip','Sidewalk · narrow strip',512,128,c=>material(c,'sidewalk',0,0,512,128,256,128));
+ sidewalk('urban-sidewalk-panel','Sidewalk · large concrete slab panel',512,512,c=>material(c,'sidewalk',0,0,512,512,256,512));
+ sidewalk('urban-sidewalk-strip','Sidewalk · concrete slab strip',512,128,c=>material(c,'sidewalk',0,0,512,128,256,128));
  sidewalk('urban-sidewalk-corner-outside','Sidewalk · outside corner',256,256,c=>{material(c,'sidewalk',0,0,256,256,128,256);curb(c,12,0,256,true,false);curb(c,0,12,256,false,false);});
  sidewalk('urban-sidewalk-corner-inside','Sidewalk · inside L corner',256,256,c=>{material(c,'sidewalk',0,0,128,256,128,256);material(c,'sidewalk',128,128,128,128,128,256);curb(c,128,0,128,true,false);curb(c,128,128,128,false,true);});
  sidewalk('urban-curb-straight','Curb · straight limestone edge',512,32,c=>{material(c,'sidewalk',0,0,512,32,256,32);curb(c,0,16,512,false,true);});
@@ -107,5 +107,5 @@ export function registerUrbanRoads(add){
  marking('urban-stop-line','Road marking · stop line',768,16,[{x:0,y:0,w:768,h:16}]);
  marking('urban-lane-dashes','Road marking · dashed lane',512,12,Array.from({length:4},(_,i)=>({x:i*128,y:1,w:64,h:10})));
  marking('urban-parking-bay','Road marking · parking bay',256,512,[{x:0,y:0,w:10,h:512},{x:0,y:0,w:256,h:10},{x:0,y:502,w:256,h:10}]);
- for(const [id,name]of [['asphalt','Asphalt road'],['sidewalk','Limestone sidewalk'],['brick','City brick paving']])properties(add('urban-paint-'+id,'Paint '+name.toLowerCase(),'urban surfaces',256,256,c=>material(c,id,0,0,256,256,128,256),[],'ground'),{paintSurface:id});
+ for(const [id,name]of [['asphalt','Asphalt road'],['sidewalk','Concrete sidewalk · large slabs'],['brick','City brick paving']])properties(add('urban-paint-'+id,'Paint '+name.toLowerCase(),'urban surfaces',256,256,c=>material(c,id,0,0,256,256,128,256),[],'ground'),{paintSurface:id});
 }

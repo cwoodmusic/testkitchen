@@ -1,5 +1,5 @@
 import {pixelPalette,FENCE} from './pixel-style.mjs';
-import {groundTextures} from './world/ground-textures.mjs?v=urban-assets-2';
+import {groundTextures} from './world/ground-textures.mjs?v=music-walls-1';
 import {baseElevation,entryConnectors,annexFurniture,roomPlan,interiorWalls,interiorFurniture} from './model.mjs';
 export const noise=(x,y,s=0)=>{const n=Math.sin(x*127.1+y*311.7+s*74.7)*43758.5453;return n-Math.floor(n);};
 export function rect(c,x,y,w,h,color){c.fillStyle=color;c.fillRect(Math.round(x),Math.round(y),Math.round(w),Math.round(h));}

@@ -1,11 +1,13 @@
-import {registerDecor} from './decor-pack.mjs?v=urban-assets-2';
-import {arcadeGeometry,drawArcade} from './arcade.mjs?v=urban-assets-2';
-import {constructionArt,stairArt,stairTreadBounds,overgrowthArt,estateArt,cliffDecorArt} from './detail-art.mjs?v=urban-assets-2';
-import {estateDefinitions,estateBoxes} from './estates.mjs?v=urban-assets-2';
-import {townArtSources,house} from '../art.mjs?v=urban-assets-2';
+import {configureMusicWallArt,registerMusicWallAssets} from './music-wall-art.mjs?v=music-walls-1';
+import {musicSquareWalls} from './music-wall-geometry.mjs?v=music-walls-1';
+import {registerDecor} from './decor-pack.mjs?v=music-walls-1';
+import {arcadeGeometry,drawArcade} from './arcade.mjs?v=music-walls-1';
+import {constructionArt,stairArt,stairTreadBounds,overgrowthArt,estateArt,cliffDecorArt} from './detail-art.mjs?v=music-walls-1';
+import {estateDefinitions,estateBoxes} from './estates.mjs?v=music-walls-1';
+import {townArtSources,house} from '../art.mjs?v=music-walls-1';
 import {homeGeometry,ARCHITECTURES} from '../model.mjs';
-import {registerUrbanDetails} from './urban-kit.mjs?v=urban-assets-2';
-import {registerUrbanRoads} from './urban-roads.mjs?v=urban-assets-2';
+import {registerUrbanDetails} from './urban-kit.mjs?v=music-walls-1';
+import {registerUrbanRoads} from './urban-roads.mjs?v=music-walls-1';
 export const sources=townArtSources(),catalog=new Map();
 function add(id,name,group,w,h,draw,boxes=[],layer='objects'){const a={id,name,group,w:Math.ceil(w),h:Math.ceil(h),boxes,layer};a.draw=draw;let cached;Object.defineProperty(a,'canvas',{get(){if(!cached){cached=document.createElement('canvas');cached.width=a.w;cached.height=a.h;draw(cached.getContext('2d'));}return cached;}});catalog.set(id,a);return a;}
 function sprite(group,i,name,w,boxes,layer){const s=sources[group][i],h=w*s.sh/s.sw;return add(`${group}-${i}-${w}`,name,group,w,h,c=>c.drawImage(s.image,s.sx,s.sy,s.sw,s.sh,0,0,w,h),boxes?.(w,h)||[],layer);}
@@ -17,6 +19,9 @@ sprite('trees',5,'Flowering shrubs',200);
 ['Grass cliff cap','Mossy boulders','Reeds','Overhanging grass','Fern overgrowth','Rock outcrop'].forEach((n,i)=>sprite('landscape',i,n,[240,240,160,240,240,300][i],null,[2,3,4].includes(i)?'overgrowth':'objects'));
 for(const [plan,p]of Object.entries(ARCHITECTURES))for(let style=0;style<6;style++){const h=homeGeometry(0,100,style,plan);h.style=style;h.renderElevation=0;add(`house-${plan}-${style}`,`${p.label} · ${['Slate','Rose','Stone','Sage','Ochre','Blue'][style]}`,'houses',h.w,h.h+100,c=>house(c,h),h.parts.map(r=>({x:r.x,y:r.y+100,w:r.w,h:r.h})));}
 const square=add('music-square','Music Square · complete piazza','landmarks',2400,1600,c=>c.drawImage(sources.square,0,0,2400,1600),[{x:950,y:580,w:500,h:400}],'ground');square.scene=true;square.pavingSource=sources.square;
+configureMusicWallArt(sources.square,constructionArt[7]);
+for(const s of musicSquareWalls({x:1200,y:1600,scale:1,rotation:0})){const half=s.width/2;square.boxes.push({x:s.x-(s.dy?half:0),y:s.y-(s.dx?half:0),w:s.dx||s.width,h:s.dy||s.width});}
+registerMusicWallAssets(add);
 // Replace legacy IDs in place so saved maps pick up the detailed artwork.
 for(let i=0;i<6;i++){const image=overgrowthArt[i],w=[448,448,512,448,448,384][i],h=w*image.height/image.width;add(i<4?`ivy-${i}`:`overgrowth-${i}`,['Trailing ivy','Climbing roses','Wisteria swag','Honeysuckle','Laurel hedge','Woodland ferns'][i],'overgrowth',w,h,c=>c.drawImage(image,0,0,w,h),[],'overgrowth');}
 for(const [i,name]of ['Oak picket fence','Timber rail fence','Musical iron fence','Limestone wall','Brick garden wall','Plaster garden wall'].entries()){const image=constructionArt[[3,3,7,0,1,2][i]],w=384,h=192;add(`construction-${i}`,name,'construction',w,h,c=>c.drawImage(image,0,0,w,h),[{x:0,y:170,w,h:22}]);}

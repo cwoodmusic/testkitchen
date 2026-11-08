@@ -1,5 +1,5 @@
-import {groundMaterials} from '../world/ground-paint.mjs?v=urban-assets-2';
-import {planTerrainFill} from './water-fill.mjs?v=land-fill-1';
+import {groundMaterials} from '../world/ground-paint.mjs?v=music-walls-1';
+import {planTerrainFill} from './water-fill.mjs?v=music-walls-1';
 
 // A land bucket reclaims the clicked connected water body. Existing land is
 // its shoreline, even where that land shares the same physical height.
