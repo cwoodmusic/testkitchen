@@ -1,8 +1,8 @@
-import {registerDecor} from './decor-pack.mjs?v=town-proportions-1';
-import {arcadeGeometry,drawArcade} from './arcade.mjs?v=town-proportions-1';
-import {constructionArt,stairArt,stairTreadBounds,overgrowthArt,estateArt,cliffDecorArt} from './detail-art.mjs?v=town-proportions-1';
-import {estateDefinitions,estateBoxes} from './estates.mjs?v=town-proportions-1';
-import {townArtSources,house} from '../art.mjs?v=town-proportions-1';
+import {registerDecor} from './decor-pack.mjs?v=urban-town-1';
+import {arcadeGeometry,drawArcade} from './arcade.mjs?v=urban-town-1';
+import {constructionArt,stairArt,stairTreadBounds,overgrowthArt,estateArt,cliffDecorArt} from './detail-art.mjs?v=urban-town-1';
+import {estateDefinitions,estateBoxes} from './estates.mjs?v=urban-town-1';
+import {townArtSources,house} from '../art.mjs?v=urban-town-1';
 import {homeGeometry,ARCHITECTURES} from '../model.mjs';
 export const sources=townArtSources(),catalog=new Map();
 function add(id,name,group,w,h,draw,boxes=[],layer='objects'){const a={id,name,group,w:Math.ceil(w),h:Math.ceil(h),boxes,layer};a.draw=draw;let cached;Object.defineProperty(a,'canvas',{get(){if(!cached){cached=document.createElement('canvas');cached.width=a.w;cached.height=a.h;draw(cached.getContext('2d'));}return cached;}});catalog.set(id,a);return a;}
@@ -23,6 +23,19 @@ add('cliff-detail','Mossy limestone cliff section','construction',384,256,c=>c.d
 for(const a of estateDefinitions){const image=estateArt[a.index];const item=add(`estate-${a.id}`,a.name,'home estates',a.size,a.size,c=>{const pad=0;c.drawImage(image,image.width*pad,image.height*pad,image.width*(1-pad*2),image.height*(1-pad*2),0,0,a.size,a.size);},estateBoxes(a),'ground');item.pavingSource=image;item.resident=a.id;item.scene=true;}
 
 const arcade=add('coda-arcade','Coda Arcade · exact interior footprint','landmarks',arcadeGeometry.w,arcadeGeometry.h,drawArcade);arcade.polygons=arcadeGeometry.polygons;arcade.door=arcadeGeometry.door;arcade.fixedScale=true;arcade.footprint=arcadeGeometry.bounds;arcade.interiorScale=arcadeGeometry.interiorScale;arcade.frontAtX=arcadeGeometry.frontAtX;
+
+// Each urban building retains its real floor area under the tall facade.
+// Door and collision coordinates are local canvas pixels, shared by play and
+// builder walk test. Fifteen floors use the same 2304 × 1728 tower footprint.
+for(const def of [
+ {id:'coda-residences',name:'Coda Residences · 15-story apartments',file:'coda-residences.png',w:3014,h:4521,fw:2304,fh:1728,front:4491,kind:'tower'},
+ {id:'coda-furnishings',name:'Coda Furnishings · furniture department store',file:'coda-furnishings.png',w:3354,h:2236,fw:3072,fh:2048,front:2160,kind:'shop'}
+]){
+ const image=await new Promise((resolve,reject)=>{const i=new Image();i.onload=()=>resolve(i);i.onerror=()=>reject(Error('Urban building artwork could not load.'));i.src=new URL('../assets/urban/'+def.file,import.meta.url);});
+ const footprint={x:(def.w-def.fw)/2,y:def.front-def.fh,w:def.fw,h:def.fh};
+ const a=add(def.id,def.name,'urban buildings',def.w,def.h,c=>c.drawImage(image,0,0,def.w,def.h),[footprint]);
+ a.urban=def.kind;a.fixedScale=true;a.footprint=footprint;a.door={x:def.w/2,y:def.front+20};a.frontAtX=x=>x>=footprint.x&&x<=footprint.x+footprint.w?def.front:null;
+}
 
 for(const[i,id,name,w]of [[0,'cliff-ivy','Cliff ivy cascade',256],[1,'cliff-roses','Cliff climbing roses',240],[2,'cliff-roots','Hanging cliff roots',192],[3,'cliff-ledge','Fern-covered rock ledge',224],[4,'cliff-lantern','Cliff wall lantern',64],[5,'cliff-relief','Cliff lyre relief',128]]){const image=cliffDecorArt[i],h=w*image.height/image.width,a=add(id,name,'cliff faces',w,h,c=>c.drawImage(image,0,0,w,h));a.mountDefault=true;a.overhang=i<4;}
 

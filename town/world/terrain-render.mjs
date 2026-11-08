@@ -1,10 +1,10 @@
-import {shadeLowerGround,drawTerrainRims} from './edge-shading.mjs?v=town-proportions-1';
-import {drawRoundUnder,drawRoundCliff} from './round-render.mjs?v=town-proportions-1';
-import {clipCurves} from './round-geometry.mjs?v=town-proportions-1';
-import {drawGround,groundFrameKey} from './ground-render.mjs?v=town-proportions-1';
-import {drawCliff,drawStairs} from './construction.mjs?v=town-proportions-1';
-import {RISE,COLS,ROWS,cell} from './model.mjs?v=town-proportions-1';
-import {sources} from './catalog.mjs?v=town-proportions-1';
+import {shadeLowerGround,drawTerrainRims} from './edge-shading.mjs?v=urban-town-1';
+import {drawRoundUnder,drawRoundCliff} from './round-render.mjs?v=urban-town-1';
+import {clipCurves} from './round-geometry.mjs?v=urban-town-1';
+import {drawGround,groundFrameKey} from './ground-render.mjs?v=urban-town-1';
+import {drawCliff,drawStairs} from './construction.mjs?v=urban-town-1';
+import {RISE,COLS,ROWS,cell} from './model.mjs?v=urban-town-1';
+import {sources} from './catalog.mjs?v=urban-town-1';
 const lawns=new WeakMap();
 function drawWaterRim(c,d,x,y,X,Y){
  c.strokeStyle='#97b9a1';c.lineWidth=5;

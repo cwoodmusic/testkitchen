@@ -1,9 +1,10 @@
 /* Notes are the arcade's local, play-earned currency. No payments or services. */
 (function(root,factory){
-  const api=factory();
+  const furniture=typeof module==='object'&&module.exports?require('./furniture-catalog.js'):root?.CodaFurnitureCatalog;
+  const api=factory(furniture||[]);
   if(typeof module==='object'&&module.exports)module.exports=api;
   if(root)root.CodaNotesShop=api;
-})(typeof window!=='undefined'?window:null,function(){
+})(typeof window!=='undefined'?window:null,function(furniture){
   'use strict';
   const KEY='codaNotesWalletV1',STARTER_NOTES=150,MAX_BALANCE=1000000;
   const DENOMINATIONS=Object.freeze([
@@ -51,7 +52,9 @@
     ['alien','form','Alien transformation',12000],['cosmiccat','pet','Cosmic cat companion',6000],['neondragon','pet','Neon dragon companion',9000],['celestialcrown','headwear','Celestial crown',4000],['nebulaaura','accessory','Nebula aura',3000],
     ['visitor-vee-jay','visitor','Invite Vee Jay',6000],['visitor-zizi','visitor','Invite Zizi',8000],['visitor-metronome','visitor','Invite Metronome',10000]
   ].map(([id,slot,label,price])=>Object.freeze({id,slot,label,price})));
-  const stock=new Map(STOCK.map(item=>[item.id,item]));
+  const FURNITURE_STOCK=Object.freeze(furniture.map(item=>Object.freeze({id:item.id,slot:'furniture',label:item.name,price:item.price,asset:item.asset,category:item.category})));
+  const ALL_STOCK=Object.freeze([...STOCK,...FURNITURE_STOCK]);
+  const stock=new Map(ALL_STOCK.map(item=>[item.id,item]));
   const FREE_ITEMS=new Set(['none','human','cap','beanie','glasses','sunglasses','bow','headphones','sneakers','boots','wave','dance']);
   const ACHIEVEMENT_ITEMS=new Set(['bowtie','starclip','partyglasses','halo','lakeotter','rhythmfox','pianophoenix','triadchampion','pitchlaurel10','pitchlaurel20','pitchlaurel30','pitchcrown40','starlight','bassclefpin','basslaurel','grandstaffbadge','grandstaffcrown']);
   function stockForCatalog(catalog){
@@ -74,7 +77,7 @@
       earned:integer(raw.earned,STARTER_NOTES),spent:integer(raw.spent)};
   }
   function createWallet(api={}){
-    const collection=stockForCatalog(api.catalog),walletStock=new Map(collection.map(item=>[item.id,item]));
+    const collection=Object.freeze([...stockForCatalog(api.catalog),...FURNITURE_STOCK]),walletStock=new Map(collection.map(item=>[item.id,item]));
     // Owning an item and selling it are separate. Older saves can contain a
     // free, earned, or retired cosmetic which is absent from today's shop.
     const knownOwned=new Set([...walletStock.keys(),...FREE_ITEMS,...ACHIEVEMENT_ITEMS]);
@@ -155,7 +158,7 @@
   }
   function createShopUI(api){
     const {wallet,renderer,panelBody:body}=api;
-    const collection=(wallet.stock||STOCK).filter(item=>Number.isSafeInteger(item.price)&&item.price>0&&!item.achievement);
+    const collection=(wallet.stock||STOCK).filter(item=>Number.isSafeInteger(item.price)&&item.price>0&&!item.achievement&&item.slot!=='furniture');
     const groups=[['all','Everything','See all the things in the shop.'],['premium','Big goals','Special things to save up for.'],['headwear','Hats','Find something for your head.'],['eyewear','Glasses','Try a new pair of glasses.'],['accessory','Accessories','Carry something fun.'],['shoes','Shoes','Find your next pair.'],['emote','Moves','Pick a fun way to move.'],['pet','Pets','Meet a new companion.'],['form','Transformations','Try a different character.'],['visitor','Visitors','Invite someone to the arcade.']];
     let view='home',group='all',itemBack='categories',query='',statusText='',statusBad=false;
     const node=(tag,className,text)=>{const element=document.createElement(tag);if(className)element.className=className;if(text!==undefined)element.textContent=text;return element;};
@@ -248,5 +251,5 @@
     }
     return {open,refresh:()=>{if(section?.isConnected)render();},getState:()=>({view,group,query})};
   }
-  return Object.freeze({KEY,STOCK,STARTER_NOTES,DENOMINATIONS,denominationBreakdown,coinSVG,stockForCatalog,gameReward,createWallet,createShopUI});
+  return Object.freeze({KEY,STOCK,FURNITURE_STOCK,STARTER_NOTES,DENOMINATIONS,denominationBreakdown,coinSVG,stockForCatalog,gameReward,createWallet,createShopUI});
 });

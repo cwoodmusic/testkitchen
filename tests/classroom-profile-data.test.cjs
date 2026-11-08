@@ -279,7 +279,7 @@ test('size limits never truncate replay-protection journals and a Firebase empty
 });
 
 test('the standalone browser module has the same schema, defaults, and API as Node',()=>{
- const context={window:{},TextEncoder};vm.runInNewContext(fs.readFileSync(require.resolve('../classroom-profile-data.js'),'utf8'),context);const browser=context.window.CodaClassroomProfileData;
+ const context={window:{},TextEncoder};vm.runInNewContext(fs.readFileSync(require.resolve('../furniture-catalog.js'),'utf8'),context);vm.runInNewContext(fs.readFileSync(require.resolve('../classroom-profile-data.js'),'utf8'),context);const browser=context.window.CodaClassroomProfileData;
  assert.equal(browser.validate(browser.blank()).ok,true);assert.equal(JSON.stringify(browser.SCHEMA),JSON.stringify(D.SCHEMA));assert.deepEqual(Object.keys(browser).sort(),Object.keys(D).sort());
  const polluted=JSON.parse('{"__proto__":{"name":"secret"},"avatar":{"__proto__":{"email":"secret"}}}');const clean=browser.sanitize(polluted);assert.equal(clean.ok,true);assert.equal(JSON.stringify(clean.data).includes('secret'),false);assert.equal({}.name,undefined);
 });

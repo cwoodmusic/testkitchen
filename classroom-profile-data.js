@@ -1,15 +1,15 @@
 /* Private classroom progress only. Local backups can contain guest work and
  * must never be uploaded. No names, prose, recordings, songs, or editor data. */
-(function(root,factory){const api=factory();if(typeof module==='object'&&module.exports)module.exports=api;if(root)root.CodaClassroomProfileData=api;})(typeof window==='undefined'?null:window,function(){
+(function(root,factory){const furniture=typeof module==='object'&&module.exports?require('./furniture-catalog.js'):root?.CodaFurnitureCatalog;const api=factory(furniture||[]);if(typeof module==='object'&&module.exports)module.exports=api;if(root)root.CodaClassroomProfileData=api;})(typeof window==='undefined'?null:window,function(furniture){
  'use strict';
  const MAX_BYTES=8*1024*1024,MAX_TIME=253402300799999;
  const KEYS=Object.freeze({avatar:'musicArcadeV1',progression:'codaPlayerProgressV1',wallet:'codaNotesWalletV1',missions:'codaMusicianMissionsV1',fishing:'codaRhythmFishingV1',piano:'codaPianoProgressV1',lessons:'codaClassroomLessonsV1',quizzes:'codaClassroomQuizzesV1',pitch:'pitchRaceLevelProgressV1',pitchTutorials:'pitchRaceTutorialsV1',finalExam:'codaHaydnFinalExamV1'});
  // Compositions and named/local educational records stay local. They must be
  // cleared between students and restored exactly with the guest's local work.
- const LOCAL_ONLY_KEYS=Object.freeze(['codaPianoTakeV1','codaDJLibraryV1','codaHallOfFameV1','rhythm-room-practice-v1','codaSongMachineDraftV1','codaAuthoredExamSessionV1','codaAuthoredQuizzesV1','codaAuthoredLessonsV1','codaClassroomExamStudyV1','codaClassroomLearningPathsV1','codaPlayNotebookV1','codaClassroomQuizAttemptsV1','codaMusicHistoryV1']);
+ const LOCAL_ONLY_KEYS=Object.freeze(['codaPianoTakeV1','codaDJLibraryV1','codaHallOfFameV1','rhythm-room-practice-v1','codaSongMachineDraftV1','codaAuthoredExamSessionV1','codaAuthoredQuizzesV1','codaAuthoredLessonsV1','codaClassroomExamStudyV1','codaClassroomLearningPathsV1','codaPlayNotebookV1','codaClassroomQuizAttemptsV1','codaMusicHistoryV1','codaUrbanRoomV1']);
  const SCOPED_KEYS=Object.freeze([...Object.values(KEYS),...LOCAL_ONLY_KEYS]);
  // Older guest backups remain restorable as local-only activity slots are added.
- const OPTIONAL_BACKUP_KEYS=new Set([KEYS.finalExam,'codaSongMachineDraftV1','codaAuthoredExamSessionV1','codaAuthoredQuizzesV1','codaAuthoredLessonsV1','codaClassroomExamStudyV1','codaClassroomLearningPathsV1','codaPlayNotebookV1','codaClassroomQuizAttemptsV1','codaMusicHistoryV1']);
+ const OPTIONAL_BACKUP_KEYS=new Set([KEYS.finalExam,'codaSongMachineDraftV1','codaAuthoredExamSessionV1','codaAuthoredQuizzesV1','codaAuthoredLessonsV1','codaClassroomExamStudyV1','codaClassroomLearningPathsV1','codaPlayNotebookV1','codaClassroomQuizAttemptsV1','codaMusicHistoryV1','codaUrbanRoomV1']);
  const split=value=>value.split(' ');
  const CATALOG={
   hairstyle:split('short bob long curly ponytail spiky bald buns pixie undercut braids locs afro slick pompadour mohawk powderwig'),
@@ -22,7 +22,7 @@
   form:split('human alien starlight'),pet:split('none cosmiccat neondragon lakeotter rhythmfox pianophoenix')
  };
  const VISITORS=split('visitor-vee-jay visitor-zizi visitor-metronome');
- const OWNED=[...new Set([...Object.values(CATALOG).flat(),...VISITORS])];
+ const OWNED=[...new Set([...Object.values(CATALOG).flat(),...VISITORS,...furniture.map(item=>item.id)])];
  const COLORS=['skin','hair','shirt','lowerColor','headwearColor','eyewearColor'];
  const DEFAULT_AVATAR={version:1,skin:'#e5ad75',hair:'#171424',shirt:'#999ca6',lowerColor:'#626875',headwearColor:'#db687f',eyewearColor:'#30374b',hairstyle:'bald',outfit:'pants',headwear:'none',eyewear:'none',accessory:'none',shoes:'sneakers',emote:'wave',form:'human',pet:'none',customized:false,walked:0,jumps:0,emotesUsed:0};
  const STAT_NAMES=split('totalRounds pitchRounds pitchCorrect pitchStreak pitchWins pitchImproved pitchPerfect pitchBestClassic pitchBestEndless pitchBestLevels pitchBestMulti triadRounds triadCaptures triadWins triadComebacks rhythmRounds rhythmBest rhythm90 rhythmPerfect');
