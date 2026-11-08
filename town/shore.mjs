@@ -1,6 +1,6 @@
 import {W,H,riverX,riverHalfWidth,lakeShore,water} from './model.mjs';
-import {material,rect,noise} from './art.mjs';
-import {shorelineTile} from './terrain-tiles.mjs';
+import {material,rect,noise} from './art.mjs?v=terrain-kit-1';
+import {shorelineTile} from './terrain-tiles.mjs?v=terrain-kit-1';
 function outline(c,points){c.beginPath();points.forEach(([x,y],i)=>i?c.lineTo(x,y):c.moveTo(x,y));c.closePath();}
 export function drawNaturalWater(c,view){
  // Water and dry ground share one collision boundary. Banks are connected,

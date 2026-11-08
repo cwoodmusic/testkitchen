@@ -14,11 +14,17 @@ Right drag pans, wheel zooms, Full map fits the map. Brush width controls terrai
 
 **Paint ground** now follows the cursor with a round brush rather than filling terrain squares. Choose grass, dirt, cobble, sand or wood, then adjust **Brush size**, **Hardness** and **Opacity / strength**. Lower hardness feathers the edge; lower opacity builds up the material over successive passes. Small brush sizes allow fine details. Cobble still samples the selected property's paving so its scale and color match the entrance.
 
+**Brush shape → Square tiles** keeps full-tile painting available alongside **Round soft**. Square mode snaps to the terrain grid, paints complete tiles and replaces any freehand mask on those tiles. Brush size becomes a whole-number tile width; hardness and opacity apply to Round soft. Fast square drags fill every crossed tile, and each stroke remains one Undo. **Blend ground** uses a round brush and remembers the previous Paint ground shape when you return.
+
+Dirt now uses dedicated packed earth with grit and pebbles, without footprints. Sand has fine grains, small stones and subtle ripples; wood has detailed grain, knots, nails and staggered plank joints. The textures share a world-aligned, mirrored continuation so neighboring tiles and soft brush strokes join cleanly. Existing painted maps receive the new artwork automatically. Asset pack downloads include all six ground materials, including sand and wood.
+
 Choose **Blend ground** and brush along a boundary to soften the transition between existing materials, including older square-painted paths. It blends material coverage while keeping the source textures sharp. The circular cursor shows the full brush size and the harder inner area. Long, fast drags interpolate continuously, and each stroke is one Undo.
 
 These tools change dry ground appearance while retaining heights and collision. Stairs, bridges and water are protected; use **Lake / river** for water. Freehand paint saves and exports with the project and uses the same renderer in gameplay. Projects accept up to 64 MiB, and autosave uses the same size limit as reopening a project.
 
 Checks: `node --test town/builder/ground-brush.test.mjs`; `python3 town/builder/ground-brush-browser.py`. The browser check covers circular/soft edges, opacity, continuous drags, legacy material blending, Undo/Redo, protected terrain, portable export, reload and exact editor/game pixel parity.
+
+Square/material checks: `python3 town/builder/square-ground-browser.py`; `python3 town/world/ground-textures-browser.py`. These cover tile replacement, drag coverage, geometry preservation, source texture joins, matching round/tile material scale and editor/game pixel parity.
 
 Validation: `node --test town/builder/model.test.mjs town/model.test.mjs`; `python3 town/builder/browser.py`; `python3 town/browser.py`.
 
@@ -27,6 +33,8 @@ The editor and playable authored maps both use `town/world/` for the asset catal
 Additional validation: `node --test town/world/physics.test.mjs`; `python3 town/world/browser.py`.
 
 Use **Select land** and drag a rectangle to select terrain tiles. The Land selection panel shows the selected size. **Raise selected land +1** and **Lower selected land −1** change the whole selection by one level while preserving its surfaces and relative heights (within the 0–8 limits). Each click is one undoable action. **Clear selection** or Escape clears the highlight. Selection itself does not alter or save terrain.
+
+Choose **Selection shape → Freeform lasso** to draw around an irregular region instead. Release to close the outline and select the terrain tiles whose centers fall inside it. The highlight and selected count reflect that shape; Raise/Lower affects only its selected tiles. Rectangle and whole-map selection remain available. Freeform selection works in Artwork, Height colors and Elevation plan, and preserves paint, curves and relative heights when moved.
 
 ## Detailed construction and home estates
 
@@ -71,6 +79,10 @@ The 256-piece library uses small previews while browsing and fetches the native 
 ## Round corners and elevation shading
 
 Choose **Round corners**, then brush near an outside corner of raised land, water, or a painted path. Click **Round corners** again, or the **Corners** button above the map, to cycle **Smooth round → Rocky irregular → Beveled**. Brush an existing corner to apply the selected shape without shrinking its radius; Undo restores the previous shape. Brush width sets the requested rounding size (up to eight tiles), limited to fit narrow terrain. One stroke is one Undo. Corner geometry is saved, visible in Elevation plan, and used by both rendering and collision. Existing rounded corners load as Smooth round. Region raise/lower preserves corner geometry; direct height-brush edits can square individual tiles again.
+
+The same tool also rounds **inside corners**: brush an inward notch to add a matching curved fillet. Inside corners support the same three styles, saved geometry, collision and Undo. Rounded cliff junctions now draw both the upper curved face and the exposed lower ledge face, so adjacent terraces meet without the missing cliff strip.
+
+Additional checks: `node --test town/builder/inside-corners.test.mjs town/builder/freeform-region.test.mjs`; `python3 town/builder/inside-corners-browser.py`; `python3 town/world/cliff-junction-browser.py`; `python3 town/builder/freeform-region-browser.py`.
 
 Terrain now has shaded upper rims, directional ground shadows, and contact shading at height changes. North/east/west edges remain readable even where the grass texture matches the lower ground. Rounded boundaries receive the same shading. South-facing exposed cliffs retain their detailed rock faces.
 

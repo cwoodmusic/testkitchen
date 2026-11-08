@@ -1,5 +1,5 @@
-import {cell,height,segment,RISE,stairProfile} from './model.mjs?v=ground-brush-1';
-import {wallArt,constructionArt,stairArt,stairTreadBounds,cliffArt} from './detail-art.mjs?v=ground-brush-1';
+import {cell,height,segment,RISE,stairProfile} from './model.mjs?v=terrain-kit-1';
+import {wallArt,constructionArt,stairArt,stairTreadBounds,cliffArt} from './detail-art.mjs?v=terrain-kit-1';
 export const barrierHeight=style=>style==='iron'?144:style==='wood'||style==='rail'?136:160;
 function piece(c,img,sx,sy,sw,sh,x,y,w,h){if(sw>0&&sh>0&&w>0&&h>0)c.drawImage(img,sx,sy,sw,sh,x,y,w,h);}
 // Clip one continuous rock field to the heights on BOTH sides of an edge.
@@ -25,7 +25,7 @@ function drawSlopedCliff(c,d,x,y){
 }
 // All cells along a face sample one world-anchored rock field. Grass crowns
 // overlap the lawn by a few pixels; source rock is never stamped as oval decals.
-export function drawCliff(c,d,x,y){const a=cell(d,x,y),b=cell(d,x,y+1);if(a.stairs||b.stairs||b.curves?.length){drawSlopedCliff(c,d,x,y);return;}const X=x*64,Y=y*64,z=a.level*RISE,south=height(d,X+32,Y+64+.001);if(a.stairs||z<=south+.01)return;const top=Y+64-z,depth=z-south,img=cliffArt,period=384;
+export function drawCliff(c,d,x,y){const a=cell(d,x,y),b=cell(d,x,y+1);if(a.stairs||a.curves?.length||b.stairs||b.curves?.length){drawSlopedCliff(c,d,x,y);return;}const X=x*64,Y=y*64,z=a.level*RISE,south=height(d,X+32,Y+64+.001);if(a.stairs||z<=south+.01)return;const top=Y+64-z,depth=z-south,img=cliffArt,period=384;
  c.fillStyle='#555b3e';c.fillRect(X,top,64,depth);
  const sx=img.width*.06+(X%period)/period*img.width*.88,sw=img.width*.88*64/period;
  for(let j=0;j<depth;j+=176){const dh=Math.min(176,depth-j);piece(c,img,sx,img.height*.18,sw,img.height*.78*dh/176,X,top+j,64,dh);}

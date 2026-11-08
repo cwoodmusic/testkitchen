@@ -3,6 +3,7 @@ from functools import partial
 from http.server import SimpleHTTPRequestHandler, ThreadingHTTPServer
 from pathlib import Path
 import threading
+import re
 import unittest
 from playwright.sync_api import sync_playwright, expect
 
@@ -47,7 +48,7 @@ class TownTests(unittest.TestCase):
     def test_home_lock_invitation_and_revocation(self):
         # Fixture moves the start to Bach's step; production has no teleport hook.
         source=(ROOT/'town/town.mjs').read_text().replace('player={...START}','player={x:1540,y:1710}')
-        self.context.route('**/town/town.mjs', lambda r:r.fulfill(body=source,content_type='text/javascript'))
+        self.context.route(re.compile(r'/town/town\.mjs(?:\?.*)?$'), lambda r:r.fulfill(body=source,content_type='text/javascript'))
         fixture='''<iframe style="width:100vw;height:100vh;border:0" title="Town fixture" src="/town/"></iframe><script>
         let points=4; window.send=()=>document.querySelector('iframe').contentWindow.postMessage({type:'coda-town-state-result',people:[{id:'bach',relationship:{count:points}}]},location.origin);
         window.setPoints=n=>{points=n;send()};addEventListener('message',e=>{if(e.data.type==='coda-town-state')send()});</script>'''
@@ -74,7 +75,7 @@ class TownTests(unittest.TestCase):
 
     def test_walk_up_and_down_real_porch_stairs(self):
         source=(ROOT/'town/town.mjs').read_text().replace('player={...START}','player={x:1540,y:2040}')
-        self.context.route('**/town/town.mjs',lambda r:r.fulfill(body=source,content_type='text/javascript'))
+        self.context.route(re.compile(r'/town/town\.mjs(?:\?.*)?$'),lambda r:r.fulfill(body=source,content_type='text/javascript'))
         self.page.goto(self.base+'/town/')
         world=self.page.locator('#world')
         expect(world).to_have_attribute('data-ground-height','240')
@@ -85,7 +86,7 @@ class TownTests(unittest.TestCase):
 
     def test_cliff_cannot_be_walked_through(self):
         source=(ROOT/'town/town.mjs').read_text().replace('player={...START}','player={x:3000,y:3340}')
-        self.context.route('**/town/town.mjs',lambda r:r.fulfill(body=source,content_type='text/javascript'))
+        self.context.route(re.compile(r'/town/town\.mjs(?:\?.*)?$'),lambda r:r.fulfill(body=source,content_type='text/javascript'))
         self.page.goto(self.base+'/town/')
         world=self.page.locator('#world');expect(world).to_have_attribute('data-ground-height','0')
         world.focus();self.page.keyboard.down('w');self.page.wait_for_timeout(800);self.page.keyboard.up('w')

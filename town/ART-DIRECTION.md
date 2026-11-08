@@ -71,6 +71,8 @@ Side-facing stair lanes must form one opaque continuous surface. Orient both the
 
 Ground painting uses freehand circular coverage with adjustable hardness and opacity. Blend material weights across boundaries while retaining sharp pixel texture detail, consistent source scale and property paving alignment. Interpolate both sides of terrain-cell boundaries so the storage grid cannot appear as seams. Keep height, water and stair collision independent of dry surface paint.
 
+Keep square, grid-snapped full-tile painting as an explicit alternative to the soft round brush. Dirt must be free of footprints and tracks. Sand needs detailed grains and restrained ripples; wood ground needs authored planks, grain, knots and joints. Use the dedicated ground-surfaces.png artwork with consistent world scale and matching repeat edges; do not return to flat sand fills or procedural board stripes.
+
 Raw standalone asset packs receive restrained shared saturation/lighting correction to match the terrain around Music Square. Apply the same correction in previews, placement, gameplay and exported PNGs. Preserve native source images and the approved finished scenes, water, paving and construction palette.
 
 Painted cobble must share the source scene's stone scale, palette and entry-edge colors. Use real donor paving from Music Square or the chosen home estate; do not substitute the old generic ground atlas cobble. Feather grass borders while preserving clear passage joins.
@@ -86,5 +88,9 @@ Cliff pieces attach to the exposed vertical south-facing rock surface, not the g
 Round corners must use actual curved land/water/path geometry, including collision and saved maps. Terrain height changes need clear rims/contact shading and ground shadows on north/east/west as well as the textured south cliff. Keep shadows soft and material detail visible; avoid relying solely on matching grass patterns to communicate height.
 
 Corner shaping offers smooth curves, irregular rocky angles and a straight bevel. Keep their cardinal endpoints and radius stable when changing styles; irregular cuts must remain inside the original corner. Rendering, edge shading, elevation guides, cliff attachments and collision must all use the same boundary.
+
+Support both outside corners and inside notches. Concave fillets add the neighboring material/height around the notch while retaining a stable lower surface. At curved terrace junctions, draw the curved upper face and any exposed lower tile-edge face independently; neither may hide the other.
+
+Land selection offers rectangles and a freeform lasso. Preview the drawn outline, then highlight/count/edit the actual selected terrain cells rather than its rectangular bounds. Regional height changes must preserve painted surfaces and curved upper/lower height relationships inside irregular masks.
 
 Render terrain and stair flights in north-to-south order so foreground ground covers stairs behind it. Exposed cliff support must follow stair slopes along both banks without gaps or a flat false floor. Preserve the approved detailed cliff material rather than covering depth problems with plain polygons.

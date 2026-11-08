@@ -1,7 +1,8 @@
-import {PAINT_GRID,PAINT_STEP,readPaint,materialKey} from './ground-paint.mjs?v=ground-brush-1';
-import {sources,catalog} from './catalog.mjs?v=ground-brush-1';
-import {cell,height} from './model.mjs?v=ground-brush-1';
-import {drawPaving,drawPavingMaterial} from './paving.mjs?v=ground-brush-1';
+import {PAINT_GRID,PAINT_STEP,readPaint,materialKey} from './ground-paint.mjs?v=terrain-kit-1';
+import {sources,catalog} from './catalog.mjs?v=terrain-kit-1';
+import {cell,height} from './model.mjs?v=terrain-kit-1';
+import {drawPaving,drawPavingMaterial} from './paving.mjs?v=terrain-kit-1';
+import {groundTextures} from './ground-textures.mjs?v=terrain-kit-1';
 
 const tiles=new WeakMap(),fields=new WeakMap(),legacyFields=new Map();
 function canvas(size){const c=document.createElement('canvas');c.width=c.height=size;return c;}
@@ -12,14 +13,12 @@ const materialContext=materialBuffer.getContext('2d'),maskContext=mask.getContex
 // elevation. Texture masks otherwise stay cached while the camera moves.
 export function groundFrameKey(d){return d.objects.filter(o=>catalog.get(o.asset)?.pavingSource).map(o=>[o.asset,o.x,o.y,o.scale,o.rotation,height(d,o.x,o.y)].join(':')).join('|');}
 
+export function groundTexture(surface){return groundTextures[surface]||sources.ground[['grass','cobble','dirt','water'].indexOf(surface)];}
 export function drawMaterial(c,d,a,x,y,X,Y,{raw=false}={}){
  const index=['grass','cobble','dirt','water'].indexOf(a.surface);
  if(a.surface==='cobble')(raw?drawPavingMaterial:drawPaving)(c,d,x,y,Y,a.paving);
  else if(index>=0)c.drawImage(sources.ground[index],x%8*64,y%8*64,64,64,X,Y,64,64);
- else{
-  c.fillStyle=a.surface==='wood'?'#907350':'#c9b286';c.fillRect(X,Y,64,64);
-  if(a.surface==='wood'){c.strokeStyle='#584b36';c.lineWidth=1;for(let j=0;j<64;j+=12)c.strokeRect(X,Y+j,64,12);}
- }
+ else c.drawImage(groundTextures[a.surface],x%8*64,y%8*64,64,64,X,Y,64,64);
 }
 
 function field(a){

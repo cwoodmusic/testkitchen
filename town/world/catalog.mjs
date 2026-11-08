@@ -1,8 +1,8 @@
-import {registerDecor} from './decor-pack.mjs?v=ground-brush-1';
+import {registerDecor} from './decor-pack.mjs?v=terrain-kit-1';
 import {arcadeGeometry,drawArcade} from './arcade.mjs';
-import {constructionArt,stairArt,stairTreadBounds,overgrowthArt,estateArt,cliffDecorArt} from './detail-art.mjs?v=ground-brush-1';
+import {constructionArt,stairArt,stairTreadBounds,overgrowthArt,estateArt,cliffDecorArt} from './detail-art.mjs?v=terrain-kit-1';
 import {estateDefinitions,estateBoxes} from './estates.mjs';
-import {townArtSources,house} from '../art.mjs';
+import {townArtSources,house} from '../art.mjs?v=terrain-kit-1';
 import {homeGeometry,ARCHITECTURES} from '../model.mjs';
 export const sources=townArtSources(),catalog=new Map();
 function add(id,name,group,w,h,draw,boxes=[],layer='objects'){const a={id,name,group,w:Math.ceil(w),h:Math.ceil(h),boxes,layer};a.draw=draw;let cached;Object.defineProperty(a,'canvas',{get(){if(!cached){cached=document.createElement('canvas');cached.width=a.w;cached.height=a.h;draw(cached.getContext('2d'));}return cached;}});catalog.set(id,a);return a;}

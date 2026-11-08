@@ -111,3 +111,19 @@ North/south stairs now use parallel sides and rectangular top-down treads, inclu
 - [Standalone asset colors beside Music Square, before and after matching](asset-color.png)
 
 **Paint ground** has a round cursor, adjustable hardness and opacity. **Blend ground** smooths existing material boundaries while preserving texture detail. Paint is saved in the project and drawn identically in the editor and game. Side stair flights no longer have grass slits between lanes. Standalone assets share a restrained palette treatment in the library, world and exports.
+
+## Ground shapes and upgraded materials
+
+Choose **Brush shape → Round soft / Square tiles** in Paint ground. Square tiles paints complete grid cells, while Round soft retains hardness and opacity controls. Both use the same native materials and are compatible with Blend ground.
+
+[Detailed sand, wood and footprint-free dirt in the shared renderer](ground-materials.png)
+
+Existing maps use the new materials automatically. The asset pack includes sand and wood alongside the other ground textures.
+
+## Inside corners, cliff joins and freeform selection
+
+- [Inside corners in the shared renderer](inside-corners.png)
+- [Rounded cliff meeting a lower terrace with its exposed face intact](cliff-junction.png)
+- [Freeform land selection in the builder](freeform-selection.png)
+
+**Round corners** works on inward notches as well as outside corners, using the same smooth, rocky and beveled modes. **Select land → Selection shape → Freeform lasso** lets you draw an irregular region and raise/lower just those selected tiles.

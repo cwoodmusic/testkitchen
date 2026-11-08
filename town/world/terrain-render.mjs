@@ -1,10 +1,10 @@
-import {shadeLowerGround,drawTerrainRims} from './edge-shading.mjs?v=ground-brush-1';
-import {drawRoundUnder,drawRoundCliff} from './round-render.mjs?v=ground-brush-1';
-import {clipCurves} from './round-geometry.mjs?v=ground-brush-1';
-import {drawGround,groundFrameKey} from './ground-render.mjs?v=ground-brush-1';
-import {drawCliff,drawStairs} from './construction.mjs?v=ground-brush-1';
-import {RISE,COLS,ROWS,cell} from './model.mjs?v=ground-brush-1';
-import {sources} from './catalog.mjs?v=ground-brush-1';
+import {shadeLowerGround,drawTerrainRims} from './edge-shading.mjs?v=terrain-kit-1';
+import {drawRoundUnder,drawRoundCliff} from './round-render.mjs?v=terrain-kit-1';
+import {clipCurves} from './round-geometry.mjs?v=terrain-kit-1';
+import {drawGround,groundFrameKey} from './ground-render.mjs?v=terrain-kit-1';
+import {drawCliff,drawStairs} from './construction.mjs?v=terrain-kit-1';
+import {RISE,COLS,ROWS,cell} from './model.mjs?v=terrain-kit-1';
+import {sources} from './catalog.mjs?v=terrain-kit-1';
 const lawns=new WeakMap();
 function drawWaterRim(c,d,x,y,X,Y){
  c.strokeStyle='#97b9a1';c.lineWidth=5;
@@ -41,7 +41,8 @@ export function drawTerrain(c,d,{x0,x1,y0,y1},opts={}){
    if(a.surface==='water')drawWaterRim(c,d,x,y,X,Y-z);
    shadeLowerGround(c,d,x,y,z);
    if(a.curves?.length)c.restore();
-   if(!a.curves?.some(q=>q.kind==='height'))drawCliff(c,d,x,y);
+   // A rounded high face can also expose its lower shelf at this tile edge.
+   drawCliff(c,d,x,y);
    if(a.bridge)drawBridge(c,d,a,x,y,X,Y-z);
    if(opts.grid){c.lineWidth=1;c.strokeStyle='#e3e6bb30';c.strokeRect(X,Y-z,64,64);}
   }
