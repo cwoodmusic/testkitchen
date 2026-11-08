@@ -1,11 +1,11 @@
-import {drawSelection} from './selection-view.mjs?v=terrain-kit-1';
-import {drawTerrain} from './terrain-render.mjs?v=terrain-kit-1';
-import {mountPose} from './cliff-mount.mjs?v=terrain-kit-1';
-import {elevationView} from './elevation-view.mjs?v=terrain-kit-1';
-import {barrierRuns,drawBarrierRun,barrierPosts,drawPost} from './construction.mjs?v=terrain-kit-1';
-import {TILE,RISE,COLS,ROWS,cell,height,segment} from './model.mjs?v=terrain-kit-1';
-import {catalog} from './catalog.mjs?v=terrain-kit-1';
-import {assetImage} from './asset-color.mjs?v=terrain-kit-1';
+import {drawSelection} from './selection-view.mjs?v=home-open-1';
+import {drawTerrain} from './terrain-render.mjs?v=home-open-1';
+import {mountPose} from './cliff-mount.mjs?v=home-open-1';
+import {elevationView} from './elevation-view.mjs?v=home-open-1';
+import {barrierRuns,drawBarrierRun,barrierPosts,drawPost} from './construction.mjs?v=home-open-1';
+import {TILE,RISE,COLS,ROWS,cell,height,segment} from './model.mjs?v=home-open-1';
+import {catalog} from './catalog.mjs?v=home-open-1';
+import {assetImage} from './asset-color.mjs?v=home-open-1';
 function drawBrush(c,d,brush,zoom){
  const radius=brush.size/2,color=brush.blend?'#b7eddf':'#ffe2a1';
  c.save();

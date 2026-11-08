@@ -127,3 +127,9 @@ Existing maps use the new materials automatically. The asset pack includes sand 
 - [Freeform land selection in the builder](freeform-selection.png)
 
 **Round corners** works on inward notches as well as outside corners, using the same smooth, rocky and beveled modes. **Select land → Selection shape → Freeform lasso** lets you draw an irregular region and raise/lower just those selected tiles.
+
+## Smaller NPC homes and open yards
+
+[NPC homes, your home and the arcade at the same world scale](open-estates.png)
+
+NPC estates are 15% smaller while retaining their size differences. All 19 home assets have open yard edges, with detached baked fencing/walls/gateposts and their collision removed. Houses, porches, gardens and paths remain. Your home's size and the arcade's exact footprint are retained. Existing saved placements receive the revised artwork and sizes automatically.
