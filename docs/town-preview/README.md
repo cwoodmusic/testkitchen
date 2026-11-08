@@ -73,3 +73,14 @@ Actual browser captures of the updated shared game artwork:
 - [Numbered elevation plan and large-area selection](elevation-plan.png)
 
 Open the **home estates** category to place whole properties. Use the canvas toolbar for **Select land region**, **Select whole map**, **Height colors**, or **Elevation plan**. Music Square and water retain their existing artwork.
+
+## Drag stairs, matching paving and Coda Arcade exterior
+
+Actual browser captures:
+
+- [Drag-built multi-level stair connection](drag-stairs.png)
+- [Paving joined to Music Square](matched-paving.png)
+- [Paving joined to a home courtyard](matched-home-paving.png)
+- [Retrofuturistic Coda Arcade exterior](arcade-exterior.png)
+
+Use **Steps** and drag between levels. Cobble uses **Paving match → Auto · nearest property** by default. The arcade is under **landmarks**, with scale locked to its actual interior footprint. Both inside and outside now use the same authoritative floor polygons.

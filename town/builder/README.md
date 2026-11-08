@@ -6,7 +6,7 @@ Choose an asset, then click the map. Select / move repositions objects; the insp
 
 Drag Fence / wall along grid edges to connect segments. Corners share posts. Gates open with E in walk test. Put ivy, roses or other foliage on the overgrowth layer to draw it over barriers. Construction PNG samples are decorations; the fence tool and terrain Steps tool provide connected barriers and climbable ground.
 
-Ground tools paint grass, cobbles, dirt, wood, sand and water. Raise/lower changes height one level per stroke; Set level uses the inspector level. Steps connect the level below the selected level toward the chosen ascent direction. Paint water for lakes/rivers, then paint bridges across it. Cliff edges and water block movement; stairs and bridges provide routes. Gazebo posts block walking while its center stays open. Collision overlays show asset footprints; walk test uses the arcade character renderer and never changes arcade rewards or relationships.
+Ground tools paint grass, cobbles, dirt, wood, sand and water. Raise/lower changes height one level per stroke; Set level uses the inspector level. Steps connect the two ground levels you drag between, with direction and rise chosen automatically. Paint water for lakes/rivers, then paint bridges across it. Cliff edges and water block movement; stairs and bridges provide routes. Gazebo posts block walking while its center stays open. Collision overlays show asset footprints; walk test uses the arcade character renderer and never changes arcade rewards or relationships.
 
 Right drag pans, wheel zooms, Full map fits the map. Brush width controls terrain painting. Undo/redo tracks strokes. Projects autosave in IndexedDB on this origin/browser. **Save project** exports a portable JSON backup; **Open** validates and restores it. Asset pack downloads individual transparent PNGs, ground textures and anchor/collision metadata. Save local work before switching browsers or clearing site data.
 
@@ -33,3 +33,13 @@ The canvas toolbar offers **Select land region**, **Select whole map**, and thre
 Region raise/lower works in all three views. Use Full map to select broad portions of the valley, then raise or lower them one level per click. Planning views are editor guides and are not saved into the map's appearance.
 
 Additional checks: `python3 town/builder/details-browser.py` validates the 19 estates, parcel collision, elevation views, large selections and whole-map height undo.
+
+## Drag stairs, matching paving, and the arcade exterior
+
+**Steps** now works by dragging between two existing terrain levels. Either drag order works. The editor snaps to a straight north/south/east/west run, reads both end heights, previews the connection, and builds it when you release. Brush width sets the width; Finish chooses stone, wood or brick. Flat landings at the clicked centers connect to a continuous slope, including multi-level changes. Same-height drags and obstructed/water routes show a message instead of changing the map. Escape cancels; each completed run is one Undo. Existing one-level stair cells still load.
+
+Cobble painting now samples actual scene paving at its world scale. **Paving match → Auto · nearest property** chooses Music Square or the nearest home estate; a specific scene can also be selected. The donor strip meets the asset's entrance edge, and mirrored continuation shares its edge colors and stone size. Paths have feathered grassy borders. The asset pack includes the matching paving textures.
+
+**Landmarks → Coda Arcade · exact interior footprint** is a retrofuturistic exterior with a lounge roof, disco dome, glass main-hall roof and southeast entrance. Its floor footprint and polygon collision use the exact same `arcade-footprint.js` geometry as the actual interior. Scaling is locked at 1:1; the original canvas is 1672×941 world units and the occupied floor bounds are 1512×685. Roof/facade projection adds visual height without changing that footprint. The exterior is a placeable building; placing it does not relocate or replace the active arcade interior.
+
+Validation: `node --test town/builder/stairs.test.mjs`; `python3 town/builder/drag-stairs-browser.py`. The browser check covers drag preview, reverse dragging, one-action undo, saved stair profiles, paving joins, exact arcade polygon collision and scale locking.

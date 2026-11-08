@@ -1,3 +1,4 @@
+import {arcadeGeometry,drawArcade} from './arcade.mjs';
 import {constructionArt,overgrowthArt,estateArt} from './detail-art.mjs';
 import {estateDefinitions,estateBoxes} from './estates.mjs';
 import {townArtSources,house} from '../art.mjs';
@@ -12,10 +13,12 @@ sprite('trees',5,'Flowering shrubs',200);
 ['Violin sign','Musical gate decoration','Lyre window','Notice board','Luthier bench','Cello monument'].forEach((n,i)=>sprite('music',i,n,[130,240,120,180,210,220][i]));
 ['Grass cliff cap','Mossy boulders','Reeds','Overhanging grass','Fern overgrowth','Rock outcrop'].forEach((n,i)=>sprite('landscape',i,n,[240,240,160,240,240,300][i],null,[2,3,4].includes(i)?'overgrowth':'objects'));
 for(const [plan,p]of Object.entries(ARCHITECTURES))for(let style=0;style<6;style++){const h=homeGeometry(0,100,style,plan);h.style=style;h.renderElevation=0;add(`house-${plan}-${style}`,`${p.label} · ${['Slate','Rose','Stone','Sage','Ochre','Blue'][style]}`,'houses',h.w,h.h+100,c=>house(c,h),h.parts.map(r=>({x:r.x,y:r.y+100,w:r.w,h:r.h})));}
-add('music-square','Music Square · complete piazza','landmarks',2400,1600,c=>c.drawImage(sources.square,0,0,2400,1600),[{x:950,y:580,w:500,h:400}],'ground');
+const square=add('music-square','Music Square · complete piazza','landmarks',2400,1600,c=>c.drawImage(sources.square,0,0,2400,1600),[{x:950,y:580,w:500,h:400}],'ground');square.scene=true;square.pavingSource=sources.square;
 // Replace legacy IDs in place so saved maps pick up the detailed artwork.
 for(let i=0;i<6;i++){const image=overgrowthArt[i],w=[448,448,512,448,448,384][i],h=w*image.height/image.width;add(i<4?`ivy-${i}`:`overgrowth-${i}`,['Trailing ivy','Climbing roses','Wisteria swag','Honeysuckle','Laurel hedge','Woodland ferns'][i],'overgrowth',w,h,c=>c.drawImage(image,0,0,w,h),[],'overgrowth');}
 for(const [i,name]of ['Oak picket fence','Timber rail fence','Musical iron fence','Limestone wall','Brick garden wall','Plaster garden wall'].entries()){const image=constructionArt[[3,3,7,0,1,2][i]],w=384,h=192;add(`construction-${i}`,name,'construction',w,h,c=>c.drawImage(image,0,0,w,h),[{x:0,y:170,w,h:22}]);}
 for(const [i,finish]of ['stone','wood','brick'].entries())add(`steps-${finish}`,`${finish} stair flight`,'construction',384,336,c=>c.drawImage(constructionArt[8+i],0,0,384,336),[],'ground');
 add('cliff-detail','Mossy limestone cliff section','construction',384,256,c=>c.drawImage(constructionArt[11],0,0,384,256),[{x:0,y:236,w:384,h:20}]);
-for(const a of estateDefinitions){const image=estateArt[a.index];const item=add(`estate-${a.id}`,a.name,'home estates',a.size,a.size,c=>{const pad=0;c.drawImage(image,image.width*pad,image.height*pad,image.width*(1-pad*2),image.height*(1-pad*2),0,0,a.size,a.size);},estateBoxes(a),'ground');item.resident=a.id;item.scene=true;}
+for(const a of estateDefinitions){const image=estateArt[a.index];const item=add(`estate-${a.id}`,a.name,'home estates',a.size,a.size,c=>{const pad=0;c.drawImage(image,image.width*pad,image.height*pad,image.width*(1-pad*2),image.height*(1-pad*2),0,0,a.size,a.size);},estateBoxes(a),'ground');item.pavingSource=image;item.resident=a.id;item.scene=true;}
+
+const arcade=add('coda-arcade','Coda Arcade · exact interior footprint','landmarks',arcadeGeometry.w,arcadeGeometry.h,drawArcade);arcade.polygons=arcadeGeometry.polygons;arcade.door=arcadeGeometry.door;arcade.fixedScale=true;arcade.footprint=arcadeGeometry.bounds;

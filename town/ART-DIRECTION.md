@@ -60,3 +60,11 @@ User approved Music Square and water as the visual benchmark, and rejected the p
 There are 19 distinct full-resolution residential scenes (`home-estate-*.png`), one for every resident and the player, not enlarged atlas thumbnails. Each is a complete home and planted yard with a large roof footprint, musical details, deep porch, stairs, thick walls and an open entry. Keep the individual house pieces available as well. Preserve the approved Music Square and water source files. Estate scenes are visual parcels with house/wall collision; actual NPC door/interior binding remains a separate feature.
 
 Editor tools must include obvious regional selection and a numbered, color-coded elevation plan so large level changes can be understood before returning to the game artwork view. The plan is a guide, not a replacement art style.
+
+### Terrain connections and arcade footprint
+
+Steps are a connection tool: drag from one existing ground height to another. Do not require a manually selected ascent direction/height. Keep endpoints at their clicked elevations, make movement continuous in both directions, and project tread artwork over the actual slope.
+
+Painted cobble must share the source scene's stone scale, palette and entry-edge colors. Use real donor paving from Music Square or the chosen home estate; do not substitute the old generic ground atlas cobble. Feather grass borders while preserving clear passage joins.
+
+The retrofuturistic Coda Arcade exterior uses a copper/teal Art Deco roof, neon trim, a glass main hall, lounge wing and dance dome. The inside and outside share `arcade-footprint.js`; preserve its exact floor polygon union, southeast entrance and world-unit scale. Roof shadows, ornaments and wall projection are not extra floor area. Do not estimate its floor plan from an image or resize it to fit a generic rectangle.
