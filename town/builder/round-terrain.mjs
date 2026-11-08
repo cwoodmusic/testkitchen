@@ -1,4 +1,4 @@
-import {cell,key,COLS,ROWS} from '../world/model.mjs?v=cliff-pack-1';
+import {cell,key,COLS,ROWS} from '../world/model.mjs?v=cliff-pack-2';
 import {insideCurve,curveBounds} from '../world/round-geometry.mjs';
 export function roundTerrain(d,p,width=3){const edits=new Map(),radius=Math.max(1,Math.min(8,Math.floor(Number(width)||1))),scan=Math.floor(radius/2),cx=Math.floor(p.x/64),cy=Math.floor(p.y/64);let corners=0;
  for(let y=Math.max(1,cy-scan);y<=Math.min(ROWS-2,cy+scan);y++)for(let x=Math.max(1,cx-scan);x<=Math.min(COLS-2,cx+scan);x++){

@@ -1,5 +1,5 @@
-import {cell,height,segment,RISE,stairProfile} from './model.mjs?v=cliff-pack-1';
-import {wallArt,constructionArt,stairArt,cliffArt} from './detail-art.mjs';
+import {cell,height,segment,RISE,stairProfile} from './model.mjs?v=cliff-pack-2';
+import {wallArt,constructionArt,stairArt,cliffArt} from './detail-art.mjs?v=cliff-pack-2';
 export const barrierHeight=style=>style==='iron'?144:style==='wood'||style==='rail'?136:160;
 function piece(c,img,sx,sy,sw,sh,x,y,w,h){if(sw>0&&sh>0&&w>0&&h>0)c.drawImage(img,sx,sy,sw,sh,x,y,w,h);}
 // All cells along a face sample one world-anchored rock field. Grass crowns

@@ -26,7 +26,7 @@ with sync_playwright() as p:
  page.mouse.move(50,50);page.screenshot(path=str(ROOT/'docs/town-preview/rounded-terrain.png'))
  page.locator('#heightView').select_option('plan');page.screenshot(path=str(ROOT/'docs/town-preview/rounded-elevation-plan.png'))
  page.wait_for_function('document.querySelector("#status").textContent.startsWith("Saved")');page.reload();page.wait_for_function('window.townBuilder?.project.name==="Rounded landscape"');assert page.evaluate('Object.values(townBuilder.project.cells).some(c=>c.curves?.length)')
- snapshot='''async()=>{const{render}=await import('/town/world/runtime.mjs?v=cliff-pack-1');const c=document.createElement('canvas');c.width=800;c.height=600;render(c.getContext('2d'),window.townBuilder?.project||townGame.project,{x:8192,y:6430,zoom:.6},800,600);return c.toDataURL();}'''
+ snapshot='''async()=>{const{render}=await import('/town/world/runtime.mjs?v=cliff-pack-2');const c=document.createElement('canvas');c.width=800;c.height=600;render(c.getContext('2d'),window.townBuilder?.project||townGame.project,{x:8192,y:6430,zoom:.6},800,600);return c.toDataURL();}'''
  image=page.evaluate(snapshot);page.locator('#play').click();page.wait_for_function('!!window.townGame');assert image==page.evaluate(snapshot)
  assert not errors,errors;b.close()
 server.shutdown();print('Rounded land, water and paving, undo/redo, saved geometry and editor/game pixel parity passed.')
