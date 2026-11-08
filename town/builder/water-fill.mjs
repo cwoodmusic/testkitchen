@@ -8,27 +8,37 @@ const GRID=16,STEP=TILE/GRID;
 const directions=[[-1,0],[1,0],[0,-1],[0,1]];
 const inMap=(x,y)=>x>=0&&y>=0&&x<COLS&&y<ROWS;
 function snapshot(a){const out={surface:a.surface,level:a.level};if(a.paving!==undefined)out.paving=a.paving;if(a.paint)out.paint=a.paint;return out;}
-function wet(a){if(a.surface==='water'&&a.paint===undefined&&a.paving===undefined)return a;const out={...a,surface:'water'};delete out.paint;delete out.paving;return out;}
+function materialMatches(a,b){return a.surface===b.surface&&a.paint===undefined&&b.paint===undefined&&(a.surface!=='cobble'||(a.paving||'auto')===(b.paving||'auto'));}
+function replaceMaterial(a,target){
+ if(a.surface===target.surface&&a.paint===undefined&&(target.surface==='cobble'?(a.paving||'auto')===target.paving:a.paving===undefined))return a;
+ const out={...a,surface:target.surface};delete out.paint;delete out.paving;if(target.surface==='cobble')out.paving=target.paving;return out;
+}
 
-export function planWaterFill(doc,p){
- const result=(message,level=null)=>({edits:[],level,count:0,message});
- if(!p||!Number.isFinite(p.x)||!Number.isFinite(p.y))return result('Click a ground surface to fill it with water.');
+export function planWaterFill(doc,p){return planTerrainFill(doc,p,{surface:'water'});}
+// Shared connected-floor traversal. Land filling restricts the traversable
+// material to water, while the water bucket still crosses all flat materials.
+export function planTerrainFill(doc,p,{surface='water',paving='auto',sourceWaterOnly=false}={}){
+
+ const result=(message,level=null)=>({edits:[],level,count:0,message}),target={surface,...(surface==='cobble'?{paving}:{})},operation=sourceWaterOnly?'land':'water';
+ if(!p||!Number.isFinite(p.x)||!Number.isFinite(p.y))return result(`Click a ground surface to fill it with ${operation}.`);
  const sx=Math.floor(p.x/TILE),sy=Math.floor(p.y/TILE);
- if(!inMap(sx,sy))return result('Click inside the map to fill water.');
+ if(!inMap(sx,sy))return result(`Click inside the map to fill ${operation}.`);
  if(cell(doc,sx,sy).stairs)return result('Click flat ground beside the stairs to fill that height level.');
  const level=height(doc,p.x,p.y)/RISE;
- if(!Number.isInteger(level))return result('Click a flat ground level to fill water.');
+ if(!Number.isInteger(level))return result(`Click a flat ground level to fill ${operation}.`);
+ const clicked=cell(doc,sx,sy),clickedUnder=roundedUnder(doc,clicked,p.x,p.y),clickedMaterial=clickedUnder?curveUnder(doc,clickedUnder):clicked;
+ if(sourceWaterOnly&&clickedMaterial.surface!=='water')return result('Click water to fill it with the selected land material.',level);
  const cache=new Map();
  function analyze(x,y){
   if(!inMap(x,y))return null;const id=y*COLS+x;if(cache.has(id))return cache.get(id);
   const a=cell(doc,x,y);let node=null;
   if(!a.stairs){
-   if(!a.curves?.length){if(a.level===level)node={x,y,a,flat:true,components:[new Set([0])]};}
+   if(!a.curves?.length){if(a.level===level&&(!sourceWaterOnly||a.surface==='water'))node={x,y,a,flat:true,components:[new Set([0])]};}
    else {
     const labels=new Int16Array(GRID*GRID).fill(-1),facets=new Int16Array(GRID*GRID).fill(-1),components=[];
     for(let yy=0;yy<GRID;yy++)for(let xx=0;xx<GRID;xx++){
      const X=x*TILE+(xx+.5)*STEP,Y=y*TILE+(yy+.5)*STEP,q=roundedUnder(doc,a,X,Y),z=q?.kind==='height'?curveUnder(doc,q).level:a.level;
-     if(z===level)facets[yy*GRID+xx]=q?a.curves.indexOf(q)+1:0;
+     if(z===level&&(!sourceWaterOnly||(q?curveUnder(doc,q):a).surface==='water'))facets[yy*GRID+xx]=q?a.curves.indexOf(q)+1:0;
     }
     for(let i=0;i<labels.length;i++)if(facets[i]>=0&&labels[i]<0){
      const component=components.length,found=new Set(),queue=[i];labels[i]=component;
@@ -70,27 +80,26 @@ export function planWaterFill(doc,p){
  const edits=new Map(),changedDonors=new Map();let count=0;
  for(const[id,{node,facets}]of reached){
   const a=node.a,k=key(node.x,node.y);let next=a;
-  if(facets.has(0))next=wet(next);
+  if(facets.has(0))next=replaceMaterial(next,target);
   if(a.curves?.length){
-   if(!a.curves.some(q=>q.kind==='height')){next={...wet(a)};delete next.curves;}
-   else {
-    let changed=false;const curves=a.curves.map((q,i)=>{
-     if(!facets.has(i+1))return q;const raw=q.under||cell(doc,q.underX,q.underY),under=wet(snapshot(raw));
-     if(raw.surface==='water'&&raw.paint===undefined&&raw.paving===undefined)return q;
-     changed=true;return {...q,under};
-    });if(changed)next={...next,curves};
-   }
+   let changed=false;const curves=a.curves.map((q,i)=>{
+    if(!facets.has(i+1))return q;const raw=q.under||cell(doc,q.underX,q.underY),under=replaceMaterial(raw,target);
+    if(under===raw)return q;changed=true;return {...q,under:snapshot(under)};
+   });if(changed)next={...next,curves};
+   // Water covers every material at this height, including a hidden cap.
+   // Land keeps shoreline masks until both sides match. Height curves stay.
+   if(!curves.some(q=>q.kind==='height')&&(!sourceWaterOnly||curves.every(q=>materialMatches(next,curveUnder(doc,q))))){next={...replaceMaterial(next,target)};delete next.curves;}
   }
   if(next===a)continue;edits.set(k,next);count++;
   if(next.surface!==a.surface||next.paving!==a.paving||next.paint!==a.paint)changedDonors.set(k,snapshot(a));
  }
  // A corner outside the filled component may refer to a changed donor tile.
- // Freeze its original material rather than flooding that disconnected floor.
+ // Freeze its original material rather than changing that disconnected floor.
  // Store the raw donor level: curveUnder applies q.lift when it is evaluated.
  if(changedDonors.size)for(const k of Object.keys(doc.cells)){
   const a=edits.get(k)||doc.cells[k];if(!a.curves?.length)continue;let changed=false;
   const curves=a.curves.map(q=>{const under=changedDonors.get(key(q.underX,q.underY));if(q.under||!under)return q;changed=true;return {...q,under};});
   if(changed)edits.set(k,{...a,curves});
  }
- return {edits:[...edits],level,count,message:count?`Filled ${count.toLocaleString('en-US')} tiles with water at level ${level}.`:'This connected area is already water.'};
+ return {edits:[...edits],level,count,message:count?`Filled ${count.toLocaleString('en-US')} ${sourceWaterOnly?'water ':''}tiles with ${surface} at level ${level}.`:sourceWaterOnly?'This connected water is already land.':'This connected area is already water.'};
 }
