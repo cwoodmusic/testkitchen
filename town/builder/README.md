@@ -32,6 +32,8 @@ The editor and playable authored maps both use `town/world/` for the asset catal
 
 Walk test and **Play this town** use the same town character proportions: 2.5× the avatar renderer's native size, with walking at 450 world pixels/second and Shift-running at 780. Equipment and directional animation scale together around the feet. Gait follows actual travel distance and stops against obstacles; terrain height, stairs and gate passage still use the shared collision/movement code. The character renderer supplies its own correctly sized shadow. These settings apply to authored towns and do not change the arcade's character scale.
 
+Stair travel budgets both the actual surface distance and its projected screen distance. Steep flights take longer to climb instead of accelerating the camera by the elevation multiplier. Flat walking/running speeds stay the same. Gait follows actual three-dimensional surface travel, including landing transitions.
+
 Character checks: `node --test town/world/physics.test.mjs town/builder/stairs.test.mjs`; `python3 town/world/walk-player-browser.py`. They cover travel speed, diagonal normalization, fast gate/stair collision, sprite scale, feet anchoring and editor/game character parity.
 
 Additional validation: `node --test town/world/physics.test.mjs`; `python3 town/world/browser.py`.
@@ -44,7 +46,7 @@ Choose **Selection shape → Freeform lasso** to draw around an irregular region
 
 The **home estates** category contains 19 complete home-and-yard scenes: every resident plus your own home. Each has its own full-resolution source artwork, garden, roof shape, porch, planting and musical theme. NPC estates are 15% smaller than their original placement sizes, retaining their relative size differences; your home keeps its existing size. These complete scenes use the ground layer like Music Square. Place them on level ground; their painted porch steps are part of the scene, while the terrain **Steps** tool creates climbable level connections. Houses and wings have collision; yard edges are open. Placed estate doors are not yet connected to NPC interiors or friendship invitations.
 
-Detached perimeter walls, fencing and gateposts have been removed from all 19 home source images. Gardens, paths and structural porch details remain. Add your own boundaries using **Fence / wall**. Existing estate IDs, anchors and saved placement scales remain valid, so saved towns receive the smaller NPC homes and open artwork automatically. The arcade retains its exact interior footprint and current exterior size.
+Detached perimeter walls, fencing and gateposts have been removed from all 19 home source images. Gardens, paths and structural porch details remain. Add your own boundaries using **Fence / wall**. Existing estate IDs, anchors and saved placement scales remain valid, so saved towns receive the smaller NPC homes and open artwork automatically. The arcade uses its exact interior layout at the same character-relative scale as the town.
 
 Connected fence/wall tools now draw shared detailed panels and corner piers; adjacent stair cells form wider flights. Existing ivy/rose/wisteria/honeysuckle IDs now use dense painted foliage. Raised terrain uses a world-aligned mossy rock face and an overhanging grass crown rather than flat patterned blocks. Existing project IDs and terrain levels remain compatible. Music Square and the water artwork are unchanged.
 
@@ -68,13 +70,17 @@ North/south stair flights use straight top-down treads with parallel sides, samp
 
 East/west flights also use the opaque tread interior, with atlas lanes and phases oriented to join across the whole flight. This removes the diagonal grass slits that appeared between side-facing stair lanes. `python3 town/world/stair-sideways-browser.py` checks both directions, all finishes, narrow/wide flights, odd/even source phases and single/multiple levels.
 
+Stair materials repeat at a fixed projected size instead of stretching a whole stair image across the flight. Wider stairs add more material detail; steeper north/south flights add more treads at the same visible pitch. Existing height profiles, collision and foreground terrain occlusion are retained.
+
 Cobble painting now samples actual scene paving at its world scale. **Paving match → Auto · nearest property** chooses Music Square or the nearest home estate; a specific scene can also be selected. The donor strip meets the asset's entrance edge, and mirrored continuation shares its edge colors and stone size. Paths have feathered grassy borders. The asset pack includes the matching paving textures.
 
-**Landmarks → Coda Arcade · exact interior footprint** is a retrofuturistic exterior with a lounge roof, disco dome, glass main-hall roof and southeast entrance. Its floor footprint and polygon collision use the exact same `arcade-footprint.js` geometry as the actual interior. Scaling is locked at 1:1; the original canvas is 1672×941 world units and the occupied floor bounds are 1512×685. Roof/facade projection adds visual height without changing that footprint. The exterior is a placeable building; placing it does not relocate or replace the active arcade interior.
+**Landmarks → Coda Arcade · exact interior footprint** is a retrofuturistic exterior with a lounge roof, disco dome, glass main-hall roof and southeast entrance. Its floor footprint and polygon collision use the exact same `arcade-footprint.js` geometry as the actual interior, converted by the town character's 2.5× scale. A person therefore has the same proportions to the building inside and outside. The native floor bounds are 1512×685 interior units; town bounds are 3780×1712.5, with a 4180×2603 artwork canvas including facade projection. Object scaling stays locked at 1 because this conversion is built into the catalog. Metadata includes `interiorScale` and reversible coordinate helpers. The exterior is a placeable building; placing it does not relocate or replace the active arcade interior. Foreground actors sort against the occupied front edge at their column rather than transparent padding beneath the artwork.
 
 Validation: `node --test town/builder/stairs.test.mjs`; `python3 town/builder/drag-stairs-browser.py`. The browser check covers drag preview, reverse dragging, one-action undo, saved stair profiles, paving joins, exact arcade polygon collision and scale locking.
 
 Projection check: `python3 town/world/stair-topdown-browser.py` verifies constant-width north/south surfaces in all three finishes at widths one and three, and captures the actual shared game rendering.
+
+Scale/pacing checks: `node --test town/world/arcade-geometry.test.mjs town/world/slope-speed.test.mjs`; `python3 town/world/arcade-scale-browser.py`; `python3 town/world/stairs-material-scale-browser.py`.
 
 ## South-facing decoration pack and cliff placement
 

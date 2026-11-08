@@ -1,4 +1,4 @@
-"""Smaller NPC homes, open yards and unchanged arcade geometry in both modes."""
+"""Smaller NPC homes, open yards and character-relative arcade geometry in both modes."""
 from functools import partial
 from http.server import SimpleHTTPRequestHandler, ThreadingHTTPServer
 from pathlib import Path
@@ -53,8 +53,8 @@ try:
             doc.objects.push(object);checks.push({id,size:a.w,native:image.naturalWidth,openYard:true,solidHouse:true});
           }
           const arcade=catalog.get('coda-arcade'),f=window.CodaArcadeFootprint;
-          if(arcade.w!==1672||arcade.h!==1041||!arcade.fixedScale||arcade.footprint.w!==1512||arcade.footprint.h!==685)throw Error('Arcade size changed.');
-          if(JSON.stringify(arcade.polygons)!==JSON.stringify(f.floorPolys.map(poly=>poly.map(([x,y])=>[x,y+100]))))throw Error('Arcade no longer matches its exact interior polygon.');
+          const scale=arcade.interiorScale;if(scale!==2.5||arcade.w!==4180||arcade.h!==2603||!arcade.fixedScale||arcade.footprint.w!==1512*scale||arcade.footprint.h!==685*scale)throw Error('Arcade town-unit conversion changed.');
+          if(JSON.stringify(arcade.polygons)!==JSON.stringify(f.floorPolys.map(poly=>poly.map(([x,y])=>[x*scale,(y+100)*scale]))))throw Error('Arcade no longer matches its exact interior polygon.');
           doc.objects.push({id:'unchanged-arcade',asset:'coda-arcade',x:14500,y:11600,scale:1,rotation:0,collision:true,layer:'objects'});
           parseProject(JSON.stringify(doc),new Set(catalog.keys()));
           function capture(d,cam,w=480,h=520){
@@ -62,9 +62,9 @@ try:
             const{ctx,width,height}=resizeSurface(c);render(ctx,d,cam,width,height);const url=c.toDataURL();c.remove();return url;
           }
           const gallery=[];
-          for(const [id,label]of [['estate-haydn','Haydn · smaller home'],['estate-bach','Bach · smaller home'],['coda-arcade','Coda Arcade · same size'],['estate-mozart','Mozart · smaller home'],['estate-beethoven','Beethoven · smaller manor'],['estate-player','Your home · same size']]){
+          for(const [id,label]of [['estate-haydn','Haydn · smaller home'],['estate-bach','Bach · smaller home'],['coda-arcade','Coda Arcade · town scale'],['estate-mozart','Mozart · smaller home'],['estate-beethoven','Beethoven · smaller manor'],['estate-player','Your home · same size']]){
             const a=catalog.get(id),d={...doc,cells:{},edges:{},objects:[{id:'preview',asset:id,x:8192,y:8192,scale:1,rotation:0,collision:true,layer:a.layer}]};
-            gallery.push({label,url:capture(d,{x:8192,y:8192-a.h/2,zoom:.21})});
+            gallery.push({label,url:capture(d,{x:8192,y:8192-a.h/2,zoom:.1})});
           }
           return {checks,project:doc,runtimeURL,gallery};
         }''')

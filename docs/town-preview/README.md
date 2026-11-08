@@ -132,10 +132,17 @@ Existing maps use the new materials automatically. The asset pack includes sand 
 
 [NPC homes, your home and the arcade at the same world scale](open-estates.png)
 
-NPC estates are 15% smaller while retaining their size differences. All 19 home assets have open yard edges, with detached baked fencing/walls/gateposts and their collision removed. Houses, porches, gardens and paths remain. Your home's size and the arcade's exact footprint are retained. Existing saved placements receive the revised artwork and sizes automatically.
+NPC estates are 15% smaller while retaining their size differences. All 19 home assets have open yard edges, with detached baked fencing/walls/gateposts and their collision removed. Houses, porches, gardens and paths remain. Your home's size is retained; the arcade uses its exact interior blueprint converted to the town character's scale. Existing saved placements receive the revised artwork and sizes automatically.
 
 ## Town character scale and walking
 
 [Larger walk-test character beside town scenery](walk-player.png)
 
 Walk test and authored-map gameplay now use a character at 2.5× native size, with faster walking and Shift-running. Directional animation and equipment retain their proportions, feet follow the actual terrain/stair height, and the gait follows movement rather than continuing against a wall.
+
+## Consistent arcade and stair scale
+
+- [Arcade and NPC home at matching character/camera scales, with entrance closeups](arcade-scale.png)
+- [Consistent stair materials across wide and steep flights](stairs-material-scale.png)
+
+The arcade uses the same 2.5× town-unit conversion as the avatar, preserving its exact interior shape and collision. Stair treads and material detail repeat at a fixed visible size, and movement is paced by the slope so steep stairs cannot rush the camera.

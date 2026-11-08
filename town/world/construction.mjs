@@ -1,5 +1,5 @@
-import {cell,height,segment,RISE,stairProfile} from './model.mjs?v=walk-scale-1';
-import {wallArt,constructionArt,stairArt,stairTreadBounds,cliffArt} from './detail-art.mjs?v=walk-scale-1';
+import {cell,height,segment,RISE,stairProfile} from './model.mjs?v=town-proportions-1';
+import {wallArt,constructionArt,stairArt,stairTreadBounds,cliffArt} from './detail-art.mjs?v=town-proportions-1';
 export const barrierHeight=style=>style==='iron'?144:style==='wood'||style==='rail'?136:160;
 function piece(c,img,sx,sy,sw,sh,x,y,w,h){if(sw>0&&sh>0&&w>0&&h>0)c.drawImage(img,sx,sy,sw,sh,x,y,w,h);}
 // Clip one continuous rock field to the heights on BOTH sides of an edge.
@@ -34,25 +34,40 @@ export function drawCliff(c,d,x,y){const a=cell(d,x,y),b=cell(d,x,y+1);if(a.stai
  const shade=c.createLinearGradient(0,top,0,top+depth);shade.addColorStop(0,'#24311e66');shade.addColorStop(.35,'#17221900');shade.addColorStop(1,'#16211788');c.fillStyle=shade;c.fillRect(X,top+13,64,Math.max(0,depth-13));
  c.fillStyle='#17271c22';c.fillRect(X,top+depth,64,5);
 }
-const flatStairs=new Map();
-export function drawStairs(c,d,x,y){const a=cell(d,x,y);if(!a.stairs)return;const q=stairProfile(a),vertical=['north','south'].includes(a.stairs),X=x*64,Y=y*64;
- const same=(xx,yy)=>{const b=cell(d,xx,yy),p=stairProfile(b);return b.stairs===a.stairs&&Math.abs(p.base-q.base)<1e-8&&Math.abs(p.rise-q.rise)<1e-8&&p.start===q.start&&p.end===q.end&&(b.finish||'stone')===(a.finish||'stone');};let start=vertical?x:y,end=start;
- while(start>0&&same(vertical?start-1:x,vertical?y:start-1))start--;
- while(end<(vertical?255:191)&&same(vertical?end+1:x,vertical?y:end+1))end++;
- const span=end-start+1,part=(vertical?x:y)-start,rawPhase=(vertical?y:x)%2,phase=['east','south'].includes(a.stairs)?1-rawPhase:rawPhase,k=[a.finish,a.stairs,span,part,phase].join(':');
- if(!flatStairs.has(k)){
-  const tile=document.createElement('canvas');tile.width=tile.height=64;const g=tile.getContext('2d'),image=stairArt[a.finish]||stairArt.stone;
-  // Every direction uses the opaque tread interior. Perspective edges leave
-  // diagonal holes between rotated E/W lanes and make N/S flights taper.
-  // Reverse the sampled lane when rotating west, so wide treads stay joined.
-  const sample=stairTreadBounds(image),lane=a.stairs==='west'?span-1-part:part;
-  g.imageSmoothingEnabled=false;g.save();if(a.stairs==='east'){g.translate(64,0);g.rotate(Math.PI/2);}if(a.stairs==='west'){g.translate(0,64);g.rotate(-Math.PI/2);}if(a.stairs==='south'){g.translate(0,64);g.scale(1,-1);}
-  g.drawImage(image,sample.x+sample.w*lane/span,sample.y+sample.h*phase/2,sample.w/span,sample.h/2,0,0,64,64);g.restore();flatStairs.set(k,tile);
+const stairMaterials=new WeakMap(),stairPatterns=new WeakMap();
+function stairPattern(c,finish,direction){
+ const image=stairArt[finish]||stairArt.stone;
+ if(!stairMaterials.has(image)){
+  const material=document.createElement('canvas');material.width=384;material.height=60;
+  const g=material.getContext('2d'),sample=stairTreadBounds(image),sy=Math.round(image.height*.2943),sh=Math.round(image.height*.4013);
+  g.imageSmoothingEnabled=false;
+  // Three complete middle tread/riser cycles retain the painted grain and
+  // joints, without the source flight's end caps or perspective side faces.
+  // They occupy a fixed 192 × 60 world-pixel field: ~20 pixels per tread.
+  for(let side=0;side<2;side++){g.save();g.translate(side?384:0,0);g.scale(side?-1:1,1);g.drawImage(image,sample.x,sy,sample.w,sh,0,0,192,60);g.restore();}
+  stairMaterials.set(image,material);
  }
- const tile=flatStairs.get(k),zAt=(fx,fy)=>{const t={north:1-fy,south:fy,east:fx,west:1-fx}[a.stairs];return (q.base+q.rise*Math.max(0,Math.min(1,(t-q.start)/(q.end-q.start))))*RISE;};
- // Project the actual walking surface, including partial first/last landings.
- // Thin affine strips keep the treads joined over any rise and all four axes.
- for(let i=0;i<8;i++){const n=i*8,z0=zAt(vertical?.5:n/64,vertical?n/64:.5),z1=zAt(vertical?.5:(n+8)/64,vertical?(n+8)/64:.5);c.save();if(vertical){c.transform(1,0,0,1-(z1-z0)/8,X,Y+n-z0);c.drawImage(tile,0,n,64,8,0,0,64,8);}else{c.transform(1,-(z1-z0)/8,0,1,X+n,Y-z0);c.drawImage(tile,n,0,8,64,0,0,8,64);}c.restore();}
+ if(!stairPatterns.has(c))stairPatterns.set(c,new Map());const cache=stairPatterns.get(c),key=(finish||'stone')+':'+direction;
+ if(!cache.has(key)){
+  const pattern=c.createPattern(stairMaterials.get(image),'repeat');
+  const matrix={north:[1,0,0,1,0,0],south:[1,0,0,-1,0,0],east:[0,1,-1,0,0,0],west:[0,-1,1,0,0,0]}[direction];
+  pattern.setTransform(new DOMMatrix(matrix));cache.set(key,pattern);
+ }
+ return cache.get(key);
+}
+export function drawStairs(c,d,x,y){const a=cell(d,x,y);if(!a.stairs)return;const q=stairProfile(a),vertical=['north','south'].includes(a.stairs),X=x*64,Y=y*64;
+ const zAt=n=>{const f=n/64,t=['north','west'].includes(a.stairs)?1-f:f;return (q.base+q.rise*Math.max(0,Math.min(1,(t-q.start)/(q.end-q.start))))*RISE;};
+ const reverse=['north','west'].includes(a.stairs),points=[0,64,(reverse?1-q.start:q.start)*64,(reverse?1-q.end:q.end)*64].sort((a,b)=>a-b).filter((n,i,list)=>i===0||Math.abs(n-list[i-1])>1e-8);
+ c.save();c.fillStyle=stairPattern(c,a.finish,a.stairs);
+ // Sample material in projected world space, rather than stretching a flat
+ // image over the slope. Tall or wide flights gain more treads/joints at the
+ // same scale instead of magnifying three giant steps to fill the surface.
+ if(vertical){const ys=points.map(n=>Y+n-zAt(n)),top=Math.min(...ys),bottom=Math.max(...ys);if(bottom>top)c.fillRect(X,top,64,bottom-top);}
+ else{
+  c.beginPath();for(let i=0;i<points.length;i++){const n=points[i],yy=Y-zAt(n);if(i===0)c.moveTo(X+n,yy);else c.lineTo(X+n,yy);}
+  for(const n of [...points].reverse())c.lineTo(X+n,Y+64-zAt(n));c.closePath();c.fill();
+ }
+ c.restore();
 }
 export function barrierRuns(d){const groups=new Map();for(const[k,e]of Object.entries(d.edges)){const s=segment(k),axis=s.dx?'h':'v',z=height(d,s.x+2,s.y+2),fixed=axis==='h'?s.y:s.x,t=axis==='h'?s.x:s.y,g=[axis,fixed,z,e.style,!!e.gate,!!e.open].join(':');if(!groups.has(g))groups.set(g,[]);groups.get(g).push({s,e,t,z,axis});}const runs=[];for(const group of groups.values()){group.sort((a,b)=>a.t-b.t);let current;for(const p of group){if(!current||p.t!==current.end||p.e.gate){current={...p,start:p.t,end:p.t+64};runs.push(current);}else current.end+=64;}}return runs;}
 export function drawBarrierRun(c,run){const {s,e,z,axis,start,end}=run,h=barrierHeight(e.style),length=end-start,img=wallArt[e.style]||wallArt.wood,X=s.x,Y=s.y-z;c.save();c.translate(X,Y);

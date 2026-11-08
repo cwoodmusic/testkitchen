@@ -1,5 +1,5 @@
-import {catalog,preparePlacedArt,render,resizeSurface,findStart,movePlayer,toggleGate,follow,PLAYER_SCALE,GAIT_PER_PIXEL} from './runtime.mjs?v=walk-scale-1';
-import {loadProject} from './storage.mjs?v=walk-scale-1';
+import {catalog,preparePlacedArt,render,resizeSurface,findStart,movePlayer,toggleGate,follow,PLAYER_SCALE,GAIT_PER_PIXEL} from './runtime.mjs?v=town-proportions-1';
+import {loadProject} from './storage.mjs?v=town-proportions-1';
 const canvas=document.getElementById('world');
 // Reuse the town route and arcade session bridge; replace the editor chrome
 // with gameplay controls while rendering the very same authored document.
@@ -26,6 +26,6 @@ if(!doc){title.textContent=loadError?'Could not load town':'No saved builder tow
  const touch=document.createElement('div');touch.id='touch';touch.innerHTML='<div class="dpad"></div>';document.body.append(touch);
  for(const [label,k]of [['↑','w'],['←','a'],['↓','s'],['→','d']]){const b=document.createElement('button');b.textContent=label;b.setAttribute('aria-label','Walk '+k);b.onpointerdown=e=>{e.preventDefault();b.setPointerCapture(e.pointerId);keys.add(k);};b.onpointerup=b.onpointercancel=()=>keys.delete(k);touch.firstChild.append(b);}
  const action=document.createElement('button');action.textContent='Gate';action.onclick=()=>toggleGate(doc,player);touch.append(action);
- let last=performance.now();function frame(now){const dt=Math.min(.04,(now-last)/1000);last=now;const motion=movePlayer(doc,player,keys,dt,catalog);if(motion.facing)facing=motion.facing;walking=motion.walking;walkPhase=(walkPhase+motion.distance*GAIT_PER_PIXEL)%(Math.PI*2);follow(cam,player,doc);const {ctx,width,height}=resizeSurface(canvas);render(ctx,doc,cam,width,height,{player,drawPlayer:(c,x,y)=>character.drawPlayer(c,avatar,{x,y,facing,walking,phase:walkPhase},now/1000)});requestAnimationFrame(frame);}requestAnimationFrame(frame);
+ let last=performance.now();function frame(now){const dt=Math.min(.04,(now-last)/1000);last=now;const motion=movePlayer(doc,player,keys,dt,catalog);if(motion.facing)facing=motion.facing;walking=motion.walking;walkPhase=(walkPhase+motion.surfaceDistance*GAIT_PER_PIXEL)%(Math.PI*2);follow(cam,player,doc);const {ctx,width,height}=resizeSurface(canvas);render(ctx,doc,cam,width,height,{player,drawPlayer:(c,x,y)=>character.drawPlayer(c,avatar,{x,y,facing,walking,phase:walkPhase},now/1000)});requestAnimationFrame(frame);}requestAnimationFrame(frame);
  window.townGame={project:doc,player,cam,catalog};
 }

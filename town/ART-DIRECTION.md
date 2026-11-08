@@ -19,7 +19,7 @@ every surface with oversized musical symbols.
 
 ## Scale and composition
 
-- Characters retain the arcade renderer's world scale indoors and outdoors.
+- Character-relative proportions stay consistent indoors and outdoors; town-unit conversion applies to both the character and the arcade building.
 - House roof volumes and walkable interiors use the same measured footprint,
   including real side wings, rear rooms and courtyard recesses.
 - Property fence boards are 56 world pixels high, with 14-pixel posts and
@@ -61,7 +61,7 @@ User approved Music Square and water as the visual benchmark, and rejected the p
 
 There are 19 distinct full-resolution residential scenes (`home-estate-*.png`), one for every resident and the player, not enlarged atlas thumbnails. Each is a complete home and planted yard with a large roof footprint, musical details, deep porch and stairs. Keep the individual house pieces available as well. Preserve the approved Music Square and water source files. Estate scenes have house/wing collision; actual NPC door/interior binding remains a separate feature.
 
-NPC home estates use 85% of their original world placement size while preserving relative variation; the player home keeps its current size. Preserve native art resolution and stable bottom-center anchors. Home yards must have no baked detached perimeter walls, fencing, gates or gateposts, and no collision left where those boundaries stood. Retain structural house/porch walls, stairs, gardens and paths. Custom boundaries belong to the connected fence/wall tool. Preserve Coda Arcade's exact geometry and exterior scale.
+NPC home estates use 85% of their original world placement size while preserving relative variation; the player home keeps its current size. Preserve native art resolution and stable bottom-center anchors. Home yards must have no baked detached perimeter walls, fencing, gates or gateposts, and no collision left where those boundaries stood. Retain structural house/porch walls, stairs, gardens and paths. Custom boundaries belong to the connected fence/wall tool. Preserve Coda Arcade's exact interior geometry and convert its town scale consistently with the character.
 
 Editor tools must include obvious regional selection and a numbered, color-coded elevation plan so large level changes can be understood before returning to the game artwork view. The plan is a guide, not a replacement art style.
 
@@ -81,7 +81,9 @@ Raw standalone asset packs receive restrained shared saturation/lighting correct
 
 Painted cobble must share the source scene's stone scale, palette and entry-edge colors. Use real donor paving from Music Square or the chosen home estate; do not substitute the old generic ground atlas cobble. Feather grass borders while preserving clear passage joins.
 
-The retrofuturistic Coda Arcade exterior uses a copper/teal Art Deco roof, neon trim, a glass main hall, lounge wing and dance dome. The inside and outside share `arcade-footprint.js`; preserve its exact floor polygon union, southeast entrance and world-unit scale. Roof shadows, ornaments and wall projection are not extra floor area. Do not estimate its floor plan from an image or resize it to fit a generic rectangle.
+The retrofuturistic Coda Arcade exterior uses a copper/teal Art Deco roof, neon trim, a glass main hall, lounge wing and dance dome. The inside and outside share `arcade-footprint.js`; preserve its exact floor polygon union and southeast entrance through the 2.5× interior-to-town conversion. That factor must track the character's town scale, so door and floor dimensions remain consistent relative to a person. Roof shadows, ornaments and wall projection are not extra floor area. Do not estimate its floor plan from an image or resize it to fit a generic rectangle. Sort a foreground actor at the actual front polygon edge, not the blank canvas bottom.
+
+Keep stair grain and visible tread pitch at a fixed size across different widths and grades. Repeating authored material fills the projected walking surface; do not stretch a whole stair sprite over a wide or steep flight. Budget stair movement against surface and projected travel so elevation cannot produce a camera rush. Advance gait by real surface travel.
 
 ### Cliff attachments, decoration library and legible terrain
 

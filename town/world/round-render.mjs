@@ -1,6 +1,6 @@
-import {cell,height} from './model.mjs?v=walk-scale-1';
-import {curveUnder,frontEdge} from './round-geometry.mjs?v=walk-scale-1';
-import {cliffArt} from './detail-art.mjs?v=walk-scale-1';
-import {drawGround,groundFrameKey} from './ground-render.mjs?v=walk-scale-1';
+import {cell,height} from './model.mjs?v=town-proportions-1';
+import {curveUnder,frontEdge} from './round-geometry.mjs?v=town-proportions-1';
+import {cliffArt} from './detail-art.mjs?v=town-proportions-1';
+import {drawGround,groundFrameKey} from './ground-render.mjs?v=town-proportions-1';
 export function drawRoundUnder(c,d,x,y,frameKey=groundFrameKey(d)){const a=cell(d,x,y);if(!a.curves?.length)return;const q=a.curves[0],u=curveUnder(d,q),z=(q.kind==='height'?u.level:a.level)*48,X=x*64,Y=y*64-z;drawGround(c,d,u,x,y,X,Y,frameKey);}
 export function drawRoundCliff(c,d,x,y){const a=cell(d,x,y);if(!a.curves?.some(q=>q.kind==='height'))return;const img=cliffArt;for(let i=0;i<16;i++){const X=x*64+i*4,edge0=frontEdge(a,X+.001,y),edge1=frontEdge(a,X+3.999,y),mid=frontEdge(a,X+2,y);if(mid>=(y+1)*64-.001)continue;const z=height(d,X+2,mid-.05),bottom=height(d,X+2,mid+.05),depth=z-bottom;if(depth<.1)continue;const sx=img.width*.06+(X%384)/384*img.width*.88,sw=img.width*.88*4/384;c.save();c.transform(1,(edge1-edge0)/4,0,1,X,edge0-z);c.fillStyle='#555b3e';c.fillRect(0,0,4,depth);for(let j=0;j<depth;j+=176){const h=Math.min(176,depth-j);c.drawImage(img,sx,img.height*.18,sw,img.height*.78*h/176,0,j,4,h);}c.drawImage(img,sx,0,sw,img.height*.28,0,-12,4,38);const shadow=c.createLinearGradient(0,0,0,depth);shadow.addColorStop(0,'#24311e55');shadow.addColorStop(.4,'#17221900');shadow.addColorStop(1,'#16211777');c.fillStyle=shadow;c.fillRect(0,13,4,Math.max(0,depth-13));c.restore();}}

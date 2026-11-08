@@ -1,8 +1,8 @@
-import {PAINT_GRID,PAINT_STEP,readPaint,materialKey} from './ground-paint.mjs?v=walk-scale-1';
-import {sources,catalog} from './catalog.mjs?v=walk-scale-1';
-import {cell,height} from './model.mjs?v=walk-scale-1';
-import {drawPaving,drawPavingMaterial} from './paving.mjs?v=walk-scale-1';
-import {groundTextures} from './ground-textures.mjs?v=walk-scale-1';
+import {PAINT_GRID,PAINT_STEP,readPaint,materialKey} from './ground-paint.mjs?v=town-proportions-1';
+import {sources,catalog} from './catalog.mjs?v=town-proportions-1';
+import {cell,height} from './model.mjs?v=town-proportions-1';
+import {drawPaving,drawPavingMaterial} from './paving.mjs?v=town-proportions-1';
+import {groundTextures} from './ground-textures.mjs?v=town-proportions-1';
 
 const tiles=new WeakMap(),fields=new WeakMap(),legacyFields=new Map();
 function canvas(size){const c=document.createElement('canvas');c.width=c.height=size;return c;}

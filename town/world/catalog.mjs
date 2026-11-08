@@ -1,8 +1,8 @@
-import {registerDecor} from './decor-pack.mjs?v=walk-scale-1';
-import {arcadeGeometry,drawArcade} from './arcade.mjs';
-import {constructionArt,stairArt,stairTreadBounds,overgrowthArt,estateArt,cliffDecorArt} from './detail-art.mjs?v=walk-scale-1';
-import {estateDefinitions,estateBoxes} from './estates.mjs?v=walk-scale-1';
-import {townArtSources,house} from '../art.mjs?v=walk-scale-1';
+import {registerDecor} from './decor-pack.mjs?v=town-proportions-1';
+import {arcadeGeometry,drawArcade} from './arcade.mjs?v=town-proportions-1';
+import {constructionArt,stairArt,stairTreadBounds,overgrowthArt,estateArt,cliffDecorArt} from './detail-art.mjs?v=town-proportions-1';
+import {estateDefinitions,estateBoxes} from './estates.mjs?v=town-proportions-1';
+import {townArtSources,house} from '../art.mjs?v=town-proportions-1';
 import {homeGeometry,ARCHITECTURES} from '../model.mjs';
 export const sources=townArtSources(),catalog=new Map();
 function add(id,name,group,w,h,draw,boxes=[],layer='objects'){const a={id,name,group,w:Math.ceil(w),h:Math.ceil(h),boxes,layer};a.draw=draw;let cached;Object.defineProperty(a,'canvas',{get(){if(!cached){cached=document.createElement('canvas');cached.width=a.w;cached.height=a.h;draw(cached.getContext('2d'));}return cached;}});catalog.set(id,a);return a;}
@@ -22,7 +22,7 @@ for(const finish of ['stone','wood','brick']){const image=stairArt[finish],b=sta
 add('cliff-detail','Mossy limestone cliff section','construction',384,256,c=>c.drawImage(constructionArt[11],0,0,384,256),[{x:0,y:236,w:384,h:20}]);
 for(const a of estateDefinitions){const image=estateArt[a.index];const item=add(`estate-${a.id}`,a.name,'home estates',a.size,a.size,c=>{const pad=0;c.drawImage(image,image.width*pad,image.height*pad,image.width*(1-pad*2),image.height*(1-pad*2),0,0,a.size,a.size);},estateBoxes(a),'ground');item.pavingSource=image;item.resident=a.id;item.scene=true;}
 
-const arcade=add('coda-arcade','Coda Arcade · exact interior footprint','landmarks',arcadeGeometry.w,arcadeGeometry.h,drawArcade);arcade.polygons=arcadeGeometry.polygons;arcade.door=arcadeGeometry.door;arcade.fixedScale=true;arcade.footprint=arcadeGeometry.bounds;
+const arcade=add('coda-arcade','Coda Arcade · exact interior footprint','landmarks',arcadeGeometry.w,arcadeGeometry.h,drawArcade);arcade.polygons=arcadeGeometry.polygons;arcade.door=arcadeGeometry.door;arcade.fixedScale=true;arcade.footprint=arcadeGeometry.bounds;arcade.interiorScale=arcadeGeometry.interiorScale;arcade.frontAtX=arcadeGeometry.frontAtX;
 
 for(const[i,id,name,w]of [[0,'cliff-ivy','Cliff ivy cascade',256],[1,'cliff-roses','Cliff climbing roses',240],[2,'cliff-roots','Hanging cliff roots',192],[3,'cliff-ledge','Fern-covered rock ledge',224],[4,'cliff-lantern','Cliff wall lantern',64],[5,'cliff-relief','Cliff lyre relief',128]]){const image=cliffDecorArt[i],h=w*image.height/image.width,a=add(id,name,'cliff faces',w,h,c=>c.drawImage(image,0,0,w,h));a.mountDefault=true;a.overhang=i<4;}
 
