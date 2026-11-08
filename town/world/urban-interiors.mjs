@@ -1,4 +1,4 @@
-import {assetImage} from './asset-color.mjs?v=music-walls-1';
+import {assetImage} from './asset-color.mjs?v=builder-tools-1';
 // The apartment tower has one consistent floor plate. Residential floors use
 // a 608px common hall and 1120px private apartments, within its 2304 × 1728 lot.
 export const FLOOR_COUNT=15;
@@ -29,7 +29,7 @@ const sceneCache=new Map(),backgroundCache=new Map();
 let nativeCatalog=null,woodTexture=null,npcRenderer=null;
 export function configureUrbanInteriors(catalog){nativeCatalog=catalog;for(const scene of sceneCache.values())warmScene(scene);}
 if(typeof document!=='undefined'){
- import('./ground-textures.mjs?v=music-walls-1').then(({groundTextures})=>{woodTexture=groundTextures.wood;backgroundCache.clear();}).catch(()=>{});
+ import('./ground-textures.mjs?v=builder-tools-1').then(({groundTextures})=>{woodTexture=groundTextures.wood;backgroundCache.clear();}).catch(()=>{});
 }
 const rect=(x,y,w,h)=>({x,y,w,h});
 const zone=(id,label,x,y,w,h,action,extra={})=>({id,label,x,y,w,h,action,...extra});

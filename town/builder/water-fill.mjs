@@ -1,6 +1,6 @@
-import {COLS,ROWS,TILE,RISE,cell,key,height} from '../world/model.mjs?v=music-walls-1';
-import {roundedUnder,curveUnder} from '../world/round-geometry.mjs?v=music-walls-1';
-import {readPaint,encodePaint,materialKey} from '../world/ground-paint.mjs?v=music-walls-1';
+import {COLS,ROWS,TILE,RISE,cell,key,height} from '../world/model.mjs?v=builder-tools-1';
+import {roundedUnder,curveUnder} from '../world/round-geometry.mjs?v=builder-tools-1';
+import {readPaint,encodePaint,materialKey} from '../world/ground-paint.mjs?v=builder-tools-1';
 
 // Rounded terrain can contain two physical floors inside one tile. Small local
 // components keep a lower corner from joining another basin across high land.
@@ -12,7 +12,7 @@ function snapshot(a){const out={surface:a.surface,level:a.level};if(a.paving!==u
 function materialMatches(a,b){return a.surface===b.surface&&a.paint===undefined&&b.paint===undefined&&(a.surface!=='cobble'||(a.paving||'auto')===(b.paving||'auto'));}
 function replaceMaterial(a,target){
  if(a.surface===target.surface&&a.paint===undefined&&(target.surface==='cobble'?(a.paving||'auto')===target.paving:a.paving===undefined))return a;
- const out={...a,surface:target.surface};delete out.paint;delete out.paving;if(target.surface==='cobble')out.paving=target.paving;return out;
+ const out={...a,surface:target.surface};delete out.paint;delete out.paving;delete out.sidewalkCurb;if(target.surface==='cobble')out.paving=target.paving;return out;
 }
 // A soft-painted tile may still have grass as its base surface. Its visible
 // material comes from the strongest channel at this exact 4px paint sample.
@@ -24,19 +24,23 @@ function dominantMaterial(a,i,paintCache){
  return materials[strongest];
 }
 function replaceSourceSamples(a,target,sourceKey,indices,wholeLayer){
- if(wholeLayer&&!a.paint)return replaceMaterial(a,target);
+ // A bucket lays down a solid material. Keeping the minority channel from a
+ // soft edge leaves an unselectable grass ribbon after both sides are filled.
+ // Hidden samples in a fully reached curve facet must normalize too, because
+ // the texture interpolator otherwise bleeds their old color into the edge.
+ if(wholeLayer)return replaceMaterial(a,target);
  const old=readPaint(a),source=old.materials.findIndex(m=>materialKey(m)===sourceKey);
  if(source<0)return a;
  const targetKey=materialKey(target);if(targetKey===sourceKey)return a;
- if(wholeLayer&&old.materials.length===1)return replaceMaterial(a,target);
  const materials=[...old.materials];let into=materials.findIndex(m=>materialKey(m)===targetKey);
  if(into<0){into=materials.length;materials.push(target);}
  const weights=new Float64Array(GRID*GRID*materials.length);
  for(let i=0;i<GRID*GRID;i++)for(let j=0;j<old.materials.length;j++)weights[i*materials.length+j]=old.weights[i*old.materials.length+j];
- let changed=false;for(const i of indices){const at=i*materials.length,value=weights[at+source];if(!value)continue;weights[at+source]=0;weights[at+into]+=value;changed=true;}
+ let changed=false;for(const i of indices){const at=i*materials.length;for(let j=0;j<materials.length;j++){const value=j===into?255:0;if(weights[at+j]!==value)changed=true;weights[at+j]=value;}}
  if(!changed)return a;
  const paint=encodePaint(materials,weights);
- return paint.materials.length===1?replaceMaterial(a,paint.materials[0]):{...a,paint};
+ if(paint.materials.length===1)return replaceMaterial(a,paint.materials[0]);
+ const out={...a,paint};delete out.sidewalkCurb;return out;
 }
 
 export function planWaterFill(doc,p){return planTerrainFill(doc,p,{surface:'water'});}

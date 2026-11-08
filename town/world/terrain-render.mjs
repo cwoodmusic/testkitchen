@@ -1,11 +1,13 @@
-import {shadeLowerGround,drawTerrainRims} from './edge-shading.mjs?v=music-walls-1';
-import {drawRoundUnder,drawRoundCliff} from './round-render.mjs?v=music-walls-1';
-import {clipCurves} from './round-geometry.mjs?v=music-walls-1';
-import {drawGround,groundFrameKey} from './ground-render.mjs?v=music-walls-1';
-import {drawCliff,drawStairs} from './construction.mjs?v=music-walls-1';
-import {RISE,COLS,ROWS,cell} from './model.mjs?v=music-walls-1';
-import {sources} from './catalog.mjs?v=music-walls-1';
-import {waterRimSegments} from './water-rim.mjs?v=music-walls-1';
+import {shadeLowerGround,drawTerrainRims} from './edge-shading.mjs?v=builder-tools-1';
+import {drawRoundUnder,drawRoundCliff} from './round-render.mjs?v=builder-tools-1';
+import {clipCurves} from './round-geometry.mjs?v=builder-tools-1';
+import {drawGround,groundFrameKey,groundTexture} from './ground-render.mjs?v=builder-tools-1';
+import {drawCliff,drawStairs} from './construction.mjs?v=builder-tools-1';
+import {RISE,COLS,ROWS,cell,terrainView} from './model.mjs?v=builder-tools-1';
+import {sources} from './catalog.mjs?v=builder-tools-1';
+import {waterRimSegments} from './water-rim.mjs?v=builder-tools-1';
+import {drawPier,drawPierSubmerged} from './piers.mjs?v=builder-tools-1';
+import {drawSidewalkCurbs} from './sidewalk-curbs.mjs?v=builder-tools-1';
 const lawns=new WeakMap();
 function drawWaterRim(c,d,x,y,X,Y){
  c.strokeStyle='#97b9a1';c.lineWidth=5;
@@ -21,6 +23,8 @@ function drawBridge(c,d,a,x,y,X,Y){
  }
 }
 export function drawTerrain(c,d,{x0,x1,y0,y1},opts={}){
+ // All ground/cliff helpers see the untouched floor below raised piers.
+ const scene=d;d=terrainView(d);
  // A continuous ground plane prevents the sky clear color appearing through
  // projection cutouts. Actual cliff faces, rather than this lawn, fill supports.
  if(!lawns.has(c))lawns.set(c,c.createPattern(sources.ground[0],'repeat'));
@@ -41,9 +45,14 @@ export function drawTerrain(c,d,{x0,x1,y0,y1},opts={}){
    if(a.curves?.length)c.restore();
    // A rounded high face can also expose its lower shelf at this tile edge.
    drawCliff(c,d,x,y);
-   if(a.bridge)drawBridge(c,d,a,x,y,X,Y-z);
+   if(a.bridge&&!a.pier)drawBridge(c,d,a,x,y,X,Y-z);
    if(opts.grid){c.lineWidth=1;c.strokeStyle='#e3e6bb30';c.strokeRect(X,Y-z,64,64);}
   }
   drawTerrainRims(c,d,x0,x1,y,y+1);
+  // Keep curb lips above the ground shading, while southern terrain rows can
+  // still cover them naturally at a higher elevation.
+  for(let x=x0;x<x1;x++)drawSidewalkCurbs(c,scene,x,y);
+  for(let x=x0;x<x1;x++)if(cell(scene,x,y).pier)drawPier(c,scene,x,y,groundTexture('wood'));
  }
+ for(let y=y0;y<y1;y++)for(let x=x0;x<x1;x++)if(cell(scene,x,y).pier)drawPierSubmerged(c,scene,x,y);
 }

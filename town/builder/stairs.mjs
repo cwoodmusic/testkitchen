@@ -1,4 +1,4 @@
-import {COLS,ROWS,cell,key,stairProfile,blocked,height} from '../world/model.mjs?v=music-walls-1';
+import {COLS,ROWS,cell,key,stairProfile,blocked,height} from '../world/model.mjs?v=builder-tools-1';
 const inside=p=>Number.isInteger(p.x)&&Number.isInteger(p.y)&&p.x>=0&&p.y>=0&&p.x<COLS&&p.y<ROWS;
 const round=v=>Math.round(v*1e9)/1e9;
 export function planStairs(doc,start,target,{width=3,finish='stone',catalog=new Map()}={}){
@@ -14,7 +14,7 @@ export function planStairs(doc,start,target,{width=3,finish='stone',catalog=new 
   const p={...low,[axis]:low[axis]+step*i,[axis==='x'?'y':'x']:low[axis==='x'?'y':'x']+lane};if(!inside(p))return fail('The stair width extends outside the map.');
   const a=cell(doc,p.x,p.y);if(a.surface==='water')return fail('Stairs need dry ground. Use a bridge over water.');
   const begin=i===0?.5:0,end=i===distance?.5:1,base=round(lowLevel+(highLevel-lowLevel)*(i+begin-.5)/distance),rise=round((highLevel-lowLevel)*(end-begin)/distance);
-  const next={...a,surface:finish==='wood'?'wood':'cobble',level:Math.floor(base),stairs:direction,stairBase:base,stairRise:rise,stairStart:begin,stairEnd:end,finish};delete next.bridge;delete next.curves;
+  const next={...a,surface:finish==='wood'?'wood':'cobble',level:Math.floor(base),stairs:direction,stairBase:base,stairRise:rise,stairStart:begin,stairEnd:end,finish};delete next.bridge;delete next.pier;delete next.sidewalkCurb;delete next.curves;
   edits.push([key(p.x,p.y),next]);
  }
  const preview={...doc,cells:{...doc.cells,...Object.fromEntries(edits)}};

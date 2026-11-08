@@ -1,6 +1,6 @@
-import {COLS,ROWS,cell,key,stairProfile} from '../world/model.mjs?v=music-walls-1';
-import {selectionContains,selectionTiles} from '../world/selection.mjs?v=music-walls-1';
-export {selectionContains,selectionCount,selectionTiles} from '../world/selection.mjs?v=music-walls-1';
+import {COLS,ROWS,cell,key,stairProfile} from '../world/model.mjs?v=builder-tools-1';
+import {selectionContains,selectionTiles} from '../world/selection.mjs?v=builder-tools-1';
+export {selectionContains,selectionCount,selectionTiles} from '../world/selection.mjs?v=builder-tools-1';
 export function regionBetween(a,b){const clamp=(v,max)=>Math.max(0,Math.min(max-1,Math.floor(v)));return {x0:clamp(Math.min(a.x,b.x),COLS),y0:clamp(Math.min(a.y,b.y),ROWS),x1:clamp(Math.max(a.x,b.x),COLS),y1:clamp(Math.max(a.y,b.y),ROWS)};}
 export function regionFromPolygon(input,{preview=false}={}){
  const points=input.filter(p=>Number.isFinite(p.x)&&Number.isFinite(p.y)).map(p=>({x:Math.max(0,Math.min(COLS*64,p.x)),y:Math.max(0,Math.min(ROWS*64,p.y))}));if(!points.length)return null;
@@ -24,4 +24,4 @@ export function regionFromPolygon(input,{preview=false}={}){
 }
 // Preserve surface, stairs and bridge metadata while moving each cell one level.
 // Return edits first, so the caller can record one undo entry only for real edits.
-export function regionHeightEdits(doc,region,delta){const edits=[];if(!region||region.preview||![1,-1].includes(delta))return edits;for(const[x,y]of selectionTiles(region)){const a=cell(doc,x,y);if(a.stairs&&a.stairBase!==undefined){const q=stairProfile(a),base=Math.round((q.base+delta)*1e9)/1e9;if(base>=0&&base+q.rise<=8+1e-8)edits.push([key(x,y),{...a,level:Math.floor(base),stairBase:base}]);continue;}const level=Math.max(0,Math.min(a.stairs?7:8,a.level+delta));if(level!==a.level){const next={...a,level};if(a.curves)next.curves=a.curves.map(q=>q.kind==='height'&&(q.under||!selectionContains(region,q.underX,q.underY))?{...q,lift:Math.max(-8,Math.min(8,(q.lift||0)+level-a.level))}:q);edits.push([key(x,y),next]);}}return edits;}
+export function regionHeightEdits(doc,region,delta){const edits=[];if(!region||region.preview||![1,-1].includes(delta))return edits;for(const[x,y]of selectionTiles(region)){const a=cell(doc,x,y);if(a.stairs&&a.stairBase!==undefined){const q=stairProfile(a),base=Math.round((q.base+delta)*1e9)/1e9;if(base>=0&&base+q.rise<=8+1e-8)edits.push([key(x,y),{...a,level:Math.floor(base),stairBase:base}]);continue;}const level=Math.max(0,Math.min(a.stairs?7:8,a.level+delta));if(level!==a.level){const next={...a,level};if(a.pier){const deck=a.pier.level+delta;if(deck<level||deck<0||deck>8)continue;next.pier={...a.pier,level:deck};}if(a.curves)next.curves=a.curves.map(q=>q.kind==='height'&&(q.under||!selectionContains(region,q.underX,q.underY))?{...q,lift:Math.max(-8,Math.min(8,(q.lift||0)+level-a.level))}:q);edits.push([key(x,y),next]);}}return edits;}

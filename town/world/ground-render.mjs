@@ -1,8 +1,9 @@
-import {PAINT_GRID,PAINT_STEP,readPaint,materialKey} from './ground-paint.mjs?v=music-walls-1';
-import {sources,catalog} from './catalog.mjs?v=music-walls-1';
-import {cell,height} from './model.mjs?v=music-walls-1';
-import {drawPaving,drawPavingMaterial} from './paving.mjs?v=music-walls-1';
-import {groundTextures} from './ground-textures.mjs?v=music-walls-1';
+import {PAINT_GRID,PAINT_STEP,readPaint,materialKey} from './ground-paint.mjs?v=builder-tools-1';
+import {sources,catalog} from './catalog.mjs?v=builder-tools-1';
+import {cell,height} from './model.mjs?v=builder-tools-1';
+import {drawPaving,drawPavingMaterial} from './paving.mjs?v=builder-tools-1';
+import {groundTextures} from './ground-textures.mjs?v=builder-tools-1';
+import {drawAnimatedWater} from './water-motion.mjs?v=builder-tools-1';
 
 const tiles=new WeakMap(),fields=new WeakMap(),legacyFields=new Map();
 function canvas(size){const c=document.createElement('canvas');c.width=c.height=size;return c;}
@@ -17,6 +18,7 @@ export function groundTexture(surface){return groundTextures[surface]||sources.g
 export function drawMaterial(c,d,a,x,y,X,Y,{raw=false}={}){
  const index=['grass','cobble','dirt','water'].indexOf(a.surface);
  if(a.surface==='cobble')(raw?drawPavingMaterial:drawPaving)(c,d,x,y,Y,a.paving);
+ else if(a.surface==='water')drawAnimatedWater(c,sources.ground[3],x,y,X,Y);
  else if(index>=0)c.drawImage(sources.ground[index],x%8*64,y%8*64,64,64,X,Y,64,64);
  else c.drawImage(groundTextures[a.surface],x%8*64,y%8*64,64,64,X,Y,64,64);
 }

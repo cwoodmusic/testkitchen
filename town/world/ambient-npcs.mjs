@@ -1,6 +1,6 @@
-import {blocked,height,surfaceAt,cell,segment,COLS,ROWS,TILE} from './model.mjs?v=music-walls-1';
-import {movePlayer} from './physics.mjs?v=music-walls-1';
-import {WALK_SPEED,GAIT_PER_PIXEL,PLAYER_SCALE} from './player-settings.mjs?v=music-walls-1';
+import {blocked,height,surfaceAt,cell,segment,COLS,ROWS,TILE} from './model.mjs?v=builder-tools-1';
+import {movePlayer} from './physics.mjs?v=builder-tools-1';
+import {WALK_SPEED,GAIT_PER_PIXEL,PLAYER_SCALE} from './player-settings.mjs?v=builder-tools-1';
 
 export const AMBIENT_RESIDENTS=Object.freeze(['bach','mozart','clara','nina','joplin','miles','chopin','haydn','vee-jay','zizi','beethoven','ellington','ella','handel','vivaldi','metronome','schoenberg','dj']);
 const clamp=(v,a,b)=>Math.max(a,Math.min(b,v));

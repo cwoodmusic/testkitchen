@@ -1,6 +1,7 @@
-import {COLS,ROWS,TILE,cell,key} from '../world/model.mjs?v=music-walls-1';
-import {roundedUnder,curveUnder} from '../world/round-geometry.mjs?v=music-walls-1';
-import {MASK_GRID,MASK_STEP,encodeMask} from '../world/organic-mask.mjs?v=music-walls-1';
+import {COLS,ROWS,TILE,cell,key} from '../world/model.mjs?v=builder-tools-1';
+import {roundedUnder,curveUnder} from '../world/round-geometry.mjs?v=builder-tools-1';
+import {MASK_GRID,MASK_STEP,encodeMask} from '../world/organic-mask.mjs?v=builder-tools-1';
+import {readPaint,encodePaint,materialKey} from '../world/ground-paint.mjs?v=builder-tools-1';
 
 const PIXELS=MASK_GRID*MASK_GRID;
 const clamp=(n,a,b)=>Math.max(a,Math.min(b,n));
@@ -22,16 +23,23 @@ export function planOrganicEdges(doc,p,{size=192,strength=.5}={}){
  if(!p||!Number.isFinite(p.x)||!Number.isFinite(p.y))return fail('Brush along a shoreline or terrain edge.');
  const amount=clamp(Number(strength)||0,0,1),radius=clamp(Number(size)||192,16,960)/2;
  if(!amount)return fail('Increase edge strength to shape this shoreline.');
- const samples=new Map(),tiles=new Map(),edits=new Map();
+ const samples=new Map(),tiles=new Map(),edits=new Map(),paints=new WeakMap();
+ function visibleMaterial(a,i,level){
+  let field;
+  if(a.paint){if(!paints.has(a.paint))paints.set(a.paint,readPaint(a));field=paints.get(a.paint);}
+  let material=a;
+  if(field){let best=0;for(let j=1;j<field.materials.length;j++)if(field.weights[i*field.materials.length+j]>field.weights[i*field.materials.length+best])best=j;material=field.materials[best];}
+  return {material:{surface:material.surface,level,...(material.surface==='cobble'?{paving:material.paving||'auto'}:{})},field,index:i};
+ }
  function sample(gx,gy){
   const id=`${gx},${gy}`;if(samples.has(id))return samples.get(id);
   const x=Math.floor(gx/MASK_GRID),y=Math.floor(gy/MASK_GRID);if(x<0||y<0||x>=COLS||y>=ROWS)return null;
   const a=cell(doc,x,y),X=(gx+.5)*MASK_STEP,Y=(gy+.5)*MASK_STEP,q=roundedUnder(doc,a,X,Y),under=q?curveUnder(doc,q):a;
-  const material={...snapshot(under),level:q?.kind==='height'?under.level:a.level},value={material,id:signature(material),x,y,protected:!!(a.stairs||a.bridge)};samples.set(id,value);return value;
+  const visible=visibleMaterial(under,(gy%MASK_GRID+MASK_GRID)%MASK_GRID*MASK_GRID+(gx%MASK_GRID+MASK_GRID)%MASK_GRID,q?.kind==='height'?under.level:a.level),material=visible.material,value={...visible,material,id:signature(material),x,y,protected:!!(a.stairs||a.bridge)};samples.set(id,value);return value;
  }
  function tile(x,y){
   const k=key(x,y);if(tiles.has(k))return tiles.get(k);const a=cell(doc,x,y),materials=new Map(),grid=[];
-  if(!a.curves?.length){const material=snapshot(a),id=signature(material),s={material,id,x,y,protected:!!(a.stairs||a.bridge)},value={a,grid:new Array(PIXELS).fill(s),materials:new Map([[id,material]])};tiles.set(k,value);return value;}
+  if(!a.curves?.length&&!a.paint){const material=snapshot(a),id=signature(material),s={material,id,x,y,protected:!!(a.stairs||a.bridge)},value={a,grid:new Array(PIXELS).fill(s),materials:new Map([[id,material]])};tiles.set(k,value);return value;}
   for(let gy=0;gy<MASK_GRID;gy++)for(let gx=0;gx<MASK_GRID;gx++){const s=sample(x*MASK_GRID+gx,y*MASK_GRID+gy);grid.push(s);materials.set(s.id,s.material);}
   const value={a,grid,materials};tiles.set(k,value);return value;
  }
@@ -39,7 +47,7 @@ export function planOrganicEdges(doc,p,{size=192,strength=.5}={}){
  let count=0;
  for(let y=y0;y<=y1;y++)for(let x=x0;x<=x1;x++){
   const flat=cell(doc,x,y);
-  if(!flat.curves?.length&&[-1,0,1].every(dy=>[-1,0,1].every(dx=>{const b=cell(doc,x+dx,y+dy);return !b.curves?.length&&signature(b)===signature(flat);})))continue;
+  if(!flat.curves?.length&&!flat.paint&&[-1,0,1].every(dy=>[-1,0,1].every(dx=>{const b=cell(doc,x+dx,y+dy);return !b.curves?.length&&!b.paint&&signature(b)===signature(flat);})))continue;
   const current=tile(x,y),a=current.a;if(a.stairs||a.bridge||current.materials.size>2)continue;
   const pair=new Map(current.materials);
   if(pair.size===1){
@@ -70,7 +78,23 @@ export function planOrganicEdges(doc,p,{size=192,strength=.5}={}){
    if(wanted!==old){mask[i]=wanted;changed=true;}
   }
   if(!changed)continue;
-  const fore=snapshot(signature(a)===fg?a:foreground),back=snapshot(background),next={...a,...fore};delete next.curves;if(fore.paint===undefined)delete next.paint;if(fore.paving===undefined)delete next.paving;
+  // A painted tile's base surface can differ from the color actually visible
+  // in the brush. Preserve blends at unchanged samples; newly shaped samples
+  // receive the material being extended, rather than a neighboring paint map.
+  function layer(material,id,value){
+   const out=snapshot(material);if(!current.grid.some(s=>s.field))return out;
+   const materials=[],lookup=new Map(),channels=[];
+   const channel=m=>{const k=materialKey(m);if(!lookup.has(k)){lookup.set(k,materials.length);materials.push(m);channels.push(new Float64Array(PIXELS));}return channels[lookup.get(k)];};
+   for(let i=0;i<PIXELS;i++){
+    const old=current.grid[i];
+    if(mask[i]===value&&old.id===id&&old.field){for(let j=0;j<old.field.materials.length;j++)channel(old.field.materials[j])[i]=old.field.weights[old.index*old.field.materials.length+j];}
+    else channel(material)[i]=255;
+   }
+   const weights=new Float64Array(PIXELS*materials.length);for(let i=0;i<PIXELS;i++)for(let j=0;j<materials.length;j++)weights[i*materials.length+j]=channels[j][i];
+   const paint=encodePaint(materials,weights);if(paint.materials.length>1)out.paint=paint;
+   return out;
+  }
+  const fore=layer(foreground,fg,1),back=layer(background,bg,0),next={...a,...fore};delete next.curves;if(fore.paint===undefined)delete next.paint;if(fore.paving===undefined)delete next.paving;if(next.surface!==a.surface||next.paint!==a.paint)delete next.sidewalkCurb;
   let kept=0;for(const value of mask)kept+=value;
   if(!kept){next.surface=back.surface;next.level=back.level;if(back.paint!==undefined)next.paint=back.paint;else delete next.paint;if(back.paving!==undefined)next.paving=back.paving;else delete next.paving;}
   else if(kept<PIXELS)next.curves=[{kind:fore.level===back.level?'surface':'height',corner:'nw',cx:(x+1)*TILE,cy:(y+1)*TILE,r:TILE,underX:x,underY:y,under:back,mask:encodeMask(mask)}];

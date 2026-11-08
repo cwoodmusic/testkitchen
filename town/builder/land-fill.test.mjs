@@ -79,7 +79,7 @@ test('cobblestone fills distinguish the clicked paving from neighboring paving d
  assert.deepEqual(parseProject(JSON.stringify(d),new Set(['music-square','other-square'])),d);
 });
 
-test('soft-painted ground is selected by its visible material while other blend channels stay intact',()=>{
+test('soft-painted ground is selected by its visible material and filled solid while untouched samples stay intact',()=>{
  const d=blank(),materials=[{surface:'grass'},{surface:'sand'}],weights=new Float64Array(256*2);
  for(let i=0;i<256;i++){weights[i*2]=i%16<8?55:255;weights[i*2+1]=i%16<8?200:0;}
  d.cells['10,10']={surface:'grass',level:1,paint:encodePaint(materials,weights)};
@@ -87,8 +87,22 @@ test('soft-painted ground is selected by its visible material while other blend 
  const before=JSON.stringify(d);assert.equal(planLandFill(d,{x:650,y:650},{surface:'sand'}).edits.length,0);assert.equal(JSON.stringify(d),before);
  const result=planLandFill(d,{x:650,y:650},{surface:'wood'});assert.equal(result.count,1);apply(d,result);
  const actual=readPaint(d.cells['10,10']),keys=actual.materials.map(materialKey);
- for(let i=0;i<256;i++)for(let j=0;j<keys.length;j++)assert.equal(actual.weights[i*keys.length+j],keys[j]==='grass'?(i%16<8?55:255):keys[j]==='wood'&&i%16<8?200:0);
+ for(let i=0;i<256;i++)for(let j=0;j<keys.length;j++)assert.equal(actual.weights[i*keys.length+j],keys[j]==='grass'?(i%16<8?0:255):keys[j]==='wood'&&i%16<8?255:0);
  assert.equal(keys.includes('sand'),false);assert.equal(d.cells['11,10'].surface,'grass');assert.equal(d.cells['10,10'].level,1);
+ assert.deepEqual(parseProject(JSON.stringify(d),new Set()),d);
+});
+
+test('filling both sides of a soft organic boundary leaves no old grass channel or hidden curved paint',()=>{
+ const d=blank(),materials=[{surface:'sand'},{surface:'grass'}],weights=new Float64Array(256*2);
+ for(let i=0;i<256;i++){weights[i*2]=i%16<8?200:55;weights[i*2+1]=255-weights[i*2];}
+ const mask=Uint8Array.from({length:256},(_,i)=>i%16<8?1:0);
+ d.cells['10,10']={surface:'sand',level:1,paint:encodePaint(materials,weights),curves:[{kind:'surface',corner:'nw',cx:704,cy:704,r:64,underX:10,underY:10,under:{surface:'grass',level:1,paint:encodePaint(materials,weights)},mask:encodeMask(mask)}]};
+ const before=structuredClone(d);apply(d,planLandFill(d,{x:650,y:650},{surface:'dirt'}));
+ assert.equal(surfaceAt(d,650,650),'dirt');assert.equal(surfaceAt(d,690,650),'grass');
+ assert.equal(d.cells['10,10'].paint,undefined,'the invisible source pixels cannot bleed back into a filled foreground');
+ apply(d,planLandFill(d,{x:690,y:650},{surface:'dirt'}));
+ assert.deepEqual(d.cells['10,10'],{surface:'dirt',level:1});
+ for(let y=642;y<704;y+=4)for(let x=642;x<704;x+=4){assert.equal(surfaceAt(d,x,y),'dirt');assert.equal(height(d,x,y),height(before,x,y));}
  assert.deepEqual(parseProject(JSON.stringify(d),new Set()),d);
 });
 

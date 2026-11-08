@@ -4,6 +4,8 @@ import {blank,key,cell,height,surfaceAt,blocked,parseProject,History} from '../w
 import {decodeMask,validMask} from '../world/organic-mask.mjs';
 import {roundTerrain} from './round-terrain.mjs';
 import {planOrganicEdges} from './organic-edges.mjs';
+import {readPaint,encodePaint,materialKey} from '../world/ground-paint.mjs';
+import {roundedUnder,curveUnder} from '../world/round-geometry.mjs';
 
 const apply=(doc,plan)=>Object.assign(doc.cells,Object.fromEntries(plan.edits));
 function beach({high=0,low=0}={}){
@@ -23,6 +25,28 @@ test('flat interiors, zero strength and invalid coordinates make no terrain edit
  const d=blank();assert.equal(planOrganicEdges(d,{x:8192,y:6144},{size:512,strength:1}).edits.length,0);
  const shore=beach();assert.equal(planOrganicEdges(shore,{x:8192,y:6144},{strength:0}).edits.length,0);
  assert.equal(planOrganicEdges(shore,{x:NaN,y:6144}).edits.length,0);assert.equal(planOrganicEdges(shore,{x:-2000,y:-2000}).edits.length,0);
+});
+
+test('organic edges see filled or painted material rather than its old grass base',()=>{
+ const plain=blank(),painted=blank();
+ for(let y=90;y<=102;y++)for(let x=122;x<=133;x++){
+  plain.cells[key(x,y)]={surface:x<128?'dirt':'grass',level:0};
+  painted.cells[key(x,y)]=x<128?{surface:'grass',level:0,paint:encodePaint([{surface:'dirt'}],new Uint8Array(256).fill(255))}:{surface:'grass',level:0};
+ }
+ const p={x:8192,y:6144},options={size:384,strength:1},a=planOrganicEdges(plain,p,options),b=planOrganicEdges(painted,p,options);
+ assert(a.count>0);assert.equal(b.count,a.count);assert.deepEqual(b.edits,a.edits);
+ apply(painted,b);assert.deepEqual(parseProject(JSON.stringify(painted),new Set()),painted);
+});
+
+test('shaping a blended material edge preserves unchanged samples outside the brush',()=>{
+ const d=blank(),materials=[{surface:'grass'},{surface:'dirt'}],weights=new Float64Array(512);
+ for(let i=0;i<256;i++){weights[i*2]=i%16<8?45:220;weights[i*2+1]=255-weights[i*2];}
+ for(let y=94;y<=98;y++)for(let x=126;x<=130;x++)d.cells[key(x,y)]={surface:x<128?'dirt':'grass',level:1};
+ d.cells['128,96']={surface:'grass',level:1,paint:encodePaint(materials,weights)};
+ const at=(doc,x,y)=>{const a=cell(doc,Math.floor(x/64),Math.floor(y/64)),q=roundedUnder(doc,a,x,y),f=readPaint(q?curveUnder(doc,q):a),i=(Math.floor(y%64/4)*16+Math.floor(x%64/4))*f.materials.length;return Object.fromEntries(f.materials.map((m,j)=>[materialKey(m),f.weights[i+j]]).filter(([,v])=>v));};
+ const before=structuredClone(d),p={x:8224,y:6176},size=64,result=planOrganicEdges(d,p,{size,strength:1});assert(result.count>0);apply(d,result);
+ for(let y=6146;y<6208;y+=4)for(let x=8194;x<8256;x+=4)if(Math.hypot(x-p.x,y-p.y)>=size/2)assert.deepEqual(at(d,x,y),at(before,x,y));
+ assert.deepEqual(parseProject(JSON.stringify(d),new Set()),d);
 });
 
 test('a dab changes only its painted boundary band, leaving the rest of the beach untouched',()=>{
