@@ -1,9 +1,11 @@
-import {registerDecor} from './decor-pack.mjs?v=urban-town-1';
-import {arcadeGeometry,drawArcade} from './arcade.mjs?v=urban-town-1';
-import {constructionArt,stairArt,stairTreadBounds,overgrowthArt,estateArt,cliffDecorArt} from './detail-art.mjs?v=urban-town-1';
-import {estateDefinitions,estateBoxes} from './estates.mjs?v=urban-town-1';
-import {townArtSources,house} from '../art.mjs?v=urban-town-1';
+import {registerDecor} from './decor-pack.mjs?v=urban-assets-2';
+import {arcadeGeometry,drawArcade} from './arcade.mjs?v=urban-assets-2';
+import {constructionArt,stairArt,stairTreadBounds,overgrowthArt,estateArt,cliffDecorArt} from './detail-art.mjs?v=urban-assets-2';
+import {estateDefinitions,estateBoxes} from './estates.mjs?v=urban-assets-2';
+import {townArtSources,house} from '../art.mjs?v=urban-assets-2';
 import {homeGeometry,ARCHITECTURES} from '../model.mjs';
+import {registerUrbanDetails} from './urban-kit.mjs?v=urban-assets-2';
+import {registerUrbanRoads} from './urban-roads.mjs?v=urban-assets-2';
 export const sources=townArtSources(),catalog=new Map();
 function add(id,name,group,w,h,draw,boxes=[],layer='objects'){const a={id,name,group,w:Math.ceil(w),h:Math.ceil(h),boxes,layer};a.draw=draw;let cached;Object.defineProperty(a,'canvas',{get(){if(!cached){cached=document.createElement('canvas');cached.width=a.w;cached.height=a.h;draw(cached.getContext('2d'));}return cached;}});catalog.set(id,a);return a;}
 function sprite(group,i,name,w,boxes,layer){const s=sources[group][i],h=w*s.sh/s.sw;return add(`${group}-${i}-${w}`,name,group,w,h,c=>c.drawImage(s.image,s.sx,s.sy,s.sw,s.sh,0,0,w,h),boxes?.(w,h)||[],layer);}
@@ -40,4 +42,9 @@ for(const def of [
 for(const[i,id,name,w]of [[0,'cliff-ivy','Cliff ivy cascade',256],[1,'cliff-roses','Cliff climbing roses',240],[2,'cliff-roots','Hanging cliff roots',192],[3,'cliff-ledge','Fern-covered rock ledge',224],[4,'cliff-lantern','Cliff wall lantern',64],[5,'cliff-relief','Cliff lyre relief',128]]){const image=cliffDecorArt[i],h=w*image.height/image.width,a=add(id,name,'cliff faces',w,h,c=>c.drawImage(image,0,0,w,h));a.mountDefault=true;a.overhang=i<4;}
 
 await registerDecor(catalog);
+registerUrbanRoads(add);
+await registerUrbanDetails(add);
+// Existing street furniture belongs in the city kit as well as its original
+// category. Keep its saved-map ID, artwork and collision intact.
+for(const a of catalog.values())if(a.urban||a.group==='street furniture'||['decor-14-01','decor-14-02','decor-14-03','decor-09-02','props-4-960','music-square','coda-arcade'].includes(a.id))a.kit='urban';
 export async function preparePlacedArt(d){await Promise.all(d.objects.map(o=>catalog.get(o.asset)?.ensureFull?.()));}

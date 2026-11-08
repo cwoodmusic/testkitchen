@@ -1,7 +1,7 @@
 // Material weights live below the terrain grid: a 4-world-pixel sample keeps
 // round brushes smooth while remaining compact in portable version-1 maps.
 export const PAINT_GRID=16,PAINT_STEP=4;
-export const groundMaterials=['grass','cobble','dirt','wood','sand'];
+export const groundMaterials=['grass','cobble','dirt','wood','sand','asphalt','sidewalk','brick'];
 const PIXELS=PAINT_GRID*PAINT_GRID,MAX_MATERIALS=8;
 const descriptor=m=>m.surface==='cobble'?{surface:'cobble',paving:m.paving||'auto'}:{surface:m.surface};
 export const materialKey=m=>m.surface==='cobble'?'cobble:'+(m.paving||'auto'):m.surface;

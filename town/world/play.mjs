@@ -1,7 +1,7 @@
-import {catalog,preparePlacedArt,render,resizeSurface,findStart,movePlayer,toggleGate,follow,PLAYER_SCALE,GAIT_PER_PIXEL} from './runtime.mjs?v=urban-town-1';
-import {loadProject} from './storage.mjs?v=urban-town-1';
-import {createUrbanController} from './urban.mjs?v=urban-town-1';
-import {createUrbanTour} from './urban-tour.mjs?v=urban-town-1';
+import {catalog,preparePlacedArt,render,resizeSurface,findStart,movePlayer,toggleGate,follow,PLAYER_SCALE,GAIT_PER_PIXEL} from './runtime.mjs?v=urban-assets-2';
+import {loadProject} from './storage.mjs?v=urban-assets-2';
+import {createUrbanController} from './urban.mjs?v=urban-assets-2';
+import {createUrbanTour} from './urban-tour.mjs?v=urban-assets-2';
 const canvas=document.getElementById('world'),route=new URLSearchParams(location.search),tour=route.get('map')!=='builder',preview=route.get('urban')==='1';
 document.querySelectorAll('body > :not(#world):not(script)').forEach(e=>e.remove());
 const header=document.createElement('header'),title=document.createElement('h1'),nav=document.createElement('nav');

@@ -1,0 +1,283 @@
+{
+  "file": "street-details.png",
+  "width": 1254,
+  "height": 1254,
+  "items": [
+    {
+      "id": "urban-hydrant-red",
+      "name": "Red cast-iron fire hydrant",
+      "x": 67,
+      "y": 15,
+      "w": 194,
+      "h": 294,
+      "worldW": 58.07,
+      "worldH": 88.0,
+      "layer": "objects",
+      "boxes": [
+        {
+          "x": 9.29,
+          "y": 66.88,
+          "w": 39.49,
+          "h": 19.36
+        }
+      ]
+    },
+    {
+      "id": "urban-hydrant-teal",
+      "name": "Teal cast-iron fire hydrant",
+      "x": 382,
+      "y": 15,
+      "w": 194,
+      "h": 294,
+      "worldW": 58.07,
+      "worldH": 88.0,
+      "layer": "objects",
+      "boxes": [
+        {
+          "x": 9.29,
+          "y": 66.88,
+          "w": 39.49,
+          "h": 19.36
+        }
+      ]
+    },
+    {
+      "id": "urban-hydrant-brass",
+      "name": "Weathered brass fire hydrant",
+      "x": 695,
+      "y": 15,
+      "w": 194,
+      "h": 294,
+      "worldW": 58.07,
+      "worldH": 88.0,
+      "layer": "objects",
+      "boxes": [
+        {
+          "x": 9.29,
+          "y": 66.88,
+          "w": 39.49,
+          "h": 19.36
+        }
+      ]
+    },
+    {
+      "id": "urban-manhole-lyre",
+      "name": "Lyre-pattern manhole cover",
+      "x": 964,
+      "y": 80,
+      "w": 266,
+      "h": 188,
+      "worldW": 96.0,
+      "worldH": 67.85,
+      "layer": "ground",
+      "boxes": []
+    },
+    {
+      "id": "urban-manhole-iron",
+      "name": "Round iron manhole cover",
+      "x": 28,
+      "y": 387,
+      "w": 258,
+      "h": 189,
+      "worldW": 96.0,
+      "worldH": 70.33,
+      "layer": "ground",
+      "boxes": []
+    },
+    {
+      "id": "urban-utility-cover",
+      "name": "Rectangular utility cover",
+      "x": 334,
+      "y": 401,
+      "w": 270,
+      "h": 148,
+      "worldW": 128,
+      "worldH": 70.16,
+      "layer": "ground",
+      "boxes": []
+    },
+    {
+      "id": "urban-storm-drain",
+      "name": "Storm drain grate",
+      "x": 648,
+      "y": 405,
+      "w": 271,
+      "h": 140,
+      "worldW": 128.0,
+      "worldH": 66.13,
+      "layer": "ground",
+      "boxes": []
+    },
+    {
+      "id": "urban-bollard",
+      "name": "Ornate iron street bollard",
+      "x": 1037,
+      "y": 322,
+      "w": 122,
+      "h": 293,
+      "worldW": 26.65,
+      "worldH": 64.0,
+      "layer": "objects",
+      "boxes": [
+        {
+          "x": 4.26,
+          "y": 48.64,
+          "w": 18.12,
+          "h": 14.08
+        }
+      ]
+    },
+    {
+      "id": "urban-parking-meter",
+      "name": "Vintage parking meter",
+      "x": 110,
+      "y": 642,
+      "w": 92,
+      "h": 292,
+      "worldW": 40.33,
+      "worldH": 128.0,
+      "layer": "objects",
+      "boxes": [
+        {
+          "x": 10.89,
+          "y": 112.0,
+          "w": 18.55,
+          "h": 16
+        }
+      ]
+    },
+    {
+      "id": "urban-traffic-light",
+      "name": "Vintage traffic light",
+      "x": 421,
+      "y": 625,
+      "w": 122,
+      "h": 309,
+      "worldW": 88.44,
+      "worldH": 224.0,
+      "layer": "objects",
+      "boxes": [
+        {
+          "x": 23.88,
+          "y": 208.0,
+          "w": 40.68,
+          "h": 16
+        }
+      ]
+    },
+    {
+      "id": "urban-bus-stop",
+      "name": "Musical bus stop sign",
+      "x": 723,
+      "y": 629,
+      "w": 123,
+      "h": 305,
+      "worldW": 90.33,
+      "worldH": 224.0,
+      "layer": "objects",
+      "boxes": [
+        {
+          "x": 24.39,
+          "y": 208.0,
+          "w": 41.55,
+          "h": 16
+        }
+      ]
+    },
+    {
+      "id": "urban-trash-can",
+      "name": "Ornate public trash can",
+      "x": 1019,
+      "y": 672,
+      "w": 159,
+      "h": 240,
+      "worldW": 58.3,
+      "worldH": 88.0,
+      "layer": "objects",
+      "boxes": [
+        {
+          "x": 7.0,
+          "y": 56.32,
+          "w": 44.31,
+          "h": 28.16
+        }
+      ]
+    },
+    {
+      "id": "urban-recycling-bin",
+      "name": "Blue recycling bin",
+      "x": 75,
+      "y": 978,
+      "w": 164,
+      "h": 252,
+      "worldW": 62.48,
+      "worldH": 96.0,
+      "layer": "objects",
+      "boxes": [
+        {
+          "x": 7.5,
+          "y": 61.44,
+          "w": 47.48,
+          "h": 30.72
+        }
+      ]
+    },
+    {
+      "id": "urban-newspaper-box",
+      "name": "Red newspaper box",
+      "x": 383,
+      "y": 966,
+      "w": 170,
+      "h": 267,
+      "worldW": 71.31,
+      "worldH": 112.0,
+      "layer": "objects",
+      "boxes": [
+        {
+          "x": 8.56,
+          "y": 71.68,
+          "w": 54.2,
+          "h": 35.84
+        }
+      ]
+    },
+    {
+      "id": "urban-bicycle-rack",
+      "name": "Iron bicycle parking rack",
+      "x": 639,
+      "y": 1024,
+      "w": 284,
+      "h": 186,
+      "worldW": 160.0,
+      "worldH": 104.79,
+      "layer": "objects",
+      "boxes": [
+        {
+          "x": 2,
+          "y": 86.79,
+          "w": 156.0,
+          "h": 18
+        }
+      ]
+    },
+    {
+      "id": "urban-street-planter",
+      "name": "Limestone street planter",
+      "x": 961,
+      "y": 959,
+      "w": 270,
+      "h": 277,
+      "worldW": 140.36,
+      "worldH": 144.0,
+      "layer": "objects",
+      "boxes": [
+        {
+          "x": 16.84,
+          "y": 100.8,
+          "w": 106.67,
+          "h": 40.32
+        }
+      ]
+    }
+  ]
+}

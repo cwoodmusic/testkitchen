@@ -1,11 +1,11 @@
-import {drawSelection} from './selection-view.mjs?v=urban-town-1';
-import {drawTerrain} from './terrain-render.mjs?v=urban-town-1';
-import {mountPose} from './cliff-mount.mjs?v=urban-town-1';
-import {elevationView} from './elevation-view.mjs?v=urban-town-1';
-import {barrierRuns,drawBarrierRun,barrierPosts,drawPost} from './construction.mjs?v=urban-town-1';
-import {TILE,RISE,COLS,ROWS,cell,height,segment} from './model.mjs?v=urban-town-1';
-import {catalog} from './catalog.mjs?v=urban-town-1';
-import {assetImage} from './asset-color.mjs?v=urban-town-1';
+import {drawSelection} from './selection-view.mjs?v=urban-assets-2';
+import {drawTerrain} from './terrain-render.mjs?v=urban-assets-2';
+import {mountPose} from './cliff-mount.mjs?v=urban-assets-2';
+import {elevationView} from './elevation-view.mjs?v=urban-assets-2';
+import {barrierRuns,drawBarrierRun,barrierPosts,drawPost} from './construction.mjs?v=urban-assets-2';
+import {TILE,RISE,COLS,ROWS,cell,height,segment} from './model.mjs?v=urban-assets-2';
+import {catalog} from './catalog.mjs?v=urban-assets-2';
+import {assetImage} from './asset-color.mjs?v=urban-assets-2';
 function drawBrush(c,d,brush,zoom){
  const radius=brush.size/2,color=brush.blend?'#b7eddf':'#ffe2a1';
  c.save();

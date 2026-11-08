@@ -1,5 +1,5 @@
-import {cell,height,segment,RISE,stairProfile} from './model.mjs?v=urban-town-1';
-import {wallArt,constructionArt,stairArt,stairTreadBounds,cliffArt} from './detail-art.mjs?v=urban-town-1';
+import {cell,height,segment,RISE,stairProfile} from './model.mjs?v=urban-assets-2';
+import {wallArt,constructionArt,stairArt,stairTreadBounds,cliffArt} from './detail-art.mjs?v=urban-assets-2';
 export const barrierHeight=style=>style==='iron'?144:style==='wood'||style==='rail'?136:160;
 function piece(c,img,sx,sy,sw,sh,x,y,w,h){if(sw>0&&sh>0&&w>0&&h>0)c.drawImage(img,sx,sy,sw,sh,x,y,w,h);}
 // Clip one continuous rock field to the heights on BOTH sides of an edge.

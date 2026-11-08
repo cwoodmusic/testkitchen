@@ -1,5 +1,5 @@
-// The urban district is the town entrance. Authored maps use the same engine;
-// the earlier valley remains available without replacing saved builder maps.
+// Urban buildings and street pieces are builder assets. Their example scene
+// is optional; opening the town keeps the existing town route.
 const townRoute=new URLSearchParams(location.search);
-if(townRoute.get('original')==='1')await import('./town.mjs?v=urban-town-1');
-else await import('./world/play.mjs?v=urban-town-1');
+if(townRoute.get('map')==='builder'||townRoute.get('urban')==='1')await import('./world/play.mjs?v=urban-assets-2');
+else await import('./town.mjs?v=urban-assets-2');

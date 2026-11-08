@@ -3,3 +3,7 @@
 #mapTools{position:absolute;left:12px;top:49px;display:flex;align-items:center;gap:6px;flex-wrap:wrap;max-width:calc(100% - 24px);padding:7px;background:#17291fed;border:1px solid #6b805d;border-radius:6px}#mapTools label{display:flex;align-items:center;gap:5px;margin:0}#mapTools select{width:auto;margin:0}#mapTools button:first-child{border-color:#d5bd7c;color:#ffe3a2}#hoverLevel{color:#d5dfc5;padding:0 5px}#heightLegend{position:absolute;right:12px;bottom:52px;padding:12px;background:#17291ff2;border:1px solid #9aab7d;border-radius:6px;max-width:280px}#levelSwatches{display:flex;gap:3px;margin:9px 0}#levelSwatches span{width:24px;height:28px;text-align:center;padding:5px 0;color:white;text-shadow:0 1px 2px #000}#heightLegend small{font-size:10px;color:#c8d4be}header{overflow-x:auto;white-space:nowrap;flex-shrink:0}header>*{flex-shrink:0}button:disabled{opacity:.45;cursor:default}
 
 #groundBrushSettings{padding:1px 9px 7px;margin:9px -3px;border:1px solid #647f63;border-radius:6px;background:#294334}#groundBrushSettings output{float:right;color:#f0d58d}#groundBrushSettings input[type=range]{padding:0;accent-color:#d3b971}#groundBrushSettings p{margin:8px 0 0;font-size:12px}
+
+#libraryShortcuts{display:grid;grid-template-columns:1fr 1fr;gap:6px}#urbanKit{border-color:#c3a66a;color:#f2d69d}#urbanKitHelp{font-size:11px;margin:9px 0}
+
+#urbanPack{grid-column:1/-1}

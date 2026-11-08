@@ -1,8 +1,8 @@
-import {validPaint} from './ground-paint.mjs?v=urban-town-1';
-import {roundedUnder,curveUnder} from './round-geometry.mjs?v=urban-town-1';
+import {validPaint} from './ground-paint.mjs?v=urban-assets-2';
+import {roundedUnder,curveUnder} from './round-geometry.mjs?v=urban-assets-2';
 export const TILE=64,RISE=48,COLS=256,ROWS=192;
 export const MAX_PROJECT_LENGTH=64*1024*1024;
-export const surfaces=['grass','cobble','dirt','water','wood','sand'];
+export const surfaces=['grass','cobble','dirt','water','wood','sand','asphalt','sidewalk','brick'];
 export const barriers=['wood','rail','iron','limestone','brick','plaster'];
 export const directions=['north','south','east','west'];
 export function blank(){return {version:1,name:'My Coda Town',cells:{},edges:{},objects:[],spawn:{x:8192,y:6144}};}

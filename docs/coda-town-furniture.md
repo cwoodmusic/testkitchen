@@ -1,6 +1,6 @@
 # Coda Town furniture
 
-Open [Coda Town](https://cwoodmusic.github.io/testkitchen/town/) for the urban district or [the unlocked tour](https://cwoodmusic.github.io/testkitchen/town/?urban=1) to preview every apartment. The builder retains your existing saved map and includes both buildings in the urban buildings category. Press E at a door, lift, stairwell, or showroom display. Floor 15 is your apartment; choose Furnish apartment to place, move, or put away purchases. Scroll to zoom.
+Open [Town Builder · Urban kit](https://cwoodmusic.github.io/testkitchen/town/builder/?kit=urban) to place the tower and furniture store in your own map. The [optional example scene](https://cwoodmusic.github.io/testkitchen/town/?urban=1) demonstrates the buildings and previews every apartment. Press E at a door, lift, stairwell, or showroom display during Walk test or Play this town. Floor 15 is your apartment; choose Furnish apartment to place, move, or put away purchases. Scroll to zoom.
 
 The furniture store uses the existing Notes wallet. Each purchase unlocks one décor item permanently; buying an owned item again costs no Notes. Furniture ownership is included in the private classroom wallet schema. Apartment layouts use the local-only `codaUrbanRoomV1` store and do not upload room designs.
 
