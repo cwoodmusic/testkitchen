@@ -1,6 +1,6 @@
 # Coda Town festival map
 
-[Download and preview the map](../town/maps/) · [Festival project JSON](../town/maps/coda-town-festival.json) · [Town Builder](../town/builder/?kit=urban)
+[Download and preview the map](../town/maps/) · [Festival project JSON](../town/maps/coda-town-festival.json) · [Town Builder](../town/builder/?kit=urban&v=festival-town-1)
 
 The uploaded town has over 100 individually movable additions: a gazebo music garden, arcade record corner, café and market pockets, festival lighting, and asymmetric gardens framing the apartment approach. The original 43 objects, terrain, roads, levels and spawn remain unchanged. The beach and southeast area remain clear.
 
