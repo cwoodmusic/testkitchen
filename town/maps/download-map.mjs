@@ -6,6 +6,7 @@ link.addEventListener('click',async event=>{
  if(busy)return;
  busy=true;
  const label=link.textContent;
+ const filename=link.download||new URL(link.href).pathname.split('/').pop();
  link.setAttribute('aria-disabled','true');
  link.textContent='Preparing JSON…';
  status.hidden=true;
@@ -16,10 +17,10 @@ link.addEventListener('click',async event=>{
   JSON.parse(text);
   const url=URL.createObjectURL(new Blob([text],{type:'application/json'}));
   const file=document.createElement('a');
-  file.href=url;file.download='coda-town-festival.json';
+  file.href=url;file.download=filename;
   document.body.append(file);file.click();file.remove();
   setTimeout(()=>URL.revokeObjectURL(url),30000);
-  status.textContent='Download started. In Town Builder, choose Open and select coda-town-festival.json.';
+  status.textContent=`Download started. In Town Builder, choose Open and select ${filename}.`;
  }catch(error){
   status.textContent=`${error.message} Please try downloading again.`;
  }finally{
