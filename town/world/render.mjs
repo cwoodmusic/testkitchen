@@ -1,14 +1,14 @@
-import {drawSelection} from './selection-view.mjs?v=clean-edges-1';
-import {drawTerrain} from './terrain-render.mjs?v=clean-edges-1';
-import {mountPose} from './cliff-mount.mjs?v=clean-edges-1';
-import {elevationView} from './elevation-view.mjs?v=clean-edges-1';
-import {barrierRuns,drawBarrierRun,barrierPosts,drawPost} from './construction.mjs?v=clean-edges-1';
-import {TILE,RISE,COLS,ROWS,cell,height,segment} from './model.mjs?v=clean-edges-1';
-import {catalog} from './catalog.mjs?v=clean-edges-1';
-import {assetMapImage} from './asset-lawn.mjs?v=clean-edges-1';
-import {renderCityNight} from './city-night.mjs?v=clean-edges-1';
-import {setWaterTime} from './water-motion.mjs?v=clean-edges-1';
-import {drawFountainMotion} from './fountain-motion.mjs?v=clean-edges-1';
+import {drawSelection} from './selection-view.mjs?v=festival-town-1';
+import {drawTerrain} from './terrain-render.mjs?v=festival-town-1';
+import {mountPose} from './cliff-mount.mjs?v=festival-town-1';
+import {elevationView} from './elevation-view.mjs?v=festival-town-1';
+import {barrierRuns,drawBarrierRun,barrierPosts,drawPost} from './construction.mjs?v=festival-town-1';
+import {TILE,RISE,COLS,ROWS,cell,height,segment} from './model.mjs?v=festival-town-1';
+import {catalog} from './catalog.mjs?v=festival-town-1';
+import {assetMapImage} from './asset-lawn.mjs?v=festival-town-1';
+import {renderCityNight} from './city-night.mjs?v=festival-town-1';
+import {setWaterTime} from './water-motion.mjs?v=festival-town-1';
+import {drawFountainMotion} from './fountain-motion.mjs?v=festival-town-1';
 function drawBrush(c,d,brush,zoom){
  const radius=brush.size/2,color=brush.blend?'#b7eddf':'#ffe2a1';
  c.save();

@@ -1,0 +1,89 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="color-scheme" content="dark">
+  <meta name="description" content="Download the editable Coda Town festival map, with musical gathering places, gardens and glowing festival lights.">
+  <title>Coda Town · Festival map</title>
+  <style>
+    :root { color-scheme: dark; font-family: system-ui, sans-serif; color: #eee7d0; background: #14261f; }
+    * { box-sizing: border-box; }
+    body { margin: 0; line-height: 1.65; }
+    a { color: #efd193; text-underline-offset: .2em; }
+    a:hover { color: #fff2ce; }
+    a:focus-visible { outline: 3px solid #f3d58f; outline-offset: 5px; border-radius: 3px; }
+    .wrap { max-width: 1240px; margin: auto; padding-inline: clamp(20px, 4vw, 56px); }
+    header { padding-block: 26px; border-bottom: 1px solid #526952; }
+    header a { font-family: Georgia, serif; font-size: 1.25rem; text-decoration: none; }
+    main { padding-block: clamp(32px, 6vw, 64px); }
+    .eyebrow { color: #d7bd7e; font-size: .75rem; font-weight: 650; letter-spacing: .17em; text-transform: uppercase; }
+    h1, h2 { font-family: Georgia, serif; font-weight: 400; line-height: 1.15; }
+    h1 { margin: 10px 0 20px; font-size: clamp(2.5rem, 6vw, 4.4rem); }
+    h2 { margin: 0 0 16px; font-size: 1.8rem; }
+    p { color: #c9d0bb; }
+    .intro { max-width: 750px; font-size: 1.1rem; }
+    .actions { display: flex; flex-wrap: wrap; gap: 14px; margin-block: 28px 38px; }
+    .button { display: inline-flex; align-items: center; justify-content: center; min-height: 48px; padding: 10px 22px; border: 1px solid #d2b878; border-radius: 6px; text-decoration: none; font-weight: 650; }
+    .primary { color: #192b22; background: #e9cd8e; }
+    .primary:hover { color: #14241c; background: #ffe2a3; }
+    .secondary { background: #233a2e; }
+    .steps { margin-block: 0 40px; padding: clamp(22px, 3vw, 32px); border: 1px solid #536c53; border-radius: 12px; background: #20362b; }
+    ol { margin: 0; padding-left: 24px; color: #d8ddca; }
+    li + li { margin-top: 9px; }
+    strong { color: #f1e8cc; }
+    .previews { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 24px; }
+    figure { margin: 0; overflow: hidden; border: 1px solid #536c53; border-radius: 10px; background: #1d3228; }
+    .overview { margin-bottom: 24px; }
+    figure a { display: block; }
+    img { display: block; width: 100%; height: auto; }
+    figcaption { padding: 15px 20px; color: #d4d9c4; }
+    .details { margin-top: 36px; max-width: 800px; }
+    footer { margin-top: 46px; padding-top: 22px; border-top: 1px solid #526952; color: #a9b99f; font-size: .9rem; }
+    @media (max-width: 720px) { .previews { grid-template-columns: 1fr; } .actions a { flex: 1 1 220px; } }
+  </style>
+</head>
+<body>
+  <header><div class="wrap"><a href="../">❧ Coda Town</a></div></header>
+  <main class="wrap">
+    <div class="eyebrow">An editable festival for your island</div>
+    <h1>A little music.<br>A town full of light.</h1>
+    <p class="intro">Your Coda Town map, dressed for an evening together: a gazebo music garden, arcade record corner, flower and food market, and welcoming gardens around the residences.</p>
+    <div class="actions">
+      <a class="button primary" href="coda-town-festival.json" download>Download festival map · JSON</a>
+      <a class="button secondary" href="../builder/?kit=urban">Open Town Builder</a>
+    </div>
+    <section class="steps" aria-labelledby="open-heading">
+      <h2 id="open-heading">Make it yours</h2>
+      <ol>
+        <li>In Town Builder, use <strong>Save project</strong> to back up your current map.</li>
+        <li>Download the festival map above, then choose <strong>Open</strong> in the builder and select <strong>coda-town-festival.json</strong>.</li>
+        <li>Use <strong>Select / move</strong> to rearrange the decorations. Choose <strong>Walk test</strong> to explore, or <strong>Play this town</strong> to visit.</li>
+      </ol>
+    </section>
+    <section aria-labelledby="preview-heading">
+      <h2 id="preview-heading">Around the festival</h2>
+      <p>Captures from the town renderer. Open any image for a closer look.</p>
+      <figure class="overview">
+        <a href="../../docs/town-preview/coda-festival-full-night.jpg"><img src="../../docs/town-preview/coda-festival-full-night.jpg" width="2000" height="1600" alt="Full island at city night, showing the complete apartment tower, festival district, and the beach and southeast area left clear."></a>
+        <figcaption>The whole island · festival lights above, open beach and southeast below.</figcaption>
+      </figure>
+      <div class="previews">
+        <figure>
+          <a href="../../docs/town-preview/coda-festival-day.jpg"><img src="../../docs/town-preview/coda-festival-day.jpg" width="1900" height="1400" alt="Daylight view of Coda Town with a gazebo music garden, arcade record corner, Music Square and a landscaped market beside the furniture store."></a>
+          <figcaption>Daylight · gardens, gathering places and clear walking routes.</figcaption>
+        </figure>
+        <figure>
+          <a href="../../docs/town-preview/coda-festival-night.jpg"><img src="../../docs/town-preview/coda-festival-night.jpg" width="1900" height="1400" alt="The same Coda Town festival at night, with warm lantern strings, glowing building windows and bright arcade neon."></a>
+          <figcaption>City night · warm lanterns, festival color and arcade neon.</figcaption>
+        </figure>
+      </div>
+    </section>
+    <div class="details">
+      <p>Over 100 additions are individual movable assets, including the festival light strings and garden details. Your original buildings, terrain, roads, levels and spawn stay in place. The beach and southeast area remain clear for your next ideas.</p>
+      <p>Use the builder’s <strong>City night / Daylight</strong> button to compare lighting, and <strong>NPCs on / off</strong> to choose how busy the town feels while editing.</p>
+    </div>
+    <footer>Keep a downloaded project file whenever you want a portable copy of your work.</footer>
+  </main>
+</body>
+</html>
