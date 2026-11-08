@@ -29,4 +29,4 @@ These captures use the town’s shared renderer and placed assets. The JSON stor
 - The final project contains 151 objects: the original 43 and 108 additions. Source terrain, edges, spawn and original objects are preserved exactly; beach and southeast exclusions pass.
 - Production collision checks report zero errors or overlaps. All seven existing entrances remain reachable and pass walking checks. The related Node suite passes 197 tests.
 - Browser checks opened the project, dragged a festival string and a bench, and verified exact Undo/Redo, autosave reload and portable JSON export. No browser errors occurred.
-- The download page passes at 1440-pixel desktop and 390-pixel mobile widths, with all three previews loaded, no horizontal overflow, a keyboard-accessible download, and an exact JSON download. The page contains no scripts.
+- The download page passes at 1440-pixel desktop and 390-pixel mobile widths, with all three previews loaded, no horizontal overflow, a keyboard-accessible download, and an exact JSON download. Its download button fetches the project and saves a JSON file directly.

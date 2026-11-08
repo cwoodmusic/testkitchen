@@ -50,9 +50,10 @@
     <h1>A little music.<br>A town full of light.</h1>
     <p class="intro">Your Coda Town map, dressed for an evening together: a gazebo music garden, arcade record corner, flower and food market, and welcoming gardens around the residences.</p>
     <div class="actions">
-      <a class="button primary" href="coda-town-festival.json" download>Download festival map · JSON</a>
+      <a id="downloadMap" class="button primary" href="coda-town-festival.json" download="coda-town-festival.json">Download festival map · JSON</a>
       <a class="button secondary" href="../builder/?kit=urban&amp;v=festival-town-1">Open Town Builder</a>
     </div>
+    <p id="downloadStatus" role="status" hidden></p>
     <section class="steps" aria-labelledby="open-heading">
       <h2 id="open-heading">Make it yours</h2>
       <ol>
@@ -85,5 +86,6 @@
     </div>
     <footer>Keep a downloaded project file whenever you want a portable copy of your work.</footer>
   </main>
+  <script type="module" src="download-map.mjs?v=download-1"></script>
 </body>
 </html>
