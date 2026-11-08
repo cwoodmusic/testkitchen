@@ -1,9 +1,9 @@
-import {drawTerrain} from './terrain-render.mjs?v=stair-depth-1';
-import {mountPose} from './cliff-mount.mjs?v=stair-depth-1';
-import {elevationView} from './elevation-view.mjs?v=stair-depth-1';
-import {barrierRuns,drawBarrierRun,barrierPosts,drawPost} from './construction.mjs?v=stair-depth-1';
-import {TILE,RISE,COLS,ROWS,cell,height,segment} from './model.mjs?v=stair-depth-1';
-import {catalog} from './catalog.mjs?v=stair-depth-1';
+import {drawTerrain} from './terrain-render.mjs?v=stairs-topdown-1';
+import {mountPose} from './cliff-mount.mjs?v=stairs-topdown-1';
+import {elevationView} from './elevation-view.mjs?v=stairs-topdown-1';
+import {barrierRuns,drawBarrierRun,barrierPosts,drawPost} from './construction.mjs?v=stairs-topdown-1';
+import {TILE,RISE,COLS,ROWS,cell,height,segment} from './model.mjs?v=stairs-topdown-1';
+import {catalog} from './catalog.mjs?v=stairs-topdown-1';
 export function drawObject(c,o,d,collision=false,alpha=1){const a=catalog.get(o.asset);if(!a)return;const pose=mountPose(d,o);if(!pose)return;c.save();c.globalAlpha=alpha;c.translate(pose.x,pose.y);c.rotate(o.rotation*Math.PI/180);c.scale(o.scale,o.scale);c.drawImage(a.canvas,-a.w/2,-a.h*pose.offset);if(collision&&o.collision){c.fillStyle='#f5616260';c.strokeStyle='#ff9c8b';for(const p of a.polygons||[]){c.beginPath();c.moveTo(p[0][0]-a.w/2,p[0][1]-a.h);for(const[x,y]of p)c.lineTo(x-a.w/2,y-a.h);c.closePath();c.fill();c.stroke();}for(const b of a.boxes){c.fillRect(b.x-a.w/2,b.y-a.h,b.w,b.h);c.strokeRect(b.x-a.w/2,b.y-a.h,b.w,b.h);}}c.restore();}
 export function render(c,d,cam,w,h,opts={}){c.clearRect(0,0,w,h);c.fillStyle='#101f19';c.fillRect(0,0,w,h);c.save();c.translate(w/2,h/2);c.scale(cam.zoom,cam.zoom);c.translate(-cam.x,-cam.y);const left=cam.x-w/2/cam.zoom,top=cam.y-h/2/cam.zoom;const x0=Math.max(0,Math.floor(left/64)-1),x1=Math.min(COLS,Math.ceil((left+w/cam.zoom)/64)+1),y0=Math.max(0,Math.floor(top/64)-1),y1=Math.min(ROWS,Math.ceil((top+h/cam.zoom+RISE*9)/64)+1);if(opts.heightView==='plan'){elevationView(c,d,cam,w,h,opts);c.restore();return;}drawTerrain(c,d,{x0,x1,y0,y1},opts);
  const visible=d.objects.filter(o=>{const a=catalog.get(o.asset);if(!a)return false;const r=Math.max(a.w,a.h)*o.scale,pose=mountPose(d,o);return pose&&pose.x+r>left&&pose.x-r<left+w/cam.zoom&&pose.y+r>top&&pose.y-r<top+h/cam.zoom;});

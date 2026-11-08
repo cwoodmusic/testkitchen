@@ -1,6 +1,6 @@
-import {registerDecor} from './decor-pack.mjs?v=stair-depth-1';
+import {registerDecor} from './decor-pack.mjs?v=stairs-topdown-1';
 import {arcadeGeometry,drawArcade} from './arcade.mjs';
-import {constructionArt,overgrowthArt,estateArt,cliffDecorArt} from './detail-art.mjs?v=stair-depth-1';
+import {constructionArt,stairArt,stairTreadBounds,overgrowthArt,estateArt,cliffDecorArt} from './detail-art.mjs?v=stairs-topdown-1';
 import {estateDefinitions,estateBoxes} from './estates.mjs';
 import {townArtSources,house} from '../art.mjs';
 import {homeGeometry,ARCHITECTURES} from '../model.mjs';
@@ -18,7 +18,7 @@ const square=add('music-square','Music Square · complete piazza','landmarks',24
 // Replace legacy IDs in place so saved maps pick up the detailed artwork.
 for(let i=0;i<6;i++){const image=overgrowthArt[i],w=[448,448,512,448,448,384][i],h=w*image.height/image.width;add(i<4?`ivy-${i}`:`overgrowth-${i}`,['Trailing ivy','Climbing roses','Wisteria swag','Honeysuckle','Laurel hedge','Woodland ferns'][i],'overgrowth',w,h,c=>c.drawImage(image,0,0,w,h),[],'overgrowth');}
 for(const [i,name]of ['Oak picket fence','Timber rail fence','Musical iron fence','Limestone wall','Brick garden wall','Plaster garden wall'].entries()){const image=constructionArt[[3,3,7,0,1,2][i]],w=384,h=192;add(`construction-${i}`,name,'construction',w,h,c=>c.drawImage(image,0,0,w,h),[{x:0,y:170,w,h:22}]);}
-for(const [i,finish]of ['stone','wood','brick'].entries())add(`steps-${finish}`,`${finish} stair flight`,'construction',384,336,c=>c.drawImage(constructionArt[8+i],0,0,384,336),[],'ground');
+for(const finish of ['stone','wood','brick']){const image=stairArt[finish],b=stairTreadBounds(image);add(`steps-${finish}`,`${finish} stair flight`,'construction',384,336,c=>c.drawImage(image,b.x,b.y,b.w,b.h,0,0,384,336),[],'ground');}
 add('cliff-detail','Mossy limestone cliff section','construction',384,256,c=>c.drawImage(constructionArt[11],0,0,384,256),[{x:0,y:236,w:384,h:20}]);
 for(const a of estateDefinitions){const image=estateArt[a.index];const item=add(`estate-${a.id}`,a.name,'home estates',a.size,a.size,c=>{const pad=0;c.drawImage(image,image.width*pad,image.height*pad,image.width*(1-pad*2),image.height*(1-pad*2),0,0,a.size,a.size);},estateBoxes(a),'ground');item.pavingSource=image;item.resident=a.id;item.scene=true;}
 

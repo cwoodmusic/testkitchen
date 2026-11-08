@@ -1,4 +1,4 @@
-import {roundedUnder,curveUnder} from './round-geometry.mjs?v=stair-depth-1';
+import {roundedUnder,curveUnder} from './round-geometry.mjs?v=stairs-topdown-1';
 export const TILE=64,RISE=48,COLS=256,ROWS=192;
 export const surfaces=['grass','cobble','dirt','water','wood','sand'];
 export const barriers=['wood','rail','iron','limestone','brick','plaster'];

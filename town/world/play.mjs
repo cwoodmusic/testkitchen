@@ -1,5 +1,5 @@
-import {catalog,preparePlacedArt,render,resizeSurface,findStart,movePlayer,toggleGate,follow} from './runtime.mjs?v=stair-depth-1';
-import {loadProject} from './storage.mjs?v=stair-depth-1';
+import {catalog,preparePlacedArt,render,resizeSurface,findStart,movePlayer,toggleGate,follow} from './runtime.mjs?v=stairs-topdown-1';
+import {loadProject} from './storage.mjs?v=stairs-topdown-1';
 const canvas=document.getElementById('world');
 // Reuse the town route and arcade session bridge; replace the editor chrome
 // with gameplay controls while rendering the very same authored document.

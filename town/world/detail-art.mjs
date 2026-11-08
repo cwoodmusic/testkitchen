@@ -8,6 +8,8 @@ const [kit,foliage,cliff,...homes]=await Promise.all(['construction-detail.png',
 export const constructionArt=atlas(kit,4,3,true),overgrowthArt=atlas(foliage,3,2,true),estateArt=homes;
 export const wallArt={wood:constructionArt[3],rail:constructionArt[3],iron:constructionArt[7],limestone:constructionArt[0],brick:constructionArt[1],plaster:constructionArt[2]};
 export const stairArt={stone:constructionArt[8],wood:constructionArt[9],brick:constructionArt[10]};
+// The straight tread interior excludes the authored flight's perspective sides.
+export function stairTreadBounds(image){const x=Math.ceil(image.width*.18),y=Math.ceil(image.height*.04);return {x,y,w:image.width-2*x,h:image.height-2*y};}
 export const cliffArt=constructionArt[11];
 
 export const cliffDecorArt=atlas(cliff,3,2,true);

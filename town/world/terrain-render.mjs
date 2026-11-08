@@ -1,10 +1,10 @@
-import {shadeLowerGround,drawTerrainRims} from './edge-shading.mjs?v=stair-depth-1';
-import {drawRoundUnder,drawRoundCliff} from './round-render.mjs?v=stair-depth-1';
-import {clipCurves} from './round-geometry.mjs?v=stair-depth-1';
-import {drawPaving} from './paving.mjs?v=stair-depth-1';
-import {drawCliff,drawStairs} from './construction.mjs?v=stair-depth-1';
-import {RISE,COLS,ROWS,cell} from './model.mjs?v=stair-depth-1';
-import {sources} from './catalog.mjs?v=stair-depth-1';
+import {shadeLowerGround,drawTerrainRims} from './edge-shading.mjs?v=stairs-topdown-1';
+import {drawRoundUnder,drawRoundCliff} from './round-render.mjs?v=stairs-topdown-1';
+import {clipCurves} from './round-geometry.mjs?v=stairs-topdown-1';
+import {drawPaving} from './paving.mjs?v=stairs-topdown-1';
+import {drawCliff,drawStairs} from './construction.mjs?v=stairs-topdown-1';
+import {RISE,COLS,ROWS,cell} from './model.mjs?v=stairs-topdown-1';
+import {sources} from './catalog.mjs?v=stairs-topdown-1';
 const lawns=new WeakMap();
 function drawSurface(c,d,a,x,y,X,Y){
  const index=['grass','cobble','dirt','water'].indexOf(a.surface);

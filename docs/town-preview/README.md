@@ -101,3 +101,5 @@ The pack is divided into 16 categories and is south-facing by default. **Cliff a
 Click **Round corners** repeatedly, or use the **Corners** button above the map, to cycle the three styles. Brush a new or existing land/water/path corner to apply the current style. Shapes share their original radius and endpoints, are undoable, persist in saved projects, and affect collision as well as artwork.
 
 Stair flights now draw behind higher foreground land. Their exposed banks follow the slope with continuous rock faces, including the north bank and adjacent wide flights. The updated [drag-stairs capture](drag-stairs.png) shows the shared editor/game rendering.
+
+North/south stairs now use parallel sides and rectangular top-down treads, including the decorative flight assets. [Stone, wood and brick in the actual shared renderer](stairs-topdown.png).

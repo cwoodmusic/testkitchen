@@ -65,6 +65,8 @@ Editor tools must include obvious regional selection and a numbered, color-coded
 
 Steps are a connection tool: drag from one existing ground height to another. Do not require a manually selected ascent direction/height. Keep endpoints at their clicked elevations, make movement continuous in both directions, and project tread artwork over the actual slope.
 
+North/south stairs have a top-down view: rectangular treads and parallel flight edges. Exclude baked trapezoidal perspective and angled step ends from the source sampling, while retaining its detailed material, tread highlights and riser shadows. Apply the same sampling to decorative stair-flight assets.
+
 Painted cobble must share the source scene's stone scale, palette and entry-edge colors. Use real donor paving from Music Square or the chosen home estate; do not substitute the old generic ground atlas cobble. Feather grass borders while preserving clear passage joins.
 
 The retrofuturistic Coda Arcade exterior uses a copper/teal Art Deco roof, neon trim, a glass main hall, lounge wing and dance dome. The inside and outside share `arcade-footprint.js`; preserve its exact floor polygon union, southeast entrance and world-unit scale. Roof shadows, ornaments and wall projection are not extra floor area. Do not estimate its floor plan from an image or resize it to fit a generic rectangle.
