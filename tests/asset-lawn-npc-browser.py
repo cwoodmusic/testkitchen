@@ -116,13 +116,15 @@ try:
             page.locator('#lightingToggle').click()
 
         # Compare the actual map sprite with its untouched native artwork.
-        # Grass can become transparent, but architecture and colorful flowers
-        # keep their original pixels. This catches broad rectangular masking.
+        # Painted paving can hide exterior planting; architecture and the planted
+        # interior retain their native pixels. Grass keeps the natural scene.
         probes = page.evaluate('''async({lawn,render})=>{
           const {assetMapImage}=await import(lawn),{drawObject}=await import(render),results={};
           for(const id of ['music-square','estate-bach','estate-nina']){
             const a=townBuilder.catalog.get(id),raw=a.canvas.getContext('2d').getImageData(0,0,a.w,a.h).data;
-            const image=assetMapImage(a),out=document.createElement('canvas');out.width=a.w;out.height=a.h;
+            const object={asset:id,x:a.w/2,y:a.h,scale:1,rotation:0,collision:false},doc={cells:{},objects:[object],edges:{}};
+            if(id==='music-square')for(let y=0;y<=Math.ceil(a.h/64);y++)for(let x=0;x<=Math.ceil(a.w/64);x++)doc.cells[x+','+y]={surface:'sidewalk',level:0};
+            const image=assetMapImage(a,object,doc),out=document.createElement('canvas');out.width=a.w;out.height=a.h;
             const c=out.getContext('2d');c.drawImage(image,0,0);
             const pixels=c.getImageData(0,0,a.w,a.h).data;
             let removed=0,changedSolid=0,architectureLost=0,architecture=0,flowerLost=0,flowers=0,point=null;
@@ -134,7 +136,7 @@ try:
               const central=id==='music-square'?x>a.w*.2&&x<a.w*.8&&y>a.h*.15&&y<a.h*.88:x>a.w*.25&&x<a.w*.78&&y>a.h*.12&&y<a.h*.55;
               if(central){architecture++;if(lost)architectureLost++;}
               const colorful=raw[i]>200&&raw[i+1]>185&&raw[i+2]>180||raw[i]>raw[i+1]+40&&raw[i+2]>100;
-              if(colorful){flowers++;if(lost)flowerLost++;}
+              if(colorful&&(id!=='music-square'||central)){flowers++;if(lost)flowerLost++;}
               if(!point&&lost&&x>3&&x<a.w*.08&&y>a.h*.35&&y<a.h*.68){
                 let clear=true;
                 for(let dy=-2;dy<=2;dy++)for(let dx=-2;dx<=2;dx++)if(pixels[((y+dy)*a.w+x+dx)*4+3]>0)clear=false;
@@ -142,10 +144,10 @@ try:
               }
             }
             const exact=document.createElement('canvas');exact.width=a.w;exact.height=a.h;
-            drawObject(exact.getContext('2d'),{asset:id,x:a.w/2,y:a.h,scale:1,rotation:0,collision:false},{cells:{},objects:[],edges:{}});
+            drawObject(exact.getContext('2d'),object,doc);
             const original=a.canvas.getContext('2d').getImageData(0,0,a.w,a.h).data;
             results[id]={removed,changedSolid,architectureLost,architecture,flowers,flowerLost,point,
-                         cached:assetMapImage(a)===image,rawUntouched:original.every((value,i)=>value===raw[i]),
+                         cached:assetMapImage(a,object,doc)===image,naturalPreserved:id!=='music-square'||assetMapImage(a)===a.canvas,rawUntouched:original.every((value,i)=>value===raw[i]),
                          actualSprite:exact.toDataURL()===out.toDataURL()};
           }return results;
         }''', dependencies)
@@ -155,7 +157,7 @@ try:
             assert proof['architectureLost'] == 0, (asset, proof)
             assert proof['flowerLost'] < max(3, proof['flowers']*.002), (asset, proof)
             assert proof['point'], (asset, proof)
-            assert proof['cached'] and proof['rawUntouched'] and proof['actualSprite'], (asset, proof)
+            assert proof['cached'] and proof['naturalPreserved'] and proof['rawUntouched'] and proof['actualSprite'], (asset, proof)
 
         # Paint real ground through each asset's lawn with both editor modes.
         # Compare at transparent lawn pixels against the exact same terrain

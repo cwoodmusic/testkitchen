@@ -1,14 +1,14 @@
-import {drawSelection} from './selection-view.mjs?v=straight-entrances-1';
-import {drawTerrain} from './terrain-render.mjs?v=straight-entrances-1';
-import {mountPose} from './cliff-mount.mjs?v=straight-entrances-1';
-import {elevationView} from './elevation-view.mjs?v=straight-entrances-1';
-import {barrierRuns,drawBarrierRun,barrierPosts,drawPost} from './construction.mjs?v=straight-entrances-1';
-import {TILE,RISE,COLS,ROWS,cell,height,segment} from './model.mjs?v=straight-entrances-1';
-import {catalog} from './catalog.mjs?v=straight-entrances-1';
-import {assetMapImage} from './asset-lawn.mjs?v=straight-entrances-1';
-import {renderCityNight} from './city-night.mjs?v=straight-entrances-1';
-import {setWaterTime} from './water-motion.mjs?v=straight-entrances-1';
-import {drawFountainMotion} from './fountain-motion.mjs?v=straight-entrances-1';
+import {drawSelection} from './selection-view.mjs?v=clean-edges-1';
+import {drawTerrain} from './terrain-render.mjs?v=clean-edges-1';
+import {mountPose} from './cliff-mount.mjs?v=clean-edges-1';
+import {elevationView} from './elevation-view.mjs?v=clean-edges-1';
+import {barrierRuns,drawBarrierRun,barrierPosts,drawPost} from './construction.mjs?v=clean-edges-1';
+import {TILE,RISE,COLS,ROWS,cell,height,segment} from './model.mjs?v=clean-edges-1';
+import {catalog} from './catalog.mjs?v=clean-edges-1';
+import {assetMapImage} from './asset-lawn.mjs?v=clean-edges-1';
+import {renderCityNight} from './city-night.mjs?v=clean-edges-1';
+import {setWaterTime} from './water-motion.mjs?v=clean-edges-1';
+import {drawFountainMotion} from './fountain-motion.mjs?v=clean-edges-1';
 function drawBrush(c,d,brush,zoom){
  const radius=brush.size/2,color=brush.blend?'#b7eddf':'#ffe2a1';
  c.save();
@@ -27,7 +27,7 @@ function drawBrush(c,d,brush,zoom){
  }
  c.restore();
 }
-export function drawObject(c,o,d,collision=false,alpha=1,time=0){const a=catalog.get(o.asset);if(!a)return;const pose=mountPose(d,o);if(!pose)return;c.save();c.globalAlpha=alpha;c.translate(pose.x,pose.y);c.rotate(o.rotation*Math.PI/180);c.scale(o.scale,o.scale);const image=assetMapImage(a);c.drawImage(image,-a.w/2,-a.h*pose.offset);c.save();c.translate(-a.w/2,-a.h*pose.offset);drawFountainMotion(c,a,image,time);c.restore();if(collision&&o.collision){c.fillStyle='#f5616260';c.strokeStyle='#ff9c8b';for(const p of a.polygons||[]){c.beginPath();c.moveTo(p[0][0]-a.w/2,p[0][1]-a.h);for(const[x,y]of p)c.lineTo(x-a.w/2,y-a.h);c.closePath();c.fill();c.stroke();}for(const b of a.boxes){c.fillRect(b.x-a.w/2,b.y-a.h,b.w,b.h);c.strokeRect(b.x-a.w/2,b.y-a.h,b.w,b.h);}}c.restore();}
+export function drawObject(c,o,d,collision=false,alpha=1,time=0){const a=catalog.get(o.asset);if(!a)return;const pose=mountPose(d,o);if(!pose)return;c.save();c.globalAlpha=alpha;c.translate(pose.x,pose.y);c.rotate(o.rotation*Math.PI/180);c.scale(o.scale,o.scale);const image=assetMapImage(a,o,d);c.drawImage(image,-a.w/2,-a.h*pose.offset);c.save();c.translate(-a.w/2,-a.h*pose.offset);drawFountainMotion(c,a,image,time);c.restore();if(collision&&o.collision){c.fillStyle='#f5616260';c.strokeStyle='#ff9c8b';for(const p of a.polygons||[]){c.beginPath();c.moveTo(p[0][0]-a.w/2,p[0][1]-a.h);for(const[x,y]of p)c.lineTo(x-a.w/2,y-a.h);c.closePath();c.fill();c.stroke();}for(const b of a.boxes){c.fillRect(b.x-a.w/2,b.y-a.h,b.w,b.h);c.strokeRect(b.x-a.w/2,b.y-a.h,b.w,b.h);}}c.restore();}
 function objectDepth(o,d,player){
  const a=catalog.get(o.asset),pose=mountPose(d,o);
  // Large irregular buildings contain transparent canvas below their facade.

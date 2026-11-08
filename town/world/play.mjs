@@ -1,10 +1,10 @@
-import {catalog,preparePlacedArt,render,resizeSurface,findStart,movePlayer,toggleGate,follow,PLAYER_SCALE,GAIT_PER_PIXEL} from './runtime.mjs?v=straight-entrances-1';
-import {loadProject} from './storage.mjs?v=straight-entrances-1';
-import {createUrbanController} from './urban.mjs?v=straight-entrances-1';
-import {createUrbanTour} from './urban-tour.mjs?v=straight-entrances-1';
-import {createSandFootprints} from './sand-footprints.mjs?v=straight-entrances-1';
-import {createAmbientNPCs} from './ambient-npcs.mjs?v=straight-entrances-1';
-import {readNightPreference,saveNightPreference} from './lighting-settings.mjs?v=straight-entrances-1';
+import {catalog,preparePlacedArt,render,resizeSurface,findStart,movePlayer,toggleGate,follow,PLAYER_SCALE,GAIT_PER_PIXEL} from './runtime.mjs?v=clean-edges-1';
+import {loadProject} from './storage.mjs?v=clean-edges-1';
+import {createUrbanController} from './urban.mjs?v=clean-edges-1';
+import {createUrbanTour} from './urban-tour.mjs?v=clean-edges-1';
+import {createSandFootprints} from './sand-footprints.mjs?v=clean-edges-1';
+import {createAmbientNPCs} from './ambient-npcs.mjs?v=clean-edges-1';
+import {readNightPreference,saveNightPreference} from './lighting-settings.mjs?v=clean-edges-1';
 const canvas=document.getElementById('world'),route=new URLSearchParams(location.search),tour=route.get('map')!=='builder',preview=route.get('urban')==='1';
 document.querySelectorAll('body > :not(#world):not(script)').forEach(e=>e.remove());
 const header=document.createElement('header'),title=document.createElement('h1'),nav=document.createElement('nav');

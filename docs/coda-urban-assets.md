@@ -8,7 +8,7 @@ Road sections have matching 768-pixel openings and 128-pixel sidewalks on a 1024
 
 Click **Paint asphalt road**, **Paint concrete sidewalk**, or **Paint city brick paving** to use a ground brush. Square tiles and the round soft brush remain available, along with Blend ground. Sidewalks use large poured-concrete slabs with sparse expansion joints. Square sidewalk painting automatically builds curbs around the outside, joins corners, and removes shared interior edges. Round brush painting stays curb-free. These materials use the same native textures as the placed street pieces. Painted terrain follows the actual ground elevation and retains terrain collision.
 
-Music Square and home estates reveal painted ground through their grassy outer edges. Their buildings, walls, paving, flowers, and foliage remain visible. Both square painting and the round brush can blend these asset edges into your town.
+Music Square keeps its exterior planting over grass and lets painted paving replace that outer planting as a complete layer. Its stone walls, finished entrance caps, inside planters, and climbing vines stay intact. Square painting and the round brush both work, including soft transitions back to grass. Home estates retain their existing paintable lawn edges.
 
 Manholes, drains, road markings, roads, and sidewalks are walkable. Buildings and upright street furniture include physical collision. Place the apartment tower or furniture store, choose Walk test, and press E at its entrance to preview the building's interior.
 

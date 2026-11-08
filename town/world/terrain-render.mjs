@@ -1,13 +1,13 @@
-import {shadeLowerGround,drawTerrainRims} from './edge-shading.mjs?v=straight-entrances-1';
-import {drawRoundUnder,drawRoundCliff} from './round-render.mjs?v=straight-entrances-1';
-import {clipCurves} from './round-geometry.mjs?v=straight-entrances-1';
-import {drawGround,groundFrameKey,groundTexture} from './ground-render.mjs?v=straight-entrances-1';
-import {drawCliff,drawStairs} from './construction.mjs?v=straight-entrances-1';
-import {RISE,COLS,ROWS,cell,terrainView} from './model.mjs?v=straight-entrances-1';
-import {sources} from './catalog.mjs?v=straight-entrances-1';
-import {waterRimSegments} from './water-rim.mjs?v=straight-entrances-1';
-import {drawPier,drawPierSubmerged} from './piers.mjs?v=straight-entrances-1';
-import {drawSidewalkCurbs} from './sidewalk-curbs.mjs?v=straight-entrances-1';
+import {shadeLowerGround,drawTerrainRims} from './edge-shading.mjs?v=clean-edges-1';
+import {drawRoundUnder,drawRoundCliff} from './round-render.mjs?v=clean-edges-1';
+import {clipCurves} from './round-geometry.mjs?v=clean-edges-1';
+import {drawGround,groundFrameKey,groundTexture} from './ground-render.mjs?v=clean-edges-1';
+import {drawCliff,drawStairs} from './construction.mjs?v=clean-edges-1';
+import {RISE,COLS,ROWS,cell,terrainView} from './model.mjs?v=clean-edges-1';
+import {sources} from './catalog.mjs?v=clean-edges-1';
+import {waterRimSegments} from './water-rim.mjs?v=clean-edges-1';
+import {drawPier,drawPierSubmerged} from './piers.mjs?v=clean-edges-1';
+import {drawSidewalkCurbs} from './sidewalk-curbs.mjs?v=clean-edges-1';
 const lawns=new WeakMap();
 function drawWaterRim(c,d,x,y,X,Y){
  c.strokeStyle='#97b9a1';c.lineWidth=5;

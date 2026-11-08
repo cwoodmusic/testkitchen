@@ -1,6 +1,6 @@
-import {curvePath} from './curve-path.mjs?v=straight-entrances-1';
-import {cell,height} from './model.mjs?v=straight-entrances-1';
-import {clipCurves,curveUnder} from './round-geometry.mjs?v=straight-entrances-1';
+import {curvePath} from './curve-path.mjs?v=clean-edges-1';
+import {cell,height} from './model.mjs?v=clean-edges-1';
+import {clipCurves,curveUnder} from './round-geometry.mjs?v=clean-edges-1';
 // Shade the receiving ground first; the higher terrain then occludes it naturally.
 export function shadeLowerGround(c,d,x,y,z){const a=cell(d,x,y);if(a.stairs)return;const X=x*64,Y=y*64-z;for(const[dx,dy]of [[-1,0],[1,0],[0,-1],[0,1]]){const neighbor=height(d,(x+dx+.5)*64,(y+dy+.5)*64),drop=neighbor-z;if(drop<1)continue;const spread=Math.min(36,9+drop*.13),alpha=dx<0||dy<0?.4:.2;let gradient;if(dx){const edge=dx<0?X:X+64;gradient=c.createLinearGradient(edge,Y,edge-dx*spread,Y);}else{const edge=dy<0?Y:Y+64;gradient=c.createLinearGradient(X,edge,X,edge-dy*spread);}gradient.addColorStop(0,`rgba(15,35,23,${alpha})`);gradient.addColorStop(1,'rgba(15,35,23,0)');c.fillStyle=gradient;if(dx)c.fillRect(dx<0?X:X+64-spread,Y,spread,64);else c.fillRect(X,dy<0?Y:Y+64-spread,64,spread);}}
 function rim(c,path,strong=false){for(const[width,alpha]of [[54,.035],[38,.07],[26,.13],[16,.23],[7,.34]]){c.strokeStyle=`rgba(18,43,28,${Math.min(.65,alpha*(strong?1.35:1))})`;c.lineWidth=width;c.stroke(path);}c.strokeStyle='#b7c87855';c.lineWidth=3;c.stroke(path);c.strokeStyle='#344523b8';c.lineWidth=1.5;c.stroke(path);}
