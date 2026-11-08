@@ -54,8 +54,12 @@ The 256-piece library uses small previews while browsing and fetches the native 
 
 ## Round corners and elevation shading
 
-Choose **Round corners**, then brush near an outside corner of raised land, water, or a painted path. Brush width sets the requested rounding size (up to eight tiles), limited to fit narrow terrain. One stroke is one Undo. Rounded geometry is saved, visible in Elevation plan, and used by both rendering and collision. Region raise/lower preserves curved geometry; direct height-brush edits can square individual tiles again.
+Choose **Round corners**, then brush near an outside corner of raised land, water, or a painted path. Click **Round corners** again, or the **Corners** button above the map, to cycle **Smooth round → Rocky irregular → Beveled**. Brush an existing corner to apply the selected shape without shrinking its radius; Undo restores the previous shape. Brush width sets the requested rounding size (up to eight tiles), limited to fit narrow terrain. One stroke is one Undo. Corner geometry is saved, visible in Elevation plan, and used by both rendering and collision. Existing rounded corners load as Smooth round. Region raise/lower preserves corner geometry; direct height-brush edits can square individual tiles again.
 
 Terrain now has shaded upper rims, directional ground shadows, and contact shading at height changes. North/east/west edges remain readable even where the grass texture matches the lower ground. Rounded boundaries receive the same shading. South-facing exposed cliffs retain their detailed rock faces.
 
+Stairs and terrain render together from north to south, so higher foreground land covers flights behind it. Cliff support follows the full stair slope at either bank, including adjacent stair lanes, rather than cutting a rectangular gap or leaving the map background exposed.
+
 Validation: `python3 town/builder/decor-browser.py`; `python3 town/builder/round-browser.py`; `node --test town/world/cliff-mount.test.mjs town/builder/round-terrain.test.mjs`. Sprite bounds and browsing thumbnails can be rebuilt with `python3 scripts/build-town-decor.py`; the full source PNG artwork is preserved.
+
+Corner/depth regression checks: `node --test town/builder/corner-styles.test.mjs`; `python3 town/builder/corner-styles-browser.py`; `python3 town/world/stair-occlusion-browser.py`. These cover reversible shapes, saved styles, Undo/Redo, editor/game pixel parity, foreground occlusion in all four stair directions, and rock support along sloped banks.

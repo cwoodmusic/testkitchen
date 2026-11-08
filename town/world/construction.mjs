@@ -1,10 +1,31 @@
-import {cell,height,segment,RISE,stairProfile} from './model.mjs?v=cliff-pack-2';
-import {wallArt,constructionArt,stairArt,cliffArt} from './detail-art.mjs?v=cliff-pack-2';
+import {cell,height,segment,RISE,stairProfile} from './model.mjs?v=stair-depth-1';
+import {wallArt,constructionArt,stairArt,cliffArt} from './detail-art.mjs?v=stair-depth-1';
 export const barrierHeight=style=>style==='iron'?144:style==='wood'||style==='rail'?136:160;
 function piece(c,img,sx,sy,sw,sh,x,y,w,h){if(sw>0&&sh>0&&w>0&&h>0)c.drawImage(img,sx,sy,sw,sh,x,y,w,h);}
+// Clip one continuous rock field to the heights on BOTH sides of an edge.
+// The southern side can be a slope, so a midpoint rectangle leaves gaps.
+function drawSlopedCliff(c,d,x,y){
+ const X=x*64,edge=(y+1)*64,img=cliffArt,parts=[];
+ let highest=-Infinity,lowest=Infinity;
+ for(let i=0;i<16;i++){
+  let left=i*4,right=left+4,top0=height(d,X+left+.001,edge-.001),top1=height(d,X+right-.001,edge-.001),base0=height(d,X+left+.001,edge+.001),base1=height(d,X+right-.001,edge+.001);
+  const gap0=top0-base0,gap1=top1-base1;if(Math.max(gap0,gap1)<=.01)continue;
+  if(gap0<0){const t=-gap0/(gap1-gap0);left+=(right-left)*t;top0+=(top1-top0)*t;base0=top0;}
+  if(gap1<0){const t=gap0/(gap0-gap1);right=left+(right-left)*t;top1=top0+(top1-top0)*t;base1=top1;}
+  parts.push({left,right,top0,top1,base0,base1});highest=Math.max(highest,top0,top1);lowest=Math.min(lowest,base0,base1);
+ }
+ if(!parts.length)return;
+ c.save();c.beginPath();for(const p of parts){c.moveTo(X+p.left,edge-p.top0);c.lineTo(X+p.right,edge-p.top1);c.lineTo(X+p.right,edge-p.base1);c.lineTo(X+p.left,edge-p.base0);c.closePath();}c.clip();
+ const top=edge-highest,depth=highest-lowest,sx=img.width*.06+(X%384)/384*img.width*.88,sw=img.width*.88*64/384;
+ c.fillStyle='#655a3e';c.fillRect(X,top,64,depth);
+ for(let j=0;j<depth;j+=176){const h=Math.min(176,depth-j);c.drawImage(img,sx,img.height*.18,sw,img.height*.78*h/176,X,top+j,64,h);}
+ const shade=c.createLinearGradient(0,top,0,top+depth);shade.addColorStop(0,'#24311e66');shade.addColorStop(.35,'#17221900');shade.addColorStop(1,'#16211788');c.fillStyle=shade;c.fillRect(X,top,64,depth);c.restore();
+ // Grass belongs on terrain lips, not between adjacent stair lanes.
+ if(!cell(d,x,y).stairs)for(const p of parts){const w=p.right-p.left;if(w<=.01)continue;c.save();c.transform(1,(p.top0-p.top1)/w,0,1,X+p.left,edge-p.top0);const sx=img.width*.06+((X+p.left)%384)/384*img.width*.88;c.drawImage(img,sx,0,img.width*.88*w/384,img.height*.28,0,-12,w,38);c.restore();}
+}
 // All cells along a face sample one world-anchored rock field. Grass crowns
 // overlap the lawn by a few pixels; source rock is never stamped as oval decals.
-export function drawCliff(c,d,x,y){const a=cell(d,x,y),X=x*64,Y=y*64,z=a.level*RISE,south=height(d,X+32,Y+64+.001);if(a.stairs||z<=south+.01)return;const top=Y+64-z,depth=z-south,img=cliffArt,period=384;
+export function drawCliff(c,d,x,y){const a=cell(d,x,y),b=cell(d,x,y+1);if(a.stairs||b.stairs||b.curves?.length){drawSlopedCliff(c,d,x,y);return;}const X=x*64,Y=y*64,z=a.level*RISE,south=height(d,X+32,Y+64+.001);if(a.stairs||z<=south+.01)return;const top=Y+64-z,depth=z-south,img=cliffArt,period=384;
  c.fillStyle='#555b3e';c.fillRect(X,top,64,depth);
  const sx=img.width*.06+(X%period)/period*img.width*.88,sw=img.width*.88*64/period;
  for(let j=0;j<depth;j+=176){const dh=Math.min(176,depth-j);piece(c,img,sx,img.height*.18,sw,img.height*.78*dh/176,X,top+j,64,dh);}

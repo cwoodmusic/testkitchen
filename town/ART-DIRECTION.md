@@ -76,3 +76,7 @@ User requested about 250 more decorations, south-facing for the most part: barre
 Cliff pieces attach to the exposed vertical south-facing rock surface, not the ground tile behind it. Mount height is relative to the actual face, follows terrain changes/rounded arcs, and must use the same projection in editor and game. Six dedicated pieces supplement the pack's cliff decorations.
 
 Round corners must use actual curved land/water/path geometry, including collision and saved maps. Terrain height changes need clear rims/contact shading and ground shadows on north/east/west as well as the textured south cliff. Keep shadows soft and material detail visible; avoid relying solely on matching grass patterns to communicate height.
+
+Corner shaping offers smooth curves, irregular rocky angles and a straight bevel. Keep their cardinal endpoints and radius stable when changing styles; irregular cuts must remain inside the original corner. Rendering, edge shading, elevation guides, cliff attachments and collision must all use the same boundary.
+
+Render terrain and stair flights in north-to-south order so foreground ground covers stairs behind it. Exposed cliff support must follow stair slopes along both banks without gaps or a flat false floor. Preserve the approved detailed cliff material rather than covering depth problems with plain polygons.

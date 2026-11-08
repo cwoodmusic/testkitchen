@@ -93,3 +93,11 @@ Use **Steps** and drag between levels. Cobble uses **Paving match → Auto · ne
 - [Rounded terrain in the elevation plan](rounded-elevation-plan.png)
 
 The pack is divided into 16 categories and is south-facing by default. **Cliff assets** opens the dedicated attachment pieces. **Round corners** softens outside land/water/path corners. The shared editor/game renderer now shades terrain rims and lower-ground contact areas to make northern and side boundaries readable.
+
+## Corner styles and stair depth
+
+[Smooth round, Rocky irregular and Beveled — actual shared-renderer browser captures](corner-styles.png)
+
+Click **Round corners** repeatedly, or use the **Corners** button above the map, to cycle the three styles. Brush a new or existing land/water/path corner to apply the current style. Shapes share their original radius and endpoints, are undoable, persist in saved projects, and affect collision as well as artwork.
+
+Stair flights now draw behind higher foreground land. Their exposed banks follow the slope with continuous rock faces, including the north bank and adjacent wide flights. The updated [drag-stairs capture](drag-stairs.png) shows the shared editor/game rendering.
