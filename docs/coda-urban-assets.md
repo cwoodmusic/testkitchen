@@ -12,7 +12,7 @@ Manholes, drains, road markings, roads, and sidewalks are walkable. Buildings an
 
 Choose **Music Square wall** to extend the plaza's matching stonework. Begin near a wall end or corner and follow the gold snap marker. Drag an L to build a connected corner; choose Gate to make an opening.
 
-**Organic edges** brushes irregular contours into shores and cliffs. Brush size sets the affected area and Edge strength controls how much the silhouette changes. Square painting and Round corners remain available. **Fill land** uses the selected Ground material, including sand, wood, cobblestone, asphalt, concrete, and brick.
+**Organic edges** brushes irregular contours into shores and cliffs. Brush size sets the affected area and Edge strength controls how much the silhouette changes. Square painting and Round corners remain available. **Fill land** replaces connected land or water with the selected Ground material, including grass, sand, dirt, wood, cobblestone, asphalt, concrete, and brick. Click the material you want to replace; other materials, different paving finishes, height changes, and stairs stop the bucket.
 
 The preview starts in **City night**, with warm streetlight bloom, fireflies, and wandering musicians. Click the lighting button for **Daylight**. Walk test and Play this town use the same lighting choice; elevation planning views retain their clear level colors.
 

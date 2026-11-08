@@ -1,7 +1,8 @@
 import {test} from 'node:test';
 import assert from 'node:assert/strict';
 import {blank,cell,key,height,surfaceAt,blocked,parseProject,History,COLS,ROWS} from '../world/model.mjs';
-import {groundMaterials} from '../world/ground-paint.mjs';
+import {groundMaterials,encodePaint,readPaint,materialKey} from '../world/ground-paint.mjs';
+import {encodeMask} from '../world/organic-mask.mjs';
 import {planLandFill} from './land-fill.mjs';
 import {planWaterFill} from './water-fill.mjs';
 import {roundTerrain} from './round-terrain.mjs';
@@ -40,10 +41,97 @@ test('bridges retain their finish and stairs remain unchanged while reclaiming w
  assert.equal(planLandFill(d,{x:480,y:416}).edits.length,0);
 });
 
-test('dry clicks, invalid materials, and out-of-map clicks make no edits',()=>{
+test('matching ground, invalid materials, and out-of-map clicks make no edits',()=>{
  const d=pond(),before=JSON.stringify(d);
  for(const [p,options]of [[{x:32,y:32},{}],[{x:-1,y:352},{}],[{x:352,y:352},{surface:'water'}],[{x:352,y:352},{surface:'lava'}],[{x:352,y:352},{surface:'cobble',paving:{}}]])assert.equal(planLandFill(d,p,options).edits.length,0);
  assert.equal(JSON.stringify(d),before);apply(d,planLandFill(d,{x:352,y:352}));assert.equal(planLandFill(d,{x:352,y:352}).edits.length,0);
+});
+
+test('every dry ground material can be replaced by another material without changing its floor',()=>{
+ for(let i=0;i<groundMaterials.length;i++){
+  const source=groundMaterials[i],surface=groundMaterials[(i+1)%groundMaterials.length],d=pond();
+  for(const a of Object.values(d.cells)){a.surface=source;if(source==='cobble')a.paving='old-square';}
+  const before=JSON.stringify(d),result=planLandFill(d,{x:352,y:352},{surface,paving:'music-square'});
+  assert.equal(JSON.stringify(d),before);assert.equal(result.level,1);assert.equal(result.count,25);apply(d,result);
+  for(let y=5;y<=9;y++)for(let x=5;x<=9;x++){const a=cell(d,x,y);assert.equal(a.surface,surface);assert.equal(a.level,1);assert.equal(a.paving,surface==='cobble'?'music-square':undefined);}
+  assert.equal(planLandFill(d,{x:352,y:352},{surface,paving:'music-square'}).edits.length,0);
+  assert.deepEqual(parseProject(JSON.stringify(d),new Set(['music-square','old-square'])),d);
+ }
+});
+
+test('dry filling stops at other materials, water, different heights, stairs, and diagonal contact',()=>{
+ const d=pond();for(const a of Object.values(d.cells))a.surface='grass';
+ for(let y=5;y<=9;y++)d.cells[key(7,y)]={surface:'sand',level:1};
+ d.cells['6,10']={surface:'grass',level:0};d.cells['4,4']={surface:'grass',level:1};d.cells['5,10']={surface:'water',level:1};
+ d.cells['5,6']={surface:'grass',level:1,bridge:'ns',finish:'wood'};
+ d.cells['6,6']={surface:'grass',level:1,stairs:'north',stairBase:1,stairRise:1,stairStart:0,stairEnd:1,finish:'stone'};
+ const stair=JSON.stringify(d.cells['6,6']),result=planLandFill(d,{x:352,y:352},{surface:'brick'});assert.equal(result.count,9);apply(d,result);
+ assert.equal(cell(d,6,9).surface,'brick');assert.equal(cell(d,7,7).surface,'sand');assert.equal(cell(d,8,7).surface,'grass');assert.equal(cell(d,6,10).surface,'grass');assert.equal(cell(d,4,4).surface,'grass');assert.equal(cell(d,5,10).surface,'water');
+ assert.deepEqual(d.cells['5,6'],{surface:'brick',level:1,bridge:'ns',finish:'wood'});assert.equal(JSON.stringify(d.cells['6,6']),stair);
+});
+
+test('cobblestone fills distinguish the clicked paving from neighboring paving designs',()=>{
+ const d=pond();for(const a of Object.values(d.cells)){a.surface='cobble';a.paving='music-square';}
+ for(let y=5;y<=9;y++)d.cells[key(7,y)]={surface:'cobble',level:1,paving:'other-square'};
+ d.cells['6,10']={surface:'cobble',level:1,paving:'auto'};
+ const result=planLandFill(d,{x:352,y:352},{surface:'wood'});assert.equal(result.count,10);apply(d,result);
+ assert.equal(cell(d,6,9).surface,'wood');assert.equal(cell(d,6,9).paving,undefined);assert.equal(cell(d,7,7).paving,'other-square');assert.equal(cell(d,8,7).paving,'music-square');assert.equal(cell(d,6,10).paving,'auto');
+ assert.deepEqual(parseProject(JSON.stringify(d),new Set(['music-square','other-square'])),d);
+});
+
+test('soft-painted ground is selected by its visible material while other blend channels stay intact',()=>{
+ const d=blank(),materials=[{surface:'grass'},{surface:'sand'}],weights=new Float64Array(256*2);
+ for(let i=0;i<256;i++){weights[i*2]=i%16<8?55:255;weights[i*2+1]=i%16<8?200:0;}
+ d.cells['10,10']={surface:'grass',level:1,paint:encodePaint(materials,weights)};
+ for(const [x,y]of [[9,10],[11,10],[10,9],[10,11]])d.cells[key(x,y)]={surface:'grass',level:1};
+ const before=JSON.stringify(d);assert.equal(planLandFill(d,{x:650,y:650},{surface:'sand'}).edits.length,0);assert.equal(JSON.stringify(d),before);
+ const result=planLandFill(d,{x:650,y:650},{surface:'wood'});assert.equal(result.count,1);apply(d,result);
+ const actual=readPaint(d.cells['10,10']),keys=actual.materials.map(materialKey);
+ for(let i=0;i<256;i++)for(let j=0;j<keys.length;j++)assert.equal(actual.weights[i*keys.length+j],keys[j]==='grass'?(i%16<8?55:255):keys[j]==='wood'&&i%16<8?200:0);
+ assert.equal(keys.includes('sand'),false);assert.equal(d.cells['11,10'].surface,'grass');assert.equal(d.cells['10,10'].level,1);
+ assert.deepEqual(parseProject(JSON.stringify(d),new Set()),d);
+});
+
+test('a painted source patch cannot connect through a different dominant material in the same tile',()=>{
+ const d=blank(),materials=[{surface:'grass'},{surface:'sand'}],weights=new Float64Array(256*2);
+ for(let i=0;i<256;i++)weights[i*2+(i%16===8?1:0)]=255;
+ d.cells['10,10']={surface:'grass',level:1,paint:encodePaint(materials,weights)};
+ apply(d,planLandFill(d,{x:650,y:650},{surface:'brick'}));
+ const actual=readPaint(d.cells['10,10']),keys=actual.materials.map(materialKey);
+ for(let i=0;i<256;i++){const expected=i%16<8?'brick':i%16===8?'sand':'grass';const j=keys.indexOf(expected);assert(j>=0);assert.equal(actual.weights[i*keys.length+j],255);}
+ assert.deepEqual(parseProject(JSON.stringify(d),new Set()),d);
+});
+
+test('rounded and organic dry islands retain their exact water shoreline while the land is repainted',()=>{
+ for(const organic of [false,true]){
+  const d=blank();for(let y=9;y<=11;y++)for(let x=9;x<=11;x++)d.cells[key(x,y)]={surface:'water',level:1};d.cells['10,10']={surface:'grass',level:1};
+  if(organic){
+   const bits=Uint8Array.from({length:256},(_,i)=>i%16<9+Math.floor(Math.sin(Math.floor(i/16)*.7)*2)?1:0);
+   d.cells['10,10'].curves=[{kind:'surface',corner:'nw',cx:704,cy:704,r:64,underX:9,underY:10,under:{surface:'water',level:1},mask:encodeMask(bits)}];
+  }else apply(d,roundTerrain(d,{x:672,y:672},3));
+  const samples=[];for(let y=641;y<704;y+=3)for(let x=641;x<704;x+=3)samples.push({x,y,surface:surfaceAt(d,x,y),z:height(d,x,y)});
+  const p=organic?{x:650,y:650}:{x:672,y:672};apply(d,planLandFill(d,p,{surface:'brick'}));
+  for(const p of samples){assert.equal(height(d,p.x,p.y),p.z);assert.equal(surfaceAt(d,p.x,p.y),p.surface==='grass'?'brick':p.surface);}
+  assert(d.cells['10,10'].curves.length>0);assert.deepEqual(parseProject(JSON.stringify(d),new Set()),d);
+ }
+});
+
+test('reclaiming a water-backed organic facet never encodes water as a dry paint material',()=>{
+ const d=blank(),bits=new Uint8Array(256).fill(1);
+ for(let y=4;y<=6;y++)for(const start of [2,10])for(let x=start;x<start+3;x++)bits[y*16+x]=0;
+ d.cells['10,10']={surface:'grass',level:0,curves:[{kind:'surface',corner:'nw',cx:704,cy:704,r:64,underX:9,underY:10,under:{surface:'water',level:0},mask:encodeMask(bits)}]};
+ for(const[x,y]of [[9,10],[11,10],[10,9],[10,11]])d.cells[key(x,y)]={surface:'grass',level:1};
+ assert.equal(surfaceAt(d,650,658),'water');assert.equal(surfaceAt(d,682,658),'water');apply(d,planLandFill(d,{x:650,y:658},{surface:'sand'}));
+ assert.equal(surfaceAt(d,650,658),'sand');assert.equal(surfaceAt(d,682,658),'sand');assert.equal(surfaceAt(d,674,674),'grass');
+ assert.equal(d.cells['10,10'].curves[0].under.paint,undefined);assert.deepEqual(parseProject(JSON.stringify(d),new Set()),d);
+});
+
+test('implicit grass fills the whole connected map with one portable, reversible edit operation',()=>{
+ const d=blank();d.objects=[{id:'bench',asset:'bench',x:8000,y:6000,scale:1,rotation:0,layer:'objects',collision:true}];d.edges={'h:5:5':{style:'iron',gate:false,open:false}};
+ const before=JSON.stringify(d),objects=JSON.stringify(d.objects),edges=JSON.stringify(d.edges),history=new History(),result=planLandFill(d,{x:8192,y:6144},{surface:'sidewalk'});
+ assert.equal(result.count,COLS*ROWS);history.record(d);apply(d,result);assert.equal(JSON.stringify(d.objects),objects);assert.equal(JSON.stringify(d.edges),edges);assert.deepEqual(parseProject(JSON.stringify(d),new Set(['bench'])),d);
+ assert.equal(cell(d,0,0).surface,'sidewalk');assert.equal(cell(d,COLS-1,ROWS-1).surface,'sidewalk');
+ const restored=history.back(d);assert.equal(JSON.stringify(restored),before);assert.equal(history.forward(restored).cells['128,96'].surface,'sidewalk');
 });
 
 test('a rounded lake keeps its grass shoreline when the water becomes sand',()=>{
