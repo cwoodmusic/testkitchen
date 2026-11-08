@@ -1,4 +1,4 @@
-import {parseProject} from './model.mjs?v=drag-stairs-paving-1';
+import {parseProject} from './model.mjs?v=cliff-pack-1';
 export function openDatabase(){return new Promise((resolve,reject)=>{const r=indexedDB.open('coda-town-builder',1);r.onupgradeneeded=()=>r.result.createObjectStore('maps');r.onsuccess=()=>resolve(r.result);r.onerror=()=>reject(r.error);});}
 export async function loadProject(ids){const db=await openDatabase();try{return await new Promise((resolve,reject)=>{const r=db.transaction('maps').objectStore('maps').get('current');r.onsuccess=()=>{try{resolve(r.result?parseProject(r.result,ids):null);}catch(e){reject(e);}};r.onerror=()=>reject(r.error);});}finally{db.close();}}
 export function saveProject(db,doc){const text=JSON.stringify(doc);return new Promise((resolve,reject)=>{const tx=db.transaction('maps','readwrite');tx.objectStore('maps').put(text,'current');tx.oncomplete=resolve;tx.onerror=()=>reject(tx.error);tx.onabort=()=>reject(tx.error||Error('Save aborted'));});}

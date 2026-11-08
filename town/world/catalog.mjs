@@ -1,5 +1,6 @@
+import {registerDecor} from './decor-pack.mjs?v=cliff-pack-1';
 import {arcadeGeometry,drawArcade} from './arcade.mjs';
-import {constructionArt,overgrowthArt,estateArt} from './detail-art.mjs';
+import {constructionArt,overgrowthArt,estateArt,cliffDecorArt} from './detail-art.mjs';
 import {estateDefinitions,estateBoxes} from './estates.mjs';
 import {townArtSources,house} from '../art.mjs';
 import {homeGeometry,ARCHITECTURES} from '../model.mjs';
@@ -22,3 +23,8 @@ add('cliff-detail','Mossy limestone cliff section','construction',384,256,c=>c.d
 for(const a of estateDefinitions){const image=estateArt[a.index];const item=add(`estate-${a.id}`,a.name,'home estates',a.size,a.size,c=>{const pad=0;c.drawImage(image,image.width*pad,image.height*pad,image.width*(1-pad*2),image.height*(1-pad*2),0,0,a.size,a.size);},estateBoxes(a),'ground');item.pavingSource=image;item.resident=a.id;item.scene=true;}
 
 const arcade=add('coda-arcade','Coda Arcade · exact interior footprint','landmarks',arcadeGeometry.w,arcadeGeometry.h,drawArcade);arcade.polygons=arcadeGeometry.polygons;arcade.door=arcadeGeometry.door;arcade.fixedScale=true;arcade.footprint=arcadeGeometry.bounds;
+
+for(const[i,id,name,w]of [[0,'cliff-ivy','Cliff ivy cascade',256],[1,'cliff-roses','Cliff climbing roses',240],[2,'cliff-roots','Hanging cliff roots',192],[3,'cliff-ledge','Fern-covered rock ledge',224],[4,'cliff-lantern','Cliff wall lantern',64],[5,'cliff-relief','Cliff lyre relief',128]]){const image=cliffDecorArt[i],h=w*image.height/image.width,a=add(id,name,'cliff faces',w,h,c=>c.drawImage(image,0,0,w,h));a.mountDefault=true;a.overhang=i<4;}
+
+await registerDecor(catalog);
+export async function preparePlacedArt(d){await Promise.all(d.objects.map(o=>catalog.get(o.asset)?.ensureFull?.()));}

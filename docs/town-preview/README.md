@@ -84,3 +84,12 @@ Actual browser captures:
 - [Retrofuturistic Coda Arcade exterior](arcade-exterior.png)
 
 Use **Steps** and drag between levels. Cobble uses **Paving match → Auto · nearest property** by default. The arcade is under **landmarks**, with scale locked to its actual interior footprint. Both inside and outside now use the same authoritative floor polygons.
+
+## Decoration pack, cliff attachments and rounded terrain
+
+- [256 new decorations — actual full-resolution browser asset gallery](decor-256-library.png)
+- [Cliff-mounted ivy, roots and lantern with instruments and containers](cliff-decorations.png)
+- [Rounded land, lake and paving with elevation edge shading](rounded-terrain.png)
+- [Rounded terrain in the elevation plan](rounded-elevation-plan.png)
+
+The pack is divided into 16 categories and is south-facing by default. **Cliff assets** opens the dedicated attachment pieces. **Round corners** softens outside land/water/path corners. The shared editor/game renderer now shades terrain rims and lower-ground contact areas to make northern and side boundaries readable.

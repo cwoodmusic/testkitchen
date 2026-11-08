@@ -68,3 +68,11 @@ Steps are a connection tool: drag from one existing ground height to another. Do
 Painted cobble must share the source scene's stone scale, palette and entry-edge colors. Use real donor paving from Music Square or the chosen home estate; do not substitute the old generic ground atlas cobble. Feather grass borders while preserving clear passage joins.
 
 The retrofuturistic Coda Arcade exterior uses a copper/teal Art Deco roof, neon trim, a glass main hall, lounge wing and dance dome. The inside and outside share `arcade-footprint.js`; preserve its exact floor polygon union, southeast entrance and world-unit scale. Roof shadows, ornaments and wall projection are not extra floor area. Do not estimate its floor plan from an image or resize it to fit a generic rectangle.
+
+### Cliff attachments, decoration library and legible terrain
+
+User requested about 250 more decorations, south-facing for the most part: barrels, crates, cellos, double basses, guitars and varied town dressing. The 256-piece pack has 16 distinct families, source atlas PNGs, cleaned alpha cutouts, component-aware sprite bounds, and small library previews. Do not count recolors as extra objects or use opaque ground squares behind props. Preserve native artwork for placement/game rendering and export.
+
+Cliff pieces attach to the exposed vertical south-facing rock surface, not the ground tile behind it. Mount height is relative to the actual face, follows terrain changes/rounded arcs, and must use the same projection in editor and game. Six dedicated pieces supplement the pack's cliff decorations.
+
+Round corners must use actual curved land/water/path geometry, including collision and saved maps. Terrain height changes need clear rims/contact shading and ground shadows on north/east/west as well as the textured south cliff. Keep shadows soft and material detail visible; avoid relying solely on matching grass patterns to communicate height.

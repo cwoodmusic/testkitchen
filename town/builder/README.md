@@ -43,3 +43,19 @@ Cobble painting now samples actual scene paving at its world scale. **Paving mat
 **Landmarks → Coda Arcade · exact interior footprint** is a retrofuturistic exterior with a lounge roof, disco dome, glass main-hall roof and southeast entrance. Its floor footprint and polygon collision use the exact same `arcade-footprint.js` geometry as the actual interior. Scaling is locked at 1:1; the original canvas is 1672×941 world units and the occupied floor bounds are 1512×685. Roof/facade projection adds visual height without changing that footprint. The exterior is a placeable building; placing it does not relocate or replace the active arcade interior.
 
 Validation: `node --test town/builder/stairs.test.mjs`; `python3 town/builder/drag-stairs-browser.py`. The browser check covers drag preview, reverse dragging, one-action undo, saved stair profiles, paving joins, exact arcade polygon collision and scale locking.
+
+## South-facing decoration pack and cliff placement
+
+The library now includes **256 new decorations in 16 families**, plus six dedicated cliff pieces. Search for individual objects or use the category dropdown (each family has 16 items): containers, strings, keys and percussion, brass and winds, music workshop, street furniture, market goods, garden pots, garden features, foliage and rocks, waterfront, farm and utility, festival, signs and lights, cliff decorations, and architectural details. Fronts and openings face south by default. These are individually drawn sprites with transparent cutouts, not ground-square scene plates.
+
+Choose **Cliff assets** in the canvas toolbar, select a piece, then click directly on the exposed south-facing rock face. The attachment stores its position on that face; it follows terrain height changes and curved cliff edges rather than falling onto a grass tile. Use **Height on cliff** to move a selected piece up/down. Existing objects can also be attached: select one, choose **Placement surface → Cliff face**, then click a face. Choose Ground to detach it. If its face is completely removed, the attachment hides until a cliff is restored there; Undo restores the original terrain.
+
+The 256-piece library uses small previews while browsing and fetches the native artwork when selected or used in a saved map. Play mode waits for used artwork, so the editor and game use the same finished art. Asset pack exports load full artwork and include individual PNGs and metadata. Decorative doors/gates/ladders are props; use the connected Gate and Steps tools for working passages and terrain connections.
+
+## Round corners and elevation shading
+
+Choose **Round corners**, then brush near an outside corner of raised land, water, or a painted path. Brush width sets the requested rounding size (up to eight tiles), limited to fit narrow terrain. One stroke is one Undo. Rounded geometry is saved, visible in Elevation plan, and used by both rendering and collision. Region raise/lower preserves curved geometry; direct height-brush edits can square individual tiles again.
+
+Terrain now has shaded upper rims, directional ground shadows, and contact shading at height changes. North/east/west edges remain readable even where the grass texture matches the lower ground. Rounded boundaries receive the same shading. South-facing exposed cliffs retain their detailed rock faces.
+
+Validation: `python3 town/builder/decor-browser.py`; `python3 town/builder/round-browser.py`; `node --test town/world/cliff-mount.test.mjs town/builder/round-terrain.test.mjs`. Sprite bounds and browsing thumbnails can be rebuilt with `python3 scripts/build-town-decor.py`; the full source PNG artwork is preserved.

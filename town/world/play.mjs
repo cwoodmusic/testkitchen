@@ -1,5 +1,5 @@
-import {catalog,render,resizeSurface,findStart,movePlayer,toggleGate,follow} from './runtime.mjs?v=drag-stairs-paving-1';
-import {loadProject} from './storage.mjs?v=drag-stairs-paving-1';
+import {catalog,preparePlacedArt,render,resizeSurface,findStart,movePlayer,toggleGate,follow} from './runtime.mjs?v=cliff-pack-1';
+import {loadProject} from './storage.mjs?v=cliff-pack-1';
 const canvas=document.getElementById('world');
 // Reuse the town route and arcade session bridge; replace the editor chrome
 // with gameplay controls while rendering the very same authored document.
@@ -11,7 +11,7 @@ button('Edit town',()=>location.href='builder/');
 button('Original town',()=>location.href='./');
 button('Back to arcade',()=>{if(parent!==window)parent.postMessage({type:'coda-town-close'},location.origin);else location.href='../';});
 const footer=document.createElement('footer');footer.textContent='WASD / arrows · Walk    Shift · Run    E · Open gate    Wheel · Zoom';document.body.append(footer);
-let doc,loadError;try{doc=await loadProject(new Set(catalog.keys()));}catch(e){loadError=e;}
+let doc,loadError;try{doc=await loadProject(new Set(catalog.keys()));if(doc)await preparePlacedArt(doc);}catch(e){doc=null;loadError=e;}
 if(!doc){title.textContent=loadError?'Could not load town':'No saved builder town';footer.textContent=loadError?loadError.message:'Open Town Builder, create a map, then choose Play this town.';}else{
  title.textContent=doc.name;
  const character=window.createCodaCharacterRenderer({});let avatar=character.normalizeProfile({}),facing='down',walking=false,player;

@@ -37,6 +37,8 @@ with sync_playwright() as p:
  page.locator('#walk').click();page.keyboard.press('d');page.locator('#walk').click()
  with page.expect_download(timeout=120000) as dl:page.locator('#pack').click()
  z=zipfile.ZipFile(dl.value.path());assert 'catalog.json' in z.namelist();assert len(z.namelist())>70
+ meta=json.loads(z.read('catalog.json'));assert len([a for a in meta if a['id'].startswith('decor-')])==256
+ mounted=next(a for a in meta if a['id']=='cliff-lantern');assert mounted['mountDefault'];assert mounted['mountAnchor']['y']==mounted['height']/2
  page.locator('#search').fill('');page.locator('#category').select_option('trees')
  page.screenshot(path=str(ROOT/'docs/town-preview/builder.png'))
  assert not errors,errors
