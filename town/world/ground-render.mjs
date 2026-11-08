@@ -1,9 +1,9 @@
-import {PAINT_GRID,PAINT_STEP,readPaint,materialKey} from './ground-paint.mjs?v=festival-town-1';
-import {sources,catalog} from './catalog.mjs?v=festival-town-1';
-import {cell,height} from './model.mjs?v=festival-town-1';
-import {drawPaving,drawPavingMaterial} from './paving.mjs?v=festival-town-1';
-import {groundTextures} from './ground-textures.mjs?v=festival-town-1';
-import {drawAnimatedWater} from './water-motion.mjs?v=festival-town-1';
+import {PAINT_GRID,PAINT_STEP,readPaint,materialKey} from './ground-paint.mjs?v=courtyard-walk-1';
+import {sources,catalog} from './catalog.mjs?v=courtyard-walk-1';
+import {cell,height} from './model.mjs?v=courtyard-walk-1';
+import {drawPaving,drawPavingMaterial} from './paving.mjs?v=courtyard-walk-1';
+import {groundTextures} from './ground-textures.mjs?v=courtyard-walk-1';
+import {drawAnimatedWater} from './water-motion.mjs?v=courtyard-walk-1';
 
 const tiles=new WeakMap(),fields=new WeakMap(),legacyFields=new Map();
 function canvas(size){const c=document.createElement('canvas');c.width=c.height=size;return c;}
@@ -37,13 +37,34 @@ function neighborhood(d,a,x,y){
  return neighbors;
 }
 function sameNeighbors(previous,current){return previous.length===current.length&&current.every((a,i)=>{const b=previous[i];return a.paint===b.paint&&a.surface===b.surface&&a.paving===b.paving&&a.level===b.level;});}
+function tileCache(d){if(!tiles.has(d))tiles.set(d,new Map());return tiles.get(d);}
+function cacheTile(cache,key,value){if(cache.size>=4096&&!cache.has(key))cache.delete(cache.keys().next().value);cache.set(key,value);}
+function pavingNeighbors(d,x,y){
+ // Paving's edge mask reads the real cardinal cells, including lower ground.
+ // The height-filtered blend neighborhood would hide some material edits.
+ return [[-1,0],[1,0],[0,-1],[0,1]].map(([dx,dy])=>{const a=cell(d,x+dx,y+dy);return `${a.surface}:${!!a.stairs}:${!!a.bridge}`;}).join('|');
+}
+
+function drawPlainPaving(c,d,a,x,y,X,Y,frameKey){
+ // Rounded under-layers and clipped tops keep their original compositing.
+ // Only the ordinary opaque, pixel-sampled floor can be flattened unchanged.
+ if(d.cells[`${x},${y}`]!==a||a.curves?.length||c.imageSmoothingEnabled||c.globalAlpha!==1||c.globalCompositeOperation!=='source-over'){
+  drawMaterial(c,d,a,x,y,X,Y);return;
+ }
+ const cache=tileCache(d),key=['paving',x,y,y*64-Y,a.paving].join(':'),neighbors=pavingNeighbors(d,x,y);
+ let entry=cache.get(key);
+ if(!entry||entry.frameKey!==frameKey||entry.neighbors!==neighbors){
+  const out=canvas(64),g=out.getContext('2d');g.imageSmoothingEnabled=false;g.translate(-X,-Y);drawMaterial(g,d,a,x,y,X,Y);
+  entry={frameKey,neighbors,canvas:out};cacheTile(cache,key,entry);
+ }
+ c.drawImage(entry.canvas,X,Y);
+}
 
 export function drawGround(c,d,a,x,y,X,Y,frameKey=''){
  if(a.surface==='water'||a.stairs||a.bridge){drawMaterial(c,d,a,x,y,X,Y);return;}
  const neighbors=neighborhood(d,a,x,y);
- if(!a.paint&&!neighbors.some(b=>b.paint)){drawMaterial(c,d,a,x,y,X,Y);return;}
- if(!tiles.has(d))tiles.set(d,new Map());
- const cache=tiles.get(d),z=y*64-Y,cacheKey=[x,y,z,a.surface,a.paving].join(':'),cached=cache.get(cacheKey);
+ if(!a.paint&&!neighbors.some(b=>b.paint)){if(a.surface==='cobble')drawPlainPaving(c,d,a,x,y,X,Y,frameKey);else drawMaterial(c,d,a,x,y,X,Y);return;}
+ const cache=tileCache(d),z=y*64-Y,cacheKey=[x,y,z,a.surface,a.paving].join(':'),cached=cache.get(cacheKey);
  if(cached&&cached.paint===a.paint&&cached.frameKey===frameKey&&sameNeighbors(cached.neighbors,neighbors)){c.drawImage(cached.canvas,X,Y);return;}
  const neighborFields=neighbors.map(field),materials=[...new Map(neighborFields.flatMap(f=>f.materials).map(m=>[materialKey(m),m])).values()];
  blendContext.setTransform(1,0,0,1,0,0);blendContext.clearRect(0,0,64,64);blendContext.globalCompositeOperation='lighter';
@@ -67,6 +88,5 @@ export function drawGround(c,d,a,x,y,X,Y,frameKey=''){
  // Keep any slight source-art transparency over its original ground rather
  // than exposing the renderer background. Material weights stay normalized.
  const out=canvas(64),g=out.getContext('2d');g.drawImage(blendBuffer,0,0);g.globalCompositeOperation='destination-over';g.save();g.translate(-X,-Y);drawMaterial(g,d,a,x,y,X,Y,{raw:true});g.restore();
- if(cache.size>=4096)cache.delete(cache.keys().next().value);
- cache.set(cacheKey,{paint:a.paint,frameKey,neighbors:neighbors.map(b=>({...b})),canvas:out});c.drawImage(out,X,Y);
+ cacheTile(cache,cacheKey,{paint:a.paint,frameKey,neighbors:neighbors.map(b=>({...b})),canvas:out});c.drawImage(out,X,Y);
 }

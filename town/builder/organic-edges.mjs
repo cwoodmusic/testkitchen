@@ -1,7 +1,7 @@
-import {COLS,ROWS,TILE,cell,key} from '../world/model.mjs?v=festival-town-1';
-import {roundedUnder,curveUnder} from '../world/round-geometry.mjs?v=festival-town-1';
-import {MASK_GRID,MASK_STEP,encodeMask} from '../world/organic-mask.mjs?v=festival-town-1';
-import {readPaint,encodePaint,materialKey} from '../world/ground-paint.mjs?v=festival-town-1';
+import {COLS,ROWS,TILE,cell,key} from '../world/model.mjs?v=courtyard-walk-1';
+import {roundedUnder,curveUnder} from '../world/round-geometry.mjs?v=courtyard-walk-1';
+import {MASK_GRID,MASK_STEP,encodeMask} from '../world/organic-mask.mjs?v=courtyard-walk-1';
+import {readPaint,encodePaint,materialKey} from '../world/ground-paint.mjs?v=courtyard-walk-1';
 
 const PIXELS=MASK_GRID*MASK_GRID;
 const clamp=(n,a,b)=>Math.max(a,Math.min(b,n));

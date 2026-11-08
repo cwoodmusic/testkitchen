@@ -1,13 +1,13 @@
-import {shadeLowerGround,drawTerrainRims} from './edge-shading.mjs?v=festival-town-1';
-import {drawRoundUnder,drawRoundCliff} from './round-render.mjs?v=festival-town-1';
-import {clipCurves} from './round-geometry.mjs?v=festival-town-1';
-import {drawGround,groundFrameKey,groundTexture} from './ground-render.mjs?v=festival-town-1';
-import {drawCliff,drawStairs} from './construction.mjs?v=festival-town-1';
-import {RISE,COLS,ROWS,cell,terrainView} from './model.mjs?v=festival-town-1';
-import {sources} from './catalog.mjs?v=festival-town-1';
-import {waterRimSegments} from './water-rim.mjs?v=festival-town-1';
-import {drawPier,drawPierSubmerged} from './piers.mjs?v=festival-town-1';
-import {drawSidewalkCurbs} from './sidewalk-curbs.mjs?v=festival-town-1';
+import {shadeLowerGround,drawTerrainRims} from './edge-shading.mjs?v=courtyard-walk-1';
+import {drawRoundUnder,drawRoundCliff} from './round-render.mjs?v=courtyard-walk-1';
+import {clipCurves} from './round-geometry.mjs?v=courtyard-walk-1';
+import {drawGround,groundFrameKey,groundTexture} from './ground-render.mjs?v=courtyard-walk-1';
+import {drawCliff,drawStairs} from './construction.mjs?v=courtyard-walk-1';
+import {RISE,COLS,ROWS,cell,terrainView} from './model.mjs?v=courtyard-walk-1';
+import {sources} from './catalog.mjs?v=courtyard-walk-1';
+import {waterRimSegments} from './water-rim.mjs?v=courtyard-walk-1';
+import {drawPier,drawPierSubmerged} from './piers.mjs?v=courtyard-walk-1';
+import {drawSidewalkCurbs} from './sidewalk-curbs.mjs?v=courtyard-walk-1';
 const lawns=new WeakMap();
 function drawWaterRim(c,d,x,y,X,Y){
  c.strokeStyle='#97b9a1';c.lineWidth=5;

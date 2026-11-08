@@ -1,6 +1,6 @@
 # Coda Town · Courtyards and gardens
 
-[Download and preview the map](../town/maps/) · [Courtyard project JSON](../town/maps/coda-town-courtyards.json) · [Town Builder](../town/builder/?kit=urban&v=festival-town-1)
+[Download and preview the map](../town/maps/) · [Courtyard project JSON](../town/maps/coda-town-courtyards.json) · [Town Builder](../town/builder/?kit=urban&v=courtyard-walk-1)
 
 The town now has a connected market court beside the furniture store, a shared forecourt around the gazebo, and quiet gardens near the residences. The market's stalls face a common aisle with picnic tables beyond it. The gazebo remains the main performance space, with café seating beside its approach. Matching paving and repeated planting connect these spaces.
 
