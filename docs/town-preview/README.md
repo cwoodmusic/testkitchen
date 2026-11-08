@@ -133,3 +133,9 @@ Existing maps use the new materials automatically. The asset pack includes sand 
 [NPC homes, your home and the arcade at the same world scale](open-estates.png)
 
 NPC estates are 15% smaller while retaining their size differences. All 19 home assets have open yard edges, with detached baked fencing/walls/gateposts and their collision removed. Houses, porches, gardens and paths remain. Your home's size and the arcade's exact footprint are retained. Existing saved placements receive the revised artwork and sizes automatically.
+
+## Town character scale and walking
+
+[Larger walk-test character beside town scenery](walk-player.png)
+
+Walk test and authored-map gameplay now use a character at 2.5× native size, with faster walking and Shift-running. Directional animation and equipment retain their proportions, feet follow the actual terrain/stair height, and the gait follows movement rather than continuing against a wall.

@@ -53,6 +53,8 @@ Keep the approved Music Square intact and available as a complete placeable scen
 
 All builder-authored maps must use `town/world/` in both the builder and playable town route (`?map=builder`). Keep one asset catalog, renderer, terrain/asset collision implementation, movement, gate interaction, and pixel scale. Editor guides may overlay the scene; they must not alter the underlying game artwork. Changes to shared graphics apply to both views. Preserve saved version-1 editor projects. The original handcrafted town is available separately while authored-map NPC interiors remain future work.
 
+Authored-town characters use a 2.5× instance scale so the native arcade avatar remains readable beside town-sized scenery. Scale the existing character, outfit and equipment around its foot anchor; do not substitute a placeholder or change the arcade's global character defaults. Walk test and gameplay share 450/780 walking/running speeds and distance-driven gait. Draw one character shadow, and retain collision substeps so the faster actor cannot skip gates or stairs.
+
 ### Detailed estate and construction pass
 
 User approved Music Square and water as the visual benchmark, and rejected the procedural stairs, walls, sparse vines, and flat cliff pattern. Construction must use the matching detailed painted kit (`construction-detail.png`), botanical overlays (`foliage-detail.png`) and continuous rock/grass cliff rendering, with shared piers at fence corners. Do not return to diagonal gate-like braces on every fence cell, flat strip stairs, or isolated rock decals stamped across cliff faces.

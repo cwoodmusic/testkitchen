@@ -30,6 +30,10 @@ Validation: `node --test town/builder/model.test.mjs town/model.test.mjs`; `pyth
 
 The editor and playable authored maps both use `town/world/` for the asset catalog, renderer, pixel resolution, project format, collision, spawn placement, movement, gates and camera height. Walk test uses those same functions. Editor guides (selection, grid, collision highlights and ghosts) are intentionally excluded from gameplay. Pixel comparison tests verify that static scenes match exactly with equal camera and viewport settings. The original handcrafted town remains a separate map; placed NPC home interiors are still not connected.
 
+Walk test and **Play this town** use the same town character proportions: 2.5× the avatar renderer's native size, with walking at 450 world pixels/second and Shift-running at 780. Equipment and directional animation scale together around the feet. Gait follows actual travel distance and stops against obstacles; terrain height, stairs and gate passage still use the shared collision/movement code. The character renderer supplies its own correctly sized shadow. These settings apply to authored towns and do not change the arcade's character scale.
+
+Character checks: `node --test town/world/physics.test.mjs town/builder/stairs.test.mjs`; `python3 town/world/walk-player-browser.py`. They cover travel speed, diagonal normalization, fast gate/stair collision, sprite scale, feet anchoring and editor/game character parity.
+
 Additional validation: `node --test town/world/physics.test.mjs`; `python3 town/world/browser.py`.
 
 Use **Select land** and drag a rectangle to select terrain tiles. The Land selection panel shows the selected size. **Raise selected land +1** and **Lower selected land −1** change the whole selection by one level while preserving its surfaces and relative heights (within the 0–8 limits). Each click is one undoable action. **Clear selection** or Escape clears the highlight. Selection itself does not alter or save terrain.

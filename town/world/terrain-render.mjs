@@ -1,10 +1,10 @@
-import {shadeLowerGround,drawTerrainRims} from './edge-shading.mjs?v=home-open-1';
-import {drawRoundUnder,drawRoundCliff} from './round-render.mjs?v=home-open-1';
-import {clipCurves} from './round-geometry.mjs?v=home-open-1';
-import {drawGround,groundFrameKey} from './ground-render.mjs?v=home-open-1';
-import {drawCliff,drawStairs} from './construction.mjs?v=home-open-1';
-import {RISE,COLS,ROWS,cell} from './model.mjs?v=home-open-1';
-import {sources} from './catalog.mjs?v=home-open-1';
+import {shadeLowerGround,drawTerrainRims} from './edge-shading.mjs?v=walk-scale-1';
+import {drawRoundUnder,drawRoundCliff} from './round-render.mjs?v=walk-scale-1';
+import {clipCurves} from './round-geometry.mjs?v=walk-scale-1';
+import {drawGround,groundFrameKey} from './ground-render.mjs?v=walk-scale-1';
+import {drawCliff,drawStairs} from './construction.mjs?v=walk-scale-1';
+import {RISE,COLS,ROWS,cell} from './model.mjs?v=walk-scale-1';
+import {sources} from './catalog.mjs?v=walk-scale-1';
 const lawns=new WeakMap();
 function drawWaterRim(c,d,x,y,X,Y){
  c.strokeStyle='#97b9a1';c.lineWidth=5;
