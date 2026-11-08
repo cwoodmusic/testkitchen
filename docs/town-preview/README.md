@@ -103,3 +103,11 @@ Click **Round corners** repeatedly, or use the **Corners** button above the map,
 Stair flights now draw behind higher foreground land. Their exposed banks follow the slope with continuous rock faces, including the north bank and adjacent wide flights. The updated [drag-stairs capture](drag-stairs.png) shows the shared editor/game rendering.
 
 North/south stairs now use parallel sides and rectangular top-down treads, including the decorative flight assets. [Stone, wood and brick in the actual shared renderer](stairs-topdown.png).
+
+## Freehand ground and continuous side stairs
+
+- [Round soft painting and before/after material blending](ground-brush.png)
+- [Continuous east/west stairs in stone, wood and brick](stairs-sideways.png)
+- [Standalone asset colors beside Music Square, before and after matching](asset-color.png)
+
+**Paint ground** has a round cursor, adjustable hardness and opacity. **Blend ground** smooths existing material boundaries while preserving texture detail. Paint is saved in the project and drawn identically in the editor and game. Side stair flights no longer have grass slits between lanes. Standalone assets share a restrained palette treatment in the library, world and exports.

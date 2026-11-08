@@ -1,5 +1,5 @@
-import {cell,height,segment,RISE,stairProfile} from './model.mjs?v=stairs-topdown-1';
-import {wallArt,constructionArt,stairArt,stairTreadBounds,cliffArt} from './detail-art.mjs?v=stairs-topdown-1';
+import {cell,height,segment,RISE,stairProfile} from './model.mjs?v=ground-brush-1';
+import {wallArt,constructionArt,stairArt,stairTreadBounds,cliffArt} from './detail-art.mjs?v=ground-brush-1';
 export const barrierHeight=style=>style==='iron'?144:style==='wood'||style==='rail'?136:160;
 function piece(c,img,sx,sy,sw,sh,x,y,w,h){if(sw>0&&sh>0&&w>0&&h>0)c.drawImage(img,sx,sy,sw,sh,x,y,w,h);}
 // Clip one continuous rock field to the heights on BOTH sides of an edge.
@@ -39,15 +39,15 @@ export function drawStairs(c,d,x,y){const a=cell(d,x,y);if(!a.stairs)return;cons
  const same=(xx,yy)=>{const b=cell(d,xx,yy),p=stairProfile(b);return b.stairs===a.stairs&&Math.abs(p.base-q.base)<1e-8&&Math.abs(p.rise-q.rise)<1e-8&&p.start===q.start&&p.end===q.end&&(b.finish||'stone')===(a.finish||'stone');};let start=vertical?x:y,end=start;
  while(start>0&&same(vertical?start-1:x,vertical?y:start-1))start--;
  while(end<(vertical?255:191)&&same(vertical?end+1:x,vertical?y:end+1))end++;
- const span=end-start+1,part=(vertical?x:y)-start,phase=(vertical?y:x)%2,k=[a.finish,a.stairs,span,part,phase].join(':');
+ const span=end-start+1,part=(vertical?x:y)-start,rawPhase=(vertical?y:x)%2,phase=['east','south'].includes(a.stairs)?1-rawPhase:rawPhase,k=[a.finish,a.stairs,span,part,phase].join(':');
  if(!flatStairs.has(k)){
   const tile=document.createElement('canvas');tile.width=tile.height=64;const g=tile.getContext('2d'),image=stairArt[a.finish]||stairArt.stone;
-  // The source is a perspective flight. Its center contains straight, detailed
-  // treads; exclude the tapered ends and side bevels for a top-down N/S view.
-  // Crop before splitting wide flights so all lanes share one continuous tread.
-  const sample=vertical?stairTreadBounds(image):{x:0,y:0,w:image.width,h:image.height};
+  // Every direction uses the opaque tread interior. Perspective edges leave
+  // diagonal holes between rotated E/W lanes and make N/S flights taper.
+  // Reverse the sampled lane when rotating west, so wide treads stay joined.
+  const sample=stairTreadBounds(image),lane=a.stairs==='west'?span-1-part:part;
   g.imageSmoothingEnabled=false;g.save();if(a.stairs==='east'){g.translate(64,0);g.rotate(Math.PI/2);}if(a.stairs==='west'){g.translate(0,64);g.rotate(-Math.PI/2);}if(a.stairs==='south'){g.translate(0,64);g.scale(1,-1);}
-  g.drawImage(image,sample.x+sample.w*part/span,sample.y+sample.h*phase/2,sample.w/span,sample.h/2,0,0,64,64);g.restore();flatStairs.set(k,tile);
+  g.drawImage(image,sample.x+sample.w*lane/span,sample.y+sample.h*phase/2,sample.w/span,sample.h/2,0,0,64,64);g.restore();flatStairs.set(k,tile);
  }
  const tile=flatStairs.get(k),zAt=(fx,fy)=>{const t={north:1-fy,south:fy,east:fx,west:1-fx}[a.stairs];return (q.base+q.rise*Math.max(0,Math.min(1,(t-q.start)/(q.end-q.start))))*RISE;};
  // Project the actual walking surface, including partial first/last landings.

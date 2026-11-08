@@ -10,6 +10,16 @@ Ground tools paint grass, cobbles, dirt, wood, sand and water. Raise/lower chang
 
 Right drag pans, wheel zooms, Full map fits the map. Brush width controls terrain painting. Undo/redo tracks strokes. Projects autosave in IndexedDB on this origin/browser. **Save project** exports a portable JSON backup; **Open** validates and restores it. Asset pack downloads individual transparent PNGs, ground textures and anchor/collision metadata. Save local work before switching browsers or clearing site data.
 
+## Freehand ground brush and blending
+
+**Paint ground** now follows the cursor with a round brush rather than filling terrain squares. Choose grass, dirt, cobble, sand or wood, then adjust **Brush size**, **Hardness** and **Opacity / strength**. Lower hardness feathers the edge; lower opacity builds up the material over successive passes. Small brush sizes allow fine details. Cobble still samples the selected property's paving so its scale and color match the entrance.
+
+Choose **Blend ground** and brush along a boundary to soften the transition between existing materials, including older square-painted paths. It blends material coverage while keeping the source textures sharp. The circular cursor shows the full brush size and the harder inner area. Long, fast drags interpolate continuously, and each stroke is one Undo.
+
+These tools change dry ground appearance while retaining heights and collision. Stairs, bridges and water are protected; use **Lake / river** for water. Freehand paint saves and exports with the project and uses the same renderer in gameplay. Projects accept up to 64 MiB, and autosave uses the same size limit as reopening a project.
+
+Checks: `node --test town/builder/ground-brush.test.mjs`; `python3 town/builder/ground-brush-browser.py`. The browser check covers circular/soft edges, opacity, continuous drags, legacy material blending, Undo/Redo, protected terrain, portable export, reload and exact editor/game pixel parity.
+
 Validation: `node --test town/builder/model.test.mjs town/model.test.mjs`; `python3 town/builder/browser.py`; `python3 town/browser.py`.
 
 The editor and playable authored maps both use `town/world/` for the asset catalog, renderer, pixel resolution, project format, collision, spawn placement, movement, gates and camera height. Walk test uses those same functions. Editor guides (selection, grid, collision highlights and ghosts) are intentionally excluded from gameplay. Pixel comparison tests verify that static scenes match exactly with equal camera and viewport settings. The original handcrafted town remains a separate map; placed NPC home interiors are still not connected.
@@ -40,6 +50,8 @@ Additional checks: `python3 town/builder/details-browser.py` validates the 19 es
 
 North/south stair flights use straight top-down treads with parallel sides, sampled from the detailed stone, wood and brick artwork without its baked perspective edges. Wide flights share one continuous tread across their lanes. The decorative stair-flight assets use the same straight tread interior. Terrain heights, climbable slopes and collision are unchanged.
 
+East/west flights also use the opaque tread interior, with atlas lanes and phases oriented to join across the whole flight. This removes the diagonal grass slits that appeared between side-facing stair lanes. `python3 town/world/stair-sideways-browser.py` checks both directions, all finishes, narrow/wide flights, odd/even source phases and single/multiple levels.
+
 Cobble painting now samples actual scene paving at its world scale. **Paving match → Auto · nearest property** chooses Music Square or the nearest home estate; a specific scene can also be selected. The donor strip meets the asset's entrance edge, and mirrored continuation shares its edge colors and stone size. Paths have feathered grassy borders. The asset pack includes the matching paving textures.
 
 **Landmarks → Coda Arcade · exact interior footprint** is a retrofuturistic exterior with a lounge roof, disco dome, glass main-hall roof and southeast entrance. Its floor footprint and polygon collision use the exact same `arcade-footprint.js` geometry as the actual interior. Scaling is locked at 1:1; the original canvas is 1672×941 world units and the occupied floor bounds are 1512×685. Roof/facade projection adds visual height without changing that footprint. The exterior is a placeable building; placing it does not relocate or replace the active arcade interior.
@@ -67,3 +79,7 @@ Stairs and terrain render together from north to south, so higher foreground lan
 Validation: `python3 town/builder/decor-browser.py`; `python3 town/builder/round-browser.py`; `node --test town/world/cliff-mount.test.mjs town/builder/round-terrain.test.mjs`. Sprite bounds and browsing thumbnails can be rebuilt with `python3 scripts/build-town-decor.py`; the full source PNG artwork is preserved.
 
 Corner/depth regression checks: `node --test town/builder/corner-styles.test.mjs`; `python3 town/builder/corner-styles-browser.py`; `python3 town/world/stair-occlusion-browser.py`. These cover reversible shapes, saved styles, Undo/Redo, editor/game pixel parity, foreground occlusion in all four stair directions, and rock support along sloped banks.
+
+## Asset color matching
+
+Standalone trees, props, instruments, furniture, foliage and decorations now share a restrained saturation/lighting adjustment to sit closer to Music Square and the terrain. The same adjustment appears in library previews, placed artwork, gameplay and exported asset PNGs. Native artwork remains intact. Finished scenes, their paving, water and matching construction materials retain their existing colors.

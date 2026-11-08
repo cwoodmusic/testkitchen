@@ -1,5 +1,5 @@
-import {cell,key,COLS,ROWS} from '../world/model.mjs?v=stairs-topdown-1';
-import {curveBounds,cornerStyles} from '../world/round-geometry.mjs?v=stairs-topdown-1';
+import {cell,key,COLS,ROWS} from '../world/model.mjs?v=ground-brush-1';
+import {curveBounds,cornerStyles} from '../world/round-geometry.mjs?v=ground-brush-1';
 const featureKey=q=>[q.corner,q.cx,q.cy,q.r,q.kind,q.underX,q.underY,q.lift||0].join(':');
 const styleOf=q=>cornerStyles.includes(q.style)?q.style:'smooth';
 export function roundTerrain(d,p,width=3,style='smooth'){style=cornerStyles.includes(style)?style:'smooth';const edits=new Map(),radius=Math.max(1,Math.min(8,Math.floor(Number(width)||1))),scan=Math.floor(radius/2),cx=Math.floor(p.x/64),cy=Math.floor(p.y/64),restyled=new Set();let corners=0;

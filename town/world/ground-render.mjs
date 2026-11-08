@@ -1,0 +1,71 @@
+import {PAINT_GRID,PAINT_STEP,readPaint,materialKey} from './ground-paint.mjs?v=ground-brush-1';
+import {sources,catalog} from './catalog.mjs?v=ground-brush-1';
+import {cell,height} from './model.mjs?v=ground-brush-1';
+import {drawPaving,drawPavingMaterial} from './paving.mjs?v=ground-brush-1';
+
+const tiles=new WeakMap(),fields=new WeakMap(),legacyFields=new Map();
+function canvas(size){const c=document.createElement('canvas');c.width=c.height=size;return c;}
+const materialBuffer=canvas(64),mask=canvas(PAINT_GRID+2),blendBuffer=canvas(64);
+const materialContext=materialBuffer.getContext('2d'),maskContext=mask.getContext('2d'),blendContext=blendBuffer.getContext('2d');
+
+// This key changes only when property paving moves, rotates, scales or changes
+// elevation. Texture masks otherwise stay cached while the camera moves.
+export function groundFrameKey(d){return d.objects.filter(o=>catalog.get(o.asset)?.pavingSource).map(o=>[o.asset,o.x,o.y,o.scale,o.rotation,height(d,o.x,o.y)].join(':')).join('|');}
+
+export function drawMaterial(c,d,a,x,y,X,Y,{raw=false}={}){
+ const index=['grass','cobble','dirt','water'].indexOf(a.surface);
+ if(a.surface==='cobble')(raw?drawPavingMaterial:drawPaving)(c,d,x,y,Y,a.paving);
+ else if(index>=0)c.drawImage(sources.ground[index],x%8*64,y%8*64,64,64,X,Y,64,64);
+ else{
+  c.fillStyle=a.surface==='wood'?'#907350':'#c9b286';c.fillRect(X,Y,64,64);
+  if(a.surface==='wood'){c.strokeStyle='#584b36';c.lineWidth=1;for(let j=0;j<64;j+=12)c.strokeRect(X,Y+j,64,12);}
+ }
+}
+
+function field(a){
+ if(!a.paint){const id=materialKey(a);if(!legacyFields.has(id))legacyFields.set(id,readPaint(a));return legacyFields.get(id);}
+ if(!fields.has(a.paint))fields.set(a.paint,readPaint(a));
+ return fields.get(a.paint);
+}
+function neighborhood(d,a,x,y){
+ const neighbors=[];
+ for(let dy=-1;dy<=1;dy++)for(let dx=-1;dx<=1;dx++){
+  const b=dx===0&&dy===0?a:cell(d,x+dx,y+dy);
+  neighbors.push(b.level===a.level&&!b.stairs&&!b.bridge&&b.surface!=='water'?b:a);
+ }
+ return neighbors;
+}
+function sameNeighbors(previous,current){return previous.length===current.length&&current.every((a,i)=>{const b=previous[i];return a.paint===b.paint&&a.surface===b.surface&&a.paving===b.paving&&a.level===b.level;});}
+
+export function drawGround(c,d,a,x,y,X,Y,frameKey=''){
+ if(a.surface==='water'||a.stairs||a.bridge){drawMaterial(c,d,a,x,y,X,Y);return;}
+ const neighbors=neighborhood(d,a,x,y);
+ if(!a.paint&&!neighbors.some(b=>b.paint)){drawMaterial(c,d,a,x,y,X,Y);return;}
+ if(!tiles.has(d))tiles.set(d,new Map());
+ const cache=tiles.get(d),z=y*64-Y,cacheKey=[x,y,z,a.surface,a.paving].join(':'),cached=cache.get(cacheKey);
+ if(cached&&cached.paint===a.paint&&cached.frameKey===frameKey&&sameNeighbors(cached.neighbors,neighbors)){c.drawImage(cached.canvas,X,Y);return;}
+ const neighborFields=neighbors.map(field),materials=[...new Map(neighborFields.flatMap(f=>f.materials).map(m=>[materialKey(m),m])).values()];
+ blendContext.setTransform(1,0,0,1,0,0);blendContext.clearRect(0,0,64,64);blendContext.globalCompositeOperation='lighter';
+ for(const material of materials){
+  const id=materialKey(material),indices=neighborFields.map(f=>f.materials.findIndex(m=>materialKey(m)===id)),alpha=maskContext.createImageData(PAINT_GRID+2,PAINT_GRID+2);
+  // A one-sample halo interpolates coverage across cell boundaries. It also
+  // keeps a large soft stroke from revealing the underlying terrain grid.
+  for(let gy=-1;gy<=PAINT_GRID;gy++)for(let gx=-1;gx<=PAINT_GRID;gx++){
+   const dx=gx<0?-1:gx>=PAINT_GRID?1:0,dy=gy<0?-1:gy>=PAINT_GRID?1:0;
+   const ni=(dy+1)*3+dx+1,f=neighborFields[ni],clamped=neighbors[ni]===a&&(dx||dy),px=clamped?Math.max(0,Math.min(PAINT_GRID-1,gx)):(gx+PAINT_GRID)%PAINT_GRID,py=clamped?Math.max(0,Math.min(PAINT_GRID-1,gy)):(gy+PAINT_GRID)%PAINT_GRID,index=indices[ni],offset=((gy+1)*(PAINT_GRID+2)+gx+1)*4;
+   alpha.data[offset]=alpha.data[offset+1]=alpha.data[offset+2]=255;
+   alpha.data[offset+3]=index<0?0:f.weights[(py*PAINT_GRID+px)*f.materials.length+index];
+  }
+  maskContext.putImageData(alpha,0,0);
+  materialContext.setTransform(1,0,0,1,0,0);materialContext.globalCompositeOperation='source-over';materialContext.clearRect(0,0,64,64);materialContext.imageSmoothingEnabled=false;
+  materialContext.save();materialContext.translate(-X,-Y);drawMaterial(materialContext,d,material,x,y,X,Y,{raw:true});materialContext.restore();
+  materialContext.globalCompositeOperation='destination-in';materialContext.imageSmoothingEnabled=true;
+  materialContext.drawImage(mask,-PAINT_STEP,-PAINT_STEP,(PAINT_GRID+2)*PAINT_STEP,(PAINT_GRID+2)*PAINT_STEP);
+  blendContext.drawImage(materialBuffer,0,0);
+ }
+ // Keep any slight source-art transparency over its original ground rather
+ // than exposing the renderer background. Material weights stay normalized.
+ const out=canvas(64),g=out.getContext('2d');g.drawImage(blendBuffer,0,0);g.globalCompositeOperation='destination-over';g.save();g.translate(-X,-Y);drawMaterial(g,d,a,x,y,X,Y,{raw:true});g.restore();
+ if(cache.size>=4096)cache.delete(cache.keys().next().value);
+ cache.set(cacheKey,{paint:a.paint,frameKey,neighbors:neighbors.map(b=>({...b})),canvas:out});c.drawImage(out,X,Y);
+}

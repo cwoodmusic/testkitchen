@@ -1,4 +1,4 @@
-import {COLS,ROWS,cell,key,stairProfile} from '../world/model.mjs?v=stairs-topdown-1';
+import {COLS,ROWS,cell,key,stairProfile} from '../world/model.mjs?v=ground-brush-1';
 export function regionBetween(a,b){const clamp=(v,max)=>Math.max(0,Math.min(max-1,Math.floor(v)));return {x0:clamp(Math.min(a.x,b.x),COLS),y0:clamp(Math.min(a.y,b.y),ROWS),x1:clamp(Math.max(a.x,b.x),COLS),y1:clamp(Math.max(a.y,b.y),ROWS)};}
 // Preserve surface, stairs and bridge metadata while moving each cell one level.
 // Return edits first, so the caller can record one undo entry only for real edits.

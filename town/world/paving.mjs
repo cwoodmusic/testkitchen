@@ -1,5 +1,5 @@
-import {catalog,sources} from './catalog.mjs?v=stairs-topdown-1';
-import {cell,height} from './model.mjs?v=stairs-topdown-1';
+import {catalog,sources} from './catalog.mjs?v=ground-brush-1';
+import {cell,height} from './model.mjs?v=ground-brush-1';
 const tiles=new Map(),patterns=new WeakMap(),masks=new Map();
 export function scenePoint(o,a,x,y){const r=-o.rotation*Math.PI/180,dx=(x-o.x)/o.scale,dy=(y-o.y)/o.scale;return {x:dx*Math.cos(r)-dy*Math.sin(r)+a.w/2,y:dx*Math.sin(r)+dy*Math.cos(r)+a.h};}
 export function resolvePaving(d,x,y,wanted='auto'){let best=null,distance=Infinity;for(const o of d.objects){const a=catalog.get(o.asset);if(!a?.pavingSource||wanted!=='auto'&&wanted!==a.id)continue;const p=scenePoint(o,a,x,y),dx=Math.max(0,-p.x,p.x-a.w),dy=Math.max(0,-p.y,p.y-a.h),dist=Math.hypot(dx,dy)*o.scale;if(dist<distance){distance=dist;best={asset:a,object:o};}}if(best&&(wanted!=='auto'||distance<768))return best;const asset=catalog.get(wanted)||catalog.get('music-square');return {asset:asset?.pavingSource?asset:catalog.get('music-square'),object:null};}
@@ -11,6 +11,9 @@ function pattern(c,d,resolved){if(!patterns.has(c))patterns.set(c,new Map());con
 function paved(d,x,y){const a=cell(d,x,y);if(a.surface==='cobble'||a.stairs||a.bridge)return true;const X=(x+.5)*64,Y=(y+.5)*64;return d.objects.some(o=>{const a=catalog.get(o.asset);if(!a?.pavingSource)return false;const p=scenePoint(o,a,X,Y);return p.x>a.w*.44&&p.x<a.w*.56&&(p.y>=a.h*.82&&p.y<=a.h||p.y>=0&&p.y<a.h*.1);});}
 function edgeMask(bits){if(masks.has(bits))return masks.get(bits);const m=document.createElement('canvas');m.width=m.height=64;const c=m.getContext('2d'),data=c.createImageData(64,64);for(let y=0;y<64;y++)for(let x=0;x<64;x++){let t=1;const grain=((x*13+y*37)%17)/6;for(const[bit,dist]of [[1,x],[2,63-x],[4,y],[8,63-y]])if(bits&bit)t=Math.min(t,Math.max(0,(dist-grain)/9));const i=(y*64+x)*4;data.data[i]=data.data[i+1]=data.data[i+2]=255;data.data[i+3]=Math.round(t*255);}c.putImageData(data,0,0);masks.set(bits,m);return m;}
 const buffer=document.createElement('canvas');buffer.width=buffer.height=64;const b=buffer.getContext('2d');
+// Freehand masks supply their own edges; sample the same property paving
+// without adding a second, tile-shaped grass fringe underneath the brush.
+export function drawPavingMaterial(c,d,x,y,Y,wanted){const X=x*64,resolved=resolvePaving(d,X+32,y*64+32,wanted||'auto');c.fillStyle=pattern(c,d,resolved);c.fillRect(X,Y,64,64);}
 export function drawPaving(c,d,x,y,Y,wanted){const X=x*64,resolved=resolvePaving(d,X+32,y*64+32,wanted||'auto'),p=pattern(c,d,resolved);let bits=0;for(const[dx,dy,bit]of [[-1,0,1],[1,0,2],[0,-1,4],[0,1,8]])if(!paved(d,x+dx,y+dy))bits|=bit;
  c.drawImage(sources.ground[0],x%8*64,y%8*64,64,64,X,Y,64,64);b.setTransform(1,0,0,1,0,0);b.globalCompositeOperation='source-over';b.clearRect(0,0,64,64);b.translate(-X,-Y);b.fillStyle=p;b.fillRect(X,Y,64,64);b.setTransform(1,0,0,1,0,0);if(bits){b.globalCompositeOperation='destination-in';b.drawImage(edgeMask(bits),0,0);}c.drawImage(buffer,X,Y);
 }

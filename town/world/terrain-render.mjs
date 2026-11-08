@@ -1,20 +1,11 @@
-import {shadeLowerGround,drawTerrainRims} from './edge-shading.mjs?v=stairs-topdown-1';
-import {drawRoundUnder,drawRoundCliff} from './round-render.mjs?v=stairs-topdown-1';
-import {clipCurves} from './round-geometry.mjs?v=stairs-topdown-1';
-import {drawPaving} from './paving.mjs?v=stairs-topdown-1';
-import {drawCliff,drawStairs} from './construction.mjs?v=stairs-topdown-1';
-import {RISE,COLS,ROWS,cell} from './model.mjs?v=stairs-topdown-1';
-import {sources} from './catalog.mjs?v=stairs-topdown-1';
+import {shadeLowerGround,drawTerrainRims} from './edge-shading.mjs?v=ground-brush-1';
+import {drawRoundUnder,drawRoundCliff} from './round-render.mjs?v=ground-brush-1';
+import {clipCurves} from './round-geometry.mjs?v=ground-brush-1';
+import {drawGround,groundFrameKey} from './ground-render.mjs?v=ground-brush-1';
+import {drawCliff,drawStairs} from './construction.mjs?v=ground-brush-1';
+import {RISE,COLS,ROWS,cell} from './model.mjs?v=ground-brush-1';
+import {sources} from './catalog.mjs?v=ground-brush-1';
 const lawns=new WeakMap();
-function drawSurface(c,d,a,x,y,X,Y){
- const index=['grass','cobble','dirt','water'].indexOf(a.surface);
- if(a.surface==='cobble')drawPaving(c,d,x,y,Y,a.paving);
- else if(index>=0)c.drawImage(sources.ground[index],x%8*64,y%8*64,64,64,X,Y,64,64);
- else{
-  c.fillStyle=a.surface==='wood'?'#907350':'#c9b286';c.fillRect(X,Y,64,64);
-  if(a.surface==='wood'){c.strokeStyle='#584b36';for(let j=0;j<64;j+=12)c.strokeRect(X,Y+j,64,12);}
- }
-}
 function drawWaterRim(c,d,x,y,X,Y){
  c.strokeStyle='#97b9a1';c.lineWidth=5;
  for(const[dx,dy]of [[0,-1],[0,1],[-1,0],[1,0]])if(cell(d,x+dx,y+dy).surface!=='water'){
@@ -36,6 +27,7 @@ export function drawTerrain(c,d,{x0,x1,y0,y1},opts={}){
  // projection cutouts. Actual cliff faces, rather than this lawn, fill supports.
  if(!lawns.has(c))lawns.set(c,c.createPattern(sources.ground[0],'repeat'));
  c.fillStyle=lawns.get(c);c.fillRect(0,0,COLS*64,ROWS*64);
+ const frameKey=groundFrameKey(d);
  for(let y=y0;y<y1;y++){
   for(let x=x0;x<x1;x++){
    const a=cell(d,x,y),X=x*64,Y=y*64,z=a.level*RISE;
@@ -44,8 +36,8 @@ export function drawTerrain(c,d,{x0,x1,y0,y1},opts={}){
     // can cover them, just as it covers any other surface behind its bank.
     drawCliff(c,d,x,y);drawStairs(c,d,x,y);continue;
    }
-   if(a.curves?.length){drawRoundUnder(c,d,x,y);drawRoundCliff(c,d,x,y);c.save();clipCurves(c,a,x,y,z);}
-   drawSurface(c,d,a,x,y,X,Y-z);
+   if(a.curves?.length){drawRoundUnder(c,d,x,y,frameKey);drawRoundCliff(c,d,x,y);c.save();clipCurves(c,a,x,y,z);}
+   drawGround(c,d,a,x,y,X,Y-z,frameKey);
    if(a.surface==='water')drawWaterRim(c,d,x,y,X,Y-z);
    shadeLowerGround(c,d,x,y,z);
    if(a.curves?.length)c.restore();
