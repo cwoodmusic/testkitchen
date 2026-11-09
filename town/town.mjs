@@ -1,7 +1,7 @@
 import {PIXEL_GRID} from './pixel-style.mjs';
 import {W,H,START,terraces,inRect,elevation,baseElevation,stairAt,canStep,roomPlan,atInteriorExit,interiorSolid,residents,landmarks,districts,nearest,friendship,canEnter,HOME_FRIENDSHIP} from './model.mjs';
-import {rect,ellipse,tree,house,housePart,drawInterior} from './art.mjs?v=courtyard-walk-1';
-import {bakeTerrain} from './terrain.mjs?v=courtyard-walk-1';
+import {rect,ellipse,tree,house,housePart,drawInterior} from './art.mjs?v=picnic-beach-1';
+import {bakeTerrain} from './terrain.mjs?v=picnic-beach-1';
 const $=id=>document.getElementById(id),canvas=$('world'),ctx=canvas.getContext('2d');
 const landscape=bakeTerrain(),trees=landscape.trees;
 const keys=new Set(),player={...START},camera={x:0,y:0};let facing='down',zoom=1,people=[],interior=null,last=0,time=0,near=null,embedded=false;

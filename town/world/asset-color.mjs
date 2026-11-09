@@ -4,7 +4,7 @@
 export function assetFilter(a){
  if(a.scene||a.pavingSource||a.group==='construction'||a.group==='cliff faces'||a.id==='coda-arcade')return 'none';
  if(a.group==='trees')return 'saturate(.8) brightness(.94)';
- if(a.pack==='town-decor-256')return 'saturate(.84) brightness(.96)';
+ if(a.pack==='town-decor-256'||a.pack==='town-leisure-38')return 'saturate(.84) brightness(.96)';
  if(a.pack==='urban-street-kit')return 'saturate(.9) brightness(.98)';
  if(['props','music','landscape'].includes(a.group))return 'saturate(.84) brightness(.96)';
  if(a.group==='furniture')return 'saturate(.88) brightness(.97)';

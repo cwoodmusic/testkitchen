@@ -1,30 +1,30 @@
-import {groundTexture} from '../world/ground-render.mjs?v=courtyard-walk-1';
-import {assetFilter} from '../world/asset-color.mjs?v=courtyard-walk-1';
-import {curveUnder} from '../world/round-geometry.mjs?v=courtyard-walk-1';
-import {roundTerrain} from './round-terrain.mjs?v=courtyard-walk-1';
-import {paintGround} from './ground-brush.mjs?v=courtyard-walk-1';
-import {planWaterFill} from './water-fill.mjs?v=courtyard-walk-1';
-import {planLandFill} from './land-fill.mjs?v=courtyard-walk-1';
-import {planOrganicEdges} from './organic-edges.mjs?v=courtyard-walk-1';
-import {createSandFootprints} from '../world/sand-footprints.mjs?v=courtyard-walk-1';
-import {createAmbientNPCs} from '../world/ambient-npcs.mjs?v=courtyard-walk-1';
-import {readNightPreference,saveNightPreference} from '../world/lighting-settings.mjs?v=courtyard-walk-1';
-import {readNPCPreference,saveNPCPreference} from './preview-settings.mjs?v=courtyard-walk-1';
-import {hitCliff,mountPose,attach,cliffFace} from '../world/cliff-mount.mjs?v=courtyard-walk-1';
-import {pavingTexture} from '../world/paving.mjs?v=courtyard-walk-1';
-import {planStairs,drawStairGuide} from './stairs.mjs?v=courtyard-walk-1';
-import {planPier,drawPierGuide} from './piers.mjs?v=courtyard-walk-1';
-import {levelColors} from '../world/elevation-view.mjs?v=courtyard-walk-1';
-import {regionBetween,regionFromPolygon,regionHeightEdits,selectionCount} from './region.mjs?v=courtyard-walk-1';
-import {blank,cell,height,key,connect,segment,clearStairs,parseProject,History,surfaces,barriers,COLS,ROWS} from '../world/model.mjs?v=courtyard-walk-1';
-import {catalog,sources,preparePlacedArt} from '../world/catalog.mjs?v=courtyard-walk-1';
-import {render,resizeSurface,findStart,movePlayer,toggleGate,follow,PLAYER_SCALE,GAIT_PER_PIXEL} from '../world/runtime.mjs?v=courtyard-walk-1';
-import {openDatabase,saveProject} from '../world/storage.mjs?v=courtyard-walk-1';
+import {groundTexture} from '../world/ground-render.mjs?v=picnic-beach-1';
+import {assetFilter} from '../world/asset-color.mjs?v=picnic-beach-1';
+import {curveUnder} from '../world/round-geometry.mjs?v=picnic-beach-1';
+import {roundTerrain} from './round-terrain.mjs?v=picnic-beach-1';
+import {paintGround} from './ground-brush.mjs?v=picnic-beach-1';
+import {planWaterFill} from './water-fill.mjs?v=picnic-beach-1';
+import {planLandFill} from './land-fill.mjs?v=picnic-beach-1';
+import {planOrganicEdges} from './organic-edges.mjs?v=picnic-beach-1';
+import {createSandFootprints} from '../world/sand-footprints.mjs?v=picnic-beach-1';
+import {createAmbientNPCs} from '../world/ambient-npcs.mjs?v=picnic-beach-1';
+import {readNightPreference,saveNightPreference} from '../world/lighting-settings.mjs?v=picnic-beach-1';
+import {readNPCPreference,saveNPCPreference} from './preview-settings.mjs?v=picnic-beach-1';
+import {hitCliff,mountPose,attach,cliffFace} from '../world/cliff-mount.mjs?v=picnic-beach-1';
+import {pavingTexture} from '../world/paving.mjs?v=picnic-beach-1';
+import {planStairs,drawStairGuide} from './stairs.mjs?v=picnic-beach-1';
+import {planPier,drawPierGuide} from './piers.mjs?v=picnic-beach-1';
+import {levelColors} from '../world/elevation-view.mjs?v=picnic-beach-1';
+import {regionBetween,regionFromPolygon,regionHeightEdits,selectionCount} from './region.mjs?v=picnic-beach-1';
+import {blank,cell,height,key,connect,segment,clearStairs,parseProject,History,surfaces,barriers,COLS,ROWS} from '../world/model.mjs?v=picnic-beach-1';
+import {catalog,sources,preparePlacedArt} from '../world/catalog.mjs?v=picnic-beach-1';
+import {render,resizeSurface,findStart,movePlayer,toggleGate,follow,PLAYER_SCALE,GAIT_PER_PIXEL} from '../world/runtime.mjs?v=picnic-beach-1';
+import {openDatabase,saveProject} from '../world/storage.mjs?v=picnic-beach-1';
 import {createZip} from '../../studio/zip.js';
-import {createUrbanController} from '../world/urban.mjs?v=courtyard-walk-1';
-import {isUrbanAsset} from '../world/urban-kit.mjs?v=courtyard-walk-1';
-import {snapUrbanAsset} from '../world/urban-roads.mjs?v=courtyard-walk-1';
-import {musicWallNode,planMusicWall} from '../world/music-wall-geometry.mjs?v=courtyard-walk-1';
+import {createUrbanController} from '../world/urban.mjs?v=picnic-beach-1';
+import {isUrbanAsset} from '../world/urban-kit.mjs?v=picnic-beach-1';
+import {snapUrbanAsset} from '../world/urban-roads.mjs?v=picnic-beach-1';
+import {musicWallNode,planMusicWall} from '../world/music-wall-geometry.mjs?v=picnic-beach-1';
 const $=id=>document.getElementById(id),canvas=$('map'),ctx=canvas.getContext('2d'),history=new History(),ids=new Set(catalog.keys());let doc=blank(),tool='select',asset=catalog.keys().next().value,selected=null,region=null,hover=null,pointer=null,walk=false,player={...doc.spawn},keys=new Set(),dirty=false,saveTimer,db=null,stairPreview=null,pierPreview=null;
 const character=window.createCodaCharacterRenderer({worldScale:PLAYER_SCALE});let avatar=character.normalizeProfile({}),facing='down',walking=false,walkPhase=0;addEventListener('message',e=>{if(e.source===parent&&e.origin===location.origin&&e.data?.type==='coda-town-state-result'&&e.data.avatar)avatar=character.normalizeProfile(e.data.avatar);});if(parent!==window)parent.postMessage({type:'coda-town-state'},location.origin);
 let assetTicket=0,loadingAsset=false,pendingAttach=null;
@@ -61,29 +61,35 @@ for(const id of ['brushHardness','brushOpacity']){$(id).oninput=()=>{$(id+'Value
 for(const a of catalog.values())if(a.pavingSource){const o=document.createElement('option');o.value=a.id;o.textContent=a.name;$('paving').append(o);}
 for(const group of new Set([...catalog.values()].map(a=>a.group))){const o=document.createElement('option');o.value=group;o.textContent=group+' ('+[...catalog.values()].filter(a=>a.group===group).length+')';$('category').append(o);}
 const urbanOption=document.createElement('option');urbanOption.value='@urban';urbanOption.textContent='Urban kit · buildings, streets & details';$('category').insertBefore(urbanOption,$('category').children[1]);
+const isLeisureAsset=a=>a.group==='picnic'||a.group==='beach';
+const leisureOption=document.createElement('option');leisureOption.value='@leisure';leisureOption.textContent='Picnic & beach · '+[...catalog.values()].filter(isLeisureAsset).length+' assets';$('category').insertBefore(leisureOption,$('category').children[2]);
 function paintUrbanSurface(a){
  asset=a.id;selected=null;loadingAsset=false;$('surface').value=a.paintSurface;groundPaintShape='square';$('brush').value=a.paintSurface==='asphalt'?12:a.paintSurface==='sidewalk'?2:4;setTool('ground');status(a.name+' · drag to paint · choose Square tiles or Round soft brush');
 }
 function library(){
  const list=$('library'),category=$('category').value,terms=$('search').value.toLowerCase().trim().split(/\s+/).filter(Boolean);list.replaceChildren();
  $('urbanKitHelp').hidden=category!=='@urban'&&!category.startsWith('urban ');
+ $('leisureKitHelp').hidden=category!=='@leisure';
+ $('assetLibraryTitle').textContent=category==='@leisure'?'Picnic & beach · '+[...catalog.values()].filter(isLeisureAsset).length:'Asset library · '+catalog.size;
+ $('search').placeholder=category==='@leisure'?'Search blankets, baskets, beach chairs…':'Search roads, sidewalks, hydrants…';
+ for(const[id,value]of [['urbanKit','@urban'],['leisureKit','@leisure'],['allAssets','']])$(id).classList.toggle('active',category===value);
  for(const a of catalog.values()){
-  if(category&&(category==='@urban'?!isUrbanAsset(a):a.group!==category))continue;
-  const searchable=(a.name+' '+a.group+' '+a.id).toLowerCase();if(!terms.every(term=>searchable.includes(term)||term.endsWith('s')&&searchable.includes(term.slice(0,-1))))continue;
+  if(category&&(category==='@urban'?!isUrbanAsset(a):category==='@leisure'?!isLeisureAsset(a):a.group!==category))continue;
+  const searchable=(a.name+' '+a.group+' '+a.id).toLowerCase();if(!terms.every(term=>searchable.includes(term)||term.length>2&&term.endsWith('s')&&searchable.includes(term.slice(0,-1))))continue;
   const b=document.createElement('button');b.className='asset';b.title=a.name+(a.snap?' · snaps to the street grid':'');b.dataset.asset=a.id;
   const thumb=document.createElement('canvas');thumb.width=100;thumb.height=85;const c=thumb.getContext('2d'),s=Math.min(100/a.w,85/a.h);c.save();c.translate((100-a.w*s)/2,(85-a.h*s)/2);c.scale(s,s);c.filter=assetFilter(a);a.draw(c);c.restore();b.append(thumb,document.createTextNode(a.name));
   b.onclick=async()=>{
    const ticket=++assetTicket;if(a.barrierStyle){chooseMusicWalls();return;}if(a.paintSurface){paintUrbanSurface(a);return;}
-   asset=a.id;selected=null;$('assetName').textContent=a.name;$('mountSurface').value=a.mountDefault?'cliff':'ground';$('mountSurface').disabled=!!(a.scene||a.fixedScale);$('mountHeight').disabled=true;$('layer').value=a.layer;$('collision').checked=a.collisionDefault??(a.boxes.length>0||!!a.polygons?.length);$('collision').disabled=!!a.mountDefault;$('scale').disabled=!!a.fixedScale;if(a.fixedScale)$('scale').value=1;setTool('place');
+   asset=a.id;selected=null;if(a.authoredFacing)$('rotation').value='0';$('assetName').textContent=a.name;$('mountSurface').value=a.mountDefault?'cliff':'ground';$('mountSurface').disabled=!!(a.scene||a.fixedScale);$('mountHeight').disabled=true;$('layer').value=a.layer;$('collision').checked=a.collisionDefault??(a.boxes.length>0||!!a.polygons?.length);$('collision').disabled=!!a.mountDefault;$('scale').disabled=!!a.fixedScale;if(a.fixedScale)$('scale').value=1;setTool('place');
    if(a.snap)$('hint').textContent='Click to place · street pieces snap to the grid · choose Rotation to turn a piece';
    loadingAsset=!!a.ensureFull;if(loadingAsset){status('Loading '+a.name+'…');try{await a.ensureFull();if(ticket===assetTicket){loadingAsset=false;status('Ready to place '+a.name);}}catch(e){if(ticket===assetTicket){loadingAsset=false;status(e.message);setTool('select');}}}
   };list.append(b);
  }
 }
-function showKit(urban){$('category').value=urban?'@urban':'';$('search').value='';library();}
-$('urbanKit').onclick=()=>showKit(true);$('allAssets').onclick=()=>showKit(false);$('search').oninput=library;$('category').onchange=library;
-if(new URLSearchParams(location.search).get('kit')==='urban')$('category').value='@urban';
-library();$('assetLibraryTitle').textContent='Asset library · '+catalog.size;
+function showKit(category){$('category').value=category;$('search').value='';library();}
+$('urbanKit').onclick=()=>showKit('@urban');$('leisureKit').onclick=()=>showKit('@leisure');$('allAssets').onclick=()=>showKit('');$('search').oninput=library;$('category').onchange=library;
+const initialKit=new URLSearchParams(location.search).get('kit');if(initialKit==='urban')$('category').value='@urban';else if(initialKit==='leisure')$('category').value='@leisure';
+library();
 function changed(){dirty=true;clearTimeout(saveTimer);status('Saving locally…');saveTimer=setTimeout(saveLocal,350);}
 function checkpoint(){history.record(doc);}
 function chooseMusicWalls(){++assetTicket;loadingAsset=false;selected=null;clearRegion();$('barrier').value='music-square';setTool('fence');status('Music Square stone wall · start a drag near an existing wall or pillar');}
