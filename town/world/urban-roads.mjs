@@ -1,6 +1,6 @@
 // One shared material field supplies roads, pavements and the terrain brush.
 // Keep the connectivity geometry usable by project validation without a DOM.
-const urbanTextures=typeof document==='undefined'?null:(await import('./urban-materials.mjs?v=map-recovery-1')).urbanTextures;
+const urbanTextures=typeof document==='undefined'?null:(await import('./urban-materials.mjs?v=collision-layers-1')).urbanTextures;
 export const ROAD_SIZE=1024,ROAD_MARGIN=128,ROAD_WIDTH=768;
 const directions=['north','east','south','west'];
 const definition=(id,name,open)=>Object.freeze({id:'urban-road-'+id,name,w:ROAD_SIZE,h:ROAD_SIZE,open:Object.freeze(open)});

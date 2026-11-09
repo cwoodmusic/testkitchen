@@ -1,4 +1,4 @@
-import {parseProject,MAX_PROJECT_LENGTH} from './model.mjs?v=map-recovery-1';
+import {parseProject,MAX_PROJECT_LENGTH} from './model.mjs?v=collision-layers-1';
 
 const BACKUP_PREFIX='backup:',BACKUP_FORMAT='coda-town-backup-v1',META_KEY='current-meta';
 export const MAX_PROJECT_BACKUPS=3;

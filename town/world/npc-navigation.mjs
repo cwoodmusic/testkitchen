@@ -1,4 +1,6 @@
-import {blocked,surfaceAt,cell,segment,COLS,ROWS,TILE} from './model.mjs?v=map-recovery-1';
+import {blocked,surfaceAt,cell,segment,COLS,ROWS,TILE} from './model.mjs?v=collision-layers-1';
+import {npcCollisionObject,npcCollisionProject,NPC_COLLISION_RADIUS,NPC_COLLISION_RADIUS_KEY} from './npc-collision.mjs?v=collision-layers-1';
+export {npcCollisionProject} from './npc-collision.mjs?v=collision-layers-1';
 
 const BIN=512,MARGIN=96,worldWidth=COLS*TILE,worldHeight=ROWS*TILE;
 const center=(x,y)=>({x:x*TILE+TILE/2,y:y*TILE+TILE/2});
@@ -27,6 +29,7 @@ function objectBounds(o,a){
 // Each check retains the real terrain, stair and collision implementation.
 // Broad-phase views change only which distant solid objects are considered.
 export function npcConnectionClear(doc,catalog,from,to){
+ doc=npcCollisionProject(doc,catalog);
  if(!inside(from)||!inside(to)||blocked(doc,from.x,from.y,catalog))return false;
  const a=cell(doc,Math.floor(from.x/TILE),Math.floor(from.y/TILE)),b=cell(doc,Math.floor(to.x/TILE),Math.floor(to.y/TILE));
  const steps=Math.max(1,Math.ceil(distance(from,to)/(a.stairs||b.stairs?1.5:4)));let previous=from;
@@ -66,7 +69,7 @@ export function createNPCNavigator({getProject,catalog,getBounds,budgetMs=2,maxN
  function clear(next,stamp){
   const abandoned=[...pending.values()];pending.clear();queue=[];doc=next;cells=next?.cells;revision=stamp;initialized=true;views.clear();edges.clear();walkable.clear();costs.clear();index=[];invalidations++;
   if(doc){
-   for(const o of doc.objects){if(!o.collision||o.mount)continue;const a=catalog.get(o.asset),bounds=a&&objectBounds(o,a);if(bounds)index.push({o,bounds});}
+   for(const original of doc.objects){const a=catalog.get(original.asset),o=npcCollisionObject(original,a);if(!o.collision||o.mount)continue;const bounds=a&&objectBounds(o,a);if(bounds)index.push({o,bounds});}
    for(const[k,e]of Object.entries(doc.edges)){const s=segment(k);index.push({k,e,bounds:{x0:s.x-20,y0:s.y-20,x1:s.x+s.dx+20,y1:s.y+s.dy+20}});}
   }
   for(const job of abandoned)if(!job.cancelled)job.callback?.([]);
@@ -78,7 +81,7 @@ export function createNPCNavigator({getProject,catalog,getBounds,budgetMs=2,maxN
   const bx=Math.floor(p.x/BIN),by=Math.floor(p.y/BIN),key=bx+','+by;let view=views.get(key);if(view)return view;
   const bounds={x0:bx*BIN-MARGIN,y0:by*BIN-MARGIN,x1:(bx+1)*BIN+MARGIN,y1:(by+1)*BIN+MARGIN},objects=[],nearEdges={};
   for(const item of index)if(overlaps(bounds,item.bounds)){if(item.o)objects.push(item.o);else nearEdges[item.k]=item.e;}
-  view={...doc,objects,edges:nearEdges};views.set(key,view);return view;
+  view={...doc,objects,edges:nearEdges,[NPC_COLLISION_RADIUS_KEY]:NPC_COLLISION_RADIUS};views.set(key,view);return view;
  }
  function clearConnection(from,to){
   if(!inside(from)||!inside(to)||!ensure())return false;
@@ -105,10 +108,10 @@ export function createNPCNavigator({getProject,catalog,getBounds,budgetMs=2,maxN
   const inBounds=p=>p.x>=minX&&p.x<=maxX&&p.y>=minY&&p.y<=maxY&&Math.abs(p.x-startTile.x)<=span&&Math.abs(p.y-startTile.y)<=span;
   // Crowds are temporary route preferences, not authored collision. Keep
   // these checks local to this search so shared walkability remains reusable.
-  const avoid=(options.avoid||[]).filter(p=>valid(p)&&Number.isFinite(p.r)&&p.r>0&&distance(p,from)>=96&&distance(p,to)>=96);
+  const avoid=(options.avoid||[]).filter(p=>valid(p)&&Number.isFinite(p.r)&&p.r>0&&distance(p,from)>18&&distance(p,to)>18);
   const clearForRoute=p=>{
    const w=center(p.x,p.y);
-   return (distance(w,from)<96||distance(w,to)<96||!avoid.some(a=>distance(w,a)<a.r))&&tileClear(p);
+   return (tileId(p)===tileId(startTile)||tileId(p)===tileId(targetTile)||!avoid.some(a=>distance(w,a)<a.r))&&tileClear(p);
   };
   if(!inBounds(startTile)||!inBounds(targetTile))return [];
   const candidates=[];

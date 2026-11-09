@@ -1,28 +1,30 @@
-import {configureMusicWallArt,registerMusicWallAssets} from './music-wall-art.mjs?v=map-recovery-1';
-import {musicSquareWalls} from './music-wall-geometry.mjs?v=map-recovery-1';
-import {drawMusicSquareScene} from './music-square-entrances.mjs?v=map-recovery-1';
-import {registerDecor} from './decor-pack.mjs?v=map-recovery-1';
-import {registerLeisure} from './leisure-pack.mjs?v=map-recovery-1';
-import {arcadeGeometry,drawArcade} from './arcade.mjs?v=map-recovery-1';
-import {constructionArt,stairArt,stairTreadBounds,overgrowthArt,estateArt,cliffDecorArt} from './detail-art.mjs?v=map-recovery-1';
-import {estateDefinitions,estateBoxes} from './estates.mjs?v=map-recovery-1';
-import {townArtSources,house} from '../art.mjs?v=map-recovery-1';
+import {musicSquareCollisionGeometry,musicSquareSceneParts,propCollisionBoxes,gazeboSceneParts,urbanBuildingCollision} from './scene-collision.mjs?v=collision-layers-1';
+import {configureMusicWallArt,registerMusicWallAssets} from './music-wall-art.mjs?v=collision-layers-1';
+import {musicSquareWalls} from './music-wall-geometry.mjs?v=collision-layers-1';
+import {drawMusicSquareScene} from './music-square-entrances.mjs?v=collision-layers-1';
+import {registerDecor} from './decor-pack.mjs?v=collision-layers-1';
+import {registerLeisure} from './leisure-pack.mjs?v=collision-layers-1';
+import {arcadeGeometry,drawArcade} from './arcade.mjs?v=collision-layers-1';
+import {constructionArt,stairArt,stairTreadBounds,overgrowthArt,estateArt,cliffDecorArt} from './detail-art.mjs?v=collision-layers-1';
+import {estateDefinitions,estateBoxes} from './estates.mjs?v=collision-layers-1';
+import {townArtSources,house} from '../art.mjs?v=collision-layers-1';
 import {homeGeometry,ARCHITECTURES} from '../model.mjs';
-import {registerUrbanDetails} from './urban-kit.mjs?v=map-recovery-1';
-import {registerUrbanRoads} from './urban-roads.mjs?v=map-recovery-1';
-import {registerRoadLights} from './road-light-art.mjs?v=map-recovery-1';
-import {registerFestivalLights} from './festival-lights.mjs?v=map-recovery-1';
+import {registerUrbanDetails} from './urban-kit.mjs?v=collision-layers-1';
+import {registerUrbanRoads} from './urban-roads.mjs?v=collision-layers-1';
+import {registerRoadLights} from './road-light-art.mjs?v=collision-layers-1';
+import {registerFestivalLights} from './festival-lights.mjs?v=collision-layers-1';
 export const sources=townArtSources(),catalog=new Map();
 function add(id,name,group,w,h,draw,boxes=[],layer='objects'){const a={id,name,group,w:Math.ceil(w),h:Math.ceil(h),boxes,layer};a.draw=draw;let cached;Object.defineProperty(a,'canvas',{get(){if(!cached){cached=document.createElement('canvas');cached.width=a.w;cached.height=a.h;draw(cached.getContext('2d'));}return cached;}});catalog.set(id,a);return a;}
 function sprite(group,i,name,w,boxes,layer){const s=sources[group][i],h=w*s.sh/s.sw;return add(`${group}-${i}-${w}`,name,group,w,h,c=>c.drawImage(s.image,s.sx,s.sy,s.sw,s.sh,0,0,w,h),boxes?.(w,h)||[],layer);}
 ['Oak','Pine','Willow','Cherry','Apple'].forEach((n,i)=>[320,480,680].forEach((w,j)=>sprite('trees',i,`${['Young','Mature','Ancient'][j]} ${n}`,w,(w,h)=>[{x:w*.45,y:h-38,w:w*.1,h:35}])));
-sprite('trees',5,'Flowering shrubs',200);
-['Fountain','Bench','Lamp post','Flower planter','Grand gazebo','Wishing well'].forEach((n,i)=>sprite('props',i,n,[360,150,65,130,960,180][i],(w,h)=>i===4?[{x:0,y:h-110,w:35,h:110},{x:w-35,y:h-110,w:35,h:110},{x:0,y:h-145,w:w,h:24}]:[{x:w*.15,y:h-45,w:w*.7,h:40}]));
+const floweringShrubs=sprite('trees',5,'Flowering shrubs',200,(w,h)=>[{x:w*.08,y:h*.57,w:w*.84,h:h*.41}]);floweringShrubs.npcAvoid=true;floweringShrubs.depthSorted=true;
+['Fountain','Bench','Lamp post','Flower planter','Grand gazebo','Wishing well'].forEach((n,i)=>sprite('props',i,n,[360,150,65,130,960,180][i],(w,h)=>propCollisionBoxes(i,w,h)));
 ['Piano','Sofa','Bed','Kitchen counter','Stove','Dining table','Toilet','Shower','Vanity'].forEach((n,i)=>sprite('furniture',i,n,180,(w,h)=>[{x:10,y:h*.5,w:w-20,h:h*.5}]));
 ['Violin sign','Musical gate decoration','Lyre window','Notice board','Luthier bench','Cello monument'].forEach((n,i)=>sprite('music',i,n,[130,240,120,180,210,220][i]));
 ['Grass cliff cap','Mossy boulders','Reeds','Overhanging grass','Fern overgrowth','Rock outcrop'].forEach((n,i)=>sprite('landscape',i,n,[240,240,160,240,240,300][i],null,[2,3,4].includes(i)?'overgrowth':'objects'));
 for(const [plan,p]of Object.entries(ARCHITECTURES))for(let style=0;style<6;style++){const h=homeGeometry(0,100,style,plan);h.style=style;h.renderElevation=0;add(`house-${plan}-${style}`,`${p.label} · ${['Slate','Rose','Stone','Sage','Ochre','Blue'][style]}`,'houses',h.w,h.h+100,c=>house(c,h),h.parts.map(r=>({x:r.x,y:r.y+100,w:r.w,h:r.h})));}
-const square=add('music-square','Music Square · complete piazza','landmarks',2400,1600,c=>drawMusicSquareScene(c,sources.square),[{x:950,y:580,w:500,h:400}],'ground');square.scene=true;square.pavingSource=sources.square;
+const squareGeometry=musicSquareCollisionGeometry();const square=add('music-square','Music Square · complete piazza','landmarks',2400,1600,c=>drawMusicSquareScene(c,sources.square),squareGeometry.boxes,'ground');square.polygons=squareGeometry.polygons;square.sceneParts=musicSquareSceneParts();square.scene=true;square.pavingSource=sources.square;
+const gazebo=catalog.get('props-4-960');gazebo.sceneParts=gazeboSceneParts(gazebo.w,gazebo.h);
 configureMusicWallArt(sources.square,constructionArt[7]);
 for(const s of musicSquareWalls({x:1200,y:1600,scale:1,rotation:0})){const half=s.width/2;square.boxes.push({x:s.x-(s.dy?half:0),y:s.y-(s.dx?half:0),w:s.dx||s.width,h:s.dy||s.width});}
 registerMusicWallAssets(add);
@@ -44,8 +46,9 @@ for(const def of [
 ]){
  const image=await new Promise((resolve,reject)=>{const i=new Image();i.onload=()=>resolve(i);i.onerror=()=>reject(Error('Urban building artwork could not load.'));i.src=new URL('../assets/urban/'+def.file,import.meta.url);});
  const footprint={x:(def.w-def.fw)/2,y:def.front-def.fh,w:def.fw,h:def.fh};
- const a=add(def.id,def.name,'urban buildings',def.w,def.h,c=>c.drawImage(image,0,0,def.w,def.h),[footprint]);
- a.urban=def.kind;a.fixedScale=true;a.footprint=footprint;a.door={x:def.w/2,y:def.front+20};a.frontAtX=x=>x>=footprint.x&&x<=footprint.x+footprint.w?def.front:null;
+ const physical=urbanBuildingCollision(footprint,def.front);
+ const a=add(def.id,def.name,'urban buildings',def.w,def.h,c=>c.drawImage(image,0,0,def.w,def.h),physical.boxes);
+ a.urban=def.kind;a.fixedScale=true;a.footprint=footprint;a.door={x:def.w/2,y:def.front+20};a.frontAtX=x=>x>=physical.left&&x<=physical.right?physical.front:null;
 }
 
 for(const[i,id,name,w]of [[0,'cliff-ivy','Cliff ivy cascade',256],[1,'cliff-roses','Cliff climbing roses',240],[2,'cliff-roots','Hanging cliff roots',192],[3,'cliff-ledge','Fern-covered rock ledge',224],[4,'cliff-lantern','Cliff wall lantern',64],[5,'cliff-relief','Cliff lyre relief',128]]){const image=cliffDecorArt[i],h=w*image.height/image.width,a=add(id,name,'cliff faces',w,h,c=>c.drawImage(image,0,0,w,h));a.mountDefault=true;a.overhang=i<4;}

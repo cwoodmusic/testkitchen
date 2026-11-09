@@ -1,6 +1,6 @@
 # Coda Town picnic and beach assets
 
-[Open the Picnic & beach library](../town/builder/?kit=leisure&v=map-recovery-1), or choose **Picnic & beach** beside Urban kit in Town Builder. The collection contains 38 separate, movable assets. Opening the collection keeps your current project.
+[Open the Picnic & beach library](../town/builder/?kit=leisure&v=collision-layers-1), or choose **Picnic & beach** beside Urban kit in Town Builder. The collection contains 38 separate, movable assets. Opening the collection keeps your current project.
 
 Picnic items include three spread blankets, folded blankets, closed and open baskets, a wicker hamper, cooler, lunch bag, food board, lemonade, thermos and cups, grill, camping lantern, travel guitar and picnic radio. Beach items include umbrellas, a cabana, towels, beach bag, lifeguard chair, changing hut, ball, sandcastle, paddleboard, life ring, dune planter and volleyball net.
 

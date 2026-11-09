@@ -1,7 +1,8 @@
 import {test} from 'node:test';
 import assert from 'node:assert/strict';
-import {blank,blocked,COLS,ROWS} from './model.mjs';
+import {blank,blocked,height,COLS,ROWS} from './model.mjs';
 import {buildNPCDistrict,npcDistrictPoint,npcDistrictFacing} from './npc-district.mjs';
+import {npcCollisionProject} from './npc-collision.mjs';
 
 const tower={id:'coda-residences',name:'Coda Residences',w:1000,h:2500,urban:'tower',footprint:{x:100,y:1700,w:800,h:700},door:{x:500,y:2440},boxes:[{x:100,y:1700,w:800,h:700}]};
 const shop={id:'coda-furnishings',name:'Coda Furnishings',w:1200,h:1000,urban:'shop',footprint:{x:40,y:100,w:1120,h:800},door:{x:600,y:930},boxes:[{x:40,y:100,w:1120,h:800}]};
@@ -52,4 +53,40 @@ test('detached distant benches and squares do not pull the district across the m
 test('scaled and rotated squares keep their cushion anchors inside the district',()=>{
  const doc=blank();doc.objects.push(placed('music-square','square',8192,6144,90,2));const d=buildNPCDistrict(doc,catalog);assert.equal(d.benches.length,4);
  for(const b of d.benches){assert.equal(b.facing,'left');assert(b.seat.x>=d.bounds.x0&&b.seat.x<=d.bounds.x1);assert(b.seat.y>=d.bounds.y0&&b.seat.y<=d.bounds.y1);assert.equal(blocked(doc,b.approach.x,b.approach.y,catalog),false);}
+});
+
+test('bench and vendor approach points avoid legacy non-solid plantings without changing saved flags',()=>{
+ const doc=blank(),localCatalog=new Map(catalog),flowers={id:'flowers',w:192,h:160,boxes:[{x:0,y:48,w:192,h:112}],npcAvoid:true};localCatalog.set(flowers.id,flowers);
+ doc.objects.push(placed('decor-06-01','bench',8192,6144),placed('decor-07-06','coffee',8500,6144));
+ // Cover each original front approach. The district must find a clear way
+ // to stand beside the planting rather than target its old walk-through base.
+ doc.objects.push({...placed('flowers','bed-by-bench',8192,6240),collision:false},{...placed('flowers','bed-by-coffee',8550,6320),collision:false});
+ const before=JSON.stringify(doc),district=buildNPCDistrict(doc,localCatalog),view=npcCollisionProject(doc,localCatalog);
+ assert.equal(district.benches.length,1);assert.equal(district.vendors.length,1);
+ for(const p of [district.benches[0].approach,district.vendors[0],district.vendors[0].interaction])assert.equal(blocked(view,p.x,p.y,localCatalog),false,'Destination overlaps a planted obstacle');
+ assert.equal(JSON.stringify(doc),before);assert(doc.objects.slice(2).every(o=>o.collision===false));
+});
+
+test('apartment and shop thresholds stay close to their doors and connected to the gathering approach',()=>{
+ for(const rotation of [0,90,180,270]){
+  const doc=blank();doc.objects.push(placed('coda-residences','tower',7000,6000,rotation),placed('coda-furnishings','shop',9500,8000,rotation));
+  const district=buildNPCDistrict(doc,catalog),view=npcCollisionProject(doc,catalog);
+  for(const building of district.anchors.filter(a=>a.kind==='tower'||a.kind==='shop')){
+   assert(building.threshold);assert(Math.hypot(building.threshold.x-building.door.x,building.threshold.y-building.door.y)<60,'Threshold was left at the distant gathering approach');
+   assert(Math.hypot(building.threshold.x-building.approach.x,building.threshold.y-building.approach.y)>30);
+   assert.equal(blocked(view,building.threshold.x,building.threshold.y,catalog),false);
+  }
+ }
+});
+
+test('bench seats retain their asset ground anchor and reject approaches across a cliff level',()=>{
+ const doc=blank();doc.objects.push(placed('decor-06-01','bench',8192,6200));
+ const level=3;
+ // The prop anchor sits on the plateau, but its entire forward approach is
+ // below the cliff. No seated resident should float at the lower elevation.
+ for(let y=90;y<=96;y++)for(let x=124;x<=132;x++)doc.cells[`${x},${y}`]={surface:'grass',level};
+ const different=buildNPCDistrict(doc,catalog);assert.equal(different.benches.length,0);
+ for(let y=97;y<=100;y++)for(let x=124;x<=132;x++)doc.cells[`${x},${y}`]={surface:'grass',level};
+ const same=buildNPCDistrict(doc,catalog);assert.equal(same.benches.length,1);
+ const b=same.benches[0];assert.deepEqual(b.ground,{x:8192,y:6200});assert.equal(height(doc,b.approach.x,b.approach.y),height(doc,b.ground.x,b.ground.y));
 });

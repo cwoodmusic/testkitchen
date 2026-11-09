@@ -32,7 +32,7 @@ test('city routines complete room departures and returns with exclusive indoor p
  const {doc,catalog,sim}=city(),before=JSON.stringify(doc);const seen=new Set();
  for(let frame=0;frame<1800;frame++){
   sim.update(.1);
-  for(const event of sim.events)seen.add(event.type);
+  for(const event of sim.events){seen.add(event.type);if(['enter-building','exit-building'].includes(event.type)){assert(event.position&&event.door);assert(Math.hypot(event.position.x-event.door.x,event.position.y-event.door.y)<40,'Building transition happened away from its doorway');}}
   const ids=new Set(sim.actors.map(a=>a.id));
   for(const resident of sim.residents){
    if(resident.location.kind==='street'){
@@ -63,4 +63,21 @@ test('a player conversation holds one resident while the rest of the city keeps 
  assert(!actor.conversation);sim.setConversation(actor.id,false);assert.equal(actor._held,false);
  for(let i=0;i<100;i++)sim.update(.1);
  assert(actor.walking||actor.x!==before.x||actor.y!==before.y);
+});
+
+test('opposing pedestrians make progress through a crowded narrow promenade',()=>{
+ const doc=blank(),catalog=new Map();doc.spawn={x:8200,y:6304};
+ doc.edges['w:7800:6208:900:0']={style:'music-square',gate:false,open:false};
+ doc.edges['w:7800:6400:900:0']={style:'music-square',gate:false,open:false};
+ const sim=createAmbientNPCs({getProject:()=>doc,catalog,count:6});sim.update(0);
+ const starts=[[8100,6272,8500],[8150,6336,8500],[8400,6272,8000],[8350,6336,8000],[8190,6304,8500],[8310,6304,8000]],goals=new Map(),reached=new Set();
+ sim.residents.forEach((actor,i)=>{
+  const [x,y,targetX]=starts[i],target={x:targetX,y};goals.set(actor.id,target);
+  Object.assign(actor,{x,y,state:'walking',location:{kind:'street'},hidden:false,activity:'',conversation:undefined,_wait:0,_path:[target],_pending:false,_goingHome:false,_progress:{x,y,time:0},_goal:{id:'promenade:'+actor.id,kind:'hangout',approach:target,...target}});
+ });
+ for(let frame=0;frame<1800&&reached.size<6;frame++){
+  sim.update(1/60);
+  for(const actor of sim.residents){assert(!blocked(doc,actor.x,actor.y,catalog));if(Math.hypot(actor.x-goals.get(actor.id).x,actor.y-goals.get(actor.id).y)<8){reached.add(actor.id);Object.assign(actor,{state:'home',location:{kind:'apartment',floor:2,resident:actor.id},_leaveAt:Infinity,walking:false});}}
+ }
+ assert.equal(reached.size,6,'Pedestrians spent the whole crossing repeatedly stepping aside');
 });

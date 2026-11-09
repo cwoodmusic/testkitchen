@@ -1,10 +1,10 @@
-import {blocked,height,TILE} from './model.mjs?v=map-recovery-1';
-import {movePlayer} from './physics.mjs?v=map-recovery-1';
-import {WALK_SPEED,GAIT_PER_PIXEL,PLAYER_SCALE} from './player-settings.mjs?v=map-recovery-1';
-import {buildNPCDistrict} from './npc-district.mjs?v=map-recovery-1';
-import {createNPCNavigator,npcPavingAt,npcMaterialCost} from './npc-navigation.mjs?v=map-recovery-1';
-import {residents as profiles,residentHomePose,interiorJourneyPose,residentInScene} from './resident-journey.mjs?v=map-recovery-1';
-export {planNPCPath,npcConnectionClear} from './npc-navigation.mjs?v=map-recovery-1';
+import {blocked,height,TILE} from './model.mjs?v=collision-layers-1';
+import {movePlayer} from './physics.mjs?v=collision-layers-1';
+import {WALK_SPEED,GAIT_PER_PIXEL,PLAYER_SCALE} from './player-settings.mjs?v=collision-layers-1';
+import {buildNPCDistrict} from './npc-district.mjs?v=collision-layers-1';
+import {createNPCNavigator,npcPavingAt,npcMaterialCost} from './npc-navigation.mjs?v=collision-layers-1';
+import {residents as profiles,residentHomePose,interiorJourneyPose,residentInScene} from './resident-journey.mjs?v=collision-layers-1';
+export {planNPCPath,npcConnectionClear} from './npc-navigation.mjs?v=collision-layers-1';
 
 export const AMBIENT_RESIDENTS=Object.freeze(['bach','mozart','clara','nina','joplin','miles','chopin','haydn','vee-jay','zizi','beethoven','ellington','ella','handel','vivaldi','metronome','schoenberg','dj']);
 const distance=(a,b)=>Math.hypot(a.x-b.x,a.y-b.y);
@@ -42,7 +42,7 @@ export function createAmbientNPCs({getProject,catalog,getRevision=()=>0,getPlaye
   }
   candidates.sort((a,b)=>a.score-b.score);return candidates[0]||null;
  }
- function releaseSeat(actor){if(actor.seatId&&claims.get(actor.seatId)===actor.id)claims.delete(actor.seatId);delete actor.seatId;actor.seated=false;delete actor.depth;}
+ function releaseSeat(actor){if(actor.seatId&&claims.get(actor.seatId)===actor.id)claims.delete(actor.seatId);delete actor.seatId;actor.seated=false;delete actor.depth;delete actor.groundAnchor;}
  function idle(actor,wait=2){actor.state='idle';actor.activity='';actor.purpose='Taking in the neighbourhood';actor.walking=false;actor._wait=wait;actor._path=[];actor._pending=false;}
  function cancel(actor){navigator.cancel(actor.id);actor._routeToken++;actor._pending=false;actor._path=[];}
  function endChat(actor){
@@ -60,32 +60,50 @@ export function createAmbientNPCs({getProject,catalog,getRevision=()=>0,getPlaye
   Object.assign(actor,{x:pose.x,y:pose.y,facing:pose.facing,walking:false,activity:'',location:{...pose.scene},hidden:false,state:'home',purpose:'At home',_journey:null,_leaveAt:elapsed+wait});
  }
  function journey(actor,direction){
-  cancel(actor);releaseSeat(actor);actor._journey={direction,elapsed:0};actor.state=direction==='out'?'departing':'returning';record(direction==='out'?'leave-room':'enter-building',actor);
+  cancel(actor);releaseSeat(actor);actor._journey={direction,elapsed:0};actor._doorWait=0;actor.state=direction==='out'?'departing':'returning';record(direction==='out'?'leave-room':'enter-building',actor,{position:{x:actor.x,y:actor.y},door:city.tower?.threshold||city.tower?.approach});
   applyJourney(actor,0);
  }
  function applyJourney(actor,dt){
   const trip=actor._journey;trip.elapsed+=dt;const pose=interiorJourneyPose(actor.id,trip.direction,trip.elapsed);
   if(pose.done){
    if(trip.direction==='home'){record('enter-room',actor);home(actor,24+random()*35);return;}
-   const p=city.tower&&standingNear(city.tower.approach,actor._index,false);
-   if(!p){home(actor,8);return;}
-   Object.assign(actor,p,{location:{...street},hidden:false,alpha:0,facing:city.tower.facing||'down',_journey:null,_homeDue:elapsed+55+random()*65});idle(actor,1+random()*2);record('exit-building',actor);return;
+   const p=city.tower&&(city.tower.threshold||city.tower.approach);
+   if(!p||!clearPoint(p)){home(actor,8);return;}
+   const player=getPlayer?.(),incoming=outdoor().some(a=>a!==actor&&a._goingHome&&['waiting','walking','entering'].includes(a.state)&&distance(a,p)<180),occupied=incoming||outdoor().some(a=>a!==actor&&distance(a,p)<54)||player&&distance(player,p)<54;
+   if(occupied){Object.assign(actor,{location:{kind:'lobby',floor:1},x:1152,y:1578,hidden:false,walking:false,purpose:'Waiting for the doorway'});return;}
+   Object.assign(actor,p,{location:{...street},hidden:false,alpha:0,facing:city.tower.facing||'down',_journey:null,_homeDue:elapsed+55+random()*65});
+   record('exit-building',actor,{position:{x:actor.x,y:actor.y},door:p});
+   const forward={down:{x:0,y:1},up:{x:0,y:-1},left:{x:-1,y:0},right:{x:1,y:0}}[city.tower.facing||'down'];
+   const wanted={x:p.x+forward.x*180,y:p.y+forward.y*180},exit=standingNear(wanted,actor._index,false)||city.tower.approach;
+   go(actor,{...city.tower,id:city.tower.id+':exit',kind:'exit',x:exit.x,y:exit.y,approach:exit,_arrival:true},false);return;
   }
   Object.assign(actor,{x:pose.x,y:pose.y,facing:pose.facing,walking:pose.walking,phase:pose.phase,hidden:pose.hidden,location:{...pose.scene},activity:'',purpose:pose.activity});
  }
  function sit(actor,bench){
-  actor._bench=bench;actor.seatId=bench.id;claims.set(bench.id,actor.id);actor.state='seated';actor.activity='relaxing';actor.seated=true;actor.walking=false;actor.facing=bench.facing;actor.depth=Math.max(bench.seat.y,bench.approach.y);actor.x=bench.seat.x;actor.y=bench.seat.y;actor._wait=16+random()*20;actor.purpose='Enjoying a seat in the square';record('sit',actor,{seat:bench.id});
+  actor._bench=bench;actor.seatId=bench.id;claims.set(bench.id,actor.id);actor.state='seated';actor.activity='relaxing';actor.seated=true;actor.groundAnchor=bench.ground;actor.walking=false;actor.facing=bench.facing;actor.depth=Math.max(bench.seat.y,bench.approach.y);actor.x=bench.seat.x;actor.y=bench.seat.y;actor._wait=16+random()*20;actor.purpose='Enjoying a seat in the square';record('sit',actor,{seat:bench.id});
  }
  function stand(actor){const bench=actor._bench;releaseSeat(actor);if(bench){actor.x=bench.approach.x;actor.y=bench.approach.y;}actor._bench=null;idle(actor,1+random());record('stand',actor);}
  function arrive(actor){
   const goal=actor._goal;actor._lastGoal=goal?.id;actor._visits++;actor.walking=false;
   if(goal?.kind==='bench'){sit(actor,goal);return;}
+  if(goal?.kind==='exit'){idle(actor,.5+random());actor.purpose='Just left home';return;}
   if(actor._goingHome&&city.tower){actor.state='entering';actor.facing=city.tower.facing==='down'?'up':city.tower.facing==='up'?'down':city.tower.facing==='left'?'right':'left';actor._wait=.55;actor.activity='';actor.purpose='Opening the building door';return;}
   idle(actor,6+random()*12);actor.purpose=goal?.kind==='arcade'?'Outside Coda Arcade':goal?.kind==='shop'?'Window shopping':goal?.kind==='tower'?'Outside Coda Residences':'Enjoying the neighbourhood';record('arrive',actor,{destination:goal?.id});
  }
  function go(actor,goal,goingHome=false,avoid=[]){
+  // Visitors gather beside the entrance. The central doorway is reserved for
+  // the one resident currently returning home and for people walking out.
+  if(!goingHome&&goal.kind==='tower'&&!goal._arrival){
+   const sides=city.anchors.filter(a=>a.kind==='hangout'&&a.objectId===goal.objectId);
+   if(sides.length)goal=sides[actor._index%sides.length];
+  }
   // Entrances and hangouts are areas, not single standing pixels. Give each
   // resident an individual arrival spot so a crowd cannot occupy one node.
+  if(goingHome&&!goal._arrival){
+   const origin=city.tower?.threshold||goal.approach||goal,lateral=['left','right'].includes(city.tower?.facing)?{x:0,y:1}:{x:1,y:0},offset=(actor._index%3-1)*18;
+   const wanted={x:origin.x+lateral.x*offset,y:origin.y+lateral.y*offset},p=clearPoint(wanted)&&navigator.connectionClear(origin,wanted)?wanted:origin;
+   goal={...goal,x:p.x,y:p.y,approach:p,_arrival:true};
+  }
   if(goal.kind!=='bench'&&!goal._arrival){
    const origin=goal.approach||goal,radius=goingHome?38:100;
    for(let n=0;n<8;n++){
@@ -107,7 +125,10 @@ export function createAmbientNPCs({getProject,catalog,getRevision=()=>0,getPlaye
   },{avoid});
  }
  function chooseDestination(actor){
-  if(city.tower&&elapsed>=actor._homeDue){go(actor,city.tower,true);return;}
+  if(city.tower&&elapsed>=actor._homeDue){
+   const homebound=people.some(a=>a!==actor&&a.location.kind==='street'&&a._goingHome&&['waiting','walking','entering'].includes(a.state));
+   if(!homebound){go(actor,city.tower,true);return;}
+  }
   const free=city.benches.filter(b=>!claims.has(b.id)&&b.id!==actor._lastGoal);
   if(free.length&&(actor._visits+actor._index)%3!==0){const bench=free[Math.floor(random()*free.length)];go(actor,bench);return;}
   const choices=city.anchors.filter(a=>a.id!==actor._lastGoal&&distance(actor,a)>90);
@@ -130,7 +151,7 @@ export function createAmbientNPCs({getProject,catalog,getRevision=()=>0,getPlaye
   const gathering=city.anchors.find(a=>a.kind==='plaza')||city.anchors.find(a=>a.kind==='hangout');
   if(gathering&&people.length>=2){
    const a=people[0],b=people[1],p=standingNear({x:gathering.x-65,y:gathering.y},0,false),q=p&&standingNear({x:p.x+130,y:p.y},1,false);
-   if(p&&q&&distance(p,q)>75&&distance(p,q)<200){Object.assign(a,p,{hidden:false});Object.assign(b,q,{hidden:false});startChat(a,b);}
+   if(p&&q&&distance(p,q)>75&&distance(p,q)<200&&navigator.connectionClear(p,q)){Object.assign(a,p,{hidden:false});Object.assign(b,q,{hidden:false});startChat(a,b);}
   }
  }
  function sync(doc,revision){
@@ -149,7 +170,7 @@ export function createAmbientNPCs({getProject,catalog,getRevision=()=>0,getPlaye
   const progress=actor._progress;
   if(progress&&distance(actor,progress)>90)actor._progress={x:actor.x,y:actor.y,time:elapsed};
   else if(progress&&elapsed-progress.time>5){
-   const avoid=outdoor().filter(b=>b!==actor&&!b.seated&&distance(actor,b)<450).map(b=>({x:b.x,y:b.y,r:48}));
+   const avoid=[...outdoor(),...vendors,...(getPlayer?.()?[{...getPlayer(),id:'__player__'}]:[])].filter(b=>b.id!==actor.id&&!b.seated&&distance(actor,b)<450).map(b=>({x:b.x,y:b.y,r:48}));
    go(actor,actor._goal,actor._goingHome,avoid);return;
   }
   const target=actor._path[0];if(!target){arrive(actor);return;}
@@ -161,14 +182,19 @@ export function createAmbientNPCs({getProject,catalog,getRevision=()=>0,getPlaye
   if(obstruction){
    actor._yield+=dt;actor.purpose='Giving someone room';
    if(actor._yield<.45)return;
-   const side=horizontal?{x:0,y:direction}:{x:-direction,y:0};let clear=false;
-   for(const sign of [1,-1]){const p={x:actor.x+side.x*24*sign,y:actor.y+side.y*24*sign};if(inDistrict(p)&&navigator.connectionClear(actor,p)&&!others.some(b=>b.id!==actor.id&&distance(b,p)<44)){key=side.x?side.x*sign<0?'a':'d':side.y*sign<0?'w':'s';amount=Math.min(dt*actor.speed*.6/WALK_SPEED,12/WALK_SPEED);clear=true;break;}}
-   if(!clear){
-    // Personal space is a preference. In a packed passage, give one walker
-    // priority instead of letting a ring of pedestrians wait forever.
-    const priority=others.filter(b=>b.role==='resident'&&b.state==='walking'&&distance(actor,b)<110).every(b=>actor._index<=b._index);
-    if(actor._yield<1.3||!priority||obstruction.role!=='resident'||obstruction.state!=='walking')return;
-    amount*=.55;
+   // Pick a passing order before attempting a side step. Otherwise two
+   // walkers can repeatedly step aside and then aim back at the same corner.
+   const priority=obstruction.role==='resident'&&obstruction.state==='walking'&&!obstruction._held&&others.filter(b=>b.role==='resident'&&b.state==='walking'&&distance(actor,b)<110).every(b=>actor._index<=b._index);
+   if(priority){amount*=.72;}
+   else{
+    const side=horizontal?{x:0,y:direction}:{x:-direction,y:0};let clear=false;
+    for(const sign of [1,-1]){
+     const p={x:actor.x+side.x*24*sign,y:actor.y+side.y*24*sign};
+     if(inDistrict(p)&&navigator.connectionClear(actor,p)&&!others.some(b=>b.id!==actor.id&&distance(b,p)<44)){
+      key=side.x?side.x*sign<0?'a':'d':side.y*sign<0?'w':'s';amount=Math.min(dt*actor.speed*.6/WALK_SPEED,12/WALK_SPEED);clear=true;break;
+     }
+    }
+    if(!clear)return;
    }
   }else actor._yield=0;
   const motion=movePlayer(navigator.collisionView(actor),actor,new Set([key]),amount,catalog);actor.walking=motion.walking;if(motion.facing)actor.facing=motion.facing;actor.phase=(actor.phase+motion.surfaceDistance*GAIT_PER_PIXEL)%(Math.PI*2);
@@ -195,7 +221,7 @@ export function createAmbientNPCs({getProject,catalog,getRevision=()=>0,getPlaye
   if(elapsed>=socialAt){
    socialAt=elapsed+.75;
    const available=outdoor().filter(a=>!a._held&&a.state==='idle'&&a._wait>2&&elapsed>=(a._socialAfter||0));
-   for(const actor of available){const other=available.find(b=>b!==actor&&b.state==='idle'&&distance(actor,b)>75&&distance(actor,b)<210);if(actor.state==='idle'&&other)startChat(actor,other);}
+   for(const actor of available){const other=available.find(b=>b!==actor&&b.state==='idle'&&distance(actor,b)>75&&distance(actor,b)<210&&navigator.connectionClear(actor,b));if(actor.state==='idle'&&other)startChat(actor,other);}
   }
  }
  function interiorActors(scene){return people.filter(a=>a.location.kind!=='street'&&!a.hidden&&residentInScene({...a,scene:a.location},scene)).map(a=>({...a}));}

@@ -1,15 +1,15 @@
-import {shadeLowerGround,drawTerrainRims} from './edge-shading.mjs?v=map-recovery-1';
-import {drawRoundUnder,drawRoundCliff} from './round-render.mjs?v=map-recovery-1';
-import {clipCurves} from './round-geometry.mjs?v=map-recovery-1';
-import {drawGround,groundFrameKey,groundTexture} from './ground-render.mjs?v=map-recovery-1';
-import {drawCliff,drawStairs} from './construction.mjs?v=map-recovery-1';
-import {RISE,COLS,ROWS,cell,terrainView} from './model.mjs?v=map-recovery-1';
-import {sources} from './catalog.mjs?v=map-recovery-1';
-import {waterRimSegments} from './water-rim.mjs?v=map-recovery-1';
-import {drawPier,drawPierSubmerged} from './piers.mjs?v=map-recovery-1';
-import {drawSidewalkCurbs} from './sidewalk-curbs.mjs?v=map-recovery-1';
-import {drawOverviewTerrain} from './overview-terrain.mjs?v=map-recovery-1';
-import {prepareOverviewRuns} from './overview-runs.mjs?v=map-recovery-1';
+import {shadeLowerGround,drawTerrainRims} from './edge-shading.mjs?v=collision-layers-1';
+import {drawRoundUnder,drawRoundCliff} from './round-render.mjs?v=collision-layers-1';
+import {clipCurves} from './round-geometry.mjs?v=collision-layers-1';
+import {drawGround,groundFrameKey,groundTexture} from './ground-render.mjs?v=collision-layers-1';
+import {drawCliff,drawStairs} from './construction.mjs?v=collision-layers-1';
+import {RISE,COLS,ROWS,cell,terrainView} from './model.mjs?v=collision-layers-1';
+import {sources} from './catalog.mjs?v=collision-layers-1';
+import {waterRimSegments} from './water-rim.mjs?v=collision-layers-1';
+import {drawPier,drawPierSubmerged} from './piers.mjs?v=collision-layers-1';
+import {drawSidewalkCurbs} from './sidewalk-curbs.mjs?v=collision-layers-1';
+import {drawOverviewTerrain} from './overview-terrain.mjs?v=collision-layers-1';
+import {prepareOverviewRuns} from './overview-runs.mjs?v=collision-layers-1';
 const lawns=new WeakMap();
 function drawWaterRim(c,d,x,y,X,Y){
  c.strokeStyle='#97b9a1';c.lineWidth=5;

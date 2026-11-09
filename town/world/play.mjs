@@ -1,10 +1,10 @@
-import {catalog,preparePlacedArt,render,resizeSurface,findStart,movePlayer,toggleGate,follow,PLAYER_SCALE,GAIT_PER_PIXEL} from './runtime.mjs?v=map-recovery-1';
-import {loadProject} from './storage.mjs?v=map-recovery-1';
-import {createUrbanController} from './urban.mjs?v=map-recovery-1';
-import {createUrbanTour} from './urban-tour.mjs?v=map-recovery-1';
-import {createSandFootprints} from './sand-footprints.mjs?v=map-recovery-1';
-import {createAmbientNPCs} from './ambient-npcs.mjs?v=map-recovery-1';
-import {readNightPreference,saveNightPreference} from './lighting-settings.mjs?v=map-recovery-1';
+import {catalog,preparePlacedArt,render,resizeSurface,findStart,movePlayer,toggleGate,follow,PLAYER_SCALE,GAIT_PER_PIXEL} from './runtime.mjs?v=collision-layers-1';
+import {loadProject} from './storage.mjs?v=collision-layers-1';
+import {createUrbanController} from './urban.mjs?v=collision-layers-1';
+import {createUrbanTour} from './urban-tour.mjs?v=collision-layers-1';
+import {createSandFootprints} from './sand-footprints.mjs?v=collision-layers-1';
+import {createAmbientNPCs} from './ambient-npcs.mjs?v=collision-layers-1';
+import {readNightPreference,saveNightPreference} from './lighting-settings.mjs?v=collision-layers-1';
 const canvas=document.getElementById('world'),route=new URLSearchParams(location.search),tour=route.get('map')!=='builder',preview=route.get('urban')==='1';
 document.querySelectorAll('body > :not(#world):not(script)').forEach(e=>e.remove());
 const header=document.createElement('header'),title=document.createElement('h1'),nav=document.createElement('nav');
@@ -22,7 +22,7 @@ if(!doc){title.textContent=loadError?'Could not load town':'No saved builder tow
  const player=findStart(doc,catalog),cam={x:player.x,y:player.y,zoom:.8},keys=new Set();
  let cityRevision=0;
  const urban=createUrbanController({canvas,getProject:()=>doc,getPlayer:()=>player,onConversation:(id,active,viewer)=>ambient.setConversation(id,active,viewer),getResidents:scene=>scene?ambient.interiorActors(scene):ambient.actors,preview});
- const ambient=createAmbientNPCs({getProject:()=>doc,catalog,getRevision:()=>cityRevision,getPlayer:()=>player});
+ const ambient=createAmbientNPCs({getProject:()=>doc,catalog,getRevision:()=>cityRevision,getPlayer:()=>urban.active?null:player});
  const footprints=createSandFootprints({getProject:()=>doc});
  const drawPlayer=(c,x,y,state={facing,walking,phase:walkPhase},now=performance.now())=>character.drawPlayer(c,avatar,{x,y,...state},now/1000);
  addEventListener('message',e=>{if(e.source===parent&&e.origin===location.origin&&e.data?.type==='coda-town-state-result'&&e.data.avatar)avatar=character.normalizeProfile(e.data.avatar);});

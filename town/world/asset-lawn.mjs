@@ -1,8 +1,9 @@
-import {assetImage} from './asset-color.mjs?v=map-recovery-1';
-import {readPaint} from './ground-paint.mjs?v=map-recovery-1';
-import {roundedUnder,curveUnder} from './round-geometry.mjs?v=map-recovery-1';
+import {assetImage} from './asset-color.mjs?v=collision-layers-1';
+import {readPaint} from './ground-paint.mjs?v=collision-layers-1';
+import {roundedUnder,curveUnder} from './round-geometry.mjs?v=collision-layers-1';
 
-const cache=new WeakMap();
+const cache=new WeakMap(),imageRevisions=new WeakMap();
+export const assetMapImageRevision=image=>imageRevisions.get(image)||0;
 export const supportsLawnReveal=a=>a.id==='music-square'||a.id.startsWith('estate-');
 
 // Remove only the native lawn around a scene's perimeter. Stone, timber,
@@ -182,7 +183,7 @@ function contextualSquare(a,o,doc,source){
  if(!changed){entry.image=source;}else{
   m.setTransform(1,0,0,1,0,0);m.drawImage(prepared.foreground,0,0);
   if(!entry.out){entry.out=document.createElement('canvas');entry.out.width=source.width;entry.out.height=source.height;}
-  const c=entry.out.getContext('2d');c.setTransform(1,0,0,1,0,0);c.globalCompositeOperation='source-over';c.clearRect(0,0,entry.out.width,entry.out.height);c.drawImage(source,0,0);c.globalCompositeOperation='destination-in';c.drawImage(mask,0,0,entry.out.width,entry.out.height);c.globalCompositeOperation='source-over';entry.image=entry.out;
+  const c=entry.out.getContext('2d');c.setTransform(1,0,0,1,0,0);c.globalCompositeOperation='source-over';c.clearRect(0,0,entry.out.width,entry.out.height);c.drawImage(source,0,0);c.globalCompositeOperation='destination-in';c.drawImage(mask,0,0,entry.out.width,entry.out.height);c.globalCompositeOperation='source-over';entry.image=entry.out;imageRevisions.set(entry.out,(imageRevisions.get(entry.out)||0)+1);
  }
  entry.refs=references.refs;entries.set(key,entry);return entry.image;
 }

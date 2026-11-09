@@ -34,7 +34,7 @@ test('ambient musicians actually walk using collision, stay on their side of a w
  const ambient=createAmbientNPCs({getProject:()=>doc,catalog:localCatalog,getCamera:()=>cam,getViewport:()=>({width:1200,height:800}),random:random(),count:4});
  ambient.update(0,0);assert.equal(ambient.actors.length,4);
  const initial=new Map(ambient.actors.map(a=>[a.id,{x:a.x,y:a.y,phase:a.phase,side:Math.sign(a.x-8192)}]));let sawWalking=false;
- for(let frame=0;frame<360;frame++){
+ for(let frame=0;frame<1800;frame++){
   ambient.update(1/60,frame/60);
   for(const actor of ambient.actors){assert(Number.isFinite(actor.x)&&Number.isFinite(actor.y));assert.equal(blocked(doc,actor.x,actor.y,localCatalog),false);assert.equal(Math.sign(actor.x-8192),initial.get(actor.id).side);sawWalking||=actor.walking;}
  }

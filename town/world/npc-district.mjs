@@ -1,4 +1,6 @@
-import {blocked,surfaceAt,COLS,ROWS,TILE} from './model.mjs?v=map-recovery-1';
+import {blocked,height,surfaceAt,COLS,ROWS,TILE} from './model.mjs?v=collision-layers-1';
+import {npcCollisionProject} from './npc-collision.mjs?v=collision-layers-1';
+import {npcConnectionClear} from './npc-navigation.mjs?v=collision-layers-1';
 
 const WORLD_W=COLS*TILE,WORLD_H=ROWS*TILE;
 const cardinal=['down','left','up','right'];
@@ -18,7 +20,7 @@ export function npcDistrictPoint(o,a,p){
 export function npcDistrictFacing(o,facing='down'){
  return cardinal[(cardinal.indexOf(facing)+Math.round((o.rotation||0)/90)+4)%4]||'down';
 }
-function nearestClear(doc,catalog,wanted,{radius=256,front=null}={}){
+function nearestClear(doc,catalog,wanted,{radius=256,front=null,groundHeight=null}={}){
  const choices=[];
  for(let r=0;r<=radius;r+=32){
   const n=r?Math.max(8,Math.ceil(Math.PI*2*r/48)):1;
@@ -26,6 +28,7 @@ function nearestClear(doc,catalog,wanted,{radius=256,front=null}={}){
    const t=i*Math.PI*2/n,p={x:wanted.x+Math.cos(t)*r,y:wanted.y+Math.sin(t)*r};
    if(front&&(p.x-front.origin.x)*front.x+(p.y-front.origin.y)*front.y<0)continue;
    if(!inside(p)||blocked(doc,p.x,p.y,catalog))continue;
+   if(Number.isFinite(groundHeight)&&Math.abs(height(doc,p.x,p.y)-groundHeight)>.5)continue;
    const material=surfaceAt(doc,p.x,p.y),score=r+(paved.has(material)?0:material==='asphalt'?72:36);
    choices.push({...p,score});
   }
@@ -50,6 +53,7 @@ const vendorNames={
 // Destinations follow placed buildings and furnishings. Camera position is
 // deliberately absent: panning never creates a new neighbourhood or resident.
 export function buildNPCDistrict(doc,catalog){
+ doc=npcCollisionProject(doc,catalog);
  const buildings=[],squares=[],vendors=[],extents=[];
  for(const o of doc.objects||[]){
   const a=catalog.get(o.asset);if(!a||o.mount)continue;
@@ -57,7 +61,13 @@ export function buildNPCDistrict(doc,catalog){
   if(kind){
    const doorLocal=a.door||{x:a.w/2,y:a.h},door=npcDistrictPoint(o,a,doorLocal),preferred=npcDistrictPoint(o,a,{x:doorLocal.x,y:doorLocal.y+96});
    const approach=nearestClear(doc,catalog,preferred,{radius:384});
-   if(approach)buildings.push({id:'building:'+objectKey(o),kind,objectId:objectKey(o),asset:o.asset,x:approach.x,y:approach.y,door,approach,facing:npcDistrictFacing(o)});
+   if(approach){
+    const facing=npcDistrictFacing(o),forward={down:{x:0,y:1},left:{x:-1,y:0},up:{x:0,y:-1},right:{x:1,y:0}}[facing];
+    const wanted=npcDistrictPoint(o,a,{x:doorLocal.x,y:doorLocal.y+28});
+    const nearDoor=kind==='arcade'?approach:nearestClear(doc,catalog,wanted,{radius:96,front:{origin:door,...forward}});
+    const threshold=nearDoor&&npcConnectionClear(doc,catalog,approach,nearDoor)?nearDoor:approach;
+    buildings.push({id:'building:'+objectKey(o),kind,objectId:objectKey(o),asset:o.asset,x:approach.x,y:approach.y,door,approach,threshold,facing});
+   }
    extents.push(...footprintPoints(o,a),preferred);
   }else if(o.asset==='music-square')squares.push({o,a});
   const cartName=vendorNames[o.asset];
@@ -87,8 +97,9 @@ export function buildNPCDistrict(doc,catalog){
   const seat=npcDistrictPoint(o,a,localSeat),wanted=npcDistrictPoint(o,a,localApproach);
   if(!contains(bounds,seat))return;
   const vx=wanted.x-seat.x,vy=wanted.y-seat.y,length=Math.hypot(vx,vy)||1;
-  const approach=nearestClear(doc,catalog,wanted,{radius:96,front:{origin:seat,x:vx/length,y:vy/length}});
-  if(approach)benches.push({id,kind:'bench',objectId:objectKey(o),x:approach.x,y:approach.y,approach,seat,facing:npcDistrictFacing(o),depth:seat.y});
+  const ground={x:o.x,y:o.y},groundHeight=height(doc,ground.x,ground.y);
+  const approach=nearestClear(doc,catalog,wanted,{radius:96,front:{origin:seat,x:vx/length,y:vy/length},groundHeight});
+  if(approach)benches.push({id,kind:'bench',objectId:objectKey(o),x:approach.x,y:approach.y,approach,seat,ground,facing:npcDistrictFacing(o),depth:seat.y});
  };
  for(const {o,a}of localSquares){
   // Four cushion anchors occupy the two carved benches in the native 1536×1024
