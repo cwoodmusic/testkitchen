@@ -1,15 +1,15 @@
-import {shadeLowerGround,drawTerrainRims} from './edge-shading.mjs?v=queues-stage-1';
-import {drawRoundUnder,drawRoundCliff} from './round-render.mjs?v=queues-stage-1';
-import {clipCurves} from './round-geometry.mjs?v=queues-stage-1';
-import {drawGround,groundFrameKey,groundTexture} from './ground-render.mjs?v=queues-stage-1';
-import {drawCliff,drawStairs} from './construction.mjs?v=queues-stage-1';
-import {RISE,COLS,ROWS,cell,terrainView} from './model.mjs?v=queues-stage-1';
-import {sources} from './catalog.mjs?v=queues-stage-1';
-import {waterRimSegments} from './water-rim.mjs?v=queues-stage-1';
-import {drawPier,drawPierSubmerged} from './piers.mjs?v=queues-stage-1';
-import {drawSidewalkCurbs} from './sidewalk-curbs.mjs?v=queues-stage-1';
-import {drawOverviewTerrain} from './overview-terrain.mjs?v=queues-stage-1';
-import {prepareOverviewRuns} from './overview-runs.mjs?v=queues-stage-1';
+import {shadeLowerGround,drawTerrainRims} from './edge-shading.mjs?v=showrooms-1';
+import {drawRoundUnder,drawRoundCliff} from './round-render.mjs?v=showrooms-1';
+import {clipCurves} from './round-geometry.mjs?v=showrooms-1';
+import {drawGround,groundFrameKey,groundTexture} from './ground-render.mjs?v=showrooms-1';
+import {drawCliff,drawStairs} from './construction.mjs?v=showrooms-1';
+import {RISE,COLS,ROWS,cell,terrainView} from './model.mjs?v=showrooms-1';
+import {sources} from './catalog.mjs?v=showrooms-1';
+import {waterRimSegments} from './water-rim.mjs?v=showrooms-1';
+import {drawPier,drawPierSubmerged} from './piers.mjs?v=showrooms-1';
+import {drawSidewalkCurbs} from './sidewalk-curbs.mjs?v=showrooms-1';
+import {drawOverviewTerrain} from './overview-terrain.mjs?v=showrooms-1';
+import {prepareOverviewRuns} from './overview-runs.mjs?v=showrooms-1';
 const lawns=new WeakMap();
 function drawWaterRim(c,d,x,y,X,Y){
  c.strokeStyle='#97b9a1';c.lineWidth=5;

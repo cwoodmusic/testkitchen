@@ -1,16 +1,18 @@
-import {assetImage} from './asset-color.mjs?v=queues-stage-1';
+import {assetImage} from './asset-color.mjs?v=showrooms-1';
+import {applyShowroomLayout} from './showroom-layout.mjs?v=showrooms-1';
+import {drawShowroomFloor,drawShowroomWallpaper} from './showroom-materials.mjs?v=showrooms-1';
 // The apartment tower has one consistent floor plate. Residential floors use
 // a 608px common hall and 1120px private apartments, within its 2304 × 1728 lot.
 export const FLOOR_COUNT=15;
 export const TOWER_FOOTPRINT=Object.freeze({width:2304,height:1728});
 export const STORE_FOOTPRINT=Object.freeze({width:3072,height:2048});
-export {residents} from './resident-profiles.mjs?v=queues-stage-1';
-import {residents} from './resident-profiles.mjs?v=queues-stage-1';
+export {residents} from './resident-profiles.mjs?v=showrooms-1';
+import {residents} from './resident-profiles.mjs?v=showrooms-1';
 const sceneCache=new Map(),backgroundCache=new Map();
 let nativeCatalog=null,woodTexture=null,npcRenderer=null;
 export function configureUrbanInteriors(catalog){nativeCatalog=catalog;for(const scene of sceneCache.values())warmScene(scene);}
 if(typeof document!=='undefined'){
- import('./ground-textures.mjs?v=queues-stage-1').then(({groundTextures})=>{woodTexture=groundTextures.wood;backgroundCache.clear();}).catch(()=>{});
+ import('./ground-textures.mjs?v=showrooms-1').then(({groundTextures})=>{woodTexture=groundTextures.wood;backgroundCache.clear();}).catch(()=>{});
 }
 const rect=(x,y,w,h)=>({x,y,w,h});
 const zone=(id,label,x,y,w,h,action,extra={})=>({id,label,x,y,w,h,action,...extra});
@@ -104,22 +106,8 @@ function apartment(residentId){
  light(s,bx,210,250);light(s,kx,650,250);light(s,mid,840,350);return s;
 }
 function shop(){
- const s=shell('furniture-store','Coda Furnishings · Showroom',3072,2048,'#7b5159','#cda056');s.kind='shop';s.floor=1;
- const bays=[{name:'The Listening Room',x:120,y:150,w:1040,h:690,color:'#536580'},{name:'Bedroom Collection',x:1912,y:150,w:1040,h:690,color:'#75617d'},{name:'Kitchen & Table',x:120,y:1030,w:1040,h:680,color:'#526d63'},{name:'The Music Studio',x:1912,y:1030,w:1040,h:680,color:'#94754f'}];
- for(const b of bays){room(s,b.name,b.x,b.y,b.w,b.h);rug(s,b.x+20,b.y+100,b.w-40,b.h-135,b.color);sign(s,b.name,b.x+b.w/2,b.y+65,28);s.zones.push(zone('browse-'+b.name,b.name+' · browse decor',b.x+b.w*.34,b.y+b.h*.65,b.w*.32,200,'shop'));}
- addItem(s,'furniture-1-180',380,590,390,290);addItem(s,'furniture-1-180',875,590,310,240);addItem(s,'decor-06-06',660,800,230,190);addItem(s,'decor-08-02',1090,400,155,200);
- addItem(s,'furniture-2-180',2190,700,320,425);addItem(s,'furniture-2-180',2670,700,270,365);addItem(s,'furniture-8-180',2860,820,160,195);addItem(s,'decor-08-01',2370,405,130,165,false);
- addItem(s,'furniture-3-180',370,1375,360,300);addItem(s,'furniture-4-180',750,1340,180,255);addItem(s,'furniture-5-180',790,1680,300,265);addItem(s,'decor-08-11',1070,1430,125,145);
- addItem(s,'decor-03-01',2190,1390,330,300);addItem(s,'decor-02-03',2510,1370,140,245);addItem(s,'decor-02-05',2790,1390,120,200);addItem(s,'decor-05-15',2260,1670,250,210);addItem(s,'decor-03-07',2750,1700,260,230);
- // The sales desk is outside the 600px central promenade, so both sides of
- // the showroom remain accessible without squeezing between displays.
- addItem(s,'decor-05-05',1536,540,330,290);s.zones.push(zone('counter','Shop for your apartment',1376,560,320,220,'shop'));
- for(const x of [1300,1772]){addItem(s,'decor-08-09',x,1100,150,220);addItem(s,'decor-08-02',x,1640,125,170);}
- rug(s,1372,785,328,1080,'#7b5159');
- for(const x of [400,1000,2072,2672])windowAt(s,x,20,190);
- sign(s,'CODA FURNISHINGS',1536,1280,34);sign(s,'Furniture · instruments · plants · little treasures',1536,1330,21);sign(s,'Every room has a rhythm.',1536,1380,23);
- s.zones.push(zone('street','Return to Coda Town',1376,1810,320,190,'exit'));s.spawn={x:1536,y:1840};
- light(s,1536,550,420);light(s,640,580,450);light(s,2432,580,450);light(s,640,1420,450);light(s,2432,1420,450);return s;
+ const s=shell('furniture-store','Coda Furnishings · Eight Rooms',STORE_FOOTPRINT.width,STORE_FOOTPRINT.height,'#665b58','#cda056');s.kind='shop';s.floor=1;
+ applyShowroomLayout(s,{room,wall,addItem,rug,sign,light,zone,windowAt});return s;
 }
 function warmScene(scene){for(const item of scene.items)nativeCatalog?.get(item.asset)?.ensureFull?.().catch(()=>{});}
 export function getInterior(scene={}){
@@ -167,12 +155,12 @@ function stairs(c,s){
 }
 function background(s){
  if(backgroundCache.has(s.id))return backgroundCache.get(s.id);const cv=document.createElement('canvas');cv.width=s.width;cv.height=s.height;const c=cv.getContext('2d');c.imageSmoothingEnabled=false;
- floor(c,0,0,s.width,s.height);for(const r of s.rooms)if(r.material==='tile')floor(c,r.x,r.y,r.w,r.h,true);for(const r of s.rugs)carpet(c,r);
+ floor(c,0,0,s.width,s.height);for(const r of s.rooms){if(r.floorFinish)drawShowroomFloor(c,r);else if(r.material==='tile')floor(c,r.x,r.y,r.w,r.h,true);}for(const r of s.rugs)carpet(c,r);
  // Full-height north facade, low cutaway south and side edges.
  plasterWall(c,rect(0,0,s.width,106),s.color,s.trim);plasterWall(c,rect(0,0,28,s.height),s.color,s.trim);plasterWall(c,rect(s.width-28,0,28,s.height),s.color,s.trim);plasterWall(c,rect(0,s.height-28,s.width,28),s.color,s.trim);
  // Wainscoting and fine masonry add depth without changing collision.
  for(let x=48;x<s.width-40;x+=62){fill(c,x,14,50,2,'#f5e6c833');fill(c,x,91,50,3,'#302c3144');fill(c,x+1,72,2,19,'#e0c69566');}
- for(const r of s.walls)plasterWall(c,r,s.color,s.trim);for(const w of s.windows)drawWindow(c,w.x,w.y,w.w,s.color);
+ for(const r of s.walls)plasterWall(c,r,r.color||s.color,r.trim||s.trim);for(const r of s.rooms)if(r.wallpaper)drawShowroomWallpaper(c,r);for(const w of s.windows)drawWindow(c,w.x,w.y,w.w,s.color);
  for(const d of s.doors||[])door(c,d);if(s.elevator)elevator(c,s.elevator);for(const st of s.stairs||[])stairs(c,st);
  if(s.directory){const r=s.directory;fill(c,r.x-10,r.y-8,r.w+20,r.h+16,'#614c3c');fill(c,r.x-4,r.y-2,r.w+8,r.h+4,'#cda056');fill(c,r.x+4,r.y+6,r.w-8,r.h-12,'#293246');c.textAlign='center';c.font='bold 15px Georgia';c.fillStyle='#e0c695';c.fillText('DIRECTORY',r.x+r.w/2,r.y+30);c.font='11px Georgia';for(let f=2;f<=15;f++){const names=f===15?'Your studio':residents.filter(n=>n.floor===f).map(n=>n.name.split(' ')[0]).join(' · ');c.fillStyle='#d1bea2';c.fillText(`${String(f).padStart(2,'0')}  ${names}`,r.x+r.w/2,r.y+34+f*14);}}
  for(const t of s.signs){c.textAlign='center';c.font=`${t.size>25?'bold ':''}${t.size}px Georgia`;c.fillStyle='#302c3155';c.fillText(t.text,t.x+2,t.y+2);c.fillStyle=t.size>25?'#ebc679':'#c8aa77';c.fillText(t.text,t.x,t.y);}

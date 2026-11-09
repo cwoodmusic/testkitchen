@@ -6,6 +6,7 @@ import {venueVisitPose,venueVisitDuration} from './resident-venue.mjs';
 import {configureUrbanInteriors,getInterior} from './urban-interiors.mjs';
 import {decorDefinitions} from './decor-definitions.mjs';
 import {residentInScene} from './resident-journey.mjs';
+import {SHOWROOMS,STORE_TRAFFIC} from './showroom-layout.mjs';
 
 // Configure the same native furniture dimensions used by the browser so a
 // convenient-looking path cannot accidentally pass through a real display.
@@ -19,21 +20,27 @@ test('every resident browses the shop and returns to its real street door withou
  const model=getInterior({kind:'shop'}),before=JSON.stringify(model),browseSpots=new Set();
  const blocked=(x,y)=>x<40||x>model.width-40||y<100||y>model.height-40||model.solids.some(r=>x>=r.x-16&&x<=r.x+r.w+16&&y>=r.y-16&&y<=r.y+r.h+16);
  for(const resident of residents){
+  const showroom=SHOWROOMS[resident.index%SHOWROOMS.length];
   const duration=venueVisitDuration(resident.id,'shop'),initial=venueVisitPose(resident.id,'shop',0);
   assert.deepEqual({x:initial.x,y:initial.y},model.spawn);
-  let walked=false,browsed=false;
-  for(let elapsed=0;elapsed<duration;elapsed+=.1){
+  let walked=false,browsed=false,sawDoor=false;
+  for(let elapsed=0;elapsed<duration;elapsed+=.05){
    const pose=venueVisitPose(resident.id,'shop',elapsed);
    assert.equal(blocked(pose.x,pose.y),false,`${resident.id} crossed a display at ${pose.x},${pose.y}`);
    assert.equal(pose.id,resident.id);assert.equal(pose.hidden,false);assert.equal(pose.done,false);assert(Number.isFinite(pose.x+pose.y+pose.phase));
    assert(residentInScene(pose,{kind:'shop',floor:1}));assert(!residentInScene(pose,{kind:'apartment',resident:resident.id,floor:resident.floor}));
+   assert.equal(pose.showroomId,showroom.id);
+   sawDoor||=Math.hypot(pose.x-showroom.doorway.x,pose.y-showroom.doorway.y)<10;
    walked||=pose.walking;
-   if(!pose.walking){browsed=true;browseSpots.add(`${pose.x},${pose.y}`);assert.match(pose.purpose,/Browsing/);}
+   if(!pose.walking){
+    browsed=true;browseSpots.add(`${pose.x},${pose.y}`);assert.match(pose.purpose,/Browsing/);assert(pose.purpose.includes(showroom.name));
+    assert(pose.x>showroom.x&&pose.x<showroom.x+showroom.w&&pose.y>showroom.y&&pose.y<showroom.y+showroom.h,'Resident must browse inside the furnished room');
+   }
   }
-  assert(walked&&browsed);
+  assert(walked&&browsed&&sawDoor,'Each resident must use its actual showroom doorway before browsing');
   const last=venueVisitPose(resident.id,'shop',duration+1);assert(last.done);assert(!last.hidden);assert(!last.walking);assert.deepEqual({x:last.x,y:last.y},model.spawn);
  }
- assert.equal(browseSpots.size,6);assert.equal(JSON.stringify(model),before);
+ assert.equal(browseSpots.size,8);assert.equal(JSON.stringify(model),before);
 });
 
 test('arcade visits remain in a hidden logical venue until they are ready for the exit queue',()=>{
@@ -56,7 +63,14 @@ test('visit timing handles boundary values without changing resident profiles or
 });
 
 
-test('separate showroom browse slots retain the real resident identity',()=>{
- const a=venueVisitPose('bach','shop',20,{stay:24,slot:0}),b=venueVisitPose('bach','shop',20,{stay:24,slot:1});
- assert.equal(a.id,'bach');assert.equal(b.id,'bach');assert(Math.hypot(a.x-b.x,a.y-b.y)>200);
+test('all eight reserved showroom slots browse distinct rooms and preserve the real resident identity',()=>{
+ assert.equal(SHOWROOMS.length,8);
+ const poses=SHOWROOMS.map((room,slot)=>venueVisitPose('bach','shop',20,{stay:80,slot}));
+ assert.equal(new Set(poses.map(pose=>pose.showroomId)).size,8);
+ for(let i=0;i<poses.length;i++){
+  const pose=poses[i],room=SHOWROOMS[i];assert.equal(pose.id,'bach');assert.equal(pose.walking,false);assert.equal(pose.showroomId,room.id);
+  assert.deepEqual({x:pose.x,y:pose.y},room.browse);
+  for(let j=0;j<i;j++)assert(Math.hypot(pose.x-poses[j].x,pose.y-poses[j].y)>200);
+ }
+ assert.deepEqual(STORE_TRAFFIC.spawn,getInterior({kind:'shop'}).spawn);
 });

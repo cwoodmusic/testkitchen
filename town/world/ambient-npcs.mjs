@@ -1,13 +1,13 @@
-import {blocked,height,TILE} from './model.mjs?v=queues-stage-1';
-import {movePlayer} from './physics.mjs?v=queues-stage-1';
-import {WALK_SPEED,GAIT_PER_PIXEL,PLAYER_SCALE} from './player-settings.mjs?v=queues-stage-1';
-import {buildNPCDistrict} from './npc-district.mjs?v=queues-stage-1';
-import {createNPCNavigator,npcPavingAt,npcMaterialCost} from './npc-navigation.mjs?v=queues-stage-1';
-import {residents as profiles,residentHomePose,interiorJourneyPose,residentInScene} from './resident-journey.mjs?v=queues-stage-1';
-import {createEntranceQueues} from './entrance-queue.mjs?v=queues-stage-1';
-import {venueVisitPose} from './resident-venue.mjs?v=queues-stage-1';
-import {planNPCPassing} from './npc-passing.mjs?v=queues-stage-1';
-export {planNPCPath,npcConnectionClear} from './npc-navigation.mjs?v=queues-stage-1';
+import {blocked,height,TILE} from './model.mjs?v=showrooms-1';
+import {movePlayer} from './physics.mjs?v=showrooms-1';
+import {WALK_SPEED,GAIT_PER_PIXEL,PLAYER_SCALE} from './player-settings.mjs?v=showrooms-1';
+import {buildNPCDistrict} from './npc-district.mjs?v=showrooms-1';
+import {createNPCNavigator,npcPavingAt,npcMaterialCost} from './npc-navigation.mjs?v=showrooms-1';
+import {residents as profiles,residentHomePose,interiorJourneyPose,residentInScene} from './resident-journey.mjs?v=showrooms-1';
+import {createEntranceQueues} from './entrance-queue.mjs?v=showrooms-1';
+import {venueVisitPose,SHOP_VISIT_CAPACITY} from './resident-venue.mjs?v=showrooms-1';
+import {planNPCPassing} from './npc-passing.mjs?v=showrooms-1';
+export {planNPCPath,npcConnectionClear} from './npc-navigation.mjs?v=showrooms-1';
 
 export const AMBIENT_RESIDENTS=Object.freeze(['bach','mozart','clara','nina','joplin','miles','chopin','haydn','vee-jay','zizi','beethoven','ellington','ella','handel','vivaldi','metronome','schoenberg','dj']);
 const distance=(a,b)=>Math.hypot(a.x-b.x,a.y-b.y);
@@ -123,7 +123,7 @@ export function createAmbientNPCs({getProject,catalog,getRevision=()=>0,getPlaye
    }
    if(actor.state!=='queuing')continue;
    actor.facing=target.facing;actor.purpose='Waiting in line';
-   if(target.head&&!(intent.purpose==='shop'&&people.filter(a=>a._venue?.kind==='shop').length>=6)&&entrances.claim(actor.id,actor)){
+   if(target.head&&!(intent.purpose==='shop'&&people.filter(a=>a._venue?.kind==='shop').length>=SHOP_VISIT_CAPACITY)&&entrances.claim(actor.id,actor)){
     record('queue-service',actor,{entranceId:target.entranceId,joinOrder:intent.joinOrder});actor._queuePhase='entry';
     go(actor,{id:intent.building.id+':door',kind:'queue-door',approach:target.entry,...target.entry,_arrival:true},intent.purpose==='home');
    }
@@ -131,7 +131,7 @@ export function createAmbientNPCs({getProject,catalog,getRevision=()=>0,getPlaye
  }
  function startVenue(actor,building){
   const occupied=new Set(people.filter(a=>a._venue?.kind==='shop').map(a=>a._venue.slot));
-  const slot=building.kind==='shop'?Array.from({length:6},(_,i)=>i).find(i=>!occupied.has(i)):undefined;
+  const slot=building.kind==='shop'?Array.from({length:SHOP_VISIT_CAPACITY},(_,i)=>(i+actor._index)%SHOP_VISIT_CAPACITY).find(i=>!occupied.has(i)):undefined;
   actor._venue={kind:building.kind,elapsed:0,stay:20+random()*24,entranceId:building.id,slot};actor.state=building.kind==='shop'?'shopping':'arcade';actor.walking=false;
   record('enter-venue',actor,{entranceId:building.id,kind:building.kind});applyVenue(actor,0);
  }

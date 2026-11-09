@@ -1,6 +1,6 @@
-import {catalog} from './catalog.mjs?v=queues-stage-1';
-import {FLOOR_COUNT,residents,getInterior,renderInterior,residentInteractionZones,apartmentDecorBounds,configureUrbanInteriors} from './urban-interiors.mjs?v=queues-stage-1';
-import {createRoomStorage,roomItemBoxes} from './urban-room.mjs?v=queues-stage-1';
+import {catalog} from './catalog.mjs?v=showrooms-1';
+import {FLOOR_COUNT,residents,getInterior,renderInterior,residentInteractionZones,apartmentDecorBounds,configureUrbanInteriors} from './urban-interiors.mjs?v=showrooms-1';
+import {createRoomStorage,roomItemBoxes} from './urban-room.mjs?v=showrooms-1';
 
 configureUrbanInteriors(catalog);
 const furniture=window.CodaFurnitureCatalog||[];
@@ -13,7 +13,7 @@ export function buildingDoor(o){
 }
 function decorSolids(items){return items.flatMap(o=>roomItemBoxes(o,catalog));}
 export function createUrbanController({canvas,getProject,getPlayer,getResidents,onConversation,preview=false}){
- const css=document.createElement('link');css.rel='stylesheet';css.href=new URL('./urban.css?v=queues-stage-1',import.meta.url);document.head.append(css);
+ const css=document.createElement('link');css.rel='stylesheet';css.href=new URL('./urban.css?v=showrooms-1',import.meta.url);document.head.append(css);
  const hud=document.createElement('section');hud.className='urban-hud';hud.hidden=true;document.body.append(hud);
  const hint=document.createElement('button');hint.className='urban-prompt';hint.hidden=true;hint.onclick=()=>interact();document.body.append(hint);
  const dialog=document.createElement('dialog');dialog.className='urban-dialog';dialog.setAttribute('aria-label','Coda Town');document.body.append(dialog);
@@ -110,7 +110,7 @@ export function createUrbanController({canvas,getProject,getPlayer,getResidents,
   else if(z.action==='stairs-up')goFloor(scene.floor+1);
   else if(z.action==='stairs-down')goFloor(scene.floor-1);
   else if(z.action==='room')openRoom(z.resident);
-  else if(z.action==='shop')showShop();
+  else if(z.action==='shop')showShop(z.showroomId);
   else if(z.action==='decorate'){decorate=true;updateHud();showInventory();}
   else if(z.action==='resident'){const r=residents.find(r=>r.id===z.resident);modal(r?.name||'Your neighbor',scene.kind==='apartment'&&r?.theme?`Welcome to my ${r.theme.toLowerCase()} apartment. It is good to see a familiar face in the building.`:'Good to see you around Coda Town. I hope we can catch some music together later.');beginConversation(z.resident);}
   else if(z.action==='exit'){
@@ -159,10 +159,40 @@ export function createUrbanController({canvas,getProject,getPlayer,getResidents,
   if(!owner)return {ok:false,error:'Wait for your arcade player to finish loading.'};
   const requestId=`furniture:${Date.now()}:${++request}`;return new Promise(resolve=>{pending.set(requestId,resolve);parent.postMessage({type:'coda-town-buy',id:item.id,requestId},location.origin);setTimeout(()=>{if(pending.delete(requestId))resolve({ok:false,error:'The arcade did not confirm the purchase. Please reopen the store to check your inventory.'});},10000);});
  }
- function showShop(){
-  if(localWallet)wallet=localWallet.refresh();const body=modal('Coda Furnishings',purchasesEnabled?`${wallet?.balance??'…'} Notes · Furniture and musical décor for your apartment. Purchases unlock one movable item each.`:purchasesMessage||'Connecting to your arcade player…');const tabs=document.createElement('div');tabs.className='urban-categories';const grid=document.createElement('div');grid.className='urban-catalog';body.append(tabs,grid);
-  function populate(category='all'){grid.replaceChildren();for(const item of furniture.filter(i=>category==='all'||i.category===category)){const b=document.createElement('button');const own=owned().includes(item.id);b.append(thumbnail(item));const name=document.createElement('span');name.textContent=item.name;const price=document.createElement('small');price.textContent=own?'Owned':`${item.price} Notes`;b.append(name,price);b.disabled=own;b.onclick=()=>{const detail=modal(item.name,`Buy for ${item.price} Notes? You have ${wallet?.balance??0} Notes. This item will be available in your apartment’s furniture inventory.`);detail.append(thumbnail(item));const confirm=actionButton(`Buy · ${item.price} Notes`,async()=>{confirm.disabled=true;const result=await buy(item);if(result.ok){showShop();flash(`${item.name} added to your apartment inventory.`);}else {const error=document.createElement('p');error.setAttribute('role','status');error.textContent=result.error||'Purchase unavailable.';detail.append(error);confirm.disabled=false;}},detail);actionButton('Back to showroom catalog',showShop,detail);};grid.append(b);}}
-  for(const category of ['all',...new Set(furniture.map(i=>i.category))])actionButton(category[0].toUpperCase()+category.slice(1),()=>populate(category),tabs);populate();
+ function showShop(showroomId=null,category='all'){
+  if(localWallet)wallet=localWallet.refresh();
+  const showrooms=getInterior({kind:'shop',floor:1}).rooms.filter(r=>Array.isArray(r.productIds));
+  const showroom=showrooms.find(r=>(r.showroomId||r.id)===showroomId)||null,selectedRoom=showroom?.showroomId||showroom?.id||null;
+  const stock=showroom?furniture.filter(item=>showroom.productIds.includes(item.id)):furniture;
+  const body=modal(showroom?`Coda Furnishings · ${showroom.name}`:'Coda Furnishings',purchasesEnabled?`${wallet?.balance??'…'} Notes · Furniture and musical décor for your apartment. Purchases unlock one movable item each.`:purchasesMessage||'Connecting to your arcade player…');
+  if(showrooms.length){
+   const label=document.createElement('label');label.className='urban-showroom-choice';label.append('Collection ');
+   const select=document.createElement('select');select.setAttribute('aria-label','Showroom collection');
+   for(const [id,name]of [[null,'All furniture'],...showrooms.map(r=>[r.showroomId||r.id,r.name])]){const option=document.createElement('option');option.value=id||'';option.textContent=name;select.append(option);}
+   select.value=selectedRoom||'';select.onchange=()=>{showShop(select.value||null);dialog.querySelector('.urban-showroom-choice select')?.focus();};label.append(select);body.append(label);
+  }
+  const summary=document.createElement('section');summary.className='urban-showroom-summary';summary.setAttribute('aria-label','Collection details');
+  if(showroom){
+   const style=document.createElement('strong');style.textContent=showroom.style||showroom.name;
+   const finishes=document.createElement('p'),floor=showroom.floorFinish?.label||showroom.floorFinish?.name||showroom.material||'Wood flooring',wallpaper=showroom.wallpaper?.label||showroom.wallpaper?.name||'Coordinated wallpaper';
+   finishes.textContent=`Floor: ${floor} · Wallpaper: ${wallpaper}`;summary.append(style,finishes);
+  }else{const description=document.createElement('p');description.textContent=showrooms.length?'Explore eight furnished rooms, each with its own furniture collection, flooring and wallpaper. Choose a collection to shop its pieces.':'Browse furniture, instruments, plants and lighting for your apartment.';summary.append(description);}
+  body.append(summary);
+  const tabs=document.createElement('div');tabs.className='urban-categories';tabs.setAttribute('role','group');tabs.setAttribute('aria-label','Furniture categories');
+  const grid=document.createElement('div');grid.className='urban-catalog';body.append(tabs,grid);
+  const categories=['all',...new Set(stock.map(i=>i.category))];let selectedCategory=categories.includes(category)?category:'all';
+  function populate(nextCategory='all'){
+   selectedCategory=nextCategory;for(const button of tabs.children)button.setAttribute('aria-pressed',String(button.dataset.category===selectedCategory));grid.replaceChildren();
+   for(const item of stock.filter(i=>selectedCategory==='all'||i.category===selectedCategory)){
+    const b=document.createElement('button'),own=owned().includes(item.id);b.append(thumbnail(item));const name=document.createElement('span');name.textContent=item.name;const price=document.createElement('small');price.textContent=own?'Owned':`${item.price} Notes`;b.append(name,price);b.disabled=own;
+    b.onclick=()=>{
+     const detail=modal(item.name,`Buy for ${item.price} Notes? You have ${wallet?.balance??0} Notes. This item will be available in your apartment’s furniture inventory.`);detail.append(thumbnail(item));
+     const confirm=actionButton(`Buy · ${item.price} Notes`,async()=>{confirm.disabled=true;const result=await buy(item);if(result.ok){showShop(selectedRoom,selectedCategory);flash(`${item.name} added to your apartment inventory.`);}else{const error=document.createElement('p');error.setAttribute('role','status');error.textContent=result.error||'Purchase unavailable.';detail.append(error);confirm.disabled=false;}},detail);
+     actionButton('Back to showroom catalog',()=>showShop(selectedRoom,selectedCategory),detail);
+    };grid.append(b);
+   }
+  }
+  for(const itemCategory of categories){const button=actionButton(itemCategory[0].toUpperCase()+itemCategory.slice(1),()=>populate(itemCategory),tabs);button.dataset.category=itemCategory;}populate(selectedCategory);
  }
  function keydown(e){
   if(dialog.open)return true;
