@@ -1,4 +1,4 @@
-import {estateDefinitions} from './estates.mjs?v=collision-layers-1';
+import {estateDefinitions} from './estates.mjs?v=queues-stage-1';
 // Shared production artwork. Atlas bounds and pivots are defined here so
 // editor and game always draw identical pieces.
 const load=path=>new Promise((resolve,reject)=>{const image=new Image();image.onload=()=>resolve(image);image.onerror=()=>reject(Error('Could not load '+path));const url=new URL('../assets/'+path,import.meta.url);if(path.startsWith('home-estate-'))url.searchParams.set('v','home-open-1');image.src=url;});

@@ -1,6 +1,6 @@
-import {catalog} from './catalog.mjs?v=collision-layers-1';
-import {FLOOR_COUNT,residents,getInterior,renderInterior,residentInteractionZones,apartmentDecorBounds,configureUrbanInteriors} from './urban-interiors.mjs?v=collision-layers-1';
-import {createRoomStorage,roomItemBoxes} from './urban-room.mjs?v=collision-layers-1';
+import {catalog} from './catalog.mjs?v=queues-stage-1';
+import {FLOOR_COUNT,residents,getInterior,renderInterior,residentInteractionZones,apartmentDecorBounds,configureUrbanInteriors} from './urban-interiors.mjs?v=queues-stage-1';
+import {createRoomStorage,roomItemBoxes} from './urban-room.mjs?v=queues-stage-1';
 
 configureUrbanInteriors(catalog);
 const furniture=window.CodaFurnitureCatalog||[];
@@ -13,7 +13,7 @@ export function buildingDoor(o){
 }
 function decorSolids(items){return items.flatMap(o=>roomItemBoxes(o,catalog));}
 export function createUrbanController({canvas,getProject,getPlayer,getResidents,onConversation,preview=false}){
- const css=document.createElement('link');css.rel='stylesheet';css.href=new URL('./urban.css?v=collision-layers-1',import.meta.url);document.head.append(css);
+ const css=document.createElement('link');css.rel='stylesheet';css.href=new URL('./urban.css?v=queues-stage-1',import.meta.url);document.head.append(css);
  const hud=document.createElement('section');hud.className='urban-hud';hud.hidden=true;document.body.append(hud);
  const hint=document.createElement('button');hint.className='urban-prompt';hint.hidden=true;hint.onclick=()=>interact();document.body.append(hint);
  const dialog=document.createElement('dialog');dialog.className='urban-dialog';dialog.setAttribute('aria-label','Coda Town');document.body.append(dialog);

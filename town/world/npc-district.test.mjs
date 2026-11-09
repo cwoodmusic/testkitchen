@@ -3,6 +3,7 @@ import assert from 'node:assert/strict';
 import {blank,blocked,height,COLS,ROWS} from './model.mjs';
 import {buildNPCDistrict,npcDistrictPoint,npcDistrictFacing} from './npc-district.mjs';
 import {npcCollisionProject} from './npc-collision.mjs';
+import {propCollisionBoxes} from './scene-collision.mjs';
 
 const tower={id:'coda-residences',name:'Coda Residences',w:1000,h:2500,urban:'tower',footprint:{x:100,y:1700,w:800,h:700},door:{x:500,y:2440},boxes:[{x:100,y:1700,w:800,h:700}]};
 const shop={id:'coda-furnishings',name:'Coda Furnishings',w:1200,h:1000,urban:'shop',footprint:{x:40,y:100,w:1120,h:800},door:{x:600,y:930},boxes:[{x:40,y:100,w:1120,h:800}]};
@@ -10,6 +11,7 @@ const square={id:'music-square',w:2400,h:1600,boxes:[{x:950,y:580,w:500,h:400}]}
 const bench={id:'decor-06-01',name:'Carved oak park bench',w:160,h:118,boxes:[{x:25.6,y:89.68,w:108.8,h:25.96}]};
 const cart={id:'decor-07-06',name:'Coffee cart',w:172,h:160,boxes:[{x:27.5,y:121.6,w:116.9,h:35.2}]};
 const catalog=new Map([tower,shop,square,bench,cart].map(a=>[a.id,a]));
+const gazebo={id:'props-4-960',name:'Grand gazebo',w:960,h:960,boxes:propCollisionBoxes(4,960,960)};
 const placed=(asset,id,x,y,rotation=0,scale=1)=>({asset,id,x,y,rotation,scale,collision:true,layer:asset==='music-square'?'ground':'objects'});
 
 test('district follows placed city buildings and is independent of camera or saved spawn',()=>{
@@ -67,16 +69,40 @@ test('bench and vendor approach points avoid legacy non-solid plantings without 
  assert.equal(JSON.stringify(doc),before);assert(doc.objects.slice(2).every(o=>o.collision===false));
 });
 
-test('apartment and shop thresholds stay close to their doors and connected to the gathering approach',()=>{
+test('all three building thresholds stay close to their doors and connected to the gathering approach',()=>{
  for(const rotation of [0,90,180,270]){
-  const doc=blank();doc.objects.push(placed('coda-residences','tower',7000,6000,rotation),placed('coda-furnishings','shop',9500,8000,rotation));
-  const district=buildNPCDistrict(doc,catalog),view=npcCollisionProject(doc,catalog);
-  for(const building of district.anchors.filter(a=>a.kind==='tower'||a.kind==='shop')){
+  const doc=blank(),localCatalog=new Map(catalog),arcade={...shop,id:'coda-arcade',urban:undefined};localCatalog.set(arcade.id,arcade);
+  doc.objects.push(placed('coda-residences','tower',7000,6000,rotation),placed('coda-furnishings','shop',9500,8000,rotation),placed('coda-arcade','arcade',11000,5000,rotation));
+  const district=buildNPCDistrict(doc,localCatalog),view=npcCollisionProject(doc,localCatalog);
+  for(const building of district.anchors.filter(a=>['tower','shop','arcade'].includes(a.kind))){
    assert(building.threshold);assert(Math.hypot(building.threshold.x-building.door.x,building.threshold.y-building.door.y)<60,'Threshold was left at the distant gathering approach');
    assert(Math.hypot(building.threshold.x-building.approach.x,building.threshold.y-building.approach.y)>30);
-   assert.equal(blocked(view,building.threshold.x,building.threshold.y,catalog),false);
+   assert.equal(blocked(view,building.threshold.x,building.threshold.y,localCatalog),false);
   }
  }
+});
+
+test('gazebo stages use the authored front steps in every placement direction',()=>{
+ const localCatalog=new Map(catalog);localCatalog.set(gazebo.id,gazebo);
+ for(const rotation of [0,90,180,270]){
+  const doc=blank(),o=placed(gazebo.id,'gazebo',8192,6144,rotation,1.35);doc.objects.push(o);
+  const before=JSON.stringify(doc),district=buildNPCDistrict(doc,localCatalog),stage=district.stages[0];assert.equal(district.stages.length,1);
+  assert.strictEqual(district.anchors.find(a=>a.kind==='stage'),stage);assert.equal(stage.id,'stage:gazebo');assert.equal(stage.objectId,'gazebo');assert.equal(stage.capacity,1);
+  assert.deepEqual(stage.approach,npcDistrictPoint(o,gazebo,{x:480,y:1024}));
+  assert.deepEqual(stage.via,[npcDistrictPoint(o,gazebo,{x:480,y:864}),npcDistrictPoint(o,gazebo,{x:480,y:710.4})]);
+  assert.deepEqual(stage.deck,stage.via[1]);assert.deepEqual(stage.exit,[stage.via[0],stage.approach]);assert.deepEqual(stage.ground,{x:8192,y:6144});
+  const view=npcCollisionProject(doc,localCatalog);for(const p of [stage.approach,...stage.via])assert.equal(blocked(view,p.x,p.y,localCatalog),false);
+  assert.equal(JSON.stringify(doc),before);
+ }
+});
+
+test('blocked, flooded or differently elevated gazebo stairs are not stage destinations',()=>{
+ const localCatalog=new Map(catalog);localCatalog.set(gazebo.id,gazebo);localCatalog.set('obstruction',{w:128,h:128,boxes:[{x:0,y:0,w:128,h:128}]});
+ const make=()=>{const doc=blank();doc.objects.push(placed(gazebo.id,'gazebo',8192,6144));return doc;};
+ const blockedDoc=make();blockedDoc.objects.push(placed('obstruction','block',8192,6100));assert.equal(buildNPCDistrict(blockedDoc,localCatalog).stages.length,0);
+ const flooded=make();flooded.cells['128,96']={surface:'water',level:0};assert.equal(buildNPCDistrict(flooded,localCatalog).stages.length,0);
+ const raised=make();raised.cells['128,92']={surface:'grass',level:1};assert.equal(buildNPCDistrict(raised,localCatalog).stages.length,0);
+ const pergola=blank();localCatalog.set('decor-09-02',{w:576,h:540,boxes:[]});pergola.objects.push(placed('decor-09-02','pergola',8192,6144));assert.equal(buildNPCDistrict(pergola,localCatalog).stages.length,0);
 });
 
 test('bench seats retain their asset ground anchor and reject approaches across a cliff level',()=>{

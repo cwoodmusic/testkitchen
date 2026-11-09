@@ -1,6 +1,6 @@
-import {blocked,height,surfaceAt,COLS,ROWS,TILE} from './model.mjs?v=collision-layers-1';
-import {npcCollisionProject} from './npc-collision.mjs?v=collision-layers-1';
-import {npcConnectionClear} from './npc-navigation.mjs?v=collision-layers-1';
+import {blocked,height,surfaceAt,COLS,ROWS,TILE} from './model.mjs?v=queues-stage-1';
+import {npcCollisionProject} from './npc-collision.mjs?v=queues-stage-1';
+import {npcConnectionClear} from './npc-navigation.mjs?v=queues-stage-1';
 
 const WORLD_W=COLS*TILE,WORLD_H=ROWS*TILE;
 const cardinal=['down','left','up','right'];
@@ -54,7 +54,7 @@ const vendorNames={
 // deliberately absent: panning never creates a new neighbourhood or resident.
 export function buildNPCDistrict(doc,catalog){
  doc=npcCollisionProject(doc,catalog);
- const buildings=[],squares=[],vendors=[],extents=[];
+ const buildings=[],squares=[],gazebos=[],vendors=[],extents=[];
  for(const o of doc.objects||[]){
   const a=catalog.get(o.asset);if(!a||o.mount)continue;
   const kind=a.urban==='tower'?'tower':a.urban==='shop'?'shop':o.asset==='coda-arcade'?'arcade':null;
@@ -64,12 +64,13 @@ export function buildNPCDistrict(doc,catalog){
    if(approach){
     const facing=npcDistrictFacing(o),forward={down:{x:0,y:1},left:{x:-1,y:0},up:{x:0,y:-1},right:{x:1,y:0}}[facing];
     const wanted=npcDistrictPoint(o,a,{x:doorLocal.x,y:doorLocal.y+28});
-    const nearDoor=kind==='arcade'?approach:nearestClear(doc,catalog,wanted,{radius:96,front:{origin:door,...forward}});
+    const nearDoor=nearestClear(doc,catalog,wanted,{radius:96,front:{origin:door,...forward}});
     const threshold=nearDoor&&npcConnectionClear(doc,catalog,approach,nearDoor)?nearDoor:approach;
     buildings.push({id:'building:'+objectKey(o),kind,objectId:objectKey(o),asset:o.asset,x:approach.x,y:approach.y,door,approach,threshold,facing});
    }
    extents.push(...footprintPoints(o,a),preferred);
   }else if(o.asset==='music-square')squares.push({o,a});
+  else if(o.asset==='props-4-960')gazebos.push({o,a});
   const cartName=vendorNames[o.asset];
   if(cartName){
    // Opaque native counters/canopies would hide a person directly behind the
@@ -85,10 +86,12 @@ export function buildNPCDistrict(doc,catalog){
  // A detached square elsewhere on a large map should not draw this city's
  // residents onto a different island. Nearby squares remain valid hangouts.
  const localSquares=squares.filter(({o})=>!buildings.length||distance(o,core)<6400);
+ const localGazebos=gazebos.filter(({o})=>!buildings.length||distance(o,core)<6400);
  for(const {o,a}of localSquares)extents.push(...footprintPoints(o,a));
+ for(const {o,a}of localGazebos)extents.push(...footprintPoints(o,a));
  if(!extents.length)extents.push({x:fallback.x-1024,y:fallback.y-1024},{x:fallback.x+1024,y:fallback.y+1024});
  const raw=boundsOf(extents),bounds={x0:clamp(raw.x0-384,24,WORLD_W-24),y0:clamp(raw.y0-384,24,WORLD_H-24),x1:clamp(raw.x1+384,24,WORLD_W-24),y1:clamp(raw.y1+384,24,WORLD_H-24)};
- const anchors=[...buildings],benches=[];
+ const anchors=[...buildings],benches=[],stages=[];
  const addAnchor=(id,kind,objectId,wanted,radius=192)=>{
   const p=nearestClear(doc,catalog,wanted,{radius});
   if(p&&contains(bounds,p))anchors.push({id,kind,objectId,...p,approach:{...p}});
@@ -113,6 +116,24 @@ export function buildNPCDistrict(doc,catalog){
   // extend in front. The approach remains a normal collision-safe position.
   addBench('bench:'+objectKey(o),o,a,{x:a.w/2,y:a.h*.72},{x:a.w/2,y:a.h+56/scale(o)});
  }
+ for(const {o,a}of localGazebos){
+  // The front opening and pictured stair flight are the only stage entry.
+  // These authored centerline points stay attached when a gazebo is moved,
+  // rotated or scaled. A blocked stair is omitted, never bypassed at its side.
+  const [approach,stair,deck]=[a.h+64,a.h*.90,a.h*.74].map(y=>npcDistrictPoint(o,a,{x:a.w/2,y}));
+  const ground={x:o.x,y:o.y},groundHeight=height(doc,ground.x,ground.y),points=[approach,stair,deck];
+  if(points.some(p=>!inside(p)||!contains(bounds,p)||blocked(doc,p.x,p.y,catalog)||Math.abs(height(doc,p.x,p.y)-groundHeight)>.5))continue;
+  let clear=true;
+  for(let at=1;at<points.length&&clear;at++){
+   const from=points[at-1],to=points[at];
+   if(!npcConnectionClear(doc,catalog,from,to)){clear=false;break;}
+   const count=Math.max(1,Math.ceil(distance(from,to)/4));
+   for(let i=1;i<count;i++){const t=i/count,p={x:from.x+(to.x-from.x)*t,y:from.y+(to.y-from.y)*t};if(Math.abs(height(doc,p.x,p.y)-groundHeight)>.5){clear=false;break;}}
+  }
+  if(!clear)continue;
+  const stage={id:'stage:'+objectKey(o),kind:'stage',objectId:objectKey(o),asset:o.asset,x:approach.x,y:approach.y,approach,deck,via:[stair,deck],exit:[stair,approach],ground,facing:npcDistrictFacing(o),capacity:1};
+  stages.push(stage);anchors.push(stage);
+ }
  // Small clear gathering pockets beside each entrance provide short errands
  // and room for a pair to stop without occupying a door threshold.
  for(const b of buildings){
@@ -123,5 +144,5 @@ export function buildNPCDistrict(doc,catalog){
   addAnchor('spawn:home','hangout',null,fallback,512);
   for(const [i,[dx,dy]]of [[-320,0],[320,0],[0,320],[0,-320]].entries())addAnchor('spawn:hangout:'+i,'hangout',null,{x:fallback.x+dx,y:fallback.y+dy},192);
  }
- return {center:core,bounds,anchors,benches,tower:buildings.find(b=>b.kind==='tower')||null,vendors};
+ return {center:core,bounds,anchors,benches,stages,tower:buildings.find(b=>b.kind==='tower')||null,vendors};
 }

@@ -1,4 +1,4 @@
-import {COLS,ROWS,TILE,RISE} from './model.mjs?v=collision-layers-1';
+import {COLS,ROWS,TILE,RISE} from './model.mjs?v=queues-stage-1';
 
 export const OVERVIEW_SCALE=.125,OVERVIEW_PAD=512,LIVE_PATCH_SIZE=512;
 export const WORLD_WIDTH=COLS*TILE,WORLD_HEIGHT=ROWS*TILE;
