@@ -42,12 +42,13 @@ test('ambient musicians actually walk using collision, stay on their side of a w
  assert.equal(JSON.stringify(doc),before);
 });
 
-test('a camera pan recycles only off-screen actors and water-only scenes hide them safely',()=>{
+test('residents keep their positions through camera pans and water-only edits hide them safely',()=>{
  let doc=blank();const cam={x:5000,y:5000,zoom:1},view={width:1000,height:700};
  const ambient=createAmbientNPCs({getProject:()=>doc,catalog,getCamera:()=>cam,getViewport:()=>view,random:random(22),count:3});
  ambient.update(0);const old=ambient.actors.map(a=>({...a}));assert.equal(old.length,3);cam.x=11000;
- for(let i=0;i<4;i++)ambient.update(1/60);
- for(const actor of ambient.actors){const prior=old.find(a=>a.id===actor.id);if(Math.abs(actor.x-prior.x)>1000)assert(Math.abs(actor.x-cam.x)>=view.width/2||Math.abs(actor.y-height(doc,actor.x,actor.y)-cam.y)>=view.height/2);}
+ for(let i=0;i<4;i++)ambient.update(0);
+ assert.deepEqual(ambient.actors.map(a=>({id:a.id,x:a.x,y:a.y})),old.map(a=>({id:a.id,x:a.x,y:a.y})));
+ assert(ambient.actors.every(a=>Math.abs(a.x-cam.x)>2000));
  doc=blank();for(let y=0;y<ROWS;y++)for(let x=0;x<COLS;x++)doc.cells[`${x},${y}`]={surface:'water',level:0};const before=JSON.stringify(doc);ambient.update(.1);
  assert.equal(ambient.actors.length,0);assert.equal(JSON.stringify(doc),before);
 });

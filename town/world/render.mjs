@@ -1,15 +1,15 @@
-import {drawSelection} from './selection-view.mjs?v=overview-fast-1';
-import {drawTerrain} from './terrain-render.mjs?v=overview-fast-1';
-import {mountPose} from './cliff-mount.mjs?v=overview-fast-1';
-import {elevationView} from './elevation-view.mjs?v=overview-fast-1';
-import {barrierRuns,drawBarrierRun,barrierPosts,drawPost} from './construction.mjs?v=overview-fast-1';
-import {TILE,RISE,COLS,ROWS,cell,height,segment} from './model.mjs?v=overview-fast-1';
-import {catalog} from './catalog.mjs?v=overview-fast-1';
-import {assetMapImage} from './asset-lawn.mjs?v=overview-fast-1';
-import {overviewObjectImage} from './overview-sprites.mjs?v=overview-fast-1';
-import {renderCityNight} from './city-night.mjs?v=overview-fast-1';
-import {setWaterTime} from './water-motion.mjs?v=overview-fast-1';
-import {drawFountainMotion} from './fountain-motion.mjs?v=overview-fast-1';
+import {drawSelection} from './selection-view.mjs?v=city-residents-1';
+import {drawTerrain} from './terrain-render.mjs?v=city-residents-1';
+import {mountPose} from './cliff-mount.mjs?v=city-residents-1';
+import {elevationView} from './elevation-view.mjs?v=city-residents-1';
+import {barrierRuns,drawBarrierRun,barrierPosts,drawPost} from './construction.mjs?v=city-residents-1';
+import {TILE,RISE,COLS,ROWS,cell,height,segment} from './model.mjs?v=city-residents-1';
+import {catalog} from './catalog.mjs?v=city-residents-1';
+import {assetMapImage} from './asset-lawn.mjs?v=city-residents-1';
+import {overviewObjectImage} from './overview-sprites.mjs?v=city-residents-1';
+import {renderCityNight} from './city-night.mjs?v=city-residents-1';
+import {setWaterTime} from './water-motion.mjs?v=city-residents-1';
+import {drawFountainMotion} from './fountain-motion.mjs?v=city-residents-1';
 function drawBrush(c,d,brush,zoom){
  const radius=brush.size/2,color=brush.blend?'#b7eddf':'#ffe2a1';
  c.save();
@@ -39,7 +39,7 @@ function objectDepth(o,d,player){
 export function render(c,d,cam,w,h,opts={}){setWaterTime(opts.time||0);const screenTransform=c.getTransform();c.clearRect(0,0,w,h);c.fillStyle='#101f19';c.fillRect(0,0,w,h);c.save();c.translate(w/2,h/2);c.scale(cam.zoom,cam.zoom);c.translate(-cam.x,-cam.y);const left=cam.x-w/2/cam.zoom,top=cam.y-h/2/cam.zoom;const x0=Math.max(0,Math.floor(left/64)-1),x1=Math.min(COLS,Math.ceil((left+w/cam.zoom)/64)+1),y0=Math.max(0,Math.floor(top/64)-1),y1=Math.min(ROWS,Math.ceil((top+h/cam.zoom+RISE*9)/64)+1);if(opts.heightView==='plan'){elevationView(c,d,cam,w,h,opts);c.restore();return;}drawTerrain(c,d,{x0,x1,y0,y1},opts);if(opts.drawFootprints)opts.drawFootprints(c,d,opts.time||0);
  const visible=d.objects.filter(o=>{const a=catalog.get(o.asset);if(!a)return false;const r=Math.max(a.w,a.h)*o.scale,pose=mountPose(d,o);return pose&&pose.x+r>left&&pose.x-r<left+w/cam.zoom&&pose.y+r>top&&pose.y-r<top+h/cam.zoom;});
  for(const o of visible.filter(o=>!o.mount&&o.layer==='ground'))drawObject(c,o,d,opts.collision,1,opts.time||0);
- const queue=visible.filter(o=>o.mount||o.layer==='objects').map(o=>({y:objectDepth(o,d,opts.player),draw:()=>drawObject(c,o,d,opts.collision,1,opts.time||0)}));for(const run of barrierRuns(d))queue.push({y:run.axis==='h'?run.s.y:run.s.y+run.end-run.start,draw:()=>drawBarrierRun(c,run)});for(const p of barrierPosts(d))queue.push({y:p.y+.1,draw:()=>drawPost(c,p,d)});for(const npc of opts.npcs||[])if(opts.drawNPC&&Number.isFinite(npc.x)&&Number.isFinite(npc.y))queue.push({y:npc.y,draw:()=>opts.drawNPC(c,{...npc,y:npc.y-height(d,npc.x,npc.y)},opts.time||0)});if(opts.player)queue.push({y:opts.player.y,draw:()=>{const p=opts.player,z=height(d,p.x,p.y);if(opts.drawPlayer)opts.drawPlayer(c,p.x,p.y-z);else{c.fillStyle='#1a251a66';c.beginPath();c.ellipse(p.x,p.y-z,16,7,0,0,7);c.fill();}}});queue.sort((a,b)=>a.y-b.y).forEach(a=>a.draw());
+ const queue=visible.filter(o=>o.mount||o.layer==='objects').map(o=>({y:objectDepth(o,d,opts.player),draw:()=>drawObject(c,o,d,opts.collision,1,opts.time||0)}));for(const run of barrierRuns(d))queue.push({y:run.axis==='h'?run.s.y:run.s.y+run.end-run.start,draw:()=>drawBarrierRun(c,run)});for(const p of barrierPosts(d))queue.push({y:p.y+.1,draw:()=>drawPost(c,p,d)});for(const npc of opts.npcs||[])if(opts.drawNPC&&Number.isFinite(npc.x)&&Number.isFinite(npc.y))queue.push({y:npc.depth??npc.y,draw:()=>opts.drawNPC(c,{...npc,y:npc.y-height(d,npc.x,npc.y)},opts.time||0)});if(opts.player)queue.push({y:opts.player.y,draw:()=>{const p=opts.player,z=height(d,p.x,p.y);if(opts.drawPlayer)opts.drawPlayer(c,p.x,p.y-z);else{c.fillStyle='#1a251a66';c.beginPath();c.ellipse(p.x,p.y-z,16,7,0,0,7);c.fill();}}});queue.sort((a,b)=>a.y-b.y).forEach(a=>a.draw());
  for(const o of visible.filter(o=>!o.mount&&o.layer==='overgrowth'))drawObject(c,o,d,opts.collision,1,opts.time||0);
  if(opts.night&&(!opts.heightView||opts.heightView==='art')){c.save();c.setTransform(screenTransform);renderCityNight(c,d,cam,w,h,opts.time||0,{catalog,objects:visible});c.restore();}
  if(opts.heightView==='colors')elevationView(c,d,cam,w,h,opts);

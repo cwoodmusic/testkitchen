@@ -1,8 +1,8 @@
-import {COLS,ROWS,terrainView} from './model.mjs?v=overview-fast-1';
-import {sources} from './catalog.mjs?v=overview-fast-1';
-import {groundFrameKey,invalidateGroundCache} from './ground-render.mjs?v=overview-fast-1';
-import {waterFrame,currentWaterFrameIndex,withLevelZeroWaterCutout} from './water-motion.mjs?v=overview-fast-1';
-import {OverviewTerrainState,OVERVIEW_SCALE,OVERVIEW_PAD,WORLD_WIDTH,WORLD_HEIGHT,terrainBoundsForRect} from './overview-state.mjs?v=overview-fast-1';
+import {COLS,ROWS,terrainView} from './model.mjs?v=city-residents-1';
+import {sources} from './catalog.mjs?v=city-residents-1';
+import {groundFrameKey,invalidateGroundCache} from './ground-render.mjs?v=city-residents-1';
+import {waterFrame,currentWaterFrameIndex,withLevelZeroWaterCutout} from './water-motion.mjs?v=city-residents-1';
+import {OverviewTerrainState,OVERVIEW_SCALE,OVERVIEW_PAD,WORLD_WIDTH,WORLD_HEIGHT,terrainBoundsForRect} from './overview-state.mjs?v=city-residents-1';
 
 const entries=new WeakMap(),fullBounds={x0:0,x1:COLS,y0:0,y1:ROWS};
 const world={x:-OVERVIEW_PAD,y:-OVERVIEW_PAD,w:WORLD_WIDTH+OVERVIEW_PAD*2,h:WORLD_HEIGHT+OVERVIEW_PAD*2};

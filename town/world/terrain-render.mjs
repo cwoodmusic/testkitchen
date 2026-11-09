@@ -1,15 +1,15 @@
-import {shadeLowerGround,drawTerrainRims} from './edge-shading.mjs?v=overview-fast-1';
-import {drawRoundUnder,drawRoundCliff} from './round-render.mjs?v=overview-fast-1';
-import {clipCurves} from './round-geometry.mjs?v=overview-fast-1';
-import {drawGround,groundFrameKey,groundTexture} from './ground-render.mjs?v=overview-fast-1';
-import {drawCliff,drawStairs} from './construction.mjs?v=overview-fast-1';
-import {RISE,COLS,ROWS,cell,terrainView} from './model.mjs?v=overview-fast-1';
-import {sources} from './catalog.mjs?v=overview-fast-1';
-import {waterRimSegments} from './water-rim.mjs?v=overview-fast-1';
-import {drawPier,drawPierSubmerged} from './piers.mjs?v=overview-fast-1';
-import {drawSidewalkCurbs} from './sidewalk-curbs.mjs?v=overview-fast-1';
-import {drawOverviewTerrain} from './overview-terrain.mjs?v=overview-fast-1';
-import {prepareOverviewRuns} from './overview-runs.mjs?v=overview-fast-1';
+import {shadeLowerGround,drawTerrainRims} from './edge-shading.mjs?v=city-residents-1';
+import {drawRoundUnder,drawRoundCliff} from './round-render.mjs?v=city-residents-1';
+import {clipCurves} from './round-geometry.mjs?v=city-residents-1';
+import {drawGround,groundFrameKey,groundTexture} from './ground-render.mjs?v=city-residents-1';
+import {drawCliff,drawStairs} from './construction.mjs?v=city-residents-1';
+import {RISE,COLS,ROWS,cell,terrainView} from './model.mjs?v=city-residents-1';
+import {sources} from './catalog.mjs?v=city-residents-1';
+import {waterRimSegments} from './water-rim.mjs?v=city-residents-1';
+import {drawPier,drawPierSubmerged} from './piers.mjs?v=city-residents-1';
+import {drawSidewalkCurbs} from './sidewalk-curbs.mjs?v=city-residents-1';
+import {drawOverviewTerrain} from './overview-terrain.mjs?v=city-residents-1';
+import {prepareOverviewRuns} from './overview-runs.mjs?v=city-residents-1';
 const lawns=new WeakMap();
 function drawWaterRim(c,d,x,y,X,Y){
  c.strokeStyle='#97b9a1';c.lineWidth=5;

@@ -26,6 +26,34 @@ const signature=ctx=>JSON.stringify(rectangles(ctx));
 const colors=ctx=>new Set(rectangles(ctx).map(rect=>rect[5]));
 function draw(r,profile={},motion={},time=0){const ctx=context();assert.equal(r.drawPlayer(ctx,profile,motion,time),true);assert.equal(ctx.depth,0);return ctx;}
 
+test('authored bench sitting leaves existing arcade relaxing artwork unchanged',()=>{
+  const {value:r}=renderer({reducedMotion:()=>true}),hash=value=>require('node:crypto').createHash('sha256').update(value).digest('hex');
+  // Captured before the opt-in bench pose: the arcade's existing relaxed
+  // actors and four directional drawings must retain their exact pixels.
+  const expected={down:'b6846db46bc4e1c52430f2c8f7decaf2c1a907a3dfee84734d993ff748d52b62',left:'241979a09b5aefd5dbc14267ed868e58037ab800be68c16a3aba568f57d02d8e',up:'2fde8dbb3e27a30615d307f78bcc1c115d8491f60e371ad68ee70445f2e979fa',right:'3456293263fed844722fb7f2e5dd5e012d316e4b9da6a9ce2461db43fc4665b0'};
+  for(const facing of directions){const ctx=context();r.drawNPC(ctx,{id:'bach',x:0,y:0,facing,activity:'relaxing'},0);assert.equal(hash(signature(ctx)),expected[facing]);}
+});
+
+test('bench occupants sit at the cushion anchor with feet below it and retain musician identity',()=>{
+  const {value:r}=renderer({reducedMotion:()=>true});
+  for(const id of ['bach','clara','miles'])for(const facing of directions){
+    const actor={id,x:170,y:230,facing,walking:false,activity:'relaxing',seated:true},before=JSON.stringify(actor),ctx=context();
+    assert.equal(r.drawNPC(ctx,actor,0),true);assert.equal(ctx.depth,0);assert.equal(JSON.stringify(actor),before);
+    assert.ok(ctx.calls.some(call=>call[0]==='translate'&&call[1]===170&&call[2]===230),'Cushion anchor must not drift with the identity');
+    const worldYs=rectangles(ctx).flatMap(([,x,y,w,h,,a,b,c,d,e,f])=>[b*x+d*y+f,b*(x+w)+d*(y+h)+f]);
+    assert.ok(Math.min(...worldYs)<210,'Recognizable head and torso remain above the cushion');
+    if(facing==='down'||facing==='left'||facing==='right')assert.ok(Math.max(...worldYs)>238,'Bent knees and shoes must extend below the cushion');
+    const standing=context();r.drawNPC(standing,{...actor,seated:false},0);assert.notEqual(signature(ctx),signature(standing));
+  }
+});
+
+test('seated residents cannot accidentally walk, jump or lose their pose with reduced motion',()=>{
+  const {value:r}=renderer({reducedMotion:()=>true}),pose=r.sampleMotion({seated:true,walking:true,jumpHeight:30,phase:1},0);
+  assert.equal(pose.seated,true);assert.equal(pose.walking,false);assert.equal(pose.stride,0);assert.equal(pose.jumpHeight,0);assert.equal(pose.clip,'sit');
+  const actor={id:'clara',x:10,y:20,facing:'down',activity:'relaxing',seated:true,walking:true},a=context(),b=context();
+  r.drawNPC(a,{...actor,phase:.7},0);r.drawNPC(b,{...actor,phase:4},8);assert.equal(signature(a),signature(b));
+});
+
 test('characters are ready synchronously and draw without image loading or a manifest',async()=>{
   const {value:r,unexpected}=renderer();assert.equal(r.isReady(),true);assert.equal(r.error,null);
   assert.ok(rectangles(draw(r)).length>20,'The character must actually paint its body');

@@ -1,166 +1,216 @@
-import {blocked,height,surfaceAt,cell,segment,COLS,ROWS,TILE} from './model.mjs?v=overview-fast-1';
-import {movePlayer} from './physics.mjs?v=overview-fast-1';
-import {WALK_SPEED,GAIT_PER_PIXEL,PLAYER_SCALE} from './player-settings.mjs?v=overview-fast-1';
+import {blocked,height,TILE} from './model.mjs?v=city-residents-1';
+import {movePlayer} from './physics.mjs?v=city-residents-1';
+import {WALK_SPEED,GAIT_PER_PIXEL,PLAYER_SCALE} from './player-settings.mjs?v=city-residents-1';
+import {buildNPCDistrict} from './npc-district.mjs?v=city-residents-1';
+import {createNPCNavigator,npcPavingAt,npcMaterialCost} from './npc-navigation.mjs?v=city-residents-1';
+import {residents as profiles,residentHomePose,interiorJourneyPose,residentInScene} from './resident-journey.mjs?v=city-residents-1';
+export {planNPCPath,npcConnectionClear} from './npc-navigation.mjs?v=city-residents-1';
 
 export const AMBIENT_RESIDENTS=Object.freeze(['bach','mozart','clara','nina','joplin','miles','chopin','haydn','vee-jay','zizi','beethoven','ellington','ella','handel','vivaldi','metronome','schoenberg','dj']);
-const clamp=(v,a,b)=>Math.max(a,Math.min(b,v));
-const center=(x,y)=>({x:x*TILE+TILE/2,y:y*TILE+TILE/2});
-const tileOf=p=>({x:Math.floor(p.x/TILE),y:Math.floor(p.y/TILE)});
 const distance=(a,b)=>Math.hypot(a.x-b.x,a.y-b.y);
-const validPoint=p=>p&&Number.isFinite(p.x)&&Number.isFinite(p.y);
-const inside=p=>p.x>=20&&p.y>=20&&p.x<COLS*TILE-20&&p.y<ROWS*TILE-20;
-const tileId=p=>p.y*COLS+p.x;
+const facing=(a,b)=>Math.abs(b.x-a.x)>Math.abs(b.y-a.y)?b.x<a.x?'left':'right':b.y<a.y?'up':'down';
+function randomSource(seed=0x63cd1a){let state=seed>>>0;return ()=>{state=(Math.imul(state,1664525)+1013904223)>>>0;return state/4294967296;};}
+const street={kind:'street'};
+const vendorLines=name=>/coffee/i.test(name)?[
+ 'The espresso machine keeps a surprisingly good rhythm. I call this morning’s blend the Coda Roast.',
+ 'A warm cup, a little night music, and a seat in the square. That’s a lovely evening.'
+]:/bakery|bread/i.test(name)?[
+ 'I knead along to the music from the square. The bread seems to rise better with a good melody.',
+ 'The first tray is always my favourite part of the day. That warm bread smell travels right down the street.'
+]:/flower/i.test(name)?[
+ 'I’m arranging these colours like notes in a chord. A little contrast makes everything sing.',
+ 'The flowers catch the glow of the street lamps beautifully. Have a look at the little blue ones.'
+]:['There’s always something to listen to in Coda Town. Have you heard the music in the square?', 'I love watching the neighbourhood come alive around these little stalls.'];
 
-function randomSource(seed=0x63cd1a){
- let state=seed>>>0;return ()=>{state=(Math.imul(state,1664525)+1013904223)>>>0;return state/4294967296;};
-}
-function heapPush(heap,item){let i=heap.length;heap.push(item);while(i){const parent=(i-1)>>1;if(heap[parent].score<=item.score)break;heap[i]=heap[parent];i=parent;}heap[i]=item;}
-function heapPop(heap){
- const first=heap[0],tail=heap.pop();if(heap.length){let i=0;while(i*2+1<heap.length){let n=i*2+1;if(n+1<heap.length&&heap[n+1].score<heap[n].score)n++;if(heap[n].score>=tail.score)break;heap[i]=heap[n];i=n;}heap[i]=tail;}return first;
-}
-
-// Preview pedestrians use the same collision model as the playable character.
-// Sampling the whole connection prevents a route from jumping over a wall,
-// a narrow shoreline, or a closed gate between two otherwise clear tile centers.
-export function npcConnectionClear(doc,catalog,from,to){
- if(!validPoint(from)||!validPoint(to)||!inside(from)||!inside(to)||blocked(doc,from.x,from.y,catalog))return false;
- const a=cell(doc,Math.floor(from.x/TILE),Math.floor(from.y/TILE)),b=cell(doc,Math.floor(to.x/TILE),Math.floor(to.y/TILE));
- const steps=Math.max(1,Math.ceil(distance(from,to)/(a.stairs||b.stairs?1.5:4)));let previous=from;
- for(let i=1;i<=steps;i++){
-  const q={x:from.x+(to.x-from.x)*i/steps,y:from.y+(to.y-from.y)*i/steps};
-  if(blocked(doc,q.x,q.y,catalog,previous))return false;previous=q;
- }
- return true;
-}
-function pavingAt(doc,catalog,p){
- const surface=surfaceAt(doc,p.x,p.y);if(surface!=='grass')return surface;
- for(const o of doc.objects){
-  const a=catalog.get(o.asset);if(!a||o.mount||o.asset!=='music-square'&&!a.roadOpen)continue;
-  const r=-(o.rotation||0)*Math.PI/180,dx=(p.x-o.x)/o.scale,dy=(p.y-o.y)/o.scale;
-  const x=dx*Math.cos(r)-dy*Math.sin(r)+a.w/2,y=dx*Math.sin(r)+dy*Math.cos(r)+a.h;
-  if(x<0||y<0||x>=a.w||y>=a.h)continue;
-  if(o.asset==='music-square')return 'cobble';
-  const margin=a.road?.sidewalk||128,right=a.w-margin,bottom=a.h-margin;
-  const asphalt=x>=margin&&x<right&&y>=margin&&y<bottom||a.roadOpen.includes('north')&&x>=margin&&x<right&&y<margin||a.roadOpen.includes('south')&&x>=margin&&x<right&&y>=bottom||a.roadOpen.includes('west')&&y>=margin&&y<bottom&&x<margin||a.roadOpen.includes('east')&&y>=margin&&y<bottom&&x>=right;
-  return asphalt?'asphalt':'sidewalk';
- }
- return surface;
-}
-const materialCost=s=>({sidewalk:1,cobble:1.05,wood:1.2,dirt:1.5,sand:1.6,brick:1.05,grass:2.1,asphalt:3.2})[s]||2;
-function orthogonalJoin(doc,catalog,from,to){
- if(Math.abs(from.x-to.x)<.01||Math.abs(from.y-to.y)<.01)return npcConnectionClear(doc,catalog,from,to)?[to]:null;
- for(const corner of [{x:to.x,y:from.y},{x:from.x,y:to.y}])if(npcConnectionClear(doc,catalog,from,corner)&&npcConnectionClear(doc,catalog,corner,to))return [corner,to];
- return null;
-}
-function navigationView(doc,catalog,from,radius){
- const reach=(radius+3)*TILE,bounds={x0:from.x-reach,y0:from.y-reach,x1:from.x+reach,y1:from.y+reach};
- const overlaps=(x0,y0,x1,y1)=>x1>=bounds.x0&&x0<=bounds.x1&&y1>=bounds.y0&&y0<=bounds.y1;
- const edges={};for(const[k,e]of Object.entries(doc.edges)){const s=segment(k);if(overlaps(s.x-96,s.y-96,s.x+s.dx+96,s.y+s.dy+96))edges[k]=e;}
- const objects=doc.objects.filter(o=>{
-  if(!o.collision||o.mount)return false;const a=catalog.get(o.asset);if(!a)return false;
-  const points=[...(a.polygons||[]).flat(),...(a.boxes||[]).flatMap(b=>[[b.x,b.y],[b.x+b.w,b.y],[b.x+b.w,b.y+b.h],[b.x,b.y+b.h]])];if(!points.length)return false;
-  const r=(o.rotation||0)*Math.PI/180,cos=Math.cos(r),sin=Math.sin(r);let x0=Infinity,y0=Infinity,x1=-Infinity,y1=-Infinity;
-  for(const [x,y]of points){const dx=(x-a.w/2)*o.scale,dy=(y-a.h)*o.scale,X=o.x+dx*cos-dy*sin,Y=o.y+dx*sin+dy*cos;x0=Math.min(x0,X);x1=Math.max(x1,X);y0=Math.min(y0,Y);y1=Math.max(y1,Y);}
-  return overlaps(x0-12,y0-12,x1+12,y1+12);
- });
- // Only broad-phase candidates change; blocked() still makes every actual
- // decision, including the live terrain masks and stair height profiles.
- return {...doc,edges,objects};
-}
-
-// A bounded A* search favors pavements and piazzas. It returns real world
-// waypoints; neither planning nor walking writes anything into the map.
-export function planNPCPath(doc,catalog,from,to,{radius=14,maxNodes=600}={}){
- if(!validPoint(from)||!validPoint(to)||!inside(from)||!inside(to)||blocked(doc,to.x,to.y,catalog))return [];
- doc=navigationView(doc,catalog,from,Math.max(1,Math.min(24,Math.round(radius))));
- const startTile=tileOf(from),goal=tileOf(to),candidates=[];
- for(let dy=-2;dy<=2;dy++)for(let dx=-2;dx<=2;dx++){const p={x:startTile.x+dx,y:startTile.y+dy},world=center(p.x,p.y);if(inside(world)&&!blocked(doc,world.x,world.y,catalog))candidates.push({tile:p,world,d:distance(from,world)});}
- candidates.sort((a,b)=>a.d-b.d);let start,prefix;
- for(const candidate of candidates){const join=orthogonalJoin(doc,catalog,from,candidate.world);if(join){start=candidate.tile;prefix=join;break;}}
- if(!start)return [];
- const goalWorld=center(goal.x,goal.y),suffix=orthogonalJoin(doc,catalog,goalWorld,to);if(!suffix)return [];
- const span=Math.max(1,Math.min(24,Math.round(radius))),minX=Math.max(0,start.x-span),maxX=Math.min(COLS-1,start.x+span),minY=Math.max(0,start.y-span),maxY=Math.min(ROWS-1,start.y+span);
- if(goal.x<minX||goal.x>maxX||goal.y<minY||goal.y>maxY)return [];
- const records=new Map(),open=[],closed=new Set(),edgeCache=new Map(),startId=tileId(start),goalId=tileId(goal);
- const heuristic=p=>Math.abs(p.x-goal.x)+Math.abs(p.y-goal.y);
- records.set(startId,{tile:start,g:0,parent:null});heapPush(open,{id:startId,score:heuristic(start)});
- while(open.length&&closed.size<maxNodes){
-  const current=heapPop(open);if(closed.has(current.id))continue;closed.add(current.id);const record=records.get(current.id),p=record.tile;
-  if(current.id===goalId){
-   const reversed=[];let at=current.id;while(at!==startId){const item=records.get(at);reversed.push(center(item.tile.x,item.tile.y));at=item.parent;}
-   return [...prefix,...reversed.reverse(),...suffix].filter((p,i,list)=>(i?distance(p,list[i-1]):distance(p,from))>.1);
+// Residents belong to the city, not the viewport. Their positions, activities
+// and indoor journeys continue when the player pans away or enters a building.
+export function createAmbientNPCs({getProject,catalog,getRevision=()=>0,getPlayer,count=18,random=randomSource()}={}){
+ let activeDoc=null,lastRevision,city=null,people=[],vendors=[],renderer=null,elapsed=0,socialAt=0;
+ const claims=new Map(),events=[];
+ const navigator=createNPCNavigator({getProject,catalog,getBounds:()=>city?.bounds,budgetMs:1.5});
+ const outdoor=()=>people.filter(a=>a.location.kind==='street'&&!a.hidden);
+ const record=(type,actor,extra={})=>{events.push({type,id:actor.id,time:elapsed,...extra});if(events.length>256)events.shift();};
+ const inDistrict=p=>city&&p.x>=city.bounds.x0&&p.x<=city.bounds.x1&&p.y>=city.bounds.y0&&p.y<=city.bounds.y1;
+ function clearPoint(p){return inDistrict(p)&&!blocked(navigator.collisionView(p),p.x,p.y,catalog);}
+ function standingNear(wanted,index=0,spread=true){
+  if(!wanted)return null;
+  const candidates=[];
+  for(let ring=0;ring<8;ring++)for(let i=0;i<(ring?12:1);i++){
+   const angle=(i/12+index*.137)*Math.PI*2,r=ring*48,p={x:wanted.x+Math.cos(angle)*r,y:wanted.y+Math.sin(angle)*r};
+   if(!clearPoint(p)||spread&&outdoor().some(a=>distance(a,p)<85))continue;
+   candidates.push({...p,score:r+npcMaterialCost(npcPavingAt(activeDoc,catalog,p))*18});
   }
-  for(const[dx,dy]of [[0,-1],[1,0],[0,1],[-1,0]]){
-   const next={x:p.x+dx,y:p.y+dy};if(next.x<minX||next.x>maxX||next.y<minY||next.y>maxY)continue;
-   const id=tileId(next);if(closed.has(id))continue;const world=center(next.x,next.y),edgeKey=current.id+':'+id;
-   if(!edgeCache.has(edgeKey))edgeCache.set(edgeKey,npcConnectionClear(doc,catalog,center(p.x,p.y),world));if(!edgeCache.get(edgeKey))continue;
-   const g=record.g+materialCost(pavingAt(doc,catalog,world)),old=records.get(id);if(old&&old.g<=g)continue;
-   records.set(id,{tile:next,g,parent:current.id});heapPush(open,{id,score:g+heuristic(next)});
-  }
+  candidates.sort((a,b)=>a.score-b.score);return candidates[0]||null;
  }
- return [];
-}
-
-export function createAmbientNPCs({getProject,catalog,getCamera,getViewport,count=10,random=randomSource()}={}){
- let activeDoc=null,residents=[],renderer=null,elapsed=0;
- const visible=()=>residents.filter(a=>!a.hidden);
- const camera=()=>getCamera?.()||{x:8192,y:6144,zoom:.6};
- const viewport=()=>getViewport?.()||{width:1000,height:760};
- function screenPoint(doc,p){const c=camera(),z=height(doc,p.x,p.y);return {x:(p.x-c.x)*(c.zoom||.6),y:(p.y-z-c.y)*(c.zoom||.6)};}
- function onScreen(doc,p,padding=0){const s=screenPoint(doc,p),v=viewport();return Math.abs(s.x)<v.width/2+padding&&Math.abs(s.y)<v.height/2+padding;}
- function findSpawn(doc,index,edge=false){
-  const c=camera(),v=viewport(),zoom=c.zoom||.6,others=visible(),candidates=[];
-  for(let i=0;i<110;i++){
-   let sx,sy;
-   if(edge){const side=(i+index)%4,t=random()*2-1;const bx=v.width/2+75,by=v.height/2+75;sx=side===0?-bx:side===1?bx:t*bx;sy=side===2?-by:side===3?by:t*by;}
-   else{sx=(random()*2-1)*Math.max(40,v.width/2-75);sy=(random()*2-1)*Math.max(40,v.height/2-135)+35;}
-   const x=(Math.floor((c.x+sx/zoom)/TILE)+.5)*TILE,baseY=c.y+sy/zoom,y=(Math.floor((baseY+height(doc,x,baseY))/TILE)+.5)*TILE,p={x,y};
-   if(!inside(p)||blocked(doc,x,y,catalog)||others.some(a=>a.id!==AMBIENT_RESIDENTS[index%AMBIENT_RESIDENTS.length]&&distance(a,p)<92))continue;
-   if(!edge&&!onScreen(doc,p,-45))continue;
-   const cost=materialCost(pavingAt(doc,catalog,p));candidates.push({...p,score:12/cost+random()*3});
-  }
-  candidates.sort((a,b)=>b.score-a.score);return candidates[0]||null;
+ function releaseSeat(actor){if(actor.seatId&&claims.get(actor.seatId)===actor.id)claims.delete(actor.seatId);delete actor.seatId;actor.seated=false;delete actor.depth;}
+ function idle(actor,wait=2){actor.state='idle';actor.activity='';actor.purpose='Taking in the neighbourhood';actor.walking=false;actor._wait=wait;actor._path=[];actor._pending=false;}
+ function cancel(actor){navigator.cancel(actor.id);actor._routeToken++;actor._pending=false;actor._path=[];}
+ function endChat(actor){
+  const partner=people.find(p=>p.id===actor.conversation);delete actor.conversation;
+  if(partner?.conversation===actor.id){delete partner.conversation;idle(partner,1.5+random()*2);}
+  idle(actor,1.5+random()*2);
  }
- function reset(){activeDoc=null;residents=[];elapsed=0;}
- function initialize(doc){
-  activeDoc=doc;residents=[];
-  for(let i=0;i<Math.max(0,Math.min(18,count));i++){
-   const p=findSpawn(doc,i);const actor={id:AMBIENT_RESIDENTS[i%AMBIENT_RESIDENTS.length],x:p?.x||camera().x,y:p?.y||camera().y,facing:['down','left','right','up'][i%4],walking:false,phase:i*.7,alpha:0,activity:'',hidden:!p,speed:120+i%5*12,_index:i,_path:[],_wait:i*.13,_retry:0,_stuck:0};residents.push(actor);
-  }
+ function startChat(a,b){
+  cancel(a);cancel(b);const duration=8+random()*8;
+  for(const [actor,other]of [[a,b],[b,a]]){actor.state='chatting';actor.activity='chatting';actor.conversation=other.id;actor.facing=facing(actor,other);actor._wait=duration;actor._socialAfter=elapsed+duration+18+random()*18;actor.walking=false;actor.purpose='Talking with '+other.name;}
+  record('chat',a,{partner:b.id});
  }
- function chooseRoute(doc,actor){
-  const options=[];
-  for(let i=0;i<24;i++){
-   const angle=random()*Math.PI*2,r=190+random()*420,p={x:(Math.floor((actor.x+Math.cos(angle)*r)/TILE)+.5)*TILE,y:(Math.floor((actor.y+Math.sin(angle)*r)/TILE)+.5)*TILE};
-   if(!inside(p)||blocked(doc,p.x,p.y,catalog)||distance(actor,p)<150||!onScreen(doc,p,180))continue;
-   options.push({...p,score:10/materialCost(pavingAt(doc,catalog,p))+random()*5});
-  }
-  options.sort((a,b)=>b.score-a.score);
-  for(const goal of options.slice(0,2)){const path=planNPCPath(doc,catalog,actor,goal,{radius:12,maxNodes:320});if(path.length){actor._path=path;return true;}}
-  return false;
+ function home(actor,wait){
+  cancel(actor);releaseSeat(actor);const pose=residentHomePose(actor.id);
+  Object.assign(actor,{x:pose.x,y:pose.y,facing:pose.facing,walking:false,activity:'',location:{...pose.scene},hidden:false,state:'home',purpose:'At home',_journey:null,_leaveAt:elapsed+wait});
  }
- function update(dt,time){
-  const doc=getProject?.();if(!doc)return;dt=Math.min(.1,Math.max(0,Number(dt)||0));elapsed=Number.isFinite(time)?time:elapsed+dt;
-  if(doc!==activeDoc)initialize(doc);let routeBudget=1,respawnBudget=1;
-  for(const actor of residents){
-   actor.walking=false;actor.alpha=Math.min(1,actor.alpha+dt*2.5);actor._retry=Math.max(0,actor._retry-dt);
-   if(actor.hidden||blocked(doc,actor.x,actor.y,catalog)||!onScreen(doc,actor,450)){
-    if(actor._retry||!respawnBudget)continue;respawnBudget--;const p=findSpawn(doc,actor._index,!actor.hidden&&!onScreen(doc,actor,450));
-    actor._retry=1.5+random();actor._path=[];actor.alpha=0;if(p){actor.x=p.x;actor.y=p.y;actor.hidden=false;actor._wait=.1+random()*.3;}else actor.hidden=true;continue;
+ function journey(actor,direction){
+  cancel(actor);releaseSeat(actor);actor._journey={direction,elapsed:0};actor.state=direction==='out'?'departing':'returning';record(direction==='out'?'leave-room':'enter-building',actor);
+  applyJourney(actor,0);
+ }
+ function applyJourney(actor,dt){
+  const trip=actor._journey;trip.elapsed+=dt;const pose=interiorJourneyPose(actor.id,trip.direction,trip.elapsed);
+  if(pose.done){
+   if(trip.direction==='home'){record('enter-room',actor);home(actor,24+random()*35);return;}
+   const p=city.tower&&standingNear(city.tower.approach,actor._index,false);
+   if(!p){home(actor,8);return;}
+   Object.assign(actor,p,{location:{...street},hidden:false,alpha:0,facing:city.tower.facing||'down',_journey:null,_homeDue:elapsed+55+random()*65});idle(actor,1+random()*2);record('exit-building',actor);return;
+  }
+  Object.assign(actor,{x:pose.x,y:pose.y,facing:pose.facing,walking:pose.walking,phase:pose.phase,hidden:pose.hidden,location:{...pose.scene},activity:'',purpose:pose.activity});
+ }
+ function sit(actor,bench){
+  actor._bench=bench;actor.seatId=bench.id;claims.set(bench.id,actor.id);actor.state='seated';actor.activity='relaxing';actor.seated=true;actor.walking=false;actor.facing=bench.facing;actor.depth=Math.max(bench.seat.y,bench.approach.y);actor.x=bench.seat.x;actor.y=bench.seat.y;actor._wait=16+random()*20;actor.purpose='Enjoying a seat in the square';record('sit',actor,{seat:bench.id});
+ }
+ function stand(actor){const bench=actor._bench;releaseSeat(actor);if(bench){actor.x=bench.approach.x;actor.y=bench.approach.y;}actor._bench=null;idle(actor,1+random());record('stand',actor);}
+ function arrive(actor){
+  const goal=actor._goal;actor._lastGoal=goal?.id;actor._visits++;actor.walking=false;
+  if(goal?.kind==='bench'){sit(actor,goal);return;}
+  if(actor._goingHome&&city.tower){actor.state='entering';actor.facing=city.tower.facing==='down'?'up':city.tower.facing==='up'?'down':city.tower.facing==='left'?'right':'left';actor._wait=.55;actor.activity='';actor.purpose='Opening the building door';return;}
+  idle(actor,6+random()*12);actor.purpose=goal?.kind==='arcade'?'Outside Coda Arcade':goal?.kind==='shop'?'Window shopping':goal?.kind==='tower'?'Outside Coda Residences':'Enjoying the neighbourhood';record('arrive',actor,{destination:goal?.id});
+ }
+ function go(actor,goal,goingHome=false,avoid=[]){
+  // Entrances and hangouts are areas, not single standing pixels. Give each
+  // resident an individual arrival spot so a crowd cannot occupy one node.
+  if(goal.kind!=='bench'&&!goal._arrival){
+   const origin=goal.approach||goal,radius=goingHome?38:100;
+   for(let n=0;n<8;n++){
+    const angle=(actor._index*.618+n/8)*Math.PI*2,p={x:origin.x+Math.cos(angle)*radius,y:origin.y+Math.sin(angle)*radius};
+    if(clearPoint(p)&&navigator.connectionClear(origin,p)){
+     goal={...goal,approach:p,x:p.x,y:p.y,_arrival:true};break;
+    }
    }
-   actor._wait=Math.max(0,actor._wait-dt);if(actor._wait)continue;
-   if(!actor._path.length){if(!routeBudget)continue;routeBudget--;if(!chooseRoute(doc,actor)){actor._wait=.7+random();continue;}}
-   const target=actor._path[0],dx=target.x-actor.x,dy=target.y-actor.y;
-   if(Math.abs(dx)<2&&Math.abs(dy)<2){actor._path.shift();if(!actor._path.length)actor._wait=.7+random()*2.5;continue;}
-   const horizontal=Math.abs(dx)>=Math.abs(dy),key=horizontal?dx<0?'a':'d':dy<0?'w':'s',delta=Math.min(dt*actor.speed/WALK_SPEED,(horizontal?Math.abs(dx):Math.abs(dy))/WALK_SPEED);
-   const motion=movePlayer(doc,actor,new Set([key]),delta,catalog);actor.walking=motion.walking;if(motion.facing)actor.facing=motion.facing;actor.phase=(actor.phase+motion.surfaceDistance*GAIT_PER_PIXEL)%(Math.PI*2);
-   actor._stuck=motion.distance<.05?actor._stuck+dt:0;
-   if(actor._stuck>.45){actor._path=[];actor._wait=.2+random()*.5;actor._stuck=0;}
   }
+  cancel(actor);actor._goal=goal;actor._goingHome=goingHome;actor.state='waiting';actor.purpose=goingHome?'Walking home':goal.kind==='bench'?'Going to sit down':'Visiting the neighbourhood';actor.walking=false;actor._pending=true;
+  if(goal.kind==='bench'){actor.seatId=goal.id;claims.set(goal.id,actor.id);}
+  const token=actor._routeToken;
+  navigator.request(actor.id,{x:actor.x,y:actor.y},goal.approach||goal,path=>{
+   if(actor._routeToken!==token||actor.location.kind!=='street')return;
+   actor._pending=false;
+   if(path.length){actor._path=path;actor.state='walking';actor._stuck=0;actor._yield=0;actor._progress={x:actor.x,y:actor.y,time:elapsed};}
+   else if(distance(actor,goal.approach||goal)<8)arrive(actor);
+   else{releaseSeat(actor);idle(actor,2+random()*3);record('unreachable',actor,{destination:goal.id});}
+  },{avoid});
+ }
+ function chooseDestination(actor){
+  if(city.tower&&elapsed>=actor._homeDue){go(actor,city.tower,true);return;}
+  const free=city.benches.filter(b=>!claims.has(b.id)&&b.id!==actor._lastGoal);
+  if(free.length&&(actor._visits+actor._index)%3!==0){const bench=free[Math.floor(random()*free.length)];go(actor,bench);return;}
+  const choices=city.anchors.filter(a=>a.id!==actor._lastGoal&&distance(actor,a)>90);
+  if(!choices.length){idle(actor,3);return;}
+  // Pick a real entrance or gathering spot. Variation happens in the choice
+  // and the time spent there, rather than in random steps around the camera.
+  go(actor,choices[Math.floor(random()*choices.length)]);
+ }
+ function initialize(doc){
+  people=[];claims.clear();elapsed=0;socialAt=0;events.length=0;
+  for(let i=0;i<Math.max(0,Math.min(18,count));i++){
+   const id=AMBIENT_RESIDENTS[i],profile=profiles.find(p=>p.id===id),actor={id,name:profile?.name||id,role:'resident',x:city.center.x,y:city.center.y,facing:'down',walking:false,phase:i*.7,alpha:1,activity:'',state:'idle',location:{...street},hidden:false,speed:180+i%5*12,purpose:'Enjoying the neighbourhood',_index:i,_path:[],_wait:1+i*.35,_routeToken:0,_pending:false,_visits:0,_homeDue:38+i*8,_stuck:0,_yield:0};
+   people.push(actor);
+   if(city.tower&&i>=10){home(actor,4+(i-10)*6);continue;}
+   const anchors=city.anchors,p=standingNear(anchors[i%Math.max(1,anchors.length)]||city.center,i);
+   if(p)Object.assign(actor,p);else actor.hidden=true;
+  }
+  // A few residents are already enjoying the neighbourhood on arrival.
+  for(const [index,slot]of [[2,0],[3,2]]){const actor=people[index],bench=city.benches[slot];if(actor&&!actor.hidden&&actor.location.kind==='street'&&bench)sit(actor,bench);}
+  const gathering=city.anchors.find(a=>a.kind==='plaza')||city.anchors.find(a=>a.kind==='hangout');
+  if(gathering&&people.length>=2){
+   const a=people[0],b=people[1],p=standingNear({x:gathering.x-65,y:gathering.y},0,false),q=p&&standingNear({x:p.x+130,y:p.y},1,false);
+   if(p&&q&&distance(p,q)>75&&distance(p,q)<200){Object.assign(a,p,{hidden:false});Object.assign(b,q,{hidden:false});startChat(a,b);}
+  }
+ }
+ function sync(doc,revision){
+  if(activeDoc===doc&&lastRevision===revision)return;
+  const first=!activeDoc;activeDoc=doc;lastRevision=revision;city=buildNPCDistrict(doc,catalog);navigator.invalidate(revision);
+  vendors=city.vendors.map((v,i)=>({...v,role:'vendor',location:{...street},state:'vending',activity:'',walking:false,phase:0,alpha:1,hidden:false,dialogue:vendorLines(v.name),appearance:{hairstyle:['curly','short','buns'][i%3],skin:['#bf8862','#e0b38c','#98694e'][i%3],hair:['#3b3035','#665044','#332832'][i%3],shirt:['#607b72','#8e655c','#686c88'][i%3],lowerColor:'#3e4350',outfit:'waistcoat',headwear:i%3===1?'chef':'none',shoes:'loafers'}}));
+  if(first){initialize(doc);return;}
+  for(const actor of people){
+   cancel(actor);if(actor.location.kind!=='street')continue;
+   if(actor.conversation)endChat(actor);releaseSeat(actor);actor._bench=null;
+   if(!clearPoint(actor)||actor.hidden){const p=standingNear(city.tower?.approach||city.center,actor._index);if(p){Object.assign(actor,p);actor.hidden=false;}else actor.hidden=true;}
+   idle(actor,1+random()*2);
+  }
+ }
+ function walkActor(actor,dt){
+  const progress=actor._progress;
+  if(progress&&distance(actor,progress)>90)actor._progress={x:actor.x,y:actor.y,time:elapsed};
+  else if(progress&&elapsed-progress.time>5){
+   const avoid=outdoor().filter(b=>b!==actor&&!b.seated&&distance(actor,b)<450).map(b=>({x:b.x,y:b.y,r:48}));
+   go(actor,actor._goal,actor._goingHome,avoid);return;
+  }
+  const target=actor._path[0];if(!target){arrive(actor);return;}
+  let dx=target.x-actor.x,dy=target.y-actor.y;
+  if(Math.abs(dx)<1.5&&Math.abs(dy)<1.5){actor.x=target.x;actor.y=target.y;actor._path.shift();if(!actor._path.length)arrive(actor);return;}
+  let horizontal=Math.abs(dx)>Math.abs(dy),direction=horizontal?Math.sign(dx):Math.sign(dy),key=horizontal?direction<0?'a':'d':direction<0?'w':'s',amount=Math.min(dt*actor.speed/WALK_SPEED,(horizontal?Math.abs(dx):Math.abs(dy))/WALK_SPEED);
+  const others=[...outdoor(),...vendors],player=getPlayer?.();if(player)others.push({...player,id:'__player__'});
+  const obstruction=others.find(b=>b.id!==actor.id&&!b.seated&&distance(actor,b)<68&&(horizontal?(b.x-actor.x)*direction>8&&Math.abs(b.y-actor.y)<48:(b.y-actor.y)*direction>8&&Math.abs(b.x-actor.x)<48)&&Math.abs(height(activeDoc,b.x,b.y)-height(activeDoc,actor.x,actor.y))<14);
+  if(obstruction){
+   actor._yield+=dt;actor.purpose='Giving someone room';
+   if(actor._yield<.45)return;
+   const side=horizontal?{x:0,y:direction}:{x:-direction,y:0};let clear=false;
+   for(const sign of [1,-1]){const p={x:actor.x+side.x*24*sign,y:actor.y+side.y*24*sign};if(inDistrict(p)&&navigator.connectionClear(actor,p)&&!others.some(b=>b.id!==actor.id&&distance(b,p)<44)){key=side.x?side.x*sign<0?'a':'d':side.y*sign<0?'w':'s';amount=Math.min(dt*actor.speed*.6/WALK_SPEED,12/WALK_SPEED);clear=true;break;}}
+   if(!clear){
+    // Personal space is a preference. In a packed passage, give one walker
+    // priority instead of letting a ring of pedestrians wait forever.
+    const priority=others.filter(b=>b.role==='resident'&&b.state==='walking'&&distance(actor,b)<110).every(b=>actor._index<=b._index);
+    if(actor._yield<1.3||!priority||obstruction.role!=='resident'||obstruction.state!=='walking')return;
+    amount*=.55;
+   }
+  }else actor._yield=0;
+  const motion=movePlayer(navigator.collisionView(actor),actor,new Set([key]),amount,catalog);actor.walking=motion.walking;if(motion.facing)actor.facing=motion.facing;actor.phase=(actor.phase+motion.surfaceDistance*GAIT_PER_PIXEL)%(Math.PI*2);
+  actor._stuck=motion.distance<.05?actor._stuck+dt:0;
+  if(actor._stuck>.7){actor._stuck=0;go(actor,actor._goal,actor._goingHome);}
+ }
+ function update(dt,_time){
+  const doc=getProject?.();if(!doc)return;dt=Math.min(.1,Math.max(0,Number(dt)||0));sync(doc,getRevision());elapsed+=dt;
+  navigator.update();
+  for(const actor of people){
+   actor.walking=false;actor.alpha=Math.min(1,actor.alpha+dt*2.5);
+   if(actor._held){actor.facing=actor._talkFacing||actor.facing;continue;}
+   if(actor._journey){applyJourney(actor,dt);continue;}
+   if(actor.state==='home'){if(city.tower&&elapsed>=actor._leaveAt)journey(actor,'out');continue;}
+   if(actor.hidden)continue;
+   if(actor.state==='waiting')continue;
+   if(actor.state==='walking'){walkActor(actor,dt);continue;}
+   actor._wait=Math.max(0,actor._wait-dt);
+   if(actor.state==='seated'){if(!actor._wait)stand(actor);continue;}
+   if(actor.state==='chatting'){if(!actor._wait)endChat(actor);continue;}
+   if(actor.state==='entering'){if(!actor._wait)journey(actor,'home');continue;}
+   if(!actor._wait)chooseDestination(actor);
+  }
+  if(elapsed>=socialAt){
+   socialAt=elapsed+.75;
+   const available=outdoor().filter(a=>!a._held&&a.state==='idle'&&a._wait>2&&elapsed>=(a._socialAfter||0));
+   for(const actor of available){const other=available.find(b=>b!==actor&&b.state==='idle'&&distance(actor,b)>75&&distance(actor,b)<210);if(actor.state==='idle'&&other)startChat(actor,other);}
+  }
+ }
+ function interiorActors(scene){return people.filter(a=>a.location.kind!=='street'&&!a.hidden&&residentInScene({...a,scene:a.location},scene)).map(a=>({...a}));}
+ function setConversation(id,active,viewer){
+  const actor=[...people,...vendors].find(a=>a.id===id);if(!actor)return;
+  if(active){
+   if(actor.conversation)endChat(actor);
+   actor._heldActivity=actor.activity;actor._held=true;actor.walking=false;actor.activity='chatting';
+   if(viewer)actor.facing=actor._talkFacing=facing(actor,viewer);
+  }else{actor._held=false;actor.activity=actor._heldActivity||'';delete actor._heldActivity;delete actor._talkFacing;}
  }
  function draw(ctx,actor,time=elapsed){
   if(!renderer&&globalThis.window?.createCodaCharacterRenderer)renderer=window.createCodaCharacterRenderer({worldScale:PLAYER_SCALE});
   if(!renderer||actor.hidden)return;ctx.save();ctx.globalAlpha*=Number.isFinite(actor.alpha)?actor.alpha:1;renderer.drawNPC(ctx,actor,time);ctx.restore();
  }
- return {update,get actors(){return visible();},draw,reset};
+ function reset(){activeDoc=null;people=[];vendors=[];claims.clear();events.length=0;elapsed=0;}
+ return {update,draw,reset,interiorActors,setConversation,get actors(){return [...outdoor(),...vendors];},get residents(){return people;},get district(){return city;},get events(){return events.slice();},get simulationTime(){return elapsed;},get navigationStats(){return navigator.stats;},get seatClaims(){return new Map(claims);}};
 }

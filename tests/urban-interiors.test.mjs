@@ -3,7 +3,8 @@ import assert from 'node:assert/strict';
 import {readFileSync} from 'node:fs';
 import {createRequire} from 'node:module';
 import vm from 'node:vm';
-import {FLOOR_COUNT,TOWER_FOOTPRINT,STORE_FOOTPRINT,residents,getInterior,apartmentDecorBounds,configureUrbanInteriors} from '../town/world/urban-interiors.mjs';
+import {FLOOR_COUNT,TOWER_FOOTPRINT,STORE_FOOTPRINT,residents,getInterior,residentInteractionZones,apartmentDecorBounds,configureUrbanInteriors} from '../town/world/urban-interiors.mjs';
+import {residentHomePose,interiorJourneyPose,journeyDuration,residentInScene} from '../town/world/resident-journey.mjs';
 import {decorDefinitions} from '../town/world/decor-definitions.mjs';
 
 const require=createRequire(import.meta.url),stock=require('../furniture-catalog.js');
@@ -112,4 +113,38 @@ test('all eighteen apartment actors retain their actual NPC appearance and paint
   const ctx=drawingContext();assert.equal(renderer.drawNPC(ctx,model.actors[0],0),true);assert.equal(ctx.depth,0);assert.ok(ctx.pixels.length>20,resident.id+' must paint a visible body');assert.ok(ctx.scales.some(([x,y])=>x===2.5&&y===2.5));signatures.push(JSON.stringify(ctx.pixels));
  }
  assert.equal(new Set(signatures).size,residents.length,'Each musician must retain their distinct native drawing');
+});
+
+test('every resident walks clear apartment, hall and lobby routes to the street and back',()=>{
+ for(const resident of residents){
+  const home=residentHomePose(resident.id),model=getInterior(home.scene);
+  assert.equal(home.scene.floor,resident.floor);assert.equal(home.scene.resident,resident.id);
+  assert.deepEqual([home.x,home.y],[model.actors[0].x,model.actors[0].y]);
+  for(const direction of ['out','home']){
+   const duration=journeyDuration(resident.id,direction),visited=[];
+   assert.ok(duration>10&&duration<40,`${resident.id}: believable journey length`);
+   for(let time=0;time<duration;time+=.125){
+    const pose=interiorJourneyPose(resident.id,direction,time);
+    if(visited.at(-1)!==pose.scene.kind)visited.push(pose.scene.kind);
+    assert.ok(Number.isFinite(pose.x+pose.y+pose.phase));
+    if(pose.hidden){assert.equal(pose.scene.kind,'lift');assert.equal(residentInScene(pose,{kind:'hall',floor:resident.floor}),false);continue;}
+    const room=getInterior(pose.scene);
+    assert.ok(pose.x>=40&&pose.x<=room.width-40&&pose.y>=100&&pose.y<=room.height-40,`${resident.id}: outside ${room.id}`);
+    assert.equal(room.solids.some(r=>pose.x>=r.x-16&&pose.x<=r.x+r.w+16&&pose.y>=r.y-16&&pose.y<=r.y+r.h+16),false,`${resident.id}: blocked at ${pose.x},${pose.y} in ${room.id}`);
+    assert.equal(scenes.filter(scene=>residentInScene(pose,scene)).length,1,`${resident.id}: duplicate interior presence`);
+   }
+   assert.deepEqual(visited,direction==='out'?['apartment','hall','lift','lobby']:['lobby','lift','hall','apartment']);
+   const end=interiorJourneyPose(resident.id,direction,duration+1);assert.equal(end.done,true);
+   if(direction==='out'){assert.equal(end.hidden,true);assert.equal(end.scene,null);}
+   else {assert.deepEqual(end,home);assert.equal(residentInScene(end,home.scene),true);}
+  }
+ }
+ assert.equal(interiorJourneyPose('missing','out',0),null);
+});
+
+test('interior talk prompts follow the present actor and disappear when that actor leaves',()=>{
+ const actor={...residentHomePose('bach'),x:700,y:800};
+ const zones=residentInteractionZones([actor]);assert.equal(zones.length,1);assert.equal(zones[0].resident,'bach');assert.equal(zones[0].label,'Talk to Bach');
+ assert.ok(actor.x>=zones[0].x&&actor.x<=zones[0].x+zones[0].w&&actor.y>=zones[0].y&&actor.y<=zones[0].y+zones[0].h);
+ assert.deepEqual(residentInteractionZones([]),[]);assert.deepEqual(residentInteractionZones([{...actor,hidden:true}]),[]);
 });

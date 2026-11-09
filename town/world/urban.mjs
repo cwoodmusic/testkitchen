@@ -1,6 +1,6 @@
-import {catalog} from './catalog.mjs?v=overview-fast-1';
-import {FLOOR_COUNT,residents,getInterior,renderInterior,apartmentDecorBounds,configureUrbanInteriors} from './urban-interiors.mjs?v=overview-fast-1';
-import {createRoomStorage,roomItemBoxes} from './urban-room.mjs?v=overview-fast-1';
+import {catalog} from './catalog.mjs?v=city-residents-1';
+import {FLOOR_COUNT,residents,getInterior,renderInterior,residentInteractionZones,apartmentDecorBounds,configureUrbanInteriors} from './urban-interiors.mjs?v=city-residents-1';
+import {createRoomStorage,roomItemBoxes} from './urban-room.mjs?v=city-residents-1';
 
 configureUrbanInteriors(catalog);
 const furniture=window.CodaFurnitureCatalog||[];
@@ -12,14 +12,14 @@ export function buildingDoor(o){
  return {x:o.x+dx*Math.cos(r)-dy*Math.sin(r),y:o.y+dx*Math.sin(r)+dy*Math.cos(r),kind:a.urban};
 }
 function decorSolids(items){return items.flatMap(o=>roomItemBoxes(o,catalog));}
-export function createUrbanController({canvas,getProject,getPlayer,preview=false}){
- const css=document.createElement('link');css.rel='stylesheet';css.href=new URL('./urban.css?v=overview-fast-1',import.meta.url);document.head.append(css);
+export function createUrbanController({canvas,getProject,getPlayer,getResidents,onConversation,preview=false}){
+ const css=document.createElement('link');css.rel='stylesheet';css.href=new URL('./urban.css?v=city-residents-1',import.meta.url);document.head.append(css);
  const hud=document.createElement('section');hud.className='urban-hud';hud.hidden=true;document.body.append(hud);
  const hint=document.createElement('button');hint.className='urban-prompt';hint.hidden=true;hint.onclick=()=>interact();document.body.append(hint);
  const dialog=document.createElement('dialog');dialog.className='urban-dialog';dialog.setAttribute('aria-label','Coda Town');document.body.append(dialog);
  let scene=null,player={x:0,y:0},outside=null,people=[],owner=parent===window&&guestStorageAvailable()?'guest':null,roomOwner=owner,wallet=null,localWallet=null,room=null,decor=[],selectedDecor=null,decorate=false,hover=null,purchasesEnabled=parent===window&&guestStorageAvailable(),purchasesMessage='';
- let facing='down',phase=0,walking=false,zoom=.72,view={x:0,y:0},lastSize={width:1,height:1},lastHint='',notice='',noticeUntil=0,request=0;
- const pending=new Map();
+ let facing='down',phase=0,walking=false,zoom=.72,view={x:0,y:0},lastSize={width:1,height:1},lastHint='',notice='',noticeUntil=0,request=0,conversation=null;
+ const pending=new Map(),dialogueTurns=new Map();
  const owned=()=>wallet?.owned||[];
  const bridge=parent!==window;
  if(!bridge&&owner&&window.CodaNotesShop){
@@ -50,10 +50,15 @@ export function createUrbanController({canvas,getProject,getPlayer,preview=false
  });
  if(bridge)parent.postMessage({type:'coda-town-state'},location.origin);
  dialog.addEventListener('cancel',e=>{e.preventDefault();closeDialog();});
+ dialog.addEventListener('close',()=>{if(!dialog.open)endConversation();});
  canvas.addEventListener('pointermove',e=>{if(!scene||!decorate)return;hover=pointerWorld(e);});
  function flash(message){notice=message||'';noticeUntil=performance.now()+4500;}
- function closeDialog(){dialog.close();canvas.focus();}
+ function conversationViewer(){return {...(scene?player:getPlayer())};}
+ function endConversation(){const id=conversation;if(id===null)return;conversation=null;onConversation?.(id,false,conversationViewer());}
+ function beginConversation(id){endConversation();if(typeof id!=='string'||!id)return;conversation=id;onConversation?.(id,true,conversationViewer());}
+ function closeDialog(){endConversation();dialog.close();canvas.focus();}
  function modal(title,description){
+  endConversation();
   dialog.replaceChildren();const header=document.createElement('div');header.className='urban-dialog-head';const h=document.createElement('h2');h.textContent=title;const x=document.createElement('button');x.textContent='Close';x.onclick=closeDialog;header.append(h,x);dialog.append(header);
   if(description){const p=document.createElement('p');p.textContent=description;dialog.append(p);}if(!dialog.open)dialog.showModal();return dialog;
  }
@@ -83,11 +88,22 @@ export function createUrbanController({canvas,getProject,getPlayer,preview=false
   if(!canEnter(id)){const r=residents.find(r=>r.id===id);modal(r?.name+'’s apartment','Build your friendship to level 5 in the arcade to receive an invitation.');return;}
   const r=residents.find(r=>r.id===id);setScene({kind:'apartment',floor:id==='player'?15:r.floor,resident:id});
  }
- function nearestZone(){if(!scene)return null;const model=getInterior(scene);return model.zones.map(z=>({...z,distance:Math.hypot(player.x-Math.max(z.x,Math.min(z.x+z.w,player.x)),player.y-Math.max(z.y,Math.min(z.y+z.h,player.y)))})).filter(z=>z.distance<120).sort((a,b)=>a.distance-b.distance)[0]||null;}
+ function sceneResidents(){const actors=getResidents?.(scene);return Array.isArray(actors)?actors:getInterior(scene).actors;}
+ function nearestZone(){if(!scene)return null;const model=getInterior(scene),zones=[...model.zones.filter(z=>z.action!=='resident'),...residentInteractionZones(sceneResidents())];return zones.map(z=>({...z,distance:Math.hypot(player.x-Math.max(z.x,Math.min(z.x+z.w,player.x)),player.y-Math.max(z.y,Math.min(z.y+z.h,player.y)))})).filter(z=>z.distance<120).sort((a,b)=>a.distance-b.distance)[0]||null;}
  function nearestBuilding(){const p=getPlayer();return getProject().objects.map(o=>({o,door:buildingDoor(o)})).filter(a=>a.door).map(a=>({...a,distance:Math.hypot(p.x-a.door.x,p.y-a.door.y)})).filter(a=>a.distance<240*a.o.scale).sort((a,b)=>a.distance-b.distance)[0];}
+ function nearestPerson(){
+  const p=getPlayer(),actors=getResidents?.(null);if(!Array.isArray(actors))return null;
+  return actors.filter(a=>!a.hidden).map(actor=>{const at=actor.interaction||actor;return {actor,distance:Math.hypot(p.x-at.x,p.y-at.y)};}).filter(a=>Number.isFinite(a.distance)&&a.distance<140).sort((a,b)=>a.distance-b.distance)[0]||null;
+ }
+ function outsideTarget(){const person=nearestPerson(),building=nearestBuilding();return person&&(!building||person.distance<=building.distance)?{person}:building?{building}:null;}
+ function talkTo(actor){
+  const lines=Array.isArray(actor.dialogue)?actor.dialogue.filter(line=>typeof line==='string'&&line.trim()):[],turn=dialogueTurns.get(actor.id)||0;
+  const fallback='Good to see you around Coda Town. I hope we can catch some music together later.';
+  modal(actor.name||residents.find(r=>r.id===actor.id)?.name||'Your neighbour',lines.length?lines[turn%lines.length]:fallback);dialogueTurns.set(actor.id,turn+1);beginConversation(actor.id);
+ }
  function interact(){
   if(dialog.open)return true;
-  if(!scene){const target=nearestBuilding();return target?enterBuilding(target.o):false;}
+  if(!scene){const target=outsideTarget();if(target?.person){talkTo(target.person.actor);return true;}return target?.building?enterBuilding(target.building.o):false;}
   if(decorate){showInventory();return true;}
   const z=nearestZone();if(!z)return true;
   if(z.action==='elevator')showDirectory();
@@ -96,7 +112,7 @@ export function createUrbanController({canvas,getProject,getPlayer,preview=false
   else if(z.action==='room')openRoom(z.resident);
   else if(z.action==='shop')showShop();
   else if(z.action==='decorate'){decorate=true;updateHud();showInventory();}
-  else if(z.action==='resident'){const r=residents.find(r=>r.id===scene.resident);modal(r?.name||'Your neighbor',r?.theme?`Welcome to my ${r.theme.toLowerCase()} apartment. It is good to see a familiar face in the building.`:'Welcome! There is always room for another musician in Coda Town.');}
+  else if(z.action==='resident'){const r=residents.find(r=>r.id===z.resident);modal(r?.name||'Your neighbor',scene.kind==='apartment'&&r?.theme?`Welcome to my ${r.theme.toLowerCase()} apartment. It is good to see a familiar face in the building.`:'Good to see you around Coda Town. I hope we can catch some music together later.');beginConversation(z.resident);}
   else if(z.action==='exit'){
    if(scene.kind==='apartment')setScene({kind:'hall',floor:scene.floor});else if(scene.kind==='hall')goFloor(1);else reset();
   }
@@ -107,7 +123,7 @@ export function createUrbanController({canvas,getProject,getPlayer,preview=false
   if(dialog.open){hint.hidden=true;return;}
   let text='';if(notice&&performance.now()<noticeUntil)text=notice;
   else if(scene){const z=nearestZone();text=decorate?(selectedDecor?'Click the floor to place · E inventory · Escape finish':'E · Choose furniture · click a placed item to move or put away'):(z?`E · ${z.label}`:'WASD / arrows · Walk · E interact');}
-  else {const n=nearestBuilding();if(n)text=`E · Enter ${n.door.kind==='shop'?'Coda Furnishings':'Coda Residences'}`;}
+  else {const n=outsideTarget();if(n?.person)text=`E · Talk to ${n.person.actor.name||residents.find(r=>r.id===n.person.actor.id)?.name||'your neighbour'}`;else if(n?.building)text=`E · Enter ${n.building.door.kind==='shop'?'Coda Furnishings':'Coda Residences'}`;}
   if(text!==lastHint){hint.textContent=text;lastHint=text;}hint.hidden=!text;
  }
  function solid(x,y){
@@ -120,7 +136,7 @@ export function createUrbanController({canvas,getProject,getPlayer,preview=false
   if(!dialog.open&&!decorate){let dx=(keys.has('d')||keys.has('arrowright')?1:0)-(keys.has('a')||keys.has('arrowleft')?1:0),dy=(keys.has('s')||keys.has('arrowdown')?1:0)-(keys.has('w')||keys.has('arrowup')?1:0);const length=Math.hypot(dx,dy);if(length){dx/=length;dy/=length;facing=Math.abs(dx)>Math.abs(dy)?dx<0?'left':'right':dy<0?'up':'down';const speed=keys.has('shift')?780:450,n=Math.ceil(speed*dt/3),sx=dx*speed*dt/n,sy=dy*speed*dt/n;let distance=0;for(let i=0;i<n;i++){const old={...player};if(!solid(player.x+sx,player.y))player.x+=sx;if(!solid(player.x,player.y+sy))player.y+=sy;distance+=Math.hypot(player.x-old.x,player.y-old.y);}walking=distance>0;phase=(phase+distance*Math.PI*2/150)%(Math.PI*2);}}
   const clampView=(p,length,visible)=>length<=visible?length/2:Math.max(visible/2,Math.min(length-visible/2,p));view={x:clampView(player.x,m.width,width/zoom),y:clampView(player.y,m.height,height/zoom)};
   tick();ctx.clearRect(0,0,width,height);ctx.fillStyle='#131b21';ctx.fillRect(0,0,width,height);ctx.save();ctx.translate(width/2,height/2);ctx.scale(zoom,zoom);ctx.translate(-view.x,-view.y);
-  renderInterior(ctx,scene,{player,drawPlayer:(c,p)=>drawPlayer(c,p.x,p.y,{facing,walking,phase}),time:now/1000,decor:scene.resident==='player'?decor:[]});
+  renderInterior(ctx,scene,{player,drawPlayer:(c,p)=>drawPlayer(c,p.x,p.y,{facing,walking,phase}),time:now/1000,decor:scene.resident==='player'?decor:[],actors:sceneResidents()});
   if(decorate&&selectedDecor&&hover){const item=furniture.find(i=>i.id===selectedDecor),a=catalog.get(item?.asset),scale=item?.scale||1;if(a){ctx.save();ctx.globalAlpha=.55;ctx.drawImage(a.canvas,Math.round(hover.x-a.w*scale/2),Math.round(hover.y-a.h*scale),a.w*scale,a.h*scale);ctx.restore();}}
   ctx.restore();return true;
  }

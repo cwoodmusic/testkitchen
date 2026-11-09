@@ -1,35 +1,16 @@
-import {assetImage} from './asset-color.mjs?v=overview-fast-1';
+import {assetImage} from './asset-color.mjs?v=city-residents-1';
 // The apartment tower has one consistent floor plate. Residential floors use
 // a 608px common hall and 1120px private apartments, within its 2304 × 1728 lot.
 export const FLOOR_COUNT=15;
 export const TOWER_FOOTPRINT=Object.freeze({width:2304,height:1728});
 export const STORE_FOOTPRINT=Object.freeze({width:3072,height:2048});
-const rows=[
- ['bach','Bach',2,'A','The Organ Loft','#526d63','#b08e60',['decor-03-06','decor-05-05','decor-04-10']],
- ['mozart','Mozart',2,'B','Rosewood Salon','#a06b6d','#e0c695',['decor-03-01','decor-08-03','decor-02-10']],
- ['beethoven','Beethoven',3,'A','Stormlight Studio','#536580','#b1a18a',['decor-03-01','decor-02-03','decor-05-08']],
- ['clara','Clara Schumann',3,'B','Fern & Ivory','#5b9160','#d1bea2',['decor-03-02','decor-05-05','decor-08-13']],
- ['chopin','Chopin',4,'A','Nocturne Apartment','#75617d','#c8aa77',['decor-03-01','decor-08-04','decor-05-08']],
- ['haydn','Haydn',4,'B','Sunflower Suite','#a5783d','#ebc679',['decor-02-10','decor-08-05','decor-05-05']],
- ['handel','Handel',5,'A','Laurel Rooms','#758879','#c8aa77',['decor-03-06','decor-04-01','decor-05-08']],
- ['vivaldi','Vivaldi',5,'B','Four Seasons','#94754f','#c38a83',['decor-02-10','decor-08-06','decor-08-08']],
- ['joplin','Scott Joplin',6,'A','Maple Ragtime','#a5783d','#e0c695',['decor-03-02','decor-05-16','decor-04-01']],
- ['ellington','Duke Ellington',6,'B','Bluebird Jazz Suite','#3c8190','#b1a18a',['decor-03-01','decor-04-06','decor-05-16']],
- ['ella','Ella Fitzgerald',7,'A','Honeysuckle Lounge','#a06b6d','#dbaa94',['decor-05-10','decor-03-01','decor-05-16']],
- ['nina','Nina Simone',8,'A','Cedar Sanctuary','#526d63','#b08e60',['decor-03-02','decor-05-09','decor-08-09']],
- ['miles','Miles Davis',9,'A','Midnight Brass','#3b4a61','#cda056',['decor-04-01','decor-05-16','decor-03-07']],
- ['dj','DJ Coda',10,'A','Nightjar Studio','#584765','#99a6b5',['decor-05-15','decor-05-13','decor-03-04']],
- ['vee-jay','Vee Jay',11,'A','Prism Video Loft','#2b6371','#97819b',['decor-03-04','decor-05-14','decor-05-13']],
- ['zizi','Zizi',12,'A','Orbit Garden','#75617d','#94b965',['decor-03-10','decor-08-15','decor-08-09']],
- ['metronome','Metronome',13,'A','Clockwork Rooms','#94754f','#cda056',['decor-03-13','decor-05-03','decor-05-06']],
- ['schoenberg','Schoenberg',14,'A','Twelve-Tone Atelier','#776966','#c1c9c5',['decor-03-01','decor-05-08','decor-02-10']]
-];
-export const residents=Object.freeze(rows.map(([id,name,floor,unit,theme,color,trim,instruments],index)=>Object.freeze({id,name,floor,unit,number:`${floor}${unit}`,theme,color,trim,instruments:Object.freeze(instruments),index})));
+export {residents} from './resident-profiles.mjs?v=city-residents-1';
+import {residents} from './resident-profiles.mjs?v=city-residents-1';
 const sceneCache=new Map(),backgroundCache=new Map();
 let nativeCatalog=null,woodTexture=null,npcRenderer=null;
 export function configureUrbanInteriors(catalog){nativeCatalog=catalog;for(const scene of sceneCache.values())warmScene(scene);}
 if(typeof document!=='undefined'){
- import('./ground-textures.mjs?v=overview-fast-1').then(({groundTextures})=>{woodTexture=groundTextures.wood;backgroundCache.clear();}).catch(()=>{});
+ import('./ground-textures.mjs?v=city-residents-1').then(({groundTextures})=>{woodTexture=groundTextures.wood;backgroundCache.clear();}).catch(()=>{});
 }
 const rect=(x,y,w,h)=>({x,y,w,h});
 const zone=(id,label,x,y,w,h,action,extra={})=>({id,label,x,y,w,h,action,...extra});
@@ -203,11 +184,15 @@ function drawItem(c,item){
  const a=nativeCatalog?.get(item.asset);if(!a)return;const scale=Number.isFinite(item.scale)&&item.scale>0?item.scale:1,w=item.w||a.w*scale,h=item.h||w*a.h/a.w;
  c.save();c.fillStyle='#16232b30';c.beginPath();c.ellipse(item.x,item.y-3,w*.39,Math.max(5,w*.045),0,0,Math.PI*2);c.fill();c.imageSmoothingEnabled=false;c.drawImage(assetImage(a),item.x-w/2,item.y-h,w,h);c.restore();
 }
-export function renderInterior(c,scene,{player,drawPlayer,time=0,decor=[],catalog}={}){
+export function residentInteractionZones(actors=[]){
+ return actors.filter(a=>!a.hidden&&Number.isFinite(a.x)&&Number.isFinite(a.y)).map(a=>zone(`resident-${a.id}`,`Talk to ${a.name||residents.find(r=>r.id===a.id)?.name||'your neighbour'}`,a.x-72,a.y-64,144,144,'resident',{resident:a.id}));
+}
+export function renderInterior(c,scene,{player,drawPlayer,time=0,decor=[],catalog,actors}={}){
  if(catalog&&catalog!==nativeCatalog)configureUrbanInteriors(catalog);const s=getInterior(scene);c.drawImage(background(s),0,0);
  const queue=s.items.map(item=>({y:item.y,draw:()=>drawItem(c,item)}));
  for(const item of decor){if(!item||!nativeCatalog?.has(item.asset)||!Number.isFinite(item.x)||!Number.isFinite(item.y))continue;queue.push({y:item.y,draw:()=>drawItem(c,item)});}
- if(s.actors.length&&!npcRenderer&&typeof window!=='undefined'&&window.createCodaCharacterRenderer)npcRenderer=window.createCodaCharacterRenderer({worldScale:2.5});
- for(const a of s.actors)queue.push({y:a.y,draw:()=>npcRenderer?.drawNPC(c,a,time)});
+ const people=Array.isArray(actors)?actors:s.actors;
+ if(people.length&&!npcRenderer&&typeof window!=='undefined'&&window.createCodaCharacterRenderer)npcRenderer=window.createCodaCharacterRenderer({worldScale:2.5});
+ for(const a of people)if(!a.hidden)queue.push({y:a.y,draw:()=>npcRenderer?.drawNPC(c,a,time)});
  if(player&&drawPlayer)queue.push({y:player.y,draw:()=>drawPlayer(c,player)});queue.sort((a,b)=>a.y-b.y);for(const o of queue)o.draw();
 }

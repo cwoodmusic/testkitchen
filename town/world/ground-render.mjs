@@ -1,9 +1,9 @@
-import {PAINT_GRID,PAINT_STEP,readPaint,materialKey} from './ground-paint.mjs?v=overview-fast-1';
-import {sources,catalog} from './catalog.mjs?v=overview-fast-1';
-import {cell,height,terrainView} from './model.mjs?v=overview-fast-1';
-import {drawPaving,drawPavingMaterial} from './paving.mjs?v=overview-fast-1';
-import {groundTextures} from './ground-textures.mjs?v=overview-fast-1';
-import {drawAnimatedWater} from './water-motion.mjs?v=overview-fast-1';
+import {PAINT_GRID,PAINT_STEP,readPaint,materialKey} from './ground-paint.mjs?v=city-residents-1';
+import {sources,catalog} from './catalog.mjs?v=city-residents-1';
+import {cell,height,terrainView} from './model.mjs?v=city-residents-1';
+import {drawPaving,drawPavingMaterial} from './paving.mjs?v=city-residents-1';
+import {groundTextures} from './ground-textures.mjs?v=city-residents-1';
+import {drawAnimatedWater} from './water-motion.mjs?v=city-residents-1';
 
 const tiles=new WeakMap(),fields=new WeakMap(),legacyFields=new Map();
 export function invalidateGroundCache(d,paints=[]){tiles.delete(d);tiles.delete(terrainView(d));for(const paint of paints)fields.delete(paint);}

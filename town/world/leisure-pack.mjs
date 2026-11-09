@@ -1,4 +1,4 @@
-import {leisureDefinitions,leisureFamilies,leisureSheetCounts} from './leisure-definitions.mjs?v=overview-fast-1';
+import {leisureDefinitions,leisureFamilies,leisureSheetCounts} from './leisure-definitions.mjs?v=city-residents-1';
 
 const assetURL=path=>{const url=new URL('../assets/leisure/'+path,import.meta.url);url.search=new URL(import.meta.url).search;return url;};
 const image=path=>new Promise((resolve,reject)=>{

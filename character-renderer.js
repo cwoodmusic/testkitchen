@@ -68,7 +68,7 @@ window.createCodaCharacterRenderer=function(api){
   }
   function sampleMotion(raw={},time=0){
     const m=raw&&typeof raw==='object'?raw:{},quiet=reduced(),t=finite(time),phase=finite(m.phase);
-    const walking=m.walking===true,emote=typeof m.emote==='string'?m.emote:'';
+    const seated=m.seated===true,walking=m.walking===true&&!seated,emote=typeof m.emote==='string'?m.emote:'';
     // Reduced motion keeps one recognizable pose rather than erasing the emote.
     const actionTime=quiet ? .6 : finite(m.emoteTime,t),beat=Math.sin(actionTime*7);
     let facing=choose(m.facing,DIRECTIONS,'down');
@@ -99,8 +99,9 @@ window.createCodaCharacterRenderer=function(api){
           if(emote==='curtsy'){bob=3;lean=.12;}
         }
       }
-    const jumpHeight=Math.max(0,Math.min(160,finite(m.jumpHeight)));
-    return {facing,walking,phase,stride,dx,lift,bob,gesture,clip,sit,lean,actionTime,jumpHeight,blink:!quiet&&((t+finite(m.seed)*.37)%5.3+5.3)%5.3>5.13,quiet};
+    if(seated){sit=true;clip='sit';bob=0;dx=0;lift=0;lean=0;}
+    const jumpHeight=seated?0:Math.max(0,Math.min(160,finite(m.jumpHeight)));
+    return {facing,walking,phase,stride,dx,lift,bob,gesture,clip,sit,seated,lean,actionTime,jumpHeight,blink:!quiet&&((t+finite(m.seed)*.37)%5.3+5.3)%5.3>5.13,quiet};
   }
   function drawHair(r,p,c,side,back){
     if(p.hairstyle==='bald')return;
@@ -542,7 +543,7 @@ window.createCodaCharacterRenderer=function(api){
     render(g,p,{...motion,x:64,y:104,scale:1,_pixelSurface:true},time,points);
     const pose=sampleMotion(motion,time),scale=motion._pixelFrame?1:Math.max(.25,Math.min(8,finite(motion.scale,1)))*worldScale;
     ctx.save();ctx.imageSmoothingEnabled=false;ctx.translate(Math.round(finite(motion.x)),Math.round(finite(motion.y)));ctx.scale(scale,scale);
-    const shadowScale=1-Math.min(.35,pose.jumpHeight/110);ctx.fillStyle='#080b214f';ctx.beginPath();ctx.ellipse(0,1,13*shadowScale,3*shadowScale,0,0,Math.PI*2);ctx.fill();
+    const shadowScale=1-Math.min(.35,pose.jumpHeight/110);ctx.fillStyle='#080b214f';ctx.beginPath();ctx.ellipse(0,pose.seated?14:1,(pose.seated?10:13)*shadowScale,3*shadowScale,0,0,Math.PI*2);ctx.fill();
     ctx.translate(pose.dx,-pose.lift-pose.jumpHeight);ctx.drawImage(surface,-64,-104);ctx.restore();
   }
   function render(ctx,p,motion,time,points){
@@ -551,17 +552,31 @@ window.createCodaCharacterRenderer=function(api){
     const x=finite(motion.x),y=finite(motion.y),scale=motion._pixelSurface||motion._pixelFrame?1:Math.max(.25,Math.min(8,finite(motion.scale,1)))*worldScale;
     ctx.save();ctx.imageSmoothingEnabled=false;ctx.translate(Math.round(x),Math.round(y));ctx.scale(scale,scale);
     const shadowScale=1-Math.min(.35,pose.jumpHeight/110);
-    if(!motion._pixelSurface){ctx.fillStyle='#080b214f';ctx.beginPath();ctx.ellipse(0,1,13*shadowScale,3*shadowScale,0,0,Math.PI*2);ctx.fill();ctx.translate(pose.dx,-pose.lift-pose.jumpHeight);}if(pose.facing==='left')ctx.scale(-1,1);
+    if(!motion._pixelSurface){ctx.fillStyle='#080b214f';ctx.beginPath();ctx.ellipse(0,pose.seated?14:1,(pose.seated?10:13)*shadowScale,3*shadowScale,0,0,Math.PI*2);ctx.fill();ctx.translate(pose.dx,-pose.lift-pose.jumpHeight);}if(pose.facing==='left')ctx.scale(-1,1);
     const buildX=finite(p.bodyScaleX,1),buildY=finite(p.bodyScaleY,1);
-    const r=(x,y,w,h,col)=>{ctx.fillStyle=col;const left=Math.round(x*buildX),top=Math.round(y*buildY);ctx.fillRect(left,top,Math.max(1,Math.round((x+w)*buildX)-left),Math.max(1,Math.round((y+h)*buildY)-top));};
+    let seatedUpper=false;
+    const r=(x,y,w,h,col)=>{const bottom=seatedUpper?Math.min(-7,y+h):y+h;if(bottom<=y)return;ctx.fillStyle=col;const left=Math.round(x*buildX),top=Math.round(y*buildY);ctx.fillRect(left,top,Math.max(1,Math.round((x+w)*buildX)-left),Math.max(1,Math.round(bottom*buildY)-top));};
     const stride=['moonwalk','breakdance'].includes(pose.gesture)?Math.round(Math.sin(pose.actionTime*7)*3):pose.stride,dress=p.outfit==='dress'||p.outfit==='gown';
     drawBackGear(r,p,c,side,back);
-    for(let leg=0;leg<2;leg++){
+    if(pose.seated){
+      // The authored bench anchor is the cushion/hip line. Thighs rest on
+      // that plane, with knees forward and shoes below it, not on the seat.
+      const legColor=p.outfit==='shorts'||p.outfit==='tutu'||dress?c.skin:c.pants;
+      for(let leg=0;leg<2;leg++){
+        const xx=side?(leg?-3:-6):leg?2:-9,knee=side?(leg?8:5):xx;
+        r(xx,-1,side?15:8,6,c.ink);r(xx+1,0,side?13:6,4,dress?c.shirt:legColor);
+        const shinY=back?-11:4;
+        r(knee,shinY,6,11,c.ink);r(knee+1,shinY+1,4,9,legColor);
+        drawShoe(r,knee-1,back?-9:13,p.shoes,c,side,back);
+      }
+      r(side?-7:-11,-2,side?19:22,6,c.ink);r(side?-6:-10,-1,side?17:20,4,dress?c.shirt:legColor);
+      r(side?-5:-8,-1,side?14:16,1,dress?c.shirtLight:c.pantsLight);
+    }else for(let leg=0;leg<2;leg++){
       const xx=side?(leg?-1:-6):p.shoes==='clown'?(leg?5:-11):(leg?2:-7),lift=Math.max(0,leg?stride:-stride),bottom=-2-(pose.sit?2:lift);
       const legColor=p.outfit==='shorts'||p.outfit==='tutu'||dress?c.skin:c.pants;
       r(xx,-10,5,Math.max(4,9-lift),c.ink);r(xx+1,-10,3,Math.max(4,8-lift),legColor);drawShoe(r,xx-1,bottom,p.shoes,c,side,back);
     }
-    ctx.save();ctx.translate(0,-pose.bob);if(pose.lean)ctx.rotate(pose.lean);
+    ctx.save();ctx.translate(0,pose.seated?8*buildY:-pose.bob);if(pose.lean)ctx.rotate(pose.lean);seatedUpper=pose.seated;
     // Back hair is beneath the torso so long styles do not cover the outfit.
     if(p.hairstyle==='long'&&back){r(-10,-42,20,28,c.hairShade);}
     r(side?-8:-10,-25,side?16:20,18,c.ink);r(side?-7:-9,-24,side?14:18,15,c.shirt);r(side?-6:-8,-23,side?3:4,13,c.shirtLight);r(side?4:6,-23,3,14,c.shirtShade);
@@ -601,7 +616,13 @@ window.createCodaCharacterRenderer=function(api){
     const armSwing=Math.round(stride*.6),leftArm=side?-9:-13,rightArm=side?5:9;
     const raised=['wave','point','robot','dance'].includes(pose.gesture);
     const special=['cheer','clap','shrug','heart','peace','airguitar','curtsy','salute','facepalm','think'].includes(pose.gesture);
-    if(!special){
+    if(pose.seated){
+      // Relaxed elbows and hands rest inward on the lap. Keep the original
+      // standing/arcade emotes untouched unless a real bench requests it.
+      r(leftArm,-23,4,10,c.shirtShade);r(rightArm,-23,4,10,c.shirt);
+      r(leftArm,-14,4,6,c.skinShade);r(rightArm,-14,4,6,c.skin);
+      r(leftArm+1,-11,8,4,c.skin);r(rightArm-4,-11,8,4,c.skinLight);
+    }else if(!special){
     r(leftArm,-23,4,8,c.shirtShade);r(leftArm,-16+armSwing,4,10,c.skinShade);r(leftArm+1,-15+armSwing,2,7,c.skin);
     r(rightArm,-23,4,8,c.shirt);r(rightArm,-16-armSwing,4,10,c.skin);
     if(raised){
@@ -766,7 +787,7 @@ window.createCodaCharacterRenderer=function(api){
     if(own(custom,'accessory'))appearance.earrings=custom.accessory==='earrings';
     const activity=p.activity||'',emote=activity==='dancing'?(EMOTES.includes(p.danceStyle)?p.danceStyle:'dance'):activity==='chatting'||p.conversation?'talk':activity==='playing'?'playing':activity==='relaxing'?'sit':p.emote;
     const seed=String(base.id).split('').reduce((a,c)=>a+c.charCodeAt(0),0);
-    const pose={x:p.x,y:p.y,facing:p.facing,walking:p.walking,phase:p.phase,emote,emoteTime:p.emoteTime,seed};render(ctx,appearance,pose,time,pixelPoints(p.id||base.id,pose));return true;
+    const pose={x:p.x,y:p.y,facing:p.facing,walking:p.walking,phase:p.phase,seated:p.seated===true,emote,emoteTime:p.emoteTime,seed};render(ctx,appearance,pose,time,pixelPoints(p.id||base.id,pose));return true;
   }
   function labelOffset(raw={},id){
     const base=id?appearanceFor(id):{},p={...base,...normalizeProfile({...base,...raw})};

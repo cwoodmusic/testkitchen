@@ -1,5 +1,5 @@
-import {groundMaterials} from '../world/ground-paint.mjs?v=overview-fast-1';
-import {planTerrainFill} from './water-fill.mjs?v=overview-fast-1';
+import {groundMaterials} from '../world/ground-paint.mjs?v=city-residents-1';
+import {planTerrainFill} from './water-fill.mjs?v=city-residents-1';
 
 // Replace the clicked material on its connected physical floor. The same
 // bucket can repaint dry land or reclaim water without crossing its shore.
