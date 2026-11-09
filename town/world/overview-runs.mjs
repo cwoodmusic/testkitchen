@@ -1,4 +1,4 @@
-import {TILE,RISE} from './model.mjs?v=showrooms-1';
+import {TILE,RISE} from './model.mjs?v=apartment-showrooms-1';
 
 const empty=Object.freeze({surface:'grass',level:0});
 const dry=new Set(['grass','dirt','sand','wood','asphalt','sidewalk','brick']);

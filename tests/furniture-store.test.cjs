@@ -11,10 +11,11 @@ function storage(){
  return {values,fail:false,getItem(key){return values.get(key)??null;},setItem(key,value){if(this.fail)throw Error('quota');values.set(key,String(value));},removeItem(key){values.delete(key);}};
 }
 
-test('the furniture catalog offers36distinct native assets and matches browser ownership',async()=>{
+test('the furniture catalog offers52distinct native assets and matches browser ownership',async()=>{
  const {decorDefinitions}=await import('../town/world/decor-definitions.mjs');
- const native=new Set([...decorDefinitions.map(item=>item.id),...Array.from({length:9},(_,i)=>`furniture-${i}-180`)]);
- assert.equal(furniture.length,36);assert.equal(new Set(furniture.map(item=>item.id)).size,36);
+ const signatures=JSON.parse(fs.readFileSync(require.resolve('../town/assets/showrooms/manifest.json'),'utf8')).assets;
+ const native=new Set([...decorDefinitions.map(item=>item.id),...Array.from({length:9},(_,i)=>`furniture-${i}-180`),...signatures.map(item=>item.id)]);
+ assert.equal(furniture.length,52);assert.equal(new Set(furniture.map(item=>item.id)).size,52);
  for(const item of furniture){
   assert.ok(native.has(item.asset),item.asset);assert.match(item.id,/^furniture-[a-z-]+$/);
   assert.ok(Number.isSafeInteger(item.price)&&item.price>0);assert.ok(Object.isFrozen(item));
@@ -25,6 +26,35 @@ test('the furniture catalog offers36distinct native assets and matches browser o
  assert.equal(JSON.stringify(context.window.CodaClassroomProfileData.SCHEMA),JSON.stringify(Profiles.SCHEMA));
  const browserWallet=context.window.CodaNotesShop.createWallet({storage:storage(),preserveEquipped:false});
  assert.equal(browserWallet.buy('furniture-sofa').ok,true);
+});
+
+test('the signature apartment collections preserve all legacy ownership IDs and match their displayed furniture',()=>{
+ const legacy=['sofa','bed','kitchen-counter','stove','dining-table','vanity','piano','cello','double-bass','acoustic-guitar','electric-guitar','harp','upright-piano','synthesizer','jazz-drums','congas','saxophone','turntable','vinyl-bin','oak-bench','wicker-chair','cafe-table','chess-table','geranium','hydrangea','rose-planter','olive-tree','lemon-tree','fern','succulents','oak-barrel','travel-trunk','wicker-hamper','streetlamp','garden-lantern','wind-chimes'];
+ assert.deepEqual(furniture.slice(0,36).map(item=>item.id),legacy.map(id=>'furniture-'+id));
+ const signatures=JSON.parse(fs.readFileSync(require.resolve('../town/assets/showrooms/manifest.json'),'utf8')).assets;
+ assert.equal(signatures.length,16);
+ const themes=['victorian-parlor','art-deco-lounge','coastal-bedroom','rustic-kitchen','botanical-conservatory','midcentury-studio','french-cafe','industrial-loft'];
+ for(const theme of themes)for(const role of ['bed','sofa']){
+  const product=furniture.find(item=>item.id===`furniture-${theme}-${role}`),native=signatures.find(asset=>asset.id===product?.asset);
+  assert(product,`${theme}: missing ${role}`);assert(native,`${theme}: displayed art is not a shop asset`);
+  assert.equal(product.asset,`showroom-${theme}-${role}`);assert.equal(product.price,role==='bed'?80:70);assert.equal(product.scale,1);assert.equal(product.category,'furniture');
+  assert.equal(native.theme,theme);assert.equal(native.role,role);assert(native.w>0&&native.h>0);
+ }
+});
+
+test('a guest can buy a matching apartment bed and sofa once and restore their ownership safely',()=>{
+ const themes=['victorian-parlor','art-deco-lounge','coastal-bedroom','rustic-kitchen','botanical-conservatory','midcentury-studio','french-cafe','industrial-loft'];
+ for(const theme of themes){
+  const disk=storage(),wallet=Shop.createWallet({storage:disk,preserveEquipped:false}),bed=`furniture-${theme}-bed`,sofa=`furniture-${theme}-sofa`;
+  assert.equal(wallet.buy(bed).ok,true);assert.equal(wallet.snapshot().balance,70);assert.equal(wallet.buy(sofa).ok,true);
+  assert.equal(wallet.snapshot().balance,0);assert.equal(wallet.snapshot().spent,150);
+  const savedBefore=JSON.stringify(wallet.snapshot());assert.equal(wallet.buy(bed).alreadyOwned,true);assert.equal(wallet.buy(sofa).alreadyOwned,true);assert.equal(JSON.stringify(wallet.snapshot()),savedBefore);
+  const capture=Profiles.capture(disk);assert.equal(capture.ok,true,capture.error);
+  const target=storage();assert.equal(Profiles.apply(target,capture.data).ok,true);
+  const restored=Shop.createWallet({storage:target,preserveEquipped:false});assert.equal(restored.owns(bed),true);assert.equal(restored.owns(sofa),true);assert.equal(restored.snapshot().balance,0);
+  const before=JSON.stringify(restored.snapshot());assert.equal(restored.buy(`furniture-${theme}-invented`).ok,false);assert.equal(JSON.stringify(restored.snapshot()),before);
+  const invalid=structuredClone(capture.data);invalid.wallet.owned.push(`furniture-${theme}-invented`);assert.equal(Profiles.validate(invalid).ok,false);
+ }
 });
 
 test('furniture shares Notes, debits once, and keeps cosmetics across reload and classroom restore',()=>{
@@ -101,6 +131,17 @@ test('cloud profile purchases wait for explicit rules enablement without changin
  b.context.window.ARCADE_ACCOUNTS_CONFIG.classroom.townFurnitureEnabled=true;b.send(buy);
  assert.equal(b.wallet.owns('furniture-sofa'),true);assert.equal(b.wallet.snapshot().balance,80);
  assert.equal(b.sent.filter(item=>item.value.type==='coda-town-state-result').at(-1).value.furniturePurchasesEnabled,true);
+});
+
+test('signature furniture retains the same protected classroom purchase gate',()=>{
+ const b=bridge(),id='furniture-art-deco-lounge-bed',buy={type:'coda-town-buy',id,requestId:'purchase:signature-gate'};
+ b.context.scope={mode:'owner',owned:true};b.context.profile={classId:'class-a',profileId:'student-a'};
+ const before=b.wallet.snapshot();b.send(buy);
+ assert.deepEqual(b.wallet.snapshot(),before);assert.equal(b.wallet.owns(id),false);
+ assert.equal(b.sent.find(item=>item.value.type==='coda-town-buy-result').value.ok,false);
+ b.context.window.ARCADE_ACCOUNTS_CONFIG.classroom.townFurnitureEnabled=true;b.send(buy);
+ assert.equal(b.wallet.owns(id),true);assert.equal(b.wallet.snapshot().balance,70);
+ b.send(buy);assert.equal(b.wallet.snapshot().balance,70,'Owning a signature design does not permit a second debit');
 });
 
 test('guest shopping works before enablement and developer bypass requires isolated storage',()=>{

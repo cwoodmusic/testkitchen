@@ -1,6 +1,7 @@
-import {catalog} from './catalog.mjs?v=showrooms-1';
-import {FLOOR_COUNT,residents,getInterior,renderInterior,residentInteractionZones,apartmentDecorBounds,configureUrbanInteriors} from './urban-interiors.mjs?v=showrooms-1';
-import {createRoomStorage,roomItemBoxes} from './urban-room.mjs?v=showrooms-1';
+import {catalog} from './catalog.mjs?v=apartment-showrooms-1';
+import {FLOOR_COUNT,residents,getInterior,renderInterior,residentInteractionZones,apartmentDecorBounds,configureUrbanInteriors} from './urban-interiors.mjs?v=apartment-showrooms-1';
+import {createRoomStorage,roomItemBoxes} from './urban-room.mjs?v=apartment-showrooms-1';
+import {SHOWROOMS} from './showroom-layout.mjs?v=apartment-showrooms-1';
 
 configureUrbanInteriors(catalog);
 const furniture=window.CodaFurnitureCatalog||[];
@@ -13,7 +14,7 @@ export function buildingDoor(o){
 }
 function decorSolids(items){return items.flatMap(o=>roomItemBoxes(o,catalog));}
 export function createUrbanController({canvas,getProject,getPlayer,getResidents,onConversation,preview=false}){
- const css=document.createElement('link');css.rel='stylesheet';css.href=new URL('./urban.css?v=showrooms-1',import.meta.url);document.head.append(css);
+ const css=document.createElement('link');css.rel='stylesheet';css.href=new URL('./urban.css?v=apartment-showrooms-1',import.meta.url);document.head.append(css);
  const hud=document.createElement('section');hud.className='urban-hud';hud.hidden=true;document.body.append(hud);
  const hint=document.createElement('button');hint.className='urban-prompt';hint.hidden=true;hint.onclick=()=>interact();document.body.append(hint);
  const dialog=document.createElement('dialog');dialog.className='urban-dialog';dialog.setAttribute('aria-label','Coda Town');document.body.append(dialog);
@@ -68,8 +69,12 @@ export function createUrbanController({canvas,getProject,getPlayer,getResidents,
   hud.replaceChildren();const title=document.createElement('strong');title.textContent=getInterior(scene).title;hud.append(title);
   if(preview){const tag=document.createElement('small');tag.textContent='Preview · friendship doors open';hud.append(tag);}
   if(scene.kind==='shop')actionButton('Browse furniture',showShop);
+  else if(scene.kind==='showroom'){
+   actionButton('Shop this apartment',()=>showShop(scene.showroomId));
+   actionButton('Back to lobby',returnToStore);
+  }
   else {actionButton('Floor directory',showDirectory);if(scene.resident==='player')actionButton(decorate?'Finish furnishing':'Furnish apartment',()=>{decorate=!decorate;selectedDecor=null;updateHud();if(decorate)showInventory();});}
-  actionButton('Go outside',reset);
+  if(scene.kind!=='showroom')actionButton('Go outside',reset);
  }
  function setScene(next,spawn){
   closeDialog();scene=next;selectedDecor=null;decorate=false;hover=null;const model=getInterior(scene);player={...(spawn||model.spawn)};walking=false;facing='up';updateHud();
@@ -87,6 +92,15 @@ export function createUrbanController({canvas,getProject,getPlayer,getResidents,
  function openRoom(id){
   if(!canEnter(id)){const r=residents.find(r=>r.id===id);modal(r?.name+'’s apartment','Build your friendship to level 5 in the arcade to receive an invitation.');return;}
   const r=residents.find(r=>r.id===id);setScene({kind:'apartment',floor:id==='player'?15:r.floor,resident:id});
+ }
+ function openShowroom(showroomId){
+  if(scene?.kind!=='shop'||!SHOWROOMS.some(room=>room.id===showroomId))return false;
+  setScene({kind:'showroom',showroomId,floor:1});return true;
+ }
+ function returnToStore(){
+  if(scene?.kind!=='showroom')return false;
+  const showroom=SHOWROOMS.find(room=>room.id===scene.showroomId);
+  setScene({kind:'shop',floor:1},showroom?.lobbyReturn);return true;
  }
  function sceneResidents(){const actors=getResidents?.(scene);return Array.isArray(actors)?actors:getInterior(scene).actors;}
  function nearestZone(){if(!scene)return null;const model=getInterior(scene),zones=[...model.zones.filter(z=>z.action!=='resident'),...residentInteractionZones(sceneResidents())];return zones.map(z=>({...z,distance:Math.hypot(player.x-Math.max(z.x,Math.min(z.x+z.w,player.x)),player.y-Math.max(z.y,Math.min(z.y+z.h,player.y)))})).filter(z=>z.distance<120).sort((a,b)=>a.distance-b.distance)[0]||null;}
@@ -110,11 +124,13 @@ export function createUrbanController({canvas,getProject,getPlayer,getResidents,
   else if(z.action==='stairs-up')goFloor(scene.floor+1);
   else if(z.action==='stairs-down')goFloor(scene.floor-1);
   else if(z.action==='room')openRoom(z.resident);
+  else if(z.action==='showroom')openShowroom(z.showroomId);
+  else if(z.action==='showroom-lobby')returnToStore();
   else if(z.action==='shop')showShop(z.showroomId);
   else if(z.action==='decorate'){decorate=true;updateHud();showInventory();}
   else if(z.action==='resident'){const r=residents.find(r=>r.id===z.resident);modal(r?.name||'Your neighbor',scene.kind==='apartment'&&r?.theme?`Welcome to my ${r.theme.toLowerCase()} apartment. It is good to see a familiar face in the building.`:'Good to see you around Coda Town. I hope we can catch some music together later.');beginConversation(z.resident);}
   else if(z.action==='exit'){
-   if(scene.kind==='apartment')setScene({kind:'hall',floor:scene.floor});else if(scene.kind==='hall')goFloor(1);else reset();
+   if(scene.kind==='showroom')returnToStore();else if(scene.kind==='apartment')setScene({kind:'hall',floor:scene.floor});else if(scene.kind==='hall')goFloor(1);else reset();
   }
   return true;
  }
@@ -176,7 +192,7 @@ export function createUrbanController({canvas,getProject,getPlayer,getResidents,
    const style=document.createElement('strong');style.textContent=showroom.style||showroom.name;
    const finishes=document.createElement('p'),floor=showroom.floorFinish?.label||showroom.floorFinish?.name||showroom.material||'Wood flooring',wallpaper=showroom.wallpaper?.label||showroom.wallpaper?.name||'Coordinated wallpaper';
    finishes.textContent=`Floor: ${floor} · Wallpaper: ${wallpaper}`;summary.append(style,finishes);
-  }else{const description=document.createElement('p');description.textContent=showrooms.length?'Explore eight furnished rooms, each with its own furniture collection, flooring and wallpaper. Choose a collection to shop its pieces.':'Browse furniture, instruments, plants and lighting for your apartment.';summary.append(description);}
+  }else{const description=document.createElement('p');description.textContent=showrooms.length?'Enter the eight apartment showrooms from the lobby to explore their kitchens, bedrooms, bathrooms and living spaces. Choose a collection to shop its pieces.':'Browse furniture, instruments, plants and lighting for your apartment.';summary.append(description);}
   body.append(summary);
   const tabs=document.createElement('div');tabs.className='urban-categories';tabs.setAttribute('role','group');tabs.setAttribute('aria-label','Furniture categories');
   const grid=document.createElement('div');grid.className='urban-catalog';body.append(tabs,grid);
@@ -196,9 +212,9 @@ export function createUrbanController({canvas,getProject,getPlayer,getResidents,
  }
  function keydown(e){
   if(dialog.open)return true;
-  if(e.key==='Escape'&&scene){e.preventDefault();if(selectedDecor){selectedDecor=null;}else if(decorate){decorate=false;updateHud();}else if(scene.kind==='apartment')setScene({kind:'hall',floor:scene.floor});else if(scene.kind==='hall')goFloor(1);else reset();return true;}
+  if(e.key==='Escape'&&scene){e.preventDefault();if(selectedDecor){selectedDecor=null;}else if(decorate){decorate=false;updateHud();}else if(scene.kind==='showroom')returnToStore();else if(scene.kind==='apartment')setScene({kind:'hall',floor:scene.floor});else if(scene.kind==='hall')goFloor(1);else reset();return true;}
   if(e.key.toLowerCase()==='e'&&!e.repeat){const handled=interact();if(handled)e.preventDefault();return handled;}
   return false;
  }
- return {get active(){return !!scene;},get blocked(){return dialog.open;},get scene(){return scene;},get player(){return player;},get decor(){return decor;},get view(){return {...view,zoom};},tick,frame,keydown,handlePointer,zoom:delta=>{zoom=Math.max(.3,Math.min(1.4,zoom*Math.exp(-delta*.001)));},reset,interact,enterBuilding,goFloor,openRoom,showShop,showInventory};
+ return {get active(){return !!scene;},get blocked(){return dialog.open;},get scene(){return scene;},get player(){return player;},get decor(){return decor;},get view(){return {...view,zoom};},tick,frame,keydown,handlePointer,zoom:delta=>{zoom=Math.max(.3,Math.min(1.4,zoom*Math.exp(-delta*.001)));},reset,interact,enterBuilding,goFloor,openRoom,openShowroom,returnToStore,showShop,showInventory};
 }

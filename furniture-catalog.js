@@ -41,6 +41,22 @@
   ['wicker-hamper','Wicker hamper',20,'decor-01-13','storage'],
   ['streetlamp','Bronze standing lamp',55,'decor-14-01','lighting'],
   ['garden-lantern','Small garden lantern',20,'decor-14-04','lighting'],
-  ['wind-chimes','Copper wind chimes',30,'decor-09-08','lighting']
+  ['wind-chimes','Copper wind chimes',30,'decor-09-08','lighting'],
+  ['victorian-parlor-bed','Victorian carved walnut bed',80,'showroom-victorian-parlor-bed','furniture'],
+  ['victorian-parlor-sofa','Victorian velvet chaise',70,'showroom-victorian-parlor-sofa','furniture'],
+  ['art-deco-lounge-bed','Art Deco fan-headboard bed',80,'showroom-art-deco-lounge-bed','furniture'],
+  ['art-deco-lounge-sofa','Art Deco curved sofa',70,'showroom-art-deco-lounge-sofa','furniture'],
+  ['coastal-bedroom-bed','Coastal whitewashed bed',80,'showroom-coastal-bedroom-bed','furniture'],
+  ['coastal-bedroom-sofa','Coastal linen and rattan sofa',70,'showroom-coastal-bedroom-sofa','furniture'],
+  ['rustic-kitchen-bed','Rustic pine patchwork bed',80,'showroom-rustic-kitchen-bed','furniture'],
+  ['rustic-kitchen-sofa','Rustic timber settle',70,'showroom-rustic-kitchen-sofa','furniture'],
+  ['botanical-conservatory-bed','Botanical woven rattan bed',80,'showroom-botanical-conservatory-bed','furniture'],
+  ['botanical-conservatory-sofa','Botanical cane sofa',70,'showroom-botanical-conservatory-sofa','furniture'],
+  ['midcentury-studio-bed','Midcentury teak bed',80,'showroom-midcentury-studio-bed','furniture'],
+  ['midcentury-studio-sofa','Midcentury tapered-leg sofa',70,'showroom-midcentury-studio-sofa','furniture'],
+  ['french-cafe-bed','French floral cabriole bed',80,'showroom-french-cafe-bed','furniture'],
+  ['french-cafe-sofa','French cream settee',70,'showroom-french-cafe-sofa','furniture'],
+  ['industrial-loft-bed','Industrial iron-pipe bed',80,'showroom-industrial-loft-bed','furniture'],
+  ['industrial-loft-sofa','Industrial leather Chesterfield',70,'showroom-industrial-loft-sofa','furniture']
  ].map(([id,name,price,asset,category])=>Object.freeze({id:'furniture-'+id,name,price,asset,category,scale:({sofa:1.75,bed:1.5,'kitchen-counter':1.75,stove:.8,'dining-table':1.5,vanity:.9,piano:1.83,'upright-piano':1.5,'jazz-drums':1.5,turntable:1.5,'olive-tree':1.3,'lemon-tree':1.3})[id]||1})));
 });

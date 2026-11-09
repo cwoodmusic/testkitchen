@@ -1,5 +1,5 @@
-import {residents} from './resident-profiles.mjs?v=showrooms-1';
-export {residents} from './resident-profiles.mjs?v=showrooms-1';
+import {residents} from './resident-profiles.mjs?v=apartment-showrooms-1';
+export {residents} from './resident-profiles.mjs?v=apartment-showrooms-1';
 
 const SPEED=156,GAIT=Math.PI*2/150;
 const journeys=new Map();
@@ -48,5 +48,6 @@ export function interiorJourneyPose(id,direction='out',elapsed=0){
 export function residentInScene(pose,scene){
  if(!pose||pose.hidden||!pose.scene||!scene||pose.scene.kind!==scene.kind)return false;
  if(scene.kind==='apartment')return pose.scene.resident===scene.resident;
+ if(scene.kind==='showroom')return pose.scene.showroomId===scene.showroomId;
  return scene.kind==='lobby'||pose.scene.floor===scene.floor;
 }

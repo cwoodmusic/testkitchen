@@ -1,18 +1,19 @@
-import {assetImage} from './asset-color.mjs?v=showrooms-1';
-import {applyShowroomLayout} from './showroom-layout.mjs?v=showrooms-1';
-import {drawShowroomFloor,drawShowroomWallpaper} from './showroom-materials.mjs?v=showrooms-1';
+import {assetImage} from './asset-color.mjs?v=apartment-showrooms-1';
+import {SHOWROOMS,applyShowroomLayout} from './showroom-layout.mjs?v=apartment-showrooms-1';
+import {applyShowroomApartment} from './showroom-apartments.mjs?v=apartment-showrooms-1';
+import {drawShowroomFloor,drawShowroomWallpaper} from './showroom-materials.mjs?v=apartment-showrooms-1';
 // The apartment tower has one consistent floor plate. Residential floors use
 // a 608px common hall and 1120px private apartments, within its 2304 × 1728 lot.
 export const FLOOR_COUNT=15;
 export const TOWER_FOOTPRINT=Object.freeze({width:2304,height:1728});
 export const STORE_FOOTPRINT=Object.freeze({width:3072,height:2048});
-export {residents} from './resident-profiles.mjs?v=showrooms-1';
-import {residents} from './resident-profiles.mjs?v=showrooms-1';
+export {residents} from './resident-profiles.mjs?v=apartment-showrooms-1';
+import {residents} from './resident-profiles.mjs?v=apartment-showrooms-1';
 const sceneCache=new Map(),backgroundCache=new Map();
 let nativeCatalog=null,woodTexture=null,npcRenderer=null;
 export function configureUrbanInteriors(catalog){nativeCatalog=catalog;for(const scene of sceneCache.values())warmScene(scene);}
 if(typeof document!=='undefined'){
- import('./ground-textures.mjs?v=showrooms-1').then(({groundTextures})=>{woodTexture=groundTextures.wood;backgroundCache.clear();}).catch(()=>{});
+ import('./ground-textures.mjs?v=apartment-showrooms-1').then(({groundTextures})=>{woodTexture=groundTextures.wood;backgroundCache.clear();}).catch(()=>{});
 }
 const rect=(x,y,w,h)=>({x,y,w,h});
 const zone=(id,label,x,y,w,h,action,extra={})=>({id,label,x,y,w,h,action,...extra});
@@ -20,7 +21,7 @@ function addItem(scene,asset,x,y,w,h=null,solid=true){
  const a=nativeCatalog?.get(asset),height=h||w*(a?.h||1)/(a?.w||1),item={id:`${scene.id}-item-${scene.items.length}`,asset,x,y,w,h:height,solid};scene.items.push(item);
  // Furniture is upright in the three-quarter cutaway. Its feet, rather than
  // its pictured height, block walking; beds occupy their full floor footprint.
- if(solid){const bed=asset==='furniture-2-180',depth=bed?height*.72:Math.min(height*.48,w*.5);scene.solids.push(rect(x-w*.43,y-depth,w*.86,depth));}
+ if(solid){const bed=asset==='furniture-2-180'||asset.endsWith('-bed'),depth=bed?height*.72:Math.min(height*.48,w*.5);scene.solids.push(rect(x-w*.43,y-depth,w*.86,depth));}
  return item;
 }
 function room(scene,name,x,y,w,h,material='wood'){scene.rooms.push({name,x,y,w,h,material});}
@@ -106,13 +107,22 @@ function apartment(residentId){
  light(s,bx,210,250);light(s,kx,650,250);light(s,mid,840,350);return s;
 }
 function shop(){
- const s=shell('furniture-store','Coda Furnishings · Eight Rooms',STORE_FOOTPRINT.width,STORE_FOOTPRINT.height,'#665b58','#cda056');s.kind='shop';s.floor=1;
+ const s=shell('furniture-store','Coda Furnishings · Main Lobby',STORE_FOOTPRINT.width,STORE_FOOTPRINT.height,'#665b58','#cda056');s.kind='shop';s.floor=1;
  applyShowroomLayout(s,{room,wall,addItem,rug,sign,light,zone,windowAt});return s;
 }
-function warmScene(scene){for(const item of scene.items)nativeCatalog?.get(item.asset)?.ensureFull?.().catch(()=>{});}
+function showroomApartment(showroomId){
+ const display=SHOWROOMS.find(room=>room.id===showroomId),plan=display.apartment;
+ const s=shell('showroom-'+display.id,display.name+' · Apartment',plan.width,plan.height,display.wallpaper.colors[0],display.wallpaper.colors[3]);
+ s.kind='showroom';s.floor=1;s.showroomId=display.id;
+ applyShowroomApartment(s,display,{room,wall,addItem,rug,sign,light,zone,windowAt});return s;
+}
+function warmScene(scene){
+ for(const item of scene.items)nativeCatalog?.get(item.asset)?.ensureFull?.().catch(()=>{});
+ for(const item of scene.doors||[])nativeCatalog?.get(item.asset)?.ensureFull?.().then(()=>backgroundCache.delete(scene.id)).catch(()=>{});
+}
 export function getInterior(scene={}){
- const requestedKind=scene.kind||'lobby',floor=Math.max(1,Math.min(15,Math.round(Number(scene.floor)||1))),kind=requestedKind==='hall'&&floor===1?'lobby':requestedKind,resident=scene.resident||'player',id=kind==='apartment'?`apartment-${resident}`:kind==='hall'?`tower-floor-${floor}`:kind==='shop'?'furniture-store':'tower-lobby';
- if(!sceneCache.has(id)){const s=kind==='apartment'?apartment(resident):kind==='hall'?hall(floor):kind==='shop'?shop():lobby();sceneCache.set(id,s);warmScene(s);}return sceneCache.get(id);
+ const requestedKind=scene.kind||'lobby',floor=Math.max(1,Math.min(15,Math.round(Number(scene.floor)||1))),kind=requestedKind==='hall'&&floor===1?'lobby':requestedKind==='showroom'&&!SHOWROOMS.some(room=>room.id===scene.showroomId)?'shop':requestedKind,resident=scene.resident||'player',id=kind==='apartment'?`apartment-${resident}`:kind==='hall'?`tower-floor-${floor}`:kind==='shop'?'furniture-store':kind==='showroom'?'showroom-'+scene.showroomId:'tower-lobby';
+ if(!sceneCache.has(id)){const s=kind==='apartment'?apartment(resident):kind==='hall'?hall(floor):kind==='shop'?shop():kind==='showroom'?showroomApartment(scene.showroomId):lobby();sceneCache.set(id,s);warmScene(s);}return sceneCache.get(id);
 }
 export function apartmentDecorBounds(scene){if(scene?.kind!=='apartment'||scene.resident!=='player')return null;return [rect(1584,512,656,540),rect(710,130,780,500)];}
 function fill(c,x,y,w,h,color){c.fillStyle=color;c.fillRect(Math.round(x),Math.round(y),Math.round(w),Math.round(h));}
@@ -138,6 +148,14 @@ function drawWindow(c,x,y,w,color){
  for(const xx of [x-w/2-18,x+w/2+7]){fill(c,xx,y-4,14,82,color);fill(c,xx+3,y,3,74,'#e8d6b377');}
 }
 function door(c,d){
+ const native=d.asset&&nativeCatalog?.get(d.asset);
+ if(native){
+  const image=assetImage(native),fit=Math.min(d.w/native.w,d.h/native.h),w=native.w*fit,h=native.h*fit;
+  c.drawImage(image,Math.round(d.x-w/2),Math.round(d.y+d.h-h),Math.round(w),Math.round(h));
+  const plaqueX=d.x+d.w/2+18,plaqueY=d.y+74;
+  fill(c,plaqueX,plaqueY,38,30,'#493b36');fill(c,plaqueX+2,plaqueY+2,34,26,'#c8aa77');fill(c,plaqueX+4,plaqueY+4,30,22,'#3b4249');
+  c.fillStyle='#ffe1a0';c.font='bold 14px Georgia';c.textAlign='center';c.fillText(d.number,plaqueX+19,plaqueY+21);return;
+ }
  fill(c,d.x-d.w/2-12,d.y-6,d.w+24,d.h+18,'#614c3c');fill(c,d.x-d.w/2-6,d.y,d.w+12,d.h+6,'#c8aa77');fill(c,d.x-d.w/2,d.y+4,d.w,d.h-3,d.color||'#526d63');
  for(const yy of [d.y+16,d.y+102]){fill(c,d.x-d.w/2+14,yy,d.w-28,64,'#302c3144');fill(c,d.x-d.w/2+18,yy+4,d.w-36,3,'#f5e6c855');}fill(c,d.x+d.w/2-21,d.y+104,7,18,'#ebc679');
  fill(c,d.x-29,d.y+30,58,26,'#493b36');c.fillStyle='#ffe1a0';c.font='bold 18px Georgia';c.textAlign='center';c.fillText(d.number,d.x,d.y+50);fill(c,d.x-d.w/2-6,d.y+d.h,d.w+12,7,'#e0c695');
@@ -153,14 +171,38 @@ function stairs(c,s){
  for(let i=0;i<count;i++){const y=s.y+i*s.h/count;fill(c,s.x,y,s.w,s.h/count-2,['#b1a18a','#d1bea2','#b1a18a','#958578'][s.up?i%4:(7-i)%4]);fill(c,s.x+4,y+2,s.w-8,3,'#f5e6c8');fill(c,s.x+4,y+s.h/count-5,s.w-8,3,'#614c3c');}
  for(const x of [s.x-8,s.x+s.w+1]){fill(c,x,s.y-8,7,s.h+24,'#493b36');fill(c,x,s.y-8,3,s.h+24,'#cda056');}
 }
+function lobbyFrontage(c,r){
+ const h=Math.min(r.h,r.facadeHeight||190),y=r.facing==='up'?r.y:r.y+r.h-h,trim=r.trim||'#c8aa77';
+ plasterWall(c,rect(r.x,y,r.w,h),'#626461',trim);
+ // The hidden apartments are black void. Only their lobby-facing stonework
+ // and doors are shown, like the cutaway walls around a normal interior.
+ for(let yy=y+15,row=0;yy<y+h-35;yy+=28,row++)for(let x=r.x+8-(row%2)*42;x<r.x+r.w-8;x+=84){
+  const left=Math.max(r.x+6,x),right=Math.min(r.x+r.w-6,x+80);if(right<=left)continue;
+  fill(c,left,yy,right-left,1,'#e5dcc42b');fill(c,left,yy+1,1,24,'#e5dcc41f');fill(c,left,yy+25,right-left,1,'#242f3430');
+ }
+ fill(c,r.x+4,y+h-35,r.w-8,4,trim);fill(c,r.x+4,y+h-30,r.w-8,23,'#465151');
+ for(let x=r.x+12;x<r.x+r.w-30;x+=48){fill(c,x,y+h-25,35,1,'#e5dcc43b');fill(c,x,y+h-25,1,14,'#e5dcc43b');}
+ if(r.facing==='up')fill(c,r.x,y-10,r.w,10,'#11192045');
+}
 function background(s){
  if(backgroundCache.has(s.id))return backgroundCache.get(s.id);const cv=document.createElement('canvas');cv.width=s.width;cv.height=s.height;const c=cv.getContext('2d');c.imageSmoothingEnabled=false;
- floor(c,0,0,s.width,s.height);for(const r of s.rooms){if(r.floorFinish)drawShowroomFloor(c,r);else if(r.material==='tile')floor(c,r.x,r.y,r.w,r.h,true);}for(const r of s.rugs)carpet(c,r);
+ const lobby=s.kind==='shop'&&Array.isArray(s.lobbyFloorRects);
+ if(lobby){fill(c,0,0,s.width,s.height,'#10171d');for(const r of s.lobbyFloorRects)floor(c,r.x,r.y,r.w,r.h);}
+ else floor(c,0,0,s.width,s.height);
+ for(const r of s.rooms){if(r.portalRoom)continue;if(r.floorFinish)drawShowroomFloor(c,r);else if(r.material==='tile')floor(c,r.x,r.y,r.w,r.h,true);}for(const r of s.rugs)carpet(c,r);
  // Full-height north facade, low cutaway south and side edges.
- plasterWall(c,rect(0,0,s.width,106),s.color,s.trim);plasterWall(c,rect(0,0,28,s.height),s.color,s.trim);plasterWall(c,rect(s.width-28,0,28,s.height),s.color,s.trim);plasterWall(c,rect(0,s.height-28,s.width,28),s.color,s.trim);
+ if(!lobby){plasterWall(c,rect(0,0,s.width,106),s.color,s.trim);plasterWall(c,rect(0,0,28,s.height),s.color,s.trim);plasterWall(c,rect(s.width-28,0,28,s.height),s.color,s.trim);plasterWall(c,rect(0,s.height-28,s.width,28),s.color,s.trim);}
+ else{
+  const main=s.lobbyFloorRects[0],entry=s.lobbyFloorRects[1];
+  plasterWall(c,rect(main.x-20,main.y,20,main.h),s.color,s.trim);plasterWall(c,rect(main.x+main.w,main.y,20,main.h),s.color,s.trim);
+  for(const x of [entry.x-20,entry.x+entry.w])plasterWall(c,rect(x,entry.y,20,entry.h),s.color,s.trim);
+  for(const x of [entry.x,entry.x+entry.w-120])plasterWall(c,rect(x,s.height-28,120,28),s.color,s.trim);
+  fill(c,s.width/2-80,s.height-28,160,8,'#c8aa77');fill(c,s.width/2-80,s.height-20,160,12,'#614c3c');
+ }
  // Wainscoting and fine masonry add depth without changing collision.
- for(let x=48;x<s.width-40;x+=62){fill(c,x,14,50,2,'#f5e6c833');fill(c,x,91,50,3,'#302c3144');fill(c,x+1,72,2,19,'#e0c69566');}
- for(const r of s.walls)plasterWall(c,r,r.color||s.color,r.trim||s.trim);for(const r of s.rooms)if(r.wallpaper)drawShowroomWallpaper(c,r);for(const w of s.windows)drawWindow(c,w.x,w.y,w.w,s.color);
+ if(!lobby)for(let x=48;x<s.width-40;x+=62){fill(c,x,14,50,2,'#f5e6c833');fill(c,x,91,50,3,'#302c3144');fill(c,x+1,72,2,19,'#e0c69566');}
+ for(const r of s.walls){if(lobby&&(r.portalRoom||r.receptionFront))lobbyFrontage(c,r);else plasterWall(c,r,r.color||s.color,r.trim||s.trim);}
+ for(const r of s.rooms)if(r.wallpaper&&!r.portalRoom)drawShowroomWallpaper(c,r);for(const w of s.windows)drawWindow(c,w.x,w.y,w.w,s.color);
  for(const d of s.doors||[])door(c,d);if(s.elevator)elevator(c,s.elevator);for(const st of s.stairs||[])stairs(c,st);
  if(s.directory){const r=s.directory;fill(c,r.x-10,r.y-8,r.w+20,r.h+16,'#614c3c');fill(c,r.x-4,r.y-2,r.w+8,r.h+4,'#cda056');fill(c,r.x+4,r.y+6,r.w-8,r.h-12,'#293246');c.textAlign='center';c.font='bold 15px Georgia';c.fillStyle='#e0c695';c.fillText('DIRECTORY',r.x+r.w/2,r.y+30);c.font='11px Georgia';for(let f=2;f<=15;f++){const names=f===15?'Your studio':residents.filter(n=>n.floor===f).map(n=>n.name.split(' ')[0]).join(' · ');c.fillStyle='#d1bea2';c.fillText(`${String(f).padStart(2,'0')}  ${names}`,r.x+r.w/2,r.y+34+f*14);}}
  for(const t of s.signs){c.textAlign='center';c.font=`${t.size>25?'bold ':''}${t.size}px Georgia`;c.fillStyle='#302c3155';c.fillText(t.text,t.x+2,t.y+2);c.fillStyle=t.size>25?'#ebc679':'#c8aa77';c.fillText(t.text,t.x,t.y);}
