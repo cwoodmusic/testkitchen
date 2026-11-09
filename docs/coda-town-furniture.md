@@ -4,6 +4,8 @@ Open [Town Builder · Urban kit](https://cwoodmusic.github.io/testkitchen/town/b
 
 Coda Furnishings opens into a main lobby with eight closed apartment doors. Press E at a door to enter its separate, fully furnished apartment scene. Every apartment includes kitchen and dining areas, a living room, a private bedroom and a bathroom with shower, toilet and vanity. Each theme has its own bed and sofa artwork, floor texture, wallpaper and accent furniture:
 
+Preview the [main lobby](town-preview/coda-furnishings-lobby.png) and [all eight complete apartments](town-preview/coda-apartment-showrooms.png).
+
 | Room | Flooring | Wallpaper |
 | --- | --- | --- |
 | Victorian Suite | Walnut herringbone | Burgundy damask |
