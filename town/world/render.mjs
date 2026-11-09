@@ -1,15 +1,15 @@
-import {drawSelection} from './selection-view.mjs?v=city-residents-1';
-import {drawTerrain} from './terrain-render.mjs?v=city-residents-1';
-import {mountPose} from './cliff-mount.mjs?v=city-residents-1';
-import {elevationView} from './elevation-view.mjs?v=city-residents-1';
-import {barrierRuns,drawBarrierRun,barrierPosts,drawPost} from './construction.mjs?v=city-residents-1';
-import {TILE,RISE,COLS,ROWS,cell,height,segment} from './model.mjs?v=city-residents-1';
-import {catalog} from './catalog.mjs?v=city-residents-1';
-import {assetMapImage} from './asset-lawn.mjs?v=city-residents-1';
-import {overviewObjectImage} from './overview-sprites.mjs?v=city-residents-1';
-import {renderCityNight} from './city-night.mjs?v=city-residents-1';
-import {setWaterTime} from './water-motion.mjs?v=city-residents-1';
-import {drawFountainMotion} from './fountain-motion.mjs?v=city-residents-1';
+import {drawSelection} from './selection-view.mjs?v=map-recovery-1';
+import {drawTerrain} from './terrain-render.mjs?v=map-recovery-1';
+import {mountPose} from './cliff-mount.mjs?v=map-recovery-1';
+import {elevationView} from './elevation-view.mjs?v=map-recovery-1';
+import {barrierRuns,drawBarrierRun,barrierPosts,drawPost} from './construction.mjs?v=map-recovery-1';
+import {TILE,RISE,COLS,ROWS,cell,height,segment} from './model.mjs?v=map-recovery-1';
+import {catalog} from './catalog.mjs?v=map-recovery-1';
+import {assetMapImage} from './asset-lawn.mjs?v=map-recovery-1';
+import {overviewObjectImage} from './overview-sprites.mjs?v=map-recovery-1';
+import {renderCityNight} from './city-night.mjs?v=map-recovery-1';
+import {setWaterTime} from './water-motion.mjs?v=map-recovery-1';
+import {drawFountainMotion} from './fountain-motion.mjs?v=map-recovery-1';
 function drawBrush(c,d,brush,zoom){
  const radius=brush.size/2,color=brush.blend?'#b7eddf':'#ffe2a1';
  c.save();

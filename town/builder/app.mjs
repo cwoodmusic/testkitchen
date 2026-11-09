@@ -1,36 +1,38 @@
-import {groundTexture} from '../world/ground-render.mjs?v=city-residents-1';
-import {assetFilter} from '../world/asset-color.mjs?v=city-residents-1';
-import {curveUnder} from '../world/round-geometry.mjs?v=city-residents-1';
-import {roundTerrain} from './round-terrain.mjs?v=city-residents-1';
-import {paintGround} from './ground-brush.mjs?v=city-residents-1';
-import {planWaterFill} from './water-fill.mjs?v=city-residents-1';
-import {planLandFill} from './land-fill.mjs?v=city-residents-1';
-import {planOrganicEdges} from './organic-edges.mjs?v=city-residents-1';
-import {createSandFootprints} from '../world/sand-footprints.mjs?v=city-residents-1';
-import {createAmbientNPCs} from '../world/ambient-npcs.mjs?v=city-residents-1';
-import {readNightPreference,saveNightPreference} from '../world/lighting-settings.mjs?v=city-residents-1';
-import {readNPCPreference,saveNPCPreference} from './preview-settings.mjs?v=city-residents-1';
-import {hitCliff,mountPose,attach,cliffFace} from '../world/cliff-mount.mjs?v=city-residents-1';
-import {pavingTexture} from '../world/paving.mjs?v=city-residents-1';
-import {planStairs,drawStairGuide} from './stairs.mjs?v=city-residents-1';
-import {planPier,drawPierGuide} from './piers.mjs?v=city-residents-1';
-import {levelColors} from '../world/elevation-view.mjs?v=city-residents-1';
-import {regionBetween,regionFromPolygon,regionHeightEdits,selectionCount} from './region.mjs?v=city-residents-1';
-import {blank,cell,height,key,connect,segment,clearStairs,parseProject,History,surfaces,barriers,COLS,ROWS} from '../world/model.mjs?v=city-residents-1';
-import {catalog,sources,preparePlacedArt} from '../world/catalog.mjs?v=city-residents-1';
-import {render,resizeSurface,findStart,movePlayer,toggleGate,follow,PLAYER_SCALE,GAIT_PER_PIXEL} from '../world/runtime.mjs?v=city-residents-1';
-import {openDatabase,saveProject} from '../world/storage.mjs?v=city-residents-1';
+import {createTownRecovery} from './recovery.mjs?v=map-recovery-1';
+import {groundTexture} from '../world/ground-render.mjs?v=map-recovery-1';
+import {assetFilter} from '../world/asset-color.mjs?v=map-recovery-1';
+import {curveUnder} from '../world/round-geometry.mjs?v=map-recovery-1';
+import {roundTerrain} from './round-terrain.mjs?v=map-recovery-1';
+import {paintGround} from './ground-brush.mjs?v=map-recovery-1';
+import {planWaterFill} from './water-fill.mjs?v=map-recovery-1';
+import {planLandFill} from './land-fill.mjs?v=map-recovery-1';
+import {planOrganicEdges} from './organic-edges.mjs?v=map-recovery-1';
+import {createSandFootprints} from '../world/sand-footprints.mjs?v=map-recovery-1';
+import {createAmbientNPCs} from '../world/ambient-npcs.mjs?v=map-recovery-1';
+import {readNightPreference,saveNightPreference} from '../world/lighting-settings.mjs?v=map-recovery-1';
+import {readNPCPreference,saveNPCPreference} from './preview-settings.mjs?v=map-recovery-1';
+import {hitCliff,mountPose,attach,cliffFace} from '../world/cliff-mount.mjs?v=map-recovery-1';
+import {pavingTexture} from '../world/paving.mjs?v=map-recovery-1';
+import {planStairs,drawStairGuide} from './stairs.mjs?v=map-recovery-1';
+import {planPier,drawPierGuide} from './piers.mjs?v=map-recovery-1';
+import {levelColors} from '../world/elevation-view.mjs?v=map-recovery-1';
+import {regionBetween,regionFromPolygon,regionHeightEdits,selectionCount} from './region.mjs?v=map-recovery-1';
+import {blank,cell,height,key,connect,segment,clearStairs,parseProject,History,surfaces,barriers,COLS,ROWS} from '../world/model.mjs?v=map-recovery-1';
+import {catalog,sources,preparePlacedArt} from '../world/catalog.mjs?v=map-recovery-1';
+import {render,resizeSurface,findStart,movePlayer,toggleGate,follow,PLAYER_SCALE,GAIT_PER_PIXEL} from '../world/runtime.mjs?v=map-recovery-1';
+import {openDatabase,saveProject} from '../world/storage.mjs?v=map-recovery-1';
 import {createZip} from '../../studio/zip.js';
-import {createUrbanController} from '../world/urban.mjs?v=city-residents-1';
-import {isUrbanAsset} from '../world/urban-kit.mjs?v=city-residents-1';
-import {snapUrbanAsset} from '../world/urban-roads.mjs?v=city-residents-1';
-import {musicWallNode,planMusicWall} from '../world/music-wall-geometry.mjs?v=city-residents-1';
+import {createUrbanController} from '../world/urban.mjs?v=map-recovery-1';
+import {isUrbanAsset} from '../world/urban-kit.mjs?v=map-recovery-1';
+import {snapUrbanAsset} from '../world/urban-roads.mjs?v=map-recovery-1';
+import {musicWallNode,planMusicWall} from '../world/music-wall-geometry.mjs?v=map-recovery-1';
 const $=id=>document.getElementById(id),canvas=$('map'),ctx=canvas.getContext('2d'),history=new History(),ids=new Set(catalog.keys());let doc=blank(),tool='select',asset=catalog.keys().next().value,selected=null,region=null,hover=null,pointer=null,walk=false,player={...doc.spawn},keys=new Set(),dirty=false,saveTimer,db=null,stairPreview=null,pierPreview=null;
 const character=window.createCodaCharacterRenderer({worldScale:PLAYER_SCALE});let avatar=character.normalizeProfile({}),facing='down',walking=false,walkPhase=0;addEventListener('message',e=>{if(e.source===parent&&e.origin===location.origin&&e.data?.type==='coda-town-state-result'&&e.data.avatar)avatar=character.normalizeProfile(e.data.avatar);});if(parent!==window)parent.postMessage({type:'coda-town-state'},location.origin);
 let assetTicket=0,loadingAsset=false,pendingAttach=null;
 const cam={x:8192,y:6144,zoom:.45};
 // All authored edits advance this hint; previews also carry a distinct document.
 let terrainRevision=0;
+let recovery=null;
 let night=readNightPreference();
 let npcsVisible=readNPCPreference();
 const ambient=createAmbientNPCs({getProject:()=>doc,catalog,getRevision:()=>terrainRevision,getPlayer:()=>walk?player:null});
@@ -128,12 +130,14 @@ $('raiseRegion').onclick=()=>adjustRegion(1);$('lowerRegion').onclick=()=>adjust
 $('selectLand').onclick=()=>{setTool('region');selected=null;};$('selectAllLand').onclick=()=>{$('selectionShape').value='rectangle';setTool('region');selected=null;region=regionBetween({x:0,y:0},{x:COLS-1,y:ROWS-1});showRegion();};
 for(let i=0;i<levelColors.length;i++){const s=document.createElement('span');s.textContent=i;s.style.background=levelColors[i];$('levelSwatches').append(s);}$('heightView').onchange=()=>{$('heightLegend').hidden=$('heightView').value==='art';};
 
-async function saveLocal(){const text=JSON.stringify(doc);try{if(!db)throw Error('Local database unavailable');await saveProject(db,doc);dirty=false;status('Saved in this browser · '+doc.objects.length+' assets');}catch(e){status('Local save failed — use Save project to keep your work.');}}
-try{db=await openDatabase();const saved=await new Promise((resolve,reject)=>{const r=db.transaction('maps').objectStore('maps').get('current');r.onsuccess=()=>resolve(r.result);r.onerror=()=>reject(r.error);});if(saved){doc=parseProject(saved,ids);await preparePlacedArt(doc);}status(saved?'Restored your saved town':'Blank grass map · ready to build');}catch(e){status('Local save unavailable — export your project regularly.');}$('name').value=doc.name;
+async function saveLocal(){if(recovery?.writeBlocked){status('Browser save is protected. Use Recover map or Save project to keep this tab’s work.');return;}try{if(!db)throw Error('Local database unavailable');await saveProject(db,doc);dirty=false;status('Saved in this browser · '+doc.objects.length+' assets');}catch(e){status('Local save failed — use Save project to keep your work.');}}
+recovery=createTownRecovery({getDatabase:()=>db,getProject:()=>doc,ids,prepare:preparePlacedArt,download,status,install:(next,{initial=false,fit=true}={})=>{if(!initial)checkpoint();clearTimeout(saveTimer);doc=next;terrainRevision++;selected=null;clearRegion();$('name').value=doc.name;dirty=false;if(fit){cam.x=COLS*32;cam.y=ROWS*32;cam.zoom=Math.min(canvas.clientWidth/(COLS*64),canvas.clientHeight/(ROWS*64))*.95;}}});
+let databaseError;try{db=await openDatabase();}catch(e){databaseError=e;}
+await recovery.loadInitial(databaseError);$('name').value=doc.name;
 $('name').onchange=()=>{checkpoint();doc.name=$('name').value||'My Coda Town';changed();};
 function download(blob,name){const url=URL.createObjectURL(blob),a=document.createElement('a');a.href=url;a.download=name;a.click();setTimeout(()=>URL.revokeObjectURL(url),30000);}
 $('save').onclick=()=>download(new Blob([JSON.stringify(doc,null,2)],{type:'application/json'}),'coda-town.json');
-$('open').onclick=()=>$('file').click();$('file').onchange=async()=>{try{const f=$('file').files[0];if(!f)return;const next=parseProject(await f.text(),ids);await preparePlacedArt(next);checkpoint();doc=next;selected=null;clearRegion();$('name').value=doc.name;changed();}catch(e){status(e.message);}$('file').value='';};
+$('open').onclick=()=>$('file').click();$('file').onchange=async()=>{try{const f=$('file').files[0];if(!f)return;const next=parseProject(await f.text(),ids);await recovery.replace(next);}catch(e){status(e.message);}$('file').value='';};
 $('new').onclick=()=>{if((doc.objects.length||Object.keys(doc.cells).length||Object.keys(doc.edges).length)&&!confirm('Start a blank map? Save project first if you want a separate backup. Undo can restore this map.'))return;checkpoint();doc=blank();selected=null;clearRegion();$('name').value=doc.name;changed();};
 $('undo').onclick=()=>{doc=history.back(doc);selected=null;$('name').value=doc.name;changed();};$('redo').onclick=()=>{doc=history.forward(doc);selected=null;changed();};
 function png(c){return new Promise(resolve=>c.toBlob(resolve,'image/png'));}
@@ -205,10 +209,10 @@ function updateStairPreview(p){stairPreview=planStairs(doc,pointer.stairStart,{x
 function updatePierPreview(p){pierPreview=planPier(doc,pointer.pierStart,p,{width:Number($('brush').value),level:Number($('level').value),catalog});status(pierPreview.message);}
 canvas.onpointerleave=()=>{if(!pointer)hover=null;};canvas.oncontextmenu=e=>e.preventDefault();canvas.onpointerdown=e=>{if(walk){urban.handlePointer(e);return;}if(tool==='place'&&loadingAsset){status('Artwork is loading. Please place it when ready.');return;}canvas.focus();canvas.setPointerCapture(e.pointerId);const p=world(e);hover={x:Math.floor(p.x/64),y:Math.floor(p.y/64),p,face:hitCliff(doc,screen(e))};if(pendingAttach){if(hover.face){checkpoint();attach(pendingAttach,hover.face);const target=pendingAttach;pendingAttach=null;select(target);changed();}else status('Click the vertical rock face to attach the selected asset.');return;}if(tool==='place'&&$('mountSurface').value==='cliff'&&!hover.face){status('Point at a vertical south-facing cliff face to attach this asset.');return;}pointer={last:{x:e.clientX,y:e.clientY},pan:e.button!==0||tool==='hand'||keys.has(' '),seen:new Set(),node:null};if(pointer.pan)return;if(['fence','gate'].includes(tool)&&$('barrier').value==='music-square'){pointer.musicWall=true;paintMusicWall(p);return;}if(['fillWater','fillLand'].includes(tool)){pointer.terrainFill=true;if($('heightView').value!=='plan'&&hover.face){status(tool==='fillLand'?'Click a flat ground or water surface to fill with the selected material.':'Click a flat ground surface to fill with water.');return;}fillTerrainAt(p);return;}if(tool==='pier'){selected=null;pointer.pierStart={...p};updatePierPreview(p);return;}if(tool==='steps'){selected=null;pointer.stairStart={x:Math.floor(p.x/64),y:Math.floor(p.y/64)};updateStairPreview(p);return;}if(tool==='region'){selected=null;if($('selectionShape').value==='freeform'){pointer.regionPoints=[{x:p.x,y:p.y}];region=regionFromPolygon(pointer.regionPoints,{preview:true});}else{pointer.regionStart={x:Math.floor(p.x/64),y:Math.floor(p.y/64)};region=regionBetween(pointer.regionStart,pointer.regionStart);}showRegion();return;}if(!['round','ground','blend','organic'].includes(tool))checkpoint();if(tool==='select'){select(pick(screen(e)));if(selected)pointer.offset={x:p.x-selected.x,y:p.y-selected.y};}if(tool==='place'){const o=placement(p);if(o){doc.objects.push(o);select(o);}}if(tool==='spawn')doc.spawn={x:p.x,y:p.y};paint(p);if(!['round','ground','blend','organic'].includes(tool))changed();};
 canvas.onpointermove=e=>{if(walk)return;const p=world(e);hover={x:Math.floor(p.x/64),y:Math.floor(p.y/64),p,face:hitCliff(doc,screen(e))};$('hoverLevel').textContent=`Level ${Math.round(height(doc,hover.p.x,hover.p.y)/48*10)/10}`;if(!pointer)return;if(pointer.pan){cam.x-=(e.clientX-pointer.last.x)/cam.zoom;cam.y-=(e.clientY-pointer.last.y)/cam.zoom;pointer.last={x:e.clientX,y:e.clientY};}else if(pointer.musicWall){paintMusicWall(p);}else if(pointer.terrainFill){return;}else if(pointer.pierStart){updatePierPreview(p);}else if(pointer.stairStart){updateStairPreview(p);}else if(pointer.regionPoints){updateLasso(p);}else if(pointer.regionStart){region=regionBetween(pointer.regionStart,{x:Math.floor(p.x/64),y:Math.floor(p.y/64)});showRegion();}else{paint(p);if(!['round','ground','blend','organic'].includes(tool))changed();}};canvas.onpointerup=e=>{if(pointer?.musicWall&&!pointer.pan)paintMusicWall(world(e));if(pointer&&!pointer.pan&&['ground','blend','organic'].includes(tool))groundStroke(world(e),true);if(pointer?.regionPoints)updateLasso(world(e),true);if(pointer?.pierStart){updatePierPreview(world(e));if(pierPreview.valid&&pierPreview.edits.length){checkpoint();for(const[k,a]of pierPreview.edits)doc.cells[k]=a;changed();}else status(pierPreview.message);}if(pointer?.stairStart){updateStairPreview(world(e));if(stairPreview.valid){checkpoint();for(const[k,a]of stairPreview.edits)doc.cells[k]=a;changed();}else status(stairPreview.message);}pointer=null;stairPreview=null;pierPreview=null;};canvas.onpointercancel=()=>{pointer=null;stairPreview=null;pierPreview=null;if(region?.preview)clearRegion();};canvas.onwheel=e=>{e.preventDefault();if(walk&&urban.active){urban.zoom(e.deltaY);return;}const before=screen(e);cam.zoom=Math.max(.035,Math.min(2,cam.zoom*Math.exp(-e.deltaY*.001)));const after=screen(e);cam.x+=before.x-after.x;cam.y+=before.y-after.y;},{passive:false};
-$('play').onclick=async()=>{try{clearTimeout(saveTimer);if(!db)db=await openDatabase();await saveProject(db,doc);dirty=false;location.href='../?map=builder';}catch(e){status('Could not save for play: '+e.message);}};
+$('play').onclick=async()=>{if(recovery.writeBlocked){await recovery.open('The existing saved data is protected. Restore or download a map before using Play.');return;}try{clearTimeout(saveTimer);if(!db)db=await openDatabase();await saveProject(db,doc);dirty=false;location.href='../?map=builder';}catch(e){status('Could not save for play: '+e.message);}};
 $('fit').onclick=()=>{cam.x=COLS*32;cam.y=ROWS*32;cam.zoom=Math.min(canvas.clientWidth/(COLS*64),canvas.clientHeight/(ROWS*64))*.95;};
 function toggleWalk(){walk=!walk;if(!walk)urban.reset();keys.clear();if(walk){try{player=findStart(doc,catalog);}catch(e){walk=false;status(e.message);return;}cam.zoom=.8;canvas.focus();}$('mapTools').hidden=walk;$('mapTools').style.display=walk?'none':'';$('heightView').disabled=walk;$('heightLegend').hidden=walk||$('heightView').value==='art';$('walk').textContent=walk?'Stop walk test':'Walk test';$('hint').textContent=walk?'WASD / arrows · Shift run · E enter / interact · Escape back':'Drag to paint · right drag to pan · wheel to zoom';}$('walk').onclick=toggleWalk;
 window.onkeydown=e=>{if(['INPUT','SELECT','TEXTAREA'].includes(document.activeElement.tagName))return;if(walk&&urban.keydown(e)){keys.clear();return;}keys.add(e.key.toLowerCase());if(['ArrowUp','ArrowDown','ArrowLeft','ArrowRight',' '].includes(e.key))e.preventDefault();if(e.key==='Escape'){pendingAttach=null;pointer=null;stairPreview=null;pierPreview=null;if(walk)toggleWalk();else clearRegion();}if((e.ctrlKey||e.metaKey)&&e.key==='z'){e.preventDefault();$('undo').click();}if(e.key==='Delete'&&!walk)$('delete').click();if(walk&&e.key.toLowerCase()==='e'&&!e.repeat){if(toggleGate(doc,player))changed();}};window.onkeyup=e=>keys.delete(e.key.toLowerCase());window.onblur=()=>keys.clear();window.addEventListener('beforeunload',e=>{if(dirty){e.preventDefault();e.returnValue='';}});
 let last=performance.now();function frame(now){const dt=Math.min(.04,(now-last)/1000);last=now;if(hover){const levelText=`Level ${Math.round(height(doc,hover.p.x,hover.p.y)/48*10)/10}`;if($('hoverLevel').textContent!==levelText)$('hoverLevel').textContent=levelText;}const surface=resizeSurface(canvas,{planning:!walk&&$('heightView').value==='plan'});if(npcsVisible)ambient.update(dt,now/1000);if(walk){urban.tick();if(urban.frame(ctx,keys,dt,now,surface.width,surface.height,(c,x,y,state)=>character.drawPlayer(c,avatar,{x,y,...state},now/1000))){requestAnimationFrame(frame);return;}const motion=movePlayer(doc,player,urban.blocked?new Set():keys,dt,catalog);if(motion.facing)facing=motion.facing;walking=motion.walking;walkPhase=(walkPhase+motion.surfaceDistance*GAIT_PER_PIXEL)%(Math.PI*2);follow(cam,player,doc);}footprints.update([...(walk?[{id:'__player__',...player,walking}]:[]),...(npcsVisible&&(walk||$('heightView').value==='art')?ambient.actors:[])],now/1000);render(ctx,pierPreview?.preview||stairPreview?.preview||doc,cam,surface.width,surface.height,{terrainRevision,night,time:now/1000,npcs:npcsVisible&&(walk||$('heightView').value==='art')?ambient.actors:[],drawNPC:ambient.draw,drawFootprints:(c,d,t)=>footprints.draw(c,d,t),heightView:walk?'art':$('heightView').value,grid:$('grid').checked,collision:$('showCollision').checked,selected:walk?null:selected,region:walk?null:region,hover:walk||['ground','blend','organic'].includes(tool)?null:hover,brush:!walk&&hover&&['ground','blend','organic'].includes(tool)?{x:hover.p.x,y:hover.p.y,size:squareGround()?groundWidth()*64:groundOptions().size,hardness:tool==='organic'?0:squareGround()?1:groundOptions().hardness,organic:tool==='organic',blend:tool==='blend',shape:squareGround()?'square':'round'}:null,ghost:!walk&&pendingAttach&&hover?.face?attach({...pendingAttach},hover.face):!walk&&tool==='place'&&hover?placement(hover.p):null,player:walk?player:null,drawPlayer:(c,x,y)=>character.drawPlayer(c,avatar,{x,y,facing,walking,phase:walkPhase},now/1000)});if(!walk){drawStairGuide(ctx,stairPreview,cam,surface.width,surface.height,$('heightView').value==='plan');if(pierPreview)drawPierGuide(ctx,pierPreview,cam,surface.width,surface.height,$('heightView').value==='plan');drawMusicWallGuide(ctx,surface.width,surface.height);}requestAnimationFrame(frame);}requestAnimationFrame(frame);
 // Read-only hooks support browser verification without modifying arcade progress.
-window.townBuilder={get project(){return doc;},catalog,cam,urban,ambient,footprints,get night(){return night;},get npcsVisible(){return npcsVisible;},get region(){return region;},get tool(){return tool;}};
+window.townBuilder={get project(){return doc;},catalog,cam,urban,ambient,footprints,get night(){return night;},get npcsVisible(){return npcsVisible;},get region(){return region;},get tool(){return tool;},recovery};

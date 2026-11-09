@@ -1,6 +1,6 @@
-import {COLS,ROWS,TILE,RISE,cell,key,height} from '../world/model.mjs?v=city-residents-1';
-import {roundedUnder,curveUnder} from '../world/round-geometry.mjs?v=city-residents-1';
-import {readPaint,encodePaint,materialKey} from '../world/ground-paint.mjs?v=city-residents-1';
+import {COLS,ROWS,TILE,RISE,cell,key,height} from '../world/model.mjs?v=map-recovery-1';
+import {roundedUnder,curveUnder} from '../world/round-geometry.mjs?v=map-recovery-1';
+import {readPaint,encodePaint,materialKey} from '../world/ground-paint.mjs?v=map-recovery-1';
 
 // Rounded terrain can contain two physical floors inside one tile. Small local
 // components keep a lower corner from joining another basin across high land.

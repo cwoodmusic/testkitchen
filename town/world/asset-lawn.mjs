@@ -1,6 +1,6 @@
-import {assetImage} from './asset-color.mjs?v=city-residents-1';
-import {readPaint} from './ground-paint.mjs?v=city-residents-1';
-import {roundedUnder,curveUnder} from './round-geometry.mjs?v=city-residents-1';
+import {assetImage} from './asset-color.mjs?v=map-recovery-1';
+import {readPaint} from './ground-paint.mjs?v=map-recovery-1';
+import {roundedUnder,curveUnder} from './round-geometry.mjs?v=map-recovery-1';
 
 const cache=new WeakMap();
 export const supportsLawnReveal=a=>a.id==='music-square'||a.id.startsWith('estate-');

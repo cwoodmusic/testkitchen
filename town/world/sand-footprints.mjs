@@ -1,6 +1,6 @@
-import {cell,height,COLS,ROWS,TILE} from './model.mjs?v=city-residents-1';
-import {roundedUnder,curveUnder} from './round-geometry.mjs?v=city-residents-1';
-import {readPaint,PAINT_GRID,PAINT_STEP} from './ground-paint.mjs?v=city-residents-1';
+import {cell,height,COLS,ROWS,TILE} from './model.mjs?v=map-recovery-1';
+import {roundedUnder,curveUnder} from './round-geometry.mjs?v=map-recovery-1';
+import {readPaint,PAINT_GRID,PAINT_STEP} from './ground-paint.mjs?v=map-recovery-1';
 
 const fields=new WeakMap(),EPS=1e-7;
 const valid=p=>p&&Number.isFinite(p.x)&&Number.isFinite(p.y);

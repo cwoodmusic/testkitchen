@@ -1,4 +1,4 @@
-import {blocked,surfaceAt,COLS,ROWS,TILE} from './model.mjs?v=city-residents-1';
+import {blocked,surfaceAt,COLS,ROWS,TILE} from './model.mjs?v=map-recovery-1';
 
 const WORLD_W=COLS*TILE,WORLD_H=ROWS*TILE;
 const cardinal=['down','left','up','right'];

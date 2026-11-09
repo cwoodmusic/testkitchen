@@ -1,4 +1,4 @@
-import {blocked,surfaceAt,cell,segment,COLS,ROWS,TILE} from './model.mjs?v=city-residents-1';
+import {blocked,surfaceAt,cell,segment,COLS,ROWS,TILE} from './model.mjs?v=map-recovery-1';
 
 const BIN=512,MARGIN=96,worldWidth=COLS*TILE,worldHeight=ROWS*TILE;
 const center=(x,y)=>({x:x*TILE+TILE/2,y:y*TILE+TILE/2});
