@@ -1,4 +1,4 @@
-import {decorDefinitions} from './decor-definitions.mjs?v=picnic-beach-1';
+import {decorDefinitions} from './decor-definitions.mjs?v=overview-fast-1';
 const image=path=>new Promise((resolve,reject)=>{const i=new Image();i.onload=()=>resolve(i);i.onerror=()=>reject(Error('Artwork could not load: '+path));i.src=new URL('../assets/decor/'+path,import.meta.url);});
 export async function registerDecor(catalog){const response=await fetch(new URL('../assets/decor/atlas.json',import.meta.url));if(!response.ok)throw Error('Decoration atlas metadata unavailable.');const sheets=await response.json();if(sheets.length!==16)throw Error('Decoration pack needs all 16 sheets.');const thumbs=await Promise.all(sheets.map(s=>image(s.thumb))),full=new Map(),pending=new Map();
  function ensure(s){if(full.has(s.family))return Promise.resolve(full.get(s.family));if(!pending.has(s.family))pending.set(s.family,image(s.file).then(i=>{full.set(s.family,i);pending.delete(s.family);return i;},e=>{pending.delete(s.family);throw e;}));return pending.get(s.family);}

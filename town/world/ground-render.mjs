@@ -1,11 +1,12 @@
-import {PAINT_GRID,PAINT_STEP,readPaint,materialKey} from './ground-paint.mjs?v=picnic-beach-1';
-import {sources,catalog} from './catalog.mjs?v=picnic-beach-1';
-import {cell,height} from './model.mjs?v=picnic-beach-1';
-import {drawPaving,drawPavingMaterial} from './paving.mjs?v=picnic-beach-1';
-import {groundTextures} from './ground-textures.mjs?v=picnic-beach-1';
-import {drawAnimatedWater} from './water-motion.mjs?v=picnic-beach-1';
+import {PAINT_GRID,PAINT_STEP,readPaint,materialKey} from './ground-paint.mjs?v=overview-fast-1';
+import {sources,catalog} from './catalog.mjs?v=overview-fast-1';
+import {cell,height,terrainView} from './model.mjs?v=overview-fast-1';
+import {drawPaving,drawPavingMaterial} from './paving.mjs?v=overview-fast-1';
+import {groundTextures} from './ground-textures.mjs?v=overview-fast-1';
+import {drawAnimatedWater} from './water-motion.mjs?v=overview-fast-1';
 
 const tiles=new WeakMap(),fields=new WeakMap(),legacyFields=new Map();
+export function invalidateGroundCache(d,paints=[]){tiles.delete(d);tiles.delete(terrainView(d));for(const paint of paints)fields.delete(paint);}
 function canvas(size){const c=document.createElement('canvas');c.width=c.height=size;return c;}
 const materialBuffer=canvas(64),mask=canvas(PAINT_GRID+2),blendBuffer=canvas(64);
 const materialContext=materialBuffer.getContext('2d'),maskContext=mask.getContext('2d'),blendContext=blendBuffer.getContext('2d');

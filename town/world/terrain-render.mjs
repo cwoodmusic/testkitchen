@@ -1,13 +1,15 @@
-import {shadeLowerGround,drawTerrainRims} from './edge-shading.mjs?v=picnic-beach-1';
-import {drawRoundUnder,drawRoundCliff} from './round-render.mjs?v=picnic-beach-1';
-import {clipCurves} from './round-geometry.mjs?v=picnic-beach-1';
-import {drawGround,groundFrameKey,groundTexture} from './ground-render.mjs?v=picnic-beach-1';
-import {drawCliff,drawStairs} from './construction.mjs?v=picnic-beach-1';
-import {RISE,COLS,ROWS,cell,terrainView} from './model.mjs?v=picnic-beach-1';
-import {sources} from './catalog.mjs?v=picnic-beach-1';
-import {waterRimSegments} from './water-rim.mjs?v=picnic-beach-1';
-import {drawPier,drawPierSubmerged} from './piers.mjs?v=picnic-beach-1';
-import {drawSidewalkCurbs} from './sidewalk-curbs.mjs?v=picnic-beach-1';
+import {shadeLowerGround,drawTerrainRims} from './edge-shading.mjs?v=overview-fast-1';
+import {drawRoundUnder,drawRoundCliff} from './round-render.mjs?v=overview-fast-1';
+import {clipCurves} from './round-geometry.mjs?v=overview-fast-1';
+import {drawGround,groundFrameKey,groundTexture} from './ground-render.mjs?v=overview-fast-1';
+import {drawCliff,drawStairs} from './construction.mjs?v=overview-fast-1';
+import {RISE,COLS,ROWS,cell,terrainView} from './model.mjs?v=overview-fast-1';
+import {sources} from './catalog.mjs?v=overview-fast-1';
+import {waterRimSegments} from './water-rim.mjs?v=overview-fast-1';
+import {drawPier,drawPierSubmerged} from './piers.mjs?v=overview-fast-1';
+import {drawSidewalkCurbs} from './sidewalk-curbs.mjs?v=overview-fast-1';
+import {drawOverviewTerrain} from './overview-terrain.mjs?v=overview-fast-1';
+import {prepareOverviewRuns} from './overview-runs.mjs?v=overview-fast-1';
 const lawns=new WeakMap();
 function drawWaterRim(c,d,x,y,X,Y){
  c.strokeStyle='#97b9a1';c.lineWidth=5;
@@ -22,7 +24,8 @@ function drawBridge(c,d,a,x,y,X,Y){
   c.beginPath();c.moveTo(X+(dx>0?64:0),Y+(dy>0?64:0)-28);c.lineTo(X+(dx?dx>0?64:0:64),Y+(dy?dy>0?64:0:64)-28);c.stroke();
  }
 }
-export function drawTerrain(c,d,{x0,x1,y0,y1},opts={}){
+export function drawTerrain(c,d,bounds,opts={}){if(!drawOverviewTerrain(c,d,bounds,opts,drawRawTerrain))drawRawTerrain(c,d,bounds,opts);}
+export function drawRawTerrain(c,d,{x0,x1,y0,y1},opts={}){
  // All ground/cliff helpers see the untouched floor below raised piers.
  const scene=d;d=terrainView(d);
  // A continuous ground plane prevents the sky clear color appearing through
@@ -30,8 +33,10 @@ export function drawTerrain(c,d,{x0,x1,y0,y1},opts={}){
  if(!lawns.has(c))lawns.set(c,c.createPattern(sources.ground[0],'repeat'));
  c.fillStyle=lawns.get(c);c.fillRect(0,0,COLS*64,ROWS*64);
  const frameKey=groundFrameKey(d);
+ const runs=opts.overviewBake&&!opts.grid?prepareOverviewRuns(d,{x0,x1,y0,y1},surface=>surface==='dirt'?sources.ground[2]:groundTexture(surface)):null;
  for(let y=y0;y<y1;y++){
   for(let x=x0;x<x1;x++){
+   if(runs){const end=runs.draw(c,x,y);if(end>x){x=end-1;continue;}}
    const a=cell(d,x,y),X=x*64,Y=y*64,z=a.level*RISE;
    if(a.stairs){
     // Stairs are terrain surfaces, not a final overlay. The next southern row

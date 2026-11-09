@@ -47,14 +47,14 @@ try:
         # Every adjacent storey is connected by a real stair interaction.
         for floor in range(1,15):
             page.evaluate('''async()=>{
-              const {getInterior}=await import('/town/world/urban-interiors.mjs?v=picnic-beach-1');
+              const {getInterior}=await import('/town/world/urban-interiors.mjs?v=overview-fast-1');
               const z=getInterior(townBuilder.urban.scene).zones.find(z=>z.action==='stairs-up');
               if(!z)throw Error('Upstairs connection missing');townBuilder.urban.player.x=z.x+z.w/2;townBuilder.urban.player.y=z.y+z.h/2;
             }''')
             page.keyboard.press('e')
             page.wait_for_function('(floor)=>townBuilder.urban.scene?.floor===floor', arg=floor+1)
         page.evaluate('''async()=>{
-          const {getInterior}=await import('/town/world/urban-interiors.mjs?v=picnic-beach-1');
+          const {getInterior}=await import('/town/world/urban-interiors.mjs?v=overview-fast-1');
           const z=getInterior(townBuilder.urban.scene).zones.find(z=>z.action==='stairs-down');
           townBuilder.urban.player.x=z.x+z.w/2;townBuilder.urban.player.y=z.y+z.h/2;
         }''')
@@ -67,7 +67,7 @@ try:
         page.locator('.urban-floors button').filter(has_text='15  Your apartment').click()
         page.wait_for_function('townBuilder.urban.scene?.floor===15')
         page.evaluate('''async()=>{
-          const {getInterior}=await import('/town/world/urban-interiors.mjs?v=picnic-beach-1');
+          const {getInterior}=await import('/town/world/urban-interiors.mjs?v=overview-fast-1');
           const z=getInterior(townBuilder.urban.scene).zones.find(z=>z.action==='room'&&z.resident==='player');
           if(!z)throw Error('Player door missing');townBuilder.urban.player.x=z.x+z.w/2;townBuilder.urban.player.y=z.y+z.h/2;
         }''')
@@ -92,7 +92,7 @@ try:
         page.wait_for_function('townGame.urban.scene?.kind==="lobby"')
         page.evaluate('townGame.urban.goFloor(2)')
         resident = page.evaluate('''async()=>{
-          const {getInterior}=await import('/town/world/urban-interiors.mjs?v=picnic-beach-1');
+          const {getInterior}=await import('/town/world/urban-interiors.mjs?v=overview-fast-1');
           const z=getInterior(townGame.urban.scene).zones.find(z=>z.action==='room');
           townGame.urban.player.x=z.x+z.w/2;townGame.urban.player.y=z.y+z.h/2;return z.resident;
         }''')
@@ -130,8 +130,8 @@ try:
         page.get_by_role('button', name='Furnish apartment', exact=True).click()
         page.locator('.urban-catalog button').filter(has_text=item['name']).click()
         point = page.evaluate('''async item=>{
-          const {getInterior,apartmentDecorBounds}=await import('/town/world/urban-interiors.mjs?v=picnic-beach-1');
-          const {roomItemBoxes}=await import('/town/world/urban-room.mjs?v=picnic-beach-1');
+          const {getInterior,apartmentDecorBounds}=await import('/town/world/urban-interiors.mjs?v=overview-fast-1');
+          const {roomItemBoxes}=await import('/town/world/urban-room.mjs?v=overview-fast-1');
           const scene=townBuilder.urban.scene,a=townBuilder.catalog.get(item.asset),solids=getInterior(scene).solids;
           const hit=(a,b)=>a.x<b.x+b.w&&a.x+a.w>b.x&&a.y<b.y+b.h&&a.y+a.h>b.y;
           for(const b of apartmentDecorBounds(scene))for(let y=b.y+a.h+24;y<b.y+b.h-32;y+=32)for(let x=b.x+a.w/2+24;x<b.x+b.w-a.w/2-24;x+=32){

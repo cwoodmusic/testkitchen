@@ -1,10 +1,10 @@
-import {catalog,preparePlacedArt,render,resizeSurface,findStart,movePlayer,toggleGate,follow,PLAYER_SCALE,GAIT_PER_PIXEL} from './runtime.mjs?v=picnic-beach-1';
-import {loadProject} from './storage.mjs?v=picnic-beach-1';
-import {createUrbanController} from './urban.mjs?v=picnic-beach-1';
-import {createUrbanTour} from './urban-tour.mjs?v=picnic-beach-1';
-import {createSandFootprints} from './sand-footprints.mjs?v=picnic-beach-1';
-import {createAmbientNPCs} from './ambient-npcs.mjs?v=picnic-beach-1';
-import {readNightPreference,saveNightPreference} from './lighting-settings.mjs?v=picnic-beach-1';
+import {catalog,preparePlacedArt,render,resizeSurface,findStart,movePlayer,toggleGate,follow,PLAYER_SCALE,GAIT_PER_PIXEL} from './runtime.mjs?v=overview-fast-1';
+import {loadProject} from './storage.mjs?v=overview-fast-1';
+import {createUrbanController} from './urban.mjs?v=overview-fast-1';
+import {createUrbanTour} from './urban-tour.mjs?v=overview-fast-1';
+import {createSandFootprints} from './sand-footprints.mjs?v=overview-fast-1';
+import {createAmbientNPCs} from './ambient-npcs.mjs?v=overview-fast-1';
+import {readNightPreference,saveNightPreference} from './lighting-settings.mjs?v=overview-fast-1';
 const canvas=document.getElementById('world'),route=new URLSearchParams(location.search),tour=route.get('map')!=='builder',preview=route.get('urban')==='1';
 document.querySelectorAll('body > :not(#world):not(script)').forEach(e=>e.remove());
 const header=document.createElement('header'),title=document.createElement('h1'),nav=document.createElement('nav');
@@ -37,7 +37,7 @@ if(!doc){title.textContent=loadError?'Could not load town':'No saved builder tow
   const dt=Math.min(.04,(now-last)/1000);last=now;const {ctx,width,height}=resizeSurface(canvas);urban.tick();if(!urban.active)ambient.update(dt,now/1000);
   if(!urban.frame(ctx,keys,dt,now,width,height,(c,x,y,state)=>drawPlayer(c,x,y,state,now))){
    if(!urban.blocked){const motion=movePlayer(doc,player,keys,dt,catalog);if(motion.facing)facing=motion.facing;walking=motion.walking;walkPhase=(walkPhase+motion.surfaceDistance*GAIT_PER_PIXEL)%(Math.PI*2);}
-   footprints.update([{id:'__player__',...player,walking},...ambient.actors],now/1000);follow(cam,player,doc);render(ctx,doc,cam,width,height,{night,time:now/1000,npcs:ambient.actors,drawNPC:ambient.draw,drawFootprints:(c,d,t)=>footprints.draw(c,d,t),player,drawPlayer:(c,x,y)=>drawPlayer(c,x,y,undefined,now)});
+   footprints.update([{id:'__player__',...player,walking},...ambient.actors],now/1000);follow(cam,player,doc);render(ctx,doc,cam,width,height,{terrainRevision:0,night,time:now/1000,npcs:ambient.actors,drawNPC:ambient.draw,drawFootprints:(c,d,t)=>footprints.draw(c,d,t),player,drawPlayer:(c,x,y)=>drawPlayer(c,x,y,undefined,now)});
   }requestAnimationFrame(frame);
  }requestAnimationFrame(frame);window.townGame={project:doc,player,cam,catalog,urban,ambient,footprints,get night(){return night;}};
 }

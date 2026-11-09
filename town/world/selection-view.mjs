@@ -1,5 +1,5 @@
-import {cell,height} from './model.mjs?v=picnic-beach-1';
-import {selectionContains} from './selection.mjs?v=picnic-beach-1';
+import {cell,height} from './model.mjs?v=overview-fast-1';
+import {selectionContains} from './selection.mjs?v=overview-fast-1';
 
 export function drawSelection(c,d,r,{plan=false,zoom=1,bounds={x0:0,y0:0,x1:256,y1:192}}={}){
  if(!r)return;c.save();c.fillStyle='#f0cb5940';c.strokeStyle='#ffe29b';c.lineWidth=2/zoom;

@@ -1,34 +1,36 @@
-import {groundTexture} from '../world/ground-render.mjs?v=picnic-beach-1';
-import {assetFilter} from '../world/asset-color.mjs?v=picnic-beach-1';
-import {curveUnder} from '../world/round-geometry.mjs?v=picnic-beach-1';
-import {roundTerrain} from './round-terrain.mjs?v=picnic-beach-1';
-import {paintGround} from './ground-brush.mjs?v=picnic-beach-1';
-import {planWaterFill} from './water-fill.mjs?v=picnic-beach-1';
-import {planLandFill} from './land-fill.mjs?v=picnic-beach-1';
-import {planOrganicEdges} from './organic-edges.mjs?v=picnic-beach-1';
-import {createSandFootprints} from '../world/sand-footprints.mjs?v=picnic-beach-1';
-import {createAmbientNPCs} from '../world/ambient-npcs.mjs?v=picnic-beach-1';
-import {readNightPreference,saveNightPreference} from '../world/lighting-settings.mjs?v=picnic-beach-1';
-import {readNPCPreference,saveNPCPreference} from './preview-settings.mjs?v=picnic-beach-1';
-import {hitCliff,mountPose,attach,cliffFace} from '../world/cliff-mount.mjs?v=picnic-beach-1';
-import {pavingTexture} from '../world/paving.mjs?v=picnic-beach-1';
-import {planStairs,drawStairGuide} from './stairs.mjs?v=picnic-beach-1';
-import {planPier,drawPierGuide} from './piers.mjs?v=picnic-beach-1';
-import {levelColors} from '../world/elevation-view.mjs?v=picnic-beach-1';
-import {regionBetween,regionFromPolygon,regionHeightEdits,selectionCount} from './region.mjs?v=picnic-beach-1';
-import {blank,cell,height,key,connect,segment,clearStairs,parseProject,History,surfaces,barriers,COLS,ROWS} from '../world/model.mjs?v=picnic-beach-1';
-import {catalog,sources,preparePlacedArt} from '../world/catalog.mjs?v=picnic-beach-1';
-import {render,resizeSurface,findStart,movePlayer,toggleGate,follow,PLAYER_SCALE,GAIT_PER_PIXEL} from '../world/runtime.mjs?v=picnic-beach-1';
-import {openDatabase,saveProject} from '../world/storage.mjs?v=picnic-beach-1';
+import {groundTexture} from '../world/ground-render.mjs?v=overview-fast-1';
+import {assetFilter} from '../world/asset-color.mjs?v=overview-fast-1';
+import {curveUnder} from '../world/round-geometry.mjs?v=overview-fast-1';
+import {roundTerrain} from './round-terrain.mjs?v=overview-fast-1';
+import {paintGround} from './ground-brush.mjs?v=overview-fast-1';
+import {planWaterFill} from './water-fill.mjs?v=overview-fast-1';
+import {planLandFill} from './land-fill.mjs?v=overview-fast-1';
+import {planOrganicEdges} from './organic-edges.mjs?v=overview-fast-1';
+import {createSandFootprints} from '../world/sand-footprints.mjs?v=overview-fast-1';
+import {createAmbientNPCs} from '../world/ambient-npcs.mjs?v=overview-fast-1';
+import {readNightPreference,saveNightPreference} from '../world/lighting-settings.mjs?v=overview-fast-1';
+import {readNPCPreference,saveNPCPreference} from './preview-settings.mjs?v=overview-fast-1';
+import {hitCliff,mountPose,attach,cliffFace} from '../world/cliff-mount.mjs?v=overview-fast-1';
+import {pavingTexture} from '../world/paving.mjs?v=overview-fast-1';
+import {planStairs,drawStairGuide} from './stairs.mjs?v=overview-fast-1';
+import {planPier,drawPierGuide} from './piers.mjs?v=overview-fast-1';
+import {levelColors} from '../world/elevation-view.mjs?v=overview-fast-1';
+import {regionBetween,regionFromPolygon,regionHeightEdits,selectionCount} from './region.mjs?v=overview-fast-1';
+import {blank,cell,height,key,connect,segment,clearStairs,parseProject,History,surfaces,barriers,COLS,ROWS} from '../world/model.mjs?v=overview-fast-1';
+import {catalog,sources,preparePlacedArt} from '../world/catalog.mjs?v=overview-fast-1';
+import {render,resizeSurface,findStart,movePlayer,toggleGate,follow,PLAYER_SCALE,GAIT_PER_PIXEL} from '../world/runtime.mjs?v=overview-fast-1';
+import {openDatabase,saveProject} from '../world/storage.mjs?v=overview-fast-1';
 import {createZip} from '../../studio/zip.js';
-import {createUrbanController} from '../world/urban.mjs?v=picnic-beach-1';
-import {isUrbanAsset} from '../world/urban-kit.mjs?v=picnic-beach-1';
-import {snapUrbanAsset} from '../world/urban-roads.mjs?v=picnic-beach-1';
-import {musicWallNode,planMusicWall} from '../world/music-wall-geometry.mjs?v=picnic-beach-1';
+import {createUrbanController} from '../world/urban.mjs?v=overview-fast-1';
+import {isUrbanAsset} from '../world/urban-kit.mjs?v=overview-fast-1';
+import {snapUrbanAsset} from '../world/urban-roads.mjs?v=overview-fast-1';
+import {musicWallNode,planMusicWall} from '../world/music-wall-geometry.mjs?v=overview-fast-1';
 const $=id=>document.getElementById(id),canvas=$('map'),ctx=canvas.getContext('2d'),history=new History(),ids=new Set(catalog.keys());let doc=blank(),tool='select',asset=catalog.keys().next().value,selected=null,region=null,hover=null,pointer=null,walk=false,player={...doc.spawn},keys=new Set(),dirty=false,saveTimer,db=null,stairPreview=null,pierPreview=null;
 const character=window.createCodaCharacterRenderer({worldScale:PLAYER_SCALE});let avatar=character.normalizeProfile({}),facing='down',walking=false,walkPhase=0;addEventListener('message',e=>{if(e.source===parent&&e.origin===location.origin&&e.data?.type==='coda-town-state-result'&&e.data.avatar)avatar=character.normalizeProfile(e.data.avatar);});if(parent!==window)parent.postMessage({type:'coda-town-state'},location.origin);
 let assetTicket=0,loadingAsset=false,pendingAttach=null;
 const cam={x:8192,y:6144,zoom:.45};
+// All authored edits advance this hint; previews also carry a distinct document.
+let terrainRevision=0;
 let night=readNightPreference();
 let npcsVisible=readNPCPreference();
 const ambient=createAmbientNPCs({getProject:()=>doc,catalog,getCamera:()=>cam,getViewport:()=>({width:canvas.clientWidth,height:canvas.clientHeight})});
@@ -90,7 +92,7 @@ function showKit(category){$('category').value=category;$('search').value='';lib
 $('urbanKit').onclick=()=>showKit('@urban');$('leisureKit').onclick=()=>showKit('@leisure');$('allAssets').onclick=()=>showKit('');$('search').oninput=library;$('category').onchange=library;
 const initialKit=new URLSearchParams(location.search).get('kit');if(initialKit==='urban')$('category').value='@urban';else if(initialKit==='leisure')$('category').value='@leisure';
 library();
-function changed(){dirty=true;clearTimeout(saveTimer);status('Saving locally…');saveTimer=setTimeout(saveLocal,350);}
+function changed(){terrainRevision++;dirty=true;clearTimeout(saveTimer);status('Saving locally…');saveTimer=setTimeout(saveLocal,350);}
 function checkpoint(){history.record(doc);}
 function chooseMusicWalls(){++assetTicket;loadingAsset=false;selected=null;clearRegion();$('barrier').value='music-square';setTool('fence');status('Music Square stone wall · start a drag near an existing wall or pillar');}
 $('musicWalls').onclick=chooseMusicWalls;
@@ -207,6 +209,6 @@ $('play').onclick=async()=>{try{clearTimeout(saveTimer);if(!db)db=await openData
 $('fit').onclick=()=>{cam.x=COLS*32;cam.y=ROWS*32;cam.zoom=Math.min(canvas.clientWidth/(COLS*64),canvas.clientHeight/(ROWS*64))*.95;};
 function toggleWalk(){walk=!walk;if(!walk)urban.reset();keys.clear();if(walk){try{player=findStart(doc,catalog);}catch(e){walk=false;status(e.message);return;}cam.zoom=.8;canvas.focus();}$('mapTools').hidden=walk;$('mapTools').style.display=walk?'none':'';$('heightView').disabled=walk;$('heightLegend').hidden=walk||$('heightView').value==='art';$('walk').textContent=walk?'Stop walk test':'Walk test';$('hint').textContent=walk?'WASD / arrows · Shift run · E enter / interact · Escape back':'Drag to paint · right drag to pan · wheel to zoom';}$('walk').onclick=toggleWalk;
 window.onkeydown=e=>{if(['INPUT','SELECT','TEXTAREA'].includes(document.activeElement.tagName))return;if(walk&&urban.keydown(e)){keys.clear();return;}keys.add(e.key.toLowerCase());if(['ArrowUp','ArrowDown','ArrowLeft','ArrowRight',' '].includes(e.key))e.preventDefault();if(e.key==='Escape'){pendingAttach=null;pointer=null;stairPreview=null;pierPreview=null;if(walk)toggleWalk();else clearRegion();}if((e.ctrlKey||e.metaKey)&&e.key==='z'){e.preventDefault();$('undo').click();}if(e.key==='Delete'&&!walk)$('delete').click();if(walk&&e.key.toLowerCase()==='e'&&!e.repeat){if(toggleGate(doc,player))changed();}};window.onkeyup=e=>keys.delete(e.key.toLowerCase());window.onblur=()=>keys.clear();window.addEventListener('beforeunload',e=>{if(dirty){e.preventDefault();e.returnValue='';}});
-let last=performance.now();function frame(now){const dt=Math.min(.04,(now-last)/1000);last=now;if(hover){const levelText=`Level ${Math.round(height(doc,hover.p.x,hover.p.y)/48*10)/10}`;if($('hoverLevel').textContent!==levelText)$('hoverLevel').textContent=levelText;}const surface=resizeSurface(canvas,{planning:!walk&&$('heightView').value==='plan'});if(npcsVisible&&!urban.active)ambient.update(dt,now/1000);if(walk){urban.tick();if(urban.frame(ctx,keys,dt,now,surface.width,surface.height,(c,x,y,state)=>character.drawPlayer(c,avatar,{x,y,...state},now/1000))){requestAnimationFrame(frame);return;}const motion=movePlayer(doc,player,urban.blocked?new Set():keys,dt,catalog);if(motion.facing)facing=motion.facing;walking=motion.walking;walkPhase=(walkPhase+motion.surfaceDistance*GAIT_PER_PIXEL)%(Math.PI*2);follow(cam,player,doc);}footprints.update([...(walk?[{id:'__player__',...player,walking}]:[]),...(npcsVisible&&(walk||$('heightView').value==='art')?ambient.actors:[])],now/1000);render(ctx,pierPreview?.preview||stairPreview?.preview||doc,cam,surface.width,surface.height,{night,time:now/1000,npcs:npcsVisible&&(walk||$('heightView').value==='art')?ambient.actors:[],drawNPC:ambient.draw,drawFootprints:(c,d,t)=>footprints.draw(c,d,t),heightView:walk?'art':$('heightView').value,grid:$('grid').checked,collision:$('showCollision').checked,selected:walk?null:selected,region:walk?null:region,hover:walk||['ground','blend','organic'].includes(tool)?null:hover,brush:!walk&&hover&&['ground','blend','organic'].includes(tool)?{x:hover.p.x,y:hover.p.y,size:squareGround()?groundWidth()*64:groundOptions().size,hardness:tool==='organic'?0:squareGround()?1:groundOptions().hardness,organic:tool==='organic',blend:tool==='blend',shape:squareGround()?'square':'round'}:null,ghost:!walk&&pendingAttach&&hover?.face?attach({...pendingAttach},hover.face):!walk&&tool==='place'&&hover?placement(hover.p):null,player:walk?player:null,drawPlayer:(c,x,y)=>character.drawPlayer(c,avatar,{x,y,facing,walking,phase:walkPhase},now/1000)});if(!walk){drawStairGuide(ctx,stairPreview,cam,surface.width,surface.height,$('heightView').value==='plan');if(pierPreview)drawPierGuide(ctx,pierPreview,cam,surface.width,surface.height,$('heightView').value==='plan');drawMusicWallGuide(ctx,surface.width,surface.height);}requestAnimationFrame(frame);}requestAnimationFrame(frame);
+let last=performance.now();function frame(now){const dt=Math.min(.04,(now-last)/1000);last=now;if(hover){const levelText=`Level ${Math.round(height(doc,hover.p.x,hover.p.y)/48*10)/10}`;if($('hoverLevel').textContent!==levelText)$('hoverLevel').textContent=levelText;}const surface=resizeSurface(canvas,{planning:!walk&&$('heightView').value==='plan'});if(npcsVisible&&!urban.active)ambient.update(dt,now/1000);if(walk){urban.tick();if(urban.frame(ctx,keys,dt,now,surface.width,surface.height,(c,x,y,state)=>character.drawPlayer(c,avatar,{x,y,...state},now/1000))){requestAnimationFrame(frame);return;}const motion=movePlayer(doc,player,urban.blocked?new Set():keys,dt,catalog);if(motion.facing)facing=motion.facing;walking=motion.walking;walkPhase=(walkPhase+motion.surfaceDistance*GAIT_PER_PIXEL)%(Math.PI*2);follow(cam,player,doc);}footprints.update([...(walk?[{id:'__player__',...player,walking}]:[]),...(npcsVisible&&(walk||$('heightView').value==='art')?ambient.actors:[])],now/1000);render(ctx,pierPreview?.preview||stairPreview?.preview||doc,cam,surface.width,surface.height,{terrainRevision,night,time:now/1000,npcs:npcsVisible&&(walk||$('heightView').value==='art')?ambient.actors:[],drawNPC:ambient.draw,drawFootprints:(c,d,t)=>footprints.draw(c,d,t),heightView:walk?'art':$('heightView').value,grid:$('grid').checked,collision:$('showCollision').checked,selected:walk?null:selected,region:walk?null:region,hover:walk||['ground','blend','organic'].includes(tool)?null:hover,brush:!walk&&hover&&['ground','blend','organic'].includes(tool)?{x:hover.p.x,y:hover.p.y,size:squareGround()?groundWidth()*64:groundOptions().size,hardness:tool==='organic'?0:squareGround()?1:groundOptions().hardness,organic:tool==='organic',blend:tool==='blend',shape:squareGround()?'square':'round'}:null,ghost:!walk&&pendingAttach&&hover?.face?attach({...pendingAttach},hover.face):!walk&&tool==='place'&&hover?placement(hover.p):null,player:walk?player:null,drawPlayer:(c,x,y)=>character.drawPlayer(c,avatar,{x,y,facing,walking,phase:walkPhase},now/1000)});if(!walk){drawStairGuide(ctx,stairPreview,cam,surface.width,surface.height,$('heightView').value==='plan');if(pierPreview)drawPierGuide(ctx,pierPreview,cam,surface.width,surface.height,$('heightView').value==='plan');drawMusicWallGuide(ctx,surface.width,surface.height);}requestAnimationFrame(frame);}requestAnimationFrame(frame);
 // Read-only hooks support browser verification without modifying arcade progress.
 window.townBuilder={get project(){return doc;},catalog,cam,urban,ambient,footprints,get night(){return night;},get npcsVisible(){return npcsVisible;},get region(){return region;},get tool(){return tool;}};

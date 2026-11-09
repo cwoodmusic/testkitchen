@@ -1,6 +1,6 @@
-import {blocked,height,surfaceAt,cell,segment,COLS,ROWS,TILE} from './model.mjs?v=picnic-beach-1';
-import {movePlayer} from './physics.mjs?v=picnic-beach-1';
-import {WALK_SPEED,GAIT_PER_PIXEL,PLAYER_SCALE} from './player-settings.mjs?v=picnic-beach-1';
+import {blocked,height,surfaceAt,cell,segment,COLS,ROWS,TILE} from './model.mjs?v=overview-fast-1';
+import {movePlayer} from './physics.mjs?v=overview-fast-1';
+import {WALK_SPEED,GAIT_PER_PIXEL,PLAYER_SCALE} from './player-settings.mjs?v=overview-fast-1';
 
 export const AMBIENT_RESIDENTS=Object.freeze(['bach','mozart','clara','nina','joplin','miles','chopin','haydn','vee-jay','zizi','beethoven','ellington','ella','handel','vivaldi','metronome','schoenberg','dj']);
 const clamp=(v,a,b)=>Math.max(a,Math.min(b,v));

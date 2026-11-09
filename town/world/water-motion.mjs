@@ -2,6 +2,7 @@
 // moves the painted wavelets while leaving the terrain's shoreline untouched.
 export const WATER_CYCLE=12,WATER_FPS=12;
 const frames=WATER_CYCLE*WATER_FPS,cache=new WeakMap(),TAU=Math.PI*2;
+const levelZeroCutouts=new WeakSet();
 let waterTime=0,motionQuery;
 const wrap=(n,size)=>((n%size)+size)%size;
 const reduced=()=>globalThis.matchMedia?(motionQuery??=globalThis.matchMedia('(prefers-reduced-motion: reduce)')).matches:false;
@@ -12,6 +13,8 @@ export function mirroredWaterIndex(n,size){const i=wrap(n,size*2);return i<size?
 
 export function setWaterTime(seconds=0){waterTime=Number.isFinite(seconds)?seconds:0;}
 export function waterFrameIndex(seconds=0,still=false){return still?0:wrap(Math.floor((Number.isFinite(seconds)?seconds:0)*WATER_FPS),frames);}
+export function currentWaterFrameIndex(seconds=waterTime){return waterFrameIndex(seconds,reduced());}
+export function withLevelZeroWaterCutout(c,draw){const nested=levelZeroCutouts.has(c);levelZeroCutouts.add(c);try{return draw();}finally{if(!nested)levelZeroCutouts.delete(c);}}
 
 // Integer harmonics meet at both texture edges. Because the field is global,
 // adjacent 64px terrain cells sample one continuous body of moving water.
@@ -55,5 +58,6 @@ export function waterFrame(source,time=waterTime){
 }
 
 export function drawAnimatedWater(c,source,x,y,X,Y){
+ if(levelZeroCutouts.has(c)&&Math.abs(y*64-Y)<.001){c.clearRect(X,Y,64,64);return;}
  const image=waterFrame(source);c.drawImage(image,wrap(x*64,image.width),wrap(y*64,image.height),64,64,X,Y,64,64);
 }

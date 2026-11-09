@@ -1,4 +1,4 @@
-import {parseProject,MAX_PROJECT_LENGTH} from './model.mjs?v=picnic-beach-1';
+import {parseProject,MAX_PROJECT_LENGTH} from './model.mjs?v=overview-fast-1';
 export function openDatabase(){return new Promise((resolve,reject)=>{const r=indexedDB.open('coda-town-builder',1);r.onupgradeneeded=()=>r.result.createObjectStore('maps');r.onsuccess=()=>resolve(r.result);r.onerror=()=>reject(r.error);});}
 export async function loadProject(ids){const db=await openDatabase();try{return await new Promise((resolve,reject)=>{const r=db.transaction('maps').objectStore('maps').get('current');r.onsuccess=()=>{try{resolve(r.result?parseProject(r.result,ids):null);}catch(e){reject(e);}};r.onerror=()=>reject(r.error);});}finally{db.close();}}
 export function saveProject(db,doc){const text=JSON.stringify(doc);if(text.length>MAX_PROJECT_LENGTH)throw Error('Project exceeds 64 MiB.');return new Promise((resolve,reject)=>{const tx=db.transaction('maps','readwrite');tx.objectStore('maps').put(text,'current');tx.oncomplete=resolve;tx.onerror=()=>reject(tx.error);tx.onabort=()=>reject(tx.error||Error('Save aborted'));});}
