@@ -36,3 +36,4 @@ To enable classroom purchases:
 3. After the rules accepting the furniture IDs are deployed, set `townFurnitureEnabled:true` in [account-config.js](../account-config.js), update that script's version query in each entry page, and publish the site. Verify a classroom furniture purchase and subsequent profile save and reload.
 
 The gate is checked again in the parent arcade before spending Notes. Changing the town frame's UI cannot bypass it.
+
