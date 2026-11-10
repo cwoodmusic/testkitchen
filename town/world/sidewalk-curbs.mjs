@@ -1,6 +1,6 @@
-import {cell,height,COLS,ROWS,TILE,RISE} from './model.mjs?v=apartment-homes-2';
-import {roundedUnder,curveUnder,clipCurves} from './round-geometry.mjs?v=apartment-homes-2';
-import {readPaint,PAINT_GRID,PAINT_STEP} from './ground-paint.mjs?v=apartment-homes-2';
+import {cell,height,COLS,ROWS,TILE,RISE} from './model.mjs?v=furniture-facings-1';
+import {roundedUnder,curveUnder,clipCurves} from './round-geometry.mjs?v=furniture-facings-1';
+import {readPaint,PAINT_GRID,PAINT_STEP} from './ground-paint.mjs?v=furniture-facings-1';
 
 export const SIDEWALK_CURB_DEPTH=12;
 const STEP=4,EPS=.08,paintFields=new WeakMap();

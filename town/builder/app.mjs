@@ -1,39 +1,41 @@
-import {createTownRecovery} from './recovery.mjs?v=apartment-homes-2';
-import {groundTexture} from '../world/ground-render.mjs?v=apartment-homes-2';
-import {assetFilter} from '../world/asset-color.mjs?v=apartment-homes-2';
-import {curveUnder} from '../world/round-geometry.mjs?v=apartment-homes-2';
-import {roundTerrain} from './round-terrain.mjs?v=apartment-homes-2';
-import {paintGround} from './ground-brush.mjs?v=apartment-homes-2';
-import {planWaterFill} from './water-fill.mjs?v=apartment-homes-2';
-import {planLandFill} from './land-fill.mjs?v=apartment-homes-2';
-import {planOrganicEdges} from './organic-edges.mjs?v=apartment-homes-2';
-import {createSandFootprints} from '../world/sand-footprints.mjs?v=apartment-homes-2';
-import {createAmbientNPCs} from '../world/ambient-npcs.mjs?v=apartment-homes-2';
-import {createPlayerCollisionIndex} from '../world/player-collision-index.mjs?v=apartment-homes-2';
-import {readNightPreference,saveNightPreference} from '../world/lighting-settings.mjs?v=apartment-homes-2';
-import {readNPCPreference,saveNPCPreference} from './preview-settings.mjs?v=apartment-homes-2';
-import {hitCliff,mountPose,attach,cliffFace} from '../world/cliff-mount.mjs?v=apartment-homes-2';
-import {pavingTexture} from '../world/paving.mjs?v=apartment-homes-2';
-import {planStairs,drawStairGuide} from './stairs.mjs?v=apartment-homes-2';
-import {planPier,drawPierGuide} from './piers.mjs?v=apartment-homes-2';
-import {levelColors} from '../world/elevation-view.mjs?v=apartment-homes-2';
-import {regionBetween,regionFromPolygon,regionHeightEdits,selectionCount} from './region.mjs?v=apartment-homes-2';
-import {selectElevationRegion} from './elevation-select.mjs?v=apartment-homes-2';
-import {blank,cell,height,terrainHeight,key,connect,segment,clearStairs,parseProject,History,surfaces,barriers,COLS,ROWS} from '../world/model.mjs?v=apartment-homes-2';
-import {catalog,sources,preparePlacedArt} from '../world/catalog.mjs?v=apartment-homes-2';
-import {render,resizeSurface,findStart,movePlayer,toggleGate,follow,PLAYER_SCALE,GAIT_PER_PIXEL} from '../world/runtime.mjs?v=apartment-homes-2';
-import {openDatabase,saveProject} from '../world/storage.mjs?v=apartment-homes-2';
+import {createTownRecovery} from './recovery.mjs?v=furniture-facings-1';
+import {groundTexture} from '../world/ground-render.mjs?v=furniture-facings-1';
+import {assetFilter} from '../world/asset-color.mjs?v=furniture-facings-1';
+import {curveUnder} from '../world/round-geometry.mjs?v=furniture-facings-1';
+import {roundTerrain} from './round-terrain.mjs?v=furniture-facings-1';
+import {paintGround} from './ground-brush.mjs?v=furniture-facings-1';
+import {planWaterFill} from './water-fill.mjs?v=furniture-facings-1';
+import {planLandFill} from './land-fill.mjs?v=furniture-facings-1';
+import {planOrganicEdges} from './organic-edges.mjs?v=furniture-facings-1';
+import {createSandFootprints} from '../world/sand-footprints.mjs?v=furniture-facings-1';
+import {createAmbientNPCs} from '../world/ambient-npcs.mjs?v=furniture-facings-1';
+import {createPlayerCollisionIndex} from '../world/player-collision-index.mjs?v=furniture-facings-1';
+import {readNightPreference,saveNightPreference} from '../world/lighting-settings.mjs?v=furniture-facings-1';
+import {readNPCPreference,saveNPCPreference} from './preview-settings.mjs?v=furniture-facings-1';
+import {hitCliff,mountPose,attach,cliffFace} from '../world/cliff-mount.mjs?v=furniture-facings-1';
+import {pavingTexture} from '../world/paving.mjs?v=furniture-facings-1';
+import {planStairs,drawStairGuide} from './stairs.mjs?v=furniture-facings-1';
+import {planPier,drawPierGuide} from './piers.mjs?v=furniture-facings-1';
+import {levelColors} from '../world/elevation-view.mjs?v=furniture-facings-1';
+import {regionBetween,regionFromPolygon,regionHeightEdits,selectionCount} from './region.mjs?v=furniture-facings-1';
+import {selectElevationRegion} from './elevation-select.mjs?v=furniture-facings-1';
+import {blank,cell,height,terrainHeight,key,connect,segment,clearStairs,parseProject,History,surfaces,barriers,COLS,ROWS} from '../world/model.mjs?v=furniture-facings-1';
+import {catalog,sources,preparePlacedArt} from '../world/catalog.mjs?v=furniture-facings-1';
+import {render,resizeSurface,findStart,movePlayer,toggleGate,follow,PLAYER_SCALE,GAIT_PER_PIXEL} from '../world/runtime.mjs?v=furniture-facings-1';
+import {openDatabase,saveProject} from '../world/storage.mjs?v=furniture-facings-1';
 import {createZip} from '../../studio/zip.js';
-import {createUrbanController} from '../world/urban.mjs?v=apartment-homes-2';
-import {createConcertAudio} from '../world/concert-audio.mjs?v=apartment-homes-2';
-import {mountConcertControls} from '../world/concert-controls.mjs?v=apartment-homes-2';
-import {CONCERT_PROGRAMME} from '../world/concert-programme.mjs?v=apartment-homes-2';
-import {isUrbanAsset} from '../world/urban-kit.mjs?v=apartment-homes-2';
-import {snapUrbanAsset} from '../world/urban-roads.mjs?v=apartment-homes-2';
-import {musicWallNode,planMusicWall} from '../world/music-wall-geometry.mjs?v=apartment-homes-2';
+import {createUrbanController} from '../world/urban.mjs?v=furniture-facings-1';
+import {createConcertAudio} from '../world/concert-audio.mjs?v=furniture-facings-1';
+import {mountConcertControls} from '../world/concert-controls.mjs?v=furniture-facings-1';
+import {CONCERT_PROGRAMME} from '../world/concert-programme.mjs?v=furniture-facings-1';
+import {isUrbanAsset} from '../world/urban-kit.mjs?v=furniture-facings-1';
+import {snapUrbanAsset} from '../world/urban-roads.mjs?v=furniture-facings-1';
+import {musicWallNode,planMusicWall} from '../world/music-wall-geometry.mjs?v=furniture-facings-1';
+import {cardinalFacing,facingRotation} from '../world/furniture-facing.mjs?v=furniture-facings-1';
+import {furnitureFacingPointHit,ensureFacingArt} from '../world/furniture-art-access.mjs?v=furniture-facings-1';
 const $=id=>document.getElementById(id),canvas=$('map'),ctx=canvas.getContext('2d'),history=new History(),ids=new Set(catalog.keys());let doc=blank(),tool='select',asset=catalog.keys().next().value,selected=null,region=null,hover=null,pointer=null,walk=false,player={...doc.spawn},keys=new Set(),dirty=false,saveTimer,db=null,stairPreview=null,pierPreview=null;
 const character=window.createCodaCharacterRenderer({worldScale:PLAYER_SCALE});let avatar=character.normalizeProfile({}),facing='down',walking=false,walkPhase=0;addEventListener('message',e=>{if(e.source===parent&&e.origin===location.origin&&e.data?.type==='coda-town-state-result'&&e.data.avatar)avatar=character.normalizeProfile(e.data.avatar);});if(parent!==window)parent.postMessage({type:'coda-town-state'},location.origin);
-let assetTicket=0,loadingAsset=false,pendingAttach=null;
+let assetTicket=0,loadingAsset=false,pendingAttach=null,libraryThumbObserver=null;
 const cam={x:8192,y:6144,zoom:.45};
 // All authored edits advance this hint; previews also carry a distinct document.
 let terrainRevision=0;
@@ -43,6 +45,8 @@ let night=readNightPreference();
 let npcsVisible=readNPCPreference();
 const ambient=createAmbientNPCs({getProject:()=>doc,catalog,getRevision:()=>terrainRevision,getPlayer:()=>walk&&!urban.active?player:null});
 const footprints=createSandFootprints({getProject:()=>doc});
+function reflectFacingLabels(a){const base=facingRotation(a?.authoredFacing?a.facing:'south');for(const option of $('rotation').options){const direction=cardinalFacing(base+Number(option.value));option.textContent=direction[0].toUpperCase()+direction.slice(1);}}
+function warmFacing(){const a=catalog.get(selected?.asset||asset);Promise.resolve(ensureFacingArt(a,Number($('rotation').value))).catch(()=>{});}
 function reflectLighting(){const b=$('lightingToggle');b.textContent=night?'City night':'Daylight';b.setAttribute('aria-pressed',String(night));b.classList.toggle('active',night);}
 $('lightingToggle').onclick=()=>{night=!night;saveNightPreference(night);reflectLighting();canvas.focus();};reflectLighting();
 function reflectNPCs(){const b=$('npcToggle');b.textContent=npcsVisible?'NPCs on':'NPCs off';b.setAttribute('aria-pressed',String(npcsVisible));b.classList.toggle('active',npcsVisible);}
@@ -80,6 +84,8 @@ function paintUrbanSurface(a){
 }
 function library(){
  const list=$('library'),category=$('category').value,terms=$('search').value.toLowerCase().trim().split(/\s+/).filter(Boolean);list.replaceChildren();
+ libraryThumbObserver?.disconnect();const painters=new WeakMap();
+ const observer=typeof IntersectionObserver==='function'?new IntersectionObserver(entries=>{for(const entry of entries)if(entry.isIntersecting){painters.get(entry.target)?.();painters.delete(entry.target);observer.unobserve(entry.target);}},{rootMargin:'160px'}):null;libraryThumbObserver=observer;
  $('urbanKitHelp').hidden=category!=='@urban'&&!category.startsWith('urban ');
  $('leisureKitHelp').hidden=category!=='@leisure';
  $('assetLibraryTitle').textContent=category==='@leisure'?'Picnic & beach · '+[...catalog.values()].filter(isLeisureAsset).length:'Asset library · '+catalog.size;
@@ -89,12 +95,12 @@ function library(){
   if(category&&(category==='@urban'?!isUrbanAsset(a):category==='@leisure'?!isLeisureAsset(a):a.group!==category))continue;
   const searchable=(a.name+' '+a.group+' '+a.id).toLowerCase();if(!terms.every(term=>searchable.includes(term)||term.length>2&&term.endsWith('s')&&searchable.includes(term.slice(0,-1))))continue;
   const b=document.createElement('button');b.className='asset';b.title=a.name+(a.snap?' · snaps to the street grid':'');b.dataset.asset=a.id;
-  const thumb=document.createElement('canvas');thumb.width=100;thumb.height=85;const c=thumb.getContext('2d'),s=Math.min(100/a.w,85/a.h);c.save();c.translate((100-a.w*s)/2,(85-a.h*s)/2);c.scale(s,s);c.filter=assetFilter(a);a.draw(c);c.restore();b.append(thumb,document.createTextNode(a.name));
+  const thumb=document.createElement('canvas');thumb.width=100;thumb.height=85;const paint=()=>{const c=thumb.getContext('2d'),s=Math.min(100/a.w,85/a.h);c.save();c.translate((100-a.w*s)/2,(85-a.h*s)/2);c.scale(s,s);c.filter=assetFilter(a);a.draw(c);c.restore();};if(observer){painters.set(thumb,paint);observer.observe(thumb);}else paint();b.append(thumb,document.createTextNode(a.name));
   b.onclick=async()=>{
    const ticket=++assetTicket;if(a.barrierStyle){chooseMusicWalls();return;}if(a.paintSurface){paintUrbanSurface(a);return;}
-   asset=a.id;selected=null;if(a.authoredFacing)$('rotation').value='0';$('assetName').textContent=a.name;$('mountSurface').value=a.mountDefault?'cliff':'ground';$('mountSurface').disabled=!!(a.scene||a.fixedScale);$('mountHeight').disabled=true;$('layer').value=a.layer;$('collision').checked=a.collisionDefault??(a.boxes.length>0||!!a.polygons?.length);$('collision').disabled=!!a.mountDefault;$('scale').disabled=!!a.fixedScale;if(a.fixedScale)$('scale').value=1;setTool('place');
+   asset=a.id;selected=null;if(a.authoredFacing)$('rotation').value='0';$('assetName').textContent=a.name;reflectFacingLabels(a);$('mountSurface').value=a.mountDefault?'cliff':'ground';$('mountSurface').disabled=!!(a.scene||a.fixedScale);$('mountHeight').disabled=true;$('layer').value=a.layer;$('collision').checked=a.collisionDefault??(a.boxes.length>0||!!a.polygons?.length);$('collision').disabled=!!a.mountDefault;$('scale').disabled=!!a.fixedScale;if(a.fixedScale)$('scale').value=1;setTool('place');
    if(a.snap)$('hint').textContent='Click to place · street pieces snap to the grid · choose Rotation to turn a piece';
-   loadingAsset=!!a.ensureFull;if(loadingAsset){status('Loading '+a.name+'…');try{await a.ensureFull();if(ticket===assetTicket){loadingAsset=false;status('Ready to place '+a.name);}}catch(e){if(ticket===assetTicket){loadingAsset=false;status(e.message);setTool('select');}}}
+   loadingAsset=!!a.ensureFull;if(loadingAsset){status('Loading '+a.name+'…');try{await ensureFacingArt(a,Number($('rotation').value));if(ticket===assetTicket){loadingAsset=false;status('Ready to place '+a.name);}}catch(e){if(ticket===assetTicket){loadingAsset=false;status(e.message);setTool('select');}}}
   };list.append(b);
  }
 }
@@ -155,14 +161,15 @@ $('open').onclick=()=>$('file').click();$('file').onchange=async()=>{try{const f
 $('new').onclick=()=>{if((doc.objects.length||Object.keys(doc.cells).length||Object.keys(doc.edges).length)&&!confirm('Start a blank map? Save project first if you want a separate backup. Undo can restore this map.'))return;checkpoint();doc=blank();selected=null;clearRegion();$('name').value=doc.name;changed();};
 $('undo').onclick=()=>{doc=history.back(doc);selected=null;$('name').value=doc.name;refreshRegionLevel();changed();};$('redo').onclick=()=>{doc=history.forward(doc);selected=null;refreshRegionLevel();changed();};
 function png(c){return new Promise(resolve=>c.toBlob(resolve,'image/png'));}
-async function assetPNG(a){const c=document.createElement('canvas');c.width=a.w;c.height=a.h;const g=c.getContext('2d');g.filter=assetFilter(a);a.draw(g);const blob=await png(c);c.width=c.height=1;return blob;}
+async function assetPNG(a,direction='south'){await a.ensureFull?.(direction);const view=a.getFacingView?.(direction),c=document.createElement('canvas');c.width=Math.ceil(view?.w||a.w);c.height=Math.ceil(view?.h||a.h);const g=c.getContext('2d');g.filter=assetFilter(a);if(view)g.drawImage(a.getFacingImage(direction),0,0,c.width,c.height);else a.draw(g);const blob=await png(c);c.width=c.height=1;return blob;}
 async function exportAssetPack(urbanOnly=false){
  $('pack').disabled=true;$('urbanPack').disabled=true;
  try{
-  const assets=[...catalog.values()].filter(a=>!urbanOnly||isUrbanAsset(a));status('Packing artwork and collision metadata…');await preparePlacedArt({objects:assets.map(a=>({asset:a.id}))});const entries=[],meta=[];
+  const assets=[...catalog.values()].filter(a=>!urbanOnly||isUrbanAsset(a));status('Packing artwork and collision metadata…');const entries=[],meta=[];
   for(const a of assets){
    entries.push({name:`assets/${a.id}.png`,data:await assetPNG(a)});
    meta.push({id:a.id,name:a.name,width:a.w,height:a.h,anchor:{x:a.w/2,y:a.h},mountAnchor:{x:a.w/2,y:a.h/2},collision:a.boxes,polygons:a.polygons||[],fixedScale:!!a.fixedScale,interiorScale:a.interiorScale||1,footprint:a.footprint||null,door:a.door||null,paving:a.pavingSource?{texture:`ground/paving-${a.id}.png`}:null,layer:a.layer,resident:a.resident||null,urban:a.urban||null,kit:a.kit||null,snap:a.snap||null,paintSurface:a.paintSurface||null,barrierStyle:a.barrierStyle||null,lightEmitters:a.lightEmitters||null,wallMounted:!!a.wallMounted,purpose:a.purpose||null,connections:a.roadOpen||null,scene:!!a.scene,mountDefault:!!a.mountDefault,facing:a.facing||'south'});
+   if(a.getFacingView){const facings={};for(const direction of ['south','west','north','east']){const view=a.getFacingView(direction,{image:false});if(!view)continue;const actual=view.facing||direction,image=direction==='south'?`assets/${a.id}.png`:`assets/facings/${a.id}-${actual}.png`;if(direction!=='south')entries.push({name:image,data:await assetPNG(a,direction)});facings[actual]={image,width:view.w,height:view.h,footCenter:view.footCenter,rotation:facingRotation(direction),motion:view.motion||null};}meta.at(-1).facings=facings;}
   }
   for(const surface of surfaces)entries.push({name:`ground/${surface}.png`,data:await png(surface==='cobble'?pavingTexture():groundTexture(surface))});
   for(const a of assets)if(a.pavingSource)entries.push({name:`ground/paving-${a.id}.png`,data:await png(pavingTexture(a.id))});
@@ -171,13 +178,15 @@ async function exportAssetPack(urbanOnly=false){
  }catch(e){status('Asset export failed: '+e.message);}finally{$('pack').disabled=false;$('urbanPack').disabled=false;}
 }
 $('pack').onclick=()=>exportAssetPack();$('urbanPack').onclick=()=>exportAssetPack(true);
-function select(o){selected=o;if(!o)return;$('inspector').scrollTop=Math.max(0,$('assetName').offsetTop-$('inspector').offsetTop-12);$('mountSurface').disabled=!!(catalog.get(o.asset).scene||catalog.get(o.asset).fixedScale);$('mountSurface').value=o.mount?'cliff':'ground';$('mountHeight').disabled=!o.mount;$('collision').disabled=!!o.mount;if(o.mount){$('mountHeight').value=Math.round(o.mount.v*100);$('mountHeightLabel').textContent=$('mountHeight').value+'%';}$('scale').disabled=!!catalog.get(o.asset).fixedScale;$('assetName').textContent=catalog.get(o.asset).name;for(const id of ['scale','rotation','layer'])$(id).value=o[id];$('collision').checked=o.collision;}
-for(const id of ['scale','rotation','layer','collision'])$(id).onchange=()=>{if(!selected)return;checkpoint();selected[id]=id==='collision'?$(id).checked:id==='layer'?$(id).value:Number($(id).value);selected.scale=Math.max(.25,Math.min(3,selected.scale));changed();};
+function select(o){selected=o;if(!o)return;$('inspector').scrollTop=Math.max(0,$('assetName').offsetTop-$('inspector').offsetTop-12);$('mountSurface').disabled=!!(catalog.get(o.asset).scene||catalog.get(o.asset).fixedScale);$('mountSurface').value=o.mount?'cliff':'ground';$('mountHeight').disabled=!o.mount;$('collision').disabled=!!o.mount;if(o.mount){$('mountHeight').value=Math.round(o.mount.v*100);$('mountHeightLabel').textContent=$('mountHeight').value+'%';}$('scale').disabled=!!catalog.get(o.asset).fixedScale;$('assetName').textContent=catalog.get(o.asset).name;reflectFacingLabels(catalog.get(o.asset));for(const id of ['scale','rotation','layer'])$(id).value=o[id];$('collision').checked=o.collision;}
+for(const id of ['scale','rotation','layer','collision'])$(id).onchange=()=>{if(id==='rotation')warmFacing();if(!selected)return;checkpoint();selected[id]=id==='collision'?$(id).checked:id==='layer'?$(id).value:Number($(id).value);selected.scale=Math.max(.25,Math.min(3,selected.scale));changed();};
 $('delete').onclick=()=>{if(selected){checkpoint();doc.objects=doc.objects.filter(o=>o!==selected);selected=null;changed();}};$('duplicate').onclick=()=>{if(selected){checkpoint();const step=catalog.get(selected.asset).snap||64,o={...selected,id:crypto.randomUUID(),x:Math.min(COLS*64,selected.x+step),y:Math.min(ROWS*64,selected.y+step)};if(o.mount){const m={...o.mount,x:o.mount.x+1};attach(o,cliffFace(doc,m.x,m.y)?m:{...o.mount,u:(o.mount.u+.3)%1});}doc.objects.push(o);select(o);changed();}};
 function placement(p){p=snapUrbanAsset(catalog.get(asset),p);p={x:Math.max(0,Math.min(COLS*64,p.x)),y:Math.max(0,Math.min(ROWS*64,p.y))};const o={id:crypto.randomUUID(),asset,x:p.x,y:p.y,scale:catalog.get(asset).fixedScale?1:Math.max(.25,Math.min(3,Number($('scale').value)||1)),rotation:Number($('rotation').value),layer:$('layer').value,collision:$('collision').checked};if($('mountSurface').value==='cliff'){const m=hover?.face;if(!m)return null;attach(o,m);const a=catalog.get(o.asset),f=cliffFace(doc,m.x,m.y);if(!a.overhang)o.scale=Math.max(.25,Math.min(o.scale,f.depth/a.h));}return o;}
 function screen(e){const r=canvas.getBoundingClientRect();return {x:(e.clientX-r.left-r.width/2)/cam.zoom+cam.x,y:(e.clientY-r.top-r.height/2)/cam.zoom+cam.y};}
 function world(e){const p=screen(e);if($('heightView').value==='plan'&&!walk)return p;for(let y=Math.floor((p.y+432)/64);y>=Math.floor(p.y/64);y--){const x=Math.floor(p.x/64),a=cell(doc,x,y),z=(a.pier?.level??a.level)*48;if(p.y>=y*64-z&&p.y<(y+1)*64-z&&(!a.curves||Math.abs(height(doc,p.x,p.y+z)-z)<.1))return {x:p.x,y:p.y+z};for(const q of a.curves||[]){const z=curveUnder(doc,q).level*48,Y=p.y+z;if(Y>=y*64&&Y<(y+1)*64&&Math.abs(height(doc,p.x,Y)-z)<.1)return {x:p.x,y:Y};}}return p;}
-function pick(p){return [...doc.objects].reverse().find(o=>{const a=catalog.get(o.asset),pose=mountPose(doc,o);if(!pose)return false;const r=-o.rotation*Math.PI/180,dx=(p.x-pose.x)/o.scale,dy=(p.y-pose.y)/o.scale,x=dx*Math.cos(r)-dy*Math.sin(r)+a.w/2,y=dx*Math.sin(r)+dy*Math.cos(r)+a.h*pose.offset;return x>=0&&y>=0&&x<a.w&&y<a.h&&a.canvas.getContext('2d').getImageData(Math.floor(x),Math.floor(y),1,1).data[3]>40;});}
+function pick(p){return [...doc.objects].reverse().find(o=>{const a=catalog.get(o.asset),pose=mountPose(doc,o);if(!pose)return false;
+ const facingHit=furnitureFacingPointHit(a,o,pose,p);if(facingHit!==null)return facingHit;
+ const r=-o.rotation*Math.PI/180,dx=(p.x-pose.x)/o.scale,dy=(p.y-pose.y)/o.scale,x=dx*Math.cos(r)-dy*Math.sin(r)+a.w/2,y=dx*Math.sin(r)+dy*Math.cos(r)+a.h*pose.offset;return x>=0&&y>=0&&x<a.w&&y<a.h&&a.canvas.getContext('2d').getImageData(Math.floor(x),Math.floor(y),1,1).data[3]>40;});}
 function groundOptions(){return {size:Math.max(16,Math.min(960,Number($('brush').value)*64||64)),hardness:Number($('brushHardness').value)/100,opacity:Number($('brushOpacity').value)/100,surface:$('surface').value,paving:$('paving').value,mode:tool==='blend'?'blend':'paint'};}
 function squareGroundDab(p){
  const width=groundWidth(),radius=Math.floor(width/2),cx=Math.floor(p.x/64),cy=Math.floor(p.y/64),edits=[];
@@ -225,8 +234,9 @@ canvas.onpointerleave=()=>{if(!pointer)hover=null;};canvas.oncontextmenu=e=>e.pr
 canvas.onpointermove=e=>{if(walk)return;const p=world(e);hover={x:Math.floor(p.x/64),y:Math.floor(p.y/64),p,face:hitCliff(doc,screen(e))};$('hoverLevel').textContent=`Level ${Math.round(height(doc,hover.p.x,hover.p.y)/48*10)/10}`;if(!pointer)return;if(pointer.pan){cam.x-=(e.clientX-pointer.last.x)/cam.zoom;cam.y-=(e.clientY-pointer.last.y)/cam.zoom;pointer.last={x:e.clientX,y:e.clientY};}else if(pointer.musicWall){paintMusicWall(p);}else if(pointer.terrainFill||pointer.regionClick){return;}else if(pointer.pierStart){updatePierPreview(p);}else if(pointer.stairStart){updateStairPreview(p);}else if(pointer.regionPoints){updateLasso(p);}else if(pointer.regionStart){region=regionBetween(pointer.regionStart,{x:Math.floor(p.x/64),y:Math.floor(p.y/64)});showRegion();}else{paint(p);if(!['round','ground','blend','organic'].includes(tool))changed();}};canvas.onpointerup=e=>{if(pointer?.musicWall&&!pointer.pan)paintMusicWall(world(e));if(pointer&&!pointer.pan&&['ground','blend','organic'].includes(tool))groundStroke(world(e),true);if(pointer?.regionPoints)updateLasso(world(e),true);if(pointer?.pierStart){updatePierPreview(world(e));if(pierPreview.valid&&pierPreview.edits.length){checkpoint();for(const[k,a]of pierPreview.edits)doc.cells[k]=a;changed();}else status(pierPreview.message);}if(pointer?.stairStart){updateStairPreview(world(e));if(stairPreview.valid){checkpoint();for(const[k,a]of stairPreview.edits)doc.cells[k]=a;changed();}else status(stairPreview.message);}pointer=null;stairPreview=null;pierPreview=null;};canvas.onpointercancel=()=>{pointer=null;stairPreview=null;pierPreview=null;if(region?.preview)clearRegion();};canvas.onwheel=e=>{e.preventDefault();if(walk&&urban.active){urban.zoom(e.deltaY);return;}const before=screen(e);cam.zoom=Math.max(.035,Math.min(2,cam.zoom*Math.exp(-e.deltaY*.001)));const after=screen(e);cam.x+=before.x-after.x;cam.y+=before.y-after.y;},{passive:false};
 $('play').onclick=async()=>{if(recovery.writeBlocked){await recovery.open('The existing saved data is protected. Restore or download a map before using Play.');return;}try{clearTimeout(saveTimer);if(!db)db=await openDatabase();await saveProject(db,doc);dirty=false;location.href='../?map=builder';}catch(e){status('Could not save for play: '+e.message);}};
 $('fit').onclick=()=>{cam.x=COLS*32;cam.y=ROWS*32;cam.zoom=Math.min(canvas.clientWidth/(COLS*64),canvas.clientHeight/(ROWS*64))*.95;};
-function toggleWalk(){walk=!walk;if(!walk)urban.reset();keys.clear();if(walk){try{player=findStart(doc,catalog);}catch(e){walk=false;status(e.message);return;}cam.zoom=.8;canvas.focus();}$('mapTools').hidden=walk;$('mapTools').style.display=walk?'none':'';$('heightView').disabled=walk;$('heightLegend').hidden=walk||$('heightView').value==='art';$('walk').textContent=walk?'Stop walk test':'Walk test';$('hint').textContent=walk?'WASD / arrows · Shift run · E enter / interact · Escape back':'Drag to paint · right drag to pan · wheel to zoom';}$('walk').onclick=toggleWalk;
+function toggleWalk(){walk=!walk;if(!walk)urban.reset();keys.clear();if(walk){try{player=findStart(doc,catalog);}catch(e){walk=false;status(e.message);return;}cam.zoom=.8;canvas.focus();}$('mapTools').hidden=walk;$('mapTools').style.display=walk?'none':'';$('heightView').disabled=walk;$('heightLegend').hidden=walk||$('heightView').value==='art';$('walk').textContent=walk?'Stop walk test':'Walk test';$('hint').textContent=walk?'WASD / arrows · Shift run · Walk through doors · E interact · Escape back':'Drag to paint · right drag to pan · wheel to zoom';}$('walk').onclick=toggleWalk;
 window.onkeydown=e=>{if(['INPUT','SELECT','TEXTAREA'].includes(document.activeElement.tagName))return;if(walk&&urban.keydown(e)){keys.clear();return;}keys.add(e.key.toLowerCase());if(['ArrowUp','ArrowDown','ArrowLeft','ArrowRight',' '].includes(e.key))e.preventDefault();if(e.key==='Escape'){pendingAttach=null;pointer=null;stairPreview=null;pierPreview=null;if(walk)toggleWalk();else clearRegion();}if((e.ctrlKey||e.metaKey)&&e.key==='z'){e.preventDefault();$('undo').click();}if(e.key==='Delete'&&!walk)$('delete').click();if(walk&&e.key.toLowerCase()==='e'&&!e.repeat){if(toggleGate(doc,player))changed();}};window.onkeyup=e=>keys.delete(e.key.toLowerCase());window.onblur=()=>keys.clear();window.addEventListener('beforeunload',e=>{if(dirty){e.preventDefault();e.returnValue='';}});
 let last=performance.now();function frame(now){const dt=Math.min(.04,(now-last)/1000);last=now;if(hover){const levelText=`Level ${Math.round(height(doc,hover.p.x,hover.p.y)/48*10)/10}`;if($('hoverLevel').textContent!==levelText)$('hoverLevel').textContent=levelText;}const surface=resizeSurface(canvas,{planning:!walk&&$('heightView').value==='plan'});concert.updateContext(urban.scene);if(npcsVisible)ambient.update(dt,now/1000);if(walk){urban.tick();if(urban.frame(ctx,keys,dt,now,surface.width,surface.height,(c,x,y,state)=>character.drawPlayer(c,avatar,{x,y,...state},now/1000))){requestAnimationFrame(frame);return;}const motion=movePlayer(playerCollision.view(player),player,urban.blocked?new Set():keys,dt,catalog);if(motion.facing)facing=motion.facing;walking=motion.walking;walkPhase=(walkPhase+motion.surfaceDistance*GAIT_PER_PIXEL)%(Math.PI*2);follow(cam,player,doc);}footprints.update([...(walk?[{id:'__player__',...player,walking}]:[]),...(npcsVisible&&(walk||$('heightView').value==='art')?ambient.actors:[])],now/1000);render(ctx,pierPreview?.preview||stairPreview?.preview||doc,cam,surface.width,surface.height,{terrainRevision,night,time:now/1000,npcs:npcsVisible&&(walk||$('heightView').value==='art')?ambient.actors:[],drawNPC:ambient.draw,drawFootprints:(c,d,t)=>footprints.draw(c,d,t),heightView:walk?'art':$('heightView').value,grid:$('grid').checked,collision:$('showCollision').checked,selected:walk?null:selected,region:walk?null:region,hover:walk||['ground','blend','organic'].includes(tool)?null:hover,brush:!walk&&hover&&['ground','blend','organic'].includes(tool)?{x:hover.p.x,y:hover.p.y,size:squareGround()?groundWidth()*64:groundOptions().size,hardness:tool==='organic'?0:squareGround()?1:groundOptions().hardness,organic:tool==='organic',blend:tool==='blend',shape:squareGround()?'square':'round'}:null,ghost:!walk&&pendingAttach&&hover?.face?attach({...pendingAttach},hover.face):!walk&&tool==='place'&&hover?placement(hover.p):null,player:walk?player:null,drawPlayer:(c,x,y)=>character.drawPlayer(c,avatar,{x,y,facing,walking,phase:walkPhase},now/1000)});if(!walk){drawStairGuide(ctx,stairPreview,cam,surface.width,surface.height,$('heightView').value==='plan');if(pierPreview)drawPierGuide(ctx,pierPreview,cam,surface.width,surface.height,$('heightView').value==='plan');drawMusicWallGuide(ctx,surface.width,surface.height);}requestAnimationFrame(frame);}requestAnimationFrame(frame);
 // Read-only hooks support browser verification without modifying arcade progress.
+addEventListener('keydown',e=>{if(walk||e.repeat||e.ctrlKey||e.metaKey||e.altKey||e.key.toLowerCase()!=='r'||e.target.closest?.('input,select,textarea')||!(tool==='place'||tool==='select'&&selected))return;e.preventDefault();$('rotation').value=String((Number($('rotation').value)+90)%360);$('rotation').dispatchEvent(new Event('change'));});
 window.townBuilder={get project(){return doc;},catalog,cam,urban,ambient,footprints,concert,playerCollision,get night(){return night;},get npcsVisible(){return npcsVisible;},get region(){return region;},get tool(){return tool;},recovery};

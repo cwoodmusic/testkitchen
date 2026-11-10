@@ -1,5 +1,6 @@
-import {height,surfaceAt} from './model.mjs?v=apartment-homes-2';
-import {mountPose} from './cliff-mount.mjs?v=apartment-homes-2';
+import {height,surfaceAt} from './model.mjs?v=furniture-facings-1';
+import {mountPose} from './cliff-mount.mjs?v=furniture-facings-1';
+import {furnitureFacingPlacement} from './furniture-facing.mjs?v=furniture-facings-1';
 
 const buffers=new WeakMap(),nativeEmitters=new WeakMap(),radialBrushes=new Map(),TAU=Math.PI*2;
 const hash=(x,y=0)=>{let n=Math.imul(Math.round(x)^Math.imul(Math.round(y),374761393),668265263);n=Math.imul(n^(n>>>13),1274126177);return ((n^(n>>>16))>>>0)/4294967296;};
@@ -9,6 +10,8 @@ const reduced=()=>globalThis.matchMedia?.('(prefers-reduced-motion: reduce)').ma
 // the visible sprite. A mounted lantern therefore glows on its actual cliff.
 function imagePoint(doc,o,a,u,v){
  const pose=mountPose(doc,o);if(!pose)return null;
+ const facing=furnitureFacingPlacement(a,o,pose,{includeImage:false});
+ if(facing)return {x:facing.x+u*facing.w,y:facing.y+v*facing.h};
  const angle=o.rotation*Math.PI/180,x=(u*a.w-a.w/2)*o.scale,y=(v*a.h-a.h*pose.offset)*o.scale;
  return {x:pose.x+x*Math.cos(angle)-y*Math.sin(angle),y:pose.y+x*Math.sin(angle)+y*Math.cos(angle)};
 }

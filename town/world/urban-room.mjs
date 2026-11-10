@@ -1,3 +1,4 @@
+import {furnitureFacingBoxes,furnitureFacingBounds} from './furniture-facing.mjs?v=furniture-facings-1';
 // Room placements are local to the active arcade profile. Notes ownership is
 // managed by the wallet; this file never grants furniture or changes currency.
 export const ROOM_KEY='codaUrbanRoomV1';
@@ -13,7 +14,7 @@ const contains=(a,b)=>b.x>=a.x&&b.y>=a.y&&b.x+b.w<=a.x+a.w&&b.y+b.h<=a.y+a.h;
 export function roomItemBoxes(item,catalog){
  const asset=catalog?.get(item.asset),scale=item.scale??1;
  if(!asset||!finite(scale)||scale<=0)return [];
- return (asset.boxes||[]).filter(rect).map(box=>({x:item.x+(box.x-asset.w/2)*scale,y:item.y+(box.y-asset.h)*scale,w:box.w*scale,h:box.h*scale}));
+ return furnitureFacingBoxes(asset,{x:item.x,y:item.y,scale,rotation:item.rotation??0});
 }
 
 export function createRoomStorage(options={}){
@@ -32,11 +33,12 @@ export function createRoomStorage(options={}){
    if(!item||typeof item!=='object'||Array.isArray(item)||typeof item.id!=='string'||!/^[a-z0-9:_-]{1,100}$/i.test(item.id)||ids.has(item.id))return 'This room contains an invalid or repeated decoration.';
    const product=stock.get(item.item),asset=catalog?.get(item.asset),scale=item.scale??1,expected=product?.scale??1;
    if(!product||product.asset!==item.asset||!asset||!finite(asset.w)||!finite(asset.h)||asset.w<=0||asset.h<=0||!finite(item.x)||!finite(item.y))return 'This room contains furniture that is unavailable.';
+   if(item.rotation!==undefined&&![0,90,180,270].includes(item.rotation))return 'This decoration has an invalid facing. Choose north, south, east or west.';
    if(!finite(scale)||scale<=0||scale!==expected)return 'This decoration has an invalid size. Place it again from your inventory.';
    if(!ownership.has(item.item))return 'Buy this decoration at Coda Furnishings before placing it.';
    if(placed.has(item.item))return 'Each decoration can be placed once. Select it again to move it.';
    const bounds=(getBounds(item,asset)||[]).filter(rect);
-   const visual={x:item.x-asset.w*scale/2,y:item.y-asset.h*scale,w:asset.w*scale,h:asset.h*scale};
+   const visual=furnitureFacingBounds(asset,{x:item.x,y:item.y,scale,rotation:item.rotation??0});
    if(!bounds.some(bound=>contains(bound,visual)))return 'Keep the entire decoration inside the furnished area of your room.';
    const boxes=roomItemBoxes(item,catalog);
    if(boxes.some(box=>fixed.some(wall=>intersects(box,wall))))return 'That spot is occupied by a wall or built-in furniture.';
@@ -72,13 +74,14 @@ export function createRoomStorage(options={}){
   let error;
   try{error=validate(value.items);}catch{error='The saved room could not be checked.';}
   if(error)return fail(error+' Your saved room has not been changed.');
-  items=value.items.map(({id,item,asset,x,y,scale=1})=>({id,item,asset,x,y,scale}));
+  items=value.items.map(item=>Object.fromEntries(Object.entries(item).filter(([key])=>['id','item','asset','x','y','scale','rotation'].includes(key))));
   return {ok:true,items:snapshot()};
  }
- function place(itemId,x,y){
+ function place(itemId,x,y,rotation){
   const product=stock.get(itemId);
   if(!product)return fail('This decoration is unavailable.');
   const existing=items.find(item=>item.item===itemId),item={id:existing?.id||'room-'+itemId,item:itemId,asset:product.asset,x,y,scale:product.scale??1};
+  if(rotation!==undefined)item.rotation=rotation;else if(existing&&Object.prototype.hasOwnProperty.call(existing,'rotation'))item.rotation=existing.rotation;
   const result=save([...items.filter(other=>other.item!==itemId),item]);
   return result.ok?{...result,item:{...item}}:result;
  }

@@ -1,18 +1,33 @@
-import {drawSelection} from './selection-view.mjs?v=apartment-homes-2';
-import {drawTerrain} from './terrain-render.mjs?v=apartment-homes-2';
-import {mountPose} from './cliff-mount.mjs?v=apartment-homes-2';
-import {elevationView} from './elevation-view.mjs?v=apartment-homes-2';
-import {barrierGeometry,drawBarrierRun,drawPost} from './construction.mjs?v=apartment-homes-2';
-import {TILE,RISE,COLS,ROWS,cell,height,segment} from './model.mjs?v=apartment-homes-2';
-import {catalog} from './catalog.mjs?v=apartment-homes-2';
-import {assetMapImage,assetMapImageRevision} from './asset-lawn.mjs?v=apartment-homes-2';
-import {overviewObjectImage} from './overview-sprites.mjs?v=apartment-homes-2';
-import {renderCityNight} from './city-night.mjs?v=apartment-homes-2';
-import {setWaterTime} from './water-motion.mjs?v=apartment-homes-2';
-import {drawFountainMotion} from './fountain-motion.mjs?v=apartment-homes-2';
-import {buildingDepthSlices,physicalObjectDepth,scenePartDepth,buildingSliceRect,batchBuildingDepthQueue} from './actor-depth.mjs?v=apartment-homes-2';
-import {spriteBounds,intersectsViewport,actorBounds} from './render-visibility.mjs?v=apartment-homes-2';
-import {scenePartitionCache} from './scene-partition.mjs?v=apartment-homes-2';
+import {drawSelection} from './selection-view.mjs?v=furniture-facings-1';
+import {drawTerrain} from './terrain-render.mjs?v=furniture-facings-1';
+import {mountPose} from './cliff-mount.mjs?v=furniture-facings-1';
+import {elevationView} from './elevation-view.mjs?v=furniture-facings-1';
+import {barrierGeometry,drawBarrierRun,drawPost} from './construction.mjs?v=furniture-facings-1';
+import {TILE,RISE,COLS,ROWS,cell,height,segment} from './model.mjs?v=furniture-facings-1';
+import {catalog} from './catalog.mjs?v=furniture-facings-1';
+import {assetMapImage,assetMapImageRevision} from './asset-lawn.mjs?v=furniture-facings-1';
+import {overviewObjectImage} from './overview-sprites.mjs?v=furniture-facings-1';
+import {renderCityNight} from './city-night.mjs?v=furniture-facings-1';
+import {setWaterTime} from './water-motion.mjs?v=furniture-facings-1';
+import {drawFountainMotion} from './fountain-motion.mjs?v=furniture-facings-1';
+import {drawApartmentMotion} from './apartment-motion.mjs?v=furniture-facings-1';
+import {buildingDepthSlices,physicalObjectDepth,scenePartDepth,buildingSliceRect,batchBuildingDepthQueue} from './actor-depth.mjs?v=furniture-facings-1';
+import {spriteBounds,intersectsViewport,actorBounds} from './render-visibility.mjs?v=furniture-facings-1';
+import {scenePartitionCache} from './scene-partition.mjs?v=furniture-facings-1';
+import {furnitureFacingPlacement,furnitureFacingDepth,supportsFurnitureFacing} from './furniture-facing.mjs?v=furniture-facings-1';
+import {createFurnitureFacingSourceRoster,furnitureFacingDrawSource,drawFurnitureFacingSource,flatFurnitureFacingPlacement,flatFurnitureFacingLocalPlacement} from './furniture-facing-source.mjs?v=furniture-facings-1';
+import {assetFilter} from './asset-color.mjs?v=furniture-facings-1';
+import {drawFacingFountainMotion} from './furniture-facing-fountain.mjs?v=furniture-facings-1';
+const facingMotionAssets=new WeakMap();
+const facingSourceRosters=new WeakMap(),fallbackFacingRoster=createFurnitureFacingSourceRoster();
+function sourceRoster(c){if(!c.canvas)return fallbackFacingRoster;let roster=facingSourceRosters.get(c.canvas);if(!roster)facingSourceRosters.set(c.canvas,roster=createFurnitureFacingSourceRoster());return roster;}
+export function furnitureFacingSourceStats(canvas){return (canvas?facingSourceRosters.get(canvas):fallbackFacingRoster)?.stats||null;}
+function motionAsset(a,facing,motion){
+ let views=facingMotionAssets.get(a);if(!views)facingMotionAssets.set(a,views=new Map());
+ let entry=views.get(facing.direction);const {w,h}=facing.view;
+ if(!entry||entry.motion!==motion||entry.w!==w||entry.h!==h){const asset=Object.create(a);Object.defineProperties(asset,{w:{value:w},h:{value:h},motion:{value:motion}});entry={motion,w,h,asset};views.set(facing.direction,entry);}
+ return entry.asset;
+}
 function drawBrush(c,d,brush,zoom){
  const radius=brush.size/2,color=brush.blend?'#b7eddf':'#ffe2a1';
  c.save();
@@ -34,6 +49,25 @@ function drawBrush(c,d,brush,zoom){
 export function drawObject(c,o,d,collision=false,alpha=1,time=0,fragment=null,prepared=null){
  const a=catalog.get(o.asset);if(!a)return;const pose=prepared?.pose||mountPose(d,o);if(!pose)return;
  c.save();c.globalAlpha=alpha;
+ const facing=prepared?.facing||furnitureFacingPlacement(a,o,pose,{includeImage:false});
+ if(facing){
+  const managed=typeof a.getFacingDrawSource==='function',native=prepared?.native!==false;
+  let fountainSource=null;
+  if(managed){
+   const source=furnitureFacingDrawSource(a,facing,{native}),previous=c.filter;c.filter=assetFilter(a);drawFurnitureFacingSource(c,facing,source);c.filter=previous;
+   fountainSource=source;
+  }else{
+   // Assets without the atlas API retain their established source path.
+   const full=furnitureFacingPlacement(a,o,pose),source=full?.image||a.canvas,graded=Object.create(a);Object.defineProperty(graded,'canvas',{value:source});const image=assetMapImage(graded,o,d);
+   c.save();c.scale(facing.scaleX,facing.scaleY);const display=overviewObjectImage(c,a,image);c.restore();c.drawImage(display,facing.x,facing.y,facing.w,facing.h);
+   fountainSource={image:source,sx:0,sy:0,sw:source.width,sh:source.height,native:true};
+  }
+  drawFacingFountainMotion(c,a,facing,fountainSource,time,{native});
+  const motion=facing.view.motion??(facing.direction==='south'?a.motion:null);
+  if(motion&&native)drawApartmentMotion(c,motionAsset(a,facing,motion),{x:facing.x+facing.w/2,y:facing.y+facing.h,w:facing.w,h:facing.h},time);
+  if(collision&&o.collision)drawObjectCollision(c,o,d);
+  c.restore();return;
+ }
  let cropPadding=0;
  if(fragment?.x0!==undefined){
   const t=c.getTransform(),spans=fragment.spans||[fragment];cropPadding=1/Math.max(1e-8,Math.hypot(t.a,t.b));c.beginPath();
@@ -44,6 +78,11 @@ export function drawObject(c,o,d,collision=false,alpha=1,time=0,fragment=null,pr
   }else{for(const span of spans)c.rect(span.x0,-65536,span.x1-span.x0,131072);c.clip();}
  }
  c.translate(pose.x,pose.y);c.rotate(o.rotation*Math.PI/180);c.scale(o.scale,o.scale);
+ const flat=prepared?.flat!==undefined?prepared.flat:flatFurnitureFacingPlacement(a,spriteBounds(a,o,pose));
+ if(flat){
+  const source=furnitureFacingDrawSource(a,flat,{native:prepared?.native!==false}),previous=c.filter;c.filter=assetFilter(a);drawFurnitureFacingSource(c,flatFurnitureFacingLocalPlacement(a,pose,flat),source);c.filter=previous;
+  if(collision&&o.collision)drawCollisionLocal(c,a);c.restore();return;
+ }
  const image=prepared?.image||assetMapImage(a,o,d),display=prepared?.display||overviewObjectImage(c,a,image);
  if(prepared){prepared.image=image;prepared.display=display;}
  const index=fragment?.outline?a.sceneParts?.indexOf(fragment):-1,isCompositeLayer=!!fragment?.base||index>=0;
@@ -61,7 +100,7 @@ export function drawObject(c,o,d,collision=false,alpha=1,time=0,fragment=null,pr
  if(!fragment||fragment.animate){
   c.save();
   if(fragment?.outline){c.beginPath();fragment.outline.forEach(([x,y],i)=>{if(i)c.lineTo(x-a.w/2,y-a.h*pose.offset);else c.moveTo(x-a.w/2,y-a.h*pose.offset);});c.closePath();c.clip();}
-  c.translate(-a.w/2,-a.h*pose.offset);drawFountainMotion(c,a,image,time);c.restore();
+  c.translate(-a.w/2,-a.h*pose.offset);drawFountainMotion(c,a,image,time);if(a.motion)drawApartmentMotion(c,a,{x:a.w/2,y:a.h,w:a.w,h:a.h},time);c.restore();
  }
  if(collision&&o.collision)drawCollisionLocal(c,a);
  c.restore();
@@ -79,7 +118,12 @@ function composite(a,o){return !o.mount&&a.sceneParts?.length;}
 function depthSorted(a,o){return o.mount||o.layer==='objects'||a.depthSorted||a.frontAtX;}
 export function render(c,d,cam,w,h,opts={}){setWaterTime(opts.time||0);const screenTransform=c.getTransform();c.clearRect(0,0,w,h);c.fillStyle='#101f19';c.fillRect(0,0,w,h);c.save();c.translate(w/2,h/2);c.scale(cam.zoom,cam.zoom);c.translate(-cam.x,-cam.y);const left=cam.x-w/2/cam.zoom,top=cam.y-h/2/cam.zoom;const x0=Math.max(0,Math.floor(left/64)-1),x1=Math.min(COLS,Math.ceil((left+w/cam.zoom)/64)+1),y0=Math.max(0,Math.floor(top/64)-1),y1=Math.min(ROWS,Math.ceil((top+h/cam.zoom+RISE*9)/64)+1);if(opts.heightView==='plan'){elevationView(c,d,cam,w,h,opts);c.restore();return;}drawTerrain(c,d,{x0,x1,y0,y1},opts);if(opts.drawFootprints)opts.drawFootprints(c,d,opts.time||0);
  const viewport={x:left,y:top,w:w/cam.zoom,h:h/cam.zoom},prepared=new Map();
- const visible=d.objects.filter(o=>{const a=catalog.get(o.asset);if(!a)return false;const pose=mountPose(d,o);if(!pose||!intersectsViewport(spriteBounds(a,o,pose),viewport,2/cam.zoom))return false;prepared.set(o,{pose});return true;});
+ const visible=d.objects.filter(o=>{const a=catalog.get(o.asset);if(!a)return false;const pose=mountPose(d,o);if(!pose)return false;const facing=furnitureFacingPlacement(a,o,pose,{includeImage:false}),bounds=facing?.bounds||spriteBounds(a,o,pose);if(!intersectsViewport(bounds,viewport,2/cam.zoom))return false;prepared.set(o,{pose,facing,flat:!facing&&flatFurnitureFacingPlacement(a,bounds)});return true;});
+ const facingEntries=[];
+ for(const o of visible){const p=prepared.get(o),placement=p.facing||p.flat;if(placement)facingEntries.push({asset:catalog.get(o.asset),placement,selected:opts.selected===o,focused:opts.focused===o});}
+ if(opts.ghost){const a=catalog.get(opts.ghost.asset),pose=a&&mountPose(d,opts.ghost),facing=pose&&furnitureFacingPlacement(a,opts.ghost,pose,{includeImage:false}),flat=!facing&&pose&&flatFurnitureFacingPlacement(a,spriteBounds(a,opts.ghost,pose)),placement=facing||flat;if(placement){prepared.set(opts.ghost,{pose,facing,flat});facingEntries.push({asset:a,placement,focused:true});}}
+ const transform=c.getTransform(),roster=sourceRoster(c);roster.update(facingEntries,{pixelScale:Math.max(Math.hypot(transform.a,transform.b),Math.hypot(transform.c,transform.d)),focus:{x:cam.x,y:cam.y}});
+ for(const [o,p]of prepared){const a=catalog.get(o.asset),placement=p.facing||p.flat;if(placement&&typeof a.getFacingDrawSource==='function')p.native=roster.isNative(a,placement);}
  const drawPlaced=(o,collision=false,fragment=null)=>{let image=prepared.get(o);if(!image){image={};prepared.set(o,image);}drawObject(c,o,d,collision,1,opts.time||0,fragment,image);};
  // Composite scenes retain their complete native ground artwork. Only their
  // raised silhouettes return to the depth queue; paving is never repainted on
@@ -93,7 +137,7 @@ export function render(c,d,cam,w,h,opts={}){setWaterTime(opts.time||0);const scr
   }else if(depthSorted(a,o)){
    const slices=buildingDepthSlices(a,o);
    if(slices)for(const part of slices)queue.push({y:part.depth,building:o,fragment:slices.length===1?null:part,draw:()=>drawPlaced(o,false,slices.length===1?null:part)});
-   else queue.push({y:physicalObjectDepth(a,o,mountPose(d,o).depth),draw:()=>drawPlaced(o)});
+   else queue.push({y:supportsFurnitureFacing(a,o)?furnitureFacingDepth(a,o,mountPose(d,o).depth):physicalObjectDepth(a,o,mountPose(d,o).depth),draw:()=>drawPlaced(o)});
   }
  }
  const barriers=barrierGeometry(d,{revision:opts.terrainRevision}),barrierPadding=2/cam.zoom;
@@ -110,4 +154,4 @@ export function render(c,d,cam,w,h,opts={}){setWaterTime(opts.time||0);const scr
  if(opts.night&&(!opts.heightView||opts.heightView==='art')){c.save();c.setTransform(screenTransform);renderCityNight(c,d,cam,w,h,opts.time||0,{catalog,objects:d.objects});c.restore();}
  if(opts.heightView==='colors')elevationView(c,d,cam,w,h,opts);
  if(opts.region)drawSelection(c,d,opts.region,{zoom:cam.zoom,bounds:{x0,x1,y0,y1},revision:opts.terrainRevision});
- if(opts.selected){const o=opts.selected,a=catalog.get(o.asset),pose=mountPose(d,o);if(pose){c.save();c.translate(pose.x,pose.y);c.rotate(o.rotation*Math.PI/180);c.scale(o.scale,o.scale);c.strokeStyle='#f6d77d';c.lineWidth=3/(cam.zoom*o.scale);c.strokeRect(-a.w/2,-a.h*pose.offset,a.w,a.h);c.restore();}}if(opts.ghost)drawObject(c,opts.ghost,d,false,.55,opts.time||0);if(opts.hover){c.strokeStyle='#f1da8b';c.lineWidth=2/cam.zoom;c.strokeRect(opts.hover.x*64,opts.hover.y*64-cell(d,opts.hover.x,opts.hover.y).level*RISE,64,64);}if(opts.brush)drawBrush(c,d,opts.brush,cam.zoom);c.restore();}
+ if(opts.selected){const o=opts.selected,a=catalog.get(o.asset),pose=mountPose(d,o);if(pose){c.save();c.strokeStyle='#f6d77d';const facing=furnitureFacingPlacement(a,o,pose,{includeImage:false});if(facing){c.lineWidth=3/cam.zoom;c.strokeRect(facing.x,facing.y,facing.w,facing.h);}else{c.translate(pose.x,pose.y);c.rotate(o.rotation*Math.PI/180);c.scale(o.scale,o.scale);c.lineWidth=3/(cam.zoom*o.scale);c.strokeRect(-a.w/2,-a.h*pose.offset,a.w,a.h);}c.restore();}}if(opts.ghost)drawObject(c,opts.ghost,d,false,.55,opts.time||0,null,prepared.get(opts.ghost));if(opts.hover){c.strokeStyle='#f1da8b';c.lineWidth=2/cam.zoom;c.strokeRect(opts.hover.x*64,opts.hover.y*64-cell(d,opts.hover.x,opts.hover.y).level*RISE,64,64);}if(opts.brush)drawBrush(c,d,opts.brush,cam.zoom);c.restore();}

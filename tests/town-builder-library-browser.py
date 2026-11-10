@@ -1,0 +1,40 @@
+"""Lazy library thumbnails, selection and a real pending native-view click."""
+from functools import partial
+from http.server import SimpleHTTPRequestHandler,ThreadingHTTPServer
+from pathlib import Path
+from threading import Thread
+import argparse,hashlib,json,time
+from playwright.sync_api import sync_playwright
+ROOT=Path(__file__).resolve().parents[1];SOURCE=ROOT/'town/maps/coda-town-uploaded-3.json';source_hash=hashlib.sha256(SOURCE.read_bytes()).hexdigest();parser=argparse.ArgumentParser();parser.add_argument('--manifest',type=Path,default=Path('/workspace/.onboarding/legacy-furniture/prototype/manifest.json'));parser.add_argument('--screenshots',type=Path,default=Path('/workspace/.onboarding/builder-library'));args=parser.parse_args();args.screenshots.mkdir(parents=True,exist_ok=True);manifest=json.loads(args.manifest.read_text());east_file=manifest['collections'][0]['views']['east']['file'];east_bytes=(ROOT/'town/assets/furniture-facings'/east_file).read_bytes()
+class Quiet(SimpleHTTPRequestHandler):
+ def log_message(self,*_):pass
+server=ThreadingHTTPServer(('127.0.0.1',0),partial(Quiet,directory=str(ROOT)));Thread(target=server.serve_forever,daemon=True).start()
+try:
+ with sync_playwright() as p:
+  browser=p.chromium.launch(executable_path='/usr/bin/chromium',args=['--no-sandbox']);context=browser.new_context(viewport={'width':1740,'height':1120});context.add_init_script('''(()=>{window.__libraryPainted=new Set();for(const method of ['drawImage','fillRect','strokeRect','fill','stroke']){const original=CanvasRenderingContext2D.prototype[method];CanvasRenderingContext2D.prototype[method]=function(...a){if(this.canvas.closest?.('#library'))__libraryPainted.add(this.canvas);return original.apply(this,a);};}})()''')
+  pending=[];context.route('**/'+east_file+'*',lambda route:pending.append(route))
+  page=context.new_page();page.set_default_timeout(180000);errors=[];page.on('pageerror',lambda e:errors.append(str(e)));page.goto(f'http://127.0.0.1:{server.server_port}/town/builder/');page.wait_for_function('!!window.townBuilder');page.wait_for_timeout(400)
+  if page.evaluate('townBuilder.npcsVisible'):page.locator('#npcToggle').click()
+  initial=page.evaluate('''()=>{const a=[...document.querySelectorAll('#library canvas')];window.__oldHiddenThumb=a[Math.floor(a.length/2)];return {total:a.length,painted:a.filter(c=>__libraryPainted.has(c)).length,middlePainted:__libraryPainted.has(__oldHiddenThumb)};}''');assert initial['total']>1000 and 0<initial['painted']<initial['total']/4 and not initial['middlePainted'],initial
+  page.locator('#library .asset').last.scroll_into_view_if_needed();page.wait_for_function('(()=>{const a=[...document.querySelectorAll("#library canvas")];return __libraryPainted.has(a.at(-1))})()')
+  page.locator('#search').fill('collection-bach-bed');page.wait_for_function('document.querySelectorAll("#library .asset").length===1');page.locator('#library .asset').first.scroll_into_view_if_needed();page.wait_for_function('__libraryPainted.has(document.querySelector("#library canvas"))');assert not page.evaluate('__libraryPainted.has(__oldHiddenThumb)')
+  page.locator('#search').fill('');page.locator('#category').select_option('furniture');assert page.locator('#library .asset').count()==9;page.locator('#library .asset').first.scroll_into_view_if_needed();page.wait_for_function('__libraryPainted.has(document.querySelector("#library canvas"))')
+  page.locator('#category').select_option('');page.locator('#search').fill('collection-bach-bed');page.wait_for_function('document.querySelectorAll("#library .asset").length===1');page.locator('#rotation').select_option('180');page.locator('#library [data-asset="collection-bach-bed"]').click();page.wait_for_function('townBuilder.tool==="place"&&document.getElementById("status").textContent.includes("Ready to place")');assert page.locator('#rotation').input_value()=='180'
+  selected=page.locator('#assetName').inner_text();assert 'Bach' in selected and 'bed' in selected.lower();page.screenshot(path=str(args.screenshots/'search-selected-facing.png'))
+  # Attach the real sparse adapter, then intentionally hold its native East IO.
+  setup=page.evaluate('''async manifest=>{const app=new URL(document.querySelector('script[type=module]').src),url=n=>new URL('../world/'+n+'.mjs'+app.search,app),{registerLegacyFurnitureFacings}=await import(url('legacy-furniture-facings')),{LEGACY_FURNITURE_ASSETS}=await import(url('legacy-furniture-definitions'));
+   const ids=new Set(manifest.collections.flatMap(c=>c.views.north.cells.map(f=>f.id)));await registerLegacyFurnitureFacings(townBuilder.catalog,{definitions:LEGACY_FURNITURE_ASSETS.filter(d=>ids.has(d.id)),directionManifest:manifest,reuseAuthoredSeats:false});window.__libraryOriginalProject=structuredClone(townBuilder.project);const o={id:'cold-native-bed',asset:'furniture-2-180',x:8192,y:8000,scale:1,rotation:270,layer:'objects',collision:true};Object.assign(townBuilder.project,{cells:{},edges:{},objects:[o],spawn:{x:8192,y:8300}});Object.assign(townBuilder.cam,{x:8192,y:7900,zoom:1});
+   const {furnitureFacingPlacement}=await import(url('furniture-facing')),{drawFurnitureFacingSource}=await import(url('furniture-facing-source')),a=townBuilder.catalog.get(o.asset),placement=furnitureFacingPlacement(a,o,undefined,{includeImage:false}),source=a.getFacingDrawSource('east',{native:false}),cv=document.createElement('canvas');cv.width=Math.ceil(placement.view.w);cv.height=Math.ceil(placement.view.h);drawFurnitureFacingSource(cv.getContext('2d'),{x:0,y:0,scaleX:1,scaleY:1,view:placement.view},source);const pixels=cv.getContext('2d').getImageData(0,0,cv.width,cv.height).data;let sample,best=Infinity;
+   for(let y=0;y<cv.height;y++)for(let x=0;x<cv.width;x++)if(pixels[(y*cv.width+x)*4+3]>200){const score=(x-cv.width*.5)**2+(y-cv.height*.65)**2;if(score<best){best=score;sample={x,y};}}
+   if(!sample)throw Error('Compact overview has no visible object pixel');return {name:a.name,point:{x:placement.x+sample.x*placement.scaleX,y:placement.y+sample.y*placement.scaleY}};
+  }''',manifest)
+  page.locator('[data-tool="select"]').click();deadline=time.monotonic()+10
+  while not pending and time.monotonic()<deadline:page.wait_for_timeout(50)
+  assert pending,'Native East request did not start';assert not page.evaluate('townBuilder.catalog.get("furniture-2-180").getFacingView("east").ready')
+  point=page.evaluate('p=>{const r=document.getElementById("map").getBoundingClientRect(),cam=townBuilder.cam;return{x:r.x+r.width/2+(p.x-cam.x)*cam.zoom,y:r.y+r.height/2+(p.y-cam.y)*cam.zoom}}',setup['point']);page.mouse.click(point['x'],point['y']);assert page.locator('#assetName').inner_text()==setup['name'];assert page.locator('#rotation').input_value()=='270';assert not page.evaluate('townBuilder.catalog.get("furniture-2-180").getFacingView("east").ready');page.screenshot(path=str(args.screenshots/'cold-overview-first-click.png'))
+  for route in pending:route.fulfill(status=200,content_type='image/webp',body=east_bytes)
+  page.wait_for_function('townBuilder.catalog.get("furniture-2-180").getFacingView("east").ready');page.mouse.click(point['x'],point['y']);assert page.locator('#assetName').inner_text()==setup['name'];assert page.locator('#rotation').input_value()=='270'
+  page.evaluate('Object.assign(townBuilder.project,__libraryOriginalProject)');assert not errors,errors;browser.close()
+ assert hashlib.sha256(SOURCE.read_bytes()).hexdigest()==source_hash
+ result={'initialLibrary':initial,'hiddenMiddleStayedUnpainted':True,'scrollPaintedLast':True,'searchAndCategoryPaintedVisible':True,'selectionKeptFacing':180,'coldNativeFirstClickSelected':True,'coldViewWasNotReady':True,'nativeReadyClickSelected':True,'sourceUnchanged':True,'pageErrors':errors};(args.screenshots/'results.json').write_text(json.dumps(result,indent=2));print(json.dumps(result),flush=True)
+finally:server.shutdown()

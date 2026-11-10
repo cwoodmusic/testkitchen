@@ -1,4 +1,4 @@
-import {supportsLawnReveal} from './asset-lawn.mjs?v=apartment-homes-2';
+import {supportsLawnReveal} from './asset-lawn.mjs?v=furniture-facings-1';
 
 export const OVERVIEW_SPRITE_SCALE=.125;
 const MIN_EDGE=128,MAX_EDGE=1024;

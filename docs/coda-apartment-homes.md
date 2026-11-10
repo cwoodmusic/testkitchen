@@ -1,37 +1,49 @@
 # Coda Town apartment homes
 
-Both the apartment tower and Coda Furnishings now use inhabited one-bedroom homes, with a private bathroom, bedroom, kitchen and living space.
+Coda Furnishings, the 18 NPC apartments and the player's rooftop home have complete one-bedroom layouts: a private bathroom and bedroom, a practical kitchen, and living/dining space.
 
-The **18 NPC homes** use six floor plans and eight personality-matched furniture families. Paired units remain 1088 × 1120; the single-owner upper floors remain 2304 × 1120. The tower exterior, floor directory, friendships, door identities and resident journeys stay compatible. Each home includes a fridge, sink, stove and kitchen storage; a shower or bathtub, toilet, vanity and wall mirror; a bed and wardrobe; and living/dining furniture with the resident’s music and keepsakes.
+The favorite wide NPC floor plans remain 2304 × 1120. Paired tower units remain 1088 × 1120, within the same fifteen-story building and floor directory. Friendships, resident identities and home journeys retain their existing contracts.
 
-The **eight furniture-store apartments** use four different compact plans and their mirrored versions. Each remains 624 × 704 inside the store’s existing floor plate, entered through its own lobby door. Bedroom and bathroom doorways have open frames and clear circulation. Room-specific shopping offers the pieces actually shown in that apartment.
+The store has **twelve apartments across two floors** inside its existing 3072 × 2048 footprint. The original eight **1184 × 448 wide homes** retain their lower-floor entrances. Four additional **1184 × 832 homes** upstairs have retrofuture, cyberpunk, steampunk and robot themes. A store lift and stairs connect the floors. No exterior building or authored town placement is enlarged.
 
-## Furniture and character
+## Individual collections
 
-There are **48 new reusable assets**, bringing the furniture shop to **100 products**. The collection includes practical home fixtures, storage, reading furniture and playful details: fox and axolotl plush friends, moon/star cushions, a checkerboard beanbag, piano-key and vinyl rugs, origami art, a solar-system model, headphones/books, record cubbies, cat planters and a lava lamp.
+Each of the 31 homes has an independently drawn 32-piece collection: **992 reusable assets**. The furnishings placed in the homes have no repeated asset IDs or repeated visible artwork. Fixtures share a practical purpose, while their shapes, materials and details follow the owner.
 
-Midcentury now uses low teak furniture, tapered legs, olive upholstery, a kidney-shaped table, a tambour record console, a starburst clock and calm cream atomic wallpaper. Other styles retain their distinct signature beds and sofas. NPC choices follow their personalities instead of using one matching set in every home.
+Examples include Bach's organ-pipe oak, Mozart's ribboned rosewood, Beethoven's angled steel and smoked ash, Miles's midnight walnut and brass, Zizi's lunar garden and the player's patchwork Comet Club. The twelve showrooms have separate collections; Atomic Walnut uses low walnut furniture, tapered legs, teal wool, burnt orange and atomic details.
 
-Electronics sit on desks or consoles; soft keepsakes sit on beds. Wall art and mirrors align with wall faces and avoid windows. Rug artwork stays under furniture and characters. Decorative objects resting on furniture use the supporting piece’s depth, so they remain visible.
+Every home has its own poster, playful toy, animated lava lamp and miniature arcade. Compact homes use tabletop cabinets; wide homes have game corners. Lava rises inside the actual glass, and arcade screens show different animated games. Static furniture artwork stays unchanged beneath the overlays; reduced-motion preferences stop them.
 
-The native transparent images, source atlases and metadata live in `town/assets/apartments/`. They are also movable Town Builder assets under the Urban kit / apartment furniture category.
+Wall decorations align with real wall faces. Rugs draw below people and furniture. Tabletop pieces use their supporting furniture's depth and do not create invisible floor obstacles.
 
-## Your room and saved purchases
+Native WebP atlases, crop/motion metadata and source hashes live in `town/assets/apartment-collections/`. Generation originals are not required by the game. All collections are also available in Town Builder's Urban kit.
 
-All original 52 shop IDs and prices remain available. The two midcentury signature IDs retain their original dimensions and collision geometry while using the new artwork, so existing purchases still match the showroom. New purchases use the same Notes wallet and one-time unlocks.
+## Doors and furniture facings
 
-Your existing floor furnishing areas and saved decoration records remain valid. The fixed kitchen has a correctly sized fridge beside the sink counter and stove; a wardrobe replaces the old built-in trunk, and a plush friend rests on the bed. These fixed changes stay outside the saved furnishing areas.
+Walk toward an unlocked door to enter or leave. Bedroom and bathroom leaves open before arrival, stay open while someone occupies the threshold, and close once everyone clears. They close behind a visitor standing inside. Owner NPCs can use their doors; player friendship requirements still apply. Arrival guards prevent held movement from bouncing between scenes.
 
-In **Furnish apartment**, posters, mirrors, shelves and clocks snap to clear north-wall sections. They use separate wall placement bounds; furniture continues to use the existing floor areas. You can move, reload or put away purchases as before. The room’s local save key and profile isolation stay unchanged.
+**E** remains available for talking, shopping, elevator controls and sitting. Door traversal needs no interaction key.
 
-The generated classroom rules fragments include the expanded catalogue. They were checked offline; static-site publication does not deploy database rules or change the existing classroom purchase gate.
+Town Builder and **Furnish apartment** offer North, East, South and West; **R** cycles the facing. Furniture aligns with the room axes, without diagonal poses. Upright furniture uses directional artwork with footprint-aligned anchors. Saved rotations retain their collision geometry. Moving keeps the facing; invalid turns leave the previous placement intact. Flat ground patterns still rotate as flat artwork.
 
-## Verification
+## Purchases and saved rooms
 
-Model checks cover every room and fixture approach with the game’s actual collision padding, furniture footprint overlap, exact floor plates, all resident journeys and the restored NPC showroom visit routes. Browser tests walk all eight showrooms and representative tower units, check all 18 homes, buy and place new décor, hang wall art, reload and put it away, and confirm an existing saved decoration remains byte-for-byte unchanged.
+Coda Furnishings offers **484 products**: all previous 100 products plus 384 pieces from the twelve showroom collections. Room shopping offers the furniture displayed there. Existing ownership IDs, prices and one-time Notes charges remain valid.
 
-The complete release passed 585 Node checks. The outdoor changes also passed four sustained walking scenarios and 18 exact pixel comparisons; see [the performance report](coda-town-performance.md).
+The player keeps the same two floor furnishing regions, three wall regions, profile isolation and local save key. New Comet Club built-ins sit outside those saved regions. Rotation is optional: old records retain absent fields and original bytes until deliberately edited. Decorations can be moved, rotated, reloaded or returned to inventory.
 
-Use `python3 tests/town-showrooms-browser.py` and `python3 tests/town-apartments-browser.py` for isolated browser regressions. Neither changes the supplied source map.
+Generated classroom rules include the expanded allowlist and are checked offline. Static-site publication does not deploy database rules or change the classroom purchase gate.
 
-Previews: [all eight showrooms](town-preview/apartments-showrooms-overview.png), [midcentury modern](town-preview/apartments-midcentury-modern.png), [NPC homes](town-preview/apartments-tower-overview.png), [Bach](town-preview/apartments-bach.png), [Miles](town-preview/apartments-miles.png), [Zizi](town-preview/apartments-zizi.png), [your room](town-preview/apartments-player.png).
+## Performance and verification
+
+Collection thumbnails load at startup; full art loads for viewed homes. NPC model/path queries do not fetch all 31 native atlases. Native sources and sprite canvases have bounded caches with eviction recovery. Interior backgrounds are limited to eight entries and 16 megapixels, with immediate backing-store release. Lava/screen buffers update at eight frames per second without repainting the room.
+
+The initial native front-art run covered all 864 distinct assets across the original 27 homes, 726 distinct placed images and 54 animations, including transparent boundaries, unchanged static art, saved decor and cache limits. Midcentury, Bach and player interiors held 60 FPS with frame CPU p95 of 1.4, 1.9 and 1.4 ms and no pauses above 50 ms in the test environment. Native art made no requests during measurement.
+
+The original 27 backgrounds also passed cache stress: limits held, 19 evicted canvases released their backing stores, and re-entering Bach reproduced exact pixels. Model checks cover real collision padding, fixture approaches, furniture overlaps, private doors, showroom routes and resident journeys. Keyboard checks cover all eight automatic showroom entrances/exits, compact/wide/player homes, friendship locks, owner NPCs and closing behind people. The supplied town map stays unchanged.
+
+Browser regressions: `tests/town-apartment-doors-browser.py`, `tests/town-apartments-collections-browser.py`, `tests/town-showrooms-browser.py`, and `tests/town-apartments-browser.py`. Earlier outdoor measurements are in [the performance report](coda-town-performance.md).
+
+Previews: [showrooms](town-preview/apartments-showrooms-overview.png), [midcentury](town-preview/apartments-midcentury-modern.png), [NPC homes](town-preview/apartments-tower-overview.png), [Bach](town-preview/apartments-bach.png), [Miles](town-preview/apartments-miles.png), [Zizi](town-preview/apartments-zizi.png), [your home](town-preview/apartments-player.png).
+
+Planning sources and their concrete layout applications are in [the interior-design notes](coda-interior-design.md).

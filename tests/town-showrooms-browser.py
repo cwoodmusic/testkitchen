@@ -14,11 +14,14 @@ import base64
 import hashlib
 import json
 from playwright.sync_api import sync_playwright
+from town_browser_compat import assert_original_furniture_stock
 
 ROOT = Path(__file__).resolve().parents[1]
 parser = argparse.ArgumentParser()
 parser.add_argument('--map', type=Path, default=ROOT / 'town/maps/coda-town-uploaded-3.json')
 parser.add_argument('--url', help='Optional published builder URL')
+parser.add_argument('--skip-tours', action='store_true', default=True, help='Run collection/purchase checks; automatic real-key journeys have their own suite')
+parser.add_argument('--legacy-tours', action='store_false', dest='skip_tours', help='Compatibility only: older builds that require E to enter rooms')
 parser.add_argument('--preview', action='store_true', help='Capture lobby and apartment scenes without walking/purchase checks')
 parser.add_argument('--screenshots', type=Path, default=Path('/tmp/town-apartment-showrooms'))
 args = parser.parse_args()
@@ -67,6 +70,7 @@ try:
         page.expose_function('__saveShowroomImage', save_image)
         page.goto(args.url or f'http://127.0.0.1:{server.server_port}/town/builder/', timeout=180000)
         page.wait_for_function('!!window.townBuilder')
+        original_stock=assert_original_furniture_stock(page)
         page.locator('#file').set_input_files(str(args.map))
         page.wait_for_function('n=>townBuilder.project.objects.length===n', arg=len(source['objects']))
         assert page.evaluate('townBuilder.project') == source
@@ -83,17 +87,17 @@ try:
             const url=name=>new URL('../world/'+name+'.mjs'+app.search,app).href;
             const {getInterior,renderInterior}=await import(url('urban-interiors'));
             const {SHOWROOMS}=await import(url('showroom-layout'));
-            const urban=townBuilder.urban,lobby=getInterior({kind:'shop',floor:1});
+            const urban=townBuilder.urban,lobbies=[getInterior({kind:'shop',floor:1}),getInterior({kind:'shop',floor:2})],lobby=lobbies[0];
             const check=(ok,label)=>{if(!ok)throw Error(label);};
             const distance=(a,b)=>Math.hypot(a.x-b.x,a.y-b.y);
             const stock=window.CodaFurnitureCatalog;
             const solid=(model,x,y)=>x<40||y<100||x>model.width-40||y>model.height-40||model.solids.some(r=>x>=r.x-16&&x<=r.x+r.w+16&&y>=r.y-16&&y<=r.y+r.h+16);
             check(lobby.width===3072&&lobby.height===2048,'Store lobby no longer fits the placed building');
-            check(SHOWROOMS.length===8,'Expected eight separate apartment definitions');
-            const doorZones=lobby.zones.filter(z=>z.action==='showroom');
-            check(doorZones.length===8&&new Set(doorZones.map(z=>z.showroomId)).size===8,'Lobby lacks eight independent apartment doors');
+            check(SHOWROOMS.length===12&&lobbies[0].id!==lobbies[1].id,'Expected twelve homes and separate store-floor models');check(SHOWROOMS.filter(r=>r.storeFloor===1).length===8&&SHOWROOMS.filter(r=>r.storeFloor===2).length===4,'Incorrect store floor allocation');
+            const doorZones=lobbies.flatMap(m=>m.zones.filter(z=>z.action==='showroom'));
+            check(doorZones.length===12&&new Set(doorZones.map(z=>z.showroomId)).size===12,'Store lacks twelve independent apartment doors');
             check(!lobby.items.some(i=>/^showroom-.*-(bed|sofa)$/.test(i.asset)),'Lobby still exposes apartment furniture as open bays');
-            check(stock.length===100,'Expected the 52 existing products plus 48 new apartment furnishings');
+            check(stock.length===484,'Expected 100 preserved products plus twelve 32-piece owner collections');
             const allProducts=new Map(stock.map(i=>[i.id,i]));
             const required=['kitchen','dining','living','bedroom','bathroom'];
             const matches=(area,role)=>{
@@ -102,7 +106,7 @@ try:
                 return role==='bedroom'?/bed|sleep/.test(text):role==='bathroom'?/bath/.test(text):text.includes(role);
             };
             const rooms=SHOWROOMS.map(display=>{
-                const scene={kind:'showroom',showroomId:display.id,floor:1},model=getInterior(scene);
+                const scene={kind:'showroom',showroomId:display.id,floor:display.storeFloor},model=getInterior(scene),floorLobby=lobbies.find(m=>m.floor===display.storeFloor);check(model.floor===display.storeFloor,'Wrong showroom floor');
                 check(model!==lobby&&model.id!==lobby.id,display.name+' still shares the lobby scene');
                 check(model.kind==='showroom'&&model.showroomId===display.id,display.name+' has the wrong scene identity');
                 check(model.width===display.w&&model.height===display.h,display.name+' exceeds its reserved physical floor area');
@@ -111,13 +115,13 @@ try:
                 const bath=areas.find(a=>a.role==='bathroom').area;
                 const privacy=model.walls.filter(w=>w.x<=bath.x+bath.w+24&&w.x+w.w>=bath.x-24&&w.y<=bath.y+bath.h+24&&w.y+w.h>=bath.y-24);
                 check(privacy.length>=2,display.name+' bathroom has no enclosing privacy walls');
-                for(const asset of ['apartment-sink-counter','apartment-cream-stove','apartment-toilet','apartment-glass-shower','apartment-bath-vanity','apartment-round-mirror'])check(model.items.filter(i=>i.asset===asset).length===1,display.name+' needs exactly one apartment essential: '+asset);
+                for(const slot of ['sink','stove','toilet','bath-fixture','vanity','mirror'])check(model.items.filter(i=>i.slot===slot).length===1,display.name+' needs exactly one apartment essential: '+slot);
                 check(model.items.filter(i=>i.furnitureRole==='fridge').length===1,display.name+' lacks a refrigerator');
                 for(const role of ['bedroom','bathroom'])check(model.rooms.filter(r=>r.functionalRole===role).length===1,display.name+' repeats its '+role);
                 check(model.privacyDoors?.length===2,display.name+' lacks two visible privacy doors');
                 for(const door of model.privacyDoors){const at=door.axis==='horizontal'?{x:door.x+door.length/2,y:door.y}:{x:door.x,y:door.y+door.length/2};check(!solid(model,at.x,at.y),display.name+' privacy doorway is blocked');}
                 for(const role of ['bed','sofa']){
-                    const asset='showroom-'+display.id+'-'+role,product='furniture-'+display.id+'-'+role;
+                    const asset='collection-showroom-'+display.id+'-'+role,product='furniture-'+asset;
                     check(model.items.some(i=>i.asset===asset),display.name+' lacks its unique '+role);
                     check(allProducts.get(product)?.asset===asset,display.name+' signature '+role+' cannot be purchased as displayed');
                     check(display.productIds.includes(product),display.name+' collection omits its '+role);
@@ -125,15 +129,15 @@ try:
                 check(display.productIds.every(id=>allProducts.has(id)),display.name+' displays unavailable stock');
                 check(model.zones.some(z=>z.action==='shop'&&z.showroomId===display.id),display.name+' has no collection interaction');
                 check(model.zones.some(z=>z.action==='showroom-lobby'),display.name+' has no return door');
-                check(display.lobbyReturn&&!solid(lobby,display.lobbyReturn.x,display.lobbyReturn.y),display.name+' returns into a wall');
-                check(solid(lobby,display.x+display.w/2,display.y+display.h/2),display.name+' is still an open lobby bay');
+                check(display.lobbyReturn&&!solid(floorLobby,display.lobbyReturn.x,display.lobbyReturn.y),display.name+' returns into a wall');
+                check(solid(floorLobby,display.x+display.w/2,display.y+display.h/2),display.name+' is still an open lobby bay');
                 return {display,scene,model,areas};
             });
-            check(new Set(rooms.map(r=>r.model.id)).size===8,'Apartment scenes share their cache identity');
-            check(new Set(SHOWROOMS.map(r=>r.floorFinish?.id||r.floor?.id)).size===8,'Apartment floors repeat');
-            check(new Set(SHOWROOMS.map(r=>r.wallpaper?.id)).size===8,'Apartment wallpapers repeat');
-            const assetIds=[...new Set([lobby,...rooms.map(r=>r.model)].flatMap(m=>m.items.map(i=>i.asset)))];
-            await Promise.all(assetIds.map(id=>Promise.resolve(townBuilder.catalog.get(id)?.ensureFull?.()).catch(()=>{})));
+            check(new Set(rooms.map(r=>r.model.id)).size===12,'Apartment scenes share their cache identity');
+            check(new Set(SHOWROOMS.map(r=>r.floorFinish?.id||r.floor?.id)).size===12,'Apartment floors repeat');
+            check(new Set(SHOWROOMS.map(r=>r.wallpaper?.id)).size===12,'Apartment wallpapers repeat');
+            const assetIds=[...new Set([...lobbies,...rooms.map(r=>r.model)].flatMap(m=>m.items.map(i=>i.asset)))];
+            await Promise.all(lobbies.flatMap(m=>m.items).map(item=>townBuilder.catalog.get(item.asset)?.ensureFull?.()));
             await document.fonts.ready;
             const draw=scene=>{const m=getInterior(scene),cv=document.createElement('canvas');cv.width=m.width;cv.height=m.height;const c=cv.getContext('2d');c.imageSmoothingEnabled=false;renderInterior(c,scene,{catalog:townBuilder.catalog,actors:[],time:0});return cv;};
             const lobbyCanvas=draw({kind:'shop',floor:1});
@@ -141,20 +145,21 @@ try:
             const overview=document.createElement('canvas');overview.width=1600;overview.height=Math.ceil(lobby.height*1600/lobby.width);
             const oc=overview.getContext('2d');oc.imageSmoothingEnabled=false;oc.drawImage(lobbyCanvas,0,0,overview.width,overview.height);
             await window.__saveShowroomImage('lobby-overview',overview.toDataURL('image/png'));
-            const sheet=document.createElement('canvas');sheet.width=624*4;sheet.height=752*2;const sc=sheet.getContext('2d');sc.fillStyle='#131b21';sc.fillRect(0,0,sheet.width,sheet.height);sc.imageSmoothingEnabled=false;
+            const upperCanvas=draw({kind:'shop',floor:2});await window.__saveShowroomImage('lobby-upper-full',upperCanvas.toDataURL('image/png'));
+            const cellW=Math.max(...rooms.map(r=>r.model.width)),columns=2,rowHeights=Array.from({length:Math.ceil(rooms.length/columns)},(_,i)=>Math.max(...rooms.slice(i*columns,i*columns+columns).map(r=>r.model.height))+48);const sheet=document.createElement('canvas');sheet.width=cellW*columns;sheet.height=rowHeights.reduce((n,h)=>n+h,0);const sc=sheet.getContext('2d');sc.fillStyle='#131b21';sc.fillRect(0,0,sheet.width,sheet.height);sc.imageSmoothingEnabled=false;
             for(let i=0;i<rooms.length;i++){
-                const r=rooms[i],cv=draw(r.scene);await window.__saveShowroomImage('apartment-'+r.display.id,cv.toDataURL('image/png'));
-                const x=i%4*624,y=Math.floor(i/4)*752;sc.drawImage(cv,x,y,624,704);sc.fillStyle='#e2c794';sc.font='bold 22px Georgia';sc.textAlign='center';sc.fillText(r.display.name,x+312,y+736);
+                const r=rooms[i];await Promise.all(r.model.items.map(item=>townBuilder.catalog.get(item.asset)?.ensureFull?.()));const cv=draw(r.scene);await window.__saveShowroomImage('apartment-'+r.display.id,cv.toDataURL('image/png'));
+                const row=Math.floor(i/columns),cellH=rowHeights[row],x=i%columns*cellW,y=rowHeights.slice(0,row).reduce((n,h)=>n+h,0);sc.drawImage(cv,x,y,r.model.width,r.model.height);sc.fillStyle='#e2c794';sc.font='bold 22px Georgia';sc.textAlign='center';sc.fillText(r.display.name,x+cellW/2,y+cellH-16);
             }
             const sheetOverview=document.createElement('canvas');sheetOverview.width=1600;sheetOverview.height=Math.ceil(sheet.height*1600/sheet.width);const soc=sheetOverview.getContext('2d');soc.imageSmoothingEnabled=false;soc.drawImage(sheet,0,0,sheetOverview.width,sheetOverview.height);
             await window.__saveShowroomImage('apartments-overview',sheetOverview.toDataURL('image/png'));
             const signatureHashes=[];
             for(const r of rooms)for(const role of ['bed','sofa']){
-                const id='showroom-'+r.display.id+'-'+role,a=townBuilder.catalog.get(id);check(a?.canvas,id+' art failed to load');
+                const id='collection-showroom-'+r.display.id+'-'+role,a=townBuilder.catalog.get(id);await a?.ensureFull?.();check(a?.canvas,id+' art failed to load');
                 const pixels=a.canvas.getContext('2d').getImageData(0,0,a.canvas.width,a.canvas.height).data;
                 const digest=await crypto.subtle.digest('SHA-256',pixels);signatureHashes.push({id,hash:[...new Uint8Array(digest)].map(n=>n.toString(16).padStart(2,'0')).join('')});
             }
-            check(new Set(signatureHashes.map(i=>i.hash)).size===16,'Signature furniture repeats the same image');
+            check(new Set(signatureHashes.map(i=>i.hash)).size===24,'Signature furniture repeats the same image');
             const cv=document.createElement('canvas');cv.width=320;cv.height=240;const ctx=cv.getContext('2d');let steps=0,clock=0,walkDistance=0;
             const moveAxis=(target,axis)=>{
                 for(let frame=0;Math.abs(urban.player[axis]-target)>.05&&frame<6000;frame++){
@@ -192,7 +197,7 @@ try:
                 exit(id){const r=rooms.find(r=>r.display.id===id),z=r.model.zones.find(z=>z.action==='showroom-lobby');return walk(p=>inside(p,z),r.model.spawn,r.display.name+' return door');},
                 returned(id){const r=rooms.find(r=>r.display.id===id);check(urban.active&&urban.scene?.kind==='shop','Return unexpectedly left the store');check(distance(urban.player,r.display.lobbyReturn)<1,'Return did not restore this apartment lobby door');return {...urban.player};}
             };
-            return {tag:app.search,width:lobby.width,height:lobby.height,signatureHashes,rooms:rooms.map(r=>({id:r.display.id,name:r.display.name,style:r.display.style,floor:r.display.floorFinish||r.display.floor,wallpaper:r.display.wallpaper,productIds:r.display.productIds,width:r.model.width,height:r.model.height,areaNames:r.areas.map(a=>a.area.name),items:r.model.items.map(i=>({asset:i.asset,role:i.furnitureRole}))})),stock:stock.map(i=>({id:i.id,name:i.name,price:i.price,asset:i.asset,category:i.category}))};
+            return {tag:app.search,width:lobby.width,height:lobby.height,floors:lobbies.map(m=>({id:m.id,floor:m.floor,width:m.width,height:m.height})),signatureHashes,rooms:rooms.map(r=>({id:r.display.id,name:r.display.name,storeFloor:r.display.storeFloor,style:r.display.style,floor:r.display.floorFinish||r.display.floor,wallpaper:r.display.wallpaper,productIds:r.display.productIds,width:r.model.width,height:r.model.height,areaNames:r.areas.map(a=>a.area.name),interiorDesign:r.model.interiorDesign,items:r.model.items.map(i=>({asset:i.asset,role:i.furnitureRole,rotation:i.rotation}))})),stock:stock.map(i=>({id:i.id,name:i.name,price:i.price,asset:i.asset,category:i.category}))};
         }""")
         (args.screenshots / 'setup.json').write_text(json.dumps(setup, indent=2))
         if args.preview:
@@ -202,7 +207,7 @@ try:
             browser.close()
             raise SystemExit(0)
         walks = []
-        for index, room in enumerate(setup['rooms']):
+        for index, room in enumerate([] if args.skip_tours else setup['rooms']):
             entry_walk = page.evaluate('(id)=>__apartmentQA.enter(id)', room['id'])
             page.locator('#map').focus()
             page.keyboard.press('e')
@@ -236,8 +241,8 @@ try:
             walks.append({'room': room['id'], 'entry': entry_walk, 'areas': area_walks, 'browse': browse_walk, 'returnMethod': method, 'exit': exit_walk, 'returned': returned})
             (args.screenshots / 'walks-progress.json').write_text(json.dumps(walks, indent=2))
         page.get_by_role('button', name='Browse furniture', exact=True).click()
-        assert page.get_by_label('Showroom collection').locator('option').count() == 9
-        assert page.locator('.urban-catalog button').count() == 100
+        assert page.get_by_label('Showroom collection').locator('option').count() == 13
+        assert page.locator('.urban-catalog button').count() == 484
         assert sorted(page.locator('.urban-catalog button span').all_text_contents()) == sorted(item['name'] for item in setup['stock'])
         collection = setup['rooms'][0]
         page.get_by_label('Showroom collection').select_option(collection['id'])
@@ -245,7 +250,7 @@ try:
         assert page.locator('.urban-categories button[aria-pressed="true"]').get_attribute('data-category') == 'furniture'
         selected_stock = [item for item in setup['stock'] if item['id'] in collection['productIds'] and item['category'] == 'furniture']
         assert page.locator('.urban-catalog button').count() == len(selected_stock)
-        products = [next(item for item in setup['stock'] if item['id'] == f"furniture-{collection['id']}-{role}") for role in ['bed', 'sofa']]
+        products = [next(item for item in setup['stock'] if item['id'] == f"furniture-collection-showroom-{collection['id']}-{role}") for role in ['bed', 'sofa']]
         assert [item['price'] for item in products] == [80, 70]
         before_balance = page.evaluate('JSON.parse(localStorage.getItem("codaNotesWalletV1"))?.balance??150')
         assert before_balance == 150
@@ -272,9 +277,12 @@ try:
         page.evaluate('townBuilder.urban.zoom(4000)')
         perf = page.evaluate("""()=>new Promise(resolve=>{const start=performance.now();let frames=0;function tick(now){frames++;if(now-start<1200){requestAnimationFrame(tick);return;}resolve({fps:frames*1000/(now-start)});}requestAnimationFrame(tick);})""")
         assert perf['fps'] > 25, perf
-        page.evaluate('(id)=>__apartmentQA.enter(id)', collection['id'])
-        page.locator('#map').focus()
-        page.keyboard.press('e')
+        if args.skip_tours:
+            page.evaluate('(id)=>townBuilder.urban.openShowroom(id)', collection['id'])
+        else:
+            page.evaluate('(id)=>__apartmentQA.enter(id)', collection['id'])
+            page.locator('#map').focus()
+            page.keyboard.press('e')
         page.wait_for_function("id=>townBuilder.urban.scene?.kind==='showroom'&&townBuilder.urban.scene.showroomId===id", arg=collection['id'])
         page.evaluate('townBuilder.urban.zoom(-Math.log(.9/townBuilder.urban.view.zoom)*1000)')
         apartment_perf = page.evaluate("""()=>new Promise(resolve=>{const start=performance.now();let frames=0;function tick(now){frames++;if(now-start<1200){requestAnimationFrame(tick);return;}resolve({fps:frames*1000/(now-start)});}requestAnimationFrame(tick);})""")
@@ -292,9 +300,9 @@ try:
         assert page.evaluate('townBuilder.project') == source
         assert hashlib.sha256(args.map.read_bytes()).hexdigest() == source_hash
         assert not errors, errors
-        result = {**setup, 'walks': walks, 'shopping': {'collection': collection['id'], 'purchases': purchases, 'totalDebit': 150, 'balance': 0}, 'performance': {'lobby': perf, 'apartment': apartment_perf}, 'sourceUnchanged': True, 'sourceHash': source_hash, 'pageErrors': errors}
+        result = {**setup, 'originalStock':original_stock, 'walks': walks, 'shopping': {'collection': collection['id'], 'purchases': purchases, 'totalDebit': 150, 'balance': 0}, 'performance': {'lobby': perf, 'apartment': apartment_perf}, 'sourceUnchanged': True, 'sourceHash': source_hash, 'pageErrors': errors}
         (args.screenshots / 'results.json').write_text(json.dumps(result, indent=2))
-        print(json.dumps(result), flush=True)
+        print(json.dumps({'rooms':len(setup['rooms']),'stock':len(setup['stock']),'shopping':result['shopping'],'performance':result['performance'],'sourceUnchanged':True,'pageErrors':errors}), flush=True)
         browser.close()
 finally:
     server.shutdown()

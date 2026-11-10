@@ -1,6 +1,16 @@
 import test from 'node:test';
 import assert from 'node:assert/strict';
-import {renderCityNight,cityFireflies} from './city-night.mjs';
+import {renderCityNight,cityFireflies,cityLights} from './city-night.mjs';
+
+test('directional lamp glow follows the upright view at every facing without loading sprite images',()=>{
+ const asset={id:'decor-14-01',w:100,h:300,boxes:[{x:40,y:260,w:20,h:40}],getFacingView:()=>({w:100,h:300,footCenter:{x:50,y:280}}),getFacingImage(){throw Error('Light geometry must not request artwork');}};
+ const catalog=new Map([[asset.id,asset]]),doc={cells:{'15,15':{surface:'grass',level:2}},objects:[]};
+ for(const rotation of [0,90,180,270]){
+  doc.objects=[{asset:asset.id,x:1000,y:1000,scale:1,rotation}];const [lamp]=cityLights(doc,catalog);
+  assert(lamp.y<lamp.gy-200,'The glow fell below its upright lamp at '+rotation);
+  if(rotation===0){assert.equal(lamp.x,1000);assert.equal(lamp.y,670);assert.equal(lamp.gy,916);}
+ }
+});
 
 function context(){
  const stack=[];

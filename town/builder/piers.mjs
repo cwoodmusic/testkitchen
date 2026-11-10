@@ -1,4 +1,4 @@
-import {COLS,ROWS,RISE,TILE,cell,key,height,terrainHeight,surfaceAt,blocked} from '../world/model.mjs?v=apartment-homes-2';
+import {COLS,ROWS,RISE,TILE,cell,key,height,terrainHeight,surfaceAt,blocked} from '../world/model.mjs?v=furniture-facings-1';
 
 const point=p=>p&&Number.isFinite(p.x)&&Number.isFinite(p.y);
 const tile=p=>({x:Math.floor(p.x/TILE),y:Math.floor(p.y/TILE)});

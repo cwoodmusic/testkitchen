@@ -5,7 +5,7 @@ const setAttribute=(element,name,value)=>{if(element.getAttribute(name)!==String
 
 function loadStyles(document){
  if(document.querySelector('link[data-concert-controls-styles]'))return;
- const link=document.createElement('link');link.rel='stylesheet';link.href=new URL('./concert-controls.css?v=apartment-homes-2',import.meta.url).href;
+ const link=document.createElement('link');link.rel='stylesheet';link.href=new URL('./concert-controls.css?v=furniture-facings-1',import.meta.url).href;
  link.dataset.concertControlsStyles='';document.head.append(link);
 }
 

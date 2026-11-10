@@ -1,0 +1,805 @@
+{
+  "commit": "b0e1a984fa9a70e49453f893175263f501839b87",
+  "products": [
+    {
+      "id": "furniture-sofa",
+      "name": "Velvet sofa",
+      "price": 70,
+      "asset": "furniture-1-180",
+      "category": "furniture",
+      "scale": 1.75
+    },
+    {
+      "id": "furniture-bed",
+      "name": "Carved wooden bed",
+      "price": 80,
+      "asset": "furniture-2-180",
+      "category": "furniture",
+      "scale": 1.5
+    },
+    {
+      "id": "furniture-kitchen-counter",
+      "name": "Kitchen counter",
+      "price": 65,
+      "asset": "furniture-3-180",
+      "category": "furniture",
+      "scale": 1.75
+    },
+    {
+      "id": "furniture-stove",
+      "name": "Enamel stove",
+      "price": 55,
+      "asset": "furniture-4-180",
+      "category": "furniture",
+      "scale": 0.8
+    },
+    {
+      "id": "furniture-dining-table",
+      "name": "Dining table",
+      "price": 60,
+      "asset": "furniture-5-180",
+      "category": "furniture",
+      "scale": 1.5
+    },
+    {
+      "id": "furniture-vanity",
+      "name": "Bathroom vanity",
+      "price": 40,
+      "asset": "furniture-8-180",
+      "category": "furniture",
+      "scale": 0.9
+    },
+    {
+      "id": "furniture-piano",
+      "name": "Grand piano",
+      "price": 300,
+      "asset": "furniture-0-180",
+      "category": "instruments",
+      "scale": 1.83
+    },
+    {
+      "id": "furniture-cello",
+      "name": "Concert cello",
+      "price": 90,
+      "asset": "decor-02-01",
+      "category": "instruments",
+      "scale": 1
+    },
+    {
+      "id": "furniture-double-bass",
+      "name": "Upright double bass",
+      "price": 100,
+      "asset": "decor-02-03",
+      "category": "instruments",
+      "scale": 1
+    },
+    {
+      "id": "furniture-acoustic-guitar",
+      "name": "Acoustic guitar",
+      "price": 60,
+      "asset": "decor-02-05",
+      "category": "instruments",
+      "scale": 1
+    },
+    {
+      "id": "furniture-electric-guitar",
+      "name": "Red electric guitar",
+      "price": 75,
+      "asset": "decor-02-08",
+      "category": "instruments",
+      "scale": 1
+    },
+    {
+      "id": "furniture-harp",
+      "name": "Concert harp",
+      "price": 140,
+      "asset": "decor-02-14",
+      "category": "instruments",
+      "scale": 1
+    },
+    {
+      "id": "furniture-upright-piano",
+      "name": "Walnut upright piano",
+      "price": 180,
+      "asset": "decor-03-02",
+      "category": "instruments",
+      "scale": 1.5
+    },
+    {
+      "id": "furniture-synthesizer",
+      "name": "Teal synthesizer",
+      "price": 120,
+      "asset": "decor-03-04",
+      "category": "instruments",
+      "scale": 1
+    },
+    {
+      "id": "furniture-jazz-drums",
+      "name": "Blue jazz drum kit",
+      "price": 140,
+      "asset": "decor-03-07",
+      "category": "instruments",
+      "scale": 1.5
+    },
+    {
+      "id": "furniture-congas",
+      "name": "Pair of congas",
+      "price": 65,
+      "asset": "decor-03-10",
+      "category": "instruments",
+      "scale": 1
+    },
+    {
+      "id": "furniture-saxophone",
+      "name": "Gold tenor saxophone",
+      "price": 90,
+      "asset": "decor-04-06",
+      "category": "instruments",
+      "scale": 1
+    },
+    {
+      "id": "furniture-turntable",
+      "name": "Turntable console",
+      "price": 100,
+      "asset": "decor-05-15",
+      "category": "instruments",
+      "scale": 1.5
+    },
+    {
+      "id": "furniture-vinyl-bin",
+      "name": "Vinyl record collection",
+      "price": 45,
+      "asset": "decor-05-16",
+      "category": "instruments",
+      "scale": 1
+    },
+    {
+      "id": "furniture-oak-bench",
+      "name": "Carved oak bench",
+      "price": 55,
+      "asset": "decor-06-01",
+      "category": "furniture",
+      "scale": 1
+    },
+    {
+      "id": "furniture-wicker-chair",
+      "name": "Wicker chair",
+      "price": 35,
+      "asset": "decor-06-04",
+      "category": "furniture",
+      "scale": 1
+    },
+    {
+      "id": "furniture-cafe-table",
+      "name": "Round caf\u00e9 table",
+      "price": 45,
+      "asset": "decor-06-06",
+      "category": "furniture",
+      "scale": 1
+    },
+    {
+      "id": "furniture-chess-table",
+      "name": "Chess table",
+      "price": 60,
+      "asset": "decor-06-07",
+      "category": "furniture",
+      "scale": 1
+    },
+    {
+      "id": "furniture-geranium",
+      "name": "Terracotta geranium",
+      "price": 20,
+      "asset": "decor-08-01",
+      "category": "plants",
+      "scale": 1
+    },
+    {
+      "id": "furniture-hydrangea",
+      "name": "Blue hydrangea pot",
+      "price": 25,
+      "asset": "decor-08-02",
+      "category": "plants",
+      "scale": 1
+    },
+    {
+      "id": "furniture-rose-planter",
+      "name": "White rose planter",
+      "price": 25,
+      "asset": "decor-08-03",
+      "category": "plants",
+      "scale": 1
+    },
+    {
+      "id": "furniture-olive-tree",
+      "name": "Potted olive tree",
+      "price": 40,
+      "asset": "decor-08-09",
+      "category": "plants",
+      "scale": 1.3
+    },
+    {
+      "id": "furniture-lemon-tree",
+      "name": "Potted lemon tree",
+      "price": 45,
+      "asset": "decor-08-10",
+      "category": "plants",
+      "scale": 1.3
+    },
+    {
+      "id": "furniture-fern",
+      "name": "Hanging fern",
+      "price": 20,
+      "asset": "decor-08-13",
+      "category": "plants",
+      "scale": 1
+    },
+    {
+      "id": "furniture-succulents",
+      "name": "Succulent collection",
+      "price": 18,
+      "asset": "decor-08-15",
+      "category": "plants",
+      "scale": 1
+    },
+    {
+      "id": "furniture-oak-barrel",
+      "name": "Oak storage barrel",
+      "price": 25,
+      "asset": "decor-01-01",
+      "category": "storage",
+      "scale": 1
+    },
+    {
+      "id": "furniture-travel-trunk",
+      "name": "Leather traveling trunk",
+      "price": 35,
+      "asset": "decor-01-12",
+      "category": "storage",
+      "scale": 1
+    },
+    {
+      "id": "furniture-wicker-hamper",
+      "name": "Wicker hamper",
+      "price": 20,
+      "asset": "decor-01-13",
+      "category": "storage",
+      "scale": 1
+    },
+    {
+      "id": "furniture-streetlamp",
+      "name": "Bronze standing lamp",
+      "price": 55,
+      "asset": "decor-14-01",
+      "category": "lighting",
+      "scale": 1
+    },
+    {
+      "id": "furniture-garden-lantern",
+      "name": "Small garden lantern",
+      "price": 20,
+      "asset": "decor-14-04",
+      "category": "lighting",
+      "scale": 1
+    },
+    {
+      "id": "furniture-wind-chimes",
+      "name": "Copper wind chimes",
+      "price": 30,
+      "asset": "decor-09-08",
+      "category": "lighting",
+      "scale": 1
+    },
+    {
+      "id": "furniture-victorian-parlor-bed",
+      "name": "Victorian carved walnut bed",
+      "price": 80,
+      "asset": "showroom-victorian-parlor-bed",
+      "category": "furniture",
+      "scale": 1
+    },
+    {
+      "id": "furniture-victorian-parlor-sofa",
+      "name": "Victorian velvet chaise",
+      "price": 70,
+      "asset": "showroom-victorian-parlor-sofa",
+      "category": "furniture",
+      "scale": 1
+    },
+    {
+      "id": "furniture-art-deco-lounge-bed",
+      "name": "Art Deco fan-headboard bed",
+      "price": 80,
+      "asset": "showroom-art-deco-lounge-bed",
+      "category": "furniture",
+      "scale": 1
+    },
+    {
+      "id": "furniture-art-deco-lounge-sofa",
+      "name": "Art Deco curved sofa",
+      "price": 70,
+      "asset": "showroom-art-deco-lounge-sofa",
+      "category": "furniture",
+      "scale": 1
+    },
+    {
+      "id": "furniture-coastal-bedroom-bed",
+      "name": "Coastal whitewashed bed",
+      "price": 80,
+      "asset": "showroom-coastal-bedroom-bed",
+      "category": "furniture",
+      "scale": 1
+    },
+    {
+      "id": "furniture-coastal-bedroom-sofa",
+      "name": "Coastal linen and rattan sofa",
+      "price": 70,
+      "asset": "showroom-coastal-bedroom-sofa",
+      "category": "furniture",
+      "scale": 1
+    },
+    {
+      "id": "furniture-rustic-kitchen-bed",
+      "name": "Rustic pine patchwork bed",
+      "price": 80,
+      "asset": "showroom-rustic-kitchen-bed",
+      "category": "furniture",
+      "scale": 1
+    },
+    {
+      "id": "furniture-rustic-kitchen-sofa",
+      "name": "Rustic timber settle",
+      "price": 70,
+      "asset": "showroom-rustic-kitchen-sofa",
+      "category": "furniture",
+      "scale": 1
+    },
+    {
+      "id": "furniture-botanical-conservatory-bed",
+      "name": "Botanical woven rattan bed",
+      "price": 80,
+      "asset": "showroom-botanical-conservatory-bed",
+      "category": "furniture",
+      "scale": 1
+    },
+    {
+      "id": "furniture-botanical-conservatory-sofa",
+      "name": "Botanical cane sofa",
+      "price": 70,
+      "asset": "showroom-botanical-conservatory-sofa",
+      "category": "furniture",
+      "scale": 1
+    },
+    {
+      "id": "furniture-midcentury-studio-bed",
+      "name": "Midcentury teak bed",
+      "price": 80,
+      "asset": "showroom-midcentury-studio-bed",
+      "category": "furniture",
+      "scale": 1
+    },
+    {
+      "id": "furniture-midcentury-studio-sofa",
+      "name": "Midcentury tapered-leg sofa",
+      "price": 70,
+      "asset": "showroom-midcentury-studio-sofa",
+      "category": "furniture",
+      "scale": 1
+    },
+    {
+      "id": "furniture-french-cafe-bed",
+      "name": "French floral cabriole bed",
+      "price": 80,
+      "asset": "showroom-french-cafe-bed",
+      "category": "furniture",
+      "scale": 1
+    },
+    {
+      "id": "furniture-french-cafe-sofa",
+      "name": "French cream settee",
+      "price": 70,
+      "asset": "showroom-french-cafe-sofa",
+      "category": "furniture",
+      "scale": 1
+    },
+    {
+      "id": "furniture-industrial-loft-bed",
+      "name": "Industrial iron-pipe bed",
+      "price": 80,
+      "asset": "showroom-industrial-loft-bed",
+      "category": "furniture",
+      "scale": 1
+    },
+    {
+      "id": "furniture-industrial-loft-sofa",
+      "name": "Industrial leather Chesterfield",
+      "price": 70,
+      "asset": "showroom-industrial-loft-sofa",
+      "category": "furniture",
+      "scale": 1
+    },
+    {
+      "id": "furniture-apartment-teak-bed",
+      "name": "Teak platform bed",
+      "price": 80,
+      "asset": "apartment-teak-bed",
+      "category": "furniture",
+      "scale": 1
+    },
+    {
+      "id": "furniture-apartment-box-sofa",
+      "name": "Olive tapered-leg sofa",
+      "price": 70,
+      "asset": "apartment-box-sofa",
+      "category": "furniture",
+      "scale": 1
+    },
+    {
+      "id": "furniture-apartment-walnut-credenza",
+      "name": "Walnut sliding-door credenza",
+      "price": 45,
+      "asset": "apartment-walnut-credenza",
+      "category": "storage",
+      "scale": 1
+    },
+    {
+      "id": "furniture-apartment-kidney-coffee-table",
+      "name": "Kidney-shaped walnut coffee table",
+      "price": 35,
+      "asset": "apartment-kidney-coffee-table",
+      "category": "furniture",
+      "scale": 1
+    },
+    {
+      "id": "furniture-apartment-molded-lounge-chair",
+      "name": "Molded walnut lounge chair",
+      "price": 40,
+      "asset": "apartment-molded-lounge-chair",
+      "category": "furniture",
+      "scale": 1
+    },
+    {
+      "id": "furniture-apartment-arc-floor-lamp",
+      "name": "Brass arc floor lamp",
+      "price": 35,
+      "asset": "apartment-arc-floor-lamp",
+      "category": "lighting",
+      "scale": 1
+    },
+    {
+      "id": "furniture-apartment-starburst-clock",
+      "name": "Atomic starburst clock",
+      "price": 20,
+      "asset": "apartment-starburst-clock",
+      "category": "decorations",
+      "scale": 0.75
+    },
+    {
+      "id": "furniture-apartment-tambour-record-console",
+      "name": "Teak tambour record console",
+      "price": 75,
+      "asset": "apartment-tambour-record-console",
+      "category": "furniture",
+      "scale": 1
+    },
+    {
+      "id": "furniture-apartment-mushroom-lamp",
+      "name": "Amber mushroom table lamp",
+      "price": 18,
+      "asset": "apartment-mushroom-lamp",
+      "category": "lighting",
+      "scale": 1
+    },
+    {
+      "id": "furniture-apartment-geometric-room-divider",
+      "name": "Geometric teak room divider",
+      "price": 50,
+      "asset": "apartment-geometric-room-divider",
+      "category": "furniture",
+      "scale": 1
+    },
+    {
+      "id": "furniture-apartment-teak-desk",
+      "name": "Streamlined teak writing desk",
+      "price": 60,
+      "asset": "apartment-teak-desk",
+      "category": "furniture",
+      "scale": 1
+    },
+    {
+      "id": "furniture-apartment-round-dining-table",
+      "name": "Round teak dining table",
+      "price": 55,
+      "asset": "apartment-round-dining-table",
+      "category": "furniture",
+      "scale": 1
+    },
+    {
+      "id": "furniture-apartment-molded-dining-chair",
+      "name": "Pastel molded dining chair",
+      "price": 25,
+      "asset": "apartment-molded-dining-chair",
+      "category": "furniture",
+      "scale": 1
+    },
+    {
+      "id": "furniture-apartment-pastel-fridge",
+      "name": "Mint retro refrigerator",
+      "price": 65,
+      "asset": "apartment-pastel-fridge",
+      "category": "kitchen",
+      "scale": 1
+    },
+    {
+      "id": "furniture-apartment-low-bookcase",
+      "name": "Low walnut bookcase",
+      "price": 35,
+      "asset": "apartment-low-bookcase",
+      "category": "storage",
+      "scale": 1
+    },
+    {
+      "id": "furniture-apartment-record-player",
+      "name": "Walnut record player",
+      "price": 70,
+      "asset": "apartment-record-player",
+      "category": "instruments",
+      "scale": 1
+    },
+    {
+      "id": "furniture-apartment-fox-plush",
+      "name": "Fox music-friend plush",
+      "price": 12,
+      "asset": "apartment-fox-plush",
+      "category": "decorations",
+      "scale": 1
+    },
+    {
+      "id": "furniture-apartment-axolotl-plush",
+      "name": "Pink axolotl plush",
+      "price": 12,
+      "asset": "apartment-axolotl-plush",
+      "category": "decorations",
+      "scale": 1
+    },
+    {
+      "id": "furniture-apartment-checkered-beanbag",
+      "name": "Mint checkerboard beanbag",
+      "price": 25,
+      "asset": "apartment-checkered-beanbag",
+      "category": "furniture",
+      "scale": 1
+    },
+    {
+      "id": "furniture-apartment-moon-star-cushions",
+      "name": "Moon and star floor cushions",
+      "price": 12,
+      "asset": "apartment-moon-star-cushions",
+      "category": "decorations",
+      "scale": 1
+    },
+    {
+      "id": "furniture-apartment-record-rug",
+      "name": "Vinyl-record music rug",
+      "price": 20,
+      "asset": "apartment-record-rug",
+      "category": "rugs",
+      "scale": 1
+    },
+    {
+      "id": "furniture-apartment-rainbow-keys-rug",
+      "name": "Rainbow piano-key rug",
+      "price": 20,
+      "asset": "apartment-rainbow-keys-rug",
+      "category": "rugs",
+      "scale": 1
+    },
+    {
+      "id": "furniture-apartment-solar-system-model",
+      "name": "Little solar-system model",
+      "price": 12,
+      "asset": "apartment-solar-system-model",
+      "category": "decorations",
+      "scale": 1
+    },
+    {
+      "id": "furniture-apartment-headphones-books",
+      "name": "Headphones and favorite books",
+      "price": 12,
+      "asset": "apartment-headphones-books",
+      "category": "decorations",
+      "scale": 1
+    },
+    {
+      "id": "furniture-apartment-cassette-cubby",
+      "name": "Cassette and record cubby",
+      "price": 45,
+      "asset": "apartment-cassette-cubby",
+      "category": "storage",
+      "scale": 1
+    },
+    {
+      "id": "furniture-apartment-sticker-suitcase",
+      "name": "Music-sticker suitcase",
+      "price": 18,
+      "asset": "apartment-sticker-suitcase",
+      "category": "decorations",
+      "scale": 1
+    },
+    {
+      "id": "furniture-apartment-origami-artboard",
+      "name": "Origami bird artboard",
+      "price": 18,
+      "asset": "apartment-origami-artboard",
+      "category": "decorations",
+      "scale": 0.75
+    },
+    {
+      "id": "furniture-apartment-cat-planter",
+      "name": "Cat-shaped plant pot",
+      "price": 16,
+      "asset": "apartment-cat-planter",
+      "category": "plants",
+      "scale": 1
+    },
+    {
+      "id": "furniture-apartment-patchwork-wall-art",
+      "name": "Patchwork music wall art",
+      "price": 18,
+      "asset": "apartment-patchwork-wall-art",
+      "category": "decorations",
+      "scale": 0.75
+    },
+    {
+      "id": "furniture-apartment-monstera",
+      "name": "Terracotta monstera",
+      "price": 16,
+      "asset": "apartment-monstera",
+      "category": "plants",
+      "scale": 1
+    },
+    {
+      "id": "furniture-apartment-fern-planter",
+      "name": "Striped fern planter",
+      "price": 16,
+      "asset": "apartment-fern-planter",
+      "category": "plants",
+      "scale": 1
+    },
+    {
+      "id": "furniture-apartment-lava-lamp",
+      "name": "Periwinkle lava lamp",
+      "price": 18,
+      "asset": "apartment-lava-lamp",
+      "category": "lighting",
+      "scale": 1
+    },
+    {
+      "id": "furniture-apartment-sink-counter",
+      "name": "Sage kitchen sink counter",
+      "price": 60,
+      "asset": "apartment-sink-counter",
+      "category": "kitchen",
+      "scale": 1
+    },
+    {
+      "id": "furniture-apartment-corner-kitchen-counter",
+      "name": "Oak corner kitchen counter",
+      "price": 55,
+      "asset": "apartment-corner-kitchen-counter",
+      "category": "kitchen",
+      "scale": 1
+    },
+    {
+      "id": "furniture-apartment-cream-stove",
+      "name": "Cream enamel stove",
+      "price": 55,
+      "asset": "apartment-cream-stove",
+      "category": "kitchen",
+      "scale": 1
+    },
+    {
+      "id": "furniture-apartment-blue-fridge",
+      "name": "Powder-blue fridge freezer",
+      "price": 65,
+      "asset": "apartment-blue-fridge",
+      "category": "kitchen",
+      "scale": 1
+    },
+    {
+      "id": "furniture-apartment-bath-vanity",
+      "name": "Oak bathroom vanity",
+      "price": 40,
+      "asset": "apartment-bath-vanity",
+      "category": "bathroom",
+      "scale": 1
+    },
+    {
+      "id": "furniture-apartment-glass-shower",
+      "name": "Glass shower stall",
+      "price": 60,
+      "asset": "apartment-glass-shower",
+      "category": "bathroom",
+      "scale": 1
+    },
+    {
+      "id": "furniture-apartment-toilet",
+      "name": "White ceramic toilet",
+      "price": 30,
+      "asset": "apartment-toilet",
+      "category": "bathroom",
+      "scale": 1
+    },
+    {
+      "id": "furniture-apartment-bathtub",
+      "name": "Compact brass-fixture bathtub",
+      "price": 70,
+      "asset": "apartment-bathtub",
+      "category": "bathroom",
+      "scale": 1
+    },
+    {
+      "id": "furniture-apartment-wardrobe",
+      "name": "Walnut wardrobe",
+      "price": 50,
+      "asset": "apartment-wardrobe",
+      "category": "storage",
+      "scale": 1
+    },
+    {
+      "id": "furniture-apartment-nightstand",
+      "name": "Sage bedside nightstand",
+      "price": 25,
+      "asset": "apartment-nightstand",
+      "category": "furniture",
+      "scale": 1
+    },
+    {
+      "id": "furniture-apartment-desk-chair",
+      "name": "Coral wooden-leg desk chair",
+      "price": 25,
+      "asset": "apartment-desk-chair",
+      "category": "furniture",
+      "scale": 1
+    },
+    {
+      "id": "furniture-apartment-toy-chest",
+      "name": "Oak cushioned toy chest",
+      "price": 22,
+      "asset": "apartment-toy-chest",
+      "category": "storage",
+      "scale": 1
+    },
+    {
+      "id": "furniture-apartment-reading-lamp",
+      "name": "Slim brass reading lamp",
+      "price": 35,
+      "asset": "apartment-reading-lamp",
+      "category": "lighting",
+      "scale": 1
+    },
+    {
+      "id": "furniture-apartment-wall-shelf",
+      "name": "Walnut books and plant shelf",
+      "price": 25,
+      "asset": "apartment-wall-shelf",
+      "category": "decorations",
+      "scale": 0.75
+    },
+    {
+      "id": "furniture-apartment-round-mirror",
+      "name": "Round brass wall mirror",
+      "price": 22,
+      "asset": "apartment-round-mirror",
+      "category": "decorations",
+      "scale": 0.75
+    },
+    {
+      "id": "furniture-apartment-dining-bench",
+      "name": "Sage oak dining bench",
+      "price": 45,
+      "asset": "apartment-dining-bench",
+      "category": "furniture",
+      "scale": 1
+    }
+  ]
+}

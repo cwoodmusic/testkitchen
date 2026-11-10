@@ -106,3 +106,48 @@ test('invalid saves are rejected without silently discarding furniture or modify
  storage.setItem(ROOM_KEY,'{broken');assert.equal(api.load().ok,false);
  storage.setItem(ROOM_KEY,' '.repeat(100000));assert.equal(api.load().ok,false);
 });
+
+test('cardinal facing quarter-turns the original physical boxes exactly',()=>{
+ const at={asset:'chair',x:200,y:300};
+ assert.deepEqual(roomItemBoxes({...at,rotation:0},catalog),[{x:170,y:265,w:60,h:30}]);
+ assert.deepEqual(roomItemBoxes({...at,rotation:90},catalog),[{x:205,y:270,w:30,h:60}]);
+ assert.deepEqual(roomItemBoxes({...at,rotation:180},catalog),[{x:170,y:305,w:60,h:30}]);
+ assert.deepEqual(roomItemBoxes({...at,rotation:270},catalog),[{x:165,y:270,w:30,h:60}]);
+});
+test('room furniture keeps its chosen facing when moved and after reload',()=>{
+ const {api,storage}=setup();assert(api.place('furniture-chair',200,300,90).ok);
+ assert.equal(api.snapshot()[0].rotation,90);assert(api.place('furniture-chair',300,300).ok);assert.equal(api.snapshot()[0].rotation,90);
+ const reloaded=setup({storage}).api;assert(reloaded.load().ok);assert.equal(reloaded.snapshot()[0].rotation,90);
+ assert(reloaded.place('furniture-chair',300,300,270).ok);assert.equal(JSON.parse(storage.getItem(ROOM_KEY)).items[0].rotation,270);
+ const before=storage.getItem(ROOM_KEY);
+ for(const rotation of [-90,45,360,'90',null,NaN,Infinity])assert.equal(reloaded.place('furniture-chair',300,300,rotation).ok,false);
+ assert.equal(storage.getItem(ROOM_KEY),before);
+});
+test('loading an old layout preserves its exact bytes and absent optional facing and scale fields',()=>{
+ const storage=disk(),item={x:200,id:'room-furniture-chair',asset:'chair',item:'furniture-chair',y:300};
+ const raw=JSON.stringify({version:1,owner:'player-one',items:[item]},null,3);storage.setItem(ROOM_KEY,raw);
+ const {api}=setup({storage});assert(api.load().ok);assert.equal(storage.getItem(ROOM_KEY),raw);assert.deepEqual(api.snapshot(),[item]);
+ assert.equal(Object.hasOwn(api.snapshot()[0],'rotation'),false);assert.equal(Object.hasOwn(api.snapshot()[0],'scale'),false);
+ const again=setup({storage}).api;assert(again.load().ok);assert.equal(storage.getItem(ROOM_KEY),raw);
+ assert(again.place('furniture-table',360,300,180).ok);assert.deepEqual(JSON.parse(storage.getItem(ROOM_KEY)).items.find(i=>i.item==='furniture-chair'),item);
+});
+test('actual upright directional image bounds determine whether a placement fits',()=>{
+ const art=new Map(catalog),chair={...catalog.get('chair'),id:'chair',group:'furniture',getFacingView:direction=>direction==='west'?{w:300,h:100,footCenter:{x:150,y:80}}:{w:80,h:100,footCenter:{x:40,y:80}}};art.set('chair',chair);
+ const {api}=setup({catalog:art});assert.equal(api.place('furniture-chair',100,300,90).ok,false,'Wide side artwork crosses the left room edge');
+ assert.equal(api.place('furniture-chair',200,300,90).ok,true);assert.equal(api.snapshot()[0].rotation,90);
+});
+test('turning an item cannot rotate its physical base into fixed furniture',()=>{
+ const {api,storage}=setup();assert.equal(api.place('furniture-chair',470,430,0).ok,true);const before=storage.getItem(ROOM_KEY);
+ assert.equal(api.place('furniture-chair',470,430,90).ok,false);assert.equal(storage.getItem(ROOM_KEY),before);assert.equal(api.snapshot()[0].rotation,0);
+});
+test('invalid stored facings are rejected without changing the previous saved bytes',()=>{
+ const {api,storage}=setup();const item={id:'room-furniture-chair',item:'furniture-chair',asset:'chair',x:200,y:300};
+ for(const rotation of [45,360,-90,'north',null]){const raw=JSON.stringify({version:1,owner:'player-one',items:[{...item,rotation}]});storage.setItem(ROOM_KEY,raw);assert.equal(api.load().ok,false);assert.equal(storage.getItem(ROOM_KEY),raw);}
+});
+
+test('unsupported legacy size fields cannot shrink native collision or bypass the fixed catalog scale',()=>{
+ const item={id:'room-furniture-chair',item:'furniture-chair',asset:'chair',x:20,y:300,w:1,h:1,scaleX:.01,scaleY:.01};
+ assert.deepEqual(roomItemBoxes(item,catalog),[{x:-10,y:265,w:60,h:30}]);
+ const {api,storage}=setup(),raw=JSON.stringify({version:1,owner:'player-one',items:[item]});storage.setItem(ROOM_KEY,raw);assert.equal(api.load().ok,false);assert.equal(storage.getItem(ROOM_KEY),raw);
+ item.x=200;const validRaw=JSON.stringify({version:1,owner:'player-one',items:[item]});storage.setItem(ROOM_KEY,validRaw);assert(api.load().ok);assert.equal(storage.getItem(ROOM_KEY),validRaw);assert(!Object.hasOwn(api.snapshot()[0],'w'));assert(!Object.hasOwn(api.snapshot()[0],'scaleX'));
+});

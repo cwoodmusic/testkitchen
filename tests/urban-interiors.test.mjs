@@ -9,6 +9,7 @@ import {decorDefinitions} from '../town/world/decor-definitions.mjs';
 import {SHOWROOMS} from '../town/world/showroom-layout.mjs';
 import {SHOWROOM_FURNITURE} from '../town/world/showroom-furniture-definitions.mjs';
 import {APARTMENT_DECOR} from '../town/world/apartment-decor-definitions.mjs';
+import {APARTMENT_COLLECTION_ASSETS} from '../town/world/apartment-collection-definitions.mjs';
 
 const require=createRequire(import.meta.url),stock=require('../furniture-catalog.js');
 const read=path=>readFileSync(new URL(path,import.meta.url));
@@ -18,9 +19,10 @@ const catalog=new Map(Array.from({length:9},(_,i)=>[`furniture-${i}-180`,{w:180,
 for(const def of decorDefinitions){const cell=atlas.find(a=>a.family===def.family).cells[def.index],fit=Math.min(def.maxW/cell.w,def.maxH/cell.h);catalog.set(def.id,{w:Math.ceil(cell.w*fit),h:Math.ceil(cell.h*fit),boxes:[]});}
 for(const def of SHOWROOM_FURNITURE)catalog.set(def.id,{w:def.w,h:def.h,boxes:def.boxes,furnitureRole:def.role});
 for(const def of APARTMENT_DECOR)catalog.set(def.id,{w:def.w,h:def.h,boxes:def.boxes,layer:def.layer,wallMounted:def.wallMounted,purpose:def.purpose});
+for(const def of APARTMENT_COLLECTION_ASSETS)catalog.set(def.id,def);
 configureUrbanInteriors(catalog);
 const floorScene=floor=>({kind:floor===1?'lobby':'hall',floor});
-const scenes=[...Array.from({length:FLOOR_COUNT},(_,i)=>floorScene(i+1)),...residents.map(r=>({kind:'apartment',resident:r.id})),{kind:'apartment',resident:'player'},{kind:'shop'},...SHOWROOMS.map(room=>({kind:'showroom',floor:1,showroomId:room.id}))];
+const scenes=[...Array.from({length:FLOOR_COUNT},(_,i)=>floorScene(i+1)),...residents.map(r=>({kind:'apartment',resident:r.id})),{kind:'apartment',resident:'player'},{kind:'shop',floor:1},{kind:'shop',floor:2},...SHOWROOMS.map(room=>({kind:'showroom',floor:room.storeFloor,showroomId:room.id}))];
 const overlaps=(a,b)=>a.x<b.x+b.w&&a.x+a.w>b.x&&a.y<b.y+b.h&&a.y+a.h>b.y;
 
 test('fifteen floors house every musician once and reserve the top apartment for the player',()=>{
@@ -84,8 +86,8 @@ function reachableCells(model){
  }
  return queue.map(key=>({x:key%cols*step+8,y:Math.floor(key/cols)*step+8}));
 }
-test('a player with the real 16px collision padding can reach every interaction in all 43 scenes',()=>{
- assert.equal(scenes.length,43);
+test('a player with the real 16px collision padding can reach every interaction in all 48 scenes',()=>{
+ assert.equal(scenes.length,48);
  for(const scene of scenes){
   const model=getInterior(scene),reachable=reachableCells(model);
   for(const zone of model.zones){

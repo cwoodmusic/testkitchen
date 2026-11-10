@@ -1,4 +1,4 @@
-import {estateDefinitions} from './estates.mjs?v=apartment-homes-2';
+import {estateDefinitions} from './estates.mjs?v=furniture-facings-1';
 // Shared production artwork. Atlas bounds and pivots are defined here so
 // editor and game always draw identical pieces.
 const load=path=>new Promise((resolve,reject)=>{const image=new Image();image.onload=()=>resolve(image);image.onerror=()=>reject(Error('Could not load '+path));const url=new URL('../assets/'+path,import.meta.url);if(path.startsWith('home-estate-'))url.searchParams.set('v','home-open-1');image.src=url;});

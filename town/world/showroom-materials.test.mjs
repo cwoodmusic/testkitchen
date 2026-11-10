@@ -6,6 +6,8 @@ const wood=['#a87342','#d8a46a','#65442d','#bb8750','#513b2e'];
 const paper=['#eee1be','#fff1d1','#687a63','#c69848','#568b8b'];
 const floorPatterns=['teak-planks','terrazzo','bathroom-hex'];
 const wallPatterns=['midcentury-atomic','tiny-stars','music-confetti'];
+const upperFloors=['spaceport-terrazzo','neon-panels','clockwork-parquet','companion-cork'];
+const upperWalls=['orbital','circuit','clockwork','companion'];
 
 // A small source-over raster canvas records the actual whole-pixel material
 // output without requiring a browser or duplicating the material algorithms.
@@ -54,13 +56,24 @@ async function withRaster(run){
 
 test('material textures are generated once per finish, reused across rooms, and deterministic in a fresh cache',()=>withRaster(async raster=>{
  const fresh=await import('./showroom-materials.mjs?deterministic-material-test');
- for(const [kind,patterns,colors]of [['floor',floorPatterns,wood],['wallpaper',wallPatterns,paper]])for(const pattern of patterns){
+ for(const [kind,patterns,colors]of [['floor',[...floorPatterns,...upperFloors],wood],['wallpaper',[...wallPatterns,...upperWalls],paper]])for(const pattern of patterns){
   const first=drawTexture(pattern,kind,colors),writes=first.writes,count=raster.canvases.length;
   const again=drawTexture(pattern,kind,colors.slice());
   assert.strictEqual(again,first);assert.equal(first.writes,writes);assert.equal(raster.canvases.length,count);
   const regenerated=drawTexture(pattern,kind,colors,fresh);
   assert.notStrictEqual(regenerated,first);assert.deepEqual(regenerated.pixels,first.pixels);
   assert.equal(first.width,kind==='floor'?256:96);assert.equal(first.height,first.width);assert.equal(first.fractionalWrites,0);
+ }
+}));
+
+test('the four upper collections have individual floors and calm coordinated wall motifs',()=>withRaster(()=>{
+ for(const [kind,patterns]of [['floor',upperFloors],['wallpaper',upperWalls]]){
+  const canvases=patterns.map(pattern=>drawTexture(pattern,kind,kind==='floor'?wood:paper));
+  for(let i=0;i<canvases.length;i++){
+   assert(stats(canvases[i],kind==='floor'?wood[0]:paper[0]).colors>=6);
+   if(kind==='wallpaper'){const result=stats(canvases[i],paper[0]);assert(result.quiet>.75&&result.quiet<.995,'A themed wall still needs quiet background around its furniture');}
+   for(let j=i+1;j<canvases.length;j++)assert(differences(canvases[i].pixels,canvases[j].pixels)>.01,patterns[i]+' must not fall through to '+patterns[j]);
+  }
  }
 }));
 

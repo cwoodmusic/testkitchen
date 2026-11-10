@@ -1,6 +1,8 @@
-import {residents as defaultResidents} from './resident-profiles.mjs?v=apartment-homes-2';
-import {APARTMENT_DECOR} from './apartment-decor-definitions.mjs?v=apartment-homes-2';
-import {SHOWROOM_FURNITURE} from './showroom-furniture-definitions.mjs?v=apartment-homes-2';
+import {residents as defaultResidents} from './resident-profiles.mjs?v=furniture-facings-1';
+import {APARTMENT_DECOR} from './apartment-decor-definitions.mjs?v=furniture-facings-1';
+import {SHOWROOM_FURNITURE} from './showroom-furniture-definitions.mjs?v=furniture-facings-1';
+import {getApartmentAsset} from './apartment-collections.mjs?v=furniture-facings-1';
+import {furnitureAtGroundCenter} from './furniture-facing.mjs?v=furniture-facings-1';
 
 const furniture=new Map(APARTMENT_DECOR.map(a=>[a.id,a]));
 const signatureFurniture=new Map(SHOWROOM_FURNITURE.map(a=>[a.id,a]));
@@ -168,6 +170,67 @@ function living(plan,area,f){
  area.wallpaper=f.paper;area.wallpaperAreas=[rect(area.x,area.y-98,area.w,88)];
 }
 
+// Geometry stays authored at the same scale. Each retained role receives its
+// owner's independently drawn collection piece; repeated generic accents are
+// removed rather than renamed into extra clutter.
+function personalizeHome(plan){
+ const owner=plan.resident.id,old=plan.items,items=[],used=new Set();
+ const find=role=>old.find(a=>a.furnitureRole===role),room=id=>plan.rooms.find(a=>a.id===id);
+ function place(slot,source,extra={}){
+  const def=getApartmentAsset(owner,slot);if(used.has(slot))throw Error(`Duplicate home collection slot: ${owner}/${slot}`);
+  const target=extra.targetBounds||source.targetBounds||{w:source.w,h:source.h||source.w*def.h/def.w};
+  const fit=Math.min(target.w/def.w,target.h/def.h),item={...source,...extra,asset:def.id,w:def.w*fit,h:def.h*fit,targetBounds:{...target},purpose:def.purpose,solid:source.solid===false?false:def.solid,wallMounted:def.wallMounted,layer:def.layer,collectionOwner:owner,collectionSlot:slot,collectionStyle:def.style,furnitureTheme:def.style,visualSignature:def.visualSignature,motionKind:def.motionKind};
+  used.add(slot);items.push(item);return item;
+ }
+ const core={bed:'bed',sofa:'sofa',wardrobe:'wardrobe',nightstand:'nightstand',desk:'writing-desk','desk-chair':'desk-chair','dining-table':'dining-table','dining-chair':'dining-chair','coffee-table':'coffee-table',sink:'sink',stove:'stove',fridge:'fridge',counter:'kitchen-storage',toilet:'toilet',vanity:'vanity','linen-storage':'bathroom-storage',mirror:'bathroom-mirror',shelf:'kitchen-shelf','record-console':'record-storage',rug:'music-rug'};
+ for(const [slot,role]of Object.entries(core)){const source=find(role);if(source)place(slot,source);}
+ const bath=find('shower')||find('bathtub');place('bath-fixture',bath);
+ const signature=find('signature-instrument');place('instrument',signature,{inspirationAsset:signature.asset});
+ const clock=find('music-clock');place('clock',clock,{targetBounds:{w:88,h:86}});
+ const poster=find('bedroom-art')||old.find(a=>a.furnitureRole==='personal-keepsake'&&a.wallMounted);
+ place('poster',poster,{furnitureRole:'signature-poster',whimsy:true,whimsyKind:'poster',targetBounds:{w:100,h:86}});
+ const reading=room('reading'),chair=reading?find('reading-beanbag'):find('reading-chair');
+ if(chair)place('reading-chair',chair,{furnitureRole:'reading-chair'});
+ const lamp=find('reading-lamp');
+ if(lamp)place('floor-lamp',lamp,{...(reading?{roomId:'reading',x:reading.x+250,y:reading.y+120}:{}),targetBounds:{w:140,h:175}});
+ else if(reading)place('floor-lamp',{furnitureRole:'reading-lamp',roomId:'reading',x:reading.x+250,y:reading.y+120,w:100,h:150,solid:true});
+ const livingRoom=room('living'),plant=find('living-plant');
+ place('plant',plant||{furnitureRole:'living-plant',roomId:'living',x:livingRoom.side==='left'?livingRoom.x+65:livingRoom.x+livingRoom.w-65,y:livingRoom.y+livingRoom.h-38,w:70,h:105,solid:true});
+ if(plan.wide){const kitchenRoom=room('kitchen');place('pantry',{furnitureRole:'pantry',roomId:'kitchen',x:kitchenRoom.x+kitchenRoom.w-130,y:kitchenRoom.y+140,w:104,h:174,solid:true});}
+
+ const table=items.find(a=>a.furnitureRole==='coffee-table');
+ place('toy',{furnitureRole:'signature-toy',roomId:table.roomId,x:table.x,y:table.y-table.h*.68,w:42,h:50,solid:false,supportedBy:'coffee-table',depth:table.y+.25,whimsy:true,whimsyKind:'toy'});
+ const support=items.find(a=>a.furnitureRole===(plan.wide?'writing-desk':'record-storage'));
+ const top=support.y-support.h*(plan.wide?.76:.8);
+ place('lava-lamp',{furnitureRole:'signature-lava-lamp',roomId:support.roomId,x:support.x+(plan.wide?55:32),y:top,w:plan.wide?32:22,h:plan.wide?70:48,solid:false,supportedBy:support.furnitureRole,depth:support.y+.25,whimsy:true,whimsyKind:'lava-lamp'});
+ if(plan.wide)place('arcade',{furnitureRole:'arcade',roomId:'living',x:livingRoom.x+livingRoom.w*.51,y:livingRoom.y+livingRoom.h-65,w:118,h:184,solid:true,whimsy:true,whimsyKind:'arcade'});
+ else place('arcade',{furnitureRole:'arcade',roomId:support.roomId,x:support.x-14,y:top,w:65,h:115,solid:false,supportedBy:'record-storage',depth:support.y+.25,miniature:true,whimsy:true,whimsyKind:'arcade'});
+
+ plan.items=items;plan.collectionOwner=owner;plan.collectionStyle=getApartmentAsset(owner,'bed').style;plan.furnitureTheme=plan.collectionStyle;
+ arrangeConversationGroup(plan);
+ plan.fixtureApproaches=plan.fixtureApproaches.flatMap(p=>{const item=items.find(a=>a.furnitureRole===p.role);return item?[{...p,asset:item.asset}]:[];});
+ for(const item of items.filter(a=>a.collectionSlot==='pantry'||a.collectionSlot==='arcade')){
+  const parent=item.supportedBy?items.find(p=>p.furnitureRole===item.supportedBy):item;
+  approach(plan,item,parent.x,parent.y+35);
+ }
+ return plan;
+}
+
+function arrangeConversationGroup(plan){
+ const living=plan.rooms.find(r=>r.id==='living'),table=plan.items.find(a=>a.furnitureRole==='coffee-table'),chair=plan.items.find(a=>a.collectionSlot==='reading-chair'&&a.roomId==='living');
+ living.focalPoint={x:table.x,y:table.y-50};
+ if(!plan.wide||!chair)return;
+ const side=living.side==='left'?1:-1,center={x:table.x+side*(table.w/2+100),y:table.y-14};
+ Object.assign(chair,furnitureAtGroundCenter(getApartmentAsset(plan.resident.id,'reading-chair'),{...chair,rotation:side===1?90:270},center),{designRole:'conversation-seat'});
+ approach(plan,chair,center.x-side*58,center.y);
+ const lamp=plan.items.find(a=>a.collectionSlot==='floor-lamp'&&a.roomId==='living');
+ if(lamp){
+  const at={x:center.x+side*96,y:center.y+32};
+  Object.assign(lamp,furnitureAtGroundCenter(getApartmentAsset(plan.resident.id,'floor-lamp'),{...lamp,rotation:side===1?180:0},at),{designRole:'reading-task-light'});
+  plan.taskLights=[{x:center.x,y:center.y-96,r:150}];
+ }
+}
+
 /** Pure authored room and furnishing data, independent of the canvas/catalog. */
 export function createApartmentHomePlan(resident){
  if(!resident||resident.id==='player')return null;
@@ -182,7 +245,7 @@ export function createApartmentHomePlan(resident){
   const area=areaFor('reading',variant.reading,width,wide);area.point={x:area.x+area.w-52,y:area.y+90};area.floorFinish=finishes.wood;plan.rooms.push(area);
   add(plan,'checkered-beanbag','reading-beanbag',area.x+110,area.y+120,.95,{roomId:area.id});add(plan,'low-bookcase','reading-books',area.x+area.w-120,area.y+100,.75,{roomId:area.id});
  }
- return plan;
+ return personalizeHome(plan);
 }
 
 /** Build the existing interior scene shape; the player apartment stays owned
@@ -196,13 +259,14 @@ export function buildApartmentHome(residentId,{residents=defaultResidents,shell,
  s.kind='apartment';s.floor=resident.floor;s.resident=residentId;s.residentInfo=resident;s.homePlan=plan;s.spawn={...plan.spawn};s.privacyDoors=plan.doors.map(d=>({...d}));
  for(const area of plan.rooms){room(s,area.name,area.x,area.y,area.w,area.h,area.id==='bathroom'?'tile':'wood');Object.assign(s.rooms.at(-1),area);}
  for(const r of plan.walls){wall(s,r.x,r.y,r.w,r.h);Object.assign(s.walls.at(-1),{color:f.accent,trim:resident.trim});}
- for(const spec of plan.items){const item=addItem(s,spec.asset,spec.x,spec.y,spec.w,spec.h,spec.solid);Object.assign(item,spec,{h:item.h});}
- rug(s,plan.width/2-55,500,110,535,f.accent);
+ for(const spec of plan.items){const item=addItem(s,spec.asset,spec.x,spec.y,spec.w,spec.h,spec.solid,spec.rotation||0);Object.assign(item,spec,{h:item.h});}
+ // The collection contains this home's one deliberately designed rug.
  for(const x of plan.wide?[220,plan.width-220]:[190,plan.width-190])windowAt(s,x,20,150);
  sign(s,resident.number,plan.width/2,98,22);sign(s,resident.theme,plan.width/2,1074,22);
  s.actors.push({id:residentId,name:resident.name,...plan.home,facing:'down'});
  s.zones.push(zone('resident',`Talk to ${resident.name}`,plan.home.x-80,plan.home.y-70,160,180,'resident',{resident:residentId}));
  s.zones.push(zone('hall','Return to the hall',plan.width/2-105,910,210,175,'exit',{floor:resident.floor}));
  light(s,plan.width/2,840,300);for(const area of plan.rooms.filter(a=>a.id!=='music'))light(s,area.x+area.w/2,area.y+area.h/2,230);
+ for(const task of plan.taskLights||[])light(s,task.x,task.y,task.r);
  return s;
 }

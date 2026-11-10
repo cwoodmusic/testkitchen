@@ -2,6 +2,7 @@ const test=require('node:test');
 const assert=require('node:assert/strict');
 const fs=require('node:fs');
 const vm=require('node:vm');
+const {createHash}=require('node:crypto');
 const furniture=require('../furniture-catalog.js');
 const Shop=require('../notes-shop.js');
 const Profiles=require('../classroom-profile-data.js');
@@ -11,12 +12,29 @@ function storage(){
  return {values,fail:false,getItem(key){return values.get(key)??null;},setItem(key,value){if(this.fail)throw Error('quota');values.set(key,String(value));},removeItem(key){values.delete(key);}};
 }
 
-test('the furniture catalog offers100 distinct native assets and matches browser ownership',async()=>{
+test('all 100 previously published products retain their exact IDs, prices, scales and metadata',()=>{
+ const digest=createHash('sha256').update(JSON.stringify(furniture.slice(0,100))).digest('hex');
+ assert.equal(digest,'bad406b9bed9be100f733b5f8e88065e0d31034dac185821845337f8aae8da4a');
+});
+
+test('new showroom collections debit once and survive profile restoration alongside old purchases',()=>{
+ const disk=storage(),wallet=Shop.createWallet({storage:disk,preserveEquipped:false}),selected=['furniture-collection-showroom-midcentury-studio-bed','furniture-collection-showroom-midcentury-studio-poster','furniture-collection-showroom-midcentury-studio-lava-lamp'];
+ for(const id of selected)assert.equal(wallet.buy(id).ok,true,id);
+ assert.equal(wallet.snapshot().balance,14);const before=JSON.stringify(wallet.snapshot());
+ for(const id of selected)assert.equal(wallet.buy(id).alreadyOwned,true);
+ assert.equal(JSON.stringify(wallet.snapshot()),before);
+ const capture=Profiles.capture(disk),target=storage();assert.equal(capture.ok,true,capture.error);assert.equal(Profiles.apply(target,capture.data).ok,true);
+ const restored=Shop.createWallet({storage:target,preserveEquipped:false});for(const id of selected)assert.equal(restored.owns(id),true);
+ assert.equal(restored.snapshot().balance,14);assert.equal(restored.buy('furniture-collection-showroom-midcentury-studio-invented').ok,false);
+});
+
+test('the furniture catalog offers484 distinct native assets and matches browser ownership',async()=>{
  const {decorDefinitions}=await import('../town/world/decor-definitions.mjs');
  const {APARTMENT_DECOR}=await import('../town/world/apartment-decor-definitions.mjs');
+ const {APARTMENT_COLLECTION_ASSETS}=await import('../town/world/apartment-collection-definitions.mjs');
  const signatures=JSON.parse(fs.readFileSync(require.resolve('../town/assets/showrooms/manifest.json'),'utf8')).assets;
- const native=new Set([...decorDefinitions.map(item=>item.id),...Array.from({length:9},(_,i)=>`furniture-${i}-180`),...signatures.map(item=>item.id),...APARTMENT_DECOR.map(item=>item.id)]);
- assert.equal(furniture.length,100);assert.equal(new Set(furniture.map(item=>item.id)).size,100);
+ const native=new Set([...decorDefinitions.map(item=>item.id),...Array.from({length:9},(_,i)=>`furniture-${i}-180`),...signatures.map(item=>item.id),...APARTMENT_DECOR.map(item=>item.id),...APARTMENT_COLLECTION_ASSETS.map(item=>item.id)]);
+ assert.equal(furniture.length,484);assert.equal(new Set(furniture.map(item=>item.id)).size,484);
  for(const item of furniture){
   assert.ok(native.has(item.asset),item.asset);assert.match(item.id,/^furniture-[a-z-]+$/);
   assert.ok(Number.isSafeInteger(item.price)&&item.price>0);assert.ok(Object.isFrozen(item));

@@ -1,23 +1,25 @@
-import {musicSquareCollisionGeometry,musicSquareSceneParts,propCollisionBoxes,gazeboSceneParts,urbanBuildingCollision} from './scene-collision.mjs?v=apartment-homes-2';
-import {configureMusicWallArt,registerMusicWallAssets} from './music-wall-art.mjs?v=apartment-homes-2';
-import {musicSquareWalls} from './music-wall-geometry.mjs?v=apartment-homes-2';
-import {drawMusicSquareScene} from './music-square-entrances.mjs?v=apartment-homes-2';
-import {registerDecor} from './decor-pack.mjs?v=apartment-homes-2';
-import {registerLeisure} from './leisure-pack.mjs?v=apartment-homes-2';
-import {registerShowroomFurniture} from './showroom-furniture.mjs?v=apartment-homes-2';
-import {registerApartmentDecor} from './apartment-decor.mjs?v=apartment-homes-2';
-import {arcadeGeometry,drawArcade} from './arcade.mjs?v=apartment-homes-2';
-import {constructionArt,stairArt,stairTreadBounds,overgrowthArt,estateArt,cliffDecorArt} from './detail-art.mjs?v=apartment-homes-2';
-import {estateDefinitions,estateBoxes} from './estates.mjs?v=apartment-homes-2';
-import {townArtSources,house} from '../art.mjs?v=apartment-homes-2';
+import {musicSquareCollisionGeometry,musicSquareSceneParts,propCollisionBoxes,gazeboSceneParts,urbanBuildingCollision} from './scene-collision.mjs?v=furniture-facings-1';
+import {configureMusicWallArt,registerMusicWallAssets} from './music-wall-art.mjs?v=furniture-facings-1';
+import {musicSquareWalls} from './music-wall-geometry.mjs?v=furniture-facings-1';
+import {drawMusicSquareScene} from './music-square-entrances.mjs?v=furniture-facings-1';
+import {registerDecor} from './decor-pack.mjs?v=furniture-facings-1';
+import {registerLeisure} from './leisure-pack.mjs?v=furniture-facings-1';
+import {registerShowroomFurniture} from './showroom-furniture.mjs?v=furniture-facings-1';
+import {registerApartmentDecor} from './apartment-decor.mjs?v=furniture-facings-1';
+import {registerApartmentCollections} from './apartment-collections.mjs?v=furniture-facings-1';
+import {preparePlacedFacingArt} from './furniture-art-access.mjs?v=furniture-facings-1';
+import {arcadeGeometry,drawArcade} from './arcade.mjs?v=furniture-facings-1';
+import {constructionArt,stairArt,stairTreadBounds,overgrowthArt,estateArt,cliffDecorArt} from './detail-art.mjs?v=furniture-facings-1';
+import {estateDefinitions,estateBoxes} from './estates.mjs?v=furniture-facings-1';
+import {townArtSources,house} from '../art.mjs?v=furniture-facings-1';
 import {homeGeometry,ARCHITECTURES} from '../model.mjs';
-import {registerUrbanDetails} from './urban-kit.mjs?v=apartment-homes-2';
-import {registerUrbanRoads} from './urban-roads.mjs?v=apartment-homes-2';
-import {registerRoadLights} from './road-light-art.mjs?v=apartment-homes-2';
-import {registerFestivalLights} from './festival-lights.mjs?v=apartment-homes-2';
-import {registerOperaBuilding} from './opera-building.mjs?v=apartment-homes-2';
+import {registerUrbanDetails} from './urban-kit.mjs?v=furniture-facings-1';
+import {registerUrbanRoads} from './urban-roads.mjs?v=furniture-facings-1';
+import {registerRoadLights} from './road-light-art.mjs?v=furniture-facings-1';
+import {registerFestivalLights} from './festival-lights.mjs?v=furniture-facings-1';
+import {registerOperaBuilding} from './opera-building.mjs?v=furniture-facings-1';
 export const sources=townArtSources(),catalog=new Map();
-function add(id,name,group,w,h,draw,boxes=[],layer='objects'){const a={id,name,group,w:Math.ceil(w),h:Math.ceil(h),boxes,layer};a.draw=draw;let cached;Object.defineProperty(a,'canvas',{get(){if(!cached){cached=document.createElement('canvas');cached.width=a.w;cached.height=a.h;draw(cached.getContext('2d'));}return cached;}});catalog.set(id,a);return a;}
+function add(id,name,group,w,h,draw,boxes=[],layer='objects'){const a={id,name,group,w:Math.ceil(w),h:Math.ceil(h),boxes,layer};a.draw=draw;let cached;Object.defineProperty(a,'canvas',{configurable:true,get(){if(!cached){cached=document.createElement('canvas');cached.width=a.w;cached.height=a.h;draw(cached.getContext('2d'));}return cached;}});catalog.set(id,a);return a;}
 function sprite(group,i,name,w,boxes,layer){const s=sources[group][i],h=w*s.sh/s.sw;return add(`${group}-${i}-${w}`,name,group,w,h,c=>c.drawImage(s.image,s.sx,s.sy,s.sw,s.sh,0,0,w,h),boxes?.(w,h)||[],layer);}
 ['Oak','Pine','Willow','Cherry','Apple'].forEach((n,i)=>[320,480,680].forEach((w,j)=>sprite('trees',i,`${['Young','Mature','Ancient'][j]} ${n}`,w,(w,h)=>[{x:w*.45,y:h-38,w:w*.1,h:35}])));
 const floweringShrubs=sprite('trees',5,'Flowering shrubs',200,(w,h)=>[{x:w*.08,y:h*.57,w:w*.84,h:h*.41}]);floweringShrubs.npcAvoid=true;floweringShrubs.depthSorted=true;
@@ -59,6 +61,7 @@ for(const[i,id,name,w]of [[0,'cliff-ivy','Cliff ivy cascade',256],[1,'cliff-rose
 await registerDecor(catalog);
 await registerShowroomFurniture(add);
 await registerApartmentDecor(add);
+await registerApartmentCollections(add);
 await registerLeisure(catalog);
 registerUrbanRoads(add);
 registerRoadLights(add,sources);
@@ -68,4 +71,4 @@ await registerOperaBuilding(add);
 // Existing street furniture belongs in the city kit as well as its original
 // category. Keep its saved-map ID, artwork and collision intact.
 for(const a of catalog.values())if(a.urban||a.group==='street furniture'||['decor-14-01','decor-14-02','decor-14-03','decor-09-02','props-4-960','music-square','coda-arcade'].includes(a.id))a.kit='urban';
-export async function preparePlacedArt(d){await Promise.all(d.objects.map(o=>catalog.get(o.asset)?.ensureFull?.()));}
+export async function preparePlacedArt(d){await preparePlacedFacingArt(d,catalog);}

@@ -33,10 +33,11 @@ function floorTile(c,pattern,p,size){
    if(band===0)plank(c,x*16,y*16,64,16,p,false,x+y);
    else if(band===4)plank(c,x*16,y*16,16,64,p,true,x-y);
   }
- }else if(pattern==='parquet'){
+ }else if(pattern==='parquet'||pattern==='clockwork-parquet'){
   for(let y=0;y<size;y+=64)for(let x=0;x<size;x+=64){
    const vertical=(x/64+y/64)%2===0;
    for(let n=0;n<4;n++)plank(c,x+(vertical?n*16:0),y+(vertical?0:n*16),vertical?16:64,vertical?64:16,n%3?p:[accent,light,dark],vertical,x+y+n);
+   if(pattern==='clockwork-parquet'){pixel(c,x+2,y+2,3,3,accent);pixel(c,x+3,y+3,1,1,light);}
   }
  }else if(pattern==='whitewashed-planks'){
   for(let y=0;y<size;y+=32)for(let x=-128;x<size;x+=128)plank(c,x+(y/32%2)*64,y,128,32,(x+y)%3?p:[accent,light,dark],false,x+y);
@@ -54,13 +55,24 @@ function floorTile(c,pattern,p,size){
    }
    if(hash(seed,5)%3===0){const kx=xx+36+hash(seed,8)%55;pixel(c,kx,y+8,6,1,dark+'50');pixel(c,kx-2,y+7,10,1,light+'30');}
   }
- }else if(pattern==='terrazzo'){
+ }else if(pattern==='terrazzo'||pattern==='spaceport-terrazzo'){
   // Broken, uneven chips sit within the material rather than on a flat grid.
   for(let i=0;i<Math.floor(size*size/96);i++){
    const x=hash(i,29)%size,y=hash(i,61)%size,w=2+hash(i,97)%5,color=[light,accent,grout,dark+'85'][hash(i,41)%4];
    pixel(c,x,y,w,1,color);pixel(c,x+(i%2),y+1,Math.max(1,w-1),1,color);
    if(i%3===0)pixel(c,x+1,y+2,Math.max(1,w-3),1,color);
    if(i%5===0)pixel(c,x,y,1,1,light+'A0');
+  }
+  if(pattern==='spaceport-terrazzo')for(let y=0;y<size;y+=128)for(let x=0;x<size;x+=128){pixel(c,x,y,128,1,grout+'65');pixel(c,x,y,1,128,grout+'65');pixel(c,x+58,y+58,12,1,accent+'90');pixel(c,x+63,y+53,1,12,accent+'90');}
+ }else if(pattern==='neon-panels'){
+  for(let y=0;y<size;y+=128)for(let x=0;x<size;x+=128){
+   pixel(c,x,y,128,128,dark);pixel(c,x+3,y+3,122,122,base);pixel(c,x+5,y+5,118,1,light+'75');pixel(c,x+5,y+123,118,1,dark+'A0');
+   pixel(c,x+8,y+9,30,1,accent+'A0');pixel(c,x+8,y+9,1,12,accent+'80');pixel(c,x+112,y+105,8,1,grout+'B0');pixel(c,x+119,y+105,1,14,grout+'B0');
+  }
+ }else if(pattern==='companion-cork'){
+  for(let y=0;y<size;y+=64)for(let x=0;x<size;x+=64){
+   pixel(c,x,y,64,64,(x/64+y/64)%3?base:accent);pixel(c,x,y,64,1,dark+'30');
+   for(let i=0;i<90;i++){const xx=x+hash(i,x+y)%64,yy=y+hash(i,y+x+13)%64;pixel(c,xx,yy,1+hash(i,3)%3,1,i%3?light+'55':dark+'40');}
   }
  }else if(pattern==='bathroom-hex'){
   pixel(c,0,0,size,size,grout+'90');
@@ -114,7 +126,24 @@ function flower(c,x,y,p){
 }
 function wallpaperTile(c,pattern,p,size){
  const [base,light,dark,accent=light]=p;pixel(c,0,0,size,size,base);
- if(pattern==='exposed-brick'){
+ if(pattern==='orbital'||pattern==='clockwork'){
+  for(let row=0;row<2;row++)for(let col=0;col<2;col++){
+   const x=col*48+20+(row%2)*5,y=row*48+22,r=pattern==='orbital'?8:7;
+   for(let n=0;n<36;n++){const a=n*Math.PI/18;pixel(c,x+Math.cos(a)*r,y+Math.sin(a)*r,1,1,dark+'A0');}
+   if(pattern==='orbital'){pixel(c,x+r-1,y-4,3,3,accent);line(c,x-10,y+4,x+10,y-4,accent+'B0',1);pixel(c,x-1,y-1,3,3,light);}
+   else{for(let n=0;n<8;n++){const a=n*Math.PI/4;pixel(c,x+Math.cos(a)*9-1,y+Math.sin(a)*9-1,2,2,accent+'B0');}pixel(c,x-1,y-1,3,3,accent);line(c,x,y,x+3,y-4,dark+'A0',1);}
+  }
+ }else if(pattern==='circuit'){
+  for(let row=0;row<3;row++)for(let col=0;col<3;col++){
+   const x=col*32+7,y=row*32+8,color=(row+col)%2?accent+'A0':(p[4]||light)+'85';
+   line(c,x,y,x+12,y,color,1);line(c,x+12,y,x+12,y+13,color,1);line(c,x+12,y+13,x+20,y+13,color,1);pixel(c,x-1,y-1,3,3,dark);pixel(c,x,y,1,1,light);pixel(c,x+19,y+12,3,3,color);
+  }
+ }else if(pattern==='companion'){
+  for(let row=0;row<2;row++)for(let col=0;col<2;col++){
+   const x=col*48+18+(row%2)*6,y=row*48+17;
+   pixel(c,x-5,y,12,9,dark+'A0');pixel(c,x-4,y+1,10,7,base);pixel(c,x-2,y+3,2,2,accent);pixel(c,x+3,y+3,2,2,accent);pixel(c,x,y-4,1,4,dark+'A0');pixel(c,x-1,y-5,3,2,accent);pixel(c,x-6,y+3,1,3,dark+'A0');pixel(c,x+7,y+3,1,3,dark+'A0');pixel(c,x-1,y+7,4,1,light);pixel(c,x+20,y+20,2,2,accent+'A0');
+  }
+ }else if(pattern==='exposed-brick'){
   for(let y=0;y<size;y+=16)for(let x=-32;x<size;x+=48){
    const xx=x+(y/16%2)*24;pixel(c,xx+1,y+1,45,13,hash(x,y)%3?base:accent);pixel(c,xx+2,y+2,43,1,light+'90');pixel(c,xx+2,y+13,43,1,dark);
    pixel(c,xx,y,48,1,dark);pixel(c,xx,y,1,16,dark);pixel(c,xx+8,y+7,12,1,light+'50');

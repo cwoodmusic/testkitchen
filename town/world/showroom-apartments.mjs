@@ -1,125 +1,151 @@
-import {SHOWROOM_FURNITURE} from './showroom-furniture-definitions.mjs?v=apartment-homes-2';
-import {APARTMENT_DECOR} from './apartment-decor-definitions.mjs?v=apartment-homes-2';
-const signatures=new Map(SHOWROOM_FURNITURE.map(a=>[a.id,a])),native=new Map(APARTMENT_DECOR.map(a=>[a.id,a]));
+import {APARTMENT_COLLECTION_ASSETS,getApartmentAsset} from './apartment-collections.mjs?v=furniture-facings-1';
+import {furnitureFacingBoxes} from './furniture-facing.mjs?v=furniture-facings-1';
+const native=new Map(APARTMENT_COLLECTION_ASSETS.map(a=>[a.id,a]));
 const rect=(x,y,w,h)=>({x,y,w,h}),point=(x,y)=>({x,y});
-const product=(id,asset,role,x,y,w,h,solid=true,extra={})=>({productId:id?'furniture-'+id:null,asset,furnitureRole:role,x,y,w,h,solid,...extra});
-const area=(name,functionalRole,x,y,w,h,px,py)=>({name,functionalRole,...rect(x,y,w,h),point:point(px,py)});
-const placements={
- 'victorian-parlor':{variant:0,mirror:false,friend:'fox-plush',art:'patchwork-wall-art',rug:'record-rug'},
- 'art-deco-lounge':{variant:1,mirror:false,friend:'moon-star-cushions',art:'origami-artboard',rug:'record-rug'},
- 'coastal-bedroom':{variant:2,mirror:false,friend:'axolotl-plush',art:'origami-artboard',rug:'rainbow-keys-rug'},
- 'rustic-kitchen':{variant:3,mirror:false,friend:'cat-planter',art:'patchwork-wall-art',rug:'rainbow-keys-rug'},
- 'botanical-conservatory':{variant:1,mirror:true,friend:'cat-planter',art:'origami-artboard',rug:'record-rug'},
- 'midcentury-studio':{variant:2,mirror:true,friend:'fox-plush',art:'patchwork-wall-art',rug:'record-rug'},
- 'french-cafe':{variant:3,mirror:true,friend:'axolotl-plush',art:'origami-artboard',rug:'rainbow-keys-rug'},
- 'industrial-loft':{variant:0,mirror:true,friend:'moon-star-cushions',art:'patchwork-wall-art',rug:'record-rug'}
-};
-function addNative(items,suffix,role,x,y,w,h,extra={}){
- const asset='apartment-'+suffix,a=native.get(asset);
- items.push(product(asset,asset,role,x,y,w||a.w,h||a.h,a.solid,{wallMounted:a.wallMounted,layer:a.layer,...extra}));
+const rooms=[
+ {bed:{x:28,w:328},bath:{x:388,w:200},front:326},
+ {bed:{x:276,w:344},bath:{x:28,w:216},front:318},
+ {bed:{x:28,w:368},bath:{x:428,w:208},front:318},
+ {bed:{x:308,w:328},bath:{x:28,w:248},front:326}
+];
+function add(items,owner,slot,role,x,y,maxW,maxH,extra={}){
+ const a=getApartmentAsset(owner,slot),scale=Math.min(maxW/a.w,maxH/a.h);
+ const item={asset:a.id,productId:'furniture-'+a.id,furnitureRole:role,slot,collectionOwner:owner,visualSignature:a.visualSignature,x,y,w:a.w*scale,h:a.h*scale,solid:a.solid,wallMounted:a.wallMounted,layer:a.layer,motionKind:a.motionKind,...extra};
+ items.push(item);return item;
 }
-function kitchen(items,{north=false,west=false,blue=false}={}){
- const x=n=>west?624-n:n,y=n=>north?n-224:n;
- for(const [suffix,role,X,Y,w,h,fixture]of [
-  ['sink-counter','kitchen',404,472,88,88,'sink'],['corner-kitchen-counter','kitchen-counter',488,472,88,77,'counter'],
-  ['cream-stove','stove',560,472,56,77,'stove'],[blue?'blue-fridge':'pastel-fridge','fridge',550,north?540:588,64,112,'fridge'],['wardrobe','pantry',north?342:450,north?442:588,north?48:64,north?100:92,'pantry']
- ])addNative(items,suffix,role,x(X),y(Y),w,h,{fixtureRole:fixture});
-}
-function bath(items,v){
- const fixtures=v===2?[
-  ['glass-shower','shower',546,250,82,129],['toilet','toilet',546,320,46,76],['bath-vanity','vanity',458,212,76,101]
- ]:v===3?[
-  ['glass-shower','shower',80,552,82,129],['toilet','toilet',80,650,46,76],['bath-vanity','vanity',190,520,76,101]
- ]:v===1?[
-  ['glass-shower','shower',546,552,82,129],['toilet','toilet',546,650,46,76],['bath-vanity','vanity',456,520,76,101]
- ]:[
-  ['glass-shower','shower',546,250,82,129],['toilet','toilet',546,344,46,76],['bath-vanity','vanity',456,212,76,101]
- ];
- for(const [asset,role,x,y,w,h]of fixtures)addNative(items,asset,role,x,y,w,h,{fixtureRole:role});
- const vanity=fixtures.find(f=>f[1]==='vanity'),north=v===1||v===3?414:106;
- addNative(items,'round-mirror','bathroom-mirror',vanity[2],north-10,58,63,{fixtureRole:'bathroom-mirror'});
-}
-// Four compact one-bedroom floor plates, each paired with a mirrored plan.
-// Opening a showroom never enlarges its reserved 624 × 704 exterior cell.
+// The eight wide units occupy two columns/four rows of the original store.
+// Four different private-room arrangements each have a mirrored counterpart.
 export function createShowroomApartmentPlan(display){
- const config=placements[display.id],v=config.variant,bedId='showroom-'+display.id+'-bed',sofaId='showroom-'+display.id+'-sofa';
- const bed=signatures.get(bedId),sofa=signatures.get(sofaId),items=[],walls=[],privacyDoors=[],areas=[];
- const door=(id,axis,x,y,length=104)=>privacyDoors.push({id,roomId:id,axis,x,y,length,open:true,hinge:'start'});
- const bedAt=v===2?point(110,310):point(110,340),sofaAt=v===2?point(470,538):v===3?point(480,550):point(128,550);
- items.push(product(display.id+'-bed',bedId,'bed',bedAt.x,bedAt.y,150,bed.h),product(display.id+'-sofa',sofaId,'sofa',sofaAt.x,sofaAt.y,180,sofa.h));
- if(v===2){
-  areas.push(area('Quiet bedroom','bedroom',28,106,384,244,300,310),area('Private bathroom','bathroom',412,106,184,278,474,310),area('L-shaped kitchen','kitchen',28,414,248,262,192,514),area('Living & music nook','living',310,414,286,262,356,570),area('Breakfast nook','dining',250,490,120,160,300,620));
-  walls.push(rect(396,106,16,262),rect(28,350,202,16),rect(334,350,78,16),rect(412,368,10,16),rect(526,368,70,16));
-  door('bedroom','horizontal',230,358);door('bathroom','horizontal',422,376);kitchen(items,{west:true,blue:true});
-  addNative(items,'round-dining-table','dining-table',300,580,72,70);addNative(items,'molded-dining-chair','dining-chair',300,496,44,69);addNative(items,'wardrobe','wardrobe',330,250,70,110);
+ if(display.storeFloor===2)return createUpperApartmentPlan(display);
+ const width=1184,height=448,index=display.index??0,mirror=(display.column??index%2)===1,variant=Math.floor(index/2)%4,config=rooms[variant],owner='showroom-'+display.id;
+ const items=[],walls=[],areas=[],privacyDoors=[],F=config.front;
+ const bed={...config.bed,y:106,h:F-106},bath={...config.bath,y:106,h:F-106};
+ const dayX=Math.max(bed.x+bed.w,bath.x+bath.w)+40;
+ const privateRoom=(r,role,label,entryOffset)=>{
+  const gap=r.x+entryOffset,length=role==='bedroom'?112:120;
+  if(r.x>28)walls.push(rect(r.x-16,106,16,F-106));
+  walls.push(rect(r.x+r.w,106,16,F-106),rect(r.x,F,gap-r.x,16),rect(gap+length,F,r.x+r.w-gap-length,16));
+  privacyDoors.push({id:role,roomId:role,axis:'horizontal',x:gap,y:F+8,length,open:true,hinge:'start'});
+  areas.push({name:label,functionalRole:role,...r,point:role==='bedroom'?point(r.x+r.w-84,268):point(r.x+56,270)});
+ };
+ privateRoom(bed,'bedroom','Private bedroom',bed.w-136);privateRoom(bath,'bathroom','Private bathroom',24);
+ areas.push({name:'Kitchen & breakfast counter',functionalRole:'kitchen',...rect(dayX,106,1156-dayX,190),point:point(dayX+90,248)},
+  {name:'Living & listening room',functionalRole:'living',...rect(dayX,276,1156-dayX,144),point:point(dayX+280,356)},
+  {name:'Everyday dining',functionalRole:'dining',...rect(dayX+270,244,210,120),point:point(dayX+340,350)});
+ const bedItem=add(items,owner,'bed','bed',bed.x+87,302,150,150);
+ add(items,owner,'wardrobe','wardrobe',bed.x+bed.w-76,236,80,130);
+ const night=add(items,owner,'nightstand','nightstand',bed.x+190,300,48,62);
+ add(items,owner,'toy','playful-accent',bedItem.x,234,42,46,{solid:false,depth:bedItem.y+.25,supportedBy:bedItem.asset});
+ add(items,owner,'table-lamp','table-lamp',night.x,254,28,42,{solid:false,depth:night.y+.25,supportedBy:night.asset});
+ add(items,owner,'poster','wall-art',bed.x+bed.w-110,94,84,92);
+ add(items,owner,'vanity','vanity',bath.x+54,212,76,102,{fixtureRole:'vanity'});
+ add(items,owner,'mirror','bathroom-mirror',bath.x+54,96,58,64,{fixtureRole:'bathroom-mirror'});
+ const bathing=getApartmentAsset(owner,'bath-fixture');
+ add(items,owner,'bath-fixture',bathing.purpose==='bathtub'?'bathtub':'shower',bath.x+bath.w-52,250,bathing.purpose==='bathtub'?104:90,140,{fixtureRole:'bath-fixture'});
+ add(items,owner,'toilet','toilet',bath.x+bath.w-52,300,46,78,{fixtureRole:'toilet'});
+ add(items,owner,'sink','kitchen',dayX+58,220,100,104,{fixtureRole:'sink'});
+ add(items,owner,'counter','kitchen-counter',dayX+166,220,110,100,{fixtureRole:'counter'});
+ add(items,owner,'stove','stove',dayX+266,224,76,108,{fixtureRole:'stove'});
+ const pantry=add(items,owner,'pantry','pantry',dayX+350,230,64,110,{fixtureRole:'pantry'});
+ add(items,owner,'fridge','fridge',dayX+444,270,70,126,{fixtureRole:'fridge'});
+ add(items,owner,'lava-lamp','lava-lamp',pantry.x,162,26,58,{solid:false,depth:pantry.y+.25,supportedBy:pantry.asset});
+ add(items,owner,'sofa','sofa',dayX+160,344,180,126);
+ add(items,owner,'coffee-table','coffee-table',dayX+160,404,104,66);
+ add(items,owner,'dining-table','dining-table',dayX+340,318,90,90);
+ add(items,owner,'dining-chair','dining-chair',dayX+430,330,48,78);
+ add(items,owner,'arcade','arcade',dayX+324,410,62,112);
+ add(items,owner,'floor-lamp','floor-lamp',dayX+262,404,68,88);
+ add(items,owner,'plant','plant',dayX+438,410,50,82);
+ add(items,owner,'rug','music-rug',dayX+164,414,220,142);
+ add(items,owner,'clock','wall-accent',dayX+300,94,64,78);
+ let plan={width,height,collectionOwner:owner,layoutId:['west-bedroom','west-bathroom','long-bedroom','broad-bathroom'][variant],spawn:point(1100,352),browse:point(dayX+280,356),items,walls,areas,privacyDoors,
+  design:{purpose:'A compact home with a private sleeping/service wing and a shared day room',focalPoints:[{x:dayX+324,y:410,role:'personal-music-and-games'}],groups:[{role:'conversation',slots:['sofa','coffee-table','floor-lamp','rug']},{role:'kitchen-work-area',slots:['sink','counter','stove','fridge','pantry']}],circulation:[]},
+  windows:[{x:bed.x+90,w:80},{x:dayX+430,w:70}],portalExit:{threshold:point(1156,352),enterNormal:point(-1,0),triggerHalfWidth:64}};
+ if(mirror)plan=mirrorPlan(plan);
+ plan.layoutId+=mirror?'-mirrored':'-original';plan.bedroomDoor=plan.privacyDoors.find(d=>d.id==='bedroom');plan.bathroomDoor=plan.privacyDoors.find(d=>d.id==='bathroom');
+ plan.visitRoute=browsingRoute(plan);plan.exitRoute=plan.visitRoute.map(p=>({...p})).reverse();return plan;
+}
+function createUpperApartmentPlan(display){
+ const width=1184,height=832,owner='showroom-'+display.id,mirror=display.column===1,variant=Math.floor((display.index-8)/2),items=[],walls=[],areas=[],privacyDoors=[];
+ const put=(slot,role,x,y,w,h,extra={})=>add(items,owner,slot,role,x,y,w,h,extra);
+ const area=(role,name,r,p)=>areas.push({functionalRole:role,name,...r,point:p});
+ const door=(role,axis,x,y,length)=>privacyDoors.push({id:role,roomId:role,axis,x,y,length,open:true,hinge:'start'});
+ const bed=rect(28,106,variant?390:368,308),bath=variant?rect(916,106,240,328):rect(28,550,368,254);
+ // Sleeping and bathing remain genuinely private. Door openings meet the
+ // circulation spine rather than opening behind a chair or an appliance.
+ if(!variant){
+  walls.push(rect(396,106,16,164),rect(396,390,16,40),rect(28,414,384,16),rect(28,444,368,106),rect(396,550,16,100),rect(396,770,16,34));
+  door('bedroom','vertical',404,270,120);door('bathroom','vertical',404,650,120);
  }else{
-  areas.push(area('Private bedroom','bedroom',28,106,266,288,230,306));
-  const bathWest=v===3,bathSouth=v!==0;
-  areas.push(area('Private bathroom','bathroom',bathWest?28:410,bathSouth?414:106,bathWest?264:186,bathSouth?262:288,bathWest?190:456,bathSouth?562:306));
-  const kitchenNorth=v!==0,livingEast=v===3;
-  areas.push(area(kitchenNorth?'Window-side galley':'Corner kitchen','kitchen',348,kitchenNorth?106:410,248,266,432,kitchenNorth?308:514),area('Living & reading nook','living',livingEast?330:28,414,livingEast?266:274,262,livingEast?350:250,v===1?510:570));
-  walls.push(rect(278,106,16,148),rect(278,358,16,36),rect(28,394,266,16));door('bedroom','vertical',286,254);
-  if(v===0){walls.push(rect(394,106,16,148),rect(394,358,16,52),rect(410,394,186,16));door('bathroom','vertical',402,254);}
-  else if(v===1){walls.push(rect(394,414,16,88),rect(394,606,16,70),rect(394,398,202,16));door('bathroom','vertical',402,502);}
-  else{walls.push(rect(278,414,16,88),rect(278,606,16,70),rect(28,414,250,16));door('bathroom','vertical',286,502);}
-  kitchen(items,{north:kitchenNorth,blue:v===1});
-  const table=v===0?point(376,580):v===1?point(256,650):point(384,414),chair=v===0?point(300,580):v===1?point(256,570):point(384,480),target=v===0?point(376,616):v===1?point(304,650):point(332,456);
-  areas.push(area(v===1?'Two-seat dining nook':'Everyday dining','dining',v===1?210:300,v===1?560:v===0?490:370,v===1?120:150,v===1?116:v===0?154:150,target.x,target.y));
-  addNative(items,'round-dining-table','dining-table',table.x,table.y,v===1?64:72,v===1?62:70);addNative(items,'molded-dining-chair','dining-chair',chair.x,chair.y,44,69);addNative(items,'molded-lounge-chair','reading-chair',226,210,56,76);
+  walls.push(rect(418,106,16,344),rect(28,434,254,16),rect(402,434,32,16),rect(900,106,16,344),rect(916,434,24,16),rect(1060,434,96,16));
+  door('bedroom','horizontal',282,442,120);door('bathroom','horizontal',940,442,120);
  }
- bath(items,v);
- const coffeeX=v===2?470:v===3?480:130;
- addNative(items,'kidney-coffee-table','coffee-table',coffeeX,650,82,51);addNative(items,'nightstand','nightstand',v===2?220:230,v===2?310:350,44,55);
- // One playful friend, a music rug and framed art have deliberate places.
- const rightLiving=v===2||v===3;
- addNative(items,config.friend,'playful-accent',rightLiving?568:230,430,40,48);
- addNative(items,config.rug,'music-rug',rightLiving?468:134,610,rightLiving?180:176,config.rug==='record-rug'?156:102);
- addNative(items,config.art,'wall-art',230,88,64,64);
- addNative(items,display.id==='midcentury-studio'?'starburst-clock':'wall-shelf','wall-accent',344,88,64,56);
- let plan={width:624,height:704,layoutId:['north-pair','diagonal-private','broad-bedroom','west-private'][v],spawn:point(312,620),browse:v===2?point(356,600):point(344,v===0?438:450),items,walls,areas,privacyDoors};
- if(config.mirror)plan=mirrorPlan(plan);
- plan.layoutId+=config.mirror?'-mirrored':'-original';plan.bedroomDoor=plan.privacyDoors.find(d=>d.id==='bedroom');plan.bathroomDoor=plan.privacyDoors.find(d=>d.id==='bathroom');
+ area('bedroom','Quiet private bedroom',bed,point(330,350));
+ area('bathroom','Complete private bathroom',bath,variant?point(1040,360):point(230,750));
+ const bedItem=put('bed','bed',145,345,170,170),night=put('nightstand','nightstand',260,345,48,62);
+ put('wardrobe','wardrobe',variant?340:320,260,80,130);
+ put('toy','playful-accent',bedItem.x,268,42,46,{solid:false,depth:bedItem.y+.25,supportedBy:bedItem.asset});
+ put('table-lamp','table-lamp',night.x,300,28,42,{solid:false,depth:night.y+.25,supportedBy:night.asset});
+ put('poster','wall-art',270,94,84,92);
+ const vanity=variant?point(970,212):point(100,656),mirrorBottom=variant?96:540;
+ put('vanity','vanity',vanity.x,vanity.y,76,102,{fixtureRole:'vanity'});
+ put('mirror','bathroom-mirror',vanity.x,mirrorBottom,58,64,{fixtureRole:'bathroom-mirror'});
+ const bathing=getApartmentAsset(owner,'bath-fixture'),bathW=bathing.purpose==='bathtub'?104:90;
+ put('bath-fixture',bathing.purpose==='bathtub'?'bathtub':'shower',variant?1100:310,variant?300:730,bathW,140,{fixtureRole:'bath-fixture'});
+ put('toilet','toilet',variant?960:100,variant?380:785,46,78,{fixtureRole:'toilet'});
+ put('linen-storage','bathroom-storage',variant?1030:220,variant?230:650,50,88);
+ const kitchen=variant?{x:90,y:640}: {x:660,y:230};
+ for(const [slot,role,dx,dy,w,h]of [['sink','kitchen',0,0,100,104],['counter','kitchen-counter',110,0,110,100],['stove','stove',205,4,76,108],['fridge','fridge',310,30,70,126],['pantry','pantry',420,30,64,110]])put(slot,role,kitchen.x+dx,kitchen.y+dy,w,h,{fixtureRole:slot});
+ area('kitchen','Connected kitchen work area',variant?rect(28,530,560,274):rect(606,106,550,274),variant?point(350,730):point(650,310));
+ const dining=variant?point(650,370):point(900,370);
+ put('dining-table','dining-table',dining.x,dining.y,100,100);put('dining-chair','dining-chair',dining.x+150,dining.y+10,56,88);
+ area('dining','Sunny breakfast and homework nook',variant?rect(470,270,390,144):rect(810,280,346,150),variant?point(550,350):point(1000,425));
+ if(variant)put('desk','window-desk',650,220,160,114);
+ const loungeX=variant?830:780,console=put('record-console','listening-focal-point',loungeX,800,180,124);
+ put('sofa','sofa',loungeX,650,190,134);put('coffee-table','coffee-table',loungeX,728,115,72);
+ put('reading-chair','conversation-chair',variant?1040:1000,680,84,114,{rotation:90});
+ put('arcade','arcade',variant?1090:1080,790,62,112);
+ put('floor-lamp','floor-lamp',variant?1030:990,800,80,100);
+ put('plant','plant',variant?580:650,800,50,82);
+ put('rug','music-rug',loungeX+35,790,360,224);
+ put('lava-lamp','lava-lamp',console.x+55,710,26,58,{solid:false,depth:console.y+.25,supportedBy:console.asset});
+ put('clock','wall-accent',variant?650:870,94,64,78);
+ area('living','Conversation and record-listening lounge',rect(variant?620:600,550,variant?536:556,254),variant?point(980,760):point(920,760));
+ let plan={width,height,collectionOwner:owner,layoutId:variant?'separated-night-wings':'stacked-private-wing',spawn:point(1100,480),browse:point(variant?890:920,480),items,walls,areas,privacyDoors,
+  wallpaperAreas:[rect(28,0,width-56,106),...(!variant?[rect(28,444,368,106)]:[])],
+  design:{purpose:'A full home organized around quiet private rooms and a shared listening lounge',focalPoints:[{x:console.x,y:console.y,role:'record-listening'},{x:variant?650:900,y:370,role:'daylight-dining'}],groups:[{role:'conversation',slots:['sofa','coffee-table','reading-chair','record-console','rug']},{role:'kitchen-work-area',slots:['sink','counter','stove','fridge','pantry']}],circulation:variant?[rect(44,452,1096,120)]:[rect(420,240,176,548),rect(420,400,736,176)]},
+  windows:variant?[{x:230,w:100},{x:650,w:140},{x:1040,w:90}]:[{x:220,w:100},{x:900,w:150}],portalExit:{threshold:point(1156,480),enterNormal:point(-1,0),triggerHalfWidth:64}};
+ if(mirror)plan=mirrorPlan(plan);
+ plan.layoutId+=mirror?'-mirrored':'-original';plan.bedroomDoor=plan.privacyDoors.find(d=>d.id==='bedroom');plan.bathroomDoor=plan.privacyDoors.find(d=>d.id==='bathroom');
  plan.visitRoute=browsingRoute(plan);plan.exitRoute=plan.visitRoute.map(p=>({...p})).reverse();return plan;
 }
 function mirrorPlan(plan){
- const flip=p=>({...p,x:624-p.x}),flipRect=r=>({...r,x:624-r.x-r.w});
- return {...plan,spawn:flip(plan.spawn),browse:flip(plan.browse),items:plan.items.map(flip),walls:plan.walls.map(flipRect),areas:plan.areas.map(a=>({...flipRect(a),point:flip(a.point)})),privacyDoors:plan.privacyDoors.map(d=>({...d,x:624-d.x-(d.axis==='horizontal'?d.length:0),hinge:d.axis==='horizontal'?'end':'start'}))};
+ const flip=p=>({...p,x:plan.width-p.x}),flipRect=r=>({...r,x:plan.width-r.x-r.w});
+ return {...plan,spawn:flip(plan.spawn),browse:flip(plan.browse),windows:plan.windows.map(flip),items:plan.items.map(item=>({...flip(item),...(item.rotation?{rotation:(360-item.rotation)%360}:{})})),walls:plan.walls.map(flipRect),areas:plan.areas.map(a=>({...flipRect(a),point:flip(a.point)})),privacyDoors:plan.privacyDoors.map(d=>({...d,x:plan.width-d.x-(d.axis==='horizontal'?d.length:0),hinge:'end'})),wallpaperAreas:plan.wallpaperAreas?.map(flipRect),design:plan.design?{...plan.design,focalPoints:plan.design.focalPoints.map(flip),circulation:plan.design.circulation.map(flipRect)}:undefined,portalExit:{...plan.portalExit,threshold:flip(plan.portalExit.threshold),enterNormal:point(1,0)}};
 }
-// Residents use this same route to enter, browse and leave the private scene.
-// Compute it once with the native art's physical bases, not room rectangles.
 function browsingRoute(plan){
- const solids=[rect(0,0,624,106),rect(0,0,28,704),rect(596,0,28,704),rect(0,676,624,28),...plan.walls];
- for(const item of plan.items){
-  if(!item.solid)continue;
-  const a=native.get(item.asset);
-  if(a){for(const b of a.boxes)solids.push(rect(item.x-item.w/2+b.x*item.w/a.w,item.y-item.h+b.y*item.h/a.h,b.w*item.w/a.w,b.h*item.h/a.h));}
-  else{const depth=item.furnitureRole==='bed'?item.h*.72:Math.min(item.h*.48,item.w*.5);solids.push(rect(item.x-item.w*.43,item.y-depth,item.w*.86,depth));}
- }
+ const solids=[rect(0,0,plan.width,106),rect(0,0,28,plan.height),rect(plan.width-28,0,28,plan.height),rect(0,plan.height-28,plan.width,28),...plan.walls];
+ for(const item of plan.items){if(!item.solid)continue;const a=native.get(item.asset);solids.push(...furnitureFacingBoxes(a,item));}
  const blocked=p=>solids.some(r=>p.x>=r.x-16&&p.x<=r.x+r.w+16&&p.y>=r.y-16&&p.y<=r.y+r.h+16);
  const clear=(a,b)=>{const steps=Math.max(1,Math.ceil(Math.hypot(b.x-a.x,b.y-a.y)/3));for(let i=0;i<=steps;i++)if(blocked({x:a.x+(b.x-a.x)*i/steps,y:a.y+(b.y-a.y)*i/steps}))return false;return true;};
  const start={...plan.spawn,parent:-1},queue=[start],seen=new Set([start.x+','+start.y]);let end=-1,corner=null;
  for(let next=0;next<queue.length;next++){
-  const a=queue[next];
-  if(Math.hypot(a.x-plan.browse.x,a.y-plan.browse.y)<=12){const c={x:plan.browse.x,y:a.y};if(clear(a,c)&&clear(c,plan.browse)){end=next;corner=c;break;}}
-  for(const [dx,dy]of [[8,0],[-8,0],[0,8],[0,-8]]){const p={x:a.x+dx,y:a.y+dy,parent:next},k=p.x+','+p.y;if(p.x<40||p.y<122||p.x>584||p.y>660||seen.has(k)||blocked(p))continue;seen.add(k);queue.push(p);}
+  const a=queue[next];if(Math.hypot(a.x-plan.browse.x,a.y-plan.browse.y)<=12){const c={x:plan.browse.x,y:a.y};if(clear(a,c)&&clear(c,plan.browse)){end=next;corner=c;break;}}
+  for(const [dx,dy]of [[8,0],[-8,0],[0,8],[0,-8]]){const p={x:a.x+dx,y:a.y+dy,parent:next},k=p.x+','+p.y;if(p.x<40||p.y<122||p.x>plan.width-40||p.y>plan.height-44||seen.has(k)||blocked(p))continue;seen.add(k);queue.push(p);}
  }
  if(end<0)throw Error('Apartment browsing route is blocked: '+plan.layoutId);
- const path=[];for(let i=end;i>=0;i=queue[i].parent)path.push({x:queue[i].x,y:queue[i].y});path.reverse();path.push(corner,{...plan.browse});
- const result=[];
- for(const p of path){if(result.length&&p.x===result.at(-1).x&&p.y===result.at(-1).y)continue;while(result.length>1){const a=result.at(-2),b=result.at(-1);if((a.x===b.x&&b.x===p.x)||(a.y===b.y&&b.y===p.y))result.pop();else break;}result.push(p);}
- return result;
+ const path=[];for(let i=end;i>=0;i=queue[i].parent)path.push({x:queue[i].x,y:queue[i].y});path.reverse();path.push(corner,{...plan.browse});const result=[];
+ for(const p of path){if(result.length&&p.x===result.at(-1).x&&p.y===result.at(-1).y)continue;while(result.length>1){const a=result.at(-2),b=result.at(-1);if((a.x===b.x&&b.x===p.x)||(a.y===b.y&&b.y===p.y))result.pop();else break;}result.push(p);}return result;
 }
 export function applyShowroomApartment(scene,display,{room,wall,addItem,rug,sign,light,zone,windowAt}){
- const plan=display.apartment;scene.kind='showroom';scene.floor=1;scene.showroomId=display.id;scene.showroom=display;scene.title=display.name+' · One-bedroom Apartment';scene.spawn={...plan.spawn};scene.apartmentLayout=plan.layoutId;
- room(scene,display.name,28,106,568,570,display.floor.id);
- Object.assign(scene.rooms.at(-1),{functionalRole:'apartment',showroomId:display.id,style:display.style,floorFinish:display.floor,wallpaper:display.wallpaper,wallpaperAreas:[rect(28,0,568,106)],productIds:display.productIds});
+ const plan=display.apartment;scene.kind='showroom';scene.floor=display.storeFloor||1;scene.storeFloor=scene.floor;scene.showroomId=display.id;scene.showroom=display;scene.title=display.name+' · Wide One-bedroom Apartment';scene.spawn={...plan.spawn};scene.apartmentLayout=plan.layoutId;scene.collectionOwner=plan.collectionOwner;scene.interiorDesign=plan.design;scene.portalExit={...plan.portalExit,doorId:'showroom-'+display.id,threshold:{...plan.portalExit.threshold},enterNormal:{...plan.portalExit.enterNormal}};
+ room(scene,display.name,28,106,scene.width-56,scene.height-134,display.floor.id);
+ Object.assign(scene.rooms.at(-1),{functionalRole:'apartment',showroomId:display.id,style:display.style,floorFinish:display.floor,wallpaper:display.wallpaper,wallpaperAreas:plan.wallpaperAreas||[rect(28,0,scene.width-56,106)],productIds:display.productIds});
  for(const a of plan.areas){room(scene,a.name,a.x,a.y,a.w,a.h,a.functionalRole==='bathroom'?'tile':display.floor.id);Object.assign(scene.rooms.at(-1),{id:display.id+'-'+a.functionalRole,functionalRole:a.functionalRole,showroomId:display.id,point:a.point,...(a.functionalRole==='bathroom'?{floorFinish:{id:'bathroom-hex',pattern:'bathroom-hex',colors:['#e1ddd0','#f0eadc','#a4b6aa','#6c817c']}}:{})});}
- const bathroom=plan.areas.find(a=>a.functionalRole==='bathroom');
- if(bathroom.y>106)scene.walls.push({...rect(bathroom.x,bathroom.y-96,bathroom.w,96),visualOnly:true,bathroomNorthFace:true,color:'#ddd9c8',trim:'#b7c8ba'});
  for(const p of plan.walls){wall(scene,p.x,p.y,p.w,p.h);Object.assign(scene.walls.at(-1),{color:display.wallpaper.colors[0],trim:display.wallpaper.colors[3]||display.wallpaper.colors[1]});}
  scene.privacyDoors=plan.privacyDoors.map(d=>({...d,id:display.id+'-'+d.id,roomId:display.id+'-'+d.roomId,color:display.wallpaper.colors[0],trim:display.wallpaper.colors[3]}));
- for(const item of plan.items){const placed=addItem(scene,item.asset,item.x,item.y,item.w,item.h,item.solid);Object.assign(placed,{productId:item.productId,showroomId:display.id,furnitureRole:item.furnitureRole,fixtureRole:item.fixtureRole,wallMounted:item.wallMounted,layer:item.layer,depth:item.depth});}
- scene.zones.push(zone('browse-'+display.id,'Shop this apartment',plan.browse.x-42,plan.browse.y-35,84,70,'shop',{showroomId:display.id}),zone('lobby-'+display.id,'Return to the main lobby',256,604,112,62,'showroom-lobby',{showroomId:display.id}));
- sign(scene,display.name,312,690,14);sign(scene,'MAIN LOBBY',312,674,11);for(const a of plan.areas)light(scene,a.point.x,a.point.y,a.functionalRole==='living'?220:150);
- if(windowAt){windowAt(scene,74,24,60);windowAt(scene,550,24,60);}return scene;
+ for(const item of plan.items){const placed=addItem(scene,item.asset,item.x,item.y,item.w,item.h,item.solid,item.rotation||0);Object.assign(placed,{productId:item.productId,showroomId:display.id,furnitureRole:item.furnitureRole,fixtureRole:item.fixtureRole,wallMounted:item.wallMounted,layer:item.layer,depth:item.depth,rotation:item.rotation||0,slot:item.slot,collectionOwner:item.collectionOwner,visualSignature:item.visualSignature,motionKind:item.motionKind,supportedBy:item.supportedBy});}
+ scene.zones.push(zone('browse-'+display.id,'Shop this apartment',plan.browse.x-30,plan.browse.y-28,60,56,'shop',{showroomId:display.id}),zone('lobby-'+display.id,'Return to '+(scene.floor===2?'the upper gallery':'the main lobby'),plan.spawn.x-28,plan.spawn.y-56,56,112,'showroom-lobby',{showroomId:display.id,storeFloor:scene.floor,doorId:'showroom-'+display.id,...plan.portalExit}));
+ sign(scene,display.name,scene.width/2,scene.height-12,14);for(const a of plan.areas)light(scene,a.point.x,a.point.y,a.functionalRole==='living'?220:150);
+ if(windowAt)for(const window of plan.windows)windowAt(scene,window.x,24,window.w);return scene;
 }

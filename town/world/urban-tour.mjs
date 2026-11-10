@@ -1,4 +1,4 @@
-import {blank,key,COLS,ROWS} from './model.mjs?v=apartment-homes-2';
+import {blank,key,COLS,ROWS} from './model.mjs?v=furniture-facings-1';
 
 // A separate, unsaved tour. Creating it never reads or replaces the builder map.
 export function createUrbanTour(){
