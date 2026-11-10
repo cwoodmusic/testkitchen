@@ -13,17 +13,17 @@ Preview the [main lobby](town-preview/coda-furnishings-lobby.png) and [all eight
 | Coastal Retreat | Whitewashed driftwood | Sea-glass stripes |
 | Rustic Cottage | Hand-fired terracotta | Sage cottage toile |
 | Botanical Apartment | Garden slate mosaic | Fern fronds |
-| Midcentury Apartment | Honey-oak parquet | Ochre geometry |
+| Midcentury Apartment | Teak plank flooring | Cream atomic motifs |
 | Parisian Apartment | Bistro checkerboard | Sage lattice |
 | Industrial Loft | Concrete slabs | Exposed warehouse brick |
 
-Use **Shop this apartment** or E at its browse point for the pieces actually displayed there. The lobby's **Browse furniture** catalogue contains all 52 products, including the original 36 and sixteen new signature beds and sofas. The new beds cost 80 Notes and sofas cost 70; legacy prices and ownership remain unchanged. Buying or returning from a product retains the selected collection and category. E at the apartment exit, Escape, or **Back to lobby** returns to that apartment's own door.
+Use **Shop this apartment** or E at its browse point for the pieces actually displayed there. The lobby's **Browse furniture** catalogue contains all 100 products, including the original 36, sixteen signature beds and sofas, and 48 new apartment furnishings. The new beds cost 80 Notes and sofas cost 70; legacy prices and ownership remain unchanged. Buying or returning from a product retains the selected collection and category. E at the apartment exit, Escape, or **Back to lobby** returns to that apartment's own door.
 
 The eight separate 624 × 704 apartments fit the cells reserved within the store's original 3072 × 2048 floor plate. A wide main lobby, reception desk, seating and connected entrance spine occupy the remaining circulation area. The street entrance and placed building remain fixed; town maps and browser saves need no migration. NPC shoppers walk to a lobby door, appear only in its apartment scene, and return through the same door before heading outside.
 
 Verification: `node --test town/world/showroom-layout.test.mjs town/world/resident-venue.test.mjs tests/urban-interiors.test.mjs tests/furniture-store.test.cjs tests/urban-room.test.mjs` and `python tests/town-showrooms-browser.py --screenshots /tmp/town-apartment-showrooms`. The browser regression physically walks every lobby door and apartment area, enters via E, checks E/Escape/HUD return positions, verifies apartment-specific catalogues and purchases, preserves profile gates and source map bytes, and captures all eight independent interiors.
 
-The final suite passes 376 Node tests. Browser checks walked all eight apartments, bought a signature bed and sofa for exactly 150 Notes once, and measured about 60 FPS in both lobby and apartment views. The six-minute town regression also passed with the separate apartment visits and unchanged source map. The original generated signature atlas, sixteen transparent cutouts and metadata are retained under `town/assets/showrooms/`.
+The original showroom release passed 376 Node tests. Browser checks walked all eight apartments, bought a signature bed and sofa for exactly 150 Notes once, and measured about 60 FPS in both lobby and apartment views. The six-minute town regression also passed with the separate apartment visits and unchanged source map. The original generated signature atlas, sixteen transparent cutouts and metadata are retained under `town/assets/showrooms/`.
 
 The furniture store uses the existing Notes wallet. Each purchase unlocks one décor item permanently; buying an owned item again costs no Notes. Furniture ownership is included in the private classroom wallet schema. Apartment layouts use the local-only `codaUrbanRoomV1` store and do not upload room designs.
 
@@ -37,3 +37,5 @@ To enable classroom purchases:
 
 The gate is checked again in the parent arcade before spending Notes. Changing the town frame's UI cannot bypass it.
 
+
+The expanded [apartment homes update](coda-apartment-homes.md) redesigns both the 18 NPC homes and eight showrooms, adds practical room fixtures and playful décor, and preserves existing purchases and player placements.

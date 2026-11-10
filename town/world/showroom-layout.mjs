@@ -1,4 +1,4 @@
-import {createShowroomApartmentPlan} from './showroom-apartments.mjs?v=town-performance-2';
+import {createShowroomApartmentPlan} from './showroom-apartments.mjs?v=apartment-homes-2';
 
 // Eight private apartment showrooms occupy the same cells in the store's
 // exact floor plate. The lobby shows their closed doors, then opening one
@@ -19,9 +19,9 @@ const definitions=[
   wallpaper:finish('peacock-deco-fan','Peacock fan wallpaper','deco-fan',['#173c47','#316477','#10242c','#d2b271']),rug:'#2d606a'
  },
  {
-  id:'coastal-bedroom',name:'Coastal Retreat',style:'Washed timber, blue linen and woven storage',
+  id:'coastal-bedroom',name:'Coastal Retreat',style:'Sea-glass linen, an axolotl friend and a sunny breakfast nook',
   floor:finish('driftwood-planks','Whitewashed driftwood','whitewashed-planks',['#a7b8b3','#d8ddd2','#728d94','#bfc1ac']),
-  wallpaper:finish('sea-glass-stripes','Sea-glass stripe wallpaper','coastal-stripe',['#b3cacc','#dce2d3','#5c8f9b','#d2bc8a']),rug:'#839fa5'
+  wallpaper:finish('sea-glass-stars','Sea-glass tiny-star wallpaper','tiny-stars',['#d5e2df','#eef0df','#7ba6ad','#c7b684']),rug:'#839fa5'
  },
  {
   id:'rustic-kitchen',name:'Rustic Cottage',style:'Terracotta, cottage florals and a family table',
@@ -34,9 +34,9 @@ const definitions=[
   wallpaper:finish('fern-frond-wallpaper','Fern-frond wallpaper','botanical-leaf',['#34564e','#6e9273','#1e3d38','#d3c18a']),rug:'#779263'
  },
  {
-  id:'midcentury-studio',name:'Midcentury Apartment',style:'Honey oak, geometric paper and electric sessions',
-  floor:finish('honey-oak-parquet','Honey-oak parquet','parquet',['#9b6f43','#c89e63','#573d31','#e1b875']),
-  wallpaper:finish('ochre-geometric','Ochre geometric wallpaper','geometric',['#bc884f','#e1c587','#6e6650','#e6d4ac']),rug:'#776c54'
+  id:'midcentury-studio',name:'Midcentury Apartment',style:'Low teak, tapered legs, olive upholstery and a starburst clock',
+  floor:finish('warm-teak-planks','Warm teak planks','teak-planks',['#a87342','#d8a46a','#65442d','#bb8750','#513b2e']),
+  wallpaper:finish('cream-atomic','Cream, teal and olive atomic wallpaper','midcentury-atomic',['#eee1be','#fff1d1','#687a63','#c69848','#568b8b']),rug:'#776c54'
  },
  {
   id:'french-cafe',name:'Parisian Apartment',style:'Bistro checks, painted lattice and acoustic afternoons',
@@ -44,9 +44,9 @@ const definitions=[
   wallpaper:finish('sage-cafe-lattice','Sage café lattice','cafe-lattice',['#a5a98a','#d6d2ac','#586957','#b48168']),rug:'#9d6e5d'
  },
  {
-  id:'industrial-loft',name:'Industrial Loft',style:'Exposed brick, concrete and a late-night rehearsal',
+  id:'industrial-loft',name:'Industrial Loft',style:'Concrete, music confetti and a cozy record-listening corner',
   floor:finish('polished-concrete','Polished concrete slabs','concrete',['#727b7c','#a5a9a1','#4e5c62','#ad805c','#657073']),
-  wallpaper:finish('warehouse-brick','Exposed warehouse brick','exposed-brick',['#8b5c4a','#b78063','#4b4943','#c6b59a']),rug:'#655b54'
+  wallpaper:finish('music-confetti','Cream music-confetti wallpaper','music-confetti',['#e3ddd0','#f6efda','#667d81','#c38b69']),rug:'#655b54'
  }
 ];
 

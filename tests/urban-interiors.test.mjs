@@ -8,6 +8,7 @@ import {residentHomePose,interiorJourneyPose,journeyDuration,residentInScene} fr
 import {decorDefinitions} from '../town/world/decor-definitions.mjs';
 import {SHOWROOMS} from '../town/world/showroom-layout.mjs';
 import {SHOWROOM_FURNITURE} from '../town/world/showroom-furniture-definitions.mjs';
+import {APARTMENT_DECOR} from '../town/world/apartment-decor-definitions.mjs';
 
 const require=createRequire(import.meta.url),stock=require('../furniture-catalog.js');
 const read=path=>readFileSync(new URL(path,import.meta.url));
@@ -16,6 +17,7 @@ const png=read('../town/assets/furniture.png'),atlas=JSON.parse(read('../town/as
 const catalog=new Map(Array.from({length:9},(_,i)=>[`furniture-${i}-180`,{w:180,h:Math.ceil(180*png.readUInt32BE(20)/png.readUInt32BE(16)),boxes:[]}]));
 for(const def of decorDefinitions){const cell=atlas.find(a=>a.family===def.family).cells[def.index],fit=Math.min(def.maxW/cell.w,def.maxH/cell.h);catalog.set(def.id,{w:Math.ceil(cell.w*fit),h:Math.ceil(cell.h*fit),boxes:[]});}
 for(const def of SHOWROOM_FURNITURE)catalog.set(def.id,{w:def.w,h:def.h,boxes:def.boxes,furnitureRole:def.role});
+for(const def of APARTMENT_DECOR)catalog.set(def.id,{w:def.w,h:def.h,boxes:def.boxes,layer:def.layer,wallMounted:def.wallMounted,purpose:def.purpose});
 configureUrbanInteriors(catalog);
 const floorScene=floor=>({kind:floor===1?'lobby':'hall',floor});
 const scenes=[...Array.from({length:FLOOR_COUNT},(_,i)=>floorScene(i+1)),...residents.map(r=>({kind:'apartment',resident:r.id})),{kind:'apartment',resident:'player'},{kind:'shop'},...SHOWROOMS.map(room=>({kind:'showroom',floor:1,showroomId:room.id}))];

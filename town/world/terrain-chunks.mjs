@@ -1,5 +1,5 @@
-import {terrainView} from './model.mjs?v=town-performance-2';
-import {OverviewTerrainState,OVERVIEW_SCALE,OVERVIEW_PAD,WORLD_WIDTH,WORLD_HEIGHT,terrainBoundsForRect} from './overview-state.mjs?v=town-performance-2';
+import {terrainView} from './model.mjs?v=apartment-homes-2';
+import {OverviewTerrainState,OVERVIEW_SCALE,OVERVIEW_PAD,WORLD_WIDTH,WORLD_HEIGHT,terrainBoundsForRect} from './overview-state.mjs?v=apartment-homes-2';
 
 export const TERRAIN_CHUNK_SIZE=512,TERRAIN_CHUNK_PAD=4;
 const defaultCanvas=(width,height)=>{const c=document.createElement('canvas');c.width=width;c.height=height;return c;};
@@ -36,23 +36,96 @@ function containsSea(doc,bounds){
  return false;
 }
 
-export function createTerrainChunkCache({maxPixels=16*1024*1024,maxEntries=256,chunkSize=TERRAIN_CHUNK_SIZE,pad=TERRAIN_CHUNK_PAD,createCanvas=defaultCanvas}={}){
- const contexts=new WeakMap(),recent=new Map();let pixels=0;
- function forget(chunk){chunk.owner.chunks.delete(chunk.key);recent.delete(chunk);pixels-=chunk.pixels;}
- function clear(e){for(const chunk of [...e.chunks.values()])forget(chunk);}
- function entryFor(c){
-  let e=contexts.get(c);if(!e){e={chunks:new Map(),state:new OverviewTerrainState(),key:null,builds:0,hits:0,scans:0,bypasses:0,livePatches:[],waterKey:null,waterImage:null,waterPattern:null,lastDoc:null,lastCells:null,lastRevision:null,lastFrame:null};contexts.set(c,e);}return e;
+const defaultRequestWork=globalThis.requestIdleCallback?
+ callback=>globalThis.requestIdleCallback(callback,{timeout:120}):
+ globalThis.requestAnimationFrame?callback=>globalThis.requestAnimationFrame(()=>callback({timeRemaining:()=>3,didTimeout:false})):null;
+const defaultCancelWork=globalThis.cancelIdleCallback?handle=>globalThis.cancelIdleCallback(handle):handle=>globalThis.cancelAnimationFrame?.(handle);
+
+export function createTerrainChunkCache({maxPixels=16*1024*1024,maxEntries=256,chunkSize=TERRAIN_CHUNK_SIZE,pad=TERRAIN_CHUNK_PAD,createCanvas=defaultCanvas,requestWork=defaultRequestWork,cancelWork=defaultCancelWork,now=()=>globalThis.performance?.now?.()??Date.now(),idleBudgetMs=2.5,prefetch=true}={}){
+ const contexts=new WeakMap(),recent=new Map(),jobs=new Set();let pixels=0,workHandle=null;
+ function forget(chunk){
+  if(!recent.has(chunk))return;
+  if(chunk.pending){chunk.owner.pending.delete(chunk.key);jobs.delete(chunk);try{chunk.steps.return?.();}catch{}chunk.owner.cancelled++;}
+  else chunk.owner.chunks.delete(chunk.key);
+  recent.delete(chunk);pixels-=chunk.pixels;
+  // Release GPU/backing memory immediately; waiting for a future major GC left
+  // entire previous towns alive after imports and long camera journeys.
+  chunk.canvas.width=0;chunk.canvas.height=0;
  }
- function build(e,spec,doc,opts,raw,hooks){
+ function clear(e){for(const chunk of [...e.chunks.values(),...e.pending.values()])forget(chunk);e.generation++;}
+ function cancelPending(e){for(const chunk of [...e.pending.values()])forget(chunk);e.generation++;}
+ function entryFor(c){
+  let e=contexts.get(c);if(!e){e={chunks:new Map(),pending:new Map(),generation:0,visible:new Set(),desired:new Set(),state:new OverviewTerrainState(),key:null,builds:0,syncBuilds:0,prefetchBuilds:0,prefetchSteps:0,cancelled:0,hits:0,scans:0,bypasses:0,livePatches:[],waterKey:null,waterImage:null,waterPattern:null,lastDoc:null,lastCells:null,lastRevision:null,lastFrame:null,lastDraw:0,lastView:null};contexts.set(c,e);}return e;
+ }
+ function reserve(e,wanted,count,chunkPixels,{soft=false}={}){
+  for(const chunk of recent.keys()){
+   if(pixels+count*chunkPixels<=maxPixels&&recent.size+count<=maxEntries)return true;
+   if(chunk.owner===e&&(wanted.has(chunk.key)||soft&&(chunk.pending||e.desired.has(chunk.key))))continue;
+   forget(chunk);
+  }
+  return pixels+count*chunkPixels<=maxPixels&&recent.size+count<=maxEntries;
+ }
+ function createJob(e,spec,doc,opts,raw,hooks,priority=0){
   const r={x:spec.x-pad,y:spec.y-pad,w:spec.w+pad*2,h:spec.h+pad*2},width=Math.ceil(r.w*spec.scale),height=Math.ceil(r.h*spec.scale),canvas=createCanvas(width,height),g=canvas.getContext('2d');
   g.setTransform(spec.scale,0,0,spec.scale,-r.x*spec.scale,-r.y*spec.scale);g.imageSmoothingEnabled=false;g.globalAlpha=1;g.globalCompositeOperation='source-over';
   const bounds=terrainBoundsForRect(r);
-  g.save();g.beginPath();g.rect(r.x,r.y,r.w,r.h);g.clip();g.clearRect(r.x,r.y,r.w,r.h);
-  const paint=()=>raw(g,doc,bounds,{...opts,overviewBake:true,terrainChunks:false});
-  if(hooks.withWaterCutout)hooks.withWaterCutout(g,paint);else paint();g.restore();
-  const chunk={...spec,owner:e,canvas,r,pixels:width*height,hasSea:containsSea(terrainView(doc),bounds)};
-  e.chunks.set(spec.key,chunk);recent.set(chunk,true);pixels+=chunk.pixels;e.builds++;
+  const paintOpts={...opts,overviewBake:true,terrainChunks:false};
+  g.beginPath();g.rect(r.x,r.y,r.w,r.h);g.clip();g.clearRect(r.x,r.y,r.w,r.h);
+  const steps=hooks.bakeSteps?hooks.bakeSteps(g,doc,bounds,paintOpts):(function*(){raw(g,doc,bounds,paintOpts);})();
+  const chunk={...spec,owner:e,canvas,g,r,bounds,pixels:width*height,pending:true,steps,doc,cells:doc.cells,frame:e.lastFrame,generation:e.generation,hooks,priority};
+  e.pending.set(spec.key,chunk);jobs.add(chunk);recent.set(chunk,true);pixels+=chunk.pixels;
   return chunk;
+ }
+ function step(chunk){
+  let result;const advance=()=>{result=chunk.steps.next();return result;};
+  if(chunk.hooks.withWaterCutout)chunk.hooks.withWaterCutout(chunk.g,advance);else advance();
+  if(result.done){
+   const e=chunk.owner;e.pending.delete(chunk.key);jobs.delete(chunk);chunk.pending=false;chunk.hasSea=containsSea(terrainView(chunk.doc),chunk.bounds);e.chunks.set(chunk.key,chunk);e.builds++;
+   delete chunk.steps;delete chunk.doc;delete chunk.cells;delete chunk.hooks;delete chunk.g;
+  }
+  return result.done;
+ }
+ function finish(chunk){
+  const e=chunk.owner;
+  while(chunk.pending)step(chunk);
+  e.syncBuilds++;return chunk;
+ }
+ function schedule(){
+  if(workHandle!==null||!jobs.size||typeof requestWork!=='function')return;
+  workHandle=requestWork(deadline=>{
+   workHandle=null;const started=now(),validated=new Set();let steps=0,active=null;
+   while(jobs.size&&now()-started<idleBudgetMs&&(steps===0||deadline.didTimeout||deadline.timeRemaining()>.75)){
+    const chunk=active&&jobs.has(active)?active:[...jobs].sort((a,b)=>a.priority-b.priority)[0],e=chunk.owner;active=chunk;
+    if(!validated.has(chunk)){
+     if(e.generation!==chunk.generation||e.lastDoc!==chunk.doc||chunk.doc.cells!==chunk.cells||now()-e.lastDraw>2000||(chunk.hooks.frameKey?.(chunk.doc)||'')!==chunk.frame){forget(chunk);continue;}
+     validated.add(chunk);
+    }
+    try{const done=step(chunk);e.prefetchSteps++;if(done)e.prefetchBuilds++;}catch{forget(chunk);}
+    steps++;
+   }
+   schedule();
+  });
+ }
+ function prefetchAround(e,view,scale,viewScale,doc,opts,raw,hooks){
+  if(!prefetch||opts.terrainPrefetch===false||typeof requestWork!=='function'||!hooks.bakeSteps){if(e.pending.size)cancelPending(e);return;}
+  const cx=view.x+view.w/2,cy=view.y+view.h/2,old=e.lastView,dx=old?cx-old.x:0,dy=old?cy-old.y:0,leadX=Math.abs(dx)>.01?Math.sign(dx)*chunkSize:0,leadY=Math.abs(dy)>.01?Math.sign(dy)*chunkSize:0;
+  const ring={x:view.x-chunkSize+Math.min(0,leadX),y:view.y-chunkSize+Math.min(0,leadY),w:view.w+chunkSize*2+Math.abs(leadX),h:view.h+chunkSize*2+Math.abs(leadY)};
+  let candidates=visibleTerrainChunks(ring,scale,{chunkSize,pad});
+  // Builder overview uses the half-size raster, but walking switches to the
+  // native raster. Warm that smaller walking viewport before the first step.
+  if(scale<1){const ratio=Math.min(1,viewScale/.4),walking={x:cx-view.w*ratio/2,y:cy-view.h*ratio/2,w:view.w*ratio,h:view.h*ratio};candidates.push(...visibleTerrainChunks(walking,1,{chunkSize,pad}));}
+  const unique=new Map(candidates.map(spec=>[spec.key,spec]));e.desired=new Set([...e.visible,...unique.keys()]);
+  for(const chunk of [...e.pending.values()])if(!e.desired.has(chunk.key))forget(chunk);
+  const distance=spec=>{const x=spec.x+spec.w/2-cx,y=spec.y+spec.h/2-cy;return Math.hypot(x,y)-(x*Math.sign(dx)+y*Math.sign(dy))*.4+(spec.scale!==scale?chunkSize*.5:0);};
+  candidates=[...unique.values()].sort((a,b)=>distance(a)-distance(b));
+  const chunkPixelsFor=spec=>Math.ceil((spec.w+pad*2)*spec.scale)*Math.ceil((spec.h+pad*2)*spec.scale);
+  for(const spec of candidates){
+   if(e.chunks.has(spec.key))continue;
+   const pending=e.pending.get(spec.key);if(pending){pending.priority=distance(spec);continue;}
+   if(!reserve(e,e.visible,1,chunkPixelsFor(spec),{soft:true}))continue;
+   createJob(e,spec,doc,opts,raw,hooks,distance(spec));
+  }
+  e.lastView={x:cx,y:cy};schedule();
  }
  function drawChunk(c,chunk,t){
   // The padded artwork covers each rounded device edge. Adjacent chunks own
@@ -69,25 +142,24 @@ export function createTerrainChunkCache({maxPixels=16*1024*1024,maxEntries=256,c
   // Never build a working set that evicts its own first tile on every frame.
   if(specs.length>maxEntries||specs.length*chunkPixels>maxPixels){entryFor(c).bypasses++;return false;}
   const e=entryFor(c),frame=hooks.frameKey?.(doc)||'',revision=opts.terrainRevision,reuse=Number.isFinite(revision)&&e.lastDoc===doc&&e.lastCells===doc.cells&&e.lastRevision===revision&&e.lastFrame===frame;
-  const changes=reuse?{first:false,changed:[],paints:[],dirty:null}:e.state.scan(doc);
+  const changes=reuse?{first:false,changed:[],paints:[],dirty:null}:e.state.scan(doc),versionChanged=e.lastDoc!==doc||e.lastCells!==doc.cells||e.lastRevision!==revision||e.lastFrame!==frame||changes.changed.length>0;
   if(!reuse)e.scans++;
+  if(versionChanged)cancelPending(e);
   e.lastDoc=doc;e.lastCells=doc.cells;e.lastRevision=revision;e.lastFrame=frame;
+  e.lastDraw=now();
   if(changes.paints.length)hooks.invalidateGround?.(doc,changes.paints);
   if(e.key!==frame||changes.first)clear(e);
   else if(changes.dirty)for(const chunk of [...e.chunks.values()])if(overlaps(chunk.r,changes.dirty))forget(chunk);
   if(changes.first||changes.changed.length)e.livePatches=e.state.livePatches();
   e.key=frame;
-  const wanted=new Set(specs.map(spec=>spec.key)),missing=specs.filter(spec=>!e.chunks.has(spec.key)).length;
+  const wanted=new Set(specs.map(spec=>spec.key)),missing=specs.filter(spec=>!e.chunks.has(spec.key)&&!e.pending.has(spec.key)).length;e.visible=wanted;
   // Reserve the new viewport before allocating, without evicting a tile that
   // this same frame still needs. Memory stays bounded during a large pan too.
-  for(const chunk of recent.keys()){
-   if(pixels+missing*chunkPixels<=maxPixels&&recent.size+missing<=maxEntries)break;
-   if(chunk.owner!==e||!wanted.has(chunk.key))forget(chunk);
-  }
+  reserve(e,wanted,missing,chunkPixels);
   const chunks=[];
   for(const spec of specs){
    let chunk=e.chunks.get(spec.key);
-   if(chunk){e.hits++;recent.delete(chunk);recent.set(chunk,true);}else chunk=build(e,spec,doc,opts,raw,hooks);
+   if(chunk){e.hits++;recent.delete(chunk);recent.set(chunk,true);}else chunk=finish(e.pending.get(spec.key)||createJob(e,spec,doc,opts,raw,hooks));
    chunks.push(chunk);
   }
   while(recent.size>maxEntries||pixels>maxPixels){const oldest=recent.keys().next().value;if(!oldest)break;forget(oldest);}
@@ -103,9 +175,9 @@ export function createTerrainChunkCache({maxPixels=16*1024*1024,maxEntries=256,c
   for(const r of e.livePatches)if(overlaps(r,view)){
    c.save();c.beginPath();c.rect(r.x,r.y,r.w,r.h);c.clip();c.fillStyle='#101f19';c.fillRect(r.x,r.y,r.w,r.h);raw(c,doc,terrainBoundsForRect(r),opts);c.restore();
   }
-  c.restore();return true;
+  c.restore();prefetchAround(e,view,scale,t.a,doc,opts,raw,hooks);return true;
  }
- return {draw,stats(c){const e=contexts.get(c);return e?{builds:e.builds,hits:e.hits,scans:e.scans,bypasses:e.bypasses,chunks:e.chunks.size,livePatches:e.livePatches.length,pixels,size:recent.size}:null;},invalidate(c){const e=contexts.get(c);if(e){clear(e);e.key=null;e.lastDoc=null;}}};
+ return {draw,stats(c){const e=contexts.get(c);return e?{builds:e.builds,syncBuilds:e.syncBuilds,prefetchBuilds:e.prefetchBuilds,prefetchSteps:e.prefetchSteps,pending:e.pending.size,cancelled:e.cancelled,hits:e.hits,scans:e.scans,bypasses:e.bypasses,chunks:e.chunks.size,livePatches:e.livePatches.length,pixels,size:recent.size}:null;},invalidate(c){const e=contexts.get(c);if(e){clear(e);e.key=null;e.lastDoc=null;}if(!jobs.size&&workHandle!==null){cancelWork?.(workHandle);workHandle=null;}}};
 }
 
 const cache=createTerrainChunkCache();

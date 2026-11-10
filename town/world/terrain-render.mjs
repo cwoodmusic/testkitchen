@@ -1,20 +1,20 @@
-import {shadeLowerGround,drawTerrainRims} from './edge-shading.mjs?v=town-performance-2';
-import {drawRoundUnder,drawRoundCliff} from './round-render.mjs?v=town-performance-2';
-import {clipCurves} from './round-geometry.mjs?v=town-performance-2';
-import {drawGround,groundFrameKey,groundTexture,invalidateGroundCache} from './ground-render.mjs?v=town-performance-2';
-import {drawCliff,drawStairs} from './construction.mjs?v=town-performance-2';
-import {RISE,COLS,ROWS,cell,terrainView} from './model.mjs?v=town-performance-2';
-import {sources} from './catalog.mjs?v=town-performance-2';
-import {waterRimSegments} from './water-rim.mjs?v=town-performance-2';
-import {drawPier,drawPierSubmerged} from './piers.mjs?v=town-performance-2';
-import {drawSidewalkCurbs} from './sidewalk-curbs.mjs?v=town-performance-2';
-import {drawOverviewTerrain} from './overview-terrain.mjs?v=town-performance-2';
-import {prepareOverviewRuns} from './overview-runs.mjs?v=town-performance-2';
-import {drawTerrainChunks} from './terrain-chunks.mjs?v=town-performance-2';
-import {waterFrame,currentWaterFrameIndex,withLevelZeroWaterCutout} from './water-motion.mjs?v=town-performance-2';
-import {cliffArt} from './detail-art.mjs?v=town-performance-2';
-import {artSourceVersion} from './art-revision.mjs?v=town-performance-2';
-const chunkHooks={frameKey:d=>groundFrameKey(terrainView(d))+'|cliff:'+artSourceVersion(cliffArt)+':'+cliffArt.width+':'+cliffArt.height,invalidateGround:invalidateGroundCache,waterImage:()=>waterFrame(sources.ground[3]),waterKey:currentWaterFrameIndex,withWaterCutout:withLevelZeroWaterCutout};
+import {shadeLowerGround,drawTerrainRims} from './edge-shading.mjs?v=apartment-homes-2';
+import {drawRoundUnder,drawRoundCliff} from './round-render.mjs?v=apartment-homes-2';
+import {clipCurves} from './round-geometry.mjs?v=apartment-homes-2';
+import {drawGround,groundFrameKey,groundTexture,invalidateGroundCache} from './ground-render.mjs?v=apartment-homes-2';
+import {drawCliff,drawStairs} from './construction.mjs?v=apartment-homes-2';
+import {RISE,COLS,ROWS,cell,terrainView} from './model.mjs?v=apartment-homes-2';
+import {sources} from './catalog.mjs?v=apartment-homes-2';
+import {waterRimSegments} from './water-rim.mjs?v=apartment-homes-2';
+import {drawPier,drawPierSubmerged} from './piers.mjs?v=apartment-homes-2';
+import {drawSidewalkCurbs} from './sidewalk-curbs.mjs?v=apartment-homes-2';
+import {drawOverviewTerrain} from './overview-terrain.mjs?v=apartment-homes-2';
+import {prepareOverviewRuns} from './overview-runs.mjs?v=apartment-homes-2';
+import {drawTerrainChunks} from './terrain-chunks.mjs?v=apartment-homes-2';
+import {waterFrame,currentWaterFrameIndex,withLevelZeroWaterCutout} from './water-motion.mjs?v=apartment-homes-2';
+import {cliffArt} from './detail-art.mjs?v=apartment-homes-2';
+import {artSourceVersion} from './art-revision.mjs?v=apartment-homes-2';
+const chunkHooks={frameKey:d=>groundFrameKey(terrainView(d))+'|cliff:'+artSourceVersion(cliffArt)+':'+cliffArt.width+':'+cliffArt.height,invalidateGround:invalidateGroundCache,waterImage:()=>waterFrame(sources.ground[3]),waterKey:currentWaterFrameIndex,withWaterCutout:withLevelZeroWaterCutout,bakeSteps:createRawTerrainBake};
 const lawns=new WeakMap();
 function drawWaterRim(c,d,x,y,X,Y){
  c.strokeStyle='#97b9a1';c.lineWidth=5;
@@ -30,7 +30,11 @@ function drawBridge(c,d,a,x,y,X,Y){
  }
 }
 export function drawTerrain(c,d,bounds,opts={}){if(!drawOverviewTerrain(c,d,bounds,opts,drawRawTerrain)&&!drawTerrainChunks(c,d,bounds,opts,drawRawTerrain,chunkHooks))drawRawTerrain(c,d,bounds,opts);}
-export function drawRawTerrain(c,d,{x0,x1,y0,y1},opts={}){
+export function drawRawTerrain(c,d,bounds,opts={}){for(const _ of createRawTerrainBake(c,d,bounds,opts)){};}
+// A private canvas can cooperatively bake exactly the same ordered operations
+// between frames. A complete terrain row, including its rims and piers, still
+// appears in the original north-to-south order; only completed chunks publish.
+export function* createRawTerrainBake(c,d,{x0,x1,y0,y1},opts={}){
  // All ground/cliff helpers see the untouched floor below raised piers.
  const scene=d;d=terrainView(d);
  // A continuous ground plane prevents the sky clear color appearing through
@@ -41,12 +45,12 @@ export function drawRawTerrain(c,d,{x0,x1,y0,y1},opts={}){
  const runs=opts.overviewBake&&!opts.grid?prepareOverviewRuns(d,{x0,x1,y0,y1},surface=>surface==='dirt'?sources.ground[2]:groundTexture(surface)):null;
  for(let y=y0;y<y1;y++){
   for(let x=x0;x<x1;x++){
-   if(runs){const end=runs.draw(c,x,y);if(end>x){x=end-1;continue;}}
+   if(runs){const end=runs.draw(c,x,y);if(end>x){x=end-1;yield;continue;}}
    const a=cell(d,x,y),X=x*64,Y=y*64,z=a.level*RISE;
    if(a.stairs){
     // Stairs are terrain surfaces, not a final overlay. The next southern row
     // can cover them, just as it covers any other surface behind its bank.
-    drawCliff(c,d,x,y);drawStairs(c,d,x,y);continue;
+    drawCliff(c,d,x,y);drawStairs(c,d,x,y);yield;continue;
    }
    if(a.curves?.length){drawRoundUnder(c,d,x,y,frameKey);drawRoundCliff(c,d,x,y);c.save();clipCurves(c,a,x,y,z);}
    drawGround(c,d,a,x,y,X,Y-z,frameKey);
@@ -57,12 +61,15 @@ export function drawRawTerrain(c,d,{x0,x1,y0,y1},opts={}){
    drawCliff(c,d,x,y);
    if(a.bridge&&!a.pier)drawBridge(c,d,a,x,y,X,Y-z);
    if(opts.grid){c.lineWidth=1;c.strokeStyle='#e3e6bb30';c.strokeRect(X,Y-z,64,64);}
+   yield;
   }
   drawTerrainRims(c,d,x0,x1,y,y+1);
+  yield;
   // Keep curb lips above the ground shading, while southern terrain rows can
   // still cover them naturally at a higher elevation.
   for(let x=x0;x<x1;x++)drawSidewalkCurbs(c,scene,x,y);
   for(let x=x0;x<x1;x++)if(cell(scene,x,y).pier)drawPier(c,scene,x,y,groundTexture('wood'));
+  yield;
  }
- for(let y=y0;y<y1;y++)for(let x=x0;x<x1;x++)if(cell(scene,x,y).pier)drawPierSubmerged(c,scene,x,y);
+ for(let y=y0;y<y1;y++)for(let x=x0;x<x1;x++)if(cell(scene,x,y).pier){drawPierSubmerged(c,scene,x,y);yield;}
 }

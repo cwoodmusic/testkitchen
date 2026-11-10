@@ -1,0 +1,1525 @@
+{
+  "version": 1,
+  "pack": "apartment-decor-48",
+  "source": "Three original image_gen 4×4 sprite atlases; all runtime props remain separate and movable.",
+  "orientation": "south, three-quarter top-down",
+  "alphaPacking": "Discard alpha below16/255 and zero RGB for fully transparent pixels. Native remaining foreground RGB/alpha preserved; no palette shifts or edge erosion.",
+  "runtimeFit": "Contain-fit at bottom center of each fixed world canvas. Never stretch native artwork.",
+  "assets": [
+    {
+      "id": "apartment-teak-bed",
+      "name": "Teak platform bed",
+      "purpose": "bed",
+      "w": 150,
+      "h": 150,
+      "category": "midcentury",
+      "atlas": "midcentury-atlas.png",
+      "atlasIndex": 0,
+      "file": "teak-bed.png",
+      "boxes": [
+        {
+          "x": 8,
+          "y": 60,
+          "w": 134,
+          "h": 87
+        }
+      ],
+      "solid": true,
+      "wallMounted": false,
+      "layer": "objects",
+      "pixelWidth": 299,
+      "pixelHeight": 257,
+      "atlasCell": {
+        "x": 0,
+        "y": 0,
+        "w": 313,
+        "h": 313
+      },
+      "sourceBounds": "287x245+14+67"
+    },
+    {
+      "id": "apartment-box-sofa",
+      "name": "Olive tapered-leg sofa",
+      "purpose": "sofa",
+      "w": 180,
+      "h": 126,
+      "category": "midcentury",
+      "atlas": "midcentury-atlas.png",
+      "atlasIndex": 1,
+      "file": "box-sofa.png",
+      "boxes": [
+        {
+          "x": 10,
+          "y": 74,
+          "w": 160,
+          "h": 50
+        }
+      ],
+      "solid": true,
+      "wallMounted": false,
+      "layer": "objects",
+      "pixelWidth": 293,
+      "pixelHeight": 192,
+      "atlasCell": {
+        "x": 313,
+        "y": 0,
+        "w": 314,
+        "h": 313
+      },
+      "sourceBounds": "281x180+16+85"
+    },
+    {
+      "id": "apartment-walnut-credenza",
+      "name": "Walnut sliding-door credenza",
+      "purpose": "storage",
+      "w": 180,
+      "h": 122,
+      "category": "midcentury",
+      "atlas": "midcentury-atlas.png",
+      "atlasIndex": 2,
+      "file": "walnut-credenza.png",
+      "boxes": [
+        {
+          "x": 10,
+          "y": 66,
+          "w": 160,
+          "h": 52
+        }
+      ],
+      "solid": true,
+      "wallMounted": false,
+      "layer": "objects",
+      "pixelWidth": 283,
+      "pixelHeight": 172,
+      "atlasCell": {
+        "x": 627,
+        "y": 0,
+        "w": 313,
+        "h": 313
+      },
+      "sourceBounds": "271x160+20+97"
+    },
+    {
+      "id": "apartment-kidney-coffee-table",
+      "name": "Kidney-shaped walnut coffee table",
+      "purpose": "coffee-table",
+      "w": 140,
+      "h": 86,
+      "category": "midcentury",
+      "atlas": "midcentury-atlas.png",
+      "atlasIndex": 3,
+      "file": "kidney-coffee-table.png",
+      "boxes": [
+        {
+          "x": 10,
+          "y": 34,
+          "w": 120,
+          "h": 50
+        }
+      ],
+      "solid": true,
+      "wallMounted": false,
+      "layer": "objects",
+      "pixelWidth": 291,
+      "pixelHeight": 163,
+      "atlasCell": {
+        "x": 940,
+        "y": 0,
+        "w": 314,
+        "h": 313
+      },
+      "sourceBounds": "279x151+16+110"
+    },
+    {
+      "id": "apartment-molded-lounge-chair",
+      "name": "Molded walnut lounge chair",
+      "purpose": "chair",
+      "w": 84,
+      "h": 114,
+      "category": "midcentury",
+      "atlas": "midcentury-atlas.png",
+      "atlasIndex": 4,
+      "file": "molded-lounge-chair.png",
+      "boxes": [
+        {
+          "x": 8,
+          "y": 70,
+          "w": 68,
+          "h": 40
+        }
+      ],
+      "solid": true,
+      "wallMounted": false,
+      "layer": "objects",
+      "pixelWidth": 241,
+      "pixelHeight": 255,
+      "atlasCell": {
+        "x": 0,
+        "y": 313,
+        "w": 313,
+        "h": 314
+      },
+      "sourceBounds": "229x243+44+48"
+    },
+    {
+      "id": "apartment-arc-floor-lamp",
+      "name": "Brass arc floor lamp",
+      "purpose": "floor-lamp",
+      "w": 152,
+      "h": 190,
+      "category": "midcentury",
+      "atlas": "midcentury-atlas.png",
+      "atlasIndex": 5,
+      "file": "arc-floor-lamp.png",
+      "boxes": [
+        {
+          "x": 10,
+          "y": 166,
+          "w": 42,
+          "h": 22
+        }
+      ],
+      "solid": true,
+      "wallMounted": false,
+      "layer": "objects",
+      "pixelWidth": 230,
+      "pixelHeight": 292,
+      "atlasCell": {
+        "x": 313,
+        "y": 313,
+        "w": 314,
+        "h": 314
+      },
+      "sourceBounds": "218x280+53+16"
+    },
+    {
+      "id": "apartment-starburst-clock",
+      "name": "Atomic starburst clock",
+      "purpose": "wall-clock",
+      "w": 96,
+      "h": 96,
+      "category": "midcentury",
+      "atlas": "midcentury-atlas.png",
+      "atlasIndex": 6,
+      "file": "starburst-clock.png",
+      "boxes": [],
+      "solid": false,
+      "wallMounted": true,
+      "layer": "objects",
+      "pixelWidth": 271,
+      "pixelHeight": 276,
+      "atlasCell": {
+        "x": 627,
+        "y": 313,
+        "w": 313,
+        "h": 314
+      },
+      "sourceBounds": "259x264+27+21"
+    },
+    {
+      "id": "apartment-tambour-record-console",
+      "name": "Teak tambour record console",
+      "purpose": "record-console",
+      "w": 180,
+      "h": 124,
+      "category": "midcentury",
+      "atlas": "midcentury-atlas.png",
+      "atlasIndex": 7,
+      "file": "tambour-record-console.png",
+      "boxes": [
+        {
+          "x": 10,
+          "y": 72,
+          "w": 160,
+          "h": 48
+        }
+      ],
+      "solid": true,
+      "wallMounted": false,
+      "layer": "objects",
+      "pixelWidth": 291,
+      "pixelHeight": 210,
+      "atlasCell": {
+        "x": 940,
+        "y": 313,
+        "w": 314,
+        "h": 314
+      },
+      "sourceBounds": "279x198+18+74"
+    },
+    {
+      "id": "apartment-mushroom-lamp",
+      "name": "Amber mushroom table lamp",
+      "purpose": "table-lamp",
+      "w": 52,
+      "h": 72,
+      "category": "midcentury",
+      "atlas": "midcentury-atlas.png",
+      "atlasIndex": 8,
+      "file": "mushroom-lamp.png",
+      "boxes": [
+        {
+          "x": 10,
+          "y": 54,
+          "w": 32,
+          "h": 16
+        }
+      ],
+      "solid": true,
+      "wallMounted": false,
+      "layer": "objects",
+      "pixelWidth": 197,
+      "pixelHeight": 229,
+      "atlasCell": {
+        "x": 0,
+        "y": 627,
+        "w": 313,
+        "h": 313
+      },
+      "sourceBounds": "185x217+65+53"
+    },
+    {
+      "id": "apartment-geometric-room-divider",
+      "name": "Geometric teak room divider",
+      "purpose": "divider",
+      "w": 150,
+      "h": 180,
+      "category": "midcentury",
+      "atlas": "midcentury-atlas.png",
+      "atlasIndex": 9,
+      "file": "geometric-room-divider.png",
+      "boxes": [
+        {
+          "x": 10,
+          "y": 146,
+          "w": 130,
+          "h": 30
+        }
+      ],
+      "solid": true,
+      "wallMounted": false,
+      "layer": "objects",
+      "pixelWidth": 249,
+      "pixelHeight": 278,
+      "atlasCell": {
+        "x": 313,
+        "y": 627,
+        "w": 314,
+        "h": 313
+      },
+      "sourceBounds": "237x266+36+19"
+    },
+    {
+      "id": "apartment-teak-desk",
+      "name": "Streamlined teak writing desk",
+      "purpose": "desk",
+      "w": 160,
+      "h": 114,
+      "category": "midcentury",
+      "atlas": "midcentury-atlas.png",
+      "atlasIndex": 10,
+      "file": "teak-desk.png",
+      "boxes": [
+        {
+          "x": 8,
+          "y": 62,
+          "w": 144,
+          "h": 48
+        }
+      ],
+      "solid": true,
+      "wallMounted": false,
+      "layer": "objects",
+      "pixelWidth": 294,
+      "pixelHeight": 195,
+      "atlasCell": {
+        "x": 627,
+        "y": 627,
+        "w": 313,
+        "h": 313
+      },
+      "sourceBounds": "282x183+16+75"
+    },
+    {
+      "id": "apartment-round-dining-table",
+      "name": "Round teak dining table",
+      "purpose": "dining-table",
+      "w": 116,
+      "h": 112,
+      "category": "midcentury",
+      "atlas": "midcentury-atlas.png",
+      "atlasIndex": 11,
+      "file": "round-dining-table.png",
+      "boxes": [
+        {
+          "x": 12,
+          "y": 58,
+          "w": 92,
+          "h": 50
+        }
+      ],
+      "solid": true,
+      "wallMounted": false,
+      "layer": "objects",
+      "pixelWidth": 275,
+      "pixelHeight": 221,
+      "atlasCell": {
+        "x": 940,
+        "y": 627,
+        "w": 314,
+        "h": 313
+      },
+      "sourceBounds": "263x209+25+58"
+    },
+    {
+      "id": "apartment-molded-dining-chair",
+      "name": "Pastel molded dining chair",
+      "purpose": "dining-chair",
+      "w": 64,
+      "h": 100,
+      "category": "midcentury",
+      "atlas": "midcentury-atlas.png",
+      "atlasIndex": 12,
+      "file": "molded-dining-chair.png",
+      "boxes": [
+        {
+          "x": 8,
+          "y": 65,
+          "w": 48,
+          "h": 32
+        }
+      ],
+      "solid": true,
+      "wallMounted": false,
+      "layer": "objects",
+      "pixelWidth": 190,
+      "pixelHeight": 265,
+      "atlasCell": {
+        "x": 0,
+        "y": 940,
+        "w": 313,
+        "h": 314
+      },
+      "sourceBounds": "178x253+69+31"
+    },
+    {
+      "id": "apartment-pastel-fridge",
+      "name": "Mint retro refrigerator",
+      "purpose": "fridge",
+      "w": 86,
+      "h": 150,
+      "category": "midcentury",
+      "atlas": "midcentury-atlas.png",
+      "atlasIndex": 13,
+      "file": "pastel-fridge.png",
+      "boxes": [
+        {
+          "x": 8,
+          "y": 96,
+          "w": 70,
+          "h": 50
+        }
+      ],
+      "solid": true,
+      "wallMounted": false,
+      "layer": "objects",
+      "pixelWidth": 194,
+      "pixelHeight": 274,
+      "atlasCell": {
+        "x": 313,
+        "y": 940,
+        "w": 314,
+        "h": 314
+      },
+      "sourceBounds": "182x262+64+23"
+    },
+    {
+      "id": "apartment-low-bookcase",
+      "name": "Low walnut bookcase",
+      "purpose": "bookcase",
+      "w": 148,
+      "h": 124,
+      "category": "midcentury",
+      "atlas": "midcentury-atlas.png",
+      "atlasIndex": 14,
+      "file": "low-bookcase.png",
+      "boxes": [
+        {
+          "x": 8,
+          "y": 76,
+          "w": 132,
+          "h": 44
+        }
+      ],
+      "solid": true,
+      "wallMounted": false,
+      "layer": "objects",
+      "pixelWidth": 283,
+      "pixelHeight": 237,
+      "atlasCell": {
+        "x": 627,
+        "y": 940,
+        "w": 313,
+        "h": 314
+      },
+      "sourceBounds": "271x225+19+52"
+    },
+    {
+      "id": "apartment-record-player",
+      "name": "Walnut record player",
+      "purpose": "record-player",
+      "w": 70,
+      "h": 72,
+      "category": "midcentury",
+      "atlas": "midcentury-atlas.png",
+      "atlasIndex": 15,
+      "file": "record-player.png",
+      "boxes": [
+        {
+          "x": 4,
+          "y": 48,
+          "w": 62,
+          "h": 22
+        }
+      ],
+      "solid": true,
+      "wallMounted": false,
+      "layer": "objects",
+      "pixelWidth": 241,
+      "pixelHeight": 260,
+      "atlasCell": {
+        "x": 940,
+        "y": 940,
+        "w": 314,
+        "h": 314
+      },
+      "sourceBounds": "229x248+42+28"
+    },
+    {
+      "id": "apartment-fox-plush",
+      "name": "Fox music-friend plush",
+      "purpose": "plush",
+      "w": 60,
+      "h": 72,
+      "category": "playful",
+      "atlas": "playful-atlas.png",
+      "atlasIndex": 0,
+      "file": "fox-plush.png",
+      "boxes": [
+        {
+          "x": 9,
+          "y": 48,
+          "w": 42,
+          "h": 22
+        }
+      ],
+      "solid": true,
+      "wallMounted": false,
+      "layer": "objects",
+      "pixelWidth": 250,
+      "pixelHeight": 298,
+      "atlasCell": {
+        "x": 0,
+        "y": 0,
+        "w": 313,
+        "h": 313
+      },
+      "sourceBounds": "238x286+35+20"
+    },
+    {
+      "id": "apartment-axolotl-plush",
+      "name": "Pink axolotl plush",
+      "purpose": "plush",
+      "w": 58,
+      "h": 62,
+      "category": "playful",
+      "atlas": "playful-atlas.png",
+      "atlasIndex": 1,
+      "file": "axolotl-plush.png",
+      "boxes": [
+        {
+          "x": 8,
+          "y": 40,
+          "w": 42,
+          "h": 20
+        }
+      ],
+      "solid": true,
+      "wallMounted": false,
+      "layer": "objects",
+      "pixelWidth": 293,
+      "pixelHeight": 253,
+      "atlasCell": {
+        "x": 313,
+        "y": 0,
+        "w": 314,
+        "h": 313
+      },
+      "sourceBounds": "281x241+16+54"
+    },
+    {
+      "id": "apartment-checkered-beanbag",
+      "name": "Mint checkerboard beanbag",
+      "purpose": "beanbag",
+      "w": 96,
+      "h": 86,
+      "category": "playful",
+      "atlas": "playful-atlas.png",
+      "atlasIndex": 2,
+      "file": "checkered-beanbag.png",
+      "boxes": [
+        {
+          "x": 9,
+          "y": 40,
+          "w": 78,
+          "h": 42
+        }
+      ],
+      "solid": true,
+      "wallMounted": false,
+      "layer": "objects",
+      "pixelWidth": 293,
+      "pixelHeight": 256,
+      "atlasCell": {
+        "x": 627,
+        "y": 0,
+        "w": 313,
+        "h": 313
+      },
+      "sourceBounds": "281x244+16+54"
+    },
+    {
+      "id": "apartment-moon-star-cushions",
+      "name": "Moon and star floor cushions",
+      "purpose": "cushion",
+      "w": 86,
+      "h": 84,
+      "category": "playful",
+      "atlas": "playful-atlas.png",
+      "atlasIndex": 3,
+      "file": "moon-star-cushions.png",
+      "boxes": [
+        {
+          "x": 9,
+          "y": 48,
+          "w": 68,
+          "h": 32
+        }
+      ],
+      "solid": true,
+      "wallMounted": false,
+      "layer": "objects",
+      "pixelWidth": 276,
+      "pixelHeight": 273,
+      "atlasCell": {
+        "x": 940,
+        "y": 0,
+        "w": 314,
+        "h": 313
+      },
+      "sourceBounds": "264x261+20+35"
+    },
+    {
+      "id": "apartment-record-rug",
+      "name": "Vinyl-record music rug",
+      "purpose": "rug",
+      "w": 160,
+      "h": 160,
+      "category": "playful",
+      "atlas": "playful-atlas.png",
+      "atlasIndex": 4,
+      "file": "record-rug.png",
+      "boxes": [],
+      "solid": false,
+      "wallMounted": false,
+      "layer": "ground",
+      "pixelWidth": 294,
+      "pixelHeight": 254,
+      "atlasCell": {
+        "x": 0,
+        "y": 313,
+        "w": 313,
+        "h": 314
+      },
+      "sourceBounds": "282x242+15+41"
+    },
+    {
+      "id": "apartment-rainbow-keys-rug",
+      "name": "Rainbow piano-key rug",
+      "purpose": "rug",
+      "w": 180,
+      "h": 104,
+      "category": "playful",
+      "atlas": "playful-atlas.png",
+      "atlasIndex": 5,
+      "file": "rainbow-keys-rug.png",
+      "boxes": [],
+      "solid": false,
+      "wallMounted": false,
+      "layer": "ground",
+      "pixelWidth": 316,
+      "pixelHeight": 174,
+      "atlasCell": {
+        "x": 313,
+        "y": 313,
+        "w": 314,
+        "h": 314
+      },
+      "sourceBounds": "304x162+4+79"
+    },
+    {
+      "id": "apartment-solar-system-model",
+      "name": "Little solar-system model",
+      "purpose": "table-decor",
+      "w": 64,
+      "h": 90,
+      "category": "playful",
+      "atlas": "playful-atlas.png",
+      "atlasIndex": 6,
+      "file": "solar-system-model.png",
+      "boxes": [
+        {
+          "x": 10,
+          "y": 68,
+          "w": 44,
+          "h": 20
+        }
+      ],
+      "solid": true,
+      "wallMounted": false,
+      "layer": "objects",
+      "pixelWidth": 302,
+      "pixelHeight": 264,
+      "atlasCell": {
+        "x": 627,
+        "y": 313,
+        "w": 313,
+        "h": 314
+      },
+      "sourceBounds": "290x252+9+28"
+    },
+    {
+      "id": "apartment-headphones-books",
+      "name": "Headphones and favorite books",
+      "purpose": "table-decor",
+      "w": 64,
+      "h": 64,
+      "category": "playful",
+      "atlas": "playful-atlas.png",
+      "atlasIndex": 7,
+      "file": "headphones-books.png",
+      "boxes": [
+        {
+          "x": 6,
+          "y": 40,
+          "w": 52,
+          "h": 22
+        }
+      ],
+      "solid": true,
+      "wallMounted": false,
+      "layer": "objects",
+      "pixelWidth": 312,
+      "pixelHeight": 232,
+      "atlasCell": {
+        "x": 940,
+        "y": 313,
+        "w": 314,
+        "h": 314
+      },
+      "sourceBounds": "300x220+7+55"
+    },
+    {
+      "id": "apartment-cassette-cubby",
+      "name": "Cassette and record cubby",
+      "purpose": "storage",
+      "w": 108,
+      "h": 126,
+      "category": "playful",
+      "atlas": "playful-atlas.png",
+      "atlasIndex": 8,
+      "file": "cassette-cubby.png",
+      "boxes": [
+        {
+          "x": 8,
+          "y": 78,
+          "w": 92,
+          "h": 44
+        }
+      ],
+      "solid": true,
+      "wallMounted": false,
+      "layer": "objects",
+      "pixelWidth": 301,
+      "pixelHeight": 311,
+      "atlasCell": {
+        "x": 0,
+        "y": 627,
+        "w": 313,
+        "h": 313
+      },
+      "sourceBounds": "289x299+21+0"
+    },
+    {
+      "id": "apartment-sticker-suitcase",
+      "name": "Music-sticker suitcase",
+      "purpose": "decoration",
+      "w": 56,
+      "h": 90,
+      "category": "playful",
+      "atlas": "playful-atlas.png",
+      "atlasIndex": 9,
+      "file": "sticker-suitcase.png",
+      "boxes": [
+        {
+          "x": 8,
+          "y": 60,
+          "w": 40,
+          "h": 26
+        }
+      ],
+      "solid": true,
+      "wallMounted": false,
+      "layer": "objects",
+      "pixelWidth": 197,
+      "pixelHeight": 293,
+      "atlasCell": {
+        "x": 313,
+        "y": 627,
+        "w": 314,
+        "h": 313
+      },
+      "sourceBounds": "185x281+66+15"
+    },
+    {
+      "id": "apartment-origami-artboard",
+      "name": "Origami bird artboard",
+      "purpose": "wall-art",
+      "w": 108,
+      "h": 100,
+      "category": "playful",
+      "atlas": "playful-atlas.png",
+      "atlasIndex": 10,
+      "file": "origami-artboard.png",
+      "boxes": [],
+      "solid": false,
+      "wallMounted": true,
+      "layer": "objects",
+      "pixelWidth": 280,
+      "pixelHeight": 251,
+      "atlasCell": {
+        "x": 627,
+        "y": 627,
+        "w": 313,
+        "h": 313
+      },
+      "sourceBounds": "268x239+23+42"
+    },
+    {
+      "id": "apartment-cat-planter",
+      "name": "Cat-shaped plant pot",
+      "purpose": "plant",
+      "w": 58,
+      "h": 78,
+      "category": "playful",
+      "atlas": "playful-atlas.png",
+      "atlasIndex": 11,
+      "file": "cat-planter.png",
+      "boxes": [
+        {
+          "x": 10,
+          "y": 54,
+          "w": 38,
+          "h": 22
+        }
+      ],
+      "solid": true,
+      "wallMounted": false,
+      "layer": "objects",
+      "pixelWidth": 265,
+      "pixelHeight": 295,
+      "atlasCell": {
+        "x": 940,
+        "y": 627,
+        "w": 314,
+        "h": 313
+      },
+      "sourceBounds": "253x283+26+11"
+    },
+    {
+      "id": "apartment-patchwork-wall-art",
+      "name": "Patchwork music wall art",
+      "purpose": "wall-art",
+      "w": 128,
+      "h": 128,
+      "category": "playful",
+      "atlas": "playful-atlas.png",
+      "atlasIndex": 12,
+      "file": "patchwork-wall-art.png",
+      "boxes": [],
+      "solid": false,
+      "wallMounted": true,
+      "layer": "objects",
+      "pixelWidth": 267,
+      "pixelHeight": 289,
+      "atlasCell": {
+        "x": 0,
+        "y": 940,
+        "w": 313,
+        "h": 314
+      },
+      "sourceBounds": "255x277+30+11"
+    },
+    {
+      "id": "apartment-monstera",
+      "name": "Terracotta monstera",
+      "purpose": "plant",
+      "w": 92,
+      "h": 144,
+      "category": "playful",
+      "atlas": "playful-atlas.png",
+      "atlasIndex": 13,
+      "file": "monstera.png",
+      "boxes": [
+        {
+          "x": 20,
+          "y": 110,
+          "w": 52,
+          "h": 30
+        }
+      ],
+      "solid": true,
+      "wallMounted": false,
+      "layer": "objects",
+      "pixelWidth": 270,
+      "pixelHeight": 306,
+      "atlasCell": {
+        "x": 313,
+        "y": 940,
+        "w": 314,
+        "h": 314
+      },
+      "sourceBounds": "258x294+24+8"
+    },
+    {
+      "id": "apartment-fern-planter",
+      "name": "Striped fern planter",
+      "purpose": "plant",
+      "w": 96,
+      "h": 122,
+      "category": "playful",
+      "atlas": "playful-atlas.png",
+      "atlasIndex": 14,
+      "file": "fern-planter.png",
+      "boxes": [
+        {
+          "x": 18,
+          "y": 90,
+          "w": 60,
+          "h": 28
+        }
+      ],
+      "solid": true,
+      "wallMounted": false,
+      "layer": "objects",
+      "pixelWidth": 299,
+      "pixelHeight": 286,
+      "atlasCell": {
+        "x": 627,
+        "y": 940,
+        "w": 313,
+        "h": 314
+      },
+      "sourceBounds": "287x274+11+19"
+    },
+    {
+      "id": "apartment-lava-lamp",
+      "name": "Periwinkle lava lamp",
+      "purpose": "table-lamp",
+      "w": 52,
+      "h": 110,
+      "category": "playful",
+      "atlas": "playful-atlas.png",
+      "atlasIndex": 15,
+      "file": "lava-lamp.png",
+      "boxes": [
+        {
+          "x": 12,
+          "y": 90,
+          "w": 28,
+          "h": 18
+        }
+      ],
+      "solid": true,
+      "wallMounted": false,
+      "layer": "objects",
+      "pixelWidth": 156,
+      "pixelHeight": 290,
+      "atlasCell": {
+        "x": 940,
+        "y": 940,
+        "w": 314,
+        "h": 314
+      },
+      "sourceBounds": "144x278+90+15"
+    },
+    {
+      "id": "apartment-sink-counter",
+      "name": "Sage kitchen sink counter",
+      "purpose": "kitchen-sink",
+      "w": 112,
+      "h": 112,
+      "category": "practical",
+      "atlas": "practical-atlas.png",
+      "atlasIndex": 0,
+      "file": "sink-counter.png",
+      "boxes": [
+        {
+          "x": 8,
+          "y": 64,
+          "w": 96,
+          "h": 44
+        }
+      ],
+      "solid": true,
+      "wallMounted": false,
+      "layer": "objects",
+      "pixelWidth": 263,
+      "pixelHeight": 284,
+      "atlasCell": {
+        "x": 0,
+        "y": 0,
+        "w": 313,
+        "h": 313
+      },
+      "sourceBounds": "251x272+35+34"
+    },
+    {
+      "id": "apartment-corner-kitchen-counter",
+      "name": "Oak corner kitchen counter",
+      "purpose": "kitchen-counter",
+      "w": 128,
+      "h": 112,
+      "category": "practical",
+      "atlas": "practical-atlas.png",
+      "atlasIndex": 1,
+      "file": "corner-kitchen-counter.png",
+      "boxes": [
+        {
+          "x": 8,
+          "y": 54,
+          "w": 112,
+          "h": 54
+        }
+      ],
+      "solid": true,
+      "wallMounted": false,
+      "layer": "objects",
+      "pixelWidth": 287,
+      "pixelHeight": 252,
+      "atlasCell": {
+        "x": 313,
+        "y": 0,
+        "w": 314,
+        "h": 313
+      },
+      "sourceBounds": "275x240+21+69"
+    },
+    {
+      "id": "apartment-cream-stove",
+      "name": "Cream enamel stove",
+      "purpose": "stove",
+      "w": 84,
+      "h": 116,
+      "category": "practical",
+      "atlas": "practical-atlas.png",
+      "atlasIndex": 2,
+      "file": "cream-stove.png",
+      "boxes": [
+        {
+          "x": 8,
+          "y": 70,
+          "w": 68,
+          "h": 42
+        }
+      ],
+      "solid": true,
+      "wallMounted": false,
+      "layer": "objects",
+      "pixelWidth": 204,
+      "pixelHeight": 281,
+      "atlasCell": {
+        "x": 627,
+        "y": 0,
+        "w": 313,
+        "h": 313
+      },
+      "sourceBounds": "192x269+62+36"
+    },
+    {
+      "id": "apartment-blue-fridge",
+      "name": "Powder-blue fridge freezer",
+      "purpose": "fridge",
+      "w": 86,
+      "h": 150,
+      "category": "practical",
+      "atlas": "practical-atlas.png",
+      "atlasIndex": 3,
+      "file": "blue-fridge.png",
+      "boxes": [
+        {
+          "x": 8,
+          "y": 96,
+          "w": 70,
+          "h": 50
+        }
+      ],
+      "solid": true,
+      "wallMounted": false,
+      "layer": "objects",
+      "pixelWidth": 175,
+      "pixelHeight": 302,
+      "atlasCell": {
+        "x": 940,
+        "y": 0,
+        "w": 314,
+        "h": 313
+      },
+      "sourceBounds": "163x290+76+18"
+    },
+    {
+      "id": "apartment-bath-vanity",
+      "name": "Oak bathroom vanity",
+      "purpose": "bath-vanity",
+      "w": 80,
+      "h": 106,
+      "category": "practical",
+      "atlas": "practical-atlas.png",
+      "atlasIndex": 4,
+      "file": "bath-vanity.png",
+      "boxes": [
+        {
+          "x": 8,
+          "y": 66,
+          "w": 64,
+          "h": 36
+        }
+      ],
+      "solid": true,
+      "wallMounted": false,
+      "layer": "objects",
+      "pixelWidth": 224,
+      "pixelHeight": 278,
+      "atlasCell": {
+        "x": 0,
+        "y": 313,
+        "w": 313,
+        "h": 314
+      },
+      "sourceBounds": "212x266+59+37"
+    },
+    {
+      "id": "apartment-glass-shower",
+      "name": "Glass shower stall",
+      "purpose": "shower",
+      "w": 98,
+      "h": 154,
+      "category": "practical",
+      "atlas": "practical-atlas.png",
+      "atlasIndex": 5,
+      "file": "glass-shower.png",
+      "boxes": [
+        {
+          "x": 8,
+          "y": 100,
+          "w": 82,
+          "h": 50
+        }
+      ],
+      "solid": true,
+      "wallMounted": false,
+      "layer": "objects",
+      "pixelWidth": 205,
+      "pixelHeight": 297,
+      "atlasCell": {
+        "x": 313,
+        "y": 313,
+        "w": 314,
+        "h": 314
+      },
+      "sourceBounds": "193x285+60+22"
+    },
+    {
+      "id": "apartment-toilet",
+      "name": "White ceramic toilet",
+      "purpose": "toilet",
+      "w": 52,
+      "h": 86,
+      "category": "practical",
+      "atlas": "practical-atlas.png",
+      "atlasIndex": 6,
+      "file": "toilet.png",
+      "boxes": [
+        {
+          "x": 8,
+          "y": 48,
+          "w": 36,
+          "h": 34
+        }
+      ],
+      "solid": true,
+      "wallMounted": false,
+      "layer": "objects",
+      "pixelWidth": 161,
+      "pixelHeight": 266,
+      "atlasCell": {
+        "x": 627,
+        "y": 313,
+        "w": 313,
+        "h": 314
+      },
+      "sourceBounds": "149x254+82+52"
+    },
+    {
+      "id": "apartment-bathtub",
+      "name": "Compact brass-fixture bathtub",
+      "purpose": "bathtub",
+      "w": 128,
+      "h": 126,
+      "category": "practical",
+      "atlas": "practical-atlas.png",
+      "atlasIndex": 7,
+      "file": "bathtub.png",
+      "boxes": [
+        {
+          "x": 8,
+          "y": 68,
+          "w": 112,
+          "h": 54
+        }
+      ],
+      "solid": true,
+      "wallMounted": false,
+      "layer": "objects",
+      "pixelWidth": 301,
+      "pixelHeight": 291,
+      "atlasCell": {
+        "x": 940,
+        "y": 313,
+        "w": 314,
+        "h": 314
+      },
+      "sourceBounds": "289x279+8+24"
+    },
+    {
+      "id": "apartment-wardrobe",
+      "name": "Walnut wardrobe",
+      "purpose": "wardrobe",
+      "w": 128,
+      "h": 184,
+      "category": "practical",
+      "atlas": "practical-atlas.png",
+      "atlasIndex": 8,
+      "file": "wardrobe.png",
+      "boxes": [
+        {
+          "x": 10,
+          "y": 126,
+          "w": 108,
+          "h": 54
+        }
+      ],
+      "solid": true,
+      "wallMounted": false,
+      "layer": "objects",
+      "pixelWidth": 232,
+      "pixelHeight": 299,
+      "atlasCell": {
+        "x": 0,
+        "y": 627,
+        "w": 313,
+        "h": 313
+      },
+      "sourceBounds": "220x287+52+15"
+    },
+    {
+      "id": "apartment-nightstand",
+      "name": "Sage bedside nightstand",
+      "purpose": "nightstand",
+      "w": 62,
+      "h": 78,
+      "category": "practical",
+      "atlas": "practical-atlas.png",
+      "atlasIndex": 9,
+      "file": "nightstand.png",
+      "boxes": [
+        {
+          "x": 6,
+          "y": 44,
+          "w": 50,
+          "h": 30
+        }
+      ],
+      "solid": true,
+      "wallMounted": false,
+      "layer": "objects",
+      "pixelWidth": 207,
+      "pixelHeight": 290,
+      "atlasCell": {
+        "x": 313,
+        "y": 627,
+        "w": 314,
+        "h": 313
+      },
+      "sourceBounds": "195x278+59+18"
+    },
+    {
+      "id": "apartment-desk-chair",
+      "name": "Coral wooden-leg desk chair",
+      "purpose": "desk-chair",
+      "w": 62,
+      "h": 94,
+      "category": "practical",
+      "atlas": "practical-atlas.png",
+      "atlasIndex": 10,
+      "file": "desk-chair.png",
+      "boxes": [
+        {
+          "x": 8,
+          "y": 60,
+          "w": 46,
+          "h": 30
+        }
+      ],
+      "solid": true,
+      "wallMounted": false,
+      "layer": "objects",
+      "pixelWidth": 225,
+      "pixelHeight": 282,
+      "atlasCell": {
+        "x": 627,
+        "y": 627,
+        "w": 313,
+        "h": 313
+      },
+      "sourceBounds": "213x270+49+29"
+    },
+    {
+      "id": "apartment-toy-chest",
+      "name": "Oak cushioned toy chest",
+      "purpose": "toy-storage",
+      "w": 96,
+      "h": 84,
+      "category": "practical",
+      "atlas": "practical-atlas.png",
+      "atlasIndex": 11,
+      "file": "toy-chest.png",
+      "boxes": [
+        {
+          "x": 8,
+          "y": 46,
+          "w": 80,
+          "h": 34
+        }
+      ],
+      "solid": true,
+      "wallMounted": false,
+      "layer": "objects",
+      "pixelWidth": 284,
+      "pixelHeight": 243,
+      "atlasCell": {
+        "x": 940,
+        "y": 627,
+        "w": 314,
+        "h": 313
+      },
+      "sourceBounds": "272x231+18+60"
+    },
+    {
+      "id": "apartment-reading-lamp",
+      "name": "Slim brass reading lamp",
+      "purpose": "floor-lamp",
+      "w": 80,
+      "h": 158,
+      "category": "practical",
+      "atlas": "practical-atlas.png",
+      "atlasIndex": 12,
+      "file": "reading-lamp.png",
+      "boxes": [
+        {
+          "x": 16,
+          "y": 136,
+          "w": 28,
+          "h": 18
+        }
+      ],
+      "solid": true,
+      "wallMounted": false,
+      "layer": "objects",
+      "pixelWidth": 174,
+      "pixelHeight": 296,
+      "atlasCell": {
+        "x": 0,
+        "y": 940,
+        "w": 313,
+        "h": 314
+      },
+      "sourceBounds": "162x284+71+14"
+    },
+    {
+      "id": "apartment-wall-shelf",
+      "name": "Walnut books and plant shelf",
+      "purpose": "wall-shelf",
+      "w": 128,
+      "h": 84,
+      "category": "practical",
+      "atlas": "practical-atlas.png",
+      "atlasIndex": 13,
+      "file": "wall-shelf.png",
+      "boxes": [],
+      "solid": false,
+      "wallMounted": true,
+      "layer": "objects",
+      "pixelWidth": 299,
+      "pixelHeight": 209,
+      "atlasCell": {
+        "x": 313,
+        "y": 940,
+        "w": 314,
+        "h": 314
+      },
+      "sourceBounds": "287x197+11+66"
+    },
+    {
+      "id": "apartment-round-mirror",
+      "name": "Round brass wall mirror",
+      "purpose": "mirror",
+      "w": 88,
+      "h": 96,
+      "category": "practical",
+      "atlas": "practical-atlas.png",
+      "atlasIndex": 14,
+      "file": "round-mirror.png",
+      "boxes": [],
+      "solid": false,
+      "wallMounted": true,
+      "layer": "objects",
+      "pixelWidth": 242,
+      "pixelHeight": 274,
+      "atlasCell": {
+        "x": 627,
+        "y": 940,
+        "w": 313,
+        "h": 314
+      },
+      "sourceBounds": "230x262+38+25"
+    },
+    {
+      "id": "apartment-dining-bench",
+      "name": "Sage oak dining bench",
+      "purpose": "dining-bench",
+      "w": 136,
+      "h": 100,
+      "category": "practical",
+      "atlas": "practical-atlas.png",
+      "atlasIndex": 15,
+      "file": "dining-bench.png",
+      "boxes": [
+        {
+          "x": 8,
+          "y": 58,
+          "w": 120,
+          "h": 38
+        }
+      ],
+      "solid": true,
+      "wallMounted": false,
+      "layer": "objects",
+      "pixelWidth": 305,
+      "pixelHeight": 226,
+      "atlasCell": {
+        "x": 940,
+        "y": 940,
+        "w": 314,
+        "h": 314
+      },
+      "sourceBounds": "293x214+9+68"
+    },
+    {
+      "id": "showroom-midcentury-studio-bed",
+      "name": "Midcentury teak bed",
+      "theme": "midcentury-studio",
+      "showroomId": "midcentury-studio",
+      "role": "bed",
+      "file": "alias-midcentury-studio-bed.png",
+      "w": 150,
+      "h": 133,
+      "boxes": [
+        {
+          "x": 9,
+          "y": 45.22,
+          "w": 132,
+          "h": 85.12
+        }
+      ],
+      "pixelWidth": 299,
+      "pixelHeight": 257,
+      "atlasCell": {
+        "x": 627,
+        "y": 627,
+        "w": 313,
+        "h": 313
+      },
+      "sourceBounds": {
+        "x": 638,
+        "y": 668,
+        "w": 288,
+        "h": 254
+      },
+      "purpose": "bed",
+      "category": "midcentury",
+      "aliasOf": "apartment-teak-bed",
+      "solid": true,
+      "layer": "objects",
+      "sourceAsset": "apartment-teak-bed"
+    },
+    {
+      "id": "showroom-midcentury-studio-sofa",
+      "name": "Midcentury mustard loveseat",
+      "theme": "midcentury-studio",
+      "showroomId": "midcentury-studio",
+      "role": "sofa",
+      "file": "alias-midcentury-studio-sofa.png",
+      "w": 180,
+      "h": 125,
+      "boxes": [
+        {
+          "x": 10.8,
+          "y": 67.5,
+          "w": 158.4,
+          "h": 55
+        }
+      ],
+      "pixelWidth": 293,
+      "pixelHeight": 192,
+      "atlasCell": {
+        "x": 940,
+        "y": 627,
+        "w": 314,
+        "h": 313
+      },
+      "sourceBounds": {
+        "x": 952,
+        "y": 707,
+        "w": 287,
+        "h": 195
+      },
+      "purpose": "sofa",
+      "category": "midcentury",
+      "aliasOf": "apartment-box-sofa",
+      "solid": true,
+      "layer": "objects",
+      "sourceAsset": "apartment-box-sofa"
+    }
+  ]
+}

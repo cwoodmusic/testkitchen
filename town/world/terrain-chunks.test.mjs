@@ -112,3 +112,44 @@ test('LRU memory remains bounded while travelling and source invalidation rebuil
  for(let x=0;x<5;x++){f.c.transform.e=-x*512*.5;f.draw({terrainRevision:0});assert.ok(f.cache.stats(f.c).pixels<=2*520*520);assert.ok(f.cache.stats(f.c).chunks<=2);}
  const first=f.paints.length;f.cache.invalidate(f.c);f.draw({terrainRevision:0});assert.ok(f.paints.length>first);
 });
+
+function idleFixture(options={}){
+ let time=0,sequence=0;const callbacks=new Map(),allocations=[],steps=[];
+ const f=fixture({now:()=>time,requestWork:callback=>{const id=++sequence;callbacks.set(id,callback);return id;},cancelWork:id=>callbacks.delete(id),createCanvas:(w,h)=>{const c=canvas(w,h);allocations.push(c);return c;},...options});
+ f.hooks.bakeSteps=function*(c,d,bounds,opts){
+  for(let row=0;row<20;row++){steps.push({d,bounds,row,opts});c.fillRect(bounds.x0*64,(bounds.y0+row)*64,64,64);time+=.5;yield;}
+ };
+ function tick(){const first=callbacks.entries().next().value;if(!first)return false;callbacks.delete(first[0]);first[1]({timeRemaining:()=>50,didTimeout:false});return true;}
+ function drain(){let count=0;while(tick()){assert.ok(++count<1000,'idle work never settled');}return count;}
+ return {...f,tick,drain,callbacks,allocations,steps,get time(){return time;}};
+}
+
+test('idle prefetch bakes cooperatively and never publishes a partially drawn chunk',()=>{
+ const f=idleFixture();f.draw({terrainRevision:0});const initial=f.cache.stats(f.c),before=f.time;
+ assert.ok(initial.pending>0);assert.equal(f.callbacks.size,1);
+ f.tick();const partial=f.cache.stats(f.c);
+ assert.equal(partial.chunks,initial.chunks);assert.ok(partial.prefetchSteps>0);assert.ok(f.time-before<=2.5,'one idle turn exceeded its cooperative budget');
+ f.drain();const warm=f.cache.stats(f.c);assert.equal(warm.pending,0);assert.ok(warm.prefetchBuilds>0);assert.ok(warm.pixels<=16*1024*1024);
+ f.c.transform.e=-512*.5;f.draw({terrainRevision:0});assert.equal(f.cache.stats(f.c).syncBuilds,initial.syncBuilds,'walking into the prepared ring did not synchronously rebuild');
+});
+
+test('editor prefetch prepares native walking chunks before the camera switches scale',()=>{
+ const f=idleFixture();f.c.transform={a:.225,b:0,c:0,d:.225,e:-1000,f:-1000};f.draw({terrainRevision:0});f.drain();
+ const before=f.cache.stats(f.c),cx=(f.c.canvas.width/2-f.c.transform.e)/.225,cy=(f.c.canvas.height/2-f.c.transform.f)/.225;
+ f.c.transform={a:.4,b:0,c:0,d:.4,e:f.c.canvas.width/2-cx*.4,f:f.c.canvas.height/2-cy*.4};
+ f.draw({terrainRevision:0});assert.equal(f.cache.stats(f.c).syncBuilds,before.syncBuilds,'the walking viewport was not warmed at native resolution');
+});
+
+test('terrain revisions and art changes cancel pending jobs and release their canvas memory before publication',()=>{
+ const f=idleFixture();f.draw({terrainRevision:0});f.tick();const initial=f.cache.stats(f.c),pendingCanvases=f.allocations.slice(initial.chunks);
+ f.doc.cells['1,1']={surface:'grass',level:3};f.draw({terrainRevision:1});
+ assert.ok(f.cache.stats(f.c).cancelled>=initial.pending);assert.ok(pendingCanvases.every(c=>c.width===0&&c.height===0));
+ const before=f.cache.stats(f.c).cancelled;f.frame.key='edited-art';f.drain();assert.ok(f.cache.stats(f.c).cancelled>before,'a source change before the next frame published stale idle artwork');
+});
+
+test('pending prefetch shares the hard memory budget and eviction explicitly releases old backing stores',()=>{
+ const f=idleFixture({maxPixels:4*520*520,maxEntries:4});f.c.canvas.width=160;f.c.canvas.height=160;
+ f.draw({terrainRevision:0});const initial=f.cache.stats(f.c);assert.ok(initial.pending>0);assert.ok(initial.pixels<=4*520*520);f.drain();
+ f.c.transform.e=-4000;f.draw({terrainRevision:0});const moved=f.cache.stats(f.c);assert.ok(moved.pixels<=4*520*520);assert.ok(moved.size<=4);assert.ok(f.allocations.some(c=>c.width===0));
+ f.cache.invalidate(f.c);assert.equal(f.cache.stats(f.c).pixels,0);assert.equal(f.cache.stats(f.c).pending,0);assert.equal(f.callbacks.size,0);assert.ok(f.allocations.every(c=>c.width===0&&c.height===0));
+});

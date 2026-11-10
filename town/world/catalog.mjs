@@ -1,20 +1,21 @@
-import {musicSquareCollisionGeometry,musicSquareSceneParts,propCollisionBoxes,gazeboSceneParts,urbanBuildingCollision} from './scene-collision.mjs?v=town-performance-2';
-import {configureMusicWallArt,registerMusicWallAssets} from './music-wall-art.mjs?v=town-performance-2';
-import {musicSquareWalls} from './music-wall-geometry.mjs?v=town-performance-2';
-import {drawMusicSquareScene} from './music-square-entrances.mjs?v=town-performance-2';
-import {registerDecor} from './decor-pack.mjs?v=town-performance-2';
-import {registerLeisure} from './leisure-pack.mjs?v=town-performance-2';
-import {registerShowroomFurniture} from './showroom-furniture.mjs?v=town-performance-2';
-import {arcadeGeometry,drawArcade} from './arcade.mjs?v=town-performance-2';
-import {constructionArt,stairArt,stairTreadBounds,overgrowthArt,estateArt,cliffDecorArt} from './detail-art.mjs?v=town-performance-2';
-import {estateDefinitions,estateBoxes} from './estates.mjs?v=town-performance-2';
-import {townArtSources,house} from '../art.mjs?v=town-performance-2';
+import {musicSquareCollisionGeometry,musicSquareSceneParts,propCollisionBoxes,gazeboSceneParts,urbanBuildingCollision} from './scene-collision.mjs?v=apartment-homes-2';
+import {configureMusicWallArt,registerMusicWallAssets} from './music-wall-art.mjs?v=apartment-homes-2';
+import {musicSquareWalls} from './music-wall-geometry.mjs?v=apartment-homes-2';
+import {drawMusicSquareScene} from './music-square-entrances.mjs?v=apartment-homes-2';
+import {registerDecor} from './decor-pack.mjs?v=apartment-homes-2';
+import {registerLeisure} from './leisure-pack.mjs?v=apartment-homes-2';
+import {registerShowroomFurniture} from './showroom-furniture.mjs?v=apartment-homes-2';
+import {registerApartmentDecor} from './apartment-decor.mjs?v=apartment-homes-2';
+import {arcadeGeometry,drawArcade} from './arcade.mjs?v=apartment-homes-2';
+import {constructionArt,stairArt,stairTreadBounds,overgrowthArt,estateArt,cliffDecorArt} from './detail-art.mjs?v=apartment-homes-2';
+import {estateDefinitions,estateBoxes} from './estates.mjs?v=apartment-homes-2';
+import {townArtSources,house} from '../art.mjs?v=apartment-homes-2';
 import {homeGeometry,ARCHITECTURES} from '../model.mjs';
-import {registerUrbanDetails} from './urban-kit.mjs?v=town-performance-2';
-import {registerUrbanRoads} from './urban-roads.mjs?v=town-performance-2';
-import {registerRoadLights} from './road-light-art.mjs?v=town-performance-2';
-import {registerFestivalLights} from './festival-lights.mjs?v=town-performance-2';
-import {registerOperaBuilding} from './opera-building.mjs?v=town-performance-2';
+import {registerUrbanDetails} from './urban-kit.mjs?v=apartment-homes-2';
+import {registerUrbanRoads} from './urban-roads.mjs?v=apartment-homes-2';
+import {registerRoadLights} from './road-light-art.mjs?v=apartment-homes-2';
+import {registerFestivalLights} from './festival-lights.mjs?v=apartment-homes-2';
+import {registerOperaBuilding} from './opera-building.mjs?v=apartment-homes-2';
 export const sources=townArtSources(),catalog=new Map();
 function add(id,name,group,w,h,draw,boxes=[],layer='objects'){const a={id,name,group,w:Math.ceil(w),h:Math.ceil(h),boxes,layer};a.draw=draw;let cached;Object.defineProperty(a,'canvas',{get(){if(!cached){cached=document.createElement('canvas');cached.width=a.w;cached.height=a.h;draw(cached.getContext('2d'));}return cached;}});catalog.set(id,a);return a;}
 function sprite(group,i,name,w,boxes,layer){const s=sources[group][i],h=w*s.sh/s.sw;return add(`${group}-${i}-${w}`,name,group,w,h,c=>c.drawImage(s.image,s.sx,s.sy,s.sw,s.sh,0,0,w,h),boxes?.(w,h)||[],layer);}
@@ -57,6 +58,7 @@ for(const[i,id,name,w]of [[0,'cliff-ivy','Cliff ivy cascade',256],[1,'cliff-rose
 
 await registerDecor(catalog);
 await registerShowroomFurniture(add);
+await registerApartmentDecor(add);
 await registerLeisure(catalog);
 registerUrbanRoads(add);
 registerRoadLights(add,sources);

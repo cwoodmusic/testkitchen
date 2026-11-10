@@ -11,11 +11,12 @@ function storage(){
  return {values,fail:false,getItem(key){return values.get(key)??null;},setItem(key,value){if(this.fail)throw Error('quota');values.set(key,String(value));},removeItem(key){values.delete(key);}};
 }
 
-test('the furniture catalog offers52distinct native assets and matches browser ownership',async()=>{
+test('the furniture catalog offers100 distinct native assets and matches browser ownership',async()=>{
  const {decorDefinitions}=await import('../town/world/decor-definitions.mjs');
+ const {APARTMENT_DECOR}=await import('../town/world/apartment-decor-definitions.mjs');
  const signatures=JSON.parse(fs.readFileSync(require.resolve('../town/assets/showrooms/manifest.json'),'utf8')).assets;
- const native=new Set([...decorDefinitions.map(item=>item.id),...Array.from({length:9},(_,i)=>`furniture-${i}-180`),...signatures.map(item=>item.id)]);
- assert.equal(furniture.length,52);assert.equal(new Set(furniture.map(item=>item.id)).size,52);
+ const native=new Set([...decorDefinitions.map(item=>item.id),...Array.from({length:9},(_,i)=>`furniture-${i}-180`),...signatures.map(item=>item.id),...APARTMENT_DECOR.map(item=>item.id)]);
+ assert.equal(furniture.length,100);assert.equal(new Set(furniture.map(item=>item.id)).size,100);
  for(const item of furniture){
   assert.ok(native.has(item.asset),item.asset);assert.match(item.id,/^furniture-[a-z-]+$/);
   assert.ok(Number.isSafeInteger(item.price)&&item.price>0);assert.ok(Object.isFrozen(item));
@@ -55,6 +56,18 @@ test('a guest can buy a matching apartment bed and sofa once and restore their o
   const before=JSON.stringify(restored.snapshot());assert.equal(restored.buy(`furniture-${theme}-invented`).ok,false);assert.equal(JSON.stringify(restored.snapshot()),before);
   const invalid=structuredClone(capture.data);invalid.wallet.owned.push(`furniture-${theme}-invented`);assert.equal(Profiles.validate(invalid).ok,false);
  }
+});
+
+test('new playful furniture and wall art debit once and survive player-profile restoration',()=>{
+ const disk=storage(),wallet=Shop.createWallet({storage:disk,preserveEquipped:false});
+ const selected=['furniture-apartment-fox-plush','furniture-apartment-checkered-beanbag','furniture-apartment-starburst-clock'];
+ const total=selected.reduce((sum,id)=>sum+furniture.find(i=>i.id===id).price,0);
+ for(const id of selected)assert.equal(wallet.buy(id).ok,true);
+ assert.equal(wallet.snapshot().balance,150-total);
+ const before=JSON.stringify(wallet.snapshot());for(const id of selected)assert.equal(wallet.buy(id).alreadyOwned,true);assert.equal(JSON.stringify(wallet.snapshot()),before);
+ const captured=Profiles.capture(disk),target=storage();assert.equal(captured.ok,true,captured.error);assert.equal(Profiles.apply(target,captured.data).ok,true);
+ const restored=Shop.createWallet({storage:target,preserveEquipped:false});for(const id of selected)assert.equal(restored.owns(id),true);
+ assert.equal(furniture.find(i=>i.id==='furniture-apartment-starburst-clock').scale,.75);
 });
 
 test('furniture shares Notes, debits once, and keeps cosmetics across reload and classroom restore',()=>{

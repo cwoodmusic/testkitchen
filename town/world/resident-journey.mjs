@@ -1,5 +1,5 @@
-import {residents} from './resident-profiles.mjs?v=town-performance-2';
-export {residents} from './resident-profiles.mjs?v=town-performance-2';
+import {residents} from './resident-profiles.mjs?v=apartment-homes-2';
+export {residents} from './resident-profiles.mjs?v=apartment-homes-2';
 
 const SPEED=156,GAIT=Math.PI*2/150;
 const journeys=new Map();

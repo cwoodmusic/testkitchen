@@ -1,4 +1,4 @@
-import {supportsLawnReveal} from './asset-lawn.mjs?v=town-performance-2';
+import {supportsLawnReveal} from './asset-lawn.mjs?v=apartment-homes-2';
 
 export const OVERVIEW_SPRITE_SCALE=.125;
 const MIN_EDGE=128,MAX_EDGE=1024;

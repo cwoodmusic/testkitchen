@@ -2,9 +2,11 @@ import {test} from 'node:test';
 import assert from 'node:assert/strict';
 import {createRequire} from 'node:module';
 import {SHOWROOMS,STORE_TRAFFIC} from './showroom-layout.mjs';
-import {getInterior,STORE_FOOTPRINT} from './urban-interiors.mjs';
+import {getInterior,STORE_FOOTPRINT,configureUrbanInteriors} from './urban-interiors.mjs';
+import {APARTMENT_DECOR} from './apartment-decor-definitions.mjs';
 
 const require=createRequire(import.meta.url),stock=require('../../furniture-catalog.js'),products=new Map(stock.map(p=>[p.id,p]));
+const native=new Map(APARTMENT_DECOR.map(a=>[a.id,a]));configureUrbanInteriors(native);
 const lobby=getInterior({kind:'shop'});
 const overlaps=(a,b)=>a.x<b.x+b.w&&a.x+a.w>b.x&&a.y<b.y+b.h&&a.y+a.h>b.y;
 const blocked=(model,p,pad=16)=>model.solids.some(r=>p.x>=r.x-pad&&p.x<=r.x+r.w+pad&&p.y>=r.y-pad&&p.y<=r.y+r.h+pad);
@@ -76,48 +78,84 @@ test('all eight lobby doors retain clear incoming and outgoing routes to the ori
  assert.equal(JSON.stringify(SHOWROOMS),before);
 });
 
-test('a real sixteen-pixel foot can reach every apartment function and pass both private doorways',()=>{
+function nativeFeet(item){
+ if(!item.solid)return [];
+ const a=native.get(item.asset);
+ if(a)return a.boxes.map(b=>({x:item.x-item.w/2+b.x*item.w/a.w,y:item.y-item.h+b.y*item.h/a.h,w:b.w*item.w/a.w,h:b.h*item.h/a.h}));
+ const depth=item.furnitureRole==='bed'?item.h*.72:Math.min(item.h*.48,item.w*.5);
+ return [{x:item.x-item.w*.43,y:item.y-depth,w:item.w*.86,h:depth}];
+}
+function navigation(model){
+ const queue=[model.spawn],seen=new Set([model.spawn.x+','+model.spawn.y]);
+ assert(!blocked(model,model.spawn),'The entry must not be inside furniture');
+ for(let next=0;next<queue.length;next++)for(const [dx,dy]of [[8,0],[-8,0],[0,8],[0,-8]]){
+  const x=queue[next].x+dx,y=queue[next].y+dy,key=x+','+y;
+  if(x<0||y<0||x>model.width||y>model.height||seen.has(key)||blocked(model,{x,y}))continue;
+  seen.add(key);queue.push({x,y});
+ }
+ return {points:queue,reaches(p){return !blocked(model,p)&&queue.some(q=>Math.hypot(q.x-p.x,q.y-p.y)<=6);}};
+}
+
+test('four different floor plates and their mirrors have real private doors and native-foot routes to every apartment function',()=>{
+ const layouts=new Set();
  for(const display of SHOWROOMS){
-  const model=getInterior({kind:'showroom',showroomId:display.id}),plan=display.apartment,before=JSON.stringify(model);
-  for(const [role,route]of Object.entries(plan.routes)){
-   checkRoute(model,route,display.name+' '+role);
-   const area=model.rooms.find(r=>r.functionalRole===role),end=route.at(-1);
-   assert(end.x>=area.x&&end.x<=area.x+area.w&&end.y>=area.y&&end.y<=area.y+area.h,'The route must actually enter '+role);
+  const model=getInterior({kind:'showroom',showroomId:display.id}),plan=display.apartment,before=JSON.stringify(model),nav=navigation(model);
+  layouts.add(plan.layoutId);assert.equal(model.apartmentLayout,plan.layoutId);
+  for(const a of plan.areas){assert(nav.reaches(a.point),display.name+' needs a padded route to '+a.functionalRole);assert(a.point.x>=a.x&&a.point.x<=a.x+a.w&&a.point.y>=a.y&&a.point.y<=a.y+a.h,'The destination must actually enter '+a.functionalRole);}
+  assert(nav.reaches(plan.browse),display.name+' browsing must be reachable');
+  assert.deepEqual(plan.visitRoute[0],plan.spawn);assert.deepEqual(plan.visitRoute.at(-1),plan.browse);
+  assert.deepEqual(plan.exitRoute,plan.visitRoute.slice().reverse());
+  checkRoute(model,plan.visitRoute,display.name+' resident browsing route');checkRoute(model,plan.exitRoute,display.name+' resident departure route');
+  const exit=model.zones.find(z=>z.action==='showroom-lobby');assert(nav.reaches({x:exit.x+exit.w/2,y:exit.y+exit.h/2}),display.name+' must retain its lobby exit');
+  assert.equal(model.privacyDoors.length,2);
+  for(const d of model.privacyDoors){
+   assert(d.length>=104,'A real door must admit the native avatar');assert.equal(d.open,true);assert(model.rooms.some(r=>r.id===d.roomId));
+   const mid=d.axis==='vertical'?{x:d.x,y:d.y+d.length/2}:{x:d.x+d.length/2,y:d.y};
+   assert(nav.reaches(mid),display.name+' door '+d.id+' is blocked');
+   for(const normal of [-32,32])assert(nav.reaches(d.axis==='vertical'?{x:mid.x+normal,y:mid.y}:{x:mid.x,y:mid.y+normal}),display.name+' must pass both sides of '+d.id);
+   const jamb=d.axis==='vertical'?{x:d.x,y:d.y+d.length+8}:{x:d.x+d.length+8,y:d.y};assert(blocked(model,jamb,0),'A privacy opening needs an actual wall beside it');
   }
-  checkRoute(model,plan.visitRoute,display.name+' browsing');checkRoute(model,plan.exitRoute,display.name+' departure');
-  assert(!blocked(model,{x:386,y:351}),'Bedroom opening must remain clear');
-  assert(blocked(model,{x:386,y:280},0),'The sleeping room needs a real privacy wall');
-  assert(!blocked(model,{x:386,y:520}),'Bathroom opening must remain clear');
-  assert(blocked(model,{x:386,y:440},0)&&blocked(model,{x:386,y:620},0),'Bathroom must have actual walls above and below its entry');
   assert.equal(JSON.stringify(model),before);
  }
+ assert.equal(layouts.size,8,'Every door should reveal its own arrangement');
+ assert.equal(new Set([...layouts].map(id=>id.replace(/-(original|mirrored)$/,''))).size,4);
 });
 
-test('every displayed purchase matches the actual room collection while fixed bath fixtures remain separate',()=>{
+test('each kitchen is practical and each unit has exactly one complete private bathroom plus curated playful details',()=>{
  for(const display of SHOWROOMS){
-  const model=getInterior({kind:'showroom',showroomId:display.id});
-  const physical=[...new Set(model.items.map(i=>i.productId).filter(Boolean))];
-  assert.deepEqual(display.productIds.slice().sort(),physical.slice().sort(),'Collection must match the furniture actually on display');
-  for(const item of model.items){
-   if(item.productId)assert.equal(products.get(item.productId)?.asset,item.asset,'A purchase must unlock the exact displayed artwork');
-   else assert(['toilet','shower'].includes(item.furnitureRole),'Only built-in bath fixtures bypass the furniture wallet');
-  }
-  for(const role of ['bed','sofa']){
-   const item=model.items.find(i=>i.furnitureRole===role);assert.equal(item.productId,'furniture-'+display.id+'-'+role);assert(products.has(item.productId));
+  const model=getInterior({kind:'showroom',showroomId:display.id}),nav=navigation(model);
+  for(const role of ['shower','toilet','vanity','bathroom-mirror'])assert.equal(model.items.filter(i=>i.furnitureRole===role).length,1,display.name+' must have exactly one '+role);
+  const vanity=model.items.find(i=>i.furnitureRole==='vanity'),mirror=model.items.find(i=>i.furnitureRole==='bathroom-mirror'),bathroom=model.rooms.find(r=>r.functionalRole==='bathroom');
+  assert.equal(mirror.x,vanity.x,'The mirror belongs above the actual vanity');assert.equal(mirror.y,bathroom.y-10);assert.equal(mirror.wallMounted,true);assert.equal(mirror.solid,false);
+  for(const role of ['sink','counter','stove','fridge','pantry'])assert.equal(model.items.filter(i=>i.fixtureRole===role).length,1,display.name+' must have a kitchen '+role);
+  for(const role of ['bed','sofa','coffee-table','dining-table','dining-chair','nightstand','playful-accent','music-rug','wall-art'])assert(model.items.some(i=>i.furnitureRole===role),display.name+' lacks '+role);
+  for(const item of model.items.filter(i=>['sink','counter','stove','fridge','pantry','shower','toilet','vanity'].includes(i.fixtureRole))){
+   const feet=nativeFeet(item)[0];
+   assert(nav.points.some(p=>Math.hypot(p.x-(feet.x+feet.w/2),p.y-(feet.y+feet.h))<=75),display.name+' cannot approach '+item.fixtureRole);
   }
  }
- assert.equal(stock.length,52,'All original products remain alongside sixteen unique signature pieces');
+ const mcm=SHOWROOMS.find(d=>d.id==='midcentury-studio');assert.equal(mcm.floor.pattern,'teak-planks');assert.equal(mcm.wallpaper.pattern,'midcentury-atomic');assert(mcm.items.some(i=>i.asset==='apartment-starburst-clock'));assert(mcm.items.some(i=>i.asset==='apartment-kidney-coffee-table'));
 });
 
-test('furniture fits inside each apartment and its floor footprints stay distinct',()=>{
+test('displayed purchases match the actual collection and all legacy ownership IDs remain in global stock',()=>{
+ for(const display of SHOWROOMS){
+  const model=getInterior({kind:'showroom',showroomId:display.id}),physical=[...new Set(model.items.map(i=>i.productId).filter(Boolean))];
+  assert.deepEqual(display.productIds.slice().sort(),physical.slice().sort());
+  for(const item of model.items)if(item.productId)assert.equal(products.get(item.productId)?.asset,item.asset,'A purchase must unlock the exact displayed artwork');
+  for(const role of ['bed','sofa'])assert.equal(model.items.find(i=>i.furnitureRole===role).productId,'furniture-'+display.id+'-'+role);
+  assert(model.items.filter(i=>['playful-accent','music-rug','wall-art'].includes(i.furnitureRole)).every(i=>products.has(i.productId)),'Playful collection details must be buyable');
+ }
+ assert.equal(stock.filter(p=>!p.asset.startsWith('apartment-')).length,52,'All legacy products remain available');assert.equal(stock.length,52+APARTMENT_DECOR.length);
+});
+
+test('native furniture footprints remain distinct and all art fits the apartment or its authored wall',()=>{
  for(const display of SHOWROOMS){
   const model=getInterior({kind:'showroom',showroomId:display.id}),footprints=[];
   for(const item of model.items){
    assert(item.x-item.w/2>=28&&item.x+item.w/2<=596,item.asset+' must fit inside the side walls');
-   assert(item.y-item.h>=106&&item.y<=676,item.asset+' must fit inside the north and south edges');
-   assert(Number.isFinite(item.w+item.h)&&item.w>0&&item.h>0);
-   const depth=item.furnitureRole==='bed'?item.h*.72:Math.min(item.h*.48,item.w*.5),feet={x:item.x-item.w*.43,y:item.y-depth,w:item.w*.86,h:depth};
-   assert(!footprints.some(other=>overlaps(feet,other)),display.name+' has overlapping furniture feet');footprints.push(feet);
+   if(item.wallMounted)assert([{x:0,y:0,w:624,h:106},...model.walls.filter(w=>w.bathroomNorthFace)].some(w=>item.x-item.w/2>=w.x&&item.x+item.w/2<=w.x+w.w&&item.y-item.h>=w.y&&item.y<=w.y+w.h),'Art should hang on an actual north wall face');
+   else assert(item.y-item.h>=106&&item.y<=676,item.asset+' must fit inside the room');
+   for(const feet of nativeFeet(item)){assert(!footprints.some(other=>overlaps(feet,other.box)),display.name+' has overlapping feet at '+item.asset+' / '+footprints.find(other=>overlaps(feet,other.box))?.asset);footprints.push({box:feet,asset:item.asset});}
   }
  }
 });

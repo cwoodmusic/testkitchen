@@ -1,22 +1,23 @@
-import {assetImage} from './asset-color.mjs?v=town-performance-2';
-import {SHOWROOMS,applyShowroomLayout} from './showroom-layout.mjs?v=town-performance-2';
-import {applyShowroomApartment} from './showroom-apartments.mjs?v=town-performance-2';
-import {drawShowroomFloor,drawShowroomWallpaper} from './showroom-materials.mjs?v=town-performance-2';
-import {getConcertHall,renderConcertHallBackground,concertHallDrawables} from './concert-hall.mjs?v=town-performance-2';
-import {renderStagePerformance} from './concert-performers.mjs?v=town-performance-2';
+import {assetImage} from './asset-color.mjs?v=apartment-homes-2';
+import {SHOWROOMS,applyShowroomLayout} from './showroom-layout.mjs?v=apartment-homes-2';
+import {applyShowroomApartment} from './showroom-apartments.mjs?v=apartment-homes-2';
+import {drawShowroomFloor,drawShowroomWallpaper} from './showroom-materials.mjs?v=apartment-homes-2';
+import {getConcertHall,renderConcertHallBackground,concertHallDrawables} from './concert-hall.mjs?v=apartment-homes-2';
+import {renderStagePerformance} from './concert-performers.mjs?v=apartment-homes-2';
+import {buildApartmentHome} from './apartment-homes.mjs?v=apartment-homes-2';
 // The apartment tower has one consistent floor plate. Residential floors use
 // a 608px common hall and 1120px private apartments, within its 2304 × 1728 lot.
 export const FLOOR_COUNT=15;
 export const TOWER_FOOTPRINT=Object.freeze({width:2304,height:1728});
 export const STORE_FOOTPRINT=Object.freeze({width:3072,height:2048});
-export {residents} from './resident-profiles.mjs?v=town-performance-2';
-import {residents} from './resident-profiles.mjs?v=town-performance-2';
+export {residents} from './resident-profiles.mjs?v=apartment-homes-2';
+import {residents} from './resident-profiles.mjs?v=apartment-homes-2';
 const sceneCache=new Map(),backgroundCache=new Map();
 let nativeCatalog=null,woodTexture=null,npcRenderer=null;
 const drawConcertNPC=(ctx,actor,time)=>npcRenderer?.drawNPC(ctx,actor,time);
 export function configureUrbanInteriors(catalog){nativeCatalog=catalog;for(const scene of sceneCache.values())warmScene(scene);}
 if(typeof document!=='undefined'){
- import('./ground-textures.mjs?v=town-performance-2').then(({groundTextures})=>{woodTexture=groundTextures.wood;backgroundCache.clear();}).catch(()=>{});
+ import('./ground-textures.mjs?v=apartment-homes-2').then(({groundTextures})=>{woodTexture=groundTextures.wood;backgroundCache.clear();}).catch(()=>{});
 }
 const rect=(x,y,w,h)=>({x,y,w,h});
 const zone=(id,label,x,y,w,h,action,extra={})=>({id,label,x,y,w,h,action,...extra});
@@ -24,7 +25,10 @@ function addItem(scene,asset,x,y,w,h=null,solid=true){
  const a=nativeCatalog?.get(asset),height=h||w*(a?.h||1)/(a?.w||1),item={id:`${scene.id}-item-${scene.items.length}`,asset,x,y,w,h:height,solid};scene.items.push(item);
  // Furniture is upright in the three-quarter cutaway. Its feet, rather than
  // its pictured height, block walking; beds occupy their full floor footprint.
- if(solid){const bed=asset==='furniture-2-180'||asset.endsWith('-bed'),depth=bed?height*.72:Math.min(height*.48,w*.5);scene.solids.push(rect(x-w*.43,y-depth,w*.86,depth));}
+ if(solid){
+  if((asset.startsWith('apartment-')||asset.startsWith('showroom-'))&&a){for(const b of a.boxes||[])scene.solids.push(rect(x-w/2+b.x*w/a.w,y-height+b.y*height/a.h,b.w*w/a.w,b.h*height/a.h));}
+  else{const bed=asset==='furniture-2-180'||asset.endsWith('-bed'),depth=bed?height*.72:Math.min(height*.48,w*.5);scene.solids.push(rect(x-w*.43,y-depth,w*.86,depth));}
+ }
  return item;
 }
 function room(scene,name,x,y,w,h,material='wood'){scene.rooms.push({name,x,y,w,h,material});}
@@ -73,6 +77,7 @@ function hall(floor){
  s.spawn={x:1152,y:440};s.zones.push(zone('lobby','Lobby directory',1057,435,190,130,'elevator',{floor}));return s;
 }
 function apartment(residentId){
+ const home=buildApartmentHome(residentId,{residents,shell,room,wall,addItem,rug,sign,light,windowAt,zone});if(home)return home;
  const r=residents.find(r=>r.id===residentId),player=residentId==='player',wide=player||(r?.floor||0)>=7,w=wide?2304:1088,h=1120;
  const s=shell(`apartment-${residentId}`,player?'Your apartment · The Rooftop Studio':`${r?.name||'Resident'} · ${r?.theme||'Apartment'}`,w,h,r?.color||'#3c8190',r?.trim||'#c8aa77');s.kind='apartment';s.floor=player?15:r?.floor||2;s.resident=residentId;s.residentInfo=r||null;
  const left=wide?650:420,right=wide?w-750:668,mid=w/2;
@@ -83,8 +88,8 @@ function apartment(residentId){
  if(wide){room(s,'Library & gallery',left+36,112,right-left-72,330);rug(s,left+66,160,right-left-132,248);}
  const kx=left/2+18,bx=right+(w-right)/2;
  addItem(s,'furniture-7-180',128,346,154,215);addItem(s,'furniture-6-180',left-92,265,84,129);addItem(s,'furniture-8-180',left-112,428,136,155);
- addItem(s,'furniture-2-180',w-205,414,250,330);addItem(s,'decor-01-12',right+85,218,120,94);addItem(s,'decor-08-01',right+70,432,90,115,false);
- addItem(s,'furniture-3-180',wide?230:150,690,wide?300:218,210);addItem(s,'furniture-4-180',left-92,680,wide?124:108,180);addItem(s,'furniture-5-180',kx,996,230,215);
+ addItem(s,'furniture-2-180',w-205,414,250,330);if(!player)addItem(s,'decor-01-12',right+85,218,120,94);addItem(s,'decor-08-01',right+70,432,90,115,false);
+ addItem(s,'furniture-3-180',player?345:wide?230:150,690,wide?300:218,210);addItem(s,'furniture-4-180',left-92,player?690:680,wide?124:108,180);addItem(s,'furniture-5-180',kx,996,230,215);
  rug(s,right+28,650,w-right-70,390);rug(s,mid-76,510,152,550,'#7b5159');
  // A calm circulation strip leads directly from the door to every room.
  if(!player){
@@ -105,6 +110,17 @@ function apartment(residentId){
   sign(s,'YOUR ROOFTOP STUDIO',mid,690,26);
  }
  for(const x of wide?[220,mid,w-220]:[190,w-190])windowAt(s,x,20,155);
+ if(player){
+  s.title='Your apartment · Rooftop home';s.color='#a9b5a4';s.trim='#d9c49b';
+  const oak={id:'rooftop-teak',pattern:'teak-planks',colors:['#9c7752','#c5a477','#604b37','#b68a57']},bath={id:'rooftop-hex',pattern:'bathroom-hex',colors:['#d7ded2','#f2edda','#a3b6ac','#7b9a92']};
+  for(const r of s.rooms){r.functionalRole=/Bathroom/.test(r.name)?'bathroom':/Kitchen/.test(r.name)?'kitchen':/Bedroom/.test(r.name)?'bedroom':/studio/i.test(r.name)?'living':'study';r.floorFinish=r.functionalRole==='bathroom'?bath:oak;}
+  s.privacyDoors=[{id:'rooftop-bath-door',roomId:'bathroom',axis:'vertical',x:left+10,y:218,length:152,open:true,color:'#96714c',trim:'#ddc5a0'},{id:'rooftop-bedroom-door',roomId:'bedroom',axis:'vertical',x:right-10,y:218,length:152,open:true,color:'#96714c',trim:'#ddc5a0'}];
+  // Keep every existing furnishing rectangle clear, so saved decorations
+  // remain valid. New essentials live in the fixed service/bedroom wings.
+  addItem(s,'apartment-blue-fridge',130,690,120,210);
+  addItem(s,'apartment-wardrobe',1660,218,110,158);
+  const plush=addItem(s,'apartment-fox-plush',w-205,215,48,58,false);plush.depth=414.25;plush.furnitureRole='bed-decoration';
+ }
  sign(s,player?'15A':r?.number||'',mid,98,22);sign(s,player?'Make room for your own rhythm.':r?.theme||'',mid,1074,22);
  s.zones.push(zone('hall','Return to the hall',mid-105,h-210,210,175,'exit',{floor:s.floor}));s.spawn={x:mid,y:h-145};
  light(s,bx,210,250);light(s,kx,650,250);light(s,mid,840,350);return s;
@@ -129,6 +145,7 @@ export function getInterior(scene={}){
  if(!sceneCache.has(id)){const s=kind==='apartment'?apartment(resident):kind==='hall'?hall(floor):kind==='shop'?shop():kind==='showroom'?showroomApartment(scene.showroomId):lobby();sceneCache.set(id,s);warmScene(s);}return sceneCache.get(id);
 }
 export function apartmentDecorBounds(scene){if(scene?.kind!=='apartment'||scene.resident!=='player')return null;return [rect(1584,512,656,540),rect(710,130,780,500)];}
+export function apartmentWallDecorBounds(scene){if(scene?.kind!=='apartment'||scene.resident!=='player')return null;return [rect(380,4,650,98),rect(1280,4,280,98),rect(1760,4,140,98)];}
 function fill(c,x,y,w,h,color){c.fillStyle=color;c.fillRect(Math.round(x),Math.round(y),Math.round(w),Math.round(h));}
 function floor(c,x,y,w,h,tile=false){
  c.save();c.beginPath();c.rect(x,y,w,h);c.clip();
@@ -194,6 +211,7 @@ function background(s){
  if(lobby){fill(c,0,0,s.width,s.height,'#10171d');for(const r of s.lobbyFloorRects)floor(c,r.x,r.y,r.w,r.h);}
  else floor(c,0,0,s.width,s.height);
  for(const r of s.rooms){if(r.portalRoom)continue;if(r.floorFinish)drawShowroomFloor(c,r);else if(r.material==='tile')floor(c,r.x,r.y,r.w,r.h,true);}for(const r of s.rugs)carpet(c,r);
+ for(const item of s.items)if(floorItem(item))drawItem(c,item);
  // Full-height north facade, low cutaway south and side edges.
  if(!lobby){plasterWall(c,rect(0,0,s.width,106),s.color,s.trim);plasterWall(c,rect(0,0,28,s.height),s.color,s.trim);plasterWall(c,rect(s.width-28,0,28,s.height),s.color,s.trim);plasterWall(c,rect(0,s.height-28,s.width,28),s.color,s.trim);}
  else{
@@ -208,15 +226,30 @@ function background(s){
  for(const r of s.walls){if(lobby&&(r.portalRoom||r.receptionFront))lobbyFrontage(c,r);else plasterWall(c,r,r.color||s.color,r.trim||s.trim);}
  for(const r of s.rooms)if(r.wallpaper&&!r.portalRoom)drawShowroomWallpaper(c,r);for(const w of s.windows)drawWindow(c,w.x,w.y,w.w,s.color);
  for(const d of s.doors||[])door(c,d);if(s.elevator)elevator(c,s.elevator);for(const st of s.stairs||[])stairs(c,st);
+ for(const item of s.items)if(wallItem(item))drawItem(c,item);
+ for(const d of s.privacyDoors||[])privacyDoor(c,d);
  if(s.directory){const r=s.directory;fill(c,r.x-10,r.y-8,r.w+20,r.h+16,'#614c3c');fill(c,r.x-4,r.y-2,r.w+8,r.h+4,'#cda056');fill(c,r.x+4,r.y+6,r.w-8,r.h-12,'#293246');c.textAlign='center';c.font='bold 15px Georgia';c.fillStyle='#e0c695';c.fillText('DIRECTORY',r.x+r.w/2,r.y+30);c.font='11px Georgia';for(let f=2;f<=15;f++){const names=f===15?'Your studio':residents.filter(n=>n.floor===f).map(n=>n.name.split(' ')[0]).join(' · ');c.fillStyle='#d1bea2';c.fillText(`${String(f).padStart(2,'0')}  ${names}`,r.x+r.w/2,r.y+34+f*14);}}
  for(const t of s.signs){c.textAlign='center';c.font=`${t.size>25?'bold ':''}${t.size}px Georgia`;c.fillStyle='#302c3155';c.fillText(t.text,t.x+2,t.y+2);c.fillStyle=t.size>25?'#ebc679':'#c8aa77';c.fillText(t.text,t.x,t.y);}
  // Warm pools from wall sconces sit underneath characters and furnishings.
  for(const l of s.lights){const glow=c.createRadialGradient(l.x,l.y,0,l.x,l.y,l.r);glow.addColorStop(0,'#ffe1a010');glow.addColorStop(1,'#ffe1a000');c.fillStyle=glow;c.fillRect(l.x-l.r,l.y-l.r,l.r*2,l.r*2);}
  backgroundCache.set(s.id,cv);return cv;
 }
+function floorItem(item){return item.layer==='ground'||item.furnitureRole==='rug'||nativeCatalog?.get(item.asset)?.layer==='ground';}
+function wallItem(item){return !!(item.wallMounted||nativeCatalog?.get(item.asset)?.wallMounted);}
+function privacyDoor(c,d){
+ const vertical=d.axis==='vertical',length=d.length||104,wood=d.color||'#95734e',trim=d.trim||'#dcc5a0';
+ c.save();c.translate(d.x,d.y);if(!vertical)c.rotate(-Math.PI/2);
+ // The open leaf rests beside the wall. The clear threshold remains the
+ // same walkable opening described by the floor plan's collision geometry.
+ fill(c,-9,0,18,length,'#d7bd8b44');fill(c,-10,0,20,5,trim);fill(c,-10,length-5,20,5,trim);
+ const end=d.hinge==='end',hinge=end?length-5:5;
+ fill(c,10,hinge-3,Math.min(length-12,96),7,'#241d2638');fill(c,10,hinge-6,Math.min(length-12,96),6,wood);fill(c,12,hinge-6,Math.min(length-16,92),2,trim);
+ fill(c,Math.min(length-14,92),hinge-8,4,5,'#d6b06b');
+ c.restore();
+}
 function drawItem(c,item){
  const a=nativeCatalog?.get(item.asset);if(!a)return;const scale=Number.isFinite(item.scale)&&item.scale>0?item.scale:1,w=item.w||a.w*scale,h=item.h||w*a.h/a.w;
- c.save();c.fillStyle='#16232b30';c.beginPath();c.ellipse(item.x,item.y-3,w*.39,Math.max(5,w*.045),0,0,Math.PI*2);c.fill();c.imageSmoothingEnabled=false;c.drawImage(assetImage(a),item.x-w/2,item.y-h,w,h);c.restore();
+ c.save();if(!floorItem(item)&&!wallItem(item)){c.fillStyle='#16232b30';c.beginPath();c.ellipse(item.x,item.y-3,w*.39,Math.max(5,w*.045),0,0,Math.PI*2);c.fill();}c.imageSmoothingEnabled=false;c.drawImage(assetImage(a),item.x-w/2,item.y-h,w,h);c.restore();
 }
 export function residentInteractionZones(actors=[]){
  return actors.filter(a=>!a.hidden&&Number.isFinite(a.x)&&Number.isFinite(a.y)).map(a=>zone(`resident-${a.id}`,`Talk to ${a.name||residents.find(r=>r.id===a.id)?.name||'your neighbour'}`,a.x-72,a.y-64,144,144,'resident',{resident:a.id}));
@@ -233,8 +266,8 @@ export function renderInterior(c,scene,{player,drawPlayer,time=0,decor=[],catalo
   return;
  }
  c.drawImage(background(s),0,0);
- const queue=s.items.map(item=>({y:item.y,draw:()=>drawItem(c,item)}));
- for(const item of decor){if(!item||!nativeCatalog?.has(item.asset)||!Number.isFinite(item.x)||!Number.isFinite(item.y))continue;queue.push({y:item.y,draw:()=>drawItem(c,item)});}
+ const queue=s.items.filter(item=>!floorItem(item)&&!wallItem(item)).map(item=>({y:item.depth??item.y,draw:()=>drawItem(c,item)}));
+ for(const item of decor){if(!item||!nativeCatalog?.has(item.asset)||!Number.isFinite(item.x)||!Number.isFinite(item.y))continue;if(floorItem(item)||wallItem(item))drawItem(c,item);else queue.push({y:item.y,draw:()=>drawItem(c,item)});}
  const people=Array.isArray(actors)?actors:s.actors;
  if(people.length&&!npcRenderer&&typeof window!=='undefined'&&window.createCodaCharacterRenderer)npcRenderer=window.createCodaCharacterRenderer({worldScale:2.5});
  for(const a of people)if(!a.hidden)queue.push({y:a.y,draw:()=>npcRenderer?.drawNPC(c,a,time)});

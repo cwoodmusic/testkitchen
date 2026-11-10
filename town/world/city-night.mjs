@@ -1,5 +1,5 @@
-import {height,surfaceAt} from './model.mjs?v=town-performance-2';
-import {mountPose} from './cliff-mount.mjs?v=town-performance-2';
+import {height,surfaceAt} from './model.mjs?v=apartment-homes-2';
+import {mountPose} from './cliff-mount.mjs?v=apartment-homes-2';
 
 const buffers=new WeakMap(),nativeEmitters=new WeakMap(),radialBrushes=new Map(),TAU=Math.PI*2;
 const hash=(x,y=0)=>{let n=Math.imul(Math.round(x)^Math.imul(Math.round(y),374761393),668265263);n=Math.imul(n^(n>>>13),1274126177);return ((n^(n>>>16))>>>0)/4294967296;};
@@ -199,11 +199,14 @@ export function renderCityNight(c,doc,cam,w,h,time=0,{catalog,objects}={}){
  }
  const cropX=Math.round((pad+(cam.x-buffer.cam.x)*cam.zoom)*sx),cropY=Math.round((pad+(cam.y-buffer.cam.y)*cam.zoom)*sy);
  c.save();c.imageSmoothingEnabled=true;c.globalCompositeOperation='source-over';c.drawImage(canvas,cropX,cropY,w*sx,h*sy,0,0,w,h);c.globalCompositeOperation='screen';c.drawImage(bloom,cropX,cropY,w*sx,h*sy,0,0,w,h);
+ const baseAlpha=c.globalAlpha;
  for(const f of cityFireflies(doc,catalog,cam,w,h,time)){
   const p=projected(f,cam,w,h),r=Math.max(3,22*cam.zoom);
   if(p.x<-r||p.y<-r||p.x>w+r||p.y>h+r)continue;
-  c.save();c.globalAlpha*=f.alpha;radial(c,p.x,p.y,r,r,[[0,'rgba(204,244,123,.24)'],[.3,'rgba(179,225,103,.1)'],[1,'rgba(179,225,103,0)']]);
-  c.fillStyle='rgba(234,255,173,.92)';const size=Math.max(1.5,f.size*cam.zoom);c.fillRect(Math.round(p.x-size/2),Math.round(p.y-size/2),size,size);c.restore();
+  // Only opacity and fill colour change per particle. The outer state save
+  // already protects the caller; repeated native saves add no visual effect.
+  c.globalAlpha=baseAlpha*f.alpha;radial(c,p.x,p.y,r,r,[[0,'rgba(204,244,123,.24)'],[.3,'rgba(179,225,103,.1)'],[1,'rgba(179,225,103,0)']]);
+  c.fillStyle='rgba(234,255,173,.92)';const size=Math.max(1.5,f.size*cam.zoom);c.fillRect(Math.round(p.x-size/2),Math.round(p.y-size/2),size,size);
  }
  c.restore();
 }

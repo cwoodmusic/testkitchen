@@ -19,6 +19,20 @@ test('furniture uses builder bottom-center anchors and physical collision boxes'
  assert.deepEqual(roomItemBoxes({asset:'missing',x:0,y:0},catalog),[]);
 });
 
+test('wall decorations use their wall zones while existing floor furniture keeps its saved positions',()=>{
+ const items=[...furniture,{id:'furniture-poster',asset:'poster',scale:.75}],art=new Map([...catalog,['poster',{w:128,h:128,boxes:[],wallMounted:true}]]);
+ const bounds={wall:[{x:100,y:4,w:500,h:98}],floor:[{x:0,y:150,w:1000,h:650}]};
+ const {api,storage}=setup({catalog:art,furniture:items,owned:()=>items.map(i=>i.id),getBounds:(_item,a)=>a.wallMounted?bounds.wall:bounds.floor});
+ assert.equal(api.place('furniture-chair',250,350).ok,true);
+ const old=api.snapshot()[0];
+ assert.equal(api.place('furniture-poster',250,102).ok,true);
+ assert.equal(api.place('furniture-poster',250,400).ok,false,'a poster cannot float in the middle of the floor');
+ assert.equal(api.place('furniture-chair',250,102).ok,false,'floor furniture cannot mount on the wall');
+ const reloaded=setup({storage,catalog:art,furniture:items,owned:()=>items.map(i=>i.id),getBounds:(_item,a)=>a.wallMounted?bounds.wall:bounds.floor}).api;
+ assert.equal(reloaded.load().ok,true);assert.deepEqual(reloaded.snapshot().find(i=>i.item==='furniture-chair'),old);
+ assert.equal(reloaded.snapshot().find(i=>i.item==='furniture-poster').y,102);
+});
+
 test('catalog scale fixes visible bounds and collision size and survives reloads',()=>{
  const scaled=furniture.map(item=>({...item,scale:item.id==='furniture-chair'?2:1}));
  const {api,storage}=setup({furniture:scaled});

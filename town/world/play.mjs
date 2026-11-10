@@ -1,13 +1,14 @@
-import {catalog,preparePlacedArt,render,resizeSurface,findStart,movePlayer,toggleGate,follow,PLAYER_SCALE,GAIT_PER_PIXEL} from './runtime.mjs?v=town-performance-2';
-import {loadProject} from './storage.mjs?v=town-performance-2';
-import {createUrbanController} from './urban.mjs?v=town-performance-2';
-import {createConcertAudio} from './concert-audio.mjs?v=town-performance-2';
-import {mountConcertControls} from './concert-controls.mjs?v=town-performance-2';
-import {CONCERT_PROGRAMME} from './concert-programme.mjs?v=town-performance-2';
-import {createUrbanTour} from './urban-tour.mjs?v=town-performance-2';
-import {createSandFootprints} from './sand-footprints.mjs?v=town-performance-2';
-import {createAmbientNPCs} from './ambient-npcs.mjs?v=town-performance-2';
-import {readNightPreference,saveNightPreference} from './lighting-settings.mjs?v=town-performance-2';
+import {catalog,preparePlacedArt,render,resizeSurface,findStart,movePlayer,toggleGate,follow,PLAYER_SCALE,GAIT_PER_PIXEL} from './runtime.mjs?v=apartment-homes-2';
+import {loadProject} from './storage.mjs?v=apartment-homes-2';
+import {createUrbanController} from './urban.mjs?v=apartment-homes-2';
+import {createConcertAudio} from './concert-audio.mjs?v=apartment-homes-2';
+import {mountConcertControls} from './concert-controls.mjs?v=apartment-homes-2';
+import {CONCERT_PROGRAMME} from './concert-programme.mjs?v=apartment-homes-2';
+import {createUrbanTour} from './urban-tour.mjs?v=apartment-homes-2';
+import {createSandFootprints} from './sand-footprints.mjs?v=apartment-homes-2';
+import {createAmbientNPCs} from './ambient-npcs.mjs?v=apartment-homes-2';
+import {createPlayerCollisionIndex} from './player-collision-index.mjs?v=apartment-homes-2';
+import {readNightPreference,saveNightPreference} from './lighting-settings.mjs?v=apartment-homes-2';
 const canvas=document.getElementById('world'),route=new URLSearchParams(location.search),tour=route.get('map')!=='builder',preview=route.get('urban')==='1';
 document.querySelectorAll('body > :not(#world):not(script)').forEach(e=>e.remove());
 const header=document.createElement('header'),title=document.createElement('h1'),nav=document.createElement('nav');
@@ -24,6 +25,7 @@ if(!doc){title.textContent=loadError?'Could not load town':'No saved builder tow
  const character=window.createCodaCharacterRenderer({worldScale:PLAYER_SCALE});let avatar=character.normalizeProfile({}),facing='down',walking=false,walkPhase=0;
  const player=findStart(doc,catalog),cam={x:player.x,y:player.y,zoom:.8},keys=new Set();
  let cityRevision=0;
+ const playerCollision=createPlayerCollisionIndex({getProject:()=>doc,catalog,getRevision:()=>cityRevision});
  const urban=createUrbanController({canvas,getProject:()=>doc,getPlayer:()=>player,onConversation:(id,active,viewer)=>ambient.setConversation(id,active,viewer),getResidents:scene=>scene?ambient.interiorActors(scene):ambient.actors,getConcert:()=>concert,preview});
  const concert=createConcertAudio({programme:CONCERT_PROGRAMME,getProject:()=>doc,getScene:()=>urban.scene});
  mountConcertControls(concert,{canvas,onProgramme:()=>urban.showProgramme()});
@@ -42,8 +44,8 @@ if(!doc){title.textContent=loadError?'Could not load town':'No saved builder tow
  let last=performance.now();function frame(now){
   const dt=Math.min(.04,(now-last)/1000);last=now;const {ctx,width,height}=resizeSurface(canvas);concert.updateContext(urban.scene);urban.tick();ambient.update(dt,now/1000);
   if(!urban.frame(ctx,keys,dt,now,width,height,(c,x,y,state)=>drawPlayer(c,x,y,state,now))){
-   if(!urban.blocked){const motion=movePlayer(doc,player,keys,dt,catalog);if(motion.facing)facing=motion.facing;walking=motion.walking;walkPhase=(walkPhase+motion.surfaceDistance*GAIT_PER_PIXEL)%(Math.PI*2);}
-   footprints.update([{id:'__player__',...player,walking},...ambient.actors],now/1000);follow(cam,player,doc);render(ctx,doc,cam,width,height,{terrainRevision:0,night,time:now/1000,npcs:ambient.actors,drawNPC:ambient.draw,drawFootprints:(c,d,t)=>footprints.draw(c,d,t),player,drawPlayer:(c,x,y)=>drawPlayer(c,x,y,undefined,now)});
+   if(!urban.blocked){const motion=movePlayer(playerCollision.view(player),player,keys,dt,catalog);if(motion.facing)facing=motion.facing;walking=motion.walking;walkPhase=(walkPhase+motion.surfaceDistance*GAIT_PER_PIXEL)%(Math.PI*2);}
+   footprints.update([{id:'__player__',...player,walking},...ambient.actors],now/1000);follow(cam,player,doc);render(ctx,doc,cam,width,height,{terrainRevision:cityRevision,night,time:now/1000,npcs:ambient.actors,drawNPC:ambient.draw,drawFootprints:(c,d,t)=>footprints.draw(c,d,t),player,drawPlayer:(c,x,y)=>drawPlayer(c,x,y,undefined,now)});
   }requestAnimationFrame(frame);
- }requestAnimationFrame(frame);window.townGame={project:doc,player,cam,catalog,urban,ambient,footprints,concert,get night(){return night;}};
+ }requestAnimationFrame(frame);window.townGame={project:doc,player,cam,catalog,urban,ambient,footprints,concert,playerCollision,get night(){return night;}};
 }

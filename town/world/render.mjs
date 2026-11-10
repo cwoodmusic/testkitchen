@@ -1,18 +1,18 @@
-import {drawSelection} from './selection-view.mjs?v=town-performance-2';
-import {drawTerrain} from './terrain-render.mjs?v=town-performance-2';
-import {mountPose} from './cliff-mount.mjs?v=town-performance-2';
-import {elevationView} from './elevation-view.mjs?v=town-performance-2';
-import {barrierRuns,drawBarrierRun,barrierPosts,drawPost} from './construction.mjs?v=town-performance-2';
-import {TILE,RISE,COLS,ROWS,cell,height,segment} from './model.mjs?v=town-performance-2';
-import {catalog} from './catalog.mjs?v=town-performance-2';
-import {assetMapImage,assetMapImageRevision} from './asset-lawn.mjs?v=town-performance-2';
-import {overviewObjectImage} from './overview-sprites.mjs?v=town-performance-2';
-import {renderCityNight} from './city-night.mjs?v=town-performance-2';
-import {setWaterTime} from './water-motion.mjs?v=town-performance-2';
-import {drawFountainMotion} from './fountain-motion.mjs?v=town-performance-2';
-import {buildingDepthSlices,physicalObjectDepth,scenePartDepth,buildingSliceRect,batchBuildingDepthQueue} from './actor-depth.mjs?v=town-performance-2';
-import {spriteBounds,intersectsViewport,actorBounds} from './render-visibility.mjs?v=town-performance-2';
-import {scenePartitionCache} from './scene-partition.mjs?v=town-performance-2';
+import {drawSelection} from './selection-view.mjs?v=apartment-homes-2';
+import {drawTerrain} from './terrain-render.mjs?v=apartment-homes-2';
+import {mountPose} from './cliff-mount.mjs?v=apartment-homes-2';
+import {elevationView} from './elevation-view.mjs?v=apartment-homes-2';
+import {barrierGeometry,drawBarrierRun,drawPost} from './construction.mjs?v=apartment-homes-2';
+import {TILE,RISE,COLS,ROWS,cell,height,segment} from './model.mjs?v=apartment-homes-2';
+import {catalog} from './catalog.mjs?v=apartment-homes-2';
+import {assetMapImage,assetMapImageRevision} from './asset-lawn.mjs?v=apartment-homes-2';
+import {overviewObjectImage} from './overview-sprites.mjs?v=apartment-homes-2';
+import {renderCityNight} from './city-night.mjs?v=apartment-homes-2';
+import {setWaterTime} from './water-motion.mjs?v=apartment-homes-2';
+import {drawFountainMotion} from './fountain-motion.mjs?v=apartment-homes-2';
+import {buildingDepthSlices,physicalObjectDepth,scenePartDepth,buildingSliceRect,batchBuildingDepthQueue} from './actor-depth.mjs?v=apartment-homes-2';
+import {spriteBounds,intersectsViewport,actorBounds} from './render-visibility.mjs?v=apartment-homes-2';
+import {scenePartitionCache} from './scene-partition.mjs?v=apartment-homes-2';
 function drawBrush(c,d,brush,zoom){
  const radius=brush.size/2,color=brush.blend?'#b7eddf':'#ffe2a1';
  c.save();
@@ -96,8 +96,9 @@ export function render(c,d,cam,w,h,opts={}){setWaterTime(opts.time||0);const scr
    else queue.push({y:physicalObjectDepth(a,o,mountPose(d,o).depth),draw:()=>drawPlaced(o)});
   }
  }
- for(const run of barrierRuns(d))queue.push({y:run.axis==='h'?run.s.y:run.s.y+run.end-run.start,draw:()=>drawBarrierRun(c,run)});
- for(const p of barrierPosts(d))queue.push({y:p.y+.1,draw:()=>drawPost(c,p,d)});
+ const barriers=barrierGeometry(d,{revision:opts.terrainRevision}),barrierPadding=2/cam.zoom;
+ for(const{run,bounds}of barriers.runItems)if(bounds&&intersectsViewport(bounds,viewport,barrierPadding))queue.push({y:run.axis==='h'?run.s.y:run.s.y+run.end-run.start,draw:()=>drawBarrierRun(c,run)});
+ for(const{post:p,bounds}of barriers.postItems)if(intersectsViewport(bounds,viewport,barrierPadding))queue.push({y:p.y+.1,draw:()=>drawPost(c,p,d)});
  for(const npc of opts.npcs||[])if(opts.drawNPC&&Number.isFinite(npc.x)&&Number.isFinite(npc.y)){
   const y=npc.y-height(d,npc.groundAnchor?.x??npc.x,npc.groundAnchor?.y??npc.y);
   if(intersectsViewport(actorBounds(npc.x,y),viewport))queue.push({y:npc.depth??npc.y,draw:()=>opts.drawNPC(c,{...npc,y},opts.time||0)});

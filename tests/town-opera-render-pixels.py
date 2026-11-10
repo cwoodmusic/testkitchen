@@ -21,6 +21,7 @@ ROOT = Path(__file__).resolve().parents[1]
 parser = argparse.ArgumentParser()
 parser.add_argument('--baseline', default='fd79869')
 parser.add_argument('--output', type=Path, default=Path('/workspace/.onboarding/opera-render-pixels'))
+parser.add_argument('--outdoors', action='store_true', help='Compare edited-town walls, night and viewport edges')
 args = parser.parse_args()
 args.output.mkdir(parents=True, exist_ok=True)
 commit = subprocess.check_output(['git', 'rev-parse', args.baseline], cwd=ROOT, text=True).strip()
@@ -74,7 +75,29 @@ SETUP = r"""async()=>{
   }
   return {object,center,actors,tip:rotate(object,0,-a.h*.79),dimensions:{w:a.w,h:a.h},parts:parts.length};
  };
+ let town=null,walled=null;
  window.__pixelQA={
+  async installTown(original){
+   town=structuredClone(original);town.objects.push({id:'pixel-opera',asset:'sydney-opera-house',x:12500,y:11200,scale:1,rotation:0,layer:'objects',collision:true});
+   await Promise.all([...new Set(town.objects.map(o=>o.asset))].map(id=>catalog.get(id)?.ensureFull?.()));
+   walled={...town,cells:{...town.cells},edges:{...town.edges}};
+   const styles=['wood','rail','iron','limestone','brick','plaster','music-square'];
+   for(let i=0;i<styles.length;i++){
+    const X=168+(i%4)*7,Y=112+Math.floor(i/4)*8,level=[0,4,8][i%3];
+    for(let y=Y-1;y<Y+6;y++)for(let x=X-1;x<X+6;x++)walled.cells[x+','+y]={surface:'grass',level};
+    for(let j=0;j<4;j++){walled.edges['h:'+(X+j)+':'+Y]={style:styles[i],gate:j===1,open:false};walled.edges['v:'+X+':'+(Y+j)]={style:styles[i],gate:j===2,open:false};}
+   }
+   for(const [index,scale]of [1,2,3].entries()){
+    const X=166+index*9,Y=129;for(let y=Y-1;y<Y+5;y++)for(let x=X-1;x<X+5;x++)walled.cells[x+','+y]={surface:'grass',level:index*4};
+    for(let j=0;j<3;j++){walled.edges['h:'+(X+j)+':'+Y]={style:'music-square',gate:j===1,open:false,wallScale:scale};walled.edges['v:'+X+':'+(Y+j)]={style:'music-square',gate:j===1,open:false,wallScale:scale};}
+   }
+   for(let i=0;i<300;i++)walled.edges['h:'+(20+i%25)+':'+(30+Math.floor(i/25))]={style:styles[i%7],gate:false,open:false};
+  },
+  outdoors(){const cases=[];
+   for(const night of [false,true])for(const open of [false,true])for(const [name,x,y,zoom]of [['wall-yard',11500.375,7400.625,.8],['scaled-post-edges',11600.375,8200.625,.8],['fractional-wall-pan',11420.43,7544.61,.37]])cases.push({id:name+'-'+(night?'night':'day')+'-'+(open?'open':'closed'),town:true,walls:true,open,night,camera:{x,y,zoom},actors:[],parts:0});
+   for(const night of [false,true])for(const [name,x,y,zoom]of [['courtyard',10500.375,7600.625,.8],['organic-cliff',12500.375,9700.625,.48],['ocean-shore',14500.375,9700.625,.48]])cases.push({id:name+'-'+(night?'night':'day'),town:true,walls:false,night,camera:{x,y,zoom},actors:[],parts:0});
+   return cases;
+  },
   fixtures(){const list=[];for(const asset of ['sydney-opera-house','coda-arcade','coda-residences','coda-furnishings'])for(const rotation of [0,90,180,270]){
    const scene=make(asset,rotation);
    for(const [zoom,dx,dy]of [[.13,.37,.63],[.37,17.29,-11.73],[.82,-43.41,28.19]])list.push({id:asset+'-'+rotation+'-'+zoom,...scene,camera:{x:scene.center.x+dx,y:scene.center.y+dy,zoom}});
@@ -82,8 +105,9 @@ SETUP = r"""async()=>{
   }return list;},
   draw(fixture){
    const canvas=document.createElement('canvas');canvas.width=640;canvas.height=480;const c=canvas.getContext('2d');c.imageSmoothingEnabled=false;c.setTransform(.5,0,0,.5,0,0);
-   const doc={version:1,name:'Isolated depth comparison',cells:{},edges:{},objects:[fixture.object],spawn:{x:0,y:0}};
-   render(c,doc,fixture.camera,1280,960,{time:7.25,night:false,terrainRevision:1,terrainChunks:false,npcs:fixture.actors,drawNPC:(ctx,npc,t)=>renderer.drawNPC(ctx,npc,t)});
+   const doc=fixture.town?(fixture.walls?walled:town):{version:1,name:'Isolated depth comparison',cells:{},edges:{},objects:[fixture.object],spawn:{x:0,y:0}};
+   if(fixture.walls)for(const edge of Object.values(doc.edges))if(edge.gate)edge.open=!!fixture.open;
+   render(c,doc,fixture.camera,1280,960,{time:7.25,night:!!fixture.night,terrainRevision:fixture.open?2:1,terrainChunks:false,npcs:fixture.actors,drawNPC:(ctx,npc,t)=>renderer.drawNPC(ctx,npc,t)});
    return canvas.toDataURL('image/png');
   }
  };
@@ -106,7 +130,11 @@ try:
             print(('baseline' if index == 0 else 'working') + ' ready ' + setup['tag'], flush=True)
             contexts.append(context)
             pages.append(page)
-        fixtures = pages[0].evaluate('__pixelQA.fixtures()')
+        if args.outdoors:
+            original = json.loads((ROOT / 'town/maps/coda-town-uploaded-3.json').read_text())
+            for page in pages:
+                page.evaluate('(doc)=>__pixelQA.installTown(doc)', original)
+        fixtures = pages[0].evaluate('__pixelQA.outdoors()' if args.outdoors else '__pixelQA.fixtures()')
         results = []
         for fixture in fixtures:
             paths = []

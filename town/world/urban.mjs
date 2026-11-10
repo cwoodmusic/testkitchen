@@ -1,9 +1,9 @@
-import {catalog} from './catalog.mjs?v=town-performance-2';
-import {FLOOR_COUNT,residents,getInterior,renderInterior,residentInteractionZones,apartmentDecorBounds,configureUrbanInteriors} from './urban-interiors.mjs?v=town-performance-2';
-import {createRoomStorage,roomItemBoxes} from './urban-room.mjs?v=town-performance-2';
-import {SHOWROOMS} from './showroom-layout.mjs?v=town-performance-2';
-import {createStagePerformance,stagePerformanceSignature,stageCollisionBoxes} from './concert-performers.mjs?v=town-performance-2';
-import {CONCERT_PROGRAMME} from './concert-programme.mjs?v=town-performance-2';
+import {catalog} from './catalog.mjs?v=apartment-homes-2';
+import {FLOOR_COUNT,residents,getInterior,renderInterior,residentInteractionZones,apartmentDecorBounds,apartmentWallDecorBounds,configureUrbanInteriors} from './urban-interiors.mjs?v=apartment-homes-2';
+import {createRoomStorage,roomItemBoxes} from './urban-room.mjs?v=apartment-homes-2';
+import {SHOWROOMS} from './showroom-layout.mjs?v=apartment-homes-2';
+import {createStagePerformance,stagePerformanceSignature,stageCollisionBoxes} from './concert-performers.mjs?v=apartment-homes-2';
+import {CONCERT_PROGRAMME} from './concert-programme.mjs?v=apartment-homes-2';
 
 configureUrbanInteriors(catalog);
 const furniture=window.CodaFurnitureCatalog||[];
@@ -16,7 +16,7 @@ export function buildingDoor(o){
 }
 function decorSolids(items){return items.flatMap(o=>roomItemBoxes(o,catalog));}
 export function createUrbanController({canvas,getProject,getPlayer,getResidents,onConversation,getConcert=()=>null,preview=false}){
- const css=document.createElement('link');css.rel='stylesheet';css.href=new URL('./urban.css?v=town-performance-2',import.meta.url);document.head.append(css);
+ const css=document.createElement('link');css.rel='stylesheet';css.href=new URL('./urban.css?v=apartment-homes-2',import.meta.url);document.head.append(css);
  const hud=document.createElement('section');hud.className='urban-hud';hud.hidden=true;document.body.append(hud);
  const hint=document.createElement('button');hint.className='urban-prompt';hint.hidden=true;hint.onclick=()=>interact();document.body.append(hint);
  const dialog=document.createElement('dialog');dialog.className='urban-dialog';dialog.setAttribute('aria-label','Coda Town');document.body.append(dialog);
@@ -54,7 +54,7 @@ export function createUrbanController({canvas,getProject,getPlayer,getResidents,
  function makeRoom(){
   if(!owner)return;
   let storage;try{storage=bridge?parent.localStorage:localStorage;}catch{}
-  room=createRoomStorage({storage,owner:roomOwner||owner,catalog,furniture,owned,getBounds:()=>apartmentDecorBounds({kind:'apartment',floor:15,resident:'player'}),getSolids:()=>getInterior({kind:'apartment',floor:15,resident:'player'}).solids});
+  room=createRoomStorage({storage,owner:roomOwner||owner,catalog,furniture,owned,getBounds:(_item,asset)=>(asset?.wallMounted?apartmentWallDecorBounds:apartmentDecorBounds)({kind:'apartment',floor:15,resident:'player'}),getSolids:()=>getInterior({kind:'apartment',floor:15,resident:'player'}).solids});
   const result=room.load();decor=room.snapshot();if(!result.ok)flash(result.error);
  }
  makeRoom();
@@ -199,7 +199,7 @@ export function createUrbanController({canvas,getProject,getPlayer,getResidents,
   if(canvas.id==='map'){const r=canvas.getBoundingClientRect();hud.style.left=(r.left+16)+'px';hud.style.top=(r.top+16)+'px';hud.style.maxWidth=Math.max(180,Math.min(420,r.width-32))+'px';hint.style.left=(r.left+r.width/2)+'px';}
   if(dialog.open){hint.hidden=true;return;}
   let text='';if(notice&&performance.now()<noticeUntil)text=notice;
-  else if(scene){const z=nearestZone();text=seated?'Watching the performance · E or WASD to stand up':decorate?(selectedDecor?'Click the floor to place · E inventory · Escape finish':'E · Choose furniture · click a placed item to move or put away'):(z?`E · ${z.label}`:'WASD / arrows · Walk · E interact');}
+  else if(scene){const z=nearestZone();text=seated?'Watching the performance · E or WASD to stand up':decorate?(selectedDecor?(catalog.get(furniture.find(item=>item.id===selectedDecor)?.asset)?.wallMounted?'Click to hang on the north wall · E inventory · Escape finish':'Click the floor to place · E inventory · Escape finish'):'E · Choose furniture · click a placed item to move or put away'):(z?`E · ${z.label}`:'WASD / arrows · Walk · E interact');}
   else {const n=outsideTarget();if(n?.person)text=`E · Talk to ${n.person.actor.name||residents.find(r=>r.id===n.person.actor.id)?.name||'your neighbour'}`;else if(n?.building)text=`E · Enter ${n.building.door.kind==='opera'?'Sydney Opera House':n.building.door.kind==='shop'?'Coda Furnishings':'Coda Residences'}`;}
   if(text!==lastHint){hint.textContent=text;lastHint=text;}hint.hidden=!text;
  }
@@ -215,19 +215,25 @@ export function createUrbanController({canvas,getProject,getPlayer,getResidents,
   const clampView=(p,length,visible)=>length<=visible?length/2:Math.max(visible/2,Math.min(length-visible/2,p)),focus=seated?{x:m.stage.x+m.stage.w/2,y:m.stage.y+m.stage.h/2+60}:player;view={x:clampView(focus.x,m.width,width/zoom),y:clampView(focus.y,m.height,height/zoom)};
   tick();ctx.clearRect(0,0,width,height);ctx.fillStyle='#131b21';ctx.fillRect(0,0,width,height);ctx.save();ctx.translate(width/2,height/2);ctx.scale(zoom,zoom);ctx.translate(-view.x,-view.y);
   renderInterior(ctx,scene,{player,drawPlayer:(c,p)=>drawPlayer(c,p.x,p.y,{facing,walking,phase,seated:!!seated}),time:now/1000,decor:scene.resident==='player'?decor:[],actors:sceneResidents(),performance:concertPerformance(),audioTime:getConcert()?.currentTime,reducedMotion,viewport:{x:view.x-width/zoom/2,y:view.y-height/zoom/2,w:width/zoom,h:height/zoom}});
-  if(decorate&&selectedDecor&&hover){const item=furniture.find(i=>i.id===selectedDecor),a=catalog.get(item?.asset),scale=item?.scale||1;if(a){ctx.save();ctx.globalAlpha=.55;ctx.drawImage(a.canvas,Math.round(hover.x-a.w*scale/2),Math.round(hover.y-a.h*scale),a.w*scale,a.h*scale);ctx.restore();}}
+  if(decorate&&selectedDecor&&hover){const item=furniture.find(i=>i.id===selectedDecor),a=catalog.get(item?.asset),scale=item?.scale||1,p=decorPlacementPoint(item,hover);if(a){ctx.save();ctx.globalAlpha=.55;ctx.drawImage(a.canvas,Math.round(p.x-a.w*scale/2),Math.round(p.y-a.h*scale),a.w*scale,a.h*scale);ctx.restore();}}
   ctx.restore();return true;
  }
  function pointerWorld(e){const rect=canvas.getBoundingClientRect();return {x:Math.round(view.x+(e.clientX-rect.left-lastSize.width/2)/zoom),y:Math.round(view.y+(e.clientY-rect.top-lastSize.height/2)/zoom)};}
+ function decorPlacementPoint(product,p){
+  const a=catalog.get(product?.asset);if(!a?.wallMounted)return p;
+  const scale=product?.scale||1,width=a.w*scale,height=a.h*scale;
+  const spots=(apartmentWallDecorBounds(scene)||[]).filter(b=>width<=b.w&&height<=b.h).map(b=>({x:Math.max(b.x+width/2,Math.min(b.x+b.w-width/2,p.x)),y:b.y+b.h}));
+  return spots.sort((a,b)=>Math.abs(a.x-p.x)-Math.abs(b.x-p.x))[0]||p;
+ }
  function handlePointer(e){
   if(!scene)return false;if(!decorate||dialog.open)return true;e.preventDefault();if(!bridge&&!guestStorageAvailable()){flash('Open town from the arcade to furnish your active player’s apartment.');return true;}const p=pointerWorld(e);
-  if(selectedDecor){const product=furniture.find(i=>i.id===selectedDecor),boxes=roomItemBoxes({asset:product?.asset,scale:product?.scale||1,...p},catalog);if(boxes.some(b=>rectHit(player.x,player.y,b,20))){flash('Leave some space around your character before placing furniture.');return true;}const result=room?.place(selectedDecor,p.x,p.y);if(result?.ok){decor=room.snapshot();selectedDecor=null;flash('Furniture saved in your apartment.');}else flash(result?.error||'Wait for your player profile to load.');}
+  if(selectedDecor){const product=furniture.find(i=>i.id===selectedDecor),point=decorPlacementPoint(product,p),boxes=roomItemBoxes({asset:product?.asset,scale:product?.scale||1,...point},catalog);if(boxes.some(b=>rectHit(player.x,player.y,b,20))){flash('Leave some space around your character before placing furniture.');return true;}const result=room?.place(selectedDecor,point.x,point.y);if(result?.ok){decor=room.snapshot();selectedDecor=null;flash('Furniture saved in your apartment.');}else flash(result?.error||'Wait for your player profile to load.');}
   else {const target=[...decor].reverse().find(o=>{const a=catalog.get(o.asset),scale=o.scale||1;return a&&rectHit(p.x,p.y,{x:o.x-a.w*scale/2,y:o.y-a.h*scale,w:a.w*scale,h:a.h*scale});});if(target){const item=furniture.find(i=>i.id===target.item);const body=modal(item?.name||'Furniture','Move this item or put it away. Your purchase remains in your inventory.');actionButton('Move',()=>{selectedDecor=target.item;closeDialog();},body);actionButton('Put away',()=>{const result=room.remove(target.id);if(result.ok){decor=room.snapshot();closeDialog();}else flash(result.error);},body);}}
   return true;
  }
  function thumbnail(item){const a=catalog.get(item.asset),c=document.createElement('canvas');c.width=c.height=100;if(a){const g=c.getContext('2d');g.imageSmoothingEnabled=false;const fit=Math.min(90/a.w,90/a.h);g.drawImage(a.canvas,(100-a.w*fit)/2,95-a.h*fit,a.w*fit,a.h*fit);}return c;}
  function showInventory(){
-  const body=modal('Your furniture','Choose an owned item, then click an open part of your apartment. Each purchase unlocks one movable item.');const grid=document.createElement('div');grid.className='urban-catalog';body.append(grid);const items=furniture.filter(i=>owned().includes(i.id));
+  const body=modal('Your furniture','Choose an owned item, then click to place it. Posters, clocks, mirrors and shelves snap to the open north-wall sections. Each purchase unlocks one movable item.');const grid=document.createElement('div');grid.className='urban-catalog';body.append(grid);const items=furniture.filter(i=>owned().includes(i.id));
   if(!items.length){const p=document.createElement('p');p.textContent='Visit Coda Furnishings to buy furniture, instruments, plants, and lights with Notes.';body.append(p);}
   for(const item of items){const b=document.createElement('button');b.append(thumbnail(item));const name=document.createElement('span');name.textContent=item.name+(decor.some(o=>o.item===item.id)?' · Move':'');b.append(name);b.onclick=()=>{decorate=true;selectedDecor=item.id;closeDialog();updateHud();};grid.append(b);}
  }

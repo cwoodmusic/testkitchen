@@ -27,6 +27,7 @@ parser.add_argument('--output', type=Path, default=Path('/workspace/.onboarding/
 parser.add_argument('--seconds', type=float, default=2.5)
 parser.add_argument('--limit', type=int, default=0)
 parser.add_argument('--scenario', action='append', help='Run only a named scenario; repeat to select several')
+parser.add_argument('--sustained', action='store_true', help='Walk continuously along real clear town corridors; include a 500-object stress copy')
 args = parser.parse_args()
 args.output.mkdir(parents=True, exist_ok=True)
 source_bytes = MAP.read_bytes()
@@ -75,7 +76,7 @@ INSTRUMENT = r"""(()=>{
  window.requestAnimationFrame=callback=>nativeRAF(now=>{
   if(!state.active||callback.name!=='frame')return callback(now);
   const start=performance.now(),draws=state.draws,drawMs=state.drawMs,reads=state.reads,readMs=state.readMs,pixels=state.sourcePixels;
-  try{return callback(now);}finally{state.frames.push({at:now,cpu:performance.now()-start,draws:state.draws-draws,drawMs:state.drawMs-drawMs,reads:state.reads-reads,readMs:state.readMs-readMs,sourcePixels:state.sourcePixels-pixels});}
+  try{return callback(now);}finally{const stats=window.__chunkStats?.();state.frames.push({at:now,cpu:performance.now()-start,draws:state.draws-draws,drawMs:state.drawMs-drawMs,reads:state.reads-reads,readMs:state.readMs-readMs,sourcePixels:state.sourcePixels-pixels,cam:window.townBuilder?{...townBuilder.cam}:null,chunkBuilds:stats?.builds,chunkScans:stats?.scans,chunkSyncBuilds:stats?.syncBuilds,chunkPrefetchBuilds:stats?.prefetchBuilds,chunkPrefetchSteps:stats?.prefetchSteps,chunkPending:stats?.pending,navigation:window.townBuilder?.ambient.navigationStats});}
  });
  for(const proto of [globalThis.CanvasRenderingContext2D?.prototype,globalThis.OffscreenCanvasRenderingContext2D?.prototype].filter(Boolean)){
   const draw=proto.drawImage,read=proto.getImageData;
@@ -132,6 +133,13 @@ scenarios = [
     {'id': 'opera-walk-courtyard-night-npcs', 'opera': True, 'night': True, 'npcs': True, 'camera': [10080, 8192, .8], 'walk': True},
     {'id': 'opera-walk-courtyard-day-no-npcs', 'opera': True, 'night': False, 'npcs': False, 'camera': [10080, 8192, .8], 'walk': True},
 ]
+if args.sustained:
+    scenarios = [
+        {'id': 'walk-courtyards-121', 'opera': True, 'night': True, 'npcs': True, 'camera': [10500, 7800, .8], 'walk': True, 'corridor': 'courtyards', 'objects': 121},
+        {'id': 'walk-organic-shore-121', 'opera': True, 'night': True, 'npcs': True, 'camera': [9000, 10800, .8], 'walk': True, 'corridor': 'shore', 'objects': 121},
+        {'id': 'walk-courtyards-500', 'opera': True, 'night': True, 'npcs': True, 'camera': [10500, 7800, .8], 'walk': True, 'corridor': 'courtyards', 'objects': 500},
+        {'id': 'walk-courtyards-121-walls1500', 'opera': True, 'night': True, 'npcs': True, 'camera': [10500, 7800, .8], 'walk': True, 'corridor': 'courtyards', 'objects': 121, 'extraEdges': 1500},
+    ]
 if args.scenario:
     scenarios = [scenario for scenario in scenarios if scenario['id'] in args.scenario]
 if args.limit:
@@ -154,6 +162,7 @@ try:
         session.send('Profiler.enable')
         session.send('Profiler.setSamplingInterval', {'interval': 500})
         session.send('Performance.enable')
+        page.evaluate('''async()=>{const app=new URL(document.querySelector('script[type="module"]').src),url=new URL('../world/terrain-chunks.mjs'+app.search,app);const {terrainChunkStats}=await import(url);window.__chunkStats=()=>terrainChunkStats(document.getElementById('map').getContext('2d'));}''')
         current_opera = None
         for scenario in scenarios:
             if current_opera is not scenario['opera'] or scenario.get('walk'):
@@ -162,6 +171,16 @@ try:
                 fixture = json.loads(source_bytes)
                 if scenario['opera']:
                     fixture['objects'].append({'id': 'temporary-profile-opera', 'asset': 'sydney-opera-house', 'x': 12500, 'y': 11200, 'scale': 1, 'rotation': 0, 'layer': 'objects', 'collision': True})
+                if scenario.get('objects', 121) > len(fixture['objects']):
+                    small_ids = page.evaluate('(ids)=>ids.filter(id=>{const a=townBuilder.catalog.get(id);return a&&a.w<240&&a.h<300;})', list({o['asset'] for o in original['objects']}))
+                    samples = [o for o in original['objects'] if o['asset'] in small_ids]
+                    for index in range(scenario['objects'] - len(fixture['objects'])):
+                        extra = {**samples[index % len(samples)], 'id': 'stress-detail-' + str(index), 'x': 6600 + index % 20 * 370, 'y': 5400 + index // 20 * 260}
+                        fixture['objects'].append(extra)
+                for index in range(scenario.get('extraEdges', 0)):
+                    axis = 'h' if index % 2 == 0 else 'v'
+                    n = index // 2
+                    fixture['edges'][f'{axis}:{60+n%36}:{150+n//36}'] = {'style': 'music-square', 'gate': False, 'open': False}
                 if scenario.get('walk'):
                     fixture['spawn'] = {'x': scenario['camera'][0], 'y': scenario['camera'][1]}
                 fixture['name'] = 'Isolated outdoor performance fixture'
@@ -177,6 +196,14 @@ try:
             if page.evaluate('townBuilder.npcsVisible') != scenario['npcs']:
                 page.locator('#npcToggle').click()
             if scenario.get('walk'):
+                if scenario.get('corridor'):
+                    route = page.evaluate('''async zone=>{
+                        const app=new URL(document.querySelector('script[type="module"]').src),{blocked}=await import(new URL('../world/model.mjs'+app.search,app));
+                        const doc=townBuilder.project,catalog=townBuilder.catalog,ys=zone==='shore'?[10080,10336,10592,10848,11104]:[7280,7440,7600,7760,7920,8080,8192,8352,8512,8672,8832,8992],runs=[];
+                        for(const y of ys){let begin=null,previous=null;for(let x=3808;x<=15136;x+=32){const p={x,y},clear=!blocked(doc,x,y,catalog,previous);if(clear){if(begin===null)begin=x;previous=p;}else {if(begin!==null)runs.push({x0:begin+64,x1:x-96,y,length:x-begin-160});begin=null;previous=null;}}if(begin!==null)runs.push({x0:begin+64,x1:15072,y,length:15072-begin-64});}
+                        runs.sort((a,b)=>b.length-a.length);const best=runs[0];if(!best||best.length<700)throw Error('No long clear '+zone+' corridor');doc.spawn={x:best.x0,y:best.y};return best;
+                    }''', scenario['corridor'])
+                    scenario['route'] = route
                 page.locator('#walk').click()
             page.evaluate('([x,y,zoom])=>Object.assign(townBuilder.cam,{x,y,zoom})', scenario['camera'])
             page.locator('#map').focus()
@@ -186,19 +213,40 @@ try:
             session.send('Profiler.start')
             page.evaluate('__outdoorPerf.begin()')
             if scenario.get('walk'):
-                page.keyboard.down('d')
-            page.wait_for_timeout(args.seconds * 1000)
+                held = 'd'
+                page.keyboard.down(held)
+            deadline = time.monotonic() + args.seconds
+            while time.monotonic() < deadline:
+                page.wait_for_timeout(min(200, max(1, (deadline - time.monotonic()) * 1000)))
+                if scenario.get('corridor'):
+                    x = page.evaluate('townBuilder.cam.x')
+                    if held == 'd' and x >= scenario['route']['x1'] - 70 or held == 'a' and x <= scenario['route']['x0'] + 70:
+                        page.keyboard.up(held)
+                        held = 'a' if held == 'd' else 'd'
+                        page.keyboard.down(held)
             if scenario.get('walk'):
-                page.keyboard.up('d')
+                page.keyboard.up(held)
             measured = page.evaluate('__outdoorPerf.end()')
             profile = session.send('Profiler.stop')['profile']
             after_metrics = {item['name']: item['value'] for item in session.send('Performance.getMetrics')['metrics']}
             frames = measured.pop('frames')
+            frame_gaps = [frames[i]['at'] - frames[i - 1]['at'] for i in range(1, len(frames))]
+            moved = [abs(frames[i]['cam']['x'] - frames[i - 1]['cam']['x']) for i in range(1, len(frames))]
             duration = (frames[-1]['at'] - frames[0]['at']) if len(frames) > 1 else args.seconds * 1000
             summary = {
                 **scenario, 'frames': len(frames), 'fps': round((len(frames) - 1) * 1000 / duration, 2),
                 'frameCpuMeanMs': round(statistics.mean(f['cpu'] for f in frames), 3),
                 'frameCpuP95Ms': round(percentile([f['cpu'] for f in frames], .95), 3),
+                'frameCpuP50Ms': round(percentile([f['cpu'] for f in frames], .5), 3),
+                'frameCpuP99Ms': round(percentile([f['cpu'] for f in frames], .99), 3),
+                'frameCpuMaxMs': round(max(f['cpu'] for f in frames), 3),
+                'frameGapP50Ms': round(percentile(frame_gaps, .5), 3),
+                'frameGapP95Ms': round(percentile(frame_gaps, .95), 3),
+                'frameGapP99Ms': round(percentile(frame_gaps, .99), 3),
+                'frameGapMaxMs': round(max(frame_gaps, default=0), 3),
+                'stallsOver50Ms': sum(t > 50 for t in frame_gaps), 'stallsOver100Ms': sum(t > 100 for t in frame_gaps),
+                'cameraTravel': round(sum(moved), 2), 'movingFrameFraction': round(sum(d > .1 for d in moved) / max(1, len(moved)), 3),
+                'worstFrames': sorted(frames, key=lambda f: -f['cpu'])[:12],
                 'drawsPerFrame': round(statistics.mean(f['draws'] for f in frames), 1),
                 'drawNativeMeanMs': round(statistics.mean(f['drawMs'] for f in frames), 3),
                 'sourceMegaPixelsPerFrame': round(statistics.mean(f['sourcePixels'] for f in frames) / 1e6, 1),
@@ -212,6 +260,7 @@ try:
             }
             results.append(summary)
             (args.output / (scenario['id'] + '.cpuprofile')).write_text(json.dumps(profile))
+            (args.output / (scenario['id'] + '.frames.json')).write_text(json.dumps(frames))
             (args.output / 'results.json').write_text(json.dumps({'ref': args.ref, 'commit': commit, 'deviceScaleFactor': 2, 'viewport': [1920, 1200], 'sourceHash': source_hash, 'scenarios': results, 'pageErrors': errors}, indent=2))
             print(json.dumps(summary), flush=True)
             page.locator('#map').screenshot(path=str(args.output / (scenario['id'] + '.png')))

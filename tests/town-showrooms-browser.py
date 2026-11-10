@@ -93,10 +93,11 @@ try:
             const doorZones=lobby.zones.filter(z=>z.action==='showroom');
             check(doorZones.length===8&&new Set(doorZones.map(z=>z.showroomId)).size===8,'Lobby lacks eight independent apartment doors');
             check(!lobby.items.some(i=>/^showroom-.*-(bed|sofa)$/.test(i.asset)),'Lobby still exposes apartment furniture as open bays');
-            check(stock.length===52,'Expected 36 original products plus 16 signature beds and sofas');
+            check(stock.length===100,'Expected the 52 existing products plus 48 new apartment furnishings');
             const allProducts=new Map(stock.map(i=>[i.id,i]));
             const required=['kitchen','dining','living','bedroom','bathroom'];
             const matches=(area,role)=>{
+                if(area.functionalRole)return area.functionalRole===role;
                 const text=[area.functionalRole,area.role,area.name,area.id].filter(Boolean).join(' ').toLowerCase();
                 return role==='bedroom'?/bed|sleep/.test(text):role==='bathroom'?/bath/.test(text):text.includes(role);
             };
@@ -110,7 +111,11 @@ try:
                 const bath=areas.find(a=>a.role==='bathroom').area;
                 const privacy=model.walls.filter(w=>w.x<=bath.x+bath.w+24&&w.x+w.w>=bath.x-24&&w.y<=bath.y+bath.h+24&&w.y+w.h>=bath.y-24);
                 check(privacy.length>=2,display.name+' bathroom has no enclosing privacy walls');
-                for(const asset of ['furniture-3-180','furniture-4-180','furniture-5-180','furniture-6-180','furniture-7-180','furniture-8-180'])check(model.items.some(i=>i.asset===asset),display.name+' lacks an apartment essential: '+asset);
+                for(const asset of ['apartment-sink-counter','apartment-cream-stove','apartment-toilet','apartment-glass-shower','apartment-bath-vanity','apartment-round-mirror'])check(model.items.filter(i=>i.asset===asset).length===1,display.name+' needs exactly one apartment essential: '+asset);
+                check(model.items.filter(i=>i.furnitureRole==='fridge').length===1,display.name+' lacks a refrigerator');
+                for(const role of ['bedroom','bathroom'])check(model.rooms.filter(r=>r.functionalRole===role).length===1,display.name+' repeats its '+role);
+                check(model.privacyDoors?.length===2,display.name+' lacks two visible privacy doors');
+                for(const door of model.privacyDoors){const at=door.axis==='horizontal'?{x:door.x+door.length/2,y:door.y}:{x:door.x,y:door.y+door.length/2};check(!solid(model,at.x,at.y),display.name+' privacy doorway is blocked');}
                 for(const role of ['bed','sofa']){
                     const asset='showroom-'+display.id+'-'+role,product='furniture-'+display.id+'-'+role;
                     check(model.items.some(i=>i.asset===asset),display.name+' lacks its unique '+role);
@@ -182,7 +187,7 @@ try:
             const inside=(p,r,inset=0)=>p.x>=r.x+inset&&p.x<=r.x+r.w-inset&&p.y>=r.y+inset&&p.y<=r.y+r.h-inset;
             window.__apartmentQA={
                 enter(id){check(urban.scene?.kind==='shop','Doors must be approached from the lobby');const r=rooms.find(r=>r.display.id===id),z=doorZones.find(z=>z.showroomId===id),at=r.display.lobbyApproach||r.display.lobbyReturn;return walk(p=>inside(p,z),at,'Lobby door '+r.display.name);},
-                areas(id){check(urban.scene?.kind==='showroom'&&urban.scene.showroomId===id,'Wrong apartment scene');const r=rooms.find(r=>r.display.id===id);return r.areas.map(({role,area})=>walk(p=>inside(p,area,12),{x:area.x+area.w/2,y:area.y+area.h/2},r.display.name+' '+role));},
+                areas(id){check(urban.scene?.kind==='showroom'&&urban.scene.showroomId===id,'Wrong apartment scene');const r=rooms.find(r=>r.display.id===id);return r.areas.map(({role,area})=>walk(p=>inside(p,area,12),area.point||{x:area.x+area.w/2,y:area.y+area.h/2},r.display.name+' '+role));},
                 browse(id){const r=rooms.find(r=>r.display.id===id),z=r.model.zones.find(z=>z.action==='shop'&&z.showroomId===id);return walk(p=>inside(p,z),{x:z.x+z.w/2,y:z.y+z.h/2},r.display.name+' collection');},
                 exit(id){const r=rooms.find(r=>r.display.id===id),z=r.model.zones.find(z=>z.action==='showroom-lobby');return walk(p=>inside(p,z),r.model.spawn,r.display.name+' return door');},
                 returned(id){const r=rooms.find(r=>r.display.id===id);check(urban.active&&urban.scene?.kind==='shop','Return unexpectedly left the store');check(distance(urban.player,r.display.lobbyReturn)<1,'Return did not restore this apartment lobby door');return {...urban.player};}
@@ -232,7 +237,7 @@ try:
             (args.screenshots / 'walks-progress.json').write_text(json.dumps(walks, indent=2))
         page.get_by_role('button', name='Browse furniture', exact=True).click()
         assert page.get_by_label('Showroom collection').locator('option').count() == 9
-        assert page.locator('.urban-catalog button').count() == 52
+        assert page.locator('.urban-catalog button').count() == 100
         assert sorted(page.locator('.urban-catalog button span').all_text_contents()) == sorted(item['name'] for item in setup['stock'])
         collection = setup['rooms'][0]
         page.get_by_label('Showroom collection').select_option(collection['id'])

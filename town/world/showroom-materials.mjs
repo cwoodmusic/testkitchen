@@ -40,6 +40,36 @@ function floorTile(c,pattern,p,size){
   }
  }else if(pattern==='whitewashed-planks'){
   for(let y=0;y<size;y+=32)for(let x=-128;x<size;x+=128)plank(c,x+(y/32%2)*64,y,128,32,(x+y)%3?p:[accent,light,dark],false,x+y);
+ }else if(pattern==='teak-planks'){
+  // Narrow, staggered boards, with restrained seams and warm, fine grain.
+  // Wrapped board seeds keep the partial boards identical at both tile edges.
+  for(let y=0;y<size;y+=16)for(let x=-128;x<size;x+=128){
+   const row=y/16,board=((x/128)%2+2)%2,seed=row*31+board*13,xx=x+(row%4)*32;
+   pixel(c,xx,y,128,16,hash(seed,2)%4?base:accent);
+   pixel(c,xx,y,128,1,dark+'70');pixel(c,xx+127,y,1,16,dark+'85');pixel(c,xx+1,y+1,125,1,light+'55');
+   for(let n=0;n<3;n++){
+    const start=5+hash(n,seed)%28,length=34+hash(n,seed+7)%58,yy=y+4+n*4;
+    pixel(c,xx+start,yy,length,1,n===1?light+'55':dark+'40');
+    pixel(c,xx+start+8,yy+1,Math.max(3,length-23),1,n===1?dark+'25':light+'30');
+   }
+   if(hash(seed,5)%3===0){const kx=xx+36+hash(seed,8)%55;pixel(c,kx,y+8,6,1,dark+'50');pixel(c,kx-2,y+7,10,1,light+'30');}
+  }
+ }else if(pattern==='terrazzo'){
+  // Broken, uneven chips sit within the material rather than on a flat grid.
+  for(let i=0;i<Math.floor(size*size/96);i++){
+   const x=hash(i,29)%size,y=hash(i,61)%size,w=2+hash(i,97)%5,color=[light,accent,grout,dark+'85'][hash(i,41)%4];
+   pixel(c,x,y,w,1,color);pixel(c,x+(i%2),y+1,Math.max(1,w-1),1,color);
+   if(i%3===0)pixel(c,x+1,y+2,Math.max(1,w-3),1,color);
+   if(i%5===0)pixel(c,x,y,1,1,light+'A0');
+  }
+ }else if(pattern==='bathroom-hex'){
+  pixel(c,0,0,size,size,grout+'90');
+  for(let col=-1;col<=size/16;col++)for(let row=-1;row<=size/16;row++){
+   const cx=col*16,cy=row*16+((col%2+2)%2)*8,seedX=(col%16+16)%16,seedY=(row%16+16)%16,color=hash(seedX,seedY)%11?base:accent;
+   // Rasterised six-sided tiles keep their edges on native whole pixels.
+   for(let yy=-7;yy<=7;yy++){const half=Math.floor(32/3-Math.abs(yy)*2/3)-1;pixel(c,cx-half,cy+yy,half*2+1,1,color);}
+   pixel(c,cx-3,cy-6,7,1,light+'A0');pixel(c,cx-4,cy+6,9,1,dark+'25');
+  }
  }else if(pattern==='diamond-marble'){
   pixel(c,0,0,size,size,dark);
   for(let y=-64;y<size;y+=64)for(let x=-64;x<size;x+=64){
@@ -119,6 +149,33 @@ function wallpaperTile(c,pattern,p,size){
   for(let y=-16;y<size;y+=32)for(let x=-16;x<size;x+=32){
    line(c,x+16,y+2,x+29,y+16,accent,2);line(c,x+29,y+16,x+16,y+30,accent,2);line(c,x+16,y+30,x+3,y+16,light,2);line(c,x+3,y+16,x+16,y+2,light,2);
    pixel(c,x+13,y+13,6,6,dark);pixel(c,x+15,y+15,2,2,accent);
+  }
+ }else if(pattern==='midcentury-atomic'){
+  const teal=p[4]||'#568b8b';
+  for(let row=0;row<2;row++)for(let col=0;col<2;col++){
+   const x=col*48+13+(row%2)*6,y=row*48+16;
+   // Asymmetric boomerangs and light starbursts evoke 1950s atomic textiles,
+   // with plenty of quiet cream plaster between the small motifs.
+   line(c,x-9,y+5,x,y-3,teal,2);line(c,x,y-3,x+11,y+2,teal,2);
+   line(c,x-9,y+5,x,y+1,teal,1);line(c,x,y+1,x+11,y+2,teal,1);
+   const sx=x+21,sy=y+20;
+   line(c,sx-7,sy,sx+7,sy,dark+'B0',1);line(c,sx,sy-8,sx,sy+8,dark+'B0',1);
+   line(c,sx-4,sy-5,sx+4,sy+5,accent,1);line(c,sx+4,sy-5,sx-4,sy+5,accent,1);
+   pixel(c,sx-1,sy-1,3,3,accent);pixel(c,x-7,y+21,3,3,accent);pixel(c,x+12,y-9,2,2,dark+'B0');
+  }
+ }else if(pattern==='tiny-stars'){
+  for(let row=0;row<3;row++)for(let col=0;col<3;col++){
+   const seed=hash(col,row),x=col*32+8+seed%13,y=row*32+8+(seed>>>8)%13,color=(row+col)%2?accent:dark+'B0';
+   pixel(c,x-3,y,7,1,color);pixel(c,x,y-3,1,7,color);pixel(c,x-1,y-1,3,3,color);pixel(c,x,y,1,1,light);
+   pixel(c,col*32+27,row*32+25,1,1,accent);pixel(c,col*32+4,row*32+28,1,1,dark+'80');
+  }
+ }else if(pattern==='music-confetti'){
+  for(let row=0;row<3;row++)for(let col=0;col<3;col++){
+   const x=col*32+10+(row%2)*5,y=row*32+11,color=(row+col)%2?accent:dark+'B0';
+   pixel(c,x,y+5,3,2,color);pixel(c,x+2,y,1,6,color);
+   if((row+col)%3===0){pixel(c,x+2,y,7,1,color);pixel(c,x+8,y,1,6,color);pixel(c,x+6,y+5,3,2,color);}
+   else pixel(c,x+3,y+1,3,1,color);
+   pixel(c,col*32+25,row*32+24,3,1,p[4]||accent);pixel(c,col*32+4,row*32+27,1,2,accent+'A0');
   }
  }else if(pattern==='cafe-lattice'){
   for(let y=-32;y<size;y+=32)for(let x=-32;x<size;x+=32){

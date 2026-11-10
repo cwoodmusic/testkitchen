@@ -27,7 +27,7 @@ export function createRoomStorage(options={}){
  function validate(next){
   if(!validOwner)return 'The current player could not be identified. Reopen your room from the arcade.';
   if(!Array.isArray(next)||next.length>MAX_ITEMS)return 'A room can contain up to 100 decorations.';
-  const ownership=new Set(owned()||[]),bounds=(getBounds()||[]).filter(rect),fixed=(getSolids()||[]).filter(rect),ids=new Set(),placed=new Set(),allBoxes=[];
+  const ownership=new Set(owned()||[]),fixed=(getSolids()||[]).filter(rect),ids=new Set(),placed=new Set(),allBoxes=[];
   for(const item of next){
    if(!item||typeof item!=='object'||Array.isArray(item)||typeof item.id!=='string'||!/^[a-z0-9:_-]{1,100}$/i.test(item.id)||ids.has(item.id))return 'This room contains an invalid or repeated decoration.';
    const product=stock.get(item.item),asset=catalog?.get(item.asset),scale=item.scale??1,expected=product?.scale??1;
@@ -35,6 +35,7 @@ export function createRoomStorage(options={}){
    if(!finite(scale)||scale<=0||scale!==expected)return 'This decoration has an invalid size. Place it again from your inventory.';
    if(!ownership.has(item.item))return 'Buy this decoration at Coda Furnishings before placing it.';
    if(placed.has(item.item))return 'Each decoration can be placed once. Select it again to move it.';
+   const bounds=(getBounds(item,asset)||[]).filter(rect);
    const visual={x:item.x-asset.w*scale/2,y:item.y-asset.h*scale,w:asset.w*scale,h:asset.h*scale};
    if(!bounds.some(bound=>contains(bound,visual)))return 'Keep the entire decoration inside the furnished area of your room.';
    const boxes=roomItemBoxes(item,catalog);

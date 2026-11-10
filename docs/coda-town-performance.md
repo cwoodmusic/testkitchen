@@ -4,7 +4,7 @@ The outdoor lag was reproduced on the supplied 120-object map, with an isolated 
 
 Unchanged projected ground and curved cliffs now reuse bounded terrain chunks, and consecutive building strips share a draw while retaining pedestrian and object ordering. The original cliff strip algorithm paints each chunk; there is no second cliff bitmap layer. Fully offscreen artwork and characters skip drawing; their simulation continues. Fountain displacement calculations reuse row and column buffers with byte-identical animation output. An idle player no longer performs repeated collision checks.
 
-Measured in the same Chromium session setup, 1920 × 1200 viewport and device scale 2:
+Initial short-sample measurements in Chromium, 1920 × 1200 viewport and device scale 2:
 
 | View | Before | After | Mean frame CPU before → after |
 | --- | ---: | ---: | ---: |
@@ -12,7 +12,30 @@ Measured in the same Chromium session setup, 1920 × 1200 viewport and device sc
 | Courtyard, night and NPCs | 38 FPS | 60 FPS | 22.0 → 6.1 ms |
 | Walking outdoors at night | 41 FPS | 60 FPS | 19.2 → 6.6–7.4 ms |
 
-These are measurements on the test machine, not a guarantee for every device. The full-map view remains around 59–60 FPS. Building pixel comparisons cover all four rotations, fractional camera positions, recessed arcade wings, and characters in front and behind. Terrain caches retain live water, cliff/shores, stairs and piers; geometry and map data are unchanged.
+These short averages missed pauses during longer camera journeys and the cost of maps with many authored walls. The sustained walking check below covers those cases. Measurements describe the test machine; they do not guarantee the same frame rate on every device. Building pixel comparisons cover all four rotations, fractional camera positions, recessed arcade wings, and characters in front and behind. Terrain caches retain live water, cliff/shores, stairs and piers; geometry and map data are unchanged.
+
+## Sustained walking and wall-heavy maps
+
+Twenty-second walks on the published `7a1de0a` release reproduced the reported lag. A courtyard fixture with 1,500 offscreen wall segments ran at 26.7 FPS and used 31.3 ms of frame CPU on average. New terrain chunks caused visible pauses while the camera travelled, even on the original map without authored fences.
+
+The player now queries a spatial index of nearby collision geometry once per frame. The existing collision algorithm still checks the original boxes, polygons, gates and terrain, including its normal movement substeps. Changes to placements, terrain, gates, collision switches, undo and imported documents invalidate the index through the editor revision.
+
+Wall runs and corner posts are derived once per revision. Drawing uses conservative bounds that include raised walls, scaled Music Square pillars, open gate posts and shadows. Offscreen walls retain their collision and NPC navigation behavior.
+
+Terrain prefetching prepares private, detailed chunks around and ahead of the camera in small idle tasks. Only completed chunks become visible; the normal ordered terrain drawing still produces their pixels. Evicted or cancelled canvases release their backing memory immediately. Fireflies retain the same opacity and bloom while sharing the frame's outer canvas state save.
+
+Eighteen deterministic browser comparisons against the deployed release produced **zero changed pixels**, covering daytime and night, open and closed gates, scaled pillars, fractional camera positions, courtyards, organic cliffs and the ocean shore.
+
+Final 20-second night walks, with NPCs enabled, compared the deployed release with this update:
+
+| Route | FPS before → after | Frame CPU p99 before → after | Cadence pauses over 50 ms before → after |
+| --- | ---: | ---: | ---: |
+| Courtyards, 121 objects | 57.9 → 59.6 | 32.1 → 22.6 ms | 2 → 0 |
+| Organic shore, 121 objects | 56.4 → 59.6 | 34.0 → 22.3 ms | 10 → 0 |
+| Courtyards, 500 objects | 57.7 → 58.9 | 32.6 → 31.4 ms | 2 → 0 |
+| Courtyards, 1,500 offscreen walls | 26.7 → 60.0 | 52.4 → 18.8 ms | 23 → 0 |
+
+Each updated walk travelled approximately 9,000 world pixels with at least 99.9% of frames moving. All four had **zero synchronous terrain chunk builds during measured movement**; prefetch completed 98, 95, 70 and 85 chunks respectively. The heaviest wall case reduced mean frame CPU from 31.3 to 6.5 ms. A large camera jump or immediate first entry into an unwarmed area can still require a synchronous chunk; these measurements cover sustained walking.
 
 ## Click to select land
 
@@ -30,4 +53,8 @@ The audio graph is created on a user gesture, reused, and smoothed only when the
 
 `python3 tests/town-opera-performance.py --ref fd79869 --output /tmp/town-before` reproduces the original benchmark from immutable source. Use `--ref working --output /tmp/town-after` for the current working tree. Fixtures use isolated browser storage and never write the supplied map source.
 
-Release verification: 461 Node checks passed, along with real browser checks of click selection, gates, raise/lower/Undo, live filtered audio, eight stage programmes and all seat routes. All 64 building pixel comparisons were exact with the terrain renderer held constant. The original map and the separate Coda Arcade checkout were untouched.
+Use `--sustained --seconds 20 --ref 7a1de0a` for the deployed walking baseline and `--sustained --seconds 20 --ref working` for the current release. These runs hold movement keys along validated clear corridors, record actual camera travel and report frame CPU percentiles, worst frames and cadence stalls as well as average FPS. Fixtures include the original town with an Opera House, its organic shore, a 500-object stress copy, and 1,500 offscreen Music Square wall segments.
+
+Initial release verification: 461 Node checks passed, along with real browser checks of click selection, gates, raise/lower/Undo, live filtered audio, eight stage programmes and all seat routes. All 64 building pixel comparisons were exact with the terrain renderer held constant. The original map and the separate Coda Arcade checkout were untouched.
+
+Apartment and sustained-walking release verification: **585 Node checks passed**, plus all four sustained walks, the 18 exact outdoor pixel comparisons, and terrain checks for water animation, organic shores, stairs, painting, elevation and exact Undo restoration. The apartment browser checks cover all eight showroom doors, all 18 NPC homes, purchases, wall hanging placement and existing room saves; see [the apartment guide](coda-apartment-homes.md).
