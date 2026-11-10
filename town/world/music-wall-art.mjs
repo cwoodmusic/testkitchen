@@ -1,4 +1,4 @@
-import {height} from './model.mjs?v=opera-concert-1';
+import {height} from './model.mjs?v=town-performance-2';
 
 // These are source rectangles from Music Square itself. A native pixel is
 // always the same size here as it is in the 2400 × 1600 placed square.

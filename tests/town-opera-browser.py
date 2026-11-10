@@ -48,6 +48,14 @@ try:
     with sync_playwright() as p, TemporaryDirectory() as downloads:
         browser = p.chromium.launch(executable_path='/usr/bin/chromium', args=['--no-sandbox'])
         context = browser.new_context(viewport={'width': 1740, 'height': 1120}, accept_downloads=True)
+        context.add_init_script('''(()=>{
+            window.__concertGraphQA={filters:[],sources:[]};
+            for(const Ctor of new Set([window.AudioContext,window.webkitAudioContext].filter(Boolean))){
+                const filter=Ctor.prototype.createBiquadFilter,source=Ctor.prototype.createMediaElementSource;
+                Ctor.prototype.createBiquadFilter=function(...args){const node=filter.apply(this,args);window.__concertGraphQA.filters.push(node);return node;};
+                Ctor.prototype.createMediaElementSource=function(...args){const node=source.apply(this,args);window.__concertGraphQA.sources.push(node);return node;};
+            }
+        })()''')
         if args.url:
             published_responses = {}
 
@@ -69,9 +77,10 @@ try:
             context.route('https://cwoodmusic.github.io/**', production)
         page = context.new_page()
         page.set_default_timeout(180000)
-        errors, failed_responses = [], []
+        errors, failed_responses, audio_requests = [], [], []
         page.on('pageerror', lambda error: errors.append(str(error)))
         page.on('response', lambda response: failed_responses.append({'url': response.url, 'status': response.status}) if response.status >= 400 and '/town/' in response.url else None)
+        page.on('request', lambda request: audio_requests.append(request.url) if '/concert/audio/' in request.url and '.mp3' in request.url else None)
         page.goto(args.url or f'http://127.0.0.1:{server.server_port}/town/builder/', timeout=180000)
         page.wait_for_function('!!window.townBuilder?.concert')
         page.locator('#file').set_input_files(str(SOURCE))
@@ -121,6 +130,8 @@ try:
         page.wait_for_function('Math.abs(townBuilder.concert.audioElement.volume-townBuilder.concert.state.volume)<.005')
         inside = page.evaluate('townBuilder.concert.state')
         assert inside['contextGain'] == 1 and inside['effectiveVolume'] == inside['volume']
+        assert inside['usingWebAudio'] and not inside['filterEnabled'] and inside['filterCutoffHz'] >= 20000
+        page.evaluate('window.__originalConcertContext=townBuilder.concert.audioContext;window.__originalConcertElement=townBuilder.concert.audioElement')
 
         setup = page.evaluate('''async()=>{
             const app=new URL(document.querySelector('script[type="module"]').src);
@@ -238,11 +249,17 @@ try:
         before_exit = page.evaluate('townBuilder.concert.state')
         page.get_by_role('button', name='Go outside', exact=True).click()
         page.wait_for_function('!townBuilder.urban.active&&townBuilder.concert.state.context==="town"')
-        page.wait_for_function('Math.abs(townBuilder.concert.audioElement.volume-townBuilder.concert.state.volume*.06)<.005')
+        page.wait_for_function('Math.abs(townBuilder.concert.audioElement.volume-townBuilder.concert.state.volume*.045)<.005')
+        page.wait_for_function('Math.abs(window.__concertGraphQA.filters[0].frequency.value-3200)<5')
         outside = page.evaluate('townBuilder.concert.state')
         assert outside['trackId'] == before_exit['trackId']
         assert before_exit['currentTime'] <= outside['currentTime'] < before_exit['currentTime'] + 4
-        assert outside['contextGain'] == .06 and outside['playing']
+        assert outside['contextGain'] == .045 and outside['playing']
+        assert outside['usingWebAudio'] and outside['filterEnabled'] and outside['filterCutoffHz'] == 3200
+        assert page.evaluate('window.__concertGraphQA.filters[0].type') == 'lowpass'
+        request_count = len(audio_requests)
+        page.wait_for_timeout(600)
+        assert len(audio_requests) == request_count, 'Render frames requested the same audio again'
         page.locator('#map').focus()
         page.keyboard.press('e')
         page.wait_for_function('townBuilder.urban.scene?.kind==="concert"')
@@ -250,6 +267,9 @@ try:
         after_entry = page.evaluate('townBuilder.concert.state')
         assert after_entry['trackId'] == outside['trackId']
         assert outside['currentTime'] <= after_entry['currentTime'] < outside['currentTime'] + 4
+        assert after_entry['usingWebAudio'] and not after_entry['filterEnabled'] and after_entry['filterCutoffHz'] >= 20000
+        assert page.evaluate('townBuilder.concert.audioContext===__originalConcertContext&&townBuilder.concert.audioElement===__originalConcertElement')
+        assert page.evaluate('window.__concertGraphQA.filters.length===1&&window.__concertGraphQA.sources.length===1')
 
         # Every selected seat is reached using actual controller movement. E
         # seats the player, E stands up, and movement also returns to the aisle.
@@ -435,6 +455,7 @@ try:
         assert hashlib.sha256(SOURCE.read_bytes()).hexdigest() == SOURCE_SHA
         assert not errors, errors
         assert not failed_responses, failed_responses
+        assert page.evaluate('window.__concertGraphQA.filters.length===1&&window.__concertGraphQA.sources.length===1')
         result = {'asset': asset, 'hall': {key: setup[key] for key in ['width', 'height', 'stage', 'reachable', 'chairDepth']}, 'reachableSeats': len(seats), 'walks': walks, 'exit': exit_route, 'recordings': recordings, 'audioContinuity': {'inside': inside, 'beforeExit': before_exit, 'outside': outside, 'afterEntry': after_entry}, 'cameraChecks': camera_checks, 'narrowWatch': narrow, 'focusCheck': focus_check, 'stageCollisions': collisions, 'ensembleOverlap': overlap_check, 'performance': perf, 'sourceUnchanged': True, 'sourceHash': SOURCE_SHA, 'pageErrors': errors, 'failedResponses': failed_responses}
         (args.screenshots / 'results.json').write_text(json.dumps(result, indent=2))
         print(json.dumps(result), flush=True)

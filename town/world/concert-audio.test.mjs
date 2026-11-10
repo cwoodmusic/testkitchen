@@ -25,6 +25,28 @@ class FakeAudio extends Target{
  pause(){this.pauseCalls++;this.paused=true;this.emit('pause');}
  removeAttribute(name){if(name==='src'){this._src='';this.currentSrc='';}}
 }
+class FakeAudioParam{
+ constructor(value=0){this.value=value;this.events=[];}
+ cancelScheduledValues(time){this.events.push(['cancel',time]);}
+ cancelAndHoldAtTime(time){this.events.push(['hold',time]);}
+ setValueAtTime(value,time){this.value=value;this.events.push(['set',value,time]);}
+ linearRampToValueAtTime(value,time){this.value=value;this.events.push(['ramp',value,time]);}
+}
+class FakeAudioNode{
+ constructor(){this.connections=[];this.disconnects=0;}
+ connect(node){this.connections.push(node);return node;}
+ disconnect(){this.disconnects++;this.connections=[];}
+}
+class FakeAudioContext extends Target{
+ constructor(){
+  super();this.state='suspended';this.sampleRate=48000;this.currentTime=12;this.destination={destination:true};
+  this.filter=null;this.source=null;this.sourceMedia=null;this.sourceCalls=0;this.resumeCalls=0;this.closeCalls=0;this.failResume=null;this.failFilter=false;
+ }
+ createBiquadFilter(){if(this.failFilter)throw Error('Unsupported filter');return this.filter=Object.assign(new FakeAudioNode(),{frequency:new FakeAudioParam(350),Q:new FakeAudioParam(1),type:'lowpass'});}
+ createMediaElementSource(media){this.sourceCalls++;if(this.source)throw Error('Media already has a source');this.sourceMedia=media;return this.source=new FakeAudioNode();}
+ resume(){this.resumeCalls++;if(this.failResume){const error=this.failResume;this.failResume=null;return Promise.reject(error);}this.state='running';this.emit('statechange');return Promise.resolve();}
+ close(){this.closeCalls++;this.state='closed';this.emit('statechange');return Promise.resolve();}
+}
 function clock(){
  let time=0,index=0;const frames=new Map();
  return {now:()=>time,request:fn=>{const id=++index;frames.set(id,fn);return id;},cancel:id=>frames.delete(id),get pending(){return frames.size;},step(ms){time+=ms;const callbacks=[...frames.values()];frames.clear();for(const fn of callbacks)fn(time);}};
@@ -72,12 +94,12 @@ test('entering and leaving the concert hall preserves the exact recording and po
  const {player,media,timer,setScene}=fixture();await player.unlock();timer.step(300);
  const track=player.currentTrack,source=media.src,loads=media.loadCalls,plays=media.playCalls;
  media.currentTime=83.125;
- assert(Math.abs(media.volume-.75*.06)<1e-8);
+ assert(Math.abs(media.volume-.75*.045)<1e-8);
  setScene({kind:'concert'});timer.step(140);
  assert(media.volume>.045&&media.volume<.75,'The indoor gain should ramp rather than jump');
  timer.step(160);assert.equal(media.volume,.75);assert.equal(player.currentTime,83.125);
  setScene({kind:'shop',floor:1});timer.step(300);assert.equal(media.volume,.75*.025);
- setScene(null);timer.step(300);assert.equal(media.volume,.75*.06);
+ setScene(null);timer.step(300);assert.equal(media.volume,.75*.045);
  assert.strictEqual(player.currentTrack,track);assert.equal(media.src,source);assert.equal(media.loadCalls,loads);assert.equal(media.playCalls,plays);assert.equal(player.currentTime,83.125);
  player.destroy();
 });
@@ -148,9 +170,9 @@ test('visibility and page lifecycle pause safely and resume without changing tim
 
 test('mute and master volume persist only their own preference without resetting the programme',async()=>{
  const {player,media,timer,writes,values,storage}=fixture();await player.play();media.currentTime=72;
- player.setVolume(.4);timer.step(300);assert.equal(media.volume,.4*.06);player.setMuted(true);assert.equal(media.muted,true);timer.step(300);assert.equal(media.volume,0);
+ player.setVolume(.4);timer.step(300);assert.equal(media.volume,.4*.045);player.setMuted(true);assert.equal(media.muted,true);timer.step(300);assert.equal(media.volume,0);
  assert.equal(player.currentTime,72);assert.equal(media.paused,false);assert.equal(player.state.playing,true);
- player.toggleMute();timer.step(300);assert.equal(media.muted,false);assert.equal(media.volume,.4*.06);assert.equal(media.loadCalls,1);
+ player.toggleMute();timer.step(300);assert.equal(media.muted,false);assert.equal(media.volume,.4*.045);assert.equal(media.loadCalls,1);
  assert.deepEqual([...new Set(writes)],[CONCERT_AUDIO_PREFERENCE_KEY]);assert.deepEqual(JSON.parse(values.get(CONCERT_AUDIO_PREFERENCE_KEY)),{version:1,volume:.4,muted:false});
  const restored=fixture({storage});assert.equal(restored.player.state.volume,.4);assert.equal(restored.player.state.muted,false);assert.equal(restored.media.playCalls,0);
  restored.player.destroy();player.destroy();
@@ -167,4 +189,110 @@ test('destroy removes media and gesture listeners, cancels ramps, and prevents a
  let changes=0;player.onChange(()=>changes++);player.destroy();const after=changes;
  assert.equal(player.state.status,'destroyed');assert.equal(media.paused,true);assert.equal(media.src,'');assert.equal(media.listenerCount,0);assert.equal(win.listenerCount,0);assert.equal(doc.listenerCount,0);assert.equal(timer.pending,0);
  win.emit('pointerdown');media.emit('ended');timer.step(1000);assert.equal(await player.play(),false);player.skip();player.destroy();assert.equal(changes,after);
+});
+
+test('Web Audio is created and resumed on a player gesture, with only one source for the session',async()=>{
+ const context=new FakeAudioContext();let constructions=0;
+ const {player,media,win}=fixture({AudioContextConstructor:function(){constructions++;return context;}});
+ assert.equal(constructions,0);assert.equal(player.state.usingWebAudio,false);
+ for(let i=0;i<120;i++)player.updateContext();
+ assert.equal(constructions,0);assert.equal(context.resumeCalls,0);
+ win.emit('pointerdown');await flush();
+ assert.equal(constructions,1);assert.equal(context.resumeCalls,1);assert.equal(context.sourceCalls,1);
+ assert.strictEqual(context.sourceMedia,media);assert.deepEqual(context.source.connections,[context.filter]);assert.deepEqual(context.filter.connections,[context.destination]);
+ assert.equal(player.state.usingWebAudio,true);assert.equal(player.state.filterEnabled,true);assert.equal(player.state.filterCutoffHz,3200);assert.equal(player.state.contextGain,.045);
+ await player.unlock();await player.play();player.skip();await flush();
+ assert.equal(constructions,1);assert.equal(context.sourceCalls,1);assert.equal(context.resumeCalls,1);
+ player.destroy();
+});
+
+test('placing an opera house after the initial unlock adds muffling on the next gesture without restarting music',async()=>{
+ const project={objects:[]},context=new FakeAudioContext();let constructions=0;
+ const {player,media,win}=fixture({getProject:()=>project,AudioContextConstructor:function(){constructions++;return context;}});
+ win.emit('pointerdown');await flush();
+ assert.equal(player.state.status,'inactive');assert.equal(constructions,0);assert.equal(media.playCalls,0);
+ project.objects.push({asset:'sydney-opera-house'});player.updateContext();await flush();
+ assert.equal(player.state.playing,true);assert.equal(constructions,0);media.currentTime=21.75;
+ const source=media.src,track=player.currentTrack,loads=media.loadCalls,plays=media.playCalls;
+ win.emit('keydown',{key:'w',repeat:false});await flush();
+ assert.equal(constructions,1);assert.equal(context.sourceCalls,1);assert.equal(context.resumeCalls,1);
+ assert.equal(player.state.filterEnabled,true);assert.equal(player.state.filterCutoffHz,3200);
+ assert.equal(player.currentTime,21.75);assert.equal(media.src,source);assert.strictEqual(player.currentTrack,track);assert.equal(media.loadCalls,loads);assert.equal(media.playCalls,plays);
+ player.destroy();
+});
+
+test('the venue placement gesture refreshes stale eligibility without waiting for a rendered frame',async()=>{
+ const project={objects:[]},context=new FakeAudioContext();
+ const {player,media,win}=fixture({getProject:()=>project,AudioContextConstructor:function(){return context;}});
+ win.emit('pointerdown');await flush();assert.equal(context.sourceCalls,0);
+ // The canvas target handler adds the venue before this event reaches the
+ // window's bubble listener; there is deliberately no updateContext call.
+ project.objects.push({asset:'sydney-opera-house'});win.emit('pointerdown');await flush();
+ assert.equal(player.state.hasVenue,true);assert.equal(player.state.playing,true);assert.equal(context.sourceCalls,1);assert.equal(context.resumeCalls,1);
+ assert.equal(player.state.filterEnabled,true);assert.equal(media.loadCalls,1);assert.equal(media.playCalls,1);player.destroy();
+});
+
+test('outdoor low-pass opens to the full range in the hall without changing source or position',async()=>{
+ const context=new FakeAudioContext(),{player,media,timer,setScene}=fixture({AudioContextConstructor:function(){return context;}});
+ await player.play();await flush();timer.step(300);media.currentTime=86.25;
+ const track=player.currentTrack,source=media.src,loads=media.loadCalls,filter=context.filter;
+ assert.equal(player.state.filterCutoffHz,3200);assert.equal(media.volume,.75*.045);
+ assert.deepEqual(filter.frequency.events,[['cancel',12],['set',3200,12]]);
+ setScene({kind:'concert'});timer.step(300);
+ assert.equal(player.state.filterEnabled,false);assert.equal(player.state.filterCutoffHz,24000);assert.equal(media.volume,.75);
+ assert.deepEqual(filter.frequency.events.slice(-2),[['hold',12],['ramp',24000,12.28]]);
+ setScene({kind:'furniture'});timer.step(300);
+ assert.equal(player.state.filterEnabled,true);assert.equal(player.state.filterCutoffHz,2200);assert.equal(media.volume,.75*.025);
+ setScene(null);timer.step(300);
+ assert.equal(player.state.filterCutoffHz,3200);assert.equal(media.volume,.75*.045);
+ assert.strictEqual(player.currentTrack,track);assert.equal(player.currentTime,86.25);assert.equal(media.src,source);assert.equal(media.loadCalls,loads);assert.equal(context.sourceCalls,1);
+ const scheduled=filter.frequency.events.length;
+ for(let i=0;i<600;i++){player.updateContext();timer.step(16);}
+ assert.equal(filter.frequency.events.length,scheduled);assert.equal(timer.pending,0);assert.equal(context.resumeCalls,1);
+ player.destroy();
+});
+
+test('unsupported Web Audio keeps the softer ordinary media playback without repeated setup attempts',async()=>{
+ for(const failure of ['constructor','filter']){
+  const context=new FakeAudioContext();context.failFilter=true;let attempts=0;
+  const {player,media,timer}=fixture({AudioContextConstructor:function(){attempts++;if(failure==='constructor')throw Error('Unsupported');return context;}});
+  await player.play();await flush();timer.step(300);
+  assert.equal(player.state.playing,true);assert.equal(player.state.usingWebAudio,false);assert.equal(player.state.filterEnabled,false);assert.equal(player.state.filterCutoffHz,null);assert.equal(media.volume,.75*.045);
+  await player.play();await player.unlock();for(let i=0;i<60;i++)player.updateContext();
+  assert.equal(attempts,1);assert.equal(context.sourceCalls,0);assert.equal(context.closeCalls,failure==='filter'?1:0);
+  player.destroy();
+ }
+});
+
+test('a blocked context resume waits for a new gesture and retries the same source rather than the playlist',async()=>{
+ const context=new FakeAudioContext();context.failResume=Object.assign(new Error('Gesture needed'),{name:'NotAllowedError'});
+ const {player,media,win}=fixture({AudioContextConstructor:function(){return context;}}),track=player.currentTrack;
+ await player.play();await flush();
+ assert.equal(player.state.status,'locked');assert.equal(media.paused,true);assert.equal(player.state.needsGesture,true);assert.deepEqual(player.state.failedTrackIds,[]);
+ for(let i=0;i<120;i++)player.updateContext();
+ assert.equal(context.resumeCalls,1);assert.equal(context.sourceCalls,1);
+ win.emit('pointerdown');await flush();assert.equal(context.resumeCalls,2);assert.equal(context.sourceCalls,1);
+ assert.strictEqual(player.currentTrack,track);assert.equal(player.state.playing,true);assert.equal(media.loadCalls,1);player.destroy();
+});
+
+test('suspended Web Audio resumes only on a gesture and destroy disconnects and closes it exactly once',async()=>{
+ const context=new FakeAudioContext(),{player,media,doc,win}=fixture({AudioContextConstructor:function(){return context;}});
+ await player.play();await flush();media.currentTime=37;
+ doc.hidden=true;doc.emit('visibilitychange');context.state='suspended';context.emit('statechange');
+ doc.hidden=false;doc.emit('visibilitychange');await flush();
+ assert.equal(context.resumeCalls,1);assert.equal(player.state.status,'locked');assert.equal(media.paused,true);
+ win.emit('keydown',{key:'e',repeat:false});await flush();assert.equal(context.resumeCalls,2);assert.equal(player.state.playing,true);assert.equal(player.currentTime,37);
+ const source=context.source,filter=context.filter;
+ player.destroy();player.destroy();await flush();
+ assert.equal(context.closeCalls,1);assert.equal(source.disconnects,1);assert.equal(filter.disconnects,1);assert.equal(context.listenerCount,0);
+ assert.equal(player.state.usingWebAudio,false);assert.equal(player.state.filterEnabled,false);
+ win.emit('pointerdown');await player.play();assert.equal(context.resumeCalls,2);assert.equal(context.sourceCalls,1);
+});
+
+test('a gesture resumes a suspended context even when native media was already unlocked',async()=>{
+ const context=new FakeAudioContext(),{player,media,win}=fixture({AudioContextConstructor:function(){return context;}});
+ await player.play();await flush();media.currentTime=66.5;
+ // Some browsers report suspension before delivering a statechange event.
+ context.state='suspended';win.emit('pointerdown');await flush();
+ assert.equal(context.resumeCalls,2);assert.equal(context.sourceCalls,1);assert.equal(player.state.playing,true);assert.equal(player.currentTime,66.5);assert.equal(media.loadCalls,1);assert.equal(media.playCalls,1);player.destroy();
 });

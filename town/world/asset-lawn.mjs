@@ -1,6 +1,6 @@
-import {assetImage} from './asset-color.mjs?v=opera-concert-1';
-import {readPaint} from './ground-paint.mjs?v=opera-concert-1';
-import {roundedUnder,curveUnder} from './round-geometry.mjs?v=opera-concert-1';
+import {assetImage} from './asset-color.mjs?v=town-performance-2';
+import {readPaint} from './ground-paint.mjs?v=town-performance-2';
+import {roundedUnder,curveUnder} from './round-geometry.mjs?v=town-performance-2';
 
 const cache=new WeakMap(),imageRevisions=new WeakMap();
 export const assetMapImageRevision=image=>imageRevisions.get(image)||0;

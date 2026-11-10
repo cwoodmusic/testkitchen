@@ -1,18 +1,21 @@
-import {cell,height} from './model.mjs?v=opera-concert-1';
-import {selectionContains} from './selection.mjs?v=opera-concert-1';
+import {height} from './model.mjs?v=town-performance-2';
+import {selectionGeometry,selectionGeometryView} from './selection-geometry.mjs?v=town-performance-2';
 
-export function drawSelection(c,d,r,{plan=false,zoom=1,bounds={x0:0,y0:0,x1:256,y1:192}}={}){
+const paths=new WeakMap();
+
+export function drawSelection(c,d,r,{plan=false,zoom=1,bounds={x0:0,y0:0,x1:256,y1:192},revision}={}){
  if(!r)return;c.save();c.fillStyle='#f0cb5940';c.strokeStyle='#ffe29b';c.lineWidth=2/zoom;
  if(r.preview&&r.outline?.length){
   c.beginPath();for(let i=0;i<r.outline.length;i++){const p=r.outline[i],Y=p.y-(plan?0:height(d,p.x,p.y));if(i===0)c.moveTo(p.x,Y);else c.lineTo(p.x,Y);}c.closePath();c.fill();c.setLineDash([7/zoom,5/zoom]);c.stroke();c.restore();return;
  }
- c.beginPath();
- for(let y=Math.max(bounds.y0,r.y0);y<=Math.min(bounds.y1-1,r.y1);y++)for(let x=Math.max(bounds.x0,r.x0);x<=Math.min(bounds.x1-1,r.x1);x++){
-  if(!selectionContains(r,x,y))continue;const X=x*64,Y=y*64-(plan?0:cell(d,x,y).level*48);c.fillRect(X,Y,64,64);
-  if(!selectionContains(r,x,y-1)){c.moveTo(X,Y);c.lineTo(X+64,Y);}
-  if(!selectionContains(r,x+1,y)){c.moveTo(X+64,Y);c.lineTo(X+64,Y+64);}
-  if(!selectionContains(r,x,y+1)){c.moveTo(X+64,Y+64);c.lineTo(X,Y+64);}
-  if(!selectionContains(r,x-1,y)){c.moveTo(X,Y+64);c.lineTo(X,Y);}
+ const geometry=selectionGeometry(d,r,{plan,revision}),view=selectionGeometryView(geometry,bounds);
+ for(const rect of view.fills)c.fillRect(rect.x,rect.y,rect.w,rect.h);
+ if(typeof Path2D!=='undefined'){
+  let path=paths.get(view);
+  if(!path){path=new Path2D();for(const[x0,y0,x1,y1]of view.segments){path.moveTo(x0,y0);path.lineTo(x1,y1);}paths.set(view,path);}
+  c.stroke(path);
+ }else{
+  c.beginPath();for(const[x0,y0,x1,y1]of view.segments){c.moveTo(x0,y0);c.lineTo(x1,y1);}c.stroke();
  }
- c.stroke();c.restore();
+ c.restore();
 }

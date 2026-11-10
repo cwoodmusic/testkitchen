@@ -27,6 +27,14 @@ export function fountainMask({data,width,height}){
  for(let i=0;i<mask.length;i++)if(mask[i]){const k=i*4;jets[i]=data[k]+data[k+1]+data[k+2]>490&&data[k]>110?1:0;}
  return {mask,jets};
 }
+// Each horizontal displacement depends only on the source row, and each
+// vertical displacement only on the source column. Reuse these small buffers
+// between frames instead of repeating their trigonometry for every water pixel.
+export function fountainDisplacements({width,height,x0=0,y0=0},phase,{dx=new Float64Array(height),dy=new Float64Array(width)}={}){
+ for(let y=0;y<height;y++){const Y=y+y0;dx[y]=Math.round((Math.sin(Y*.085+phase*2)-Math.sin(Y*.085))*1.8);}
+ for(let x=0;x<width;x++){const X=x+x0;dy[x]=Math.round((Math.sin(X*.07-phase)-Math.sin(X*.07))*1.2);}
+ return {dx,dy};
+}
 function prepare(a,image){
  if(cache.has(image))return cache.get(image);
  const region=fountainRegion(a,image.width,image.height),sample=document.createElement('canvas');sample.width=region.w;sample.height=region.h;
@@ -36,7 +44,9 @@ function prepare(a,image){
  for(let i=0;i<mask.length;i++)if(mask[i]){const x=i%region.w,y=Math.floor(i/region.w);x0=Math.min(x0,x);x1=Math.max(x1,x);y0=Math.min(y0,y);y1=Math.max(y1,y);}
  if(x1<0){cache.set(image,null);return null;}
  const width=x1-x0+1,height=y1-y0+1,canvas=document.createElement('canvas');canvas.width=width;canvas.height=height;
- const c=canvas.getContext('2d'),pixels=c.createImageData(width,height),entry={canvas,c,pixels,original:original.data,mask,jets,region,width,height,x0,y0,x:region.x+x0,y:region.y+y0,index:-1};
+ const c=canvas.getContext('2d'),pixels=c.createImageData(width,height),jetRowBase=new Float64Array(height);
+ for(let y=0;y<height;y++)jetRowBase[y]=Math.sin((y+y0)*.43);
+ const entry={canvas,c,pixels,original:original.data,mask,jets,region,width,height,x0,y0,x:region.x+x0,y:region.y+y0,index:-1,dx:new Float64Array(height),dy:new Float64Array(width),jetRowBase};
  cache.set(image,entry);return entry;
 }
 
@@ -45,19 +55,23 @@ export function fountainFrame(a,image,time=0){
  const entry=prepare(a,image);if(!entry)return null;
  const index=reduced()?0:wrap(Math.floor((Number.isFinite(time)?time:0)*FOUNTAIN_FPS),frames);
  if(entry.index===index)return entry;
- const phase=index/frames*TAU,{width,height,x0,y0,mask,jets,original,pixels,region}=entry,stride=region.w;
+ const phase=index/frames*TAU,{width,height,x0,y0,mask,jets,original,pixels,region,jetRowBase}=entry,stride=region.w;
+ const {dx:rowDisplacement,dy:columnDisplacement}=fountainDisplacements(entry,phase,entry);
  pixels.data.fill(0);
- for(let y=0;y<height;y++)for(let x=0;x<width;x++){
-  const X=x+x0,Y=y+y0,i=Y*stride+X;if(!mask[i])continue;
+ for(let y=0;y<height;y++){
+  const Y=y+y0,dx=rowDisplacement[y],fallingRow=(Math.sin(Y*.43-phase*11)-jetRowBase[y])*5;
+  for(let x=0;x<width;x++){
+  const X=x+x0,i=Y*stride+X;if(!mask[i])continue;
   // The pool's painted caustics ripple locally. Sampling is confined to the
   // water mask, so a moving reflection can never pull a stone pixel inward.
-  const dx=Math.round((Math.sin(Y*.085+phase*2)-Math.sin(Y*.085))*1.8),dy=Math.round((Math.sin(X*.07-phase)-Math.sin(X*.07))*1.2);
+  const dy=columnDisplacement[x];
   const nx=X+dx,ny=Y+dy,j=nx>=0&&ny>=0&&nx<region.w&&ny<region.h&&mask[ny*stride+nx]?ny*stride+nx:i;
   const from=(jets[i]?i:j)*4,to=(y*width+x)*4;
   // Fine bright bands travel down the actual pale jet silhouette. Their
   // position changes, rather than pulsing the brightness of the whole pool.
-  const falling=jets[i]?((Math.sin(Y*.21+X*.013-phase*9)-Math.sin(Y*.21+X*.013))*13+(Math.sin(Y*.43-phase*11)-Math.sin(Y*.43))*5):0;
+  const falling=jets[i]?((Math.sin(Y*.21+X*.013-phase*9)-Math.sin(Y*.21+X*.013))*13+fallingRow):0;
   pixels.data[to]=clamp(original[from]+falling,0,255);pixels.data[to+1]=clamp(original[from+1]+falling,0,255);pixels.data[to+2]=clamp(original[from+2]+falling,0,255);pixels.data[to+3]=original[i*4+3];
+ }
  }
  entry.c.putImageData(pixels,0,0);entry.index=index;return entry;
 }

@@ -49,3 +49,55 @@ export function buildingDepthSlices(a,o){
  }
  cache.set(o,{key,asset:a,parts});return parts;
 }
+
+// A world-vertical facade strip maps to native image columns or rows at the
+// builder's quarter-turn rotations. Crop the source as well as clipping the
+// destination, so a narrow strip never submits the complete large texture.
+// Padding is in world units and covers the existing rounded device clip edge.
+export function buildingSliceRect(a,o,part,padding=0){
+ if(!part||!Number.isFinite(part.x0)||!Number.isFinite(part.x1)||part.x1<=part.x0||!Number.isFinite(a.w)||!Number.isFinite(a.h)||a.w<=0||a.h<=0)return null;
+ const scale=o.scale||1,turn=(o.rotation||0)/90;
+ if(scale<=0||!Number.isFinite(turn)||Math.abs(turn-Math.round(turn))>1e-8)return null;
+ const quarter=((Math.round(turn)%4)+4)%4,pad=Math.max(0,Number.isFinite(padding)?padding:0),left=part.x0-pad,right=part.x1+pad;
+ const clamp=(value,max)=>Math.max(0,Math.min(max,value));
+ if(quarter===0||quarter===2){
+  const x0=quarter===0?(left-o.x)/scale+a.w/2:(o.x-right)/scale+a.w/2;
+  const x1=quarter===0?(right-o.x)/scale+a.w/2:(o.x-left)/scale+a.w/2;
+  const x=clamp(x0,a.w),end=clamp(x1,a.w);return {x,y:0,w:Math.max(0,end-x),h:a.h};
+ }
+ const y0=quarter===1?a.h-(right-o.x)/scale:a.h+(left-o.x)/scale;
+ const y1=quarter===1?a.h-(left-o.x)/scale:a.h+(right-o.x)/scale;
+ const y=clamp(y0,a.h),end=clamp(y1,a.h);return {x:0,y,w:a.w,h:Math.max(0,end-y)};
+}
+
+// The caller sorts the complete queue first, including NPCs, player, fences
+// and other objects. Consecutive strips of one building can then share one
+// draw without crossing a single foreign layer. Disjoint x ranges retain a
+// union clip: merging their bounding rectangle alone would cover a gap.
+// Building entries must be dispatched using the returned fragment metadata,
+// rather than an original per-strip draw closure retained on the entry.
+export function batchBuildingDepthQueue(queue){
+ const result=[],candidate=entry=>entry?.building!=null&&Number.isFinite(entry.fragment?.x0)&&Number.isFinite(entry.fragment?.x1)&&entry.fragment.x1>entry.fragment.x0;
+ for(let i=0;i<queue.length;){
+  const first=queue[i];
+  if(!candidate(first)){result.push(first);i++;continue;}
+  let end=i+1;
+  while(end<queue.length&&candidate(queue[end])&&queue[end].building===first.building)end++;
+  if(end===i+1){result.push(first);i=end;continue;}
+  const ranges=[];let count=0;
+  for(let at=i;at<end;at++){
+   const entry=queue[at];count+=entry.depthBatchCount||1;
+   for(const span of entry.fragment.spans||[entry.fragment])ranges.push({x0:span.x0,x1:span.x1});
+  }
+  ranges.sort((a,b)=>a.x0-b.x0||a.x1-b.x1);
+  const spans=[];
+  for(const span of ranges){
+   const previous=spans.at(-1);
+   if(previous&&span.x0<=previous.x1+1e-7)previous.x1=Math.max(previous.x1,span.x1);
+   else spans.push(span);
+  }
+  result.push({...first,fragment:{...first.fragment,x0:spans[0].x0,x1:spans.at(-1).x1,spans},depthBatchCount:count});
+  i=end;
+ }
+ return result;
+}

@@ -1,5 +1,5 @@
-import {getSavedProjects,saveProject} from '../world/storage.mjs?v=opera-concert-1';
-import {parseProject} from '../world/model.mjs?v=opera-concert-1';
+import {getSavedProjects,saveProject} from '../world/storage.mjs?v=town-performance-2';
+import {parseProject} from '../world/model.mjs?v=town-performance-2';
 
 const uploadedURL=new URL('../maps/coda-town-uploaded-3.json',import.meta.url);
 const isBlank=doc=>!doc.objects.length&&!Object.keys(doc.cells).length&&!Object.keys(doc.edges).length;

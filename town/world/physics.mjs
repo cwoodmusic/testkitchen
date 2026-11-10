@@ -1,8 +1,9 @@
-import {blocked,height,segment,cell,TILE} from './model.mjs?v=opera-concert-1';
-import {WALK_SPEED,RUN_SPEED} from './player-settings.mjs?v=opera-concert-1';
+import {blocked,height,segment,cell,TILE} from './model.mjs?v=town-performance-2';
+import {WALK_SPEED,RUN_SPEED} from './player-settings.mjs?v=town-performance-2';
 export function findStart(doc,catalog){if(!blocked(doc,doc.spawn.x,doc.spawn.y,catalog))return {...doc.spawn};for(let r=1;r<100;r++)for(let y=-r;y<=r;y++)for(let x=-r;x<=r;x++){if(Math.abs(x)!==r&&Math.abs(y)!==r)continue;const p={x:doc.spawn.x+x*64,y:doc.spawn.y+y*64};if(!blocked(doc,p.x,p.y,catalog))return p;}throw Error('No walkable start found. Place a walk start on clear ground.');}
 export function movePlayer(doc,player,keys,dt,catalog){
  const dx=(keys.has('d')||keys.has('arrowright')?1:0)-(keys.has('a')||keys.has('arrowleft')?1:0),dy=(keys.has('s')||keys.has('arrowdown')?1:0)-(keys.has('w')||keys.has('arrowup')?1:0),len=Math.hypot(dx,dy)||1,speed=keys.has('shift')?RUN_SPEED:WALK_SPEED;
+ if(!dx&&!dy)return {distance:0,surfaceDistance:0,walking:false,facing:null};
  const start={x:player.x,y:player.y},steps=Math.max(4,Math.ceil(speed*dt/1.5));let surfaceDistance=0;
  for(let i=0;i<steps;i++){
   let sx=dx/len*speed*dt/steps,sy=dy/len*speed*dt/steps;

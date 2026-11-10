@@ -1,5 +1,5 @@
-import {residents} from './resident-profiles.mjs?v=opera-concert-1';
-import {SHOWROOMS,STORE_TRAFFIC} from './showroom-layout.mjs?v=opera-concert-1';
+import {residents} from './resident-profiles.mjs?v=town-performance-2';
+import {SHOWROOMS,STORE_TRAFFIC} from './showroom-layout.mjs?v=town-performance-2';
 export const SHOP_VISIT_CAPACITY=SHOWROOMS.length;
 
 const SPEED=156,GAIT=Math.PI*2/150;

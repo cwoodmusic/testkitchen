@@ -1,15 +1,20 @@
-import {shadeLowerGround,drawTerrainRims} from './edge-shading.mjs?v=opera-concert-1';
-import {drawRoundUnder,drawRoundCliff} from './round-render.mjs?v=opera-concert-1';
-import {clipCurves} from './round-geometry.mjs?v=opera-concert-1';
-import {drawGround,groundFrameKey,groundTexture} from './ground-render.mjs?v=opera-concert-1';
-import {drawCliff,drawStairs} from './construction.mjs?v=opera-concert-1';
-import {RISE,COLS,ROWS,cell,terrainView} from './model.mjs?v=opera-concert-1';
-import {sources} from './catalog.mjs?v=opera-concert-1';
-import {waterRimSegments} from './water-rim.mjs?v=opera-concert-1';
-import {drawPier,drawPierSubmerged} from './piers.mjs?v=opera-concert-1';
-import {drawSidewalkCurbs} from './sidewalk-curbs.mjs?v=opera-concert-1';
-import {drawOverviewTerrain} from './overview-terrain.mjs?v=opera-concert-1';
-import {prepareOverviewRuns} from './overview-runs.mjs?v=opera-concert-1';
+import {shadeLowerGround,drawTerrainRims} from './edge-shading.mjs?v=town-performance-2';
+import {drawRoundUnder,drawRoundCliff} from './round-render.mjs?v=town-performance-2';
+import {clipCurves} from './round-geometry.mjs?v=town-performance-2';
+import {drawGround,groundFrameKey,groundTexture,invalidateGroundCache} from './ground-render.mjs?v=town-performance-2';
+import {drawCliff,drawStairs} from './construction.mjs?v=town-performance-2';
+import {RISE,COLS,ROWS,cell,terrainView} from './model.mjs?v=town-performance-2';
+import {sources} from './catalog.mjs?v=town-performance-2';
+import {waterRimSegments} from './water-rim.mjs?v=town-performance-2';
+import {drawPier,drawPierSubmerged} from './piers.mjs?v=town-performance-2';
+import {drawSidewalkCurbs} from './sidewalk-curbs.mjs?v=town-performance-2';
+import {drawOverviewTerrain} from './overview-terrain.mjs?v=town-performance-2';
+import {prepareOverviewRuns} from './overview-runs.mjs?v=town-performance-2';
+import {drawTerrainChunks} from './terrain-chunks.mjs?v=town-performance-2';
+import {waterFrame,currentWaterFrameIndex,withLevelZeroWaterCutout} from './water-motion.mjs?v=town-performance-2';
+import {cliffArt} from './detail-art.mjs?v=town-performance-2';
+import {artSourceVersion} from './art-revision.mjs?v=town-performance-2';
+const chunkHooks={frameKey:d=>groundFrameKey(terrainView(d))+'|cliff:'+artSourceVersion(cliffArt)+':'+cliffArt.width+':'+cliffArt.height,invalidateGround:invalidateGroundCache,waterImage:()=>waterFrame(sources.ground[3]),waterKey:currentWaterFrameIndex,withWaterCutout:withLevelZeroWaterCutout};
 const lawns=new WeakMap();
 function drawWaterRim(c,d,x,y,X,Y){
  c.strokeStyle='#97b9a1';c.lineWidth=5;
@@ -24,7 +29,7 @@ function drawBridge(c,d,a,x,y,X,Y){
   c.beginPath();c.moveTo(X+(dx>0?64:0),Y+(dy>0?64:0)-28);c.lineTo(X+(dx?dx>0?64:0:64),Y+(dy?dy>0?64:0:64)-28);c.stroke();
  }
 }
-export function drawTerrain(c,d,bounds,opts={}){if(!drawOverviewTerrain(c,d,bounds,opts,drawRawTerrain))drawRawTerrain(c,d,bounds,opts);}
+export function drawTerrain(c,d,bounds,opts={}){if(!drawOverviewTerrain(c,d,bounds,opts,drawRawTerrain)&&!drawTerrainChunks(c,d,bounds,opts,drawRawTerrain,chunkHooks))drawRawTerrain(c,d,bounds,opts);}
 export function drawRawTerrain(c,d,{x0,x1,y0,y1},opts={}){
  // All ground/cliff helpers see the untouched floor below raised piers.
  const scene=d;d=terrainView(d);

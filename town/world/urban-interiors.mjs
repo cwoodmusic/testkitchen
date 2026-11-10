@@ -1,22 +1,22 @@
-import {assetImage} from './asset-color.mjs?v=opera-concert-1';
-import {SHOWROOMS,applyShowroomLayout} from './showroom-layout.mjs?v=opera-concert-1';
-import {applyShowroomApartment} from './showroom-apartments.mjs?v=opera-concert-1';
-import {drawShowroomFloor,drawShowroomWallpaper} from './showroom-materials.mjs?v=opera-concert-1';
-import {getConcertHall,renderConcertHallBackground,concertHallDrawables} from './concert-hall.mjs?v=opera-concert-1';
-import {renderStagePerformance} from './concert-performers.mjs?v=opera-concert-1';
+import {assetImage} from './asset-color.mjs?v=town-performance-2';
+import {SHOWROOMS,applyShowroomLayout} from './showroom-layout.mjs?v=town-performance-2';
+import {applyShowroomApartment} from './showroom-apartments.mjs?v=town-performance-2';
+import {drawShowroomFloor,drawShowroomWallpaper} from './showroom-materials.mjs?v=town-performance-2';
+import {getConcertHall,renderConcertHallBackground,concertHallDrawables} from './concert-hall.mjs?v=town-performance-2';
+import {renderStagePerformance} from './concert-performers.mjs?v=town-performance-2';
 // The apartment tower has one consistent floor plate. Residential floors use
 // a 608px common hall and 1120px private apartments, within its 2304 × 1728 lot.
 export const FLOOR_COUNT=15;
 export const TOWER_FOOTPRINT=Object.freeze({width:2304,height:1728});
 export const STORE_FOOTPRINT=Object.freeze({width:3072,height:2048});
-export {residents} from './resident-profiles.mjs?v=opera-concert-1';
-import {residents} from './resident-profiles.mjs?v=opera-concert-1';
+export {residents} from './resident-profiles.mjs?v=town-performance-2';
+import {residents} from './resident-profiles.mjs?v=town-performance-2';
 const sceneCache=new Map(),backgroundCache=new Map();
 let nativeCatalog=null,woodTexture=null,npcRenderer=null;
 const drawConcertNPC=(ctx,actor,time)=>npcRenderer?.drawNPC(ctx,actor,time);
 export function configureUrbanInteriors(catalog){nativeCatalog=catalog;for(const scene of sceneCache.values())warmScene(scene);}
 if(typeof document!=='undefined'){
- import('./ground-textures.mjs?v=opera-concert-1').then(({groundTextures})=>{woodTexture=groundTextures.wood;backgroundCache.clear();}).catch(()=>{});
+ import('./ground-textures.mjs?v=town-performance-2').then(({groundTextures})=>{woodTexture=groundTextures.wood;backgroundCache.clear();}).catch(()=>{});
 }
 const rect=(x,y,w,h)=>({x,y,w,h});
 const zone=(id,label,x,y,w,h,action,extra={})=>({id,label,x,y,w,h,action,...extra});

@@ -1,17 +1,18 @@
-import {drawSelection} from './selection-view.mjs?v=opera-concert-1';
-import {drawTerrain} from './terrain-render.mjs?v=opera-concert-1';
-import {mountPose} from './cliff-mount.mjs?v=opera-concert-1';
-import {elevationView} from './elevation-view.mjs?v=opera-concert-1';
-import {barrierRuns,drawBarrierRun,barrierPosts,drawPost} from './construction.mjs?v=opera-concert-1';
-import {TILE,RISE,COLS,ROWS,cell,height,segment} from './model.mjs?v=opera-concert-1';
-import {catalog} from './catalog.mjs?v=opera-concert-1';
-import {assetMapImage,assetMapImageRevision} from './asset-lawn.mjs?v=opera-concert-1';
-import {overviewObjectImage} from './overview-sprites.mjs?v=opera-concert-1';
-import {renderCityNight} from './city-night.mjs?v=opera-concert-1';
-import {setWaterTime} from './water-motion.mjs?v=opera-concert-1';
-import {drawFountainMotion} from './fountain-motion.mjs?v=opera-concert-1';
-import {buildingDepthSlices,physicalObjectDepth,scenePartDepth} from './actor-depth.mjs?v=opera-concert-1';
-import {scenePartitionCache} from './scene-partition.mjs?v=opera-concert-1';
+import {drawSelection} from './selection-view.mjs?v=town-performance-2';
+import {drawTerrain} from './terrain-render.mjs?v=town-performance-2';
+import {mountPose} from './cliff-mount.mjs?v=town-performance-2';
+import {elevationView} from './elevation-view.mjs?v=town-performance-2';
+import {barrierRuns,drawBarrierRun,barrierPosts,drawPost} from './construction.mjs?v=town-performance-2';
+import {TILE,RISE,COLS,ROWS,cell,height,segment} from './model.mjs?v=town-performance-2';
+import {catalog} from './catalog.mjs?v=town-performance-2';
+import {assetMapImage,assetMapImageRevision} from './asset-lawn.mjs?v=town-performance-2';
+import {overviewObjectImage} from './overview-sprites.mjs?v=town-performance-2';
+import {renderCityNight} from './city-night.mjs?v=town-performance-2';
+import {setWaterTime} from './water-motion.mjs?v=town-performance-2';
+import {drawFountainMotion} from './fountain-motion.mjs?v=town-performance-2';
+import {buildingDepthSlices,physicalObjectDepth,scenePartDepth,buildingSliceRect,batchBuildingDepthQueue} from './actor-depth.mjs?v=town-performance-2';
+import {spriteBounds,intersectsViewport,actorBounds} from './render-visibility.mjs?v=town-performance-2';
+import {scenePartitionCache} from './scene-partition.mjs?v=town-performance-2';
 function drawBrush(c,d,brush,zoom){
  const radius=brush.size/2,color=brush.blend?'#b7eddf':'#ffe2a1';
  c.save();
@@ -31,16 +32,16 @@ function drawBrush(c,d,brush,zoom){
  c.restore();
 }
 export function drawObject(c,o,d,collision=false,alpha=1,time=0,fragment=null,prepared=null){
- const a=catalog.get(o.asset);if(!a)return;const pose=mountPose(d,o);if(!pose)return;
+ const a=catalog.get(o.asset);if(!a)return;const pose=prepared?.pose||mountPose(d,o);if(!pose)return;
  c.save();c.globalAlpha=alpha;
+ let cropPadding=0;
  if(fragment?.x0!==undefined){
-  const t=c.getTransform();c.beginPath();
+  const t=c.getTransform(),spans=fragment.spans||[fragment];cropPadding=1/Math.max(1e-8,Math.hypot(t.a,t.b));c.beginPath();
   if(Math.abs(t.b)<1e-9&&Math.abs(t.c)<1e-9&&t.a>0){
    // Adjacent strips share one device-pixel edge, so their clips cannot
    // introduce a translucent seam when the camera stops between pixels.
-   const left=Math.round(fragment.x0*t.a+t.e),right=Math.round(fragment.x1*t.a+t.e);
-   c.setTransform(1,0,0,1,0,0);c.rect(left,0,right-left,c.canvas.height);c.clip();c.setTransform(t);
-  }else{c.rect(fragment.x0,-65536,fragment.x1-fragment.x0,131072);c.clip();}
+   c.setTransform(1,0,0,1,0,0);for(const span of spans){const left=Math.round(span.x0*t.a+t.e),right=Math.round(span.x1*t.a+t.e);c.rect(left,0,right-left,c.canvas.height);}c.clip();c.setTransform(t);
+  }else{for(const span of spans)c.rect(span.x0,-65536,span.x1-span.x0,131072);c.clip();}
  }
  c.translate(pose.x,pose.y);c.rotate(o.rotation*Math.PI/180);c.scale(o.scale,o.scale);
  const image=prepared?.image||assetMapImage(a,o,d),display=prepared?.display||overviewObjectImage(c,a,image);
@@ -53,7 +54,9 @@ export function drawObject(c,o,d,collision=false,alpha=1,time=0,fragment=null,pr
   if(layer.w&&layer.h)c.drawImage(layer.canvas,layer.x*fx-a.w/2,layer.y*fy-a.h*pose.offset,layer.w*fx,layer.h*fy);
  }else{
   if(fragment?.outline){c.beginPath();fragment.outline.forEach(([x,y],i)=>{if(i)c.lineTo(x-a.w/2,y-a.h*pose.offset);else c.moveTo(x-a.w/2,y-a.h*pose.offset);});c.closePath();c.clip();}
-  c.drawImage(display,-a.w/2,-a.h*pose.offset,a.w,a.h);
+  const crop=fragment?.x0!==undefined?buildingSliceRect(a,o,fragment,cropPadding):null;
+  if(crop){if(crop.w>0&&crop.h>0)c.drawImage(display,crop.x*display.width/a.w,crop.y*display.height/a.h,crop.w*display.width/a.w,crop.h*display.height/a.h,crop.x-a.w/2,crop.y-a.h*pose.offset,crop.w,crop.h);}
+  else c.drawImage(display,-a.w/2,-a.h*pose.offset,a.w,a.h);
  }
  if(!fragment||fragment.animate){
   c.save();
@@ -75,8 +78,8 @@ export function drawObjectCollision(c,o,d){
 function composite(a,o){return !o.mount&&a.sceneParts?.length;}
 function depthSorted(a,o){return o.mount||o.layer==='objects'||a.depthSorted||a.frontAtX;}
 export function render(c,d,cam,w,h,opts={}){setWaterTime(opts.time||0);const screenTransform=c.getTransform();c.clearRect(0,0,w,h);c.fillStyle='#101f19';c.fillRect(0,0,w,h);c.save();c.translate(w/2,h/2);c.scale(cam.zoom,cam.zoom);c.translate(-cam.x,-cam.y);const left=cam.x-w/2/cam.zoom,top=cam.y-h/2/cam.zoom;const x0=Math.max(0,Math.floor(left/64)-1),x1=Math.min(COLS,Math.ceil((left+w/cam.zoom)/64)+1),y0=Math.max(0,Math.floor(top/64)-1),y1=Math.min(ROWS,Math.ceil((top+h/cam.zoom+RISE*9)/64)+1);if(opts.heightView==='plan'){elevationView(c,d,cam,w,h,opts);c.restore();return;}drawTerrain(c,d,{x0,x1,y0,y1},opts);if(opts.drawFootprints)opts.drawFootprints(c,d,opts.time||0);
- const visible=d.objects.filter(o=>{const a=catalog.get(o.asset);if(!a)return false;const r=Math.max(a.w,a.h)*o.scale,pose=mountPose(d,o);return pose&&pose.x+r>left&&pose.x-r<left+w/cam.zoom&&pose.y+r>top&&pose.y-r<top+h/cam.zoom;});
- const prepared=new Map();
+ const viewport={x:left,y:top,w:w/cam.zoom,h:h/cam.zoom},prepared=new Map();
+ const visible=d.objects.filter(o=>{const a=catalog.get(o.asset);if(!a)return false;const pose=mountPose(d,o);if(!pose||!intersectsViewport(spriteBounds(a,o,pose),viewport,2/cam.zoom))return false;prepared.set(o,{pose});return true;});
  const drawPlaced=(o,collision=false,fragment=null)=>{let image=prepared.get(o);if(!image){image={};prepared.set(o,image);}drawObject(c,o,d,collision,1,opts.time||0,fragment,image);};
  // Composite scenes retain their complete native ground artwork. Only their
  // raised silhouettes return to the depth queue; paving is never repainted on
@@ -89,18 +92,21 @@ export function render(c,d,cam,w,h,opts={}){setWaterTime(opts.time||0);const scr
    for(const part of a.sceneParts)queue.push({y:scenePartDepth(a,o,part),draw:()=>drawPlaced(o,false,part)});
   }else if(depthSorted(a,o)){
    const slices=buildingDepthSlices(a,o);
-   if(slices)for(const part of slices)queue.push({y:part.depth,draw:()=>drawPlaced(o,false,slices.length===1?null:part)});
+   if(slices)for(const part of slices)queue.push({y:part.depth,building:o,fragment:slices.length===1?null:part,draw:()=>drawPlaced(o,false,slices.length===1?null:part)});
    else queue.push({y:physicalObjectDepth(a,o,mountPose(d,o).depth),draw:()=>drawPlaced(o)});
   }
  }
  for(const run of barrierRuns(d))queue.push({y:run.axis==='h'?run.s.y:run.s.y+run.end-run.start,draw:()=>drawBarrierRun(c,run)});
  for(const p of barrierPosts(d))queue.push({y:p.y+.1,draw:()=>drawPost(c,p,d)});
- for(const npc of opts.npcs||[])if(opts.drawNPC&&Number.isFinite(npc.x)&&Number.isFinite(npc.y))queue.push({y:npc.depth??npc.y,draw:()=>opts.drawNPC(c,{...npc,y:npc.y-height(d,npc.groundAnchor?.x??npc.x,npc.groundAnchor?.y??npc.y)},opts.time||0)});
+ for(const npc of opts.npcs||[])if(opts.drawNPC&&Number.isFinite(npc.x)&&Number.isFinite(npc.y)){
+  const y=npc.y-height(d,npc.groundAnchor?.x??npc.x,npc.groundAnchor?.y??npc.y);
+  if(intersectsViewport(actorBounds(npc.x,y),viewport))queue.push({y:npc.depth??npc.y,draw:()=>opts.drawNPC(c,{...npc,y},opts.time||0)});
+ }
  if(opts.player)queue.push({y:opts.player.y,draw:()=>{const p=opts.player,z=height(d,p.x,p.y);if(opts.drawPlayer)opts.drawPlayer(c,p.x,p.y-z);else{c.fillStyle='#1a251a66';c.beginPath();c.ellipse(p.x,p.y-z,16,7,0,0,7);c.fill();}}});
- queue.sort((a,b)=>a.y-b.y).forEach(a=>a.draw());
+ queue.sort((a,b)=>a.y-b.y);for(const item of batchBuildingDepthQueue(queue)){if(item.building)drawPlaced(item.building,false,item.fragment);else item.draw();}
  for(const o of visible){const a=catalog.get(o.asset);if(!o.mount&&o.layer==='overgrowth'&&!depthSorted(a,o)&&!composite(a,o))drawPlaced(o);}
  if(opts.collision)for(const o of visible)drawObjectCollision(c,o,d);
- if(opts.night&&(!opts.heightView||opts.heightView==='art')){c.save();c.setTransform(screenTransform);renderCityNight(c,d,cam,w,h,opts.time||0,{catalog,objects:visible});c.restore();}
+ if(opts.night&&(!opts.heightView||opts.heightView==='art')){c.save();c.setTransform(screenTransform);renderCityNight(c,d,cam,w,h,opts.time||0,{catalog,objects:d.objects});c.restore();}
  if(opts.heightView==='colors')elevationView(c,d,cam,w,h,opts);
- if(opts.region)drawSelection(c,d,opts.region,{zoom:cam.zoom,bounds:{x0,x1,y0,y1}});
+ if(opts.region)drawSelection(c,d,opts.region,{zoom:cam.zoom,bounds:{x0,x1,y0,y1},revision:opts.terrainRevision});
  if(opts.selected){const o=opts.selected,a=catalog.get(o.asset),pose=mountPose(d,o);if(pose){c.save();c.translate(pose.x,pose.y);c.rotate(o.rotation*Math.PI/180);c.scale(o.scale,o.scale);c.strokeStyle='#f6d77d';c.lineWidth=3/(cam.zoom*o.scale);c.strokeRect(-a.w/2,-a.h*pose.offset,a.w,a.h);c.restore();}}if(opts.ghost)drawObject(c,opts.ghost,d,false,.55,opts.time||0);if(opts.hover){c.strokeStyle='#f1da8b';c.lineWidth=2/cam.zoom;c.strokeRect(opts.hover.x*64,opts.hover.y*64-cell(d,opts.hover.x,opts.hover.y).level*RISE,64,64);}if(opts.brush)drawBrush(c,d,opts.brush,cam.zoom);c.restore();}

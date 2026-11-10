@@ -1,5 +1,5 @@
-import {SHOWROOM_FURNITURE} from './showroom-furniture-definitions.mjs?v=opera-concert-1';
-export {SHOWROOM_FURNITURE} from './showroom-furniture-definitions.mjs?v=opera-concert-1';
+import {SHOWROOM_FURNITURE} from './showroom-furniture-definitions.mjs?v=town-performance-2';
+export {SHOWROOM_FURNITURE} from './showroom-furniture-definitions.mjs?v=town-performance-2';
 
 // Signature beds and seating keep the same bottom-center anchor and native
 // cutaway perspective as the original furniture. The source atlas is retained

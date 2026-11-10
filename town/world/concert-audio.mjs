@@ -45,11 +45,12 @@ function readPreferences(storage){
 export function createConcertAudio({
  programme=[],getProject,getScene,AudioConstructor=globalThis.Audio,random=Math.random,
  storage=defaultStorage(),targetWindow=globalThis.window,targetDocument=globalThis.document,
+ AudioContextConstructor=targetWindow?.AudioContext??targetWindow?.webkitAudioContext??globalThis.AudioContext??globalThis.webkitAudioContext,
  requestFrame=targetWindow?.requestAnimationFrame?.bind(targetWindow),
  cancelFrame=targetWindow?.cancelAnimationFrame?.bind(targetWindow),
  now=()=>globalThis.performance?.now?.()??Date.now(),
  autoplay=true,volume=.75,muted=false,fadeMs=280,
- outdoorGain=.06,indoorGain=1,interiorGain=.025,
+ outdoorGain=.045,indoorGain=1,interiorGain=.025,outdoorCutoff=3200,interiorCutoff=2200,
  venueAsset='sydney-opera-house',onChange
 }={}){
  const tracks=availableProgramme(programme),shuffle=createConcertShuffleBag(tracks,{random});
@@ -59,6 +60,7 @@ export function createConcertAudio({
  let wantsPlay=Boolean(autoplay),unlocked=false,needsGesture=false,pending=null,playSequence=0;
  let contextScene=null,contextEnabled=true,eligible=false,mode='absent',hasVenue=false,contextGain=0;
  let pageHidden=false,lastError='',frame=null,desiredOutput=0,rampSequence=0;
+ let graph=null,graphAttempted=false,graphResumePending=null,filterTarget=null;
  const fadeDuration=Math.max(0,finite(fadeMs,280));
  if(typeof onChange==='function')listeners.add(onChange);
  try{
@@ -75,6 +77,8 @@ export function createConcertAudio({
    track:currentTrack,trackId:currentTrack?.id??null,category:currentTrack?.category??null,pianist:currentTrack?.pianist??null,
    playing:!destroyed&&media?.paused===false,status,muted:isMuted,volume:master,
    context:mode,contextGain,effectiveVolume:desiredOutput,outputVolume:finite(media?.volume,0),
+   usingWebAudio:Boolean(graph),filterEnabled:Boolean(graph?.filter&&eligible&&mode!=='concert'&&!destroyed),
+   filterCutoffHz:graph?.filter?filterTarget:null,audioContextState:graph?.context.state??null,
    currentTime:preparedId===currentTrack?.id?Math.max(0,finite(media?.currentTime,0)):0,
    duration:preparedId===currentTrack?.id&&Number.isFinite(media?.duration)?Math.max(0,media.duration):null,
    needsGesture:eligible&&wantsPlay&&(!unlocked||needsGesture)&&!noRecordings&&!unavailable,
@@ -89,6 +93,72 @@ export function createConcertAudio({
   target.addEventListener(event,handler,options);removers.push(()=>target.removeEventListener(event,handler,options));
  }
  function persist(){try{storage?.setItem(CONCERT_AUDIO_PREFERENCE_KEY,JSON.stringify({version:1,muted:isMuted,volume:master}));}catch{/* Music remains usable when preference storage is full or private. */}}
+ function closeGraph(value){
+  if(!value)return;
+  try{value.source?.disconnect();}catch{}
+  try{value.filter?.disconnect();}catch{}
+  try{value.context.close?.()?.catch?.(()=>{});}catch{}
+ }
+ function cutoff(){
+  const fullRange=(graph?.context.sampleRate??48000)/2;
+  return !eligible||mode==='concert'?fullRange:clamp(finite(mode==='interior'?interiorCutoff:outdoorCutoff,3200),80,fullRange);
+ }
+ function updateFilter(immediate=false){
+  if(!graph?.filter)return;
+  const value=cutoff();if(value===filterTarget)return;filterTarget=value;
+  const parameter=graph.filter.frequency,time=finite(graph.context.currentTime,0);
+  // Native AudioParam automation runs on the audio thread. Repeated town
+  // render updates never reschedule these ramps or create additional nodes.
+  try{
+   if(immediate||!fadeDuration){parameter.cancelScheduledValues(time);parameter.setValueAtTime(value,time);return;}
+   if(typeof parameter.cancelAndHoldAtTime==='function')parameter.cancelAndHoldAtTime(time);
+   else{const held=parameter.value;parameter.cancelScheduledValues(time);parameter.setValueAtTime(held,time);}
+   parameter.linearRampToValueAtTime(value,time+fadeDuration/1000);
+  }catch{parameter.value=value;}
+ }
+ function ensureAudioGraph(){
+  if(graphAttempted||destroyed||!media||!tracks.length||!eligible)return;
+  graphAttempted=true;
+  if(typeof AudioContextConstructor!=='function')return;
+  let candidate=null;
+  try{
+   const context=new AudioContextConstructor();candidate={context,source:null,filter:null};
+   // Create and connect the filter before taking ownership of the media
+   // element. Browsers without this API retain ordinary media playback.
+   const filter=context.createBiquadFilter();candidate.filter=filter;
+   filter.type='lowpass';filter.Q.value=.7;filter.connect(context.destination);
+   const source=context.createMediaElementSource(media);candidate.source=source;
+   try{source.connect(filter);}catch{
+    // A partially supported filter must not leave the captured media silent.
+    filter.disconnect();source.connect(context.destination);candidate.filter=null;
+   }
+   graph=candidate;filterTarget=null;updateFilter(true);
+   listen(context,'statechange',()=>{
+    if(destroyed)return;
+    if(context.state==='suspended'&&!graphResumePending&&eligible&&!hidden()&&wantsPlay){
+     unlocked=false;needsGesture=true;pauseMedia();
+    }
+    emit('filter');
+   });
+  }catch{closeGraph(candidate);}
+ }
+ function activateAudioGraph(){
+  // Only unlock()/play(), called by an actual player gesture, create or
+  // resume a context. Scene changes and animation frames never do either.
+  ensureAudioGraph();
+  if(!graph||graph.context.state==='running')return Promise.resolve(true);
+  if(graphResumePending)return graphResumePending;
+  const activeGraph=graph;let resumed;
+  try{resumed=activeGraph.context.resume();}catch(error){resumed=Promise.reject(error);}
+  graphResumePending=Promise.resolve(resumed).then(()=>{
+   graphResumePending=null;if(destroyed||graph!==activeGraph)return false;
+   emit('filter');return true;
+  }).catch(()=>{
+   graphResumePending=null;if(destroyed||graph!==activeGraph)return false;
+   unlocked=false;needsGesture=true;lastError='Select Play to start the concert music.';pauseMedia();emit('blocked');return false;
+  });
+  return graphResumePending;
+ }
  function cancelRamp(){rampSequence++;if(frame!==null&&typeof cancelFrame==='function')cancelFrame(frame);frame=null;}
  function output(value,immediate=false){
   value=clamp(finite(value,0));
@@ -174,6 +244,8 @@ export function createConcertAudio({
   mode=!contextEnabled?'inactive':concert?'concert':hasVenue?scene?'interior':'town':'absent';
   eligible=contextEnabled&&(concert||hasVenue);
   contextGain=eligible?clamp(finite(concert?indoorGain:scene?interiorGain:outdoorGain,0)):0;
+  updateFilter();
+  if(graph?.context.state==='suspended'&&!graphResumePending&&eligible&&!hidden()&&wantsPlay){unlocked=false;needsGesture=true;}
   updateOutput(hidden());
   if(!eligible||hidden()||!wantsPlay)pauseMedia();else if(unlocked)void attemptPlay();
   if(previous!==[mode,contextGain,eligible,contextEnabled,hasVenue].join('|'))emit('context');
@@ -182,11 +254,13 @@ export function createConcertAudio({
  function unlock(){
   if(destroyed)return Promise.resolve(false);
   unlocked=true;needsGesture=false;
+  void activateAudioGraph();
   updateContext();return wantsPlay?attemptPlay():Promise.resolve(false);
  }
  function play(){
   if(destroyed)return Promise.resolve(false);
-  wantsPlay=true;unlocked=true;needsGesture=false;if(failed.size<tracks.length)lastError='';updateContext();emit('resume');return attemptPlay();
+  wantsPlay=true;unlocked=true;needsGesture=false;if(failed.size<tracks.length)lastError='';
+  void activateAudioGraph();updateContext();emit('resume');return attemptPlay();
  }
  function pause(){if(destroyed)return;wantsPlay=false;pauseMedia();emit('pause');}
  function setMuted(value){if(destroyed)return;isMuted=Boolean(value);if(media)media.muted=isMuted;persist();updateOutput();emit('mute');}
@@ -209,8 +283,19 @@ export function createConcertAudio({
  // during the Play button's pointerdown would turn its following click into
  // Pause before the player had a chance to hear anything.
  const isPlayerControl=event=>Boolean(event?.target?.closest?.('[data-concert-controls]'));
- listen(targetWindow,'pointerdown',event=>{if(!unlocked&&!isPlayerControl(event))void unlock();},{capture:true,passive:true});
- listen(targetWindow,'keydown',event=>{if(!event?.repeat&&!unlocked&&!isPlayerControl(event))void unlock();},{capture:true});
+ const needsUnlock=()=>!unlocked||eligible&&!graphAttempted||graph?.context.state==='suspended';
+ function onGesture(event){
+  if(event?.repeat||isPlayerControl(event))return;
+  // A town can gain its opera house long after the initial browser unlock.
+  // Read the current project before deciding whether this gesture is needed;
+  // it may have changed since the last rendered frame.
+  if(!graphAttempted)updateContext();
+  if(needsUnlock())void unlock();
+ }
+ // Bubble after the canvas handler so the click that places a new venue can
+ // also create its graph, while the browser's user activation is still live.
+ listen(targetWindow,'pointerdown',onGesture,{passive:true});
+ listen(targetWindow,'keydown',onGesture,{capture:true});
  listen(targetDocument,'visibilitychange',onVisibility);
  listen(targetWindow,'pagehide',()=>{pageHidden=true;updateContext();emit('visibility');});
  listen(targetWindow,'pageshow',()=>{pageHidden=false;updateContext();emit('visibility');});
@@ -224,9 +309,10 @@ export function createConcertAudio({
    if(destroyed)return;destroyed=true;pauseMedia();cancelRamp();desiredOutput=0;
    for(const remove of removers.splice(0))remove();
    if(media){media.volume=0;try{media.removeAttribute?.('src');media.load?.();}catch{}}
+   closeGraph(graph);graph=null;graphResumePending=null;filterTarget=null;
    emit('destroy');listeners.clear();
   },
   get state(){return state();},get currentTrack(){return currentTrack;},
-  get currentTime(){return state().currentTime;},get audioElement(){return media;}
+  get currentTime(){return state().currentTime;},get audioElement(){return media;},get audioContext(){return graph?.context??null;}
  };
 }

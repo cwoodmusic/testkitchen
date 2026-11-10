@@ -1,8 +1,8 @@
-import {cell,height} from './model.mjs?v=opera-concert-1';
-import {curveUnder,frontEdge,curveBounds,curveOutline,clipCurves} from './round-geometry.mjs?v=opera-concert-1';
-import {decodeMask,encodeMask} from './organic-mask.mjs?v=opera-concert-1';
-import {cliffArt} from './detail-art.mjs?v=opera-concert-1';
-import {drawGround,groundFrameKey} from './ground-render.mjs?v=opera-concert-1';
+import {cell,height} from './model.mjs?v=town-performance-2';
+import {curveUnder,frontEdge,curveBounds,curveOutline,clipCurves} from './round-geometry.mjs?v=town-performance-2';
+import {decodeMask,encodeMask} from './organic-mask.mjs?v=town-performance-2';
+import {cliffArt} from './detail-art.mjs?v=town-performance-2';
+import {drawGround,groundFrameKey} from './ground-render.mjs?v=town-performance-2';
 const inverses=new WeakMap(),angles={nw:Math.PI,ne:Math.PI*1.5,sw:Math.PI/2,se:0};
 function clipUnder(c,q,x,y,z){
  if(q.mask!==undefined){
