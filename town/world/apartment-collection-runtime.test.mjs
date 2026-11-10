@@ -3,6 +3,8 @@ import assert from 'node:assert/strict';
 import {APARTMENT_COLLECTIONS,APARTMENT_COLLECTION_ASSETS,APARTMENT_COLLECTION_OWNERS,registerApartmentCollections,clearApartmentCollectionCache} from './apartment-collections.mjs';
 import {createApartmentCollectionRuntime} from './apartment-collection-runtime.mjs';
 import {createFurnitureFacingSourceRoster,drawFurnitureFacingSource} from './furniture-facing-source.mjs';
+import {furnitureFacingPlacement,furnitureFacingBoxes,furnitureFootCenter} from './furniture-facing.mjs';
+import {collectionImageRect} from './apartment-collection-art.mjs';
 
 function manifestFor(collections){return {version:1,columns:4,rows:8,collections:collections.map(collection=>({
  owner:collection.owner,file:collection.owner+'.webp',thumbnail:collection.owner+'-thumb.webp',width:400,height:800,
@@ -86,6 +88,20 @@ test('thumbnail and full atlas crops preserve the same contain geometry without 
  assert.deepEqual(native.draws[0],[f.images[0],frame.x,frame.y,frame.w,frame.h,0,0,150,150]);
  const lamp=f.def(0,'lava-lamp');await f.runtime.ensureAsset(lamp.id);const draw=f.runtime.canvas(lamp.id).draws[0];assert(Math.abs(draw[5])<1e-10);assert(Math.abs(draw[6]-58)<1e-10);assert(Math.abs(draw[7]-52)<1e-10);assert(Math.abs(draw[8]-52)<1e-10);
  assert.equal(f.loads.length,1);assert.equal(f.runtime.stats.canvasEntries,2);f.runtime.clear();
+});
+
+test('an authored South lamp base aligns the picture without altering its raster or physical footprint',()=>{
+ const owner=APARTMENT_COLLECTIONS[0],def=owner.assets.find(asset=>asset.slot==='floor-lamp'),manifest=manifestFor([owner]);
+ const frame=manifest.collections[0].cells.find(cell=>cell.slot==='floor-lamp'),rect=collectionImageRect(def,frame),physical=furnitureFootCenter(def);
+ const original=fixture({definitions:[def],manifest}),before=original.runtime.canvas(def.id),draw=before.draws[0].slice(1);
+ frame.footCenter=[.8,(physical.y-rect.y)/rect.h];
+ const authored=fixture({definitions:[def],manifest}),after=authored.runtime.canvas(def.id),asset={...def,getFacingView:direction=>authored.runtime.view(def.id,direction)},object={x:500,y:600,rotation:0,scale:1};
+ assert.deepEqual(after.draws[0].slice(1),draw,'Anchor metadata must not move or resample pixels inside the native canvas');
+ const placement=furnitureFacingPlacement(asset,object,undefined,{includeImage:false}),box=furnitureFacingBoxes(asset,object)[0],picturedBaseX=placement.x+rect.x+.8*rect.w;
+ assert(Math.abs(picturedBaseX-(box.x+box.w/2))<1e-9,'The actual pictured base must sit at the unchanged physical centre');
+ assert.equal(placement.groundCenter.x,box.x+box.w/2);assert.equal(placement.view.footCenter.y,physical.y);
+ assert.equal(original.runtime.stats.sourceLoads,0);assert.equal(authored.runtime.stats.sourceLoads,0);
+ original.runtime.clear();authored.runtime.clear();
 });
 
 test('simultaneous item warmups share one owner load and fulfilled promises retain no source image',async()=>{

@@ -5,6 +5,7 @@ not hand-authored stand-ins. It changes an isolated guest profile only.
 Run after the owner-specific collection integration is ready.
 """
 from functools import partial
+from datetime import datetime, timezone
 from http.server import SimpleHTTPRequestHandler, ThreadingHTTPServer
 from pathlib import Path
 from threading import Thread
@@ -65,7 +66,8 @@ try:
         report = page.evaluate(r'''async()=>{
             const app=new URL(document.querySelector('script[type=module]').src),url=name=>new URL('../world/'+name+'.mjs'+app.search,app);
             const {getInterior,renderInterior,residents,STORE_FOOTPRINT,getInteriorRenderCacheStats}=await import(url('urban-interiors'));
-            const {SHOWROOMS}=await import(url('showroom-layout')),{assetImage}=await import(url('asset-color'));
+            const {SHOWROOMS}=await import(url('showroom-layout')),{assetImage}=await import(url('asset-color')),{preparePlacedFacingArt}=await import(url('furniture-art-access')),{cardinalFacing}=await import(url('furniture-facing'));
+            window.__warmCollectionScene=async scene=>{const model=getInterior(scene);await preparePlacedFacingArt({objects:[...model.items,...(model.doors||[])]},townBuilder.catalog);return model;};
             const {drawApartmentMotion,getApartmentMotionStats,createApartmentMotionRenderer}=await import(url('apartment-motion'));
             const {APARTMENT_COLLECTIONS,getApartmentCollectionRuntimeStats}=await import(url('apartment-collections'));
             const check=(b,m)=>{if(!b)throw Error(m);},catalog=townBuilder.catalog;
@@ -106,6 +108,8 @@ try:
                 }
                 }
                 if(owner.scene.kind==='showroom')check(model.width===1184&&model.height===(owner.scene.floor===2?832:448),owner.id+' has the wrong floor plate');
+                await __warmCollectionScene(owner.scene);
+                for(const item of [...model.items,...(model.doors||[])]){const a=catalog.get(item.asset);if(a?.getFacingView){const direction=a.wallMounted||a.layer==='ground'?'south':cardinalFacing(item.rotation||0);check(a.getFacingView(direction)?.ready!==false,owner.id+' posed artwork is not native-ready: '+item.asset+' '+direction);}}
                 const cv=document.createElement('canvas');cv.width=model.width;cv.height=model.height;renderInterior(cv.getContext('2d'),owner.scene,{catalog,actors:[],time:.4});await __saveCollectionImage(owner.id,cv.toDataURL());renderInterior(cv.getContext('2d'),owner.scene,{catalog,actors:[],time:.4});
             }
             check(records.length===992,'The complete native catalog has missing props');check(motionReports.length===62,'Every home needs one animated lava lamp and arcade');
@@ -127,14 +131,15 @@ try:
         if args.performance:
             page.locator('#walk').click()
             for owner in ['showroom-midcentury-studio', 'showroom-retrofuture', 'bach', 'player']:
-                page.evaluate('''id=>{const q=townBuilder.urban;if(id.startsWith('showroom-')){q.enterBuilding(townBuilder.project.objects.find(o=>o.asset==='coda-furnishings'));q.goStoreFloor(__collectionShowroomFloors[id.slice(9)]);q.openShowroom(id.slice(9));}else q.openRoom(id);}''',owner)
+                page.evaluate('''async id=>{const q=townBuilder.urban;if(id.startsWith('showroom-')){q.enterBuilding(townBuilder.project.objects.find(o=>o.asset==='coda-furnishings'));q.goStoreFloor(__collectionShowroomFloors[id.slice(9)]);q.openShowroom(id.slice(9));}else q.openRoom(id);await __warmCollectionScene(q.scene);}''',owner)
                 page.wait_for_timeout(1000)
                 request_count=len(native_requests)
+                measured_started=datetime.now(timezone.utc).isoformat()
                 page.evaluate('window.__collectionFrames=[]')
                 page.wait_for_timeout(2500)
                 frames=page.evaluate('(()=>{const a=__collectionFrames;window.__collectionFrames=null;return a})()')
                 cpu=sorted(f['cpu'] for f in frames);duration=frames[-1]['at']-frames[0]['at'];gaps=[frames[i]['at']-frames[i-1]['at'] for i in range(1,len(frames))]
-                row={'owner':owner,'fps':round((len(frames)-1)*1000/duration,2),'cpuMeanMs':round(statistics.mean(cpu),3),'cpuP95Ms':round(cpu[int(len(cpu)*.95)],3),'cpuMaxMs':round(max(cpu),3),'stallsOver50Ms':sum(g>50 for g in gaps)}
+                row={'owner':owner,'measuredStartedUTC':measured_started,'measuredFinishedUTC':datetime.now(timezone.utc).isoformat(),'fps':round((len(frames)-1)*1000/duration,2),'cpuMeanMs':round(statistics.mean(cpu),3),'cpuP95Ms':round(cpu[int(len(cpu)*.95)],3),'cpuMaxMs':round(max(cpu),3),'stallsOver50Ms':sum(g>50 for g in gaps)}
                 row['nativeAtlasRequestsDuringFrames']=len(native_requests)-request_count
                 assert row['nativeAtlasRequestsDuringFrames']==0,row
                 performance.append(row);assert row['fps']>35 and row['cpuP95Ms']<50,row

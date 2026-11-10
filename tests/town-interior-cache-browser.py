@@ -15,10 +15,10 @@ try:
   page.goto(f'http://127.0.0.1:{server.server_port}/town/builder/');page.wait_for_function('!!window.townBuilder')
   result=page.evaluate('''async()=>{
    const app=new URL(document.querySelector('script[type=module]').src),url=n=>new URL('../world/'+n+'.mjs'+app.search,app);
-   const {getInterior,renderInterior,residents,getInteriorRenderCacheStats,clearInteriorRenderCache}=await import(url('urban-interiors')),{SHOWROOMS}=await import(url('showroom-layout'));await import(url('ground-textures'));await document.fonts.ready;
+   const {getInterior,renderInterior,residents,getInteriorRenderCacheStats,clearInteriorRenderCache}=await import(url('urban-interiors')),{SHOWROOMS}=await import(url('showroom-layout')),{preparePlacedFacingArt}=await import(url('furniture-art-access'));await import(url('ground-textures'));await document.fonts.ready;
    const scenes=[...residents.map(r=>({kind:'apartment',resident:r.id,floor:r.floor})),{kind:'apartment',resident:'player',floor:15},...SHOWROOMS.map(r=>({kind:'showroom',showroomId:r.id,floor:r.storeFloor}))],check=(v,m)=>{if(!v)throw Error(m);},backgrounds=[],visits=[];
    const digest=async c=>[...new Uint8Array(await crypto.subtle.digest('SHA-256',c.getImageData(0,0,c.canvas.width,c.canvas.height).data))].map(n=>n.toString(16).padStart(2,'0')).join('');
-   async function draw(scene){const model=getInterior(scene);await Promise.all(model.items.map(i=>townBuilder.catalog.get(i.asset)?.ensureFull?.()));const cv=document.createElement('canvas');cv.width=model.width;cv.height=model.height;const c=cv.getContext('2d'),native=c.drawImage;let bg;
+   async function draw(scene){const model=getInterior(scene);await preparePlacedFacingArt({objects:[...model.items,...(model.doors||[])]},townBuilder.catalog);const cv=document.createElement('canvas');cv.width=model.width;cv.height=model.height;const c=cv.getContext('2d'),native=c.drawImage;let bg;
     c.drawImage=function(image,...args){if(image.width===model.width&&image.height===model.height)bg=image;return native.call(this,image,...args);};
     renderInterior(c,scene,{catalog:townBuilder.catalog,actors:[],time:.4});await new Promise(r=>setTimeout(r,0));renderInterior(c,scene,{catalog:townBuilder.catalog,actors:[],time:.4});c.drawImage=native;check(bg&&bg!==cv,'Did not observe native interior background');return {canvas:cv,c,bg,hash:await digest(c)};
    }

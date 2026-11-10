@@ -18,7 +18,7 @@ export async function registerApartmentCollections(add,{
 }={}){
  const externalManifest=manifest===undefined;manifest??=await fetchManifest();
  directionManifest??=externalManifest?await fetchDirections():null;
- // Only the 27 small owner thumbnails load during catalog startup. Full native
+ // Only the 31 small owner thumbnails load during catalog startup. Full native
  // sheets are fetched for an entered home and released independently later.
  const thumbnails=new Map(await Promise.all(manifest.collections.map(async collection=>[collection.owner,await loadImage(assetURL(collection.thumbnail).href)])));
  const runtime=createApartmentCollectionRuntime({definitions,manifest,directionManifest,overviewManifest,thumbnails,loadImage:file=>loadImage(assetURL(file).href),createCanvas,maxSources,maxCanvases,maxCanvasPixels});

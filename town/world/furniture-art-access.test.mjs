@@ -31,6 +31,13 @@ test('library warmups keep relative facing even for an old north-authored chair'
  assert.deepEqual(calls.map(call=>call.direction),['south','west','north','east','south']);assert(calls.every(call=>call.thisValue===a));assert.equal(ensureFacingArt(null,270),undefined);
 });
 
+test('flat wall art and rugs prepare the same canonical texture used by rendering',async()=>{
+ const calls=[],wall={wallMounted:true,ensureFull:direction=>calls.push(['wall',direction])},rug={layer:'ground',ensureFull:direction=>calls.push(['rug',direction])};
+ await ensureFacingArt(wall,90);await ensureFacingArt(rug,270);assert.deepEqual(calls,[['wall','south'],['rug','south']]);calls.length=0;
+ await preparePlacedFacingArt({objects:[{asset:'wall',rotation:90},{asset:'wall',rotation:180},{asset:'rug',rotation:270},{asset:'rug',rotation:0}]},new Map([['wall',wall],['rug',rug]]));
+ assert.deepEqual(calls,[['wall','south'],['rug','south']]);
+});
+
 test('town import prepares each saved asset/facing once and bounds concurrent native work to four',async()=>{
  let active=0,peak=0;const calls=[],catalog=new Map(Array.from({length:12},(_,i)=>['asset-'+i,{ensureFull(direction){calls.push([i,direction]);peak=Math.max(peak,++active);return new Promise(resolve=>setImmediate(()=>{active--;resolve();}));}}]));
  const objects=Array.from({length:12},(_,i)=>({asset:'asset-'+i,rotation:[0,90,180,270][i%4]}));objects.push({...objects[0],rotation:360},{...objects[3]},{asset:'missing',rotation:270});
@@ -40,6 +47,12 @@ test('town import prepares each saved asset/facing once and bounds concurrent na
 test('preparation surfaces artwork failures without altering placed records',async()=>{
  const objects=[{asset:'chair',x:30,y:40,rotation:270}],before=JSON.stringify(objects),catalog=new Map([['chair',{ensureFull:()=>Promise.reject(Error('artwork offline'))}]]);
  await assert.rejects(preparePlacedFacingArt({objects},catalog),/artwork offline/);assert.equal(JSON.stringify(objects),before);
+});
+
+test('one missing source cannot finish room preparation before the other placed artwork settles',async()=>{
+ const loaded=[],objects=Array.from({length:9},(_,i)=>({asset:'item-'+i,rotation:0})),catalog=new Map(objects.map((object,i)=>[object.asset,{async ensureFull(){if(i===0)throw Error('first source unavailable');await new Promise(resolve=>setImmediate(resolve));loaded.push(i);}}]));
+ await assert.rejects(preparePlacedFacingArt({objects},catalog),/first source unavailable/);
+ assert.deepEqual(loaded.sort((a,b)=>a-b),[1,2,3,4,5,6,7,8]);
 });
 
 test('alternating map placements prepare known provider/owner/facing families together',async()=>{

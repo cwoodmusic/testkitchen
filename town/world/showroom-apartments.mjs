@@ -1,5 +1,5 @@
 import {APARTMENT_COLLECTION_ASSETS,getApartmentAsset} from './apartment-collections.mjs?v=furniture-facings-1';
-import {furnitureFacingBoxes} from './furniture-facing.mjs?v=furniture-facings-1';
+import {furnitureFacingBoxes,furnitureFacingDepth,furnitureAtGroundCenter} from './furniture-facing.mjs?v=furniture-facings-1';
 const native=new Map(APARTMENT_COLLECTION_ASSETS.map(a=>[a.id,a]));
 const rect=(x,y,w,h)=>({x,y,w,h}),point=(x,y)=>({x,y});
 const rooms=[
@@ -86,7 +86,7 @@ function createUpperApartmentPlan(display){
  put('wardrobe','wardrobe',variant?340:320,260,80,130);
  put('toy','playful-accent',bedItem.x,268,42,46,{solid:false,depth:bedItem.y+.25,supportedBy:bedItem.asset});
  put('table-lamp','table-lamp',night.x,300,28,42,{solid:false,depth:night.y+.25,supportedBy:night.asset});
- put('poster','wall-art',270,94,84,92);
+ put('poster','wall-art',variant?346:336,94,84,92);
  const vanity=variant?point(970,212):point(100,656),mirrorBottom=variant?96:540;
  put('vanity','vanity',vanity.x,vanity.y,76,102,{fixtureRole:'vanity'});
  put('mirror','bathroom-mirror',vanity.x,mirrorBottom,58,64,{fixtureRole:'bathroom-mirror'});
@@ -101,20 +101,21 @@ function createUpperApartmentPlan(display){
  put('dining-table','dining-table',dining.x,dining.y,100,100);put('dining-chair','dining-chair',dining.x+150,dining.y+10,56,88);
  area('dining','Sunny breakfast and homework nook',variant?rect(470,270,390,144):rect(810,280,346,150),variant?point(550,350):point(1000,425));
  if(variant)put('desk','window-desk',650,220,160,114);
- const loungeX=variant?830:780,console=put('record-console','listening-focal-point',loungeX,800,180,124);
+ const loungeX=variant?830:780,console=put('record-console','listening-focal-point',0,0,180,124,{rotation:270});
+ Object.assign(console,furnitureAtGroundCenter(getApartmentAsset(owner,'record-console'),console,point(650,660)));
  put('sofa','sofa',loungeX,650,190,134);put('coffee-table','coffee-table',loungeX,728,115,72);
  put('reading-chair','conversation-chair',variant?1040:1000,680,84,114,{rotation:90});
  put('arcade','arcade',variant?1090:1080,790,62,112);
  put('floor-lamp','floor-lamp',variant?1030:990,800,80,100);
  put('plant','plant',variant?580:650,800,50,82);
  put('rug','music-rug',loungeX+35,790,360,224);
- put('lava-lamp','lava-lamp',console.x+55,710,26,58,{solid:false,depth:console.y+.25,supportedBy:console.asset});
- put('clock','wall-accent',variant?650:870,94,64,78);
+ put('lava-lamp','lava-lamp',650,600,26,58,{solid:false,depth:furnitureFacingDepth(getApartmentAsset(owner,'record-console'),console)+.25,supportedBy:console.asset});
+ put('clock','wall-accent',variant?820:650,94,64,78);
  area('living','Conversation and record-listening lounge',rect(variant?620:600,550,variant?536:556,254),variant?point(980,760):point(920,760));
  let plan={width,height,collectionOwner:owner,layoutId:variant?'separated-night-wings':'stacked-private-wing',spawn:point(1100,480),browse:point(variant?890:920,480),items,walls,areas,privacyDoors,
   wallpaperAreas:[rect(28,0,width-56,106),...(!variant?[rect(28,444,368,106)]:[])],
-  design:{purpose:'A full home organized around quiet private rooms and a shared listening lounge',focalPoints:[{x:console.x,y:console.y,role:'record-listening'},{x:variant?650:900,y:370,role:'daylight-dining'}],groups:[{role:'conversation',slots:['sofa','coffee-table','reading-chair','record-console','rug']},{role:'kitchen-work-area',slots:['sink','counter','stove','fridge','pantry']}],circulation:variant?[rect(44,452,1096,120)]:[rect(420,240,176,548),rect(420,400,736,176)]},
-  windows:variant?[{x:230,w:100},{x:650,w:140},{x:1040,w:90}]:[{x:220,w:100},{x:900,w:150}],portalExit:{threshold:point(1156,480),enterNormal:point(-1,0),triggerHalfWidth:64}};
+  design:{purpose:'A full home organized around quiet private rooms and a shared listening lounge',focalPoints:[{x:650,y:660,role:'record-listening'},{x:variant?650:900,y:370,role:'daylight-dining'}],groups:[{role:'conversation',slots:['sofa','coffee-table','reading-chair','record-console','rug']},{role:'kitchen-work-area',slots:['sink','counter','stove','fridge','pantry']}],circulation:variant?[rect(44,452,1096,120)]:[rect(420,240,176,548),rect(420,400,736,176)]},
+  windows:variant?[{x:230,w:100},{x:650,w:140},{x:1090,w:70}]:[{x:220,w:100},{x:900,w:150}],portalExit:{threshold:point(1156,480),enterNormal:point(-1,0),triggerHalfWidth:64}};
  if(mirror)plan=mirrorPlan(plan);
  plan.layoutId+=mirror?'-mirrored':'-original';plan.bedroomDoor=plan.privacyDoors.find(d=>d.id==='bedroom');plan.bathroomDoor=plan.privacyDoors.find(d=>d.id==='bathroom');
  plan.visitRoute=browsingRoute(plan);plan.exitRoute=plan.visitRoute.map(p=>({...p})).reverse();return plan;

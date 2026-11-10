@@ -20,7 +20,7 @@ export function createApartmentCollectionRuntime({definitions,manifest,direction
   const key=faceKey(def.id,facing),drawDef=facing==='south'?def:{w:frame.viewWidth??def.w,h:frame.viewHeight??def.h};
   if(!Number.isFinite(drawDef.w)||!Number.isFinite(drawDef.h)||drawDef.w<=0||drawDef.h<=0)throw Error('Invalid apartment facing size: '+key);
   const rect=collectionImageRect(drawDef,frame),sourceFoot=frame.footCenter;
-  const footCenter=facing==='south'?southFootCenter(def):Array.isArray(sourceFoot)?{x:rect.x+sourceFoot[0]*rect.w,y:rect.y+sourceFoot[1]*rect.h}:frame.worldFootCenter??{x:drawDef.w/2,y:drawDef.h};
+  const footCenter=Array.isArray(sourceFoot)?{x:rect.x+sourceFoot[0]*rect.w,y:rect.y+sourceFoot[1]*rect.h}:frame.worldFootCenter??(facing==='south'?southFootCenter(def):{x:drawDef.w/2,y:drawDef.h});
   const motion=collectionMotion(drawDef,frame),view={id:facing==='south'?def.id:key,w:drawDef.w,h:drawDef.h,footCenter,facing,...(motion?{motion}: {})};
   Object.defineProperty(view,'canvas',{enumerable:true,get:()=>{warmAsset(def.id,facing);return canvasForKey(key);}});
   Object.defineProperty(view,'ready',{get:()=>Boolean(canvasLRU.get(key)?.full)});

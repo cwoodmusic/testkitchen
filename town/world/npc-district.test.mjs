@@ -4,6 +4,7 @@ import {blank,blocked,height,COLS,ROWS} from './model.mjs';
 import {buildNPCDistrict,npcDistrictPoint,npcDistrictFacing} from './npc-district.mjs';
 import {npcCollisionProject} from './npc-collision.mjs';
 import {propCollisionBoxes} from './scene-collision.mjs';
+import {furnitureFacingPlacement,furnitureFootCenter,furnitureFacingDepth} from './furniture-facing.mjs';
 
 const tower={id:'coda-residences',name:'Coda Residences',w:1000,h:2500,urban:'tower',footprint:{x:100,y:1700,w:800,h:700},door:{x:500,y:2440},boxes:[{x:100,y:1700,w:800,h:700}]};
 const shop={id:'coda-furnishings',name:'Coda Furnishings',w:1200,h:1000,urban:'shop',footprint:{x:40,y:100,w:1120,h:800},door:{x:600,y:930},boxes:[{x:40,y:100,w:1120,h:800}]};
@@ -115,4 +116,24 @@ test('bench seats retain their asset ground anchor and reject approaches across 
  for(let y=97;y<=100;y++)for(let x=124;x<=132;x++)doc.cells[`${x},${y}`]={surface:'grass',level};
  const same=buildNPCDistrict(doc,catalog);assert.equal(same.benches.length,1);
  const b=same.benches[0];assert.deepEqual(b.ground,{x:8192,y:6200});assert.equal(height(doc,b.approach.x,b.approach.y),height(doc,b.ground.x,b.ground.y));
+});
+
+test('upright cardinal benches rotate ground support while the seated hip lift stays vertical',()=>{
+ let imageReads=0;const foot=furnitureFootCenter(bench),views=Object.fromEntries(['south','north','east','west'].map(facing=>[facing,{id:bench.id+'|'+facing,w:80,h:210,footCenter:{x:40,y:170},get canvas(){imageReads++;throw Error('Metadata must not warm artwork');}}]));
+ const authored={...bench,getFacingView:(direction,options)=>{assert.equal(options.image,false);return views[direction];}},localCatalog=new Map([[bench.id,authored]]);
+ for(const rotation of [90,180,270])for(const scale of [.65,1,1.8]){
+  const doc=blank(),o=placed(bench.id,'bench',8192,6144,rotation,scale);doc.objects.push(o);const before=JSON.stringify(doc),b=buildNPCDistrict(doc,localCatalog).benches[0];assert(b);
+  const ground=furnitureFacingPlacement(authored,o,undefined,{includeImage:false}).groundCenter,lift=(foot.y-bench.h*.72)*scale;
+  assert(Math.abs(b.seat.x-ground.x)<1e-9,'Pictured hip height was rotated sideways into world X');assert(Math.abs(b.seat.y-(ground.y-lift))<1e-9);assert(b.seat.y<ground.y);
+  assert.deepEqual(b.approach,npcDistrictPoint(o,bench,{x:bench.w/2,y:bench.h+56/scale}));
+  if(rotation%180)assert(b.seatedDepth>furnitureFacingDepth(authored,o),'An upright side bench would cover its seated occupant');else assert.equal(b.seatedDepth,undefined);
+  assert.equal(JSON.stringify(doc),before);assert.deepEqual(authored.boxes,bench.boxes);
+ }
+ assert.equal(imageReads,0);
+});
+
+test('South cardinal seating remains identical to the original bench metadata',()=>{
+ const doc=blank();doc.objects.push(placed(bench.id,'bench',8192,6144,0,1.35));const legacy=buildNPCDistrict(doc,new Map([[bench.id,bench]])).benches;
+ const authored={...bench,getFacingView(){throw Error('South seating should retain its exact legacy path');}};
+ assert.deepEqual(buildNPCDistrict(doc,new Map([[bench.id,authored]])).benches,legacy);
 });

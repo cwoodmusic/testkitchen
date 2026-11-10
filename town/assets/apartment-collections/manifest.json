@@ -340,7 +340,12 @@
             "y": 1109,
             "w": 222,
             "h": 221
-          }
+          },
+          "footCenter": [
+            0.49610768,
+            0.9315789473684211
+          ],
+          "footCenterReview": "Native opaque base centroid in bottom10% of crop; vertical physical anchor unchanged."
         },
         {
           "slot": "table-lamp",
@@ -881,7 +886,12 @@
             "y": 1109,
             "w": 222,
             "h": 221
-          }
+          },
+          "footCenter": [
+            0.50331479,
+            0.9315789473684211
+          ],
+          "footCenterReview": "Native opaque base centroid in bottom10% of crop; vertical physical anchor unchanged."
         },
         {
           "slot": "table-lamp",
@@ -1422,7 +1432,12 @@
             "y": 1109,
             "w": 222,
             "h": 221
-          }
+          },
+          "footCenter": [
+            0.60049142,
+            0.9315789473684211
+          ],
+          "footCenterReview": "Native opaque base centroid in bottom10% of crop; vertical physical anchor unchanged."
         },
         {
           "slot": "table-lamp",
@@ -1963,7 +1978,12 @@
             "y": 1109,
             "w": 222,
             "h": 221
-          }
+          },
+          "footCenter": [
+            0.70298827,
+            0.9315789473684211
+          ],
+          "footCenterReview": "Native opaque base centroid in bottom10% of crop; vertical physical anchor unchanged."
         },
         {
           "slot": "table-lamp",
@@ -2504,7 +2524,12 @@
             "y": 1109,
             "w": 222,
             "h": 221
-          }
+          },
+          "footCenter": [
+            0.52118523,
+            0.9315789473684211
+          ],
+          "footCenterReview": "Native opaque base centroid in bottom10% of crop; vertical physical anchor unchanged."
         },
         {
           "slot": "table-lamp",
@@ -3045,7 +3070,12 @@
             "y": 1109,
             "w": 222,
             "h": 221
-          }
+          },
+          "footCenter": [
+            0.50022694,
+            0.9315789473684211
+          ],
+          "footCenterReview": "Native opaque base centroid in bottom10% of crop; vertical physical anchor unchanged."
         },
         {
           "slot": "table-lamp",
@@ -3586,7 +3616,12 @@
             "y": 1109,
             "w": 222,
             "h": 221
-          }
+          },
+          "footCenter": [
+            0.50826349,
+            0.9315789473684211
+          ],
+          "footCenterReview": "Native opaque base centroid in bottom10% of crop; vertical physical anchor unchanged."
         },
         {
           "slot": "table-lamp",
@@ -4127,7 +4162,12 @@
             "y": 1109,
             "w": 222,
             "h": 221
-          }
+          },
+          "footCenter": [
+            0.49455914,
+            0.9315789473684211
+          ],
+          "footCenterReview": "Native opaque base centroid in bottom10% of crop; vertical physical anchor unchanged."
         },
         {
           "slot": "table-lamp",
@@ -4668,7 +4708,12 @@
             "y": 1109,
             "w": 222,
             "h": 221
-          }
+          },
+          "footCenter": [
+            0.51165856,
+            0.9315789473684211
+          ],
+          "footCenterReview": "Native opaque base centroid in bottom10% of crop; vertical physical anchor unchanged."
         },
         {
           "slot": "table-lamp",
@@ -5209,7 +5254,12 @@
             "y": 1109,
             "w": 222,
             "h": 221
-          }
+          },
+          "footCenter": [
+            0.35267613,
+            0.9315789473684211
+          ],
+          "footCenterReview": "Native opaque base centroid in bottom10% of crop; vertical physical anchor unchanged."
         },
         {
           "slot": "table-lamp",
@@ -5750,7 +5800,12 @@
             "y": 1109,
             "w": 222,
             "h": 221
-          }
+          },
+          "footCenter": [
+            0.63691511,
+            0.9315789473684211
+          ],
+          "footCenterReview": "Native opaque base centroid in bottom10% of crop; vertical physical anchor unchanged."
         },
         {
           "slot": "table-lamp",
@@ -6291,7 +6346,12 @@
             "y": 1109,
             "w": 222,
             "h": 221
-          }
+          },
+          "footCenter": [
+            0.50532094,
+            0.9315789473684211
+          ],
+          "footCenterReview": "Native opaque base centroid in bottom10% of crop; vertical physical anchor unchanged."
         },
         {
           "slot": "table-lamp",
@@ -6832,7 +6892,12 @@
             "y": 1109,
             "w": 222,
             "h": 221
-          }
+          },
+          "footCenter": [
+            0.64435383,
+            0.9315789473684211
+          ],
+          "footCenterReview": "Native opaque base centroid in bottom10% of crop; vertical physical anchor unchanged."
         },
         {
           "slot": "table-lamp",
@@ -7373,7 +7438,12 @@
             "y": 1109,
             "w": 222,
             "h": 221
-          }
+          },
+          "footCenter": [
+            0.30905682,
+            0.9315789473684211
+          ],
+          "footCenterReview": "Native opaque base centroid in bottom10% of crop; vertical physical anchor unchanged."
         },
         {
           "slot": "table-lamp",
@@ -7914,7 +7984,12 @@
             "y": 1109,
             "w": 222,
             "h": 221
-          }
+          },
+          "footCenter": [
+            0.65743987,
+            0.9268575851393189
+          ],
+          "footCenterReview": "Native opaque base centroid in bottom10% of crop; vertical physical anchor unchanged."
         },
         {
           "slot": "table-lamp",
@@ -8455,7 +8530,12 @@
             "y": 1109,
             "w": 222,
             "h": 221
-          }
+          },
+          "footCenter": [
+            0.35945997,
+            0.929953560371517
+          ],
+          "footCenterReview": "Native opaque base centroid in bottom10% of crop; vertical physical anchor unchanged."
         },
         {
           "slot": "table-lamp",
@@ -8996,7 +9076,12 @@
             "y": 1109,
             "w": 222,
             "h": 221
-          }
+          },
+          "footCenter": [
+            0.70335619,
+            0.9315789473684211
+          ],
+          "footCenterReview": "Native opaque base centroid in bottom10% of crop; vertical physical anchor unchanged."
         },
         {
           "slot": "table-lamp",
@@ -9537,7 +9622,12 @@
             "y": 1109,
             "w": 222,
             "h": 221
-          }
+          },
+          "footCenter": [
+            0.68122181,
+            0.9315789473684211
+          ],
+          "footCenterReview": "Native opaque base centroid in bottom10% of crop; vertical physical anchor unchanged."
         },
         {
           "slot": "table-lamp",
@@ -10078,7 +10168,12 @@
             "y": 1109,
             "w": 222,
             "h": 221
-          }
+          },
+          "footCenter": [
+            0.57161755,
+            0.9315789473684211
+          ],
+          "footCenterReview": "Native opaque base centroid in bottom10% of crop; vertical physical anchor unchanged."
         },
         {
           "slot": "table-lamp",
@@ -10619,7 +10714,12 @@
             "y": 1109,
             "w": 222,
             "h": 221
-          }
+          },
+          "footCenter": [
+            0.48415353,
+            0.9315789473684211
+          ],
+          "footCenterReview": "Native opaque base centroid in bottom10% of crop; vertical physical anchor unchanged."
         },
         {
           "slot": "table-lamp",
@@ -11160,7 +11260,12 @@
             "y": 1109,
             "w": 222,
             "h": 221
-          }
+          },
+          "footCenter": [
+            0.5013557,
+            0.9315789473684211
+          ],
+          "footCenterReview": "Native opaque base centroid in bottom10% of crop; vertical physical anchor unchanged."
         },
         {
           "slot": "table-lamp",
@@ -11701,7 +11806,12 @@
             "y": 1109,
             "w": 222,
             "h": 221
-          }
+          },
+          "footCenter": [
+            0.29436628,
+            0.9315789473684211
+          ],
+          "footCenterReview": "Native opaque base centroid in bottom10% of crop; vertical physical anchor unchanged."
         },
         {
           "slot": "table-lamp",
@@ -12242,7 +12352,12 @@
             "y": 1109,
             "w": 222,
             "h": 221
-          }
+          },
+          "footCenter": [
+            0.49243312,
+            0.9315789473684211
+          ],
+          "footCenterReview": "Native opaque base centroid in bottom10% of crop; vertical physical anchor unchanged."
         },
         {
           "slot": "table-lamp",
@@ -12783,7 +12898,12 @@
             "y": 1109,
             "w": 222,
             "h": 221
-          }
+          },
+          "footCenter": [
+            0.33829276,
+            0.9315789473684211
+          ],
+          "footCenterReview": "Native opaque base centroid in bottom10% of crop; vertical physical anchor unchanged."
         },
         {
           "slot": "table-lamp",
@@ -13324,7 +13444,12 @@
             "y": 1109,
             "w": 222,
             "h": 221
-          }
+          },
+          "footCenter": [
+            0.29919447,
+            0.9315789473684211
+          ],
+          "footCenterReview": "Native opaque base centroid in bottom10% of crop; vertical physical anchor unchanged."
         },
         {
           "slot": "table-lamp",
@@ -13865,7 +13990,12 @@
             "y": 1109,
             "w": 222,
             "h": 221
-          }
+          },
+          "footCenter": [
+            0.49250992,
+            0.9315789473684211
+          ],
+          "footCenterReview": "Native opaque base centroid in bottom10% of crop; vertical physical anchor unchanged."
         },
         {
           "slot": "table-lamp",
@@ -14406,7 +14536,12 @@
             "y": 1109,
             "w": 222,
             "h": 221
-          }
+          },
+          "footCenter": [
+            0.58975867,
+            0.9315789473684211
+          ],
+          "footCenterReview": "Native opaque base centroid in bottom10% of crop; vertical physical anchor unchanged."
         },
         {
           "slot": "table-lamp",
@@ -14947,7 +15082,12 @@
             "y": 1109,
             "w": 222,
             "h": 222
-          }
+          },
+          "footCenter": [
+            0.74653693,
+            0.9315015479876161
+          ],
+          "footCenterReview": "Native opaque base centroid in bottom10% of crop; vertical physical anchor unchanged."
         },
         {
           "slot": "table-lamp",
@@ -15488,7 +15628,12 @@
             "y": 1109,
             "w": 222,
             "h": 221
-          }
+          },
+          "footCenter": [
+            0.45860347,
+            0.9315789473684211
+          ],
+          "footCenterReview": "Native opaque base centroid in bottom10% of crop; vertical physical anchor unchanged."
         },
         {
           "slot": "table-lamp",
@@ -16029,7 +16174,12 @@
             "y": 1109,
             "w": 222,
             "h": 221
-          }
+          },
+          "footCenter": [
+            0.57583356,
+            0.9315789473684211
+          ],
+          "footCenterReview": "Native opaque base centroid in bottom10% of crop; vertical physical anchor unchanged."
         },
         {
           "slot": "table-lamp",
@@ -16570,7 +16720,12 @@
             "y": 1109,
             "w": 222,
             "h": 221
-          }
+          },
+          "footCenter": [
+            0.50204045,
+            0.9315789473684211
+          ],
+          "footCenterReview": "Native opaque base centroid in bottom10% of crop; vertical physical anchor unchanged."
         },
         {
           "slot": "table-lamp",

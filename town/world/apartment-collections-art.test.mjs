@@ -3,6 +3,7 @@ import assert from 'node:assert/strict';
 import {readFileSync,statSync} from 'node:fs';
 import {APARTMENT_COLLECTIONS,APARTMENT_COLLECTION_ASSETS,APARTMENT_COLLECTION_SLOTS,getApartmentAsset} from './apartment-collection-definitions.mjs';
 import {collectionImageRect,collectionMotion} from './apartment-collection-art.mjs';
+import {furnitureFootCenter} from './furniture-facing.mjs';
 
 const root=new URL('../assets/apartment-collections/',import.meta.url),manifest=JSON.parse(readFileSync(new URL('manifest.json',root),'utf8'));
 
@@ -50,4 +51,13 @@ test('every collection has reviewed lava glass and arcade screen masks inside it
   assert(motion.bounds[2]>0&&motion.bounds[3]>0);
  }
  assert.equal(count,62);
+});
+
+test('all31 South arc lamps carry authored base anchors while retaining their physical vertical centre',()=>{
+ for(const collection of manifest.collections){
+  const frame=collection.cells.find(cell=>cell.slot==='floor-lamp'),asset=getApartmentAsset(collection.owner,'floor-lamp'),rect=collectionImageRect(asset,frame);
+  assert(frame.footCenterReview,collection.owner+' lamp anchor review');
+  assert(frame.footCenter?.length===2&&frame.footCenter.every(value=>Number.isFinite(value)&&value>=0&&value<=1),collection.owner+' source base point');
+  assert(Math.abs(rect.y+frame.footCenter[1]*rect.h-furnitureFootCenter(asset).y)<.00001,collection.owner+' vertical footprint must remain unchanged');
+ }
 });

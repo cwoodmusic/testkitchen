@@ -24,7 +24,7 @@ Walk toward an unlocked door to enter or leave. Bedroom and bathroom leaves open
 
 **E** remains available for talking, shopping, elevator controls and sitting. Door traversal needs no interaction key.
 
-Town Builder and **Furnish apartment** offer North, East, South and West; **R** cycles the facing. Furniture aligns with the room axes, without diagonal poses. Upright furniture uses directional artwork with footprint-aligned anchors. Saved rotations retain their collision geometry. Moving keeps the facing; invalid turns leave the previous placement intact. Flat ground patterns still rotate as flat artwork.
+Town Builder and **Furnish apartment** offer North, East, South and West; **R** cycles the facing. Furniture aligns with the room axes, without diagonal poses. Upright furniture uses directional artwork with footprint-aligned anchors. Saved rotations retain their collision geometry. Moving keeps the facing; invalid turns leave the previous placement intact. Flat wall decorations and ground patterns rotate their original texture; they do not become upright side-view objects. Asset exports follow the same convention.
 
 ## Purchases and saved rooms
 

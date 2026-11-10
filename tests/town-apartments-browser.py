@@ -58,7 +58,7 @@ try:
         setup = page.evaluate('''async()=>{
             const app=new URL(document.querySelector('script[type="module"]').src),url=name=>new URL('../world/'+name+'.mjs'+app.search,app).href;
             const {getInterior,renderInterior,residents}=await import(url('urban-interiors'));
-            const {SHOWROOMS}=await import(url('showroom-layout'));
+            const {SHOWROOMS}=await import(url('showroom-layout')),{preparePlacedFacingArt}=await import(url('furniture-art-access'));
             const homes=[...residents.map(r=>({id:r.id,name:r.name,scene:{kind:'apartment',floor:r.floor,resident:r.id}})),{id:'player',name:'Your rooftop home',scene:{kind:'apartment',floor:15,resident:'player'}}];
             const scenes=[...homes,...SHOWROOMS.map(r=>({id:'showroom-'+r.id,name:r.name,scene:{kind:'showroom',showroomId:r.id,floor:r.storeFloor}}))];
             await document.fonts.ready;
@@ -68,7 +68,7 @@ try:
             const storeSheet=document.createElement('canvas');storeSheet.width=storeCellWidth*storeColumns;storeSheet.height=storeRowHeights.reduce((n,h)=>n+h,0);const ss=storeSheet.getContext('2d');ss.fillStyle='#121b21';ss.fillRect(0,0,storeSheet.width,storeSheet.height);ss.imageSmoothingEnabled=false;
             const descriptions=[];
             for(let i=0;i<scenes.length;i++){
-                const entry=scenes[i],m=getInterior(entry.scene);await Promise.all(m.items.map(item=>townBuilder.catalog.get(item.asset)?.ensureFull?.()));const cv=draw(entry);await __saveApartmentImage(entry.id,cv.toDataURL());
+                const entry=scenes[i],m=getInterior(entry.scene);await preparePlacedFacingArt({objects:[...m.items,...(m.doors||[])]},townBuilder.catalog);const cv=draw(entry);await __saveApartmentImage(entry.id,cv.toDataURL());
                 if(i<homes.length){const x=i%3*(1600/3),y=Math.floor(i/3)*360,fit=Math.min(520/m.width,320/m.height),w=m.width*fit,h=m.height*fit;sc.drawImage(cv,x+(1600/3-w)/2,y,w,h);sc.fillStyle='#ead2a1';sc.font='18px Georgia';sc.textAlign='center';sc.fillText(entry.name+' · '+(m.homePlan?.variant||'rooftop'),x+1600/6,y+344);}
                 else {const index=i-homes.length,row=Math.floor(index/storeColumns),storeCellHeight=storeRowHeights[row],x=index%storeColumns*storeCellWidth,y=storeRowHeights.slice(0,row).reduce((n,h)=>n+h,0);ss.drawImage(cv,x+(storeCellWidth-m.width)/2,y,m.width,m.height);ss.fillStyle='#ead2a1';ss.font='22px Georgia';ss.textAlign='center';ss.fillText(entry.name,x+storeCellWidth/2,y+storeCellHeight-16);}
                 if(entry.id==='showroom-midcentury-studio'){const large=document.createElement('canvas');large.width=cv.width*2;large.height=cv.height*2;const c=large.getContext('2d');c.imageSmoothingEnabled=false;c.drawImage(cv,0,0,large.width,large.height);await __saveApartmentImage('midcentury-apartment-large',large.toDataURL());}

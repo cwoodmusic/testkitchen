@@ -2,6 +2,7 @@ import {test} from 'node:test';
 import assert from 'node:assert/strict';
 import {blank,blocked,height,COLS,ROWS} from './model.mjs';
 import {createAmbientNPCs,planNPCPath,npcConnectionClear} from './ambient-npcs.mjs';
+import {furnitureFacingDepth} from './furniture-facing.mjs';
 
 const catalog=new Map();
 function random(seed=17){return ()=>{seed=(Math.imul(seed,1664525)+1013904223)>>>0;return seed/4294967296;};}
@@ -51,4 +52,15 @@ test('residents keep their positions through camera pans and water-only edits hi
  assert(ambient.actors.every(a=>Math.abs(a.x-cam.x)>2000));
  doc=blank();for(let y=0;y<ROWS;y++)for(let x=0;x<COLS;x++)doc.cells[`${x},${y}`]={surface:'water',level:0};const before=JSON.stringify(doc);ambient.update(.1);
  assert.equal(ambient.actors.length,0);assert.equal(JSON.stringify(doc),before);
+});
+
+test('real initial sitting honors the upright side-bench depth while South keeps its old draw order',()=>{
+ const asset={id:'decor-06-01',name:'Carved oak park bench',w:160,h:118,boxes:[{x:6.4,y:63.72,w:147.2,h:51.92}],getFacingView:direction=>({id:'bench|'+direction,w:78,h:214,footCenter:{x:39,y:140}})},localCatalog=new Map([[asset.id,asset]]);
+ for(const rotation of [0,90,270]){
+  const doc=blank();doc.spawn={x:2048,y:2048};const object={id:'bench-fixture',asset:asset.id,x:2048,y:2048,scale:1,rotation,collision:true,layer:'objects'};doc.objects.push(object);const before=JSON.stringify(doc);
+  const sim=createAmbientNPCs({getProject:()=>doc,catalog:localCatalog,count:3,random:random()});sim.update(0,0);const actor=sim.actors.find(actor=>actor.id==='clara'),bench=sim.district.benches[0];
+  assert(actor?.seated);assert(sim.events.some(event=>event.type==='sit'&&event.id==='clara'));assert.deepEqual({x:actor.x,y:actor.y},bench.seat);assert.deepEqual(actor.groundAnchor,bench.ground);
+  if(rotation)assert(actor.depth>furnitureFacingDepth(asset,object));else assert.equal(actor.depth,Math.max(bench.seat.y,bench.approach.y));
+  assert.equal(JSON.stringify(doc),before);
+ }
 });

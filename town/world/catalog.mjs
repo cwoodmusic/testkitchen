@@ -7,6 +7,7 @@ import {registerLeisure} from './leisure-pack.mjs?v=furniture-facings-1';
 import {registerShowroomFurniture} from './showroom-furniture.mjs?v=furniture-facings-1';
 import {registerApartmentDecor} from './apartment-decor.mjs?v=furniture-facings-1';
 import {registerApartmentCollections} from './apartment-collections.mjs?v=furniture-facings-1';
+import {registerLegacyFurnitureFacings} from './legacy-furniture-facings.mjs?v=furniture-facings-1';
 import {preparePlacedFacingArt} from './furniture-art-access.mjs?v=furniture-facings-1';
 import {arcadeGeometry,drawArcade} from './arcade.mjs?v=furniture-facings-1';
 import {constructionArt,stairArt,stairTreadBounds,overgrowthArt,estateArt,cliffDecorArt} from './detail-art.mjs?v=furniture-facings-1';
@@ -68,6 +69,7 @@ registerRoadLights(add,sources);
 await registerFestivalLights(add,catalog);
 await registerUrbanDetails(add);
 await registerOperaBuilding(add);
+await registerLegacyFurnitureFacings(catalog);
 // Existing street furniture belongs in the city kit as well as its original
 // category. Keep its saved-map ID, artwork and collision intact.
 for(const a of catalog.values())if(a.urban||a.group==='street furniture'||['decor-14-01','decor-14-02','decor-14-03','decor-09-02','props-4-960','music-square','coda-arcade'].includes(a.id))a.kit='urban';

@@ -7,7 +7,8 @@ import {renderStagePerformance} from './concert-performers.mjs?v=furniture-facin
 import {buildApartmentHome} from './apartment-homes.mjs?v=furniture-facings-1';
 import {APARTMENT_COLLECTION_ASSETS,getApartmentAsset} from './apartment-collections.mjs?v=furniture-facings-1';
 import {drawApartmentMotion} from './apartment-motion.mjs?v=furniture-facings-1';
-import {furnitureFacingPlacement,furnitureFacingDepth,furnitureFacingBoxes,furnitureAtGroundCenter,cardinalFacing} from './furniture-facing.mjs?v=furniture-facings-1';
+import {furnitureFacingPlacement,furnitureFacingDepth,furnitureFacingBoxes,furnitureAtGroundCenter} from './furniture-facing.mjs?v=furniture-facings-1';
+import {preparePlacedFacingArt} from './furniture-art-access.mjs?v=furniture-facings-1';
 // The apartment tower has one consistent floor plate. Residential floors use
 // a 608px common hall and 1120px private apartments, within its 2304 × 1728 lot.
 export const FLOOR_COUNT=15;
@@ -182,8 +183,7 @@ function showroomApartment(showroomId){
 function warmScene(scene){
  if(!nativeCatalog||warmedScene===scene&&warmedCatalog===nativeCatalog)return;
  warmedScene=scene;warmedCatalog=nativeCatalog;
- const assets=new Map();for(const item of [...scene.items,...(scene.doors||[])]){const a=nativeCatalog.get(item.asset);if(a?.ensureFull)assets.set(a,cardinalFacing(item.rotation||0));}
- Promise.allSettled([...assets].map(([a,direction])=>a.ensureFull(direction))).then(()=>discardBackground(scene.id));
+ preparePlacedFacingArt({objects:[...scene.items,...(scene.doors||[])]},nativeCatalog).finally(()=>discardBackground(scene.id)).catch(()=>{});
 }
 export function getInterior(scene={}){
  if(scene.kind==='concert')return getConcertHall();

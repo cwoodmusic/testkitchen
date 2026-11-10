@@ -271,7 +271,7 @@ export function createAmbientNPCs({getProject,catalog,getRevision=()=>0,getPlaye
   Object.assign(actor,{x:pose.x,y:pose.y,facing:pose.facing,walking:pose.walking,phase:pose.phase,hidden:pose.hidden,location:{...pose.scene},activity:'',purpose:pose.activity});
  }
  function sit(actor,bench){
-  actor._bench=bench;actor.seatId=bench.id;claims.set(bench.id,actor.id);actor.state='seated';actor.activity='relaxing';actor.seated=true;actor.groundAnchor=bench.ground;actor.walking=false;actor.facing=bench.facing;actor.depth=Math.max(bench.seat.y,bench.approach.y);actor.x=bench.seat.x;actor.y=bench.seat.y;actor._wait=16+random()*20;actor.purpose='Enjoying a seat in the square';record('sit',actor,{seat:bench.id});
+  actor._bench=bench;actor.seatId=bench.id;claims.set(bench.id,actor.id);actor.state='seated';actor.activity='relaxing';actor.seated=true;actor.groundAnchor=bench.ground;actor.walking=false;actor.facing=bench.facing;actor.depth=bench.seatedDepth??Math.max(bench.seat.y,bench.approach.y);actor.x=bench.seat.x;actor.y=bench.seat.y;actor._wait=16+random()*20;actor.purpose='Enjoying a seat in the square';record('sit',actor,{seat:bench.id});
  }
  function stand(actor){
   const bench=actor._bench,player=getPlayer?.();

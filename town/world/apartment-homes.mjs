@@ -2,7 +2,7 @@ import {residents as defaultResidents} from './resident-profiles.mjs?v=furniture
 import {APARTMENT_DECOR} from './apartment-decor-definitions.mjs?v=furniture-facings-1';
 import {SHOWROOM_FURNITURE} from './showroom-furniture-definitions.mjs?v=furniture-facings-1';
 import {getApartmentAsset} from './apartment-collections.mjs?v=furniture-facings-1';
-import {furnitureAtGroundCenter} from './furniture-facing.mjs?v=furniture-facings-1';
+import {furnitureAtGroundCenter,furnitureFacingBoxes} from './furniture-facing.mjs?v=furniture-facings-1';
 
 const furniture=new Map(APARTMENT_DECOR.map(a=>[a.id,a]));
 const signatureFurniture=new Map(SHOWROOM_FURNITURE.map(a=>[a.id,a]));
@@ -185,7 +185,13 @@ function personalizeHome(plan){
  const core={bed:'bed',sofa:'sofa',wardrobe:'wardrobe',nightstand:'nightstand',desk:'writing-desk','desk-chair':'desk-chair','dining-table':'dining-table','dining-chair':'dining-chair','coffee-table':'coffee-table',sink:'sink',stove:'stove',fridge:'fridge',counter:'kitchen-storage',toilet:'toilet',vanity:'vanity','linen-storage':'bathroom-storage',mirror:'bathroom-mirror',shelf:'kitchen-shelf','record-console':'record-storage',rug:'music-rug'};
  for(const [slot,role]of Object.entries(core)){const source=find(role);if(source)place(slot,source);}
  const bath=find('shower')||find('bathtub');place('bath-fixture',bath);
- const signature=find('signature-instrument');place('instrument',signature,{inspirationAsset:signature.asset});
+ const signature=find('signature-instrument'),instrument=place('instrument',signature,{inspirationAsset:signature.asset});
+ if(plan.wide&&['zizi','metronome','schoenberg'].includes(owner)){
+  // The deep grand-piano base needs eight pixels below the106px north wall.
+  // Move its floor center vertically; retain X, rotation and every other item.
+  const def=getApartmentAsset(owner,'instrument'),boxes=furnitureFacingBoxes(def,instrument),top=Math.min(...boxes.map(b=>b.y)),bottom=Math.max(...boxes.map(b=>b.y+b.h));
+  if(top<114){const left=Math.min(...boxes.map(b=>b.x)),right=Math.max(...boxes.map(b=>b.x+b.w));Object.assign(instrument,furnitureAtGroundCenter(def,instrument,{x:(left+right)/2,y:114+(bottom-top)/2}));}
+ }
  const clock=find('music-clock');place('clock',clock,{targetBounds:{w:88,h:86}});
  const poster=find('bedroom-art')||old.find(a=>a.furnitureRole==='personal-keepsake'&&a.wallMounted);
  place('poster',poster,{furnitureRole:'signature-poster',whimsy:true,whimsyKind:'poster',targetBounds:{w:100,h:86}});

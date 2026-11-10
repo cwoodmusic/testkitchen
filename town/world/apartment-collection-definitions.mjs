@@ -53,12 +53,29 @@ const slots=[
  ['plant','plant',92,144,[20,110,52,30]],['clock','wall-clock',96,110,null]
 ];
 const wall=new Set(['mirror','shelf','poster','clock']);
+// These new collection pieces occupy their full floor area. The legacy
+// catalog keeps its existing bases and saved-map geometry.
+const grandPianoOwners=new Set([
+ 'mozart','beethoven','chopin','haydn','handel','joplin','zizi','metronome','schoenberg','player',
+ 'showroom-victorian-parlor','showroom-art-deco-lounge','showroom-coastal-bedroom','showroom-rustic-kitchen',
+ 'showroom-botanical-conservatory','showroom-midcentury-studio','showroom-french-cafe'
+]);
+const roundCoffeeOwners=new Set([
+ 'bach','mozart','handel','vivaldi','ella','metronome',
+ 'showroom-victorian-parlor','showroom-art-deco-lounge','showroom-coastal-bedroom',
+ 'showroom-rustic-kitchen','showroom-botanical-conservatory','showroom-french-cafe'
+]);
+function collectionBase(owner,slot,fallback){
+ if(slot==='instrument'&&grandPianoOwners.has(owner))return [26,28,132,128];
+ if(slot==='coffee-table'&&roundCoffeeOwners.has(owner))return [30,6,80,80];
+ return fallback;
+}
 export const APARTMENT_COLLECTION_SLOTS=Object.freeze(slots.map(row=>row[0]));
 const definitions=[];
 export const APARTMENT_COLLECTIONS=Object.freeze(owners.map(([owner,label,style,materials,bedForm,sofaForm,motif,bathKind],index)=>{
  const collection={owner,label,style,index,materials,bedForm,sofaForm,motif,bathKind};
  collection.assets=Object.freeze(slots.map(([slot,purpose,width,height,baseBox],atlasIndex)=>{
-  const bathtub=slot==='bath-fixture'&&bathKind==='bathtub',w=bathtub?128:width,h=bathtub?126:height,box=bathtub?[8,68,112,54]:baseBox;
+  const bathtub=slot==='bath-fixture'&&bathKind==='bathtub',w=bathtub?128:width,h=bathtub?126:height,box=bathtub?[8,68,112,54]:collectionBase(owner,slot,baseBox);
   const asset=Object.freeze({id:`collection-${owner}-${slot}`,owner,collectionOwner:owner,apartmentCollection:owner,slot,purpose:bathtub?'bathtub':purpose,
    name:label+' · '+slot.replaceAll('-',' '),style,w,h,boxes:Object.freeze(box?[Object.freeze({x:box[0],y:box[1],w:box[2],h:box[3]})]:[]),solid:!!box,wallMounted:wall.has(slot),layer:slot==='rug'?'ground':'objects',
    atlasIndex,atlas:owner+'.webp',thumbnail:owner+'-thumb.webp',visualSignature:[owner,slot,materials,motif,slot==='bed'?bedForm:slot==='sofa'?sofaForm:'independently drawn '+slot].join(' | '),

@@ -39,3 +39,10 @@ test('the player keeps exact saved furnishing regions and clear entry despite th
  for(const item of scene.items)for(const b of item.collisionBoxes)assert(!overlaps(entry,b),'The front door corridor is blocked by '+item.asset);
  for(const item of scene.items.filter(i=>i.supportedBy)){const parent=scene.items.find(i=>i.furnitureRole===item.supportedBy);assert(parent);assert(item.y<=parent.y&&item.y>=parent.y-parent.h,'Floating keepsake '+item.asset);assert.equal(item.solid,false);}
 });
+
+test('the complete physical bases of all31 furnished homes stay outside structural walls',()=>{
+ for(const scene of scenes){
+  const bases=new Set(scene.items.flatMap(item=>item.collisionBoxes)),walls=scene.solids.filter(solid=>!bases.has(solid));
+  for(const item of scene.items)for(const base of item.collisionBoxes)for(const wall of walls)assert(!overlaps(base,wall),scene.id+' '+item.asset+' intersects a structural wall');
+ }
+});

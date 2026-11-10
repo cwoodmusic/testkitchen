@@ -1,6 +1,7 @@
 import {blocked,height,surfaceAt,COLS,ROWS,TILE} from './model.mjs?v=furniture-facings-1';
 import {npcCollisionProject} from './npc-collision.mjs?v=furniture-facings-1';
 import {npcConnectionClear} from './npc-navigation.mjs?v=furniture-facings-1';
+import {furnitureFacingPlacement,furnitureFootCenter,furnitureFacingDepth} from './furniture-facing.mjs?v=furniture-facings-1';
 
 const WORLD_W=COLS*TILE,WORLD_H=ROWS*TILE;
 const cardinal=['down','left','up','right'];
@@ -96,13 +97,29 @@ export function buildNPCDistrict(doc,catalog){
   const p=nearestClear(doc,catalog,wanted,{radius});
   if(p&&contains(bounds,p))anchors.push({id,kind,objectId,...p,approach:{...p}});
  };
- const addBench=(id,o,a,localSeat,localApproach)=>{
-  const seat=npcDistrictPoint(o,a,localSeat),wanted=npcDistrictPoint(o,a,localApproach);
+ const addBench=(id,o,a,localSeat,localApproach,upright=false)=>{
+  let seat=npcDistrictPoint(o,a,localSeat);const wanted=npcDistrictPoint(o,a,localApproach);
+  const rotation=((o.rotation||0)%360+360)%360;
+  const cardinalSeat=upright&&rotation!==0&&[90,180,270].includes(rotation)&&furnitureFacingPlacement(a,o,undefined,{includeImage:false});
+  if(cardinalSeat){
+   // The cushion's height is vertical in every upright view. Rotate its
+   // physical support on the ground, then lift the hip; rotating that lift
+   // would move it sideways on E/W and below the cushion on North.
+   const foot=furnitureFootCenter(a),support=npcDistrictPoint(o,a,{x:localSeat.x,y:foot.y});
+   seat={x:support.x,y:support.y-(foot.y-localSeat.y)*scale(o)};
+  }
   if(!contains(bounds,seat))return;
   const vx=wanted.x-seat.x,vy=wanted.y-seat.y,length=Math.hypot(vx,vy)||1;
   const ground={x:o.x,y:o.y},groundHeight=height(doc,ground.x,ground.y);
   const approach=nearestClear(doc,catalog,wanted,{radius:96,front:{origin:seat,x:vx/length,y:vy/length},groundHeight});
-  if(approach)benches.push({id,kind:'bench',objectId:objectKey(o),x:approach.x,y:approach.y,approach,seat,ground,facing:npcDistrictFacing(o),depth:seat.y});
+  if(approach){
+   const bench={id,kind:'bench',objectId:objectKey(o),x:approach.x,y:approach.y,approach,seat,ground,facing:npcDistrictFacing(o),depth:seat.y};
+   // Side benches have a long physical front row. Their seated occupant
+   // must be drawn above the seat/back artwork rather than disappear behind
+   // the whole sprite. South and North retain their established ordering.
+   if(cardinalSeat&&rotation%180)bench.seatedDepth=Math.max(seat.y,approach.y,furnitureFacingDepth(a,o)+.01);
+   benches.push(bench);
+  }
  };
  for(const {o,a}of localSquares){
   // Four cushion anchors occupy the two carved benches in the native 1536×1024
@@ -114,7 +131,7 @@ export function buildNPCDistrict(doc,catalog){
   const a=catalog.get(o.asset);if(!a||o.mount||!benchIDs.has(o.asset))continue;
   // Seated actor poses are anchored at the cushion/hip line; their feet
   // extend in front. The approach remains a normal collision-safe position.
-  addBench('bench:'+objectKey(o),o,a,{x:a.w/2,y:a.h*.72},{x:a.w/2,y:a.h+56/scale(o)});
+  addBench('bench:'+objectKey(o),o,a,{x:a.w/2,y:a.h*.72},{x:a.w/2,y:a.h+56/scale(o)},true);
  }
  for(const {o,a}of localGazebos){
   // The front opening and pictured stair flight are the only stage entry.
