@@ -7,7 +7,21 @@ const base=new URL('../assets/furniture-facings/',import.meta.url);
 const settled=Promise.resolve();
 let activeRuntime=null,activeSeats=null;
 function assetURL(file){const url=new URL(file,base);url.search=new URL(import.meta.url).search;return url;}
-function browserImage(url){return new Promise((resolve,reject)=>{const image=new Image();image.onload=()=>{image.onload=image.onerror=null;resolve(image);};image.onerror=()=>{image.onload=image.onerror=null;reject(Error('Legacy furniture artwork could not load: '+url));};image.src=url;});}
+function browserImage(url){
+ return new Promise((resolve,reject)=>{
+  const image=new Image();
+  image.onload=async()=>{
+   image.onload=image.onerror=null;
+   try{
+    if(typeof image.decode==='function')await image.decode();
+    if(typeof createImageBitmap==='function'){
+     const bitmap=await createImageBitmap(image);image.removeAttribute('src');resolve(bitmap);
+    }else resolve(image);
+   }catch(error){reject(error);}
+  };
+  image.onerror=()=>{image.onload=image.onerror=null;reject(Error('Legacy furniture artwork could not load: '+url));};image.src=url;
+ });
+}
 async function fetchDirections(){const response=await fetch(assetURL('manifest.json'));if(!response.ok)throw Error('Legacy furniture direction metadata could not load.');return response.json();}
 const validDirection=direction=>directions.includes(direction);
 const imageSize=image=>({w:image?.naturalWidth||image?.width||0,h:image?.naturalHeight||image?.height||0});

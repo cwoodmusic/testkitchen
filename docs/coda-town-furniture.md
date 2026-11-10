@@ -4,7 +4,7 @@ Open [Town Builder · Urban kit](https://cwoodmusic.github.io/testkitchen/town/b
 
 Coda Furnishings has twelve apartment showrooms across two floors. Eight doors open from the lower lobby; a lift and stairs lead to four larger themed homes upstairs. Approach and walk through a door to enter its separate, fully furnished apartment scene; it opens before you arrive and closes after you clear it. Every apartment includes kitchen and dining areas, a living room, a private bedroom and a bathroom with a shower or bathtub, toilet and vanity. Each apartment now has entirely unique furniture and fixtures, an animated lava lamp, a miniature arcade, a poster and a toy, as well as its own floors and wallpaper:
 
-Preview the [main lobby](town-preview/coda-furnishings-lobby.png) and [the apartment collection](town-preview/apartments-showrooms-overview.png).
+Preview the [main lobby](town-preview/coda-furnishings-lobby.png), [upper gallery](town-preview/coda-furnishings-upper-lobby.png) and [all twelve apartments](town-preview/apartments-showrooms-overview.png).
 
 | Room | Flooring | Wallpaper |
 | --- | --- | --- |

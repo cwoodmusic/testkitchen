@@ -19,7 +19,7 @@ Read November 10, 2026, using the publishers' public source repositories for the
 | A focal group | Group sofa, coffee table and listening furniture. Wide NPC living areas gain an inward-facing cardinal chair and nearby task lamp; dedicated reading nooks remain separate. The player's sofa faces its coffee table. |
 | Circulation | Route walking around seating groups. Check actual rotated collision bases, fixture approaches, door landings and resident journeys with player collision padding. |
 | Working kitchens | Group sink, prep surface, stove and refrigerator along a usable work edge. Provide standing positions. Avoid cramped U-shaped arrangements in shallow homes. |
-| Scale and restraint | Retain native furniture proportions. Use one owner-specific collection, one defining rug and supported accents instead of repeated decorative clutter. |
+| Scale and restraint | Retain native furniture proportions. Grand pianos use deep physical bases; round tables keep broad, balanced forms when turned. Use one owner-specific collection, one defining rug and supported accents instead of repeated decorative clutter. |
 | Lighting | Put task-light pools beside chairs or work surfaces, with softer room fill. Favor cross-room reading sightlines over staring into a bright window. |
 | Harmony and variety | Repeat a controlled material/color vocabulary within each home while giving homes distinct silhouettes and furnishings. |
 

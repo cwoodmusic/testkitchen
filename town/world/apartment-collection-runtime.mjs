@@ -9,13 +9,14 @@ function southFootCenter(def){
  const xs=points.map(p=>p[0]),ys=points.map(p=>p[1]);return {x:(Math.min(...xs)+Math.max(...xs))/2,y:(Math.min(...ys)+Math.max(...ys))/2};
 }
 
-export function createApartmentCollectionRuntime({definitions,manifest,directionManifest,overviewManifest,thumbnails,loadImage,createCanvas,maxSources=4,maxCanvases=192,maxCanvasPixels=4*1024*1024}){
+export function createApartmentCollectionRuntime({definitions,manifest,directionManifest,overviewManifest,thumbnails,loadImage,createCanvas,maxSources=4,maxConcurrentLoads=4,maxCanvases=192,maxCanvasPixels=4*1024*1024}){
  const sourceLRU=new Map(),canvasLRU=new Map(),states=new Map(),ownerStates=new Map(),records=new Map(),byId=new Map(definitions.map(def=>[def.id,def]));
  const overview=overviewManifest??directionManifest?.overview??manifest.overview,overviewCells=new Map();
  const settled=Promise.resolve();
- let canvasPixels=0,sourceLoads=0,generation=0,canvasBuilds=0,nativeCompilations=0,overviewImage=null,overviewPending=null,overviewAttempted=false,overviewLoads=0;
+ const loadQueue=[];
+ let activeLoads=0,canvasPixels=0,sourceLoads=0,generation=0,canvasBuilds=0,nativeCompilations=0,overviewImage=null,overviewPending=null,overviewAttempted=false,overviewLoads=0;
  const limit=(n,fallback)=>Number.isFinite(n)&&n>0?Math.max(1,Math.floor(n)):fallback;
- maxSources=limit(maxSources,4);maxCanvases=limit(maxCanvases,192);maxCanvasPixels=limit(maxCanvasPixels,4*1024*1024);
+ maxSources=limit(maxSources,4);maxConcurrentLoads=limit(maxConcurrentLoads,4);maxCanvases=limit(maxCanvases,192);maxCanvasPixels=limit(maxCanvasPixels,4*1024*1024);
  function addRecord(def,frame,state,facing){
   const key=faceKey(def.id,facing),drawDef=facing==='south'?def:{w:frame.viewWidth??def.w,h:frame.viewHeight??def.h};
   if(!Number.isFinite(drawDef.w)||!Number.isFinite(drawDef.h)||drawDef.w<=0||drawDef.h<=0)throw Error('Invalid apartment facing size: '+key);
@@ -46,6 +47,22 @@ export function createApartmentCollectionRuntime({definitions,manifest,direction
  for(const cell of overview?.cells||[])overviewCells.set(faceKey(cell.id,cell.facing??cell.direction??'south'),cell);
  const touch=(map,key,value)=>{map.delete(key);map.set(key,value);return value;};
  function releaseImage(image){try{if(typeof image?.close==='function')image.close();else image?.removeAttribute?.('src');}catch{}}
+ function pumpLoads(){
+  while(activeLoads<maxConcurrentLoads&&loadQueue.length){
+   const request=loadQueue.shift();
+   if(request.generation!==generation){request.resolve();continue;}
+   activeLoads++;if(request.overview)overviewLoads++;else sourceLoads++;
+   let loading;try{loading=loadImage(request.file,request.owner);}catch(error){loading=Promise.reject(error);}
+   Promise.resolve(loading).then(image=>{
+    if(request.generation!==generation){releaseImage(image);request.resolve();}else request.resolve(image);
+   },request.reject).finally(()=>{activeLoads--;pumpLoads();});
+  }
+ }
+ function queueLoad(file,owner,overview=false){
+  const request={file,owner,overview,generation,resolve:null,reject:null};
+  const promise=new Promise((resolve,reject)=>{request.resolve=resolve;request.reject=reject;});
+  loadQueue.push(request);pumpLoads();return promise;
+ }
  function removeCanvas(key){const item=canvasLRU.get(key);if(!item)return;canvasPixels-=item.pixels;canvasLRU.delete(key);item.canvas.width=item.canvas.height=1;}
  function trimSources(){while(sourceLRU.size>maxSources){const key=sourceLRU.keys().next().value,image=sourceLRU.get(key);sourceLRU.delete(key);for(const item of states.get(key).records||[])if(item.direct.image===image)item.direct.image=null;releaseImage(image);}}
  function record(id,facing='south'){const result=records.get(faceKey(id,facing));if(!result)throw Error('Unknown apartment collection facing: '+id+'/'+facing);return result;}
@@ -66,8 +83,7 @@ export function createApartmentCollectionRuntime({definitions,manifest,direction
  function requestOverview(){
   if(overviewPending)return overviewPending.promise;
   if(overviewImage||overviewAttempted||!overview?.file)return settled;
-  overviewAttempted=true;overviewLoads++;const epoch=generation;let loading;
-  try{loading=loadImage(overview.file,'__overview__');}catch(error){loading=Promise.reject(error);}
+  overviewAttempted=true;const epoch=generation,loading=queueLoad(overview.file,'__overview__',true);
   const request={promise:null};overviewPending=request;
   request.promise=Promise.resolve(loading).then(image=>{if(epoch!==generation||(image.naturalWidth||image.width)*(image.naturalHeight||image.height)>4*1024*1024){releaseImage(image);return;}overviewImage=image;}).catch(()=>{}).finally(()=>{if(overviewPending===request)overviewPending=null;});
   return request.promise;
@@ -102,8 +118,8 @@ export function createApartmentCollectionRuntime({definitions,manifest,direction
   const existing=sourceLRU.get(state.key);
   if(existing){touch(sourceLRU,state.key,existing);for(const key of keys)canvasForKey(key,existing);return Promise.resolve();}
   if(state.pending){for(const key of keys)state.pending.keys.add(key);return state.pending.promise;}
-  const request={generation,keys:new Set(keys),promise:null};state.pending=request;sourceLoads++;
-  let loading;try{loading=loadImage(state.entry.file,state.owner);}catch(error){loading=Promise.reject(error);}
+  const request={generation,keys:new Set(keys),promise:null};state.pending=request;
+  const loading=queueLoad(state.entry.file,state.owner);
   request.promise=Promise.resolve(loading).then(image=>{
    if(request.generation!==generation){releaseImage(image);return;}
    sourceLRU.set(state.key,image);state.autoFailed=false;
@@ -140,12 +156,15 @@ export function createApartmentCollectionRuntime({definitions,manifest,direction
   ensureAsset,
   warmAsset,
   clear(){
-   generation++;for(const key of canvasLRU.keys())removeCanvas(key);
+   generation++;for(const request of loadQueue)request.resolve();loadQueue.length=0;
+   // A loader may still be decoding an old generation. Keep its slot occupied
+   // until it settles, so clearing cannot start another full burst of decodes.
+   for(const key of canvasLRU.keys())removeCanvas(key);
    for(const image of sourceLRU.values())releaseImage(image);sourceLRU.clear();
    for(const state of states.values()){state.pending?.keys.clear();state.pending=null;state.autoFailed=false;}
    releaseImage(overviewImage);overviewImage=null;overviewPending=null;overviewAttempted=false;
    for(const item of records.values())for(const source of [item.preview,item.direct,item.nativeSource]){source.image=null;source.revision++;}
   },
-  get stats(){return {sourceEntries:sourceLRU.size,sourceOwners:[...sourceLRU.keys()].map(key=>states.get(key).owner),sourceKeys:[...sourceLRU.keys()],canvasEntries:canvasLRU.size,canvasPixels,canvasBuilds,nativeCompilations,sourceLoads,pendingLoads:[...states.values()].filter(state=>state.pending).length,overviewLoads,overviewReady:Boolean(overviewImage),overviewPixels:overviewImage?(overviewImage.naturalWidth||overviewImage.width)*(overviewImage.naturalHeight||overviewImage.height):0,maxSources,maxCanvases,maxCanvasPixels};}
+  get stats(){return {sourceEntries:sourceLRU.size,sourceOwners:[...sourceLRU.keys()].map(key=>states.get(key).owner),sourceKeys:[...sourceLRU.keys()],canvasEntries:canvasLRU.size,canvasPixels,canvasBuilds,nativeCompilations,sourceLoads,activeLoads,queuedLoads:loadQueue.length,pendingLoads:[...states.values()].filter(state=>state.pending).length,overviewLoads,overviewReady:Boolean(overviewImage),overviewPixels:overviewImage?(overviewImage.naturalWidth||overviewImage.width)*(overviewImage.naturalHeight||overviewImage.height):0,maxSources,maxConcurrentLoads,maxCanvases,maxCanvasPixels};}
  };
 }

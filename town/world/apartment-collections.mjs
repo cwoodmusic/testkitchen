@@ -7,7 +7,17 @@ function assetURL(file){const url=new URL(file,base);url.search=new URL(import.m
 let activeRuntime=null;
 function browserImage(url){
  return new Promise((resolve,reject)=>{
-  const image=new Image();image.onload=()=>{image.onload=image.onerror=null;resolve(image);};image.onerror=()=>{image.onload=image.onerror=null;reject(Error('Apartment collection artwork could not load: '+url));};image.src=url;
+  const image=new Image();
+  image.onload=async()=>{
+   image.onload=image.onerror=null;
+   try{
+    if(typeof image.decode==='function')await image.decode();
+    if(typeof createImageBitmap==='function'){
+     const bitmap=await createImageBitmap(image);image.removeAttribute('src');resolve(bitmap);
+    }else resolve(image);
+   }catch(error){reject(error);}
+  };
+  image.onerror=()=>{image.onload=image.onerror=null;reject(Error('Apartment collection artwork could not load: '+url));};image.src=url;
  });
 }
 export async function registerApartmentCollections(add,{

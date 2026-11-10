@@ -130,6 +130,61 @@ test('native crops complete before simultaneous owners are trimmed to the four-s
  const loads=f.loads.length;await f.runtime.ensureAsset(defs[0].id);assert.equal(f.loads.length,loads,'A retained complete native crop does not need its evicted source sheet');f.runtime.clear();
 });
 
+test('distinct atlas warmups queue behind four active decodes while queued crops share one request',async()=>{
+ const loads=[],images=[];let active=0,peak=0;
+ const f=fixture({loadImage(file){
+  active++;peak=Math.max(peak,active);
+  return new Promise(resolve=>loads.push({file,resolve(){active--;const full=image(file);images.push(full);resolve(full);}}));
+ }}),defs=Array.from({length:6},(_,index)=>f.def(index)),pending=defs.map(def=>f.runtime.ensureAsset(def.id));
+ assert.equal(loads.length,4);assert.equal(f.runtime.stats.activeLoads,4);assert.equal(f.runtime.stats.queuedLoads,2);assert.equal(f.runtime.stats.pendingLoads,6);assert.equal(f.runtime.stats.sourceLoads,4);assert.equal(f.runtime.stats.maxConcurrentLoads,4);
+ const sofa=f.def(4,'sofa'),sameOwner=f.runtime.ensureAsset(sofa.id);
+ assert.strictEqual(sameOwner,pending[4]);assert.equal(f.runtime.stats.queuedLoads,2);
+ for(let i=0;i<6;i++){loads[i].resolve();await new Promise(resolve=>setImmediate(resolve));}
+ assert.deepEqual(await Promise.all([...pending,sameOwner]),Array(7).fill(undefined));
+ assert.equal(peak,4);assert.equal(loads.length,6);assert.equal(f.runtime.stats.sourceLoads,6);assert.equal(f.runtime.stats.activeLoads,0);assert.equal(f.runtime.stats.queuedLoads,0);assert.equal(f.runtime.stats.pendingLoads,0);
+ assert.equal(f.runtime.stats.sourceEntries,4);assert.equal(images.filter(full=>full.closed).length,2);assert.equal(f.runtime.stats.canvasEntries,7);assert.equal(f.runtime.canvas(sofa.id).draws[0][0].name,sofa.owner+'.webp');f.runtime.clear();
+});
+
+test('a rejected or synchronously thrown queued load frees its slot and permits an explicit retry',async()=>{
+ const loads=[];let throwNext=false;
+ const f=fixture({maxConcurrentLoads:1,loadImage(file){
+  if(throwNext){throwNext=false;throw Error('Synchronous decode failure');}
+  return new Promise((resolve,reject)=>loads.push({file,resolve:()=>resolve(image(file)),reject}));
+ }}),a=f.def(0),b=f.def(1),c=f.def(2);
+ const failed=f.runtime.ensureAsset(a.id),next=f.runtime.ensureAsset(b.id);
+ assert.equal(loads.length,1);assert.equal(f.runtime.stats.queuedLoads,1);
+ loads[0].reject(Error('Asynchronous decode failure'));await assert.rejects(failed,/Asynchronous/);
+ assert.equal(loads.length,2);assert.equal(f.runtime.stats.activeLoads,1);assert.equal(f.runtime.stats.queuedLoads,0);
+ throwNext=true;const thrown=f.runtime.ensureAsset(c.id),retry=f.runtime.ensureAsset(a.id),thrownCheck=assert.rejects(thrown,/Synchronous/);
+ loads[1].resolve();await next;await thrownCheck;
+ assert.equal(loads.length,3);assert.equal(f.runtime.stats.activeLoads,1);assert.equal(f.runtime.stats.queuedLoads,0);
+ loads[2].resolve();assert.equal(await retry,undefined);assert.equal(f.runtime.stats.activeLoads,0);assert.equal(f.runtime.stats.pendingLoads,0);assert.equal(f.runtime.stats.sourceLoads,4);
+ assert.equal(f.runtime.canvas(a.id).draws[0][0].name,a.owner+'.webp');f.runtime.clear();
+});
+
+test('clear cancels unstarted loads but retains an old decode slot until its late image is released',async()=>{
+ const loads=[],f=fixture({maxConcurrentLoads:1,loadImage(file){return new Promise(resolve=>loads.push({file,resolve}));}}),a=f.def(0),b=f.def(1),c=f.def(2);
+ const old=f.runtime.ensureAsset(a.id),cancelledB=f.runtime.ensureAsset(b.id),cancelledC=f.runtime.ensureAsset(c.id);
+ assert.equal(loads.length,1);assert.equal(f.runtime.stats.queuedLoads,2);
+ f.runtime.clear();assert.deepEqual(await Promise.all([cancelledB,cancelledC]),[undefined,undefined]);assert.equal(f.runtime.stats.queuedLoads,0);assert.equal(f.runtime.stats.pendingLoads,0);assert.equal(f.runtime.stats.activeLoads,1);
+ const fresh=f.runtime.ensureAsset(a.id);assert.equal(loads.length,1);assert.equal(f.runtime.stats.queuedLoads,1);
+ const late=image('late-generation.webp');loads[0].resolve(late);assert.equal(await old,undefined);
+ assert.equal(late.closed,1);assert.equal(loads.length,2);assert.equal(f.runtime.stats.sourceEntries,0);assert.equal(f.runtime.stats.canvasEntries,0);assert.equal(f.runtime.stats.activeLoads,1);assert.equal(f.runtime.stats.queuedLoads,0);
+ const full=image('fresh-generation.webp');loads[1].resolve(full);assert.equal(await fresh,undefined);
+ assert.equal(f.runtime.canvas(a.id).draws[0][0].name,'fresh-generation.webp');assert.equal(f.runtime.stats.nativeCompilations,1);assert.equal(f.runtime.stats.activeLoads,0);assert.equal(f.runtime.stats.pendingLoads,0);f.runtime.clear();
+});
+
+test('the compact overview shares the decode queue and keeps its deduplicated warmup promise',async()=>{
+ const collections=APARTMENT_COLLECTIONS.slice(0,6),directionManifest=directionsFor(collections),overview=overviewFor(collections),loads=[];
+ directionManifest.overview=overview;
+ const f=fixture({directionManifest,maxConcurrentLoads:1,loadImage(file){return new Promise(resolve=>loads.push({file,resolve:()=>resolve(image(file,file===overview.file?overview.width:400,file===overview.file?overview.height:800))}));}});
+ const native=f.runtime.ensureAsset(f.def(0).id),preview=f.runtime.warmOverview(),next=f.runtime.ensureAsset(f.def(1).id);
+ assert.strictEqual(f.runtime.warmOverview(),preview);assert.equal(loads.length,1);assert.equal(f.runtime.stats.activeLoads,1);assert.equal(f.runtime.stats.queuedLoads,2);assert.equal(f.runtime.stats.overviewLoads,0);
+ loads[0].resolve();await native;assert.equal(loads[1].file,overview.file);assert.equal(f.runtime.stats.overviewLoads,1);assert.equal(f.runtime.stats.queuedLoads,1);
+ loads[1].resolve();assert.equal(await preview,undefined);assert.equal(f.runtime.stats.overviewReady,true);assert.equal(loads.length,3);
+ loads[2].resolve();await next;assert.equal(f.runtime.stats.activeLoads,0);assert.equal(f.runtime.stats.queuedLoads,0);assert.equal(f.runtime.stats.sourceLoads,2);f.runtime.clear();
+});
+
 test('native canvas count and pixel budgets stay bounded while visiting every home',async()=>{
  const f=fixture({maxSources:2,maxCanvases:3,maxCanvasPixels:50000});
  for(let visit=0;visit<5;visit++)for(let owner=0;owner<6;owner++)for(const slot of ['bed','sofa','lava-lamp']){
