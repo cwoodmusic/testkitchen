@@ -39,3 +39,4 @@ The gate is checked again in the parent arcade before spending Notes. Changing t
 
 
 The expanded [apartment homes update](coda-apartment-homes.md) redesigns both the 18 NPC homes and eight showrooms, adds practical room fixtures and playful décor, and preserves existing purchases and player placements.
+
