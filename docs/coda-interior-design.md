@@ -20,6 +20,7 @@ Read November 10, 2026, using the publishers' public source repositories for the
 | Circulation | Route walking around seating groups. Check actual rotated collision bases, fixture approaches, door landings and resident journeys with player collision padding. |
 | Working kitchens | Group sink, prep surface, stove and refrigerator along a usable work edge. Provide standing positions. Avoid cramped U-shaped arrangements in shallow homes. |
 | Scale and restraint | Retain native furniture proportions. Grand pianos use deep physical bases; round tables keep broad, balanced forms when turned. Use one owner-specific collection, one defining rug and supported accents instead of repeated decorative clutter. |
+| Usable surfaces | Keep turntables and their controls clear. The upper apartments put lava lamps on free desk or homework-table space, with drawing depth tied to the supporting furniture. |
 | Lighting | Put task-light pools beside chairs or work surfaces, with softer room fill. Favor cross-room reading sightlines over staring into a bright window. |
 | Harmony and variety | Repeat a controlled material/color vocabulary within each home while giving homes distinct silhouettes and furnishings. |
 

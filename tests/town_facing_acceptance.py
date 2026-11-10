@@ -45,3 +45,13 @@ def assert_frozen(graph):
     assert hashlib.sha256(MAP.read_bytes()).hexdigest() == MAP_SHA256
     for path, before in graph['manifestHashes'].items():
         assert hashlib.sha256((ROOT / path).read_bytes()).hexdigest() == before, 'Source manifest changed during acceptance: ' + path
+
+
+def bitmap_probe_script():
+    """Attribute both DOM-image and Blob bitmap inputs without retaining pixels."""
+    return r'''(()=>{
+        const nativeFetch=globalThis.fetch,blobURLs=new WeakMap(),nativeBitmap=globalThis.createImageBitmap;
+        window.__bitmapCalls=[];
+        globalThis.fetch=async function(...args){const response=await nativeFetch.apply(this,args),readBlob=response.blob.bind(response);Object.defineProperty(response,'blob',{configurable:true,value:async()=>{const blob=await readBlob();blobURLs.set(blob,response.url||String(args[0]));return blob;}});return response;};
+        if(nativeBitmap)globalThis.createImageBitmap=async function(source,...args){const image=await nativeBitmap.call(globalThis,source,...args);__bitmapCalls.push({url:blobURLs.get(source)||source.currentSrc||source.src||'',input:source instanceof Blob?'blob':source.constructor?.name||typeof source,width:image.width,height:image.height});return image;};
+    })()'''

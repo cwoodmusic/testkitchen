@@ -37,6 +37,16 @@ Final 20-second night walks, with NPCs enabled, compared the deployed release wi
 
 Each updated walk travelled approximately 9,000 world pixels with at least 99.9% of frames moving. All four had **zero synchronous terrain chunk builds during measured movement**; prefetch completed 98, 95, 70 and 85 chunks respectively. The heaviest wall case reduced mean frame CPU from 31.3 to 6.5 ms. A large camera jump or immediate first entry into an unwarmed area can still require a synchronous chunk; these measurements cover sustained walking.
 
+## Cardinal furniture and first-zoom loading
+
+A cold close-up of 500 distinct collection props exposed an image-loading hitch across 53 native atlases. DOM image loading caused each WebP to decode on a worker and again on the main thread when its pixels were consumed. Awaiting `Image.decode()` and creating a bitmap from the DOM image retained that second decode. The loaders now fetch encoded blobs and create `ImageBitmap` objects directly, with at most four active loads per provider. Eviction closes the decoded bitmaps; clearing cancels queued work and safely releases late results.
+
+The final cold transition completed its 53 native loads in 2.72 seconds while drawing continued, with **zero cadence stalls over 50 ms**, frame CPU p95 of 15.8 ms and maximum of 41.7 ms. Its trace contains 53 worker decode events and no main-thread decodes, replacing the previous 106 worker-plus-main decode events. Four steady far/near zoom samples ran at 59.8–60 FPS with no stalls, repeated atlas requests or new native compilations.
+
+This dense fixture deliberately overlaps 500 different props to keep them visible. The shared native budget admitted 192 views using 2.60 megapixels; the rest used the 32-pixel overview. This measures artwork admission rather than NPC pathfinding or ordinary town walking. The four separately measured apartment interiors each held 60 FPS without stalls or native requests.
+
+Verification includes 714 Node checks, all 3,968 native collection views, exact RGBA agreement with an independent DOM-image provider, the actual asset ZIP download, saved-room compatibility, and queued-generation cancellation. Reproduce the stress run with `python tests/town-facing-source-performance-browser.py` and pixel comparison with `python tests/town-collection-bitmap-pixels-browser.py`. These use isolated browser storage and preserve the supplied map source. See [the apartment guide](coda-apartment-homes.md) for room and cache details.
+
 ## Click to select land
 
 Choose **Select land → Elevation / enclosed area**, then click a flat patch. The selection follows connected dry ground at that elevation and stops at elevation changes, water, walls, fences and closed gates. Open gates connect areas. Off-grid Music Square walls are respected; ordinary buildings and trees do not cut up the land selection.

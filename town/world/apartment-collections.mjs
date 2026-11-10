@@ -5,17 +5,17 @@ export * from './apartment-collection-definitions.mjs?v=furniture-facings-1';
 const base=new URL('../assets/apartment-collections/',import.meta.url);
 function assetURL(file){const url=new URL(file,base);url.search=new URL(import.meta.url).search;return url;}
 let activeRuntime=null;
-function browserImage(url){
+async function browserImage(url){
+ if(typeof fetch==='function'&&typeof createImageBitmap==='function'){
+  const response=await fetch(url);
+  if(!response.ok)throw Error('Apartment collection artwork could not load: '+url+' ('+response.status+')');
+  return await createImageBitmap(await response.blob());
+ }
  return new Promise((resolve,reject)=>{
   const image=new Image();
   image.onload=async()=>{
    image.onload=image.onerror=null;
-   try{
-    if(typeof image.decode==='function')await image.decode();
-    if(typeof createImageBitmap==='function'){
-     const bitmap=await createImageBitmap(image);image.removeAttribute('src');resolve(bitmap);
-    }else resolve(image);
-   }catch(error){reject(error);}
+   try{if(typeof image.decode==='function')await image.decode();resolve(image);}catch(error){reject(error);}
   };
   image.onerror=()=>{image.onload=image.onerror=null;reject(Error('Apartment collection artwork could not load: '+url));};image.src=url;
  });

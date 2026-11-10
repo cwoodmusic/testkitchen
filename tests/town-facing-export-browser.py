@@ -15,13 +15,14 @@ server=ThreadingHTTPServer(('127.0.0.1',0),partial(Quiet,directory=str(ROOT)));T
 try:
     with sync_playwright() as p:
         browser=p.chromium.launch(executable_path='/usr/bin/chromium',args=['--no-sandbox']);context=browser.new_context(viewport={'width':1740,'height':1120},accept_downloads=True);page=context.new_page();page.set_default_timeout(180000);errors=[];page.on('pageerror',lambda e:errors.append(str(e)))
+        page.expose_function('__exportProgress',lambda item:print(json.dumps(item),flush=True))
         page.goto(f'http://127.0.0.1:{server.server_port}/town/builder/');page.wait_for_function('!!window.townBuilder')
         if page.evaluate('townBuilder.npcsVisible'):page.locator('#npcToggle').click()
         setup=page.evaluate('''async()=>{
             const app=new URL(document.querySelector('script[type=module]').src),url=n=>new URL('../world/'+n+'.mjs'+app.search,app),{supportsFurnitureFacing}=await import(url('furniture-facing')),{assetFilter}=await import(url('asset-color')),catalog=townBuilder.catalog;
             const ids=['collection-bach-bed','furniture-2-180','beach-deck-chair-north','collection-bach-poster','collection-bach-rug'],selected=ids.map(id=>{const a=catalog.get(id);if(!a)throw Error('Missing subsetasset '+id);return a;}),chairs=new Map(['south','west','north','east'].map(d=>[d,catalog.get('beach-deck-chair-'+d)]));
             window.__exportCalls=[];window.__exportRecording=true;
-            for(const a of selected){const original=a.ensureFull;a.ensureFull=function(direction='south'){if(__exportRecording)__exportCalls.push({id:a.id,direction});return original?.call(a,direction);};}
+            for(const a of selected){const original=a.ensureFull;a.ensureFull=async function(direction='south'){if(__exportRecording){__exportCalls.push({id:a.id,direction});await __exportProgress({asset:a.id,direction,state:'loading'});}await original?.call(a,direction);if(__exportRecording)await __exportProgress({asset:a.id,direction,state:'ready'});};}
             window.__exportReferences=async()=>{
                 window.__exportRecording=false;const refs=[];const digest=async pixels=>[...new Uint8Array(await crypto.subtle.digest('SHA-256',pixels))].map(v=>v.toString(16).padStart(2,'0')).join('');
                 for(const a of selected){const upright=supportsFurnitureFacing(a),base=a.id==='beach-deck-chair-north'?'north':'south',directions=upright?[['south',0],['west',90],['north',180],['east',270]]:[['south',0]],views=[];
@@ -30,10 +31,15 @@ try:
                 }
                 return {assets:refs,calls:__exportCalls};
             };
-            for(const id of [...catalog.keys()])if(!ids.includes(id))catalog.delete(id);
-            if(catalog.size!==5)throw Error('Catalog isolation failed');return {ids,sourceTag:app.search};
+            // Keep lookup-only donors such as Music Square available to ground export.
+            Object.defineProperty(catalog,'values',{configurable:true,value:function*(){yield* selected;}});
+            if([...catalog.values()].length!==5)throw Error('Catalog enumeration isolation failed');return {ids,sourceTag:app.search};
         }''')
-        with page.expect_download() as download_info:page.locator('#pack').click()
+        with page.expect_download() as download_info:
+            page.locator('#pack').click()
+            page.wait_for_function('!document.getElementById("pack").disabled',timeout=90000)
+            export_status=page.locator('#status').inner_text();print(json.dumps({'exportStatus':export_status}),flush=True)
+            assert 'failed' not in export_status.lower(),export_status
         download=download_info.value;archive_path=args.screenshots/'asset-pack.zip';download.save_as(str(archive_path));assert not download.failure()
         page.wait_for_function('!document.getElementById("pack").disabled');assert 'downloaded' in page.locator('#status').inner_text().lower()
         reference=page.evaluate('__exportReferences()');assert not errors,errors;browser.close()

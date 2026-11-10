@@ -61,7 +61,7 @@ test('each independent owner has one complete bath, a practical kitchen and uniq
   for(const role of ['bed','sofa','coffee-table','dining-table','dining-chair','nightstand','wardrobe','playful-accent','music-rug','wall-art','lava-lamp','arcade'])assert(m.items.some(i=>i.furnitureRole===role),d.name+' lacks '+role);
   const vanity=m.items.find(i=>i.slot==='vanity'),mirror=m.items.find(i=>i.slot==='mirror');assert.equal(mirror.x,vanity.x);assert.equal(mirror.y,d.storeFloor===2&&!d.row?540:96);assert(mirror.wallMounted&&!mirror.solid);
   for(const item of m.items.filter(i=>i.fixtureRole&&i.solid)){const b=feet(item)[0];assert(nav.points.some(p=>Math.hypot(p.x-b.x-b.w/2,p.y-b.y-b.h)<=75),d.name+' cannot approach '+item.fixtureRole);}
-  for(const slot of ['toy','table-lamp','lava-lamp']){const item=m.items.find(i=>i.slot===slot),support=m.items.find(i=>i.asset===item.supportedBy);assert(support&&!item.solid);assert.equal(item.depth,(support.rotation?furnitureFacingDepth(native.get(support.asset),support):support.y)+.25);}
+  for(const slot of ['toy','table-lamp','lava-lamp']){const item=m.items.find(i=>i.slot===slot),support=m.items.find(i=>i.asset===item.supportedBy);assert(support&&!item.solid);const useNativeDepth=support.rotation||d.storeFloor===2&&slot==='lava-lamp';assert.equal(item.depth,(useNativeDepth?furnitureFacingDepth(native.get(support.asset),support):support.y)+.25);}
  }
  const mcm=SHOWROOMS.find(d=>d.id==='midcentury-studio');assert.equal(mcm.floor.pattern,'teak-planks');assert.equal(mcm.wallpaper.pattern,'midcentury-atomic');
 });
@@ -76,6 +76,8 @@ test('collection stock is exactly the physical buyable pieces while all previous
 test('upper homes protect broad circulation and group conversation around a real listening focus',()=>{
  for(const d of getStoreFloorShowrooms(2)){
   const m=getInterior({kind:'showroom',showroomId:d.id}),design=m.interiorDesign,focus=m.items.find(i=>i.slot==='record-console');
+  const lava=m.items.find(i=>i.slot==='lava-lamp'),lampSupport=m.items.find(i=>i.asset===lava.supportedBy);
+  assert.equal(lampSupport.slot,d.row?'desk':'dining-table','The lava lamp uses a writing/work surface, leaving the record platter free');assert.equal(lampSupport.rotation||0,0);assert(!lava.solid);assert.equal(lava.depth,furnitureFacingDepth(native.get(lampSupport.asset),lampSupport)+.25);
   assert(design.groups.some(g=>g.role==='conversation'&&g.slots.includes('reading-chair')&&g.slots.includes('record-console')));
   const focusBox=feet(focus)[0];assert(design.focalPoints.some(p=>p.x===focusBox.x+focusBox.w/2&&p.y===focusBox.y+focusBox.h/2));
   assert.equal(focus.rotation,d.column?90:270,'The console stands beside the seating group, rather than hiding the coffee table from the foreground');

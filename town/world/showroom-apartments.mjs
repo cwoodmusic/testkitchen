@@ -98,9 +98,9 @@ function createUpperApartmentPlan(display){
  for(const [slot,role,dx,dy,w,h]of [['sink','kitchen',0,0,100,104],['counter','kitchen-counter',110,0,110,100],['stove','stove',205,4,76,108],['fridge','fridge',310,30,70,126],['pantry','pantry',420,30,64,110]])put(slot,role,kitchen.x+dx,kitchen.y+dy,w,h,{fixtureRole:slot});
  area('kitchen','Connected kitchen work area',variant?rect(28,530,560,274):rect(606,106,550,274),variant?point(350,730):point(650,310));
  const dining=variant?point(650,370):point(900,370);
- put('dining-table','dining-table',dining.x,dining.y,100,100);put('dining-chair','dining-chair',dining.x+150,dining.y+10,56,88);
+ const diningTable=put('dining-table','dining-table',dining.x,dining.y,100,100);put('dining-chair','dining-chair',dining.x+150,dining.y+10,56,88);
  area('dining','Sunny breakfast and homework nook',variant?rect(470,270,390,144):rect(810,280,346,150),variant?point(550,350):point(1000,425));
- if(variant)put('desk','window-desk',650,220,160,114);
+ const desk=variant?put('desk','window-desk',650,220,160,114):null;
  const loungeX=variant?830:780,console=put('record-console','listening-focal-point',0,0,180,124,{rotation:270});
  Object.assign(console,furnitureAtGroundCenter(getApartmentAsset(owner,'record-console'),console,point(650,660)));
  put('sofa','sofa',loungeX,650,190,134);put('coffee-table','coffee-table',loungeX,728,115,72);
@@ -109,7 +109,10 @@ function createUpperApartmentPlan(display){
  put('floor-lamp','floor-lamp',variant?1030:990,800,80,100);
  put('plant','plant',variant?580:650,800,50,82);
  put('rug','music-rug',loungeX+35,790,360,224);
- put('lava-lamp','lava-lamp',650,600,26,58,{solid:false,depth:furnitureFacingDepth(getApartmentAsset(owner,'record-console'),console)+.25,supportedBy:console.asset});
+ // Use the clear writing surface, keeping the record-player platter usable.
+ // The first pair shares a breakfast/homework table; the second has desks.
+ const lampSupport=desk||diningTable,lampX=desk?desk.x-(mirror?32:18):diningTable.x-26,lampY=desk?desk.y-(mirror?52:56):diningTable.y-48;
+ put('lava-lamp','lava-lamp',lampX,lampY,26,58,{solid:false,depth:furnitureFacingDepth(getApartmentAsset(owner,lampSupport.slot),lampSupport)+.25,supportedBy:lampSupport.asset});
  put('clock','wall-accent',variant?820:650,94,64,78);
  area('living','Conversation and record-listening lounge',rect(variant?620:600,550,variant?536:556,254),variant?point(980,760):point(920,760));
  let plan={width,height,collectionOwner:owner,layoutId:variant?'separated-night-wings':'stacked-private-wing',spawn:point(1100,480),browse:point(variant?890:920,480),items,walls,areas,privacyDoors,
