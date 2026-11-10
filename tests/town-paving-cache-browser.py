@@ -28,8 +28,8 @@ try:
         page.goto(f'http://127.0.0.1:{server.server_port}/town/builder/')
         page.wait_for_function('!!window.townBuilder', timeout=120000)
         result = page.evaluate('''async()=>{
-          const {drawGround,drawMaterial,groundFrameKey}=await import('../world/ground-render.mjs?v=apartment-showrooms-1');
-          const {encodePaint}=await import('../world/ground-paint.mjs?v=apartment-showrooms-1');
+          const {drawGround,drawMaterial,groundFrameKey}=await import('../world/ground-render.mjs?v=opera-concert-1');
+          const {encodePaint}=await import('../world/ground-paint.mjs?v=opera-concert-1');
           const check=(ok,message)=>{if(!ok)throw Error(message);};
           const cv=document.createElement('canvas');cv.width=cv.height=96;
           const c=cv.getContext('2d',{willReadFrequently:true}),originalFill=CanvasRenderingContext2D.prototype.fillRect;

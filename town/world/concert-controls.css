@@ -1,0 +1,22 @@
+.concert-controls{position:fixed;z-index:8;box-sizing:border-box;padding:12px 14px;color:#f7e8c9;background:linear-gradient(140deg,#202c37f5,#1d222cf5);border:1px solid #998361;border-radius:8px;box-shadow:0 7px 26px #02060c66;font:12px/1.35 system-ui,sans-serif;text-align:left;isolation:isolate}
+.concert-controls[hidden],.concert-controls [hidden]{display:none!important}
+.concert-controls *{box-sizing:border-box}
+.concert-controls__heading{display:flex;align-items:center;justify-content:space-between;gap:8px;margin-bottom:5px}
+.concert-controls__eyebrow{color:#dec28e;font-size:10px;font-weight:700;letter-spacing:.09em;text-transform:uppercase}
+.concert-controls__category{color:#b8c6c8;font-size:10px;white-space:nowrap}
+.concert-controls__track{display:block;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;font-size:13px;font-weight:600}
+.concert-controls__status{display:block;min-height:16px;margin:3px 0 9px;color:#b8c3c6;font-size:11px}
+.concert-controls__actions{display:flex;flex-wrap:wrap;align-items:center;gap:6px}
+.concert-controls button{min-height:30px;margin:0;padding:5px 9px;color:#f7e8c9;background:#34424b;border:1px solid #67747a;border-radius:4px;font:11px/1.2 system-ui,sans-serif;cursor:pointer;white-space:nowrap}
+.concert-controls button:hover{background:#47575f;border-color:#c2ad82}
+.concert-controls button:disabled{cursor:wait;opacity:.65}
+.concert-controls button:focus-visible,.concert-controls input:focus-visible{outline:2px solid #ffe5a7;outline-offset:3px}
+.concert-controls .concert-controls__play{min-width:48px;background:#725b35;border-color:#b69a66}
+.concert-controls .concert-controls__play:hover{background:#8a7043}
+.concert-controls .concert-controls__mute[aria-pressed=true]{color:#ffe1a1;border-color:#c4a875}
+.concert-controls__volume{display:flex;flex:1;align-items:center;gap:6px;min-width:108px;margin:0;color:#c5ccca;font-size:10px}
+.concert-controls__volume input{display:block;flex:1;min-width:55px;max-width:95px;width:100%;height:24px;margin:0;padding:0;border:0;border-radius:0;accent-color:#dcc28b;cursor:pointer;background:transparent}
+.concert-controls .concert-controls__programme{width:100%;min-height:24px;padding:3px 0 0;color:#ddcda9;background:transparent;border:0;text-align:left;text-decoration:underline;text-underline-offset:3px;font-size:10px}
+.concert-controls .concert-controls__programme:hover{color:#fff0cf;background:transparent}
+.concert-controls[data-state=unavailable] .concert-controls__status{color:#f1bc99}
+@media(max-width:600px){.concert-controls{padding:9px 11px}.concert-controls__eyebrow{font-size:9px}.concert-controls__track{font-size:12px}.concert-controls__status{font-size:10px;margin-bottom:6px}.concert-controls button{min-height:32px}.concert-controls__category{font-size:9px}}

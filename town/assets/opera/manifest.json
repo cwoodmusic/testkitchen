@@ -1,0 +1,381 @@
+{
+  "version": 1,
+  "source": "sydney-opera-house-source.png",
+  "generator": "image_gen",
+  "orientation": "south",
+  "notes": "Isolated sail-shell concert hall; transparent native art. Front stairs are walkable art, not an elevation change. Floor plate is shared with the concert-hall interior.",
+  "assets": [
+    {
+      "id": "sydney-opera-house",
+      "name": "Sydney Opera House · concert hall",
+      "group": "landmarks",
+      "w": 4608,
+      "h": 3328,
+      "native": {
+        "w": 1448,
+        "h": 1086
+      },
+      "artwork": {
+        "x": 256,
+        "y": 180,
+        "w": 4096,
+        "h": 3072
+      },
+      "footprint": {
+        "x": 256,
+        "y": 80,
+        "w": 4096,
+        "h": 2560
+      },
+      "door": {
+        "x": 2304,
+        "y": 2672
+      },
+      "entranceProjection": {
+        "x": 2304,
+        "y": 2672
+      },
+      "approach": {
+        "x": 2304,
+        "y": 3032
+      },
+      "front": 2640,
+      "boxes": [],
+      "polygons": [
+        [
+          [
+            1280,
+            80
+          ],
+          [
+            2816,
+            80
+          ],
+          [
+            4352,
+            1408
+          ],
+          [
+            4352,
+            2496
+          ],
+          [
+            4184,
+            2640
+          ],
+          [
+            424,
+            2640
+          ],
+          [
+            256,
+            2496
+          ],
+          [
+            256,
+            1408
+          ]
+        ],
+        [
+          [
+            414.4088397790055,
+            3087.9337016574586
+          ],
+          [
+            516.243093922652,
+            3087.9337016574586
+          ],
+          [
+            519.0718232044198,
+            3003.07182320442
+          ],
+          [
+            793.4585635359116,
+            2785.259668508287
+          ],
+          [
+            869.8342541436464,
+            2643.8232044198894
+          ],
+          [
+            793.4585635359116,
+            2643.8232044198894
+          ],
+          [
+            459.6685082872928,
+            2912.5524861878453
+          ],
+          [
+            417.23756906077347,
+            2969.1270718232045
+          ]
+        ],
+        [
+          [
+            4196.419889502762,
+            3087.9337016574586
+          ],
+          [
+            4091.756906077348,
+            3087.9337016574586
+          ],
+          [
+            4086.0994475138123,
+            3003.07182320442
+          ],
+          [
+            3814.5414364640883,
+            2785.259668508287
+          ],
+          [
+            3738.1657458563536,
+            2643.8232044198894
+          ],
+          [
+            3814.5414364640883,
+            2643.8232044198894
+          ],
+          [
+            4148.331491712707,
+            2912.5524861878453
+          ],
+          [
+            4196.419889502762,
+            2969.1270718232045
+          ]
+        ]
+      ],
+      "lightEmitters": [
+        {
+          "u": 0.17464702271332105,
+          "v": 0.6133725563110922,
+          "kind": "window",
+          "radius": 300,
+          "power": 0.85,
+          "color": [
+            255,
+            202,
+            128
+          ]
+        },
+        {
+          "u": 0.25260896255371396,
+          "v": 0.6397218975775606,
+          "kind": "window",
+          "radius": 280,
+          "power": 0.8,
+          "color": [
+            255,
+            202,
+            128
+          ]
+        },
+        {
+          "u": 0.39993861264579494,
+          "v": 0.6533215575860604,
+          "kind": "window",
+          "radius": 300,
+          "power": 0.85,
+          "color": [
+            255,
+            202,
+            128
+          ]
+        },
+        {
+          "u": 0.496316758747698,
+          "v": 0.6082726838079048,
+          "kind": "window",
+          "radius": 360,
+          "power": 0.95,
+          "color": [
+            255,
+            202,
+            128
+          ]
+        },
+        {
+          "u": 0.5951503990178023,
+          "v": 0.6533215575860604,
+          "kind": "window",
+          "radius": 300,
+          "power": 0.85,
+          "color": [
+            255,
+            202,
+            128
+          ]
+        },
+        {
+          "u": 0.7394106813996317,
+          "v": 0.6354720038249043,
+          "kind": "window",
+          "radius": 280,
+          "power": 0.8,
+          "color": [
+            255,
+            202,
+            128
+          ]
+        },
+        {
+          "u": 0.8321055862492327,
+          "v": 0.6142225350616235,
+          "kind": "window",
+          "radius": 300,
+          "power": 0.85,
+          "color": [
+            255,
+            202,
+            128
+          ]
+        },
+        {
+          "u": 0.2354205033763045,
+          "v": 0.7485191776455589,
+          "kind": "window",
+          "radius": 300,
+          "power": 0.9,
+          "color": [
+            255,
+            202,
+            128
+          ]
+        },
+        {
+          "u": 0.7658072437077963,
+          "v": 0.7485191776455589,
+          "kind": "window",
+          "radius": 300,
+          "power": 0.9,
+          "color": [
+            255,
+            202,
+            128
+          ]
+        },
+        {
+          "u": 0.496316758747698,
+          "v": 0.7595689014024649,
+          "kind": "door",
+          "radius": 430,
+          "power": 1,
+          "color": [
+            255,
+            202,
+            128
+          ]
+        },
+        {
+          "u": 0.120012277470841,
+          "v": 0.7714686039099022,
+          "kind": "uplight",
+          "radius": 280,
+          "power": 0.88,
+          "color": [
+            255,
+            202,
+            128
+          ],
+          "groundV": 0.7859182426689333,
+          "beamHeight": 420,
+          "beamWidth": 145
+        },
+        {
+          "u": 0.29680785758133826,
+          "v": 0.7774184551636208,
+          "kind": "uplight",
+          "radius": 280,
+          "power": 0.88,
+          "color": [
+            255,
+            202,
+            128
+          ],
+          "groundV": 0.7859182426689333,
+          "beamHeight": 420,
+          "beamWidth": 145
+        },
+        {
+          "u": 0.32443216697360344,
+          "v": 0.7774184551636208,
+          "kind": "uplight",
+          "radius": 280,
+          "power": 0.88,
+          "color": [
+            255,
+            202,
+            128
+          ],
+          "groundV": 0.7859182426689333,
+          "beamHeight": 420,
+          "beamWidth": 145
+        },
+        {
+          "u": 0.6767955801104972,
+          "v": 0.7774184551636208,
+          "kind": "uplight",
+          "radius": 280,
+          "power": 0.88,
+          "color": [
+            255,
+            202,
+            128
+          ],
+          "groundV": 0.7859182426689333,
+          "beamHeight": 420,
+          "beamWidth": 145
+        },
+        {
+          "u": 0.7044198895027624,
+          "v": 0.7774184551636208,
+          "kind": "uplight",
+          "radius": 280,
+          "power": 0.88,
+          "color": [
+            255,
+            202,
+            128
+          ],
+          "groundV": 0.7859182426689333,
+          "beamHeight": 420,
+          "beamWidth": 145
+        },
+        {
+          "u": 0.8934929404542665,
+          "v": 0.7714686039099022,
+          "kind": "uplight",
+          "radius": 280,
+          "power": 0.88,
+          "color": [
+            255,
+            202,
+            128
+          ],
+          "groundV": 0.7859182426689333,
+          "beamHeight": 420,
+          "beamWidth": 145
+        }
+      ],
+      "urban": "opera",
+      "kit": "urban",
+      "facing": "south",
+      "fixedScale": true,
+      "collisionDefault": true,
+      "image": "../assets/opera/sydney-opera-house.png",
+      "file": "sydney-opera-house.png",
+      "sourceFile": "sydney-opera-house-source.png",
+      "depthGeometry": "Collision polygons determine the physical front envelope; front stairs remain ground artwork."
+    }
+  ],
+  "alphaCleanup": {
+    "minimumAlpha": 16,
+    "edgeInsetPixels": 1,
+    "transparentRGB": [
+      0,
+      0,
+      0
+    ],
+    "description": "Discard near-transparent generated gutter pixels, inset the alpha silhouette by one native pixel, and zero hidden transparent RGB. Native source and remaining foreground RGB are preserved."
+  }
+}

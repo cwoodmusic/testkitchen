@@ -1,0 +1,170 @@
+import test from 'node:test';
+import assert from 'node:assert/strict';
+import {CONCERT_AUDIO_PREFERENCE_KEY,createConcertShuffleBag,createConcertAudio} from './concert-audio.mjs';
+
+const programme=Object.freeze([
+ Object.freeze({id:'orchestra',title:'Symphonic programme',category:'orchestra',pianist:null,src:'/music/orchestra.mp3'}),
+ Object.freeze({id:'jazz',title:'New Orleans programme',category:'jazz',pianist:null,src:'/music/jazz.mp3'}),
+ Object.freeze({id:'chopin',title:'Chopin recital',category:'piano',pianist:'chopin',src:'/music/chopin.mp3'}),
+ Object.freeze({id:'liszt',title:'Liszt recital',category:'piano',pianist:'liszt',src:'/music/liszt.mp3'})
+]);
+function seeded(seed=733){return()=>{seed=(Math.imul(seed,1664525)+1013904223)>>>0;return seed/4294967296;};}
+class Target{
+ constructor(){this.listeners=new Map();}
+ addEventListener(name,fn){if(!this.listeners.has(name))this.listeners.set(name,new Set());this.listeners.get(name).add(fn);}
+ removeEventListener(name,fn){this.listeners.get(name)?.delete(fn);}
+ emit(name,extra={}){for(const fn of [...(this.listeners.get(name)||[])])fn({type:name,target:this,...extra});}
+ get listenerCount(){return [...this.listeners.values()].reduce((n,set)=>n+set.size,0);}
+}
+class FakeAudio extends Target{
+ constructor(){super();this._src='';this.currentSrc='';this.currentTime=0;this.duration=180;this.paused=true;this.volume=1;this.muted=false;this.playCalls=0;this.pauseCalls=0;this.loadCalls=0;this.sourceChanges=[];this.failPlay=null;this.failLoad=false;}
+ set src(value){this._src=value;this.currentSrc=value;this.currentTime=0;this.sourceChanges.push(value);}
+ get src(){return this._src;}
+ load(){this.loadCalls++;if(this.failLoad)throw Error('missing source');}
+ play(){this.playCalls++;if(this.failPlay){const error=this.failPlay;this.failPlay=null;return Promise.reject(error);}this.paused=false;this.emit('play');return Promise.resolve();}
+ pause(){this.pauseCalls++;this.paused=true;this.emit('pause');}
+ removeAttribute(name){if(name==='src'){this._src='';this.currentSrc='';}}
+}
+function clock(){
+ let time=0,index=0;const frames=new Map();
+ return {now:()=>time,request:fn=>{const id=++index;frames.set(id,fn);return id;},cancel:id=>frames.delete(id),get pending(){return frames.size;},step(ms){time+=ms;const callbacks=[...frames.values()];frames.clear();for(const fn of callbacks)fn(time);}};
+}
+const flush=async()=>{await Promise.resolve();await Promise.resolve();await Promise.resolve();};
+function fixture(options={}){
+ const media=new FakeAudio(),win=new Target(),doc=new Target(),timer=clock(),values=new Map(),writes=[];
+ doc.hidden=false;let scene=null;
+ const project={objects:[{id:'opera',asset:'sydney-opera-house'}],cells:{'1,1':{surface:'grass',level:0}},name:'Unchanged town'};
+ const storage={getItem:key=>values.get(key)??null,setItem(key,value){writes.push(key);values.set(key,value);}};
+ const player=createConcertAudio({programme,getProject:()=>project,getScene:()=>scene,AudioConstructor:function(){return media;},storage,targetWindow:win,targetDocument:doc,requestFrame:timer.request,cancelFrame:timer.cancel,now:timer.now,random:seeded(),...options});
+ return {player,media,win,doc,timer,project,storage,values,writes,setScene(next){scene=next;player.updateContext();}};
+}
+
+test('shuffle bags play every recording before repeating and avoid consecutive programme repeats',()=>{
+ const source=programme.slice(),before=JSON.stringify(source),bag=createConcertShuffleBag(source,{random:seeded(1)}),selected=[];
+ for(let cycle=0;cycle<20;cycle++){
+  const round=Array.from({length:source.length},()=>bag.next());
+  assert.deepEqual(round.map(track=>track.id).sort(),source.map(track=>track.id).sort());selected.push(...round);
+ }
+ for(let i=1;i<selected.length;i++)assert.notEqual(selected[i].id,selected[i-1].id);
+ assert.equal(JSON.stringify(source),before);
+});
+
+test('failed recordings are excluded without blocking the remaining programme',()=>{
+ const bag=createConcertShuffleBag(programme,{random:()=>0}),failed=new Set(['orchestra','jazz','chopin']);
+ for(let i=0;i<12;i++)assert.equal(bag.next(failed).id,'liszt');
+ failed.add('liszt');assert.equal(bag.next(failed),null);
+ assert.equal(createConcertShuffleBag([]).next(),null);
+});
+
+test('a programme is visible before playback but media is not loaded or started without a gesture',async()=>{
+ const {player,media,project,win,timer,writes}=fixture(),before=JSON.stringify(project),track=player.currentTrack;
+ assert(track);assert.equal(player.state.status,'locked');assert.equal(player.state.needsGesture,true);
+ assert.equal(media.src,'');assert.equal(media.loadCalls,0);assert.equal(media.playCalls,0);assert.equal(writes.length,0);
+ for(let i=0;i<30;i++)player.updateContext();
+ assert.strictEqual(player.currentTrack,track);assert.equal(media.playCalls,0);
+ win.emit('pointerdown');await flush();timer.step(300);
+ assert.equal(media.playCalls,1);assert.equal(media.loadCalls,1);assert.equal(player.state.playing,true);
+ assert.equal(player.state.category,track.category);assert.equal(player.state.pianist,track.pianist);
+ assert.equal(JSON.stringify(project),before);player.destroy();
+});
+
+test('entering and leaving the concert hall preserves the exact recording and position',async()=>{
+ const {player,media,timer,setScene}=fixture();await player.unlock();timer.step(300);
+ const track=player.currentTrack,source=media.src,loads=media.loadCalls,plays=media.playCalls;
+ media.currentTime=83.125;
+ assert(Math.abs(media.volume-.75*.06)<1e-8);
+ setScene({kind:'concert'});timer.step(140);
+ assert(media.volume>.045&&media.volume<.75,'The indoor gain should ramp rather than jump');
+ timer.step(160);assert.equal(media.volume,.75);assert.equal(player.currentTime,83.125);
+ setScene({kind:'shop',floor:1});timer.step(300);assert.equal(media.volume,.75*.025);
+ setScene(null);timer.step(300);assert.equal(media.volume,.75*.06);
+ assert.strictEqual(player.currentTrack,track);assert.equal(media.src,source);assert.equal(media.loadCalls,loads);assert.equal(media.playCalls,plays);assert.equal(player.currentTime,83.125);
+ player.destroy();
+});
+
+test('explicit player controls keep the Play gesture from starting and immediately pausing the programme',async()=>{
+ const {player,media,win}=fixture(),target={closest:selector=>selector==='[data-concert-controls]'?{}:null};
+ win.emit('pointerdown',{target});win.emit('keydown',{target,key:'Enter',repeat:false});await flush();
+ assert.equal(media.playCalls,0);assert.equal(player.state.status,'locked');
+ await player.play();assert.equal(media.playCalls,1);assert.equal(player.state.playing,true);player.destroy();
+});
+
+test('repeated frame context updates do not restart a gain ramp or media source',async()=>{
+ const {player,media,timer,setScene}=fixture();await player.unlock();timer.step(300);
+ setScene({kind:'concert'});
+ for(let i=0;i<60;i++){player.updateContext();timer.step(16);assert(timer.pending<=1);}
+ assert.equal(media.volume,.75);assert.equal(media.loadCalls,1);assert.equal(media.playCalls,1);assert.equal(timer.pending,0);player.destroy();
+});
+
+test('outdoor music requires a placed opera house while the entered concert scene remains playable',async()=>{
+ const {player,media,project,setScene}=fixture();project.objects=[];player.updateContext();await player.unlock();
+ assert.equal(player.state.status,'inactive');assert.equal(player.state.hasVenue,false);assert.equal(media.playCalls,0);
+ setScene({kind:'concert'});await flush();assert.equal(media.playCalls,1);assert.equal(player.state.context,'concert');
+ media.currentTime=29;setScene(null);assert.equal(media.paused,true);assert.equal(player.currentTime,29);
+ project.objects.push({asset:'sydney-opera-house'});player.updateContext();await flush();assert.equal(media.playCalls,2);assert.equal(player.currentTime,29);player.destroy();
+});
+
+test('manual pause survives later gestures and context changes until explicitly resumed',async()=>{
+ const {player,media,win,setScene}=fixture();await player.unlock();media.currentTime=42;player.pause();
+ win.emit('pointerdown');win.emit('keydown',{key:'e',repeat:false});setScene({kind:'concert'});await flush();
+ assert.equal(media.paused,true);assert.equal(media.playCalls,1);assert.equal(player.state.status,'paused');
+ await player.play();assert.equal(media.playCalls,2);assert.equal(player.currentTime,42);player.destroy();
+});
+
+test('native autoplay rejection is handled and a subsequent real gesture retries the same recording',async()=>{
+ const {player,media,win}=fixture(),track=player.currentTrack,error=new Error('gesture required');error.name='NotAllowedError';media.failPlay=error;
+ assert.equal(await player.unlock(),false);assert.equal(player.state.status,'locked');assert.equal(player.state.needsGesture,true);
+ assert.strictEqual(player.currentTrack,track);assert.deepEqual(player.state.failedTrackIds,[]);
+ win.emit('keydown',{key:'e',repeat:false});await flush();assert.equal(player.state.playing,true);assert.equal(media.loadCalls,1);assert.equal(media.playCalls,2);player.destroy();
+});
+
+test('ending a recording changes metadata and stage category to the recording actually selected',async()=>{
+ const {player,media}=fixture(),changes=[];player.onChange((state,reason)=>{if(reason==='track')changes.push({id:state.trackId,category:state.category,pianist:state.pianist});});await player.play();
+ const seen=new Set([player.currentTrack.id]);
+ for(let i=0;i<12;i++){
+  const previous=player.currentTrack;media.currentTime=media.duration;media.emit('ended');await flush();
+  assert.notEqual(player.currentTrack.id,previous.id);assert.equal(media.src,player.currentTrack.src);assert.equal(player.currentTime,0);seen.add(player.currentTrack.id);
+  const change=changes.at(-1);assert.equal(change.id,player.currentTrack.id);assert.equal(change.category,player.currentTrack.category);assert.equal(change.pianist,player.currentTrack.pianist);
+ }
+ assert.equal(seen.size,programme.length);assert.equal(changes.length,12);player.destroy();
+});
+
+test('media errors try each available recording once and stop instead of looping requests forever',async()=>{
+ const {player,media}=fixture();await player.play();
+ const attempted=[];
+ for(let i=0;i<programme.length;i++){attempted.push(player.currentTrack.id);media.emit('error');await flush();}
+ assert.equal(new Set(attempted).size,programme.length);assert.equal(media.playCalls,programme.length);assert.equal(player.state.status,'unavailable');assert.equal(media.paused,true);
+ const loads=media.loadCalls;for(let i=0;i<50;i++){player.updateContext();media.emit('error');}
+ assert.equal(media.loadCalls,loads);assert.equal(media.playCalls,programme.length);assert.match(player.state.error,/could not be played/);
+ await player.retry();assert.equal(player.state.playing,true);assert.equal(player.state.failedTrackIds.length,0);assert.equal(media.playCalls,programme.length+1);player.destroy();
+});
+
+test('visibility and page lifecycle pause safely and resume without changing time or selection',async()=>{
+ const {player,media,doc,win,timer}=fixture();await player.play();media.currentTime=51.5;
+ doc.hidden=true;doc.emit('visibilitychange');assert.equal(media.paused,true);assert.equal(media.volume,0);assert.equal(timer.pending,0);assert.equal(player.state.status,'suspended');
+ const track=player.currentTrack;doc.hidden=false;doc.emit('visibilitychange');await flush();assert.equal(media.paused,false);assert.equal(player.currentTime,51.5);
+ win.emit('pagehide');assert.equal(media.paused,true);win.emit('pageshow');await flush();assert.equal(media.paused,false);assert.strictEqual(player.currentTrack,track);assert.equal(player.currentTime,51.5);assert.equal(media.loadCalls,1);player.destroy();
+});
+
+test('mute and master volume persist only their own preference without resetting the programme',async()=>{
+ const {player,media,timer,writes,values,storage}=fixture();await player.play();media.currentTime=72;
+ player.setVolume(.4);timer.step(300);assert.equal(media.volume,.4*.06);player.setMuted(true);assert.equal(media.muted,true);timer.step(300);assert.equal(media.volume,0);
+ assert.equal(player.currentTime,72);assert.equal(media.paused,false);assert.equal(player.state.playing,true);
+ player.toggleMute();timer.step(300);assert.equal(media.muted,false);assert.equal(media.volume,.4*.06);assert.equal(media.loadCalls,1);
+ assert.deepEqual([...new Set(writes)],[CONCERT_AUDIO_PREFERENCE_KEY]);assert.deepEqual(JSON.parse(values.get(CONCERT_AUDIO_PREFERENCE_KEY)),{version:1,volume:.4,muted:false});
+ const restored=fixture({storage});assert.equal(restored.player.state.volume,.4);assert.equal(restored.player.state.muted,false);assert.equal(restored.media.playCalls,0);
+ restored.player.destroy();player.destroy();
+});
+
+test('storage failures and unavailable browser audio produce usable state without throwing',async()=>{
+ const {player}=fixture({AudioConstructor:null,storage:{getItem(){throw Error('private');},setItem(){throw Error('quota');}}});
+ assert.equal(player.state.status,'unavailable');assert(player.currentTrack);assert.equal(await player.play(),false);assert.doesNotThrow(()=>{player.setVolume(.2);player.setMuted(true);player.destroy();});
+ const empty=fixture({programme:[]});assert.equal(empty.player.state.status,'empty');assert.equal(await empty.player.play(),false);empty.player.destroy();
+});
+
+test('destroy removes media and gesture listeners, cancels ramps, and prevents any later playback',async()=>{
+ const {player,media,win,doc,timer}=fixture();await player.play();player.updateContext({kind:'concert'});assert(timer.pending>0);
+ let changes=0;player.onChange(()=>changes++);player.destroy();const after=changes;
+ assert.equal(player.state.status,'destroyed');assert.equal(media.paused,true);assert.equal(media.src,'');assert.equal(media.listenerCount,0);assert.equal(win.listenerCount,0);assert.equal(doc.listenerCount,0);assert.equal(timer.pending,0);
+ win.emit('pointerdown');media.emit('ended');timer.step(1000);assert.equal(await player.play(),false);player.skip();player.destroy();assert.equal(changes,after);
+});

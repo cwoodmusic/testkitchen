@@ -1,4 +1,4 @@
-import {createShowroomApartmentPlan} from './showroom-apartments.mjs?v=apartment-showrooms-1';
+import {createShowroomApartmentPlan} from './showroom-apartments.mjs?v=opera-concert-1';
 
 // Eight private apartment showrooms occupy the same cells in the store's
 // exact floor plate. The lobby shows their closed doors, then opening one

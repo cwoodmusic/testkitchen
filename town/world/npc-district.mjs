@@ -1,6 +1,6 @@
-import {blocked,height,surfaceAt,COLS,ROWS,TILE} from './model.mjs?v=apartment-showrooms-1';
-import {npcCollisionProject} from './npc-collision.mjs?v=apartment-showrooms-1';
-import {npcConnectionClear} from './npc-navigation.mjs?v=apartment-showrooms-1';
+import {blocked,height,surfaceAt,COLS,ROWS,TILE} from './model.mjs?v=opera-concert-1';
+import {npcCollisionProject} from './npc-collision.mjs?v=opera-concert-1';
+import {npcConnectionClear} from './npc-navigation.mjs?v=opera-concert-1';
 
 const WORLD_W=COLS*TILE,WORLD_H=ROWS*TILE;
 const cardinal=['down','left','up','right'];

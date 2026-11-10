@@ -1,0 +1,64 @@
+Coda Town Concert Hall — recording credits
+=========================================
+
+Recordings have their own rights, separate from their compositions.
+The general code licence does not replace the following recording licences.
+Liszt adapted audio is distributed under CC BY-SA 4.0; share-alike applies to that audio.
+Historic jazz is public domain in the United States; no worldwide CC0 licence is asserted.
+For full source notes see docs/opera-music-sources.md and manifest.json.
+
+grieg-morning.mp3
+Morning Mood — Peer Gynt, Op. 46 No. 1 by Edvard Grieg. Performed by Musopen Symphony (Czech National Symphony Orchestra). Public domain (rights-holder dedication). Source: https://commons.wikimedia.org/wiki/File:Grieg_-_Peer_Gynt_Suite_No._1,_Op._46_-_I._Morning_Mood_(Musopen_Symphony).flac. Coda Town edition: loudness-normalised and transcoded to MP3; no musical cuts.
+Licence / rights: https://creativecommons.org/publicdomain/mark/1.0/
+Scope: Rights-holder public-domain dedication as documented by source; composition public domain.
+Mirror: https://raw.githubusercontent.com/jpavia10/titan-reliquary-preview/f22a0725b0879dc68b7d16e2674556a9b9f63c95/audio/music/grieg-morning-mood.m4a
+SHA256: 116580cbb333799bc044290436cf27e8e0be8c1819c26e0ffcd82db7a6ae9c47
+
+chopin-nocturne.mp3
+Nocturne in E-flat major, Op. 9 No. 2 by Frédéric Chopin. Performed by Frank Lévy, piano / Musopen. Public domain (rights-holder dedication). Source: https://commons.wikimedia.org/wiki/File:Chopin_-_Nocturne_No._2_in_E-flat_major,_Op._9_No._2_(Frank_Levy).flac. Coda Town edition: loudness-normalised and transcoded to MP3; no musical cuts.
+Licence / rights: https://creativecommons.org/publicdomain/mark/1.0/
+Scope: Rights-holder public-domain dedication as documented by source; composition public domain.
+Mirror: https://raw.githubusercontent.com/lfpose/caset/1bc77a0b112191dbea85283a52599c6bfa9edb62/public/audio/classical/b2.mp3
+SHA256: 74d89f53b5f773d712f21d5edfa8d9e5fff3e895194f88f74a972d519a1f4d9c
+
+oliver-dippermouth.mp3
+Dippermouth Blues by Joe “King” Oliver and Louis Armstrong. Performed by King Oliver’s Creole Jazz Band, with Louis Armstrong. Public domain in the United States. Source: https://archive.org/details/JV-506-1923-QmcAz5oYhG3xCpMdqE3eUGmfsGHz7vPeUdJnP1Ai9uwWxE.mp3. Coda Town edition: loudness-normalised and transcoded to MP3; no musical cuts.
+Licence / rights: https://www.copyright.gov/music-modernization/pre1972-soundrecordings/
+Scope: US public domain from historic publication dates; no blanket worldwide CC0 grant is asserted.
+Mirror: https://raw.githubusercontent.com/lfpose/caset/1bc77a0b112191dbea85283a52599c6bfa9edb62/public/audio/jazz/a1.mp3
+SHA256: 4c5176a5bb185ef30fed107ad8f500c38aff10c68162aacaeb267a60390b7650
+
+beethoven-storm.mp3
+Symphony No. 6 “Pastoral” — IV. Thunderstorm by Ludwig van Beethoven. Performed by Musopen orchestra (individual orchestra not identified in source). Public domain (rights-holder dedication). Source: https://commons.wikimedia.org/wiki/File:Ludwig_van_Beethoven_-_symphony_no._6_in_f_major_'pastoral',_op._68_-_iv._allegro.ogg. Coda Town edition: loudness-normalised and transcoded to MP3; no musical cuts.
+Licence / rights: https://creativecommons.org/publicdomain/mark/1.0/
+Scope: Rights-holder public-domain dedication as documented by source; composition public domain.
+Mirror: https://raw.githubusercontent.com/jpavia10/titan-reliquary-preview/f22a0725b0879dc68b7d16e2674556a9b9f63c95/audio/music/supercell-pastoral-storm.m4a
+SHA256: fbec11383ff34ecddd474233b4a058145337a4bc8f150c51d2bf530b0910de41
+
+liszt-consolation.mp3
+Consolation No. 3 in D-flat major, S. 172 by Franz Liszt. Performed by Benedict Kramer, piano. CC BY-SA 4.0. Source: https://commons.wikimedia.org/wiki/File:Franz_Liszt_-_Consolation_No._3,_Lento_placido.ogg. Coda Town edition: loudness-normalised and transcoded to MP3; no musical cuts.
+Licence / rights: https://creativecommons.org/licenses/by-sa/4.0/
+Scope: Worldwide permission for commercial redistribution and adaptation with attribution and share-alike for adapted audio.
+Mirror: https://raw.githubusercontent.com/jpavia10/titan-reliquary-preview/f22a0725b0879dc68b7d16e2674556a9b9f63c95/audio/music/liszt-consolation-3.m4a
+SHA256: 52b73b036c14f8f73c307ebc15a254c3495c5a3036e1a9ce36a8d9c545fbea8e
+
+wolverines-riverboat.mp3
+Riverboat Shuffle by Hoagy Carmichael and Dick Voynow. Performed by The Wolverine Orchestra, with Bix Beiderbecke. Public domain in the United States. Source: https://archive.org/details/JV-1037-1924-QmSL2AedU963Vvd7rPBrdnfVEyNVWFj6G8GtnfA5AxGN2o.mp3. Coda Town edition: loudness-normalised and transcoded to MP3; no musical cuts.
+Licence / rights: https://www.copyright.gov/music-modernization/pre1972-soundrecordings/
+Scope: US public domain from historic publication dates; no blanket worldwide CC0 grant is asserted.
+Mirror: https://raw.githubusercontent.com/lfpose/caset/1bc77a0b112191dbea85283a52599c6bfa9edb62/public/audio/jazz/a3.mp3
+SHA256: b5acb51e64f8aedd036295ba1fbc5ba430f309f7e2abf5d562b99187a1bb0cee
+
+grieg-mountain-king.mp3
+In the Hall of the Mountain King — Peer Gynt, Op. 46 No. 4 by Edvard Grieg. Performed by Musopen Symphony (Czech National Symphony Orchestra). Public domain (rights-holder dedication). Source: https://commons.wikimedia.org/wiki/File:Grieg_-_Peer_Gynt_Suite_No._1,_Op._46_-_IV._In_the_Hall_of_the_Mountain_King_(Musopen_Symphony).flac. Coda Town edition: loudness-normalised and transcoded to MP3; no musical cuts.
+Licence / rights: https://creativecommons.org/publicdomain/mark/1.0/
+Scope: Rights-holder public-domain dedication as documented by source; composition public domain.
+Mirror: https://raw.githubusercontent.com/jpavia10/titan-reliquary-preview/f22a0725b0879dc68b7d16e2674556a9b9f63c95/audio/music/valhalla-mountainking.m4a
+SHA256: af6403d8b55155bfde69c78bca413e4e1587fecaa0bc38b0731c8c9bbfb7ab25
+
+debussy-clair-de-lune.mp3
+Clair de lune — Suite bergamasque by Claude Debussy. Performed by Laurens Goedhart, piano. CC BY 3.0. Source: https://commons.wikimedia.org/wiki/File:Clair_de_lune_(Claude_Debussy)_Suite_bergamasque.ogg. Coda Town edition: loudness-normalised and transcoded to MP3; no musical cuts.
+Licence / rights: https://creativecommons.org/licenses/by/3.0/
+Scope: Worldwide permission for commercial redistribution and adaptation with attribution.
+Mirror: https://raw.githubusercontent.com/lfpose/caset/1bc77a0b112191dbea85283a52599c6bfa9edb62/public/audio/classical/b3.mp3
+SHA256: 4bb917020c969e38c0e58e93189a19c7bc747e8e87ab20b7e0e4ed20bc9e0472

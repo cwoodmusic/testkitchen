@@ -1,4 +1,4 @@
-import {SHOWROOM_FURNITURE} from './showroom-furniture-definitions.mjs?v=apartment-showrooms-1';
+import {SHOWROOM_FURNITURE} from './showroom-furniture-definitions.mjs?v=opera-concert-1';
 
 const signatures=new Map(SHOWROOM_FURNITURE.map(item=>[item.id,item]));
 const rect=(x,y,w,h)=>({x,y,w,h});

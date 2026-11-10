@@ -1,5 +1,5 @@
-import {cell,key,COLS,ROWS} from '../world/model.mjs?v=apartment-showrooms-1';
-import {curveBounds,cornerStyles} from '../world/round-geometry.mjs?v=apartment-showrooms-1';
+import {cell,key,COLS,ROWS} from '../world/model.mjs?v=opera-concert-1';
+import {curveBounds,cornerStyles} from '../world/round-geometry.mjs?v=opera-concert-1';
 const featureKey=q=>[q.corner,q.cx,q.cy,q.r,q.kind,q.underX,q.underY,q.lift||0,q.concave?1:0,q.under?.surface,q.under?.level,q.under?.paving].join(':');
 const styleOf=q=>cornerStyles.includes(q.style)?q.style:'smooth';
 const directions=[[-1,-1,'nw'],[1,-1,'ne'],[-1,1,'sw'],[1,1,'se']];

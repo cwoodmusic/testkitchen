@@ -1,0 +1,49 @@
+{
+  "source": "Generated original game art; architecture-only concert props. Refined to match the modern Sydney Opera House Concert Hall reference.",
+  "sprites": {
+    "audience-chair": {
+      "file": "hall-audience-chair.png",
+      "width": 334,
+      "height": 350
+    },
+    "stage-chair": {
+      "file": "hall-stage-chair.png",
+      "width": 215,
+      "height": 380
+    },
+    "organ": {
+      "file": "hall-organ.png",
+      "width": 411,
+      "height": 426
+    },
+    "reflector": {
+      "file": "hall-reflector.png",
+      "width": 426,
+      "height": 273
+    },
+    "balcony-rail": {
+      "file": "hall-balcony-rail.png",
+      "width": 427,
+      "height": 243
+    },
+    "timber-rib": {
+      "file": "hall-timber-rib.png",
+      "width": 382,
+      "height": 362
+    },
+    "door": {
+      "file": "hall-door.png",
+      "width": 372,
+      "height": 367
+    },
+    "sconce": {
+      "file": "hall-sconce.png",
+      "width": 283,
+      "height": 337
+    }
+  },
+  "revision": 2,
+  "sourceFile": "hall-props-source-modern.png",
+  "styleReference": "Modern honey beech acoustic ribs, unornamented silver pipe organ, plain timber/brass gallery rails, simple red upholstery, flush timber exit doors, pink acoustic petals. Replaces the initial baroque/gilded prop treatment.",
+  "packing": "Four columns by two rows, in sprites manifest order. Alpha values 0\u201316 discarded to remove colored matte; tight cutouts fitted into the unchanged frame dimensions with six-pixel transparent gutters."
+}

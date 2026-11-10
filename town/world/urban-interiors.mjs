@@ -1,19 +1,22 @@
-import {assetImage} from './asset-color.mjs?v=apartment-showrooms-1';
-import {SHOWROOMS,applyShowroomLayout} from './showroom-layout.mjs?v=apartment-showrooms-1';
-import {applyShowroomApartment} from './showroom-apartments.mjs?v=apartment-showrooms-1';
-import {drawShowroomFloor,drawShowroomWallpaper} from './showroom-materials.mjs?v=apartment-showrooms-1';
+import {assetImage} from './asset-color.mjs?v=opera-concert-1';
+import {SHOWROOMS,applyShowroomLayout} from './showroom-layout.mjs?v=opera-concert-1';
+import {applyShowroomApartment} from './showroom-apartments.mjs?v=opera-concert-1';
+import {drawShowroomFloor,drawShowroomWallpaper} from './showroom-materials.mjs?v=opera-concert-1';
+import {getConcertHall,renderConcertHallBackground,concertHallDrawables} from './concert-hall.mjs?v=opera-concert-1';
+import {renderStagePerformance} from './concert-performers.mjs?v=opera-concert-1';
 // The apartment tower has one consistent floor plate. Residential floors use
 // a 608px common hall and 1120px private apartments, within its 2304 × 1728 lot.
 export const FLOOR_COUNT=15;
 export const TOWER_FOOTPRINT=Object.freeze({width:2304,height:1728});
 export const STORE_FOOTPRINT=Object.freeze({width:3072,height:2048});
-export {residents} from './resident-profiles.mjs?v=apartment-showrooms-1';
-import {residents} from './resident-profiles.mjs?v=apartment-showrooms-1';
+export {residents} from './resident-profiles.mjs?v=opera-concert-1';
+import {residents} from './resident-profiles.mjs?v=opera-concert-1';
 const sceneCache=new Map(),backgroundCache=new Map();
 let nativeCatalog=null,woodTexture=null,npcRenderer=null;
+const drawConcertNPC=(ctx,actor,time)=>npcRenderer?.drawNPC(ctx,actor,time);
 export function configureUrbanInteriors(catalog){nativeCatalog=catalog;for(const scene of sceneCache.values())warmScene(scene);}
 if(typeof document!=='undefined'){
- import('./ground-textures.mjs?v=apartment-showrooms-1').then(({groundTextures})=>{woodTexture=groundTextures.wood;backgroundCache.clear();}).catch(()=>{});
+ import('./ground-textures.mjs?v=opera-concert-1').then(({groundTextures})=>{woodTexture=groundTextures.wood;backgroundCache.clear();}).catch(()=>{});
 }
 const rect=(x,y,w,h)=>({x,y,w,h});
 const zone=(id,label,x,y,w,h,action,extra={})=>({id,label,x,y,w,h,action,...extra});
@@ -121,6 +124,7 @@ function warmScene(scene){
  for(const item of scene.doors||[])nativeCatalog?.get(item.asset)?.ensureFull?.().then(()=>backgroundCache.delete(scene.id)).catch(()=>{});
 }
 export function getInterior(scene={}){
+ if(scene.kind==='concert')return getConcertHall();
  const requestedKind=scene.kind||'lobby',floor=Math.max(1,Math.min(15,Math.round(Number(scene.floor)||1))),kind=requestedKind==='hall'&&floor===1?'lobby':requestedKind==='showroom'&&!SHOWROOMS.some(room=>room.id===scene.showroomId)?'shop':requestedKind,resident=scene.resident||'player',id=kind==='apartment'?`apartment-${resident}`:kind==='hall'?`tower-floor-${floor}`:kind==='shop'?'furniture-store':kind==='showroom'?'showroom-'+scene.showroomId:'tower-lobby';
  if(!sceneCache.has(id)){const s=kind==='apartment'?apartment(resident):kind==='hall'?hall(floor):kind==='shop'?shop():kind==='showroom'?showroomApartment(scene.showroomId):lobby();sceneCache.set(id,s);warmScene(s);}return sceneCache.get(id);
 }
@@ -217,8 +221,18 @@ function drawItem(c,item){
 export function residentInteractionZones(actors=[]){
  return actors.filter(a=>!a.hidden&&Number.isFinite(a.x)&&Number.isFinite(a.y)).map(a=>zone(`resident-${a.id}`,`Talk to ${a.name||residents.find(r=>r.id===a.id)?.name||'your neighbour'}`,a.x-72,a.y-64,144,144,'resident',{resident:a.id}));
 }
-export function renderInterior(c,scene,{player,drawPlayer,time=0,decor=[],catalog,actors}={}){
- if(catalog&&catalog!==nativeCatalog)configureUrbanInteriors(catalog);const s=getInterior(scene);c.drawImage(background(s),0,0);
+export function renderInterior(c,scene,{player,drawPlayer,time=0,decor=[],catalog,actors,performance,audioTime,reducedMotion=false,viewport}={}){
+ if(catalog&&catalog!==nativeCatalog)configureUrbanInteriors(catalog);const s=getInterior(scene);
+ if(scene.kind==='concert'){
+  renderConcertHallBackground(c,s);
+  if(!npcRenderer&&typeof window!=='undefined'&&window.createCodaCharacterRenderer)npcRenderer=window.createCodaCharacterRenderer({worldScale:2.5});
+  const extraDrawables=concertHallDrawables(c,s,{viewport});
+  if(player&&drawPlayer)extraDrawables.push({y:player.y,draw:()=>drawPlayer(c,player)});
+  if(performance)renderStagePerformance(c,performance,{time,audioTime,catalog:nativeCatalog,drawNPC:drawConcertNPC,reducedMotion,extraDrawables,viewport});
+  else for(const item of extraDrawables)item.draw();
+  return;
+ }
+ c.drawImage(background(s),0,0);
  const queue=s.items.map(item=>({y:item.y,draw:()=>drawItem(c,item)}));
  for(const item of decor){if(!item||!nativeCatalog?.has(item.asset)||!Number.isFinite(item.x)||!Number.isFinite(item.y))continue;queue.push({y:item.y,draw:()=>drawItem(c,item)});}
  const people=Array.isArray(actors)?actors:s.actors;

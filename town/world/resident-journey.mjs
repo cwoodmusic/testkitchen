@@ -1,5 +1,5 @@
-import {residents} from './resident-profiles.mjs?v=apartment-showrooms-1';
-export {residents} from './resident-profiles.mjs?v=apartment-showrooms-1';
+import {residents} from './resident-profiles.mjs?v=opera-concert-1';
+export {residents} from './resident-profiles.mjs?v=opera-concert-1';
 
 const SPEED=156,GAIT=Math.PI*2/150;
 const journeys=new Map();

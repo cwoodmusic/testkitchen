@@ -1,0 +1,54 @@
+{
+  "note": "Selected recording-specific metadata retained from the pinned upstream intake report. These notices document source permissions; Coda Town does not assert a new rights waiver.",
+  "intakeMade": "2026-10-09T15:28:54Z",
+  "selected": [
+    {
+      "id": "liszt-consolation-3",
+      "picked": "File:Franz Liszt - Consolation No. 3, Lento placido.ogg",
+      "sourceMetadata": {
+        "file": "File:Franz Liszt - Consolation No. 3, Lento placido.ogg",
+        "url": "https://upload.wikimedia.org/wikipedia/commons/f/f5/Franz_Liszt_-_Consolation_No._3%2C_Lento_placido.ogg?utm_source=commons.wikimedia.org&utm_campaign=imageinfo&utm_content=original",
+        "size": 4398046,
+        "mime": "application/ogg",
+        "duration": 226.4,
+        "license": "CC BY-SA 4.0",
+        "artist": "Franz Liszt",
+        "desc": "Franz Liszt : Consolation No. 3, Lento placido",
+        "credit": "Private recording.",
+        "cats": "Compositions by Franz Liszt|Consolations (Liszt)|Items with VRTS permission confirmed|Media of the day|Audio files of classical music for piano|Audio files of music by Franz Liszt",
+        "page": "https://commons.wikimedia.org/wiki/File%3AFranz_Liszt_-_Consolation_No._3%2C_Lento_placido.ogg",
+        "score": 103.46601533333333,
+        "why": "ok",
+        "encoded_sec": 226.4
+      }
+    },
+    {
+      "id": "grieg-morning-mood",
+      "picked": "File:Grieg - Peer Gynt Suite No. 1, Op. 46 - I. Morning Mood (Musopen Symphony).flac",
+      "sourceMetadata": {
+        "file": "File:Grieg - Peer Gynt Suite No. 1, Op. 46 - I. Morning Mood (Musopen Symphony).flac",
+        "url": "https://upload.wikimedia.org/wikipedia/commons/c/c2/Grieg_-_Peer_Gynt_Suite_No._1%2C_Op._46_-_I._Morning_Mood_%28Musopen_Symphony%29.flac?utm_source=commons.wikimedia.org&utm_campaign=imageinfo&utm_content=original",
+        "size": 39347119,
+        "mime": "audio/flac",
+        "duration": 229.18304166666667,
+        "license": "Public domain",
+        "artist": "Edvard Grieg",
+        "desc": "​Grieg - Peer Gynt Suite No. 1, Op. 46 - I. Morning Mood",
+        "credit": "This work comes from the non profit U.S. organization Musopen where it is available at the following link: https://musopen.org/music/777-peer-gynt-suite-no-1-op-46/ The Musopen website requires all uploaders to \"represent and warrant that content uploaded to the site is in the public domain\" (see FA",
+        "cats": "Peer Gynt (Grieg)|PD-author|Musopen|PD-old-100-expired|CC-PD-Mark|Audio files of music by Edvard Grieg|Musopen Kickstarter Project",
+        "page": "https://commons.wikimedia.org/wiki/File%3AGrieg_-_Peer_Gynt_Suite_No._1%2C_Op._46_-_I._Morning_Mood_%28Musopen_Symphony%29.flac",
+        "score": 114.0,
+        "why": "ok",
+        "encoded_sec": 229.2
+      }
+    }
+  ],
+  "sourceLinks": {
+    "canonicalAccess": "Canonical Commons/Archive hosts were blocked in this managed environment. Recording-specific metadata and permission notices were checked through pinned legitimate GitHub mirrors; canonical source URLs retained for independent review.",
+    "titanManifest": "https://github.com/jpavia10/titan-reliquary-preview/blob/f22a0725b0879dc68b7d16e2674556a9b9f63c95/audio/music/manifest.json",
+    "titanCredits": "https://github.com/jpavia10/titan-reliquary-preview/blob/f22a0725b0879dc68b7d16e2674556a9b9f63c95/audio/music/CREDITS.md",
+    "titanIntake": "https://github.com/jpavia10/titan-reliquary-preview/blob/f22a0725b0879dc68b7d16e2674556a9b9f63c95/docs/music/intake_report.json",
+    "casetSources": "https://github.com/lfpose/caset/blob/1bc77a0b112191dbea85283a52599c6bfa9edb62/SOURCES.md",
+    "casetProgramme": "https://github.com/lfpose/caset/blob/1bc77a0b112191dbea85283a52599c6bfa9edb62/public/tapes.json"
+  }
+}

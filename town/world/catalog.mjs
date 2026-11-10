@@ -1,19 +1,20 @@
-import {musicSquareCollisionGeometry,musicSquareSceneParts,propCollisionBoxes,gazeboSceneParts,urbanBuildingCollision} from './scene-collision.mjs?v=apartment-showrooms-1';
-import {configureMusicWallArt,registerMusicWallAssets} from './music-wall-art.mjs?v=apartment-showrooms-1';
-import {musicSquareWalls} from './music-wall-geometry.mjs?v=apartment-showrooms-1';
-import {drawMusicSquareScene} from './music-square-entrances.mjs?v=apartment-showrooms-1';
-import {registerDecor} from './decor-pack.mjs?v=apartment-showrooms-1';
-import {registerLeisure} from './leisure-pack.mjs?v=apartment-showrooms-1';
-import {registerShowroomFurniture} from './showroom-furniture.mjs?v=apartment-showrooms-1';
-import {arcadeGeometry,drawArcade} from './arcade.mjs?v=apartment-showrooms-1';
-import {constructionArt,stairArt,stairTreadBounds,overgrowthArt,estateArt,cliffDecorArt} from './detail-art.mjs?v=apartment-showrooms-1';
-import {estateDefinitions,estateBoxes} from './estates.mjs?v=apartment-showrooms-1';
-import {townArtSources,house} from '../art.mjs?v=apartment-showrooms-1';
+import {musicSquareCollisionGeometry,musicSquareSceneParts,propCollisionBoxes,gazeboSceneParts,urbanBuildingCollision} from './scene-collision.mjs?v=opera-concert-1';
+import {configureMusicWallArt,registerMusicWallAssets} from './music-wall-art.mjs?v=opera-concert-1';
+import {musicSquareWalls} from './music-wall-geometry.mjs?v=opera-concert-1';
+import {drawMusicSquareScene} from './music-square-entrances.mjs?v=opera-concert-1';
+import {registerDecor} from './decor-pack.mjs?v=opera-concert-1';
+import {registerLeisure} from './leisure-pack.mjs?v=opera-concert-1';
+import {registerShowroomFurniture} from './showroom-furniture.mjs?v=opera-concert-1';
+import {arcadeGeometry,drawArcade} from './arcade.mjs?v=opera-concert-1';
+import {constructionArt,stairArt,stairTreadBounds,overgrowthArt,estateArt,cliffDecorArt} from './detail-art.mjs?v=opera-concert-1';
+import {estateDefinitions,estateBoxes} from './estates.mjs?v=opera-concert-1';
+import {townArtSources,house} from '../art.mjs?v=opera-concert-1';
 import {homeGeometry,ARCHITECTURES} from '../model.mjs';
-import {registerUrbanDetails} from './urban-kit.mjs?v=apartment-showrooms-1';
-import {registerUrbanRoads} from './urban-roads.mjs?v=apartment-showrooms-1';
-import {registerRoadLights} from './road-light-art.mjs?v=apartment-showrooms-1';
-import {registerFestivalLights} from './festival-lights.mjs?v=apartment-showrooms-1';
+import {registerUrbanDetails} from './urban-kit.mjs?v=opera-concert-1';
+import {registerUrbanRoads} from './urban-roads.mjs?v=opera-concert-1';
+import {registerRoadLights} from './road-light-art.mjs?v=opera-concert-1';
+import {registerFestivalLights} from './festival-lights.mjs?v=opera-concert-1';
+import {registerOperaBuilding} from './opera-building.mjs?v=opera-concert-1';
 export const sources=townArtSources(),catalog=new Map();
 function add(id,name,group,w,h,draw,boxes=[],layer='objects'){const a={id,name,group,w:Math.ceil(w),h:Math.ceil(h),boxes,layer};a.draw=draw;let cached;Object.defineProperty(a,'canvas',{get(){if(!cached){cached=document.createElement('canvas');cached.width=a.w;cached.height=a.h;draw(cached.getContext('2d'));}return cached;}});catalog.set(id,a);return a;}
 function sprite(group,i,name,w,boxes,layer){const s=sources[group][i],h=w*s.sh/s.sw;return add(`${group}-${i}-${w}`,name,group,w,h,c=>c.drawImage(s.image,s.sx,s.sy,s.sw,s.sh,0,0,w,h),boxes?.(w,h)||[],layer);}
@@ -61,6 +62,7 @@ registerUrbanRoads(add);
 registerRoadLights(add,sources);
 await registerFestivalLights(add,catalog);
 await registerUrbanDetails(add);
+await registerOperaBuilding(add);
 // Existing street furniture belongs in the city kit as well as its original
 // category. Keep its saved-map ID, artwork and collision intact.
 for(const a of catalog.values())if(a.urban||a.group==='street furniture'||['decor-14-01','decor-14-02','decor-14-03','decor-09-02','props-4-960','music-square','coda-arcade'].includes(a.id))a.kit='urban';
