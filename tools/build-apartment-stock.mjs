@@ -1,5 +1,6 @@
 import {readFileSync,writeFileSync} from 'node:fs';
 import {fileURLToPath} from 'node:url';
+import {FAMILY_FURNITURE_ASSETS} from '../town/world/family-furniture-definitions.mjs';
 import {APARTMENT_COLLECTIONS} from '../town/world/apartment-collection-definitions.mjs';
 
 const prices={"bed":32000,"sofa":28000,"wardrobe":24000,"nightstand":7000,"desk":20000,"desk-chair":6500,"reading-chair":12000,"dining-table":18000,"dining-chair":6000,"coffee-table":10000,"sink":24000,"stove":22000,"fridge":30000,"counter":18000,"pantry":16000,"toilet":9000,"vanity":16000,"bath-fixture":28000,"linen-storage":9000,"mirror":5000,"shelf":6500,"record-console":48000,"floor-lamp":12000,"table-lamp":6500,"rug":8000,"poster":2500,"toy":3000,"lava-lamp":9500,"arcade":75000,"instrument":100000,"plant":3500,"clock":4500};
@@ -44,8 +45,14 @@ const playfulBegin='  // BEGIN GENERATED PLAYFUL DECOR PRODUCTS',playfulEnd='  /
 if(!current.includes(playfulBegin)||!current.includes(playfulEnd))throw Error('Furniture catalogue playful-decor markers are missing.');
 const collectionText=current.slice(0,current.indexOf(begin))+fragment+current.slice(current.indexOf(end)+end.length);
 const playfulFragment=playfulBegin+'\n'+playfulRows.map(row=>'  '+JSON.stringify(row)).join(',\n')+'\n'+playfulEnd;
-const next=collectionText.slice(0,collectionText.indexOf(playfulBegin))+playfulFragment+collectionText.slice(collectionText.indexOf(playfulEnd)+playfulEnd.length);
+let next=collectionText.slice(0,collectionText.indexOf(playfulBegin))+playfulFragment+collectionText.slice(collectionText.indexOf(playfulEnd)+playfulEnd.length);
+const familyPrices={'dining-table':42000,'coffee-table':22000,rug:24000,plant:12000};
+const familyRows=FAMILY_FURNITURE_ASSETS.map(a=>[a.id,a.name,familyPrices[a.slot],a.id,category(a.slot),1,a.owner]);
+const familyBegin='  // BEGIN GENERATED FAMILY ROOM PRODUCTS',familyEnd='  // END GENERATED FAMILY ROOM PRODUCTS';
+if(!next.includes(familyBegin)||!next.includes(familyEnd))throw Error('Family-room stock markers are missing.');
+const familyFragment=familyBegin+'\n'+familyRows.map(row=>'  '+JSON.stringify(row)).join(',\n')+'\n'+familyEnd;
+next=next.slice(0,next.indexOf(familyBegin))+familyFragment+next.slice(next.indexOf(familyEnd)+familyEnd.length);
 if(process.argv.includes('--check')){
  if(next!==current)throw Error('Furniture collection stock is stale. Run node tools/build-apartment-stock.mjs.');
- console.log('Apartment stock matches '+rows.length+' showroom pieces and '+playfulRows.length+' named playful keepsakes.');
-}else{writeFileSync(target,next);console.log('Generated '+rows.length+' showroom products and '+playfulRows.length+' named playful keepsakes.');}
+ console.log('Apartment stock matches '+rows.length+' showroom pieces and '+playfulRows.length+' named playful keepsakes and '+familyRows.length+' family-room products.');
+}else{writeFileSync(target,next);console.log('Generated '+rows.length+' showroom products and '+playfulRows.length+' named playful keepsakes and '+familyRows.length+' family-room products.');}

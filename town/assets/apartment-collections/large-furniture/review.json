@@ -1,0 +1,42 @@
+{
+  "version": 1,
+  "newProducts": 124,
+  "owners": 31,
+  "productsPerOwner": [
+    "dining-table",
+    "coffee-table",
+    "rug",
+    "plant"
+  ],
+  "newTableNativeViews": 124,
+  "tableFacings": 248,
+  "allProductFacings": 496,
+  "nativeAtlases": 62,
+  "acceptedNativeSprites": 124,
+  "acceptedRawGenerations": 12,
+  "preview": {
+    "file": "large-furniture/table-preview-a78649afaba6.webp",
+    "width": 1024,
+    "height": 512,
+    "bytes": 399580
+  },
+  "artifactBytes": 38892173,
+  "unreferencedProductionRasters": 0,
+  "packing": "Exact unresized RGBA native crops and lossless WebP; measured complete object bounds, no neighboring fragments. All124rawPNG crop and124atlas comparisons passed.",
+  "cardinalPairs": "New symmetric South fronts serve North; separately drawn East profiles serve West. No rotated or skewed furniture raster.",
+  "approvedExistingSourcesUnchanged": true,
+  "stockAndOwnedDataEditedByArtTask": false,
+  "verification": {
+    "focusedTests": 54,
+    "sourceHelpersAll248ViewsBounded": true,
+    "tableCache": {
+      "maxSources": 4,
+      "maxCanvases": 96,
+      "maxPixels": 4194304
+    },
+    "derivedCache": {
+      "maxCanvases": 48,
+      "maxPixels": 4194304
+    }
+  }
+}

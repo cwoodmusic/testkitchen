@@ -23,12 +23,12 @@ test('all 100 previously published products retain every non-price field exactly
  assert.equal(digest,'bad406b9bed9be100f733b5f8e88065e0d31034dac185821845337f8aae8da4a');
 });
 
-test('all515 furniture products use the expensive Notes tiers and fit within the unchanged wallet cap',()=>{
+test('all639 furniture products use the expensive Notes tiers and fit within the unchanged wallet cap',()=>{
  const originals=require('./fixtures/town-stock-original-100.json').products;
- assert.equal(furniture.length,515);
+ assert.equal(furniture.length,639);
  for(const item of furniture){
-  const slot=item.collectionOwner&&item.asset.slice(('collection-'+item.collectionOwner+'-').length);
-  assert.equal(item.price,priceTiers.playfulProducts[item.id]??(item.collectionOwner?priceTiers.collectionSlots[slot]:priceTiers.legacy[item.id]),item.id);
+  const family=item.asset.startsWith('family-'),slot=item.collectionOwner&&item.asset.slice(((family?'family-':'collection-')+item.collectionOwner+'-').length);
+  assert.equal(item.price,family?({'dining-table':42000,'coffee-table':22000,rug:24000,plant:12000}[slot]):priceTiers.playfulProducts[item.id]??(item.collectionOwner?priceTiers.collectionSlots[slot]:priceTiers.legacy[item.id]),item.id);
   assert.ok(item.price>=2000&&item.price<=150000,item.id);
   const original=originals.find(old=>old.id===item.id);
   if(original)assert.ok(item.price>original.price,item.id);
@@ -49,7 +49,7 @@ test('all515 furniture products use the expensive Notes tiers and fit within the
 
 test('the named playful additions preserve every field and price of all484 existing products',()=>{
  assert.equal(createHash('sha256').update(JSON.stringify(furniture.slice(0,484))).digest('hex'),'c7614f1191c1b9a08e2683f59bad74b361e41c834320119d21e1f0fe45763c89');
- const additions=furniture.slice(484),plush=additions.filter(item=>item.category==='plushies'),toys=additions.filter(item=>item.category==='playful decor');
+ const additions=furniture.slice(484,515),plush=additions.filter(item=>item.category==='plushies'),toys=additions.filter(item=>item.category==='playful decor');
  assert.equal(additions.length,31);assert.equal(plush.length,12);assert.equal(toys.length,19);
  assert.equal(new Set(furniture.map(item=>item.asset)).size,furniture.length,'A new item cannot charge twice for an already purchasable asset');
  for(const item of additions){assert(item.price>=4000&&item.price<=12000);assert.equal(item.id,'furniture-'+item.asset);assert.equal(item.scale,1);assert.equal(item.price,priceTiers.playfulProducts[item.id]);}
@@ -61,7 +61,7 @@ test('the named playful additions preserve every field and price of all484 exist
 test('every new named keepsake debits exactly once and restores with old ownership through the unchanged private profile schema',()=>{
  const disk=storage(500000),historic=JSON.parse(disk.getItem(Shop.KEY));
  historic.owned=['furniture-geranium'];historic.spent=20;historic.earned+=20;disk.setItem(Shop.KEY,JSON.stringify(historic));
- const wallet=Shop.createWallet({storage:disk,preserveEquipped:false}),additions=furniture.slice(484),debit=additions.reduce((sum,item)=>sum+item.price,0);
+ const wallet=Shop.createWallet({storage:disk,preserveEquipped:false}),additions=furniture.slice(484,515),debit=additions.reduce((sum,item)=>sum+item.price,0);
  for(const item of additions){assert.equal(wallet.buy(item.id).ok,true,item.id);const before=disk.getItem(Shop.KEY);assert.equal(wallet.buy(item.id).alreadyOwned,true);assert.equal(disk.getItem(Shop.KEY),before);}
  assert.equal(wallet.snapshot().balance,500000-debit);assert.equal(wallet.snapshot().spent,20+debit);assert(wallet.owns('furniture-geranium'));
  const capture=Profiles.capture(disk),target=storage();assert.equal(capture.ok,true,capture.error);assert.equal(Profiles.apply(target,capture.data).ok,true);
@@ -100,14 +100,15 @@ test('new showroom collections debit once and survive profile restoration alongs
  assert.equal(restored.snapshot().balance,14);assert.equal(restored.buy('furniture-collection-showroom-midcentury-studio-invented').ok,false);
 });
 
-test('the furniture catalog offers515 distinct native assets and matches browser ownership',async()=>{
+test('the furniture catalog offers639 distinct native assets and matches browser ownership',async()=>{
  const {decorDefinitions}=await import('../town/world/decor-definitions.mjs');
  const {APARTMENT_DECOR}=await import('../town/world/apartment-decor-definitions.mjs');
  const {APARTMENT_COLLECTION_ASSETS}=await import('../town/world/apartment-collection-definitions.mjs');
  const {WHIMSICAL_PLUSH_DEFINITIONS}=await import('../town/world/whimsical-plush-definitions.mjs');
+ const {FAMILY_FURNITURE_ASSETS}=await import('../town/world/family-furniture-definitions.mjs');
  const signatures=JSON.parse(fs.readFileSync(require.resolve('../town/assets/showrooms/manifest.json'),'utf8')).assets;
- const native=new Set([...decorDefinitions.map(item=>item.id),...Array.from({length:9},(_,i)=>`furniture-${i}-180`),...signatures.map(item=>item.id),...APARTMENT_DECOR.map(item=>item.id),...APARTMENT_COLLECTION_ASSETS.map(item=>item.id),...WHIMSICAL_PLUSH_DEFINITIONS.map(item=>item.id)]);
- assert.equal(furniture.length,515);assert.equal(new Set(furniture.map(item=>item.id)).size,515);
+ const native=new Set([...decorDefinitions.map(item=>item.id),...Array.from({length:9},(_,i)=>`furniture-${i}-180`),...signatures.map(item=>item.id),...APARTMENT_DECOR.map(item=>item.id),...APARTMENT_COLLECTION_ASSETS.map(item=>item.id),...WHIMSICAL_PLUSH_DEFINITIONS.map(item=>item.id),...FAMILY_FURNITURE_ASSETS.map(item=>item.id)]);
+ assert.equal(furniture.length,639);assert.equal(new Set(furniture.map(item=>item.id)).size,639);
  for(const item of furniture){
   assert.ok(native.has(item.asset),item.asset);assert.match(item.id,/^furniture-[a-z-]+$/);
   assert.ok(Number.isSafeInteger(item.price)&&item.price>0);assert.ok(Object.isFrozen(item));
@@ -250,7 +251,7 @@ test('signature furniture retains the same protected classroom purchase gate',()
 });
 
 test('all31 new plushes and musical toys keep the same classroom purchase gate',()=>{
- for(const item of furniture.slice(484)){
+ for(const item of furniture.slice(484,515)){
   const b=bridge(),buy={type:'coda-town-buy',id:item.id,requestId:'purchase:playful'};
   b.context.scope={mode:'owner',owned:true};b.context.profile={classId:'class-a',profileId:'student-a'};
   const before=b.wallet.snapshot();b.send(buy);assert.deepEqual(b.wallet.snapshot(),before,item.id);assert.equal(b.wallet.owns(item.id),false);
@@ -268,5 +269,21 @@ test('guest shopping works before enablement and developer bypass requires isola
   const b=bridge();b.context.scope={mode:'owner',owned:true};b.context.profile={classId:'class-a',profileId:'teacher-a',kind:'teacher'};
   b.context.testEnabled=true;b.context.testIsolated=isolated;b.send(buy);
   assert.equal(b.wallet.owns('furniture-sofa'),isolated);assert.equal(b.wallet.snapshot().balance,isolated?60000-price('furniture-sofa'):60000);
+ }
+});
+
+test('124 family-room options preserve every field of all515 published products',async()=>{
+ assert.equal(createHash('sha256').update(JSON.stringify(furniture.slice(0,515))).digest('hex'),'b658b7fc3dace5a4aba08dc71adda1052dcb916a5908f6de7bb0ff102f5f1f0c');
+ const {FAMILY_FURNITURE_ASSETS}=await import('../town/world/family-furniture-definitions.mjs');
+ const additions=furniture.slice(515);assert.equal(additions.length,124);assert.equal(new Set(additions.map(i=>i.collectionOwner)).size,31);
+ for(const product of additions){const asset=FAMILY_FURNITURE_ASSETS.find(a=>a.id===product.asset);assert(asset,product.id);assert.equal(product.id,'furniture-'+asset.id);assert.equal(product.scale,1);assert.equal(product.collectionOwner,asset.owner);assert(product.price>=12000&&product.price<=42000);}
+ for(const owner of new Set(additions.map(i=>i.collectionOwner)))assert.equal(additions.filter(i=>i.collectionOwner===owner).length,4);
+});
+
+test('family furniture uses the existing classroom purchase gate and debits once',()=>{
+ for(const item of furniture.slice(515)){
+  const b=bridge(),buy={type:'coda-town-buy',id:item.id,requestId:'purchase:family'};b.context.scope={mode:'owner',owned:true};b.context.profile={classId:'class-a',profileId:'student-a'};
+  const before=b.wallet.snapshot();b.send(buy);assert.deepEqual(b.wallet.snapshot(),before);assert.equal(b.wallet.owns(item.id),false);
+  b.context.window.ARCADE_ACCOUNTS_CONFIG.classroom.townFurnitureEnabled=true;b.send(buy);assert.equal(b.wallet.owns(item.id),true);assert.equal(b.wallet.snapshot().balance,60000-item.price);b.send(buy);assert.equal(b.wallet.snapshot().balance,60000-item.price);
  }
 });

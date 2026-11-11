@@ -1,21 +1,22 @@
 import test from 'node:test';
 import assert from 'node:assert/strict';
 import {APARTMENT_COLLECTIONS,APARTMENT_COLLECTION_ASSETS} from './apartment-collection-definitions.mjs';
+import {FAMILY_FURNITURE_ASSETS} from './family-furniture-definitions.mjs';
 import {getInterior,configureUrbanInteriors,apartmentDecorBounds,apartmentWallDecorBounds,residents} from './urban-interiors.mjs';
 import {SHOWROOMS} from './showroom-layout.mjs';
 
 let imageRequests=0;
-const definitions=new Map(APARTMENT_COLLECTION_ASSETS.map(a=>[a.id,a]));
-configureUrbanInteriors(new Map(APARTMENT_COLLECTION_ASSETS.map(a=>[a.id,{...a,ensureFull(){imageRequests++;return Promise.resolve();}}])));
+const definitions=new Map([...APARTMENT_COLLECTION_ASSETS,...FAMILY_FURNITURE_ASSETS].map(a=>[a.id,a]));
+configureUrbanInteriors(new Map([...definitions.values()].map(a=>[a.id,{...a,ensureFull(){imageRequests++;return Promise.resolve();}}])));
 const scenes=[...residents.map(r=>getInterior({kind:'apartment',resident:r.id})),getInterior({kind:'apartment',resident:'player'}),...SHOWROOMS.map(s=>getInterior({kind:'showroom',showroomId:s.id}))];
 const overlaps=(a,b)=>a.x<b.x+b.w&&a.x+a.w>b.x&&a.y<b.y+b.h&&a.y+a.h>b.y;
 
-test('every placed item in all 31 homes belongs to its owner and is never repeated',()=>{
+test('all31 retain unique original collections and add matching family-room pieces from their own theme',()=>{
  const seen=new Set();assert.equal(scenes.length,31);assert.equal(APARTMENT_COLLECTIONS.length,31);
  for(const scene of scenes){
   const owner=scene.kind==='showroom'?'showroom-'+scene.showroomId:scene.resident;
   assert(scene.items.length>=20,owner+' needs a complete furnished home');
-  for(const item of scene.items){const a=definitions.get(item.asset);assert(a,'Generic or unavailable furnishing '+item.asset);assert.equal(a.owner,owner);assert(!seen.has(a.id),'Repeated furnishing '+a.id);seen.add(a.id);
+  for(const item of scene.items){const a=definitions.get(item.asset);assert(a,'Generic or unavailable furnishing '+item.asset);assert.equal(a.owner,owner);if(!item.roomExpansion){assert(!seen.has(a.id),'Repeated original furnishing '+a.id);seen.add(a.id);}else assert.equal(item.roomExpansion,'family-room-1');
    assert(Math.abs(item.w/item.h-a.w/a.h)<1e-9,'Stretched furniture '+a.id);
   }
  }
@@ -23,7 +24,7 @@ test('every placed item in all 31 homes belongs to its owner and is never repeat
 });
 
 test('every home has its own lava lamp, poster, toy and arcade with practical home essentials',()=>{
- for(const scene of scenes){const slots=scene.items.map(item=>definitions.get(item.asset).slot);
+ for(const scene of scenes){const slots=scene.items.filter(i=>!i.roomExpansion).map(item=>definitions.get(item.asset).slot);
   for(const slot of ['bed','sofa','fridge','sink','stove','toilet','vanity','bath-fixture','wardrobe','dining-table','lava-lamp','poster','toy','arcade'])assert.equal(slots.filter(s=>s===slot).length,1,scene.id+' '+slot);
  }
 });

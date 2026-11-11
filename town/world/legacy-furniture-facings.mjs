@@ -1,6 +1,6 @@
-import {LEGACY_FURNITURE_ASSETS} from './legacy-furniture-definitions.mjs?v=room-editor-1';
-import {createApartmentCollectionRuntime} from './apartment-collection-runtime.mjs?v=room-editor-1';
-import {furnitureFootCenter} from './furniture-facing.mjs?v=room-editor-1';
+import {LEGACY_FURNITURE_ASSETS} from './legacy-furniture-definitions.mjs?v=family-rooms-1';
+import {createApartmentCollectionRuntime} from './apartment-collection-runtime.mjs?v=family-rooms-1';
+import {furnitureFootCenter} from './furniture-facing.mjs?v=family-rooms-1';
 
 const directions=['south','west','north','east'];
 const base=new URL('../assets/furniture-facings/',import.meta.url);

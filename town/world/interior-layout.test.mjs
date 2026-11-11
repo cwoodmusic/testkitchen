@@ -4,6 +4,7 @@ import {readFileSync,writeFileSync} from 'node:fs';
 import {getInterior,configureUrbanInteriors,residents,apartmentDecorBounds,apartmentWallDecorBounds} from './urban-interiors.mjs';
 import {SHOWROOMS} from './showroom-layout.mjs';
 import {APARTMENT_COLLECTION_ASSETS} from './apartment-collection-definitions.mjs';
+import {FAMILY_FURNITURE_ASSETS} from './family-furniture-definitions.mjs';
 import {createApartmentCollectionRuntime} from './apartment-collection-runtime.mjs';
 import {furnitureFacingBoxes,furnitureFacingBounds} from './furniture-facing.mjs';
 
@@ -13,6 +14,7 @@ const json=name=>JSON.parse(readFileSync(new URL('../assets/apartment-collection
 const manifest=json('manifest.json'),thumbnails=new Map(manifest.collections.map(c=>[c.owner,{width:1,height:1}]));
 const runtime=createApartmentCollectionRuntime({definitions:APARTMENT_COLLECTION_ASSETS,manifest,directionManifest:json('directions-manifest.json'),thumbnails,loadImage(){throw Error('Layout checks must not load art');},createCanvas(){throw Error('Layout checks must not rasterize art');}});
 const catalog=new Map(APARTMENT_COLLECTION_ASSETS.map(a=>[a.id,{...a,getFacingView:direction=>runtime.view(a.id,direction)}]));
+for(const asset of FAMILY_FURNITURE_ASSETS)catalog.set(asset.id,asset);
 configureUrbanInteriors(catalog);
 const requests=[...residents.map(r=>({kind:'apartment',resident:r.id,floor:r.floor})),{kind:'apartment',resident:'player',floor:15},...SHOWROOMS.map(r=>({kind:'showroom',showroomId:r.id,floor:r.storeFloor}))];
 const models=requests.map(getInterior),RADIUS=6,findings={};
@@ -49,16 +51,20 @@ const reachable=new Map(models.map(m=>[m,navigation(m)]));
 function check(name,failures){findings[name]=failures;test(name,()=>assert.equal(failures.length,0,failures.slice(0,24).map(f=>JSON.stringify(f)).join('\n')));}
 
 const presence=[];
-for(const m of models)for(const role of ['bed','sofa','dining-table','dining-chair','rug'])if(m.items.filter(i=>slot(i)===role).length!==1)presence.push({owner:owner(m),missingOrRepeated:role});
-check('all31 actual homes have one bed, living group, dining table/chair and native rug',presence);
+for(const m of models)for(const role of ['bed','sofa','dining-table','dining-chair','rug'])if(m.items.filter(i=>!i.roomExpansion&&slot(i)===role).length!==1)presence.push({owner:owner(m),missingOrRepeatedOriginal:role});
+check('all31 homes retain each original bed, living group, dining table/chair and native rug',presence);
 
 const seats=[];
-for(const m of models)for(const [seatRole,targetRole]of [['dining-chair','dining-table'],['desk-chair','desk'],['reading-chair','coffee-table']]){
- const seat=itemFor(m,seatRole),target=itemFor(m,targetRole);if(!seat||!target)continue;
- if(seatRole==='reading-chair'&&seat.roomId&&target.roomId&&seat.roomId!==target.roomId)continue;
+for(const m of models)for(const seat of m.items.filter(i=>['dining-chair','desk-chair','reading-chair'].includes(slot(i))||i.roomExpansion&&slot(i)==='sofa')){
+ const seatRole=slot(seat),targetRole={'dining-chair':'dining-table','desk-chair':'desk','reading-chair':'coffee-table',sofa:'coffee-table'}[seatRole],target=seat.seatingTarget?m.items.find(i=>i.id===seat.seatingTarget):itemFor(m,targetRole);
+ if(seat.roomExpansion&&!seat.seatingTarget){seats.push({owner:owner(m),seat:seat.id,error:'Expanded seating needs its actual table target'});continue;}
+ if(!target){if(seat.seatingTarget)seats.push({owner:owner(m),seat:seat.id,error:'Missing seating target',target:seat.seatingTarget});continue;}
+ if(!seat.seatingTarget&&seatRole==='reading-chair'&&seat.roomId&&target.roomId&&seat.roomId!==target.roomId)continue;
  const s=footprint(seat),t=footprint(target),angle=(seat.rotation||0)*Math.PI/180,front={x:-Math.sin(angle),y:Math.cos(angle)},dx=t.cx-s.cx,dy=t.cy-s.cy;
- const dot=front.x*dx+front.y*dy,cross=Math.abs(front.x*dy-front.y*dx);
- if((seat.rotation||0)%90!==0||dot<=0||cross>2)seats.push({owner:owner(m),seat:seatRole,rotation:seat.rotation||0,seatCenter:round({x:s.cx,y:s.cy}),target:round({x:t.cx,y:t.cy}),crossAxisError:Math.round(cross*100)/100});
+ const dot=front.x*dx+front.y*dy,cross=Math.abs(front.x*dy-front.y*dx),edgeLimit=seat.seatingTarget?(Math.abs(front.x)>.5?t.h:t.w)/2+2:2;
+ // Several diners can sit along one table edge. Their forward rays must hit
+ // that physical tabletop rather than all converging on the same centre.
+ if((seat.rotation||0)%90!==0||dot<=0||cross>edgeLimit)seats.push({owner:owner(m),seat:seat.id,role:seatRole,rotation:seat.rotation||0,seatCenter:round({x:s.cx,y:s.cy}),target:round({x:t.cx,y:t.cy}),crossAxisError:Math.round(cross*100)/100});
 }
 check('actual dining, work and conversation seats face their own table along a cardinal axis',seats);
 

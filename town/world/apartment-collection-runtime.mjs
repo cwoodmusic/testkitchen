@@ -1,4 +1,4 @@
-import {collectionImageRect,collectionMotion} from './apartment-collection-art.mjs?v=room-editor-1';
+import {collectionImageRect,collectionMotion} from './apartment-collection-art.mjs?v=family-rooms-1';
 
 const directions=['south','north','east','west'];
 const faceKey=(id,facing='south')=>facing==='south'?id:id+'|'+facing;

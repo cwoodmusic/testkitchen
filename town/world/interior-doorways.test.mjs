@@ -5,6 +5,7 @@ import {createAutomaticDoors} from './automatic-doors.mjs';
 import {getPrivacyDoorVisualGeometry,getDoorVisualGeometry} from './interior-portal-art.mjs';
 import {getInterior,configureUrbanInteriors,residents} from './urban-interiors.mjs';
 import {APARTMENT_COLLECTION_ASSETS} from './apartment-collection-definitions.mjs';
+import {FAMILY_FURNITURE_ASSETS} from './family-furniture-definitions.mjs';
 import {SHOWROOMS} from './showroom-layout.mjs';
 
 const hit=(p,r,pad)=>p.x>=r.x-pad&&p.x<=r.x+r.w+pad&&p.y>=r.y-pad&&p.y<=r.y+r.h+pad;
@@ -44,7 +45,7 @@ test('clear-opening rendering uses the complete actual passage instead of steali
  const shop={kind:'shop',walls:[],solids:[],doors:[{id:'suite',facing:'right',x:1216,y:129,w:156,h:190,threshold:{x:1216,y:224},triggerHalfWidth:64}],zones:[{id:'suite',action:'showroom',x:1220,y:160,w:48,h:128,triggerHalfWidth:64}]};normalizeInteriorDoorways(shop);assert.equal(shop.doors[0].triggerHalfWidth,41);assert.equal(getDoorVisualGeometry(shop.doors[0],1).span,82);assert.equal(shop.zones[0].triggerHalfWidth,41);assert.deepEqual(shop.doors[0].threshold,{x:1216,y:224});
 });
 
-configureUrbanInteriors(new Map(APARTMENT_COLLECTION_ASSETS.map(a=>[a.id,a])));
+configureUrbanInteriors(new Map([...APARTMENT_COLLECTION_ASSETS,...FAMILY_FURNITURE_ASSETS].map(a=>[a.id,a])));
 const privateScenes=[...residents.map(r=>({kind:'apartment',resident:r.id})),{kind:'apartment',resident:'player'},...SHOWROOMS.map(s=>({kind:'showroom',showroomId:s.id}))];
 test('all 31 real homes have matching 36-wide passages and six-radius clear doorway crossings',()=>{
  let count=0;

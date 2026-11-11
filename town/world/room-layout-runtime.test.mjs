@@ -37,3 +37,11 @@ test('public interiors and other owners do not pick up room templates',()=>{
  assert.equal(roomLayoutThemeId({kind:'showroom',showroomId:'robot'}),'showroom-robot');
  assert.equal(f.resolver.resolve(hall,f.catalog),hall);f.resolver.dispose();
 });
+test('gameplay reads preceding edited templates without rewriting raw saves, then saves an upgraded record only on commit',()=>{
+ const f=fixture(),record=createRoomLayoutModel({themeId:'player',scene:f.base,catalog:f.catalog}).record();record.placements[0].x=220;assert.equal(f.store.save('player',record).ok,true);
+ const raw=f.values.get(f.store.key),write=f.storage.setItem;let writes=0;f.storage.setItem=(key,value)=>{writes++;write(key,value);};
+ const good={...f.base.items[0],id:'family-good',x:350,roomExpansion:'family-room-1',collisionBoxes:[{x:340,y:190,w:20,h:10}]},bad={...good,id:'family-user-overlap',x:220,collisionBoxes:[{x:210,y:190,w:20,h:10}]},expanded={...f.base,items:[...f.base.items,good,bad],solids:[...f.base.solids,...good.collisionBoxes,...bad.collisionBoxes]},model=f.resolver.resolve(expanded,f.catalog);
+ assert.notEqual(model,expanded);assert.equal(model.items.find(i=>i.id==='chair-1').x,220);assert(model.items.some(i=>i.id==='family-good'));assert(!model.items.some(i=>i.id==='family-user-overlap'));assert.equal(f.resolver.resolve(expanded,f.catalog),model);
+ assert.equal(writes,0);assert.equal(f.values.get(f.store.key),raw);assert.equal(f.values.get('codaUrbanRoomV1'),'purchased furniture');assert.equal(f.values.get('wallet'),'12345');assert.equal(f.values.get('town-map'),'unchanged');
+ const editor=createRoomLayoutModel({themeId:'player',scene:expanded,catalog:f.catalog,record}),upgraded=editor.record();assert.notEqual(upgraded.baseSignature,record.baseSignature);assert.equal(writes,0);assert.equal(f.store.save('player',upgraded).ok,true);assert.equal(writes,1);assert.notEqual(f.values.get(f.store.key),raw);assert.equal(f.store.load('player').record.baseSignature,upgraded.baseSignature);f.resolver.dispose();
+});

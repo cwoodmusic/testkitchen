@@ -8,6 +8,7 @@ import {roomItemBoxes} from '../town/world/urban-room.mjs';
 import {presentedRoomItem,furniturePresentationScale} from '../town/world/private-furniture.mjs';
 import {FLOOR_COUNT,residents,getInterior,residentInteractionZones,configureUrbanInteriors} from '../town/world/urban-interiors.mjs';
 import {APARTMENT_COLLECTION_ASSETS} from '../town/world/apartment-collection-definitions.mjs';
+import {FAMILY_FURNITURE_ASSETS} from '../town/world/family-furniture-definitions.mjs';
 import {SHOWROOMS,STORE_FLOOR_COUNT,STORE_VERTICAL_CORE} from '../town/world/showroom-layout.mjs';
 
 // Run the production controller with actual scene geometry/door physics. Only
@@ -27,7 +28,7 @@ class Element{
  getContext(){return new Proxy({},{get:()=>()=>{},set:()=>true});}
 }
 function fixture({preview=false,furnishing=false}={}){
- const catalog=new Map(APARTMENT_COLLECTION_ASSETS.map(d=>[d.id,d]));
+ const catalog=new Map([...APARTMENT_COLLECTION_ASSETS,...FAMILY_FURNITURE_ASSETS].map(d=>[d.id,d]));
  for(const [id,urban]of [['tower','tower'],['store','shop'],['opera','opera']])catalog.set(id,{id,urban,w:1000,h:900,door:{x:500,y:880}});
  const objects=['tower','store','opera'].map((asset,i)=>({id:asset,asset,x:2000+i*4000,y:2000,scale:1,rotation:0}));
  const project={objects},original=JSON.stringify(project),outside={x:0,y:0},actors=[],elements=[],events=new Map(),win={CodaFurnitureCatalog:[]};let clock=0,storageWrites=0;const placements=[],renderCalls=[],drawn=[];

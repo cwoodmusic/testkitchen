@@ -10,7 +10,9 @@ import {SHOWROOMS} from '../town/world/showroom-layout.mjs';
 import {SHOWROOM_FURNITURE} from '../town/world/showroom-furniture-definitions.mjs';
 import {APARTMENT_DECOR} from '../town/world/apartment-decor-definitions.mjs';
 import {APARTMENT_COLLECTION_ASSETS} from '../town/world/apartment-collection-definitions.mjs';
+import {FAMILY_FURNITURE_ASSETS} from '../town/world/family-furniture-definitions.mjs';
 import {WHIMSICAL_PLUSH_DEFINITIONS} from '../town/world/whimsical-plush-definitions.mjs';
+import {interiorActorScale} from '../town/world/interior-scale.mjs';
 
 const require=createRequire(import.meta.url),stock=require('../furniture-catalog.js');
 const read=path=>readFileSync(new URL(path,import.meta.url));
@@ -21,6 +23,7 @@ for(const def of decorDefinitions){const cell=atlas.find(a=>a.family===def.famil
 for(const def of SHOWROOM_FURNITURE)catalog.set(def.id,{w:def.w,h:def.h,boxes:def.boxes,furnitureRole:def.role});
 for(const def of APARTMENT_DECOR)catalog.set(def.id,{w:def.w,h:def.h,boxes:def.boxes,layer:def.layer,wallMounted:def.wallMounted,purpose:def.purpose});
 for(const def of APARTMENT_COLLECTION_ASSETS)catalog.set(def.id,def);
+for(const def of FAMILY_FURNITURE_ASSETS)catalog.set(def.id,def);
 for(const def of WHIMSICAL_PLUSH_DEFINITIONS)catalog.set(def.id,def);
 configureUrbanInteriors(catalog);
 const floorScene=floor=>({kind:floor===1?'lobby':'hall',floor});
@@ -74,8 +77,8 @@ test('stairs and doors only lead to existing floors and existing apartments',()=
 });
 
 function reachableCells(model){
- const step=16,cols=Math.ceil(model.width/step),rows=Math.ceil(model.height/step),seen=new Uint8Array(cols*rows),queue=[];
- const solid=(x,y)=>x<40||y<100||x>model.width-40||y>model.height-40||model.solids.some(r=>x>=r.x-16&&x<=r.x+r.w+16&&y>=r.y-16&&y<=r.y+r.h+16);
+ const step=16,pad=16*interiorActorScale(model),cols=Math.ceil(model.width/step),rows=Math.ceil(model.height/step),seen=new Uint8Array(cols*rows),queue=[];
+ const solid=(x,y)=>x<40||y<100||x>model.width-40||y>model.height-40||model.solids.some(r=>x>=r.x-pad&&x<=r.x+r.w+pad&&y>=r.y-pad&&y<=r.y+r.h+pad);
  assert.equal(solid(model.spawn.x,model.spawn.y),false,`${model.id}: spawn`);
  const start=Math.floor(model.spawn.y/step)*cols+Math.floor(model.spawn.x/step);seen[start]=1;queue.push(start);
  for(let i=0;i<queue.length;i++){
@@ -88,7 +91,7 @@ function reachableCells(model){
  }
  return queue.map(key=>({x:key%cols*step+8,y:Math.floor(key/cols)*step+8}));
 }
-test('a player with the real 16px collision padding can reach every interaction in all 48 scenes',()=>{
+test('a player with the actual scene-scaled collision padding can reach every interaction in all48 scenes',()=>{
  assert.equal(scenes.length,48);
  for(const scene of scenes){
   const model=getInterior(scene),reachable=reachableCells(model);

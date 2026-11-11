@@ -1,4 +1,4 @@
-import {drawHomeMaterialFloor,drawHomeMaterialWallpaper} from './home-materials.mjs?v=room-editor-1';
+import {drawHomeMaterialFloor,drawHomeMaterialWallpaper} from './home-materials.mjs?v=family-rooms-1';
 // Small, repeatable pixel textures keep the eight room finishes at the same
 // scale as the native furniture. They are painted once, then cached with the
 // interior background; no texture work runs in the animation loop.

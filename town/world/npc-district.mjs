@@ -1,7 +1,7 @@
-import {blocked,height,surfaceAt,COLS,ROWS,TILE} from './model.mjs?v=room-editor-1';
-import {npcCollisionProject} from './npc-collision.mjs?v=room-editor-1';
-import {npcConnectionClear} from './npc-navigation.mjs?v=room-editor-1';
-import {furnitureFacingPlacement,furnitureFootCenter,furnitureFacingDepth} from './furniture-facing.mjs?v=room-editor-1';
+import {blocked,height,surfaceAt,COLS,ROWS,TILE} from './model.mjs?v=family-rooms-1';
+import {npcCollisionProject} from './npc-collision.mjs?v=family-rooms-1';
+import {npcConnectionClear} from './npc-navigation.mjs?v=family-rooms-1';
+import {furnitureFacingPlacement,furnitureFootCenter,furnitureFacingDepth} from './furniture-facing.mjs?v=family-rooms-1';
 
 const WORLD_W=COLS*TILE,WORLD_H=ROWS*TILE;
 const cardinal=['down','left','up','right'];

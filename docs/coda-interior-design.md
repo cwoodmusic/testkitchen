@@ -37,7 +37,7 @@ All furniture faces north, east, south or west; diagonal poses are excluded. Pic
 | Steampunk Clockwork | Mahogany, green velvet, aged brass, oxblood leather | Engraved fittings, clockwork inlay and copper curves |
 | Robot Companion | Powder-blue enamel, ivory, soft yellow, aluminum | Friendly indicator faces, rounded joints and charging docks |
 
-Each has 32 unique pieces, including a lava lamp, arcade cabinet, poster and toy. Existing furniture ownership and prices remain compatible.
+Each has 32 original unique pieces, including a lava lamp, arcade cabinet, poster and toy, plus four larger family-room product options. Matching chair sets, conversation groups and bedroom nooks fill the larger floor plates. Existing furniture ownership and prices remain compatible.
 
 
 ## Current room implementation

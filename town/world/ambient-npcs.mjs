@@ -1,13 +1,13 @@
-import {blocked,height,TILE} from './model.mjs?v=room-editor-1';
-import {movePlayer} from './physics.mjs?v=room-editor-1';
-import {WALK_SPEED,GAIT_PER_PIXEL,PLAYER_SCALE} from './player-settings.mjs?v=room-editor-1';
-import {buildNPCDistrict} from './npc-district.mjs?v=room-editor-1';
-import {createNPCNavigator,npcPavingAt,npcMaterialCost} from './npc-navigation.mjs?v=room-editor-1';
-import {residents as profiles,residentHomePose,interiorJourneyPose,residentInScene} from './resident-journey.mjs?v=room-editor-1';
-import {createEntranceQueues} from './entrance-queue.mjs?v=room-editor-1';
-import {venueVisitPose,SHOP_VISIT_CAPACITY} from './resident-venue.mjs?v=room-editor-1';
-import {planNPCPassing} from './npc-passing.mjs?v=room-editor-1';
-export {planNPCPath,npcConnectionClear} from './npc-navigation.mjs?v=room-editor-1';
+import {blocked,height,TILE} from './model.mjs?v=family-rooms-1';
+import {movePlayer} from './physics.mjs?v=family-rooms-1';
+import {WALK_SPEED,GAIT_PER_PIXEL,PLAYER_SCALE} from './player-settings.mjs?v=family-rooms-1';
+import {buildNPCDistrict} from './npc-district.mjs?v=family-rooms-1';
+import {createNPCNavigator,npcPavingAt,npcMaterialCost} from './npc-navigation.mjs?v=family-rooms-1';
+import {residents as profiles,residentHomePose,interiorJourneyPose,residentInScene} from './resident-journey.mjs?v=family-rooms-1';
+import {createEntranceQueues} from './entrance-queue.mjs?v=family-rooms-1';
+import {venueVisitPose,SHOP_VISIT_CAPACITY} from './resident-venue.mjs?v=family-rooms-1';
+import {planNPCPassing} from './npc-passing.mjs?v=family-rooms-1';
+export {planNPCPath,npcConnectionClear} from './npc-navigation.mjs?v=family-rooms-1';
 
 export const AMBIENT_RESIDENTS=Object.freeze(['bach','mozart','clara','nina','joplin','miles','chopin','haydn','vee-jay','zizi','beethoven','ellington','ella','handel','vivaldi','metronome','schoenberg','dj']);
 const distance=(a,b)=>Math.hypot(a.x-b.x,a.y-b.y);

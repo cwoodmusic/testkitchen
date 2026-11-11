@@ -1,10 +1,10 @@
-import {createRoomLayoutModel} from '../world/room-layout-model.mjs?v=room-editor-1';
-import {createRoomLayoutStorage} from '../world/room-layout-storage.mjs?v=room-editor-1';
-import {SHOWROOMS} from '../world/showroom-layout.mjs?v=room-editor-1';
-import {residents} from '../world/resident-profiles.mjs?v=room-editor-1';
-import {furnitureFacingPlacement,furnitureFacingBounds,cardinalFacing} from '../world/furniture-facing.mjs?v=room-editor-1';
-import {furnitureFacingDrawSource,drawFurnitureFacingSource} from '../world/furniture-facing-source.mjs?v=room-editor-1';
-import {assetFilter} from '../world/asset-color.mjs?v=room-editor-1';
+import {createRoomLayoutModel} from '../world/room-layout-model.mjs?v=family-rooms-1';
+import {createRoomLayoutStorage} from '../world/room-layout-storage.mjs?v=family-rooms-1';
+import {SHOWROOMS} from '../world/showroom-layout.mjs?v=family-rooms-1';
+import {residents} from '../world/resident-profiles.mjs?v=family-rooms-1';
+import {furnitureFacingPlacement,furnitureFacingBounds,cardinalFacing} from '../world/furniture-facing.mjs?v=family-rooms-1';
+import {furnitureFacingDrawSource,drawFurnitureFacingSource} from '../world/furniture-facing-source.mjs?v=family-rooms-1';
+import {assetFilter} from '../world/asset-color.mjs?v=family-rooms-1';
 
 const FACINGS=[['north','↑','North',180],['east','→','East',270],['south','↓','South',0],['west','←','West',90]];
 const ARROWS={ArrowUp:180,ArrowRight:270,ArrowDown:0,ArrowLeft:90};
@@ -29,7 +29,7 @@ export function createRoomEditor({canvas,catalog,renderRoom,getBaseModel,getThem
  if(storage===undefined)try{storage=globalThis.localStorage;}catch{storage=null;}
  const store=typeof storage?.load==='function'&&typeof storage?.save==='function'?storage:createRoomLayoutStorage({storage,owner});
  const themes=getThemes(),models=new Map(),views=new Map(),blockedThemes=new Map(),saveProblems=new Map(),thumbTimers=new Set();
- let active=false,theme=null,model=null,lastTheme='showroom-midcentury-studio',rotation=0,scope='theme',limit=48,pan=null,space=false,loadToken=0,displayCache=null;
+ let active=false,theme=null,model=null,lastTheme='showroom-midcentury-studio',rotation=0,scope='theme',limit=48,pan=null,panMode=false,space=false,loadToken=0,displayCache=null;
  const view={x:0,y:0,zoom:1},cursor={x:0,y:0};let statusText='Saved',statusKind='saved';
  const preferenceKey='codaRoomEditorThemeV1:'+encodeURIComponent(owner);
  try{const remembered=storage?.getItem?.(preferenceKey);if(themes.some(t=>t.id===remembered))lastTheme=remembered;}catch{}
@@ -39,14 +39,19 @@ export function createRoomEditor({canvas,catalog,renderRoom,getBaseModel,getThem
  const themeLabel=node('label','room-editor-label','Room theme'),themeSelect=node('select');themeSelect.id='roomEditorTheme';themeSelect.setAttribute('aria-label','Room theme');
  for(const group of [...new Set(themes.map(t=>t.group))]){const options=node('optgroup');options.label=group;for(const t of themes.filter(t=>t.group===group)){const option=node('option','',t.label);option.value=t.id;options.append(option);}themeSelect.append(options);}
  themeSelect.onchange=()=>switchTheme(themeSelect.value);themeLabel.append(themeSelect);panel.append(themeLabel);
- panel.append(node('p','room-editor-intro','Click furniture to pick it up. Click again to place it.'));
- const actions=node('div','room-editor-actions'),undo=button('Undo',()=>mutate('undo')),redo=button('Redo',()=>mutate('redo')),fit=button('Fit room',fitView),reset=button('Reset theme',()=>mutate('reset'));
- actions.append(undo,redo,fit,reset);panel.append(actions);
+ const intro=node('p','room-editor-intro','Click furniture to pick it up. Click again to place it.');panel.append(intro);
+ const viewTools=node('div','room-editor-view-tools');viewTools.setAttribute('role','group');viewTools.setAttribute('aria-label','Room view');
+ const zoomOut=button('−',()=>zoomBy(1/1.25),'room-editor-zoom-out'),zoomValue=node('output','room-editor-zoom-value','100%'),zoomIn=button('+',()=>zoomBy(1.25),'room-editor-zoom-in'),fit=button('Fit room',fitView,'room-editor-fit');
+ zoomOut.setAttribute('aria-label','Zoom out');zoomIn.setAttribute('aria-label','Zoom in');zoomValue.setAttribute('aria-label','Room zoom');viewTools.append(zoomOut,zoomValue,zoomIn,fit);panel.append(viewTools);
+ const modeTools=node('div','room-editor-mode-tools');modeTools.setAttribute('role','group');modeTools.setAttribute('aria-label','Room tools');
+ const arrangeButton=button('Arrange',()=>setPanMode(false),'room-editor-arrange'),panButton=button('Pan view',()=>setPanMode(!panMode),'room-editor-pan');modeTools.append(arrangeButton,panButton);panel.append(modeTools);
+ const actions=node('div','room-editor-actions'),undo=button('Undo',()=>mutate('undo')),redo=button('Redo',()=>mutate('redo')),reset=button('Reset theme',()=>mutate('reset'));
+ actions.append(undo,redo,reset);panel.append(actions);
  const facing=node('div','room-editor-facing');facing.setAttribute('role','group');facing.setAttribute('aria-label','Furniture facing');
  for(const [id,arrow,name,degrees]of FACINGS){const b=button(arrow+' '+name,()=>face(degrees));b.dataset.facing=id;b.title=name+' · '+arrow+' arrow key';facing.append(b);}panel.append(facing);
  const heldInfo=node('p','room-editor-held','Choose a piece to place.');heldInfo.setAttribute('aria-live','polite');panel.append(heldInfo);
  const remove=button('Remove picked-up piece',removeHeld,'room-editor-remove');remove.disabled=true;panel.append(remove);
- const hint=node('p','room-editor-keys','Arrow keys face furniture · Esc cancels · Delete removes · Right-drag pans · Wheel zooms');panel.append(hint);
+ const hint=node('p','room-editor-keys','Arrow keys face furniture · Esc cancels · Delete removes · Wheel zooms · Space-drag or right-drag pans');panel.append(hint);
  const saveStatus=node('p','room-editor-save','Saved');saveStatus.setAttribute('role','status');saveStatus.setAttribute('aria-live','polite');panel.append(saveStatus);
  const tabs=node('div','room-editor-tabs'),themeTab=button('This theme',()=>setScope('theme')),allTab=button('All furniture',()=>setScope('all'));tabs.append(themeTab,allTab);panel.append(tabs);
  const search=node('input','room-editor-search');search.type='search';search.placeholder='Find a piece…';search.setAttribute('aria-label','Search room furniture');search.oninput=()=>{limit=48;refreshPalette();};panel.append(search);
@@ -64,7 +69,21 @@ export function createRoomEditor({canvas,catalog,renderRoom,getBaseModel,getThem
   for(const b of facing.children)b.setAttribute('aria-pressed',String(Number(FACINGS.find(f=>f[0]===b.dataset.facing)?.[3])===rotation));
   if(model?.held){const a=catalog.get(model.held.item.asset);heldInfo.textContent=(a?.purpose==='plush'?a.name:label(a?.slot||a?.name))+' · '+label(cardinalFacing(rotation));heldInfo.dataset.valid=String(model.held.valid);}
   else{heldInfo.textContent='Choose a piece, or click furniture in the room.';delete heldInfo.dataset.valid;}
+  viewControls();
  }
+ function viewControls(){
+  zoomValue.value=Math.round(view.zoom*100)+'%';zoomValue.textContent=zoomValue.value;zoomOut.disabled=view.zoom<=.15;zoomIn.disabled=view.zoom>=4;
+  arrangeButton.setAttribute('aria-pressed',String(!panMode));panButton.setAttribute('aria-pressed',String(panMode));
+  intro.textContent=panMode?'Drag the room to look around. Choose Arrange to move furniture.':'Click furniture to pick it up. Click again to place it.';
+  if(active)canvas.dataset.roomEditorTool=pan?'panning':panMode||space?'pan':'arrange';else delete canvas.dataset.roomEditorTool;
+ }
+ function endPan(event){
+  const pointerId=pan?.pointerId??event?.pointerId;pan=null;
+  if(pointerId!==undefined)try{if(canvas.hasPointerCapture(pointerId))canvas.releasePointerCapture(pointerId);}catch{}
+  viewControls();
+ }
+ function setPanMode(value){endPan();panMode=value;viewControls();canvas.focus({preventScroll:true});}
+ function zoomBy(factor){if(!model)return;view.zoom=clamp(view.zoom*factor,.15,4);viewControls();canvas.focus({preventScroll:true});}
  function save(message='Saved'){
   if(blockedThemes.has(theme.id)){canEdit();return {ok:false,error:blockedThemes.get(theme.id)};}
   const result=store.save(theme.id,model.record());
@@ -125,7 +144,7 @@ export function createRoomEditor({canvas,catalog,renderRoom,getBaseModel,getThem
   if(result?.ok===false&&!model.held){tell(result.error,'error');return;}model.rotate(rotation);displayCache=null;previewStatus();canvas.focus({preventScroll:true});
   a.ensureFull?.(cardinalFacing(rotation))?.catch?.(()=>{});
  }
- function fitView(){if(!model)return;const r=canvas.getBoundingClientRect();view.x=model.scene.width/2;view.y=model.scene.height/2;view.zoom=clamp(Math.min((r.width-56)/model.scene.width,(r.height-56)/model.scene.height),.15,2.5);cursor.x=view.x;cursor.y=view.y;}
+ function fitView(){if(!model)return;const r=canvas.getBoundingClientRect();view.x=model.scene.width/2;view.y=model.scene.height/2;view.zoom=clamp(Math.min((r.width-56)/model.scene.width,(r.height-56)/model.scene.height),.15,2.5);cursor.x=view.x;cursor.y=view.y;viewControls();}
  function screenToRoom(event){const r=canvas.getBoundingClientRect();return {x:view.x+(event.clientX-r.left-r.width/2)/view.zoom,y:view.y+(event.clientY-r.top-r.height/2)/view.zoom};}
  async function switchTheme(id){
   const selected=themes.find(t=>t.id===id);if(!selected)return false;const token=++loadToken;
@@ -147,7 +166,7 @@ export function createRoomEditor({canvas,catalog,renderRoom,getBaseModel,getThem
   if(!active){active=true;panel.hidden=false;document.body.classList.add('room-editor-active');onActiveChange(true);}
   const ok=await switchTheme(themes.some(t=>t.id===id)?id:themes[0].id);canvas.focus({preventScroll:true});return ok;
  }
- function close(){if(!active)return;model?.cancel();displayCache=null;if(theme)views.set(theme.id,{...view});active=false;++loadToken;pan=null;space=false;panel.hidden=true;document.body.classList.remove('room-editor-active');for(const t of thumbTimers)clearTimeout(t);thumbTimers.clear();onActiveChange(false);}
+ function close(){if(!active)return;model?.cancel();displayCache=null;if(theme)views.set(theme.id,{...view});active=false;++loadToken;endPan();space=false;panel.hidden=true;document.body.classList.remove('room-editor-active');for(const t of thumbTimers)clearTimeout(t);thumbTimers.clear();onActiveChange(false);}
  function displayModel(){
   const hidden=[model.held?.originalId,...(model.held?.companions||[]).map(i=>i.id)].filter(Boolean),key=model.revision+'|'+hidden.join('|');
   if(displayCache?.key!==key){const excluded=new Set(hidden);displayCache={key,value:{...model.scene,id:model.scene.id+'-room-editor-'+theme.id+'-'+key,items:model.scene.items.filter(i=>!excluded.has(i.id)),actors:[]}};}
@@ -171,25 +190,25 @@ export function createRoomEditor({canvas,catalog,renderRoom,getBaseModel,getThem
  }
  function handlePointer(event){
   if(!active)return false;if(!model)return true;
-  if(event.type==='pointerup'||event.type==='pointercancel'){pan=null;return true;}
+  if(event.type==='pointerup'||event.type==='pointercancel'){if(!pan||event.pointerId===pan.pointerId)endPan(event);return true;}
   if(event.type==='pointerdown'){
    canvas.focus({preventScroll:true});try{canvas.setPointerCapture(event.pointerId);}catch{}
-   if(event.button!==0||space){pan={x:event.clientX,y:event.clientY};event.preventDefault();return true;}
+   if(event.button!==0||space||panMode){pan={x:event.clientX,y:event.clientY,pointerId:event.pointerId};viewControls();event.preventDefault();return true;}
    if(!canEdit()){event.preventDefault();return true;}
    Object.assign(cursor,screenToRoom(event));
    if(model.held)resultMessage(model.place(cursor));else{model.pick(cursor);if(model.held){rotation=model.held.item.rotation||0;displayCache=null;previewStatus();}}
    controls();event.preventDefault();return true;
   }
   if(event.type==='pointermove'){
-   if(pan){view.x-=(event.clientX-pan.x)/view.zoom;view.y-=(event.clientY-pan.y)/view.zoom;pan={x:event.clientX,y:event.clientY};}
-   Object.assign(cursor,screenToRoom(event));if(model.held){model.move(cursor);previewStatus();}return true;
+   if(pan){if(event.pointerId!==pan.pointerId)return true;view.x-=(event.clientX-pan.x)/view.zoom;view.y-=(event.clientY-pan.y)/view.zoom;pan.x=event.clientX;pan.y=event.clientY;return true;}
+   Object.assign(cursor,screenToRoom(event));if(model.held&&!panMode&&!space){model.move(cursor);previewStatus();}return true;
   }
   return true;
  }
- function wheel(event){if(!active)return false;event.preventDefault();const before=screenToRoom(event);view.zoom=clamp(view.zoom*Math.exp(-event.deltaY*.001),.15,4);const after=screenToRoom(event);view.x+=before.x-after.x;view.y+=before.y-after.y;if(model?.held){Object.assign(cursor,screenToRoom(event));model.move(cursor);previewStatus();}return true;}
+ function wheel(event){if(!active)return false;event.preventDefault();const before=screenToRoom(event);view.zoom=clamp(view.zoom*Math.exp(-event.deltaY*.001),.15,4);const after=screenToRoom(event);view.x+=before.x-after.x;view.y+=before.y-after.y;if(model?.held&&!panMode&&!space){Object.assign(cursor,screenToRoom(event));model.move(cursor);previewStatus();}viewControls();return true;}
  function keydown(event){
   if(!active)return false;if(fieldTarget(event.target))return false;
-  if(event.key===' '){space=true;event.preventDefault();return true;}
+  if(event.key===' '){space=true;viewControls();event.preventDefault();return true;}
   if(Object.hasOwn(ARROWS,event.key)){event.preventDefault();face(ARROWS[event.key]);return true;}
   if((event.ctrlKey||event.metaKey)&&event.key.toLowerCase()==='z'){event.preventDefault();mutate(event.shiftKey?'redo':'undo');return true;}
   if((event.ctrlKey||event.metaKey)&&event.key.toLowerCase()==='y'){event.preventDefault();mutate('redo');return true;}
@@ -197,8 +216,9 @@ export function createRoomEditor({canvas,catalog,renderRoom,getBaseModel,getThem
   if(event.key==='Delete'||event.key==='Backspace'){removeHeld();event.preventDefault();return true;}
   return true;
  }
- function keyup(event){if(event.key===' ')space=false;return active;}
- globalThis.addEventListener?.('keyup',keyup);globalThis.addEventListener?.('blur',()=>{space=false;pan=null;});
+ function keyup(event){if(event.key===' '){space=false;viewControls();}return active;}
+ canvas.addEventListener('lostpointercapture',event=>{if(pan?.pointerId===event.pointerId){pan=null;viewControls();}});
+ globalThis.addEventListener?.('keyup',keyup);globalThis.addEventListener?.('blur',()=>{space=false;endPan();});
  function exportLayouts(){
   try{
    let raw,backup=false,recovery=false;

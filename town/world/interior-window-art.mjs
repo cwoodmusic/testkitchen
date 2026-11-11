@@ -1,4 +1,4 @@
-import {assetImage} from './asset-color.mjs?v=room-editor-1';
+import {assetImage} from './asset-color.mjs?v=family-rooms-1';
 
 // Reuse the actual architectural sprites from the town, rather than drawing
 // a second, simplified window style inside the apartments.

@@ -1,32 +1,33 @@
-import {assetImage} from './asset-color.mjs?v=room-editor-1';
-import {SHOWROOMS,applyShowroomLayout} from './showroom-layout.mjs?v=room-editor-1';
-import {drawShowroomThemeSign} from './showroom-signs.mjs?v=room-editor-1';
-import {applyShowroomApartment} from './showroom-apartments.mjs?v=room-editor-1';
-import {drawShowroomFloor,drawShowroomWallpaper} from './showroom-materials.mjs?v=room-editor-1';
-import {applyHomeMaterialSuite,warmHomeMaterials} from './home-materials.mjs?v=room-editor-1';
-import {drawTowerCommonSurfaces,drawTowerCommonStairs,towerCommonMaterialsReady,warmTowerCommonMaterials} from './tower-common-materials.mjs?v=room-editor-1';
-import {drawInteriorDoor,drawPrivacyDoor,drawElevatorPortal,interiorPortalVisualDepth,warmInteriorPortalArt} from './interior-portal-art.mjs?v=room-editor-1';
-import {interiorActorScale} from './interior-scale.mjs?v=room-editor-1';
-import {calibratePrivateFurniture,presentedRoomItem} from './private-furniture.mjs?v=room-editor-1';
-import {normalizeInteriorDoorways} from './interior-doorways.mjs?v=room-editor-1';
-import {drawInteriorWindow,warmInteriorWindows} from './interior-window-art.mjs?v=room-editor-1';
-import {drawInteriorWallNetwork} from './interior-wall-art.mjs?v=room-editor-1';
-import {createRoomLayoutResolver} from './room-layout-runtime.mjs?v=room-editor-1';
-export {apartmentDecorBounds,apartmentWallDecorBounds} from './personal-room-areas.mjs?v=room-editor-1';
-import {getConcertHall,renderConcertHallBackground,concertHallDrawables} from './concert-hall.mjs?v=room-editor-1';
-import {renderStagePerformance} from './concert-performers.mjs?v=room-editor-1';
-import {buildApartmentHome} from './apartment-homes.mjs?v=room-editor-1';
-import {APARTMENT_COLLECTION_ASSETS,getApartmentAsset} from './apartment-collections.mjs?v=room-editor-1';
-import {drawApartmentMotion} from './apartment-motion.mjs?v=room-editor-1';
-import {furnitureFacingPlacement,furnitureFacingDepth,furnitureFacingBoxes,furnitureAtGroundCenter} from './furniture-facing.mjs?v=room-editor-1';
-import {preparePlacedFacingArt} from './furniture-art-access.mjs?v=room-editor-1';
+import {assetImage} from './asset-color.mjs?v=family-rooms-1';
+import {SHOWROOMS,applyShowroomLayout} from './showroom-layout.mjs?v=family-rooms-1';
+import {drawShowroomThemeSign} from './showroom-signs.mjs?v=family-rooms-1';
+import {applyShowroomApartment} from './showroom-apartments.mjs?v=family-rooms-1';
+import {drawShowroomFloor,drawShowroomWallpaper} from './showroom-materials.mjs?v=family-rooms-1';
+import {applyHomeMaterialSuite,warmHomeMaterials} from './home-materials.mjs?v=family-rooms-1';
+import {drawTowerCommonSurfaces,drawTowerCommonStairs,towerCommonMaterialsReady,warmTowerCommonMaterials} from './tower-common-materials.mjs?v=family-rooms-1';
+import {drawInteriorDoor,drawPrivacyDoor,drawElevatorPortal,interiorPortalVisualDepth,warmInteriorPortalArt} from './interior-portal-art.mjs?v=family-rooms-1';
+import {interiorActorScale} from './interior-scale.mjs?v=family-rooms-1';
+import {calibratePrivateFurniture,presentedRoomItem} from './private-furniture.mjs?v=family-rooms-1';
+import {normalizeInteriorDoorways} from './interior-doorways.mjs?v=family-rooms-1';
+import {drawInteriorWindow,warmInteriorWindows} from './interior-window-art.mjs?v=family-rooms-1';
+import {drawInteriorWallNetwork} from './interior-wall-art.mjs?v=family-rooms-1';
+import {createRoomLayoutResolver} from './room-layout-runtime.mjs?v=family-rooms-1';
+export {apartmentDecorBounds,apartmentWallDecorBounds} from './personal-room-areas.mjs?v=family-rooms-1';
+import {getConcertHall,renderConcertHallBackground,concertHallDrawables} from './concert-hall.mjs?v=family-rooms-1';
+import {renderStagePerformance} from './concert-performers.mjs?v=family-rooms-1';
+import {buildApartmentHome} from './apartment-homes.mjs?v=family-rooms-1';
+import {FAMILY_FURNITURE_ASSETS} from './family-furniture-definitions.mjs?v=family-rooms-1';
+import {APARTMENT_COLLECTION_ASSETS,getApartmentAsset} from './apartment-collections.mjs?v=family-rooms-1';
+import {drawApartmentMotion} from './apartment-motion.mjs?v=family-rooms-1';
+import {furnitureFacingPlacement,furnitureFacingDepth,furnitureFacingBoxes,furnitureAtGroundCenter} from './furniture-facing.mjs?v=family-rooms-1';
+import {preparePlacedFacingArt} from './furniture-art-access.mjs?v=family-rooms-1';
 // The apartment tower has one consistent floor plate. Residential floors use
 // a 608px common hall and 1120px private apartments, within its 2304 × 1728 lot.
 export const FLOOR_COUNT=15;
 export const TOWER_FOOTPRINT=Object.freeze({width:2304,height:1728});
 export const STORE_FOOTPRINT=Object.freeze({width:3072,height:2048});
-export {residents} from './resident-profiles.mjs?v=room-editor-1';
-import {residents} from './resident-profiles.mjs?v=room-editor-1';
+export {residents} from './resident-profiles.mjs?v=family-rooms-1';
+import {residents} from './resident-profiles.mjs?v=family-rooms-1';
 const sceneCache=new Map(),backgroundCache=new Map();
 const MAX_BACKGROUNDS=8,MAX_BACKGROUND_PIXELS=16*1024*1024;
 let backgroundPixels=0;
@@ -35,14 +36,14 @@ function clearBackgrounds(){for(const id of backgroundCache.keys())discardBackgr
 function rememberBackground(id,canvas){discardBackground(id);backgroundCache.set(id,canvas);backgroundPixels+=canvas.width*canvas.height;while(backgroundCache.size>MAX_BACKGROUNDS||backgroundPixels>MAX_BACKGROUND_PIXELS&&backgroundCache.size>1)discardBackground(backgroundCache.keys().next().value);}
 export const getInteriorRenderCacheStats=()=>({backgrounds:backgroundCache.size,pixels:backgroundPixels,maxBackgrounds:MAX_BACKGROUNDS,maxPixels:MAX_BACKGROUND_PIXELS});
 export function clearInteriorRenderCache(){clearBackgrounds();warmedScene=null;warmedCatalog=null;}
-const collectionDefinitions=new Map(APARTMENT_COLLECTION_ASSETS.map(a=>[a.id,a]));
+const collectionDefinitions=new Map([...APARTMENT_COLLECTION_ASSETS,...FAMILY_FURNITURE_ASSETS].map(a=>[a.id,a]));
 let warmedScene=null,warmedCatalog=null,portalArtWarmed=false;
 let nativeCatalog=null,woodTexture=null,npcRenderer=null;
 let roomLayouts;
 const drawConcertNPC=(ctx,actor,time)=>npcRenderer?.drawNPC(ctx,actor,time);
 export function configureUrbanInteriors(catalog){if(nativeCatalog!==catalog){nativeCatalog=catalog;clearBackgrounds();}}
 if(typeof document!=='undefined'){
- import('./ground-textures.mjs?v=room-editor-1').then(({groundTextures})=>{woodTexture=groundTextures.wood;clearBackgrounds();}).catch(()=>{});
+ import('./ground-textures.mjs?v=family-rooms-1').then(({groundTextures})=>{woodTexture=groundTextures.wood;clearBackgrounds();}).catch(()=>{});
 }
 const rect=(x,y,w,h)=>({x,y,w,h});
 const zone=(id,label,x,y,w,h,action,extra={})=>({id,label,x,y,w,h,action,...extra});

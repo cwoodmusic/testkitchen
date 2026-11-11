@@ -1,8 +1,10 @@
-import {interiorActorScale} from './interior-scale.mjs?v=room-editor-1';
-import {APARTMENT_COLLECTION_ASSETS} from './apartment-collection-definitions.mjs?v=room-editor-1';
-import {furnitureAtGroundCenter,furnitureFacingBoxes,furnitureFacingBounds,furnitureFacingDepth} from './furniture-facing.mjs?v=room-editor-1';
+import {interiorActorScale} from './interior-scale.mjs?v=family-rooms-1';
+import {APARTMENT_COLLECTION_ASSETS} from './apartment-collection-definitions.mjs?v=family-rooms-1';
+import {FAMILY_FURNITURE_ASSETS,getFamilyFurniture} from './family-furniture-definitions.mjs?v=family-rooms-1';
+import {apartmentDecorBounds} from './personal-room-areas.mjs?v=family-rooms-1';
+import {furnitureAtGroundCenter,furnitureFacingBoxes,furnitureFacingBounds,furnitureFacingDepth} from './furniture-facing.mjs?v=family-rooms-1';
 
-const definitions=new Map(APARTMENT_COLLECTION_ASSETS.map(a=>[a.id,a])),CALIBRATED=Symbol.for('coda.privateFurnitureCalibration');
+const definitions=new Map([...APARTMENT_COLLECTION_ASSETS,...FAMILY_FURNITURE_ASSETS].map(a=>[a.id,a])),CALIBRATED=Symbol.for('coda.privateFurnitureCalibration');
 const finite=n=>typeof n==='number'&&Number.isFinite(n);
 const median=list=>[...list].sort((a,b)=>a-b)[Math.floor(list.length/2)];
 const slot=(item,a)=>item.slot||item.collectionSlot||a?.slot;
@@ -20,6 +22,10 @@ function furnitureSlot(item,a){
 export function furniturePresentationScale(item,scene,asset){
  const actor=typeof scene==='number'?scene:interiorActorScale(scene);if(actor===1)return 1;
  const a=asset||definitions.get(item.asset),role=furnitureSlot(item,a),reference=role==='bath-fixture'&&a?.purpose==='bathtub'?.65:ROLE_SCALE[role]??.50;
+ if(a?.variant==='family-room'&&role==='rug'&&typeof scene==='object'){
+  const room=scene.familyFurnitureZones?.living||scene.rooms?.find(r=>r.functionalRole==='living');
+  if(room)return Math.min(reference,Math.max(.1,(room.w-24)/a.w),Math.max(.1,(room.h-24)/a.h))*actor/.375;
+ }
  return reference*actor/.375;
 }
 function footprint(a,item){
@@ -32,7 +38,8 @@ function moveCenter(item,a,center){Object.assign(item,furnitureAtGroundCenter(a,
 function supportedParent(item,items){
  if(!item.supportedBy||item.supportedBy==='north-wall')return null;
  const candidates=items.filter(p=>p!==item&&(p.asset===item.supportedBy||p.furnitureRole===item.supportedBy||p.slot===item.supportedBy||p.collectionSlot===item.supportedBy));
- return candidates.find(p=>p.roomId===item.roomId)||candidates[0]||null;
+ const original=!item.roomExpansion?candidates.filter(p=>!p.roomExpansion):[],parents=original.length?original:candidates;
+ return parents.find(p=>p.roomId===item.roomId)||parents[0]||null;
 }
 function separateFrom(item,a,other,otherAsset,oldVector,gap=10){
  const p=footprint(a,item),base=footprint(otherAsset,other),horizontal=Math.abs(oldVector.x)>Math.abs(oldVector.y),side=(horizontal?oldVector.x:oldVector.y)<0?-1:1;
@@ -158,20 +165,181 @@ function arrangePrivateRooms(scene,assets,old){
  }
 }
 
+// The larger products are additions, not rescaled replacements. Keeping every
+// original item/signature lets an existing room-editor layout remain authoritative.
+function furnishFamilyRooms(scene,assets,old){
+ const owner=scene.resident||'showroom-'+scene.showroomId,originals=[...scene.items],role=i=>furnitureSlot(i,assets.get(i)),find=r=>originals.find(i=>role(i)===r),room=r=>scene.rooms.find(a=>a.functionalRole===r);
+ scene.roomExpansionLegacyPoses=Object.fromEntries(originals.map(i=>{
+  const parent=supportedParent(i,originals),source=old.get(i),previous=parent&&old.get(parent);
+  const sx=previous?parent.w/previous.w:1,sy=previous?parent.h/previous.h:1;
+  return [i.id,{x:previous?parent.x+(source.x-previous.x)*sx:i.x,y:previous?parent.y+(source.y-previous.y)*sy:i.y,rotation:i.rotation||0}];
+ }));
+ const living=room('living'),bedroom=room('bedroom'),kitchen=room('kitchen');if(!living||!bedroom||!kitchen)return;
+ const sofa=find('sofa'),coffee=find('coffee-table'),smallTable=find('dining-table'),smallChair=find('dining-chair'),oldRug=find('rug'),reading=find('reading-chair'),console=find('record-console'),lamp=find('floor-lamp'),plant=find('plant'),arcade=find('arcade');
+ if(!sofa||!coffee||!smallTable||!smallChair)return;
+ const lowerShop=scene.kind==='showroom'&&scene.height<500,wide=living.w>600,compactShort=living.w<500&&living.h<350,player=scene.resident==='player';
+ const mirrored=scene.showroom?.column===1;
+ let loungeZone={...living},diningZone;
+ if(lowerShop){
+  const day=kitchen,inner=mirrored?day.x+day.w:day.x;
+  loungeZone={x:mirrored?inner-248:inner,y:214,w:248,h:206};
+  diningZone={x:mirrored?day.x:day.x+day.w-254,y:164,w:254,h:154};
+ }else if(scene.kind==='showroom'){
+  const d=room('dining');diningZone={...d,...((scene.interiorDesign?.circulation||[]).some(p=>p.y===400)?{y:d.y-28}: {})};loungeZone={...living};
+ }else if(player){
+  diningZone={x:kitchen.x+100,y:kitchen.y+170,w:kitchen.w-150,h:220};
+ }else if(wide){
+  const split=living.w*.53;loungeZone={x:living.x,y:living.y,w:split,h:living.h};diningZone={x:living.x+split+24,y:living.y+24,w:living.w-split-24,h:living.h-48};
+ }else{
+  const diningH=142,loungeH=living.h-diningH-28;loungeZone={x:living.x,y:living.y,w:living.w,h:loungeH};diningZone={x:living.x+22,y:living.y+living.h-diningH-8,w:living.w-44,h:diningH};
+ }
+ scene.familyFurnitureZones={living:loungeZone,dining:diningZone};
+ const furnitureBases=new Set(originals.flatMap(i=>i.collisionBoxes||[])),structural=scene.solids.filter(b=>!furnitureBases.has(b)),reserved=[...(apartmentDecorBounds(scene)||[])];
+ for(const area of scene.rooms)if(area.point)reserved.push({x:area.point.x-9,y:area.point.y-9,w:18,h:18});
+ for(const door of scene.privacyDoors||[]){
+  // These are source door lengths, before normalization to the approved36px.
+  const length=36,start=(door.axis==='vertical'?door.y:door.x)+((door.length||36)-length)/2;
+  reserved.push(door.axis==='vertical'?{x:door.x-34,y:start-6,w:68,h:length+12}:{x:start-6,y:door.y-34,w:length+12,h:68});
+ }
+ for(const path of scene.interiorDesign?.circulation||[])reserved.push({...path});
+ if(scene.spawn)reserved.push({x:scene.spawn.x-16,y:scene.spawn.y-16,w:32,h:32});
+ if(scene.portalExit?.threshold&&scene.portalExit.enterNormal){const p=scene.portalExit,n=p.enterNormal,x=p.threshold.x+n.x*24,y=p.threshold.y+n.y*24;reserved.push({x:x-18,y:y-18,w:36,h:36});}
+ if(scene.resident&&scene.resident!=='player')reserved.push({x:scene.width/2-12,y:scene.floor>=7?738:638,w:24,h:349});
+ // Shoppers follow authored venue scripts, whose clearance is wider than the
+ // player's6px floor radius. Reserve every real leg, including its turn caps.
+ const shoppingRoute=scene.showroom?.apartment?.visitRoute||[];
+ for(let n=1;n<shoppingRoute.length;n++){const from=shoppingRoute[n-1],to=shoppingRoute[n];reserved.push({x:Math.min(from.x,to.x)-18,y:Math.min(from.y,to.y)-18,w:Math.abs(to.x-from.x)+36,h:Math.abs(to.y-from.y)+36});}
+ const movable=new Set([sofa,coffee,oldRug,console,lamp?.roomId==='reading'?null:lamp,plant,arcade?.supportedBy?null:arcade,reading?.roomId==='reading'?null:reading,smallTable,smallChair].filter(Boolean));
+ const placed=originals.filter(i=>!movable.has(i)&&i.solid&&!i.supportedBy),counters=new Map();
+ const a=i=>assets.get(i),b=i=>footprint(a(i),i);
+ const clear=(items,{ignore=new Set(),gap=5}={})=>{
+  if(items.some(i=>i.x-i.w/2<28||i.x+i.w/2>scene.width-28))return false;
+  const boxes=items.filter(i=>i.solid).flatMap(i=>furnitureFacingBoxes(a(i),i));
+  if(boxes.some(box=>box.x<28||box.y<106||box.x+box.w>scene.width-28||box.y+box.h>scene.height-28||[...structural,...reserved].some(r=>intersects(box,r))))return false;
+  const other=placed.filter(i=>!ignore.has(i)).flatMap(i=>furnitureFacingBoxes(a(i),i));
+  if(boxes.some(box=>other.some(r=>intersects(box,r,gap))))return false;
+  for(let i=0;i<boxes.length;i++)for(let j=i+1;j<boxes.length;j++)if(intersects(boxes[i],boxes[j],gap))return false;
+  return true;
+ };
+ const append=(asset,designRole,roomId)=>{
+  const n=(counters.get(designRole)||0)+1;counters.set(designRole,n);const size=furniturePresentationScale({asset:asset.id},scene,asset);
+  const item={id:scene.id+':family-room-1:'+designRole+'-'+n,asset:asset.id,x:0,y:0,w:asset.w*size,h:asset.h*size,solid:asset.solid,rotation:0,wallMounted:false,layer:asset.layer||'objects',slot:asset.slot,collectionOwner:owner,visualSignature:asset.visualSignature,roomExpansion:'family-room-1',designRole,roomId,presentationScale:size};
+  if(scene.kind==='showroom'||asset.variant==='family-room')item.productId='furniture-'+asset.id;
+  assets.set(item,asset);return item;
+ };
+ const native=r=>definitions.get('collection-'+owner+'-'+r),added=[];let bedroomNook=null;
+ const commit=items=>{for(const i of items){if(!originals.includes(i)&&!added.includes(i))added.push(i);if(i.solid&&!placed.includes(i))placed.push(i);}};
+ const center=(item,x,y,rotation=item.rotation||0)=>{item.rotation=rotation;moveCenter(item,a(item),{x,y});};
+ const tryGroup=(items,zone,preferred,arrange)=>{
+  const centers=[preferred];for(const dy of [0,-12,12,-24,24,-36,36])for(const dx of [0,-12,12,-24,24,-36,36])centers.push({x:preferred.x+dx,y:preferred.y+dy});
+  for(const at of centers){arrange(at);const bounds=items.filter(i=>i.solid).map(b);if(bounds.some(q=>q.x<zone.x-1||q.y<zone.y-1||q.x+q.w>zone.x+zone.w+1||q.y+q.h>zone.y+zone.h+1))continue;if(clear(items)){commit(items);return true;}}
+  return false;
+ };
+
+ const familyTable=append(getFamilyFurniture(owner,'dining-table'),'family-dining-table',living.id||'living'),diningSeats=Array.from({length:6},()=>append(native('dining-chair'),'family-dining-chair',familyTable.roomId));
+ const diningGroup=[familyTable,...diningSeats],diningAt={x:diningZone.x+diningZone.w/2,y:diningZone.y+diningZone.h/2};
+ const diningFound=tryGroup(diningGroup,diningZone,diningAt,at=>{
+  center(familyTable,at.x,at.y,0);const table=b(familyTable),offset=table.w/4;
+  const poses=[[-offset,-1,0],[offset,-1,0],[-offset,1,180],[offset,1,180]];
+   for(let n=0;n<4;n++){const [x,side,turn]=poses[n],seat=diningSeats[n];seat.rotation=turn;const box=b(seat);center(seat,at.x+x,at.y+side*(table.h/2+22+box.h/2),turn);seat.seatingTarget=familyTable.id;}
+  for(let n=4;n<6;n++){const side=n===4?-1:1,seat=diningSeats[n];seat.rotation=side<0?270:90;const box=b(seat);center(seat,at.x+side*(table.w/2+22+box.w/2),at.y,seat.rotation);seat.seatingTarget=familyTable.id;}
+ });
+ const broadCoffee=append(getFamilyFurniture(owner,'coffee-table'),'family-coffee-table',living.id||'living'),loungeSeats=[];
+ const existingReading=reading&&movable.has(reading)?reading:null;
+ loungeSeats.push(existingReading||append(native('reading-chair'),'family-lounge-chair',living.id||'living'),append(native('reading-chair'),'family-lounge-chair',living.id||'living'));
+ if(existingReading&&scene.kind==='showroom'&&!mirrored)loungeSeats.reverse();
+ const secondSofa=!lowerShop&&!compactShort&&(loungeZone.h>=190)?append(native('sofa'),'family-lounge-sofa',living.id||'living'):null;
+ const loungeItems=[sofa,broadCoffee,...loungeSeats,...(secondSofa?[secondSofa]:[])],loungeAt={x:loungeZone.x+loungeZone.w/2,y:lowerShop?350:loungeZone.y+(secondSofa?loungeZone.h/2:Math.min(loungeZone.h/2+12,120))};
+ const loungeFound=tryGroup(loungeItems,loungeZone,loungeAt,at=>{
+  center(broadCoffee,at.x,at.y,0);const table=b(broadCoffee);sofa.rotation=0;const s=b(sofa);center(sofa,at.x,at.y-table.h/2-22-s.h/2,0);sofa.seatingTarget=broadCoffee.id;
+  if(secondSofa){
+   // A foreground high-back sofa hides a low table even with a clear floor
+   // aisle. Turn it onto the side; a lower chair keeps the front visually open.
+   const side=mirrored||player?1:-1;secondSofa.rotation=side<0?270:90;const second=b(secondSofa);center(secondSofa,at.x+side*(table.w/2+24+second.w/2),at.y,secondSofa.rotation);secondSofa.seatingTarget=broadCoffee.id;
+   const lateral=existingReading||loungeSeats[0],front=loungeSeats.find(i=>i!==lateral),opposite=-side;lateral.rotation=opposite<0?270:90;const chair=b(lateral);center(lateral,at.x+opposite*(table.w/2+24+chair.w/2),at.y,lateral.rotation);
+   front.rotation=180;const low=b(front);center(front,at.x,at.y+table.h/2+54+low.h/2,180);
+   for(const seat of loungeSeats){seat.seatingTarget=broadCoffee.id;seat.roomId=living.id||'living';}
+  }else for(let n=0;n<2;n++){const seat=loungeSeats[n],side=n===0?-1:1;seat.rotation=side<0?270:90;const box=b(seat);center(seat,at.x+side*(table.w/2+(lowerShop?22:24)+box.w/2),at.y,seat.rotation);seat.seatingTarget=broadCoffee.id;seat.roomId=living.id||'living';}
+ });
+ // Keep the original small table useful as an intimate bedroom reading nook.
+ // Larger living products occupy different floor space, never stretch a chair.
+ const relocate=(item,area,preferred,{rotations=[item.rotation||0],gap=8}={})=>{
+  if(!item||placed.includes(item))return true;const source={...item},options=[preferred];
+  for(const y of [area.y+area.h*.72,area.y+area.h*.45,area.y+area.h-28,area.y+36])for(const x of [area.x+area.w*.5,area.x+area.w*.72,area.x+area.w*.28,area.x+28,area.x+area.w-28])options.push({x,y});
+  for(let y=area.y+24;y<area.y+area.h-16;y+=18)for(let x=area.x+24;x<area.x+area.w-16;x+=18)options.push({x,y});
+  for(const turn of rotations)for(const at of options){center(item,at.x,at.y,turn);const box=b(item);if(box.x<area.x+6||box.y<area.y+6||box.x+box.w>area.x+area.w-6||box.y+box.h>area.y+area.h-6)continue;if(clear([item],{gap})){commit([item]);return true;}}
+  Object.assign(item,source);if(originals.includes(item))commit([item]);return false;
+ };
+ if(loungeFound){
+  const nookTable=lowerShop?smallTable:coffee,nookSeat=lowerShop?smallChair:append(native('reading-chair'),'bedroom-reading-chair',bedroom.id||'bedroom');
+  const pair=[nookTable,nookSeat],nookAt={x:bedroom.x+bedroom.w*(bedroom.side==='right'?.38:.62),y:bedroom.y+bedroom.h*.70};
+  const nookFound=tryGroup(pair,bedroom,nookAt,at=>{
+   center(nookTable,at.x,at.y,0);const table=b(nookTable);nookSeat.rotation=180;const seat=b(nookSeat);center(nookSeat,at.x,at.y+table.h/2+20+seat.h/2,180);nookSeat.seatingTarget=nookTable.id;nookSeat.roomId=bedroom.id||'bedroom';nookTable.roomId=nookSeat.roomId;
+  });
+  if(nookFound)bedroomNook={table:nookTable.id,seat:nookSeat.id};
+  if(nookFound&&oldRug){oldRug.roomId=bedroom.id||'bedroom';oldRug.x=nookTable.x;oldRug.y=clamp(b(nookSeat).y+b(nookSeat).h+12,bedroom.y+oldRug.h,bedroom.y+bedroom.h-8);}
+  else if(oldRug){const bed=find('bed');oldRug.x=bed.x;oldRug.y=bed.y+oldRug.h*.40;oldRug.roomId=bedroom.id||'bedroom';}
+  if(lowerShop)relocate(coffee,{x:kitchen.x,y:152,w:kitchen.w,h:84},{x:loungeZone.x+loungeZone.w/2,y:190},{gap:6});
+  else if(!nookFound)relocate(coffee,bedroom,{x:bedroom.x+bedroom.w/2,y:bedroom.y+bedroom.h*.55});
+  const rug=append(getFamilyFurniture(owner,'rug'),'family-living-rug',living.id||'living');rug.x=broadCoffee.x;rug.y=clamp(b(broadCoffee).cy+rug.h/2,loungeZone.y+rug.h,loungeZone.y+loungeZone.h);commit([rug]);
+ }
+ if(!lowerShop){
+  const breakfastAt={x:kitchen.x+kitchen.w*.48,y:kitchen.y+(scene.kind==='showroom'?126:kitchen.h-64)},pair=[smallTable,smallChair];
+  const breakfastFound=tryGroup(pair,kitchen,breakfastAt,at=>{
+   center(smallTable,at.x,at.y,0);const table=b(smallTable),side=kitchen.x+kitchen.w/2<scene.width/2?-1:1;smallChair.rotation=side<0?270:90;const seat=b(smallChair);center(smallChair,at.x+side*(table.w/2+24+seat.w/2),at.y,smallChair.rotation);smallChair.seatingTarget=smallTable.id;smallTable.roomId=kitchen.id||'kitchen';smallChair.roomId=smallTable.roomId;
+  });
+  if(!breakfastFound){relocate(smallTable,kitchen,breakfastAt);const table=b(smallTable);smallChair.rotation=180;relocate(smallChair,kitchen,{x:table.cx,y:table.y+table.h+28},{rotations:[180,90,270,0]});smallChair.seatingTarget=smallTable.id;}
+ }
+ if(!loungeFound)for(const item of [sofa,coffee,reading].filter(Boolean))if(movable.has(item))relocate(item,living,{x:item.x,y:b(item).cy});
+ // Consoles and arcade cabinets remain useful perimeter destinations, clear of
+ // the main seating group, dining seats and every original door landing.
+ for(const item of [console,arcade?.supportedBy?null:arcade].filter(Boolean))if(movable.has(item)){
+  const area=living,side=item===console&&scene.showroom?(mirrored?'right':'left'):area.x+area.w/2<scene.width/2?'left':'right',box=b(item),x=side==='left'?area.x+8+box.w/2:area.x+area.w-8-box.w/2;
+  relocate(item,area,{x,y:area.y+area.h*.48},{rotations:[side==='left'?270:90,0,180]});
+ }
+ if(lamp&&movable.has(lamp))relocate(lamp,living,{x:loungeAt.x+loungeZone.w*.36,y:loungeAt.y-45});
+ if(plant&&movable.has(plant))relocate(plant,living,{x:living.x+18,y:living.y+living.h-20});
+ const statement=append(getFamilyFurniture(owner,'plant'),'family-statement-plant',living.id||'living');
+ relocate(statement,living,{x:living.x+living.w-34,y:living.y+living.h-25},{gap:10});
+ const bedroomPlant=append(native('plant'),'bedroom-plant',bedroom.id||'bedroom');
+ relocate(bedroomPlant,bedroom,{x:bedroom.x+bedroom.w*.35,y:bedroom.y+bedroom.h-24},{gap:10});
+ // A failed optional relocation must not create a default at its sentinel0,0.
+ const validAdded=added.filter(i=>i.x!==0||i.y!==0);scene.items.push(...validAdded);
+ for(const item of scene.items){const parent=supportedParent(item,scene.items);if(parent&&parent.roomId)item.roomId=parent.roomId;}
+ scene.familyFurniture={version:1,expansion:'family-room-1',diningTable:diningFound?familyTable.id:null,livingTable:loungeFound?broadCoffee.id:null,diningSeats:diningFound?diningSeats.map(i=>i.id):[],livingSeats:loungeFound?[sofa,...loungeSeats,...(secondSofa?[secondSofa]:[])].map(i=>i.id):[],bedroomNook};
+}
+
 /** Apply room drawing units without changing the persisted product or anchor. */
 export function presentedRoomItem(item,scene,catalog){
  const factor=furniturePresentationScale(item,scene,assetFor(item,catalog));
  if(factor===1)return item;
  return {...item,scale:(item.scale??1)*factor,...(finite(item.w)?{w:item.w*factor}:{}),...(finite(item.h)?{h:item.h*factor}:{}),presentationScale:factor};
 }
+function reachableNookApproach(scene){
+ const step=8,radius=6,cols=Math.ceil(scene.width/step),rows=Math.ceil(scene.height/step),blocked=new Uint8Array(cols*rows),visited=new Uint8Array(cols*rows),queue=new Int32Array(cols*rows);
+ for(const box of scene.solids){
+  const x0=Math.max(0,Math.ceil((box.x-radius-4)/step)),x1=Math.min(cols-1,Math.floor((box.x+box.w+radius-4)/step)),y0=Math.max(0,Math.ceil((box.y-radius-4)/step)),y1=Math.min(rows-1,Math.floor((box.y+box.h+radius-4)/step));
+  for(let y=y0;y<=y1;y++)for(let x=x0;x<=x1;x++)blocked[y*cols+x]=1;
+ }
+ let end=0;const sx=Math.floor(scene.spawn.x/step),sy=Math.floor(scene.spawn.y/step);
+ for(let dy=-1;dy<=1;dy++)for(let dx=-1;dx<=1;dx++){const x=sx+dx,y=sy+dy,n=y*cols+x;if(x>=0&&y>=0&&x<cols&&y<rows&&!blocked[n]&&!visited[n]){visited[n]=1;queue[end++]=n;}}
+ for(let head=0;head<end;head++){const n=queue[head],x=n%cols,y=Math.floor(n/cols);for(const next of [x?n-1:-1,x+1<cols?n+1:-1,y?n-cols:-1,y+1<rows?n+cols:-1])if(next>=0&&!visited[next]&&!blocked[next]){visited[next]=1;queue[end++]=next;}}
+ return point=>{const x=Math.floor(point.x/step),y=Math.floor(point.y/step);for(let Y=Math.max(0,y-3);Y<=Math.min(rows-1,y+3);Y++)for(let X=Math.max(0,x-3);X<=Math.min(cols-1,x+3);X++)if(visited[Y*cols+X]&&Math.hypot(X*step+4-point.x,Y*step+4-point.y)<=25)return true;return false;};
+}
 function refreshFunctionalTargets(scene,assets){
  if(!scene.homePlan)return;
+ let nookReachable;
  const blocked=p=>p.x<40||p.y<112||p.x>scene.width-40||p.y>scene.height-40||scene.solids.some(b=>p.x>=b.x-6&&p.x<=b.x+b.w+6&&p.y>=b.y-6&&p.y<=b.y+b.h+6);
  const approaches=(scene.homePlan.fixtureApproaches||[]).map(previous=>{
   let item=scene.items.find(i=>i.asset===previous.asset)||scene.items.find(i=>i.furnitureRole===previous.role&&i.roomId===previous.roomId);if(!item)return {...previous};
   item=supportedParent(item,scene.items)||item;const b=footprint(assets.get(item),item),front=(((item.rotation||0)/90)%4+4)%4;
   const candidates=[];for(const gap of [12,20,28]){const side=[{x:b.cx,y:b.y+b.h+gap},{x:b.x-gap,y:b.cy},{x:b.cx,y:b.y-gap},{x:b.x+b.w+gap,y:b.cy}];candidates.push(side[front],...side);}
-  const point=candidates.find(p=>!blocked(p));if(point){item.approach={...point};return {...previous,...point};}return {...previous};
+  // A20px gap between a deep reading table and its chair is physically open,
+  // but can fall between navigation rows. Use an accessible side of that nook
+  // instead of assigning a target inside its narrow chair/table aisle.
+  const nook=previous.role==='coffee-table'&&scene.familyFurniture?.bedroomNook?.table===item.id;
+  if(nook)nookReachable||=reachableNookApproach(scene);
+  const point=candidates.find(p=>!blocked(p)&&(!nook||nookReachable(p)));if(point){item.approach={...point};return {...previous,...point};}return {...previous};
  });
  const seat=scene.items.find(i=>furnitureSlot(i,assets.get(i))==='reading-chair'),lamp=scene.items.find(i=>furnitureSlot(i,assets.get(i))==='floor-lamp'),tasks=[];
  for(const task of scene.homePlan.taskLights||[]){
@@ -201,11 +369,12 @@ export function calibratePrivateFurniture(scene,catalog){
  }
 
  arrangePrivateRooms(scene,assets,old);
+ furnishFamilyRooms(scene,assets,old);
 
  // Listening targets belong to their actual furniture rather than the old
  // display-size coordinates. Keep the design/circulation contract meaningful.
  if(scene.interiorDesign)scene.interiorDesign={...scene.interiorDesign,focalPoints:(scene.interiorDesign.focalPoints||[]).map(point=>{
-  const item=scene.items.find(item=>{const before=oldCenter(item);return Math.abs(before.cx-point.x)<1e-6&&Math.abs(before.cy-point.y)<1e-6;});
+  const item=scene.items.find(item=>{if(!old.has(item))return false;const before=oldCenter(item);return Math.abs(before.cx-point.x)<1e-6&&Math.abs(before.cy-point.y)<1e-6;});
   if(!item)return {...point};const at=footprint(assets.get(item),item);return {...point,x:at.cx,y:at.cy};
  })};
 
@@ -213,6 +382,7 @@ export function calibratePrivateFurniture(scene,catalog){
  // Parent keys are legacy roles in homes and asset IDs in the showrooms.
  for(const item of scene.items){
   const parent=supportedParent(item,scene.items);if(!parent)continue;
+  if(!old.has(item)||!old.has(parent))continue;
   const source=old.get(item),previous=old.get(parent),sx=parent.w/previous.w,sy=parent.h/previous.h;
   item.x=parent.x+(source.x-previous.x)*sx;item.y=parent.y+(source.y-previous.y)*sy;
   item.depth=furnitureFacingDepth(assets.get(parent),parent,parent.y)+.25;item.solid=false;

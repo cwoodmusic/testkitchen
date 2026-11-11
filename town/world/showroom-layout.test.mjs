@@ -4,12 +4,13 @@ import {createRequire} from 'node:module';
 import {SHOWROOMS,STORE_TRAFFIC,STORE_VERTICAL_CORE,STORE_FLOOR_COUNT,SHOWROOM_UNIT_FOOTPRINT,UPPER_SHOWROOM_UNIT_FOOTPRINT,getStoreFloorShowrooms} from './showroom-layout.mjs';
 import {getInterior,STORE_FOOTPRINT,configureUrbanInteriors} from './urban-interiors.mjs';
 import {APARTMENT_COLLECTION_ASSETS} from './apartment-collections.mjs';
+import {FAMILY_FURNITURE_ASSETS} from './family-furniture-definitions.mjs';
 import {APARTMENT_DECOR} from './apartment-decor-definitions.mjs';
 import {furnitureFacingBoxes,furnitureFacingDepth} from './furniture-facing.mjs';
 import {interiorActorScale} from './interior-scale.mjs';
 import {PRIVATE_DOOR_CLEAR_WIDTH,PUBLIC_DOOR_CLEAR_WIDTH} from './interior-doorways.mjs';
 const require=createRequire(import.meta.url),stock=require('../../furniture-catalog.js'),products=new Map(stock.map(p=>[p.id,p]));
-const native=new Map([...APARTMENT_DECOR,...APARTMENT_COLLECTION_ASSETS].map(a=>[a.id,a]));configureUrbanInteriors(native);
+const native=new Map([...APARTMENT_DECOR,...APARTMENT_COLLECTION_ASSETS,...FAMILY_FURNITURE_ASSETS].map(a=>[a.id,a]));configureUrbanInteriors(native);
 const lobby=getInterior({kind:'shop'}),overlaps=(a,b)=>a.x<b.x+b.w&&a.x+a.w>b.x&&a.y<b.y+b.h&&a.y+a.h>b.y;
 const blocked=(m,p,pad=16*interiorActorScale(m))=>m.solids.some(r=>p.x>=r.x-pad&&p.x<=r.x+r.w+pad&&p.y>=r.y-pad&&p.y<=r.y+r.h+pad);
 function route(model,points,label){for(let i=1;i<points.length;i++){const a=points[i-1],b=points[i];assert(a.x===b.x||a.y===b.y,'A venue route must use cardinal legs');const steps=Math.max(1,Math.ceil(Math.hypot(b.x-a.x,b.y-a.y)/3));for(let n=0;n<=steps;n++)assert(!blocked(model,{x:a.x+(b.x-a.x)*n/steps,y:a.y+(b.y-a.y)*n/steps}),label+' must remain clear');}}
@@ -54,11 +55,13 @@ test('wide units have private bedroom and bathroom doors and physical native-foo
  assert.equal(layouts.size,12);assert.equal(new Set([...layouts].map(id=>id.replace(/-(original|mirrored)$/,''))).size,6);
 });
 
-test('each independent owner has one complete bath, a practical kitchen and unique whimsical pieces without repeated artwork',()=>{
+test('each owner retains its unique original collection while expanded seating can repeat matching pieces',()=>{
  const all=new Set();
  for(const d of SHOWROOMS){const m=getInterior({kind:'showroom',showroomId:d.id}),nav=navigation(m),owner='showroom-'+d.id;
-  assert.equal(m.items.length,d.storeFloor===1?25:d.row?29:28);assert.equal(new Set(m.items.map(i=>i.asset)).size,m.items.length);
-  for(const item of m.items){assert.equal(item.collectionOwner,owner);assert(!all.has(item.asset),'An apartment must not reuse another collection’s artwork');all.add(item.asset);assert(item.visualSignature.includes(owner));}
+  const original=m.items.filter(i=>!i.roomExpansion);assert.equal(original.length,d.storeFloor===1?25:d.row?29:28);assert.equal(new Set(original.map(i=>i.asset)).size,original.length);
+  for(const item of m.items){assert.equal(item.collectionOwner,owner);assert(item.visualSignature.includes(owner));}
+  for(const asset of new Set(m.items.map(i=>i.asset)))if(m.items.filter(i=>i.asset===asset).length>1)assert(['sofa','dining-chair','reading-chair','plant'].includes(native.get(asset)?.slot),d.name+' repeats an unintended fixture');
+  for(const asset of new Set(m.items.map(i=>i.asset))){assert(!all.has(asset),'An apartment must not reuse another collection’s artwork');all.add(asset);}
   for(const role of ['sink','counter','stove','fridge','pantry','vanity','toilet','bath-fixture','bathroom-mirror'])assert.equal(m.items.filter(i=>i.fixtureRole===role).length,1,d.name+' needs one '+role);
   for(const role of ['bed','sofa','coffee-table','dining-table','dining-chair','nightstand','wardrobe','playful-accent','music-rug','wall-art','lava-lamp','arcade'])assert(m.items.some(i=>i.furnitureRole===role),d.name+' lacks '+role);
   const vanity=m.items.find(i=>i.slot==='vanity'),mirror=m.items.find(i=>i.slot==='mirror');assert(Math.abs(mirror.x-vanity.x)<1e-8);assert(Math.abs(mirror.y-(vanity.y-vanity.h-6))<1e-8,'The mirror sits directly above its actual basin');assert(mirror.wallMounted&&!mirror.solid);
@@ -69,11 +72,11 @@ test('each independent owner has one complete bath, a practical kitchen and uniq
 });
 
 test('collection stock is exactly the physical buyable pieces while all previous products and ownership IDs remain available',()=>{
- for(const d of SHOWROOMS){const m=getInterior({kind:'showroom',showroomId:d.id});assert.deepEqual(d.productIds.slice().sort(),m.items.map(i=>i.productId).sort());for(const item of m.items)assert.equal(products.get(item.productId)?.asset,item.asset,'A purchase must unlock the exact display asset');}
- assert.equal(stock.filter(p=>!p.asset.startsWith('apartment-')&&!p.asset.startsWith('collection-')&&!p.asset.startsWith('plush-')).length,52);
+ for(const d of SHOWROOMS){const m=getInterior({kind:'showroom',showroomId:d.id});assert.deepEqual(d.productIds.slice().sort(),m.items.filter(i=>!i.roomExpansion).map(i=>i.productId).sort());for(const item of m.items)assert.equal(products.get(item.productId)?.asset,item.asset,'A purchase must unlock the exact display asset');}
+ assert.equal(stock.filter(p=>!p.asset.startsWith('apartment-')&&!p.asset.startsWith('collection-')&&!p.asset.startsWith('plush-')&&!p.asset.startsWith('family-')).length,52);
  assert.equal(stock.filter(p=>p.asset.startsWith('plush-')).length,12);
  for(const d of getStoreFloorShowrooms(1))for(const role of ['bed','sofa'])assert(products.has('furniture-'+d.id+'-'+role),'Existing owned signatures must keep their IDs');
- assert.equal(stock.length,100+APARTMENT_COLLECTION_ASSETS.filter(a=>a.owner.startsWith('showroom-')).length+19+12);
+ assert.equal(stock.length,100+APARTMENT_COLLECTION_ASSETS.filter(a=>a.owner.startsWith('showroom-')).length+19+12+FAMILY_FURNITURE_ASSETS.length);
 });
 
 test('upper homes protect broad circulation and group conversation around a real listening focus',()=>{
