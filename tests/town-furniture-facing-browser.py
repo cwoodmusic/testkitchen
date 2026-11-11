@@ -10,7 +10,7 @@ from threading import Thread
 import argparse,hashlib,json
 from playwright.sync_api import sync_playwright
 ROOT=Path(__file__).resolve().parents[1];SOURCE=ROOT/'town/maps/coda-town-uploaded-3.json'
-parser=argparse.ArgumentParser();parser.add_argument('--front-only',action='store_true');parser.add_argument('--screenshots',type=Path,default=Path('/workspace/.onboarding/furniture-facing'));args=parser.parse_args();args.screenshots.mkdir(parents=True,exist_ok=True)
+parser=argparse.ArgumentParser();parser.add_argument('--front-only',action='store_true');parser.add_argument('--normal-camera',action='store_true',help='Keep the real default camera and stand near saved furniture instead of zooming out');parser.add_argument('--screenshots',type=Path,default=Path('/workspace/.onboarding/furniture-facing'));args=parser.parse_args();args.screenshots.mkdir(parents=True,exist_ok=True)
 source_hash=hashlib.sha256(SOURCE.read_bytes()).hexdigest();legacy={'id':'room-legacy-geranium','item':'furniture-geranium','asset':'decor-08-01','x':1800,'y':900,'scale':1};product_id='furniture-collection-showroom-midcentury-studio-reading-chair'
 class Quiet(SimpleHTTPRequestHandler):
  def log_message(self,*_):pass
@@ -22,7 +22,9 @@ try:
   if args.front_only:context.route('**/directions-manifest.json*',lambda route:route.fulfill(status=200,content_type='application/json',body='{"collections":[]}'))
   page=context.new_page();page.set_default_timeout(180000);errors=[];page.on('pageerror',lambda e:errors.append(str(e)))
   page.goto(f'http://127.0.0.1:{server.server_port}/town/builder/');page.wait_for_function('!!window.townBuilder')
-  page.locator('#file').set_input_files(str(SOURCE));page.wait_for_function('townBuilder.project.objects.length===120');page.locator('#walk').click();page.evaluate("townBuilder.urban.openRoom('player');townBuilder.urban.zoom(10000)")
+  page.locator('#file').set_input_files(str(SOURCE));page.wait_for_function('townBuilder.project.objects.length===120');page.locator('#walk').click();page.evaluate("townBuilder.urban.openRoom('player')")
+  if args.normal_camera:page.evaluate('Object.assign(townBuilder.urban.player,{x:2050,y:700})')
+  else:page.evaluate('townBuilder.urban.zoom(10000)')
   info=page.evaluate('''async id=>{const app=new URL(document.querySelector('script[type=module]').src),{furnitureFacingBounds}=await import(new URL('../world/furniture-facing.mjs'+app.search,app));window.__facingBounds=item=>furnitureFacingBounds(townBuilder.catalog.get(item.asset),item);const p=CodaFurnitureCatalog.find(p=>p.id===id);await townBuilder.catalog.get(p.asset).ensureFull();return p;}''',product_id)
   def frame():page.evaluate('()=>new Promise(r=>requestAnimationFrame(()=>requestAnimationFrame(r)))')
   def click_world(x,y):
@@ -44,14 +46,19 @@ try:
    turned.append({'direction':direction,'rotation':rotation,'bounds':page.evaluate('item=>__facingBounds(item)',item)})
   click_placed();page.get_by_role('button',name='Move',exact=True).click();assert page.evaluate('townBuilder.urban.furnitureRotation')==90;click_world(2150,900);moved=current();assert moved['rotation']==90 and moved['id']==first['id'] and moved['x']==2150 and moved['y']==900
   page.screenshot(path=str(args.screenshots/'facing-controls.png'));saved=page.evaluate('townBuilder.urban.decor');assert next(o for o in saved if o['id']==legacy['id'])==legacy
-  wallet=page.evaluate('localStorage.getItem("codaNotesWalletV1")');page.reload();page.wait_for_function('!!window.townBuilder');page.locator('#walk').click();page.evaluate("townBuilder.urban.openRoom('player');townBuilder.urban.zoom(10000)");assert page.evaluate('townBuilder.urban.decor')==saved
+  wallet=page.evaluate('localStorage.getItem("codaNotesWalletV1")');page.reload();page.wait_for_function('!!window.townBuilder');page.locator('#walk').click();page.evaluate("townBuilder.urban.openRoom('player')")
+  if args.normal_camera:page.evaluate('Object.assign(townBuilder.urban.player,{x:2050,y:700})')
+  else:page.evaluate('townBuilder.urban.zoom(10000)')
+  assert page.evaluate('townBuilder.urban.decor')==saved
   page.evaluate('''async()=>{const app=new URL(document.querySelector('script[type=module]').src),{furnitureFacingBounds}=await import(new URL('../world/furniture-facing.mjs'+app.search,app));window.__facingBounds=item=>furnitureFacingBounds(townBuilder.catalog.get(item.asset),item);}''')
-  choose();assert page.evaluate('townBuilder.urban.furnitureRotation')==90;page.get_by_role('group',name='Furniture facing',exact=True).locator('[data-room-facing="south"]').click();click_world(2150,1045);edge=current();assert edge['rotation']==0 and edge['y']==1045,edge
+  choose();assert page.evaluate('townBuilder.urban.furnitureRotation')==90;page.get_by_role('group',name='Furniture facing',exact=True).locator('[data-room-facing="south"]').click()
+  if args.normal_camera:page.evaluate('Object.assign(townBuilder.urban.player,{x:2050,y:925})')
+  click_world(2150,1045);edge=current();assert edge['rotation']==0 and edge['y']==1045,edge
   click_placed();page.get_by_role('group',name='Turn furniture',exact=True).locator('[data-room-facing="north"]').click();page.get_by_role('status').filter(has_text='inside').wait_for();assert current()==edge
   page.screenshot(path=str(args.screenshots/'invalid-turn-rejected.png'));page.get_by_role('button',name='Close',exact=True).click();click_placed();page.get_by_role('button',name='Put away',exact=True).click();assert page.evaluate('townBuilder.urban.decor')==[legacy]
   assert page.evaluate('localStorage.getItem("codaNotesWalletV1")')==wallet
   assert page.evaluate('(id)=>JSON.parse(localStorage.getItem("codaNotesWalletV1")).owned.includes(id)',product_id)
   assert page.evaluate('townBuilder.project')==json.loads(SOURCE.read_bytes());assert not errors,errors;browser.close()
  assert hashlib.sha256(SOURCE.read_bytes()).hexdigest()==source_hash
- result={'frontFallbackOnly':args.front_only,'directionArtworkVerified':False,'cardinalControls':turned,'keyboardR':True,'movePreservedFacing':True,'reloadPreservedFacing':True,'invalidTurnRejectedWithoutMutation':True,'ownershipAndWalletUnchanged':True,'legacyDecorUnchanged':True,'sourceUnchanged':True,'pageErrors':errors};(args.screenshots/'results.json').write_text(json.dumps(result,indent=2));print(json.dumps(result),flush=True)
+ result={'normalPlayCamera':args.normal_camera,'frontFallbackOnly':args.front_only,'directionArtworkVerified':False,'cardinalControls':turned,'keyboardR':True,'movePreservedFacing':True,'reloadPreservedFacing':True,'invalidTurnRejectedWithoutMutation':True,'ownershipAndWalletUnchanged':True,'legacyDecorUnchanged':True,'sourceUnchanged':True,'pageErrors':errors};(args.screenshots/'results.json').write_text(json.dumps(result,indent=2));print(json.dumps(result),flush=True)
 finally:server.shutdown()
