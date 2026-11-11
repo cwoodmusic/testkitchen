@@ -1,4 +1,4 @@
-import {assetImage} from './asset-color.mjs?v=interior-design-1';
+import {assetImage} from './asset-color.mjs?v=room-editor-1';
 
 export const SHOWROOM_SIGN_ASSET='decor-14-16';
 

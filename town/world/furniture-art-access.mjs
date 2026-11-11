@@ -1,4 +1,4 @@
-import {cardinalFacing,furnitureFacingPlacement} from './furniture-facing.mjs?v=interior-design-1';
+import {cardinalFacing,furnitureFacingPlacement} from './furniture-facing.mjs?v=room-editor-1';
 
 /** Metadata rejects distant objects before any view/canvas getter can warm art. */
 export function furnitureFacingPointHit(asset,object,pose,point){

@@ -1,7 +1,7 @@
-import {APARTMENT_COLLECTION_ASSETS} from './apartment-collection-definitions.mjs?v=interior-design-1';
-import {createApartmentCollectionRuntime} from './apartment-collection-runtime.mjs?v=interior-design-1';
-import {resolveSouthArtCorrections,SOUTH_ART_PREVIEW} from './south-art-fixes.mjs?v=interior-design-1';
-export * from './apartment-collection-definitions.mjs?v=interior-design-1';
+import {APARTMENT_COLLECTION_ASSETS} from './apartment-collection-definitions.mjs?v=room-editor-1';
+import {createApartmentCollectionRuntime} from './apartment-collection-runtime.mjs?v=room-editor-1';
+import {resolveSouthArtCorrections,SOUTH_ART_PREVIEW} from './south-art-fixes.mjs?v=room-editor-1';
+export * from './apartment-collection-definitions.mjs?v=room-editor-1';
 
 const base=new URL('../assets/apartment-collections/',import.meta.url);
 function assetURL(file){const url=new URL(file,base);url.search=new URL(import.meta.url).search;return url;}

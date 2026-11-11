@@ -1,4 +1,4 @@
-import {maskContains,maskBounds,maskRects,maskEdges,maskFront} from './organic-mask.mjs?v=interior-design-1';
+import {maskContains,maskBounds,maskRects,maskEdges,maskFront} from './organic-mask.mjs?v=room-editor-1';
 export const cornerStyles=['smooth','rocky','bevel'];
 const styleOf=q=>cornerStyles.includes(q.style)?q.style:'smooth';
 const angles={nw:Math.PI,ne:Math.PI*1.5,sw:Math.PI/2,se:0};

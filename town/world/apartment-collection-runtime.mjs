@@ -1,4 +1,4 @@
-import {collectionImageRect,collectionMotion} from './apartment-collection-art.mjs?v=interior-design-1';
+import {collectionImageRect,collectionMotion} from './apartment-collection-art.mjs?v=room-editor-1';
 
 const directions=['south','north','east','west'];
 const faceKey=(id,facing='south')=>facing==='south'?id:id+'|'+facing;
@@ -66,11 +66,12 @@ export function createApartmentCollectionRuntime({definitions,manifest,direction
   }
  }
  for(const correction of southArtCorrections){
-  const def=byId.get(correction.id);if(!def||def.owner!==correction.owner)throw Error('Invalid reviewed South correction: '+correction.id);
+  const def=byId.get(correction.id);if(!def||def.owner!==correction.owner)throw Error('Invalid reviewed cardinal correction: '+correction.id);
   const entry=correction.entry,key=def.owner+'|'+entry.file;
   let state=states.get(key);if(!state){state={key,owner:def.owner,entry,thumb:null,pending:null,autoFailed:false};states.set(key,state);}
-  addRecord(def,correction.frame,state,'south');
-  records.get(def.id).correctedPreview={...correction.preview,image:southArtPreview};
+  const facing=correction.facing??'south';if(!directions.includes(facing))throw Error('Invalid reviewed cardinal facing: '+facing);
+  addRecord(def,correction.frame,state,facing);
+  records.get(faceKey(def.id,facing)).correctedPreview={...correction.preview,image:southArtPreview};
  }
  for(const cell of overview?.cells||[])overviewCells.set(faceKey(cell.id,cell.facing??cell.direction??'south'),cell);
  const touch=(map,key,value)=>{map.delete(key);map.set(key,value);return value;};

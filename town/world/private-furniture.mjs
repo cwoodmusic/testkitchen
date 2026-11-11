@@ -1,6 +1,6 @@
-import {interiorActorScale} from './interior-scale.mjs?v=interior-design-1';
-import {APARTMENT_COLLECTION_ASSETS} from './apartment-collection-definitions.mjs?v=interior-design-1';
-import {furnitureAtGroundCenter,furnitureFacingBoxes,furnitureFacingBounds,furnitureFacingDepth} from './furniture-facing.mjs?v=interior-design-1';
+import {interiorActorScale} from './interior-scale.mjs?v=room-editor-1';
+import {APARTMENT_COLLECTION_ASSETS} from './apartment-collection-definitions.mjs?v=room-editor-1';
+import {furnitureAtGroundCenter,furnitureFacingBoxes,furnitureFacingBounds,furnitureFacingDepth} from './furniture-facing.mjs?v=room-editor-1';
 
 const definitions=new Map(APARTMENT_COLLECTION_ASSETS.map(a=>[a.id,a])),CALIBRATED=Symbol.for('coda.privateFurnitureCalibration');
 const finite=n=>typeof n==='number'&&Number.isFinite(n);
