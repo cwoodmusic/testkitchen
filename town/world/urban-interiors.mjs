@@ -189,7 +189,7 @@ function warmScene(scene){
  if(!portalArtWarmed){portalArtWarmed=true;void warmInteriorPortalArt().catch(()=>{});}
  if(!nativeCatalog||warmedScene===scene&&warmedCatalog===nativeCatalog)return;
  warmedScene=scene;warmedCatalog=nativeCatalog;
- Promise.all([preparePlacedFacingArt({objects:[...scene.items,...(scene.doors||[])]},nativeCatalog),warmHomeMaterials(scene.homeMaterialSuite)]).finally(()=>discardBackground(scene.id)).catch(()=>{});
+ Promise.allSettled([preparePlacedFacingArt({objects:[...scene.items,...(scene.doors||[])]},nativeCatalog),warmHomeMaterials(scene.homeMaterialSuite)]).finally(()=>discardBackground(scene.id)).catch(()=>{});
 }
 export function getInterior(scene={}){
  if(scene.kind==='concert')return getConcertHall();
