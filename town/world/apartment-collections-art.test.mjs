@@ -26,6 +26,7 @@ test('native runtime art contains992 distinct RGBA crops in31 lossless atlases w
  const digests=new Set(),frames=new Set();
  for(const c of manifest.collections){
   assert(APARTMENT_COLLECTIONS.some(owner=>owner.owner===c.owner));assert.equal(c.cells.length,32);assert.match(c.sourceDigest,/^[a-f0-9]{64}$/);
+  assert(c.width*c.height<=7*1024*1024,c.owner+' native sheet exceeds its decoded pixel budget');
   for(const file of [c.file,c.thumbnail]){
    const bytes=readFileSync(new URL(file,root));assert.equal(bytes.toString('ascii',0,4),'RIFF');assert.equal(bytes.toString('ascii',8,12),'WEBP');assert(bytes.includes(Buffer.from('VP8L')),'Runtime art must use lossless WebP');
   }
@@ -33,11 +34,14 @@ test('native runtime art contains992 distinct RGBA crops in31 lossless atlases w
    const a=getApartmentAsset(c.owner,frame.slot);assert(frame.w>=24&&frame.h>=24);assert(frame.x>=0&&frame.y>=0&&frame.x+frame.w<=c.width&&frame.y+frame.h<=c.height);
    assert(frame.x>=frame.cell.x&&frame.y>=frame.cell.y&&frame.x+frame.w<=frame.cell.x+frame.cell.w&&frame.y+frame.h<=frame.cell.y+frame.cell.h,'Crops cannot borrow another object cell');
    assert.match(frame.digest,/^[a-f0-9]{64}$/);digests.add(frame.digest);frames.add(c.file+':'+frame.x+':'+frame.y+':'+frame.w+':'+frame.h);
-   const r=collectionImageRect(a,frame);assert(Math.abs(r.w/r.h-frame.w/frame.h)<1e-9);assert(r.x>=0&&r.y>=0&&r.x+r.w<=a.w+1e-9&&Math.abs(r.y+r.h-a.h)<1e-9);
+   const visual={w:frame.viewWidth??a.w,h:frame.viewHeight??a.h},r=collectionImageRect(visual,frame);assert(Math.abs(r.w/r.h-frame.w/frame.h)<1e-9);assert(r.x>=0&&r.y>=0&&r.x+r.w<=visual.w+1e-9&&Math.abs(r.y+r.h-visual.h)<1e-9);
+   if(visual.w!==a.w||visual.h!==a.h)assert(Array.isArray(frame.footCenter)&&frame.footCenter.length===2&&frame.footCenter.every(Number.isFinite),'Expanded artwork needs its own floor anchor');
   }
  }
  assert.equal(digests.size,992,'Distinct names must also have different actual native RGBA artwork');assert.equal(frames.size,992,'No two assets may point at a shared source crop');
- const bytes=manifest.collections.reduce((sum,c)=>sum+statSync(new URL(c.file,root)).size+statSync(new URL(c.thumbnail,root)).size,0);assert(bytes<60*1024*1024,'Atlas pipeline must avoid a huge individual-PNG payload');
+ const bytes=manifest.collections.reduce((sum,c)=>sum+statSync(new URL(c.file,root)).size+statSync(new URL(c.thumbnail,root)).size,0);// The corrected native artwork is retained losslessly (84.5 MiB across all31
+ // South sheets/thumbnails), loaded by viewed owner rather than at startup.
+ assert(bytes<90*1024*1024,'Lossless South art and thumbnails exceed the encoded release budget');
 });
 
 test('every collection has reviewed lava glass and arcade screen masks inside its contained native artwork',()=>{

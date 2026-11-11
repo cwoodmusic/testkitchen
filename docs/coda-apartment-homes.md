@@ -40,7 +40,7 @@ Generated classroom rules include the expanded allowlist and are checked offline
 
 ## Performance and verification
 
-Collection thumbnails load at startup; full art loads for viewed homes. NPC model/path queries do not fetch all 31 native atlases. Native sources and sprite canvases have bounded caches with eviction recovery. Interior backgrounds are limited to eight entries and 16 megapixels, with immediate backing-store release. Lava/screen buffers update at eight frames per second without repainting the room.
+Collection thumbnails load at startup; full art loads for viewed homes. NPC model/path queries do not fetch all 31 native atlases. Native sources and sprite canvases have bounded caches with eviction recovery. The corrected South sheets and thumbnails total about 84.5 MiB across all 31 owners; each viewed home loads its own native art. The 31 startup thumbnails total about 2.5 MiB. Source atlases remain lossless, with no approved crop resampling. Interior backgrounds are limited to eight entries and 16 megapixels, with immediate backing-store release. Lava/screen buffers update at eight frames per second without repainting the room.
 
 Native browser checks cover all 31 homes, 992 distinct props, 840 distinct placed items, transparent boundaries and saved décor. Facing checks exercise all 3,968 native views, with animated overlays tested separately for movement and containment in their actual glass. Performance measurements use warmed, visible interiors and cold outdoor asset loading, with native request counts, frame pauses and cache bounds reported separately.
 
