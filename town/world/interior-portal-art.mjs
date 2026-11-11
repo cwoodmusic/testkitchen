@@ -56,13 +56,13 @@ function paletteFor(d,options,palettes){
 // chooses the room into which the leaf opens. Private rooms are seen from
 // above: the visible door is its narrow top edge, never an upright facade.
 export function getPrivacyDoorVisualGeometry(d,openness=0){
- const vertical=d.axis==='vertical',length=Math.max(24,finite(d.length,104)),end=d.hinge==='end',hinge=end?length-5:5,span=Math.max(14,length-10),open=openValue(openness),swing=d.swing===-1?-1:1;
+ const vertical=d.axis==='vertical',length=Math.max(24,finite(d.length,104)),clearOpening=d.clearOpening===true,inset=clearOpening?0:5,end=d.hinge==='end',hinge=end?length-inset:inset,span=Math.max(14,length-inset*2),open=openValue(openness),swing=d.swing===-1?-1:1;
  const angle=(end?-1:1)*Math.PI/2*(1-open),co=unit(Math.cos(angle)),si=unit(Math.sin(angle));
  const at=vertical?{x:finite(d.x),y:finite(d.y)+hinge}:{x:finite(d.x)+hinge,y:finite(d.y)};
  const vector=vertical?{x:swing*co,y:si}:{x:si,y:-swing*co};
  const height=8;
  const tip={x:at.x+vector.x*span,y:at.y+vector.y*span};
- return {kind:'top-down',privacy:true,vertical,length,span,height,openness:open,hinge:at,vector,tip,depth:Math.max(at.y,tip.y),gapStart:vertical?{x:finite(d.x),y:finite(d.y)+5}:{x:finite(d.x)+5,y:finite(d.y)},gapEnd:vertical?{x:finite(d.x),y:finite(d.y)+length-5}:{x:finite(d.x)+length-5,y:finite(d.y)}};
+ return {kind:'top-down',privacy:true,vertical,length,span,height,clearOpening,openness:open,hinge:at,vector,tip,depth:Math.max(at.y,tip.y),gapStart:vertical?{x:finite(d.x),y:finite(d.y)+inset}:{x:finite(d.x)+inset,y:finite(d.y)},gapEnd:vertical?{x:finite(d.x),y:finite(d.y)+length-inset}:{x:finite(d.x)+length-inset,y:finite(d.y)}};
 }
 
 export function getDoorVisualGeometry(d,openness=0){
@@ -168,7 +168,15 @@ export function createInteriorPortalArt({createCanvas=defaultCanvas,maxEntries=P
   // Two short jamb caps meet the existing wall ends. The open gap shows its
   // floor and threshold; there is no tall frame covering the room behind it.
   c.save();c.translate(g.gapStart.x,g.gapStart.y);c.transform(g.vertical?0:1,g.vertical?1:0,g.vertical?-1:0,g.vertical?0:1,0,0);
-  cached(c,['plan-opening',span,p.key].join('|'),span+20,20,cc=>{
+  if(g.clearOpening){
+   // Jambs sit on the wall ends, outside the actual clear passage. Narrow
+   // openings must not lose twenty-two pixels to the legacy inset caps.
+   const depth=clamp(finite(d.wallThickness,18),12,28),cap=4;
+   cached(c,['plan-clear-opening',span,depth,p.key].join('|'),span+cap*2,depth+4,cc=>{
+    pixel(cc,cap,depth/2,span,4,p.frameDark);pixel(cc,cap,depth/2,span,2,p.ivory);pixel(cc,cap,depth/2,span,1,p.light);
+    for(const x of [0,span+cap]){pixel(cc,x,2,cap,depth,p.frameDark);pixel(cc,x+1,3,cap-2,depth-2,p.frame);pixel(cc,x,3,cap,2,p.trim);}
+   },-cap,-depth/2-2);
+  }else cached(c,['plan-opening',span,p.key].join('|'),span+20,20,cc=>{
    pixel(cc,10,7,span,6,p.frameDark);pixel(cc,10,8,span,3,p.ivory);pixel(cc,10,8,span,1,p.light);
    for(const x of [4,span+4]){pixel(cc,x,2,12,16,p.frameDark);pixel(cc,x+1,3,10,14,p.frame);material(cc,1,{x:x+2,y:4,w:8,h:11},p.frame);pixel(cc,x+1,3,10,2,p.trim);pixel(cc,x+2,5,1,9,p.light);}
   },-10,-10);c.restore();

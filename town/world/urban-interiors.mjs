@@ -1,25 +1,28 @@
-import {assetImage} from './asset-color.mjs?v=apartment-scale-2';
-import {SHOWROOMS,applyShowroomLayout} from './showroom-layout.mjs?v=apartment-scale-2';
-import {applyShowroomApartment} from './showroom-apartments.mjs?v=apartment-scale-2';
-import {drawShowroomFloor,drawShowroomWallpaper} from './showroom-materials.mjs?v=apartment-scale-2';
-import {applyHomeMaterialSuite,warmHomeMaterials} from './home-materials.mjs?v=apartment-scale-2';
-import {drawTowerCommonSurfaces,drawTowerCommonStairs,towerCommonMaterialsReady,warmTowerCommonMaterials} from './tower-common-materials.mjs?v=apartment-scale-2';
-import {drawInteriorDoor,drawPrivacyDoor,drawElevatorPortal,interiorPortalVisualDepth,warmInteriorPortalArt} from './interior-portal-art.mjs?v=apartment-scale-2';
-import {interiorActorScale} from './interior-scale.mjs?v=apartment-scale-2';
-import {getConcertHall,renderConcertHallBackground,concertHallDrawables} from './concert-hall.mjs?v=apartment-scale-2';
-import {renderStagePerformance} from './concert-performers.mjs?v=apartment-scale-2';
-import {buildApartmentHome} from './apartment-homes.mjs?v=apartment-scale-2';
-import {APARTMENT_COLLECTION_ASSETS,getApartmentAsset} from './apartment-collections.mjs?v=apartment-scale-2';
-import {drawApartmentMotion} from './apartment-motion.mjs?v=apartment-scale-2';
-import {furnitureFacingPlacement,furnitureFacingDepth,furnitureFacingBoxes,furnitureAtGroundCenter} from './furniture-facing.mjs?v=apartment-scale-2';
-import {preparePlacedFacingArt} from './furniture-art-access.mjs?v=apartment-scale-2';
+import {assetImage} from './asset-color.mjs?v=town-polish-1';
+import {SHOWROOMS,applyShowroomLayout} from './showroom-layout.mjs?v=town-polish-1';
+import {drawShowroomThemeSign} from './showroom-signs.mjs?v=town-polish-1';
+import {applyShowroomApartment} from './showroom-apartments.mjs?v=town-polish-1';
+import {drawShowroomFloor,drawShowroomWallpaper} from './showroom-materials.mjs?v=town-polish-1';
+import {applyHomeMaterialSuite,warmHomeMaterials} from './home-materials.mjs?v=town-polish-1';
+import {drawTowerCommonSurfaces,drawTowerCommonStairs,towerCommonMaterialsReady,warmTowerCommonMaterials} from './tower-common-materials.mjs?v=town-polish-1';
+import {drawInteriorDoor,drawPrivacyDoor,drawElevatorPortal,interiorPortalVisualDepth,warmInteriorPortalArt} from './interior-portal-art.mjs?v=town-polish-1';
+import {interiorActorScale} from './interior-scale.mjs?v=town-polish-1';
+import {calibratePrivateFurniture,presentedRoomItem} from './private-furniture.mjs?v=town-polish-1';
+import {normalizeInteriorDoorways} from './interior-doorways.mjs?v=town-polish-1';
+import {getConcertHall,renderConcertHallBackground,concertHallDrawables} from './concert-hall.mjs?v=town-polish-1';
+import {renderStagePerformance} from './concert-performers.mjs?v=town-polish-1';
+import {buildApartmentHome} from './apartment-homes.mjs?v=town-polish-1';
+import {APARTMENT_COLLECTION_ASSETS,getApartmentAsset} from './apartment-collections.mjs?v=town-polish-1';
+import {drawApartmentMotion} from './apartment-motion.mjs?v=town-polish-1';
+import {furnitureFacingPlacement,furnitureFacingDepth,furnitureFacingBoxes,furnitureAtGroundCenter} from './furniture-facing.mjs?v=town-polish-1';
+import {preparePlacedFacingArt} from './furniture-art-access.mjs?v=town-polish-1';
 // The apartment tower has one consistent floor plate. Residential floors use
 // a 608px common hall and 1120px private apartments, within its 2304 × 1728 lot.
 export const FLOOR_COUNT=15;
 export const TOWER_FOOTPRINT=Object.freeze({width:2304,height:1728});
 export const STORE_FOOTPRINT=Object.freeze({width:3072,height:2048});
-export {residents} from './resident-profiles.mjs?v=apartment-scale-2';
-import {residents} from './resident-profiles.mjs?v=apartment-scale-2';
+export {residents} from './resident-profiles.mjs?v=town-polish-1';
+import {residents} from './resident-profiles.mjs?v=town-polish-1';
 const sceneCache=new Map(),backgroundCache=new Map();
 const MAX_BACKGROUNDS=8,MAX_BACKGROUND_PIXELS=16*1024*1024;
 let backgroundPixels=0;
@@ -34,7 +37,7 @@ let nativeCatalog=null,woodTexture=null,npcRenderer=null;
 const drawConcertNPC=(ctx,actor,time)=>npcRenderer?.drawNPC(ctx,actor,time);
 export function configureUrbanInteriors(catalog){if(nativeCatalog!==catalog){nativeCatalog=catalog;clearBackgrounds();}}
 if(typeof document!=='undefined'){
- import('./ground-textures.mjs?v=apartment-scale-2').then(({groundTextures})=>{woodTexture=groundTextures.wood;clearBackgrounds();}).catch(()=>{});
+ import('./ground-textures.mjs?v=town-polish-1').then(({groundTextures})=>{woodTexture=groundTextures.wood;clearBackgrounds();}).catch(()=>{});
 }
 const rect=(x,y,w,h)=>({x,y,w,h});
 const zone=(id,label,x,y,w,h,action,extra={})=>({id,label,x,y,w,h,action,...extra});
@@ -196,6 +199,7 @@ export function getInterior(scene={}){
  if(scene.kind==='concert')return getConcertHall();
  const requestedKind=scene.kind||'lobby',floor=Math.max(1,Math.min(15,Math.round(Number(scene.floor)||1))),storeFloor=floor===2?2:1,kind=requestedKind==='hall'&&floor===1?'lobby':requestedKind==='showroom'&&!SHOWROOMS.some(room=>room.id===scene.showroomId)?'shop':requestedKind,resident=scene.resident||'player',id=kind==='apartment'?`apartment-${resident}`:kind==='hall'?`tower-floor-${floor}`:kind==='shop'?(storeFloor===1?'furniture-store':'furniture-store-floor-2'):kind==='showroom'?'showroom-'+scene.showroomId:'tower-lobby';
  if(!sceneCache.has(id)){const s=kind==='apartment'?apartment(resident):kind==='hall'?hall(floor):kind==='shop'?shop(storeFloor):kind==='showroom'?showroomApartment(scene.showroomId):lobby();
+  calibratePrivateFurniture(s,nativeCatalog||collectionDefinitions);normalizeInteriorDoorways(s);
   for(const d of s.privacyDoors||[]){const r=s.rooms.find(r=>r.id===d.roomId||r.functionalRole===d.roomId);if(r&&d.swing===undefined)d.swing=d.axis==='vertical'?(r.x+r.w/2>d.x?1:-1):(r.y+r.h/2>d.y?-1:1);}
   sceneCache.set(id,s);}return sceneCache.get(id);
 }
@@ -279,7 +283,7 @@ function background(s){
  if(s.directory){const r=s.directory;fill(c,r.x-10,r.y-8,r.w+20,r.h+16,'#614c3c');fill(c,r.x-4,r.y-2,r.w+8,r.h+4,'#cda056');fill(c,r.x+4,r.y+6,r.w-8,r.h-12,'#293246');c.textAlign='center';c.font='bold 15px Georgia';c.fillStyle='#e0c695';c.fillText('DIRECTORY',r.x+r.w/2,r.y+30);c.font='11px Georgia';for(let f=2;f<=15;f++){const names=f===15?'Your studio':residents.filter(n=>n.floor===f).map(n=>n.name.split(' ')[0]).join(' · ');c.fillStyle='#d1bea2';c.fillText(`${String(f).padStart(2,'0')}  ${names}`,r.x+r.w/2,r.y+34+f*14);}}
  for(const t of s.signs){c.textAlign='center';c.font=`${t.size>25?'bold ':''}${t.size}px Georgia`;c.fillStyle='#302c3155';c.fillText(t.text,t.x+2,t.y+2);c.fillStyle=t.size>25?'#ebc679':'#c8aa77';c.fillText(t.text,t.x,t.y);}
  // Warm pools from wall sconces sit underneath characters and furnishings.
- for(const l of s.lights){const glow=c.createRadialGradient(l.x,l.y,0,l.x,l.y,l.r);glow.addColorStop(0,'#ffe1a010');glow.addColorStop(1,'#ffe1a000');c.fillStyle=glow;c.fillRect(l.x-l.r,l.y-l.r,l.r*2,l.r*2);}
+ for(const l of s.lights){const radius=l.r*1.55,glow=c.createRadialGradient(l.x,l.y,0,l.x,l.y,radius);glow.addColorStop(0,'#ffe1a018');glow.addColorStop(.45,'#ffe1a008');glow.addColorStop(1,'#ffe1a000');c.fillStyle=glow;c.fillRect(l.x-radius,l.y-radius,radius*2,radius*2);}
  rememberBackground(s.id,cv);return cv;
 }
 function floorItem(item){return item.layer==='ground'||item.furnitureRole==='rug'||nativeCatalog?.get(item.asset)?.layer==='ground';}
@@ -287,7 +291,7 @@ function wallItem(item){return !!(item.wallMounted||nativeCatalog?.get(item.asse
 function drawItem(c,item,time=0){
  const a=nativeCatalog?.get(item.asset);if(!a)return;const scale=Number.isFinite(item.scale)&&item.scale>0?item.scale:1,w=item.w||a.w*scale,h=item.h||w*a.h/a.w;
  const placed={...item,w,h},facing=furnitureFacingPlacement(a,placed);
- c.save();if(!floorItem(item)&&!wallItem(item)){const foot=facing?.screenFootCenter||{x:item.x,y:item.y-3};c.fillStyle='#16232b30';c.beginPath();c.ellipse(foot.x,foot.y,w*.39,Math.max(5,w*.045),0,0,Math.PI*2);c.fill();}c.imageSmoothingEnabled=false;
+ c.save();if(!floorItem(item)&&!wallItem(item)){const foot=facing?.screenFootCenter||{x:item.x,y:item.y-3};c.fillStyle='#16232b30';c.beginPath();c.ellipse(foot.x,foot.y,w*.39,Math.max(5*(item.presentationScale||1),w*.045),0,0,Math.PI*2);c.fill();}c.imageSmoothingEnabled=false;
  if(facing){const graded=Object.create(a);Object.defineProperty(graded,'canvas',{value:facing.image});c.drawImage(assetImage(graded),facing.x,facing.y,facing.w,facing.h);drawApartmentMotion(c,facing.view,{x:facing.x+facing.w/2,y:facing.y+facing.h,w:facing.w,h:facing.h},time);}
  else{c.translate(item.x,item.y);c.rotate((item.rotation||0)*Math.PI/180);c.drawImage(assetImage(a),-w/2,-h,w,h);drawApartmentMotion(c,a,{x:0,y:0,w,h},time);}
  c.restore();
@@ -318,13 +322,14 @@ export function renderInterior(c,scene,{player,drawPlayer,time=0,decor=[],catalo
  warmScene(s);c.drawImage(background(s),0,0);
  if(s.elevator)drawElevatorPortal(c,s.elevator,{floors:s.kind==='shop'?2:15});
  const queue=s.items.filter(item=>!floorItem(item)&&!wallItem(item)).map(item=>({y:itemDepth(item),draw:()=>drawItem(c,item,time)}));
+ for(const sign of s.showroomSigns||[])queue.push({y:sign.y,draw:()=>drawShowroomThemeSign(c,sign,nativeCatalog)});
  for(const d of s.doors||[])queue.push({y:d.threshold?.y??d.floorY??d.y+d.h,draw:()=>drawInteriorDoor(c,d,doorOpenness(d),{theme:s.collectionOwner||s.showroomId})});
  for(const d of s.privacyDoors||[])queue.push({y:interiorPortalVisualDepth(d,doorOpenness(d)),draw:()=>drawPrivacyDoor(c,d,doorOpenness(d))});
  for(const state of doorStates){const d=state.door;if(!d.virtual||!d.threshold)continue;const at=d.threshold,normal=d.enterNormal||{x:0,y:1},length=(d.triggerHalfWidth||70)*2;
   const visual={...d,axis:normal.x?'vertical':'horizontal',x:at.x-(normal.x?0:length/2),y:at.y-(normal.x?length/2:0),length,color:s.color,trim:s.trim};
   queue.push({y:interiorPortalVisualDepth(visual,state.openness),draw:()=>drawPrivacyDoor(c,visual,state.openness)});
  }
- for(const item of decor){if(!item||!nativeCatalog?.has(item.asset)||!Number.isFinite(item.x)||!Number.isFinite(item.y))continue;if(floorItem(item)||wallItem(item))drawItem(c,item,time);else queue.push({y:itemDepth(item),draw:()=>drawItem(c,item,time)});}
+ for(const saved of decor){const item=presentedRoomItem(saved,s);if(!item||!nativeCatalog?.has(item.asset)||!Number.isFinite(item.x)||!Number.isFinite(item.y))continue;if(floorItem(item)||wallItem(item))drawItem(c,item,time);else queue.push({y:itemDepth(item),draw:()=>drawItem(c,item,time)});}
  const people=Array.isArray(actors)?actors:s.actors;
  if(people.length&&!npcRenderer&&typeof window!=='undefined'&&window.createCodaCharacterRenderer)npcRenderer=window.createCodaCharacterRenderer({worldScale:2.5});
  for(const a of people)if(!a.hidden)queue.push({y:a.y,draw:()=>drawInteriorCharacter(c,s,a,(ctx,actor)=>npcRenderer?.drawNPC(ctx,actor,time))});

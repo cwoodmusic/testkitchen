@@ -1,6 +1,6 @@
-import {blocked,surfaceAt,cell,segment,COLS,ROWS,TILE} from './model.mjs?v=apartment-scale-2';
-import {npcCollisionObject,npcCollisionProject,NPC_COLLISION_RADIUS,NPC_COLLISION_RADIUS_KEY} from './npc-collision.mjs?v=apartment-scale-2';
-export {npcCollisionProject} from './npc-collision.mjs?v=apartment-scale-2';
+import {blocked,surfaceAt,cell,segment,COLS,ROWS,TILE} from './model.mjs?v=town-polish-1';
+import {npcCollisionObject,npcCollisionProject,NPC_COLLISION_RADIUS,NPC_COLLISION_RADIUS_KEY} from './npc-collision.mjs?v=town-polish-1';
+export {npcCollisionProject} from './npc-collision.mjs?v=town-polish-1';
 
 const BIN=512,MARGIN=96,worldWidth=COLS*TILE,worldHeight=ROWS*TILE;
 const center=(x,y)=>({x:x*TILE+TILE/2,y:y*TILE+TILE/2});

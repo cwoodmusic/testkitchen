@@ -1,7 +1,7 @@
-import {COLS,ROWS,TILE,cell,key} from '../world/model.mjs?v=apartment-scale-2';
-import {roundedUnder,curveUnder} from '../world/round-geometry.mjs?v=apartment-scale-2';
-import {MASK_GRID,MASK_STEP,encodeMask} from '../world/organic-mask.mjs?v=apartment-scale-2';
-import {readPaint,encodePaint,materialKey} from '../world/ground-paint.mjs?v=apartment-scale-2';
+import {COLS,ROWS,TILE,cell,key} from '../world/model.mjs?v=town-polish-1';
+import {roundedUnder,curveUnder} from '../world/round-geometry.mjs?v=town-polish-1';
+import {MASK_GRID,MASK_STEP,encodeMask} from '../world/organic-mask.mjs?v=town-polish-1';
+import {readPaint,encodePaint,materialKey} from '../world/ground-paint.mjs?v=town-polish-1';
 
 const PIXELS=MASK_GRID*MASK_GRID;
 const clamp=(n,a,b)=>Math.max(a,Math.min(b,n));

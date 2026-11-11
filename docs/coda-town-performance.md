@@ -22,7 +22,7 @@ The player now queries a spatial index of nearby collision geometry once per fra
 
 Wall runs and corner posts are derived once per revision. Drawing uses conservative bounds that include raised walls, scaled Music Square pillars, open gate posts and shadows. Offscreen walls retain their collision and NPC navigation behavior.
 
-Terrain prefetching prepares private, detailed chunks around and ahead of the camera in small idle tasks. Only completed chunks become visible; the normal ordered terrain drawing still produces their pixels. Evicted or cancelled canvases release their backing memory immediately. Fireflies retain the same opacity and bloom while sharing the frame's outer canvas state save.
+Terrain prefetching prepares private, detailed chunks around and ahead of the camera in small idle tasks. Only completed chunks become visible; the normal ordered terrain drawing still produces their pixels. Evicted or cancelled canvases release their backing memory immediately. Fireflies share the frame's outer canvas state save and cached glow brushes. Their curved flight and independent flashes enlarge the visible halo without rebuilding gradients for every insect; lamp fields include their expanded bloom in visibility checks.
 
 Eighteen deterministic browser comparisons against the deployed release produced **zero changed pixels**, covering daytime and night, open and closed gates, scaled pillars, fractional camera positions, courtyards, organic cliffs and the ocean shore.
 
@@ -70,3 +70,6 @@ Use `--sustained --seconds 20 --ref 7a1de0a` for the deployed walking baseline a
 Initial release verification: 461 Node checks passed, along with real browser checks of click selection, gates, raise/lower/Undo, live filtered audio, eight stage programmes and all seat routes. All 64 building pixel comparisons were exact with the terrain renderer held constant. The original map and the separate Coda Arcade checkout were untouched.
 
 Apartment and sustained-walking release verification: **585 Node checks passed**, plus all four sustained walks, the 18 exact outdoor pixel comparisons, and terrain checks for water animation, organic shores, stairs, painting, elevation and exact Undo restoration. The apartment browser checks cover all eight showroom doors, all 18 NPC homes, purchases, wall hanging placement and existing room saves; see [the apartment guide](coda-apartment-homes.md).
+
+
+The larger-lighting revision was compared with the prior renderer in headless Chromium at the same Music Square position, zoom 0.42, 1280 × 1062 CSS viewport, NPCs off and matching warmup. The previous renderer measured 38.34 FPS and the updated effects 39.00 FPS; frame CPU p95 was 7.2 ms and 6.6 ms respectively, with no gaps over 50 ms or page errors in the paired samples. The result applies to this fixed-view headless test. Native furniture, doorway traversal, both showroom sign floors and saved furniture editing were verified separately in real play.

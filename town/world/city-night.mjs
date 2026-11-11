@@ -1,6 +1,6 @@
-import {height,surfaceAt} from './model.mjs?v=apartment-scale-2';
-import {mountPose} from './cliff-mount.mjs?v=apartment-scale-2';
-import {furnitureFacingPlacement} from './furniture-facing.mjs?v=apartment-scale-2';
+import {height,surfaceAt} from './model.mjs?v=town-polish-1';
+import {mountPose} from './cliff-mount.mjs?v=town-polish-1';
+import {furnitureFacingPlacement} from './furniture-facing.mjs?v=town-polish-1';
 
 const buffers=new WeakMap(),nativeEmitters=new WeakMap(),radialBrushes=new Map(),TAU=Math.PI*2;
 const hash=(x,y=0)=>{let n=Math.imul(Math.round(x)^Math.imul(Math.round(y),374761393),668265263);n=Math.imul(n^(n>>>13),1274126177);return ((n^(n>>>16))>>>0)/4294967296;};
@@ -58,7 +58,7 @@ export function cityLights(doc,catalog,objects=doc.objects){
   const authored=emitter=>{
    const p=imagePoint(doc,o,a,emitter.u,emitter.v);if(!p)return;
    const foot=imagePoint(doc,o,a,emitter.groundU??emitter.u,emitter.groundV??1);
-   lights.push({...p,...(emitter.kind==='lamp'||emitter.kind==='uplight'?{gx:foot?.x??p.x,gy:foot?.y??p.y}:{}),radius:emitter.radius*scale,power:emitter.power??1,kind:emitter.kind,color:emitter.color,beamHeight:(emitter.beamHeight||0)*scale,beamWidth:(emitter.beamWidth||0)*scale});
+   lights.push({...p,...(emitter.kind==='lamp'||emitter.kind==='uplight'||emitter.kind==='door'?{gx:foot?.x??p.x,gy:foot?.y??p.y}:{}),radius:emitter.radius*scale,power:emitter.power??1,kind:emitter.kind,color:emitter.color,beamHeight:(emitter.beamHeight||0)*scale,beamWidth:(emitter.beamWidth||0)*scale});
   };
   if(a.lightEmitters?.length){a.lightEmitters.forEach(authored);continue;}
   if(o.asset==='props-2-65')lamp(.785,.345,310);
@@ -118,7 +118,7 @@ function radial(c,x,y,rx,ry,stops){
 }
 const tint=(l,alpha,fallback=[255,191,105])=>`rgba(${(l.color||fallback).join(',')},${alpha})`;
 function upwardBeam(c,p,l,zoom,mask=false){
- const H=l.beamHeight*zoom,W=l.beamWidth*zoom,P=l.power;
+ const H=l.beamHeight*zoom*(mask?1:1.25),W=l.beamWidth*zoom*(mask?1:1.65),P=l.power;
  const color=alpha=>mask?`rgba(0,0,0,${alpha})`:tint(l,alpha);
  // Overlapping soft ellipses widen upward from the small fixture. No hard
  // triangle edge crosses the building or a tree illuminated behind it.
@@ -132,25 +132,57 @@ function canvasFor(c,w,h){
  if(value.canvas.width!==width||value.canvas.height!==height){value.canvas.width=value.bloom.width=width;value.canvas.height=value.bloom.height=height;value.key=null;}return value;
 }
 function projected(p,cam,w,h){return {x:(p.x-cam.x)*cam.zoom+w/2,y:(p.y-cam.y)*cam.zoom+h/2};}
-function visibleLight(l,cam,w,h){const p=projected(l,cam,w,h),r=l.radius*cam.zoom+80;return p.x+r>=0&&p.x-r<=w&&p.y+r>=0&&p.y-r<=h;}
+// Bloom extends beyond the illuminated ground. Include both positions and an
+// uplight's full beam so lights do not blink out when their fixture leaves view.
+export function cityLightBounds(l){
+ const r=l.radius*1.55,xs=[l.x-r,l.x+r],ys=[l.y-r,l.y+r];
+ if(Number.isFinite(l.gx)&&Number.isFinite(l.gy)){xs.push(l.gx-r,l.gx+r);ys.push(l.gy-r,l.gy+r);}
+ if(l.kind==='uplight'){
+  const halfWidth=(l.beamWidth||0)*1.65/2;
+  xs.push(l.x-halfWidth,l.x+halfWidth);ys.push(l.y-(l.beamHeight||0)*1.25);
+ }
+ const x=Math.min(...xs),y=Math.min(...ys);return {x,y,w:Math.max(...xs)-x,h:Math.max(...ys)-y};
+}
+export function cityLightVisible(l,cam,w,h){
+ const b=cityLightBounds(l),left=cam.x-w/2/cam.zoom,top=cam.y-h/2/cam.zoom;
+ return b.x+b.w>=left&&b.x<=left+w/cam.zoom&&b.y+b.h>=top&&b.y<=top+h/cam.zoom;
+}
+
+const smooth=t=>{t=Math.max(0,Math.min(1,t));return t*t*t*(t*(t*6-15)+10);};
+const spline=(a,b,c,d,t)=>.5*((2*b)+(-a+c)*t+(2*a-5*b+4*c-d)*t*t+(-a+3*b-3*c+d)*t*t*t);
+const offset=(seed,index,axis)=>(hash(seed*65536+axis*977,index*31337)-.5)*2;
+// Each insect follows its own small curved flights, pauses to hover, then
+// chooses another heading. Smooth joins avoid teleports and mechanical orbits.
+export function fireflyPose(x,y,seed,time=0,still=false){
+ const t=still?0:time,phase=seed*TAU,period=5.2+seed*3.1,clock=t/period+seed*13,index=Math.floor(clock),part=clock-index;
+ const hover=.16+hash(seed*8192,index)*.24,u=smooth((part-hover)/(1-hover)),reach=55+seed*60;
+ const path=axis=>spline(offset(seed,index-1,axis),offset(seed,index,axis),offset(seed,index+1,axis),offset(seed,index+2,axis),u)*reach;
+ const X=x+path(0)+Math.sin(t*2.2+phase)*1.7+Math.sin(t*.6+phase)*2.5;
+ const Y=y+path(1)+Math.sin(t*1.9+phase)*2+Math.sin(t*.73+phase)*5;
+ const cycle=3.7+seed*3,flash=(t/cycle+seed*4.81)%1;
+ const envelope=(at,strength=1)=>smooth((flash-at)/.045)*(1-smooth((flash-at-.045)/.23))*strength;
+ const alpha=still?.62:.025+.975*Math.min(1,envelope(.12)+(seed>.55?envelope(.55,.55):0));
+ return {x:X,y:Y,alpha,size:2.8+seed*1.5,glowRadius:48+seed*18,lift:28+seed*24};
+}
 
 // Sparse world-anchored clusters do not scroll with the camera. Gardens get
 // extra fireflies; ordinary grassy verges still have a little night life.
 export function cityFireflies(doc,catalog,cam,w,h,time=0){
- const particles=[],spacing=320,left=cam.x-w/2/cam.zoom,top=cam.y-h/2/cam.zoom,still=reduced(),t=still?0:time;
- const add=(x,y,seed)=>{
-  if(particles.length>=56)return;const phase=seed*TAU,pulse=still ? .62 : .2+.8*Math.pow((Math.sin(time*(.5+seed*.25)+phase)+1)/2,2);
-  const X=x+Math.sin(t*.36+phase)*19,Y=y+Math.cos(t*.27+phase*1.6)*14;
-  particles.push({x:X,y:Y-height(doc,X,Y)-28-seed*24,alpha:pulse,size:3.1+seed*1.6});
+ const particles=[],spacing=320,left=cam.x-w/2/cam.zoom,top=cam.y-h/2/cam.zoom,still=reduced();
+ const add=(x,y,seed,id)=>{
+  if(particles.length>=56)return;const pose=fireflyPose(x,y,seed,time,still);
+  // A flight keeps its altitude over its home patch instead of jumping when
+  // its smooth path crosses a discrete terrain-level boundary.
+  particles.push({...pose,id,y:pose.y-height(doc,x,y)-pose.lift});
  };
  for(let gy=Math.floor(top/spacing)-1;gy<=Math.ceil((top+h/cam.zoom)/spacing)&&particles.length<40;gy++)for(let gx=Math.floor(left/spacing)-1;gx<=Math.ceil((left+w/cam.zoom)/spacing)&&particles.length<40;gx++){
   const seed=hash(gx,gy);if(seed>.69)continue;const x=(gx+.14+seed*.7)*spacing,y=(gy+.12+hash(gy,gx+31)*.76)*spacing;
-  if(x<0||y<0||x>16384||y>12288)continue;const material=surfaceAt(doc,x,y);if(!['grass','sand','water','dirt'].includes(material))continue;add(x,y,seed);
+  if(x<0||y<0||x>16384||y>12288)continue;const material=surfaceAt(doc,x,y);if(!['grass','sand','water','dirt'].includes(material))continue;add(x,y,seed,`verge-${gx}-${gy}`);
  }
  for(const o of doc.objects||[]){
   const a=catalog?.get(o.asset);if(!a||!['trees','foliage and rocks','garden pots','overgrowth','home estates'].includes(a.group))continue;
   if(Math.abs(o.x-cam.x)>w/2/cam.zoom+400||Math.abs(o.y-cam.y)>h/2/cam.zoom+400)continue;
-  for(let i=0;i<3&&particles.length<56;i++){const seed=hash(o.x+i*71,o.y+17),spread=Math.min(a.w*.35,240)*(o.scale||1);add(o.x+(seed-.5)*spread*2,o.y-70+(hash(o.y,i+13)-.5)*spread,seed);}
+  for(let i=0;i<3&&particles.length<56;i++){const seed=hash(o.x+i*71,o.y+17),spread=Math.min(a.w*.35,240)*(o.scale||1);add(o.x+(seed-.5)*spread*2,o.y-70+(hash(o.y,i+13)-.5)*spread,seed,`garden-${o.id??o.x+'-'+o.y}-${i}`);}
  }
  return particles;
 }
@@ -164,7 +196,7 @@ export function renderCityNight(c,doc,cam,w,h,time=0,{catalog,objects}={}){
  // field. Only its crop moves; gradients rebuild after a larger pan, zoom,
  // or a real light edit. Fireflies are still drawn at their live world points.
  if(buffer.key!==key||!buffer.cam||Math.abs((cam.x-buffer.cam.x)*cam.zoom)>pad||Math.abs((cam.y-buffer.cam.y)*cam.zoom)>pad){
- buffer.cam={...cam};const fieldCam=buffer.cam,visible=lights.filter(l=>visibleLight(l,fieldCam,fieldW,fieldH));
+ buffer.cam={...cam};const fieldCam=buffer.cam,visible=lights.filter(l=>cityLightVisible(l,fieldCam,fieldW,fieldH));
  m.setTransform(1,0,0,1,0,0);m.globalCompositeOperation='source-over';m.clearRect(0,0,canvas.width,canvas.height);m.fillStyle='rgba(9,19,43,.64)';m.fillRect(0,0,canvas.width,canvas.height);
  m.globalCompositeOperation='destination-out';
  for(const l of visible){
@@ -186,15 +218,16 @@ export function renderCityNight(c,doc,cam,w,h,time=0,{catalog,objects}={}){
   const p=projected(l,fieldCam,fieldW,fieldH),r=l.radius*cam.zoom;
   if(l.kind==='uplight'){
    upwardBeam(b,p,l,cam.zoom);
-   radial(b,p.x,p.y,r*.15,r*.08,[[0,tint(l,.58)],[.2,tint(l,.26)],[1,tint(l,0)]]);
+   radial(b,p.x,p.y,r*.26,r*.14,[[0,tint(l,.58)],[.2,tint(l,.26)],[1,tint(l,0)]]);
   }else if(l.kind==='neon'){
-   radial(b,p.x,p.y,r,r*.72,[[0,tint(l,.48*l.power)],[.18,tint(l,.24*l.power)],[.5,tint(l,.09*l.power)],[1,tint(l,0)]]);
+   radial(b,p.x,p.y,r*1.55,r*1.12,[[0,tint(l,.48*l.power)],[.18,tint(l,.24*l.power)],[.5,tint(l,.07*l.power)],[1,tint(l,0)]]);
    radial(b,p.x,p.y,r*.12,r*.09,[[0,tint(l,.78)],[.3,tint(l,.35)],[1,tint(l,0)]]);
-  }else if(l.kind==='window')radial(b,p.x,p.y,r*.85,r*.64,[[0,tint(l,.16*l.power,[255,181,89])],[.45,tint(l,.055,[238,146,62])],[1,tint(l,0)]]);
+  }else if(l.kind==='window')radial(b,p.x,p.y,r*1.35,r*1.02,[[0,tint(l,.16*l.power,[255,181,89])],[.45,tint(l,.045,[238,146,62])],[1,tint(l,0)]]);
   else{
    const floor=projected({x:l.gx,y:l.gy},fieldCam,fieldW,fieldH);
-   radial(b,floor.x,floor.y,r,r*.62,[[0,tint(l,.16*l.power)],[.4,tint(l,.075,[245,174,88])],[1,tint(l,0)]]);
-   radial(b,p.x,p.y,r*.34,r*.37,[[0,tint(l,.55,[255,222,162])],[.1,tint(l,.23,[255,204,124])],[.4,tint(l,.075,[255,181,83])],[1,tint(l,0)]]);
+   radial(b,floor.x,floor.y,r*1.25,r*.78,[[0,tint(l,.16*l.power)],[.4,tint(l,.06,[245,174,88])],[1,tint(l,0)]]);
+   radial(b,p.x,p.y,r*1.55,r*1.4,[[0,tint(l,.075,[255,222,162])],[.3,tint(l,.035,[255,204,124])],[1,tint(l,0)]]);
+   radial(b,p.x,p.y,r*.68,r*.74,[[0,tint(l,.55,[255,222,162])],[.1,tint(l,.23,[255,204,124])],[.4,tint(l,.065,[255,181,83])],[1,tint(l,0)]]);
    if(l.kind==='lamp')radial(b,p.x,p.y,Math.max(2,4*cam.zoom),Math.max(2,5*cam.zoom),[[0,tint(l,.9,[255,245,211])],[.45,tint(l,.6,[255,226,158])],[1,tint(l,0)]]);
   }
  }
@@ -204,11 +237,11 @@ export function renderCityNight(c,doc,cam,w,h,time=0,{catalog,objects}={}){
  c.save();c.imageSmoothingEnabled=true;c.globalCompositeOperation='source-over';c.drawImage(canvas,cropX,cropY,w*sx,h*sy,0,0,w,h);c.globalCompositeOperation='screen';c.drawImage(bloom,cropX,cropY,w*sx,h*sy,0,0,w,h);
  const baseAlpha=c.globalAlpha;
  for(const f of cityFireflies(doc,catalog,cam,w,h,time)){
-  const p=projected(f,cam,w,h),r=Math.max(3,22*cam.zoom);
+  const p=projected(f,cam,w,h),r=Math.max(6,f.glowRadius*cam.zoom);
   if(p.x<-r||p.y<-r||p.x>w+r||p.y>h+r)continue;
   // Only opacity and fill colour change per particle. The outer state save
   // already protects the caller; repeated native saves add no visual effect.
-  c.globalAlpha=baseAlpha*f.alpha;radial(c,p.x,p.y,r,r,[[0,'rgba(204,244,123,.24)'],[.3,'rgba(179,225,103,.1)'],[1,'rgba(179,225,103,0)']]);
+  c.globalAlpha=baseAlpha*f.alpha;radial(c,p.x,p.y,r,r,[[0,'rgba(222,248,149,.34)'],[.2,'rgba(199,237,112,.17)'],[.55,'rgba(179,225,103,.045)'],[1,'rgba(179,225,103,0)']]);
   c.fillStyle='rgba(234,255,173,.92)';const size=Math.max(1.5,f.size*cam.zoom);c.fillRect(Math.round(p.x-size/2),Math.round(p.y-size/2),size,size);
  }
  c.restore();

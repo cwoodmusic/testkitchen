@@ -1,5 +1,5 @@
-import {APARTMENT_COLLECTION_ASSETS,getApartmentAsset} from './apartment-collections.mjs?v=apartment-scale-2';
-import {furnitureFacingBoxes,furnitureFacingDepth,furnitureAtGroundCenter} from './furniture-facing.mjs?v=apartment-scale-2';
+import {APARTMENT_COLLECTION_ASSETS,getApartmentAsset} from './apartment-collections.mjs?v=town-polish-1';
+import {furnitureFacingBoxes,furnitureFacingDepth,furnitureAtGroundCenter} from './furniture-facing.mjs?v=town-polish-1';
 const native=new Map(APARTMENT_COLLECTION_ASSETS.map(a=>[a.id,a]));
 const rect=(x,y,w,h)=>({x,y,w,h}),point=(x,y)=>({x,y});
 const rooms=[
@@ -150,6 +150,6 @@ export function applyShowroomApartment(scene,display,{room,wall,addItem,rug,sign
  scene.privacyDoors=plan.privacyDoors.map(d=>({...d,id:display.id+'-'+d.id,roomId:display.id+'-'+d.roomId,color:display.wallpaper.colors[0],trim:display.wallpaper.colors[3]}));
  for(const item of plan.items){const placed=addItem(scene,item.asset,item.x,item.y,item.w,item.h,item.solid,item.rotation||0);Object.assign(placed,{productId:item.productId,showroomId:display.id,furnitureRole:item.furnitureRole,fixtureRole:item.fixtureRole,wallMounted:item.wallMounted,layer:item.layer,depth:item.depth,rotation:item.rotation||0,slot:item.slot,collectionOwner:item.collectionOwner,visualSignature:item.visualSignature,motionKind:item.motionKind,supportedBy:item.supportedBy});}
  scene.zones.push(zone('browse-'+display.id,'Shop this apartment',plan.browse.x-30,plan.browse.y-28,60,56,'shop',{showroomId:display.id}),zone('lobby-'+display.id,'Return to '+(scene.floor===2?'the upper gallery':'the main lobby'),plan.spawn.x-28,plan.spawn.y-56,56,112,'showroom-lobby',{showroomId:display.id,storeFloor:scene.floor,doorId:'showroom-'+display.id,...plan.portalExit}));
- sign(scene,display.name,scene.width/2,scene.height-12,14);for(const a of plan.areas)light(scene,a.point.x,a.point.y,a.functionalRole==='living'?220:150);
+ for(const a of plan.areas)light(scene,a.point.x,a.point.y,a.functionalRole==='living'?220:150);
  if(windowAt)for(const window of plan.windows)windowAt(scene,window.x,24,window.w);return scene;
 }

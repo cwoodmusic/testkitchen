@@ -1,12 +1,13 @@
-import {catalog} from './catalog.mjs?v=apartment-scale-2';
-import {FLOOR_COUNT,residents,getInterior,renderInterior,residentInteractionZones,apartmentDecorBounds,apartmentWallDecorBounds,configureUrbanInteriors} from './urban-interiors.mjs?v=apartment-scale-2';
-import {createRoomStorage,roomItemBoxes} from './urban-room.mjs?v=apartment-scale-2';
-import {SHOWROOMS,STORE_FLOOR_COUNT,STORE_VERTICAL_CORE} from './showroom-layout.mjs?v=apartment-scale-2';
-import {createStagePerformance,stagePerformanceSignature,stageCollisionBoxes} from './concert-performers.mjs?v=apartment-scale-2';
-import {CONCERT_PROGRAMME} from './concert-programme.mjs?v=apartment-scale-2';
-import {createAutomaticDoors} from './automatic-doors.mjs?v=apartment-scale-2';
-import {furnitureFacingPlacement,furnitureFacingBounds} from './furniture-facing.mjs?v=apartment-scale-2';
-import {interiorActorScale,effectiveInteriorZoom} from './interior-scale.mjs?v=apartment-scale-2';
+import {catalog} from './catalog.mjs?v=town-polish-1';
+import {FLOOR_COUNT,residents,getInterior,renderInterior,residentInteractionZones,apartmentDecorBounds,apartmentWallDecorBounds,configureUrbanInteriors} from './urban-interiors.mjs?v=town-polish-1';
+import {createRoomStorage,roomItemBoxes} from './urban-room.mjs?v=town-polish-1';
+import {SHOWROOMS,STORE_FLOOR_COUNT,STORE_VERTICAL_CORE} from './showroom-layout.mjs?v=town-polish-1';
+import {createStagePerformance,stagePerformanceSignature,stageCollisionBoxes} from './concert-performers.mjs?v=town-polish-1';
+import {CONCERT_PROGRAMME} from './concert-programme.mjs?v=town-polish-1';
+import {createAutomaticDoors} from './automatic-doors.mjs?v=town-polish-1';
+import {furnitureFacingPlacement,furnitureFacingBounds} from './furniture-facing.mjs?v=town-polish-1';
+import {interiorActorScale,effectiveInteriorZoom} from './interior-scale.mjs?v=town-polish-1';
+import {presentedRoomItem} from './private-furniture.mjs?v=town-polish-1';
 
 configureUrbanInteriors(catalog);
 const furniture=window.CodaFurnitureCatalog||[];
@@ -18,9 +19,9 @@ export function buildingDoor(o){
  const p=a.door||{x:a.w/2,y:a.h},r=o.rotation*Math.PI/180,dx=(p.x-a.w/2)*o.scale,dy=(p.y-a.h)*o.scale;
  return {x:o.x+dx*Math.cos(r)-dy*Math.sin(r),y:o.y+dx*Math.sin(r)+dy*Math.cos(r),kind:a.urban};
 }
-function decorSolids(items){return items.flatMap(o=>roomItemBoxes(o,catalog));}
+function decorSolids(items,scene){return items.flatMap(o=>roomItemBoxes(o,catalog,interiorActorScale(scene)));}
 export function createUrbanController({canvas,getProject,getPlayer,getResidents,onConversation,getConcert=()=>null,preview=false}){
- const css=document.createElement('link');css.rel='stylesheet';css.href=new URL('./urban.css?v=apartment-scale-2',import.meta.url);document.head.append(css);
+ const css=document.createElement('link');css.rel='stylesheet';css.href=new URL('./urban.css?v=town-polish-1',import.meta.url);document.head.append(css);
  const hud=document.createElement('section');hud.className='urban-hud';hud.hidden=true;document.body.append(hud);
  const hint=document.createElement('button');hint.className='urban-prompt';hint.hidden=true;hint.onclick=()=>interact();document.body.append(hint);
  const dialog=document.createElement('dialog');dialog.className='urban-dialog';dialog.setAttribute('aria-label','Coda Town');document.body.append(dialog);
@@ -59,7 +60,7 @@ export function createUrbanController({canvas,getProject,getPlayer,getResidents,
  function makeRoom(){
   if(!owner)return;
   let storage;try{storage=bridge?parent.localStorage:localStorage;}catch{}
-  room=createRoomStorage({storage,owner:roomOwner||owner,catalog,furniture,owned,getBounds:(_item,asset)=>(asset?.wallMounted?apartmentWallDecorBounds:apartmentDecorBounds)({kind:'apartment',floor:15,resident:'player'}),getSolids:()=>getInterior({kind:'apartment',floor:15,resident:'player'}).solids});
+  room=createRoomStorage({storage,owner:roomOwner||owner,catalog,furniture,owned,presentationScale:interiorActorScale({kind:'apartment'}),getBounds:(_item,asset)=>(asset?.wallMounted?apartmentWallDecorBounds:apartmentDecorBounds)({kind:'apartment',floor:15,resident:'player'}),getSolids:()=>getInterior({kind:'apartment',floor:15,resident:'player'}).solids});
   const result=room.load();decor=room.snapshot();if(!result.ok)flash(result.error);
  }
  makeRoom();
@@ -141,7 +142,7 @@ export function createUrbanController({canvas,getProject,getPlayer,getResidents,
     const door=entry?.door||(model.doors||[]).find(d=>d.id===(entry?.doorId||z.doorId))||{id:entry?.doorId||entry?.id||z.doorId||z.id,threshold,enterNormal:normal,triggerHalfWidth:entry?.triggerHalfWidth||70,virtual:true};
     result.push(describePortal(z.id,threshold,normal,{zone:z,door,action:z.action,showroomId:z.showroomId,triggerHalfWidth:entry?.triggerHalfWidth||70}));
    }else if(z.action==='exit'&&!(z.id==='stair-down'||z.id==='stair-up')){
-    const threshold=model.exit||{x:z.x+z.w/2,y:model.height-28},normal={x:0,y:1},door={id:z.id,threshold,enterNormal:normal,triggerHalfWidth:Math.min(110,z.w/2),virtual:true};
+    const threshold=model.exit||{x:z.x+z.w/2,y:model.height-28},normal={x:0,y:1},door={id:z.id,threshold,enterNormal:normal,triggerHalfWidth:Math.min(110,z.w/2),clearOpening:z.clearOpening,virtual:true};
     result.push(describePortal(z.id,threshold,normal,{zone:z,door,action:'exit',triggerHalfWidth:door.triggerHalfWidth}));
    }
   }
@@ -262,6 +263,10 @@ export function createUrbanController({canvas,getProject,getPlayer,getResidents,
   else if(z.action==='stairs-down')goFloor(scene.floor-1);
   else if(z.action==='room')openRoom(z.resident);
   else if(z.action==='showroom')openShowroom(z.showroomId);
+  else if(z.action==='showroom-info'){
+   const display=SHOWROOMS.find(room=>room.id===z.showroomId&&room.storeFloor===(scene.floor||1));
+   if(display)modal(display.name,display.style);
+  }
   else if(z.action==='showroom-lobby')returnToStore();
   else if(z.action==='shop')showShop(z.showroomId);
   else if(z.action==='concert-seat')watchSeat(z.seatId);
@@ -286,7 +291,7 @@ export function createUrbanController({canvas,getProject,getPlayer,getResidents,
  }
  function solid(x,y){
   const m=getInterior(scene),radius=16*interiorActorScale(scene);if(x<40||y<100||x>m.width-40||y>m.height-40)return true;
-  const items=scene.resident==='player'?decorSolids(decor):[];
+  const items=scene.resident==='player'?decorSolids(decor,scene):[];
   const onStage=scene.kind==='concert'&&rectHit(x,y,m.stage,24);if(onStage)concertPerformance();
   return !!automaticDoors?.blocked(x,y,radius)||[...m.solids,...items,...(onStage?performanceBoxes:[])].some(r=>rectHit(x,y,r,radius));
  }
@@ -296,7 +301,7 @@ export function createUrbanController({canvas,getProject,getPlayer,getResidents,
   const clampView=(p,length,visible)=>length<=visible?length/2:Math.max(visible/2,Math.min(length-visible/2,p)),focus=seated?{x:m.stage.x+m.stage.w/2,y:m.stage.y+m.stage.h/2+60}:player;view={x:clampView(focus.x,m.width,width/drawZoom),y:clampView(focus.y,m.height,height/drawZoom)};
   tick();ctx.clearRect(0,0,width,height);ctx.fillStyle='#131b21';ctx.fillRect(0,0,width,height);ctx.save();ctx.translate(width/2,height/2);ctx.scale(drawZoom,drawZoom);ctx.translate(-view.x,-view.y);
   renderInterior(ctx,scene,{player,drawPlayer:(c,p)=>drawPlayer(c,p.x,p.y,{facing,walking,phase,seated:!!seated}),time:now/1000,decor:scene.resident==='player'?decor:[],actors,doorStates:automaticDoors.states,doorOpenness:automaticDoors.openness,performance:concertPerformance(),audioTime:getConcert()?.currentTime,reducedMotion,viewport:{x:view.x-width/drawZoom/2,y:view.y-height/drawZoom/2,w:width/drawZoom,h:height/drawZoom}});
-  if(decorate&&selectedDecor&&hover){const item=furniture.find(i=>i.id===selectedDecor),a=catalog.get(item?.asset),scale=item?.scale||1,p=decorPlacementPoint(item,hover),object={...p,asset:a?.id,scale,rotation:selectedRotation};if(a){
+  if(decorate&&selectedDecor&&hover){const item=furniture.find(i=>i.id===selectedDecor),a=catalog.get(item?.asset),scale=(item?.scale||1)*interiorActorScale(scene),p=decorPlacementPoint(item,hover),object={...p,asset:a?.id,scale,rotation:selectedRotation};if(a){
    const placement=furnitureFacingPlacement(a,object),image=placement?.image||(placement&&a.getFacingImage?.(placement.direction));ctx.save();ctx.globalAlpha=.55;
    if(placement&&image)ctx.drawImage(image,placement.x,placement.y,placement.w,placement.h);
    else{ctx.translate(p.x,p.y);ctx.rotate(selectedRotation*Math.PI/180);ctx.drawImage(a.canvas,-a.w*scale/2,-a.h*scale,a.w*scale,a.h*scale);}ctx.restore();
@@ -306,13 +311,13 @@ export function createUrbanController({canvas,getProject,getPlayer,getResidents,
  function pointerWorld(e){const rect=canvas.getBoundingClientRect(),drawZoom=effectiveInteriorZoom(scene,zoom);return {x:Math.round(view.x+(e.clientX-rect.left-lastSize.width/2)/drawZoom),y:Math.round(view.y+(e.clientY-rect.top-lastSize.height/2)/drawZoom)};}
  function decorPlacementPoint(product,p){
   const a=catalog.get(product?.asset);if(!a?.wallMounted)return p;
-  const scale=product?.scale||1,relative=furnitureFacingBounds(a,{x:0,y:0,scale,rotation:selectedRotation});
+  const scale=(product?.scale||1)*interiorActorScale(scene),relative=furnitureFacingBounds(a,{x:0,y:0,scale,rotation:selectedRotation});
   const spots=(apartmentWallDecorBounds(scene)||[]).filter(b=>relative.w<=b.w&&relative.h<=b.h).map(b=>({x:Math.max(b.x-relative.x,Math.min(b.x+b.w-relative.x-relative.w,p.x)),y:b.y+b.h-relative.y-relative.h}));
   return spots.sort((a,b)=>Math.abs(a.x-p.x)-Math.abs(b.x-p.x))[0]||p;
  }
  function selectFurniture(itemId){const existing=decor.find(o=>o.item===itemId);selectedDecor=itemId;if(existing)selectedRotation=existing.rotation??0;closeDialog();updateHud();}
  function placementResult(itemId,point,rotation){
-  const product=furniture.find(i=>i.id===itemId),boxes=roomItemBoxes({asset:product?.asset,scale:product?.scale||1,...point,rotation},catalog);
+  const product=furniture.find(i=>i.id===itemId),boxes=roomItemBoxes({asset:product?.asset,scale:product?.scale||1,...point,rotation},catalog,interiorActorScale(scene));
   if(boxes.some(b=>rectHit(player.x,player.y,b,20*interiorActorScale(scene))))return {ok:false,error:'Leave some space around your character before placing furniture.'};
   return room?.place(itemId,point.x,point.y,rotation)||{ok:false,error:'Wait for your player profile to load.'};
  }
@@ -320,7 +325,7 @@ export function createUrbanController({canvas,getProject,getPlayer,getResidents,
   if(!scene)return false;if(!decorate||dialog.open)return true;e.preventDefault();if(!bridge&&!guestStorageAvailable()){flash('Open town from the arcade to furnish your active player’s apartment.');return true;}const p=pointerWorld(e);
   if(selectedDecor){const product=furniture.find(i=>i.id===selectedDecor),point=decorPlacementPoint(product,p),result=placementResult(selectedDecor,point,selectedRotation);if(result.ok){decor=room.snapshot();selectedDecor=null;updateHud();flash('Furniture saved in your apartment.');}else flash(result.error);}
   else {
-   const target=[...decor].reverse().find(o=>{const a=catalog.get(o.asset);return a&&rectHit(p.x,p.y,furnitureFacingBounds(a,o));});
+   const target=[...decor].reverse().find(o=>{const a=catalog.get(o.asset);return a&&rectHit(p.x,p.y,furnitureFacingBounds(a,presentedRoomItem(o,scene)));});
    if(target){
     const item=furniture.find(i=>i.id===target.item),body=modal(item?.name||'Furniture','Move, turn, or put away this item. Your purchase remains in your inventory.');
     actionButton('Move',()=>selectFurniture(target.item),body);

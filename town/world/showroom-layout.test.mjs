@@ -6,10 +6,12 @@ import {getInterior,STORE_FOOTPRINT,configureUrbanInteriors} from './urban-inter
 import {APARTMENT_COLLECTION_ASSETS} from './apartment-collections.mjs';
 import {APARTMENT_DECOR} from './apartment-decor-definitions.mjs';
 import {furnitureFacingBoxes,furnitureFacingDepth} from './furniture-facing.mjs';
+import {interiorActorScale} from './interior-scale.mjs';
+import {PRIVATE_DOOR_CLEAR_WIDTH,PUBLIC_DOOR_CLEAR_WIDTH} from './interior-doorways.mjs';
 const require=createRequire(import.meta.url),stock=require('../../furniture-catalog.js'),products=new Map(stock.map(p=>[p.id,p]));
 const native=new Map([...APARTMENT_DECOR,...APARTMENT_COLLECTION_ASSETS].map(a=>[a.id,a]));configureUrbanInteriors(native);
 const lobby=getInterior({kind:'shop'}),overlaps=(a,b)=>a.x<b.x+b.w&&a.x+a.w>b.x&&a.y<b.y+b.h&&a.y+a.h>b.y;
-const blocked=(m,p,pad=16)=>m.solids.some(r=>p.x>=r.x-pad&&p.x<=r.x+r.w+pad&&p.y>=r.y-pad&&p.y<=r.y+r.h+pad);
+const blocked=(m,p,pad=16*interiorActorScale(m))=>m.solids.some(r=>p.x>=r.x-pad&&p.x<=r.x+r.w+pad&&p.y>=r.y-pad&&p.y<=r.y+r.h+pad);
 function route(model,points,label){for(let i=1;i<points.length;i++){const a=points[i-1],b=points[i];assert(a.x===b.x||a.y===b.y,'A venue route must use cardinal legs');const steps=Math.max(1,Math.ceil(Math.hypot(b.x-a.x,b.y-a.y)/3));for(let n=0;n<=steps;n++)assert(!blocked(model,{x:a.x+(b.x-a.x)*n/steps,y:a.y+(b.y-a.y)*n/steps}),label+' must remain clear');}}
 function feet(item){return item.solid?furnitureFacingBoxes(native.get(item.asset),item):[];}
 function navigation(model){
@@ -26,7 +28,7 @@ test('eight original wide units and four larger upper homes share the unchanged 
  for(const d of SHOWROOMS){const model=getInterior({kind:'shop',floor:d.storeFloor});assert.equal(d.w,1184);assert.equal(d.h,d.storeFloor===1?448:832);assert(d.w>d.h);assert(d.x>=0&&d.y>=0&&d.x+d.w<=3072&&d.y+d.h<=2048);assert(!SHOWROOMS.some(other=>other!==d&&other.storeFloor===d.storeFloor&&overlaps(d,other)));
   for(const hall of model.lobbyFloorRects)assert(!overlaps(d,hall),'Shared circulation cannot borrow private floor area');
   const door=model.doors.find(door=>door.showroomId===d.id),zone=model.zones.find(z=>z.showroomId===d.id),room=model.rooms.find(r=>r.showroomId===d.id);
-  assert(room.portalRoom);assert.deepEqual(door.threshold,d.threshold);assert.deepEqual(door.enterNormal,d.enterNormal);assert.equal(door.facing,d.column?'left':'right');assert.equal(zone.doorId,door.id);assert.equal(door.triggerHalfWidth,64);
+  assert(room.portalRoom);assert.deepEqual(door.threshold,d.threshold);assert.deepEqual(door.enterNormal,d.enterNormal);assert.equal(door.facing,d.column?'left':'right');assert.equal(zone.doorId,door.id);assert.equal(door.triggerHalfWidth,PUBLIC_DOOR_CLEAR_WIDTH/2);
   assert(blocked(model,{x:d.x+d.w/2,y:d.y+d.h/2},0));assert(!blocked(model,d.lobbyApproach));assert.deepEqual(d.lobbyReturn,d.lobbyApproach);
  }
  const upper=getInterior({kind:'shop',floor:2});assert.notEqual(upper,lobby);assert.equal(upper.id,'furniture-store-floor-2');assert.equal(upper.rooms.length,4);assert.deepEqual(upper.spawn,STORE_VERTICAL_CORE.arrival);assert.deepEqual({width:upper.width,height:upper.height},STORE_FOOTPRINT);
@@ -46,7 +48,7 @@ test('wide units have private bedroom and bathroom doors and physical native-foo
   assert.deepEqual({width:m.width,height:m.height},d.storeFloor===1?SHOWROOM_UNIT_FOOTPRINT:UPPER_SHOWROOM_UNIT_FOOTPRINT);assert.equal(m.floor,d.storeFloor);assert.equal(m.apartmentLayout,p.layoutId);assert.equal(m.collectionOwner,'showroom-'+d.id);assert.deepEqual(m.spawn,p.spawn);
   for(const role of ['bedroom','bathroom','kitchen','living','dining']){const a=p.areas.find(a=>a.functionalRole===role);assert(a);assert(nav.reaches(a.point),d.name+' cannot reach '+role);assert(a.point.x>=a.x&&a.point.x<=a.x+a.w&&a.point.y>=a.y&&a.point.y<=a.y+a.h);}
   assert(nav.reaches(p.browse));assert.deepEqual(p.visitRoute[0],p.spawn);assert.deepEqual(p.visitRoute.at(-1),p.browse);assert.deepEqual(p.exitRoute,p.visitRoute.slice().reverse());route(m,p.visitRoute,d.name+' browsing');route(m,p.exitRoute,d.name+' returning');
-  assert.equal(m.privacyDoors.length,2);for(const door of m.privacyDoors){assert(door.length>=104);assert(m.rooms.some(r=>r.id===door.roomId));const vertical=door.axis==='vertical',mid={x:door.x+(vertical?0:door.length/2),y:door.y+(vertical?door.length/2:0)};assert(nav.reaches(mid),d.name+' door');for(const normal of [-32,32])assert(nav.reaches({x:mid.x+(vertical?normal:0),y:mid.y+(vertical?0:normal)}),d.name+' must pass both sides of '+door.id);assert(blocked(m,{x:door.x+(vertical?0:door.length+8),y:door.y+(vertical?door.length+8:0)},0));}
+  assert.equal(m.privacyDoors.length,2);for(const door of m.privacyDoors){assert.equal(door.length,PRIVATE_DOOR_CLEAR_WIDTH);assert(m.rooms.some(r=>r.id===door.roomId));const vertical=door.axis==='vertical',mid={x:door.x+(vertical?0:door.length/2),y:door.y+(vertical?door.length/2:0)};assert(nav.reaches(mid),d.name+' door');for(const normal of [-32,32])assert(nav.reaches({x:mid.x+(vertical?normal:0),y:mid.y+(vertical?0:normal)}),d.name+' must pass both sides of '+door.id);assert(blocked(m,{x:door.x+(vertical?0:door.length+8),y:door.y+(vertical?door.length+8:0)},0));}
   assert.deepEqual(m.portalExit.threshold,p.portalExit.threshold);assert.deepEqual(m.portalExit.enterNormal,p.portalExit.enterNormal);assert.equal(Math.abs(m.spawn.x-m.portalExit.threshold.x),56);assert.equal(m.spawn.y,m.portalExit.threshold.y);
  }
  assert.equal(layouts.size,12);assert.equal(new Set([...layouts].map(id=>id.replace(/-(original|mirrored)$/,''))).size,6);
@@ -59,9 +61,9 @@ test('each independent owner has one complete bath, a practical kitchen and uniq
   for(const item of m.items){assert.equal(item.collectionOwner,owner);assert(!all.has(item.asset),'An apartment must not reuse another collection’s artwork');all.add(item.asset);assert(item.visualSignature.includes(owner));}
   for(const role of ['sink','counter','stove','fridge','pantry','vanity','toilet','bath-fixture','bathroom-mirror'])assert.equal(m.items.filter(i=>i.fixtureRole===role).length,1,d.name+' needs one '+role);
   for(const role of ['bed','sofa','coffee-table','dining-table','dining-chair','nightstand','wardrobe','playful-accent','music-rug','wall-art','lava-lamp','arcade'])assert(m.items.some(i=>i.furnitureRole===role),d.name+' lacks '+role);
-  const vanity=m.items.find(i=>i.slot==='vanity'),mirror=m.items.find(i=>i.slot==='mirror');assert.equal(mirror.x,vanity.x);assert.equal(mirror.y,d.storeFloor===2&&!d.row?540:96);assert(mirror.wallMounted&&!mirror.solid);
+  const vanity=m.items.find(i=>i.slot==='vanity'),mirror=m.items.find(i=>i.slot==='mirror');assert(Math.abs(mirror.x-vanity.x)<1e-8);assert.equal(mirror.y,d.storeFloor===2&&!d.row?540:96);assert(mirror.wallMounted&&!mirror.solid);
   for(const item of m.items.filter(i=>i.fixtureRole&&i.solid)){const b=feet(item)[0];assert(nav.points.some(p=>Math.hypot(p.x-b.x-b.w/2,p.y-b.y-b.h)<=75),d.name+' cannot approach '+item.fixtureRole);}
-  for(const slot of ['toy','table-lamp','lava-lamp']){const item=m.items.find(i=>i.slot===slot),support=m.items.find(i=>i.asset===item.supportedBy);assert(support&&!item.solid);const useNativeDepth=support.rotation||d.storeFloor===2&&slot==='lava-lamp';assert.equal(item.depth,(useNativeDepth?furnitureFacingDepth(native.get(support.asset),support):support.y)+.25);}
+  for(const slot of ['toy','table-lamp','lava-lamp']){const item=m.items.find(i=>i.slot===slot),support=m.items.find(i=>i.asset===item.supportedBy);assert(support&&!item.solid);assert.equal(item.depth,furnitureFacingDepth(native.get(support.asset),support)+.25);}
  }
  const mcm=SHOWROOMS.find(d=>d.id==='midcentury-studio');assert.equal(mcm.floor.pattern,'teak-planks');assert.equal(mcm.wallpaper.pattern,'midcentury-atomic');
 });
@@ -81,7 +83,7 @@ test('upper homes protect broad circulation and group conversation around a real
   assert(design.groups.some(g=>g.role==='conversation'&&g.slots.includes('reading-chair')&&g.slots.includes('record-console')));
   const focusBox=feet(focus)[0];assert(design.focalPoints.some(p=>p.x===focusBox.x+focusBox.w/2&&p.y===focusBox.y+focusBox.h/2));
   assert.equal(focus.rotation,d.column?90:270,'The console stands beside the seating group, rather than hiding the coffee table from the foreground');
-  const coffee=m.items.find(i=>i.slot==='coffee-table'),sideViewWidth=68;
+  const coffee=m.items.find(i=>i.slot==='coffee-table'),sideViewWidth=68*focus.w/native.get(focus.asset).w;
   assert(Math.abs(focusBox.x+focusBox.w/2-coffee.x)>sideViewWidth/2+coffee.w/2,'Even the entire narrow console image stays outside the coffee-table image');
   for(const item of m.items.filter(i=>i.wallMounted&&i.y<=106))for(const window of d.apartment.windows){
    const frame={x:window.x-window.w/2-18,y:18,w:window.w+36,h:92},art={x:item.x-item.w/2,y:item.y-item.h,w:item.w,h:item.h};
