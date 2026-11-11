@@ -1,4 +1,4 @@
-import {segment,COLS,ROWS,TILE} from './model.mjs?v=door-price-2';
+import {segment,COLS,ROWS,TILE} from './model.mjs?v=apartment-scale-1';
 
 export const PLAYER_COLLISION_BIN=512,PLAYER_COLLISION_MARGIN=128;
 const RADIUS=Symbol.for('coda.town.collisionRadius');

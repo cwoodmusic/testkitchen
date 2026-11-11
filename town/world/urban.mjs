@@ -1,11 +1,12 @@
-import {catalog} from './catalog.mjs?v=door-price-2';
-import {FLOOR_COUNT,residents,getInterior,renderInterior,residentInteractionZones,apartmentDecorBounds,apartmentWallDecorBounds,configureUrbanInteriors} from './urban-interiors.mjs?v=door-price-2';
-import {createRoomStorage,roomItemBoxes} from './urban-room.mjs?v=door-price-2';
-import {SHOWROOMS,STORE_FLOOR_COUNT,STORE_VERTICAL_CORE} from './showroom-layout.mjs?v=door-price-2';
-import {createStagePerformance,stagePerformanceSignature,stageCollisionBoxes} from './concert-performers.mjs?v=door-price-2';
-import {CONCERT_PROGRAMME} from './concert-programme.mjs?v=door-price-2';
-import {createAutomaticDoors} from './automatic-doors.mjs?v=door-price-2';
-import {furnitureFacingPlacement,furnitureFacingBounds} from './furniture-facing.mjs?v=door-price-2';
+import {catalog} from './catalog.mjs?v=apartment-scale-1';
+import {FLOOR_COUNT,residents,getInterior,renderInterior,residentInteractionZones,apartmentDecorBounds,apartmentWallDecorBounds,configureUrbanInteriors} from './urban-interiors.mjs?v=apartment-scale-1';
+import {createRoomStorage,roomItemBoxes} from './urban-room.mjs?v=apartment-scale-1';
+import {SHOWROOMS,STORE_FLOOR_COUNT,STORE_VERTICAL_CORE} from './showroom-layout.mjs?v=apartment-scale-1';
+import {createStagePerformance,stagePerformanceSignature,stageCollisionBoxes} from './concert-performers.mjs?v=apartment-scale-1';
+import {CONCERT_PROGRAMME} from './concert-programme.mjs?v=apartment-scale-1';
+import {createAutomaticDoors} from './automatic-doors.mjs?v=apartment-scale-1';
+import {furnitureFacingPlacement,furnitureFacingBounds} from './furniture-facing.mjs?v=apartment-scale-1';
+import {interiorActorScale,effectiveInteriorZoom} from './interior-scale.mjs?v=apartment-scale-1';
 
 configureUrbanInteriors(catalog);
 const furniture=window.CodaFurnitureCatalog||[];
@@ -19,7 +20,7 @@ export function buildingDoor(o){
 }
 function decorSolids(items){return items.flatMap(o=>roomItemBoxes(o,catalog));}
 export function createUrbanController({canvas,getProject,getPlayer,getResidents,onConversation,getConcert=()=>null,preview=false}){
- const css=document.createElement('link');css.rel='stylesheet';css.href=new URL('./urban.css?v=door-price-2',import.meta.url);document.head.append(css);
+ const css=document.createElement('link');css.rel='stylesheet';css.href=new URL('./urban.css?v=apartment-scale-1',import.meta.url);document.head.append(css);
  const hud=document.createElement('section');hud.className='urban-hud';hud.hidden=true;document.body.append(hud);
  const hint=document.createElement('button');hint.className='urban-prompt';hint.hidden=true;hint.onclick=()=>interact();document.body.append(hint);
  const dialog=document.createElement('dialog');dialog.className='urban-dialog';dialog.setAttribute('aria-label','Coda Town');document.body.append(dialog);
@@ -284,17 +285,17 @@ export function createUrbanController({canvas,getProject,getPlayer,getResidents,
   if(text!==lastHint){hint.textContent=text;lastHint=text;}hint.hidden=!text;
  }
  function solid(x,y){
-  const m=getInterior(scene);if(x<40||y<100||x>m.width-40||y>m.height-40)return true;
+  const m=getInterior(scene),radius=16*interiorActorScale(scene);if(x<40||y<100||x>m.width-40||y>m.height-40)return true;
   const items=scene.resident==='player'?decorSolids(decor):[];
   const onStage=scene.kind==='concert'&&rectHit(x,y,m.stage,24);if(onStage)concertPerformance();
-  return !!automaticDoors?.blocked(x,y,16)||[...m.solids,...items,...(onStage?performanceBoxes:[])].some(r=>rectHit(x,y,r,16));
+  return !!automaticDoors?.blocked(x,y,radius)||[...m.solids,...items,...(onStage?performanceBoxes:[])].some(r=>rectHit(x,y,r,radius));
  }
  function frame(ctx,keys,dt,now,width,height,drawPlayer){
-  if(!scene){updateExteriorDoors(dt);return false;}lastSize={width,height};const m=getInterior(scene),actors=sceneResidents();automaticDoors.update(dt,player,actors);refreshStage();walking=false;
-  if(!dialog.open&&!decorate){let dx=(keys.has('d')||keys.has('arrowright')?1:0)-(keys.has('a')||keys.has('arrowleft')?1:0),dy=(keys.has('s')||keys.has('arrowdown')?1:0)-(keys.has('w')||keys.has('arrowup')?1:0);const length=Math.hypot(dx,dy);if(length){if(seated)standUp();dx/=length;dy/=length;facing=Math.abs(dx)>Math.abs(dy)?dx<0?'left':'right':dy<0?'up':'down';const speed=keys.has('shift')?780:450,n=Math.ceil(speed*dt/3),sx=dx*speed*dt/n,sy=dy*speed*dt/n;let distance=0;for(let i=0;i<n;i++){const old={...player};if(!solid(player.x+sx,player.y))player.x+=sx;if(!solid(player.x,player.y+sy))player.y+=sy;distance+=Math.hypot(player.x-old.x,player.y-old.y);}walking=distance>0;phase=(phase+distance*Math.PI*2/150)%(Math.PI*2);}}
-  const clampView=(p,length,visible)=>length<=visible?length/2:Math.max(visible/2,Math.min(length-visible/2,p)),focus=seated?{x:m.stage.x+m.stage.w/2,y:m.stage.y+m.stage.h/2+60}:player;view={x:clampView(focus.x,m.width,width/zoom),y:clampView(focus.y,m.height,height/zoom)};
-  tick();ctx.clearRect(0,0,width,height);ctx.fillStyle='#131b21';ctx.fillRect(0,0,width,height);ctx.save();ctx.translate(width/2,height/2);ctx.scale(zoom,zoom);ctx.translate(-view.x,-view.y);
-  renderInterior(ctx,scene,{player,drawPlayer:(c,p)=>drawPlayer(c,p.x,p.y,{facing,walking,phase,seated:!!seated}),time:now/1000,decor:scene.resident==='player'?decor:[],actors,doorStates:automaticDoors.states,doorOpenness:automaticDoors.openness,performance:concertPerformance(),audioTime:getConcert()?.currentTime,reducedMotion,viewport:{x:view.x-width/zoom/2,y:view.y-height/zoom/2,w:width/zoom,h:height/zoom}});
+  if(!scene){updateExteriorDoors(dt);return false;}lastSize={width,height};const actorScale=interiorActorScale(scene),drawZoom=effectiveInteriorZoom(scene,zoom),m=getInterior(scene),actors=sceneResidents();automaticDoors.update(dt,player,actors);refreshStage();walking=false;
+  if(!dialog.open&&!decorate){let dx=(keys.has('d')||keys.has('arrowright')?1:0)-(keys.has('a')||keys.has('arrowleft')?1:0),dy=(keys.has('s')||keys.has('arrowdown')?1:0)-(keys.has('w')||keys.has('arrowup')?1:0);const length=Math.hypot(dx,dy);if(length){if(seated)standUp();dx/=length;dy/=length;facing=Math.abs(dx)>Math.abs(dy)?dx<0?'left':'right':dy<0?'up':'down';const speed=(keys.has('shift')?780:450)*actorScale,n=Math.ceil(speed*dt/3),sx=dx*speed*dt/n,sy=dy*speed*dt/n;let distance=0;for(let i=0;i<n;i++){const old={...player};if(!solid(player.x+sx,player.y))player.x+=sx;if(!solid(player.x,player.y+sy))player.y+=sy;distance+=Math.hypot(player.x-old.x,player.y-old.y);}walking=distance>0;phase=(phase+distance*Math.PI*2/(150*actorScale))%(Math.PI*2);}}
+  const clampView=(p,length,visible)=>length<=visible?length/2:Math.max(visible/2,Math.min(length-visible/2,p)),focus=seated?{x:m.stage.x+m.stage.w/2,y:m.stage.y+m.stage.h/2+60}:player;view={x:clampView(focus.x,m.width,width/drawZoom),y:clampView(focus.y,m.height,height/drawZoom)};
+  tick();ctx.clearRect(0,0,width,height);ctx.fillStyle='#131b21';ctx.fillRect(0,0,width,height);ctx.save();ctx.translate(width/2,height/2);ctx.scale(drawZoom,drawZoom);ctx.translate(-view.x,-view.y);
+  renderInterior(ctx,scene,{player,drawPlayer:(c,p)=>drawPlayer(c,p.x,p.y,{facing,walking,phase,seated:!!seated}),time:now/1000,decor:scene.resident==='player'?decor:[],actors,doorStates:automaticDoors.states,doorOpenness:automaticDoors.openness,performance:concertPerformance(),audioTime:getConcert()?.currentTime,reducedMotion,viewport:{x:view.x-width/drawZoom/2,y:view.y-height/drawZoom/2,w:width/drawZoom,h:height/drawZoom}});
   if(decorate&&selectedDecor&&hover){const item=furniture.find(i=>i.id===selectedDecor),a=catalog.get(item?.asset),scale=item?.scale||1,p=decorPlacementPoint(item,hover),object={...p,asset:a?.id,scale,rotation:selectedRotation};if(a){
    const placement=furnitureFacingPlacement(a,object),image=placement?.image||(placement&&a.getFacingImage?.(placement.direction));ctx.save();ctx.globalAlpha=.55;
    if(placement&&image)ctx.drawImage(image,placement.x,placement.y,placement.w,placement.h);
@@ -302,7 +303,7 @@ export function createUrbanController({canvas,getProject,getPlayer,getResidents,
   }}
   ctx.restore();return true;
  }
- function pointerWorld(e){const rect=canvas.getBoundingClientRect();return {x:Math.round(view.x+(e.clientX-rect.left-lastSize.width/2)/zoom),y:Math.round(view.y+(e.clientY-rect.top-lastSize.height/2)/zoom)};}
+ function pointerWorld(e){const rect=canvas.getBoundingClientRect(),drawZoom=effectiveInteriorZoom(scene,zoom);return {x:Math.round(view.x+(e.clientX-rect.left-lastSize.width/2)/drawZoom),y:Math.round(view.y+(e.clientY-rect.top-lastSize.height/2)/drawZoom)};}
  function decorPlacementPoint(product,p){
   const a=catalog.get(product?.asset);if(!a?.wallMounted)return p;
   const scale=product?.scale||1,relative=furnitureFacingBounds(a,{x:0,y:0,scale,rotation:selectedRotation});
@@ -312,7 +313,7 @@ export function createUrbanController({canvas,getProject,getPlayer,getResidents,
  function selectFurniture(itemId){const existing=decor.find(o=>o.item===itemId);selectedDecor=itemId;if(existing)selectedRotation=existing.rotation??0;closeDialog();updateHud();}
  function placementResult(itemId,point,rotation){
   const product=furniture.find(i=>i.id===itemId),boxes=roomItemBoxes({asset:product?.asset,scale:product?.scale||1,...point,rotation},catalog);
-  if(boxes.some(b=>rectHit(player.x,player.y,b,20)))return {ok:false,error:'Leave some space around your character before placing furniture.'};
+  if(boxes.some(b=>rectHit(player.x,player.y,b,20*interiorActorScale(scene))))return {ok:false,error:'Leave some space around your character before placing furniture.'};
   return room?.place(itemId,point.x,point.y,rotation)||{ok:false,error:'Wait for your player profile to load.'};
  }
  function handlePointer(e){
@@ -388,5 +389,5 @@ export function createUrbanController({canvas,getProject,getPlayer,getResidents,
   if(e.key.toLowerCase()==='e'&&!e.repeat){const handled=interact();if(handled)e.preventDefault();return handled;}
   return false;
  }
- return {get active(){return !!scene;},get blocked(){return dialog.open;},get scene(){return scene;},get player(){return player;},get decor(){return decor;},get furnitureRotation(){return selectedRotation;},get view(){return {...view,zoom};},get seated(){return seated;},get automaticDoors(){return scene?automaticDoors:exteriorDoors;},get portals(){if(!scene)refreshExteriorDoors();return scene?portals:exteriorPortals;},get performance(){return concertPerformance();},tick,frame,keydown,handlePointer,zoom:delta=>{zoom=Math.max(seated?.04:.3,Math.min(1.4,zoom*Math.exp(-delta*.001)));},reset,interact,enterBuilding,goFloor,goStoreFloor,showStoreDirectory,openRoom,openShowroom,returnToStore,showShop,showInventory,showProgramme,watchSeat,standUp};
+ return {get active(){return !!scene;},get blocked(){return dialog.open;},get scene(){return scene;},get player(){return player;},get decor(){return decor;},get furnitureRotation(){return selectedRotation;},get view(){return {...view,zoom:effectiveInteriorZoom(scene,zoom)};},get seated(){return seated;},get automaticDoors(){return scene?automaticDoors:exteriorDoors;},get portals(){if(!scene)refreshExteriorDoors();return scene?portals:exteriorPortals;},get performance(){return concertPerformance();},tick,frame,keydown,handlePointer,zoom:delta=>{zoom=Math.max(seated?.04:.3,Math.min(1.4,zoom*Math.exp(-delta*.001)));},reset,interact,enterBuilding,goFloor,goStoreFloor,showStoreDirectory,openRoom,openShowroom,returnToStore,showShop,showInventory,showProgramme,watchSeat,standUp};
 }

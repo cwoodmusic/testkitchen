@@ -1,14 +1,14 @@
-import {catalog,preparePlacedArt,render,resizeSurface,findStart,movePlayer,toggleGate,follow,PLAYER_SCALE,GAIT_PER_PIXEL} from './runtime.mjs?v=door-price-2';
-import {loadProject} from './storage.mjs?v=door-price-2';
-import {createUrbanController} from './urban.mjs?v=door-price-2';
-import {createConcertAudio} from './concert-audio.mjs?v=door-price-2';
-import {mountConcertControls} from './concert-controls.mjs?v=door-price-2';
-import {CONCERT_PROGRAMME} from './concert-programme.mjs?v=door-price-2';
-import {createUrbanTour} from './urban-tour.mjs?v=door-price-2';
-import {createSandFootprints} from './sand-footprints.mjs?v=door-price-2';
-import {createAmbientNPCs} from './ambient-npcs.mjs?v=door-price-2';
-import {createPlayerCollisionIndex} from './player-collision-index.mjs?v=door-price-2';
-import {readNightPreference,saveNightPreference} from './lighting-settings.mjs?v=door-price-2';
+import {catalog,preparePlacedArt,render,resizeSurface,findStart,movePlayer,toggleGate,follow,PLAYER_SCALE,GAIT_PER_PIXEL} from './runtime.mjs?v=apartment-scale-1';
+import {loadProject} from './storage.mjs?v=apartment-scale-1';
+import {createUrbanController} from './urban.mjs?v=apartment-scale-1';
+import {createConcertAudio} from './concert-audio.mjs?v=apartment-scale-1';
+import {mountConcertControls} from './concert-controls.mjs?v=apartment-scale-1';
+import {CONCERT_PROGRAMME} from './concert-programme.mjs?v=apartment-scale-1';
+import {createUrbanTour} from './urban-tour.mjs?v=apartment-scale-1';
+import {createSandFootprints} from './sand-footprints.mjs?v=apartment-scale-1';
+import {createAmbientNPCs} from './ambient-npcs.mjs?v=apartment-scale-1';
+import {createPlayerCollisionIndex} from './player-collision-index.mjs?v=apartment-scale-1';
+import {readNightPreference,saveNightPreference} from './lighting-settings.mjs?v=apartment-scale-1';
 const canvas=document.getElementById('world'),route=new URLSearchParams(location.search),tour=route.get('map')!=='builder',preview=route.get('urban')==='1';
 document.querySelectorAll('body > :not(#world):not(script)').forEach(e=>e.remove());
 const header=document.createElement('header'),title=document.createElement('h1'),nav=document.createElement('nav');
@@ -18,7 +18,7 @@ button('Town Builder',()=>location.href='builder/');
 button(tour?'Play saved town':'Urban district tour',()=>location.href=tour?'?map=builder':'?urban=1');
 button('Back to arcade',()=>{if(parent!==window)parent.postMessage({type:'coda-town-close'},location.origin);else location.href='../';});
 let night=readNightPreference();const lighting=button(night?'City night':'Daylight',()=>{night=!night;saveNightPreference(night);lighting.textContent=night?'City night':'Daylight';});lighting.id='lightingToggle';
-const footer=document.createElement('footer');footer.textContent='WASD / arrows · Walk    Shift · Run    Walk through doors    E · Interact    Wheel · Zoom';document.body.append(footer);
+const footer=document.createElement('footer');footer.textContent='WASD / arrows · Walk    Shift · Run    Bedroom / bath doors automatic    E · Enter / interact    Wheel · Zoom';document.body.append(footer);
 let doc,loadError;try{doc=tour?createUrbanTour():await loadProject(new Set(catalog.keys()));if(doc)await preparePlacedArt(doc);}catch(e){doc=null;loadError=e;}
 if(!doc){title.textContent=loadError?'Could not load town':'No saved builder town';footer.textContent=loadError?loadError.message:'Open Town Builder, create a map, then choose Play this town.';}else{
  title.textContent=doc.name;

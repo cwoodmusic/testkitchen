@@ -1,5 +1,6 @@
-import {residents} from './resident-profiles.mjs?v=door-price-2';
-import {SHOWROOMS,STORE_TRAFFIC,STORE_VERTICAL_CORE} from './showroom-layout.mjs?v=door-price-2';
+import {residents} from './resident-profiles.mjs?v=apartment-scale-1';
+import {SHOWROOMS,STORE_TRAFFIC,STORE_VERTICAL_CORE} from './showroom-layout.mjs?v=apartment-scale-1';
+import {interiorActorScale} from './interior-scale.mjs?v=apartment-scale-1';
 export const SHOP_VISIT_CAPACITY=SHOWROOMS.length;
 
 const SPEED=156,GAIT=Math.PI*2/150;
@@ -19,7 +20,7 @@ function shopRoute(resident,stay,slot){
  const enter=point(STORE_TRAFFIC.incomingX,shopDoor.y),aisleIn=point(STORE_TRAFFIC.incomingX,STORE_TRAFFIC.ingressY),roomIn=point(showroom.lobbyApproach.x,STORE_TRAFFIC.ingressY);
  const roomOut=point(showroom.lobbyReturn.x,STORE_TRAFFIC.egressY),aisleOut=point(STORE_TRAFFIC.outgoingX,STORE_TRAFFIC.egressY),exit=point(STORE_TRAFFIC.outgoingX,shopDoor.y);
  const steps=[];
- const walk=(scene,from,to,purpose)=>steps.push({scene,from,to,purpose,duration:Math.hypot(to.x-from.x,to.y-from.y)/SPEED});
+ const walk=(scene,from,to,purpose)=>steps.push({scene,from,to,purpose,duration:Math.hypot(to.x-from.x,to.y-from.y)/(SPEED*interiorActorScale(scene))});
  const wait=(scene,at,duration,purpose,direction,hidden=false)=>steps.push({scene,from:at,to:at,duration,purpose,facing:direction,hidden});
  const follow=(scene,points,purpose)=>{for(let i=1;i<points.length;i++)walk(scene,points[i-1],points[i],purpose);};
  if(showroom.storeFloor===2){
@@ -61,5 +62,5 @@ export function venueVisitPose(id,kind,elapsed=0,{stay=24,slot}={}){
  const route=shopRoute(resident,stay,slot);
  if(elapsed>=route.duration)return {id,name:resident.name,scene:{kind:'shop',floor:1},...shopDoor,showroomId:route.showroom.id,facing:'down',walking:false,phase:0,hidden:false,done:true,activity:'',purpose:'Ready to go outside'};
  const step=route.steps.find(item=>elapsed<item.start+item.duration)||route.steps.at(-1),distance=Math.hypot(step.to.x-step.from.x,step.to.y-step.from.y),fraction=step.duration?Math.min(1,(elapsed-step.start)/step.duration):1;
- return {id,name:resident.name,scene:{...step.scene},x:step.from.x+(step.to.x-step.from.x)*fraction,y:step.from.y+(step.to.y-step.from.y)*fraction,showroomId:route.showroom.id,facing:distance?facing(step.from,step.to):step.facing||'down',walking:distance>0,phase:(step.distance+distance*fraction)*GAIT%(Math.PI*2),hidden:!!step.hidden,done:false,activity:'',purpose:step.purpose};
+ return {id,name:resident.name,scene:{...step.scene},x:step.from.x+(step.to.x-step.from.x)*fraction,y:step.from.y+(step.to.y-step.from.y)*fraction,showroomId:route.showroom.id,facing:distance?facing(step.from,step.to):step.facing||'down',walking:distance>0,phase:(step.distance+distance*fraction)*GAIT/interiorActorScale(step.scene)%(Math.PI*2),hidden:!!step.hidden,done:false,activity:'',purpose:step.purpose};
 }

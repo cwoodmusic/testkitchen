@@ -1,5 +1,6 @@
-import {residents} from './resident-profiles.mjs?v=door-price-2';
-export {residents} from './resident-profiles.mjs?v=door-price-2';
+import {residents} from './resident-profiles.mjs?v=apartment-scale-1';
+import {interiorActorScale} from './interior-scale.mjs?v=apartment-scale-1';
+export {residents} from './resident-profiles.mjs?v=apartment-scale-1';
 
 const SPEED=156,GAIT=Math.PI*2/150;
 const journeys=new Map();
@@ -21,7 +22,7 @@ function journey(id,direction){
  const homeAt=point(home.x,home.y),roomExit=point(home.x,975),doorX=resident.floor>=7?500:resident.unit==='A'?430:1874;
  const hallDoor=point(doorX,342),hallTurn=point(doorX,464),hallCenter=point(1152,464),hallLift=point(1152,342);
  const lobbyLift=point(1152,400),street=point(1152,1578),steps=[];
- const walk=(scene,from,to,activity)=>steps.push({scene,from,to,activity,duration:Math.hypot(to.x-from.x,to.y-from.y)/SPEED});
+ const walk=(scene,from,to,activity)=>steps.push({scene,from,to,activity,duration:Math.hypot(to.x-from.x,to.y-from.y)/(SPEED*interiorActorScale(scene))});
  const wait=(scene,at,duration,activity,hidden=false)=>steps.push({scene,from:at,to:at,duration,activity,hidden});
  const elevator=()=>wait({kind:'lift',floor:resident.floor},point(1152,342),2.5+resident.floor*.35,'Riding the elevator',true);
  if(direction==='home'){
@@ -43,7 +44,7 @@ export function interiorJourneyPose(id,direction='out',elapsed=0){
  elapsed=Number.isNaN(elapsed)?0:Math.max(0,elapsed);
  if(elapsed>=route.duration)return direction==='home'?{...route.home,scene:{...route.home.scene}}:{id,name:route.home.name,scene:null,x:1152,y:1578,facing:'down',walking:false,phase:0,hidden:true,done:true,activity:'Outside'};
  const step=route.steps.find(s=>elapsed<s.start+s.duration)||route.steps.at(-1),p=Math.min(1,(elapsed-step.start)/step.duration),distance=Math.hypot(step.to.x-step.from.x,step.to.y-step.from.y);
- return {id,name:route.home.name,scene:{...step.scene},x:step.from.x+(step.to.x-step.from.x)*p,y:step.from.y+(step.to.y-step.from.y)*p,facing:distance?facing(step.from,step.to):direction==='home'?'up':'down',walking:distance>0,phase:(step.distance+distance*p)*GAIT%(Math.PI*2),hidden:!!step.hidden,done:false,activity:step.activity};
+ return {id,name:route.home.name,scene:{...step.scene},x:step.from.x+(step.to.x-step.from.x)*p,y:step.from.y+(step.to.y-step.from.y)*p,facing:distance?facing(step.from,step.to):direction==='home'?'up':'down',walking:distance>0,phase:(step.distance+distance*p)*GAIT/interiorActorScale(step.scene)%(Math.PI*2),hidden:!!step.hidden,done:false,activity:step.activity};
 }
 export function residentInScene(pose,scene){
  if(!pose||pose.hidden||!pose.scene||!scene||pose.scene.kind!==scene.kind)return false;

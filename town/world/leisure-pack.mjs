@@ -1,4 +1,4 @@
-import {leisureDefinitions,leisureFamilies,leisureSheetCounts} from './leisure-definitions.mjs?v=door-price-2';
+import {leisureDefinitions,leisureFamilies,leisureSheetCounts} from './leisure-definitions.mjs?v=apartment-scale-1';
 
 const assetURL=path=>{const url=new URL('../assets/leisure/'+path,import.meta.url);url.search=new URL(import.meta.url).search;return url;};
 const image=path=>new Promise((resolve,reject)=>{

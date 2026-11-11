@@ -1,4 +1,4 @@
-import {collectionImageRect,collectionMotion} from './apartment-collection-art.mjs?v=door-price-2';
+import {collectionImageRect,collectionMotion} from './apartment-collection-art.mjs?v=apartment-scale-1';
 
 const directions=['south','north','east','west'];
 const faceKey=(id,facing='south')=>facing==='south'?id:id+'|'+facing;

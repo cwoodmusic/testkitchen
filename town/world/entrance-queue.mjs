@@ -1,6 +1,6 @@
-import {blocked,COLS,ROWS,TILE} from './model.mjs?v=door-price-2';
-import {npcCollisionProject} from './npc-collision.mjs?v=door-price-2';
-import {npcConnectionClear} from './npc-navigation.mjs?v=door-price-2';
+import {blocked,COLS,ROWS,TILE} from './model.mjs?v=apartment-scale-1';
+import {npcCollisionProject} from './npc-collision.mjs?v=apartment-scale-1';
+import {npcConnectionClear} from './npc-navigation.mjs?v=apartment-scale-1';
 
 const valid=p=>p&&Number.isFinite(p.x)&&Number.isFinite(p.y);
 const copy=p=>({x:p.x,y:p.y});

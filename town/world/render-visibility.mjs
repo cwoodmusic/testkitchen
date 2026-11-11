@@ -13,4 +13,4 @@ export function intersectsViewport(bounds,view,padding=0){
  return bounds.x+bounds.w+padding>=view.x&&bounds.x-padding<=view.x+view.w&&bounds.y+bounds.h+padding>=view.y&&bounds.y-padding<=view.y+view.h;
 }
 export function actorBounds(x,y){return {x:x-160,y:y-320,w:320,h:360};}
-import {furnitureFacingPlacement} from './furniture-facing.mjs?v=door-price-2';
+import {furnitureFacingPlacement} from './furniture-facing.mjs?v=apartment-scale-1';

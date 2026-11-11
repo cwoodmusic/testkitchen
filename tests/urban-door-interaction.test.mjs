@@ -3,6 +3,8 @@ import assert from 'node:assert/strict';
 import {readFileSync} from 'node:fs';
 import vm from 'node:vm';
 import {createAutomaticDoors} from '../town/world/automatic-doors.mjs';
+import {interiorActorScale,effectiveInteriorZoom} from '../town/world/interior-scale.mjs';
+import {roomItemBoxes} from '../town/world/urban-room.mjs';
 import {FLOOR_COUNT,residents,getInterior,residentInteractionZones,configureUrbanInteriors} from '../town/world/urban-interiors.mjs';
 import {APARTMENT_COLLECTION_ASSETS} from '../town/world/apartment-collection-definitions.mjs';
 import {SHOWROOMS,STORE_FLOOR_COUNT,STORE_VERTICAL_CORE} from '../town/world/showroom-layout.mjs';
@@ -12,7 +14,7 @@ import {SHOWROOMS,STORE_FLOOR_COUNT,STORE_VERTICAL_CORE} from '../town/world/sho
 const urbanURL=new URL('../town/world/urban.mjs',import.meta.url);
 const controllerSource=readFileSync(urbanURL,'utf8').replace(/^import .*;\r?\n/gm,'').replace(/^export function /gm,'function ').replaceAll('import.meta.url',JSON.stringify(urbanURL.href))+'\n({createUrbanController,buildingDoor});';
 class Element{
- constructor(tag){this.tagName=tag;this.children=[];this.style={};this.hidden=false;this.open=false;this.events=new Map();}
+ constructor(tag){this.tagName=tag;this.children=[];this.style={};this.dataset={};this.hidden=false;this.open=false;this.events=new Map();}
  append(...children){this.children.push(...children);}
  replaceChildren(...children){this.children=[...children];}
  addEventListener(name,fn){this.events.set(name,fn);}
@@ -20,25 +22,28 @@ class Element{
  close(){this.open=false;this.events.get('close')?.();}
  showModal(){this.open=true;}
  focus(){}
+ getBoundingClientRect(){return {left:10,top:20,width:1200,height:760};}
+ getContext(){return new Proxy({},{get:()=>()=>{},set:()=>true});}
 }
-function fixture({preview=false}={}){
+function fixture({preview=false,furnishing=false}={}){
  const catalog=new Map(APARTMENT_COLLECTION_ASSETS.map(d=>[d.id,d]));
  for(const [id,urban]of [['tower','tower'],['store','shop'],['opera','opera']])catalog.set(id,{id,urban,w:1000,h:900,door:{x:500,y:880}});
  const objects=['tower','store','opera'].map((asset,i)=>({id:asset,asset,x:2000+i*4000,y:2000,scale:1,rotation:0}));
- const project={objects},original=JSON.stringify(project),outside={x:0,y:0},actors=[],elements=[],events=new Map(),win={CodaFurnitureCatalog:[]};let clock=0,storageWrites=0;
+ const project={objects},original=JSON.stringify(project),outside={x:0,y:0},actors=[],elements=[],events=new Map(),win={CodaFurnitureCatalog:[]};let clock=0,storageWrites=0;const placements=[],renderCalls=[],drawn=[];
+ if(furnishing){win.CodaFurnitureCatalog=[{id:'test-chair',asset:'collection-player-dining-chair',name:'Test chair',scale:1}];win.CodaNotesShop={createWallet:()=>({snapshot:()=>({balance:100,owned:['test-chair']})})};}
  const document={head:new Element('head'),body:new Element('body'),createElement(tag){const e=new Element(tag);elements.push(e);return e;}};
- const context={catalog,window:win,parent:win,document,location:{origin:'https://coda.invalid'},URL,performance:{now:()=>clock},matchMedia:()=>({matches:false}),localStorage:{getItem:()=> 'active-classroom',setItem(){storageWrites++;}},addEventListener:(type,fn)=>events.set(type,fn),setTimeout,
-  FLOOR_COUNT,residents,getInterior,residentInteractionZones,configureUrbanInteriors,createAutomaticDoors,SHOWROOMS,STORE_FLOOR_COUNT,STORE_VERTICAL_CORE,
-  renderInterior(){},createRoomStorage(){throw Error('Unexpected storage access');},roomItemBoxes:()=>[],apartmentDecorBounds:()=>[],apartmentWallDecorBounds:()=>[],furnitureFacingPlacement:()=>null,furnitureFacingBounds:()=>null,
+ const context={catalog,window:win,parent:win,document,location:{origin:'https://coda.invalid'},URL,performance:{now:()=>clock},matchMedia:()=>({matches:false}),localStorage:{getItem:()=>furnishing?null:'active-classroom',setItem(){storageWrites++;}},addEventListener:(type,fn)=>events.set(type,fn),setTimeout,
+  FLOOR_COUNT,residents,getInterior,residentInteractionZones,configureUrbanInteriors,createAutomaticDoors,interiorActorScale,effectiveInteriorZoom,SHOWROOMS,STORE_FLOOR_COUNT,STORE_VERTICAL_CORE,
+  renderInterior(c,scene,options){renderCalls.push({scene,viewport:options.viewport});options.drawPlayer?.(c,options.player);},createRoomStorage(){if(!furnishing)throw Error('Unexpected storage access');return {load:()=>({ok:true}),snapshot:()=>[],place(item,x,y,rotation){placements.push({item,x,y,rotation});return {ok:true};}};},roomItemBoxes,apartmentDecorBounds:()=>[],apartmentWallDecorBounds:()=>[],furnitureFacingPlacement:()=>null,furnitureFacingBounds:()=>null,
   createStagePerformance:()=>({assetIds:[]}),stagePerformanceSignature:()=> 'test-performance',stageCollisionBoxes:()=>[],CONCERT_PROGRAMME:[{id:'test-performance'}]};
  const {createUrbanController,buildingDoor}=vm.runInNewContext(controllerSource,context,{filename:urbanURL.pathname});
  const canvas=new Element('canvas');canvas.id='door-controller-test';const q=createUrbanController({canvas,getProject:()=>project,getPlayer:()=>outside,getResidents:()=>actors,preview});
  const ctx=new Proxy({},{get:(_target,key)=>()=>{},set:()=>true});
- const frame=(keys=new Set(),dt=.04)=>{clock+=dt*1000;return q.frame(ctx,keys,dt,clock,1200,760,()=>{});};
+ const frame=(keys=new Set(),dt=.04)=>{clock+=dt*1000;return q.frame(ctx,keys,dt,clock,1200,760,(_c,x,y,state)=>drawn.push({x,y,state}));};
  const walk=(normal,seconds=1)=>{const keys=new Set([normal.x>.5?'d':normal.x<-.5?'a':normal.y>.5?'s':'w']);for(let t=0;t<seconds;t+=.04)frame(keys);};
  const key=key=>q.keydown({key,repeat:false,preventDefault(){}});
  const approach=p=>{Object.assign(q.player,p.approach);frame();};
- return {q,project,original,outside,actors,buildingDoor,frame,walk,key,approach,dialog:elements.find(e=>e.tagName==='dialog'),hint:elements.find(e=>e.className==='urban-prompt'),assertUntouched(){assert.equal(JSON.stringify(project),original);assert.equal(storageWrites,0);},unlock(id){events.get('message')({origin:'https://coda.invalid',source:win,data:{type:'coda-town-state-result',people:[{id,relationship:{count:5}}]}});}};
+ return {q,project,original,outside,actors,buildingDoor,frame,walk,key,approach,elements,canvas,placements,renderCalls,drawn,dialog:elements.find(e=>e.tagName==='dialog'),hint:elements.find(e=>e.className==='urban-prompt'),assertUntouched(){assert.equal(JSON.stringify(project),original);assert.equal(storageWrites,0);},unlock(id){events.get('message')({origin:'https://coda.invalid',source:win,data:{type:'coda-town-state-result',people:[{id,relationship:{count:5}}]}});}};
 }
 
 test('street entrances and lobby exits wait for E and stay closed to player proximity',()=>{
@@ -79,4 +84,32 @@ test('only bedroom and bathroom privacy leaves open and pass automatically for p
   }
   f.assertUntouched();
  }
+});
+
+test('private camera compensation preserves actor presentation and uses the same viewport units',()=>{
+ for(const kind of [null,'lobby','hall','shop','concert','apartment','showroom']){
+  const scene=kind?{kind}:null,scale=interiorActorScale(scene),expected=['apartment','showroom'].includes(kind)?.75:1;
+  assert.equal(scale,expected);assert.equal(effectiveInteriorZoom(scene,.72)*scale,.72);
+ }
+ const f=fixture();f.q.openRoom('player');f.frame();assert.equal(f.q.view.zoom,.96);assert.equal(f.renderCalls.at(-1).viewport.w,1200/.96);assert.equal(f.renderCalls.at(-1).viewport.h,760/.96);
+ assert.equal(f.drawn.at(-1).state.scale,undefined,'Actor draw calibration belongs to renderInterior, without a second controller scale');
+ f.q.goFloor(1);f.frame();assert.equal(f.q.view.zoom,.72);assert.equal(f.renderCalls.at(-1).viewport.w,1200/.72);f.assertUntouched();
+});
+
+test('private player speed, gait and foot clearance calibrate together while public movement is unchanged',()=>{
+ for(const privateRoom of [false,true])for(const run of [false,true]){
+  const f=fixture();if(privateRoom)f.q.openRoom('player');else f.q.goFloor(1);const start={...f.q.player};f.frame(new Set(run?['d','shift']:['d']),.04);
+  const factor=privateRoom?.75:1,distance=(run?780:450)*factor*.04;assert(Math.abs(f.q.player.x-start.x-distance)<1e-8);assert.equal(f.q.player.y,start.y);
+  const expectedPhase=(run?780:450)*.04*Math.PI*2/150;assert(Math.abs(f.drawn.at(-1).state.phase-expectedPhase)<1e-8,'Stride scales with speed, retaining real-time cadence');
+  const m=getInterior(f.q.scene),y=Array.from({length:Math.floor((m.height-300)/20)},(_,i)=>200+i*20).find(y=>!m.solids.some(r=>r.x>0&&r.x<120&&y>r.y-40&&y<r.y+r.h+40));assert(y!==undefined);Object.assign(f.q.player,{x:80,y});f.walk({x:-1,y:0},.5);
+  const expectedEdge=privateRoom?40:44;assert(f.q.player.x>=expectedEdge-1e-8&&f.q.player.x<expectedEdge+3.2,'Private foot radius12, public radius16');f.assertUntouched();
+ }
+});
+
+test('furnishing pointer coordinates invert effective private zoom without moving the saved target',()=>{
+ const f=fixture({furnishing:true});f.q.openRoom('player');f.frame();const view=f.q.view,target={x:Math.round(view.x+150),y:Math.round(view.y+20)};assert.equal(view.zoom,.96);
+ const furnish=f.elements.find(e=>e.tagName==='button'&&e.textContent==='Furnish apartment');assert(furnish);furnish.onclick();
+ const item=f.elements.find(e=>e.tagName==='button'&&e.children.some(c=>c?.textContent==='Test chair'));assert(item);item.onclick();assert.equal(f.placements.length,0);
+ const rect=f.canvas.getBoundingClientRect();f.q.handlePointer({clientX:rect.left+600+(target.x-view.x)*view.zoom,clientY:rect.top+380+(target.y-view.y)*view.zoom,preventDefault(){}});
+ assert.equal(f.placements.length,1);assert.deepEqual(f.placements[0],{item:'test-chair',...target,rotation:0});assert.equal(JSON.stringify(f.project),f.original);
 });

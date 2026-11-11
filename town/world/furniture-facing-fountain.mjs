@@ -1,5 +1,5 @@
-import {assetImage} from './asset-color.mjs?v=door-price-2';
-import {drawFountainMotion,supportsFountainMotion} from './fountain-motion.mjs?v=door-price-2';
+import {assetImage} from './asset-color.mjs?v=apartment-scale-1';
+import {drawFountainMotion,supportsFountainMotion} from './fountain-motion.mjs?v=apartment-scale-1';
 
 function grade(asset,image){const proxy=Object.create(asset);Object.defineProperty(proxy,'canvas',{value:image});return assetImage(proxy);}
 

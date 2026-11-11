@@ -2,6 +2,8 @@
 
 Open [Town Builder · Urban kit](https://cwoodmusic.github.io/testkitchen/town/builder/?kit=urban) to place the tower and furniture store in your own map. The [optional example scene](https://cwoodmusic.github.io/testkitchen/town/?urban=1) demonstrates the buildings and previews every apartment. Use E at building, apartment and showroom entrances and exits during Walk test or Play this town. Bedroom and bathroom doors inside apartments open automatically. E also handles lifts, stairwells, shopping and conversations. Floor 15 is your apartment; choose Furnish apartment to place, move, or put away purchases. Scroll to zoom.
 
+Apartment and showroom furnishings now appear one-third larger relative to the characters, while your character keeps the same screen size and walking speed. The correction applies to NPC homes, your home and all twelve showrooms; saved furniture positions stay intact.
+
 Coda Furnishings has twelve apartment showrooms across two floors. Eight doors open from the lower lobby; a lift and stairs lead to four larger themed homes upstairs. Approach a showroom door and press E to enter its separate, fully furnished apartment scene. Bedroom and bathroom privacy doors inside that apartment open and close automatically. Every apartment includes kitchen and dining areas, a living room, a private bedroom and a bathroom with a shower or bathtub, toilet and vanity. Each apartment now has entirely unique furniture and fixtures, an animated lava lamp, a miniature arcade, a poster and a toy, as well as its own floors and wallpaper:
 
 Preview the [main lobby](town-preview/coda-furnishings-lobby.png), [upper gallery](town-preview/coda-furnishings-upper-lobby.png) and [all twelve apartments](town-preview/apartments-showrooms-overview.png).

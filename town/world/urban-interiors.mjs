@@ -1,24 +1,25 @@
-import {assetImage} from './asset-color.mjs?v=door-price-2';
-import {SHOWROOMS,applyShowroomLayout} from './showroom-layout.mjs?v=door-price-2';
-import {applyShowroomApartment} from './showroom-apartments.mjs?v=door-price-2';
-import {drawShowroomFloor,drawShowroomWallpaper} from './showroom-materials.mjs?v=door-price-2';
-import {applyHomeMaterialSuite,warmHomeMaterials} from './home-materials.mjs?v=door-price-2';
-import {drawTowerCommonSurfaces,drawTowerCommonStairs,towerCommonMaterialsReady,warmTowerCommonMaterials} from './tower-common-materials.mjs?v=door-price-2';
-import {drawInteriorDoor,drawPrivacyDoor,drawElevatorPortal,interiorPortalVisualDepth,warmInteriorPortalArt} from './interior-portal-art.mjs?v=door-price-2';
-import {getConcertHall,renderConcertHallBackground,concertHallDrawables} from './concert-hall.mjs?v=door-price-2';
-import {renderStagePerformance} from './concert-performers.mjs?v=door-price-2';
-import {buildApartmentHome} from './apartment-homes.mjs?v=door-price-2';
-import {APARTMENT_COLLECTION_ASSETS,getApartmentAsset} from './apartment-collections.mjs?v=door-price-2';
-import {drawApartmentMotion} from './apartment-motion.mjs?v=door-price-2';
-import {furnitureFacingPlacement,furnitureFacingDepth,furnitureFacingBoxes,furnitureAtGroundCenter} from './furniture-facing.mjs?v=door-price-2';
-import {preparePlacedFacingArt} from './furniture-art-access.mjs?v=door-price-2';
+import {assetImage} from './asset-color.mjs?v=apartment-scale-1';
+import {SHOWROOMS,applyShowroomLayout} from './showroom-layout.mjs?v=apartment-scale-1';
+import {applyShowroomApartment} from './showroom-apartments.mjs?v=apartment-scale-1';
+import {drawShowroomFloor,drawShowroomWallpaper} from './showroom-materials.mjs?v=apartment-scale-1';
+import {applyHomeMaterialSuite,warmHomeMaterials} from './home-materials.mjs?v=apartment-scale-1';
+import {drawTowerCommonSurfaces,drawTowerCommonStairs,towerCommonMaterialsReady,warmTowerCommonMaterials} from './tower-common-materials.mjs?v=apartment-scale-1';
+import {drawInteriorDoor,drawPrivacyDoor,drawElevatorPortal,interiorPortalVisualDepth,warmInteriorPortalArt} from './interior-portal-art.mjs?v=apartment-scale-1';
+import {interiorActorScale} from './interior-scale.mjs?v=apartment-scale-1';
+import {getConcertHall,renderConcertHallBackground,concertHallDrawables} from './concert-hall.mjs?v=apartment-scale-1';
+import {renderStagePerformance} from './concert-performers.mjs?v=apartment-scale-1';
+import {buildApartmentHome} from './apartment-homes.mjs?v=apartment-scale-1';
+import {APARTMENT_COLLECTION_ASSETS,getApartmentAsset} from './apartment-collections.mjs?v=apartment-scale-1';
+import {drawApartmentMotion} from './apartment-motion.mjs?v=apartment-scale-1';
+import {furnitureFacingPlacement,furnitureFacingDepth,furnitureFacingBoxes,furnitureAtGroundCenter} from './furniture-facing.mjs?v=apartment-scale-1';
+import {preparePlacedFacingArt} from './furniture-art-access.mjs?v=apartment-scale-1';
 // The apartment tower has one consistent floor plate. Residential floors use
 // a 608px common hall and 1120px private apartments, within its 2304 × 1728 lot.
 export const FLOOR_COUNT=15;
 export const TOWER_FOOTPRINT=Object.freeze({width:2304,height:1728});
 export const STORE_FOOTPRINT=Object.freeze({width:3072,height:2048});
-export {residents} from './resident-profiles.mjs?v=door-price-2';
-import {residents} from './resident-profiles.mjs?v=door-price-2';
+export {residents} from './resident-profiles.mjs?v=apartment-scale-1';
+import {residents} from './resident-profiles.mjs?v=apartment-scale-1';
 const sceneCache=new Map(),backgroundCache=new Map();
 const MAX_BACKGROUNDS=8,MAX_BACKGROUND_PIXELS=16*1024*1024;
 let backgroundPixels=0;
@@ -33,7 +34,7 @@ let nativeCatalog=null,woodTexture=null,npcRenderer=null;
 const drawConcertNPC=(ctx,actor,time)=>npcRenderer?.drawNPC(ctx,actor,time);
 export function configureUrbanInteriors(catalog){if(nativeCatalog!==catalog){nativeCatalog=catalog;clearBackgrounds();}}
 if(typeof document!=='undefined'){
- import('./ground-textures.mjs?v=door-price-2').then(({groundTextures})=>{woodTexture=groundTextures.wood;clearBackgrounds();}).catch(()=>{});
+ import('./ground-textures.mjs?v=apartment-scale-1').then(({groundTextures})=>{woodTexture=groundTextures.wood;clearBackgrounds();}).catch(()=>{});
 }
 const rect=(x,y,w,h)=>({x,y,w,h});
 const zone=(id,label,x,y,w,h,action,extra={})=>({id,label,x,y,w,h,action,...extra});
@@ -295,6 +296,14 @@ function itemDepth(item){const a=nativeCatalog?.get(item.asset);return item.dept
 export function residentInteractionZones(actors=[]){
  return actors.filter(a=>!a.hidden&&Number.isFinite(a.x)&&Number.isFinite(a.y)).map(a=>zone(`resident-${a.id}`,`Talk to ${a.name||residents.find(r=>r.id===a.id)?.name||'your neighbour'}`,a.x-72,a.y-64,144,144,'resident',{resident:a.id}));
 }
+function drawInteriorCharacter(c,scene,actor,draw){
+ const scale=interiorActorScale(scene);
+ if(scale===1){draw(c,actor);return;}
+ // The furnished maps use their own drawing units. Keep the character's feet
+ // on the saved world point while matching the furniture's human scale.
+ c.save();c.translate(actor.x,actor.y);c.scale(scale,scale);
+ try{draw(c,{...actor,x:0,y:0});}finally{c.restore();}
+}
 export function renderInterior(c,scene,{player,drawPlayer,time=0,decor=[],catalog,actors,performance,audioTime,reducedMotion=false,viewport,doorStates=[],doorOpenness=()=>0}={}){
  if(catalog&&catalog!==nativeCatalog)configureUrbanInteriors(catalog);const s=getInterior(scene);
  if(scene.kind==='concert'){
@@ -318,6 +327,6 @@ export function renderInterior(c,scene,{player,drawPlayer,time=0,decor=[],catalo
  for(const item of decor){if(!item||!nativeCatalog?.has(item.asset)||!Number.isFinite(item.x)||!Number.isFinite(item.y))continue;if(floorItem(item)||wallItem(item))drawItem(c,item,time);else queue.push({y:itemDepth(item),draw:()=>drawItem(c,item,time)});}
  const people=Array.isArray(actors)?actors:s.actors;
  if(people.length&&!npcRenderer&&typeof window!=='undefined'&&window.createCodaCharacterRenderer)npcRenderer=window.createCodaCharacterRenderer({worldScale:2.5});
- for(const a of people)if(!a.hidden)queue.push({y:a.y,draw:()=>npcRenderer?.drawNPC(c,a,time)});
- if(player&&drawPlayer)queue.push({y:player.y,draw:()=>drawPlayer(c,player)});queue.sort((a,b)=>a.y-b.y);for(const o of queue)o.draw();
+ for(const a of people)if(!a.hidden)queue.push({y:a.y,draw:()=>drawInteriorCharacter(c,s,a,(ctx,actor)=>npcRenderer?.drawNPC(ctx,actor,time))});
+ if(player&&drawPlayer)queue.push({y:player.y,draw:()=>drawInteriorCharacter(c,s,player,drawPlayer)});queue.sort((a,b)=>a.y-b.y);for(const o of queue)o.draw();
 }
