@@ -1,4 +1,4 @@
-import {furnitureFacingBoxes,furnitureFacingBounds} from './furniture-facing.mjs?v=furniture-facings-1';
+import {furnitureFacingBoxes,furnitureFacingBounds} from './furniture-facing.mjs?v=interior-polish-1';
 // Room placements are local to the active arcade profile. Notes ownership is
 // managed by the wallet; this file never grants furniture or changes currency.
 export const ROOM_KEY='codaUrbanRoomV1';

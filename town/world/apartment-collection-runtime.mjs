@@ -1,4 +1,4 @@
-import {collectionImageRect,collectionMotion} from './apartment-collection-art.mjs?v=furniture-facings-1';
+import {collectionImageRect,collectionMotion} from './apartment-collection-art.mjs?v=interior-polish-1';
 
 const directions=['south','north','east','west'];
 const faceKey=(id,facing='south')=>facing==='south'?id:id+'|'+facing;
@@ -26,6 +26,7 @@ export function createApartmentCollectionRuntime({definitions,manifest,direction
   Object.defineProperty(view,'canvas',{enumerable:true,get:()=>{warmAsset(def.id,facing);return canvasForKey(key);}});
   Object.defineProperty(view,'ready',{get:()=>Boolean(canvasLRU.get(key)?.full)});
   const source=()=>({image:null,sx:0,sy:0,sw:0,sh:0,dx:0,dy:0,dw:drawDef.w,dh:drawDef.h,native:false,revision:0});
+  const previous=records.get(key);if(previous)previous.state.records=previous.state.records.filter(item=>item!==previous);
   const item={key,def,drawDef,frame,state,view,rect,preview:source(),direct:source(),nativeSource:source()};records.set(key,item);(state.records??=[]).push(item);
  }
  for(const collection of manifest.collections){
@@ -34,11 +35,25 @@ export function createApartmentCollectionRuntime({definitions,manifest,direction
   for(const frame of collection.cells){const def=byId.get(frame.id||'collection-'+collection.owner+'-'+frame.slot);if(def)addRecord(def,frame,state,'south');}
  }
  for(const def of definitions)if(!ownerStates.get(def.owner+'|south')?.thumb||!records.has(def.id))throw Error('Missing apartment collection artwork: '+def.id);
+ const southOverrides=new Set();
  for(const collection of directionManifest?.collections||[]){
-  for(const facing of directions.slice(1)){
-   const authored=collection.views?.[facing],cells=authored?.cells;if(!cells)continue;
+  for(const facing of directions){
+   const authored=collection.views?.[facing],cells=authored?.cells;
+   if(facing==='south'&&authored!==undefined&&!Array.isArray(cells))throw Error('Invalid apartment South override sheet: '+collection.owner);
+   if(!cells)continue;
    const entry={...collection,...authored},key=collection.owner+'|'+entry.file;
    if(!entry.file||!(entry.width>0&&entry.height>0))throw Error('Missing apartment direction sheet: '+collection.owner+'/'+facing);
+   if(facing==='south'){
+    if(!Array.isArray(cells)||typeof entry.file!=='string'||![entry.width,entry.height].every(Number.isFinite))throw Error('Invalid apartment South override sheet: '+collection.owner);
+    for(const frame of cells){
+     const id=frame.id||'collection-'+collection.owner+'-'+frame.slot,def=byId.get(id);
+     if(!def)throw Error('Unknown apartment South override: '+id);
+     if(def.owner!==collection.owner)throw Error('Apartment South override changes owner: '+id);
+     if(southOverrides.has(id))throw Error('Duplicate apartment South override: '+id);
+     if(![frame.x,frame.y,frame.w,frame.h].every(Number.isFinite)||frame.x<0||frame.y<0||frame.w<=0||frame.h<=0||frame.x+frame.w>entry.width||frame.y+frame.h>entry.height)throw Error('Invalid apartment South override crop: '+id);
+     southOverrides.add(id);
+    }
+   }
    let state=states.get(key);if(!state){state={key,owner:collection.owner,entry,thumb:null,pending:null,autoFailed:false};states.set(key,state);}
    ownerStates.set(collection.owner+'|'+facing,state);
    for(const frame of cells){const def=byId.get(frame.id||'collection-'+collection.owner+'-'+frame.slot);if(def)addRecord(def,frame,state,facing);}
@@ -150,8 +165,13 @@ export function createApartmentCollectionRuntime({definitions,manifest,direction
   view(id,facing='south'){return records.get(faceKey(id,facing))?.view??null;},
   ensureFull(owner,facing='south',ids=[]){
    if(Array.isArray(facing)){ids=facing;facing='south';}
-   const state=ownerStates.get(owner+'|'+facing);if(!state)return Promise.reject(Error('Unknown apartment collection direction: '+owner+'/'+facing));
-   state.autoFailed=false;return loadState(state,ids.map(id=>record(id,facing).key));
+   // A partial South replacement can share an owner with its preserved base
+   // sheet. Resolve each requested crop against its actual source state.
+   let items;try{items=ids.length?ids.map(id=>record(id,facing)):[...records.values()].filter(item=>item.def.owner===owner&&item.view.facing===facing);}catch(error){return Promise.reject(error);}
+   if(!items.length||items.some(item=>item.def.owner!==owner))return Promise.reject(Error('Unknown apartment collection direction: '+owner+'/'+facing));
+   const groups=new Map();for(const item of items){if(!groups.has(item.state))groups.set(item.state,[]);if(ids.length)groups.get(item.state).push(item.key);}
+   const pending=[...groups].map(([state,keys])=>{state.autoFailed=false;return loadState(state,keys);});
+   return pending.length===1?pending[0]:Promise.all(pending).then(()=>{});
   },
   ensureAsset,
   warmAsset,

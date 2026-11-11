@@ -8,18 +8,20 @@ Preview the [main lobby](town-preview/coda-furnishings-lobby.png), [upper galler
 
 | Room | Flooring | Wallpaper |
 | --- | --- | --- |
-| Victorian Suite | Walnut herringbone | Burgundy damask |
-| Art Deco Apartment | Ivory and teal marble | Peacock fans |
-| Coastal Retreat | Whitewashed driftwood | Sea-glass stripes |
-| Rustic Cottage | Hand-fired terracotta | Sage cottage toile |
-| Botanical Apartment | Garden slate mosaic | Fern fronds |
-| Midcentury Apartment | Teak plank flooring | Cream atomic motifs |
-| Parisian Apartment | Bistro checkerboard | Sage lattice |
-| Industrial Loft | Concrete slabs | Exposed warehouse brick |
-| Retrofuture Spaceport | Warm spaceport terrazzo | Cream orbital wallpaper |
-| Cyberpunk Neon Loft | Graphite inset panels | Midnight circuit wallpaper |
-| Steampunk Clockwork | Mahogany parquet | Sage clockwork wallpaper |
-| Robot Companion | Warm companion cork | Friendly companion wallpaper |
+| Victorian Suite | Chestnut octagonal marquetry | Plum silk cameo damask |
+| Art Deco Apartment | Ebony and ivory octagonal marble | Peacock silk and champagne fan rays |
+| Coastal Retreat | Bleached-oak rope-jointed deck | Sea-glass linen and shell-sprig paper |
+| Rustic Cottage | Warm clay honeycomb pavement | Cream gingham and tiny bee-wing toile |
+| Botanical Apartment | Pale limestone garden flag mosaic | Sage fern-jacquard and rattan dado |
+| Midcentury Apartment | Oiled-walnut finger parquet | Cream atomic linen and walnut dado |
+| Parisian Apartment | Cream and charcoal small bistro hex | Blush ticking and painted café lattice |
+| Industrial Loft | Reclaimed-oak iron-capped boards | Mineral brick and fine copper service band |
+| Retrofuture Spaceport | Cream orbital-aggregate terrazzo | Warm ivory capsule weave and aqua dado |
+| Cyberpunk Neon Loft | Brushed graphite staggered service panels | Midnight acoustic ribs and sparse circuits |
+| Steampunk Clockwork Home | Mahogany octagon and brass-key parquet | Sage woven cog-stripe and mahogany dado |
+| Robot Companion Home | Warm cork and powder-blue charging joints | Ivory micro-weave and rounded companion band |
+
+All 31 private homes and showrooms have independent authored dry floors, wallpaper, bathroom ceramics and dado trim. Floor grain continues through circulation gaps. The tower halls use detailed limestone landings, timber floors, inset runners, wainscoting and carved trim. Interior doors reuse their existing automatic opening and collision rules, with upright paneled leaves and frames; the elevator is an upright metal entrance with a floor display and call buttons. These finishes retain the existing room dimensions, saved furniture and walking routes.
 
 Use **Shop this apartment** or E at its browse point for the pieces actually displayed there. The lobby's **Browse furniture** catalogue contains all 484 products: the previous 100 and 384 pieces from the twelve collections. The new beds cost 80 Notes and sofas cost 70; legacy prices and ownership remain unchanged. Buying or returning from a product retains the selected collection and category. Walking through the apartment exit, Escape, or **Back to lobby** returns to that apartment's own door.
 

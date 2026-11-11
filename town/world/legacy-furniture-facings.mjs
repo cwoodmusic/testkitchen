@@ -1,6 +1,6 @@
-import {LEGACY_FURNITURE_ASSETS} from './legacy-furniture-definitions.mjs?v=furniture-facings-1';
-import {createApartmentCollectionRuntime} from './apartment-collection-runtime.mjs?v=furniture-facings-1';
-import {furnitureFootCenter} from './furniture-facing.mjs?v=furniture-facings-1';
+import {LEGACY_FURNITURE_ASSETS} from './legacy-furniture-definitions.mjs?v=interior-polish-1';
+import {createApartmentCollectionRuntime} from './apartment-collection-runtime.mjs?v=interior-polish-1';
+import {furnitureFootCenter} from './furniture-facing.mjs?v=interior-polish-1';
 
 const directions=['south','west','north','east'];
 const base=new URL('../assets/furniture-facings/',import.meta.url);
@@ -41,7 +41,7 @@ function runtimeMetadata(catalog,definitions,directionManifest,overview){
  if(!Array.isArray(directionManifest?.collections))throw Error('Legacy furniture direction collections are missing.');
  if(!overview?.file||!(overview.width>0&&overview.height>0)||overview.width*overview.height>4*1024*1024)throw Error('Legacy furniture needs one compact overview of at most four million pixels.');
  const ids=new Set(definitions.map(def=>def.id));if(ids.size!==definitions.length)throw Error('Duplicate legacy furniture definitions.');
- const owners=new Map(),coverage=new Map(directions.slice(1).map(dir=>[dir,new Set()]));
+ const owners=new Map(),coverage=new Map(directions.slice(1).map(dir=>[dir,new Set()])),southOverrides=new Set();
  for(const collection of directionManifest.collections){
   if(typeof collection.owner!=='string'||!collection.owner)throw Error('Legacy furniture board owner is missing.');
   for(const facing of directions.slice(1)){
@@ -53,6 +53,21 @@ function runtimeMetadata(catalog,definitions,directionManifest,overview){
     if(owners.has(cell.id)&&owners.get(cell.id)!==collection.owner)throw Error('Legacy furniture changes board owner: '+cell.id);
     owners.set(cell.id,collection.owner);coverage.get(facing).add(cell.id);
    }
+  }
+ }
+ // South corrections are deliberately opt-in per saved-map ID. A partial
+ // board cannot replace an unrelated original, owner or physical anchor.
+ for(const collection of directionManifest.collections){
+  const view=collection.views?.south;if(view===undefined)continue;
+  if(!view||typeof view.file!=='string'||!view.file||![view.width,view.height].every(n=>Number.isFinite(n)&&n>0)||!Array.isArray(view.cells))throw Error('Invalid legacy South override sheet: '+collection.owner);
+  for(const cell of view.cells){
+   if(!ids.has(cell.id))throw Error('Unknown legacy South override: '+cell.id);
+   if(owners.get(cell.id)!==collection.owner)throw Error('Legacy South override changes board owner: '+cell.id);
+   if(southOverrides.has(cell.id))throw Error('Duplicate legacy South override: '+cell.id);
+   if(![cell.x,cell.y,cell.w,cell.h].every(Number.isFinite)||cell.x<0||cell.y<0||cell.w<=0||cell.h<=0||cell.x+cell.w>view.width||cell.y+cell.h>view.height)throw Error('Invalid legacy South override crop: '+cell.id);
+   const asset=catalog.get(cell.id);
+   if((cell.viewWidth!==undefined&&cell.viewWidth!==asset?.w)||(cell.viewHeight!==undefined&&cell.viewHeight!==asset?.h)||cell.footCenter!==undefined||cell.worldFootCenter!==undefined)throw Error('Legacy South override must preserve original size and ground anchor: '+cell.id);
+   southOverrides.add(cell.id);
   }
  }
  const overviewKeys=new Set();for(const cell of overview.cells||[]){
@@ -67,15 +82,16 @@ function runtimeMetadata(catalog,definitions,directionManifest,overview){
   for(const facing of directions){if(facing!=='south'&&!coverage.get(facing).has(def.id))throw Error('Missing legacy furniture facing: '+def.id+'/'+facing);if(!overviewKeys.has(def.id+'|'+facing))throw Error('Missing legacy furniture overview: '+def.id+'/'+facing);}
   return {...def,w:asset.w,h:asset.h,boxes:asset.boxes,polygons:asset.polygons,owner:owners.get(def.id)};
  });
- // This record exists only to satisfy the shared runtime's namespace. South
- // imagery always comes from the original asset or the authored overview.
+ // The synthetic base satisfies the shared runtime's namespace. Only declared
+ // partial South crops replace it; every other original remains untouched.
  const manifest={collections:[...new Set(owners.values())].map(owner=>({owner,file:'__preserved-south__',width:1,height:1,cells:runtimeDefinitions.filter(def=>def.owner===owner).map(def=>({id:def.id,x:0,y:0,w:def.w,h:def.h}))}))};
- return {definitions:runtimeDefinitions,manifest};
+ return {definitions:runtimeDefinitions,manifest,southOverrides};
 }
 
 /**
- * Add authored cardinal views without replacing an old South canvas getter,
- * draw function, saved-map ID, dimensions, physical box or pack metadata.
+ * Add authored cardinal views while retaining every original canvas getter,
+ * saved-map ID, dimensions, physical box and pack metadata. Only explicitly
+ * declared South corrections replace an original draw function.
  * Registration decodes one compact overview; native direction sheets remain
  * lazy and share the collection runtime's source/canvas limits.
  */
@@ -91,15 +107,15 @@ export async function registerLegacyFurnitureFacings(catalog,{
  await runtime.warmOverview();
  if(!runtime.stats.overviewReady)throw Error('Legacy furniture overview could not load.');
  const assets=metadata.definitions.map(def=>{
-  const asset=catalog.get(def.id),record={asset,source:descriptor()},south=originalView(asset),ensure=asset.ensureFull;
-  asset.getFacingView=(facing='south')=>facing==='south'?south:validDirection(facing)?runtime.view(def.id,facing):null;
+  const asset=catalog.get(def.id),record={asset,source:descriptor()},south=originalView(asset),ensure=asset.ensureFull,correctSouth=metadata.southOverrides.has(def.id);
+  asset.getFacingView=(facing='south')=>facing==='south'&&!correctSouth?south:validDirection(facing)?runtime.view(def.id,facing):null;
   asset.getFacingImage=(facing='south')=>{
-   if(facing==='south')return asset.canvas;if(!validDirection(facing))return null;
+   if(facing==='south'&&!correctSouth)return asset.canvas;if(!validDirection(facing))return null;
    runtime.warmAsset(def.id,facing);return runtime.canvas(def.id,facing);
   };
   asset.getFacingDrawSource=(facing='south',{native=false}={})=>{
    if(!validDirection(facing))return null;
-   if(facing==='south'&&native)return originalSource(record);
+   if(facing==='south'&&native&&!correctSouth)return originalSource(record);
    runtime.warmOverview();const source=runtime.drawSource(def.id,facing,{native});
    // The shared runtime's synthetic South placeholder is never an image.
    // After an explicit cache clear, wait for the overview to recover rather
@@ -107,8 +123,14 @@ export async function registerLegacyFurnitureFacings(catalog,{
    return source.image===stub?null:source;
   };
   asset.ensureFull=function(facing='south'){
-   if(facing==='south')return ensure?ensure.call(asset):settled;
+   if(facing==='south'&&!correctSouth)return ensure?ensure.call(asset):settled;
    return validDirection(facing)?runtime.ensureAsset(def.id,facing):Promise.reject(Error('Unknown legacy furniture facing: '+def.id+'/'+facing));
+  };
+  if(correctSouth)asset.draw=context=>{
+   // Library thumbnails call draw directly. Use the already-ready native crop
+   // or compact overview, and never leak the synthetic base after clear().
+   const source=asset.getFacingDrawSource('south',{native:runtime.view(def.id,'south').ready});
+   if(source?.image)context.drawImage(source.image,source.sx,source.sy,source.sw,source.sh,source.dx,source.dy,source.dw,source.dh);
   };
   asset.legacyFurnitureFacingProvider='legacy-board';asset.legacyFurnitureFacingOwner=def.owner;
   return asset;

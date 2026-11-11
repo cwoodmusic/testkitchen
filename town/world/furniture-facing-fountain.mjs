@@ -1,5 +1,5 @@
-import {assetImage} from './asset-color.mjs?v=furniture-facings-1';
-import {drawFountainMotion,supportsFountainMotion} from './fountain-motion.mjs?v=furniture-facings-1';
+import {assetImage} from './asset-color.mjs?v=interior-polish-1';
+import {drawFountainMotion,supportsFountainMotion} from './fountain-motion.mjs?v=interior-polish-1';
 
 function grade(asset,image){const proxy=Object.create(asset);Object.defineProperty(proxy,'canvas',{value:image});return assetImage(proxy);}
 

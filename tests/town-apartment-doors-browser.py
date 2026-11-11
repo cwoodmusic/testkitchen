@@ -17,6 +17,7 @@ ROOT=Path(__file__).resolve().parents[1]
 SOURCE=ROOT/'town/maps/coda-town-uploaded-3.json'
 parser=argparse.ArgumentParser()
 parser.add_argument('--mock-collections',action='store_true')
+parser.add_argument('--showrooms',nargs='*',help='Optional representative showroom IDs; default visits all12')
 parser.add_argument('--screenshots',type=Path,default=Path('/workspace/.onboarding/apartment-doors'))
 args=parser.parse_args();args.screenshots.mkdir(parents=True,exist_ok=True)
 source_hash=hashlib.sha256(SOURCE.read_bytes()).hexdigest()
@@ -98,7 +99,7 @@ export async function registerApartmentCollections(add){{return APARTMENT_COLLEC
   page.wait_for_function('townBuilder.urban.scene?.floor===1')
   assert snap()['player']=={'x':1732,'y':380},snap()
   floor_navigation={'liftViaInteraction':True,'stairsViaInteraction':True,'wrongFloorRoomsRejected':True}
-  for showroom in setup['showrooms']:
+  for showroom in [r for r in setup['showrooms'] if not args.showrooms or r['id'] in args.showrooms]:
    if snap()['scene']['floor']!=showroom['storeFloor']:
     page.get_by_role('button',name='Store floors',exact=True).click();page.get_by_role('button',name=re.compile('^Upper gallery ·' if showroom['storeFloor']==2 else '^Main lobby ·')).click();page.wait_for_function('floor=>townBuilder.urban.scene?.floor===floor',arg=showroom['storeFloor'])
    portal=next(p for p in snap()['portals'] if p.get('showroomId')==showroom['id'] and p['action']=='showroom')
@@ -129,7 +130,7 @@ export async function registerApartmentCollections(add){{return APARTMENT_COLLEC
    const app=new URL(document.querySelector('script[type=module]').src),{createUrbanController}=await import(new URL('../world/urban.mjs'+app.search,app));
    const cv=document.createElement('canvas');cv.width=1200;cv.height=760;cv.tabIndex=0;cv.id='door-lock-qa';cv.style.cssText='position:fixed;left:0;top:0;width:1200px;height:760px;z-index:9999';document.body.append(cv);const keys=new Set();window.__doorNPCs=[];addEventListener('keydown',e=>keys.add(e.key.toLowerCase()));addEventListener('keyup',e=>keys.delete(e.key.toLowerCase()));
    const q=createUrbanController({canvas:cv,getProject:()=>townBuilder.project,getPlayer:()=>({x:0,y:0}),getResidents:()=>__doorNPCs,preview:false});window.__activeDoorQA=q;
-   const ctx=cv.getContext('2d');let last=performance.now();window.__doorLockStop=false;function lockFrame(now){if(__doorLockStop)return;const dt=Math.min(.04,(now-last)/1000);last=now;q.frame(ctx,keys,dt,now,cv.width,cv.height,(c,x,y)=>{c.fillStyle='#ff00ff';c.fillRect(x-12,y-55,24,55);});requestAnimationFrame(lockFrame);}requestAnimationFrame(lockFrame);
+   const ctx=cv.getContext('2d'),actorRenderer=window.createCodaCharacterRenderer({worldScale:128/44}),actorProfile=actorRenderer.normalizeProfile({});let last=performance.now();window.__doorLockStop=false;function lockFrame(now){if(__doorLockStop)return;const dt=Math.min(.04,(now-last)/1000);last=now;q.frame(ctx,keys,dt,now,cv.width,cv.height,(c,x,y,state)=>actorRenderer.drawPlayer(c,actorProfile,{x,y,...state},now/1000));requestAnimationFrame(lockFrame);}requestAnimationFrame(lockFrame);
    q.goFloor(__doorQA.residents.find(r=>r.id==='bach').floor);const portal=q.portals.find(p=>p.resident==='bach');Object.assign(q.player,{x:portal.threshold.x,y:portal.threshold.y+130});cv.focus();return {portal:{threshold:portal.threshold,normal:portal.enterNormal},floor:q.scene.floor};
   }''')
   page.keyboard.down('w');page.wait_for_timeout(750);locked=snap();assert locked['scene']['kind']=='hall';assert next(p for p in locked['portals'] if p.get('resident')=='bach')['openness']==0,locked
@@ -140,16 +141,23 @@ export async function registerApartmentCollections(add){{return APARTMENT_COLLEC
   page.evaluate('()=>{window.__doorNPCs=[];const q=__activeDoorQA;q.player.y+=120;}');page.wait_for_timeout(1100);closed=snap();assert next(p for p in closed['portals'] if p.get('resident')=='bach')['openness']==0,closed
   page.evaluate("__activeDoorQA.openRoom('player')");assert page.evaluate('__activeDoorQA.decor')==[legacy]
   privacy=[]
-  for index in range(2):
-   info=page.evaluate('''i=>{const q=__activeDoorQA,m=__doorQA.getInterior(q.scene),d=m.privacyDoors[i],s=q.automaticDoors.states.find(s=>s.door===d),o=s.opening;window.__doorNPCs=[];Object.assign(q.player,{x:o.x+o.nx*125,y:o.y+o.ny*125});return {id:s.id,o};}''',index)
-   o=info['o'];n={'x':-o['nx'],'y':-o['ny']};page.wait_for_timeout(300);key=key_for(n);page.keyboard.down(key);page.wait_for_timeout(600);page.keyboard.up(key);through=snap();state=next(d for d in through['doors'] if d['id']==info['id']);assert state['openness']>.7,state
+  for privacy_case in [('player',0),('player',1),('steampunk-horizontal',None)]:
+   case,index=privacy_case
+   if case=='steampunk-horizontal':
+    page.evaluate("()=>{const q=__activeDoorQA;q.enterBuilding(townBuilder.project.objects.find(o=>o.asset==='coda-furnishings'));q.goStoreFloor(2);q.openShowroom('steampunk');}")
+    index=page.evaluate("__doorQA.getInterior(__activeDoorQA.scene).privacyDoors.findIndex(d=>d.axis==='horizontal')")
+    assert index>=0
+   info=page.evaluate('''i=>{const q=__activeDoorQA,m=__doorQA.getInterior(q.scene),d=m.privacyDoors[i],s=q.automaticDoors.states.find(s=>s.door===d),o=s.opening;window.__doorNPCs=[];Object.assign(q.player,{x:o.x+o.nx*125,y:o.y+o.ny*125});return {id:s.id,o,axis:d.axis};}''',index)
+   o=info['o'];n={'x':-o['nx'],'y':-o['ny']};page.wait_for_timeout(1100);page.locator('#door-lock-qa').screenshot(path=str(args.screenshots/(case+'-'+str(index)+'-closed.png')));key=key_for(n);page.keyboard.down(key);page.wait_for_timeout(600);page.keyboard.up(key);through=snap();state=next(d for d in through['doors'] if d['id']==info['id']);assert state['openness']>.7,state
    signed=(through['player']['x']-o['x'])*o['nx']+(through['player']['y']-o['y'])*o['ny'];assert signed<-25,('Player did not walk through privacy door',info,through)
+   page.locator('#door-lock-qa').screenshot(path=str(args.screenshots/(case+'-'+str(index)+'-open.png')))
    # Stand 100px inside: door must close after the character clears the leaf.
    page.evaluate('o=>Object.assign(__activeDoorQA.player,{x:o.x-o.nx*110,y:o.y-o.ny*110})',o);page.wait_for_timeout(1100);after=snap();assert next(d for d in after['doors'] if d['id']==info['id'])['openness']==0,after
    # A passing NPC also opens, holds, and clears this same physical leaf.
    page.evaluate('o=>{Object.assign(__activeDoorQA.player,{x:1152,y:900});window.__doorNPCs=[{id:"bath-test-npc",x:o.x+o.nx*60,y:o.y+o.ny*60}]}',o);page.wait_for_timeout(300);opened=snap();assert next(d for d in opened['doors'] if d['id']==info['id'])['openness']>.9,opened
    page.evaluate('o=>{window.__doorNPCs[0].x=o.x-o.nx*120;window.__doorNPCs[0].y=o.y-o.ny*120}',o);page.wait_for_timeout(1100);npc_closed=snap();assert next(d for d in npc_closed['doors'] if d['id']==info['id'])['openness']==0,npc_closed
-   privacy.append({'id':info['id'],'playerCrossed':True,'closedBehindPlayer':True,'npcOpenedAndCleared':True})
+   page.locator('#door-lock-qa').screenshot(path=str(args.screenshots/(case+'-'+str(index)+'-closed-behind.png')))
+   privacy.append({'scene':case,'axis':info['axis'],'id':info['id'],'playerCrossed':True,'closedBehindPlayer':True,'npcOpenedAndCleared':True})
   page.locator('#door-lock-qa').screenshot(path=str(args.screenshots/'privacy-door.png'))
   assert page.evaluate('__doorKeys.filter(k=>k==="e").length')==2 and page.evaluate('__doorKeys.filter(k=>k==="enter").length')==0,'An entrance crossing used an interaction key'
   assert page.evaluate('townBuilder.project')==json.loads(SOURCE.read_bytes())

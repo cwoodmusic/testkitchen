@@ -1,6 +1,6 @@
-import {APARTMENT_COLLECTION_ASSETS} from './apartment-collection-definitions.mjs?v=furniture-facings-1';
-import {createApartmentCollectionRuntime} from './apartment-collection-runtime.mjs?v=furniture-facings-1';
-export * from './apartment-collection-definitions.mjs?v=furniture-facings-1';
+import {APARTMENT_COLLECTION_ASSETS} from './apartment-collection-definitions.mjs?v=interior-polish-1';
+import {createApartmentCollectionRuntime} from './apartment-collection-runtime.mjs?v=interior-polish-1';
+export * from './apartment-collection-definitions.mjs?v=interior-polish-1';
 
 const base=new URL('../assets/apartment-collections/',import.meta.url);
 function assetURL(file){const url=new URL(file,base);url.search=new URL(import.meta.url).search;return url;}

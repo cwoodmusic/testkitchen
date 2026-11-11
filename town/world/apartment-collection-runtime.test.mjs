@@ -50,6 +50,25 @@ function fixture(options={}){
  return {...f,runtime,definitions,manifest,thumbnails,loads,images,def:(owner=0,slot='bed')=>definitions.find(d=>d.owner===collections[owner].owner&&d.slot===slot)};
 }
 
+test('partial South overrides replace only their exact crop and group mixed owner requests by their real source',async()=>{
+ const owner=APARTMENT_COLLECTIONS[0],definitions=owner.assets.filter(d=>['bed','sofa'].includes(d.slot)),bed=definitions.find(d=>d.slot==='bed'),sofa=definitions.find(d=>d.slot==='sofa'),manifest=manifestFor([owner]),frame={id:bed.id,x:23,y:41,w:72,h:90},directionManifest={collections:[{owner:owner.owner,views:{south:{file:'corrected-south.webp',width:400,height:800,cells:[frame]}}}]};
+ const f=fixture({definitions,manifest,directionManifest,maxSources:1}),before=f.runtime.view(bed.id);assert.deepEqual(before.footCenter,furnitureFootCenter(bed));assert.deepEqual([before.w,before.h],[bed.w,bed.h]);assert.equal(f.loads.length,0);
+ await f.runtime.ensureFull(owner.owner,'south',[bed.id,sofa.id]);assert.deepEqual(new Set(f.loads.map(r=>r.file)),new Set(['corrected-south.webp',owner.owner+'.webp']));const B=f.runtime.canvas(bed.id),S=f.runtime.canvas(sofa.id);assert.equal(B.draws[0][0].name,'corrected-south.webp');assert.deepEqual(B.draws[0].slice(1,5),[23,41,72,90]);assert.equal(S.draws[0][0].name,owner.owner+'.webp');assert.equal(f.runtime.stats.sourceEntries,1);assert.equal(f.runtime.stats.canvasEntries,2);assert(f.runtime.view(bed.id).ready&&f.runtime.view(sofa.id).ready);f.runtime.clear();assert.equal(B.width,1);assert.equal(S.width,1);
+});
+
+test('clearing a pending South override disposes the old generation and reloads the corrected source',async()=>{
+ const owner=APARTMENT_COLLECTIONS[0],bed=owner.assets.find(d=>d.slot==='bed'),loads=[],directionManifest={collections:[{owner:owner.owner,views:{south:{file:'corrected-south.webp',width:400,height:800,cells:[{id:bed.id,x:7,y:9,w:80,h:90}]}}}]},f=fixture({definitions:[bed],directionManifest,loadImage(file){return new Promise(resolve=>loads.push({file,resolve}));}});
+ const first=f.runtime.ensureAsset(bed.id);f.runtime.clear();const second=f.runtime.ensureAsset(bed.id);assert.equal(loads.length,2);const stale=image('stale-corrected');loads[0].resolve(stale);await first;assert.equal(stale.closed,1);assert.equal(f.runtime.view(bed.id).ready,false);assert.equal(f.runtime.stats.canvasEntries,0);loads[1].resolve(image('current-corrected'));await second;assert.equal(f.runtime.canvas(bed.id).draws[0][0].name,'current-corrected');assert(f.runtime.view(bed.id).ready);f.runtime.clear();
+});
+
+test('South override IDs, owners, duplicate entries and crop extents are validated independently of native loads',()=>{
+ const owner=APARTMENT_COLLECTIONS[0],bed=owner.assets.find(d=>d.slot==='bed');
+ for(const mutate of [v=>{v.cells[0].id='missing';},v=>v.cells.push({...v.cells[0]}),v=>{v.cells[0].x=399;},v=>{v.cells[0].h=Infinity;},v=>{v.cells=null;}]){
+  const v={file:'corrected.webp',width:400,height:800,cells:[{id:bed.id,x:4,y:8,w:80,h:90}]};mutate(v);assert.throws(()=>fixture({definitions:[bed],directionManifest:{collections:[{owner:owner.owner,views:{south:v}}]}}),/South override/);
+ }
+ assert.throws(()=>fixture({definitions:[bed],directionManifest:{collections:[{owner:'wrong-owner',views:{south:{file:'corrected.webp',width:400,height:800,cells:[{id:bed.id,x:4,y:8,w:80,h:90}]}}}]}}),/changes owner/);
+});
+
 test('registration loads only 31 thumbnails, preserves all metadata and installs recoverable lazy canvases',async()=>{
  const calls=[],f=canvasFactory(),manifest=manifestFor(APARTMENT_COLLECTIONS);let oldGetterCalls=0;
  const assets=await registerApartmentCollections((id,name,group,w,h,draw,boxes,layer)=>{

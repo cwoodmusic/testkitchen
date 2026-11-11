@@ -1,5 +1,5 @@
-import {height,segment} from './model.mjs?v=furniture-facings-1';
-import {MUSIC_WALL_HEIGHT,MUSIC_WALL_WIDTH,MUSIC_WALL_SCALE,musicWallDonors} from './music-wall-art.mjs?v=furniture-facings-1';
+import {height,segment} from './model.mjs?v=interior-polish-1';
+import {MUSIC_WALL_HEIGHT,MUSIC_WALL_WIDTH,MUSIC_WALL_SCALE,musicWallDonors} from './music-wall-art.mjs?v=interior-polish-1';
 
 export const barrierHeight=style=>style==='music-square'?MUSIC_WALL_HEIGHT:style==='iron'?144:style==='wood'||style==='rail'?136:160;
 

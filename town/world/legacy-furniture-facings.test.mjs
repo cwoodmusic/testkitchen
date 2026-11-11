@@ -2,7 +2,7 @@ import test from 'node:test';
 import assert from 'node:assert/strict';
 import {LEGACY_FURNITURE_ASSETS,LEGACY_FURNITURE_BOARDS} from './legacy-furniture-definitions.mjs';
 import {registerLegacyFurnitureFacings,registerAuthoredSeatFacings,getLegacyFurnitureFacingRuntimeStats,clearLegacyFurnitureFacingCache} from './legacy-furniture-facings.mjs';
-import {furnitureFacingPlacement,furnitureFootCenter} from './furniture-facing.mjs';
+import {furnitureFacingPlacement,furnitureFacingBoxes,furnitureFootCenter} from './furniture-facing.mjs';
 
 const directions=['south','west','north','east'];
 function image(name,width=1024,height=2048){return {name,width,height,closed:0,close(){this.closed++;}};}
@@ -121,4 +121,44 @@ test('authored chair overflow uses only eight compact original-draw previews and
  for(let pass=0;pass<4;pass++)for(const a of f.catalog.values())for(const direction of directions){const source=a.getFacingDrawSource(direction,{native:false});assert(source.image);assert.equal(source.native,false);assert.equal(source.quality,'thumbnail');assert(Math.max(source.image.width,source.image.height)<=160);}
  assert.equal(f.canvases.length,8);assert.equal(controller.stats.previewEntries,8);assert(controller.stats.previewPixels<=8*160*160);assert([...f.records.values()].every(r=>r.getters===0&&r.ensures===0&&r.draws===1));
  controller.clear();assert.equal(controller.stats.previewEntries,0);assert.equal(controller.stats.previewPixels,0);assert(f.canvases.every(c=>c.width===1&&c.height===1));
+});
+
+function addSouthOverrides(f,ids){
+ for(const id of ids){const board=f.directionManifest.collections.find(c=>c.views.north.cells.some(cell=>cell.id===id));
+  board.views.south??={file:board.owner+'-south-corrected.webp',width:1024,height:2048,cells:[]};
+  board.views.south.cells.push({id,x:44,y:92,w:160,h:220});
+ }
+}
+test('partial South corrections reach native game/export APIs and library draws without replacing original getters or physics',async()=>{
+ const ids=['apartment-corner-kitchen-counter','beach-lifeguard-chair'],definitions=LEGACY_FURNITURE_ASSETS.filter(d=>[...ids,'apartment-teak-bed'].includes(d.id)),f=fixture({definitions}),before=new Map([...f.catalog].map(([id,a])=>[id,{draw:a.draw,descriptor:Object.getOwnPropertyDescriptor(a,'canvas'),boxes:a.boxes,w:a.w,h:a.h,physical:[0,90,180,270].map(rotation=>furnitureFacingBoxes(a,{x:713,y:905,scale:.37,rotation}))}]));
+ addSouthOverrides(f,ids);await f.register();assert.deepEqual(f.loads,['overview.webp']);
+ for(const id of ids){const a=f.catalog.get(id),old=before.get(id),view=a.getFacingView();assert.notStrictEqual(a.draw,old.draw);assert.deepEqual(Object.getOwnPropertyDescriptor(a,'canvas'),old.descriptor);assert.strictEqual(a.boxes,old.boxes);assert.deepEqual([a.w,a.h],[old.w,old.h]);assert.deepEqual(view.footCenter,furnitureFootCenter(a));assert.deepEqual([0,90,180,270].map(rotation=>furnitureFacingBoxes(a,{x:713,y:905,scale:.37,rotation})),old.physical);
+  const preview={draws:[],drawImage(...args){this.draws.push(args);}};a.draw(preview);assert.equal(preview.draws[0][0].name,'overview.webp');assert.equal(f.records.get(id).getters,0);assert.equal(f.records.get(id).ensures.length,0);
+  const pose=furnitureFacingPlacement(a,{x:713,y:905,scale:.37,rotation:0},undefined,{includeImage:false});assert.deepEqual(pose.bounds,{x:713-a.w*.37/2,y:905-a.h*.37,w:a.w*.37,h:a.h*.37});
+  await a.ensureFull();assert(view.ready);const canvas=a.getFacingImage();assert.match(canvas.draws[0][0].name,/-south-corrected.webp$/);assert.deepEqual(canvas.draws[0].slice(1,5),[44,92,160,220]);assert.strictEqual(a.getFacingView().canvas,canvas);assert.strictEqual(a.getFacingDrawSource('south',{native:true}).image,canvas);
+  const native={draws:[],drawImage(...args){this.draws.push(args);}};a.draw(native);assert.strictEqual(native.draws[0][0],canvas);
+ }
+ const untouched=f.catalog.get('apartment-teak-bed');assert.strictEqual(untouched.draw,before.get(untouched.id).draw);assert.strictEqual(untouched.getFacingImage(),f.records.get(untouched.id).canvas);assert.strictEqual(untouched.ensureFull(),f.records.get(untouched.id).promise);clearLegacyFurnitureFacingCache();
+});
+
+test('a South correction is per exact ID and never propagates into a historical alias',async()=>{
+ const ids=['apartment-teak-bed','showroom-midcentury-studio-bed'],f=fixture({definitions:LEGACY_FURNITURE_ASSETS.filter(d=>ids.includes(d.id))}),alias=f.catalog.get(ids[1]),old=alias.draw;
+ addSouthOverrides(f,[ids[0]]);await f.register();await f.catalog.get(ids[0]).ensureFull();assert.strictEqual(alias.draw,old);assert.strictEqual(alias.getFacingView().canvas,f.records.get(alias.id).canvas);assert.strictEqual(alias.ensureFull(),f.records.get(alias.id).promise);clearLegacyFurnitureFacingCache();
+});
+
+test('corrected library draws after clear never use the synthetic stub or a released native image',async()=>{
+ const id='beach-lifeguard-chair',f=fixture({definitions:LEGACY_FURNITURE_ASSETS.filter(d=>d.id===id)});addSouthOverrides(f,[id]);await f.register();const a=f.catalog.get(id);await a.ensureFull();const source=a.getFacingDrawSource('south',{native:true}),oldCanvas=source.image;
+ clearLegacyFurnitureFacingCache();assert.equal(source.image,null);assert.equal(oldCanvas.width,1);
+ const c={draws:[],drawImage(...args){assert(args[0].name||args[0].draws,'A plain synthetic stub is not drawable');assert(!args[0].closed,'A released image is not drawable');this.draws.push(args);}};
+ a.draw(c);assert.equal(c.draws.length,0);await new Promise(resolve=>setImmediate(resolve));a.draw(c);assert.equal(c.draws[0][0].name,'overview.webp');assert.notStrictEqual(c.draws[0][0],oldCanvas);await a.ensureFull();a.draw(c);assert.match(c.draws.at(-1)[0].draws[0][0].name,/-south-corrected.webp$/);clearLegacyFurnitureFacingCache();
+});
+
+test('invalid partial South namespaces/crops fail before any original asset or loader is touched',async()=>{
+ const ids=['apartment-corner-kitchen-counter','beach-lifeguard-chair'];
+ for(const mutate of [
+  (f,v)=>{v.cells[0].id='unknown-south';},(f,v)=>v.cells.push({...v.cells[0]}),(f,v)=>{v.cells[0].x=1020;},(f,v)=>{v.cells[0].w=NaN;},(f,v)=>{v.cells[0].viewWidth=999;},(f,v)=>{v.cells[0].footCenter=[.5,1];},
+  (f,v)=>{const owner=f.directionManifest.collections.find(c=>c.views.south);delete owner.views.south;f.directionManifest.collections.find(c=>c!==owner).views.south=v;},(f,v)=>{v.cells=null;}
+ ]){
+  const f=fixture({definitions:LEGACY_FURNITURE_ASSETS.filter(d=>ids.includes(d.id))});addSouthOverrides(f,[ids[0]]);const a=f.catalog.get(ids[0]),draw=a.draw,ensure=a.ensureFull,v=f.directionManifest.collections.find(c=>c.views.south).views.south;mutate(f,v);await assert.rejects(f.register(),/South override/);assert.strictEqual(a.draw,draw);assert.strictEqual(a.ensureFull,ensure);assert.equal(a.getFacingView,undefined);assert.equal(f.loads.length,0);assert.equal(f.records.get(a.id).getters,0);
+ }
 });

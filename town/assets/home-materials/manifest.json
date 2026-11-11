@@ -1,0 +1,2684 @@
+{
+  "version": 1,
+  "description": "Authored native surface fields, separate22pixel dado bands and mirror-safe texture edges. All areas share world-space phase.",
+  "owners": 31,
+  "textures": 124,
+  "pixels": 3194812,
+  "collections": [
+    {
+      "owner": "bach",
+      "source": "/workspace/.onboarding/home-materials-proof/six-suite-authored-proof-source.png",
+      "sourceDigest": "84b1618cdbdfeb960a47e3cd59e53ec365e57d02a10513abc43789ede32ed5d9",
+      "files": [
+        {
+          "file": "bach-floor.webp",
+          "source": "/workspace/.onboarding/home-materials-proof/six-suite-authored-proof-source.png",
+          "sourceFrame": {
+            "left": 148,
+            "top": 11,
+            "width": 114,
+            "height": 173
+          },
+          "width": 256,
+          "height": 388,
+          "sha256": "edd593d132431bd9ed8ee5637094dd5926edb4cdc9dfd15038281aceef58fce6",
+          "cellBounds": {
+            "left": 6,
+            "top": 6,
+            "right": 384,
+            "bottom": 211
+          }
+        },
+        {
+          "file": "bach-wall.webp",
+          "source": "/workspace/.onboarding/home-materials-proof/six-suite-authored-proof-source.png",
+          "sourceFrame": {
+            "left": 401,
+            "top": 7,
+            "width": 401,
+            "height": 138
+          },
+          "width": 256,
+          "height": 88,
+          "sha256": "ae645ed795082df0ffbca8867a0c3690b86fa95fd2a7838e5cd2d9ba5640d58e",
+          "cellBounds": {
+            "left": 395,
+            "top": 6,
+            "right": 809,
+            "bottom": 211
+          }
+        },
+        {
+          "file": "bach-wet-floor.webp",
+          "source": "/workspace/.onboarding/home-materials-proof/six-suite-authored-proof-source.png",
+          "sourceFrame": {
+            "left": 823,
+            "top": 9,
+            "width": 371,
+            "height": 199
+          },
+          "width": 192,
+          "height": 102,
+          "sha256": "632e7b733d428fa694680cf56dd8daa9a9c68af9cce7eea2c3b540aaeb144152",
+          "cellBounds": {
+            "left": 820,
+            "top": 6,
+            "right": 1197,
+            "bottom": 211
+          },
+          "packing": "Explicit verified owner cell; no gutter/adjacent material pixels; uniform nearest fit and reflected safe edges"
+        },
+        {
+          "file": "bach-dado.webp",
+          "source": "/workspace/.onboarding/home-materials-proof/six-suite-authored-proof-source.png",
+          "sourceFrame": {
+            "left": 401,
+            "top": 165,
+            "width": 401,
+            "height": 39
+          },
+          "width": 452,
+          "height": 22,
+          "sha256": "6eff83599a328e58d4379df9ea107fc362072c2844a9296a13c6fb0ab61e8468",
+          "cellBounds": {
+            "left": 395,
+            "top": 6,
+            "right": 809,
+            "bottom": 211
+          }
+        }
+      ]
+    },
+    {
+      "owner": "beethoven",
+      "source": "/workspace/.onboarding/home-materials-proof/six-suite-authored-proof-source.png",
+      "sourceDigest": "84b1618cdbdfeb960a47e3cd59e53ec365e57d02a10513abc43789ede32ed5d9",
+      "files": [
+        {
+          "file": "beethoven-floor.webp",
+          "source": "/workspace/.onboarding/home-materials-proof/six-suite-authored-proof-source.png",
+          "sourceFrame": {
+            "left": 9,
+            "top": 224,
+            "width": 372,
+            "height": 201
+          },
+          "width": 256,
+          "height": 138,
+          "sha256": "cf0580c3de0ec47cdc30523bff76d04622f08df82f822fcfdd9c9b8cd5243448",
+          "cellBounds": {
+            "left": 6,
+            "top": 221,
+            "right": 384,
+            "bottom": 428
+          },
+          "packing": "Explicit verified owner cell; no gutter/adjacent material pixels; uniform nearest fit and reflected safe edges"
+        },
+        {
+          "file": "beethoven-wall.webp",
+          "source": "/workspace/.onboarding/home-materials-proof/six-suite-authored-proof-source.png",
+          "sourceFrame": {
+            "left": 398,
+            "top": 224,
+            "width": 408,
+            "height": 120
+          },
+          "width": 256,
+          "height": 76,
+          "sha256": "41f21b24154ae6fc29e1f043852e29f59238574ea86bd96173ec0f928522411d",
+          "cellBounds": {
+            "left": 395,
+            "top": 221,
+            "right": 809,
+            "bottom": 428
+          },
+          "packing": "Explicit verified owner cell; no gutter/adjacent material pixels; uniform nearest fit and reflected safe edges"
+        },
+        {
+          "file": "beethoven-wet-floor.webp",
+          "source": "/workspace/.onboarding/home-materials-proof/six-suite-authored-proof-source.png",
+          "sourceFrame": {
+            "left": 823,
+            "top": 224,
+            "width": 371,
+            "height": 156
+          },
+          "width": 192,
+          "height": 80,
+          "sha256": "9e717f4c843aedf9e5dd781a447d50365390cb0564f2a647296ddd9bb0d59230",
+          "cellBounds": {
+            "left": 820,
+            "top": 221,
+            "right": 1197,
+            "bottom": 428
+          },
+          "packing": "Explicit verified owner cell; no gutter/adjacent material pixels; uniform nearest fit and reflected safe edges"
+        },
+        {
+          "file": "beethoven-dado.webp",
+          "source": "/workspace/.onboarding/home-materials-proof/six-suite-authored-proof-source.png",
+          "sourceFrame": {
+            "left": 401,
+            "top": 397,
+            "width": 401,
+            "height": 24
+          },
+          "width": 736,
+          "height": 22,
+          "sha256": "946f73cc474a2176c7bf6514645b3d6571c0240ce6b3de61c7509525a58f72a1",
+          "cellBounds": {
+            "left": 395,
+            "top": 221,
+            "right": 809,
+            "bottom": 428
+          }
+        }
+      ]
+    },
+    {
+      "owner": "clara",
+      "source": "/workspace/.onboarding/home-materials-proof/six-suite-authored-proof-source.png",
+      "sourceDigest": "84b1618cdbdfeb960a47e3cd59e53ec365e57d02a10513abc43789ede32ed5d9",
+      "files": [
+        {
+          "file": "clara-floor.webp",
+          "source": "/workspace/.onboarding/home-materials-proof/six-suite-authored-proof-source.png",
+          "sourceFrame": {
+            "left": 9,
+            "top": 441,
+            "width": 372,
+            "height": 204
+          },
+          "width": 256,
+          "height": 140,
+          "sha256": "00a481b49d7beb271c4061754be15b655e0ce276ab8756c00a1c49be216cf63f",
+          "cellBounds": {
+            "left": 6,
+            "top": 438,
+            "right": 384,
+            "bottom": 648
+          },
+          "packing": "Explicit verified owner cell; no gutter/adjacent material pixels; uniform nearest fit and reflected safe edges"
+        },
+        {
+          "file": "clara-wall.webp",
+          "source": "/workspace/.onboarding/home-materials-proof/six-suite-authored-proof-source.png",
+          "sourceFrame": {
+            "left": 398,
+            "top": 441,
+            "width": 408,
+            "height": 122
+          },
+          "width": 256,
+          "height": 76,
+          "sha256": "b1dfadd9e92eba6e4c1b26424973859aaaa3e16cf45add69ea7833f460d7c16a",
+          "cellBounds": {
+            "left": 395,
+            "top": 438,
+            "right": 809,
+            "bottom": 648
+          },
+          "packing": "Explicit verified owner cell; no gutter/adjacent material pixels; uniform nearest fit and reflected safe edges"
+        },
+        {
+          "file": "clara-wet-floor.webp",
+          "source": "/workspace/.onboarding/home-materials-proof/six-suite-authored-proof-source.png",
+          "sourceFrame": {
+            "left": 823,
+            "top": 441,
+            "width": 371,
+            "height": 204
+          },
+          "width": 192,
+          "height": 106,
+          "sha256": "ee904e5b65f436e95ad15a987d7b60cb9fffbecd06f1564b5f38f9a193cc9451",
+          "cellBounds": {
+            "left": 820,
+            "top": 438,
+            "right": 1197,
+            "bottom": 648
+          },
+          "packing": "Explicit verified owner cell; no gutter/adjacent material pixels; uniform nearest fit and reflected safe edges"
+        },
+        {
+          "file": "clara-dado.webp",
+          "source": "/workspace/.onboarding/home-materials-proof/six-suite-authored-proof-source.png",
+          "sourceFrame": {
+            "left": 401,
+            "top": 608,
+            "width": 401,
+            "height": 33
+          },
+          "width": 534,
+          "height": 22,
+          "sha256": "9f21a26b9bc004cc7162fc991b3c63f004ccc6e99f1ff7c3505865d93ead0075",
+          "cellBounds": {
+            "left": 395,
+            "top": 438,
+            "right": 809,
+            "bottom": 648
+          }
+        }
+      ]
+    },
+    {
+      "owner": "showroom-art-deco-lounge",
+      "source": "/workspace/.onboarding/home-materials-proof/six-suite-authored-proof-source.png",
+      "sourceDigest": "84b1618cdbdfeb960a47e3cd59e53ec365e57d02a10513abc43789ede32ed5d9",
+      "files": [
+        {
+          "file": "showroom-art-deco-lounge-floor.webp",
+          "source": "/workspace/.onboarding/home-materials-proof/six-suite-authored-proof-source.png",
+          "sourceFrame": {
+            "left": 9,
+            "top": 661,
+            "width": 372,
+            "height": 204
+          },
+          "width": 256,
+          "height": 140,
+          "sha256": "32dd4519f856a98ded18d1a163dcb98b51abef0d9d4596e2848e81e784a2dfea",
+          "cellBounds": {
+            "left": 6,
+            "top": 658,
+            "right": 384,
+            "bottom": 868
+          },
+          "packing": "Explicit verified owner cell; no gutter/adjacent material pixels; uniform nearest fit and reflected safe edges"
+        },
+        {
+          "file": "showroom-art-deco-lounge-wall.webp",
+          "source": "/workspace/.onboarding/home-materials-proof/six-suite-authored-proof-source.png",
+          "sourceFrame": {
+            "left": 398,
+            "top": 661,
+            "width": 408,
+            "height": 122
+          },
+          "width": 256,
+          "height": 76,
+          "sha256": "b38c78d191ed4a5bc081c0ef2b4853bdc59bf66ab011f72b2c45ab8dc920f8c1",
+          "cellBounds": {
+            "left": 395,
+            "top": 658,
+            "right": 809,
+            "bottom": 868
+          },
+          "packing": "Explicit verified owner cell; no gutter/adjacent material pixels; uniform nearest fit and reflected safe edges"
+        },
+        {
+          "file": "showroom-art-deco-lounge-wet-floor.webp",
+          "source": "/workspace/.onboarding/home-materials-proof/six-suite-authored-proof-source.png",
+          "sourceFrame": {
+            "left": 823,
+            "top": 661,
+            "width": 371,
+            "height": 204
+          },
+          "width": 192,
+          "height": 106,
+          "sha256": "9ac055fb4966a72a5ce55024a86e05f1b286c8b2f2822038043ea50e9cd53b59",
+          "cellBounds": {
+            "left": 820,
+            "top": 658,
+            "right": 1197,
+            "bottom": 868
+          },
+          "packing": "Explicit verified owner cell; no gutter/adjacent material pixels; uniform nearest fit and reflected safe edges"
+        },
+        {
+          "file": "showroom-art-deco-lounge-dado.webp",
+          "source": "/workspace/.onboarding/home-materials-proof/six-suite-authored-proof-source.png",
+          "sourceFrame": {
+            "left": 398,
+            "top": 841,
+            "width": 408,
+            "height": 24
+          },
+          "width": 748,
+          "height": 22,
+          "sha256": "ccf91fd3272fe0a655c29b531c9b833d1890af9f304f87dab770ad5caa094622",
+          "cellBounds": {
+            "left": 395,
+            "top": 658,
+            "right": 809,
+            "bottom": 868
+          },
+          "packing": "Explicit verified owner cell; no gutter/adjacent material pixels; uniform nearest fit and reflected safe edges"
+        }
+      ]
+    },
+    {
+      "owner": "showroom-midcentury-studio",
+      "files": [
+        {
+          "file": "showroom-midcentury-studio-floor.webp",
+          "source": "/workspace/.onboarding/home-materials-proof/six-suite-authored-proof-source.png",
+          "sourceFrame": {
+            "left": 121,
+            "top": 894,
+            "width": 141,
+            "height": 85
+          },
+          "width": 256,
+          "height": 154,
+          "sha256": "cba86f730906ff26a16339be8aff53ac1df53160d5b42d493cae3f7418a28e58",
+          "cellBounds": {
+            "left": 6,
+            "top": 878,
+            "right": 384,
+            "bottom": 1084
+          }
+        },
+        {
+          "file": "showroom-midcentury-studio-wall.webp",
+          "source": "/workspace/.onboarding/home-materials-proof/six-suite-authored-proof-source.png",
+          "sourceFrame": {
+            "left": 398,
+            "top": 881,
+            "width": 408,
+            "height": 120
+          },
+          "width": 256,
+          "height": 76,
+          "sha256": "b3cfe3a916bbcc159cd51911a2185f006085e224fb8c3b6fd8b654fcffd5375f",
+          "cellBounds": {
+            "left": 395,
+            "top": 878,
+            "right": 809,
+            "bottom": 1084
+          },
+          "packing": "Verified upper wallpaper field only; dado/rail excluded; uniform nearest fit and reflected safe edges"
+        },
+        {
+          "file": "showroom-midcentury-studio-wet-floor.webp",
+          "source": "/workspace/.onboarding/home-materials-proof/six-suite-authored-proof-source.png",
+          "sourceFrame": {
+            "left": 823,
+            "top": 881,
+            "width": 371,
+            "height": 200
+          },
+          "width": 192,
+          "height": 104,
+          "sha256": "346d1ebf4335ce7ee3da9a36c93732aba6aa5a5c973ba97462892735bd689a06",
+          "cellBounds": {
+            "left": 820,
+            "top": 878,
+            "right": 1197,
+            "bottom": 1084
+          },
+          "packing": "Explicit verified owner cell; no gutter/adjacent material pixels; uniform nearest fit and reflected safe edges"
+        },
+        {
+          "file": "showroom-midcentury-studio-dado.webp",
+          "source": "/workspace/.onboarding/home-materials-proof/six-suite-authored-proof-source.png",
+          "sourceFrame": {
+            "left": 398,
+            "top": 1057,
+            "width": 408,
+            "height": 24
+          },
+          "width": 748,
+          "height": 22,
+          "sha256": "5865c9c31d2ee50963202367d60a6f85c29adc9f697a260b23b9730817bdc74a",
+          "cellBounds": {
+            "left": 395,
+            "top": 878,
+            "right": 809,
+            "bottom": 1084
+          },
+          "packing": "Explicit verified owner cell; no gutter/adjacent material pixels; uniform nearest fit and reflected safe edges"
+        }
+      ]
+    },
+    {
+      "owner": "showroom-cyberpunk",
+      "source": "/workspace/.onboarding/home-materials-proof/six-suite-authored-proof-source.png",
+      "sourceDigest": "84b1618cdbdfeb960a47e3cd59e53ec365e57d02a10513abc43789ede32ed5d9",
+      "files": [
+        {
+          "file": "showroom-cyberpunk-floor.webp",
+          "source": "/workspace/.onboarding/home-materials-proof/six-suite-authored-proof-source.png",
+          "sourceFrame": {
+            "left": 9,
+            "top": 1098,
+            "width": 372,
+            "height": 200
+          },
+          "width": 256,
+          "height": 138,
+          "sha256": "7fb5ce2b32d80d418cc2c62e43e10b3cade870f5b7978c685bc825bc5200a9a1",
+          "cellBounds": {
+            "left": 6,
+            "top": 1095,
+            "right": 384,
+            "bottom": 1301
+          },
+          "packing": "Explicit verified owner cell; no gutter/adjacent material pixels; uniform nearest fit and reflected safe edges"
+        },
+        {
+          "file": "showroom-cyberpunk-wall.webp",
+          "source": "/workspace/.onboarding/home-materials-proof/six-suite-authored-proof-source.png",
+          "sourceFrame": {
+            "left": 401,
+            "top": 1101,
+            "width": 401,
+            "height": 139
+          },
+          "width": 256,
+          "height": 88,
+          "sha256": "5fd5b9b4b0985d8efbb54ab085d25ed8ac8b4c38b2565aed65a709a8b941ba1d",
+          "cellBounds": {
+            "left": 395,
+            "top": 1095,
+            "right": 809,
+            "bottom": 1301
+          }
+        },
+        {
+          "file": "showroom-cyberpunk-wet-floor.webp",
+          "source": "/workspace/.onboarding/home-materials-proof/six-suite-authored-proof-source.png",
+          "sourceFrame": {
+            "left": 823,
+            "top": 1098,
+            "width": 371,
+            "height": 200
+          },
+          "width": 192,
+          "height": 104,
+          "sha256": "be4b77bb476088124d36bb4c41b1f6fcb13247e8e471e7b9de97874766bc8bd2",
+          "cellBounds": {
+            "left": 820,
+            "top": 1095,
+            "right": 1197,
+            "bottom": 1301
+          },
+          "packing": "Explicit verified owner cell; no gutter/adjacent material pixels; uniform nearest fit and reflected safe edges"
+        },
+        {
+          "file": "showroom-cyberpunk-dado.webp",
+          "source": "/workspace/.onboarding/home-materials-proof/six-suite-authored-proof-source.png",
+          "sourceFrame": {
+            "left": 401,
+            "top": 1260,
+            "width": 401,
+            "height": 40
+          },
+          "width": 442,
+          "height": 22,
+          "sha256": "ea46b08741cddfedaa188d37e58e7bbaa4ee7628ae90e83d523a2278885815ca",
+          "cellBounds": {
+            "left": 395,
+            "top": 1095,
+            "right": 809,
+            "bottom": 1301
+          }
+        }
+      ]
+    },
+    {
+      "owner": "mozart",
+      "source": "/workspace/.onboarding/home-materials-proof/classical-five-authored-source.png",
+      "sourceDigest": "7317d092179b26540984dea613ca4bce342682330edf24bfd05ba212d17338b4",
+      "files": [
+        {
+          "file": "mozart-floor.webp",
+          "source": "/workspace/.onboarding/home-materials-proof/classical-five-authored-source.png",
+          "sourceFrame": {
+            "left": 9,
+            "top": 9,
+            "width": 373,
+            "height": 243
+          },
+          "width": 256,
+          "height": 166,
+          "sha256": "9e4a281d5c721c61e1d276c7b7078b49d23fa0fd74256f040b72162cdd2286ac",
+          "cellBounds": {
+            "left": 6,
+            "top": 6,
+            "right": 385,
+            "bottom": 255
+          },
+          "packing": "Explicit verified owner cell; no gutter/adjacent material pixels; uniform nearest fit and reflected safe edges"
+        },
+        {
+          "file": "mozart-wall.webp",
+          "source": "/workspace/.onboarding/home-materials-proof/classical-five-authored-source.png",
+          "sourceFrame": {
+            "left": 398,
+            "top": 9,
+            "width": 409,
+            "height": 145
+          },
+          "width": 256,
+          "height": 90,
+          "sha256": "6965b92eff755f21d26d40888a1149fe0294b2040d9750cfcf9217a621641eeb",
+          "cellBounds": {
+            "left": 395,
+            "top": 6,
+            "right": 810,
+            "bottom": 255
+          },
+          "packing": "Explicit verified owner cell; no gutter/adjacent material pixels; uniform nearest fit and reflected safe edges"
+        },
+        {
+          "file": "mozart-wet-floor.webp",
+          "source": "/workspace/.onboarding/home-materials-proof/classical-five-authored-source.png",
+          "sourceFrame": {
+            "left": 827,
+            "top": 7,
+            "width": 369,
+            "height": 241
+          },
+          "width": 192,
+          "height": 126,
+          "sha256": "0c82ba7c71bd73c502d414c1fc1f7e80a7d0b4f964282483f2651135c619c355",
+          "cellBounds": {
+            "left": 821,
+            "top": 6,
+            "right": 1198,
+            "bottom": 255
+          }
+        },
+        {
+          "file": "mozart-dado.webp",
+          "source": "/workspace/.onboarding/home-materials-proof/classical-five-authored-source.png",
+          "sourceFrame": {
+            "left": 398,
+            "top": 223,
+            "width": 409,
+            "height": 29
+          },
+          "width": 620,
+          "height": 22,
+          "sha256": "506f72053af240316ac6737ef6cd0f94bcee7ac20b583e1cb1d3eeedb1a7005b",
+          "cellBounds": {
+            "left": 395,
+            "top": 6,
+            "right": 810,
+            "bottom": 255
+          },
+          "packing": "Explicit verified owner cell; no gutter/adjacent material pixels; uniform nearest fit and reflected safe edges"
+        }
+      ]
+    },
+    {
+      "owner": "chopin",
+      "source": "/workspace/.onboarding/home-materials-proof/classical-five-authored-source.png",
+      "sourceDigest": "7317d092179b26540984dea613ca4bce342682330edf24bfd05ba212d17338b4",
+      "files": [
+        {
+          "file": "chopin-floor.webp",
+          "source": "/workspace/.onboarding/home-materials-proof/classical-five-authored-source.png",
+          "sourceFrame": {
+            "left": 9,
+            "top": 267,
+            "width": 373,
+            "height": 244
+          },
+          "width": 256,
+          "height": 168,
+          "sha256": "24e98a620829de229a17c5380263744c1dbe14f51ddb8fde906f3072bde17105",
+          "cellBounds": {
+            "left": 6,
+            "top": 264,
+            "right": 385,
+            "bottom": 514
+          },
+          "packing": "Explicit verified owner cell; no gutter/adjacent material pixels; uniform nearest fit and reflected safe edges"
+        },
+        {
+          "file": "chopin-wall.webp",
+          "source": "/workspace/.onboarding/home-materials-proof/classical-five-authored-source.png",
+          "sourceFrame": {
+            "left": 398,
+            "top": 267,
+            "width": 409,
+            "height": 146
+          },
+          "width": 256,
+          "height": 92,
+          "sha256": "a92879b41ec73d269a9f8e5fee76c127826de87e0dc04cce48b14a59cd604116",
+          "cellBounds": {
+            "left": 395,
+            "top": 264,
+            "right": 810,
+            "bottom": 514
+          },
+          "packing": "Explicit verified owner cell; no gutter/adjacent material pixels; uniform nearest fit and reflected safe edges"
+        },
+        {
+          "file": "chopin-wet-floor.webp",
+          "source": "/workspace/.onboarding/home-materials-proof/classical-five-authored-source.png",
+          "sourceFrame": {
+            "left": 824,
+            "top": 267,
+            "width": 371,
+            "height": 244
+          },
+          "width": 192,
+          "height": 126,
+          "sha256": "cc0b0e9ca9be06b0806f23853712e8bfdf74d54f24e7fd977a55c8e9c2c95e8b",
+          "cellBounds": {
+            "left": 821,
+            "top": 264,
+            "right": 1198,
+            "bottom": 514
+          },
+          "packing": "Explicit verified owner cell; no gutter/adjacent material pixels; uniform nearest fit and reflected safe edges"
+        },
+        {
+          "file": "chopin-dado.webp",
+          "source": "/workspace/.onboarding/home-materials-proof/classical-five-authored-source.png",
+          "sourceFrame": {
+            "left": 398,
+            "top": 482,
+            "width": 409,
+            "height": 29
+          },
+          "width": 620,
+          "height": 22,
+          "sha256": "ce77e3d3caa9a6c819191d30bedafdd648923c76d639ba953bb2f9f9fbc174b9",
+          "cellBounds": {
+            "left": 395,
+            "top": 264,
+            "right": 810,
+            "bottom": 514
+          },
+          "packing": "Explicit verified owner cell; no gutter/adjacent material pixels; uniform nearest fit and reflected safe edges"
+        }
+      ]
+    },
+    {
+      "owner": "haydn",
+      "source": "/workspace/.onboarding/home-materials-proof/classical-five-authored-source.png",
+      "sourceDigest": "7317d092179b26540984dea613ca4bce342682330edf24bfd05ba212d17338b4",
+      "files": [
+        {
+          "file": "haydn-floor.webp",
+          "source": "/workspace/.onboarding/home-materials-proof/classical-five-authored-source.png",
+          "sourceFrame": {
+            "left": 9,
+            "top": 527,
+            "width": 373,
+            "height": 221
+          },
+          "width": 256,
+          "height": 152,
+          "sha256": "4b53d962879cd91db22a592a2536062bb350229958f10fb4e8896c0c4fd1ff6e",
+          "cellBounds": {
+            "left": 6,
+            "top": 524,
+            "right": 385,
+            "bottom": 751
+          },
+          "packing": "Explicit verified owner cell; no gutter/adjacent material pixels; uniform nearest fit and reflected safe edges"
+        },
+        {
+          "file": "haydn-wall.webp",
+          "source": "/workspace/.onboarding/home-materials-proof/classical-five-authored-source.png",
+          "sourceFrame": {
+            "left": 398,
+            "top": 527,
+            "width": 409,
+            "height": 132
+          },
+          "width": 256,
+          "height": 82,
+          "sha256": "f664584fbb23f418ac6c6a0049030f38e781edc573b3054895570b818e1b2c0b",
+          "cellBounds": {
+            "left": 395,
+            "top": 524,
+            "right": 810,
+            "bottom": 751
+          },
+          "packing": "Explicit verified owner cell; no gutter/adjacent material pixels; uniform nearest fit and reflected safe edges"
+        },
+        {
+          "file": "haydn-wet-floor.webp",
+          "source": "/workspace/.onboarding/home-materials-proof/classical-five-authored-source.png",
+          "sourceFrame": {
+            "left": 824,
+            "top": 527,
+            "width": 371,
+            "height": 221
+          },
+          "width": 192,
+          "height": 114,
+          "sha256": "ef32e6bd7c9d3b3a24fe335303f956626299e3d61283dd35f6a8ff13cd37d287",
+          "cellBounds": {
+            "left": 821,
+            "top": 524,
+            "right": 1198,
+            "bottom": 751
+          },
+          "packing": "Explicit verified owner cell; no gutter/adjacent material pixels; uniform nearest fit and reflected safe edges"
+        },
+        {
+          "file": "haydn-dado.webp",
+          "source": "/workspace/.onboarding/home-materials-proof/classical-five-authored-source.png",
+          "sourceFrame": {
+            "left": 398,
+            "top": 722,
+            "width": 409,
+            "height": 26
+          },
+          "width": 692,
+          "height": 22,
+          "sha256": "7a884b1938842ad47f214554834241b03974fcd25b15cfd5bf1a95c288f3f6e6",
+          "cellBounds": {
+            "left": 395,
+            "top": 524,
+            "right": 810,
+            "bottom": 751
+          },
+          "packing": "Explicit verified owner cell; no gutter/adjacent material pixels; uniform nearest fit and reflected safe edges"
+        }
+      ]
+    },
+    {
+      "owner": "handel",
+      "source": "/workspace/.onboarding/home-materials-proof/classical-five-authored-source.png",
+      "sourceDigest": "7317d092179b26540984dea613ca4bce342682330edf24bfd05ba212d17338b4",
+      "files": [
+        {
+          "file": "handel-floor.webp",
+          "source": "/workspace/.onboarding/home-materials-proof/classical-five-authored-source.png",
+          "sourceFrame": {
+            "left": 9,
+            "top": 764,
+            "width": 373,
+            "height": 253
+          },
+          "width": 256,
+          "height": 174,
+          "sha256": "f5998b7edeabc15f101634d4f5a07c8f5d5dfa61818da1a937c9c214dc1f8596",
+          "cellBounds": {
+            "left": 6,
+            "top": 761,
+            "right": 385,
+            "bottom": 1020
+          },
+          "packing": "Explicit verified owner cell; no gutter/adjacent material pixels; uniform nearest fit and reflected safe edges"
+        },
+        {
+          "file": "handel-wall.webp",
+          "source": "/workspace/.onboarding/home-materials-proof/classical-five-authored-source.png",
+          "sourceFrame": {
+            "left": 398,
+            "top": 764,
+            "width": 409,
+            "height": 151
+          },
+          "width": 256,
+          "height": 94,
+          "sha256": "a3739db70577b811024af331510806ab4d37ebc0828c831f3dc49624d2965431",
+          "cellBounds": {
+            "left": 395,
+            "top": 761,
+            "right": 810,
+            "bottom": 1020
+          },
+          "packing": "Explicit verified owner cell; no gutter/adjacent material pixels; uniform nearest fit and reflected safe edges"
+        },
+        {
+          "file": "handel-wet-floor.webp",
+          "source": "/workspace/.onboarding/home-materials-proof/classical-five-authored-source.png",
+          "sourceFrame": {
+            "left": 824,
+            "top": 764,
+            "width": 371,
+            "height": 253
+          },
+          "width": 192,
+          "height": 130,
+          "sha256": "a9be2eacc2a958ad7155c9dec14c8514941a27598970f56bba61fa85c33c81c2",
+          "cellBounds": {
+            "left": 821,
+            "top": 761,
+            "right": 1198,
+            "bottom": 1020
+          },
+          "packing": "Explicit verified owner cell; no gutter/adjacent material pixels; uniform nearest fit and reflected safe edges"
+        },
+        {
+          "file": "handel-dado.webp",
+          "source": "/workspace/.onboarding/home-materials-proof/classical-five-authored-source.png",
+          "sourceFrame": {
+            "left": 398,
+            "top": 987,
+            "width": 409,
+            "height": 30
+          },
+          "width": 600,
+          "height": 22,
+          "sha256": "f3fc1e04c2490a620e0606516d380806f225b6941f6febc04c24cd791ae6125e",
+          "cellBounds": {
+            "left": 395,
+            "top": 761,
+            "right": 810,
+            "bottom": 1020
+          },
+          "packing": "Explicit verified owner cell; no gutter/adjacent material pixels; uniform nearest fit and reflected safe edges"
+        }
+      ]
+    },
+    {
+      "owner": "vivaldi",
+      "source": "/workspace/.onboarding/home-materials-proof/classical-five-authored-source.png",
+      "sourceDigest": "7317d092179b26540984dea613ca4bce342682330edf24bfd05ba212d17338b4",
+      "files": [
+        {
+          "file": "vivaldi-floor.webp",
+          "source": "/workspace/.onboarding/home-materials-proof/classical-five-authored-source.png",
+          "sourceFrame": {
+            "left": 9,
+            "top": 1034,
+            "width": 373,
+            "height": 265
+          },
+          "width": 256,
+          "height": 182,
+          "sha256": "1aa3812f1429047aa217a7c525e233727478e67e4aa744f07d8a11a2ed3f7451",
+          "cellBounds": {
+            "left": 6,
+            "top": 1031,
+            "right": 385,
+            "bottom": 1302
+          },
+          "packing": "Explicit verified owner cell; no gutter/adjacent material pixels; uniform nearest fit and reflected safe edges"
+        },
+        {
+          "file": "vivaldi-wall.webp",
+          "source": "/workspace/.onboarding/home-materials-proof/classical-five-authored-source.png",
+          "sourceFrame": {
+            "left": 398,
+            "top": 1034,
+            "width": 409,
+            "height": 159
+          },
+          "width": 256,
+          "height": 100,
+          "sha256": "190c7cb40f608e13dc4d6d2e5ab6050c61429b248847d39fc02198691ca69c33",
+          "cellBounds": {
+            "left": 395,
+            "top": 1031,
+            "right": 810,
+            "bottom": 1302
+          },
+          "packing": "Explicit verified owner cell; no gutter/adjacent material pixels; uniform nearest fit and reflected safe edges"
+        },
+        {
+          "file": "vivaldi-wet-floor.webp",
+          "source": "/workspace/.onboarding/home-materials-proof/classical-five-authored-source.png",
+          "sourceFrame": {
+            "left": 827,
+            "top": 1036,
+            "width": 369,
+            "height": 265
+          },
+          "width": 192,
+          "height": 138,
+          "sha256": "b199a2dea05d065f69eee5c4260edff74cf863fb517eff0d9dcf4f846afde863",
+          "cellBounds": {
+            "left": 821,
+            "top": 1031,
+            "right": 1198,
+            "bottom": 1302
+          }
+        },
+        {
+          "file": "vivaldi-dado.webp",
+          "source": "/workspace/.onboarding/home-materials-proof/classical-five-authored-source.png",
+          "sourceFrame": {
+            "left": 398,
+            "top": 1268,
+            "width": 409,
+            "height": 31
+          },
+          "width": 580,
+          "height": 22,
+          "sha256": "78cbedc223372c3b20adced3d22ddb5aaa64e4ade7ce06548bd2cb15235347e1",
+          "cellBounds": {
+            "left": 395,
+            "top": 1031,
+            "right": 810,
+            "bottom": 1302
+          },
+          "packing": "Explicit verified owner cell; no gutter/adjacent material pixels; uniform nearest fit and reflected safe edges"
+        }
+      ]
+    },
+    {
+      "owner": "joplin",
+      "source": "/workspace/.onboarding/home-materials-proof/jazz-five-authored-source.png",
+      "sourceDigest": "901974947de76e1a5abcd45ae5905c0dd890cf80a214618f74fcc389b91c212c",
+      "files": [
+        {
+          "file": "joplin-floor.webp",
+          "source": "/workspace/.onboarding/home-materials-proof/jazz-five-authored-source.png",
+          "sourceFrame": {
+            "left": 9,
+            "top": 7,
+            "width": 372,
+            "height": 238
+          },
+          "width": 256,
+          "height": 164,
+          "sha256": "851eff64e7a5e9674a02cead1dd6921c829a38be3a2cf23c94cf1e65568d18d6",
+          "cellBounds": {
+            "left": 6,
+            "top": 4,
+            "right": 384,
+            "bottom": 248
+          },
+          "packing": "Explicit verified owner cell; no gutter/adjacent material pixels; uniform nearest fit and reflected safe edges"
+        },
+        {
+          "file": "joplin-wall.webp",
+          "source": "/workspace/.onboarding/home-materials-proof/jazz-five-authored-source.png",
+          "sourceFrame": {
+            "left": 398,
+            "top": 7,
+            "width": 407,
+            "height": 142
+          },
+          "width": 256,
+          "height": 90,
+          "sha256": "5b9360e616dbbc3f26ce42f10aeb0a27e5a1fe4cfcddedb3d05380475185beac",
+          "cellBounds": {
+            "left": 395,
+            "top": 4,
+            "right": 808,
+            "bottom": 248
+          },
+          "packing": "Explicit verified owner cell; no gutter/adjacent material pixels; uniform nearest fit and reflected safe edges"
+        },
+        {
+          "file": "joplin-wet-floor.webp",
+          "source": "/workspace/.onboarding/home-materials-proof/jazz-five-authored-source.png",
+          "sourceFrame": {
+            "left": 823,
+            "top": 7,
+            "width": 371,
+            "height": 238
+          },
+          "width": 192,
+          "height": 124,
+          "sha256": "536776656e036ec863b305d2f36622f89f4de483943d92d593625fbda5ef4b36",
+          "cellBounds": {
+            "left": 820,
+            "top": 4,
+            "right": 1197,
+            "bottom": 248
+          },
+          "packing": "Explicit verified owner cell; no gutter/adjacent material pixels; uniform nearest fit and reflected safe edges"
+        },
+        {
+          "file": "joplin-dado.webp",
+          "source": "/workspace/.onboarding/home-materials-proof/jazz-five-authored-source.png",
+          "sourceFrame": {
+            "left": 398,
+            "top": 217,
+            "width": 407,
+            "height": 28
+          },
+          "width": 640,
+          "height": 22,
+          "sha256": "a315378628ff7c956529541573e52afcbc1177c29604c46b88c762212d3a9b9e",
+          "cellBounds": {
+            "left": 395,
+            "top": 4,
+            "right": 808,
+            "bottom": 248
+          },
+          "packing": "Explicit verified owner cell; no gutter/adjacent material pixels; uniform nearest fit and reflected safe edges"
+        }
+      ]
+    },
+    {
+      "owner": "ellington",
+      "source": "/workspace/.onboarding/home-materials-proof/jazz-five-authored-source.png",
+      "sourceDigest": "901974947de76e1a5abcd45ae5905c0dd890cf80a214618f74fcc389b91c212c",
+      "files": [
+        {
+          "file": "ellington-floor.webp",
+          "source": "/workspace/.onboarding/home-materials-proof/jazz-five-authored-source.png",
+          "sourceFrame": {
+            "left": 9,
+            "top": 261,
+            "width": 372,
+            "height": 245
+          },
+          "width": 256,
+          "height": 168,
+          "sha256": "18863946be8c29de71301c497c645c8b05d0ea45f66428f42f7a17968a300572",
+          "cellBounds": {
+            "left": 6,
+            "top": 258,
+            "right": 384,
+            "bottom": 509
+          },
+          "packing": "Explicit verified owner cell; no gutter/adjacent material pixels; uniform nearest fit and reflected safe edges"
+        },
+        {
+          "file": "ellington-wall.webp",
+          "source": "/workspace/.onboarding/home-materials-proof/jazz-five-authored-source.png",
+          "sourceFrame": {
+            "left": 398,
+            "top": 261,
+            "width": 407,
+            "height": 147
+          },
+          "width": 256,
+          "height": 92,
+          "sha256": "e3524a3bb17106b4ba0ee2ba432d24427d565aa8d91930372c698bdf576b4ad9",
+          "cellBounds": {
+            "left": 395,
+            "top": 258,
+            "right": 808,
+            "bottom": 509
+          },
+          "packing": "Explicit verified owner cell; no gutter/adjacent material pixels; uniform nearest fit and reflected safe edges"
+        },
+        {
+          "file": "ellington-wet-floor.webp",
+          "source": "/workspace/.onboarding/home-materials-proof/jazz-five-authored-source.png",
+          "sourceFrame": {
+            "left": 823,
+            "top": 261,
+            "width": 371,
+            "height": 245
+          },
+          "width": 192,
+          "height": 126,
+          "sha256": "a560a24a7c30d12c04a57bdddf01adfd8599920c0b7742a0edb54e86c065181b",
+          "cellBounds": {
+            "left": 820,
+            "top": 258,
+            "right": 1197,
+            "bottom": 509
+          },
+          "packing": "Explicit verified owner cell; no gutter/adjacent material pixels; uniform nearest fit and reflected safe edges"
+        },
+        {
+          "file": "ellington-dado.webp",
+          "source": "/workspace/.onboarding/home-materials-proof/jazz-five-authored-source.png",
+          "sourceFrame": {
+            "left": 398,
+            "top": 477,
+            "width": 407,
+            "height": 29
+          },
+          "width": 618,
+          "height": 22,
+          "sha256": "2b7b75d136061c2630180e8c4872998f26857b8a3369c78156b0825d4cf4db98",
+          "cellBounds": {
+            "left": 395,
+            "top": 258,
+            "right": 808,
+            "bottom": 509
+          },
+          "packing": "Explicit verified owner cell; no gutter/adjacent material pixels; uniform nearest fit and reflected safe edges"
+        }
+      ]
+    },
+    {
+      "owner": "ella",
+      "source": "/workspace/.onboarding/home-materials-proof/jazz-five-authored-source.png",
+      "sourceDigest": "901974947de76e1a5abcd45ae5905c0dd890cf80a214618f74fcc389b91c212c",
+      "files": [
+        {
+          "file": "ella-floor.webp",
+          "source": "/workspace/.onboarding/home-materials-proof/jazz-five-authored-source.png",
+          "sourceFrame": {
+            "left": 9,
+            "top": 522,
+            "width": 372,
+            "height": 250
+          },
+          "width": 256,
+          "height": 172,
+          "sha256": "8ce41e2fcd74b71dff3179ed5771a5e1bb236c2b272d028a3e5e7ce1c67fe523",
+          "cellBounds": {
+            "left": 6,
+            "top": 519,
+            "right": 384,
+            "bottom": 775
+          },
+          "packing": "Explicit verified owner cell; no gutter/adjacent material pixels; uniform nearest fit and reflected safe edges"
+        },
+        {
+          "file": "ella-wall.webp",
+          "source": "/workspace/.onboarding/home-materials-proof/jazz-five-authored-source.png",
+          "sourceFrame": {
+            "left": 398,
+            "top": 522,
+            "width": 407,
+            "height": 150
+          },
+          "width": 256,
+          "height": 94,
+          "sha256": "38ba92cb845c35f5b47b53fbd99823438b245d98760e219e7b94fb167cb51076",
+          "cellBounds": {
+            "left": 395,
+            "top": 519,
+            "right": 808,
+            "bottom": 775
+          },
+          "packing": "Explicit verified owner cell; no gutter/adjacent material pixels; uniform nearest fit and reflected safe edges"
+        },
+        {
+          "file": "ella-wet-floor.webp",
+          "source": "/workspace/.onboarding/home-materials-proof/jazz-five-authored-source.png",
+          "sourceFrame": {
+            "left": 823,
+            "top": 522,
+            "width": 371,
+            "height": 250
+          },
+          "width": 192,
+          "height": 130,
+          "sha256": "dbd13f02e50b2bdecaa131afcfe9b08d9d090cfc88f0124be037454b142fadc3",
+          "cellBounds": {
+            "left": 820,
+            "top": 519,
+            "right": 1197,
+            "bottom": 775
+          },
+          "packing": "Explicit verified owner cell; no gutter/adjacent material pixels; uniform nearest fit and reflected safe edges"
+        },
+        {
+          "file": "ella-dado.webp",
+          "source": "/workspace/.onboarding/home-materials-proof/jazz-five-authored-source.png",
+          "sourceFrame": {
+            "left": 398,
+            "top": 742,
+            "width": 407,
+            "height": 30
+          },
+          "width": 596,
+          "height": 22,
+          "sha256": "575c01e7f1a8d85b9b6db88e7435ff6b0e5ee2b31faf51d1e4e9b7700f693f76",
+          "cellBounds": {
+            "left": 395,
+            "top": 519,
+            "right": 808,
+            "bottom": 775
+          },
+          "packing": "Explicit verified owner cell; no gutter/adjacent material pixels; uniform nearest fit and reflected safe edges"
+        }
+      ]
+    },
+    {
+      "owner": "nina",
+      "source": "/workspace/.onboarding/home-materials-proof/jazz-five-authored-source.png",
+      "sourceDigest": "901974947de76e1a5abcd45ae5905c0dd890cf80a214618f74fcc389b91c212c",
+      "files": [
+        {
+          "file": "nina-floor.webp",
+          "source": "/workspace/.onboarding/home-materials-proof/jazz-five-authored-source.png",
+          "sourceFrame": {
+            "left": 9,
+            "top": 788,
+            "width": 372,
+            "height": 229
+          },
+          "width": 256,
+          "height": 158,
+          "sha256": "50c5f073dae5017d889d46d4be8a04dfb447386e411512c76bde518c4fae3b7b",
+          "cellBounds": {
+            "left": 6,
+            "top": 785,
+            "right": 384,
+            "bottom": 1020
+          },
+          "packing": "Explicit verified owner cell; no gutter/adjacent material pixels; uniform nearest fit and reflected safe edges"
+        },
+        {
+          "file": "nina-wall.webp",
+          "source": "/workspace/.onboarding/home-materials-proof/jazz-five-authored-source.png",
+          "sourceFrame": {
+            "left": 398,
+            "top": 788,
+            "width": 407,
+            "height": 137
+          },
+          "width": 256,
+          "height": 86,
+          "sha256": "77c69e4fa5ad394e19d764ea80ac7f020f9f99db8027a20ea367fc20029e8f0c",
+          "cellBounds": {
+            "left": 395,
+            "top": 785,
+            "right": 808,
+            "bottom": 1020
+          },
+          "packing": "Explicit verified owner cell; no gutter/adjacent material pixels; uniform nearest fit and reflected safe edges"
+        },
+        {
+          "file": "nina-wet-floor.webp",
+          "source": "/workspace/.onboarding/home-materials-proof/jazz-five-authored-source.png",
+          "sourceFrame": {
+            "left": 823,
+            "top": 788,
+            "width": 371,
+            "height": 229
+          },
+          "width": 192,
+          "height": 118,
+          "sha256": "c8136817d3d09404d48ec39fac259791c39a26936f2bd60f515cda6c82af1579",
+          "cellBounds": {
+            "left": 820,
+            "top": 785,
+            "right": 1197,
+            "bottom": 1020
+          },
+          "packing": "Explicit verified owner cell; no gutter/adjacent material pixels; uniform nearest fit and reflected safe edges"
+        },
+        {
+          "file": "nina-dado.webp",
+          "source": "/workspace/.onboarding/home-materials-proof/jazz-five-authored-source.png",
+          "sourceFrame": {
+            "left": 398,
+            "top": 990,
+            "width": 407,
+            "height": 27
+          },
+          "width": 664,
+          "height": 22,
+          "sha256": "9bd1f68ad0c843ec291a7c925b8c56ad3e4fd495ef8c61290b246995addfbaef",
+          "cellBounds": {
+            "left": 395,
+            "top": 785,
+            "right": 808,
+            "bottom": 1020
+          },
+          "packing": "Explicit verified owner cell; no gutter/adjacent material pixels; uniform nearest fit and reflected safe edges"
+        }
+      ]
+    },
+    {
+      "owner": "miles",
+      "source": "/workspace/.onboarding/home-materials-proof/jazz-five-authored-source.png",
+      "sourceDigest": "901974947de76e1a5abcd45ae5905c0dd890cf80a214618f74fcc389b91c212c",
+      "files": [
+        {
+          "file": "miles-floor.webp",
+          "source": "/workspace/.onboarding/home-materials-proof/jazz-five-authored-source.png",
+          "sourceFrame": {
+            "left": 7,
+            "top": 1037,
+            "width": 370,
+            "height": 264
+          },
+          "width": 256,
+          "height": 182,
+          "sha256": "ba680762bb4e935fc07d82992f85f9b3bd0918d4e98f13149bd40e244bbe6abe",
+          "cellBounds": {
+            "left": 6,
+            "top": 1031,
+            "right": 384,
+            "bottom": 1301
+          }
+        },
+        {
+          "file": "miles-wall.webp",
+          "source": "/workspace/.onboarding/home-materials-proof/jazz-five-authored-source.png",
+          "sourceFrame": {
+            "left": 398,
+            "top": 1034,
+            "width": 407,
+            "height": 158
+          },
+          "width": 256,
+          "height": 100,
+          "sha256": "e4205dc27f65fe431d4aefdba739b2915cae91a42ae8cca2442ff6d1376e648b",
+          "cellBounds": {
+            "left": 395,
+            "top": 1031,
+            "right": 808,
+            "bottom": 1301
+          },
+          "packing": "Explicit verified owner cell; no gutter/adjacent material pixels; uniform nearest fit and reflected safe edges"
+        },
+        {
+          "file": "miles-wet-floor.webp",
+          "source": "/workspace/.onboarding/home-materials-proof/jazz-five-authored-source.png",
+          "sourceFrame": {
+            "left": 826,
+            "top": 1037,
+            "width": 370,
+            "height": 206
+          },
+          "width": 192,
+          "height": 106,
+          "sha256": "e158191dd1c430b4a0b2f43a498d7dcd7bfacbf288e2f16b2358bb48a1c714c9",
+          "cellBounds": {
+            "left": 820,
+            "top": 1031,
+            "right": 1197,
+            "bottom": 1301
+          }
+        },
+        {
+          "file": "miles-dado.webp",
+          "source": "/workspace/.onboarding/home-materials-proof/jazz-five-authored-source.png",
+          "sourceFrame": {
+            "left": 398,
+            "top": 1267,
+            "width": 407,
+            "height": 31
+          },
+          "width": 578,
+          "height": 22,
+          "sha256": "d2cf80df3e9e71d4cd6d525535ae04e289299995b925dff24b225072e517b956",
+          "cellBounds": {
+            "left": 395,
+            "top": 1031,
+            "right": 808,
+            "bottom": 1301
+          },
+          "packing": "Explicit verified owner cell; no gutter/adjacent material pixels; uniform nearest fit and reflected safe edges"
+        }
+      ]
+    },
+    {
+      "owner": "dj",
+      "source": "/workspace/.onboarding/home-materials-proof/modern-five-authored-source.png",
+      "sourceDigest": "1ccb675efeae5fbddb7a9c9496aff5d15ffb295a661cbedc8de6f6391534ac18",
+      "files": [
+        {
+          "file": "dj-floor.webp",
+          "source": "/workspace/.onboarding/home-materials-proof/modern-five-authored-source.png",
+          "sourceFrame": {
+            "left": 9,
+            "top": 7,
+            "width": 373,
+            "height": 201
+          },
+          "width": 256,
+          "height": 138,
+          "sha256": "e96e1e291d3aab9c401aef01990fabaeec16dc519086423b7f312679abdf0305",
+          "cellBounds": {
+            "left": 6,
+            "top": 4,
+            "right": 385,
+            "bottom": 211
+          },
+          "packing": "Explicit verified owner cell; no gutter/adjacent material pixels; uniform nearest fit and reflected safe edges"
+        },
+        {
+          "file": "dj-wall.webp",
+          "source": "/workspace/.onboarding/home-materials-proof/modern-five-authored-source.png",
+          "sourceFrame": {
+            "left": 396,
+            "top": 7,
+            "width": 411,
+            "height": 120
+          },
+          "width": 256,
+          "height": 74,
+          "sha256": "9bf76c7e7f14fd1ecb4f5081a4a9becd03a41718d158f04591184b02503a9e77",
+          "cellBounds": {
+            "left": 393,
+            "top": 4,
+            "right": 810,
+            "bottom": 211
+          },
+          "packing": "Verified upper wallpaper field only; dado/rail excluded; uniform nearest fit and reflected safe edges"
+        },
+        {
+          "file": "dj-wet-floor.webp",
+          "source": "/workspace/.onboarding/home-materials-proof/modern-five-authored-source.png",
+          "sourceFrame": {
+            "left": 823,
+            "top": 7,
+            "width": 371,
+            "height": 201
+          },
+          "width": 192,
+          "height": 104,
+          "sha256": "aac4c772cd74c1ad219c5aac5d3f17b3e6a53df4e8fb032a94f99d582c5bd810",
+          "cellBounds": {
+            "left": 820,
+            "top": 4,
+            "right": 1197,
+            "bottom": 211
+          },
+          "packing": "Explicit verified owner cell; no gutter/adjacent material pixels; uniform nearest fit and reflected safe edges"
+        },
+        {
+          "file": "dj-dado.webp",
+          "source": "/workspace/.onboarding/home-materials-proof/modern-five-authored-source.png",
+          "sourceFrame": {
+            "left": 396,
+            "top": 184,
+            "width": 411,
+            "height": 24
+          },
+          "width": 754,
+          "height": 22,
+          "sha256": "062e7c3b223173f76337a8a1109c880e7901815c4d205ee1932d865fcdb0f923",
+          "cellBounds": {
+            "left": 393,
+            "top": 4,
+            "right": 810,
+            "bottom": 211
+          },
+          "packing": "Explicit verified owner cell; no gutter/adjacent material pixels; uniform nearest fit and reflected safe edges"
+        }
+      ]
+    },
+    {
+      "owner": "vee-jay",
+      "source": "/workspace/.onboarding/home-materials-proof/modern-five-authored-source.png",
+      "sourceDigest": "1ccb675efeae5fbddb7a9c9496aff5d15ffb295a661cbedc8de6f6391534ac18",
+      "files": [
+        {
+          "file": "vee-jay-floor.webp",
+          "source": "/workspace/.onboarding/home-materials-proof/modern-five-authored-source.png",
+          "sourceFrame": {
+            "left": 9,
+            "top": 223,
+            "width": 373,
+            "height": 204
+          },
+          "width": 256,
+          "height": 140,
+          "sha256": "00f5efe2b3d30c1b02a5fafe5a7b5e60386bc6b432c44cdd23d6950135d9b80a",
+          "cellBounds": {
+            "left": 6,
+            "top": 220,
+            "right": 385,
+            "bottom": 430
+          },
+          "packing": "Explicit verified owner cell; no gutter/adjacent material pixels; uniform nearest fit and reflected safe edges"
+        },
+        {
+          "file": "vee-jay-wall.webp",
+          "source": "/workspace/.onboarding/home-materials-proof/modern-five-authored-source.png",
+          "sourceFrame": {
+            "left": 396,
+            "top": 223,
+            "width": 411,
+            "height": 122
+          },
+          "width": 256,
+          "height": 76,
+          "sha256": "56313dbadd82224c520be4679315bfad6f243d297783b3a79722384ac9756465",
+          "cellBounds": {
+            "left": 393,
+            "top": 220,
+            "right": 810,
+            "bottom": 430
+          },
+          "packing": "Explicit verified owner cell; no gutter/adjacent material pixels; uniform nearest fit and reflected safe edges"
+        },
+        {
+          "file": "vee-jay-wet-floor.webp",
+          "source": "/workspace/.onboarding/home-materials-proof/modern-five-authored-source.png",
+          "sourceFrame": {
+            "left": 823,
+            "top": 223,
+            "width": 371,
+            "height": 204
+          },
+          "width": 192,
+          "height": 106,
+          "sha256": "6c78f1c6022abb6e736e6e5e7bca368f5a2848d40b5e71c133f16fee01f8bc1f",
+          "cellBounds": {
+            "left": 820,
+            "top": 220,
+            "right": 1197,
+            "bottom": 430
+          },
+          "packing": "Explicit verified owner cell; no gutter/adjacent material pixels; uniform nearest fit and reflected safe edges"
+        },
+        {
+          "file": "vee-jay-dado.webp",
+          "source": "/workspace/.onboarding/home-materials-proof/modern-five-authored-source.png",
+          "sourceFrame": {
+            "left": 396,
+            "top": 403,
+            "width": 411,
+            "height": 24
+          },
+          "width": 754,
+          "height": 22,
+          "sha256": "6055aa80a9f0cc94b92eef0bc1b682b5c17dc23a1fc8569c444e77714e4cfa2b",
+          "cellBounds": {
+            "left": 393,
+            "top": 220,
+            "right": 810,
+            "bottom": 430
+          },
+          "packing": "Explicit verified owner cell; no gutter/adjacent material pixels; uniform nearest fit and reflected safe edges"
+        }
+      ]
+    },
+    {
+      "owner": "zizi",
+      "source": "/workspace/.onboarding/home-materials-proof/modern-five-authored-source.png",
+      "sourceDigest": "1ccb675efeae5fbddb7a9c9496aff5d15ffb295a661cbedc8de6f6391534ac18",
+      "files": [
+        {
+          "file": "zizi-floor.webp",
+          "source": "/workspace/.onboarding/home-materials-proof/modern-five-authored-source.png",
+          "sourceFrame": {
+            "left": 9,
+            "top": 440,
+            "width": 373,
+            "height": 226
+          },
+          "width": 256,
+          "height": 156,
+          "sha256": "047aab59a120efeef89179fcd6ed5467ccd161b3cf0bc8e6d62c77e4ddbbb492",
+          "cellBounds": {
+            "left": 6,
+            "top": 437,
+            "right": 385,
+            "bottom": 669
+          },
+          "packing": "Explicit verified owner cell; no gutter/adjacent material pixels; uniform nearest fit and reflected safe edges"
+        },
+        {
+          "file": "zizi-wall.webp",
+          "source": "/workspace/.onboarding/home-materials-proof/modern-five-authored-source.png",
+          "sourceFrame": {
+            "left": 396,
+            "top": 440,
+            "width": 411,
+            "height": 135
+          },
+          "width": 256,
+          "height": 84,
+          "sha256": "535a44e1bef9e10689dfdd033446e9b6c0c2c2ba3140be1f48d0b86599678a26",
+          "cellBounds": {
+            "left": 393,
+            "top": 437,
+            "right": 810,
+            "bottom": 669
+          },
+          "packing": "Explicit verified owner cell; no gutter/adjacent material pixels; uniform nearest fit and reflected safe edges"
+        },
+        {
+          "file": "zizi-wet-floor.webp",
+          "source": "/workspace/.onboarding/home-materials-proof/modern-five-authored-source.png",
+          "sourceFrame": {
+            "left": 823,
+            "top": 440,
+            "width": 371,
+            "height": 226
+          },
+          "width": 192,
+          "height": 116,
+          "sha256": "6424a4d6a37765d3ea0c05693c250b171db4ce00122153a76b964bf06da65ee8",
+          "cellBounds": {
+            "left": 820,
+            "top": 437,
+            "right": 1197,
+            "bottom": 669
+          },
+          "packing": "Explicit verified owner cell; no gutter/adjacent material pixels; uniform nearest fit and reflected safe edges"
+        },
+        {
+          "file": "zizi-dado.webp",
+          "source": "/workspace/.onboarding/home-materials-proof/modern-five-authored-source.png",
+          "sourceFrame": {
+            "left": 396,
+            "top": 639,
+            "width": 411,
+            "height": 27
+          },
+          "width": 670,
+          "height": 22,
+          "sha256": "e60578675f556169da0937513f9be91492bfdd07bbb73d399c12bde5320b9d53",
+          "cellBounds": {
+            "left": 393,
+            "top": 437,
+            "right": 810,
+            "bottom": 669
+          },
+          "packing": "Explicit verified owner cell; no gutter/adjacent material pixels; uniform nearest fit and reflected safe edges"
+        }
+      ]
+    },
+    {
+      "owner": "metronome",
+      "source": "/workspace/.onboarding/home-materials-proof/modern-five-authored-source.png",
+      "sourceDigest": "1ccb675efeae5fbddb7a9c9496aff5d15ffb295a661cbedc8de6f6391534ac18",
+      "files": [
+        {
+          "file": "metronome-floor.webp",
+          "source": "/workspace/.onboarding/home-materials-proof/modern-five-authored-source.png",
+          "sourceFrame": {
+            "left": 9,
+            "top": 682,
+            "width": 373,
+            "height": 260
+          },
+          "width": 256,
+          "height": 178,
+          "sha256": "cd580a13b1eabd6cae7c559b1e7205b3f9a99674eb5a0f29d810f4995b68ed20",
+          "cellBounds": {
+            "left": 6,
+            "top": 679,
+            "right": 385,
+            "bottom": 945
+          },
+          "packing": "Explicit verified owner cell; no gutter/adjacent material pixels; uniform nearest fit and reflected safe edges"
+        },
+        {
+          "file": "metronome-wall.webp",
+          "source": "/workspace/.onboarding/home-materials-proof/modern-five-authored-source.png",
+          "sourceFrame": {
+            "left": 396,
+            "top": 682,
+            "width": 411,
+            "height": 156
+          },
+          "width": 256,
+          "height": 98,
+          "sha256": "3a7b7a619d68342bf9193a3966dd1961c810a4a7ec0132ea99870cb1ca440638",
+          "cellBounds": {
+            "left": 393,
+            "top": 679,
+            "right": 810,
+            "bottom": 945
+          },
+          "packing": "Explicit verified owner cell; no gutter/adjacent material pixels; uniform nearest fit and reflected safe edges"
+        },
+        {
+          "file": "metronome-wet-floor.webp",
+          "source": "/workspace/.onboarding/home-materials-proof/modern-five-authored-source.png",
+          "sourceFrame": {
+            "left": 823,
+            "top": 682,
+            "width": 371,
+            "height": 260
+          },
+          "width": 192,
+          "height": 134,
+          "sha256": "e20d28eca2aaa109f410f4bb9114b3262dd6526315df48489bef7f1322df4ce4",
+          "cellBounds": {
+            "left": 820,
+            "top": 679,
+            "right": 1197,
+            "bottom": 945
+          },
+          "packing": "Explicit verified owner cell; no gutter/adjacent material pixels; uniform nearest fit and reflected safe edges"
+        },
+        {
+          "file": "metronome-dado.webp",
+          "source": "/workspace/.onboarding/home-materials-proof/modern-five-authored-source.png",
+          "sourceFrame": {
+            "left": 396,
+            "top": 911,
+            "width": 411,
+            "height": 31
+          },
+          "width": 584,
+          "height": 22,
+          "sha256": "2cc293a839b0f2e0f928366fe5cbd0713bdfb2d8a979c74ce30a9aa69e133290",
+          "cellBounds": {
+            "left": 393,
+            "top": 679,
+            "right": 810,
+            "bottom": 945
+          },
+          "packing": "Explicit verified owner cell; no gutter/adjacent material pixels; uniform nearest fit and reflected safe edges"
+        }
+      ]
+    },
+    {
+      "owner": "schoenberg",
+      "source": "/workspace/.onboarding/home-materials-proof/modern-five-authored-source.png",
+      "sourceDigest": "1ccb675efeae5fbddb7a9c9496aff5d15ffb295a661cbedc8de6f6391534ac18",
+      "files": [
+        {
+          "file": "schoenberg-floor.webp",
+          "source": "/workspace/.onboarding/home-materials-proof/modern-five-authored-source.png",
+          "sourceFrame": {
+            "left": 7,
+            "top": 1020,
+            "width": 378,
+            "height": 281
+          },
+          "width": 256,
+          "height": 190,
+          "sha256": "3b941a595ae4e2183774ea4803ce4cd6d81fbd92cc61135b3cbce08cfe803646",
+          "cellBounds": {
+            "left": 6,
+            "top": 953,
+            "right": 385,
+            "bottom": 1301
+          }
+        },
+        {
+          "file": "schoenberg-wall.webp",
+          "source": "/workspace/.onboarding/home-materials-proof/modern-five-authored-source.png",
+          "sourceFrame": {
+            "left": 399,
+            "top": 1020,
+            "width": 404,
+            "height": 205
+          },
+          "width": 256,
+          "height": 130,
+          "sha256": "1d8128594afc3b5d6f1dc9844fd7e6a71da0ee716f78c64308fc5da3f98dcfe9",
+          "cellBounds": {
+            "left": 393,
+            "top": 953,
+            "right": 810,
+            "bottom": 1301
+          }
+        },
+        {
+          "file": "schoenberg-wet-floor.webp",
+          "source": "/workspace/.onboarding/home-materials-proof/modern-five-authored-source.png",
+          "sourceFrame": {
+            "left": 823,
+            "top": 956,
+            "width": 371,
+            "height": 342
+          },
+          "width": 192,
+          "height": 176,
+          "sha256": "15a18fa390b9d51c869b4816c94e07db5ed4719e55088a7802791c7d7f9d696d",
+          "cellBounds": {
+            "left": 820,
+            "top": 953,
+            "right": 1197,
+            "bottom": 1301
+          },
+          "packing": "Explicit verified owner cell; no gutter/adjacent material pixels; uniform nearest fit and reflected safe edges"
+        },
+        {
+          "file": "schoenberg-dado.webp",
+          "source": "/workspace/.onboarding/home-materials-proof/modern-five-authored-source.png",
+          "sourceFrame": {
+            "left": 399,
+            "top": 1256,
+            "width": 404,
+            "height": 45
+          },
+          "width": 396,
+          "height": 22,
+          "sha256": "f2dee9c642b75825d7d1588694a36d00e36aa5ac2997bef5b7d1d5534fbba2e8",
+          "cellBounds": {
+            "left": 393,
+            "top": 953,
+            "right": 810,
+            "bottom": 1301
+          }
+        }
+      ]
+    },
+    {
+      "owner": "player",
+      "source": "/workspace/.onboarding/home-materials-proof/cozy-five-authored-source.png",
+      "sourceDigest": "d126f85cba707a4dde305cebe4c2e048adfd1823feb6d5f6910ce95e2c936815",
+      "files": [
+        {
+          "file": "player-floor.webp",
+          "source": "/workspace/.onboarding/home-materials-proof/cozy-five-authored-source.png",
+          "sourceFrame": {
+            "left": 8,
+            "top": 8,
+            "width": 374,
+            "height": 218
+          },
+          "width": 256,
+          "height": 150,
+          "sha256": "f06b5f766bc0d744701bdaef964673c97fc8a729a717e240350389f7610a382f",
+          "cellBounds": {
+            "left": 5,
+            "top": 5,
+            "right": 385,
+            "bottom": 229
+          },
+          "packing": "Explicit verified owner cell; no gutter/adjacent material pixels; uniform nearest fit and reflected safe edges"
+        },
+        {
+          "file": "player-wall.webp",
+          "source": "/workspace/.onboarding/home-materials-proof/cozy-five-authored-source.png",
+          "sourceFrame": {
+            "left": 401,
+            "top": 7,
+            "width": 401,
+            "height": 156
+          },
+          "width": 256,
+          "height": 100,
+          "sha256": "9007885e4e9ca634c5791f496015beb8d4d3c87b0d1eaca6fed8000579270acb",
+          "cellBounds": {
+            "left": 395,
+            "top": 5,
+            "right": 809,
+            "bottom": 229
+          }
+        },
+        {
+          "file": "player-wet-floor.webp",
+          "source": "/workspace/.onboarding/home-materials-proof/cozy-five-authored-source.png",
+          "sourceFrame": {
+            "left": 822,
+            "top": 8,
+            "width": 373,
+            "height": 218
+          },
+          "width": 192,
+          "height": 112,
+          "sha256": "585b4e0198a5598b2627a88c172c1170c5bb131f5e3b98176d91b7004bc28cb7",
+          "cellBounds": {
+            "left": 819,
+            "top": 5,
+            "right": 1198,
+            "bottom": 229
+          },
+          "packing": "Explicit verified owner cell; no gutter/adjacent material pixels; uniform nearest fit and reflected safe edges"
+        },
+        {
+          "file": "player-dado.webp",
+          "source": "/workspace/.onboarding/home-materials-proof/cozy-five-authored-source.png",
+          "sourceFrame": {
+            "left": 398,
+            "top": 200,
+            "width": 408,
+            "height": 26
+          },
+          "width": 690,
+          "height": 22,
+          "sha256": "f869e99d6a61d0081657cd13daf19edb2f2358b82b42a519588db69949751718",
+          "cellBounds": {
+            "left": 395,
+            "top": 5,
+            "right": 809,
+            "bottom": 229
+          },
+          "packing": "Explicit verified owner cell; no gutter/adjacent material pixels; uniform nearest fit and reflected safe edges"
+        }
+      ]
+    },
+    {
+      "owner": "showroom-victorian-parlor",
+      "source": "/workspace/.onboarding/home-materials-proof/cozy-five-authored-source.png",
+      "sourceDigest": "d126f85cba707a4dde305cebe4c2e048adfd1823feb6d5f6910ce95e2c936815",
+      "files": [
+        {
+          "file": "showroom-victorian-parlor-floor.webp",
+          "source": "/workspace/.onboarding/home-materials-proof/cozy-five-authored-source.png",
+          "sourceFrame": {
+            "left": 8,
+            "top": 240,
+            "width": 374,
+            "height": 248
+          },
+          "width": 256,
+          "height": 170,
+          "sha256": "b84715f39c148820c441de6b0ef5a0139a26addb4c654f74c4a8db65fe49d029",
+          "cellBounds": {
+            "left": 5,
+            "top": 237,
+            "right": 385,
+            "bottom": 491
+          },
+          "packing": "Explicit verified owner cell; no gutter/adjacent material pixels; uniform nearest fit and reflected safe edges"
+        },
+        {
+          "file": "showroom-victorian-parlor-wall.webp",
+          "source": "/workspace/.onboarding/home-materials-proof/cozy-five-authored-source.png",
+          "sourceFrame": {
+            "left": 401,
+            "top": 244,
+            "width": 401,
+            "height": 181
+          },
+          "width": 256,
+          "height": 116,
+          "sha256": "1a1063b563bd3eb01d693bfe5dfa0aea0482495bb4c869a75a5adcd9dbdb6d42",
+          "cellBounds": {
+            "left": 395,
+            "top": 237,
+            "right": 809,
+            "bottom": 491
+          }
+        },
+        {
+          "file": "showroom-victorian-parlor-wet-floor.webp",
+          "source": "/workspace/.onboarding/home-materials-proof/cozy-five-authored-source.png",
+          "sourceFrame": {
+            "left": 822,
+            "top": 240,
+            "width": 373,
+            "height": 248
+          },
+          "width": 192,
+          "height": 128,
+          "sha256": "ccb9b4e55912f8c359dee99a9413fe0e48fae0cf682e233e88978f40ff547aa7",
+          "cellBounds": {
+            "left": 819,
+            "top": 237,
+            "right": 1198,
+            "bottom": 491
+          },
+          "packing": "Explicit verified owner cell; no gutter/adjacent material pixels; uniform nearest fit and reflected safe edges"
+        },
+        {
+          "file": "showroom-victorian-parlor-dado.webp",
+          "source": "/workspace/.onboarding/home-materials-proof/cozy-five-authored-source.png",
+          "sourceFrame": {
+            "left": 398,
+            "top": 459,
+            "width": 408,
+            "height": 29
+          },
+          "width": 620,
+          "height": 22,
+          "sha256": "6f46040f6dd4f75ed0c441545536956cebffd2f738460d0aaaf95f8256f472d8",
+          "cellBounds": {
+            "left": 395,
+            "top": 237,
+            "right": 809,
+            "bottom": 491
+          },
+          "packing": "Explicit verified owner cell; no gutter/adjacent material pixels; uniform nearest fit and reflected safe edges"
+        }
+      ]
+    },
+    {
+      "owner": "showroom-coastal-bedroom",
+      "source": "/workspace/.onboarding/home-materials-proof/cozy-five-authored-source.png",
+      "sourceDigest": "d126f85cba707a4dde305cebe4c2e048adfd1823feb6d5f6910ce95e2c936815",
+      "files": [
+        {
+          "file": "showroom-coastal-bedroom-floor.webp",
+          "source": "/workspace/.onboarding/home-materials-proof/cozy-five-authored-source.png",
+          "sourceFrame": {
+            "left": 8,
+            "top": 504,
+            "width": 374,
+            "height": 235
+          },
+          "width": 256,
+          "height": 160,
+          "sha256": "f3e76eae5b52e34a868a64f39e3cc47bf36ec4ba32621d4901cf7b38be246550",
+          "cellBounds": {
+            "left": 5,
+            "top": 501,
+            "right": 385,
+            "bottom": 742
+          },
+          "packing": "Explicit verified owner cell; no gutter/adjacent material pixels; uniform nearest fit and reflected safe edges"
+        },
+        {
+          "file": "showroom-coastal-bedroom-wall.webp",
+          "source": "/workspace/.onboarding/home-materials-proof/cozy-five-authored-source.png",
+          "sourceFrame": {
+            "left": 401,
+            "top": 506,
+            "width": 401,
+            "height": 183
+          },
+          "width": 256,
+          "height": 116,
+          "sha256": "8ae530cbaa12a6e86d17d75414b5709cd6e4e2b3fb08dcec572068ef9cf2dcd2",
+          "cellBounds": {
+            "left": 395,
+            "top": 501,
+            "right": 809,
+            "bottom": 742
+          }
+        },
+        {
+          "file": "showroom-coastal-bedroom-wet-floor.webp",
+          "source": "/workspace/.onboarding/home-materials-proof/cozy-five-authored-source.png",
+          "sourceFrame": {
+            "left": 822,
+            "top": 504,
+            "width": 373,
+            "height": 235
+          },
+          "width": 192,
+          "height": 120,
+          "sha256": "140f9b2db3ba02663d13f4f3353d00ef97ead0a520290cacb905512308e6ac20",
+          "cellBounds": {
+            "left": 819,
+            "top": 501,
+            "right": 1198,
+            "bottom": 742
+          },
+          "packing": "Explicit verified owner cell; no gutter/adjacent material pixels; uniform nearest fit and reflected safe edges"
+        },
+        {
+          "file": "showroom-coastal-bedroom-dado.webp",
+          "source": "/workspace/.onboarding/home-materials-proof/cozy-five-authored-source.png",
+          "sourceFrame": {
+            "left": 398,
+            "top": 711,
+            "width": 408,
+            "height": 28
+          },
+          "width": 642,
+          "height": 22,
+          "sha256": "5645715a6175fc894518fa0a245e023a3090c2b4e425945eda29771b5c67c808",
+          "cellBounds": {
+            "left": 395,
+            "top": 501,
+            "right": 809,
+            "bottom": 742
+          },
+          "packing": "Explicit verified owner cell; no gutter/adjacent material pixels; uniform nearest fit and reflected safe edges"
+        }
+      ]
+    },
+    {
+      "owner": "showroom-rustic-kitchen",
+      "source": "/workspace/.onboarding/home-materials-proof/cozy-five-authored-source.png",
+      "sourceDigest": "d126f85cba707a4dde305cebe4c2e048adfd1823feb6d5f6910ce95e2c936815",
+      "files": [
+        {
+          "file": "showroom-rustic-kitchen-floor.webp",
+          "source": "/workspace/.onboarding/home-materials-proof/cozy-five-authored-source.png",
+          "sourceFrame": {
+            "left": 8,
+            "top": 755,
+            "width": 374,
+            "height": 241
+          },
+          "width": 256,
+          "height": 164,
+          "sha256": "4dbbe8b5627fe6319dfd0af8438d70a944f6eab4ce6b11def8202f9d167b1b14",
+          "cellBounds": {
+            "left": 5,
+            "top": 752,
+            "right": 385,
+            "bottom": 999
+          },
+          "packing": "Explicit verified owner cell; no gutter/adjacent material pixels; uniform nearest fit and reflected safe edges"
+        },
+        {
+          "file": "showroom-rustic-kitchen-wall.webp",
+          "source": "/workspace/.onboarding/home-materials-proof/cozy-five-authored-source.png",
+          "sourceFrame": {
+            "left": 398,
+            "top": 755,
+            "width": 408,
+            "height": 144
+          },
+          "width": 256,
+          "height": 90,
+          "sha256": "1beadd66e17a6c556d8f9b6a6b98d68886796a27f7416b52cecfd30511ca338f",
+          "cellBounds": {
+            "left": 395,
+            "top": 752,
+            "right": 809,
+            "bottom": 999
+          },
+          "packing": "Verified upper wallpaper field only; dado/rail excluded; uniform nearest fit and reflected safe edges"
+        },
+        {
+          "file": "showroom-rustic-kitchen-wet-floor.webp",
+          "source": "/workspace/.onboarding/home-materials-proof/cozy-five-authored-source.png",
+          "sourceFrame": {
+            "left": 822,
+            "top": 755,
+            "width": 373,
+            "height": 241
+          },
+          "width": 192,
+          "height": 124,
+          "sha256": "c14f71a11428cf722df063a0db1fc3b54a28112cf476571bc26cfead41b0c3e5",
+          "cellBounds": {
+            "left": 819,
+            "top": 752,
+            "right": 1198,
+            "bottom": 999
+          },
+          "packing": "Explicit verified owner cell; no gutter/adjacent material pixels; uniform nearest fit and reflected safe edges"
+        },
+        {
+          "file": "showroom-rustic-kitchen-dado.webp",
+          "source": "/workspace/.onboarding/home-materials-proof/cozy-five-authored-source.png",
+          "sourceFrame": {
+            "left": 401,
+            "top": 960,
+            "width": 401,
+            "height": 39
+          },
+          "width": 452,
+          "height": 22,
+          "sha256": "ac4267d24ff4fefbaf077e949b4b6a3172c1da5dc3a69e07c83275bfbfcecc45",
+          "cellBounds": {
+            "left": 395,
+            "top": 752,
+            "right": 809,
+            "bottom": 999
+          }
+        }
+      ]
+    },
+    {
+      "owner": "showroom-botanical-conservatory",
+      "source": "/workspace/.onboarding/home-materials-proof/cozy-five-authored-source.png",
+      "sourceDigest": "d126f85cba707a4dde305cebe4c2e048adfd1823feb6d5f6910ce95e2c936815",
+      "files": [
+        {
+          "file": "showroom-botanical-conservatory-floor.webp",
+          "source": "/workspace/.onboarding/home-materials-proof/cozy-five-authored-source.png",
+          "sourceFrame": {
+            "left": 8,
+            "top": 1009,
+            "width": 374,
+            "height": 289
+          },
+          "width": 256,
+          "height": 198,
+          "sha256": "bc397fb81efaeba622362f5e43a90a55c19c5f097da4aaebfa58a859c0fafd4c",
+          "cellBounds": {
+            "left": 5,
+            "top": 1006,
+            "right": 385,
+            "bottom": 1301
+          },
+          "packing": "Explicit verified owner cell; no gutter/adjacent material pixels; uniform nearest fit and reflected safe edges"
+        },
+        {
+          "file": "showroom-botanical-conservatory-wall.webp",
+          "source": "/workspace/.onboarding/home-materials-proof/cozy-five-authored-source.png",
+          "sourceFrame": {
+            "left": 398,
+            "top": 1009,
+            "width": 408,
+            "height": 173
+          },
+          "width": 256,
+          "height": 108,
+          "sha256": "f6e84ca71d54074f32ad413dcea1da99f10b002fcc308fb7e8e4a2aa886992b0",
+          "cellBounds": {
+            "left": 395,
+            "top": 1006,
+            "right": 809,
+            "bottom": 1301
+          },
+          "packing": "Verified upper wallpaper field only; dado/rail excluded; uniform nearest fit and reflected safe edges"
+        },
+        {
+          "file": "showroom-botanical-conservatory-wet-floor.webp",
+          "source": "/workspace/.onboarding/home-materials-proof/cozy-five-authored-source.png",
+          "sourceFrame": {
+            "left": 822,
+            "top": 1009,
+            "width": 373,
+            "height": 289
+          },
+          "width": 192,
+          "height": 148,
+          "sha256": "d5f2ff4ec9a66f37dc17670569fa077dfa576a335f37e25eac0210c33d0bc7f1",
+          "cellBounds": {
+            "left": 819,
+            "top": 1006,
+            "right": 1198,
+            "bottom": 1301
+          },
+          "packing": "Explicit verified owner cell; no gutter/adjacent material pixels; uniform nearest fit and reflected safe edges"
+        },
+        {
+          "file": "showroom-botanical-conservatory-dado.webp",
+          "source": "/workspace/.onboarding/home-materials-proof/cozy-five-authored-source.png",
+          "sourceFrame": {
+            "left": 401,
+            "top": 1255,
+            "width": 401,
+            "height": 46
+          },
+          "width": 384,
+          "height": 22,
+          "sha256": "8141feee5488ae42de616e7efce8170c6f7315d4adef20d334d4093c0c4cb9db",
+          "cellBounds": {
+            "left": 395,
+            "top": 1006,
+            "right": 809,
+            "bottom": 1301
+          }
+        }
+      ]
+    },
+    {
+      "owner": "showroom-french-cafe",
+      "source": "/workspace/.onboarding/home-materials-proof/urban-five-authored-source.png",
+      "sourceDigest": "d7714e3b9f1f32312567e3e4033c8b852fffb5595533ac0ad61e5bdec591a94b",
+      "files": [
+        {
+          "file": "showroom-french-cafe-floor.webp",
+          "source": "/workspace/.onboarding/home-materials-proof/urban-five-authored-source.png",
+          "sourceFrame": {
+            "left": 7,
+            "top": 8,
+            "width": 375,
+            "height": 245
+          },
+          "width": 256,
+          "height": 168,
+          "sha256": "04e240cad5d63a371d00c1fe26bb81180f8ec63550f2ad7fe4467375909fa25b",
+          "cellBounds": {
+            "left": 4,
+            "top": 5,
+            "right": 385,
+            "bottom": 256
+          },
+          "packing": "Explicit verified owner cell; no gutter/adjacent material pixels; uniform nearest fit and reflected safe edges"
+        },
+        {
+          "file": "showroom-french-cafe-wall.webp",
+          "source": "/workspace/.onboarding/home-materials-proof/urban-five-authored-source.png",
+          "sourceFrame": {
+            "left": 400,
+            "top": 7,
+            "width": 402,
+            "height": 150
+          },
+          "width": 256,
+          "height": 96,
+          "sha256": "befb6967d04cbad22a6078cb713405d8c9dd9d51bf61410c7a78d5d9176c3a4b",
+          "cellBounds": {
+            "left": 394,
+            "top": 5,
+            "right": 809,
+            "bottom": 256
+          }
+        },
+        {
+          "file": "showroom-french-cafe-wet-floor.webp",
+          "source": "/workspace/.onboarding/home-materials-proof/urban-five-authored-source.png",
+          "sourceFrame": {
+            "left": 822,
+            "top": 8,
+            "width": 374,
+            "height": 245
+          },
+          "width": 192,
+          "height": 126,
+          "sha256": "b6221cc8fdecded315aeba60a6d29f1de1ffebdd94e5458ffbd75b066c438d00",
+          "cellBounds": {
+            "left": 819,
+            "top": 5,
+            "right": 1199,
+            "bottom": 256
+          },
+          "packing": "Explicit verified owner cell; no gutter/adjacent material pixels; uniform nearest fit and reflected safe edges"
+        },
+        {
+          "file": "showroom-french-cafe-dado.webp",
+          "source": "/workspace/.onboarding/home-materials-proof/urban-five-authored-source.png",
+          "sourceFrame": {
+            "left": 400,
+            "top": 186,
+            "width": 402,
+            "height": 63
+          },
+          "width": 280,
+          "height": 22,
+          "sha256": "d63161a1c9472055d5439fc037f4b887e57efb88feeb4fb9ae5807d7d100c6df",
+          "cellBounds": {
+            "left": 394,
+            "top": 5,
+            "right": 809,
+            "bottom": 256
+          }
+        }
+      ]
+    },
+    {
+      "owner": "showroom-industrial-loft",
+      "source": "/workspace/.onboarding/home-materials-proof/urban-five-authored-source.png",
+      "sourceDigest": "d7714e3b9f1f32312567e3e4033c8b852fffb5595533ac0ad61e5bdec591a94b",
+      "files": [
+        {
+          "file": "showroom-industrial-loft-floor.webp",
+          "source": "/workspace/.onboarding/home-materials-proof/urban-five-authored-source.png",
+          "sourceFrame": {
+            "left": 7,
+            "top": 267,
+            "width": 375,
+            "height": 247
+          },
+          "width": 256,
+          "height": 168,
+          "sha256": "f67f8350560c01e8c24ae9aa49eab2b851740194a4680ab0fc1ce89e76456b5a",
+          "cellBounds": {
+            "left": 4,
+            "top": 264,
+            "right": 385,
+            "bottom": 517
+          },
+          "packing": "Explicit verified owner cell; no gutter/adjacent material pixels; uniform nearest fit and reflected safe edges"
+        },
+        {
+          "file": "showroom-industrial-loft-wall.webp",
+          "source": "/workspace/.onboarding/home-materials-proof/urban-five-authored-source.png",
+          "sourceFrame": {
+            "left": 397,
+            "top": 267,
+            "width": 409,
+            "height": 148
+          },
+          "width": 256,
+          "height": 92,
+          "sha256": "8d1253392b25fd477d2699220c3049a9dec3fc7cb415916e7f5aa45804760c2a",
+          "cellBounds": {
+            "left": 394,
+            "top": 264,
+            "right": 809,
+            "bottom": 517
+          },
+          "packing": "Explicit verified owner cell; no gutter/adjacent material pixels; uniform nearest fit and reflected safe edges"
+        },
+        {
+          "file": "showroom-industrial-loft-wet-floor.webp",
+          "source": "/workspace/.onboarding/home-materials-proof/urban-five-authored-source.png",
+          "sourceFrame": {
+            "left": 822,
+            "top": 267,
+            "width": 374,
+            "height": 192
+          },
+          "width": 192,
+          "height": 98,
+          "sha256": "2d4d65fd1134bb2ea675905448dc9c61615ecd879141c0b4fa1b579076b3be37",
+          "cellBounds": {
+            "left": 819,
+            "top": 264,
+            "right": 1199,
+            "bottom": 517
+          },
+          "packing": "Explicit verified owner cell; no gutter/adjacent material pixels; uniform nearest fit and reflected safe edges"
+        },
+        {
+          "file": "showroom-industrial-loft-dado.webp",
+          "source": "/workspace/.onboarding/home-materials-proof/urban-five-authored-source.png",
+          "sourceFrame": {
+            "left": 397,
+            "top": 485,
+            "width": 409,
+            "height": 29
+          },
+          "width": 620,
+          "height": 22,
+          "sha256": "a7e2968245cc4ae0d5fdffe320225392387428581710aa72332ebd3cee4cd718",
+          "cellBounds": {
+            "left": 394,
+            "top": 264,
+            "right": 809,
+            "bottom": 517
+          },
+          "packing": "Explicit verified owner cell; no gutter/adjacent material pixels; uniform nearest fit and reflected safe edges"
+        }
+      ]
+    },
+    {
+      "owner": "showroom-retrofuture",
+      "source": "/workspace/.onboarding/home-materials-proof/urban-five-authored-source.png",
+      "sourceDigest": "d7714e3b9f1f32312567e3e4033c8b852fffb5595533ac0ad61e5bdec591a94b",
+      "files": [
+        {
+          "file": "showroom-retrofuture-floor.webp",
+          "source": "/workspace/.onboarding/home-materials-proof/urban-five-authored-source.png",
+          "sourceFrame": {
+            "left": 7,
+            "top": 529,
+            "width": 375,
+            "height": 241
+          },
+          "width": 256,
+          "height": 164,
+          "sha256": "e66cbc6a53eec20224b0b4faa5f40ff5b6b28d13395afb0ee49beeedbad33737",
+          "cellBounds": {
+            "left": 4,
+            "top": 526,
+            "right": 385,
+            "bottom": 773
+          },
+          "packing": "Explicit verified owner cell; no gutter/adjacent material pixels; uniform nearest fit and reflected safe edges"
+        },
+        {
+          "file": "showroom-retrofuture-wall.webp",
+          "source": "/workspace/.onboarding/home-materials-proof/urban-five-authored-source.png",
+          "sourceFrame": {
+            "left": 400,
+            "top": 532,
+            "width": 402,
+            "height": 147
+          },
+          "width": 256,
+          "height": 94,
+          "sha256": "af2eb735828dfd555c110eea7a725d1e27db143ab40b1abc8c7a8c937a615640",
+          "cellBounds": {
+            "left": 394,
+            "top": 526,
+            "right": 809,
+            "bottom": 773
+          }
+        },
+        {
+          "file": "showroom-retrofuture-wet-floor.webp",
+          "source": "/workspace/.onboarding/home-materials-proof/urban-five-authored-source.png",
+          "sourceFrame": {
+            "left": 822,
+            "top": 529,
+            "width": 374,
+            "height": 241
+          },
+          "width": 192,
+          "height": 124,
+          "sha256": "ea7ffadfa1e3b87a76d008b3fa5aa6f0004327e8930bd8271da5baa8a395f33f",
+          "cellBounds": {
+            "left": 819,
+            "top": 526,
+            "right": 1199,
+            "bottom": 773
+          },
+          "packing": "Explicit verified owner cell; no gutter/adjacent material pixels; uniform nearest fit and reflected safe edges"
+        },
+        {
+          "file": "showroom-retrofuture-dado.webp",
+          "source": "/workspace/.onboarding/home-materials-proof/urban-five-authored-source.png",
+          "sourceFrame": {
+            "left": 400,
+            "top": 710,
+            "width": 402,
+            "height": 56
+          },
+          "width": 316,
+          "height": 22,
+          "sha256": "5ee7bac38da1c77eb5152daaad1729a43d27552dd7f50f824023106c47301fec",
+          "cellBounds": {
+            "left": 394,
+            "top": 526,
+            "right": 809,
+            "bottom": 773
+          }
+        }
+      ]
+    },
+    {
+      "owner": "showroom-steampunk",
+      "source": "/workspace/.onboarding/home-materials-proof/urban-five-authored-source.png",
+      "sourceDigest": "d7714e3b9f1f32312567e3e4033c8b852fffb5595533ac0ad61e5bdec591a94b",
+      "files": [
+        {
+          "file": "showroom-steampunk-floor.webp",
+          "source": "/workspace/.onboarding/home-materials-proof/urban-five-authored-source.png",
+          "sourceFrame": {
+            "left": 7,
+            "top": 784,
+            "width": 375,
+            "height": 242
+          },
+          "width": 256,
+          "height": 166,
+          "sha256": "bbf925c46193d50afc19c2bba4d3f8a9ce5aa99aa41b2b804e1997f77a330d6e",
+          "cellBounds": {
+            "left": 4,
+            "top": 781,
+            "right": 385,
+            "bottom": 1029
+          },
+          "packing": "Explicit verified owner cell; no gutter/adjacent material pixels; uniform nearest fit and reflected safe edges"
+        },
+        {
+          "file": "showroom-steampunk-wall.webp",
+          "source": "/workspace/.onboarding/home-materials-proof/urban-five-authored-source.png",
+          "sourceFrame": {
+            "left": 397,
+            "top": 784,
+            "width": 409,
+            "height": 145
+          },
+          "width": 256,
+          "height": 90,
+          "sha256": "6f9ae15302c3e01989c84d28ae4ebc6df53e47206020cdf82763ffce4b78dc90",
+          "cellBounds": {
+            "left": 394,
+            "top": 781,
+            "right": 809,
+            "bottom": 1029
+          },
+          "packing": "Explicit verified owner cell; no gutter/adjacent material pixels; uniform nearest fit and reflected safe edges"
+        },
+        {
+          "file": "showroom-steampunk-wet-floor.webp",
+          "source": "/workspace/.onboarding/home-materials-proof/urban-five-authored-source.png",
+          "sourceFrame": {
+            "left": 822,
+            "top": 784,
+            "width": 374,
+            "height": 242
+          },
+          "width": 192,
+          "height": 124,
+          "sha256": "f76c3b1a13e911dd580ef80f2e65880118664952e6e78cbc8f8ce2a46b5218d0",
+          "cellBounds": {
+            "left": 819,
+            "top": 781,
+            "right": 1199,
+            "bottom": 1029
+          },
+          "packing": "Explicit verified owner cell; no gutter/adjacent material pixels; uniform nearest fit and reflected safe edges"
+        },
+        {
+          "file": "showroom-steampunk-dado.webp",
+          "source": "/workspace/.onboarding/home-materials-proof/urban-five-authored-source.png",
+          "sourceFrame": {
+            "left": 397,
+            "top": 997,
+            "width": 409,
+            "height": 29
+          },
+          "width": 620,
+          "height": 22,
+          "sha256": "9244b2d3859a85c0af802141499755f16a84082ad198a5a684aacc8193b325a0",
+          "cellBounds": {
+            "left": 394,
+            "top": 781,
+            "right": 809,
+            "bottom": 1029
+          },
+          "packing": "Explicit verified owner cell; no gutter/adjacent material pixels; uniform nearest fit and reflected safe edges"
+        }
+      ]
+    },
+    {
+      "owner": "showroom-robot",
+      "source": "/workspace/.onboarding/home-materials-proof/urban-five-authored-source.png",
+      "sourceDigest": "d7714e3b9f1f32312567e3e4033c8b852fffb5595533ac0ad61e5bdec591a94b",
+      "files": [
+        {
+          "file": "showroom-robot-floor.webp",
+          "source": "/workspace/.onboarding/home-materials-proof/urban-five-authored-source.png",
+          "sourceFrame": {
+            "left": 7,
+            "top": 1041,
+            "width": 375,
+            "height": 258
+          },
+          "width": 256,
+          "height": 176,
+          "sha256": "1c1ea396c00fcc8ea6fd7b8da59480ab5d98deb609578db7b87bdeae24d50a21",
+          "cellBounds": {
+            "left": 4,
+            "top": 1038,
+            "right": 385,
+            "bottom": 1302
+          },
+          "packing": "Explicit verified owner cell; no gutter/adjacent material pixels; uniform nearest fit and reflected safe edges"
+        },
+        {
+          "file": "showroom-robot-wall.webp",
+          "source": "/workspace/.onboarding/home-materials-proof/urban-five-authored-source.png",
+          "sourceFrame": {
+            "left": 400,
+            "top": 1044,
+            "width": 402,
+            "height": 180
+          },
+          "width": 256,
+          "height": 114,
+          "sha256": "00345c166ad44f593e3c3b6c82a2a093e131a1962bf7f6e09e5e132eab966156",
+          "cellBounds": {
+            "left": 394,
+            "top": 1038,
+            "right": 809,
+            "bottom": 1302
+          }
+        },
+        {
+          "file": "showroom-robot-wet-floor.webp",
+          "source": "/workspace/.onboarding/home-materials-proof/urban-five-authored-source.png",
+          "sourceFrame": {
+            "left": 822,
+            "top": 1041,
+            "width": 374,
+            "height": 258
+          },
+          "width": 192,
+          "height": 132,
+          "sha256": "ae62b83841e4d711bef2b69224a91507795d3e498bab028f474e443812f4fb33",
+          "cellBounds": {
+            "left": 819,
+            "top": 1038,
+            "right": 1199,
+            "bottom": 1302
+          },
+          "packing": "Explicit verified owner cell; no gutter/adjacent material pixels; uniform nearest fit and reflected safe edges"
+        },
+        {
+          "file": "showroom-robot-dado.webp",
+          "source": "/workspace/.onboarding/home-materials-proof/urban-five-authored-source.png",
+          "sourceFrame": {
+            "left": 400,
+            "top": 1252,
+            "width": 402,
+            "height": 49
+          },
+          "width": 360,
+          "height": 22,
+          "sha256": "661b1be4dab35c1387b578d6810716d00d2ed2442917b5cbd62d6fbcaced03c7",
+          "cellBounds": {
+            "left": 394,
+            "top": 1038,
+            "right": 809,
+            "bottom": 1302
+          }
+        }
+      ]
+    }
+  ],
+  "cropAudit": {
+    "version": 3,
+    "changed": 98,
+    "unchanged": 26,
+    "method": "All124 source crops checked against explicit verified atlas cells and intended floor/wall/wet/dado fields; flat gutters and adjacent material fields excluded; retained files byte-identical"
+  }
+}

@@ -1,3 +1,4 @@
+import {drawHomeMaterialFloor,drawHomeMaterialWallpaper} from './home-materials.mjs?v=interior-polish-1';
 // Small, repeatable pixel textures keep the eight room finishes at the same
 // scale as the native furniture. They are painted once, then cached with the
 // interior background; no texture work runs in the animation loop.
@@ -225,11 +226,13 @@ function texture(finish,kind){
  (kind==='floor'?floorTile:wallpaperTile)(c,finish.pattern,colors,cv.width);textures.set(key,cv);return cv;
 }
 export function drawShowroomFloor(c,room){
+ if(drawHomeMaterialFloor(c,room))return;
  const finish=room.floorFinish||room.floor;if(!finish)return;
  c.save();c.beginPath();c.rect(room.x,room.y,room.w,room.h);c.clip();c.translate(room.x,room.y);c.fillStyle=c.createPattern(texture(finish,'floor'),'repeat');c.fillRect(0,0,room.w,room.h);
  const edge=finish.colors?.[2]||'#493b36';pixel(c,0,0,room.w,3,edge);pixel(c,0,0,3,room.h,edge);pixel(c,room.w-3,0,3,room.h,edge);pixel(c,0,room.h-3,room.w,3,edge);c.restore();
 }
 export function drawShowroomWallpaper(c,room){
+ if(drawHomeMaterialWallpaper(c,room))return;
  const finish=room.wallpaper;if(!finish)return;
  const [base,light,dark,accent=light]=finish.colors||['#526d63','#c8aa77','#3e534b','#bba075'];
  for(const area of room.wallpaperAreas||[]){

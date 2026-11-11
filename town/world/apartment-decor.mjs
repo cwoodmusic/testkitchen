@@ -1,5 +1,5 @@
-import {APARTMENT_DECOR,APARTMENT_DECOR_ALIASES} from './apartment-decor-definitions.mjs?v=furniture-facings-1';
-export {APARTMENT_DECOR,APARTMENT_DECOR_ALIASES} from './apartment-decor-definitions.mjs?v=furniture-facings-1';
+import {APARTMENT_DECOR,APARTMENT_DECOR_ALIASES} from './apartment-decor-definitions.mjs?v=interior-polish-1';
+export {APARTMENT_DECOR,APARTMENT_DECOR_ALIASES} from './apartment-decor-definitions.mjs?v=interior-polish-1';
 
 // Keep the native silhouettes and pixel proportions. Purchased legacy items
 // use this same contain fit inside their original world canvas and boxes.
