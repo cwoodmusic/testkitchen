@@ -354,7 +354,7 @@ export function createUrbanController({canvas,getProject,getPlayer,getResidents,
 
   return true;
  }
- function thumbnail(item){const a=catalog.get(item.asset),c=document.createElement('canvas');c.width=c.height=100;if(a){const g=c.getContext('2d');g.imageSmoothingEnabled=false;const fit=Math.min(90/a.w,90/a.h);g.drawImage(a.canvas,(100-a.w*fit)/2,95-a.h*fit,a.w*fit,a.h*fit);}return c;}
+ function thumbnail(item){const a=catalog.get(item.asset),c=document.createElement('canvas');c.width=c.height=100;if(a){const g=c.getContext('2d');g.imageSmoothingEnabled=false;const view=a.getFacingView?.('south',{image:false}),w=view?.w||a.w,h=view?.h||a.h,fit=Math.min(90/w,90/h);g.translate((100-w*fit)/2,95-h*fit);g.scale(fit,fit);if(typeof view?.ready==='boolean')a.draw(g);else g.drawImage(a.canvas,0,0,w,h);}return c;}
  function showInventory(){
   const body=modal('Your furniture','Choose an owned item, then use the facing buttons or R before placing it. Select a placed item to turn it in place. Posters, clocks, mirrors and shelves snap to the open north-wall sections.');const grid=document.createElement('div');grid.className='urban-catalog';body.append(grid);const items=furniture.filter(i=>owned().includes(i.id));
   if(!items.length){const p=document.createElement('p');p.textContent='Visit Coda Furnishings to buy furniture, instruments, plants, and lights with Notes.';body.append(p);}

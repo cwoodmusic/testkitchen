@@ -50,6 +50,29 @@ function fixture(options={}){
  return {...f,runtime,definitions,manifest,thumbnails,loads,images,def:(owner=0,slot='bed')=>definitions.find(d=>d.owner===collections[owner].owner&&d.slot===slot)};
 }
 
+test('taller South artwork keeps its natural aspect and the exact saved physical floor centre',async()=>{
+ const owner=APARTMENT_COLLECTIONS[0],bed=owner.assets.find(d=>d.slot==='bed'),definition=structuredClone(bed),manifest=manifestFor([owner]),original=fixture({definitions:[bed],manifest:structuredClone(manifest)});
+ const frame=manifest.collections[0].cells.find(cell=>cell.slot==='bed');Object.assign(frame,{w:80,h:140,viewWidth:200,viewHeight:280,footCenter:[.5,.82]});
+ const expanded=fixture({definitions:[bed],manifest}),view=expanded.runtime.view(bed.id),placement={x:510,y:630,rotation:0,scale:1.25};
+ const before={...bed,getFacingView:direction=>original.runtime.view(bed.id,direction)},after={...bed,getFacingView:direction=>expanded.runtime.view(bed.id,direction)};
+ const oldPose=furnitureFacingPlacement(before,placement,undefined,{includeImage:false}),newPose=furnitureFacingPlacement(after,placement,undefined,{includeImage:false});
+ assert.deepEqual([view.w,view.h],[200,280]);assert.notDeepEqual(newPose.bounds,oldPose.bounds);
+ assert.deepEqual(newPose.groundCenter,oldPose.groundCenter);assert.deepEqual(newPose.screenFootCenter,oldPose.screenFootCenter);
+ assert.deepEqual(furnitureFacingBoxes(after,placement),furnitureFacingBoxes(before,placement));assert.deepEqual(bed,definition);
+ assert.equal(newPose.x+view.footCenter.x*newPose.scaleX,newPose.screenFootCenter.x);assert.equal(newPose.y+view.footCenter.y*newPose.scaleY,newPose.screenFootCenter.y);
+ await expanded.runtime.ensureAsset(bed.id);const native=expanded.runtime.canvas(bed.id),draw=native.draws[0];assert.deepEqual([native.width,native.height],[200,280]);
+ assert.equal(draw[7]/draw[8],frame.w/frame.h,'The taller source must be uniformly contained, never stretched into the old preview');
+ assert.equal(expanded.runtime.view(bed.id).ready,true);original.runtime.clear();expanded.runtime.clear();
+});
+
+test('an expanded South envelope requires an explicit finite ground anchor before loading artwork',()=>{
+ const owner=APARTMENT_COLLECTIONS[0],bed=owner.assets.find(d=>d.slot==='bed');
+ for(const anchor of [{},{footCenter:[.5]},{footCenter:[NaN,.8]},{worldFootCenter:{x:90,y:Infinity}}]){
+  const manifest=manifestFor([owner]);Object.assign(manifest.collections[0].cells.find(cell=>cell.slot==='bed'),{viewHeight:280,...anchor});
+  assert.throws(()=>fixture({definitions:[bed],manifest}),/South view needs an authored ground anchor/);
+ }
+});
+
 test('partial South overrides replace only their exact crop and group mixed owner requests by their real source',async()=>{
  const owner=APARTMENT_COLLECTIONS[0],definitions=owner.assets.filter(d=>['bed','sofa'].includes(d.slot)),bed=definitions.find(d=>d.slot==='bed'),sofa=definitions.find(d=>d.slot==='sofa'),manifest=manifestFor([owner]),frame={id:bed.id,x:23,y:41,w:72,h:90},directionManifest={collections:[{owner:owner.owner,views:{south:{file:'corrected-south.webp',width:400,height:800,cells:[frame]}}}]};
  const f=fixture({definitions,manifest,directionManifest,maxSources:1}),before=f.runtime.view(bed.id);assert.deepEqual(before.footCenter,furnitureFootCenter(bed));assert.deepEqual([before.w,before.h],[bed.w,bed.h]);assert.equal(f.loads.length,0);

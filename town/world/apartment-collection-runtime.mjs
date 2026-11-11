@@ -18,8 +18,14 @@ export function createApartmentCollectionRuntime({definitions,manifest,direction
  const limit=(n,fallback)=>Number.isFinite(n)&&n>0?Math.max(1,Math.floor(n)):fallback;
  maxSources=limit(maxSources,4);maxConcurrentLoads=limit(maxConcurrentLoads,4);maxCanvases=limit(maxCanvases,192);maxCanvasPixels=limit(maxCanvasPixels,4*1024*1024);
  function addRecord(def,frame,state,facing){
-  const key=faceKey(def.id,facing),drawDef=facing==='south'?def:{w:frame.viewWidth??def.w,h:frame.viewHeight??def.h};
+  const key=faceKey(def.id,facing),drawDef={w:frame.viewWidth??def.w,h:frame.viewHeight??def.h};
   if(!Number.isFinite(drawDef.w)||!Number.isFinite(drawDef.h)||drawDef.w<=0||drawDef.h<=0)throw Error('Invalid apartment facing size: '+key);
+  // Expanded artwork has its own envelope; its authored floor centre still
+  // maps to the exact original asset base and saved placement pivot.
+  if(facing==='south'&&(drawDef.w!==def.w||drawDef.h!==def.h)){
+   const point=frame.footCenter,world=frame.worldFootCenter;
+   if(!(Array.isArray(point)&&point.length===2&&point.every(Number.isFinite))&&!(world&&Number.isFinite(world.x)&&Number.isFinite(world.y)))throw Error('Expanded apartment South view needs an authored ground anchor: '+key);
+  }
   const rect=collectionImageRect(drawDef,frame),sourceFoot=frame.footCenter;
   const footCenter=Array.isArray(sourceFoot)?{x:rect.x+sourceFoot[0]*rect.w,y:rect.y+sourceFoot[1]*rect.h}:frame.worldFootCenter??(facing==='south'?southFootCenter(def):{x:drawDef.w/2,y:drawDef.h});
   const motion=collectionMotion(drawDef,frame),view={id:facing==='south'?def.id:key,w:drawDef.w,h:drawDef.h,footCenter,facing,...(motion?{motion}: {})};

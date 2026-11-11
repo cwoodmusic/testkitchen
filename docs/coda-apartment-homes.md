@@ -18,7 +18,11 @@ Wall decorations align with real wall faces. Rugs draw below people and furnitur
 
 Native WebP atlases, crop/motion metadata and source hashes live in `town/assets/apartment-collections/`. Generation originals are not required by the game. All collections are also available in Town Builder's Urban kit.
 
-## Doors and furniture facings
+## Interior finishes, doors and furniture facings
+
+Each home and showroom has a separate set of textured floor, wall, bathroom and dado materials. The tower common floors use detailed limestone, walnut, green marble, wainscoting, stair rails and runners. These finishes follow the existing room boundaries and circulation routes.
+
+Doors use framed wood, brass and glass artwork, with leaves drawn at the correct depth around people. Lift entrances stand upright above their floor thresholds, with sliding steel doors, call panels and floor indicators.
 
 Walk toward an unlocked door to enter or leave. Bedroom and bathroom leaves open before arrival, stay open while someone occupies the threshold, and close once everyone clears. They close behind a visitor standing inside. Owner NPCs can use their doors; player friendship requirements still apply. Arrival guards prevent held movement from bouncing between scenes.
 
@@ -40,9 +44,9 @@ Collection thumbnails load at startup; full art loads for viewed homes. NPC mode
 
 The final native run covers all 31 homes, 992 distinct props, 840 distinct placed items and 62 South-view animations, including transparent boundaries, unchanged static art and saved decor. A separate browser pass checks all 3,968 native views and 155 visible animated views. Midcentury, retrofuture, Bach and player interiors each held 60 FPS, with frame CPU p95 of 1.4, 1.2, 1.3 and 1.2 ms respectively. All four had no pauses above 50 ms or native atlas requests during measurement in the test environment.
 
-All 3,968 views also match an independent DOM-image renderer byte for byte through the Blob/ImageBitmap loader. The nine intentional South alignment corrections preserve the other 3,959 reviewed signatures. The 31-room cache test releases 23 evicted background backing stores, reproduces exact pixels on re-entry, and frees all backgrounds on explicit clear. The complete Node suite passes 714 checks.
+Cardinal artwork is checked against its source crop and an independent DOM-image renderer through the Blob/ImageBitmap loader. Corrected South artwork can use a taller visual envelope while retaining the original physical dimensions and saved floor center. Source recovery retains complete props rather than dividing them at arbitrary row boundaries. Cache checks cover exact pixels on room re-entry and backing-store release.
 
-Model checks cover real collision padding, fixture approaches, structural walls, furniture overlaps, private doors, showroom routes and resident journeys. Browser journeys cover all twelve automatic showroom entrances/exits and both store floors, compact/wide/player homes, friendship locks, owner NPCs and closing behind people. The supplied town map, existing ownership and player furnishing regions stay unchanged. The 293 original furniture assets retain their South artwork and physical geometry while gaining cardinal views.
+Model checks cover real collision padding, fixture approaches, structural walls, furniture overlaps, private doors, showroom routes and resident journeys. Browser journeys cover all twelve automatic showroom entrances/exits and both store floors, compact/wide/player homes, friendship locks, owner NPCs and closing behind people. The supplied town map, existing ownership and player furnishing regions stay unchanged. The 293 original furniture assets retain their physical geometry. South artwork is preserved except for the explicitly corrected corner kitchen counter and lifeguard chair; their existing dimensions and anchors remain unchanged.
 
 Browser regressions: `tests/town-apartment-doors-browser.py`, `tests/town-apartments-collections-browser.py`, `tests/town-showrooms-browser.py`, and `tests/town-apartments-browser.py`. Earlier outdoor measurements are in [the performance report](coda-town-performance.md).
 
