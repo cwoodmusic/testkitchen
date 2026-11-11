@@ -1,6 +1,6 @@
-import {residents} from './resident-profiles.mjs?v=town-polish-1';
-import {interiorActorScale} from './interior-scale.mjs?v=town-polish-1';
-export {residents} from './resident-profiles.mjs?v=town-polish-1';
+import {residents} from './resident-profiles.mjs?v=interior-design-1';
+import {interiorActorScale} from './interior-scale.mjs?v=interior-design-1';
+export {residents} from './resident-profiles.mjs?v=interior-design-1';
 
 const SPEED=156,GAIT=Math.PI*2/150;
 const journeys=new Map();

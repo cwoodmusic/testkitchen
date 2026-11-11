@@ -10,6 +10,7 @@ import {SHOWROOMS} from '../town/world/showroom-layout.mjs';
 import {SHOWROOM_FURNITURE} from '../town/world/showroom-furniture-definitions.mjs';
 import {APARTMENT_DECOR} from '../town/world/apartment-decor-definitions.mjs';
 import {APARTMENT_COLLECTION_ASSETS} from '../town/world/apartment-collection-definitions.mjs';
+import {WHIMSICAL_PLUSH_DEFINITIONS} from '../town/world/whimsical-plush-definitions.mjs';
 
 const require=createRequire(import.meta.url),stock=require('../furniture-catalog.js');
 const read=path=>readFileSync(new URL(path,import.meta.url));
@@ -20,6 +21,7 @@ for(const def of decorDefinitions){const cell=atlas.find(a=>a.family===def.famil
 for(const def of SHOWROOM_FURNITURE)catalog.set(def.id,{w:def.w,h:def.h,boxes:def.boxes,furnitureRole:def.role});
 for(const def of APARTMENT_DECOR)catalog.set(def.id,{w:def.w,h:def.h,boxes:def.boxes,layer:def.layer,wallMounted:def.wallMounted,purpose:def.purpose});
 for(const def of APARTMENT_COLLECTION_ASSETS)catalog.set(def.id,def);
+for(const def of WHIMSICAL_PLUSH_DEFINITIONS)catalog.set(def.id,def);
 configureUrbanInteriors(catalog);
 const floorScene=floor=>({kind:floor===1?'lobby':'hall',floor});
 const scenes=[...Array.from({length:FLOOR_COUNT},(_,i)=>floorScene(i+1)),...residents.map(r=>({kind:'apartment',resident:r.id})),{kind:'apartment',resident:'player'},{kind:'shop',floor:1},{kind:'shop',floor:2},...SHOWROOMS.map(room=>({kind:'showroom',floor:room.storeFloor,showroomId:room.id}))];

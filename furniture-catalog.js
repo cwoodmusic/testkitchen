@@ -495,5 +495,40 @@
   ["collection-showroom-robot-clock","Robot Companion Apartment · clock",4500,"collection-showroom-robot-clock","decorations",0.75,"showroom-robot"]
   // END GENERATED APARTMENT COLLECTION PRODUCTS
  ];
- return Object.freeze([...legacy,...collectionRows.map(([asset,name,price,_asset,category,scale,collectionOwner])=>Object.freeze({id:'furniture-'+asset,name,price,asset,category,scale,collectionOwner}))]);
+ const playfulRows=[
+  // BEGIN GENERATED PLAYFUL DECOR PRODUCTS
+  ["collection-bach-toy","Woodland organ music box",6000,"collection-bach-toy","playful decor",1,"bach"],
+  ["collection-mozart-toy","Pink conductor bird",6500,"collection-mozart-toy","playful decor",1,"mozart"],
+  ["collection-beethoven-toy","Lightning wind-up bird",7500,"collection-beethoven-toy","playful decor",1,"beethoven"],
+  ["collection-clara-toy","Leafy owl keyboard",5500,"collection-clara-toy","playful decor",1,"clara"],
+  ["collection-chopin-toy","Moon-cat music box",7000,"collection-chopin-toy","playful decor",1,"chopin"],
+  ["collection-haydn-toy","Sunflower songbird",4500,"collection-haydn-toy","playful decor",1,"haydn"],
+  ["collection-handel-toy","Laurel wind-up songbird",6000,"collection-handel-toy","playful decor",1,"handel"],
+  ["collection-vivaldi-toy","Autumn songbird",5500,"collection-vivaldi-toy","playful decor",1,"vivaldi"],
+  ["collection-joplin-toy","Ragtime drummer squirrel",7000,"collection-joplin-toy","playful decor",1,"joplin"],
+  ["collection-ellington-toy","Bluebird jazz music box",7000,"collection-ellington-toy","playful decor",1,"ellington"],
+  ["collection-ella-toy","Honeysuckle singing bird",5500,"collection-ella-toy","playful decor",1,"ella"],
+  ["collection-nina-toy","Cedar xylophone friend",6000,"collection-nina-toy","playful decor",1,"nina"],
+  ["collection-miles-toy","Brass headphone bird",7500,"collection-miles-toy","playful decor",1,"miles"],
+  ["collection-dj-toy","Neon owl DJ",10000,"collection-dj-toy","playful decor",1,"dj"],
+  ["collection-vee-jay-toy","Prism keyboard robot",12000,"collection-vee-jay-toy","playful decor",1,"vee-jay"],
+  ["collection-zizi-toy","Moon-garden keyboard friend",8500,"collection-zizi-toy","playful decor",1,"zizi"],
+  ["collection-metronome-toy","Clockwork owl music box",6500,"collection-metronome-toy","playful decor",1,"metronome"],
+  ["collection-schoenberg-toy","Wooden keyboard rabbit",6000,"collection-schoenberg-toy","playful decor",1,"schoenberg"],
+  ["collection-player-toy","Cloud keyboard friend",10000,"collection-player-toy","playful decor",1,"player"],
+  ["plush-headphone-whale","Headphone Whale",8000,"plush-headphone-whale","plushies",1],
+  ["plush-lavender-dragon","Lavender Dragon",12000,"plush-lavender-dragon","plushies",1],
+  ["plush-ukulele-capybara","Ukulele Capybara",10000,"plush-ukulele-capybara","plushies",1],
+  ["plush-starry-bunny","Starry Bunny",6000,"plush-starry-bunny","plushies",1],
+  ["plush-strawberry-frog","Strawberry Frog",6500,"plush-strawberry-frog","plushies",1],
+  ["plush-red-panda","Sleepy Red Panda",7500,"plush-red-panda","plushies",1],
+  ["plush-cloud-cat","Cloud Cat",6500,"plush-cloud-cat","plushies",1],
+  ["plush-sun-lion","Sunshine Lion",7000,"plush-sun-lion","plushies",1],
+  ["plush-mint-robot","Soft Mint Robot",9000,"plush-mint-robot","plushies",1],
+  ["plush-moon-owl","Moon Owl",7000,"plush-moon-owl","plushies",1],
+  ["plush-mushroom-friend","Mushroom Friend",4500,"plush-mushroom-friend","plushies",1],
+  ["plush-bluebird","Little Songbird",4000,"plush-bluebird","plushies",1]
+  // END GENERATED PLAYFUL DECOR PRODUCTS
+ ];
+ return Object.freeze([...legacy,...collectionRows.map(([asset,name,price,_asset,category,scale,collectionOwner])=>Object.freeze({id:'furniture-'+asset,name,price,asset,category,scale,collectionOwner})),...playfulRows.map(([asset,name,price,_asset,category,scale,collectionOwner])=>Object.freeze({id:'furniture-'+asset,name,price,asset,category,scale,...(collectionOwner?{collectionOwner}:{})}))]);
 });

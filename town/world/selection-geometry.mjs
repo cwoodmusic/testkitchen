@@ -1,4 +1,4 @@
-import {TILE,RISE,COLS,ROWS} from './model.mjs?v=town-polish-1';
+import {TILE,RISE,COLS,ROWS} from './model.mjs?v=interior-design-1';
 
 // Selection masks are immutable, as in selectionContains. A shallow-copied
 // region can reuse its cells array after a height edit. Weak keys release old

@@ -1,8 +1,8 @@
-import {residents as defaultResidents} from './resident-profiles.mjs?v=town-polish-1';
-import {APARTMENT_DECOR} from './apartment-decor-definitions.mjs?v=town-polish-1';
-import {SHOWROOM_FURNITURE} from './showroom-furniture-definitions.mjs?v=town-polish-1';
-import {getApartmentAsset} from './apartment-collections.mjs?v=town-polish-1';
-import {furnitureAtGroundCenter,furnitureFacingBoxes} from './furniture-facing.mjs?v=town-polish-1';
+import {residents as defaultResidents} from './resident-profiles.mjs?v=interior-design-1';
+import {APARTMENT_DECOR} from './apartment-decor-definitions.mjs?v=interior-design-1';
+import {SHOWROOM_FURNITURE} from './showroom-furniture-definitions.mjs?v=interior-design-1';
+import {getApartmentAsset} from './apartment-collections.mjs?v=interior-design-1';
+import {furnitureAtGroundCenter,furnitureFacingBoxes} from './furniture-facing.mjs?v=interior-design-1';
 
 const furniture=new Map(APARTMENT_DECOR.map(a=>[a.id,a]));
 const signatureFurniture=new Map(SHOWROOM_FURNITURE.map(a=>[a.id,a]));

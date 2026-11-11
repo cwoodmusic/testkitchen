@@ -1,6 +1,6 @@
-import {LEGACY_FURNITURE_ASSETS} from './legacy-furniture-definitions.mjs?v=town-polish-1';
-import {createApartmentCollectionRuntime} from './apartment-collection-runtime.mjs?v=town-polish-1';
-import {furnitureFootCenter} from './furniture-facing.mjs?v=town-polish-1';
+import {LEGACY_FURNITURE_ASSETS} from './legacy-furniture-definitions.mjs?v=interior-design-1';
+import {createApartmentCollectionRuntime} from './apartment-collection-runtime.mjs?v=interior-design-1';
+import {furnitureFootCenter} from './furniture-facing.mjs?v=interior-design-1';
 
 const directions=['south','west','north','east'];
 const base=new URL('../assets/furniture-facings/',import.meta.url);

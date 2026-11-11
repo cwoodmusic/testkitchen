@@ -33,17 +33,66 @@ const rows=[
  ['showroom-steampunk','Clockwork Mahogany','Mahogany octagon and brass-key parquet','Sage woven cog-stripe and mahogany dado','Bottle-green ivory and copper gear mosaic',['#79533e','#c8ad79','#45372c','#a8935d','#738167']],
  ['showroom-robot','Companion Cork','Warm cork and powder-blue charging joints','Ivory micro-weave and rounded companion band','Powder-blue ivory and yellow capsule mosaic',['#c0b59a','#f0e3bd','#8a9487','#99b6bb','#d1b46b']]
 ];
-// Quiet the busiest dry-floor inlays so furniture retains the visual focus.
-const dryFloorGlazes={bach:.28,vivaldi:.30,ella:.18};
+// Architecture recedes behind the furnishings. Each owner keeps an individual
+// authored field, with a quieter value/hue and a smaller human-scale grain.
+// Pale furniture uses deeper floors; dark wood uses light stone/washed wood.
+const contrastRows=[
+ ['bach','#c5bead',.68,'#747f77','#d4d5c8','#ebe8dc','#eee5d1',.52,'stone'],
+ ['mozart','#c8cbc5',.64,'#958a91','#e2d9cc','#eee5dd','#f2e8dd',.52,'deco'],
+ ['beethoven','#bdc5c8',.66,'#6c7a87','#bdc6c7','#d6dfe1','#d9dfe0',.45,'slab'],
+ ['clara','#657b7b',.64,'#a6b2a8','#d4dbcf','#e4e8dc','#f0ecd9',.56,'stone'],
+ ['chopin','#c8c8ce',.68,'#8e8495','#d9dce0','#e6e2eb','#eee7ed',.54,'deco'],
+ ['haydn','#c3c9bc',.64,'#8f9b8a','#d5b99b','#eee1ca','#f0e8d2',.52,'clay'],
+ ['handel','#c6c9bd',.66,'#7d8879','#dad6c6','#ece7d4','#e8e8d7',.56,'deco'],
+ ['vivaldi','#c7cbbd',.70,'#928d7c','#ccb49b','#eae5d5','#eee7d6',.58,'clay'],
+ ['joplin','#c2c9cb',.66,'#788d9b','#d3d8d5','#e2e8e4','#eee8d9',.50,'terrazzo'],
+ ['ellington','#c9ccca',.66,'#657f87','#d8d6c6','#e1e9e4','#dee8e4',.48,'deco'],
+ ['ella','#6d8389',.66,'#b8b4a7','#d4c4b7','#efe4da','#f0e4d8',.55,'stone'],
+ ['nina','#d4c8b0',.70,'#7d8c7c','#c0c8bd','#e5e3d1','#e9e2cd',.55,'clay'],
+ ['miles','#bfc7c8',.72,'#6d7c86','#c3cbc9','#dce4e3','#d7dfe1',.48,'slab'],
+ ['dj','#a7b2be',.72,'#646a85','#b5bdc8','#d6dce4','#c8c9db',.48,'slab'],
+ ['vee-jay','#5e7381',.66,'#aeb0c6','#b4c6c8','#e3e5ee','#ece4ef',.52,'terrazzo'],
+ ['zizi','#627d72',.68,'#afa6ba','#c8c9b9','#e6e3d8','#ece5df',.58,'stone'],
+ ['metronome','#c0c7c7',.68,'#7e8c8e','#d4c6ac','#e7e0d1','#e9e5d5',.54,'clay'],
+ ['schoenberg','#c8cdca',.68,'#7f8c94','#c1c9cd','#e5e6df','#e8e6dd',.54,'terrazzo'],
+ ['player','#718994',.64,'#b8abbf','#d6d9d3','#eee6d9','#efe6d6',.52,'terrazzo'],
+ ['showroom-victorian-parlor','#cdc3b1',.70,'#7d7883','#d8d5c6','#ece5d6','#ede3d8',.58,'deco'],
+ ['showroom-art-deco-lounge','#d5cebb',.65,'#627b7b','#d5d7cd','#e0e9dd','#d9e5dd',.48,'deco'],
+ ['showroom-coastal-bedroom','#657f87',.68,'#b4b5a5','#c4cfc9','#e8e6d7','#e8e9da',.56,'stone'],
+ ['showroom-rustic-kitchen','#c6c9bb',.68,'#849384','#d5bba0','#eee4ce','#f0e6d2',.58,'clay'],
+ ['showroom-botanical-conservatory','#e5decb',.82,'#6c8181','#ced5cd','#e9e7da','#eee8d8',.76,'stone'],
+ ['showroom-midcentury-studio','#bdc7ca',.72,'#8799a3','#d6dacf','#e4e8df','#f0e6d2',.54,'terrazzo'],
+ ['showroom-french-cafe','#697b81',.64,'#bba6ac','#d9d3c5','#eee4da','#f0e5dd',.58,'deco'],
+ ['showroom-industrial-loft','#b9c7c9',.68,'#76868c','#adbcc0','#dce3df','#d6dfdc',.48,'slab'],
+ ['showroom-retrofuture','#657f8a',.66,'#c5b3a0','#d8d7c7','#e5e9da','#eee6d2',.58,'terrazzo'],
+ ['showroom-cyberpunk','#a4b5bc',.70,'#64748b','#aebbc3','#d5dfe2','#c2ced8',.42,'slab'],
+ ['showroom-steampunk','#c5cabc',.70,'#7c8b83','#d0c2a8','#e4e4d5','#e9e4ce',.58,'deco'],
+ ['showroom-robot','#667e8c',.66,'#c1b6a0','#cad9d8','#e2e9de','#eee6d3',.56,'terrazzo']
+];
+const contrastByOwner=new Map(contrastRows.map(([owner,floorColor,floorOpacity,carpet,kitchen,bathWall,wallColor,wallOpacity,kitchenStyle])=>[owner,{floorColor,floorOpacity,carpet,kitchen,bathWall,wallColor,wallOpacity,kitchenStyle}]));
+const mix=(hex,other,amount)=>'#'+[1,3,5].map(i=>Math.round(parseInt(hex.slice(i,i+2),16)*(1-amount)+parseInt(other.slice(i,i+2),16)*amount).toString(16).padStart(2,'0')).join('');
+const surfaceColors=base=>[base,mix(base,'#ffffff',.09),mix(base,'#1d2b31',.12),mix(base,'#ffffff',.045),mix(base,'#394348',.055)];
+// These two authored wet repeats read as a mirrored chevron/bowtie field.
+// Use a quiet real tile layout instead, separate from both walls and dry floors.
+const quietWetFloors=new Map([
+ ['showroom-botanical-conservatory',{style:'stone',color:'#e2dfd2',label:'Warm ivory square limestone bathroom tile'}],
+ ['showroom-midcentury-studio',{style:'porcelain',color:'#c8d0cf',label:'Cool pearl square porcelain bathroom tile'}]
+]);
 const freeze=value=>{if(value&&typeof value==='object'){for(const part of Object.values(value))freeze(part);Object.freeze(value);}return value;};
 const finish=(owner,kind,name,colors,extra={})=>({id:`${owner}-${kind}`,name,label:name,pattern:`home-${owner}-${kind}`,homeMaterial:true,owner,kind,colors,texture:`${owner}-${kind==='wet-wall'?'wet-floor':kind}.webp`,...extra});
-export const HOME_MATERIAL_SUITES=freeze(rows.map(([owner,name,floorName,wallName,wetName,colors])=>({
- owner,id:`home-suite-${owner}`,name,floor:finish(owner,'floor',floorName,colors,{glaze:dryFloorGlazes[owner]||0}),wallpaper:finish(owner,'wall',wallName,colors,{trimTexture:`${owner}-dado.webp`}),
- wetFloor:finish(owner,'wet-floor',wetName,colors),wetWallpaper:finish(owner,'wet-wall',wetName+' wall glaze',colors,{glazed:true}),
- trim:{wood:colors[0],light:colors[1],shadow:colors[2],metal:colors[3]},
- construction:{floor:floorName,wall:wallName,wet:wetName},
- assets:[`${owner}-floor.webp`,`${owner}-wall.webp`,`${owner}-wet-floor.webp`,`${owner}-dado.webp`]
-})));
+export const HOME_MATERIAL_SUITES=freeze(rows.map(([owner,name,floorName,wallName,wetName,colors])=>{
+ const contrast=contrastByOwner.get(owner),quietWet=quietWetFloors.get(owner),floor=finish(owner,'floor',floorName,colors,{presentation:{scale:.5,color:contrast.floorColor,opacity:contrast.floorOpacity}}),wallpaper=finish(owner,'wall',wallName,colors,{trimTexture:`${owner}-dado.webp`,presentation:{scale:.65,color:contrast.wallColor,opacity:contrast.wallOpacity},trimPresentation:{scaleX:.65,scaleY:1,color:contrast.wallColor,opacity:.12}});
+ return {
+  owner,id:`home-suite-${owner}`,name,floor,wallpaper,
+  bedroomFloor:finish(owner,'carpet',name+' quiet woven carpet',surfaceColors(contrast.carpet),{texture:null,surfaceStyle:'carpet',presentation:{scale:.5}}),
+  kitchenFloor:finish(owner,'kitchen-floor',name+' '+contrast.kitchenStyle+' kitchen floor',surfaceColors(contrast.kitchen),{texture:null,surfaceStyle:contrast.kitchenStyle,presentation:{scale:.5}}),
+  wetFloor:quietWet?finish(owner,'wet-floor',quietWet.label,surfaceColors(quietWet.color),{texture:null,surfaceStyle:quietWet.style,presentation:{scale:.5}}):finish(owner,'wet-floor',wetName,colors,{presentation:{scale:.5,color:contrast.bathWall,opacity:.58}}),
+  wetWallpaper:finish(owner,'wet-wall',name+' glazed ceramic wall',surfaceColors(contrast.bathWall),{texture:null,surfaceStyle:'ceramic-wall',glazed:true,presentation:{scale:.5}}),
+  trim:{wood:colors[0],light:colors[1],shadow:colors[2],metal:colors[3]},
+  construction:{floor:floorName,wall:wallName,wet:wetName},
+  assets:[`${owner}-floor.webp`,`${owner}-wall.webp`,`${owner}-wet-floor.webp`,`${owner}-dado.webp`]
+ };
+}));
 const byOwner=new Map(HOME_MATERIAL_SUITES.map(suite=>[suite.owner,suite]));
 export const getHomeMaterialSuite=owner=>byOwner.get(owner)||null;
 
@@ -54,7 +103,11 @@ export function applyHomeMaterialSuite(scene,owner){
  scene.color=suite.wallpaper.colors[0];scene.trim=suite.trim.light;
  for(const room of scene.rooms){
   const wet=room.functionalRole==='bathroom'||/bathroom/i.test(room.name);
-  room.floorFinish=wet?suite.wetFloor:suite.floor;room.wallpaper=wet?suite.wetWallpaper:suite.wallpaper;
+  const role=room.functionalRole||'';
+  room.floorFinish=wet?suite.wetFloor:role==='bedroom'?suite.bedroomFloor:role==='kitchen'?suite.kitchenFloor:suite.floor;room.wallpaper=wet?suite.wetWallpaper:suite.wallpaper;
+  // Dining labels describe an open-plan furniture group, not another solid
+  // rectangle of flooring across the kitchen/living boundary.
+  room.floorOverlay=role!=='dining';
   // Existing north-wall bands are render-only architectural metadata.
   // Never borrow walkable floor to invent a new wall face.
   room.wallpaperAreas??=room.y<=112?[{x:room.x,y:0,w:room.w,h:106}]:[];

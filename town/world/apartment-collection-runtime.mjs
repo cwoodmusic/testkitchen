@@ -1,4 +1,4 @@
-import {collectionImageRect,collectionMotion} from './apartment-collection-art.mjs?v=town-polish-1';
+import {collectionImageRect,collectionMotion} from './apartment-collection-art.mjs?v=interior-design-1';
 
 const directions=['south','north','east','west'];
 const faceKey=(id,facing='south')=>facing==='south'?id:id+'|'+facing;
@@ -9,7 +9,7 @@ function southFootCenter(def){
  const xs=points.map(p=>p[0]),ys=points.map(p=>p[1]);return {x:(Math.min(...xs)+Math.max(...xs))/2,y:(Math.min(...ys)+Math.max(...ys))/2};
 }
 
-export function createApartmentCollectionRuntime({definitions,manifest,directionManifest,overviewManifest,thumbnails,loadImage,createCanvas,maxSources=4,maxConcurrentLoads=4,maxCanvases=192,maxCanvasPixels=4*1024*1024}){
+export function createApartmentCollectionRuntime({definitions,manifest,directionManifest,overviewManifest,thumbnails,southArtCorrections=[],southArtPreview=null,loadImage,createCanvas,maxSources=4,maxConcurrentLoads=4,maxCanvases=192,maxCanvasPixels=4*1024*1024}){
  const sourceLRU=new Map(),canvasLRU=new Map(),states=new Map(),ownerStates=new Map(),records=new Map(),byId=new Map(definitions.map(def=>[def.id,def]));
  const overview=overviewManifest??directionManifest?.overview??manifest.overview,overviewCells=new Map();
  const settled=Promise.resolve();
@@ -65,6 +65,13 @@ export function createApartmentCollectionRuntime({definitions,manifest,direction
    for(const frame of cells){const def=byId.get(frame.id||'collection-'+collection.owner+'-'+frame.slot);if(def)addRecord(def,frame,state,facing);}
   }
  }
+ for(const correction of southArtCorrections){
+  const def=byId.get(correction.id);if(!def||def.owner!==correction.owner)throw Error('Invalid reviewed South correction: '+correction.id);
+  const entry=correction.entry,key=def.owner+'|'+entry.file;
+  let state=states.get(key);if(!state){state={key,owner:def.owner,entry,thumb:null,pending:null,autoFailed:false};states.set(key,state);}
+  addRecord(def,correction.frame,state,'south');
+  records.get(def.id).correctedPreview={...correction.preview,image:southArtPreview};
+ }
  for(const cell of overview?.cells||[])overviewCells.set(faceKey(cell.id,cell.facing??cell.direction??'south'),cell);
  const touch=(map,key,value)=>{map.delete(key);map.set(key,value);return value;};
  function releaseImage(image){try{if(typeof image?.close==='function')image.close();else image?.removeAttribute?.('src');}catch{}}
@@ -94,8 +101,9 @@ export function createApartmentCollectionRuntime({definitions,manifest,direction
   const width=Math.ceil(drawDef.w),height=Math.ceil(drawDef.h),pixels=width*height;if(pixels>maxCanvasPixels)throw Error('Apartment asset exceeds native canvas budget: '+key);
   while(canvasLRU.size>=maxCanvases||canvasPixels+pixels>maxCanvasPixels)removeCanvas(canvasLRU.keys().next().value);
   const canvas=createCanvas();canvas.width=width;canvas.height=height;const c=canvas.getContext('2d');c.imageSmoothingEnabled=false;
-  const source=full||state.thumb;
-  if(source){const rect=collectionImageRect(drawDef,frame),sx=(source.naturalWidth||source.width)/state.entry.width,sy=(source.naturalHeight||source.height)/state.entry.height;
+  const preview=item.correctedPreview,source=full||state.thumb;
+  if(!full&&preview?.image){c.drawImage(preview.image,preview.x,preview.y,preview.w,preview.h,0,0,drawDef.w,drawDef.h);}
+  else if(source){const rect=collectionImageRect(drawDef,frame),sx=(source.naturalWidth||source.width)/state.entry.width,sy=(source.naturalHeight||source.height)/state.entry.height;
    c.drawImage(source,frame.x*sx,frame.y*sy,frame.w*sx,frame.h*sy,rect.x,rect.y,rect.w,rect.h);
   }
   // Pending directions stay transparent rather than substituting rotated south art.
@@ -121,6 +129,11 @@ export function createApartmentCollectionRuntime({definitions,manifest,direction
  }
  function previewSource(item){
   const descriptor=item.preview,cell=overviewCells.get(item.key);
+  if(item.correctedPreview){
+   const preview=item.correctedPreview;
+   if(preview.image&&descriptor.image!==preview.image)Object.assign(descriptor,{image:preview.image,sx:preview.x,sy:preview.y,sw:preview.w,sh:preview.h,dx:0,dy:0,dw:item.drawDef.w,dh:item.drawDef.h,native:false,quality:'corrected-preview',revision:descriptor.revision+1});
+   return descriptor;
+  }
   if(cell&&overviewImage){
    if(descriptor.image!==overviewImage){const sx=(overviewImage.naturalWidth||overviewImage.width)/overview.width,sy=(overviewImage.naturalHeight||overviewImage.height)/overview.height;
     Object.assign(descriptor,{image:overviewImage,sx:cell.x*sx,sy:cell.y*sy,sw:cell.w*sx,sh:cell.h*sy,dx:0,dy:0,dw:item.drawDef.w,dh:item.drawDef.h,native:false,quality:'overview',revision:descriptor.revision+1});}

@@ -19,6 +19,18 @@ test('furniture uses builder bottom-center anchors and physical collision boxes'
  assert.deepEqual(roomItemBoxes({asset:'missing',x:0,y:0},catalog),[]);
 });
 
+test('role-specific room sizing uses the same displayed bounds and collision without rewriting product scales',()=>{
+ const policy=(item,asset)=>{assert.equal(asset,catalog.get(item.asset));return item.asset==='chair'?.5:.75;};
+ const {api,storage}=setup({presentationScale:policy});
+ const chair=api.place('furniture-chair',20,100);assert.equal(chair.ok,true,'A half-size chair fits with its pictured left edge on the room boundary');assert.equal(chair.item.scale,1);
+ assert.deepEqual(roomItemBoxes(chair.item,catalog,policy),[{x:5,y:82.5,w:30,h:15}]);
+ const table=api.place('furniture-table',70,250);assert.equal(table.ok,true);assert.equal(table.item.scale,1);
+ assert.deepEqual(roomItemBoxes(table.item,catalog,policy),[{x:17.5,y:205,w:105,h:41.25}]);
+ const raw=storage.getItem(ROOM_KEY),loaded=setup({storage,presentationScale:policy}).api;
+ assert.equal(loaded.load().ok,true);assert.deepEqual(loaded.snapshot(),api.snapshot());assert.equal(storage.getItem(ROOM_KEY),raw,'Loading with the shared size policy keeps saved bytes untouched');
+ const invalid=setup({presentationScale:()=>NaN});assert.equal(invalid.api.place('furniture-chair',200,300).ok,false,'Invalid drawing sizes cannot bypass room validation');assert.equal(invalid.storage.getItem(ROOM_KEY),null);
+});
+
 test('wall decorations use their wall zones while existing floor furniture keeps its saved positions',()=>{
  const items=[...furniture,{id:'furniture-poster',asset:'poster',scale:.75}],art=new Map([...catalog,['poster',{w:128,h:128,boxes:[],wallMounted:true}]]);
  const bounds={wall:[{x:100,y:4,w:500,h:98}],floor:[{x:0,y:150,w:1000,h:650}]};

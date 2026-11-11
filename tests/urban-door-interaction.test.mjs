@@ -5,7 +5,7 @@ import vm from 'node:vm';
 import {createAutomaticDoors} from '../town/world/automatic-doors.mjs';
 import {interiorActorScale,effectiveInteriorZoom} from '../town/world/interior-scale.mjs';
 import {roomItemBoxes} from '../town/world/urban-room.mjs';
-import {presentedRoomItem} from '../town/world/private-furniture.mjs';
+import {presentedRoomItem,furniturePresentationScale} from '../town/world/private-furniture.mjs';
 import {FLOOR_COUNT,residents,getInterior,residentInteractionZones,configureUrbanInteriors} from '../town/world/urban-interiors.mjs';
 import {APARTMENT_COLLECTION_ASSETS} from '../town/world/apartment-collection-definitions.mjs';
 import {SHOWROOMS,STORE_FLOOR_COUNT,STORE_VERTICAL_CORE} from '../town/world/showroom-layout.mjs';
@@ -34,7 +34,7 @@ function fixture({preview=false,furnishing=false}={}){
  if(furnishing){win.CodaFurnitureCatalog=[{id:'test-chair',asset:'collection-player-dining-chair',name:'Test chair',scale:1}];win.CodaNotesShop={createWallet:()=>({snapshot:()=>({balance:100,owned:['test-chair']})})};}
  const document={head:new Element('head'),body:new Element('body'),createElement(tag){const e=new Element(tag);elements.push(e);return e;}};
  const context={catalog,window:win,parent:win,document,location:{origin:'https://coda.invalid'},URL,performance:{now:()=>clock},matchMedia:()=>({matches:false}),localStorage:{getItem:()=>furnishing?null:'active-classroom',setItem(){storageWrites++;}},addEventListener:(type,fn)=>events.set(type,fn),setTimeout,
-  FLOOR_COUNT,residents,getInterior,residentInteractionZones,configureUrbanInteriors,createAutomaticDoors,interiorActorScale,effectiveInteriorZoom,presentedRoomItem,SHOWROOMS,STORE_FLOOR_COUNT,STORE_VERTICAL_CORE,
+  FLOOR_COUNT,residents,getInterior,residentInteractionZones,configureUrbanInteriors,createAutomaticDoors,interiorActorScale,effectiveInteriorZoom,presentedRoomItem,furniturePresentationScale,SHOWROOMS,STORE_FLOOR_COUNT,STORE_VERTICAL_CORE,
   renderInterior(c,scene,options){renderCalls.push({scene,viewport:options.viewport});options.drawPlayer?.(c,options.player);},createRoomStorage(){if(!furnishing)throw Error('Unexpected storage access');return {load:()=>({ok:true}),snapshot:()=>[],place(item,x,y,rotation){placements.push({item,x,y,rotation});return {ok:true};}};},roomItemBoxes,apartmentDecorBounds:()=>[],apartmentWallDecorBounds:()=>[],furnitureFacingPlacement:()=>null,furnitureFacingBounds:()=>null,
   createStagePerformance:()=>({assetIds:[]}),stagePerformanceSignature:()=> 'test-performance',stageCollisionBoxes:()=>[],CONCERT_PROGRAMME:[{id:'test-performance'}]};
  const {createUrbanController,buildingDoor}=vm.runInNewContext(controllerSource,context,{filename:urbanURL.pathname});
@@ -79,7 +79,7 @@ test('only bedroom and bathroom privacy leaves open and pass automatically for p
   const m=getInterior(f.q.scene);assert.equal(m.privacyDoors.length,2);
   for(const door of m.privacyDoors){
    const state=f.q.automaticDoors.states.find(s=>s.door===door),o=state.opening;assert(state);Object.assign(f.q.player,{x:o.x+o.nx*125,y:o.y+o.ny*125});for(let i=0;i<30;i++)f.frame();assert.equal(state.openness,0);
-   f.walk({x:-o.nx,y:-o.ny},210/(450*interiorActorScale(f.q.scene)));const signed=(f.q.player.x-o.x)*o.nx+(f.q.player.y-o.y)*o.ny;assert(signed<-25,'The player walks through the privacy leaf without E');assert(state.openness>.7);
+   f.walk({x:-o.nx,y:-o.ny},210/(450*interiorActorScale(f.q.scene)));const signed=(f.q.player.x-o.x)*o.nx+(f.q.player.y-o.y)*o.ny;assert(signed<-25,`${m.id}/${door.id}: player must pass privacy leaf without E; stopped ${signed} from doorway at ${f.q.player.x},${f.q.player.y}`);assert(state.openness>.7);
    Object.assign(f.q.player,{x:o.x-o.nx*110,y:o.y-o.ny*110});for(let i=0;i<30;i++)f.frame();assert.equal(state.openness,0,'Privacy closes after the player clears it');
    Object.assign(f.q.player,{x:m.width-100,y:m.height-150});f.actors.push({id:'privacy-npc',x:o.x+o.nx*55,y:o.y+o.ny*55});for(let i=0;i<10;i++)f.frame();assert(state.openness>.9);f.actors[0].x=o.x-o.nx*120;f.actors[0].y=o.y-o.ny*120;for(let i=0;i<30;i++)f.frame();assert.equal(state.openness,0);f.actors.length=0;
   }
@@ -138,7 +138,7 @@ test('spacious private rooms retain their area while furniture matches native ga
   const m=getInterior(f.q.scene),physical=JSON.stringify({width:m.width,height:m.height,items:m.items,solids:m.solids,rooms:m.rooms}),oldScale=.75,oldZoom=.96;f.frame();
   const scale=interiorActorScale(f.q.scene),zoom=f.q.view.zoom;assert.equal(oldScale/scale,2);
   assert.equal(m.width*zoom/(m.width*oldZoom),2);assert.equal(m.height*zoom/(m.height*oldZoom),2);assert.equal((m.width*zoom*m.height*zoom)/(m.width*oldZoom*m.height*oldZoom),4,'Actual rendered room floor area is four times the previous calibration');
-  const sofa=m.items.find(i=>i.furnitureRole==='sofa'),native=APARTMENT_COLLECTION_ASSETS.find(a=>a.id===sofa?.asset);assert(native);assert.equal(sofa.w/scale,native.w);assert.equal(sofa.h/scale,native.h,'Furniture uses the same human proportions as its native town asset');
+  const sofa=m.items.find(i=>i.furnitureRole==='sofa'),native=APARTMENT_COLLECTION_ASSETS.find(a=>a.id===sofa?.asset);assert(native);assert(Math.abs(sofa.w-native.w*.80)<1e-8);assert(Math.abs(sofa.h-native.h*.80)<1e-8,'Two-seat furniture uses the playable Arcade reference rather than catalog drawing units');
   assert.equal(scale*zoom,oldScale*oldZoom,'On-screen actor size is unchanged');assert.equal(450*scale*zoom,450*oldScale*oldZoom,'On-screen walking speed is unchanged');
   assert.equal(JSON.stringify({width:m.width,height:m.height,items:m.items,solids:m.solids,rooms:m.rooms}),physical,'Authored furniture, walls, rooms and solids keep their exact coordinates');f.assertUntouched();
  }

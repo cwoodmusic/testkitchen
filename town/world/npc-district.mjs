@@ -1,7 +1,7 @@
-import {blocked,height,surfaceAt,COLS,ROWS,TILE} from './model.mjs?v=town-polish-1';
-import {npcCollisionProject} from './npc-collision.mjs?v=town-polish-1';
-import {npcConnectionClear} from './npc-navigation.mjs?v=town-polish-1';
-import {furnitureFacingPlacement,furnitureFootCenter,furnitureFacingDepth} from './furniture-facing.mjs?v=town-polish-1';
+import {blocked,height,surfaceAt,COLS,ROWS,TILE} from './model.mjs?v=interior-design-1';
+import {npcCollisionProject} from './npc-collision.mjs?v=interior-design-1';
+import {npcConnectionClear} from './npc-navigation.mjs?v=interior-design-1';
+import {furnitureFacingPlacement,furnitureFootCenter,furnitureFacingDepth} from './furniture-facing.mjs?v=interior-design-1';
 
 const WORLD_W=COLS*TILE,WORLD_H=ROWS*TILE;
 const cardinal=['down','left','up','right'];

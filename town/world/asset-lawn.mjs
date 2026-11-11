@@ -1,6 +1,6 @@
-import {assetImage} from './asset-color.mjs?v=town-polish-1';
-import {readPaint} from './ground-paint.mjs?v=town-polish-1';
-import {roundedUnder,curveUnder} from './round-geometry.mjs?v=town-polish-1';
+import {assetImage} from './asset-color.mjs?v=interior-design-1';
+import {readPaint} from './ground-paint.mjs?v=interior-design-1';
+import {roundedUnder,curveUnder} from './round-geometry.mjs?v=interior-design-1';
 
 const cache=new WeakMap(),imageRevisions=new WeakMap();
 export const assetMapImageRevision=image=>imageRevisions.get(image)||0;

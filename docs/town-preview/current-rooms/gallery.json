@@ -1,0 +1,796 @@
+{
+  "rooms": [
+    {
+      "id": "showroom-midcentury-studio",
+      "name": "Midcentury Apartment",
+      "category": "showroom",
+      "thumb": "town-preview/current-rooms/showroom-midcentury-studio-thumb.webp",
+      "views": [
+        {
+          "label": "Full room",
+          "file": "town-preview/current-rooms/showroom-midcentury-studio.webp"
+        },
+        {
+          "label": "Kitchen \u00b7 beside your character",
+          "file": "town-preview/current-rooms/showroom-midcentury-studio-counter-live.webp"
+        },
+        {
+          "label": "Living area \u00b7 beside your character",
+          "file": "town-preview/current-rooms/showroom-midcentury-studio-sofa-live.webp"
+        }
+      ]
+    },
+    {
+      "id": "showroom-botanical-conservatory",
+      "name": "Botanical Apartment",
+      "category": "showroom",
+      "thumb": "town-preview/current-rooms/showroom-botanical-conservatory-thumb.webp",
+      "views": [
+        {
+          "label": "Full room",
+          "file": "town-preview/current-rooms/showroom-botanical-conservatory.webp"
+        },
+        {
+          "label": "Kitchen \u00b7 beside your character",
+          "file": "town-preview/current-rooms/showroom-botanical-conservatory-counter-live.webp"
+        },
+        {
+          "label": "Living area \u00b7 beside your character",
+          "file": "town-preview/current-rooms/showroom-botanical-conservatory-sofa-live.webp"
+        }
+      ]
+    },
+    {
+      "id": "showroom-victorian-parlor",
+      "name": "Victorian Suite",
+      "category": "showroom",
+      "thumb": "town-preview/current-rooms/showroom-victorian-parlor-thumb.webp",
+      "views": [
+        {
+          "label": "Full room",
+          "file": "town-preview/current-rooms/showroom-victorian-parlor.webp"
+        }
+      ]
+    },
+    {
+      "id": "showroom-art-deco-lounge",
+      "name": "Art Deco Apartment",
+      "category": "showroom",
+      "thumb": "town-preview/current-rooms/showroom-art-deco-lounge-thumb.webp",
+      "views": [
+        {
+          "label": "Full room",
+          "file": "town-preview/current-rooms/showroom-art-deco-lounge.webp"
+        }
+      ]
+    },
+    {
+      "id": "showroom-coastal-bedroom",
+      "name": "Coastal Retreat",
+      "category": "showroom",
+      "thumb": "town-preview/current-rooms/showroom-coastal-bedroom-thumb.webp",
+      "views": [
+        {
+          "label": "Full room",
+          "file": "town-preview/current-rooms/showroom-coastal-bedroom.webp"
+        }
+      ]
+    },
+    {
+      "id": "showroom-rustic-kitchen",
+      "name": "Rustic Cottage",
+      "category": "showroom",
+      "thumb": "town-preview/current-rooms/showroom-rustic-kitchen-thumb.webp",
+      "views": [
+        {
+          "label": "Full room",
+          "file": "town-preview/current-rooms/showroom-rustic-kitchen.webp"
+        }
+      ]
+    },
+    {
+      "id": "showroom-french-cafe",
+      "name": "Parisian Apartment",
+      "category": "showroom",
+      "thumb": "town-preview/current-rooms/showroom-french-cafe-thumb.webp",
+      "views": [
+        {
+          "label": "Full room",
+          "file": "town-preview/current-rooms/showroom-french-cafe.webp"
+        }
+      ]
+    },
+    {
+      "id": "showroom-industrial-loft",
+      "name": "Industrial Loft",
+      "category": "showroom",
+      "thumb": "town-preview/current-rooms/showroom-industrial-loft-thumb.webp",
+      "views": [
+        {
+          "label": "Full room",
+          "file": "town-preview/current-rooms/showroom-industrial-loft.webp"
+        }
+      ]
+    },
+    {
+      "id": "showroom-retrofuture",
+      "name": "Retrofuture Spaceport",
+      "category": "showroom",
+      "thumb": "town-preview/current-rooms/showroom-retrofuture-thumb.webp",
+      "views": [
+        {
+          "label": "Full room",
+          "file": "town-preview/current-rooms/showroom-retrofuture.webp"
+        },
+        {
+          "label": "Kitchen \u00b7 beside your character",
+          "file": "town-preview/current-rooms/showroom-retrofuture-counter-live.webp"
+        },
+        {
+          "label": "Living area \u00b7 beside your character",
+          "file": "town-preview/current-rooms/showroom-retrofuture-sofa-live.webp"
+        }
+      ]
+    },
+    {
+      "id": "showroom-cyberpunk",
+      "name": "Cyberpunk Neon Loft",
+      "category": "showroom",
+      "thumb": "town-preview/current-rooms/showroom-cyberpunk-thumb.webp",
+      "views": [
+        {
+          "label": "Full room",
+          "file": "town-preview/current-rooms/showroom-cyberpunk.webp"
+        }
+      ]
+    },
+    {
+      "id": "showroom-steampunk",
+      "name": "Steampunk Clockwork Home",
+      "category": "showroom",
+      "thumb": "town-preview/current-rooms/showroom-steampunk-thumb.webp",
+      "views": [
+        {
+          "label": "Full room",
+          "file": "town-preview/current-rooms/showroom-steampunk.webp"
+        }
+      ]
+    },
+    {
+      "id": "showroom-robot",
+      "name": "Robot Companion Home",
+      "category": "showroom",
+      "thumb": "town-preview/current-rooms/showroom-robot-thumb.webp",
+      "views": [
+        {
+          "label": "Full room",
+          "file": "town-preview/current-rooms/showroom-robot.webp"
+        },
+        {
+          "label": "Kitchen \u00b7 beside your character",
+          "file": "town-preview/current-rooms/showroom-robot-counter-live.webp"
+        },
+        {
+          "label": "Living area \u00b7 beside your character",
+          "file": "town-preview/current-rooms/showroom-robot-sofa-live.webp"
+        }
+      ]
+    },
+    {
+      "id": "bach",
+      "name": "Bach \u00b7 Organ Loft",
+      "category": "neighbour",
+      "thumb": "town-preview/current-rooms/bach-thumb.webp",
+      "views": [
+        {
+          "label": "Full room",
+          "file": "town-preview/current-rooms/bach.webp"
+        },
+        {
+          "label": "Kitchen \u00b7 beside your character",
+          "file": "town-preview/current-rooms/bach-counter-live.webp"
+        },
+        {
+          "label": "Living area \u00b7 beside your character",
+          "file": "town-preview/current-rooms/bach-sofa-live.webp"
+        }
+      ]
+    },
+    {
+      "id": "mozart",
+      "name": "Mozart \u00b7 Rosewood Salon",
+      "category": "neighbour",
+      "thumb": "town-preview/current-rooms/mozart-thumb.webp",
+      "views": [
+        {
+          "label": "Full room",
+          "file": "town-preview/current-rooms/mozart.webp"
+        }
+      ]
+    },
+    {
+      "id": "beethoven",
+      "name": "Beethoven \u00b7 Stormlight",
+      "category": "neighbour",
+      "thumb": "town-preview/current-rooms/beethoven-thumb.webp",
+      "views": [
+        {
+          "label": "Full room",
+          "file": "town-preview/current-rooms/beethoven.webp"
+        }
+      ]
+    },
+    {
+      "id": "clara",
+      "name": "Clara \u00b7 Fern and Ivory",
+      "category": "neighbour",
+      "thumb": "town-preview/current-rooms/clara-thumb.webp",
+      "views": [
+        {
+          "label": "Full room",
+          "file": "town-preview/current-rooms/clara.webp"
+        }
+      ]
+    },
+    {
+      "id": "chopin",
+      "name": "Chopin \u00b7 Nocturne",
+      "category": "neighbour",
+      "thumb": "town-preview/current-rooms/chopin-thumb.webp",
+      "views": [
+        {
+          "label": "Full room",
+          "file": "town-preview/current-rooms/chopin.webp"
+        }
+      ]
+    },
+    {
+      "id": "haydn",
+      "name": "Haydn \u00b7 Sunflower Suite",
+      "category": "neighbour",
+      "thumb": "town-preview/current-rooms/haydn-thumb.webp",
+      "views": [
+        {
+          "label": "Full room",
+          "file": "town-preview/current-rooms/haydn.webp"
+        }
+      ]
+    },
+    {
+      "id": "handel",
+      "name": "Handel \u00b7 Laurel Rooms",
+      "category": "neighbour",
+      "thumb": "town-preview/current-rooms/handel-thumb.webp",
+      "views": [
+        {
+          "label": "Full room",
+          "file": "town-preview/current-rooms/handel.webp"
+        }
+      ]
+    },
+    {
+      "id": "vivaldi",
+      "name": "Vivaldi \u00b7 Four Seasons",
+      "category": "neighbour",
+      "thumb": "town-preview/current-rooms/vivaldi-thumb.webp",
+      "views": [
+        {
+          "label": "Full room",
+          "file": "town-preview/current-rooms/vivaldi.webp"
+        }
+      ]
+    },
+    {
+      "id": "joplin",
+      "name": "Joplin \u00b7 Maple Ragtime",
+      "category": "neighbour",
+      "thumb": "town-preview/current-rooms/joplin-thumb.webp",
+      "views": [
+        {
+          "label": "Full room",
+          "file": "town-preview/current-rooms/joplin.webp"
+        }
+      ]
+    },
+    {
+      "id": "ellington",
+      "name": "Ellington \u00b7 Bluebird Jazz",
+      "category": "neighbour",
+      "thumb": "town-preview/current-rooms/ellington-thumb.webp",
+      "views": [
+        {
+          "label": "Full room",
+          "file": "town-preview/current-rooms/ellington.webp"
+        }
+      ]
+    },
+    {
+      "id": "ella",
+      "name": "Ella \u00b7 Honeysuckle Lounge",
+      "category": "neighbour",
+      "thumb": "town-preview/current-rooms/ella-thumb.webp",
+      "views": [
+        {
+          "label": "Full room",
+          "file": "town-preview/current-rooms/ella.webp"
+        }
+      ]
+    },
+    {
+      "id": "nina",
+      "name": "Nina \u00b7 Cedar Sanctuary",
+      "category": "neighbour",
+      "thumb": "town-preview/current-rooms/nina-thumb.webp",
+      "views": [
+        {
+          "label": "Full room",
+          "file": "town-preview/current-rooms/nina.webp"
+        }
+      ]
+    },
+    {
+      "id": "miles",
+      "name": "Miles \u00b7 Midnight Brass",
+      "category": "neighbour",
+      "thumb": "town-preview/current-rooms/miles-thumb.webp",
+      "views": [
+        {
+          "label": "Full room",
+          "file": "town-preview/current-rooms/miles.webp"
+        }
+      ]
+    },
+    {
+      "id": "dj",
+      "name": "DJ Coda \u00b7 Nightjar Studio",
+      "category": "neighbour",
+      "thumb": "town-preview/current-rooms/dj-thumb.webp",
+      "views": [
+        {
+          "label": "Full room",
+          "file": "town-preview/current-rooms/dj.webp"
+        }
+      ]
+    },
+    {
+      "id": "vee-jay",
+      "name": "Vee Jay \u00b7 Prism Video Loft",
+      "category": "neighbour",
+      "thumb": "town-preview/current-rooms/vee-jay-thumb.webp",
+      "views": [
+        {
+          "label": "Full room",
+          "file": "town-preview/current-rooms/vee-jay.webp"
+        }
+      ]
+    },
+    {
+      "id": "zizi",
+      "name": "Zizi \u00b7 Orbit Garden",
+      "category": "neighbour",
+      "thumb": "town-preview/current-rooms/zizi-thumb.webp",
+      "views": [
+        {
+          "label": "Full room",
+          "file": "town-preview/current-rooms/zizi.webp"
+        }
+      ]
+    },
+    {
+      "id": "metronome",
+      "name": "Metronome \u00b7 Clockwork Rooms",
+      "category": "neighbour",
+      "thumb": "town-preview/current-rooms/metronome-thumb.webp",
+      "views": [
+        {
+          "label": "Full room",
+          "file": "town-preview/current-rooms/metronome.webp"
+        }
+      ]
+    },
+    {
+      "id": "schoenberg",
+      "name": "Schoenberg \u00b7 Twelve-Tone Atelier",
+      "category": "neighbour",
+      "thumb": "town-preview/current-rooms/schoenberg-thumb.webp",
+      "views": [
+        {
+          "label": "Full room",
+          "file": "town-preview/current-rooms/schoenberg.webp"
+        }
+      ]
+    },
+    {
+      "id": "player",
+      "name": "Your home \u00b7 Comet Club",
+      "category": "player",
+      "thumb": "town-preview/current-rooms/player-thumb.webp",
+      "views": [
+        {
+          "label": "Full room",
+          "file": "town-preview/current-rooms/player.webp"
+        },
+        {
+          "label": "Kitchen \u00b7 beside your character",
+          "file": "town-preview/current-rooms/player-counter-live.webp"
+        },
+        {
+          "label": "Living area \u00b7 beside your character",
+          "file": "town-preview/current-rooms/player-sofa-live.webp"
+        }
+      ]
+    }
+  ],
+  "images": [
+    {
+      "file": "docs/town-preview/current-rooms/bach.webp",
+      "bytes": 1343374,
+      "pixelsExact": true
+    },
+    {
+      "file": "docs/town-preview/current-rooms/bach-thumb.webp",
+      "bytes": 265758,
+      "pixelsExact": true
+    },
+    {
+      "file": "docs/town-preview/current-rooms/bach-counter-live.webp",
+      "bytes": 264632,
+      "pixelsExact": true
+    },
+    {
+      "file": "docs/town-preview/current-rooms/bach-sofa-live.webp",
+      "bytes": 373360,
+      "pixelsExact": true
+    },
+    {
+      "file": "docs/town-preview/current-rooms/mozart.webp",
+      "bytes": 1369810,
+      "pixelsExact": true
+    },
+    {
+      "file": "docs/town-preview/current-rooms/mozart-thumb.webp",
+      "bytes": 274368,
+      "pixelsExact": true
+    },
+    {
+      "file": "docs/town-preview/current-rooms/beethoven.webp",
+      "bytes": 1273574,
+      "pixelsExact": true
+    },
+    {
+      "file": "docs/town-preview/current-rooms/beethoven-thumb.webp",
+      "bytes": 255924,
+      "pixelsExact": true
+    },
+    {
+      "file": "docs/town-preview/current-rooms/clara.webp",
+      "bytes": 1363550,
+      "pixelsExact": true
+    },
+    {
+      "file": "docs/town-preview/current-rooms/clara-thumb.webp",
+      "bytes": 271086,
+      "pixelsExact": true
+    },
+    {
+      "file": "docs/town-preview/current-rooms/chopin.webp",
+      "bytes": 1361878,
+      "pixelsExact": true
+    },
+    {
+      "file": "docs/town-preview/current-rooms/chopin-thumb.webp",
+      "bytes": 268990,
+      "pixelsExact": true
+    },
+    {
+      "file": "docs/town-preview/current-rooms/haydn.webp",
+      "bytes": 1416910,
+      "pixelsExact": true
+    },
+    {
+      "file": "docs/town-preview/current-rooms/haydn-thumb.webp",
+      "bytes": 287190,
+      "pixelsExact": true
+    },
+    {
+      "file": "docs/town-preview/current-rooms/handel.webp",
+      "bytes": 1356286,
+      "pixelsExact": true
+    },
+    {
+      "file": "docs/town-preview/current-rooms/handel-thumb.webp",
+      "bytes": 282498,
+      "pixelsExact": true
+    },
+    {
+      "file": "docs/town-preview/current-rooms/vivaldi.webp",
+      "bytes": 1377482,
+      "pixelsExact": true
+    },
+    {
+      "file": "docs/town-preview/current-rooms/vivaldi-thumb.webp",
+      "bytes": 274896,
+      "pixelsExact": true
+    },
+    {
+      "file": "docs/town-preview/current-rooms/joplin.webp",
+      "bytes": 1318722,
+      "pixelsExact": true
+    },
+    {
+      "file": "docs/town-preview/current-rooms/joplin-thumb.webp",
+      "bytes": 268792,
+      "pixelsExact": true
+    },
+    {
+      "file": "docs/town-preview/current-rooms/ellington.webp",
+      "bytes": 1455044,
+      "pixelsExact": true
+    },
+    {
+      "file": "docs/town-preview/current-rooms/ellington-thumb.webp",
+      "bytes": 285806,
+      "pixelsExact": true
+    },
+    {
+      "file": "docs/town-preview/current-rooms/ella.webp",
+      "bytes": 1282058,
+      "pixelsExact": true
+    },
+    {
+      "file": "docs/town-preview/current-rooms/ella-thumb.webp",
+      "bytes": 121456,
+      "pixelsExact": true
+    },
+    {
+      "file": "docs/town-preview/current-rooms/nina.webp",
+      "bytes": 1441776,
+      "pixelsExact": true
+    },
+    {
+      "file": "docs/town-preview/current-rooms/nina-thumb.webp",
+      "bytes": 136472,
+      "pixelsExact": true
+    },
+    {
+      "file": "docs/town-preview/current-rooms/miles.webp",
+      "bytes": 1018126,
+      "pixelsExact": true
+    },
+    {
+      "file": "docs/town-preview/current-rooms/miles-thumb.webp",
+      "bytes": 103564,
+      "pixelsExact": true
+    },
+    {
+      "file": "docs/town-preview/current-rooms/dj.webp",
+      "bytes": 1162710,
+      "pixelsExact": true
+    },
+    {
+      "file": "docs/town-preview/current-rooms/dj-thumb.webp",
+      "bytes": 112912,
+      "pixelsExact": true
+    },
+    {
+      "file": "docs/town-preview/current-rooms/vee-jay.webp",
+      "bytes": 1469376,
+      "pixelsExact": true
+    },
+    {
+      "file": "docs/town-preview/current-rooms/vee-jay-thumb.webp",
+      "bytes": 142590,
+      "pixelsExact": true
+    },
+    {
+      "file": "docs/town-preview/current-rooms/zizi.webp",
+      "bytes": 1293390,
+      "pixelsExact": true
+    },
+    {
+      "file": "docs/town-preview/current-rooms/zizi-thumb.webp",
+      "bytes": 123942,
+      "pixelsExact": true
+    },
+    {
+      "file": "docs/town-preview/current-rooms/metronome.webp",
+      "bytes": 1267568,
+      "pixelsExact": true
+    },
+    {
+      "file": "docs/town-preview/current-rooms/metronome-thumb.webp",
+      "bytes": 123298,
+      "pixelsExact": true
+    },
+    {
+      "file": "docs/town-preview/current-rooms/schoenberg.webp",
+      "bytes": 1300456,
+      "pixelsExact": true
+    },
+    {
+      "file": "docs/town-preview/current-rooms/schoenberg-thumb.webp",
+      "bytes": 134986,
+      "pixelsExact": true
+    },
+    {
+      "file": "docs/town-preview/current-rooms/player.webp",
+      "bytes": 1329130,
+      "pixelsExact": true
+    },
+    {
+      "file": "docs/town-preview/current-rooms/player-thumb.webp",
+      "bytes": 139136,
+      "pixelsExact": true
+    },
+    {
+      "file": "docs/town-preview/current-rooms/player-counter-live.webp",
+      "bytes": 190674,
+      "pixelsExact": true
+    },
+    {
+      "file": "docs/town-preview/current-rooms/player-sofa-live.webp",
+      "bytes": 381446,
+      "pixelsExact": true
+    },
+    {
+      "file": "docs/town-preview/current-rooms/showroom-victorian-parlor.webp",
+      "bytes": 639824,
+      "pixelsExact": true
+    },
+    {
+      "file": "docs/town-preview/current-rooms/showroom-victorian-parlor-thumb.webp",
+      "bytes": 109060,
+      "pixelsExact": true
+    },
+    {
+      "file": "docs/town-preview/current-rooms/showroom-art-deco-lounge.webp",
+      "bytes": 661262,
+      "pixelsExact": true
+    },
+    {
+      "file": "docs/town-preview/current-rooms/showroom-art-deco-lounge-thumb.webp",
+      "bytes": 110710,
+      "pixelsExact": true
+    },
+    {
+      "file": "docs/town-preview/current-rooms/showroom-coastal-bedroom.webp",
+      "bytes": 613886,
+      "pixelsExact": true
+    },
+    {
+      "file": "docs/town-preview/current-rooms/showroom-coastal-bedroom-thumb.webp",
+      "bytes": 104596,
+      "pixelsExact": true
+    },
+    {
+      "file": "docs/town-preview/current-rooms/showroom-rustic-kitchen.webp",
+      "bytes": 652816,
+      "pixelsExact": true
+    },
+    {
+      "file": "docs/town-preview/current-rooms/showroom-rustic-kitchen-thumb.webp",
+      "bytes": 109622,
+      "pixelsExact": true
+    },
+    {
+      "file": "docs/town-preview/current-rooms/showroom-botanical-conservatory.webp",
+      "bytes": 549198,
+      "pixelsExact": true
+    },
+    {
+      "file": "docs/town-preview/current-rooms/showroom-botanical-conservatory-thumb.webp",
+      "bytes": 94142,
+      "pixelsExact": true
+    },
+    {
+      "file": "docs/town-preview/current-rooms/showroom-botanical-conservatory-counter-live.webp",
+      "bytes": 263054,
+      "pixelsExact": true
+    },
+    {
+      "file": "docs/town-preview/current-rooms/showroom-botanical-conservatory-sofa-live.webp",
+      "bytes": 237886,
+      "pixelsExact": true
+    },
+    {
+      "file": "docs/town-preview/current-rooms/showroom-midcentury-studio.webp",
+      "bytes": 491000,
+      "pixelsExact": true
+    },
+    {
+      "file": "docs/town-preview/current-rooms/showroom-midcentury-studio-thumb.webp",
+      "bytes": 86138,
+      "pixelsExact": true
+    },
+    {
+      "file": "docs/town-preview/current-rooms/showroom-midcentury-studio-counter-live.webp",
+      "bytes": 238564,
+      "pixelsExact": true
+    },
+    {
+      "file": "docs/town-preview/current-rooms/showroom-midcentury-studio-sofa-live.webp",
+      "bytes": 245378,
+      "pixelsExact": true
+    },
+    {
+      "file": "docs/town-preview/current-rooms/showroom-french-cafe.webp",
+      "bytes": 623080,
+      "pixelsExact": true
+    },
+    {
+      "file": "docs/town-preview/current-rooms/showroom-french-cafe-thumb.webp",
+      "bytes": 106526,
+      "pixelsExact": true
+    },
+    {
+      "file": "docs/town-preview/current-rooms/showroom-industrial-loft.webp",
+      "bytes": 625846,
+      "pixelsExact": true
+    },
+    {
+      "file": "docs/town-preview/current-rooms/showroom-industrial-loft-thumb.webp",
+      "bytes": 103240,
+      "pixelsExact": true
+    },
+    {
+      "file": "docs/town-preview/current-rooms/showroom-retrofuture.webp",
+      "bytes": 1076898,
+      "pixelsExact": true
+    },
+    {
+      "file": "docs/town-preview/current-rooms/showroom-retrofuture-thumb.webp",
+      "bytes": 188908,
+      "pixelsExact": true
+    },
+    {
+      "file": "docs/town-preview/current-rooms/showroom-retrofuture-counter-live.webp",
+      "bytes": 238946,
+      "pixelsExact": true
+    },
+    {
+      "file": "docs/town-preview/current-rooms/showroom-retrofuture-sofa-live.webp",
+      "bytes": 348882,
+      "pixelsExact": true
+    },
+    {
+      "file": "docs/town-preview/current-rooms/showroom-cyberpunk.webp",
+      "bytes": 846234,
+      "pixelsExact": true
+    },
+    {
+      "file": "docs/town-preview/current-rooms/showroom-cyberpunk-thumb.webp",
+      "bytes": 151238,
+      "pixelsExact": true
+    },
+    {
+      "file": "docs/town-preview/current-rooms/showroom-steampunk.webp",
+      "bytes": 1082114,
+      "pixelsExact": true
+    },
+    {
+      "file": "docs/town-preview/current-rooms/showroom-steampunk-thumb.webp",
+      "bytes": 189840,
+      "pixelsExact": true
+    },
+    {
+      "file": "docs/town-preview/current-rooms/showroom-robot.webp",
+      "bytes": 1014926,
+      "pixelsExact": true
+    },
+    {
+      "file": "docs/town-preview/current-rooms/showroom-robot-thumb.webp",
+      "bytes": 183776,
+      "pixelsExact": true
+    },
+    {
+      "file": "docs/town-preview/current-rooms/showroom-robot-counter-live.webp",
+      "bytes": 167334,
+      "pixelsExact": true
+    },
+    {
+      "file": "docs/town-preview/current-rooms/showroom-robot-sofa-live.webp",
+      "bytes": 349794,
+      "pixelsExact": true
+    }
+  ]
+}

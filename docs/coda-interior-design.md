@@ -19,7 +19,7 @@ Read November 10, 2026, using the publishers' public source repositories for the
 | A focal group | Group sofa, coffee table and listening furniture. Wide NPC living areas gain an inward-facing cardinal chair and nearby task lamp; dedicated reading nooks remain separate. The player's sofa faces its coffee table. |
 | Circulation | Route walking around seating groups. Check actual rotated collision bases, fixture approaches, door landings and resident journeys with player collision padding. |
 | Working kitchens | Group sink, prep surface, stove and refrigerator along a usable work edge. Provide standing positions. Avoid cramped U-shaped arrangements in shallow homes. |
-| Scale and restraint | Retain native furniture proportions. Grand pianos use deep physical bases; round tables keep broad, balanced forms when turned. Use one owner-specific collection, one defining rug and supported accents instead of repeated decorative clutter. |
+| Scale and restraint | Preserve source artwork aspect while using the actual Arcade player and placed furniture as the human-scale reference. Grand pianos use deep physical bases; round tables keep broad, balanced forms when turned. Use one owner-specific collection, one defining rug and supported accents instead of repeated decorative clutter. |
 | Usable surfaces | Keep turntables and their controls clear. The upper apartments put lava lamps on free desk or homework-table space, with drawing depth tied to the supporting furniture. |
 | Lighting | Put task-light pools beside chairs or work surfaces, with softer room fill. Favor cross-room reading sightlines over staring into a bright window. |
 | Harmony and variety | Repeat a controlled material/color vocabulary within each home while giving homes distinct silhouettes and furnishings. |
@@ -38,3 +38,10 @@ All furniture faces north, east, south or west; diagonal poses are excluded. Pic
 | Robot Companion | Powder-blue enamel, ivory, soft yellow, aluminum | Friendly indicator faces, rounded joints and charging docks |
 
 Each has 32 unique pieces, including a lava lamp, arcade cabinet, poster and toy. Existing furniture ownership and prices remain compatible.
+
+
+## Current room implementation
+
+The [finished-room gallery](coda-room-gallery.html) shows all 31 layouts and six homes at normal play zoom. Physical furniture backs sit 4–8 world units from their actual room walls; bedheads and tall storage avoid window glazing. Sink, preparation and cooking surfaces form contiguous work runs; the open steampunk and robot homes use outer-wall L-shaped runs to preserve the central aisle. Mirrors sit above their own basins. Dining and desk chairs face their tables, and listening furniture groups around an area rug. Every home has a dining table and rug. Front approaches, privacy-door landings, fixed resident journeys and the player’s reserved decorating regions are checked across all 31 models.
+
+Material contrast separates foreground objects from the floor. Botanical greens stand against ivory limestone and cream walls; warm walnut furniture stands against cooler ash parquet. Quiet carpets, small kitchen tiles and distinct ceramic bathroom walls give each functional room a purpose without competing with the furniture.

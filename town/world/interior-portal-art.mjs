@@ -173,8 +173,11 @@ export function createInteriorPortalArt({createCanvas=defaultCanvas,maxEntries=P
    // openings must not lose twenty-two pixels to the legacy inset caps.
    const depth=clamp(finite(d.wallThickness,18),12,28),cap=4;
    cached(c,['plan-clear-opening',span,depth,p.key].join('|'),span+cap*2,depth+4,cc=>{
-    pixel(cc,cap,depth/2,span,4,p.frameDark);pixel(cc,cap,depth/2,span,2,p.ivory);pixel(cc,cap,depth/2,span,1,p.light);
-    for(const x of [0,span+cap]){pixel(cc,x,2,cap,depth,p.frameDark);pixel(cc,x+1,3,cap-2,depth-2,p.frame);pixel(cc,x,3,cap,2,p.trim);}
+    // A shallow pale-stone inlay separates the opening from busy timber or
+    // patterned tiles. Its dark lower lip reads as depth, not a tall facade.
+    pixel(cc,cap,depth/2-3,span,10,'#17232c');pixel(cc,cap,depth/2-2,span,8,p.ivory);pixel(cc,cap,depth/2-2,span,1,p.light);pixel(cc,cap,depth/2+5,span,1,p.frameDark);
+    for(const x of [cap+Math.round(span/3),cap+Math.round(span*2/3)])pixel(cc,x,depth/2-1,1,6,'#9b9788');
+    for(const x of [0,span+cap]){pixel(cc,x,2,cap,depth,'#17232c');pixel(cc,x+1,3,cap-2,depth-2,p.frame);pixel(cc,x,3,cap,2,p.light);pixel(cc,x,depth,cap,2,p.trim);}
    },-cap,-depth/2-2);
   }else cached(c,['plan-opening',span,p.key].join('|'),span+20,20,cc=>{
    pixel(cc,10,7,span,6,p.frameDark);pixel(cc,10,8,span,3,p.ivory);pixel(cc,10,8,span,1,p.light);
@@ -183,13 +186,14 @@ export function createInteriorPortalArt({createCanvas=defaultCanvas,maxEntries=P
   // Rotate the actual narrow leaf in the floor plane around its real hinge.
   // This is an overhead edge, with wood grain, a brass pin and a small handle.
   const {x:a,y:b}=g.vector;
-  c.save();c.translate(g.hinge.x+2,g.hinge.y+3);c.transform(a,b,-b,a,0,0);pixel(c,0,-4,span,8,'#14202730');c.restore();
+  c.save();c.translate(g.hinge.x+(g.clearOpening?3:2),g.hinge.y+(g.clearOpening?4:3));c.transform(a,b,-b,a,0,0);pixel(c,0,-4,span,8,g.clearOpening?'#0c172440':'#14202730');c.restore();
   c.save();c.translate(g.hinge.x,g.hinge.y);c.transform(a,b,-b,a,0,0);
-  cached(c,['plan-leaf',span,p.key].join('|'),span,12,cc=>{
-   pixel(cc,0,2,span,8,p.leafDark);pixel(cc,1,3,span-2,5,p.leaf);
+  cached(c,['plan-leaf',span,p.key,!!g.clearOpening].join('|'),span,12,cc=>{
+   pixel(cc,0,2,span,8,g.clearOpening?'#17232c':p.leafDark);pixel(cc,1,3,span-2,5,p.leaf);
    material(cc,p.metallic?3:0,{x:2,y:3,w:span-4,h:5},p.leaf);
-   pixel(cc,1,2,span-2,1,p.leafLight);pixel(cc,3,5,span-6,1,p.leafDark);pixel(cc,1,9,span-2,1,p.frameDark);
-   pixel(cc,span-12,7,6,3,p.trim);pixel(cc,span-11,7,4,1,p.light);
+   pixel(cc,1,2,span-2,1,g.clearOpening?p.light:p.leafLight);pixel(cc,3,5,span-6,1,p.leafDark);pixel(cc,1,9,span-2,1,p.frameDark);
+   if(g.clearOpening){pixel(cc,span-13,4,9,5,'#17232c');pixel(cc,span-12,5,7,3,p.trim);pixel(cc,span-11,5,5,1,p.light);pixel(cc,2,3,1,2,p.trim);}
+   else{pixel(cc,span-12,7,6,3,p.trim);pixel(cc,span-11,7,4,1,p.light);}
   },0,-6);c.restore();
   pixel(c,g.hinge.x-2,g.hinge.y-2,4,4,p.trim);pixel(c,g.hinge.x-1,g.hinge.y-1,2,2,p.light);
   c.restore();return g;

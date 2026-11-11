@@ -1,4 +1,4 @@
-import {furnitureFacingBoxes,furnitureFacingBounds} from './furniture-facing.mjs?v=town-polish-1';
+import {furnitureFacingBoxes,furnitureFacingBounds} from './furniture-facing.mjs?v=interior-design-1';
 // Room placements are local to the active arcade profile. Notes ownership is
 // managed by the wallet; this file never grants furniture or changes currency.
 export const ROOM_KEY='codaUrbanRoomV1';
@@ -8,11 +8,12 @@ const finite=value=>typeof value==='number'&&Number.isFinite(value);
 const rect=value=>value&&finite(value.x)&&finite(value.y)&&finite(value.w)&&finite(value.h)&&value.w>0&&value.h>0;
 const intersects=(a,b)=>a.x<b.x+b.w&&a.x+a.w>b.x&&a.y<b.y+b.h&&a.y+a.h>b.y;
 const contains=(a,b)=>b.x>=a.x&&b.y>=a.y&&b.x+b.w<=a.x+a.w&&b.y+b.h<=a.y+a.h;
+const displayScale=(policy,item,asset)=>typeof policy==='function'?policy(item,asset):policy;
 
 // Coordinates use the same bottom-center anchor as assets in the town builder.
 // Only collision boxes block walking; plants and wall hangings can overlap air.
 export function roomItemBoxes(item,catalog,presentationScale=1){
- const asset=catalog?.get(item.asset),scale=(item.scale??1)*presentationScale;
+ const asset=catalog?.get(item.asset),scale=(item.scale??1)*displayScale(presentationScale,item,asset);
  if(!asset||!finite(scale)||scale<=0)return [];
  return furnitureFacingBoxes(asset,{x:item.x,y:item.y,scale,rotation:item.rotation??0});
 }
@@ -37,8 +38,9 @@ export function createRoomStorage(options={}){
    if(!finite(scale)||scale<=0||scale!==expected)return 'This decoration has an invalid size. Place it again from your inventory.';
    if(!ownership.has(item.item))return 'Buy this decoration at Coda Furnishings before placing it.';
    if(placed.has(item.item))return 'Each decoration can be placed once. Select it again to move it.';
-   const bounds=(getBounds(item,asset)||[]).filter(rect);
-   const visual=furnitureFacingBounds(asset,{x:item.x,y:item.y,scale:scale*presentationScale,rotation:item.rotation??0});
+   const bounds=(getBounds(item,asset)||[]).filter(rect),factor=displayScale(presentationScale,item,asset);
+   if(!finite(factor)||factor<=0)return 'This decoration could not be sized for your room.';
+   const visual=furnitureFacingBounds(asset,{x:item.x,y:item.y,scale:scale*factor,rotation:item.rotation??0});
    if(!bounds.some(bound=>contains(bound,visual)))return 'Keep the entire decoration inside the furnished area of your room.';
    const boxes=roomItemBoxes(item,catalog,presentationScale);
    if(boxes.some(box=>fixed.some(wall=>intersects(box,wall))))return 'That spot is occupied by a wall or built-in furniture.';

@@ -1,6 +1,7 @@
-import {APARTMENT_COLLECTION_ASSETS} from './apartment-collection-definitions.mjs?v=town-polish-1';
-import {createApartmentCollectionRuntime} from './apartment-collection-runtime.mjs?v=town-polish-1';
-export * from './apartment-collection-definitions.mjs?v=town-polish-1';
+import {APARTMENT_COLLECTION_ASSETS} from './apartment-collection-definitions.mjs?v=interior-design-1';
+import {createApartmentCollectionRuntime} from './apartment-collection-runtime.mjs?v=interior-design-1';
+import {resolveSouthArtCorrections,SOUTH_ART_PREVIEW} from './south-art-fixes.mjs?v=interior-design-1';
+export * from './apartment-collection-definitions.mjs?v=interior-design-1';
 
 const base=new URL('../assets/apartment-collections/',import.meta.url);
 function assetURL(file){const url=new URL(file,base);url.search=new URL(import.meta.url).search;return url;}
@@ -30,8 +31,13 @@ export async function registerApartmentCollections(add,{
  directionManifest??=externalManifest?await fetchDirections():null;
  // Only the 31 small owner thumbnails load during catalog startup. Full native
  // sheets are fetched for an entered home and released independently later.
- const thumbnails=new Map(await Promise.all(manifest.collections.map(async collection=>[collection.owner,await loadImage(assetURL(collection.thumbnail).href)])));
- const runtime=createApartmentCollectionRuntime({definitions,manifest,directionManifest,overviewManifest,thumbnails,loadImage:file=>loadImage(assetURL(file).href),createCanvas,maxSources,maxCanvases,maxCanvasPixels});
+ const southArtCorrections=externalManifest?resolveSouthArtCorrections(definitions,directionManifest):[];
+ const [thumbnailEntries,southArtPreview]=await Promise.all([
+  Promise.all(manifest.collections.map(async collection=>[collection.owner,await loadImage(assetURL(collection.thumbnail).href)])),
+  southArtCorrections.length?loadImage(assetURL(SOUTH_ART_PREVIEW.file).href):null
+ ]);
+ const thumbnails=new Map(thumbnailEntries);
+ const runtime=createApartmentCollectionRuntime({definitions,manifest,directionManifest,overviewManifest,thumbnails,southArtCorrections,southArtPreview,loadImage:file=>loadImage(assetURL(file).href),createCanvas,maxSources,maxCanvases,maxCanvasPixels});
  const assets=definitions.map(def=>{
   const asset=add(def.id,def.name,'apartment collections',def.w,def.h,c=>runtime.draw(def.id,c),def.boxes.map(box=>({...box})),def.layer);
   Object.assign(asset,{

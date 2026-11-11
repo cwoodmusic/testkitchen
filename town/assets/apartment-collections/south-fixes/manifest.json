@@ -1,0 +1,40 @@
+{
+  "version": 1,
+  "asset": "collection-showroom-midcentury-studio-arcade",
+  "file": "midcentury-arcade-south-d3d457042101.webp",
+  "width": 825,
+  "height": 1342,
+  "generation": "image_gen reference edit, front orthographic South",
+  "sourceGeneratedFile": "exec-01ffd581-4239-409d-a2e4-73fc29088cca.png",
+  "sourceSHA256": "d735a4cff6e6ed607d84c8a6a11b2e3fceed48e53268be5a0e71f5971adaca03",
+  "packCrop": [
+    67,
+    110,
+    892,
+    1452
+  ],
+  "pixelSHA256": "d3d457042101e42749a47b85fd7a90b19051eeb064d2b9c5a32ce324f9b471c7",
+  "footCenter": [
+    0.5,
+    0.94
+  ],
+  "motionMask": [
+    [
+      0.27,
+      0.24
+    ],
+    [
+      0.73,
+      0.24
+    ],
+    [
+      0.73,
+      0.49
+    ],
+    [
+      0.27,
+      0.49
+    ]
+  ],
+  "review": "Same walnut/teal/cream/brass design; parallel screen edges and equal front rail widths; symmetric front feet. Source pixel crop only, no scaling or skew. Physical world100x176 and original collision boxes unchanged."
+}

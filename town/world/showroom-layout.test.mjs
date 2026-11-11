@@ -61,7 +61,7 @@ test('each independent owner has one complete bath, a practical kitchen and uniq
   for(const item of m.items){assert.equal(item.collectionOwner,owner);assert(!all.has(item.asset),'An apartment must not reuse another collection’s artwork');all.add(item.asset);assert(item.visualSignature.includes(owner));}
   for(const role of ['sink','counter','stove','fridge','pantry','vanity','toilet','bath-fixture','bathroom-mirror'])assert.equal(m.items.filter(i=>i.fixtureRole===role).length,1,d.name+' needs one '+role);
   for(const role of ['bed','sofa','coffee-table','dining-table','dining-chair','nightstand','wardrobe','playful-accent','music-rug','wall-art','lava-lamp','arcade'])assert(m.items.some(i=>i.furnitureRole===role),d.name+' lacks '+role);
-  const vanity=m.items.find(i=>i.slot==='vanity'),mirror=m.items.find(i=>i.slot==='mirror');assert(Math.abs(mirror.x-vanity.x)<1e-8);assert.equal(mirror.y,d.storeFloor===2&&!d.row?540:96);assert(mirror.wallMounted&&!mirror.solid);
+  const vanity=m.items.find(i=>i.slot==='vanity'),mirror=m.items.find(i=>i.slot==='mirror');assert(Math.abs(mirror.x-vanity.x)<1e-8);assert(Math.abs(mirror.y-(vanity.y-vanity.h-6))<1e-8,'The mirror sits directly above its actual basin');assert(mirror.wallMounted&&!mirror.solid);
   for(const item of m.items.filter(i=>i.fixtureRole&&i.solid)){const b=feet(item)[0];assert(nav.points.some(p=>Math.hypot(p.x-b.x-b.w/2,p.y-b.y-b.h)<=75),d.name+' cannot approach '+item.fixtureRole);}
   for(const slot of ['toy','table-lamp','lava-lamp']){const item=m.items.find(i=>i.slot===slot),support=m.items.find(i=>i.asset===item.supportedBy);assert(support&&!item.solid);assert.equal(item.depth,furnitureFacingDepth(native.get(support.asset),support)+.25);}
  }
@@ -70,9 +70,10 @@ test('each independent owner has one complete bath, a practical kitchen and uniq
 
 test('collection stock is exactly the physical buyable pieces while all previous products and ownership IDs remain available',()=>{
  for(const d of SHOWROOMS){const m=getInterior({kind:'showroom',showroomId:d.id});assert.deepEqual(d.productIds.slice().sort(),m.items.map(i=>i.productId).sort());for(const item of m.items)assert.equal(products.get(item.productId)?.asset,item.asset,'A purchase must unlock the exact display asset');}
- assert.equal(stock.filter(p=>!p.asset.startsWith('apartment-')&&!p.asset.startsWith('collection-')).length,52);
+ assert.equal(stock.filter(p=>!p.asset.startsWith('apartment-')&&!p.asset.startsWith('collection-')&&!p.asset.startsWith('plush-')).length,52);
+ assert.equal(stock.filter(p=>p.asset.startsWith('plush-')).length,12);
  for(const d of getStoreFloorShowrooms(1))for(const role of ['bed','sofa'])assert(products.has('furniture-'+d.id+'-'+role),'Existing owned signatures must keep their IDs');
- assert.equal(stock.length,100+APARTMENT_COLLECTION_ASSETS.filter(a=>a.owner.startsWith('showroom-')).length);
+ assert.equal(stock.length,100+APARTMENT_COLLECTION_ASSETS.filter(a=>a.owner.startsWith('showroom-')).length+19+12);
 });
 
 test('upper homes protect broad circulation and group conversation around a real listening focus',()=>{
@@ -101,7 +102,10 @@ test('upper homes protect broad circulation and group conversation around a real
 test('native art keeps its aspect ratio and all physical bases stay distinct inside the wide floor plate',()=>{
  for(const d of SHOWROOMS){const m=getInterior({kind:'showroom',showroomId:d.id}),footprints=[];
   for(const item of m.items){const a=native.get(item.asset);assert(Math.abs(item.w/item.h-a.w/a.h)<1e-9,'A native sprite must not be squashed to fit');assert(item.x-item.w/2>=28&&item.x+item.w/2<=m.width-28,item.asset+' width');
-   if(item.wallMounted)assert(d.apartment.wallpaperAreas?.some(r=>item.x-item.w/2>=r.x&&item.x+item.w/2<=r.x+r.w&&item.y-item.h>=r.y&&item.y<=r.y+r.h)||item.y-item.h>=0&&item.y<=106);else assert(item.y-item.h>=106&&item.y<=m.height-28,item.asset+' height');
+   if(item.wallMounted)assert(d.apartment.wallpaperAreas?.some(r=>item.x-item.w/2>=r.x&&item.x+item.w/2<=r.x+r.w&&item.y-item.h>=r.y&&item.y<=r.y+r.h)||item.y-item.h>=0&&item.y<=106);else{
+    assert(item.y-item.h>=0&&item.y<=m.height-28,item.asset+' artwork fits inside the cutaway');
+    for(const b of feet(item))assert(b.x>=28&&b.y>=106&&b.x+b.w<=m.width-28&&b.y+b.h<=m.height-28,item.asset+' physical base stays on the floor while its upright artwork can overlap the back wall');
+   }
    for(const b of feet(item)){assert(!footprints.some(other=>overlaps(b,other.box)),d.name+' overlaps '+item.slot+' and '+footprints.find(other=>overlaps(b,other.box))?.slot);footprints.push({box:b,slot:item.slot});}
   }
  }

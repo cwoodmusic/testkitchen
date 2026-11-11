@@ -1,0 +1,1185 @@
+{
+  "version": 1,
+  "count": 12,
+  "views": 48,
+  "file": "plush-cardinal-48.webp",
+  "width": 2048,
+  "height": 1504,
+  "thumbnail": "plush-cardinal-48-thumb.webp",
+  "thumbnailWidth": 512,
+  "thumbnailHeight": 376,
+  "sha256": "f764cfe2e3860e05958e180d69c4b75c389c5ec7870fc28c0d5d300c2452d518",
+  "sources": [
+    {
+      "file": "source-1.png",
+      "sha256": "afc641935f9051f52e88c28ab7071b3aabc36647d193d126cd64bf3468374e44",
+      "width": 1024,
+      "height": 1536,
+      "generator": "image_gen",
+      "layout": "six rows; columns south,north,east,west"
+    },
+    {
+      "file": "source-2.png",
+      "sha256": "9ddb8c7af41348ced7c2493029d3cca7461538887024df797bddc032e379d117",
+      "width": 1024,
+      "height": 1536,
+      "generator": "image_gen",
+      "layout": "six rows; columns south,north,east,west"
+    }
+  ],
+  "frames": [
+    {
+      "id": "plush-headphone-whale",
+      "direction": "south",
+      "source": "source-1.png",
+      "sourceRect": {
+        "x": 13,
+        "y": 23,
+        "w": 231,
+        "h": 218
+      },
+      "pixelSHA256": "b3aa57e76df91be0ccab512b08c62ba60b4d08c63003a2db233762f5e20b244a",
+      "opaqueBounds": {
+        "x": 6,
+        "y": 6,
+        "w": 219,
+        "h": 206
+      },
+      "rect": {
+        "x": 4,
+        "y": 4,
+        "w": 231,
+        "h": 218
+      }
+    },
+    {
+      "id": "plush-headphone-whale",
+      "direction": "north",
+      "source": "source-1.png",
+      "sourceRect": {
+        "x": 270,
+        "y": 23,
+        "w": 229,
+        "h": 218
+      },
+      "pixelSHA256": "abe15f4cf94fce915a35a7932273edafbc7b6f02b6f787c141133c7ac206cd74",
+      "opaqueBounds": {
+        "x": 6,
+        "y": 6,
+        "w": 217,
+        "h": 206
+      },
+      "rect": {
+        "x": 243,
+        "y": 4,
+        "w": 229,
+        "h": 218
+      }
+    },
+    {
+      "id": "plush-headphone-whale",
+      "direction": "east",
+      "source": "source-1.png",
+      "sourceRect": {
+        "x": 515,
+        "y": 62,
+        "w": 226,
+        "h": 179
+      },
+      "pixelSHA256": "a2e060be14dd2699943c26b3d994485cc6a234613670fd9906de7df1c18daf3c",
+      "opaqueBounds": {
+        "x": 6,
+        "y": 6,
+        "w": 214,
+        "h": 167
+      },
+      "rect": {
+        "x": 480,
+        "y": 4,
+        "w": 226,
+        "h": 179
+      }
+    },
+    {
+      "id": "plush-headphone-whale",
+      "direction": "west",
+      "source": "source-1.png",
+      "sourceRect": {
+        "x": 794,
+        "y": 62,
+        "w": 229,
+        "h": 179
+      },
+      "pixelSHA256": "86006745d002d087628d59f4571ee19b6b8a9ebd3578076b628d356a89e2ab76",
+      "opaqueBounds": {
+        "x": 6,
+        "y": 6,
+        "w": 217,
+        "h": 167
+      },
+      "rect": {
+        "x": 714,
+        "y": 4,
+        "w": 229,
+        "h": 179
+      }
+    },
+    {
+      "id": "plush-lavender-dragon",
+      "direction": "south",
+      "source": "source-1.png",
+      "sourceRect": {
+        "x": 8,
+        "y": 262,
+        "w": 243,
+        "h": 234
+      },
+      "pixelSHA256": "5d84d1911133e647ac996c83f4c6ff739977c7ccc14013de293e615f46bf0e2c",
+      "opaqueBounds": {
+        "x": 6,
+        "y": 6,
+        "w": 231,
+        "h": 222
+      },
+      "rect": {
+        "x": 951,
+        "y": 4,
+        "w": 243,
+        "h": 234
+      }
+    },
+    {
+      "id": "plush-lavender-dragon",
+      "direction": "north",
+      "source": "source-1.png",
+      "sourceRect": {
+        "x": 267,
+        "y": 262,
+        "w": 235,
+        "h": 234
+      },
+      "pixelSHA256": "793f25a8a2570227d419c0d0b93f2f0f1006573f6940c1d348b0259902b79dcd",
+      "opaqueBounds": {
+        "x": 6,
+        "y": 6,
+        "w": 223,
+        "h": 222
+      },
+      "rect": {
+        "x": 1202,
+        "y": 4,
+        "w": 235,
+        "h": 234
+      }
+    },
+    {
+      "id": "plush-lavender-dragon",
+      "direction": "east",
+      "source": "source-1.png",
+      "sourceRect": {
+        "x": 524,
+        "y": 262,
+        "w": 202,
+        "h": 234
+      },
+      "pixelSHA256": "07f13ce97b4a3b952f00f1e87f9468fcf792221bf9e867d0a024b8120da98063",
+      "opaqueBounds": {
+        "x": 6,
+        "y": 6,
+        "w": 190,
+        "h": 222
+      },
+      "rect": {
+        "x": 1445,
+        "y": 4,
+        "w": 202,
+        "h": 234
+      }
+    },
+    {
+      "id": "plush-lavender-dragon",
+      "direction": "west",
+      "source": "source-1.png",
+      "sourceRect": {
+        "x": 808,
+        "y": 261,
+        "w": 201,
+        "h": 235
+      },
+      "pixelSHA256": "25e5612b99be84257a1b6d61900193e2397f5ee4b90ae1201aab5a9abf887cb0",
+      "opaqueBounds": {
+        "x": 6,
+        "y": 6,
+        "w": 189,
+        "h": 223
+      },
+      "rect": {
+        "x": 1655,
+        "y": 4,
+        "w": 201,
+        "h": 235
+      }
+    },
+    {
+      "id": "plush-ukulele-capybara",
+      "direction": "south",
+      "source": "source-1.png",
+      "sourceRect": {
+        "x": 24,
+        "y": 521,
+        "w": 205,
+        "h": 239
+      },
+      "pixelSHA256": "ef1c7fa53b77fee64b9cc9217e4a006c344f5268831187988740da07a73d3008",
+      "opaqueBounds": {
+        "x": 6,
+        "y": 6,
+        "w": 193,
+        "h": 227
+      },
+      "rect": {
+        "x": 4,
+        "y": 247,
+        "w": 205,
+        "h": 239
+      }
+    },
+    {
+      "id": "plush-ukulele-capybara",
+      "direction": "north",
+      "source": "source-1.png",
+      "sourceRect": {
+        "x": 281,
+        "y": 522,
+        "w": 205,
+        "h": 238
+      },
+      "pixelSHA256": "5cba7fb9f35641cc859ae1c6c830272c3b1c27c971f96d3e183b216945229a83",
+      "opaqueBounds": {
+        "x": 6,
+        "y": 6,
+        "w": 193,
+        "h": 226
+      },
+      "rect": {
+        "x": 217,
+        "y": 247,
+        "w": 205,
+        "h": 238
+      }
+    },
+    {
+      "id": "plush-ukulele-capybara",
+      "direction": "east",
+      "source": "source-1.png",
+      "sourceRect": {
+        "x": 535,
+        "y": 518,
+        "w": 195,
+        "h": 241
+      },
+      "pixelSHA256": "6feee81db9b53b2bbedc279bc4b5188cfcb0db35a0c8cd43ac75a4370f2395c5",
+      "opaqueBounds": {
+        "x": 6,
+        "y": 6,
+        "w": 183,
+        "h": 229
+      },
+      "rect": {
+        "x": 430,
+        "y": 247,
+        "w": 195,
+        "h": 241
+      }
+    },
+    {
+      "id": "plush-ukulele-capybara",
+      "direction": "west",
+      "source": "source-1.png",
+      "sourceRect": {
+        "x": 805,
+        "y": 518,
+        "w": 196,
+        "h": 240
+      },
+      "pixelSHA256": "295cd94563d442bd09931368bca5e0bfc246d38571bc172e5d3b77d50f51fb3b",
+      "opaqueBounds": {
+        "x": 6,
+        "y": 6,
+        "w": 184,
+        "h": 228
+      },
+      "rect": {
+        "x": 633,
+        "y": 247,
+        "w": 196,
+        "h": 240
+      }
+    },
+    {
+      "id": "plush-starry-bunny",
+      "direction": "south",
+      "source": "source-1.png",
+      "sourceRect": {
+        "x": 43,
+        "y": 768,
+        "w": 173,
+        "h": 256
+      },
+      "pixelSHA256": "55888139cbe0ceb90102afc438adfbfe63630b641d631f3f6b623f75b5b3efab",
+      "opaqueBounds": {
+        "x": 6,
+        "y": 5,
+        "w": 161,
+        "h": 249
+      },
+      "rect": {
+        "x": 837,
+        "y": 247,
+        "w": 173,
+        "h": 256
+      }
+    },
+    {
+      "id": "plush-starry-bunny",
+      "direction": "north",
+      "source": "source-1.png",
+      "sourceRect": {
+        "x": 296,
+        "y": 768,
+        "w": 173,
+        "h": 256
+      },
+      "pixelSHA256": "7c99a5fd53025b6797c148c061ef7ffda987feb04e097147204b1e5536ad5fa3",
+      "opaqueBounds": {
+        "x": 6,
+        "y": 6,
+        "w": 161,
+        "h": 249
+      },
+      "rect": {
+        "x": 1018,
+        "y": 247,
+        "w": 173,
+        "h": 256
+      }
+    },
+    {
+      "id": "plush-starry-bunny",
+      "direction": "east",
+      "source": "source-1.png",
+      "sourceRect": {
+        "x": 546,
+        "y": 768,
+        "w": 171,
+        "h": 256
+      },
+      "pixelSHA256": "c6205c6f2867a1fd48f79e744ccd94571bf059177191fc3c2ee4d1f6f01b2dbf",
+      "opaqueBounds": {
+        "x": 6,
+        "y": 2,
+        "w": 159,
+        "h": 253
+      },
+      "rect": {
+        "x": 1199,
+        "y": 247,
+        "w": 171,
+        "h": 256
+      }
+    },
+    {
+      "id": "plush-starry-bunny",
+      "direction": "west",
+      "source": "source-1.png",
+      "sourceRect": {
+        "x": 820,
+        "y": 768,
+        "w": 170,
+        "h": 256
+      },
+      "pixelSHA256": "f2a55a2fa433758ce7cfce8a9cc24b8e8e0d9eb227ab23fa2a2f5bb0efdd78b8",
+      "opaqueBounds": {
+        "x": 6,
+        "y": 2,
+        "w": 158,
+        "h": 253
+      },
+      "rect": {
+        "x": 1378,
+        "y": 247,
+        "w": 170,
+        "h": 256
+      }
+    },
+    {
+      "id": "plush-strawberry-frog",
+      "direction": "south",
+      "source": "source-1.png",
+      "sourceRect": {
+        "x": 17,
+        "y": 1028,
+        "w": 214,
+        "h": 251
+      },
+      "pixelSHA256": "df5f3f45ec8f29ae2917034205646cdff8c5cd7326465a83e265b43db3940aec",
+      "opaqueBounds": {
+        "x": 6,
+        "y": 6,
+        "w": 202,
+        "h": 239
+      },
+      "rect": {
+        "x": 1556,
+        "y": 247,
+        "w": 214,
+        "h": 251
+      }
+    },
+    {
+      "id": "plush-strawberry-frog",
+      "direction": "north",
+      "source": "source-1.png",
+      "sourceRect": {
+        "x": 281,
+        "y": 1029,
+        "w": 207,
+        "h": 246
+      },
+      "pixelSHA256": "006484d2dbd5196f868114541b57b31fcb26ede83472c995bf3b4dfe9cfea349",
+      "opaqueBounds": {
+        "x": 6,
+        "y": 6,
+        "w": 195,
+        "h": 234
+      },
+      "rect": {
+        "x": 1778,
+        "y": 247,
+        "w": 207,
+        "h": 246
+      }
+    },
+    {
+      "id": "plush-strawberry-frog",
+      "direction": "east",
+      "source": "source-1.png",
+      "sourceRect": {
+        "x": 543,
+        "y": 1031,
+        "w": 191,
+        "h": 246
+      },
+      "pixelSHA256": "4f3a0902d0054aaed4e53dd32bb429004a487a645ffa1d4f47410324268eee12",
+      "opaqueBounds": {
+        "x": 6,
+        "y": 6,
+        "w": 179,
+        "h": 234
+      },
+      "rect": {
+        "x": 4,
+        "y": 511,
+        "w": 191,
+        "h": 246
+      }
+    },
+    {
+      "id": "plush-strawberry-frog",
+      "direction": "west",
+      "source": "source-1.png",
+      "sourceRect": {
+        "x": 803,
+        "y": 1032,
+        "w": 192,
+        "h": 245
+      },
+      "pixelSHA256": "dd5844b2f5be3f3446771b18420a1483daa11c1012d55f2f169bb38189d3840f",
+      "opaqueBounds": {
+        "x": 6,
+        "y": 6,
+        "w": 180,
+        "h": 233
+      },
+      "rect": {
+        "x": 203,
+        "y": 511,
+        "w": 192,
+        "h": 245
+      }
+    },
+    {
+      "id": "plush-red-panda",
+      "direction": "south",
+      "source": "source-1.png",
+      "sourceRect": {
+        "x": 4,
+        "y": 1292,
+        "w": 229,
+        "h": 236
+      },
+      "pixelSHA256": "caeafb8750d1e882e1252f5c0514e59c1ddb4e45be0e31de91bba9536bf085df",
+      "opaqueBounds": {
+        "x": 6,
+        "y": 6,
+        "w": 217,
+        "h": 224
+      },
+      "rect": {
+        "x": 403,
+        "y": 511,
+        "w": 229,
+        "h": 236
+      }
+    },
+    {
+      "id": "plush-red-panda",
+      "direction": "north",
+      "source": "source-1.png",
+      "sourceRect": {
+        "x": 274,
+        "y": 1292,
+        "w": 227,
+        "h": 237
+      },
+      "pixelSHA256": "d1b25063904b09b12f541e6e048d48cdb939df8f580e846667afe01d091a9969",
+      "opaqueBounds": {
+        "x": 6,
+        "y": 6,
+        "w": 215,
+        "h": 225
+      },
+      "rect": {
+        "x": 640,
+        "y": 511,
+        "w": 227,
+        "h": 237
+      }
+    },
+    {
+      "id": "plush-red-panda",
+      "direction": "east",
+      "source": "source-1.png",
+      "sourceRect": {
+        "x": 515,
+        "y": 1287,
+        "w": 215,
+        "h": 240
+      },
+      "pixelSHA256": "b85f9f1b668887582ae982e184ee9b730307c38bf01abd4549595c5607be7072",
+      "opaqueBounds": {
+        "x": 6,
+        "y": 6,
+        "w": 203,
+        "h": 228
+      },
+      "rect": {
+        "x": 875,
+        "y": 511,
+        "w": 215,
+        "h": 240
+      }
+    },
+    {
+      "id": "plush-red-panda",
+      "direction": "west",
+      "source": "source-1.png",
+      "sourceRect": {
+        "x": 806,
+        "y": 1290,
+        "w": 215,
+        "h": 237
+      },
+      "pixelSHA256": "c5b7bc9f49c03ea8f51c86dbbdc5250b1c44d5995fff0c8a240d5d8e92876404",
+      "opaqueBounds": {
+        "x": 6,
+        "y": 6,
+        "w": 203,
+        "h": 225
+      },
+      "rect": {
+        "x": 1098,
+        "y": 511,
+        "w": 215,
+        "h": 237
+      }
+    },
+    {
+      "id": "plush-cloud-cat",
+      "direction": "south",
+      "source": "source-2.png",
+      "sourceRect": {
+        "x": 16,
+        "y": 25,
+        "w": 230,
+        "h": 219
+      },
+      "pixelSHA256": "d6789b5602ee121a0858ab28bc4d75d540c45e5f3fd82db6e2c8ee8be5c62681",
+      "opaqueBounds": {
+        "x": 6,
+        "y": 6,
+        "w": 218,
+        "h": 207
+      },
+      "rect": {
+        "x": 1321,
+        "y": 511,
+        "w": 230,
+        "h": 219
+      }
+    },
+    {
+      "id": "plush-cloud-cat",
+      "direction": "north",
+      "source": "source-2.png",
+      "sourceRect": {
+        "x": 270,
+        "y": 25,
+        "w": 232,
+        "h": 222
+      },
+      "pixelSHA256": "b34140487df59a98479112a1f34a2b345c4a9f15cc19fe5c5af22970cf5afc92",
+      "opaqueBounds": {
+        "x": 6,
+        "y": 6,
+        "w": 220,
+        "h": 210
+      },
+      "rect": {
+        "x": 1559,
+        "y": 511,
+        "w": 232,
+        "h": 222
+      }
+    },
+    {
+      "id": "plush-cloud-cat",
+      "direction": "east",
+      "source": "source-2.png",
+      "sourceRect": {
+        "x": 539,
+        "y": 21,
+        "w": 200,
+        "h": 225
+      },
+      "pixelSHA256": "f477092c6e0a7ce550db61522657514e08c21a5e3ad73d509d6ad1513cb351d6",
+      "opaqueBounds": {
+        "x": 6,
+        "y": 6,
+        "w": 188,
+        "h": 213
+      },
+      "rect": {
+        "x": 1799,
+        "y": 511,
+        "w": 200,
+        "h": 225
+      }
+    },
+    {
+      "id": "plush-cloud-cat",
+      "direction": "west",
+      "source": "source-2.png",
+      "sourceRect": {
+        "x": 803,
+        "y": 21,
+        "w": 198,
+        "h": 225
+      },
+      "pixelSHA256": "5b94003d9fe99b7035a3d8a0acb7eec6273cd889567bf8d9ed81b89e92126b00",
+      "opaqueBounds": {
+        "x": 6,
+        "y": 6,
+        "w": 186,
+        "h": 213
+      },
+      "rect": {
+        "x": 4,
+        "y": 765,
+        "w": 198,
+        "h": 225
+      }
+    },
+    {
+      "id": "plush-sun-lion",
+      "direction": "south",
+      "source": "source-2.png",
+      "sourceRect": {
+        "x": 17,
+        "y": 260,
+        "w": 225,
+        "h": 247
+      },
+      "pixelSHA256": "a295e2fbc08b3a4ddddeb9e9351a10c7c53f8a89f48a58f41bd70672a6802a42",
+      "opaqueBounds": {
+        "x": 6,
+        "y": 6,
+        "w": 213,
+        "h": 235
+      },
+      "rect": {
+        "x": 210,
+        "y": 765,
+        "w": 225,
+        "h": 247
+      }
+    },
+    {
+      "id": "plush-sun-lion",
+      "direction": "north",
+      "source": "source-2.png",
+      "sourceRect": {
+        "x": 274,
+        "y": 259,
+        "w": 224,
+        "h": 249
+      },
+      "pixelSHA256": "4384c67929f7a4c040fb185fe7ff726e13738b17b9b5b91d25db535ff2c2661d",
+      "opaqueBounds": {
+        "x": 6,
+        "y": 6,
+        "w": 212,
+        "h": 237
+      },
+      "rect": {
+        "x": 443,
+        "y": 765,
+        "w": 224,
+        "h": 249
+      }
+    },
+    {
+      "id": "plush-sun-lion",
+      "direction": "east",
+      "source": "source-2.png",
+      "sourceRect": {
+        "x": 543,
+        "y": 259,
+        "w": 189,
+        "h": 249
+      },
+      "pixelSHA256": "ffe477d651fcb062e8cded740ba42190edcb73150474085798be65a7c7bb57a2",
+      "opaqueBounds": {
+        "x": 6,
+        "y": 6,
+        "w": 177,
+        "h": 237
+      },
+      "rect": {
+        "x": 675,
+        "y": 765,
+        "w": 189,
+        "h": 249
+      }
+    },
+    {
+      "id": "plush-sun-lion",
+      "direction": "west",
+      "source": "source-2.png",
+      "sourceRect": {
+        "x": 802,
+        "y": 259,
+        "w": 188,
+        "h": 249
+      },
+      "pixelSHA256": "066b7424043768a2f9231963d606377475ed7414b4466b21ecd03188b632fb5a",
+      "opaqueBounds": {
+        "x": 6,
+        "y": 6,
+        "w": 176,
+        "h": 237
+      },
+      "rect": {
+        "x": 872,
+        "y": 765,
+        "w": 188,
+        "h": 249
+      }
+    },
+    {
+      "id": "plush-mint-robot",
+      "direction": "south",
+      "source": "source-2.png",
+      "sourceRect": {
+        "x": 22,
+        "y": 514,
+        "w": 215,
+        "h": 252
+      },
+      "pixelSHA256": "b562d640b15c282c3aafa4275b53e59317124d05ed6aabbdbe5f26935cec77ee",
+      "opaqueBounds": {
+        "x": 6,
+        "y": 6,
+        "w": 203,
+        "h": 240
+      },
+      "rect": {
+        "x": 1068,
+        "y": 765,
+        "w": 215,
+        "h": 252
+      }
+    },
+    {
+      "id": "plush-mint-robot",
+      "direction": "north",
+      "source": "source-2.png",
+      "sourceRect": {
+        "x": 282,
+        "y": 514,
+        "w": 207,
+        "h": 253
+      },
+      "pixelSHA256": "a6a0ef38e73fcae9c131a9e8218258ee543b7918729534b332741573d871eeb5",
+      "opaqueBounds": {
+        "x": 6,
+        "y": 6,
+        "w": 195,
+        "h": 241
+      },
+      "rect": {
+        "x": 1291,
+        "y": 765,
+        "w": 207,
+        "h": 253
+      }
+    },
+    {
+      "id": "plush-mint-robot",
+      "direction": "east",
+      "source": "source-2.png",
+      "sourceRect": {
+        "x": 563,
+        "y": 514,
+        "w": 156,
+        "h": 252
+      },
+      "pixelSHA256": "0ad1d0ac23c9b84537ee616d2d91c99b8b7bf3eb4ef8e80edc0cb9a41b8511d1",
+      "opaqueBounds": {
+        "x": 6,
+        "y": 6,
+        "w": 144,
+        "h": 240
+      },
+      "rect": {
+        "x": 1506,
+        "y": 765,
+        "w": 156,
+        "h": 252
+      }
+    },
+    {
+      "id": "plush-mint-robot",
+      "direction": "west",
+      "source": "source-2.png",
+      "sourceRect": {
+        "x": 813,
+        "y": 514,
+        "w": 157,
+        "h": 254
+      },
+      "pixelSHA256": "1e99b7a58995c588dc50c36e5a377a5192ea89c63871bfbefb037ccfd955a0b2",
+      "opaqueBounds": {
+        "x": 6,
+        "y": 6,
+        "w": 145,
+        "h": 243
+      },
+      "rect": {
+        "x": 1670,
+        "y": 765,
+        "w": 157,
+        "h": 254
+      }
+    },
+    {
+      "id": "plush-moon-owl",
+      "direction": "south",
+      "source": "source-2.png",
+      "sourceRect": {
+        "x": 14,
+        "y": 779,
+        "w": 233,
+        "h": 234
+      },
+      "pixelSHA256": "359cb5a1e235c3c69b369e56d92bbeb9e56686c574b4f79f32338057c0006a22",
+      "opaqueBounds": {
+        "x": 6,
+        "y": 6,
+        "w": 221,
+        "h": 222
+      },
+      "rect": {
+        "x": 4,
+        "y": 1027,
+        "w": 233,
+        "h": 234
+      }
+    },
+    {
+      "id": "plush-moon-owl",
+      "direction": "north",
+      "source": "source-2.png",
+      "sourceRect": {
+        "x": 269,
+        "y": 779,
+        "w": 233,
+        "h": 234
+      },
+      "pixelSHA256": "5adde283f3f4af998a26c34bb5c05dba9aa706791fd80dc56278e213facf623c",
+      "opaqueBounds": {
+        "x": 6,
+        "y": 6,
+        "w": 221,
+        "h": 222
+      },
+      "rect": {
+        "x": 245,
+        "y": 1027,
+        "w": 233,
+        "h": 234
+      }
+    },
+    {
+      "id": "plush-moon-owl",
+      "direction": "east",
+      "source": "source-2.png",
+      "sourceRect": {
+        "x": 530,
+        "y": 777,
+        "w": 200,
+        "h": 237
+      },
+      "pixelSHA256": "2714b5adba930f4f4adcb0e9e7be25717a360f1bcae66fe5fdc6b5ee7b0edd35",
+      "opaqueBounds": {
+        "x": 6,
+        "y": 6,
+        "w": 188,
+        "h": 225
+      },
+      "rect": {
+        "x": 486,
+        "y": 1027,
+        "w": 200,
+        "h": 237
+      }
+    },
+    {
+      "id": "plush-moon-owl",
+      "direction": "west",
+      "source": "source-2.png",
+      "sourceRect": {
+        "x": 803,
+        "y": 777,
+        "w": 200,
+        "h": 237
+      },
+      "pixelSHA256": "1c0096a93c1358ec13f154533f2355a5c7bb0b7f841e6bcf7672aa0ed9214bd9",
+      "opaqueBounds": {
+        "x": 6,
+        "y": 6,
+        "w": 188,
+        "h": 225
+      },
+      "rect": {
+        "x": 694,
+        "y": 1027,
+        "w": 200,
+        "h": 237
+      }
+    },
+    {
+      "id": "plush-mushroom-friend",
+      "direction": "south",
+      "source": "source-2.png",
+      "sourceRect": {
+        "x": 12,
+        "y": 1034,
+        "w": 233,
+        "h": 234
+      },
+      "pixelSHA256": "a320a1d17e58122bd2cb166b4819c605917b67d86616e0ac60ccd2efe3f48e56",
+      "opaqueBounds": {
+        "x": 6,
+        "y": 6,
+        "w": 221,
+        "h": 222
+      },
+      "rect": {
+        "x": 902,
+        "y": 1027,
+        "w": 233,
+        "h": 234
+      }
+    },
+    {
+      "id": "plush-mushroom-friend",
+      "direction": "north",
+      "source": "source-2.png",
+      "sourceRect": {
+        "x": 268,
+        "y": 1034,
+        "w": 234,
+        "h": 234
+      },
+      "pixelSHA256": "2a4966f59a69edeb30ecc20cff00c98d39ea16b6faf60b57797f4121cd8e3da4",
+      "opaqueBounds": {
+        "x": 6,
+        "y": 6,
+        "w": 222,
+        "h": 222
+      },
+      "rect": {
+        "x": 1143,
+        "y": 1027,
+        "w": 234,
+        "h": 234
+      }
+    },
+    {
+      "id": "plush-mushroom-friend",
+      "direction": "east",
+      "source": "source-2.png",
+      "sourceRect": {
+        "x": 529,
+        "y": 1036,
+        "w": 209,
+        "h": 232
+      },
+      "pixelSHA256": "b259c07c0388198b6910d4d7d230fd0d6999dccf61b9b78fc750507bab6bbf15",
+      "opaqueBounds": {
+        "x": 6,
+        "y": 6,
+        "w": 197,
+        "h": 220
+      },
+      "rect": {
+        "x": 1385,
+        "y": 1027,
+        "w": 209,
+        "h": 232
+      }
+    },
+    {
+      "id": "plush-mushroom-friend",
+      "direction": "west",
+      "source": "source-2.png",
+      "sourceRect": {
+        "x": 799,
+        "y": 1036,
+        "w": 208,
+        "h": 232
+      },
+      "pixelSHA256": "3e3c0bbc2b916159d52defccae64c3b3c2fa2f023ab0679bc6d555c87efd0d55",
+      "opaqueBounds": {
+        "x": 6,
+        "y": 6,
+        "w": 196,
+        "h": 220
+      },
+      "rect": {
+        "x": 1602,
+        "y": 1027,
+        "w": 208,
+        "h": 232
+      }
+    },
+    {
+      "id": "plush-bluebird",
+      "direction": "south",
+      "source": "source-2.png",
+      "sourceRect": {
+        "x": 9,
+        "y": 1285,
+        "w": 242,
+        "h": 227
+      },
+      "pixelSHA256": "c25d780ac0c9a5dabdd1d079c6a831368eef3fbbfd54a69663b847f5258369cd",
+      "opaqueBounds": {
+        "x": 6,
+        "y": 6,
+        "w": 230,
+        "h": 215
+      },
+      "rect": {
+        "x": 4,
+        "y": 1272,
+        "w": 242,
+        "h": 227
+      }
+    },
+    {
+      "id": "plush-bluebird",
+      "direction": "north",
+      "source": "source-2.png",
+      "sourceRect": {
+        "x": 266,
+        "y": 1285,
+        "w": 238,
+        "h": 226
+      },
+      "pixelSHA256": "621fe60eb8703bda2fc3d429e44df281ca4b6527a4dcbbd1dc7cb792e4c9f13d",
+      "opaqueBounds": {
+        "x": 6,
+        "y": 6,
+        "w": 226,
+        "h": 214
+      },
+      "rect": {
+        "x": 254,
+        "y": 1272,
+        "w": 238,
+        "h": 226
+      }
+    },
+    {
+      "id": "plush-bluebird",
+      "direction": "east",
+      "source": "source-2.png",
+      "sourceRect": {
+        "x": 534,
+        "y": 1284,
+        "w": 207,
+        "h": 228
+      },
+      "pixelSHA256": "c78f24c26a8a11bb0374de5cb6eca9254be5f037418ddfd6749287d972308741",
+      "opaqueBounds": {
+        "x": 6,
+        "y": 6,
+        "w": 195,
+        "h": 216
+      },
+      "rect": {
+        "x": 500,
+        "y": 1272,
+        "w": 207,
+        "h": 228
+      }
+    },
+    {
+      "id": "plush-bluebird",
+      "direction": "west",
+      "source": "source-2.png",
+      "sourceRect": {
+        "x": 792,
+        "y": 1285,
+        "w": 209,
+        "h": 227
+      },
+      "pixelSHA256": "afe310c3fb1358025b8dd4a72947ff5585f40f64a66fce9d4dd91dbcc2194851",
+      "opaqueBounds": {
+        "x": 6,
+        "y": 6,
+        "w": 197,
+        "h": 215
+      },
+      "rect": {
+        "x": 715,
+        "y": 1272,
+        "w": 209,
+        "h": 227
+      }
+    }
+  ],
+  "packing": "Lossless padded source crops, no palette or source-pixel changes; small startup thumbnail is separate."
+}
