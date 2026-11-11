@@ -29,7 +29,8 @@ test('all31 wall networks preserve every physical model and never invent an unsu
   for(const r of g.returns){
    projected++;assert(r.face);assert(r.y>=r.face.y&&r.y+r.h<=r.face.y+r.face.h);
    assert(r.x===r.face.x+r.face.w||r.x+r.w===r.face.x,`${m.id}: a return must lie on the actual face edge`);
-   assert(m.walls.some(w=>w.x===r.x&&w.w===r.w&&w.y===r.y+r.h),`${m.id}: return must terminate at its actual wall`);
+   assert(['up','down'].includes(r.returnDirection),`${m.id}: return direction must be explicit`);
+   assert(m.walls.some(w=>w.x===r.x&&w.w===r.w&&(r.returnDirection==='up'?w.y===r.y+r.h:w.y+w.h===r.y)),`${m.id}: return must meet its actual wall edge`);
   }
   for(const r of g.paint){
    for(const d of g.apertures)assert(!overlap(r,d),`${m.id}: cap covers a real doorway`);
@@ -51,6 +52,24 @@ test('junction pixels are continuous while native wallpaper fields and the sourc
  for(let y=0;y<106;y++)assert.notDeepEqual(color(c,404,y),[16,32,48,255],`North join missing at${y}`);
  for(let y=444;y<550;y++)assert.notDeepEqual(color(c,404,y),[16,32,48,255],`Lower face return missing at${y}`);
  assert.deepEqual(color(c,404,412),color(c,404,414),'No internal edge is drawn across a structural T join');
+ cv.width=cv.height=1;
+});
+
+test('Bach kitchen corner continues to the adjoining face bottom without covering wallpaper or the bedroom door',()=>{
+ const m=getInterior({kind:'apartment',resident:'bach'}),before=JSON.stringify(m),g=interiorWallNetworkGeometry(m);
+ const corner=g.returns.find(r=>r.returnDirection==='down'&&r.x===430&&r.y===530&&r.w===18&&r.h===50);
+ assert(corner,'The actual reported corner must continue to the kitchen face bottom at580');
+ assert.deepEqual(corner.face,{x:36,y:492,w:394,h:88});
+ const cv=createCanvas(m.width,m.height),c=cv.getContext('2d'),floor=[16,32,48,255];
+ c.fillStyle='#102030';c.fillRect(0,0,m.width,m.height);c.fillStyle='#557799';c.fillRect(36,492,394,88);
+ drawInteriorWallNetwork(c,m);
+ const originalCap=color(c,439,528);
+ for(let y=530;y<578;y++)assert.deepEqual(color(c,439,y),originalCap,`Cap colour must continue through the old end at${y}`);
+ for(const y of [578,579])assert.notDeepEqual(color(c,439,y),floor,'The finished cap edge must reach the face bottom');
+ for(let x=430;x<448;x++)assert.deepEqual(color(c,x,528),color(c,x,540),`The entire existing cap profile continues at${x}`);
+ assert.deepEqual(color(c,400,540),[85,119,153,255],'The authored wallpaper field remains unchanged');
+ for(let y=389;y<425;y++)assert.deepEqual(color(c,439,y),floor,`The real bedroom aperture remains open at${y}`);
+ assert.equal(JSON.stringify(m),before,'Rendering must leave physical walls, doorways and saved layout geometry unchanged');
  cv.width=cv.height=1;
 });
 

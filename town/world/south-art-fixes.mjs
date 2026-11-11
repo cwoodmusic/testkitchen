@@ -1,5 +1,5 @@
-import {CARDINAL_GENERATED_PATCHES,CARDINAL_ART_PREVIEW} from './cardinal-art-patches.mjs?v=family-rooms-1';
-import {collectionImageRect} from './apartment-collection-art.mjs?v=family-rooms-1';
+import {CARDINAL_GENERATED_PATCHES,CARDINAL_ART_PREVIEW} from './cardinal-art-patches.mjs?v=wall-caps-1';
+import {collectionImageRect} from './apartment-collection-art.mjs?v=wall-caps-1';
 // Reviewed source-only corrections. Original atlases, physical dimensions and
 // collision bases stay immutable. Small previews show the corrected facing
 // while its individual native source loads lazily within the existing cache.
@@ -18,7 +18,7 @@ export const CARDINAL_TABLE_SOUTH_OWNERS=Object.freeze([
  "showroom-midcentury-studio",
  "showroom-industrial-loft"
 ]);
-export {CARDINAL_ART_PREVIEW as SOUTH_ART_PREVIEW} from './cardinal-art-patches.mjs?v=family-rooms-1';
+export {CARDINAL_ART_PREVIEW as SOUTH_ART_PREVIEW} from './cardinal-art-patches.mjs?v=wall-caps-1';
 const arcadeCorrection={
  "id": "collection-showroom-midcentury-studio-arcade",
  "owner": "showroom-midcentury-studio",

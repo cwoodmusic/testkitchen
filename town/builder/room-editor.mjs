@@ -1,10 +1,10 @@
-import {createRoomLayoutModel} from '../world/room-layout-model.mjs?v=family-rooms-1';
-import {createRoomLayoutStorage} from '../world/room-layout-storage.mjs?v=family-rooms-1';
-import {SHOWROOMS} from '../world/showroom-layout.mjs?v=family-rooms-1';
-import {residents} from '../world/resident-profiles.mjs?v=family-rooms-1';
-import {furnitureFacingPlacement,furnitureFacingBounds,cardinalFacing} from '../world/furniture-facing.mjs?v=family-rooms-1';
-import {furnitureFacingDrawSource,drawFurnitureFacingSource} from '../world/furniture-facing-source.mjs?v=family-rooms-1';
-import {assetFilter} from '../world/asset-color.mjs?v=family-rooms-1';
+import {createRoomLayoutModel} from '../world/room-layout-model.mjs?v=wall-caps-1';
+import {createRoomLayoutStorage} from '../world/room-layout-storage.mjs?v=wall-caps-1';
+import {SHOWROOMS} from '../world/showroom-layout.mjs?v=wall-caps-1';
+import {residents} from '../world/resident-profiles.mjs?v=wall-caps-1';
+import {furnitureFacingPlacement,furnitureFacingBounds,cardinalFacing} from '../world/furniture-facing.mjs?v=wall-caps-1';
+import {furnitureFacingDrawSource,drawFurnitureFacingSource} from '../world/furniture-facing-source.mjs?v=wall-caps-1';
+import {assetFilter} from '../world/asset-color.mjs?v=wall-caps-1';
 
 const FACINGS=[['north','↑','North',180],['east','→','East',270],['south','↓','South',0],['west','←','West',90]];
 const ARROWS={ArrowUp:180,ArrowRight:270,ArrowDown:0,ArrowLeft:90};

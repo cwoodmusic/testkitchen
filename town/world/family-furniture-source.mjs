@@ -1,4 +1,4 @@
-import {furnitureFootCenter} from './furniture-facing.mjs?v=family-rooms-1';
+import {furnitureFootCenter} from './furniture-facing.mjs?v=wall-caps-1';
 
 const directions=['south','north','east','west'];
 const metadataOptions=Object.freeze({image:false});

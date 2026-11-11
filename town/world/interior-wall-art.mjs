@@ -1,5 +1,5 @@
 // Cutaway walls share one cap network. Wallpaper remains the authored upright
-// face; only its adjoining wall edge returns to the same height at a corner.
+// face; its adjoining wall edge returns to the same height at either end.
 const EPS=.001;
 const privateScene=s=>s?.kind==='apartment'||s?.kind==='showroom';
 const valid=r=>Number.isFinite(r.x)&&Number.isFinite(r.y)&&r.w>0&&r.h>0;
@@ -41,7 +41,12 @@ export function interiorWallNetworkGeometry(scene){
    const bottom=face.y+face.h;
    // This is an upright return on an existing face edge, not an attempt to
    // connect unrelated pieces across an open strip of circulation floor.
-   if(wall.y>face.y+EPS&&wall.y<=bottom+EPS&&wall.y+wall.h>bottom+EPS)returns.push({...wall,y:face.y,h:wall.y-face.y,face:{x:face.x,y:face.y,w:face.w,h:face.h}});
+   const wallBottom=wall.y+wall.h,sourceFace={x:face.x,y:face.y,w:face.w,h:face.h};
+   if(wall.y>face.y+EPS&&wall.y<=bottom+EPS&&wallBottom>bottom+EPS)returns.push({...wall,y:face.y,h:wall.y-face.y,face:sourceFace,returnDirection:'up'});
+   // A shared wall can also end partway through its adjoining raised face.
+   // Finish that face edge with the same cap width and profile, rather than
+   // leaving the wallpaper/dado hanging below an abruptly cut wall end.
+   if(wall.y<=face.y+EPS&&wallBottom>face.y+EPS&&wallBottom<bottom-EPS)returns.push({...wall,y:wallBottom,h:bottom-wallBottom,face:sourceFace,returnDirection:'down'});
   }
  }
  const projectedReturns=unique(subtractAll(returns,apertures)),paint=unique(subtractAll([...subtractAll(walls,faces),...projectedReturns],apertures)),outer=[{x:0,y:0,w:scene.width,h:3},{x:0,y:102,w:scene.width,h:4},{x:0,y:0,w:28,h:scene.height},{x:scene.width-28,y:0,w:28,h:scene.height},{x:0,y:scene.height-28,w:scene.width,h:28}],context=[...paint,...outer];

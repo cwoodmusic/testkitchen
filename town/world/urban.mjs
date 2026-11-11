@@ -1,13 +1,13 @@
-import {catalog} from './catalog.mjs?v=family-rooms-1';
-import {FLOOR_COUNT,residents,getInterior,renderInterior,residentInteractionZones,apartmentDecorBounds,apartmentWallDecorBounds,configureUrbanInteriors} from './urban-interiors.mjs?v=family-rooms-1';
-import {createRoomStorage,roomItemBoxes} from './urban-room.mjs?v=family-rooms-1';
-import {SHOWROOMS,STORE_FLOOR_COUNT,STORE_VERTICAL_CORE} from './showroom-layout.mjs?v=family-rooms-1';
-import {createStagePerformance,stagePerformanceSignature,stageCollisionBoxes} from './concert-performers.mjs?v=family-rooms-1';
-import {CONCERT_PROGRAMME} from './concert-programme.mjs?v=family-rooms-1';
-import {createAutomaticDoors} from './automatic-doors.mjs?v=family-rooms-1';
-import {furnitureFacingPlacement,furnitureFacingBounds} from './furniture-facing.mjs?v=family-rooms-1';
-import {interiorActorScale,effectiveInteriorZoom} from './interior-scale.mjs?v=family-rooms-1';
-import {presentedRoomItem,furniturePresentationScale} from './private-furniture.mjs?v=family-rooms-1';
+import {catalog} from './catalog.mjs?v=wall-caps-1';
+import {FLOOR_COUNT,residents,getInterior,renderInterior,residentInteractionZones,apartmentDecorBounds,apartmentWallDecorBounds,configureUrbanInteriors} from './urban-interiors.mjs?v=wall-caps-1';
+import {createRoomStorage,roomItemBoxes} from './urban-room.mjs?v=wall-caps-1';
+import {SHOWROOMS,STORE_FLOOR_COUNT,STORE_VERTICAL_CORE} from './showroom-layout.mjs?v=wall-caps-1';
+import {createStagePerformance,stagePerformanceSignature,stageCollisionBoxes} from './concert-performers.mjs?v=wall-caps-1';
+import {CONCERT_PROGRAMME} from './concert-programme.mjs?v=wall-caps-1';
+import {createAutomaticDoors} from './automatic-doors.mjs?v=wall-caps-1';
+import {furnitureFacingPlacement,furnitureFacingBounds} from './furniture-facing.mjs?v=wall-caps-1';
+import {interiorActorScale,effectiveInteriorZoom} from './interior-scale.mjs?v=wall-caps-1';
+import {presentedRoomItem,furniturePresentationScale} from './private-furniture.mjs?v=wall-caps-1';
 
 configureUrbanInteriors(catalog);
 const furniture=window.CodaFurnitureCatalog||[];
@@ -21,7 +21,7 @@ export function buildingDoor(o){
 }
 function decorSolids(items,scene){const model=scene?.rooms?scene:getInterior(scene);return items.flatMap(o=>roomItemBoxes(o,catalog,(item,asset)=>furniturePresentationScale(item,model,asset)));}
 export function createUrbanController({canvas,getProject,getPlayer,getResidents,onConversation,getConcert=()=>null,preview=false}){
- const css=document.createElement('link');css.rel='stylesheet';css.href=new URL('./urban.css?v=family-rooms-1',import.meta.url);document.head.append(css);
+ const css=document.createElement('link');css.rel='stylesheet';css.href=new URL('./urban.css?v=wall-caps-1',import.meta.url);document.head.append(css);
  const hud=document.createElement('section');hud.className='urban-hud';hud.hidden=true;document.body.append(hud);
  const hint=document.createElement('button');hint.className='urban-prompt';hint.hidden=true;hint.onclick=()=>interact();document.body.append(hint);
  const dialog=document.createElement('dialog');dialog.className='urban-dialog';dialog.setAttribute('aria-label','Coda Town');document.body.append(dialog);

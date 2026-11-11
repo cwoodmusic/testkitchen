@@ -1,6 +1,6 @@
-import {blocked,surfaceAt,cell,segment,COLS,ROWS,TILE} from './model.mjs?v=family-rooms-1';
-import {npcCollisionObject,npcCollisionProject,NPC_COLLISION_RADIUS,NPC_COLLISION_RADIUS_KEY} from './npc-collision.mjs?v=family-rooms-1';
-export {npcCollisionProject} from './npc-collision.mjs?v=family-rooms-1';
+import {blocked,surfaceAt,cell,segment,COLS,ROWS,TILE} from './model.mjs?v=wall-caps-1';
+import {npcCollisionObject,npcCollisionProject,NPC_COLLISION_RADIUS,NPC_COLLISION_RADIUS_KEY} from './npc-collision.mjs?v=wall-caps-1';
+export {npcCollisionProject} from './npc-collision.mjs?v=wall-caps-1';
 
 const BIN=512,MARGIN=96,worldWidth=COLS*TILE,worldHeight=ROWS*TILE;
 const center=(x,y)=>({x:x*TILE+TILE/2,y:y*TILE+TILE/2});

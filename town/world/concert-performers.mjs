@@ -1,4 +1,4 @@
-import {assetImage} from './asset-color.mjs?v=family-rooms-1';
+import {assetImage} from './asset-color.mjs?v=wall-caps-1';
 
 // Performers belong to the programme, never to the camera or the saved town.
 // Coordinates are feet on the stage; the native seated renderer uses a hip
