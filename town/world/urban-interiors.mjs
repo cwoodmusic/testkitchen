@@ -1,25 +1,25 @@
-import {assetImage} from './asset-color.mjs?v=apartment-scale-1';
-import {SHOWROOMS,applyShowroomLayout} from './showroom-layout.mjs?v=apartment-scale-1';
-import {applyShowroomApartment} from './showroom-apartments.mjs?v=apartment-scale-1';
-import {drawShowroomFloor,drawShowroomWallpaper} from './showroom-materials.mjs?v=apartment-scale-1';
-import {applyHomeMaterialSuite,warmHomeMaterials} from './home-materials.mjs?v=apartment-scale-1';
-import {drawTowerCommonSurfaces,drawTowerCommonStairs,towerCommonMaterialsReady,warmTowerCommonMaterials} from './tower-common-materials.mjs?v=apartment-scale-1';
-import {drawInteriorDoor,drawPrivacyDoor,drawElevatorPortal,interiorPortalVisualDepth,warmInteriorPortalArt} from './interior-portal-art.mjs?v=apartment-scale-1';
-import {interiorActorScale} from './interior-scale.mjs?v=apartment-scale-1';
-import {getConcertHall,renderConcertHallBackground,concertHallDrawables} from './concert-hall.mjs?v=apartment-scale-1';
-import {renderStagePerformance} from './concert-performers.mjs?v=apartment-scale-1';
-import {buildApartmentHome} from './apartment-homes.mjs?v=apartment-scale-1';
-import {APARTMENT_COLLECTION_ASSETS,getApartmentAsset} from './apartment-collections.mjs?v=apartment-scale-1';
-import {drawApartmentMotion} from './apartment-motion.mjs?v=apartment-scale-1';
-import {furnitureFacingPlacement,furnitureFacingDepth,furnitureFacingBoxes,furnitureAtGroundCenter} from './furniture-facing.mjs?v=apartment-scale-1';
-import {preparePlacedFacingArt} from './furniture-art-access.mjs?v=apartment-scale-1';
+import {assetImage} from './asset-color.mjs?v=apartment-scale-2';
+import {SHOWROOMS,applyShowroomLayout} from './showroom-layout.mjs?v=apartment-scale-2';
+import {applyShowroomApartment} from './showroom-apartments.mjs?v=apartment-scale-2';
+import {drawShowroomFloor,drawShowroomWallpaper} from './showroom-materials.mjs?v=apartment-scale-2';
+import {applyHomeMaterialSuite,warmHomeMaterials} from './home-materials.mjs?v=apartment-scale-2';
+import {drawTowerCommonSurfaces,drawTowerCommonStairs,towerCommonMaterialsReady,warmTowerCommonMaterials} from './tower-common-materials.mjs?v=apartment-scale-2';
+import {drawInteriorDoor,drawPrivacyDoor,drawElevatorPortal,interiorPortalVisualDepth,warmInteriorPortalArt} from './interior-portal-art.mjs?v=apartment-scale-2';
+import {interiorActorScale} from './interior-scale.mjs?v=apartment-scale-2';
+import {getConcertHall,renderConcertHallBackground,concertHallDrawables} from './concert-hall.mjs?v=apartment-scale-2';
+import {renderStagePerformance} from './concert-performers.mjs?v=apartment-scale-2';
+import {buildApartmentHome} from './apartment-homes.mjs?v=apartment-scale-2';
+import {APARTMENT_COLLECTION_ASSETS,getApartmentAsset} from './apartment-collections.mjs?v=apartment-scale-2';
+import {drawApartmentMotion} from './apartment-motion.mjs?v=apartment-scale-2';
+import {furnitureFacingPlacement,furnitureFacingDepth,furnitureFacingBoxes,furnitureAtGroundCenter} from './furniture-facing.mjs?v=apartment-scale-2';
+import {preparePlacedFacingArt} from './furniture-art-access.mjs?v=apartment-scale-2';
 // The apartment tower has one consistent floor plate. Residential floors use
 // a 608px common hall and 1120px private apartments, within its 2304 × 1728 lot.
 export const FLOOR_COUNT=15;
 export const TOWER_FOOTPRINT=Object.freeze({width:2304,height:1728});
 export const STORE_FOOTPRINT=Object.freeze({width:3072,height:2048});
-export {residents} from './resident-profiles.mjs?v=apartment-scale-1';
-import {residents} from './resident-profiles.mjs?v=apartment-scale-1';
+export {residents} from './resident-profiles.mjs?v=apartment-scale-2';
+import {residents} from './resident-profiles.mjs?v=apartment-scale-2';
 const sceneCache=new Map(),backgroundCache=new Map();
 const MAX_BACKGROUNDS=8,MAX_BACKGROUND_PIXELS=16*1024*1024;
 let backgroundPixels=0;
@@ -34,7 +34,7 @@ let nativeCatalog=null,woodTexture=null,npcRenderer=null;
 const drawConcertNPC=(ctx,actor,time)=>npcRenderer?.drawNPC(ctx,actor,time);
 export function configureUrbanInteriors(catalog){if(nativeCatalog!==catalog){nativeCatalog=catalog;clearBackgrounds();}}
 if(typeof document!=='undefined'){
- import('./ground-textures.mjs?v=apartment-scale-1').then(({groundTextures})=>{woodTexture=groundTextures.wood;clearBackgrounds();}).catch(()=>{});
+ import('./ground-textures.mjs?v=apartment-scale-2').then(({groundTextures})=>{woodTexture=groundTextures.wood;clearBackgrounds();}).catch(()=>{});
 }
 const rect=(x,y,w,h)=>({x,y,w,h});
 const zone=(id,label,x,y,w,h,action,extra={})=>({id,label,x,y,w,h,action,...extra});

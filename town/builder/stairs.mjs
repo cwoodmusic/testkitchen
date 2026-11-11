@@ -1,4 +1,4 @@
-import {COLS,ROWS,cell,key,stairProfile,blocked,height} from '../world/model.mjs?v=apartment-scale-1';
+import {COLS,ROWS,cell,key,stairProfile,blocked,height} from '../world/model.mjs?v=apartment-scale-2';
 const inside=p=>Number.isInteger(p.x)&&Number.isInteger(p.y)&&p.x>=0&&p.y>=0&&p.x<COLS&&p.y<ROWS;
 const round=v=>Math.round(v*1e9)/1e9;
 export function planStairs(doc,start,target,{width=3,finish='stone',catalog=new Map()}={}){

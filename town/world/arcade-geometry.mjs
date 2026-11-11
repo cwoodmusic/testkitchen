@@ -1,5 +1,5 @@
 import '../../arcade-footprint.js';
-import {PLAYER_SCALE} from './player-settings.mjs?v=apartment-scale-1';
+import {PLAYER_SCALE} from './player-settings.mjs?v=apartment-scale-2';
 
 // Interior pixels and the native avatar use one scale. Authored-town avatars
 // are larger, so convert the complete floor shape by that same factor.

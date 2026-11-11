@@ -1,5 +1,5 @@
-import {COLS,ROWS,TILE,RISE,cell,key,segment,terrainHeight,surfaceAt} from '../world/model.mjs?v=apartment-scale-1';
-import {musicSquareWalls} from '../world/music-wall-geometry.mjs?v=apartment-scale-1';
+import {COLS,ROWS,TILE,RISE,cell,key,segment,terrainHeight,surfaceAt} from '../world/model.mjs?v=apartment-scale-2';
+import {musicSquareWalls} from '../world/music-wall-geometry.mjs?v=apartment-scale-2';
 
 const EPS=1e-7,DEFAULT=Object.freeze({surface:'grass',level:0});
 const clamp=(n,lo,hi)=>Math.max(lo,Math.min(hi,n));

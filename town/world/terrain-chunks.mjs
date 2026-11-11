@@ -1,5 +1,5 @@
-import {terrainView} from './model.mjs?v=apartment-scale-1';
-import {OverviewTerrainState,OVERVIEW_SCALE,OVERVIEW_PAD,WORLD_WIDTH,WORLD_HEIGHT,terrainBoundsForRect} from './overview-state.mjs?v=apartment-scale-1';
+import {terrainView} from './model.mjs?v=apartment-scale-2';
+import {OverviewTerrainState,OVERVIEW_SCALE,OVERVIEW_PAD,WORLD_WIDTH,WORLD_HEIGHT,terrainBoundsForRect} from './overview-state.mjs?v=apartment-scale-2';
 
 export const TERRAIN_CHUNK_SIZE=512,TERRAIN_CHUNK_PAD=4;
 const defaultCanvas=(width,height)=>{const c=document.createElement('canvas');c.width=width;c.height=height;return c;};

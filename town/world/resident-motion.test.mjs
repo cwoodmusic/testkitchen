@@ -17,7 +17,7 @@ function checkWalkingLegs(poseAt,duration,kinds){
  for(let time=.05;time+DT<duration&&found.size<kinds.length;time+=.07){
   const a=poseAt(time),b=poseAt(time+DT),kind=a.scene?.kind;
   if(!kinds.includes(kind)||found.has(kind)||!a.walking||!b.walking||a.hidden||b.hidden||JSON.stringify(a.scene)!==JSON.stringify(b.scene)||a.facing!==b.facing||(a.activity||a.purpose)!==(b.activity||b.purpose))continue;
-  const privateRoom=kind==='apartment'||kind==='showroom',speed=privateRoom?117:156,stride=privateRoom?112.5:150;
+  const privateRoom=kind==='apartment'||kind==='showroom',speed=privateRoom?58.5:156,stride=privateRoom?56.25:150;
   const distance=Math.hypot(b.x-a.x,b.y-a.y),phase=(b.phase-a.phase+TAU)%TAU;
   near(distance/DT,speed,kind+' walking speed');
   near(phase/distance,TAU/stride,kind+' world-space stride');
@@ -34,12 +34,12 @@ test('all resident home journeys scale only apartment walking and retain the sam
   const doorX=resident.floor>=7?500:resident.unit==='A'?430:1874;
   const publicDistance=1178+244+Math.abs(doorX-1152);
   const publicWaits=4+resident.floor*.35;
-  const expected=publicDistance/156+privateDistance/117+publicWaits;
+  const expected=publicDistance/156+privateDistance/58.5+publicWaits;
   for(const direction of ['out','home']){
    const duration=journeyDuration(resident.id,direction);
    near(duration,expected,resident.id+' '+direction+' total duration');
    const oldDuration=publicDistance/156+privateDistance/156+publicWaits;
-   near(duration-oldDuration,privateDistance/117-privateDistance/156,'Only the private walking leg adds time');
+   near(duration-oldDuration,privateDistance/58.5-privateDistance/156,'Only the private walking leg adds time');
    checkWalkingLegs(time=>interiorJourneyPose(resident.id,direction,time),duration,['apartment','hall','lobby']);
    const done=interiorJourneyPose(resident.id,direction,duration);
    assert.equal(done.done,true);assert.equal(done.id,resident.id);
@@ -68,7 +68,7 @@ test('all twelve store visits scale showroom legs while preserving both public f
     +length([room.lobbyReturn,point(room.lobbyReturn.x,STORE_TRAFFIC.egressY),point(STORE_TRAFFIC.outgoingX,STORE_TRAFFIC.egressY),point(STORE_TRAFFIC.outgoingX,door.y),door]);
   }
   const duration=venueVisitDuration('bach','shop',{slot,stay});
-  near(duration,publicDistance/156+privateDistance/117+stay+waits,room.id+' visit duration');
+  near(duration,publicDistance/156+privateDistance/58.5+stay+waits,room.id+' visit duration');
   checkWalkingLegs(time=>venueVisitPose('bach','shop',time,{slot,stay}),duration,['shop','showroom']);
   const done=venueVisitPose('bach','shop',duration,{slot,stay});
   assert.equal(done.done,true);assert.equal(done.showroomId,room.id);

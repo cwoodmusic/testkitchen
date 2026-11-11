@@ -1,6 +1,6 @@
-import {drawSelection} from './selection-view.mjs?v=apartment-scale-1';
-import {curvePath} from './curve-path.mjs?v=apartment-scale-1';
-import {clipCurves,curveUnder,curveBounds} from './round-geometry.mjs?v=apartment-scale-1';
+import {drawSelection} from './selection-view.mjs?v=apartment-scale-2';
+import {curvePath} from './curve-path.mjs?v=apartment-scale-2';
+import {clipCurves,curveUnder,curveBounds} from './round-geometry.mjs?v=apartment-scale-2';
 import {cell} from './model.mjs';
 export const levelColors=['#314b43','#56724e','#8b985c','#b9aa65','#c09a68','#ab7f73','#94788d','#8e98b2','#d2dce3'];
 export function elevationView(c,d,cam,w,h,opts={}){const plan=opts.heightView==='plan',left=cam.x-w/2/cam.zoom,top=cam.y-h/2/cam.zoom,x0=Math.max(0,Math.floor(left/64)-1),x1=Math.min(256,Math.ceil((left+w/cam.zoom)/64)+1),y0=Math.max(0,Math.floor(top/64)-1),y1=Math.min(192,Math.ceil((top+h/cam.zoom+(plan?0:432))/64)+1);

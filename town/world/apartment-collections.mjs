@@ -1,6 +1,6 @@
-import {APARTMENT_COLLECTION_ASSETS} from './apartment-collection-definitions.mjs?v=apartment-scale-1';
-import {createApartmentCollectionRuntime} from './apartment-collection-runtime.mjs?v=apartment-scale-1';
-export * from './apartment-collection-definitions.mjs?v=apartment-scale-1';
+import {APARTMENT_COLLECTION_ASSETS} from './apartment-collection-definitions.mjs?v=apartment-scale-2';
+import {createApartmentCollectionRuntime} from './apartment-collection-runtime.mjs?v=apartment-scale-2';
+export * from './apartment-collection-definitions.mjs?v=apartment-scale-2';
 
 const base=new URL('../assets/apartment-collections/',import.meta.url);
 function assetURL(file){const url=new URL(file,base);url.search=new URL(import.meta.url).search;return url;}

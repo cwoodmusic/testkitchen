@@ -1,4 +1,4 @@
-import {createShowroomApartmentPlan} from './showroom-apartments.mjs?v=apartment-scale-1';
+import {createShowroomApartmentPlan} from './showroom-apartments.mjs?v=apartment-scale-2';
 
 // The original eight homes retain their ground-floor addresses. Four larger
 // homes occupy a second storey inside the same exterior floor plate.

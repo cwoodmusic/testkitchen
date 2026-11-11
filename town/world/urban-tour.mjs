@@ -1,4 +1,4 @@
-import {blank,key,COLS,ROWS} from './model.mjs?v=apartment-scale-1';
+import {blank,key,COLS,ROWS} from './model.mjs?v=apartment-scale-2';
 
 // A separate, unsaved tour. Creating it never reads or replaces the builder map.
 export function createUrbanTour(){

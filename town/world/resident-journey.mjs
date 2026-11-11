@@ -1,6 +1,6 @@
-import {residents} from './resident-profiles.mjs?v=apartment-scale-1';
-import {interiorActorScale} from './interior-scale.mjs?v=apartment-scale-1';
-export {residents} from './resident-profiles.mjs?v=apartment-scale-1';
+import {residents} from './resident-profiles.mjs?v=apartment-scale-2';
+import {interiorActorScale} from './interior-scale.mjs?v=apartment-scale-2';
+export {residents} from './resident-profiles.mjs?v=apartment-scale-2';
 
 const SPEED=156,GAIT=Math.PI*2/150;
 const journeys=new Map();

@@ -1,4 +1,4 @@
-import {cell,height,terrainHeight,surfaceAt,RISE,TILE} from './model.mjs?v=apartment-scale-1';
+import {cell,height,terrainHeight,surfaceAt,RISE,TILE} from './model.mjs?v=apartment-scale-2';
 
 const same=(d,x,y,level)=>cell(d,x,y).pier?.level===level;
 export function pierGeometry(d,x,y){

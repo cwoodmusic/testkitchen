@@ -78,7 +78,7 @@ test('only bedroom and bathroom privacy leaves open and pass automatically for p
   const m=getInterior(f.q.scene);assert.equal(m.privacyDoors.length,2);
   for(const door of m.privacyDoors){
    const state=f.q.automaticDoors.states.find(s=>s.door===door),o=state.opening;assert(state);Object.assign(f.q.player,{x:o.x+o.nx*125,y:o.y+o.ny*125});for(let i=0;i<30;i++)f.frame();assert.equal(state.openness,0);
-   f.walk({x:-o.nx,y:-o.ny},.65);const signed=(f.q.player.x-o.x)*o.nx+(f.q.player.y-o.y)*o.ny;assert(signed<-25,'The player walks through the privacy leaf without E');assert(state.openness>.7);
+   f.walk({x:-o.nx,y:-o.ny},210/(450*interiorActorScale(f.q.scene)));const signed=(f.q.player.x-o.x)*o.nx+(f.q.player.y-o.y)*o.ny;assert(signed<-25,'The player walks through the privacy leaf without E');assert(state.openness>.7);
    Object.assign(f.q.player,{x:o.x-o.nx*110,y:o.y-o.ny*110});for(let i=0;i<30;i++)f.frame();assert.equal(state.openness,0,'Privacy closes after the player clears it');
    Object.assign(f.q.player,{x:m.width-100,y:m.height-150});f.actors.push({id:'privacy-npc',x:o.x+o.nx*55,y:o.y+o.ny*55});for(let i=0;i<10;i++)f.frame();assert(state.openness>.9);f.actors[0].x=o.x-o.nx*120;f.actors[0].y=o.y-o.ny*120;for(let i=0;i<30;i++)f.frame();assert.equal(state.openness,0);f.actors.length=0;
   }
@@ -88,10 +88,10 @@ test('only bedroom and bathroom privacy leaves open and pass automatically for p
 
 test('private camera compensation preserves actor presentation and uses the same viewport units',()=>{
  for(const kind of [null,'lobby','hall','shop','concert','apartment','showroom']){
-  const scene=kind?{kind}:null,scale=interiorActorScale(scene),expected=['apartment','showroom'].includes(kind)?.75:1;
+  const scene=kind?{kind}:null,scale=interiorActorScale(scene),expected=['apartment','showroom'].includes(kind)?.375:1;
   assert.equal(scale,expected);assert.equal(effectiveInteriorZoom(scene,.72)*scale,.72);
  }
- const f=fixture();f.q.openRoom('player');f.frame();assert.equal(f.q.view.zoom,.96);assert.equal(f.renderCalls.at(-1).viewport.w,1200/.96);assert.equal(f.renderCalls.at(-1).viewport.h,760/.96);
+ const f=fixture();f.q.openRoom('player');f.frame();assert.equal(f.q.view.zoom,1.92);assert.equal(f.renderCalls.at(-1).viewport.w,1200/1.92);assert.equal(f.renderCalls.at(-1).viewport.h,760/1.92);
  assert.equal(f.drawn.at(-1).state.scale,undefined,'Actor draw calibration belongs to renderInterior, without a second controller scale');
  f.q.goFloor(1);f.frame();assert.equal(f.q.view.zoom,.72);assert.equal(f.renderCalls.at(-1).viewport.w,1200/.72);f.assertUntouched();
 });
@@ -99,17 +99,46 @@ test('private camera compensation preserves actor presentation and uses the same
 test('private player speed, gait and foot clearance calibrate together while public movement is unchanged',()=>{
  for(const privateRoom of [false,true])for(const run of [false,true]){
   const f=fixture();if(privateRoom)f.q.openRoom('player');else f.q.goFloor(1);const start={...f.q.player};f.frame(new Set(run?['d','shift']:['d']),.04);
-  const factor=privateRoom?.75:1,distance=(run?780:450)*factor*.04;assert(Math.abs(f.q.player.x-start.x-distance)<1e-8);assert.equal(f.q.player.y,start.y);
+  const factor=privateRoom?.375:1,distance=(run?780:450)*factor*.04;assert(Math.abs(f.q.player.x-start.x-distance)<1e-8);assert.equal(f.q.player.y,start.y);
   const expectedPhase=(run?780:450)*.04*Math.PI*2/150;assert(Math.abs(f.drawn.at(-1).state.phase-expectedPhase)<1e-8,'Stride scales with speed, retaining real-time cadence');
-  const m=getInterior(f.q.scene),y=Array.from({length:Math.floor((m.height-300)/20)},(_,i)=>200+i*20).find(y=>!m.solids.some(r=>r.x>0&&r.x<120&&y>r.y-40&&y<r.y+r.h+40));assert(y!==undefined);Object.assign(f.q.player,{x:80,y});f.walk({x:-1,y:0},.5);
-  const expectedEdge=privateRoom?40:44;assert(f.q.player.x>=expectedEdge-1e-8&&f.q.player.x<expectedEdge+3.2,'Private foot radius12, public radius16');f.assertUntouched();
+  const m=getInterior(f.q.scene);
+  if(privateRoom){
+   // Test a real interior wall: the outer world boundary at40 would hide
+   // whether a six-pixel foot collider was actually used.
+   let wallProbe;
+   for(const wall of m.solids.filter(r=>r.w<=28&&r.h>=100&&r.x>120&&r.x<m.width-120)){
+    for(let y=wall.y+32;y<wall.y+wall.h-32&&!wallProbe;y+=40)for(const side of [-1,1]){
+     const face=side<0?wall.x:wall.x+wall.w,x=face+side*60;
+     if(y<140||y>m.height-80||m.solids.some(r=>r!==wall&&y>=r.y-20&&y<=r.y+r.h+20&&Math.max(face,x)>=r.x-20&&Math.min(face,x)<=r.x+r.w+20))continue;
+     wallProbe={x,y,face,side};break;
+    }
+    if(wallProbe)break;
+   }
+   assert(wallProbe);Object.assign(f.q.player,{x:wallProbe.x,y:wallProbe.y});f.walk({x:-wallProbe.side,y:0},.5);
+   const gap=(f.q.player.x-wallProbe.face)*wallProbe.side;assert(gap>=6-1e-8&&gap<9.2,'Actual private foot radius is6 at authored interior walls');
+  }else{
+   const y=Array.from({length:Math.floor((m.height-300)/20)},(_,i)=>200+i*20).find(y=>!m.solids.some(r=>r.x>0&&r.x<120&&y>r.y-40&&y<r.y+r.h+40));assert(y!==undefined);Object.assign(f.q.player,{x:80,y});f.walk({x:-1,y:0},.5);assert(f.q.player.x>=44-1e-8&&f.q.player.x<47.2,'Public foot radius stays16');
+  }
+  f.assertUntouched();
  }
 });
 
 test('furnishing pointer coordinates invert effective private zoom without moving the saved target',()=>{
- const f=fixture({furnishing:true});f.q.openRoom('player');f.frame();const view=f.q.view,target={x:Math.round(view.x+150),y:Math.round(view.y+20)};assert.equal(view.zoom,.96);
+ const f=fixture({furnishing:true});f.q.openRoom('player');f.frame();const view=f.q.view,target={x:Math.round(view.x+150),y:Math.round(view.y+20)};assert.equal(view.zoom,1.92);
  const furnish=f.elements.find(e=>e.tagName==='button'&&e.textContent==='Furnish apartment');assert(furnish);furnish.onclick();
  const item=f.elements.find(e=>e.tagName==='button'&&e.children.some(c=>c?.textContent==='Test chair'));assert(item);item.onclick();assert.equal(f.placements.length,0);
  const rect=f.canvas.getBoundingClientRect();f.q.handlePointer({clientX:rect.left+600+(target.x-view.x)*view.zoom,clientY:rect.top+380+(target.y-view.y)*view.zoom,preventDefault(){}});
  assert.equal(f.placements.length,1);assert.deepEqual(f.placements[0],{item:'test-chair',...target,rotation:0});assert.equal(JSON.stringify(f.project),f.original);
+});
+
+test('new private proportions double real room and furnishing dimensions and quadruple floor area relative to actors',()=>{
+ for(const showroom of [false,true]){
+  const f=fixture();if(showroom){f.q.enterBuilding(f.project.objects.find(o=>o.asset==='store'));f.q.openShowroom('midcentury-studio');}else f.q.openRoom('player');
+  const m=getInterior(f.q.scene),physical=JSON.stringify({width:m.width,height:m.height,items:m.items,solids:m.solids,rooms:m.rooms}),oldScale=.75,oldZoom=.96;f.frame();
+  const scale=interiorActorScale(f.q.scene),zoom=f.q.view.zoom;assert.equal(oldScale/scale,2);
+  assert.equal(m.width*zoom/(m.width*oldZoom),2);assert.equal(m.height*zoom/(m.height*oldZoom),2);assert.equal((m.width*zoom*m.height*zoom)/(m.width*oldZoom*m.height*oldZoom),4,'Actual rendered room floor area is four times the previous calibration');
+  const sofa=m.items.find(i=>i.furnitureRole==='sofa');assert(sofa);assert.equal((sofa.w/scale)/(sofa.w/oldScale),2);assert.equal((sofa.h/scale)/(sofa.h/oldScale),2,'Furnishings have doubled linear proportions relative to the same character');
+  assert.equal(scale*zoom,oldScale*oldZoom,'On-screen actor size is unchanged');assert.equal(450*scale*zoom,450*oldScale*oldZoom,'On-screen walking speed is unchanged');
+  assert.equal(JSON.stringify({width:m.width,height:m.height,items:m.items,solids:m.solids,rooms:m.rooms}),physical,'Authored furniture, walls, rooms and solids keep their exact coordinates');f.assertUntouched();
+ }
 });
