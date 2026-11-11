@@ -94,12 +94,12 @@ test('entering and leaving the concert hall preserves the exact recording and po
  const {player,media,timer,setScene}=fixture();await player.unlock();timer.step(300);
  const track=player.currentTrack,source=media.src,loads=media.loadCalls,plays=media.playCalls;
  media.currentTime=83.125;
- assert(Math.abs(media.volume-.75*.045)<1e-8);
+ assert(Math.abs(media.volume-.75*.025)<1e-8);const outsideVolume=media.volume;
  setScene({kind:'concert'});timer.step(140);
- assert(media.volume>.045&&media.volume<.75,'The indoor gain should ramp rather than jump');
+ assert(media.volume>outsideVolume&&media.volume<.75,'The indoor gain should ramp rather than jump');
  timer.step(160);assert.equal(media.volume,.75);assert.equal(player.currentTime,83.125);
- setScene({kind:'shop',floor:1});timer.step(300);assert.equal(media.volume,.75*.025);
- setScene(null);timer.step(300);assert.equal(media.volume,.75*.045);
+ setScene({kind:'shop',floor:1});timer.step(300);assert.equal(media.volume,.75*.003);
+ setScene(null);timer.step(300);assert.equal(media.volume,.75*.025);
  assert.strictEqual(player.currentTrack,track);assert.equal(media.src,source);assert.equal(media.loadCalls,loads);assert.equal(media.playCalls,plays);assert.equal(player.currentTime,83.125);
  player.destroy();
 });
@@ -170,9 +170,9 @@ test('visibility and page lifecycle pause safely and resume without changing tim
 
 test('mute and master volume persist only their own preference without resetting the programme',async()=>{
  const {player,media,timer,writes,values,storage}=fixture();await player.play();media.currentTime=72;
- player.setVolume(.4);timer.step(300);assert.equal(media.volume,.4*.045);player.setMuted(true);assert.equal(media.muted,true);timer.step(300);assert.equal(media.volume,0);
+ player.setVolume(.4);timer.step(300);assert.equal(media.volume,.4*.025);player.setMuted(true);assert.equal(media.muted,true);timer.step(300);assert.equal(media.volume,0);
  assert.equal(player.currentTime,72);assert.equal(media.paused,false);assert.equal(player.state.playing,true);
- player.toggleMute();timer.step(300);assert.equal(media.muted,false);assert.equal(media.volume,.4*.045);assert.equal(media.loadCalls,1);
+ player.toggleMute();timer.step(300);assert.equal(media.muted,false);assert.equal(media.volume,.4*.025);assert.equal(media.loadCalls,1);
  assert.deepEqual([...new Set(writes)],[CONCERT_AUDIO_PREFERENCE_KEY]);assert.deepEqual(JSON.parse(values.get(CONCERT_AUDIO_PREFERENCE_KEY)),{version:1,volume:.4,muted:false});
  const restored=fixture({storage});assert.equal(restored.player.state.volume,.4);assert.equal(restored.player.state.muted,false);assert.equal(restored.media.playCalls,0);
  restored.player.destroy();player.destroy();
@@ -200,7 +200,7 @@ test('Web Audio is created and resumed on a player gesture, with only one source
  win.emit('pointerdown');await flush();
  assert.equal(constructions,1);assert.equal(context.resumeCalls,1);assert.equal(context.sourceCalls,1);
  assert.strictEqual(context.sourceMedia,media);assert.deepEqual(context.source.connections,[context.filter]);assert.deepEqual(context.filter.connections,[context.destination]);
- assert.equal(player.state.usingWebAudio,true);assert.equal(player.state.filterEnabled,true);assert.equal(player.state.filterCutoffHz,3200);assert.equal(player.state.contextGain,.045);
+ assert.equal(player.state.usingWebAudio,true);assert.equal(player.state.filterEnabled,true);assert.equal(player.state.filterCutoffHz,1500);assert.equal(player.state.contextGain,.025);
  await player.unlock();await player.play();player.skip();await flush();
  assert.equal(constructions,1);assert.equal(context.sourceCalls,1);assert.equal(context.resumeCalls,1);
  player.destroy();
@@ -216,7 +216,7 @@ test('placing an opera house after the initial unlock adds muffling on the next 
  const source=media.src,track=player.currentTrack,loads=media.loadCalls,plays=media.playCalls;
  win.emit('keydown',{key:'w',repeat:false});await flush();
  assert.equal(constructions,1);assert.equal(context.sourceCalls,1);assert.equal(context.resumeCalls,1);
- assert.equal(player.state.filterEnabled,true);assert.equal(player.state.filterCutoffHz,3200);
+ assert.equal(player.state.filterEnabled,true);assert.equal(player.state.filterCutoffHz,1500);
  assert.equal(player.currentTime,21.75);assert.equal(media.src,source);assert.strictEqual(player.currentTrack,track);assert.equal(media.loadCalls,loads);assert.equal(media.playCalls,plays);
  player.destroy();
 });
@@ -236,15 +236,15 @@ test('outdoor low-pass opens to the full range in the hall without changing sour
  const context=new FakeAudioContext(),{player,media,timer,setScene}=fixture({AudioContextConstructor:function(){return context;}});
  await player.play();await flush();timer.step(300);media.currentTime=86.25;
  const track=player.currentTrack,source=media.src,loads=media.loadCalls,filter=context.filter;
- assert.equal(player.state.filterCutoffHz,3200);assert.equal(media.volume,.75*.045);
- assert.deepEqual(filter.frequency.events,[['cancel',12],['set',3200,12]]);
+ assert.equal(player.state.filterCutoffHz,1500);assert.equal(media.volume,.75*.025);
+ assert.deepEqual(filter.frequency.events,[['cancel',12],['set',1500,12]]);
  setScene({kind:'concert'});timer.step(300);
  assert.equal(player.state.filterEnabled,false);assert.equal(player.state.filterCutoffHz,24000);assert.equal(media.volume,.75);
  assert.deepEqual(filter.frequency.events.slice(-2),[['hold',12],['ramp',24000,12.28]]);
- setScene({kind:'furniture'});timer.step(300);
- assert.equal(player.state.filterEnabled,true);assert.equal(player.state.filterCutoffHz,2200);assert.equal(media.volume,.75*.025);
+ setScene({kind:'shop',floor:1});timer.step(300);
+ assert.equal(player.state.filterEnabled,true);assert.equal(player.state.filterCutoffHz,600);assert.equal(media.volume,.75*.003);
  setScene(null);timer.step(300);
- assert.equal(player.state.filterCutoffHz,3200);assert.equal(media.volume,.75*.045);
+ assert.equal(player.state.filterCutoffHz,1500);assert.equal(media.volume,.75*.025);
  assert.strictEqual(player.currentTrack,track);assert.equal(player.currentTime,86.25);assert.equal(media.src,source);assert.equal(media.loadCalls,loads);assert.equal(context.sourceCalls,1);
  const scheduled=filter.frequency.events.length;
  for(let i=0;i<600;i++){player.updateContext();timer.step(16);}
@@ -252,12 +252,39 @@ test('outdoor low-pass opens to the full range in the hall without changing sour
  player.destroy();
 });
 
+test('every non-opera building stays nearly silent and more muffled while player controls and the live programme continue',async()=>{
+ const context=new FakeAudioContext(),{player,media,timer,setScene,values,writes}=fixture({AudioContextConstructor:function(){return context;}});
+ await player.play();await flush();timer.step(300);player.setVolume(.42);timer.step(300);
+ const track=player.currentTrack,source=media.src,loads=media.loadCalls,plays=media.playCalls;media.currentTime=47.125;
+ setScene({kind:'lobby',floor:1});timer.step(300);
+ player.setMuted(true);timer.step(300);assert.equal(media.volume,0);assert.equal(media.muted,true);
+ player.setMuted(false);timer.step(300);const saved=values.get(CONCERT_AUDIO_PREFERENCE_KEY),writeCount=writes.length,scheduled=context.filter.frequency.events.length;
+ for(const scene of [{kind:'lobby',floor:1},{kind:'hall',floor:8},{kind:'shop',floor:1},{kind:'shop',floor:2},{kind:'showroom',showroomId:'midcentury-studio'},{kind:'apartment',resident:'player',floor:15}]){
+  setScene(scene);timer.step(300);
+  assert.equal(player.state.context,'interior');assert.equal(player.state.contextGain,.003);
+  assert.equal(player.state.filterEnabled,true);assert.equal(context.filter.frequency.value,600);
+  assert.equal(media.volume,.42*.003);assert.equal(player.state.playing,true);
+  for(let i=0;i<100;i++)player.updateContext();
+ }
+ assert.equal(context.filter.frequency.events.length,scheduled,'Moving between other buildings must not reschedule identical filter automation');
+ assert.equal(timer.pending,0);
+ setScene(null);timer.step(300);assert.equal(player.state.context,'town');assert.equal(media.volume,.42*.025);assert.equal(context.filter.frequency.value,1500);
+ setScene({kind:'concert'});timer.step(300);assert.equal(player.state.context,'concert');assert.equal(media.volume,.42);assert.equal(player.state.filterEnabled,false);assert.equal(context.filter.frequency.value,24000);
+ assert.strictEqual(player.currentTrack,track);assert.equal(player.currentTime,47.125);assert.equal(media.src,source);assert.equal(media.loadCalls,loads);assert.equal(media.playCalls,plays);
+ assert.equal(player.state.volume,.42);assert.equal(player.state.muted,false);assert.equal(values.get(CONCERT_AUDIO_PREFERENCE_KEY),saved);assert.equal(writes.length,writeCount);assert.equal(context.sourceCalls,1);assert.equal(context.resumeCalls,1);
+ player.destroy();
+});
+
 test('unsupported Web Audio keeps the softer ordinary media playback without repeated setup attempts',async()=>{
  for(const failure of ['constructor','filter']){
   const context=new FakeAudioContext();context.failFilter=true;let attempts=0;
-  const {player,media,timer}=fixture({AudioContextConstructor:function(){attempts++;if(failure==='constructor')throw Error('Unsupported');return context;}});
+  const {player,media,timer,setScene}=fixture({AudioContextConstructor:function(){attempts++;if(failure==='constructor')throw Error('Unsupported');return context;}});
   await player.play();await flush();timer.step(300);
-  assert.equal(player.state.playing,true);assert.equal(player.state.usingWebAudio,false);assert.equal(player.state.filterEnabled,false);assert.equal(player.state.filterCutoffHz,null);assert.equal(media.volume,.75*.045);
+  assert.equal(player.state.playing,true);assert.equal(player.state.usingWebAudio,false);assert.equal(player.state.filterEnabled,false);assert.equal(player.state.filterCutoffHz,null);assert.equal(media.volume,.75*.025);
+  media.currentTime=19.5;const source=media.src;
+  setScene({kind:'concert'});timer.step(300);assert.equal(media.volume,.75);
+  setScene({kind:'apartment',resident:'player',floor:15});timer.step(300);assert.equal(media.volume,.75*.003);
+  assert.equal(media.currentTime,19.5);assert.equal(media.src,source);assert.equal(media.loadCalls,1);
   await player.play();await player.unlock();for(let i=0;i<60;i++)player.updateContext();
   assert.equal(attempts,1);assert.equal(context.sourceCalls,0);assert.equal(context.closeCalls,failure==='filter'?1:0);
   player.destroy();

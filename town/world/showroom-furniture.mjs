@@ -1,5 +1,5 @@
-import {SHOWROOM_FURNITURE} from './showroom-furniture-definitions.mjs?v=interior-polish-1';
-export {SHOWROOM_FURNITURE} from './showroom-furniture-definitions.mjs?v=interior-polish-1';
+import {SHOWROOM_FURNITURE} from './showroom-furniture-definitions.mjs?v=door-price-2';
+export {SHOWROOM_FURNITURE} from './showroom-furniture-definitions.mjs?v=door-price-2';
 
 // Signature beds and seating keep the same bottom-center anchor and native
 // cutaway perspective as the original furniture. The source atlas is retained

@@ -1,6 +1,6 @@
-import {cell,height,COLS,ROWS,TILE} from './model.mjs?v=interior-polish-1';
-import {roundedUnder,curveUnder} from './round-geometry.mjs?v=interior-polish-1';
-import {readPaint,PAINT_GRID,PAINT_STEP} from './ground-paint.mjs?v=interior-polish-1';
+import {cell,height,COLS,ROWS,TILE} from './model.mjs?v=door-price-2';
+import {roundedUnder,curveUnder} from './round-geometry.mjs?v=door-price-2';
+import {readPaint,PAINT_GRID,PAINT_STEP} from './ground-paint.mjs?v=door-price-2';
 
 const fields=new WeakMap(),EPS=1e-7;
 const valid=p=>p&&Number.isFinite(p.x)&&Number.isFinite(p.y);

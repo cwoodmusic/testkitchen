@@ -1,4 +1,4 @@
-import {parseProject,MAX_PROJECT_LENGTH} from './model.mjs?v=interior-polish-1';
+import {parseProject,MAX_PROJECT_LENGTH} from './model.mjs?v=door-price-2';
 
 const BACKUP_PREFIX='backup:',BACKUP_FORMAT='coda-town-backup-v1',META_KEY='current-meta';
 export const MAX_PROJECT_BACKUPS=3;

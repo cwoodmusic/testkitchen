@@ -1,6 +1,7 @@
 /** Geometry/save baseline for cosmetic room, corridor and doorway work.
  * Run with --root <immutable tree> --output <json>, then compare the final tree
- * using --baseline <json>. No browser, rendering, localStorage or map writes.
+ * using --baseline <json>. --allow-price-changes permits only explicit price
+ * increases; all other fields still compare exactly. No browser/storage/map writes.
  */
 import {readFileSync,writeFileSync} from 'node:fs';
 import {resolve} from 'node:path';
@@ -30,5 +31,17 @@ for(let n=0;n<50;n++){actor.y=420-n*6;manager.update(.025,actor,[]);doorTrace.pu
 const gate=createAutomaticPortalGate(),point={x:400,y:240};gate.arrive(point);const gateTrace=[gate.update(.1,point,{x:0,y:-1},[fixture])?.id||null];point.y=280;gate.update(.1,point,{x:0,y:1},[fixture]);for(let n=0;n<4;n++)gate.update(.1,point,{x:0,y:0},[fixture]);point.y=240;gateTrace.push(gate.update(.025,point,{x:0,y:-1},[fixture])?.id||null);assert.deepEqual(gateTrace,[null,fixture.id]);
 const payload={schema:1,models,playerSave:{key:ROOM_KEY,raw,loaded:room.snapshot(),writes,floorBounds:apartmentDecorBounds(player),wallBounds:apartmentWallDecorBounds(player)},showroomRoutes:SHOWROOMS.map(s=>select(s,['id','storeFloor','x','y','w','h','threshold','enterNormal','triggerHalfWidth','entry','lobbyApproach','lobbyReturn','visitRoute','exitRoute'])),storeTraffic:STORE_TRAFFIC,storeVerticalCore:STORE_VERTICAL_CORE,journeys,doorTrace,gateTrace,stock:stock.map(p=>select(p,['id','asset','price','scale'])),sourceMapHash:createHash('sha256').update(readFileSync(resolve(root,'town/maps/coda-town-uploaded-3.json'))).digest('hex')};
 const canonical=v=>JSON.stringify(v,(_k,value)=>value&&typeof value==='object'&&!Array.isArray(value)?Object.fromEntries(Object.keys(value).sort().map(k=>[k,value[k]])):value),encoded=canonical(payload),hash=createHash('sha256').update(encoded).digest('hex');
-const baseline=option('--baseline',null);if(baseline){const b=JSON.parse(readFileSync(baseline)),changed=[];function diff(a,v,path='payload'){if(JSON.stringify(a)===JSON.stringify(v))return;if(a&&v&&typeof a==='object'&&typeof v==='object'){for(const k of new Set([...Object.keys(a),...Object.keys(v)]))diff(a[k],v[k],path+'.'+k);}else if(changed.length<20)changed.push({path,before:v,after:a});}diff(JSON.parse(encoded),b.payload);assert.equal(hash,b.hash,'Geometry/save/portal fingerprint changed: '+JSON.stringify(changed));}
-const result={root,hash,payload};if(option('--output',null))writeFileSync(option('--output'),JSON.stringify(result,null,2));console.log(JSON.stringify({models:models.length,privateHomes:31,commonFloors:15,storeFloors:2,hash,baselineMatches:!!baseline,oldSaveUnchanged:true,mapHash:payload.sourceMapHash}));
+const baseline=option('--baseline',null),allowPriceChanges=args.includes('--allow-price-changes');let changedPrices=0;
+if(baseline){
+ const b=JSON.parse(readFileSync(baseline)),changed=[];
+ function diff(a,v,path='payload'){if(JSON.stringify(a)===JSON.stringify(v))return;if(a&&v&&typeof a==='object'&&typeof v==='object'){for(const k of new Set([...Object.keys(a),...Object.keys(v)]))diff(a[k],v[k],path+'.'+k);}else if(changed.length<20)changed.push({path,before:v,after:a});}
+ if(allowPriceChanges){
+  // An explicit economy revision may raise prices, while every model, saved
+  // placement, product ID/asset/scale and route still matches the old baseline.
+  const stripPrices=value=>({...value,stock:value.stock.map(({price,...product})=>product)});
+  const current=JSON.parse(encoded),before=stripPrices(b.payload),after=stripPrices(current);diff(after,before);
+  assert.deepEqual(after,before,'Non-price geometry/save/portal contract changed: '+JSON.stringify(changed));
+  for(let i=0;i<current.stock.length;i++){const now=current.stock[i].price,old=b.payload.stock[i].price;assert(Number.isInteger(now)&&now>=old,'Authorized repricing must retain a valid non-decreasing price: '+current.stock[i].id);if(now!==old)changedPrices++;}
+ }else{diff(JSON.parse(encoded),b.payload);assert.equal(hash,b.hash,'Geometry/save/portal fingerprint changed: '+JSON.stringify(changed));}
+}
+const result={root,hash,payload};if(option('--output',null))writeFileSync(option('--output'),JSON.stringify(result,null,2));console.log(JSON.stringify({models:models.length,privateHomes:31,commonFloors:15,storeFloors:2,hash,baselineMatches:!!baseline&&!changedPrices,geometryAndSavesMatch:!!baseline,authorizedPriceChanges:changedPrices,oldSaveUnchanged:true,mapHash:payload.sourceMapHash}));

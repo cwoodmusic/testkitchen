@@ -1,11 +1,11 @@
-import {catalog} from './catalog.mjs?v=interior-polish-1';
-import {FLOOR_COUNT,residents,getInterior,renderInterior,residentInteractionZones,apartmentDecorBounds,apartmentWallDecorBounds,configureUrbanInteriors} from './urban-interiors.mjs?v=interior-polish-1';
-import {createRoomStorage,roomItemBoxes} from './urban-room.mjs?v=interior-polish-1';
-import {SHOWROOMS,STORE_FLOOR_COUNT,STORE_VERTICAL_CORE} from './showroom-layout.mjs?v=interior-polish-1';
-import {createStagePerformance,stagePerformanceSignature,stageCollisionBoxes} from './concert-performers.mjs?v=interior-polish-1';
-import {CONCERT_PROGRAMME} from './concert-programme.mjs?v=interior-polish-1';
-import {createAutomaticDoors,createAutomaticPortalGate} from './automatic-doors.mjs?v=interior-polish-1';
-import {furnitureFacingPlacement,furnitureFacingBounds} from './furniture-facing.mjs?v=interior-polish-1';
+import {catalog} from './catalog.mjs?v=door-price-2';
+import {FLOOR_COUNT,residents,getInterior,renderInterior,residentInteractionZones,apartmentDecorBounds,apartmentWallDecorBounds,configureUrbanInteriors} from './urban-interiors.mjs?v=door-price-2';
+import {createRoomStorage,roomItemBoxes} from './urban-room.mjs?v=door-price-2';
+import {SHOWROOMS,STORE_FLOOR_COUNT,STORE_VERTICAL_CORE} from './showroom-layout.mjs?v=door-price-2';
+import {createStagePerformance,stagePerformanceSignature,stageCollisionBoxes} from './concert-performers.mjs?v=door-price-2';
+import {CONCERT_PROGRAMME} from './concert-programme.mjs?v=door-price-2';
+import {createAutomaticDoors} from './automatic-doors.mjs?v=door-price-2';
+import {furnitureFacingPlacement,furnitureFacingBounds} from './furniture-facing.mjs?v=door-price-2';
 
 configureUrbanInteriors(catalog);
 const furniture=window.CodaFurnitureCatalog||[];
@@ -19,14 +19,13 @@ export function buildingDoor(o){
 }
 function decorSolids(items){return items.flatMap(o=>roomItemBoxes(o,catalog));}
 export function createUrbanController({canvas,getProject,getPlayer,getResidents,onConversation,getConcert=()=>null,preview=false}){
- const css=document.createElement('link');css.rel='stylesheet';css.href=new URL('./urban.css?v=interior-polish-1',import.meta.url);document.head.append(css);
+ const css=document.createElement('link');css.rel='stylesheet';css.href=new URL('./urban.css?v=door-price-2',import.meta.url);document.head.append(css);
  const hud=document.createElement('section');hud.className='urban-hud';hud.hidden=true;document.body.append(hud);
  const hint=document.createElement('button');hint.className='urban-prompt';hint.hidden=true;hint.onclick=()=>interact();document.body.append(hint);
  const dialog=document.createElement('dialog');dialog.className='urban-dialog';dialog.setAttribute('aria-label','Coda Town');document.body.append(dialog);
  let scene=null,player={x:0,y:0},outside=null,people=[],owner=parent===window&&guestStorageAvailable()?'guest':null,roomOwner=owner,wallet=null,localWallet=null,room=null,decor=[],selectedDecor=null,decorate=false,hover=null,selectedRotation=0,purchasesEnabled=parent===window&&guestStorageAvailable(),purchasesMessage='';
  let facing='down',phase=0,walking=false,zoom=.72,view={x:0,y:0},lastSize={width:1,height:1},lastHint='',notice='',noticeUntil=0,request=0,conversation=null;
  const pending=new Map(),dialogueTurns=new Map();
- const portalGate=createAutomaticPortalGate(),movementIntent={x:0,y:0};
  let automaticDoors=null,portals=[],exteriorDoors=null,exteriorPortals=[],exteriorDoc=null,exteriorCount=-1,doorOwners=new WeakMap();
  let seated=null,performanceModel=null,performanceKey=null,performanceBoxes=[],settledPerformance=null,walkZoom=zoom;
  const reducedMotion=typeof matchMedia==='function'&&matchMedia('(prefers-reduced-motion: reduce)').matches;
@@ -115,7 +114,6 @@ export function createUrbanController({canvas,getProject,getPlayer,getResidents,
   }
   if(scene.kind!=='showroom')actionButton(scene.kind==='shop'&&scene.floor===2?'Main lobby':'Go outside',scene.kind==='shop'&&scene.floor===2?()=>goStoreFloor(1):reset);
  }
- function intentFromKeys(keys){movementIntent.x=(keys.has('d')||keys.has('arrowright')?1:0)-(keys.has('a')||keys.has('arrowleft')?1:0);movementIntent.y=(keys.has('s')||keys.has('arrowdown')?1:0)-(keys.has('w')||keys.has('arrowup')?1:0);return movementIntent;}
  function normalForDoor(d){return d.enterNormal||({down:{x:0,y:-1},up:{x:0,y:1},left:{x:1,y:0},right:{x:-1,y:0}})[d.facing]||{x:0,y:-1};}
  function doorForZone(model,z){
   const list=model.doors||[],profile=z.resident==='player'?{number:'15A'}:residents.find(r=>r.id===z.resident);
@@ -149,10 +147,10 @@ export function createUrbanController({canvas,getProject,getPlayer,getResidents,
   return result;
  }
  function configureSceneDoors(model){
-  portals=scenePortals(model);const defs=[...(model.privacyDoors||[]),...(model.doors||[])];
+  portals=scenePortals(model);const privacyDoors=scene.kind==='apartment'||scene.kind==='showroom'?model.privacyDoors||[]:[],privacy=new WeakSet(privacyDoors),defs=[...privacyDoors,...(model.doors||[])];
   for(const p of portals)if(!defs.includes(p.door))defs.push(p.door);
-  automaticDoors=createAutomaticDoors(defs,{canOpen:(door,actor,isPlayer)=>{const resident=doorOwners.get(door);return !resident||(isPlayer?canEnter(resident):actor.id===resident);}});
-  automaticDoors.prime(player,sceneResidents());portalGate.arrive(player);
+  automaticDoors=createAutomaticDoors(defs,{canOpen:(door,actor,isPlayer)=>{if(privacy.has(door))return true;if(isPlayer)return false;const resident=doorOwners.get(door);return !resident||actor.id===resident;}});
+  automaticDoors.prime(player,sceneResidents());
  }
  function refreshExteriorDoors(){
   const doc=getProject();let changed=doc!==exteriorDoc||doc.objects.length!==exteriorCount;
@@ -164,38 +162,21 @@ export function createUrbanController({canvas,getProject,getPlayer,getResidents,
    const angle=(o.rotation||0)*Math.PI/180,normal={x:Math.sin(angle),y:-Math.cos(angle)},door={id:'building-'+(o.id||index),threshold:{x:at.x,y:at.y},enterNormal:normal,triggerHalfWidth:85*(o.scale||1),virtual:true,object:o};
    exteriorPortals.push(describePortal(door.id,door.threshold,normal,{door,action:'building',object:o,objectIndex:index,objectX:o.x,objectY:o.y,objectRotation:o.rotation,objectScale:o.scale,triggerHalfWidth:door.triggerHalfWidth,approachDistance:80*(o.scale||1)}));
   }
-  exteriorDoors=createAutomaticDoors(exteriorPortals.map(p=>p.door));
+  exteriorDoors=createAutomaticDoors(exteriorPortals.map(p=>p.door),{canOpen:(_door,_actor,isPlayer)=>!isPlayer});
  }
- function roomHallReturn(id,floor){
-  const hall=getInterior({kind:'hall',floor}),zone=hall.zones.find(z=>z.action==='room'&&z.resident===id),door=zone&&doorForZone(hall,zone);
-  return door?{x:door.threshold?.x??door.x,y:(door.threshold?.y??door.floorY??door.y+door.h)+56}:hall.spawn;
- }
- function traverse(portal){
-  if(portal.action==='building')return enterBuilding(portal.object);
-  if(portal.action==='room'){openRoom(portal.resident);return true;}
-  if(portal.action==='showroom')return openShowroom(portal.showroomId);
-  if(portal.action==='showroom-lobby')return returnToStore();
-  if(portal.action==='exit'){
-   if(scene.kind==='showroom')return returnToStore();
-   if(scene.kind==='apartment'){const floor=scene.floor,id=scene.resident;setScene({kind:'hall',floor},roomHallReturn(id,floor));}
-   else if(scene.kind==='hall')goFloor(1);else reset();
-   return true;
-  }
-  return false;
- }
- function automaticOutside(dt,keys){
-  refreshExteriorDoors();const actors=getResidents?.(null)||[];exteriorDoors?.update(dt,getPlayer(),actors);
-  if(dialog.open)return false;const portal=portalGate.update(dt,getPlayer(),intentFromKeys(keys),exteriorPortals);
-  if(portal&&exteriorDoors.openness(portal.door)>=.7)return traverse(portal);return false;
+ // Building entrances are manual for the player; NPC entrance animation keeps
+ // following the existing resident journeys without changing their queue.
+ function updateExteriorDoors(dt){
+  refreshExteriorDoors();exteriorDoors?.update(dt,getPlayer(),getResidents?.(null)||[]);
  }
  function setScene(next,spawn){
   closeDialog();if(seated)zoom=walkZoom;scene=next;seated=null;selectedDecor=null;decorate=false;hover=null;const model=getInterior(scene);player={...(spawn||model.spawn)};walking=false;facing='up';configureSceneDoors(model);updateHud();getConcert()?.updateContext(scene);
   // Furniture collision is tested at the feet, like the outdoor character.
   if(solid(player.x,player.y)){let found=false;for(let y=model.height-140;y>100&&!found;y-=40)for(let x=model.width/2;x<model.width-100;x+=40)if(!solid(x,y)){player={x,y};found=true;break;}}
-  automaticDoors.prime(player,sceneResidents());portalGate.arrive(player);
+  automaticDoors.prime(player,sceneResidents());
  }
  function enterBuilding(o){const door=buildingDoor(o);if(!door)return false;outside={object:o,position:{...getPlayer()}};setScene(door.kind==='opera'?{kind:'concert'}:door.kind==='shop'?{kind:'shop',floor:1}:{kind:'lobby',floor:1});return true;}
- function reset(){closeDialog();if(seated)zoom=walkZoom;scene=null;seated=null;outside=null;decorate=false;selectedDecor=null;hover=null;hud.hidden=true;hint.hidden=true;lastHint='';automaticDoors=null;portals=[];portalGate.arrive(getPlayer());getConcert()?.updateContext(null);}
+ function reset(){closeDialog();if(seated)zoom=walkZoom;scene=null;seated=null;outside=null;decorate=false;selectedDecor=null;hover=null;hud.hidden=true;hint.hidden=true;lastHint='';automaticDoors=null;portals=[];getConcert()?.updateContext(null);}
  function standUp(){if(!seated)return false;const seat=seated;seated=null;zoom=walkZoom;player={...seat.approach};walking=false;facing='up';updateHud();return true;}
  function watchSeat(seatId){
   if(scene?.kind!=='concert')return false;
@@ -298,8 +279,8 @@ export function createUrbanController({canvas,getProject,getPlayer,getResidents,
   if(canvas.id==='map'){const r=canvas.getBoundingClientRect();hud.style.left=(r.left+16)+'px';hud.style.top=(r.top+16)+'px';hud.style.maxWidth=Math.max(180,Math.min(420,r.width-32))+'px';hint.style.left=(r.left+r.width/2)+'px';}
   if(dialog.open){hint.hidden=true;return;}
   let text='';if(notice&&performance.now()<noticeUntil)text=notice;
-  else if(scene){const z=nearestZone(),portal=z&&portals.find(p=>p.id===z.id),label=portal?(portal.action==='room'&&!canEnter(portal.resident)?'Friendship level 5 opens this apartment':`Walk through · ${z.label}`):(z?`E · ${z.label}`:'WASD / arrows · Walk · E interact');text=seated?'Watching the performance · E or WASD to stand up':decorate?(selectedDecor?(catalog.get(furniture.find(item=>item.id===selectedDecor)?.asset)?.wallMounted?'Click to hang on the north wall · R turn · E inventory · Escape finish':'Click the floor to place · R turn · E inventory · Escape finish'):'E · Choose furniture · click a placed item to move or put away'):label;}
-  else {const n=outsideTarget();if(n?.person)text=`E · Talk to ${n.person.actor.name||residents.find(r=>r.id===n.person.actor.id)?.name||'your neighbour'}`;else if(n?.building)text=`Walk through the entrance · ${n.building.door.kind==='opera'?'Sydney Opera House':n.building.door.kind==='shop'?'Coda Furnishings':'Coda Residences'}`;}
+  else if(scene){const z=nearestZone(),label=z?`E · ${z.label}${z.action==='room'&&!canEnter(z.resident)?' · Friendship level 5 required':''}`:'WASD / arrows · Walk · E interact';text=seated?'Watching the performance · E or WASD to stand up':decorate?(selectedDecor?(catalog.get(furniture.find(item=>item.id===selectedDecor)?.asset)?.wallMounted?'Click to hang on the north wall · R turn · E inventory · Escape finish':'Click the floor to place · R turn · E inventory · Escape finish'):'E · Choose furniture · click a placed item to move or put away'):label;}
+  else {const n=outsideTarget();if(n?.person)text=`E · Talk to ${n.person.actor.name||residents.find(r=>r.id===n.person.actor.id)?.name||'your neighbour'}`;else if(n?.building)text=`E · Enter ${n.building.door.kind==='opera'?'Sydney Opera House':n.building.door.kind==='shop'?'Coda Furnishings':'Coda Residences'}`;}
   if(text!==lastHint){hint.textContent=text;lastHint=text;}hint.hidden=!text;
  }
  function solid(x,y){
@@ -309,9 +290,8 @@ export function createUrbanController({canvas,getProject,getPlayer,getResidents,
   return !!automaticDoors?.blocked(x,y,16)||[...m.solids,...items,...(onStage?performanceBoxes:[])].some(r=>rectHit(x,y,r,16));
  }
  function frame(ctx,keys,dt,now,width,height,drawPlayer){
-  if(!scene&&!automaticOutside(dt,keys))return false;lastSize={width,height};const m=getInterior(scene),actors=sceneResidents();automaticDoors.update(dt,player,actors);refreshStage();walking=false;
+  if(!scene){updateExteriorDoors(dt);return false;}lastSize={width,height};const m=getInterior(scene),actors=sceneResidents();automaticDoors.update(dt,player,actors);refreshStage();walking=false;
   if(!dialog.open&&!decorate){let dx=(keys.has('d')||keys.has('arrowright')?1:0)-(keys.has('a')||keys.has('arrowleft')?1:0),dy=(keys.has('s')||keys.has('arrowdown')?1:0)-(keys.has('w')||keys.has('arrowup')?1:0);const length=Math.hypot(dx,dy);if(length){if(seated)standUp();dx/=length;dy/=length;facing=Math.abs(dx)>Math.abs(dy)?dx<0?'left':'right':dy<0?'up':'down';const speed=keys.has('shift')?780:450,n=Math.ceil(speed*dt/3),sx=dx*speed*dt/n,sy=dy*speed*dt/n;let distance=0;for(let i=0;i<n;i++){const old={...player};if(!solid(player.x+sx,player.y))player.x+=sx;if(!solid(player.x,player.y+sy))player.y+=sy;distance+=Math.hypot(player.x-old.x,player.y-old.y);}walking=distance>0;phase=(phase+distance*Math.PI*2/150)%(Math.PI*2);}}
-  if(!dialog.open&&!decorate&&!seated){const portal=portalGate.update(dt,player,intentFromKeys(keys),portals);if(portal&&automaticDoors.openness(portal.door)>=.7&&traverse(portal))return true;}
   const clampView=(p,length,visible)=>length<=visible?length/2:Math.max(visible/2,Math.min(length-visible/2,p)),focus=seated?{x:m.stage.x+m.stage.w/2,y:m.stage.y+m.stage.h/2+60}:player;view={x:clampView(focus.x,m.width,width/zoom),y:clampView(focus.y,m.height,height/zoom)};
   tick();ctx.clearRect(0,0,width,height);ctx.fillStyle='#131b21';ctx.fillRect(0,0,width,height);ctx.save();ctx.translate(width/2,height/2);ctx.scale(zoom,zoom);ctx.translate(-view.x,-view.y);
   renderInterior(ctx,scene,{player,drawPlayer:(c,p)=>drawPlayer(c,p.x,p.y,{facing,walking,phase,seated:!!seated}),time:now/1000,decor:scene.resident==='player'?decor:[],actors,doorStates:automaticDoors.states,doorOpenness:automaticDoors.openness,performance:concertPerformance(),audioTime:getConcert()?.currentTime,reducedMotion,viewport:{x:view.x-width/zoom/2,y:view.y-height/zoom/2,w:width/zoom,h:height/zoom}});

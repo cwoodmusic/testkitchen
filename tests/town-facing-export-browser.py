@@ -31,7 +31,7 @@ try:
     with sync_playwright() as p:
         browser=p.chromium.launch(executable_path='/usr/bin/chromium',args=['--no-sandbox']);context=browser.new_context(viewport={'width':1740,'height':1120},accept_downloads=True);page=context.new_page();page.set_default_timeout(180000);errors=[];page.on('pageerror',lambda e:errors.append(str(e)))
         page.expose_function('__exportProgress',lambda item:print(json.dumps(item),flush=True))
-        if args.south_overrides:context.add_init_script("localStorage.setItem('codaNotesWalletV1',JSON.stringify({version:1,balance:10000,owned:[],rewards:[],earned:10000,spent:0}));")
+        if args.south_overrides:context.add_init_script("localStorage.setItem('codaNotesWalletV1',JSON.stringify({version:1,balance:500000,owned:[],rewards:[],earned:500000,spent:0}));")
         page.goto(f'http://127.0.0.1:{server.server_port}/town/builder/');page.wait_for_function('!!window.townBuilder')
         loaded_graph=page.evaluate('''async()=>{const app=new URL(document.querySelector('script[type=module]').src),base=new URL('../assets/apartment-collections/',app),result={};for(const file of ['manifest.json','directions-manifest.json']){const bytes=await(await fetch(new URL(file+app.search,base))).arrayBuffer();result[file]=[...new Uint8Array(await crypto.subtle.digest('SHA-256',bytes))].map(v=>v.toString(16).padStart(2,'0')).join('');}return result;}''')
         if snapshot:
@@ -92,7 +92,7 @@ try:
             page.keyboard.press('Escape');page.evaluate('townBuilder.urban.showInventory()')
             inventory=page.locator('.urban-dialog[open] .urban-catalog button').filter(has=page.get_by_text(grown['name'],exact=True))
             inventory_result=inventory.locator('canvas').evaluate('(c)=>__compareSouthThumb(c,"inventory",__southOverrideProduct.asset)')
-            wallet=page.evaluate('JSON.parse(localStorage.getItem("codaNotesWalletV1"))');assert wallet['balance']==10000-grown['price'] and wallet['owned'].count(grown['id'])==1
+            wallet=page.evaluate('JSON.parse(localStorage.getItem("codaNotesWalletV1"))');assert wallet['balance']==500000-grown['price'] and wallet['owned'].count(grown['id'])==1
             page.keyboard.press('Escape')
             page.evaluate('''async()=>{const app=new URL(document.querySelector('script[type=module]').src),{clearApartmentCollectionCache}=await import(new URL('../world/apartment-collections.mjs'+app.search,app));clearApartmentCollectionCache();}''')
             page.locator('#rotation').select_option('270');library.click()

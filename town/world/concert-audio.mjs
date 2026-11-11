@@ -50,7 +50,7 @@ export function createConcertAudio({
  cancelFrame=targetWindow?.cancelAnimationFrame?.bind(targetWindow),
  now=()=>globalThis.performance?.now?.()??Date.now(),
  autoplay=true,volume=.75,muted=false,fadeMs=280,
- outdoorGain=.045,indoorGain=1,interiorGain=.025,outdoorCutoff=3200,interiorCutoff=2200,
+ outdoorGain=.025,indoorGain=1,interiorGain=.003,outdoorCutoff=1500,interiorCutoff=600,
  venueAsset='sydney-opera-house',onChange
 }={}){
  const tracks=availableProgramme(programme),shuffle=createConcertShuffleBag(tracks,{random});
@@ -101,7 +101,7 @@ export function createConcertAudio({
  }
  function cutoff(){
   const fullRange=(graph?.context.sampleRate??48000)/2;
-  return !eligible||mode==='concert'?fullRange:clamp(finite(mode==='interior'?interiorCutoff:outdoorCutoff,3200),80,fullRange);
+  return !eligible||mode==='concert'?fullRange:clamp(finite(mode==='interior'?interiorCutoff:outdoorCutoff,1500),80,fullRange);
  }
  function updateFilter(immediate=false){
   if(!graph?.filter)return;

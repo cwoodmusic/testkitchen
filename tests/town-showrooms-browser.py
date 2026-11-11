@@ -40,6 +40,7 @@ try:
     with sync_playwright() as p:
         browser = p.chromium.launch(executable_path='/usr/bin/chromium', args=['--no-sandbox'])
         context = browser.new_context(viewport={'width': 1600, 'height': 1100})
+        context.add_init_script("""(()=>{if(localStorage.getItem('__showroomPriceQASeed'))return;localStorage.setItem('__showroomPriceQASeed','1');localStorage.setItem('codaNotesWalletV1',JSON.stringify({version:1,balance:150,owned:['furniture-geranium'],rewards:[],earned:170,spent:20}));})()""")
         if args.url:
             published_responses = {}
             def production(route):
@@ -254,9 +255,18 @@ try:
         selected_stock = [item for item in setup['stock'] if item['id'] in collection['productIds'] and item['category'] == 'furniture']
         assert page.locator('.urban-catalog button').count() == len(selected_stock)
         products = [next(item for item in setup['stock'] if item['id'] == f"furniture-collection-showroom-{collection['id']}-{role}") for role in ['bed', 'sofa']]
-        assert [item['price'] for item in products] == [80, 70]
-        before_balance = page.evaluate('JSON.parse(localStorage.getItem("codaNotesWalletV1"))?.balance??150')
-        assert before_balance == 150
+        assert [item['price'] for item in products] == [32000, 28000]
+        low_wallet=page.evaluate('localStorage.getItem("codaNotesWalletV1")')
+        assert json.loads(low_wallet)['balance']==150 and 'furniture-geranium' in json.loads(low_wallet)['owned']
+        first_product=products[0]
+        page.locator('.urban-catalog button').filter(has_text=first_product['name']).click()
+        page.get_by_role('button',name=f"Buy · {first_product['price']} Notes",exact=True).click()
+        page.locator('.urban-dialog[open] [role="status"]').filter(has_text=f"You need {first_product['price']-150} more Notes.").wait_for()
+        assert page.evaluate('localStorage.getItem("codaNotesWalletV1")')==low_wallet,'Low-balance purchase charged or changed ownership'
+        page.get_by_role('button',name='Back to showroom catalog',exact=True).click()
+        before_balance=500000
+        page.evaluate('''({balance,room})=>{const wallet=JSON.parse(localStorage.getItem('codaNotesWalletV1'));wallet.balance=balance;wallet.earned=balance+wallet.spent;localStorage.setItem('codaNotesWalletV1',JSON.stringify(wallet));townBuilder.urban.showShop(room,'furniture');}''',{'balance':before_balance,'room':collection['id']})
+        assert page.evaluate('JSON.parse(localStorage.getItem("codaNotesWalletV1")).balance')==before_balance
         purchases = []
         for product in products:
             page.locator('.urban-catalog button').filter(has_text=product['name']).click()
@@ -272,8 +282,14 @@ try:
             owned_card = page.locator('.urban-catalog button').filter(has_text=product['name'])
             assert owned_card.is_disabled() and 'Owned' in owned_card.inner_text()
             assert page.evaluate('JSON.parse(localStorage.getItem("codaNotesWalletV1")).balance') == prior_balance - product['price']
-            purchases.append({'id': product['id'], 'asset': product['asset'], 'debit': product['price'], 'owned': True})
-        assert page.evaluate('JSON.parse(localStorage.getItem("codaNotesWalletV1")).balance') == 0
+            before_replay=page.evaluate('localStorage.getItem("codaNotesWalletV1")')
+            replay=page.evaluate('id=>CodaNotesShop.createWallet({preserveEquipped:false}).buy(id)',product['id'])
+            assert replay['ok'] and replay['alreadyOwned'] and page.evaluate('localStorage.getItem("codaNotesWalletV1")')==before_replay
+            wallet=json.loads(before_replay);assert wallet['owned'].count(product['id'])==1 and 'furniture-geranium' in wallet['owned']
+            purchases.append({'id': product['id'], 'asset': product['asset'], 'debit': product['price'], 'owned': True,'alreadyOwnedReplayFree':True})
+        total_debit=sum(product['price'] for product in products)
+        final_balance=before_balance-total_debit
+        assert page.evaluate('JSON.parse(localStorage.getItem("codaNotesWalletV1")).balance') == final_balance
         page.screenshot(path=str(args.screenshots / 'collection-shopping.png'))
         page.get_by_role('button', name='Close', exact=True).click()
         assert page.evaluate('townBuilder.project') == source
@@ -303,7 +319,7 @@ try:
         assert page.evaluate('townBuilder.project') == source
         assert hashlib.sha256(args.map.read_bytes()).hexdigest() == source_hash
         assert not errors, errors
-        result = {**setup, 'originalStock':original_stock, 'walks': walks, 'shopping': {'collection': collection['id'], 'purchases': purchases, 'totalDebit': 150, 'balance': 0}, 'performance': {'lobby': perf, 'apartment': apartment_perf}, 'sourceUnchanged': True, 'sourceHash': source_hash, 'pageErrors': errors}
+        result = {**setup, 'originalStock':original_stock, 'walks': walks, 'shopping': {'collection': collection['id'], 'lowBalanceRejectedWithoutMutation':True,'fundedBalance':before_balance,'legacyOwnershipRetained':True,'purchases': purchases, 'totalDebit': total_debit, 'balance': final_balance}, 'performance': {'lobby': perf, 'apartment': apartment_perf}, 'sourceUnchanged': True, 'sourceHash': source_hash, 'pageErrors': errors}
         (args.screenshots / 'results.json').write_text(json.dumps(result, indent=2))
         print(json.dumps({'rooms':len(setup['rooms']),'stock':len(setup['stock']),'shopping':result['shopping'],'performance':result['performance'],'sourceUnchanged':True,'pageErrors':errors}), flush=True)
         browser.close()

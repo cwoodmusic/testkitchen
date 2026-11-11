@@ -45,8 +45,9 @@ test('front and side entrances use their original thresholds without moving the 
  assert.equal((g.gapStart.y+g.gapEnd.y)/2,d.threshold.y);assert.equal(getDoorVisualGeometry(d,1).tip.x,1098);
 });
 
-test('visual height does not alter a leaf footprint or its actor-sort depth',()=>{
+test('private door tops ignore old upright height hints without changing the hinge or sorting',()=>{
  const small=getPrivacyDoorVisualGeometry(privateDoor,.4),tall=getPrivacyDoorVisualGeometry({...privateDoor,visualHeight:240},.4);
+ assert.equal(small.kind,'top-down');assert(small.height<=12);assert.equal(tall.height,small.height);
  assert.deepEqual(small.hinge,tall.hinge);assert.deepEqual(small.tip,tall.tip);assert.equal(small.depth,tall.depth);assert.equal(interiorPortalVisualDepth(privateDoor,.4),small.depth);
  assert.equal(interiorPortalVisualDepth(entry,1),302);
  assert.equal(getDoorVisualGeometry(entry,-12).openness,0);assert.equal(getDoorVisualGeometry(entry,42).openness,1);assert.equal(getDoorVisualGeometry(entry,NaN).openness,0);

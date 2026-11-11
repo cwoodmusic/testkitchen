@@ -1,4 +1,4 @@
-export {HOME_MATERIAL_SUITES,getHomeMaterialSuite,applyHomeMaterialSuite} from './home-material-definitions.mjs?v=interior-polish-1';
+export {HOME_MATERIAL_SUITES,getHomeMaterialSuite,applyHomeMaterialSuite} from './home-material-definitions.mjs?v=door-price-2';
 
 // Seam-safe authored tiles are decoded once into ImageBitmap. The completed
 // room background owns all subsequent material painting, including its grain.

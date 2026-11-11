@@ -47,7 +47,7 @@ After the complete furniture and interior art overhaul, the final cold transitio
 
 This dense fixture deliberately overlaps 500 different props to keep them visible. The shared native budget admitted 192 views using 2.60 megapixels; the rest used the 32-pixel overview. This measures artwork admission rather than NPC pathfinding or ordinary town walking. The four separately measured apartment interiors each held 60 FPS without stalls or native requests.
 
-Verification includes 738 Node checks, all 5,172 collection/legacy/seating views, exact RGBA agreement for all 3,968 collection views with an independent DOM-image provider, the actual asset ZIP download, saved-room compatibility, and queued-generation cancellation. Reproduce the stress run with `python tests/town-facing-source-performance-browser.py` and pixel comparison with `python tests/town-collection-bitmap-pixels-browser.py`. These use isolated browser storage and preserve the supplied map source. See [the apartment guide](coda-apartment-homes.md) for room and cache details.
+Verification includes 745 Node checks, all 5,172 collection/legacy/seating views, exact RGBA agreement for all 3,968 collection views with an independent DOM-image provider, the actual asset ZIP download, saved-room compatibility, and queued-generation cancellation. Reproduce the stress run with `python tests/town-facing-source-performance-browser.py` and pixel comparison with `python tests/town-collection-bitmap-pixels-browser.py`. These use isolated browser storage and preserve the supplied map source. See [the apartment guide](coda-apartment-homes.md) for room and cache details.
 
 ## Click to select land
 
@@ -57,7 +57,7 @@ Use **Raise selected land** or **Lower selected land** to edit the selected regi
 
 ## Outdoor concert music
 
-Town music is now 4.5% of the master volume, with a gentle 3.2 kHz low-pass filter. Other interiors remain quiet and muffled; the concert hall restores the full frequency range and selected master volume. Scene changes keep the same media source and playback position. Browsers without Web Audio retain softer ordinary playback.
+Town music is 2.5% of the master volume with a 1.5 kHz low-pass filter. Other building interiors are nearly silent at 0.3% with a 600 Hz filter; the opera house restores the full frequency range and selected master volume. Scene changes keep the same media source and playback position. Browsers without Web Audio retain softer ordinary playback.
 
 The audio graph is created on a user gesture, reused, and smoothed only when the listening context changes. Native audio filtering adds no per-frame music processing on the main thread.
 

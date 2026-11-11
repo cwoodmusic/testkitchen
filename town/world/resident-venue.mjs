@@ -1,5 +1,5 @@
-import {residents} from './resident-profiles.mjs?v=interior-polish-1';
-import {SHOWROOMS,STORE_TRAFFIC,STORE_VERTICAL_CORE} from './showroom-layout.mjs?v=interior-polish-1';
+import {residents} from './resident-profiles.mjs?v=door-price-2';
+import {SHOWROOMS,STORE_TRAFFIC,STORE_VERTICAL_CORE} from './showroom-layout.mjs?v=door-price-2';
 export const SHOP_VISIT_CAPACITY=SHOWROOMS.length;
 
 const SPEED=156,GAIT=Math.PI*2/150;

@@ -1,6 +1,6 @@
-import {validMask} from './organic-mask.mjs?v=interior-polish-1';
-import {validPaint} from './ground-paint.mjs?v=interior-polish-1';
-import {roundedUnder,curveUnder} from './round-geometry.mjs?v=interior-polish-1';
+import {validMask} from './organic-mask.mjs?v=door-price-2';
+import {validPaint} from './ground-paint.mjs?v=door-price-2';
+import {roundedUnder,curveUnder} from './round-geometry.mjs?v=door-price-2';
 export const TILE=64,RISE=48,COLS=256,ROWS=192;
 export const MAX_PROJECT_LENGTH=64*1024*1024;
 export const surfaces=['grass','cobble','dirt','water','wood','sand','asphalt','sidewalk','brick'];

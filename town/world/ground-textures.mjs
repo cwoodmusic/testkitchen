@@ -1,4 +1,4 @@
-import {urbanTextures} from './urban-materials.mjs?v=interior-polish-1';
+import {urbanTextures} from './urban-materials.mjs?v=door-price-2';
 // Dedicated, footprint-free dry ground artwork. Keep the approved grass,
 // Music Square paving and water atlas intact.
 const image=await new Promise((resolve,reject)=>{const i=new Image();i.onload=()=>resolve(i);i.onerror=()=>reject(Error('Ground artwork could not load.'));i.src=new URL('../assets/ground-surfaces.png',import.meta.url);});

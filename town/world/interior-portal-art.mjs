@@ -53,15 +53,16 @@ function paletteFor(d,options,palettes){
 
 // These are the existing swing conventions used by automatic privacy doors:
 // a start hinge closes toward +length, an end hinge toward -length, and swing
-// chooses the room into which the leaf opens. Height only affects projection.
+// chooses the room into which the leaf opens. Private rooms are seen from
+// above: the visible door is its narrow top edge, never an upright facade.
 export function getPrivacyDoorVisualGeometry(d,openness=0){
  const vertical=d.axis==='vertical',length=Math.max(24,finite(d.length,104)),end=d.hinge==='end',hinge=end?length-5:5,span=Math.max(14,length-10),open=openValue(openness),swing=d.swing===-1?-1:1;
  const angle=(end?-1:1)*Math.PI/2*(1-open),co=unit(Math.cos(angle)),si=unit(Math.sin(angle));
  const at=vertical?{x:finite(d.x),y:finite(d.y)+hinge}:{x:finite(d.x)+hinge,y:finite(d.y)};
  const vector=vertical?{x:swing*co,y:si}:{x:si,y:-swing*co};
- const height=Math.max(76,finite(d.visualHeight,clamp(length*1.12,164,192)));
+ const height=8;
  const tip={x:at.x+vector.x*span,y:at.y+vector.y*span};
- return {kind:vertical?'side':'front',privacy:true,vertical,length,span,height,openness:open,hinge:at,vector,tip,depth:Math.max(at.y,tip.y),gapStart:vertical?{x:finite(d.x),y:finite(d.y)+5}:{x:finite(d.x)+5,y:finite(d.y)},gapEnd:vertical?{x:finite(d.x),y:finite(d.y)+length-5}:{x:finite(d.x)+length-5,y:finite(d.y)}};
+ return {kind:'top-down',privacy:true,vertical,length,span,height,openness:open,hinge:at,vector,tip,depth:Math.max(at.y,tip.y),gapStart:vertical?{x:finite(d.x),y:finite(d.y)+5}:{x:finite(d.x)+5,y:finite(d.y)},gapEnd:vertical?{x:finite(d.x),y:finite(d.y)+length-5}:{x:finite(d.x)+length-5,y:finite(d.y)}};
 }
 
 export function getDoorVisualGeometry(d,openness=0){
@@ -162,17 +163,27 @@ export function createInteriorPortalArt({createCanvas=defaultCanvas,maxEntries=P
    cached(c,['plaque',text,p.trim,p.frame].join('|'),pw,ph,cc=>{pixel(cc,0,0,pw,ph,p.frameDark);pixel(cc,1,1,pw-2,ph-2,p.trim);pixel(cc,3,3,pw-6,ph-6,p.frameDark);pixelText(cc,text,pw/2,4,p.light,2);pixel(cc,2,9,1,2,p.light);pixel(cc,pw-3,9,1,2,p.light);},px,py);
   }
  }
- function sideFrame(c,g,p){
-  const a=g.gapStart,b=g.gapEnd,h=g.height,x=a.x;
-  pixel(c,x-9,a.y-h-4,23,b.y-a.y+h+18,'#101b2330');
-  pixel(c,x-9,a.y-h-3,18,b.y-a.y+8,p.frameDark);pixel(c,x-7,a.y-h-2,12,b.y-a.y+5,p.frame);pixel(c,x-6,a.y-h-1,2,b.y-a.y+3,p.frameLight);pixel(c,x+4,a.y-h,2,b.y-a.y+3,p.trim);
-  for(const at of [a,b]){pixel(c,at.x-10,at.y-h,20,h+8,p.frameDark);pixel(c,at.x-7,at.y-h+2,14,h+4,p.frame);pixel(c,at.x-6,at.y-h+3,2,h,p.frameLight);pixel(c,at.x+4,at.y-h+3,2,h,p.frameDark);pixel(c,at.x-12,at.y-1,24,9,p.frameDark);pixel(c,at.x-10,at.y-1,20,3,p.trim);}
-  pixel(c,x-3,a.y,6,b.y-a.y,p.frameDark);pixel(c,x-2,a.y+2,2,b.y-a.y-4,p.light);
- }
  function privacy(c,d,openness=0,options={}){
-  const g=getPrivacyDoorVisualGeometry(d,openness),p=palette(d,options),variant=/bath/i.test(d.roomId||d.id||'')?'bath':'panel';c.save();c.imageSmoothingEnabled=false;
-  if(g.vertical){sideFrame(c,g,p);leaf(c,g,p,variant);for(const at of [g.gapStart,g.gapEnd]){pixel(c,at.x-7,at.y-8,14,10,p.frameDark);pixel(c,at.x-5,at.y-8,3,8,p.trim);}}
-  else{const left=Math.min(g.gapStart.x,g.gapEnd.x);frontFrame(c,{...g,opening:{x:left,y:finite(d.y)-g.height,w:g.span,h:g.height}},p,options.label||'',variant);}
+  const g=getPrivacyDoorVisualGeometry(d,openness),p=palette(d,options),span=g.span;c.save();c.imageSmoothingEnabled=false;
+  // Two short jamb caps meet the existing wall ends. The open gap shows its
+  // floor and threshold; there is no tall frame covering the room behind it.
+  c.save();c.translate(g.gapStart.x,g.gapStart.y);c.transform(g.vertical?0:1,g.vertical?1:0,g.vertical?-1:0,g.vertical?0:1,0,0);
+  cached(c,['plan-opening',span,p.key].join('|'),span+20,20,cc=>{
+   pixel(cc,10,7,span,6,p.frameDark);pixel(cc,10,8,span,3,p.ivory);pixel(cc,10,8,span,1,p.light);
+   for(const x of [4,span+4]){pixel(cc,x,2,12,16,p.frameDark);pixel(cc,x+1,3,10,14,p.frame);material(cc,1,{x:x+2,y:4,w:8,h:11},p.frame);pixel(cc,x+1,3,10,2,p.trim);pixel(cc,x+2,5,1,9,p.light);}
+  },-10,-10);c.restore();
+  // Rotate the actual narrow leaf in the floor plane around its real hinge.
+  // This is an overhead edge, with wood grain, a brass pin and a small handle.
+  const {x:a,y:b}=g.vector;
+  c.save();c.translate(g.hinge.x+2,g.hinge.y+3);c.transform(a,b,-b,a,0,0);pixel(c,0,-4,span,8,'#14202730');c.restore();
+  c.save();c.translate(g.hinge.x,g.hinge.y);c.transform(a,b,-b,a,0,0);
+  cached(c,['plan-leaf',span,p.key].join('|'),span,12,cc=>{
+   pixel(cc,0,2,span,8,p.leafDark);pixel(cc,1,3,span-2,5,p.leaf);
+   material(cc,p.metallic?3:0,{x:2,y:3,w:span-4,h:5},p.leaf);
+   pixel(cc,1,2,span-2,1,p.leafLight);pixel(cc,3,5,span-6,1,p.leafDark);pixel(cc,1,9,span-2,1,p.frameDark);
+   pixel(cc,span-12,7,6,3,p.trim);pixel(cc,span-11,7,4,1,p.light);
+  },0,-6);c.restore();
+  pixel(c,g.hinge.x-2,g.hinge.y-2,4,4,p.trim);pixel(c,g.hinge.x-1,g.hinge.y-1,2,2,p.light);
   c.restore();return g;
  }
  function door(c,d,openness=0,options={}){
