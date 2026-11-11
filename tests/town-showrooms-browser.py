@@ -85,8 +85,10 @@ try:
         setup = page.evaluate("""async()=>{
             const app=new URL(document.querySelector('script[type="module"]').src);
             const url=name=>new URL('../world/'+name+'.mjs'+app.search,app).href;
-            const {getInterior,renderInterior}=await import(url('urban-interiors'));
+            const {getInterior,renderInterior,clearInteriorRenderCache}=await import(url('urban-interiors'));
             const {SHOWROOMS}=await import(url('showroom-layout')),{preparePlacedFacingArt}=await import(url('furniture-art-access'));
+            const {warmHomeMaterials}=await import(url('home-materials')),{warmInteriorPortalArt}=await import(url('interior-portal-art')),{warmTowerCommonMaterials}=await import(url('tower-common-materials'));
+            const warm=async model=>Promise.all([preparePlacedFacingArt({objects:[...model.items,...(model.doors||[])]},townBuilder.catalog),warmHomeMaterials(model.homeMaterialSuite),warmInteriorPortalArt(),warmTowerCommonMaterials()]);
             const urban=townBuilder.urban,lobbies=[getInterior({kind:'shop',floor:1}),getInterior({kind:'shop',floor:2})],lobby=lobbies[0];
             const check=(ok,label)=>{if(!ok)throw Error(label);};
             const distance=(a,b)=>Math.hypot(a.x-b.x,a.y-b.y);
@@ -137,7 +139,8 @@ try:
             check(new Set(SHOWROOMS.map(r=>r.floorFinish?.id||r.floor?.id)).size===12,'Apartment floors repeat');
             check(new Set(SHOWROOMS.map(r=>r.wallpaper?.id)).size===12,'Apartment wallpapers repeat');
             const assetIds=[...new Set([...lobbies,...rooms.map(r=>r.model)].flatMap(m=>m.items.map(i=>i.asset)))];
-            for(const m of lobbies)await preparePlacedFacingArt({objects:[...m.items,...(m.doors||[])]},townBuilder.catalog);
+            for(const m of lobbies)await warm(m);
+            clearInteriorRenderCache();
             await document.fonts.ready;
             const draw=scene=>{const m=getInterior(scene),cv=document.createElement('canvas');cv.width=m.width;cv.height=m.height;const c=cv.getContext('2d');c.imageSmoothingEnabled=false;renderInterior(c,scene,{catalog:townBuilder.catalog,actors:[],time:0});return cv;};
             const lobbyCanvas=draw({kind:'shop',floor:1});
@@ -148,7 +151,7 @@ try:
             const upperCanvas=draw({kind:'shop',floor:2});await window.__saveShowroomImage('lobby-upper-full',upperCanvas.toDataURL('image/png'));
             const cellW=Math.max(...rooms.map(r=>r.model.width)),columns=2,rowHeights=Array.from({length:Math.ceil(rooms.length/columns)},(_,i)=>Math.max(...rooms.slice(i*columns,i*columns+columns).map(r=>r.model.height))+48);const sheet=document.createElement('canvas');sheet.width=cellW*columns;sheet.height=rowHeights.reduce((n,h)=>n+h,0);const sc=sheet.getContext('2d');sc.fillStyle='#131b21';sc.fillRect(0,0,sheet.width,sheet.height);sc.imageSmoothingEnabled=false;
             for(let i=0;i<rooms.length;i++){
-                const r=rooms[i];await preparePlacedFacingArt({objects:[...r.model.items,...(r.model.doors||[])]},townBuilder.catalog);const cv=draw(r.scene);await window.__saveShowroomImage('apartment-'+r.display.id,cv.toDataURL('image/png'));
+                const r=rooms[i];await warm(r.model);const cv=draw(r.scene);await window.__saveShowroomImage('apartment-'+r.display.id,cv.toDataURL('image/png'));
                 const row=Math.floor(i/columns),cellH=rowHeights[row],x=i%columns*cellW,y=rowHeights.slice(0,row).reduce((n,h)=>n+h,0);sc.drawImage(cv,x,y,r.model.width,r.model.height);sc.fillStyle='#e2c794';sc.font='bold 22px Georgia';sc.textAlign='center';sc.fillText(r.display.name,x+cellW/2,y+cellH-16);
             }
             const sheetOverview=document.createElement('canvas');sheetOverview.width=1600;sheetOverview.height=Math.ceil(sheet.height*1600/sheet.width);const soc=sheetOverview.getContext('2d');soc.imageSmoothingEnabled=false;soc.drawImage(sheet,0,0,sheetOverview.width,sheetOverview.height);

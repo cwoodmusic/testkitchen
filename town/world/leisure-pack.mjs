@@ -35,14 +35,17 @@ export async function registerLeisure(catalog){
   let cached=null,cacheSource=null;
   const a={id:def.id,name:def.name,group:def.group,w,h,boxes,layer:def.layer,collisionDefault:def.solid,pack:'town-leisure-38',kit:'urban',facing:def.facing||'south',authoredFacing:!!def.authoredFacing,ensureFull:()=>ensure(s)};
   if(def.lightEmitters)a.lightEmitters=def.lightEmitters.map(e=>({...e,color:[...e.color]}));
-  a.draw=c=>{
+  const drawNative=c=>{
    const source=full.get(s.family)||thumbs.get(s.family),sx=source.width/s.width,sy=source.height/s.height;
    c.drawImage(source,r.x*sx,r.y*sy,r.w*sx,r.h*sy,0,0,w,h);
   };
+  a.draw=drawNative;
+  // Keep the original source getter independent of optional facing previews.
+  // A corrected South draw must never repaint this preserved native canvas.
   Object.defineProperty(a,'canvas',{get(){
    const source=full.get(s.family)||thumbs.get(s.family);
    if(!full.has(s.family))ensure(s).catch(()=>{});
-   if(!cached||source!==cacheSource){cached=document.createElement('canvas');cached.width=w;cached.height=h;a.draw(cached.getContext('2d'));cacheSource=source;}
+   if(!cached||source!==cacheSource){cached=document.createElement('canvas');cached.width=w;cached.height=h;drawNative(cached.getContext('2d'));cacheSource=source;}
    return cached;
   }});
   catalog.set(a.id,a);
