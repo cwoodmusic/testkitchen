@@ -1,4 +1,4 @@
-import {furnitureFootCenter} from './furniture-facing.mjs?v=opera-shells-1';
+import {furnitureFootCenter} from './furniture-facing.mjs?v=opera-depth-1';
 
 const directions=['south','north','east','west'];
 const metadataOptions=Object.freeze({image:false});

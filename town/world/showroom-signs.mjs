@@ -1,4 +1,4 @@
-import {assetImage} from './asset-color.mjs?v=opera-shells-1';
+import {assetImage} from './asset-color.mjs?v=opera-depth-1';
 
 export const SHOWROOM_SIGN_ASSET='decor-14-16';
 

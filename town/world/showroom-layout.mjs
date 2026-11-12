@@ -1,5 +1,5 @@
-import {createShowroomApartmentPlan} from './showroom-apartments.mjs?v=opera-shells-1';
-import {createShowroomThemeSign,showroomThemeSignZone} from './showroom-signs.mjs?v=opera-shells-1';
+import {createShowroomApartmentPlan} from './showroom-apartments.mjs?v=opera-depth-1';
+import {createShowroomThemeSign,showroomThemeSignZone} from './showroom-signs.mjs?v=opera-depth-1';
 
 // The original eight homes retain their ground-floor addresses. Four larger
 // homes occupy a second storey inside the same exterior floor plate.

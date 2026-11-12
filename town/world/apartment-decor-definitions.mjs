@@ -1,4 +1,4 @@
-import {SHOWROOM_FURNITURE} from './showroom-furniture-definitions.mjs?v=opera-shells-1';
+import {SHOWROOM_FURNITURE} from './showroom-furniture-definitions.mjs?v=opera-depth-1';
 
 // World canvases stay stable independently of generated image proportions.
 // Registration contains each native cutout at the bottom-center anchor.

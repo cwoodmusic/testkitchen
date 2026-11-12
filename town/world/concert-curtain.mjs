@@ -47,22 +47,23 @@ export function createConcertCurtain({createPerformance}={}){
 const fill=(c,x,y,w,h,color)=>{c.fillStyle=color;c.fillRect(Math.round(x),Math.round(y),Math.max(1,Math.round(w)),Math.max(1,Math.round(h)));};
 export function drawConcertCurtain(c,stage,state={},{viewport}={}){
  if(!stage||!c)return false;
- const x=stage.x-32,y=stage.y-92,w=stage.w+64,h=stage.h+92,closed=clamp(Number(state.closure)||0);
+ const closed=clamp(Number(state.closure)||0);
+ // The modern hall has no permanent proscenium. Open panels, valance and
+ // track are completely stowed, leaving the pipe chamber and ceiling clear.
+ if(closed===0)return false;
+ const x=stage.x-32,y=Math.min(0,stage.y),w=stage.w+64,h=stage.y+stage.h-y;
  if(viewport&&(x+w<viewport.x||x>viewport.x+viewport.w||y+h<viewport.y||y>viewport.y+viewport.h))return false;
  c.save();c.imageSmoothingEnabled=false;
- const panel=Math.max(28,w*.5*closed),palette=['#341b2a','#4d2033','#69263e','#82324b','#9c4258','#7c2d46','#592237','#3b1c2d'];
+ const panel=w*.5*closed,palette=['#341b2a','#4d2033','#69263e','#82324b','#9c4258','#7c2d46','#592237','#3b1c2d'];
  for(const side of [0,1]){
   const left=side?x+w-panel:x;
-  fill(c,left+5,y+18,panel,h-12,'#130f1c80');
+  fill(c,left+5,y+18,panel,h-24,'#130f1c80');
   fill(c,left,y,panel,h,'#60243b');
   for(let col=0;col<panel;col+=8){const index=Math.floor((side?panel-col:col)/8)%palette.length;fill(c,left+col,y,Math.min(8,panel-col),h,palette[index]);}
   for(let row=24;row<h-18;row+=58)fill(c,left+4,y+row,Math.max(1,panel-8),1,'#e3977915');
   fill(c,left,y+h-15,panel,3,'#d3a761');fill(c,left,y+h-11,panel,2,'#7f5438');fill(c,left,y+h-7,panel,3,'#b78a4e');
-  const edge=side?left:left+panel-4;fill(c,edge,y,4,h-16,'#c28b55');fill(c,edge+1,y+1,1,h-20,'#edc786');
+  const cap=Math.min(4,panel),edge=side?left:left+panel-cap;fill(c,edge,y,cap,h-16,'#c28b55');fill(c,edge+Math.min(1,cap/2),y+1,Math.min(1,cap),h-20,'#edc786');
  }
- // A shallow valance and brass rail stay in place when the panels part.
- fill(c,x-12,y-12,w+24,12,'#392c2c');fill(c,x-8,y-10,w+16,3,'#d6ae68');fill(c,x-4,y-5,w+8,3,'#916d47');
- fill(c,x,y,w,26,'#68263e');
- for(let col=0;col<w;col+=16){fill(c,x+col,y,8,26,palette[Math.floor(col/16)%palette.length]);fill(c,x+col+3,y+26,8,4,'#b98b51');}
+ // The rig is above the visible ceiling line, never across the organ pipes.
  c.restore();return true;
 }

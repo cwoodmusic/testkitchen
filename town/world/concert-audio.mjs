@@ -1,4 +1,4 @@
-import {CONCERT_CHANGEOVER} from './concert-curtain.mjs?v=opera-shells-1';
+import {CONCERT_CHANGEOVER} from './concert-curtain.mjs?v=opera-depth-1';
 // One venue programme owns one media element for the whole town session.
 // Entering the hall changes its gain, never its source or playback position.
 export const CONCERT_AUDIO_PREFERENCE_KEY='codaTownConcertAudioV1';

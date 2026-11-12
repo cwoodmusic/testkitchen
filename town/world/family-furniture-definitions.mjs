@@ -1,4 +1,4 @@
-import {APARTMENT_COLLECTIONS} from './apartment-collection-definitions.mjs?v=opera-shells-1';
+import {APARTMENT_COLLECTIONS} from './apartment-collection-definitions.mjs?v=opera-depth-1';
 
 // New larger products have their own physical geometry. Approved collection
 // furniture, owned items and existing catalog dimensions remain unchanged.

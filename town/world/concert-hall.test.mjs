@@ -2,7 +2,7 @@ import test from 'node:test';
 import assert from 'node:assert/strict';
 import {readFile} from 'node:fs/promises';
 import {createRequire} from 'node:module';
-import {CONCERT_FOOTPRINT,getConcertHall,prepareConcertHallArt,concertHallDrawables,renderConcertHallBackground} from './concert-hall.mjs';
+import {CONCERT_FOOTPRINT,getConcertHall,prepareConcertHallArt,concertHallDrawables,renderConcertHallBackground,concertSuspendedReflectors,drawConcertSuspendedReflector} from './concert-hall.mjs';
 
 const hall=getConcertHall(),pad=16;
 // Match the interior controller's circular-foot approximation and safety pad.
@@ -78,6 +78,29 @@ test('static prop cutouts are local RGBA PNGs and the pure model can load withou
   assert.equal(bytes.toString('hex',0,8),'89504e470d0a1a0a');
   assert.equal(bytes.readUInt32BE(16),prop.width);assert.equal(bytes.readUInt32BE(20),prop.height);assert.equal(bytes[25],6,`${prop.file}: RGBA`);
  }
+});
+
+test('suspended cloud wires visibly connect the roof plates to the actual native stem caps and stay above the rear musicians',async()=>{
+ const {createCanvas,loadImage}=createRequire(import.meta.url)('@napi-rs/canvas');
+ const image=await loadImage(new URL('../assets/concert/hall-reflector.png',import.meta.url).pathname),source=createCanvas(image.width,image.height),sc=source.getContext('2d');sc.drawImage(image,0,0);
+ for(const rig of concertSuspendedReflectors(hall)){
+  assert(rig.bodyTop>126,'Cloud skins must have air below the roof soffit');
+  assert(rig.y+rig.h<=280,'Keep suspended skin above the seated rear-brass silhouettes');
+  const cv=createCanvas(hall.width,360),c=cv.getContext('2d');drawConcertSuspendedReflector(c,rig);
+  assert.equal(rig.cables.length,3,'Reuse the three native attachment points');
+  for(const {anchor,cap}of rig.cables){
+   const sx=Math.round((cap.x-rig.x)*image.width/rig.w),sy=Math.round((cap.y-rig.y)*image.height/rig.h);
+   assert(sc.getImageData(sx,sy,1,1).data[3]>128,'The wire must meet an opaque native cap, not transparent padding');
+   assert(cap.y>anchor.y+30,'Suspension must expose real cable clearance');
+   assert(c.getImageData(Math.round(anchor.x),anchor.y-3,1,1).data[3]>128,'The wire begins inside the mounting plate');
+   for(let y=anchor.y;y<Math.floor(cap.y);y++){
+    const row=c.getImageData(Math.round(anchor.x)-1,y,3,1).data;
+    assert([...row].some((value,i)=>i%4===3&&value>0),`Cable is disconnected at${anchor.x},${y}`);
+   }
+  }
+  cv.width=cv.height=1;
+ }
+ source.width=source.height=1;
 });
 
 test('the detailed acoustic architecture is rasterized once and reuses its one background canvas',()=>{

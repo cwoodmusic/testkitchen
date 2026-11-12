@@ -1,6 +1,6 @@
 // The hall shares the Opera House lot's exact floor area. Architecture is static;
 // the programme supplies its own musicians, instruments and animated performance.
-import {drawAcousticCeiling,drawAcousticShell,drawOrganAcousticPanels} from './concert-acoustics.mjs?v=opera-shells-1';
+import {drawAcousticCeiling,drawAcousticShell,drawAcousticAirBay,drawOrganAcousticPanels} from './concert-acoustics.mjs?v=opera-depth-1';
 export const CONCERT_FOOTPRINT=Object.freeze({width:4096,height:2560});
 const rect=(x,y,w,h)=>({x,y,w,h});
 const zone=(id,label,x,y,w,h,action,extra={})=>({id,label,x,y,w,h,action,...extra});
@@ -149,6 +149,34 @@ function reflector(c,x,y,w,h,flip=false){
   line(c,x+w*.15,y+h*.72,x+w*.76,y+h*.9,'#f3b1b8',4);
  }c.restore();
 }
+// Native stem caps measured from the unchanged 426×273 reflector cutout.
+const STEM_CAPS=Object.freeze([[99,35],[228,56],[342,13]].map(Object.freeze));
+export function concertSuspendedReflectors(model=getConcertHall()){
+ const left=[{x:1060,y:152,w:200,h:128},{x:1370,y:148,w:174,h:112}];
+ return [...left,...left.map(r=>({...r,x:model.width-r.x-r.w}))].map(r=>({...r,
+  cables:STEM_CAPS.map(([x,y])=>({anchor:{x:r.x+r.w*x/426,y:109},cap:{x:r.x+r.w*x/426,y:r.y+r.h*y/273}})),
+  shadow:{x:r.x+r.w*.12+16,y:r.y+r.h*.66+17,w:r.w*.84,h:r.h*.34},
+  bodyTop:r.y+r.h*85/273,depth:320}));
+}
+export function drawConcertSuspendedReflector(c,r){
+ c.save();c.save();c.beginPath();c.rect(r.x-8,136,r.w+32,158);c.clip();
+ // A displaced shadow falls on the recessed bay, visibly separated from the
+ // cloud's lit skin. All of it remains behind the rear-stage performer line.
+ const s=r.shadow;
+ for(const [scale,color]of [[1,'#080d1626'],[.8,'#080d1638'],[.55,'#080d1645']]){
+  c.fillStyle=color;c.beginPath();c.ellipse(s.x+s.w/2,s.y+s.h/2,s.w*scale/2,s.h*scale/2,0,0,Math.PI*2);c.fill();
+ }
+ c.restore();
+ // Suspension is not inside the shadow clip: each full wire runs from its
+ // roof plate's underside into the native image's measured stem cap.
+ for(const cable of r.cables){
+  const {anchor:a,cap:b}=cable;line(c,a.x,a.y,b.x,b.y,'#293138',2);line(c,a.x+1,a.y,b.x+1,b.y,'#b6b2a1',1);
+ }
+ reflector(c,r.x,r.y,r.w,r.h);
+ // Roof anchor plates are separate from the PNG's lower stem caps.
+ for(const {anchor:a}of r.cables){fill(c,a.x-6,104,12,5,'#6e563b');fill(c,a.x-4,105,8,2,'#d2c5a9');}
+ c.restore();
+}
 function stage(c,s){
  const r=s.stage;
  fill(c,r.x-9,r.y+18,r.w+18,r.h+52,'#241c22aa');
@@ -173,17 +201,20 @@ function drawHall(c,s){
  for(const xx of [88,3414]){wood(c,xx,1302,594,1210,{light:false,vertical:true});for(let yy=1370;yy<2410;yy+=290){wallPanel(c,xx+20,yy-72,554,188);sconce(c,xx+300,yy+65);}}
  // A broad timber chamber and galleries, with the organ centered over the stage.
  drawAcousticCeiling(c,w);
- for(const x of [788,2532]){wood(c,x,176,776,144,{light:false});for(let i=0;i<10;i++)chair(c,x+54+i*74,298,.8);rail(c,x,294,776,44);}
  for(let i=0;i<s.audience.balconies.length;i++)balcony(c,s.audience.balconies[i],i===1);
  stage(c,s);
+ // An actual dark volume sits below each roof return. Moving the decorative
+ // choir banks outboard leaves air behind the suspended acoustic clouds.
+ for(const [x,right]of [[788,false],[2532,true]]){
+  drawAcousticAirBay(c,{x:right?2528:996,y:92,w:572,h:202});
+  const bankX=right?3104:788;wood(c,bankX,294,224,26,{light:false});line(c,bankX,294,bankX+224,294,'#e9c389',3);
+  for(let i=0;i<3;i++)chair(c,right?3260-i*66:840+i*66,298,.68);
+ }
  drawOrganAcousticPanels(c,{x:1696,y:0,w:704,h:360});
  // Preserve the native organ's near-square proportions and reveal the red
  // acoustic panel bay that surrounds it in the modern Concert Hall.
  organ(c,1898,40,300,312);
- // The acoustic petals remain above the performers' silhouettes.
- for(const p of [[1050,12,224,144,false],[1400,44,194,124,true],[2430,30,214,138,false],[2790,0,246,158,true]]){
-  line(c,p[0]+p[2]*.5,0,p[0]+p[2]*.5,p[1]+18,'#4e3c35',2);reflector(c,...p);
- }
+ for(const rig of concertSuspendedReflectors(s))drawConcertSuspendedReflector(c,rig);
  for(const x of [803,3293])sconce(c,x,390);
  // Interactive ground chairs are added through concertHallDrawables so their
  // backs correctly cover a visitor's feet on the north side of each row.

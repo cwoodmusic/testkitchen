@@ -2,7 +2,7 @@ import test from 'node:test';
 import assert from 'node:assert/strict';
 import {createRequire} from 'node:module';
 import {createHash} from 'node:crypto';
-import {drawAcousticCeiling,drawAcousticShell,drawOrganAcousticPanels} from './concert-acoustics.mjs';
+import {drawAcousticCeiling,drawAcousticShell,drawAcousticAirBay,drawOrganAcousticPanels} from './concert-acoustics.mjs';
 
 const {createCanvas}=createRequire(import.meta.url)('@napi-rs/canvas');
 const WIDTH=800,HEIGHT=800;
@@ -10,6 +10,7 @@ const cases=[
  {name:'ceiling coffers',bounds:{x:72,y:0,w:WIDTH-144,h:176},draw:c=>drawAcousticCeiling(c,WIDTH)},
  {name:'left acoustic shell',bounds:{x:100,y:200,w:360,h:480},draw:c=>drawAcousticShell(c,Object.freeze({x:100,y:200,w:360,h:480}),{right:false})},
  {name:'right acoustic shell',bounds:{x:100,y:200,w:360,h:480},draw:c=>drawAcousticShell(c,Object.freeze({x:100,y:200,w:360,h:480}),{right:true})},
+ {name:'suspended acoustic air bay',bounds:{x:100,y:92,w:572,h:202},draw:c=>drawAcousticAirBay(c,Object.freeze({x:100,y:92,w:572,h:202}))},
  {name:'organ acoustic panels',bounds:{x:200,y:180,w:360,h:410},draw:c=>drawOrganAcousticPanels(c,Object.freeze({x:200,y:180,w:360,h:410}))}
 ];
 const matrix=c=>{const m=c.getTransform();return ['a','b','c','d','e','f'].map(k=>m[k]);};
@@ -56,6 +57,17 @@ test('architectural rendering is deterministic across fresh canvases',()=>{
   entry.draw(a.getContext('2d'));entry.draw(b.getContext('2d'));
   assert.equal(digest(a),digest(b),entry.name);dispose(a);dispose(b);
  }
+});
+
+test('the suspended bay has an opaque roof soffit and a fading open bottom without a lower frame',()=>{
+ const cv=createCanvas(WIDTH,HEIGHT),c=cv.getContext('2d'),r={x:100,y:92,w:572,h:202};
+ drawAcousticAirBay(c,r);
+ assert.equal(c.getImageData(r.x+r.w/2,r.y+4,1,1).data[3],255,'The upper timber is a solid roof return');
+ const bottom=c.getImageData(r.x,r.y+r.h-1,r.w,1).data;
+ assert([...bottom].filter((_,i)=>i%4===3).every(alpha=>alpha<=8),'The lowest edge must fade to air, not become a visible sill');
+ const mid=c.getImageData(r.x+r.w/2,r.y+r.h/2,1,1).data;
+ assert(mid[3]>32&&mid[0]<70&&mid[1]<70,'Recessed shade supplies depth below the soffit');
+ dispose(cv);
 });
 
 test('the acoustic timber and red stage panels retain readable contrast when zoomed out',()=>{

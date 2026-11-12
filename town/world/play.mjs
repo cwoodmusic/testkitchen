@@ -1,22 +1,22 @@
-import {catalog,preparePlacedArt,render,resizeSurface,findStart,movePlayer,toggleGate,follow,PLAYER_SCALE,GAIT_PER_PIXEL} from './runtime.mjs?v=opera-shells-1';
-import {loadProject} from './storage.mjs?v=opera-shells-1';
-import {createUrbanController} from './urban.mjs?v=opera-shells-1';
-import {createConcertAudio} from './concert-audio.mjs?v=opera-shells-1';
-import {mountConcertControls} from './concert-controls.mjs?v=opera-shells-1';
-import {CONCERT_PROGRAMME} from './concert-programme.mjs?v=opera-shells-1';
-import {createUrbanTour} from './urban-tour.mjs?v=opera-shells-1';
-import {createSandFootprints} from './sand-footprints.mjs?v=opera-shells-1';
-import {createAmbientNPCs} from './ambient-npcs.mjs?v=opera-shells-1';
-import {createPlayerCollisionIndex} from './player-collision-index.mjs?v=opera-shells-1';
-import {readNightPreference,saveNightPreference} from './lighting-settings.mjs?v=opera-shells-1';
+import {catalog,preparePlacedArt,render,resizeSurface,findStart,movePlayer,toggleGate,follow,PLAYER_SCALE,GAIT_PER_PIXEL} from './runtime.mjs?v=opera-depth-1';
+import {loadProject} from './storage.mjs?v=opera-depth-1';
+import {createUrbanController} from './urban.mjs?v=opera-depth-1';
+import {createConcertAudio} from './concert-audio.mjs?v=opera-depth-1';
+import {mountConcertControls} from './concert-controls.mjs?v=opera-depth-1';
+import {CONCERT_PROGRAMME} from './concert-programme.mjs?v=opera-depth-1';
+import {createUrbanTour} from './urban-tour.mjs?v=opera-depth-1';
+import {createSandFootprints} from './sand-footprints.mjs?v=opera-depth-1';
+import {createAmbientNPCs} from './ambient-npcs.mjs?v=opera-depth-1';
+import {createPlayerCollisionIndex} from './player-collision-index.mjs?v=opera-depth-1';
+import {readNightPreference,saveNightPreference} from './lighting-settings.mjs?v=opera-depth-1';
 const canvas=document.getElementById('world'),route=new URLSearchParams(location.search),tour=route.get('map')!=='builder',preview=route.get('urban')==='1';
 document.querySelectorAll('body > :not(#world):not(script)').forEach(e=>e.remove());
 const header=document.createElement('header'),title=document.createElement('h1'),nav=document.createElement('nav');
 header.append(title,nav);document.body.append(header);
 function button(label,fn){const b=document.createElement('button');b.textContent=label;b.onclick=()=>{fn();b.blur();canvas.focus();};nav.append(b);return b;}
-button('Town Builder',()=>location.href='builder/?v=opera-shells-1');
-button(tour?'Play saved town':'Urban district tour',()=>location.href=tour?'?map=builder&v=opera-shells-1':'?urban=1&v=opera-shells-1');
-button('Back to arcade',()=>{if(parent!==window)parent.postMessage({type:'coda-town-close'},location.origin);else location.href='../?v=opera-shells-1';});
+button('Town Builder',()=>location.href='builder/?v=opera-depth-1');
+button(tour?'Play saved town':'Urban district tour',()=>location.href=tour?'?map=builder&v=opera-depth-1':'?urban=1&v=opera-depth-1');
+button('Back to arcade',()=>{if(parent!==window)parent.postMessage({type:'coda-town-close'},location.origin);else location.href='../?v=opera-depth-1';});
 let night=readNightPreference();const lighting=button(night?'City night':'Daylight',()=>{night=!night;saveNightPreference(night);lighting.textContent=night?'City night':'Daylight';});lighting.id='lightingToggle';
 const footer=document.createElement('footer');footer.textContent='WASD / arrows · Walk    Shift · Run    Bedroom / bath doors automatic    E · Enter / interact    Wheel · Zoom';document.body.append(footer);
 let doc,loadError;try{doc=tour?createUrbanTour():await loadProject(new Set(catalog.keys()));if(doc)await preparePlacedArt(doc);}catch(e){doc=null;loadError=e;}

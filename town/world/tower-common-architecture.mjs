@@ -1,4 +1,4 @@
-import {getElevatorVisualGeometry} from './interior-portal-art.mjs?v=opera-shells-1';
+import {getElevatorVisualGeometry} from './interior-portal-art.mjs?v=opera-depth-1';
 
 const NORTH_SHELL_DEPTH=106;
 const valid=r=>r&&[r.x,r.y,r.w,r.h].every(Number.isFinite)&&r.w>0&&r.h>0;

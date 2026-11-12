@@ -3,7 +3,7 @@ import assert from 'node:assert/strict';
 import {blank,height} from './model.mjs';
 import {deriveBarrierRuns,deriveBarrierPosts,createBarrierGeometryCache,barrierRuns,barrierPosts,barrierRunBounds,barrierPostBounds} from './barrier-geometry.mjs';
 import {intersectsViewport} from './render-visibility.mjs';
-import {configureMusicWallArt} from './music-wall-art.mjs?v=opera-shells-1';
+import {configureMusicWallArt} from './music-wall-art.mjs?v=opera-depth-1';
 
 const edge=(style='music-square',extra={})=>({style,gate:false,open:false,...extra});
 function offsetMusic(){
@@ -78,7 +78,7 @@ test('culling bounds contain every actual draw rectangle for all styles, orienta
  globalThis.Image=class{constructor(){this.width=160;this.height=120;}set src(value){queueMicrotask(()=>this.onload());}};
  globalThis.document={createElement:()=>({width:1,height:1,getContext:()=>new DrawingContext()})};
  try{
-  const {drawBarrierRun,drawPost}=await import('./construction.mjs?v=opera-shells-1'),d=blank();
+  const {drawBarrierRun,drawPost}=await import('./construction.mjs?v=opera-depth-1'),d=blank();
   configureMusicWallArt({width:1536,height:1024},{width:300,height:300});
   const check=(context,bounds,label)=>{
    for(const rect of context.rects)for(const[x,y]of rect)assert(bounds&&x>=bounds.x-1e-6&&x<=bounds.x+bounds.w+1e-6&&y>=bounds.y-1e-6&&y<=bounds.y+bounds.h+1e-6,label+': culling must contain '+x+','+y);

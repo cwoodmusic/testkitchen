@@ -1,7 +1,7 @@
-import {APARTMENT_COLLECTION_ASSETS} from './apartment-collection-definitions.mjs?v=opera-shells-1';
-import {createApartmentCollectionRuntime} from './apartment-collection-runtime.mjs?v=opera-shells-1';
-import {resolveSouthArtCorrections,SOUTH_ART_PREVIEW} from './south-art-fixes.mjs?v=opera-shells-1';
-export * from './apartment-collection-definitions.mjs?v=opera-shells-1';
+import {APARTMENT_COLLECTION_ASSETS} from './apartment-collection-definitions.mjs?v=opera-depth-1';
+import {createApartmentCollectionRuntime} from './apartment-collection-runtime.mjs?v=opera-depth-1';
+import {resolveSouthArtCorrections,SOUTH_ART_PREVIEW} from './south-art-fixes.mjs?v=opera-depth-1';
+export * from './apartment-collection-definitions.mjs?v=opera-depth-1';
 
 const base=new URL('../assets/apartment-collections/',import.meta.url);
 function assetURL(file){const url=new URL(file,base);url.search=new URL(import.meta.url).search;return url;}

@@ -1,6 +1,6 @@
-import {blocked,COLS,ROWS,TILE} from './model.mjs?v=opera-shells-1';
-import {npcCollisionProject} from './npc-collision.mjs?v=opera-shells-1';
-import {npcConnectionClear} from './npc-navigation.mjs?v=opera-shells-1';
+import {blocked,COLS,ROWS,TILE} from './model.mjs?v=opera-depth-1';
+import {npcCollisionProject} from './npc-collision.mjs?v=opera-depth-1';
+import {npcConnectionClear} from './npc-navigation.mjs?v=opera-depth-1';
 
 const valid=p=>p&&Number.isFinite(p.x)&&Number.isFinite(p.y);
 const copy=p=>({x:p.x,y:p.y});

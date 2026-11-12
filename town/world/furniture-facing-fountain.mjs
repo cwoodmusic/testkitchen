@@ -1,5 +1,5 @@
-import {assetImage} from './asset-color.mjs?v=opera-shells-1';
-import {drawFountainMotion,supportsFountainMotion} from './fountain-motion.mjs?v=opera-shells-1';
+import {assetImage} from './asset-color.mjs?v=opera-depth-1';
+import {drawFountainMotion,supportsFountainMotion} from './fountain-motion.mjs?v=opera-depth-1';
 
 function grade(asset,image){const proxy=Object.create(asset);Object.defineProperty(proxy,'canvas',{value:image});return assetImage(proxy);}
 
