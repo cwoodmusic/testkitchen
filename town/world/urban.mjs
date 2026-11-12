@@ -1,13 +1,14 @@
-import {catalog} from './catalog.mjs?v=wall-caps-1';
-import {FLOOR_COUNT,residents,getInterior,renderInterior,residentInteractionZones,apartmentDecorBounds,apartmentWallDecorBounds,configureUrbanInteriors} from './urban-interiors.mjs?v=wall-caps-1';
-import {createRoomStorage,roomItemBoxes} from './urban-room.mjs?v=wall-caps-1';
-import {SHOWROOMS,STORE_FLOOR_COUNT,STORE_VERTICAL_CORE} from './showroom-layout.mjs?v=wall-caps-1';
-import {createStagePerformance,stagePerformanceSignature,stageCollisionBoxes} from './concert-performers.mjs?v=wall-caps-1';
-import {CONCERT_PROGRAMME} from './concert-programme.mjs?v=wall-caps-1';
-import {createAutomaticDoors} from './automatic-doors.mjs?v=wall-caps-1';
-import {furnitureFacingPlacement,furnitureFacingBounds} from './furniture-facing.mjs?v=wall-caps-1';
-import {interiorActorScale,effectiveInteriorZoom} from './interior-scale.mjs?v=wall-caps-1';
-import {presentedRoomItem,furniturePresentationScale} from './private-furniture.mjs?v=wall-caps-1';
+import {catalog} from './catalog.mjs?v=room-defaults-curtain-1';
+import {FLOOR_COUNT,residents,getInterior,renderInterior,residentInteractionZones,apartmentDecorBounds,apartmentWallDecorBounds,configureUrbanInteriors} from './urban-interiors.mjs?v=room-defaults-curtain-1';
+import {createRoomStorage,roomItemBoxes} from './urban-room.mjs?v=room-defaults-curtain-1';
+import {SHOWROOMS,STORE_FLOOR_COUNT,STORE_VERTICAL_CORE} from './showroom-layout.mjs?v=room-defaults-curtain-1';
+import {createStagePerformance,stagePerformanceSignature,stageCollisionBoxes} from './concert-performers.mjs?v=room-defaults-curtain-1';
+import {CONCERT_PROGRAMME} from './concert-programme.mjs?v=room-defaults-curtain-1';
+import {createConcertCurtain,drawConcertCurtain} from './concert-curtain.mjs?v=room-defaults-curtain-1';
+import {createAutomaticDoors} from './automatic-doors.mjs?v=room-defaults-curtain-1';
+import {furnitureFacingPlacement,furnitureFacingBounds} from './furniture-facing.mjs?v=room-defaults-curtain-1';
+import {interiorActorScale,effectiveInteriorZoom} from './interior-scale.mjs?v=room-defaults-curtain-1';
+import {presentedRoomItem,furniturePresentationScale} from './private-furniture.mjs?v=room-defaults-curtain-1';
 
 configureUrbanInteriors(catalog);
 const furniture=window.CodaFurnitureCatalog||[];
@@ -21,7 +22,7 @@ export function buildingDoor(o){
 }
 function decorSolids(items,scene){const model=scene?.rooms?scene:getInterior(scene);return items.flatMap(o=>roomItemBoxes(o,catalog,(item,asset)=>furniturePresentationScale(item,model,asset)));}
 export function createUrbanController({canvas,getProject,getPlayer,getResidents,onConversation,getConcert=()=>null,preview=false}){
- const css=document.createElement('link');css.rel='stylesheet';css.href=new URL('./urban.css?v=wall-caps-1',import.meta.url);document.head.append(css);
+ const css=document.createElement('link');css.rel='stylesheet';css.href=new URL('./urban.css?v=room-defaults-curtain-1',import.meta.url);document.head.append(css);
  const hud=document.createElement('section');hud.className='urban-hud';hud.hidden=true;document.body.append(hud);
  const hint=document.createElement('button');hint.className='urban-prompt';hint.hidden=true;hint.onclick=()=>interact();document.body.append(hint);
  const dialog=document.createElement('dialog');dialog.className='urban-dialog';dialog.setAttribute('aria-label','Coda Town');document.body.append(dialog);
@@ -29,14 +30,20 @@ export function createUrbanController({canvas,getProject,getPlayer,getResidents,
  let facing='down',phase=0,walking=false,zoom=.72,view={x:0,y:0},lastSize={width:1,height:1},lastHint='',notice='',noticeUntil=0,request=0,conversation=null;
  const pending=new Map(),dialogueTurns=new Map();
  let automaticDoors=null,portals=[],exteriorDoors=null,exteriorPortals=[],exteriorDoc=null,exteriorCount=-1,doorOwners=new WeakMap();
- let seated=null,performanceModel=null,performanceKey=null,performanceBoxes=[],settledPerformance=null,walkZoom=zoom;
+ let seated=null,performanceModel=null,performanceBoxes=[],settledPerformance=null,walkZoom=zoom;
  const reducedMotion=typeof matchMedia==='function'&&matchMedia('(prefers-reduced-motion: reduce)').matches;
+ const stageCurtain=createConcertCurtain({createPerformance(track,previous){
+  return previous?.signature===stagePerformanceSignature(track)?previous:createStagePerformance(track,{stage:getInterior(scene).stage});
+ }});
  function concertPerformance(){
   if(scene?.kind!=='concert')return null;
-  const track=getConcert()?.currentTrack||CONCERT_PROGRAMME[0],signature=stagePerformanceSignature(track);
-  if(signature!==performanceKey||!performanceModel){performanceKey=signature;performanceModel=createStagePerformance(track,{stage:getInterior(scene).stage});performanceBoxes=stageCollisionBoxes(performanceModel,{catalog});for(const id of performanceModel.assetIds||[])catalog.get(id)?.ensureFull?.().catch(()=>{});}
-  performanceModel.programmeId=track?.id||performanceModel.programmeId;
-  return performanceModel;
+  const audio=getConcert(),track=audio?.currentTrack||CONCERT_PROGRAMME[0],timeline=audio?.state?.changeover;
+  const next=stageCurtain.update(track,performance.now()/1000,{timeline,reducedMotion});
+  if(next.performance!==performanceModel){
+   performanceModel=next.performance;performanceBoxes=stageCollisionBoxes(performanceModel,{catalog});
+   for(const id of performanceModel.assetIds||[])catalog.get(id)?.ensureFull?.(performanceModel.props.some(p=>p.asset===id&&p.pianoFacing==='west')?'west':undefined).catch(()=>{});
+  }
+  performanceModel.programmeId=next.programmeId;return performanceModel;
  }
  function refreshStage(){
   if(scene?.kind!=='concert')return;
@@ -172,13 +179,14 @@ export function createUrbanController({canvas,getProject,getPlayer,getResidents,
   refreshExteriorDoors();exteriorDoors?.update(dt,getPlayer(),getResidents?.(null)||[]);
  }
  function setScene(next,spawn){
+  stageCurtain.reset();performanceModel=null;performanceBoxes=[];settledPerformance=null;
   closeDialog();if(seated)zoom=walkZoom;scene=next;seated=null;selectedDecor=null;decorate=false;hover=null;const model=getInterior(scene);player={...(spawn||model.spawn)};walking=false;facing='up';configureSceneDoors(model);updateHud();getConcert()?.updateContext(scene);
   // Furniture collision is tested at the feet, like the outdoor character.
   if(solid(player.x,player.y)){let found=false;for(let y=model.height-140;y>100&&!found;y-=40)for(let x=model.width/2;x<model.width-100;x+=40)if(!solid(x,y)){player={x,y};found=true;break;}}
   automaticDoors.prime(player,sceneResidents());
  }
  function enterBuilding(o){const door=buildingDoor(o);if(!door)return false;outside={object:o,position:{...getPlayer()}};setScene(door.kind==='opera'?{kind:'concert'}:door.kind==='shop'?{kind:'shop',floor:1}:{kind:'lobby',floor:1});return true;}
- function reset(){closeDialog();if(seated)zoom=walkZoom;scene=null;seated=null;outside=null;decorate=false;selectedDecor=null;hover=null;hud.hidden=true;hint.hidden=true;lastHint='';automaticDoors=null;portals=[];getConcert()?.updateContext(null);}
+ function reset(){stageCurtain.reset();performanceModel=null;performanceBoxes=[];settledPerformance=null;closeDialog();if(seated)zoom=walkZoom;scene=null;seated=null;outside=null;decorate=false;selectedDecor=null;hover=null;hud.hidden=true;hint.hidden=true;lastHint='';automaticDoors=null;portals=[];getConcert()?.updateContext(null);}
  function standUp(){if(!seated)return false;const seat=seated;seated=null;zoom=walkZoom;player={...seat.approach};walking=false;facing='up';updateHud();return true;}
  function watchSeat(seatId){
   if(scene?.kind!=='concert')return false;
@@ -301,6 +309,7 @@ export function createUrbanController({canvas,getProject,getPlayer,getResidents,
   const clampView=(p,length,visible)=>length<=visible?length/2:Math.max(visible/2,Math.min(length-visible/2,p)),focus=seated?{x:m.stage.x+m.stage.w/2,y:m.stage.y+m.stage.h/2+60}:player;view={x:clampView(focus.x,m.width,width/drawZoom),y:clampView(focus.y,m.height,height/drawZoom)};
   tick();ctx.clearRect(0,0,width,height);ctx.fillStyle='#131b21';ctx.fillRect(0,0,width,height);ctx.save();ctx.translate(width/2,height/2);ctx.scale(drawZoom,drawZoom);ctx.translate(-view.x,-view.y);
   renderInterior(ctx,scene,{player,drawPlayer:(c,p)=>drawPlayer(c,p.x,p.y,{facing,walking,phase,seated:!!seated}),time:now/1000,decor:scene.resident==='player'?decor:[],actors,doorStates:automaticDoors.states,doorOpenness:automaticDoors.openness,performance:concertPerformance(),audioTime:getConcert()?.currentTime,reducedMotion,viewport:{x:view.x-width/drawZoom/2,y:view.y-height/drawZoom/2,w:width/drawZoom,h:height/drawZoom}});
+  if(scene.kind==='concert')drawConcertCurtain(ctx,m.stage,stageCurtain.state,{viewport:{x:view.x-width/drawZoom/2,y:view.y-height/drawZoom/2,w:width/drawZoom,h:height/drawZoom}});
   if(decorate&&selectedDecor&&hover){const item=furniture.find(i=>i.id===selectedDecor),a=catalog.get(item?.asset),scale=(item?.scale||1)*furniturePresentationScale(item,getInterior(scene),a),p=decorPlacementPoint(item,hover),object={...p,asset:a?.id,scale,rotation:selectedRotation};if(a){
    const placement=furnitureFacingPlacement(a,object),image=placement?.image||(placement&&a.getFacingImage?.(placement.direction));ctx.save();ctx.globalAlpha=.55;
    if(placement&&image)ctx.drawImage(image,placement.x,placement.y,placement.w,placement.h);
@@ -396,5 +405,5 @@ export function createUrbanController({canvas,getProject,getPlayer,getResidents,
   if(e.key.toLowerCase()==='e'&&!e.repeat){const handled=interact();if(handled)e.preventDefault();return handled;}
   return false;
  }
- return {get active(){return !!scene;},get blocked(){return dialog.open;},get scene(){return scene;},get player(){return player;},get decor(){return decor;},get furnitureRotation(){return selectedRotation;},get view(){return {...view,zoom:effectiveInteriorZoom(scene,zoom)};},get seated(){return seated;},get automaticDoors(){return scene?automaticDoors:exteriorDoors;},get portals(){if(!scene)refreshExteriorDoors();return scene?portals:exteriorPortals;},get performance(){return concertPerformance();},tick,frame,keydown,handlePointer,zoom:delta=>{zoom=Math.max(seated?.04:.3,Math.min(1.4,zoom*Math.exp(-delta*.001)));},reset,interact,enterBuilding,goFloor,goStoreFloor,showStoreDirectory,openRoom,openShowroom,returnToStore,showShop,showInventory,showProgramme,watchSeat,standUp};
+ return {get active(){return !!scene;},get blocked(){return dialog.open;},get scene(){return scene;},get player(){return player;},get decor(){return decor;},get furnitureRotation(){return selectedRotation;},get view(){return {...view,zoom:effectiveInteriorZoom(scene,zoom)};},get seated(){return seated;},get automaticDoors(){return scene?automaticDoors:exteriorDoors;},get portals(){if(!scene)refreshExteriorDoors();return scene?portals:exteriorPortals;},get performance(){return concertPerformance();},get curtain(){return stageCurtain.state;},tick,frame,keydown,handlePointer,zoom:delta=>{zoom=Math.max(seated?.04:.3,Math.min(1.4,zoom*Math.exp(-delta*.001)));},reset,interact,enterBuilding,goFloor,goStoreFloor,showStoreDirectory,openRoom,openShowroom,returnToStore,showShop,showInventory,showProgramme,watchSeat,standUp};
 }

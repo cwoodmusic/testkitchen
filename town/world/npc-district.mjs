@@ -1,7 +1,7 @@
-import {blocked,height,surfaceAt,COLS,ROWS,TILE} from './model.mjs?v=wall-caps-1';
-import {npcCollisionProject} from './npc-collision.mjs?v=wall-caps-1';
-import {npcConnectionClear} from './npc-navigation.mjs?v=wall-caps-1';
-import {furnitureFacingPlacement,furnitureFootCenter,furnitureFacingDepth} from './furniture-facing.mjs?v=wall-caps-1';
+import {blocked,height,surfaceAt,COLS,ROWS,TILE} from './model.mjs?v=room-defaults-curtain-1';
+import {npcCollisionProject} from './npc-collision.mjs?v=room-defaults-curtain-1';
+import {npcConnectionClear} from './npc-navigation.mjs?v=room-defaults-curtain-1';
+import {furnitureFacingPlacement,furnitureFootCenter,furnitureFacingDepth} from './furniture-facing.mjs?v=room-defaults-curtain-1';
 
 const WORLD_W=COLS*TILE,WORLD_H=ROWS*TILE;
 const cardinal=['down','left','up','right'];

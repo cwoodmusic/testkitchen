@@ -323,3 +323,23 @@ test('a gesture resumes a suspended context even when native media was already u
  context.state='suspended';win.emit('pointerdown');await flush();
  assert.equal(context.resumeCalls,2);assert.equal(context.sourceCalls,1);assert.equal(player.state.playing,true);assert.equal(player.currentTime,66.5);assert.equal(media.loadCalls,1);assert.equal(media.playCalls,1);player.destroy();
 });
+
+test('production changeovers pause at the curtain, select the act only fully closed, and play when it starts opening',async()=>{
+ const f=fixture({changeover:true}),{player,media,timer}=f;f.setScene({kind:'concert'});await player.unlock();await flush();const old=player.currentTrack,plays=media.playCalls;
+ media.paused=true;media.emit('ended');assert.equal(player.currentTrack,old);assert.equal(player.state.status,'intermission');assert.equal(player.state.changeover.phase,'closing');
+ timer.step(350);assert.equal(player.currentTrack,old);assert.equal(media.playCalls,plays);assert(player.state.changeover.closure>0&&player.state.changeover.closure<1);
+ timer.step(350);assert.notEqual(player.currentTrack,old);assert.equal(player.state.changeover.closure,1);assert.equal(player.state.changeover.phase,'closed');assert.equal(media.playCalls,plays);
+ timer.step(249);assert.equal(media.playCalls,plays);timer.step(1);await flush();assert.equal(media.playCalls,plays+1);assert.equal(player.state.changeover.phase,'opening');assert.equal(player.state.playing,true);
+ const selected=player.currentTrack;timer.step(850);assert.equal(player.state.changeover,null);assert.equal(player.currentTrack,selected);player.destroy();
+});
+test('rapid Next requests keep closing on the old act and reveal only the latest selected recording',async()=>{
+ const {player,timer,media}=fixture({changeover:true});await player.unlock();await flush();const old=player.currentTrack,first=player.skip();timer.step(200);const latest=player.skip();assert.notEqual(first,latest);assert.equal(player.currentTrack,old);assert.equal(player.state.changeover.nextTrack,latest);
+ timer.step(500);assert.equal(player.currentTrack,latest);assert.equal(player.state.changeover.closure,1);assert.equal(media.paused,true);player.destroy();assert.equal(timer.pending,0);
+});
+test('a manual pause during the closed changeover survives its reveal and later context changes',async()=>{
+ const {player,timer,media,setScene}=fixture({changeover:true});await player.unlock();await flush();player.skip();player.pause();timer.step(2000);await flush();assert.equal(player.state.changeover,null);assert.equal(media.paused,true);setScene({kind:'concert'});assert.equal(media.paused,true);await player.play();await flush();assert.equal(media.paused,false);player.destroy();
+});
+
+test('a failed intermission recording retries behind the closed curtain and destroy cancels the pending reveal',async()=>{
+ const {player,timer,media}=fixture({changeover:true});await player.unlock();await flush();const next=player.skip();media.failLoad=true;timer.step(700);await flush();assert(player.state.failedTrackIds.includes(next.id));assert.equal(player.state.status,'unavailable');assert.equal(player.state.changeover,null);assert.equal(media.paused,true);player.destroy();assert.equal(timer.pending,0);
+});

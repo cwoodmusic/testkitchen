@@ -5,7 +5,7 @@ const setAttribute=(element,name,value)=>{if(element.getAttribute(name)!==String
 
 function loadStyles(document){
  if(document.querySelector('link[data-concert-controls-styles]'))return;
- const link=document.createElement('link');link.rel='stylesheet';link.href=new URL('./concert-controls.css?v=wall-caps-1',import.meta.url).href;
+ const link=document.createElement('link');link.rel='stylesheet';link.href=new URL('./concert-controls.css?v=room-defaults-curtain-1',import.meta.url).href;
  link.dataset.concertControlsStyles='';document.head.append(link);
 }
 
@@ -65,9 +65,9 @@ export function mountConcertControls(concert,{canvas,onProgramme}={}){
   const title=state.track?.title??'Tonight’s concert programme';
   setText(track,title);setAttribute(track,'title',[title,state.track?.composer,state.track?.performer].filter(Boolean).join(' · '));
   setText(category,categoryLabels[state.category]??'Live programme');
-  const unavailable=state.status==='unavailable',loading=state.status==='loading';
-  setText(play,unavailable?'Retry':state.playing?'Pause':loading?'Loading…':'Play');
-  play.disabled=state.status==='empty'||loading;
+  const unavailable=state.status==='unavailable',loading=state.status==='loading',intermission=state.status==='intermission';
+  setText(play,unavailable?'Retry':intermission?'Changing act…':state.playing?'Pause':loading?'Loading…':'Play');
+  play.disabled=state.status==='empty'||loading||intermission;
   setAttribute(play,'aria-label',unavailable?'Retry concert music':state.playing?'Pause concert music':'Play concert music');
   setText(mute,state.muted?'Unmute':'Mute');setAttribute(mute,'aria-pressed',state.muted);
   setAttribute(mute,'title',state.muted?'Unmute the concert programme':'Mute the concert programme');
@@ -75,7 +75,7 @@ export function mountConcertControls(concert,{canvas,onProgramme}={}){
   if(Number(volume.value)!==percent)volume.value=String(percent);
   setAttribute(volume,'aria-valuetext',`${percent} percent`);
   const location=state.context==='concert'?'Full sound in the concert hall':state.context==='interior'?'Softly from the concert hall':'Softly across town';
-  const message=unavailable?'Music is unavailable. Retry the programme.':state.status==='empty'?'No recordings are available.':state.status==='locked'?'Press Play to hear tonight’s programme.':loading?'Opening the next recording…':state.status==='suspended'?'Concert paused while this page is hidden.':state.playing?`${state.muted?'Muted · ':''}${location}`:'Concert paused';
+  const message=intermission?'Between performances · the next act is preparing.':unavailable?'Music is unavailable. Retry the programme.':state.status==='empty'?'No recordings are available.':state.status==='locked'?'Press Play to hear tonight’s programme.':loading?'Opening the next recording…':state.status==='suspended'?'Concert paused while this page is hidden.':state.playing?`${state.muted?'Muted · ':''}${location}`:'Concert paused';
   setText(status,message);
  }
  const unsubscribe=concert.onChange(update);

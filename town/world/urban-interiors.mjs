@@ -1,33 +1,33 @@
-import {assetImage} from './asset-color.mjs?v=wall-caps-1';
-import {SHOWROOMS,applyShowroomLayout} from './showroom-layout.mjs?v=wall-caps-1';
-import {drawShowroomThemeSign} from './showroom-signs.mjs?v=wall-caps-1';
-import {applyShowroomApartment} from './showroom-apartments.mjs?v=wall-caps-1';
-import {drawShowroomFloor,drawShowroomWallpaper} from './showroom-materials.mjs?v=wall-caps-1';
-import {applyHomeMaterialSuite,warmHomeMaterials} from './home-materials.mjs?v=wall-caps-1';
-import {drawTowerCommonSurfaces,drawTowerCommonStairs,towerCommonMaterialsReady,warmTowerCommonMaterials} from './tower-common-materials.mjs?v=wall-caps-1';
-import {drawInteriorDoor,drawPrivacyDoor,drawElevatorPortal,interiorPortalVisualDepth,warmInteriorPortalArt} from './interior-portal-art.mjs?v=wall-caps-1';
-import {interiorActorScale} from './interior-scale.mjs?v=wall-caps-1';
-import {calibratePrivateFurniture,presentedRoomItem} from './private-furniture.mjs?v=wall-caps-1';
-import {normalizeInteriorDoorways} from './interior-doorways.mjs?v=wall-caps-1';
-import {drawInteriorWindow,warmInteriorWindows} from './interior-window-art.mjs?v=wall-caps-1';
-import {drawInteriorWallNetwork} from './interior-wall-art.mjs?v=wall-caps-1';
-import {createRoomLayoutResolver} from './room-layout-runtime.mjs?v=wall-caps-1';
-export {apartmentDecorBounds,apartmentWallDecorBounds} from './personal-room-areas.mjs?v=wall-caps-1';
-import {getConcertHall,renderConcertHallBackground,concertHallDrawables} from './concert-hall.mjs?v=wall-caps-1';
-import {renderStagePerformance} from './concert-performers.mjs?v=wall-caps-1';
-import {buildApartmentHome} from './apartment-homes.mjs?v=wall-caps-1';
-import {FAMILY_FURNITURE_ASSETS} from './family-furniture-definitions.mjs?v=wall-caps-1';
-import {APARTMENT_COLLECTION_ASSETS,getApartmentAsset} from './apartment-collections.mjs?v=wall-caps-1';
-import {drawApartmentMotion} from './apartment-motion.mjs?v=wall-caps-1';
-import {furnitureFacingPlacement,furnitureFacingDepth,furnitureFacingBoxes,furnitureAtGroundCenter} from './furniture-facing.mjs?v=wall-caps-1';
-import {preparePlacedFacingArt} from './furniture-art-access.mjs?v=wall-caps-1';
+import {assetImage} from './asset-color.mjs?v=room-defaults-curtain-1';
+import {SHOWROOMS,applyShowroomLayout} from './showroom-layout.mjs?v=room-defaults-curtain-1';
+import {drawShowroomThemeSign} from './showroom-signs.mjs?v=room-defaults-curtain-1';
+import {applyShowroomApartment} from './showroom-apartments.mjs?v=room-defaults-curtain-1';
+import {drawShowroomFloor,drawShowroomWallpaper} from './showroom-materials.mjs?v=room-defaults-curtain-1';
+import {applyHomeMaterialSuite,warmHomeMaterials} from './home-materials.mjs?v=room-defaults-curtain-1';
+import {drawTowerCommonSurfaces,drawTowerCommonStairs,towerCommonMaterialsReady,warmTowerCommonMaterials} from './tower-common-materials.mjs?v=room-defaults-curtain-1';
+import {drawInteriorDoor,drawPrivacyDoor,drawElevatorPortal,interiorPortalVisualDepth,warmInteriorPortalArt} from './interior-portal-art.mjs?v=room-defaults-curtain-1';
+import {interiorActorScale} from './interior-scale.mjs?v=room-defaults-curtain-1';
+import {calibratePrivateFurniture,presentedRoomItem} from './private-furniture.mjs?v=room-defaults-curtain-1';
+import {normalizeInteriorDoorways} from './interior-doorways.mjs?v=room-defaults-curtain-1';
+import {drawInteriorWindow,warmInteriorWindows} from './interior-window-art.mjs?v=room-defaults-curtain-1';
+import {drawInteriorWallNetwork} from './interior-wall-art.mjs?v=room-defaults-curtain-1';
+import {createRoomLayoutResolver} from './room-layout-runtime.mjs?v=room-defaults-curtain-1';
+export {apartmentDecorBounds,apartmentWallDecorBounds} from './personal-room-areas.mjs?v=room-defaults-curtain-1';
+import {getConcertHall,renderConcertHallBackground,concertHallDrawables} from './concert-hall.mjs?v=room-defaults-curtain-1';
+import {renderStagePerformance} from './concert-performers.mjs?v=room-defaults-curtain-1';
+import {buildApartmentHome} from './apartment-homes.mjs?v=room-defaults-curtain-1';
+import {FAMILY_FURNITURE_ASSETS} from './family-furniture-definitions.mjs?v=room-defaults-curtain-1';
+import {APARTMENT_COLLECTION_ASSETS,getApartmentAsset} from './apartment-collections.mjs?v=room-defaults-curtain-1';
+import {drawApartmentMotion} from './apartment-motion.mjs?v=room-defaults-curtain-1';
+import {furnitureFacingPlacement,furnitureFacingDepth,furnitureFacingBoxes,furnitureAtGroundCenter} from './furniture-facing.mjs?v=room-defaults-curtain-1';
+import {preparePlacedFacingArt} from './furniture-art-access.mjs?v=room-defaults-curtain-1';
 // The apartment tower has one consistent floor plate. Residential floors use
 // a 608px common hall and 1120px private apartments, within its 2304 × 1728 lot.
 export const FLOOR_COUNT=15;
 export const TOWER_FOOTPRINT=Object.freeze({width:2304,height:1728});
 export const STORE_FOOTPRINT=Object.freeze({width:3072,height:2048});
-export {residents} from './resident-profiles.mjs?v=wall-caps-1';
-import {residents} from './resident-profiles.mjs?v=wall-caps-1';
+export {residents} from './resident-profiles.mjs?v=room-defaults-curtain-1';
+import {residents} from './resident-profiles.mjs?v=room-defaults-curtain-1';
 const sceneCache=new Map(),backgroundCache=new Map();
 const MAX_BACKGROUNDS=8,MAX_BACKGROUND_PIXELS=16*1024*1024;
 let backgroundPixels=0;
@@ -43,7 +43,7 @@ let roomLayouts;
 const drawConcertNPC=(ctx,actor,time)=>npcRenderer?.drawNPC(ctx,actor,time);
 export function configureUrbanInteriors(catalog){if(nativeCatalog!==catalog){nativeCatalog=catalog;clearBackgrounds();}}
 if(typeof document!=='undefined'){
- import('./ground-textures.mjs?v=wall-caps-1').then(({groundTextures})=>{woodTexture=groundTextures.wood;clearBackgrounds();}).catch(()=>{});
+ import('./ground-textures.mjs?v=room-defaults-curtain-1').then(({groundTextures})=>{woodTexture=groundTextures.wood;clearBackgrounds();}).catch(()=>{});
 }
 const rect=(x,y,w,h)=>({x,y,w,h});
 const zone=(id,label,x,y,w,h,action,extra={})=>({id,label,x,y,w,h,action,...extra});

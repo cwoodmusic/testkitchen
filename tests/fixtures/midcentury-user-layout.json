@@ -1,0 +1,283 @@
+{
+  "format": "coda-room-layouts",
+  "version": 1,
+  "owner": "builder",
+  "rooms": {
+    "showroom-midcentury-studio": {
+      "format": "coda-room-layout",
+      "version": 1,
+      "themeId": "showroom-midcentury-studio",
+      "baseSignature": "room-c4fe0c34",
+      "placements": [
+        {
+          "id": "showroom-midcentury-studio-item-0",
+          "x": 949.5,
+          "y": 174.99999999999997,
+          "rotation": 0,
+          "support": null
+        },
+        {
+          "id": "showroom-midcentury-studio-item-1",
+          "x": 1113.2,
+          "y": 245.92000000000002,
+          "rotation": 90,
+          "support": null
+        },
+        {
+          "id": "showroom-midcentury-studio-item-2",
+          "x": 886.35,
+          "y": 132.73,
+          "rotation": 0,
+          "support": null
+        },
+        {
+          "id": "showroom-midcentury-studio-item-3",
+          "x": 949.5,
+          "y": 127.39999999999998,
+          "rotation": 0,
+          "support": "showroom-midcentury-studio-item-0"
+        },
+        {
+          "id": "showroom-midcentury-studio-item-4",
+          "x": 886.35,
+          "y": 105.99249999999999,
+          "rotation": 0,
+          "support": "showroom-midcentury-studio-item-2"
+        },
+        {
+          "id": "showroom-midcentury-studio-item-5",
+          "x": 898,
+          "y": 94,
+          "rotation": 0,
+          "support": null
+        },
+        {
+          "id": "showroom-midcentury-studio-item-8",
+          "x": 580.6,
+          "y": 144.4,
+          "rotation": 0,
+          "support": null
+        },
+        {
+          "id": "showroom-midcentury-studio-item-12",
+          "x": 54.69999999999999,
+          "y": 137.3,
+          "rotation": 0,
+          "support": null
+        },
+        {
+          "id": "showroom-midcentury-studio-item-18",
+          "x": 1016.16,
+          "y": 274.7,
+          "rotation": 0,
+          "support": null
+        },
+        {
+          "id": "showroom-midcentury-studio-item-19",
+          "x": 1016.16,
+          "y": 290.4,
+          "rotation": 180,
+          "support": null
+        },
+        {
+          "id": "showroom-midcentury-studio-item-21",
+          "x": 495.78,
+          "y": 311.5,
+          "rotation": 0,
+          "support": null
+        },
+        {
+          "id": "showroom-midcentury-studio-item-22",
+          "x": 56,
+          "y": 389.18,
+          "rotation": 0,
+          "support": null
+        },
+        {
+          "id": "showroom-midcentury-studio-item-23",
+          "x": 1016.16,
+          "y": 310,
+          "rotation": 0,
+          "support": null
+        },
+        {
+          "id": "showroom-midcentury-studio-item-24",
+          "x": 208,
+          "y": 94,
+          "rotation": 0,
+          "support": null
+        },
+        {
+          "id": "showroom-midcentury-studio:family-room-1:family-coffee-table-1",
+          "x": 384,
+          "y": 379.25,
+          "rotation": 0,
+          "support": null
+        },
+        {
+          "id": "showroom-midcentury-studio:family-room-1:family-lounge-chair-1",
+          "x": 293.15,
+          "y": 350,
+          "rotation": 270,
+          "support": null
+        },
+        {
+          "id": "showroom-midcentury-studio:family-room-1:family-lounge-chair-2",
+          "x": 474.85,
+          "y": 350,
+          "rotation": 90,
+          "support": null
+        },
+        {
+          "id": "showroom-midcentury-studio:family-room-1:family-living-rug-1",
+          "x": 384,
+          "y": 420,
+          "rotation": 0,
+          "support": null
+        },
+        {
+          "id": "showroom-midcentury-studio:family-room-1:family-statement-plant-1",
+          "x": 268,
+          "y": 406.25,
+          "rotation": 0,
+          "support": null
+        },
+        {
+          "id": "showroom-midcentury-studio-item-20",
+          "x": 484.1391304347826,
+          "y": 149.13056265984656,
+          "rotation": 0,
+          "support": null
+        },
+        {
+          "id": "showroom-midcentury-studio-item-9",
+          "x": 727.1480818414321,
+          "y": 193.08491048593353,
+          "rotation": 90,
+          "support": null
+        },
+        {
+          "id": "showroom-midcentury-studio-item-6",
+          "x": 700.4859335038363,
+          "y": 133.72890025575447,
+          "rotation": 0,
+          "support": null
+        },
+        {
+          "id": "showroom-midcentury-studio-item-7",
+          "x": 705.0281329923273,
+          "y": 80.02659846547314,
+          "rotation": 0,
+          "support": null
+        },
+        {
+          "id": "showroom-midcentury-studio:family-room-1:family-dining-table-1",
+          "x": 155,
+          "y": 276,
+          "rotation": 0,
+          "support": null
+        },
+        {
+          "id": "showroom-midcentury-studio-item-10",
+          "x": 103.08030690537086,
+          "y": 133.1007441606058,
+          "rotation": 0,
+          "support": null
+        },
+        {
+          "id": "showroom-midcentury-studio-item-14",
+          "x": 151.77391304347827,
+          "y": 139.1007672634271,
+          "rotation": 0,
+          "support": null
+        },
+        {
+          "id": "showroom-midcentury-studio-item-13",
+          "x": 213.40076726342713,
+          "y": 140.4859566066576,
+          "rotation": 0,
+          "support": null
+        },
+        {
+          "id": "showroom-midcentury-studio-item-15",
+          "x": 213.40076726342713,
+          "y": 74.1859566066576,
+          "rotation": 0,
+          "support": "showroom-midcentury-studio-item-13"
+        },
+        {
+          "id": "showroom-midcentury-studio-item-11",
+          "x": 283.602836402054,
+          "y": 141.62892335857578,
+          "rotation": 0,
+          "support": null
+        },
+        {
+          "id": "showroom-midcentury-studio:family-room-1:family-dining-chair-5",
+          "x": 68.0258312020461,
+          "y": 253.11257817495203,
+          "rotation": 270,
+          "support": null
+        },
+        {
+          "id": "showroom-midcentury-studio:family-room-1:family-dining-chair-3",
+          "x": 112.30000000000001,
+          "y": 282.57263427109973,
+          "rotation": 180,
+          "support": null
+        },
+        {
+          "id": "showroom-midcentury-studio:family-room-1:family-dining-chair-4",
+          "x": 197.7,
+          "y": 280.3015345268542,
+          "rotation": 180,
+          "support": null
+        },
+        {
+          "id": "showroom-midcentury-studio:family-room-1:family-dining-chair-6",
+          "x": 243.48818908847505,
+          "y": 247.05631219029732,
+          "rotation": 90,
+          "support": null
+        },
+        {
+          "id": "showroom-midcentury-studio:family-room-1:family-dining-chair-2",
+          "x": 200.7281329923273,
+          "y": 210.78286445012787,
+          "rotation": 0,
+          "support": null
+        },
+        {
+          "id": "showroom-midcentury-studio:family-room-1:family-dining-chair-1",
+          "x": 121.38439897698208,
+          "y": 209.2687748511429,
+          "rotation": 0,
+          "support": null
+        },
+        {
+          "id": "showroom-midcentury-studio-item-16",
+          "x": 385.51406649616376,
+          "y": 310.16329923273656,
+          "rotation": 0,
+          "support": null
+        },
+        {
+          "id": "showroom-midcentury-studio-item-17",
+          "x": 848.0612886628836,
+          "y": 159.52877237851663,
+          "rotation": 270,
+          "support": null
+        },
+        {
+          "id": "showroom-midcentury-studio:family-room-1:bedroom-plant-1",
+          "x": 814.6006039202366,
+          "y": 306.52813299232736,
+          "rotation": 0,
+          "support": null
+        }
+      ],
+      "removed": [],
+      "added": []
+    }
+  }
+}

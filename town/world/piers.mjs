@@ -1,4 +1,4 @@
-import {cell,height,terrainHeight,surfaceAt,RISE,TILE} from './model.mjs?v=wall-caps-1';
+import {cell,height,terrainHeight,surfaceAt,RISE,TILE} from './model.mjs?v=room-defaults-curtain-1';
 
 const same=(d,x,y,level)=>cell(d,x,y).pier?.level===level;
 export function pierGeometry(d,x,y){

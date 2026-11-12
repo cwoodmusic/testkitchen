@@ -1,4 +1,4 @@
-import {SHOWROOM_FURNITURE} from './showroom-furniture-definitions.mjs?v=wall-caps-1';
+import {SHOWROOM_FURNITURE} from './showroom-furniture-definitions.mjs?v=room-defaults-curtain-1';
 
 // World canvases stay stable independently of generated image proportions.
 // Registration contains each native cutout at the bottom-center anchor.

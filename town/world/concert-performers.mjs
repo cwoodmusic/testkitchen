@@ -1,4 +1,5 @@
-import {assetImage} from './asset-color.mjs?v=wall-caps-1';
+import {assetImage} from './asset-color.mjs?v=room-defaults-curtain-1';
+import {drawViolinPlayingPose} from './concert-string-art.mjs?v=room-defaults-curtain-1';
 
 // Performers belong to the programme, never to the camera or the saved town.
 // Coordinates are feet on the stage; the native seated renderer uses a hip
@@ -47,7 +48,7 @@ const PIANISTS=Object.freeze({chopin:CHOPIN,liszt:LISZT,debussy:DEBUSSY});
 
 function actor(instrument,section,index,x,y,options={}){
  const id=options.id||`concert-${section}-${index}`;
- return {id,actorId:id,name:options.name||`${section} musician ${index+1}`,instrument,section,x:Math.round(x),y:Math.round(y),facing:options.facing||'down',seated:options.seated??!['double-bass','percussion','conductor','jazz'].includes(section),walking:false,activity:'playing',phase:(index*.618)%TAU,appearance:options.appearance||musicianAppearance(index,options.jazz),...options};
+ return {id,actorId:id,name:options.name||`${section} musician ${index+1}`,instrument,section,x:Math.round(x),y:Math.round(y),facing:options.facing||'down',seated:options.seated??!['double-bass','percussion','conductor','jazz'].includes(section),walking:false,activity:'playing',phase:(index*.618)%TAU,appearance:options.appearance||musicianAppearance(index,options.jazz),...(['violin','viola','piano'].includes(instrument)?{instrumentPose:instrument}:{}),...options};
 }
 function prop(asset,x,y,w,h,depth,role,owner){return {asset,x:Math.round(x),y:Math.round(y),w,h,depth,role,owner};}
 function rowX(bounds,index,count){return bounds.x+bounds.w*(index+.5)/count;}
@@ -101,8 +102,8 @@ function jazz(performance){
  for(const [instrument,x,y,seated] of rhythm)actors.push(actor(instrument,'jazz',actors.length,b.x+b.w*x,b.y+b.h*y,{jazz:true,seated}));
  for(const [instrument,x] of front)actors.push(actor(instrument,'jazz',actors.length,b.x+b.w*x,b.y+b.h*.88,{jazz:true,seated:false}));
  const pianist=actors.find(a=>a.instrument==='piano');
- props.push(prop('decor-03-02',pianist.x,pianist.y+21,215,204,pianist.y-1,'piano',pianist.id));
- pianist.facing='up';
+ props.push({...prop('decor-03-02',pianist.x,pianist.y,250,320,pianist.y-1,'piano',pianist.id),pianoFacing:'west'});
+ pianist.facing='right';
  attachInstruments(performance);
 }
 
@@ -110,9 +111,9 @@ function recital(performance){
  const {stage,actors,props,pianist}=performance,b=stage.performerBounds;
  const x=stage.x+stage.w/2,y=Math.min(stage.y+stage.h-105,b.y+b.h*.92);
  const profile=PIANISTS[pianist];
- const a=actor('piano','solo',0,x,y,{id:pianist,name:profile.name,facing:'up',seated:true,appearance:{...profile}});
+ const a=actor('piano','solo',0,x,y,{id:pianist,name:profile.name,facing:'right',seated:true,appearance:{...profile}});
  actors.push(a);
- props.push(prop('decor-03-01',x,y+22,350,350,y-1,'piano',a.id));
+ props.push({...prop('decor-03-01',x,y,350,350,y-1,'piano',a.id),pianoFacing:'west'});
 }
 
 /** A deterministic, self-contained stage arrangement for one programme. */
@@ -130,16 +131,31 @@ function defaultDrawNPC(){
  return nativeRenderer?.drawNPC;
 }
 function catalogAsset(catalog,id){return catalog?.get?.(id)||catalog?.[id];}
-function propDrawBounds(p,a){
+export function concertPropBounds(p,a){
+ if(p.pianoFacing==='west'){
+  const grand=p.asset==='decor-03-01',ratio=grand?147/208:132/213,h=Math.min(p.h,p.w/ratio),w=h*ratio;
+  // Native West views put the bench and keyboard to the left. The actor's
+  // seated renderer anchors at its hip, forty pixels above stage feet.
+  return {x:p.x-w*.15,y:p.y-SEAT_DROP-h*(grand?.69:.68),w,h,scale:h/(grand?208:213)};
+ }
  const width=Math.max(1,finite(a?.w,p.w)),height=Math.max(1,finite(a?.h,p.h));
  const scale=Math.min(p.w/width,p.h/height),w=width*scale,h=height*scale;
  return {x:p.x-w/2,y:p.y-h,w,h,scale};
 }
+export function concertPianoSourceRect(p,view,image){
+ const iw=image?.width||image?.naturalWidth||1,ih=image?.height||image?.naturalHeight||1;
+ if(!view||!Number.isFinite(view.w)||!Number.isFinite(view.h)||iw!==Math.ceil(view.w)||ih!==Math.ceil(view.h))return {x:0,y:0,w:iw,h:ih};
+ const [width,height]=p.asset==='decor-03-01'?[147,208]:[132,213],scale=Math.min(view.w/width,view.h/height),w=width*scale,h=height*scale;
+ // The shared furniture view reserves transparent space for its floor
+ // anchor. Concert props align to the pictured bench, not that reserved area.
+ return {x:Math.max(0,(view.w-w)/2),y:Math.max(0,view.h-h),w,h};
+}
 function drawAsset(ctx,p,catalog){
  const a=catalogAsset(catalog,p.asset);if(!a)return false;
- const image=assetImage(a);if(!image)return false;
- const b=propDrawBounds(p,a);
- ctx.drawImage(image,Math.round(b.x),Math.round(b.y),Math.round(b.w),Math.round(b.h));
+ const view=p.pianoFacing?a.getFacingView?.(p.pianoFacing):null,image=p.pianoFacing?(view?.canvas||view?.image||a.getFacingImage?.(p.pianoFacing)):assetImage(a);if(!image)return false;
+ const b=concertPropBounds(p,a);
+ if(p.pianoFacing){const r=concertPianoSourceRect(p,view,image);ctx.drawImage(image,r.x,r.y,r.w,r.h,Math.round(b.x),Math.round(b.y),Math.round(b.w),Math.round(b.h));}
+ else ctx.drawImage(image,Math.round(b.x),Math.round(b.y),Math.round(b.w),Math.round(b.h));
  return true;
 }
 
@@ -151,7 +167,11 @@ export function stageCollisionBoxes(performance,{catalog}={}){
  if(!performance)return [];
  const boxes=performance.actors.map(a=>({x:a.x-22,y:a.y-18,w:44,h:28,owner:a.id,role:'performer'}));
  for(const p of performance.props){
-  const a=catalogAsset(catalog,p.asset),b=propDrawBounds(p,a);
+  const a=catalogAsset(catalog,p.asset),b=concertPropBounds(p,a);
+  if(p.pianoFacing==='west'){
+   boxes.push({x:b.x+b.w*.32,y:b.y+b.h*.40,w:b.w*.64,h:b.h*.54,owner:p.owner,role:'piano-body',asset:p.asset});
+   boxes.push({x:b.x+b.w*.02,y:b.y+b.h*.70,w:b.w*.27,h:b.h*.25,owner:p.owner,role:'piano',asset:p.asset});continue;
+  }
   const native=a?.boxes?.length?a.boxes:[{x:(a?.w||p.w)*.16,y:(a?.h||p.h)*.76,w:(a?.w||p.w)*.68,h:(a?.h||p.h)*.22}];
   for(const r of native)boxes.push({x:b.x+r.x*b.scale,y:b.y+r.y*b.scale,w:r.w*b.scale,h:r.h*b.scale,owner:p.owner,role:p.role,asset:p.asset});
   if(p.asset==='decor-03-01')boxes.push({x:b.x+b.w*.10,y:b.y+b.h*.39,w:b.w*.80,h:b.h*.40,owner:p.owner,role:'piano-body',asset:p.asset});
@@ -178,16 +198,7 @@ function chair(ctx,a){
  rectangle(ctx,a.x-22,a.y-53,5,46,'#302d36');rectangle(ctx,a.x+17,a.y-53,5,46,'#302d36');
 }
 
-function violin(ctx,a,beat){
- const o=a.seated?8:0,sway=Math.round(Math.sin(beat+a.phase)*3),v=a.instrument==='viola';
- const wood=v?'#9e623c':'#c58049';
- rectangle(ctx,1,-24+o,7,3,'#412b2b');rectangle(ctx,0,-21+o,11,8,'#422a2a');rectangle(ctx,2,-22+o,7,10,wood);
- rectangle(ctx,-1,-19+o,4,5,wood);rectangle(ctx,8,-19+o,5,6,wood);rectangle(ctx,3,-21+o,2,8,'#e3ad67');
- pixelLine(ctx,8,-21+o,18,-28+o,'#4e342d',3);rectangle(ctx,17,-29+o,5,4,'#b67b48');
- pixelLine(ctx,5,-16+o,18,-27+o,'#eadab4');rectangle(ctx,4,-18+o,1,4,'#5b372b');rectangle(ctx,9,-18+o,1,4,'#5b372b');
- arms(ctx,a,[14,-25+o],[4+sway,-14+o]);
- pixelLine(ctx,-10+sway,-28+o,18+sway,-6+o,'#6c493a',2);pixelLine(ctx,-10+sway,-27+o,18+sway,-5+o,'#ead9ba');
-}
+function violin(ctx,a,beat){drawViolinPlayingPose(ctx,a,beat);}
 function bowedBass(ctx,a,beat){
  const o=a.seated?8:0,motion=Math.sin(beat+a.phase),bass=a.instrument==='double-bass';
  arms(ctx,a,[bass?13:9,-25+o],[10+Math.round(motion*4),-11+o]);
@@ -234,11 +245,11 @@ function percussion(ctx,a,beat){
  if(a.instrument!=='drums'){rectangle(ctx,left-9,-32+o+lift*6,5,5,'#e6d6b5');rectangle(ctx,right+9,-32+o-lift*6,5,5,'#e6d6b5');}
 }
 function pianoHands(ctx,a,beat){
- const o=a.seated?8:0,tap=Math.round(Math.sin(beat*3+a.phase));
- // Facing north, forearms reach forward onto the keyboard rather than
- // dangling in the seated renderer's neutral lap pose.
- arms(ctx,a,[-8,-22+o+tap],[5,-22+o-tap]);
- for(let i=0;i<3;i++){rectangle(ctx,-8+i,-23+o+tap,1,2,a.appearance.skin);rectangle(ctx,5+i,-23+o-tap,1,2,a.appearance.skin);}
+ const tap=Math.round(Math.sin(beat*3+a.phase)),skin=a.appearance.skin,shirt=a.appearance.shirt;
+ // In profile both forearms reach right, to the native West-facing keys.
+ pixelLine(ctx,1,-16,10,-11,shirt,4);pixelLine(ctx,10,-11,18,-14+tap,shirt,3);
+ pixelLine(ctx,4,-22,12,-18,shirt,4);pixelLine(ctx,12,-18,19,-19-tap,shirt,3);
+ hand(ctx,18,-14+tap,skin);hand(ctx,19,-19-tap,skin);
 }
 function conductorHands(ctx,a,beat){
  const phase=beat*.5,left=[-15+Math.sin(phase)*6,-26+Math.cos(phase)*8],right=[13+Math.cos(phase)*9,-30+Math.sin(phase)*11];
@@ -262,7 +273,7 @@ function drawPlaying(ctx,a,clock,bpm){
 
 const bodyCaches=new WeakMap();
 function bodyCache(ctx,performance,drawNPC,createCanvas){
- let entry=bodyCaches.get(performance);if(entry?.drawNPC===drawNPC)return entry.images;
+ const poses=performance.actors.map(a=>a.instrumentPose||'').join('|');let entry=bodyCaches.get(performance);if(entry?.drawNPC===drawNPC&&entry.poses===poses)return entry.images;
  const document=ctx.canvas?.ownerDocument;
  const make=createCanvas||(document?.createElement?()=>document.createElement('canvas'):typeof OffscreenCanvas==='function'?()=>new OffscreenCanvas(156,215):null);
  if(!make)return null;
@@ -273,7 +284,7 @@ function bodyCache(ctx,performance,drawNPC,createCanvas){
   drawNPC(c,{...a,x:78,y:160,activity:'',emote:'',emoteTime:.6,walking:false},0);
   images.set(a,canvas);
  }
- bodyCaches.set(performance,{drawNPC,images});return images;
+ bodyCaches.set(performance,{drawNPC,images,poses});return images;
 }
 
 /** Draw native character bodies once, then animate instrument-specific hands
@@ -288,13 +299,13 @@ export function renderStagePerformance(ctx,performance,options={}){
  ctx.save();ctx.imageSmoothingEnabled=false;
  const queue=[],view=options.view||options.viewport;
  for(const a of performance.actors){
-  if(!visible({x:a.x-90,y:a.y-215,w:180,h:240},view))continue;
+  if(!visible({x:a.x-90,y:a.y-215,w:['violin','viola'].includes(a.instrument)?205:180,h:240},view))continue;
   queue.push({depth:a.y-2,draw:()=>chair(ctx,a)});queue.push({depth:a.y,draw:()=>{
   const source=images?.get(a);
   if(source)ctx.drawImage(source,Math.round(a.x-78),Math.round(a.y-(a.seated?SEAT_DROP:0)-160));
   else drawNPC(ctx,{...a,y:a.y-(a.seated?SEAT_DROP:0),emoteTime:clock,walking:false},clock);
  }});queue.push({depth:a.y+.2,draw:()=>drawPlaying(ctx,a,clock,performance.bpm)});}
- for(const p of performance.props)if(visible({x:p.x-p.w/2,y:p.y-p.h,w:p.w,h:p.h},view))queue.push({depth:p.depth,draw:()=>drawAsset(ctx,p,options.catalog)});
+ for(const p of performance.props)if(visible(concertPropBounds(p,catalogAsset(options.catalog,p.asset)),view))queue.push({depth:p.depth,draw:()=>drawAsset(ctx,p,options.catalog)});
  // The visiting player can share the same depth sort on the stage. Callers
  // own these drawables; the performance never moves or stores them.
  for(const item of options.extraDrawables||[])if(typeof item.draw==='function'&&(!item.bounds||visible(item.bounds,view)))queue.push({depth:finite(item.y,finite(item.depth,0)),draw:()=>item.draw(ctx)});

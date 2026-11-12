@@ -18,6 +18,7 @@ for(const asset of FAMILY_FURNITURE_ASSETS)catalog.set(asset.id,asset);
 configureUrbanInteriors(catalog);
 const requests=[...residents.map(r=>({kind:'apartment',resident:r.id,floor:r.floor})),{kind:'apartment',resident:'player',floor:15},...SHOWROOMS.map(r=>({kind:'showroom',showroomId:r.id,floor:r.storeFloor}))];
 const models=requests.map(getInterior),RADIUS=6,findings={};
+const approvedMidcentury=new Map(JSON.parse(readFileSync(new URL('../../tests/fixtures/midcentury-user-layout.json',import.meta.url))).rooms['showroom-midcentury-studio'].placements.map(p=>[p.id,p]));
 const slot=item=>item.slot||item.collectionSlot||catalog.get(item.asset)?.slot;
 const itemFor=(m,role)=>m.items.find(i=>slot(i)===role);
 const owner=m=>m.resident||'showroom-'+m.showroomId;
@@ -73,9 +74,14 @@ for(const m of models)for(const [role,area]of [['bed','bedroom'],['sink','kitche
  const item=itemFor(m,role);if(!item)continue;const room=roleRoom(m,item,area);if(!room){backs.push({owner:owner(m),role,error:'Missing functional room'});continue;}
  const b=footprint(item),turn=((item.rotation||0)%360+360)%360;
  const gap=turn===0?b.y-room.y:turn===90?room.x+room.w-b.x-b.w:turn===180?room.y+room.h-b.y-b.h:b.x-room.x;
- if(gap<4-1e-6||gap>8+1e-6)backs.push({owner:owner(m),role,backGap:Math.round(gap*100)/100,physicalBase:round(b),room:{x:room.x,y:room.y,w:room.w,h:room.h}});
+ const approved=m.id==='showroom-midcentury-studio'?approvedMidcentury.get(item.id):null;
+ // The owner positioned this kitchen/bath run closer to its wall in the
+ // approved export. Keep those exact poses and the normal4px minimum elsewhere.
+ if(approved&&(item.x!==approved.x||item.y!==approved.y||(item.rotation||0)!==approved.rotation))backs.push({owner:owner(m),role,error:'The approved Midcentury pose changed'});
+ const minimum=approved?0:4;
+ if(gap<minimum-1e-6||gap>8+1e-6)backs.push({owner:owner(m),role,backGap:Math.round(gap*100)/100,physicalBase:round(b),room:{x:room.x,y:room.y,w:room.w,h:room.h}});
 }
-check('beds and kitchen/bath cabinets have a real backing edge within4–8px of their functional wall',backs);
+check('beds and kitchen/bath cabinets meet their functional wall, including exact owner-approved Midcentury poses',backs);
 
 const windows=[];
 for(const m of models)for(const item of m.items.filter(i=>['bed','wardrobe','fridge','pantry'].includes(slot(i)))){

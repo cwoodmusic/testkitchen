@@ -1,5 +1,5 @@
-import {createShowroomApartmentPlan} from './showroom-apartments.mjs?v=wall-caps-1';
-import {createShowroomThemeSign,showroomThemeSignZone} from './showroom-signs.mjs?v=wall-caps-1';
+import {createShowroomApartmentPlan} from './showroom-apartments.mjs?v=room-defaults-curtain-1';
+import {createShowroomThemeSign,showroomThemeSignZone} from './showroom-signs.mjs?v=room-defaults-curtain-1';
 
 // The original eight homes retain their ground-floor addresses. Four larger
 // homes occupy a second storey inside the same exterior floor plate.

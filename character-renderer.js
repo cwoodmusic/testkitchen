@@ -616,6 +616,9 @@ window.createCodaCharacterRenderer=function(api){
     const armSwing=Math.round(stride*.6),leftArm=side?-9:-13,rightArm=side?5:9;
     const raised=['wave','point','robot','dance'].includes(pose.gesture);
     const special=['cheer','clap','shrug','heart','peace','airguitar','curtsy','salute','facepalm','think'].includes(pose.gesture);
+    // Concert strings and pianists supply both posed arms with the instrument.
+    // Keep the ordinary hands for every other NPC and all existing activities.
+    if(motion.instrumentPose!=='violin'&&motion.instrumentPose!=='viola'&&motion.instrumentPose!=='piano'){
     if(pose.seated){
       // Relaxed elbows and hands rest inward on the lap. Keep the original
       // standing/arcade emotes untouched unless a real bench requests it.
@@ -648,6 +651,7 @@ window.createCodaCharacterRenderer=function(api){
     if(pose.gesture==='airguitar'){r(-13,-20,15,4,c.skinShade);hand(6,-16+Math.round(beat*2));r(8,-20,4,7,c.skin);}
       if(pose.gesture==='curtsy'){r(-19,-17,10,4,c.skinShade);r(10,-17,10,4,c.skin);hand(-22,-15);hand(18,-15);}
       if(['salute','facepalm','think'].includes(pose.gesture)){r(leftArm,-17,4,11,c.skinShade);r(rightArm,-28,4,13,c.skin);r(4,-29,8,4,c.skin);if(pose.gesture==='salute')r(3,-40,10,4,c.skinLight);}
+    }
     }
     r(-5,-29,10,6,c.skinShade);r(-4,-28,8,5,c.skin);
     if(p.neckwear==='cravat'&&!back){r(-4,-26,8,4,'#f2e9d4');r(-2,-22,4,7,'#ddd1bc');r(-4,-21,8,2,'#f5ecdb');}
@@ -787,7 +791,7 @@ window.createCodaCharacterRenderer=function(api){
     if(own(custom,'accessory'))appearance.earrings=custom.accessory==='earrings';
     const activity=p.activity||'',emote=activity==='dancing'?(EMOTES.includes(p.danceStyle)?p.danceStyle:'dance'):activity==='chatting'||p.conversation?'talk':activity==='playing'?'playing':activity==='relaxing'?'sit':p.emote;
     const seed=String(base.id).split('').reduce((a,c)=>a+c.charCodeAt(0),0);
-    const pose={x:p.x,y:p.y,facing:p.facing,walking:p.walking,phase:p.phase,seated:p.seated===true,emote,emoteTime:p.emoteTime,seed};render(ctx,appearance,pose,time,pixelPoints(p.id||base.id,pose));return true;
+    const pose={x:p.x,y:p.y,facing:p.facing,walking:p.walking,phase:p.phase,seated:p.seated===true,emote,emoteTime:p.emoteTime,seed,instrumentPose:p.instrumentPose};render(ctx,appearance,pose,time,pixelPoints(p.id||base.id,pose));return true;
   }
   function labelOffset(raw={},id){
     const base=id?appearanceFor(id):{},p={...base,...normalizeProfile({...base,...raw})};

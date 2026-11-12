@@ -1,6 +1,6 @@
-import {furnitureFacingBounds,furnitureFacingBoxes,furnitureFacingDepth} from './furniture-facing.mjs?v=wall-caps-1';
-import {furniturePresentationScale} from './private-furniture.mjs?v=wall-caps-1';
-import {apartmentDecorBounds,apartmentWallDecorBounds} from './personal-room-areas.mjs?v=wall-caps-1';
+import {furnitureFacingBounds,furnitureFacingBoxes,furnitureFacingDepth} from './furniture-facing.mjs?v=room-defaults-curtain-1';
+import {furniturePresentationScale} from './private-furniture.mjs?v=room-defaults-curtain-1';
+import {apartmentDecorBounds,apartmentWallDecorBounds} from './personal-room-areas.mjs?v=room-defaults-curtain-1';
 
 export const ROOM_LAYOUT_FORMAT='coda-room-layout';
 export const ROOM_LAYOUT_VERSION=1;

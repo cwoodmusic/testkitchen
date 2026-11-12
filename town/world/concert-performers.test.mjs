@@ -1,6 +1,6 @@
 import test from 'node:test';
 import assert from 'node:assert/strict';
-import {createStagePerformance,renderStagePerformance,stagePerformanceSignature,stageCollisionBoxes} from './concert-performers.mjs';
+import {createStagePerformance,renderStagePerformance,stagePerformanceSignature,stageCollisionBoxes,concertPropBounds,concertPianoSourceRect} from './concert-performers.mjs';
 import {CONCERT_PROGRAMME} from './concert-programme.mjs';
 
 const STAGE={x:768,y:300,w:2560,h:900,performerBounds:{x:1000,y:420,w:2096,h:680}};
@@ -51,7 +51,7 @@ test('solo recitals retain each pianist identity and use the native grand piano'
   const p=createStagePerformance({kind:'piano',pianist,id:'recital'}),a=p.actors[0];
   assert.equal(p.actors.length,1);assert.equal(p.pianist,pianist);
   assert.equal(a.id,pianist);assert.equal(a.name,name);assert.equal(a.appearance.hair,hair);assert.equal(a.appearance.hairstyle,style);
-  assert.equal(a.appearance.accessory,'none');assert.equal(a.seated,true);assert.equal(a.facing,'up');
+  assert.equal(a.appearance.accessory,'none');assert.equal(a.seated,true);assert.equal(a.facing,'right');
   assert.equal(p.props.length,1);assert.equal(p.props[0].asset,'decor-03-01');
  }
  assert.equal(createStagePerformance({ensemble:'solo-piano',composer:'Franz Liszt'}).pianist,'liszt');
@@ -150,10 +150,26 @@ test('stage collision follows musician feet and native instrument draw scaling',
 test('the recital grand piano blocks its soundboard and the performer, not the whole stage',()=>{
  const p=createStagePerformance({kind:'piano'}),grand={w:100,h:200,boxes:[{x:16,y:152,w:68,h:44}]};
  const boxes=stageCollisionBoxes(p,{catalog:new Map([['decor-03-01',grand]])}),body=boxes.find(b=>b.role==='piano-body');
- assert.equal(body.w,140);assert.equal(body.h,140);
+ const bounds=concertPropBounds(p.props[0],grand);assert.equal(body.w,bounds.w*.64);assert.equal(body.h,bounds.h*.54);assert(body.x>p.actors[0].x,'The soundboard lies to the right of the pianist');
  const player=p.actors[0];assert.ok(boxes.some(b=>b.role==='performer'&&b.x<player.x&&b.x+b.w>player.x));
  assert.ok(body.y<player.y-100);
  const sideX=p.stage.performerBounds.x+50;
  assert.ok(boxes.every(b=>sideX<b.x||sideX>b.x+b.w));
  assert.deepEqual(stageCollisionBoxes(null),[]);
 });
+
+ test('all pianists face right at the native left-side keyboard without rotating the south sprite',()=>{
+  for(const program of [...CONCERT_PROGRAMME.filter(p=>p.category==='piano'),{kind:'jazz'}]){
+   const p=createStagePerformance(program),a=p.actors.find(a=>a.instrument==='piano'),piano=p.props.find(q=>q.role==='piano'),b=concertPropBounds(piano);
+   assert.equal(a.facing,'right');assert.equal(piano.pianoFacing,'west');assert(a.x<b.x+b.w*.32);assert(Math.abs(a.x-(b.x+b.w*.15))<1e-8);
+   const hip=a.y-40;assert(hip>b.y+b.h*.64&&hip<b.y+b.h*.72);assert(b.y+b.h<p.stage.y+p.stage.h);
+   const calls=[],image={width:147,height:208},asset={w:113,h:132,getFacingView:direction=>{calls.push(direction);return{image};}};const g=ctx();
+   renderStagePerformance(g,p,{catalog:new Map([[piano.asset,asset]]),drawNPC(){}});assert(calls.includes('west'));assert(g.calls.some(row=>row[0]==='image'&&row[1]===image));
+  }
+ });
+
+ test('native piano padding is excluded analytically so the pictured bench meets the seated hip',()=>{
+  const p=createStagePerformance({kind:'piano'}).props[0],view={w:78.24,h:179.8},image={width:79,height:180},r=concertPianoSourceRect(p,view,image);
+  assert.equal(r.x,0);assert.equal(r.w,78.24);assert(Math.abs(r.h/r.w-208/147)<1e-10);assert(Math.abs(r.y+r.h-view.h)<1e-10);assert(r.y>60);
+  const raw=concertPianoSourceRect(p,{},{width:147,height:208});assert.deepEqual(raw,{x:0,y:0,w:147,h:208});
+ });

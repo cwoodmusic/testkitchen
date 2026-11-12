@@ -1,4 +1,4 @@
-import {assetImage} from './asset-color.mjs?v=wall-caps-1';
+import {assetImage} from './asset-color.mjs?v=room-defaults-curtain-1';
 
 export const SHOWROOM_SIGN_ASSET='decor-14-16';
 

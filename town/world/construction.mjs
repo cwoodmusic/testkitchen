@@ -1,8 +1,8 @@
-import {drawMusicWallRun,drawMusicWallPost} from './music-wall-art.mjs?v=wall-caps-1';
-import {cell,height,RISE,stairProfile} from './model.mjs?v=wall-caps-1';
-import {wallArt,constructionArt,stairArt,stairTreadBounds,cliffArt} from './detail-art.mjs?v=wall-caps-1';
-import {barrierHeight} from './barrier-geometry.mjs?v=wall-caps-1';
-export {barrierHeight,barrierRuns,barrierPosts,barrierGeometry} from './barrier-geometry.mjs?v=wall-caps-1';
+import {drawMusicWallRun,drawMusicWallPost} from './music-wall-art.mjs?v=room-defaults-curtain-1';
+import {cell,height,RISE,stairProfile} from './model.mjs?v=room-defaults-curtain-1';
+import {wallArt,constructionArt,stairArt,stairTreadBounds,cliffArt} from './detail-art.mjs?v=room-defaults-curtain-1';
+import {barrierHeight} from './barrier-geometry.mjs?v=room-defaults-curtain-1';
+export {barrierHeight,barrierRuns,barrierPosts,barrierGeometry} from './barrier-geometry.mjs?v=room-defaults-curtain-1';
 function piece(c,img,sx,sy,sw,sh,x,y,w,h){if(sw>0&&sh>0&&w>0&&h>0)c.drawImage(img,sx,sy,sw,sh,x,y,w,h);}
 // Clip one continuous rock field to the heights on BOTH sides of an edge.
 // The southern side can be a slope, so a midpoint rectangle leaves gaps.

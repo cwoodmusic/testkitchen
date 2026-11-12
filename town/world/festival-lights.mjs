@@ -70,7 +70,7 @@ function performanceDeck(c,wood){
 export async function registerFestivalLights(add,catalog){
  const post=catalog.get('decor-14-01'),lantern=catalog.get('decor-14-04');
  if(!post||!lantern)throw Error('Festival lights need the native bronze lamp artwork.');
- const[,,{groundTextures}]=await Promise.all([post.ensureFull?.(),lantern.ensureFull?.(),import('./ground-textures.mjs?v=wall-caps-1')]);
+ const[,,{groundTextures}]=await Promise.all([post.ensureFull?.(),lantern.ensureFull?.(),import('./ground-textures.mjs?v=room-defaults-curtain-1')]);
  // Extract only the lantern roof/glass/cage. Its stake, leaves and ground base
  // are not part of a hanging fixture.
  const whole=document.createElement('canvas');whole.width=lantern.w;whole.height=lantern.h;lantern.draw(whole.getContext('2d'));

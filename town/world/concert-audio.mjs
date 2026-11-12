@@ -1,3 +1,4 @@
+import {CONCERT_CHANGEOVER} from './concert-curtain.mjs?v=room-defaults-curtain-1';
 // One venue programme owns one media element for the whole town session.
 // Entering the hall changes its gain, never its source or playback position.
 export const CONCERT_AUDIO_PREFERENCE_KEY='codaTownConcertAudioV1';
@@ -49,7 +50,7 @@ export function createConcertAudio({
  requestFrame=targetWindow?.requestAnimationFrame?.bind(targetWindow),
  cancelFrame=targetWindow?.cancelAnimationFrame?.bind(targetWindow),
  now=()=>globalThis.performance?.now?.()??Date.now(),
- autoplay=true,volume=.75,muted=false,fadeMs=280,
+ autoplay=true,volume=.75,muted=false,fadeMs=280,changeover=false,
  outdoorGain=.025,indoorGain=1,interiorGain=.003,outdoorCutoff=1500,interiorCutoff=600,
  venueAsset='sydney-opera-house',onChange
 }={}){
@@ -61,6 +62,9 @@ export function createConcertAudio({
  let contextScene=null,contextEnabled=true,eligible=false,mode='absent',hasVenue=false,contextGain=0;
  let pageHidden=false,lastError='',frame=null,desiredOutput=0,rampSequence=0;
  let graph=null,graphAttempted=false,graphResumePending=null,filterTarget=null;
+ let intermission=null,changeFrame=null;
+ const reducedMotion=Boolean(targetWindow?.matchMedia?.('(prefers-reduced-motion: reduce)')?.matches);
+ const waitingForStage=()=>Boolean(intermission&&(!intermission.committed||now()<intermission.started+intermission.close+intermission.hold));
  const fadeDuration=Math.max(0,finite(fadeMs,280));
  if(typeof onChange==='function')listeners.add(onChange);
  try{
@@ -69,11 +73,12 @@ export function createConcertAudio({
   }
  }catch{media=null;}
  const hidden=()=>Boolean(pageHidden||targetDocument?.hidden);
- const canPlay=()=>!destroyed&&!!media&&!!currentTrack&&tracks.length>failed.size&&eligible&&!hidden()&&wantsPlay&&unlocked;
+ const canPlay=()=>!waitingForStage()&&!destroyed&&!!media&&!!currentTrack&&tracks.length>failed.size&&eligible&&!hidden()&&wantsPlay&&unlocked;
  function state(){
   const noRecordings=!tracks.length,unavailable=!media||tracks.length>0&&failed.size>=tracks.length;
-  let status=destroyed?'destroyed':noRecordings?'empty':unavailable?'unavailable':!eligible?'inactive':hidden()?'suspended':!wantsPlay?'paused':!unlocked||needsGesture?'locked':pending?'loading':media?.paused===false?'playing':'ready';
+  let status=destroyed?'destroyed':noRecordings?'empty':unavailable?'unavailable':!eligible?'inactive':hidden()?'suspended':!wantsPlay?'paused':!unlocked||needsGesture?'locked':waitingForStage()?'intermission':pending?'loading':media?.paused===false?'playing':'ready';
   return Object.freeze({
+   changeover:changeoverState(),
    track:currentTrack,trackId:currentTrack?.id??null,category:currentTrack?.category??null,pianist:currentTrack?.pianist??null,
    playing:!destroyed&&media?.paused===false,status,muted:isMuted,volume:master,
    context:mode,contextGain,effectiveVolume:desiredOutput,outputVolume:finite(media?.volume,0),
@@ -219,18 +224,41 @@ export function createConcertAudio({
   });
   emit('loading');return request.promise;
  }
+ function changeoverState(){
+  if(!intermission)return null;
+  const elapsed=Math.max(0,now()-intermission.started),afterClose=elapsed-intermission.close;
+  const phase=!intermission.committed?'closing':afterClose<intermission.hold?'closed':'opening';
+  const unit=clamp(phase==='closing'?elapsed/Math.max(1,intermission.close):(afterClose-intermission.hold)/Math.max(1,intermission.open)),ease=unit*unit*(3-2*unit);
+  const closure=phase==='closing'?intermission.from+(1-intermission.from)*ease:phase==='closed'?1:reducedMotion?0:1-ease;
+  return Object.freeze({phase,closure,previousTrack:intermission.previous,nextTrack:intermission.next,startedAt:intermission.started/1000});
+ }
+ function cancelChangeover(){if(changeFrame!==null)cancelFrame?.(changeFrame);changeFrame=null;intermission=null;}
+ function changeoverTick(){
+  changeFrame=null;if(destroyed||!intermission)return;
+  const active=intermission,elapsed=Math.max(0,now()-active.started);
+  if(!active.committed&&elapsed+1e-6>=active.close){
+   currentTrack=active.next;preparedId=null;active.committed=true;lastError='';needsGesture=false;prepare();emit('track');if(destroyed||intermission!==active)return;
+  }
+  if(elapsed+1e-6>=active.close+active.hold&&!active.startedAudio){active.startedAudio=true;if(canPlay())void attemptPlay();emit('opening');}
+  if(elapsed+1e-6>=active.close+active.hold+active.open){intermission=null;emit('changeover');return;}
+  changeFrame=requestFrame(changeoverTick);
+ }
  function nextTrack(reason='next'){
   if(destroyed)return null;
   pauseMedia();
   const next=shuffle.next(failed);
   if(!next){
-   lastError='The concert recordings could not be played. Retry the programme to try again.';
+   cancelChangeover();lastError='The concert recordings could not be played. Retry the programme to try again.';
    needsGesture=false;output(0,true);emit('unavailable');return null;
   }
-  currentTrack=next;preparedId=null;lastError='';needsGesture=false;
-  emit('track');
-  if(canPlay())void attemptPlay();
-  return currentTrack;
+  if(changeover&&unlocked&&eligible&&typeof requestFrame==='function'&&reason!=='retry'){
+   if(intermission&&!intermission.committed){intermission.next=next;emit('changeover');return next;}
+   const from=changeoverState()?.closure??0;cancelChangeover();
+   intermission={previous:currentTrack,next,started:now(),from:reducedMotion?1:from,close:reducedMotion?0:CONCERT_CHANGEOVER.close*1000*(1-from),hold:(reducedMotion?CONCERT_CHANGEOVER.reducedHold:CONCERT_CHANGEOVER.hold)*1000,open:reducedMotion?0:CONCERT_CHANGEOVER.open*1000,committed:false,startedAudio:false};
+   emit('changeover');changeoverTick();return next;
+  }
+  cancelChangeover();currentTrack=next;preparedId=null;lastError='';needsGesture=false;
+  emit('track');if(canPlay())void attemptPlay();return currentTrack;
  }
  function failCurrent(message){
   if(destroyed||!currentTrack||failed.has(currentTrack.id))return;
@@ -306,7 +334,7 @@ export function createConcertAudio({
   skip(){return nextTrack('skip');},
   onChange(fn){if(typeof fn!=='function')return()=>{};listeners.add(fn);try{fn(state(),'subscribe');}catch{}return()=>listeners.delete(fn);},
   destroy(){
-   if(destroyed)return;destroyed=true;pauseMedia();cancelRamp();desiredOutput=0;
+   if(destroyed)return;destroyed=true;cancelChangeover();pauseMedia();cancelRamp();desiredOutput=0;
    for(const remove of removers.splice(0))remove();
    if(media){media.volume=0;try{media.removeAttribute?.('src');media.load?.();}catch{}}
    closeGraph(graph);graph=null;graphResumePending=null;filterTarget=null;

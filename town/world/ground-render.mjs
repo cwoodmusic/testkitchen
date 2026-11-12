@@ -1,9 +1,9 @@
-import {PAINT_GRID,PAINT_STEP,readPaint,materialKey} from './ground-paint.mjs?v=wall-caps-1';
-import {sources,catalog} from './catalog.mjs?v=wall-caps-1';
-import {cell,height,terrainView} from './model.mjs?v=wall-caps-1';
-import {drawPaving,drawPavingMaterial} from './paving.mjs?v=wall-caps-1';
-import {groundTextures} from './ground-textures.mjs?v=wall-caps-1';
-import {drawAnimatedWater} from './water-motion.mjs?v=wall-caps-1';
+import {PAINT_GRID,PAINT_STEP,readPaint,materialKey} from './ground-paint.mjs?v=room-defaults-curtain-1';
+import {sources,catalog} from './catalog.mjs?v=room-defaults-curtain-1';
+import {cell,height,terrainView} from './model.mjs?v=room-defaults-curtain-1';
+import {drawPaving,drawPavingMaterial} from './paving.mjs?v=room-defaults-curtain-1';
+import {groundTextures} from './ground-textures.mjs?v=room-defaults-curtain-1';
+import {drawAnimatedWater} from './water-motion.mjs?v=room-defaults-curtain-1';
 
 const tiles=new WeakMap(),fields=new WeakMap(),legacyFields=new Map();
 export function invalidateGroundCache(d,paints=[]){tiles.delete(d);tiles.delete(terrainView(d));for(const paint of paints)fields.delete(paint);}

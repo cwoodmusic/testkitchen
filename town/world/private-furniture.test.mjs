@@ -15,7 +15,7 @@ configureUrbanInteriors(catalog);
 const privateScenes=[...residents.map(r=>({kind:'apartment',resident:r.id})),{kind:'apartment',resident:'player'},...SHOWROOMS.map(r=>({kind:'showroom',showroomId:r.id}))];
 const near=(a,b,label)=>assert.ok(Math.abs(a-b)<1e-8,`${label}: ${a} != ${b}`);
 const overlaps=(a,b,tolerance=0)=>Math.min(a.x+a.w,b.x+b.w)-Math.max(a.x,b.x)>tolerance&&Math.min(a.y+a.h,b.y+b.h)-Math.max(a.y,b.y)>tolerance;
-function parentOf(item,items){return items.find(p=>p!==item&&(p.asset===item.supportedBy||p.furnitureRole===item.supportedBy||p.slot===item.supportedBy||p.collectionSlot===item.supportedBy)&&(!item.roomId||!p.roomId||p.roomId===item.roomId));}
+function parentOf(item,items){return items.find(p=>p!==item&&(p.id===item.supportedBy||p.asset===item.supportedBy||p.furnitureRole===item.supportedBy||p.slot===item.supportedBy||p.collectionSlot===item.supportedBy)&&(!item.roomId||!p.roomId||p.roomId===item.roomId));}
 
 test('all31 large private rooms use Arcade-referenced role proportions without changing their floor plates',()=>{
  for(const request of privateScenes){
@@ -94,7 +94,9 @@ test('all31 homes gain six inward-facing native chairs around a separate family 
    const seat=scene.items.find(i=>i.id===id),s=body(seat),a=catalog.get(seat.asset),turn=(seat.rotation||0)/90,angle=turn*Math.PI/2,dx=t.cx-s.cx,dy=t.cy-s.cy;
    assert.equal(seat.seatingTarget,table.id);assert.equal(seat.roomExpansion,'family-room-1');near(seat.w,a.w*.50,'Dining chair retains approved person scale');
    const front={x:-Math.sin(angle),y:Math.cos(angle)};assert(front.x*dx+front.y*dy>0,scene.id+' chair faces its table');
-   const horizontal=turn%2!==0,gap=horizontal?Math.abs(dx)-(s.w+t.w)/2:Math.abs(dy)-(s.h+t.h)/2;near(gap,22,scene.id+' table-to-chair clearance');
+   const horizontal=turn%2!==0,gap=horizontal?Math.abs(dx)-(s.w+t.w)/2:Math.abs(dy)-(s.h+t.h)/2;
+   if(scene.id==='showroom-midcentury-studio')assert(gap>=0,'The approved tucked-in dining chairs stay outside their table');
+   else near(gap,22,scene.id+' table-to-chair clearance');
    assert(horizontal?Math.abs(dy)<=t.h/2:Math.abs(dx)<=t.w/2,'Every chair serves a real section of tabletop');facings.push(seat.rotation||0);
   }
   assert.deepEqual(facings.sort((a,b)=>a-b),[0,0,90,180,180,270]);
@@ -126,7 +128,12 @@ test('a real player can approach every family dining, conversation and bedroom s
   const scene=getInterior(request),reaches=walkable(scene);
   for(const item of scene.items.filter(i=>i.seatingTarget)){
    const s=body(item),turn=(item.rotation||0)/90,angle=turn*Math.PI/2,front={x:-Math.sin(angle),y:Math.cos(angle)},depth=turn%2?s.w:s.h,at={x:s.cx+front.x*(depth/2+8),y:s.cy+front.y*(depth/2+8)};
-   assert(reaches(at),scene.id+' cannot approach '+item.id+' at '+JSON.stringify(at));
+   if(scene.id==='showroom-midcentury-studio'){
+    // The owner's dining edit tucks chairs close to the table. A person
+    // approaches these seats from the aisle beside or behind the chair.
+    const aisle=[at,{x:s.cx,y:s.y-8},{x:s.cx,y:s.y+s.h+8},{x:s.x-8,y:s.cy},{x:s.x+s.w+8,y:s.cy}];
+    assert(aisle.some(reaches),scene.id+' cannot approach the approved seat '+item.id);
+   }else assert(reaches(at),scene.id+' cannot approach '+item.id+' at '+JSON.stringify(at));
   }
  }
 });
