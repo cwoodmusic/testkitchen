@@ -1,5 +1,5 @@
-import {assetImage} from './asset-color.mjs?v=room-defaults-curtain-1';
-import {drawViolinPlayingPose} from './concert-string-art.mjs?v=room-defaults-curtain-1';
+import {assetImage} from './asset-color.mjs?v=north-walls-1';
+import {drawViolinPlayingPose} from './concert-string-art.mjs?v=north-walls-1';
 
 // Performers belong to the programme, never to the camera or the saved town.
 // Coordinates are feet on the stage; the native seated renderer uses a hip

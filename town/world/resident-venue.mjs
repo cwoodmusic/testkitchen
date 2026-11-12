@@ -1,6 +1,6 @@
-import {residents} from './resident-profiles.mjs?v=room-defaults-curtain-1';
-import {SHOWROOMS,STORE_TRAFFIC,STORE_VERTICAL_CORE} from './showroom-layout.mjs?v=room-defaults-curtain-1';
-import {interiorActorScale} from './interior-scale.mjs?v=room-defaults-curtain-1';
+import {residents} from './resident-profiles.mjs?v=north-walls-1';
+import {SHOWROOMS,STORE_TRAFFIC,STORE_VERTICAL_CORE} from './showroom-layout.mjs?v=north-walls-1';
+import {interiorActorScale} from './interior-scale.mjs?v=north-walls-1';
 export const SHOP_VISIT_CAPACITY=SHOWROOMS.length;
 
 const SPEED=156,GAIT=Math.PI*2/150;

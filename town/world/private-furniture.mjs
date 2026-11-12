@@ -1,9 +1,9 @@
-import {interiorActorScale} from './interior-scale.mjs?v=room-defaults-curtain-1';
-import {APARTMENT_COLLECTION_ASSETS} from './apartment-collection-definitions.mjs?v=room-defaults-curtain-1';
-import {FAMILY_FURNITURE_ASSETS,getFamilyFurniture} from './family-furniture-definitions.mjs?v=room-defaults-curtain-1';
-import {apartmentDecorBounds} from './personal-room-areas.mjs?v=room-defaults-curtain-1';
-import {furnitureAtGroundCenter,furnitureFacingBoxes,furnitureFacingBounds,furnitureFacingDepth} from './furniture-facing.mjs?v=room-defaults-curtain-1';
-import {applyMidcenturyRoomLayout} from './midcentury-room-layout.mjs?v=room-defaults-curtain-1';
+import {interiorActorScale} from './interior-scale.mjs?v=north-walls-1';
+import {APARTMENT_COLLECTION_ASSETS} from './apartment-collection-definitions.mjs?v=north-walls-1';
+import {FAMILY_FURNITURE_ASSETS,getFamilyFurniture} from './family-furniture-definitions.mjs?v=north-walls-1';
+import {apartmentDecorBounds} from './personal-room-areas.mjs?v=north-walls-1';
+import {furnitureAtGroundCenter,furnitureFacingBoxes,furnitureFacingBounds,furnitureFacingDepth} from './furniture-facing.mjs?v=north-walls-1';
+import {applyMidcenturyRoomLayout} from './midcentury-room-layout.mjs?v=north-walls-1';
 
 const definitions=new Map([...APARTMENT_COLLECTION_ASSETS,...FAMILY_FURNITURE_ASSETS].map(a=>[a.id,a])),CALIBRATED=Symbol.for('coda.privateFurnitureCalibration');
 const finite=n=>typeof n==='number'&&Number.isFinite(n);

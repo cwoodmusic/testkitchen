@@ -1,6 +1,6 @@
-import {residents} from './resident-profiles.mjs?v=room-defaults-curtain-1';
-import {interiorActorScale} from './interior-scale.mjs?v=room-defaults-curtain-1';
-export {residents} from './resident-profiles.mjs?v=room-defaults-curtain-1';
+import {residents} from './resident-profiles.mjs?v=north-walls-1';
+import {interiorActorScale} from './interior-scale.mjs?v=north-walls-1';
+export {residents} from './resident-profiles.mjs?v=north-walls-1';
 
 const SPEED=156,GAIT=Math.PI*2/150;
 const journeys=new Map();

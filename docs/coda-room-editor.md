@@ -2,7 +2,7 @@
 
 Open [Town Builder](https://cwoodmusic.github.io/testkitchen/town/builder/) and choose **Room editor** in the top bar. The **Room theme** dropdown contains all 31 interiors: twelve showrooms, eighteen neighbors’ homes and your apartment. Each theme keeps its own furniture layout. Walls, doors and room sizes stay fixed.
 
-[Editor preview](town-preview/room-editor.webp?v=room-defaults-curtain-1) · [Browse the updated rooms](coda-room-gallery.html?v=room-defaults-curtain-1)
+[Editor preview](town-preview/room-editor.webp?v=north-walls-1) · [Browse the updated rooms](coda-room-gallery.html?v=north-walls-1)
 
 Click a piece in the room to pick it up, move the pointer, then click again to place it. You do not need to hold the mouse button. Use the facing buttons or arrow keys while holding a piece:
 

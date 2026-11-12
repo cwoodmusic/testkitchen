@@ -1,5 +1,5 @@
-import {createRoomLayoutModel} from './room-layout-model.mjs?v=room-defaults-curtain-1';
-import {createRoomLayoutStorage} from './room-layout-storage.mjs?v=room-defaults-curtain-1';
+import {createRoomLayoutModel} from './room-layout-model.mjs?v=north-walls-1';
+import {createRoomLayoutStorage} from './room-layout-storage.mjs?v=north-walls-1';
 
 export function roomLayoutThemeId(scene){
  if(scene?.kind==='showroom')return 'showroom-'+scene.showroomId;

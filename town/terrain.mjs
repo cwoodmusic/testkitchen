@@ -1,8 +1,8 @@
 import {W,H,paths,allHomes,residents,landmarks,terraces,landStairs,accessPath,riverX,bridges,baseElevation,biomeAt,townTrees,groves,inRect} from './model.mjs';
-import {noise,rect,ellipse,flower,fence,bench,lamp,material,fountain,planter,musicalDetail,environmentDetail} from './art.mjs?v=room-defaults-curtain-1';
-import {rockFace,grassLip} from './terrain-tiles.mjs?v=room-defaults-curtain-1';
-import {drawMusicSquare} from './square.mjs?v=room-defaults-curtain-1';
-import {drawNaturalWater} from './shore.mjs?v=room-defaults-curtain-1';
+import {noise,rect,ellipse,flower,fence,bench,lamp,material,fountain,planter,musicalDetail,environmentDetail} from './art.mjs?v=north-walls-1';
+import {rockFace,grassLip} from './terrain-tiles.mjs?v=north-walls-1';
+import {drawMusicSquare} from './square.mjs?v=north-walls-1';
+import {drawNaturalWater} from './shore.mjs?v=north-walls-1';
 const CHUNK=1024,OVERVIEW_W=3200,OVERVIEW_H=2400;
 const canvas=(w,h)=>{const c=document.createElement('canvas');c.width=w;c.height=h;return c;};
 const intersects=(a,b)=>a.x<b.x+b.w&&a.x+a.w>b.x&&a.y<b.y+b.h&&a.y+a.h>b.y;

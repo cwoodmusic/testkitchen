@@ -1,4 +1,4 @@
-import {assetImage} from './asset-color.mjs?v=room-defaults-curtain-1';
+import {assetImage} from './asset-color.mjs?v=north-walls-1';
 
 // Reuse the actual architectural sprites from the town, rather than drawing
 // a second, simplified window style inside the apartments.

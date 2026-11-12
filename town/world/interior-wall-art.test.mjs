@@ -32,13 +32,45 @@ test('all31 wall networks preserve every physical model and never invent an unsu
    assert(['up','down'].includes(r.returnDirection),`${m.id}: return direction must be explicit`);
    assert(m.walls.some(w=>w.x===r.x&&w.w===r.w&&(r.returnDirection==='up'?w.y===r.y+r.h:w.y+w.h===r.y)),`${m.id}: return must meet its actual wall edge`);
   }
+  for(const r of g.northCaps){
+   assert.equal(r.capDirection,'north');assert(r.face);
+   assert.equal(r.y,Math.max(0,r.face.y));assert(r.x>=r.face.x&&r.x+r.w<=r.face.x+r.face.w);
+   assert(r.y+r.h<=r.face.y+r.face.h,`${m.id}: the cap must remain inside its authored face`);
+  }
   for(const r of g.paint){
    for(const d of g.apertures)assert(!overlap(r,d),`${m.id}: cap covers a real doorway`);
-   const x=r.x+r.w/2,y=r.y+r.h/2;assert([...m.walls,...g.returns].some(w=>inside(w,x,y)),`${m.id}: unsupported floor patch`);
+   const x=r.x+r.w/2,y=r.y+r.h/2;assert([...m.walls,...g.returns,...g.northCaps].some(w=>inside(w,x,y)),`${m.id}: unsupported floor patch`);
   }
   assert.equal(JSON.stringify(m),before);
  }
  assert(projected>50,'Exercise the complete home/showroom wall network');
+});
+
+test('every private wallpaper face has a full north cap matching its side-wall thickness',()=>{
+ let faces=0;
+ for(const m of models){
+  const g=interiorWallNetworkGeometry(m),expected=m.kind==='showroom'?16:m.resident==='player'?20:18;
+  for(const face of g.faces){
+   faces++;const cap=g.northCaps.find(r=>r.x===face.x&&r.y===face.y&&r.w===face.w);assert(cap,`${m.id}: missing north cap above${JSON.stringify(face)}`);
+   assert.equal(cap.h,expected,`${m.id}: horizontal and vertical wall caps share the same width`);
+   assert(cap.y>=0&&cap.y+cap.h<=m.height,'North caps cannot disappear above the canvas');
+  }
+ }
+ assert(faces>=130,'Cover every resident, player and showroom wallpaper band');
+});
+
+test('north caps meet side caps without a seam and leave the wallpaper below visible',()=>{
+ for(const request of [{kind:'apartment',resident:'bach'},{kind:'showroom',showroomId:'midcentury-studio'},{kind:'apartment',resident:'player'}]){
+  const m=getInterior(request),g=interiorWallNetworkGeometry(m),cv=createCanvas(m.width,m.height),c=cv.getContext('2d');
+  c.fillStyle='#557799';c.fillRect(0,0,m.width,m.height);drawInteriorWallNetwork(c,m);
+  const cap=g.northCaps.find(r=>r.x>28&&g.returns.some(side=>(side.x===r.x+r.w||side.x+side.w===r.x)&&side.y===r.y));assert(cap,m.id+' needs a real L join');
+  const side=g.returns.find(side=>(side.x===cap.x+cap.w||side.x+side.w===cap.x)&&side.y===cap.y),y=cap.y+Math.floor(cap.h/2),join=side.x===cap.x+cap.w?cap.x+cap.w:cap.x;
+  assert.deepEqual(color(c,join-4,y),color(c,join+4,y),m.id+' must not draw an internal seam through its north/side join');
+  for(let x=join-3;x<=join+3;x++)assert.deepEqual(color(c,x,y),color(c,join-4,y),m.id+' corner needs continuous cap material');
+  assert.deepEqual(color(c,cap.x+Math.floor(cap.w/2),cap.y+cap.h+4),[85,119,153,255],m.id+' wallpaper continues directly below the cap');
+  if(cap.y===0)assert.notDeepEqual(color(c,cap.x+Math.floor(cap.w/2),1),[85,119,153,255],'The first cap row remains visible at y0');
+  cv.width=cv.height=1;
+ }
 });
 
 test('junction pixels are continuous while native wallpaper fields and the source gap stay intact',()=>{

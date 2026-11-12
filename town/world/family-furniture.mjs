@@ -1,7 +1,7 @@
-import {FAMILY_FURNITURE_ASSETS} from './family-furniture-definitions.mjs?v=room-defaults-curtain-1';
-import {createApartmentCollectionRuntime} from './apartment-collection-runtime.mjs?v=room-defaults-curtain-1';
-import {createFamilySourceView,createFamilySourceCanvasCache} from './family-furniture-source.mjs?v=room-defaults-curtain-1';
-export * from './family-furniture-definitions.mjs?v=room-defaults-curtain-1';
+import {FAMILY_FURNITURE_ASSETS} from './family-furniture-definitions.mjs?v=north-walls-1';
+import {createApartmentCollectionRuntime} from './apartment-collection-runtime.mjs?v=north-walls-1';
+import {createFamilySourceView,createFamilySourceCanvasCache} from './family-furniture-source.mjs?v=north-walls-1';
+export * from './family-furniture-definitions.mjs?v=north-walls-1';
 
 const base=new URL('../assets/apartment-collections/',import.meta.url);
 function assetURL(file){const url=new URL(file,base);url.search=new URL(import.meta.url).search;return url;}

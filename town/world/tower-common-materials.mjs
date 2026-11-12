@@ -1,5 +1,5 @@
-// Static architectural surfaces only. Doorways, circulation and collision stay
-// owned by the existing tower scenes; these finishes never add scene objects.
+// The shared tower architecture supplies the north wall plane and core
+// recesses. These surfaces paint that geometry without adding scene objects.
 const palettes=[
  {paper:'#c9c3ae',panel:'#3d5d59',runner:'#3f6261',wood:'#634b38'},
  {paper:'#c7c8b4',panel:'#52614d',runner:'#4b5d4e',wood:'#66513d'},
@@ -108,12 +108,13 @@ function threshold(c,x,y,w){
  rect(c,x-w/2+8,y+6,w-16,2,'#ede4cc88');rect(c,x-w/2+8,y+20,w-16,2,'#3b423a55');shadow(c,x-w/2,y-1,w,7,.28);
 }
 function walls(c,s,p){
- if(!donor(c,5,0,0,s.width,106,256,256,p.paper))pattern(c,'plaster-'+p.paper,0,0,s.width,106,96,96,t=>{noise(t,96,96,p.paper,41,3);for(let x=9;x<96;x+=24){rect(t,x,0,1,96,'#685b4310');rect(t,x+2,0,1,96,'#fff0d40c');}});
+ const floorY=s.towerArchitecture?.northWallDepth||106,panelY=floorY-42;
+ if(!donor(c,5,0,0,s.width,floorY,256,256,p.paper))pattern(c,'plaster-'+p.paper,0,0,s.width,floorY,96,96,t=>{noise(t,96,96,p.paper,41,3);for(let x=9;x<96;x+=24){rect(t,x,0,1,96,'#685b4310');rect(t,x+2,0,1,96,'#fff0d40c');}});
  rect(c,0,0,s.width,5,'#302d27');rect(c,0,5,s.width,4,brass);rect(c,0,9,s.width,2,'#efe0bc');rect(c,0,11,s.width,5,'#76664d4d');
- rect(c,0,64,s.width,39,walnut);rect(c,0,64,s.width,3,'#392f2b');rect(c,0,67,s.width,2,brassLight);rect(c,0,69,s.width,3,'#1c302d70');
- for(let x=32;x<s.width-24;x+=80){rect(c,x,74,70,22,'#253b36');rect(c,x+2,76,66,18,p.panel);rect(c,x+3,76,64,1,'#e8d7b240');rect(c,x+3,77,1,16,'#e8d7b229');rect(c,x+4,93,63,2,'#10272255');}
- if(authoredImage){c.save();c.translate(0,70);pattern(c,'authored-wainscot',0,0,s.width,32,288,36,t=>{t.imageSmoothingEnabled=false;t.drawImage(authoredImage,888,508,441,55,0,0,288,36);});colorize(c,0,0,s.width,32,p.panel);c.restore();molding(c,0,0,s.width,16);}
- rect(c,0,100,s.width,6,'#302b26');rect(c,0,99,s.width,2,brass);shadow(c,28,106,s.width-56,23,.24);
+ rect(c,0,panelY,s.width,39,walnut);rect(c,0,panelY,s.width,3,'#392f2b');rect(c,0,panelY+3,s.width,2,brassLight);rect(c,0,panelY+5,s.width,3,'#1c302d70');
+ for(let x=32;x<s.width-24;x+=80){rect(c,x,panelY+10,70,22,'#253b36');rect(c,x+2,panelY+12,66,18,p.panel);rect(c,x+3,panelY+12,64,1,'#e8d7b240');rect(c,x+3,panelY+13,1,16,'#e8d7b229');rect(c,x+4,panelY+29,63,2,'#10272255');}
+ if(authoredImage){c.save();c.translate(0,panelY+6);pattern(c,'authored-wainscot',0,0,s.width,32,288,36,t=>{t.imageSmoothingEnabled=false;t.drawImage(authoredImage,888,508,441,55,0,0,288,36);});colorize(c,0,0,s.width,32,p.panel);c.restore();molding(c,0,0,s.width,16);}
+ rect(c,0,floorY-6,s.width,6,'#302b26');rect(c,0,floorY-7,s.width,2,brass);shadow(c,28,floorY,s.width-56,23,.24);
  for(const x of [0,s.width-28]){rect(c,x,0,28,s.height,'#342e29');rect(c,x+3,9,21,s.height-12,p.panel);rect(c,x+4,10,2,s.height-15,brass);rect(c,x+21,10,3,s.height-15,'#1e312d88');rect(c,x+8,13,10,s.height-20,'#b5a57413');}
  const y=s.height-28;rect(c,0,y,s.width,28,'#352e28');rect(c,3,y+2,s.width-6,3,brassLight);rect(c,3,y+5,s.width-6,17,p.panel);rect(c,3,y+20,s.width-6,3,'#1b2d28');rect(c,3,y+24,s.width-6,2,brass);
  const lamps=s.kind==='lobby'?[150,950,1354,2154]:[160,650,1654,2144];
@@ -138,11 +139,15 @@ export function drawTowerCommonSurfaces(c,s){
   stone(c,coreLeft,106,coreRight-coreLeft,216);frame(c,{x:coreLeft,y:106,w:coreRight-coreLeft,h:216},'#5a5a49','#d7c99a99');
  }
  for(const [i,r] of s.rugs.entries())carpet(c,r,grand?['#466465','#654a53','#52634e'][i]:p.runner,grand&&i===0);
+ walls(c,s,p);
+ // Core entrances can sit behind the main wall line. Their short stone
+ // landings return to that line without painting wallpaper onto walkable floor.
+ for(const r of s.towerArchitecture?.facadeRecesses||[]){stone(c,r.x,r.y,r.w,r.h);rect(c,r.x-2,r.y,2,r.h,walnut);rect(c,r.x+r.w,r.y,2,r.h,walnut);}
  for(const d of s.doors||[])threshold(c,d.x,d.y+d.h+3,d.w+28);
  if(s.elevator)threshold(c,s.elevator.x+s.elevator.w/2,s.elevator.y+s.elevator.h+4,s.elevator.w+26);
  for(const st of s.stairs||[])threshold(c,st.x+st.w/2,st.y+st.h+6,st.w+20);
  if(grand){threshold(c,s.width/2,s.height-58,356);rect(c,s.width/2-172,s.height-104,344,2,'#53625555');}
- walls(c,s,p);c.restore();return true;
+ c.restore();return true;
 }
 export function drawTowerCommonStairs(c,st,s){
  if(s.kind!=='hall'&&s.kind!=='lobby')return false;

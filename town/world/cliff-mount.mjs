@@ -1,5 +1,5 @@
-import {frontEdge} from './round-geometry.mjs?v=room-defaults-curtain-1';
-import {cell,height,RISE,COLS,ROWS} from './model.mjs?v=room-defaults-curtain-1';
+import {frontEdge} from './round-geometry.mjs?v=north-walls-1';
+import {cell,height,RISE,COLS,ROWS} from './model.mjs?v=north-walls-1';
 export function cliffFace(d,x,y,u=.5){if(!Number.isInteger(x)||!Number.isInteger(y)||x<0||x>=COLS||y<0||y>=ROWS-1)return null;const a=cell(d,x,y);if(a.stairs)return null;const X=(x+u)*64,edge=frontEdge(a,X,y),top=height(d,X,edge-.05),bottom=height(d,X,edge+.05);if(top-bottom<1)return null;return {x,y,edge,top,bottom,depth:top-bottom,screenTop:edge-top,screenBottom:edge-bottom};}
 export function hitCliff(d,p){const x=Math.floor(p.x/64);for(let y=Math.min(ROWS-2,Math.floor((p.y+RISE*8)/64));y>=Math.max(0,Math.floor(p.y/64)-1);y--){const f=cliffFace(d,x,y,(p.x-x*64)/64);if(f&&p.y>=f.screenTop&&p.y<=f.screenBottom)return {x,y,u:Math.max(0,Math.min(1,(p.x-x*64)/64)),v:Math.max(0,Math.min(1,(f.screenBottom-p.y)/f.depth))};}return null;}
 export function mountPose(d,o){if(!o.mount)return {x:o.x,y:o.y-height(d,o.x,o.y),offset:1,depth:o.y};const m=o.mount,f=cliffFace(d,m.x,m.y,m.u);if(!f)return null;return {x:(m.x+m.u)*64,y:f.screenBottom-f.depth*m.v,offset:.5,depth:f.edge-.1};}
