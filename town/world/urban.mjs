@@ -1,3 +1,4 @@
+import {createTownActivities} from './town-activities.mjs?v=town-games-1';
 import {catalog} from './catalog.mjs?v=opera-parallax-1';
 import {FLOOR_COUNT,residents,getInterior,renderInterior,residentInteractionZones,apartmentDecorBounds,apartmentWallDecorBounds,configureUrbanInteriors} from './urban-interiors.mjs?v=opera-players-2';
 import {createRoomStorage,roomItemBoxes} from './urban-room.mjs?v=opera-parallax-1';
@@ -35,6 +36,7 @@ export function createUrbanController({canvas,getProject,getPlayer,getResidents,
  const stageCurtain=createConcertCurtain({createPerformance(track,previous){
   return previous?.signature===stagePerformanceSignature(track)?updateStageProgramme(previous,track):createStagePerformance(track,{stage:getInterior(scene).stage});
  }});
+ const activities=createTownActivities({canvas,getProject,getPlayer,getResidents,getOwner:()=>owner,catalog});
  function concertPerformance(){
   if(scene?.kind!=='concert')return null;
   const audio=getConcert(),track=audio?.currentTrack||CONCERT_PROGRAMME[0],timeline=audio?.state?.changeover;
@@ -186,7 +188,7 @@ export function createUrbanController({canvas,getProject,getPlayer,getResidents,
   automaticDoors.prime(player,sceneResidents());
  }
  function enterBuilding(o){const door=buildingDoor(o);if(!door)return false;outside={object:o,position:{...getPlayer()}};setScene(door.kind==='opera'?{kind:'concert'}:door.kind==='shop'?{kind:'shop',floor:1}:{kind:'lobby',floor:1});return true;}
- function reset(){stageCurtain.reset();performanceModel=null;performanceBoxes=[];settledPerformance=null;closeDialog();if(seated)zoom=walkZoom;scene=null;seated=null;outside=null;decorate=false;selectedDecor=null;hover=null;hud.hidden=true;hint.hidden=true;lastHint='';automaticDoors=null;portals=[];getConcert()?.updateContext(null);}
+ function reset(){activities.end();stageCurtain.reset();performanceModel=null;performanceBoxes=[];settledPerformance=null;closeDialog();if(seated)zoom=walkZoom;scene=null;seated=null;outside=null;decorate=false;selectedDecor=null;hover=null;hud.hidden=true;hint.hidden=true;lastHint='';automaticDoors=null;portals=[];getConcert()?.updateContext(null);}
  function standUp(){if(!seated)return false;const seat=seated;seated=null;zoom=walkZoom;player={...seat.approach};walking=false;facing='up';updateHud();return true;}
  function watchSeat(seatId){
   if(scene?.kind!=='concert')return false;
@@ -257,11 +259,11 @@ export function createUrbanController({canvas,getProject,getPlayer,getResidents,
  function talkTo(actor){
   const lines=Array.isArray(actor.dialogue)?actor.dialogue.filter(line=>typeof line==='string'&&line.trim()):[],turn=dialogueTurns.get(actor.id)||0;
   const fallback='Good to see you around Coda Town. I hope we can catch some music together later.';
-  modal(actor.name||residents.find(r=>r.id===actor.id)?.name||'Your neighbour',lines.length?lines[turn%lines.length]:fallback);dialogueTurns.set(actor.id,turn+1);beginConversation(actor.id);
+  const body=modal(actor.name||residents.find(r=>r.id===actor.id)?.name||'Your neighbour',lines.length?lines[turn%lines.length]:fallback);dialogueTurns.set(actor.id,turn+1);beginConversation(actor.id);activities.offerVendor(actor,body,closeDialog);
  }
  function interact(){
   if(dialog.open)return true;
-  if(!scene){const target=outsideTarget();if(target?.person){talkTo(target.person.actor);return true;}return target?.building?enterBuilding(target.building.o):false;}
+  if(!scene){if(activities.interact())return true;const target=outsideTarget();if(target?.person){talkTo(target.person.actor);return true;}return target?.building?enterBuilding(target.building.o):false;}
   if(decorate){showInventory();return true;}
   if(seated){standUp();return true;}
   const z=nearestZone();if(!z)return true;
@@ -296,6 +298,8 @@ export function createUrbanController({canvas,getProject,getPlayer,getResidents,
   let text='';if(notice&&performance.now()<noticeUntil)text=notice;
   else if(scene){const z=nearestZone(),label=z?`E · ${z.label}${z.action==='room'&&!canEnter(z.resident)?' · Friendship level 5 required':''}`:'WASD / arrows · Walk · E interact';text=seated?'Watching the performance · E or WASD to stand up':decorate?(selectedDecor?(catalog.get(furniture.find(item=>item.id===selectedDecor)?.asset)?.wallMounted?'Click to hang on the north wall · R turn · E inventory · Escape finish':'Click the floor to place · R turn · E inventory · Escape finish'):'E · Choose furniture · click a placed item to move or put away'):label;}
   else {const n=outsideTarget();if(n?.person)text=`E · Talk to ${n.person.actor.name||residents.find(r=>r.id===n.person.actor.id)?.name||'your neighbour'}`;else if(n?.building)text=`E · Enter ${n.building.door.kind==='opera'?'Sydney Opera House':n.building.door.kind==='shop'?'Coda Furnishings':'Coda Residences'}`;}
+  if(!scene&&!dialog.open&&activities.prompt)text=activities.prompt;
+  if(!scene&&activities.active)text='';
   if(text!==lastHint){hint.textContent=text;lastHint=text;}hint.hidden=!text;
  }
  function solid(x,y){
@@ -305,7 +309,7 @@ export function createUrbanController({canvas,getProject,getPlayer,getResidents,
   return !!automaticDoors?.blocked(x,y,radius)||[...m.solids,...items,...(onStage?performanceBoxes:[])].some(r=>rectHit(x,y,r,radius));
  }
  function frame(ctx,keys,dt,now,width,height,drawPlayer){
-  if(!scene){updateExteriorDoors(dt);return false;}lastSize={width,height};const actorScale=interiorActorScale(scene),m=getInterior(scene),actors=sceneResidents();automaticDoors.update(dt,player,actors);refreshStage();walking=false;
+  if(!scene){activities.tick();updateExteriorDoors(dt);return false;}lastSize={width,height};const actorScale=interiorActorScale(scene),m=getInterior(scene),actors=sceneResidents();automaticDoors.update(dt,player,actors);refreshStage();walking=false;
   if(!dialog.open&&!decorate){let dx=(keys.has('d')||keys.has('arrowright')?1:0)-(keys.has('a')||keys.has('arrowleft')?1:0),dy=(keys.has('s')||keys.has('arrowdown')?1:0)-(keys.has('w')||keys.has('arrowup')?1:0);const length=Math.hypot(dx,dy);if(length){if(seated)standUp();dx/=length;dy/=length;facing=Math.abs(dx)>Math.abs(dy)?dx<0?'left':'right':dy<0?'up':'down';const speed=(keys.has('shift')?780:450)*actorScale,n=Math.ceil(speed*dt/3),sx=dx*speed*dt/n,sy=dy*speed*dt/n;let distance=0;for(let i=0;i<n;i++){const old={...player};if(!solid(player.x+sx,player.y))player.x+=sx;if(!solid(player.x,player.y+sy))player.y+=sy;distance+=Math.hypot(player.x-old.x,player.y-old.y);}walking=distance>0;phase=(phase+distance*Math.PI*2/(150*actorScale))%(Math.PI*2);}}
   const drawZoom=effectiveInteriorZoom(scene,zoom),clampView=(p,length,visible)=>length<=visible?length/2:Math.max(visible/2,Math.min(length-visible/2,p)),focus=seated?{x:m.stage.x+m.stage.w/2,y:m.stage.y+m.stage.h/2+60}:player;view={x:clampView(focus.x,m.width,width/drawZoom),y:clampView(focus.y,m.height,height/drawZoom)};
   tick();ctx.clearRect(0,0,width,height);ctx.fillStyle='#131b21';ctx.fillRect(0,0,width,height);ctx.save();ctx.translate(width/2,height/2);ctx.scale(drawZoom,drawZoom);ctx.translate(-view.x,-view.y);
@@ -332,7 +336,7 @@ export function createUrbanController({canvas,getProject,getPlayer,getResidents,
   return room?.place(itemId,point.x,point.y,rotation)||{ok:false,error:'Wait for your player profile to load.'};
  }
  function handlePointer(e){
-  if(!scene)return false;
+  if(!scene)return activities.pointer(e);
   if(!decorate||dialog.open)return true;e.preventDefault();if(!bridge&&!guestStorageAvailable()){flash('Open town from the arcade to furnish your active player’s apartment.');return true;}const p=pointerWorld(e);
   if(selectedDecor){const product=furniture.find(i=>i.id===selectedDecor),point=decorPlacementPoint(product,p),result=placementResult(selectedDecor,point,selectedRotation);if(result.ok){decor=room.snapshot();selectedDecor=null;updateHud();flash('Furniture saved in your apartment.');}else flash(result.error);}
   else {
@@ -402,10 +406,11 @@ export function createUrbanController({canvas,getProject,getPlayer,getResidents,
  }
  function keydown(e){
   if(dialog.open)return true;
+  if(activities.keydown(e))return true;
   if(scene&&decorate&&selectedDecor&&e.key.toLowerCase()==='r'&&!e.repeat){e.preventDefault();selectedRotation=(selectedRotation+90)%360;updateHud();return true;}
   if(e.key==='Escape'&&scene){e.preventDefault();if(selectedDecor){selectedDecor=null;}else if(decorate){decorate=false;updateHud();}else if(scene.kind==='showroom')returnToStore();else if(scene.kind==='shop'&&scene.floor===2)goStoreFloor(1);else if(scene.kind==='apartment')setScene({kind:'hall',floor:scene.floor});else if(scene.kind==='hall')goFloor(1);else reset();return true;}
   if(e.key.toLowerCase()==='e'&&!e.repeat){const handled=interact();if(handled)e.preventDefault();return handled;}
   return false;
  }
- return {get active(){return !!scene;},get blocked(){return dialog.open;},get scene(){return scene;},get player(){return player;},get decor(){return decor;},get furnitureRotation(){return selectedRotation;},get view(){return {...view,zoom:effectiveInteriorZoom(scene,zoom)};},get seated(){return seated;},get automaticDoors(){return scene?automaticDoors:exteriorDoors;},get portals(){if(!scene)refreshExteriorDoors();return scene?portals:exteriorPortals;},get performance(){return concertPerformance();},get curtain(){return stageCurtain.state;},tick,frame,keydown,handlePointer,zoom:delta=>{zoom=Math.max(seated?.04:.3,Math.min(1.4,zoom*Math.exp(-delta*.001)));},reset,interact,enterBuilding,goFloor,goStoreFloor,showStoreDirectory,openRoom,openShowroom,returnToStore,showShop,showInventory,showProgramme,watchSeat,standUp};
+ return {get active(){return !!scene;},get blocked(){return dialog.open||activities.blocked;},get scene(){return scene;},get player(){return player;},get decor(){return decor;},get furnitureRotation(){return selectedRotation;},get view(){return {...view,zoom:effectiveInteriorZoom(scene,zoom)};},get seated(){return seated;},get automaticDoors(){return scene?automaticDoors:exteriorDoors;},get portals(){if(!scene)refreshExteriorDoors();return scene?portals:exteriorPortals;},get performance(){return concertPerformance();},get curtain(){return stageCurtain.state;},get activities(){return activities;},drawOutdoor:(ctx,cam,w,h,time)=>activities.draw(ctx,cam,w,h,time),tick,frame,keydown,handlePointer,zoom:delta=>{zoom=Math.max(seated?.04:.3,Math.min(1.4,zoom*Math.exp(-delta*.001)));},reset,interact,enterBuilding,goFloor,goStoreFloor,showStoreDirectory,openRoom,openShowroom,returnToStore,showShop,showInventory,showProgramme,watchSeat,standUp};
 }

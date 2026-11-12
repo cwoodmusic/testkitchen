@@ -5,6 +5,13 @@ active arcade tab, preserving its guest or classroom player. Closing the town
 returns to the same arcade session. Standalone `town/` works for exploration,
 with musician homes private until an arcade session supplies friendship.
 
+## Rhythm adventures
+
+The coffee-cart host offers **Rhythm Catch**: listen, catch floating notes with a
+net, then rebuild the rhythm. The boat at the apartment pier offers **Rhythm
+Fishing**, with 24 coastal species, four rhythm challenges and a saved journal.
+See [controls and rules](../docs/town-rhythm-adventures.md).
+
 ## Landscape and scale
 
 The town is 16000 × 12000 native world pixels, nearly three times the area of

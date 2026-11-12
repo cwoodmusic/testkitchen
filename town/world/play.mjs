@@ -1,6 +1,6 @@
 import {catalog,preparePlacedArt,render,resizeSurface,findStart,movePlayer,toggleGate,follow,PLAYER_SCALE,GAIT_PER_PIXEL} from './runtime.mjs?v=opera-parallax-1';
 import {loadProject} from './storage.mjs?v=opera-parallax-1';
-import {createUrbanController} from './urban.mjs?v=opera-players-2';
+import {createUrbanController} from './urban.mjs?v=town-games-1';
 import {createConcertAudio} from './concert-audio.mjs?v=opera-parallax-1';
 import {mountConcertControls} from './concert-controls.mjs?v=opera-parallax-1';
 import {CONCERT_PROGRAMME} from './concert-programme.mjs?v=opera-players-1';
@@ -14,8 +14,8 @@ document.querySelectorAll('body > :not(#world):not(script)').forEach(e=>e.remove
 const header=document.createElement('header'),title=document.createElement('h1'),nav=document.createElement('nav');
 header.append(title,nav);document.body.append(header);
 function button(label,fn){const b=document.createElement('button');b.textContent=label;b.onclick=()=>{fn();b.blur();canvas.focus();};nav.append(b);return b;}
-button('Town Builder',()=>location.href='builder/?v=opera-parallax-1');
-button(tour?'Play saved town':'Urban district tour',()=>location.href=tour?'?map=builder&v=opera-parallax-1':'?urban=1&v=opera-parallax-1');
+button('Town Builder',()=>location.href='builder/?v=town-games-1');
+button(tour?'Play saved town':'Urban district tour',()=>location.href=tour?'?map=builder&v=town-games-1':'?urban=1&v=town-games-1');
 button('Back to arcade',()=>{if(parent!==window)parent.postMessage({type:'coda-town-close'},location.origin);else location.href='../?v=opera-parallax-1';});
 let night=readNightPreference();const lighting=button(night?'City night':'Daylight',()=>{night=!night;saveNightPreference(night);lighting.textContent=night?'City night':'Daylight';});lighting.id='lightingToggle';
 const footer=document.createElement('footer');footer.textContent='WASD / arrows · Walk    Shift · Run    Bedroom / bath doors automatic    E · Enter / interact    Wheel · Zoom';document.body.append(footer);
@@ -45,7 +45,7 @@ if(!doc){title.textContent=loadError?'Could not load town':'No saved builder tow
   const dt=Math.min(.04,(now-last)/1000);last=now;const {ctx,width,height}=resizeSurface(canvas);concert.updateContext(urban.scene);urban.tick();ambient.update(dt,now/1000);
   if(!urban.frame(ctx,keys,dt,now,width,height,(c,x,y,state)=>drawPlayer(c,x,y,state,now))){
    if(!urban.blocked){const motion=movePlayer(playerCollision.view(player),player,keys,dt,catalog);if(motion.facing)facing=motion.facing;walking=motion.walking;walkPhase=(walkPhase+motion.surfaceDistance*GAIT_PER_PIXEL)%(Math.PI*2);}
-   footprints.update([{id:'__player__',...player,walking},...ambient.actors],now/1000);follow(cam,player,doc);render(ctx,doc,cam,width,height,{terrainRevision:cityRevision,night,time:now/1000,npcs:ambient.actors,drawNPC:ambient.draw,drawFootprints:(c,d,t)=>footprints.draw(c,d,t),player,drawPlayer:(c,x,y)=>drawPlayer(c,x,y,undefined,now)});
+   footprints.update([{id:'__player__',...player,walking},...ambient.actors],now/1000);follow(cam,player,doc);render(ctx,doc,cam,width,height,{terrainRevision:cityRevision,night,time:now/1000,npcs:ambient.actors,drawNPC:ambient.draw,drawFootprints:(c,d,t)=>footprints.draw(c,d,t),player,drawPlayer:(c,x,y)=>drawPlayer(c,x,y,undefined,now)});urban.drawOutdoor(ctx,cam,width,height,now/1000);
   }requestAnimationFrame(frame);
  }requestAnimationFrame(frame);window.townGame={project:doc,player,cam,catalog,urban,ambient,footprints,concert,playerCollision,get night(){return night;}};
 }
