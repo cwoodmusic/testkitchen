@@ -1,6 +1,6 @@
 import {catalog,preparePlacedArt,render,resizeSurface,findStart,movePlayer,toggleGate,follow,PLAYER_SCALE,GAIT_PER_PIXEL} from './runtime.mjs?v=opera-parallax-1';
 import {loadProject} from './storage.mjs?v=opera-parallax-1';
-import {createUrbanController} from './urban.mjs?v=opera-players-1';
+import {createUrbanController} from './urban.mjs?v=opera-players-2';
 import {createConcertAudio} from './concert-audio.mjs?v=opera-parallax-1';
 import {mountConcertControls} from './concert-controls.mjs?v=opera-parallax-1';
 import {CONCERT_PROGRAMME} from './concert-programme.mjs?v=opera-players-1';

@@ -198,14 +198,15 @@ function pixelLine(ctx,x1,y1,x2,y2,color,width=1){
  for(let i=0;i<=steps;i++){const t=i/steps;ctx.fillRect(Math.round(x1+(x2-x1)*t),Math.round(y1+(y2-y1)*t),width,width);}
 }
 function hand(ctx,x,y,skin){rectangle(ctx,x,y,4,3,skin);rectangle(ctx,x+1,y,2,1,'#e8c6a0');}
-function arms(ctx,a,left,right){
+// Targets are screen-left/screen-right, not the front-facing player's own hands.
+function arms(ctx,a,screenLeft,screenRight){
  const skin=a.appearance.skin,shirt=a.appearance.shirt,offset=a.seated?8:0;
- for(const [side,target]of [[-1,left],[1,right]]){
+ for(const [side,target]of [[-1,screenLeft],[1,screenRight]]){
   const elbow=[side*16,-16+offset];
   pixelLine(ctx,side*10,-23+offset,...elbow,shirt,4);
   pixelLine(ctx,...elbow,...target,skin,3);
  }
- hand(ctx,...left,skin);hand(ctx,...right,skin);
+ hand(ctx,...screenLeft,skin);hand(ctx,...screenRight,skin);
 }
 function chair(ctx,a){
  if(!a.seated||a.instrument==='piano')return;
@@ -220,9 +221,9 @@ function bowedBass(ctx,a,beat){
  // bridge, with its grip outside the torso rather than pumping in the lap.
  const neck=[15,bass?-43:-30+o],grip=[-17+stroke,bass?-24:-12+o];
  if(bass&&a.jazz){
-  arms(ctx,a,neck,[18,-23]);rectangle(ctx,18+Math.round(Math.sin(beat+a.phase)),-25,2,3,a.appearance.skin);return;
+  arms(ctx,a,[18,-23],neck);rectangle(ctx,18+Math.round(Math.sin(beat+a.phase)),-25,2,3,a.appearance.skin);return;
  }
- arms(ctx,a,neck,grip);
+ arms(ctx,a,grip,neck);
  pixelLine(ctx,grip[0]-4,grip[1]-2,27+stroke,grip[1]+3,'#4f342c',2);
  pixelLine(ctx,grip[0]-4,grip[1]-1,27+stroke,grip[1]+4,'#e9d9b9');
 }
@@ -267,7 +268,7 @@ function banjo(ctx,a,beat){
  const sway=Math.round(Math.sin(beat*2+a.phase));
  rectangle(ctx,-4,-19,15,18,'#453331');rectangle(ctx,-6,-15,19,10,'#453331');rectangle(ctx,-3,-17,13,14,'#dbc7a0');
  rectangle(ctx,-2,-15,11,10,'#eadcc0');pixelLine(ctx,7,-19,23,-34,'#79533b',4);pixelLine(ctx,7,-18,24,-34,'#d8c48d');
- for(const x of [0,3,6])rectangle(ctx,x,-15,1,10,'#b09565');arms(ctx,a,[20,-29],[6,-13+sway]);
+ for(const x of [0,3,6])rectangle(ctx,x,-15,1,10,'#b09565');arms(ctx,a,[6,-13+sway],[20,-29]);
 }
 export function percussionPlayingGeometry(a,beat){
  const o=a.seated?8:0,phase=beat+finite(a.phase,0);
