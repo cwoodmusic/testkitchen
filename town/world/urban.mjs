@@ -1,4 +1,4 @@
-import {createTownActivities} from './town-activities.mjs?v=town-games-1';
+import {createTownActivities} from './town-activities.mjs?v=town-games-2';
 import {catalog} from './catalog.mjs?v=opera-parallax-1';
 import {FLOOR_COUNT,residents,getInterior,renderInterior,residentInteractionZones,apartmentDecorBounds,apartmentWallDecorBounds,configureUrbanInteriors} from './urban-interiors.mjs?v=opera-players-2';
 import {createRoomStorage,roomItemBoxes} from './urban-room.mjs?v=opera-parallax-1';

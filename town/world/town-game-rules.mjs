@@ -1,28 +1,36 @@
+import {createPlayerCollisionIndex} from './player-collision-index.mjs?v=opera-parallax-1';
 import {blocked,height,cell,COLS,ROWS} from './model.mjs?v=opera-parallax-1';
-export const NOTE_VALUES=Object.freeze([.5,1,2]);
-export const CATCH_PATTERNS=Object.freeze([[1,.5,.5,2],[.5,.5,1,1,1],[2,.5,.5,1],[1,1,.5,.5,1],[.5,.5,.5,.5,2],[1,2,.5,.5]].map(Object.freeze));
+export const NOTE_VALUES=Object.freeze(['quarter','eighth-pair','sixteenth-group','quarter-rest']);
+export const CATCH_PATTERNS=Object.freeze([
+ ['quarter','eighth-pair','sixteenth-group','quarter-rest'],
+ ['eighth-pair','quarter','quarter-rest','sixteenth-group'],
+ ['sixteenth-group','quarter-rest','eighth-pair','quarter'],
+ ['quarter-rest','sixteenth-group','quarter','eighth-pair'],
+ ['eighth-pair','quarter','eighth-pair','quarter-rest'],
+ ['quarter','sixteenth-group','quarter-rest','quarter']
+].map(Object.freeze));
+export function catchAttacks(value){return value==='quarter-rest'?[]:value==='eighth-pair'?[0,.5]:value==='sixteenth-group'?[0,.25,.5,.75]:[0];}
 export const sameRhythm=(a,b)=>a.length===b.length&&a.every((v,i)=>v===b[i]);
 export function remainingNotes(target,bag){const left=[...target];for(const n of bag){const i=left.indexOf(n);if(i>=0)left.splice(i,1);}return left;}
-export function reachableNoteSpots(doc,catalog,origin,{limit=4200,radius=2400}={}){
- const z=height(doc,origin.x,origin.y),clear=p=>p.x>32&&p.y>32&&p.x<COLS*64-32&&p.y<ROWS*64-32&&Math.hypot(p.x-origin.x,p.y-origin.y)<=radius&&Math.abs(height(doc,p.x,p.y)-z)<12&&!blocked(doc,p.x,p.y,catalog);
- const linked=(a,b)=>{const steps=Math.max(1,Math.ceil(Math.hypot(b.x-a.x,b.y-a.y)/8));for(let i=1;i<=steps;i++)if(!clear({x:a.x+(b.x-a.x)*i/steps,y:a.y+(b.y-a.y)*i/steps}))return false;return true;};
+export function reachableNoteSpots(doc,catalog,origin,{limit=COLS*ROWS,radius=22000}={}){
+ const index=createPlayerCollisionIndex({getProject:()=>doc,catalog,getRevision:()=>0});
+ const clear=p=>p.x>32&&p.y>32&&p.x<COLS*64-32&&p.y<ROWS*64-32&&Math.hypot(p.x-origin.x,p.y-origin.y)<=radius&&!blocked(index.view(p),p.x,p.y,catalog);
+ const linked=(a,b)=>{const ca=cell(doc,Math.floor(a.x/64),Math.floor(a.y/64)),cb=cell(doc,Math.floor(b.x/64),Math.floor(b.y/64)),step=ca.stairs||cb.stairs||ca.curves||cb.curves?2:8;const steps=Math.max(1,Math.ceil(Math.hypot(b.x-a.x,b.y-a.y)/step));let prev=a;for(let i=1;i<=steps;i++){const q={x:a.x+(b.x-a.x)*i/steps,y:a.y+(b.y-a.y)*i/steps};if(!clear(q)||Math.abs(height(doc,q.x,q.y)-height(doc,prev.x,prev.y))>14)return false;prev=q;}return true;};
  let start;for(let r=0;r<=3&&!start;r++)for(let yy=-r;yy<=r&&!start;yy++)for(let xx=-r;xx<=r;xx++){const p={x:(Math.floor(origin.x/64)+xx)*64+32,y:(Math.floor(origin.y/64)+yy)*64+32};if(clear(p)&&linked(origin,{x:p.x,y:origin.y})&&linked({x:p.x,y:origin.y},p)){start=p;break;}}
  if(!start)return [];
  const key=p=>`${p.x},${p.y}`,queue=[start],seen=new Set([key(start)]);
  for(let i=0;i<queue.length&&queue.length<limit;i++)for(const [dx,dy]of [[64,0],[-64,0],[0,64],[0,-64]]){
-  const a=queue[i],p={x:a.x+dx,y:a.y+dy},k=key(p);if(seen.has(k))continue;seen.add(k);if(!clear(p))continue;
-  let connected=true;for(let t=1;t<8;t++){const q={x:a.x+dx*t/8,y:a.y+dy*t/8};if(!clear(q)){connected=false;break;}}
-  if(connected)queue.push(p);
+  const a=queue[i],p={x:a.x+dx,y:a.y+dy},k=key(p);if(seen.has(k))continue;seen.add(k);if(clear(p)&&linked(a,p))queue.push(p);
  }
  return queue.filter(p=>Math.hypot(p.x-origin.x,p.y-origin.y)>220);
 }
 export function scatterNotes(target,spots,random=Math.random){
- const values=[...target,.5,1,2],pool=spots.map(p=>({...p,rank:random()})).sort((a,b)=>a.rank-b.rank),placed=[];
+ const values=[...target,...Array.from({length:92},(_,i)=>NOTE_VALUES[i%NOTE_VALUES.length])],pool=spots.map(p=>({...p,rank:random()})).sort((a,b)=>a.rank-b.rank),placed=[];
  for(const [i,value]of values.entries()){
-  const at=pool.find(p=>placed.every(q=>Math.hypot(p.x-q.x,p.y-q.y)>200));if(!at)return [];
+  const at=pool.find(p=>placed.every(q=>Math.hypot(p.x-q.x,p.y-q.y)>160));if(!at)break;
   pool.splice(pool.indexOf(at),1);placed.push({id:`note-${i}`,value,x:at.x,y:at.y,phase:random()*Math.PI*2});
  }
- return placed;
+ return placed.length>=target.length?placed:[];
 }
 export function findFishingDock(doc,catalog){
  const apartment=doc.objects.find(o=>o.asset==='coda-residences');

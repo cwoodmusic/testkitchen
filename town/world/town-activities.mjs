@@ -1,8 +1,8 @@
 import {height} from './model.mjs?v=opera-parallax-1';
-import {findFishingDock} from './town-game-rules.mjs?v=town-games-1';
-import {mountGameStyles,createTownJournal,gameButton} from './town-game-audio.mjs?v=town-games-1';
-import {createRhythmCatch} from './rhythm-catch.mjs?v=town-games-1';
-import {createTownFishing} from './town-fishing.mjs?v=town-games-1';
+import {findFishingDock} from './town-game-rules.mjs?v=town-games-2';
+import {mountGameStyles,createTownJournal,gameButton} from './town-game-audio.mjs?v=town-games-2';
+import {createRhythmCatch} from './rhythm-catch.mjs?v=town-games-2';
+import {createTownFishing} from './town-fishing.mjs?v=town-games-2';
 export function createTownActivities({canvas,getProject,getPlayer,getResidents,getOwner,catalog}){
  mountGameStyles();const journal=createTownJournal(getOwner),rhythm=createRhythmCatch({canvas,getProject,getPlayer,catalog,journal}),fishing=createTownFishing({canvas,journal});let doc=null,dock=null,owner=getOwner?.();
  const host=()=>{const vendors=(getResidents?.(null)||[]).filter(a=>a.role==='vendor'&&!a.hidden);return vendors.find(a=>a.asset==='decor-07-06')||vendors[0];};
@@ -20,5 +20,5 @@ export function createTownActivities({canvas,getProject,getPlayer,getResidents,g
  function offerVendor(actor,parent,close){if(actor.id!==host()?.id)return;const p=document.createElement('p');p.textContent='Got sharp ears? Borrow my big net, catch the floating notes around town, and build the rhythm I play!';parent.append(p);parent.append(gameButton('Play Rhythm Catch',()=>{close();rhythm.start(actor);},'town-vendor-game'));}
  function keydown(e){return rhythm.active?rhythm.keydown(e):fishing.active?fishing.keydown(e):false;}
  document.addEventListener('visibilitychange',()=>{if(document.hidden){rhythm.pause();fishing.pause();}});window.addEventListener('blur',()=>rhythm.pause());
- return {offerVendor,keydown,tick,draw,end,pointer:e=>rhythm.pointer(e),interact(){if(rhythm.active||fishing.active)return true;if(nearDock()){fishing.start();return true;}return false;},get active(){return rhythm.active||fishing.active;},get blocked(){return rhythm.blocked||fishing.active;},get prompt(){if(this.active)return '';if(nearDock())return 'E · Board boat · Rhythm Fishing';return '';},get state(){return {player:getPlayer()?{...getPlayer()}:null,rhythmCatch:rhythm.state,fishing:fishing.state,dock:dock?structuredClone(dock):null};}};
+ return {offerVendor,keydown,tick,draw,end,pointer:e=>rhythm.pointer(e),interact(){if(rhythm.active)return rhythm.interact();if(fishing.active)return true;if(nearDock()){fishing.start();return true;}return false;},get active(){return rhythm.active||fishing.active;},get blocked(){return rhythm.blocked||fishing.active;},get prompt(){if(this.active)return '';if(nearDock())return 'E · Board boat · Rhythm Fishing';return '';},get state(){return {player:getPlayer()?{...getPlayer()}:null,rhythmCatch:rhythm.state,fishing:fishing.state,dock:dock?structuredClone(dock):null};}};
 }

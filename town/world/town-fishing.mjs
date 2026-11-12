@@ -1,5 +1,5 @@
-import {TOWN_FISH,FISH_MODES,createFishingChallenge,updateFishingChallenge,fishingPress,fishingRelease} from './town-game-rules.mjs?v=town-games-1';
-import {createGameAudio,gameButton,drawNote} from './town-game-audio.mjs?v=town-games-1';
+import {TOWN_FISH,FISH_MODES,createFishingChallenge,updateFishingChallenge,fishingPress,fishingRelease} from './town-game-rules.mjs?v=town-games-2';
+import {createGameAudio,gameButton,drawNote} from './town-game-audio.mjs?v=town-games-2';
 export function createTownFishing({canvas,journal}){
  const dialog=document.createElement('dialog');dialog.className='town-game-dialog town-fishing-dialog';dialog.setAttribute('aria-label','Rhythm Fishing');document.body.append(dialog);
  const audio=createGameAudio(),keys=new Set(),presses=new Set();let phase='idle',paused=false,mode='current',boat={x:.5,y:.68},fish=[],selected=null,challenge=null,last=0,waterTime=0,view=null,ctx=null,status=null,feedback=null,netResult=false,error='',entry=0;

@@ -23,17 +23,18 @@ try:
   fixture=page.evaluate('''()=>{const d=structuredClone(townBuilder.project),v=townBuilder.ambient.actors.find(a=>a.role==='vendor'&&a.asset==='decor-07-06');d.spawn={...v.interaction};return d;}''')
   page.locator('#file').set_input_files({'name':'vendor-game-fixture.json','mimeType':'application/json','buffer':json.dumps(fixture).encode()});page.wait_for_timeout(500);page.locator('#walk').click();page.locator('#map').focus();page.keyboard.press('e');page.get_by_role('button',name='Play Rhythm Catch',exact=True).click();
   page.wait_for_selector('#rhythmCatchCount');page.wait_for_timeout(1300);page.screenshot(path=str(OUT/'countdown.png'));page.wait_for_function('townBuilder.urban.activities.state.rhythmCatch.phase==="hunt"',timeout=30000);page.screenshot(path=str(OUT/'hunt.png'))
+  state=page.evaluate('townBuilder.urban.activities.state.rhythmCatch');assert len(state['tokens'])==96;assert max(t['x'] for t in state['tokens'])-min(t['x'] for t in state['tokens'])>5000;assert all(n['value'] in ['quarter','eighth-pair','sixteenth-group','quarter-rest'] for n in state['tokens'])
   # Walk real controller routes to each needed note and swing the net.
   target=page.evaluate('townBuilder.urban.activities.state.rhythmCatch.target')
-  for value in target:
+  for value in [*target,'vendor']:
    route=page.evaluate("""async value=>{
     const t=townBuilder,{blocked,height}=await import('/town/world/model.mjs?v=opera-parallax-1'),d=t.project,p=t.urban.activities.state.player,state=t.urban.activities.state.rhythmCatch;
-    const token=state.tokens.filter(n=>n.value===value).sort((a,b)=>Math.hypot(a.x-p.x,a.y-p.y)-Math.hypot(b.x-p.x,b.y-p.y))[0];
-    const rawClear=q=>!blocked(d,q.x,q.y,t.catalog)&&Math.abs(height(d,q.x,q.y)-height(d,p.x,p.y))<12;
+    const token=value==='vendor'?{...(state.host.interaction||state.host)}:state.tokens.filter(n=>n.value===value).sort((a,b)=>Math.hypot(a.x-p.x,a.y-p.y)-Math.hypot(b.x-p.x,b.y-p.y))[0];
+    const rawClear=q=>!blocked(d,q.x,q.y,t.catalog);
     const clear=q=>[[0,0],[9,0],[-9,0],[0,9],[0,-9]].every(([dx,dy])=>rawClear({x:q.x+dx,y:q.y+dy}));
-    const linked=(a,b)=>{const n=Math.max(1,Math.ceil(Math.hypot(b.x-a.x,b.y-a.y)/8));for(let i=1;i<=n;i++)if(!rawClear({x:a.x+(b.x-a.x)*i/n,y:a.y+(b.y-a.y)*i/n}))return false;return true;};
+    const linked=(a,b)=>{const n=Math.max(1,Math.ceil(Math.hypot(b.x-a.x,b.y-a.y)/2));for(let i=1;i<=n;i++){const q={x:a.x+(b.x-a.x)*i/n,y:a.y+(b.y-a.y)*i/n},prev={x:a.x+(b.x-a.x)*(i-1)/n,y:a.y+(b.y-a.y)*(i-1)/n};if(!rawClear(q)||Math.abs(height(d,q.x,q.y)-height(d,prev.x,prev.y))>14)return false;}return true;};
     let start;for(let r=0;r<=3&&!start;r++)for(let yy=-r;yy<=r&&!start;yy++)for(let xx=-r;xx<=r;xx++){const q={x:(Math.floor(p.x/64)+xx)*64+32,y:(Math.floor(p.y/64)+yy)*64+32};if(clear(q)&&linked(p,{x:q.x,y:p.y})&&linked({x:q.x,y:p.y},q)){start=q;break;}}if(!start)throw Error('No safe route start');const key=q=>`${q.x},${q.y}`,queue=[start],parents=new Map([[key(start),null]]),points=new Map([[key(start),start]]);let goal;
-    for(let i=0;i<queue.length&&i<7000;i++){const a=queue[i];if(Math.hypot(a.x-token.x,a.y-token.y)<32){goal=key(a);break;}for(const[dx,dy]of [[64,0],[-64,0],[0,64],[0,-64]]){const q={x:a.x+dx,y:a.y+dy},k=key(q);if(parents.has(k)||!clear(q))continue;let ok=true;for(let n=1;n<8;n++)if(!clear({x:a.x+dx*n/8,y:a.y+dy*n/8})){ok=false;break;}if(!ok)continue;parents.set(k,key(a));points.set(k,q);queue.push(q);}}
+    for(let i=0;i<queue.length&&i<7000;i++){const a=queue[i];if(Math.hypot(a.x-token.x,a.y-token.y)<32){goal=key(a);break;}for(const[dx,dy]of [[64,0],[-64,0],[0,64],[0,-64]]){const q={x:a.x+dx,y:a.y+dy},k=key(q);if(parents.has(k)||!clear(q))continue;if(!linked(a,q))continue;parents.set(k,key(a));points.set(k,q);queue.push(q);}}
     if(!goal)throw Error('No walking path to note');const path=[];for(let k=goal;k!==null;k=parents.get(k))path.push(points.get(k));path.reverse();const turns=[path[0]];for(let i=1;i<path.length;i++){const a=path[i-1],b=path[i],c=path[i+1];if(!c||(b.x-a.x)*(c.y-b.y)!==(b.y-a.y)*(c.x-b.x))turns.push(b);}return turns;
    }""",value)
    for point in route:
@@ -41,11 +42,13 @@ try:
      current=page.evaluate('townBuilder.urban.activities.state.player')[axis];delta=point[axis]-current
      if abs(delta)<10:continue
      key=positive if delta>0 else negative;page.keyboard.down(key)
-     page.wait_for_function('([axis,target,sign])=>sign*(townBuilder.urban.activities.state.player[axis]-target)>=-7',arg=[axis,point[axis],1 if delta>0 else -1],timeout=20000)
+     page.wait_for_function('([axis,target,sign])=>sign*(townBuilder.urban.activities.state.player[axis]-target)>=-7',arg=[axis,point[axis],1 if delta>0 else -1],timeout=40000)
      page.keyboard.up(key)
-   before=page.evaluate('townBuilder.urban.activities.state.rhythmCatch.bag.length');page.keyboard.press('Space');page.wait_for_function('(n)=>townBuilder.urban.activities.state.rhythmCatch.bag.length===n+1',arg=before)
+   if value=='vendor':
+    page.keyboard.press('e');continue
+   before=page.evaluate('townBuilder.urban.activities.state.rhythmCatch.bag.length');page.keyboard.press('f');page.wait_for_function('(n)=>townBuilder.urban.activities.state.rhythmCatch.bag.length===n+1',arg=before)
   page.wait_for_function('townBuilder.urban.activities.state.rhythmCatch.phase==="arrange"');page.screenshot(path=str(OUT/'arrange.png'))
-  names={.5:'Eighth note',1:'Quarter note',2:'Half note'}
+  names={'quarter':'Quarter note','eighth-pair':'Two eighth notes','sixteenth-group':'Four sixteenth notes','quarter-rest':'Quarter rest'}
   for v in reversed(target):page.get_by_role('button',name='Add '+names[v],exact=True).click()
   page.get_by_role('button',name='Check my rhythm',exact=True).click();assert page.evaluate('townBuilder.urban.activities.state.rhythmCatch.phase')=='arrange'
   for _ in target:page.locator('.rhythm-catch-dialog').get_by_role('button',name='Undo',exact=True).click()

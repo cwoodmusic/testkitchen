@@ -1,15 +1,17 @@
 import test from 'node:test';
 import assert from 'node:assert/strict';
 import {readFile} from 'node:fs/promises';
-import {CATCH_PATTERNS,remainingNotes,sameRhythm,reachableNoteSpots,scatterNotes,findFishingDock,TOWN_FISH,FISH_MODES,fishingPattern,createFishingChallenge,updateFishingChallenge,fishingPress,fishingRelease} from './town-game-rules.mjs';
+import {CATCH_PATTERNS,NOTE_VALUES,catchAttacks,remainingNotes,sameRhythm,reachableNoteSpots,scatterNotes,findFishingDock,TOWN_FISH,FISH_MODES,fishingPattern,createFishingChallenge,updateFishingChallenge,fishingPress,fishingRelease} from './town-game-rules.mjs';
 
-test('listening targets fill one four-beat bar and require the correct values and order',()=>{
- for(const target of CATCH_PATTERNS){assert.equal(target.reduce((a,b)=>a+b,0),4);assert(remainingNotes(target,[]).length===target.length);assert.deepEqual(remainingNotes(target,[...target].reverse()),[]);assert(sameRhythm(target,[...target]));}
- assert(!sameRhythm([1,.5,.5,2],[2,.5,.5,1]));assert.deepEqual(remainingNotes([1,1,.5],[1]),[1,.5]);
+test('catch cards are four one-beat groups, with only quarter rests and no isolated subdivisions',()=>{
+ assert.deepEqual(NOTE_VALUES,['quarter','eighth-pair','sixteenth-group','quarter-rest']);
+ for(const target of CATCH_PATTERNS){assert.equal(target.length,4);assert(target.every(t=>NOTE_VALUES.includes(t)));assert.deepEqual(remainingNotes(target,[...target].reverse()),[]);assert(sameRhythm(target,[...target]));}
+ assert.deepEqual(catchAttacks('eighth-pair'),[0,.5]);assert.deepEqual(catchAttacks('sixteenth-group'),[0,.25,.5,.75]);assert.deepEqual(catchAttacks('quarter-rest'),[]);
+ assert(!sameRhythm(CATCH_PATTERNS[0],[...CATCH_PATTERNS[0]].reverse()));
 });
 test('floating notes remain on connected walkable ground and do not change the saved map',()=>{
  const doc={cells:{},objects:[],edges:{},spawn:{x:500,y:500}},before=JSON.stringify(doc),spots=reachableNoteSpots(doc,new Map(),doc.spawn,{radius:1000,limit:1000}),tokens=scatterNotes(CATCH_PATTERNS[0],spots,()=>.4);
- assert.equal(tokens.length,CATCH_PATTERNS[0].length+3);assert.equal(new Set(tokens.map(t=>`${t.x},${t.y}`)).size,tokens.length);assert.equal(JSON.stringify(doc),before);
+ assert(tokens.length>=40);assert.equal(new Set(tokens.map(t=>`${t.x},${t.y}`)).size,tokens.length);assert.equal(JSON.stringify(doc),before);
  assert(tokens.every(t=>spots.some(p=>p.x===t.x&&p.y===t.y)));
  const island={cells:{},objects:[],edges:{},spawn:{x:32,y:32}};for(let y=0;y<30;y++)for(let x=0;x<30;x++)island.cells[`${x},${y}`]={surface:'water',level:0};island.cells['0,0']={surface:'grass',level:0};
  assert.deepEqual(scatterNotes([1,1],reachableNoteSpots(island,new Map(),island.spawn)),[]);

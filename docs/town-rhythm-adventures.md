@@ -13,16 +13,20 @@ interaction prompt). Choose **Play Rhythm Catch**. If a map has other vendors
 but no coffee cart, the first available vendor hosts the game.
 
 Watch **1 · 2 · Ready · GO!**, then listen to the four-beat rhythm twice. Borrow
-a big net and walk around town to collect the quarter, eighth and half notes
-that make the rhythm. Floating notes spawn on connected, walkable ground near
-the host. Additional note values are decoys. Nothing is placed in the map JSON.
+a bug-catching net and walk around town to collect quarter notes, beamed pairs of eighth notes, beamed groups of four
+sixteenth notes, and quarter rests. Each card fills one beat; there are no
+individual eighths or sixteenths, longer notes, or other rests. Up to 96 cards
+are scattered across connected, walkable parts of the map, including areas
+reached by stairs. Extra cards offer plenty of choices. Nothing is placed in the map JSON.
 
 - **WASD / arrows:** walk; **Shift:** run.
-- **Space** or **Swing net:** catch a nearby note. Clicking the canvas aims and swings.
+- **F** (or **Space**) / **Swing net:** catch a nearby note. Clicking the canvas aims and swings.
 - **R / Hear rhythm:** replay the example without losing caught notes.
 - **Escape / Leave:** leave the hunt.
 
-Once all needed notes are caught, arrange them in the order you heard. Undo,
+Bring your cards back to the hosting vendor and press **E / Build at vendor**.
+Choose four cards from your collection and arrange them in the order you heard.
+You can return to town to collect more cards at any point. Undo,
 replay and check as often as needed. Completing a rhythm earns one to three
 town stars. Three rounds earn the Town Rhythm Ranger finish screen.
 
