@@ -2,7 +2,7 @@ import test from 'node:test';
 import assert from 'node:assert/strict';
 import {readFile} from 'node:fs/promises';
 import {createRequire} from 'node:module';
-import {CONCERT_FOOTPRINT,getConcertHall,prepareConcertHallArt,concertHallDrawables,renderConcertHallBackground,concertSuspendedReflectors,drawConcertSuspendedReflector} from './concert-hall.mjs';
+import {CONCERT_FOOTPRINT,getConcertHall,prepareConcertHallArt,concertHallDrawables,renderConcertHallBackground,concertSuspendedReflectors,drawConcertSuspendedReflector,concertHallOverheadPlanes,renderConcertHallOverhead} from './concert-hall.mjs';
 
 const hall=getConcertHall(),pad=16;
 // Match the interior controller's circular-foot approximation and safety pad.
@@ -103,14 +103,93 @@ test('suspended cloud wires visibly connect the roof plates to the actual native
  source.width=source.height=1;
 });
 
-test('the detailed acoustic architecture is rasterized once and reuses its one background canvas',()=>{
+test('overhead depth responds to the actual camera in both axes, stays bounded, and stops with the camera',()=>{
+ const reference={x:2048,y:1280},view=(x,y)=>({camera:{x:reference.x+x,y:reference.y+y,reference,seated:true}});
+ const a=concertHallOverheadPlanes(hall,view(-120,-72)),b=concertHallOverheadPlanes(hall,view(120,72));
+ assert.deepEqual(concertHallOverheadPlanes(hall,view(-120,-72)),a,'Time and animation clocks do not move this architecture');
+ for(let i=0;i<a.length;i++){
+  assert(a[i].offset.x-b[i].offset.x>40,'Horizontal drag must create visible differential projection');
+  assert(a[i].offset.y-b[i].offset.y>25,'Vertical drag must not be saturated by the default watch camera');
+ }
+ for(const p of concertHallOverheadPlanes(hall,{camera:{x:-1e5,y:1e5}})){
+  assert(Math.abs(p.offset.x)<=72&&Math.abs(p.offset.y)<=36,'Walking near hall edges cannot project a roof across the stage');
+ }
+ for(const p of concertHallOverheadPlanes(hall,{...view(-120,-72),reducedMotion:true}))assert.deepEqual(p.offset,{x:0,y:0});
+ const explicit=concertHallOverheadPlanes(hall,{camera:{x:2048,y:810,reference:{x:2048,y:810},seated:true}});
+ assert(explicit.every(p=>p.offset.x===0&&p.offset.y===0),'Watch reference follows the actual viewport clamp, including a wider screen');
+});
+
+test('the detailed floor and four cropped overhead textures are rasterized once and reused while the camera moves',()=>{
  const {createCanvas}=createRequire(import.meta.url)('@napi-rs/canvas'),original=globalThis.OffscreenCanvas,allocations=[];
  globalThis.OffscreenCanvas=class{constructor(w,h){allocations.push([w,h]);return createCanvas(w,h);}};
  try{
   const cv=createCanvas(32,32),c=cv.getContext('2d');c.globalAlpha=.7;c.imageSmoothingEnabled=true;const alpha=c.globalAlpha;
-  for(let frame=0;frame<16;frame++)renderConcertHallBackground(c,hall);
-  assert.deepEqual(allocations,[[hall.width,hall.height]],'Repeated performance frames must not rebuild the architectural canvas');
+  for(let frame=0;frame<16;frame++){
+   renderConcertHallBackground(c,hall);
+   renderConcertHallOverhead(c,hall,{camera:{x:1988+frame*8,y:1244+frame*5}});
+  }
+  assert.deepEqual(allocations,[[hall.width,hall.height],[3952,176],[610,1100],[610,1100],[2104,188]],'Repeated camera movement must reuse one floor cache and four tightly cropped RGBA textures');
+  assert(allocations.slice(1).reduce((sum,[w,h])=>sum+w*h,0)<2_500_000,'Elevated art must not allocate a second full-size hall canvas');
   assert.equal(c.globalAlpha,alpha);assert.equal(c.imageSmoothingEnabled,true);
   assert(c.getImageData(0,0,32,32).data.some((value,i)=>i%4===3&&value>0));
  }finally{if(original===undefined)delete globalThis.OffscreenCanvas;else globalThis.OffscreenCanvas=original;}
+});
+
+test('actual cached cloud pixels move relative to the floor while organ, actors and a nearby player remain uncovered',()=>{
+ const {createCanvas}=createRequire(import.meta.url)('@napi-rs/canvas'),a=createCanvas(hall.width,400),b=createCanvas(hall.width,400);
+ const reference={x:2048,y:1280};
+ for(const [cv,x,y]of [[a,1928,1208],[b,2168,1352]])renderConcertHallOverhead(cv.getContext('2d'),hall,{camera:{x,y,reference},viewport:{x:900,y:0,w:2300,h:400}});
+ function pinkCentroid(cv){
+  const data=cv.getContext('2d').getImageData(980,150,600,190).data;let x=0,y=0,n=0;
+  for(let i=0;i<data.length;i+=4)if(data[i+3]>128&&data[i]>data[i+1]*1.2&&data[i+2]>data[i+1]*1.15){x+=(i/4)%600;y+=Math.floor(i/4/600);n++;}
+  assert(n>100,'A detached pink cloud must actually be drawn, not just reported by an offset helper');return {x:x/n,y:y/n};
+ }
+ const ca=pinkCentroid(a),cb=pinkCentroid(b);
+ assert(Math.abs(ca.x-cb.x)>35&&Math.abs(ca.y-cb.y)>20,'Both camera axes move actual cached reflector pixels against fixed world coordinates');
+ const cv=createCanvas(hall.width,400),c=cv.getContext('2d'),player={x:1150,y:300},actor={x:2940,y:470,seated:true};
+ renderConcertHallOverhead(c,hall,{camera:{x:1928,y:1208,reference},player,performance:{actors:[actor]}});
+ for(const r of [{x:1696,y:0,w:704,h:360},{x:player.x-100,y:player.y-190,w:200,h:240},{x:actor.x-82,y:actor.y-160,w:164,h:226}]){
+  const area=c.getImageData(r.x,r.y,r.w,Math.min(r.h,400-r.y)).data;
+  assert([...area].filter((_,i)=>i%4===3).every(alpha=>alpha===0),'The organ bay and silhouettes retain a clear cutaway at the nearest camera pose');
+ }
+ a.width=a.height=b.width=b.height=cv.width=cv.height=1;
+});
+
+test('performer cutaways follow visible heads and never slice the suspended pink skins at either camera extreme',()=>{
+ const {createCanvas}=createRequire(import.meta.url)('@napi-rs/canvas'),reference={x:2048,y:1280};
+ const actors=[{x:2980,y:470,seated:true},{x:2747,y:470,seated:true},{x:2514,y:470,seated:true}];
+ for(const [x,y]of [[1928,1208],[2168,1352],[0,0]]){
+  const plain=createCanvas(hall.width,400),orchestra=createCanvas(hall.width,400),camera={x,y,reference};
+  renderConcertHallOverhead(plain.getContext('2d'),hall,{camera});
+  renderConcertHallOverhead(orchestra.getContext('2d'),hall,{camera,performance:{actors}});
+  const a=plain.getContext('2d').getImageData(2500,130,700,180).data,b=orchestra.getContext('2d').getImageData(2500,130,700,180).data;
+  let skin=0;
+  for(let i=0;i<a.length;i+=4)if(a[i+3]>128&&a[i]>a[i+1]*1.2&&a[i+2]>a[i+1]*1.15){
+   skin++;assert.deepEqual([...b.subarray(i,i+4)],[...a.subarray(i,i+4)],'A transparent actor-cache margin must not remove part of a cloud');
+  }
+  assert(skin>100);plain.width=plain.height=orchestra.width=orchestra.height=1;
+ }
+});
+
+test('late native prop loads invalidate both architectural caches and settle into reuse',async()=>{
+ const {createCanvas}=createRequire(import.meta.url)('@napi-rs/canvas'),Canvas=globalThis.OffscreenCanvas,Image=globalThis.Image,loads=[],allocations=[];
+ globalThis.OffscreenCanvas=class{constructor(w,h){allocations.push([w,h]);return createCanvas(w,h);}};
+ globalThis.Image=class{constructor(){
+  const image=createCanvas(4,4),c=image.getContext('2d');c.fillStyle='#d78eab';c.fillRect(0,0,4,4);
+  Object.defineProperty(image,'src',{set(){loads.push(()=>image.onload());}});return image;
+ }};
+ try{
+  // A fresh module mirrors entering while the eight native PNGs are loading.
+  const renderer=await import('./concert-hall.mjs?late-native-props');
+  const cv=createCanvas(8,8),c=cv.getContext('2d'),paint=()=>{renderer.renderConcertHallBackground(c,hall);renderer.renderConcertHallOverhead(c,hall);};
+  paint();assert.equal(allocations.length,5);assert.equal(loads.length,8);
+  loads.forEach(load=>load());await renderer.prepareConcertHallArt();
+  paint();assert.equal(allocations.length,10,'Native props replace both the floor and overhead fallback textures');
+  for(let frame=0;frame<8;frame++)paint();
+  assert.equal(allocations.length,10,'Completed image loads do not repeatedly rebuild either cache');
+  cv.width=cv.height=1;
+ }finally{
+  if(Canvas===undefined)delete globalThis.OffscreenCanvas;else globalThis.OffscreenCanvas=Canvas;
+  if(Image===undefined)delete globalThis.Image;else globalThis.Image=Image;
+ }
 });

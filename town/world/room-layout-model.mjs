@@ -1,6 +1,6 @@
-import {furnitureFacingBounds,furnitureFacingBoxes,furnitureFacingDepth} from './furniture-facing.mjs?v=opera-depth-1';
-import {furniturePresentationScale} from './private-furniture.mjs?v=opera-depth-1';
-import {apartmentDecorBounds,apartmentWallDecorBounds} from './personal-room-areas.mjs?v=opera-depth-1';
+import {furnitureFacingBounds,furnitureFacingBoxes,furnitureFacingDepth} from './furniture-facing.mjs?v=opera-parallax-1';
+import {furniturePresentationScale} from './private-furniture.mjs?v=opera-parallax-1';
+import {apartmentDecorBounds,apartmentWallDecorBounds} from './personal-room-areas.mjs?v=opera-parallax-1';
 
 export const ROOM_LAYOUT_FORMAT='coda-room-layout';
 export const ROOM_LAYOUT_VERSION=1;

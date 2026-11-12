@@ -1,34 +1,34 @@
-import {assetImage} from './asset-color.mjs?v=opera-depth-1';
-import {SHOWROOMS,applyShowroomLayout} from './showroom-layout.mjs?v=opera-depth-1';
-import {drawShowroomThemeSign} from './showroom-signs.mjs?v=opera-depth-1';
-import {applyShowroomApartment} from './showroom-apartments.mjs?v=opera-depth-1';
-import {drawShowroomFloor,drawShowroomWallpaper} from './showroom-materials.mjs?v=opera-depth-1';
-import {applyHomeMaterialSuite,warmHomeMaterials} from './home-materials.mjs?v=opera-depth-1';
-import {drawTowerCommonSurfaces,drawTowerCommonStairs,towerCommonMaterialsReady,warmTowerCommonMaterials} from './tower-common-materials.mjs?v=opera-depth-1';
-import {drawInteriorDoor,drawPrivacyDoor,drawElevatorPortal,getElevatorVisualGeometry,interiorPortalVisualDepth,warmInteriorPortalArt} from './interior-portal-art.mjs?v=opera-depth-1';
-import {applyTowerCommonArchitecture} from './tower-common-architecture.mjs?v=opera-depth-1';
-import {interiorActorScale} from './interior-scale.mjs?v=opera-depth-1';
-import {calibratePrivateFurniture,presentedRoomItem} from './private-furniture.mjs?v=opera-depth-1';
-import {normalizeInteriorDoorways} from './interior-doorways.mjs?v=opera-depth-1';
-import {drawInteriorWindow,warmInteriorWindows} from './interior-window-art.mjs?v=opera-depth-1';
-import {drawInteriorWallNetwork} from './interior-wall-art.mjs?v=opera-depth-1';
-import {createRoomLayoutResolver} from './room-layout-runtime.mjs?v=opera-depth-1';
-export {apartmentDecorBounds,apartmentWallDecorBounds} from './personal-room-areas.mjs?v=opera-depth-1';
-import {getConcertHall,renderConcertHallBackground,concertHallDrawables} from './concert-hall.mjs?v=opera-depth-1';
-import {renderStagePerformance} from './concert-performers.mjs?v=opera-depth-1';
-import {buildApartmentHome} from './apartment-homes.mjs?v=opera-depth-1';
-import {FAMILY_FURNITURE_ASSETS} from './family-furniture-definitions.mjs?v=opera-depth-1';
-import {APARTMENT_COLLECTION_ASSETS,getApartmentAsset} from './apartment-collections.mjs?v=opera-depth-1';
-import {drawApartmentMotion} from './apartment-motion.mjs?v=opera-depth-1';
-import {furnitureFacingPlacement,furnitureFacingDepth,furnitureFacingBoxes,furnitureAtGroundCenter} from './furniture-facing.mjs?v=opera-depth-1';
-import {preparePlacedFacingArt} from './furniture-art-access.mjs?v=opera-depth-1';
+import {assetImage} from './asset-color.mjs?v=opera-parallax-1';
+import {SHOWROOMS,applyShowroomLayout} from './showroom-layout.mjs?v=opera-parallax-1';
+import {drawShowroomThemeSign} from './showroom-signs.mjs?v=opera-parallax-1';
+import {applyShowroomApartment} from './showroom-apartments.mjs?v=opera-parallax-1';
+import {drawShowroomFloor,drawShowroomWallpaper} from './showroom-materials.mjs?v=opera-parallax-1';
+import {applyHomeMaterialSuite,warmHomeMaterials} from './home-materials.mjs?v=opera-parallax-1';
+import {drawTowerCommonSurfaces,drawTowerCommonStairs,towerCommonMaterialsReady,warmTowerCommonMaterials} from './tower-common-materials.mjs?v=opera-parallax-1';
+import {drawInteriorDoor,drawPrivacyDoor,drawElevatorPortal,getElevatorVisualGeometry,interiorPortalVisualDepth,warmInteriorPortalArt} from './interior-portal-art.mjs?v=opera-parallax-1';
+import {applyTowerCommonArchitecture} from './tower-common-architecture.mjs?v=opera-parallax-1';
+import {interiorActorScale} from './interior-scale.mjs?v=opera-parallax-1';
+import {calibratePrivateFurniture,presentedRoomItem} from './private-furniture.mjs?v=opera-parallax-1';
+import {normalizeInteriorDoorways} from './interior-doorways.mjs?v=opera-parallax-1';
+import {drawInteriorWindow,warmInteriorWindows} from './interior-window-art.mjs?v=opera-parallax-1';
+import {drawInteriorWallNetwork} from './interior-wall-art.mjs?v=opera-parallax-1';
+import {createRoomLayoutResolver} from './room-layout-runtime.mjs?v=opera-parallax-1';
+export {apartmentDecorBounds,apartmentWallDecorBounds} from './personal-room-areas.mjs?v=opera-parallax-1';
+import {getConcertHall,renderConcertHallBackground,concertHallDrawables,renderConcertHallOverhead} from './concert-hall.mjs?v=opera-parallax-1';
+import {renderStagePerformance} from './concert-performers.mjs?v=opera-parallax-1';
+import {buildApartmentHome} from './apartment-homes.mjs?v=opera-parallax-1';
+import {FAMILY_FURNITURE_ASSETS} from './family-furniture-definitions.mjs?v=opera-parallax-1';
+import {APARTMENT_COLLECTION_ASSETS,getApartmentAsset} from './apartment-collections.mjs?v=opera-parallax-1';
+import {drawApartmentMotion} from './apartment-motion.mjs?v=opera-parallax-1';
+import {furnitureFacingPlacement,furnitureFacingDepth,furnitureFacingBoxes,furnitureAtGroundCenter} from './furniture-facing.mjs?v=opera-parallax-1';
+import {preparePlacedFacingArt} from './furniture-art-access.mjs?v=opera-parallax-1';
 // The apartment tower has one consistent floor plate. Residential floors use
 // a 608px common hall and 1120px private apartments, within its 2304 × 1728 lot.
 export const FLOOR_COUNT=15;
 export const TOWER_FOOTPRINT=Object.freeze({width:2304,height:1728});
 export const STORE_FOOTPRINT=Object.freeze({width:3072,height:2048});
-export {residents} from './resident-profiles.mjs?v=opera-depth-1';
-import {residents} from './resident-profiles.mjs?v=opera-depth-1';
+export {residents} from './resident-profiles.mjs?v=opera-parallax-1';
+import {residents} from './resident-profiles.mjs?v=opera-parallax-1';
 const sceneCache=new Map(),backgroundCache=new Map();
 const MAX_BACKGROUNDS=8,MAX_BACKGROUND_PIXELS=16*1024*1024;
 let backgroundPixels=0;
@@ -44,7 +44,7 @@ let roomLayouts;
 const drawConcertNPC=(ctx,actor,time)=>npcRenderer?.drawNPC(ctx,actor,time);
 export function configureUrbanInteriors(catalog){if(nativeCatalog!==catalog){nativeCatalog=catalog;clearBackgrounds();}}
 if(typeof document!=='undefined'){
- import('./ground-textures.mjs?v=opera-depth-1').then(({groundTextures})=>{woodTexture=groundTextures.wood;clearBackgrounds();}).catch(()=>{});
+ import('./ground-textures.mjs?v=opera-parallax-1').then(({groundTextures})=>{woodTexture=groundTextures.wood;clearBackgrounds();}).catch(()=>{});
 }
 const rect=(x,y,w,h)=>({x,y,w,h});
 const zone=(id,label,x,y,w,h,action,extra={})=>({id,label,x,y,w,h,action,...extra});
@@ -321,7 +321,7 @@ function drawInteriorCharacter(c,scene,actor,draw){
  c.save();c.translate(actor.x,actor.y);c.scale(scale,scale);
  try{draw(c,{...actor,x:0,y:0});}finally{c.restore();}
 }
-export function renderInterior(c,scene,{model,player,drawPlayer,time=0,decor=[],catalog,actors,performance,audioTime,reducedMotion=false,viewport,doorStates=[],doorOpenness=()=>0}={}){
+export function renderInterior(c,scene,{model,player,drawPlayer,time=0,decor=[],catalog,actors,performance,audioTime,reducedMotion=false,camera,viewport,doorStates=[],doorOpenness=()=>0}={}){
  if(catalog&&catalog!==nativeCatalog)configureUrbanInteriors(catalog);const s=model||getInterior(scene);
  if(scene.kind==='concert'){
   renderConcertHallBackground(c,s);
@@ -330,6 +330,7 @@ export function renderInterior(c,scene,{model,player,drawPlayer,time=0,decor=[],
   if(player&&drawPlayer)extraDrawables.push({y:player.y,draw:()=>drawPlayer(c,player)});
   if(performance)renderStagePerformance(c,performance,{time,audioTime,catalog:nativeCatalog,drawNPC:drawConcertNPC,reducedMotion,extraDrawables,viewport});
   else for(const item of extraDrawables)item.draw();
+  renderConcertHallOverhead(c,s,{camera,viewport,reducedMotion,player,performance});
   return;
  }
  warmScene(s);c.drawImage(background(s),0,0);

@@ -1,5 +1,5 @@
-import {createRoomLayoutModel} from './room-layout-model.mjs?v=opera-depth-1';
-import {createRoomLayoutStorage} from './room-layout-storage.mjs?v=opera-depth-1';
+import {createRoomLayoutModel} from './room-layout-model.mjs?v=opera-parallax-1';
+import {createRoomLayoutStorage} from './room-layout-storage.mjs?v=opera-parallax-1';
 
 export function roomLayoutThemeId(scene){
  if(scene?.kind==='showroom')return 'showroom-'+scene.showroomId;

@@ -1,4 +1,4 @@
-import {furnitureFacingDepth} from './furniture-facing.mjs?v=opera-depth-1';
+import {furnitureFacingDepth} from './furniture-facing.mjs?v=opera-parallax-1';
 
 // The owner's approved Room Editor export, applied after automatic furnishing.
 // Only poses and tabletop supports change; item order, sizes and stock stay put.

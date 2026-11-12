@@ -31,20 +31,23 @@ export function drawAcousticCeiling(c,width){
 }
 
 /** Broad roof returns project above recessed side-gallery air, not a wall decal. */
-export function drawAcousticShell(c,r,{right=false}={}){
+export function drawAcousticShell(c,r,{right=false,plane='all'}={}){
  if(!valid(r))return false;
  c.save();clip(c,r);c.translate(right?r.x+r.w:r.x,r.y);if(right)c.scale(-1,1);
+ if(plane!=='roof'){
  fill(c,0,0,r.w,r.h,'#292326');
  // The outer structural wall carries the roof; the inboard space beneath it
  // is deliberately dark. Each return has a top, thick soffit and cut end.
  fill(c,0,0,44,r.h,'#9b6738');fill(c,2,0,8,r.h,'#e8be80');grain(c,{x:8,y:0,w:30,h:r.h},7);
+ }
  const step=r.h/6;
  for(let i=0;i<6;i++){
   const y=-32+i*step,reach=r.w-12-(i%2)*18;
   const top=contour([[28,y+18],[r.w*.35,y-54],[r.w*.75,y-24],[reach,y+42]]);
   const back=contour([[reach,y+92],[r.w*.74,y+28],[r.w*.39,y+10],[28,y+110]]);
   const lip=contour([[reach,y+65],[r.w*.74,y+2],[r.w*.39,y-12],[28,y+86]]);
-  c.save();c.translate(8,30);polygon(c,[...top,...back],'#080d1478');c.restore();
+  if(plane!=='roof'){c.save();c.translate(8,30);polygon(c,[...top,...back],'#080d1478');c.restore();}
+  if(plane==='base')continue;
   polygon(c,[...top,...back],'#6d4328');
   polygon(c,[...top,...lip],HONEY[2+i%2]);
   polygon(c,[[reach-9,y+39],[reach,y+42],[reach,y+92],[reach-9,y+87]],'#9f6937');
@@ -59,18 +62,22 @@ export function drawAcousticShell(c,r,{right=false}={}){
 function lineAlong(c,points,color,width){c.strokeStyle=color;c.lineWidth=width;c.beginPath();points.forEach((p,i)=>i?c.lineTo(...p):c.moveTo(...p));c.stroke();}
 
 /** A projecting soffit casts an open-bottom shadow, not a framed wall niche. */
-export function drawAcousticAirBay(c,r){
+export function drawAcousticAirBay(c,r,{plane='all'}={}){
  if(!valid(r))return false;
  c.save();clip(c,r);
+ if(plane!=='beam'){
  const shadow=c.createLinearGradient(0,r.y+24,0,r.y+r.h);
  shadow.addColorStop(0,'#0d141df5');shadow.addColorStop(.5,'#191f29e8');shadow.addColorStop(.82,'#1b202980');shadow.addColorStop(1,'#1b202900');
  // Tapered, staggered shadow edges fade back into the rear timber below.
  // No side posts or lower sill enclose the clouds like display screens.
  c.fillStyle=shadow;c.beginPath();for(const [i,p]of [[r.x,r.y+22],[r.x+r.w,r.y+22],[r.x+r.w-18,r.y+r.h*.83],[r.x+r.w-66,r.y+r.h],[r.x+54,r.y+r.h-8],[r.x+13,r.y+r.h*.77]].entries())i?c.lineTo(...p):c.moveTo(...p);c.closePath();c.fill();
+ }
+ if(plane!=='shadow'){
  polygon(c,[[r.x,r.y],[r.x+r.w,r.y],[r.x+r.w-2,r.y+13],[r.x+6,r.y+10]],'#e0b77a');
  polygon(c,[[r.x+6,r.y+10],[r.x+r.w-2,r.y+13],[r.x+r.w-10,r.y+31],[r.x+16,r.y+25]],'#a4713e');
  polygon(c,[[r.x+16,r.y+25],[r.x+r.w-10,r.y+31],[r.x+r.w-18,r.y+38],[r.x+22,r.y+32]],'#5a3c2d');
  grain(c,{x:r.x+14,y:r.y,w:r.w-28,h:24},3);
+ }
  c.restore();return true;
 }
 

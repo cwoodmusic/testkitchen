@@ -1,12 +1,12 @@
-// The hall shares the Opera House lot's exact floor area. Architecture is static;
-// the programme supplies its own musicians, instruments and animated performance.
-import {drawAcousticCeiling,drawAcousticShell,drawAcousticAirBay,drawOrganAcousticPanels} from './concert-acoustics.mjs?v=opera-depth-1';
+// The hall shares the Opera House lot's exact floor area. Its floor and raised
+// acoustic structure are cached separately, so the camera can reveal their depth.
+import {drawAcousticCeiling,drawAcousticShell,drawAcousticAirBay,drawOrganAcousticPanels} from './concert-acoustics.mjs?v=opera-parallax-1';
 export const CONCERT_FOOTPRINT=Object.freeze({width:4096,height:2560});
 const rect=(x,y,w,h)=>({x,y,w,h});
 const zone=(id,label,x,y,w,h,action,extra={})=>({id,label,x,y,w,h,action,...extra});
 const ROWS=[1370,1510,1650,1840,1980,2120,2260];
 const seatColumns=[...Array.from({length:14},(_,i)=>936+i*72),...Array.from({length:14},(_,i)=>2224+i*72)];
-let hall=null,background=null,artPromise=null;
+let hall=null,background=null,overhead=null,artPromise=null;
 const art=new Map();
 const ART_NAMES=['audience-chair','stage-chair','organ','reflector','balcony-rail','timber-rib','door','sconce'];
 
@@ -44,7 +44,7 @@ export function prepareConcertHallArt(){
  if(artPromise)return artPromise;
  if(typeof Image==='undefined')return Promise.resolve();
  artPromise=Promise.all(ART_NAMES.map(name=>new Promise(resolve=>{
-  const img=new Image();img.onload=()=>{art.set(name,img);background=null;resolve(img);};img.onerror=()=>resolve(null);
+  const img=new Image();img.onload=()=>{art.set(name,img);background=null;overhead=null;resolve(img);};img.onerror=()=>resolve(null);
   img.src=new URL(`../assets/concert/hall-${name}.png`,import.meta.url).href;
  }))).then(()=>undefined);return artPromise;
 }
@@ -58,6 +58,79 @@ export function renderConcertHallBackground(ctx,model=getConcertHall()){
   canvas.width=model.width;canvas.height=model.height;const c=canvas.getContext('2d');c.imageSmoothingEnabled=false;drawHall(c,model);background=canvas;
  }
  ctx.drawImage(background,0,0);
+}
+
+const clamp=(n,low,high)=>Math.max(low,Math.min(high,n));
+const overlaps=(a,b)=>a.x+a.w>b.x&&a.x<b.x+b.w&&a.y+a.h>b.y&&a.y<b.y+b.h;
+const OVERHEAD_HEIGHTS=Object.freeze({roof:{rate:.30,x:72,y:36},rig:{rate:.18,x:44,y:20}});
+
+/** Camera-relative projection only: a stationary camera never animates a roof. */
+export function concertHallOverheadPlanes(model=getConcertHall(),{camera,reducedMotion=false}={}){
+ const reference=camera?.reference||{x:model.width/2,y:model.height/2};
+ const dx=Number.isFinite(camera?.x)?camera.x-reference.x:0,dy=Number.isFinite(camera?.y)?camera.y-reference.y:0;
+ const offset=kind=>{const h=OVERHEAD_HEIGHTS[kind];return {x:reducedMotion?0:clamp(-dx*h.rate,-h.x,h.x),y:reducedMotion?0:clamp(-dy*h.rate,-h.y,h.y)};};
+ return [
+  {id:'ceiling',height:'roof',bounds:rect(72,0,model.width-144,176)},
+  ...model.audience.balconies.map((r,i)=>({id:`roof-${i}`,height:'roof',bounds:{...r},right:i===1})),
+  {id:'suspension',height:'rig',bounds:rect(996,92,model.width-1992,188)}
+ ].map(p=>({...p,offset:offset(p.height)}));
+}
+
+function makeCanvas(w,h){
+ const cv=typeof OffscreenCanvas!=='undefined'?new OffscreenCanvas(w,h):typeof document!=='undefined'?document.createElement('canvas'):null;
+ if(cv){cv.width=w;cv.height=h;}return cv;
+}
+function paintOverhead(c,model,plane){
+ if(plane.id==='ceiling'){
+  // This is a genuine opening in the roof, not a roof painted over the organ.
+  c.save();exclude(c,rect(1696,0,704,176),model);drawAcousticCeiling(c,model.width);c.restore();
+ }else if(plane.height==='roof')drawAcousticShell(c,plane.bounds,{right:plane.right,plane:'roof'});
+ else{
+  for(const x of [996,model.width-1568])drawAcousticAirBay(c,rect(x,92,572,202),{plane:'beam'});
+  for(const rig of concertSuspendedReflectors(model))drawConcertSuspendedReflector(c,rig,{shadow:false});
+ }
+}
+function overheadCutaways(model,{player,performance}={}){
+ const cuts=[rect(1696,0,704,360)];
+ // Gallery furniture stays on its fixed architectural ledges. The open roof
+ // is cut away above those ledges, just as it is above the playable stage.
+ for(const r of model.audience.balconies)for(let tier=0;tier<3;tier++)cuts.push(rect(r.x,r.y+178+tier*278,r.w,260));
+ // The native body cache has transparent padding above the visible hair.
+ // Cutting at its texture origin would bite into a cloud above a seated head.
+ // Visible seated hair begins about 155px above the actor's floor anchor.
+ for(const a of performance?.actors||[])cuts.push(rect(a.x-82,a.y-160,164,226));
+ if(Number.isFinite(player?.x)&&Number.isFinite(player?.y))cuts.push(rect(player.x-100,player.y-190,200,240));
+ return cuts;
+}
+function exclude(c,r,model){
+ c.beginPath();c.rect(0,0,model.width,model.height);c.rect(r.x,r.y,r.w,r.h);c.clip('evenodd');
+}
+
+/** Four cropped RGBA blits; beams, wires and clouds remain connected in space. */
+export function renderConcertHallOverhead(ctx,model=getConcertHall(),options={}){
+ prepareConcertHallArt();
+ const planes=concertHallOverheadPlanes(model,options),cuts=overheadCutaways(model,options);
+ if(!overhead){
+  const tiles=planes.map(p=>{
+   const canvas=makeCanvas(p.bounds.w,p.bounds.h);if(!canvas)return {...p,canvas:null};
+   const c=canvas.getContext('2d');c.imageSmoothingEnabled=false;c.translate(-p.bounds.x,-p.bounds.y);paintOverhead(c,model,p);
+   return {...p,canvas};
+  });
+  if(tiles.every(p=>p.canvas))overhead=tiles;
+ }
+ let blits=0;
+ for(let i=0;i<planes.length;i++){
+  const p=planes[i],b={...p.bounds,x:p.bounds.x+p.offset.x,y:p.bounds.y+p.offset.y};
+  if(options.viewport&&!overlaps(b,options.viewport))continue;
+  ctx.save();ctx.beginPath();ctx.rect(0,0,model.width,model.height);ctx.clip();ctx.imageSmoothingEnabled=false;
+  // Only nearby silhouettes add clips (normally none or one). No masks or
+  // temporary textures are allocated during walking or a seated camera drag.
+  for(const cut of cuts)if(overlaps(b,cut))exclude(ctx,cut,model);
+  if(overhead?.[i]?.canvas)ctx.drawImage(overhead[i].canvas,b.x,b.y);
+  else{ctx.translate(p.offset.x,p.offset.y);paintOverhead(ctx,model,p);}
+  ctx.restore();blits++;
+ }
+ return {blits,cachePixels:planes.reduce((sum,p)=>sum+p.bounds.w*p.bounds.h,0)};
 }
 
 /** Chair backs share the player's depth sort rather than flattening into the floor. */
@@ -115,7 +188,7 @@ function sconce(c,x,y){
 }
 function balcony(c,r,right=false){
  c.save();c.beginPath();c.rect(r.x,r.y,r.w,r.h);c.clip();
- drawAcousticShell(c,r,{right});
+ drawAcousticShell(c,r,{right,plane:'base'});
  // Three separate vineyard-style boxes step toward the stage. Their broad
  // beech fascias remain legible at the seated camera's smaller scale.
  for(let tier=0;tier<3;tier++){
@@ -158,23 +231,24 @@ export function concertSuspendedReflectors(model=getConcertHall()){
   shadow:{x:r.x+r.w*.12+16,y:r.y+r.h*.66+17,w:r.w*.84,h:r.h*.34},
   bodyTop:r.y+r.h*85/273,depth:320}));
 }
-export function drawConcertSuspendedReflector(c,r){
- c.save();c.save();c.beginPath();c.rect(r.x-8,136,r.w+32,158);c.clip();
+export function drawConcertSuspendedReflector(c,r,{shadow=true,suspension=true}={}){
+ c.save();
+ if(shadow){c.save();c.beginPath();c.rect(r.x-8,136,r.w+32,158);c.clip();
  // A displaced shadow falls on the recessed bay, visibly separated from the
  // cloud's lit skin. All of it remains behind the rear-stage performer line.
  const s=r.shadow;
  for(const [scale,color]of [[1,'#080d1626'],[.8,'#080d1638'],[.55,'#080d1645']]){
   c.fillStyle=color;c.beginPath();c.ellipse(s.x+s.w/2,s.y+s.h/2,s.w*scale/2,s.h*scale/2,0,0,Math.PI*2);c.fill();
  }
- c.restore();
+ c.restore();}
  // Suspension is not inside the shadow clip: each full wire runs from its
  // roof plate's underside into the native image's measured stem cap.
- for(const cable of r.cables){
+ if(suspension){for(const cable of r.cables){
   const {anchor:a,cap:b}=cable;line(c,a.x,a.y,b.x,b.y,'#293138',2);line(c,a.x+1,a.y,b.x+1,b.y,'#b6b2a1',1);
  }
  reflector(c,r.x,r.y,r.w,r.h);
  // Roof anchor plates are separate from the PNG's lower stem caps.
- for(const {anchor:a}of r.cables){fill(c,a.x-6,104,12,5,'#6e563b');fill(c,a.x-4,105,8,2,'#d2c5a9');}
+ for(const {anchor:a}of r.cables){fill(c,a.x-6,104,12,5,'#6e563b');fill(c,a.x-4,105,8,2,'#d2c5a9');}}
  c.restore();
 }
 function stage(c,s){
@@ -200,13 +274,15 @@ function drawHall(c,s){
  fill(c,82,1268,606,1244,'#29252c');fill(c,3408,1268,606,1244,'#29252c');
  for(const xx of [88,3414]){wood(c,xx,1302,594,1210,{light:false,vertical:true});for(let yy=1370;yy<2410;yy+=290){wallPanel(c,xx+20,yy-72,554,188);sconce(c,xx+300,yy+65);}}
  // A broad timber chamber and galleries, with the organ centered over the stage.
- drawAcousticCeiling(c,w);
+ // The fixed ceiling recess and gallery walls remain behind the independently
+ // projected timber. Their cast shade does not slide along with that timber.
+ fill(c,72,0,w-144,176,'#292326');
  for(let i=0;i<s.audience.balconies.length;i++)balcony(c,s.audience.balconies[i],i===1);
  stage(c,s);
  // An actual dark volume sits below each roof return. Moving the decorative
  // choir banks outboard leaves air behind the suspended acoustic clouds.
  for(const [x,right]of [[788,false],[2532,true]]){
-  drawAcousticAirBay(c,{x:right?2528:996,y:92,w:572,h:202});
+  drawAcousticAirBay(c,{x:right?2528:996,y:92,w:572,h:202},{plane:'shadow'});
   const bankX=right?3104:788;wood(c,bankX,294,224,26,{light:false});line(c,bankX,294,bankX+224,294,'#e9c389',3);
   for(let i=0;i<3;i++)chair(c,right?3260-i*66:840+i*66,298,.68);
  }
@@ -214,7 +290,7 @@ function drawHall(c,s){
  // Preserve the native organ's near-square proportions and reveal the red
  // acoustic panel bay that surrounds it in the modern Concert Hall.
  organ(c,1898,40,300,312);
- for(const rig of concertSuspendedReflectors(s))drawConcertSuspendedReflector(c,rig);
+ for(const rig of concertSuspendedReflectors(s))drawConcertSuspendedReflector(c,rig,{suspension:false});
  for(const x of [803,3293])sconce(c,x,390);
  // Interactive ground chairs are added through concertHallDrawables so their
  // backs correctly cover a visitor's feet on the north side of each row.

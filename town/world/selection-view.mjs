@@ -1,5 +1,5 @@
-import {height} from './model.mjs?v=opera-depth-1';
-import {selectionGeometry,selectionGeometryView} from './selection-geometry.mjs?v=opera-depth-1';
+import {height} from './model.mjs?v=opera-parallax-1';
+import {selectionGeometry,selectionGeometryView} from './selection-geometry.mjs?v=opera-parallax-1';
 
 const paths=new WeakMap();
 

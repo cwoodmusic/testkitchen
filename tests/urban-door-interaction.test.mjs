@@ -17,7 +17,7 @@ import {SHOWROOMS,STORE_FLOOR_COUNT,STORE_VERTICAL_CORE} from '../town/world/sho
 const urbanURL=new URL('../town/world/urban.mjs',import.meta.url);
 const controllerSource=readFileSync(urbanURL,'utf8').replace(/^import .*;\r?\n/gm,'').replace(/^export function /gm,'function ').replaceAll('import.meta.url',JSON.stringify(urbanURL.href))+'\n({createUrbanController,buildingDoor});';
 class Element{
- constructor(tag){this.tagName=tag;this.children=[];this.style={};this.dataset={};this.hidden=false;this.open=false;this.events=new Map();}
+ constructor(tag){this.tagName=tag;this.children=[];this.style={};this.dataset={};this.hidden=false;this.open=false;this.events=new Map();this.captures=new Set();}
  append(...children){this.children.push(...children);}
  replaceChildren(...children){this.children=[...children];}
  addEventListener(name,fn){this.events.set(name,fn);}
@@ -25,28 +25,31 @@ class Element{
  close(){this.open=false;this.events.get('close')?.();}
  showModal(){this.open=true;}
  focus(){}
+ setPointerCapture(id){this.captures.add(id);}
+ releasePointerCapture(id){this.captures.delete(id);}
+ hasPointerCapture(id){return this.captures.has(id);}
  getBoundingClientRect(){return {left:10,top:20,width:1200,height:760};}
  getContext(){return new Proxy({},{get:()=>()=>{},set:()=>true});}
 }
-function fixture({preview=false,furnishing=false}={}){
+function fixture({preview=false,furnishing=false,reducedMotion=false}={}){
  const catalog=new Map([...APARTMENT_COLLECTION_ASSETS,...FAMILY_FURNITURE_ASSETS].map(d=>[d.id,d]));
  for(const [id,urban]of [['tower','tower'],['store','shop'],['opera','opera']])catalog.set(id,{id,urban,w:1000,h:900,door:{x:500,y:880}});
  const objects=['tower','store','opera'].map((asset,i)=>({id:asset,asset,x:2000+i*4000,y:2000,scale:1,rotation:0}));
  const project={objects},original=JSON.stringify(project),outside={x:0,y:0},actors=[],elements=[],events=new Map(),win={CodaFurnitureCatalog:[]};let clock=0,storageWrites=0;const placements=[],renderCalls=[],drawn=[];
  if(furnishing){win.CodaFurnitureCatalog=[{id:'test-chair',asset:'collection-player-dining-chair',name:'Test chair',scale:1}];win.CodaNotesShop={createWallet:()=>({snapshot:()=>({balance:100,owned:['test-chair']})})};}
  const document={head:new Element('head'),body:new Element('body'),createElement(tag){const e=new Element(tag);elements.push(e);return e;}};
- const context={catalog,window:win,parent:win,document,location:{origin:'https://coda.invalid'},URL,performance:{now:()=>clock},matchMedia:()=>({matches:false}),localStorage:{getItem:()=>furnishing?null:'active-classroom',setItem(){storageWrites++;}},addEventListener:(type,fn)=>events.set(type,fn),setTimeout,
+ const context={catalog,window:win,parent:win,document,location:{origin:'https://coda.invalid'},URL,performance:{now:()=>clock},matchMedia:()=>({matches:reducedMotion}),localStorage:{getItem:()=>furnishing?null:'active-classroom',setItem(){storageWrites++;}},addEventListener:(type,fn)=>events.set(type,fn),setTimeout,
   FLOOR_COUNT,residents,getInterior,residentInteractionZones,configureUrbanInteriors,createAutomaticDoors,createConcertCurtain,drawConcertCurtain,interiorActorScale,effectiveInteriorZoom,presentedRoomItem,furniturePresentationScale,SHOWROOMS,STORE_FLOOR_COUNT,STORE_VERTICAL_CORE,
-  renderInterior(c,scene,options){renderCalls.push({scene,viewport:options.viewport});options.drawPlayer?.(c,options.player);},createRoomStorage(){if(!furnishing)throw Error('Unexpected storage access');return {load:()=>({ok:true}),snapshot:()=>[],place(item,x,y,rotation){placements.push({item,x,y,rotation});return {ok:true};}};},roomItemBoxes,apartmentDecorBounds:()=>[],apartmentWallDecorBounds:()=>[],furnitureFacingPlacement:()=>null,furnitureFacingBounds:()=>null,
+  renderInterior(c,scene,options){renderCalls.push({scene,viewport:options.viewport,camera:options.camera,reducedMotion:options.reducedMotion});options.drawPlayer?.(c,options.player);},createRoomStorage(){if(!furnishing)throw Error('Unexpected storage access');return {load:()=>({ok:true}),snapshot:()=>[],place(item,x,y,rotation){placements.push({item,x,y,rotation});return {ok:true};}};},roomItemBoxes,apartmentDecorBounds:()=>[],apartmentWallDecorBounds:()=>[],furnitureFacingPlacement:()=>null,furnitureFacingBounds:()=>null,
   createStagePerformance:()=>({assetIds:[]}),stagePerformanceSignature:()=> 'test-performance',stageCollisionBoxes:()=>[],CONCERT_PROGRAMME:[{id:'test-performance'}]};
  const {createUrbanController,buildingDoor}=vm.runInNewContext(controllerSource,context,{filename:urbanURL.pathname});
  const canvas=new Element('canvas');canvas.id='door-controller-test';const q=createUrbanController({canvas,getProject:()=>project,getPlayer:()=>outside,getResidents:()=>actors,preview});
  const ctx=new Proxy({},{get:(_target,key)=>()=>{},set:()=>true});
- const frame=(keys=new Set(),dt=.04)=>{clock+=dt*1000;return q.frame(ctx,keys,dt,clock,1200,760,(_c,x,y,state)=>drawn.push({x,y,state}));};
+ const frame=(keys=new Set(),dt=.04,{width=1200,height=760}={})=>{clock+=dt*1000;return q.frame(ctx,keys,dt,clock,width,height,(_c,x,y,state)=>drawn.push({x,y,state}));};
  const walk=(normal,seconds=1)=>{const keys=new Set([normal.x>.5?'d':normal.x<-.5?'a':normal.y>.5?'s':'w']);for(let t=0;t<seconds;t+=.04)frame(keys);};
  const key=key=>q.keydown({key,repeat:false,preventDefault(){}});
  const approach=p=>{Object.assign(q.player,p.approach);frame();};
- return {q,project,original,outside,actors,buildingDoor,frame,walk,key,approach,elements,canvas,placements,renderCalls,drawn,dialog:elements.find(e=>e.tagName==='dialog'),hint:elements.find(e=>e.className==='urban-prompt'),assertUntouched(){assert.equal(JSON.stringify(project),original);assert.equal(storageWrites,0);},unlock(id){events.get('message')({origin:'https://coda.invalid',source:win,data:{type:'coda-town-state-result',people:[{id,relationship:{count:5}}]}});}};
+ return {q,project,original,outside,actors,buildingDoor,frame,walk,key,approach,elements,events,canvas,placements,renderCalls,drawn,dialog:elements.find(e=>e.tagName==='dialog'),hint:elements.find(e=>e.className==='urban-prompt'),assertUntouched(){assert.equal(JSON.stringify(project),original);assert.equal(storageWrites,0);},unlock(id){events.get('message')({origin:'https://coda.invalid',source:win,data:{type:'coda-town-state-result',people:[{id,relationship:{count:5}}]}});}};
 }
 
 test('street entrances and lobby exits wait for E and stay closed to player proximity',()=>{
@@ -97,6 +100,60 @@ test('private camera compensation preserves actor presentation and uses the same
  const f=fixture();f.q.openRoom('player');f.frame();assert.equal(f.q.view.zoom,1.92);assert.equal(f.renderCalls.at(-1).viewport.w,1200/1.92);assert.equal(f.renderCalls.at(-1).viewport.h,760/1.92);
  assert.equal(f.drawn.at(-1).state.scale,undefined,'Actor draw calibration belongs to renderInterior, without a second controller scale');
  f.q.goFloor(1);f.frame();assert.equal(f.q.view.zoom,.72);assert.equal(f.renderCalls.at(-1).viewport.w,1200/.72);f.assertUntouched();
+});
+
+test('seated concert drag moves both camera axes after hall-fit clamping without moving the player or editing the map',()=>{
+ for(const reducedMotion of [false,true]){
+  const f=fixture({reducedMotion}),size={width:1200,height:1062},frame=keys=>f.frame(keys||new Set(),.04,size);
+  f.q.enterBuilding(f.project.objects.find(o=>o.asset==='opera'));frame();assert(f.q.watchSeat('seat-1-1'));frame();
+  const neutral={...f.q.view},player=JSON.stringify(f.q.player),seat=f.q.seated.id;
+  assert.equal(neutral.y,1280,'This viewport fits the whole hall vertically');
+  const pointer={pointerId:7,isPrimary:true,button:0,clientX:610,clientY:400,preventDefault(){}};
+  f.q.handlePointer(pointer);assert(f.canvas.hasPointerCapture(7));assert.equal(f.canvas.style.touchAction,'none');
+  f.canvas.events.get('pointermove')({...pointer,pointerId:8,clientX:-3000,clientY:-3000});frame();assert.equal(f.q.view.x,neutral.x,'A second pointer does not steer the view');
+  f.canvas.events.get('pointermove')({...pointer,clientX:-3000,clientY:-3000});frame();
+  assert.equal(f.q.view.x,neutral.x+120);assert.equal(f.q.view.y,neutral.y+72);
+  const options=f.renderCalls.at(-1);assert.equal(options.camera.x,f.q.view.x);assert.equal(options.camera.y,f.q.view.y);assert.equal(options.camera.zoom,neutral.zoom);assert.equal(options.camera.seated,true);assert.equal(options.camera.reference.x,neutral.x);assert.equal(options.camera.reference.y,neutral.y);assert.equal(options.reducedMotion,reducedMotion);
+  assert.equal(options.viewport.x+options.viewport.w/2,options.camera.x);assert.equal(options.viewport.y+options.viewport.h/2,options.camera.y);
+  assert.equal(JSON.stringify(f.q.player),player);assert.equal(f.q.seated.id,seat);assert.match(f.hint.textContent,/Drag to look/);
+  f.canvas.events.get('pointerup')(pointer);assert.equal(f.canvas.hasPointerCapture(7),false);assert.equal(f.canvas.style.cursor,'');
+  f.canvas.events.get('pointermove')({...pointer,clientX:3000,clientY:3000});frame();assert.equal(f.q.view.x,neutral.x+120,'Released drag must stop steering');
+  f.q.handlePointer(pointer);f.canvas.events.get('pointermove')({...pointer,clientX:3000,clientY:3000});frame();assert.equal(f.q.view.x,neutral.x-120);assert.equal(f.q.view.y,neutral.y-72);
+  f.canvas.events.get('pointercancel')(pointer);assert.equal(f.canvas.hasPointerCapture(7),false);f.assertUntouched();
+ }
+});
+
+test('leaving or changing a concert seat releases drag capture and clears its camera offset',()=>{
+ for(const exit of ['stand','interact','walk','scene','reset','seat']){
+  const f=fixture(),size={width:1200,height:1062},frame=keys=>f.frame(keys||new Set(),.04,size);
+  f.canvas.style.touchAction='pan-y';f.q.enterBuilding(f.project.objects.find(o=>o.asset==='opera'));frame();f.q.watchSeat('seat-1-1');frame();const neutral={...f.q.view};
+  const pointer={pointerId:3,isPrimary:true,button:0,clientX:610,clientY:400,preventDefault(){}};
+  f.q.handlePointer(pointer);f.canvas.events.get('pointermove')({...pointer,clientX:590,clientY:380});frame();assert(f.q.view.x>neutral.x);
+  if(exit==='stand')f.q.standUp();
+  if(exit==='interact')f.key('e');
+  if(exit==='walk'){frame(new Set(['d']));assert.equal(f.renderCalls.at(-1).camera.zoom,.72,'The first standing frame uses walking zoom');}
+  if(exit==='scene')f.q.goFloor(1);
+  if(exit==='reset')f.q.reset();
+  if(exit==='seat')f.q.watchSeat('seat-1-2');
+  assert.equal(f.canvas.hasPointerCapture(3),false,exit);assert.equal(f.canvas.style.cursor,'',exit);
+  assert.equal(f.canvas.style.touchAction,exit==='seat'?'none':'pan-y',exit);
+  if(f.q.scene?.kind!=='concert'){f.q.enterBuilding(f.project.objects.find(o=>o.asset==='opera'));frame();}
+  f.q.watchSeat('seat-1-1');frame();assert.equal(f.q.view.x,neutral.x,exit);assert.equal(f.q.view.y,neutral.y,exit);f.assertUntouched();
+ }
+ const f=fixture();f.q.enterBuilding(f.project.objects.find(o=>o.asset==='opera'));f.frame();f.q.watchSeat('seat-1-1');const pointer={pointerId:11,button:0,clientX:600,clientY:400,preventDefault(){}};f.q.handlePointer(pointer);f.events.get('blur')();assert.equal(f.canvas.hasPointerCapture(11),false,'Window blur releases a captured drag');
+});
+
+test('concert look input stays inactive outside a seat and when a programme dialog is open',()=>{
+ const f=fixture(),pointer={pointerId:9,isPrimary:true,button:0,clientX:600,clientY:400,preventDefault(){throw Error('Inactive input was consumed');}};
+ for(const place of ['town','apartment','lobby','concert']){
+  if(place==='town')f.q.reset();
+  if(place==='apartment')f.q.openRoom('player');
+  if(place==='lobby')f.q.goFloor(1);
+  if(place==='concert')f.q.enterBuilding(f.project.objects.find(o=>o.asset==='opera'));
+  f.frame();const before={...f.q.view};f.q.handlePointer(pointer);f.canvas.events.get('pointermove')({...pointer,clientX:100,clientY:100});f.frame();
+  assert.equal(f.canvas.hasPointerCapture(9),false,place);assert.equal(f.q.view.x,before.x,place);assert.equal(f.q.view.y,before.y,place);
+ }
+ f.q.watchSeat('seat-1-1');f.frame();f.q.handlePointer({...pointer,preventDefault(){}});assert(f.canvas.hasPointerCapture(9));f.q.showProgramme();assert.equal(f.canvas.hasPointerCapture(9),false,'Opening a modal releases an active drag');f.q.handlePointer(pointer);assert.equal(f.canvas.hasPointerCapture(9),false,'Modal input cannot begin a drag');f.assertUntouched();
 });
 
 test('private player speed, gait and foot clearance calibrate together while public movement is unchanged',()=>{

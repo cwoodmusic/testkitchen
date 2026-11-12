@@ -1,4 +1,4 @@
-import {cardinalFacing,furnitureFacingPlacement} from './furniture-facing.mjs?v=opera-depth-1';
+import {cardinalFacing,furnitureFacingPlacement} from './furniture-facing.mjs?v=opera-parallax-1';
 
 /** Metadata rejects distant objects before any view/canvas getter can warm art. */
 export function furnitureFacingPointHit(asset,object,pose,point){

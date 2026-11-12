@@ -1,5 +1,5 @@
-import {catalog,sources} from './catalog.mjs?v=opera-depth-1';
-import {cell,height} from './model.mjs?v=opera-depth-1';
+import {catalog,sources} from './catalog.mjs?v=opera-parallax-1';
+import {cell,height} from './model.mjs?v=opera-parallax-1';
 const tiles=new Map(),patterns=new WeakMap(),masks=new Map();
 export function scenePoint(o,a,x,y){const r=-o.rotation*Math.PI/180,dx=(x-o.x)/o.scale,dy=(y-o.y)/o.scale;return {x:dx*Math.cos(r)-dy*Math.sin(r)+a.w/2,y:dx*Math.sin(r)+dy*Math.cos(r)+a.h};}
 export function resolvePaving(d,x,y,wanted='auto'){let best=null,distance=Infinity;for(const o of d.objects){const a=catalog.get(o.asset);if(!a?.pavingSource||wanted!=='auto'&&wanted!==a.id)continue;const p=scenePoint(o,a,x,y),dx=Math.max(0,-p.x,p.x-a.w),dy=Math.max(0,-p.y,p.y-a.h),dist=Math.hypot(dx,dy)*o.scale;if(dist<distance){distance=dist;best={asset:a,object:o};}}if(best&&(wanted!=='auto'||distance<768))return best;const asset=catalog.get(wanted)||catalog.get('music-square');return {asset:asset?.pavingSource?asset:catalog.get('music-square'),object:null};}

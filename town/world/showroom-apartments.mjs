@@ -1,5 +1,5 @@
-import {APARTMENT_COLLECTION_ASSETS,getApartmentAsset} from './apartment-collections.mjs?v=opera-depth-1';
-import {furnitureFacingBoxes,furnitureFacingDepth,furnitureAtGroundCenter} from './furniture-facing.mjs?v=opera-depth-1';
+import {APARTMENT_COLLECTION_ASSETS,getApartmentAsset} from './apartment-collections.mjs?v=opera-parallax-1';
+import {furnitureFacingBoxes,furnitureFacingDepth,furnitureAtGroundCenter} from './furniture-facing.mjs?v=opera-parallax-1';
 const native=new Map(APARTMENT_COLLECTION_ASSETS.map(a=>[a.id,a]));
 const rect=(x,y,w,h)=>({x,y,w,h}),point=(x,y)=>({x,y});
 const rooms=[

@@ -70,6 +70,25 @@ test('the suspended bay has an opaque roof soffit and a fading open bottom witho
  dispose(cv);
 });
 
+test('the projected timber contains transparent air while its detached shadows stay in the base plane',()=>{
+ const r={x:100,y:200,w:360,h:480},base=createCanvas(WIDTH,HEIGHT),roof=createCanvas(WIDTH,HEIGHT);
+ drawAcousticShell(base.getContext('2d'),r,{plane:'base'});drawAcousticShell(roof.getContext('2d'),r,{plane:'roof'});
+ const b=bytes(base),p=bytes(roof);let opaqueBaseAir=0,timber=0;
+ for(let y=r.y;y<r.y+r.h;y++)for(let x=r.x;x<r.x+r.w;x++){
+  const i=(y*WIDTH+x)*4;
+  if(b[i+3]===255&&p[i+3]===0)opaqueBaseAir++;
+  if(p[i+3]>128)timber++;
+ }
+ assert(opaqueBaseAir>r.w*r.h*.25,'A roof layer must not carry the opaque gallery-wall rectangle');
+ assert(timber>r.w*r.h*.1,'Structural returns must still occupy their own elevated plane');
+ const beam=createCanvas(WIDTH,HEIGHT),shade=createCanvas(WIDTH,HEIGHT),bay={x:100,y:92,w:572,h:202};
+ drawAcousticAirBay(beam.getContext('2d'),bay,{plane:'beam'});drawAcousticAirBay(shade.getContext('2d'),bay,{plane:'shadow'});
+ assert(beam.getContext('2d').getImageData(300,100,1,1).data[3]>128);
+ assert.equal(beam.getContext('2d').getImageData(300,230,1,1).data[3],0,'Dark air-pocket backing must not travel with the suspension');
+ assert(shade.getContext('2d').getImageData(300,230,1,1).data[3]>32,'The detached soft cast shade remains on the fixed rear surface');
+ for(const cv of [base,roof,beam,shade])dispose(cv);
+});
+
 test('the acoustic timber and red stage panels retain readable contrast when zoomed out',()=>{
  for(const entry of cases){
   const cv=createCanvas(WIDTH,HEIGHT);entry.draw(cv.getContext('2d'));

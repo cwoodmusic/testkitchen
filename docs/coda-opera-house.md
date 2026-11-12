@@ -4,9 +4,9 @@ The Opera House is a movable, south-facing **Urban kit** landmark. Search for **
 
 The exterior’s floor plate and the concert hall both measure **4096 × 2560 world units**. The tall sail roofs have their own transparent padding, collision outline and depth slices. The sandstone approach stays walkable; warm windows and uplights use the town’s existing night-light renderer.
 
-The enterable hall adapts the supplied Concert Hall reference to the game camera: sweeping honey-colored timber shells with deep undersides, stepped side galleries, recessed pairs of ceiling lights and red acoustic panels. Pink reflectors hang from roof beams over dark air bays, with visible suspension and space beneath them. A smaller silver-pipe organ sits inside the recessed red stage bay. There are 196 usable ground-floor seats with central, side and cross aisles. The raised stage has a broad staircase. Chairs, architectural tiers, performers and instruments have physical collision.
+The enterable hall adapts the supplied Concert Hall reference to the game camera: sweeping honey-colored timber shells with deep undersides, stepped side galleries, recessed pairs of ceiling lights and red acoustic panels. The ceiling and suspended pink reflectors occupy separate overhead layers that shift relative to the room as the camera moves. Their cast shadows remain on the room surfaces, and cutaways preserve the organ and performance sightlines. A smaller silver-pipe organ sits inside the recessed red stage bay. There are 196 usable ground-floor seats with central, side and cross aisles. The raised stage has a broad staircase. Chairs, architectural tiers, performers and instruments have physical collision.
 
-Press **E** at a seat to sit and watch. The camera frames the stage while seated. Press **E**, use **WASD**, or choose **Stand up** to return to the aisle and the walking camera. The entrance, **Go outside**, and **Escape** return to the town.
+Press **E** at a seat to sit and watch. The camera frames the stage while seated; **drag the concert view** to look around a little. Press **E**, use **WASD**, or choose **Stand up** to return to the aisle and the walking camera. With reduced motion enabled, deliberate dragging still pans the view and the extra overhead parallax is suppressed. The entrance, **Go outside**, and **Escape** return to the town.
 
 ## Performances and music
 
@@ -22,10 +22,14 @@ Full recording sources, attribution and processing details are in [opera-music-s
 
 The concert model tests check every seat’s collision and route from the entrance, stage access and the exact shared floor size. Performer tests cover the actual programme’s ensemble identities, instrumentation, poses, depth ordering and cached native sprites. Audio tests cover shuffle order, gesture handling, bounded failed-track recovery, preferences, lifecycle cleanup and source/time continuity across scene changes.
 
+Motion checks compare the fixed room with the two overhead depths during dragging and walking, including touch, reduced motion and pointer cleanup. The four cropped overhead textures are reused across camera changes; late native-art loads refresh both the room and overhead caches.
+
 Run `python3 tests/town-opera-browser.py` for real keyboard walking and seating, stage changes, decoded audio, volume transitions, credits, frame timing and screenshots in an isolated browser save. The test never writes the supplied map source.
 
-Reference update: [whole hall](town-preview/opera-reference-hall.webp?v=opera-depth-1) · [watch view](town-preview/opera-reference-watch.webp?v=opera-depth-1).
+Reference update: [whole hall](town-preview/opera-reference-hall.webp?v=opera-parallax-1) · [watch view](town-preview/opera-reference-watch.webp?v=opera-parallax-1).
 
-Release previews: [exterior](town-preview/coda-opera-exterior.png), [whole hall](town-preview/coda-opera-hall.png?v=opera-depth-1), [orchestra](town-preview/coda-opera-orchestra.png?v=opera-depth-1), [jazz](town-preview/coda-opera-jazz.png?v=opera-depth-1), [Chopin](town-preview/coda-opera-chopin.png?v=opera-depth-1), [Liszt](town-preview/coda-opera-liszt.png?v=opera-depth-1).
+Motion demo: [dragging and walking in the actual game](town-preview/opera-parallax-actual.webm?v=opera-parallax-1).
+
+Release previews: [exterior](town-preview/coda-opera-exterior.png), [whole hall](town-preview/coda-opera-hall.png?v=opera-parallax-1), [orchestra](town-preview/coda-opera-orchestra.png?v=opera-parallax-1), [jazz](town-preview/coda-opera-jazz.png?v=opera-parallax-1), [Chopin](town-preview/coda-opera-chopin.png?v=opera-parallax-1), [Liszt](town-preview/coda-opera-liszt.png?v=opera-parallax-1).
 
 The browser checks cover desktop and narrow-screen framing, every seat approach, physical walking routes, chair depth, stage collisions, curtain changes, performer poses, credits and audio continuity across the entrance. The supplied map remains byte-for-byte unchanged.
