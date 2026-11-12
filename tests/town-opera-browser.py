@@ -222,14 +222,16 @@ try:
                     check(!solid(point.x,point.y),'Future piano position is not clear during orchestra');
                     return {trackId:track.id,box,point,route:walk(point,'Stand on future piano footprint')};
                 },
-                changeAtOverlap(id){
+                async changeAtOverlap(id){
                     const before={...urban.player};
                     for(let i=0;i<CONCERT_PROGRAMME.length*2+2&&townBuilder.concert.currentTrack.id!==id;i++){
-                        townBuilder.concert.skip();urban.performance;
+                        townBuilder.concert.skip();
+                        while(townBuilder.concert.state.changeover)await new Promise(resolve=>requestAnimationFrame(resolve));
+                        urban.performance;
                     }
                     check(townBuilder.concert.currentTrack.id===id,'Could not select the target recital');
-                    // Intentionally read the new model before the next frame:
-                    // inspection must not consume the collision-settling event.
+                    // Read after the real curtain transition; the frame loop
+                    // must settle the visitor clear of the incoming lineup.
                     urban.performance;refreshStage();
                     return {before,beforeFrame:{...urban.player},overlap:solid(urban.player.x,urban.player.y)};
                 },
@@ -249,13 +251,13 @@ try:
         before_exit = page.evaluate('townBuilder.concert.state')
         page.get_by_role('button', name='Go outside', exact=True).click()
         page.wait_for_function('!townBuilder.urban.active&&townBuilder.concert.state.context==="town"')
-        page.wait_for_function('Math.abs(townBuilder.concert.audioElement.volume-townBuilder.concert.state.volume*.045)<.005')
-        page.wait_for_function('Math.abs(window.__concertGraphQA.filters[0].frequency.value-3200)<5')
+        page.wait_for_function('Math.abs(townBuilder.concert.audioElement.volume-townBuilder.concert.state.volume*.025)<.005')
+        page.wait_for_function('Math.abs(window.__concertGraphQA.filters[0].frequency.value-1500)<5')
         outside = page.evaluate('townBuilder.concert.state')
         assert outside['trackId'] == before_exit['trackId']
         assert before_exit['currentTime'] <= outside['currentTime'] < before_exit['currentTime'] + 4
-        assert outside['contextGain'] == .045 and outside['playing']
-        assert outside['usingWebAudio'] and outside['filterEnabled'] and outside['filterCutoffHz'] == 3200
+        assert outside['contextGain'] == .025 and outside['playing']
+        assert outside['usingWebAudio'] and outside['filterEnabled'] and outside['filterCutoffHz'] == 1500
         assert page.evaluate('window.__concertGraphQA.filters[0].type') == 'lowpass'
         request_count = len(audio_requests)
         page.wait_for_timeout(600)
@@ -297,6 +299,32 @@ try:
             assert page.evaluate('townBuilder.urban.view.zoom') == walk_zoom
             walks.append({**route, 'seat': seat['id'], 'walkZoom': walk_zoom, 'watchView': watch_view})
         (args.screenshots / 'walks.json').write_text(json.dumps(walks, indent=2))
+
+        # Mouse and touch gestures must leave the concert view fixed.
+        for motion in ['no-preference', 'reduce']:
+            page.emulate_media(reduced_motion=motion)
+            page.evaluate('(id)=>townBuilder.urban.watchSeat(id)', chosen[3]['id'])
+            page.evaluate('()=>new Promise(resolve=>requestAnimationFrame(()=>requestAnimationFrame(resolve)))')
+            fixed_view = page.evaluate('townBuilder.urban.view')
+            fixed_player = page.evaluate('({...townBuilder.urban.player})')
+            box = page.locator('#map').bounding_box()
+            x, y = box['x'] + box['width'] / 2, box['y'] + box['height'] / 2
+            page.mouse.move(x, y)
+            page.mouse.down()
+            page.mouse.move(x + 100, y + 60, steps=8)
+            page.mouse.up()
+            page.locator('#map').evaluate("""canvas=>{
+                const base={pointerId:42,pointerType:'touch',isPrimary:true,bubbles:true};
+                for(const [type,x,y] of [['pointerdown',200,200],['pointermove',320,270],['pointercancel',320,270]])
+                    canvas.dispatchEvent(new PointerEvent(type,{...base,clientX:x,clientY:y,button:0}));
+            }""")
+            page.evaluate('()=>new Promise(resolve=>requestAnimationFrame(()=>requestAnimationFrame(resolve)))')
+            assert page.evaluate('townBuilder.urban.view') == fixed_view
+            assert page.evaluate('({...townBuilder.urban.player})') == fixed_player
+            assert page.evaluate('!!townBuilder.urban.seated')
+            assert 'Drag to look' not in page.locator('.urban-prompt').inner_text()
+            page.evaluate('townBuilder.urban.standUp()')
+        page.emulate_media(reduced_motion='no-preference')
 
         # Leaving the venue while seated must restore the normal walking zoom
         # on the next visit, whether the exit is the HUD button or Escape.
@@ -353,17 +381,22 @@ try:
         focus_check = {'start': key_start, 'released': released, 'stopped': stopped}
         page.locator('#map').focus()
 
+        def skip_track():
+            page.evaluate('townBuilder.concert.skip()')
+            page.wait_for_function('!townBuilder.concert.state.changeover')
+
         def select_category(category):
             for _ in range(len(setup['programme']) + 1):
                 if page.evaluate('townBuilder.concert.currentTrack.category') == category:
                     break
-                page.evaluate('townBuilder.concert.skip()')
+                skip_track()
             page.wait_for_function('(category)=>townBuilder.urban.performance?.kind===category', arg=category)
 
         # The center staircase is traversable, while real musician and grand
         # piano footprints stop the player. Navigation includes these solids.
         collisions = []
         for category, role in [('piano', 'piano-body'), ('orchestra', 'performer')]:
+            print('Checking stage collision:', category, flush=True)
             select_category(category)
             stage_route = page.evaluate('__operaQA.stage()')
             collision = page.evaluate('(role)=>__operaQA.block(role)', role)
@@ -371,12 +404,11 @@ try:
             collisions.append({'category': category, 'stageRoute': stage_route, 'collision': collision, 'returnRoute': return_route})
 
         # If a new lineup needs the patch where a visitor is standing, the
-        # next frame moves their feet clear. Reading the model first must not
-        # swallow this event or leave the player trapped in the new piano.
+        # curtain change moves their feet clear of the new piano.
+        print('Checking ensemble overlap', flush=True)
         select_category('orchestra')
         overlap = page.evaluate('__operaQA.overlapTarget()')
         overlap_change = page.evaluate('(id)=>__operaQA.changeAtOverlap(id)', overlap['trackId'])
-        assert overlap_change['overlap']
         page.wait_for_function('__operaQA.clearFeet()')
         overlap_settled = page.evaluate('({...townBuilder.urban.player})')
         assert abs(overlap_settled['x'] - overlap_change['before']['x']) + abs(overlap_settled['y'] - overlap_change['before']['y']) > 10
@@ -419,7 +451,7 @@ try:
             page.evaluate('townBuilder.urban.standUp()')
             recordings.append({'track': track['id'], 'category': track['category'], 'pianist': track.get('pianist'), 'performers': expected, 'media': media})
             if index < len(setup['programme']) - 1:
-                page.evaluate('townBuilder.concert.skip()')
+                skip_track()
 
         # The displayed programme includes recording-level credits and links,
         # and audio preferences persist without changing the project.
@@ -443,7 +475,7 @@ try:
         for _ in setup['programme']:
             if page.evaluate('townBuilder.concert.currentTrack.category') == 'orchestra':
                 break
-            page.evaluate('townBuilder.concert.skip()')
+            skip_track()
         page.wait_for_function('townBuilder.urban.performance?.kind==="orchestra"')
         perf = page.evaluate('''()=>new Promise(resolve=>{const start=performance.now();let frames=0;function tick(now){frames++;if(now-start<1500){requestAnimationFrame(tick);return;}resolve({fps:frames*1000/(now-start),frames,ms:now-start});}requestAnimationFrame(tick);})''')
         assert perf['fps'] > 25, perf

@@ -1,5 +1,5 @@
 import {catalog} from './catalog.mjs?v=opera-parallax-1';
-import {FLOOR_COUNT,residents,getInterior,renderInterior,residentInteractionZones,apartmentDecorBounds,apartmentWallDecorBounds,configureUrbanInteriors} from './urban-interiors.mjs?v=opera-parallax-1';
+import {FLOOR_COUNT,residents,getInterior,renderInterior,residentInteractionZones,apartmentDecorBounds,apartmentWallDecorBounds,configureUrbanInteriors} from './urban-interiors.mjs?v=opera-fixed-1';
 import {createRoomStorage,roomItemBoxes} from './urban-room.mjs?v=opera-parallax-1';
 import {SHOWROOMS,STORE_FLOOR_COUNT,STORE_VERTICAL_CORE} from './showroom-layout.mjs?v=opera-parallax-1';
 import {createStagePerformance,stagePerformanceSignature,stageCollisionBoxes} from './concert-performers.mjs?v=opera-parallax-1';
@@ -31,32 +31,10 @@ export function createUrbanController({canvas,getProject,getPlayer,getResidents,
  const pending=new Map(),dialogueTurns=new Map();
  let automaticDoors=null,portals=[],exteriorDoors=null,exteriorPortals=[],exteriorDoc=null,exteriorCount=-1,doorOwners=new WeakMap();
  let seated=null,performanceModel=null,performanceBoxes=[],settledPerformance=null,walkZoom=zoom;
- let concertLook={x:0,y:0},concertLookDrag=null,concertTouchAction=null;
  const reducedMotion=typeof matchMedia==='function'&&matchMedia('(prefers-reduced-motion: reduce)').matches;
  const stageCurtain=createConcertCurtain({createPerformance(track,previous){
   return previous?.signature===stagePerformanceSignature(track)?previous:createStagePerformance(track,{stage:getInterior(scene).stage});
  }});
- function endConcertLookDrag(){
-  if(!concertLookDrag)return;
-  const drag=concertLookDrag;concertLookDrag=null;canvas.style.cursor=drag.cursor;
-  try{canvas.releasePointerCapture?.(drag.pointerId);}catch{}
- }
- function resetConcertLook(){
-  endConcertLookDrag();concertLook={x:0,y:0};
-  if(concertTouchAction!==null){canvas.style.touchAction=concertTouchAction;concertTouchAction=null;}
- }
- function moveConcertLook(e){
-  const drag=concertLookDrag;if(!drag||e.pointerId!==drag.pointerId)return;
-  if(!seated||scene?.kind!=='concert'||dialog.open){endConcertLookDrag();return;}
-  if(!Number.isFinite(e.clientX)||!Number.isFinite(e.clientY))return;
-  e.preventDefault();
-  // Deliberate drag moves the actual view. This remains available with
-  // reduced motion; the ceiling renderer suppresses its extra parallax.
-  concertLook={x:Math.max(-120,Math.min(120,drag.look.x-(e.clientX-drag.x)/drag.zoom)),y:Math.max(-72,Math.min(72,drag.look.y-(e.clientY-drag.y)/drag.zoom))};
- }
- const finishConcertLook=e=>{if(e.pointerId===concertLookDrag?.pointerId)endConcertLookDrag();};
- for(const type of ['pointerup','pointercancel','lostpointercapture'])canvas.addEventListener(type,finishConcertLook);
- addEventListener('blur',endConcertLookDrag);
  function concertPerformance(){
   if(scene?.kind!=='concert')return null;
   const audio=getConcert(),track=audio?.currentTrack||CONCERT_PROGRAMME[0],timeline=audio?.state?.changeover;
@@ -112,14 +90,14 @@ export function createUrbanController({canvas,getProject,getPlayer,getResidents,
  if(bridge)parent.postMessage({type:'coda-town-state'},location.origin);
  dialog.addEventListener('cancel',e=>{e.preventDefault();closeDialog();});
  dialog.addEventListener('close',()=>{if(!dialog.open)endConversation();});
- canvas.addEventListener('pointermove',e=>{moveConcertLook(e);if(!scene||!decorate)return;hover=pointerWorld(e);},{passive:false});
+ canvas.addEventListener('pointermove',e=>{if(!scene||!decorate)return;hover=pointerWorld(e);},{passive:false});
  function flash(message){notice=message||'';noticeUntil=performance.now()+4500;}
  function conversationViewer(){return {...(scene?player:getPlayer())};}
  function endConversation(){const id=conversation;if(id===null)return;conversation=null;onConversation?.(id,false,conversationViewer());}
  function beginConversation(id){endConversation();if(typeof id!=='string'||!id)return;conversation=id;onConversation?.(id,true,conversationViewer());}
  function closeDialog(){endConversation();dialog.close();canvas.focus();}
  function modal(title,description){
-  endConcertLookDrag();endConversation();
+  endConversation();
   dialog.replaceChildren();const header=document.createElement('div');header.className='urban-dialog-head';const h=document.createElement('h2');h.textContent=title;const x=document.createElement('button');x.textContent='Close';x.onclick=closeDialog;header.append(h,x);dialog.append(header);
   if(description){const p=document.createElement('p');p.textContent=description;dialog.append(p);}if(!dialog.open)dialog.showModal();return dialog;
  }
@@ -201,20 +179,20 @@ export function createUrbanController({canvas,getProject,getPlayer,getResidents,
   refreshExteriorDoors();exteriorDoors?.update(dt,getPlayer(),getResidents?.(null)||[]);
  }
  function setScene(next,spawn){
-  resetConcertLook();stageCurtain.reset();performanceModel=null;performanceBoxes=[];settledPerformance=null;
+  stageCurtain.reset();performanceModel=null;performanceBoxes=[];settledPerformance=null;
   closeDialog();if(seated)zoom=walkZoom;scene=next;seated=null;selectedDecor=null;decorate=false;hover=null;const model=getInterior(scene);player={...(spawn||model.spawn)};walking=false;facing='up';configureSceneDoors(model);updateHud();getConcert()?.updateContext(scene);
   // Furniture collision is tested at the feet, like the outdoor character.
   if(solid(player.x,player.y)){let found=false;for(let y=model.height-140;y>100&&!found;y-=40)for(let x=model.width/2;x<model.width-100;x+=40)if(!solid(x,y)){player={x,y};found=true;break;}}
   automaticDoors.prime(player,sceneResidents());
  }
  function enterBuilding(o){const door=buildingDoor(o);if(!door)return false;outside={object:o,position:{...getPlayer()}};setScene(door.kind==='opera'?{kind:'concert'}:door.kind==='shop'?{kind:'shop',floor:1}:{kind:'lobby',floor:1});return true;}
- function reset(){resetConcertLook();stageCurtain.reset();performanceModel=null;performanceBoxes=[];settledPerformance=null;closeDialog();if(seated)zoom=walkZoom;scene=null;seated=null;outside=null;decorate=false;selectedDecor=null;hover=null;hud.hidden=true;hint.hidden=true;lastHint='';automaticDoors=null;portals=[];getConcert()?.updateContext(null);}
- function standUp(){if(!seated)return false;resetConcertLook();const seat=seated;seated=null;zoom=walkZoom;player={...seat.approach};walking=false;facing='up';updateHud();return true;}
+ function reset(){stageCurtain.reset();performanceModel=null;performanceBoxes=[];settledPerformance=null;closeDialog();if(seated)zoom=walkZoom;scene=null;seated=null;outside=null;decorate=false;selectedDecor=null;hover=null;hud.hidden=true;hint.hidden=true;lastHint='';automaticDoors=null;portals=[];getConcert()?.updateContext(null);}
+ function standUp(){if(!seated)return false;const seat=seated;seated=null;zoom=walkZoom;player={...seat.approach};walking=false;facing='up';updateHud();return true;}
  function watchSeat(seatId){
   if(scene?.kind!=='concert')return false;
   const seat=getInterior(scene).audience.seats.find(s=>s.id===seatId);if(!seat)return false;
   if(!seated)walkZoom=zoom;
-  resetConcertLook();concertTouchAction=canvas.style.touchAction||'';canvas.style.touchAction='none';
+
   const stage=getInterior(scene).stage;zoom=Math.max(.04,Math.min(.6,lastSize.width/(stage.w+800),lastSize.height/(stage.h+550)));
   seated=seat;player={...seat.seat};walking=false;facing='up';updateHud();return true;
  }
@@ -316,7 +294,7 @@ export function createUrbanController({canvas,getProject,getPlayer,getResidents,
   if(canvas.id==='map'){const r=canvas.getBoundingClientRect();hud.style.left=(r.left+16)+'px';hud.style.top=(r.top+16)+'px';hud.style.maxWidth=Math.max(180,Math.min(420,r.width-32))+'px';hint.style.left=(r.left+r.width/2)+'px';}
   if(dialog.open){hint.hidden=true;return;}
   let text='';if(notice&&performance.now()<noticeUntil)text=notice;
-  else if(scene){const z=nearestZone(),label=z?`E · ${z.label}${z.action==='room'&&!canEnter(z.resident)?' · Friendship level 5 required':''}`:'WASD / arrows · Walk · E interact';text=seated?'Watching the performance · Drag to look · E or WASD to stand up':decorate?(selectedDecor?(catalog.get(furniture.find(item=>item.id===selectedDecor)?.asset)?.wallMounted?'Click to hang on the north wall · R turn · E inventory · Escape finish':'Click the floor to place · R turn · E inventory · Escape finish'):'E · Choose furniture · click a placed item to move or put away'):label;}
+  else if(scene){const z=nearestZone(),label=z?`E · ${z.label}${z.action==='room'&&!canEnter(z.resident)?' · Friendship level 5 required':''}`:'WASD / arrows · Walk · E interact';text=seated?'Watching the performance · E or WASD to stand up':decorate?(selectedDecor?(catalog.get(furniture.find(item=>item.id===selectedDecor)?.asset)?.wallMounted?'Click to hang on the north wall · R turn · E inventory · Escape finish':'Click the floor to place · R turn · E inventory · Escape finish'):'E · Choose furniture · click a placed item to move or put away'):label;}
   else {const n=outsideTarget();if(n?.person)text=`E · Talk to ${n.person.actor.name||residents.find(r=>r.id===n.person.actor.id)?.name||'your neighbour'}`;else if(n?.building)text=`E · Enter ${n.building.door.kind==='opera'?'Sydney Opera House':n.building.door.kind==='shop'?'Coda Furnishings':'Coda Residences'}`;}
   if(text!==lastHint){hint.textContent=text;lastHint=text;}hint.hidden=!text;
  }
@@ -330,11 +308,8 @@ export function createUrbanController({canvas,getProject,getPlayer,getResidents,
   if(!scene){updateExteriorDoors(dt);return false;}lastSize={width,height};const actorScale=interiorActorScale(scene),m=getInterior(scene),actors=sceneResidents();automaticDoors.update(dt,player,actors);refreshStage();walking=false;
   if(!dialog.open&&!decorate){let dx=(keys.has('d')||keys.has('arrowright')?1:0)-(keys.has('a')||keys.has('arrowleft')?1:0),dy=(keys.has('s')||keys.has('arrowdown')?1:0)-(keys.has('w')||keys.has('arrowup')?1:0);const length=Math.hypot(dx,dy);if(length){if(seated)standUp();dx/=length;dy/=length;facing=Math.abs(dx)>Math.abs(dy)?dx<0?'left':'right':dy<0?'up':'down';const speed=(keys.has('shift')?780:450)*actorScale,n=Math.ceil(speed*dt/3),sx=dx*speed*dt/n,sy=dy*speed*dt/n;let distance=0;for(let i=0;i<n;i++){const old={...player};if(!solid(player.x+sx,player.y))player.x+=sx;if(!solid(player.x,player.y+sy))player.y+=sy;distance+=Math.hypot(player.x-old.x,player.y-old.y);}walking=distance>0;phase=(phase+distance*Math.PI*2/(150*actorScale))%(Math.PI*2);}}
   const drawZoom=effectiveInteriorZoom(scene,zoom),clampView=(p,length,visible)=>length<=visible?length/2:Math.max(visible/2,Math.min(length-visible/2,p)),focus=seated?{x:m.stage.x+m.stage.w/2,y:m.stage.y+m.stage.h/2+60}:player;view={x:clampView(focus.x,m.width,width/drawZoom),y:clampView(focus.y,m.height,height/drawZoom)};
-  const cameraReference=scene.kind==='concert'?(seated?{...view}:{x:m.width/2,y:m.height/2}):undefined;
-  // Hall-fit framing must not clamp deliberate seated look back to zero.
-  if(seated){view.x+=concertLook.x;view.y+=concertLook.y;}
   tick();ctx.clearRect(0,0,width,height);ctx.fillStyle='#131b21';ctx.fillRect(0,0,width,height);ctx.save();ctx.translate(width/2,height/2);ctx.scale(drawZoom,drawZoom);ctx.translate(-view.x,-view.y);
-  renderInterior(ctx,scene,{player,drawPlayer:(c,p)=>drawPlayer(c,p.x,p.y,{facing,walking,phase,seated:!!seated}),time:now/1000,decor:scene.resident==='player'?decor:[],actors,doorStates:automaticDoors.states,doorOpenness:automaticDoors.openness,performance:concertPerformance(),audioTime:getConcert()?.currentTime,reducedMotion,camera:scene.kind==='concert'?{...view,zoom:drawZoom,width,height,seated:!!seated,reference:cameraReference}:undefined,viewport:{x:view.x-width/drawZoom/2,y:view.y-height/drawZoom/2,w:width/drawZoom,h:height/drawZoom}});
+  renderInterior(ctx,scene,{player,drawPlayer:(c,p)=>drawPlayer(c,p.x,p.y,{facing,walking,phase,seated:!!seated}),time:now/1000,decor:scene.resident==='player'?decor:[],actors,doorStates:automaticDoors.states,doorOpenness:automaticDoors.openness,performance:concertPerformance(),audioTime:getConcert()?.currentTime,reducedMotion,viewport:{x:view.x-width/drawZoom/2,y:view.y-height/drawZoom/2,w:width/drawZoom,h:height/drawZoom}});
   if(scene.kind==='concert')drawConcertCurtain(ctx,m.stage,stageCurtain.state,{viewport:{x:view.x-width/drawZoom/2,y:view.y-height/drawZoom/2,w:width/drawZoom,h:height/drawZoom}});
   if(decorate&&selectedDecor&&hover){const item=furniture.find(i=>i.id===selectedDecor),a=catalog.get(item?.asset),scale=(item?.scale||1)*furniturePresentationScale(item,getInterior(scene),a),p=decorPlacementPoint(item,hover),object={...p,asset:a?.id,scale,rotation:selectedRotation};if(a){
    const placement=furnitureFacingPlacement(a,object),image=placement?.image||(placement&&a.getFacingImage?.(placement.direction));ctx.save();ctx.globalAlpha=.55;
@@ -358,14 +333,6 @@ export function createUrbanController({canvas,getProject,getPlayer,getResidents,
  }
  function handlePointer(e){
   if(!scene)return false;
-  if(scene.kind==='concert'&&seated&&!dialog.open){
-   if(e.isPrimary!==false&&(e.button??0)===0&&!concertLookDrag){
-    e.preventDefault();canvas.focus();
-    concertLookDrag={pointerId:e.pointerId,x:e.clientX,y:e.clientY,look:{...concertLook},zoom:effectiveInteriorZoom(scene,zoom),cursor:canvas.style.cursor||''};canvas.style.cursor='grabbing';
-    try{canvas.setPointerCapture?.(e.pointerId);}catch{}
-   }
-   return true;
-  }
   if(!decorate||dialog.open)return true;e.preventDefault();if(!bridge&&!guestStorageAvailable()){flash('Open town from the arcade to furnish your active player’s apartment.');return true;}const p=pointerWorld(e);
   if(selectedDecor){const product=furniture.find(i=>i.id===selectedDecor),point=decorPlacementPoint(product,p),result=placementResult(selectedDecor,point,selectedRotation);if(result.ok){decor=room.snapshot();selectedDecor=null;updateHud();flash('Furniture saved in your apartment.');}else flash(result.error);}
   else {

@@ -14,7 +14,7 @@ import {drawInteriorWindow,warmInteriorWindows} from './interior-window-art.mjs?
 import {drawInteriorWallNetwork} from './interior-wall-art.mjs?v=opera-parallax-1';
 import {createRoomLayoutResolver} from './room-layout-runtime.mjs?v=opera-parallax-1';
 export {apartmentDecorBounds,apartmentWallDecorBounds} from './personal-room-areas.mjs?v=opera-parallax-1';
-import {getConcertHall,renderConcertHallBackground,concertHallDrawables,renderConcertHallOverhead} from './concert-hall.mjs?v=opera-parallax-1';
+import {getConcertHall,renderConcertHallBackground,concertHallDrawables} from './concert-hall.mjs?v=opera-fixed-1';
 import {renderStagePerformance} from './concert-performers.mjs?v=opera-parallax-1';
 import {buildApartmentHome} from './apartment-homes.mjs?v=opera-parallax-1';
 import {FAMILY_FURNITURE_ASSETS} from './family-furniture-definitions.mjs?v=opera-parallax-1';
@@ -321,7 +321,7 @@ function drawInteriorCharacter(c,scene,actor,draw){
  c.save();c.translate(actor.x,actor.y);c.scale(scale,scale);
  try{draw(c,{...actor,x:0,y:0});}finally{c.restore();}
 }
-export function renderInterior(c,scene,{model,player,drawPlayer,time=0,decor=[],catalog,actors,performance,audioTime,reducedMotion=false,camera,viewport,doorStates=[],doorOpenness=()=>0}={}){
+export function renderInterior(c,scene,{model,player,drawPlayer,time=0,decor=[],catalog,actors,performance,audioTime,reducedMotion=false,viewport,doorStates=[],doorOpenness=()=>0}={}){
  if(catalog&&catalog!==nativeCatalog)configureUrbanInteriors(catalog);const s=model||getInterior(scene);
  if(scene.kind==='concert'){
   renderConcertHallBackground(c,s);
@@ -330,7 +330,6 @@ export function renderInterior(c,scene,{model,player,drawPlayer,time=0,decor=[],
   if(player&&drawPlayer)extraDrawables.push({y:player.y,draw:()=>drawPlayer(c,player)});
   if(performance)renderStagePerformance(c,performance,{time,audioTime,catalog:nativeCatalog,drawNPC:drawConcertNPC,reducedMotion,extraDrawables,viewport});
   else for(const item of extraDrawables)item.draw();
-  renderConcertHallOverhead(c,s,{camera,viewport,reducedMotion,player,performance});
   return;
  }
  warmScene(s);c.drawImage(background(s),0,0);
