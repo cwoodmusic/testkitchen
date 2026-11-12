@@ -1,9 +1,9 @@
 import {catalog} from './catalog.mjs?v=opera-parallax-1';
-import {FLOOR_COUNT,residents,getInterior,renderInterior,residentInteractionZones,apartmentDecorBounds,apartmentWallDecorBounds,configureUrbanInteriors} from './urban-interiors.mjs?v=opera-fixed-1';
+import {FLOOR_COUNT,residents,getInterior,renderInterior,residentInteractionZones,apartmentDecorBounds,apartmentWallDecorBounds,configureUrbanInteriors} from './urban-interiors.mjs?v=opera-players-1';
 import {createRoomStorage,roomItemBoxes} from './urban-room.mjs?v=opera-parallax-1';
 import {SHOWROOMS,STORE_FLOOR_COUNT,STORE_VERTICAL_CORE} from './showroom-layout.mjs?v=opera-parallax-1';
-import {createStagePerformance,stagePerformanceSignature,stageCollisionBoxes} from './concert-performers.mjs?v=opera-parallax-1';
-import {CONCERT_PROGRAMME} from './concert-programme.mjs?v=opera-parallax-1';
+import {createStagePerformance,updateStageProgramme,stagePerformanceSignature,stageCollisionBoxes} from './concert-performers.mjs?v=opera-players-1';
+import {CONCERT_PROGRAMME} from './concert-programme.mjs?v=opera-players-1';
 import {createConcertCurtain,drawConcertCurtain} from './concert-curtain.mjs?v=opera-parallax-1';
 import {createAutomaticDoors} from './automatic-doors.mjs?v=opera-parallax-1';
 import {furnitureFacingPlacement,furnitureFacingBounds} from './furniture-facing.mjs?v=opera-parallax-1';
@@ -33,7 +33,7 @@ export function createUrbanController({canvas,getProject,getPlayer,getResidents,
  let seated=null,performanceModel=null,performanceBoxes=[],settledPerformance=null,walkZoom=zoom;
  const reducedMotion=typeof matchMedia==='function'&&matchMedia('(prefers-reduced-motion: reduce)').matches;
  const stageCurtain=createConcertCurtain({createPerformance(track,previous){
-  return previous?.signature===stagePerformanceSignature(track)?previous:createStagePerformance(track,{stage:getInterior(scene).stage});
+  return previous?.signature===stagePerformanceSignature(track)?updateStageProgramme(previous,track):createStagePerformance(track,{stage:getInterior(scene).stage});
  }});
  function concertPerformance(){
   if(scene?.kind!=='concert')return null;

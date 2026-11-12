@@ -3,6 +3,8 @@
 const tracks = [
   {
     "id": "grieg-morning",
+    "timeSignature": {"numerator": 6, "denominator": 8},
+    "bpm": 60,
     "title": "Morning Mood — Peer Gynt, Op. 46 No. 1",
     "composer": "Edvard Grieg",
     "compositionYear": 1875,
@@ -26,6 +28,8 @@ const tracks = [
   },
   {
     "id": "chopin-nocturne",
+    "timeSignature": {"numerator": 12, "denominator": 8},
+    "bpm": 54,
     "title": "Nocturne in E-flat major, Op. 9 No. 2",
     "composer": "Frédéric Chopin",
     "compositionYear": "1830–1832",
@@ -49,6 +53,8 @@ const tracks = [
   },
   {
     "id": "oliver-dippermouth",
+    "timeSignature": {"numerator": 4, "denominator": 4},
+    "bpm": 112,
     "title": "Dippermouth Blues",
     "composer": "Joe “King” Oliver and Louis Armstrong",
     "compositionYear": 1923,
@@ -72,6 +78,8 @@ const tracks = [
   },
   {
     "id": "beethoven-storm",
+    "timeSignature": {"numerator": 4, "denominator": 4},
+    "bpm": 80,
     "title": "Symphony No. 6 “Pastoral” — IV. Thunderstorm",
     "composer": "Ludwig van Beethoven",
     "compositionYear": 1808,
@@ -95,6 +103,8 @@ const tracks = [
   },
   {
     "id": "liszt-consolation",
+    "timeSignature": {"numerator": 4, "denominator": 4},
+    "bpm": 54,
     "title": "Consolation No. 3 in D-flat major, S. 172",
     "composer": "Franz Liszt",
     "compositionYear": 1850,
@@ -118,6 +128,8 @@ const tracks = [
   },
   {
     "id": "wolverines-riverboat",
+    "timeSignature": {"numerator": 4, "denominator": 4},
+    "bpm": 120,
     "title": "Riverboat Shuffle",
     "composer": "Hoagy Carmichael and Dick Voynow",
     "compositionYear": 1924,
@@ -141,6 +153,8 @@ const tracks = [
   },
   {
     "id": "grieg-mountain-king",
+    "timeSignature": {"numerator": 4, "denominator": 4},
+    "bpm": 112,
     "title": "In the Hall of the Mountain King — Peer Gynt, Op. 46 No. 4",
     "composer": "Edvard Grieg",
     "compositionYear": 1875,
@@ -164,6 +178,8 @@ const tracks = [
   },
   {
     "id": "debussy-clair-de-lune",
+    "timeSignature": {"numerator": 9, "denominator": 8},
+    "bpm": 50,
     "title": "Clair de lune — Suite bergamasque",
     "composer": "Claude Debussy",
     "compositionYear": "1890; revised 1905",

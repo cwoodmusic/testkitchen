@@ -616,9 +616,9 @@ window.createCodaCharacterRenderer=function(api){
     const armSwing=Math.round(stride*.6),leftArm=side?-9:-13,rightArm=side?5:9;
     const raised=['wave','point','robot','dance'].includes(pose.gesture);
     const special=['cheer','clap','shrug','heart','peace','airguitar','curtsy','salute','facepalm','think'].includes(pose.gesture);
-    // Concert strings and pianists supply both posed arms with the instrument.
+    // Concert musicians supply both posed arms with their instrument.
     // Keep the ordinary hands for every other NPC and all existing activities.
-    if(motion.instrumentPose!=='violin'&&motion.instrumentPose!=='viola'&&motion.instrumentPose!=='piano'){
+    if(motion.instrumentPose!=='violin'&&motion.instrumentPose!=='viola'&&motion.instrumentPose!=='piano'&&motion.instrumentPose!=='concert'){
     if(pose.seated){
       // Relaxed elbows and hands rest inward on the lap. Keep the original
       // standing/arcade emotes untouched unless a real bench requests it.

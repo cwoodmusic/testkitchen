@@ -1,3 +1,4 @@
+import {conductingGeometry,conductingMeter} from './concert-conducting.mjs?v=opera-players-1';
 import {assetImage} from './asset-color.mjs?v=opera-parallax-1';
 import {drawViolinPlayingPose} from './concert-string-art.mjs?v=opera-parallax-1';
 
@@ -48,7 +49,7 @@ const PIANISTS=Object.freeze({chopin:CHOPIN,liszt:LISZT,debussy:DEBUSSY});
 
 function actor(instrument,section,index,x,y,options={}){
  const id=options.id||`concert-${section}-${index}`;
- return {id,actorId:id,name:options.name||`${section} musician ${index+1}`,instrument,section,x:Math.round(x),y:Math.round(y),facing:options.facing||'down',seated:options.seated??!['double-bass','percussion','conductor','jazz'].includes(section),walking:false,activity:'playing',phase:(index*.618)%TAU,appearance:options.appearance||musicianAppearance(index,options.jazz),...(['violin','viola','piano'].includes(instrument)?{instrumentPose:instrument}:{}),...options};
+ return {id,actorId:id,name:options.name||`${section} musician ${index+1}`,instrument,section,x:Math.round(x),y:Math.round(y),facing:options.facing||'down',seated:options.seated??!['double-bass','percussion','conductor','jazz'].includes(section),walking:false,activity:'playing',phase:(index*.618)%TAU,appearance:options.appearance||musicianAppearance(index,options.jazz),instrumentPose:['violin','viola','piano'].includes(instrument)?instrument:'concert',...options};
 }
 function prop(asset,x,y,w,h,depth,role,owner){return {asset,x:Math.round(x),y:Math.round(y),w,h,depth,role,owner};}
 function rowX(bounds,index,count){return bounds.x+bounds.w*(index+.5)/count;}
@@ -58,9 +59,9 @@ function attachInstruments(performance){
   if(a.instrument==='cello')props.push(prop('decor-02-01',a.x+24,a.y+6,67,119,a.y+.1,'instrument',a.id));
   if(a.instrument==='double-bass')props.push(prop('decor-02-03',a.x+37,a.y+7,90,169,a.y+.1,'instrument',a.id));
   if(a.instrument==='tuba')props.push(prop('decor-04-05',a.x+19,a.y+2,84,104,a.y+.1,'instrument',a.id));
-  if(a.instrument==='timpani')props.push(prop('decor-03-12',a.x,a.y+6,151,112,a.y+.1,'instrument',a.id));
-  if(a.instrument==='bass-drum')props.push(prop('decor-03-09',a.x+9,a.y+6,110,112,a.y+.1,'instrument',a.id));
-  if(a.instrument==='gong')props.push(prop('decor-03-16',a.x+34,a.y+4,119,142,a.y+.1,'instrument',a.id));
+  if(a.instrument==='timpani')props.push(prop('decor-03-12',a.x,a.y+70,151,112,a.y+.1,'instrument',a.id));
+  if(a.instrument==='bass-drum')props.push(prop('decor-03-09',a.x+9,a.y+68,110,112,a.y+.1,'instrument',a.id));
+  if(a.instrument==='gong')props.push(prop('decor-03-16',a.x+26,a.y+88,119,142,a.y+.1,'instrument',a.id));
   // The drummer sits behind the cymbal line. Position the kit forward so
   // its high cymbals cannot cover the seated player's head and shoulders.
   if(a.instrument==='drums')props.push(prop('decor-03-07',a.x,a.y+77,197,154,a.y+.1,'instrument',a.id));
@@ -121,7 +122,17 @@ export function createStagePerformance(program={},options={}){
  const {kind,pianist}=programmeType(program),stage=stageGeometry(options.stage||{});
  const performance={kind,pianist,signature:stagePerformanceSignature(program),programmeId:String(program.id||program.title||kind),bpm:bounded(finite(program.bpm,kind==='jazz'?124:kind==='piano'?76:92),36,220),stage,actors:[],props:[]};
  if(kind==='jazz')jazz(performance);else if(kind==='piano')recital(performance);else orchestra(performance);
+ updateStageProgramme(performance,program);
  performance.assetIds=[...new Set(performance.props.map(p=>p.asset))];
+ return performance;
+}
+
+/** Update musical timing without replacing an ensemble or its cached bodies. */
+export function updateStageProgramme(performance,program={}){
+ const meter=conductingMeter(program.timeSignature);
+ performance.timeSignature={numerator:meter.numerator,denominator:meter.denominator};
+ performance.bpm=bounded(finite(program.bpm,performance.kind==='jazz'?124:performance.kind==='piano'?76:92),36,220);
+ performance.beatOffset=Math.max(0,finite(program.beatOffset,0));
  return performance;
 }
 
@@ -189,7 +200,11 @@ function pixelLine(ctx,x1,y1,x2,y2,color,width=1){
 function hand(ctx,x,y,skin){rectangle(ctx,x,y,4,3,skin);rectangle(ctx,x+1,y,2,1,'#e8c6a0');}
 function arms(ctx,a,left,right){
  const skin=a.appearance.skin,shirt=a.appearance.shirt,offset=a.seated?8:0;
- pixelLine(ctx,-11,-22+offset,left[0],left[1],shirt,4);pixelLine(ctx,11,-22+offset,right[0],right[1],shirt,4);
+ for(const [side,target]of [[-1,left],[1,right]]){
+  const elbow=[side*16,-16+offset];
+  pixelLine(ctx,side*10,-23+offset,...elbow,shirt,4);
+  pixelLine(ctx,...elbow,...target,skin,3);
+ }
  hand(ctx,...left,skin);hand(ctx,...right,skin);
 }
 function chair(ctx,a){
@@ -200,9 +215,16 @@ function chair(ctx,a){
 
 function violin(ctx,a,beat){drawViolinPlayingPose(ctx,a,beat);}
 function bowedBass(ctx,a,beat){
- const o=a.seated?8:0,motion=Math.sin(beat+a.phase),bass=a.instrument==='double-bass';
- arms(ctx,a,[bass?13:9,-25+o],[10+Math.round(motion*4),-11+o]);
- pixelLine(ctx,-8+motion*4,-16+o,23+motion*4,-9+o,'#4f342c',2);pixelLine(ctx,-8+motion*4,-15+o,23+motion*4,-8+o,'#e9d9b9');
+ const o=a.seated?8:0,stroke=Math.sin(beat+a.phase)*5,bass=a.instrument==='double-bass';
+ // The left hand stays on the neck. The bow travels sideways across the
+ // bridge, with its grip outside the torso rather than pumping in the lap.
+ const neck=[15,bass?-43:-30+o],grip=[-17+stroke,bass?-24:-12+o];
+ if(bass&&a.jazz){
+  arms(ctx,a,neck,[18,-23]);rectangle(ctx,18+Math.round(Math.sin(beat+a.phase)),-25,2,3,a.appearance.skin);return;
+ }
+ arms(ctx,a,neck,grip);
+ pixelLine(ctx,grip[0]-4,grip[1]-2,27+stroke,grip[1]+3,'#4f342c',2);
+ pixelLine(ctx,grip[0]-4,grip[1]-1,27+stroke,grip[1]+4,'#e9d9b9');
 }
 function woodwind(ctx,a,beat){
  const o=a.seated?8:0,tap=Math.round(Math.sin(beat*2+a.phase));
@@ -214,35 +236,58 @@ function woodwind(ctx,a,beat){
   pixelLine(ctx,0,-27+o,12,bassoon?3:-5+o,wood,bassoon?4:3);
   if(bassoon)pixelLine(ctx,12,3,17,-26+o,'#b98750',3);
   for(let y=-21+o;y<-5+o;y+=4)rectangle(ctx,4+(y+21-o)/3,y,2,1,'#c8bd9a');
-  rectangle(ctx,9,-5+o,7,3,bassoon?'#5e3c2d':'#222831');arms(ctx,a,[2,-19+o+tap],[7,-11+o-tap]);
+  rectangle(ctx,9,-5+o,7,3,bassoon?'#5e3c2d':'#222831');arms(ctx,a,[2,-21+o],[7,-16+o]);
  }
 }
 function brass(ctx,a,beat){
  const o=a.seated?8:0,tap=Math.round(Math.sin(beat*2+a.phase)),gold='#c39b52',light='#e9cd83',ink='#5c4839';
- if(a.instrument==='tuba'){arms(ctx,a,[5,-19+o],[13,-11+o+tap]);return;}
+ if(a.instrument==='tuba'){arms(ctx,a,[10,-24+o],[17,-18+o]);return;}
  if(a.instrument==='horn'){
   rectangle(ctx,-1,-21+o,15,14,ink);rectangle(ctx,1,-19+o,11,10,gold);rectangle(ctx,4,-17+o,5,5,'#38323a');
   pixelLine(ctx,2,-23+o,14,-16+o,light,2);rectangle(ctx,13,-19+o,7,8,gold);rectangle(ctx,19,-21+o,3,12,light);
-  arms(ctx,a,[0,-20+o],[9,-13+o+tap]);return;
+  arms(ctx,a,[0,-22+o],[14,-18+o]);return;
  }
- const slide=a.instrument==='trombone'?13+Math.round((Math.sin(beat+a.phase)+1)*3):0;
- pixelLine(ctx,0,-27+o,22+slide,-22+o,gold,3);pixelLine(ctx,0,-28+o,22+slide,-23+o,light);
- rectangle(ctx,21+slide,-25+o,5,9,ink);rectangle(ctx,21+slide,-24+o,3,7,light);
- if(slide){pixelLine(ctx,8,-19+o,34+slide,-15+o,gold,2);pixelLine(ctx,34+slide,-15+o,34+slide,-21+o,light,2);}
- else{rectangle(ctx,6,-21+o,12,4,gold);for(const x of [7,11,15])rectangle(ctx,x,-24+o,2,6,light);}
- arms(ctx,a,[5,-22+o],[13+(slide?slide*.5:0),-20+o+tap]);
+ if(a.instrument==='trombone'){
+  const extension=6+(Math.sin(beat+a.phase)+1)*5;
+  // The bell and mouthpiece stay fixed; only the parallel U-slide moves.
+  pixelLine(ctx,0,-27+o,27,-25+o,gold,3);rectangle(ctx,25,-29+o,5,10,light);
+  for(const y of [-22,-17])pixelLine(ctx,8,y+o,27+extension,y+o,gold,2);
+  pixelLine(ctx,27+extension,-22+o,27+extension,-17+o,light,2);
+  arms(ctx,a,[5,-24+o],[22+extension,-20+o]);return;
+ }
+ pixelLine(ctx,0,-27+o,22,-22+o,gold,3);pixelLine(ctx,0,-28+o,22,-23+o,light);
+ rectangle(ctx,21,-25+o,5,9,ink);rectangle(ctx,21,-24+o,3,7,light);
+ rectangle(ctx,6,-21+o,12,4,gold);for(const x of [7,11,15])rectangle(ctx,x,-24+o,2,6,light);
+ arms(ctx,a,[5,-24+o],[13,-22+o]);
+ // Valve fingers move one pixel, while both hands keep their playing grip.
+ rectangle(ctx,12,-24+o+tap,2,2,a.appearance.skin);
 }
+
 function banjo(ctx,a,beat){
- const sway=Math.round(Math.sin(beat*2+a.phase)*2);
+ const sway=Math.round(Math.sin(beat*2+a.phase));
  rectangle(ctx,-4,-19,15,18,'#453331');rectangle(ctx,-6,-15,19,10,'#453331');rectangle(ctx,-3,-17,13,14,'#dbc7a0');
  rectangle(ctx,-2,-15,11,10,'#eadcc0');pixelLine(ctx,7,-19,23,-34,'#79533b',4);pixelLine(ctx,7,-18,24,-34,'#d8c48d');
- for(const x of [0,3,6])rectangle(ctx,x,-15,1,10,'#b09565');arms(ctx,a,[17,-28],[2+sway,-10]);
+ for(const x of [0,3,6])rectangle(ctx,x,-15,1,10,'#b09565');arms(ctx,a,[20,-29],[6,-13+sway]);
 }
+export function percussionPlayingGeometry(a,beat){
+ const o=a.seated?8:0,phase=beat+finite(a.phase,0);
+ const strike=angle=>{const f=((angle/TAU)%1+1)%1;return f<.2?f/.2:1-(f-.2)/.8;};
+ const stick=(grip,pulse,length,side=1,mallet=true)=>{
+  const angle=-1.25+strike(pulse)*3.15;
+  return {grip,tip:[grip[0]+side*Math.cos(angle)*length,grip[1]+Math.sin(angle)*length],mallet};
+ };
+ if(a.instrument==='gong')return {left:[-17,-20],right:[18,-18],sticks:[stick([18,-18],phase,26)]};
+ if(a.instrument==='bass-drum')return {left:[-16,-19],right:[15,-17],sticks:[stick([15,-17],phase,23)]};
+ const left=[-17,-18+o],right=[17,-18+o],mallet=a.instrument!=='drums';
+ return {left,right,sticks:[stick(left,phase,18,1,mallet),stick(right,phase+Math.PI,18,-1,mallet)]};
+}
+
 function percussion(ctx,a,beat){
- const o=a.seated?8:0,lift=Math.sin(beat*2+a.phase),left=-12,right=10;
- arms(ctx,a,[left,-17+o+lift*3],[right,-17+o-lift*3]);
- pixelLine(ctx,left,-16+o+lift*3,left-8,-30+o+lift*6,'#d6b98a',2);pixelLine(ctx,right+2,-16+o-lift*3,right+10,-30+o-lift*6,'#d6b98a',2);
- if(a.instrument!=='drums'){rectangle(ctx,left-9,-32+o+lift*6,5,5,'#e6d6b5');rectangle(ctx,right+9,-32+o-lift*6,5,5,'#e6d6b5');}
+ const pose=percussionPlayingGeometry(a,beat);arms(ctx,a,pose.left,pose.right);
+ for(const {grip,tip,mallet}of pose.sticks){
+  pixelLine(ctx,...grip,...tip,'#d6b98a',2);
+  if(mallet)rectangle(ctx,tip[0]-2,tip[1]-2,5,5,'#e6d6b5');
+ }
 }
 function pianoHands(ctx,a,beat){
  const tap=Math.round(Math.sin(beat*3+a.phase)),skin=a.appearance.skin,shirt=a.appearance.shirt;
@@ -251,12 +296,13 @@ function pianoHands(ctx,a,beat){
  pixelLine(ctx,4,-22,12,-18,shirt,4);pixelLine(ctx,12,-18,19,-19-tap,shirt,3);
  hand(ctx,18,-14+tap,skin);hand(ctx,19,-19-tap,skin);
 }
-function conductorHands(ctx,a,beat){
- const phase=beat*.5,left=[-15+Math.sin(phase)*6,-26+Math.cos(phase)*8],right=[13+Math.cos(phase)*9,-30+Math.sin(phase)*11];
- arms(ctx,a,left,right);pixelLine(ctx,right[0]+1,right[1],right[0]+9,right[1]-16,'#f1e4c0');
+function conductorHands(ctx,a,clock,performance){
+ const g=conductingGeometry(clock,performance);
+ arms(ctx,a,[g.left.x,g.left.y],[g.right.x,g.right.y]);
+ pixelLine(ctx,g.right.x+1,g.right.y,g.batonTip.x,g.batonTip.y,'#f1e4c0');
 }
-function drawPlaying(ctx,a,clock,bpm){
- const beat=clock*bpm/60*TAU;
+function drawPlaying(ctx,a,clock,performance){
+ const beat=clock*performance.bpm/60*TAU;
  ctx.save();ctx.translate(a.x,a.y-(a.seated?SEAT_DROP:0));ctx.scale(SCALE,SCALE);
  switch(a.instrument){
   case 'violin':case 'viola':violin(ctx,a,beat);break;
@@ -266,7 +312,7 @@ function drawPlaying(ctx,a,clock,bpm){
   case 'banjo':banjo(ctx,a,beat);break;
   case 'timpani':case 'bass-drum':case 'gong':case 'drums':percussion(ctx,a,beat);break;
   case 'piano':pianoHands(ctx,a,beat);break;
-  case 'baton':conductorHands(ctx,a,beat);break;
+  case 'baton':conductorHands(ctx,a,clock,performance);break;
  }
  ctx.restore();
 }
@@ -304,7 +350,7 @@ export function renderStagePerformance(ctx,performance,options={}){
   const source=images?.get(a);
   if(source)ctx.drawImage(source,Math.round(a.x-78),Math.round(a.y-(a.seated?SEAT_DROP:0)-160));
   else drawNPC(ctx,{...a,y:a.y-(a.seated?SEAT_DROP:0),emoteTime:clock,walking:false},clock);
- }});queue.push({depth:a.y+.2,draw:()=>drawPlaying(ctx,a,clock,performance.bpm)});}
+ }});queue.push({depth:a.y+.2,draw:()=>drawPlaying(ctx,a,clock,performance)});}
  for(const p of performance.props)if(visible(concertPropBounds(p,catalogAsset(options.catalog,p.asset)),view))queue.push({depth:p.depth,draw:()=>drawAsset(ctx,p,options.catalog)});
  // The visiting player can share the same depth sort on the stage. Callers
  // own these drawables; the performance never moves or stores them.

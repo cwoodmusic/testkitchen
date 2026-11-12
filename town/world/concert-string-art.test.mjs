@@ -37,14 +37,15 @@ test('bow hair stays across the bridge while a connected right hand slides the b
  assert.notDeepEqual(violinPlayingGeometry(actor,0).bowGrip,violinPlayingGeometry(actor,1).bowGrip);
 });
 
-test('native bodies omit lap hands only for string and piano overlays; unrelated pixels stay identical',()=>{
+test('native bodies omit resting hands for concert poses; unrelated pixels stay identical',()=>{
  const sandbox={window:{}};runInNewContext(readFileSync(new URL('../../character-renderer.js',import.meta.url),'utf8'),sandbox);
  const renderer=sandbox.window.createCodaCharacterRenderer({worldScale:1,reducedMotion:()=>true});
  const frame=(instrumentPose,facing)=>{const cv=createCanvas(128,144),c=cv.getContext('2d');renderer.drawNPC(c,{...actor,x:64,y:100,facing,instrumentPose},.6);return c.getImageData(0,0,128,144).data;};
  for(const facing of ['down','right']){
- const normal=frame(undefined,facing),unknown=frame('clarinet',facing),violin=frame('violin',facing),viola=frame('viola',facing),piano=frame('piano',facing);
+ const normal=frame(undefined,facing),unknown=frame('clarinet',facing),violin=frame('violin',facing),viola=frame('viola',facing),piano=frame('piano',facing),concert=frame('concert',facing);
  assert.deepEqual(unknown,normal,'Unknown instrument flags must not alter ordinary characters');
  assert.deepEqual(viola,violin,'Both bowed shoulder strings use the same body-only boundary');
+ assert.deepEqual(concert,violin,'Other instrument overlays suppress the same resting arms');
  assert.deepEqual(piano,violin,'The right-facing keyboard pose supplies its own arms through the same boundary');
  assert.notDeepEqual(violin,normal,'The native lap hands must disappear before posed arms are drawn');
  let changed=0;
