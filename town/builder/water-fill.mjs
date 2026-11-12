@@ -1,6 +1,6 @@
-import {COLS,ROWS,TILE,RISE,cell,key,height} from '../world/model.mjs?v=north-walls-1';
-import {roundedUnder,curveUnder} from '../world/round-geometry.mjs?v=north-walls-1';
-import {readPaint,encodePaint,materialKey} from '../world/ground-paint.mjs?v=north-walls-1';
+import {COLS,ROWS,TILE,RISE,cell,key,height} from '../world/model.mjs?v=opera-shells-1';
+import {roundedUnder,curveUnder} from '../world/round-geometry.mjs?v=opera-shells-1';
+import {readPaint,encodePaint,materialKey} from '../world/ground-paint.mjs?v=opera-shells-1';
 
 // Rounded terrain can contain two physical floors inside one tile. Small local
 // components keep a lower corner from joining another basin across high land.

@@ -1,4 +1,4 @@
-import {ROOM_LAYOUT_FORMAT,ROOM_LAYOUT_VERSION} from './room-layout-model.mjs?v=north-walls-1';
+import {ROOM_LAYOUT_FORMAT,ROOM_LAYOUT_VERSION} from './room-layout-model.mjs?v=opera-shells-1';
 
 export const ROOM_LAYOUT_STORAGE_PREFIX='codaRoomLayoutsV1:';
 export const ROOM_LAYOUTS_FORMAT='coda-room-layouts';

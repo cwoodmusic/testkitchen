@@ -1,5 +1,5 @@
-import {APARTMENT_DECOR,APARTMENT_DECOR_ALIASES} from './apartment-decor-definitions.mjs?v=north-walls-1';
-export {APARTMENT_DECOR,APARTMENT_DECOR_ALIASES} from './apartment-decor-definitions.mjs?v=north-walls-1';
+import {APARTMENT_DECOR,APARTMENT_DECOR_ALIASES} from './apartment-decor-definitions.mjs?v=opera-shells-1';
+export {APARTMENT_DECOR,APARTMENT_DECOR_ALIASES} from './apartment-decor-definitions.mjs?v=opera-shells-1';
 
 // Keep the native silhouettes and pixel proportions. Purchased legacy items
 // use this same contain fit inside their original world canvas and boxes.

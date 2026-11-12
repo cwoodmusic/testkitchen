@@ -1,5 +1,6 @@
 // The hall shares the Opera House lot's exact floor area. Architecture is static;
 // the programme supplies its own musicians, instruments and animated performance.
+import {drawAcousticCeiling,drawAcousticShell,drawOrganAcousticPanels} from './concert-acoustics.mjs?v=opera-shells-1';
 export const CONCERT_FOOTPRINT=Object.freeze({width:4096,height:2560});
 const rect=(x,y,w,h)=>({x,y,w,h});
 const zone=(id,label,x,y,w,h,action,extra={})=>({id,label,x,y,w,h,action,...extra});
@@ -75,8 +76,8 @@ function line(c,x,y,x2,y2,color,width=2){c.strokeStyle=color;c.lineWidth=width;c
 function sprite(c,name,x,y,w,h){const im=art.get(name);if(!im)return false;c.drawImage(im,Math.round(x),Math.round(y),Math.round(w),Math.round(h));return true;}
 function glow(c,x,y,r,color){const g=c.createRadialGradient(x,y,2,x,y,r);g.addColorStop(0,color);g.addColorStop(1,'#ffcc7700');c.fillStyle=g;c.fillRect(x-r,y-r,r*2,r*2);}
 function wood(c,x,y,w,h,{light=false,vertical=false}={}){
- c.save();c.beginPath();c.rect(x,y,w,h);c.clip();fill(c,x,y,w,h,light?'#a67c4e':'#735038');
- const grain=light?['#ad8355','#b18a5b','#9d7448','#a47a4d']:['#79563c','#805d41','#715037','#896145'];
+ c.save();c.beginPath();c.rect(x,y,w,h);c.clip();fill(c,x,y,w,h,light?'#cc9858':'#a8753e');
+ const grain=light?['#d1a166','#d9ad73','#c79352','#d1a064']:['#ae7b43','#b88449','#a7743d','#bd8b50'];
  const plank=28,length=224;
  if(vertical){
   for(let xx=x;xx<x+w;xx+=plank){fill(c,xx+1,y,plank-2,h,grain[Math.floor(xx/plank)%4]);line(c,xx+3,y,xx+3,y+h,'#e9be7730');for(let yy=y+(Math.floor(xx/plank)%3)*68;yy<y+h;yy+=length)line(c,xx,yy,xx+plank,yy,'#3b2c2650');}
@@ -113,19 +114,25 @@ function sconce(c,x,y){
  if(!sprite(c,'sconce',x-36,y-118,72,120)){fill(c,x-7,y-62,14,64,'#a68143');polygon(c,[[x-24,y-86],[x+24,y-86],[x+15,y-48],[x-15,y-48]],'#ffdf9c');}
 }
 function balcony(c,r,right=false){
- fill(c,r.x-8,r.y+16,r.w+16,r.h+20,'#1a1921a0');wood(c,r.x,r.y,r.w,r.h,{light:false});
- for(let row=0;row<7;row++){
-  const yy=r.y+170+row*126,inset=(6-row)*15;
-  fill(c,r.x+inset,yy-80,r.w-inset*2,110,'#3a2928');
-  for(let col=0;col<6;col++)chair(c,r.x+72+inset+col*(r.w-144-inset*2)/5,yy,.9);
-  line(c,r.x+inset,yy+12,r.x+r.w-inset,yy+12,'#d4a564',4);
+ c.save();c.beginPath();c.rect(r.x,r.y,r.w,r.h);c.clip();
+ drawAcousticShell(c,r,{right});
+ // Three separate vineyard-style boxes step toward the stage. Their broad
+ // beech fascias remain legible at the seated camera's smaller scale.
+ for(let tier=0;tier<3;tier++){
+  const y=r.y+190+tier*278,outer=26+tier*8,inner=r.w-22-(2-tier)*20;
+  const local=x=>right?r.x+r.w-x:r.x+x;
+  const left=right?local(inner):local(outer),width=inner-outer;
+  fill(c,left,y-12,width,194,'#6a4030');wood(c,left+5,y-8,width-10,180,{light:false});
+  for(let row=0;row<2;row++)for(let col=0;col<8;col++)chair(c,local(outer+30+(inner-outer-60)*col/7),y+61+row*72,.72);
+  const points=[[local(outer),y+153],[local(inner),y+173],[local(inner),y+248],[local(outer),y+229]];
+  polygon(c,points,'#7f4d29');
+  polygon(c,[[local(outer+3),y+158],[local(inner-3),y+178],[local(inner-3),y+235],[local(outer+3),y+218]],'#d4a367');
+  line(c,local(outer),y+153,local(inner),y+173,'#f0ce95',5);
+  line(c,local(outer+4),y+219,local(inner-4),y+237,'#9d6e3b',4);
+  for(let i=1;i<11;i++){const x=outer+(inner-outer)*i/11,ratio=(x-outer)/(inner-outer);line(c,local(x),y+166+ratio*20,local(x),y+216+ratio*18,'#a36d3838',2);}
+  fill(c,local(right?inner-8:outer+2),y+188,6,17,'#dbb474');
  }
- rail(c,r.x,r.y+r.h-74,r.w,74);
- // Vertical brass rails follow the raised gallery's inner edge.
- const ix=right?r.x:r.x+r.w-13;
- fill(c,ix,r.y+140,12,r.h-172,'#503629');fill(c,ix+3,r.y+140,4,r.h-172,'#d3ab62');
- for(let yy=r.y+160;yy<r.y+r.h-45;yy+=66){fill(c,ix-5,yy,22,8,'#8a613b');fill(c,ix-3,yy-3,18,4,'#dbb776');}
- sconce(c,r.x+r.w/2,r.y+95);
+ c.restore();
 }
 function organ(c,x,y,w,h){
  glow(c,x+w/2,y+h*.55,w*.7,'#ffd99923');
@@ -165,13 +172,18 @@ function drawHall(c,s){
  fill(c,82,1268,606,1244,'#29252c');fill(c,3408,1268,606,1244,'#29252c');
  for(const xx of [88,3414]){wood(c,xx,1302,594,1210,{light:false,vertical:true});for(let yy=1370;yy<2410;yy+=290){wallPanel(c,xx+20,yy-72,554,188);sconce(c,xx+300,yy+65);}}
  // A broad timber chamber and galleries, with the organ centered over the stage.
- wallPanel(c,72,0,w-144,182);fill(c,72,172,w-144,10,'#281f22');line(c,80,168,w-80,168,'#e5b77a',4);
+ drawAcousticCeiling(c,w);
  for(const x of [788,2532]){wood(c,x,176,776,144,{light:false});for(let i=0;i<10;i++)chair(c,x+54+i*74,298,.8);rail(c,x,294,776,44);}
  for(let i=0;i<s.audience.balconies.length;i++)balcony(c,s.audience.balconies[i],i===1);
  stage(c,s);
- organ(c,1696,16,704,344);
+ drawOrganAcousticPanels(c,{x:1696,y:0,w:704,h:360});
+ // Preserve the native organ's near-square proportions and reveal the red
+ // acoustic panel bay that surrounds it in the modern Concert Hall.
+ organ(c,1898,40,300,312);
  // The acoustic petals remain above the performers' silhouettes.
- reflector(c,1050,40,300,190);reflector(c,1430,54,310,198,true);reflector(c,2364,54,310,198);reflector(c,2744,40,300,190,true);
+ for(const p of [[1050,12,224,144,false],[1400,44,194,124,true],[2430,30,214,138,false],[2790,0,246,158,true]]){
+  line(c,p[0]+p[2]*.5,0,p[0]+p[2]*.5,p[1]+18,'#4e3c35',2);reflector(c,...p);
+ }
  for(const x of [803,3293])sconce(c,x,390);
  // Interactive ground chairs are added through concertHallDrawables so their
  // backs correctly cover a visitor's feet on the north side of each row.

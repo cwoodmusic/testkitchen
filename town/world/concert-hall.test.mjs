@@ -1,7 +1,8 @@
 import test from 'node:test';
 import assert from 'node:assert/strict';
 import {readFile} from 'node:fs/promises';
-import {CONCERT_FOOTPRINT,getConcertHall,prepareConcertHallArt,concertHallDrawables} from './concert-hall.mjs';
+import {createRequire} from 'node:module';
+import {CONCERT_FOOTPRINT,getConcertHall,prepareConcertHallArt,concertHallDrawables,renderConcertHallBackground} from './concert-hall.mjs';
 
 const hall=getConcertHall(),pad=16;
 // Match the interior controller's circular-foot approximation and safety pad.
@@ -77,4 +78,16 @@ test('static prop cutouts are local RGBA PNGs and the pure model can load withou
   assert.equal(bytes.toString('hex',0,8),'89504e470d0a1a0a');
   assert.equal(bytes.readUInt32BE(16),prop.width);assert.equal(bytes.readUInt32BE(20),prop.height);assert.equal(bytes[25],6,`${prop.file}: RGBA`);
  }
+});
+
+test('the detailed acoustic architecture is rasterized once and reuses its one background canvas',()=>{
+ const {createCanvas}=createRequire(import.meta.url)('@napi-rs/canvas'),original=globalThis.OffscreenCanvas,allocations=[];
+ globalThis.OffscreenCanvas=class{constructor(w,h){allocations.push([w,h]);return createCanvas(w,h);}};
+ try{
+  const cv=createCanvas(32,32),c=cv.getContext('2d');c.globalAlpha=.7;c.imageSmoothingEnabled=true;const alpha=c.globalAlpha;
+  for(let frame=0;frame<16;frame++)renderConcertHallBackground(c,hall);
+  assert.deepEqual(allocations,[[hall.width,hall.height]],'Repeated performance frames must not rebuild the architectural canvas');
+  assert.equal(c.globalAlpha,alpha);assert.equal(c.imageSmoothingEnabled,true);
+  assert(c.getImageData(0,0,32,32).data.some((value,i)=>i%4===3&&value>0));
+ }finally{if(original===undefined)delete globalThis.OffscreenCanvas;else globalThis.OffscreenCanvas=original;}
 });

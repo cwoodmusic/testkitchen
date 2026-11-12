@@ -1,13 +1,13 @@
-import {blocked,height,TILE} from './model.mjs?v=north-walls-1';
-import {movePlayer} from './physics.mjs?v=north-walls-1';
-import {WALK_SPEED,GAIT_PER_PIXEL,PLAYER_SCALE} from './player-settings.mjs?v=north-walls-1';
-import {buildNPCDistrict} from './npc-district.mjs?v=north-walls-1';
-import {createNPCNavigator,npcPavingAt,npcMaterialCost} from './npc-navigation.mjs?v=north-walls-1';
-import {residents as profiles,residentHomePose,interiorJourneyPose,residentInScene} from './resident-journey.mjs?v=north-walls-1';
-import {createEntranceQueues} from './entrance-queue.mjs?v=north-walls-1';
-import {venueVisitPose,SHOP_VISIT_CAPACITY} from './resident-venue.mjs?v=north-walls-1';
-import {planNPCPassing} from './npc-passing.mjs?v=north-walls-1';
-export {planNPCPath,npcConnectionClear} from './npc-navigation.mjs?v=north-walls-1';
+import {blocked,height,TILE} from './model.mjs?v=opera-shells-1';
+import {movePlayer} from './physics.mjs?v=opera-shells-1';
+import {WALK_SPEED,GAIT_PER_PIXEL,PLAYER_SCALE} from './player-settings.mjs?v=opera-shells-1';
+import {buildNPCDistrict} from './npc-district.mjs?v=opera-shells-1';
+import {createNPCNavigator,npcPavingAt,npcMaterialCost} from './npc-navigation.mjs?v=opera-shells-1';
+import {residents as profiles,residentHomePose,interiorJourneyPose,residentInScene} from './resident-journey.mjs?v=opera-shells-1';
+import {createEntranceQueues} from './entrance-queue.mjs?v=opera-shells-1';
+import {venueVisitPose,SHOP_VISIT_CAPACITY} from './resident-venue.mjs?v=opera-shells-1';
+import {planNPCPassing} from './npc-passing.mjs?v=opera-shells-1';
+export {planNPCPath,npcConnectionClear} from './npc-navigation.mjs?v=opera-shells-1';
 
 export const AMBIENT_RESIDENTS=Object.freeze(['bach','mozart','clara','nina','joplin','miles','chopin','haydn','vee-jay','zizi','beethoven','ellington','ella','handel','vivaldi','metronome','schoenberg','dj']);
 const distance=(a,b)=>Math.hypot(a.x-b.x,a.y-b.y);

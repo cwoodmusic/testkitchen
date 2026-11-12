@@ -1,4 +1,4 @@
-import {supportsLawnReveal} from './asset-lawn.mjs?v=north-walls-1';
+import {supportsLawnReveal} from './asset-lawn.mjs?v=opera-shells-1';
 
 export const OVERVIEW_SPRITE_SCALE=.125;
 const MIN_EDGE=128,MAX_EDGE=1024;
