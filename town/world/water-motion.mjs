@@ -47,6 +47,22 @@ export function waterFrame(source,time=waterTime){
   still.getContext('2d').putImageData(image,0,0);
   entry={sourceWidth,width,height,canvas,still,c,original,image,pixels,mirrorX,mirrorY,index:-1};cache.set(source,entry);
  }
+ // Upload generated wave pixels off the animation thread. Keep the last
+ // completed bitmap while a single replacement is in flight.
+ if(!entry.workerTried){
+  entry.workerTried=true;
+  if(typeof Worker!=='undefined'&&typeof OffscreenCanvas!=='undefined')try{
+   const worker=new Worker(new URL('./water-worker.mjs?v=opera-smooth-1',import.meta.url),{type:'module'}),copy=entry.original.slice();entry.worker=worker;
+   worker.onmessage=({data})=>{entry.moving?.close();entry.moving=data.image;entry.movingIndex=data.index;entry.pending=false;};
+   worker.onerror=()=>{worker.terminate();entry.worker=null;entry.pending=false;entry.moving?.close();entry.moving=null;};
+   worker.postMessage({original:copy,sourceWidth:entry.sourceWidth,width:entry.width,height:entry.height},[copy.buffer]);
+  }catch{entry.worker=null;}
+ }
+ if(entry.worker){
+  if(index===0)return entry.still;
+  if(!entry.pending&&entry.movingIndex!==index){entry.pending=true;entry.worker.postMessage({index});}
+  return entry.moving||entry.still;
+ }
  if(index===0)return entry.still;
  if(entry.index===index)return entry.canvas;
  const {width,height,original,pixels,mirrorX,mirrorY}=entry,displacement=waterDisplacements(width,height,index);

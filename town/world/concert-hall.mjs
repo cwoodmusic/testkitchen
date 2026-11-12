@@ -1,3 +1,4 @@
+import {sceneryImage,forgetScenery} from './scenery-cache.mjs?v=opera-smooth-1';
 // The hall shares the Opera House lot's exact floor area.
 // Fixed architecture is cached once behind the performers and audience.
 import {drawOrganAcousticPanels} from './concert-acoustics.mjs?v=opera-parallax-1';
@@ -44,7 +45,7 @@ export function prepareConcertHallArt(){
  if(artPromise)return artPromise;
  if(typeof Image==='undefined')return Promise.resolve();
  artPromise=Promise.all(ART_NAMES.map(name=>new Promise(resolve=>{
-  const img=new Image();img.onload=()=>{art.set(name,img);background=null;resolve(img);};img.onerror=()=>resolve(null);
+  const img=new Image();img.onload=()=>{art.set(name,img);if(background){forgetScenery(background);background.width=background.height=0;background=null;}resolve(img);};img.onerror=()=>resolve(null);
   img.src=new URL(`../assets/concert/hall-${name}.png`,import.meta.url).href;
  }))).then(()=>undefined);return artPromise;
 }
@@ -57,7 +58,7 @@ export function renderConcertHallBackground(ctx,model=getConcertHall()){
   if(!canvas){drawHall(ctx,model);return;}
   canvas.width=model.width;canvas.height=model.height;const c=canvas.getContext('2d');c.imageSmoothingEnabled=false;drawHall(c,model);background=canvas;
  }
- ctx.drawImage(background,0,0);
+ const image=sceneryImage(ctx,background);ctx.save();ctx.imageSmoothingEnabled=true;ctx.imageSmoothingQuality='high';ctx.drawImage(image,0,0,model.width,model.height);ctx.restore();
 }
 
 /** Chair backs share the player's depth sort rather than flattening into the floor. */
@@ -75,12 +76,22 @@ function polygon(c,points,color){c.fillStyle=color;c.beginPath();points.forEach(
 function line(c,x,y,x2,y2,color,width=2){c.strokeStyle=color;c.lineWidth=width;c.beginPath();c.moveTo(x,y);c.lineTo(x2,y2);c.stroke();}
 function sprite(c,name,x,y,w,h){const im=art.get(name);if(!im)return false;c.drawImage(im,Math.round(x),Math.round(y),Math.round(w),Math.round(h));return true;}
 function glow(c,x,y,r,color){const g=c.createRadialGradient(x,y,2,x,y,r);g.addColorStop(0,color);g.addColorStop(1,'#ffcc7700');c.fillStyle=g;c.fillRect(x-r,y-r,r*2,r*2);}
-function wood(c,x,y,w,h,{light=false,vertical=false}={}){
+function wood(c,x,y,w,h,{light=false,vertical=false,floor=false}={}){
  c.save();c.beginPath();c.rect(x,y,w,h);c.clip();fill(c,x,y,w,h,light?'#cc9858':'#a8753e');
  const grain=light?['#d1a166','#d9ad73','#c79352','#d1a064']:['#ae7b43','#b88449','#a7743d','#bd8b50'];
  const plank=28,length=224;
  if(vertical){
   for(let xx=x;xx<x+w;xx+=plank){fill(c,xx+1,y,plank-2,h,grain[Math.floor(xx/plank)%4]);line(c,xx+3,y,xx+3,y+h,'#e9be7730');for(let yy=y+(Math.floor(xx/plank)%3)*68;yy<y+h;yy+=length)line(c,xx,yy,xx+plank,yy,'#3b2c2650');}
+ }else if(floor){
+  const tones=light?['#d0a064','#d3a368','#ce9e62','#d2a165']:['#ad7b45','#b07e47','#ac7a43','#ae7c45'];
+  for(let yy=y,row=0;yy<y+h;yy+=plank,row++){
+   const span=length+(row*13%5)*16,offset=(row*97+row*row*17)%span;
+   for(let xx=x-offset,col=0;xx<x+w;xx+=span,col++){
+    fill(c,xx,yy,span,plank,tones[(row*37+col*13)%tones.length]);
+    line(c,xx,yy,xx+span,yy,'#62452c20',1);line(c,xx,yy,xx,yy+plank,'#62452c30',1);
+    line(c,xx+24,yy+17,xx+94,yy+17,'#51342010',1);
+   }
+  }
  }else{
   for(let yy=y;yy<y+h;yy+=plank){const row=Math.floor((yy-y)/plank);fill(c,x,yy+1,w,plank-2,grain[row%4]);line(c,x,yy+2,x+w,yy+2,'#e9be7738');for(let xx=x-(row%3)*74;xx<x+w;xx+=length){line(c,xx,yy,xx,yy+plank,'#3b2c2660');line(c,xx+24,yy+17,xx+94,yy+17,'#51342020');line(c,xx+114,yy+9,xx+187,yy+9,'#eed1a020');}}
  }
@@ -144,7 +155,7 @@ function organ(c,x,y,w,h){
 function stage(c,s){
  const r=s.stage;
  fill(c,r.x-9,r.y+18,r.w+18,r.h+52,'#241c22aa');
- wood(c,r.x,r.y,r.w,r.h,{light:true});
+ wood(c,r.x,r.y,r.w,r.h,{light:true,floor:true});
  // A fine inlaid stage border, darker apron and small gold footlights.
  for(const [off,color]of [[0,'#382d28'],[4,'#d6b27a'],[9,'#87603d']]){line(c,r.x+off,r.y+off,r.x+r.w-off,r.y+off,color,3);line(c,r.x+off,r.y+off,r.x+off,r.y+r.h,color,3);line(c,r.x+r.w-off,r.y+off,r.x+r.w-off,r.y+r.h,color,3);}
  wood(c,r.x,r.y+r.h-7,r.w,54,{light:false,vertical:true});
@@ -157,7 +168,7 @@ function stage(c,s){
 }
 function drawHall(c,s){
  const {width:w,height:h}=s;c.save();c.imageSmoothingEnabled=false;
- fill(c,0,0,w,h,'#171923');wood(c,72,176,w-144,h-224,{light:false});
+ fill(c,0,0,w,h,'#171923');wood(c,72,176,w-144,h-224,{light:false,floor:true});
  // Central and outer walking aisles connect every ground-floor seat to the door.
  carpet(c,1940,1238,216,1274);carpet(c,712,1284,172,1228);carpet(c,3212,1284,172,1228);
  carpet(c,884,1704,2328,74);carpet(c,712,2330,2672,182);

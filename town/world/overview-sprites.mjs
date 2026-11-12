@@ -1,4 +1,5 @@
-import {supportsLawnReveal} from './asset-lawn.mjs?v=opera-parallax-1';
+import {sceneryImage} from './scenery-cache.mjs?v=opera-smooth-1';
+import {supportsLawnReveal,assetMapImageRevision} from './asset-lawn.mjs?v=opera-parallax-1';
 
 export const OVERVIEW_SPRITE_SCALE=.125;
 const MIN_EDGE=128,MAX_EDGE=1024;
@@ -14,10 +15,11 @@ export function overviewSpriteSize(width,height,scale){
 }
 
 export function createOverviewSpriteCache({maxEntries=24,maxPixels=4*1024*1024,maxLevels=3,createCanvas=(width,height)=>{
- const c=document.createElement('canvas');c.width=width;c.height=height;return c;
+ const c=typeof OffscreenCanvas!=='undefined'?new OffscreenCanvas(width,height):document.createElement('canvas');c.width=width;c.height=height;return c;
 }}={}){
  const sources=new WeakMap(),recent=new Map();let pixels=0;
- function remove(entry){entry.bucket.delete(entry.key);recent.delete(entry);pixels-=entry.pixels;}
+ // Finish any remaining depth strips before releasing their source raster.
+ function remove(entry){entry.bucket.delete(entry.key);recent.delete(entry);pixels-=entry.pixels;queueMicrotask(()=>{if(entry.canvas.close)entry.canvas.close();else entry.canvas.width=entry.canvas.height=0;});}
  function image(source,scale){
   const size=overviewSpriteSize(source.width,source.height,scale);if(!size)return source;
   let bucket=sources.get(source);if(!bucket){bucket=new Map();sources.set(source,bucket);}
@@ -27,19 +29,20 @@ export function createOverviewSpriteCache({maxEntries=24,maxPixels=4*1024*1024,m
   if(entry){bucket.delete(key);bucket.set(key,entry);recent.delete(entry);recent.set(entry,true);return entry.canvas;}
   const canvas=createCanvas(size.width,size.height),c=canvas.getContext('2d');
   c.imageSmoothingEnabled=true;c.imageSmoothingQuality='high';c.drawImage(source,0,0,size.width,size.height);
-  entry={bucket,key,canvas,sourceWidth:source.width,sourceHeight:source.height,pixels:size.width*size.height};bucket.set(key,entry);recent.set(entry,true);pixels+=entry.pixels;
+  entry={bucket,key,canvas:canvas.transferToImageBitmap?.()||canvas,sourceWidth:source.width,sourceHeight:source.height,pixels:size.width*size.height};bucket.set(key,entry);recent.set(entry,true);pixels+=entry.pixels;
   while(bucket.size>maxLevels)remove(bucket.values().next().value);
   while(recent.size>maxEntries||pixels>maxPixels)remove(recent.keys().next().value);
-  return canvas;
+  return entry.canvas;
  }
  return {image,get size(){return recent.size;},get pixels(){return pixels;}};
 }
 
 const cache=createOverviewSpriteCache();
 export function overviewObjectImage(c,a,source){
- // Contextual lawn masks can repaint an existing canvas after a terrain edit.
- // These scenes retain their original source rather than a stale reduced copy.
- if(supportsLawnReveal(a))return source;
  const m=c.getTransform(),scale=Math.max(Math.hypot(m.a,m.b),Math.hypot(m.c,m.d));
+ // Ground masks repaint the same source canvas. Their revision invalidates
+ // reduced scenery immediately after edits, including equal-data Undo/Open.
+ if(supportsLawnReveal(a))return scale<=OVERVIEW_SPRITE_SCALE?sceneryImage(c,source,assetMapImageRevision(source)):source;
+ if(a.id==='sydney-opera-house')return sceneryImage(c,source);
  return cache.image(source,scale);
 }

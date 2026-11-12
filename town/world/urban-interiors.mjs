@@ -14,7 +14,7 @@ import {drawInteriorWindow,warmInteriorWindows} from './interior-window-art.mjs?
 import {drawInteriorWallNetwork} from './interior-wall-art.mjs?v=opera-parallax-1';
 import {createRoomLayoutResolver} from './room-layout-runtime.mjs?v=opera-parallax-1';
 export {apartmentDecorBounds,apartmentWallDecorBounds} from './personal-room-areas.mjs?v=opera-parallax-1';
-import {getConcertHall,renderConcertHallBackground,concertHallDrawables} from './concert-hall.mjs?v=opera-fixed-1';
+import {getConcertHall,renderConcertHallBackground,concertHallDrawables} from './concert-hall.mjs?v=opera-smooth-1';
 import {renderStagePerformance} from './concert-performers.mjs?v=opera-players-2';
 import {buildApartmentHome} from './apartment-homes.mjs?v=opera-parallax-1';
 import {FAMILY_FURNITURE_ASSETS} from './family-furniture-definitions.mjs?v=opera-parallax-1';

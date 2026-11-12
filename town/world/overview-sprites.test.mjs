@@ -71,9 +71,9 @@ test('one source retains only its recent zoom levels',()=>{
  assert.equal(cache.size,2);
 });
 
-test('terrain-dependent lawn scenes and ordinary close views retain original source pixels',()=>{
+test('close views of terrain-dependent lawn scenes and ordinary artwork retain original pixels',()=>{
  const source={width:2400,height:1600};
- const c={getTransform(){return {a:.04,b:0,c:0,d:.04};}};
+ const c={getTransform(){return {a:.4,b:0,c:0,d:.4};}};
  assert.equal(overviewObjectImage(c,{id:'music-square'},source),source);
  assert.equal(overviewObjectImage(c,{id:'estate-bach'},source),source);
  const close={getTransform(){return {a:.5,b:0,c:0,d:.5};}};

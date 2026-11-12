@@ -139,3 +139,21 @@ test('authored concert-hall doorway lights retain a finite ground anchor for the
  const [light]=cityLights(doc,new Map([[asset.id,asset]]));
  assert.equal(light.kind,'door');assert.equal(light.gx,2000);assert.equal(light.gy,2000);assert(light.y<light.gy);assert(Object.values(cityLightBounds(light)).every(Number.isFinite));
 });
+
+test('night fields use backing-pixel dimensions and reuse a flattened bloom raster',async()=>{
+ const originalDocument=globalThis.document,originalBitmap=globalThis.createImageBitmap,made=[],bitmaps=[];
+ globalThis.document={createElement(){const c=context(),canvas={width:0,height:0,getContext:()=>c};made.push(canvas);return canvas;}};
+ globalThis.createImageBitmap=async canvas=>{const bitmap={width:canvas.width,height:canvas.height,closed:false,close(){this.closed=true;}};bitmaps.push(bitmap);return bitmap;};
+ try{
+  const c=context();c.getTransform=()=>({a:.5,b:0,c:0,d:.5});const doc={cells:{},objects:[]},catalog=new Map(),cam={x:2000,y:2000,zoom:.8};
+  renderCityNight(c,doc,cam,1280,800,0,{catalog});await Promise.resolve();
+  assert.equal(made[0].width,768);assert.equal(made[0].height,528);assert.equal(bitmaps.length,1);
+  for(let i=0;i<12;i++)renderCityNight(c,doc,cam,1280,800,i/60,{catalog});
+  assert.equal(bitmaps.length,1,'Warm frames reuse the immutable raster');
+  renderCityNight(c,doc,{...cam,zoom:.05},1280,800,1,{catalog});await Promise.resolve();
+  assert.equal(bitmaps.length,2);assert.equal(bitmaps[0].closed,true,'Zoom changes release the previous bitmap');
+ }finally{
+  if(originalDocument===undefined)delete globalThis.document;else globalThis.document=originalDocument;
+  if(originalBitmap===undefined)delete globalThis.createImageBitmap;else globalThis.createImageBitmap=originalBitmap;
+ }
+});

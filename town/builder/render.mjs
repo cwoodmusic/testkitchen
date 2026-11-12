@@ -1,1 +1,1 @@
-export * from '../world/render.mjs';
+export * from '../world/render.mjs?v=opera-smooth-1';

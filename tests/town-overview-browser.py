@@ -31,6 +31,8 @@ try:
  with sync_playwright() as p:
   browser=p.chromium.launch(executable_path='/usr/bin/chromium',args=['--no-sandbox'])
   context=browser.new_context(viewport={'width':1500,'height':1000},accept_downloads=True)
+  # Pixel comparisons use the deterministic synchronous fallback. Worker parity has its own browser test.
+  context.add_init_script('window.Worker=undefined')
   page=context.new_page();errors=[]
   page.on('pageerror',lambda error:errors.append(str(error)))
   page.goto(f'http://127.0.0.1:{server.server_port}/town/builder/?kit=leisure')

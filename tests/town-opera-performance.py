@@ -162,7 +162,7 @@ try:
         session.send('Profiler.enable')
         session.send('Profiler.setSamplingInterval', {'interval': 500})
         session.send('Performance.enable')
-        page.evaluate('''async()=>{const app=new URL(document.querySelector('script[type="module"]').src),url=new URL('../world/terrain-chunks.mjs'+app.search,app);const {terrainChunkStats}=await import(url);window.__chunkStats=()=>terrainChunkStats(document.getElementById('map').getContext('2d'));}''')
+        page.evaluate(r'''async()=>{const app=new URL(document.querySelector('script[type="module"]').src),terrainURL=new URL('../world/terrain-render.mjs'+app.search,app),source=await (await fetch(terrainURL)).text(),url=new URL(source.match(/from ['"]([^'"]*terrain-chunks\.mjs[^'"]*)['"]/)[1],terrainURL);const {terrainChunkStats}=await import(url);window.__chunkStats=()=>terrainChunkStats(document.getElementById('map').getContext('2d'));}''')
         current_opera = None
         for scenario in scenarios:
             if current_opera is not scenario['opera'] or scenario.get('walk'):

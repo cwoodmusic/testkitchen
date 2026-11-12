@@ -1,5 +1,5 @@
 export {findStart,movePlayer,toggleGate,follow} from './physics.mjs?v=opera-parallax-1';
-export {render} from './render.mjs?v=opera-parallax-1';
+export {render} from './render.mjs?v=opera-smooth-1';
 export {catalog,preparePlacedArt} from './catalog.mjs?v=opera-parallax-1';
 export {PLAYER_SCALE,GAIT_PER_PIXEL} from './player-settings.mjs?v=opera-parallax-1';
 export const PIXEL_GRID=2;

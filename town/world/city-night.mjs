@@ -128,7 +128,7 @@ function upwardBeam(c,p,l,zoom,mask=false){
 }
 function canvasFor(c,w,h){
  if(!buffers.has(c)){const canvas=document.createElement('canvas'),bloom=document.createElement('canvas');buffers.set(c,{canvas,ctx:canvas.getContext('2d'),bloom,bloomCtx:bloom.getContext('2d'),key:null});}
- const value=buffers.get(c),width=Math.max(1,Math.ceil(w)),height=Math.max(1,Math.ceil(h));
+ const value=buffers.get(c),t=c.getTransform?.(),scale=t?Math.min(1,Math.max(Math.hypot(t.a,t.b),Math.hypot(t.c,t.d))):1,width=Math.max(1,Math.ceil(w*scale)),height=Math.max(1,Math.ceil(h*scale));
  if(value.canvas.width!==width||value.canvas.height!==height){value.canvas.width=value.bloom.width=width;value.canvas.height=value.bloom.height=height;value.key=null;}return value;
 }
 function projected(p,cam,w,h){return {x:(p.x-cam.x)*cam.zoom+w/2,y:(p.y-cam.y)*cam.zoom+h/2};}
@@ -232,9 +232,16 @@ export function renderCityNight(c,doc,cam,w,h,time=0,{catalog,objects}={}){
   }
  }
  buffer.key=key;
+ // Freeze the glow field into one immutable raster for repeated screen
+ // compositing, including pans and returns from an interior.
+ buffer.generation=(buffer.generation||0)+1;const generation=buffer.generation;
+ buffer.raster?.close();buffer.raster=null;
+ if(typeof createImageBitmap==='function')createImageBitmap(bloom).then(image=>{
+  if(buffer.generation!==generation){image.close();return;}buffer.raster=image;
+ }).catch(()=>{});
  }
  const cropX=Math.round((pad+(cam.x-buffer.cam.x)*cam.zoom)*sx),cropY=Math.round((pad+(cam.y-buffer.cam.y)*cam.zoom)*sy);
- c.save();c.imageSmoothingEnabled=true;c.globalCompositeOperation='source-over';c.drawImage(canvas,cropX,cropY,w*sx,h*sy,0,0,w,h);c.globalCompositeOperation='screen';c.drawImage(bloom,cropX,cropY,w*sx,h*sy,0,0,w,h);
+ c.save();c.imageSmoothingEnabled=true;c.globalCompositeOperation='source-over';c.drawImage(canvas,cropX,cropY,w*sx,h*sy,0,0,w,h);c.globalCompositeOperation='screen';c.drawImage(buffer.raster||bloom,cropX,cropY,w*sx,h*sy,0,0,w,h);
  const baseAlpha=c.globalAlpha;
  for(const f of cityFireflies(doc,catalog,cam,w,h,time)){
   const p=projected(f,cam,w,h),r=Math.max(6,f.glowRadius*cam.zoom);

@@ -1,7 +1,7 @@
 import {COLS,ROWS,terrainView} from './model.mjs?v=opera-parallax-1';
 import {sources} from './catalog.mjs?v=opera-parallax-1';
-import {groundFrameKey,invalidateGroundCache} from './ground-render.mjs?v=opera-parallax-1';
-import {waterFrame,currentWaterFrameIndex,withLevelZeroWaterCutout} from './water-motion.mjs?v=opera-parallax-1';
+import {groundFrameKey,invalidateGroundCache} from './ground-render.mjs?v=opera-smooth-1';
+import {waterFrame,currentWaterFrameIndex,withLevelZeroWaterCutout} from './water-motion.mjs?v=opera-smooth-1';
 import {OverviewTerrainState,OVERVIEW_SCALE,OVERVIEW_PAD,WORLD_WIDTH,WORLD_HEIGHT,terrainBoundsForRect} from './overview-state.mjs?v=opera-parallax-1';
 
 const entries=new WeakMap(),fullBounds={x0:0,x1:COLS,y0:0,y1:ROWS};
@@ -13,7 +13,7 @@ function eligible(c,opts){
 function entryFor(c){
  let e=entries.get(c);if(e)return e;
  const canvas=document.createElement('canvas');canvas.width=Math.ceil(world.w*OVERVIEW_SCALE);canvas.height=Math.ceil(world.h*OVERVIEW_SCALE);
- e={canvas,ctx:canvas.getContext('2d'),state:new OverviewTerrainState(),key:null,fullBuilds:0,patchBuilds:0,scans:0,livePatches:[],waterKey:null,waterPattern:null,lastDoc:null,lastCells:null,lastRevision:null,lastFrame:null};entries.set(c,e);return e;
+ e={canvas,ctx:canvas.getContext('2d'),state:new OverviewTerrainState(),key:null,fullBuilds:0,patchBuilds:0,scans:0,livePatches:[],waterKey:null,waterPattern:null,lastDoc:null,lastCells:null,lastRevision:null,lastFrame:null,waterImage:null};entries.set(c,e);return e;
 }
 function paintCache(e,d,r,opts,raw,full){
  const g=e.ctx;g.setTransform(OVERVIEW_SCALE,0,0,OVERVIEW_SCALE,OVERVIEW_PAD*OVERVIEW_SCALE,OVERVIEW_PAD*OVERVIEW_SCALE);g.imageSmoothingEnabled=false;g.globalAlpha=1;g.globalCompositeOperation='source-over';
@@ -39,13 +39,17 @@ export function drawOverviewTerrain(c,d,bounds,opts,raw){
  if(full||changes.changed.length)e.livePatches=e.state.livePatches();
  e.key=key;
  const image=waterFrame(sources.ground[3]),waterKey=currentWaterFrameIndex();
- if(e.waterKey!==waterKey||!e.waterPattern){e.waterPattern=c.createPattern(image,'repeat');e.waterKey=waterKey;}
+ if(e.waterKey!==waterKey||e.waterImage!==image||!e.waterPattern){e.waterPattern=c.createPattern(image,'repeat');e.waterKey=waterKey;e.waterImage=image;}
  c.save();c.fillStyle=e.waterPattern;c.fillRect(0,0,WORLD_WIDTH,WORLD_HEIGHT);c.imageSmoothingEnabled=false;c.drawImage(e.canvas,world.x,world.y,world.w,world.h);c.restore();
- // Raised lakes retain original water phase and projection. The rectangles
- // do not overlap, and each redraw includes all contributing terrain rows.
- for(const r of e.livePatches){
+ // In the far overview waves move less than one backing pixel. The baked
+ // lakes retain their complete banks/occlusion there. Closer views animate
+ // only visible patches; offscreen lakes must never redraw the entire town.
+ const t=c.getTransform(),view={x:-t.e/t.a,y:-t.f/t.d,w:c.canvas.width/t.a,h:c.canvas.height/t.d};
+ if(t.a>OVERVIEW_SCALE/2)for(const r of e.livePatches){
+  if(r.x+r.w<=view.x||r.x>=view.x+view.w||r.y+r.h<=view.y||r.y>=view.y+view.h)continue;
   c.save();c.beginPath();c.rect(r.x,r.y,r.w,r.h);c.clip();c.fillStyle='#101f19';c.fillRect(r.x,r.y,r.w,r.h);raw(c,d,terrainBoundsForRect(r),opts);c.restore();
  }
+
  return true;
 }
 export function overviewTerrainStats(c){const e=entries.get(c);return e?{fullBuilds:e.fullBuilds,patchBuilds:e.patchBuilds,scans:e.scans,livePatches:e.livePatches.length,pixels:e.canvas.width*e.canvas.height,scale:OVERVIEW_SCALE}:null;}

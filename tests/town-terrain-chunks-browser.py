@@ -38,6 +38,8 @@ try:
     with sync_playwright() as p:
         browser = p.chromium.launch(executable_path='/usr/bin/chromium', args=['--no-sandbox'])
         page = browser.new_page(viewport={'width': 1500, 'height': 1000})
+        # Native-pixel comparisons use the synchronous fallback; worker parity is tested separately.
+        page.add_init_script('window.Worker=undefined')
         page.set_default_timeout(180000)
         errors = []
         page.on('pageerror', lambda error: errors.append(str(error)))
@@ -52,7 +54,9 @@ try:
           const app=new URL(document.querySelector('script[type="module"]').src);
           const url=name=>new URL('../world/'+name+'.mjs'+app.search,app).href;
           const {drawTerrain}=await import(url('terrain-render'));
-          const {terrainChunkStats}=await import(url('terrain-chunks'));
+          const terrainURL=url('terrain-render'),terrainSource=await (await fetch(terrainURL)).text();
+          const chunkURL=new URL(terrainSource.match(/from ['"]([^'"]*terrain-chunks\.mjs[^'"]*)['"]/)[1],terrainURL);
+          const {terrainChunkStats}=await import(chunkURL);
           const {setWaterTime}=await import(url('water-motion'));
           const {height}=await import(url('model'));
           const {paintGround}=await import(new URL('./ground-brush.mjs'+app.search,app));
