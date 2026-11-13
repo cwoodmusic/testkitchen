@@ -1,6 +1,8 @@
 export const NET_SWEEP_SECONDS=.50,NET_RECOVERY_SECONDS=.20,NET_HALF_ARC=Math.PI/2;
-export const NET_WINDUP_FRACTION=.32,NET_STRIKE_FRACTION=.82,NET_RIM_RX=30,NET_RIM_RY=20;
-const NET_REST_PITCH=2.45,NET_REACH=128,NET_SHOULDER_LIFT=30/62;
+export const NET_WINDUP_FRACTION=.32,NET_STRIKE_FRACTION=.82,NET_CONTACT_FRACTION=.94,NET_RIM_RX=30,NET_RIM_RY=20;
+const NET_REST_PITCH=2.45,NET_REACH=128,NET_SHOULDER_LIFT=30/62,NET_MESH_DEPTH=38;
+// The far edge of the hoop, rather than the mesh pocket, reaches the ground.
+const NET_FINISH_PITCH=-Math.asin(30/(NET_REACH+NET_RIM_RX));
 const ease=u=>u*u*(3-2*u),clamp=u=>Math.max(0,Math.min(1,u));
 export const facingAngle=facing=>({right:0,down:Math.PI/2,left:Math.PI,up:-Math.PI/2})[facing]??Math.PI/2;
 export const angleFacing=angle=>Math.abs(Math.cos(angle))>Math.abs(Math.sin(angle))?(Math.cos(angle)>0?'right':'left'):(Math.sin(angle)>0?'down':'up');
@@ -29,11 +31,23 @@ function netArm(player,angle,z,lift=0){
  return {grip,elbow};
 }
 function posed(player,angle,pitch,reach,z,stage,progress,armLift=0,depthScale=1){
- const {grip,elbow}=netArm(player,angle,z,armLift),forward=Math.cos(pitch)*reach,lift=Math.sin(pitch)*reach;
- const x=grip.x+Math.cos(angle)*forward,y=grip.y+Math.sin(angle)*forward*depthScale-lift;
- const screenForward=(x-grip.x)*Math.cos(angle)+(y-grip.y)*Math.sin(angle),frontRim=Math.abs(Math.cos(angle))*NET_RIM_RX+Math.abs(Math.sin(angle))*NET_RIM_RY;
+ const {grip,elbow}=netArm(player,angle,z,armLift),fx=Math.cos(angle),fy=Math.sin(angle),cos=Math.cos(pitch),sin=Math.sin(pitch),forward=cos*reach,lift=sin*reach;
+ const dx=fx*cos,dy=fy*cos*depthScale-sin,projectedLength=Math.hypot(dx,dy),x=grip.x+dx*reach,y=grip.y+dy*reach;
+ // A gently billboarded cross-axis keeps the standing hoop readable in side
+ // views. The long axis follows the shaft; it never remains a horizontal bowl.
+ let ux=projectedLength>1e-9?dx/projectedLength:0,uy=projectedLength>1e-9?dy/projectedLength:-1;
+ if(uy>1e-9||(Math.abs(uy)<=1e-9&&ux<0)){ux=-ux;uy=-uy;}
+ const major=NET_RIM_RX*Math.max(.45,projectedLength),u={x:ux*major,y:uy*major},v={x:-uy*NET_RIM_RY,y:ux*NET_RIM_RY};
+ const gripHeight=30+62*armLift,centerHeight=gripHeight+lift,verticalRadius=NET_RIM_RX*Math.abs(sin),lowest=centerHeight-verticalRadius;
+ const rim={u,v,minHeight:Math.abs(lowest)<1e-8?0:lowest,maxHeight:centerHeight+verticalRadius};
+ const distance=projectedLength*reach,joint=distance>major?{x:x-dx/projectedLength*major,y:y-dy/projectedLength*major}:{...grip};
+ // This is the opposite of angular travel during the forward stroke. The
+ // flexible pocket trails backward overhead, then upward above the landing rim.
+ const meshAxis={x:-fx*sin,y:-fy*sin*depthScale-cos,height:cos};
+ const meshTip={x:x+meshAxis.x*NET_MESH_DEPTH,y:y+meshAxis.y*NET_MESH_DEPTH,height:centerHeight+meshAxis.height*NET_MESH_DEPTH};
+ const screenForward=(x-grip.x)*fx+(y-grip.y)*fy,frontRim=Math.hypot(u.x*fx+u.y*fy,v.x*fx+v.y*fy);
  const layer=forward>1e-8?'front':'behind';
- return {grip,elbow,x,y,angle:Math.atan2(y-grip.y,x-grip.x),forward:angle,groundForward:forward,pitch,reach,depthScale,rx:NET_RIM_RX,ry:NET_RIM_RY,stage,progress,layer,behind:layer==='behind',catchable:stage==='sweep'&&layer==='front'&&screenForward>=frontRim+8};
+ return {grip,elbow,x,y,joint,rim,meshTip,meshAxis,gripHeight,centerHeight,angle:Math.atan2(y-grip.y,x-grip.x),forward:angle,groundForward:forward,pitch,reach,depthScale,rx:Math.hypot(u.x,v.x),ry:Math.hypot(u.y,v.y),stage,progress,layer,behind:layer==='behind',catchable:stage==='sweep'&&layer==='front'&&screenForward>=frontRim+8};
 }
 function heldPose(player,angle,z){return posed(player,angle,NET_REST_PITCH,NET_REACH,z,'ready',1,NET_SHOULDER_LIFT,.45);}
 export function netSweepPose(player,angle,progress,z=0){
@@ -42,8 +56,8 @@ export function netSweepPose(player,angle,progress,z=0){
   const t=ease(u/NET_WINDUP_FRACTION);
   return posed(player,angle,NET_REST_PITCH+(Math.PI/2-NET_REST_PITCH)*t,NET_REACH,z,'raise',u,NET_SHOULDER_LIFT+(1-NET_SHOULDER_LIFT)*t,.45+.55*t);
  }
- const t=ease((u-NET_WINDUP_FRACTION)/(1-NET_WINDUP_FRACTION));
- return posed(player,angle,Math.PI/2-(Math.PI/2+.12)*t,NET_REACH,z,'sweep',u,1-t);
+ const t=ease(clamp((u-NET_WINDUP_FRACTION)/(NET_CONTACT_FRACTION-NET_WINDUP_FRACTION)));
+ return posed(player,angle,Math.PI/2+(NET_FINISH_PITCH-Math.PI/2)*t,NET_REACH,z,'sweep',u,1-t);
 }
 export function netVisualPose(player,angle,age=Infinity,z=0){
  if(Number.isFinite(age)&&age>=0&&age<NET_SWEEP_SECONDS)return netSweepPose(player,angle,age/NET_SWEEP_SECONDS,z);
@@ -65,7 +79,10 @@ export function netSweepHits(point,player,angle,from,to,z=0){
  const n=Math.max(1,Math.ceil(Math.abs(to-from)*48));
  for(let i=0;i<=n;i++){
   const pose=netSweepPose(player,angle,from+(to-from)*i/n,z);
-  if(pose.catchable&&Math.hypot((point.x-pose.x)/pose.rx,(point.y-pose.y)/pose.ry)<=1)return true;
+  if(!pose.catchable)continue;
+  const {u,v}=pose.rim,dx=point.x-pose.x,dy=point.y-pose.y,det=u.x*v.y-u.y*v.x;
+  const a=(dx*v.y-dy*v.x)/det,b=(u.x*dy-u.y*dx)/det;
+  if(a*a+b*b<=1+1e-12)return true;
  }
  return false;
 }

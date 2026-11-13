@@ -83,6 +83,26 @@ try:
             assert_fairy_limit()
             return snapshot
 
+        def assert_rotating_hoop(direction):
+            snapshot=page.evaluate(r'''async direction=>{
+              const t=townBuilder,p=t.urban.activities.state.player,app=new URL(document.querySelector('script[type="module"]').src),
+                {height}=await import(new URL('../world/model.mjs'+app.search,app)),
+                {netSweepPose,facingAngle,NET_WINDUP_FRACTION,NET_STRIKE_FRACTION,NET_CONTACT_FRACTION}=await import(new URL('../world/rhythm-hunt-motion.mjs'+app.search,app)),
+                z=height(t.project,p.x,p.y),angle=facingAngle(direction);
+              return {overhead:netSweepPose(p,angle,NET_WINDUP_FRACTION,z),strike:netSweepPose(p,angle,NET_STRIKE_FRACTION,z),
+                beforeContact:netSweepPose(p,angle,NET_CONTACT_FRACTION-.01,z),contact:netSweepPose(p,angle,NET_CONTACT_FRACTION,z)};
+            }''',direction)
+            overhead,strike,contact=snapshot['overhead'],snapshot['strike'],snapshot['contact']
+            u,v=overhead['rim']['u'],overhead['rim']['v']
+            assert abs(u['x'])<1e-7 and abs(v['y'])<1e-7,(direction,overhead['rim'])
+            assert abs(u['y'])>abs(v['x'])>=12,'The overhead hoop must stand upright and remain visibly open'
+            assert snapshot['beforeContact']['rim']['minHeight']>0,'The hoop reaches the ground at the end of its arc'
+            assert abs(contact['rim']['minHeight'])<1e-7,(direction,contact['rim'])
+            assert contact['meshTip']['height']>contact['rim']['maxHeight'],'The trailing mesh must stay above the hoop when it touches down'
+            assert strike['meshTip']['height']>strike['rim']['minHeight']+10,'The mesh trails above the leading downstroke'
+            assert math.hypot(overhead['meshTip']['x']-overhead['x'],overhead['meshTip']['y']-overhead['y'])>20
+            return snapshot
+
         def route_to(value):
             return page.evaluate(r'''async value=>{
               const t=townBuilder,app=new URL(document.querySelector('script[type="module"]').src),
@@ -161,10 +181,11 @@ try:
                     dx=note.x-p.x,dy=note.y-(p.y-z-30),vertical=Math.abs(dy)>Math.abs(dx),
                     direction=vertical?(dy>0?'s':'w'):(dx>0?'d':'a'),facing={w:'up',s:'down',a:'left',d:'right'}[direction],
                     rim=netSweepPose(p,facingAngle(facing),NET_STRIKE_FRACTION,z);
-                  return {direction,errorX:note.x-rim.x,errorY:note.y-rim.y,rx:rim.rx,ry:rim.ry};
+                  const ex=note.x-rim.x,ey=note.y-rim.y,u=rim.rim.u,v=rim.rim.v,det=u.x*v.y-u.y*v.x;
+                  return {direction,errorX:ex,errorY:ey,mouthDistance:((ex*v.y-ey*v.x)/det)**2+((u.x*ey-u.y*ex)/det)**2};
                 }''', value)
                 ex, ey = aim['errorX'], aim['errorY']
-                if (ex/aim['rx'])**2+(ey/aim['ry'])**2 < 1.5:
+                if aim['mouthDistance'] < 1.5:
                     direction = aim['direction']
                     page.keyboard.down(direction)
                     page.clock.run_for(25)
@@ -241,11 +262,13 @@ try:
         for direction, expected in [('w', -math.pi/2), ('s', math.pi/2), ('a', math.pi), ('d', 0)]:
             page.locator('#map').focus();page.keyboard.down(direction);page.clock.run_for(100);page.keyboard.up(direction)
             assert_shoulder_rest({'w':'up','s':'down','a':'left','d':'right'}[direction])
+            assert_rotating_hoop({'w':'up','s':'down','a':'left','d':'right'}[direction])
             page.screenshot(path=str(OUT/f'net-shoulder-{direction}.png'))
             page.keyboard.press('f');page.clock.run_for(16);page.screenshot(path=str(OUT/f'net-start-{direction}.png'));page.clock.run_for(144)
             swing=state()['swing'];assert swing is not None,(direction,state())
             assert abs(math.atan2(math.sin(swing['angle']-expected),math.cos(swing['angle']-expected)))<.01,(direction,swing)
-            page.screenshot(path=str(OUT/f'net-overhead-{direction}.png'));page.clock.run_for(250);page.screenshot(path=str(OUT/f'net-strike-{direction}.png'));page.clock.run_for(SWING_MS)
+            page.screenshot(path=str(OUT/f'net-overhead-{direction}.png'));page.clock.run_for(125);page.screenshot(path=str(OUT/f'net-descending-{direction}.png'))
+            page.clock.run_for(125);page.screenshot(path=str(OUT/f'net-strike-{direction}.png'));page.clock.run_for(70);page.screenshot(path=str(OUT/f'net-ground-{direction}.png'));page.clock.run_for(SWING_MS)
         page.mouse.click(box['x']+20,box['y']+box['height']/2);page.clock.run_for(100)
         assert state()['swing'] is not None and abs(state()['swing']['angle'])<.01, 'Clicking left must still swing to the right-facing avatar’s front'
         page.keyboard.press('Tab');page.clock.run_for(16)
@@ -344,7 +367,7 @@ try:
         page.wait_for_function('!!window.townBuilder')
         assert page.evaluate('JSON.parse(localStorage.getItem("codaTownAdventuresV1:guest"))') == saved
         assert not errors, errors
-        print('PASS: sparse blue fairies, Tab equip, shoulder carry and forward overhead swings, five-minute build, Escape confirmation, expiry/retry, rewards and unchanged saved map.', flush=True)
+        print('PASS: sparse blue fairies, Tab equip, shoulder carry, rotating upright hoop with trailing mesh and hoop-first ground contact, five-minute build, Escape confirmation, expiry/retry, rewards and unchanged saved map.', flush=True)
         browser.close()
 finally:
     server.shutdown()

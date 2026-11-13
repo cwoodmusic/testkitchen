@@ -1,11 +1,11 @@
-import {netToolPose,netVisualPose} from './rhythm-hunt-motion.mjs?v=town-shoulder-1';
-import {drawRhythmNet} from './rhythm-net-render.mjs?v=town-shoulder-1';
+import {netToolPose,netVisualPose} from './rhythm-hunt-motion.mjs?v=town-net-arc-1';
+import {drawRhythmNet} from './rhythm-net-render.mjs?v=town-net-arc-1';
 import {height} from './model.mjs?v=town-flight-1';
 import {findFishingDock} from './town-game-rules.mjs?v=town-notes-1';
 import {mountGameStyles,createTownJournal,gameButton} from './town-game-audio.mjs?v=town-fairies-1';
-import {createRhythmCatch} from './rhythm-catch.mjs?v=town-shoulder-1';
+import {createRhythmCatch} from './rhythm-catch.mjs?v=town-net-arc-1';
 import {createNoteInventory} from './note-inventory.mjs?v=town-notes-1';
-import {createYellowNoteCatch} from './yellow-note-catch.mjs?v=town-shoulder-1';
+import {createYellowNoteCatch} from './yellow-note-catch.mjs?v=town-net-arc-1';
 import {createNPCRhythmRequests} from './npc-rhythm-requests.mjs?v=town-fairies-1';
 import {createTownFishing} from './town-fishing.mjs?v=town-fairies-1';
 export function createTownActivities({canvas,getProject,getPlayer,getFacing,setFacing,getResidents,getOwner,getScene=()=>null,isConversationOpen=()=>false,catalog}){

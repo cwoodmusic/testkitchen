@@ -1,5 +1,5 @@
 import test from 'node:test';import assert from 'node:assert/strict';
-import {launchFlyingNotes,advanceFlyingNote,netSweepPose,netSweepHits,netVisualPose,netToolPose,facingAngle,NET_STRIKE_FRACTION,NET_WINDUP_FRACTION,NET_SWEEP_SECONDS,NET_RECOVERY_SECONDS} from './rhythm-hunt-motion.mjs';
+import {launchFlyingNotes,advanceFlyingNote,netSweepPose,netSweepHits,netVisualPose,netToolPose,facingAngle,NET_STRIKE_FRACTION,NET_WINDUP_FRACTION,NET_CONTACT_FRACTION,NET_SWEEP_SECONDS,NET_RECOVERY_SECONDS} from './rhythm-hunt-motion.mjs';
 test('notes fly with changing headings, evade a nearby player, and keep their card identities',()=>{
  const [a]=launchFlyingNotes([{id:'one',value:'eighth-pair',x:500,y:500,phase:0}]),positions=[];let away=false;
  for(let i=0;i<600;i++){advanceFlyingNote(a,{x:a.x-80,y:a.y},1/60,i/60,()=>true);positions.push({x:a.x,y:a.y});if(a.vx>140)away=true;}
@@ -88,5 +88,56 @@ test('walking carries the net above the back shoulder in the rear plane and cann
   assert(!netSweepHits(rest,p,angle,0,0));
   const strike=netSweepPose(p,angle,NET_STRIKE_FRACTION);assert.equal(strike.layer,'front');assert(strike.groundForward>100);
   const end=netVisualPose(p,angle,NET_SWEEP_SECONDS+NET_RECOVERY_SECONDS);assert.deepEqual(end,rest);
+ }
+});
+
+test('the hoop rotates with the shaft and stands vertically overhead in every view',()=>{
+ const player={x:500,y:500};
+ for(const facing of ['up','down','left','right']){
+  const angle=facingAngle(facing),above=netSweepPose(player,angle,NET_WINDUP_FRACTION),rest=netVisualPose(player,angle),strike=netSweepPose(player,angle,NET_STRIKE_FRACTION);
+  assert(Math.abs(above.rim.u.x)<1e-8);assert(Math.abs(above.rim.v.y)<1e-8);
+  assert(Math.abs(above.rim.u.y)>Math.abs(above.rim.v.x),'The overhead opening is a standing hoop, not a horizontal bowl');
+  if(facing==='left'||facing==='right'){
+   assert(Math.abs(rest.rim.u.x)>5&&Math.abs(rest.rim.u.y)>5,'The carried hoop tilts with the rear shaft');
+   assert(Math.abs(strike.rim.u.x)>Math.abs(strike.rim.u.y),'The hoop turns forward as the shaft comes down');
+  }
+  for(let i=0;i<=200;i++){
+   const pose=netSweepPose(player,angle,i/200),{u,v}=pose.rim,det=u.x*v.y-u.y*v.x;
+   assert(Number.isFinite(det)&&Math.abs(det)>100,'The camera cannot collapse the hoop to a line');
+   assert([pose.joint.x,pose.joint.y,pose.meshTip.x,pose.meshTip.y,pose.meshTip.height,pose.rim.minHeight].every(Number.isFinite));
+   assert(pose.rim.minHeight>=0,'The hoop cannot pass through the ground');
+  }
+ }
+});
+
+test('the flexible net pocket trails actual hoop motion and rises above its landing edge',()=>{
+ const player={x:500,y:500};
+ for(const facing of ['up','down','left','right']){
+  const angle=facingAngle(facing),above=netSweepPose(player,angle,NET_WINDUP_FRACTION),fx=Math.cos(angle),fy=Math.sin(angle);
+  assert((above.meshTip.x-above.x)*fx+(above.meshTip.y-above.y)*fy<0,'Overhead mesh hangs behind the advancing hoop');
+  for(const progress of [.4,.5,.65,.82,.9]){
+   const pose=netSweepPose(player,angle,progress),next=netSweepPose(player,angle,progress+1e-5),trail={x:pose.meshTip.x-pose.x,y:pose.meshTip.y-pose.y};
+   assert(trail.x*(next.x-pose.x)+trail.y*(next.y-pose.y)<0,'The pocket must trail, rather than lead, actual projected hoop travel');
+  }
+  const before=netSweepPose(player,angle,NET_CONTACT_FRACTION-.001),contact=netSweepPose(player,angle,NET_CONTACT_FRACTION),held=netSweepPose(player,angle,1);
+  assert(before.rim.minHeight>0);assert.equal(contact.rim.minHeight,0);
+  assert(contact.meshTip.height>contact.rim.maxHeight,'The hoop lands first while the mesh remains above it');
+  assert.equal(contact.x,held.x);assert.equal(contact.y,held.y);assert.deepEqual(contact.rim,held.rim,'The contact frame holds briefly before returning to the shoulder');
+ }
+});
+
+test('catching uses the rotated hoop interior rather than its old horizontal oval or bounding box',()=>{
+ const player={x:500,y:500},progress=.7;
+ for(const facing of ['up','down','left','right']){
+  const angle=facingAngle(facing),pose=netSweepPose(player,angle,progress),{u,v}=pose.rim;
+  assert(pose.catchable,facing);
+  const inside={x:pose.x+u.x*.95+v.x*.1,y:pose.y+u.y*.95+v.y*.1};
+  assert(netSweepHits(inside,player,angle,progress,progress));
+  const outside={x:pose.x+u.x*.7+v.x*.8,y:pose.y+u.y*.7+v.y*.8};
+  assert(!netSweepHits(outside,player,angle,progress,progress));
+  if(facing==='right'){
+   assert(Math.hypot((inside.x-pose.x)/pose.rx,(inside.y-pose.y)/pose.ry)>1,'A rotated interior point can lie outside the former axis-aligned oval');
+   assert(Math.hypot((outside.x-pose.x)/pose.rx,(outside.y-pose.y)/pose.ry)<1,'An old oval hit must be rejected when it misses the visible tilted hoop');
+  }
  }
 });

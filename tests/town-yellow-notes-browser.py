@@ -33,6 +33,18 @@ try:
           CanvasRenderingContext2D.prototype.stroke=function(...args){if(this.canvas.id==='map'&&this.strokeStyle==='#5d412b')netInk++;return stroke.apply(this,args);};""")
         page=context.new_page();page.set_default_timeout(60000);errors=[];page.on('pageerror',lambda e:(errors.append(str(e)),print('PAGE ERROR',str(e),flush=True)))
         state=lambda:page.evaluate('townBuilder.urban.activities.state')
+        def assert_moving_net_geometry(game):
+            poses=page.evaluate(r'''async game=>{
+              const t=window[game],p=t.urban.activities.state.player,app=new URL(document.querySelector('script[type="module"]').src),base=game==='townBuilder'?'../world/':'./world/',
+                {height}=await import(new URL(base+'model.mjs'+app.search,app)),
+                {netSweepPose,NET_WINDUP_FRACTION,NET_CONTACT_FRACTION}=await import(new URL(base+'rhythm-hunt-motion.mjs'+app.search,app)),z=height(t.project,p.x,p.y);
+              return {overhead:netSweepPose(p,0,NET_WINDUP_FRACTION,z),contact:netSweepPose(p,0,NET_CONTACT_FRACTION,z)};
+            }''',game)
+            u,v=poses['overhead']['rim']['u'],poses['overhead']['rim']['v']
+            assert abs(u['x'])<1e-7 and abs(v['y'])<1e-7
+            assert abs(u['y'])>abs(v['x'])>=12,'The whole hoop must turn upright above the body'
+            assert abs(poses['contact']['rim']['minHeight'])<1e-7
+            assert poses['contact']['meshTip']['height']>poses['contact']['rim']['maxHeight'],'The hoop leads the trailing net into the ground'
         page.goto(f'http://127.0.0.1:{server.server_port}/town/builder/');page.wait_for_function('!!window.townBuilder')
         page.locator('#file').set_input_files(str(MAP));page.wait_for_function('townBuilder.project.objects.length===137')
         if not page.evaluate('townBuilder.npcsVisible'):page.locator('#npcToggle').click()
@@ -51,6 +63,7 @@ try:
         assert resting['pose']['groundForward']<0 and resting['pose']['layer']=='behind' and resting['pose']['behind']
         assert resting['pose']['y']+resting['pose']['ry']<resting['p']['y']-resting['z']-58
         assert resting['tool'] and resting['tool']['facing']=='right' and not resting['tool']['active']
+        assert_moving_net_geometry('townBuilder')
         page.screenshot(path=str(OUT/'shoulder-carried-yellow-net.png'))
         page.mouse.click(box['x']+20,box['y']+box['height']/2)
         assert state()['yellowNotes']['swing']['angle']==0,'Pointer location must not change right-facing swing'
@@ -95,10 +108,11 @@ try:
                 {netSweepPose,facingAngle,flyingNotePose,NET_STRIKE_FRACTION}=await import(new URL('../world/rhythm-hunt-motion.mjs'+app.search,app));
               const token=s.yellowNotes.tokens.sort((a,b)=>Math.hypot(a.x-p.x,a.y-p.y)-Math.hypot(b.x-p.x,b.y-p.y))[0],
                 z=height(t.project,p.x,p.y),note=flyingNotePose(token,s.yellowNotes.flightTime,height(t.project,token.x,token.y),matchMedia('(prefers-reduced-motion: reduce)').matches),dx=note.x-p.x,dy=note.y-(p.y-z-30),direction=Math.abs(dy)>Math.abs(dx)?(dy>0?'s':'w'):(dx>0?'d':'a'),rim=netSweepPose(p,facingAngle({w:'up',s:'down',a:'left',d:'right'}[direction]),NET_STRIKE_FRACTION,z);
-              return {direction,errorX:note.x-rim.x,errorY:note.y-rim.y,rx:rim.rx,ry:rim.ry};
+              const ex=note.x-rim.x,ey=note.y-rim.y,u=rim.rim.u,v=rim.rim.v,det=u.x*v.y-u.y*v.x;
+              return {direction,errorX:ex,errorY:ey,mouthDistance:((ex*v.y-ey*v.x)/det)**2+((u.x*ey-u.y*ex)/det)**2};
             }''')
             ex,ey=aim['errorX'],aim['errorY']
-            if (ex/aim['rx'])**2+(ey/aim['ry'])**2<1.5:
+            if aim['mouthDistance']<1.5:
                 page.keyboard.down(aim['direction']);page.clock.run_for(22);page.keyboard.up(aim['direction']);page.screenshot(path=str(OUT/'fairy-before-catch.png'));page.keyboard.press('f');page.clock.run_for(SWING_MS)
             else:
                 direction=('d' if ex>0 else 'a') if abs(ex)>abs(ey) else ('s' if ey>0 else 'w')
@@ -185,6 +199,7 @@ try:
         assert resting['pose']['groundForward']<0 and resting['pose']['layer']=='behind'
         assert resting['pose']['y']+resting['pose']['ry']<resting['p']['y']-resting['z']-58
         assert resting['tool'] and resting['tool']['facing']=='right' and not resting['tool']['active']
+        assert_moving_net_geometry('townGame')
         page.screenshot(path=str(OUT/'public-play-shoulder-carry.png'));page.keyboard.press('f')
         assert page.evaluate('townGame.urban.activities.state.yellowNotes.swing.angle')==0
         page.wait_for_timeout(600)
@@ -196,6 +211,6 @@ try:
         assert page.evaluate('townGame.project')==fishing_fixture
         assert hashlib.sha256(MAP.read_bytes()).hexdigest()==source_hash
         assert not errors,errors
-        print('PASS: five yellow fairies, Tab equip, shoulder carry and forward overhead F/click, inventory/replenish/reload, NPC requests, combined five-note cap, Escape exit, public Play/mobile and unchanged map.',flush=True)
+        print('PASS: five yellow fairies, Tab equip, shoulder carry, upright rotating hoop and hoop-first contact, forward F/click, inventory/replenish/reload, NPC requests, combined five-note cap, Escape exit, public Play/mobile and unchanged map.',flush=True)
         browser.close()
 finally:server.shutdown()

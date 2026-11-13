@@ -1,4 +1,4 @@
-import {flyingNotePose} from './rhythm-hunt-motion.mjs?v=town-shoulder-1';
+import {flyingNotePose} from './rhythm-hunt-motion.mjs?v=town-net-arc-1';
 import {drawCatchNote} from './town-game-audio.mjs?v=town-fairies-1';
 
 const palettes={
