@@ -1,4 +1,4 @@
-"""Timed blue-note vendor quest: chase four cards, rebuild by ear, and use a directional net.
+"""Timed blue-fairy vendor quest: equip an overhead net, chase four notes, and rebuild by ear.
 Permanent yellow-note collecting is covered separately from this vendor round.
 """
 from collections import Counter
@@ -41,17 +41,28 @@ try:
         browser = playwright.chromium.launch(executable_path='/usr/bin/chromium', args=['--no-sandbox'])
         page = browser.new_page(viewport={'width': 1500, 'height': 1100})
         page.set_default_timeout(30000)
+        page.add_init_script('''window.noteBadgeInk=0;const fairyArc=CanvasRenderingContext2D.prototype.arc;
+          CanvasRenderingContext2D.prototype.arc=function(x,y,r,...args){if(this.canvas.id==='map'&&r>=35&&r<=45&&['#164fa8','#ddb538'].includes(this.fillStyle))noteBadgeInk++;return fairyArc.call(this,x,y,r,...args);};''')
         errors = []
         page.on('pageerror', lambda error: errors.append(str(error)))
 
+        def activity_state():
+            return page.evaluate('townBuilder.urban.activities.state')
+
         def state():
-            return page.evaluate('townBuilder.urban.activities.state.rhythmCatch')
+            return activity_state()['rhythmCatch']
+
+        def assert_fairy_limit():
+            snapshot=activity_state()
+            assert len(snapshot['yellowNotes']['tokens'])+len(snapshot['rhythmCatch']['tokens'])<=5, snapshot
+            return snapshot
 
         def assert_hunting():
             snapshot = state()
             assert snapshot['phase'] == 'hunt', snapshot
             assert snapshot['remainingSeconds'] > 0, snapshot
             assert len(snapshot['bag']) <= 4, snapshot
+            assert_fairy_limit()
             return snapshot
 
         def route_to(value):
@@ -126,12 +137,12 @@ try:
                 aim = page.evaluate(r'''async value=>{
                   const t=townBuilder,s=t.urban.activities.state,p=s.player,app=new URL(document.querySelector('script[type="module"]').src),
                     {height}=await import(new URL('../world/model.mjs'+app.search,app)),
-                    {netSweepPose,facingAngle,flyingNotePose,NET_WINDUP_FRACTION}=await import(new URL('../world/rhythm-hunt-motion.mjs'+app.search,app));
+                    {netSweepPose,facingAngle,flyingNotePose,NET_STRIKE_FRACTION}=await import(new URL('../world/rhythm-hunt-motion.mjs'+app.search,app));
                   const token=s.rhythmCatch.tokens.filter(n=>n.value===value).sort((a,b)=>Math.hypot(a.x-p.x,a.y-p.y)-Math.hypot(b.x-p.x,b.y-p.y))[0];
                   const z=height(t.project,p.x,p.y),note=flyingNotePose(token,s.rhythmCatch.flightTime,height(t.project,token.x,token.y),matchMedia('(prefers-reduced-motion: reduce)').matches),
                     dx=note.x-p.x,dy=note.y-(p.y-z-30),vertical=Math.abs(dy)>Math.abs(dx),
                     direction=vertical?(dy>0?'s':'w'):(dx>0?'d':'a'),facing={w:'up',s:'down',a:'left',d:'right'}[direction],
-                    rim=netSweepPose(p,facingAngle(facing),(1+NET_WINDUP_FRACTION)/2,z);
+                    rim=netSweepPose(p,facingAngle(facing),NET_STRIKE_FRACTION,z);
                   return {direction,errorX:note.x-rim.x,errorY:note.y-rim.y,rx:rim.rx,ry:rim.ry};
                 }''', value)
                 ex, ey = aim['errorX'], aim['errorY']
@@ -141,7 +152,7 @@ try:
                     page.clock.run_for(25)
                     page.keyboard.up(direction)
                     page.keyboard.press('f')
-                    page.clock.run_for(560)
+                    page.clock.run_for(SWING_MS)
                 else:
                     direction = ('d' if ex > 0 else 'a') if abs(ex) > abs(ey) else ('s' if ey > 0 else 'w')
                     page.keyboard.down(direction)
@@ -181,6 +192,7 @@ try:
         page.screenshot(path=str(OUT/'countdown.png'))
         page.wait_for_function('townBuilder.urban.activities.state.rhythmCatch.phase==="hunt"')
         page.clock.pause_at(page.evaluate('Date.now()/1000')+1)
+        SWING_MS=page.evaluate('''async()=>{const app=new URL(document.querySelector('script[type="module"]').src),m=await import(new URL('../world/rhythm-hunt-motion.mjs'+app.search,app));return Math.ceil((m.NET_SWEEP_SECONDS+m.NET_RECOVERY_SECONDS)*1000)+40;}''')
         snapshot = assert_hunting()
         assert len(snapshot['tokens']) == 4
         assert Counter(t['value'] for t in snapshot['tokens']) == Counter(snapshot['target'])
@@ -193,20 +205,33 @@ try:
         assert state()['remainingSeconds'] < TIME_LIMIT-.5
         page.screenshot(path=str(OUT/'hunt.png'))
 
-        # Real controller input must reach the net; a pure-angle unit test would
-        # miss an integration bug that keeps swinging at one side of the sprite.
+        # Tab equips the tool. F and a pointer click cannot swing or catch while stowed.
+        assert not activity_state()['netEquipped']
+        page.locator('#map').focus()
+        page.keyboard.press('f');page.clock.run_for(100)
+        assert state()['swing'] is None and not state()['bag']
+        box=page.locator('#map').bounding_box()
+        page.mouse.click(box['x']+20,box['y']+box['height']/2);page.clock.run_for(100)
+        assert state()['swing'] is None and not state()['bag']
+        page.keyboard.press('Tab');page.clock.run_for(16)
+        assert activity_state()['netEquipped']
+        assert page.locator('#map').evaluate('node=>document.activeElement===node'), 'Tab equips without moving keyboard focus'
+        assert page.locator('.blue-rhythm-hud button').count()==0, 'The hunt must not show the old floating action panel'
+        assert page.get_by_role('button',name='Hear rhythm · R',exact=True).count()==0
+
+        # Real WASD/F inputs reach all four overhead strokes; pointer location never re-aims them.
         for direction, expected in [('w', -math.pi/2), ('s', math.pi/2), ('a', math.pi), ('d', 0)]:
-            page.locator('#map').focus()
-            page.keyboard.down(direction)
-            page.clock.run_for(100)
-            page.keyboard.up(direction)
-            page.keyboard.press('f')
-            page.clock.run_for(100)
-            swing = state()['swing']
-            assert swing is not None, (direction, state())
-            assert abs(math.atan2(math.sin(swing['angle']-expected), math.cos(swing['angle']-expected))) < .01, (direction, swing)
-            page.screenshot(path=str(OUT/f'net-{direction}.png'))
-            page.clock.run_for(470)
+            page.locator('#map').focus();page.keyboard.down(direction);page.clock.run_for(100);page.keyboard.up(direction)
+            page.keyboard.press('f');page.clock.run_for(160)
+            swing=state()['swing'];assert swing is not None,(direction,state())
+            assert abs(math.atan2(math.sin(swing['angle']-expected),math.cos(swing['angle']-expected)))<.01,(direction,swing)
+            page.screenshot(path=str(OUT/f'net-overhead-{direction}.png'));page.clock.run_for(250);page.screenshot(path=str(OUT/f'net-strike-{direction}.png'));page.clock.run_for(SWING_MS)
+        page.mouse.click(box['x']+20,box['y']+box['height']/2);page.clock.run_for(100)
+        assert state()['swing'] is not None and abs(state()['swing']['angle'])<.01, 'Clicking left must still swing to the right-facing avatar’s front'
+        page.keyboard.press('Tab');page.clock.run_for(16)
+        assert not activity_state()['netEquipped'] and state()['swing'] is None
+        page.keyboard.press('f');page.clock.run_for(100);assert state()['swing'] is None
+        page.keyboard.press('Tab');page.clock.run_for(SWING_MS);assert activity_state()['netEquipped']
 
         target = state()['target']
         quotas = Counter(target)
@@ -220,6 +245,7 @@ try:
         page.keyboard.press('e')
         page.wait_for_function('townBuilder.urban.activities.state.rhythmCatch.phase==="arrange"')
         page.screenshot(path=str(OUT/'arrange.png'))
+        assert page.get_by_role('button',name='Hear it again',exact=True).count()==0
         before = state()['remainingSeconds']
         page.clock.run_for(3000)
         assert before-state()['remainingSeconds'] >= 2.9, 'Building must use the same countdown'
@@ -246,27 +272,34 @@ try:
         page.wait_for_function('townBuilder.urban.activities.state.rhythmCatch.phase==="hunt"')
         page.clock.pause_at(page.evaluate('Date.now()/1000')+1)
         page.locator('#map').focus()
-        page.keyboard.press('r')
-        page.wait_for_function('townBuilder.urban.activities.state.rhythmCatch.phase==="listen"')
-        before = state()['remainingSeconds']
-        page.clock.run_for(8000)
-        assert before-state()['remainingSeconds'] >= 7.9, 'Replaying the example must spend hunt time'
-        assert page.locator('.rhythm-catch-dialog .rhythm-slot').count() == 0
-        page.evaluate('window.dispatchEvent(new Event("blur"))')
-        assert state()['paused']
-        before = state()['remainingSeconds']
-        page.clock.fast_forward(15000)
-        assert state()['remainingSeconds'] == before, 'A paused or backgrounded game must retain its remaining time'
-        page.get_by_role('button', name='Continue', exact=True).click()
-        # AudioContext.resume resolves asynchronously on the browser audio
-        # thread. Pump frames without charging any of the paused interval.
+        before=state()['remainingSeconds'];page.keyboard.press('r');page.clock.run_for(100)
+        assert state()['phase']=='hunt', 'The old replay shortcut is gone'
+        assert page.locator('.blue-rhythm-hud button').count()==0
+        page.keyboard.press('Escape');page.clock.run_for(16)
+        assert state()['requestingEnd']
+        assert page.get_by_role('heading',name='Are you sure you want to end Rhythm Catch?',exact=True).is_visible()
+        before=state()['remainingSeconds'];page.clock.fast_forward(15000)
+        assert state()['remainingSeconds']==before, 'The end confirmation must hold the remaining time'
+        page.get_by_role('button',name='Keep playing',exact=True).click()
         for _ in range(50):
-            if not state()['paused']:
-                break
-            page.wait_for_timeout(20)
-            page.clock.run_for(16)
-        assert not state()['paused'], state()
-        assert state()['remainingSeconds'] <= before
+            if not state()['requestingEnd']:break
+            page.wait_for_timeout(20);page.clock.run_for(16)
+        assert not state()['requestingEnd'] and state()['phase']=='hunt'
+        assert state()['remainingSeconds']<=before and state()['remainingSeconds']>before-2
+        page.keyboard.press('Escape');page.clock.run_for(16);assert state()['requestingEnd']
+        page.keyboard.press('Escape');page.clock.run_for(16)
+        for _ in range(50):
+            if not state()['requestingEnd']:break
+            page.wait_for_timeout(20);page.clock.run_for(16)
+        assert not state()['requestingEnd'], 'Escape cancels its own end confirmation'
+        page.evaluate('window.dispatchEvent(new Event("blur"))');assert state()['paused']
+        before=state()['remainingSeconds'];page.clock.fast_forward(15000)
+        assert state()['remainingSeconds']==before
+        page.get_by_role('button',name='Continue',exact=True).click()
+        for _ in range(50):
+            if not state()['paused']:break
+            page.wait_for_timeout(20);page.clock.run_for(16)
+        assert not state()['paused'],state()
         page.clock.fast_forward((TIME_LIMIT+1)*1000)
         assert state()['phase'] == 'lost'
         assert state()['remainingSeconds'] == 0
@@ -279,15 +312,19 @@ try:
         assert len(state()['tokens']) == 4
         assert not state()['bag']
         assert page.get_by_role('timer').inner_text() == '5:00'
-        page.get_by_role('button', name='Leave game', exact=True).click()
-        assert state()['phase'] == 'idle'
+        page.keyboard.press('Escape');page.clock.run_for(16)
+        assert state()['requestingEnd']
+        page.get_by_role('button',name='End Rhythm Catch',exact=True).click()
+        assert state()['phase']=='idle' and not state()['requestingEnd']
+        assert_fairy_limit()
+        assert page.evaluate('noteBadgeInk')==0, 'Floating notes must not be drawn inside the old large badges'
         assert page.evaluate('townBuilder.project') == fixture, 'The game changed the saved map'
         page.clock.resume()
         page.reload()
         page.wait_for_function('!!window.townBuilder')
         assert page.evaluate('JSON.parse(localStorage.getItem("codaTownAdventuresV1:guest"))') == saved
         assert not errors, errors
-        print('PASS: four blue notes, directional F swings, five-minute quest, timed build/replay, pause, expiry/retry, rewards and unchanged saved map.', flush=True)
+        print('PASS: sparse blue fairies, Tab equip, overhead directional swings, five-minute build, Escape confirmation, expiry/retry, rewards and unchanged saved map.', flush=True)
         browser.close()
 finally:
     server.shutdown()

@@ -1,6 +1,6 @@
-import {netVisualPose,netSweepPose,NET_SWEEP_SECONDS,NET_RECOVERY_SECONDS,NET_WINDUP_FRACTION} from './rhythm-hunt-motion.mjs?v=town-notes-1';
+import {netVisualPose,netSweepPose,NET_SWEEP_SECONDS,NET_RECOVERY_SECONDS,NET_WINDUP_FRACTION} from './rhythm-hunt-motion.mjs?v=town-fairies-1';
 
-/** Draw the shared bug net in world coordinates, using the same mouth as catches. */
+/** Lift the net over the head and chop forward, sharing the exact catch mouth. */
 export function drawRhythmNet(c,player,{angle,age=Infinity,z=0,reducedMotion=false,swinging=false}={}){
  const active=Number.isFinite(age)&&age>=0&&age<NET_SWEEP_SECONDS+NET_RECOVERY_SECONDS,pose=netVisualPose(player,angle,active?age:Infinity,z),sweeping=active&&age<NET_SWEEP_SECONDS;
  c.save();c.lineCap='round';c.lineJoin='round';
@@ -17,6 +17,6 @@ export function drawRhythmNet(c,player,{angle,age=Infinity,z=0,reducedMotion=fal
  c.beginPath();c.moveTo(-pose.rx,0);c.bezierCurveTo(-26,27,-13,38,0,38);c.bezierCurveTo(15,38,27,26,pose.rx,0);c.quadraticCurveTo(0,15,-pose.rx,0);c.closePath();c.fillStyle='#eaf4de24';c.fill();c.save();c.clip();c.strokeStyle='#e1edcf91';c.lineWidth=1;
  for(let x=-36;x<=36;x+=9){c.beginPath();c.moveTo(x,-8);c.lineTo(x+18,42);c.stroke();c.beginPath();c.moveTo(x,-8);c.lineTo(x-18,42);c.stroke();}c.restore();
  c.strokeStyle='#c3cfb6b0';c.lineWidth=2;c.beginPath();c.moveTo(-pose.rx,0);c.bezierCurveTo(-26,27,-13,38,0,38);c.bezierCurveTo(15,38,27,26,pose.rx,0);c.stroke();
- c.fillStyle='#d9efda18';c.beginPath();c.ellipse(0,0,pose.rx,pose.ry,0,0,Math.PI*2);c.fill();c.strokeStyle=sweeping?'#ffe5a1':'#c7ab7a';c.lineWidth=3;c.stroke();c.restore();
+ c.fillStyle='#d9efda18';c.beginPath();c.ellipse(0,0,pose.rx,pose.ry,0,0,Math.PI*2);c.fill();c.strokeStyle=sweeping&&pose.catchable?'#ffe5a1':'#c7ab7a';c.lineWidth=3;c.stroke();c.restore();
  return pose;
 }

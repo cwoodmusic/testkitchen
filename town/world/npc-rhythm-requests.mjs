@@ -1,6 +1,6 @@
 import {residents} from './resident-profiles.mjs?v=opera-parallax-1';
 import {CATCH_PATTERNS,NOTE_VALUES,catchAttacks,sameRhythm} from './town-game-rules.mjs?v=town-notes-1';
-import {createGameAudio,noteSVG,noteName,gameButton} from './town-game-audio.mjs?v=town-notes-1';
+import {createGameAudio,noteSVG,noteName,gameButton} from './town-game-audio.mjs?v=town-fairies-1';
 
 const profiles=new Map(residents.map(resident=>[resident.id,resident]));
 const BEAT=.625;

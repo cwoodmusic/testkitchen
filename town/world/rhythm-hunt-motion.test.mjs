@@ -1,5 +1,5 @@
 import test from 'node:test';import assert from 'node:assert/strict';
-import {launchFlyingNotes,advanceFlyingNote,netSweepPose,netSweepHits,netVisualPose,facingAngle,NET_HALF_ARC,NET_WINDUP_FRACTION,NET_SWEEP_SECONDS,NET_RECOVERY_SECONDS} from './rhythm-hunt-motion.mjs';
+import {launchFlyingNotes,advanceFlyingNote,netSweepPose,netSweepHits,netVisualPose,netToolPose,facingAngle,NET_STRIKE_FRACTION,NET_WINDUP_FRACTION,NET_SWEEP_SECONDS,NET_RECOVERY_SECONDS} from './rhythm-hunt-motion.mjs';
 test('notes fly with changing headings, evade a nearby player, and keep their card identities',()=>{
  const [a]=launchFlyingNotes([{id:'one',value:'eighth-pair',x:500,y:500,phase:0}]),positions=[];let away=false;
  for(let i=0;i<600;i++){advanceFlyingNote(a,{x:a.x-80,y:a.y},1/60,i/60,()=>true);positions.push({x:a.x,y:a.y});if(a.vx>140)away=true;}
@@ -9,32 +9,68 @@ test('flight checks its complete path against walls and cliffs and respects paus
  const [a]=launchFlyingNotes([{id:'one',value:'quarter',x:100,y:100,phase:0}]);for(let i=0;i<300;i++)advanceFlyingNote(a,{x:0,y:100},1/60,i/60,(_,b)=>b.x<120&&b.y>70&&b.y<140);assert(a.x<120);assert(a.y>70&&a.y<140);
  const before={...a};advanceFlyingNote(a,{x:0,y:0},0,20,()=>true);assert.deepEqual(a,before);
 });
-test('each facing has its own forward arc and the rim catches only inside its visible mouth',()=>{
+test('the net lifts completely above the head then chops into the facing direction',()=>{
+ const p={x:500,y:500},z=48;
+ for(const direction of ['up','down','left','right']){
+  const angle=facingAngle(direction),held=netVisualPose(p,angle,Infinity,z),lift=netSweepPose(p,angle,NET_WINDUP_FRACTION,z),finish=netSweepPose(p,angle,1,z);
+  assert(lift.y+lift.ry<p.y-z-120,'The entire raised rim must clear the avatar head');
+  assert(lift.y<held.y-60,'The lift must be a visible overhead movement');
+  assert(Math.abs(lift.x-lift.grip.x)<1e-9,'The raised handle points vertically over the hand');
+  const forward=(finish.x-finish.grip.x)*Math.cos(angle)+(finish.y-finish.grip.y)*Math.sin(angle);
+  assert(forward>80,'The chop must finish well in front of the facing hand');
+  const start=netSweepPose(p,angle,0,z);assert.equal(start.x,held.x);assert.equal(start.y,held.y);
+ }
+});
+test('only the forward downstroke catches notes and it uses the actual visible oval',()=>{
  const p={x:500,y:500};
  for(const direction of ['up','down','left','right']){
-  const angle=facingAngle(direction),samples=Array.from({length:25},(_,i)=>netSweepPose(p,angle,NET_WINDUP_FRACTION+(1-NET_WINDUP_FRACTION)*i/24));
-  for(const s of samples)assert((s.x-s.grip.x)*Math.cos(angle)+(s.y-s.grip.y)*Math.sin(angle)>65,'The full stroke stays in front of its hand');
-  assert(samples.every((s,i)=>i===0||s.angle>samples[i-1].angle));assert(Math.abs(samples.at(-1).angle-samples[0].angle-NET_HALF_ARC*2)<1e-10);
-  const middle=samples[12],u=NET_WINDUP_FRACTION+(1-NET_WINDUP_FRACTION)/2;
-  assert(netSweepHits({x:middle.x,y:middle.y},p,angle,u,u));
-  assert(netSweepHits({x:middle.x+middle.rx*.9,y:middle.y},p,angle,u,u));
-  assert(!netSweepHits({x:middle.x+middle.rx+1,y:middle.y},p,angle,u,u),'A stationary mouth must not catch outside its drawn oval');
+  const angle=facingAngle(direction),strike=netSweepPose(p,angle,NET_STRIKE_FRACTION),lift=netSweepPose(p,angle,NET_WINDUP_FRACTION/2);
+  assert.equal(strike.stage,'sweep');assert.equal(strike.catchable,true);
+  assert(netSweepHits({x:strike.x,y:strike.y},p,angle,NET_STRIKE_FRACTION,NET_STRIKE_FRACTION));
+  assert(netSweepHits({x:strike.x+strike.rx*.9,y:strike.y},p,angle,NET_STRIKE_FRACTION,NET_STRIKE_FRACTION));
+  assert(!netSweepHits({x:strike.x+strike.rx+1,y:strike.y},p,angle,NET_STRIKE_FRACTION,NET_STRIKE_FRACTION),'A stationary mouth must not catch outside its drawn oval');
+  assert(!netSweepHits({x:lift.x,y:lift.y},p,angle,NET_WINDUP_FRACTION/2,NET_WINDUP_FRACTION/2),'Raising the net cannot collect notes');
   assert(!netSweepHits({x:p.x-Math.cos(angle)*170,y:p.y-30-Math.sin(angle)*170},p,angle,0,1),'A note behind the avatar must not be caught');
  }
 });
-test('wrist anchors mirror back/front and follow the side the sprite faces',()=>{
- const p={x:500,y:500},grip=direction=>netSweepPose(p,facingAngle(direction),.5,48).grip;
- assert(grip('right').x>p.x);assert(grip('left').x<p.x);assert(grip('down').x<p.x);assert(grip('up').x>p.x);
- for(const direction of ['up','down','left','right'])assert.equal(grip(direction).y,p.y-48-30);
- assert.equal(grip('left').x-p.x,p.x-grip('right').x);assert.equal(grip('up').x-p.x,p.x-grip('down').x);
-});
-test('recovery retracts at the ending angle instead of replaying a reverse sweep',()=>{
+test('the vertical chop stays in one facing plane instead of sweeping sideways',()=>{
  const p={x:500,y:500};
  for(const direction of ['up','down','left','right']){
-  const angle=facingAngle(direction),end=netSweepPose(p,angle,1),samples=Array.from({length:20},(_,i)=>netVisualPose(p,angle,NET_SWEEP_SECONDS+NET_RECOVERY_SECONDS*i/19));
-  let reach=Infinity;
-  for(const pose of samples){assert(Math.abs(pose.angle-end.angle)<1e-12);const distance=Math.hypot(pose.x-pose.grip.x,pose.y-pose.grip.y);assert(distance<=reach+1e-10);reach=distance;}
-  const idle=netVisualPose(p,angle),rest=samples.at(-1);assert.deepEqual(idle,rest);assert.equal(idle.stage,'ready');
-  const begin=netSweepPose(p,angle,0);assert.equal(begin.x,idle.x);assert.equal(begin.y,idle.y,'Windup begins at the held pose without a snap');
+  const angle=facingAngle(direction),samples=Array.from({length:51},(_,i)=>netSweepPose(p,angle,i/50));
+  if(direction==='up'||direction==='down')assert(samples.every(s=>Math.abs(s.x-s.grip.x)<1e-9),'North/south swings move vertically over the same hand');
+  else assert(samples.every(s=>(s.x-s.grip.x)*Math.cos(angle)>=0),'East/west swings cannot cross to the other side');
+  assert(samples.every(s=>Number.isFinite(s.x)&&Number.isFinite(s.y)&&Number.isFinite(s.angle)));
+ }
+});
+test('the hand and elbow actually rise with the net and return to the near-hand rest',()=>{
+ const p={x:500,y:500},z=48;
+ for(const direction of ['up','down','left','right']){
+  const angle=facingAngle(direction),rest=netVisualPose(p,angle,Infinity,z),raised=netSweepPose(p,angle,NET_WINDUP_FRACTION,z),strike=netSweepPose(p,angle,NET_STRIKE_FRACTION,z),finish=netSweepPose(p,angle,1,z);
+  assert.equal(rest.grip.y,p.y-z-30);assert.equal(raised.grip.y,p.y-z-92);assert(raised.elbow.y<rest.elbow.y);
+  assert(strike.grip.y>raised.grip.y&&strike.grip.y<rest.grip.y);assert.deepEqual(finish.grip,rest.grip);assert.deepEqual(finish.elbow,rest.elbow);
+  assert(Math.abs(raised.grip.x-p.x)>=42-1e-9,'Raised hands stay outside the face');
+ }
+ const grip=direction=>netVisualPose(p,facingAngle(direction),Infinity,z).grip;
+ assert(grip('right').x>p.x);assert(grip('left').x<p.x);assert(grip('down').x<p.x);assert(grip('up').x>p.x);
+ assert.equal(grip('left').x-p.x,p.x-grip('right').x);assert.equal(grip('up').x-p.x,p.x-grip('down').x);
+});
+test('native tool arm endpoints register with the world-space grip at every scale and terrain level',()=>{
+ const p={x:513.25,y:604.75};
+ for(const direction of ['up','down','left','right'])for(const z of [0,48,144])for(const scale of [1.25,2.5,4])for(const age of [Infinity,0,.1,.16,.285,.41,.59,.7]){
+  const angle=facingAngle(direction),pose=netVisualPose(p,angle,age,z),tool=netToolPose(p,angle,age,z,scale);
+  assert.equal(tool.kind,'net');assert.equal(tool.facing,direction);
+  for(const [endpoint,world]of [[tool.hand,pose.grip],[tool.elbow,pose.elbow]]){assert(Math.abs(p.x+endpoint.x*scale-world.x)<1e-9);assert(Math.abs(p.y-z+endpoint.y*scale-world.y)<1e-9);}
+ }
+});
+test('recovery lowers directly to the held pose without a second overhead stroke',()=>{
+ const p={x:500,y:500};
+ for(const direction of ['up','down','left','right']){
+  const angle=facingAngle(direction),end=netSweepPose(p,angle,1),rest=netVisualPose(p,angle),samples=Array.from({length:21},(_,i)=>netVisualPose(p,angle,NET_SWEEP_SECONDS+NET_RECOVERY_SECONDS*i/20));
+  let remaining=Infinity;
+  for(const pose of samples){
+   assert(pose.x>=Math.min(end.x,rest.x)-1e-9&&pose.x<=Math.max(end.x,rest.x)+1e-9);assert(pose.y>=Math.min(end.y,rest.y)-1e-9&&pose.y<=Math.max(end.y,rest.y)+1e-9);
+   const distance=Math.hypot(pose.x-rest.x,pose.y-rest.y);assert(distance<=remaining+1e-9);remaining=distance;assert.equal(pose.catchable,false);
+  }
+  assert.deepEqual(samples.at(-1),rest);assert.equal(rest.stage,'ready');
  }
 });

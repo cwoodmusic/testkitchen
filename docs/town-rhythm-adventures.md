@@ -2,25 +2,31 @@
 
 The town activities work in **Walk test** and **Play this town**, and leave the saved map unchanged. Town stars remain separate from arcade Notes. Cave and coastal fish now share one journal, including catch counts and largest sizes from the earlier coastal game.
 
-## Yellow-note inventory and NPC requests
+## Musical fairies and yellow-note inventory
 
-Yellow note bugs fly around the connected town whenever you are outside. No vendor game is needed. Chase them with **WASD / arrows** and **Shift**, then swing with **F** or **Swing net**. Clicking turns toward the pointer and swings. Each successful sweep catches one card; yellow cards replenish after twelve active outdoor seconds.
+Small musical fairies drift around town with translucent wings and glitter trails. Their musical glyphs have no circular badge. Yellow fairies supply the saved inventory; blue fairies belong to the vendor challenge. **At most five fairies appear on the island at once, counting both colors.** When all four blue fairies are out, only one yellow fairy appears. More yellow slots become available as blue notes are caught.
 
-The yellow inventory saves quarter notes, beamed eighth-note pairs, beamed four-sixteenth groups, and quarter rests. Each card represents one beat. It stays with the active player on this browser/device, separately from blue challenge cards and arcade Notes. Existing town stars, fish records, and maps are preserved.
+Press **Tab** to equip or stow the net. It starts stowed. Turn with **WASD / arrows**, then press **F** or click/tap to swing in the direction the avatar faces. Clicking does not turn or aim the avatar. The stroke lifts over the head and chops forward like an axe, with the drawn mouth and catch collision sharing the same geometry. Windup and behind-the-body positions cannot catch a note. Stowing cancels the stroke; no net is drawn and no catches happen while it is stowed. Touch players can use **Equip net / Stow net** in the Play controls.
 
-Approach a named neighbour, press **E**, and choose **Hear rhythm request**. Hear the count-in and example twice, then write four beats from your yellow inventory. The answer is hidden while listening. Replay and undo freely; incorrect answers spend nothing. You can leave to catch more yellow cards and return to the same neighbour’s request. A correct answer uses exactly four cards, earns one town star, and advances that neighbour’s next request. A failed inventory save leaves the cards available to retry. NPC requests have no timer.
+A yellow catch saves one quarter-note card, beamed eighth-note pair, beamed four-sixteenth group, or quarter rest. It replenishes in its original slot after twelve active outdoor seconds. The compact inventory counter stays out of the way. Inventory remains separate for each active player in this browser/device; cross-device syncing is deferred. Existing town stars, fish records, and maps are preserved.
+
+## NPC rhythm requests
+
+Approach a named neighbour, press **E**, and choose **Hear rhythm request**. Hear the count-in and example twice, then write four beats from your saved yellow inventory. The answer is hidden while listening. Replay and undo in the NPC’s actual interaction panel; incorrect answers spend nothing. Leave to catch more yellow fairies and return to the same request. A correct answer uses exactly four cards, earns one town star, and advances that neighbour’s next request. Failed saves leave the cards available to retry. NPC requests are untimed.
 
 ## Blue vendor challenge
 
 With **NPCs on**, approach the coffee-cart host, press **E**, and choose **Play Rhythm Catch**. If there is no coffee cart, another vendor hosts.
 
-Watch **1 · 2 · Ready · GO!**, then hear the four-beat rhythm twice. Exactly **four blue cards** appear around the connected island. They flutter and flee like the yellow bugs, but belong only to this vendor challenge. Their values match the heard rhythm; their order is not shown.
+Watch **1 · 2 · Ready · GO!**, then hear the four-beat rhythm twice. Exactly **four blue fairies** appear around the connected island. Their values match the heard rhythm; their order is not shown.
 
-You have **five minutes** to catch all four blue cards, return to the original vendor, and rebuild the rhythm by ear. The timer starts after the first example and keeps running during reconstruction and replays. **R / Hear rhythm** replays the example. **E / Build at vendor** opens the four-slot builder near the vendor. A correct answer earns one to three town stars; three rounds earn the Town Rhythm Ranger finish screen. Each new round starts with a fresh five minutes.
+You have **five minutes** to catch all four blue notes, return to the original vendor, and rebuild the rhythm by ear. The timer starts after the first example and continues during reconstruction. Hunting shows only a small timer and blue-note count, with no replay or action-button panel. **E** at the vendor opens the four-slot rhythm builder. A correct answer earns one to three town stars; three rounds earn the Town Rhythm Ranger finish screen. Every new round starts with a fresh five minutes.
 
-If time runs out, that round ends without a reward. **Try again** starts fresh. Your yellow inventory is kept, and blue cards never become inventory cards. Yellow catches during a blue hunt still go into the yellow collection. Leaving, pausing, or switching the active player cannot spend yellow cards on a blue challenge.
+**Escape** opens **“Are you sure you want to end Rhythm Catch?”**. **Keep playing** (or Escape again) returns to the same round without resetting the notes, written order, or remaining time. The clock pauses while confirming. **End Rhythm Catch** clears that blue hunt while preserving saved yellow inventory and stars.
 
-The shared net uses a direction-specific wrist anchor, a short windup, a forward sweep, and a straight retract. The visible rim and catch collision use the same geometry. WASD sets facing immediately before F; the avatar keeps that facing through the stroke. Water, solid walls and cliffs stop both flying cards and catches. Reduced motion removes wing flicker, bobbing, and the trail. Explicit pause/background-tab protection freezes the challenge clock and note movement.
+If time expires, the round ends without a reward. **Try again** starts fresh. Blue notes never become saved inventory; yellow catches during a blue hunt still go into the yellow collection. Background-tab protection freezes the clock and note movement. A correct answer awaiting a failed progress save keeps its remaining time while **Try saving again** retries without duplicate rewards.
+
+Water, solid walls, and cliffs stop flying fairies and catches. All five slots use connected paths with safe approaches. Reduced motion freezes decorative wing motion, bobbing, and glitter while leaving recognizable notation and the catch action available.
 
 ## Sailing and fishing
 
@@ -48,8 +54,8 @@ On the same saved 137-object town in managed Chromium, the district view improve
 
 Browser checks:
 
-- `tests/town-adventures-browser.py`: four blue cards, all four net directions, five-minute deadline/replay/build/pause/timeout/retry, rewards and save/reload.
-- `tests/town-yellow-notes-browser.py`: permanent yellow catches, inventory persistence, respawn and interactions.
+- `tests/town-adventures-browser.py`: four blue fairies, Tab equip/stow, overhead directions, clean HUD, Escape confirmation, five-minute deadline/build/pause/timeout/retry, rewards and save/reload.
+- `tests/town-yellow-notes-browser.py`: five-note cap, fairy art, equipped catches, inventory persistence, replenishment, interactions, and mobile controls.
 - `tests/town-npc-rhythm-browser.py`: real neighbour conversation, by-ear reconstruction, exact inventory spend and persistence.
 - `tests/town-island-browser.py`: actual island sailing, a four-bar perfect cave-engine catch, 54-species journal, reload and mobile layout.
 - `tests/town-fishing-shared-browser.py`: real arcade/iframe catch sharing, existing cave catches retained, one Notes reward, and persistence.

@@ -66,6 +66,7 @@ window.createCodaCharacterRenderer=function(api){
     const result={skin:p.skin,skinShade:shade(p.skin,-24),skinLight:shade(p.skin,18),hair:p.hair,hairShade:shade(p.hair,-23),hairLight:shade(p.hair,20),shirt:p.shirt,shirtShade:shade(p.shirt,-25),shirtLight:shade(p.shirt,25),ink:'#211d34',pants:p.lowerColor,pantsShade:shade(p.lowerColor,-22),pantsLight:shade(p.lowerColor,18)};
     if(palettes.size>=cacheLimit)palettes.delete(palettes.keys().next().value);palettes.set(key,result);return result;
   }
+  function validNetTool(value){return value?.kind==='net'&&[value.hand,value.elbow].every(point=>point&&Number.isFinite(point.x)&&Number.isFinite(point.y)&&Math.abs(point.x)<=100&&Math.abs(point.y)<=100);}
   function sampleMotion(raw={},time=0){
     const m=raw&&typeof raw==='object'?raw:{},quiet=reduced(),t=finite(time),phase=finite(m.phase);
     const seated=m.seated===true,walking=m.walking===true&&!seated,emote=typeof m.emote==='string'?m.emote:'';
@@ -100,6 +101,7 @@ window.createCodaCharacterRenderer=function(api){
         }
       }
     if(seated){sit=true;clip='sit';bob=0;dx=0;lift=0;lean=0;}
+    if(validNetTool(m.toolPose)){bob=dx=lift=lean=0;gesture='';}
     const jumpHeight=seated?0:Math.max(0,Math.min(160,finite(m.jumpHeight)));
     return {facing,walking,phase,stride,dx,lift,bob,gesture,clip,sit,seated,lean,actionTime,jumpHeight,blink:!quiet&&((t+finite(m.seed)*.37)%5.3+5.3)%5.3>5.13,quiet};
   }
@@ -548,7 +550,9 @@ window.createCodaCharacterRenderer=function(api){
   }
   function render(ctx,p,motion,time,points){
     if(points?.length&&!motion._pixelSurface)return renderPixelActor(ctx,p,motion,time,points);
-    const pose=sampleMotion(motion,time),c=palette(p),side=pose.facing==='left'||pose.facing==='right',back=pose.facing==='up';
+    const pose=sampleMotion(motion,time),rawTool=motion.toolPose;
+    const tool=validNetTool(rawTool)?rawTool:null;
+    const c=palette(p),side=pose.facing==='left'||pose.facing==='right',back=pose.facing==='up';
     const x=finite(motion.x),y=finite(motion.y),scale=motion._pixelSurface||motion._pixelFrame?1:Math.max(.25,Math.min(8,finite(motion.scale,1)))*worldScale;
     ctx.save();ctx.imageSmoothingEnabled=false;ctx.translate(Math.round(x),Math.round(y));ctx.scale(scale,scale);
     const shadowScale=1-Math.min(.35,pose.jumpHeight/110);
@@ -619,6 +623,18 @@ window.createCodaCharacterRenderer=function(api){
     // Concert musicians supply both posed arms with their instrument.
     // Keep the ordinary hands for every other NPC and all existing activities.
     if(motion.instrumentPose!=='violin'&&motion.instrumentPose!=='viola'&&motion.instrumentPose!=='piano'&&motion.instrumentPose!=='concert'){
+    if(tool){
+      const nearLeft=pose.facing==='down',far=nearLeft?rightArm:leftArm;
+      r(far,-23,4,8,nearLeft?c.shirt:c.shirtShade);r(far,-16+(nearLeft?-armSwing:armSwing),4,10,nearLeft?c.skin:c.skinShade);
+      // Tool coordinates are already screen-oriented. Undo the actor's left
+      // mirror, and keep grip/elbow independent of costume body proportions.
+      const mirror=pose.facing==='left'?-1:1,hand={x:tool.hand.x*mirror,y:tool.hand.y},elbow={x:tool.elbow.x*mirror,y:tool.elbow.y};
+      const shoulder={x:(nearLeft?-11:side?7:11)*buildX,y:-22*buildY};
+      const pixel=(x,y,w,h,col)=>r(x/buildX,y/buildY,w/buildX,h/buildY,col);
+      const limb=(a,b,col,width)=>{const n=Math.max(1,Math.ceil(Math.max(Math.abs(b.x-a.x),Math.abs(b.y-a.y))));for(let i=0;i<=n;i++){const u=i/n;pixel(a.x+(b.x-a.x)*u-width/2,a.y+(b.y-a.y)*u-width/2,width,width,col);}};
+      limb(shoulder,elbow,nearLeft?c.shirtShade:c.shirt,4);limb(elbow,hand,nearLeft?c.skinShade:c.skin,3);
+      pixel(hand.x-2,hand.y-1,4,3,c.skin);pixel(hand.x-1,hand.y-1,2,1,c.skinLight);
+    }else{
     if(pose.seated){
       // Relaxed elbows and hands rest inward on the lap. Keep the original
       // standing/arcade emotes untouched unless a real bench requests it.
@@ -651,6 +667,7 @@ window.createCodaCharacterRenderer=function(api){
     if(pose.gesture==='airguitar'){r(-13,-20,15,4,c.skinShade);hand(6,-16+Math.round(beat*2));r(8,-20,4,7,c.skin);}
       if(pose.gesture==='curtsy'){r(-19,-17,10,4,c.skinShade);r(10,-17,10,4,c.skin);hand(-22,-15);hand(18,-15);}
       if(['salute','facepalm','think'].includes(pose.gesture)){r(leftArm,-17,4,11,c.skinShade);r(rightArm,-28,4,13,c.skin);r(4,-29,8,4,c.skin);if(pose.gesture==='salute')r(3,-40,10,4,c.skinLight);}
+    }
     }
     }
     r(-5,-29,10,6,c.skinShade);r(-4,-28,8,5,c.skin);
@@ -700,7 +717,10 @@ window.createCodaCharacterRenderer=function(api){
       head(-12,-46,24,22,'#2d3e58');head(-10,-44,20,18,'#9ab7c8');head(-12,-39,2,9,'#d0e7e8');head(10,-39,3,9,'#526d87');head(-1,-53,2,8,'#d4bd79');head(-3,-56,6,4,'#f7d96d');if(!back){head(-8,-39,6,4,'#71f2da');head(3,-39,6,4,'#71f2da');head(-5,-30,11,3,'#3a536c');head(-3,-30,1,3,'#c9e6e9');head(1,-30,1,3,'#c9e6e9');}
     }
     if(p.form==='starlight'){for(const [sx,sy]of [[-16,-46],[17,-33],[-15,-16],[13,-7]])pixelStar(r,sx,sy,1,'#ffef9c');}
-    drawHair(hairRect,p,c,side,back);drawHeadwear(r,p,c,side,back);drawEyewear(r,p,side,back);drawGear(r,p,c,pose,side,back);
+    drawHair(hairRect,p,c,side,back);drawHeadwear(r,p,c,side,back);drawEyewear(r,p,side,back);
+    // A net temporarily occupies the carried-item hand. Wearables stay on,
+    // and the saved accessory returns unchanged when the tool is stowed.
+    drawGear(r,tool&&carriedGearOffset(p.accessory,side)!==null?{...p,accessory:'none'}:p,c,pose,side,back);
     if(p.headwear==='celestialcrown'){
       r(-13,-47,26,3,p.headwearColor);r(-11,-47,22,2,'#f5d681');
       for(const sign of [-1,1]){r(sign<0?-13:10,-52,3,6,'#f5d681');pixelStar(r,sign*11,-55,1,'#ffe9a3');}
