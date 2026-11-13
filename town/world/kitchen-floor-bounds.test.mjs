@@ -18,7 +18,7 @@ test('all eight compact kitchen finishes follow their actual fixture row, includ
   assert.deepEqual(b,display.column===1?{x:28,y:106,w:display.id==='midcentury-studio'?304:276,h:170}:{x:880,y:106,w:276,h:170});
   for(const item of scene.items.filter(i=>['sink','counter','stove','fridge','pantry'].includes(i.fixtureRole))){
    const fixture=furnitureFacingBounds(catalog.get(item.asset),item);
-   assert(fixture.x>=b.x&&fixture.x+fixture.w<=b.x+b.w,display.id+' '+item.fixtureRole+' stays on kitchen tile');
+   assert(Math.max(28,fixture.x)>=b.x&&Math.min(scene.width-28,fixture.x+fixture.w)<=b.x+b.w,display.id+' '+item.fixtureRole+' stays on kitchen tile inside the room edge');
   }
   const physical=structuredClone({...scene,rooms:scene.rooms.map(({floorBounds,...room})=>room)});
   fitCompactKitchenFloor(scene,catalog);

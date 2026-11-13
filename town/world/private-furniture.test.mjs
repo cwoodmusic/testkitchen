@@ -46,7 +46,9 @@ test('tabletop lamps, toys and mini cabinets stay attached to their resized real
   const scene=getInterior(request);calibratePrivateFurniture(scene,catalog);
   for(const item of scene.items.filter(i=>i.supportedBy&&i.supportedBy!=='north-wall')){
    const parent=parentOf(item,scene.items);assert(parent,scene.id+' support '+item.supportedBy);assert.equal(item.solid,false);assert.equal(item.collisionBoxes.length,0);
-   assert(item.y<=parent.y+1e-8&&item.y>=parent.y-parent.h-1e-8,'Supported item remains on its pictured furniture: '+scene.id+' '+item.asset);
+   // The approved Victorian export uses a turned table as a plant support.
+   const pictured=scene.roomLayoutBaseItems?furnitureFacingBounds(catalog.get(parent.asset),parent):{y:parent.y-parent.h,h:parent.h};
+   assert(item.y<=pictured.y+pictured.h+1e-8&&item.y>=pictured.y-1e-8,'Supported item remains on its pictured furniture: '+scene.id+' '+item.asset);
    near(item.depth,furnitureFacingDepth(catalog.get(parent.asset),parent,parent.y)+.25,'Child depth follows support feet');supported++;
   }
  }
@@ -85,21 +87,22 @@ function body(item){
  const boxes=furnitureFacingBoxes(catalog.get(item.asset),item),x=Math.min(...boxes.map(b=>b.x)),y=Math.min(...boxes.map(b=>b.y)),right=Math.max(...boxes.map(b=>b.x+b.w)),bottom=Math.max(...boxes.map(b=>b.y+b.h));
  return {x,y,w:right-x,h:bottom-y,cx:(x+right)/2,cy:(y+bottom)/2};
 }
-test('all31 homes gain six inward-facing native chairs around a separate family table, with useful bedroom and living groups',()=>{
+test('all31 homes retain inward-facing native dining chairs, including the approved three-chair Victorian arrangement',()=>{
  for(const request of privateScenes){
   const scene=getInterior(request),family=scene.familyFurniture,table=scene.items.find(i=>i.id===family?.diningTable);assert(table,scene.id+' family dining table');
-  assert.equal(table.asset,'family-'+(scene.resident||'showroom-'+scene.showroomId)+'-dining-table');assert.equal(family.diningSeats.length,6,scene.id+' six family places');
+  const approvedVictorian=scene.id==='showroom-victorian-parlor';
+  assert.equal(table.asset,'family-'+(scene.resident||'showroom-'+scene.showroomId)+'-dining-table');assert.equal(family.diningSeats.length,approvedVictorian?3:6,scene.id+' approved dining places');
   const t=body(table),facings=[];
   for(const id of family.diningSeats){
    const seat=scene.items.find(i=>i.id===id),s=body(seat),a=catalog.get(seat.asset),turn=(seat.rotation||0)/90,angle=turn*Math.PI/2,dx=t.cx-s.cx,dy=t.cy-s.cy;
    assert.equal(seat.seatingTarget,table.id);assert.equal(seat.roomExpansion,'family-room-1');near(seat.w,a.w*.50,'Dining chair retains approved person scale');
    const front={x:-Math.sin(angle),y:Math.cos(angle)};assert(front.x*dx+front.y*dy>0,scene.id+' chair faces its table');
    const horizontal=turn%2!==0,gap=horizontal?Math.abs(dx)-(s.w+t.w)/2:Math.abs(dy)-(s.h+t.h)/2;
-   if(scene.id==='showroom-midcentury-studio')assert(gap>=0,'The approved tucked-in dining chairs stay outside their table');
+   if(scene.id==='showroom-midcentury-studio'||approvedVictorian)assert(gap>=0,'The approved tucked-in dining chairs stay outside their table');
    else near(gap,22,scene.id+' table-to-chair clearance');
    assert(horizontal?Math.abs(dy)<=t.h/2:Math.abs(dx)<=t.w/2,'Every chair serves a real section of tabletop');facings.push(seat.rotation||0);
   }
-  assert.deepEqual(facings.sort((a,b)=>a-b),[0,0,90,180,180,270]);
+  assert.deepEqual(facings.sort((a,b)=>a-b),approvedVictorian?[90,180,270]:[0,0,90,180,180,270]);
   assert(family.livingSeats.length>=3,scene.id+' conversation seating');assert(scene.items.some(i=>i.id===family.livingTable&&i.asset.startsWith('family-')));
   assert(family.bedroomNook,scene.id+' bedroom reading nook');const nook=scene.items.find(i=>i.id===family.bedroomNook.seat);assert.equal(nook.seatingTarget,family.bedroomNook.table);
   assert(scene.items.some(i=>i.designRole==='family-statement-plant'),scene.id+' large indoor greenery');assert(scene.items.some(i=>i.designRole==='bedroom-plant'),scene.id+' bedroom greenery');
@@ -128,7 +131,7 @@ test('a real player can approach every family dining, conversation and bedroom s
   const scene=getInterior(request),reaches=walkable(scene);
   for(const item of scene.items.filter(i=>i.seatingTarget)){
    const s=body(item),turn=(item.rotation||0)/90,angle=turn*Math.PI/2,front={x:-Math.sin(angle),y:Math.cos(angle)},depth=turn%2?s.w:s.h,at={x:s.cx+front.x*(depth/2+8),y:s.cy+front.y*(depth/2+8)};
-   if(scene.id==='showroom-midcentury-studio'){
+   if(scene.id==='showroom-midcentury-studio'||scene.id==='showroom-victorian-parlor'){
     // The owner's dining edit tucks chairs close to the table. A person
     // approaches these seats from the aisle beside or behind the chair.
     const aisle=[at,{x:s.cx,y:s.y-8},{x:s.cx,y:s.y+s.h+8},{x:s.x-8,y:s.cy},{x:s.x+s.w+8,y:s.cy}];

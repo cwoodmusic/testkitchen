@@ -28,12 +28,14 @@ Use **This theme** for the selected collection’s pieces, or **All furniture** 
 | − / + | Zoom out or in. The percentage shows the current zoom. |
 | Mouse wheel | Zoom at the pointer. |
 | Fit room | Show the whole interior. |
-| Reset theme | Restore the original furniture layout for this theme. Undo can bring your edited layout back during the current session. |
+| Reset theme | Restore the current default furniture layout for this theme. Undo can bring your edited layout back during the current session. |
 | Back to town | Return to the town canvas. |
 
 Completed edits autosave in this browser; look for **Saved** beneath the controls. Switching themes or returning to town cancels an unfinished pickup. Undo history lasts for the current page session.
 
 The Victorian bathroom rug can be moved, turned, removed and restored with the same controls. Its placement saves with the room and appears in Walk test and Play this town; existing room layouts keep their furniture positions.
+
+The Victorian Suite starts with the approved dining and lounge arrangement. Existing saved Victorian designs stay unchanged; choose **Reset theme** to use the updated default.
 
 If browser saving fails, the error stays visible when you return to that theme. **Export layouts ↓** includes your completed changes so you can keep a file copy. An unfinished pickup is excluded.
 

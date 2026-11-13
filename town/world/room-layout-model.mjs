@@ -1,7 +1,7 @@
 import {furnitureFacingBounds,furnitureFacingBoxes,furnitureFacingDepth} from './furniture-facing.mjs?v=opera-parallax-1';
-import {furniturePresentationScale} from './private-furniture.mjs?v=town-store-halls-1';
+import {furniturePresentationScale} from './private-furniture.mjs?v=town-victorian-default-1';
 import {apartmentDecorBounds,apartmentWallDecorBounds} from './personal-room-areas.mjs?v=opera-parallax-1';
-import {createRoomRugItems} from './room-rugs.mjs?v=town-room-placement-2';
+import {createRoomRugItems} from './room-rugs.mjs?v=town-victorian-default-1';
 
 export const ROOM_LAYOUT_FORMAT='coda-room-layout';
 export const ROOM_LAYOUT_VERSION=1;
@@ -68,18 +68,20 @@ export function createRoomLayoutModel({themeId,scene:authored,catalog,record:ini
  const base=clone(authored);base.items=(authored.items||[]).map((i,index)=>copyItem({...i,id:i.id||'base-'+index,collisionBoxes:i.collisionBoxes||[]}));
  if(new Set(base.items.map(i=>i.id)).size!==base.items.length)throw Error('The room contains repeated furniture IDs.');
  const authoredBases=new Set((authored.items||[]).flatMap(i=>i.collisionBoxes||[])),structural=(authored.solids||[]).filter(b=>!authoredBases.has(b)).map(b=>({...b}));
- const originalItems=canonicalItems(base.items,catalog),rugItems=createRoomRugItems(base,catalog),rugMap=new Map(rugItems.map(item=>[item.roomRugId,item])),baseItems=canonicalItems([...originalItems,...rugItems],catalog),baseMap=new Map(baseItems.map(i=>[i.id,i])),originalMap=new Map(originalItems.map(i=>[i.id,i])),baseSignature=signature({...base,items:originalItems}),clearance=doorClearance(base);
+ // Approved defaults can move or remove pieces without redefining the stock
+ // used by existing saves. Keep that canonical stock separate from Reset.
+ const originalItems=canonicalItems(base.roomLayoutBaseItems||base.items,catalog),rugItems=createRoomRugItems(base,catalog),rugMap=new Map(rugItems.map(item=>[item.roomRugId,item])),baseItems=canonicalItems([...originalItems,...rugItems],catalog),defaultItems=canonicalItems([...base.items,...rugItems],catalog),baseMap=new Map(baseItems.map(i=>[i.id,i])),originalMap=new Map(originalItems.map(i=>[i.id,i])),baseSignature=signature({...base,items:originalItems}),clearance=doorClearance(base);
  // Textured rugs use the normal picking/history/rendering pipeline, while
  // their optional saved poses leave every existing furniture signature intact.
  base.rugs=(base.rugs||[]).filter(rug=>!rug.texture);
  // Only this explicitly appended family is compatible with the preceding
  // room. Changes to old IDs, asset sizes, walls or doors still fail strictly.
- const expansionItems=originalItems.filter(i=>i.roomExpansion==='family-room-1'),legacyItems=originalItems.filter(i=>i.roomExpansion!=='family-room-1'),legacyMap=new Map(legacyItems.map(i=>[i.id,i])),legacySignature=expansionItems.length?signature({...base,items:legacyItems}):null;
+ const expansionItems=defaultItems.filter(i=>i.roomExpansion==='family-room-1'),legacyItems=originalItems.filter(i=>i.roomExpansion!=='family-room-1'),legacyMap=new Map(legacyItems.map(i=>[i.id,i])),legacySignature=expansionItems.length?signature({...base,items:legacyItems}):null;
  const legacyPoses=new Map(expansionItems.length?legacyItems.flatMap(item=>{const pose=base.roomExpansionLegacyPoses?.[item.id];return point(pose)&&rotation(pose.rotation??0)?[[item.id,{x:pose.x,y:pose.y,rotation:pose.rotation??0}]]:[];}):[]);
  const personalFloor=apartmentDecorBounds(base)||[],personalWalls=apartmentWallDecorBounds(base)||[];
  const wallAreas=[{x:28,y:0,w:base.width-56,h:106},...(base.rooms||[]).flatMap(r=>r.wallpaperAreas||[]),...(base.walls||[]).map(w=>({x:w.x,y:w.y-96,w:w.w,h:96})).filter(r=>r.w>40)];
- let current=clone(base),held=null,revision=0,serial=1,undo=[],redo=[];current.items=baseItems.map(copyItem);
- function rebuild(items=current.items){const next={...current,items,solids:[...structural,...items.flatMap(i=>i.collisionBoxes)],layoutRevision:revision};for(const symbol of Object.getOwnPropertySymbols(current))Object.defineProperty(next,symbol,{value:current[symbol]});current=next;}
+ let current=clone(base),held=null,revision=0,serial=1,undo=[],redo=[];current.items=defaultItems.map(copyItem);
+ function rebuild(items=current.items){const next={...current,items,solids:[...structural,...items.flatMap(i=>i.collisionBoxes)],layoutRevision:revision};if(base.roomLayoutBaseItems&&next.familyFurniture){const ids=new Set(items.map(i=>i.id)),family=next.familyFurniture;next.familyFurniture={...family,diningSeats:originalItems.filter(i=>i.seatingTarget===family.diningTable&&ids.has(i.id)).map(i=>i.id)};}for(const symbol of Object.getOwnPropertySymbols(current))Object.defineProperty(next,symbol,{value:current[symbol]});current=next;}
  rebuild();
  function geometryError(item){
   const a=catalog.get(item.asset);if(!a)return 'This furniture artwork is unavailable.';
@@ -162,7 +164,7 @@ export function createRoomLayoutModel({themeId,scene:authored,catalog,record:ini
   const admitted=new Set(items.map(i=>i.id)),attempted=new Set(),visiting=new Set();
   function admit(source){
    if(admitted.has(source.id))return true;if(attempted.has(source.id)||visiting.has(source.id))return false;visiting.add(source.id);
-   const item=copyItem(source),sourceParent=supportOf(source,baseItems);
+   const item=copyItem(source),sourceParent=supportOf(source,defaultItems);
    if(sourceParent){
     if(!admitted.has(sourceParent.id)&&sourceParent.roomExpansion==='family-room-1')admit(sourceParent);
     const parent=items.find(i=>i.id===sourceParent.id);if(!parent){visiting.delete(source.id);attempted.add(source.id);return false;}
@@ -181,7 +183,7 @@ export function createRoomLayoutModel({themeId,scene:authored,catalog,record:ini
   return items;
  }
  function applyRecord(value,{initial=false}={}){let decoded;try{decoded=itemsFromRecord(value);}catch(e){return fail(e.message);}let {items}=decoded;const error=validate(items,{reach:true});if(error)return fail(error);if(decoded.legacy)items=mergeExpansion(items);held=null;if(initial){rebuild(items);undo=[];redo=[];return {ok:true,changed:false};}return commit(items);}
- const api={get themeId(){return themeId;},get scene(){return current;},get held(){return ghost();},get revision(){return revision;},get canUndo(){return !!undo.length;},get canRedo(){return !!redo.length;},get hasEdits(){return JSON.stringify(record())!==baseRecord;},pick,move,rotate,place,add,remove,cancel(){held=null;return {ok:true,changed:false};},undo:()=>history(undo,redo),redo:()=>history(redo,undo),reset(){held=null;return commit(baseItems);},record,applyRecord};
+ const api={get themeId(){return themeId;},get scene(){return current;},get held(){return ghost();},get revision(){return revision;},get canUndo(){return !!undo.length;},get canRedo(){return !!redo.length;},get hasEdits(){return JSON.stringify(record())!==baseRecord;},pick,move,rotate,place,add,remove,cancel(){held=null;return {ok:true,changed:false};},undo:()=>history(undo,redo),redo:()=>history(redo,undo),reset(){held=null;return commit(defaultItems);},record,applyRecord};
  const baseRecord=JSON.stringify(record());if(initialRecord){const result=applyRecord(initialRecord,{initial:true});if(!result.ok){const error=Error(result.error);error.code='INVALID_ROOM_LAYOUT';throw error;}}
  return api;
 }

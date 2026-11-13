@@ -125,7 +125,9 @@ export function fitCompactKitchenFloor(scene,catalog){
  if(scene.kind!=='showroom'||scene.width!==1184||scene.height!==448)return scene;
  const kitchen=scene.rooms.find(room=>room.functionalRole==='kitchen'),living=scene.rooms.find(room=>room.functionalRole==='living');
  if(!kitchen||!living)return scene;
- const roles=new Set(['sink','counter','stove','fridge','pantry']),bounds=scene.items.filter(item=>roles.has(item.fixtureRole)).map(item=>{
+ // Promoting a furniture arrangement keeps the floor finish the owner edited
+ // against; an already-authored tile edge does not follow each moved cabinet.
+ const roles=new Set(['sink','counter','stove','fridge','pantry']),bounds=(scene.roomLayoutBaseItems||scene.items).filter(item=>roles.has(item.fixtureRole)).map(item=>{
   const asset=catalog?.get(item.asset);return asset?furnitureFacingBounds(asset,item):{x:item.x-item.w/2,y:item.y-item.h,w:item.w,h:item.h};
  });
  if(!bounds.length)return scene;

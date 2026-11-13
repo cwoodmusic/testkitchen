@@ -1,0 +1,260 @@
+{
+  "format": "coda-room-layouts",
+  "version": 1,
+  "owner": "builder",
+  "rooms": {
+    "showroom-victorian-parlor": {
+      "format": "coda-room-layout",
+      "version": 1,
+      "themeId": "showroom-victorian-parlor",
+      "baseSignature": "room-361c4bf9",
+      "placements": [
+        {
+          "id": "showroom-victorian-parlor-item-0",
+          "x": 234.5,
+          "y": 174.99999999999997,
+          "rotation": 0,
+          "support": null
+        },
+        {
+          "id": "showroom-victorian-parlor-item-2",
+          "x": 297.65,
+          "y": 132.73,
+          "rotation": 0,
+          "support": null
+        },
+        {
+          "id": "showroom-victorian-parlor-item-3",
+          "x": 234.5,
+          "y": 127.39999999999998,
+          "rotation": 0,
+          "support": "showroom-victorian-parlor-item-0"
+        },
+        {
+          "id": "showroom-victorian-parlor-item-4",
+          "x": 297.65,
+          "y": 105.99249999999999,
+          "rotation": 0,
+          "support": "showroom-victorian-parlor-item-2"
+        },
+        {
+          "id": "showroom-victorian-parlor-item-5",
+          "x": 246,
+          "y": 94,
+          "rotation": 0,
+          "support": null
+        },
+        {
+          "id": "showroom-victorian-parlor-item-6",
+          "x": 442,
+          "y": 136,
+          "rotation": 0,
+          "support": null
+        },
+        {
+          "id": "showroom-victorian-parlor-item-7",
+          "x": 442,
+          "y": 66.4,
+          "rotation": 0,
+          "support": null
+        },
+        {
+          "id": "showroom-victorian-parlor-item-8",
+          "x": 543.6,
+          "y": 149.70000000000002,
+          "rotation": 0,
+          "support": null
+        },
+        {
+          "id": "showroom-victorian-parlor-item-24",
+          "x": 928,
+          "y": 94,
+          "rotation": 0,
+          "support": null
+        },
+        {
+          "id": "showroom-victorian-parlor:family-room-1:family-dining-chair-5",
+          "x": 848.1537084398976,
+          "y": 185.73657289002557,
+          "rotation": 90,
+          "support": null
+        },
+        {
+          "id": "showroom-victorian-parlor:family-room-1:family-dining-chair-6",
+          "x": 655.6979539641944,
+          "y": 189.52173913043478,
+          "rotation": 270,
+          "support": null
+        },
+        {
+          "id": "showroom-victorian-parlor:family-room-1:family-dining-chair-2",
+          "x": 750.7179028132992,
+          "y": 228.19462915601025,
+          "rotation": 180,
+          "support": null
+        },
+        {
+          "id": "showroom-victorian-parlor:family-room-1:family-dining-table-1",
+          "x": 756.468030690537,
+          "y": 154.87468030690542,
+          "rotation": 180,
+          "support": null
+        },
+        {
+          "id": "showroom-victorian-parlor-item-20",
+          "x": 316.23161125319695,
+          "y": 207.42212276214838,
+          "rotation": 90,
+          "support": null
+        },
+        {
+          "id": "showroom-victorian-parlor-item-1",
+          "x": 62.47263427109982,
+          "y": 143.70127877237852,
+          "rotation": 0,
+          "support": null
+        },
+        {
+          "id": "showroom-victorian-parlor-item-18",
+          "x": 136.08634271099746,
+          "y": 242.44833759590793,
+          "rotation": 0,
+          "support": null
+        },
+        {
+          "id": "showroom-victorian-parlor-item-23",
+          "x": 130.78710997442457,
+          "y": 308.91560102301787,
+          "rotation": 0,
+          "support": null
+        },
+        {
+          "id": "showroom-victorian-parlor:family-room-1:bedroom-plant-1",
+          "x": 136.7437340153453,
+          "y": 199.4590792838875,
+          "rotation": 0,
+          "support": "showroom-victorian-parlor-item-18"
+        },
+        {
+          "id": "showroom-victorian-parlor-item-19",
+          "x": 81.57994884910485,
+          "y": 228.62404092071608,
+          "rotation": 270,
+          "support": null
+        },
+        {
+          "id": "showroom-victorian-parlor-item-9",
+          "x": 414.4434462450013,
+          "y": 158.74665676187436,
+          "rotation": 270,
+          "support": null
+        },
+        {
+          "id": "showroom-victorian-parlor-item-14",
+          "x": 911.8083612461653,
+          "y": 141.18585287231565,
+          "rotation": 0,
+          "support": null
+        },
+        {
+          "id": "showroom-victorian-parlor-item-10",
+          "x": 965.4186627047499,
+          "y": 140.2366555015339,
+          "rotation": 0,
+          "support": null
+        },
+        {
+          "id": "showroom-victorian-parlor-item-12",
+          "x": 1012.2132117772132,
+          "y": 140.05498325230087,
+          "rotation": 0,
+          "support": null
+        },
+        {
+          "id": "showroom-victorian-parlor-item-13",
+          "x": 1126.007356384217,
+          "y": 139.70418062308266,
+          "rotation": 0,
+          "support": null
+        },
+        {
+          "id": "showroom-victorian-parlor-item-15",
+          "x": 1126.007356384217,
+          "y": 73.40418062308268,
+          "rotation": 0,
+          "support": "showroom-victorian-parlor-item-13"
+        },
+        {
+          "id": "showroom-victorian-parlor-item-11",
+          "x": 1066.3617392400295,
+          "y": 140.22668899693218,
+          "rotation": 0,
+          "support": null
+        },
+        {
+          "id": "showroom-victorian-parlor-item-16",
+          "x": 1108.437871922503,
+          "y": 331.4417917608599,
+          "rotation": 90,
+          "support": null
+        },
+        {
+          "id": "showroom-victorian-parlor:family-room-1:family-coffee-table-1",
+          "x": 1075.2531969309464,
+          "y": 320.2014066496164,
+          "rotation": 270,
+          "support": null
+        },
+        {
+          "id": "showroom-victorian-parlor:family-room-1:family-lounge-chair-2",
+          "x": 996.5277493606138,
+          "y": 318.9616368286445,
+          "rotation": 270,
+          "support": null
+        },
+        {
+          "id": "showroom-victorian-parlor:family-room-1:family-statement-plant-1",
+          "x": 646.7212276214834,
+          "y": 144.31649616368287,
+          "rotation": 0,
+          "support": null
+        },
+        {
+          "id": "showroom-victorian-parlor:family-room-1:family-living-rug-1",
+          "x": 753.6753609988488,
+          "y": 266.93096609143697,
+          "rotation": 0,
+          "support": null
+        },
+        {
+          "id": "showroom-victorian-parlor:family-room-1:family-lounge-chair-1",
+          "x": 998.7868286445013,
+          "y": 365.1406649616368,
+          "rotation": 270,
+          "support": null
+        },
+        {
+          "id": "showroom-victorian-parlor-item-22",
+          "x": 1046.9974424552431,
+          "y": 333.1595396419438,
+          "rotation": 0,
+          "support": "showroom-victorian-parlor:family-room-1:family-coffee-table-1"
+        },
+        {
+          "id": "showroom-victorian-parlor-item-21",
+          "x": 1150.6956010230178,
+          "y": 417.4846547314578,
+          "rotation": 0,
+          "support": null
+        }
+      ],
+      "removed": [
+        "showroom-victorian-parlor-item-17",
+        "showroom-victorian-parlor:family-room-1:family-dining-chair-1",
+        "showroom-victorian-parlor:family-room-1:family-dining-chair-3",
+        "showroom-victorian-parlor:family-room-1:family-dining-chair-4"
+      ],
+      "added": []
+    }
+  }
+}

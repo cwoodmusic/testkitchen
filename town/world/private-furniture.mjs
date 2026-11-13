@@ -4,6 +4,7 @@ import {FAMILY_FURNITURE_ASSETS,getFamilyFurniture} from './family-furniture-def
 import {apartmentDecorBounds} from './personal-room-areas.mjs?v=opera-parallax-1';
 import {furnitureAtGroundCenter,furnitureFacingBoxes,furnitureFacingBounds,furnitureFacingDepth} from './furniture-facing.mjs?v=opera-parallax-1';
 import {applyMidcenturyRoomLayout} from './midcentury-room-layout.mjs?v=opera-parallax-1';
+import {applyVictorianRoomLayout} from './victorian-room-layout.mjs?v=town-victorian-default-1';
 
 const definitions=new Map([...APARTMENT_COLLECTION_ASSETS,...FAMILY_FURNITURE_ASSETS].map(a=>[a.id,a])),CALIBRATED=Symbol.for('coda.privateFurnitureCalibration');
 const finite=n=>typeof n==='number'&&Number.isFinite(n);
@@ -391,6 +392,7 @@ export function calibratePrivateFurniture(scene,catalog){
  }
 
  applyMidcenturyRoomLayout(scene,assets);
+ applyVictorianRoomLayout(scene,assets);
 
  // Remove only the old furniture bases. Structural walls retain their original
  // objects; each furniture collision array is rebuilt in place for consumers.

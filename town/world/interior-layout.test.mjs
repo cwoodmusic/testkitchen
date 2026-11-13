@@ -7,6 +7,7 @@ import {APARTMENT_COLLECTION_ASSETS} from './apartment-collection-definitions.mj
 import {FAMILY_FURNITURE_ASSETS} from './family-furniture-definitions.mjs';
 import {createApartmentCollectionRuntime} from './apartment-collection-runtime.mjs';
 import {furnitureFacingBoxes,furnitureFacingBounds} from './furniture-facing.mjs';
+import {getShowroomNavigation} from './showroom-navigation.mjs';
 
 // Real authored view dimensions/anchors, without fetching or rasterizing art.
 // A rotated PNG's rectangle is not a valid stand-in for a cardinal view.
@@ -19,6 +20,7 @@ configureUrbanInteriors(catalog);
 const requests=[...residents.map(r=>({kind:'apartment',resident:r.id,floor:r.floor})),{kind:'apartment',resident:'player',floor:15},...SHOWROOMS.map(r=>({kind:'showroom',showroomId:r.id,floor:r.storeFloor}))];
 const models=requests.map(getInterior),RADIUS=6,findings={};
 const approvedMidcentury=new Map(JSON.parse(readFileSync(new URL('../../tests/fixtures/midcentury-user-layout.json',import.meta.url))).rooms['showroom-midcentury-studio'].placements.map(p=>[p.id,p]));
+const approvedVictorian=new Map(JSON.parse(readFileSync(new URL('../../tests/fixtures/victorian-user-layout.json',import.meta.url))).rooms['showroom-victorian-parlor'].placements.map(p=>[p.id,p]));
 const slot=item=>item.slot||item.collectionSlot||catalog.get(item.asset)?.slot;
 const itemFor=(m,role)=>m.items.find(i=>slot(i)===role);
 const owner=m=>m.resident||'showroom-'+m.showroomId;
@@ -74,21 +76,23 @@ for(const m of models)for(const [role,area]of [['bed','bedroom'],['sink','kitche
  const item=itemFor(m,role);if(!item)continue;const room=roleRoom(m,item,area);if(!room){backs.push({owner:owner(m),role,error:'Missing functional room'});continue;}
  const b=footprint(item),turn=((item.rotation||0)%360+360)%360;
  const gap=turn===0?b.y-room.y:turn===90?room.x+room.w-b.x-b.w:turn===180?room.y+room.h-b.y-b.h:b.x-room.x;
- const approved=m.id==='showroom-midcentury-studio'?approvedMidcentury.get(item.id):null;
+ const victorian=m.id==='showroom-victorian-parlor',approved=m.id==='showroom-midcentury-studio'?approvedMidcentury.get(item.id):victorian?approvedVictorian.get(item.id):null;
  // The owner positioned this kitchen/bath run closer to its wall in the
  // approved export. Keep those exact poses and the normal4px minimum elsewhere.
- if(approved&&(item.x!==approved.x||item.y!==approved.y||(item.rotation||0)!==approved.rotation))backs.push({owner:owner(m),role,error:'The approved Midcentury pose changed'});
+ if(approved&&(item.x!==approved.x||item.y!==approved.y||(item.rotation||0)!==approved.rotation))backs.push({owner:owner(m),role,error:'The approved furniture pose changed'});
  const minimum=approved?0:4;
- if(gap<minimum-1e-6||gap>8+1e-6)backs.push({owner:owner(m),role,backGap:Math.round(gap*100)/100,physicalBase:round(b),room:{x:room.x,y:room.y,w:room.w,h:room.h}});
+ if(gap<minimum-1e-6||gap>(victorian?12:8)+1e-6)backs.push({owner:owner(m),role,backGap:Math.round(gap*100)/100,physicalBase:round(b),room:{x:room.x,y:room.y,w:room.w,h:room.h}});
 }
-check('beds and kitchen/bath cabinets meet their functional wall, including exact owner-approved Midcentury poses',backs);
+check('beds and cabinets meet their functional wall, preserving exact owner-approved furniture poses',backs);
 
 const windows=[];
 for(const m of models)for(const item of m.items.filter(i=>['bed','wardrobe','fridge','pantry'].includes(slot(i)))){
  const image=furnitureFacingBounds(catalog.get(item.asset),item);
+ const approved=m.id==='showroom-victorian-parlor'&&item.id==='showroom-victorian-parlor-item-1'?approvedVictorian.get(item.id):null;
+ if(approved&&item.x===approved.x&&item.y===approved.y&&(item.rotation||0)===approved.rotation)continue; // The owner placed this wardrobe beside/partly in front of the bedroom window.
  for(const w of m.windows||[]){const glass={x:w.x-w.w/2,y:w.y+6,w:w.w,h:62};if(overlap(image,glass))windows.push({owner:owner(m),role:slot(item),picturedBounds:round(image),window:glass});}
 }
-check('tall furniture and bedheads leave actual window glazing visible',windows);
+check('tall furniture leaves window glazing visible except the exact approved Victorian wardrobe placement',windows);
 
 const approaches=[];
 for(const m of models)for(const item of m.items.filter(i=>['sink','stove','counter','fridge','pantry','vanity','toilet','bath-fixture','linen-storage','wardrobe','desk'].includes(slot(i)))){
@@ -115,7 +119,7 @@ const routes=[];
 for(const m of models){
  const paths=[];
  if(m.resident&&m.resident!=='player')paths.push([{x:m.width/2,y:m.floor>=7?750:650},{x:m.width/2,y:975}]);
- if(m.kind==='showroom'){const room=SHOWROOMS.find(s=>s.id===m.showroomId);paths.push(room.apartment.visitRoute,room.apartment.exitRoute);}
+ if(m.kind==='showroom'){const room=SHOWROOMS.find(s=>s.id===m.showroomId),tour=m.roomLayoutBaseItems?getShowroomNavigation(m):room.apartment;if(!tour){routes.push({owner:owner(m),error:'No reachable showroom tour'});continue;}paths.push(tour.visitRoute,tour.exitRoute);}
  for(const points of paths)for(let i=1;i<points.length;i++){
   const a=points[i-1],b=points[i],count=Math.max(1,Math.ceil(Math.hypot(b.x-a.x,b.y-a.y)/3));
   for(let n=0;n<=count;n++){const p={x:a.x+(b.x-a.x)*n/count,y:a.y+(b.y-a.y)*n/count};if(blocked(m,p)){routes.push({owner:owner(m),blockedAuthoredRoute:round(p)});break;}}

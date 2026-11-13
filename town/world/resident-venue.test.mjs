@@ -21,7 +21,9 @@ configureUrbanInteriors(catalog);
 test('every resident enters its separate apartment showroom at the real lobby door and returns to the street',()=>{
  const model=getInterior({kind:'shop'}),models=[model,getInterior({kind:'shop',floor:2}),...SHOWROOMS.map(room=>getInterior({kind:'showroom',showroomId:room.id,floor:room.storeFloor}))],before=JSON.stringify(models),browsedRooms=new Set();
  const allScenes=[{kind:'shop',floor:1},{kind:'shop',floor:2},...SHOWROOMS.map(room=>({kind:'showroom',showroomId:room.id,floor:room.storeFloor}))];
- const blocked=(model,x,y)=>x<40||x>model.width-40||y<100||y>model.height-40||model.solids.some(r=>x>=r.x-16&&x<=r.x+r.w+16&&y>=r.y-16&&y<=r.y+r.h+16);
+ // Promoted decorated defaults use the editor's six-pixel walking clearance;
+ // the other eleven authored tours retain their original wider margin.
+ const blocked=(model,x,y)=>{const radius=model.roomLayoutBaseItems?6:16;return x<40||x>model.width-40||y<100||y>model.height-40||model.solids.some(r=>x>=r.x-radius&&x<=r.x+r.w+radius&&y>=r.y-radius&&y<=r.y+r.h+radius);};
  for(const resident of residents){
   const showroom=SHOWROOMS[resident.index%SHOWROOMS.length];
   const duration=venueVisitDuration(resident.id,'shop'),initial=venueVisitPose(resident.id,'shop',0);

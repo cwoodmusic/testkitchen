@@ -1,4 +1,4 @@
-import {drawHomeMaterialRug,warmHomeMaterials} from './home-materials.mjs?v=town-victorian-2';
+import {drawHomeMaterialRug,warmHomeMaterials} from './home-materials.mjs?v=town-victorian-default-1';
 
 /** Adapt authored bitmap rugs to the editor's ordinary floor-item pipeline. */
 export function createRoomRugItems(scene,catalog){

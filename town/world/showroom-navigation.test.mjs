@@ -25,8 +25,13 @@ function clearRoute(scene,route){
 function fixture({spawn={x:60,y:180},browse={x:300,y:180},solids=[]}={}){
  const visitRoute=[{...spawn},{...browse}];return {kind:'showroom',width:400,height:300,spawn,solids,items:[],layoutRevision:1,showroom:{apartment:{browse,visitRoute,exitRoute:[...visitRoute].reverse()}}};
 }
+function historicalScene(source){
+ if(!source.roomLayoutBaseItems)return source;
+ const previous=new Set(source.items.flatMap(item=>item.collisionBoxes||[])),items=source.roomLayoutBaseItems.map(item=>({...item,collisionBoxes:item.solid?furnitureFacingBoxes(catalog.get(item.asset),item):[]}));
+ return {...source,roomLayoutBaseItems:undefined,items,solids:[...source.solids.filter(box=>!previous.has(box)),...items.flatMap(item=>item.collisionBoxes)]};
+}
 function victorianTable({small=false}={}){
- const base=getInterior({kind:'showroom',showroomId:'victorian-parlor'}),previous=base.items.find(item=>item.asset==='family-showroom-victorian-parlor-coffee-table');
+ const base=historicalScene(getInterior({kind:'showroom',showroomId:'victorian-parlor'})),previous=base.items.find(item=>item.asset==='family-showroom-victorian-parlor-coffee-table');
  const asset=catalog.get(small?'collection-showroom-victorian-parlor-coffee-table':previous.asset),item=small?{id:'navigation-small-coffee',asset:asset.id,w:asset.w*.75,h:asset.h*.75,x:912,y:388,rotation:90,solid:true}:{...previous,x:912,y:348,rotation:90};
  const boxes=furnitureFacingBoxes(asset,item);Object.defineProperty(item,'collisionBoxes',{value:boxes});const removed=new Set(small?[]:previous.collisionBoxes);
  const scene={...base,layoutRevision:1,items:small?[...base.items,item]:base.items.map(old=>old===previous?item:old),solids:[...base.solids.filter(box=>!removed.has(box)),...boxes]};
@@ -37,15 +42,30 @@ function venueWith(edited){
  return vm.runInNewContext(source,{getConcertHall,residents,SHOWROOMS,STORE_TRAFFIC,STORE_VERTICAL_CORE,interiorActorScale,getShowroomNavigation,getInterior:request=>request.kind==='showroom'&&request.showroomId===edited.showroomId?edited:getInterior(request)},{filename:url.pathname});
 }
 
-test('authored showroom routes and all31 furnished source models remain unchanged',()=>{
+test('the other eleven authored showroom tours and all31 furnished source models remain unchanged',()=>{
  const models=[...residents.map(resident=>getInterior({kind:'apartment',resident:resident.id})),getInterior({kind:'apartment',resident:'player'}),...SHOWROOMS.map(room=>getInterior({kind:'showroom',showroomId:room.id}))],before=JSON.stringify(models);
  assert.equal(models.length,31);
  for(const scene of models){
   const navigation=getShowroomNavigation(scene);
-  if(scene.kind==='showroom'){assert.equal(navigation.visitRoute,scene.showroom.apartment.visitRoute);assert.equal(navigation.exitRoute,scene.showroom.apartment.exitRoute);assert.equal(getShowroomNavigation(scene),navigation);}
+  if(scene.kind==='showroom'){
+   if(scene.roomLayoutBaseItems){assert(navigation);assert(clearRoute(scene,navigation.visitRoute));assert(close(navigation.visitRoute[0],scene.spawn));assert(Math.hypot(navigation.visitRoute.at(-1).x-scene.showroom.apartment.browse.x,navigation.visitRoute.at(-1).y-scene.showroom.apartment.browse.y)<=14);}
+   else{assert.equal(navigation.visitRoute,scene.showroom.apartment.visitRoute);assert.equal(navigation.exitRoute,scene.showroom.apartment.exitRoute);}
+   assert.equal(getShowroomNavigation(scene),navigation);
+  }
   else assert.equal(navigation,null);
  }
  assert.equal(JSON.stringify(models),before);
+});
+
+test('a promoted default replans even without an editor revision instead of crossing its stale tour',()=>{
+ const scene=fixture({solids:[{x:160,y:140,w:40,h:80}]});delete scene.layoutRevision;scene.roomLayoutBaseItems=[];
+ const navigation=getShowroomNavigation(scene);assert(navigation);assert(!clearRoute(scene,scene.showroom.apartment.visitRoute));assert(clearRoute(scene,navigation.visitRoute));assert(close(navigation.visitRoute[0],scene.spawn));assert(close(navigation.visitRoute.at(-1),scene.showroom.apartment.browse));
+});
+
+test('the approved Victorian default has a clear visitor route around its newly arranged furniture',()=>{
+ const scene=getInterior({kind:'showroom',showroomId:'victorian-parlor'}),before=JSON.stringify(scene),navigation=getShowroomNavigation(scene);
+ assert.equal(scene.layoutRevision,undefined);assert.equal(scene.roomLayoutBaseItems.length,38);assert.equal(scene.items.length,34);
+ assert(navigation);assert(clearRoute(scene,navigation.visitRoute));assert(clearRoute(scene,navigation.exitRoute));assert(close(navigation.visitRoute[0],scene.spawn));assert(Math.hypot(navigation.visitRoute.at(-1).x-scene.showroom.apartment.browse.x,navigation.visitRoute.at(-1).y-scene.showroom.apartment.browse.y)<=14);assert.deepEqual(navigation.exitRoute,[...navigation.visitRoute].reverse());assert.equal(JSON.stringify(scene),before);
 });
 
 test('a clear edited tour is reused and an obstructed one replans around current furniture',()=>{
