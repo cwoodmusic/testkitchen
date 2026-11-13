@@ -1,7 +1,7 @@
 import {residents as defaultResidents} from './resident-profiles.mjs?v=opera-parallax-1';
 import {APARTMENT_DECOR} from './apartment-decor-definitions.mjs?v=opera-parallax-1';
 import {SHOWROOM_FURNITURE} from './showroom-furniture-definitions.mjs?v=opera-parallax-1';
-import {getApartmentAsset} from './apartment-collections.mjs?v=opera-parallax-1';
+import {getApartmentAsset} from './apartment-collections.mjs?v=town-room-placement-2';
 import {furnitureAtGroundCenter,furnitureFacingBoxes} from './furniture-facing.mjs?v=opera-parallax-1';
 
 const furniture=new Map(APARTMENT_DECOR.map(a=>[a.id,a]));

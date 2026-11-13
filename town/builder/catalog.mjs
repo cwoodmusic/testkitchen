@@ -1,1 +1,1 @@
-export * from '../world/catalog.mjs?v=town-flight-1';
+export * from '../world/catalog.mjs?v=town-room-placement-2';

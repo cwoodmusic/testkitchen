@@ -1,6 +1,7 @@
 import {furnitureFacingBounds,furnitureFacingBoxes,furnitureFacingDepth} from './furniture-facing.mjs?v=opera-parallax-1';
 import {furniturePresentationScale} from './private-furniture.mjs?v=town-store-halls-1';
 import {apartmentDecorBounds,apartmentWallDecorBounds} from './personal-room-areas.mjs?v=opera-parallax-1';
+import {createRoomRugItems} from './room-rugs.mjs?v=town-room-placement-2';
 
 export const ROOM_LAYOUT_FORMAT='coda-room-layout';
 export const ROOM_LAYOUT_VERSION=1;
@@ -44,7 +45,9 @@ function doorClearance(scene){
  }
  if(point(scene.spawn)){areas.push({x:scene.spawn.x-16,y:scene.spawn.y-16,w:32,h:32});targets.push({...scene.spawn});}
  const paths=[];for(const actor of scene.actors||[])if(point(actor)){areas.push({x:actor.x-14,y:actor.y-14,w:28,h:28});targets.push({x:actor.x,y:actor.y});if(point(scene.spawn))paths.push([actor,{x:actor.x,y:scene.spawn.y},scene.spawn]);}
- if(scene.showroom?.apartment?.visitRoute)paths.push(scene.showroom.apartment.visitRoute);
+ // A showroom's tour may detour after decorating. Protect its destination's
+ // reachability instead of reserving every old transit leg as empty floor.
+ const browse=scene.showroom?.apartment?.visitRoute?.at(-1);if(point(browse))targets.push({...browse});
  for(const path of paths)for(let i=1;i<path.length;i++){const a=path[i-1],b=path[i];if(!point(a)||!point(b))continue;areas.push({x:Math.min(a.x,b.x)-8,y:Math.min(a.y,b.y)-8,w:Math.abs(b.x-a.x)+16,h:Math.abs(b.y-a.y)+16});targets.push({...b});}
  const p=scene.portalExit;if(point(p?.threshold)&&point(p.enterNormal)){const at={x:p.threshold.x+p.enterNormal.x*24,y:p.threshold.y+p.enterNormal.y*24};areas.push({x:at.x-18,y:at.y-18,w:36,h:36});targets.push(at);}
  return {areas,targets};
@@ -65,10 +68,13 @@ export function createRoomLayoutModel({themeId,scene:authored,catalog,record:ini
  const base=clone(authored);base.items=(authored.items||[]).map((i,index)=>copyItem({...i,id:i.id||'base-'+index,collisionBoxes:i.collisionBoxes||[]}));
  if(new Set(base.items.map(i=>i.id)).size!==base.items.length)throw Error('The room contains repeated furniture IDs.');
  const authoredBases=new Set((authored.items||[]).flatMap(i=>i.collisionBoxes||[])),structural=(authored.solids||[]).filter(b=>!authoredBases.has(b)).map(b=>({...b}));
- const baseItems=canonicalItems(base.items,catalog),baseMap=new Map(baseItems.map(i=>[i.id,i])),baseSignature=signature({...base,items:baseItems}),clearance=doorClearance(base);
+ const originalItems=canonicalItems(base.items,catalog),rugItems=createRoomRugItems(base,catalog),rugMap=new Map(rugItems.map(item=>[item.roomRugId,item])),baseItems=canonicalItems([...originalItems,...rugItems],catalog),baseMap=new Map(baseItems.map(i=>[i.id,i])),originalMap=new Map(originalItems.map(i=>[i.id,i])),baseSignature=signature({...base,items:originalItems}),clearance=doorClearance(base);
+ // Textured rugs use the normal picking/history/rendering pipeline, while
+ // their optional saved poses leave every existing furniture signature intact.
+ base.rugs=(base.rugs||[]).filter(rug=>!rug.texture);
  // Only this explicitly appended family is compatible with the preceding
  // room. Changes to old IDs, asset sizes, walls or doors still fail strictly.
- const expansionItems=baseItems.filter(i=>i.roomExpansion==='family-room-1'),legacyItems=baseItems.filter(i=>i.roomExpansion!=='family-room-1'),legacyMap=new Map(legacyItems.map(i=>[i.id,i])),legacySignature=expansionItems.length?signature({...base,items:legacyItems}):null;
+ const expansionItems=originalItems.filter(i=>i.roomExpansion==='family-room-1'),legacyItems=originalItems.filter(i=>i.roomExpansion!=='family-room-1'),legacyMap=new Map(legacyItems.map(i=>[i.id,i])),legacySignature=expansionItems.length?signature({...base,items:legacyItems}):null;
  const legacyPoses=new Map(expansionItems.length?legacyItems.flatMap(item=>{const pose=base.roomExpansionLegacyPoses?.[item.id];return point(pose)&&rotation(pose.rotation??0)?[[item.id,{x:pose.x,y:pose.y,rotation:pose.rotation??0}]]:[];}):[]);
  const personalFloor=apartmentDecorBounds(base)||[],personalWalls=apartmentWallDecorBounds(base)||[];
  const wallAreas=[{x:28,y:0,w:base.width-56,h:106},...(base.rooms||[]).flatMap(r=>r.wallpaperAreas||[]),...(base.walls||[]).map(w=>({x:w.x,y:w.y-96,w:w.w,h:96})).filter(r=>r.w>40)];
@@ -86,7 +92,7 @@ export function createRoomLayoutModel({themeId,scene:authored,catalog,record:ini
   return null;
  }
  function validate(items,{changedIds,reach=false}={}){
-  if(items.length>MAX_ITEMS)return 'A room can contain up to600 furniture pieces.';
+  if(items.filter(item=>!item.roomRugId).length>MAX_ITEMS)return 'A room can contain up to600 furniture pieces.';
   const ids=new Set();for(const item of items){if(ids.has(item.id))return 'The layout contains repeated furniture IDs.';ids.add(item.id);if(!changedIds||changedIds.has(item.id)){const original=baseMap.get(item.id),oldPose=legacyPoses.get(item.id),samePose=pose=>pose&&item.x===pose.x&&item.y===pose.y&&(item.rotation||0)===(pose.rotation||0),unchanged=original&&item.supportedBy===original.supportedBy&&(samePose(original)||samePose(oldPose));const error=unchanged?null:geometryError(item);if(error)return error;}}
   for(let i=0;i<items.length;i++)for(let j=i+1;j<items.length;j++)if(!changedIds||changedIds.has(items[i].id)||changedIds.has(items[j].id)){if(items[i].collisionBoxes.some(a=>items[j].collisionBoxes.some(b=>overlap(a,b))))return 'That spot is occupied by another piece of furniture.';}
   if(reach&&!canReach(current,[...structural,...items.flatMap(i=>i.collisionBoxes)],clearance.targets))return 'Keep a walkable route from the entrance to every door.';
@@ -130,16 +136,27 @@ export function createRoomLayoutModel({themeId,scene:authored,catalog,record:ini
  }
  function remove(id=held?.originalId){if(!validId(id))return fail('Pick up furniture before removing it.');const item=current.items.find(i=>i.id===id);if(!item)return fail('That furniture is no longer in this room.');const ids=new Set([id,...descendants(item,current.items).map(i=>i.id)]);const result=commit(current.items.filter(i=>!ids.has(i.id)));held=null;return result;}
  function history(from,to){held=null;if(!from.length)return {ok:true,changed:false};to.push(snapshot());const next=canonicalItems(from.pop(),catalog);revision++;rebuild(next);return {ok:true,changed:true};}
- function record(){return {format:ROOM_LAYOUT_FORMAT,version:ROOM_LAYOUT_VERSION,themeId,baseSignature,placements:current.items.filter(i=>baseMap.has(i.id)).map(i=>({id:i.id,x:i.x,y:i.y,rotation:i.rotation||0,support:i.supportedBy&&i.supportedBy!=='north-wall'?i.supportedBy:null})),removed:baseItems.filter(i=>!current.items.some(n=>n.id===i.id)).map(i=>i.id),added:current.items.filter(i=>!baseMap.has(i.id)).map(i=>({id:i.id,asset:i.asset,x:i.x,y:i.y,rotation:i.rotation||0,scale:i.sourceScale??1,...(i.supportedBy&&i.supportedBy!=='north-wall'?{support:i.supportedBy}:{}),...(i.productId?{productId:i.productId}:{})}))};}
+ function record(){
+  const result={format:ROOM_LAYOUT_FORMAT,version:ROOM_LAYOUT_VERSION,themeId,baseSignature,placements:current.items.filter(i=>originalMap.has(i.id)).map(i=>({id:i.id,x:i.x,y:i.y,rotation:i.rotation||0,support:i.supportedBy&&i.supportedBy!=='north-wall'?i.supportedBy:null})),removed:originalItems.filter(i=>!current.items.some(n=>n.id===i.id)).map(i=>i.id),added:current.items.filter(i=>!baseMap.has(i.id)).map(i=>({id:i.id,asset:i.asset,x:i.x,y:i.y,rotation:i.rotation||0,scale:i.sourceScale??1,...(i.supportedBy&&i.supportedBy!=='north-wall'?{support:i.supportedBy}:{}),...(i.productId?{productId:i.productId}:{})}))};
+  const rugs=[];for(const source of rugItems){const item=current.items.find(i=>i.id===source.id);if(!item)rugs.push({id:source.roomRugId,removed:true});else if(item.x!==source.x||item.y!==source.y||(item.rotation||0)!==(source.rotation||0))rugs.push({id:source.roomRugId,x:item.x,y:item.y,rotation:item.rotation||0});}
+  if(rugs.length)result.rugs=rugs;return result;
+ }
+ function rugsFromRecord(value){
+  const rugs=new Map(rugItems.map(item=>[item.roomRugId,copyItem(item)]));if(value===undefined)return [...rugs.values()];
+  if(!Array.isArray(value)||value.length>rugItems.length)throw Error('The room contains an invalid rug layout.');
+  const seen=new Set();for(const pose of value){if(!validId(pose?.id)||seen.has(pose.id)||!rugMap.has(pose.id)||pose.removed!==undefined&&typeof pose.removed!=='boolean')throw Error('A rug placement is invalid.');seen.add(pose.id);
+   if(pose.removed){rugs.delete(pose.id);continue;}if(!point(pose)||!rotation(pose.rotation??0))throw Error('A rug needs a valid position and cardinal facing.');Object.assign(rugs.get(pose.id),{x:pose.x,y:pose.y,rotation:pose.rotation??0});
+  }return [...rugs.values()];
+ }
  function itemsFromRecord(value){
-  const legacy=!!value&&legacySignature!==null&&value.baseSignature===legacySignature,originals=legacy?legacyItems:baseItems,originalMap=legacy?legacyMap:baseMap;
+  const legacy=!!value&&legacySignature!==null&&value.baseSignature===legacySignature,originals=legacy?legacyItems:originalItems,sourceMap=legacy?legacyMap:originalMap;
   if(!value||value.format!==ROOM_LAYOUT_FORMAT||value.version!==ROOM_LAYOUT_VERSION||value.themeId!==themeId||value.baseSignature!==baseSignature&&!legacy||!Array.isArray(value.placements)||!Array.isArray(value.removed)||!Array.isArray(value.added))throw Error('This layout belongs to a different room or room version.');
-  if(value.placements.length+value.added.length>MAX_ITEMS||value.removed.length>originals.length)throw Error('The room layout is too large.');const removed=new Set(value.removed);if(removed.size!==value.removed.length||[...removed].some(id=>!originalMap.has(id)))throw Error('The removed furniture list is invalid.');
-  const items=[],seen=new Set();for(const p of value.placements){if(!validId(p?.id)||seen.has(p.id)||removed.has(p.id)||!originalMap.has(p.id)||!point(p)||!rotation(p.rotation??0))throw Error('A furniture placement is invalid.');const item=copyItem(originalMap.get(p.id));Object.assign(item,{x:p.x,y:p.y,rotation:p.rotation??0});if(p.support!==undefined){if(p.support!==null&&!validId(p.support))throw Error('A furniture support is invalid.');if(p.support===null&&item.supportedBy!=='north-wall'){const wasSupported=!!item.supportedBy;delete item.supportedBy;delete item.depth;if(wasSupported){const a=catalog.get(item.asset);item.solid=!!(a.solid??a.collisionDefault??a.boxes?.length);}}else if(p.support)item.supportedBy=p.support;}items.push(item);seen.add(p.id);}
+  if(value.placements.length+value.added.length>MAX_ITEMS||value.removed.length>originals.length)throw Error('The room layout is too large.');const removed=new Set(value.removed);if(removed.size!==value.removed.length||[...removed].some(id=>!sourceMap.has(id)))throw Error('The removed furniture list is invalid.');
+  const items=[],seen=new Set();for(const p of value.placements){if(!validId(p?.id)||seen.has(p.id)||removed.has(p.id)||!sourceMap.has(p.id)||!point(p)||!rotation(p.rotation??0))throw Error('A furniture placement is invalid.');const item=copyItem(sourceMap.get(p.id));Object.assign(item,{x:p.x,y:p.y,rotation:p.rotation??0});if(p.support!==undefined){if(p.support!==null&&!validId(p.support))throw Error('A furniture support is invalid.');if(p.support===null&&item.supportedBy!=='north-wall'){const wasSupported=!!item.supportedBy;delete item.supportedBy;delete item.depth;if(wasSupported){const a=catalog.get(item.asset);item.solid=!!(a.solid??a.collisionDefault??a.boxes?.length);}}else if(p.support)item.supportedBy=p.support;}items.push(item);seen.add(p.id);}
   if(originals.some(i=>!seen.has(i.id)&&!removed.has(i.id)))throw Error('The room layout omits original furniture without removing it.');
   for(const p of value.added){if(!validId(p?.id)||seen.has(p.id)||baseMap.has(p.id)||typeof p.asset!=='string'||!point(p)||!rotation(p.rotation??0)||!finite(p.scale??1)||(p.scale??1)<=0||(p.scale??1)>8)throw Error('An added furniture placement is invalid.');const a=catalog.get(p.asset);if(!a)throw Error('This layout uses unavailable furniture: '+p.asset);const scale=furniturePresentationScale(p,current,a)*(p.scale??1),item={id:p.id,asset:p.asset,x:p.x,y:p.y,w:a.w*scale,h:a.h*scale,rotation:p.rotation??0,solid:!!(a.solid??a.collisionDefault??a.boxes?.length),wallMounted:!!a.wallMounted,layer:a.layer||'objects',sourceScale:p.scale??1,...(p.support?{supportedBy:p.support,solid:false}:{}),...(typeof p.productId==='string'?{productId:p.productId}:{})};Object.defineProperty(item,'collisionBoxes',{value:[],configurable:true});items.push(item);seen.add(p.id);}
   for(const item of items)if(item.supportedBy&&item.supportedBy!=='north-wall'){const parent=items.find(i=>i.id===item.supportedBy);if(!parent||parent===item)throw Error('A tabletop decoration is missing its support.');const a=catalog.get(item.asset);if(!['table-decor','lava-lamp','table-lamp','plant','arcade','plush','toy'].includes(a.purpose)&&!baseMap.get(item.id)?.supportedBy)throw Error('Only small decorations can rest on supporting furniture.');let p=parent,steps=0;while(p?.supportedBy&&p.supportedBy!=='north-wall'){p=items.find(i=>i.id===p.supportedBy);if(++steps>items.length)throw Error('Furniture supports cannot form a loop.');}}
-  return {items:canonicalItems(items,catalog),legacy};
+  return {items:canonicalItems([...items,...rugsFromRecord(value.rugs)],catalog),legacy};
  }
  function mergeExpansion(items){
   const admitted=new Set(items.map(i=>i.id)),attempted=new Set(),visiting=new Set();

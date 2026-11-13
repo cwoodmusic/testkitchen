@@ -43,19 +43,24 @@ async()=>{
    for(const d of SHOWROOMS.filter(d=>d.storeFloor===1)){
     const m=interiors.getInterior({kind:'showroom',showroomId:d.id,floor:1}),k=m.rooms.find(r=>r.functionalRole==='kitchen'),cv=document.createElement('canvas');cv.width=m.width;cv.height=m.height;const fc=cv.getContext('2d');drawHomeMaterialFloor(fc,k);const pixels=fc.getImageData(0,0,cv.width,cv.height).data;let x0=cv.width,y0=cv.height,x1=-1,y1=-1;
     for(let y=0;y<cv.height;y++)for(let x=0;x<cv.width;x++)if(pixels[(y*cv.width+x)*4+3]){x0=Math.min(x0,x);y0=Math.min(y0,y);x1=Math.max(x1,x);y1=Math.max(y1,y);}
-    const furniture=m.items.map(i=>({id:i.id,asset:i.asset,x:i.x,y:i.y,w:i.w,h:i.h,rotation:i.rotation||0,solid:i.solid,wallMounted:!!i.wallMounted,slot:i.slot||null,collisionBoxes:(i.collisionBoxes||[]).map(b=>({...b}))}));
+    const furniture=m.items.filter(i=>!i.roomRugId).map(i=>({id:i.id,asset:i.asset,x:i.x,y:i.y,w:i.w,h:i.h,rotation:i.rotation||0,solid:i.solid,wallMounted:!!i.wallMounted,slot:i.slot||null,collisionBoxes:(i.collisionBoxes||[]).map(b=>({...b}))}));
     const fixtures=m.items.filter(i=>['sink','counter','stove','fridge','pantry'].includes(i.slot)).map(i=>({id:i.id,asset:i.asset,slot:i.slot,x:i.x,y:i.y,w:i.w,h:i.h,bounds:furnitureFacingBounds(townBuilder.catalog.get(i.asset),i)}));
     const roomGeometry=m.rooms.map(r=>({id:r.id||null,role:r.functionalRole||null,x:r.x,y:r.y,w:r.w,h:r.h,point:r.point||null}));
-    const old=window.__savedKitchenLayouts?.rooms['showroom-'+d.id];if(old)createRoomLayoutModel({themeId:'showroom-'+d.id,scene:interiors.getInteriorBase({kind:'showroom',showroomId:d.id,floor:1}),catalog:townBuilder.catalog,record:old});
-    records['showroom-'+d.id]=createRoomLayoutModel({themeId:'showroom-'+d.id,scene:m,catalog:townBuilder.catalog}).record();
+    const old=window.__savedKitchenLayouts?.rooms['showroom-'+d.id],authored=interiors.getInteriorBase({kind:'showroom',showroomId:d.id,floor:1});
+    records['showroom-'+d.id]=createRoomLayoutModel({themeId:'showroom-'+d.id,scene:authored,catalog:townBuilder.catalog,...(old?{record:old}:{})}).record();
+    const rugs=m.rugs?.length?m.rugs:m.items.filter(i=>i.roomRugId).map(i=>{
+     const asset=townBuilder.catalog.get(i.asset);if(!asset?.roomRug||!asset.texture)throw Error('Editable room rug must retain its native texture metadata: '+i.asset);
+     return {id:i.roomRugId,x:i.x-i.w/2,y:i.y-i.h,w:i.w,h:i.h,texture:asset.texture,...(asset.sourceRect?{sourceRect:{...asset.sourceRect}}:{})};
+    });
     let rugProof=null;
     if(d.id==='victorian-parlor'){
-     const mat=m.rugs.find(r=>r.x===436&&r.y===194),probe=document.createElement('canvas');probe.width=128;probe.height=88;const rc=probe.getContext('2d');rc.translate(16-mat.x,16-mat.y);
+     const mat=rugs.find(r=>r.id==='victorian-bath-rug'||r.x===436&&r.y===194);if(!mat)throw Error('Victorian bathroom rug must remain available as a native rug or editable ground item');
+     const probe=document.createElement('canvas');probe.width=128;probe.height=88;const rc=probe.getContext('2d');rc.translate(16-mat.x,16-mat.y);
      const ready=typeof drawHomeMaterialRug==='function'&&drawHomeMaterialRug(rc,mat),data=rc.getImageData(0,0,128,88).data,colors=new Set();let count=0,outside=0;
      for(let y=0;y<88;y++)for(let x=0;x<128;x++){const at=(y*128+x)*4;if(!data[at+3])continue;count++;colors.add((data[at]<<16)|(data[at+1]<<8)|data[at+2]);if(x<16||x>=112||y<16||y>=72)outside++;}
      rugProof={ready,colors:colors.size,pixels:count,outsidePixels:outside,texture:mat.texture||null};
     }
-    rooms.push({id:d.id,column:d.column,width:m.width,height:m.height,kitchen:{x:k.x,y:k.y,w:k.w,h:k.h,floorBounds:k.floorBounds||null,floorArea:k.floorArea||null},paintedBounds:{x:x0,y:y0,w:x1-x0+1,h:y1-y0+1},fixtures,furniture,roomGeometry,rugs:m.rugs,rugProof,trimPresentation:m.homeMaterialSuite.wallpaper.trimPresentation,savedLayoutAccepted:!!old,walls:m.walls,privacyDoors:m.privacyDoors,spawn:m.spawn,portalExit:{threshold:m.portalExit.threshold,enterNormal:m.portalExit.enterNormal}});
+    rooms.push({id:d.id,column:d.column,width:m.width,height:m.height,kitchen:{x:k.x,y:k.y,w:k.w,h:k.h,floorBounds:k.floorBounds||null,floorArea:k.floorArea||null},paintedBounds:{x:x0,y:y0,w:x1-x0+1,h:y1-y0+1},fixtures,furniture,roomGeometry,rugs,rugProof,trimPresentation:m.homeMaterialSuite.wallpaper.trimPresentation,savedLayoutAccepted:!!old,walls:m.walls,privacyDoors:m.privacyDoors,spawn:m.spawn,portalExit:{threshold:m.portalExit.threshold,enterNormal:m.portalExit.enterNormal}});
    }
    return {image:out.toDataURL('image/png'),width:model.width,height:model.height,name:model.title,items:model.items.length,scene,rooms,savedLayouts:{format:'coda-room-layouts',version:1,owner:'builder',rooms:records}};
   }

@@ -82,7 +82,7 @@ test('imports reject wrong rooms, unknown artwork, missing bases and corrupt geo
 test('all31 actual models reload both authored records and a committed native furniture move',()=>{
  const art=new Map([...APARTMENT_COLLECTION_ASSETS,...FAMILY_FURNITURE_ASSETS].map(a=>[a.id,a]));configureUrbanInteriors(art);
  const themes=[...residents.map(r=>[r.id,{kind:'apartment',resident:r.id}]),['player',{kind:'apartment',resident:'player'}],...SHOWROOMS.map(r=>['showroom-'+r.id,{kind:'showroom',showroomId:r.id}])];
- for(const [themeId,request]of themes){const scene=getInterior(request),original=JSON.stringify(scene),model=createRoomLayoutModel({themeId,scene,catalog:art});assert.equal(model.hasEdits,false);assert.equal(createRoomLayoutModel({themeId,scene,catalog:art,record:model.record()}).scene.items.length,scene.items.length);
+ for(const [themeId,request]of themes){const scene=getInterior(request),original=JSON.stringify(scene),model=createRoomLayoutModel({themeId,scene,catalog:art});assert.equal(model.hasEdits,false);assert.equal(createRoomLayoutModel({themeId,scene,catalog:art,record:model.record()}).scene.items.filter(item=>!item.roomRugId).length,scene.items.length);
   const bed=model.scene.items.find(i=>art.get(i.asset)?.slot==='bed'),b=furnitureFacingBounds(art.get(bed.asset),bed),p={x:b.x+b.w*.65,y:b.y+b.h*.9};assert.equal(model.pick(p).ok,true,themeId);assert.equal(model.held.originalId,bed.id);assert.equal(model.move({x:p.x+.25,y:p.y}).ok,true,themeId+' preview');assert.equal(model.place().ok,true,themeId+' commit');
   const next=createRoomLayoutModel({themeId,scene,catalog:art,record:model.record()});assert.equal(next.scene.items.find(i=>i.id===bed.id).x,bed.x+.25);assert.equal(JSON.stringify(scene),original,'The authored '+themeId+' model stays immutable');
  }
@@ -191,5 +191,41 @@ test('south showroom entrances preserve older upper-room arcades while still rej
   const exported=JSON.stringify(model.record()),asset='collection-'+entry.themeId+'-dining-chair';
   assert.equal(model.add(asset,{x:approach.x,y:approach.y+8}).ok,false,'A new object cannot use the migrated doorway as a free placement');assert.match(model.held.reason,/doorways|arrival/);assert.equal(JSON.stringify(model.record()),exported);model.cancel();
   assert.equal(JSON.stringify(entry.record),before);assert.deepEqual(createRoomLayoutModel({themeId:entry.themeId,scene,catalog:art,record:model.record()}).record(),model.record());
+ }
+});
+
+function victorianEditor(){
+ const art=new Map([...APARTMENT_COLLECTION_ASSETS,...FAMILY_FURNITURE_ASSETS].map(a=>[a.id,a]));configureUrbanInteriors(art);
+ const scene=getInterior({kind:'showroom',showroomId:'victorian-parlor'}),themeId='showroom-victorian-parlor';
+ return {art,scene,themeId,model:createRoomLayoutModel({themeId,scene,catalog:art})};
+}
+
+test('a clear vertical Victorian table can occupy the former tour strip while real walls and arrivals remain protected',()=>{
+ const {art,scene,themeId,model}=victorianEditor(),table=model.scene.items.find(i=>i.asset==='family-showroom-victorian-parlor-coffee-table'),b=furnitureFacingBounds(art.get(table.asset),table),before=JSON.stringify(scene);
+ assert.equal(model.pick({x:b.x+b.w/2,y:b.y+b.h*.8}).ok,true);assert.equal(model.held.originalId,table.id);model.rotate(90);const offset=model.held.offset;
+ assert.equal(model.move({x:912+offset.x,y:348+offset.y}).ok,true,'The table fits the actual floor and furniture; a previous NPC transit line is not a wall');
+ assert.equal(model.place().ok,true,'A detour leaves the entrance, bedroom, bathroom and browsing area accessible');
+ const record=model.record(),reloaded=createRoomLayoutModel({themeId,scene,catalog:art,record});assert.deepEqual(reloaded.record(),record);assert.equal(reloaded.scene.items.find(i=>i.id===table.id).x,912);
+ assert.equal(reloaded.pick({x:932,y:330}).ok,true);const nextOffset=reloaded.held.offset;
+ assert.equal(reloaded.move({x:10+nextOffset.x,y:348+nextOffset.y}).ok,false,'Walls and exterior bounds remain real restrictions');
+ assert.equal(reloaded.move({x:1090+nextOffset.x,y:348+nextOffset.y}).ok,false,'The actual arrival/exit space stays clear');
+ assert.equal(JSON.stringify(scene),before,'Editing never moves authored furniture or changes physical walls');
+});
+
+test('the native bath rug picks, moves, rotates, saves and undoes without changing old furniture records or duplicating its artwork',()=>{
+ const {art,scene,themeId,model}=victorianEditor(),original=JSON.stringify(scene),legacy=createRoomLayoutModel({themeId,scene:{...scene,rugs:[]},catalog:art}).record(),initial=model.record(),rug=model.scene.items.find(i=>i.roomRugId==='victorian-bath-rug');
+ assert(rug);assert.equal(model.scene.items.length,scene.items.length+1);assert.equal(model.scene.rugs.length,0);assert.equal(rug.layer,'ground');assert.deepEqual(rug.collisionBoxes,[]);assert.deepEqual(initial,legacy,'Unmoved rugs preserve the exact old record and signature');
+ assert.equal(model.pick({x:484,y:222}).ok,true);assert.equal(model.held.originalId,rug.id);assert.equal(model.move({x:500,y:242}).ok,true);assert.deepEqual(model.record(),initial,'Held positions do not write into committed records');assert.equal(model.place().ok,true);
+ const moved=model.record();assert.deepEqual(moved.rugs,[{id:'victorian-bath-rug',x:500,y:270,rotation:0}]);for(const key of ['placements','removed','added','baseSignature'])assert.deepEqual(moved[key],legacy[key]);
+ const reload=createRoomLayoutModel({themeId,scene,catalog:art,record:moved});assert.deepEqual(reload.record(),moved);assert.equal(reload.scene.rugs.length,0);assert.equal(reload.scene.items.filter(i=>i.roomRugId).length,1);
+ model.undo();assert.deepEqual(model.record(),initial);model.redo();assert.deepEqual(model.record(),moved);
+ assert.equal(model.pick({x:500,y:242}).ok,true);assert.equal(model.rotate(90).ok,true);assert.equal(model.place().ok,true);assert.equal(model.record().rugs[0].rotation,90);assert.deepEqual(createRoomLayoutModel({themeId,scene,catalog:art,record:model.record()}).record(),model.record());
+ assert.equal(model.remove(rug.id).ok,true);assert.deepEqual(model.record().rugs,[{id:'victorian-bath-rug',removed:true}]);assert(!model.scene.items.some(i=>i.roomRugId));model.undo();assert(model.scene.items.some(i=>i.roomRugId));model.reset();assert.deepEqual(model.record(),initial);assert.equal(JSON.stringify(scene),original);
+});
+
+test('invalid rug imports cannot replace native artwork, escape the room or overwrite a valid edited layout',()=>{
+ const {model}=victorianEditor(),before=model.scene,raw=JSON.stringify(model.record());
+ for(const rugs of [[{id:'unknown',x:500,y:270}],[{id:'victorian-bath-rug',x:500,y:270,rotation:45}],[{id:'victorian-bath-rug',x:-500,y:270}],[{id:'victorian-bath-rug',removed:'yes'}],[{id:'victorian-bath-rug',removed:true},{id:'victorian-bath-rug',removed:true}]]){
+  const record=JSON.parse(raw);record.rugs=rugs;assert.equal(model.applyRecord(record).ok,false);assert.equal(model.scene,before);assert.equal(JSON.stringify(model.record()),raw);
  }
 });

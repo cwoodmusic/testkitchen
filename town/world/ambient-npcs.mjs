@@ -6,7 +6,7 @@ import {buildNPCDistrict} from './npc-district.mjs?v=town-flight-1';
 import {createNPCNavigator,npcPavingAt,npcMaterialCost} from './npc-navigation.mjs?v=town-flight-1';
 import {residents as profiles,residentHomePose,interiorJourneyPose,residentInScene} from './resident-journey.mjs?v=opera-parallax-1';
 import {createEntranceQueues} from './entrance-queue.mjs?v=town-flight-1';
-import {venueVisitPose,SHOP_VISIT_CAPACITY} from './resident-venue.mjs?v=town-victorian-2';
+import {venueVisitPose,SHOP_VISIT_CAPACITY} from './resident-venue.mjs?v=town-room-placement-2';
 import {planNPCPassing} from './npc-passing.mjs?v=opera-parallax-1';
 export {planNPCPath,npcConnectionClear} from './npc-navigation.mjs?v=town-flight-1';
 

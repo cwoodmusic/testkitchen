@@ -1,4 +1,4 @@
-import {catalog,sources} from './catalog.mjs?v=town-flight-1';
+import {catalog,sources} from './catalog.mjs?v=town-room-placement-2';
 import {cell,height} from './model.mjs?v=town-flight-1';
 const tiles=new Map(),patterns=new WeakMap(),masks=new Map();
 export function scenePoint(o,a,x,y){const r=-o.rotation*Math.PI/180,dx=(x-o.x)/o.scale,dy=(y-o.y)/o.scale;return {x:dx*Math.cos(r)-dy*Math.sin(r)+a.w/2,y:dx*Math.sin(r)+dy*Math.cos(r)+a.h};}

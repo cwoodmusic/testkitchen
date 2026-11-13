@@ -4,7 +4,7 @@ Open [Town Builder](https://cwoodmusic.github.io/testkitchen/town/builder/) and 
 
 [Editor preview](town-preview/room-editor.webp?v=opera-parallax-1) · [Browse the updated rooms](coda-room-gallery.html?v=opera-parallax-1)
 
-Click a piece in the room to pick it up, move the pointer, then click again to place it. You do not need to hold the mouse button. Use the facing buttons or arrow keys while holding a piece:
+Drag a piece and release to place it, or click to pick it up, move the pointer, and click again to place it. Use the facing buttons or arrow keys while holding a piece:
 
 | Key | Facing |
 | --- | --- |
@@ -13,7 +13,7 @@ Click a piece in the room to pick it up, move the pointer, then click again to p
 | ↓ | South |
 | ← | West |
 
-The placement outline turns red when a piece cannot go there. The status message explains the problem. Keep furniture clear of walls, entrances and bedroom/bathroom doorways. Decorations resting on a table or cabinet travel with that support when it is moved.
+The placement outline turns red when a piece cannot go there. The status message explains the problem. Keep furniture clear of walls, entrances and bedroom/bathroom doorways. Showroom visitors find a route around your furniture. Decorations resting on a table or cabinet travel with that support when it is moved.
 
 Use **This theme** for the selected collection’s pieces, or **All furniture** for the full catalogue. Search by name or choose a category, then click a palette piece and click in the room to add it. This edits the design template; it does not spend Notes or change furniture ownership.
 
@@ -32,6 +32,8 @@ Use **This theme** for the selected collection’s pieces, or **All furniture** 
 | Back to town | Return to the town canvas. |
 
 Completed edits autosave in this browser; look for **Saved** beneath the controls. Switching themes or returning to town cancels an unfinished pickup. Undo history lasts for the current page session.
+
+The Victorian bathroom rug can be moved, turned, removed and restored with the same controls. Its placement saves with the room and appears in Walk test and Play this town; existing room layouts keep their furniture positions.
 
 If browser saving fails, the error stays visible when you return to that theme. **Export layouts ↓** includes your completed changes so you can keep a file copy. An unfinished pickup is excluded.
 

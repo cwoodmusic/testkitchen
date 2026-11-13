@@ -1,7 +1,7 @@
-import {createRoomEditor} from './room-editor.mjs?v=town-victorian-2';
-import {getInteriorBase,renderInterior} from '../world/urban-interiors.mjs?v=town-victorian-4';
+import {createRoomEditor} from './room-editor.mjs?v=town-room-placement-2';
+import {getInteriorBase,renderInterior} from '../world/urban-interiors.mjs?v=town-room-placement-2';
 import {createTownRecovery} from './recovery.mjs?v=town-flight-1';
-import {groundTexture} from '../world/ground-render.mjs?v=town-flight-1';
+import {groundTexture} from '../world/ground-render.mjs?v=town-room-placement-2';
 import {assetFilter} from '../world/asset-color.mjs?v=opera-parallax-1';
 import {curveUnder} from '../world/round-geometry.mjs?v=opera-parallax-1';
 import {roundTerrain} from './round-terrain.mjs?v=town-flight-1';
@@ -10,23 +10,23 @@ import {planWaterFill} from './water-fill.mjs?v=town-flight-1';
 import {planLandFill} from './land-fill.mjs?v=town-flight-1';
 import {planOrganicEdges} from './organic-edges.mjs?v=town-flight-1';
 import {createSandFootprints} from '../world/sand-footprints.mjs?v=town-flight-1';
-import {createAmbientNPCs} from '../world/ambient-npcs.mjs?v=town-victorian-2';
+import {createAmbientNPCs} from '../world/ambient-npcs.mjs?v=town-room-placement-2';
 import {createPlayerCollisionIndex} from '../world/player-collision-index.mjs?v=town-flight-1';
 import {readNightPreference,saveNightPreference} from '../world/lighting-settings.mjs?v=opera-parallax-1';
 import {readNPCPreference,saveNPCPreference} from './preview-settings.mjs?v=opera-parallax-1';
 import {hitCliff,mountPose,attach,cliffFace} from '../world/cliff-mount.mjs?v=town-flight-1';
-import {pavingTexture} from '../world/paving.mjs?v=town-flight-1';
+import {pavingTexture} from '../world/paving.mjs?v=town-room-placement-2';
 import {planStairs,drawStairGuide} from './stairs.mjs?v=town-flight-1';
 import {planPier,drawPierGuide} from './piers.mjs?v=town-flight-1';
 import {levelColors} from '../world/elevation-view.mjs?v=town-flight-1';
 import {regionBetween,regionFromPolygon,regionHeightEdits,selectionCount} from './region.mjs?v=town-flight-1';
 import {selectElevationRegion} from './elevation-select.mjs?v=town-flight-1';
 import {blank,cell,height,terrainHeight,key,connect,segment,clearStairs,parseProject,History,surfaces,barriers,COLS,ROWS} from '../world/model.mjs?v=town-flight-1';
-import {catalog,sources,preparePlacedArt} from '../world/catalog.mjs?v=town-flight-1';
-import {render,resizeSurface,findStart,movePlayer,toggleGate,follow,PLAYER_SCALE,GAIT_PER_PIXEL} from '../world/runtime.mjs?v=town-flight-1';
+import {catalog,sources,preparePlacedArt} from '../world/catalog.mjs?v=town-room-placement-2';
+import {render,resizeSurface,findStart,movePlayer,toggleGate,follow,PLAYER_SCALE,GAIT_PER_PIXEL} from '../world/runtime.mjs?v=town-room-placement-2';
 import {openDatabase,saveProject} from '../world/storage.mjs?v=town-flight-1';
 import {createZip} from '../../studio/zip.js';
-import {createUrbanController} from '../world/urban.mjs?v=town-victorian-4';
+import {createUrbanController} from '../world/urban.mjs?v=town-room-placement-2';
 import {createConcertAudio} from '../world/concert-audio.mjs?v=opera-parallax-1';
 import {mountConcertControls} from '../world/concert-controls.mjs?v=opera-parallax-1';
 import {CONCERT_PROGRAMME} from '../world/concert-programme.mjs?v=opera-players-1';
@@ -98,10 +98,11 @@ function library(){
  const observer=typeof IntersectionObserver==='function'?new IntersectionObserver(entries=>{for(const entry of entries)if(entry.isIntersecting){painters.get(entry.target)?.();painters.delete(entry.target);observer.unobserve(entry.target);}},{rootMargin:'160px'}):null;libraryThumbObserver=observer;
  $('urbanKitHelp').hidden=category!=='@urban'&&!category.startsWith('urban ');
  $('leisureKitHelp').hidden=category!=='@leisure';
- $('assetLibraryTitle').textContent=category==='@leisure'?'Picnic & beach · '+[...catalog.values()].filter(isLeisureAsset).length:'Asset library · '+catalog.size;
+ $('assetLibraryTitle').textContent=category==='@leisure'?'Picnic & beach · '+[...catalog.values()].filter(isLeisureAsset).length:'Asset library · '+[...catalog.values()].filter(a=>!a.roomRug).length;
  $('search').placeholder=category==='@leisure'?'Search blankets, baskets, beach chairs…':'Search roads, sidewalks, hydrants…';
  for(const[id,value]of [['urbanKit','@urban'],['leisureKit','@leisure'],['allAssets','']])$(id).classList.toggle('active',category===value);
  for(const a of catalog.values()){
+  if(a.roomRug)continue;
   if(category&&(category==='@urban'?!isUrbanAsset(a):category==='@leisure'?!isLeisureAsset(a):a.group!==category))continue;
   const searchable=(a.name+' '+a.group+' '+a.id).toLowerCase();if(!terms.every(term=>searchable.includes(term)||term.length>2&&term.endsWith('s')&&searchable.includes(term.slice(0,-1))))continue;
   const b=document.createElement('button');b.className='asset';b.title=a.name+(a.snap?' · snaps to the street grid':'');b.dataset.asset=a.id;
@@ -175,7 +176,7 @@ async function assetPNG(a,direction='south'){await a.ensureFull?.(direction);con
 async function exportAssetPack(urbanOnly=false){
  $('pack').disabled=true;$('urbanPack').disabled=true;
  try{
-  const assets=[...catalog.values()].filter(a=>!urbanOnly||isUrbanAsset(a));status('Packing artwork and collision metadata…');const entries=[],meta=[];
+  const assets=[...catalog.values()].filter(a=>!a.roomRug&&(!urbanOnly||isUrbanAsset(a)));status('Packing artwork and collision metadata…');const entries=[],meta=[];
   for(const a of assets){
    entries.push({name:`assets/${a.id}.png`,data:await assetPNG(a)});
    meta.push({id:a.id,name:a.name,width:a.w,height:a.h,anchor:{x:a.w/2,y:a.h},mountAnchor:{x:a.w/2,y:a.h/2},collision:a.boxes,polygons:a.polygons||[],fixedScale:!!a.fixedScale,interiorScale:a.interiorScale||1,footprint:a.footprint||null,door:a.door||null,paving:a.pavingSource?{texture:`ground/paving-${a.id}.png`}:null,layer:a.layer,resident:a.resident||null,urban:a.urban||null,kit:a.kit||null,snap:a.snap||null,paintSurface:a.paintSurface||null,barrierStyle:a.barrierStyle||null,lightEmitters:a.lightEmitters||null,wallMounted:!!a.wallMounted,purpose:a.purpose||null,connections:a.roadOpen||null,scene:!!a.scene,mountDefault:!!a.mountDefault,facing:a.facing||'south'});

@@ -1,6 +1,6 @@
-import {createRoomLayoutModel} from '../world/room-layout-model.mjs?v=town-store-halls-1';
-import {createRoomLayoutStorage} from '../world/room-layout-storage.mjs?v=town-store-halls-1';
-import {SHOWROOMS} from '../world/showroom-layout.mjs?v=town-victorian-2';
+import {createRoomLayoutModel} from '../world/room-layout-model.mjs?v=town-room-placement-2';
+import {createRoomLayoutStorage} from '../world/room-layout-storage.mjs?v=town-room-placement-2';
+import {SHOWROOMS} from '../world/showroom-layout.mjs?v=town-room-placement-2';
 import {residents} from '../world/resident-profiles.mjs?v=opera-parallax-1';
 import {furnitureFacingPlacement,furnitureFacingBounds,cardinalFacing} from '../world/furniture-facing.mjs?v=opera-parallax-1';
 import {furnitureFacingDrawSource,drawFurnitureFacingSource} from '../world/furniture-facing-source.mjs?v=town-flight-1';
@@ -29,7 +29,7 @@ export function createRoomEditor({canvas,catalog,renderRoom,getBaseModel,getThem
  if(storage===undefined)try{storage=globalThis.localStorage;}catch{storage=null;}
  const store=typeof storage?.load==='function'&&typeof storage?.save==='function'?storage:createRoomLayoutStorage({storage,owner});
  const themes=getThemes(),models=new Map(),views=new Map(),blockedThemes=new Map(),saveProblems=new Map(),thumbTimers=new Set();
- let active=false,theme=null,model=null,lastTheme='showroom-midcentury-studio',rotation=0,scope='theme',limit=48,pan=null,panMode=false,space=false,loadToken=0,displayCache=null;
+ let active=false,theme=null,model=null,lastTheme='showroom-midcentury-studio',rotation=0,scope='theme',limit=48,pan=null,drag=null,panMode=false,space=false,loadToken=0,displayCache=null;
  const view={x:0,y:0,zoom:1},cursor={x:0,y:0};let statusText='Saved',statusKind='saved';
  const preferenceKey='codaRoomEditorThemeV1:'+encodeURIComponent(owner);
  try{const remembered=storage?.getItem?.(preferenceKey);if(themes.some(t=>t.id===remembered))lastTheme=remembered;}catch{}
@@ -39,7 +39,7 @@ export function createRoomEditor({canvas,catalog,renderRoom,getBaseModel,getThem
  const themeLabel=node('label','room-editor-label','Room theme'),themeSelect=node('select');themeSelect.id='roomEditorTheme';themeSelect.setAttribute('aria-label','Room theme');
  for(const group of [...new Set(themes.map(t=>t.group))]){const options=node('optgroup');options.label=group;for(const t of themes.filter(t=>t.group===group)){const option=node('option','',t.label);option.value=t.id;options.append(option);}themeSelect.append(options);}
  themeSelect.onchange=()=>switchTheme(themeSelect.value);themeLabel.append(themeSelect);panel.append(themeLabel);
- const intro=node('p','room-editor-intro','Click furniture to pick it up. Click again to place it.');panel.append(intro);
+ const intro=node('p','room-editor-intro','Drag furniture to move it, or click to pick it up and click again to place it.');panel.append(intro);
  const viewTools=node('div','room-editor-view-tools');viewTools.setAttribute('role','group');viewTools.setAttribute('aria-label','Room view');
  const zoomOut=button('−',()=>zoomBy(1/1.25),'room-editor-zoom-out'),zoomValue=node('output','room-editor-zoom-value','100%'),zoomIn=button('+',()=>zoomBy(1.25),'room-editor-zoom-in'),fit=button('Fit room',fitView,'room-editor-fit');
  zoomOut.setAttribute('aria-label','Zoom out');zoomIn.setAttribute('aria-label','Zoom in');zoomValue.setAttribute('aria-label','Room zoom');viewTools.append(zoomOut,zoomValue,zoomIn,fit);panel.append(viewTools);
@@ -74,11 +74,11 @@ export function createRoomEditor({canvas,catalog,renderRoom,getBaseModel,getThem
  function viewControls(){
   zoomValue.value=Math.round(view.zoom*100)+'%';zoomValue.textContent=zoomValue.value;zoomOut.disabled=view.zoom<=.15;zoomIn.disabled=view.zoom>=4;
   arrangeButton.setAttribute('aria-pressed',String(!panMode));panButton.setAttribute('aria-pressed',String(panMode));
-  intro.textContent=panMode?'Drag the room to look around. Choose Arrange to move furniture.':'Click furniture to pick it up. Click again to place it.';
+  intro.textContent=panMode?'Drag the room to look around. Choose Arrange to move furniture.':'Drag furniture to move it, or click to pick it up and click again to place it.';
   if(active)canvas.dataset.roomEditorTool=pan?'panning':panMode||space?'pan':'arrange';else delete canvas.dataset.roomEditorTool;
  }
  function endPan(event){
-  const pointerId=pan?.pointerId??event?.pointerId;pan=null;
+  const pointerId=pan?.pointerId??event?.pointerId;pan=null;drag=null;
   if(pointerId!==undefined)try{if(canvas.hasPointerCapture(pointerId))canvas.releasePointerCapture(pointerId);}catch{}
   viewControls();
  }
@@ -94,12 +94,12 @@ export function createRoomEditor({canvas,catalog,renderRoom,getBaseModel,getThem
   displayCache=null;if(result?.changed)save(success);else controls();return true;
  }
  function mutate(action){
-  if(!model||action!=='reset'&&!canEdit())return;model.cancel();
+  if(!model||action!=='reset'&&!canEdit())return;drag=null;model.cancel();
   const result=model[action]();
   if(action==='reset'&&result.ok){blockedThemes.delete(theme.id);if(!result.changed){displayCache=null;save('Original theme restored.');return;}}
   resultMessage(result,action==='reset'?'Original theme restored · Undo brings your layout back.':'Saved');
  }
- function removeHeld(){if(!model?.held)return;const original=model.held.originalId;if(original)resultMessage(model.remove(original));else{model.cancel();tell('Placement canceled.');controls();}}
+ function removeHeld(){drag=null;if(!model?.held)return;const original=model.held.originalId;if(original)resultMessage(model.remove(original));else{model.cancel();tell('Placement canceled.');controls();}}
  function face(degrees){rotation=degrees;if(model?.held){model.rotate(degrees);previewStatus();}controls();canvas.focus({preventScroll:true});}
  function previewStatus(){if(!model?.held)return;const a=catalog.get(model.held.item.asset),piece=a?.name||'Furniture';tell(model.held.valid?'Click to place · '+label(cardinalFacing(rotation)):model.held.reason||'Choose a clear spot for '+piece,model.held.valid?'held':'error');controls();}
  function setScope(value){scope=value;category.value='';limit=48;refreshPalette();}
@@ -140,14 +140,14 @@ export function createRoomEditor({canvas,catalog,renderRoom,getBaseModel,getThem
   }
  }
  function choose(a,p){
-  if(!model||!canEdit())return;model.cancel();const result=model.add({asset:a.id,...(p?{productId:p.id,scale:p.scale}:{})},cursor);
+  if(!model||!canEdit())return;drag=null;model.cancel();const result=model.add({asset:a.id,...(p?{productId:p.id,scale:p.scale}:{})},cursor);
   if(result?.ok===false&&!model.held){tell(result.error,'error');return;}model.rotate(rotation);displayCache=null;previewStatus();canvas.focus({preventScroll:true});
   a.ensureFull?.(cardinalFacing(rotation))?.catch?.(()=>{});
  }
  function fitView(){if(!model)return;const r=canvas.getBoundingClientRect();view.x=model.scene.width/2;view.y=model.scene.height/2;view.zoom=clamp(Math.min((r.width-56)/model.scene.width,(r.height-56)/model.scene.height),.15,2.5);cursor.x=view.x;cursor.y=view.y;viewControls();}
  function screenToRoom(event){const r=canvas.getBoundingClientRect();return {x:view.x+(event.clientX-r.left-r.width/2)/view.zoom,y:view.y+(event.clientY-r.top-r.height/2)/view.zoom};}
  async function switchTheme(id){
-  const selected=themes.find(t=>t.id===id);if(!selected)return false;const token=++loadToken;
+  const selected=themes.find(t=>t.id===id);if(!selected)return false;endPan();const token=++loadToken;
   if(model){model.cancel();views.set(theme.id,{...view});}
   theme=selected;themeSelect.value=id;lastTheme=id;displayCache=null;
   try{
@@ -190,17 +190,23 @@ export function createRoomEditor({canvas,catalog,renderRoom,getBaseModel,getThem
  }
  function handlePointer(event){
   if(!active)return false;if(!model)return true;
-  if(event.type==='pointerup'||event.type==='pointercancel'){if(!pan||event.pointerId===pan.pointerId)endPan(event);return true;}
+  if(event.type==='pointerup'||event.type==='pointercancel'){
+   if(drag&&drag.pointerId===event.pointerId){const released=drag;drag=null;if(event.type==='pointerup'&&released.dragged&&!pan&&!panMode&&!space&&model.held?.originalId===released.originalId){Object.assign(cursor,screenToRoom(event));resultMessage(model.place(cursor));event.preventDefault();}}
+   if(!pan||event.pointerId===pan.pointerId)endPan(event);return true;
+  }
   if(event.type==='pointerdown'){
+   if(drag&&drag.pointerId!==event.pointerId){drag=null;event.preventDefault();return true;}
+   drag=null;
    canvas.focus({preventScroll:true});try{canvas.setPointerCapture(event.pointerId);}catch{}
    if(event.button!==0||space||panMode){pan={x:event.clientX,y:event.clientY,pointerId:event.pointerId};viewControls();event.preventDefault();return true;}
    if(!canEdit()){event.preventDefault();return true;}
    Object.assign(cursor,screenToRoom(event));
-   if(model.held)resultMessage(model.place(cursor));else{model.pick(cursor);if(model.held){rotation=model.held.item.rotation||0;displayCache=null;previewStatus();}}
+   if(model.held)resultMessage(model.place(cursor));else{model.pick(cursor);if(model.held){drag={pointerId:event.pointerId,x:event.clientX,y:event.clientY,originalId:model.held.originalId,dragged:false};rotation=model.held.item.rotation||0;displayCache=null;previewStatus();}}
    controls();event.preventDefault();return true;
   }
   if(event.type==='pointermove'){
    if(pan){if(event.pointerId!==pan.pointerId)return true;view.x-=(event.clientX-pan.x)/view.zoom;view.y-=(event.clientY-pan.y)/view.zoom;pan.x=event.clientX;pan.y=event.clientY;return true;}
+   if(drag){if(event.pointerId!==drag.pointerId)return true;if(Math.hypot(event.clientX-drag.x,event.clientY-drag.y)>4)drag.dragged=true;}
    Object.assign(cursor,screenToRoom(event));if(model.held&&!panMode&&!space){model.move(cursor);previewStatus();}return true;
   }
   return true;
@@ -208,16 +214,16 @@ export function createRoomEditor({canvas,catalog,renderRoom,getBaseModel,getThem
  function wheel(event){if(!active)return false;event.preventDefault();const before=screenToRoom(event);view.zoom=clamp(view.zoom*Math.exp(-event.deltaY*.001),.15,4);const after=screenToRoom(event);view.x+=before.x-after.x;view.y+=before.y-after.y;if(model?.held&&!panMode&&!space){Object.assign(cursor,screenToRoom(event));model.move(cursor);previewStatus();}viewControls();return true;}
  function keydown(event){
   if(!active)return false;if(fieldTarget(event.target))return false;
-  if(event.key===' '){space=true;viewControls();event.preventDefault();return true;}
+  if(event.key===' '){drag=null;space=true;viewControls();event.preventDefault();return true;}
   if(Object.hasOwn(ARROWS,event.key)){event.preventDefault();face(ARROWS[event.key]);return true;}
   if((event.ctrlKey||event.metaKey)&&event.key.toLowerCase()==='z'){event.preventDefault();mutate(event.shiftKey?'redo':'undo');return true;}
   if((event.ctrlKey||event.metaKey)&&event.key.toLowerCase()==='y'){event.preventDefault();mutate('redo');return true;}
-  if(event.key==='Escape'){model?.cancel();displayCache=null;tell('Placement canceled.');controls();event.preventDefault();return true;}
+  if(event.key==='Escape'){drag=null;model?.cancel();displayCache=null;tell('Placement canceled.');controls();event.preventDefault();return true;}
   if(event.key==='Delete'||event.key==='Backspace'){removeHeld();event.preventDefault();return true;}
   return true;
  }
  function keyup(event){if(event.key===' '){space=false;viewControls();}return active;}
- canvas.addEventListener('lostpointercapture',event=>{if(pan?.pointerId===event.pointerId){pan=null;viewControls();}});
+ canvas.addEventListener('lostpointercapture',event=>{if(drag?.pointerId===event.pointerId)drag=null;if(pan?.pointerId===event.pointerId){pan=null;viewControls();}});
  globalThis.addEventListener?.('keyup',keyup);globalThis.addEventListener?.('blur',()=>{space=false;endPan();});
  function exportLayouts(){
   try{

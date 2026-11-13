@@ -1,4 +1,4 @@
-import {createShowroomApartmentPlan} from './showroom-apartments.mjs?v=town-victorian-2';
+import {createShowroomApartmentPlan} from './showroom-apartments.mjs?v=town-room-placement-2';
 import {createShowroomThemeSign,showroomThemeSignZone} from './showroom-signs.mjs?v=town-store-halls-1';
 
 // Public frontages leave horizontal halls in front of every south-facing door.

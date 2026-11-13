@@ -4,6 +4,15 @@ import {createRoomLayoutStorage,roomLayoutStorageKey,ROOM_LAYOUT_STORAGE_PREFIX}
 const record=(themeId,x=200)=>({format:'coda-room-layout',version:1,themeId,baseSignature:'room-test',placements:[{id:'chair-1',x,y:300,rotation:0,support:null}],removed:[],added:[]});
 function disk(){return {data:new Map(),writes:0,fail:false,getItem(k){if(this.fail)throw Error('unavailable');return this.data.get(k)??null;},setItem(k,v){if(this.fail)throw Error('quota');this.writes++;this.data.set(k,v);}};}
 
+test('optional rug edits persist with ordinary room records and reject malformed changes atomically',()=>{
+ const storage=disk(),api=createRoomLayoutStorage({storage,eventTarget:null}),saved={...record('showroom-victorian-parlor'),rugs:[{id:'victorian-bath-rug',x:500,y:270,rotation:90}]};
+ assert.equal(api.save(saved.themeId,saved).ok,true);assert.deepEqual(api.load(saved.themeId).record,saved);const raw=api.raw,writes=storage.writes;
+ for(const rugs of [{},[{id:'victorian-bath-rug',x:NaN,y:270}],[{id:'victorian-bath-rug',removed:'yes'}],[{id:'victorian-bath-rug',x:500,y:270,rotation:45}],[{id:'victorian-bath-rug',removed:true},{id:'victorian-bath-rug',removed:true}]]){
+  assert.equal(api.save(saved.themeId,{...saved,rugs}).ok,false);assert.equal(api.raw,raw);assert.equal(storage.writes,writes);
+ }
+ assert.equal(api.save(saved.themeId,{...saved,rugs:[{id:'victorian-bath-rug',removed:true}]}).ok,true);
+});
+
 test('design templates have their own local namespace and never touch map, wallet or purchased room keys',()=>{
  const storage=disk();for(const [key,value]of [['codaTownBuilderV1','map'],['codaUrbanRoomV1','purchases'],['codaNotesWalletV1','wallet']])storage.data.set(key,value);
  const api=createRoomLayoutStorage({storage,eventTarget:null});assert.equal(api.key,ROOM_LAYOUT_STORAGE_PREFIX+'builder');assert.equal(api.load('bach').record,null);assert.equal(api.save('bach',record('bach')).ok,true);

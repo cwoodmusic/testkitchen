@@ -1,6 +1,6 @@
 import {COLS,ROWS,terrainView} from './model.mjs?v=town-flight-1';
-import {sources} from './catalog.mjs?v=town-flight-1';
-import {groundFrameKey,invalidateGroundCache} from './ground-render.mjs?v=town-flight-1';
+import {sources} from './catalog.mjs?v=town-room-placement-2';
+import {groundFrameKey,invalidateGroundCache} from './ground-render.mjs?v=town-room-placement-2';
 import {waterFrame,currentWaterFrameIndex,withLevelZeroWaterCutout} from './water-motion.mjs?v=opera-smooth-1';
 import {OverviewTerrainState,OVERVIEW_SCALE,OVERVIEW_PAD,WORLD_WIDTH,WORLD_HEIGHT,terrainBoundsForRect} from './overview-state.mjs?v=town-flight-1';
 

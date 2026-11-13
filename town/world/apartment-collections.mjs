@@ -1,5 +1,6 @@
 import {APARTMENT_COLLECTION_ASSETS} from './apartment-collection-definitions.mjs?v=opera-parallax-1';
 import {createApartmentCollectionRuntime} from './apartment-collection-runtime.mjs?v=opera-parallax-1';
+import {mirrorVictorianSofaLeft} from './victorian-sofa-facing.mjs?v=town-room-placement-2';
 import {resolveSouthArtCorrections,SOUTH_ART_PREVIEW} from './south-art-fixes.mjs?v=opera-parallax-1';
 export * from './apartment-collection-definitions.mjs?v=opera-parallax-1';
 
@@ -50,7 +51,7 @@ export async function registerApartmentCollections(add,{
   asset.getFacingImage=(facing='south')=>{if(!runtime.view(def.id,facing))return null;runtime.warmAsset(def.id,facing);return runtime.canvas(def.id,facing);};
   asset.getFacingDrawSource=(facing='south',options)=>runtime.drawSource(def.id,facing,options);
   const motion=runtime.motion(def.id);if(motion)asset.motion=motion;
-  return asset;
+  return mirrorVictorianSofaLeft(asset,{createCanvas});
  });
  activeRuntime=runtime;return assets;
 }

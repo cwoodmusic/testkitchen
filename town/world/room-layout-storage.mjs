@@ -1,4 +1,4 @@
-import {ROOM_LAYOUT_FORMAT,ROOM_LAYOUT_VERSION} from './room-layout-model.mjs?v=town-store-halls-1';
+import {ROOM_LAYOUT_FORMAT,ROOM_LAYOUT_VERSION} from './room-layout-model.mjs?v=town-room-placement-2';
 
 export const ROOM_LAYOUT_STORAGE_PREFIX='codaRoomLayoutsV1:';
 export const ROOM_LAYOUTS_FORMAT='coda-room-layouts';
@@ -13,6 +13,10 @@ export function validateRoomLayoutRecord(themeId,record){
  if(!validId(themeId)||!plain(record)||record.format!==ROOM_LAYOUT_FORMAT||record.version!==ROOM_LAYOUT_VERSION||record.themeId!==themeId||typeof record.baseSignature!=='string'||record.baseSignature.length>100||!Array.isArray(record.placements)||!Array.isArray(record.removed)||!Array.isArray(record.added))return fail('The file contains an unsupported room layout.');
  if(record.placements.length+record.added.length>600||record.removed.length>600)return fail('A room contains too many furniture pieces.');
  if(record.placements.some(p=>!plain(p)||!validId(p.id)||!Number.isFinite(p.x)||!Number.isFinite(p.y)||![0,90,180,270].includes(p.rotation??0))||record.removed.some(id=>!validId(id))||record.added.some(p=>!plain(p)||!validId(p.id)||typeof p.asset!=='string'||p.asset.length>160||!Number.isFinite(p.x)||!Number.isFinite(p.y)||![0,90,180,270].includes(p.rotation??0)))return fail('A furniture placement is invalid.');
+ if(record.rugs!==undefined){
+  if(!Array.isArray(record.rugs)||record.rugs.length>600)return fail('The room contains an invalid rug layout.');
+  const ids=new Set();for(const rug of record.rugs){if(!plain(rug)||!validId(rug.id)||ids.has(rug.id)||rug.removed!==undefined&&typeof rug.removed!=='boolean'||!rug.removed&&(!Number.isFinite(rug.x)||!Number.isFinite(rug.y)||![0,90,180,270].includes(rug.rotation??0)))return fail('A rug placement is invalid.');ids.add(rug.id);}
+ }
  return {ok:true,changed:false};
 }
 

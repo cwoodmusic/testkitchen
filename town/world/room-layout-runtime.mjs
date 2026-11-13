@@ -1,5 +1,5 @@
-import {createRoomLayoutModel} from './room-layout-model.mjs?v=town-store-halls-1';
-import {createRoomLayoutStorage} from './room-layout-storage.mjs?v=town-store-halls-1';
+import {createRoomLayoutModel} from './room-layout-model.mjs?v=town-room-placement-2';
+import {createRoomLayoutStorage} from './room-layout-storage.mjs?v=town-room-placement-2';
 
 export function roomLayoutThemeId(scene){
  if(scene?.kind==='showroom')return 'showroom-'+scene.showroomId;

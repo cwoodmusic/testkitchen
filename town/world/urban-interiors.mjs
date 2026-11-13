@@ -1,7 +1,7 @@
 import {assetImage} from './asset-color.mjs?v=opera-parallax-1';
-import {SHOWROOMS,applyShowroomLayout} from './showroom-layout.mjs?v=town-victorian-2';
+import {SHOWROOMS,applyShowroomLayout} from './showroom-layout.mjs?v=town-room-placement-2';
 import {drawShowroomThemeSign} from './showroom-signs.mjs?v=town-store-halls-1';
-import {applyShowroomApartment} from './showroom-apartments.mjs?v=town-victorian-2';
+import {applyShowroomApartment} from './showroom-apartments.mjs?v=town-room-placement-2';
 import {drawShowroomFloor,drawShowroomWallpaper} from './showroom-materials.mjs?v=town-victorian-2';
 import {applyHomeMaterialSuite,fitCompactKitchenFloor,warmHomeMaterials,drawHomeMaterialRug} from './home-materials.mjs?v=town-victorian-2';
 import {drawTowerCommonSurfaces,drawTowerCommonStairs,towerCommonMaterialsReady,warmTowerCommonMaterials} from './tower-common-materials.mjs?v=opera-parallax-1';
@@ -12,15 +12,16 @@ import {calibratePrivateFurniture,presentedRoomItem} from './private-furniture.m
 import {normalizeInteriorDoorways} from './interior-doorways.mjs?v=opera-parallax-1';
 import {drawInteriorWindow,warmInteriorWindows} from './interior-window-art.mjs?v=opera-parallax-1';
 import {drawInteriorWallNetwork} from './interior-wall-art.mjs?v=town-victorian-4';
-import {createRoomLayoutResolver} from './room-layout-runtime.mjs?v=town-store-halls-1';
+import {createRoomLayoutResolver} from './room-layout-runtime.mjs?v=town-room-placement-2';
 export {apartmentDecorBounds,apartmentWallDecorBounds} from './personal-room-areas.mjs?v=opera-parallax-1';
 import {getConcertHall,renderConcertHallBackground,concertHallDrawables} from './concert-hall.mjs?v=town-flight-1';
 import {renderStagePerformance} from './concert-performers.mjs?v=opera-players-2';
-import {buildApartmentHome} from './apartment-homes.mjs?v=opera-parallax-1';
+import {buildApartmentHome} from './apartment-homes.mjs?v=town-room-placement-2';
 import {FAMILY_FURNITURE_ASSETS} from './family-furniture-definitions.mjs?v=opera-parallax-1';
-import {APARTMENT_COLLECTION_ASSETS,getApartmentAsset} from './apartment-collections.mjs?v=opera-parallax-1';
+import {APARTMENT_COLLECTION_ASSETS,getApartmentAsset} from './apartment-collections.mjs?v=town-room-placement-2';
 import {drawApartmentMotion} from './apartment-motion.mjs?v=opera-parallax-1';
 import {furnitureFacingPlacement,furnitureFacingDepth,furnitureFacingBoxes,furnitureAtGroundCenter} from './furniture-facing.mjs?v=opera-parallax-1';
+import {drawFurnitureContactShadow} from './furniture-contact-shadow.mjs?v=town-room-placement-2';
 import {preparePlacedFacingArt} from './furniture-art-access.mjs?v=opera-parallax-1';
 // The apartment tower has one consistent floor plate. Residential floors use
 // a 608px common hall and 1120px private apartments, within its 2304 × 1728 lot.
@@ -308,7 +309,7 @@ function wallItem(item){return !!(item.wallMounted||nativeCatalog?.get(item.asse
 function drawItem(c,item,time=0){
  const a=nativeCatalog?.get(item.asset);if(!a)return;const scale=Number.isFinite(item.scale)&&item.scale>0?item.scale:1,w=item.w||a.w*scale,h=item.h||w*a.h/a.w;
  const placed={...item,w,h},facing=furnitureFacingPlacement(a,placed);
- c.save();if(!floorItem(item)&&!wallItem(item)){const foot=facing?.screenFootCenter||{x:item.x,y:item.y-3};c.fillStyle='#16232b30';c.beginPath();c.ellipse(foot.x,foot.y,w*.39,Math.max(5*(item.presentationScale||1),w*.045),0,0,Math.PI*2);c.fill();}c.imageSmoothingEnabled=false;
+ c.save();drawFurnitureContactShadow(c,a,item,facing);c.imageSmoothingEnabled=false;
  if(facing){const graded=Object.create(a);Object.defineProperty(graded,'canvas',{value:facing.image});c.drawImage(assetImage(graded),facing.x,facing.y,facing.w,facing.h);drawApartmentMotion(c,facing.view,{x:facing.x+facing.w/2,y:facing.y+facing.h,w:facing.w,h:facing.h},time);}
  else{c.translate(item.x,item.y);c.rotate((item.rotation||0)*Math.PI/180);c.drawImage(assetImage(a),-w/2,-h,w,h);drawApartmentMotion(c,a,{x:0,y:0,w,h},time);}
  c.restore();

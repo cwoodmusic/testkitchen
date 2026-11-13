@@ -1,4 +1,4 @@
-import {APARTMENT_COLLECTION_ASSETS,getApartmentAsset} from './apartment-collections.mjs?v=opera-parallax-1';
+import {APARTMENT_COLLECTION_ASSETS,getApartmentAsset} from './apartment-collections.mjs?v=town-room-placement-2';
 import {furnitureFacingBoxes,furnitureFacingDepth,furnitureAtGroundCenter} from './furniture-facing.mjs?v=opera-parallax-1';
 const native=new Map(APARTMENT_COLLECTION_ASSETS.map(a=>[a.id,a]));
 const rect=(x,y,w,h)=>({x,y,w,h}),point=(x,y)=>({x,y});
@@ -172,7 +172,7 @@ export function applyShowroomApartment(scene,display,{room,wall,addItem,rug,sign
  for(const a of plan.areas)light(scene,a.point.x,a.point.y,a.functionalRole==='living'?220:150);
  if(display.id==='victorian-parlor'){
   rug(scene,436,194,96,56,display.rug);
-  Object.assign(scene.rugs.at(-1),{texture:'victorian-bath-rug.png',sourceRect:{x:104,y:110,w:1436,h:738}});
+  Object.assign(scene.rugs.at(-1),{id:'victorian-bath-rug',texture:'victorian-bath-rug.png',sourceRect:{x:104,y:110,w:1436,h:738}});
  }
  if(windowAt)for(const window of plan.windows)windowAt(scene,window.x,24,window.w);return scene;
 }
