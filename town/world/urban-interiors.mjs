@@ -1,9 +1,9 @@
 import {assetImage} from './asset-color.mjs?v=opera-parallax-1';
-import {SHOWROOMS,applyShowroomLayout} from './showroom-layout.mjs?v=town-store-halls-1';
+import {SHOWROOMS,applyShowroomLayout} from './showroom-layout.mjs?v=town-victorian-1';
 import {drawShowroomThemeSign} from './showroom-signs.mjs?v=town-store-halls-1';
-import {applyShowroomApartment} from './showroom-apartments.mjs?v=town-store-halls-1';
-import {drawShowroomFloor,drawShowroomWallpaper} from './showroom-materials.mjs?v=opera-parallax-1';
-import {applyHomeMaterialSuite,warmHomeMaterials} from './home-materials.mjs?v=opera-parallax-1';
+import {applyShowroomApartment} from './showroom-apartments.mjs?v=town-victorian-1';
+import {drawShowroomFloor,drawShowroomWallpaper} from './showroom-materials.mjs?v=town-victorian-1';
+import {applyHomeMaterialSuite,fitCompactKitchenFloor,warmHomeMaterials} from './home-materials.mjs?v=town-victorian-1';
 import {drawTowerCommonSurfaces,drawTowerCommonStairs,towerCommonMaterialsReady,warmTowerCommonMaterials} from './tower-common-materials.mjs?v=opera-parallax-1';
 import {drawInteriorDoor,drawPrivacyDoor,drawElevatorPortal,getElevatorVisualGeometry,interiorPortalVisualDepth,warmInteriorPortalArt} from './interior-portal-art.mjs?v=opera-parallax-1';
 import {applyTowerCommonArchitecture} from './tower-common-architecture.mjs?v=opera-parallax-1';
@@ -206,7 +206,7 @@ export function getInteriorBase(scene={}){
  if(scene.kind==='concert')return getConcertHall();
  const requestedKind=scene.kind||'lobby',floor=Math.max(1,Math.min(15,Math.round(Number(scene.floor)||1))),storeFloor=floor===2?2:1,kind=requestedKind==='hall'&&floor===1?'lobby':requestedKind==='showroom'&&!SHOWROOMS.some(room=>room.id===scene.showroomId)?'shop':requestedKind,resident=scene.resident||'player',id=kind==='apartment'?`apartment-${resident}`:kind==='hall'?`tower-floor-${floor}`:kind==='shop'?(storeFloor===1?'furniture-store':'furniture-store-floor-2'):kind==='showroom'?'showroom-'+scene.showroomId:'tower-lobby';
  if(!sceneCache.has(id)){const s=kind==='apartment'?apartment(resident):kind==='hall'?hall(floor):kind==='shop'?shop(storeFloor):kind==='showroom'?showroomApartment(scene.showroomId):lobby();
-  calibratePrivateFurniture(s,nativeCatalog||collectionDefinitions);normalizeInteriorDoorways(s);applyTowerCommonArchitecture(s);
+  calibratePrivateFurniture(s,nativeCatalog||collectionDefinitions);fitCompactKitchenFloor(s,nativeCatalog||collectionDefinitions);normalizeInteriorDoorways(s);applyTowerCommonArchitecture(s);
   // Floor lettering is retired; retain labels painted on the north wall and
   // the separate framed door, lift, directory and showroom-sign renderers.
   const wallDepth=s.towerArchitecture?.northWallDepth||106;s.signs=s.signs.filter(label=>label.y<=wallDepth);

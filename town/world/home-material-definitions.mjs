@@ -1,3 +1,5 @@
+import {furnitureFacingBounds} from './furniture-facing.mjs?v=opera-parallax-1';
+
 // Each private home has its own authored construction, rather than a tint of
 // another owner's finish. Texture files are small native-pixel repeat tiles.
 const rows=[
@@ -81,7 +83,7 @@ const quietWetFloors=new Map([
 const freeze=value=>{if(value&&typeof value==='object'){for(const part of Object.values(value))freeze(part);Object.freeze(value);}return value;};
 const finish=(owner,kind,name,colors,extra={})=>({id:`${owner}-${kind}`,name,label:name,pattern:`home-${owner}-${kind}`,homeMaterial:true,owner,kind,colors,texture:`${owner}-${kind==='wet-wall'?'wet-floor':kind}.webp`,...extra});
 export const HOME_MATERIAL_SUITES=freeze(rows.map(([owner,name,floorName,wallName,wetName,colors])=>{
- const contrast=contrastByOwner.get(owner),quietWet=quietWetFloors.get(owner),floor=finish(owner,'floor',floorName,colors,{presentation:{scale:.5,color:contrast.floorColor,opacity:contrast.floorOpacity}}),wallpaper=finish(owner,'wall',wallName,colors,{trimTexture:`${owner}-dado.webp`,presentation:{scale:.65,color:contrast.wallColor,opacity:contrast.wallOpacity},trimPresentation:{scaleX:.65,scaleY:1,color:contrast.wallColor,opacity:.12}});
+ const contrast=contrastByOwner.get(owner),quietWet=quietWetFloors.get(owner),floor=finish(owner,'floor',floorName,colors,{presentation:{scale:.5,color:contrast.floorColor,opacity:contrast.floorOpacity}}),wallpaper=finish(owner,'wall',wallName,colors,{trimTexture:`${owner}-dado.webp`,presentation:{scale:.65,color:contrast.wallColor,opacity:contrast.wallOpacity},trimPresentation:{scaleX:.65,scaleY:1,color:contrast.wallColor,opacity:.12,...(owner==='showroom-victorian-parlor'?{style:'complete-scroll',fitHeight:true,insetTop:4,insetBottom:4}:{})}});
  return {
   owner,id:`home-suite-${owner}`,name,floor,wallpaper,
   bedroomFloor:finish(owner,'carpet',name+' quiet woven carpet',surfaceColors(contrast.carpet),{texture:null,surfaceStyle:'carpet',presentation:{scale:.5}}),
@@ -114,5 +116,19 @@ export function applyHomeMaterialSuite(scene,owner){
  }
  for(const wall of scene.walls){wall.color=suite.trim.wood;wall.trim=suite.trim.light;}
  for(const door of scene.privacyDoors||[]){door.color=suite.trim.wood;door.trim=suite.trim.light;}
+ return scene;
+}
+
+/** Finish the compact showroom kitchen at its fixture row, without moving rooms. */
+export function fitCompactKitchenFloor(scene,catalog){
+ if(scene.kind!=='showroom'||scene.width!==1184||scene.height!==448)return scene;
+ const kitchen=scene.rooms.find(room=>room.functionalRole==='kitchen'),living=scene.rooms.find(room=>room.functionalRole==='living');
+ if(!kitchen||!living)return scene;
+ const roles=new Set(['sink','counter','stove','fridge','pantry']),bounds=scene.items.filter(item=>roles.has(item.fixtureRole)).map(item=>{
+  const asset=catalog?.get(item.asset);return asset?furnitureFacingBounds(asset,item):{x:item.x-item.w/2,y:item.y-item.h,w:item.w,h:item.h};
+ });
+ if(!bounds.length)return scene;
+ const left=kitchen.x<scene.width/2,x=left?kitchen.x:Math.max(kitchen.x,Math.floor((Math.min(...bounds.map(b=>b.x))-10)/4)*4),right=left?Math.min(kitchen.x+kitchen.w,Math.ceil((Math.max(...bounds.map(b=>b.x+b.w))+10)/4)*4):kitchen.x+kitchen.w;
+ kitchen.floorBounds={x,y:kitchen.y,w:right-x,h:Math.min(kitchen.y+kitchen.h,living.y)-kitchen.y};
  return scene;
 }

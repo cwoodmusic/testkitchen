@@ -2,6 +2,8 @@ import test from 'node:test';
 import assert from 'node:assert/strict';
 import {readFileSync} from 'node:fs';
 import {createHash} from 'node:crypto';
+import {createRequire} from 'node:module';
+import {runInNewContext} from 'node:vm';
 import {HOME_MATERIAL_SUITES,getHomeMaterialSuite,applyHomeMaterialSuite} from './home-material-definitions.mjs';
 import {APARTMENT_COLLECTION_OWNERS} from './apartment-collection-definitions.mjs';
 
@@ -78,4 +80,64 @@ test('Botanical and Midcentury bathrooms replace the busy mirrored wet repeat wi
   if(expected.has(suite.owner)){assert.equal(suite.wetFloor.texture,null);assert.equal(suite.wetFloor.surfaceStyle,expected.get(suite.owner));assert.equal(suite.wetFloor.presentation.scale,.5);assert.notEqual(suite.wetFloor.pattern,suite.wetWallpaper.pattern);assert.notDeepEqual(suite.wetFloor.colors,suite.wetWallpaper.colors,'Floor and wall retain separate values and tile layouts');}
   else {assert.equal(suite.wetFloor.texture,suite.owner+'-wet-floor.webp');assert.equal(suite.wetFloor.surfaceStyle,undefined,'Other29 authored fancy bathroom floors stay intact');}
  }
+});
+
+function pixelMaterialRenderer(textures=new Map()){
+ const {createCanvas,loadImage}=createRequire(import.meta.url)('@napi-rs/canvas'),base=new URL('./home-materials.mjs',import.meta.url);
+ const source=readFileSync(base,'utf8').replace(/^export \{[^\n]*\n/m,'').replaceAll('export ','').replaceAll('import.meta.url',JSON.stringify(base.href))+'\n({warmHomeMaterials,drawHomeMaterialWallpaper,drawHomeMaterialFloor})';
+ const renderer=runInNewContext(source,{URL,document:{createElement:()=>createCanvas(1,1)},fetch:async url=>({ok:true,blob:async()=>textures.get(new URL(url).pathname.split('/').at(-1))||loadImage(readFileSync(new URL(url)))}),createImageBitmap:async image=>image});
+ return {...renderer,createCanvas};
+}
+const materialPixels=(canvas,r)=>canvas.getContext('2d').getImageData(r.x,r.y,r.w,r.h).data;
+const materialHasColor=(pixels,rgb)=>{for(let i=0;i<pixels.length;i+=4)if(rgb.every((value,k)=>Math.abs(pixels[i+k]-value)<=2))return true;return false;};
+const dadoArtRect=(wall,style)=>({x:wall.x,y:wall.y+wall.h-22+style.insetTop,w:wall.w,h:22-style.insetTop-style.insetBottom});
+
+test('fitted dado contains the complete native ornament between caps instead of cropping or overpainting its ends',async()=>{
+ const {createCanvas}=createRequire(import.meta.url)('@napi-rs/canvas'),art=createCanvas(40,44),a=art.getContext('2d');
+ a.fillStyle='#164bcc';a.fillRect(0,0,40,44);a.fillStyle='#eb2832';a.fillRect(0,0,40,4);a.fillStyle='#17be44';a.fillRect(0,40,40,4);
+ const renderer=pixelMaterialRenderer(new Map([['probe-dado.webp',art]])),finish={homeMaterial:true,colors:['#d5c6ab','#bfa166','#30231e','#997c52'],texture:null,trimTexture:'probe-dado.webp',trimPresentation:{scaleX:.65,fitHeight:true,insetTop:2,insetBottom:4}};
+ await renderer.warmHomeMaterials({assets:['probe-dado.webp']});
+ const area={x:11,y:9,w:90,h:106},room={wallpaper:finish,wallpaperAreas:[area]},canvas=renderer.createCanvas(140,140),c=canvas.getContext('2d');c.imageSmoothingEnabled=false;renderer.drawHomeMaterialWallpaper(c,room);
+ const dadoY=area.y+area.h-22,inner=dadoArtRect(area,finish.trimPresentation),pixels=materialPixels(canvas,inner);
+ for(const color of [[235,40,50],[22,75,204],[23,190,68]])assert(materialHasColor(pixels,color),'Every native top, middle and bottom marker remains inside the framed ornament');
+ assert.deepEqual([...materialPixels(canvas,{x:area.x+10,y:dadoY,w:1,h:1})],[191,161,102,255],'The top has one continuous gold cap');
+ assert.deepEqual([...materialPixels(canvas,{x:area.x+10,y:dadoY+1,w:1,h:1})],[48,35,30,255],'A dark shadow separates the cap from the complete motif');
+ assert.deepEqual([...materialPixels(canvas,{x:area.x+10,y:dadoY+19,w:1,h:1})],[48,35,30,255],'The lower moulding sits below the artwork');
+ const legacy=renderer.createCanvas(140,140),lc=legacy.getContext('2d');lc.imageSmoothingEnabled=false;renderer.drawHomeMaterialWallpaper(lc,{...room,wallpaper:{...finish,trimPresentation:{scaleX:.65,scaleY:1}}});
+ const old=materialPixels(legacy,{x:area.x,y:dadoY,w:area.w,h:22});
+ assert.equal(materialHasColor(old,[23,190,68]),false,'The opt-in fit must not change the legacy authored-repeat presentation');
+});
+
+test('Victorian framed frieze preserves horizontal phase across wall joins and fits each wall height locally',async()=>{
+ const renderer=pixelMaterialRenderer(),suite=getHomeMaterialSuite('showroom-victorian-parlor');await renderer.warmHomeMaterials(suite);
+ const style=suite.wallpaper.trimPresentation;assert.equal(style.fitHeight,true);assert.equal(style.style,'complete-scroll');assert.equal(style.insetTop,4);assert.equal(style.insetBottom,4);
+ for(const other of HOME_MATERIAL_SUITES)if(other!==suite){assert.equal(other.wallpaper.trimPresentation.fitHeight,undefined,'The other30 authored trim presentations stay unchanged');assert.equal(other.wallpaper.trimPresentation.style,undefined);}
+ const wall={x:13,y:7,w:296,h:106},whole=renderer.createCanvas(340,160),joined=renderer.createCanvas(340,160),shifted=renderer.createCanvas(340,160),paint=(canvas,areas)=>{const c=canvas.getContext('2d');c.imageSmoothingEnabled=false;renderer.drawHomeMaterialWallpaper(c,{wallpaper:suite.wallpaper,wallpaperAreas:areas});};
+ paint(whole,[wall]);paint(joined,[{...wall,w:151},{...wall,x:164,w:145}]);paint(shifted,[{...wall,y:21,h:74}]);
+ const art=dadoArtRect(wall,style);
+ assert.deepEqual(materialPixels(joined,art),materialPixels(whole,art),'Splitting a wall must not restart the gold ornament repeat');
+ assert.deepEqual(materialPixels(shifted,dadoArtRect({...wall,y:21,h:74},style)),materialPixels(whole,art),'A different wall height still contains the same full ornament, with its baseline anchored locally');
+});
+
+test('complete Victorian scrolls have visible breathing room above and below every floral motif',async()=>{
+ const renderer=pixelMaterialRenderer(),suite=getHomeMaterialSuite('showroom-victorian-parlor'),wallpaper={...suite.wallpaper,trimPresentation:{...suite.wallpaper.trimPresentation,opacity:0}};
+ const wall={x:13,y:7,w:296,h:106},canvas=renderer.createCanvas(340,140),c=canvas.getContext('2d');c.imageSmoothingEnabled=false;renderer.drawHomeMaterialWallpaper(c,{wallpaper,wallpaperAreas:[wall]});
+ const style=wallpaper.trimPresentation,rect=dadoArtRect(wall,style),art=materialPixels(canvas,rect),inkRows=[];
+ for(let y=0;y<rect.h;y++){let ink=0;for(let x=0;x<rect.w;x++){const i=(y*rect.w+x)*4;if(art[i]>150&&art[i+1]>110&&art[i+2]>55)ink++;}if(ink)inkRows.push(y);}
+ assert(inkRows.length>=5,'The bounded band actually draws detailed gold flowers and scrolling vines');
+ assert(inkRows[0]>=2,'The complete petal tips have clear space below the top moulding');
+ assert(inkRows.at(-1)<rect.h-2,'The full vine curls stay clear of the bottom moulding');
+ assert(style.insetTop+inkRows[0]>=4,'The motif leaves at least four full-band pixels above its highest tip');
+ assert(style.insetBottom+rect.h-1-inkRows.at(-1)>=4,'The motif leaves at least four full-band pixels below its lowest curl');
+});
+
+test('floor material, clipping and glaze use visual floor bounds without changing the logical room',async()=>{
+ const {createCanvas}=createRequire(import.meta.url)('@napi-rs/canvas'),blue=createCanvas(4,4);blue.getContext('2d').fillStyle='#0000ff';blue.getContext('2d').fillRect(0,0,4,4);
+ const renderer=pixelMaterialRenderer(new Map([['probe-floor.webp',blue]])),finish={homeMaterial:true,colors:['#ff0000'],texture:'probe-floor.webp',glaze:.5};await renderer.warmHomeMaterials({assets:['probe-floor.webp']});
+ const room={x:32,y:30,w:30,h:24,floorBounds:{x:8,y:11,w:91,h:70},floorFinish:finish},before=structuredClone(room),canvas=renderer.createCanvas(120,100),c=canvas.getContext('2d');c.imageSmoothingEnabled=false;renderer.drawHomeMaterialFloor(c,room);
+ const inside=[...materialPixels(canvas,{x:10,y:13,w:1,h:1})],middle=[...materialPixels(canvas,{x:40,y:40,w:1,h:1})];
+ assert.deepEqual(inside,middle,'The texture and glaze extend through the full visual kitchen floor');assert(inside[0]>110&&inside[2]>110&&inside[3]===255);
+ for(const point of [{x:7,y:20},{x:99,y:20},{x:20,y:10},{x:20,y:81}])assert.equal(materialPixels(canvas,{...point,w:1,h:1})[3],0,'Painting remains clipped to the visual floor boundary');
+ assert.deepEqual(room,before,'Painting never moves the logical room or its floor region');
+ const legacy=renderer.createCanvas(120,100),lc=legacy.getContext('2d');renderer.drawHomeMaterialFloor(lc,{...room,floorBounds:undefined});assert.equal(materialPixels(legacy,{x:10,y:13,w:1,h:1})[3],0);assert.equal(materialPixels(legacy,{x:40,y:40,w:1,h:1})[3],255,'Other room floors still use their original bounds');
 });

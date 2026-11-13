@@ -1,4 +1,4 @@
-export {HOME_MATERIAL_SUITES,getHomeMaterialSuite,applyHomeMaterialSuite} from './home-material-definitions.mjs?v=opera-parallax-1';
+export {HOME_MATERIAL_SUITES,getHomeMaterialSuite,applyHomeMaterialSuite,fitCompactKitchenFloor} from './home-material-definitions.mjs?v=town-victorian-1';
 
 // Seam-safe authored tiles are decoded once into ImageBitmap. The completed
 // room background owns all subsequent material painting, including its grain.
@@ -50,19 +50,42 @@ function tileFor(finish){
  return tile;
 }
 export const getHomeSurfacePatternCacheStats=()=>({entries:surfaceTiles.size,pixels:surfacePixels,maxEntries:SURFACE_TILE_LIMITS.entries,maxPixels:SURFACE_TILE_LIMITS.pixels});
+const scrollTiles=new Map();
+function completeScrollTile(finish){
+ if(typeof document==='undefined')return null;
+ const key=finish.colors.join('|');let tile=scrollTiles.get(key);if(tile)return tile;
+ tile=document.createElement('canvas');tile.width=160;tile.height=32;const c=tile.getContext('2d'),[base,,dark]=finish.colors;
+ c.fillStyle=base;c.fillRect(0,0,160,32);
+ const ornament=()=>{
+  c.beginPath();
+  for(const offset of [0,80]){
+   // Each palmette and both curling vines stay entirely inside the band. The
+   // horizontal vine ends meet at the same height for a continuous repeat.
+   c.moveTo(offset,22);c.bezierCurveTo(offset+10,22,offset+14,26,offset+25,24);c.bezierCurveTo(offset+36,22,offset+37,13,offset+28,10);c.bezierCurveTo(offset+18,7,offset+11,14,offset+16,19);c.bezierCurveTo(offset+20,23,offset+27,20,offset+25,16);
+   c.moveTo(offset+80,22);c.bezierCurveTo(offset+70,22,offset+66,26,offset+55,24);c.bezierCurveTo(offset+44,22,offset+43,13,offset+52,10);c.bezierCurveTo(offset+62,7,offset+69,14,offset+64,19);c.bezierCurveTo(offset+60,23,offset+53,20,offset+55,16);
+   c.moveTo(offset+40,24);c.bezierCurveTo(offset+31,22,offset+25,18,offset+27,13);c.bezierCurveTo(offset+33,13,offset+39,18,offset+40,24);
+   c.moveTo(offset+40,24);c.bezierCurveTo(offset+49,22,offset+55,18,offset+53,13);c.bezierCurveTo(offset+47,13,offset+41,18,offset+40,24);
+   c.moveTo(offset+40,24);c.bezierCurveTo(offset+34,17,offset+35,9,offset+40,6);c.bezierCurveTo(offset+45,9,offset+46,17,offset+40,24);
+  }
+ };
+ c.lineCap='round';c.lineJoin='round';c.save();c.translate(0,.65);ornament();c.strokeStyle=dark;c.lineWidth=3;c.stroke();c.restore();ornament();c.strokeStyle='#d8ad64';c.lineWidth=1.7;c.stroke();
+ c.beginPath();for(const offset of [0,80]){c.moveTo(offset+40,9);c.quadraticCurveTo(offset+39,16,offset+40,21);c.moveTo(offset+18,12);c.quadraticCurveTo(offset+24,9,offset+29,13);c.moveTo(offset+62,12);c.quadraticCurveTo(offset+56,9,offset+51,13);}c.strokeStyle='#f4d58d';c.lineWidth=.7;c.stroke();
+ scrollTiles.set(key,tile);if(scrollTiles.size>16){const oldest=scrollTiles.keys().next().value,retired=scrollTiles.get(oldest);scrollTiles.delete(oldest);retired.width=retired.height=0;}return tile;
+}
 function field(c,finish,r,file=finish.texture){
- const trim=file===finish.trimTexture&&Boolean(file),style=trim?finish.trimPresentation:finish.presentation,image=finish.surfaceStyle&&!trim?tileFor(finish):request(file)?.image;
+ const trim=file===finish.trimTexture&&Boolean(file),style=trim?finish.trimPresentation:finish.presentation,image=trim&&style?.style==='complete-scroll'?completeScrollTile(finish):finish.surfaceStyle&&!trim?tileFor(finish):request(file)?.image;
  const pattern=image?c.createPattern(image,'repeat'):null;
- if(pattern){const sx=style?.scaleX??style?.scale??1,sy=style?.scaleY??style?.scale??1;pattern.setTransform?.({a:sx,b:0,c:0,d:sy,e:0,f:0});}
+ if(pattern){const fit=trim&&(style?.fitHeight||style?.style==='complete-scroll'),sx=style?.scaleX??style?.scale??1,sy=fit?r.h/image.height:style?.scaleY??style?.scale??1;pattern.setTransform?.({a:sx,b:0,c:0,d:sy,e:0,f:fit?r.y:0});}
  c.fillStyle=pattern||finish.colors[0];c.fillRect(r.x,r.y,r.w,r.h);
  if(style?.color&&style.opacity>0){c.save();c.globalAlpha*=style.opacity;c.fillStyle=style.color;c.fillRect(r.x,r.y,r.w,r.h);c.restore();}
 }
 export function drawHomeMaterialFloor(c,room){
  const finish=room.floorFinish||room.floor;if(!finish?.homeMaterial)return false;if(room.floorOverlay===false)return true;
- c.save();c.beginPath();c.rect(room.x,room.y,room.w,room.h);c.clip();
+ const bounds=room.floorBounds||room;
+ c.save();c.beginPath();c.rect(bounds.x,bounds.y,bounds.w,bounds.h);c.clip();
  // World coordinates keep the same grain phase through every room join.
- field(c,finish,room);
- if(finish.glaze>0){c.globalAlpha=finish.glaze;c.fillStyle=finish.colors[0];c.fillRect(room.x,room.y,room.w,room.h);}
+ field(c,finish,bounds);
+ if(finish.glaze>0){c.globalAlpha=finish.glaze;c.fillStyle=finish.colors[0];c.fillRect(bounds.x,bounds.y,bounds.w,bounds.h);}
  c.restore();return true;
 }
 export function drawHomeMaterialWallpaper(c,room){
@@ -72,11 +95,21 @@ export function drawHomeMaterialWallpaper(c,room){
   c.save();c.beginPath();c.rect(area.x,area.y,area.w,area.h);c.clip();
   const dadoHeight=Math.min(22,Math.max(0,area.h-8)),dadoY=area.y+area.h-dadoHeight;
   field(c,finish,{...area,h:Math.max(0,area.h-dadoHeight)});
-  if(finish.trimTexture){c.save();c.translate(0,dadoY);field(c,finish,{x:area.x,y:0,w:area.w,h:dadoHeight},finish.trimTexture);c.restore();}
+  const fitted=finish.trimTexture&&(finish.trimPresentation?.fitHeight||finish.trimPresentation?.style==='complete-scroll');
+  if(fitted){
+   const style=finish.trimPresentation,top=Math.min(dadoHeight,Math.max(0,style.insetTop??2)),bottom=Math.min(dadoHeight-top,Math.max(0,style.insetBottom??4)),artHeight=dadoHeight-top-bottom;
+   // Keep the complete authored ornament between the two moulding caps. Its
+   // horizontal repeat stays in world coordinates through adjoining wall areas.
+   px(c,area.x,dadoY,area.w,dadoHeight,dark);
+   c.save();c.translate(0,dadoY);if(artHeight>0)field(c,finish,{x:area.x,y:top,w:area.w,h:artHeight},finish.trimTexture);c.restore();
+   if(top>0)px(c,area.x,dadoY,area.w,1,light);
+   if(bottom>0)px(c,area.x,dadoY+dadoHeight-bottom,area.w,1,light);
+  }
+  else if(finish.trimTexture){c.save();c.translate(0,dadoY);field(c,finish,{x:area.x,y:0,w:area.w,h:dadoHeight},finish.trimTexture);c.restore();}
   else{field(c,finish,{x:area.x,y:dadoY,w:area.w,h:dadoHeight});px(c,area.x,dadoY,area.w,1,light);px(c,area.x,dadoY+2,area.w,1,metal+'75');}
   px(c,area.x,area.y,area.w,2,dark);px(c,area.x+2,area.y+2,area.w-4,1,light+'A0');
-  px(c,area.x,dadoY-2,area.w,1,metal+'B0');px(c,area.x,dadoY-1,area.w,1,dark+'A0');
-  px(c,area.x,area.y+area.h-3,area.w,2,dark);px(c,area.x+1,area.y+area.h-4,area.w-2,1,light+'70');c.restore();
+  if(!fitted){px(c,area.x,dadoY-2,area.w,1,metal+'B0');px(c,area.x,dadoY-1,area.w,1,dark+'A0');
+   px(c,area.x,area.y+area.h-3,area.w,2,dark);px(c,area.x+1,area.y+area.h-4,area.w-2,1,light+'70');}c.restore();
  }
  return true;
 }
