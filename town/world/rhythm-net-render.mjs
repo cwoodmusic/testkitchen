@@ -1,10 +1,10 @@
-import {netVisualPose,netSweepPose,NET_SWEEP_SECONDS,NET_RECOVERY_SECONDS,NET_WINDUP_FRACTION} from './rhythm-hunt-motion.mjs?v=town-fairies-1';
+import {netVisualPose,netSweepPose,NET_SWEEP_SECONDS,NET_RECOVERY_SECONDS,NET_WINDUP_FRACTION} from './rhythm-hunt-motion.mjs?v=town-shoulder-1';
 
-/** Lift the net over the head and chop forward, sharing the exact catch mouth. */
+/** Carry the net behind the shoulder, then draw its one forward chop arc. */
 export function drawRhythmNet(c,player,{angle,age=Infinity,z=0,reducedMotion=false,swinging=false}={}){
  const active=Number.isFinite(age)&&age>=0&&age<NET_SWEEP_SECONDS+NET_RECOVERY_SECONDS,pose=netVisualPose(player,angle,active?age:Infinity,z),sweeping=active&&age<NET_SWEEP_SECONDS;
  c.save();c.lineCap='round';c.lineJoin='round';
- if(sweeping&&pose.stage==='sweep'&&!reducedMotion){
+ if(sweeping&&pose.stage==='sweep'&&pose.layer==='front'&&!reducedMotion){
   const u=age/NET_SWEEP_SECONDS,from=Math.max(NET_WINDUP_FRACTION,u-.16);c.strokeStyle='#fce9af66';c.lineWidth=3;c.beginPath();
   for(let i=0;i<=10;i++){const p=netSweepPose(player,angle,from+(u-from)*i/10,z);if(i)c.lineTo(p.x,p.y);else c.moveTo(p.x,p.y);}c.stroke();
  }

@@ -1,6 +1,6 @@
 import {catalog,preparePlacedArt,render,resizeSurface,findStart,movePlayer,toggleGate,follow,PLAYER_SCALE,GAIT_PER_PIXEL} from './runtime.mjs?v=town-flight-1';
 import {loadProject} from './storage.mjs?v=town-flight-1';
-import {createUrbanController} from './urban.mjs?v=town-fairies-1';
+import {createUrbanController} from './urban.mjs?v=town-shoulder-1';
 import {createConcertAudio} from './concert-audio.mjs?v=opera-parallax-1';
 import {mountConcertControls} from './concert-controls.mjs?v=opera-parallax-1';
 import {CONCERT_PROGRAMME} from './concert-programme.mjs?v=opera-players-1';
@@ -14,8 +14,8 @@ document.querySelectorAll('body > :not(#world):not(script)').forEach(e=>e.remove
 const header=document.createElement('header'),title=document.createElement('h1'),nav=document.createElement('nav');
 header.append(title,nav);document.body.append(header);
 function button(label,fn){const b=document.createElement('button');b.textContent=label;b.onclick=()=>{fn();b.blur();canvas.focus();};nav.append(b);return b;}
-button('Town Builder',()=>location.href='builder/?v=town-fairies-1');
-button(tour?'Play saved town':'Urban district tour',()=>location.href=tour?'?map=builder&v=town-fairies-1':'?urban=1&v=town-fairies-1');
+button('Town Builder',()=>location.href='builder/?v=town-shoulder-1');
+button(tour?'Play saved town':'Urban district tour',()=>location.href=tour?'?map=builder&v=town-shoulder-1':'?urban=1&v=town-shoulder-1');
 button('Back to arcade',()=>{if(parent!==window)parent.postMessage({type:'coda-town-close'},location.origin);else location.href='../?v=opera-parallax-1';});
 let night=readNightPreference();const lighting=button(night?'City night':'Daylight',()=>{night=!night;saveNightPreference(night);lighting.textContent=night?'City night':'Daylight';});lighting.id='lightingToggle';
 const footer=document.createElement('footer');footer.textContent='WASD / arrows · Walk    Shift · Run    Bedroom / bath doors automatic    E · Enter / interact    Wheel · Zoom    Tab · Equip net    F · Swing';document.body.append(footer);
@@ -31,7 +31,7 @@ if(!doc){title.textContent=loadError?'Could not load town':'No saved builder tow
  mountConcertControls(concert,{canvas,onProgramme:()=>urban.showProgramme()});
  const ambient=createAmbientNPCs({getConcertSeat:()=>urban.seated?.id||null,getInteriorPlayer:()=>urban.scene?.kind==='concert'?urban.player:null,getProject:()=>doc,catalog,getRevision:()=>cityRevision,getPlayer:()=>urban.active?null:player});
  const footprints=createSandFootprints({getProject:()=>doc});
- const drawPlayer=(c,x,y,state={facing,walking,phase:walkPhase},now=performance.now())=>character.drawPlayer(c,avatar,{x,y,...state,toolPose:urban.activities.netToolPose,...(urban.activities.sailing?{seated:true,walking:false,facing:urban.activities.boatFacing}:{})},now/1000);
+ const drawPlayer=(c,x,y,state={facing,walking,phase:walkPhase},now=performance.now())=>{urban.activities.drawNetBehind(c);character.drawPlayer(c,avatar,{x,y,...state,toolPose:urban.activities.netToolPose,...(urban.activities.sailing?{seated:true,walking:false,facing:urban.activities.boatFacing}:{})},now/1000);};
  addEventListener('message',e=>{if(e.source===parent&&e.origin===location.origin&&e.data?.type==='coda-town-state-result'&&e.data.avatar)avatar=character.normalizeProfile(e.data.avatar);});
  if(parent!==window)parent.postMessage({type:'coda-town-state'},location.origin);
  addEventListener('keydown',e=>{if(e.target.closest('input,select,textarea'))return;if(urban.keydown(e)){if(urban.blocked||urban.active)keys.clear();return;}if(e.target.closest('button,a'))return;keys.add(e.key.toLowerCase());if(e.key.startsWith('Arrow')||e.key===' ')e.preventDefault();if(e.key.toLowerCase()==='e'&&!e.repeat&&toggleGate(doc,player))cityRevision++;});

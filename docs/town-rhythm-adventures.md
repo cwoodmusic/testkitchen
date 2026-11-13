@@ -6,7 +6,7 @@ The town activities work in **Walk test** and **Play this town**, and leave the 
 
 Small musical fairies drift around town with translucent wings and glitter trails. Their musical glyphs have no circular badge. Yellow fairies supply the saved inventory; blue fairies belong to the vendor challenge. **At most five fairies appear on the island at once, counting both colors.** When all four blue fairies are out, only one yellow fairy appears. More yellow slots become available as blue notes are caught.
 
-Press **Tab** to equip or stow the net. It starts stowed. Turn with **WASD / arrows**, then press **F** or click/tap to swing in the direction the avatar faces. Clicking does not turn or aim the avatar. The stroke lifts over the head and chops forward like an axe, with the drawn mouth and catch collision sharing the same geometry. Windup and behind-the-body positions cannot catch a note. Stowing cancels the stroke; no net is drawn and no catches happen while it is stowed. Touch players can use **Equip net / Stow net** in the Play controls.
+Press **Tab** to equip or stow the net. It starts stowed. Turn with **WASD / arrows**, then press **F** or click/tap to swing in the direction the avatar faces. Clicking does not turn or aim the avatar. While walking, the net rests over the back shoulder and draws behind the body. The stroke starts from that resting pose and sweeps forward over the head in one arc, with the hand, drawn mouth and catch collision sharing the same geometry. Behind-the-body positions and the return to the shoulder cannot catch a note. Stowing cancels the stroke; no net is drawn and no catches happen while it is stowed. Touch players can use **Equip net / Stow net** in the Play controls.
 
 A yellow catch saves one quarter-note card, beamed eighth-note pair, beamed four-sixteenth group, or quarter rest. It replenishes in its original slot after twelve active outdoor seconds. The compact inventory counter stays out of the way. Inventory remains separate for each active player in this browser/device; cross-device syncing is deferred. Existing town stars, fish records, and maps are preserved.
 
@@ -54,7 +54,7 @@ On the same saved 137-object town in managed Chromium, the district view improve
 
 Browser checks:
 
-- `tests/town-adventures-browser.py`: four blue fairies, Tab equip/stow, overhead directions, clean HUD, Escape confirmation, five-minute deadline/build/pause/timeout/retry, rewards and save/reload.
+- `tests/town-adventures-browser.py`: four blue fairies, Tab equip/stow, shoulder carry and forward overhead directions, clean HUD, Escape confirmation, five-minute deadline/build/pause/timeout/retry, rewards and save/reload.
 - `tests/town-yellow-notes-browser.py`: five-note cap, fairy art, equipped catches, inventory persistence, replenishment, interactions, and mobile controls.
 - `tests/town-npc-rhythm-browser.py`: real neighbour conversation, by-ear reconstruction, exact inventory spend and persistence.
 - `tests/town-island-browser.py`: actual island sailing, a four-bar perfect cave-engine catch, 54-species journal, reload and mobile layout.

@@ -1,7 +1,7 @@
 import {createPlayerCollisionIndex} from './player-collision-index.mjs?v=town-flight-1';
-import {launchFlyingNotes,advanceFlyingNote,flyingNotePose,netSweepHits,facingAngle,angleFacing,NET_SWEEP_SECONDS,NET_RECOVERY_SECONDS} from './rhythm-hunt-motion.mjs?v=town-fairies-1';
-import {drawRhythmNet} from './rhythm-net-render.mjs?v=town-fairies-1';
-import {drawNoteFairy} from './note-fairy-render.mjs?v=town-fairies-1';
+import {launchFlyingNotes,advanceFlyingNote,flyingNotePose,netSweepHits,facingAngle,angleFacing,NET_SWEEP_SECONDS,NET_RECOVERY_SECONDS} from './rhythm-hunt-motion.mjs?v=town-shoulder-1';
+import {drawRhythmNet} from './rhythm-net-render.mjs?v=town-shoulder-1';
+import {drawNoteFairy} from './note-fairy-render.mjs?v=town-shoulder-1';
 import {createRhythmRoundClock} from './rhythm-round-clock.mjs?v=town-notes-1';
 import {blocked,height} from './model.mjs?v=town-flight-1';
 import {CATCH_PATTERNS,NOTE_VALUES,catchAttacks,remainingNotes,sameRhythm,reachableNoteSpots,scatterNotes} from './town-game-rules.mjs?v=town-notes-1';
@@ -112,11 +112,11 @@ export function createRhythmCatch({canvas,getProject,getPlayer,getFacing=()=>'do
   const elapsed=audio.time-start,count=Math.floor(elapsed/.625),node=dialog.querySelector('#rhythmCatchCount');if(node){const text=count<0?'Get ready':count<4?['1','2','READY','GO!'][count]:'LISTEN';if(node.textContent!==text)node.textContent=text;}
   if(audio.time>=huntAt)hunt();
  }}
- function draw(c,cam,time){if(phase!=='hunt')return;layoutHUD();const p=getPlayer();if(!p)return;
+ function draw(c,cam,time,{net=true}={}){if(phase!=='hunt')return;layoutHUD();const p=getPlayer();if(!p)return;
   for(const t of tokens){const z=height(doc,t.x,t.y),point=flyingNotePose(t,flightTime,z,motionQuery.matches);if(Math.abs(point.x-cam.x)>canvas.clientWidth/2/cam.zoom+50||Math.abs(point.y-cam.y)>canvas.clientHeight/2/cam.zoom+50)continue;drawNoteFairy(c,t,{time:flightTime,z,reducedMotion:motionQuery.matches});}
 
   const age=now()-swingAt,recovering=age>=0&&age<NET_SWEEP_SECONDS+NET_RECOVERY_SECONDS;
-  if(isEquipped())drawRhythmNet(c,p,{angle:recovering?aim:facingAngle(getFacing()),age:recovering?age:Infinity,z:height(doc,p.x,p.y),reducedMotion:motionQuery.matches,swinging});
+  if(net&&isEquipped())drawRhythmNet(c,p,{angle:recovering?aim:facingAngle(getFacing()),age:recovering?age:Infinity,z:height(doc,p.x,p.y),reducedMotion:motionQuery.matches,swinging});
  }
  dialog.addEventListener('cancel',e=>{e.preventDefault();requestEnd();});exitDialog.addEventListener('cancel',e=>{e.preventDefault();void keepPlaying();});
  return {start:startGame,end,tick,draw,pointer,keydown,pause,interact,cancelSwing,requestEnd,get active(){return active();},get fullscreen(){return dialog.open||exitDialog.open;},get blocked(){return active()&&(paused||phase!=='hunt');},get swingFacing(){const age=now()-swingAt;return isEquipped()&&phase==='hunt'&&!paused&&age>=0&&age<NET_SWEEP_SECONDS+NET_RECOVERY_SECONDS?angleFacing(aim):null;},get netStroke(){if(!isEquipped()||phase!=='hunt'||paused)return null;const age=now()-swingAt,active=age>=0&&age<NET_SWEEP_SECONDS+NET_RECOVERY_SECONDS;return {angle:active?aim:facingAngle(getFacing()),age:active?age:Infinity};},get fairyCount(){return active()?tokens.length:0;},get state(){return {phase,round,requestingEnd,netEquipped:!!isEquipped(),target:[...target],host:host?{x:host.x,y:host.y,interaction:host.interaction}:null,tokens:tokens.map(t=>({...t})),bag:[...bag],order:[...order],paused,mistakes,flightTime,remainingSeconds:clock.remainingSeconds,timeLimit:clock.timeLimit,timerStarted:clock.started,swing:swinging?{angle:aim,progress:swingProgress,hit:swingHit}:null};}};

@@ -19,7 +19,7 @@ test('raised player hands touch the net grip in all four views and costume build
   const angle=facingAngle(facing),toolPose=netToolPose(player,angle,age),pose=netVisualPose(player,angle,age),posed=render(r,profile,{...player,facing,toolPose}),normal=render(r,profile,{...player,facing});
   assert(countColor(posed.pixels,pose.grip,profile.skin)>0,`${facing}: actual skin pixels must reach the raised world-space handle`);
   assert.equal(countColor(normal.pixels,pose.grip,profile.skin),0,`${facing}: this is a raised arm, not the old wrist position`);
-  const rest=netVisualPose(player,angle).grip;
+  const rest={x:player.x+(facing==='down'?-27.5:facing==='up'?27.5:facing==='left'?-17.5:17.5),y:player.y-27.5};
   assert.equal(countColor(posed.pixels,rest,profile.skin,2),0,`${facing}: the replaced arm cannot leave an extra resting hand`);
  }
 });

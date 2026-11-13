@@ -47,6 +47,11 @@ try:
         assert state()['yellowNotes']['swing'] is None and page.evaluate('netInk')==0
         page.keyboard.press('Tab');assert state()['netEquipped']
         page.keyboard.down('d');page.wait_for_timeout(30);page.keyboard.up('d')
+        resting=page.evaluate(r'''async()=>{const t=townBuilder,p=t.urban.activities.state.player,app=new URL(document.querySelector('script[type="module"]').src),{height}=await import(new URL('../world/model.mjs'+app.search,app)),{netVisualPose,facingAngle}=await import(new URL('../world/rhythm-hunt-motion.mjs'+app.search,app));return {p,z:height(t.project,p.x,p.y),pose:netVisualPose(p,facingAngle('right'),Infinity,height(t.project,p.x,p.y)),tool:t.urban.activities.netToolPose};}''')
+        assert resting['pose']['groundForward']<0 and resting['pose']['layer']=='behind' and resting['pose']['behind']
+        assert resting['pose']['y']+resting['pose']['ry']<resting['p']['y']-resting['z']-58
+        assert resting['tool'] and resting['tool']['facing']=='right' and not resting['tool']['active']
+        page.screenshot(path=str(OUT/'shoulder-carried-yellow-net.png'))
         page.mouse.click(box['x']+20,box['y']+box['height']/2)
         assert state()['yellowNotes']['swing']['angle']==0,'Pointer location must not change right-facing swing'
         page.wait_for_timeout(800);page.keyboard.press('Tab');assert not state()['netEquipped']
@@ -175,7 +180,12 @@ try:
         page.locator('#world').focus();assert not page.evaluate('townGame.urban.activities.state.netEquipped')
         page.keyboard.press('f');assert page.evaluate('townGame.urban.activities.state.yellowNotes.swing') is None
         page.keyboard.press('Tab');assert page.evaluate('townGame.urban.activities.state.netEquipped')
-        page.keyboard.down('d');page.wait_for_timeout(45);page.keyboard.press('f');page.keyboard.up('d')
+        page.keyboard.down('d');page.wait_for_timeout(45);page.keyboard.up('d')
+        resting=page.evaluate(r'''async()=>{const t=townGame,p=t.player,app=new URL(document.querySelector('script[type="module"]').src),{height}=await import(new URL('./world/model.mjs'+app.search,app)),{netVisualPose,facingAngle}=await import(new URL('./world/rhythm-hunt-motion.mjs'+app.search,app));return {p,z:height(t.project,p.x,p.y),pose:netVisualPose(p,facingAngle('right'),Infinity,height(t.project,p.x,p.y)),tool:t.urban.activities.netToolPose};}''')
+        assert resting['pose']['groundForward']<0 and resting['pose']['layer']=='behind'
+        assert resting['pose']['y']+resting['pose']['ry']<resting['p']['y']-resting['z']-58
+        assert resting['tool'] and resting['tool']['facing']=='right' and not resting['tool']['active']
+        page.screenshot(path=str(OUT/'public-play-shoulder-carry.png'));page.keyboard.press('f')
         assert page.evaluate('townGame.urban.activities.state.yellowNotes.swing.angle')==0
         page.wait_for_timeout(600)
         page.set_viewport_size({'width':650,'height':950});page.screenshot(path=str(OUT/'mobile-yellow-inventory.png'))
@@ -186,6 +196,6 @@ try:
         assert page.evaluate('townGame.project')==fishing_fixture
         assert hashlib.sha256(MAP.read_bytes()).hexdigest()==source_hash
         assert not errors,errors
-        print('PASS: five yellow fairies, Tab equip, forward overhead F/click, inventory/replenish/reload, NPC requests, combined five-note cap, Escape exit, public Play/mobile and unchanged map.',flush=True)
+        print('PASS: five yellow fairies, Tab equip, shoulder carry and forward overhead F/click, inventory/replenish/reload, NPC requests, combined five-note cap, Escape exit, public Play/mobile and unchanged map.',flush=True)
         browser.close()
 finally:server.shutdown()

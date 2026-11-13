@@ -57,6 +57,24 @@ try:
             assert len(snapshot['yellowNotes']['tokens'])+len(snapshot['rhythmCatch']['tokens'])<=5, snapshot
             return snapshot
 
+        def assert_shoulder_rest(direction):
+            snapshot=page.evaluate(r'''async direction=>{
+              const t=townBuilder,p=t.urban.activities.state.player,app=new URL(document.querySelector('script[type="module"]').src),
+                {height}=await import(new URL('../world/model.mjs'+app.search,app)),
+                {netVisualPose,netSweepPose,facingAngle}=await import(new URL('../world/rhythm-hunt-motion.mjs'+app.search,app)),
+                z=height(t.project,p.x,p.y),angle=facingAngle(direction);
+              return {p,z,rest:netVisualPose(p,angle,Infinity,z),start:netSweepPose(p,angle,0,z),tool:t.urban.activities.netToolPose};
+            }''',direction)
+            rest,start,tool=snapshot['rest'],snapshot['start'],snapshot['tool']
+            assert rest['groundForward']<0 and rest['layer']=='behind' and rest['behind'],(direction,rest)
+            assert rest['y']+rest['ry']<snapshot['p']['y']-snapshot['z']-58, 'The carried net mouth belongs above the shoulder, not below the feet'
+            assert math.hypot(rest['x']-start['x'],rest['y']-start['y'])<1e-8,'A forward stroke must begin at the exact carried pose'
+            assert math.hypot(rest['grip']['x']-start['grip']['x'],rest['grip']['y']-start['grip']['y'])<1e-8
+            assert tool and tool['kind']=='net' and tool['facing']==direction and not tool['active'],(direction,tool)
+            assert abs(tool['hand']['x']*2.5+snapshot['p']['x']-rest['grip']['x'])<1e-8
+            assert abs(tool['hand']['y']*2.5+snapshot['p']['y']-snapshot['z']-rest['grip']['y'])<1e-8
+            return snapshot
+
         def assert_hunting():
             snapshot = state()
             assert snapshot['phase'] == 'hunt', snapshot
@@ -222,7 +240,9 @@ try:
         # Real WASD/F inputs reach all four overhead strokes; pointer location never re-aims them.
         for direction, expected in [('w', -math.pi/2), ('s', math.pi/2), ('a', math.pi), ('d', 0)]:
             page.locator('#map').focus();page.keyboard.down(direction);page.clock.run_for(100);page.keyboard.up(direction)
-            page.keyboard.press('f');page.clock.run_for(160)
+            assert_shoulder_rest({'w':'up','s':'down','a':'left','d':'right'}[direction])
+            page.screenshot(path=str(OUT/f'net-shoulder-{direction}.png'))
+            page.keyboard.press('f');page.clock.run_for(16);page.screenshot(path=str(OUT/f'net-start-{direction}.png'));page.clock.run_for(144)
             swing=state()['swing'];assert swing is not None,(direction,state())
             assert abs(math.atan2(math.sin(swing['angle']-expected),math.cos(swing['angle']-expected)))<.01,(direction,swing)
             page.screenshot(path=str(OUT/f'net-overhead-{direction}.png'));page.clock.run_for(250);page.screenshot(path=str(OUT/f'net-strike-{direction}.png'));page.clock.run_for(SWING_MS)
@@ -324,7 +344,7 @@ try:
         page.wait_for_function('!!window.townBuilder')
         assert page.evaluate('JSON.parse(localStorage.getItem("codaTownAdventuresV1:guest"))') == saved
         assert not errors, errors
-        print('PASS: sparse blue fairies, Tab equip, overhead directional swings, five-minute build, Escape confirmation, expiry/retry, rewards and unchanged saved map.', flush=True)
+        print('PASS: sparse blue fairies, Tab equip, shoulder carry and forward overhead swings, five-minute build, Escape confirmation, expiry/retry, rewards and unchanged saved map.', flush=True)
         browser.close()
 finally:
     server.shutdown()
