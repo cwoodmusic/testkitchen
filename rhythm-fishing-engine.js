@@ -89,6 +89,12 @@
   meters:Object.freeze(['common','uncommon'].includes(rarity)?Object.keys(METERS):rarity==='legendary'||index%6<3?[['4/4','6/8','2/2'][index%3]]:[['4/4','6/8','2/2'][index%3],['4/4','6/8','2/2'][(index+1)%3]]),
   biomes:fishHabitats({id,meter:['4/4','6/8','2/2'][index%3]})
  })));
+ const COASTAL_SPECIES=[["copper-sprat","Copper Sprat","common","slender"],["harbour-goby","Harbour Goby","common","round"],["sunstripe-perch","Sunstripe Perch","common","striped"],["tidal-dace","Tidal Dace","common","slender"],["bluefin-smelt","Bluefin Smelt","common","slender"],["pebble-flounder","Pebble Flounder","common","deep"],["ripple-mackerel","Ripple Mackerel","uncommon","striped"],["rosefin-mullet","Rosefin Mullet","uncommon","broad"],["sea-glass-wrasse","Sea-glass Wrasse","uncommon","round"],["dotted-drumfish","Dotted Drumfish","uncommon","spotted"],["ribbon-pipefish","Ribbon Pipefish","uncommon","long"],["moonlit-herring","Moonlit Herring","uncommon","slender"],["syncopation-snapper","Syncopation Snapper","rare","deep"],["triplet-trout","Triplet Trout","rare","spotted"],["coral-cadence","Coral Cadence","rare","spiny"],["polka-puffer","Polka Puffer","rare","round"],["sapphire-seahorse","Sapphire Seahorse","rare","seahorse"],["swingtail-bass","Swingtail Bass","rare","broad"],["aurora-sailfish","Aurora Sailfish","epic","sail"],["velvet-manta","Velvet Manta","epic","manta"],["silver-sonata","Silver Sonata","epic","slender"],["tempo-tigerfish","Tempo Tigerfish","epic","striped"],["golden-fermata","Golden Fermata","legendary","deep"],["constellation-koi","Constellation Koi","legendary","spotted"]];
+ const COASTAL_FISH=Object.freeze(COASTAL_SPECIES.map(([id,name,rarity,shape],index)=>{
+  const rank=RARITIES.find(r=>r.id===rarity),meter=['4/4','6/8','2/2'][index%3];
+  return Object.freeze({id,name,rarity,rarityLabel:rank.label,rarityRank:rank.rank,coastal:true,color:['#78d7cb','#e5ae74','#a5a2f2','#ef92b3','#8dc2ee','#d6da87'][index%6],accent:'#f7e5af',shape,silhouette:shape,size:Object.freeze([12+index*2,30+index*4]),notes:8+rank.rank*14,xp:8+rank.rank*6,tempo:speciesTempo(rarity,index),patternIndex:index%6,meter,timeSignature:meter,meters:Object.freeze(rank.rank<2?Object.keys(METERS):[meter]),biomes:Object.freeze(['coast'])});
+ }));
+ const ALL_FISH=Object.freeze([...FISH,...COASTAL_FISH]);
  const DURATIONS={h:2,q:1,e:.5,s:.25,dq:1.5,de:.75,rh:2,rq:1,re:.5,rs:.25,rdq:1.5,rw:4};
  const GLYPHS={h:'noteHalfUp',q:'noteQuarterUp',e:'note8thUp',s:'note16thUp',dq:'noteQuarterUp',de:'note8thUp',rh:'restHalf',rq:'restQuarter',re:'rest8th',rs:'rest16th',rdq:'restQuarter',rw:'restWhole'};
  // Six phrases at every rarity and meter alternate notes with silence. A
@@ -123,7 +129,7 @@
   return Object.freeze({id:rarity.id+'-'+meter.id.replace('/','-')+'-'+index,rarity:rarity.id,meter:meter.id,beats:meter.barBeats,pulses:meter.pulsesPerBar,events:Object.freeze(events)});
  }))));
  const rarityFor=value=>RARITIES.find(rarity=>rarity.id===(typeof value==='string'?value:value?.rarity))||null;
- const fishFor=value=>FISH.find(fish=>fish.id===(typeof value==='string'?value:value?.id))||null;
+ const fishFor=value=>ALL_FISH.find(fish=>fish.id===(typeof value==='string'?value:value?.id))||null;
  function drawRandom(random){const value=Number((typeof random==='function'?random:Math.random)());return Number.isFinite(value)?clamp(value,0,.999999999999):0;}
  function canFishInMeter(value,meter){const fish=fishFor(value),info=meterFor(meter);return !!fish&&!!info&&fish.meters.includes(info.id);}
  function canFishInBiome(value,biome){const fish=fishFor(value),habitat=biomeFor(biome);return !!fish&&!!habitat&&fish.biomes.includes(habitat.id);}
@@ -335,5 +341,5 @@
     notes:events.filter(event=>event.onset+event.duration>=beat-8&&event.onset<=beat+16).map(noteState),result:result?copy(result):null};}
   return {update,tap,press,release,releaseAllSources,getState,snapshot:getState,timeAtBeat,beatAtTime,tempoAtBeat,abort(){if(!finished)finish('escaped','aborted');return getState();}};
  }
- return Object.freeze({FISH,RARITIES,METERS,PATTERNS,TARGET_BARS,PERFECT_TARGET_BARS,chooseFish,availableFish,canFishInMeter,canFishInBiome,fishFor,rarityFor,meterFor,countingAt,tempoMarking,createSession});
+ return Object.freeze({FISH,COASTAL_FISH,ALL_FISH,RARITIES,METERS,PATTERNS,TARGET_BARS,PERFECT_TARGET_BARS,chooseFish,availableFish,canFishInMeter,canFishInBiome,fishFor,rarityFor,meterFor,countingAt,tempoMarking,createSession});
 });

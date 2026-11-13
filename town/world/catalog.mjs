@@ -1,5 +1,5 @@
 import {musicSquareCollisionGeometry,musicSquareSceneParts,propCollisionBoxes,gazeboSceneParts,urbanBuildingCollision} from './scene-collision.mjs?v=opera-parallax-1';
-import {configureMusicWallArt,registerMusicWallAssets} from './music-wall-art.mjs?v=opera-parallax-1';
+import {configureMusicWallArt,registerMusicWallAssets} from './music-wall-art.mjs?v=town-flight-1';
 import {musicSquareWalls} from './music-wall-geometry.mjs?v=opera-parallax-1';
 import {drawMusicSquareScene} from './music-square-entrances.mjs?v=opera-parallax-1';
 import {registerDecor} from './decor-pack.mjs?v=opera-parallax-1';

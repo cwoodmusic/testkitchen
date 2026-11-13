@@ -1,5 +1,5 @@
-import {getSavedProjects,saveProject} from '../world/storage.mjs?v=opera-parallax-1';
-import {parseProject} from '../world/model.mjs?v=opera-parallax-1';
+import {getSavedProjects,saveProject} from '../world/storage.mjs?v=town-flight-1';
+import {parseProject} from '../world/model.mjs?v=town-flight-1';
 
 const uploadedURL=new URL('../maps/coda-town-uploaded-3.json',import.meta.url);
 const isBlank=doc=>!doc.objects.length&&!Object.keys(doc.cells).length&&!Object.keys(doc.edges).length;

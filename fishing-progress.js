@@ -43,7 +43,7 @@
  function create(api={}){
   const catalog=catalogMap(api.catalog||root?.CodaRhythmFishing?.FISH);let lastError='';
   function readCatches(){try{const entries=api.getCatches?.();if(!Array.isArray(entries))return {ok:false,error:'Your catch must be saved before its reward can be collected.',entries:[]};return {ok:true,entries};}catch{return {ok:false,error:'Your catch journal could not be read. Keep this page open and try saving the reward again.',entries:[]};}}
-  function getAchievements(){const journal=readCatches(),stats=catchStats(journal.entries,catalog);return ACHIEVEMENTS.map(achievement=>({...achievement,progress:Math.min(achievement.target,stats[achievement.metric]),earned:stats[achievement.metric]>=achievement.target}));}
+  function getAchievements(){const journal=readCatches(),stats=catchStats(journal.entries,catalog);return ACHIEVEMENTS.map(achievement=>{const target=achievement.id==='fishing-all-species'?Math.max(1,catalog.size):achievement.target;return {...achievement,...(achievement.id==='fishing-all-species'?{description:'Discover every fish in the cave and around the island.'}:{}),target,progress:Math.min(target,stats[achievement.metric]),earned:stats[achievement.metric]>=target};});}
   function snapshot(){const journal=readCatches();return {stats:catchStats(journal.entries,catalog),achievements:getAchievements(),error:lastError||journal.error||''};}
   function reward(fishInput,result){
    let notes=0,xp=0;const achievements=[];

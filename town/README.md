@@ -7,9 +7,10 @@ with musician homes private until an arcade session supplies friendship.
 
 ## Rhythm adventures
 
-The coffee-cart host offers **Rhythm Catch**: listen, catch floating notes with a
-net, then rebuild the rhythm. The boat at the apartment pier offers **Rhythm
-Fishing**, with 24 coastal species, four rhythm challenges and a saved journal.
+The coffee-cart host offers **Rhythm Catch**: listen, chase flying note bugs with a
+forward net sweep, then return to the vendor to rebuild the rhythm. The boat at the apartment pier offers **Rhythm
+Fishing** on the actual island water, using the cave game and a shared
+54-species cave/coast journal.
 See [controls and rules](../docs/town-rhythm-adventures.md).
 
 ## Landscape and scale

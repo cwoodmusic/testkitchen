@@ -1,4 +1,6 @@
-"""Vendor Rhythm Catch and pier fishing: real walking, rhythm inputs, rewards, saves and normal play."""
+"""Chase moving note bugs with the forward F sweep, return to the vendor, and build the rhythm.
+Island sailing and shared cave fishing are exercised in town-island-browser.py.
+"""
 from pathlib import Path
 from functools import partial
 from http.server import ThreadingHTTPServer,SimpleHTTPRequestHandler
@@ -24,12 +26,15 @@ try:
   page.locator('#file').set_input_files({'name':'vendor-game-fixture.json','mimeType':'application/json','buffer':json.dumps(fixture).encode()});page.wait_for_timeout(500);page.locator('#walk').click();page.locator('#map').focus();page.keyboard.press('e');page.get_by_role('button',name='Play Rhythm Catch',exact=True).click();
   page.wait_for_selector('#rhythmCatchCount');page.wait_for_timeout(1300);page.screenshot(path=str(OUT/'countdown.png'));page.wait_for_function('townBuilder.urban.activities.state.rhythmCatch.phase==="hunt"',timeout=30000);page.screenshot(path=str(OUT/'hunt.png'))
   state=page.evaluate('townBuilder.urban.activities.state.rhythmCatch');assert len(state['tokens'])==96;assert max(t['x'] for t in state['tokens'])-min(t['x'] for t in state['tokens'])>5000;assert all(n['value'] in ['quarter','eighth-pair','sixteenth-group','quarter-rest'] for n in state['tokens'])
+  first=page.evaluate('townBuilder.urban.activities.state.rhythmCatch.tokens');page.wait_for_timeout(800);later=page.evaluate('townBuilder.urban.activities.state.rhythmCatch.tokens');assert any(abs(a['x']-b['x'])+abs(a['y']-b['y'])>20 for a,b in zip(first,later))
+  fps=page.evaluate('''async()=>{const times=[];await new Promise(resolve=>{const take=t=>{times.push(t);if(times.length<100)requestAnimationFrame(take);else resolve();};requestAnimationFrame(take);});return (times.length-1)*1000/(times.at(-1)-times[0]);}''');assert fps>45,fps;print('Active note hunt FPS',round(fps,1),flush=True)
   # Walk real controller routes to each needed note and swing the net.
   target=page.evaluate('townBuilder.urban.activities.state.rhythmCatch.target')
   for value in [*target,'vendor']:
    route=page.evaluate("""async value=>{
     const t=townBuilder,{blocked,height}=await import('/town/world/model.mjs?v=opera-parallax-1'),d=t.project,p=t.urban.activities.state.player,state=t.urban.activities.state.rhythmCatch;
     const token=value==='vendor'?{...(state.host.interaction||state.host)}:state.tokens.filter(n=>n.value===value).sort((a,b)=>Math.hypot(a.x-p.x,a.y-p.y)-Math.hypot(b.x-p.x,b.y-p.y))[0];
+    if(value!=='vendor'){token.x=token.homeX;token.y=token.homeY;}
     const rawClear=q=>!blocked(d,q.x,q.y,t.catalog);
     const clear=q=>[[0,0],[9,0],[-9,0],[0,9],[0,-9]].every(([dx,dy])=>rawClear({x:q.x+dx,y:q.y+dy}));
     const linked=(a,b)=>{const n=Math.max(1,Math.ceil(Math.hypot(b.x-a.x,b.y-a.y)/2));for(let i=1;i<=n;i++){const q={x:a.x+(b.x-a.x)*i/n,y:a.y+(b.y-a.y)*i/n},prev={x:a.x+(b.x-a.x)*(i-1)/n,y:a.y+(b.y-a.y)*(i-1)/n};if(!rawClear(q)||Math.abs(height(d,q.x,q.y)-height(d,prev.x,prev.y))>14)return false;}return true;};
@@ -46,7 +51,21 @@ try:
      page.keyboard.up(key)
    if value=='vendor':
     page.keyboard.press('e');continue
-   before=page.evaluate('townBuilder.urban.activities.state.rhythmCatch.bag.length');page.keyboard.press('f');page.wait_for_function('(n)=>townBuilder.urban.activities.state.rhythmCatch.bag.length===n+1',arg=before)
+   before=page.evaluate('(value)=>townBuilder.urban.activities.state.rhythmCatch.bag.filter(v=>v===value).length',value)
+   for attempt in range(100):
+    snap=page.evaluate("value=>{const s=townBuilder.urban.activities.state,p=s.player;return {p,t:s.rhythmCatch.tokens.filter(t=>t.value===value).sort((a,b)=>Math.hypot(a.x-p.x,a.y-p.y)-Math.hypot(b.x-p.x,b.y-p.y))[0],count:s.rhythmCatch.bag.filter(v=>v===value).length};}",value)
+    if snap['count']>before:break
+    p0,t=snap['p'],snap['t'];dx,dy=t['x']-p0['x'],t['y']-p0['y'];vertical=abs(dy)>abs(dx);direction=('s' if dy>0 else 'w') if vertical else ('d' if dx>0 else 'a');distance=(dx*dx+dy*dy)**.5
+    desired=58 if direction=='w' else 135
+    if distance>desired+35:
+     page.keyboard.down(direction);page.wait_for_timeout(110);page.keyboard.up(direction)
+    elif distance<desired-35:
+     opposite={'w':'s','s':'w','a':'d','d':'a'}[direction];page.keyboard.down(opposite);page.wait_for_timeout(65);page.keyboard.up(opposite)
+    else:
+     page.keyboard.down(direction);page.wait_for_timeout(28);page.keyboard.up(direction);page.keyboard.press('f')
+     if attempt==0:page.wait_for_timeout(150);page.screenshot(path=str(OUT/'forward-net-sweep.png'));page.wait_for_timeout(410)
+     else:page.wait_for_timeout(560)
+   else:raise AssertionError(('Unable to chase a moving note',value,snap))
   page.wait_for_function('townBuilder.urban.activities.state.rhythmCatch.phase==="arrange"');page.screenshot(path=str(OUT/'arrange.png'))
   names={'quarter':'Quarter note','eighth-pair':'Two eighth notes','sixteenth-group':'Four sixteenth notes','quarter-rest':'Quarter rest'}
   for v in reversed(target):page.get_by_role('button',name='Add '+names[v],exact=True).click()
@@ -57,46 +76,10 @@ try:
   assert page.evaluate('JSON.parse(localStorage.getItem("codaTownAdventuresV1:guest")).netWins')==1
   page.get_by_role('button',name='Back to town',exact=True).click()
   page.wait_for_function('townBuilder.urban.activities.state.rhythmCatch.phase==="idle"');
-  # An isolated map spawn at the computed pier boarding point exercises E.
-  dock=page.evaluate('townBuilder.urban.activities.state.dock');assert dock,dock
-  page.locator('#walk').click();fixture['spawn']={'x':dock['stand']['x'],'y':dock['stand']['y']};page.locator('#file').set_input_files({'name':'dock-game-fixture.json','mimeType':'application/json','buffer':json.dumps(fixture).encode()});page.wait_for_timeout(400);page.locator('#walk').click();page.locator('#map').focus();page.keyboard.press('e');page.wait_for_selector('.town-fishing-dialog[open]');page.wait_for_timeout(300);page.screenshot(path=str(OUT/'fishing-boat.png'))
-  modes=[('echo','Echo the fish'),('current','Beat current'),('hold','Reel & hold'),('response','Call & response')]
-  catches=[]
-  for mode,label in modes:
-   page.get_by_role('button',name=label,exact=True).click()
-   state=page.evaluate('townBuilder.urban.activities.state.fishing');shadow=min(state['school'],key=lambda f:(f['x']-state['boat']['x'])**2+(f['y']-state['boat']['y'])**2)
-   for axis,key1,key2 in [('x','d','a'),('y','s','w')]:
-    current=page.evaluate('townBuilder.urban.activities.state.fishing.boat')[axis];delta=shadow[axis]-current
-    if abs(delta)<.015:continue
-    key=key1 if delta>0 else key2;page.keyboard.down(key);page.wait_for_function('([axis,target,sign])=>sign*(townBuilder.urban.activities.state.fishing.boat[axis]-target)>=-.01',arg=[axis,shadow[axis],1 if delta>0 else -1]);page.keyboard.up(key)
-   page.keyboard.press('e');page.wait_for_function('townBuilder.urban.activities.state.fishing.phase==="challenge"');page.screenshot(path=str(OUT/('fishing-'+mode+'.png')))
-   if mode=='hold':
-    page.evaluate('window.dispatchEvent(new Event("blur"))');page.wait_for_function('townBuilder.urban.activities.state.fishing.paused');page.get_by_role('button',name='Continue',exact=True).click();page.wait_for_function('!townBuilder.urban.activities.state.fishing.paused')
-   events=page.evaluate('townBuilder.urban.activities.state.fishing.challenge.events')
-   for event in events:
-    now=page.evaluate('townBuilder.urban.activities.state.fishing.audioTime');wait=max(0,(event['at']-now)*1000)
-    if wait>0:page.wait_for_timeout(wait+25)
-    if event['hold']:
-     page.keyboard.down('Space');page.wait_for_timeout(event['duration']*.87*1000);page.keyboard.up('Space')
-    else:page.keyboard.press('Space')
-   page.wait_for_function('townBuilder.urban.activities.state.fishing.phase==="result"',timeout=20000)
-   state=page.evaluate('townBuilder.urban.activities.state.fishing');assert state['challenge']['caught'],(mode,state['challenge']);assert state['challenge']['hits']==len(events),(mode,state['challenge'])
-   catches.append({'mode':mode,'fish':state['challenge']['fish']['name'],'hits':state['challenge']['hits']})
-   page.screenshot(path=str(OUT/('fish-win-'+mode+'.png')));page.get_by_role('button',name='Cast again',exact=True).click()
-  page.get_by_role('button',name='Fish journal',exact=True).click();page.screenshot(path=str(OUT/'fish-journal.png'));assert page.locator('.fish-journal-card').count()==24
-  saved=page.evaluate('JSON.parse(localStorage.getItem("codaTownAdventuresV1:guest"))');assert sum(v['count'] for v in saved['fish'].values())==4
-  page.locator('.town-fishing-dialog .fishing-heading').get_by_role('button',name='Leave boat',exact=True).click();page.wait_for_function('townBuilder.urban.activities.state.fishing.phase==="idle"')
-  assert page.evaluate('townBuilder.project')==fixture,'Games changed the saved map'
-  page.reload();page.wait_for_function('!!window.townBuilder');restored=page.evaluate('townBuilder.urban.activities.state.fishing.journal');assert restored==saved,'Saved adventure progress did not survive reload'
-  # Both games work in the normal play route, including a narrow touch layout.
-  page.goto(f'http://127.0.0.1:{server.server_port}/town/?map=builder');page.wait_for_function('!!window.townGame')
-  assert page.evaluate('townGame.project.objects.length')==137
-  page.locator('#world').focus();page.keyboard.press('e');page.wait_for_selector('.town-fishing-dialog[open]');page.set_viewport_size({'width':650,'height':950});page.screenshot(path=str(OUT/'mobile-fishing.png'))
-  assert page.evaluate('document.querySelector(".town-fishing-dialog").getBoundingClientRect().width<=innerWidth')
-  page.get_by_role('button',name='Fish journal',exact=True).click();assert page.locator('.fish-journal-card.discovered').count()>0
-  page.locator('.town-fishing-dialog .fishing-heading').get_by_role('button',name='Leave boat',exact=True).click()
-  print('ALL FOUR CATCHES',json.dumps(catches),flush=True)
+  assert page.evaluate('townBuilder.project')==fixture,'Catching notes changed the saved map'
+  saved=page.evaluate('JSON.parse(localStorage.getItem("codaTownAdventuresV1:guest"))');assert saved['netWins']==1
+  page.reload();page.wait_for_function('!!window.townBuilder');assert page.evaluate('JSON.parse(localStorage.getItem("codaTownAdventuresV1:guest")).netWins')==1
   assert not errors,errors
-  print('END-TO-END PASS: net collection, wrong/correct ordering, stars, all four fishing modes, hold pause, 24-card journal, saved catches, unchanged map and exits.',flush=True)
+  print('END-TO-END PASS: chase flying notes, F forward sweeps, vendor return, wrong/correct rhythm, stars, save/reload, unchanged map.',flush=True)
   b.close()
 finally:server.shutdown()

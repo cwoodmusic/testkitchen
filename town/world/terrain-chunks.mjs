@@ -1,5 +1,5 @@
-import {terrainView} from './model.mjs?v=opera-parallax-1';
-import {OverviewTerrainState,OVERVIEW_SCALE,OVERVIEW_PAD,WORLD_WIDTH,WORLD_HEIGHT,terrainBoundsForRect} from './overview-state.mjs?v=opera-parallax-1';
+import {terrainView} from './model.mjs?v=town-flight-1';
+import {OverviewTerrainState,OVERVIEW_SCALE,OVERVIEW_PAD,WORLD_WIDTH,WORLD_HEIGHT,terrainBoundsForRect} from './overview-state.mjs?v=town-flight-1';
 
 export const TERRAIN_CHUNK_SIZE=512,TERRAIN_CHUNK_PAD=4;
 const defaultCanvas=(width,height)=>{const c=document.createElement('canvas');c.width=width;c.height=height;return c;};
@@ -8,7 +8,7 @@ const world={x:-OVERVIEW_PAD,y:-OVERVIEW_PAD,w:WORLD_WIDTH+OVERVIEW_PAD*2,h:WORL
 
 export function terrainChunkScale(transform,opts={}){
  if(opts.terrainChunks===false||opts.overviewBake||opts.grid||opts.heightView&&opts.heightView!=='art'||Math.abs(transform.b)>1e-9||Math.abs(transform.c)>1e-9||transform.a<=OVERVIEW_SCALE+1e-9||Math.abs(transform.a-transform.d)>1e-9||transform.a>1+1e-9)return null;
- return transform.a>.25?1:.5;
+ return transform.a>.5?1:transform.a>.25?.5:.25;
 }
 
 export function visibleTerrainChunks(view,scale,{chunkSize=TERRAIN_CHUNK_SIZE,pad=TERRAIN_CHUNK_PAD}={}){
@@ -67,7 +67,7 @@ export function createTerrainChunkCache({maxPixels=16*1024*1024,maxEntries=256,c
  }
  function createJob(e,spec,doc,opts,raw,hooks,priority=0){
   const r={x:spec.x-pad,y:spec.y-pad,w:spec.w+pad*2,h:spec.h+pad*2},width=Math.ceil(r.w*spec.scale),height=Math.ceil(r.h*spec.scale),canvas=createCanvas(width,height),g=canvas.getContext('2d');
-  g.setTransform(spec.scale,0,0,spec.scale,-r.x*spec.scale,-r.y*spec.scale);g.imageSmoothingEnabled=false;g.globalAlpha=1;g.globalCompositeOperation='source-over';
+  g.setTransform(spec.scale,0,0,spec.scale,-r.x*spec.scale,-r.y*spec.scale);g.imageSmoothingEnabled=spec.scale<1;g.imageSmoothingQuality='high';g.globalAlpha=1;g.globalCompositeOperation='source-over';
   const bounds=terrainBoundsForRect(r);
   const paintOpts={...opts,overviewBake:true,terrainChunks:false};
   g.beginPath();g.rect(r.x,r.y,r.w,r.h);g.clip();g.clearRect(r.x,r.y,r.w,r.h);
@@ -111,9 +111,9 @@ export function createTerrainChunkCache({maxPixels=16*1024*1024,maxEntries=256,c
   const cx=view.x+view.w/2,cy=view.y+view.h/2,old=e.lastView,dx=old?cx-old.x:0,dy=old?cy-old.y:0,leadX=Math.abs(dx)>.01?Math.sign(dx)*chunkSize:0,leadY=Math.abs(dy)>.01?Math.sign(dy)*chunkSize:0;
   const ring={x:view.x-chunkSize+Math.min(0,leadX),y:view.y-chunkSize+Math.min(0,leadY),w:view.w+chunkSize*2+Math.abs(leadX),h:view.h+chunkSize*2+Math.abs(leadY)};
   let candidates=visibleTerrainChunks(ring,scale,{chunkSize,pad});
-  // Builder overview uses the half-size raster, but walking switches to the
-  // native raster. Warm that smaller walking viewport before the first step.
-  if(scale<1){const ratio=Math.min(1,viewScale/.4),walking={x:cx-view.w*ratio/2,y:cy-view.h*ratio/2,w:view.w*ratio,h:view.h*ratio};candidates.push(...visibleTerrainChunks(walking,1,{chunkSize,pad}));}
+  // Warm the half-size walking raster while viewing a wider district, before
+  // the first step or zoom back into town.
+  if(scale<.5){const ratio=Math.min(1,viewScale/.4),walking={x:cx-view.w*ratio/2,y:cy-view.h*ratio/2,w:view.w*ratio,h:view.h*ratio};candidates.push(...visibleTerrainChunks(walking,.5,{chunkSize,pad}));}
   const unique=new Map(candidates.map(spec=>[spec.key,spec]));e.desired=new Set([...e.visible,...unique.keys()]);
   for(const chunk of [...e.pending.values()])if(!e.desired.has(chunk.key))forget(chunk);
   const distance=spec=>{const x=spec.x+spec.w/2-cx,y=spec.y+spec.h/2-cy;return Math.hypot(x,y)-(x*Math.sign(dx)+y*Math.sign(dy))*.4+(spec.scale!==scale?chunkSize*.5:0);};
@@ -163,7 +163,7 @@ export function createTerrainChunkCache({maxPixels=16*1024*1024,maxEntries=256,c
    chunks.push(chunk);
   }
   while(recent.size>maxEntries||pixels>maxPixels){const oldest=recent.keys().next().value;if(!oldest)break;forget(oldest);}
-  c.save();c.imageSmoothingEnabled=false;
+  c.save();c.imageSmoothingEnabled=true;c.imageSmoothingQuality='low';
   if(chunks.some(chunk=>chunk.hasSea)&&hooks.waterImage){
    const key=hooks.waterKey?.(),image=hooks.waterImage();
    if(!e.waterPattern||e.waterKey!==key||e.waterImage!==image){e.waterPattern=c.createPattern(image,'repeat');e.waterKey=key;e.waterImage=image;}

@@ -14,7 +14,7 @@ import {drawInteriorWindow,warmInteriorWindows} from './interior-window-art.mjs?
 import {drawInteriorWallNetwork} from './interior-wall-art.mjs?v=opera-parallax-1';
 import {createRoomLayoutResolver} from './room-layout-runtime.mjs?v=opera-parallax-1';
 export {apartmentDecorBounds,apartmentWallDecorBounds} from './personal-room-areas.mjs?v=opera-parallax-1';
-import {getConcertHall,renderConcertHallBackground,concertHallDrawables} from './concert-hall.mjs?v=opera-smooth-1';
+import {getConcertHall,renderConcertHallBackground,concertHallDrawables} from './concert-hall.mjs?v=town-flight-1';
 import {renderStagePerformance} from './concert-performers.mjs?v=opera-players-2';
 import {buildApartmentHome} from './apartment-homes.mjs?v=opera-parallax-1';
 import {FAMILY_FURNITURE_ASSETS} from './family-furniture-definitions.mjs?v=opera-parallax-1';
@@ -327,6 +327,7 @@ export function renderInterior(c,scene,{model,player,drawPlayer,time=0,decor=[],
   renderConcertHallBackground(c,s);
   if(!npcRenderer&&typeof window!=='undefined'&&window.createCodaCharacterRenderer)npcRenderer=window.createCodaCharacterRenderer({worldScale:2.5});
   const extraDrawables=concertHallDrawables(c,s,{viewport});
+  for(const actor of actors||[]){if(actor.hidden)continue;const bounds={x:actor.x-60,y:actor.y-170,w:120,h:190};if(viewport&&(bounds.x+bounds.w<viewport.x||bounds.x>viewport.x+viewport.w||bounds.y+bounds.h<viewport.y||bounds.y>viewport.y+viewport.h))continue;extraDrawables.push({y:actor.y,bounds,draw:()=>npcRenderer?.drawNPC(c,actor,time)});}
   if(player&&drawPlayer)extraDrawables.push({y:player.y,draw:()=>drawPlayer(c,player)});
   if(performance)renderStagePerformance(c,performance,{time,audioTime,catalog:nativeCatalog,drawNPC:drawConcertNPC,reducedMotion,extraDrawables,viewport});
   else for(const item of extraDrawables)item.draw();

@@ -55,6 +55,15 @@ function arrayIndexRegex(maxItems){
  parts.push(maximum);return '^('+parts.join('|')+')$';
 }
 
+// Share literal prefixes so large furniture enums stay within RTDB's regex
+// determinization budget. The resulting expression permits the exact same set.
+function enumPattern(values){
+ const root={end:false,children:new Map()},escape=value=>value.replace(/[.*+?^${}()|[\]\\]/g,'\\$&');
+ for(const value of values){let node=root;for(const char of value){if(!node.children.has(char))node.children.set(char,{end:false,children:new Map()});node=node.children.get(char);}node.end=true;}
+ const render=node=>{const parts=[...node.children].map(([char,child])=>escape(char)+render(child));if(!parts.length)return '';const text=parts.length===1?parts[0]:'('+parts.join('|')+')';return node.end?'('+text+')?':text;};
+ return '^'+render(root)+'$';
+}
+
 function convertSchema(schema,context={nextIndex:0}){
  if(!schema||typeof schema!=='object'||Array.isArray(schema))throw Error('A canonical schema object is required.');
  const type=schema.type;
@@ -84,7 +93,7 @@ function convertSchema(schema,context={nextIndex:0}){
   conditions.push('newData.isString()');
   if(schema.enum){
    const escape=value=>value.replace(/[.*+?^${}()|[\]\\]/g,'\\$&');
-   conditions.push(matches('newData.val()','^('+schema.enum.map(escape).join('|')+')$'));
+   conditions.push(matches('newData.val()',schema.enum.length>100?enumPattern(schema.enum):'^('+schema.enum.map(escape).join('|')+')$'));
   }else if(!Number.isSafeInteger(schema.maxLength))throw Error('Free-text DTO fields need a bounded maxLength.');
   if(schema.minLength!==undefined)conditions.push('newData.val().length >= '+schema.minLength);
   if(schema.maxLength!==undefined)conditions.push('newData.val().length <= '+schema.maxLength);
@@ -325,7 +334,17 @@ function buildClassroomRules(schema){
  return {rules:{classroomV1:namespace}};
 }
 
-function renderClassroomRules(schema){return JSON.stringify(buildClassroomRules(schema),null,2)+'\n';}
+// Keep the optional migration summaries compact: both full profile copies must
+// fit Firebase's 256 KiB rules source limit, including the other namespaces.
+function renderClassroomRules(schema){
+ const rules=buildClassroomRules(schema);let text=JSON.stringify(rules,null,1);
+ const summary=rules.rules.classroomV1.teacherPlayers.$uid.state.data.fishing.legacyCoast;
+ if(summary)for(const match of [...text.matchAll(/^( *)"legacyCoast": /gm)]){
+  const expanded=JSON.stringify(summary,null,1).replaceAll('\n','\n'+match[1]);
+  text=text.replace('"legacyCoast": '+expanded,'"legacyCoast": '+JSON.stringify(summary));
+ }
+ return text+'\n';
+}
 function renderHallRules(){return JSON.stringify({hallOfFame:hallRules()},null,2)+'\n';}
 function renderDeveloperRules(){return JSON.stringify({developerAccess:developerRules()},null,2)+'\n';}
 function renderClassroomImportRules(){return JSON.stringify({classroomImports:classroomImportRules()},null,2)+'\n';}
@@ -344,4 +363,4 @@ function run(argv){
  }else{fs.writeFileSync(target,text);fs.writeFileSync(hallTarget,hallText);fs.writeFileSync(developerTarget,developerText);fs.writeFileSync(importTarget,importText);process.stdout.write('Generated classroom-database.rules.json ('+Buffer.byteLength(text)+' bytes) and the Hall/developer/import fragments. No deployment performed.\n');}
 }
 if(require.main===module)try{run(process.argv.slice(2));}catch(error){process.stderr.write(error.message+'\n');process.exitCode=1;}
-module.exports={arrayIndexRegex,convertSchema,buildClassroomRules,renderClassroomRules,renderHallRules,renderDeveloperRules,renderClassroomImportRules,run};
+module.exports={enumPattern,arrayIndexRegex,convertSchema,buildClassroomRules,renderClassroomRules,renderHallRules,renderDeveloperRules,renderClassroomImportRules,run};

@@ -1,5 +1,5 @@
-import {createPlayerCollisionIndex} from './player-collision-index.mjs?v=opera-parallax-1';
-import {blocked,height,cell,COLS,ROWS} from './model.mjs?v=opera-parallax-1';
+import {createPlayerCollisionIndex} from './player-collision-index.mjs?v=town-flight-1';
+import {blocked,height,cell,COLS,ROWS} from './model.mjs?v=town-flight-1';
 export const NOTE_VALUES=Object.freeze(['quarter','eighth-pair','sixteenth-group','quarter-rest']);
 export const CATCH_PATTERNS=Object.freeze([
  ['quarter','eighth-pair','sixteenth-group','quarter-rest'],

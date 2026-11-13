@@ -95,3 +95,13 @@ test('CLI prepares a private new candidate/config only and will not overwrite an
   assert.equal(failed.status,1);assert.match(failed.stderr,/not valid JSON/);assert.doesNotMatch(failed.stderr,/a-private-value/);
  }finally{fs.rmSync(dir,{recursive:true,force:true});}
 });
+
+test('large literal enums compile with shared prefixes and preserve the exact value set',()=>{
+ const {enumPattern}=require('../tools/build-classroom-rules.cjs'),values=Array.from({length:2000},(_,i)=>'furniture-kit-'+i).concat(['short','shorter','shortest','a.b','a+b']),pattern=new RegExp(enumPattern(values)),allowed=new Set(values);
+ for(const value of values)assert(pattern.test(value));for(const value of ['furniture-kit-','furniture-kit-2000','furniture-kit-00','shortest!','shorter-more','axb','aab','a+b+'])assert.equal(pattern.test(value),allowed.has(value));
+});
+
+test('complete prepared Firebase rules fit the RTDB source limit',()=>{
+ const text=fs.readFileSync(path.join(__dirname,'../docs/firebase-google-classroom.rules.json'),'utf8');
+ assert(Buffer.byteLength(text)<256*1024);JSON.parse(text);
+});

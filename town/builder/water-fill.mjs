@@ -1,4 +1,4 @@
-import {COLS,ROWS,TILE,RISE,cell,key,height} from '../world/model.mjs?v=opera-parallax-1';
+import {COLS,ROWS,TILE,RISE,cell,key,height} from '../world/model.mjs?v=town-flight-1';
 import {roundedUnder,curveUnder} from '../world/round-geometry.mjs?v=opera-parallax-1';
 import {readPaint,encodePaint,materialKey} from '../world/ground-paint.mjs?v=opera-parallax-1';
 

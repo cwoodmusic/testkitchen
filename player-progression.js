@@ -48,7 +48,7 @@
   {id:'rollerskates',label:'Roller skates',achievement:'dance-perfect-set',requirement:'Complete a DJ line dance without a wrong or extra arrow.',purchaseAlternative:true},
   {id:'boombox',label:'Boombox',achievement:'dance-hard-perfect',requirement:'Complete an Extreme DJ line dance without a wrong or extra arrow.',purchaseAlternative:true},
   {id:'rhythmfox',label:'Rhythm fox companion',achievement:'rhythm-hundred-streak',requirement:'Match 100 notes in a row in Rhythm Room.'},
-  {id:'lakeotter',label:'Lake otter companion',achievement:'fishing-all-species',requirement:'Catch all 30 fish species.'},
+  {id:'lakeotter',label:'Lake otter companion',achievement:'fishing-all-species',requirement:'Catch every cave and coastal fish species.'},
   {id:'pianophoenix',label:'Piano phoenix companion',achievement:'piano-memory-master',requirement:'Complete all nine Piano Lab melodies from memory.'},
   {id:'triadchampion',label:'Triad champion crown',achievement:'triad-hard-advanced-win',requirement:'Win an Advanced Music Triad game on Hard.'},
   {id:'bassclefpin',label:'Bass clef pin',achievement:'pitch-bass-reader',requirement:'Read 10 bass-clef notes correctly in one Pitch Race run.'},

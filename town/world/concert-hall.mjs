@@ -33,7 +33,7 @@ export function getConcertHall(){
   zone('concert-watch','Watch the performance',1948,1264,200,100,'concert-watch'));
  const s={id:'opera-concert-hall',kind:'concert',title:'Coda Opera House · Concert Hall',width,height,color:'#824d3e',trim:'#d6ae68',
   spawn:{x:2048,y:2416},stage,solids,zones,items:[],rooms:[],walls:[],rugs:[],windows:[],signs:[],lights:[],actors:[],
-  audience:{seats,balconies,aisles:[rect(1940,1248,216,1264),rect(710,1280,174,1232),rect(3212,1280,174,1232),rect(710,1702,2676,80)]},
+  audience:{seats,balconies,galleryFacing:{left:'right',right:'left'},aisles:[rect(1940,1248,216,1264),rect(710,1280,174,1232),rect(3212,1280,174,1232),rect(710,1702,2676,80)]},
   stairs:{x:1880,y:1200,w:336,h:100},programme:{x:816,y:2410},exit:{x:2048,y:2504}};
  // A controller keeps the current seat and actors separately; all geometry is reusable.
  hall=deepFreeze(s);return hall;
@@ -102,7 +102,15 @@ function carpet(c,x,y,w,h){
  for(let yy=y+18;yy<y+h-12;yy+=14)for(let xx=x+18;xx<x+w-12;xx+=14)fill(c,xx,yy,2,2,'#bc6b6926');
  line(c,x+15,y+15,x+15,y+h-15,'#c69d5d70');line(c,x+w-15,y+15,x+w-15,y+h-15,'#c69d5d70');
 }
-function chair(c,x,y,scale=1){
+function chair(c,x,y,scale=1,facing='up'){
+ if(facing==='left'||facing==='right'){
+  c.save();c.translate(x,y);c.scale(facing==='left'?-scale:scale,scale);
+  fill(c,-22,-23,7,23,'#49332b');fill(c,22,-19,6,19,'#49332b');
+  fill(c,-25,-67,14,49,'#b68d51');fill(c,-22,-63,9,40,'#9b3448');fill(c,-21,-60,4,32,'#b64b5b');
+  fill(c,-16,-29,45,14,'#653b34');fill(c,-14,-32,42,12,'#9f374b');fill(c,-13,-32,40,3,'#cf706e');
+  line(c,-17,-43,28,-37,'#d3a965',5);fill(c,25,-38,4,24,'#b98d4e');c.restore();return;
+ }
+
  const w=66*scale,h=74*scale;
  if(sprite(c,'audience-chair',x-w/2,y-h,w,h))return;
  fill(c,x-29*scale,y-13*scale,58*scale,12*scale,'#251f22');fill(c,x-26*scale,y-65*scale,52*scale,54*scale,'#59362d');
@@ -134,7 +142,7 @@ function balcony(c,r,right=false){
   const local=x=>right?r.x+r.w-x:r.x+x;
   const left=right?local(inner):local(outer),width=inner-outer;
   fill(c,left,y-12,width,194,'#6a4030');wood(c,left+5,y-8,width-10,180,{light:false});
-  for(let row=0;row<2;row++)for(let col=0;col<8;col++)chair(c,local(outer+30+(inner-outer-60)*col/7),y+61+row*72,.72);
+  for(let row=0;row<2;row++)for(let col=0;col<8;col++)chair(c,local(outer+30+(inner-outer-60)*col/7),y+61+row*72,.72,right?'left':'right');
   const points=[[local(outer),y+153],[local(inner),y+173],[local(inner),y+248],[local(outer),y+229]];
   polygon(c,points,'#7f4d29');
   polygon(c,[[local(outer+3),y+158],[local(inner-3),y+178],[local(inner-3),y+235],[local(outer+3),y+218]],'#d4a367');

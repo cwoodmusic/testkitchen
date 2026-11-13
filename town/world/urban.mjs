@@ -1,6 +1,6 @@
-import {createTownActivities} from './town-activities.mjs?v=town-games-2';
-import {catalog} from './catalog.mjs?v=opera-parallax-1';
-import {FLOOR_COUNT,residents,getInterior,renderInterior,residentInteractionZones,apartmentDecorBounds,apartmentWallDecorBounds,configureUrbanInteriors} from './urban-interiors.mjs?v=opera-smooth-1';
+import {createTownActivities} from './town-activities.mjs?v=town-flight-1';
+import {catalog} from './catalog.mjs?v=town-flight-1';
+import {FLOOR_COUNT,residents,getInterior,renderInterior,residentInteractionZones,apartmentDecorBounds,apartmentWallDecorBounds,configureUrbanInteriors} from './urban-interiors.mjs?v=town-flight-1';
 import {createRoomStorage,roomItemBoxes} from './urban-room.mjs?v=opera-parallax-1';
 import {SHOWROOMS,STORE_FLOOR_COUNT,STORE_VERTICAL_CORE} from './showroom-layout.mjs?v=opera-parallax-1';
 import {createStagePerformance,updateStageProgramme,stagePerformanceSignature,stageCollisionBoxes} from './concert-performers.mjs?v=opera-players-2';
@@ -22,7 +22,7 @@ export function buildingDoor(o){
  return {x:o.x+dx*Math.cos(r)-dy*Math.sin(r),y:o.y+dx*Math.sin(r)+dy*Math.cos(r),kind:a.urban};
 }
 function decorSolids(items,scene){const model=scene?.rooms?scene:getInterior(scene);return items.flatMap(o=>roomItemBoxes(o,catalog,(item,asset)=>furniturePresentationScale(item,model,asset)));}
-export function createUrbanController({canvas,getProject,getPlayer,getResidents,onConversation,getConcert=()=>null,preview=false}){
+export function createUrbanController({canvas,getProject,getPlayer,getFacing,setFacing,getResidents,onConversation,getConcert=()=>null,preview=false}){
  const css=document.createElement('link');css.rel='stylesheet';css.href=new URL('./urban.css?v=opera-parallax-1',import.meta.url);document.head.append(css);
  const hud=document.createElement('section');hud.className='urban-hud';hud.hidden=true;document.body.append(hud);
  const hint=document.createElement('button');hint.className='urban-prompt';hint.hidden=true;hint.onclick=()=>interact();document.body.append(hint);
@@ -36,7 +36,7 @@ export function createUrbanController({canvas,getProject,getPlayer,getResidents,
  const stageCurtain=createConcertCurtain({createPerformance(track,previous){
   return previous?.signature===stagePerformanceSignature(track)?updateStageProgramme(previous,track):createStagePerformance(track,{stage:getInterior(scene).stage});
  }});
- const activities=createTownActivities({canvas,getProject,getPlayer,getResidents,getOwner:()=>owner,catalog});
+ const activities=createTownActivities({canvas,getProject,getPlayer,getFacing,setFacing,getResidents,getOwner:()=>owner,catalog});
  function concertPerformance(){
   if(scene?.kind!=='concert')return null;
   const audio=getConcert(),track=audio?.currentTrack||CONCERT_PROGRAMME[0],timeline=audio?.state?.changeover;
@@ -193,6 +193,7 @@ export function createUrbanController({canvas,getProject,getPlayer,getResidents,
  function watchSeat(seatId){
   if(scene?.kind!=='concert')return false;
   const seat=getInterior(scene).audience.seats.find(s=>s.id===seatId);if(!seat)return false;
+  if(sceneResidents().some(a=>a.seatId===seat.id)){flash('That seat is reserved by a concert visitor. Choose another seat.');return false;}
   if(!seated)walkZoom=zoom;
 
   const stage=getInterior(scene).stage;zoom=Math.max(.04,Math.min(.6,lastSize.width/(stage.w+800),lastSize.height/(stage.h+550)));
@@ -248,7 +249,7 @@ export function createUrbanController({canvas,getProject,getPlayer,getResidents,
   const showroom=SHOWROOMS.find(room=>room.id===scene.showroomId);
   setScene({kind:'shop',floor:showroom?.storeFloor||1},showroom?.lobbyReturn);return true;
  }
- function sceneResidents(){if(scene?.kind==='concert')return [];const actors=getResidents?.(scene);return Array.isArray(actors)?actors:getInterior(scene).actors;}
+ function sceneResidents(){const actors=getResidents?.(scene);return Array.isArray(actors)?actors:getInterior(scene).actors;}
  function nearestZone(){if(!scene)return null;const model=getInterior(scene),zones=[...model.zones.filter(z=>z.action!=='resident'),...residentInteractionZones(sceneResidents())];return zones.map(z=>({...z,distance:Math.hypot(player.x-Math.max(z.x,Math.min(z.x+z.w,player.x)),player.y-Math.max(z.y,Math.min(z.y+z.h,player.y)))})).filter(z=>z.distance<120).sort((a,b)=>a.distance-b.distance)[0]||null;}
  function nearestBuilding(){const p=getPlayer();return getProject().objects.map(o=>({o,door:buildingDoor(o)})).filter(a=>a.door).map(a=>({...a,distance:Math.hypot(p.x-a.door.x,p.y-a.door.y)})).filter(a=>a.distance<240*a.o.scale).sort((a,b)=>a.distance-b.distance)[0];}
  function nearestPerson(){
@@ -309,7 +310,7 @@ export function createUrbanController({canvas,getProject,getPlayer,getResidents,
   return !!automaticDoors?.blocked(x,y,radius)||[...m.solids,...items,...(onStage?performanceBoxes:[])].some(r=>rectHit(x,y,r,radius));
  }
  function frame(ctx,keys,dt,now,width,height,drawPlayer){
-  if(!scene){activities.tick();updateExteriorDoors(dt);return false;}lastSize={width,height};const actorScale=interiorActorScale(scene),m=getInterior(scene),actors=sceneResidents();automaticDoors.update(dt,player,actors);refreshStage();walking=false;
+  if(!scene){activities.tick(keys,dt);updateExteriorDoors(dt);return false;}lastSize={width,height};const actorScale=interiorActorScale(scene),m=getInterior(scene),actors=sceneResidents();automaticDoors.update(dt,player,actors);refreshStage();walking=false;
   if(!dialog.open&&!decorate){let dx=(keys.has('d')||keys.has('arrowright')?1:0)-(keys.has('a')||keys.has('arrowleft')?1:0),dy=(keys.has('s')||keys.has('arrowdown')?1:0)-(keys.has('w')||keys.has('arrowup')?1:0);const length=Math.hypot(dx,dy);if(length){if(seated)standUp();dx/=length;dy/=length;facing=Math.abs(dx)>Math.abs(dy)?dx<0?'left':'right':dy<0?'up':'down';const speed=(keys.has('shift')?780:450)*actorScale,n=Math.ceil(speed*dt/3),sx=dx*speed*dt/n,sy=dy*speed*dt/n;let distance=0;for(let i=0;i<n;i++){const old={...player};if(!solid(player.x+sx,player.y))player.x+=sx;if(!solid(player.x,player.y+sy))player.y+=sy;distance+=Math.hypot(player.x-old.x,player.y-old.y);}walking=distance>0;phase=(phase+distance*Math.PI*2/(150*actorScale))%(Math.PI*2);}}
   const drawZoom=effectiveInteriorZoom(scene,zoom),clampView=(p,length,visible)=>length<=visible?length/2:Math.max(visible/2,Math.min(length-visible/2,p)),focus=seated?{x:m.stage.x+m.stage.w/2,y:m.stage.y+m.stage.h/2+60}:player;view={x:clampView(focus.x,m.width,width/drawZoom),y:clampView(focus.y,m.height,height/drawZoom)};
   tick();ctx.clearRect(0,0,width,height);ctx.fillStyle='#131b21';ctx.fillRect(0,0,width,height);ctx.save();ctx.translate(width/2,height/2);ctx.scale(drawZoom,drawZoom);ctx.translate(-view.x,-view.y);

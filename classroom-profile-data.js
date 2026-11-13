@@ -58,6 +58,8 @@
   ['opal-angelfish','epic',40,24],['echo-salmon','epic',44,25],['golden-cave-carp','epic',48,26],['aurora-eel','epic',48,26],['midnight-catfish','epic',44,25],['ruby-lionfish','epic',40,24],
   ['crescendo-coelacanth','legendary',64,30],['starlight-sturgeon','legendary',72,32],['prism-koi','legendary',64,30],['thunderfin-pike','legendary',72,32],['royal-moonfish','legendary',80,35],['luminous-dragonfish','legendary',80,35]
  ];
+ const COASTAL_FISH_ROWS=[["copper-sprat","common",8,8],["harbour-goby","common",8,8],["sunstripe-perch","common",8,8],["tidal-dace","common",8,8],["bluefin-smelt","common",8,8],["pebble-flounder","common",8,8],["ripple-mackerel","uncommon",22,14],["rosefin-mullet","uncommon",22,14],["sea-glass-wrasse","uncommon",22,14],["dotted-drumfish","uncommon",22,14],["ribbon-pipefish","uncommon",22,14],["moonlit-herring","uncommon",22,14],["syncopation-snapper","rare",36,20],["triplet-trout","rare",36,20],["coral-cadence","rare",36,20],["polka-puffer","rare",36,20],["sapphire-seahorse","rare",36,20],["swingtail-bass","rare",36,20],["aurora-sailfish","epic",50,26],["velvet-manta","epic",50,26],["silver-sonata","epic",50,26],["tempo-tigerfish","epic",50,26],["golden-fermata","legendary",64,32],["constellation-koi","legendary",64,32]];
+ FISH_ROWS.push(...COASTAL_FISH_ROWS);
  const FISH=Object.fromEntries(FISH_ROWS.map(([id,rarity,notes,xp])=>[id,{rarity,notes,xp}]));
  const enumOf=values=>({type:typeof values[0]==='number'?'integer':typeof values[0]==='boolean'?'boolean':'string',enum:values});
  const integer=(minimum,maximum)=>({type:'integer',minimum,maximum});
@@ -80,7 +82,7 @@
   progression:object({version,xp:integer(0,20000000),events:array(object({id:id(),xp:integer(1,1000)}),20000),bestPitchLevel:integer(0,1000)}),
   wallet:object({version,balance:integer(0,1000000),earned:integer(0,1000000),spent:integer(0,1000000),owned:array(enumOf(OWNED),256,true),rewards:array(id(100),4096,true)}),
   missions:object({version,missions:missionSchema,seen:array(id(140),512,true)},['version']),
-  fishing:object({version,catches:array(catchSchema,5000)}),
+  fishing:object({version,catches:array(catchSchema,5000),legacyCoast:object(Object.fromEntries(COASTAL_FISH_ROWS.map(([id])=>[id,object({count:integer(1,1000000),best:number(0,2000)})])),[])},['version']),
   piano:object({version,learned:array(enumOf(MELODIES),9,true),completed:array(enumOf(PIANO_REWARDS),PIANO_REWARDS.length,true)}),
   lessons:object({version,lessons:lessonSchema}),quizzes:object({version,quizzes:quizSchema}),
   pitch:object({version,bestCompleted:integer(0,999)}),pitchTutorials:object({version,completed:array(enumOf(['treble','bass','grand']),3,true)}),finalExam:finalExamSchema
@@ -138,6 +140,7 @@
    const result=entry?.result,fish=FISH[entry?.fishId];if(!record(entry)||!fish||!safeId(entry.id,92)||fishSeen.has(entry.id)||!record(result)||result.id!==entry.id||result.fishId!==entry.fishId||result.caught!==true||result.outcome!=='caught'||result.practice===true||result.reason!=null||result.rarity!==fish.rarity||!['4/4','6/8','2/2'].includes(result.meter)||result.timeSignature!==undefined&&result.timeSignature!==result.meter||!int(result.hits,1,1e6)||!Number.isSafeInteger(result.misses)||result.misses<0||result.misses>1e6||!Number.isSafeInteger(result.extras)||result.extras<0||result.extras>1e6||result.perfect!==(result.misses===0&&result.extras===0)||result.notes!==fish.notes||result.xp!==fish.xp||!finite(entry.size,.1,10000)||typeof entry.rewarded!=='boolean')continue;
    fishSeen.add(entry.id);out.fishing.catches.push({id:entry.id,fishId:entry.fishId,size:entry.size,at:time(entry.at),meter:result.meter,perfect:result.perfect,caught:true,rewarded:entry.rewarded,result:{id:entry.id,fishId:entry.fishId,rarity:fish.rarity,meter:result.meter,timeSignature:result.meter,hits:result.hits,misses:result.misses,extras:result.extras,perfect:result.perfect,notes:fish.notes,xp:fish.xp,caught:true,outcome:'caught'}});
   }
+  const legacyCoast={};for(const [id]of COASTAL_FISH_ROWS){const value=raw('fishing').legacyCoast?.[id];if(value&&int(value.count,1,1000000)&&finite(value.best,0,2000))legacyCoast[id]={count:value.count,best:value.best};}if(Object.keys(legacyCoast).length)out.fishing.legacyCoast=legacyCoast;
   const piano=raw('piano');out.piano.learned=ids(piano.learned,9,80,MELODIES,'Learned melodies');out.piano.completed=ids(piano.completed,PIANO_REWARDS.length,100,PIANO_REWARDS,'Piano challenge completions');
   for(const [key,total]of Object.entries(LESSON_TOTALS)){
    const lesson=raw('lessons').lessons?.[key],quiz=raw('quizzes').quizzes?.[key],target=out.lessons.lessons[key],question=out.quizzes.quizzes[key];

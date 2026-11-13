@@ -1,4 +1,4 @@
-import {segment,COLS,ROWS,TILE} from './model.mjs?v=opera-parallax-1';
+import {segment,COLS,ROWS,TILE} from './model.mjs?v=town-flight-1';
 
 export const PLAYER_COLLISION_BIN=512,PLAYER_COLLISION_MARGIN=128;
 const RADIUS=Symbol.for('coda.town.collisionRadius');

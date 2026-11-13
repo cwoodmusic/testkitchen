@@ -1,13 +1,14 @@
-import {blocked,height,TILE} from './model.mjs?v=opera-parallax-1';
-import {movePlayer} from './physics.mjs?v=opera-parallax-1';
+import {getConcertHall} from './concert-hall.mjs?v=town-flight-1';
+import {blocked,height,TILE} from './model.mjs?v=town-flight-1';
+import {movePlayer} from './physics.mjs?v=town-flight-1';
 import {WALK_SPEED,GAIT_PER_PIXEL,PLAYER_SCALE} from './player-settings.mjs?v=opera-parallax-1';
-import {buildNPCDistrict} from './npc-district.mjs?v=opera-parallax-1';
-import {createNPCNavigator,npcPavingAt,npcMaterialCost} from './npc-navigation.mjs?v=opera-parallax-1';
+import {buildNPCDistrict} from './npc-district.mjs?v=town-flight-1';
+import {createNPCNavigator,npcPavingAt,npcMaterialCost} from './npc-navigation.mjs?v=town-flight-1';
 import {residents as profiles,residentHomePose,interiorJourneyPose,residentInScene} from './resident-journey.mjs?v=opera-parallax-1';
-import {createEntranceQueues} from './entrance-queue.mjs?v=opera-parallax-1';
-import {venueVisitPose,SHOP_VISIT_CAPACITY} from './resident-venue.mjs?v=opera-parallax-1';
+import {createEntranceQueues} from './entrance-queue.mjs?v=town-flight-1';
+import {venueVisitPose,SHOP_VISIT_CAPACITY} from './resident-venue.mjs?v=town-flight-1';
 import {planNPCPassing} from './npc-passing.mjs?v=opera-parallax-1';
-export {planNPCPath,npcConnectionClear} from './npc-navigation.mjs?v=opera-parallax-1';
+export {planNPCPath,npcConnectionClear} from './npc-navigation.mjs?v=town-flight-1';
 
 export const AMBIENT_RESIDENTS=Object.freeze(['bach','mozart','clara','nina','joplin','miles','chopin','haydn','vee-jay','zizi','beethoven','ellington','ella','handel','vivaldi','metronome','schoenberg','dj']);
 const distance=(a,b)=>Math.hypot(a.x-b.x,a.y-b.y);
@@ -27,12 +28,12 @@ const vendorLines=name=>/coffee/i.test(name)?[
 
 // Residents belong to the city, not the viewport. Their positions, activities
 // and indoor journeys continue when the player pans away or enters a building.
-export function createAmbientNPCs({getProject,catalog,getRevision=()=>0,getPlayer,count=18,random=randomSource()}={}){
+export function createAmbientNPCs({getProject,catalog,getRevision=()=>0,getPlayer,getConcertSeat=()=>null,getInteriorPlayer=()=>null,count=18,random=randomSource()}={}){
  let activeDoc=null,lastRevision,city=null,people=[],vendors=[],renderer=null,elapsed=0,socialAt=0,eventSequence=0,joinSequence=0,passingBudget=1;
  let rendezvous=null,rendezvousSequence=0,lastChatAt=0,rendezvousRetryAt=48;
  const claims=new Map(),stageClaims=new Map(),approachClaims=new Map(),overflowClaims=new Map(),events=[];
  const navigator=createNPCNavigator({getProject,catalog,getBounds:()=>city?.bounds,budgetMs:1.5});
- const entrances=createEntranceQueues({getEntrances:()=>city?.anchors.filter(a=>['tower','shop','arcade'].includes(a.kind))||[],getProject,catalog,pointClear:p=>clearPoint(p),connectionClear:(a,b)=>navigator.connectionClear(a,b)});
+ const entrances=createEntranceQueues({getEntrances:()=>city?.anchors.filter(a=>['tower','shop','arcade','opera'].includes(a.kind))||[],getProject,catalog,pointClear:p=>clearPoint(p),connectionClear:(a,b)=>navigator.connectionClear(a,b)});
  const outdoor=()=>people.filter(a=>a.location.kind==='street'&&!a.hidden);
  const record=(type,actor,extra={})=>{events.push({type,id:actor.id,time:elapsed,sequence:++eventSequence,...extra});if(events.length>512)events.shift();};
  const inDistrict=p=>city&&p.x>=city.bounds.x0&&p.x<=city.bounds.x1&&p.y>=city.bounds.y0&&p.y<=city.bounds.y1;
@@ -132,22 +133,24 @@ export function createAmbientNPCs({getProject,catalog,getRevision=()=>0,getPlaye
  function startVenue(actor,building){
   const occupied=new Set(people.filter(a=>a._venue?.kind==='shop').map(a=>a._venue.slot));
   const slot=building.kind==='shop'?Array.from({length:SHOP_VISIT_CAPACITY},(_,i)=>(i+actor._index)%SHOP_VISIT_CAPACITY).find(i=>!occupied.has(i)):undefined;
-  actor._venue={kind:building.kind,elapsed:0,stay:20+random()*24,entranceId:building.id,slot};actor.state=building.kind==='shop'?'shopping':'arcade';actor.walking=false;
+  const hallSeats=getConcertHall().audience.seats,occupiedHall=new Set(people.filter(a=>a._venue?.kind==='opera').map(a=>a._venue.slot)),hallSlot=hallSeats.findIndex((seat,i)=>!occupiedHall.has(i)&&seat.id!==getConcertSeat()&&i>=(actor._index*11)%140);
+  actor._venue={kind:building.kind,elapsed:0,stay:building.kind==='opera'?70+random()*80:20+random()*24,entranceId:building.id,slot:building.kind==='opera'?(hallSlot<0?hallSeats.findIndex((seat,i)=>!occupiedHall.has(i)&&seat.id!==getConcertSeat()):hallSlot):slot};actor.state=building.kind==='shop'?'shopping':building.kind==='opera'?'concert':'arcade';actor.walking=false;
   record('enter-venue',actor,{entranceId:building.id,kind:building.kind});applyVenue(actor,0);
  }
  function exitBuilding(actor,building){
   const layout=entrances.layout(building.id);if(!layout||!entrances.claimExit(actor.id,building.id))return false;
   const target=entrances.target(actor.id),p=target.exit,player=getPlayer?.();
   if(!clearPoint(p)||outdoor().some(a=>a!==actor&&distance(a,p)<44)||player&&distance(player,p)<44)return false;
-  Object.assign(actor,p,{location:{...street},hidden:false,alpha:0,facing:layout.facing,_journey:null,_venue:null,_homeDue:building.kind==='tower'?elapsed+55+random()*65:actor._homeDue});
+  Object.assign(actor,p,{location:{...street},hidden:false,alpha:0,facing:layout.facing,seated:false,seatId:null,_journey:null,_venue:null,_homeDue:building.kind==='tower'?elapsed+55+random()*65:actor._homeDue});
   actor.queueEntranceId=building.id;actor._queuePhase='exit';
   record('exit-building',actor,{entranceId:building.id,position:{...p},door:layout.door});
   const [first,...rest]=[...(target.exitVia||[]),target.exitClear];
   go(actor,{id:building.id+':exit',kind:'queue-exit',approach:first,...first,_via:rest,_arrival:true});return true;
  }
  function applyVenue(actor,dt){
-  const visit=actor._venue;visit.elapsed+=dt;const pose=venueVisitPose(actor.id,visit.kind,visit.elapsed,{stay:visit.stay,slot:visit.slot});
-  Object.assign(actor,{x:pose.x,y:pose.y,location:{...pose.scene},facing:pose.facing,phase:pose.phase,walking:pose.walking,hidden:pose.hidden,activity:pose.activity,purpose:pose.purpose});
+  const visit=actor._venue,previousElapsed=visit.elapsed;visit.elapsed+=dt;const pose=venueVisitPose(actor.id,visit.kind,visit.elapsed,{stay:visit.stay,slot:visit.slot});
+  const visitor=getInteriorPlayer?.();if(visit.kind==='opera'&&visitor&&pose.walking&&Math.hypot(pose.x-visitor.x,pose.y-visitor.y)<58){visit.elapsed=previousElapsed;actor.walking=false;return;}
+  Object.assign(actor,{x:pose.x,y:pose.y,location:{...pose.scene},facing:pose.facing,phase:pose.phase,walking:pose.walking,seated:pose.seated===true,seatId:pose.seatId||null,hidden:pose.hidden,activity:pose.activity,purpose:pose.purpose});
   if(pose.done){const building=city.anchors.find(a=>a.id===visit.entranceId);if(building)exitBuilding(actor,building);}
  }
  function beginStage(actor,stage){
@@ -167,7 +170,7 @@ export function createAmbientNPCs({getProject,catalog,getRevision=()=>0,getPlaye
  function releaseSeat(actor){if(actor.seatId&&claims.get(actor.seatId)===actor.id)claims.delete(actor.seatId);delete actor.seatId;actor.seated=false;delete actor.depth;delete actor.groundAnchor;}
  function idle(actor,wait=2){actor.state='idle';actor.activity='';actor.purpose='Taking in the neighbourhood';actor.walking=false;actor._wait=wait;actor._path=[];actor._pending=false;}
  function cancel(actor){navigator.cancel(actor.id);actor._routeToken++;actor._pending=false;actor._path=[];actor._passingRemaining=0;delete actor._passingStart;}
- function awayFromDoors(point){return city.anchors.filter(a=>['tower','shop','arcade'].includes(a.kind)).every(a=>distance(point,a.threshold||a)>320);}
+ function awayFromDoors(point){return city.anchors.filter(a=>['tower','shop','arcade','opera'].includes(a.kind)).every(a=>distance(point,a.threshold||a)>320);}
  function socialCandidate(actor){
   return actor.location.kind==='street'&&!actor.hidden&&!actor.conversation&&!actor._held&&!actor._entranceIntent&&!actor.queueEntranceId&&!actor.stageId&&!actor.seatId&&!actor._goingHome&&!actor._passingRemaining&&!actor._rendezvous
    &&elapsed>=(actor._socialAfter||0)&&awayFromDoors(actor)
@@ -301,7 +304,7 @@ export function createAmbientNPCs({getProject,catalog,getRevision=()=>0,getPlaye
   if(actor._rendezvous&&goal.kind!=='social-meeting')cancelRendezvous(actor,'new destination');
   delete actor._resumeGoal;
   if(!goal._arrival&&goal.kind==='stage'){if(!beginStage(actor,goal))idle(actor,3);return;}
-  if(!goal._arrival&&(['shop','arcade'].includes(goal.kind)||goingHome&&goal.kind==='tower')){beginEntrance(actor,goal,goingHome?'home':goal.kind);return;}
+  if(!goal._arrival&&(['shop','arcade','opera'].includes(goal.kind)||goingHome&&goal.kind==='tower')){beginEntrance(actor,goal,goingHome?'home':goal.kind);return;}
 
   // Visitors gather beside the entrance. The central doorway is reserved for
   // the one resident currently returning home and for people walking out.
@@ -354,6 +357,12 @@ export function createAmbientNPCs({getProject,catalog,getRevision=()=>0,getPlaye
   // and the time spent there, rather than in random steps around the camera.
   go(actor,choices[Math.floor(random()*choices.length)]);
  }
+ function seedConcertVisitors(){
+  const opera=city.anchors.find(a=>a.kind==='opera');if(opera){
+   for(const index of [6,7]){const actor=people[index];if(!actor)continue;cancel(actor);releaseSeat(actor);releaseEntrance(actor);releaseStage(actor);actor._journey=null;actor.seated=false;actor._bench=null;startVenue(actor,opera);if(index===6){actor._venue.elapsed=17;applyVenue(actor,0);}}
+   for(const index of [8,9]){const actor=people[index];if(!actor)continue;const at=standingNear(opera.approach,index);if(at){Object.assign(actor,at,{hidden:false,_homeDue:elapsed+150});go(actor,opera);}}
+  }
+ }
  function initialize(doc){
   rendezvous=null;rendezvousSequence=0;lastChatAt=0;rendezvousRetryAt=48;
   people=[];claims.clear();stageClaims.clear();approachClaims.clear();overflowClaims.clear();entrances.clear();elapsed=0;socialAt=0;events.length=0;eventSequence=0;joinSequence=0;
@@ -371,11 +380,12 @@ export function createAmbientNPCs({getProject,catalog,getRevision=()=>0,getPlaye
    const a=people[0],b=people[1],p=standingNear({x:gathering.x-65,y:gathering.y},0,false),q=p&&standingNear({x:p.x+130,y:p.y},1,false);
    if(p&&q&&distance(p,q)>75&&distance(p,q)<200&&navigator.connectionClear(p,q)){Object.assign(a,p,{hidden:false});Object.assign(b,q,{hidden:false});startChat(a,b);}
   }
+  seedConcertVisitors();
  }
  function sync(doc,revision){
   if(activeDoc===doc&&lastRevision===revision)return;
   cancelRendezvous(null,'geometry changed',false);
-  const first=!activeDoc;activeDoc=doc;lastRevision=revision;city=buildNPCDistrict(doc,catalog);navigator.invalidate(revision);entrances.clear();stageClaims.clear();approachClaims.clear();overflowClaims.clear();
+  const previousOpera=city?.anchors.find(a=>a.kind==='opera')?.objectId;const first=!activeDoc;activeDoc=doc;lastRevision=revision;city=buildNPCDistrict(doc,catalog);navigator.invalidate(revision);entrances.clear();stageClaims.clear();approachClaims.clear();overflowClaims.clear();
   vendors=city.vendors.map((v,i)=>({...v,role:'vendor',location:{...street},state:'vending',activity:'',walking:false,phase:0,alpha:1,hidden:false,dialogue:vendorLines(v.name),appearance:{hairstyle:['curly','short','buns'][i%3],skin:['#bf8862','#e0b38c','#98694e'][i%3],hair:['#3b3035','#665044','#332832'][i%3],shirt:['#607b72','#8e655c','#686c88'][i%3],lowerColor:'#3e4350',outfit:'waistcoat',headwear:i%3===1?'chef':'none',shoes:'loafers'}}));
   if(first){initialize(doc);return;}
   for(const actor of people){
@@ -390,6 +400,7 @@ export function createAmbientNPCs({getProject,catalog,getRevision=()=>0,getPlaye
    if(!clearPoint(actor)||actor.hidden){const p=standingNear(city.tower?.approach||city.center,actor._index);if(p){Object.assign(actor,p);actor.hidden=false;}else actor.hidden=true;}
    idle(actor,1+random()*2);
   }
+  if(city.anchors.find(a=>a.kind==='opera')?.objectId!==previousOpera)seedConcertVisitors();
  }
  function walkActor(actor,dt){
   const progress=actor._progress;
@@ -499,7 +510,7 @@ export function createAmbientNPCs({getProject,catalog,getRevision=()=>0,getPlaye
   if(!renderer||actor.hidden)return;ctx.save();ctx.globalAlpha*=Number.isFinite(actor.alpha)?actor.alpha:1;renderer.drawNPC(ctx,actor,time);ctx.restore();
  }
  function reset(){rendezvous=null;lastChatAt=0;rendezvousRetryAt=48;activeDoc=null;people=[];vendors=[];claims.clear();stageClaims.clear();approachClaims.clear();overflowClaims.clear();entrances.clear();events.length=0;elapsed=0;}
- function visit(id,entranceId){const actor=people.find(a=>a.id===id),building=city?.anchors.find(a=>a.id===entranceId||a.objectId===entranceId);return !!(actor&&building&&['tower','shop','arcade'].includes(building.kind)&&actor.location.kind==='street'&&!actor._held&&beginEntrance(actor,building,building.kind==='tower'?'home':building.kind));}
+ function visit(id,entranceId){const actor=people.find(a=>a.id===id),building=city?.anchors.find(a=>a.id===entranceId||a.objectId===entranceId);return !!(actor&&building&&['tower','shop','arcade','opera'].includes(building.kind)&&actor.location.kind==='street'&&!actor._held&&beginEntrance(actor,building,building.kind==='tower'?'home':building.kind));}
  function visitStage(id,stageId){const actor=people.find(a=>a.id===id),stage=city?.stages.find(a=>a.id===stageId);return !!(actor&&stage&&actor.location.kind==='street'&&!actor._held&&beginStage(actor,stage));}
- return {update,draw,reset,interiorActors,setConversation,visit,visitStage,get queues(){return city?city.anchors.filter(a=>['tower','shop','arcade'].includes(a.kind)).map(a=>({entranceId:a.id,layout:entrances.layout(a.id),people:entrances.inspect(a.id)})):[];},get actors(){return [...outdoor(),...vendors];},get residents(){return people;},get district(){return city;},get events(){return events.slice();},get simulationTime(){return elapsed;},get navigationStats(){return navigator.stats;},get seatClaims(){return new Map(claims);}};
+ return {update,draw,reset,interiorActors,setConversation,visit,visitStage,get queues(){return city?city.anchors.filter(a=>['tower','shop','arcade','opera'].includes(a.kind)).map(a=>({entranceId:a.id,layout:entrances.layout(a.id),people:entrances.inspect(a.id)})):[];},get actors(){return [...outdoor(),...vendors];},get residents(){return people;},get district(){return city;},get events(){return events.slice();},get simulationTime(){return elapsed;},get navigationStats(){return navigator.stats;},get seatClaims(){return new Map(claims);}};
 }

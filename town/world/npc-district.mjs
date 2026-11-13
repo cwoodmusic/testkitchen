@@ -1,6 +1,6 @@
-import {blocked,height,surfaceAt,COLS,ROWS,TILE} from './model.mjs?v=opera-parallax-1';
+import {blocked,height,surfaceAt,COLS,ROWS,TILE} from './model.mjs?v=town-flight-1';
 import {npcCollisionProject} from './npc-collision.mjs?v=opera-parallax-1';
-import {npcConnectionClear} from './npc-navigation.mjs?v=opera-parallax-1';
+import {npcConnectionClear} from './npc-navigation.mjs?v=town-flight-1';
 import {furnitureFacingPlacement,furnitureFootCenter,furnitureFacingDepth} from './furniture-facing.mjs?v=opera-parallax-1';
 
 const WORLD_W=COLS*TILE,WORLD_H=ROWS*TILE;
@@ -58,7 +58,7 @@ export function buildNPCDistrict(doc,catalog){
  const buildings=[],squares=[],gazebos=[],vendors=[],extents=[];
  for(const o of doc.objects||[]){
   const a=catalog.get(o.asset);if(!a||o.mount)continue;
-  const kind=a.urban==='tower'?'tower':a.urban==='shop'?'shop':o.asset==='coda-arcade'?'arcade':null;
+  const kind=a.urban==='tower'?'tower':a.urban==='shop'?'shop':a.urban==='opera'?'opera':o.asset==='coda-arcade'?'arcade':null;
   if(kind){
    const doorLocal=a.door||{x:a.w/2,y:a.h},door=npcDistrictPoint(o,a,doorLocal),preferred=npcDistrictPoint(o,a,{x:doorLocal.x,y:doorLocal.y+96});
    const approach=nearestClear(doc,catalog,preferred,{radius:384});

@@ -1,4 +1,4 @@
-import {COLS,ROWS,cell,key,stairProfile} from '../world/model.mjs?v=opera-parallax-1';
+import {COLS,ROWS,cell,key,stairProfile} from '../world/model.mjs?v=town-flight-1';
 import {selectionContains,selectionTiles} from '../world/selection.mjs?v=opera-parallax-1';
 export {selectionContains,selectionCount,selectionTiles} from '../world/selection.mjs?v=opera-parallax-1';
 export function regionBetween(a,b){const clamp=(v,max)=>Math.max(0,Math.min(max-1,Math.floor(v)));return {x0:clamp(Math.min(a.x,b.x),COLS),y0:clamp(Math.min(a.y,b.y),ROWS),x1:clamp(Math.max(a.x,b.x),COLS),y1:clamp(Math.max(a.y,b.y),ROWS)};}

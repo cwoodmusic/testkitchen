@@ -1,13 +1,14 @@
-import {drawSelection} from './selection-view.mjs?v=opera-parallax-1';
-import {drawTerrain} from './terrain-render.mjs?v=opera-smooth-1';
-import {mountPose} from './cliff-mount.mjs?v=opera-parallax-1';
-import {elevationView} from './elevation-view.mjs?v=opera-parallax-1';
-import {barrierGeometry,drawBarrierRun,drawPost} from './construction.mjs?v=opera-parallax-1';
-import {TILE,RISE,COLS,ROWS,cell,height,segment} from './model.mjs?v=opera-parallax-1';
-import {catalog} from './catalog.mjs?v=opera-parallax-1';
+import {drawStaticImage} from './static-sprite-cache.mjs?v=town-flight-1';
+import {drawSelection} from './selection-view.mjs?v=town-flight-1';
+import {drawTerrain} from './terrain-render.mjs?v=town-flight-1';
+import {mountPose} from './cliff-mount.mjs?v=town-flight-1';
+import {elevationView} from './elevation-view.mjs?v=town-flight-1';
+import {barrierGeometry,drawBarrierRun,drawPost} from './construction.mjs?v=town-flight-1';
+import {TILE,RISE,COLS,ROWS,cell,height,segment} from './model.mjs?v=town-flight-1';
+import {catalog} from './catalog.mjs?v=town-flight-1';
 import {assetMapImage,assetMapImageRevision} from './asset-lawn.mjs?v=opera-parallax-1';
 import {overviewObjectImage} from './overview-sprites.mjs?v=opera-smooth-1';
-import {renderCityNight} from './city-night.mjs?v=opera-smooth-1';
+import {renderCityNight} from './city-night.mjs?v=town-flight-1';
 import {setWaterTime} from './water-motion.mjs?v=opera-smooth-1';
 import {drawFountainMotion} from './fountain-motion.mjs?v=opera-parallax-1';
 import {drawApartmentMotion} from './apartment-motion.mjs?v=opera-parallax-1';
@@ -15,7 +16,7 @@ import {buildingDepthSlices,physicalObjectDepth,scenePartDepth,buildingSliceRect
 import {spriteBounds,intersectsViewport,actorBounds} from './render-visibility.mjs?v=opera-parallax-1';
 import {scenePartitionCache} from './scene-partition.mjs?v=opera-parallax-1';
 import {furnitureFacingPlacement,furnitureFacingDepth,supportsFurnitureFacing} from './furniture-facing.mjs?v=opera-parallax-1';
-import {createFurnitureFacingSourceRoster,furnitureFacingDrawSource,drawFurnitureFacingSource,flatFurnitureFacingPlacement,flatFurnitureFacingLocalPlacement} from './furniture-facing-source.mjs?v=opera-parallax-1';
+import {createFurnitureFacingSourceRoster,furnitureFacingDrawSource,drawFurnitureFacingSource,flatFurnitureFacingPlacement,flatFurnitureFacingLocalPlacement} from './furniture-facing-source.mjs?v=town-flight-1';
 import {assetFilter} from './asset-color.mjs?v=opera-parallax-1';
 import {drawFacingFountainMotion} from './furniture-facing-fountain.mjs?v=opera-parallax-1';
 const facingMotionAssets=new WeakMap();
@@ -59,7 +60,7 @@ export function drawObject(c,o,d,collision=false,alpha=1,time=0,fragment=null,pr
   }else{
    // Assets without the atlas API retain their established source path.
    const full=furnitureFacingPlacement(a,o,pose),source=full?.image||a.canvas,graded=Object.create(a);Object.defineProperty(graded,'canvas',{value:source});const image=assetMapImage(graded,o,d);
-   c.save();c.scale(facing.scaleX,facing.scaleY);const display=overviewObjectImage(c,a,image);c.restore();c.drawImage(display,facing.x,facing.y,facing.w,facing.h);
+   c.save();c.scale(facing.scaleX,facing.scaleY);const display=overviewObjectImage(c,a,image);c.restore();drawStaticImage(c,display,0,0,display.width,display.height,facing.x,facing.y,facing.w,facing.h);
    fountainSource={image:source,sx:0,sy:0,sw:source.width,sh:source.height,native:true};
   }
   drawFacingFountainMotion(c,a,facing,fountainSource,time,{native});
@@ -90,12 +91,12 @@ export function drawObject(c,o,d,collision=false,alpha=1,time=0,fragment=null,pr
   const partition=prepared?.partition||scenePartitionCache.partition(a,display,assetMapImageRevision(image),a.sceneParts.map(p=>scenePartDepth(a,o,p)));
   if(prepared)prepared.partition=partition;
   const layer=fragment.base?{canvas:partition.base,x:0,y:0,w:display.width,h:display.height}:partition.parts[index],fx=a.w/display.width,fy=a.h/display.height;
-  if(layer.w&&layer.h)c.drawImage(layer.canvas,layer.x*fx-a.w/2,layer.y*fy-a.h*pose.offset,layer.w*fx,layer.h*fy);
+  if(layer.w&&layer.h)drawStaticImage(c,layer.canvas,0,0,layer.canvas.width,layer.canvas.height,layer.x*fx-a.w/2,layer.y*fy-a.h*pose.offset,layer.w*fx,layer.h*fy,{revision:assetMapImageRevision(image)});
  }else{
   if(fragment?.outline){c.beginPath();fragment.outline.forEach(([x,y],i)=>{if(i)c.lineTo(x-a.w/2,y-a.h*pose.offset);else c.moveTo(x-a.w/2,y-a.h*pose.offset);});c.closePath();c.clip();}
   const crop=fragment?.x0!==undefined?buildingSliceRect(a,o,fragment,cropPadding):null;
-  if(crop){if(crop.w>0&&crop.h>0)c.drawImage(display,crop.x*display.width/a.w,crop.y*display.height/a.h,crop.w*display.width/a.w,crop.h*display.height/a.h,crop.x-a.w/2,crop.y-a.h*pose.offset,crop.w,crop.h);}
-  else c.drawImage(display,-a.w/2,-a.h*pose.offset,a.w,a.h);
+  if(crop){if(crop.w>0&&crop.h>0)drawStaticImage(c,display,crop.x*display.width/a.w,crop.y*display.height/a.h,crop.w*display.width/a.w,crop.h*display.height/a.h,crop.x-a.w/2,crop.y-a.h*pose.offset,crop.w,crop.h,{revision:assetMapImageRevision(image)});}
+  else drawStaticImage(c,display,0,0,display.width,display.height,-a.w/2,-a.h*pose.offset,a.w,a.h,{revision:assetMapImageRevision(image)});
  }
  if(!fragment||fragment.animate){
   c.save();
@@ -118,7 +119,7 @@ function composite(a,o){return !o.mount&&a.sceneParts?.length;}
 function depthSorted(a,o){return o.mount||o.layer==='objects'||a.depthSorted||a.frontAtX;}
 export function render(c,d,cam,w,h,opts={}){setWaterTime(opts.time||0);const screenTransform=c.getTransform();c.clearRect(0,0,w,h);c.fillStyle='#101f19';c.fillRect(0,0,w,h);c.save();c.translate(w/2,h/2);c.scale(cam.zoom,cam.zoom);c.translate(-cam.x,-cam.y);const left=cam.x-w/2/cam.zoom,top=cam.y-h/2/cam.zoom;const x0=Math.max(0,Math.floor(left/64)-1),x1=Math.min(COLS,Math.ceil((left+w/cam.zoom)/64)+1),y0=Math.max(0,Math.floor(top/64)-1),y1=Math.min(ROWS,Math.ceil((top+h/cam.zoom+RISE*9)/64)+1);if(opts.heightView==='plan'){elevationView(c,d,cam,w,h,opts);c.restore();return;}drawTerrain(c,d,{x0,x1,y0,y1},opts);if(opts.drawFootprints)opts.drawFootprints(c,d,opts.time||0);
  const viewport={x:left,y:top,w:w/cam.zoom,h:h/cam.zoom},prepared=new Map();
- const visible=d.objects.filter(o=>{const a=catalog.get(o.asset);if(!a)return false;const pose=mountPose(d,o);if(!pose)return false;const facing=furnitureFacingPlacement(a,o,pose,{includeImage:false}),bounds=facing?.bounds||spriteBounds(a,o,pose);if(!intersectsViewport(bounds,viewport,2/cam.zoom))return false;prepared.set(o,{pose,facing,flat:!facing&&flatFurnitureFacingPlacement(a,bounds)});return true;});
+ const visible=d.objects.filter(o=>{if(opts.hiddenBoat&&o.id===opts.hiddenBoat)return false;const a=catalog.get(o.asset);if(!a)return false;const pose=mountPose(d,o);if(!pose)return false;const facing=furnitureFacingPlacement(a,o,pose,{includeImage:false}),bounds=facing?.bounds||spriteBounds(a,o,pose);if(!intersectsViewport(bounds,viewport,2/cam.zoom))return false;prepared.set(o,{pose,facing,flat:!facing&&flatFurnitureFacingPlacement(a,bounds)});return true;});
  const facingEntries=[];
  for(const o of visible){const p=prepared.get(o),placement=p.facing||p.flat;if(placement)facingEntries.push({asset:catalog.get(o.asset),placement,selected:opts.selected===o,focused:opts.focused===o});}
  if(opts.ghost){const a=catalog.get(opts.ghost.asset),pose=a&&mountPose(d,opts.ghost),facing=pose&&furnitureFacingPlacement(a,opts.ghost,pose,{includeImage:false}),flat=!facing&&pose&&flatFurnitureFacingPlacement(a,spriteBounds(a,opts.ghost,pose)),placement=facing||flat;if(placement){prepared.set(opts.ghost,{pose,facing,flat});facingEntries.push({asset:a,placement,focused:true});}}

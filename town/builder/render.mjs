@@ -1,1 +1,1 @@
-export * from '../world/render.mjs?v=opera-smooth-1';
+export * from '../world/render.mjs?v=town-flight-1';

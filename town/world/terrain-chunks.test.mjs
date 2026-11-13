@@ -25,11 +25,11 @@ function fixture(options={}){
 
 test('terrain chunks choose native close detail and generous medium samples while debug/overview transforms stay raw',()=>{
  const t={a:.4,b:0,c:0,d:.4,e:0,f:0};
- assert.equal(terrainChunkScale(t),1);
- assert.equal(terrainChunkScale({...t,a:.2,d:.2}),.5);
+ assert.equal(terrainChunkScale(t),.5);
+ assert.equal(terrainChunkScale({...t,a:.2,d:.2}),.25);
  for(const opts of [{terrainChunks:false},{overviewBake:true},{grid:true},{heightView:'colors'},{heightView:'plan'}])assert.equal(terrainChunkScale(t,opts),null);
  for(const transform of [{...t,a:.125,d:.125},{...t,a:1.1,d:1.1},{...t,b:.2},{...t,d:.5}])assert.equal(terrainChunkScale(transform),null);
- assert.equal(terrainChunkScale(t,{heightView:'art'}),1);
+ assert.equal(terrainChunkScale(t,{heightView:'art'}),.5);
 });
 
 test('projected chunks cover the visible world once, including terrain above its unprojected row',()=>{
@@ -133,11 +133,11 @@ test('idle prefetch bakes cooperatively and never publishes a partially drawn ch
  f.c.transform.e=-512*.5;f.draw({terrainRevision:0});assert.equal(f.cache.stats(f.c).syncBuilds,initial.syncBuilds,'walking into the prepared ring did not synchronously rebuild');
 });
 
-test('editor prefetch prepares native walking chunks before the camera switches scale',()=>{
+test('editor prefetch prepares filtered walking chunks before the camera switches scale',()=>{
  const f=idleFixture();f.c.transform={a:.225,b:0,c:0,d:.225,e:-1000,f:-1000};f.draw({terrainRevision:0});f.drain();
  const before=f.cache.stats(f.c),cx=(f.c.canvas.width/2-f.c.transform.e)/.225,cy=(f.c.canvas.height/2-f.c.transform.f)/.225;
  f.c.transform={a:.4,b:0,c:0,d:.4,e:f.c.canvas.width/2-cx*.4,f:f.c.canvas.height/2-cy*.4};
- f.draw({terrainRevision:0});assert.equal(f.cache.stats(f.c).syncBuilds,before.syncBuilds,'the walking viewport was not warmed at native resolution');
+ f.draw({terrainRevision:0});assert.equal(f.cache.stats(f.c).syncBuilds,before.syncBuilds,'the walking viewport was not warmed at walking resolution');
 });
 
 test('terrain revisions and art changes cancel pending jobs and release their canvas memory before publication',()=>{

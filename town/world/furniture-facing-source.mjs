@@ -1,3 +1,4 @@
+import {drawStaticImage} from './static-sprite-cache.mjs?v=town-flight-1';
 export const FURNITURE_NATIVE_VIEWS=192;
 export const FURNITURE_NATIVE_PIXELS=4*1024*1024;
 export const FURNITURE_OVERVIEW_EDGE=32;
@@ -63,5 +64,5 @@ export function drawFurnitureFacingSource(ctx,placement,source){
  const sx=source.sx??0,sy=source.sy??0,sw=source.sw,sh=source.sh;
  const dx=source.dx??0,dy=source.dy??0,dw=source.dw??placement.view.w,dh=source.dh??placement.view.h;
  if(![sx,sy,sw,sh,dx,dy,dw,dh].every(finite)||sw<=0||sh<=0||dw<=0||dh<=0)return false;
- ctx.drawImage(source.image,sx,sy,sw,sh,placement.x+dx*placement.scaleX,placement.y+dy*placement.scaleY,dw*placement.scaleX,dh*placement.scaleY);return true;
+ drawStaticImage(ctx,source.image,sx,sy,sw,sh,placement.x+dx*placement.scaleX,placement.y+dy*placement.scaleY,dw*placement.scaleX,dh*placement.scaleY);return true;
 }

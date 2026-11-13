@@ -1,3 +1,4 @@
+import {getConcertHall} from './concert-hall.mjs?v=town-flight-1';
 import {residents} from './resident-profiles.mjs?v=opera-parallax-1';
 import {SHOWROOMS,STORE_TRAFFIC,STORE_VERTICAL_CORE} from './showroom-layout.mjs?v=opera-parallax-1';
 import {interiorActorScale} from './interior-scale.mjs?v=opera-parallax-1';
@@ -46,18 +47,34 @@ function shopRoute(resident,stay,slot){
  return {steps,duration:elapsed,showroom};
 }
 
+const concertRoutes=new Map();
+function concertRoute(slot,stay){
+ const hall=getConcertHall(),seat=hall.audience.seats[Math.max(0,Math.min(hall.audience.seats.length-1,Number.isInteger(slot)?slot:0))],key=seat.id+':'+stay;
+ if(concertRoutes.has(key))return concertRoutes.get(key);
+ const entry={x:2000,y:2470},exit={x:2096,y:2470},points=[entry,{x:entry.x,y:seat.approach.y},seat.approach],steps=[];let duration=0,distance=0;
+ const walk=(a,b)=>{const length=Math.hypot(b.x-a.x,b.y-a.y),seconds=length/170;steps.push({from:a,to:b,start:duration,duration:seconds,distance,seated:false});duration+=seconds;distance+=length;};
+ for(let i=1;i<points.length;i++)walk(points[i-1],points[i]);
+ steps.push({from:seat.seat,to:seat.seat,start:duration,duration:stay,distance,seated:true});duration+=stay;
+ walk(seat.approach,{x:exit.x,y:seat.approach.y});walk({x:exit.x,y:seat.approach.y},exit);
+ const route={seat,steps,duration};if(concertRoutes.size>=256)concertRoutes.delete(concertRoutes.keys().next().value);concertRoutes.set(key,route);return route;
+}
+export function concertVisitPose(id,elapsed=0,{stay=90,slot=0}={}){
+ const route=concertRoute(slot,visitLength(stay)),time=Math.max(0,elapsed),step=route.steps.find(s=>time<s.start+s.duration)||route.steps.at(-1),distance=Math.hypot(step.to.x-step.from.x,step.to.y-step.from.y),u=step.duration?Math.min(1,(time-step.start)/step.duration):1;
+ return {id,scene:{kind:'concert'},x:step.from.x+(step.to.x-step.from.x)*u,y:step.from.y+(step.to.y-step.from.y)*u,facing:step.seated?'up':facing(step.from,step.to),walking:distance>0&&time<route.duration,seated:step.seated&&time<route.duration,seatId:route.seat.id,phase:(step.distance+distance*u)*GAIT%(Math.PI*2),hidden:false,done:time>=route.duration,activity:'',purpose:step.seated?'Listening to the concert':time<route.duration/2?'Finding a seat':'Leaving the concert',duration:route.duration};
+}
 export function venueVisitDuration(id,kind,{stay=24,slot}={}){
  const resident=profileById.get(id);if(!resident)return 0;
  stay=visitLength(stay);
- return kind==='shop'?shopRoute(resident,stay,slot).duration:kind==='arcade'?stay:0;
+ return kind==='shop'?shopRoute(resident,stay,slot).duration:kind==='arcade'?stay:kind==='opera'?concertRoute(slot,stay).duration:0;
 }
 
 // A visit has one resident identity throughout. The city controller owns the
 // actual door transition and exit queue. This helper only describes activity
 // inside the venue and never reads or writes purchases, money or map data.
 export function venueVisitPose(id,kind,elapsed=0,{stay=24,slot}={}){
- const resident=profileById.get(id);if(!resident||!['shop','arcade'].includes(kind))return null;
+ const resident=profileById.get(id);if(!resident||!['shop','arcade','opera'].includes(kind))return null;
  elapsed=Number.isNaN(elapsed)?0:Math.max(0,elapsed);stay=visitLength(stay);
+ if(kind==='opera')return {...concertVisitPose(id,elapsed,{stay,slot}),name:resident.name};
  if(kind==='arcade')return {id,name:resident.name,scene:{kind:'arcade',floor:1},x:0,y:0,facing:'down',walking:false,phase:0,hidden:true,done:elapsed>=stay,activity:'',purpose:'Visiting Coda Arcade'};
  const route=shopRoute(resident,stay,slot);
  if(elapsed>=route.duration)return {id,name:resident.name,scene:{kind:'shop',floor:1},...shopDoor,showroomId:route.showroom.id,facing:'down',walking:false,phase:0,hidden:false,done:true,activity:'',purpose:'Ready to go outside'};

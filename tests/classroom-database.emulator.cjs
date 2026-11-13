@@ -848,3 +848,11 @@ test('final exam rules validate exact bounded private state for both teacher and
  await assertFails(write(student,`${PROFILE_PATH}/state/data/finalExam/index`,1),'Direct partial state writes remain unavailable');
  await assertFails(write(anonymous('student_two'),`${PROFILE_PATH}/state`,state(3,data)));await assertFails(write(google('other_admin'),`${TEACHER_PATH}/state`,state(2,data)));
 });
+
+test('coastal catch IDs and legacy coastal summaries persist under the existing profile lease',async()=>{
+ const student=anonymous('student_one'),data=DTO.blank(),id='coast-emulator-catch';
+ data.fishing={version:1,catches:[{id,fishId:'copper-sprat',size:20,at:stamp(),meter:'4/4',perfect:true,caught:true,rewarded:false,result:{id,fishId:'copper-sprat',rarity:'common',meter:'4/4',timeSignature:'4/4',hits:16,misses:0,extras:0,perfect:true,notes:8,xp:8,caught:true,outcome:'caught'}}],legacyCoast:{'copper-sprat':{count:3,best:28}}};
+ await assertSucceeds(write(student,`${PROFILE_PATH}/state`,state(2,data)));
+ for(const change of [value=>{value.fishing.catches[0].fishId='invented-fish';},value=>{value.fishing.legacyCoast['silver-minnow']={count:1,best:2};},value=>{value.fishing.legacyCoast['copper-sprat'].count=-1;},value=>{value.fishing.legacyCoast['copper-sprat'].best=2001;}]){const invalid=clone(data);change(invalid);await assertFails(write(student,`${PROFILE_PATH}/state`,state(3,invalid)));}
+ await assertFails(write(anonymous('student_two'),`${PROFILE_PATH}/state`,state(3,data)));
+});

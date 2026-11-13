@@ -45,7 +45,8 @@ function polygonBlocks(x,y,points,radius){
 export function blocked(d,x,y,catalog,from){
  if(x<12||y<12||x>COLS*TILE-12||y>ROWS*TILE-12)return true;
  const a=cell(d,Math.floor(x/TILE),Math.floor(y/TILE));
- if(surfaceAt(d,x,y)==='water'&&!a.bridge)return true;
+ const water=surfaceAt(d,x,y)==='water';
+ if(d[Symbol.for('coda.town.waterNavigation')]?(!water||!!a.bridge):water&&!a.bridge)return true;
  if(from&&Math.abs(height(d,x,y)-height(d,from.x,from.y))>14)return true;
  for(const [k,e]of Object.entries(d.edges)){
   if(e.gate&&e.open)continue;

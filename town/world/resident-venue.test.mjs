@@ -97,3 +97,9 @@ test('all twelve reserved slots occupy distinct apartment scenes on the proper s
  }
  assert.deepEqual(STORE_TRAFFIC.spawn,getInterior({kind:'shop'}).spawn);
 });
+
+test('concert visitors walk the aisles, sit in a reserved chair, and leave through the entrance',()=>{
+ const first=venueVisitPose('bach','opera',0,{stay:80,slot:73}),duration=venueVisitDuration('bach','opera',{stay:80,slot:73});assert.equal(first.scene.kind,'concert');assert.equal(first.walking,true);let sitting=false,leaving=false;
+ for(let t=0;t<=duration;t+=.1){const p=venueVisitPose('bach','opera',t,{stay:80,slot:73});assert.equal(p.seatId,first.seatId);assert(p.x>700&&p.x<3400&&p.y>=1300&&p.y<2500);if(p.seated){sitting=true;assert.equal(p.facing,'up');assert.equal(p.walking,false);}if(t>duration-5&&p.walking)leaving=true;}
+ assert(sitting);assert(leaving);assert.equal(venueVisitPose('bach','opera',duration+.1,{stay:80,slot:73}).done,true);
+});
