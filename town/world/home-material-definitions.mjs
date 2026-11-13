@@ -86,6 +86,7 @@ export const HOME_MATERIAL_SUITES=freeze(rows.map(([owner,name,floorName,wallNam
  const contrast=contrastByOwner.get(owner),quietWet=quietWetFloors.get(owner),floor=finish(owner,'floor',floorName,colors,{presentation:{scale:.5,color:contrast.floorColor,opacity:contrast.floorOpacity}}),wallpaper=finish(owner,'wall',wallName,colors,{trimTexture:`${owner}-dado.webp`,presentation:{scale:.65,color:contrast.wallColor,opacity:contrast.wallOpacity},trimPresentation:{scaleX:.65,scaleY:1,color:contrast.wallColor,opacity:.12,...(owner==='showroom-victorian-parlor'?{style:'complete-scroll',fitHeight:true,insetTop:4,insetBottom:4}:{})}});
  return {
   owner,id:`home-suite-${owner}`,name,floor,wallpaper,
+  ...(owner==='showroom-victorian-parlor'?{decorativeRugTexture:'victorian-bath-rug.png'}:{}),
   bedroomFloor:finish(owner,'carpet',name+' quiet woven carpet',surfaceColors(contrast.carpet),{texture:null,surfaceStyle:'carpet',presentation:{scale:.5}}),
   kitchenFloor:finish(owner,'kitchen-floor',name+' '+contrast.kitchenStyle+' kitchen floor',surfaceColors(contrast.kitchen),{texture:null,surfaceStyle:contrast.kitchenStyle,presentation:{scale:.5}}),
   wetFloor:quietWet?finish(owner,'wet-floor',quietWet.label,surfaceColors(quietWet.color),{texture:null,surfaceStyle:quietWet.style,presentation:{scale:.5}}):finish(owner,'wet-floor',wetName,colors,{presentation:{scale:.5,color:contrast.bathWall,opacity:.58}}),

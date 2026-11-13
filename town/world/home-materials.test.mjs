@@ -82,11 +82,17 @@ test('Botanical and Midcentury bathrooms replace the busy mirrored wet repeat wi
  }
 });
 
+function canvasDecodeBytes(bytes){
+ if(!bytes.subarray(0,8).equals(Buffer.from([137,80,78,71,13,10,26,10])))return bytes;
+ // The node test decoder rejects PNG's optional C2PA chunk. Decode the exact
+ // original IDAT pixels without that chunk in memory; keep the shipped file.
+ const chunks=[bytes.subarray(0,8)];for(let at=8;at<bytes.length;){const end=at+bytes.readUInt32BE(at)+12;if(bytes.toString('ascii',at+4,at+8)!=='caBX')chunks.push(bytes.subarray(at,end));at=end;}return Buffer.concat(chunks);
+}
 function pixelMaterialRenderer(textures=new Map()){
  const {createCanvas,loadImage}=createRequire(import.meta.url)('@napi-rs/canvas'),base=new URL('./home-materials.mjs',import.meta.url);
- const source=readFileSync(base,'utf8').replace(/^export \{[^\n]*\n/m,'').replaceAll('export ','').replaceAll('import.meta.url',JSON.stringify(base.href))+'\n({warmHomeMaterials,drawHomeMaterialWallpaper,drawHomeMaterialFloor})';
- const renderer=runInNewContext(source,{URL,document:{createElement:()=>createCanvas(1,1)},fetch:async url=>({ok:true,blob:async()=>textures.get(new URL(url).pathname.split('/').at(-1))||loadImage(readFileSync(new URL(url)))}),createImageBitmap:async image=>image});
- return {...renderer,createCanvas};
+ const source=readFileSync(base,'utf8').replace(/^export \{[^\n]*\n/m,'').replaceAll('export ','').replaceAll('import.meta.url',JSON.stringify(base.href))+'\n({warmHomeMaterials,drawHomeMaterialWallpaper,drawHomeMaterialFloor,drawHomeMaterialRug,getHomeMaterialCacheStats})',operations={fetches:0,decodes:0,canvases:0};
+ const renderer=runInNewContext(source,{URL,document:{createElement(){operations.canvases++;return createCanvas(1,1);}},fetch:async url=>{operations.fetches++;return {ok:true,blob:async()=>textures.get(new URL(url).pathname.split('/').at(-1))||loadImage(canvasDecodeBytes(readFileSync(new URL(url))))};},createImageBitmap:async image=>{operations.decodes++;return image;}});
+ return {...renderer,createCanvas,operations};
 }
 const materialPixels=(canvas,r)=>canvas.getContext('2d').getImageData(r.x,r.y,r.w,r.h).data;
 const materialHasColor=(pixels,rgb)=>{for(let i=0;i<pixels.length;i+=4)if(rgb.every((value,k)=>Math.abs(pixels[i+k]-value)<=2))return true;return false;};
@@ -140,4 +146,21 @@ test('floor material, clipping and glaze use visual floor bounds without changin
  for(const point of [{x:7,y:20},{x:99,y:20},{x:20,y:10},{x:20,y:81}])assert.equal(materialPixels(canvas,{...point,w:1,h:1})[3],0,'Painting remains clipped to the visual floor boundary');
  assert.deepEqual(room,before,'Painting never moves the logical room or its floor region');
  const legacy=renderer.createCanvas(120,100),lc=legacy.getContext('2d');renderer.drawHomeMaterialFloor(lc,{...room,floorBounds:undefined});assert.equal(materialPixels(legacy,{x:10,y:13,w:1,h:1})[3],0);assert.equal(materialPixels(legacy,{x:40,y:40,w:1,h:1})[3],255,'Other room floors still use their original bounds');
+});
+
+test('Victorian bathroom rug draws detailed cropped native art in its exact rectangle and reuses the decoded bitmap',async()=>{
+ const renderer=pixelMaterialRenderer(),suite=getHomeMaterialSuite('showroom-victorian-parlor'),assets=suite.assets,rug={x:12,y:11,w:96,h:56,texture:suite.decorativeRugTexture,sourceRect:{x:104,y:110,w:1436,h:738}},before=structuredClone(rug),canvas=renderer.createCanvas(120,80),c=canvas.getContext('2d');
+ assert.equal(rug.texture,'victorian-bath-rug.png');assert.equal(assets.length,4,'The optional rug does not alter the four authored material assets');
+ assert.equal(renderer.drawHomeMaterialRug(c,{x:12,y:11,w:96,h:56}),false);assert.equal(renderer.drawHomeMaterialRug(c,rug),false,'Unready artwork reports fallback instead of drawing a substitute');
+ await renderer.warmHomeMaterials(suite);assert.equal(renderer.getHomeMaterialCacheStats().ready,5);assert.equal(renderer.operations.fetches,5);assert.equal(renderer.operations.decodes,5);assert.equal(renderer.operations.canvases,0,'Warming native rugs does not allocate procedural decoder canvases');
+ const allocations={...renderer.operations};await renderer.warmHomeMaterials(suite);assert.deepEqual(renderer.operations,allocations,'Re-entering the suite reuses every decoded material and rug');assert.equal(suite.assets,assets);
+ c.imageSmoothingEnabled=true;assert.equal(renderer.drawHomeMaterialRug(c,rug),true);assert.equal(c.imageSmoothingEnabled,true,'Nearest-pixel rug drawing restores the surrounding context');
+ const pixels=materialPixels(canvas,{x:0,y:0,w:120,h:80}),colors=new Set();let left=120,right=0,top=80,bottom=0,opaque=0;
+ for(let y=0;y<80;y++)for(let x=0;x<120;x++){
+  const i=(y*120+x)*4,alpha=pixels[i+3];if(x<rug.x||x>=rug.x+rug.w||y<rug.y||y>=rug.y+rug.h){assert.equal(alpha,0,'The native asset adds no painted pixels or extra shadow outside the existing rug rectangle');continue;}
+  if(alpha>=240){opaque++;colors.add([pixels[i],pixels[i+1],pixels[i+2]].join(','));left=Math.min(left,x);right=Math.max(right,x);top=Math.min(top,y);bottom=Math.max(bottom,y);}
+ }
+ assert(opaque>2000&&colors.size>150,'The 96×56 mat retains substantial native weaving, fringe and ornamental color detail');
+ assert(right-left+1>=90&&bottom-top+1>=50,'The source crop fills the intended mat instead of shrinking transparent source margins into it');
+ assert.deepEqual(rug,before,'Native art does not alter rug geometry or source metadata');assert.deepEqual(renderer.operations,allocations,'Painting allocates no new image decoder or texture request');
 });

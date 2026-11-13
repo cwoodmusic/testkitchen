@@ -34,7 +34,7 @@ test('upper showrooms and all residential apartments keep their existing kitchen
 
 test('Victorian bath gets one small plum rectangular rug inside its open floor, clear of doors and fixtures',()=>{
  const scene=showroom('victorian-parlor'),bath=scene.rooms.find(r=>r.functionalRole==='bathroom');
- assert.equal(scene.rugs.length,1);const rug=scene.rugs[0];assert.deepEqual(rug,{x:436,y:194,w:96,h:56,color:scene.showroom.rug});assert.equal(rug.color,'#744452');
+ assert.equal(scene.rugs.length,1);const rug=scene.rugs[0];assert.deepEqual(rug,{x:436,y:194,w:96,h:56,color:scene.showroom.rug,texture:'victorian-bath-rug.png',sourceRect:{x:104,y:110,w:1436,h:738}});assert.equal(rug.color,'#744452');assert.equal(scene.homeMaterialSuite.decorativeRugTexture,rug.texture);
  assert(rug.w>rug.h&&rug.w*rug.h<bath.w*bath.h*.15);
  assert(rug.x>bath.x&&rug.y>bath.y&&rug.x+rug.w<bath.x+bath.w&&rug.y+rug.h<bath.y+bath.h);
  for(const solid of scene.solids)assert(!(rug.x<solid.x+solid.w&&rug.x+rug.w>solid.x&&rug.y<solid.y+solid.h&&rug.y+rug.h>solid.y),'Bath rug stays in unobstructed floor');

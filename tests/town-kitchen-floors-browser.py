@@ -35,7 +35,7 @@ def close_values(a,b,path='geometry'):
 CAPTURE_JS = r'''
 async()=>{
    const app=new URL(document.querySelector('script[type="module"]').src),a=await(await fetch(app)).text(),urbanURL=new URL(a.match(/from\s+['"]([^'"]*world\/urban\.mjs[^'"]*)['"]/)[1],app),u=await(await fetch(urbanURL)).text(),interiorsURL=new URL(u.match(/from\s+['"]([^'"]*urban-interiors\.mjs[^'"]*)['"]/)[1],urbanURL),source=await(await fetch(interiorsURL)).text(),dep=name=>new URL(source.match(new RegExp("from\\s+['\"]([^'\"]*"+name+"\\.mjs[^'\"]*)['\"]"))[1],interiorsURL);
-   const interiors=await import(interiorsURL),{preparePlacedFacingArt}=await import(dep('furniture-art-access')),{warmHomeMaterials,drawHomeMaterialFloor}=await import(dep('home-materials')),{warmInteriorPortalArt}=await import(dep('interior-portal-art')),{warmInteriorWindows}=await import(dep('interior-window-art'));
+   const interiors=await import(interiorsURL),{preparePlacedFacingArt}=await import(dep('furniture-art-access')),{warmHomeMaterials,drawHomeMaterialFloor,drawHomeMaterialRug}=await import(dep('home-materials')),{warmInteriorPortalArt}=await import(dep('interior-portal-art')),{warmInteriorWindows}=await import(dep('interior-window-art'));
    const scene=townBuilder.urban.scene,model=interiors.getInterior(scene);await Promise.all([preparePlacedFacingArt({objects:[...model.items,...(model.doors||[])]},townBuilder.catalog),warmHomeMaterials(model.homeMaterialSuite),warmInteriorPortalArt(),warmInteriorWindows(model,townBuilder.catalog)]);await document.fonts.ready;interiors.clearInteriorRenderCache();
    const canvas=document.createElement('canvas');canvas.width=model.width;canvas.height=model.height;const c=canvas.getContext('2d');c.imageSmoothingEnabled=false;interiors.renderInterior(c,scene,{catalog:townBuilder.catalog,actors:[],time:0});
    const out=document.createElement('canvas');out.width=model.width*2;out.height=model.height*2;out.getContext('2d').imageSmoothingEnabled=false;out.getContext('2d').drawImage(canvas,0,0,out.width,out.height);
@@ -48,7 +48,14 @@ async()=>{
     const roomGeometry=m.rooms.map(r=>({id:r.id||null,role:r.functionalRole||null,x:r.x,y:r.y,w:r.w,h:r.h,point:r.point||null}));
     const old=window.__savedKitchenLayouts?.rooms['showroom-'+d.id];if(old)createRoomLayoutModel({themeId:'showroom-'+d.id,scene:interiors.getInteriorBase({kind:'showroom',showroomId:d.id,floor:1}),catalog:townBuilder.catalog,record:old});
     records['showroom-'+d.id]=createRoomLayoutModel({themeId:'showroom-'+d.id,scene:m,catalog:townBuilder.catalog}).record();
-    rooms.push({id:d.id,column:d.column,width:m.width,height:m.height,kitchen:{x:k.x,y:k.y,w:k.w,h:k.h,floorBounds:k.floorBounds||null,floorArea:k.floorArea||null},paintedBounds:{x:x0,y:y0,w:x1-x0+1,h:y1-y0+1},fixtures,furniture,roomGeometry,rugs:m.rugs,trimPresentation:m.homeMaterialSuite.wallpaper.trimPresentation,savedLayoutAccepted:!!old,walls:m.walls,privacyDoors:m.privacyDoors,spawn:m.spawn,portalExit:{threshold:m.portalExit.threshold,enterNormal:m.portalExit.enterNormal}});
+    let rugProof=null;
+    if(d.id==='victorian-parlor'){
+     const mat=m.rugs.find(r=>r.x===436&&r.y===194),probe=document.createElement('canvas');probe.width=128;probe.height=88;const rc=probe.getContext('2d');rc.translate(16-mat.x,16-mat.y);
+     const ready=typeof drawHomeMaterialRug==='function'&&drawHomeMaterialRug(rc,mat),data=rc.getImageData(0,0,128,88).data,colors=new Set();let count=0,outside=0;
+     for(let y=0;y<88;y++)for(let x=0;x<128;x++){const at=(y*128+x)*4;if(!data[at+3])continue;count++;colors.add((data[at]<<16)|(data[at+1]<<8)|data[at+2]);if(x<16||x>=112||y<16||y>=72)outside++;}
+     rugProof={ready,colors:colors.size,pixels:count,outsidePixels:outside,texture:mat.texture||null};
+    }
+    rooms.push({id:d.id,column:d.column,width:m.width,height:m.height,kitchen:{x:k.x,y:k.y,w:k.w,h:k.h,floorBounds:k.floorBounds||null,floorArea:k.floorArea||null},paintedBounds:{x:x0,y:y0,w:x1-x0+1,h:y1-y0+1},fixtures,furniture,roomGeometry,rugs:m.rugs,rugProof,trimPresentation:m.homeMaterialSuite.wallpaper.trimPresentation,savedLayoutAccepted:!!old,walls:m.walls,privacyDoors:m.privacyDoors,spawn:m.spawn,portalExit:{threshold:m.portalExit.threshold,enterNormal:m.portalExit.enterNormal}});
    }
    return {image:out.toDataURL('image/png'),width:model.width,height:model.height,name:model.title,items:model.items.length,scene,rooms,savedLayouts:{format:'coda-room-layouts',version:1,owner:'builder',rooms:records}};
   }
@@ -99,6 +106,8 @@ try:
     trim=room['trimPresentation'];assert trim['style']=='complete-scroll' and trim['insetTop']==4 and trim['insetBottom']==4
     assert 22-trim['insetTop']-trim['insetBottom']==14
     assert any(all(rug.get(k)==v for k,v in {'x':436,'y':194,'w':96,'h':56}.items()) for rug in room['rugs'])
+    proof=room['rugProof'];assert proof['ready'] and proof['texture'],'The detailed native bath-rug bitmap must be ready, without a vector fallback'
+    assert proof['colors']>=150 and proof['pixels']>2000 and proof['outsidePixels']==0,proof
    else:assert not room['rugs'],room['id']
   if pack:assert page.evaluate('localStorage.getItem("codaRoomLayoutsV1:builder")')==raw,'Saved layouts were rewritten'
   assert page.evaluate('townBuilder.project')==fixture
@@ -106,6 +115,6 @@ try:
   assert not errors,errors
   assert not failed,failed
   (OUT/'kitchens-after.json').write_text(json.dumps(result,indent=2))
-  print(json.dumps({'rooms':8,'nativeFloorPixels':True,'mirrorsAndMidcenturyException':True,'fixturesCovered':True,'furnitureAndCollidersUnchanged':bool(baseline),'savedLayoutsAccepted':8 if pack else 0,'savedLayoutsUnchanged':bool(pack),'completeScrollArtHeight':14,'bathRug':True,'mapUnchanged':True,'errors':errors,'failedResponses':failed,'after':str(OUT/'victorian-after.png')}),flush=True)
+  print(json.dumps({'rooms':8,'nativeFloorPixels':True,'mirrorsAndMidcenturyException':True,'fixturesCovered':True,'furnitureAndCollidersUnchanged':bool(baseline),'savedLayoutsAccepted':8 if pack else 0,'savedLayoutsUnchanged':bool(pack),'completeScrollArtHeight':14,'nativeBathRug':True,'rugDetailColors':proof['colors'],'rugOutsidePixels':proof['outsidePixels'],'mapUnchanged':True,'errors':errors,'failedResponses':failed,'after':str(OUT/'victorian-after.png')}),flush=True)
   browser.close()
 finally:server.shutdown()

@@ -1,6 +1,6 @@
 import {getConcertHall} from './concert-hall.mjs?v=town-flight-1';
 import {residents} from './resident-profiles.mjs?v=opera-parallax-1';
-import {SHOWROOMS,STORE_TRAFFIC,STORE_VERTICAL_CORE} from './showroom-layout.mjs?v=town-victorian-1';
+import {SHOWROOMS,STORE_TRAFFIC,STORE_VERTICAL_CORE} from './showroom-layout.mjs?v=town-victorian-2';
 import {interiorActorScale} from './interior-scale.mjs?v=opera-parallax-1';
 export const SHOP_VISIT_CAPACITY=SHOWROOMS.length;
 

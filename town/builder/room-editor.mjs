@@ -1,6 +1,6 @@
 import {createRoomLayoutModel} from '../world/room-layout-model.mjs?v=town-store-halls-1';
 import {createRoomLayoutStorage} from '../world/room-layout-storage.mjs?v=town-store-halls-1';
-import {SHOWROOMS} from '../world/showroom-layout.mjs?v=town-victorian-1';
+import {SHOWROOMS} from '../world/showroom-layout.mjs?v=town-victorian-2';
 import {residents} from '../world/resident-profiles.mjs?v=opera-parallax-1';
 import {furnitureFacingPlacement,furnitureFacingBounds,cardinalFacing} from '../world/furniture-facing.mjs?v=opera-parallax-1';
 import {furnitureFacingDrawSource,drawFurnitureFacingSource} from '../world/furniture-facing-source.mjs?v=town-flight-1';

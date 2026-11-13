@@ -1,4 +1,4 @@
-export {HOME_MATERIAL_SUITES,getHomeMaterialSuite,applyHomeMaterialSuite,fitCompactKitchenFloor} from './home-material-definitions.mjs?v=town-victorian-1';
+export {HOME_MATERIAL_SUITES,getHomeMaterialSuite,applyHomeMaterialSuite,fitCompactKitchenFloor} from './home-material-definitions.mjs?v=town-victorian-2';
 
 // Seam-safe authored tiles are decoded once into ImageBitmap. The completed
 // room background owns all subsequent material painting, including its grain.
@@ -11,7 +11,7 @@ function request(file){
  state.promise=fetch(url).then(response=>{if(!response.ok)throw Error('Material '+response.status);return response.blob();}).then(blob=>createImageBitmap(blob)).then(image=>{state.image=image;return image;}).catch(error=>{state.error=error;return null;});
  return state;
 }
-export function warmHomeMaterials(suite){if(!suite)return Promise.resolve();return Promise.all(suite.assets.map(file=>request(file)?.promise)).then(()=>{});}
+export function warmHomeMaterials(suite){if(!suite)return Promise.resolve();return Promise.all([...suite.assets,suite.decorativeRugTexture].filter(Boolean).map(file=>request(file)?.promise)).then(()=>{});}
 export const getHomeMaterialCacheStats=()=>({textures:images.size,ready:[...images.values()].filter(state=>state.image).length,pixels:[...images.values()].reduce((n,state)=>n+(state.image?state.image.width*state.image.height:0),0)});
 const px=(c,x,y,w,h,color)=>{c.fillStyle=color;c.fillRect(Math.round(x),Math.round(y),Math.round(w),Math.round(h));};
 const surfaceTiles=new Map();
@@ -78,6 +78,11 @@ function field(c,finish,r,file=finish.texture){
  if(pattern){const fit=trim&&(style?.fitHeight||style?.style==='complete-scroll'),sx=style?.scaleX??style?.scale??1,sy=fit?r.h/image.height:style?.scaleY??style?.scale??1;pattern.setTransform?.({a:sx,b:0,c:0,d:sy,e:0,f:fit?r.y:0});}
  c.fillStyle=pattern||finish.colors[0];c.fillRect(r.x,r.y,r.w,r.h);
  if(style?.color&&style.opacity>0){c.save();c.globalAlpha*=style.opacity;c.fillStyle=style.color;c.fillRect(r.x,r.y,r.w,r.h);c.restore();}
+}
+export function drawHomeMaterialRug(c,r){
+ if(!r.texture)return false;const image=request(r.texture)?.image;if(!image)return false;
+ const source=r.sourceRect||{x:0,y:0,w:image.width,h:image.height};
+ c.save();c.imageSmoothingEnabled=false;c.drawImage(image,source.x,source.y,source.w,source.h,r.x,r.y,r.w,r.h);c.restore();return true;
 }
 export function drawHomeMaterialFloor(c,room){
  const finish=room.floorFinish||room.floor;if(!finish?.homeMaterial)return false;if(room.floorOverlay===false)return true;
