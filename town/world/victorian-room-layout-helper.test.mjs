@@ -32,5 +32,6 @@ test('Victorian promotion rejects incomplete or unrelated rooms before mutating 
  for(const change of [scene=>{scene.id='showroom-art-deco-lounge';},scene=>{scene.items.pop();},scene=>{scene.items.push({...scene.items[0],id:'unexpected-extra'});}]){
   const scene=seed();change(scene);const before=JSON.stringify(scene),assets=new Map(scene.items.map(item=>[item,catalog.get(item.asset)]));assert.equal(applyVictorianRoomLayout(scene,assets),false);assert.equal(JSON.stringify(scene),before);assert.equal(scene.roomLayoutBaseItems,undefined);
  }
- const other=getInteriorBase({kind:'showroom',showroomId:'art-deco-lounge'});assert.equal(other.roomLayoutBaseItems,undefined,'Other showroom themes retain their existing defaults');
+ const other=getInteriorBase({kind:'showroom',showroomId:'art-deco-lounge'}),before=JSON.stringify(other),stock=other.roomLayoutBaseItems,sources=other.roomLayoutLegacySources,assets=new Map(other.items.map(item=>[item,catalog.get(item.asset)]));
+ assert.equal(applyVictorianRoomLayout(other,assets),false);assert.equal(JSON.stringify(other),before,'The Victorian helper never modifies a different theme’s refreshed default');assert.equal(other.roomLayoutBaseItems,stock);assert.equal(other.roomLayoutLegacySources,sources);assert.equal(sources[0].roomLayoutBaseItems,undefined,'The original Art Deco source also retains its own stock contract');
 });

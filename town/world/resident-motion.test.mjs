@@ -5,6 +5,14 @@ import {venueVisitPose,venueVisitDuration} from './resident-venue.mjs';
 import {SHOWROOMS,STORE_TRAFFIC,STORE_VERTICAL_CORE} from './showroom-layout.mjs';
 import {getInteriorBase} from './urban-interiors.mjs';
 import {getShowroomNavigation} from './showroom-navigation.mjs';
+import {readFileSync} from 'node:fs';
+import {runInNewContext} from 'node:vm';
+import {createRoomLayoutModel} from './room-layout-model.mjs';
+import {createRoomLayoutResolver} from './room-layout-runtime.mjs';
+import {createRoomLayoutStorage} from './room-layout-storage.mjs';
+import {APARTMENT_COLLECTION_ASSETS} from './apartment-collection-definitions.mjs';
+import {FAMILY_FURNITURE_ASSETS} from './family-furniture-definitions.mjs';
+import {interiorActorScale} from './interior-scale.mjs';
 
 const TAU=Math.PI*2,DT=.01;
 const near=(actual,expected,message)=>assert.ok(Math.abs(actual-expected)<1e-7,`${message}: ${actual} != ${expected}`);
@@ -65,6 +73,27 @@ test('home journeys reach the active south arrival before leaving and begin ther
   assert.equal(afterEntry.scene.kind,'apartment');assert.equal(afterEntry.walking,true);assert(Math.hypot(afterEntry.x-arrival.x,afterEntry.y-arrival.y)<.001,resident.id+' returns at the active arrival');
   assert.deepEqual(interiorJourneyPose(resident.id,'home',journeyDuration(resident.id,'home')),home);assert.equal(JSON.stringify(model),before,'Journeys preserve the furnished source model');
  }
+});
+
+test('saved compact home journeys switch to the fresh wide model without retaining the old route or rewriting the save',()=>{
+ const resident=residents.find(r=>r.id==='bach'),latest=getInteriorBase({kind:'apartment',resident:resident.id}),legacy=latest.roomLayoutLegacySources[0],catalog=new Map([...APARTMENT_COLLECTION_ASSETS,...FAMILY_FURNITURE_ASSETS].map(a=>[a.id,a]));
+ assert.equal(legacy.width,1088);assert.equal(legacy.height,1120);assert.equal(latest.width,2304);assert.equal(latest.height,1184);
+ const originalRecord=createRoomLayoutModel({themeId:resident.id,scene:legacy,catalog}).record(),memory=new Map(),events=new EventTarget();let writes=0;
+ const storage={getItem:key=>memory.get(key)??null,setItem(key,value){writes++;memory.set(key,value);}},store=createRoomLayoutStorage({storage,eventTarget:events}),resolver=createRoomLayoutResolver({storage,events});
+ assert.equal(store.save(resident.id,originalRecord).ok,true);const raw=store.raw;writes=0;
+ const url=new URL('./resident-journey.mjs',import.meta.url),source=readFileSync(url,'utf8').replace(/^import .*;\r?\n/gm,'').replace(/^export \{.*\} from .*;\r?\n/gm,'').replace(/^export function /gm,'function ')+'\n({residentHomePose,interiorJourneyPose,journeyDuration});';
+ const journey=runInNewContext(source,{residents,interiorActorScale,getInterior:request=>request.kind==='apartment'&&request.resident===resident.id?resolver.resolve(latest,catalog):getInteriorBase(request)},{filename:url.pathname});
+ function inspect(model){
+  const home=journey.residentHomePose(resident.id),actor=model.actors.find(a=>a.id===resident.id),privateSeconds=Math.hypot(model.spawn.x-home.x,model.spawn.y-home.y)/58.5;
+  assert.deepEqual({x:home.x,y:home.y},{x:actor.x,y:actor.y});
+  const atDoor=journey.interiorJourneyPose(resident.id,'out',privateSeconds+.35);assert.equal(atDoor.scene.kind,'apartment');assert.equal(atDoor.walking,false);assert.deepEqual({x:atDoor.x,y:atDoor.y},model.spawn);
+  const returnTime=journey.journeyDuration(resident.id,'home')-privateSeconds,entering=journey.interiorJourneyPose(resident.id,'home',returnTime+1e-6);assert.equal(entering.scene.kind,'apartment');assert(Math.hypot(entering.x-model.spawn.x,entering.y-model.spawn.y)<.001);
+  return {home:{x:home.x,y:home.y},duration:journey.journeyDuration(resident.id,'out')};
+ }
+ const resolved=resolver.resolve(latest,catalog);assert.deepEqual(resolved.rooms,legacy.rooms);assert.deepEqual(resolved.walls,legacy.walls);assert.deepEqual(resolved.privacyDoors,legacy.privacyDoors);assert.deepEqual(resolved.spawn,legacy.spawn);
+ const old=inspect(resolved);assert.deepEqual(old.home,{x:544,y:650});assert.equal(store.raw,raw);assert.equal(writes,0,'Reading or animating the old home does not rewrite its record');
+ assert.equal(store.remove(resident.id).ok,true);assert.equal(resolver.resolve(latest,catalog),latest);const fresh=inspect(latest);assert.deepEqual(fresh.home,{x:1152,y:750});assert.notEqual(fresh.duration,old.duration);
+ assert.equal(store.save(resident.id,originalRecord).ok,true);const restored=inspect(resolver.resolve(latest,catalog));assert.deepEqual(restored,old,'Restoring the same saved compact home restores its own route and actor coordinates');resolver.dispose();
 });
 
 test('all twelve store visits scale showroom legs while preserving both public floors, lift waits and browsing time',()=>{

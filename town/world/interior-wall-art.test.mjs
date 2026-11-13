@@ -8,22 +8,22 @@ const {createCanvas}=createRequire(import.meta.url)('@napi-rs/canvas');
 const overlap=(a,b)=>a.x<b.x+b.w&&a.x+a.w>b.x&&a.y<b.y+b.h&&a.y+a.h>b.y;
 const inside=(r,x,y)=>x>=r.x&&x<r.x+r.w&&y>=r.y&&y<r.y+r.h;
 const descriptors=[...residents.map(r=>({kind:'apartment',resident:r.id})),{kind:'apartment',resident:'player'},...SHOWROOMS.map(r=>({kind:'showroom',showroomId:r.id}))];
-const models=descriptors.map(getInterior);
+const activeModels=descriptors.map(getInterior),preserved=m=>m.roomLayoutLegacySources?.[0]??m,sourceModels=activeModels.map(preserved),legacyModels=activeModels.flatMap(m=>m.roomLayoutLegacySources||[]),models=[...activeModels,...legacyModels];
 const color=(c,x,y)=>[...c.getImageData(x,y,1,1).data];
 
 test('actual reported junctions return only along the adjoining authored wall face',()=>{
  for(const [id,x]of [['cyberpunk',772],['retrofuture',396]]){
-  const m=getInterior({kind:'showroom',showroomId:id}),g=interiorWallNetworkGeometry(m);
+  const m=preserved(getInterior({kind:'showroom',showroomId:id})),g=interiorWallNetworkGeometry(m);
   assert(g.returns.some(r=>r.x===x&&r.y===0&&r.w===16&&r.h===106));
   assert(g.returns.some(r=>r.x===x&&r.y===444&&r.w===16&&r.h===106));
   assert(!g.paint.some(r=>inside(r,x+8,438)),'Do not conceal the real14px circulation strip between separate rooms');
  }
- const robot=interiorWallNetworkGeometry(getInterior({kind:'showroom',showroomId:'robot'}));
+ const robot=interiorWallNetworkGeometry(preserved(getInterior({kind:'showroom',showroomId:'robot'})));
  for(const x of [268,750])assert(robot.returns.some(r=>r.x===x&&r.y===0&&r.w===16&&r.h===106));
 });
 
-test('all31 wall networks preserve every physical model and never invent an unsupported floor bridge',()=>{
- assert.equal(models.length,31);let projected=0;
+test('all31 active and30 preserved wall networks retain physical models without unsupported floor bridges',()=>{
+ assert.equal(activeModels.length,31);assert.equal(legacyModels.length,30);let projected=0;
  for(const m of models){
   const before=JSON.stringify(m),g=interiorWallNetworkGeometry(m);
   for(const r of g.returns){
@@ -46,17 +46,17 @@ test('all31 wall networks preserve every physical model and never invent an unsu
  assert(projected>50,'Exercise the complete home/showroom wall network');
 });
 
-test('every private wallpaper face has a full north cap matching its side-wall thickness',()=>{
- let faces=0;
+test('every current and preserved wallpaper face has a north cap matching its side-wall thickness',()=>{
+ let faces=0,sourceFaces=0;
  for(const m of models){
-  const g=interiorWallNetworkGeometry(m),expected=m.kind==='showroom'?16:m.resident==='player'?20:18;
+  const g=interiorWallNetworkGeometry(m),expected=m.kind==='showroom'?16:m.resident==='player'&&!m.wideRoomLayout?20:18;
   for(const face of g.faces){
-   faces++;const cap=g.northCaps.find(r=>r.x===face.x&&r.y===face.y&&r.w===face.w);assert(cap,`${m.id}: missing north cap above${JSON.stringify(face)}`);
+   faces++;if(sourceModels.includes(m))sourceFaces++;const cap=g.northCaps.find(r=>r.x===face.x&&r.y===face.y&&r.w===face.w);assert(cap,`${m.id}: missing north cap above${JSON.stringify(face)}`);
    assert.equal(cap.h,expected,`${m.id}: horizontal and vertical wall caps share the same width`);
    assert(cap.y>=0&&cap.y+cap.h<=m.height,'North caps cannot disappear above the canvas');
   }
  }
- assert(faces>=130,'Cover every resident, player and showroom wallpaper band');
+ assert(sourceFaces>=130,'Retain coverage of every original resident, player and showroom wallpaper band');assert(faces>=sourceFaces,'Also check every new default wallpaper band');
 });
 
 test('north caps meet side caps without a seam and leave the wallpaper below visible',()=>{
@@ -74,7 +74,7 @@ test('north caps meet side caps without a seam and leave the wallpaper below vis
 });
 
 test('junction pixels are continuous while native wallpaper fields and the source gap stay intact',()=>{
- const m=getInterior({kind:'showroom',showroomId:'retrofuture'}),cv=createCanvas(m.width,m.height),c=cv.getContext('2d');
+ const m=preserved(getInterior({kind:'showroom',showroomId:'retrofuture'})),cv=createCanvas(m.width,m.height),c=cv.getContext('2d');
  c.fillStyle='#102030';c.fillRect(0,0,m.width,m.height);c.fillStyle='#557799';c.fillRect(28,444,368,106);
  c.imageSmoothingEnabled=true;c.fillStyle='#abcdef';
  assert(drawInteriorWallNetwork(c,m));assert.equal(c.imageSmoothingEnabled,true);assert.equal(c.globalAlpha,1);
@@ -87,8 +87,8 @@ test('junction pixels are continuous while native wallpaper fields and the sourc
  cv.width=cv.height=1;
 });
 
-test('Bach kitchen corner continues to the adjoining face bottom without covering wallpaper or the bedroom door',()=>{
- const m=getInterior({kind:'apartment',resident:'bach'}),before=JSON.stringify(m),g=interiorWallNetworkGeometry(m);
+test('the preserved Bach kitchen corner meets the adjoining face without covering wallpaper or the bedroom door',()=>{
+ const m=preserved(getInterior({kind:'apartment',resident:'bach'})),before=JSON.stringify(m),g=interiorWallNetworkGeometry(m);
  const corner=g.returns.find(r=>r.returnDirection==='down'&&r.x===430&&r.y===530&&r.w===18&&r.h===50);
  assert(corner,'The actual reported corner must continue to the kitchen face bottom at580');
  assert.deepEqual(corner.face,{x:36,y:492,w:394,h:88});
@@ -105,7 +105,7 @@ test('Bach kitchen corner continues to the adjoining face bottom without coverin
  cv.width=cv.height=1;
 });
 
-test('all62 actual36px doorway slits remain completely free of cap, trim and shadow pixels',()=>{
+test('all62 current and60 preserved36px doorway slits stay free of cap, trim and shadow pixels',()=>{
  let count=0;
  for(const m of models){
   const cv=createCanvas(m.width,m.height),c=cv.getContext('2d');drawInteriorWallNetwork(c,m);
@@ -115,7 +115,7 @@ test('all62 actual36px doorway slits remain completely free of cap, trim and sha
   }
   cv.width=cv.height=1;
  }
- assert.equal(count,62);
+ assert.equal(count,122);
  const untouched=createCanvas(100,100),c=untouched.getContext('2d');assert.equal(drawInteriorWallNetwork(c,{kind:'shop'}),false);assert.equal(drawInteriorWallNetwork(c,{kind:'hall'}),false);assert.equal(drawInteriorWallNetwork(c,{kind:'concert'}),false);
 });
 
@@ -138,5 +138,5 @@ test('every front corner cap is supported by an exactly adjoining wall band and 
   assert(cap.w===cap.wall.w&&cap.w<=32&&cap.h<=32);
   for(const doorway of g.apertures)assert(!overlap(cap,doorway));
  }}
- const retro=interiorWallNetworkGeometry(getInterior({kind:'showroom',showroomId:'retrofuture'}));assert(!retro.cornerCaps.some(cap=>inside(cap,404,438)),'A real14px circulation gap remains open');
+ const retro=interiorWallNetworkGeometry(preserved(getInterior({kind:'showroom',showroomId:'retrofuture'})));assert(!retro.cornerCaps.some(cap=>inside(cap,404,438)),'The preserved14px circulation gap remains open');
 });

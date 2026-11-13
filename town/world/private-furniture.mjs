@@ -25,7 +25,7 @@ export function furniturePresentationScale(item,scene,asset){
  const actor=typeof scene==='number'?scene:interiorActorScale(scene);if(actor===1)return 1;
  const a=asset||definitions.get(item.asset),role=furnitureSlot(item,a),reference=role==='bath-fixture'&&a?.purpose==='bathtub'?.65:ROLE_SCALE[role]??.50;
  if(a?.variant==='family-room'&&role==='rug'&&typeof scene==='object'){
-  const room=scene.familyFurnitureZones?.living||scene.rooms?.find(r=>r.functionalRole==='living');
+  const room=scene.familyFurnitureZones?.rug||scene.familyFurnitureZones?.living||scene.rooms?.find(r=>r.functionalRole==='living');
   if(room)return Math.min(reference,Math.max(.1,(room.w-24)/a.w),Math.max(.1,(room.h-24)/a.h))*actor/.375;
  }
  return reference*actor/.375;

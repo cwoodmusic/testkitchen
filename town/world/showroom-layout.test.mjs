@@ -20,6 +20,9 @@ const lobby=getInterior({kind:'shop'}),overlaps=(a,b)=>a.x<b.x+b.w&&a.x+a.w>b.x&
 const blocked=(m,p,pad=16*interiorActorScale(m))=>m.solids.some(r=>p.x>=r.x-pad&&p.x<=r.x+r.w+pad&&p.y>=r.y-pad&&p.y<=r.y+r.h+pad);
 function route(model,points,label,{cardinal=true}={}){for(let i=1;i<points.length;i++){const a=points[i-1],b=points[i];if(cardinal)assert(a.x===b.x||a.y===b.y,'A venue route must use cardinal legs');const steps=Math.max(1,Math.ceil(Math.hypot(b.x-a.x,b.y-a.y)/3));for(let n=0;n<=steps;n++)assert(!blocked(model,{x:a.x+(b.x-a.x)*n/steps,y:a.y+(b.y-a.y)*n/steps}),label+' must remain clear');}}
 function feet(item){return item.solid?furnitureFacingBoxes(native.get(item.asset),item):[];}
+const showroomModels=display=>{const current=getInterior({kind:'showroom',showroomId:display.id});return [current,...current.roomLayoutLegacySources||[]];};
+const previousSource=scene=>scene.roomLayoutLegacySources?.[0]||scene;
+function baseCenter(item){const boxes=feet(item),x=Math.min(...boxes.map(b=>b.x)),y=Math.min(...boxes.map(b=>b.y)),right=Math.max(...boxes.map(b=>b.x+b.w)),bottom=Math.max(...boxes.map(b=>b.y+b.h));return {x:(x+right)/2,y:(y+bottom)/2};}
 function navigation(model){
  const queue=[model.spawn],seen=new Set([model.spawn.x+','+model.spawn.y]);assert(!blocked(model,model.spawn));
  for(let i=0;i<queue.length;i++)for(const [dx,dy]of [[8,0],[-8,0],[0,8],[0,-8]]){const x=queue[i].x+dx,y=queue[i].y+dy,k=x+','+y;if(x<0||y<0||x>model.width||y>model.height||seen.has(k)||blocked(model,{x,y}))continue;seen.add(k);queue.push({x,y});}
@@ -55,9 +58,9 @@ test('all eight showroom doors retain real incoming and outgoing NPC journeys to
 
 test('wide units have private bedroom and bathroom doors and physical native-foot routes to every real function',()=>{
  const layouts=new Set();
- for(const d of SHOWROOMS){const m=getInterior({kind:'showroom',showroomId:d.id}),p=d.apartment,nav=navigation(m),promoted=d.id==='victorian-parlor';layouts.add(p.layoutId);
+ for(const d of SHOWROOMS)for(const m of showroomModels(d)){const p=m.showroom.apartment,original=d.apartment,nav=navigation(m),promoted=d.id==='victorian-parlor';layouts.add(original.layoutId);
   const authoredFootprint=d.storeFloor===1?SHOWROOM_UNIT_FOOTPRINT:UPPER_SHOWROOM_UNIT_FOOTPRINT;
-  assert.deepEqual({width:m.width,height:m.height},{width:authoredFootprint.width,height:authoredFootprint.height+64});assert.equal(m.roomLayoutSignatureFrame.height,authoredFootprint.height);assert.equal(m.floor,d.storeFloor);assert.equal(m.apartmentLayout,p.layoutId);assert.equal(m.collectionOwner,'showroom-'+d.id);assert.deepEqual(m.spawn,{...p.spawn,y:p.spawn.y+64});
+  assert.deepEqual({width:m.width,height:m.height},{width:authoredFootprint.width,height:authoredFootprint.height+64});assert.equal(previousSource(m).roomLayoutSignatureFrame.height,authoredFootprint.height);assert.equal(m.floor,d.storeFloor);assert.equal(m.apartmentLayout,original.layoutId);assert.equal(m.collectionOwner,'showroom-'+d.id);assert.deepEqual(m.spawn,{...original.spawn,y:original.spawn.y+64});
   for(const role of ['bedroom','bathroom','kitchen','living','dining']){const a=p.areas.find(a=>a.functionalRole===role);assert(a);
    if(promoted){const item=m.items.find(i=>role==='dining'?i.designRole==='family-dining-table':i.slot===({bedroom:'bed',bathroom:'vanity',kitchen:'sink',living:'sofa'}[role])),approach=furnitureApproach(nav,item);assert(approach.point&&approach.distance<=32,d.name+' cannot approach its approved '+role+' furniture');}
    else{assert(nav.reaches(a.point),d.name+' cannot reach '+role);assert(a.point.x>=a.x&&a.point.x<=a.x+a.w&&a.point.y>=a.y&&a.point.y<=a.y+a.h);}
@@ -66,23 +69,24 @@ test('wide units have private bedroom and bathroom doors and physical native-foo
   const resolved=getShowroomNavigation(m);assert(resolved);assert.deepEqual(resolved.visitRoute[0],m.spawn);assert(Math.hypot(resolved.visitRoute.at(-1).x-p.browse.x,resolved.visitRoute.at(-1).y-p.browse.y)<=14);assert(nav.reaches(resolved.visitRoute.at(-1)));route(m,resolved.visitRoute,d.name+' active browsing',{cardinal:false});route(m,resolved.exitRoute,d.name+' active returning',{cardinal:false});
   if(!promoted)assert(nav.reaches(p.browse));
   assert.equal(m.privacyDoors.length,2);for(const door of m.privacyDoors){assert.equal(door.length,PRIVATE_DOOR_CLEAR_WIDTH);assert(m.rooms.some(r=>r.id===door.roomId));const vertical=door.axis==='vertical',mid={x:door.x+(vertical?0:door.length/2),y:door.y+(vertical?door.length/2:0)};assert(nav.reaches(mid),d.name+' door');for(const normal of [-32,32])assert(nav.reaches({x:mid.x+(vertical?normal:0),y:mid.y+(vertical?0:normal)}),d.name+' must pass both sides of '+door.id);assert(blocked(m,{x:door.x+(vertical?0:door.length+8),y:door.y+(vertical?door.length+8:0)},0));}
-  assert.deepEqual(m.portalExit.threshold,{...p.portalExit.threshold,y:p.portalExit.threshold.y+64});assert.deepEqual(m.portalExit.door.threshold,m.portalExit.threshold);assert.deepEqual(m.portalExit.enterNormal,p.portalExit.enterNormal);assert.equal(m.spawn.x,m.portalExit.threshold.x);assert.equal(m.portalExit.threshold.y-m.spawn.y,56);assert.deepEqual(m.portalExit.enterNormal,{x:0,y:-1});assert.equal(getDoorVisualGeometry(m.portalExit.door).kind,'front');route(m,[m.spawn,{x:m.spawn.x,y:m.portalExit.threshold.y-20}],d.name+' south foyer');
+  assert.deepEqual(m.portalExit.threshold,{...original.portalExit.threshold,y:original.portalExit.threshold.y+64});assert.deepEqual(m.portalExit.door.threshold,m.portalExit.threshold);assert.deepEqual(m.portalExit.enterNormal,original.portalExit.enterNormal);assert.equal(m.spawn.x,m.portalExit.threshold.x);assert.equal(m.portalExit.threshold.y-m.spawn.y,56);assert.deepEqual(m.portalExit.enterNormal,{x:0,y:-1});assert.equal(getDoorVisualGeometry(m.portalExit.door).kind,'front');route(m,[m.spawn,{x:m.spawn.x,y:m.portalExit.threshold.y-20}],d.name+' south foyer');
  }
  assert.equal(layouts.size,12);assert.equal(new Set([...layouts].map(id=>id.replace(/-(original|mirrored)$/,''))).size,6);
 });
 
 test('each owner retains its unique original collection while expanded seating can repeat matching pieces',()=>{
- const all=new Set();
- for(const d of SHOWROOMS){const m=getInterior({kind:'showroom',showroomId:d.id}),nav=navigation(m),owner='showroom-'+d.id;
-  const original=m.items.filter(i=>!i.roomExpansion),promoted=d.id==='victorian-parlor';assert.equal(original.length,promoted?24:d.storeFloor===1?25:d.row?29:28);assert.equal(new Set(original.map(i=>i.asset)).size,original.length);
+ const all=new Map();
+ for(const d of SHOWROOMS)for(const m of showroomModels(d)){const nav=navigation(m),owner='showroom-'+d.id,refreshed=Boolean(m.wideRoomLayout);
+  const original=(refreshed?m.roomLayoutBaseItems:m.items).filter(i=>!i.roomExpansion),promoted=d.id==='victorian-parlor';assert.equal(original.length,promoted?24:d.storeFloor===1?25:d.row?29:28);assert.equal(new Set(original.map(i=>i.asset)).size,original.length);
+  if(refreshed){const active=new Set(m.items.map(i=>i.id)),removed=m.roomLayoutBaseItems.filter(i=>!active.has(i.id));assert.equal(removed.filter(i=>i.roomExpansion&&i.slot==='dining-chair').length,3);assert(removed.every(i=>i.roomExpansion&&i.slot==='dining-chair'||!i.roomExpansion&&i.slot==='coffee-table'),'Only the three spare diners and optional small coffee table are decluttered');assert.deepEqual(m.roomLayoutBaseItems.map(i=>[i.id,i.asset]).sort(),previousSource(m).items.map(i=>[i.id,i.asset]).sort(),'Every original ownership ID and artwork remains in canonical stock');}
   if(promoted){assert.equal(m.items.filter(i=>i.roomExpansion).length,10);assert.equal(m.roomLayoutBaseItems.length,38);assert.deepEqual(m.items.map(i=>i.id),approvedVictorian.placements.map(i=>i.id));assert.deepEqual(m.roomLayoutBaseItems.filter(i=>!m.items.some(active=>active.id===i.id)).map(i=>i.id).sort(),approvedVictorian.removed.slice().sort());}
   for(const item of m.items){assert.equal(item.collectionOwner,owner);assert(item.visualSignature.includes(owner));}
   for(const asset of new Set(m.items.map(i=>i.asset)))if(m.items.filter(i=>i.asset===asset).length>1)assert(['sofa','dining-chair','reading-chair','plant'].includes(native.get(asset)?.slot),d.name+' repeats an unintended fixture');
-  for(const asset of new Set(m.items.map(i=>i.asset))){assert(!all.has(asset),'An apartment must not reuse another collection’s artwork');all.add(asset);}
+  for(const asset of new Set(m.items.map(i=>i.asset))){assert(!all.has(asset)||all.get(asset)===owner,'An apartment must not reuse another collection’s artwork');all.set(asset,owner);}
   for(const role of ['sink','counter','stove','fridge','pantry','vanity','toilet','bath-fixture','bathroom-mirror'])assert.equal(m.items.filter(i=>i.fixtureRole===role).length,1,d.name+' needs one '+role);
-  for(const role of ['bed','sofa','coffee-table','dining-table','dining-chair','nightstand','wardrobe','playful-accent','music-rug','wall-art','lava-lamp','arcade'])assert(m.items.some(i=>i.furnitureRole===role||promoted&&i.slot===role),d.name+' lacks '+role);
+  for(const role of ['bed','sofa','coffee-table','dining-table','dining-chair','nightstand','wardrobe','playful-accent','music-rug','wall-art','lava-lamp','arcade'])assert(m.items.some(i=>i.furnitureRole===role||(promoted||refreshed)&&i.slot===role),d.name+' lacks '+role);
   const vanity=m.items.find(i=>i.slot==='vanity'),mirror=m.items.find(i=>i.slot==='mirror');
-  if(d.id==='midcentury-studio')for(const item of [vanity,mirror]){const pose=approvedMidcentury.placements.find(p=>p.id===item.id);assert.equal(item.x,pose.x);assert.equal(item.y,pose.y);}
+  if(d.id==='midcentury-studio'&&!refreshed)for(const item of [vanity,mirror]){const pose=approvedMidcentury.placements.find(p=>p.id===item.id);assert.equal(item.x,pose.x);assert.equal(item.y,pose.y);}
   else{assert(Math.abs(mirror.x-vanity.x)<1e-8);assert(Math.abs(mirror.y-(vanity.y-vanity.h-6))<1e-8,'The mirror sits directly above its actual basin');}
   assert(mirror.wallMounted&&!mirror.solid);
   for(const item of m.items.filter(i=>i.fixtureRole&&i.solid)){const b=feet(item)[0];assert(nav.points.some(p=>Math.hypot(p.x-b.x-b.w/2,p.y-b.y-b.h)<=75),d.name+' cannot approach '+item.fixtureRole);}
@@ -102,7 +106,7 @@ test('collection stock remains buyable when an approved default removes display 
 
 test('upper homes protect broad circulation and group conversation around a real listening focus',()=>{
  for(const d of getStoreFloorShowrooms(2)){
-  const m=getInterior({kind:'showroom',showroomId:d.id}),design=m.interiorDesign,focus=m.items.find(i=>i.slot==='record-console');
+  const m=previousSource(getInterior({kind:'showroom',showroomId:d.id})),design=m.interiorDesign,focus=m.items.find(i=>i.slot==='record-console');
   const lava=m.items.find(i=>i.slot==='lava-lamp'),lampSupport=m.items.find(i=>i.asset===lava.supportedBy);
   assert.equal(lampSupport.slot,d.row?'desk':'dining-table','The lava lamp uses a writing/work surface, leaving the record platter free');assert.equal(lampSupport.rotation||0,0);assert(!lava.solid);assert.equal(lava.depth,furnitureFacingDepth(native.get(lampSupport.asset),lampSupport)+.25);
   assert(design.groups.some(g=>g.role==='conversation'&&g.slots.includes('reading-chair')&&g.slots.includes('record-console')));
@@ -123,13 +127,27 @@ test('upper homes protect broad circulation and group conversation around a real
  }
 });
 
+test('refreshed showroom defaults keep the mirrored reference grouping with actual inward-facing native seats',()=>{
+ let count=0;
+ for(const d of SHOWROOMS){const m=getInterior({kind:'showroom',showroomId:d.id});if(!m.wideRoomLayout)continue;count++;
+  const source=previousSource(m),mirror=m.wideRoomLayout.mirrored,canonical=r=>mirror?{...r,x:m.width-r.x-r.w}:r,point=p=>mirror?{...p,x:m.width-p.x}:p;
+  assert.equal(mirror,Boolean(d.column));assert.deepEqual({width:m.width,height:m.height},{width:source.width,height:source.height});
+  const room=role=>canonical(m.rooms.find(r=>r.functionalRole===role)),bed=room('bedroom'),bath=room('bathroom'),kitchen=room('kitchen'),living=room('living');
+  assert(bed.x+bed.w<bath.x&&bath.x+bath.w<kitchen.x,'Sleeping and service rooms keep the canonical reference order');assert.equal(bed.y,106);assert.equal(bath.y,106);assert.equal(bed.h,bath.h);assert.equal(kitchen.y,106);assert.equal(kitchen.h,170);assert(living.x>m.width/2);
+  const family=m.familyFurniture,dining=m.items.find(i=>i.id===family.diningTable),coffee=m.items.find(i=>i.id===family.livingTable),diningCenter=point(baseCenter(dining)),coffeeCenter=point(baseCenter(coffee));
+  assert(diningCenter.x<coffeeCenter.x&&diningCenter.y<coffeeCenter.y,'Dining stays toward the middle/back with the lounge farther right/front');assert.equal(family.diningSeats.length,3);
+  for(const id of [...family.diningSeats,...family.livingSeats]){const seat=m.items.find(i=>i.id===id),target=m.items.find(i=>i.id===seat.seatingTarget);assert(seat&&target);assert([0,90,180,270].includes(seat.rotation||0));const s=baseCenter(seat),t=baseCenter(target),angle=(seat.rotation||0)*Math.PI/180;assert(-Math.sin(angle)*(t.x-s.x)+Math.cos(angle)*(t.y-s.y)>0,'Every native seat faces its actual table');}
+ }
+ assert.equal(count,11);
+});
+
 test('native art keeps its aspect ratio and all physical bases stay distinct inside the wide floor plate',()=>{
- for(const d of SHOWROOMS){const m=getInterior({kind:'showroom',showroomId:d.id}),footprints=[],promoted=d.id==='victorian-parlor',sourceById=promoted?new Map(m.roomLayoutBaseItems.map(item=>[item.id,item])):null;
+ for(const d of SHOWROOMS)for(const m of showroomModels(d)){const footprints=[],promoted=d.id==='victorian-parlor',refreshed=Boolean(m.wideRoomLayout),sourceById=promoted||refreshed?new Map(m.roomLayoutBaseItems.map(item=>[item.id,item])):null,legacyById=refreshed?new Map(previousSource(m).items.map(item=>[item.id,item])):null;
   for(const item of m.items){const a=native.get(item.asset);assert(Math.abs(item.w/item.h-a.w/a.h)<1e-9,'A native sprite must not be squashed to fit');
-   if(promoted){const source=sourceById.get(item.id);assert(source);assert.equal(item.asset,source.asset);assert.equal(item.w,source.w);assert.equal(item.h,source.h,'Approved poses keep each original item size despite their reordered display list');}
+   if(promoted||refreshed){const source=sourceById.get(item.id);assert(source);assert.equal(item.asset,source.asset);assert.equal(item.w,source.w);assert.equal(item.h,source.h,'Default poses keep each canonical item size despite their reordered display list');if(refreshed&&item.designRole!=='family-living-rug'){const legacy=legacyById.get(item.id);assert(legacy);assert.equal(item.asset,legacy.asset);assert.equal(item.w,legacy.w);assert.equal(item.h,legacy.h,'Refreshing the layout never rescales native furniture');}}
    else assert(item.x-item.w/2>=28&&item.x+item.w/2<=m.width-28,item.asset+' width');
-   if(item.wallMounted)assert(d.apartment.wallpaperAreas?.some(r=>item.x-item.w/2>=r.x&&item.x+item.w/2<=r.x+r.w&&item.y-item.h>=r.y&&item.y<=r.y+r.h)||item.y-item.h>=0&&item.y<=106);else{
-    if(!promoted)assert(item.y-item.h>=0&&item.y<=m.height-28,item.asset+' artwork fits inside the cutaway');
+   if(item.wallMounted)assert(m.showroom.apartment.wallpaperAreas?.some(r=>item.x-item.w/2>=r.x&&item.x+item.w/2<=r.x+r.w&&item.y-item.h>=r.y&&item.y<=r.y+r.h)||item.y-item.h>=0&&item.y<=106);else{
+    if(!promoted&&!refreshed)assert(item.y-item.h>=0&&item.y<=m.height-28,item.asset+' artwork fits inside the cutaway');
     for(const b of feet(item))assert(b.x>=28&&b.y>=106&&b.x+b.w<=m.width-28&&b.y+b.h<=m.height-28,item.asset+' physical base stays on the floor while its upright artwork can overlap the back wall');
    }
    for(const b of feet(item)){assert(!footprints.some(other=>overlaps(b,other.box)),d.name+' overlaps '+item.slot+' and '+footprints.find(other=>overlaps(b,other.box))?.slot);footprints.push({box:b,slot:item.slot});}

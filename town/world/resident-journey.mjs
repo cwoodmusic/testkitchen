@@ -1,26 +1,30 @@
 import {residents} from './resident-profiles.mjs?v=opera-parallax-1';
 import {interiorActorScale} from './interior-scale.mjs?v=opera-parallax-1';
-import {WIDE_ROOM_EXTRA_DEPTH} from './wide-room-shell.mjs?v=town-wide-rooms-1';
+import {getInterior} from './urban-interiors.mjs?v=town-wide-layout-1';
 export {residents} from './resident-profiles.mjs?v=opera-parallax-1';
 
 const SPEED=156,GAIT=Math.PI*2/150;
-const journeys=new Map();
+const journeys=new WeakMap();
 const point=(x,y)=>({x,y});
 const facing=(a,b)=>Math.abs(b.x-a.x)>Math.abs(b.y-a.y)?b.x<a.x?'left':'right':b.y<a.y?'up':'down';
 
+function homePose(resident,model){
+ const at=model.actors?.find(actor=>actor.id===resident.id)||model.homePlan?.home||model.spawn;
+ return {id:resident.id,name:resident.name,scene:{kind:'apartment',floor:resident.floor,resident:resident.id},x:at.x,y:at.y,facing:'down',walking:false,phase:0,hidden:false,done:true,activity:'At home'};
+}
 export function residentHomePose(id){
  const resident=residents.find(r=>r.id===id);if(!resident)return null;
- const wide=resident.floor>=7;
- return {id,name:resident.name,scene:{kind:'apartment',floor:resident.floor,resident:id},x:wide?1152:544,y:wide?750:650,facing:'down',walking:false,phase:0,hidden:false,done:true,activity:'At home'};
+ return homePose(resident,getInterior({kind:'apartment',floor:resident.floor,resident:id}));
 }
 
 // These waypoints follow the same broad, clear circulation strips used by
 // the player. Scene changes occur only at a real apartment door, lift or exit.
 function journey(id,direction){
- const key=id+':'+direction;if(journeys.has(key))return journeys.get(key);
  const resident=residents.find(r=>r.id===id);if(!resident)return null;
- const home=residentHomePose(id),room=home.scene,hall={kind:'hall',floor:resident.floor},lobby={kind:'lobby',floor:1};
- const homeAt=point(home.x,home.y),roomExit=point(home.x,975+(resident.floor>=7?WIDE_ROOM_EXTRA_DEPTH:0)),doorX=resident.floor>=7?500:resident.unit==='A'?430:1874;
+ const model=getInterior({kind:'apartment',floor:resident.floor,resident:id}),key=id+':'+direction;
+ let cached=journeys.get(model);if(!cached){cached=new Map();journeys.set(model,cached);}if(cached.has(key))return cached.get(key);
+ const home=homePose(resident,model),room=home.scene,hall={kind:'hall',floor:resident.floor},lobby={kind:'lobby',floor:1};
+ const homeAt=point(home.x,home.y),roomExit=point(model.spawn.x,model.spawn.y),doorX=resident.floor>=7?500:resident.unit==='A'?430:1874;
  const hallDoor=point(doorX,342),hallTurn=point(doorX,464),hallCenter=point(1152,464),hallLift=point(1152,342);
  const lobbyLift=point(1152,400),street=point(1152,1578),steps=[];
  const walk=(scene,from,to,activity)=>steps.push({scene,from,to,activity,duration:Math.hypot(to.x-from.x,to.y-from.y)/(SPEED*interiorActorScale(scene))});
@@ -37,7 +41,7 @@ function journey(id,direction){
  }
  let elapsed=0,distance=0;
  for(const step of steps){step.start=elapsed;step.distance=distance;elapsed+=step.duration;distance+=Math.hypot(step.to.x-step.from.x,step.to.y-step.from.y);}
- const result={steps,duration:elapsed,home};journeys.set(key,result);return result;
+ const result={steps,duration:elapsed,home};cached.set(key,result);return result;
 }
 export function journeyDuration(id,direction='out'){return journey(id,direction)?.duration||0;}
 export function interiorJourneyPose(id,direction='out',elapsed=0){

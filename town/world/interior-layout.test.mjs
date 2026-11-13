@@ -18,7 +18,7 @@ const catalog=new Map(APARTMENT_COLLECTION_ASSETS.map(a=>[a.id,{...a,getFacingVi
 for(const asset of FAMILY_FURNITURE_ASSETS)catalog.set(asset.id,asset);
 configureUrbanInteriors(catalog);
 const requests=[...residents.map(r=>({kind:'apartment',resident:r.id,floor:r.floor})),{kind:'apartment',resident:'player',floor:15},...SHOWROOMS.map(r=>({kind:'showroom',showroomId:r.id,floor:r.storeFloor}))];
-const models=requests.map(getInterior),RADIUS=6,findings={};
+const models=requests.flatMap(request=>{const scene=getInterior(request);return [scene,...(scene.roomLayoutLegacySources||[])];}),RADIUS=6,findings={};
 const approvedMidcentury=new Map(JSON.parse(readFileSync(new URL('../../tests/fixtures/midcentury-user-layout.json',import.meta.url))).rooms['showroom-midcentury-studio'].placements.map(p=>[p.id,p]));
 const approvedVictorian=new Map(JSON.parse(readFileSync(new URL('../../tests/fixtures/victorian-user-layout.json',import.meta.url))).rooms['showroom-victorian-parlor'].placements.map(p=>[p.id,p]));
 const slot=item=>item.slot||item.collectionSlot||catalog.get(item.asset)?.slot;
@@ -76,7 +76,7 @@ for(const m of models)for(const [role,area]of [['bed','bedroom'],['sink','kitche
  const item=itemFor(m,role);if(!item)continue;const room=roleRoom(m,item,area);if(!room){backs.push({owner:owner(m),role,error:'Missing functional room'});continue;}
  const b=footprint(item),turn=((item.rotation||0)%360+360)%360;
  const gap=turn===0?b.y-room.y:turn===90?room.x+room.w-b.x-b.w:turn===180?room.y+room.h-b.y-b.h:b.x-room.x;
- const victorian=m.id==='showroom-victorian-parlor',approved=m.id==='showroom-midcentury-studio'?approvedMidcentury.get(item.id):victorian?approvedVictorian.get(item.id):null;
+ const victorian=m.id==='showroom-victorian-parlor',approved=m.id==='showroom-midcentury-studio'&&!m.wideRoomLayout?approvedMidcentury.get(item.id):victorian?approvedVictorian.get(item.id):null;
  // The owner positioned this kitchen/bath run closer to its wall in the
  // approved export. Keep those exact poses and the normal4px minimum elsewhere.
  if(approved&&(item.x!==approved.x||item.y!==approved.y||(item.rotation||0)!==approved.rotation))backs.push({owner:owner(m),role,error:'The approved furniture pose changed'});
@@ -118,7 +118,7 @@ check('all36px privacy openings retain reachable landings on both sides',doors);
 const routes=[];
 for(const m of models){
  const paths=[];
- if(m.resident&&m.resident!=='player')paths.push([{x:m.width/2,y:m.floor>=7?750:650},{x:m.width/2,y:975}]);
+ if(m.resident&&m.resident!=='player')paths.push([{x:m.actors[0].x,y:m.actors[0].y},{...m.spawn}]);
  if(m.kind==='showroom'){const tour=getShowroomNavigation(m);if(!tour){routes.push({owner:owner(m),error:'No reachable showroom tour'});continue;}paths.push(tour.visitRoute,tour.exitRoute);}
  for(const points of paths)for(let i=1;i<points.length;i++){
   const a=points[i-1],b=points[i],count=Math.max(1,Math.ceil(Math.hypot(b.x-a.x,b.y-a.y)/3));

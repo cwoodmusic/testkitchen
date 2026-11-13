@@ -1,5 +1,5 @@
 import {furnitureFacingBounds,furnitureFacingBoxes,furnitureFacingDepth} from './furniture-facing.mjs?v=opera-parallax-1';
-import {furniturePresentationScale} from './private-furniture.mjs?v=town-victorian-default-1';
+import {furniturePresentationScale} from './private-furniture.mjs?v=town-wide-layout-1';
 import {apartmentDecorBounds,apartmentWallDecorBounds} from './personal-room-areas.mjs?v=opera-parallax-1';
 import {createRoomRugItems} from './room-rugs.mjs?v=town-victorian-default-1';
 
@@ -68,7 +68,7 @@ function canReach(scene,solids,targets){
 }
 
 /** Committed scene is independent of authored models; held previews never save. */
-export function createRoomLayoutModel({themeId,scene:authored,catalog,record:initialRecord}={}){
+function createSingleRoomLayoutModel({themeId,scene:authored,catalog,record:initialRecord}={}){
  if(!validId(themeId)||!authored||!finite(authored.width)||!finite(authored.height)||!catalog?.get)throw Error('Choose a valid room theme and asset catalog.');
  const base=clone(authored);base.items=(authored.items||[]).map((i,index)=>copyItem({...i,id:i.id||'base-'+index,collisionBoxes:i.collisionBoxes||[]}));
  if(new Set(base.items.map(i=>i.id)).size!==base.items.length)throw Error('The room contains repeated furniture IDs.');
@@ -190,5 +190,66 @@ export function createRoomLayoutModel({themeId,scene:authored,catalog,record:ini
  function applyRecord(value,{initial=false}={}){let decoded;try{decoded=itemsFromRecord(value);}catch(e){return fail(e.message);}let {items}=decoded;const error=validate(items,{reach:true});if(error)return fail(error);if(decoded.legacy)items=mergeExpansion(items);held=null;if(initial){rebuild(items);undo=[];redo=[];return {ok:true,changed:false};}return commit(items);}
  const api={get themeId(){return themeId;},get scene(){return current;},get held(){return ghost();},get revision(){return revision;},get canUndo(){return !!undo.length;},get canRedo(){return !!redo.length;},get hasEdits(){return JSON.stringify(record())!==baseRecord;},pick,move,rotate,place,add,remove,cancel(){held=null;return {ok:true,changed:false};},undo:()=>history(undo,redo),redo:()=>history(redo,undo),reset(){held=null;return commit(defaultItems);},record,applyRecord};
  const baseRecord=JSON.stringify(record());if(initialRecord){const result=applyRecord(initialRecord,{initial:true});if(!result.ok){const error=Error(result.error);error.code='INVALID_ROOM_LAYOUT';throw error;}}
+ return api;
+}
+
+
+/** Architectural alternatives retain the complete scene used by an old save.
+ * Single-source rooms keep their existing model and history implementation. */
+export function createRoomLayoutModel(options={}){
+ const {scene:authored,themeId,catalog,record:initialRecord}=options;
+ const legacy=Array.isArray(authored?.roomLayoutLegacySources)?authored.roomLayoutLegacySources.filter(source=>source&&source!==authored):[];
+ if(!legacy.length)return createSingleRoomLayoutModel(options);
+ const sources=[...new Set([authored,...legacy])];
+ function make(source,record,load=false){
+  const model=createSingleRoomLayoutModel({themeId,scene:source,catalog});
+  if(load){const result=model.applyRecord(record,{initial:true});if(!result.ok)throw Object.assign(Error(result.error),{code:'INVALID_ROOM_LAYOUT'});}
+  return model;
+ }
+ function select(record,exclude){
+  let error;
+  for(const source of sources){
+   if(source===exclude)continue;
+   try{return {source,model:make(source,record,true)};}
+   catch(failure){
+    // Prefer the matching source's geometry/placement error to unrelated
+    // candidates' signature mismatches, without relaxing either check.
+    if(!error||error.message==='This layout belongs to a different room or room version.')error=failure;
+   }
+  }
+  throw error||Object.assign(Error('This layout belongs to a different room or room version.'),{code:'INVALID_ROOM_LAYOUT'});
+ }
+ let active=initialRecord?select(initialRecord):{source:authored,model:make(authored)},revision=0,undo=[],redo=[];
+ const snapshot=()=>({source:active.source,record:active.model.record()});
+ function changed(before,result){
+  if(result?.ok&&result.changed){undo.push(before);if(undo.length>MAX_HISTORY)undo.shift();redo=[];revision++;}
+  return result;
+ }
+ function mutate(name,args){const before=snapshot();return changed(before,active.model[name](...args));}
+ function history(from,to){
+  active.model.cancel();if(!from.length)return {ok:true,changed:false};
+  const target=from.at(-1);let next;
+  try{next={source:target.source,model:make(target.source,target.record,true)};}catch(error){return fail(error.message);}
+  to.push(snapshot());if(to.length>MAX_HISTORY)to.shift();from.pop();active=next;revision++;return {ok:true,changed:true};
+ }
+ function applyRecord(record){
+  const before=snapshot(),result=active.model.applyRecord(record);
+  if(result.ok)return changed(before,result);
+  let next;try{next=select(record,active.source);}catch(error){return fail(result.error==='This layout belongs to a different room or room version.'?error.message:result.error);}
+  active.model.cancel();active=next;return changed(before,{ok:true,changed:true});
+ }
+ function reset(){
+  if(active.source===authored)return mutate('reset',[]);
+  const before=snapshot();active.model.cancel();active={source:authored,model:make(authored)};return changed(before,{ok:true,changed:true});
+ }
+ const api={
+  get themeId(){return active.model.themeId;},
+  get scene(){const scene=active.model.scene;if(scene.layoutRevision!==revision)scene.layoutRevision=revision;return scene;},
+  get held(){return active.model.held;},get revision(){return revision;},
+  get canUndo(){return !!undo.length;},get canRedo(){return !!redo.length;},get hasEdits(){return active.model.hasEdits;},
+  pick:(...args)=>active.model.pick(...args),move:(...args)=>active.model.move(...args),rotate:(...args)=>active.model.rotate(...args),add:(...args)=>active.model.add(...args),cancel:(...args)=>active.model.cancel(...args),
+  place:(...args)=>mutate('place',args),remove:(...args)=>mutate('remove',args),
+  undo:()=>history(undo,redo),redo:()=>history(redo,undo),reset,record:()=>active.model.record(),applyRecord
+ };
  return api;
 }

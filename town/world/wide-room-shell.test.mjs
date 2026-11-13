@@ -45,12 +45,15 @@ test('the finalized shell gains64 usable pixels with closed side/private boundar
  assert.deepEqual(getInteriorVisualBounds(s),{x:0,y:0,w:1184,h:620});const once=JSON.stringify(s);expandWideRoomShell(s);assert.equal(JSON.stringify(s),once);
 });
 
-test('only12 wide showrooms and9 genuinely wide tower homes expand; compact and public scenes stay unchanged',()=>{
- const requests=[...SHOWROOMS.map(r=>({kind:'showroom',showroomId:r.id})),...residents.map(r=>({kind:'apartment',resident:r.id})),{kind:'apartment',resident:'player'}];let expanded=0,compact=0;
- for(const request of requests){const s=getInteriorBase(request);expandWideRoomShell(s);const expected=request.kind==='showroom'||request.resident==='player'||residents.find(r=>r.id===request.resident).floor>=7;
-  assert.equal(Boolean(s.wideRoomExpansion),expected,s.id);if(expected){expanded++;const old=s.wideRoomExpansion;assert.equal(s.height,old.previousHeight+64);assert.equal(s.portalExit.threshold.y,s.height-28);assert.equal(s.portalExit.door.threshold.y,s.height-28);assert.equal(s.portalExit.triggerHalfWidth,18);assert.equal(s.portalExit.door.virtual,true);}else{compact++;const raw=JSON.stringify(s);expandWideRoomShell(s);assert.equal(JSON.stringify(s),raw);assert.equal(s.roomLayoutSignatureFrame,undefined);assert.equal(getInteriorVisualBounds(s).h,s.height);}
+test('all31 fresh private rooms have wide shells while saved compact and public scenes retain their original geometry',()=>{
+ const requests=[...SHOWROOMS.map(r=>({kind:'showroom',showroomId:r.id})),...residents.map(r=>({kind:'apartment',resident:r.id})),{kind:'apartment',resident:'player'}];let expanded=0,originalWide=0,compact=0;
+ for(const request of requests){const s=getInteriorBase(request),before=JSON.stringify(s);assert(s.wideRoomExpansion,s.id);assert.equal(expandWideRoomShell(s),s);assert.equal(JSON.stringify(s),before,'The completed default shell is idempotent');
+  expanded++;const old=s.wideRoomExpansion;assert.equal(s.height,old.previousHeight+64);assert.equal(s.portalExit.threshold.y,s.height-28);assert.equal(s.portalExit.door.threshold.y,s.height-28);assert.equal(s.portalExit.triggerHalfWidth,18);assert.equal(s.portalExit.door.virtual,true);
+  const previous=s.roomLayoutLegacySources?.[0]||s;
+  if(previous.wideRoomExpansion)originalWide++;
+  else{compact++;assert.equal(previous.width,1088);assert.equal(previous.height,1120);const raw=JSON.stringify(previous);expandWideRoomShell(previous);assert.equal(JSON.stringify(previous),raw);assert.equal(previous.roomLayoutSignatureFrame,undefined);assert.equal(getInteriorVisualBounds(previous).h,previous.height);}
  }
- assert.equal(expanded,21);assert.equal(compact,10);
+ assert.equal(expanded,31);assert.equal(originalWide,21);assert.equal(compact,10);
  for(const kind of ['shop','hall','lobby','concert']){const s={kind,width:3000,height:400},raw=JSON.stringify(s);assert.equal(expandWideRoomShell(s),s);assert.equal(JSON.stringify(s),raw);}
 });
 

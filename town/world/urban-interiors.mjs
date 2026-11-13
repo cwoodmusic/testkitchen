@@ -8,11 +8,11 @@ import {drawTowerCommonSurfaces,drawTowerCommonStairs,towerCommonMaterialsReady,
 import {drawInteriorDoor,drawPrivacyDoor,drawElevatorPortal,getElevatorVisualGeometry,interiorPortalVisualDepth,warmInteriorPortalArt} from './interior-portal-art.mjs?v=opera-parallax-1';
 import {applyTowerCommonArchitecture} from './tower-common-architecture.mjs?v=opera-parallax-1';
 import {interiorActorScale} from './interior-scale.mjs?v=opera-parallax-1';
-import {calibratePrivateFurniture,presentedRoomItem} from './private-furniture.mjs?v=town-victorian-default-1';
+import {calibratePrivateFurniture,presentedRoomItem} from './private-furniture.mjs?v=town-wide-layout-1';
 import {normalizeInteriorDoorways} from './interior-doorways.mjs?v=opera-parallax-1';
 import {drawInteriorWindow,warmInteriorWindows} from './interior-window-art.mjs?v=opera-parallax-1';
 import {drawInteriorWallNetwork} from './interior-wall-art.mjs?v=town-victorian-4';
-import {createRoomLayoutResolver} from './room-layout-runtime.mjs?v=town-wide-rooms-1';
+import {createRoomLayoutResolver} from './room-layout-runtime.mjs?v=town-wide-layout-1';
 export {apartmentDecorBounds,apartmentWallDecorBounds} from './personal-room-areas.mjs?v=opera-parallax-1';
 import {getConcertHall,renderConcertHallBackground,concertHallDrawables} from './concert-hall.mjs?v=town-flight-1';
 import {renderStagePerformance} from './concert-performers.mjs?v=opera-players-2';
@@ -25,9 +25,10 @@ import {drawFurnitureContactShadow} from './furniture-contact-shadow.mjs?v=town-
 import {expandWideRoomShell,getInteriorVisualBounds} from './wide-room-shell.mjs?v=town-wide-rooms-1';
 import {drawWideRoomSouthExterior,drawWideRoomEntrance} from './wide-room-frontage.mjs?v=town-wide-rooms-1';
 import {wideRoomPartitionDrawables,clearWideRoomPartitionCache} from './wide-room-partitions.mjs?v=town-wide-rooms-1';
+import {applyWideRoomLayout} from './wide-room-layout.mjs?v=town-wide-layout-1';
 import {preparePlacedFacingArt} from './furniture-art-access.mjs?v=opera-parallax-1';
-// The apartment tower has one consistent floor plate. Residential floors use
-// a 608px common hall and 1120px private apartments, within its 2304 × 1728 lot.
+// Public tower floors retain their original halls and 2304 × 1728 lot.
+// Private scenes use the shared wide layout; saved designs retain their shell.
 export const FLOOR_COUNT=15;
 export const TOWER_FOOTPRINT=Object.freeze({width:2304,height:1728});
 export const STORE_FOOTPRINT=Object.freeze({width:3072,height:2048});
@@ -209,13 +210,14 @@ function warmScene(scene){
 export function getInteriorBase(scene={}){
  if(scene.kind==='concert')return getConcertHall();
  const requestedKind=scene.kind||'lobby',floor=Math.max(1,Math.min(15,Math.round(Number(scene.floor)||1))),storeFloor=floor===2?2:1,kind=requestedKind==='hall'&&floor===1?'lobby':requestedKind==='showroom'&&!SHOWROOMS.some(room=>room.id===scene.showroomId)?'shop':requestedKind,resident=scene.resident||'player',id=kind==='apartment'?`apartment-${resident}`:kind==='hall'?`tower-floor-${floor}`:kind==='shop'?(storeFloor===1?'furniture-store':'furniture-store-floor-2'):kind==='showroom'?'showroom-'+scene.showroomId:'tower-lobby';
- if(!sceneCache.has(id)){const s=kind==='apartment'?apartment(resident):kind==='hall'?hall(floor):kind==='shop'?shop(storeFloor):kind==='showroom'?showroomApartment(scene.showroomId):lobby();
+ if(!sceneCache.has(id)){let s=kind==='apartment'?apartment(resident):kind==='hall'?hall(floor):kind==='shop'?shop(storeFloor):kind==='showroom'?showroomApartment(scene.showroomId):lobby();
   calibratePrivateFurniture(s,nativeCatalog||collectionDefinitions);fitCompactKitchenFloor(s,nativeCatalog||collectionDefinitions);normalizeInteriorDoorways(s);applyTowerCommonArchitecture(s);
   // Floor lettering is retired; retain labels painted on the north wall and
   // the separate framed door, lift, directory and showroom-sign renderers.
   const wallDepth=s.towerArchitecture?.northWallDepth||106;s.signs=s.signs.filter(label=>label.y<=wallDepth);
   for(const d of s.privacyDoors||[]){const r=s.rooms.find(r=>r.id===d.roomId||r.functionalRole===d.roomId);if(r&&d.swing===undefined)d.swing=d.axis==='vertical'?(r.x+r.w/2>d.x?1:-1):(r.y+r.h/2>d.y?-1:1);}
   expandWideRoomShell(s);
+  if((s.kind==='apartment'||s.kind==='showroom')&&id!=='showroom-victorian-parlor')s=applyWideRoomLayout(s,nativeCatalog||collectionDefinitions,{reference:getInteriorBase({kind:'showroom',showroomId:'victorian-parlor'})});
   sceneCache.set(id,s);}return sceneCache.get(id);
 }
 export function getInterior(scene={}){
@@ -278,7 +280,7 @@ function background(s){
  if(towerCommon&&!towerCommonMaterialsReady())void warmTowerCommonMaterials().then(()=>discardBackground(s)).catch(()=>{});
  if(!towerCommon){if(lobby){fill(c,0,0,s.width,s.height,'#10171d');for(const r of s.lobbyFloorRects)floor(c,r.x,r.y,r.w,r.h);}
  else if(s.homeMaterialSuite)drawShowroomFloor(c,{x:0,y:0,w:s.width,h:s.height,floorFinish:s.homeMaterialSuite.floor});else floor(c,0,0,s.width,s.height);}
- for(const r of s.rooms){if(r.portalRoom)continue;if(r.floorFinish)drawShowroomFloor(c,r);else if(r.material==='tile')floor(c,r.x,r.y,r.w,r.h,true);}if(!towerCommon)for(const r of s.rugs)carpet(c,r);
+ for(const r of s.rooms){if(r.portalRoom||r.floorOverlay===false)continue;if(r.floorFinish)drawShowroomFloor(c,r);else if(r.material==='tile')floor(c,r.x,r.y,r.w,r.h,true);}if(!towerCommon)for(const r of s.rugs)carpet(c,r);
  for(const item of s.items)if(floorItem(item))drawItem(c,item);
  // Full-height north facade, low cutaway south and side edges.
  if(!lobby&&!towerCommon){plasterWall(c,rect(0,0,s.width,106),s.color,s.trim);plasterWall(c,rect(0,0,28,s.height),s.color,s.trim);plasterWall(c,rect(s.width-28,0,28,s.height),s.color,s.trim);if(!s.wideRoomExpansion)plasterWall(c,rect(0,s.height-28,s.width,28),s.color,s.trim);}

@@ -1,6 +1,6 @@
 import {createTownActivities} from './town-activities.mjs?v=town-store-halls-1';
 import {catalog} from './catalog.mjs?v=town-room-placement-2';
-import {FLOOR_COUNT,residents,getInterior,renderInterior,residentInteractionZones,apartmentDecorBounds,apartmentWallDecorBounds,configureUrbanInteriors} from './urban-interiors.mjs?v=town-wide-rooms-1';
+import {FLOOR_COUNT,residents,getInterior,renderInterior,residentInteractionZones,apartmentDecorBounds,apartmentWallDecorBounds,configureUrbanInteriors} from './urban-interiors.mjs?v=town-wide-layout-1';
 import {createRoomStorage,roomItemBoxes} from './urban-room.mjs?v=opera-parallax-1';
 import {SHOWROOMS,STORE_FLOOR_COUNT,STORE_VERTICAL_CORE} from './showroom-layout.mjs?v=town-room-placement-2';
 import {createStagePerformance,updateStageProgramme,stagePerformanceSignature,stageCollisionBoxes} from './concert-performers.mjs?v=opera-players-2';
@@ -9,7 +9,7 @@ import {createConcertCurtain,drawConcertCurtain} from './concert-curtain.mjs?v=o
 import {createAutomaticDoors} from './automatic-doors.mjs?v=opera-parallax-1';
 import {furnitureFacingPlacement,furnitureFacingBounds} from './furniture-facing.mjs?v=opera-parallax-1';
 import {interiorActorScale,effectiveInteriorZoom} from './interior-scale.mjs?v=opera-parallax-1';
-import {presentedRoomItem,furniturePresentationScale} from './private-furniture.mjs?v=town-victorian-default-1';
+import {presentedRoomItem,furniturePresentationScale} from './private-furniture.mjs?v=town-wide-layout-1';
 import {getInteriorVisualBounds} from './wide-room-shell.mjs?v=town-wide-rooms-1';
 
 configureUrbanInteriors(catalog);
@@ -31,7 +31,7 @@ export function createUrbanController({canvas,getProject,getPlayer,getFacing,set
  let scene=null,player={x:0,y:0},outside=null,people=[],owner=parent===window&&guestStorageAvailable()?'guest':null,roomOwner=owner,wallet=null,localWallet=null,room=null,decor=[],selectedDecor=null,decorate=false,hover=null,selectedRotation=0,purchasesEnabled=parent===window&&guestStorageAvailable(),purchasesMessage='';
  let facing='down',phase=0,walking=false,zoom=.72,view={x:0,y:0},lastSize={width:1,height:1},lastHint='',notice='',noticeUntil=0,request=0,conversation=null;
  const pending=new Map(),dialogueTurns=new Map();
- let automaticDoors=null,portals=[],exteriorDoors=null,exteriorPortals=[],exteriorDoc=null,exteriorCount=-1,doorOwners=new WeakMap();
+ let automaticDoors=null,portals=[],activeSceneModel=null,exteriorDoors=null,exteriorPortals=[],exteriorDoc=null,exteriorCount=-1,doorOwners=new WeakMap();
  let seated=null,performanceModel=null,performanceBoxes=[],settledPerformance=null,walkZoom=zoom;
  const reducedMotion=typeof matchMedia==='function'&&matchMedia('(prefers-reduced-motion: reduce)').matches;
  const stageCurtain=createConcertCurtain({createPerformance(track,previous){
@@ -183,13 +183,13 @@ export function createUrbanController({canvas,getProject,getPlayer,getFacing,set
  }
  function setScene(next,spawn){
   stageCurtain.reset();performanceModel=null;performanceBoxes=[];settledPerformance=null;
-  closeDialog();if(seated)zoom=walkZoom;scene=next;seated=null;selectedDecor=null;decorate=false;hover=null;const model=getInterior(scene);player={...(spawn||model.spawn)};walking=false;facing='up';configureSceneDoors(model);updateHud();getConcert()?.updateContext(scene);
+  closeDialog();if(seated)zoom=walkZoom;scene=next;seated=null;selectedDecor=null;decorate=false;hover=null;const model=getInterior(scene);activeSceneModel=model;player={...(spawn||model.spawn)};walking=false;facing='up';configureSceneDoors(model);updateHud();getConcert()?.updateContext(scene);
   // Furniture collision is tested at the feet, like the outdoor character.
   if(solid(player.x,player.y)){let found=false;for(let y=model.height-140;y>100&&!found;y-=40)for(let x=model.width/2;x<model.width-100;x+=40)if(!solid(x,y)){player={x,y};found=true;break;}}
   automaticDoors.prime(player,sceneResidents());
  }
  function enterBuilding(o){const door=buildingDoor(o);if(!door)return false;outside={object:o,position:{...getPlayer()}};setScene(door.kind==='opera'?{kind:'concert'}:door.kind==='shop'?{kind:'shop',floor:1}:{kind:'lobby',floor:1});return true;}
- function reset(){activities.end();stageCurtain.reset();performanceModel=null;performanceBoxes=[];settledPerformance=null;closeDialog();if(seated)zoom=walkZoom;scene=null;seated=null;outside=null;decorate=false;selectedDecor=null;hover=null;hud.hidden=true;hint.hidden=true;lastHint='';automaticDoors=null;portals=[];getConcert()?.updateContext(null);}
+ function reset(){activities.end();stageCurtain.reset();performanceModel=null;performanceBoxes=[];settledPerformance=null;closeDialog();if(seated)zoom=walkZoom;scene=null;seated=null;outside=null;decorate=false;selectedDecor=null;hover=null;hud.hidden=true;hint.hidden=true;lastHint='';automaticDoors=null;portals=[];activeSceneModel=null;getConcert()?.updateContext(null);}
  function standUp(){if(!seated)return false;const seat=seated;seated=null;zoom=walkZoom;player={...seat.approach};walking=false;facing='up';updateHud();return true;}
  function watchSeat(seatId){
   if(scene?.kind!=='concert')return false;
@@ -311,7 +311,11 @@ export function createUrbanController({canvas,getProject,getPlayer,getFacing,set
   return !!automaticDoors?.blocked(x,y,radius)||[...m.solids,...items,...(onStage?performanceBoxes:[])].some(r=>rectHit(x,y,r,radius));
  }
  function frame(ctx,keys,dt,now,width,height,drawPlayer){
-  activities.tick(keys,dt);if(!scene){updateExteriorDoors(dt);return false;}lastSize={width,height};const actorScale=interiorActorScale(scene),m=getInterior(scene),actors=sceneResidents();automaticDoors.update(dt,player,actors);refreshStage();walking=false;
+  activities.tick(keys,dt);if(!scene){updateExteriorDoors(dt);return false;}lastSize={width,height};const actorScale=interiorActorScale(scene),m=getInterior(scene),actors=sceneResidents();
+  // A layout imported or reset in another tab can change the room's walls.
+  // Refresh its real door definitions before movement uses the new model.
+  if(m!==activeSceneModel){activeSceneModel=m;configureSceneDoors(m);if(solid(player.x,player.y))player={...m.spawn};automaticDoors.prime(player,actors);}
+  automaticDoors.update(dt,player,actors);refreshStage();walking=false;
   if(!dialog.open&&!decorate){let dx=(keys.has('d')||keys.has('arrowright')?1:0)-(keys.has('a')||keys.has('arrowleft')?1:0),dy=(keys.has('s')||keys.has('arrowdown')?1:0)-(keys.has('w')||keys.has('arrowup')?1:0);const length=Math.hypot(dx,dy);if(length){if(seated)standUp();dx/=length;dy/=length;facing=Math.abs(dx)>Math.abs(dy)?dx<0?'left':'right':dy<0?'up':'down';const speed=(keys.has('shift')?780:450)*actorScale,n=Math.ceil(speed*dt/3),sx=dx*speed*dt/n,sy=dy*speed*dt/n;let distance=0;for(let i=0;i<n;i++){const old={...player};if(!solid(player.x+sx,player.y))player.x+=sx;if(!solid(player.x,player.y+sy))player.y+=sy;distance+=Math.hypot(player.x-old.x,player.y-old.y);}walking=distance>0;phase=(phase+distance*Math.PI*2/(150*actorScale))%(Math.PI*2);}}
   const drawZoom=effectiveInteriorZoom(scene,zoom),bounds=getInteriorVisualBounds(m),clampView=(p,length,visible)=>length<=visible?length/2:Math.max(visible/2,Math.min(length-visible/2,p)),focus=seated?{x:m.stage.x+m.stage.w/2,y:m.stage.y+m.stage.h/2+60}:player;view={x:clampView(focus.x,bounds.w,width/drawZoom),y:clampView(focus.y,bounds.h,height/drawZoom)};
   tick();ctx.clearRect(0,0,width,height);ctx.fillStyle='#131b21';ctx.fillRect(0,0,width,height);ctx.save();ctx.translate(width/2,height/2);ctx.scale(drawZoom,drawZoom);ctx.translate(-view.x,-view.y);

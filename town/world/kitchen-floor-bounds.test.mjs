@@ -10,10 +10,11 @@ import {furnitureFacingBounds} from './furniture-facing.mjs';
 const catalog=new Map([...APARTMENT_COLLECTION_ASSETS,...FAMILY_FURNITURE_ASSETS].map(a=>[a.id,a]));
 configureUrbanInteriors(catalog);
 const showroom=id=>getInterior({kind:'showroom',showroomId:id});
+const previousSource=scene=>scene.roomLayoutLegacySources?.[0]||scene;
 
-test('all eight compact kitchen finishes follow their actual fixture row, including mirrors and the extended Midcentury counter',()=>{
+test('all eight saved compact kitchen finishes retain their exact tile edge, including mirrors and the extended Midcentury counter',()=>{
  for(const display of SHOWROOMS.filter(d=>d.storeFloor!==2)){
-  const scene=showroom(display.id),kitchen=scene.rooms.find(r=>r.functionalRole==='kitchen'),b=kitchen.floorBounds;
+  const scene=previousSource(showroom(display.id)),kitchen=scene.rooms.find(r=>r.functionalRole==='kitchen'),b=kitchen.floorBounds;
   assert(b,display.id);assert.equal(b.y,106);assert.equal(b.h,170);assert.equal(b.y+b.h,scene.rooms.find(r=>r.functionalRole==='living').y);
   assert.deepEqual(b,display.column===1?{x:28,y:106,w:display.id==='midcentury-studio'?304:276,h:170}:{x:880,y:106,w:276,h:170});
   for(const item of scene.items.filter(i=>['sink','counter','stove','fridge','pantry'].includes(i.fixtureRole))){
@@ -26,10 +27,25 @@ test('all eight compact kitchen finishes follow their actual fixture row, includ
  }
 });
 
-test('upper showrooms and all residential apartments keep their existing kitchen finishes',()=>{
+test('saved upper showrooms and residential apartments retain their original kitchen finishes',()=>{
  const scenes=[...SHOWROOMS.filter(d=>d.storeFloor===2).map(d=>showroom(d.id)),...residents.map(r=>getInterior({kind:'apartment',resident:r.id})),getInterior({kind:'apartment',resident:'player'})];
  assert.equal(scenes.length,23);
- for(const scene of scenes){const before=structuredClone(scene);assert.equal(fitCompactKitchenFloor(scene,catalog),scene);assert.deepEqual(scene,before);assert(scene.rooms.every(r=>!r.floorBounds),scene.id);}
+ for(const current of scenes){const scene=previousSource(current),before=structuredClone(scene);assert.equal(fitCompactKitchenFloor(scene,catalog),scene);assert.deepEqual(scene,before);assert(scene.rooms.every(r=>!r.floorBounds),scene.id);}
+});
+
+test('all30 refreshed defaults keep a themed170px kitchen field around the current fixture row and preserve mirroring',()=>{
+ const scenes=[...SHOWROOMS.map(d=>showroom(d.id)),...residents.map(r=>getInterior({kind:'apartment',resident:r.id})),getInterior({kind:'apartment',resident:'player'})].filter(scene=>scene.wideRoomLayout);
+ assert.equal(scenes.length,30);
+ for(const scene of scenes){
+  const kitchen=scene.rooms.find(r=>r.functionalRole==='kitchen'),b=kitchen.floorBounds,legacy=previousSource(scene),before=JSON.stringify(scene),legacyBefore=JSON.stringify(legacy);
+  assert.deepEqual(b,{x:kitchen.x,y:106,w:kitchen.w,h:170});assert.equal(kitchen.h,170);assert.deepEqual(kitchen.floorFinish,scene.homeMaterialSuite.kitchenFloor);
+  const canonical=scene.wideRoomLayout.mirrored?{...b,x:scene.width-b.x-b.w}:b;
+  assert(Math.abs(canonical.x+canonical.w-(scene.width-28))<1e-8,scene.id+' kitchen ends at its original outside wall');assert(canonical.x>scene.width/2,scene.id+' canonical kitchen stays in the day wing');
+  const roles=new Set(['sink','counter','stove','fridge','pantry']),role=item=>item.slot||item.collectionSlot||item.fixtureRole,fixtures=scene.items.filter(item=>roles.has(role(item))),original=legacy.items.filter(item=>roles.has(role(item)));
+  assert.deepEqual(fixtures.map(item=>item.id).sort(),original.map(item=>item.id).sort(),scene.id+' keeps its complete original kitchen run');for(const key of ['fridge','sink','stove','counter'])assert(fixtures.some(item=>role(item)===key),scene.id+' has a '+key);
+  for(const item of fixtures){const fixture=furnitureFacingBounds(catalog.get(item.asset),item);assert(fixture.x>=b.x-1e-8&&fixture.x+fixture.w<=b.x+b.w+1e-8,scene.id+' '+item.asset+' stays on its current kitchen tile');}
+  assert.equal(fitCompactKitchenFloor(scene,catalog),scene);assert.equal(JSON.stringify(scene),before,'Refitting a new default does not alter its architecture or furnishings');assert.equal(JSON.stringify(legacy),legacyBefore,'The saved source keeps its exact previous tile edge');
+ }
 });
 
 test('Victorian bath gets one small plum rectangular rug inside its open floor, clear of doors and fixtures',()=>{

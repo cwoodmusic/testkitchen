@@ -39,7 +39,13 @@ test('earlier edited table and rug placements override the new default and survi
  assert.deepEqual(model.record(),record);assert.deepEqual(createRoomLayoutModel({themeId:approved.themeId,scene,catalog,record:model.record()}).record(),record);assert.equal(JSON.stringify(record),raw);assert(getShowroomNavigation(model.scene));model.reset();assert.deepEqual(model.record(),approved);
 });
 
-test('Victorian promotion leaves the other30 private-room default contracts alone',()=>{
+test('Victorian promotion preserves the other30 original sources while refreshed defaults retain their full stock',()=>{
  const requests=[...residents.map(r=>({kind:'apartment',resident:r.id})),{kind:'apartment',resident:'player'},...SHOWROOMS.filter(r=>r.id!=='victorian-parlor').map(r=>({kind:'showroom',showroomId:r.id}))];assert.equal(requests.length,30);
- for(const request of requests){const scene=getInteriorBase(request);assert.equal(scene.roomLayoutBaseItems,undefined,scene.id);const themeId=request.kind==='showroom'?'showroom-'+request.showroomId:request.resident,model=createRoomLayoutModel({themeId,scene,catalog});assert.equal(model.hasEdits,false);assert.deepEqual(model.record().removed,[]);assert.equal(model.record().placements.length,scene.items.length);}
+ for(const request of requests){
+  const scene=getInteriorBase(request),source=scene.roomLayoutLegacySources?.[0]||scene,themeId=request.kind==='showroom'?'showroom-'+request.showroomId:request.resident,original=createRoomLayoutModel({themeId,scene:source,catalog}),model=createRoomLayoutModel({themeId,scene,catalog});
+  assert.equal(source.roomLayoutBaseItems,undefined,source.id+' original stock contract');assert.equal(original.hasEdits,false);assert.deepEqual(original.record().removed,[]);assert.equal(original.record().placements.length,source.items.length);
+  const stock=scene.roomLayoutBaseItems||scene.items,active=new Set(scene.items.map(item=>item.id));assert.deepEqual(stock.map(item=>[item.id,item.asset]).sort(),source.items.map(item=>[item.id,item.asset]).sort(),scene.id+' keeps every original ownership ID and artwork');
+  assert.equal(model.hasEdits,false);assert.deepEqual(model.record().removed,stock.filter(item=>!active.has(item.id)).map(item=>item.id));assert.equal(model.record().placements.length,scene.items.length);
+  const reloaded=createRoomLayoutModel({themeId,scene,catalog,record:model.record()});assert.deepEqual(reloaded.record(),model.record());assert.deepEqual(reloaded.scene.rooms,scene.rooms);
+ }
 });

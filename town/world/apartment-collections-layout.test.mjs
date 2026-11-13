@@ -4,6 +4,7 @@ import {APARTMENT_COLLECTIONS,APARTMENT_COLLECTION_ASSETS} from './apartment-col
 import {FAMILY_FURNITURE_ASSETS} from './family-furniture-definitions.mjs';
 import {getInterior,configureUrbanInteriors,apartmentDecorBounds,apartmentWallDecorBounds,residents} from './urban-interiors.mjs';
 import {SHOWROOMS} from './showroom-layout.mjs';
+import {furnitureFacingBounds} from './furniture-facing.mjs';
 
 let imageRequests=0;
 const definitions=new Map([...APARTMENT_COLLECTION_ASSETS,...FAMILY_FURNITURE_ASSETS].map(a=>[a.id,a]));
@@ -32,13 +33,18 @@ test('every home has its own lava lamp, poster, toy and arcade with practical ho
 test('NPC model and path queries do not download all 31 full furniture atlases',()=>{assert.equal(imageRequests,0);});
 
 test('the player keeps exact saved furnishing regions and clear entry despite the new built-ins',()=>{
- const scene=getInterior({kind:'apartment',resident:'player'}),bounds=apartmentDecorBounds(scene);
- assert.deepEqual(bounds,[{x:1584,y:512,w:656,h:540},{x:710,y:130,w:780,h:500}]);
- assert.deepEqual(apartmentWallDecorBounds(scene),[{x:380,y:4,w:650,h:98},{x:1280,y:4,w:280,h:98},{x:1760,y:4,w:140,h:98}]);
- for(const b of bounds)assert(!scene.solids.some(s=>overlaps(b,s)),'New fixed furniture overlaps a saved floor region');
- const entry={x:scene.spawn.x-70,y:640,w:140,h:scene.height-640};
- for(const item of scene.items)for(const b of item.collisionBoxes)assert(!overlaps(entry,b),'The front door corridor is blocked by '+item.asset);
- for(const item of scene.items.filter(i=>i.supportedBy)){const parent=scene.items.find(i=>i.furnitureRole===item.supportedBy);assert(parent);assert(item.y<=parent.y&&item.y>=parent.y-parent.h,'Floating keepsake '+item.asset);assert.equal(item.solid,false);}
+ const latest=getInterior({kind:'apartment',resident:'player'});
+ for(const scene of [latest,...(latest.roomLayoutLegacySources||[])]){
+  const bounds=apartmentDecorBounds(scene);
+  assert.deepEqual(bounds,[{x:1584,y:512,w:656,h:540},{x:710,y:130,w:780,h:500}]);
+  assert.deepEqual(apartmentWallDecorBounds(scene),[{x:380,y:4,w:650,h:98},{x:1280,y:4,w:280,h:98},{x:1760,y:4,w:140,h:98}]);
+  for(const b of bounds)assert(!scene.solids.some(s=>overlaps(b,s)),'New fixed furniture overlaps a saved floor region');
+  const halfWidth=scene.wideRoomLayout?scene.portalExit.triggerHalfWidth:70;
+  if(scene.wideRoomLayout)assert.equal(halfWidth,18,'The complete current doorway width stays clear along the entry route');
+  const entryY=scene.wideRoomLayout?scene.spawn.y-halfWidth:640,entry={x:scene.spawn.x-halfWidth,y:entryY,w:halfWidth*2,h:scene.height-entryY};
+  for(const item of scene.items)for(const b of item.collisionBoxes)assert(!overlaps(entry,b),'The front door corridor is blocked by '+item.asset);
+  for(const item of scene.items.filter(i=>i.supportedBy&&i.supportedBy!=='north-wall')){const parent=scene.items.find(i=>i.id===item.supportedBy||i.furnitureRole===item.supportedBy||i.asset===item.supportedBy);assert(parent);const pictured=scene.wideRoomLayout?furnitureFacingBounds(definitions.get(parent.asset),parent):{y:parent.y-parent.h,h:parent.h};assert(item.y<=pictured.y+pictured.h&&item.y>=pictured.y,'Floating keepsake '+item.asset);assert.equal(item.solid,false);}
+ }
 });
 
 test('the complete physical bases of all31 furnished homes stay outside structural walls',()=>{

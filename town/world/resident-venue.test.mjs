@@ -9,6 +9,9 @@ import {residentInScene} from './resident-journey.mjs';
 import {SHOWROOMS,STORE_TRAFFIC,STORE_VERTICAL_CORE} from './showroom-layout.mjs';
 import {SHOWROOM_FURNITURE} from './showroom-furniture-definitions.mjs';
 import {interiorActorScale} from './interior-scale.mjs';
+import {APARTMENT_COLLECTION_ASSETS} from './apartment-collections.mjs';
+import {FAMILY_FURNITURE_ASSETS} from './family-furniture-definitions.mjs';
+import {getShowroomNavigation} from './showroom-navigation.mjs';
 
 // Configure the same native furniture dimensions used by the browser so a
 // convenient-looking path cannot accidentally pass through a real display.
@@ -17,6 +20,7 @@ const png=read('../assets/furniture.png'),atlas=JSON.parse(read('../assets/decor
 const catalog=new Map(Array.from({length:9},(_,i)=>[`furniture-${i}-180`,{w:180,h:Math.ceil(180*png.readUInt32BE(20)/png.readUInt32BE(16)),boxes:[]}]));
 for(const def of decorDefinitions){const cell=atlas.find(sheet=>sheet.family===def.family).cells[def.index],fit=Math.min(def.maxW/cell.w,def.maxH/cell.h);catalog.set(def.id,{w:Math.ceil(cell.w*fit),h:Math.ceil(cell.h*fit),boxes:[]});}
 for(const item of SHOWROOM_FURNITURE)catalog.set(item.id,{w:item.w,h:item.h,boxes:item.boxes});
+for(const asset of [...APARTMENT_COLLECTION_ASSETS,...FAMILY_FURNITURE_ASSETS])catalog.set(asset.id,asset);
 configureUrbanInteriors(catalog);
 
 test('every resident enters its separate apartment showroom at the real lobby door and returns to the street',()=>{
@@ -94,7 +98,8 @@ test('all twelve reserved slots occupy distinct apartment scenes on the proper s
  for(let i=0;i<poses.length;i++){
   const pose=poses[i],room=SHOWROOMS[i];assert.equal(pose.id,'bach');assert.equal(pose.walking,false);assert.equal(pose.showroomId,room.id);
   assert.deepEqual(pose.scene,{kind:'showroom',showroomId:room.id,floor:room.storeFloor});
-  assert.deepEqual({x:pose.x,y:pose.y},room.apartment.visitRoute.at(-1));
+  const active=getInterior(pose.scene),navigation=getShowroomNavigation(active);assert(navigation);assert.deepEqual(navigation.visitRoute[0],active.spawn);
+  assert.deepEqual({x:pose.x,y:pose.y},navigation.visitRoute.at(-1));assert(Math.hypot(pose.x-active.showroom.apartment.browse.x,pose.y-active.showroom.apartment.browse.y)<=14);
   assert(residentInScene(pose,pose.scene));assert(!residentInScene(pose,{kind:'shop',floor:1}));
   for(let j=0;j<poses.length;j++)assert.equal(residentInScene(pose,{kind:'showroom',showroomId:SHOWROOMS[j].id,floor:SHOWROOMS[j].storeFloor}),i===j);
  }

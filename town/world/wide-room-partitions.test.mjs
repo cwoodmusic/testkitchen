@@ -6,6 +6,8 @@ import {SHOWROOMS} from './showroom-layout.mjs';
 import {wideRoomSouthPartitionGeometry,wideRoomPartitionDrawables,clearWideRoomPartitionCache,getWideRoomPartitionCacheStats} from './wide-room-partitions.mjs';
 const {createCanvas}=createRequire(import.meta.url)('@napi-rs/canvas');
 const scene=id=>getInteriorBase({kind:'showroom',showroomId:id});
+const preserved=s=>s.roomLayoutLegacySources?.[0]??s;
+const requests=[...residents.map(r=>({kind:'apartment',resident:r.id})),{kind:'apartment',resident:'player'},...SHOWROOMS.map(r=>({kind:'showroom',showroomId:r.id}))];
 const freeze=value=>{if(value&&typeof value==='object'){Object.freeze(value);for(const item of Object.values(value))freeze(item);}return value;};
 function context(){
  const stack=[],calls=[],c={fillStyle:'#123456',globalAlpha:.7,imageSmoothingEnabled:true,matrix:[1,0,0,1,3,5]};
@@ -15,28 +17,29 @@ function context(){
 const intersects=(a,b)=>a.x<b.x+b.w&&a.x+a.w>b.x&&a.y<b.y+b.h&&a.y+a.h>b.y;
 
 test('real horizontal private doors become aligned upright openings while vertical doors stay out of the partition layer',()=>{
- let doors=0,solidFronts=0;
- for(const request of [...residents.map(r=>({kind:'apartment',resident:r.id})),{kind:'apartment',resident:'player'},...SHOWROOMS.map(r=>({kind:'showroom',showroomId:r.id}))]){
-  const s=getInteriorBase(request),before=JSON.stringify(s),{groups}=wideRoomSouthPartitionGeometry(s);
+ let currentDoors=0,sourceDoors=0,sourceSolidFronts=0;
+ for(const version of ['current','preserved'])for(const request of requests){
+  const active=getInteriorBase(request),s=version==='preserved'?preserved(active):active,before=JSON.stringify(s),{groups}=wideRoomSouthPartitionGeometry(s);
   if(!s.wideRoomExpansion)assert.equal(groups.length,0);
+  else if(version==='current'){assert.equal(groups.length,2,s.id+' has two front-facing private rooms');assert(groups.every(g=>g.doors.length===1),s.id+' has an upright door in each private frontage');}
   for(const g of groups){
    assert(g.walls.length);assert.equal(g.wallpaper,s.homeMaterialSuite.wallpaper,'The hallway side of a bathroom uses the home dry wallpaper');
    for(const wall of g.walls){assert(s.walls.some(w=>JSON.stringify(w)===JSON.stringify(wall)));assert.equal(g.floorY,wall.y+wall.h/2);}
    for(const face of g.faces){assert.equal(face.y,g.floorY-96);assert.equal(face.h,96+g.thickness/2);}
-   if(!g.doors.length)solidFronts++;
-   for(const d of g.doors){doors++;assert(s.privacyDoors.includes(d));assert.equal(d.axis,'horizontal');assert.equal(d.length,36);assert.equal(d.y,g.floorY);for(const face of g.faces)assert(!intersects(face,{x:d.x,y:g.floorY-96,w:d.length,h:96+g.thickness/2}),'No face or cap crosses the real door opening');}
+   if(version==='preserved'&&!g.doors.length)sourceSolidFronts++;
+   for(const d of g.doors){if(version==='preserved')sourceDoors++;else currentDoors++;assert(s.privacyDoors.includes(d));assert.equal(d.axis,'horizontal');assert.equal(d.length,36);assert.equal(d.y,g.floorY);for(const face of g.faces)assert(!intersects(face,{x:d.x,y:g.floorY-96,w:d.length,h:96+g.thickness/2}),'No face or cap crosses the real door opening');}
   }
   assert.equal(JSON.stringify(s),before);
  }
- assert.equal(doors,20);assert(solidFronts>=10,'Include front walls in homes with side-facing private doors');
- const player=wideRoomSouthPartitionGeometry(getInteriorBase({kind:'apartment',resident:'player'}));assert.equal(player.groups.length,2);assert(player.groups.every(g=>g.doors.length===0));
+ assert.equal(currentDoors,62);assert.equal(sourceDoors,20);assert(sourceSolidFronts>=10,'Preserve front walls in the original homes with side-facing private doors');
+ const player=getInteriorBase({kind:'apartment',resident:'player'}),current=wideRoomSouthPartitionGeometry(player),original=wideRoomSouthPartitionGeometry(preserved(player));assert.equal(current.groups.length,2);assert(current.groups.every(g=>g.doors.length===1));assert.equal(original.groups.length,2);assert(original.groups.every(g=>g.doors.length===0));
 });
 
 test('north walls, detached floor strips and an existing complete native wallpaper face are never doubled',()=>{
  const fixture={kind:'showroom',wideRoomExpansion:{},height:600,rooms:[{id:'bedroom',functionalRole:'bedroom',x:20,y:100,w:300,h:200}],walls:[{x:20,y:84,w:300,h:16},{x:20,y:300,w:300,h:16},{x:350,y:410,w:120,h:16}],privacyDoors:[]};
  let g=wideRoomSouthPartitionGeometry(fixture);assert.equal(g.groups.length,1);assert.equal(g.groups[0].floorY,308);
  const existing={...fixture,rooms:[...fixture.rooms,{id:'living',functionalRole:'living',x:20,y:390,w:300,h:150,wallpaperAreas:[{x:20,y:290,w:300,h:96}]}]};assert.equal(wideRoomSouthPartitionGeometry(existing).groups.length,0);
- for(const id of ['miles','dj'])assert.equal(wideRoomSouthPartitionGeometry(getInteriorBase({kind:'apartment',resident:id})).groups.length,0,'An existing lower-room north face remains authoritative');
+ for(const id of ['miles','dj']){const current=getInteriorBase({kind:'apartment',resident:id});assert.equal(wideRoomSouthPartitionGeometry(preserved(current)).groups.length,0,'The preserved lower-room north face remains authoritative');assert.equal(wideRoomSouthPartitionGeometry(current).groups.length,2,'The new default has two distinct private frontages');}
 });
 
 test('room and doorway focus fades only the matching front wall through its twelve-pixel crossing apron',()=>{

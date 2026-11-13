@@ -1,4 +1,4 @@
-import {ROOM_LAYOUT_FORMAT,ROOM_LAYOUT_VERSION} from './room-layout-model.mjs?v=town-wide-rooms-1';
+import {ROOM_LAYOUT_FORMAT,ROOM_LAYOUT_VERSION} from './room-layout-model.mjs?v=town-wide-layout-1';
 
 export const ROOM_LAYOUT_STORAGE_PREFIX='codaRoomLayoutsV1:';
 export const ROOM_LAYOUTS_FORMAT='coda-room-layouts';
