@@ -19,12 +19,13 @@ VICTORIAN = 'showroom-victorian-parlor'
 parser = argparse.ArgumentParser()
 parser.add_argument('--url', help='Published Builder URL')
 parser.add_argument('--screenshots', type=Path, default=ROOT/'work/wide-layout/browser')
-parser.add_argument('--skip-legacy', action='store_true', help='Skip five separately verified legacy-bank contexts')
+parser.add_argument('--skip-legacy', action='store_true', help='Skip the separately verified historical save-bank contexts')
 parser.add_argument('--baseline-dir', type=Path, help='Optional verbose frozen scenes for failure diagnostics')
 args = parser.parse_args()
 OUT = args.screenshots
 OUT.mkdir(parents=True, exist_ok=True)
 manifest = json.loads((ROOT/'tests/fixtures/room-layout-ac1ee72.json').read_text())
+shape_manifest = json.loads((ROOT/'tests/fixtures/room-layout-98c6c7a.json').read_text())
 map_hash = hashlib.sha256(MAP.read_bytes()).hexdigest()
 errors, failed, steps = [], [], []
 
@@ -108,6 +109,7 @@ SURVEY = r'''()=>{
     if(item.solid)solidCount++;
    }
    assert(solidCount>10,theme.id+': no solid furniture');
+   for(const zone of scene.zones.filter(z=>['showroom-lobby','exit'].includes(z.action)))assert(zone.x>=0&&zone.y>=0&&zone.x+zone.w<=scene.width&&zone.y+zone.h<=scene.height,theme.id+': return trigger extends outside its resized floor');
    for(const seat of scene.items.filter(i=>i.seatingTarget)){
     const target=scene.items.find(i=>i.id===seat.seatingTarget);assert(target,seat.id+': missing seating target');
     const center=item=>{const boxes=F.furnitureFacingBoxes(catalog.get(item.asset),item),left=Math.min(...boxes.map(b=>b.x)),top=Math.min(...boxes.map(b=>b.y)),right=Math.max(...boxes.map(b=>b.x+b.w)),bottom=Math.max(...boxes.map(b=>b.y+b.h));return{x:(left+right)/2,y:(top+bottom)/2,w:right-left,h:bottom-top};},s=center(seat),t=center(target),r=(seat.rotation||0)*Math.PI/180,front={x:-Math.sin(r),y:Math.cos(r)},dx=t.x-s.x,dy=t.y-s.y;
@@ -342,16 +344,25 @@ try:
         assert len(rows)==31
         changed=[row for row in rows if row['marker']]
         assert len(changed)==30,[(row['themeId'],row['width'],row['height']) for row in rows if not row['marker']]
+        reshaped=[row for row in rows if row['marker'] and row['marker']['version']==2]
+        assert len(reshaped)==23,[(row['themeId'],row['marker']) for row in rows]
         for row in rows:
-            if row['request']['kind']=='apartment':assert (row['width'],row['height'])==(2304,1184),(row['themeId'],row['width'],row['height'])
-            else:assert row['width']==1184 and row['height'] in (512,896)
+            if row['request']['kind']=='apartment':assert (row['width'],row['height'])==(2368,1132),(row['themeId'],row['width'],row['height'])
+            else:assert (row['width'],row['height'])==(1184,512),(row['themeId'],row['width'],row['height'])
             assert row['visual']['h']==row['height']+108
+            assert row['visual']['w']*620==row['visual']['h']*1184,(row['themeId'],'room shape differs from the Victorian reference')
             assert normalized_scene(row['editor'])==normalized_scene(row['reloaded']),(row['themeId'],'fresh full-scene metadata changed on record reload')
+            if not row['marker'] or row['marker']['version']!=2:
+                for key,value in room_fingerprints(row).items():assert value==shape_manifest['cases']['fresh'][row['themeId']][key],(row['themeId'],'an approved lower room changed',key)
+            if row['request']['kind']=='apartment':
+                scene=row['editor'];center=row['width']/2
+                assert scene['spawn']['x']==center and scene['portalExit']['threshold']['x']==center,(row['themeId'],'arrival/exit did not follow the resized home center')
+                assert all(actor['x']==center for actor in scene.get('actors',[])),(row['themeId'],'resident actor did not follow the resized home center')
         victorian=next(row for row in rows if row['themeId']==VICTORIAN)
         for key,value in room_fingerprints(victorian).items():assert value==manifest['cases']['fresh'][VICTORIAN][key],('Victorian changed',key,value)
         assert page.evaluate('localStorage.getItem(%s)'%json.dumps(KEY)) is None
         (OUT/'fresh-survey.json').write_text(json.dumps(rows,indent=2))
-        note('All 30 new defaults reload through the real native catalog, retain stock/mirrors/supports, and have reachable functional rooms; approved Victorian remains exact',{'rooms':31,'changed':30,'checkedRouteTargets':sum(row.get('checkedTargets',0) for row in rows)})
+        note('All 31 rooms share the Victorian visual proportions; 23 reshaped defaults fully reload, eight approved lower rooms remain exact, and all functional targets are reachable',{'rooms':31,'standardLayouts':30,'reshaped':23,'checkedRouteTargets':sum(row.get('checkedTargets',0) for row in rows)})
 
         for row in rows:
             editor(page,row['themeId']);page.locator('.room-editor-fit').click()
@@ -367,20 +378,20 @@ try:
         # Seed an actual old architecture, then keep a live Play room open while
         # Builder Reset/Undo/Redo/import changes both walls and placed furniture.
         theme='showroom-retrofuture';request=next(row['request'] for row in rows if row['themeId']==theme)
-        old_record=manifest['currentRecords'][theme]
+        old_record=shape_manifest['currentRecords'][theme]
         new_record=next(row['record'] for row in rows if row['themeId']==theme)
         old_pack={'format':'coda-room-layouts','version':1,'owner':'builder','rooms':{theme:old_record}}
         page.evaluate('({key,pack})=>localStorage.setItem(key,JSON.stringify(pack))',{'key':KEY,'pack':old_pack})
         page.reload();page.wait_for_function('!!window.townBuilder?.roomEditor');page.evaluate(INSTALL)
         editor(page,theme)
         assert fingerprint(page.evaluate('townBuilder.roomEditor.model.record()'))==fingerprint(old_record)
-        assert fingerprint(normalized_scene(page.evaluate('__sceneSnapshot(townBuilder.roomEditor.model.scene)')))==manifest['cases']['current31'][theme]['editorSHA256']
+        assert fingerprint(normalized_scene(page.evaluate('__sceneSnapshot(townBuilder.roomEditor.model.scene)')))==shape_manifest['cases']['current31'][theme]['editorSHA256']
         page.locator('.room-editor-exit').click();page.locator('#play').click();page.wait_for_function('!!window.townGame?.urban');page.evaluate(INSTALL)
         page.evaluate("townGame.urban.enterBuilding(townGame.project.objects.find(o=>o.asset==='coda-furnishings'));townGame.urban.goStoreFloor(2);townGame.urban.openShowroom('retrofuture')")
         page.wait_for_function("townGame.urban.scene?.showroomId==='retrofuture'")
         old_active=page.evaluate(ACTIVE)
         assert old_active['signature']==old_record['baseSignature'] and old_active['allOriginalReferences'] and old_active['free']
-        assert fingerprint(normalized_scene(old_active['scene']))==manifest['cases']['current31'][theme]['gameplaySHA256']
+        assert fingerprint(normalized_scene(old_active['scene']))==shape_manifest['cases']['current31'][theme]['gameplaySHA256']
         note('Actual Play has opened the saved upper showroom with its complete previous walls and furniture')
         original_play_url=page.url
         control=boot(context);control.evaluate(INSTALL);editor(control,theme)
@@ -403,6 +414,9 @@ try:
             return result
 
         control.get_by_role('button',name='Reset theme',exact=True).click();new_active=expect_active(new_record)
+        assert old_active['scene']['height']==896 and new_active['scene']['height']==512
+        assert old_active['player']['y']>new_active['scene']['height']-40
+        assert new_active['player']==new_active['scene']['spawn'],'A player outside the resized room did not return to its safe arrival'
         assert old_active['privacy']!=new_active['privacy'],'The source-switch test did not change actual door geometry'
         control.bring_to_front();control.get_by_role('button',name='Undo',exact=True).click();expect_active(old_record)
         control.bring_to_front();control.get_by_role('button',name='Redo',exact=True).click();expect_active(new_record)
@@ -425,20 +439,21 @@ try:
         control.evaluate("floor=>{townBuilder.urban.enterBuilding(townBuilder.project.objects.find(o=>o.asset==='coda-residences'));townBuilder.urban.goFloor(floor)}",floor);control.clock.run_for(40)
         home_walker.walk(control.evaluate("townBuilder.urban.portals.find(p=>p.action==='room'&&p.resident==='bach').approach"));home_walker.interact()
         assert home_walker.scene()['scene']['resident']=='bach'
-        assert control.evaluate('__audit.I.getInterior(townBuilder.urban.scene).width')==2304
+        assert control.evaluate('__audit.I.getInterior(townBuilder.urban.scene).width')==next(row['width'] for row in rows if row['themeId']=='bach')
         home_walker.walk(control.evaluate("townBuilder.urban.portals.find(p=>p.action==='exit').approach"));home_walker.interact()
         assert home_walker.scene()['scene']=={'kind':'hall','floor':floor};tours.append('newly wide Bach home')
         note('Actual WASD/E enters and leaves lower/upper showrooms and a newly widened lower-floor apartment',{'tours':tours,'walkedWorldPixels':round(walker.distance+home_walker.distance)})
         assert page.evaluate('JSON.stringify(townGame.project)')==world
         assert page.evaluate('()=>Object.fromEntries(["codaNotesWalletV1","musicArcadeV1","codaTownAdventuresV1:guest"].map(k=>[k,localStorage.getItem(k)]))')==protected
         context.close()
-        legacy=None
+        legacy=None;prior_shapes=None
         if not args.skip_legacy:
             fixtures={'approved':json.loads((ROOT/'tests/fixtures/victorian-user-layout.json').read_text()),'previous':json.loads((ROOT/'tests/fixtures/victorian-previous-default.json').read_text()),'frozen':json.loads((ROOT/'tests/fixtures/room-layout-e6a709a.json').read_text())}
             legacy=verify_legacy_layouts(browser,boot=boot,manifest=manifest,fixtures=fixtures,output=OUT/'legacy-results.json',baseline_dir=args.baseline_dir)
+            prior_shapes=verify_legacy_layouts(browser,boot=boot,manifest=shape_manifest,fixtures=fixtures,only_cases={'current31'},output=OUT/'previous-shape-results.json')
         assert not errors and not failed,(errors,failed)
         assert hashlib.sha256(MAP.read_bytes()).hexdigest()==map_hash
-        result={'passed':True,'newDefaults':30,'approvedVictorianUnchanged':True,'actualRuntimeNativeCatalog':True,'allRecordsReload':True,'activePlaySourceSwitch':True,'realDoorJourneys':tours,'mapAndProgressUnchanged':True,'legacy':legacy,'errors':errors,'failedResponses':failed,'steps':steps}
+        result={'passed':True,'standardLayouts':30,'reshapedDefaults':23,'equalVictorianVisualProportions':True,'approvedVictorianUnchanged':True,'actualRuntimeNativeCatalog':True,'allRecordsReload':True,'activePlaySourceSwitch':True,'realDoorJourneys':tours,'mapAndProgressUnchanged':True,'legacy':legacy,'previousShapes':prior_shapes,'errors':errors,'failedResponses':failed,'steps':steps}
         (OUT/'results.json').write_text(json.dumps(result,indent=2));print(json.dumps(result),flush=True)
         browser.close()
 finally:

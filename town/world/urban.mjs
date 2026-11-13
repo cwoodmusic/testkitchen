@@ -1,6 +1,6 @@
 import {createTownActivities} from './town-activities.mjs?v=town-store-halls-1';
 import {catalog} from './catalog.mjs?v=town-room-placement-2';
-import {FLOOR_COUNT,residents,getInterior,renderInterior,residentInteractionZones,apartmentDecorBounds,apartmentWallDecorBounds,configureUrbanInteriors} from './urban-interiors.mjs?v=town-wide-layout-1';
+import {FLOOR_COUNT,residents,getInterior,renderInterior,residentInteractionZones,apartmentDecorBounds,apartmentWallDecorBounds,configureUrbanInteriors} from './urban-interiors.mjs?v=town-wide-shape-1';
 import {createRoomStorage,roomItemBoxes} from './urban-room.mjs?v=opera-parallax-1';
 import {SHOWROOMS,STORE_FLOOR_COUNT,STORE_VERTICAL_CORE} from './showroom-layout.mjs?v=town-room-placement-2';
 import {createStagePerformance,updateStageProgramme,stagePerformanceSignature,stageCollisionBoxes} from './concert-performers.mjs?v=opera-players-2';

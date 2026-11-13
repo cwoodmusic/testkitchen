@@ -2,7 +2,7 @@
 
 Open [Town Builder](https://cwoodmusic.github.io/testkitchen/town/builder/) and choose **Room editor** in the top bar. The **Room theme** dropdown contains all 31 interiors: twelve showrooms, eighteen neighbors’ homes and your apartment. Each theme keeps its own furniture layout. Walls, doors and room sizes stay fixed.
 
-Every apartment and showroom default follows the approved Victorian furniture grouping while keeping each home’s own theme and mirrored side. Existing saved designs retain their original rooms. Choose **Reset theme** to use the new default; **Undo** restores the previous room and furniture.
+Every apartment and showroom default follows the approved Victorian wide outline and furniture grouping while keeping each home’s own theme and mirrored side. Existing saved designs retain their original rooms. Choose **Reset theme** to use the new default; **Undo** restores the previous room and furniture.
 
 [Editor preview](town-preview/room-editor.webp?v=opera-parallax-1) · [Browse the updated rooms](coda-room-gallery.html?v=opera-parallax-1)
 

@@ -1,6 +1,6 @@
 import {residents} from './resident-profiles.mjs?v=opera-parallax-1';
 import {interiorActorScale} from './interior-scale.mjs?v=opera-parallax-1';
-import {getInterior} from './urban-interiors.mjs?v=town-wide-layout-1';
+import {getInterior} from './urban-interiors.mjs?v=town-wide-shape-1';
 export {residents} from './resident-profiles.mjs?v=opera-parallax-1';
 
 const SPEED=156,GAIT=Math.PI*2/150;

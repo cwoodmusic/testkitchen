@@ -25,7 +25,7 @@ import {drawFurnitureContactShadow} from './furniture-contact-shadow.mjs?v=town-
 import {expandWideRoomShell,getInteriorVisualBounds} from './wide-room-shell.mjs?v=town-wide-rooms-1';
 import {drawWideRoomSouthExterior,drawWideRoomEntrance} from './wide-room-frontage.mjs?v=town-wide-rooms-1';
 import {wideRoomPartitionDrawables,clearWideRoomPartitionCache} from './wide-room-partitions.mjs?v=town-wide-rooms-1';
-import {applyWideRoomLayout} from './wide-room-layout.mjs?v=town-wide-layout-1';
+import {applyWideRoomLayout} from './wide-room-layout.mjs?v=town-wide-shape-1';
 import {preparePlacedFacingArt} from './furniture-art-access.mjs?v=opera-parallax-1';
 // Public tower floors retain their original halls and 2304 × 1728 lot.
 // Private scenes use the shared wide layout; saved designs retain their shell.

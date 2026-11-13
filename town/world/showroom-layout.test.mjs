@@ -57,10 +57,10 @@ test('all eight showroom doors retain real incoming and outgoing NPC journeys to
 });
 
 test('wide units have private bedroom and bathroom doors and physical native-foot routes to every real function',()=>{
- const layouts=new Set();
+ const layouts=new Set();let checked=0;
  for(const d of SHOWROOMS)for(const m of showroomModels(d)){const p=m.showroom.apartment,original=d.apartment,nav=navigation(m),promoted=d.id==='victorian-parlor';layouts.add(original.layoutId);
-  const authoredFootprint=d.storeFloor===1?SHOWROOM_UNIT_FOOTPRINT:UPPER_SHOWROOM_UNIT_FOOTPRINT;
-  assert.deepEqual({width:m.width,height:m.height},{width:authoredFootprint.width,height:authoredFootprint.height+64});assert.equal(previousSource(m).roomLayoutSignatureFrame.height,authoredFootprint.height);assert.equal(m.floor,d.storeFloor);assert.equal(m.apartmentLayout,original.layoutId);assert.equal(m.collectionOwner,'showroom-'+d.id);assert.deepEqual(m.spawn,{...original.spawn,y:original.spawn.y+64});
+  checked++;const authoredFootprint=d.storeFloor===1?SHOWROOM_UNIT_FOOTPRINT:UPPER_SHOWROOM_UNIT_FOOTPRINT,latestShape=m.wideRoomLayout?.version===2,expectedHeight=latestShape?512:authoredFootprint.height+64;
+  assert.deepEqual({width:m.width,height:m.height},{width:authoredFootprint.width,height:expectedHeight});assert.equal(previousSource(m).roomLayoutSignatureFrame.height,authoredFootprint.height);assert.equal(m.floor,d.storeFloor);assert.equal(m.apartmentLayout,original.layoutId);assert.equal(m.collectionOwner,'showroom-'+d.id);assert.deepEqual(m.spawn,{x:original.spawn.x,y:expectedHeight-84});
   for(const role of ['bedroom','bathroom','kitchen','living','dining']){const a=p.areas.find(a=>a.functionalRole===role);assert(a);
    if(promoted){const item=m.items.find(i=>role==='dining'?i.designRole==='family-dining-table':i.slot===({bedroom:'bed',bathroom:'vanity',kitchen:'sink',living:'sofa'}[role])),approach=furnitureApproach(nav,item);assert(approach.point&&approach.distance<=32,d.name+' cannot approach its approved '+role+' furniture');}
    else{assert(nav.reaches(a.point),d.name+' cannot reach '+role);assert(a.point.x>=a.x&&a.point.x<=a.x+a.w&&a.point.y>=a.y&&a.point.y<=a.y+a.h);}
@@ -69,16 +69,21 @@ test('wide units have private bedroom and bathroom doors and physical native-foo
   const resolved=getShowroomNavigation(m);assert(resolved);assert.deepEqual(resolved.visitRoute[0],m.spawn);assert(Math.hypot(resolved.visitRoute.at(-1).x-p.browse.x,resolved.visitRoute.at(-1).y-p.browse.y)<=14);assert(nav.reaches(resolved.visitRoute.at(-1)));route(m,resolved.visitRoute,d.name+' active browsing',{cardinal:false});route(m,resolved.exitRoute,d.name+' active returning',{cardinal:false});
   if(!promoted)assert(nav.reaches(p.browse));
   assert.equal(m.privacyDoors.length,2);for(const door of m.privacyDoors){assert.equal(door.length,PRIVATE_DOOR_CLEAR_WIDTH);assert(m.rooms.some(r=>r.id===door.roomId));const vertical=door.axis==='vertical',mid={x:door.x+(vertical?0:door.length/2),y:door.y+(vertical?door.length/2:0)};assert(nav.reaches(mid),d.name+' door');for(const normal of [-32,32])assert(nav.reaches({x:mid.x+(vertical?normal:0),y:mid.y+(vertical?0:normal)}),d.name+' must pass both sides of '+door.id);assert(blocked(m,{x:door.x+(vertical?0:door.length+8),y:door.y+(vertical?door.length+8:0)},0));}
-  assert.deepEqual(m.portalExit.threshold,{...original.portalExit.threshold,y:original.portalExit.threshold.y+64});assert.deepEqual(m.portalExit.door.threshold,m.portalExit.threshold);assert.deepEqual(m.portalExit.enterNormal,original.portalExit.enterNormal);assert.equal(m.spawn.x,m.portalExit.threshold.x);assert.equal(m.portalExit.threshold.y-m.spawn.y,56);assert.deepEqual(m.portalExit.enterNormal,{x:0,y:-1});assert.equal(getDoorVisualGeometry(m.portalExit.door).kind,'front');route(m,[m.spawn,{x:m.spawn.x,y:m.portalExit.threshold.y-20}],d.name+' south foyer');
+  assert.deepEqual(m.portalExit.threshold,{x:original.portalExit.threshold.x,y:expectedHeight-28});assert.deepEqual(m.portalExit.door.threshold,m.portalExit.threshold);assert.deepEqual(m.portalExit.enterNormal,original.portalExit.enterNormal);assert.equal(m.spawn.x,m.portalExit.threshold.x);assert.equal(m.portalExit.threshold.y-m.spawn.y,56);assert.deepEqual(m.portalExit.enterNormal,{x:0,y:-1});assert.equal(getDoorVisualGeometry(m.portalExit.door).kind,'front');route(m,[m.spawn,{x:m.spawn.x,y:m.portalExit.threshold.y-20}],d.name+' south foyer');
  }
- assert.equal(layouts.size,12);assert.equal(new Set([...layouts].map(id=>id.replace(/-(original|mirrored)$/,''))).size,6);
+ assert.equal(checked,27,'All12 current homes,11 original sources and4 previous wide layouts remain covered');assert.equal(layouts.size,12);assert.equal(new Set([...layouts].map(id=>id.replace(/-(original|mirrored)$/,''))).size,6);
 });
 
 test('each owner retains its unique original collection while expanded seating can repeat matching pieces',()=>{
  const all=new Map();
  for(const d of SHOWROOMS)for(const m of showroomModels(d)){const nav=navigation(m),owner='showroom-'+d.id,refreshed=Boolean(m.wideRoomLayout);
   const original=(refreshed?m.roomLayoutBaseItems:m.items).filter(i=>!i.roomExpansion),promoted=d.id==='victorian-parlor';assert.equal(original.length,promoted?24:d.storeFloor===1?25:d.row?29:28);assert.equal(new Set(original.map(i=>i.asset)).size,original.length);
-  if(refreshed){const active=new Set(m.items.map(i=>i.id)),removed=m.roomLayoutBaseItems.filter(i=>!active.has(i.id));assert.equal(removed.filter(i=>i.roomExpansion&&i.slot==='dining-chair').length,3);assert(removed.every(i=>i.roomExpansion&&i.slot==='dining-chair'||!i.roomExpansion&&i.slot==='coffee-table'),'Only the three spare diners and optional small coffee table are decluttered');assert.deepEqual(m.roomLayoutBaseItems.map(i=>[i.id,i.asset]).sort(),previousSource(m).items.map(i=>[i.id,i.asset]).sort(),'Every original ownership ID and artwork remains in canonical stock');}
+  if(refreshed){
+   const active=new Set(m.items.map(i=>i.id)),removed=m.roomLayoutBaseItems.filter(i=>!active.has(i.id)),shortUpper=m.wideRoomLayout.version===2&&d.storeFloor===2,secondary=new Set(['family-lounge-sofa','bedroom-reading-chair']);
+   assert.equal(removed.filter(i=>i.roomExpansion&&i.slot==='dining-chair').length,3);assert(removed.every(i=>i.roomExpansion&&i.slot==='dining-chair'||!i.roomExpansion&&i.slot==='coffee-table'||shortUpper&&secondary.has(i.designRole)),'Decluttering is limited to spare diners, the small coffee table and secondary upper-floor seating');
+   const primary=m.familyFurniture,required=new Set([primary.diningTable,primary.livingTable,...primary.diningSeats,...primary.livingSeats,...m.roomLayoutBaseItems.filter(i=>['desk','linen-storage','record-console'].includes(i.slot)).map(i=>i.id)]);for(const id of required)assert(active.has(id),d.name+' must retain its primary group and functional stock '+id);
+   assert.deepEqual(m.roomLayoutBaseItems.map(i=>[i.id,i.asset]).sort(),previousSource(m).items.map(i=>[i.id,i.asset]).sort(),'Every original ownership ID and artwork remains in canonical stock');
+  }
   if(promoted){assert.equal(m.items.filter(i=>i.roomExpansion).length,10);assert.equal(m.roomLayoutBaseItems.length,38);assert.deepEqual(m.items.map(i=>i.id),approvedVictorian.placements.map(i=>i.id));assert.deepEqual(m.roomLayoutBaseItems.filter(i=>!m.items.some(active=>active.id===i.id)).map(i=>i.id).sort(),approvedVictorian.removed.slice().sort());}
   for(const item of m.items){assert.equal(item.collectionOwner,owner);assert(item.visualSignature.includes(owner));}
   for(const asset of new Set(m.items.map(i=>i.asset)))if(m.items.filter(i=>i.asset===asset).length>1)assert(['sofa','dining-chair','reading-chair','plant'].includes(native.get(asset)?.slot),d.name+' repeats an unintended fixture');
@@ -131,7 +136,7 @@ test('refreshed showroom defaults keep the mirrored reference grouping with actu
  let count=0;
  for(const d of SHOWROOMS){const m=getInterior({kind:'showroom',showroomId:d.id});if(!m.wideRoomLayout)continue;count++;
   const source=previousSource(m),mirror=m.wideRoomLayout.mirrored,canonical=r=>mirror?{...r,x:m.width-r.x-r.w}:r,point=p=>mirror?{...p,x:m.width-p.x}:p;
-  assert.equal(mirror,Boolean(d.column));assert.deepEqual({width:m.width,height:m.height},{width:source.width,height:source.height});
+  assert.equal(mirror,Boolean(d.column));assert.deepEqual({width:m.width,height:m.height},{width:1184,height:512});assert.equal(source.width,m.width);assert.equal(source.height,d.storeFloor===2?896:512,'The saved source keeps its previous physical depth');
   const room=role=>canonical(m.rooms.find(r=>r.functionalRole===role)),bed=room('bedroom'),bath=room('bathroom'),kitchen=room('kitchen'),living=room('living');
   assert(bed.x+bed.w<bath.x&&bath.x+bath.w<kitchen.x,'Sleeping and service rooms keep the canonical reference order');assert.equal(bed.y,106);assert.equal(bath.y,106);assert.equal(bed.h,bath.h);assert.equal(kitchen.y,106);assert.equal(kitchen.h,170);assert(living.x>m.width/2);
   const family=m.familyFurniture,dining=m.items.find(i=>i.id===family.diningTable),coffee=m.items.find(i=>i.id===family.livingTable),diningCenter=point(baseCenter(dining)),coffeeCenter=point(baseCenter(coffee));

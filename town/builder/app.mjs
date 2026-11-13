@@ -1,5 +1,5 @@
 import {createRoomEditor} from './room-editor.mjs?v=town-wide-layout-1';
-import {getInteriorBase,renderInterior} from '../world/urban-interiors.mjs?v=town-wide-layout-1';
+import {getInteriorBase,renderInterior} from '../world/urban-interiors.mjs?v=town-wide-shape-1';
 import {createTownRecovery} from './recovery.mjs?v=town-flight-1';
 import {groundTexture} from '../world/ground-render.mjs?v=town-room-placement-2';
 import {assetFilter} from '../world/asset-color.mjs?v=opera-parallax-1';
@@ -10,7 +10,7 @@ import {planWaterFill} from './water-fill.mjs?v=town-flight-1';
 import {planLandFill} from './land-fill.mjs?v=town-flight-1';
 import {planOrganicEdges} from './organic-edges.mjs?v=town-flight-1';
 import {createSandFootprints} from '../world/sand-footprints.mjs?v=town-flight-1';
-import {createAmbientNPCs} from '../world/ambient-npcs.mjs?v=town-wide-layout-1';
+import {createAmbientNPCs} from '../world/ambient-npcs.mjs?v=town-wide-shape-1';
 import {createPlayerCollisionIndex} from '../world/player-collision-index.mjs?v=town-flight-1';
 import {readNightPreference,saveNightPreference} from '../world/lighting-settings.mjs?v=opera-parallax-1';
 import {readNPCPreference,saveNPCPreference} from './preview-settings.mjs?v=opera-parallax-1';
@@ -26,7 +26,7 @@ import {catalog,sources,preparePlacedArt} from '../world/catalog.mjs?v=town-room
 import {render,resizeSurface,findStart,movePlayer,toggleGate,follow,PLAYER_SCALE,GAIT_PER_PIXEL} from '../world/runtime.mjs?v=town-room-placement-2';
 import {openDatabase,saveProject} from '../world/storage.mjs?v=town-flight-1';
 import {createZip} from '../../studio/zip.js';
-import {createUrbanController} from '../world/urban.mjs?v=town-wide-layout-1';
+import {createUrbanController} from '../world/urban.mjs?v=town-wide-shape-1';
 import {createConcertAudio} from '../world/concert-audio.mjs?v=opera-parallax-1';
 import {mountConcertControls} from '../world/concert-controls.mjs?v=town-music-settings-1';
 import {CONCERT_PROGRAMME} from '../world/concert-programme.mjs?v=opera-players-1';

@@ -17,21 +17,22 @@ function context(){
 const intersects=(a,b)=>a.x<b.x+b.w&&a.x+a.w>b.x&&a.y<b.y+b.h&&a.y+a.h>b.y;
 
 test('real horizontal private doors become aligned upright openings while vertical doors stay out of the partition layer',()=>{
- let currentDoors=0,sourceDoors=0,sourceSolidFronts=0;
- for(const version of ['current','preserved'])for(const request of requests){
-  const active=getInteriorBase(request),s=version==='preserved'?preserved(active):active,before=JSON.stringify(s),{groups}=wideRoomSouthPartitionGeometry(s);
+ let currentDoors=0,sourceDoors=0,previousDoors=0,sourceSolidFronts=0;
+ const active=requests.map(getInteriorBase),previous=active.flatMap(s=>s.roomLayoutLegacySources?.slice(1)||[]);assert.equal(previous.length,23);
+ for(const [version,models]of [['current',active],['preserved',active.map(preserved)],['previous',previous]])for(const s of models){
+  const before=JSON.stringify(s),{groups}=wideRoomSouthPartitionGeometry(s);
   if(!s.wideRoomExpansion)assert.equal(groups.length,0);
-  else if(version==='current'){assert.equal(groups.length,2,s.id+' has two front-facing private rooms');assert(groups.every(g=>g.doors.length===1),s.id+' has an upright door in each private frontage');}
+  else if(version!=='preserved'){assert.equal(groups.length,2,s.id+' has two front-facing private rooms');assert(groups.every(g=>g.doors.length===1),s.id+' has an upright door in each private frontage');}
   for(const g of groups){
    assert(g.walls.length);assert.equal(g.wallpaper,s.homeMaterialSuite.wallpaper,'The hallway side of a bathroom uses the home dry wallpaper');
    for(const wall of g.walls){assert(s.walls.some(w=>JSON.stringify(w)===JSON.stringify(wall)));assert.equal(g.floorY,wall.y+wall.h/2);}
    for(const face of g.faces){assert.equal(face.y,g.floorY-96);assert.equal(face.h,96+g.thickness/2);}
    if(version==='preserved'&&!g.doors.length)sourceSolidFronts++;
-   for(const d of g.doors){if(version==='preserved')sourceDoors++;else currentDoors++;assert(s.privacyDoors.includes(d));assert.equal(d.axis,'horizontal');assert.equal(d.length,36);assert.equal(d.y,g.floorY);for(const face of g.faces)assert(!intersects(face,{x:d.x,y:g.floorY-96,w:d.length,h:96+g.thickness/2}),'No face or cap crosses the real door opening');}
+   for(const d of g.doors){if(version==='preserved')sourceDoors++;else if(version==='previous')previousDoors++;else currentDoors++;assert(s.privacyDoors.includes(d));assert.equal(d.axis,'horizontal');assert.equal(d.length,36);assert.equal(d.y,g.floorY);for(const face of g.faces)assert(!intersects(face,{x:d.x,y:g.floorY-96,w:d.length,h:96+g.thickness/2}),'No face or cap crosses the real door opening');}
   }
   assert.equal(JSON.stringify(s),before);
  }
- assert.equal(currentDoors,62);assert.equal(sourceDoors,20);assert(sourceSolidFronts>=10,'Preserve front walls in the original homes with side-facing private doors');
+ assert.equal(currentDoors,62);assert.equal(sourceDoors,20);assert.equal(previousDoors,46);assert(sourceSolidFronts>=10,'Preserve front walls in the original homes with side-facing private doors');
  const player=getInteriorBase({kind:'apartment',resident:'player'}),current=wideRoomSouthPartitionGeometry(player),original=wideRoomSouthPartitionGeometry(preserved(player));assert.equal(current.groups.length,2);assert(current.groups.every(g=>g.doors.length===1));assert.equal(original.groups.length,2);assert(original.groups.every(g=>g.doors.length===0));
 });
 

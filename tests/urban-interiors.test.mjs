@@ -45,7 +45,7 @@ test('fifteen floors house every musician once and reserve the top apartment for
  assert.equal(getInterior({kind:'apartment',resident:'player'}).floor,15);
 });
 
-test('fresh apartments share the expanded shell while preserved sources retain their original floor plots',()=>{
+test('fresh apartments share the uniform shell while both preserved versions retain their floor plots',()=>{
  const lobby=getInterior({kind:'lobby'});assert.deepEqual({width:lobby.width,height:lobby.height},TOWER_FOOTPRINT);
  let paired=0,single=0;
  for(let floor=2;floor<=FLOOR_COUNT;floor++){
@@ -53,10 +53,12 @@ test('fresh apartments share the expanded shell while preserved sources retain t
   assert.equal(hall.width,TOWER_FOOTPRINT.width);assert.equal(hall.height,608);
   for(const a of apartments){
    const source=a.roomLayoutLegacySources?.[0]??a,sourceWide=source.width===2304,original=source.roomLayoutSignatureFrame??source;
-   assert.deepEqual({width:a.width,height:a.height},{width:2304,height:1184});assert.equal(a.wideRoomExpansion.depth,64);
+   assert.deepEqual({width:a.width,height:a.height},{width:2368,height:1132});assert.equal(a.height,a.wideRoomExpansion.previousHeight+a.wideRoomExpansion.depth);
+   assert.equal(a.wideRoomExpansion.previousWidth,source.width);assert.equal(a.wideRoomExpansion.previousHeight,source.height);assert.equal(a.wideRoomExpansion.newFloorBottom,a.height-28);
    assert.equal(original.height+hall.height,TOWER_FOOTPRINT.height,'Every preserved source keeps its authored floor depth');
    assert.deepEqual({width:source.width,height:source.height},{width:sourceWide?2304:1088,height:sourceWide?1184:1120},'Existing saved architecture retains its original compact or expanded wide shell');
    if(sourceWide)assert.equal(source.wideRoomExpansion.depth,64);else {assert.equal(source.roomLayoutSignatureFrame,undefined);assert.equal(source.wideRoomExpansion,undefined);}
+   assert.equal(a.roomLayoutLegacySources.length,2);const previous=a.roomLayoutLegacySources[1];assert.equal(previous.wideRoomLayout.version,1);assert.deepEqual({width:previous.width,height:previous.height},{width:2304,height:1184},'Saved layouts from the first shared default retain their exact shell');
   }
   const sources=apartments.map(a=>a.roomLayoutLegacySources?.[0]??a);
   if(apartments.length===2){paired++;for(const source of sources)assert.equal(source.width,1088);assert.equal(sources.reduce((sum,a)=>sum+a.width,0)+128,TOWER_FOOTPRINT.width);}

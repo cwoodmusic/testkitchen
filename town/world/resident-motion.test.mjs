@@ -75,10 +75,10 @@ test('home journeys reach the active south arrival before leaving and begin ther
  }
 });
 
-test('saved compact home journeys switch to the fresh wide model without retaining the old route or rewriting the save',()=>{
- const resident=residents.find(r=>r.id==='bach'),latest=getInteriorBase({kind:'apartment',resident:resident.id}),legacy=latest.roomLayoutLegacySources[0],catalog=new Map([...APARTMENT_COLLECTION_ASSETS,...FAMILY_FURNITURE_ASSETS].map(a=>[a.id,a]));
- assert.equal(legacy.width,1088);assert.equal(legacy.height,1120);assert.equal(latest.width,2304);assert.equal(latest.height,1184);
- const originalRecord=createRoomLayoutModel({themeId:resident.id,scene:legacy,catalog}).record(),memory=new Map(),events=new EventTarget();let writes=0;
+test('home journeys switch between both saved shapes and the latest shape without stale routes or save rewrites',()=>{
+ const resident=residents.find(r=>r.id==='bach'),latest=getInteriorBase({kind:'apartment',resident:resident.id}),[legacy,prior]=latest.roomLayoutLegacySources,catalog=new Map([...APARTMENT_COLLECTION_ASSETS,...FAMILY_FURNITURE_ASSETS].map(a=>[a.id,a]));
+ assert.equal(legacy.width,1088);assert.equal(legacy.height,1120);assert.equal(prior.width,2304);assert.equal(prior.height,1184);assert.equal(latest.width,2368);assert.equal(latest.height,1132);
+ const originalRecord=createRoomLayoutModel({themeId:resident.id,scene:legacy,catalog}).record(),priorRecord=createRoomLayoutModel({themeId:resident.id,scene:prior,catalog}).record(),memory=new Map(),events=new EventTarget();let writes=0;
  const storage={getItem:key=>memory.get(key)??null,setItem(key,value){writes++;memory.set(key,value);}},store=createRoomLayoutStorage({storage,eventTarget:events}),resolver=createRoomLayoutResolver({storage,events});
  assert.equal(store.save(resident.id,originalRecord).ok,true);const raw=store.raw;writes=0;
  const url=new URL('./resident-journey.mjs',import.meta.url),source=readFileSync(url,'utf8').replace(/^import .*;\r?\n/gm,'').replace(/^export \{.*\} from .*;\r?\n/gm,'').replace(/^export function /gm,'function ')+'\n({residentHomePose,interiorJourneyPose,journeyDuration});';
@@ -92,8 +92,9 @@ test('saved compact home journeys switch to the fresh wide model without retaini
  }
  const resolved=resolver.resolve(latest,catalog);assert.deepEqual(resolved.rooms,legacy.rooms);assert.deepEqual(resolved.walls,legacy.walls);assert.deepEqual(resolved.privacyDoors,legacy.privacyDoors);assert.deepEqual(resolved.spawn,legacy.spawn);
  const old=inspect(resolved);assert.deepEqual(old.home,{x:544,y:650});assert.equal(store.raw,raw);assert.equal(writes,0,'Reading or animating the old home does not rewrite its record');
- assert.equal(store.remove(resident.id).ok,true);assert.equal(resolver.resolve(latest,catalog),latest);const fresh=inspect(latest);assert.deepEqual(fresh.home,{x:1152,y:750});assert.notEqual(fresh.duration,old.duration);
- assert.equal(store.save(resident.id,originalRecord).ok,true);const restored=inspect(resolver.resolve(latest,catalog));assert.deepEqual(restored,old,'Restoring the same saved compact home restores its own route and actor coordinates');resolver.dispose();
+ assert.equal(store.save(resident.id,priorRecord).ok,true);const priorRaw=store.raw;writes=0;const savedPrior=resolver.resolve(latest,catalog);for(const key of ['width','height','rooms','walls','privacyDoors','spawn'])assert.deepEqual(savedPrior[key],prior[key],'The just-published saved architecture remains exact: '+key);const previous=inspect(savedPrior);assert.deepEqual(previous.home,{x:1152,y:750});assert.equal(store.raw,priorRaw);assert.equal(writes,0);assert.notEqual(previous.duration,old.duration);
+ assert.equal(store.remove(resident.id).ok,true);assert.equal(resolver.resolve(latest,catalog),latest);const fresh=inspect(latest);assert.deepEqual(fresh.home,{x:1184,y:750});assert.notEqual(fresh.duration,old.duration);assert.notEqual(fresh.duration,previous.duration);
+ assert.equal(store.save(resident.id,originalRecord).ok,true);const restored=inspect(resolver.resolve(latest,catalog));assert.deepEqual(restored,old,'Restoring the same saved compact home restores its own route and actor coordinates');assert.equal(store.save(resident.id,priorRecord).ok,true);assert.deepEqual(inspect(resolver.resolve(latest,catalog)),previous,'The just-published saved home restores its own actor and route too');resolver.dispose();
 });
 
 test('all twelve store visits scale showroom legs while preserving both public floors, lift waits and browsing time',()=>{
