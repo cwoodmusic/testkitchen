@@ -228,7 +228,7 @@ function floor(c,x,y,w,h,tile=false){
  c.restore();
 }
 function carpet(c,r){
- if(drawHomeMaterialRug(c,r))return;
+ if(r.texture){drawHomeMaterialRug(c,r);return;}
  fill(c,r.x+8,r.y+10,r.w,r.h,'#302c3138');fill(c,r.x,r.y,r.w,r.h,'#493b36');fill(c,r.x+4,r.y+4,r.w-8,r.h-8,'#c8aa77');fill(c,r.x+10,r.y+10,r.w-20,r.h-20,r.color);fill(c,r.x+17,r.y+17,r.w-34,r.h-34,'#302c3128');
  for(let y=r.y+28;y<r.y+r.h-22;y+=32)for(let x=r.x+28;x<r.x+r.w-22;x+=32){fill(c,x,y,4,4,'#e0c69566');if(x<r.x+46||x>r.x+r.w-52||y<r.y+46||y>r.y+r.h-52){fill(c,x-5,y+5,14,3,'#c8aa77');fill(c,x,y-4,4,17,'#c8aa77');}}
 }
