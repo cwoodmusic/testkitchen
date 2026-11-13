@@ -1,5 +1,5 @@
 import {createRoomEditor} from './room-editor.mjs?v=town-victorian-2';
-import {getInteriorBase,renderInterior} from '../world/urban-interiors.mjs?v=town-victorian-3';
+import {getInteriorBase,renderInterior} from '../world/urban-interiors.mjs?v=town-victorian-4';
 import {createTownRecovery} from './recovery.mjs?v=town-flight-1';
 import {groundTexture} from '../world/ground-render.mjs?v=town-flight-1';
 import {assetFilter} from '../world/asset-color.mjs?v=opera-parallax-1';
@@ -26,7 +26,7 @@ import {catalog,sources,preparePlacedArt} from '../world/catalog.mjs?v=town-flig
 import {render,resizeSurface,findStart,movePlayer,toggleGate,follow,PLAYER_SCALE,GAIT_PER_PIXEL} from '../world/runtime.mjs?v=town-flight-1';
 import {openDatabase,saveProject} from '../world/storage.mjs?v=town-flight-1';
 import {createZip} from '../../studio/zip.js';
-import {createUrbanController} from '../world/urban.mjs?v=town-victorian-3';
+import {createUrbanController} from '../world/urban.mjs?v=town-victorian-4';
 import {createConcertAudio} from '../world/concert-audio.mjs?v=opera-parallax-1';
 import {mountConcertControls} from '../world/concert-controls.mjs?v=opera-parallax-1';
 import {CONCERT_PROGRAMME} from '../world/concert-programme.mjs?v=opera-players-1';

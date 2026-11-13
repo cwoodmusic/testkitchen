@@ -58,8 +58,12 @@ export function interiorWallNetworkGeometry(scene){
   const x=Math.max(0,face.x),y=Math.max(0,face.y),right=Math.min(scene.width,face.x+face.w),bottom=Math.min(scene.height,face.y+Math.min(face.h,thickness));
   return {x,y,w:right-x,h:bottom-y,color:frame?.color||scene.homeMaterialSuite?.trim?.wood||scene.color,trim:frame?.trim||scene.homeMaterialSuite?.trim?.light||scene.trim,face:{...face},capDirection:'north'};
  }).filter(valid);
- const projectedReturns=unique(subtractAll(returns,apertures)),northCaps=unique(subtractAll(northBands,apertures)),paint=unique(subtractAll([...subtractAll(walls,faces),...projectedReturns,...northCaps],apertures)),outer=[{x:0,y:0,w:scene.width,h:3},{x:0,y:102,w:scene.width,h:4},{x:0,y:0,w:28,h:scene.height},{x:scene.width-28,y:0,w:28,h:scene.height},{x:0,y:scene.height-28,w:scene.width,h:28}],context=[...paint,...outer];
- return {paint,returns:projectedReturns,northCaps,faces,apertures,edges:boundaryEdges(paint,context)};
+ // A side partition can stop at the front wall's north edge. Continue its
+ // cutaway cap through that adjoining band's thickness so the L join has no
+ // floor-shaped notch. Exact contact never bridges a real circulation gap.
+ const cornerBands=sideWalls.flatMap(wall=>walls.filter(front=>front.h<=32&&front.w>front.h&&same(front.y,wall.y+wall.h)&&(same(front.x+front.w,wall.x)||same(front.x,wall.x+wall.w))).map(front=>({x:wall.x,y:front.y,w:wall.w,h:front.h,color:wall.color,trim:wall.trim,cornerDirection:'south',wall:{...wall},front:{...front}})));
+ const projectedReturns=unique(subtractAll(returns,apertures)),northCaps=unique(subtractAll(northBands,apertures)),cornerCaps=unique(subtractAll(cornerBands,apertures)),paint=unique(subtractAll([...subtractAll(walls,faces),...projectedReturns,...northCaps,...cornerCaps],apertures)),outer=[{x:0,y:0,w:scene.width,h:3},{x:0,y:102,w:scene.width,h:4},{x:0,y:0,w:28,h:scene.height},{x:scene.width-28,y:0,w:28,h:scene.height},{x:0,y:scene.height-28,w:scene.width,h:28}],context=[...paint,...outer];
+ return {paint,returns:projectedReturns,northCaps,cornerCaps,faces,apertures,edges:boundaryEdges(paint,context)};
 }
 function edgeRect(edge,width,inset=0){
  const {side,at,start,end}=edge;

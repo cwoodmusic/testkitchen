@@ -39,7 +39,7 @@ test('all31 wall networks preserve every physical model and never invent an unsu
   }
   for(const r of g.paint){
    for(const d of g.apertures)assert(!overlap(r,d),`${m.id}: cap covers a real doorway`);
-   const x=r.x+r.w/2,y=r.y+r.h/2;assert([...m.walls,...g.returns,...g.northCaps].some(w=>inside(w,x,y)),`${m.id}: unsupported floor patch`);
+   const x=r.x+r.w/2,y=r.y+r.h/2;assert([...m.walls,...g.returns,...g.northCaps,...g.cornerCaps].some(w=>inside(w,x,y)),`${m.id}: unsupported floor patch`);
   }
   assert.equal(JSON.stringify(m),before);
  }
@@ -117,4 +117,26 @@ test('all62 actual36px doorway slits remain completely free of cap, trim and sha
  }
  assert.equal(count,62);
  const untouched=createCanvas(100,100),c=untouched.getContext('2d');assert.equal(drawInteriorWallNetwork(c,{kind:'shop'}),false);assert.equal(drawInteriorWallNetwork(c,{kind:'hall'}),false);assert.equal(drawInteriorWallNetwork(c,{kind:'concert'}),false);
+});
+
+test('Victorian front corners continue the partition caps through the adjoining skirting without floor notches or seams',()=>{
+ const m=getInterior({kind:'showroom',showroomId:'victorian-parlor'}),before=JSON.stringify(m),g=interiorWallNetworkGeometry(m),cv=createCanvas(m.width,m.height),c=cv.getContext('2d');
+ assert.deepEqual(g.cornerCaps.map(({x,y,w,h})=>({x,y,w,h})),[{x:356,y:326,w:16,h:16},{x:372,y:326,w:16,h:16},{x:588,y:326,w:16,h:16}]);
+ c.fillStyle='#102030';c.fillRect(0,0,m.width,m.height);drawInteriorWallNetwork(c,m);
+ for(const x of [364,380,596]){
+  for(let y=324;y<340;y++)assert.deepEqual(color(c,x,y),color(c,x,323),`The wall at${x} must continue through its front corner at${y}`);
+  assert.deepEqual(color(c,x,345),[16,32,48,255],'The cap stops at the front trim rather than extending over the hall floor');
+ }
+ for(let x=358;x<386;x++)assert.deepEqual(color(c,x,334),color(c,364,334),'The shared partition cap has no seam between its two wall halves');
+ assert.equal(JSON.stringify(m),before,'Corner artwork preserves the original walls, colliders, furniture and saved-layout signature');
+});
+
+test('every front corner cap is supported by an exactly adjoining wall band and preserves the actual floor gaps',()=>{
+ for(const m of models){const g=interiorWallNetworkGeometry(m);for(const cap of g.cornerCaps){
+  assert.equal(cap.cornerDirection,'south');assert.equal(cap.y,cap.wall.y+cap.wall.h);assert.equal(cap.y,cap.front.y);assert.equal(cap.h,cap.front.h);
+  assert(cap.wall.x===cap.front.x+cap.front.w||cap.wall.x+cap.wall.w===cap.front.x);
+  assert(cap.w===cap.wall.w&&cap.w<=32&&cap.h<=32);
+  for(const doorway of g.apertures)assert(!overlap(cap,doorway));
+ }}
+ const retro=interiorWallNetworkGeometry(getInterior({kind:'showroom',showroomId:'retrofuture'}));assert(!retro.cornerCaps.some(cap=>inside(cap,404,438)),'A real14px circulation gap remains open');
 });
