@@ -1,24 +1,26 @@
 # Town rhythm adventures
 
-Both activities work in **Walk test** and **Play this town**, and leave the saved map unchanged. Town stars remain separate from arcade Notes. Cave and coastal fish now share one journal, including catch counts and largest sizes from the earlier coastal game.
+The town activities work in **Walk test** and **Play this town**, and leave the saved map unchanged. Town stars remain separate from arcade Notes. Cave and coastal fish now share one journal, including catch counts and largest sizes from the earlier coastal game.
 
-## Rhythm Catch
+## Yellow-note inventory and NPC requests
+
+Yellow note bugs fly around the connected town whenever you are outside. No vendor game is needed. Chase them with **WASD / arrows** and **Shift**, then swing with **F** or **Swing net**. Clicking turns toward the pointer and swings. Each successful sweep catches one card; yellow cards replenish after twelve active outdoor seconds.
+
+The yellow inventory saves quarter notes, beamed eighth-note pairs, beamed four-sixteenth groups, and quarter rests. Each card represents one beat. It stays with the active player on this browser/device, separately from blue challenge cards and arcade Notes. Existing town stars, fish records, and maps are preserved.
+
+Approach a named neighbour, press **E**, and choose **Hear rhythm request**. Hear the count-in and example twice, then write four beats from your yellow inventory. The answer is hidden while listening. Replay and undo freely; incorrect answers spend nothing. You can leave to catch more yellow cards and return to the same neighbour’s request. A correct answer uses exactly four cards, earns one town star, and advances that neighbour’s next request. A failed inventory save leaves the cards available to retry. NPC requests have no timer.
+
+## Blue vendor challenge
 
 With **NPCs on**, approach the coffee-cart host, press **E**, and choose **Play Rhythm Catch**. If there is no coffee cart, another vendor hosts.
 
-Watch **1 · 2 · Ready · GO!**, then hear the four-beat rhythm twice. Up to 96 note bugs are scattered across connected, walkable parts of town. They wander, flutter, and dart away when approached. They cannot cross solid walls, water, or sheer cliffs, and stay near their original neighborhood so every card remains reachable.
+Watch **1 · 2 · Ready · GO!**, then hear the four-beat rhythm twice. Exactly **four blue cards** appear around the connected island. They flutter and flee like the yellow bugs, but belong only to this vendor challenge. Their values match the heard rhythm; their order is not shown.
 
-Catch quarter notes, beamed eighth-note pairs, beamed four-sixteenth groups, and quarter rests. Each card fills one beat. There are no isolated eighths/sixteenths, longer notes, or other rests in this game.
+You have **five minutes** to catch all four blue cards, return to the original vendor, and rebuild the rhythm by ear. The timer starts after the first example and keeps running during reconstruction and replays. **R / Hear rhythm** replays the example. **E / Build at vendor** opens the four-slot builder near the vendor. A correct answer earns one to three town stars; three rounds earn the Town Rhythm Ranger finish screen. Each new round starts with a fresh five minutes.
 
-- **WASD / arrows:** chase; **Shift:** run.
-- **F / Swing net:** sweep a forward arc in the direction you face. The rim must pass the bug; notes behind you or across a wall cannot be caught.
-- **Click:** turn toward the pointer and sweep. One swing catches one card.
-- **R / Hear rhythm:** replay without losing caught cards.
-- **Escape / Leave:** finish hunting.
+If time runs out, that round ends without a reward. **Try again** starts fresh. Your yellow inventory is kept, and blue cards never become inventory cards. Yellow catches during a blue hunt still go into the yellow collection. Leaving, pausing, or switching the active player cannot spend yellow cards on a blue challenge.
 
-The net has a visible sweep and recovery, with a brief trail. Reduced motion removes wing flicker, bobbing, and the trail while preserving the chase. Pausing freezes note movement.
-
-Return to the original vendor and press **E / Build at vendor**. Arrange four cards to rebuild the example. Extra cards are allowed, and **Catch more notes** returns to the hunt. Undo, replay and retry freely. A correct rhythm earns one to three town stars; three rounds earn the Town Rhythm Ranger finish screen.
+The shared net uses a direction-specific wrist anchor, a short windup, a forward sweep, and a straight retract. The visible rim and catch collision use the same geometry. WASD sets facing immediately before F; the avatar keeps that facing through the stroke. Water, solid walls and cliffs stop both flying cards and catches. Reduced motion removes wing flicker, bobbing, and the trail. Explicit pause/background-tab protection freezes the challenge clock and note movement.
 
 ## Sailing and fishing
 
@@ -46,7 +48,9 @@ On the same saved 137-object town in managed Chromium, the district view improve
 
 Browser checks:
 
-- `tests/town-adventures-browser.py`: real note chase, forward F sweeps, vendor return, reconstruction, rewards and save/reload.
+- `tests/town-adventures-browser.py`: four blue cards, all four net directions, five-minute deadline/replay/build/pause/timeout/retry, rewards and save/reload.
+- `tests/town-yellow-notes-browser.py`: permanent yellow catches, inventory persistence, respawn and interactions.
+- `tests/town-npc-rhythm-browser.py`: real neighbour conversation, by-ear reconstruction, exact inventory spend and persistence.
 - `tests/town-island-browser.py`: actual island sailing, a four-bar perfect cave-engine catch, 54-species journal, reload and mobile layout.
 - `tests/town-fishing-shared-browser.py`: real arcade/iframe catch sharing, existing cave catches retained, one Notes reward, and persistence.
 - `tests/town-concert-visitors-browser.py`: reserved seats, walking/seated town residents, inward gallery chairs, NPC switch and unchanged map.

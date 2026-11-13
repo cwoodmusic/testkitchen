@@ -1,24 +1,29 @@
 import {height} from './model.mjs?v=town-flight-1';
-import {findFishingDock} from './town-game-rules.mjs?v=town-flight-1';
-import {mountGameStyles,createTownJournal,gameButton} from './town-game-audio.mjs?v=town-flight-1';
-import {createRhythmCatch} from './rhythm-catch.mjs?v=town-flight-1';
-import {createTownFishing} from './town-fishing.mjs?v=town-flight-1';
-export function createTownActivities({canvas,getProject,getPlayer,getFacing,setFacing,getResidents,getOwner,catalog}){
- mountGameStyles();const journal=createTownJournal(getOwner),rhythm=createRhythmCatch({canvas,getProject,getPlayer,getFacing,setFacing,catalog,journal}),fishing=createTownFishing({canvas,journal,getProject,getPlayer,getOwner,catalog});let doc=null,dock=null,owner=getOwner?.();
+import {findFishingDock} from './town-game-rules.mjs?v=town-notes-1';
+import {mountGameStyles,createTownJournal,gameButton} from './town-game-audio.mjs?v=town-notes-1';
+import {createRhythmCatch} from './rhythm-catch.mjs?v=town-notes-1';
+import {createNoteInventory} from './note-inventory.mjs?v=town-notes-1';
+import {createYellowNoteCatch} from './yellow-note-catch.mjs?v=town-notes-1';
+import {createNPCRhythmRequests} from './npc-rhythm-requests.mjs?v=town-notes-1';
+import {createTownFishing} from './town-fishing.mjs?v=town-notes-1';
+export function createTownActivities({canvas,getProject,getPlayer,getFacing,setFacing,getResidents,getOwner,getScene=()=>null,isConversationOpen=()=>false,catalog}){
+ mountGameStyles();const journal=createTownJournal(getOwner),inventory=createNoteInventory(journal),requests=createNPCRhythmRequests({canvas,journal,inventory});
+ const yellow=createYellowNoteCatch({canvas,getProject,getPlayer,getFacing,setFacing,catalog,inventory,canUseNet:()=>!getScene()&&!isConversationOpen()&&!rhythm.active&&!fishing.active&&!requests.active});
+ const rhythm=createRhythmCatch({canvas,getProject,getPlayer,getFacing,setFacing,catalog,journal,onExtraSweep:(...args)=>yellow.catchAlongSweep(...args)}),fishing=createTownFishing({canvas,journal,getProject,getPlayer,getOwner,catalog});let doc=null,dock=null,owner=getOwner?.();
  const host=()=>{const vendors=(getResidents?.(null)||[]).filter(a=>a.role==='vendor'&&!a.hidden);return vendors.find(a=>a.asset==='decor-07-06')||vendors[0];};
  function refresh(){if(doc===getProject())return;doc=getProject();dock=findFishingDock(doc,catalog);}
  function nearDock(){refresh();const p=getPlayer();return p&&dock&&Math.hypot(p.x-dock.stand.x,p.y-dock.stand.y)<190;}
- function end(){rhythm.end();fishing.end();doc=null;dock=null;}
- function tick(keys,dt){if(getOwner?.()!==owner){end();owner=getOwner?.();}if(doc&&doc!==getProject()){end();}refresh();rhythm.tick();fishing.tick(keys,dt);}
+ function end(){rhythm.end();fishing.end();requests.end();yellow.reset();doc=null;dock=null;}
+ function tick(keys,dt){if(getOwner?.()!==owner){end();owner=getOwner?.();}if(doc&&doc!==getProject()){end();}refresh();rhythm.tick();requests.tick();fishing.tick(keys,dt);if(!getScene()&&!isConversationOpen()&&!fishing.active&&!requests.fullscreen&&!rhythm.fullscreen)yellow.tick(keys,dt);else yellow.hide();}
  function draw(c,cam,w,h,time){refresh();c.save();c.translate(w/2,h/2);c.scale(cam.zoom,cam.zoom);c.translate(-cam.x,-cam.y);
   if(dock&&!fishing.active){const b=dock.boat,p=dock.stand,z=height(doc,p.x,p.y);if(b.virtual){c.save();c.translate(b.x,b.y);c.fillStyle='#382d29';c.beginPath();c.moveTo(-67,-35);c.quadraticCurveTo(-80,15,0,44);c.quadraticCurveTo(80,15,67,-35);c.closePath();c.fill();c.strokeStyle='#d6ad73';c.lineWidth=7;c.stroke();c.fillStyle='#b88e5c';c.fillRect(-55,-27,110,13);c.fillRect(-45,5,90,12);c.restore();}
    c.fillStyle='#113c3be8';c.strokeStyle='#efcd84';c.lineWidth=2;c.beginPath();c.roundRect(p.x-83,p.y-z-155,166,39,12);c.fill();c.stroke();c.font='bold 16px system-ui';c.textAlign='center';c.fillStyle='#fff0b9';c.fillText('RHYTHM FISHING',p.x,p.y-z-130);
   }
-  const vendor=host();if(vendor&&!rhythm.active&&!fishing.active){const y=vendor.y-height(doc,vendor.x,vendor.y)-168;c.fillStyle='#143f36eb';c.strokeStyle='#9ae1c2';c.lineWidth=2;c.beginPath();c.roundRect(vendor.x-89,y-25,178,35,10);c.fill();c.stroke();c.font='bold 15px system-ui';c.textAlign='center';c.fillStyle='#fff0b9';c.fillText('♩ RHYTHM CATCH',vendor.x,y-2);}
-  rhythm.draw(c,cam,time);fishing.draw(c,cam,w,h,time);c.restore();
+  const vendor=host();if(vendor&&!rhythm.active&&!fishing.active){const y=vendor.y-height(doc,vendor.x,vendor.y)-168;c.fillStyle='#143f36eb';c.strokeStyle='#9ae1c2';c.lineWidth=2;c.beginPath();c.roundRect(vendor.x-89,y-25,178,35,10);c.fill();c.stroke();c.font='bold 15px system-ui';c.textAlign='center';c.fillStyle='#fff0b9';c.fillText('♩ BLUE NOTE CHALLENGE',vendor.x,y-2);}
+  if(!fishing.active)yellow.draw(c,cam,time,{net:!rhythm.active&&!requests.active});rhythm.draw(c,cam,time);fishing.draw(c,cam,w,h,time);c.restore();
  }
- function offerVendor(actor,parent,close){if(actor.id!==host()?.id)return;const p=document.createElement('p');p.textContent='Got sharp ears? Borrow my big net, catch the floating notes around town, and build the rhythm I play!';parent.append(p);parent.append(gameButton('Play Rhythm Catch',()=>{close();rhythm.start(actor);},'town-vendor-game'));}
- function keydown(e){return rhythm.active?rhythm.keydown(e):fishing.active?fishing.keydown(e):false;}
- document.addEventListener('visibilitychange',()=>{if(document.hidden){rhythm.pause();fishing.pause();}});window.addEventListener('blur',()=>rhythm.pause());
- return {offerVendor,keydown,tick,draw,end,pointer:e=>fishing.active?fishing.pointer(e):rhythm.pointer(e),interact(){if(rhythm.active)return rhythm.interact();if(fishing.active)return fishing.interact();if(nearDock()){fishing.start(dock);return true;}return false;},get active(){return rhythm.active||fishing.active;},get fullscreen(){return rhythm.fullscreen||fishing.fullscreen;},get blocked(){return rhythm.blocked||fishing.blocked;},get sailing(){return fishing.sailing;},get boatFacing(){return fishing.facing;},get hiddenBoat(){return fishing.active?dock?.boat?.id:null;},get prompt(){if(this.active)return '';if(nearDock())return 'E · Board boat · Rhythm Fishing';return '';},get state(){return {player:getPlayer()?{...getPlayer()}:null,rhythmCatch:rhythm.state,fishing:fishing.state,dock:dock?structuredClone(dock):null};}};
+ function offerVendor(actor,parent,close){if(actor.id!==host()?.id){requests.offer(actor,parent,close);return;}const p=document.createElement('p');p.textContent='Can you catch a rhythm by ear? Find my four blue cards and bring them back to build what you heard. You have five minutes. Yellow cards stay in your inventory for your neighbours’ requests.';parent.append(p);parent.append(gameButton('Play Rhythm Catch',()=>{close();rhythm.start(actor);},'town-vendor-game'));}
+ function keydown(e){return requests.active?requests.keydown(e):rhythm.active?rhythm.keydown(e):fishing.active?fishing.keydown(e):!getScene()&&!isConversationOpen()?yellow.keydown(e):false;}
+ document.addEventListener('visibilitychange',()=>{if(document.hidden){rhythm.pause();requests.pause();fishing.pause();yellow.hide();}});window.addEventListener('blur',()=>{rhythm.pause();requests.pause();yellow.hide();});
+ return {offerVendor,keydown,tick,draw,end,pointer:e=>fishing.active?fishing.pointer(e):rhythm.active?rhythm.pointer(e):yellow.pointer(e),interact(){if(requests.active)return true;if(rhythm.active)return rhythm.interact();if(fishing.active)return fishing.interact();if(nearDock()){fishing.start(dock);return true;}return false;},get active(){return rhythm.active||fishing.active||requests.active;},get fullscreen(){return rhythm.fullscreen||fishing.fullscreen||requests.fullscreen;},get blocked(){return rhythm.blocked||fishing.blocked||requests.blocked;},get netFacing(){return rhythm.swingFacing||yellow.swingFacing;},get sailing(){return fishing.sailing;},get boatFacing(){return fishing.facing;},get hiddenBoat(){return fishing.active?dock?.boat?.id:null;},get prompt(){if(this.active)return '';if(nearDock())return 'E · Board boat · Rhythm Fishing';return '';},get state(){return {player:getPlayer()?{...getPlayer()}:null,rhythmCatch:rhythm.state,yellowNotes:yellow.state,npcRhythmRequest:requests.state,fishing:fishing.state,dock:dock?structuredClone(dock):null};}};
 }

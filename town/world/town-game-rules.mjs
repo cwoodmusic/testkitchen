@@ -12,10 +12,11 @@ export const CATCH_PATTERNS=Object.freeze([
 export function catchAttacks(value){return value==='quarter-rest'?[]:value==='eighth-pair'?[0,.5]:value==='sixteenth-group'?[0,.25,.5,.75]:[0];}
 export const sameRhythm=(a,b)=>a.length===b.length&&a.every((v,i)=>v===b[i]);
 export function remainingNotes(target,bag){const left=[...target];for(const n of bag){const i=left.indexOf(n);if(i>=0)left.splice(i,1);}return left;}
-export function reachableNoteSpots(doc,catalog,origin,{limit=COLS*ROWS,radius=22000}={}){
+export function reachableNoteSpots(doc,catalog,origin,{limit=COLS*ROWS,radius=22000,clearance=0}={}){
  const index=createPlayerCollisionIndex({getProject:()=>doc,catalog,getRevision:()=>0});
- const clear=p=>p.x>32&&p.y>32&&p.x<COLS*64-32&&p.y<ROWS*64-32&&Math.hypot(p.x-origin.x,p.y-origin.y)<=radius&&!blocked(index.view(p),p.x,p.y,catalog);
- const linked=(a,b)=>{const ca=cell(doc,Math.floor(a.x/64),Math.floor(a.y/64)),cb=cell(doc,Math.floor(b.x/64),Math.floor(b.y/64)),step=ca.stairs||cb.stairs||ca.curves||cb.curves?2:8;const steps=Math.max(1,Math.ceil(Math.hypot(b.x-a.x,b.y-a.y)/step));let prev=a;for(let i=1;i<=steps;i++){const q={x:a.x+(b.x-a.x)*i/steps,y:a.y+(b.y-a.y)*i/steps};if(!clear(q)||Math.abs(height(doc,q.x,q.y)-height(doc,prev.x,prev.y))>14)return false;prev=q;}return true;};
+ const offsets=clearance>0?[[0,0],[clearance,0],[-clearance,0],[0,clearance],[0,-clearance]]:[[0,0]];
+ const clear=p=>p.x>32&&p.y>32&&p.x<COLS*64-32&&p.y<ROWS*64-32&&Math.hypot(p.x-origin.x,p.y-origin.y)<=radius&&offsets.every(([dx,dy])=>{const q={x:p.x+dx,y:p.y+dy};return !blocked(index.view(q),q.x,q.y,catalog);});
+ const linked=(a,b)=>{const ca=cell(doc,Math.floor(a.x/64),Math.floor(a.y/64)),cb=cell(doc,Math.floor(b.x/64),Math.floor(b.y/64)),step=ca.stairs||cb.stairs||ca.curves||cb.curves?2:8;const steps=Math.max(1,Math.ceil(Math.hypot(b.x-a.x,b.y-a.y)/step));let prev=a;for(let i=1;i<=steps;i++){const q={x:a.x+(b.x-a.x)*i/steps,y:a.y+(b.y-a.y)*i/steps};if(!clear(q)||offsets.some(([dx,dy])=>Math.abs(height(doc,q.x+dx,q.y+dy)-height(doc,prev.x+dx,prev.y+dy))>14))return false;prev=q;}return true;};
  let start;for(let r=0;r<=3&&!start;r++)for(let yy=-r;yy<=r&&!start;yy++)for(let xx=-r;xx<=r;xx++){const p={x:(Math.floor(origin.x/64)+xx)*64+32,y:(Math.floor(origin.y/64)+yy)*64+32};if(clear(p)&&linked(origin,{x:p.x,y:origin.y})&&linked({x:p.x,y:origin.y},p)){start=p;break;}}
  if(!start)return [];
  const key=p=>`${p.x},${p.y}`,queue=[start],seen=new Set([key(start)]);

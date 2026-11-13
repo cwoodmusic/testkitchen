@@ -1,4 +1,4 @@
-import {createTownActivities} from './town-activities.mjs?v=town-flight-1';
+import {createTownActivities} from './town-activities.mjs?v=town-notes-1';
 import {catalog} from './catalog.mjs?v=town-flight-1';
 import {FLOOR_COUNT,residents,getInterior,renderInterior,residentInteractionZones,apartmentDecorBounds,apartmentWallDecorBounds,configureUrbanInteriors} from './urban-interiors.mjs?v=town-flight-1';
 import {createRoomStorage,roomItemBoxes} from './urban-room.mjs?v=opera-parallax-1';
@@ -36,7 +36,7 @@ export function createUrbanController({canvas,getProject,getPlayer,getFacing,set
  const stageCurtain=createConcertCurtain({createPerformance(track,previous){
   return previous?.signature===stagePerformanceSignature(track)?updateStageProgramme(previous,track):createStagePerformance(track,{stage:getInterior(scene).stage});
  }});
- const activities=createTownActivities({canvas,getProject,getPlayer,getFacing,setFacing,getResidents,getOwner:()=>owner,catalog});
+ const activities=createTownActivities({canvas,getProject,getPlayer,getFacing,setFacing,getResidents,getOwner:()=>owner,getScene:()=>scene,isConversationOpen:()=>dialog.open,catalog});
  function concertPerformance(){
   if(scene?.kind!=='concert')return null;
   const audio=getConcert(),track=audio?.currentTrack||CONCERT_PROGRAMME[0],timeline=audio?.state?.changeover;
@@ -287,7 +287,7 @@ export function createUrbanController({canvas,getProject,getPlayer,getFacing,set
   }
   else if(z.action==='programme'||z.action==='concert-programme')showProgramme();
   else if(z.action==='decorate'){decorate=true;updateHud();showInventory();}
-  else if(z.action==='resident'){const r=residents.find(r=>r.id===z.resident);modal(r?.name||'Your neighbor',scene.kind==='apartment'&&r?.theme?`Welcome to my ${r.theme.toLowerCase()} apartment. It is good to see a familiar face in the building.`:'Good to see you around Coda Town. I hope we can catch some music together later.');beginConversation(z.resident);}
+  else if(z.action==='resident'){const r=residents.find(r=>r.id===z.resident),body=modal(r?.name||'Your neighbor',scene.kind==='apartment'&&r?.theme?`Welcome to my ${r.theme.toLowerCase()} apartment. It is good to see a familiar face in the building.`:'Good to see you around Coda Town. I hope we can catch some music together later.');beginConversation(z.resident);const actor=sceneResidents().find(a=>a.id===z.resident)||r;if(actor)activities.offerVendor(actor,body,closeDialog);}
   else if(z.action==='exit'){
    if(scene.kind==='showroom')returnToStore();else if(scene.kind==='apartment')setScene({kind:'hall',floor:scene.floor});else if(scene.kind==='hall')goFloor(1);else reset();
   }
@@ -310,7 +310,7 @@ export function createUrbanController({canvas,getProject,getPlayer,getFacing,set
   return !!automaticDoors?.blocked(x,y,radius)||[...m.solids,...items,...(onStage?performanceBoxes:[])].some(r=>rectHit(x,y,r,radius));
  }
  function frame(ctx,keys,dt,now,width,height,drawPlayer){
-  if(!scene){activities.tick(keys,dt);updateExteriorDoors(dt);return false;}lastSize={width,height};const actorScale=interiorActorScale(scene),m=getInterior(scene),actors=sceneResidents();automaticDoors.update(dt,player,actors);refreshStage();walking=false;
+  activities.tick(keys,dt);if(!scene){updateExteriorDoors(dt);return false;}lastSize={width,height};const actorScale=interiorActorScale(scene),m=getInterior(scene),actors=sceneResidents();automaticDoors.update(dt,player,actors);refreshStage();walking=false;
   if(!dialog.open&&!decorate){let dx=(keys.has('d')||keys.has('arrowright')?1:0)-(keys.has('a')||keys.has('arrowleft')?1:0),dy=(keys.has('s')||keys.has('arrowdown')?1:0)-(keys.has('w')||keys.has('arrowup')?1:0);const length=Math.hypot(dx,dy);if(length){if(seated)standUp();dx/=length;dy/=length;facing=Math.abs(dx)>Math.abs(dy)?dx<0?'left':'right':dy<0?'up':'down';const speed=(keys.has('shift')?780:450)*actorScale,n=Math.ceil(speed*dt/3),sx=dx*speed*dt/n,sy=dy*speed*dt/n;let distance=0;for(let i=0;i<n;i++){const old={...player};if(!solid(player.x+sx,player.y))player.x+=sx;if(!solid(player.x,player.y+sy))player.y+=sy;distance+=Math.hypot(player.x-old.x,player.y-old.y);}walking=distance>0;phase=(phase+distance*Math.PI*2/(150*actorScale))%(Math.PI*2);}}
   const drawZoom=effectiveInteriorZoom(scene,zoom),clampView=(p,length,visible)=>length<=visible?length/2:Math.max(visible/2,Math.min(length-visible/2,p)),focus=seated?{x:m.stage.x+m.stage.w/2,y:m.stage.y+m.stage.h/2+60}:player;view={x:clampView(focus.x,m.width,width/drawZoom),y:clampView(focus.y,m.height,height/drawZoom)};
   tick();ctx.clearRect(0,0,width,height);ctx.fillStyle='#131b21';ctx.fillRect(0,0,width,height);ctx.save();ctx.translate(width/2,height/2);ctx.scale(drawZoom,drawZoom);ctx.translate(-view.x,-view.y);
