@@ -374,6 +374,18 @@ try:
         assert page.evaluate('localStorage.getItem(%s)'%json.dumps(KEY))is None
         page.locator('#roomEditorTheme').select_option('showroom-victorian-parlor');page.wait_for_function("townBuilder.roomEditor.model.themeId==='showroom-victorian-parlor'")
         page.evaluate('__warm(townBuilder.roomEditor.model.scene)');page.locator('#map').screenshot(path=str(OUT/'wide-editor-fit.png'))
+        group=victorian['partitionGroups'][0];focus={'x':group['room']['x']+group['room']['w']/2,'y':group['room']['y']+group['room']['h']/2}
+        runtime_fade=page.evaluate('''({request,focus,bounds})=>{const m=__interiors.getInterior(request),v=__visualBounds(m),make=player=>{const cv=document.createElement('canvas');cv.width=v.w;cv.height=v.h;__interiors.renderInterior(cv.getContext('2d'),request,{model:m,catalog:townBuilder.catalog,actors:[],time:0,player});return cv.getContext('2d').getImageData(Math.floor(bounds.x),Math.floor(bounds.y),Math.ceil(bounds.w),Math.ceil(bounds.h)).data},a=make(),b=make(focus);let changed=0;for(let i=0;i<a.length;i+=4)if(a[i]!==b[i]||a[i+1]!==b[i+1]||a[i+2]!==b[i+2])changed++;return changed}''',{'request':request,'focus':focus,'bounds':group['bounds']})
+        assert runtime_fade>1000,runtime_fade
+        before_hover=page.evaluate('({record:townBuilder.roomEditor.model.record(),raw:localStorage.getItem("codaRoomLayoutsV1:builder")})')
+        outside=page.evaluate('__point',{'x':900,'y':450});page.mouse.move(outside['x'],outside['y'])
+        page.evaluate('''bounds=>{const e=townBuilder.roomEditor,cv=document.getElementById('map'),r=cv.getBoundingClientRect(),v=e.view,sx=cv.width/r.width,sy=cv.height/r.height;e.frame(0);const rect={x:Math.floor((r.width/2+(bounds.x-v.x)*v.zoom)*sx),y:Math.floor((r.height/2+(bounds.y-v.y)*v.zoom)*sy),w:Math.ceil(bounds.w*v.zoom*sx),h:Math.ceil(bounds.h*v.zoom*sy)};window.__wallHoverBefore={rect,pixels:cv.getContext('2d').getImageData(rect.x,rect.y,rect.w,rect.h).data}}''',group['bounds'])
+        page.locator('#map').screenshot(path=str(OUT/'wide-editor-opaque.png'))
+        at=page.evaluate('__point',focus);page.mouse.move(at['x'],at['y'])
+        hover_change=page.evaluate('''()=>{townBuilder.roomEditor.frame(0);const cv=document.getElementById('map'),{rect,pixels:a}=__wallHoverBefore,b=cv.getContext('2d').getImageData(rect.x,rect.y,rect.w,rect.h).data;let changed=0;for(let i=0;i<a.length;i+=4)if(a[i]!==b[i]||a[i+1]!==b[i+1]||a[i+2]!==b[i+2])changed++;return changed}''')
+        assert hover_change>1000,hover_change
+        assert page.evaluate('({record:townBuilder.roomEditor.model.record(),raw:localStorage.getItem("codaRoomLayoutsV1:builder")})')==before_hover
+        page.locator('#map').screenshot(path=str(OUT/'wide-editor-faded.png'));note('Actual runtime player focus and real editor hover fade only the front wall without editing the room',{'runtimeChangedPixels':runtime_fade,'hoverChangedPixels':hover_change})
         rug=page.evaluate("__snap().items.find(i=>i.roomRugId==='victorian-bath-rug')");b=rug['bounds'];start={'x':b['x']+b['w']/2,'y':b['y']+b['h']/2};at=page.evaluate('__point',start);page.mouse.click(at['x'],at['y'])
         held=page.evaluate('townBuilder.roomEditor.held');end={'x':180+held['offset']['x'],'y':480+held['offset']['y']};at=page.evaluate('__point',end);page.mouse.move(at['x'],at['y']);assert page.evaluate('townBuilder.roomEditor.held.valid');page.mouse.click(at['x'],at['y'])
         assert page.evaluate("townBuilder.roomEditor.model.record().rugs[0].y")>448
