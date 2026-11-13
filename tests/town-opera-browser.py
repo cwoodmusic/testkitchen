@@ -371,7 +371,8 @@ try:
         key_start = page.evaluate('({...townBuilder.urban.player})')
         page.keyboard.down('w')
         page.wait_for_timeout(120)
-        page.locator('.concert-controls input[type="range"]').focus()
+        page.locator('.concert-controls__settings').click()
+        page.get_by_role('dialog', name='Settings', exact=True).get_by_role('slider', name='Opera House volume', exact=True).focus()
         page.keyboard.up('w')
         released = page.evaluate('({...townBuilder.urban.player})')
         page.wait_for_timeout(250)
@@ -379,6 +380,7 @@ try:
         assert key_start['y'] - released['y'] > 10
         assert abs(released['x'] - stopped['x']) + abs(released['y'] - stopped['y']) < .1, (released, stopped)
         focus_check = {'start': key_start, 'released': released, 'stopped': stopped}
+        page.get_by_role('dialog', name='Settings', exact=True).get_by_role('button', name='Done', exact=True).click()
         page.locator('#map').focus()
 
         def skip_track():

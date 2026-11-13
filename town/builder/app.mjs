@@ -28,7 +28,7 @@ import {openDatabase,saveProject} from '../world/storage.mjs?v=town-flight-1';
 import {createZip} from '../../studio/zip.js';
 import {createUrbanController} from '../world/urban.mjs?v=town-victorian-default-1';
 import {createConcertAudio} from '../world/concert-audio.mjs?v=opera-parallax-1';
-import {mountConcertControls} from '../world/concert-controls.mjs?v=opera-parallax-1';
+import {mountConcertControls} from '../world/concert-controls.mjs?v=town-music-settings-1';
 import {CONCERT_PROGRAMME} from '../world/concert-programme.mjs?v=opera-players-1';
 import {isUrbanAsset} from '../world/urban-kit.mjs?v=opera-parallax-1';
 import {snapUrbanAsset} from '../world/urban-roads.mjs?v=opera-parallax-1';
@@ -55,7 +55,7 @@ function reflectNPCs(){const b=$('npcToggle');b.textContent=npcsVisible?'NPCs on
 $('npcToggle').onclick=()=>{npcsVisible=!npcsVisible;saveNPCPreference(npcsVisible);reflectNPCs();canvas.focus();};reflectNPCs();
 const urban=createUrbanController({canvas,getProject:()=>doc,getPlayer:()=>player,getFacing:()=>facing,setFacing:value=>{facing=value;},onConversation:(id,active,viewer)=>ambient.setConversation(id,active,viewer),getResidents:scene=>npcsVisible?(scene?ambient.interiorActors(scene):ambient.actors):[],getConcert:()=>concert,preview:true});
 const concert=createConcertAudio({programme:CONCERT_PROGRAMME,changeover:true,getProject:()=>doc,getScene:()=>urban.scene});
-mountConcertControls(concert,{canvas,onProgramme:()=>urban.showProgramme()});
+mountConcertControls(concert,{canvas,toolbar:document.querySelector('header'),onSettingsOpen:()=>{keys.clear();pointer=null;},onProgramme:()=>urban.showProgramme()});
 const status=t=>$('status').textContent=t;
 const roomEditor=createRoomEditor({canvas,catalog,renderRoom:renderInterior,getBaseModel:getInteriorBase,onStatus:status,onActiveChange:active=>{
  keys.clear();pointer=null;hover=null;stairPreview=null;pierPreview=null;
