@@ -1,5 +1,5 @@
 import test from 'node:test';import assert from 'node:assert/strict';
-import {launchFlyingNotes,advanceFlyingNote,netSweepPose,netSweepHits,netVisualPose,netToolPose,facingAngle,NET_STRIKE_FRACTION,NET_WINDUP_FRACTION,NET_CONTACT_FRACTION,NET_SWEEP_SECONDS,NET_RECOVERY_SECONDS} from './rhythm-hunt-motion.mjs';
+import {launchFlyingNotes,advanceFlyingNote,netSweepPose,netSweepHits,netVisualPose,netToolPose,facingAngle,FAIRY_CATCH_PADDING,NET_STRIKE_FRACTION,NET_WINDUP_FRACTION,NET_CONTACT_FRACTION,NET_SWEEP_SECONDS,NET_RECOVERY_SECONDS} from './rhythm-hunt-motion.mjs';
 test('notes fly with changing headings, evade a nearby player, and keep their card identities',()=>{
  const [a]=launchFlyingNotes([{id:'one',value:'eighth-pair',x:500,y:500,phase:0}]),positions=[];let away=false;
  for(let i=0;i<600;i++){advanceFlyingNote(a,{x:a.x-80,y:a.y},1/60,i/60,()=>true);positions.push({x:a.x,y:a.y});if(a.vx>140)away=true;}
@@ -21,14 +21,14 @@ test('the net lifts completely above the head then chops into the facing directi
   const start=netSweepPose(p,angle,0,z);assert.equal(start.x,held.x);assert.equal(start.y,held.y);
  }
 });
-test('only the forward downstroke catches notes and it uses the actual visible oval',()=>{
+test('only the forward downstroke catches notes with bounded forgiveness around the visible oval',()=>{
  const p={x:500,y:500};
  for(const direction of ['up','down','left','right']){
   const angle=facingAngle(direction),strike=netSweepPose(p,angle,NET_STRIKE_FRACTION),lift=netSweepPose(p,angle,NET_WINDUP_FRACTION/2);
   assert.equal(strike.stage,'sweep');assert.equal(strike.catchable,true);
   assert(netSweepHits({x:strike.x,y:strike.y},p,angle,NET_STRIKE_FRACTION,NET_STRIKE_FRACTION));
   assert(netSweepHits({x:strike.x+strike.rx*.9,y:strike.y},p,angle,NET_STRIKE_FRACTION,NET_STRIKE_FRACTION));
-  assert(!netSweepHits({x:strike.x+strike.rx+1,y:strike.y},p,angle,NET_STRIKE_FRACTION,NET_STRIKE_FRACTION),'A stationary mouth must not catch outside its drawn oval');
+  assert(!netSweepHits({x:strike.x+strike.rx+FAIRY_CATCH_PADDING+2,y:strike.y},p,angle,NET_STRIKE_FRACTION,NET_STRIKE_FRACTION),'Distant fairies outside the padded mouth must still miss');
   assert(!netSweepHits({x:lift.x,y:lift.y},p,angle,NET_WINDUP_FRACTION/2,NET_WINDUP_FRACTION/2),'Raising the net cannot collect notes');
   assert(!netSweepHits({x:p.x-Math.cos(angle)*170,y:p.y-30-Math.sin(angle)*170},p,angle,0,1),'A note behind the avatar must not be caught');
  }
@@ -126,18 +126,19 @@ test('the flexible net pocket trails actual hoop motion and rises above its land
  }
 });
 
-test('catching uses the rotated hoop interior rather than its old horizontal oval or bounding box',()=>{
+test('fairy catch padding follows the rotated hoop axes in every direction and terrain height',()=>{
  const player={x:500,y:500},progress=.7;
- for(const facing of ['up','down','left','right']){
-  const angle=facingAngle(facing),pose=netSweepPose(player,angle,progress),{u,v}=pose.rim;
+ for(const facing of ['up','down','left','right'])for(const z of [0,48,144]){
+  const angle=facingAngle(facing),pose=netSweepPose(player,angle,progress,z),{u,v}=pose.rim;
   assert(pose.catchable,facing);
   const inside={x:pose.x+u.x*.95+v.x*.1,y:pose.y+u.y*.95+v.y*.1};
-  assert(netSweepHits(inside,player,angle,progress,progress));
-  const outside={x:pose.x+u.x*.7+v.x*.8,y:pose.y+u.y*.7+v.y*.8};
-  assert(!netSweepHits(outside,player,angle,progress,progress));
-  if(facing==='right'){
-   assert(Math.hypot((inside.x-pose.x)/pose.rx,(inside.y-pose.y)/pose.ry)>1,'A rotated interior point can lie outside the former axis-aligned oval');
-   assert(Math.hypot((outside.x-pose.x)/pose.rx,(outside.y-pose.y)/pose.ry)<1,'An old oval hit must be rejected when it misses the visible tilted hoop');
+  assert(netSweepHits(inside,player,angle,progress,progress,z));
+  for(const axis of [u,v]){
+   const size=Math.hypot(axis.x,axis.y),near=1+(FAIRY_CATCH_PADDING-1)/size,far=1+(FAIRY_CATCH_PADDING+1)/size;
+   assert(netSweepHits({x:pose.x+axis.x*near,y:pose.y+axis.y*near},player,angle,progress,progress,z),'A fairy just outside the drawn rim should be easy to catch');
+   assert(!netSweepHits({x:pose.x+axis.x*far,y:pose.y+axis.y*far},player,angle,progress,progress,z),'Padding must not turn distant notes into catches');
   }
+  const diagonal={x:pose.x+u.x*(1+FAIRY_CATCH_PADDING/Math.hypot(u.x,u.y))*.8+v.x*(1+FAIRY_CATCH_PADDING/Math.hypot(v.x,v.y))*.8,y:pose.y+u.y*(1+FAIRY_CATCH_PADDING/Math.hypot(u.x,u.y))*.8+v.y*(1+FAIRY_CATCH_PADDING/Math.hypot(v.x,v.y))*.8};
+  assert(!netSweepHits(diagonal,player,angle,progress,progress,z),'A corner outside the padded ellipse cannot use its rectangular bounds as a hitbox');
  }
 });

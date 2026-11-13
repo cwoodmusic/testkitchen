@@ -1,4 +1,4 @@
-import {netVisualPose,netSweepPose,NET_SWEEP_SECONDS,NET_RECOVERY_SECONDS,NET_WINDUP_FRACTION} from './rhythm-hunt-motion.mjs?v=town-net-arc-1';
+import {netVisualPose,netSweepPose,NET_SWEEP_SECONDS,NET_RECOVERY_SECONDS,NET_WINDUP_FRACTION} from './rhythm-hunt-motion.mjs?v=town-store-halls-1';
 
 const TAU=Math.PI*2;
 function rimPoint(pose,angle,scale=1,center=pose){

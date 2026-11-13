@@ -1,8 +1,8 @@
-import {createShowroomApartmentPlan} from './showroom-apartments.mjs?v=opera-parallax-1';
-import {createShowroomThemeSign,showroomThemeSignZone} from './showroom-signs.mjs?v=opera-parallax-1';
+import {createShowroomApartmentPlan} from './showroom-apartments.mjs?v=town-store-halls-1';
+import {createShowroomThemeSign,showroomThemeSignZone} from './showroom-signs.mjs?v=town-store-halls-1';
 
-// The original eight homes retain their ground-floor addresses. Four larger
-// homes occupy a second storey inside the same exterior floor plate.
+// Public frontages leave horizontal halls in front of every south-facing door.
+// Each doorway still opens the same independently furnished apartment scene.
 export const STORE_TRAFFIC=Object.freeze({incomingX:1478,outgoingX:1594,ingressY:992,egressY:1056,crossY:1024,spawn:Object.freeze({x:1536,y:1840})});
 export const STORE_FLOOR_COUNT=2;
 export const STORE_VERTICAL_CORE=Object.freeze({
@@ -79,13 +79,13 @@ const definitions=[
 export const SHOWROOM_UNIT_FOOTPRINT=Object.freeze({width:1184,height:448});
 export const UPPER_SHOWROOM_UNIT_FOOTPRINT=Object.freeze({width:1184,height:832});
 export const SHOWROOMS=deepFreeze(definitions.map((definition,index)=>{
- const storeFloor=index<8?1:2,localIndex=index<8?index:index-8,column=localIndex%2,row=Math.floor(localIndex/2),x=column?1856:32,y=row*(storeFloor===1?480:960),w=1184,h=storeFloor===1?448:832;
- const threshold={x:column?x:x+w,y:y+h/2},enterNormal={x:column?1:-1,y:0},facing=column?'left':'right';
- const lobbyApproach={x:threshold.x-enterNormal.x*28,y:threshold.y},entry={x:lobbyApproach.x,y:storeFloor===1?STORE_TRAFFIC.crossY:STORE_VERTICAL_CORE.travelY};
+ const storeFloor=index<8?1:2,localIndex=index<8?index:index-8,column=localIndex%2,row=Math.floor(localIndex/2),x=column?1856:32,y=row*(storeFloor===1?480:960),w=1184,h=storeFloor===1?320:736;
+ const threshold={x:x+w/2,y:y+h},enterNormal={x:0,y:-1},facing='down',hallway={x:28,y:threshold.y,w:3016,h:storeFloor===1?160:224};
+ const lobbyApproach={x:threshold.x,y:threshold.y+56},entry={x:column?STORE_VERTICAL_CORE.outgoingX:STORE_VERTICAL_CORE.incomingX,y:hallway.y+hallway.h/2};
  const apartment=createShowroomApartmentPlan({...definition,index,column,width:w,height:h,storeFloor});
  const productIds=[...new Set(apartment.items.map(item=>item.productId).filter(Boolean))];
  return {...definition,items:apartment.items,index,row,column,x,y,w,h,storeFloor,showroomId:definition.id,floorFinish:definition.floor,doorway:threshold,threshold,enterNormal,facing,triggerHalfWidth:64,entry,
-  lobbyApproach,lobbyReturn:{...lobbyApproach},apartment,productIds,visitRoute:[entry,lobbyApproach],exitRoute:[lobbyApproach,entry]};
+  lobbyApproach,lobbyReturn:{...lobbyApproach},hallway,apartment,productIds,visitRoute:[entry,{x:threshold.x,y:entry.y},lobbyApproach],exitRoute:[lobbyApproach,{x:threshold.x,y:entry.y},entry]};
 }));
 export const getStoreFloorShowrooms=(floor=1)=>SHOWROOMS.filter(display=>display.storeFloor===floor);
 
@@ -93,8 +93,8 @@ export function applyShowroomLayout(scene,{room,wall,addItem,rug,sign,light,zone
  const storeFloor=scene.floor===2?2:1,showrooms=getStoreFloorShowrooms(storeFloor);
  scene.showrooms=showrooms;scene.allShowrooms=SHOWROOMS;scene.storeTraffic=STORE_TRAFFIC;scene.storeFloor=storeFloor;scene.showroomSigns=[];
  const frontageBottom=storeFloor===1?1888:1792;
- scene.lobbyFloorRects=[{x:1216,y:0,w:640,h:frontageBottom},{x:28,y:frontageBottom,w:3016,h:2020-frontageBottom}];scene.sideFacingShowrooms=true;
- if(storeFloor===2)for(const x of [28,1856])scene.lobbyFloorRects.push({x,y:832,w:1188,h:128});
+ scene.hallways=showrooms.filter(display=>display.column===0).map(display=>({...display.hallway}));
+ scene.lobbyFloorRects=[{x:1216,y:0,w:640,h:frontageBottom},{x:28,y:frontageBottom,w:3016,h:2020-frontageBottom},...scene.hallways];scene.southFacingShowrooms=true;
  for(const display of showrooms){
   const {x,y,w,h,threshold,enterNormal,facing}=display,doorId='showroom-'+display.id;
   room(scene,display.name,x,y,w,h,display.floor.id);
@@ -103,13 +103,13 @@ export function applyShowroomLayout(scene,{room,wall,addItem,rug,sign,light,zone
   const doorAsset=['decor-16-01','decor-16-02','decor-16-03','decor-16-01','decor-16-03','decor-16-02','decor-16-01','decor-16-02'][display.index];
   scene.doors??=[];scene.doors.push({id:doorId,showroomId:display.id,storeFloor,asset:doorAsset||'decor-16-02',x:threshold.x,y:threshold.y-95,w:156,h:190,floorY:threshold.y,threshold:{...threshold},enterNormal:{...enterNormal},triggerHalfWidth:64,number:String(display.index+1).padStart(2,'0'),color:display.wallpaper.colors[0],facing});
   const themeSign=createShowroomThemeSign(display);scene.showroomSigns.push(themeSign);scene.solids.push(themeSign.base);light(scene,display.lobbyApproach.x,threshold.y,150);
-  scene.zones.push(zone(doorId,'Enter '+display.name+' apartment',display.lobbyApproach.x-24,display.lobbyApproach.y-64,48,128,'showroom',{doorId,showroomId:display.id,storeFloor,threshold:{...threshold},enterNormal:{...enterNormal},triggerHalfWidth:64}),showroomThemeSignZone(themeSign));
+  scene.zones.push(zone(doorId,'Enter '+display.name+' apartment',display.lobbyApproach.x-64,display.lobbyApproach.y-28,128,56,'showroom',{doorId,showroomId:display.id,storeFloor,threshold:{...threshold},enterNormal:{...enterNormal},triggerHalfWidth:64}),showroomThemeSignZone(themeSign));
  }
  wall(scene,1216,0,640,106);Object.assign(scene.walls.at(-1),{receptionFront:true,facing:'down',color:'#4f6666',trim:'#cda056'});
  scene.title=storeFloor===1?'Coda Furnishings · Main Lobby':'Coda Furnishings · Upper Gallery';scene.spawn=storeFloor===1?{...STORE_TRAFFIC.spawn}:{...STORE_VERTICAL_CORE.arrival};
  scene.elevator={...STORE_VERTICAL_CORE.elevator,floor:storeFloor};scene.stairs=[{...STORE_VERTICAL_CORE.stairs,up:storeFloor===1}];
  scene.zones.push(zone('store-lift','Lift · choose store floor',1432,334,208,100,'store-elevator',{storeFloor}),zone('store-stairs',storeFloor===1?'Stairs to upper gallery':'Stairs to main lobby',1664,334,136,100,'store-floor',{targetFloor:storeFloor===1?2:1,arrival:'stairs'}));
- sign(scene,'LIFT',1536,118,18);sign(scene,storeFloor===1?'UP ↑':'DOWN ↓',1732,118,18);
+ sign(scene,'LIFT',1536,98,18);sign(scene,storeFloor===1?'UP ↑':'DOWN ↓',1732,98,18);
  if(storeFloor===1){
   const counter=addItem(scene,'decor-05-05',1536,730,278,182);counter.fixture='checkout';scene.checkout={x:1536,y:730};
   scene.zones.push(zone('counter','Shop all twelve collections',1396,746,280,64,'shop'),zone('street','Return to Coda Town',1376,1810,320,190,'exit'));

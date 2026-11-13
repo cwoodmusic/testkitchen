@@ -1,4 +1,4 @@
-"""Actual town conversation rebuilds a heard rhythm using saved yellow inventory."""
+"""NPC requests use three note symbols and migrate saved rests without losing cards."""
 from functools import partial
 from http.server import SimpleHTTPRequestHandler, ThreadingHTTPServer
 from pathlib import Path
@@ -7,11 +7,12 @@ from playwright.sync_api import sync_playwright
 import json
 
 ROOT=Path(__file__).resolve().parents[1]
-OUT=ROOT/'work/rhythm-timed/npc'
+OUT=ROOT/'work/fairy-forgiving/npc'
 OUT.mkdir(parents=True,exist_ok=True)
-VALUES=['quarter','eighth-pair','sixteenth-group','quarter-rest']
-NAMES={'quarter':'Quarter note','eighth-pair':'Two eighth notes','sixteenth-group':'Four sixteenth notes','quarter-rest':'Quarter rest'}
-SEED={'version':1,'stars':0,'netWins':0,'fish':{},'yellowNotes':{value:4 for value in VALUES},'npcRhythmWins':{}}
+VALUES=['quarter','eighth-pair','sixteenth-group']
+NAMES={'quarter':'Quarter note','eighth-pair':'Two eighth notes','sixteenth-group':'Four sixteenth notes'}
+SEED={'version':1,'stars':7,'netWins':2,'fish':{'copper-sprat':{'count':2,'best':14.5}},'yellowNotes':{**{value:4 for value in VALUES},'quarter-rest':4},'npcRhythmWins':{'mozart':2}}
+MIGRATED={value:8 if value=='quarter' else 4 for value in VALUES}
 
 class Quiet(SimpleHTTPRequestHandler):
     def log_message(self,*_):
@@ -33,6 +34,7 @@ try:
         page.set_default_timeout(60000)
         errors=[]
         page.on('pageerror',lambda error:errors.append(str(error)))
+        saved=lambda:page.evaluate('JSON.parse(localStorage.getItem("codaTownAdventuresV1:guest"))')
         page.goto(f'http://127.0.0.1:{server.server_port}/town/builder/')
         page.wait_for_function('!!window.townBuilder')
         page.locator('#file').set_input_files(str(ROOT/'town/maps/coda-town-plaza-boardwalk.json'))
@@ -51,6 +53,14 @@ try:
         page.locator('#file').set_input_files({'name':'npc-rhythm-fixture.json','mimeType':'application/json','buffer':json.dumps(fixture).encode()})
         page.wait_for_timeout(400)
         page.locator('#walk').click()
+        page.wait_for_selector('.yellow-note-inventory',state='visible')
+        assert page.evaluate('townBuilder.urban.activities.state.yellowNotes.counts')==MIGRATED
+        assert page.evaluate('townBuilder.urban.activities.state.yellowNotes.total')==sum(SEED['yellowNotes'].values()),'Each old rest must become exactly one quarter note'
+        assert page.locator('.yellow-note-inventory .yellow-note-count').count()==3
+        assert page.locator('.yellow-note-inventory [aria-label="Quarter note: 8"]').count()==1
+        assert page.locator('.yellow-note-inventory [aria-label*="rest" i]').count()==0
+        page.screenshot(path=str(OUT/'migrated-three-note-inventory.png'))
+        stored_before=saved()
         page.locator('#map').focus()
         page.keyboard.press('e')
         page.get_by_role('button',name='Hear rhythm request',exact=True).click()
@@ -64,15 +74,19 @@ try:
         target=initial['target']
         actor_id=initial['actorId']
         assert len(target)==4
-        assert initial['inventory']==SEED['yellowNotes']
+        assert all(value in VALUES for value in target),target
+        assert initial['inventory']==MIGRATED
+        assert page.locator('.npc-rhythm-dialog .rhythm-note-tray button').count()==3
+        assert page.get_by_role('button',name='Add Quarter rest',exact=True).count()==0
         assert page.evaluate('townBuilder.urban.activities.state.rhythmCatch.phase')=='idle'
-        for value in reversed(target):
+        wrong=list(target)
+        wrong[0]=next(value for value in VALUES if value!=target[0])
+        for value in wrong:
             page.get_by_role('button',name='Add '+NAMES[value],exact=True).click()
         page.get_by_role('button',name='Check my rhythm',exact=True).click()
         assert state()['phase']=='arrange'
-        saved=lambda:page.evaluate('JSON.parse(localStorage.getItem("codaTownAdventuresV1:guest"))')
-        assert saved()['yellowNotes']==SEED['yellowNotes']
-        assert saved()['stars']==0 and saved()['npcRhythmWins']=={}
+        assert saved()==stored_before,'An incorrect answer cannot spend or rewrite stored progress'
+        assert state()['inventory']==MIGRATED
         for _ in target:
             page.locator('.npc-rhythm-dialog').get_by_role('button',name='Undo',exact=True).click()
         page.get_by_role('button',name='Catch yellow notes',exact=True).click()
@@ -86,21 +100,27 @@ try:
         page.screenshot(path=str(OUT/'written-from-inventory.png'))
         page.get_by_role('button',name='Check my rhythm',exact=True).click()
         page.wait_for_function('townBuilder.urban.activities.state.npcRhythmRequest.phase==="won"')
-        expected=dict(SEED['yellowNotes'])
+        expected=dict(MIGRATED)
         for value in target:
             expected[value]-=1
         assert saved()['yellowNotes']==expected
-        assert saved()['stars']==1 and saved()['npcRhythmWins']=={actor_id:1}
-        assert saved()['netWins']==0,'An NPC request must not count as a blue vendor win'
+        wins={**SEED['npcRhythmWins'],actor_id:SEED['npcRhythmWins'].get(actor_id,0)+1}
+        assert saved()['stars']==SEED['stars']+1 and saved()['npcRhythmWins']==wins
+        assert saved()['netWins']==SEED['netWins'],'An NPC request must not count as a blue vendor win'
+        assert saved()['fish']==SEED['fish'],'Converting old rest cards must preserve fishing records'
+        assert 'quarter-rest' not in saved()['yellowNotes']
         page.screenshot(path=str(OUT/'npc-rhythm-win.png'))
         page.get_by_role('button',name='Back to town',exact=True).click()
         assert page.evaluate('townBuilder.project')==fixture,'NPC requests must not edit a saved map'
         page.reload()
         page.wait_for_function('!!window.townBuilder')
-        assert saved()['yellowNotes']==expected and saved()['stars']==1
-        assert saved()['npcRhythmWins']=={actor_id:1}
+        assert saved()['yellowNotes']==expected and saved()['stars']==SEED['stars']+1
+        assert saved()['npcRhythmWins']==wins and saved()['netWins']==SEED['netWins']
+        assert saved()['fish']==SEED['fish']
+        assert 'quarter-rest' not in saved()['yellowNotes'],'Reload must not restore rests or convert them twice'
+        assert page.evaluate('townBuilder.urban.activities.state.yellowNotes.counts')==expected
         assert not errors,errors
-        print(json.dumps({'heardOnly':True,'actor':actor_id,'spentCards':4,'townStars':1,'yellowCounts':expected,'persistent':True,'blueVendorUntouched':True,'mapUnchanged':True,'errors':errors}))
+        print(json.dumps({'heardOnly':True,'actor':actor_id,'allowedSymbols':VALUES,'restsConvertedToQuarters':4,'spentCards':4,'townStarsAdded':1,'yellowCounts':expected,'persistent':True,'priorStarsFishAndWinsPreserved':True,'blueVendorUntouched':True,'mapUnchanged':True,'errors':errors}))
         browser.close()
 finally:
     server.shutdown()

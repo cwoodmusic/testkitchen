@@ -20,7 +20,7 @@ OUT = args.screenshots
 OUT.mkdir(parents=True, exist_ok=True)
 TIME_LIMIT = 300
 NAMES = {'quarter': 'Quarter note', 'eighth-pair': 'Two eighth notes',
-         'sixteenth-group': 'Four sixteenth notes', 'quarter-rest': 'Quarter rest'}
+         'sixteenth-group': 'Four sixteenth notes'}
 
 
 class Quiet(SimpleHTTPRequestHandler):
@@ -41,8 +41,9 @@ try:
         browser = playwright.chromium.launch(executable_path='/usr/bin/chromium', args=['--no-sandbox'])
         page = browser.new_page(viewport={'width': 1500, 'height': 1100})
         page.set_default_timeout(30000)
-        page.add_init_script('''window.noteBadgeInk=0;const fairyArc=CanvasRenderingContext2D.prototype.arc;
-          CanvasRenderingContext2D.prototype.arc=function(x,y,r,...args){if(this.canvas.id==='map'&&r>=35&&r<=45&&['#164fa8','#ddb538'].includes(this.fillStyle))noteBadgeInk++;return fairyArc.call(this,x,y,r,...args);};''')
+        page.add_init_script('''window.noteBadgeInk=0;window.blueCompassInk=0;window.blueCompassRingInk=0;const fairyArc=CanvasRenderingContext2D.prototype.arc,compassFill=CanvasRenderingContext2D.prototype.fill;
+          CanvasRenderingContext2D.prototype.fill=function(...args){if(this.canvas.id==='map'&&this.fillStyle==='#69d2ff')blueCompassInk++;return compassFill.apply(this,args);};
+          CanvasRenderingContext2D.prototype.arc=function(x,y,r,...args){if(this.canvas.id==='map'&&r>=35&&r<=45&&['#164fa8','#ddb538'].includes(this.fillStyle))noteBadgeInk++;if(this.canvas.id==='map'&&this.fillStyle==='#69d2ff')blueCompassRingInk++;return fairyArc.call(this,x,y,r,...args);};''')
         errors = []
         page.on('pageerror', lambda error: errors.append(str(error)))
 
@@ -55,6 +56,8 @@ try:
         def assert_fairy_limit():
             snapshot=activity_state()
             assert len(snapshot['yellowNotes']['tokens'])+len(snapshot['rhythmCatch']['tokens'])<=5, snapshot
+            assert all(token['value'] in NAMES for token in snapshot['yellowNotes']['tokens']+snapshot['rhythmCatch']['tokens'])
+            assert set(snapshot['yellowNotes']['counts'])==set(NAMES),'Caught-card inventory must contain notes only'
             return snapshot
 
         def assert_shoulder_rest(direction):
@@ -82,6 +85,29 @@ try:
             assert len(snapshot['bag']) <= 4, snapshot
             assert_fairy_limit()
             return snapshot
+
+        def assert_blue_tracker(required=False):
+            page.evaluate('blueCompassInk=0');page.clock.run_for(40)
+            snapshot=page.evaluate(r'''async()=>{
+              const t=townBuilder,s=t.urban.activities.state,p=s.player,canvas=document.querySelector('#map'),app=new URL(document.querySelector('script[type="module"]').src),
+                {height}=await import(new URL('../world/model.mjs'+app.search,app)),
+                {flyingNotePose}=await import(new URL('../world/rhythm-hunt-motion.mjs'+app.search,app)),
+                {blueNoteTrackerPose}=await import(new URL('../world/blue-note-tracker.mjs'+app.search,app)),z=height(t.project,p.x,p.y),reduced=matchMedia('(prefers-reduced-motion: reduce)').matches,
+                pose=blueNoteTrackerPose({player:p,playerZ:z,tokens:s.rhythmCatch.tokens,time:s.rhythmCatch.flightTime,cam:t.cam,width:canvas.clientWidth,height:canvas.clientHeight,reducedMotion:reduced,getHeight:token=>height(t.project,token.x,token.y)}),
+                anchor={x:p.x,y:p.y-z-55},eligible=s.rhythmCatch.tokens.filter(token=>token.color==='blue').map(token=>{const q=flyingNotePose(token,s.rhythmCatch.flightTime,height(t.project,token.x,token.y),reduced),dx=(q.x-anchor.x)*t.cam.zoom,dy=(q.y-anchor.y)*t.cam.zoom;return {id:token.id,distance:Math.hypot(dx,dy),screens:Math.hypot(dx/canvas.clientWidth,dy/canvas.clientHeight)};}).filter(token=>token.screens<=1.5).sort((a,b)=>a.distance-b.distance);
+              return {pose,expected:eligible[0]?.id||null,ink:blueCompassInk,rings:blueCompassRingInk};
+            }''')
+            pose=snapshot['pose']
+            assert (pose['targetId'] if pose else None)==snapshot['expected'],'The pointer must select the nearest eligible blue fairy'
+            assert snapshot['rings']==0,'The pointer orbit must stay invisible'
+            if required:assert pose is not None,'A nearby blue fairy needs a compass pointer'
+            if pose:
+                assert snapshot['ink']>0,'The live hunt must draw the blue pointer'
+                assert pose['distanceScreens']<=1.5 and pose['radius']>=50
+                assert abs(math.hypot((pose['x']-pose['anchor']['x'])*pose['zoom'],(pose['y']-pose['anchor']['y'])*pose['zoom'])-pose['radius'])<1e-7
+                expected=math.atan2(pose['target']['y']-pose['anchor']['y'],pose['target']['x']-pose['anchor']['x'])
+                assert abs(math.atan2(math.sin(pose['angle']-expected),math.cos(pose['angle']-expected)))<1e-7
+            return pose
 
         def assert_rotating_hoop(direction):
             snapshot=page.evaluate(r'''async direction=>{
@@ -166,6 +192,8 @@ try:
 
         def chase(value, quota):
             walk_route(route_to(value))
+            assert_blue_tracker(required=True)
+            page.screenshot(path=str(OUT/f'blue-compass-{value}-{quota}.png'))
             for attempt in range(100):
                 snapshot = assert_hunting()
                 if snapshot['bag'].count(value) >= quota:
@@ -237,12 +265,16 @@ try:
         assert Counter(t['value'] for t in snapshot['tokens']) == Counter(snapshot['target'])
         assert all(t['color'] == 'blue' for t in snapshot['tokens'])
         assert all(t['value'] in NAMES for t in snapshot['tokens'])
+        assert all(value in NAMES for value in snapshot['target'])
+        assert page.locator('.yellow-note-count').count()==3
+        assert page.locator('.yellow-note-count[title="Quarter rest"]').count()==0
         first = snapshot['tokens']
         page.clock.run_for(800)
         later = state()['tokens']
         assert any(abs(a['x']-b['x'])+abs(a['y']-b['y']) > 1 for a, b in zip(first, later))
         assert state()['remainingSeconds'] < TIME_LIMIT-.5
         page.screenshot(path=str(OUT/'hunt.png'))
+        assert_blue_tracker()
 
         # Tab equips the tool. F and a pointer click cannot swing or catch while stowed.
         assert not activity_state()['netEquipped']
@@ -284,6 +316,7 @@ try:
                 print('Caught blue card', value, 'remaining', round(state()['remainingSeconds'], 1), flush=True)
         assert len(state()['bag']) == 4
         assert not state()['tokens']
+        assert assert_blue_tracker() is None
         walk_route(route_to('vendor'))
         page.keyboard.press('e')
         page.wait_for_function('townBuilder.urban.activities.state.rhythmCatch.phase==="arrange"')
@@ -292,7 +325,11 @@ try:
         before = state()['remainingSeconds']
         page.clock.run_for(3000)
         assert before-state()['remainingSeconds'] >= 2.9, 'Building must use the same countdown'
-        for value in reversed(target):
+        assert page.get_by_role('button',name='Add Quarter rest',exact=True).count()==0
+        wrong=list(target)
+        other=next(i for i,value in enumerate(wrong) if value!=wrong[0])
+        wrong[0],wrong[other]=wrong[other],wrong[0]
+        for value in wrong:
             page.get_by_role('button', name='Add '+NAMES[value], exact=True).click()
         page.get_by_role('button', name='Check my rhythm', exact=True).click()
         assert state()['phase'] == 'arrange'
@@ -320,6 +357,7 @@ try:
         assert page.locator('.blue-rhythm-hud button').count()==0
         page.keyboard.press('Escape');page.clock.run_for(16)
         assert state()['requestingEnd']
+        page.evaluate('blueCompassInk=0');page.clock.run_for(40);assert page.evaluate('blueCompassInk')==0
         assert page.get_by_role('heading',name='Are you sure you want to end Rhythm Catch?',exact=True).is_visible()
         before=state()['remainingSeconds'];page.clock.fast_forward(15000)
         assert state()['remainingSeconds']==before, 'The end confirmation must hold the remaining time'

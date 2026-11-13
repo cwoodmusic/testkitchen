@@ -1,8 +1,13 @@
-export const INVENTORY_NOTE_VALUES=Object.freeze(['quarter','eighth-pair','sixteenth-group','quarter-rest']);
+export const INVENTORY_NOTE_VALUES=Object.freeze(['quarter','eighth-pair','sixteenth-group']);
 export const NOTE_INVENTORY_LIMIT=1000000;
 const record=value=>value&&typeof value==='object'&&!Array.isArray(value);
 export function normalizeYellowNotes(raw){
- return Object.fromEntries(INVENTORY_NOTE_VALUES.map(value=>[value,Number.isSafeInteger(raw?.[value])&&raw[value]>0?Math.min(NOTE_INVENTORY_LIMIT,raw[value]):0]));
+ const count=value=>Number.isSafeInteger(raw?.[value])&&raw[value]>0?Math.min(NOTE_INVENTORY_LIMIT,raw[value]):0;
+ const counts=Object.fromEntries(INVENTORY_NOTE_VALUES.map(value=>[value,count(value)]));
+ // Old catches remain useful after rests leave the game. The returned record
+ // has no rest key, so loading or saving it again cannot repeat the conversion.
+ counts.quarter=Math.min(NOTE_INVENTORY_LIMIT,counts.quarter+count('quarter-rest'));
+ return counts;
 }
 export function normalizeNPCRhythmWins(raw){
  const result={};if(!record(raw))return result;

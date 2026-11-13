@@ -1,5 +1,5 @@
-import {flyingNotePose} from './rhythm-hunt-motion.mjs?v=town-net-arc-1';
-import {drawCatchNote} from './town-game-audio.mjs?v=town-fairies-1';
+import {flyingNotePose} from './rhythm-hunt-motion.mjs?v=town-store-halls-1';
+import {drawCatchNote} from './town-game-audio.mjs?v=town-store-halls-1';
 
 const palettes={
  yellow:{ink:'#fff0a5',edge:'#ffcf62',wing:'#fff3b6',shade:'#76591e'},

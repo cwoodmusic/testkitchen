@@ -179,3 +179,17 @@ test('all31 actual e6a709a records survive rearranged originals using exact trus
   assert.deepEqual(createRoomLayoutModel({themeId,scene,catalog:art,record:model.record()}).record(),model.record(),themeId+' upgraded export');
  }
 });
+
+
+test('south showroom entrances preserve older upper-room arcades while still rejecting new doorway obstructions',()=>{
+ const frozen=JSON.parse(readFileSync(new URL('../../tests/fixtures/room-layout-e6a709a.json',import.meta.url))),art=new Map([...APARTMENT_COLLECTION_ASSETS,...FAMILY_FURNITURE_ASSETS].map(a=>[a.id,a]));configureUrbanInteriors(art);
+ for(const entry of frozen.cases.filter(c=>c.request.kind==='showroom'&&getInterior(c.request).floor===2)){
+  const scene=getInterior(entry.request),before=JSON.stringify(entry.record),model=createRoomLayoutModel({themeId:entry.themeId,scene,catalog:art,record:entry.record}),portal=model.scene.portalExit,approach={x:portal.threshold.x,y:portal.threshold.y-24};
+  assert.deepEqual(portal.enterNormal,{x:0,y:-1});assert.equal(model.scene.spawn.x,scene.showroom.column?112:1072);
+  for(const saved of entry.record.placements){const item=model.scene.items.find(i=>i.id===saved.id);assert.equal(item.x,saved.x);assert.equal(item.y,saved.y);assert.equal(item.rotation||0,saved.rotation);}
+  assert(!model.scene.solids.some(b=>approach.x>=b.x-6&&approach.x<=b.x+b.w+6&&approach.y>=b.y-6&&approach.y<=b.y+b.h+6),'The new physical south approach must remain clear of old saved arcade cabinets');
+  const exported=JSON.stringify(model.record()),asset='collection-'+entry.themeId+'-dining-chair';
+  assert.equal(model.add(asset,{x:approach.x,y:approach.y+8}).ok,false,'A new object cannot use the migrated doorway as a free placement');assert.match(model.held.reason,/doorways|arrival/);assert.equal(JSON.stringify(model.record()),exported);model.cancel();
+  assert.equal(JSON.stringify(entry.record),before);assert.deepEqual(createRoomLayoutModel({themeId:entry.themeId,scene,catalog:art,record:model.record()}).record(),model.record());
+ }
+});

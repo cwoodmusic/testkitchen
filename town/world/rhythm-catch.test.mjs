@@ -1,7 +1,7 @@
 import test from 'node:test';
 import assert from 'node:assert/strict';
 import {createRhythmCatch} from './rhythm-catch.mjs';
-import {netSweepPose,facingAngle,NET_SWEEP_SECONDS,NET_RECOVERY_SECONDS,NET_STRIKE_FRACTION} from './rhythm-hunt-motion.mjs';
+import {netSweepPose,netSweepHits,advanceFlyingNote,flyingNotePose,facingAngle,NET_SWEEP_SECONDS,NET_RECOVERY_SECONDS,NET_STRIKE_FRACTION} from './rhythm-hunt-motion.mjs';
 import {noteName} from './town-game-audio.mjs';
 import {blocked} from './model.mjs';
 
@@ -29,7 +29,7 @@ function fixture(t,{equipped:initialEquipped=true}={}){
  let project={version:1,cells:{},objects:[],edges:{},spawn:{x:1344,y:1344}};
  for(let i=0;i<43;i++)for(const [x,y]of [[i,0],[i,42],[0,i],[42,i]])project.cells[`${x},${y}`]={surface:'water',level:0};
  const before=JSON.stringify(project),player={...project.spawn},host={id:'vendor',...project.spawn,interaction:{...project.spawn}},catalog=new Map(),canvas=new Element('canvas');let facing='down',equipped=initialEquipped,writes=0,saveOK=true;
- const journal={data:{stars:7,netWins:0,fish:{},yellowNotes:{quarter:20,'eighth-pair':20,'sixteenth-group':20,'quarter-rest':20},npcRhythmWins:{bach:2}},save(){writes++;return saveOK;},warning:''};
+ const journal={data:{stars:7,netWins:0,fish:{},yellowNotes:{quarter:20,'eighth-pair':20,'sixteenth-group':20},npcRhythmWins:{bach:2}},save(){writes++;return saveOK;},warning:''};
  const audio={now:0,running:true,tones:[],async unlock(){this.running=true;return true;},get time(){return this.now;},tone(...args){this.tones.push(args);},stop(){},suspend(){this.running=false;},async resume(){this.running=true;}};
  const q=createRhythmCatch({canvas,getProject:()=>project,getPlayer:()=>player,getFacing:()=>facing,setFacing:value=>{facing=value;},isEquipped:()=>equipped,catalog,journal,audio});
  const dialog=body.children.find(node=>node.className?.split(' ').includes('rhythm-catch-dialog')),
@@ -40,11 +40,20 @@ function fixture(t,{equipped:initialEquipped=true}={}){
  const hunt=async()=>{await start();audio.now+=8;q.tick();assert.equal(q.state.phase,'hunt');assert.equal(q.state.remainingSeconds,300);};
  const step=seconds=>{time+=seconds;if(audio.running)audio.now+=seconds;q.tick();};
  function catchOne(){
-  const token=q.state.tokens[0];assert(token);const visual={x:token.x,y:token.y-80};
+  // Prime this frame so the following real swing advances the fairy by the
+  // same bounded flight tick that we use to find a legal approach below.
+  q.tick();const state=q.state,token=state.tokens[0];assert(token);const visual=flyingNotePose(token,state.flightTime,0,true),flightAt=state.flightTime+.05;
+  const offsets=[0,-8,8,-16,16,-24,24,-28,28,-32,32],shifts=offsets.flatMap(x=>offsets.map(y=>({x,y}))).sort((a,b)=>a.x*a.x+a.y*a.y-b.x*b.x-b.y*b.y);
+  function clearPath(from,to){
+   if(blocked(project,from.x,from.y,catalog))return false;const steps=Math.max(1,Math.ceil(Math.hypot(to.x-from.x,to.y-from.y)/4));let previous=from;
+   for(let i=1;i<=steps;i++){const point={x:from.x+(to.x-from.x)*i/steps,y:from.y+(to.y-from.y)*i/steps};if(blocked(project,point.x,point.y,catalog,previous))return false;previous=point;}return true;
+  }
   let pose;
-  for(const direction of ['right','left','up','down']){
-   const offset=netSweepPose({x:0,y:0},facingAngle(direction),NET_STRIKE_FRACTION),candidate={x:visual.x-offset.x,y:visual.y-offset.y};
-   if(Array.from({length:32},(_,i)=>({x:candidate.x+(token.x-candidate.x)*i/31,y:candidate.y+(token.y-candidate.y)*i/31})).every(p=>!blocked(project,p.x,p.y,catalog))){pose={candidate,direction};break;}
+  search:for(const shift of shifts)for(const direction of ['right','left','up','down']){
+   const angle=facingAngle(direction),offset=netSweepPose({x:0,y:0},angle,NET_STRIKE_FRACTION),candidate={x:visual.x-offset.x+shift.x,y:visual.y-offset.y+shift.y},next={...token};
+   advanceFlyingNote(next,candidate,.05,flightAt,(a,b)=>!blocked(project,b.x,b.y,catalog,a));
+   const point=flyingNotePose(next,flightAt,0,true);
+   if(clearPath(candidate,next)&&netSweepHits(point,candidate,angle,0,1)){pose={candidate,direction};break search;}
   }
   assert(pose,'A clear approach to the spawned fairy must exist');Object.assign(player,pose.candidate);facing=pose.direction;
   const count=q.state.bag.length;q.keydown(event('f'));step(NET_SWEEP_SECONDS);assert.equal(q.state.bag.length,count+1);step(NET_RECOVERY_SECONDS+.02);
@@ -58,6 +67,7 @@ function fixture(t,{equipped:initialEquipped=true}={}){
 
 test('the initial example hides the answer and starts exactly four blue fairies with five full minutes',async t=>{
  const f=fixture(t);await f.start();assert.equal(f.q.state.timeLimit,300);assert.equal(f.q.state.timerStarted,false);assert.equal(f.q.state.tokens.length,4);assert(f.q.state.tokens.every(token=>token.color==='blue'));
+ assert(f.q.state.target.every(value=>['quarter','eighth-pair','sixteenth-group'].includes(value)));assert(f.q.state.tokens.every(token=>token.value!=='quarter-rest'));
  assert.equal(f.dialog.all().some(node=>node.innerHTML.includes('<svg')),false);assert(f.audio.tones.length>4);
  f.step(45);assert.equal(f.q.state.phase,'hunt');assert.equal(f.q.state.remainingSeconds,300);assert.equal(f.q.state.timerStarted,true);
  f.step(17);assert.equal(f.q.state.remainingSeconds,283);assert.equal(f.writes,0);f.assertMapUnchanged();
@@ -147,4 +157,16 @@ test('a failed blue reward save rolls back progress and allows one frozen-clock 
  assert.equal(f.q.state.phase,'reward');assert.deepEqual(f.journal.data,before);assert.equal(f.writes,1);const remaining=f.q.state.remainingSeconds;f.step(1000);assert.equal(f.q.state.phase,'reward');assert.equal(f.q.state.remainingSeconds,remaining,'A solved answer must not time out while its reward waits for storage');
  const retry=f.button('Try saving again',f.dialog);f.q.keydown(f.event('Escape'));assert.equal(f.q.state.requestingEnd,true);await f.button('Keep playing',f.exitDialog()).click();assert.equal(f.q.state.phase,'reward');assert.equal(f.q.state.requestingEnd,false);f.allowSave();retry.click();assert.equal(f.q.state.phase,'won');assert.equal(f.journal.data.stars,before.stars+3);assert.equal(f.journal.data.netWins,before.netWins+1);assert.deepEqual(f.journal.data.yellowNotes,before.yellowNotes);assert.equal(f.writes,2);
  retry.click();submit.click();assert.equal(f.writes,2);assert.equal(f.journal.data.stars,before.stars+3);assert.equal(f.journal.data.netWins,before.netWins+1);f.assertMapUnchanged();
+});
+
+test('the blue compass guides an active hunt with the net stowed and hides during every dialog or exit',async t=>{
+ const f=fixture(t,{equipped:false}),cam={x:f.player.x,y:f.player.y,zoom:1};
+ const nearBlue=()=>{const token=f.q.state.tokens[0];Object.assign(f.player,{x:token.x-200,y:token.y});};
+ function arrows(){let count=0;const c=drawingContext();c.fill=()=>{if(c.fillStyle==='#69d2ff')count++;};f.q.draw(c,cam,0,{net:false});return count;}
+ await f.start();assert.equal(arrows(),0,'Listening must not reveal a compass before the hunt');
+ f.audio.now+=8;f.q.tick();nearBlue();assert.equal(arrows(),1,'The compass must not require an equipped net');
+ f.q.pause();assert.equal(arrows(),0);await f.button('Continue',f.dialog).click();assert.equal(arrows(),1);
+ f.q.keydown(f.event('Escape'));assert.equal(arrows(),0);await f.button('Keep playing',f.exitDialog()).click();assert.equal(arrows(),1);
+ f.vendor();assert.equal(arrows(),0);f.button('Continue hunting',f.dialog).click();nearBlue();assert.equal(arrows(),1);
+ f.q.end();assert.equal(arrows(),0);f.assertMapUnchanged();
 });

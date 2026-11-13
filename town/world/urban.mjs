@@ -1,15 +1,15 @@
-import {createTownActivities} from './town-activities.mjs?v=town-net-arc-1';
+import {createTownActivities} from './town-activities.mjs?v=town-store-halls-1';
 import {catalog} from './catalog.mjs?v=town-flight-1';
-import {FLOOR_COUNT,residents,getInterior,renderInterior,residentInteractionZones,apartmentDecorBounds,apartmentWallDecorBounds,configureUrbanInteriors} from './urban-interiors.mjs?v=town-flight-1';
+import {FLOOR_COUNT,residents,getInterior,renderInterior,residentInteractionZones,apartmentDecorBounds,apartmentWallDecorBounds,configureUrbanInteriors} from './urban-interiors.mjs?v=town-store-halls-1';
 import {createRoomStorage,roomItemBoxes} from './urban-room.mjs?v=opera-parallax-1';
-import {SHOWROOMS,STORE_FLOOR_COUNT,STORE_VERTICAL_CORE} from './showroom-layout.mjs?v=opera-parallax-1';
+import {SHOWROOMS,STORE_FLOOR_COUNT,STORE_VERTICAL_CORE} from './showroom-layout.mjs?v=town-store-halls-1';
 import {createStagePerformance,updateStageProgramme,stagePerformanceSignature,stageCollisionBoxes} from './concert-performers.mjs?v=opera-players-2';
 import {CONCERT_PROGRAMME} from './concert-programme.mjs?v=opera-players-1';
 import {createConcertCurtain,drawConcertCurtain} from './concert-curtain.mjs?v=opera-parallax-1';
 import {createAutomaticDoors} from './automatic-doors.mjs?v=opera-parallax-1';
 import {furnitureFacingPlacement,furnitureFacingBounds} from './furniture-facing.mjs?v=opera-parallax-1';
 import {interiorActorScale,effectiveInteriorZoom} from './interior-scale.mjs?v=opera-parallax-1';
-import {presentedRoomItem,furniturePresentationScale} from './private-furniture.mjs?v=opera-parallax-1';
+import {presentedRoomItem,furniturePresentationScale} from './private-furniture.mjs?v=town-store-halls-1';
 
 configureUrbanInteriors(catalog);
 const furniture=window.CodaFurnitureCatalog||[];

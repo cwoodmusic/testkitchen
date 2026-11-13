@@ -63,7 +63,7 @@ export function createShowroomApartmentPlan(display){
   windows:[{x:bed.x+90,w:80},{x:dayX+430,w:70}],portalExit:{threshold:point(1156,352),enterNormal:point(-1,0),triggerHalfWidth:64}};
  if(mirror)plan=mirrorPlan(plan);
  plan.layoutId+=mirror?'-mirrored':'-original';plan.bedroomDoor=plan.privacyDoors.find(d=>d.id==='bedroom');plan.bathroomDoor=plan.privacyDoors.find(d=>d.id==='bathroom');
- plan.visitRoute=browsingRoute(plan);plan.exitRoute=plan.visitRoute.map(p=>({...p})).reverse();return plan;
+ installSouthEntrance(plan,display);return plan;
 }
 function createUpperApartmentPlan(display){
  const width=1184,height=832,owner='showroom-'+display.id,mirror=display.column===1,variant=Math.floor((display.index-8)/2),items=[],walls=[],areas=[],privacyDoors=[];
@@ -121,11 +121,30 @@ function createUpperApartmentPlan(display){
   windows:variant?[{x:230,w:100},{x:650,w:140},{x:1090,w:70}]:[{x:220,w:100},{x:900,w:150}],portalExit:{threshold:point(1156,480),enterNormal:point(-1,0),triggerHalfWidth:64}};
  if(mirror)plan=mirrorPlan(plan);
  plan.layoutId+=mirror?'-mirrored':'-original';plan.bedroomDoor=plan.privacyDoors.find(d=>d.id==='bedroom');plan.bathroomDoor=plan.privacyDoors.find(d=>d.id==='bathroom');
- plan.visitRoute=browsingRoute(plan);plan.exitRoute=plan.visitRoute.map(p=>({...p})).reverse();return plan;
+ installSouthEntrance(plan,display);return plan;
 }
 function mirrorPlan(plan){
  const flip=p=>({...p,x:plan.width-p.x}),flipRect=r=>({...r,x:plan.width-r.x-r.w});
  return {...plan,spawn:flip(plan.spawn),browse:flip(plan.browse),windows:plan.windows.map(flip),items:plan.items.map(item=>({...flip(item),...(item.rotation?{rotation:(360-item.rotation)%360}:{})})),walls:plan.walls.map(flipRect),areas:plan.areas.map(a=>({...flipRect(a),point:flip(a.point)})),privacyDoors:plan.privacyDoors.map(d=>({...d,x:plan.width-d.x-(d.axis==='horizontal'?d.length:0),hinge:'end'})),wallpaperAreas:plan.wallpaperAreas?.map(flipRect),design:plan.design?{...plan.design,focalPoints:plan.design.focalPoints.map(flip),circulation:plan.design.circulation.map(flipRect)}:undefined,portalExit:{...plan.portalExit,threshold:flip(plan.portalExit.threshold),enterNormal:point(1,0)}};
+}
+// Primary entrances move to the south without redecorating the authored homes.
+// Keep the former circulation reservation during furniture calibration; these
+// short new foyer legs join its already clear route around the existing pieces.
+const upperSouthPassages={
+ retrofuture:[[1048,748],[1048,608],[1092,608],[1092,492],[1100,492]],
+ cyberpunk:[[96,748],[96,628],[92,628],[92,492],[84,492]],
+ steampunk:[[1052,748],[1052,608],[1092,608],[1092,492],[1100,492]],
+ robot:[[96,748],[96,628],[92,628],[92,492],[84,492]]
+};
+function installSouthEntrance(plan,display){
+ const previous={spawn:{...plan.spawn},portalExit:{...plan.portalExit,threshold:{...plan.portalExit.threshold},enterNormal:{...plan.portalExit.enterNormal}},visitRoute:browsingRoute(plan)};
+ plan.calibrationEntry=previous;
+ // Keep the upper opening inboard of arcade positions from older saved rooms.
+ const upper=display.storeFloor===2,x=previous.spawn.x+(upper?(display.column?28:-28):display.column?8:-8),y=plan.height-28;
+ plan.spawn=point(x,y-56);plan.portalExit={threshold:point(x,y),enterNormal:point(0,-1),triggerHalfWidth:64};
+ const passage=upper?upperSouthPassages[display.id].map(([x,y])=>point(x,y)):[point(x,previous.spawn.y+4),point(previous.spawn.x,previous.spawn.y+4)];
+ plan.visitRoute=[{...plan.spawn},...passage,...previous.visitRoute.map(p=>({...p}))];
+ plan.exitRoute=plan.visitRoute.map(p=>({...p})).reverse();
 }
 function browsingRoute(plan){
  const solids=[rect(0,0,plan.width,106),rect(0,0,28,plan.height),rect(plan.width-28,0,28,plan.height),rect(0,plan.height-28,plan.width,28),...plan.walls];
@@ -149,7 +168,7 @@ export function applyShowroomApartment(scene,display,{room,wall,addItem,rug,sign
  for(const p of plan.walls){wall(scene,p.x,p.y,p.w,p.h);Object.assign(scene.walls.at(-1),{color:display.wallpaper.colors[0],trim:display.wallpaper.colors[3]||display.wallpaper.colors[1]});}
  scene.privacyDoors=plan.privacyDoors.map(d=>({...d,id:display.id+'-'+d.id,roomId:display.id+'-'+d.roomId,color:display.wallpaper.colors[0],trim:display.wallpaper.colors[3]}));
  for(const item of plan.items){const placed=addItem(scene,item.asset,item.x,item.y,item.w,item.h,item.solid,item.rotation||0);Object.assign(placed,{productId:item.productId,showroomId:display.id,furnitureRole:item.furnitureRole,fixtureRole:item.fixtureRole,wallMounted:item.wallMounted,layer:item.layer,depth:item.depth,rotation:item.rotation||0,slot:item.slot,collectionOwner:item.collectionOwner,visualSignature:item.visualSignature,motionKind:item.motionKind,supportedBy:item.supportedBy});}
- scene.zones.push(zone('browse-'+display.id,'Shop this apartment',plan.browse.x-30,plan.browse.y-28,60,56,'shop',{showroomId:display.id}),zone('lobby-'+display.id,'Return to '+(scene.floor===2?'the upper gallery':'the main lobby'),plan.spawn.x-28,plan.spawn.y-56,56,112,'showroom-lobby',{showroomId:display.id,storeFloor:scene.floor,doorId:'showroom-'+display.id,...plan.portalExit}));
+ scene.zones.push(zone('browse-'+display.id,'Shop this apartment',plan.browse.x-30,plan.browse.y-28,60,56,'shop',{showroomId:display.id}),zone('lobby-'+display.id,'Return to '+(scene.floor===2?'the upper gallery':'the main lobby'),plan.spawn.x-56,plan.spawn.y-24,112,48,'showroom-lobby',{showroomId:display.id,storeFloor:scene.floor,doorId:'showroom-'+display.id,...plan.portalExit}));
  for(const a of plan.areas)light(scene,a.point.x,a.point.y,a.functionalRole==='living'?220:150);
  if(windowAt)for(const window of plan.windows)windowAt(scene,window.x,24,window.w);return scene;
 }

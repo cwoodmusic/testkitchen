@@ -1,18 +1,18 @@
 import {assetImage} from './asset-color.mjs?v=opera-parallax-1';
-import {SHOWROOMS,applyShowroomLayout} from './showroom-layout.mjs?v=opera-parallax-1';
-import {drawShowroomThemeSign} from './showroom-signs.mjs?v=opera-parallax-1';
-import {applyShowroomApartment} from './showroom-apartments.mjs?v=opera-parallax-1';
+import {SHOWROOMS,applyShowroomLayout} from './showroom-layout.mjs?v=town-store-halls-1';
+import {drawShowroomThemeSign} from './showroom-signs.mjs?v=town-store-halls-1';
+import {applyShowroomApartment} from './showroom-apartments.mjs?v=town-store-halls-1';
 import {drawShowroomFloor,drawShowroomWallpaper} from './showroom-materials.mjs?v=opera-parallax-1';
 import {applyHomeMaterialSuite,warmHomeMaterials} from './home-materials.mjs?v=opera-parallax-1';
 import {drawTowerCommonSurfaces,drawTowerCommonStairs,towerCommonMaterialsReady,warmTowerCommonMaterials} from './tower-common-materials.mjs?v=opera-parallax-1';
 import {drawInteriorDoor,drawPrivacyDoor,drawElevatorPortal,getElevatorVisualGeometry,interiorPortalVisualDepth,warmInteriorPortalArt} from './interior-portal-art.mjs?v=opera-parallax-1';
 import {applyTowerCommonArchitecture} from './tower-common-architecture.mjs?v=opera-parallax-1';
 import {interiorActorScale} from './interior-scale.mjs?v=opera-parallax-1';
-import {calibratePrivateFurniture,presentedRoomItem} from './private-furniture.mjs?v=opera-parallax-1';
+import {calibratePrivateFurniture,presentedRoomItem} from './private-furniture.mjs?v=town-store-halls-1';
 import {normalizeInteriorDoorways} from './interior-doorways.mjs?v=opera-parallax-1';
 import {drawInteriorWindow,warmInteriorWindows} from './interior-window-art.mjs?v=opera-parallax-1';
 import {drawInteriorWallNetwork} from './interior-wall-art.mjs?v=opera-parallax-1';
-import {createRoomLayoutResolver} from './room-layout-runtime.mjs?v=opera-parallax-1';
+import {createRoomLayoutResolver} from './room-layout-runtime.mjs?v=town-store-halls-1';
 export {apartmentDecorBounds,apartmentWallDecorBounds} from './personal-room-areas.mjs?v=opera-parallax-1';
 import {getConcertHall,renderConcertHallBackground,concertHallDrawables} from './concert-hall.mjs?v=town-flight-1';
 import {renderStagePerformance} from './concert-performers.mjs?v=opera-players-2';
@@ -207,6 +207,9 @@ export function getInteriorBase(scene={}){
  const requestedKind=scene.kind||'lobby',floor=Math.max(1,Math.min(15,Math.round(Number(scene.floor)||1))),storeFloor=floor===2?2:1,kind=requestedKind==='hall'&&floor===1?'lobby':requestedKind==='showroom'&&!SHOWROOMS.some(room=>room.id===scene.showroomId)?'shop':requestedKind,resident=scene.resident||'player',id=kind==='apartment'?`apartment-${resident}`:kind==='hall'?`tower-floor-${floor}`:kind==='shop'?(storeFloor===1?'furniture-store':'furniture-store-floor-2'):kind==='showroom'?'showroom-'+scene.showroomId:'tower-lobby';
  if(!sceneCache.has(id)){const s=kind==='apartment'?apartment(resident):kind==='hall'?hall(floor):kind==='shop'?shop(storeFloor):kind==='showroom'?showroomApartment(scene.showroomId):lobby();
   calibratePrivateFurniture(s,nativeCatalog||collectionDefinitions);normalizeInteriorDoorways(s);applyTowerCommonArchitecture(s);
+  // Floor lettering is retired; retain labels painted on the north wall and
+  // the separate framed door, lift, directory and showroom-sign renderers.
+  const wallDepth=s.towerArchitecture?.northWallDepth||106;s.signs=s.signs.filter(label=>label.y<=wallDepth);
   for(const d of s.privacyDoors||[]){const r=s.rooms.find(r=>r.id===d.roomId||r.functionalRole===d.roomId);if(r&&d.swing===undefined)d.swing=d.axis==='vertical'?(r.x+r.w/2>d.x?1:-1):(r.y+r.h/2>d.y?-1:1);}
   sceneCache.set(id,s);}return sceneCache.get(id);
 }
@@ -273,7 +276,7 @@ function background(s){
  for(const item of s.items)if(floorItem(item))drawItem(c,item);
  // Full-height north facade, low cutaway south and side edges.
  if(!lobby&&!towerCommon){plasterWall(c,rect(0,0,s.width,106),s.color,s.trim);plasterWall(c,rect(0,0,28,s.height),s.color,s.trim);plasterWall(c,rect(s.width-28,0,28,s.height),s.color,s.trim);plasterWall(c,rect(0,s.height-28,s.width,28),s.color,s.trim);}
- else if(lobby&&s.sideFacingShowrooms){
+ else if(lobby&&(s.sideFacingShowrooms||s.southFacingShowrooms)){
   const main=s.lobbyFloorRects[0],entry=s.lobbyFloorRects[1];
   plasterWall(c,rect(entry.x-20,entry.y,20,entry.h),s.color,s.trim);plasterWall(c,rect(entry.x+entry.w,entry.y,20,entry.h),s.color,s.trim);
   for(const x of [entry.x,entry.x+entry.w-120])plasterWall(c,rect(x,s.height-28,120,28),s.color,s.trim);

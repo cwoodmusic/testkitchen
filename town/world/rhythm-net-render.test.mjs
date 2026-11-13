@@ -2,7 +2,7 @@ import test from 'node:test';
 import assert from 'node:assert/strict';
 import {createRequire} from 'node:module';
 import {drawRhythmNet} from './rhythm-net-render.mjs';
-import {facingAngle,netSweepHits,NET_WINDUP_FRACTION,NET_STRIKE_FRACTION,NET_CONTACT_FRACTION,NET_SWEEP_SECONDS,NET_RECOVERY_SECONDS} from './rhythm-hunt-motion.mjs';
+import {facingAngle,netSweepHits,FAIRY_CATCH_PADDING,NET_WINDUP_FRACTION,NET_STRIKE_FRACTION,NET_CONTACT_FRACTION,NET_SWEEP_SECONDS,NET_RECOVERY_SECONDS} from './rhythm-hunt-motion.mjs';
 const {createCanvas}=createRequire(import.meta.url)('@napi-rs/canvas');
 
 function context(){
@@ -11,7 +11,7 @@ function context(){
  return c;
 }
 const near=(a,b)=>assert(Math.abs(a-b)<1e-8,`${a} versus ${b}`);
-test('every rendered hoop point follows the rotated catch opening in all four directions',()=>{
+test('the rotated drawn opening remains accurate while close fairy overlaps are forgiven',()=>{
  const player={x:400,y:400},progress=NET_STRIKE_FRACTION;
  for(const direction of ['up','down','left','right']){
   const c=context(),angle=facingAngle(direction),pose=drawRhythmNet(c,player,{angle,age:progress*NET_SWEEP_SECONDS,z:24,reducedMotion:true}),hoop=c.strokes.at(-1),{u,v}=pose.rim,det=u.x*v.y-u.y*v.x;
@@ -20,7 +20,9 @@ test('every rendered hoop point follows the rotated catch opening in all four di
    const dx=p.x-pose.x,dy=p.y-pose.y,a=(dx*v.y-dy*v.x)/det,b=(u.x*dy-u.y*dx)/det;
    near(a*a+b*b,1);
    assert(netSweepHits({x:pose.x+dx*.99,y:pose.y+dy*.99},player,angle,progress,progress,24),'A note just inside the drawn rim is catchable');
-   assert(!netSweepHits({x:pose.x+dx*1.01,y:pose.y+dy*1.01},player,angle,progress,progress,24),'A note outside the visible rim must miss');
+   assert(netSweepHits({x:pose.x+dx*1.01,y:pose.y+dy*1.01},player,angle,progress,progress,24),'A close overlap just beyond the visible rim should count');
+   const far=1+(FAIRY_CATCH_PADDING+2)/Math.min(Math.hypot(u.x,u.y),Math.hypot(v.x,v.y));
+   assert(!netSweepHits({x:pose.x+dx*far,y:pose.y+dy*far},player,angle,progress,progress,24),'The catch margin remains limited');
   }
   const shaft=c.strokes.find(s=>s.color==='#5d412b');assert.deepEqual(shaft.points,[pose.grip,pose.joint]);
  }

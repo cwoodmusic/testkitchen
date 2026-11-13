@@ -20,7 +20,7 @@ class Element{
 function fixture(t,{empty=false}={}){
  const previous=globalThis.document,body=new Element('body');globalThis.document={body,createElement:tag=>new Element(tag)};t.after(()=>{globalThis.document=previous;});
  let writes=0,saveOK=true;
- const journal={data:{stars:0,netWins:0,fish:{},yellowNotes:Object.fromEntries(['quarter','eighth-pair','sixteenth-group','quarter-rest'].map(value=>[value,empty?0:4])),npcRhythmWins:{}},warning:'',save(){writes++;return saveOK;}};
+ const journal={data:{stars:0,netWins:0,fish:{},yellowNotes:Object.fromEntries(['quarter','eighth-pair','sixteenth-group'].map(value=>[value,empty?0:4])),npcRhythmWins:{}},warning:'',save(){writes++;return saveOK;}};
  const inventory=createNoteInventory(journal),audio={now:0,tones:[],async unlock(){return true;},get time(){return this.now;},tone(...args){this.tones.push(args);},stop(){},suspend(){},async resume(){}};
  const q=createNPCRhythmRequests({canvas:new Element('canvas'),journal,inventory,audio}),dialog=body.children[0];
  const button=label=>{const node=dialog.all().find(node=>node.tagName==='button'&&(node.textContent===label||node.attributes['aria-label']===label));assert(node,'Missing button: '+label);return node;};
@@ -37,16 +37,17 @@ test('real named neighbours offer ear-only requests while vendors keep their own
  assert.equal(closed,1);assert.equal(f.q.state.phase,'listen');assert(f.q.fullscreen);assert.equal(f.dialog.all().some(node=>node.innerHTML.includes('<svg')),false,'The played answer must not appear as notation');
  f.audio.now=.8;f.q.tick();assert.equal(f.dialog.querySelector('#npcRhythmCount').textContent,'2');
  assert.deepEqual(f.audio.tones.slice(0,4).map(tone=>tone[2]),[460,460,460,960]);assert(f.audio.tones.length>4,'The request must actually schedule rhythm sounds');
+ assert(f.q.state.target.every(value=>['quarter','eighth-pair','sixteenth-group'].includes(value)),'An NPC never asks for an uncatchable rest');
  assert.equal(f.writes,0);
 });
 
 test('wrong answers and undo preserve cards; one correct answer spends exactly four and awards once',async t=>{
- const f=fixture(t);await f.listen();const target=f.q.state.target,initial={...f.inventory.counts};
+ const f=fixture(t);await f.listen();const target=f.q.state.target,initial={...f.inventory.counts};assert.equal(f.dialog.all().filter(node=>node.attributes['aria-label']?.startsWith('Add ')).length,3);assert.equal(f.dialog.all().some(node=>node.attributes['aria-label']==='Add Quarter rest'),false);
  for(const value of [...target].reverse())f.button('Add '+noteName(value)).click();
  const submit=f.button('Check my rhythm');submit.click();assert.equal(f.q.state.phase,'arrange');assert.equal(f.q.state.mistakes,1);assert.deepEqual(f.inventory.counts,initial);assert.equal(f.writes,0);
  for(const _ of target)f.button('Undo').click();
  for(const value of target)f.button('Add '+noteName(value)).click();
- f.button('Check my rhythm').click();assert.equal(f.q.state.phase,'won');assert.equal(f.journal.data.stars,1);assert.equal(f.journal.data.npcRhythmWins.bach,1);assert.equal(f.inventory.total,12);assert.equal(f.writes,1);
+ f.button('Check my rhythm').click();assert.equal(f.q.state.phase,'won');assert.equal(f.journal.data.stars,1);assert.equal(f.journal.data.npcRhythmWins.bach,1);assert.equal(f.inventory.total,8);assert.equal(f.writes,1);
  for(const value of target)initial[value]--;
  assert.deepEqual(f.inventory.counts,initial);submit.click();assert.equal(f.writes,1,'A repeated submit must not pay or spend twice');
  f.button('Back to town').click();assert.equal(f.q.active,false);

@@ -1,6 +1,6 @@
 import {getConcertHall} from './concert-hall.mjs?v=town-flight-1';
 import {residents} from './resident-profiles.mjs?v=opera-parallax-1';
-import {SHOWROOMS,STORE_TRAFFIC,STORE_VERTICAL_CORE} from './showroom-layout.mjs?v=opera-parallax-1';
+import {SHOWROOMS,STORE_TRAFFIC,STORE_VERTICAL_CORE} from './showroom-layout.mjs?v=town-store-halls-1';
 import {interiorActorScale} from './interior-scale.mjs?v=opera-parallax-1';
 export const SHOP_VISIT_CAPACITY=SHOWROOMS.length;
 
@@ -18,8 +18,7 @@ function shopRoute(resident,stay,slot){
  const index=Number.isInteger(slot)&&slot>=0&&slot<SHOWROOMS.length?slot:resident.index%SHOWROOMS.length;
  const showroom=SHOWROOMS[index],apartment=showroom.apartment;
  const ground={kind:'shop',floor:1},lobby={kind:'shop',floor:showroom.storeFloor},inside={kind:'showroom',showroomId:showroom.id,floor:showroom.storeFloor};
- const enter=point(STORE_TRAFFIC.incomingX,shopDoor.y),aisleIn=point(STORE_TRAFFIC.incomingX,STORE_TRAFFIC.ingressY),roomIn=point(showroom.lobbyApproach.x,STORE_TRAFFIC.ingressY);
- const roomOut=point(showroom.lobbyReturn.x,STORE_TRAFFIC.egressY),aisleOut=point(STORE_TRAFFIC.outgoingX,STORE_TRAFFIC.egressY),exit=point(STORE_TRAFFIC.outgoingX,shopDoor.y);
+ const rowEntry=showroom.entry;
  const steps=[];
  const walk=(scene,from,to,purpose)=>steps.push({scene,from,to,purpose,duration:Math.hypot(to.x-from.x,to.y-from.y)/(SPEED*interiorActorScale(scene))});
  const wait=(scene,at,duration,purpose,direction,hidden=false)=>steps.push({scene,from:at,to:at,duration,purpose,facing:direction,hidden});
@@ -28,9 +27,9 @@ function shopRoute(resident,stay,slot){
   const core=STORE_VERTICAL_CORE,at=core.arrival;
   follow(ground,[shopDoor,point(core.incomingX,shopDoor.y),point(core.incomingX,core.travelY),point(at.x,core.travelY),at],'Walking to the store lift');
   wait(ground,at,.5,'Waiting for the store lift','up');wait({kind:'store-lift',floor:2},at,2.5,'Riding to the upper gallery','up',true);
-  follow(lobby,[at,point(at.x,core.travelY),showroom.entry,showroom.lobbyApproach],'Visiting '+showroom.name);
- }else follow(lobby,[shopDoor,enter,aisleIn,roomIn,showroom.lobbyApproach],'Visiting '+showroom.name);
- wait(lobby,showroom.lobbyApproach,.3,'Entering '+showroom.name,showroom.row?'down':'up');
+  follow(lobby,[at,point(rowEntry.x,at.y),rowEntry,...showroom.visitRoute.slice(1)],'Visiting '+showroom.name);
+ }else follow(lobby,[shopDoor,point(rowEntry.x,shopDoor.y),...showroom.visitRoute],'Visiting '+showroom.name);
+ wait(lobby,showroom.lobbyApproach,.3,'Entering '+showroom.name,'up');
  follow(inside,apartment.visitRoute,'Looking around '+showroom.name);
  const browse=apartment.visitRoute.at(-1),beforeBrowse=apartment.visitRoute.at(-2)||apartment.spawn;
  wait(inside,browse,stay,'Browsing '+showroom.name,facing(beforeBrowse,browse));
@@ -38,10 +37,10 @@ function shopRoute(resident,stay,slot){
  wait(inside,apartment.spawn,.3,'Returning to the furniture-store lobby','down');
  if(showroom.storeFloor===2){
   const core=STORE_VERTICAL_CORE,at=core.arrival;
-  follow(lobby,[showroom.lobbyReturn,showroom.entry,point(at.x,core.travelY),at],'Returning to the store lift');
+  follow(lobby,[...showroom.exitRoute,point(rowEntry.x,at.y),at],'Returning to the store lift');
   wait(lobby,at,.5,'Waiting for the store lift','up');wait({kind:'store-lift',floor:1},at,2.5,'Riding to the main lobby','down',true);
   follow(ground,[at,point(core.outgoingX,at.y),point(core.outgoingX,shopDoor.y),shopDoor],'Heading back outside');
- }else follow(lobby,[showroom.lobbyReturn,roomOut,aisleOut,exit,shopDoor],'Heading back outside');
+ }else follow(lobby,[...showroom.exitRoute,point(rowEntry.x,shopDoor.y),shopDoor],'Heading back outside');
  let elapsed=0,distance=0;
  for(const step of steps){step.start=elapsed;step.distance=distance;elapsed+=step.duration;distance+=Math.hypot(step.to.x-step.from.x,step.to.y-step.from.y);}
  return {steps,duration:elapsed,showroom};

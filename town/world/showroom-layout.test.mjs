@@ -3,13 +3,14 @@ import assert from 'node:assert/strict';
 import {createRequire} from 'node:module';
 import {readFileSync} from 'node:fs';
 import {SHOWROOMS,STORE_TRAFFIC,STORE_VERTICAL_CORE,STORE_FLOOR_COUNT,SHOWROOM_UNIT_FOOTPRINT,UPPER_SHOWROOM_UNIT_FOOTPRINT,getStoreFloorShowrooms} from './showroom-layout.mjs';
-import {getInterior,STORE_FOOTPRINT,configureUrbanInteriors} from './urban-interiors.mjs';
+import {getInterior,STORE_FOOTPRINT,configureUrbanInteriors,residents} from './urban-interiors.mjs';
 import {APARTMENT_COLLECTION_ASSETS} from './apartment-collections.mjs';
 import {FAMILY_FURNITURE_ASSETS} from './family-furniture-definitions.mjs';
 import {APARTMENT_DECOR} from './apartment-decor-definitions.mjs';
 import {furnitureFacingBoxes,furnitureFacingDepth} from './furniture-facing.mjs';
 import {interiorActorScale} from './interior-scale.mjs';
 import {PRIVATE_DOOR_CLEAR_WIDTH,PUBLIC_DOOR_CLEAR_WIDTH} from './interior-doorways.mjs';
+import {getDoorVisualGeometry} from './interior-portal-art.mjs';
 const require=createRequire(import.meta.url),stock=require('../../furniture-catalog.js'),products=new Map(stock.map(p=>[p.id,p]));
 const approvedMidcentury=JSON.parse(readFileSync(new URL('../../tests/fixtures/midcentury-user-layout.json',import.meta.url),'utf8')).rooms['showroom-midcentury-studio'];
 const native=new Map([...APARTMENT_DECOR,...APARTMENT_COLLECTION_ASSETS,...FAMILY_FURNITURE_ASSETS].map(a=>[a.id,a]));configureUrbanInteriors(native);
@@ -27,11 +28,11 @@ test('eight original wide units and four larger upper homes share the unchanged 
  assert.equal(SHOWROOMS.length,12);assert.equal(STORE_FLOOR_COUNT,2);assert.equal(getStoreFloorShowrooms(1).length,8);assert.equal(getStoreFloorShowrooms(2).length,4);assert.deepEqual({width:lobby.width,height:lobby.height},STORE_FOOTPRINT);assert.deepEqual(STORE_FOOTPRINT,{width:3072,height:2048});
  assert.deepEqual(SHOWROOM_UNIT_FOOTPRINT,{width:1184,height:448});assert.deepEqual(lobby.spawn,STORE_TRAFFIC.spawn);assert.deepEqual(lobby.spawn,{x:1536,y:1840});
  assert.equal(lobby.rooms.length,8);assert.equal(lobby.doors.length,8);assert.equal(lobby.zones.filter(z=>z.action==='showroom').length,8);assert.equal(lobby.windows.length,0);
- assert.equal(lobby.sideFacingShowrooms,true);assert(lobby.lobbyFloorRects.some(r=>r.x===1216&&r.w===640&&r.h===1888));
- for(const d of SHOWROOMS){const model=getInterior({kind:'shop',floor:d.storeFloor});assert.equal(d.w,1184);assert.equal(d.h,d.storeFloor===1?448:832);assert(d.w>d.h);assert(d.x>=0&&d.y>=0&&d.x+d.w<=3072&&d.y+d.h<=2048);assert(!SHOWROOMS.some(other=>other!==d&&other.storeFloor===d.storeFloor&&overlaps(d,other)));
+ assert.equal(lobby.southFacingShowrooms,true);assert.equal(lobby.sideFacingShowrooms,undefined);assert.equal(lobby.hallways.length,4);assert(lobby.lobbyFloorRects.some(r=>r.x===1216&&r.w===640&&r.h===1888));
+ for(const d of SHOWROOMS){const model=getInterior({kind:'shop',floor:d.storeFloor});assert.equal(d.w,1184);assert.equal(d.h,d.storeFloor===1?320:736);assert(d.w>d.h);assert(d.x>=0&&d.y>=0&&d.x+d.w<=3072&&d.y+d.h<=2048);assert(!SHOWROOMS.some(other=>other!==d&&other.storeFloor===d.storeFloor&&overlaps(d,other)));
   for(const hall of model.lobbyFloorRects)assert(!overlaps(d,hall),'Shared circulation cannot borrow private floor area');
   const door=model.doors.find(door=>door.showroomId===d.id),zone=model.zones.find(z=>z.showroomId===d.id),room=model.rooms.find(r=>r.showroomId===d.id);
-  assert(room.portalRoom);assert.deepEqual(door.threshold,d.threshold);assert.deepEqual(door.enterNormal,d.enterNormal);assert.equal(door.facing,d.column?'left':'right');assert.equal(zone.doorId,door.id);assert.equal(door.triggerHalfWidth,PUBLIC_DOOR_CLEAR_WIDTH/2);
+  assert(room.portalRoom);assert.deepEqual(door.threshold,d.threshold);assert.deepEqual(door.enterNormal,d.enterNormal);assert.equal(door.facing,'down');assert.deepEqual(d.enterNormal,{x:0,y:-1});assert.deepEqual(d.threshold,{x:d.x+d.w/2,y:d.y+d.h});assert.equal(getDoorVisualGeometry(door).kind,'front');assert.equal(zone.doorId,door.id);assert.equal(door.triggerHalfWidth,PUBLIC_DOOR_CLEAR_WIDTH/2);
   assert(blocked(model,{x:d.x+d.w/2,y:d.y+d.h/2},0));assert(!blocked(model,d.lobbyApproach));assert.deepEqual(d.lobbyReturn,d.lobbyApproach);
  }
  const upper=getInterior({kind:'shop',floor:2});assert.notEqual(upper,lobby);assert.equal(upper.id,'furniture-store-floor-2');assert.equal(upper.rooms.length,4);assert.deepEqual(upper.spawn,STORE_VERTICAL_CORE.arrival);assert.deepEqual({width:upper.width,height:upper.height},STORE_FOOTPRINT);
@@ -41,7 +42,8 @@ test('eight original wide units and four larger upper homes share the unchanged 
 
 test('all eight showroom doors retain real incoming and outgoing NPC journeys to the original street entrance',()=>{
  const before=JSON.stringify(SHOWROOMS);
- for(const d of getStoreFloorShowrooms(1)){route(lobby,[lobby.spawn,{x:STORE_TRAFFIC.incomingX,y:lobby.spawn.y},{x:STORE_TRAFFIC.incomingX,y:STORE_TRAFFIC.ingressY},{x:d.entry.x,y:STORE_TRAFFIC.ingressY},d.entry,d.lobbyApproach],d.name+' approach');route(lobby,[d.lobbyReturn,{x:d.entry.x,y:STORE_TRAFFIC.egressY},{x:STORE_TRAFFIC.outgoingX,y:STORE_TRAFFIC.egressY},{x:STORE_TRAFFIC.outgoingX,y:lobby.spawn.y},lobby.spawn],d.name+' departure');}
+ for(const d of getStoreFloorShowrooms(1)){route(lobby,[lobby.spawn,{x:d.entry.x,y:lobby.spawn.y},...d.visitRoute],d.name+' approach');route(lobby,[...d.exitRoute,{x:d.entry.x,y:lobby.spawn.y},lobby.spawn],d.name+' departure');}
+ for(const d of getStoreFloorShowrooms(2)){const m=getInterior({kind:'shop',floor:2}),at=STORE_VERTICAL_CORE.arrival;route(m,[at,{x:d.entry.x,y:at.y},...d.visitRoute],d.name+' upper approach');route(m,[...d.exitRoute,{x:d.entry.x,y:at.y},at],d.name+' upper departure');}
  assert.equal(JSON.stringify(SHOWROOMS),before);
 });
 
@@ -52,7 +54,7 @@ test('wide units have private bedroom and bathroom doors and physical native-foo
   for(const role of ['bedroom','bathroom','kitchen','living','dining']){const a=p.areas.find(a=>a.functionalRole===role);assert(a);assert(nav.reaches(a.point),d.name+' cannot reach '+role);assert(a.point.x>=a.x&&a.point.x<=a.x+a.w&&a.point.y>=a.y&&a.point.y<=a.y+a.h);}
   assert(nav.reaches(p.browse));assert.deepEqual(p.visitRoute[0],p.spawn);assert.deepEqual(p.visitRoute.at(-1),p.browse);assert.deepEqual(p.exitRoute,p.visitRoute.slice().reverse());route(m,p.visitRoute,d.name+' browsing');route(m,p.exitRoute,d.name+' returning');
   assert.equal(m.privacyDoors.length,2);for(const door of m.privacyDoors){assert.equal(door.length,PRIVATE_DOOR_CLEAR_WIDTH);assert(m.rooms.some(r=>r.id===door.roomId));const vertical=door.axis==='vertical',mid={x:door.x+(vertical?0:door.length/2),y:door.y+(vertical?door.length/2:0)};assert(nav.reaches(mid),d.name+' door');for(const normal of [-32,32])assert(nav.reaches({x:mid.x+(vertical?normal:0),y:mid.y+(vertical?0:normal)}),d.name+' must pass both sides of '+door.id);assert(blocked(m,{x:door.x+(vertical?0:door.length+8),y:door.y+(vertical?door.length+8:0)},0));}
-  assert.deepEqual(m.portalExit.threshold,p.portalExit.threshold);assert.deepEqual(m.portalExit.enterNormal,p.portalExit.enterNormal);assert.equal(Math.abs(m.spawn.x-m.portalExit.threshold.x),56);assert.equal(m.spawn.y,m.portalExit.threshold.y);
+  assert.deepEqual(m.portalExit.threshold,p.portalExit.threshold);assert.deepEqual(m.portalExit.enterNormal,p.portalExit.enterNormal);assert.equal(m.spawn.x,m.portalExit.threshold.x);assert.equal(m.portalExit.threshold.y-m.spawn.y,56);assert.deepEqual(m.portalExit.enterNormal,{x:0,y:-1});assert.equal(getDoorVisualGeometry(m.portalExit.door).kind,'front');route(m,[m.spawn,{x:m.spawn.x,y:m.portalExit.threshold.y-20}],d.name+' south foyer');
  }
  assert.equal(layouts.size,12);assert.equal(new Set([...layouts].map(id=>id.replace(/-(original|mirrored)$/,''))).size,6);
 });
@@ -117,4 +119,11 @@ test('native art keeps its aspect ratio and all physical bases stay distinct ins
    for(const b of feet(item)){assert(!footprints.some(other=>overlaps(b,other.box)),d.name+' overlaps '+item.slot+' and '+footprints.find(other=>overlaps(b,other.box))?.slot);footprints.push({box:b,slot:item.slot});}
   }
  }
+});
+
+
+test('store floors, apartment homes and shared halls keep labels on the back wall instead of the floor',()=>{
+ const scenes=[{kind:'shop',floor:1},{kind:'shop',floor:2},{kind:'lobby',floor:1},...Array.from({length:14},(_,i)=>({kind:'hall',floor:i+2})),...residents.map(r=>({kind:'apartment',resident:r.id,floor:r.floor})),{kind:'apartment',resident:'player',floor:15},...SHOWROOMS.map(d=>({kind:'showroom',showroomId:d.id,floor:d.storeFloor}))];
+ for(const request of scenes){const model=getInterior(request),wallDepth=model.towerArchitecture?.northWallDepth||106;assert(model.signs.every(label=>label.y<=wallDepth),model.id+' must not paint words on walkable floor');}
+ for(const floor of [1,2]){const model=getInterior({kind:'shop',floor});assert.equal(model.showroomSigns.length,floor===1?8:4);assert(model.doors.every(door=>door.number&&getDoorVisualGeometry(door).kind==='front'),'Framed door addresses stay available');}
 });

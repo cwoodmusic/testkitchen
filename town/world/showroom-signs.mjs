@@ -5,10 +5,9 @@ export const SHOWROOM_SIGN_ASSET='decor-14-16';
 // Signs sit beside the public doorway queue. Only their small floor base is
 // solid; neither their pictured panel nor their address blocks a doorway.
 export function createShowroomThemeSign(display){
- // Keep the first upper signs clear of the waiting bench/flower pots. The
- // left sign can sit above its door; the right also clears the stair flight.
- const offset=display.row===0&&display.column?(display.storeFloor===2?240:192):display.storeFloor===2&&display.row===0?-140:152;
- const x=display.threshold.x-display.enterNormal.x*108,y=display.threshold.y+offset;
+ // A small framed marquee beside each south entrance stays clear of both
+ // the doorway and the shared horizontal corridor.
+ const x=display.threshold.x+132,y=display.threshold.y+16;
  return {id:'showroom-sign-'+display.id,asset:SHOWROOM_SIGN_ASSET,showroomId:display.id,storeFloor:display.storeFloor,
   doorId:'showroom-'+display.id,x,y,w:84,h:83,number:String(display.index+1).padStart(2,'0'),
   title:display.name,description:display.style,floorLabel:display.floor.label,wallpaperLabel:display.wallpaper.label,

@@ -203,12 +203,13 @@ function furnishFamilyRooms(scene,assets,old){
   reserved.push(door.axis==='vertical'?{x:door.x-34,y:start-6,w:68,h:length+12}:{x:start-6,y:door.y-34,w:length+12,h:68});
  }
  for(const path of scene.interiorDesign?.circulation||[])reserved.push({...path});
- if(scene.spawn)reserved.push({x:scene.spawn.x-16,y:scene.spawn.y-16,w:32,h:32});
- if(scene.portalExit?.threshold&&scene.portalExit.enterNormal){const p=scene.portalExit,n=p.enterNormal,x=p.threshold.x+n.x*24,y=p.threshold.y+n.y*24;reserved.push({x:x-18,y:y-18,w:36,h:36});}
+ const calibrationEntry=scene.showroom?.apartment?.calibrationEntry||scene;
+ if(calibrationEntry.spawn)reserved.push({x:calibrationEntry.spawn.x-16,y:calibrationEntry.spawn.y-16,w:32,h:32});
+ if(calibrationEntry.portalExit?.threshold&&calibrationEntry.portalExit.enterNormal){const p=calibrationEntry.portalExit,n=p.enterNormal,x=p.threshold.x+n.x*24,y=p.threshold.y+n.y*24;reserved.push({x:x-18,y:y-18,w:36,h:36});}
  if(scene.resident&&scene.resident!=='player')reserved.push({x:scene.width/2-12,y:scene.floor>=7?738:638,w:24,h:349});
  // Shoppers follow authored venue scripts, whose clearance is wider than the
  // player's6px floor radius. Reserve every real leg, including its turn caps.
- const shoppingRoute=scene.showroom?.apartment?.visitRoute||[];
+ const shoppingRoute=scene.showroom?.apartment?.calibrationEntry?.visitRoute||scene.showroom?.apartment?.visitRoute||[];
  for(let n=1;n<shoppingRoute.length;n++){const from=shoppingRoute[n-1],to=shoppingRoute[n];reserved.push({x:Math.min(from.x,to.x)-18,y:Math.min(from.y,to.y)-18,w:Math.abs(to.x-from.x)+36,h:Math.abs(to.y-from.y)+36});}
  const movable=new Set([sofa,coffee,oldRug,console,lamp?.roomId==='reading'?null:lamp,plant,arcade?.supportedBy?null:arcade,reading?.roomId==='reading'?null:reading,smallTable,smallChair].filter(Boolean));
  const placed=originals.filter(i=>!movable.has(i)&&i.solid&&!i.supportedBy),counters=new Map();

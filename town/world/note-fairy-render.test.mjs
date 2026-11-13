@@ -2,6 +2,7 @@ import test from 'node:test';
 import assert from 'node:assert/strict';
 import {drawNoteFairy} from './note-fairy-render.mjs';
 import {flyingNotePose} from './rhythm-hunt-motion.mjs';
+import {NOTE_VALUES} from './town-game-rules.mjs';
 
 function context(){
  const calls=[],stack=[],state={fillStyle:'#123456',strokeStyle:'#abcdef',globalAlpha:.7,lineWidth:9};
@@ -10,7 +11,7 @@ function context(){
   set(_target,key,value){if(key==='shadowBlur')assert.equal(value,0);state[key]=value;calls.push(['set',key,value]);return true;}
  });return c;
 }
-const values=['quarter','eighth-pair','sixteenth-group','quarter-rest'];
+const values=NOTE_VALUES;
 const token={x:300,y:400,phase:.4,vx:90,vy:-45,color:'yellow'};
 test('every allowed notation stays bare and compact, with both fairy palettes and restored drawing state',()=>{
  for(const color of ['yellow','blue'])for(const value of values){

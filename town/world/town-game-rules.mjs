@@ -1,15 +1,15 @@
 import {createPlayerCollisionIndex} from './player-collision-index.mjs?v=town-flight-1';
 import {blocked,height,cell,COLS,ROWS} from './model.mjs?v=town-flight-1';
-export const NOTE_VALUES=Object.freeze(['quarter','eighth-pair','sixteenth-group','quarter-rest']);
+export const NOTE_VALUES=Object.freeze(['quarter','eighth-pair','sixteenth-group']);
 export const CATCH_PATTERNS=Object.freeze([
- ['quarter','eighth-pair','sixteenth-group','quarter-rest'],
- ['eighth-pair','quarter','quarter-rest','sixteenth-group'],
- ['sixteenth-group','quarter-rest','eighth-pair','quarter'],
- ['quarter-rest','sixteenth-group','quarter','eighth-pair'],
- ['eighth-pair','quarter','eighth-pair','quarter-rest'],
- ['quarter','sixteenth-group','quarter-rest','quarter']
+ ['quarter','eighth-pair','sixteenth-group','quarter'],
+ ['eighth-pair','quarter','eighth-pair','sixteenth-group'],
+ ['sixteenth-group','quarter','eighth-pair','quarter'],
+ ['quarter','sixteenth-group','quarter','eighth-pair'],
+ ['eighth-pair','quarter','eighth-pair','quarter'],
+ ['quarter','sixteenth-group','eighth-pair','sixteenth-group']
 ].map(Object.freeze));
-export function catchAttacks(value){return value==='quarter-rest'?[]:value==='eighth-pair'?[0,.5]:value==='sixteenth-group'?[0,.25,.5,.75]:[0];}
+export function catchAttacks(value){return value==='quarter'?[0]:value==='eighth-pair'?[0,.5]:value==='sixteenth-group'?[0,.25,.5,.75]:[];}
 export const sameRhythm=(a,b)=>a.length===b.length&&a.every((v,i)=>v===b[i]);
 export function remainingNotes(target,bag){const left=[...target];for(const n of bag){const i=left.indexOf(n);if(i>=0)left.splice(i,1);}return left;}
 export function reachableNoteSpots(doc,catalog,origin,{limit=COLS*ROWS,radius=22000,clearance=0}={}){

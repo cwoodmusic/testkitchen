@@ -59,13 +59,13 @@ test('all twelve store visits scale showroom legs while preserving both public f
   if(room.storeFloor===2){
    const at=core.arrival;
    publicDistance=length([door,point(core.incomingX,door.y),point(core.incomingX,core.travelY),point(at.x,core.travelY),at])
-    +length([at,point(at.x,core.travelY),room.entry,room.lobbyApproach])
-    +length([room.lobbyReturn,room.entry,point(at.x,core.travelY),at])
+    +length([at,point(room.entry.x,at.y),room.entry,...room.visitRoute.slice(1)])
+    +length([...room.exitRoute,point(room.entry.x,at.y),at])
     +length([at,point(core.outgoingX,at.y),point(core.outgoingX,door.y),door]);
    waits+=6;
   }else{
-   publicDistance=length([door,point(STORE_TRAFFIC.incomingX,door.y),point(STORE_TRAFFIC.incomingX,STORE_TRAFFIC.ingressY),point(room.lobbyApproach.x,STORE_TRAFFIC.ingressY),room.lobbyApproach])
-    +length([room.lobbyReturn,point(room.lobbyReturn.x,STORE_TRAFFIC.egressY),point(STORE_TRAFFIC.outgoingX,STORE_TRAFFIC.egressY),point(STORE_TRAFFIC.outgoingX,door.y),door]);
+   publicDistance=length([door,point(room.entry.x,door.y),...room.visitRoute])
+    +length([...room.exitRoute,point(room.entry.x,door.y),door]);
   }
   const duration=venueVisitDuration('bach','shop',{slot,stay});
   near(duration,publicDistance/156+privateDistance/58.5+stay+waits,room.id+' visit duration');

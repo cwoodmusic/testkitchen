@@ -36,9 +36,9 @@ function fixture(run){
 const event=key=>({key,repeat:false,preventDefault(){}});
 
 test('five yellow fairies save catches, replenish within five slots, and preserve the map',()=>fixture(f=>{
- const initial=f.yellow.state.tokens;assert.equal(initial.length,5);assert(initial.every(token=>token.color==='yellow'));const before=JSON.stringify(f.doc),token=initial[0],{angle}=f.approach(token);
+ const initial=f.yellow.state.tokens;assert.equal(initial.length,5);assert(initial.every(token=>token.color==='yellow'&&['quarter','eighth-pair','sixteenth-group'].includes(token.value)));assert.equal(f.hud.all().filter(node=>node.className==='yellow-note-count').length,3);const before=JSON.stringify(f.doc),token=initial[0],{angle}=f.approach(token);
  assert(f.yellow.catchAlongSweep(f.player,angle,0,1));assert.equal(f.inventory.counts[token.value],1);assert.equal(f.saves,1);assert.equal(f.yellow.state.tokens.length,4);
- for(let i=0;i<242;i++)f.yellow.tick(new Set(),.05);assert.equal(f.yellow.state.tokens.length,5);assert.equal(f.inventory.total,1);assert.equal(JSON.stringify(f.doc),before);
+ for(let i=0;i<242;i++)f.yellow.tick(new Set(),.05);assert.equal(f.yellow.state.tokens.length,5);assert(f.yellow.state.tokens.every(token=>token.value!=='quarter-rest'));assert.equal(f.inventory.total,1);assert.equal(JSON.stringify(f.doc),before);
 }));
 
 test('blue fairies reserve island slots immediately in drawing, state and catching',()=>fixture(f=>{

@@ -1,7 +1,7 @@
 import {createIslandNavigation} from './island-sailing.mjs?v=town-flight-1';
 import {loadCaveFishing} from './cave-fishing-loader.mjs?v=town-flight-1';
 import {createFishingJournalBridge} from './fishing-journal-bridge.mjs?v=town-flight-1';
-import {gameButton} from './town-game-audio.mjs?v=town-fairies-1';
+import {gameButton} from './town-game-audio.mjs?v=town-store-halls-1';
 export function createTownFishing({canvas,journal,getProject,getPlayer,getOwner,catalog}){
  const hud=document.createElement('section');hud.className='town-game-hud island-sailing-hud';hud.hidden=true;document.body.append(hud);
  let phase='idle',doc=null,dock=null,ashore=null,boat=null,navigation=null,school=[],clock=0,room=null,host=null,bridge=null,lastCam=null,destination=null,serial=0,paused=false,moving=false,engine=null,owner=null;const held=new Set();let loading=null,loadingSerial=-1;

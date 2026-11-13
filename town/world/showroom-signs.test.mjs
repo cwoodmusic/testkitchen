@@ -24,8 +24,8 @@ test('all twelve showroom doors have one small public theme sign with a clear in
   assert(!blocked(model,sign.approach));assert(blocked(model,{x:sign.x,y:sign.y}),'The stand has a physical base');
   const route=[display.lobbyApproach,{x:display.lobbyApproach.x,y:sign.approach.y},sign.approach];
   for(let i=1;i<route.length;i++){const a=route[i-1],b=route[i],steps=Math.ceil(Math.hypot(b.x-a.x,b.y-a.y)/4);for(let n=0;n<=steps;n++)assert(!blocked(model,{x:a.x+(b.x-a.x)*n/steps,y:a.y+(b.y-a.y)*n/steps}),'A player must reach the reading spot from the door queue');}
-  assert(sign.x-sign.w/2>1216&&sign.x+sign.w/2<1856,'The entire sign is outside the private unit and clear of the central aisle');
-  assert(sign.y-sign.h>display.threshold.y+display.triggerHalfWidth||sign.y<display.threshold.y-display.triggerHalfWidth,'A stand cannot overlap the door opening/queue');
+  assert(sign.base.y>display.y+display.h,'The small stand base belongs in the public hallway');assert(inside(sign.approach,display.hallway),'The reading spot belongs to the shared hallway');
+  assert(sign.x-sign.w/2>display.threshold.x+display.triggerHalfWidth,'A framed marquee stays beside the south doorway instead of covering its queue');
   assert(!model.items.some(item=>item.id===sign.id||item.asset===SHOWROOM_SIGN_ASSET),'Only the explicit24×10 base creates sign collision');
   for(const stair of model.stairs)assert(!(sign.x-sign.w/2<stair.x+stair.w&&sign.x+sign.w/2>stair.x&&sign.y-sign.h<stair.y+stair.h&&sign.y>stair.y),'A sign must remain clear of the pictured stair flight');
   assert(!model.signs.some(label=>label.text===display.name),'Theme names are removed from the public floor');
@@ -36,7 +36,7 @@ test('all twelve showroom doors have one small public theme sign with a clear in
  for(const floor of [1,2]){
   const model=getInterior({kind:'shop',floor});
   assert.equal(model.showroomSigns.length,floor===1?8:4);
-  assert(model.signs.some(s=>s.text==='LIFT'));assert(model.signs.some(s=>s.text==='CODA FURNISHINGS'));
+  assert(model.signs.some(s=>s.text==='LIFT'));assert(!model.signs.some(s=>s.text==='CODA FURNISHINGS'));assert(model.signs.every(s=>s.y<=106),'Only north-wall signage remains; the walkable floor has no painted labels');
  }
 });
 

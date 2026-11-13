@@ -1,5 +1,7 @@
 export const NET_SWEEP_SECONDS=.50,NET_RECOVERY_SECONDS=.20,NET_HALF_ARC=Math.PI/2;
 export const NET_WINDUP_FRACTION=.32,NET_STRIKE_FRACTION=.82,NET_CONTACT_FRACTION=.94,NET_RIM_RX=30,NET_RIM_RY=20;
+// Fairies occupy a little space around their glyph; a close overlap counts.
+export const FAIRY_CATCH_PADDING=12;
 const NET_REST_PITCH=2.45,NET_REACH=128,NET_SHOULDER_LIFT=30/62,NET_MESH_DEPTH=38;
 // The far edge of the hoop, rather than the mesh pocket, reaches the ground.
 const NET_FINISH_PITCH=-Math.asin(30/(NET_REACH+NET_RIM_RX));
@@ -81,7 +83,7 @@ export function netSweepHits(point,player,angle,from,to,z=0){
   const pose=netSweepPose(player,angle,from+(to-from)*i/n,z);
   if(!pose.catchable)continue;
   const {u,v}=pose.rim,dx=point.x-pose.x,dy=point.y-pose.y,det=u.x*v.y-u.y*v.x;
-  const a=(dx*v.y-dy*v.x)/det,b=(u.x*dy-u.y*dx)/det;
+  const a=(dx*v.y-dy*v.x)/det/(1+FAIRY_CATCH_PADDING/Math.hypot(u.x,u.y)),b=(u.x*dy-u.y*dx)/det/(1+FAIRY_CATCH_PADDING/Math.hypot(v.x,v.y));
   if(a*a+b*b<=1+1e-12)return true;
  }
  return false;

@@ -1,11 +1,12 @@
 import {createPlayerCollisionIndex} from './player-collision-index.mjs?v=town-flight-1';
-import {launchFlyingNotes,advanceFlyingNote,flyingNotePose,netSweepHits,facingAngle,angleFacing,NET_SWEEP_SECONDS,NET_RECOVERY_SECONDS} from './rhythm-hunt-motion.mjs?v=town-net-arc-1';
-import {drawRhythmNet} from './rhythm-net-render.mjs?v=town-net-arc-1';
-import {drawNoteFairy} from './note-fairy-render.mjs?v=town-net-arc-1';
+import {launchFlyingNotes,advanceFlyingNote,flyingNotePose,netSweepHits,facingAngle,angleFacing,NET_SWEEP_SECONDS,NET_RECOVERY_SECONDS} from './rhythm-hunt-motion.mjs?v=town-store-halls-1';
+import {drawRhythmNet} from './rhythm-net-render.mjs?v=town-store-halls-1';
+import {drawNoteFairy} from './note-fairy-render.mjs?v=town-store-halls-1';
+import {drawBlueNoteTracker} from './blue-note-tracker.mjs?v=town-store-halls-1';
 import {createRhythmRoundClock} from './rhythm-round-clock.mjs?v=town-notes-1';
 import {blocked,height} from './model.mjs?v=town-flight-1';
-import {CATCH_PATTERNS,NOTE_VALUES,catchAttacks,remainingNotes,sameRhythm,reachableNoteSpots,scatterNotes} from './town-game-rules.mjs?v=town-notes-1';
-import {createGameAudio,noteSVG,noteName,gameButton} from './town-game-audio.mjs?v=town-fairies-1';
+import {CATCH_PATTERNS,NOTE_VALUES,catchAttacks,remainingNotes,sameRhythm,reachableNoteSpots,scatterNotes} from './town-game-rules.mjs?v=town-store-halls-1';
+import {createGameAudio,noteSVG,noteName,gameButton} from './town-game-audio.mjs?v=town-store-halls-1';
 export function createRhythmCatch({canvas,getProject,getPlayer,getFacing=()=>'down',setFacing=()=>{},catalog,journal,onExtraSweep=()=>false,isEquipped=()=>true,audio=createGameAudio()}){
  const clock=createRhythmRoundClock({duration:300}),dialog=document.createElement('dialog'),hud=document.createElement('section'),exitDialog=document.createElement('dialog');dialog.className='town-game-dialog rhythm-catch-dialog';dialog.setAttribute('aria-label','Rhythm Catch');hud.className='town-game-hud blue-rhythm-hud';hud.hidden=true;hud.setAttribute('aria-label','Rhythm Catch status');exitDialog.className='town-game-dialog rhythm-exit-dialog';exitDialog.setAttribute('aria-label','End Rhythm Catch');document.body.append(dialog,hud,exitDialog);
  let phase='idle',doc=null,round=0,target=[],tokens=[],bag=[],order=[],host=null,start=0,huntAt=0,aim=0,swingAt=-10,mistakes=0,message='',paused=false,busy=false,serial=0,flightTime=0,lastTick=null,swingProgress=0,swingHit=false,swinging=false,hudLayout='',requestingEnd=false,exitResume=null,confirmBusy=false;
@@ -114,6 +115,7 @@ export function createRhythmCatch({canvas,getProject,getPlayer,getFacing=()=>'do
  }}
  function draw(c,cam,time,{net=true}={}){if(phase!=='hunt')return;layoutHUD();const p=getPlayer();if(!p)return;
   for(const t of tokens){const z=height(doc,t.x,t.y),point=flyingNotePose(t,flightTime,z,motionQuery.matches);if(Math.abs(point.x-cam.x)>canvas.clientWidth/2/cam.zoom+50||Math.abs(point.y-cam.y)>canvas.clientHeight/2/cam.zoom+50)continue;drawNoteFairy(c,t,{time:flightTime,z,reducedMotion:motionQuery.matches});}
+  if(!paused&&!requestingEnd&&!dialog.open)drawBlueNoteTracker(c,{player:p,playerZ:height(doc,p.x,p.y),tokens,time:flightTime,cam,width:canvas.clientWidth,height:canvas.clientHeight,reducedMotion:motionQuery.matches,getHeight:t=>height(doc,t.x,t.y)});
 
   const age=now()-swingAt,recovering=age>=0&&age<NET_SWEEP_SECONDS+NET_RECOVERY_SECONDS;
   if(net&&isEquipped())drawRhythmNet(c,p,{angle:recovering?aim:facingAngle(getFacing()),age:recovering?age:Infinity,z:height(doc,p.x,p.y),reducedMotion:motionQuery.matches,swinging});
