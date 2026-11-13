@@ -2,19 +2,19 @@
 
 Coda Furnishings, the 18 NPC apartments and the player's rooftop home have complete one-bedroom layouts: a private bathroom and bedroom, a practical kitchen, and living/dining space.
 
-[Explore all 31 finished rooms](coda-room-gallery.html), with full floor plans and close-ups beside the player character. Room dimensions and the approved play camera remain fixed. Furniture uses role-specific dimensions measured against the playable Coda Arcade: cabinets, tall appliances, seating, tables and beds have separate targets while retaining their artwork proportions. Kitchens and bedheads back onto real walls, mirrors align with vanities, chairs face their tables, and rugs anchor the listening groups. Walking routes, windows, door landings and the player's saved furnishing areas stay clear.
+[Explore all 31 finished rooms](coda-room-gallery.html), with full floor plans and close-ups beside the player character. Every new default uses the same compact floor plan, with left and right versions. Furniture uses role-specific dimensions measured against the playable Coda Arcade: cabinets, tall appliances, seating, tables and beds have separate targets while retaining their artwork proportions. Kitchens and bedheads back onto real walls, mirrors align with vanities, chairs face their tables, and rugs anchor the listening groups. Walking routes, windows, door landings and the player's saved furnishing areas stay clear.
 
-The favorite wide NPC floor plans remain 2304 × 1120. Paired tower units remain 1088 × 1120, within the same fifteen-story building and floor directory. Friendships, resident identities and home journeys retain their existing contracts.
+All 31 apartment and showroom defaults use the Victorian showroom’s 1184 × 512 floor plan, with the south exterior visible below it. Each theme keeps its own furniture and finishes. Saved custom designs retain their original geometry; Reset theme switches to the compact default and Undo restores the saved design. Existing personal purchases can retain a compatible historical room without changing their saved positions or ownership.
 
-The store has **twelve apartments across two floors** inside its existing 3072 × 2048 footprint. The original eight **1184 × 448 wide homes** retain their lower-floor entrances. Four additional **1184 × 832 homes** upstairs have retrofuture, cyberpunk, steampunk and robot themes. A store lift and stairs connect the floors. No exterior building or authored town placement is enlarged.
+The store has **twelve apartments across two floors** inside its existing 3072 × 2048 footprint. Eight showrooms retain their lower-floor entrances. Four equally sized showrooms upstairs have retrofuture, cyberpunk, steampunk and robot themes. A store lift and stairs connect the floors. No exterior building or authored town placement is enlarged.
 
 ## Individual collections
 
-Each of the 31 homes has an independently drawn 32-piece collection: **992 reusable assets**. The original artwork stays unique to its owner. The family-room expansion adds 124 theme-specific products and matching dining-chair sets, with six places at every family table. Fixtures share a practical purpose, while their shapes, materials and details follow the owner.
+Each of the 31 homes has an independently drawn 32-piece collection: **992 reusable assets**. The original artwork stays unique to its owner. The family-room expansion adds 124 theme-specific products and matching dining-chair sets. Fixtures share a practical purpose, while their shapes, materials and details follow the owner.
 
 Examples include Bach's organ-pipe oak, Mozart's ribboned rosewood, Beethoven's angled steel and smoked ash, Miles's midnight walnut and brass, Zizi's lunar garden and the player's patchwork Comet Club. The twelve showrooms have separate collections; Atomic Walnut uses low walnut furniture, tapered legs, teal wool, burnt orange and atomic details.
 
-Every home has its own poster, playful toy, animated lava lamp and miniature arcade. Compact homes use tabletop cabinets; wide homes have game corners. Lava rises inside the actual glass, and arcade screens show different animated games. Static furniture artwork stays unchanged beneath the overlays; reduced-motion preferences stop them.
+Every home has its own poster, playful toy, animated lava lamp and miniature arcade. Their original tabletop cabinets and game corners retain their native furniture sizes. Lava rises inside the actual glass, and arcade screens show different animated games. Static furniture artwork stays unchanged beneath the overlays; reduced-motion preferences stop them.
 
 Wall decorations align with real wall faces. Rugs draw below people and furniture. Tabletop pieces use their supporting furniture's depth and do not create invisible floor obstacles. Bedside tables sit beside the head of the bed; lamps and keepsakes follow their actual supporting surface.
 

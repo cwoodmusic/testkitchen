@@ -1,7 +1,7 @@
-import {createTownActivities} from './town-activities.mjs?v=town-store-halls-1';
-import {catalog} from './catalog.mjs?v=town-room-placement-2';
-import {FLOOR_COUNT,residents,getInterior,renderInterior,residentInteractionZones,apartmentDecorBounds,apartmentWallDecorBounds,configureUrbanInteriors} from './urban-interiors.mjs?v=town-wide-shape-1';
-import {createRoomStorage,roomItemBoxes} from './urban-room.mjs?v=opera-parallax-1';
+import {createTownActivities} from './town-activities.mjs?v=town-compact-island-1';
+import {catalog} from './catalog.mjs?v=town-compact-island-1';
+import {FLOOR_COUNT,residents,getInterior,renderInterior,residentInteractionZones,apartmentDecorBounds,apartmentDecorFootBounds,apartmentWallDecorBounds,configureUrbanInteriors,configurePlayerRoomSource,invalidatePlayerRoomSource} from './urban-interiors.mjs?v=town-compact-island-1';
+import {createRoomStorage,roomItemBoxes,ROOM_KEY} from './urban-room.mjs?v=town-compact-island-1';
 import {SHOWROOMS,STORE_FLOOR_COUNT,STORE_VERTICAL_CORE} from './showroom-layout.mjs?v=town-room-placement-2';
 import {createStagePerformance,updateStageProgramme,stagePerformanceSignature,stageCollisionBoxes} from './concert-performers.mjs?v=opera-players-2';
 import {CONCERT_PROGRAMME} from './concert-programme.mjs?v=opera-players-1';
@@ -9,7 +9,7 @@ import {createConcertCurtain,drawConcertCurtain} from './concert-curtain.mjs?v=o
 import {createAutomaticDoors} from './automatic-doors.mjs?v=opera-parallax-1';
 import {furnitureFacingPlacement,furnitureFacingBounds} from './furniture-facing.mjs?v=opera-parallax-1';
 import {interiorActorScale,effectiveInteriorZoom} from './interior-scale.mjs?v=opera-parallax-1';
-import {presentedRoomItem,furniturePresentationScale} from './private-furniture.mjs?v=town-wide-layout-1';
+import {presentedRoomItem,furniturePresentationScale} from './private-furniture.mjs?v=town-compact-island-1';
 import {getInteriorVisualBounds} from './wide-room-shell.mjs?v=town-wide-rooms-1';
 
 configureUrbanInteriors(catalog);
@@ -68,14 +68,16 @@ export function createUrbanController({canvas,getProject,getPlayer,getFacing,set
   const character=window.createCodaCharacterRenderer?.();localWallet=window.CodaNotesShop.createWallet({catalog:character?.catalog,preserveEquipped:false});wallet=localWallet.snapshot();
  }
  function makeRoom(){
-  if(!owner)return;
+  if(!owner||!bridge&&!guestStorageAvailable()){configurePlayerRoomSource(null);room=null;decor=[];return;}
   let storage;try{storage=bridge?parent.localStorage:localStorage;}catch{}
-  room=createRoomStorage({storage,owner:roomOwner||owner,catalog,furniture,owned,presentationScale:(item,asset)=>furniturePresentationScale(item,getInterior({kind:'apartment',resident:'player',floor:15}),asset),getBounds:(_item,asset)=>(asset?.wallMounted?apartmentWallDecorBounds:apartmentDecorBounds)({kind:'apartment',floor:15,resident:'player'}),getSolids:()=>getInterior({kind:'apartment',floor:15,resident:'player'}).solids});
+  configurePlayerRoomSource({storage,owner:roomOwner||owner,catalog,furniture,owned});
+  const playerScene=()=>getInterior({kind:'apartment',resident:'player',floor:15});
+  room=createRoomStorage({storage,owner:roomOwner||owner,catalog,furniture,owned,presentationScale:(item,asset)=>furniturePresentationScale(item,playerScene(),asset),getBounds:(_item,asset)=>(asset?.wallMounted?apartmentWallDecorBounds:apartmentDecorBounds)(playerScene()),getFootBounds:(_item,asset)=>asset?.wallMounted?null:apartmentDecorFootBounds(playerScene()),getSolids:()=>playerScene().solids});
   const result=room.load();decor=room.snapshot();if(!result.ok)flash(result.error);
  }
  makeRoom();
  if(!bridge&&!owner)purchasesMessage='Open town from the arcade to use your active player and Notes wallet.';
- addEventListener('storage',e=>{if(!bridge&&e.key==='codaClassroomWorkspaceV1'&&!guestStorageAvailable()){purchasesEnabled=false;purchasesMessage='Open town from the arcade to use your active player.';room=null;decor=[];wallet=null;localWallet=null;decorate=false;selectedDecor=null;reset();}});
+ addEventListener('storage',e=>{if(!bridge&&e.key==='codaClassroomWorkspaceV1'&&!guestStorageAvailable()){purchasesEnabled=false;purchasesMessage='Open town from the arcade to use your active player.';room=null;decor=[];wallet=null;localWallet=null;decorate=false;selectedDecor=null;configurePlayerRoomSource(null);reset();}else if(e.key===ROOM_KEY||e.key===null)makeRoom();});
  addEventListener('message',e=>{
   if(e.origin!==location.origin||e.source!==parent)return;
   const data=e.data;if(data?.type==='coda-town-state-result'){
@@ -83,7 +85,7 @@ export function createUrbanController({canvas,getProject,getPlayer,getFacing,set
    if(data.wallet)wallet=data.wallet;
    if(typeof data.furniturePurchasesEnabled==='boolean')purchasesEnabled=data.furniturePurchasesEnabled;
    purchasesMessage=data.furniturePurchasesMessage||'';
-   if(typeof data.owner==='string'&&(data.owner!==owner||data.roomOwner!==roomOwner)){owner=data.owner;roomOwner=data.roomOwner||owner;selectedDecor=null;decorate=false;makeRoom();}
+   if(typeof data.owner==='string'&&(data.owner!==owner||data.roomOwner!==roomOwner)){owner=data.owner;roomOwner=data.roomOwner||owner;selectedDecor=null;decorate=false;makeRoom();}else if(data.wallet&&owner)makeRoom();
    if(scene)updateHud();
   }
   if(data?.type==='coda-town-buy-result'&&pending.has(data.requestId)){
@@ -224,7 +226,7 @@ export function createUrbanController({canvas,getProject,getPlayer,getFacing,set
   setScene({kind:'shop',floor},arrival==='stairs'?STORE_VERTICAL_CORE.stairsArrival:STORE_VERTICAL_CORE.arrival);return true;
  }
  function showStoreDirectory(){
-  const body=modal('Coda Furnishings · Store floors','Eight complete homes on the main floor. Four larger homes in the upper gallery. The lift and stairs connect both floors.');
+  const body=modal('Coda Furnishings · Store floors','Eight complete homes on the main floor. Four themed homes in the upper gallery. The lift and stairs connect both floors.');
   const grid=document.createElement('div');grid.className='urban-floors';body.append(grid);
   for(let floor=1;floor<=STORE_FLOOR_COUNT;floor++){
    const names=SHOWROOMS.filter(room=>room.storeFloor===floor).map(room=>room.name).join(' · ');
@@ -332,14 +334,14 @@ export function createUrbanController({canvas,getProject,getPlayer,getFacing,set
  function decorPlacementPoint(product,p){
   const a=catalog.get(product?.asset);if(!a?.wallMounted)return p;
   const scale=(product?.scale||1)*furniturePresentationScale(product,getInterior(scene),a),relative=furnitureFacingBounds(a,{x:0,y:0,scale,rotation:selectedRotation});
-  const spots=(apartmentWallDecorBounds(scene)||[]).filter(b=>relative.w<=b.w&&relative.h<=b.h).map(b=>({x:Math.max(b.x-relative.x,Math.min(b.x+b.w-relative.x-relative.w,p.x)),y:b.y+b.h-relative.y-relative.h}));
+  const spots=(apartmentWallDecorBounds(getInterior(scene))||[]).filter(b=>relative.w<=b.w&&relative.h<=b.h).map(b=>({x:Math.max(b.x-relative.x,Math.min(b.x+b.w-relative.x-relative.w,p.x)),y:b.y+b.h-relative.y-relative.h}));
   return spots.sort((a,b)=>Math.abs(a.x-p.x)-Math.abs(b.x-p.x))[0]||p;
  }
  function selectFurniture(itemId){const existing=decor.find(o=>o.item===itemId);selectedDecor=itemId;if(existing)selectedRotation=existing.rotation??0;closeDialog();updateHud();}
  function placementResult(itemId,point,rotation){
   const product=furniture.find(i=>i.id===itemId),boxes=roomItemBoxes({asset:product?.asset,scale:product?.scale||1,...point,rotation},catalog,(item,asset)=>furniturePresentationScale(item,getInterior(scene),asset));
   if(boxes.some(b=>rectHit(player.x,player.y,b,20*interiorActorScale(scene))))return {ok:false,error:'Leave some space around your character before placing furniture.'};
-  return room?.place(itemId,point.x,point.y,rotation)||{ok:false,error:'Wait for your player profile to load.'};
+  const result=room?.place(itemId,point.x,point.y,rotation)||{ok:false,error:'Wait for your player profile to load.'};if(result.ok)invalidatePlayerRoomSource();return result;
  }
  function handlePointer(e){
   if(!scene)return activities.pointer(e);
@@ -355,7 +357,7 @@ export function createUrbanController({canvas,getProject,getPlayer,getFacing,set
      const button=actionButton(label,()=>{const result=placementResult(target.item,target,rotation);if(result.ok){decor=room.snapshot();selectedRotation=rotation;closeDialog();updateHud();flash(label+'-facing furniture saved.');}else{let error=body.querySelector('[role="status"]');if(!error){error=document.createElement('p');error.setAttribute('role','status');body.append(error);}error.textContent=result.error;}},directions);
      button.dataset.roomFacing=label.toLowerCase();button.setAttribute('aria-pressed',String((target.rotation??0)===rotation));
     }
-    actionButton('Put away',()=>{const result=room.remove(target.id);if(result.ok){decor=room.snapshot();closeDialog();}else flash(result.error);},body);
+    actionButton('Put away',()=>{const result=room.remove(target.id);if(result.ok){invalidatePlayerRoomSource();decor=room.snapshot();closeDialog();}else flash(result.error);},body);
    }
   }
 
@@ -392,7 +394,7 @@ export function createUrbanController({canvas,getProject,getPlayer,getFacing,set
    const style=document.createElement('strong');style.textContent=showroom.style||showroom.name;
    const finishes=document.createElement('p'),floor=showroom.floorFinish?.label||showroom.floorFinish?.name||showroom.material||'Wood flooring',wallpaper=showroom.wallpaper?.label||showroom.wallpaper?.name||'Coordinated wallpaper';
    finishes.textContent=`Floor: ${floor} · Wallpaper: ${wallpaper}`;summary.append(style,finishes);
-  }else{const description=document.createElement('p');description.textContent='Explore twelve complete apartment showrooms across two store floors. Take the lift or stairs to the four larger homes upstairs, then choose a collection to shop its pieces.';summary.append(description);}
+  }else{const description=document.createElement('p');description.textContent='Explore twelve complete apartment showrooms across two store floors. Take the lift or stairs to the four themed homes upstairs, then choose a collection to shop its pieces.';summary.append(description);}
   body.append(summary);
   const tabs=document.createElement('div');tabs.className='urban-categories';tabs.setAttribute('role','group');tabs.setAttribute('aria-label','Furniture categories');
   const grid=document.createElement('div');grid.className='urban-catalog';body.append(tabs,grid);

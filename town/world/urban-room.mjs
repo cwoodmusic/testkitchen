@@ -19,7 +19,7 @@ export function roomItemBoxes(item,catalog,presentationScale=1){
 }
 
 export function createRoomStorage(options={}){
- const {catalog,furniture=[],getBounds=()=>[],getSolids=()=>[],owned=()=>[],presentationScale=1}=options;
+ const {catalog,furniture=[],getBounds=()=>[],getFootBounds=()=>null,getSolids=()=>[],owned=()=>[],presentationScale=1}=options;
  const owner=options.owner??'guest',validOwner=typeof owner==='string'&&owner.length>0&&owner.length<=256&&!/[\u0000-\u001f]/.test(owner);
  const stock=new Map(furniture.map(item=>[item.id,item]));
  let storage=options.storage,items=[];
@@ -43,6 +43,8 @@ export function createRoomStorage(options={}){
    const visual=furnitureFacingBounds(asset,{x:item.x,y:item.y,scale:scale*factor,rotation:item.rotation??0});
    if(!bounds.some(bound=>contains(bound,visual)))return 'Keep the entire decoration inside the furnished area of your room.';
    const boxes=roomItemBoxes(item,catalog,presentationScale);
+   const feet=getFootBounds(item,asset);
+   if(boxes.length&&feet!=null&&(!Array.isArray(feet)||!feet.filter(rect).some(bound=>boxes.every(box=>contains(bound,box)))))return 'Keep the furniture base inside the clear furnished area of your room.';
    if(boxes.some(box=>fixed.some(wall=>intersects(box,wall))))return 'That spot is occupied by a wall or built-in furniture.';
    if(boxes.some(box=>allBoxes.some(other=>intersects(box,other))))return 'That spot is occupied by another decoration.';
    ids.add(item.id);placed.add(item.item);allBoxes.push(...boxes);

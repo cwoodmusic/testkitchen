@@ -1,5 +1,5 @@
-import {blocked,cell,surfaceAt,COLS,ROWS} from './model.mjs?v=town-flight-1';
-import {createPlayerCollisionIndex} from './player-collision-index.mjs?v=town-flight-1';
+import {blocked,cell,surfaceAt,COLS,ROWS} from './model.mjs?v=town-compact-island-1';
+import {createPlayerCollisionIndex} from './player-collision-index.mjs?v=town-compact-island-1';
 export function createIslandNavigation(doc,catalog,dock){
  const sea=Object.create(doc);Object.defineProperties(sea,{objects:{value:doc.objects.filter(o=>!dock.boat.id||o.id!==dock.boat.id)},[Symbol.for('coda.town.waterNavigation')]:{value:true},[Symbol.for('coda.town.collisionRadius')]:{value:25}});
  const index=createPlayerCollisionIndex({getProject:()=>sea,catalog,getRevision:()=>0,maxViews:128});

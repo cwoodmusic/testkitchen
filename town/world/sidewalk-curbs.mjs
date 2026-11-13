@@ -1,5 +1,5 @@
-import {cell,height,COLS,ROWS,TILE,RISE} from './model.mjs?v=town-flight-1';
-import {roundedUnder,curveUnder,clipCurves} from './round-geometry.mjs?v=opera-parallax-1';
+import {cell,height,COLS,ROWS,TILE,RISE} from './model.mjs?v=town-compact-island-1';
+import {roundedUnder,curveUnder,clipCurves} from './round-geometry.mjs?v=town-compact-island-1';
 import {readPaint,PAINT_GRID,PAINT_STEP} from './ground-paint.mjs?v=opera-parallax-1';
 
 export const SIDEWALK_CURB_DEPTH=12;

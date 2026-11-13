@@ -1,8 +1,8 @@
-import {cell,height} from './model.mjs?v=town-flight-1';
-import {curveUnder,frontEdge,curveBounds,curveOutline,clipCurves} from './round-geometry.mjs?v=opera-parallax-1';
-import {decodeMask,encodeMask} from './organic-mask.mjs?v=opera-parallax-1';
+import {cell,height} from './model.mjs?v=town-compact-island-1';
+import {curveUnder,frontEdge,curveBounds,curveOutline,clipCurves} from './round-geometry.mjs?v=town-compact-island-1';
+import {decodeMask,encodeMask,maskFronts} from './organic-mask.mjs?v=town-compact-island-1';
 import {cliffArt} from './detail-art.mjs?v=opera-parallax-1';
-import {drawGround,groundFrameKey} from './ground-render.mjs?v=town-room-placement-2';
+import {drawGround,groundFrameKey} from './ground-render.mjs?v=town-compact-island-1';
 const inverses=new WeakMap(),angles={nw:Math.PI,ne:Math.PI*1.5,sw:Math.PI/2,se:0};
 function clipUnder(c,q,x,y,z){
  if(q.mask!==undefined){
@@ -23,4 +23,22 @@ export function drawRoundUnder(c,d,x,y,frameKey=groundFrameKey(d)){
   c.save();if(i)clipCurves(c,{curves:a.curves.slice(0,i)},x,y,z);clipUnder(c,q,x,y,z);drawGround(c,d,u,x,y,X,Y,frameKey);c.restore();
  }
 }
-export function drawRoundCliff(c,d,x,y){const a=cell(d,x,y);if(!a.curves?.some(q=>q.kind==='height'))return;const img=cliffArt;for(let i=0;i<16;i++){const X=x*64+i*4,edge0=frontEdge(a,X+.001,y),edge1=frontEdge(a,X+3.999,y),mid=frontEdge(a,X+2,y);if(mid>=(y+1)*64-.001)continue;const z=height(d,X+2,mid-.05),bottom=height(d,X+2,mid+.05),depth=z-bottom;if(depth<.1)continue;const sx=img.width*.06+(X%384)/384*img.width*.88,sw=img.width*.88*4/384;c.save();c.transform(1,(edge1-edge0)/4,0,1,X,edge0-z);c.fillStyle='#555b3e';c.fillRect(0,0,4,depth);for(let j=0;j<depth;j+=176){const h=Math.min(176,depth-j);c.drawImage(img,sx,img.height*.18,sw,img.height*.78*h/176,0,j,4,h);}c.drawImage(img,sx,0,sw,img.height*.28,0,-12,4,38);const shadow=c.createLinearGradient(0,0,0,depth);shadow.addColorStop(0,'#24311e55');shadow.addColorStop(.4,'#17221900');shadow.addColorStop(1,'#16211777');c.fillStyle=shadow;c.fillRect(0,13,4,Math.max(0,depth-13));c.restore();}}
+export function drawRoundCliff(c,d,x,y){
+ const a=cell(d,x,y);if(!a.curves?.some(q=>q.kind==='height'))return;
+ const img=cliffArt,organic=a.curves.filter(q=>q.kind==='height'&&q.mask!==undefined),curved={...a,curves:a.curves.filter(q=>q.kind==='height'&&q.mask===undefined)};
+ for(let i=0;i<16;i++){
+  const X=x*64+i*4,fronts=[...new Set(organic.flatMap(q=>maskFronts(q,X+2)))].map(mid=>({mid,edge0:mid,edge1:mid}));
+  if(curved.curves.length)fronts.push({mid:frontEdge(curved,X+2,y),edge0:frontEdge(curved,X+.001,y),edge1:frontEdge(curved,X+3.999,y)});
+  fronts.sort((a,b)=>a.mid-b.mid);
+  for(const{mid,edge0,edge1}of fronts){
+   if(mid>=(y+1)*64-.001)continue;
+   const z=height(d,X+2,mid-.05),bottom=height(d,X+2,mid+.05),depth=z-bottom;
+   if(depth<.1)continue;
+   const sx=img.width*.06+(X%384)/384*img.width*.88,sw=img.width*.88*4/384;
+   c.save();c.transform(1,(edge1-edge0)/4,0,1,X,edge0-z);c.fillStyle='#555b3e';c.fillRect(0,0,4,depth);
+   for(let j=0;j<depth;j+=176){const h=Math.min(176,depth-j);c.drawImage(img,sx,img.height*.18,sw,img.height*.78*h/176,0,j,4,h);}
+   c.drawImage(img,sx,0,sw,img.height*.28,0,-12,4,38);
+   const shadow=c.createLinearGradient(0,0,0,depth);shadow.addColorStop(0,'#24311e55');shadow.addColorStop(.4,'#17221900');shadow.addColorStop(1,'#16211777');c.fillStyle=shadow;c.fillRect(0,13,4,Math.max(0,depth-13));c.restore();
+  }
+ }
+}

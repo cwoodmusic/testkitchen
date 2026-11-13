@@ -1,5 +1,5 @@
-import {createRoomLayoutModel} from '../world/room-layout-model.mjs?v=town-wide-layout-1';
-import {createRoomLayoutStorage} from '../world/room-layout-storage.mjs?v=town-wide-layout-1';
+import {createRoomLayoutModel} from '../world/room-layout-model.mjs?v=town-compact-island-1';
+import {createRoomLayoutStorage} from '../world/room-layout-storage.mjs?v=town-compact-island-1';
 import {SHOWROOMS} from '../world/showroom-layout.mjs?v=town-room-placement-2';
 import {residents} from '../world/resident-profiles.mjs?v=opera-parallax-1';
 import {furnitureFacingPlacement,furnitureFacingBounds,cardinalFacing} from '../world/furniture-facing.mjs?v=opera-parallax-1';

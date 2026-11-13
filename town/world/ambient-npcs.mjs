@@ -1,14 +1,15 @@
 import {getConcertHall} from './concert-hall.mjs?v=town-flight-1';
-import {blocked,height,TILE} from './model.mjs?v=town-flight-1';
-import {movePlayer} from './physics.mjs?v=town-flight-1';
+import {blocked,cell,height,TILE} from './model.mjs?v=town-compact-island-1';
+import {movePlayer} from './physics.mjs?v=town-compact-island-1';
 import {WALK_SPEED,GAIT_PER_PIXEL,PLAYER_SCALE} from './player-settings.mjs?v=opera-parallax-1';
-import {buildNPCDistrict} from './npc-district.mjs?v=town-flight-1';
-import {createNPCNavigator,npcPavingAt,npcMaterialCost} from './npc-navigation.mjs?v=town-flight-1';
-import {residents as profiles,residentHomePose,interiorJourneyPose,residentInScene} from './resident-journey.mjs?v=town-wide-shape-1';
-import {createEntranceQueues} from './entrance-queue.mjs?v=town-flight-1';
-import {venueVisitPose,SHOP_VISIT_CAPACITY} from './resident-venue.mjs?v=town-wide-shape-1';
+import {buildNPCDistrict} from './npc-district.mjs?v=town-compact-island-1';
+import {createNPCNavigator,npcPavingAt,npcMaterialCost} from './npc-navigation.mjs?v=town-compact-island-1';
+import {residents as profiles,residentHomePose,interiorJourneyPose,residentInScene} from './resident-journey.mjs?v=town-compact-island-1';
+import {createEntranceQueues} from './entrance-queue.mjs?v=town-compact-island-1';
+import {venueVisitPose,SHOP_VISIT_CAPACITY} from './resident-venue.mjs?v=town-compact-island-1';
 import {planNPCPassing} from './npc-passing.mjs?v=opera-parallax-1';
-export {planNPCPath,npcConnectionClear} from './npc-navigation.mjs?v=town-flight-1';
+import {createNPCStairTraffic} from './npc-stair-traffic.mjs?v=town-compact-island-1';
+export {planNPCPath,npcConnectionClear} from './npc-navigation.mjs?v=town-compact-island-1';
 
 export const AMBIENT_RESIDENTS=Object.freeze(['bach','mozart','clara','nina','joplin','miles','chopin','haydn','vee-jay','zizi','beethoven','ellington','ella','handel','vivaldi','metronome','schoenberg','dj']);
 const distance=(a,b)=>Math.hypot(a.x-b.x,a.y-b.y);
@@ -33,6 +34,7 @@ export function createAmbientNPCs({getProject,catalog,getRevision=()=>0,getPlaye
  let rendezvous=null,rendezvousSequence=0,lastChatAt=0,rendezvousRetryAt=48;
  const claims=new Map(),stageClaims=new Map(),approachClaims=new Map(),overflowClaims=new Map(),events=[];
  const navigator=createNPCNavigator({getProject,catalog,getBounds:()=>city?.bounds,budgetMs:1.5});
+ const stairTraffic=createNPCStairTraffic();
  const entrances=createEntranceQueues({getEntrances:()=>city?.anchors.filter(a=>['tower','shop','arcade','opera'].includes(a.kind))||[],getProject,catalog,pointClear:p=>clearPoint(p),connectionClear:(a,b)=>navigator.connectionClear(a,b)});
  const outdoor=()=>people.filter(a=>a.location.kind==='street'&&!a.hidden);
  const record=(type,actor,extra={})=>{events.push({type,id:actor.id,time:elapsed,sequence:++eventSequence,...extra});if(events.length>512)events.shift();};
@@ -301,6 +303,7 @@ export function createAmbientNPCs({getProject,catalog,getRevision=()=>0,getPlaye
   idle(actor,6+random()*12);actor.purpose=goal?.kind==='arcade'?'Outside Coda Arcade':goal?.kind==='shop'?'Window shopping':goal?.kind==='tower'?'Outside Coda Residences':'Enjoying the neighbourhood';record('arrive',actor,{destination:goal?.id});
  }
  function go(actor,goal,goingHome=false,avoid=[]){
+  const previousRoute=avoid.length&&actor.state==='walking'&&actor._path.length?{path:actor._path.map(p=>({...p})),passing:actor._passingRemaining||0,start:actor._passingStart,partner:actor._passingPartner}:null;
   if(actor._rendezvous&&goal.kind!=='social-meeting')cancelRendezvous(actor,'new destination');
   delete actor._resumeGoal;
   if(!goal._arrival&&goal.kind==='stage'){if(!beginStage(actor,goal))idle(actor,3);return;}
@@ -342,7 +345,15 @@ export function createAmbientNPCs({getProject,catalog,getRevision=()=>0,getPlaye
    actor._pending=false;
    const joined=path.length||distance(actor,target)<8,route=joined?[...path,...(goal._via||[])]:[];if(route.length){actor._path=route;actor.state='walking';actor._stuck=0;actor._yield=0;actor._progress={x:actor.x,y:actor.y,time:elapsed};}
    else if(distance(actor,goal.approach||goal)<8)arrive(actor);
-   else{releaseSeat(actor);if(goal.kind.startsWith('queue-'))releaseEntrance(actor,'route unavailable');if(goal.kind.startsWith('stage-'))releaseStage(actor);idle(actor,2+random()*3);record('unreachable',actor,{destination:goal.id});}
+   else{
+    // Temporary people can cover every nearby search node while the authored
+    // route remains open. Keep that route and its committed passing waypoints
+    // instead of abandoning the destination in the middle of a stair flight.
+    let previous=actor,clear=!!previousRoute;
+    for(const p of previousRoute?.path||[]){if(!navigator.connectionClear(previous,p)){clear=false;break;}previous=p;}
+    if(clear){actor._path=previousRoute.path;actor._passingRemaining=previousRoute.passing;if(previousRoute.start)actor._passingStart=previousRoute.start;if(previousRoute.partner)actor._passingPartner=previousRoute.partner;actor.state='walking';actor._stuck=0;actor._yield=0;actor._progress={x:actor.x,y:actor.y,time:elapsed};record('crowd-wait',actor,{destination:goal.id});return;}
+    releaseSeat(actor);if(goal.kind.startsWith('queue-'))releaseEntrance(actor,'route unavailable');if(goal.kind.startsWith('stage-'))releaseStage(actor);idle(actor,2+random()*3);record('unreachable',actor,{destination:goal.id});
+   }
   },{avoid});
  }
  function chooseDestination(actor){
@@ -385,7 +396,7 @@ export function createAmbientNPCs({getProject,catalog,getRevision=()=>0,getPlaye
  function sync(doc,revision){
   if(activeDoc===doc&&lastRevision===revision)return;
   cancelRendezvous(null,'geometry changed',false);
-  const previousOpera=city?.anchors.find(a=>a.kind==='opera')?.objectId;const first=!activeDoc;activeDoc=doc;lastRevision=revision;city=buildNPCDistrict(doc,catalog);navigator.invalidate(revision);entrances.clear();stageClaims.clear();approachClaims.clear();overflowClaims.clear();
+  const previousOpera=city?.anchors.find(a=>a.kind==='opera')?.objectId;const first=!activeDoc;activeDoc=doc;lastRevision=revision;city=buildNPCDistrict(doc,catalog);navigator.invalidate(revision);stairTraffic.reset(doc);entrances.clear();stageClaims.clear();approachClaims.clear();overflowClaims.clear();
   vendors=city.vendors.map((v,i)=>({...v,role:'vendor',location:{...street},state:'vending',activity:'',walking:false,phase:0,alpha:1,hidden:false,dialogue:vendorLines(v.name),appearance:{hairstyle:['curly','short','buns'][i%3],skin:['#bf8862','#e0b38c','#98694e'][i%3],hair:['#3b3035','#665044','#332832'][i%3],shirt:['#607b72','#8e655c','#686c88'][i%3],lowerColor:'#3e4350',outfit:'waistcoat',headwear:i%3===1?'chef':'none',shoes:'loafers'}}));
   if(first){initialize(doc);return;}
   for(const actor of people){
@@ -411,7 +422,18 @@ export function createAmbientNPCs({getProject,catalog,getRevision=()=>0,getPlaye
   }
   const target=actor._path[0];if(!target){arrive(actor);return;}
   const others=[...outdoor(),...vendors],player=getPlayer?.();if(player)others.push({...player,id:'__player__'});
-  const peers=others.filter(b=>b.id!==actor.id&&!b.seated&&Math.abs(height(activeDoc,b.x,b.y)-height(activeDoc,actor.x,actor.y))<14);
+  if(stairTraffic.shouldWait(actor,others)){
+   actor.purpose='Waiting for the stairs';actor._progress={x:actor.x,y:actor.y,time:elapsed};return;
+  }
+  const actorHeight=height(activeDoc,actor.x,actor.y),actorStairs=cell(activeDoc,Math.floor(actor.x/TILE),Math.floor(actor.y/TILE)).stairs;
+  const peers=others.filter(b=>{
+   if(b.id===actor.id||b.seated)return false;
+   if(Math.abs(height(activeDoc,b.x,b.y)-actorHeight)<14)return true;
+   // A steep flight changes elevation much faster than foot spacing. Its
+   // walkers still share one passage, even while their feet are at different
+   // heights. Keep bare cliff levels separate by checking the actual route.
+   return distance(actor,b)<224&&(actorStairs||cell(activeDoc,Math.floor(b.x/TILE),Math.floor(b.y/TILE)).stairs)&&navigator.connectionClear(actor,b);
+  });
   const closesBodyGap=next=>peers.some(b=>distance(next,b)<40&&distance(next,b)<distance(actor,b)-.01);
   const incoming=b=>b.queueEntranceId===actor.queueEntranceId&&b._queuePhase!=='exit'&&Number.isInteger(b.queueIndex);
   const leader=actor.queueEntranceId&&actor._queuePhase!=='exit'&&peers.filter(b=>incoming(b)&&b.queueIndex<actor.queueIndex).sort((a,b)=>b.queueIndex-a.queueIndex)[0];

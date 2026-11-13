@@ -1,6 +1,6 @@
 import {furnitureFacingBounds,furnitureFacingBoxes,furnitureFacingDepth} from './furniture-facing.mjs?v=opera-parallax-1';
-import {furniturePresentationScale} from './private-furniture.mjs?v=town-wide-layout-1';
-import {apartmentDecorBounds,apartmentWallDecorBounds} from './personal-room-areas.mjs?v=opera-parallax-1';
+import {furniturePresentationScale} from './private-furniture.mjs?v=town-compact-island-1';
+import {apartmentDecorBounds,apartmentDecorFootBounds,apartmentWallDecorBounds} from './personal-room-areas.mjs?v=town-compact-island-1';
 import {createRoomRugItems} from './room-rugs.mjs?v=town-victorian-default-1';
 
 export const ROOM_LAYOUT_FORMAT='coda-room-layout';
@@ -39,7 +39,7 @@ function signature(scene){
  // compatibility merely because a copied scene carries the old frame.
  const expected=scene.wideRoomExpansion?.signatureGeometry,actual={id:scene.id,width:scene.width,height:scene.height,walls:scene.walls,privacyDoors:scene.privacyDoors};
  const frame=expected&&scene.roomLayoutSignatureFrame&&JSON.stringify(actual)===JSON.stringify(expected)?scene.roomLayoutSignatureFrame:scene;
- const data=JSON.stringify({id:frame.id,width:frame.width,height:frame.height,walls:frame.walls,doors:frame.privacyDoors,items:scene.items.map(i=>[i.id,i.asset,i.w,i.h,i.solid,i.wallMounted,i.layer])});let hash=2166136261;
+ const data=JSON.stringify({id:frame.id,width:frame.width,height:frame.height,walls:frame.walls,doors:frame.privacyDoors,items:scene.items.map(i=>[i.id,i.asset,i.w,i.h,i.solid,i.wallMounted,i.layer]),...(scene.roomLayoutRecipe?{recipe:scene.roomLayoutRecipe}:{})});let hash=2166136261;
  for(let i=0;i<data.length;i++){hash^=data.charCodeAt(i);hash=Math.imul(hash,16777619);}return 'room-'+(hash>>>0).toString(16).padStart(8,'0');
 }
 function doorClearance(scene){
@@ -83,7 +83,7 @@ function createSingleRoomLayoutModel({themeId,scene:authored,catalog,record:init
  // room. Changes to old IDs, asset sizes, walls or doors still fail strictly.
  const expansionItems=defaultItems.filter(i=>i.roomExpansion==='family-room-1'),legacyItems=originalItems.filter(i=>i.roomExpansion!=='family-room-1'),legacyMap=new Map(legacyItems.map(i=>[i.id,i])),legacySignature=expansionItems.length?signature({...base,items:legacyItems}):null;
  const legacyPoses=new Map(expansionItems.length?legacyItems.flatMap(item=>{const pose=base.roomExpansionLegacyPoses?.[item.id];return point(pose)&&rotation(pose.rotation??0)?[[item.id,{x:pose.x,y:pose.y,rotation:pose.rotation??0}]]:[];}):[]);
- const personalFloor=apartmentDecorBounds(base)||[],personalWalls=apartmentWallDecorBounds(base)||[];
+ const personalFloor=apartmentDecorFootBounds(base)??apartmentDecorBounds(base)??[],personalWalls=apartmentWallDecorBounds(base)||[];
  const wallAreas=[{x:28,y:0,w:base.width-56,h:106},...(base.rooms||[]).flatMap(r=>r.wallpaperAreas||[]),...(base.walls||[]).map(w=>({x:w.x,y:w.y-96,w:w.w,h:96})).filter(r=>r.w>40)];
  let current=clone(base),held=null,revision=0,serial=1,undo=[],redo=[];current.items=defaultItems.map(copyItem);
  function rebuild(items=current.items){const next={...current,items,solids:[...structural,...items.flatMap(i=>i.collisionBoxes)],layoutRevision:revision};if(base.roomLayoutBaseItems&&next.familyFurniture){const ids=new Set(items.map(i=>i.id)),family=next.familyFurniture;next.familyFurniture={...family,diningSeats:originalItems.filter(i=>i.seatingTarget===family.diningTable&&ids.has(i.id)).map(i=>i.id)};}for(const symbol of Object.getOwnPropertySymbols(current))Object.defineProperty(next,symbol,{value:current[symbol]});current=next;}

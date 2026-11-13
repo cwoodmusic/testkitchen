@@ -1,6 +1,6 @@
-import {COLS,ROWS,TILE,cell,key} from '../world/model.mjs?v=town-flight-1';
-import {roundedUnder,curveUnder} from '../world/round-geometry.mjs?v=opera-parallax-1';
-import {MASK_GRID,MASK_STEP,encodeMask} from '../world/organic-mask.mjs?v=opera-parallax-1';
+import {COLS,ROWS,TILE,cell,key} from '../world/model.mjs?v=town-compact-island-1';
+import {roundedUnder,curveUnder} from '../world/round-geometry.mjs?v=town-compact-island-1';
+import {MASK_GRID,MASK_STEP,encodeMask} from '../world/organic-mask.mjs?v=town-compact-island-1';
 import {readPaint,encodePaint,materialKey} from '../world/ground-paint.mjs?v=opera-parallax-1';
 
 const PIXELS=MASK_GRID*MASK_GRID;
@@ -23,7 +23,7 @@ export function planOrganicEdges(doc,p,{size=192,strength=.5}={}){
  if(!p||!Number.isFinite(p.x)||!Number.isFinite(p.y))return fail('Brush along a shoreline or terrain edge.');
  const amount=clamp(Number(strength)||0,0,1),radius=clamp(Number(size)||192,16,960)/2;
  if(!amount)return fail('Increase edge strength to shape this shoreline.');
- const samples=new Map(),tiles=new Map(),edits=new Map(),paints=new WeakMap();
+ const samples=new Map(),tiles=new Map(),edits=new Map(),paints=new WeakMap(),planned=new Map();
  function visibleMaterial(a,i,level){
   let field;
   if(a.paint){if(!paints.has(a.paint))paints.set(a.paint,readPaint(a));field=paints.get(a.paint);}
@@ -62,6 +62,20 @@ export function planOrganicEdges(doc,p,{size=192,strength=.5}={}){
   const [background,foreground]=[...pair.values()].sort(rank),fg=signature(foreground),bg=signature(background),mask=new Uint8Array(PIXELS);
   let changed=false;
   const occupancy=(gx,gy)=>{const s=sample(gx,gy);return !s||s.protected||s.id!==fg&&s.id!==bg?null:s.id===fg?1:0;};
+  // Preserve local topology while moving the coast. A noisy threshold must
+  // not split a thin cape into a detached cliff scrap, or punch a one-sample
+  // hole through an otherwise solid plateau. Read previous accepted samples
+  // too, so adjacent brush tiles cannot each sever the same narrow connection.
+  const plannedAt=(gx,gy)=>{const id=planned.get(`${gx},${gy}`);return id===undefined?occupancy(gx,gy):id===fg?1:id===bg?0:null;};
+  const simplePoint=(gx,gy)=>{
+   const ring=[];for(let dy=-1;dy<=1;dy++)for(let dx=-1;dx<=1;dx++)if(dx||dy)ring.push({dx,dy,value:plannedAt(gx+dx,gy+dy)});
+   for(const value of [0,1]){
+    const nodes=ring.filter(p=>p.value===value);if(!nodes.length)return false;
+    const seen=new Set([0]),queue=[0];for(let head=0;head<queue.length;head++){const a=nodes[queue[head]];for(let i=0;i<nodes.length;i++)if(!seen.has(i)&&(value===1?Math.abs(nodes[i].dx-a.dx)+Math.abs(nodes[i].dy-a.dy):Math.max(Math.abs(nodes[i].dx-a.dx),Math.abs(nodes[i].dy-a.dy)))===1){seen.add(i);queue.push(i);}}
+    if(seen.size!==nodes.length)return false;
+   }
+   return true;
+  };
   for(let gy=0;gy<MASK_GRID;gy++)for(let gx=0;gx<MASK_GRID;gx++){
    const i=gy*MASK_GRID+gx,GX=x*MASK_GRID+gx,GY=y*MASK_GRID+gy,X=(GX+.5)*MASK_STEP,Y=(GY+.5)*MASK_STEP,old=current.grid[i].id===fg?1:0;mask[i]=old;
    const distance=Math.hypot(X-p.x,Y-p.y);if(distance>=radius)continue;
@@ -75,7 +89,7 @@ export function planOrganicEdges(doc,p,{size=192,strength=.5}={}){
    const cx=Math.floor((X+wx)/MASK_STEP),cy=Math.floor((Y+wy)/MASK_STEP),kernel=[1,2,1];let total=0,covered=0;
    for(let j=-1;j<=1;j++)for(let k=-1;k<=1;k++){const v=occupancy(cx+k*2,cy+j*2);if(v===null)continue;const w=kernel[k+1]*kernel[j+1];total+=w;covered+=v*w;}
    if(!total)continue;const wanted=covered/total>=.5+noise(X,Y,24,41)*.055?1:0;
-   if(wanted!==old){mask[i]=wanted;changed=true;}
+   if(wanted!==old&&simplePoint(GX,GY)){mask[i]=wanted;planned.set(`${GX},${GY}`,wanted?fg:bg);changed=true;}
   }
   if(!changed)continue;
   // A painted tile's base surface can differ from the color actually visible

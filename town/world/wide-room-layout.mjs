@@ -1,7 +1,8 @@
 import {cloneRoomLayoutScene} from './room-layout-sources.mjs?v=town-wide-layout-1';
 import {applyWideRoomLayout as applyPreviousWideRoomLayout} from './wide-room-layout-v1.mjs?v=town-wide-shape-1';
+import {applyWideRoomLayout as applyPreviousShapeLayout} from './wide-room-layout-v2.mjs';
 import {furnitureAtGroundCenter,furnitureFacingBoxes,furnitureFacingBounds,furnitureFacingDepth} from './furniture-facing.mjs?v=opera-parallax-1';
-import {apartmentDecorBounds,apartmentWallDecorBounds} from './personal-room-areas.mjs?v=opera-parallax-1';
+import {apartmentDecorBounds,apartmentWallDecorBounds} from './personal-room-areas.mjs?v=town-compact-island-1';
 
 const EPS=1e-6,RADIUS=6;
 const rect=(x,y,w,h)=>({x,y,w,h});
@@ -15,31 +16,32 @@ const cloneItem=item=>{const copy={...item};Object.defineProperty(copy,'collisio
 /** An approved grouping, with each owner's own cardinal art and original units. */
 export function applyWideRoomLayout(source,catalog,{reference}={}){
  if(!['apartment','showroom'].includes(source?.kind)||source.id==='showroom-victorian-parlor'||source.wideRoomLayout||!catalog?.get)return source;
- const legacySource=source,previousLayout=applyPreviousWideRoomLayout(source,catalog,{reference}),targetWidth=source.kind==='showroom'?1184:2368,targetHeight=source.kind==='showroom'?512:1132;
- if(previousLayout.width===targetWidth&&previousLayout.height===targetHeight)return previousLayout;
+ const legacySource=source,previousLayoutV1=applyPreviousWideRoomLayout(source,catalog,{reference}),previousLayout=applyPreviousShapeLayout(source,catalog,{reference}),targetWidth=1184,targetHeight=512;
+ const previousBedroom=(legacySource.rooms||[]).find(r=>r.functionalRole==='bedroom'),mirrored=source.kind==='showroom'?source.showroom?.column===1:previousBedroom?previousBedroom.x+previousBedroom.w/2>legacySource.width/2:false,entryX=mirrored?92:1092,actorX=mirrored?428:756;
+ if(previousLayout.kind==='showroom'&&previousLayout.width===targetWidth&&previousLayout.height===targetHeight&&previousLayout.portalExit.threshold.x===entryX)return previousLayout;
  source=cloneRoomLayoutScene(source);
- const previousWidth=source.width,previousHeight=source.height,exit=(source.zones||[]).find(z=>z.action==='showroom-lobby'||z.action==='exit'),doorId=source.portalExit?.doorId||exit?.doorId||exit?.id||source.id+'-exit',home=source.kind==='apartment',entryX=home?targetWidth/2:source.portalExit.threshold.x,entryY=targetHeight-28;
- source.width=targetWidth;source.height=targetHeight;source.spawn={x:entryX,y:home?targetHeight-145:entryY-56};
+ const previousWidth=source.width,previousHeight=source.height,exit=(source.zones||[]).find(z=>z.action==='showroom-lobby'||z.action==='exit'),doorId=source.portalExit?.doorId||exit?.doorId||exit?.id||source.id+'-exit',home=source.kind==='apartment',entryY=targetHeight-28;
+ source.width=targetWidth;source.height=targetHeight;source.spawn={x:entryX,y:428};
  source.portalExit={...source.portalExit,doorId,threshold:{x:entryX,y:entryY},enterNormal:{x:0,y:-1},triggerHalfWidth:18,clearOpening:true,door:{...source.portalExit?.door,id:doorId,threshold:{x:entryX,y:entryY},enterNormal:{x:0,y:1},triggerHalfWidth:18,virtual:true,clearOpening:true}};
  if(source.exit)source.exit={x:entryX,y:entryY};
- if(home)source.actors=(source.actors||[]).map(actor=>({...actor,x:entryX,y:750}));
- source.zones=(source.zones||[]).map(zone=>zone.action==='exit'||zone.action==='showroom-lobby'?{...zone,x:entryX-18,y:source.spawn.y-(home?65:24),w:36,h:home?175:48,threshold:{x:entryX,y:entryY},enterNormal:{x:0,y:-1},triggerHalfWidth:18,clearOpening:true}:home&&zone.action==='resident'?{...zone,x:entryX-80,y:680,w:160,h:180}:zone);
- if(source.homePlan)source.homePlan={...source.homePlan,width:targetWidth,height:targetHeight,wide:true,spawn:{...source.spawn},home:{x:entryX,y:750}};
+ if(home)source.actors=(source.actors||[]).map(actor=>({...actor,x:actorX,y:420}));
+ source.zones=(source.zones||[]).map(zone=>zone.action==='exit'||zone.action==='showroom-lobby'?{...zone,x:entryX-18,y:source.spawn.y-24,w:36,h:48,threshold:{x:entryX,y:entryY},enterNormal:{x:0,y:-1},triggerHalfWidth:18,clearOpening:true}:home&&zone.action==='resident'?{...zone,x:actorX-70,y:356,w:140,h:144}:zone);
+ if(source.homePlan)source.homePlan={...source.homePlan,width:targetWidth,height:targetHeight,wide:true,spawn:{...source.spawn},home:{x:actorX,y:420}};
+ if(source.resident==='player'){
+  const floor=[rect(640,280,240,180),rect(40,250,180,60)],floorVisual=[rect(628,106,276,378),rect(40,250,180,60)],wall=[rect(640,4,120,98)];source.personalRoomAreas={floor:floor.map(r=>mirrored?flippedRect(r,targetWidth):r),floorVisual:floorVisual.map(r=>mirrored?flippedRect(r,targetWidth):r),wall:wall.map(r=>mirrored?flippedRect(r,targetWidth):r)};
+  source.zones=source.zones.map(zone=>zone.action==='decorate'?{...zone,...source.personalRoomAreas.floor[0]}:zone);
+ }
  source.wideRoomExpansion={previousWidth,previousHeight,depth:targetHeight-previousHeight,previousFloorBottom:previousHeight-28,newFloorBottom:entryY,previousSpawn:{...legacySource.spawn},previousThreshold:legacySource.portalExit?.threshold?{...legacySource.portalExit.threshold}:{x:exit?exit.x+exit.w/2:previousWidth/2,y:previousHeight-28}};
  const scene=cloneRoomLayoutScene(source),width=scene.width,height=scene.height,player=scene.resident==='player';
- const previousBedroom=(legacySource.rooms||[]).find(r=>r.functionalRole==='bedroom');
- const mirrored=scene.kind==='showroom'?scene.showroom?.column===1:previousBedroom?previousBedroom.x+previousBedroom.w/2>legacySource.width/2:false;
  const canonicalPoint=p=>mirrored?{...p,x:width-p.x}:{...p};
  const originalItems=scene.items,asset=item=>catalog.get(item.asset),role=item=>slot(item,catalog),originalByRole=key=>originalItems.find(i=>!i.roomExpansion&&role(i)===key),design=key=>originalItems.filter(i=>i.designRole===key);
- const all=new Map(originalItems.map(i=>[i.id,i])),used=new Set(),placed=[],hidden=[],floorBottom=height-28,depth=floorBottom-106,wallWidth=scene.kind==='showroom'?16:18;
- const reserved=(apartmentDecorBounds(scene)||[]).map(r=>mirrored?flippedRect(r,width):{...r}),wallReserved=(apartmentWallDecorBounds(scene)||[]).map(r=>mirrored?flippedRect(r,width):{...r});
+ const all=new Map(originalItems.map(i=>[i.id,i])),used=new Set(),placed=[],hidden=[],floorBottom=height-28,depth=floorBottom-106,wallWidth=16;
+ const reserved=(scene.personalRoomAreas?.floor??apartmentDecorBounds(scene)??[]).map(r=>mirrored?flippedRect(r,width):{...r}),wallReserved=(scene.personalRoomAreas?.wall??apartmentWallDecorBounds(scene)??[]).map(r=>mirrored?flippedRect(r,width):{...r});
  const actorReservations=(source.actors||[]).flatMap(a=>{const p=canonicalPoint(a),spawn=canonicalPoint(source.spawn);return [rect(p.x-20,p.y-20,40,40),rect(Math.min(p.x,spawn.x)-18,Math.min(p.y,spawn.y)-18,Math.abs(p.x-spawn.x)+36,Math.abs(p.y-spawn.y)+36)];});
  const spawn=canonicalPoint(source.spawn),arrival=rect(spawn.x-19,spawn.y-19,38,38),doorApproach=canonicalPoint({x:source.portalExit.threshold.x,y:source.portalExit.threshold.y-24});
  reserved.push(...actorReservations,arrival,rect(doorApproach.x-18,doorApproach.y-18,36,36));
- const snap=value=>Math.round(value/4)*4,privateDepth=player?220:snap(depth*220/378),front=106+privateDepth;
- const bedWidth=player?255:snap(328*(width-56)/1128),bathWidth=player?305:snap(200*(width-56)/1128);
- const bed=rect(28,106,bedWidth,privateDepth),bath=rect(player?315:bed.x+bed.w+wallWidth*2,106,bathWidth,privateDepth);
- const dayStart=player?width-710:bath.x+bath.w+wallWidth+24,day=rect(dayStart,106,width-28-dayStart,depth);
+ const privateDepth=220,front=326,bedWidth=328,bathWidth=200;
+ const bed=rect(28,106,bedWidth,privateDepth),bath=rect(388,106,bathWidth,privateDepth),day=rect(628,106,528,depth);
  const oldRoom=key=>(source.rooms||[]).find(r=>r.functionalRole===key)||{},roomId=key=>oldRoom(key).id||key;
  const bedDoor=(source.privacyDoors||[]).find(d=>d.roomId===roomId('bedroom')||d.roomId==='bedroom'||d.roomId?.endsWith('-bedroom'));
  const bathDoor=(source.privacyDoors||[]).find(d=>d.roomId===roomId('bathroom')||d.roomId==='bathroom'||d.roomId?.endsWith('-bathroom'));
@@ -89,7 +91,7 @@ export function applyWideRoomLayout(source,catalog,{reference}={}){
  north(bedItem,bed,bed.x+bed.w*.63);const bedFoot=footprint(bedItem);north(night,bed,bedFoot.cx+bedFoot.w/2+5+(footprint(night)?.w||0)/2);north(wardrobe,bed,bed.x+6+(footprint(wardrobe)?.w||0)/2);
  attach(originalByRole('toy'),bedItem,{dy:-bedItem.h*.2});attach(originalByRole('table-lamp'),night,{dy:-night.h*.5});
  const vanity=ownerRoom(originalByRole('vanity'),'bathroom'),tub=ownerRoom(originalByRole('bath-fixture'),'bathroom'),toilet=ownerRoom(originalByRole('toilet'),'bathroom');
- north(vanity,bath,bath.x+(player?32:54));
+ north(vanity,bath,bath.x+54);
  if(tub){tub.rotation=0;const t=footprint(tub);put(tub,bath,bath.x+bath.w-8-t.w/2,player?210:112+t.h/2,0);}
  if(toilet){toilet.rotation=270;const t=footprint(toilet);put(toilet,bath,bath.x+6+t.w/2,bath.y+54,270);}
  const mirror=originalByRole('mirror');if(mirror){Object.assign(mirror,{x:vanity.x,y:vanity.y-69.6,rotation:0,roomId:roomId('bathroom'),supportedBy:'north-wall',solid:false});commit([mirror]);}
@@ -116,12 +118,12 @@ export function applyWideRoomLayout(source,catalog,{reference}={}){
  const arcade=ownerRoom(originalByRole('arcade'),'bedroom'),sourceArcade=arcade&&source.items.find(i=>i.id===arcade.id),miniArcade=sourceArcade?.supportedBy&&sourceArcade.supportedBy!=='north-wall'&&(sourceArcade.miniature||arcade.w<(asset(arcade)?.w||100)*.65*.8);
  if(arcade&&!miniArcade)put(arcade,bed,bed.x+bed.w-24,Math.min(front-70,106+privateDepth*.46),90);
  const statement=ownerRoom(design('family-statement-plant')[0],'dining');if(statement)put(statement,day,day.x+20,142);
- const extrasArea=player?flippedRect(rect(710,650,780,height-690),width):rect(day.x,Math.max(front+wallWidth+34,loungeY+110),day.w,Math.max(90,floorBottom-Math.max(front+wallWidth+34,loungeY+110)-16));
+ const extrasArea=rect(day.x,Math.max(front+wallWidth+34,loungeY+110),day.w,Math.max(90,floorBottom-Math.max(front+wallWidth+34,loungeY+110)-16));
  const desk=ownerRoom(originalByRole('desk'),'bedroom'),deskChair=ownerRoom(originalByRole('desk-chair'),'bedroom');
  if(desk){const pair=[desk,...(deskChair?[deskChair]:[])];fit(pair,bed,{x:bed.x+bed.w-80,y:front-100},p=>{placeCenter(desk,p.x,p.y,0);if(deskChair){const t=footprint(desk),b=footprint(deskChair);placeCenter(deskChair,t.cx,t.y+t.h+24+b.h/2,180);deskChair.seatingTarget=desk.id;}});}
  const linen=ownerRoom(originalByRole('linen-storage'),'bathroom');if(linen)put(linen,bath,bath.x+54,Math.min(front-70,260),0);
  const extraSofa=design('family-lounge-sofa')[0],extraChair=design('bedroom-reading-chair')[0],spareReading=alternate&&!used.has(alternate)?alternate:null,smallCoffee=originalByRole('coffee-table');
- const shortShowroom=scene.kind==='showroom'&&legacySource.height>targetHeight;
+ const shortShowroom=legacySource.height>targetHeight;
  if(shortShowroom){for(const item of [extraSofa,smallCoffee,extraChair,spareReading].filter(Boolean)){hidden.push(item);used.add(item);}}
  else if(extraSofa&&smallCoffee){
   fit([smallCoffee,extraSofa,...(extraChair?[extraChair]:[]),...(spareReading?[spareReading]:[])],extrasArea,{x:extrasArea.x+extrasArea.w*.5,y:extrasArea.y+extrasArea.h*.5},p=>{
@@ -137,8 +139,8 @@ export function applyWideRoomLayout(source,catalog,{reference}={}){
  for(const item of originalItems){
   if(used.has(item)||item.layer==='ground'||item.wallMounted||miniArcade&&item===arcade)continue;
   if(diners.includes(item)||item===smallCoffee&&!extraSofa){hidden.push(item);continue;}
-  const key=role(item),area=key==='instrument'||key==='record-console'?player?extrasArea:day:extrasArea;
-  const preferred=key==='instrument'?{x:day.x+120,y:106+depth*.43}:key==='record-console'?{x:area.x+46,y:area.y+Math.min(area.h*.6,180)}:{x:area.x+area.w*.7,y:area.y+area.h*.65};
+  const key=role(item),area=key==='instrument'||key==='record-console'?day:extrasArea;
+  const preferred=key==='instrument'?{x:800,y:360}:key==='record-console'?{x:area.x+46,y:area.y+Math.min(area.h*.6,180)}:{x:area.x+area.w*.7,y:area.y+area.h*.65};
   ownerRoom(item,key==='instrument'?'music':'living');put(item,area,preferred.x,preferred.y,key==='record-console'?270:item.rotation||0);
  }
  if(miniArcade){
@@ -172,7 +174,6 @@ export function applyWideRoomLayout(source,catalog,{reference}={}){
   scene.walls=scene.walls.map(w=>flippedRect(w,width));scene.rooms=scene.rooms.map(r=>({...flippedRect(r,width),wallpaperAreas:(r.wallpaperAreas||[]).map(a=>flippedRect(a,width)),...(r.floorBounds?{floorBounds:flippedRect(r.floorBounds,width)}:{})}));
   scene.privacyDoors=scene.privacyDoors.map(d=>({...d,x:width-d.x-d.length,hinge:'end'}));scene.spawn=canonicalPoint(scene.spawn);scene.portalExit={...scene.portalExit,threshold:canonicalPoint(scene.portalExit.threshold),door:{...scene.portalExit.door,threshold:canonicalPoint(scene.portalExit.door.threshold)}};
  }
- if(player)scene.rooms.push(...source.rooms.filter(r=>['study','personal-studio'].includes(r.functionalRole)).map(r=>({...r,h:Math.min(r.h,floorBottom-r.y),...(r.floorBounds?{floorBounds:{...r.floorBounds,h:Math.min(r.floorBounds.h,floorBottom-r.floorBounds.y)}}:{}),wallpaperAreas:[]})));
  if(miniArcade){
   const parent=all.get(arcade.supportedBy),picture=parent&&furnitureFacingBounds(asset(parent),parent),foot=footprint(arcade);
   if(picture&&foot){const pad=3,cx=Math.max(picture.x+pad+foot.w/2,Math.min(picture.x+picture.w-pad-foot.w/2,foot.cx)),cy=Math.max(picture.y+pad+foot.h/2,Math.min(picture.y+picture.h-pad-foot.h/2,foot.cy));Object.assign(arcade,furnitureAtGroundCenter(asset(arcade),arcade,{x:cx,y:cy}));}
@@ -213,10 +214,11 @@ export function applyWideRoomLayout(source,catalog,{reference}={}){
  }
  if(scene.showroom)scene.showroom.apartment.windows=scene.windows;
  delete scene.roomLayoutSignatureFrame;delete scene.roomExpansionLegacyPoses;
- scene.wideRoomLayout={version:2,reference:reference?.id||'showroom-victorian-parlor',mirrored};
+ scene.wideRoomLayout={version:3,reference:reference?.id||'showroom-victorian-parlor',mirrored};scene.roomLayoutRecipe='compact-v3';
  // Saved layouts reconstruct pieces from this canonical stock. Capture the
  // final approach/support metadata so Reset and a fresh reload agree exactly.
  scene.roomLayoutBaseItems=originalItems.map(cloneItem);
- Object.defineProperty(scene,'roomLayoutLegacySources',{value:[legacySource,previousLayout],configurable:true});
+ const sources=[],seen=new Set();for(const alternative of [legacySource,previousLayoutV1,previousLayout]){const key=JSON.stringify(alternative);if(!seen.has(key)){seen.add(key);sources.push(alternative);}}
+ Object.defineProperty(scene,'roomLayoutLegacySources',{value:sources,configurable:true});
  return scene;
 }

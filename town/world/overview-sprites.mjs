@@ -1,5 +1,5 @@
 import {sceneryImage} from './scenery-cache.mjs?v=opera-smooth-1';
-import {supportsLawnReveal,assetMapImageRevision} from './asset-lawn.mjs?v=opera-parallax-1';
+import {supportsLawnReveal,assetMapImageRevision} from './asset-lawn.mjs?v=town-compact-island-1';
 
 export const OVERVIEW_SPRITE_SCALE=.125;
 const MIN_EDGE=128,MAX_EDGE=1024;

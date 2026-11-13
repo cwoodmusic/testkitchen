@@ -3,7 +3,12 @@ import assert from 'node:assert/strict';
 import {readFileSync} from 'node:fs';
 import {createRequire} from 'node:module';
 import vm from 'node:vm';
-import {FLOOR_COUNT,TOWER_FOOTPRINT,STORE_FOOTPRINT,residents,getInterior,residentInteractionZones,apartmentDecorBounds,configureUrbanInteriors} from '../town/world/urban-interiors.mjs';
+import {FLOOR_COUNT,TOWER_FOOTPRINT,STORE_FOOTPRINT,residents,getInterior,residentInteractionZones,apartmentDecorBounds,apartmentWallDecorBounds,configureUrbanInteriors} from '../town/world/urban-interiors.mjs';
+import {furniturePresentationScale} from '../town/world/private-furniture.mjs';
+import {furnitureFacingBounds} from '../town/world/furniture-facing.mjs';
+import {apartmentDecorFootBounds} from '../town/world/personal-room-areas.mjs';
+import {createRoomStorage,roomItemBoxes,ROOM_KEY} from '../town/world/urban-room.mjs';
+import {decorCollisionBoxes} from '../town/world/scene-collision.mjs';
 import {residentHomePose,interiorJourneyPose,journeyDuration,residentInScene} from '../town/world/resident-journey.mjs';
 import {decorDefinitions} from '../town/world/decor-definitions.mjs';
 import {SHOWROOMS} from '../town/world/showroom-layout.mjs';
@@ -12,14 +17,15 @@ import {APARTMENT_DECOR} from '../town/world/apartment-decor-definitions.mjs';
 import {APARTMENT_COLLECTION_ASSETS} from '../town/world/apartment-collection-definitions.mjs';
 import {FAMILY_FURNITURE_ASSETS} from '../town/world/family-furniture-definitions.mjs';
 import {WHIMSICAL_PLUSH_DEFINITIONS} from '../town/world/whimsical-plush-definitions.mjs';
+import {LEGACY_FURNITURE_ASSETS} from '../town/world/legacy-furniture-definitions.mjs';
 import {interiorActorScale} from '../town/world/interior-scale.mjs';
 
 const require=createRequire(import.meta.url),stock=require('../furniture-catalog.js');
 const read=path=>readFileSync(new URL(path,import.meta.url));
 // Read native asset dimensions without loading a browser, images, or canvases.
-const png=read('../town/assets/furniture.png'),atlas=JSON.parse(read('../town/assets/decor/atlas.json'));
-const catalog=new Map(Array.from({length:9},(_,i)=>[`furniture-${i}-180`,{w:180,h:Math.ceil(180*png.readUInt32BE(20)/png.readUInt32BE(16)),boxes:[]}]));
-for(const def of decorDefinitions){const cell=atlas.find(a=>a.family===def.family).cells[def.index],fit=Math.min(def.maxW/cell.w,def.maxH/cell.h);catalog.set(def.id,{w:Math.ceil(cell.w*fit),h:Math.ceil(cell.h*fit),boxes:[]});}
+const atlas=JSON.parse(read('../town/assets/decor/atlas.json'));
+const catalog=new Map(LEGACY_FURNITURE_ASSETS.filter(a=>/^furniture-[0-8]-180$/.test(a.id)).map(a=>[a.id,a]));
+for(const def of decorDefinitions){const cell=atlas.find(a=>a.family===def.family).cells[def.index],fit=Math.min(def.maxW/cell.w,def.maxH/cell.h),w=Math.ceil(cell.w*fit),h=Math.ceil(cell.h*fit);catalog.set(def.id,{id:def.id,w,h,boxes:decorCollisionBoxes(def,w,h),layer:'objects',collisionDefault:def.solid&&!def.mount});}
 for(const def of SHOWROOM_FURNITURE)catalog.set(def.id,{w:def.w,h:def.h,boxes:def.boxes,furnitureRole:def.role});
 for(const def of APARTMENT_DECOR)catalog.set(def.id,{w:def.w,h:def.h,boxes:def.boxes,layer:def.layer,wallMounted:def.wallMounted,purpose:def.purpose});
 for(const def of APARTMENT_COLLECTION_ASSETS)catalog.set(def.id,def);
@@ -45,7 +51,7 @@ test('fifteen floors house every musician once and reserve the top apartment for
  assert.equal(getInterior({kind:'apartment',resident:'player'}).floor,15);
 });
 
-test('fresh apartments share the uniform shell while both preserved versions retain their floor plots',()=>{
+test('fresh compact apartments share the reference shell while all three preserved versions retain their floor plots',()=>{
  const lobby=getInterior({kind:'lobby'});assert.deepEqual({width:lobby.width,height:lobby.height},TOWER_FOOTPRINT);
  let paired=0,single=0;
  for(let floor=2;floor<=FLOOR_COUNT;floor++){
@@ -53,12 +59,12 @@ test('fresh apartments share the uniform shell while both preserved versions ret
   assert.equal(hall.width,TOWER_FOOTPRINT.width);assert.equal(hall.height,608);
   for(const a of apartments){
    const source=a.roomLayoutLegacySources?.[0]??a,sourceWide=source.width===2304,original=source.roomLayoutSignatureFrame??source;
-   assert.deepEqual({width:a.width,height:a.height},{width:2368,height:1132});assert.equal(a.height,a.wideRoomExpansion.previousHeight+a.wideRoomExpansion.depth);
+   assert.deepEqual({width:a.width,height:a.height},{width:1184,height:512});assert.equal(a.height,a.wideRoomExpansion.previousHeight+a.wideRoomExpansion.depth);
    assert.equal(a.wideRoomExpansion.previousWidth,source.width);assert.equal(a.wideRoomExpansion.previousHeight,source.height);assert.equal(a.wideRoomExpansion.newFloorBottom,a.height-28);
    assert.equal(original.height+hall.height,TOWER_FOOTPRINT.height,'Every preserved source keeps its authored floor depth');
    assert.deepEqual({width:source.width,height:source.height},{width:sourceWide?2304:1088,height:sourceWide?1184:1120},'Existing saved architecture retains its original compact or expanded wide shell');
    if(sourceWide)assert.equal(source.wideRoomExpansion.depth,64);else {assert.equal(source.roomLayoutSignatureFrame,undefined);assert.equal(source.wideRoomExpansion,undefined);}
-   assert.equal(a.roomLayoutLegacySources.length,2);const previous=a.roomLayoutLegacySources[1];assert.equal(previous.wideRoomLayout.version,1);assert.deepEqual({width:previous.width,height:previous.height},{width:2304,height:1184},'Saved layouts from the first shared default retain their exact shell');
+   assert.equal(a.roomLayoutLegacySources.length,3);const previous=a.roomLayoutLegacySources[1];assert.equal(previous.wideRoomLayout.version,1);assert.deepEqual({width:previous.width,height:previous.height},{width:2304,height:1184},'Saved layouts from the first shared default retain their exact shell');const shape=a.roomLayoutLegacySources[2];assert.equal(shape.wideRoomLayout.version,2);assert.deepEqual({width:shape.width,height:shape.height},{width:2368,height:1132},'Saved layouts from the second shared default retain their exact shell');
   }
   const sources=apartments.map(a=>a.roomLayoutLegacySources?.[0]??a);
   if(apartments.length===2){paired++;for(const source of sources)assert.equal(source.width,1088);assert.equal(sources.reduce((sum,a)=>sum+a.width,0)+128,TOWER_FOOTPRINT.width);}
@@ -114,11 +120,33 @@ test('a player with the actual scene-scaled collision padding can reach every in
 });
 
 test('the player has clear furnishing areas that fit every scaled store item and preserve the entry',()=>{
- const scene={kind:'apartment',resident:'player'},model=getInterior(scene),bounds=apartmentDecorBounds(scene);
- assert.ok(bounds.length>=2);assert.equal(apartmentDecorBounds({kind:'apartment',resident:'bach'}),null);
- const entryRoute={x:model.spawn.x-90,y:640,w:180,h:model.height-640};
- for(const b of bounds){assert.ok(!model.solids.some(s=>overlaps(b,s)),'Furnishing regions must be clear of built-in furniture and walls');assert.ok(!overlaps(b,entryRoute),'The entry route remains outside the furnishing areas');}
- for(const product of stock){const a=catalog.get(product.asset);assert.ok(a,product.asset);const width=a.w*product.scale,height=a.h*product.scale;assert.ok(bounds.some(b=>width<=b.w&&height<=b.h),`${product.name} must fit in an actual furnishing area at its fixed product scale`);}
+ const latest=getInterior({kind:'apartment',resident:'player'});assert.equal(apartmentDecorBounds({kind:'apartment',resident:'bach'}),null);
+ for(const model of [latest,...latest.roomLayoutLegacySources]){
+  const bounds=apartmentDecorBounds(model),feet=apartmentDecorFootBounds(model)??bounds,walls=apartmentWallDecorBounds(model);assert.ok(bounds.length>=2);
+  const entryRoute=model.personalRoomAreas?{x:model.spawn.x-18,y:model.spawn.y-18,w:36,h:model.height-model.spawn.y+18}:{x:model.spawn.x-90,y:640,w:180,h:model.height-640};
+  for(const b of bounds)assert.ok(b.x>=28&&b.y>=106&&b.x+b.w<=model.width-28&&b.y+b.h<=model.height-28,'Purchased artwork stays in the selected actual room');
+  for(const b of feet){assert.ok(!model.solids.some(s=>overlaps(b,s)),'Furnishing foot regions must be clear of built-in furniture and walls');assert.ok(!overlaps(b,entryRoute),'The entry route remains outside the furnishing foot areas');}
+  for(const product of stock){const a=catalog.get(product.asset);assert.ok(a,product.asset);const item={asset:product.asset,scale:product.scale,rotation:0},factor=furniturePresentationScale(item,model,a),visual=furnitureFacingBounds(a,{...item,x:0,y:0,scale:product.scale*factor}),areas=a.wallMounted?walls:bounds;assert.ok(areas.some(b=>visual.w<=b.w&&visual.h<=b.h),`${product.name} must fit at its actual fixed product scale in ${model.width}×${model.height}`);if(!model.personalRoomAreas)assert.ok(bounds.some(b=>a.w*product.scale<=b.w&&a.h*product.scale<=b.h),'Saved rooms keep their original full-scale furniture capacity');}
+ }
+});
+
+test('all639 store products can actually be placed at their fixed native scale with compact room art, feet and solids enforced',()=>{
+ const model=getInterior({kind:'apartment',resident:'player'}),floor=apartmentDecorBounds(model),walls=apartmentWallDecorBounds(model),footAreas=apartmentDecorFootBounds(model);assert.equal(stock.length,639);assert.deepEqual(footAreas,[{x:304,y:280,w:240,h:180},{x:964,y:250,w:180,h:60}]);
+ for(const product of stock){
+  const asset=catalog.get(product.asset),policy=(item,a)=>furniturePresentationScale(item,model,a),memory=new Map(),room=createRoomStorage({owner:'product-proof',storage:{getItem:k=>memory.get(k),setItem:(k,v)=>memory.set(k,v)},catalog,furniture:[product],owned:()=>[product.id],presentationScale:policy,getBounds:(_i,a)=>a.wallMounted?walls:floor,getFootBounds:(_i,a)=>a.wallMounted?null:footAreas,getSolids:()=>model.solids});
+  let result;
+  placement:for(const rotation of [0,90,180,270]){
+   const item={item:product.id,asset:product.asset,scale:product.scale,rotation,x:0,y:0},scale=product.scale*policy(item,asset),image=furnitureFacingBounds(asset,{...item,scale}),bases=roomItemBoxes(item,catalog,policy);
+   for(const visualArea of asset.wallMounted?walls:floor)for(const footArea of bases.length?footAreas:[null]){
+    let minX=visualArea.x-image.x,maxX=visualArea.x+visualArea.w-image.x-image.w,minY=visualArea.y-image.y,maxY=visualArea.y+visualArea.h-image.y-image.h;
+    if(footArea)for(const b of bases){minX=Math.max(minX,footArea.x-b.x);maxX=Math.min(maxX,footArea.x+footArea.w-b.x-b.w);minY=Math.max(minY,footArea.y-b.y);maxY=Math.min(maxY,footArea.y+footArea.h-b.y-b.h);}
+    if(minX>maxX||minY>maxY)continue;
+    result=room.place(product.id,(minX+maxX)/2,(minY+maxY)/2,rotation);if(result.ok)break placement;
+   }
+  }
+  assert.ok(result?.ok,product.name+': '+(result?.error??'no valid art and foot placement'));
+  assert.equal(result.item.scale,product.scale);assert.equal(result.item.asset,product.asset);assert.equal(room.load().ok,true);assert.equal(JSON.parse(memory.get(ROOM_KEY)).items.length,1);
+ }
 });
 
 function drawingContext(){

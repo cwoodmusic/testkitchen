@@ -12,6 +12,7 @@ import {decorCollisionBoxes} from './scene-collision.mjs';
 import {createRoomStorage,ROOM_KEY} from './urban-room.mjs';
 import {furniturePresentationScale} from './private-furniture.mjs';
 import {apartmentDecorBounds,apartmentWallDecorBounds} from './personal-room-areas.mjs';
+import {createPlayerRoomSourceResolver} from './player-room-source.mjs';
 
 const catalog=new Map([
  ['chair',{id:'chair',w:40,h:60,boxes:[{x:4,y:34,w:32,h:22}],solid:true,purpose:'dining-chair'}],
@@ -27,6 +28,20 @@ function fixture(){
  const scene={id:'fixture',kind:'apartment',resident:'fixture',width:600,height:500,spawn:{x:300,y:430},actors:[],rooms:[],walls,privacyDoors:[{id:'privacy',axis:'vertical',roomId:'bath',x:298,y:160,length:36}],items,solids:[...walls,...items.flatMap(i=>i.collisionBoxes)],windows:[],zones:[]};
  return {scene,model:createRoomLayoutModel({themeId:'fixture',scene,catalog})};
 }
+
+test('an authored recipe change distinguishes same-size rooms while old saves retain their complete source',()=>{
+ const {scene,model}=fixture(),oldRecord=model.record(),current={...scene,roomLayoutRecipe:'compact-v3',spawn:{x:500,y:430}};
+ Object.defineProperty(current,'roomLayoutLegacySources',{value:[scene]});
+ const fresh=createRoomLayoutModel({themeId:'fixture',scene:current,catalog});
+ assert.notEqual(fresh.record().baseSignature,oldRecord.baseSignature);
+ assert.deepEqual(fresh.scene.spawn,current.spawn);
+ const loaded=createRoomLayoutModel({themeId:'fixture',scene:current,catalog,record:oldRecord});
+ assert.deepEqual(loaded.record(),oldRecord);assert.deepEqual(loaded.scene.spawn,scene.spawn);
+ loaded.reset();assert.deepEqual(loaded.scene.spawn,current.spawn);assert.equal(loaded.record().baseSignature,fresh.record().baseSignature);
+ loaded.undo();assert.deepEqual(loaded.scene.spawn,scene.spawn);assert.deepEqual(loaded.record(),oldRecord);
+ const corrupt={...oldRecord,roomLayoutRecipe:'compact-v3',baseSignature:'room-00000000'};
+ assert.equal(loaded.applyRecord(corrupt).ok,false);
+});
 
 test('pickup preserves exact grab offset and does not change authored, committed or exported data',()=>{
  const {scene,model}=fixture(),authored=JSON.stringify(scene),before=model.scene,record=JSON.stringify(model.record());
@@ -91,13 +106,17 @@ test('all31 actual models reload both authored records and a committed native fu
 test('player template edits cannot invalidate existing purchased floor furniture or wall art',()=>{
  const atlas=JSON.parse(readFileSync(new URL('../assets/decor/atlas.json',import.meta.url))),def=decorDefinitions.find(d=>d.id==='decor-08-01'),cell=atlas.find(s=>s.family===def.family).cells[def.index],fit=Math.min(def.maxW/cell.w,def.maxH/cell.h),w=Math.ceil(cell.w*fit),h=Math.ceil(cell.h*fit);
  const geranium={id:def.id,w,h,boxes:decorCollisionBoxes(def,w,h),collisionDefault:def.solid},art=new Map([...[...APARTMENT_COLLECTION_ASSETS,...FAMILY_FURNITURE_ASSETS].map(a=>[a.id,a]),[geranium.id,geranium]]);configureUrbanInteriors(art);
- const scene=getInterior({kind:'apartment',resident:'player'}),model=createRoomLayoutModel({themeId:'player',scene,catalog:art}),items=[{id:'room-legacy-geranium',item:'furniture-geranium',asset:geranium.id,x:1800,y:900,scale:1},{id:'room-poster',item:'furniture-poster',asset:'collection-player-poster',x:800,y:98,scale:1}];
+ const latest=getInterior({kind:'apartment',resident:'player'}),items=[{id:'room-legacy-geranium',item:'furniture-geranium',asset:geranium.id,x:1800,y:900,scale:1},{id:'room-poster',item:'furniture-poster',asset:'collection-player-poster',x:800,y:98,scale:1}];
  const raw=JSON.stringify({version:1,owner:'guest',items}),memory=new Map([[ROOM_KEY,raw]]);let writes=0;
+ const storage={getItem:k=>memory.get(k),setItem(k,v){writes++;memory.set(k,v);}},furniture=items.map(i=>({id:i.item,asset:i.asset,scale:i.scale})),owned=()=>items.map(i=>i.item),resolver=createPlayerRoomSourceResolver({storage,owner:'guest',catalog:art,furniture,owned}),scene=resolver.resolve(latest),model=createRoomLayoutModel({themeId:'player',scene,catalog:art});assert.equal(scene,latest.roomLayoutLegacySources[0],'Valid historical purchases select the exact original room');
  const personal=()=>createRoomStorage({owner:'guest',storage:{getItem:k=>memory.get(k),setItem(k,v){writes++;memory.set(k,v);}},catalog:art,furniture:items.map(i=>({id:i.item,asset:i.asset,scale:i.scale})),owned:()=>items.map(i=>i.item),presentationScale:(item,a)=>furniturePresentationScale(item,{kind:'apartment'},a),getBounds:(_item,a)=>a.wallMounted?apartmentWallDecorBounds(scene):apartmentDecorBounds(scene),getSolids:()=>model.scene.solids});
  assert.equal(personal().load().ok,true);
  assert.equal(model.add('collection-player-bed',{x:1800,y:930}).ok,false);assert.match(model.held.reason,/purchased furniture/);assert.equal(model.place().ok,false);model.cancel();
  assert.equal(model.add('collection-player-poster',{x:800,y:98}).ok,false);assert.match(model.held.reason,/purchased decorations/);assert.equal(model.place().ok,false);model.cancel();
  assert.equal(model.add('collection-player-rug',{x:1800,y:900}).ok,true,'A noncolliding template rug may sit beneath personal décor');assert.equal(model.place().ok,true);assert.equal(personal().load().ok,true);assert.equal(memory.get(ROOM_KEY),raw);assert.equal(writes,0);
+ const compact=createRoomLayoutModel({themeId:'player',scene:latest,catalog:art});
+ assert.equal(compact.add('collection-player-bed',{x:424,y:430}).ok,false);assert.match(compact.held.reason,/purchased furniture/);compact.cancel();
+ assert.equal(compact.add('collection-player-poster',{x:484,y:98}).ok,false);assert.match(compact.held.reason,/purchased decorations/);compact.cancel();
  const other=getInterior({kind:'apartment',resident:'bach'}),npc=createRoomLayoutModel({themeId:'bach',scene:other,catalog:art});assert.equal(npc.add('collection-player-poster',{x:700,y:98}).ok,true);assert.equal(npc.place().ok,true,'Other room themes retain the full design area');
  for(const request of [...residents.map(r=>({kind:'apartment',resident:r.id})),...SHOWROOMS.map(r=>({kind:'showroom',showroomId:r.id}))]){assert.equal(apartmentDecorBounds(request),null);assert.equal(apartmentWallDecorBounds(request),null);}
 });

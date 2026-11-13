@@ -1,5 +1,5 @@
-import {cell,key,COLS,ROWS,RISE} from '../world/model.mjs?v=town-flight-1';
-import {roundedUnder} from '../world/round-geometry.mjs?v=opera-parallax-1';
+import {cell,key,COLS,ROWS,RISE} from '../world/model.mjs?v=town-compact-island-1';
+import {roundedUnder} from '../world/round-geometry.mjs?v=town-compact-island-1';
 import {PAINT_GRID,PAINT_STEP,groundMaterials,materialKey,readPaint,encodePaint} from '../world/ground-paint.mjs?v=opera-parallax-1';
 const clamp=(v,a,b)=>Math.max(a,Math.min(b,v)),PIXELS=PAINT_GRID*PAINT_GRID;
 // Pointer interpolation is in world units, independent of pointer-event rate.

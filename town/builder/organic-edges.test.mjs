@@ -89,3 +89,15 @@ test('a complete organic stroke is portable and reversible with the existing pro
  for(let y=6000;y<=6272;y+=24)apply(d,planOrganicEdges(d,{x:8192,y},{size:192,strength:.5}));
  assert.notEqual(JSON.stringify(d),before);assert.deepEqual(parseProject(JSON.stringify(d),new Set()),d);const restored=history.back(d);assert.equal(JSON.stringify(restored),before);assert.deepEqual(history.forward(restored),d);
 });
+
+test('repeated strokes on a diagonal tall cliff cannot detach tiny land scraps',()=>{
+ const d=blank();for(let y=90;y<110;y++)for(let x=120;x<136;x++)d.cells[key(x,y)]={surface:x+y<225?'grass':'water',level:x+y<225?8:0};
+ for(let i=0;i<3;i++)apply(d,planOrganicEdges(d,{x:8110+i*8,y:6230-i*8+(i%4-1)*4},{size:192,strength:1}));
+ const size=96,samples=new Uint8Array(size*size);for(let y=0;y<size;y++)for(let x=0;x<size;x++)samples[y*size+x]=height(d,8100+x*4+2,6052+y*4+2)>0?1:0;
+ let components=0;
+ for(let i=0;i<samples.length;i++)if(samples[i]){
+  components++;const queue=[i];samples[i]=0;
+  for(let head=0;head<queue.length;head++){const index=queue[head],x=index%size,y=Math.floor(index/size);for(const[X,Y]of[[x-1,y],[x+1,y],[x,y-1],[x,y+1]])if(X>=0&&Y>=0&&X<size&&Y<size&&samples[Y*size+X]){samples[Y*size+X]=0;queue.push(Y*size+X);}}
+ }
+ assert.equal(components,1,'A few brush dabs must not turn four-pixel scraps into detached384px cliff towers');
+});

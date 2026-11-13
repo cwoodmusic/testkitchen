@@ -1,4 +1,4 @@
-import {TILE,RISE} from './model.mjs?v=town-flight-1';
+import {TILE,RISE} from './model.mjs?v=town-compact-island-1';
 
 const empty=Object.freeze({surface:'grass',level:0});
 const dry=new Set(['grass','dirt','sand','wood','asphalt','sidewalk','brick']);

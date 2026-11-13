@@ -22,8 +22,8 @@ test('actual reported junctions return only along the adjoining authored wall fa
  for(const x of [268,750])assert(robot.returns.some(r=>r.x===x&&r.y===0&&r.w===16&&r.h===106));
 });
 
-test('all31 active and53 preserved wall networks retain physical models without unsupported floor bridges',()=>{
- assert.equal(activeModels.length,31);assert.equal(legacyModels.length,53);assert.equal(previousModels.length,23);let projected=0;
+test('all31 active and76 preserved wall networks retain physical models without unsupported floor bridges',()=>{
+ assert.equal(activeModels.length,31);assert.equal(legacyModels.length,76);assert.equal(previousModels.length,46);let projected=0;
  for(const m of models){
   const before=JSON.stringify(m),g=interiorWallNetworkGeometry(m);
   for(const r of g.returns){
@@ -49,7 +49,7 @@ test('all31 active and53 preserved wall networks retain physical models without 
 test('every current and preserved wallpaper face has a north cap matching its side-wall thickness',()=>{
  let faces=0,sourceFaces=0;
  for(const m of models){
-  const g=interiorWallNetworkGeometry(m),expected=m.kind==='showroom'?16:m.resident==='player'&&!m.wideRoomLayout?20:18;
+  const g=interiorWallNetworkGeometry(m),expected=m.kind==='showroom'||m.wideRoomLayout?.version>=3?16:m.resident==='player'&&!m.wideRoomLayout?20:18;
   for(const face of g.faces){
    faces++;if(sourceModels.includes(m))sourceFaces++;const cap=g.northCaps.find(r=>r.x===face.x&&r.y===face.y&&r.w===face.w);assert(cap,`${m.id}: missing north cap above${JSON.stringify(face)}`);
    assert.equal(cap.h,expected,`${m.id}: horizontal and vertical wall caps share the same width`);
@@ -105,7 +105,7 @@ test('the preserved Bach kitchen corner meets the adjoining face without coverin
  cv.width=cv.height=1;
 });
 
-test('all62 current and106 preserved36px doorway slits stay free of cap, trim and shadow pixels',()=>{
+test('all62 current and152 preserved36px doorway slits stay free of cap, trim and shadow pixels',()=>{
  let count=0;
  for(const m of models){
   const cv=createCanvas(m.width,m.height),c=cv.getContext('2d');drawInteriorWallNetwork(c,m);
@@ -115,7 +115,7 @@ test('all62 current and106 preserved36px doorway slits stay free of cap, trim an
   }
   cv.width=cv.height=1;
  }
- assert.equal(count,168);
+ assert.equal(count,214);
  const untouched=createCanvas(100,100),c=untouched.getContext('2d');assert.equal(drawInteriorWallNetwork(c,{kind:'shop'}),false);assert.equal(drawInteriorWallNetwork(c,{kind:'hall'}),false);assert.equal(drawInteriorWallNetwork(c,{kind:'concert'}),false);
 });
 

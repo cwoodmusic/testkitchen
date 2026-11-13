@@ -1,11 +1,11 @@
-import {createPlayerCollisionIndex} from './player-collision-index.mjs?v=town-flight-1';
+import {createPlayerCollisionIndex} from './player-collision-index.mjs?v=town-compact-island-1';
 import {launchFlyingNotes,advanceFlyingNote,flyingNotePose,netSweepHits,facingAngle,angleFacing,NET_SWEEP_SECONDS,NET_RECOVERY_SECONDS} from './rhythm-hunt-motion.mjs?v=town-store-halls-1';
 import {drawRhythmNet} from './rhythm-net-render.mjs?v=town-store-halls-1';
 import {drawNoteFairy} from './note-fairy-render.mjs?v=town-store-halls-1';
 import {drawBlueNoteTracker} from './blue-note-tracker.mjs?v=town-store-halls-1';
 import {createRhythmRoundClock} from './rhythm-round-clock.mjs?v=town-notes-1';
-import {blocked,height} from './model.mjs?v=town-flight-1';
-import {CATCH_PATTERNS,NOTE_VALUES,catchAttacks,remainingNotes,sameRhythm,reachableNoteSpots,scatterNotes} from './town-game-rules.mjs?v=town-store-halls-1';
+import {blocked,height} from './model.mjs?v=town-compact-island-1';
+import {CATCH_PATTERNS,NOTE_VALUES,catchAttacks,remainingNotes,sameRhythm,reachableNoteSpots,scatterNotes} from './town-game-rules.mjs?v=town-compact-island-1';
 import {createGameAudio,noteSVG,noteName,gameButton} from './town-game-audio.mjs?v=town-store-halls-1';
 export function createRhythmCatch({canvas,getProject,getPlayer,getFacing=()=>'down',setFacing=()=>{},catalog,journal,onExtraSweep=()=>false,isEquipped=()=>true,audio=createGameAudio()}){
  const clock=createRhythmRoundClock({duration:300}),dialog=document.createElement('dialog'),hud=document.createElement('section'),exitDialog=document.createElement('dialog');dialog.className='town-game-dialog rhythm-catch-dialog';dialog.setAttribute('aria-label','Rhythm Catch');hud.className='town-game-hud blue-rhythm-hud';hud.hidden=true;hud.setAttribute('aria-label','Rhythm Catch status');exitDialog.className='town-game-dialog rhythm-exit-dialog';exitDialog.setAttribute('aria-label','End Rhythm Catch');document.body.append(dialog,hud,exitDialog);

@@ -5,6 +5,7 @@ import {FAMILY_FURNITURE_ASSETS} from './family-furniture-definitions.mjs';
 import {getInterior,configureUrbanInteriors,apartmentDecorBounds,apartmentWallDecorBounds,residents} from './urban-interiors.mjs';
 import {SHOWROOMS} from './showroom-layout.mjs';
 import {furnitureFacingBounds} from './furniture-facing.mjs';
+import {apartmentDecorFootBounds} from './personal-room-areas.mjs';
 
 let imageRequests=0;
 const definitions=new Map([...APARTMENT_COLLECTION_ASSETS,...FAMILY_FURNITURE_ASSETS].map(a=>[a.id,a]));
@@ -35,9 +36,10 @@ test('NPC model and path queries do not download all 31 full furniture atlases',
 test('the player keeps exact saved furnishing regions and clear entry despite the new built-ins',()=>{
  const latest=getInterior({kind:'apartment',resident:'player'});
  for(const scene of [latest,...(latest.roomLayoutLegacySources||[])]){
-  const bounds=apartmentDecorBounds(scene);
-  assert.deepEqual(bounds,[{x:1584,y:512,w:656,h:540},{x:710,y:130,w:780,h:500}]);
-  assert.deepEqual(apartmentWallDecorBounds(scene),[{x:380,y:4,w:650,h:98},{x:1280,y:4,w:280,h:98},{x:1760,y:4,w:140,h:98}]);
+  const bounds=apartmentDecorFootBounds(scene)??apartmentDecorBounds(scene);
+  assert.deepEqual(bounds,scene===latest?[{x:304,y:280,w:240,h:180},{x:964,y:250,w:180,h:60}]:[{x:1584,y:512,w:656,h:540},{x:710,y:130,w:780,h:500}]);
+  assert.deepEqual(apartmentDecorBounds(scene),scene===latest?[{x:280,y:106,w:276,h:378},{x:964,y:250,w:180,h:60}]:bounds);
+  assert.deepEqual(apartmentWallDecorBounds(scene),scene===latest?[{x:424,y:4,w:120,h:98}]:[{x:380,y:4,w:650,h:98},{x:1280,y:4,w:280,h:98},{x:1760,y:4,w:140,h:98}]);
   for(const b of bounds)assert(!scene.solids.some(s=>overlaps(b,s)),'New fixed furniture overlaps a saved floor region');
   const halfWidth=scene.wideRoomLayout?scene.portalExit.triggerHalfWidth:70;
   if(scene.wideRoomLayout)assert.equal(halfWidth,18,'The complete current doorway width stays clear along the entry route');

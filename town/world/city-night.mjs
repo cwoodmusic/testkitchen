@@ -1,5 +1,5 @@
-import {height,surfaceAt} from './model.mjs?v=town-flight-1';
-import {mountPose} from './cliff-mount.mjs?v=town-flight-1';
+import {height,surfaceAt} from './model.mjs?v=town-compact-island-1';
+import {mountPose} from './cliff-mount.mjs?v=town-compact-island-1';
 import {furnitureFacingPlacement} from './furniture-facing.mjs?v=opera-parallax-1';
 
 const buffers=new WeakMap(),nativeEmitters=new WeakMap(),radialBrushes=new Map(),TAU=Math.PI*2;

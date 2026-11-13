@@ -1,4 +1,4 @@
-import {createIslandNavigation} from './island-sailing.mjs?v=town-flight-1';
+import {createIslandNavigation} from './island-sailing.mjs?v=town-compact-island-1';
 import {loadCaveFishing} from './cave-fishing-loader.mjs?v=town-flight-1';
 import {createFishingJournalBridge} from './fishing-journal-bridge.mjs?v=town-flight-1';
 import {gameButton} from './town-game-audio.mjs?v=town-store-halls-1';

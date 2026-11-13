@@ -1,8 +1,10 @@
 import test from 'node:test';
 import assert from 'node:assert/strict';
 import {readFileSync} from 'node:fs';
+import {createHash} from 'node:crypto';
 import {applyWideRoomLayout} from './wide-room-layout.mjs';
 import {applyWideRoomLayout as applyPreviousWideRoomLayout} from './wide-room-layout-v1.mjs';
+import {applyWideRoomLayout as applyPreviousShapeLayout} from './wide-room-layout-v2.mjs';
 import {getInteriorBase,configureUrbanInteriors,residents} from './urban-interiors.mjs';
 import {SHOWROOMS} from './showroom-layout.mjs';
 import {APARTMENT_COLLECTION_ASSETS} from './apartment-collection-definitions.mjs';
@@ -11,7 +13,7 @@ import {createApartmentCollectionRuntime} from './apartment-collection-runtime.m
 import {furnitureFacingBoxes,furnitureFacingBounds,furnitureFacingDepth} from './furniture-facing.mjs';
 import {createRoomLayoutModel} from './room-layout-model.mjs';
 import {getShowroomNavigation} from './showroom-navigation.mjs';
-import {apartmentDecorBounds,apartmentWallDecorBounds} from './personal-room-areas.mjs';
+import {apartmentDecorBounds,apartmentDecorFootBounds,apartmentWallDecorBounds} from './personal-room-areas.mjs';
 import {getInteriorVisualBounds} from './wide-room-shell.mjs';
 
 const catalog=new Map([...APARTMENT_COLLECTION_ASSETS,...FAMILY_FURNITURE_ASSETS].map(asset=>[asset.id,asset]));
@@ -30,7 +32,7 @@ function footprint(item){
 }
 const cases=descriptors.map(descriptor=>{
  const current=getInteriorBase(descriptor),source=current.roomLayoutLegacySources?.[0]||current,before=fingerprint(source),sourceItems=[...source.items],sourceBases=source.items.map(item=>item.collisionBoxes);
- try{return {descriptor,source,before,sourceItems,sourceBases,previous:applyPreviousWideRoomLayout(source,catalog,{reference}),scene:applyWideRoomLayout(source,catalog,{reference})};}
+ try{return {descriptor,source,before,sourceItems,sourceBases,previous:applyPreviousWideRoomLayout(source,catalog,{reference}),previousShape:applyPreviousShapeLayout(source,catalog,{reference}),scene:applyWideRoomLayout(source,catalog,{reference})};}
  catch(error){return {descriptor,source,before,sourceItems,sourceBases,error};}
 });
 const changed=()=>cases.filter(entry=>entry.scene?.wideRoomLayout);
@@ -50,38 +52,41 @@ function flood(scene){
  };
 }
 
-test('all showrooms share the Victorian shape and tower homes have exactly twice its exterior dimensions',()=>{
+test('all thirty-one rooms share the exact Victorian physical size, partitions and mirrored entrances',()=>{
  const errors=cases.filter(entry=>entry.error).map(entry=>`${entry.source.id}: ${entry.error.stack||entry.error.message}`);assert.deepEqual(errors,[]);
  assert.equal(cases.length,31);assert.equal(changed().length,30);
- let unchanged=0,converted=0,version1=0,version2=0,homes=0;
+ let unchanged=0,version1=0,version3=0,homes=0;
+ const geometry=scene=>{const mirror=scene.wideRoomLayout?.mirrored,box=r=>({x:mirror?scene.width-r.x-r.w:r.x,y:r.y,w:r.w,h:r.h}),sort=list=>list.sort((a,b)=>a.y-b.y||a.x-b.x||a.w-b.w||a.h-b.h);return {walls:sort(scene.walls.map(box)),rooms:['bedroom','bathroom'].map(key=>box(scene.rooms.find(r=>r.functionalRole===key))),doors:scene.privacyDoors.map(d=>({x:mirror?scene.width-d.x-d.length:d.x,y:d.y,length:d.length,axis:d.axis})).sort((a,b)=>a.x-b.x)};},expectedGeometry=geometry(reference);
  for(const entry of cases){
   const {source,scene,before,sourceItems,sourceBases}=entry;assert.equal(fingerprint(source),before,`${source.id}: source geometry/poses/colliders changed`);assert.deepEqual(source.items,sourceItems);source.items.forEach((item,index)=>assert.equal(item.collisionBoxes,sourceBases[index]));
   for(const zone of scene.zones){assert([zone.x,zone.y,zone.w,zone.h].every(Number.isFinite));assert(zone.w>0&&zone.h>0);assert(contains({x:0,y:0,w:scene.width,h:scene.height},zone),`${scene.id}: ${zone.id} interaction zone escapes the physical room`);}
+  assert.equal(scene.width,1184);assert.equal(scene.height,512);assert.deepEqual(getInteriorVisualBounds(scene),{x:0,y:0,w:1184,h:620});assert.deepEqual(geometry(scene),expectedGeometry,`${scene.id}: structural layout differs from the reference`);
   if(source.id==='showroom-victorian-parlor'){unchanged++;assert.equal(scene,source);assert.equal(scene.wideRoomLayout,undefined);continue;}
   assert.notEqual(scene,source);assert.equal(scene.id,source.id);
-  const sameRecipe=source.kind==='showroom'&&source.showroom.storeFloor===1;assert.equal(scene.wideRoomLayout.version,sameRecipe?1:2,scene.id);
+  const sameRecipe=source.kind==='showroom'&&source.showroom.storeFloor===1;assert.equal(scene.wideRoomLayout.version,sameRecipe?1:3,scene.id);
   if(sameRecipe)version1++;else{
-   version2++;assert.equal(scene.wideRoomExpansion.previousWidth,source.width);assert.equal(scene.wideRoomExpansion.previousHeight,source.height);assert.equal(scene.wideRoomExpansion.depth,scene.height-source.height);assert.equal(scene.wideRoomExpansion.previousFloorBottom,source.height-28);assert.equal(scene.wideRoomExpansion.newFloorBottom,scene.height-28);
+   version3++;assert.equal(scene.roomLayoutRecipe,'compact-v3');assert.equal(scene.wideRoomExpansion.previousWidth,source.width);assert.equal(scene.wideRoomExpansion.previousHeight,source.height);assert.equal(scene.wideRoomExpansion.depth,scene.height-source.height);assert.equal(scene.wideRoomExpansion.previousFloorBottom,source.height-28);assert.equal(scene.wideRoomExpansion.newFloorBottom,scene.height-28);
   }
   if(scene.kind==='apartment'){
-   homes++;assert.equal(scene.width,2368);assert.equal(scene.height,1132);assert.deepEqual(scene.spawn,{x:1184,y:987});assert.deepEqual(scene.portalExit.threshold,{x:1184,y:1104});if(scene.homePlan)assert.deepEqual(scene.homePlan.home,{x:1184,y:750});
-   const bounds=getInteriorVisualBounds(scene),referenceBounds=getInteriorVisualBounds(reference);assert.equal(bounds.w,referenceBounds.w*2);assert.equal(bounds.h,referenceBounds.h*2);
-   if(source.width===1088){converted++;assert.equal(source.height,1120);assert.equal(scene.wideRoomExpansion.depth,12);}
-  }else{assert.equal(scene.width,1184);assert.equal(scene.height,512);assert.deepEqual(getInteriorVisualBounds(scene),getInteriorVisualBounds(reference));if(scene.wideRoomLayout.version===2){const exit=scene.zones.find(zone=>zone.action==='showroom-lobby');assert(exit);assert.equal(exit.w,36);assert.equal(exit.h,48);assert.equal(exit.y,scene.spawn.y-24);}}
+   homes++;if(scene.homePlan)assert.deepEqual(scene.homePlan.home,{x:scene.wideRoomLayout.mirrored?428:756,y:420});assert(!scene.rooms.some(r=>r.functionalRole==='personal-studio'),'The compact default cannot retain an oversized studio');
+  }
+  const entryX=scene.wideRoomLayout.mirrored?92:1092;assert.deepEqual(scene.spawn,{x:entryX,y:428});assert.deepEqual(scene.portalExit.threshold,{x:entryX,y:484});const exit=scene.zones.find(zone=>zone.action==='showroom-lobby'||zone.action==='exit');assert(exit);if(scene.wideRoomLayout.version===3)assert.equal(exit.w,36);assert.equal(exit.h,48);assert.equal(exit.y,scene.spawn.y-24);assert.equal(scene.portalExit.triggerHalfWidth,18);
   const legacy=Object.getOwnPropertyDescriptor(scene,'roomLayoutLegacySources');assert(legacy);assert.equal(legacy.enumerable,false);assert.equal(legacy.value[0],source);assert(!Object.keys(scene).includes('roomLayoutLegacySources'));
  }
- assert.equal(unchanged,1);assert.equal(converted,10);assert.equal(homes,19);assert.equal(version1,7);assert.equal(version2,23);
+ assert.equal(unchanged,1);assert.equal(homes,19);assert.equal(version1,7);assert.equal(version3,23);
 });
 
-test('seven lower showroom recipes remain exact and every version-one saved room can reopen its full previous shape',()=>{
+test('frozen previous recipes stay exact and all three saved-layout generations reopen their complete original scenes',()=>{
+ assert.equal(createHash('sha256').update(readFileSync(new URL('./wide-room-layout-v2.mjs',import.meta.url))).digest('hex'),'39b07398cdc190a7d95ff325104762be56681f657d1743cfaa18430df301ffcc','The published 4c6c895 recipe must remain byte-identical');
  const metadata=items=>items.map(item=>({...item,collisionBoxes:(item.collisionBoxes||[]).map(box=>({...box}))}));
  let preserved=0,reopened=0;
- for(const {source,scene,previous}of changed()){
+ for(const {source,scene,previous,previousShape}of changed()){
   if(scene.wideRoomLayout.version===1){preserved++;assert.equal(fingerprint(scene),fingerprint(previous),`${scene.id}: the accepted lower showroom recipe changed`);continue;}
-  const alternatives=scene.roomLayoutLegacySources;assert.equal(alternatives.length,2);assert.equal(alternatives[0],source);assert.equal(fingerprint(alternatives[1]),fingerprint(previous),`${scene.id}: the complete previous wide recipe was not retained`);
-  const id=themeId(scene),prior=createRoomLayoutModel({themeId:id,scene:previous,catalog}),record=prior.record(),loaded=createRoomLayoutModel({themeId:id,scene,catalog,record});assert.deepEqual(loaded.record(),record);assert.equal(loaded.scene.width,previous.width);assert.equal(loaded.scene.height,previous.height);assert.deepEqual(loaded.scene.walls,previous.walls);assert.deepEqual(loaded.scene.privacyDoors,previous.privacyDoors);assert.deepEqual(loaded.scene.rooms,prior.scene.rooms);assert.deepEqual(loaded.scene.portalExit,prior.scene.portalExit);assert.deepEqual(loaded.scene.spawn,prior.scene.spawn);assert.deepEqual(metadata(loaded.scene.items),metadata(prior.scene.items));assert.deepEqual(loaded.scene.solids,prior.scene.solids);reopened++;
+  const alternatives=scene.roomLayoutLegacySources;assert.equal(alternatives.length,3);assert.equal(alternatives[0],source);assert.equal(fingerprint(alternatives[1]),fingerprint(previous));assert.equal(fingerprint(alternatives[2]),fingerprint(previousShape));
+  const id=themeId(scene),fresh=createRoomLayoutModel({themeId:id,scene,catalog}).record();
+  for(const bank of [source,previous,previousShape]){const prior=createRoomLayoutModel({themeId:id,scene:bank,catalog}),record=prior.record(),expected=createRoomLayoutModel({themeId:id,scene:bank,catalog,record}),loaded=createRoomLayoutModel({themeId:id,scene,catalog,record});assert.notEqual(fresh.baseSignature,record.baseSignature,`${scene.id}: the new recipe must select separately from a historical source`);assert.deepEqual(loaded.record(),record);assert.equal(loaded.scene.width,bank.width);assert.equal(loaded.scene.height,bank.height);assert.deepEqual(loaded.scene.walls,bank.walls);assert.deepEqual(loaded.scene.privacyDoors,bank.privacyDoors);assert.deepEqual(loaded.scene.rooms,expected.scene.rooms);assert.deepEqual(loaded.scene.portalExit,expected.scene.portalExit);assert.deepEqual(loaded.scene.spawn,expected.scene.spawn);assert.deepEqual(metadata(loaded.scene.items),metadata(expected.scene.items));assert.deepEqual(loaded.scene.solids,expected.scene.solids);reopened++;}
  }
- assert.equal(preserved,7);assert.equal(reopened,23);
+ assert.equal(preserved,7);assert.equal(reopened,69);
 });
 
 test('native art, furniture dimensions, IDs and complete canonical stock survive each themed arrangement',()=>{
@@ -166,15 +171,15 @@ test('a six-radius walker reaches every room, privacy doorway, fixture and visit
   for(const [name,point]of targets)assert(reaches(point),`${scene.id}: cannot reach ${name} at ${point.x},${point.y}`);
   for(const core of ['bed','sink','stove','fridge','counter','vanity','bath-fixture','toilet','pantry']){if(!source.items.some(item=>slot(item)===core))continue;const item=scene.items.find(item=>slot(item)===core);assert(item,`${scene.id}: original ${core} disappeared`);assert(item.approach||(scene.homePlan?.fixtureApproaches||[]).some(point=>point.asset===item.asset),`${scene.id}: ${core} lost its usable fixture approach`);}
   if(scene.kind==='apartment'&&scene.resident!=='player'){
-   assert.deepEqual(scene.actors.map(actor=>({id:actor.id,x:actor.x,y:actor.y})),[{id:scene.resident,x:1184,y:750}]);
-   for(let y=750;y<=scene.spawn.y;y+=3)assert(clear(scene,{x:1184,y}),`${scene.id}: resident's centered home journey crosses furniture at y=${y}`);
+   const home={x:scene.wideRoomLayout.mirrored?428:756,y:420};assert.deepEqual(scene.actors.map(actor=>({id:actor.id,x:actor.x,y:actor.y})),[{id:scene.resident,...home}]);
+   for(const [a,b]of [[home,{x:scene.spawn.x,y:home.y}],[{x:scene.spawn.x,y:home.y},scene.spawn]]){const count=Math.ceil(Math.hypot(b.x-a.x,b.y-a.y)/3);for(let n=0;n<=count;n++)assert(clear(scene,{x:a.x+(b.x-a.x)*n/count,y:a.y+(b.y-a.y)*n/count}),`${scene.id}: the compact resident route crosses furniture`);}
   }
  }
 });
 
-test('the mirrored player template leaves every fixed purchased floor and wall region untouched',()=>{
- const {scene}=changed().find(entry=>entry.scene.resident==='player');assert(scene);
- const floors=[{x:1584,y:512,w:656,h:540},{x:710,y:130,w:780,h:500}],walls=[{x:380,y:4,w:650,h:98},{x:1280,y:4,w:280,h:98},{x:1760,y:4,w:140,h:98}];assert.deepEqual(apartmentDecorBounds(scene),floors);assert.deepEqual(apartmentWallDecorBounds(scene),walls);
+test('the compact player declares usable purchase areas while historical sources retain their original areas',()=>{
+ const {source,scene}=changed().find(entry=>entry.scene.resident==='player');assert(scene);
+ const floors=[{x:304,y:280,w:240,h:180},{x:964,y:250,w:180,h:60}],visuals=[{x:280,y:106,w:276,h:378},{x:964,y:250,w:180,h:60}],walls=[{x:424,y:4,w:120,h:98}];assert.deepEqual(scene.personalRoomAreas,{floor:floors,floorVisual:visuals,wall:walls});assert.deepEqual(apartmentDecorBounds(scene),visuals);assert.deepEqual(apartmentDecorFootBounds(scene),floors);assert.deepEqual(apartmentWallDecorBounds(scene),walls);for(const area of floors)assert(visuals.some(visual=>contains(visual,area)),'Every clear foot region must lie inside its artwork allowance');assert.deepEqual(apartmentDecorBounds(source),[{x:1584,y:512,w:656,h:540},{x:710,y:130,w:780,h:500}]);assert.equal(source.personalRoomAreas,undefined);assert.equal(apartmentDecorFootBounds(source),null);
  const bases=new Set(scene.items.flatMap(item=>item.collisionBoxes||[])),structural=scene.solids.filter(box=>!bases.has(box));
  for(const box of structural)assert(!floors.some(region=>overlaps(region,box)),'The new shell crosses an owned floor reservation');
  for(const item of scene.items){for(const box of item.collisionBoxes||[])assert(!floors.some(region=>overlaps(region,box)),`${item.id}: occupies purchased floor`);if(item.wallMounted){const bounds=furnitureFacingBounds(catalog.get(item.asset),item);assert(!walls.some(region=>overlaps(region,bounds)),`${item.id}: covers purchased wall art`);}}

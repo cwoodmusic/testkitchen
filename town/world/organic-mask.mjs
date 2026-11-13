@@ -46,6 +46,16 @@ export function maskEdges(q,z=0){
  }
  return edges;
 }
+// Every south-facing run matters: natural edges can contain several small
+// inlets in one column. Drawing only the lowest run leaves unbacked lawn
+// rectangles visible through the higher cliff. Tile-edge faces stay with the
+// ordinary terrain boundary renderer.
+export function maskFronts(q,x){
+ const b=maskBounds(q);if(x<b.x0||x>=b.x1)return [];
+ const col=Math.max(0,Math.min(MASK_GRID-1,Math.floor((x-b.x0)/MASK_STEP))),data=readMask(q.mask),fronts=[];
+ for(let y=0;y<MASK_GRID-1;y++)if(data[y*MASK_GRID+col]&&!data[(y+1)*MASK_GRID+col])fronts.push(b.y0+(y+1)*MASK_STEP);
+ return fronts;
+}
 export function maskFront(q,x){
  const b=maskBounds(q);if(x<b.x0||x>=b.x1)return null;
  const col=Math.max(0,Math.min(MASK_GRID-1,Math.floor((x-b.x0)/MASK_STEP))),data=readMask(q.mask);

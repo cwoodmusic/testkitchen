@@ -2,6 +2,7 @@ import {test,after} from 'node:test';
 import assert from 'node:assert/strict';
 import {readFileSync,writeFileSync} from 'node:fs';
 import {getInterior,configureUrbanInteriors,residents,apartmentDecorBounds,apartmentWallDecorBounds} from './urban-interiors.mjs';
+import {apartmentDecorFootBounds} from './personal-room-areas.mjs';
 import {SHOWROOMS} from './showroom-layout.mjs';
 import {APARTMENT_COLLECTION_ASSETS} from './apartment-collection-definitions.mjs';
 import {FAMILY_FURNITURE_ASSETS} from './family-furniture-definitions.mjs';
@@ -127,14 +128,16 @@ for(const m of models){
 }
 check('fixed resident departures and showroom shopping routes remain physically clear',routes);
 
-const player=models.find(m=>m.resident==='player'),savedFloor=apartmentDecorBounds(player),savedWall=apartmentWallDecorBounds(player),saved=[];
-assert.deepEqual(savedFloor,[{x:1584,y:512,w:656,h:540},{x:710,y:130,w:780,h:500}]);
-assert.deepEqual(savedWall,[{x:380,y:4,w:650,h:98},{x:1280,y:4,w:280,h:98},{x:1760,y:4,w:140,h:98}]);
+const latestPlayer=models.find(m=>m.resident==='player'),saved=[];
+for(const player of [latestPlayer,...latestPlayer.roomLayoutLegacySources]){
+const savedFloor=apartmentDecorFootBounds(player)??apartmentDecorBounds(player),savedWall=apartmentWallDecorBounds(player);
+assert.deepEqual(savedFloor,player===latestPlayer?[{x:304,y:280,w:240,h:180},{x:964,y:250,w:180,h:60}]:[{x:1584,y:512,w:656,h:540},{x:710,y:130,w:780,h:500}]);
+assert.deepEqual(savedWall,player===latestPlayer?[{x:424,y:4,w:120,h:98}]:[{x:380,y:4,w:650,h:98},{x:1280,y:4,w:280,h:98},{x:1760,y:4,w:140,h:98}]);
 for(const item of player.items){
  const a=catalog.get(item.asset);
  if(item.wallMounted){const image=furnitureFacingBounds(a,item);for(const region of savedWall)if(overlap(image,region))saved.push({role:slot(item),error:'Built-in covers saved wall area',image:round(image),region});}
  else for(const base of furnitureFacingBoxes(a,item))for(const region of savedFloor)if(overlap(base,region))saved.push({role:slot(item),error:'Built-in occupies saved floor area',base:round(base),region});
-}
-check('the player keeps all original saved furnishing regions free of new built-ins',saved);
+}}
+check('the current and preserved player furnishing regions stay free of built-ins',saved);
 
 after(()=>{if(process.env.CODA_LAYOUT_REPORT)writeFileSync(process.env.CODA_LAYOUT_REPORT,JSON.stringify({models:models.length,radius:RADIUS,failures:findings},null,2)+'\n');});

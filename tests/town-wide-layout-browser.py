@@ -14,6 +14,7 @@ from playwright.sync_api import sync_playwright
 
 ROOT = Path(__file__).resolve().parents[1]
 MAP = ROOT/'town/maps/coda-town-plaza-boardwalk.json'
+MAP_OBJECT_COUNT = len(json.loads(MAP.read_text())['objects'])
 KEY = 'codaRoomLayoutsV1:builder'
 VICTORIAN = 'showroom-victorian-parlor'
 parser = argparse.ArgumentParser()
@@ -26,6 +27,7 @@ OUT = args.screenshots
 OUT.mkdir(parents=True, exist_ok=True)
 manifest = json.loads((ROOT/'tests/fixtures/room-layout-ac1ee72.json').read_text())
 shape_manifest = json.loads((ROOT/'tests/fixtures/room-layout-98c6c7a.json').read_text())
+compact_manifest = json.loads((ROOT/'tests/fixtures/room-layout-4c6c895.json').read_text())
 map_hash = hashlib.sha256(MAP.read_bytes()).hexdigest()
 errors, failed, steps = [], [], []
 
@@ -66,15 +68,15 @@ def boot(context):
     page.goto(url)
     page.wait_for_function('!!window.townBuilder?.roomEditor')
     page.locator('#file').set_input_files(str(MAP))
-    page.wait_for_function('townBuilder.project.objects.length===137')
+    page.wait_for_function('count=>townBuilder.project.objects.length===count',arg=MAP_OBJECT_COUNT)
     return page
 
 INSTALL = r'''async()=>{
  let app=new URL(document.querySelector('script[type=module]').src),text=await(await fetch(app)).text();
  if(!/from\s+['"][^'"]*urban\.mjs/.test(text)){app=new URL(text.match(/import\(['"]([^'"]*play\.mjs[^'"]*)['"]/)[1],app);text=await(await fetch(app)).text();}
  const urbanURL=new URL(text.match(/from\s+['"]([^'"]*urban\.mjs[^'"]*)['"]/)[1],app),urbanText=await(await fetch(urbanURL)).text(),iURL=new URL(urbanText.match(/from\s+['"]([^'"]*urban-interiors\.mjs[^'"]*)['"]/)[1],urbanURL),iText=await(await fetch(iURL)).text(),dep=name=>new URL(iText.match(new RegExp("from\\s+['\"]([^'\"]*"+name+"\\.mjs[^'\"]*)['\"]"))[1],iURL),runtimeURL=dep('room-layout-runtime'),runtimeText=await(await fetch(runtimeURL)).text(),modelURL=new URL(runtimeText.match(/from\s+['"]([^'"]*room-layout-model\.mjs[^'"]*)['"]/)[1],runtimeURL),editorURL=new URL('../builder/room-editor.mjs'+app.search,iURL);
- const I=await import(iURL),M=await import(modelURL),F=await import(dep('furniture-facing')),N=await import(new URL('./showroom-navigation.mjs'+iURL.search,iURL)),W=await import(dep('wide-room-shell'));
- window.__game=window.townBuilder||window.townGame;window.__audit={I,M,F,N,W,catalog:__game.catalog,themes:(await import(editorURL)).roomEditorThemes(),moduleURL:iURL.href};
+ const I=await import(iURL),M=await import(modelURL),F=await import(dep('furniture-facing')),N=await import(new URL('./showroom-navigation.mjs'+iURL.search,iURL)),W=await import(dep('wide-room-shell')),J=await import(new URL('./resident-journey.mjs'+iURL.search,iURL)),P=await import(dep('private-furniture')),RS=await import(new URL(urbanText.match(/from\s+['"]([^'"]*urban-room\.mjs[^'"]*)['"]/)[1],urbanURL));
+ window.__game=window.townBuilder||window.townGame;window.__audit={I,M,F,N,W,J,P,RS,catalog:__game.catalog,themes:(await import(editorURL)).roomEditorThemes(),moduleURL:iURL.href};
  window.__warm=async scene=>{const{preparePlacedFacingArt}=await import(dep('furniture-art-access')),{warmHomeMaterials}=await import(dep('home-materials')),{warmInteriorPortalArt}=await import(dep('interior-portal-art')),{warmInteriorWindows}=await import(dep('interior-window-art'));await Promise.all([preparePlacedFacingArt({objects:scene.items},__audit.catalog),warmHomeMaterials(scene.homeMaterialSuite),warmInteriorPortalArt(),warmInteriorWindows(scene,__audit.catalog),document.fonts.ready]);for(const item of scene.items)if(item.roomRugId)await __audit.catalog.get(item.asset).ensureFull();};
  window.__point=p=>{const e=townBuilder.roomEditor,r=document.getElementById('map').getBoundingClientRect(),v=e.view;return{x:r.left+r.width/2+(p.x-v.x)*v.zoom,y:r.top+r.height/2+(p.y-v.y)*v.zoom}};
  window.__sceneSnapshot=scene=>{const result=JSON.parse(JSON.stringify(scene));result.items=scene.items.map(item=>({...item,collisionBoxes:(item.collisionBoxes||[]).map(box=>({...box}))}));return result;};
@@ -109,7 +111,7 @@ SURVEY = r'''()=>{
     if(item.solid)solidCount++;
    }
    assert(solidCount>10,theme.id+': no solid furniture');
-   for(const zone of scene.zones.filter(z=>['showroom-lobby','exit'].includes(z.action)))assert(zone.x>=0&&zone.y>=0&&zone.x+zone.w<=scene.width&&zone.y+zone.h<=scene.height,theme.id+': return trigger extends outside its resized floor');
+   for(const zone of scene.zones)assert(zone.x>=0&&zone.y>=0&&zone.x+zone.w<=scene.width&&zone.y+zone.h<=scene.height,theme.id+': '+zone.action+' trigger extends outside its compact floor');
    for(const seat of scene.items.filter(i=>i.seatingTarget)){
     const target=scene.items.find(i=>i.id===seat.seatingTarget);assert(target,seat.id+': missing seating target');
     const center=item=>{const boxes=F.furnitureFacingBoxes(catalog.get(item.asset),item),left=Math.min(...boxes.map(b=>b.x)),top=Math.min(...boxes.map(b=>b.y)),right=Math.max(...boxes.map(b=>b.x+b.w)),bottom=Math.max(...boxes.map(b=>b.y+b.h));return{x:(left+right)/2,y:(top+bottom)/2,w:right-left,h:bottom-top};},s=center(seat),t=center(target),r=(seat.rotation||0)*Math.PI/180,front={x:-Math.sin(r),y:Math.cos(r)},dx=t.x-s.x,dy=t.y-s.y;
@@ -123,15 +125,28 @@ SURVEY = r'''()=>{
    for(const r of scene.rooms)if(r.point)targets.push([r.functionalRole,r.point]);for(const p of scene.homePlan?.fixtureApproaches||[])targets.push([p.role,p]);for(const i of scene.items)if(i.approach)targets.push([i.id,i.approach]);
    for(const[name,point]of targets)assert(reaches(point),theme.id+': unreachable '+name+' '+JSON.stringify(point));
    const family=scene.familyFurniture;assert(family&&family.diningSeats.every(id=>scene.items.some(i=>i.id===id))&&family.livingSeats.every(id=>scene.items.some(i=>i.id===id)),theme.id+': dangling family seats');
+   for(const core of['bed','sink','stove','fridge','counter','vanity','bath-fixture','toilet','pantry','instrument'])if(source.items.some(i=>slot(i)===core))assert(scene.items.some(i=>slot(i)===core),theme.id+': its native '+core+' is hidden');
    info.checkedTargets=targets.length;info.solidFurniture=solidCount;info.supportedFurniture=supportedCount;
    if(theme.id==='player'){
-    const floors=[{x:1584,y:512,w:656,h:540},{x:710,y:130,w:780,h:500}],walls=[{x:380,y:4,w:650,h:98},{x:1280,y:4,w:280,h:98},{x:1760,y:4,w:140,h:98}];for(const i of scene.items){for(const box of i.collisionBoxes||[])assert(!floors.some(r=>overlap(r,box)),i.id+': covers owned floor');if(i.wallMounted)assert(!walls.some(r=>overlap(r,F.furnitureFacingBounds(catalog.get(i.asset),i))),i.id+': covers owned wall');}
+    const floors=I.apartmentDecorFootBounds(scene),visual=I.apartmentDecorBounds(scene),walls=I.apartmentWallDecorBounds(scene);assert(floors?.length&&visual?.length&&walls?.length,'Player purchase regions missing');for(const r of [...floors,...visual,...walls])assert(r.x>=0&&r.y>=0&&r.x+r.w<=scene.width&&r.y+r.h<=scene.height,'Player purchase area is outside the compact room');for(const i of scene.items){for(const box of i.collisionBoxes||[])assert(!floors.some(r=>overlap(r,box)),i.id+': covers owned floor feet');if(i.wallMounted)assert(!walls.some(r=>overlap(r,F.furnitureFacingBounds(catalog.get(i.asset),i))),i.id+': covers owned wall');}
     const arcade=scene.items.find(i=>!i.roomExpansion&&slot(i)==='arcade'),parent=scene.items.find(i=>i.id===arcade?.supportedBy);assert(arcade&&parent&&slot(parent)==='record-console'&&!arcade.solid&&arcade.w===originals.get(arcade.id).w&&arcade.h===originals.get(arcade.id).h,'Player mini arcade lost native console support');info.miniArcade={id:arcade.id,supportedBy:parent.id,w:arcade.w,h:arcade.h};
    }
   }
+  const mirror=!!base.wideRoomLayout?.mirrored,canonical=r=>({x:mirror?base.width-r.x-r.w:r.x,y:r.y,w:r.w,h:r.h}),roomRect=role=>canonical(base.rooms.find(r=>r.functionalRole===role)),sortRects=list=>list.map(canonical).sort((a,b)=>a.x-b.x||a.y-b.y||a.w-b.w||a.h-b.h),reference=I.getInteriorBase({kind:'showroom',showroomId:'victorian-parlor',floor:1});
+  assert(same(roomRect('bedroom'),{x:28,y:106,w:328,h:220})&&same(roomRect('bathroom'),{x:388,y:106,w:200,h:220}),theme.id+': different actual private-room footprint');
+  assert(same(sortRects(base.walls),reference.walls.map(r=>({x:r.x,y:r.y,w:r.w,h:r.h})).sort((a,b)=>a.x-b.x||a.y-b.y||a.w-b.w||a.h-b.h)),theme.id+': different physical partition walls');
+  const doorRects=base.privacyDoors.map(d=>canonical({x:d.x,y:d.y,w:d.length,h:0})).sort((a,b)=>a.x-b.x);assert(same(doorRects,[{x:258,y:334,w:36,h:0},{x:454,y:334,w:36,h:0}]),theme.id+': different private doorway geometry');
   rows.push(info);
  }
  return rows;
+}'''
+
+NPC_JOURNEYS=r'''()=>{
+ const{I,J,themes}=__audit,proof=[];for(const theme of themes.filter(t=>t.scene.kind==='apartment'&&t.id!=='player')){
+  const model=I.getInterior(theme.scene),home=J.residentHomePose(theme.id),actor=model.actors.find(a=>a.id===theme.id),clear=p=>p.x>=40&&p.y>=100&&p.x<=model.width-40&&p.y<=model.height-40&&!model.solids.some(r=>p.x>=r.x-6&&p.x<=r.x+r.w+6&&p.y>=r.y-6&&p.y<=r.y+r.h+6);if(!actor||home.x!==actor.x||home.y!==actor.y)throw Error(theme.id+': NPC home did not use current room model');let samples=0;
+  for(const direction of['out','home']){const duration=J.journeyDuration(theme.id,direction);for(let time=0;time<=duration;time+=.2){const p=J.interiorJourneyPose(theme.id,direction,time);if(p.scene?.kind==='apartment'){if(!clear(p))throw Error(theme.id+': '+direction+' NPC crosses furniture/wall '+JSON.stringify(p));samples++;}}const done=J.interiorJourneyPose(theme.id,direction,duration+.01);if(!done.done||(direction==='home'&&(done.x!==actor.x||done.y!==actor.y)))throw Error(theme.id+': NPC did not finish '+direction);}
+  proof.push({id:theme.id,home:{x:home.x,y:home.y},clearPrivateJourneySamples:samples});
+ }return proof;
 }'''
 
 PHOTO = r'''async request=>{
@@ -149,7 +164,7 @@ import math
 from pathlib import Path
 
 LAYOUT_KEY = 'codaRoomLayoutsV1:builder'
-SCENE_FIELDS = ('id','title','width','height','color','trim','spawn','solids','items','zones','rooms','walls','rugs','windows','signs','lights','actors','kind','floor','showroomId','storeFloor','showroom','apartmentLayout','collectionOwner','interiorDesign','portalExit','privacyDoors','homeMaterialSuite','familyFurnitureZones','familyFurniture','resident','residentInfo','homePlan')
+SCENE_FIELDS = ('id','title','width','height','color','trim','spawn','solids','items','zones','rooms','walls','rugs','windows','signs','lights','actors','kind','floor','showroomId','storeFloor','showroom','apartmentLayout','collectionOwner','interiorDesign','portalExit','privacyDoors','homeMaterialSuite','familyFurnitureZones','familyFurniture','resident','residentInfo','homePlan','personalRoomAreas')
 # These arrays describe sets of geometry/IDs. Route vertices, colors, paint layers,
 # rooms, and nested source plans retain their meaningful order.
 UNORDERED_KEYS = {'solids','walls','collisionBoxes','privacyDoors','doors','windows','lights','actors','diningSeats','livingSeats','removed','placements','added','rugs'}
@@ -326,10 +341,98 @@ def editor(page,theme):
 
 
 ACTIVE = r'''()=>{
- const u=__game.urban,m=__audit.I.getInterior(u.scene),states=u.automaticDoors.states,privacy=m.privacyDoors||[],returnPortal=u.portals.find(p=>['showroom-lobby','exit'].includes(p.action));
- return{signature:__audit.M.createRoomLayoutModel({themeId:m.id,scene:__audit.I.getInteriorBase(u.scene),catalog:__audit.catalog,record:JSON.parse(localStorage.getItem('codaRoomLayoutsV1:builder')).rooms[m.id]}).record().baseSignature,
+ const u=__game.urban,m=__audit.I.getInterior(u.scene),themeId=u.scene.kind==='apartment'?u.scene.resident:'showroom-'+u.scene.showroomId,states=u.automaticDoors.states,privacy=m.privacyDoors||[],returnPortal=u.portals.find(p=>['showroom-lobby','exit'].includes(p.action));
+ return{signature:__audit.M.createRoomLayoutModel({themeId,scene:__audit.I.getInteriorBase(u.scene),catalog:__audit.catalog,record:JSON.parse(localStorage.getItem('codaRoomLayoutsV1:builder')).rooms[themeId]}).record().baseSignature,
  scene:__sceneSnapshot(m),player:{...u.player},privacy:privacy.map(d=>({id:d.id,x:d.x,y:d.y,axis:d.axis,length:d.length})),states:states.filter(s=>privacy.some(d=>d.id===s.id)).map(s=>({id:s.id,x:s.door.x,y:s.door.y,axis:s.door.axis,length:s.door.length})),allOriginalReferences:privacy.every(d=>states.some(s=>s.door===d)),free:!m.solids.some(r=>u.player.x>=r.x-6&&u.player.x<=r.x+r.w+6&&u.player.y>=r.y-6&&u.player.y<=r.y+r.h+6),returnApproach:returnPortal.approach,returnThreshold:returnPortal.threshold,modelThreshold:m.portalExit.threshold};
 }'''
+
+DECOR_SPOT=r'''productId=>{
+ const{I,P,RS,catalog}=__audit,u=townBuilder.urban,scene=I.getInterior(u.scene),furniture=CodaFurnitureCatalog,product=furniture.find(p=>p.id===productId),asset=catalog.get(product.asset),wallet=JSON.parse(localStorage.getItem('codaNotesWalletV1')),memory=new Map(),storage={getItem:k=>memory.get(k)||null,setItem:(k,v)=>memory.set(k,v),removeItem:k=>memory.delete(k)};
+ const raw=localStorage.getItem('codaUrbanRoomV1');if(raw)memory.set('codaUrbanRoomV1',raw);
+ const api=RS.createRoomStorage({storage,owner:'guest',catalog,furniture,owned:()=>wallet.owned,presentationScale:(item,a)=>P.furniturePresentationScale(item,scene,a),getBounds:(_item,a)=>(a.wallMounted?I.apartmentWallDecorBounds:I.apartmentDecorBounds)(scene),getFootBounds:(_item,a)=>a.wallMounted?null:I.apartmentDecorFootBounds(scene),getSolids:()=>scene.solids});if(!api.load().ok)throw Error('Existing purchased room could not reload');
+ const regions=(asset.wallMounted?I.apartmentWallDecorBounds:I.apartmentDecorBounds)(scene),scale=(product.scale||1)*P.furniturePresentationScale(product,scene,asset),relative=__audit.F.furnitureFacingBounds(asset,{x:0,y:0,scale,rotation:0});
+ for(const region of regions)for(let x=Math.ceil(region.x-relative.x);x<=region.x+region.w-relative.x-relative.w;x+=8)for(let y=asset.wallMounted?region.y+region.h-relative.y-relative.h:Math.ceil(region.y-relative.y);y<=region.y+region.h-relative.y-relative.h;y+=8){const point={x:Math.round(x),y:asset.wallMounted?y:Math.round(y)},boxes=RS.roomItemBoxes({...point,asset:product.asset,scale:product.scale||1,rotation:0},catalog,(item,a)=>P.furniturePresentationScale(item,scene,a));if(boxes.some(b=>u.player.x>=b.x-8&&u.player.x<=b.x+b.w+8&&u.player.y>=b.y-8&&u.player.y<=b.y+b.h+8))continue;const result=api.place(productId,point.x,point.y,0);if(result.ok)return{...point,expected:result.item,wall:!!asset.wallMounted};}
+ throw Error('No owned-decor placement in compact source for '+productId);
+}'''
+
+DECOR_OUTSIDE_FEET=DECOR_SPOT.replace("const api=RS.createRoomStorage", "const contains=(r,b)=>b.x>=r.x&&b.y>=r.y&&b.x+b.w<=r.x+r.w&&b.y+b.h<=r.y+r.h;const api=RS.createRoomStorage").replace("getFootBounds:(_item,a)=>a.wallMounted?null:I.apartmentDecorFootBounds(scene),",'').replace("if(result.ok)return{...point,expected:result.item,wall:!!asset.wallMounted};", "if(result.ok&&!I.apartmentDecorFootBounds(scene).some(r=>boxes.every(b=>contains(r,b))))return{...point,expected:result.item,wall:false};if(result.ok)api.clear();")
+
+
+def verify_personal_purchases(browser):
+    context=browser.new_context(viewport={'width':1600,'height':1100})
+    seed="""if(!localStorage.getItem('__compactPurchaseSeed')){localStorage.setItem('__compactPurchaseSeed','1');localStorage.setItem('codaNotesWalletV1',JSON.stringify({version:1,balance:500000,owned:['furniture-geranium'],rewards:[],earned:500020,spent:20}));localStorage.setItem('musicArcadeV1',JSON.stringify({name:'Compact Purchase QA',customized:true}));}"""
+    context.add_init_script(seed)
+    page=boot(context);page.evaluate(INSTALL)
+    world=page.evaluate('JSON.stringify(townBuilder.project)')
+    page.locator('#walk').click()
+    products=page.evaluate("['furniture-bed','furniture-hydrangea','furniture-collection-showroom-victorian-parlor-poster'].map(id=>CodaFurnitureCatalog.find(p=>p.id===id))")
+    for product in products:
+        collection='victorian-parlor' if product.get('collectionOwner') else None
+        page.evaluate('({collection,category})=>townBuilder.urban.showShop(collection,category)',{'collection':collection,'category':product['category']})
+        page.locator('.urban-catalog button').filter(has_text=product['name']).click()
+        before=page.evaluate('JSON.parse(localStorage.getItem("codaNotesWalletV1")).balance')
+        page.get_by_role('button',name=f"Buy · {product['price']} Notes",exact=True).click()
+        page.wait_for_function('id=>JSON.parse(localStorage.getItem("codaNotesWalletV1")).owned.includes(id)',arg=product['id'])
+        assert page.evaluate('JSON.parse(localStorage.getItem("codaNotesWalletV1")).balance')==before-product['price']
+        owned_card=page.locator('.urban-catalog button').filter(has_text=product['name'])
+        assert owned_card.is_disabled()
+        before_replay=page.evaluate('localStorage.getItem("codaNotesWalletV1")')
+        replay=page.evaluate('id=>CodaNotesShop.createWallet({preserveEquipped:false}).buy(id)',product['id'])
+        assert replay['ok'] and replay['alreadyOwned'] and page.evaluate('localStorage.getItem("codaNotesWalletV1")')==before_replay
+        page.get_by_role('button',name='Close',exact=True).click()
+    page.evaluate("townBuilder.urban.openRoom('player');townBuilder.urban.zoom(10000)")
+    page.wait_for_function('townBuilder.urban.view.zoom<1&&townBuilder.urban.view.x>0&&townBuilder.urban.view.y>0')
+    assert page.evaluate('__audit.I.getInterior(townBuilder.urban.scene).width')==1184
+    placements=[]
+    for product in products:
+        page.evaluate('townBuilder.urban.showInventory()')
+        page.locator('.urban-catalog button').filter(has_text=product['name']).click()
+        if product['id']=='furniture-bed':
+            invalid=page.evaluate(DECOR_OUTSIDE_FEET,product['id'])
+            before_invalid=page.evaluate('localStorage.getItem("codaUrbanRoomV1")')
+            at=page.evaluate('''p=>{const r=document.getElementById('map').getBoundingClientRect(),v=townBuilder.urban.view;return{x:r.left+r.width/2+(p.x-v.x)*v.zoom,y:r.top+r.height/2+(p.y-v.y)*v.zoom}}''',invalid)
+            page.mouse.click(at['x'],at['y'])
+            assert page.evaluate('localStorage.getItem("codaUrbanRoomV1")')==before_invalid,'Floor artwork permission admitted feet outside the clear area'
+            page.wait_for_function('document.querySelector(".urban-prompt")?.textContent.includes("base inside")',timeout=5000)
+        point=page.evaluate(DECOR_SPOT,product['id'])
+        screen=page.evaluate('''p=>{const u=townBuilder.urban,r=document.getElementById('map').getBoundingClientRect(),v=u.view;return{x:r.left+r.width/2+(p.x-v.x)*v.zoom,y:r.top+r.height/2+(p.y-v.y)*v.zoom}}''',point)
+        page.mouse.move(screen['x'],screen['y']);page.mouse.click(screen['x'],screen['y'])
+        page.wait_for_function('id=>townBuilder.urban.decor.some(i=>i.item===id)',arg=product['id'])
+        actual=page.evaluate('id=>townBuilder.urban.decor.find(i=>i.item===id)',product['id'])
+        assert actual==point['expected'],(actual,point)
+        assert page.evaluate('__audit.I.getInterior(townBuilder.urban.scene).width')==1184,'A valid compact decoration selected a legacy room'
+        placements.append(actual)
+    saved=page.evaluate('localStorage.getItem("codaUrbanRoomV1")')
+    wallet=page.evaluate('localStorage.getItem("codaNotesWalletV1")')
+    assert json.loads(wallet)['balance']==500000-sum(product['price'] for product in products)
+    assert page.evaluate('localStorage.getItem(%s)'%json.dumps(KEY)) is None
+    page.reload();page.wait_for_function('!!window.townBuilder?.urban');page.evaluate(INSTALL);page.locator('#walk').click();page.evaluate("townBuilder.urban.openRoom('player')")
+    assert page.evaluate('townBuilder.urban.decor')==placements
+    assert page.evaluate('localStorage.getItem("codaUrbanRoomV1")')==saved
+    assert page.evaluate('localStorage.getItem("codaNotesWalletV1")')==wallet
+    assert page.evaluate('__audit.I.getInterior(townBuilder.urban.scene).width')==1184
+    assert page.evaluate('JSON.stringify(townBuilder.project)')==world
+    page.evaluate('''async products=>{await Promise.all(products.map(p=>__audit.catalog.get(p.asset).ensureFull?.()));townBuilder.urban.zoom(10000);}''',products)
+    page.wait_for_function('townBuilder.urban.view.zoom<1&&townBuilder.urban.view.x>0&&townBuilder.urban.view.y>0')
+    page.locator('#map').screenshot(path=str(OUT/'compact-owned-floor-and-wall.png'))
+    context.close()
+
+    # This older room has no template-layout record. Its valid purchased plant
+    # must select its intact historical source rather than disappear off-map.
+    legacy={'id':'room-legacy-geranium','item':'furniture-geranium','asset':'decor-08-01','x':1800,'y':900,'scale':1}
+    raw=json.dumps({'version':1,'owner':'guest','items':[legacy]},separators=(',',':'))
+    context=browser.new_context(viewport={'width':1600,'height':1100});context.add_init_script(seed)
+    context.add_init_script('if(!localStorage.getItem("__legacyCompactDecorSeed")){localStorage.setItem("__legacyCompactDecorSeed","1");localStorage.setItem("codaUrbanRoomV1",%s);}'%json.dumps(raw))
+    page=boot(context);page.evaluate(INSTALL);page.locator('#walk').click();page.evaluate("townBuilder.urban.openRoom('player')")
+    assert page.evaluate('townBuilder.urban.decor')==[legacy]
+    assert page.evaluate('__audit.I.getInterior(townBuilder.urban.scene).width')>1184
+    assert page.evaluate('__audit.I.getInteriorBase(townBuilder.urban.scene).width')==1184
+    assert page.evaluate('localStorage.getItem("codaUrbanRoomV1")')==raw
+    assert page.evaluate('localStorage.getItem(%s)'%json.dumps(KEY)) is None
+    page.reload();page.wait_for_function('!!window.townBuilder?.urban');page.evaluate(INSTALL);page.locator('#walk').click();page.evaluate("townBuilder.urban.openRoom('player')")
+    assert page.evaluate('townBuilder.urban.decor')==[legacy] and page.evaluate('localStorage.getItem("codaUrbanRoomV1")')==raw
+    context.close()
+    return {'actualPurchases':3,'chargedExactlyOnce':True,'flagshipBedFitsWithFullNativeArt':True,'artPermissionDoesNotAdmitFeetOutsideClearFloor':True,'compactFloorAndWallPlacements':placements,'reloadPreserved':True,'oldDecorWithoutTemplateRecordPreserved':True}
 
 
 try:
@@ -344,25 +447,29 @@ try:
         assert len(rows)==31
         changed=[row for row in rows if row['marker']]
         assert len(changed)==30,[(row['themeId'],row['width'],row['height']) for row in rows if not row['marker']]
-        reshaped=[row for row in rows if row['marker'] and row['marker']['version']==2]
+        reshaped=[row for row in rows if row['marker'] and row['marker']['version']==3]
         assert len(reshaped)==23,[(row['themeId'],row['marker']) for row in rows]
         for row in rows:
-            if row['request']['kind']=='apartment':assert (row['width'],row['height'])==(2368,1132),(row['themeId'],row['width'],row['height'])
-            else:assert (row['width'],row['height'])==(1184,512),(row['themeId'],row['width'],row['height'])
+            assert (row['width'],row['height'])==(1184,512),(row['themeId'],row['width'],row['height'])
             assert row['visual']['h']==row['height']+108
             assert row['visual']['w']*620==row['visual']['h']*1184,(row['themeId'],'room shape differs from the Victorian reference')
             assert normalized_scene(row['editor'])==normalized_scene(row['reloaded']),(row['themeId'],'fresh full-scene metadata changed on record reload')
-            if not row['marker'] or row['marker']['version']!=2:
-                for key,value in room_fingerprints(row).items():assert value==shape_manifest['cases']['fresh'][row['themeId']][key],(row['themeId'],'an approved lower room changed',key)
+            if not row['marker'] or row['marker']['version']!=3:
+                for key,value in room_fingerprints(row).items():assert value==compact_manifest['cases']['fresh'][row['themeId']][key],(row['themeId'],'an approved lower room changed',key)
             if row['request']['kind']=='apartment':
-                scene=row['editor'];center=row['width']/2
-                assert scene['spawn']['x']==center and scene['portalExit']['threshold']['x']==center,(row['themeId'],'arrival/exit did not follow the resized home center')
-                assert all(actor['x']==center for actor in scene.get('actors',[])),(row['themeId'],'resident actor did not follow the resized home center')
+                scene=row['editor'];mirrored=row['marker']['mirrored'];entrance=92 if mirrored else 1092
+                assert scene['spawn']=={'x':entrance,'y':428} and scene['portalExit']['threshold']=={'x':entrance,'y':484},(row['themeId'],'arrival/exit does not match the compact reference')
+                for actor in scene.get('actors',[]):
+                    assert 40<=actor['x']<=scene['width']-40 and 112<=actor['y']<=scene['height']-40,(row['themeId'],'actor outside compact floor')
+                    assert not any(r['x']-6<=actor['x']<=r['x']+r['w']+6 and r['y']-6<=actor['y']<=r['y']+r['h']+6 for r in scene['solids']),(row['themeId'],'resident home pose is blocked')
         victorian=next(row for row in rows if row['themeId']==VICTORIAN)
         for key,value in room_fingerprints(victorian).items():assert value==manifest['cases']['fresh'][VICTORIAN][key],('Victorian changed',key,value)
         assert page.evaluate('localStorage.getItem(%s)'%json.dumps(KEY)) is None
         (OUT/'fresh-survey.json').write_text(json.dumps(rows,indent=2))
-        note('All 31 rooms share the Victorian visual proportions; 23 reshaped defaults fully reload, eight approved lower rooms remain exact, and all functional targets are reachable',{'rooms':31,'standardLayouts':30,'reshaped':23,'checkedRouteTargets':sum(row.get('checkedTargets',0) for row in rows)})
+        note('All31 rooms share the actual Victorian footprint and partitions;23 compact defaults fully reload, eight approved lower rooms remain exact, and all functional targets are reachable',{'rooms':31,'standardLayouts':30,'compactDefaults':23,'checkedRouteTargets':sum(row.get('checkedTargets',0) for row in rows)})
+        npc_journeys=page.evaluate(NPC_JOURNEYS)
+        assert len(npc_journeys)==18
+        note('All18 residents use their actual compact home pose and clear model-aware departure/return routes',npc_journeys)
 
         for row in rows:
             editor(page,row['themeId']);page.locator('.room-editor-fit').click()
@@ -377,29 +484,29 @@ try:
 
         # Seed an actual old architecture, then keep a live Play room open while
         # Builder Reset/Undo/Redo/import changes both walls and placed furniture.
-        theme='showroom-retrofuture';request=next(row['request'] for row in rows if row['themeId']==theme)
-        old_record=shape_manifest['currentRecords'][theme]
+        theme='player';request=next(row['request'] for row in rows if row['themeId']==theme)
+        old_record=compact_manifest['currentRecords'][theme]
         new_record=next(row['record'] for row in rows if row['themeId']==theme)
         old_pack={'format':'coda-room-layouts','version':1,'owner':'builder','rooms':{theme:old_record}}
         page.evaluate('({key,pack})=>localStorage.setItem(key,JSON.stringify(pack))',{'key':KEY,'pack':old_pack})
         page.reload();page.wait_for_function('!!window.townBuilder?.roomEditor');page.evaluate(INSTALL)
         editor(page,theme)
         assert fingerprint(page.evaluate('townBuilder.roomEditor.model.record()'))==fingerprint(old_record)
-        assert fingerprint(normalized_scene(page.evaluate('__sceneSnapshot(townBuilder.roomEditor.model.scene)')))==shape_manifest['cases']['current31'][theme]['editorSHA256']
+        assert fingerprint(normalized_scene(page.evaluate('__sceneSnapshot(townBuilder.roomEditor.model.scene)')))==compact_manifest['cases']['current31'][theme]['editorSHA256']
         page.locator('.room-editor-exit').click();page.locator('#play').click();page.wait_for_function('!!window.townGame?.urban');page.evaluate(INSTALL)
-        page.evaluate("townGame.urban.enterBuilding(townGame.project.objects.find(o=>o.asset==='coda-furnishings'));townGame.urban.goStoreFloor(2);townGame.urban.openShowroom('retrofuture')")
-        page.wait_for_function("townGame.urban.scene?.showroomId==='retrofuture'")
+        page.evaluate("townGame.urban.enterBuilding(townGame.project.objects.find(o=>o.asset==='coda-residences'));townGame.urban.goFloor(15);townGame.urban.openRoom('player')")
+        page.wait_for_function("townGame.urban.scene?.resident==='player'")
         old_active=page.evaluate(ACTIVE)
         assert old_active['signature']==old_record['baseSignature'] and old_active['allOriginalReferences'] and old_active['free']
-        assert fingerprint(normalized_scene(old_active['scene']))==shape_manifest['cases']['current31'][theme]['gameplaySHA256']
-        note('Actual Play has opened the saved upper showroom with its complete previous walls and furniture')
+        assert fingerprint(normalized_scene(old_active['scene']))==compact_manifest['cases']['current31'][theme]['gameplaySHA256']
+        note('Actual Play opens the previous2368×1132 player home with its exact saved architecture and furniture')
         original_play_url=page.url
         control=boot(context);control.evaluate(INSTALL);editor(control,theme)
 
         def expect_active(record):
             expected=record['baseSignature']
             page.bring_to_front()
-            page.wait_for_function('signature=>{const u=townGame.urban,m=__audit.I.getInterior(u.scene),record=JSON.parse(localStorage.getItem("codaRoomLayoutsV1:builder")).rooms[m.id],fresh=__audit.M.createRoomLayoutModel({themeId:m.id,scene:__audit.I.getInteriorBase(u.scene),catalog:__audit.catalog,record});return fresh.record().baseSignature===signature&&(m.privacyDoors||[]).every(d=>u.automaticDoors.states.some(s=>s.door===d))}',arg=expected)
+            page.wait_for_function('signature=>{const u=townGame.urban,m=__audit.I.getInterior(u.scene),themeId=u.scene.kind==="apartment"?u.scene.resident:"showroom-"+u.scene.showroomId,record=JSON.parse(localStorage.getItem("codaRoomLayoutsV1:builder")).rooms[themeId],fresh=__audit.M.createRoomLayoutModel({themeId,scene:__audit.I.getInteriorBase(u.scene),catalog:__audit.catalog,record});return fresh.record().baseSignature===signature&&(m.privacyDoors||[]).every(d=>u.automaticDoors.states.some(s=>s.door===d))}',arg=expected)
             result=page.evaluate(ACTIVE)
             assert page.url==original_play_url,'Active source switch reloaded Play'
             assert result['signature']==expected and result['allOriginalReferences'] and result['free'],result
@@ -414,7 +521,8 @@ try:
             return result
 
         control.get_by_role('button',name='Reset theme',exact=True).click();new_active=expect_active(new_record)
-        assert old_active['scene']['height']==896 and new_active['scene']['height']==512
+        assert (old_active['scene']['width'],old_active['scene']['height'])==(2368,1132)
+        assert (new_active['scene']['width'],new_active['scene']['height'])==(1184,512)
         assert old_active['player']['y']>new_active['scene']['height']-40
         assert new_active['player']==new_active['scene']['spawn'],'A player outside the resized room did not return to its safe arrival'
         assert old_active['privacy']!=new_active['privacy'],'The source-switch test did not change actual door geometry'
@@ -425,14 +533,29 @@ try:
         control.bring_to_front();control.get_by_role('button',name='Reset theme',exact=True).click();expect_active(new_record)
         note('Real Builder Reset, Undo, Redo and file import switch full saved architecture in Editor and active Play, including door definitions, without reloading Play')
 
+        # A visiting resident's cached home path must change with its stored
+        # source even while the live player remains in a different apartment.
+        old_bach_pack={'format':'coda-room-layouts','version':1,'owner':'builder','rooms':{'bach':compact_manifest['currentRecords']['bach']}}
+        control.bring_to_front();control.locator('.room-editor-panel input[type=file]').set_input_files({'name':'previous-bach-home.json','mimeType':'application/json','buffer':json.dumps(old_bach_pack).encode()})
+        control.wait_for_function('townBuilder.roomEditor.status.text==="Room layouts imported."')
+        page.bring_to_front();page.wait_for_function('''()=>{const m=__audit.I.getInterior({kind:'apartment',resident:'bach',floor:2}),p=__audit.J.residentHomePose('bach'),a=m.actors.find(a=>a.id==='bach');return m.width===2368&&p.x===a.x&&p.y===a.y;}''')
+        old_home=page.evaluate("__audit.J.residentHomePose('bach')")
+        control.bring_to_front();editor(control,'bach');control.get_by_role('button',name='Reset theme',exact=True).click()
+        page.bring_to_front();page.wait_for_function('''()=>{const m=__audit.I.getInterior({kind:'apartment',resident:'bach',floor:2}),p=__audit.J.residentHomePose('bach'),a=m.actors.find(a=>a.id==='bach');return m.width===1184&&p.x===a.x&&p.y===a.y;}''')
+        compact_home=page.evaluate("__audit.J.residentHomePose('bach')")
+        assert (old_home['x'],old_home['y'])!=(compact_home['x'],compact_home['y'])
+        assert len(page.evaluate(NPC_JOURNEYS))==18
+        note('Live resident home poses and departure/return paths follow imported wide and reset compact sources without reloading Play')
+
         walker=Walker(page);tours=[]
-        walker.walk(page.evaluate("townGame.urban.portals.find(p=>p.action==='showroom-lobby').approach"));walker.interact()
-        assert walker.scene()['scene']=={'kind':'shop','floor':2};tours.append('retrofuture reset while inside Play')
-        page.evaluate("townGame.urban.goStoreFloor(1)");page.clock.run_for(40)
-        walker.walk(page.evaluate("townGame.urban.portals.find(p=>p.action==='showroom'&&p.showroomId==='art-deco-lounge').approach"));walker.interact()
-        assert walker.scene()['scene']['showroomId']=='art-deco-lounge'
-        walker.walk(page.evaluate("townGame.urban.portals.find(p=>p.action==='showroom-lobby').approach"));walker.interact()
-        assert walker.scene()['scene']=={'kind':'shop','floor':1};tours.append('art-deco-lounge')
+        walker.walk(page.evaluate("townGame.urban.portals.find(p=>p.action==='exit').approach"));walker.interact()
+        assert walker.scene()['scene']=={'kind':'hall','floor':15};tours.append('player reset from wide to compact during Play')
+        for showroom_id,store_floor in [('art-deco-lounge',1),('retrofuture',2)]:
+            page.evaluate("floor=>{townGame.urban.enterBuilding(townGame.project.objects.find(o=>o.asset==='coda-furnishings'));townGame.urban.goStoreFloor(floor)}",store_floor);page.clock.run_for(40)
+            walker.walk(page.evaluate("id=>townGame.urban.portals.find(p=>p.action==='showroom'&&p.showroomId===id).approach",showroom_id));walker.interact()
+            assert walker.scene()['scene']['showroomId']==showroom_id
+            walker.walk(page.evaluate("townGame.urban.portals.find(p=>p.action==='showroom-lobby').approach"));walker.interact()
+            assert walker.scene()['scene']=={'kind':'shop','floor':store_floor};tours.append(showroom_id)
         floor=next(row['request']['floor'] for row in rows if row['themeId']=='bach')
         control.bring_to_front();control.locator('.room-editor-exit').click();control.locator('#walk').click()
         home_walker=Walker(control)
@@ -446,14 +569,17 @@ try:
         assert page.evaluate('JSON.stringify(townGame.project)')==world
         assert page.evaluate('()=>Object.fromEntries(["codaNotesWalletV1","musicArcadeV1","codaTownAdventuresV1:guest"].map(k=>[k,localStorage.getItem(k)]))')==protected
         context.close()
-        legacy=None;prior_shapes=None
+        purchases=verify_personal_purchases(browser)
+        note('Actual floor/wall purchases debit once, place and reload inside compact home; old personal décor keeps its valid full historical source without a template record',purchases)
+        legacy=None;prior_shapes=None;previous_wide_homes=None
         if not args.skip_legacy:
             fixtures={'approved':json.loads((ROOT/'tests/fixtures/victorian-user-layout.json').read_text()),'previous':json.loads((ROOT/'tests/fixtures/victorian-previous-default.json').read_text()),'frozen':json.loads((ROOT/'tests/fixtures/room-layout-e6a709a.json').read_text())}
             legacy=verify_legacy_layouts(browser,boot=boot,manifest=manifest,fixtures=fixtures,output=OUT/'legacy-results.json',baseline_dir=args.baseline_dir)
             prior_shapes=verify_legacy_layouts(browser,boot=boot,manifest=shape_manifest,fixtures=fixtures,only_cases={'current31'},output=OUT/'previous-shape-results.json')
+            previous_wide_homes=verify_legacy_layouts(browser,boot=boot,manifest=compact_manifest,fixtures=fixtures,only_cases={'current31'},output=OUT/'previous-wide-home-results.json')
         assert not errors and not failed,(errors,failed)
         assert hashlib.sha256(MAP.read_bytes()).hexdigest()==map_hash
-        result={'passed':True,'standardLayouts':30,'reshapedDefaults':23,'equalVictorianVisualProportions':True,'approvedVictorianUnchanged':True,'actualRuntimeNativeCatalog':True,'allRecordsReload':True,'activePlaySourceSwitch':True,'realDoorJourneys':tours,'mapAndProgressUnchanged':True,'legacy':legacy,'previousShapes':prior_shapes,'errors':errors,'failedResponses':failed,'steps':steps}
+        result={'passed':True,'standardLayouts':30,'compactDefaults':23,'actualVictorianFootprintAndPartitions':True,'approvedVictorianUnchanged':True,'actualRuntimeNativeCatalog':True,'allRecordsReload':True,'activePlaySourceSwitch':True,'residentSourceSwitch':True,'residentJourneys':npc_journeys,'personalPurchases':purchases,'realDoorJourneys':tours,'mapAndProgressUnchanged':True,'legacy':legacy,'previousShapes':prior_shapes,'previousWideHomes':previous_wide_homes,'errors':errors,'failedResponses':failed,'steps':steps}
         (OUT/'results.json').write_text(json.dumps(result,indent=2));print(json.dumps(result),flush=True)
         browser.close()
 finally:
