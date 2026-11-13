@@ -2,8 +2,8 @@ import {getConcertHall} from './concert-hall.mjs?v=town-flight-1';
 import {residents} from './resident-profiles.mjs?v=opera-parallax-1';
 import {SHOWROOMS,STORE_TRAFFIC,STORE_VERTICAL_CORE} from './showroom-layout.mjs?v=town-room-placement-2';
 import {interiorActorScale} from './interior-scale.mjs?v=opera-parallax-1';
-import {getInterior} from './urban-interiors.mjs?v=town-victorian-default-1';
-import {getShowroomNavigation} from './showroom-navigation.mjs?v=town-victorian-default-1';
+import {getInterior} from './urban-interiors.mjs?v=town-wide-rooms-1';
+import {getShowroomNavigation} from './showroom-navigation.mjs?v=town-wide-rooms-1';
 export const SHOP_VISIT_CAPACITY=SHOWROOMS.length;
 
 const SPEED=156,GAIT=Math.PI*2/150;

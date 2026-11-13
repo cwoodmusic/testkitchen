@@ -1,6 +1,6 @@
 import {createTownActivities} from './town-activities.mjs?v=town-store-halls-1';
 import {catalog} from './catalog.mjs?v=town-room-placement-2';
-import {FLOOR_COUNT,residents,getInterior,renderInterior,residentInteractionZones,apartmentDecorBounds,apartmentWallDecorBounds,configureUrbanInteriors} from './urban-interiors.mjs?v=town-victorian-default-1';
+import {FLOOR_COUNT,residents,getInterior,renderInterior,residentInteractionZones,apartmentDecorBounds,apartmentWallDecorBounds,configureUrbanInteriors} from './urban-interiors.mjs?v=town-wide-rooms-1';
 import {createRoomStorage,roomItemBoxes} from './urban-room.mjs?v=opera-parallax-1';
 import {SHOWROOMS,STORE_FLOOR_COUNT,STORE_VERTICAL_CORE} from './showroom-layout.mjs?v=town-room-placement-2';
 import {createStagePerformance,updateStageProgramme,stagePerformanceSignature,stageCollisionBoxes} from './concert-performers.mjs?v=opera-players-2';
@@ -10,6 +10,7 @@ import {createAutomaticDoors} from './automatic-doors.mjs?v=opera-parallax-1';
 import {furnitureFacingPlacement,furnitureFacingBounds} from './furniture-facing.mjs?v=opera-parallax-1';
 import {interiorActorScale,effectiveInteriorZoom} from './interior-scale.mjs?v=opera-parallax-1';
 import {presentedRoomItem,furniturePresentationScale} from './private-furniture.mjs?v=town-victorian-default-1';
+import {getInteriorVisualBounds} from './wide-room-shell.mjs?v=town-wide-rooms-1';
 
 configureUrbanInteriors(catalog);
 const furniture=window.CodaFurnitureCatalog||[];
@@ -312,7 +313,7 @@ export function createUrbanController({canvas,getProject,getPlayer,getFacing,set
  function frame(ctx,keys,dt,now,width,height,drawPlayer){
   activities.tick(keys,dt);if(!scene){updateExteriorDoors(dt);return false;}lastSize={width,height};const actorScale=interiorActorScale(scene),m=getInterior(scene),actors=sceneResidents();automaticDoors.update(dt,player,actors);refreshStage();walking=false;
   if(!dialog.open&&!decorate){let dx=(keys.has('d')||keys.has('arrowright')?1:0)-(keys.has('a')||keys.has('arrowleft')?1:0),dy=(keys.has('s')||keys.has('arrowdown')?1:0)-(keys.has('w')||keys.has('arrowup')?1:0);const length=Math.hypot(dx,dy);if(length){if(seated)standUp();dx/=length;dy/=length;facing=Math.abs(dx)>Math.abs(dy)?dx<0?'left':'right':dy<0?'up':'down';const speed=(keys.has('shift')?780:450)*actorScale,n=Math.ceil(speed*dt/3),sx=dx*speed*dt/n,sy=dy*speed*dt/n;let distance=0;for(let i=0;i<n;i++){const old={...player};if(!solid(player.x+sx,player.y))player.x+=sx;if(!solid(player.x,player.y+sy))player.y+=sy;distance+=Math.hypot(player.x-old.x,player.y-old.y);}walking=distance>0;phase=(phase+distance*Math.PI*2/(150*actorScale))%(Math.PI*2);}}
-  const drawZoom=effectiveInteriorZoom(scene,zoom),clampView=(p,length,visible)=>length<=visible?length/2:Math.max(visible/2,Math.min(length-visible/2,p)),focus=seated?{x:m.stage.x+m.stage.w/2,y:m.stage.y+m.stage.h/2+60}:player;view={x:clampView(focus.x,m.width,width/drawZoom),y:clampView(focus.y,m.height,height/drawZoom)};
+  const drawZoom=effectiveInteriorZoom(scene,zoom),bounds=getInteriorVisualBounds(m),clampView=(p,length,visible)=>length<=visible?length/2:Math.max(visible/2,Math.min(length-visible/2,p)),focus=seated?{x:m.stage.x+m.stage.w/2,y:m.stage.y+m.stage.h/2+60}:player;view={x:clampView(focus.x,bounds.w,width/drawZoom),y:clampView(focus.y,bounds.h,height/drawZoom)};
   tick();ctx.clearRect(0,0,width,height);ctx.fillStyle='#131b21';ctx.fillRect(0,0,width,height);ctx.save();ctx.translate(width/2,height/2);ctx.scale(drawZoom,drawZoom);ctx.translate(-view.x,-view.y);
   renderInterior(ctx,scene,{player,drawPlayer:(c,p)=>drawPlayer(c,p.x,p.y,{facing,walking,phase,seated:!!seated}),time:now/1000,decor:scene.resident==='player'?decor:[],actors,doorStates:automaticDoors.states,doorOpenness:automaticDoors.openness,performance:concertPerformance(),audioTime:getConcert()?.currentTime,reducedMotion,viewport:{x:view.x-width/drawZoom/2,y:view.y-height/drawZoom/2,w:width/drawZoom,h:height/drawZoom}});
   if(scene.kind==='concert')drawConcertCurtain(ctx,m.stage,stageCurtain.state,{viewport:{x:view.x-width/drawZoom/2,y:view.y-height/drawZoom/2,w:width/drawZoom,h:height/drawZoom}});

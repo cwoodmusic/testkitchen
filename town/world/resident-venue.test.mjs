@@ -8,6 +8,7 @@ import {decorDefinitions} from './decor-definitions.mjs';
 import {residentInScene} from './resident-journey.mjs';
 import {SHOWROOMS,STORE_TRAFFIC,STORE_VERTICAL_CORE} from './showroom-layout.mjs';
 import {SHOWROOM_FURNITURE} from './showroom-furniture-definitions.mjs';
+import {interiorActorScale} from './interior-scale.mjs';
 
 // Configure the same native furniture dimensions used by the browser so a
 // convenient-looking path cannot accidentally pass through a real display.
@@ -21,11 +22,11 @@ configureUrbanInteriors(catalog);
 test('every resident enters its separate apartment showroom at the real lobby door and returns to the street',()=>{
  const model=getInterior({kind:'shop'}),models=[model,getInterior({kind:'shop',floor:2}),...SHOWROOMS.map(room=>getInterior({kind:'showroom',showroomId:room.id,floor:room.storeFloor}))],before=JSON.stringify(models),browsedRooms=new Set();
  const allScenes=[{kind:'shop',floor:1},{kind:'shop',floor:2},...SHOWROOMS.map(room=>({kind:'showroom',showroomId:room.id,floor:room.storeFloor}))];
- // Promoted decorated defaults use the editor's six-pixel walking clearance;
- // the other eleven authored tours retain their original wider margin.
- const blocked=(model,x,y)=>{const radius=model.roomLayoutBaseItems?6:16;return x<40||x>model.width-40||y<100||y>model.height-40||model.solids.some(r=>x>=r.x-radius&&x<=r.x+r.w+radius&&y>=r.y-radius&&y<=r.y+r.h+radius);};
+ // Expanded room routes use the same physical foot radius as their player;
+ // public store floors retain the original sixteen-pixel clearance.
+ const blocked=(model,x,y)=>{const radius=16*interiorActorScale(model);return x<40||x>model.width-40||y<100||y>model.height-40||model.solids.some(r=>x>=r.x-radius&&x<=r.x+r.w+radius&&y>=r.y-radius&&y<=r.y+r.h+radius);};
  for(const resident of residents){
-  const showroom=SHOWROOMS[resident.index%SHOWROOMS.length];
+  const showroom=SHOWROOMS[resident.index%SHOWROOMS.length],activeRoom=getInterior({kind:'showroom',showroomId:showroom.id,floor:showroom.storeFloor});
   const duration=venueVisitDuration(resident.id,'shop'),initial=venueVisitPose(resident.id,'shop',0);
   assert.deepEqual({x:initial.x,y:initial.y},model.spawn);
   let walked=false,browsed=false,previous=null;const scenes=[];
@@ -42,9 +43,9 @@ test('every resident enters its separate apartment showroom at the real lobby do
    if(previous&&previous.scene.kind!==pose.scene.kind){
     if(pose.scene.kind==='showroom'){
      assert(Math.hypot(previous.x-showroom.lobbyApproach.x,previous.y-showroom.lobbyApproach.y)<.01,'Entry must occur at the lobby door');
-     assert(Math.hypot(pose.x-showroom.apartment.spawn.x,pose.y-showroom.apartment.spawn.y)<9,'Entry must begin at the interior door');
+     assert(Math.hypot(pose.x-activeRoom.spawn.x,pose.y-activeRoom.spawn.y)<9,'Entry must begin at the active interior door');
     }else if(previous.scene.kind==='showroom'&&pose.scene.kind==='shop'){
-     assert(Math.hypot(previous.x-showroom.apartment.spawn.x,previous.y-showroom.apartment.spawn.y)<.01,'Return must occur at the interior door');
+     assert(Math.hypot(previous.x-activeRoom.spawn.x,previous.y-activeRoom.spawn.y)<.01,'Return must occur at the active interior door');
      assert(Math.hypot(pose.x-showroom.lobbyReturn.x,pose.y-showroom.lobbyReturn.y)<9,'The same door must return the visitor to the lobby');
     }
    }

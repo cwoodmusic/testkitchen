@@ -1,10 +1,11 @@
-import {createRoomLayoutModel} from '../world/room-layout-model.mjs?v=town-victorian-default-1';
-import {createRoomLayoutStorage} from '../world/room-layout-storage.mjs?v=town-victorian-default-1';
+import {createRoomLayoutModel} from '../world/room-layout-model.mjs?v=town-wide-rooms-1';
+import {createRoomLayoutStorage} from '../world/room-layout-storage.mjs?v=town-wide-rooms-1';
 import {SHOWROOMS} from '../world/showroom-layout.mjs?v=town-room-placement-2';
 import {residents} from '../world/resident-profiles.mjs?v=opera-parallax-1';
 import {furnitureFacingPlacement,furnitureFacingBounds,cardinalFacing} from '../world/furniture-facing.mjs?v=opera-parallax-1';
 import {furnitureFacingDrawSource,drawFurnitureFacingSource} from '../world/furniture-facing-source.mjs?v=town-flight-1';
 import {assetFilter} from '../world/asset-color.mjs?v=opera-parallax-1';
+import {getInteriorVisualBounds} from '../world/wide-room-shell.mjs?v=town-wide-rooms-1';
 
 const FACINGS=[['north','↑','North',180],['east','→','East',270],['south','↓','South',0],['west','←','West',90]];
 const ARROWS={ArrowUp:180,ArrowRight:270,ArrowDown:0,ArrowLeft:90};
@@ -144,7 +145,7 @@ export function createRoomEditor({canvas,catalog,renderRoom,getBaseModel,getThem
   if(result?.ok===false&&!model.held){tell(result.error,'error');return;}model.rotate(rotation);displayCache=null;previewStatus();canvas.focus({preventScroll:true});
   a.ensureFull?.(cardinalFacing(rotation))?.catch?.(()=>{});
  }
- function fitView(){if(!model)return;const r=canvas.getBoundingClientRect();view.x=model.scene.width/2;view.y=model.scene.height/2;view.zoom=clamp(Math.min((r.width-56)/model.scene.width,(r.height-56)/model.scene.height),.15,2.5);cursor.x=view.x;cursor.y=view.y;viewControls();}
+ function fitView(){if(!model)return;const r=canvas.getBoundingClientRect(),bounds=getInteriorVisualBounds(model.scene);view.x=bounds.x+bounds.w/2;view.y=bounds.y+bounds.h/2;view.zoom=clamp(Math.min((r.width-56)/bounds.w,(r.height-56)/bounds.h),.15,2.5);cursor.x=model.scene.width/2;cursor.y=model.scene.height/2;viewControls();}
  function screenToRoom(event){const r=canvas.getBoundingClientRect();return {x:view.x+(event.clientX-r.left-r.width/2)/view.zoom,y:view.y+(event.clientY-r.top-r.height/2)/view.zoom};}
  async function switchTheme(id){
   const selected=themes.find(t=>t.id===id);if(!selected)return false;endPan();const token=++loadToken;
@@ -184,7 +185,7 @@ export function createRoomEditor({canvas,catalog,renderRoom,getBaseModel,getThem
   if(!active)return false;const c=canvas.getContext('2d');c.save();c.setTransform(canvas.width/width,0,0,canvas.height/height,0,0);c.clearRect(0,0,width,height);c.fillStyle='#152128';c.fillRect(0,0,width,height);
   if(model){c.translate(width/2,height/2);c.scale(view.zoom,view.zoom);c.translate(-view.x,-view.y);c.imageSmoothingEnabled=false;
    const viewport={x:view.x-width/view.zoom/2,y:view.y-height/view.zoom/2,w:width/view.zoom,h:height/view.zoom};
-   renderRoom(c,theme.scene,{model:displayModel(),revision:model.revision,catalog,actors:[],time:now/1000,viewport});
+   renderRoom(c,theme.scene,{model:displayModel(),revision:model.revision,catalog,actors:[],wallFocus:model.held?.item??cursor,time:now/1000,viewport});
    if(model.held){for(const item of [model.held.item,...model.held.companions])drawGhost(c,item);c.save();c.lineWidth=1.8/view.zoom;c.strokeStyle=model.held.valid?'#9ce6b2':'#ff8581';c.fillStyle=model.held.valid?'#55cc8829':'#f55c4d30';const boxes=model.held.boxes.length?model.held.boxes:[furnitureFacingBounds(catalog.get(model.held.item.asset),model.held.item)];for(const b of boxes){c.fillRect(b.x,b.y,b.w,b.h);c.strokeRect(b.x,b.y,b.w,b.h);}c.restore();}
   }c.restore();return true;
  }

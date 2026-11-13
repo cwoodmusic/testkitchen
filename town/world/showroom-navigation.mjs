@@ -39,7 +39,7 @@ export function getShowroomNavigation(scene){
  if(cache.has(scene))return cache.get(scene);
  const plan=scene.showroom?.apartment;
  if(!plan||!Array.isArray(plan.visitRoute)||!Array.isArray(plan.exitRoute)){cache.set(scene,null);return null;}
- if(scene.layoutRevision===undefined&&!scene.roomLayoutBaseItems){const original=Object.freeze({visitRoute:plan.visitRoute,exitRoute:plan.exitRoute});cache.set(scene,original);return original;}
+ if(scene.layoutRevision===undefined&&!scene.roomLayoutBaseItems&&!scene.wideRoomExpansion){const original=Object.freeze({visitRoute:plan.visitRoute,exitRoute:plan.exitRoute});cache.set(scene,original);return original;}
  const {spawn}=scene,goal=plan.browse;
  if(!point(spawn)||!point(goal)||!finite(scene.width)||!finite(scene.height)||scene.width<80||scene.height<152){cache.set(scene,null);return null;}
  const geometry=collision(scene);

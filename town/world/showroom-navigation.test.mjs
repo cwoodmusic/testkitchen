@@ -42,14 +42,13 @@ function venueWith(edited){
  return vm.runInNewContext(source,{getConcertHall,residents,SHOWROOMS,STORE_TRAFFIC,STORE_VERTICAL_CORE,interiorActorScale,getShowroomNavigation,getInterior:request=>request.kind==='showroom'&&request.showroomId===edited.showroomId?edited:getInterior(request)},{filename:url.pathname});
 }
 
-test('the other eleven authored showroom tours and all31 furnished source models remain unchanged',()=>{
+test('expanded showroom tours start at the active entrance without mutating any of the31 furnished models',()=>{
  const models=[...residents.map(resident=>getInterior({kind:'apartment',resident:resident.id})),getInterior({kind:'apartment',resident:'player'}),...SHOWROOMS.map(room=>getInterior({kind:'showroom',showroomId:room.id}))],before=JSON.stringify(models);
  assert.equal(models.length,31);
  for(const scene of models){
   const navigation=getShowroomNavigation(scene);
   if(scene.kind==='showroom'){
-   if(scene.roomLayoutBaseItems){assert(navigation);assert(clearRoute(scene,navigation.visitRoute));assert(close(navigation.visitRoute[0],scene.spawn));assert(Math.hypot(navigation.visitRoute.at(-1).x-scene.showroom.apartment.browse.x,navigation.visitRoute.at(-1).y-scene.showroom.apartment.browse.y)<=14);}
-   else{assert.equal(navigation.visitRoute,scene.showroom.apartment.visitRoute);assert.equal(navigation.exitRoute,scene.showroom.apartment.exitRoute);}
+   assert(scene.wideRoomExpansion);assert(navigation);assert(clearRoute(scene,navigation.visitRoute));assert(clearRoute(scene,navigation.exitRoute));assert(close(navigation.visitRoute[0],scene.spawn));assert(Math.hypot(navigation.visitRoute.at(-1).x-scene.showroom.apartment.browse.x,navigation.visitRoute.at(-1).y-scene.showroom.apartment.browse.y)<=14);assert.deepEqual(navigation.exitRoute,[...navigation.visitRoute].reverse());
    assert.equal(getShowroomNavigation(scene),navigation);
   }
   else assert.equal(navigation,null);

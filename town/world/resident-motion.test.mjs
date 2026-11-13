@@ -32,7 +32,7 @@ function checkWalkingLegs(poseAt,duration,kinds){
 test('all resident home journeys scale only apartment walking and retain the same public waits and route distances',()=>{
  const before=JSON.stringify(residents);
  for(const resident of residents){
-  const home=residentHomePose(resident.id),privateDistance=975-home.y;
+  const home=residentHomePose(resident.id),model=getInteriorBase(home.scene),privateDistance=Math.hypot(model.spawn.x-home.x,model.spawn.y-home.y);
   const doorX=resident.floor>=7?500:resident.unit==='A'?430:1874;
   const publicDistance=1178+244+Math.abs(doorX-1152);
   const publicWaits=4+resident.floor*.35;
@@ -52,12 +52,27 @@ test('all resident home journeys scale only apartment walking and retain the sam
  assert.equal(JSON.stringify(residents),before);
 });
 
+test('home journeys reach the active south arrival before leaving and begin there when returning',()=>{
+ const epsilon=1e-6;
+ for(const resident of residents){
+  const home=residentHomePose(resident.id),model=getInteriorBase(home.scene),before=JSON.stringify(model),arrival=model.spawn,privateSeconds=Math.hypot(arrival.x-home.x,arrival.y-home.y)/58.5;
+  const walkingOut=interiorJourneyPose(resident.id,'out',privateSeconds-epsilon),opening=interiorJourneyPose(resident.id,'out',privateSeconds+.35);
+  assert.equal(walkingOut.scene.kind,'apartment');assert.equal(walkingOut.walking,true);assert(Math.hypot(walkingOut.x-arrival.x,walkingOut.y-arrival.y)<.001,resident.id+' reaches the active arrival');
+  assert.equal(opening.scene.kind,'apartment');assert.equal(opening.walking,false);assert.equal(opening.activity,'Opening my apartment');assert.deepEqual({x:opening.x,y:opening.y},arrival);
+  assert.equal(interiorJourneyPose(resident.id,'out',privateSeconds+.7-epsilon).scene.kind,'apartment');assert.equal(interiorJourneyPose(resident.id,'out',privateSeconds+.7+epsilon).scene.kind,'hall');
+  const comingHome=journeyDuration(resident.id,'home')-privateSeconds,beforeEntry=interiorJourneyPose(resident.id,'home',comingHome-epsilon),afterEntry=interiorJourneyPose(resident.id,'home',comingHome+epsilon);
+  assert.equal(beforeEntry.scene.kind,'hall');assert.equal(beforeEntry.walking,false);assert.equal(beforeEntry.activity,'Opening my apartment');
+  assert.equal(afterEntry.scene.kind,'apartment');assert.equal(afterEntry.walking,true);assert(Math.hypot(afterEntry.x-arrival.x,afterEntry.y-arrival.y)<.001,resident.id+' returns at the active arrival');
+  assert.deepEqual(interiorJourneyPose(resident.id,'home',journeyDuration(resident.id,'home')),home);assert.equal(JSON.stringify(model),before,'Journeys preserve the furnished source model');
+ }
+});
+
 test('all twelve store visits scale showroom legs while preserving both public floors, lift waits and browsing time',()=>{
  const before=JSON.stringify(SHOWROOMS),door=STORE_TRAFFIC.spawn,core=STORE_VERTICAL_CORE;
  for(const [slot,room]of SHOWROOMS.entries()){
-  const apartment=room.apartment,stay=24,model=getInteriorBase({kind:'showroom',showroomId:room.id,floor:room.storeFloor}),navigation=model.roomLayoutBaseItems?getShowroomNavigation(model):{visitRoute:apartment.visitRoute,exitRoute:apartment.exitRoute};
+  const stay=24,model=getInteriorBase({kind:'showroom',showroomId:room.id,floor:room.storeFloor}),navigation=getShowroomNavigation(model);
   assert(navigation,room.id+' has a reachable browsing route');
-  if(!model.roomLayoutBaseItems){assert.equal(navigation.visitRoute,apartment.visitRoute);assert.equal(navigation.exitRoute,apartment.exitRoute);}
+  assert.deepEqual(navigation.visitRoute[0],model.spawn);assert.deepEqual(navigation.exitRoute.at(-1),model.spawn);
   const privateDistance=length(navigation.visitRoute)+length(navigation.exitRoute);
   let publicDistance,incomingDistance,waits=.6;
   if(room.storeFloor===2){

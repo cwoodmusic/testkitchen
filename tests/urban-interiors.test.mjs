@@ -45,13 +45,18 @@ test('fifteen floors house every musician once and reserve the top apartment for
  assert.equal(getInterior({kind:'apartment',resident:'player'}).floor,15);
 });
 
-test('common halls and private apartments fit the exterior floor plate at the same scale',()=>{
+test('authored halls and apartments retain their floor plate while wide homes gain south floor space',()=>{
  const lobby=getInterior({kind:'lobby'});assert.deepEqual({width:lobby.width,height:lobby.height},TOWER_FOOTPRINT);
  let paired=0,single=0;
  for(let floor=2;floor<=FLOOR_COUNT;floor++){
   const hall=getInterior(floorScene(floor)),ids=hall.zones.filter(z=>z.action==='room').map(z=>z.resident),apartments=ids.map(resident=>getInterior({kind:'apartment',resident}));
   assert.equal(hall.width,TOWER_FOOTPRINT.width);assert.equal(hall.height,608);
-  for(const a of apartments)assert.equal(a.height+hall.height,TOWER_FOOTPRINT.height);
+  for(const a of apartments){
+   const wide=a.width===2304,original=a.roomLayoutSignatureFrame;
+   assert.equal(a.height+hall.height,TOWER_FOOTPRINT.height+(wide?64:0));
+   if(wide){assert.equal(original.height+hall.height,TOWER_FOOTPRINT.height);assert.equal(a.wideRoomExpansion.depth,64);}
+   else {assert.equal(original,undefined);assert.equal(a.wideRoomExpansion,undefined);}
+  }
   if(apartments.length===2){paired++;for(const a of apartments)assert.equal(a.width,1088);assert.equal(apartments.reduce((sum,a)=>sum+a.width,0)+128,TOWER_FOOTPRINT.width);}
   else {single++;assert.equal(apartments.length,1);assert.equal(apartments[0].width,TOWER_FOOTPRINT.width);}
  }

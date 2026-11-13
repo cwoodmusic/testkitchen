@@ -34,7 +34,12 @@ function canonicalItems(items,catalog){
  return result;
 }
 function signature(scene){
- const data=JSON.stringify({id:scene.id,width:scene.width,height:scene.height,walls:scene.walls,doors:scene.privacyDoors,items:scene.items.map(i=>[i.id,i.asset,i.w,i.h,i.solid,i.wallMounted,i.layer])});let hash=2166136261;
+ // A known additive shell expansion retains the preceding save signature.
+ // Later structural edits must still reject stale layouts rather than inherit
+ // compatibility merely because a copied scene carries the old frame.
+ const expected=scene.wideRoomExpansion?.signatureGeometry,actual={id:scene.id,width:scene.width,height:scene.height,walls:scene.walls,privacyDoors:scene.privacyDoors};
+ const frame=expected&&scene.roomLayoutSignatureFrame&&JSON.stringify(actual)===JSON.stringify(expected)?scene.roomLayoutSignatureFrame:scene;
+ const data=JSON.stringify({id:frame.id,width:frame.width,height:frame.height,walls:frame.walls,doors:frame.privacyDoors,items:scene.items.map(i=>[i.id,i.asset,i.w,i.h,i.solid,i.wallMounted,i.layer])});let hash=2166136261;
  for(let i=0;i<data.length;i++){hash^=data.charCodeAt(i);hash=Math.imul(hash,16777619);}return 'room-'+(hash>>>0).toString(16).padStart(8,'0');
 }
 function doorClearance(scene){

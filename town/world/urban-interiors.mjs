@@ -12,7 +12,7 @@ import {calibratePrivateFurniture,presentedRoomItem} from './private-furniture.m
 import {normalizeInteriorDoorways} from './interior-doorways.mjs?v=opera-parallax-1';
 import {drawInteriorWindow,warmInteriorWindows} from './interior-window-art.mjs?v=opera-parallax-1';
 import {drawInteriorWallNetwork} from './interior-wall-art.mjs?v=town-victorian-4';
-import {createRoomLayoutResolver} from './room-layout-runtime.mjs?v=town-victorian-default-1';
+import {createRoomLayoutResolver} from './room-layout-runtime.mjs?v=town-wide-rooms-1';
 export {apartmentDecorBounds,apartmentWallDecorBounds} from './personal-room-areas.mjs?v=opera-parallax-1';
 import {getConcertHall,renderConcertHallBackground,concertHallDrawables} from './concert-hall.mjs?v=town-flight-1';
 import {renderStagePerformance} from './concert-performers.mjs?v=opera-players-2';
@@ -22,6 +22,9 @@ import {APARTMENT_COLLECTION_ASSETS,getApartmentAsset} from './apartment-collect
 import {drawApartmentMotion} from './apartment-motion.mjs?v=opera-parallax-1';
 import {furnitureFacingPlacement,furnitureFacingDepth,furnitureFacingBoxes,furnitureAtGroundCenter} from './furniture-facing.mjs?v=opera-parallax-1';
 import {drawFurnitureContactShadow} from './furniture-contact-shadow.mjs?v=town-room-placement-2';
+import {expandWideRoomShell,getInteriorVisualBounds} from './wide-room-shell.mjs?v=town-wide-rooms-1';
+import {drawWideRoomSouthExterior,drawWideRoomEntrance} from './wide-room-frontage.mjs?v=town-wide-rooms-1';
+import {wideRoomPartitionDrawables,clearWideRoomPartitionCache} from './wide-room-partitions.mjs?v=town-wide-rooms-1';
 import {preparePlacedFacingArt} from './furniture-art-access.mjs?v=opera-parallax-1';
 // The apartment tower has one consistent floor plate. Residential floors use
 // a 608px common hall and 1120px private apartments, within its 2304 × 1728 lot.
@@ -33,7 +36,7 @@ import {residents} from './resident-profiles.mjs?v=opera-parallax-1';
 const sceneCache=new Map(),backgroundCache=new Map();
 const MAX_BACKGROUNDS=8,MAX_BACKGROUND_PIXELS=16*1024*1024;
 let backgroundPixels=0;
-function discardBackground(id){const canvas=backgroundCache.get(id);if(!canvas)return; backgroundPixels-=canvas.width*canvas.height;backgroundCache.delete(id);canvas.width=canvas.height=0;}
+function discardBackground(id){clearWideRoomPartitionCache(id);const canvas=backgroundCache.get(id);if(!canvas)return; backgroundPixels-=canvas.width*canvas.height;backgroundCache.delete(id);canvas.width=canvas.height=0;}
 function clearBackgrounds(){for(const id of backgroundCache.keys())discardBackground(id);}
 function rememberBackground(id,canvas){discardBackground(id);backgroundCache.set(id,canvas);backgroundPixels+=canvas.width*canvas.height;while(backgroundCache.size>MAX_BACKGROUNDS||backgroundPixels>MAX_BACKGROUND_PIXELS&&backgroundCache.size>1)discardBackground(backgroundCache.keys().next().value);}
 export const getInteriorRenderCacheStats=()=>({backgrounds:backgroundCache.size,pixels:backgroundPixels,maxBackgrounds:MAX_BACKGROUNDS,maxPixels:MAX_BACKGROUND_PIXELS});
@@ -212,6 +215,7 @@ export function getInteriorBase(scene={}){
   // the separate framed door, lift, directory and showroom-sign renderers.
   const wallDepth=s.towerArchitecture?.northWallDepth||106;s.signs=s.signs.filter(label=>label.y<=wallDepth);
   for(const d of s.privacyDoors||[]){const r=s.rooms.find(r=>r.id===d.roomId||r.functionalRole===d.roomId);if(r&&d.swing===undefined)d.swing=d.axis==='vertical'?(r.x+r.w/2>d.x?1:-1):(r.y+r.h/2>d.y?-1:1);}
+  expandWideRoomShell(s);
   sceneCache.set(id,s);}return sceneCache.get(id);
 }
 export function getInterior(scene={}){
@@ -268,7 +272,7 @@ function lobbyFrontage(c,r){
  if(r.facing==='up')fill(c,r.x,y-10,r.w,10,'#11192045');
 }
 function background(s){
- const cached=backgroundCache.get(s);if(cached){backgroundCache.delete(s);backgroundCache.set(s,cached);return cached;}const cv=document.createElement('canvas');cv.width=s.width;cv.height=s.height;const c=cv.getContext('2d');c.imageSmoothingEnabled=false;
+ const cached=backgroundCache.get(s);if(cached){backgroundCache.delete(s);backgroundCache.set(s,cached);return cached;}const bounds=getInteriorVisualBounds(s),cv=document.createElement('canvas');cv.width=bounds.w;cv.height=bounds.h;const c=cv.getContext('2d');c.imageSmoothingEnabled=false;
  const lobby=s.kind==='shop'&&Array.isArray(s.lobbyFloorRects);
  const towerCommon=drawTowerCommonSurfaces(c,s);
  if(towerCommon&&!towerCommonMaterialsReady())void warmTowerCommonMaterials().then(()=>discardBackground(s)).catch(()=>{});
@@ -277,7 +281,7 @@ function background(s){
  for(const r of s.rooms){if(r.portalRoom)continue;if(r.floorFinish)drawShowroomFloor(c,r);else if(r.material==='tile')floor(c,r.x,r.y,r.w,r.h,true);}if(!towerCommon)for(const r of s.rugs)carpet(c,r);
  for(const item of s.items)if(floorItem(item))drawItem(c,item);
  // Full-height north facade, low cutaway south and side edges.
- if(!lobby&&!towerCommon){plasterWall(c,rect(0,0,s.width,106),s.color,s.trim);plasterWall(c,rect(0,0,28,s.height),s.color,s.trim);plasterWall(c,rect(s.width-28,0,28,s.height),s.color,s.trim);plasterWall(c,rect(0,s.height-28,s.width,28),s.color,s.trim);}
+ if(!lobby&&!towerCommon){plasterWall(c,rect(0,0,s.width,106),s.color,s.trim);plasterWall(c,rect(0,0,28,s.height),s.color,s.trim);plasterWall(c,rect(s.width-28,0,28,s.height),s.color,s.trim);if(!s.wideRoomExpansion)plasterWall(c,rect(0,s.height-28,s.width,28),s.color,s.trim);}
  else if(lobby&&(s.sideFacingShowrooms||s.southFacingShowrooms)){
   const main=s.lobbyFloorRects[0],entry=s.lobbyFloorRects[1];
   plasterWall(c,rect(entry.x-20,entry.y,20,entry.h),s.color,s.trim);plasterWall(c,rect(entry.x+entry.w,entry.y,20,entry.h),s.color,s.trim);
@@ -302,6 +306,7 @@ function background(s){
  for(const t of s.signs){c.textAlign='center';c.font=`${t.size>25?'bold ':''}${t.size}px Georgia`;c.fillStyle='#302c3155';c.fillText(t.text,t.x+2,t.y+2);c.fillStyle=t.size>25?'#ebc679':'#c8aa77';c.fillText(t.text,t.x,t.y);}
  // Warm pools from wall sconces sit underneath characters and furnishings.
  for(const l of s.lights){const radius=l.r*1.55,glow=c.createRadialGradient(l.x,l.y,0,l.x,l.y,radius);glow.addColorStop(0,'#ffe1a018');glow.addColorStop(.45,'#ffe1a008');glow.addColorStop(1,'#ffe1a000');c.fillStyle=glow;c.fillRect(l.x-radius,l.y-radius,radius*2,radius*2);}
+ drawWideRoomSouthExterior(c,s);
  rememberBackground(s,cv);return cv;
 }
 function floorItem(item){return item.layer==='ground'||item.furnitureRole==='rug'||nativeCatalog?.get(item.asset)?.layer==='ground';}
@@ -326,7 +331,7 @@ function drawInteriorCharacter(c,scene,actor,draw){
  c.save();c.translate(actor.x,actor.y);c.scale(scale,scale);
  try{draw(c,{...actor,x:0,y:0});}finally{c.restore();}
 }
-export function renderInterior(c,scene,{model,player,drawPlayer,time=0,decor=[],catalog,actors,performance,audioTime,reducedMotion=false,viewport,doorStates=[],doorOpenness=()=>0}={}){
+export function renderInterior(c,scene,{model,player,wallFocus,drawPlayer,time=0,decor=[],catalog,actors,performance,audioTime,reducedMotion=false,viewport,doorStates=[],doorOpenness=()=>0}={}){
  if(catalog&&catalog!==nativeCatalog)configureUrbanInteriors(catalog);const s=model||getInterior(scene);
  if(scene.kind==='concert'){
   renderConcertHallBackground(c,s);
@@ -340,11 +345,14 @@ export function renderInterior(c,scene,{model,player,drawPlayer,time=0,decor=[],
  }
  warmScene(s);c.drawImage(background(s),0,0);
  const queue=s.items.filter(item=>!floorItem(item)&&!wallItem(item)).map(item=>({y:itemDepth(item),draw:()=>drawItem(c,item,time)}));
+ const partitions=wideRoomPartitionDrawables(c,s,{player:player??wallFocus,doorOpenness}),partitionDoors=new Set(partitions.flatMap(partition=>partition.doors));queue.push(...partitions);
  if(s.elevator)queue.push({y:getElevatorVisualGeometry(s.elevator).floorY,draw:()=>drawElevatorPortal(c,s.elevator,{floors:s.kind==='shop'?2:15})});
  for(const sign of s.showroomSigns||[])queue.push({y:sign.y,draw:()=>drawShowroomThemeSign(c,sign,nativeCatalog)});
  for(const d of s.doors||[])queue.push({y:d.threshold?.y??d.floorY??d.y+d.h,draw:()=>drawInteriorDoor(c,d,doorOpenness(d),{theme:s.collectionOwner||s.showroomId})});
- for(const d of s.privacyDoors||[])queue.push({y:interiorPortalVisualDepth(d,doorOpenness(d)),draw:()=>drawPrivacyDoor(c,d,doorOpenness(d))});
- for(const state of doorStates){const d=state.door;if(!d.virtual||!d.threshold)continue;const at=d.threshold,normal=d.enterNormal||{x:0,y:1},length=(d.triggerHalfWidth||70)*2;
+ for(const d of s.privacyDoors||[])if(!partitionDoors.has(d))queue.push({y:interiorPortalVisualDepth(d,doorOpenness(d)),draw:()=>drawPrivacyDoor(c,d,doorOpenness(d))});
+ const entrance=s.wideRoomExpansion?s.portalExit?.door:null,entranceState=entrance?doorStates.find(state=>state.door?.id===entrance.id||state.door?.threshold?.x===entrance.threshold.x&&state.door?.threshold?.y===entrance.threshold.y):null;
+ if(s.wideRoomExpansion)queue.push({y:s.height+108,draw:()=>drawWideRoomEntrance(c,s,entranceState?.openness??0)});
+ for(const state of doorStates){const d=state.door;if(!d.virtual||!d.threshold||entrance&&(d.id===entrance.id||d.threshold.x===entrance.threshold.x&&d.threshold.y===entrance.threshold.y))continue;const at=d.threshold,normal=d.enterNormal||{x:0,y:1},length=(d.triggerHalfWidth||70)*2;
   const visual={...d,axis:normal.x?'vertical':'horizontal',x:at.x-(normal.x?0:length/2),y:at.y-(normal.x?length/2:0),length,color:s.color,trim:s.trim};
   queue.push({y:interiorPortalVisualDepth(visual,state.openness),draw:()=>drawPrivacyDoor(c,visual,state.openness)});
  }

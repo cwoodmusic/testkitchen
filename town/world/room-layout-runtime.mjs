@@ -1,5 +1,5 @@
-import {createRoomLayoutModel} from './room-layout-model.mjs?v=town-victorian-default-1';
-import {createRoomLayoutStorage} from './room-layout-storage.mjs?v=town-victorian-default-1';
+import {createRoomLayoutModel} from './room-layout-model.mjs?v=town-wide-rooms-1';
+import {createRoomLayoutStorage} from './room-layout-storage.mjs?v=town-wide-rooms-1';
 
 export function roomLayoutThemeId(scene){
  if(scene?.kind==='showroom')return 'showroom-'+scene.showroomId;

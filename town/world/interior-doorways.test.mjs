@@ -60,12 +60,12 @@ test('all 31 real homes have matching 36-wide passages and six-radius clear door
  assert.equal(count,62);
 });
 
-test('manual store entrances and returns retain their exact thresholds while showroom routes stay clear',()=>{
+test('manual store entrances retain their thresholds and expanded showroom returns keep a clear route',()=>{
  const publicScenes=[getInterior({kind:'shop',floor:1}),getInterior({kind:'shop',floor:2})];
  for(const display of SHOWROOMS){
   const lobby=publicScenes[display.storeFloor-1],door=lobby.doors.find(d=>d.showroomId===display.id),inside=getInterior({kind:'showroom',showroomId:display.id});
-  assert.equal(getDoorVisualGeometry(door,0).span,PUBLIC_DOOR_CLEAR_WIDTH);assert.deepEqual(door.threshold,display.threshold);assert.equal(inside.portalExit.triggerHalfWidth,18);assert.deepEqual(inside.portalExit.threshold,display.apartment.portalExit.threshold);
-  const tour=inside.roomLayoutBaseItems?getShowroomNavigation(inside):display.apartment;assert(tour);
+  assert.equal(getDoorVisualGeometry(door,0).span,PUBLIC_DOOR_CLEAR_WIDTH);assert.deepEqual(door.threshold,display.threshold);assert.equal(inside.portalExit.triggerHalfWidth,18);assert.deepEqual(inside.portalExit.threshold,{...display.apartment.portalExit.threshold,y:display.apartment.portalExit.threshold.y+64});assert.equal(inside.portalExit.threshold.y,inside.height-28);
+  const tour=getShowroomNavigation(inside);assert(tour);assert.deepEqual(tour.visitRoute[0],inside.spawn);assert.deepEqual(tour.exitRoute.at(-1),inside.spawn);
   for(const route of [tour.visitRoute,tour.exitRoute])for(let i=1;i<route.length;i++){
    const a=route[i-1],b=route[i],steps=Math.ceil(Math.hypot(b.x-a.x,b.y-a.y)/3);
    for(let j=0;j<=steps;j++){const p={x:a.x+(b.x-a.x)*j/steps,y:a.y+(b.y-a.y)*j/steps};assert(!inside.solids.some(r=>hit(p,r,6)),`${inside.id}: owner route blocked by door normalization`);}

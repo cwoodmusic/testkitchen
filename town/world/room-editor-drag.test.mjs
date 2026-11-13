@@ -2,6 +2,7 @@ import test from 'node:test';
 import assert from 'node:assert/strict';
 import {readFileSync} from 'node:fs';
 import {runInNewContext} from 'node:vm';
+import {getInteriorVisualBounds} from './wide-room-shell.mjs';
 
 class Element{
  constructor(tag='div'){this.tagName=tag.toUpperCase();this.children=[];this.dataset={};this.value='';this.listeners=new Map();this.classList={add(){},remove(){}};this.captured=new Set();}
@@ -20,8 +21,8 @@ async function fixture(){
  const canvas=new Element('canvas'),events=new Map(),counts={saves:0,commits:0},scene={width:600,height:500,items:[{id:'chair-1',asset:'chair',x:250,y:300,w:40,h:60,rotation:0,solid:true}],actors:[]};let held=null,revision=0;
  const model={get scene(){return scene;},get held(){return held;},get revision(){return revision;},get canUndo(){return revision>0;},get canRedo(){return false;},record:()=>({placements:scene.items.map(i=>({...i}))}),pick(p){const item={...scene.items[0]};held={item,originalId:item.id,companions:[],boxes:[],valid:true,offset:{x:p.x-item.x,y:p.y-item.y}};return {ok:true};},move(p){held.item.x=p.x-held.offset.x;held.item.y=p.y-held.offset.y;held.valid=held.item.x>=40;held.reason=held.valid?'':'Blocked';return {ok:held.valid};},place(p){if(p)this.move(p);if(!held.valid)return {ok:false,error:'Blocked'};scene.items[0]={...held.item};held=null;revision++;counts.commits++;return {ok:true,changed:true};},cancel(){held=null;return {ok:true,changed:false};}};
  const source=readFileSync(new URL('../builder/room-editor.mjs',import.meta.url),'utf8').replace(/^import .*;\r?\n/gm,'').replaceAll('export function ','function ')+'\n({createRoomEditor})',catalog=new Map([['chair',{id:'chair',name:'Chair',w:40,h:60}]]),document={body:new Element('body'),createElement:tag=>new Element(tag)};
- const context={document,performance:{now:()=>0},setTimeout,clearTimeout,SHOWROOMS:[],residents:[],createRoomLayoutModel:()=>model,createRoomLayoutStorage(){throw Error('Use the supplied store');},cardinalFacing:rotation=>rotation===90?'west':'south',furnitureFacingBounds:(_a,i)=>({x:i.x-i.w/2,y:i.y-i.h,w:i.w,h:i.h}),assetFilter:()=> 'none',addEventListener:(type,fn)=>events.set(type,fn)};
- const {createRoomEditor}=runInNewContext(source,context),editor=createRoomEditor({canvas,catalog,renderRoom(){},getBaseModel:()=>scene,getThemes:()=>[{id:'test',owner:'test',label:'Test',group:'Rooms',scene:{kind:'showroom'}}],storage:{load:()=>({ok:true,record:null}),save(){counts.saves++;return {ok:true};}}});await editor.open('test');
+ const context={document,performance:{now:()=>0},setTimeout,clearTimeout,SHOWROOMS:[],residents:[],getInteriorVisualBounds,createRoomLayoutModel:()=>model,createRoomLayoutStorage(){throw Error('Use the supplied store');},cardinalFacing:rotation=>rotation===90?'west':'south',furnitureFacingBounds:(_a,i)=>({x:i.x-i.w/2,y:i.y-i.h,w:i.w,h:i.h}),assetFilter:()=> 'none',addEventListener:(type,fn)=>events.set(type,fn)};
+ const {createRoomEditor}=runInNewContext(source,context),editor=createRoomEditor({canvas,catalog,renderRoom(){},getBaseModel:()=>scene,getThemes:()=>[{id:'test',owner:'test',label:'Test',group:'Rooms',scene:{kind:'showroom'}}],storage:{load:()=>({ok:true,record:null}),save(){counts.saves++;return {ok:true};}}});assert.equal(await editor.open('test'),true,'The editor must finish opening and fitting the room');
  const pointer=(type,x,y,id=1,button=0)=>{const e={type,clientX:x,clientY:y,pointerId:id,button,preventDefault(){}};editor.handlePointer(e);return e;},start={x:255.6,y:267.76};
  return {editor,model,canvas,events,counts,pointer,start};
 }

@@ -119,7 +119,7 @@ const routes=[];
 for(const m of models){
  const paths=[];
  if(m.resident&&m.resident!=='player')paths.push([{x:m.width/2,y:m.floor>=7?750:650},{x:m.width/2,y:975}]);
- if(m.kind==='showroom'){const room=SHOWROOMS.find(s=>s.id===m.showroomId),tour=m.roomLayoutBaseItems?getShowroomNavigation(m):room.apartment;if(!tour){routes.push({owner:owner(m),error:'No reachable showroom tour'});continue;}paths.push(tour.visitRoute,tour.exitRoute);}
+ if(m.kind==='showroom'){const tour=getShowroomNavigation(m);if(!tour){routes.push({owner:owner(m),error:'No reachable showroom tour'});continue;}paths.push(tour.visitRoute,tour.exitRoute);}
  for(const points of paths)for(let i=1;i<points.length;i++){
   const a=points[i-1],b=points[i],count=Math.max(1,Math.ceil(Math.hypot(b.x-a.x,b.y-a.y)/3));
   for(let n=0;n<=count;n++){const p={x:a.x+(b.x-a.x)*n/count,y:a.y+(b.y-a.y)*n/count};if(blocked(m,p)){routes.push({owner:owner(m),blockedAuthoredRoute:round(p)});break;}}

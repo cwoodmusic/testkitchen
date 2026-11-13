@@ -1,5 +1,6 @@
 import {residents} from './resident-profiles.mjs?v=opera-parallax-1';
 import {interiorActorScale} from './interior-scale.mjs?v=opera-parallax-1';
+import {WIDE_ROOM_EXTRA_DEPTH} from './wide-room-shell.mjs?v=town-wide-rooms-1';
 export {residents} from './resident-profiles.mjs?v=opera-parallax-1';
 
 const SPEED=156,GAIT=Math.PI*2/150;
@@ -19,7 +20,7 @@ function journey(id,direction){
  const key=id+':'+direction;if(journeys.has(key))return journeys.get(key);
  const resident=residents.find(r=>r.id===id);if(!resident)return null;
  const home=residentHomePose(id),room=home.scene,hall={kind:'hall',floor:resident.floor},lobby={kind:'lobby',floor:1};
- const homeAt=point(home.x,home.y),roomExit=point(home.x,975),doorX=resident.floor>=7?500:resident.unit==='A'?430:1874;
+ const homeAt=point(home.x,home.y),roomExit=point(home.x,975+(resident.floor>=7?WIDE_ROOM_EXTRA_DEPTH:0)),doorX=resident.floor>=7?500:resident.unit==='A'?430:1874;
  const hallDoor=point(doorX,342),hallTurn=point(doorX,464),hallCenter=point(1152,464),hallLift=point(1152,342);
  const lobbyLift=point(1152,400),street=point(1152,1578),steps=[];
  const walk=(scene,from,to,activity)=>steps.push({scene,from,to,activity,duration:Math.hypot(to.x-from.x,to.y-from.y)/(SPEED*interiorActorScale(scene))});
