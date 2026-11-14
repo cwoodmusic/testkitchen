@@ -13,7 +13,7 @@ const json=value=>JSON.stringify(value),copy=value=>JSON.parse(json(value));
 const fixtureCatalog=new Map([['chair',{id:'chair',w:40,h:60,solid:true,purpose:'dining-chair',boxes:[{x:4,y:34,w:32,h:22}]}]]);
 function physical(scene){
  const bases=new Set(scene.items.flatMap(item=>item.collisionBoxes||[]));
- return {id:scene.id,width:scene.width,height:scene.height,walls:scene.walls,privacyDoors:scene.privacyDoors,rooms:scene.rooms,rugs:scene.rugs,windows:scene.windows,spawn:scene.spawn,portalExit:scene.portalExit,zones:scene.zones,structural:scene.solids.filter(box=>!bases.has(box)),orientation:scene.layoutOrientation};
+ return {id:scene.id,width:scene.width,height:scene.height,walls:scene.walls,privacyDoors:scene.privacyDoors,rooms:scene.rooms.map(({point,...room})=>room),rugs:scene.rugs,windows:scene.windows,spawn:scene.spawn,portalExit:scene.portalExit,zones:scene.zones,structural:scene.solids.filter(box=>!bases.has(box)),orientation:scene.layoutOrientation};
 }
 function fixture(){
  const item={id:'chair-1',asset:'chair',x:120,y:240,w:40,h:60,rotation:0,solid:true},boxes=[{x:104,y:214,w:32,h:22}];Object.defineProperty(item,'collisionBoxes',{value:boxes});

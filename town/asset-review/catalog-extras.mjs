@@ -1,4 +1,4 @@
-import {configureUrbanInteriors,getInteriorBase,residents} from '../world/urban-interiors.mjs?v=town-compact-island-1';
+import {configureUrbanInteriors,getInteriorBase,residents} from '../world/urban-interiors.mjs?v=town-room-floorplan-1';
 import {SHOWROOMS} from '../world/showroom-layout.mjs?v=town-room-placement-2';
 import {createRoomRugItems} from '../world/room-rugs.mjs?v=town-victorian-default-1';
 

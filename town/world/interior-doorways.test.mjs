@@ -66,11 +66,11 @@ test('manual store entrances retain their thresholds and expanded showroom retur
   const lobby=publicScenes[display.storeFloor-1],door=lobby.doors.find(d=>d.showroomId===display.id),inside=getInterior({kind:'showroom',showroomId:display.id});
   assert.equal(getDoorVisualGeometry(door,0).span,PUBLIC_DOOR_CLEAR_WIDTH);assert.deepEqual(door.threshold,display.threshold);assert.equal(inside.height,512);
   for(const [version,scene]of [inside,...(inside.roomLayoutLegacySources||[])].entries()){
-   const entranceX=version===0?(display.column?92:1092):display.apartment.portalExit.threshold.x;
+   const entranceX=version===0||scene.wideRoomLayout?.version===3?(display.column?92:1092):display.apartment.portalExit.threshold.x;
    assert.equal(scene.portalExit.triggerHalfWidth,18);assert.deepEqual(scene.portalExit.threshold,{x:entranceX,y:scene.height-28});
    if(version===1){assert.equal(scene.height,display.apartment.height+64);assert.deepEqual(scene.portalExit.threshold,{...display.apartment.portalExit.threshold,y:display.apartment.portalExit.threshold.y+64},'Original saved entrances keep their full floor geometry');}
-   if(version===2){assert.equal(scene.wideRoomLayout.version,1);assert.equal(scene.height,896,'The first saved upper-room layout retains its tall shell');}
-   if(version===3){assert.equal(scene.wideRoomLayout.version,2);assert.equal(scene.height,512,'The second saved upper-room layout retains its compact shell and original entry X');}
+   if(scene.wideRoomLayout?.version===1&&display.storeFloor===2){assert.equal(scene.height,896,'The first saved upper-room layout retains its tall shell');}
+   if(scene.wideRoomLayout?.version===2){assert.equal(scene.height,512,'The second saved upper-room layout retains its compact shell and original entry X');}
    const tour=getShowroomNavigation(scene);assert(tour);assert.deepEqual(tour.visitRoute[0],scene.spawn);assert.deepEqual(tour.exitRoute.at(-1),scene.spawn);
    for(const route of [tour.visitRoute,tour.exitRoute])for(let i=1;i<route.length;i++){
     const a=route[i-1],b=route[i],steps=Math.ceil(Math.hypot(b.x-a.x,b.y-a.y)/3);

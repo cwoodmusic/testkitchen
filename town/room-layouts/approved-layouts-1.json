@@ -1,0 +1,3910 @@
+{
+  "format": "coda-room-layouts",
+  "version": 1,
+  "owner": "builder",
+  "rooms": {
+    "showroom-midcentury-studio": {
+      "format": "coda-room-layout",
+      "version": 1,
+      "themeId": "showroom-midcentury-studio",
+      "baseSignature": "room-c4fe0c34",
+      "placements": [
+        {
+          "id": "showroom-midcentury-studio-item-0",
+          "x": 949.5,
+          "y": 174.99999999999997,
+          "rotation": 0,
+          "support": null
+        },
+        {
+          "id": "showroom-midcentury-studio-item-1",
+          "x": 1113.2,
+          "y": 245.92000000000002,
+          "rotation": 90,
+          "support": null
+        },
+        {
+          "id": "showroom-midcentury-studio-item-2",
+          "x": 886.35,
+          "y": 132.73,
+          "rotation": 0,
+          "support": null
+        },
+        {
+          "id": "showroom-midcentury-studio-item-3",
+          "x": 949.5,
+          "y": 127.39999999999998,
+          "rotation": 0,
+          "support": "showroom-midcentury-studio-item-0"
+        },
+        {
+          "id": "showroom-midcentury-studio-item-4",
+          "x": 886.35,
+          "y": 105.99249999999999,
+          "rotation": 0,
+          "support": "showroom-midcentury-studio-item-2"
+        },
+        {
+          "id": "showroom-midcentury-studio-item-5",
+          "x": 898,
+          "y": 94,
+          "rotation": 0,
+          "support": null
+        },
+        {
+          "id": "showroom-midcentury-studio-item-8",
+          "x": 580.6,
+          "y": 144.4,
+          "rotation": 0,
+          "support": null
+        },
+        {
+          "id": "showroom-midcentury-studio-item-12",
+          "x": 54.69999999999999,
+          "y": 137.3,
+          "rotation": 0,
+          "support": null
+        },
+        {
+          "id": "showroom-midcentury-studio-item-18",
+          "x": 1016.16,
+          "y": 274.7,
+          "rotation": 0,
+          "support": null
+        },
+        {
+          "id": "showroom-midcentury-studio-item-19",
+          "x": 1016.16,
+          "y": 290.4,
+          "rotation": 180,
+          "support": null
+        },
+        {
+          "id": "showroom-midcentury-studio-item-21",
+          "x": 495.78,
+          "y": 311.5,
+          "rotation": 0,
+          "support": null
+        },
+        {
+          "id": "showroom-midcentury-studio-item-23",
+          "x": 1016.16,
+          "y": 310,
+          "rotation": 0,
+          "support": null
+        },
+        {
+          "id": "showroom-midcentury-studio-item-24",
+          "x": 208,
+          "y": 94,
+          "rotation": 0,
+          "support": null
+        },
+        {
+          "id": "showroom-midcentury-studio-item-20",
+          "x": 484.1391304347826,
+          "y": 149.13056265984656,
+          "rotation": 0,
+          "support": null
+        },
+        {
+          "id": "showroom-midcentury-studio-item-9",
+          "x": 727.1480818414321,
+          "y": 193.08491048593353,
+          "rotation": 90,
+          "support": null
+        },
+        {
+          "id": "showroom-midcentury-studio-item-6",
+          "x": 700.4859335038363,
+          "y": 133.72890025575447,
+          "rotation": 0,
+          "support": null
+        },
+        {
+          "id": "showroom-midcentury-studio-item-7",
+          "x": 705.0281329923273,
+          "y": 80.02659846547314,
+          "rotation": 0,
+          "support": null
+        },
+        {
+          "id": "showroom-midcentury-studio-item-10",
+          "x": 103.08030690537086,
+          "y": 133.1007441606058,
+          "rotation": 0,
+          "support": null
+        },
+        {
+          "id": "showroom-midcentury-studio-item-14",
+          "x": 151.77391304347827,
+          "y": 139.1007672634271,
+          "rotation": 0,
+          "support": null
+        },
+        {
+          "id": "showroom-midcentury-studio-item-13",
+          "x": 213.40076726342713,
+          "y": 140.4859566066576,
+          "rotation": 0,
+          "support": null
+        },
+        {
+          "id": "showroom-midcentury-studio-item-15",
+          "x": 213.40076726342713,
+          "y": 74.1859566066576,
+          "rotation": 0,
+          "support": "showroom-midcentury-studio-item-13"
+        },
+        {
+          "id": "showroom-midcentury-studio-item-11",
+          "x": 283.602836402054,
+          "y": 141.62892335857578,
+          "rotation": 0,
+          "support": null
+        },
+        {
+          "id": "showroom-midcentury-studio-item-17",
+          "x": 848.0612886628836,
+          "y": 159.52877237851663,
+          "rotation": 270,
+          "support": null
+        },
+        {
+          "id": "showroom-midcentury-studio:family-room-1:bedroom-plant-1",
+          "x": 814.6006039202366,
+          "y": 306.52813299232736,
+          "rotation": 0,
+          "support": null
+        },
+        {
+          "id": "showroom-midcentury-studio:family-room-1:family-dining-chair-2",
+          "x": 389.3654211279205,
+          "y": 160.2120231167063,
+          "rotation": 0,
+          "support": null
+        },
+        {
+          "id": "showroom-midcentury-studio:family-room-1:family-dining-chair-1",
+          "x": 464.94510143990584,
+          "y": 165.11962230877003,
+          "rotation": 0,
+          "support": null
+        },
+        {
+          "id": "showroom-midcentury-studio:family-room-1:family-dining-table-1",
+          "x": 423.1057749602754,
+          "y": 230.24541760460804,
+          "rotation": 0,
+          "support": null
+        },
+        {
+          "id": "showroom-midcentury-studio:family-room-1:family-dining-chair-6",
+          "x": 508.3831043427124,
+          "y": 206.92071896995836,
+          "rotation": 90,
+          "support": null
+        },
+        {
+          "id": "showroom-midcentury-studio:family-room-1:family-dining-chair-4",
+          "x": 383.1264284295551,
+          "y": 244.98220024454486,
+          "rotation": 180,
+          "support": null
+        },
+        {
+          "id": "showroom-midcentury-studio:family-room-1:family-dining-chair-3",
+          "x": 443.81996325476695,
+          "y": 242.43704105076074,
+          "rotation": 180,
+          "support": null
+        },
+        {
+          "id": "showroom-midcentury-studio:family-room-1:family-dining-chair-5",
+          "x": 357.0021023884868,
+          "y": 146.35190633305584,
+          "rotation": 270,
+          "support": null
+        },
+        {
+          "id": "showroom-midcentury-studio:family-room-1:family-living-rug-1",
+          "x": 153.6216581700212,
+          "y": 408.76205227092163,
+          "rotation": 0,
+          "support": null
+        },
+        {
+          "id": "showroom-midcentury-studio:family-room-1:family-lounge-chair-1",
+          "x": 70.79883805614406,
+          "y": 367.6596671411547,
+          "rotation": 270,
+          "support": null
+        },
+        {
+          "id": "showroom-midcentury-studio:family-room-1:family-lounge-chair-2",
+          "x": 247.68257911811446,
+          "y": 362.0405861030191,
+          "rotation": 90,
+          "support": null
+        },
+        {
+          "id": "showroom-midcentury-studio:family-room-1:family-coffee-table-1",
+          "x": 154.42441902807207,
+          "y": 412.1611129502119,
+          "rotation": 0,
+          "support": null
+        },
+        {
+          "id": "showroom-midcentury-studio-item-16",
+          "x": 155.13578590824008,
+          "y": 346.2853943730967,
+          "rotation": 0,
+          "support": null
+        },
+        {
+          "id": "showroom-midcentury-studio:family-room-1:family-statement-plant-1",
+          "x": 1119.677337129237,
+          "y": 472.0723177635065,
+          "rotation": 0,
+          "support": null
+        },
+        {
+          "id": "showroom-midcentury-studio-item-22",
+          "x": 1134.0420277740996,
+          "y": 127.4958832097458,
+          "rotation": 0,
+          "support": null
+        }
+      ],
+      "removed": [],
+      "added": []
+    },
+    "showroom-art-deco-lounge": {
+      "format": "coda-room-layout",
+      "version": 1,
+      "themeId": "showroom-art-deco-lounge",
+      "baseSignature": "room-987eecbe",
+      "placements": [
+        {
+          "id": "showroom-art-deco-lounge-item-0",
+          "x": 949.36,
+          "y": 174.99999999999997,
+          "rotation": 0,
+          "support": null
+        },
+        {
+          "id": "showroom-art-deco-lounge-item-2",
+          "x": 886.21,
+          "y": 127.3,
+          "rotation": 0,
+          "support": null
+        },
+        {
+          "id": "showroom-art-deco-lounge-item-1",
+          "x": 1117.8000000000002,
+          "y": 146.79999999999998,
+          "rotation": 0,
+          "support": null
+        },
+        {
+          "id": "showroom-art-deco-lounge-item-3",
+          "x": 949.36,
+          "y": 121.44999999999999,
+          "rotation": 0,
+          "support": "showroom-art-deco-lounge-item-0"
+        },
+        {
+          "id": "showroom-art-deco-lounge-item-4",
+          "x": 886.21,
+          "y": 101.2,
+          "rotation": 0,
+          "support": "showroom-art-deco-lounge-item-2"
+        },
+        {
+          "id": "showroom-art-deco-lounge-item-6",
+          "x": 742,
+          "y": 136,
+          "rotation": 0,
+          "support": null
+        },
+        {
+          "id": "showroom-art-deco-lounge-item-8",
+          "x": 640.4,
+          "y": 149.70000000000002,
+          "rotation": 0,
+          "support": null
+        },
+        {
+          "id": "showroom-art-deco-lounge-item-9",
+          "x": 769.1,
+          "y": 160,
+          "rotation": 90,
+          "support": null
+        },
+        {
+          "id": "showroom-art-deco-lounge-item-7",
+          "x": 742,
+          "y": 66.4,
+          "rotation": 0,
+          "support": null
+        },
+        {
+          "id": "showroom-art-deco-lounge-item-14",
+          "x": 275.6,
+          "y": 144.4,
+          "rotation": 0,
+          "support": null
+        },
+        {
+          "id": "showroom-art-deco-lounge-item-10",
+          "x": 224.20000000000005,
+          "y": 138.4,
+          "rotation": 0,
+          "support": null
+        },
+        {
+          "id": "showroom-art-deco-lounge-item-12",
+          "x": 175.0999999999999,
+          "y": 137.3,
+          "rotation": 0,
+          "support": null
+        },
+        {
+          "id": "showroom-art-deco-lounge-item-11",
+          "x": 121.59999999999991,
+          "y": 143.9,
+          "rotation": 0,
+          "support": null
+        },
+        {
+          "id": "showroom-art-deco-lounge-item-13",
+          "x": 60.399999999999636,
+          "y": 142,
+          "rotation": 0,
+          "support": null
+        },
+        {
+          "id": "showroom-art-deco-lounge-item-15",
+          "x": 60.399999999999636,
+          "y": 73.6,
+          "rotation": 0,
+          "support": "showroom-art-deco-lounge-item-13"
+        },
+        {
+          "id": "showroom-art-deco-lounge:family-room-1:family-dining-table-1",
+          "x": 427.168,
+          "y": 154.916,
+          "rotation": 180,
+          "support": null
+        },
+        {
+          "id": "showroom-art-deco-lounge:family-room-1:family-dining-chair-5",
+          "x": 331.26800000000003,
+          "y": 189.916,
+          "rotation": 270,
+          "support": null
+        },
+        {
+          "id": "showroom-art-deco-lounge:family-room-1:family-dining-chair-6",
+          "x": 523.068,
+          "y": 189.916,
+          "rotation": 90,
+          "support": null
+        },
+        {
+          "id": "showroom-art-deco-lounge:family-room-1:family-dining-chair-2",
+          "x": 427.168,
+          "y": 229.81599999999997,
+          "rotation": 180,
+          "support": null
+        },
+        {
+          "id": "showroom-art-deco-lounge-item-18",
+          "x": 1047.76,
+          "y": 242.90000000000003,
+          "rotation": 0,
+          "support": null
+        },
+        {
+          "id": "showroom-art-deco-lounge-item-19",
+          "x": 1102.46,
+          "y": 222.60000000000005,
+          "rotation": 90,
+          "support": null
+        },
+        {
+          "id": "showroom-art-deco-lounge:family-room-1:bedroom-plant-1",
+          "x": 1047.76,
+          "y": 199.08000000000007,
+          "rotation": 0,
+          "support": "showroom-art-deco-lounge-item-18"
+        },
+        {
+          "id": "showroom-art-deco-lounge-item-20",
+          "x": 869.55,
+          "y": 207.2,
+          "rotation": 270,
+          "support": null
+        },
+        {
+          "id": "showroom-art-deco-lounge:family-room-1:family-statement-plant-1",
+          "x": 536,
+          "y": 156.25,
+          "rotation": 0,
+          "support": null
+        },
+        {
+          "id": "showroom-art-deco-lounge-item-5",
+          "x": 939.52,
+          "y": 94,
+          "rotation": 0,
+          "support": null
+        },
+        {
+          "id": "showroom-art-deco-lounge-item-24",
+          "x": 250,
+          "y": 94,
+          "rotation": 0,
+          "support": null
+        },
+        {
+          "id": "showroom-art-deco-lounge-item-23",
+          "x": 1047.76,
+          "y": 284.20000000000005,
+          "rotation": 0,
+          "support": null
+        },
+        {
+          "id": "showroom-art-deco-lounge:family-room-1:family-living-rug-1",
+          "x": 147.02157769465043,
+          "y": 437.9684477511476,
+          "rotation": 0,
+          "support": null
+        },
+        {
+          "id": "showroom-art-deco-lounge:family-room-1:family-lounge-chair-2",
+          "x": 199.08791710805085,
+          "y": 389.86972268935386,
+          "rotation": 90,
+          "support": null
+        },
+        {
+          "id": "showroom-art-deco-lounge:family-room-1:family-lounge-chair-1",
+          "x": 200.69337758209744,
+          "y": 329.4480338983051,
+          "rotation": 90,
+          "support": null
+        },
+        {
+          "id": "showroom-art-deco-lounge-item-21",
+          "x": 71.6972697629767,
+          "y": 463.7642622153072,
+          "rotation": 0,
+          "support": null
+        },
+        {
+          "id": "showroom-art-deco-lounge-item-16",
+          "x": 76.95542985301914,
+          "y": 358.05352499337926,
+          "rotation": 270,
+          "support": null
+        },
+        {
+          "id": "showroom-art-deco-lounge:family-room-1:family-coffee-table-1",
+          "x": 115.17171941207624,
+          "y": 342.80192607918434,
+          "rotation": 90,
+          "support": null
+        },
+        {
+          "id": "showroom-art-deco-lounge-item-22",
+          "x": 144.42171941207624,
+          "y": 355.80192607918434,
+          "rotation": 0,
+          "support": "showroom-art-deco-lounge:family-room-1:family-coffee-table-1"
+        }
+      ],
+      "removed": [
+        "showroom-art-deco-lounge-item-17",
+        "showroom-art-deco-lounge:family-room-1:family-dining-chair-1",
+        "showroom-art-deco-lounge:family-room-1:family-dining-chair-3",
+        "showroom-art-deco-lounge:family-room-1:family-dining-chair-4"
+      ],
+      "added": []
+    },
+    "showroom-coastal-bedroom": {
+      "format": "coda-room-layout",
+      "version": 1,
+      "themeId": "showroom-coastal-bedroom",
+      "baseSignature": "room-324bb383",
+      "placements": [
+        {
+          "id": "showroom-coastal-bedroom-item-0",
+          "x": 234.64000000000001,
+          "y": 174.99999999999997,
+          "rotation": 0,
+          "support": null
+        },
+        {
+          "id": "showroom-coastal-bedroom-item-2",
+          "x": 297.78999999999996,
+          "y": 127.3,
+          "rotation": 0,
+          "support": null
+        },
+        {
+          "id": "showroom-coastal-bedroom-item-1",
+          "x": 66.20000000000002,
+          "y": 146.79999999999998,
+          "rotation": 0,
+          "support": null
+        },
+        {
+          "id": "showroom-coastal-bedroom-item-3",
+          "x": 234.64,
+          "y": 121.44999999999999,
+          "rotation": 0,
+          "support": "showroom-coastal-bedroom-item-0"
+        },
+        {
+          "id": "showroom-coastal-bedroom-item-4",
+          "x": 297.78999999999996,
+          "y": 101.2,
+          "rotation": 0,
+          "support": "showroom-coastal-bedroom-item-2"
+        },
+        {
+          "id": "showroom-coastal-bedroom-item-6",
+          "x": 442,
+          "y": 136,
+          "rotation": 0,
+          "support": null
+        },
+        {
+          "id": "showroom-coastal-bedroom-item-8",
+          "x": 555.4,
+          "y": 144.4,
+          "rotation": 0,
+          "support": null
+        },
+        {
+          "id": "showroom-coastal-bedroom-item-9",
+          "x": 414.90000000000003,
+          "y": 160,
+          "rotation": 270,
+          "support": null
+        },
+        {
+          "id": "showroom-coastal-bedroom-item-7",
+          "x": 442,
+          "y": 66.4,
+          "rotation": 0,
+          "support": null
+        },
+        {
+          "id": "showroom-coastal-bedroom-item-14",
+          "x": 908.4,
+          "y": 144.4,
+          "rotation": 0,
+          "support": null
+        },
+        {
+          "id": "showroom-coastal-bedroom-item-10",
+          "x": 959.8,
+          "y": 138.4,
+          "rotation": 0,
+          "support": null
+        },
+        {
+          "id": "showroom-coastal-bedroom-item-12",
+          "x": 1008.9000000000001,
+          "y": 137.3,
+          "rotation": 0,
+          "support": null
+        },
+        {
+          "id": "showroom-coastal-bedroom-item-11",
+          "x": 1062.4,
+          "y": 143.9,
+          "rotation": 0,
+          "support": null
+        },
+        {
+          "id": "showroom-coastal-bedroom-item-13",
+          "x": 1123.6,
+          "y": 142,
+          "rotation": 0,
+          "support": null
+        },
+        {
+          "id": "showroom-coastal-bedroom-item-15",
+          "x": 1123.6,
+          "y": 73.6,
+          "rotation": 0,
+          "support": "showroom-coastal-bedroom-item-13"
+        },
+        {
+          "id": "showroom-coastal-bedroom:family-room-1:family-dining-table-1",
+          "x": 756.832,
+          "y": 154.916,
+          "rotation": 180,
+          "support": null
+        },
+        {
+          "id": "showroom-coastal-bedroom:family-room-1:family-dining-chair-5",
+          "x": 852.732,
+          "y": 189.916,
+          "rotation": 90,
+          "support": null
+        },
+        {
+          "id": "showroom-coastal-bedroom:family-room-1:family-dining-chair-6",
+          "x": 660.932,
+          "y": 189.916,
+          "rotation": 270,
+          "support": null
+        },
+        {
+          "id": "showroom-coastal-bedroom:family-room-1:family-dining-chair-2",
+          "x": 756.832,
+          "y": 229.81599999999997,
+          "rotation": 180,
+          "support": null
+        },
+        {
+          "id": "showroom-coastal-bedroom-item-18",
+          "x": 136.24,
+          "y": 242.90000000000003,
+          "rotation": 0,
+          "support": null
+        },
+        {
+          "id": "showroom-coastal-bedroom-item-19",
+          "x": 81.54000000000002,
+          "y": 222.60000000000005,
+          "rotation": 270,
+          "support": null
+        },
+        {
+          "id": "showroom-coastal-bedroom:family-room-1:bedroom-plant-1",
+          "x": 136.24,
+          "y": 199.08000000000007,
+          "rotation": 0,
+          "support": "showroom-coastal-bedroom-item-18"
+        },
+        {
+          "id": "showroom-coastal-bedroom-item-20",
+          "x": 314.45,
+          "y": 207.2,
+          "rotation": 90,
+          "support": null
+        },
+        {
+          "id": "showroom-coastal-bedroom:family-room-1:family-statement-plant-1",
+          "x": 648,
+          "y": 156.25,
+          "rotation": 0,
+          "support": null
+        },
+        {
+          "id": "showroom-coastal-bedroom-item-5",
+          "x": 244.48000000000002,
+          "y": 94,
+          "rotation": 0,
+          "support": null
+        },
+        {
+          "id": "showroom-coastal-bedroom-item-24",
+          "x": 934,
+          "y": 94,
+          "rotation": 0,
+          "support": null
+        },
+        {
+          "id": "showroom-coastal-bedroom-item-23",
+          "x": 136.24,
+          "y": 284.20000000000005,
+          "rotation": 0,
+          "support": null
+        },
+        {
+          "id": "showroom-coastal-bedroom:family-room-1:family-living-rug-1",
+          "x": 756.832,
+          "y": 264.5826666666667,
+          "rotation": 0,
+          "support": null
+        },
+        {
+          "id": "showroom-coastal-bedroom-item-21",
+          "x": 1157.302760858051,
+          "y": 446.1047175582628,
+          "rotation": 0,
+          "support": null
+        },
+        {
+          "id": "showroom-coastal-bedroom-item-16",
+          "x": 1106.2419011520128,
+          "y": 346.81548540121827,
+          "rotation": 90,
+          "support": null
+        },
+        {
+          "id": "showroom-coastal-bedroom:family-room-1:family-coffee-table-1",
+          "x": 1078.4608597060383,
+          "y": 325.94498917505297,
+          "rotation": 270,
+          "support": null
+        },
+        {
+          "id": "showroom-coastal-bedroom-item-22",
+          "x": 1049.2108597060383,
+          "y": 338.94498917505297,
+          "rotation": 0,
+          "support": "showroom-coastal-bedroom:family-room-1:family-coffee-table-1"
+        },
+        {
+          "id": "showroom-coastal-bedroom:family-room-1:family-lounge-chair-1",
+          "x": 992.136440677966,
+          "y": 319.0127857852225,
+          "rotation": 270,
+          "support": null
+        },
+        {
+          "id": "showroom-coastal-bedroom:family-room-1:family-lounge-chair-2",
+          "x": 993.7418399099577,
+          "y": 370.6046869372351,
+          "rotation": 270,
+          "support": null
+        }
+      ],
+      "removed": [
+        "showroom-coastal-bedroom-item-17",
+        "showroom-coastal-bedroom:family-room-1:family-dining-chair-1",
+        "showroom-coastal-bedroom:family-room-1:family-dining-chair-3",
+        "showroom-coastal-bedroom:family-room-1:family-dining-chair-4"
+      ],
+      "added": []
+    },
+    "showroom-rustic-kitchen": {
+      "format": "coda-room-layout",
+      "version": 1,
+      "themeId": "showroom-rustic-kitchen",
+      "baseSignature": "room-143c5418",
+      "placements": [
+        {
+          "id": "showroom-rustic-kitchen-item-0",
+          "x": 949.36,
+          "y": 174.99999999999997,
+          "rotation": 0,
+          "support": null
+        },
+        {
+          "id": "showroom-rustic-kitchen-item-2",
+          "x": 886.21,
+          "y": 127.3,
+          "rotation": 0,
+          "support": null
+        },
+        {
+          "id": "showroom-rustic-kitchen-item-1",
+          "x": 1117.8,
+          "y": 146.79999999999998,
+          "rotation": 0,
+          "support": null
+        },
+        {
+          "id": "showroom-rustic-kitchen-item-3",
+          "x": 949.36,
+          "y": 121.44999999999999,
+          "rotation": 0,
+          "support": "showroom-rustic-kitchen-item-0"
+        },
+        {
+          "id": "showroom-rustic-kitchen-item-4",
+          "x": 886.21,
+          "y": 101.2,
+          "rotation": 0,
+          "support": "showroom-rustic-kitchen-item-2"
+        },
+        {
+          "id": "showroom-rustic-kitchen-item-6",
+          "x": 742,
+          "y": 136,
+          "rotation": 0,
+          "support": null
+        },
+        {
+          "id": "showroom-rustic-kitchen-item-8",
+          "x": 640.4,
+          "y": 149.70000000000002,
+          "rotation": 0,
+          "support": null
+        },
+        {
+          "id": "showroom-rustic-kitchen-item-9",
+          "x": 769.1,
+          "y": 160,
+          "rotation": 90,
+          "support": null
+        },
+        {
+          "id": "showroom-rustic-kitchen-item-7",
+          "x": 742,
+          "y": 66.4,
+          "rotation": 0,
+          "support": null
+        },
+        {
+          "id": "showroom-rustic-kitchen-item-14",
+          "x": 275.6,
+          "y": 144.4,
+          "rotation": 0,
+          "support": null
+        },
+        {
+          "id": "showroom-rustic-kitchen-item-10",
+          "x": 224.20000000000005,
+          "y": 138.4,
+          "rotation": 0,
+          "support": null
+        },
+        {
+          "id": "showroom-rustic-kitchen-item-12",
+          "x": 175.0999999999999,
+          "y": 137.3,
+          "rotation": 0,
+          "support": null
+        },
+        {
+          "id": "showroom-rustic-kitchen-item-11",
+          "x": 121.59999999999991,
+          "y": 143.9,
+          "rotation": 0,
+          "support": null
+        },
+        {
+          "id": "showroom-rustic-kitchen-item-13",
+          "x": 60.399999999999636,
+          "y": 142,
+          "rotation": 0,
+          "support": null
+        },
+        {
+          "id": "showroom-rustic-kitchen-item-15",
+          "x": 60.399999999999636,
+          "y": 73.6,
+          "rotation": 0,
+          "support": "showroom-rustic-kitchen-item-13"
+        },
+        {
+          "id": "showroom-rustic-kitchen:family-room-1:family-dining-table-1",
+          "x": 427.168,
+          "y": 154.916,
+          "rotation": 180,
+          "support": null
+        },
+        {
+          "id": "showroom-rustic-kitchen:family-room-1:family-dining-chair-5",
+          "x": 331.26800000000003,
+          "y": 189.916,
+          "rotation": 270,
+          "support": null
+        },
+        {
+          "id": "showroom-rustic-kitchen:family-room-1:family-dining-chair-6",
+          "x": 523.068,
+          "y": 189.916,
+          "rotation": 90,
+          "support": null
+        },
+        {
+          "id": "showroom-rustic-kitchen:family-room-1:family-dining-chair-2",
+          "x": 427.168,
+          "y": 229.81599999999997,
+          "rotation": 180,
+          "support": null
+        },
+        {
+          "id": "showroom-rustic-kitchen-item-18",
+          "x": 1047.76,
+          "y": 242.90000000000003,
+          "rotation": 0,
+          "support": null
+        },
+        {
+          "id": "showroom-rustic-kitchen-item-19",
+          "x": 1102.46,
+          "y": 222.60000000000005,
+          "rotation": 90,
+          "support": null
+        },
+        {
+          "id": "showroom-rustic-kitchen:family-room-1:bedroom-plant-1",
+          "x": 1047.76,
+          "y": 199.08000000000007,
+          "rotation": 0,
+          "support": "showroom-rustic-kitchen-item-18"
+        },
+        {
+          "id": "showroom-rustic-kitchen-item-20",
+          "x": 869.55,
+          "y": 207.2,
+          "rotation": 270,
+          "support": null
+        },
+        {
+          "id": "showroom-rustic-kitchen:family-room-1:family-statement-plant-1",
+          "x": 536,
+          "y": 156.25,
+          "rotation": 0,
+          "support": null
+        },
+        {
+          "id": "showroom-rustic-kitchen-item-5",
+          "x": 939.52,
+          "y": 94,
+          "rotation": 0,
+          "support": null
+        },
+        {
+          "id": "showroom-rustic-kitchen-item-24",
+          "x": 250,
+          "y": 94,
+          "rotation": 0,
+          "support": null
+        },
+        {
+          "id": "showroom-rustic-kitchen-item-23",
+          "x": 1047.76,
+          "y": 284.20000000000005,
+          "rotation": 0,
+          "support": null
+        },
+        {
+          "id": "showroom-rustic-kitchen:family-room-1:family-lounge-chair-2",
+          "x": 192.66625893802964,
+          "y": 411.54291853151483,
+          "rotation": 90,
+          "support": null
+        },
+        {
+          "id": "showroom-rustic-kitchen:family-room-1:family-lounge-chair-1",
+          "x": 197.48257911811444,
+          "y": 336.67245292637716,
+          "rotation": 90,
+          "support": null
+        },
+        {
+          "id": "showroom-rustic-kitchen-item-21",
+          "x": 74.90812946901474,
+          "y": 482.2266902145127,
+          "rotation": 0,
+          "support": null
+        },
+        {
+          "id": "showroom-rustic-kitchen-item-16",
+          "x": 74.54726976297671,
+          "y": 386.1483790055614,
+          "rotation": 270,
+          "support": null
+        },
+        {
+          "id": "showroom-rustic-kitchen:family-room-1:family-coffee-table-1",
+          "x": 107.94730038400422,
+          "y": 358.05340250926906,
+          "rotation": 90,
+          "support": null
+        },
+        {
+          "id": "showroom-rustic-kitchen-item-22",
+          "x": 137.19730038400422,
+          "y": 371.05340250926906,
+          "rotation": 0,
+          "support": "showroom-rustic-kitchen:family-room-1:family-coffee-table-1"
+        },
+        {
+          "id": "showroom-rustic-kitchen:family-room-1:family-living-rug-1",
+          "x": 220.87107534427963,
+          "y": 368.93520903954806,
+          "rotation": 270,
+          "support": null
+        }
+      ],
+      "removed": [
+        "showroom-rustic-kitchen-item-17",
+        "showroom-rustic-kitchen:family-room-1:family-dining-chair-1",
+        "showroom-rustic-kitchen:family-room-1:family-dining-chair-3",
+        "showroom-rustic-kitchen:family-room-1:family-dining-chair-4"
+      ],
+      "added": []
+    },
+    "showroom-botanical-conservatory": {
+      "format": "coda-room-layout",
+      "version": 1,
+      "themeId": "showroom-botanical-conservatory",
+      "baseSignature": "room-2c0c9f83",
+      "placements": [
+        {
+          "id": "showroom-botanical-conservatory-item-0",
+          "x": 234.64000000000001,
+          "y": 174.99999999999997,
+          "rotation": 0,
+          "support": null
+        },
+        {
+          "id": "showroom-botanical-conservatory-item-2",
+          "x": 297.78999999999996,
+          "y": 127.3,
+          "rotation": 0,
+          "support": null
+        },
+        {
+          "id": "showroom-botanical-conservatory-item-1",
+          "x": 66.19999999999999,
+          "y": 146.79999999999998,
+          "rotation": 0,
+          "support": null
+        },
+        {
+          "id": "showroom-botanical-conservatory-item-3",
+          "x": 234.64,
+          "y": 121.44999999999999,
+          "rotation": 0,
+          "support": "showroom-botanical-conservatory-item-0"
+        },
+        {
+          "id": "showroom-botanical-conservatory-item-4",
+          "x": 297.78999999999996,
+          "y": 101.2,
+          "rotation": 0,
+          "support": "showroom-botanical-conservatory-item-2"
+        },
+        {
+          "id": "showroom-botanical-conservatory-item-6",
+          "x": 442,
+          "y": 136,
+          "rotation": 0,
+          "support": null
+        },
+        {
+          "id": "showroom-botanical-conservatory-item-8",
+          "x": 555.4,
+          "y": 144.4,
+          "rotation": 0,
+          "support": null
+        },
+        {
+          "id": "showroom-botanical-conservatory-item-9",
+          "x": 414.9,
+          "y": 160,
+          "rotation": 270,
+          "support": null
+        },
+        {
+          "id": "showroom-botanical-conservatory-item-7",
+          "x": 442,
+          "y": 66.4,
+          "rotation": 0,
+          "support": null
+        },
+        {
+          "id": "showroom-botanical-conservatory-item-14",
+          "x": 908.4,
+          "y": 144.4,
+          "rotation": 0,
+          "support": null
+        },
+        {
+          "id": "showroom-botanical-conservatory-item-10",
+          "x": 959.8,
+          "y": 138.4,
+          "rotation": 0,
+          "support": null
+        },
+        {
+          "id": "showroom-botanical-conservatory-item-12",
+          "x": 1008.9000000000001,
+          "y": 137.3,
+          "rotation": 0,
+          "support": null
+        },
+        {
+          "id": "showroom-botanical-conservatory-item-11",
+          "x": 1062.4,
+          "y": 143.9,
+          "rotation": 0,
+          "support": null
+        },
+        {
+          "id": "showroom-botanical-conservatory-item-13",
+          "x": 1123.6,
+          "y": 142,
+          "rotation": 0,
+          "support": null
+        },
+        {
+          "id": "showroom-botanical-conservatory-item-15",
+          "x": 1123.6,
+          "y": 73.6,
+          "rotation": 0,
+          "support": "showroom-botanical-conservatory-item-13"
+        },
+        {
+          "id": "showroom-botanical-conservatory:family-room-1:family-dining-table-1",
+          "x": 756.832,
+          "y": 154.916,
+          "rotation": 180,
+          "support": null
+        },
+        {
+          "id": "showroom-botanical-conservatory:family-room-1:family-dining-chair-5",
+          "x": 852.732,
+          "y": 189.916,
+          "rotation": 90,
+          "support": null
+        },
+        {
+          "id": "showroom-botanical-conservatory:family-room-1:family-dining-chair-6",
+          "x": 660.932,
+          "y": 189.916,
+          "rotation": 270,
+          "support": null
+        },
+        {
+          "id": "showroom-botanical-conservatory:family-room-1:family-dining-chair-2",
+          "x": 756.832,
+          "y": 229.81599999999997,
+          "rotation": 180,
+          "support": null
+        },
+        {
+          "id": "showroom-botanical-conservatory-item-18",
+          "x": 136.24,
+          "y": 242.90000000000003,
+          "rotation": 0,
+          "support": null
+        },
+        {
+          "id": "showroom-botanical-conservatory-item-19",
+          "x": 81.54000000000002,
+          "y": 222.60000000000005,
+          "rotation": 270,
+          "support": null
+        },
+        {
+          "id": "showroom-botanical-conservatory:family-room-1:bedroom-plant-1",
+          "x": 136.24,
+          "y": 199.08000000000007,
+          "rotation": 0,
+          "support": "showroom-botanical-conservatory-item-18"
+        },
+        {
+          "id": "showroom-botanical-conservatory-item-20",
+          "x": 314.45,
+          "y": 207.2,
+          "rotation": 90,
+          "support": null
+        },
+        {
+          "id": "showroom-botanical-conservatory:family-room-1:family-statement-plant-1",
+          "x": 648,
+          "y": 156.25,
+          "rotation": 0,
+          "support": null
+        },
+        {
+          "id": "showroom-botanical-conservatory-item-5",
+          "x": 244.48000000000002,
+          "y": 94,
+          "rotation": 0,
+          "support": null
+        },
+        {
+          "id": "showroom-botanical-conservatory-item-24",
+          "x": 934,
+          "y": 94,
+          "rotation": 0,
+          "support": null
+        },
+        {
+          "id": "showroom-botanical-conservatory-item-23",
+          "x": 136.24,
+          "y": 284.20000000000005,
+          "rotation": 0,
+          "support": null
+        },
+        {
+          "id": "showroom-botanical-conservatory:family-room-1:family-living-rug-1",
+          "x": 987.1276258909836,
+          "y": 365.20248145161304,
+          "rotation": 90,
+          "support": null
+        },
+        {
+          "id": "showroom-botanical-conservatory-item-21",
+          "x": 1157.5762133906485,
+          "y": 453.49623430350925,
+          "rotation": 0,
+          "support": null
+        },
+        {
+          "id": "showroom-botanical-conservatory-item-16",
+          "x": 1111.3403692695126,
+          "y": 355.3008005036629,
+          "rotation": 90,
+          "support": null
+        },
+        {
+          "id": "showroom-botanical-conservatory:family-room-1:family-coffee-table-1",
+          "x": 1087.0876083651442,
+          "y": 335.3920638040925,
+          "rotation": 270,
+          "support": null
+        },
+        {
+          "id": "showroom-botanical-conservatory-item-22",
+          "x": 1057.8376083651442,
+          "y": 348.3920638040925,
+          "rotation": 0,
+          "support": "showroom-botanical-conservatory:family-room-1:family-coffee-table-1"
+        },
+        {
+          "id": "showroom-botanical-conservatory:family-room-1:family-lounge-chair-2",
+          "x": 989.6930480703264,
+          "y": 389.2957770251064,
+          "rotation": 270,
+          "support": null
+        },
+        {
+          "id": "showroom-botanical-conservatory:family-room-1:family-lounge-chair-1",
+          "x": 992.9215240351631,
+          "y": 332.06732158615813,
+          "rotation": 270,
+          "support": null
+        }
+      ],
+      "removed": [
+        "showroom-botanical-conservatory-item-17",
+        "showroom-botanical-conservatory:family-room-1:family-dining-chair-1",
+        "showroom-botanical-conservatory:family-room-1:family-dining-chair-3",
+        "showroom-botanical-conservatory:family-room-1:family-dining-chair-4"
+      ],
+      "added": []
+    },
+    "showroom-french-cafe": {
+      "format": "coda-room-layout",
+      "version": 1,
+      "themeId": "showroom-french-cafe",
+      "baseSignature": "room-40fa9b9c",
+      "placements": [
+        {
+          "id": "showroom-french-cafe-item-0",
+          "x": 234.64000000000001,
+          "y": 174.99999999999997,
+          "rotation": 0,
+          "support": null
+        },
+        {
+          "id": "showroom-french-cafe-item-2",
+          "x": 297.78999999999996,
+          "y": 127.3,
+          "rotation": 0,
+          "support": null
+        },
+        {
+          "id": "showroom-french-cafe-item-1",
+          "x": 66.20000000000002,
+          "y": 146.79999999999998,
+          "rotation": 0,
+          "support": null
+        },
+        {
+          "id": "showroom-french-cafe-item-3",
+          "x": 234.64,
+          "y": 121.44999999999999,
+          "rotation": 0,
+          "support": "showroom-french-cafe-item-0"
+        },
+        {
+          "id": "showroom-french-cafe-item-4",
+          "x": 297.78999999999996,
+          "y": 101.2,
+          "rotation": 0,
+          "support": "showroom-french-cafe-item-2"
+        },
+        {
+          "id": "showroom-french-cafe-item-6",
+          "x": 442,
+          "y": 136,
+          "rotation": 0,
+          "support": null
+        },
+        {
+          "id": "showroom-french-cafe-item-8",
+          "x": 543.6,
+          "y": 149.70000000000002,
+          "rotation": 0,
+          "support": null
+        },
+        {
+          "id": "showroom-french-cafe-item-9",
+          "x": 414.90000000000003,
+          "y": 160,
+          "rotation": 270,
+          "support": null
+        },
+        {
+          "id": "showroom-french-cafe-item-7",
+          "x": 442,
+          "y": 66.4,
+          "rotation": 0,
+          "support": null
+        },
+        {
+          "id": "showroom-french-cafe-item-14",
+          "x": 908.4,
+          "y": 144.4,
+          "rotation": 0,
+          "support": null
+        },
+        {
+          "id": "showroom-french-cafe-item-10",
+          "x": 959.8,
+          "y": 138.4,
+          "rotation": 0,
+          "support": null
+        },
+        {
+          "id": "showroom-french-cafe-item-12",
+          "x": 1008.9000000000001,
+          "y": 137.3,
+          "rotation": 0,
+          "support": null
+        },
+        {
+          "id": "showroom-french-cafe-item-11",
+          "x": 1062.4,
+          "y": 143.9,
+          "rotation": 0,
+          "support": null
+        },
+        {
+          "id": "showroom-french-cafe-item-13",
+          "x": 1123.6,
+          "y": 142,
+          "rotation": 0,
+          "support": null
+        },
+        {
+          "id": "showroom-french-cafe-item-15",
+          "x": 1123.6,
+          "y": 73.6,
+          "rotation": 0,
+          "support": "showroom-french-cafe-item-13"
+        },
+        {
+          "id": "showroom-french-cafe:family-room-1:family-dining-table-1",
+          "x": 756.832,
+          "y": 154.916,
+          "rotation": 180,
+          "support": null
+        },
+        {
+          "id": "showroom-french-cafe:family-room-1:family-dining-chair-5",
+          "x": 852.732,
+          "y": 189.916,
+          "rotation": 90,
+          "support": null
+        },
+        {
+          "id": "showroom-french-cafe:family-room-1:family-dining-chair-6",
+          "x": 660.932,
+          "y": 189.916,
+          "rotation": 270,
+          "support": null
+        },
+        {
+          "id": "showroom-french-cafe:family-room-1:family-dining-chair-2",
+          "x": 756.832,
+          "y": 229.81599999999997,
+          "rotation": 180,
+          "support": null
+        },
+        {
+          "id": "showroom-french-cafe-item-18",
+          "x": 136.24,
+          "y": 242.90000000000003,
+          "rotation": 0,
+          "support": null
+        },
+        {
+          "id": "showroom-french-cafe-item-19",
+          "x": 81.54000000000002,
+          "y": 222.60000000000005,
+          "rotation": 270,
+          "support": null
+        },
+        {
+          "id": "showroom-french-cafe:family-room-1:bedroom-plant-1",
+          "x": 136.24,
+          "y": 199.08000000000007,
+          "rotation": 0,
+          "support": "showroom-french-cafe-item-18"
+        },
+        {
+          "id": "showroom-french-cafe-item-20",
+          "x": 314.45,
+          "y": 207.2,
+          "rotation": 90,
+          "support": null
+        },
+        {
+          "id": "showroom-french-cafe:family-room-1:family-statement-plant-1",
+          "x": 648,
+          "y": 156.25,
+          "rotation": 0,
+          "support": null
+        },
+        {
+          "id": "showroom-french-cafe-item-5",
+          "x": 244.48000000000002,
+          "y": 94,
+          "rotation": 0,
+          "support": null
+        },
+        {
+          "id": "showroom-french-cafe-item-24",
+          "x": 934,
+          "y": 94,
+          "rotation": 0,
+          "support": null
+        },
+        {
+          "id": "showroom-french-cafe-item-23",
+          "x": 136.24,
+          "y": 284.20000000000005,
+          "rotation": 0,
+          "support": null
+        },
+        {
+          "id": "showroom-french-cafe:family-room-1:family-living-rug-1",
+          "x": 756.832,
+          "y": 264.5826666666667,
+          "rotation": 0,
+          "support": null
+        },
+        {
+          "id": "showroom-french-cafe-item-21",
+          "x": 1154.2973119419141,
+          "y": 477.89318464697016,
+          "rotation": 0,
+          "support": null
+        },
+        {
+          "id": "showroom-french-cafe-item-16",
+          "x": 1109.9716262789925,
+          "y": 369.22570177778795,
+          "rotation": 90,
+          "support": null
+        },
+        {
+          "id": "showroom-french-cafe:family-room-1:family-coffee-table-1",
+          "x": 1087.5850665694218,
+          "y": 337.5069735751402,
+          "rotation": 270,
+          "support": null
+        },
+        {
+          "id": "showroom-french-cafe-item-22",
+          "x": 1058.3350665694218,
+          "y": 350.5069735751402,
+          "rotation": 0,
+          "support": "showroom-french-cafe:family-room-1:family-coffee-table-1"
+        },
+        {
+          "id": "showroom-french-cafe:family-room-1:family-lounge-chair-2",
+          "x": 997.4716262789924,
+          "y": 393.1419015250801,
+          "rotation": 270,
+          "support": null
+        },
+        {
+          "id": "showroom-french-cafe:family-room-1:family-lounge-chair-1",
+          "x": 997.47159266864,
+          "y": 329.45008751364327,
+          "rotation": 270,
+          "support": null
+        }
+      ],
+      "removed": [
+        "showroom-french-cafe-item-17",
+        "showroom-french-cafe:family-room-1:family-dining-chair-1",
+        "showroom-french-cafe:family-room-1:family-dining-chair-3",
+        "showroom-french-cafe:family-room-1:family-dining-chair-4"
+      ],
+      "added": []
+    },
+    "showroom-industrial-loft": {
+      "format": "coda-room-layout",
+      "version": 1,
+      "themeId": "showroom-industrial-loft",
+      "baseSignature": "room-70980db7",
+      "placements": [
+        {
+          "id": "showroom-industrial-loft-item-0",
+          "x": 949.36,
+          "y": 174.99999999999997,
+          "rotation": 0,
+          "support": null
+        },
+        {
+          "id": "showroom-industrial-loft-item-2",
+          "x": 886.21,
+          "y": 127.3,
+          "rotation": 0,
+          "support": null
+        },
+        {
+          "id": "showroom-industrial-loft-item-1",
+          "x": 1117.8,
+          "y": 146.79999999999998,
+          "rotation": 0,
+          "support": null
+        },
+        {
+          "id": "showroom-industrial-loft-item-3",
+          "x": 949.36,
+          "y": 121.44999999999999,
+          "rotation": 0,
+          "support": "showroom-industrial-loft-item-0"
+        },
+        {
+          "id": "showroom-industrial-loft-item-4",
+          "x": 886.21,
+          "y": 101.2,
+          "rotation": 0,
+          "support": "showroom-industrial-loft-item-2"
+        },
+        {
+          "id": "showroom-industrial-loft-item-6",
+          "x": 742,
+          "y": 136,
+          "rotation": 0,
+          "support": null
+        },
+        {
+          "id": "showroom-industrial-loft-item-8",
+          "x": 628.6,
+          "y": 144.4,
+          "rotation": 0,
+          "support": null
+        },
+        {
+          "id": "showroom-industrial-loft-item-9",
+          "x": 769.1,
+          "y": 160,
+          "rotation": 90,
+          "support": null
+        },
+        {
+          "id": "showroom-industrial-loft-item-7",
+          "x": 742,
+          "y": 66.4,
+          "rotation": 0,
+          "support": null
+        },
+        {
+          "id": "showroom-industrial-loft-item-14",
+          "x": 275.6,
+          "y": 144.4,
+          "rotation": 0,
+          "support": null
+        },
+        {
+          "id": "showroom-industrial-loft-item-10",
+          "x": 224.20000000000005,
+          "y": 138.4,
+          "rotation": 0,
+          "support": null
+        },
+        {
+          "id": "showroom-industrial-loft-item-12",
+          "x": 175.0999999999999,
+          "y": 137.3,
+          "rotation": 0,
+          "support": null
+        },
+        {
+          "id": "showroom-industrial-loft-item-11",
+          "x": 121.59999999999991,
+          "y": 143.9,
+          "rotation": 0,
+          "support": null
+        },
+        {
+          "id": "showroom-industrial-loft-item-13",
+          "x": 60.399999999999636,
+          "y": 142,
+          "rotation": 0,
+          "support": null
+        },
+        {
+          "id": "showroom-industrial-loft-item-15",
+          "x": 60.399999999999636,
+          "y": 73.6,
+          "rotation": 0,
+          "support": "showroom-industrial-loft-item-13"
+        },
+        {
+          "id": "showroom-industrial-loft:family-room-1:family-dining-table-1",
+          "x": 427.168,
+          "y": 154.916,
+          "rotation": 180,
+          "support": null
+        },
+        {
+          "id": "showroom-industrial-loft:family-room-1:family-dining-chair-5",
+          "x": 331.26800000000003,
+          "y": 189.916,
+          "rotation": 270,
+          "support": null
+        },
+        {
+          "id": "showroom-industrial-loft:family-room-1:family-dining-chair-6",
+          "x": 523.068,
+          "y": 189.916,
+          "rotation": 90,
+          "support": null
+        },
+        {
+          "id": "showroom-industrial-loft:family-room-1:family-dining-chair-2",
+          "x": 427.168,
+          "y": 229.81599999999997,
+          "rotation": 180,
+          "support": null
+        },
+        {
+          "id": "showroom-industrial-loft-item-18",
+          "x": 1047.76,
+          "y": 242.90000000000003,
+          "rotation": 0,
+          "support": null
+        },
+        {
+          "id": "showroom-industrial-loft-item-19",
+          "x": 1102.46,
+          "y": 222.60000000000005,
+          "rotation": 90,
+          "support": null
+        },
+        {
+          "id": "showroom-industrial-loft:family-room-1:bedroom-plant-1",
+          "x": 1047.76,
+          "y": 199.08000000000007,
+          "rotation": 0,
+          "support": "showroom-industrial-loft-item-18"
+        },
+        {
+          "id": "showroom-industrial-loft-item-20",
+          "x": 869.55,
+          "y": 207.2,
+          "rotation": 270,
+          "support": null
+        },
+        {
+          "id": "showroom-industrial-loft:family-room-1:family-statement-plant-1",
+          "x": 536,
+          "y": 156.25,
+          "rotation": 0,
+          "support": null
+        },
+        {
+          "id": "showroom-industrial-loft-item-5",
+          "x": 939.52,
+          "y": 94,
+          "rotation": 0,
+          "support": null
+        },
+        {
+          "id": "showroom-industrial-loft-item-24",
+          "x": 250,
+          "y": 94,
+          "rotation": 0,
+          "support": null
+        },
+        {
+          "id": "showroom-industrial-loft-item-23",
+          "x": 1047.76,
+          "y": 284.20000000000005,
+          "rotation": 0,
+          "support": null
+        },
+        {
+          "id": "showroom-industrial-loft:family-room-1:family-living-rug-1",
+          "x": 427.168,
+          "y": 264.5826666666667,
+          "rotation": 0,
+          "support": null
+        },
+        {
+          "id": "showroom-industrial-loft-item-21",
+          "x": 35.57523586467164,
+          "y": 454.93450519729873,
+          "rotation": 180,
+          "support": null
+        },
+        {
+          "id": "showroom-industrial-loft-item-16",
+          "x": 76.1527302370233,
+          "y": 362.0670536943856,
+          "rotation": 270,
+          "support": null
+        },
+        {
+          "id": "showroom-industrial-loft:family-room-1:family-coffee-table-1",
+          "x": 108.75,
+          "y": 368.4887118644068,
+          "rotation": 90,
+          "support": null
+        },
+        {
+          "id": "showroom-industrial-loft-item-22",
+          "x": 138,
+          "y": 381.4887118644068,
+          "rotation": 0,
+          "support": "showroom-industrial-loft:family-room-1:family-coffee-table-1"
+        },
+        {
+          "id": "showroom-industrial-loft:family-room-1:family-lounge-chair-2",
+          "x": 192.66632018008474,
+          "y": 415.5565084745763,
+          "rotation": 90,
+          "support": null
+        },
+        {
+          "id": "showroom-industrial-loft:family-room-1:family-lounge-chair-1",
+          "x": 191.06085970603814,
+          "y": 348.71313089247883,
+          "rotation": 90,
+          "support": null
+        }
+      ],
+      "removed": [
+        "showroom-industrial-loft-item-17",
+        "showroom-industrial-loft:family-room-1:family-dining-chair-1",
+        "showroom-industrial-loft:family-room-1:family-dining-chair-3",
+        "showroom-industrial-loft:family-room-1:family-dining-chair-4"
+      ],
+      "added": []
+    },
+    "showroom-retrofuture": {
+      "format": "coda-room-layout",
+      "version": 1,
+      "themeId": "showroom-retrofuture",
+      "baseSignature": "room-480ccc6a",
+      "placements": [
+        {
+          "id": "showroom-retrofuture-item-0",
+          "x": 234.64000000000001,
+          "y": 174.99999999999997,
+          "rotation": 0,
+          "support": null
+        },
+        {
+          "id": "showroom-retrofuture-item-1",
+          "x": 297.78999999999996,
+          "y": 127.3,
+          "rotation": 0,
+          "support": null
+        },
+        {
+          "id": "showroom-retrofuture-item-2",
+          "x": 66.19999999999999,
+          "y": 146.79999999999998,
+          "rotation": 0,
+          "support": null
+        },
+        {
+          "id": "showroom-retrofuture-item-3",
+          "x": 234.64,
+          "y": 121.44999999999999,
+          "rotation": 0,
+          "support": "showroom-retrofuture-item-0"
+        },
+        {
+          "id": "showroom-retrofuture-item-4",
+          "x": 297.78999999999996,
+          "y": 101.2,
+          "rotation": 0,
+          "support": "showroom-retrofuture-item-1"
+        },
+        {
+          "id": "showroom-retrofuture-item-6",
+          "x": 442,
+          "y": 136,
+          "rotation": 0,
+          "support": null
+        },
+        {
+          "id": "showroom-retrofuture-item-8",
+          "x": 543.6,
+          "y": 149.70000000000002,
+          "rotation": 0,
+          "support": null
+        },
+        {
+          "id": "showroom-retrofuture-item-9",
+          "x": 414.90000000000003,
+          "y": 160,
+          "rotation": 270,
+          "support": null
+        },
+        {
+          "id": "showroom-retrofuture-item-7",
+          "x": 442,
+          "y": 66.4,
+          "rotation": 0,
+          "support": null
+        },
+        {
+          "id": "showroom-retrofuture-item-14",
+          "x": 908.4000000000001,
+          "y": 144.4,
+          "rotation": 0,
+          "support": null
+        },
+        {
+          "id": "showroom-retrofuture-item-11",
+          "x": 959.8000000000001,
+          "y": 138.4,
+          "rotation": 0,
+          "support": null
+        },
+        {
+          "id": "showroom-retrofuture-item-13",
+          "x": 1008.9000000000001,
+          "y": 137.3,
+          "rotation": 0,
+          "support": null
+        },
+        {
+          "id": "showroom-retrofuture-item-12",
+          "x": 1062.3999999999999,
+          "y": 143.9,
+          "rotation": 0,
+          "support": null
+        },
+        {
+          "id": "showroom-retrofuture-item-15",
+          "x": 1123.6,
+          "y": 142,
+          "rotation": 0,
+          "support": null
+        },
+        {
+          "id": "showroom-retrofuture-item-26",
+          "x": 1123.6,
+          "y": 73.6,
+          "rotation": 0,
+          "support": "showroom-retrofuture-item-15"
+        },
+        {
+          "id": "showroom-retrofuture:family-room-1:family-dining-table-1",
+          "x": 756.832,
+          "y": 154.916,
+          "rotation": 180,
+          "support": null
+        },
+        {
+          "id": "showroom-retrofuture:family-room-1:family-dining-chair-5",
+          "x": 852.732,
+          "y": 189.916,
+          "rotation": 90,
+          "support": null
+        },
+        {
+          "id": "showroom-retrofuture:family-room-1:family-dining-chair-6",
+          "x": 660.932,
+          "y": 189.916,
+          "rotation": 270,
+          "support": null
+        },
+        {
+          "id": "showroom-retrofuture:family-room-1:family-dining-chair-2",
+          "x": 756.832,
+          "y": 229.81599999999997,
+          "rotation": 180,
+          "support": null
+        },
+        {
+          "id": "showroom-retrofuture-item-16",
+          "x": 136.24,
+          "y": 242.90000000000003,
+          "rotation": 0,
+          "support": null
+        },
+        {
+          "id": "showroom-retrofuture-item-17",
+          "x": 81.54000000000002,
+          "y": 222.60000000000005,
+          "rotation": 270,
+          "support": null
+        },
+        {
+          "id": "showroom-retrofuture:family-room-1:bedroom-plant-1",
+          "x": 136.24,
+          "y": 199.08000000000007,
+          "rotation": 0,
+          "support": "showroom-retrofuture-item-16"
+        },
+        {
+          "id": "showroom-retrofuture-item-22",
+          "x": 314.45,
+          "y": 207.2,
+          "rotation": 90,
+          "support": null
+        },
+        {
+          "id": "showroom-retrofuture:family-room-1:family-statement-plant-1",
+          "x": 648,
+          "y": 156.25,
+          "rotation": 0,
+          "support": null
+        },
+        {
+          "id": "showroom-retrofuture-item-10",
+          "x": 442,
+          "y": 271,
+          "rotation": 0,
+          "support": null
+        },
+        {
+          "id": "showroom-retrofuture-item-5",
+          "x": 244.48000000000002,
+          "y": 94,
+          "rotation": 0,
+          "support": null
+        },
+        {
+          "id": "showroom-retrofuture-item-27",
+          "x": 934,
+          "y": 94,
+          "rotation": 0,
+          "support": null
+        },
+        {
+          "id": "showroom-retrofuture-item-25",
+          "x": 136.24,
+          "y": 284.20000000000005,
+          "rotation": 0,
+          "support": null
+        },
+        {
+          "id": "showroom-retrofuture:family-room-1:family-living-rug-1",
+          "x": 1022.529614870233,
+          "y": 458.5966101694915,
+          "rotation": 0,
+          "support": null
+        },
+        {
+          "id": "showroom-retrofuture-item-19",
+          "x": 1019.5489952992585,
+          "y": 341.1964962261652,
+          "rotation": 0,
+          "support": null
+        },
+        {
+          "id": "showroom-retrofuture-item-23",
+          "x": 1154.8946007680083,
+          "y": 341.7520527012713,
+          "rotation": 0,
+          "support": null
+        },
+        {
+          "id": "showroom-retrofuture-item-21",
+          "x": 928.7221298993644,
+          "y": 385.05343313029664,
+          "rotation": 270,
+          "support": null
+        },
+        {
+          "id": "showroom-retrofuture:family-room-1:family-lounge-chair-1",
+          "x": 1113.3459199549789,
+          "y": 391.2568229608051,
+          "rotation": 90,
+          "support": null
+        },
+        {
+          "id": "showroom-retrofuture-item-18",
+          "x": 130.09629568326278,
+          "y": 383.12812334480935,
+          "rotation": 0,
+          "support": null
+        },
+        {
+          "id": "showroom-retrofuture:family-room-1:family-coffee-table-1",
+          "x": 1026.9705373971985,
+          "y": 405.86634588853536,
+          "rotation": 0,
+          "support": null
+        },
+        {
+          "id": "showroom-retrofuture-item-24",
+          "x": 1030.4608454290105,
+          "y": 362.8427103946783,
+          "rotation": 0,
+          "support": "showroom-retrofuture:family-room-1:family-coffee-table-1"
+        }
+      ],
+      "removed": [
+        "showroom-retrofuture-item-20",
+        "showroom-retrofuture:family-room-1:family-dining-chair-1",
+        "showroom-retrofuture:family-room-1:family-dining-chair-3",
+        "showroom-retrofuture:family-room-1:family-dining-chair-4",
+        "showroom-retrofuture:family-room-1:family-lounge-sofa-1",
+        "showroom-retrofuture:family-room-1:bedroom-reading-chair-1"
+      ],
+      "added": []
+    },
+    "showroom-cyberpunk": {
+      "format": "coda-room-layout",
+      "version": 1,
+      "themeId": "showroom-cyberpunk",
+      "baseSignature": "room-2e8e5adc",
+      "placements": [
+        {
+          "id": "showroom-cyberpunk-item-0",
+          "x": 949.36,
+          "y": 174.99999999999997,
+          "rotation": 0,
+          "support": null
+        },
+        {
+          "id": "showroom-cyberpunk-item-1",
+          "x": 886.21,
+          "y": 127.3,
+          "rotation": 0,
+          "support": null
+        },
+        {
+          "id": "showroom-cyberpunk-item-2",
+          "x": 1117.8000000000002,
+          "y": 146.79999999999998,
+          "rotation": 0,
+          "support": null
+        },
+        {
+          "id": "showroom-cyberpunk-item-3",
+          "x": 949.36,
+          "y": 121.44999999999999,
+          "rotation": 0,
+          "support": "showroom-cyberpunk-item-0"
+        },
+        {
+          "id": "showroom-cyberpunk-item-4",
+          "x": 886.21,
+          "y": 101.2,
+          "rotation": 0,
+          "support": "showroom-cyberpunk-item-1"
+        },
+        {
+          "id": "showroom-cyberpunk-item-6",
+          "x": 742,
+          "y": 136,
+          "rotation": 0,
+          "support": null
+        },
+        {
+          "id": "showroom-cyberpunk-item-8",
+          "x": 628.6,
+          "y": 144.4,
+          "rotation": 0,
+          "support": null
+        },
+        {
+          "id": "showroom-cyberpunk-item-9",
+          "x": 769.1,
+          "y": 160,
+          "rotation": 90,
+          "support": null
+        },
+        {
+          "id": "showroom-cyberpunk-item-7",
+          "x": 742,
+          "y": 66.4,
+          "rotation": 0,
+          "support": null
+        },
+        {
+          "id": "showroom-cyberpunk-item-14",
+          "x": 275.6,
+          "y": 144.4,
+          "rotation": 0,
+          "support": null
+        },
+        {
+          "id": "showroom-cyberpunk-item-11",
+          "x": 224.20000000000005,
+          "y": 138.4,
+          "rotation": 0,
+          "support": null
+        },
+        {
+          "id": "showroom-cyberpunk-item-13",
+          "x": 175.0999999999999,
+          "y": 137.3,
+          "rotation": 0,
+          "support": null
+        },
+        {
+          "id": "showroom-cyberpunk-item-12",
+          "x": 121.59999999999991,
+          "y": 143.9,
+          "rotation": 0,
+          "support": null
+        },
+        {
+          "id": "showroom-cyberpunk-item-15",
+          "x": 60.40000000000009,
+          "y": 142,
+          "rotation": 0,
+          "support": null
+        },
+        {
+          "id": "showroom-cyberpunk-item-26",
+          "x": 60.40000000000009,
+          "y": 73.6,
+          "rotation": 0,
+          "support": "showroom-cyberpunk-item-15"
+        },
+        {
+          "id": "showroom-cyberpunk:family-room-1:family-dining-table-1",
+          "x": 427.168,
+          "y": 154.916,
+          "rotation": 180,
+          "support": null
+        },
+        {
+          "id": "showroom-cyberpunk:family-room-1:family-dining-chair-5",
+          "x": 331.26800000000003,
+          "y": 189.916,
+          "rotation": 270,
+          "support": null
+        },
+        {
+          "id": "showroom-cyberpunk:family-room-1:family-dining-chair-6",
+          "x": 523.068,
+          "y": 189.916,
+          "rotation": 90,
+          "support": null
+        },
+        {
+          "id": "showroom-cyberpunk:family-room-1:family-dining-chair-2",
+          "x": 427.168,
+          "y": 229.81599999999997,
+          "rotation": 180,
+          "support": null
+        },
+        {
+          "id": "showroom-cyberpunk-item-16",
+          "x": 1047.76,
+          "y": 242.90000000000003,
+          "rotation": 0,
+          "support": null
+        },
+        {
+          "id": "showroom-cyberpunk-item-17",
+          "x": 1102.46,
+          "y": 222.60000000000005,
+          "rotation": 90,
+          "support": null
+        },
+        {
+          "id": "showroom-cyberpunk:family-room-1:bedroom-plant-1",
+          "x": 1047.76,
+          "y": 199.08000000000007,
+          "rotation": 0,
+          "support": "showroom-cyberpunk-item-16"
+        },
+        {
+          "id": "showroom-cyberpunk-item-22",
+          "x": 869.55,
+          "y": 207.2,
+          "rotation": 270,
+          "support": null
+        },
+        {
+          "id": "showroom-cyberpunk:family-room-1:family-statement-plant-1",
+          "x": 536,
+          "y": 156.25,
+          "rotation": 0,
+          "support": null
+        },
+        {
+          "id": "showroom-cyberpunk-item-5",
+          "x": 939.52,
+          "y": 94,
+          "rotation": 0,
+          "support": null
+        },
+        {
+          "id": "showroom-cyberpunk-item-27",
+          "x": 250,
+          "y": 94,
+          "rotation": 0,
+          "support": null
+        },
+        {
+          "id": "showroom-cyberpunk-item-25",
+          "x": 1047.76,
+          "y": 284.20000000000005,
+          "rotation": 0,
+          "support": null
+        },
+        {
+          "id": "showroom-cyberpunk-item-23",
+          "x": 73.9526252959921,
+          "y": 476.5739948703051,
+          "rotation": 0,
+          "support": null
+        },
+        {
+          "id": "showroom-cyberpunk-item-19",
+          "x": 75.35000000000001,
+          "y": 371.89500151221387,
+          "rotation": 270,
+          "support": null
+        },
+        {
+          "id": "showroom-cyberpunk:family-room-1:family-coffee-table-1",
+          "x": 105.84469399391276,
+          "y": 341.38937156945235,
+          "rotation": 90,
+          "support": null
+        },
+        {
+          "id": "showroom-cyberpunk-item-24",
+          "x": 135.09469399391276,
+          "y": 354.38937156945235,
+          "rotation": 0,
+          "support": "showroom-cyberpunk:family-room-1:family-coffee-table-1"
+        },
+        {
+          "id": "showroom-cyberpunk-item-21",
+          "x": 195.83954995616267,
+          "y": 394.537042503083,
+          "rotation": 90,
+          "support": null
+        },
+        {
+          "id": "showroom-cyberpunk:family-room-1:family-lounge-chair-1",
+          "x": 189.3026252959921,
+          "y": 331.09483954387673,
+          "rotation": 90,
+          "support": null
+        },
+        {
+          "id": "showroom-cyberpunk-item-18",
+          "x": 1109.9542199663565,
+          "y": 414.55927818890785,
+          "rotation": 90,
+          "support": null
+        },
+        {
+          "id": "showroom-cyberpunk-item-10",
+          "x": 687.5257201887504,
+          "y": 142.44068025051484,
+          "rotation": 0,
+          "support": null
+        },
+        {
+          "id": "showroom-cyberpunk:family-room-1:family-living-rug-1",
+          "x": 436.61017525215476,
+          "y": 288.53692466017054,
+          "rotation": 0,
+          "support": null
+        }
+      ],
+      "removed": [
+        "showroom-cyberpunk-item-20",
+        "showroom-cyberpunk:family-room-1:family-dining-chair-1",
+        "showroom-cyberpunk:family-room-1:family-dining-chair-3",
+        "showroom-cyberpunk:family-room-1:family-dining-chair-4",
+        "showroom-cyberpunk:family-room-1:family-lounge-sofa-1",
+        "showroom-cyberpunk:family-room-1:bedroom-reading-chair-1"
+      ],
+      "added": []
+    },
+    "showroom-steampunk": {
+      "format": "coda-room-layout",
+      "version": 1,
+      "themeId": "showroom-steampunk",
+      "baseSignature": "room-3a887a5c",
+      "placements": [
+        {
+          "id": "showroom-steampunk-item-0",
+          "x": 234.64000000000001,
+          "y": 174.99999999999997,
+          "rotation": 0,
+          "support": null
+        },
+        {
+          "id": "showroom-steampunk-item-1",
+          "x": 297.78999999999996,
+          "y": 127.3,
+          "rotation": 0,
+          "support": null
+        },
+        {
+          "id": "showroom-steampunk-item-2",
+          "x": 66.19999999999999,
+          "y": 146.79999999999998,
+          "rotation": 0,
+          "support": null
+        },
+        {
+          "id": "showroom-steampunk-item-3",
+          "x": 234.64,
+          "y": 121.44999999999999,
+          "rotation": 0,
+          "support": "showroom-steampunk-item-0"
+        },
+        {
+          "id": "showroom-steampunk-item-4",
+          "x": 297.78999999999996,
+          "y": 101.2,
+          "rotation": 0,
+          "support": "showroom-steampunk-item-1"
+        },
+        {
+          "id": "showroom-steampunk-item-6",
+          "x": 442,
+          "y": 136,
+          "rotation": 0,
+          "support": null
+        },
+        {
+          "id": "showroom-steampunk-item-8",
+          "x": 543.6,
+          "y": 149.70000000000002,
+          "rotation": 0,
+          "support": null
+        },
+        {
+          "id": "showroom-steampunk-item-9",
+          "x": 414.90000000000003,
+          "y": 160,
+          "rotation": 270,
+          "support": null
+        },
+        {
+          "id": "showroom-steampunk-item-7",
+          "x": 442,
+          "y": 66.4,
+          "rotation": 0,
+          "support": null
+        },
+        {
+          "id": "showroom-steampunk-item-14",
+          "x": 908.4,
+          "y": 144.4,
+          "rotation": 0,
+          "support": null
+        },
+        {
+          "id": "showroom-steampunk-item-11",
+          "x": 959.8,
+          "y": 138.40000000000003,
+          "rotation": 0,
+          "support": null
+        },
+        {
+          "id": "showroom-steampunk-item-13",
+          "x": 1008.8999999999999,
+          "y": 137.3,
+          "rotation": 0,
+          "support": null
+        },
+        {
+          "id": "showroom-steampunk-item-12",
+          "x": 1062.3999999999999,
+          "y": 143.90000000000003,
+          "rotation": 0,
+          "support": null
+        },
+        {
+          "id": "showroom-steampunk-item-15",
+          "x": 1123.6,
+          "y": 142,
+          "rotation": 0,
+          "support": null
+        },
+        {
+          "id": "showroom-steampunk-item-27",
+          "x": 1123.6,
+          "y": 73.6,
+          "rotation": 0,
+          "support": "showroom-steampunk-item-15"
+        },
+        {
+          "id": "showroom-steampunk:family-room-1:family-dining-table-1",
+          "x": 756.832,
+          "y": 154.916,
+          "rotation": 180,
+          "support": null
+        },
+        {
+          "id": "showroom-steampunk:family-room-1:family-dining-chair-5",
+          "x": 852.732,
+          "y": 189.916,
+          "rotation": 90,
+          "support": null
+        },
+        {
+          "id": "showroom-steampunk:family-room-1:family-dining-chair-6",
+          "x": 660.932,
+          "y": 189.916,
+          "rotation": 270,
+          "support": null
+        },
+        {
+          "id": "showroom-steampunk:family-room-1:family-dining-chair-2",
+          "x": 756.832,
+          "y": 229.81599999999997,
+          "rotation": 180,
+          "support": null
+        },
+        {
+          "id": "showroom-steampunk-item-16",
+          "x": 136.24,
+          "y": 242.90000000000003,
+          "rotation": 0,
+          "support": null
+        },
+        {
+          "id": "showroom-steampunk-item-17",
+          "x": 81.54000000000002,
+          "y": 222.60000000000005,
+          "rotation": 270,
+          "support": null
+        },
+        {
+          "id": "showroom-steampunk:family-room-1:bedroom-plant-1",
+          "x": 136.24,
+          "y": 199.08000000000007,
+          "rotation": 0,
+          "support": "showroom-steampunk-item-16"
+        },
+        {
+          "id": "showroom-steampunk-item-23",
+          "x": 314.45,
+          "y": 207.2,
+          "rotation": 90,
+          "support": null
+        },
+        {
+          "id": "showroom-steampunk:family-room-1:family-statement-plant-1",
+          "x": 648,
+          "y": 156.25,
+          "rotation": 0,
+          "support": null
+        },
+        {
+          "id": "showroom-steampunk-item-18",
+          "x": 260,
+          "y": 245.6,
+          "rotation": 0,
+          "support": null
+        },
+        {
+          "id": "showroom-steampunk-item-10",
+          "x": 442,
+          "y": 271,
+          "rotation": 0,
+          "support": null
+        },
+        {
+          "id": "showroom-steampunk-item-5",
+          "x": 244.48000000000002,
+          "y": 94,
+          "rotation": 0,
+          "support": null
+        },
+        {
+          "id": "showroom-steampunk-item-28",
+          "x": 934,
+          "y": 94,
+          "rotation": 0,
+          "support": null
+        },
+        {
+          "id": "showroom-steampunk-item-26",
+          "x": 136.24,
+          "y": 284.20000000000005,
+          "rotation": 0,
+          "support": null
+        },
+        {
+          "id": "showroom-steampunk:family-room-1:family-living-rug-1",
+          "x": 756.832,
+          "y": 282,
+          "rotation": 0,
+          "support": null
+        },
+        {
+          "id": "showroom-steampunk-item-24",
+          "x": 1160.5135593220339,
+          "y": 475.80503204449155,
+          "rotation": 0,
+          "support": null
+        },
+        {
+          "id": "showroom-steampunk-item-20",
+          "x": 1112.663559322034,
+          "y": 369.2914421014301,
+          "rotation": 90,
+          "support": null
+        },
+        {
+          "id": "showroom-steampunk:family-room-1:family-coffee-table-1",
+          "x": 1076.0526383739407,
+          "y": 355.6453036612818,
+          "rotation": 270,
+          "support": null
+        },
+        {
+          "id": "showroom-steampunk-item-25",
+          "x": 1046.8026383739407,
+          "y": 368.6453036612818,
+          "rotation": 0,
+          "support": "showroom-steampunk:family-room-1:family-coffee-table-1"
+        },
+        {
+          "id": "showroom-steampunk-item-22",
+          "x": 994.5446007680084,
+          "y": 412.3457100105932,
+          "rotation": 270,
+          "support": null
+        },
+        {
+          "id": "showroom-steampunk:family-room-1:family-lounge-chair-1",
+          "x": 992.1364406779662,
+          "y": 337.47518316340046,
+          "rotation": 270,
+          "support": null
+        },
+        {
+          "id": "showroom-steampunk-item-19",
+          "x": 134.91255462129251,
+          "y": 385.5362834348517,
+          "rotation": 0,
+          "support": null
+        }
+      ],
+      "removed": [
+        "showroom-steampunk-item-21",
+        "showroom-steampunk:family-room-1:family-dining-chair-1",
+        "showroom-steampunk:family-room-1:family-dining-chair-3",
+        "showroom-steampunk:family-room-1:family-dining-chair-4",
+        "showroom-steampunk:family-room-1:family-lounge-sofa-1",
+        "showroom-steampunk:family-room-1:bedroom-reading-chair-1"
+      ],
+      "added": []
+    },
+    "showroom-robot": {
+      "format": "coda-room-layout",
+      "version": 1,
+      "themeId": "showroom-robot",
+      "baseSignature": "room-c065132c",
+      "placements": [
+        {
+          "id": "showroom-robot-item-0",
+          "x": 949.36,
+          "y": 174.99999999999997,
+          "rotation": 0,
+          "support": null
+        },
+        {
+          "id": "showroom-robot-item-1",
+          "x": 886.21,
+          "y": 127.3,
+          "rotation": 0,
+          "support": null
+        },
+        {
+          "id": "showroom-robot-item-2",
+          "x": 1117.8000000000002,
+          "y": 146.79999999999998,
+          "rotation": 0,
+          "support": null
+        },
+        {
+          "id": "showroom-robot-item-3",
+          "x": 949.36,
+          "y": 121.44999999999999,
+          "rotation": 0,
+          "support": "showroom-robot-item-0"
+        },
+        {
+          "id": "showroom-robot-item-4",
+          "x": 886.2100000000002,
+          "y": 101.2,
+          "rotation": 0,
+          "support": "showroom-robot-item-1"
+        },
+        {
+          "id": "showroom-robot-item-6",
+          "x": 742,
+          "y": 136,
+          "rotation": 0,
+          "support": null
+        },
+        {
+          "id": "showroom-robot-item-8",
+          "x": 628.6,
+          "y": 144.4,
+          "rotation": 0,
+          "support": null
+        },
+        {
+          "id": "showroom-robot-item-9",
+          "x": 769.1,
+          "y": 160,
+          "rotation": 90,
+          "support": null
+        },
+        {
+          "id": "showroom-robot-item-7",
+          "x": 742,
+          "y": 66.4,
+          "rotation": 0,
+          "support": null
+        },
+        {
+          "id": "showroom-robot-item-14",
+          "x": 275.5999999999999,
+          "y": 144.4,
+          "rotation": 0,
+          "support": null
+        },
+        {
+          "id": "showroom-robot-item-11",
+          "x": 224.19999999999993,
+          "y": 138.40000000000003,
+          "rotation": 0,
+          "support": null
+        },
+        {
+          "id": "showroom-robot-item-13",
+          "x": 175.0999999999999,
+          "y": 137.3,
+          "rotation": 0,
+          "support": null
+        },
+        {
+          "id": "showroom-robot-item-12",
+          "x": 121.60000000000014,
+          "y": 143.90000000000003,
+          "rotation": 0,
+          "support": null
+        },
+        {
+          "id": "showroom-robot-item-15",
+          "x": 60.40000000000009,
+          "y": 142,
+          "rotation": 0,
+          "support": null
+        },
+        {
+          "id": "showroom-robot-item-27",
+          "x": 60.40000000000009,
+          "y": 73.6,
+          "rotation": 0,
+          "support": "showroom-robot-item-15"
+        },
+        {
+          "id": "showroom-robot:family-room-1:family-dining-table-1",
+          "x": 427.168,
+          "y": 154.916,
+          "rotation": 180,
+          "support": null
+        },
+        {
+          "id": "showroom-robot:family-room-1:family-dining-chair-5",
+          "x": 331.26800000000003,
+          "y": 189.916,
+          "rotation": 270,
+          "support": null
+        },
+        {
+          "id": "showroom-robot:family-room-1:family-dining-chair-6",
+          "x": 523.068,
+          "y": 189.916,
+          "rotation": 90,
+          "support": null
+        },
+        {
+          "id": "showroom-robot:family-room-1:family-dining-chair-2",
+          "x": 427.168,
+          "y": 229.81599999999997,
+          "rotation": 180,
+          "support": null
+        },
+        {
+          "id": "showroom-robot-item-16",
+          "x": 1047.76,
+          "y": 242.90000000000003,
+          "rotation": 0,
+          "support": null
+        },
+        {
+          "id": "showroom-robot-item-17",
+          "x": 1102.46,
+          "y": 222.60000000000005,
+          "rotation": 90,
+          "support": null
+        },
+        {
+          "id": "showroom-robot:family-room-1:bedroom-plant-1",
+          "x": 1047.76,
+          "y": 199.08000000000007,
+          "rotation": 0,
+          "support": "showroom-robot-item-16"
+        },
+        {
+          "id": "showroom-robot:family-room-1:family-statement-plant-1",
+          "x": 536,
+          "y": 156.25,
+          "rotation": 0,
+          "support": null
+        },
+        {
+          "id": "showroom-robot-item-18",
+          "x": 924,
+          "y": 245.6,
+          "rotation": 0,
+          "support": null
+        },
+        {
+          "id": "showroom-robot-item-10",
+          "x": 742,
+          "y": 271,
+          "rotation": 0,
+          "support": null
+        },
+        {
+          "id": "showroom-robot-item-5",
+          "x": 939.52,
+          "y": 94,
+          "rotation": 0,
+          "support": null
+        },
+        {
+          "id": "showroom-robot-item-28",
+          "x": 250,
+          "y": 94,
+          "rotation": 0,
+          "support": null
+        },
+        {
+          "id": "showroom-robot-item-26",
+          "x": 1047.76,
+          "y": 284.20000000000005,
+          "rotation": 0,
+          "support": null
+        },
+        {
+          "id": "showroom-robot:family-room-1:family-living-rug-1",
+          "x": 427.168,
+          "y": 282,
+          "rotation": 0,
+          "support": null
+        },
+        {
+          "id": "showroom-robot-item-22",
+          "x": 200.69337758209744,
+          "y": 415.55653909560385,
+          "rotation": 90,
+          "support": null
+        },
+        {
+          "id": "showroom-robot:family-room-1:family-lounge-chair-1",
+          "x": 203.10153767213987,
+          "y": 344.6995409494173,
+          "rotation": 90,
+          "support": null
+        },
+        {
+          "id": "showroom-robot:family-room-1:family-coffee-table-1",
+          "x": 112.76355932203387,
+          "y": 364.47515254237294,
+          "rotation": 90,
+          "support": null
+        },
+        {
+          "id": "showroom-robot-item-25",
+          "x": 142.01355932203387,
+          "y": 377.47515254237294,
+          "rotation": 0,
+          "support": "showroom-robot:family-room-1:family-coffee-table-1"
+        },
+        {
+          "id": "showroom-robot-item-24",
+          "x": 76.51355932203387,
+          "y": 474.19947970736234,
+          "rotation": 0,
+          "support": null
+        },
+        {
+          "id": "showroom-robot-item-20",
+          "x": 72.94187053098527,
+          "y": 364.47515254237294,
+          "rotation": 270,
+          "support": null
+        },
+        {
+          "id": "showroom-robot-item-19",
+          "x": 534.5491525423729,
+          "y": 283.5918399099576,
+          "rotation": 90,
+          "support": null
+        },
+        {
+          "id": "showroom-robot-item-23",
+          "x": 867.9446007680084,
+          "y": 155.8264437400688,
+          "rotation": 270,
+          "support": null
+        }
+      ],
+      "removed": [
+        "showroom-robot-item-21",
+        "showroom-robot:family-room-1:family-dining-chair-1",
+        "showroom-robot:family-room-1:family-dining-chair-3",
+        "showroom-robot:family-room-1:family-dining-chair-4",
+        "showroom-robot:family-room-1:family-lounge-sofa-1",
+        "showroom-robot:family-room-1:bedroom-reading-chair-1"
+      ],
+      "added": []
+    },
+    "bach": {
+      "format": "coda-room-layout",
+      "version": 1,
+      "themeId": "bach",
+      "baseSignature": "room-a980aac4",
+      "placements": [
+        {
+          "id": "apartment-bach-item-0",
+          "x": 234.64000000000001,
+          "y": 174.99999999999997,
+          "rotation": 0,
+          "support": null
+        },
+        {
+          "id": "apartment-bach-item-3",
+          "x": 297.78999999999996,
+          "y": 127.3,
+          "rotation": 0,
+          "support": null
+        },
+        {
+          "id": "apartment-bach-item-2",
+          "x": 66.19999999999999,
+          "y": 146.79999999999998,
+          "rotation": 0,
+          "support": null
+        },
+        {
+          "id": "apartment-bach-item-22",
+          "x": 234.64,
+          "y": 121.44999999999999,
+          "rotation": 0,
+          "support": "apartment-bach-item-0"
+        },
+        {
+          "id": "apartment-bach-item-12",
+          "x": 442,
+          "y": 136,
+          "rotation": 0,
+          "support": null
+        },
+        {
+          "id": "apartment-bach-item-17",
+          "x": 555.4,
+          "y": 144.4,
+          "rotation": 0,
+          "support": null
+        },
+        {
+          "id": "apartment-bach-item-11",
+          "x": 414.9,
+          "y": 160,
+          "rotation": 270,
+          "support": null
+        },
+        {
+          "id": "apartment-bach-item-13",
+          "x": 442,
+          "y": 66.4,
+          "rotation": 0,
+          "support": null
+        },
+        {
+          "id": "apartment-bach-item-9",
+          "x": 965.2,
+          "y": 144.4,
+          "rotation": 0,
+          "support": null
+        },
+        {
+          "id": "apartment-bach-item-7",
+          "x": 1016.6,
+          "y": 138.40000000000003,
+          "rotation": 0,
+          "support": null
+        },
+        {
+          "id": "apartment-bach-item-8",
+          "x": 1065.7,
+          "y": 137.3,
+          "rotation": 0,
+          "support": null
+        },
+        {
+          "id": "apartment-bach-item-10",
+          "x": 1119.2,
+          "y": 143.90000000000003,
+          "rotation": 0,
+          "support": null
+        },
+        {
+          "id": "apartment-bach-item-23",
+          "x": 1119.2,
+          "y": 96.05000000000004,
+          "rotation": 0,
+          "support": "apartment-bach-item-10"
+        },
+        {
+          "id": "apartment-bach:family-room-1:family-dining-table-1",
+          "x": 756.832,
+          "y": 154.916,
+          "rotation": 180,
+          "support": null
+        },
+        {
+          "id": "apartment-bach:family-room-1:family-dining-chair-5",
+          "x": 852.732,
+          "y": 189.916,
+          "rotation": 90,
+          "support": null
+        },
+        {
+          "id": "apartment-bach:family-room-1:family-dining-chair-6",
+          "x": 660.932,
+          "y": 189.916,
+          "rotation": 270,
+          "support": null
+        },
+        {
+          "id": "apartment-bach:family-room-1:family-dining-chair-2",
+          "x": 756.832,
+          "y": 229.81599999999997,
+          "rotation": 180,
+          "support": null
+        },
+        {
+          "id": "apartment-bach:family-room-1:family-coffee-table-1",
+          "x": 1075.25,
+          "y": 320.326,
+          "rotation": 270,
+          "support": null
+        },
+        {
+          "id": "apartment-bach-item-1",
+          "x": 1108.65,
+          "y": 320.326,
+          "rotation": 90,
+          "support": null
+        },
+        {
+          "id": "apartment-bach:family-room-1:family-lounge-chair-1",
+          "x": 996.15,
+          "y": 293.326,
+          "rotation": 270,
+          "support": null
+        },
+        {
+          "id": "apartment-bach:family-room-1:family-lounge-chair-2",
+          "x": 996.15,
+          "y": 347.326,
+          "rotation": 270,
+          "support": null
+        },
+        {
+          "id": "apartment-bach-item-4",
+          "x": 136.24,
+          "y": 242.90000000000003,
+          "rotation": 0,
+          "support": null
+        },
+        {
+          "id": "apartment-bach-item-5",
+          "x": 81.54000000000002,
+          "y": 222.60000000000005,
+          "rotation": 270,
+          "support": null
+        },
+        {
+          "id": "apartment-bach:family-room-1:bedroom-plant-1",
+          "x": 136.24,
+          "y": 199.08000000000007,
+          "rotation": 0,
+          "support": "apartment-bach-item-4"
+        },
+        {
+          "id": "apartment-bach-item-21",
+          "x": 1046,
+          "y": 333.326,
+          "rotation": 0,
+          "support": "apartment-bach:family-room-1:family-coffee-table-1"
+        },
+        {
+          "id": "apartment-bach:family-room-1:family-statement-plant-1",
+          "x": 648,
+          "y": 156.25,
+          "rotation": 0,
+          "support": null
+        },
+        {
+          "id": "apartment-bach-item-18",
+          "x": 800,
+          "y": 379.5,
+          "rotation": 0,
+          "support": null
+        },
+        {
+          "id": "apartment-bach-item-14",
+          "x": 733.6,
+          "y": 94,
+          "rotation": 0,
+          "support": null
+        },
+        {
+          "id": "apartment-bach-item-19",
+          "x": 934,
+          "y": 94,
+          "rotation": 0,
+          "support": null
+        },
+        {
+          "id": "apartment-bach-item-20",
+          "x": 244.48000000000002,
+          "y": 94,
+          "rotation": 0,
+          "support": null
+        },
+        {
+          "id": "apartment-bach-item-16",
+          "x": 136.24,
+          "y": 284.20000000000005,
+          "rotation": 0,
+          "support": null
+        },
+        {
+          "id": "apartment-bach:family-room-1:family-living-rug-1",
+          "x": 756.832,
+          "y": 282,
+          "rotation": 0,
+          "support": null
+        },
+        {
+          "id": "apartment-bach-item-24",
+          "x": 334.540716153178,
+          "y": 129.06439453125006,
+          "rotation": 0,
+          "support": null
+        },
+        {
+          "id": "apartment-bach-item-15",
+          "x": 645.4372881355932,
+          "y": 279.57828058792376,
+          "rotation": 270,
+          "support": null
+        }
+      ],
+      "removed": [
+        "apartment-bach-item-6",
+        "apartment-bach:family-room-1:family-dining-chair-1",
+        "apartment-bach:family-room-1:family-dining-chair-3",
+        "apartment-bach:family-room-1:family-dining-chair-4",
+        "apartment-bach:family-room-1:family-lounge-sofa-1",
+        "apartment-bach:family-room-1:bedroom-reading-chair-1"
+      ],
+      "added": []
+    },
+    "mozart": {
+      "format": "coda-room-layout",
+      "version": 1,
+      "themeId": "mozart",
+      "baseSignature": "room-63e64bf0",
+      "placements": [
+        {
+          "id": "apartment-mozart-item-0",
+          "x": 949.36,
+          "y": 174.99999999999997,
+          "rotation": 0,
+          "support": null
+        },
+        {
+          "id": "apartment-mozart-item-3",
+          "x": 886.21,
+          "y": 127.3,
+          "rotation": 0,
+          "support": null
+        },
+        {
+          "id": "apartment-mozart-item-2",
+          "x": 1117.8,
+          "y": 146.79999999999998,
+          "rotation": 0,
+          "support": null
+        },
+        {
+          "id": "apartment-mozart-item-22",
+          "x": 949.36,
+          "y": 121.44999999999999,
+          "rotation": 0,
+          "support": "apartment-mozart-item-0"
+        },
+        {
+          "id": "apartment-mozart-item-12",
+          "x": 742,
+          "y": 136,
+          "rotation": 0,
+          "support": null
+        },
+        {
+          "id": "apartment-mozart-item-17",
+          "x": 628.6,
+          "y": 144.4,
+          "rotation": 0,
+          "support": null
+        },
+        {
+          "id": "apartment-mozart-item-11",
+          "x": 769.1,
+          "y": 160,
+          "rotation": 90,
+          "support": null
+        },
+        {
+          "id": "apartment-mozart-item-13",
+          "x": 742,
+          "y": 66.4,
+          "rotation": 0,
+          "support": null
+        },
+        {
+          "id": "apartment-mozart-item-9",
+          "x": 218.79999999999995,
+          "y": 144.4,
+          "rotation": 0,
+          "support": null
+        },
+        {
+          "id": "apartment-mozart-item-7",
+          "x": 167.39999999999998,
+          "y": 138.40000000000003,
+          "rotation": 0,
+          "support": null
+        },
+        {
+          "id": "apartment-mozart-item-8",
+          "x": 118.29999999999995,
+          "y": 137.29999999999998,
+          "rotation": 0,
+          "support": null
+        },
+        {
+          "id": "apartment-mozart-item-10",
+          "x": 64.79999999999995,
+          "y": 143.90000000000003,
+          "rotation": 0,
+          "support": null
+        },
+        {
+          "id": "apartment-mozart-item-23",
+          "x": 64.80000000000018,
+          "y": 96.05000000000005,
+          "rotation": 0,
+          "support": "apartment-mozart-item-10"
+        },
+        {
+          "id": "apartment-mozart:family-room-1:family-dining-table-1",
+          "x": 427.168,
+          "y": 154.916,
+          "rotation": 180,
+          "support": null
+        },
+        {
+          "id": "apartment-mozart:family-room-1:family-dining-chair-5",
+          "x": 331.26800000000003,
+          "y": 189.916,
+          "rotation": 270,
+          "support": null
+        },
+        {
+          "id": "apartment-mozart:family-room-1:family-dining-chair-6",
+          "x": 523.068,
+          "y": 189.916,
+          "rotation": 90,
+          "support": null
+        },
+        {
+          "id": "apartment-mozart:family-room-1:family-dining-chair-2",
+          "x": 427.168,
+          "y": 229.81599999999997,
+          "rotation": 180,
+          "support": null
+        },
+        {
+          "id": "apartment-mozart-item-4",
+          "x": 1047.76,
+          "y": 242.90000000000003,
+          "rotation": 0,
+          "support": null
+        },
+        {
+          "id": "apartment-mozart-item-5",
+          "x": 1102.46,
+          "y": 222.60000000000005,
+          "rotation": 90,
+          "support": null
+        },
+        {
+          "id": "apartment-mozart:family-room-1:bedroom-plant-1",
+          "x": 1047.76,
+          "y": 199.08000000000007,
+          "rotation": 0,
+          "support": "apartment-mozart-item-4"
+        },
+        {
+          "id": "apartment-mozart:family-room-1:family-statement-plant-1",
+          "x": 536,
+          "y": 156.25,
+          "rotation": 0,
+          "support": null
+        },
+        {
+          "id": "apartment-mozart-item-14",
+          "x": 450.4,
+          "y": 94,
+          "rotation": 0,
+          "support": null
+        },
+        {
+          "id": "apartment-mozart-item-19",
+          "x": 250,
+          "y": 94,
+          "rotation": 0,
+          "support": null
+        },
+        {
+          "id": "apartment-mozart-item-20",
+          "x": 939.52,
+          "y": 94,
+          "rotation": 0,
+          "support": null
+        },
+        {
+          "id": "apartment-mozart-item-16",
+          "x": 1047.76,
+          "y": 284.20000000000005,
+          "rotation": 0,
+          "support": null
+        },
+        {
+          "id": "apartment-mozart:family-room-1:family-living-rug-1",
+          "x": 427.168,
+          "y": 252.916,
+          "rotation": 0,
+          "support": null
+        },
+        {
+          "id": "apartment-mozart:family-room-1:family-coffee-table-1",
+          "x": 106.34187053098515,
+          "y": 343.6046256951801,
+          "rotation": 90,
+          "support": null
+        },
+        {
+          "id": "apartment-mozart-item-21",
+          "x": 135.59187053098515,
+          "y": 356.6046256951801,
+          "rotation": 0,
+          "support": "apartment-mozart:family-room-1:family-coffee-table-1"
+        },
+        {
+          "id": "apartment-mozart-item-1",
+          "x": 69.73098020391954,
+          "y": 378.12119911943853,
+          "rotation": 270,
+          "support": null
+        },
+        {
+          "id": "apartment-mozart:family-room-1:family-lounge-chair-2",
+          "x": 188.65269961599577,
+          "y": 385.85610212526484,
+          "rotation": 90,
+          "support": null
+        },
+        {
+          "id": "apartment-mozart:family-room-1:family-lounge-chair-1",
+          "x": 187.85,
+          "y": 319.01272454316745,
+          "rotation": 90,
+          "support": null
+        },
+        {
+          "id": "apartment-mozart-item-18",
+          "x": 361.52410454184326,
+          "y": 411.45147643008477,
+          "rotation": 0,
+          "support": null
+        },
+        {
+          "id": "apartment-mozart-item-15",
+          "x": 1106.8827363612293,
+          "y": 412.0257994570974,
+          "rotation": 90,
+          "support": null
+        },
+        {
+          "id": "apartment-mozart-item-24",
+          "x": 286.493322905138,
+          "y": 134.68341432733033,
+          "rotation": 0,
+          "support": null
+        }
+      ],
+      "removed": [
+        "apartment-mozart-item-6",
+        "apartment-mozart:family-room-1:family-dining-chair-1",
+        "apartment-mozart:family-room-1:family-dining-chair-3",
+        "apartment-mozart:family-room-1:family-dining-chair-4",
+        "apartment-mozart:family-room-1:bedroom-reading-chair-1"
+      ],
+      "added": []
+    },
+    "beethoven": {
+      "format": "coda-room-layout",
+      "version": 1,
+      "themeId": "beethoven",
+      "baseSignature": "room-302202e8",
+      "placements": [
+        {
+          "id": "apartment-beethoven-item-0",
+          "x": 234.64000000000001,
+          "y": 174.99999999999997,
+          "rotation": 0,
+          "support": null
+        },
+        {
+          "id": "apartment-beethoven-item-3",
+          "x": 297.78999999999996,
+          "y": 127.3,
+          "rotation": 0,
+          "support": null
+        },
+        {
+          "id": "apartment-beethoven-item-2",
+          "x": 66.19999999999999,
+          "y": 146.79999999999998,
+          "rotation": 0,
+          "support": null
+        },
+        {
+          "id": "apartment-beethoven-item-22",
+          "x": 234.64,
+          "y": 121.44999999999999,
+          "rotation": 0,
+          "support": "apartment-beethoven-item-0"
+        },
+        {
+          "id": "apartment-beethoven-item-12",
+          "x": 442,
+          "y": 136,
+          "rotation": 0,
+          "support": null
+        },
+        {
+          "id": "apartment-beethoven-item-17",
+          "x": 555.4,
+          "y": 144.4,
+          "rotation": 0,
+          "support": null
+        },
+        {
+          "id": "apartment-beethoven-item-11",
+          "x": 414.90000000000003,
+          "y": 160,
+          "rotation": 270,
+          "support": null
+        },
+        {
+          "id": "apartment-beethoven-item-13",
+          "x": 442,
+          "y": 66.4,
+          "rotation": 0,
+          "support": null
+        },
+        {
+          "id": "apartment-beethoven:family-room-1:family-dining-table-1",
+          "x": 756.832,
+          "y": 154.916,
+          "rotation": 180,
+          "support": null
+        },
+        {
+          "id": "apartment-beethoven:family-room-1:family-dining-chair-5",
+          "x": 852.732,
+          "y": 189.916,
+          "rotation": 90,
+          "support": null
+        },
+        {
+          "id": "apartment-beethoven:family-room-1:family-dining-chair-6",
+          "x": 660.932,
+          "y": 189.916,
+          "rotation": 270,
+          "support": null
+        },
+        {
+          "id": "apartment-beethoven:family-room-1:family-dining-chair-2",
+          "x": 756.832,
+          "y": 229.81599999999997,
+          "rotation": 180,
+          "support": null
+        },
+        {
+          "id": "apartment-beethoven-item-4",
+          "x": 136.24,
+          "y": 242.90000000000003,
+          "rotation": 0,
+          "support": null
+        },
+        {
+          "id": "apartment-beethoven-item-5",
+          "x": 81.54000000000002,
+          "y": 222.60000000000005,
+          "rotation": 270,
+          "support": null
+        },
+        {
+          "id": "apartment-beethoven:family-room-1:bedroom-plant-1",
+          "x": 136.24,
+          "y": 199.08000000000007,
+          "rotation": 0,
+          "support": "apartment-beethoven-item-4"
+        },
+        {
+          "id": "apartment-beethoven:family-room-1:family-statement-plant-1",
+          "x": 648,
+          "y": 156.25,
+          "rotation": 0,
+          "support": null
+        },
+        {
+          "id": "apartment-beethoven-item-18",
+          "x": 800,
+          "y": 396.2,
+          "rotation": 0,
+          "support": null
+        },
+        {
+          "id": "apartment-beethoven-item-14",
+          "x": 733.6,
+          "y": 94,
+          "rotation": 0,
+          "support": null
+        },
+        {
+          "id": "apartment-beethoven-item-19",
+          "x": 934,
+          "y": 94,
+          "rotation": 0,
+          "support": null
+        },
+        {
+          "id": "apartment-beethoven-item-20",
+          "x": 244.48000000000002,
+          "y": 94,
+          "rotation": 0,
+          "support": null
+        },
+        {
+          "id": "apartment-beethoven-item-16",
+          "x": 136.24,
+          "y": 284.20000000000005,
+          "rotation": 0,
+          "support": null
+        },
+        {
+          "id": "apartment-beethoven:family-room-1:family-living-rug-1",
+          "x": 756.832,
+          "y": 282,
+          "rotation": 0,
+          "support": null
+        },
+        {
+          "id": "apartment-beethoven:family-room-1:family-lounge-chair-2",
+          "x": 992.939201536017,
+          "y": 395.4887118644068,
+          "rotation": 270,
+          "support": null
+        },
+        {
+          "id": "apartment-beethoven:family-room-1:family-coffee-table-1",
+          "x": 1076.0526996159956,
+          "y": 341.19652684719284,
+          "rotation": 270,
+          "support": null
+        },
+        {
+          "id": "apartment-beethoven-item-21",
+          "x": 1046.8026996159956,
+          "y": 354.19652684719284,
+          "rotation": 0,
+          "support": "apartment-beethoven:family-room-1:family-coffee-table-1"
+        },
+        {
+          "id": "apartment-beethoven-item-1",
+          "x": 1111.0581600900425,
+          "y": 358.05346375132416,
+          "rotation": 90,
+          "support": null
+        },
+        {
+          "id": "apartment-beethoven-item-10",
+          "x": 1124.0161976959746,
+          "y": 139.08372575145657,
+          "rotation": 0,
+          "support": null
+        },
+        {
+          "id": "apartment-beethoven-item-23",
+          "x": 1124.0161976959746,
+          "y": 91.23372575145655,
+          "rotation": 0,
+          "support": "apartment-beethoven-item-10"
+        },
+        {
+          "id": "apartment-beethoven-item-7",
+          "x": 1011.7837410619703,
+          "y": 138.4,
+          "rotation": 0,
+          "support": null
+        },
+        {
+          "id": "apartment-beethoven-item-8",
+          "x": 1062.4891402939618,
+          "y": 138.10269961599576,
+          "rotation": 0,
+          "support": null
+        },
+        {
+          "id": "apartment-beethoven-item-24",
+          "x": 889.5489453458687,
+          "y": 130.66985500529668,
+          "rotation": 0,
+          "support": null
+        },
+        {
+          "id": "apartment-beethoven-item-15",
+          "x": 70.6956360897774,
+          "y": 401.5905513440149,
+          "rotation": 270,
+          "support": null
+        },
+        {
+          "id": "apartment-beethoven:family-room-1:family-lounge-chair-1",
+          "x": 989.7283418299788,
+          "y": 326.23714357123947,
+          "rotation": 270,
+          "support": null
+        },
+        {
+          "id": "apartment-beethoven-item-9",
+          "x": 957.9756422139831,
+          "y": 141.99188584149894,
+          "rotation": 0,
+          "support": null
+        }
+      ],
+      "removed": [
+        "apartment-beethoven-item-6",
+        "apartment-beethoven:family-room-1:family-dining-chair-1",
+        "apartment-beethoven:family-room-1:family-dining-chair-3",
+        "apartment-beethoven:family-room-1:family-dining-chair-4",
+        "apartment-beethoven:family-room-1:family-lounge-sofa-1",
+        "apartment-beethoven:family-room-1:bedroom-reading-chair-1"
+      ],
+      "added": []
+    },
+    "clara": {
+      "format": "coda-room-layout",
+      "version": 1,
+      "themeId": "clara",
+      "baseSignature": "room-a050190b",
+      "placements": [
+        {
+          "id": "apartment-clara-item-0",
+          "x": 949.36,
+          "y": 174.99999999999997,
+          "rotation": 0,
+          "support": null
+        },
+        {
+          "id": "apartment-clara-item-3",
+          "x": 886.21,
+          "y": 127.3,
+          "rotation": 0,
+          "support": null
+        },
+        {
+          "id": "apartment-clara-item-2",
+          "x": 1117.8,
+          "y": 146.79999999999998,
+          "rotation": 0,
+          "support": null
+        },
+        {
+          "id": "apartment-clara-item-22",
+          "x": 949.36,
+          "y": 121.44999999999999,
+          "rotation": 0,
+          "support": "apartment-clara-item-0"
+        },
+        {
+          "id": "apartment-clara-item-12",
+          "x": 742,
+          "y": 136,
+          "rotation": 0,
+          "support": null
+        },
+        {
+          "id": "apartment-clara-item-17",
+          "x": 628.6,
+          "y": 144.4,
+          "rotation": 0,
+          "support": null
+        },
+        {
+          "id": "apartment-clara-item-11",
+          "x": 769.1,
+          "y": 160,
+          "rotation": 90,
+          "support": null
+        },
+        {
+          "id": "apartment-clara-item-13",
+          "x": 742,
+          "y": 66.4,
+          "rotation": 0,
+          "support": null
+        },
+        {
+          "id": "apartment-clara-item-9",
+          "x": 218.79999999999995,
+          "y": 144.4,
+          "rotation": 0,
+          "support": null
+        },
+        {
+          "id": "apartment-clara-item-7",
+          "x": 167.39999999999998,
+          "y": 138.4,
+          "rotation": 0,
+          "support": null
+        },
+        {
+          "id": "apartment-clara-item-8",
+          "x": 118.29999999999995,
+          "y": 137.3,
+          "rotation": 0,
+          "support": null
+        },
+        {
+          "id": "apartment-clara-item-10",
+          "x": 64.79999999999995,
+          "y": 143.9,
+          "rotation": 0,
+          "support": null
+        },
+        {
+          "id": "apartment-clara-item-23",
+          "x": 64.80000000000018,
+          "y": 96.05,
+          "rotation": 0,
+          "support": "apartment-clara-item-10"
+        },
+        {
+          "id": "apartment-clara:family-room-1:family-dining-table-1",
+          "x": 427.168,
+          "y": 154.916,
+          "rotation": 180,
+          "support": null
+        },
+        {
+          "id": "apartment-clara:family-room-1:family-dining-chair-5",
+          "x": 331.26800000000003,
+          "y": 189.916,
+          "rotation": 270,
+          "support": null
+        },
+        {
+          "id": "apartment-clara:family-room-1:family-dining-chair-6",
+          "x": 523.068,
+          "y": 189.916,
+          "rotation": 90,
+          "support": null
+        },
+        {
+          "id": "apartment-clara:family-room-1:family-dining-chair-2",
+          "x": 427.168,
+          "y": 229.81599999999997,
+          "rotation": 180,
+          "support": null
+        },
+        {
+          "id": "apartment-clara-item-4",
+          "x": 1047.76,
+          "y": 242.90000000000003,
+          "rotation": 0,
+          "support": null
+        },
+        {
+          "id": "apartment-clara-item-5",
+          "x": 1102.46,
+          "y": 222.60000000000005,
+          "rotation": 90,
+          "support": null
+        },
+        {
+          "id": "apartment-clara:family-room-1:bedroom-plant-1",
+          "x": 1047.76,
+          "y": 199.08000000000007,
+          "rotation": 0,
+          "support": "apartment-clara-item-4"
+        },
+        {
+          "id": "apartment-clara:family-room-1:family-statement-plant-1",
+          "x": 536,
+          "y": 156.25,
+          "rotation": 0,
+          "support": null
+        },
+        {
+          "id": "apartment-clara-item-14",
+          "x": 450.4,
+          "y": 94,
+          "rotation": 0,
+          "support": null
+        },
+        {
+          "id": "apartment-clara-item-19",
+          "x": 250,
+          "y": 94,
+          "rotation": 0,
+          "support": null
+        },
+        {
+          "id": "apartment-clara-item-20",
+          "x": 939.52,
+          "y": 94,
+          "rotation": 0,
+          "support": null
+        },
+        {
+          "id": "apartment-clara-item-16",
+          "x": 1047.76,
+          "y": 284.20000000000005,
+          "rotation": 0,
+          "support": null
+        },
+        {
+          "id": "apartment-clara:family-room-1:family-living-rug-1",
+          "x": 427.168,
+          "y": 282,
+          "rotation": 0,
+          "support": null
+        },
+        {
+          "id": "apartment-clara-item-1",
+          "x": 75.35000000000001,
+          "y": 386.1483790055615,
+          "rotation": 270,
+          "support": null
+        },
+        {
+          "id": "apartment-clara:family-room-1:family-coffee-table-1",
+          "x": 115.97435778601698,
+          "y": 329.1558488810912,
+          "rotation": 90,
+          "support": null
+        },
+        {
+          "id": "apartment-clara-item-21",
+          "x": 145.22435778601698,
+          "y": 342.1558488810912,
+          "rotation": 0,
+          "support": "apartment-clara:family-room-1:family-coffee-table-1"
+        },
+        {
+          "id": "apartment-clara:family-room-1:family-lounge-chair-2",
+          "x": 206.31233613612287,
+          "y": 377.0263451072564,
+          "rotation": 90,
+          "support": null
+        },
+        {
+          "id": "apartment-clara:family-room-1:family-lounge-chair-1",
+          "x": 208.72049622616524,
+          "y": 306.169408203125,
+          "rotation": 90,
+          "support": null
+        },
+        {
+          "id": "apartment-clara-item-18",
+          "x": 1074.3322646318852,
+          "y": 393.94883805614404,
+          "rotation": 0,
+          "support": null
+        },
+        {
+          "id": "apartment-clara-item-15",
+          "x": 313.8033898305084,
+          "y": 151.14439759335275,
+          "rotation": 0,
+          "support": null
+        },
+        {
+          "id": "apartment-clara-item-24",
+          "x": 854.0279428973138,
+          "y": 131.926772871797,
+          "rotation": 0,
+          "support": null
+        }
+      ],
+      "removed": [
+        "apartment-clara-item-6",
+        "apartment-clara:family-room-1:family-dining-chair-1",
+        "apartment-clara:family-room-1:family-dining-chair-3",
+        "apartment-clara:family-room-1:family-dining-chair-4",
+        "apartment-clara:family-room-1:family-lounge-sofa-1",
+        "apartment-clara:family-room-1:bedroom-reading-chair-1"
+      ],
+      "added": []
+    }
+  }
+}

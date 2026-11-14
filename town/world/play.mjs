@@ -1,13 +1,13 @@
 import {catalog,preparePlacedArt,render,resizeSurface,findStart,movePlayer,toggleGate,follow,PLAYER_SCALE,GAIT_PER_PIXEL} from './runtime.mjs?v=town-day-night-1';
 import {loadProject} from './storage.mjs?v=town-coast-pier-1';
 import {normalizeKnownTerrainProject} from './known-terrain-repairs.mjs?v=town-coast-pier-1';
-import {createUrbanController} from './urban.mjs?v=town-gold-tracker-1';
+import {createUrbanController} from './urban.mjs?v=town-room-floorplan-1';
 import {createConcertAudio} from './concert-audio.mjs?v=opera-parallax-1';
 import {mountConcertControls} from './concert-controls.mjs?v=town-coast-pier-1';
 import {CONCERT_PROGRAMME} from './concert-programme.mjs?v=opera-players-1';
 import {createUrbanTour} from './urban-tour.mjs?v=town-coast-pier-1';
 import {createSandFootprints} from './sand-footprints.mjs?v=town-coast-pier-1';
-import {createAmbientNPCs} from './ambient-npcs.mjs?v=town-coast-pier-1';
+import {createAmbientNPCs} from './ambient-npcs.mjs?v=town-room-floorplan-1';
 import {createPlayerCollisionIndex} from './player-collision-index.mjs?v=town-coast-pier-1';
 import {createDayNightCycle} from './day-night-cycle.mjs?v=town-day-night-1';
 import {mountDayNightControl} from './day-night-controls.mjs?v=town-day-night-1';
@@ -16,8 +16,8 @@ document.querySelectorAll('body > :not(#world):not(script)').forEach(e=>e.remove
 const header=document.createElement('header'),title=document.createElement('h1'),nav=document.createElement('nav');
 header.append(title,nav);document.body.append(header);
 function button(label,fn){const b=document.createElement('button');b.textContent=label;b.onclick=()=>{fn();b.blur();canvas.focus();};nav.append(b);return b;}
-button('Town Builder',()=>location.href='builder/?v=town-day-night-1');
-button(tour?'Play saved town':'Urban district tour',()=>location.href=tour?'?map=builder&v=town-day-night-1':'?urban=1&v=town-day-night-1');
+button('Town Builder',()=>location.href='builder/?v=town-room-floorplan-1');
+button(tour?'Play saved town':'Urban district tour',()=>location.href=tour?'?map=builder&v=town-room-floorplan-1':'?urban=1&v=town-room-floorplan-1');
 button('Back to arcade',()=>{if(parent!==window)parent.postMessage({type:'coda-town-close'},location.origin);else location.href='../?v=opera-parallax-1';});
 const dayNightCycle=createDayNightCycle(),lightingControl=mountDayNightControl(dayNightCycle,{parent:nav,onChange:()=>canvas.focus()});let lightingState=dayNightCycle.sample();
 const footer=document.createElement('footer');footer.textContent='WASD / arrows · Walk    Shift · Run    Bedroom / bath doors automatic    E · Enter / interact    Wheel · Zoom    Tab · Equip net    F · Swing';document.body.append(footer);

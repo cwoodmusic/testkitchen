@@ -14,6 +14,7 @@ const catalog=new Map([...APARTMENT_COLLECTION_ASSETS,...FAMILY_FURNITURE_ASSETS
 configureUrbanInteriors(catalog);
 const privateScenes=[...residents.map(r=>({kind:'apartment',resident:r.id})),{kind:'apartment',resident:'player'},...SHOWROOMS.map(r=>({kind:'showroom',showroomId:r.id}))];
 const privateModels=()=>privateScenes.flatMap(request=>{const scene=getInterior(request);return [scene,...(scene.roomLayoutLegacySources||[])];});
+const uploadedLayouts=JSON.parse(readFileSync(new URL('../room-layouts/approved-layouts-1.json',import.meta.url))).rooms;
 const near=(a,b,label)=>assert.ok(Math.abs(a-b)<1e-8,`${label}: ${a} != ${b}`);
 const overlaps=(a,b,tolerance=0)=>Math.min(a.x+a.w,b.x+b.w)-Math.max(a.x,b.x)>tolerance&&Math.min(a.y+a.h,b.y+b.h)-Math.max(a.y,b.y)>tolerance;
 function parentOf(item,items){return items.find(p=>p!==item&&(p.id===item.supportedBy||p.asset===item.supportedBy||p.furnitureRole===item.supportedBy||p.slot===item.supportedBy||p.collectionSlot===item.supportedBy)&&(!item.roomId||!p.roomId||p.roomId===item.roomId));}
@@ -23,7 +24,7 @@ test('private defaults and saved source rooms use Arcade-referenced role proport
   const before=JSON.stringify({width:scene.width,height:scene.height,rooms:scene.rooms,spawn:scene.spawn,zones:scene.zones});
   calibratePrivateFurniture(scene,catalog);assert.equal(JSON.stringify({width:scene.width,height:scene.height,rooms:scene.rooms,spawn:scene.spawn,zones:scene.zones}),before);
   for(const item of scene.items.filter(i=>!i.supportedBy||i.supportedBy==='north-wall')){
-   const a=catalog.get(item.asset);assert(a,item.asset);const size=furniturePresentationScale(item,scene,a);near(item.w,a.w*size,scene.id+' '+item.asset+' width');near(item.h,a.h*size,scene.id+' '+item.asset+' height');
+   const a=catalog.get(item.asset);assert(a,item.asset);const size=furniturePresentationScale(item,scene,a),approvedSource=scene.approvedRoomLayout?scene.roomLayoutBaseItems.find(source=>source.id===item.id):null;near(item.w,approvedSource?.w??a.w*size,scene.id+' '+item.asset+' width');near(item.h,approvedSource?.h??a.h*size,scene.id+' '+item.asset+' height');
    near(item.w/item.h,a.w/a.h,'Role sizing preserves native art proportions');
   }
   const snapshot=JSON.stringify(scene);calibratePrivateFurniture(scene,catalog);assert.equal(JSON.stringify(scene),snapshot,'Model calibration is idempotent');
@@ -92,6 +93,12 @@ function body(item){
 test('default and saved homes retain inward-facing native dining chairs and their authored table clearance',()=>{
  for(const scene of privateModels()){
   const family=scene.familyFurniture,table=scene.items.find(i=>i.id===family?.diningTable);assert(table,scene.id+' family dining table');
+  if(scene.approvedRoomLayout){
+   const id=scene.kind==='showroom'?scene.id:scene.resident,requested=new Map(uploadedLayouts[id].placements.map(pose=>[pose.id,pose]));
+   for(const seatId of [...family.diningSeats,...family.livingSeats]){const seat=scene.items.find(item=>item.id===seatId),pose=requested.get(seatId);assert(seat&&pose);assert.deepEqual({x:seat.x,y:seat.y,rotation:seat.rotation||0},{x:pose.x,y:pose.y,rotation:pose.rotation});assert([0,90,180,270].includes(seat.rotation||0));assert(scene.items.some(item=>item.id===seat.seatingTarget),'An approved seat keeps a real table target');}
+   const nook=family.bedroomNook;if(nook?.seat)assert(scene.items.some(item=>item.id===nook.seat&&item.seatingTarget===nook.table));
+   continue; // Uploaded positions replace the automatic uniform table-edge gaps.
+  }
   const approvedVictorian=scene.id==='showroom-victorian-parlor',threeSeats=approvedVictorian||Boolean(scene.wideRoomLayout);
   assert.equal(table.asset,'family-'+(scene.resident||'showroom-'+scene.showroomId)+'-dining-table');assert.equal(family.diningSeats.length,threeSeats?3:6,scene.id+' approved dining places');
   const t=body(table),facings=[];

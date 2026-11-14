@@ -16,9 +16,11 @@ function context(){
 }
 const intersects=(a,b)=>a.x<b.x+b.w&&a.x+a.w>b.x&&a.y<b.y+b.h&&a.y+a.h>b.y;
 
-test('real horizontal private doors become aligned upright openings while vertical doors stay out of the partition layer',()=>{
+test('current and all preserved horizontal private doors stay aligned while vertical doors remain outside the partition layer',()=>{
  let currentDoors=0,sourceDoors=0,previousDoors=0,sourceSolidFronts=0;
- const active=requests.map(getInteriorBase),previous=active.flatMap(s=>s.roomLayoutLegacySources?.slice(1)||[]),first=active.flatMap(s=>s.roomLayoutLegacySources?.slice(1,2)||[]),second=active.flatMap(s=>s.roomLayoutLegacySources?.slice(2,3)||[]);assert.equal(previous.length,46);assert.equal(first.length,23);assert.equal(second.length,23);assert(first.every(s=>s.wideRoomLayout.version===1));assert(second.every(s=>s.wideRoomLayout.version===2));
+ const active=requests.map(getInteriorBase),previous=active.flatMap(s=>s.roomLayoutLegacySources?.slice(1)||[]),first=active.flatMap(s=>s.roomLayoutLegacySources?.slice(1,2)||[]),second=active.flatMap(s=>s.roomLayoutLegacySources?.slice(2,3)||[]),previousDefaults=active.filter(s=>s.approvedRoomLayout).map(s=>s.roomLayoutPreviousDefault);
+ assert.equal(previous.length,61);assert.equal(first.length,30);assert.equal(second.length,23);assert(first.every(s=>s.wideRoomLayout.version===1));assert(second.every(s=>s.wideRoomLayout.version===2));
+ assert.equal(previousDefaults.length,15);assert(previousDefaults.every(s=>previous.includes(s)),'Every newly preserved default remains in the actual partition and doorway checks');assert.equal(first.filter(s=>!previousDefaults.includes(s)).length,23,'The original twenty-three first-generation sources remain intact alongside seven newly preserved lower showrooms');
  for(const [version,models]of [['current',active],['preserved',active.map(preserved)],['previous',previous]])for(const s of models){
   const before=JSON.stringify(s),{groups}=wideRoomSouthPartitionGeometry(s);
   if(!s.wideRoomExpansion)assert.equal(groups.length,0);
@@ -32,7 +34,7 @@ test('real horizontal private doors become aligned upright openings while vertic
   }
   assert.equal(JSON.stringify(s),before);
  }
- assert.equal(currentDoors,62);assert.equal(sourceDoors,20);assert.equal(previousDoors,92);assert(sourceSolidFronts>=10,'Preserve front walls in the original homes with side-facing private doors');
+ assert.equal(currentDoors,62);assert.equal(sourceDoors,20);assert.equal(previousDoors,122);assert(sourceSolidFronts>=10,'Preserve front walls in the original homes with side-facing private doors');
  const player=getInteriorBase({kind:'apartment',resident:'player'}),current=wideRoomSouthPartitionGeometry(player),original=wideRoomSouthPartitionGeometry(preserved(player));assert.equal(current.groups.length,2);assert(current.groups.every(g=>g.doors.length===1));assert.equal(original.groups.length,2);assert(original.groups.every(g=>g.doors.length===0));
 });
 

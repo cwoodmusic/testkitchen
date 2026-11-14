@@ -56,16 +56,17 @@ test('room themes retain distinct facade materials and left/right entrances stay
  const apartment=scene('bach',{kind:'apartment',resident:'bach',portalExit:null,zones:[{id:'hall',action:'exit',x:1050,w:204}],width:2304});assert.equal(wideRoomSouthExteriorGeometry(apartment).door.threshold.x,1152);
 });
 
-test('all31 fresh rooms and preserved wide sources have aligned entrances while saved compact homes draw no new architecture',()=>{
+test('all31 fresh rooms and91 preserved sources have aligned entrances while saved compact homes draw no new architecture',()=>{
  const requests=[...residents.map(r=>({kind:'apartment',resident:r.id})),{kind:'apartment',resident:'player'},...SHOWROOMS.map(r=>({kind:'showroom',showroomId:r.id}))],fresh=requests.map(getInteriorBase),models=fresh.flatMap(s=>[s,...(s.roomLayoutLegacySources||[])]);let wide=0,compact=0;
- assert.equal(fresh.length,31);assert(fresh.every(s=>s.wideRoomExpansion&&s.width===1184&&s.height===512));assert.equal(models.length,107);
+ assert.equal(fresh.length,31);assert(fresh.every(s=>s.wideRoomExpansion&&s.width===1184&&s.height===512));assert.equal(models.length,122);
+ const previousDefaults=fresh.filter(s=>s.approvedRoomLayout).map(s=>s.roomLayoutPreviousDefault);assert.equal(previousDefaults.length,15);assert(previousDefaults.every(s=>models.includes(s)&&s.wideRoomExpansion),'All fifteen replaced defaults retain their complete original frontage in the render sweep');
  for(const s of models){
   const before=JSON.stringify(s),cv=canvasFor(s),c=cv.getContext('2d'),g=wideRoomSouthExteriorGeometry(s);
   if(s.wideRoomExpansion){wide++;assert(g);assert.equal(g.door.threshold.x,s.portalExit.threshold.x);assert.equal(g.seam,s.portalExit.threshold.y);assert.equal(g.door.threshold.y-g.seam,106);drawWideRoomSouthExterior(c,s);assert.equal(drawWideRoomEntrance(c,s,.5).span,36);}
   else{compact++;assert.equal(g,null);assert.equal(drawWideRoomSouthExterior(c,s),null);assert.equal(drawWideRoomEntrance(c,s),null);assert.equal(c.getImageData(0,0,cv.width,cv.height).data.some(value=>value!==0),false);}
   assert.equal(JSON.stringify(s),before,`${s.id}: drawing must preserve architecture, portals, furniture and saves`);
  }
- assert.equal(wide,97);assert.equal(compact,10);
+ assert.equal(wide,112);assert.equal(compact,10);
 });
 
 test('animated entrance reuses the bounded shared door artwork cache',()=>{

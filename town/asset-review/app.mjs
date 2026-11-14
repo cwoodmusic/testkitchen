@@ -1,6 +1,6 @@
 import {createAssetReview} from './review-model.mjs?v=town-asset-review-1';
 import {availableFacings,prepareAssetPreview} from './preview.mjs?v=town-asset-review-1';
-import {registerReviewRoomRugs} from './catalog-extras.mjs?v=town-asset-review-1';
+import {registerReviewRoomRugs} from './catalog-extras.mjs?v=town-room-floorplan-1';
 
 const $=id=>document.getElementById(id),canvas=$('preview'),context=canvas.getContext('2d'),CURSOR_KEY='codaTownAssetReviewCursorV1';
 const names={south:'South',west:'West',north:'North',east:'East'};

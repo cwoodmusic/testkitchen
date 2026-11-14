@@ -2,6 +2,7 @@ import {furnitureFacingBounds,furnitureFacingBoxes,furnitureFacingDepth} from '.
 import {furniturePresentationScale} from './private-furniture.mjs?v=town-compact-island-1';
 import {apartmentDecorBounds,apartmentDecorFootBounds,apartmentWallDecorBounds} from './personal-room-areas.mjs?v=town-compact-island-1';
 import {createRoomRugItems} from './room-rugs.mjs?v=town-victorian-default-1';
+import {refreshRoomLayoutNavigation} from './room-layout-navigation.mjs?v=town-room-floorplan-1';
 
 export const ROOM_LAYOUT_FORMAT='coda-room-layout';
 export const ROOM_LAYOUT_VERSION=1;
@@ -10,6 +11,7 @@ const finite=n=>typeof n==='number'&&Number.isFinite(n);
 const validId=id=>typeof id==='string'&&/^[a-z0-9][a-z0-9:_-]{0,149}$/i.test(id)&&!['__proto__','constructor','prototype'].includes(id);
 const rect=r=>r&&[r.x,r.y,r.w,r.h].every(finite)&&r.w>0&&r.h>0;
 const overlap=(a,b)=>Math.min(a.x+a.w,b.x+b.w)-Math.max(a.x,b.x)>EPS&&Math.min(a.y+a.h,b.y+b.h)-Math.max(a.y,b.y)>EPS;
+const touches=(a,b)=>a.x<=b.x+b.w+EPS&&a.x+a.w>=b.x-EPS&&a.y<=b.y+b.h+EPS&&a.y+a.h>=b.y-EPS;
 const contains=(a,b)=>b.x>=a.x-EPS&&b.y>=a.y-EPS&&b.x+b.w<=a.x+a.w+EPS&&b.y+b.h<=a.y+a.h+EPS;
 const point=p=>p&&finite(p.x)&&finite(p.y);
 const rotation=n=>[0,90,180,270].includes(n);
@@ -42,19 +44,28 @@ function signature(scene){
  const data=JSON.stringify({id:frame.id,width:frame.width,height:frame.height,walls:frame.walls,doors:frame.privacyDoors,items:scene.items.map(i=>[i.id,i.asset,i.w,i.h,i.solid,i.wallMounted,i.layer]),...(scene.roomLayoutRecipe?{recipe:scene.roomLayoutRecipe}:{})});let hash=2166136261;
  for(let i=0;i<data.length;i++){hash^=data.charCodeAt(i);hash=Math.imul(hash,16777619);}return 'room-'+(hash>>>0).toString(16).padStart(8,'0');
 }
+export {signature as roomLayoutSignature};
 function doorClearance(scene){
  const areas=[],targets=[];
+ const standing=at=>({x:at.x-RADIUS,y:at.y-RADIUS,w:RADIUS*2,h:RADIUS*2});
  for(const d of scene.privacyDoors||[]){const vertical=d.axis==='vertical',length=d.length||36,cx=vertical?d.x:d.x+length/2,cy=vertical?d.y+length/2:d.y;
-  areas.push(vertical?{x:cx-30,y:cy-length/2-6,w:60,h:length+12}:{x:cx-length/2-6,y:cy-30,w:length+12,h:60});
+  // Reserve the actual opening and its body clearance, matching the drawn
+  // aperture. Empty floor farther in front of a door can be furnished when
+  // the player can still approach it through the remaining room.
+  const depth=(d.wallThickness||18)+RADIUS*2;
+  areas.push(vertical?{x:cx-depth/2,y:d.y,w:depth,h:length}:{x:d.x,y:cy-depth/2,w:length,h:depth});
   targets.push(vertical?{x:cx-24,y:cy}:{x:cx,y:cy-24},vertical?{x:cx+24,y:cy}:{x:cx,y:cy+24});
  }
- if(point(scene.spawn)){areas.push({x:scene.spawn.x-16,y:scene.spawn.y-16,w:32,h:32});targets.push({...scene.spawn});}
- const paths=[];for(const actor of scene.actors||[])if(point(actor)){areas.push({x:actor.x-14,y:actor.y-14,w:28,h:28});targets.push({x:actor.x,y:actor.y});if(point(scene.spawn))paths.push([actor,{x:actor.x,y:scene.spawn.y},scene.spawn]);}
- // A showroom's tour may detour after decorating. Protect its destination's
- // reachability instead of reserving every old transit leg as empty floor.
- const browse=scene.showroom?.apartment?.visitRoute?.at(-1);if(point(browse))targets.push({...browse});
- for(const path of paths)for(let i=1;i<path.length;i++){const a=path[i-1],b=path[i];if(!point(a)||!point(b))continue;areas.push({x:Math.min(a.x,b.x)-8,y:Math.min(a.y,b.y)-8,w:Math.abs(b.x-a.x)+16,h:Math.abs(b.y-a.y)+16});targets.push({...b});}
- const p=scene.portalExit;if(point(p?.threshold)&&point(p.enterNormal)){const at={x:p.threshold.x+p.enterNormal.x*24,y:p.threshold.y+p.enterNormal.y*24};areas.push({x:at.x-18,y:at.y-18,w:36,h:36});targets.push(at);}
+ // Private-room bodies have a six-pixel radius. Keep their actual standing
+ // footprints clear rather than retaining the old full-size actor padding.
+ if(point(scene.spawn)){areas.push(standing(scene.spawn));targets.push({...scene.spawn});}
+ for(const actor of scene.actors||[])if(point(actor)){areas.push(standing(actor));targets.push({x:actor.x,y:actor.y});}
+ // Showroom browsing targets follow the actual furniture after a commit.
+ // An obsolete destination must not become an invisible floor obstacle.
+ const p=scene.portalExit;if(point(p?.threshold)&&point(p.enterNormal)){
+  const at={x:p.threshold.x+p.enterNormal.x*24,y:p.threshold.y+p.enterNormal.y*24},opening=(p.triggerHalfWidth||18)*2,horizontal=Math.abs(p.enterNormal.x)>Math.abs(p.enterNormal.y);
+  areas.push(horizontal?{x:at.x-RADIUS,y:at.y-opening/2,w:RADIUS*2,h:opening}:{x:at.x-opening/2,y:at.y-RADIUS,w:opening,h:RADIUS*2});targets.push(at);
+ }
  return {areas,targets};
 }
 function canReach(scene,solids,targets){
@@ -86,8 +97,10 @@ function createSingleRoomLayoutModel({themeId,scene:authored,catalog,record:init
  const personalFloor=apartmentDecorFootBounds(base)??apartmentDecorBounds(base)??[],personalWalls=apartmentWallDecorBounds(base)||[];
  const wallAreas=[{x:28,y:0,w:base.width-56,h:106},...(base.rooms||[]).flatMap(r=>r.wallpaperAreas||[]),...(base.walls||[]).map(w=>({x:w.x,y:w.y-96,w:w.w,h:96})).filter(r=>r.w>40)];
  let current=clone(base),held=null,revision=0,serial=1,undo=[],redo=[];current.items=defaultItems.map(copyItem);
- function rebuild(items=current.items){const next={...current,items,solids:[...structural,...items.flatMap(i=>i.collisionBoxes)],layoutRevision:revision};if(base.roomLayoutBaseItems&&next.familyFurniture){const ids=new Set(items.map(i=>i.id)),family=next.familyFurniture;next.familyFurniture={...family,diningSeats:originalItems.filter(i=>i.seatingTarget===family.diningTable&&ids.has(i.id)).map(i=>i.id)};}for(const symbol of Object.getOwnPropertySymbols(current))Object.defineProperty(next,symbol,{value:current[symbol]});current=next;}
- rebuild();
+ function rebuild(items=current.items,{refreshNavigation=true}={}){const next={...current,items,solids:[...structural,...items.flatMap(i=>i.collisionBoxes)],layoutRevision:revision};if(base.roomLayoutBaseItems&&next.familyFurniture){const ids=new Set(items.map(i=>i.id)),family=next.familyFurniture;next.familyFurniture={...family,diningSeats:originalItems.filter(i=>i.seatingTarget===family.diningTable&&ids.has(i.id)).map(i=>i.id)};}for(const symbol of Object.getOwnPropertySymbols(current))Object.defineProperty(next,symbol,{value:current[symbol]});current=refreshNavigation?refreshRoomLayoutNavigation(next):next;}
+ // Fresh templates already carry authored targets. Failed source candidates
+ // need no navigation work before their saved signature is validated.
+ rebuild(current.items,{refreshNavigation:false});
  function geometryError(item){
   const a=catalog.get(item.asset);if(!a)return 'This furniture artwork is unavailable.';
   if(!validId(item.id)||!point(item)||![item.w,item.h].every(n=>finite(n)&&n>0&&n<=8192)||!rotation(item.rotation||0))return 'Furniture needs a valid position, size and cardinal facing.';
@@ -95,7 +108,7 @@ function createSingleRoomLayoutModel({themeId,scene:authored,catalog,record:init
   if(item.wallMounted){if(!wallAreas.some(area=>contains(area,visual)))return 'Place wall decorations completely on a wall.';if(personalWalls.some(area=>overlap(area,visual)))return 'Keep this wall space free for your purchased decorations.';const glass=(current.windows||[]).map(w=>({x:w.x-w.w/2,y:w.y+6,w:w.w,h:62}));if(glass.some(w=>overlap(w,visual)))return 'Leave the window clear.';}
   else if(item.layer==='ground'){if(!contains({x:28,y:106,w:base.width-56,h:base.height-134},visual))return 'Keep the rug or floor decoration inside the room.';}
   else if(!item.collisionBoxes.length&&!item.supportedBy&&(item.x<28||item.x>base.width-28||item.y<106||item.y>base.height-28))return 'Keep furniture inside the apartment.';
-  for(const b of item.collisionBoxes){if(!contains({x:28,y:106,w:base.width-56,h:base.height-134},b))return 'Keep the furniture base inside the room.';if(personalFloor.some(area=>overlap(area,b)))return 'Keep this floor space free for your purchased furniture.';if(structural.some(w=>overlap(b,w)))return 'That spot is occupied by a wall.';if(clearance.areas.some(r=>overlap(b,r)))return 'Leave doorways and the arrival point clear.';}
+  for(const b of item.collisionBoxes){if(!contains({x:28,y:106,w:base.width-56,h:base.height-134},b))return 'Keep the furniture base inside the room.';if(personalFloor.some(area=>overlap(area,b)))return 'Keep this floor space free for your purchased furniture.';if(structural.some(w=>overlap(b,w)))return 'That spot is occupied by a wall.';if(clearance.areas.some(r=>touches(b,r)))return 'Leave doorways and the arrival point clear.';}
   return null;
  }
  function validate(items,{changedIds,reach=false}={}){
@@ -207,8 +220,12 @@ export function createRoomLayoutModel(options={}){
   return model;
  }
  function select(record,exclude){
-  let error;
-  for(const source of sources){
+  let error;const previous=authored.roomLayoutPreviousDefault,preferPrevious=authored.approvedRoomLayout&&record?.baseSignature!==authored.approvedRoomLayout.baseSignature&&sources.includes(previous);
+  // Older partial-family saves must merge the defaults of their own source,
+  // rather than inherit newly approved furnishing poses. This source hint
+  // comes only from the authored scene; the record still validates strictly.
+  const candidates=preferPrevious?[previous,...sources.filter(source=>source!==previous&&source!==authored),authored]:sources;
+  for(const source of candidates){
    if(source===exclude)continue;
    try{return {source,model:make(source,record,true)};}
    catch(failure){

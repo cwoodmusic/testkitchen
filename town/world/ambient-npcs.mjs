@@ -4,9 +4,9 @@ import {movePlayer} from './physics.mjs?v=town-coast-pier-1';
 import {WALK_SPEED,GAIT_PER_PIXEL,PLAYER_SCALE} from './player-settings.mjs?v=opera-parallax-1';
 import {buildNPCDistrict} from './npc-district.mjs?v=town-coast-pier-1';
 import {createNPCNavigator,npcPavingAt,npcMaterialCost} from './npc-navigation.mjs?v=town-coast-pier-1';
-import {residents as profiles,residentHomePose,interiorJourneyPose,residentInScene} from './resident-journey.mjs?v=town-compact-island-1';
+import {residents as profiles,residentHomePose,interiorJourneyPose,residentInScene} from './resident-journey.mjs?v=town-room-floorplan-1';
 import {createEntranceQueues} from './entrance-queue.mjs?v=town-coast-pier-1';
-import {venueVisitPose,SHOP_VISIT_CAPACITY} from './resident-venue.mjs?v=town-compact-island-1';
+import {venueVisitPose,SHOP_VISIT_CAPACITY} from './resident-venue.mjs?v=town-room-floorplan-1';
 import {planNPCPassing} from './npc-passing.mjs?v=opera-parallax-1';
 import {createNPCStairTraffic} from './npc-stair-traffic.mjs?v=town-coast-pier-1';
 export {planNPCPath,npcConnectionClear} from './npc-navigation.mjs?v=town-coast-pier-1';
@@ -268,7 +268,7 @@ export function createAmbientNPCs({getProject,catalog,getRevision=()=>0,getPlaye
   applyJourney(actor,0);
  }
  function applyJourney(actor,dt){
-  const trip=actor._journey;trip.elapsed+=dt;const pose=interiorJourneyPose(actor.id,trip.direction,trip.elapsed);
+  const trip=actor._journey;trip.elapsed+=dt;const pose=interiorJourneyPose(actor.id,trip.direction,trip.elapsed);if(pose.waiting)trip.elapsed=pose.resumeAt;
   if(pose.done){
    if(trip.direction==='home'){record('enter-room',actor);home(actor,24+random()*35);return;}
    if(!city.tower||!exitBuilding(actor,city.tower)){Object.assign(actor,{location:{kind:'lobby',floor:1},x:1152,y:1578,hidden:false,walking:false,purpose:'Waiting for the doorway'});}return;

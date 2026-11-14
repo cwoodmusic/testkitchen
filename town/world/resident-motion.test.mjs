@@ -13,6 +13,7 @@ import {createRoomLayoutStorage} from './room-layout-storage.mjs';
 import {APARTMENT_COLLECTION_ASSETS} from './apartment-collection-definitions.mjs';
 import {FAMILY_FURNITURE_ASSETS} from './family-furniture-definitions.mjs';
 import {interiorActorScale} from './interior-scale.mjs';
+import {getApartmentNavigation} from './apartment-navigation.mjs';
 
 const TAU=Math.PI*2,DT=.01;
 const near=(actual,expected,message)=>assert.ok(Math.abs(actual-expected)<1e-7,`${message}: ${actual} != ${expected}`);
@@ -76,12 +77,13 @@ test('home journeys reach the active south arrival before leaving and begin ther
 });
 
 test('home journeys switch among all three saved shapes and the compact default without stale routes or save rewrites',()=>{
+ const physicalRooms=rooms=>rooms.map(({point,...room})=>room);
  const resident=residents.find(r=>r.id==='bach'),latest=getInteriorBase({kind:'apartment',resident:resident.id}),[legacy,prior,shape]=latest.roomLayoutLegacySources,catalog=new Map([...APARTMENT_COLLECTION_ASSETS,...FAMILY_FURNITURE_ASSETS].map(a=>[a.id,a]));
  for(const [scene,width,height]of [[legacy,1088,1120],[prior,2304,1184],[shape,2368,1132],[latest,1184,512]])assert.deepEqual({width:scene.width,height:scene.height},{width,height});
  const memory=new Map(),events=new EventTarget();let writes=0;
  const storage={getItem:key=>memory.get(key)??null,setItem(key,value){writes++;memory.set(key,value);}},store=createRoomLayoutStorage({storage,eventTarget:events}),resolver=createRoomLayoutResolver({storage,events});
  const url=new URL('./resident-journey.mjs',import.meta.url),source=readFileSync(url,'utf8').replace(/^import .*;\r?\n/gm,'').replace(/^export \{.*\} from .*;\r?\n/gm,'').replace(/^export function /gm,'function ')+'\n({residentHomePose,interiorJourneyPose,journeyDuration});';
- const journey=runInNewContext(source,{residents,interiorActorScale,getInterior:request=>request.kind==='apartment'&&request.resident===resident.id?resolver.resolve(latest,catalog):getInteriorBase(request)},{filename:url.pathname});
+ const journey=runInNewContext(source,{residents,interiorActorScale,getApartmentNavigation,getInterior:request=>request.kind==='apartment'&&request.resident===resident.id?resolver.resolve(latest,catalog):getInteriorBase(request)},{filename:url.pathname});
  function inspect(model){
   const home=journey.residentHomePose(resident.id),actor=model.actors.find(a=>a.id===resident.id),privateSeconds=Math.hypot(model.spawn.x-home.x,model.spawn.y-home.y)/58.5;
   assert.deepEqual({x:home.x,y:home.y},{x:actor.x,y:actor.y});
@@ -92,7 +94,10 @@ test('home journeys switch among all three saved shapes and the compact default 
  const banks=[[legacy,{x:544,y:650}],[prior,{x:1152,y:750}],[shape,{x:1184,y:750}]],results=[];
  for(const [scene,home]of banks){
   const record=createRoomLayoutModel({themeId:resident.id,scene,catalog}).record();assert.equal(store.save(resident.id,record).ok,true);const raw=store.raw;writes=0;
-  const resolved=resolver.resolve(latest,catalog);for(const key of ['width','height','rooms','walls','privacyDoors','spawn','portalExit'])assert.deepEqual(resolved[key],scene[key],'Saved architecture remains exact: '+key);
+  const resolved=resolver.resolve(latest,catalog);for(const key of ['width','height','rooms','walls','privacyDoors','spawn','portalExit'])assert.deepEqual(key==='rooms'?physicalRooms(resolved[key]):resolved[key],key==='rooms'?physicalRooms(scene[key]):scene[key],'Saved architecture remains exact: '+key);
+  // Access targets follow current furniture; they do not redefine the saved
+  // room's rectangles, finishes, walls, doorways or entrance coordinates.
+  for(const room of resolved.rooms)if(room.point){const p=room.point;assert(p.x>=40&&p.y>=112&&p.x<=resolved.width-40&&p.y<=resolved.height-40&&!resolved.solids.some(b=>p.x>=b.x-6&&p.x<=b.x+b.w+6&&p.y>=b.y-6&&p.y<=b.y+b.h+6),'Refreshed '+room.id+' target has actual six-pixel body clearance');}
   const result=inspect(resolved);assert.deepEqual(result.home,home);assert.equal(store.raw,raw);assert.equal(writes,0,'Reading or animating a saved home does not rewrite its record');results.push({record,result});
  }
  assert.equal(store.remove(resident.id).ok,true);assert.equal(resolver.resolve(latest,catalog),latest);const fresh=inspect(latest);assert.deepEqual(fresh.home,{x:latest.wideRoomLayout.mirrored?428:756,y:420});for(const {result}of results)assert.notEqual(fresh.duration,result.duration);

@@ -162,7 +162,7 @@ test('all31 frozen e6a709a room records preserve their saved originals and expor
  for(const {themeId,request,record}of frozen.cases){
   const scene=getInterior(request),legacy=scene.roomLayoutLegacySources?.[0]||scene,authored=JSON.stringify(scene),raw=JSON.stringify(record),model=createRoomLayoutModel({themeId,scene,catalog:art,record});
   assert(scene.items.some(i=>i.roomExpansion==='family-room-1'),themeId+' uses the actual expanded source');assert.notEqual(model.record().baseSignature,record.baseSignature);
-  for(const key of ['width','height','walls','privacyDoors','rooms','spawn','portalExit','windows'])assert.deepEqual(model.scene[key],legacy[key],themeId+' keeps its complete saved architecture: '+key);
+  for(const key of ['width','height','walls','privacyDoors','rooms','spawn','portalExit','windows'])assert.deepEqual(key==='rooms'?model.scene.rooms.map(({point,...room})=>room):model.scene[key],key==='rooms'?legacy.rooms.map(({point,...room})=>room):legacy[key],themeId+' keeps its complete saved architecture: '+key);
   for(const p of record.placements){const item=model.scene.items.find(i=>i.id===p.id);assert(item,themeId+'/'+p.id);assert.equal(item.x,p.x);assert.equal(item.y,p.y);assert.equal(item.rotation||0,p.rotation);assert.deepEqual(legacy.roomExpansionLegacyPoses[p.id],{x:p.x,y:p.y,rotation:p.rotation},themeId+' exact trusted old pose');}
   for(const id of record.removed)assert(!model.scene.items.some(i=>i.id===id));
   const upgraded=model.record(),roundtrip=createRoomLayoutModel({themeId,scene,catalog:art,record:upgraded});assert.deepEqual(roundtrip.record(),upgraded,themeId+' current export');assert.equal(JSON.stringify(record),raw);assert.equal(JSON.stringify(scene),authored);

@@ -12,7 +12,7 @@ import {calibratePrivateFurniture,presentedRoomItem} from './private-furniture.m
 import {normalizeInteriorDoorways} from './interior-doorways.mjs?v=opera-parallax-1';
 import {drawInteriorWindow,warmInteriorWindows} from './interior-window-art.mjs?v=opera-parallax-1';
 import {drawInteriorWallNetwork} from './interior-wall-art.mjs?v=town-victorian-4';
-import {createRoomLayoutResolver} from './room-layout-runtime.mjs?v=town-compact-island-1';
+import {createRoomLayoutResolver} from './room-layout-runtime.mjs?v=town-room-floorplan-1';
 import {createPlayerRoomSourceResolver} from './player-room-source.mjs?v=town-compact-island-1';
 export {apartmentDecorBounds,apartmentDecorFootBounds,apartmentWallDecorBounds} from './personal-room-areas.mjs?v=town-compact-island-1';
 import {getConcertHall,renderConcertHallBackground,concertHallDrawables} from './concert-hall.mjs?v=town-flight-1';
@@ -27,6 +27,7 @@ import {expandWideRoomShell,getInteriorVisualBounds} from './wide-room-shell.mjs
 import {drawWideRoomSouthExterior,drawWideRoomEntrance} from './wide-room-frontage.mjs?v=town-wide-rooms-1';
 import {wideRoomPartitionDrawables,clearWideRoomPartitionCache} from './wide-room-partitions.mjs?v=town-wide-rooms-1';
 import {applyWideRoomLayout} from './wide-room-layout.mjs?v=town-compact-island-1';
+import {applyApprovedRoomLayout} from './approved-room-layout.mjs?v=town-room-floorplan-1';
 import {preparePlacedFacingArt} from './furniture-art-access.mjs?v=opera-parallax-1';
 // Public tower floors retain their original halls and 2304 × 1728 lot.
 // Private scenes use the shared wide layout; saved designs retain their shell.
@@ -223,6 +224,7 @@ export function getInteriorBase(scene={}){
   for(const d of s.privacyDoors||[]){const r=s.rooms.find(r=>r.id===d.roomId||r.functionalRole===d.roomId);if(r&&d.swing===undefined)d.swing=d.axis==='vertical'?(r.x+r.w/2>d.x?1:-1):(r.y+r.h/2>d.y?-1:1);}
   expandWideRoomShell(s);
   if((s.kind==='apartment'||s.kind==='showroom')&&id!=='showroom-victorian-parlor')s=applyWideRoomLayout(s,nativeCatalog||collectionDefinitions,{reference:getInteriorBase({kind:'showroom',showroomId:'victorian-parlor'})});
+  s=applyApprovedRoomLayout(s,nativeCatalog||collectionDefinitions);
   sceneCache.set(id,s);}return sceneCache.get(id);
 }
 export function getInterior(scene={}){

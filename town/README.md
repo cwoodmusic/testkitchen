@@ -24,6 +24,12 @@ Open [Asset review](asset-review/) or choose **Review assets** in the Builder's 
 
 Choose **Download review JSON**, then attach `coda-asset-review.json` in chat. The file includes the exact IDs, directions, names, flags and notes needed to locate each repair. Download also works if browser saving is unavailable; heed the on-screen save warning before closing the tab. Reviewing artwork does not edit town maps or player progress.
 
+## Approved room layouts and placement
+
+The [approved room export](room-layouts/approved-layouts-1.json) supplies the exact default furniture layouts for eleven showrooms and the Bach, Mozart, Beethoven and Clara apartments. Reset theme selects these defaults; existing saved designs retain their matching room architecture and furniture stock. The Midcentury layout uses the wall plan named by its saved record.
+
+Placement checks furniture feet against the physical walls and door openings. Open floor along an NPC's former walking route can be furnished when the room remains accessible. Residents plan a route around the placed furniture; an unavailable route makes them wait safely until it becomes clear. Room-layout settings remain separate from maps, owned decorations and player progress.
+
 ## Landscape and scale
 
 The town is 16000 × 12000 native world pixels, nearly three times the area of

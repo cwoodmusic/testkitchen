@@ -8,7 +8,7 @@ const {createCanvas}=createRequire(import.meta.url)('@napi-rs/canvas');
 const overlap=(a,b)=>a.x<b.x+b.w&&a.x+a.w>b.x&&a.y<b.y+b.h&&a.y+a.h>b.y;
 const inside=(r,x,y)=>x>=r.x&&x<r.x+r.w&&y>=r.y&&y<r.y+r.h;
 const descriptors=[...residents.map(r=>({kind:'apartment',resident:r.id})),{kind:'apartment',resident:'player'},...SHOWROOMS.map(r=>({kind:'showroom',showroomId:r.id}))];
-const activeModels=descriptors.map(getInterior),preserved=m=>m.roomLayoutLegacySources?.[0]??m,sourceModels=activeModels.map(preserved),previousModels=activeModels.flatMap(m=>m.roomLayoutLegacySources?.slice(1)||[]),legacyModels=activeModels.flatMap(m=>m.roomLayoutLegacySources||[]),models=[...activeModels,...legacyModels];
+const activeModels=descriptors.map(getInterior),preserved=m=>m.roomLayoutLegacySources?.[0]??m,sourceModels=activeModels.map(preserved),previousModels=activeModels.flatMap(m=>m.roomLayoutLegacySources?.slice(1)||[]),legacyModels=activeModels.flatMap(m=>m.roomLayoutLegacySources||[]),models=[...activeModels,...legacyModels],previousDefaults=activeModels.filter(m=>m.approvedRoomLayout).map(m=>m.roomLayoutPreviousDefault);
 const color=(c,x,y)=>[...c.getImageData(x,y,1,1).data];
 
 test('actual reported junctions return only along the adjoining authored wall face',()=>{
@@ -22,8 +22,10 @@ test('actual reported junctions return only along the adjoining authored wall fa
  for(const x of [268,750])assert(robot.returns.some(r=>r.x===x&&r.y===0&&r.w===16&&r.h===106));
 });
 
-test('all31 active and76 preserved wall networks retain physical models without unsupported floor bridges',()=>{
- assert.equal(activeModels.length,31);assert.equal(legacyModels.length,76);assert.equal(previousModels.length,46);let projected=0;
+test('all31 active and91 preserved wall networks retain physical models without unsupported floor bridges',()=>{
+ assert.equal(activeModels.length,31);assert.equal(legacyModels.length,91);assert.equal(previousModels.length,61);
+ assert.equal(previousDefaults.length,15);assert.equal(new Set(previousDefaults).size,15);assert(previousDefaults.every(m=>previousModels.includes(m)),'Every replaced default remains in the complete wall-network checks');
+ let projected=0;
  for(const m of models){
   const before=JSON.stringify(m),g=interiorWallNetworkGeometry(m);
   for(const r of g.returns){
@@ -105,7 +107,7 @@ test('the preserved Bach kitchen corner meets the adjoining face without coverin
  cv.width=cv.height=1;
 });
 
-test('all62 current and152 preserved36px doorway slits stay free of cap, trim and shadow pixels',()=>{
+test('all62 current and182 preserved36px doorway slits stay free of cap, trim and shadow pixels',()=>{
  let count=0;
  for(const m of models){
   const cv=createCanvas(m.width,m.height),c=cv.getContext('2d');drawInteriorWallNetwork(c,m);
@@ -115,7 +117,7 @@ test('all62 current and152 preserved36px doorway slits stay free of cap, trim an
   }
   cv.width=cv.height=1;
  }
- assert.equal(count,214);
+ assert.equal(count,244);assert.equal(previousDefaults.reduce((sum,m)=>sum+m.privacyDoors.length,0),30,'Both privacy openings of every newly preserved default receive the same native pixel checks');
  const untouched=createCanvas(100,100),c=untouched.getContext('2d');assert.equal(drawInteriorWallNetwork(c,{kind:'shop'}),false);assert.equal(drawInteriorWallNetwork(c,{kind:'hall'}),false);assert.equal(drawInteriorWallNetwork(c,{kind:'concert'}),false);
 });
 
