@@ -1,337 +1,354 @@
-"""Exercise Rhythm Blocks through its real desktop/mobile UI.
+"""Actual shaped-game UI tests; only routed app constructor options are seeded.
 
-Only this browser context receives a deterministic RNG module response. Game
-state is observed, never edited; all play uses keyboard, buttons or touch.
+Game state is observed, never edited. Production sources are untouched.
 """
+from collections import Counter
 from functools import partial
 from http.server import SimpleHTTPRequestHandler, ThreadingHTTPServer
 from pathlib import Path
 from threading import Thread
 import json
 import re
-
 from playwright.sync_api import sync_playwright
 
-
 ROOT = Path(__file__).resolve().parents[1]
-OUT = ROOT / 'work/rhythm-blocks/browser'
+OUT = ROOT / 'work/rhythm-blocks-shapes'
 OUT.mkdir(parents=True, exist_ok=True)
-PROTECTED = {'musicArcadeV1': '{"test":"preserve arcade"}', 'codaNotesWalletV1': '{"notes":23}'}
-
+PROTECTED = {'musicArcadeV1': '{"test":"preserve arcade"}', 'codaNotesWalletV1': '{"notes":23}', 'codaRhythmBlocksBestV1': '3210'}
+UNITS = {'quarter': 2, 'eighth-pair': 2, 'sixteenth-group': 2, 'half': 4, 'whole': 8, 'eighth': 1, 'quarter-rest': 2, 'half-rest': 4, 'whole-rest': 8, 'dotted-half': 6, 'sixteenth-pair': 1}
 
 class Quiet(SimpleHTTPRequestHandler):
     def log_message(self, *_):
         pass
-
     def copyfile(self, source, target):
         try:
             super().copyfile(source, target)
         except (BrokenPipeError, ConnectionResetError):
             pass
 
-
 def state(page):
     return page.evaluate('window.rhythmBlocks.state')
-
 
 def wait_state(page, expression):
     page.wait_for_function('window.rhythmBlocks && (' + expression + ')')
 
-
-def capture_errors(page, errors):
-    page.on('pageerror', lambda error: errors.append(str(error)))
-    page.on('console', lambda message: errors.append(message.text) if message.type == 'error' else None)
-
-
-def deterministic_engine(route, counters, rng='()=>0'):
+def route_fixture(route, counters, rng='()=>0', board=None):
     response = route.fetch()
     source = response.text()
-    needle = 'rng=Math.random'
-    assert source.count(needle) == 1, 'The RNG injection point changed; do not silently run a nondeterministic UI test.'
-    source = source.replace(needle, 'rng=' + rng, 1)
-    counters['deterministicEngineResponses'] += 1
+    assert source.count('createGame()') == 1, 'The app constructor fixture point changed.'
+    options = '{rng:' + rng + (',initialBoard:' + json.dumps(board) if board is not None else '') + '}'
+    source = source.replace('createGame()', 'createGame(' + options + ')', 1)
     headers = {key: value for key, value in response.headers.items() if key.lower() not in ['content-length', 'content-encoding']}
+    counters['fixtureAppResponses'] += 1
     route.fulfill(response=response, body=source, headers={**headers, 'cache-control': 'no-store'})
 
+def open_page(browser, url, counters, viewport=(1366, 768), touch=False, rng='()=>0', board=None, protected=False):
+    context = browser.new_context(viewport={'width': viewport[0], 'height': viewport[1]}, has_touch=touch, is_mobile=touch, reduced_motion='reduce')
+    context.route('**/games/rhythm-blocks/app.mjs*', lambda route: route_fixture(route, counters, rng, board))
+    if protected:
+        context.add_init_script('for(const[key,value]of Object.entries(' + json.dumps(PROTECTED) + ')){if(localStorage.getItem(key)===null)localStorage.setItem(key,value);}')
+    page = context.new_page()
+    errors = []
+    page.set_default_timeout(15000)
+    page.on('pageerror', lambda error: errors.append(str(error)))
+    page.on('console', lambda message: errors.append(message.text) if message.type == 'error' else None)
+    page.goto(url)
+    wait_state(page, "rhythmBlocks.state.phase==='idle'")
+    assert 'rhythm-blocks-shapes-1' in page.locator('script[type="module"]').get_attribute('src')
+    return context, page, errors
 
-def no_horizontal_overflow(page):
-    return page.evaluate('''() => ({
-      viewport: innerWidth,
-      document: document.documentElement.scrollWidth,
-      body: document.body.scrollWidth,
-      board: (() => {const r=document.getElementById('board').getBoundingClientRect(); return {left:r.left,right:r.right,top:r.top,bottom:r.bottom,width:r.width,height:r.height};})()
-    })''')
+def cells(piece, row=None):
+    return [{'row': (piece['row'] if row is None else row) + cell['row'], 'col': piece['col'] + cell['col'], 'kind': cell['kind'], 'owner': str(piece['id'])} for cell in piece['cells']]
 
+def sorted_cells(items):
+    return sorted(items, key=lambda item: (item['row'], item['col'], item['kind'], item.get('owner', '')))
 
-def assert_layout(page):
-    layout = no_horizontal_overflow(page)
-    assert layout['document'] <= layout['viewport'] + 1, layout
-    assert layout['body'] <= layout['viewport'] + 1, layout
-    assert layout['board']['left'] >= -1 and layout['board']['right'] <= layout['viewport'] + 1, layout
-    assert layout['board']['width'] > 120 and layout['board']['height'] > 250, layout
-    return layout
+def local_signature(piece):
+    return sorted((cell['row'], cell['col'], cell['kind']) for cell in piece['cells'])
 
+def rendered_cells(page, selector):
+    return page.locator(selector).evaluate_all('''items=>items.map(e=>({row:Number(e.style.getPropertyValue('--row')),col:Number(e.style.getPropertyValue('--col')),kind:e.dataset.kind,owner:e.dataset.piece}))''')
 
-def touch_bounds(page, scroll_into_view=False):
-    if scroll_into_view:
+def landing_cells(snapshot):
+    piece = snapshot['active']
+    row = piece['row']
+    while True:
+        candidate = cells(piece, row + 1)
+        if not all(0 <= cell['row'] < 24 and 0 <= cell['col'] < 10 and snapshot['board'][cell['row']][cell['col']] is None for cell in candidate):
+            return cells(piece, row)
+        row += 1
+
+def assert_piece_ui(page):
+    probe = page.evaluate('''()=>{
+      const read=selector=>[...document.querySelectorAll(selector)].map(e=>({row:Number(e.style.getPropertyValue('--row')),col:Number(e.style.getPropertyValue('--col')),kind:e.dataset.kind,owner:e.dataset.piece}));
+      return {snapshot:rhythmBlocks.state,active:read('#active .tile.active'),ghost:read('#ghost .tile.ghost')};
+    }''')
+    snapshot = probe['snapshot']
+    active = snapshot['active']
+    assert active and len(active['cells']) == 4
+    assert len({(cell['row'], cell['col']) for cell in active['cells']}) == 4
+    assert len({UNITS[cell['kind']] for cell in active['cells']}) >= 2
+    assert sorted_cells(probe['active']) == sorted_cells(cells(active))
+    landing = landing_cells(snapshot)
+    expected = landing if min(cell['row'] for cell in landing) > min(cell['row'] for cell in cells(active)) else []
+    assert sorted_cells(probe['ghost']) == sorted_cells(expected)
+    assert page.locator('#next-symbol .preview-cell').count() == 4
+    assert page.locator('#next-symbol .preview-cell svg').count() == 4
+    assert snapshot['next']['shape'] in page.locator('#next-label').inner_text()
+    assert page.evaluate('''async()=>{
+      const source=performance.getEntriesByType('resource').find(e=>new URL(e.name).pathname.endsWith('/rhythm-blocks/notation.mjs')).name;
+      const {symbolMarkup}=await import(source),piece=rhythmBlocks.state.next;
+      return [...document.querySelectorAll('#next-symbol .preview-cell')].every((e,index)=>{
+        const cell=piece.cells[index],expected=document.createElement('div');expected.innerHTML=symbolMarkup(cell.kind);
+        return Number(e.style.gridColumn)===cell.col+1&&Number(e.style.gridRow)===cell.row+1&&e.firstElementChild.isEqualNode(expected.firstElementChild);
+      });
+    }''')
+    return snapshot
+
+def assert_layout(page, scroll_controls=False):
+    layout = page.evaluate('''()=>{const r=document.getElementById('board').getBoundingClientRect();return{viewportWidth:innerWidth,viewportHeight:innerHeight,documentWidth:document.documentElement.scrollWidth,bodyWidth:document.body.scrollWidth,board:{left:r.left,right:r.right,width:r.width,height:r.height}}}''')
+    assert layout['documentWidth'] <= layout['viewportWidth'] + 1 and layout['bodyWidth'] <= layout['viewportWidth'] + 1, layout
+    assert layout['board']['left'] >= -1 and layout['board']['right'] <= layout['viewportWidth'] + 1, layout
+    assert layout['board']['width'] >= 180 and abs(layout['board']['height'] / layout['board']['width'] - 2.4) < .02
+    if scroll_controls:
         page.locator('.touch-controls').scroll_into_view_if_needed()
-    result = page.locator('.touch-controls button').evaluate_all('''items => items.map(button => {
-      const r=button.getBoundingClientRect(); return {label:button.getAttribute('aria-label'),left:r.left,right:r.right,top:r.top,bottom:r.bottom,width:r.width,height:r.height,viewportHeight:innerHeight};
-    })''')
-    assert len(result) == 4
-    for bounds in result:
-        assert bounds['top'] >= -1 and bounds['bottom'] <= bounds['viewportHeight'] + 1, bounds
-    return result
+    buttons = page.locator('.touch-controls button').evaluate_all('''items=>items.map(e=>{const r=e.getBoundingClientRect();return{action:e.dataset.action,left:r.left,right:r.right,top:r.top,bottom:r.bottom,width:r.width,height:r.height}})''')
+    assert {button['action'] for button in buttons} == {'left', 'right', 'rotate', 'down', 'drop'}
+    for button in buttons:
+        assert 0 <= button['left'] < button['right'] <= layout['viewportWidth'] + 1, button
+        assert button['top'] >= -1 and button['bottom'] <= layout['viewportHeight'] + 1, button
+    return {**layout, 'controls': buttons, 'verticalScrollToControls': scroll_controls}
 
+def start(page, touch=False):
+    getattr(page.locator('#primary-action'), 'tap' if touch else 'click')()
+    wait_state(page, "rhythmBlocks.state.phase==='falling'")
+    return assert_piece_ui(page)
 
-def move_to_column(page, target):
-    wait_state(page, "rhythmBlocks.state.phase==='falling' && !rhythmBlocks.state.paused")
-    active = state(page)['active']
-    assert active['kind'] == 'quarter', active
-    direction = 'ArrowRight' if target > active['col'] else 'ArrowLeft'
-    for _ in range(abs(target - active['col'])):
-        page.keyboard.press(direction)
-    assert state(page)['active']['col'] == target
-
-
-def open_help(page):
-    page.get_by_role('button', name=re.compile(r'how to play|help', re.I)).first.click()
+def help_dialog(page):
+    page.locator('#help').click()
     dialog = page.get_by_role('dialog')
     dialog.wait_for(state='visible')
-    assert dialog.locator('svg').count() >= 10, 'Help should show every rhythm symbol.'
-    return dialog
-
-
-def close_help(dialog):
+    assert dialog.locator('.legend-row').count() == 11
+    assert dialog.locator('svg').count() == 11
+    assert re.search(r'different pieces', dialog.inner_text(), re.I)
     dialog.get_by_role('button', name=re.compile(r'close|got it|done', re.I)).first.click()
     dialog.wait_for(state='hidden')
 
-
 def desktop(browser, url, counters):
-    errors = []
-    context = browser.new_context(viewport={'width': 1366, 'height': 768}, reduced_motion='reduce')
-    context.route('**/games/rhythm-blocks/engine.mjs*', lambda route: deterministic_engine(route, counters))
-    context.add_init_script('for (const [key,value] of Object.entries(' + json.dumps(PROTECTED) + ')) { if(localStorage.getItem(key)===null) localStorage.setItem(key,value); }')
-    page = context.new_page()
-    page.set_default_timeout(15000)
-    capture_errors(page, errors)
-    page.goto(url)
-    wait_state(page, "rhythmBlocks.state.phase==='idle'")
+    context, page, errors = open_page(browser, url, counters, protected=True)
     layout = assert_layout(page)
-    controls = touch_bounds(page)
-    close_help(open_help(page))
-    assert state(page)['phase'] == 'idle'
-    page.locator('#primary-action').click()
-    wait_state(page, "rhythmBlocks.state.phase==='falling'")
-    assert page.locator('#board .tile.active').count() == 1
-
-    origin = state(page)['active']['col']
+    assert page.locator('#best').inner_text() == '0', 'Old single-note best must not become shaped best.'
+    help_dialog(page)
+    initial = start(page)
+    identity = initial['active']['id']
+    kinds = Counter(cell['kind'] for cell in initial['active']['cells'])
+    original = local_signature(initial['active'])
     page.keyboard.press('ArrowLeft')
-    assert state(page)['active']['col'] == origin - 1
+    assert state(page)['active']['col'] == initial['active']['col'] - 1
     page.keyboard.press('ArrowRight')
-    assert state(page)['active']['col'] == origin
-    row = state(page)['active']['row']
+    page.keyboard.press('ArrowUp')
+    assert state(page)['active']['rotation'] == 1
+    assert_piece_ui(page)
+    page.keyboard.press('z')
+    assert state(page)['active']['rotation'] == 0 and local_signature(state(page)['active']) == original
+    for _ in range(4):
+        page.keyboard.press('x')
+    rotated = assert_piece_ui(page)['active']
+    assert rotated['id'] == identity and Counter(cell['kind'] for cell in rotated['cells']) == kinds
+    assert local_signature(rotated) == original
+    row = rotated['row']
     page.keyboard.press('ArrowDown')
     assert state(page)['active']['row'] >= row + 1
-
+    for _ in range(12):
+        page.keyboard.press('ArrowLeft')
+    at_wall = state(page)['active']
+    assert min(cell['col'] for cell in cells(at_wall)) == 0
+    page.keyboard.press('ArrowLeft')
+    assert state(page)['active']['col'] == at_wall['col']
+    page.keyboard.press('ArrowUp')
+    assert all(0 <= cell['col'] < 10 for cell in cells(state(page)['active']))
+    before_drop = assert_piece_ui(page)
+    landing = landing_cells(before_drop)
+    previous_next = before_drop['next']
+    page.keyboard.press('Space')
+    wait_state(page, "rhythmBlocks.state.phase==='falling'")
+    dropped = assert_piece_ui(page)
+    assert page.locator('#board .tile.settled').count() == 4
+    assert dropped['score'] == 0 and dropped['lastClear'] is None, 'A new shape must not clear itself.'
+    for cell in landing:
+        assert dropped['board'][cell['row']][cell['col']] == cell['kind']
+        assert str(dropped['boardOwners'][cell['row']][cell['col']]) == cell['owner']
+    assert dropped['active']['id'] != identity and dropped['active']['shape'] == previous_next['shape']
+    assert local_signature(dropped['active']) == local_signature(previous_next)
     page.keyboard.press('p')
     wait_state(page, 'rhythmBlocks.state.paused')
-    frozen = state(page)
     page.locator('#board').focus()
-    page.keyboard.press('ArrowLeft')
-    page.keyboard.press('Space')
-    page.wait_for_timeout(1200)
-    assert state(page)['active'] == frozen['active']
-    assert state(page)['board'] == frozen['board']
+    frozen = state(page)
+    for key in ['ArrowLeft', 'ArrowUp', 'z', 'Space']:
+        page.keyboard.press(key)
+    page.wait_for_timeout(1150)
+    assert state(page)['active'] == frozen['active'] and state(page)['board'] == frozen['board']
     page.screenshot(path=str(OUT / 'desktop-paused.png'))
     page.locator('#primary-action').click()
     wait_state(page, '!rhythmBlocks.state.paused')
-
     sound = page.locator('#sound')
-    before_sound = sound.get_attribute('aria-pressed')
+    old_sound = sound.get_attribute('aria-pressed')
     sound.click()
-    assert sound.get_attribute('aria-pressed') != before_sound
+    assert sound.get_attribute('aria-pressed') != old_sound
     sound.click()
-    assert sound.get_attribute('aria-pressed') == before_sound
-
+    assert sound.get_attribute('aria-pressed') == old_sound
     page.locator('#restart').click()
-    wait_state(page, "rhythmBlocks.state.phase==='falling' && rhythmBlocks.state.score===0")
-    assert all(cell is None for row in state(page)['board'] for cell in row)
-    for column in range(4):
-        move_to_column(page, column)
-        page.keyboard.press('Space')
-        if column < 3:
-            page.wait_for_function('(count)=>document.querySelectorAll("#board .tile.settled").length===count', arg=column + 1)
-    wait_state(page, "rhythmBlocks.state.phase==='clearing'")
-    page.screenshot(path=str(OUT / 'desktop-four-beat-clear.png'))
-    wait_state(page, 'rhythmBlocks.state.score===200 && rhythmBlocks.state.lastClear!==null')
     wait_state(page, "rhythmBlocks.state.phase==='falling'")
-    cleared = state(page)
-    assert cleared['lastClear']['points'] == 200
-    assert len(cleared['lastClear']['patterns']) == 1
-    pattern = cleared['lastClear']['patterns'][0]
-    assert pattern['units'] == 8 and pattern['axis'] == 'horizontal'
-    assert [cell['col'] for cell in pattern['cells']] == [0, 1, 2, 3]
-    assert pattern['kinds'] == ['quarter'] * 4
-    assert page.locator('#board .tile.settled').count() == 0
-    assert page.locator('#board .tile.active').count() == 1
-    page.screenshot(path=str(OUT / 'desktop-after-clear.png'))
-
-    best = page.locator('#best').inner_text()
-    assert '200' in best, best
-    saved = page.evaluate('Object.fromEntries(Object.entries(localStorage))')
-    assert any('200' in value for key, value in saved.items() if key not in PROTECTED), saved
-    assert {key: saved[key] for key in PROTECTED} == PROTECTED
-    page.reload()
-    wait_state(page, "rhythmBlocks.state.phase==='idle'")
-    assert page.locator('#best').inner_text() == best
-    assert state(page)['score'] == 0
+    assert not any(kind for row in state(page)['board'] for kind in row)
+    assert_piece_ui(page)
     assert page.evaluate('(keys)=>Object.fromEntries(keys.map(key=>[key,localStorage.getItem(key)]))', list(PROTECTED)) == PROTECTED
     assert not errors, errors
     context.close()
-    return {'passed': True, 'layout': layout, 'touchControlBounds': controls, 'keyboardMoveAndSoftDrop': True, 'pauseFreezesGravityAndInput': True,
-            'soundToggle': True, 'actualHorizontalFourBeatClear': True, 'clearPoints': 200,
-            'restart': True, 'localBestPersists': True, 'helpDialog': True, 'protectedProgressUnchanged': True, 'consoleErrors': errors}
-
+    return {'passed': True, 'layout': layout, 'fourCellMovementRotationAndIdentity': True, 'wallCollision': True,
+            'ghostAndNextGeometry': True, 'hardDropPreservesOwnership': True, 'samePieceCannotSelfClear': True,
+            'pauseBlocksMovementRotationDropAndGravity': True, 'restartSoundHelp': True, 'protectedProgress': True, 'errors': errors}
 
 def mobile(browser, url, counters):
-    errors = []
-    context = browser.new_context(viewport={'width': 390, 'height': 844}, device_scale_factor=2, is_mobile=True, has_touch=True, reduced_motion='reduce')
-    context.route('**/games/rhythm-blocks/engine.mjs*', lambda route: deterministic_engine(route, counters))
-    page = context.new_page()
-    page.set_default_timeout(15000)
-    capture_errors(page, errors)
-    page.goto(url)
-    wait_state(page, "rhythmBlocks.state.phase==='idle'")
-    idle_layout = assert_layout(page)
-    page.locator('#primary-action').tap()
-    wait_state(page, "rhythmBlocks.state.phase==='falling'")
-    before = state(page)['active']
-    page.get_by_role('button', name=re.compile(r'move left|^left$', re.I)).tap()
-    assert state(page)['active']['col'] == before['col'] - 1
-    page.get_by_role('button', name=re.compile(r'move right|^right$', re.I)).tap()
-    assert state(page)['active']['col'] == before['col']
-    row = state(page)['active']['row']
-    page.get_by_role('button', name=re.compile(r'soft drop|move down|lower block', re.I)).tap()
+    context, page, errors = open_page(browser, url, counters, viewport=(390, 844), touch=True)
+    before = start(page, touch=True)
+    original = before['active']
+    page.locator('[data-action="left"]').tap()
+    assert state(page)['active']['col'] == original['col'] - 1
+    page.locator('[data-action="right"]').tap()
+    page.locator('[data-action="rotate"]').tap()
+    after_rotate = assert_piece_ui(page)['active']
+    assert after_rotate['rotation'] == 1 and after_rotate['id'] == original['id']
+    assert Counter(cell['kind'] for cell in after_rotate['cells']) == Counter(cell['kind'] for cell in original['cells'])
+    row = after_rotate['row']
+    page.locator('[data-action="down"]').tap()
     assert state(page)['active']['row'] >= row + 1
-    page.get_by_role('button', name=re.compile(r'hard drop|drop block', re.I)).tap()
-    page.wait_for_function('document.querySelectorAll("#board .tile.settled").length===1')
-    assert sum(cell is not None for row in state(page)['board'] for cell in row) == 1
-    playing_layout = assert_layout(page)
-    controls = touch_bounds(page)
+    page.locator('[data-action="drop"]').tap()
+    wait_state(page, "rhythmBlocks.state.phase==='falling'")
+    assert page.locator('#board .tile.settled').count() == 4 and state(page)['score'] == 0
+    assert_piece_ui(page)
+    layout = assert_layout(page)
     page.screenshot(path=str(OUT / 'mobile-playing.png'))
     page.locator('#pause').tap()
     wait_state(page, 'rhythmBlocks.state.paused')
     page.locator('#primary-action').tap()
     wait_state(page, '!rhythmBlocks.state.paused')
     page.locator('#pause').tap()
-    wait_state(page, 'rhythmBlocks.state.paused')
     page.locator('#overlay-restart').tap()
     wait_state(page, "rhythmBlocks.state.phase==='falling'")
-    assert all(cell is None for row in state(page)['board'] for cell in row)
-    close_help(open_help(page))
+    assert page.locator('#board .tile.settled').count() == 0
+    help_dialog(page)
     assert not errors, errors
     context.close()
-    return {'passed': True, 'viewport': {'width': 390, 'height': 844}, 'idleLayout': idle_layout,
-            'playingLayout': playing_layout, 'touchControlBounds': controls, 'touchLeftRightSoftHardDrop': True, 'pauseResumeRestart': True,
-            'helpDialog': True, 'consoleErrors': errors}
+    return {'passed': True, 'layout': layout, 'touchFourCellMovementRotationAndDrop': True, 'pauseResumeRestart': True, 'errors': errors}
 
+def seeded_clear(browser, url, counters, beats):
+    board = [[None] * 10 for _ in range(24)]
+    if beats == 4:
+        board[23][6] = 'quarter'
+    else:
+        board[23][6], board[23][7] = 'half', 'dotted-half'
+    context, page, errors = open_page(browser, url, counters, board=board, protected=True)
+    initial = start(page)
+    assert initial['active']['shape'] == 'O' and initial['active']['col'] == 4
+    page.keyboard.press('Space')
+    wait_state(page, "rhythmBlocks.state.phase==='clearing'")
+    clearing = state(page)
+    pattern = next(pattern for pattern in clearing['clearingMatches'] if pattern['axis'] == 'horizontal' and pattern['units'] == beats * 2)
+    owners = {clearing['boardOwners'][cell['row']][cell['col']] for cell in pattern['cells']}
+    assert len(pattern['cells']) >= 2 and len(owners) >= 2
+    assert initial['active']['id'] in owners and any(owner < 0 for owner in owners)
+    page.screenshot(path=str(OUT / f'actual-{beats}-beat-clear.png'))
+    expected = 200 if beats == 4 else 500
+    wait_state(page, f'rhythmBlocks.state.score==={expected}')
+    wait_state(page, "rhythmBlocks.state.phase==='falling'")
+    final = assert_piece_ui(page)
+    assert final['lastClear']['points'] == expected and page.locator('#score').inner_text() == str(expected)
+    assert page.locator('#board .tile.settled').count() == 2
+    assert page.locator('#best').inner_text() == str(expected)
+    assert page.evaluate('localStorage.getItem("codaRhythmBlocksShapesBestV1")') == str(expected)
+    page.reload()
+    wait_state(page, "rhythmBlocks.state.phase==='idle'")
+    assert page.locator('#best').inner_text() == str(expected)
+    assert page.evaluate('(keys)=>Object.fromEntries(keys.map(key=>[key,localStorage.getItem(key)]))', list(PROTECTED)) == PROTECTED
+    assert not errors, errors
+    context.close()
+    return {'passed': True, 'beats': beats, 'points': expected, 'patternKinds': pattern['kinds'], 'distinctPieceOwners': len(owners),
+            'realDropAndClear': True, 'bestPersistsUnderNewKey': True, 'oldSingleBestAndOtherProgressPreserved': True, 'errors': errors}
 
 def game_over(browser, url, counters):
-    """Three-beat dotted halves cannot form four/eight by repeating vertically."""
-    errors = []
-    context = browser.new_context(viewport={'width': 1366, 'height': 768}, reduced_motion='reduce')
-    context.route('**/games/rhythm-blocks/engine.mjs*', lambda route: deterministic_engine(route, counters, '()=>.995'))
-    page = context.new_page()
-    capture_errors(page, errors)
-    page.goto(url)
-    wait_state(page, "rhythmBlocks.state.phase==='idle'")
-    page.locator('#primary-action').click()
-    for count in range(24):
-        assert state(page)['active']['kind'] == 'dotted-half'
+    rng = '(()=>{let x=1;return()=>((x=(x*1664525+1013904223)>>>0)/4294967296);})()'
+    context, page, errors = open_page(browser, url, counters, rng=rng)
+    start(page)
+    drops = 0
+    while drops < 80 and state(page)['phase'] != 'over':
+        wait_state(page, "['falling','over'].includes(rhythmBlocks.state.phase)")
+        if state(page)['phase'] == 'over':
+            break
         page.keyboard.press('Space')
-        if count < 23:
-            wait_state(page, "rhythmBlocks.state.phase==='falling'")
+        drops += 1
     wait_state(page, "rhythmBlocks.state.phase==='over'")
-    over = state(page)
-    assert over['score'] == 0 and over['active'] is None
-    assert page.locator('#board .tile.settled').count() == 24
-    assert page.locator('#overlay').is_visible()
-    assert 'wrap' in page.locator('#overlay-title').inner_text().lower()
+    assert state(page)['active'] is None and page.locator('#overlay').is_visible()
     assert page.locator('#primary-action').inner_text() == 'Play again'
-    page.screenshot(path=str(OUT / 'desktop-game-over.png'))
+    page.screenshot(path=str(OUT / 'game-over.png'))
     page.locator('#primary-action').click()
     wait_state(page, "rhythmBlocks.state.phase==='falling'")
-    assert state(page)['score'] == 0
-    assert page.locator('#board .tile.settled').count() == 0
-    assert page.locator('#board .tile.active').count() == 1
+    assert not any(kind for row in state(page)['board'] for kind in row)
+    assert state(page)['score'] == 0 and page.locator('#active .tile').count() == 4
     assert not errors, errors
     context.close()
-    return {'passed': True, 'actualDroppedBlocks': 24, 'topOut': True, 'playAgainFreshBoard': True, 'consoleErrors': errors}
+    return {'passed': True, 'realDroppedPieces': drops, 'topOutAndFreshPlayAgain': True, 'errors': errors}
 
-
-def varied_notation_and_compact_layout(browser, url, counters):
-    # Queue useful distinct values without injecting state or changing game code.
-    rng = '(()=>{const values=[.74,.3,.6,.85,.795,.995,.95,.78,.98,0];let n=0;return()=>values[n++%values.length];})()'
+def layout_gallery(browser, url, counters):
     results = []
-    for width, height, name in [(1366, 768, 'desktop'), (390, 844, 'mobile'), (320, 568, 'compact')]:
-        errors = []
-        context = browser.new_context(viewport={'width': width, 'height': height}, has_touch=True, reduced_motion='reduce')
-        context.route('**/games/rhythm-blocks/engine.mjs*', lambda route: deterministic_engine(route, counters, rng))
-        page = context.new_page()
-        capture_errors(page, errors)
-        page.goto(url)
-        wait_state(page, "rhythmBlocks.state.phase==='idle'")
+    rng = '(()=>{let x=314159;return()=>((x=(x*1664525+1013904223)>>>0)/4294967296);})()'
+    for width, height, name in [(1366, 768, 'desktop'), (390, 844, 'phone'), (320, 568, 'compact')]:
+        context, page, errors = open_page(browser, url, counters, viewport=(width, height), touch=True, rng=rng)
         page.screenshot(path=str(OUT / (name + '-idle.png')))
-        page.locator('#primary-action').click()
-        for column in [0, 2, 4, 6, 8, 9, 7]:
+        start(page, touch=True)
+        for target, rotations in [(0, 0), (6, 1), (2, 0), (5, 2)]:
             wait_state(page, "rhythmBlocks.state.phase==='falling'")
-            current = state(page)['active']['col']
-            key = 'ArrowRight' if column > current else 'ArrowLeft'
-            for _ in range(abs(column - current)):
-                page.keyboard.press(key)
+            for _ in range(rotations):
+                page.keyboard.press('ArrowUp')
+            active = state(page)['active']
+            maximum = 9 - max(cell['col'] for cell in active['cells'])
+            target = min(target, maximum)
+            direction = 'ArrowRight' if target > active['col'] else 'ArrowLeft'
+            for _ in range(abs(target - active['col'])):
+                page.keyboard.press(direction)
             page.keyboard.press('Space')
-        wait_state(page, "rhythmBlocks.state.phase==='falling'")
-        assert page.locator('#board .tile.settled').count() == 7
-        assert len(set(page.locator('#board .tile.settled').evaluate_all('items=>items.map(item=>item.dataset.kind)'))) == 7
-        layout = assert_layout(page)
-        controls = touch_bounds(page, scroll_into_view=name == 'compact')
-        page.screenshot(path=str(OUT / (name + '-varied-notation.png')))
+            wait_state(page, "rhythmBlocks.state.phase==='falling'")
+        assert_piece_ui(page)
+        layout = assert_layout(page, scroll_controls=name == 'compact')
+        page.screenshot(path=str(OUT / (name + '-shaped-playing.png')))
         if name == 'compact':
-            page.locator('[data-action="left"]').tap()
-            assert state(page)['active']['col'] == 3
+            previous = state(page)['active']['rotation']
+            page.locator('[data-action="rotate"]').tap()
+            assert state(page)['active']['rotation'] == (previous + 1) % 4
             page.locator('#pause').tap()
             wait_state(page, 'rhythmBlocks.state.paused')
             page.locator('#primary-action').tap()
             wait_state(page, '!rhythmBlocks.state.paused')
-            close_help(open_help(page))
-            page.screenshot(path=str(OUT / 'compact-help-closed.png'))
         assert not errors, errors
-        results.append({'viewport': {'width': width, 'height': height}, 'layout': layout, 'cellPixels': layout['board']['width'] / 10,
-                        'touchControlBounds': controls, 'verticalScrollToControlsAllowed': name == 'compact',
-                        'distinctSettledNotation': 7, 'consoleErrors': errors})
+        results.append({'viewport': {'width': width, 'height': height}, 'layout': layout, 'fourCellActiveGhostAndPreview': True, 'errors': errors})
         context.close()
     return results
-
 
 def main():
     server = ThreadingHTTPServer(('127.0.0.1', 0), partial(Quiet, directory=str(ROOT)))
     Thread(target=server.serve_forever, daemon=True).start()
-    counters = {'deterministicEngineResponses': 0}
+    counters = {'fixtureAppResponses': 0}
     try:
         with sync_playwright() as pw:
             browser = pw.chromium.launch(executable_path='/usr/bin/chromium', args=['--no-sandbox'])
             url = f'http://127.0.0.1:{server.server_port}/games/rhythm-blocks/'
             results = {'desktop': desktop(browser, url, counters), 'mobile': mobile(browser, url, counters),
-                       'gameOver': game_over(browser, url, counters),
-                       'variedNotationLayouts': varied_notation_and_compact_layout(browser, url, counters), **counters}
+                       'fourBeatClear': seeded_clear(browser, url, counters, 4), 'eightBeatClear': seeded_clear(browser, url, counters, 8),
+                       'gameOver': game_over(browser, url, counters), 'layouts': layout_gallery(browser, url, counters), **counters}
             browser.close()
-        assert counters['deterministicEngineResponses'] >= 2
         (OUT / 'results.json').write_text(json.dumps(results, indent=2) + '\n')
         print(json.dumps(results), flush=True)
     finally:
         server.shutdown()
-
 
 if __name__ == '__main__':
     main()

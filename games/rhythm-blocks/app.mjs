@@ -1,10 +1,10 @@
-import {createGame,NOTE_KINDS,NOTE_KIND_BY_ID,ROWS,COLUMNS} from './engine.mjs?v=rhythm-blocks-1';
-import {symbolMarkup} from './notation.mjs?v=rhythm-blocks-1';
-import {createRhythmAudio} from './audio.mjs?v=rhythm-blocks-1';
+import {createGame,NOTE_KINDS,NOTE_KIND_BY_ID,ROWS,COLUMNS,absoluteCells} from './engine.mjs?v=rhythm-blocks-shapes-1';
+import {symbolMarkup} from './notation.mjs?v=rhythm-blocks-shapes-1';
+import {createRhythmAudio} from './audio.mjs?v=rhythm-blocks-shapes-1';
 
 const $=id=>document.getElementById(id);
-const colors={quarter:'#7dd9be','eighth-pair':'#8bcfe7','sixteenth-group':'#b9abf1',half:'#efc573',whole:'#eaa894',eighth:'#a99beb','quarter-rest':'#e4d6ae','half-rest':'#d5af81','whole-rest':'#d5a1af','dotted-half':'#e0a9d4'};
-const BEST_KEY='codaRhythmBlocksBestV1',SOUND_KEY='codaRhythmBlocksSoundV1';
+const colors={quarter:'#7dd9be','eighth-pair':'#8bcfe7','sixteenth-group':'#b9abf1','sixteenth-pair':'#c1b8f7',half:'#efc573',whole:'#eaa894',eighth:'#a99beb','quarter-rest':'#e4d6ae','half-rest':'#d5af81','whole-rest':'#d5a1af','dotted-half':'#e0a9d4'};
+const BEST_KEY='codaRhythmBlocksShapesBestV1',SOUND_KEY='codaRhythmBlocksSoundV1';
 function read(key,fallback){try{return localStorage.getItem(key)??fallback;}catch{return fallback;}}
 function save(key,value){try{localStorage.setItem(key,String(value));}catch{}}
 let best=Math.max(0,Number(read(BEST_KEY,'0'))||0),soundEnabled=read(SOUND_KEY,'on')!=='off';
@@ -13,9 +13,31 @@ let seenRevision=-1,lastEvent=0,boardSignature='',state=game.state,lastFrame=per
 const held=new Map(),format=new Intl.NumberFormat('en-US');
 const beatsText=value=>`${value===.5?'½':value} beat${value===1?'':'s'}`;
 const paint=(element,kind)=>{element.style.setProperty('--tile-color',colors[kind]);element.innerHTML=symbolMarkup(kind);};
-function tile(kind,row,col,classes=''){
- const element=document.createElement('div');element.className=`tile ${classes}`;element.dataset.kind=kind;element.style.setProperty('--row',row);element.style.setProperty('--col',col);paint(element,kind);return element;
+function tile(kind,row,col,classes='',owner=null){
+ const element=document.createElement('div');
+ element.className=`tile ${classes}`;element.dataset.kind=kind;
+ if(owner!==null)element.dataset.piece=String(owner);
+ element.style.setProperty('--row',row);element.style.setProperty('--col',col);
+ paint(element,kind);return element;
 }
+function renderPreview(piece){
+ const container=$('next-symbol');container.replaceChildren();
+ if(!piece){$('next-label').textContent='Seven shapes';$('next-beats').textContent='Mixed note values';container.setAttribute('aria-label','The next piece appears when you start.');return;}
+ const width=Math.max(...piece.cells.map(cell=>cell.col))+1;
+ const height=Math.max(...piece.cells.map(cell=>cell.row))+1;
+ const grid=document.createElement('div');grid.className='preview-grid';
+ grid.style.setProperty('--preview-cols',width);grid.style.setProperty('--preview-rows',height);
+ for(const cell of piece.cells){
+  const element=document.createElement('span');element.className='preview-cell';
+  element.style.gridColumn=String(cell.col+1);element.style.gridRow=String(cell.row+1);
+  paint(element,cell.kind);grid.append(element);
+ }
+ container.append(grid);$('next-label').textContent=`${piece.shape} piece`;
+ const beats=piece.cells.reduce((total,cell)=>total+NOTE_KIND_BY_ID[cell.kind].beats,0);
+ $('next-beats').textContent=`${beats} beats total`;
+ container.setAttribute('aria-label',`${piece.shape} piece: ${piece.cells.map(cell=>NOTE_KIND_BY_ID[cell.kind].label).join(', ')}`);
+}
+
 function legend(){
  return NOTE_KINDS.map(kind=>`<div class="legend-row"><span class="legend-symbol" aria-hidden="true" style="--tile-color:${colors[kind.id]}">${symbolMarkup(kind.id)}</span><span class="legend-name">${kind.label}</span><span class="legend-beats">${beatsText(kind.beats)}</span></div>`).join('');
 }
@@ -29,26 +51,25 @@ function update(){
  if(game.revision===seenRevision)return;
  seenRevision=game.revision;state=game.state;
  const clearing=new Set(state.clearingMatches.flatMap(pattern=>pattern.cells.map(cell=>`${cell.row}:${cell.col}`)));
- const signature=JSON.stringify(state.board)+[...clearing].join('|');
+ const signature=JSON.stringify([state.board,state.boardOwners])+[...clearing].join('|');
  if(signature!==boardSignature){
   boardSignature=signature;const fragment=document.createDocumentFragment();
-  state.board.forEach((row,r)=>row.forEach((kind,c)=>{if(kind)fragment.append(tile(kind,r,c,`settled${clearing.has(`${r}:${c}`)?' clearing':''}`));}));
+  state.board.forEach((row,r)=>row.forEach((kind,c)=>{if(kind)fragment.append(tile(kind,r,c,`settled${clearing.has(`${r}:${c}`)?' clearing':''}`,state.boardOwners[r][c]));}));
   $('settled').replaceChildren(fragment);
  }
  $('active').replaceChildren();$('ghost').replaceChildren();
  if(state.active){
-  const {kind,row,col}=state.active;let landing=row;
-  while(landing+1<ROWS&&!state.board[landing+1][col])landing++;
-  if(landing>row)$('ghost').append(tile(kind,landing,col,'ghost'));
-  $('active').append(tile(kind,row,col,'active'));
+  const piece=state.active;let landing=piece.row;
+  while(absoluteCells(piece,landing+1,piece.col).every(cell=>cell.row>=0&&cell.row<ROWS&&cell.col>=0&&cell.col<COLUMNS&&!state.board[cell.row][cell.col]))landing++;
+  for(const cell of absoluteCells(piece))$('active').append(tile(cell.kind,cell.row,cell.col,'active',piece.id));
+  if(landing>piece.row)for(const cell of absoluteCells(piece,landing,piece.col))$('ghost').append(tile(cell.kind,cell.row,cell.col,'ghost',piece.id));
+  $('board').setAttribute('aria-label',`${piece.shape} piece in column ${piece.col+1}. ${piece.cells.map(cell=>NOTE_KIND_BY_ID[cell.kind].label).join(', ')}. Left and right move, up rotates, down lowers, space drops, P pauses.`);
  }
  $('score').textContent=format.format(state.score);$('level').textContent=state.level;
  if(state.score>best){best=state.score;save(BEST_KEY,best);}
  $('best').textContent=format.format(best);$('progress').value=state.score%1000;
  $('level-hint').textContent=`${format.format(1000-state.score%1000)} points to level ${state.level+1}`;
- if(state.next){
-  const kind=NOTE_KIND_BY_ID[state.next];paint($('next-symbol'),kind.id);$('next-symbol').style.background=colors[kind.id];$('next-label').textContent=kind.label;$('next-beats').textContent=beatsText(kind.beats);
- }else{paint($('next-symbol'),'quarter');$('next-label').textContent='Quarter note';$('next-beats').textContent='1 beat';}
+ renderPreview(state.next);
  const running=!['idle','over'].includes(state.phase);
  $('pause').disabled=!running;$('pause').textContent=state.paused?'Resume':'Pause';$('restart').disabled=state.phase==='idle';
  $('overlay').hidden=running&&!state.paused;
@@ -66,11 +87,11 @@ function update(){
   else if(event.type==='over'){audio.stop();stopHeld();announce(`Game over. ${state.score} points.`);$('primary-action').focus({preventScroll:true});}
  }
 }
-function begin(){stopHeld();audio.stop();void audio.unlock();game.start();lastFrame=performance.now();update();$('board').focus({preventScroll:true});feedback('Find four beats in a row or column.');}
+function begin(){stopHeld();audio.stop();void audio.unlock();game.start();lastFrame=performance.now();update();$('board').focus({preventScroll:true});feedback('Make a complete 4- or 8-beat run.');}
 function resume(){if($('help-dialog').open)return;void audio.unlock();game.resume();lastFrame=performance.now();update();$('board').focus({preventScroll:true});}
 function pause(){stopHeld();audio.stop();game.pause();update();}
 function togglePause(){if(state.paused)resume();else pause();}
-function action(name){if($('help-dialog').open)return;if(name==='left')game.move(-1);if(name==='right')game.move(1);if(name==='down')game.softDrop();if(name==='drop')game.hardDrop();update();}
+function action(name){if($('help-dialog').open)return;if(name==='left')game.move(-1);if(name==='right')game.move(1);if(name==='down')game.softDrop();if(name==='drop')game.hardDrop();if(name==='rotate')game.rotate(1);update();}
 $('primary-action').addEventListener('click',()=>state.paused?resume():begin());
 $('restart').addEventListener('click',begin);$('overlay-restart').addEventListener('click',begin);$('pause').addEventListener('click',togglePause);
 $('sound').addEventListener('click',()=>{soundEnabled=!soundEnabled;audio.setEnabled(soundEnabled);save(SOUND_KEY,soundEnabled?'on':'off');updateSound();if(soundEnabled)void audio.unlock();});
@@ -83,7 +104,7 @@ for(const button of document.querySelectorAll('[data-action]')){
  const name=button.dataset.action;
  button.addEventListener('pointerdown',event=>{
   if(event.button!==0)return;event.preventDefault();button.setPointerCapture(event.pointerId);stopHeld();action(name);
-  if(name!=='drop'&&!state.paused&&!['idle','over'].includes(state.phase)){
+  if(name!=='drop'&&name!=='rotate'&&!state.paused&&!['idle','over'].includes(state.phase)){
    const repeat=()=>{action(name);if(!held.has(button))return;held.set(button,setTimeout(repeat,name==='down'?65:100));};
    held.set(button,setTimeout(repeat,180));
   }
@@ -99,6 +120,7 @@ document.addEventListener('keydown',event=>{
  if((key===' '||key==='enter')&&event.target.closest('button,a'))return;
  const movement={arrowleft:'left',a:'left',arrowright:'right',d:'right',arrowdown:'down',s:'down',' ':'drop'};
  if(movement[key]){event.preventDefault();if(key===' '&&event.repeat)return;action(movement[key]);}
+ else if(key==='arrowup'||key==='x'||key==='z'){event.preventDefault();if(!event.repeat){game.rotate(key==='z'?-1:1);update();}}
  else if(key==='p'||key==='escape'){event.preventDefault();if(!event.repeat)togglePause();}
  else if(key==='r'){event.preventDefault();if(!event.repeat)begin();}
  else if(key==='enter'){event.preventDefault();if(!event.repeat){if(state.phase==='idle'||state.phase==='over')begin();else if(state.paused)resume();}}

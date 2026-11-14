@@ -1,4 +1,4 @@
-import {NOTE_KIND_BY_ID} from './engine.mjs?v=rhythm-blocks-1';
+import {NOTE_KIND_BY_ID} from './engine.mjs?v=rhythm-blocks-shapes-1';
 
 /** A small, local synthesizer. Rests advance time without making a sound. */
 export function createRhythmAudio({enabled=true}={}){
@@ -13,7 +13,7 @@ export function createRhythmAudio({enabled=true}={}){
   const beat=60/108;let cursor=context.currentTime+.035;
   for(const id of kinds){
    const kind=NOTE_KIND_BY_ID[id];if(!kind)continue;
-   const divisions=id==='eighth-pair'?2:id==='sixteenth-group'?4:1;
+   const divisions=(id==='eighth-pair'||id==='sixteenth-pair')?2:id==='sixteenth-group'?4:1;
    if(!kind.rest)for(let part=0;part<divisions;part++){
     const start=cursor+part*kind.beats*beat/divisions,duration=kind.beats*beat/divisions*.82;
     const osc=context.createOscillator(),gain=context.createGain(),voice={osc,gain};

@@ -37,6 +37,10 @@ const symbols = new Map([
   ['eighth-pair',
     stem(21, 14, 45, 2.8) + stem(51, 14, 45, 2.8) +
     beam(19.6, 14, 32.8, 6.5) + head(7, 47, .05) + head(37, 47, .05)],
+  ['sixteenth-pair',
+    stem(21, 14, 45, 2.8) + stem(51, 14, 45, 2.8) +
+    beam(19.6, 14, 32.8, 6.5) + beam(19.6, 24, 32.8, 5.5) +
+    head(7, 47, .05) + head(37, 47, .05)],
   ['sixteenth-group',
     [12, 27, 42, 57].map(x => stem(x, 13, 47, 2.5)).join('') +
     beam(10.75, 13, 47.5) + beam(10.75, 24, 47.5, 5.5) +

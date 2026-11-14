@@ -17,3 +17,9 @@ translation and uniform scaling compose them with stems and beams.
 These are inline vector outlines, with no runtime font or network dependency.
 The SVG uses the caller's `currentColor` and transparent hollow noteheads.
 The caller supplies accessible labels outside these decorative SVGs.
+
+The grouped symbols keep their musical meanings: `eighth-pair` has two heads
+and one beam (one beat), `sixteenth-pair` has two heads and two beams (half a
+beat), and `sixteenth-group` has four heads and two beams (one beat). Values
+use a quarter-note beat and are supplied by the caller. The single eighth note
+remains available separately. All eleven symbols use the same 64×64 viewBox.

@@ -2,10 +2,10 @@ import test from 'node:test';
 import assert from 'node:assert/strict';
 import {symbolMarkup} from './notation.mjs';
 
-const kinds = ['quarter', 'eighth-pair', 'sixteenth-group', 'half', 'whole', 'eighth', 'quarter-rest', 'half-rest', 'whole-rest', 'dotted-half'];
+const kinds = ['quarter', 'eighth-pair', 'sixteenth-pair', 'sixteenth-group', 'half', 'whole', 'eighth', 'quarter-rest', 'half-rest', 'whole-rest', 'dotted-half'];
 const count = (markup, part) => [...markup.matchAll(new RegExp(`data-part="${part}"`, 'g'))].length;
 
-test('all ten symbols are standalone scalable currentColor SVG without font or external requests', () => {
+test('all eleven symbols are standalone scalable currentColor SVG without font or external requests', () => {
   for (const kind of kinds) {
     const markup = symbolMarkup(kind);
     assert.match(markup, /^<svg /);
@@ -24,6 +24,12 @@ test('beamed groups represent the requested number of attacks and beam levels', 
   assert.equal(count(pair, 'stem'), 2);
   assert.equal(count(pair, 'beam'), 1);
   assert.equal(count(pair, 'flag'), 0);
+  const sixteenthPair = symbolMarkup('sixteenth-pair');
+  assert.equal(count(sixteenthPair, 'notehead'), 2);
+  assert.equal(count(sixteenthPair, 'stem'), 2);
+  assert.equal(count(sixteenthPair, 'beam'), 2);
+  assert.equal(count(sixteenthPair, 'flag'), 0);
+  assert.notEqual(sixteenthPair, pair, 'Two sixteenths need a second beam; two eighths keep one.');
   const sixteenths = symbolMarkup('sixteenth-group');
   assert.equal(count(sixteenths, 'notehead'), 4);
   assert.equal(count(sixteenths, 'stem'), 4);

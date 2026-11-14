@@ -100,3 +100,16 @@ test('an unavailable or denied AudioContext keeps the game silent without throwi
  fakeAudio(t);delete globalThis.AudioContext;const unavailable=createRhythmAudio();await unavailable.unlock();assert.doesNotThrow(()=>unavailable.playPattern(['quarter']));
  globalThis.AudioContext=class{constructor(){throw Error('Audio denied');}};const denied=createRhythmAudio();await assert.doesNotReject(denied.unlock());assert.doesNotThrow(()=>denied.playPattern(['quarter']));
 });
+
+test('a pair of sixteenths fills half a beat with two attacks; a single eighth fills the same time with one',async t=>{
+ const {contexts}=fakeAudio(t),audio=createRhythmAudio();await audio.unlock();
+ audio.playPattern(['sixteenth-pair','eighth','quarter']);
+ const context=contexts[0],base=context.currentTime+.035;
+ assert.equal(context.oscillators.length,4);
+ const starts=[0,.25,.5,1];
+ context.oscillators.forEach((osc,index)=>near(osc.starts[0],base+starts[index]*BEAT));
+ near(context.oscillators[0].stops[0]-context.oscillators[0].starts[0],.25*BEAT*.82+.025);
+ near(context.oscillators[1].stops[0]-context.oscillators[1].starts[0],.25*BEAT*.82+.025);
+ near(context.oscillators[2].stops[0]-context.oscillators[2].starts[0],.5*BEAT*.82+.025);
+ audio.stop();
+});
