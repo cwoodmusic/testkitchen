@@ -1,4 +1,4 @@
-import {cell,key,COLS,ROWS} from '../world/model.mjs?v=town-compact-island-1';
+import {cell,key,COLS,ROWS} from '../world/model.mjs?v=town-coast-pier-1';
 import {curveBounds,cornerStyles} from '../world/round-geometry.mjs?v=town-compact-island-1';
 const featureKey=q=>[q.corner,q.cx,q.cy,q.r,q.kind,q.underX,q.underY,q.lift||0,q.concave?1:0,q.under?.surface,q.under?.level,q.under?.paving].join(':');
 const styleOf=q=>cornerStyles.includes(q.style)?q.style:'smooth';

@@ -12,6 +12,7 @@ import {FLOOR_COUNT,residents,getInterior,residentInteractionZones,configureUrba
 import {APARTMENT_COLLECTION_ASSETS} from '../town/world/apartment-collection-definitions.mjs';
 import {FAMILY_FURNITURE_ASSETS} from '../town/world/family-furniture-definitions.mjs';
 import {SHOWROOMS,STORE_FLOOR_COUNT,STORE_VERTICAL_CORE} from '../town/world/showroom-layout.mjs';
+import {restoreOutdoorActor,onSameOutdoorSurface} from '../town/world/outdoor-actor-layer.mjs';
 
 // Run the production controller with actual scene geometry/door physics. Only
 // DOM drawing and native artwork loading are replaced; no browser/image work.
@@ -40,7 +41,7 @@ function fixture({preview=false,furnishing=false,reducedMotion=false}={}){
  if(furnishing){win.CodaFurnitureCatalog=[{id:'test-chair',asset:'collection-player-dining-chair',name:'Test chair',scale:1}];win.CodaNotesShop={createWallet:()=>({snapshot:()=>({balance:100,owned:['test-chair']})})};}
  const document={head:new Element('head'),body:new Element('body'),createElement(tag){const e=new Element(tag);elements.push(e);return e;}};
  const context={catalog,window:win,parent:win,document,location:{origin:'https://coda.invalid'},URL,performance:{now:()=>clock},matchMedia:()=>({matches:reducedMotion}),localStorage:{getItem:()=>furnishing?null:'active-classroom',setItem(){storageWrites++;}},addEventListener:(type,fn)=>events.set(type,fn),setTimeout,
-  FLOOR_COUNT,residents,getInterior,residentInteractionZones,configureUrbanInteriors,configurePlayerRoomSource,invalidatePlayerRoomSource,ROOM_KEY,createAutomaticDoors,createConcertCurtain,drawConcertCurtain,interiorActorScale,effectiveInteriorZoom,getInteriorVisualBounds,presentedRoomItem,furniturePresentationScale,SHOWROOMS,STORE_FLOOR_COUNT,STORE_VERTICAL_CORE,
+  FLOOR_COUNT,residents,getInterior,residentInteractionZones,configureUrbanInteriors,configurePlayerRoomSource,invalidatePlayerRoomSource,ROOM_KEY,createAutomaticDoors,createConcertCurtain,drawConcertCurtain,interiorActorScale,effectiveInteriorZoom,getInteriorVisualBounds,presentedRoomItem,furniturePresentationScale,SHOWROOMS,STORE_FLOOR_COUNT,STORE_VERTICAL_CORE,restoreOutdoorActor,onSameOutdoorSurface,
   renderInterior(c,scene,options){renderCalls.push({scene,viewport:options.viewport,camera:options.camera,reducedMotion:options.reducedMotion});options.drawPlayer?.(c,options.player);},createRoomStorage(){if(!furnishing)throw Error('Unexpected storage access');return {load:()=>({ok:true}),snapshot:()=>[],place(item,x,y,rotation){placements.push({item,x,y,rotation});return {ok:true};}};},roomItemBoxes,apartmentDecorBounds:()=>[],apartmentDecorFootBounds:()=>null,apartmentWallDecorBounds:()=>[],furnitureFacingPlacement:()=>null,furnitureFacingBounds:()=>null,
   createTownActivities:()=>({end(){},tick(){},draw(){},interact:()=>false,keydown:()=>false,pointer:()=>false,offerVendor(){},blocked:false}),createStagePerformance:()=>({assetIds:[]}),stagePerformanceSignature:()=> 'test-performance',stageCollisionBoxes:()=>[],CONCERT_PROGRAMME:[{id:'test-performance'}]};
  const {createUrbanController,buildingDoor}=vm.runInNewContext(controllerSource,context,{filename:urbanURL.pathname});

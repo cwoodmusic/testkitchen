@@ -1,30 +1,28 @@
-import {cell,height,terrainHeight,surfaceAt,RISE,TILE} from './model.mjs?v=town-compact-island-1';
+import {cell,height,terrainHeight,surfaceAt,RISE,TILE} from './model.mjs?v=town-coast-pier-1';
+import {PIER_POST_WIDTH,pierPostCentres} from './pier-post-layout.mjs?v=town-coast-pier-1';
 
 const same=(d,x,y,level)=>cell(d,x,y).pier?.level===level;
 export function pierGeometry(d,x,y){
  const a=cell(d,x,y);if(!a.pier)return null;
  const z=a.pier.level*RISE,X=x*TILE,Y=y*TILE,ground=terrainHeight(d,X+TILE/2,Y+TILE/2),water=surfaceAt(d,X+TILE/2,Y+TILE/2)==='water';
  const joins={north:same(d,x,y-1,a.pier.level),east:same(d,x+1,y,a.pier.level),south:same(d,x,y+1,a.pier.level),west:same(d,x-1,y,a.pier.level)};
- const supportY=Y+TILE-8,top=supportY-z-2,supports=[];
- const support=offset=>{const px=X+offset,base=terrainHeight(d,px+5,supportY),wet=surfaceAt(d,px+5,supportY)==='water',waterline=supportY-base;return {x:px,y:top,w:10,h:Math.max(5,waterline+(wet?58:3)-top),waterline,ground:base,water:wet};};
+ const supports=pierPostCentres(x,y,joins).map(center=>{const top=center.y-z-2,base=terrainHeight(d,center.x,center.y),wet=surfaceAt(d,center.x,center.y)==='water',waterline=center.y-base;return {x:center.x-PIER_POST_WIDTH/2,y:top,w:PIER_POST_WIDTH,h:Math.max(5,waterline+(wet?58:3)-top),waterline,ground:base,groundX:center.x,groundY:center.y,water:wet};});
  // Regular bents carry a long run; end bents and outside corners remain even
  // on the odd grid rows. Every post ends at real ground or below the water.
- if(!joins.south||y%2===0){
-  if(!joins.west||x%2===0)supports.push(support(6));
-  if(!joins.east)supports.push(support(TILE-16));
- }
  return {x:X,y:Y-z,w:TILE,h:TILE,z,ground,water,axis:a.pier.axis,joins,supports};
 }
 
 function post(c,p){
- c.fillStyle='#3d3028';c.fillRect(p.x,p.y,p.w,p.h);c.fillStyle='#725039';c.fillRect(p.x+2,p.y,p.w-3,p.h);c.fillStyle='#a27a50';c.fillRect(p.x+2,p.y,2,p.h);
- for(let at=p.y+9;at<p.y+p.h;at+=24){c.fillStyle='#49392c';c.fillRect(p.x+5,at,1,11);c.fillStyle='#c3945e55';c.fillRect(p.x+3,at+3,1,8);}
- c.fillStyle='#252d2b';c.fillRect(p.x,p.y+12,p.w,4);c.fillStyle='#9a9e90';c.fillRect(p.x+2,p.y+13,2,1);
+ c.fillStyle='#3d3028';c.fillRect(p.x,p.y,p.w,p.h);c.fillStyle='#725039';c.fillRect(p.x+3,p.y,p.w-5,p.h);c.fillStyle='#a27a50';c.fillRect(p.x+3,p.y,3,p.h);
+ for(let at=p.y+9;at<p.y+p.h;at+=24){c.fillStyle='#49392c';c.fillRect(p.x+Math.round(p.w*.6),at,2,11);c.fillStyle='#c3945e55';c.fillRect(p.x+7,at+3,1,8);}
+ c.fillStyle='#252d2b';c.fillRect(p.x,p.y+12,p.w,5);c.fillStyle='#9a9e90';for(const x of [p.x+4,p.x+p.w-6])c.fillRect(x,p.y+13,2,2);
  if(p.water&&p.y+p.h>p.waterline){const top=Math.max(p.y,p.waterline),g=c.createLinearGradient(0,top,0,p.y+p.h);g.addColorStop(0,'rgba(27,99,106,.22)');g.addColorStop(.55,'rgba(34,112,119,.62)');g.addColorStop(1,'rgba(34,112,119,.94)');c.fillStyle=g;c.fillRect(p.x,top,p.w,p.y+p.h-top);}
 }
-export function drawPier(c,d,x,y,wood){
+export function drawPier(c,d,x,y,wood,{afterY=-Infinity}={}){
  const g=pierGeometry(d,x,y);if(!g)return;
- c.save();for(const p of g.supports)post(c,p);
+ // A clipped foreground redraw may omit supports north of an under-deck
+ // walker. The deck itself still covers the walker below it.
+ c.save();for(const p of g.supports)if(p.groundY>=afterY)post(c,p);
  // A weathered native wood field supplies grain and joints at its actual
  // world pixel scale; the edge fascia remains separate from the deck boards.
  if(wood){c.save();if(g.axis==='ew'){c.translate(g.x,g.y);c.rotate(Math.PI/2);c.drawImage(wood,(y%8)*TILE,(x%8)*TILE,TILE,TILE,0,-TILE,TILE,TILE);}else c.drawImage(wood,(x%8)*TILE,(y%8)*TILE,TILE,TILE,g.x,g.y,TILE,TILE);c.restore();}

@@ -10,4 +10,6 @@ The `?recover=uploaded-3` link restores the uploaded map automatically only when
 
 Browser saves belong to the site origin, browser profile and any storage partition. A direct GitHub Pages link, another domain or an embedded browser can therefore see a different save. This recovery flow does not claim to inspect another device's saved data. Routines and NPC behavior are unchanged.
 
+The authored island has two exact terrain repair passes: the earlier cliff and paint cleanup, followed by grass replacing the thin beach around the southwest headland. Loading either older map generation applies both passes in memory. Cells edited since those versions are left alone, and opening a map does not rewrite its saved bytes, backups or metadata. The large southern beach and its stairs, piers and boats remain in place.
+
 Verification: `node --test town/world/storage-recovery.test.mjs` and `python tests/town-map-recovery-browser.py --map project.json`.

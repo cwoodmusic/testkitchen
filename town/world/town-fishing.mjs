@@ -1,4 +1,5 @@
-import {createIslandNavigation} from './island-sailing.mjs?v=town-compact-island-1';
+import {canBoardFishingDock,restoreOutdoorActor} from './outdoor-actor-layer.mjs?v=town-coast-pier-1';
+import {createIslandNavigation} from './island-sailing.mjs?v=town-coast-pier-1';
 import {loadCaveFishing} from './cave-fishing-loader.mjs?v=town-flight-1';
 import {createFishingJournalBridge} from './fishing-journal-bridge.mjs?v=town-flight-1';
 import {gameButton} from './town-game-audio.mjs?v=town-store-halls-1';
@@ -7,7 +8,7 @@ export function createTownFishing({canvas,journal,getProject,getPlayer,getOwner,
  let phase='idle',doc=null,dock=null,ashore=null,boat=null,navigation=null,school=[],clock=0,room=null,host=null,bridge=null,lastCam=null,destination=null,serial=0,paused=false,moving=false,engine=null,owner=null;const held=new Set();let loading=null,loadingSerial=-1;
  const active=()=>phase!=='idle';
  function announce(text){const p=hud.querySelector('[role="status"]');if(p)p.textContent=text;}
- function end(){serial++;phase='idle';paused=false;held.clear();destination=null;room?.destroy();room=null;bridge?.destroy();bridge=null;if(host?.open)host.close();host?.remove();host=null;hud.hidden=true;if(ashore&&getPlayer())Object.assign(getPlayer(),doc===getProject()?ashore:getProject().spawn);ashore=null;boat=null;navigation=null;school=[];canvas.focus();}
+ function end(){serial++;phase='idle';paused=false;held.clear();destination=null;room?.destroy();room=null;bridge?.destroy();bridge=null;if(host?.open)host.close();host?.remove();host=null;hud.hidden=true;if(ashore&&getPlayer())restoreOutdoorActor(getProject(),getPlayer(),doc===getProject()?ashore:getProject().spawn,catalog);ashore=null;boat=null;navigation=null;school=[];canvas.focus();}
  async function prepare(){
   if(room&&owner===getOwner())return room;if(loading&&loadingSerial===serial)return loading;const ticket=serial;loadingSerial=ticket;
   loading=(async()=>{engine=await loadCaveFishing();if(ticket!==serial)return null;room?.destroy();bridge?.destroy();host?.remove();owner=getOwner();bridge=createFishingJournalBridge({getOwner,legacy:journal});await bridge.ready();if(ticket!==serial)return null;
@@ -25,8 +26,8 @@ export function createTownFishing({canvas,journal,getProject,getPlayer,getOwner,
   const shuffled=points.map(p=>({p,rank:Math.random()})).sort((a,b)=>a.rank-b.rank);for(const {p}of shuffled){if(school.length>=72)break;if(school.some(f=>Math.hypot(f.x-p.x,f.y-p.y)<330))continue;const distance=Math.hypot(p.x-dock.stand.x,p.y-dock.stand.y),maxRank=distance<1700?1:distance<4000?2:4,fish=engine.COASTAL_FISH.filter(f=>f.rarityRank<=maxRank);place(p,fish[Math.floor(Math.random()*fish.length)]);}
  }
  async function start(at){
-  end();const ticket=serial;phase='loading';dock=at;doc=getProject();ashore={...getPlayer()};controls();hud.hidden=false;announce('Preparing your boat and fish journal…');
-  try{const ready=await prepare();if(ticket!==serial||!ready)return;navigation=createIslandNavigation(doc,catalog,dock);if(!navigation||navigation.points.length<6)throw Error('This pier needs a clear connection to the island’s water.');boat={...navigation.spawn,facing:'down'};Object.assign(getPlayer(),{x:boat.x,y:boat.y});fillSchool();clock=0;phase='sail';announce('Sail around the island. Find shadows near the shore and out at sea.');canvas.focus();}catch(error){if(ticket!==serial)return;phase='sail-error';announce(error.message||'Fishing could not start. Please try again.');}
+  end();if(!canBoardFishingDock(getProject(),getPlayer(),at))return false;const ticket=serial;phase='loading';dock=at;doc=getProject();ashore={...getPlayer()};controls();hud.hidden=false;announce('Preparing your boat and fish journal…');
+  try{const ready=await prepare();if(ticket!==serial||!ready)return;navigation=createIslandNavigation(doc,catalog,dock);if(!navigation||navigation.points.length<6)throw Error('This pier needs a clear connection to the island’s water.');boat={...navigation.spawn,facing:'down'};restoreOutdoorActor(doc,getPlayer(),{x:boat.x,y:boat.y},catalog);fillSchool();clock=0;phase='sail';announce('Sail around the island. Find shadows near the shore and out at sea.');canvas.focus();}catch(error){if(ticket!==serial)return;phase='sail-error';announce(error.message||'Fishing could not start. Please try again.');}
  }
  function nearDock(){return boat&&dock&&Math.hypot(boat.x-dock.stand.x,boat.y-dock.stand.y)<190;}
  function nearest(){return boat?[...school].sort((a,b)=>Math.hypot(a.x-boat.x,a.y-boat.y)-Math.hypot(b.x-boat.x,b.y-boat.y))[0]:null;}
@@ -38,7 +39,7 @@ export function createTownFishing({canvas,journal,getProject,getPlayer,getOwner,
  function tick(keys=new Set(),dt=0){if(!active())return;if(getProject()!==doc||getOwner()!==owner&&room){end();return;}if(phase!=='sail'||paused||!boat)return;clock+=dt;
   const has=k=>keys.has(k)||held.has(k);let dx=(has('d')||has('arrowright')?1:0)-(has('a')||has('arrowleft')?1:0),dy=(has('s')||has('arrowdown')?1:0)-(has('w')||has('arrowup')?1:0);
   if(dx||dy)destination=null;else if(destination){dx=destination.x-boat.x;dy=destination.y-boat.y;if(Math.hypot(dx,dy)<18){destination=null;dx=dy=0;}}
-  moving=navigation.move(boat,dx,dy,dt,has('shift')?850:580)>0;Object.assign(getPlayer(),{x:boat.x,y:boat.y});
+  moving=navigation.move(boat,dx,dy,dt,has('shift')?850:580)>0;restoreOutdoorActor(doc,getPlayer(),{x:boat.x,y:boat.y},catalog);
   for(const f of school){const next={x:f.homeX+Math.sin(clock*.7+f.phase)*32,y:f.homeY+Math.sin(clock*.53+f.phase*2)*24};if(navigation.clear(next)){f.x=next.x;f.y=next.y;}}
  }
  function draw(c,cam,w,h,time){if(!active()||!boat)return;lastCam={...cam};const left=cam.x-w/2/cam.zoom,top=cam.y-h/2/cam.zoom,pad=120;

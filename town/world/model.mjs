@@ -1,6 +1,7 @@
 import {validMask} from './organic-mask.mjs?v=town-compact-island-1';
 import {validPaint} from './ground-paint.mjs?v=opera-parallax-1';
 import {roundedUnder,curveUnder} from './round-geometry.mjs?v=town-compact-island-1';
+import {pierPostCentres,PIER_POST_WIDTH,PIER_POST_DEPTH} from './pier-post-layout.mjs?v=town-coast-pier-1';
 export const TILE=64,RISE=48,COLS=256,ROWS=192;
 export const MAX_PROJECT_LENGTH=64*1024*1024;
 export const surfaces=['grass','cobble','dirt','water','wood','sand','asphalt','sidewalk','brick'];
@@ -15,6 +16,35 @@ export function terrainHeight(d,x,y){const a=cell(d,Math.floor(x/TILE),Math.floo
 const TERRAIN_VIEW=Symbol.for('coda.town.terrainWithoutPierDecks'),terrainViews=new WeakMap();
 export function terrainView(d){if(d[TERRAIN_VIEW])return d;if(!terrainViews.has(d))terrainViews.set(d,{...d,[TERRAIN_VIEW]:true});const view=terrainViews.get(d);Object.assign(view,d);return view;}
 export function height(d,x,y){const a=cell(d,Math.floor(x/TILE),Math.floor(y/TILE));return a.pier&&!d[TERRAIN_VIEW]?a.pier.level*RISE:terrainHeight(d,x,y);}
+// Walking layers belong to an actor, never to the portable map. A deck still
+// supplies the default height used by authored routes, boats and editor tools.
+export const PIER_WALK_CLEARANCE=96;
+export function actorHeight(d,actor){
+ if(!actor.underPier)return height(d,actor.x,actor.y);
+ const a=cell(d,Math.floor(actor.x/TILE),Math.floor(actor.y/TILE)),ground=terrainHeight(d,actor.x,actor.y);
+ return actor.underPier&&a.pier&&a.pier.level*RISE-ground>=PIER_WALK_CLEARANCE?ground:height(d,actor.x,actor.y);
+}
+export function actorTraversal(d,from,x,y){
+ const prior=actorHeight(d,from),a=cell(d,Math.floor(x/TILE),Math.floor(y/TILE));
+ if(a.pier){
+  const ground=terrainHeight(d,x,y),deck=a.pier.level*RISE,clear=deck-ground>=PIER_WALK_CLEARANCE,old=cell(d,Math.floor(from.x/TILE),Math.floor(from.y/TILE));
+  if(from.underPier&&old.pier&&clear&&Math.abs(ground-prior)<=14)return {underPier:true,height:ground};
+  if(Math.abs(deck-prior)<=14)return {underPier:false,height:deck};
+  if(clear&&Math.abs(ground-prior)<=14)return {underPier:true,height:ground};
+  return null;
+ }
+ const next=height(d,x,y);return Math.abs(next-prior)<=14?{underPier:false,height:next}:null;
+}
+export function commitActorTraversal(actor,traversal){if(traversal?.underPier)actor.underPier=true;else delete actor.underPier;}
+function pierPostBlocks(d,x,y,z){
+ const cx=Math.floor(x/TILE),cy=Math.floor(y/TILE),pad=Math.max(12,d[Symbol.for('coda.town.collisionRadius')]||0);
+ for(let yy=cy-1;yy<=cy+1;yy++)for(let xx=cx-1;xx<=cx+1;xx++){
+  const a=cell(d,xx,yy);if(!a.pier||a.pier.level*RISE-z<PIER_WALK_CLEARANCE)continue;
+  const same=(dx,dy)=>cell(d,xx+dx,yy+dy).pier?.level===a.pier.level,joins={north:same(0,-1),south:same(0,1),east:same(1,0),west:same(-1,0)};
+  for(const p of pierPostCentres(xx,yy,joins))if(Math.abs(terrainHeight(d,p.x,p.y)-z)<=14&&Math.abs(x-p.x)<PIER_POST_WIDTH/2+pad&&Math.abs(y-p.y)<PIER_POST_DEPTH/2+pad)return true;
+ }
+ return false;
+}
 export function surfaceAt(d,x,y){const a=cell(d,Math.floor(x/TILE),Math.floor(y/TILE)),q=roundedUnder(d,a,x,y);return q?curveUnder(d,q).surface:a.surface;}
 export function edgeKey(a,b){if(a.y===b.y)return `h:${Math.min(a.x,b.x)}:${a.y}`;return `v:${a.x}:${Math.min(a.y,b.y)}`;}
 export function connect(d,a,b,style,gate=false){let p={...a};while(p.x!==b.x||p.y!==b.y){const q={x:p.x+(p.x!==b.x?Math.sign(b.x-p.x):0),y:p.y+(p.x===b.x?Math.sign(b.y-p.y):0)};if(p.x>=0&&p.y>=0&&q.x>=0&&q.y>=0&&p.x<=COLS&&q.x<=COLS&&p.y<=ROWS&&q.y<=ROWS)d.edges[edgeKey(p,q)]={style,gate,open:false};p=q;}}
@@ -42,12 +72,16 @@ function polygonBlocks(x,y,points,radius){
  }
  return false;
 }
-export function blocked(d,x,y,catalog,from){
+export function blocked(d,x,y,catalog,from){return movementBlocked(d,x,y,catalog,from,false);}
+export function actorBlocked(d,x,y,catalog,from){return movementBlocked(d,x,y,catalog,from,true);}
+function movementBlocked(d,x,y,catalog,from,pierTraversal){
  if(x<12||y<12||x>COLS*TILE-12||y>ROWS*TILE-12)return true;
  const a=cell(d,Math.floor(x/TILE),Math.floor(y/TILE));
- const water=surfaceAt(d,x,y)==='water';
- if(d[Symbol.for('coda.town.waterNavigation')]?(!water||!!a.bridge):water&&!a.bridge)return true;
- if(from&&Math.abs(height(d,x,y)-height(d,from.x,from.y))>14)return true;
+ const layered=from&&pierTraversal&&(from.underPier||a.pier||cell(d,Math.floor(from.x/TILE),Math.floor(from.y/TILE)).pier);
+ const traversal=layered?actorTraversal(d,from,x,y):null,water=surfaceAt(d,x,y)==='water';
+ if(from&&(layered?!traversal:Math.abs(height(d,x,y)-height(d,from.x,from.y))>14))return true;
+ if(d[Symbol.for('coda.town.waterNavigation')]?(!water||!!a.bridge):water&&(!a.bridge||traversal?.underPier))return true;
+ if(traversal&&(traversal.underPier||from.underPier)&&pierPostBlocks(d,x,y,traversal.height))return true;
  for(const [k,e]of Object.entries(d.edges)){
   if(e.gate&&e.open)continue;
   const s=segment(k),px=Math.max(s.x,Math.min(s.x+s.dx,x)),py=Math.max(s.y,Math.min(s.y+s.dy,y));

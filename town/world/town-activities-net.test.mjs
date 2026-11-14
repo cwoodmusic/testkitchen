@@ -20,7 +20,7 @@ function ink(){
 }
 function fixture(){
  let now=0,facing='right',scene=null,conversation=false,owner='guest',yellowAt=null,blueAt=null,blueActive=false,blueCount=4,requestActive=false,fishingActive=false;
- let yellowOptions,blueOptions;const draws=[],cancelled={yellow:0,blue:0},player={x:640,y:768},doc={objects:[],cells:{},edges:{},spawn:{...player}},z=48;
+ let yellowOptions,blueOptions;const occluded=[],draws=[],cancelled={yellow:0,blue:0},player={x:640,y:768},doc={objects:[],cells:{},edges:{},spawn:{...player}};let z=48;
  const canvas={focus(){}};
  const yellow={tick(){},hide(){},reset(){yellowAt=null;},catchAlongSweep:()=>false,
   cancelSwing(){cancelled.yellow++;yellowAt=null;},
@@ -38,7 +38,7 @@ function fixture(){
  };
  const requests={offer(){},end(){requestActive=false;},tick(){},pause(){},keydown:()=>false,get active(){return requestActive;},get fullscreen(){return requestActive;},get blocked(){return requestActive;},get state(){return {};}};
  const fishing={end(){fishingActive=false;},tick(){},pause(){},draw(){},keydown:()=>false,pointer:()=>false,interact:()=>false,get active(){return fishingActive;},get fullscreen(){return false;},get blocked(){return fishingActive;},get state(){return {};}};
- const context={netToolPose,netVisualPose,drawRhythmNet,height:()=>z,findFishingDock:()=>null,mountGameStyles(){},createTownJournal:()=>({data:{stars:0}}),gameButton(){},createNoteInventory:()=>({counts:{},total:0}),createNPCRhythmRequests:()=>requests,
+ const context={netToolPose,netVisualPose,drawRhythmNet,groundTexture:()=>null,drawPierOccludedActor:(c,_doc,actor,draw)=>{occluded.push({...actor});draw(c);},height:()=>z,actorHeight:(_doc,actor)=>actor.underPier?0:z,canBoardFishingDock:()=>false,findFishingDock:()=>null,mountGameStyles(){},createTownJournal:()=>({data:{stars:0}}),gameButton(){},createNoteInventory:()=>({counts:{},total:0}),createNPCRhythmRequests:()=>requests,
   createYellowNoteCatch(options){yellowOptions=options;return yellow;},createRhythmCatch(options){blueOptions=options;return blue;},createTownFishing:()=>fishing,
   matchMedia:()=>({matches:true}),performance:{now:()=>now*1000},document:{addEventListener(){}},window:{addEventListener(){}}
  };
@@ -50,7 +50,7 @@ function fixture(){
   c.events.push('body');now+=advanceBetweenPasses;c.pass='front';q.draw(c,{x:player.x,y:player.y,zoom:1},1200,800,now);
   return {c,tool};
  }
- return {q,player,z,event,frame,draws,cancelled,get yellowOptions(){return yellowOptions;},get blueOptions(){return blueOptions;},get now(){return now;},face(value){facing=value;},advance(seconds){now+=seconds;},blue(){blueActive=true;},setScene(value){scene=value;},setConversation(value){conversation=value;},setFishing(value){fishingActive=value;},setRequest(value){requestActive=value;},changeOwner(){owner='second-player';}};
+ return {q,player,get z(){return z;},underPier(){z=384;doc.cells['10,12']={surface:'sand',level:0,bridge:'ns',pier:{level:8,axis:'ns'}};player.underPier=true;},event,frame,occluded,draws,cancelled,get yellowOptions(){return yellowOptions;},get blueOptions(){return blueOptions;},get now(){return now;},face(value){facing=value;},advance(seconds){now+=seconds;},blue(){blueActive=true;},setScene(value){scene=value;},setConversation(value){conversation=value;},setFishing(value){fishingActive=value;},setRequest(value){requestActive=value;},changeOwner(){owner='second-player';}};
 }
 const close=(actual,expected,message)=>assert(Math.abs(actual-expected)<1e-9,message+`: ${actual} versus ${expected}`);
 function registered(tool,net,player,z){
@@ -101,4 +101,16 @@ test('interiors, conversations, fishing, NPC requests and changing owner cannot 
   if(mode==='scene')f.setScene({kind:'concert'});if(mode==='conversation')f.setConversation(true);if(mode==='fishing')f.setFishing(true);if(mode==='request')f.setRequest(true);if(mode==='owner')f.changeOwner();
   const {c,tool}=f.frame();assert.equal(c.nets.length,0,mode);assert.equal(tool,null,mode);if(mode==='owner')assert.equal(f.q.netEquipped,false);
  }
+});
+
+
+test('an under-pier player carries the net on its own ground layer rather than on the deck above',()=>{
+ const f=fixture();f.underPier();f.q.keydown(f.event('Tab'));const {c,tool}=f.frame();assert.equal(c.nets.length,1);registered(tool,c.nets[0],f.player,0);
+ delete f.player.underPier;const top=f.frame();registered(top.tool,top.c.nets[0],f.player,f.z);
+});
+
+
+test('the lower forward net pass uses the pier ink mask while a top-deck swing stays unmasked',()=>{
+ const f=fixture();f.underPier();f.q.keydown(f.event('Tab'));f.q.keydown(f.event('f'));f.advance(NET_SWEEP_SECONDS*NET_STRIKE_FRACTION);const under=f.frame();assert.equal(under.c.nets[0].pass,'front');assert.equal(f.occluded.length,1);assert.equal(f.occluded[0].underPier,true);
+ delete f.player.underPier;const top=f.frame();assert.equal(top.c.nets[0].pass,'front');assert.equal(f.occluded.length,1,'Top-deck ink must remain above the deck');
 });

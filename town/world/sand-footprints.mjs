@@ -1,4 +1,4 @@
-import {cell,height,COLS,ROWS,TILE} from './model.mjs?v=town-compact-island-1';
+import {cell,height,COLS,ROWS,TILE} from './model.mjs?v=town-coast-pier-1';
 import {roundedUnder,curveUnder} from './round-geometry.mjs?v=town-compact-island-1';
 import {readPaint,PAINT_GRID,PAINT_STEP} from './ground-paint.mjs?v=opera-parallax-1';
 

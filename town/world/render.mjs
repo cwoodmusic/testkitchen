@@ -1,14 +1,16 @@
 import {drawStaticImage} from './static-sprite-cache.mjs?v=town-flight-1';
-import {drawSelection} from './selection-view.mjs?v=town-compact-island-1';
-import {drawTerrain} from './terrain-render.mjs?v=town-compact-island-1';
-import {mountPose} from './cliff-mount.mjs?v=town-compact-island-1';
-import {elevationView} from './elevation-view.mjs?v=town-compact-island-1';
-import {barrierGeometry,drawBarrierRun,drawPost} from './construction.mjs?v=town-compact-island-1';
-import {TILE,RISE,COLS,ROWS,cell,height,segment} from './model.mjs?v=town-compact-island-1';
-import {catalog} from './catalog.mjs?v=town-compact-island-1';
+import {drawSelection} from './selection-view.mjs?v=town-coast-pier-1';
+import {drawTerrain} from './terrain-render.mjs?v=town-coast-pier-1';
+import {mountPose} from './cliff-mount.mjs?v=town-coast-pier-1';
+import {elevationView} from './elevation-view.mjs?v=town-coast-pier-1';
+import {barrierGeometry,drawBarrierRun,drawPost} from './construction.mjs?v=town-coast-pier-1';
+import {TILE,RISE,COLS,ROWS,cell,height,actorHeight,segment} from './model.mjs?v=town-coast-pier-1';
+import {drawPierOccludedActor} from './pier-actor-occlusion.mjs?v=town-coast-pier-1';
+import {groundTexture} from './ground-render.mjs?v=town-coast-pier-1';
+import {catalog} from './catalog.mjs?v=town-coast-pier-1';
 import {assetMapImage,assetMapImageRevision} from './asset-lawn.mjs?v=town-compact-island-1';
 import {overviewObjectImage} from './overview-sprites.mjs?v=town-compact-island-1';
-import {renderCityNight} from './city-night.mjs?v=town-compact-island-1';
+import {renderCityNight} from './city-night.mjs?v=town-coast-pier-1';
 import {setWaterTime} from './water-motion.mjs?v=opera-smooth-1';
 import {drawFountainMotion} from './fountain-motion.mjs?v=opera-parallax-1';
 import {drawApartmentMotion} from './apartment-motion.mjs?v=opera-parallax-1';
@@ -145,10 +147,10 @@ export function render(c,d,cam,w,h,opts={}){setWaterTime(opts.time||0);const scr
  for(const{run,bounds}of barriers.runItems)if(bounds&&intersectsViewport(bounds,viewport,barrierPadding))queue.push({y:run.axis==='h'?run.s.y:run.s.y+run.end-run.start,draw:()=>drawBarrierRun(c,run)});
  for(const{post:p,bounds}of barriers.postItems)if(intersectsViewport(bounds,viewport,barrierPadding))queue.push({y:p.y+.1,draw:()=>drawPost(c,p,d)});
  for(const npc of opts.npcs||[])if(opts.drawNPC&&Number.isFinite(npc.x)&&Number.isFinite(npc.y)){
-  const y=npc.y-height(d,npc.groundAnchor?.x??npc.x,npc.groundAnchor?.y??npc.y);
-  if(intersectsViewport(actorBounds(npc.x,y),viewport))queue.push({y:npc.depth??npc.y,draw:()=>opts.drawNPC(c,{...npc,y},opts.time||0)});
+  const y=npc.y-actorHeight(d,{...npc,x:npc.groundAnchor?.x??npc.x,y:npc.groundAnchor?.y??npc.y});
+  if(intersectsViewport(actorBounds(npc.x,y),viewport))queue.push({y:npc.depth??npc.y,draw:()=>{const paint=ctx=>opts.drawNPC(ctx,{...npc,y},opts.time||0);if(npc.underPier)drawPierOccludedActor(c,d,npc,paint,groundTexture('wood'));else paint(c);}});
  }
- if(opts.player)queue.push({y:opts.player.y,draw:()=>{const p=opts.player,z=height(d,p.x,p.y);if(opts.drawPlayer)opts.drawPlayer(c,p.x,p.y-z);else{c.fillStyle='#1a251a66';c.beginPath();c.ellipse(p.x,p.y-z,16,7,0,0,7);c.fill();}}});
+ if(opts.player)queue.push({y:opts.player.y,draw:()=>{const p=opts.player,z=actorHeight(d,p),paint=ctx=>{if(opts.drawPlayer)opts.drawPlayer(ctx,p.x,p.y-z);else{ctx.fillStyle='#1a251a66';ctx.beginPath();ctx.ellipse(p.x,p.y-z,16,7,0,0,7);ctx.fill();}};if(p.underPier)drawPierOccludedActor(c,d,p,paint,groundTexture('wood'));else paint(c);}});
  queue.sort((a,b)=>a.y-b.y);for(const item of batchBuildingDepthQueue(queue)){if(item.building)drawPlaced(item.building,false,item.fragment);else item.draw();}
  for(const o of visible){const a=catalog.get(o.asset);if(!o.mount&&o.layer==='overgrowth'&&!depthSorted(a,o)&&!composite(a,o))drawPlaced(o);}
  if(opts.collision)for(const o of visible)drawObjectCollision(c,o,d);

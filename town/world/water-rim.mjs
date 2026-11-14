@@ -1,4 +1,4 @@
-import {cell,surfaceAt} from './model.mjs?v=town-compact-island-1';
+import {cell,surfaceAt} from './model.mjs?v=town-coast-pier-1';
 
 // A rounded or brushed neighbor may be water at the shared edge even when
 // its main material is land. Follow the actual shore, not its terrain square.

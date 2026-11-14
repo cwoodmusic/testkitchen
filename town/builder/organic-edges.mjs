@@ -1,4 +1,4 @@
-import {COLS,ROWS,TILE,cell,key} from '../world/model.mjs?v=town-compact-island-1';
+import {COLS,ROWS,TILE,cell,key} from '../world/model.mjs?v=town-coast-pier-1';
 import {roundedUnder,curveUnder} from '../world/round-geometry.mjs?v=town-compact-island-1';
 import {MASK_GRID,MASK_STEP,encodeMask} from '../world/organic-mask.mjs?v=town-compact-island-1';
 import {readPaint,encodePaint,materialKey} from '../world/ground-paint.mjs?v=opera-parallax-1';

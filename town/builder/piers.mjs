@@ -1,4 +1,4 @@
-import {COLS,ROWS,RISE,TILE,cell,key,height,terrainHeight,surfaceAt,blocked} from '../world/model.mjs?v=town-compact-island-1';
+import {COLS,ROWS,RISE,TILE,cell,key,height,terrainHeight,surfaceAt,blocked} from '../world/model.mjs?v=town-coast-pier-1';
 
 const point=p=>p&&Number.isFinite(p.x)&&Number.isFinite(p.y);
 const tile=p=>({x:Math.floor(p.x/TILE),y:Math.floor(p.y/TILE)});

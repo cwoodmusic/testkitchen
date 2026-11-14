@@ -1,15 +1,15 @@
 import {getConcertHall} from './concert-hall.mjs?v=town-flight-1';
-import {blocked,cell,height,TILE} from './model.mjs?v=town-compact-island-1';
-import {movePlayer} from './physics.mjs?v=town-compact-island-1';
+import {blocked,cell,height,actorHeight,TILE} from './model.mjs?v=town-coast-pier-1';
+import {movePlayer} from './physics.mjs?v=town-coast-pier-1';
 import {WALK_SPEED,GAIT_PER_PIXEL,PLAYER_SCALE} from './player-settings.mjs?v=opera-parallax-1';
-import {buildNPCDistrict} from './npc-district.mjs?v=town-compact-island-1';
-import {createNPCNavigator,npcPavingAt,npcMaterialCost} from './npc-navigation.mjs?v=town-compact-island-1';
+import {buildNPCDistrict} from './npc-district.mjs?v=town-coast-pier-1';
+import {createNPCNavigator,npcPavingAt,npcMaterialCost} from './npc-navigation.mjs?v=town-coast-pier-1';
 import {residents as profiles,residentHomePose,interiorJourneyPose,residentInScene} from './resident-journey.mjs?v=town-compact-island-1';
-import {createEntranceQueues} from './entrance-queue.mjs?v=town-compact-island-1';
+import {createEntranceQueues} from './entrance-queue.mjs?v=town-coast-pier-1';
 import {venueVisitPose,SHOP_VISIT_CAPACITY} from './resident-venue.mjs?v=town-compact-island-1';
 import {planNPCPassing} from './npc-passing.mjs?v=opera-parallax-1';
-import {createNPCStairTraffic} from './npc-stair-traffic.mjs?v=town-compact-island-1';
-export {planNPCPath,npcConnectionClear} from './npc-navigation.mjs?v=town-compact-island-1';
+import {createNPCStairTraffic} from './npc-stair-traffic.mjs?v=town-coast-pier-1';
+export {planNPCPath,npcConnectionClear} from './npc-navigation.mjs?v=town-coast-pier-1';
 
 export const AMBIENT_RESIDENTS=Object.freeze(['bach','mozart','clara','nina','joplin','miles','chopin','haydn','vee-jay','zizi','beethoven','ellington','ella','handel','vivaldi','metronome','schoenberg','dj']);
 const distance=(a,b)=>Math.hypot(a.x-b.x,a.y-b.y);
@@ -417,18 +417,18 @@ export function createAmbientNPCs({getProject,catalog,getRevision=()=>0,getPlaye
   const progress=actor._progress;
   if(progress&&distance(actor,progress)>90)actor._progress={x:actor.x,y:actor.y,time:elapsed};
   else if(progress&&elapsed-progress.time>5){
-   const player=getPlayer?.(),avoid=[...outdoor(),...vendors,...(player?[{...player,id:'__player__'}]:[])].filter(b=>b.id!==actor.id&&!b.seated&&distance(actor,b)<450).map(b=>({x:b.x,y:b.y,r:48}));
+   const player=getPlayer?.(),avoid=[...outdoor(),...vendors,...(player?[{...player,id:'__player__'}]:[])].filter(b=>b.id!==actor.id&&!b.seated&&distance(actor,b)<450&&(!b.underPier||Math.abs(actorHeight(activeDoc,b)-height(activeDoc,actor.x,actor.y))<14)).map(b=>({x:b.x,y:b.y,r:48}));
    go(actor,{...actor._goal,_arrival:true},actor._goingHome,avoid);return;
   }
   const target=actor._path[0];if(!target){arrive(actor);return;}
-  const others=[...outdoor(),...vendors],player=getPlayer?.();if(player)others.push({...player,id:'__player__'});
+  const others=[...outdoor(),...vendors],player=getPlayer?.();if(player&&(!player.underPier||Math.abs(actorHeight(activeDoc,player)-height(activeDoc,actor.x,actor.y))<14))others.push({...player,id:'__player__'});
   if(stairTraffic.shouldWait(actor,others)){
    actor.purpose='Waiting for the stairs';actor._progress={x:actor.x,y:actor.y,time:elapsed};return;
   }
-  const actorHeight=height(activeDoc,actor.x,actor.y),actorStairs=cell(activeDoc,Math.floor(actor.x/TILE),Math.floor(actor.y/TILE)).stairs;
+  const actorZ=actorHeight(activeDoc,actor),actorStairs=cell(activeDoc,Math.floor(actor.x/TILE),Math.floor(actor.y/TILE)).stairs;
   const peers=others.filter(b=>{
    if(b.id===actor.id||b.seated)return false;
-   if(Math.abs(height(activeDoc,b.x,b.y)-actorHeight)<14)return true;
+   if(Math.abs(actorHeight(activeDoc,b)-actorZ)<14)return true;
    // A steep flight changes elevation much faster than foot spacing. Its
    // walkers still share one passage, even while their feet are at different
    // heights. Keep bare cliff levels separate by checking the actual route.

@@ -1,4 +1,4 @@
-import {blocked,surfaceAt,cell,segment,COLS,ROWS,TILE} from './model.mjs?v=town-compact-island-1';
+import {blocked,surfaceAt,cell,segment,COLS,ROWS,TILE} from './model.mjs?v=town-coast-pier-1';
 import {npcCollisionObject,npcCollisionProject,NPC_COLLISION_RADIUS,NPC_COLLISION_RADIUS_KEY} from './npc-collision.mjs?v=opera-parallax-1';
 export {npcCollisionProject} from './npc-collision.mjs?v=opera-parallax-1';
 

@@ -1,6 +1,6 @@
-import {blocked,height,surfaceAt,COLS,ROWS,TILE} from './model.mjs?v=town-compact-island-1';
+import {blocked,height,surfaceAt,COLS,ROWS,TILE} from './model.mjs?v=town-coast-pier-1';
 import {npcCollisionProject} from './npc-collision.mjs?v=opera-parallax-1';
-import {npcConnectionClear} from './npc-navigation.mjs?v=town-compact-island-1';
+import {npcConnectionClear} from './npc-navigation.mjs?v=town-coast-pier-1';
 import {furnitureFacingPlacement,furnitureFootCenter,furnitureFacingDepth} from './furniture-facing.mjs?v=opera-parallax-1';
 
 const WORLD_W=COLS*TILE,WORLD_H=ROWS*TILE;

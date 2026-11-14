@@ -10,6 +10,8 @@ Buildings sort by the physical front in each column, independently of player or 
 
 Apartment transitions occur at the doorway rather than at a point far in front of the facade. Returning residents take turns approaching the entrance; visitors gather to the side and exiting residents clear the passage. Entering the building as the player removes the player's outdoor collision presence.
 
+High piers have separate deck and ground walking layers. Approaching from the deck’s shore keeps the player on top; approaching from dry ground allows walking underneath when there is enough headroom. Timber posts, cliffs, water and low beams still block the lower route. The camera, character and net use the same walking layer, and overhead boards and foreground posts cover the lower character without hiding people on the deck. Fishing boats can be boarded only from the dock’s level. Walking-layer state is temporary and does not change the map format.
+
 These are runtime metadata and rendering changes. Existing map files, uploaded backups and browser-save data are not migrated or rewritten. Reloading applies the fixes without importing another JSON file.
 
 Verification:

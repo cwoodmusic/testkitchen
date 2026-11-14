@@ -1,8 +1,8 @@
-import {drawMusicWallRun,drawMusicWallPost} from './music-wall-art.mjs?v=town-compact-island-1';
-import {cell,height,RISE,stairProfile} from './model.mjs?v=town-compact-island-1';
+import {drawMusicWallRun,drawMusicWallPost} from './music-wall-art.mjs?v=town-coast-pier-1';
+import {cell,height,RISE,stairProfile} from './model.mjs?v=town-coast-pier-1';
 import {wallArt,constructionArt,stairArt,stairTreadBounds,cliffArt} from './detail-art.mjs?v=opera-parallax-1';
-import {barrierHeight} from './barrier-geometry.mjs?v=town-compact-island-1';
-export {barrierHeight,barrierRuns,barrierPosts,barrierGeometry} from './barrier-geometry.mjs?v=town-compact-island-1';
+import {barrierHeight} from './barrier-geometry.mjs?v=town-coast-pier-1';
+export {barrierHeight,barrierRuns,barrierPosts,barrierGeometry} from './barrier-geometry.mjs?v=town-coast-pier-1';
 function piece(c,img,sx,sy,sw,sh,x,y,w,h){if(sw>0&&sh>0&&w>0&&h>0)c.drawImage(img,sx,sy,sw,sh,x,y,w,h);}
 // Clip one continuous rock field to the heights on BOTH sides of an edge.
 // The southern side can be a slope, so a midpoint rectangle leaves gaps.
@@ -34,7 +34,6 @@ export function drawCliff(c,d,x,y){const a=cell(d,x,y),b=cell(d,x,y+1);if(a.stai
  // Top grass is actual painted cliff foliage, overlaid across the lawn seam.
  piece(c,img,sx,0,sw,img.height*.28,X,top-12,64,38);
  const shade=c.createLinearGradient(0,top,0,top+depth);shade.addColorStop(0,'#24311e66');shade.addColorStop(.35,'#17221900');shade.addColorStop(1,'#16211788');c.fillStyle=shade;c.fillRect(X,top+13,64,Math.max(0,depth-13));
- c.fillStyle='#17271c22';c.fillRect(X,top+depth,64,5);
 }
 const stairMaterials=new WeakMap(),stairPatterns=new WeakMap();
 function stairPattern(c,finish,direction){

@@ -1,1 +1,1 @@
-export * from '../world/render.mjs?v=town-compact-island-1';
+export * from '../world/render.mjs?v=town-coast-pier-1';

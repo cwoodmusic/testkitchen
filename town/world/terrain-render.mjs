@@ -1,16 +1,16 @@
-import {shadeLowerGround,drawTerrainRims} from './edge-shading.mjs?v=town-compact-island-1';
-import {drawRoundUnder,drawRoundCliff} from './round-render.mjs?v=town-compact-island-1';
+import {drawTerrainRims} from './edge-shading.mjs?v=town-coast-pier-1';
+import {drawRoundUnder,drawRoundCliff} from './round-render.mjs?v=town-coast-pier-1';
 import {clipCurves} from './round-geometry.mjs?v=town-compact-island-1';
-import {drawGround,groundFrameKey,groundTexture,invalidateGroundCache} from './ground-render.mjs?v=town-compact-island-1';
-import {drawCliff,drawStairs} from './construction.mjs?v=town-compact-island-1';
-import {RISE,COLS,ROWS,cell,terrainView} from './model.mjs?v=town-compact-island-1';
-import {sources} from './catalog.mjs?v=town-compact-island-1';
-import {waterRimSegments} from './water-rim.mjs?v=town-compact-island-1';
-import {drawPier,drawPierSubmerged} from './piers.mjs?v=town-compact-island-1';
-import {drawSidewalkCurbs} from './sidewalk-curbs.mjs?v=town-compact-island-1';
-import {drawOverviewTerrain} from './overview-terrain.mjs?v=town-compact-island-1';
-import {prepareOverviewRuns} from './overview-runs.mjs?v=town-compact-island-1';
-import {drawTerrainChunks} from './terrain-chunks.mjs?v=town-compact-island-1';
+import {drawGround,groundFrameKey,groundTexture,invalidateGroundCache} from './ground-render.mjs?v=town-coast-pier-1';
+import {drawCliff,drawStairs} from './construction.mjs?v=town-coast-pier-1';
+import {RISE,COLS,ROWS,cell,terrainView} from './model.mjs?v=town-coast-pier-1';
+import {sources} from './catalog.mjs?v=town-coast-pier-1';
+import {waterRimSegments} from './water-rim.mjs?v=town-coast-pier-1';
+import {drawPier,drawPierSubmerged} from './piers.mjs?v=town-coast-pier-1';
+import {drawSidewalkCurbs} from './sidewalk-curbs.mjs?v=town-coast-pier-1';
+import {drawOverviewTerrain} from './overview-terrain.mjs?v=town-coast-pier-1';
+import {prepareOverviewRuns} from './overview-runs.mjs?v=town-coast-pier-1';
+import {drawTerrainChunks} from './terrain-chunks.mjs?v=town-coast-pier-1';
 import {waterFrame,currentWaterFrameIndex,withLevelZeroWaterCutout} from './water-motion.mjs?v=opera-smooth-1';
 import {cliffArt} from './detail-art.mjs?v=opera-parallax-1';
 import {artSourceVersion} from './art-revision.mjs?v=opera-parallax-1';
@@ -55,7 +55,6 @@ export function* createRawTerrainBake(c,d,{x0,x1,y0,y1},opts={}){
    if(a.curves?.length){drawRoundUnder(c,d,x,y,frameKey);drawRoundCliff(c,d,x,y);c.save();clipCurves(c,a,x,y,z);}
    drawGround(c,d,a,x,y,X,Y-z,frameKey);
    if(a.surface==='water')drawWaterRim(c,d,x,y,X,Y-z);
-   shadeLowerGround(c,d,x,y,z);
    if(a.curves?.length)c.restore();
    // A rounded high face can also expose its lower shelf at this tile edge.
    drawCliff(c,d,x,y);

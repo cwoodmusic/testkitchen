@@ -1,6 +1,7 @@
-import {createPlayerCollisionIndex} from './player-collision-index.mjs?v=town-compact-island-1';
-import {blocked,height} from './model.mjs?v=town-compact-island-1';
-import {NOTE_VALUES,reachableNoteSpots,scatterNotes} from './town-game-rules.mjs?v=town-compact-island-1';
+import {clearNetPath} from './outdoor-actor-layer.mjs?v=town-coast-pier-1';
+import {createPlayerCollisionIndex} from './player-collision-index.mjs?v=town-coast-pier-1';
+import {blocked,height,actorHeight} from './model.mjs?v=town-coast-pier-1';
+import {NOTE_VALUES,reachableNoteSpots,scatterNotes} from './town-game-rules.mjs?v=town-coast-pier-1';
 import {launchFlyingNotes,advanceFlyingNote,flyingNotePose,netSweepHits,facingAngle,angleFacing,NET_SWEEP_SECONDS,NET_RECOVERY_SECONDS} from './rhythm-hunt-motion.mjs?v=town-store-halls-1';
 import {drawRhythmNet} from './rhythm-net-render.mjs?v=town-store-halls-1';
 import {drawNoteFairy} from './note-fairy-render.mjs?v=town-store-halls-1';
@@ -34,10 +35,7 @@ export function createYellowNoteCatch({canvas,getProject,getPlayer,getFacing=()=
   if(doc!==next){doc=next;collision.invalidate();tokens=launchFlyingNotes(scatterNotes(NOTE_VALUES,reachableNoteSpots(doc,catalog,player,{clearance:9})).slice(0,5)).map(token=>({...token,id:'yellow-'+token.id,color:'yellow'}));flightTime=0;cancelSwing();}
   return true;
  }
- function clearPath(a,b){
-  const steps=Math.max(1,Math.ceil(Math.hypot(b.x-a.x,b.y-a.y)/4));let previous=a;
-  for(let i=1;i<=steps;i++){const q={x:a.x+(b.x-a.x)*i/steps,y:a.y+(b.y-a.y)*i/steps};if(blocked(collision.view(q),q.x,q.y,catalog,previous))return false;previous=q;}return true;
- }
+ function clearPath(a,b){return clearNetPath(doc,a,b,catalog,p=>collision.view(p));}
  function catchAlongSweep(player,angle,from,to,z=0){
   if(!doc||!player||!visible||!isEquipped())return false;
   const token=activeTokens().find(token=>!(token.retryAt>flightTime)&&netSweepHits(flyingNotePose(token,flightTime,height(doc,token.x,token.y),reduced.matches),player,angle,from,to,z)&&clearPath(player,token));
@@ -53,7 +51,7 @@ export function createYellowNoteCatch({canvas,getProject,getPlayer,getFacing=()=
   if(!sync()){hide();return;}visible=true;hud.hidden=false;updateHUD();dt=Math.min(.05,Math.max(0,dt));flightTime+=dt;
   const player=getPlayer();for(const token of activeTokens())advanceFlyingNote(token,player,dt,flightTime,(a,b)=>!blocked(collision.view(b),b.x,b.y,catalog,a));
   if(!canUseNet()||!isEquipped()){cancelSwing();return;}
-  if(swinging){setFacing(angleFacing(aim));const progress=Math.min(1,(performance.now()/1000-swingAt)/NET_SWEEP_SECONDS),z=height(doc,player.x,player.y);if(!swingHit)swingHit=catchAlongSweep(player,aim,swingProgress,progress,z);swingProgress=progress;if(progress>=1)swinging=false;}
+  if(swinging){setFacing(angleFacing(aim));const progress=Math.min(1,(performance.now()/1000-swingAt)/NET_SWEEP_SECONDS),z=actorHeight(doc,player);if(!swingHit)swingHit=catchAlongSweep(player,aim,swingProgress,progress,z);swingProgress=progress;if(progress>=1)swinging=false;}
  }
  function keydown(event){
   if(!visible||!canUseNet()||event.ctrlKey||event.metaKey||event.altKey)return false;const key=event.key.toLowerCase(),age=performance.now()/1000-swingAt;
@@ -69,7 +67,7 @@ export function createYellowNoteCatch({canvas,getProject,getPlayer,getFacing=()=
    const point=flyingNotePose(token,flightTime,height(doc,token.x,token.y),reduced.matches);if(Math.abs(point.x-cam.x)>canvas.clientWidth/2/cam.zoom+50||Math.abs(point.y-cam.y)>canvas.clientHeight/2/cam.zoom+50)continue;
    drawNoteFairy(c,token,{time:flightTime,z:height(doc,token.x,token.y),reducedMotion:reduced.matches});
   }
-  if(net&&canUseNet()&&isEquipped()){const player=getPlayer(),age=performance.now()/1000-swingAt,active=age>=0&&age<NET_SWEEP_SECONDS+NET_RECOVERY_SECONDS;drawRhythmNet(c,player,{angle:active?aim:facingAngle(getFacing()),age:active?age:Infinity,z:height(doc,player.x,player.y),reducedMotion:reduced.matches,swinging});}
+  if(net&&canUseNet()&&isEquipped()){const player=getPlayer(),age=performance.now()/1000-swingAt,active=age>=0&&age<NET_SWEEP_SECONDS+NET_RECOVERY_SECONDS;drawRhythmNet(c,player,{angle:active?aim:facingAngle(getFacing()),age:active?age:Infinity,z:actorHeight(doc,player),reducedMotion:reduced.matches,swinging});}
  }
  window.addEventListener('blur',cancelSwing);
  return {tick,draw,keydown,pointer,reset,hide,cancelSwing,catchAlongSweep,get swingFacing(){return this.lockedFacing;},get lockedFacing(){const age=performance.now()/1000-swingAt;return visible&&canUseNet()&&isEquipped()&&age>=0&&age<NET_SWEEP_SECONDS+NET_RECOVERY_SECONDS?angleFacing(aim):null;},get netStroke(){if(!visible||!canUseNet()||!isEquipped())return null;const age=performance.now()/1000-swingAt,active=age>=0&&age<NET_SWEEP_SECONDS+NET_RECOVERY_SECONDS;return {angle:active?aim:facingAngle(getFacing()),age:active?age:Infinity};},get state(){return {tokens:activeTokens().map(token=>({...token})),limit:limit(),equipped:isEquipped(),counts:inventory.counts,total:inventory.total,flightTime,swing:swinging?{angle:aim,progress:swingProgress,hit:swingHit}:null};}};

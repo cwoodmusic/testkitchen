@@ -3,18 +3,19 @@ import assert from 'node:assert/strict';
 import {readFileSync} from 'node:fs';
 import {normalizeKnownTerrainProject,knownTerrainRepairCount} from './known-terrain-repairs.mjs';
 import {knownTerrainRepairs} from './known-terrain-repair-data.mjs';
+import {knownSouthwestCoastRepairs} from './southwest-coast-repair-data.mjs';
 import {parseProject} from './model.mjs';
 import {readPaint} from './ground-paint.mjs';
 import {height} from './model.mjs';
 import {decodeMask} from './organic-mask.mjs';
 
 const current=()=>JSON.parse(readFileSync(new URL('../maps/coda-town-plaza-boardwalk.json',import.meta.url)));
-const old=()=>{const project=current();for(const[key,before]of knownTerrainRepairs)project.cells[key]=structuredClone(before);return project;};
+const old=()=>{const project=current();for(const[key,before]of knownSouthwestCoastRepairs)project.cells[key]=structuredClone(before);for(const[key,before]of knownTerrainRepairs)project.cells[key]=structuredClone(before);return project;};
 
 test('the complete authored island repair changes only the exact known defective cells in memory',()=>{
  const project=old(),raw=JSON.stringify(project),fixed=normalizeKnownTerrainProject(project);assert.equal(knownTerrainRepairCount,987);assert.notEqual(fixed,project);assert.equal(JSON.stringify(project),raw,'Loading a repair must never mutate the saved/recovery project');
  assert.deepEqual(fixed,current());for(const key of ['objects','spawn','edges'])assert.equal(fixed[key],project[key]);
- const affected=new Set(knownTerrainRepairs.map(([key])=>key));for(const[key,cell]of Object.entries(project.cells))if(!affected.has(key))assert.equal(fixed.cells[key],cell);
+ const affected=new Set([...knownTerrainRepairs,...knownSouthwestCoastRepairs].map(([key])=>key));for(const[key,cell]of Object.entries(project.cells))if(!affected.has(key))assert.equal(fixed.cells[key],cell);
  for(const[key,cell]of Object.entries(project.cells))if(cell.stairs||cell.bridge||cell.pier)assert.deepEqual(fixed.cells[key],cell,'Every authored stair flight, bridge and landing retains its physical geometry');
  assert.equal(normalizeKnownTerrainProject(fixed),fixed,'The repaired map is idempotent');
 });

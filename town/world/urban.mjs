@@ -1,5 +1,6 @@
-import {createTownActivities} from './town-activities.mjs?v=town-compact-island-1';
-import {catalog} from './catalog.mjs?v=town-compact-island-1';
+import {restoreOutdoorActor,onSameOutdoorSurface} from './outdoor-actor-layer.mjs?v=town-coast-pier-1';
+import {createTownActivities} from './town-activities.mjs?v=town-coast-pier-1';
+import {catalog} from './catalog.mjs?v=town-coast-pier-1';
 import {FLOOR_COUNT,residents,getInterior,renderInterior,residentInteractionZones,apartmentDecorBounds,apartmentDecorFootBounds,apartmentWallDecorBounds,configureUrbanInteriors,configurePlayerRoomSource,invalidatePlayerRoomSource} from './urban-interiors.mjs?v=town-compact-island-1';
 import {createRoomStorage,roomItemBoxes,ROOM_KEY} from './urban-room.mjs?v=town-compact-island-1';
 import {SHOWROOMS,STORE_FLOOR_COUNT,STORE_VERTICAL_CORE} from './showroom-layout.mjs?v=town-room-placement-2';
@@ -185,13 +186,13 @@ export function createUrbanController({canvas,getProject,getPlayer,getFacing,set
  }
  function setScene(next,spawn){
   stageCurtain.reset();performanceModel=null;performanceBoxes=[];settledPerformance=null;
-  closeDialog();if(seated)zoom=walkZoom;scene=next;seated=null;selectedDecor=null;decorate=false;hover=null;const model=getInterior(scene);activeSceneModel=model;player={...(spawn||model.spawn)};walking=false;facing='up';configureSceneDoors(model);updateHud();getConcert()?.updateContext(scene);
+  closeDialog();if(seated)zoom=walkZoom;scene=next;seated=null;selectedDecor=null;decorate=false;hover=null;const model=getInterior(scene);activeSceneModel=model;player={...(spawn||model.spawn)};delete player.underPier;walking=false;facing='up';configureSceneDoors(model);updateHud();getConcert()?.updateContext(scene);
   // Furniture collision is tested at the feet, like the outdoor character.
   if(solid(player.x,player.y)){let found=false;for(let y=model.height-140;y>100&&!found;y-=40)for(let x=model.width/2;x<model.width-100;x+=40)if(!solid(x,y)){player={x,y};found=true;break;}}
   automaticDoors.prime(player,sceneResidents());
  }
- function enterBuilding(o){const door=buildingDoor(o);if(!door)return false;outside={object:o,position:{...getPlayer()}};setScene(door.kind==='opera'?{kind:'concert'}:door.kind==='shop'?{kind:'shop',floor:1}:{kind:'lobby',floor:1});return true;}
- function reset(){activities.end();stageCurtain.reset();performanceModel=null;performanceBoxes=[];settledPerformance=null;closeDialog();if(seated)zoom=walkZoom;scene=null;seated=null;outside=null;decorate=false;selectedDecor=null;hover=null;hud.hidden=true;hint.hidden=true;lastHint='';automaticDoors=null;portals=[];activeSceneModel=null;getConcert()?.updateContext(null);}
+ function enterBuilding(o){const door=buildingDoor(o),p=getPlayer();if(!door||p?.underPier&&!onSameOutdoorSurface(getProject(),p,door))return false;outside={object:o,position:{...getPlayer()}};setScene(door.kind==='opera'?{kind:'concert'}:door.kind==='shop'?{kind:'shop',floor:1}:{kind:'lobby',floor:1});return true;}
+ function reset(){activities.end();const outdoors=getPlayer();if(outdoors)restoreOutdoorActor(getProject(),outdoors,outdoors,catalog);stageCurtain.reset();performanceModel=null;performanceBoxes=[];settledPerformance=null;closeDialog();if(seated)zoom=walkZoom;scene=null;seated=null;outside=null;decorate=false;selectedDecor=null;hover=null;hud.hidden=true;hint.hidden=true;lastHint='';automaticDoors=null;portals=[];activeSceneModel=null;getConcert()?.updateContext(null);}
  function standUp(){if(!seated)return false;const seat=seated;seated=null;zoom=walkZoom;player={...seat.approach};walking=false;facing='up';updateHud();return true;}
  function watchSeat(seatId){
   if(scene?.kind!=='concert')return false;
@@ -254,10 +255,10 @@ export function createUrbanController({canvas,getProject,getPlayer,getFacing,set
  }
  function sceneResidents(){const actors=getResidents?.(scene);return Array.isArray(actors)?actors:getInterior(scene).actors;}
  function nearestZone(){if(!scene)return null;const model=getInterior(scene),zones=[...model.zones.filter(z=>z.action!=='resident'),...residentInteractionZones(sceneResidents())];return zones.map(z=>({...z,distance:Math.hypot(player.x-Math.max(z.x,Math.min(z.x+z.w,player.x)),player.y-Math.max(z.y,Math.min(z.y+z.h,player.y)))})).filter(z=>z.distance<120).sort((a,b)=>a.distance-b.distance)[0]||null;}
- function nearestBuilding(){const p=getPlayer();return getProject().objects.map(o=>({o,door:buildingDoor(o)})).filter(a=>a.door).map(a=>({...a,distance:Math.hypot(p.x-a.door.x,p.y-a.door.y)})).filter(a=>a.distance<240*a.o.scale).sort((a,b)=>a.distance-b.distance)[0];}
+ function nearestBuilding(){const p=getPlayer();return getProject().objects.map(o=>({o,door:buildingDoor(o)})).filter(a=>a.door).map(a=>({...a,distance:Math.hypot(p.x-a.door.x,p.y-a.door.y)})).filter(a=>a.distance<240*a.o.scale&&(!p.underPier||onSameOutdoorSurface(getProject(),p,a.door))).sort((a,b)=>a.distance-b.distance)[0];}
  function nearestPerson(){
   const p=getPlayer(),actors=getResidents?.(null);if(!Array.isArray(actors))return null;
-  return actors.filter(a=>!a.hidden).map(actor=>{const at=actor.interaction||actor;return {actor,distance:Math.hypot(p.x-at.x,p.y-at.y)};}).filter(a=>Number.isFinite(a.distance)&&a.distance<140).sort((a,b)=>a.distance-b.distance)[0]||null;
+  return actors.filter(a=>!a.hidden).map(actor=>{const at=actor.interaction||actor;return {actor,distance:Math.hypot(p.x-at.x,p.y-at.y)};}).filter(a=>Number.isFinite(a.distance)&&a.distance<140&&(!p.underPier||onSameOutdoorSurface(getProject(),p,a.actor.interaction||a.actor))).sort((a,b)=>a.distance-b.distance)[0]||null;
  }
  function outsideTarget(){const person=nearestPerson(),building=nearestBuilding();return person&&(!building||person.distance<=building.distance)?{person}:building?{building}:null;}
  function talkTo(actor){

@@ -94,8 +94,8 @@ test('lowering a rounded water donor to sea level still supplies animated water 
 test('raised water patches redraw live with complete contributor bounds and cull when offscreen',()=>{
  const f=fixture();f.doc.cells['3,3']={surface:'water',level:2};f.draw({terrainRevision:0});
  assert.ok(f.cache.stats(f.c).livePatches>0);
- const first=f.paints.length;f.draw({terrainRevision:0});
- const live=f.paints.slice(first);assert.ok(live.length>0);assert.ok(live.every(p=>!p.opts.overviewBake));
+ const first=f.paints.length;f.water.index++;f.draw({terrainRevision:0});
+ const live=f.paints.slice(first);assert.ok(live.length>0);assert.ok(live.every(p=>p.opts.liveTerrainPatch&&p.opts.overviewBake));
  assert.ok(live.every(p=>p.bounds.y1>p.bounds.y0+8),'all north/south contributing terrain rows are included');
  f.c.transform.e=-4000;f.draw({terrainRevision:0});const moved=f.paints.length;f.draw({terrainRevision:0});assert.equal(f.paints.length,moved,'offscreen raised water does not redraw');
 });
@@ -152,4 +152,50 @@ test('pending prefetch shares the hard memory budget and eviction explicitly rel
  f.draw({terrainRevision:0});const initial=f.cache.stats(f.c);assert.ok(initial.pending>0);assert.ok(initial.pixels<=4*520*520);f.drain();
  f.c.transform.e=-4000;f.draw({terrainRevision:0});const moved=f.cache.stats(f.c);assert.ok(moved.pixels<=4*520*520);assert.ok(moved.size<=4);assert.ok(f.allocations.some(c=>c.width===0));
  f.cache.invalidate(f.c);assert.equal(f.cache.stats(f.c).pixels,0);assert.equal(f.cache.stats(f.c).pending,0);assert.equal(f.callbacks.size,0);assert.ok(f.allocations.every(c=>c.width===0&&c.height===0));
+});
+
+test('animated chunks reuse their existing rasters within the hard memory budget',()=>{
+ const allocated=[],limit=2*260*260,f=fixture({prefetch:false,maxPixels:limit,maxEntries:2,createCanvas:(w,h)=>{const value=canvas(w,h);allocated.push(value);return value;}});
+ f.c.canvas.width=f.c.canvas.height=160;
+ for(let i=0;i<5;i++)f.doc.cells[`${65+i*8},90`]={surface:'water',level:2};
+ for(let i=0;i<5;i++){
+  f.c.transform={a:.5,b:0,c:0,d:.5,e:-(4192+i*512)*.5,f:-5680*.5};
+  assert.equal(f.draw({terrainRevision:0}),true);
+  const stats=f.cache.stats(f.c);assert(stats.pixels<=limit);
+  assert.equal(allocated.length,i+1,'Animating a cached chunk must not allocate another canvas');
+  assert(allocated.reduce((sum,value)=>sum+value.width*value.height,0)<=limit);
+  f.water.index++;f.draw({terrainRevision:0});assert.equal(allocated.length,i+1);assert.equal(f.cache.stats(f.c).builds,stats.builds);
+ }
+ f.cache.invalidate(f.c);assert.equal(f.cache.stats(f.c).pixels,0);assert(allocated.every(value=>value.width===0&&value.height===0));
+});
+
+test('only changed water frames refresh chunks that contain actual projected lake pixels',()=>{
+ const f=fixture();f.doc.cells['3,3']={surface:'water',level:2};f.draw({terrainRevision:0});
+ const first=f.paints.length,builds=f.cache.stats(f.c).builds;
+ for(let i=0;i<60;i++)f.draw({terrainRevision:0});
+ assert.equal(f.paints.length,first,'Unchanged water must reuse the complete cached raster');
+ f.water.index++;f.draw({terrainRevision:0});const updated=f.paints.length;
+ assert.equal(updated-first,1,'The padded chunk containing the lake refreshes, without repainting empty neighboring patch rectangles');
+ assert.equal(f.cache.stats(f.c).builds,builds);assert.equal(f.cache.stats(f.c).liveBuilds,1);
+ f.water.image={width:64,height:64};f.draw({terrainRevision:0});assert.equal(f.paints.length,updated+1,'A completed worker bitmap can arrive while its requested frame key stays unchanged');
+});
+
+test('a requested worker frame does not rebake until its new immutable bitmap arrives',()=>{
+ const previous=globalThis.ImageBitmap;class Bitmap{}globalThis.ImageBitmap=Bitmap;
+ try{
+  const f=fixture();f.water.image=new Bitmap();f.doc.cells['3,3']={surface:'water',level:2};f.draw({terrainRevision:0});const first=f.paints.length;
+  f.water.index++;f.draw({terrainRevision:0});assert.equal(f.paints.length,first,'A pending worker request reused the existing completed water frame');
+  f.water.image=new Bitmap();f.draw({terrainRevision:0});assert.equal(f.paints.length,first+1);assert.equal(f.cache.stats(f.c).liveBuilds,1);
+ }finally{if(previous===undefined)delete globalThis.ImageBitmap;else globalThis.ImageBitmap=previous;}
+});
+
+test('a prefetched lake baked across a water change is refreshed before its first visible draw',()=>{
+ const f=idleFixture();f.doc.cells['19,3']={surface:'water',level:2};f.draw({terrainRevision:0});
+ let turns=0;
+ while(!f.steps.some(step=>step.bounds.x0===14&&step.bounds.y1===17)){assert(f.tick());assert(++turns<1000);}
+ f.water.index++;f.drain();
+ const before=f.cache.stats(f.c);f.c.transform.e=-1024*.5;f.draw({terrainRevision:0});
+ assert.equal(f.cache.stats(f.c).liveBuilds,before.liveBuilds+1);
+ const refreshed=f.paints.filter(paint=>paint.opts.liveTerrainPatch);assert.equal(refreshed.length,1);assert.equal(refreshed[0].bounds.x0,14);assert.equal(refreshed[0].bounds.y1,17);
+ assert.notEqual(refreshed[0].ctx,f.c,'Water refreshes its cached raster rather than drawing a rectangle on the screen');
 });

@@ -1,5 +1,5 @@
 import {residents} from './resident-profiles.mjs?v=opera-parallax-1';
-import {CATCH_PATTERNS,NOTE_VALUES,catchAttacks,sameRhythm} from './town-game-rules.mjs?v=town-compact-island-1';
+import {CATCH_PATTERNS,NOTE_VALUES,catchAttacks,sameRhythm} from './town-game-rules.mjs?v=town-coast-pier-1';
 import {createGameAudio,noteSVG,noteName,gameButton} from './town-game-audio.mjs?v=town-store-halls-1';
 
 const profiles=new Map(residents.map(resident=>[resident.id,resident]));

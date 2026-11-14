@@ -1,4 +1,4 @@
-import {height,TILE} from './model.mjs?v=town-compact-island-1';
+import {height,TILE} from './model.mjs?v=town-coast-pier-1';
 
 const tileKey=p=>Math.floor(p.x/TILE)+','+Math.floor(p.y/TILE);
 const sign=(actor,flight)=>{
