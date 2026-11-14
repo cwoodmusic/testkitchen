@@ -12,10 +12,10 @@ import re
 from playwright.sync_api import sync_playwright
 
 ROOT = Path(__file__).resolve().parents[1]
-OUT = ROOT / 'work/rhythm-blocks-shapes'
+OUT = ROOT / 'work/rhythm-blocks-four'
 OUT.mkdir(parents=True, exist_ok=True)
-PROTECTED = {'musicArcadeV1': '{"test":"preserve arcade"}', 'codaNotesWalletV1': '{"notes":23}', 'codaRhythmBlocksBestV1': '3210'}
-UNITS = {'quarter': 2, 'eighth-pair': 2, 'sixteenth-group': 2, 'half': 4, 'whole': 8, 'eighth': 1, 'quarter-rest': 2, 'half-rest': 4, 'whole-rest': 8, 'dotted-half': 6, 'sixteenth-pair': 1}
+PROTECTED = {'musicArcadeV1': '{"test":"preserve arcade"}', 'codaNotesWalletV1': '{"notes":23}', 'codaRhythmBlocksBestV1': '3210', 'codaRhythmBlocksShapesBestV1': '4400'}
+UNITS = {'quarter': 2, 'eighth-pair': 2, 'sixteenth-group': 2, 'half': 4, 'eighth': 1, 'quarter-rest': 2, 'half-rest': 4, 'dotted-half': 6, 'sixteenth-pair': 1}
 
 class Quiet(SimpleHTTPRequestHandler):
     def log_message(self, *_):
@@ -54,7 +54,7 @@ def open_page(browser, url, counters, viewport=(1366, 768), touch=False, rng='()
     page.on('console', lambda message: errors.append(message.text) if message.type == 'error' else None)
     page.goto(url)
     wait_state(page, "rhythmBlocks.state.phase==='idle'")
-    assert 'rhythm-blocks-shapes-1' in page.locator('script[type="module"]').get_attribute('src')
+    assert 'rhythm-blocks-four-1' in page.locator('script[type="module"]').get_attribute('src')
     return context, page, errors
 
 def cells(piece, row=None):
@@ -128,16 +128,19 @@ def help_dialog(page):
     page.locator('#help').click()
     dialog = page.get_by_role('dialog')
     dialog.wait_for(state='visible')
-    assert dialog.locator('.legend-row').count() == 11
-    assert dialog.locator('svg').count() == 11
-    assert re.search(r'different pieces', dialog.inner_text(), re.I)
+    assert dialog.locator('.legend-row').count() == 9
+    assert dialog.locator('svg').count() == 9
+    names = dialog.locator('.legend-name').all_inner_texts()
+    assert 'Whole note' not in names and 'Whole rest' not in names
+    assert 'Eighth note' in names and 'Two sixteenth notes' in names
+    assert re.search(r'4\s*beats|four.beat', dialog.inner_text(), re.I)
     dialog.get_by_role('button', name=re.compile(r'close|got it|done', re.I)).first.click()
     dialog.wait_for(state='hidden')
 
 def desktop(browser, url, counters):
     context, page, errors = open_page(browser, url, counters, protected=True)
     layout = assert_layout(page)
-    assert page.locator('#best').inner_text() == '0', 'Old single-note best must not become shaped best.'
+    assert page.locator('#best').inner_text() == '0', 'Earlier rulesets must not become the new four-beat best.'
     help_dialog(page)
     initial = start(page)
     identity = initial['active']['id']
@@ -174,7 +177,7 @@ def desktop(browser, url, counters):
     wait_state(page, "rhythmBlocks.state.phase==='falling'")
     dropped = assert_piece_ui(page)
     assert page.locator('#board .tile.settled').count() == 4
-    assert dropped['score'] == 0 and dropped['lastClear'] is None, 'A new shape must not clear itself.'
+    assert dropped['score'] == 0 and dropped['lastClear'] is None, 'This O fixture has no four-beat row/column.'
     for cell in landing:
         assert dropped['board'][cell['row']][cell['col']] == cell['kind']
         assert str(dropped['boardOwners'][cell['row']][cell['col']]) == cell['owner']
@@ -205,7 +208,7 @@ def desktop(browser, url, counters):
     assert not errors, errors
     context.close()
     return {'passed': True, 'layout': layout, 'fourCellMovementRotationAndIdentity': True, 'wallCollision': True,
-            'ghostAndNextGeometry': True, 'hardDropPreservesOwnership': True, 'samePieceCannotSelfClear': True,
+            'ghostAndNextGeometry': True, 'hardDropPreservesOwnership': True,
             'pauseBlocksMovementRotationDropAndGravity': True, 'restartSoundHelp': True, 'protectedProgress': True, 'errors': errors}
 
 def mobile(browser, url, counters):
@@ -241,62 +244,92 @@ def mobile(browser, url, counters):
     context.close()
     return {'passed': True, 'layout': layout, 'touchFourCellMovementRotationAndDrop': True, 'pauseResumeRestart': True, 'errors': errors}
 
-def seeded_clear(browser, url, counters, beats):
+def seeded_clear(browser, url, counters, combo=False):
     board = [[None] * 10 for _ in range(24)]
-    if beats == 4:
+    if not combo:
         board[23][6] = 'quarter'
     else:
-        board[23][6], board[23][7] = 'half', 'dotted-half'
+        # Three quarters on either side do not clear until the O's two top
+        # quarters bridge the gap. The resulting eight quarters are TWO runs.
+        for col in [1, 2, 3, 6, 7, 8]:
+            board[22][col] = 'quarter'
     context, page, errors = open_page(browser, url, counters, board=board, protected=True)
     initial = start(page)
     assert initial['active']['shape'] == 'O' and initial['active']['col'] == 4
     page.keyboard.press('Space')
     wait_state(page, "rhythmBlocks.state.phase==='clearing'")
     clearing = state(page)
-    pattern = next(pattern for pattern in clearing['clearingMatches'] if pattern['axis'] == 'horizontal' and pattern['units'] == beats * 2)
-    owners = {clearing['boardOwners'][cell['row']][cell['col']] for cell in pattern['cells']}
-    assert len(pattern['cells']) >= 2 and len(owners) >= 2
-    assert initial['active']['id'] in owners and any(owner < 0 for owner in owners)
-    page.screenshot(path=str(OUT / f'actual-{beats}-beat-clear.png'))
-    expected = 200 if beats == 4 else 500
+    patterns = clearing['clearingMatches']
+    assert len(patterns) == (2 if combo else 1)
+    assert all(pattern['units'] == 8 and pattern['axis'] == 'horizontal' for pattern in patterns)
+    owners = {clearing['boardOwners'][cell['row']][cell['col']] for pattern in patterns for cell in pattern['cells']}
+    keys = [(cell['row'], cell['col']) for pattern in patterns for cell in pattern['cells']]
+    assert len(keys) == len(set(keys)), 'Separate same-axis four-beat runs must not overlap.'
+    assert initial['active']['id'] in owners
+    if combo:
+        assert len(keys) == 8 and all(kind == 'quarter' for pattern in patterns for kind in pattern['kinds'])
+    page.screenshot(path=str(OUT / ('two-four-beat-combo.png' if combo else 'single-four-beat-clear.png')))
+    expected = 500 if combo else 200
     wait_state(page, f'rhythmBlocks.state.score==={expected}')
     wait_state(page, "rhythmBlocks.state.phase==='falling'")
     final = assert_piece_ui(page)
     assert final['lastClear']['points'] == expected and page.locator('#score').inner_text() == str(expected)
+    if combo:
+        assert 'Combo' in page.locator('#feedback').inner_text()
+        assert '2 runs' in page.locator('#feedback').inner_text()
+        assert final['lastClear']['comboRuns'] == 2
+        page.screenshot(path=str(OUT / 'two-four-beat-combo-result.png'))
     assert page.locator('#board .tile.settled').count() == 2
     assert page.locator('#best').inner_text() == str(expected)
-    assert page.evaluate('localStorage.getItem("codaRhythmBlocksShapesBestV1")') == str(expected)
+    assert page.evaluate('localStorage.getItem("codaRhythmBlocksFourBestV1")') == str(expected)
     page.reload()
     wait_state(page, "rhythmBlocks.state.phase==='idle'")
     assert page.locator('#best').inner_text() == str(expected)
     assert page.evaluate('(keys)=>Object.fromEntries(keys.map(key=>[key,localStorage.getItem(key)]))', list(PROTECTED)) == PROTECTED
     assert not errors, errors
     context.close()
-    return {'passed': True, 'beats': beats, 'points': expected, 'patternKinds': pattern['kinds'], 'distinctPieceOwners': len(owners),
-            'realDropAndClear': True, 'bestPersistsUnderNewKey': True, 'oldSingleBestAndOtherProgressPreserved': True, 'errors': errors}
+    return {'passed': True, 'fourBeatRuns': len(patterns), 'points': expected, 'patternKinds': [pattern['kinds'] for pattern in patterns],
+            'visibleComboFeedback': combo,
+            'eightQuartersBecomeTwoFourBeatRuns': combo, 'realDropAndClear': True, 'bestPersistsUnderNewKey': True,
+            'olderRulesetBestsAndOtherProgressPreserved': True, 'errors': errors}
+
+def same_piece_clear(browser, url, counters):
+    context, page, errors = open_page(browser, url, counters, rng='()=>.995')
+    initial = start(page)
+    assert initial['active']['shape'] == 'I'
+    assert [cell['kind'] for cell in initial['active']['cells']] == ['sixteenth-pair'] * 3 + ['dotted-half']
+    page.keyboard.press('Space')
+    wait_state(page, "rhythmBlocks.state.phase==='clearing'")
+    snapshot = state(page)
+    assert len(snapshot['clearingMatches']) == 1
+    pattern = snapshot['clearingMatches'][0]
+    assert pattern['units'] == 8 and len(pattern['cells']) == 3
+    assert {snapshot['boardOwners'][cell['row']][cell['col']] for cell in pattern['cells']} == {initial['active']['id']}
+    page.screenshot(path=str(OUT / 'same-piece-four-beat-clear.png'))
+    wait_state(page, "rhythmBlocks.state.phase==='falling' && rhythmBlocks.state.score===200")
+    assert page.locator('#board .tile.settled').count() == 1
+    assert not errors, errors
+    context.close()
+    return {'passed': True, 'fourBeatsWithinLongerLineAndSamePiece': True, 'points': 200, 'errors': errors}
 
 def game_over(browser, url, counters):
-    rng = '(()=>{let x=1;return()=>((x=(x*1664525+1013904223)>>>0)/4294967296);})()'
-    context, page, errors = open_page(browser, url, counters, rng=rng)
-    start(page)
-    drops = 0
-    while drops < 80 and state(page)['phase'] != 'over':
-        wait_state(page, "['falling','over'].includes(rhythmBlocks.state.phase)")
-        if state(page)['phase'] == 'over':
-            break
-        page.keyboard.press('Space')
-        drops += 1
+    board = [[None] * 10 for _ in range(24)]
+    board[0][4] = 'quarter'
+    context, page, errors = open_page(browser, url, counters, board=board)
+    page.locator('#primary-action').click()
     wait_state(page, "rhythmBlocks.state.phase==='over'")
     assert state(page)['active'] is None and page.locator('#overlay').is_visible()
     assert page.locator('#primary-action').inner_text() == 'Play again'
     page.screenshot(path=str(OUT / 'game-over.png'))
+    first_start = next(event['id'] for event in state(page)['events'] if event['type'] == 'start')
     page.locator('#primary-action').click()
-    wait_state(page, "rhythmBlocks.state.phase==='falling'")
-    assert not any(kind for row in state(page)['board'] for kind in row)
-    assert state(page)['score'] == 0 and page.locator('#active .tile').count() == 4
+    wait_state(page, "rhythmBlocks.state.phase==='over'")
+    assert next(event['id'] for event in state(page)['events'] if event['type'] == 'start') > first_start
+    assert state(page)['score'] == 0
     assert not errors, errors
     context.close()
-    return {'passed': True, 'realDroppedPieces': drops, 'topOutAndFreshPlayAgain': True, 'errors': errors}
+    return {'passed': True, 'blockedSpawnFixture': True, 'playAgainStartsNewRun': True,
+            'seededObstacleIntentionallyRestored': True, 'freshEmptyRestartCoveredByDesktopAndMobile': True, 'errors': errors}
 
 def layout_gallery(browser, url, counters):
     results = []
@@ -342,7 +375,8 @@ def main():
             browser = pw.chromium.launch(executable_path='/usr/bin/chromium', args=['--no-sandbox'])
             url = f'http://127.0.0.1:{server.server_port}/games/rhythm-blocks/'
             results = {'desktop': desktop(browser, url, counters), 'mobile': mobile(browser, url, counters),
-                       'fourBeatClear': seeded_clear(browser, url, counters, 4), 'eightBeatClear': seeded_clear(browser, url, counters, 8),
+                       'fourBeatClear': seeded_clear(browser, url, counters), 'twoFourBeatCombo': seeded_clear(browser, url, counters, combo=True),
+                       'samePieceClear': same_piece_clear(browser, url, counters),
                        'gameOver': game_over(browser, url, counters), 'layouts': layout_gallery(browser, url, counters), **counters}
             browser.close()
         (OUT / 'results.json').write_text(json.dumps(results, indent=2) + '\n')

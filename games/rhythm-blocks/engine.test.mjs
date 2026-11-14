@@ -14,11 +14,11 @@ function connected(cells){const keys=new Set(cells.map(c=>`${c.row}:${c.col}`)),
 function validOwnership(state){for(let r=0;r<ROWS;r++)for(let c=0;c<COLUMNS;c++)assert.equal(state.board[r][c]===null,state.boardOwners[r][c]===null);}
 function placeAt(game,target){let attempts=20;while(game.state.active?.col!==target&&attempts-->0&&game.move(Math.sign(target-game.state.active.col))){}game.hardDrop();settle(game);}
 
-test('all eleven kinds keep exact half-beat durations, including two and four sixteenths',()=>{
- assert.equal(COLUMNS,10);assert.equal(ROWS,24);assert.equal(NOTE_KINDS.length,11);
- assert.deepEqual(NOTE_KINDS.map(k=>k.units),[2,2,2,4,8,1,2,4,8,6,1]);
+test('nine kinds exclude whole values and retain exact half-beats, including two and four sixteenths',()=>{
+ assert.equal(COLUMNS,10);assert.equal(ROWS,24);assert.equal(NOTE_KINDS.length,9);
+ assert.deepEqual(NOTE_KINDS.map(k=>k.units),[2,2,2,4,1,2,4,6,1]);assert.equal(NOTE_KIND_BY_ID.whole,undefined);assert.equal(NOTE_KIND_BY_ID['whole-rest'],undefined);
  assert.equal(NOTE_KIND_BY_ID['sixteenth-pair'].label,'Two sixteenth notes');assert.equal(NOTE_KIND_BY_ID['sixteenth-pair'].beats,.5);assert.equal(NOTE_KIND_BY_ID['sixteenth-group'].beats,1);
- assert(NOTE_KINDS.every(k=>Number.isInteger(k.units)&&k.beats===k.units/2&&k.label));assert.deepEqual(NOTE_KINDS.filter(k=>k.rest).map(k=>k.id),['quarter-rest','half-rest','whole-rest']);
+ assert(NOTE_KINDS.every(k=>Number.isInteger(k.units)&&k.beats===k.units/2&&k.label));assert.deepEqual(NOTE_KINDS.filter(k=>k.rest).map(k=>k.id),['quarter-rest','half-rest']);
  assert(Object.isFrozen(NOTE_KINDS)&&NOTE_KINDS.every(Object.isFrozen));
 });
 
@@ -40,28 +40,26 @@ test('every active and preview piece mixes at least two beat values, with an ear
   const game=createGame({rng:seeded(seed+1)});game.start();
   for(const piece of [game.state.active,game.state.next]){const values=piece.cells.map(c=>NOTE_KIND_BY_ID[c.kind].units);assert(new Set(values).size>=2);for(const cell of piece.cells){seen.add(cell.kind);total++;if(NOTE_KIND_BY_ID[cell.kind].units===2)oneBeat++;}}
  }
- assert(oneBeat/total>.6&&oneBeat/total<=.75);assert(seen.has('eighth')&&seen.has('sixteenth-pair'));
+ assert(oneBeat/total>.6&&oneBeat/total<=.75);assert(seen.has('eighth')&&seen.has('sixteenth-pair'));assert(!seen.has('whole')&&!seen.has('whole-rest'));
  for(const value of [0,.999]){const game=createGame({rng:()=>value});game.start();for(const p of [game.state.active,game.state.next])assert(new Set(p.cells.map(c=>NOTE_KIND_BY_ID[c.kind].units)).size>=2);}
 });
 
-test('matching requires the whole maximal run: no free singleton or subwindow inside six or ten beats',()=>{
- for(const kind of ['whole','whole-rest']){const board=empty();board[23][3]=kind;assert.deepEqual(findMatches(board),[]);}
- for(const count of [6,10]){const board=empty();put(board,23,0,Array(count).fill('quarter'));assert.deepEqual(findMatches(board),[]);}
- const vertical=empty();for(let row=5;row<11;row++)vertical[row][3]='quarter';assert.deepEqual(findMatches(vertical),[]);
- const eight=empty();put(eight,23,1,Array(8).fill('quarter'));const patterns=findMatches(eight);assert.equal(patterns.length,1);assert.equal(patterns[0].units,16);assert.equal(patterns[0].cells.length,8);
- const pair=empty();pair[22][4]=pair[23][4]='whole';assert.equal(findMatches(pair)[0].units,16);
+test('four-beat windows clear inside longer rows and columns without overlapping same-axis notes',()=>{
+ for(const count of [5,6,8,10]){const board=empty();put(board,23,0,Array(count).fill('quarter'));const patterns=findMatches(board);assert.equal(patterns.length,Math.floor(count/4));assert(patterns.every(p=>p.units===8&&p.cells.length===4));assert.equal(new Set(patterns.flatMap(p=>p.cells.map(c=>c.col))).size,patterns.length*4);}
+ const vertical=empty();for(let row=5;row<11;row++)vertical[row][3]='quarter';const matches=findMatches(vertical);assert.equal(matches.length,1);assert.equal(matches[0].axis,'vertical');
+ const totalEight=empty();put(totalEight,23,1,['dotted-half','dotted-half','half']);assert.deepEqual(findMatches(totalEight),[],'Eight total beats without a four-beat window is not a pattern');
 });
 
-test('four and eight beats count groups, rests, single eighths and double-sixteenths exactly',()=>{
+test('four beats count groups, rests, single eighths and double-sixteenths exactly',()=>{
  for(const kinds of [['eighth-pair','sixteenth-group','quarter-rest','quarter'],['dotted-half','eighth','sixteenth-pair'],['half-rest','half']]){const board=empty();put(board,22,2,kinds);const patterns=findMatches(board);assert.equal(patterns.length,1);assert.equal(patterns[0].units,8);assert.deepEqual(patterns[0].kinds,kinds);}
- const board=empty();put(board,23,1,['dotted-half','dotted-half','half-rest']);assert.equal(findMatches(board)[0].units,16);
+ const board=empty();put(board,23,1,['quarter','dotted-half','eighth','sixteenth-pair','dotted-half']);const patterns=findMatches(board);assert.equal(patterns.length,2,'Earliest finishing windows preserve two runs instead of choosing an overlapping middle window');assert.deepEqual(patterns.map(p=>p.cells.map(c=>c.col)).sort((a,b)=>a[0]-b[0]),[[1,2],[3,4,5]]);
 });
 
-test('provenance rejects self-clears even across gravity, while genuine cross-piece lines and crossings count',()=>{
- const board=empty();put(board,23,1,['quarter','eighth-pair','sixteenth-group','quarter-rest']);const owners=ownersFor(board,41);assert.deepEqual(findMatches(board,owners),[]);owners[23][4]=42;assert.equal(findMatches(board,owners).length,1);
+test('owners never restrict four-beat windows and crossing horizontal/vertical patterns are a valid combo',()=>{
+ const board=empty();put(board,23,1,['quarter','eighth-pair','sixteenth-group','quarter-rest']);const owners=ownersFor(board,41);assert.equal(findMatches(board,owners).length,1);owners[23][4]=42;assert.equal(findMatches(board,owners).length,1);
  const cross=empty();put(cross,12,3,Array(4).fill('quarter'));for(let row=10;row<14;row++)cross[row][4]='quarter';
  const patterns=findMatches(cross);assert.equal(patterns.length,2);assert.deepEqual(new Set(patterns.map(p=>p.axis)),new Set(['horizontal','vertical']));
- const own=ownersFor(cross,'same');own[10][4]='other';assert.deepEqual(findMatches(cross,own).map(p=>p.axis),['vertical'],'Each pattern needs its own two owners');
+ const own=ownersFor(cross,'same');assert.equal(findMatches(cross,own).length,2);own[10][4]='other';assert.equal(findMatches(cross,own).length,2,'Ownership cannot change which notes count');
  const game=createGame({initialBoard:cross,rng:()=>0});game.start();settle(game);assert.equal(game.state.score,500);assert.equal(clears(game)[0].cells.length,7);
 });
 
@@ -73,12 +71,12 @@ test('matching cannot wrap rows, jump gaps or bend, and malformed boards/owners 
  const occupied=empty();occupied[1][1]='quarter';assert.throws(()=>findMatches(occupied,empty()),/stable piece owner/);assert.throws(()=>createGame({initialOwners:[[null]]}),/24 rows/);
 });
 
-test('absoluteCells is pure and a lock writes all four squares atomically with one new owner and no self-clearing',()=>{
+test('absoluteCells is pure and a lock writes all four squares atomically, allowing a same-piece four-beat clear',()=>{
  const game=createGame({rng:rngForI()});game.start();const before=game.state.active,local=structuredClone(before.cells),absolute=absoluteCells(before,23,2);
  assert.deepEqual(absolute.map(c=>[c.row,c.col]),[[23,2],[23,3],[23,4],[23,5]]);assert.deepEqual(before.cells,local);
- assert.equal(game.hardDrop(),23);const state=game.state;assert.equal(state.score,0);assert.equal(state.phase,'falling');assert.equal(state.board.flat().filter(Boolean).length,4);assert.equal(state.boardOwners.flat().filter(v=>v===before.id).length,4);assert.equal(state.active.id,before.id+1);validOwnership(state);
- assert.deepEqual(state.board[23].slice(3,7),local.map(c=>c.kind));assert.equal(clears(game).length,0);
- const self=empty();put(self,23,0,['half','half']);assert.equal(findMatches(self).length,1);assert.deepEqual(findMatches(self,ownersFor(self,1)),[]);
+ assert.equal(game.hardDrop(),23);const state=game.state;assert.equal(state.score,0);assert.equal(state.phase,'clearing');assert.equal(state.board.flat().filter(Boolean).length,4);assert.equal(state.boardOwners.flat().filter(v=>v===before.id).length,4);validOwnership(state);
+ assert.deepEqual(state.board[23].slice(3,7),local.map(c=>c.kind));settle(game);assert.equal(game.state.score,200);assert.equal(game.state.active.id,before.id+1);assert.equal(game.state.board.flat().filter(Boolean).length,1);assert.equal(clears(game).length,1);
+ const self=empty();put(self,23,0,['half','half']);assert.equal(findMatches(self,ownersFor(self,1)).length,1);
 });
 
 test('movement and downward collision check every square, not only the anchor; blocked spawn never overwrites',()=>{
@@ -101,33 +99,36 @@ test('bounded wall and floor kicks keep all four cells inside the board, and an 
  const board=empty();put(board,2,0,Array(10).fill('dotted-half'));const blocked=createGame({initialBoard:board,rng:rngForI()});blocked.start();blocked.softDrop();const before=blocked.state.active,revision=blocked.revision;assert.equal(blocked.rotate(),false);assert.deepEqual(blocked.state.active,before);assert.equal(blocked.revision,revision);
 });
 
-test('real shaped drops make four/eight beats with older pieces, then flash, clear and resume automatically',()=>{
- for(const [seedKinds,points,units]of [[['quarter'],200,8],[['half','dotted-half'],500,16]]){
-  const board=empty();put(board,23,6,seedKinds);const game=createGame({initialBoard:board,rng:()=>0});game.start();assert.equal(game.state.phase,'falling');assert.equal(game.hardDrop(),22);assert.equal(game.state.phase,'clearing');assert.equal(game.state.clearingMatches[0].units,units);
+test('a real shaped drop clears four beats, flashes, settles and resumes automatically',()=>{
+  const board=empty();board[23][6]='quarter';const game=createGame({initialBoard:board,rng:()=>0});game.start();assert.equal(game.state.phase,'falling');assert.equal(game.hardDrop(),22);assert.equal(game.state.phase,'clearing');assert.equal(game.state.clearingMatches[0].units,8);
   const revision=game.revision;assert.equal(game.rotate(),false);assert.equal(game.move(1),false);assert.equal(game.softDrop(),false);assert.equal(game.hardDrop(),0);assert.equal(game.revision,revision);
-  advance(game,CLEAR_FLASH_MS-1);assert.equal(game.state.score,0);game.tick(1);assert.equal(game.state.score,points);assert.equal(game.state.phase,'settling');advance(game,SETTLE_MS);assert.equal(game.state.phase,'falling');assert.equal(clears(game).length,1);assert.equal(game.state.board.flat().filter(Boolean).length,2);validOwnership(game.state);
- }
+  advance(game,CLEAR_FLASH_MS-1);assert.equal(game.state.score,0);game.tick(1);assert.equal(game.state.score,200);assert.equal(game.state.phase,'settling');advance(game,SETTLE_MS);assert.equal(game.state.phase,'falling');assert.equal(clears(game).length,1);assert.equal(game.state.board.flat().filter(Boolean).length,2);validOwnership(game.state);
 });
 
-test('gravity carries owners without inventing cross-piece cascades; genuine second waves multiply points',()=>{
+test('one drop can make disjoint four-beat runs, including eight quarters as a 500-point combo',()=>{
+ const board=empty();put(board,22,1,Array(3).fill('quarter'));put(board,22,6,Array(3).fill('quarter'));const game=createGame({initialBoard:board,rng:()=>0});game.start();assert.equal(game.state.phase,'falling');game.hardDrop();assert.equal(game.state.clearingMatches.length,2);assert(game.state.clearingMatches.every(p=>p.units===8));settle(game);
+ assert.equal(game.state.score,500);assert.equal(game.state.lastClear.comboRuns,2);assert.equal(game.state.lastClear.chain,1);assert.equal(game.state.board.flat().filter(Boolean).length,2);
+ const three=empty();for(let row=12;row<24;row++)three[row][0]='quarter';const triple=createGame({initialBoard:three,rng:()=>0});triple.start();settle(triple);assert.equal(triple.state.score,800);assert.equal(triple.state.lastClear.comboRuns,3);assert.equal(triple.state.lastClear.patterns.length,3);
+});
+
+test('gravity preserves owner metadata, while same-owner cascades count toward this drop’s cumulative combo',()=>{
  const board=empty();put(board,23,0,Array(4).fill('quarter'));board[20][0]='half';board[21][1]='quarter';board[22][2]='quarter';
  for(const distinct of [false,true]){
-  const owners=ownersFor(board,(r,c)=>r===23?`base:${c}`:distinct?`upper:${c}`:'one-piece'),game=createGame({initialBoard:board,initialOwners:owners,rng:()=>0});game.start();settle(game);
-  assert.equal(game.state.score,distinct?600:200);assert.equal(clears(game).length,distinct?2:1);validOwnership(game.state);
-  if(distinct){assert.deepEqual(clears(game).map(e=>e.chain),[1,2]);assert.deepEqual(clears(game)[1].patterns[0].kinds,['half','quarter','quarter']);}
-  else{assert.deepEqual(game.state.board[23].slice(0,3),['half','quarter','quarter']);assert.deepEqual(game.state.boardOwners[23].slice(0,3),Array(3).fill('one-piece'));assert.equal(findMatches(game.state.board).length,1);assert.deepEqual(findMatches(game.state.board,game.state.boardOwners),[]);}
+  const owners=ownersFor(board,(r,c)=>r===23?`base:${c}`:distinct?`upper:${c}`:'one-piece'),game=createGame({initialBoard:board,initialOwners:owners,rng:()=>0});game.start();advance(game,CLEAR_FLASH_MS);
+  assert.equal(game.state.phase,'settling');assert.deepEqual(game.state.board[23].slice(0,3),['half','quarter','quarter']);assert.deepEqual(game.state.boardOwners[23].slice(0,3),distinct?['upper:0','upper:1','upper:2']:Array(3).fill('one-piece'));assert.equal(findMatches(game.state.board,game.state.boardOwners).length,1);validOwnership(game.state);settle(game);
+  assert.equal(game.state.score,700);assert.equal(clears(game).length,2);assert.deepEqual(clears(game).map(e=>e.chain),[1,2]);assert.deepEqual(clears(game).map(e=>e.comboRuns),[1,2]);assert.deepEqual(clears(game).map(e=>e.points),[200,500]);assert.deepEqual(clears(game)[1].patterns[0].kinds,['half','quarter','quarter']);
+  const previous=game.state.lastClear.id;game.hardDrop();settle(game);game.hardDrop();settle(game);const nextDrop=clears(game).find(e=>e.id>previous);assert(nextDrop);assert.equal(nextDrop.chain,1);assert.equal(nextDrop.comboRuns,nextDrop.patterns.length,'A new drop starts its own combo count');assert.equal(nextDrop.points,200*nextDrop.patterns.length+100*(nextDrop.patterns.length-1));
  }
 });
 
 test('settled ceiling risk waits for a real rescue pattern and otherwise ends the game without overwriting',()=>{
  const full=empty();for(let row=0;row<ROWS;row++)full[row][0]='dotted-half';const over=createGame({initialBoard:full,rng:()=>0});over.start();assert.equal(over.state.phase,'over');assert.equal(over.state.active,null);
- full[0][0]='half';full[1][0]='half';const noWindow=createGame({initialBoard:full,rng:()=>0});noWindow.start();assert.equal(noWindow.state.phase,'over','A longer vertical run cannot be rescued by a four-beat subwindow');
- full[0][1]='half';const rescue=createGame({initialBoard:full,rng:()=>0});rescue.start();assert.equal(rescue.state.phase,'clearing');assert.equal(rescue.state.events.some(e=>e.type==='over'),false);settle(rescue);assert.equal(rescue.state.phase,'falling');assert.equal(rescue.state.board[0][0],null);assert.equal(rescue.state.score,200);
+ full[0][0]='half';full[1][0]='half';const rescue=createGame({initialBoard:full,rng:()=>0});rescue.start();assert.equal(rescue.state.phase,'clearing','A four-beat window can rescue the ceiling even inside a longer column');assert.equal(rescue.state.events.some(e=>e.type==='over'),false);settle(rescue);assert.equal(rescue.state.phase,'falling');assert.equal(rescue.state.board[0][0],null);assert.equal(rescue.state.score,200);
 });
 
-test('a newly locked ceiling piece resolves cross-owner rescue and cascades before top-out and level progression',()=>{
+test('a newly locked ceiling piece resolves crossing rescue and cascades before top-out and level progression',()=>{
  const board=empty();board[1][6]='quarter';board[2][4]=board[2][5]='dotted-half';const game=createGame({initialBoard:board,rng:()=>0});game.start();assert.equal(game.state.phase,'falling');assert.equal(game.hardDrop(),0);assert.equal(game.state.phase,'clearing');assert.equal(game.state.events.some(e=>e.type==='over'),false);
- settle(game);assert.equal(game.state.phase,'falling');assert.equal(game.state.score,1200);assert.equal(game.state.level,2);assert.equal(game.state.fallIntervalMs,995);assert.deepEqual(clears(game).map(e=>e.chain),[1,2]);assert.equal(game.state.events.some(e=>e.type==='over'),false);assert(game.state.board.flat().every(c=>c===null));
+ settle(game);assert.equal(game.state.phase,'falling');assert.equal(game.state.score,1500);assert.equal(game.state.level,2);assert.equal(game.state.fallIntervalMs,995);assert.deepEqual(clears(game).map(e=>e.chain),[1,2]);assert.deepEqual(clears(game).map(e=>e.comboRuns),[2,4]);assert.deepEqual(clears(game).map(e=>e.points),[500,1000]);assert.equal(game.state.events.some(e=>e.type==='over'),false);assert(game.state.board.flat().every(c=>c===null));
 });
 
 test('pause freezes clocks and input; tick is bounded and revision changes only when visible state changes',()=>{
@@ -156,12 +157,4 @@ test('snapshots and fixtures isolate active/preview cells and owners; seeded pla
  const state=game.state;state.active.cells[0].kind='whole';state.next.cells[0].kind='whole';state.boardOwners[23][0]='changed';state.events[0].type='changed';assert.equal(game.state.active.cells[0].kind,'quarter');assert.equal(game.state.next.cells[0].kind,'quarter');assert.equal(game.state.boardOwners[23][0],'seed');assert.equal(game.state.events[0].type,'start');
  const a=createGame({rng:seeded(55)}),b=createGame({rng:seeded(55)});a.start();b.start();for(let i=0;i<15;i++)for(const g of [a,b])if(g.state.phase!=='over'){g.rotate(i%2?1:-1);placeAt(g,i%6);}
  assert.deepEqual(a.state,b.state);assert.throws(()=>createGame({rng:()=>1}).start(),/rng must return/);assert.throws(()=>createGame({rng:null}),/rng must be/);
-});
-
-test('fixed-seed center hard-drop spam reaches top-out instead of generating endless free clears',()=>{
- for(const seed of [1,7,17,42,55,117,233,777,1049,8191]){
-  const game=createGame({rng:seeded(seed)});game.start();let pieces=0;
-  while(game.state.phase!=='over'&&pieces<120){game.hardDrop();settle(game);pieces++;validOwnership(game.state);}
-  assert.equal(game.state.phase,'over',`Seed ${seed} survived ${pieces} mindless drops`);assert(pieces<120);assert(Number.isSafeInteger(game.state.score));
- }
 });

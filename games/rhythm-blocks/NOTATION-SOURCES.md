@@ -1,9 +1,9 @@
 # Musical notation outlines
 
-`notation.mjs` embeds five Bravura glyph outlines from the repository's existing
-`../rhythm-room/Bravura.woff`: SMuFL `noteheadWhole` (U+E0A2), `noteheadHalf`
-(U+E0A3), `noteheadBlack` (U+E0A4), `flag8thUp` (U+E240), and `restQuarter`
-(U+E4E5). Stem, beam, dot and half/whole-rest reference geometry uses SVG shapes.
+`notation.mjs` embeds four Bravura glyph outlines from the repository's existing
+`../rhythm-room/Bravura.woff`: SMuFL `noteheadHalf` (U+E0A3), `noteheadBlack`
+(U+E0A4), `flag8thUp` (U+E240), and `restQuarter` (U+E4E5). Stem, beam, dot and
+half-rest reference geometry uses SVG shapes.
 
 Bravura is by Steinberg Media Technologies GmbH and licensed under the SIL Open
 Font License 1.1. The complete notice and license accompany these outlines in
@@ -22,4 +22,5 @@ The grouped symbols keep their musical meanings: `eighth-pair` has two heads
 and one beam (one beat), `sixteenth-pair` has two heads and two beams (half a
 beat), and `sixteenth-group` has four heads and two beams (one beat). Values
 use a quarter-note beat and are supplied by the caller. The single eighth note
-remains available separately. All eleven symbols use the same 64×64 viewBox.
+remains available separately. The whole-note and whole-rest symbols are removed;
+all nine remaining symbols use the same 64×64 viewBox.

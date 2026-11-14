@@ -95,7 +95,7 @@ class RhythmBlocksLaunchTests(world.WorldBrowserCase):
         self.page.locator('#returnworld').click()
         self.page.locator('#worldGamesBtn').click()
         self.page.locator('[data-arcade-game="0"]').click()
-        self.page.wait_for_function("document.querySelector('#gameiframe').contentDocument?.documentElement.dataset.codaGame==='pitch'")
+        self.page.wait_for_function("document.querySelector('#gameiframe').contentDocument?.documentElement?.dataset.codaGame==='pitch'")
         other = self.page.locator('#gameiframe').element_handle().content_frame()
         other.evaluate("parent.postMessage({coda:1,game:'rhythm-blocks',type:'close'},location.origin)")
         self.page.wait_for_timeout(100)

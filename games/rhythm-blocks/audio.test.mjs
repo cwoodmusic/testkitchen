@@ -57,16 +57,16 @@ test('paired eighths and four-sixteenth groups schedule distinct attacks at thei
 });
 
 test('rests advance the full silent duration before the following attacks',async t=>{
- const {contexts}=fakeAudio(t),audio=createRhythmAudio();await audio.unlock();audio.playPattern(['quarter-rest','half-rest','whole-rest','quarter','quarter-rest','half']);
- const context=contexts[0],base=context.currentTime+.035;assert.equal(context.oscillators.length,2);near(context.oscillators[0].starts[0],base+7*BEAT);near(context.oscillators[1].starts[0],base+9*BEAT);
- audio.playPattern(['quarter-rest','half-rest','whole-rest']);assert.equal(context.oscillators.length,2,'An all-rest pattern creates no oscillators');assert(context.oscillators.every(osc=>osc.stops.at(-1)===undefined),'Replacing the pattern stops its old voices immediately');
+ const {contexts}=fakeAudio(t),audio=createRhythmAudio();await audio.unlock();audio.playPattern(['quarter-rest','half-rest','quarter-rest','quarter','quarter-rest','half']);
+ const context=contexts[0],base=context.currentTime+.035;assert.equal(context.oscillators.length,2);near(context.oscillators[0].starts[0],base+4*BEAT);near(context.oscillators[1].starts[0],base+6*BEAT);
+ audio.playPattern(['quarter-rest','half-rest','quarter-rest']);assert.equal(context.oscillators.length,2,'An all-rest pattern creates no oscillators');assert(context.oscillators.every(osc=>osc.stops.at(-1)===undefined),'Replacing the pattern stops its old voices immediately');
 });
 
-test('half, dotted-half and whole notes sustain proportionally; the whole is not truncated by a fixed cap',async t=>{
- const {contexts}=fakeAudio(t),audio=createRhythmAudio();await audio.unlock();audio.playPattern(['half','dotted-half','whole','eighth']);
- const context=contexts[0],base=context.currentTime+.035,beats=[2,3,4,.5],offsets=[0,2,5,9];
+test('half and dotted-half notes sustain proportionally, while a single eighth has a half-beat gate',async t=>{
+ const {contexts}=fakeAudio(t),audio=createRhythmAudio();await audio.unlock();audio.playPattern(['half','dotted-half','eighth']);
+ const context=contexts[0],base=context.currentTime+.035,beats=[2,3,.5],offsets=[0,2,5];
  context.oscillators.forEach((osc,index)=>{near(osc.starts[0],base+offsets[index]*BEAT);near(osc.stops[0]-osc.starts[0],beats[index]*BEAT*.82+.025);});
- assert(context.gains[2].gain.events[2].time-context.oscillators[2].starts[0]>1.8,'A four-beat note must keep its full musical gate');
+ assert(context.gains[1].gain.events[2].time-context.oscillators[1].starts[0]>1.3,'A dotted half keeps its full musical gate');
 });
 
 test('a new pattern replaces every scheduled old voice without stale ended callbacks stopping its replacement',async t=>{
@@ -83,10 +83,10 @@ test('naturally ended voices disconnect and leave the active collection',async t
 });
 
 test('mute and pause suspension cancel future voices, prevent playback and can resume cleanly',async t=>{
- const {contexts}=fakeAudio(t),audio=createRhythmAudio();await audio.unlock();audio.playPattern(['quarter','whole']);const context=contexts[0];
+ const {contexts}=fakeAudio(t),audio=createRhythmAudio();await audio.unlock();audio.playPattern(['quarter','dotted-half']);const context=contexts[0];
  await audio.suspend();assert.equal(context.state,'suspended');assert.equal(context.suspends,1);assert(context.oscillators.every(osc=>osc.stops.at(-1)===undefined));
  audio.playPattern(['quarter']);assert.equal(context.oscillators.length,2);await audio.unlock();assert.equal(context.resumes,1);audio.playPattern(['quarter']);assert.equal(context.oscillators.length,3);
- audio.setEnabled(false);assert.equal(context.oscillators.at(-1).stops.at(-1),undefined);audio.playPattern(['whole']);await audio.unlock();assert.equal(context.oscillators.length,3);assert.equal(contexts.length,1);
+ audio.setEnabled(false);assert.equal(context.oscillators.at(-1).stops.at(-1),undefined);audio.playPattern(['dotted-half']);await audio.unlock();assert.equal(context.oscillators.length,3);assert.equal(contexts.length,1);
  audio.setEnabled(true);await audio.unlock();audio.playPattern(['eighth']);assert.equal(context.oscillators.length,4);
 });
 

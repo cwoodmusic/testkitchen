@@ -1,10 +1,10 @@
-import {createGame,NOTE_KINDS,NOTE_KIND_BY_ID,ROWS,COLUMNS,absoluteCells} from './engine.mjs?v=rhythm-blocks-shapes-1';
-import {symbolMarkup} from './notation.mjs?v=rhythm-blocks-shapes-1';
-import {createRhythmAudio} from './audio.mjs?v=rhythm-blocks-shapes-1';
+import {createGame,NOTE_KINDS,NOTE_KIND_BY_ID,ROWS,COLUMNS,absoluteCells} from './engine.mjs?v=rhythm-blocks-four-1';
+import {symbolMarkup} from './notation.mjs?v=rhythm-blocks-four-1';
+import {createRhythmAudio} from './audio.mjs?v=rhythm-blocks-four-1';
 
 const $=id=>document.getElementById(id);
-const colors={quarter:'#7dd9be','eighth-pair':'#8bcfe7','sixteenth-group':'#b9abf1','sixteenth-pair':'#c1b8f7',half:'#efc573',whole:'#eaa894',eighth:'#a99beb','quarter-rest':'#e4d6ae','half-rest':'#d5af81','whole-rest':'#d5a1af','dotted-half':'#e0a9d4'};
-const BEST_KEY='codaRhythmBlocksShapesBestV1',SOUND_KEY='codaRhythmBlocksSoundV1';
+const colors={quarter:'#7dd9be','eighth-pair':'#8bcfe7','sixteenth-group':'#b9abf1','sixteenth-pair':'#c1b8f7',half:'#efc573',eighth:'#a99beb','quarter-rest':'#e4d6ae','half-rest':'#d5af81','dotted-half':'#e0a9d4'};
+const BEST_KEY='codaRhythmBlocksFourBestV1',SOUND_KEY='codaRhythmBlocksSoundV1';
 function read(key,fallback){try{return localStorage.getItem(key)??fallback;}catch{return fallback;}}
 function save(key,value){try{localStorage.setItem(key,String(value));}catch{}}
 let best=Math.max(0,Number(read(BEST_KEY,'0'))||0),soundEnabled=read(SOUND_KEY,'on')!=='off';
@@ -45,7 +45,7 @@ $('legend').innerHTML=legend();$('help-legend').innerHTML=legend();
 function updateSound(){const button=$('sound');button.textContent=soundEnabled?'Sound on':'Sound off';button.setAttribute('aria-pressed',String(soundEnabled));}
 updateSound();
 function announce(message){$('announcement').textContent=message;}
-function feedback(message){clearTimeout(feedbackTimer);$('feedback').textContent=message;feedbackTimer=setTimeout(()=>{$('feedback').textContent='Four beats to clear. Eight beats for a bonus.';},5000);}
+function feedback(message){clearTimeout(feedbackTimer);$('feedback').textContent=message;feedbackTimer=setTimeout(()=>{$('feedback').textContent='Four beats to clear. More runs, bigger combos.';},5000);}
 function stopHeld(){for(const timer of held.values())clearTimeout(timer);held.clear();}
 function update(){
  if(game.revision===seenRevision)return;
@@ -76,18 +76,19 @@ function update(){
  $('overlay-restart').hidden=!state.paused;
  if(state.paused){$('overlay-kicker').textContent='Take a breath';$('overlay-title').textContent='Paused';$('overlay-copy').textContent='Your rhythm will be right here when you’re ready.';$('primary-action').textContent='Resume';$('overlay-hint').textContent='P or Escape also resumes.';}
  else if(state.phase==='over'){$('overlay-kicker').textContent=`Level ${state.level} · ${format.format(state.score)} points`;$('overlay-title').textContent='That’s a wrap.';$('overlay-copy').textContent='The stack reached the top. Start a fresh board and find your next rhythm.';$('primary-action').textContent='Play again';$('overlay-hint').textContent=`Best score: ${format.format(best)}`;}
+ const clearInUpdate=state.events.some(event=>event.id>lastEvent&&event.type==='clear');
  for(const event of state.events){
   if(event.id<=lastEvent)continue;lastEvent=event.id;
   if(event.type==='clear'){
-   const maxBeats=Math.max(...event.patterns.map(pattern=>pattern.units/2));
-   const message=`${maxBeats} beats! +${format.format(event.points)}${event.chain>1?` · Chain ×${event.chain}`:''}${event.patterns.length>1?' · Combo!':''}`;
-   feedback(message);announce(`${message}. Score ${state.score}.`);
+   const runs=event.patterns.length,comboRuns=event.comboRuns??runs;
+   const message=`${runs>1?`${runs} × 4 beats`:'4 beats'}! +${format.format(event.points)}${comboRuns>1?` · Combo: ${comboRuns} runs`:''}${event.chain>1?` · Chain ×${event.chain}`:''}`;
+   feedback(message);announce(`${message}. Score ${event.score}. Level ${event.level}.`);
    audio.playPattern([...event.patterns].sort((a,b)=>b.units-a.units)[0].kinds);
-  }else if(event.type==='level'){feedback(`Level ${event.level} · Pick up the tempo`);announce(`Level ${event.level}. The blocks fall faster.`);}
+  }else if(event.type==='level'&&!clearInUpdate){feedback(`Level ${event.level} · Pick up the tempo`);announce(`Level ${event.level}. The blocks fall faster.`);}
   else if(event.type==='over'){audio.stop();stopHeld();announce(`Game over. ${state.score} points.`);$('primary-action').focus({preventScroll:true});}
  }
 }
-function begin(){stopHeld();audio.stop();void audio.unlock();game.start();lastFrame=performance.now();update();$('board').focus({preventScroll:true});feedback('Make a complete 4- or 8-beat run.');}
+function begin(){stopHeld();audio.stop();void audio.unlock();game.start();lastFrame=performance.now();update();$('board').focus({preventScroll:true});feedback('Find four beats. Stack up combos.');}
 function resume(){if($('help-dialog').open)return;void audio.unlock();game.resume();lastFrame=performance.now();update();$('board').focus({preventScroll:true});}
 function pause(){stopHeld();audio.stop();game.pause();update();}
 function togglePause(){if(state.paused)resume();else pause();}

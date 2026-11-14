@@ -1,4 +1,4 @@
-import {NOTE_KIND_BY_ID} from './engine.mjs?v=rhythm-blocks-shapes-1';
+import {NOTE_KIND_BY_ID} from './engine.mjs?v=rhythm-blocks-four-1';
 
 /** A small, local synthesizer. Rests advance time without making a sound. */
 export function createRhythmAudio({enabled=true}={}){
