@@ -5,7 +5,7 @@
  <meta name="viewport" content="width=device-width,initial-scale=1">
  <meta name="theme-color" content="#223b32">
  <title>Coda Town · Asset review</title>
- <link rel="stylesheet" href="review.css?v=town-asset-review-1">
+ <link rel="stylesheet" href="review.css?v=town-review-issues-1">
 </head>
 <body>
  <header class="topbar">
@@ -13,11 +13,11 @@
   <div class="top-actions"><span id="saveStatus" role="status">Loading catalog…</span><button id="downloadReview" class="primary" disabled>↓ Download review JSON</button><a class="back-link" href="../builder/?v=town-front-facing-2">Back to Builder ↗</a></div>
  </header>
  <main>
-  <section class="intro"><div><p class="eyebrow">THE TOWN ART DESK</p><h1>One asset at a time.</h1><p>Flip through the artwork, flag anything that needs fixing, and leave a note.</p></div><p id="summary" class="summary" aria-live="polite">Opening the complete asset library…</p></section>
+  <section class="intro"><div><p class="eyebrow">THE TOWN ART DESK</p><h1>One asset at a time.</h1><p>Find an asset, check its issues, and add any other notes.</p></div><p id="summary" class="summary" aria-live="polite">Opening the complete asset library…</p></section>
   <section class="filters" aria-label="Find assets">
-   <label class="search-label">Search<input id="search" type="search" placeholder="Name, asset ID, or your notes" autocomplete="off" disabled></label>
+   <label class="search-label">Search<input id="search" type="search" placeholder="Name, category, asset ID, or your notes" autocomplete="off" disabled></label>
    <label>Category<select id="category" disabled><option value="">All categories</option></select></label>
-   <label>Show<select id="reviewFilter" disabled><option value="all">All assets</option><option value="unreviewed">No reviews yet</option><option value="flagged">Flagged assets</option><option value="noted">With notes</option></select></label>
+   <label>Show<select id="reviewFilter" disabled><option value="all">All assets</option><option value="unreviewed">No reviews yet</option><option value="flagged">Flagged assets</option><option value="noted">With notes</option><optgroup label="Issue"><option value="issue:perspective">Needs 2/3 perspective</option><option value="issue:cut-off">Edges are cut off</option><option value="issue:angled">Angled</option><option value="issue:delete">Marked for deletion</option></optgroup></select></label>
   </section>
   <div class="review-layout">
    <section class="art-panel" aria-label="Asset artwork">
@@ -30,16 +30,23 @@
    <aside class="notes-panel" aria-label="Your review">
     <div><p class="eyebrow">YOUR REVIEW</p><h2>What needs a second look?</h2><p id="viewLabel" class="muted">Notes are saved separately for each view.</p></div>
     <div class="review-status" role="group" aria-label="Review status"><button id="flagReview" class="flag-button" aria-pressed="false" disabled>⚑ Needs fixing</button><button id="markGood" aria-pressed="false" disabled>✓ Looks good</button><button id="clearStatus" class="quiet" aria-pressed="true" disabled>Not reviewed</button></div>
-    <label class="note-label" for="note">What should change?</label><textarea id="note" rows="7" placeholder="For example: the left-facing couch has a strange shadow, or the top of the wall trim is cut off." disabled></textarea>
-    <p class="field-hint">Adding a note flags an unreviewed view. Everything saves as you type.</p>
+    <fieldset id="reviewIssues" class="review-issues" disabled><legend>Issues</legend>
+     <label><input id="issue-perspective" type="checkbox" data-issue="perspective">Needs 2/3 perspective</label>
+     <label><input id="issue-cut-off" type="checkbox" data-issue="cut-off">Edges are cut off</label>
+     <label><input id="issue-angled" type="checkbox" data-issue="angled">Angled</label>
+     <label><input id="issue-delete" type="checkbox" data-issue="delete">Mark for deletion</label>
+    </fieldset>
+    <p class="issue-hint">Check any that apply. Deletion marks are included in your review file.</p>
+    <label class="note-label" for="note">Other issues or details</label><textarea id="note" rows="5" placeholder="Describe any other issue, or add details about the boxes you checked." disabled></textarea>
+    <p class="field-hint">Everything saves as you go and is included in your download.</p>
     <p id="storageWarning" class="warning" role="status" hidden></p>
     <div class="jump-row"><label for="jumpIndex">Go to asset #</label><input id="jumpIndex" type="number" min="1" value="1" disabled><button id="jumpAsset" disabled>Go</button></div>
-    <div class="handoff"><span aria-hidden="true">↗</span><div><strong>Send the fixes back</strong><p>Download your review JSON, then attach that file in our chat. It includes the exact asset IDs, directions, flags, and notes.</p></div></div>
+    <div class="handoff"><span aria-hidden="true">↗</span><div><strong>Send the fixes back</strong><p>Download your review JSON, then attach that file in our chat. It includes the exact asset IDs, directions, checked issues, and notes.</p></div></div>
     <p class="keyboard-hint">Keyboard: ← / → browse · F flags the current view. Shortcuts pause while you type.</p>
    </aside>
   </div>
   <footer>Review progress stays in this browser. Download a file whenever you want a backup or are ready to send it.</footer>
  </main>
- <script type="module" src="app.mjs?v=town-front-facing-2"></script>
+ <script type="module" src="app.mjs?v=town-review-issues-1"></script>
 </body>
 </html>

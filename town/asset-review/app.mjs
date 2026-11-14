@@ -1,8 +1,11 @@
-import {createAssetReview} from './review-model.mjs?v=town-asset-review-1';
+import {createAssetReview,ASSET_REVIEW_ISSUES} from './review-model.mjs?v=town-review-issues-1';
 import {availableFacings,prepareAssetPreview,assetPreviewSample} from './preview.mjs?v=town-library-review-1';
 import {registerReviewRoomRugs,registerReviewMaterials,registerReviewWallSegments,registerReviewGroundSurfaces} from './catalog-extras.mjs?v=town-front-facing-2';
+import {ASSET_CATEGORIES,assetCategory,categorySearchTerms} from './categories.mjs?v=town-review-issues-1';
 
 const $=id=>document.getElementById(id),canvas=$('preview'),context=canvas.getContext('2d'),CURSOR_KEY='codaTownAssetReviewCursorV1';
+const issueControls=[...$('reviewIssues').querySelectorAll('input[data-issue]')];
+const issueLabels=new Map(ASSET_REVIEW_ISSUES.map(issue=>[issue.id,issue.label]));
 const names={south:'South',west:'West',north:'North',east:'East'};
 let catalog,assets=[],review,filtered=[],assetId='',facing='south',preview=null,ticket=0,pan={x:0,y:0},drag=null,loadChain=Promise.resolve();
 let animationFrame=0,lastAnimationFrame=-1;
@@ -36,6 +39,7 @@ function paint(time=performance.now()/1000){
 function reflectReview(){
  const current=review.get(assetId,facing);
  if($('note').value!==current.note)$('note').value=current.note;
+ for(const control of issueControls)control.checked=current.issues.includes(control.dataset.issue);
  for(const[id,status]of [['flagReview','flagged'],['markGood','ok'],['clearStatus','unreviewed']])$(id).setAttribute('aria-pressed',String(current.status===status));
  for(const button of $('facings').children)button.dataset.status=review.get(assetId,button.dataset.facing).status;
  updateProgress();
@@ -50,9 +54,10 @@ function rebuildPicker(){
  const terms=$('search').value.toLowerCase().trim().split(/\s+/).filter(Boolean),category=$('category').value,filter=$('reviewFilter').value;
  const records=new Map();for(const record of review.entries()){if(!records.has(record.assetId))records.set(record.assetId,[]);records.get(record.assetId).push(record);}
  filtered=assets.filter(asset=>{
-  if(category&&asset.group!==category)return false;
-  const entries=records.get(asset.id)||[],searchable=[asset.name,asset.id,asset.group,...entries.map(r=>r.note)].join(' ').toLowerCase();
+  if(category&&assetCategory(asset)!==category)return false;
+  const entries=records.get(asset.id)||[],searchable=[asset.name,asset.id,asset.group,asset.pack,categorySearchTerms(asset),...entries.flatMap(r=>[r.note,...r.issues.map(id=>issueLabels.get(id))])].join(' ').toLowerCase();
   if(!terms.every(term=>searchable.includes(term)))return false;
+  if(filter.startsWith('issue:'))return entries.some(r=>r.issues.includes(filter.slice(6)));
   return filter==='flagged'?entries.some(r=>r.status==='flagged'):filter==='noted'?entries.some(r=>r.note.trim()):filter==='unreviewed'?!entries.some(r=>r.status!=='unreviewed'):true;
  });
  const fragment=document.createDocumentFragment();
@@ -65,11 +70,12 @@ async function goTo(id,direction='south'){
  const asset=catalog.get(id);if(!asset)throw Error('That asset is not in the catalog.');
  if(!filtered.some(a=>a.id===id)){$('search').value='';$('category').value='';$('reviewFilter').value='all';rebuildPicker();}
  stopAnimation();assetId=id;const facings=availableFacings(asset);facing=facings.includes(direction)?direction:facings[0];preview=null;pan={x:0,y:0};$('zoom').value='fit';
- text($('assetName'),asset.name);text($('assetId'),asset.id);text($('assetGroup'),asset.group);$('assetPicker').value=id;$('emptyState').hidden=true;
+ text($('assetName'),asset.name);text($('assetId'),asset.id);text($('assetGroup'),assetCategory(asset));$('assetPicker').value=id;$('emptyState').hidden=true;
  $('facings').replaceChildren();for(const value of facings){const button=document.createElement('button');button.dataset.facing=value;button.textContent=facings.length===1?'Original'+(asset.facing&&asset.facing!=='south'?' · '+names[asset.facing]:''):names[value];button.setAttribute('aria-pressed',String(facing===value));button.onclick=()=>void goTo(id,value);$('facings').append(button);}
  const sample=assetPreviewSample(asset);
  text($('viewLabel'),sample?`Reviewing a ${sample.label}. Notes apply to this finish.`:facings.length===1?'Reviewing this asset’s original artwork.':`Reviewing the ${names[facing].toLowerCase()} view. Each direction has its own notes.`);
  for(const control of [$('flagReview'),$('markGood'),$('clearStatus'),$('note')])control.disabled=false;
+ $('reviewIssues').disabled=false;
  canvas.setAttribute('aria-label',asset.name+' · '+names[facing]+' preview');reflectReview();updateNavigation();saveCursor();paint();
  const request=++ticket;text($('previewStatus'),'Loading artwork…');$('previewStatus').dataset.error='false';$('retryPreview').hidden=true;
  try{
@@ -81,12 +87,13 @@ function filterChanged(){
  rebuildPicker();if(filtered.length){void goTo(filtered.some(a=>a.id===assetId)?assetId:filtered[0].id,facing);return;}
  ++ticket;stopAnimation();preview=null;assetId='';paint();$('emptyState').hidden=false;text($('assetName'),'No matching assets');text($('assetId'),'');text($('counter'),'0 / 0');text($('previewStatus'),'Change the search or filters to keep browsing.');$('facings').replaceChildren();$('retryPreview').hidden=true;
  for(const id of ['flagReview','markGood','clearStatus','note','previous','next'])$(id).disabled=true;$('note').value='';
+ $('reviewIssues').disabled=true;for(const control of issueControls)control.checked=false;
 }
 function navigate(delta){const index=filtered.findIndex(a=>a.id===assetId),next=filtered[index+delta];if(next)void goTo(next.id);}
 function setStatus(status){if(!assetId)return;review.set(assetId,facing,{status});reflectReview();}
 function downloadReview(){
- const report=review.snapshot();report.appVersion='town-front-facing-2';
- for(const item of report.reviews){const asset=catalog.get(item.assetId);if(!asset)continue;item.pack=asset.pack||null;item.owner=asset.collectionOwner||asset.owner||null;item.purpose=asset.purpose||null;item.sourceAssetId=asset.sourceAssetId||null;item.authoredFacing=asset.facing||'south';if(asset.texture)item.texture=asset.texture;if(asset.sourceRect)item.sourceRect={...asset.sourceRect};if(asset.finishId){item.finishId=asset.finishId;item.finishKind=asset.finishKind;item.materialOrigin={...asset.materialOrigin};}const sample=assetPreviewSample(asset);if(sample)item.sample={kind:sample.kind,columns:sample.columns,rows:sample.rows,width:sample.width,height:sample.height,tileWidth:sample.tileWidth,tileHeight:sample.tileHeight};const view=asset.getFacingView?.(item.facing,{image:false});if(view)item.view={id:view.id||null,facing:view.facing||view.direction||item.facing,width:view.w,height:view.h};}
+ const report=review.snapshot();report.appVersion='town-review-issues-1';
+ for(const item of report.reviews){const asset=catalog.get(item.assetId);if(!asset)continue;item.category=assetCategory(asset);item.pack=asset.pack||null;item.owner=asset.collectionOwner||asset.owner||null;item.purpose=asset.purpose||null;item.sourceAssetId=asset.sourceAssetId||null;item.authoredFacing=asset.facing||'south';if(asset.texture)item.texture=asset.texture;if(asset.sourceRect)item.sourceRect={...asset.sourceRect};if(asset.finishId){item.finishId=asset.finishId;item.finishKind=asset.finishKind;item.materialOrigin={...asset.materialOrigin};}const sample=assetPreviewSample(asset);if(sample)item.sample={kind:sample.kind,columns:sample.columns,rows:sample.rows,width:sample.width,height:sample.height,tileWidth:sample.tileWidth,tileHeight:sample.tileHeight};const view=asset.getFacingView?.(item.facing,{image:false});if(view)item.view={id:view.id||null,facing:view.facing||view.direction||item.facing,width:view.w,height:view.h};}
  const blob=new Blob([JSON.stringify(report,null,2)+'\n'],{type:'application/json'}),url=URL.createObjectURL(blob),link=document.createElement('a');link.href=url;link.download='coda-asset-review.json';document.body.append(link);link.click();link.remove();setTimeout(()=>URL.revokeObjectURL(url),1000);
 }
 async function start(){
@@ -94,12 +101,14 @@ async function start(){
  catalog=registerReviewRoomRugs(new Map(townCatalog));
  registerReviewMaterials(catalog);registerReviewWallSegments(catalog);registerReviewGroundSurfaces(catalog,{surfaces,groundTexture});
  assets=[...catalog.values()];review=createAssetReview({catalog});
- for(const group of [...new Set(assets.map(a=>a.group))].sort()){const option=document.createElement('option');option.value=group;option.textContent=group;$('category').append(option);}
+ const categoryCounts=new Map();for(const asset of assets){const category=assetCategory(asset);categoryCounts.set(category,(categoryCounts.get(category)||0)+1);}
+ for(const category of ASSET_CATEGORIES){const count=categoryCounts.get(category);if(!count)continue;const option=document.createElement('option');option.value=category;option.textContent=`${category} (${count.toLocaleString()})`;$('category').append(option);}
  for(const id of ['search','category','reviewFilter','downloadReview','jumpIndex','jumpAsset'])$(id).disabled=false;
  $('jumpIndex').max=String(assets.length);rebuildPicker();
  $('assetPicker').onchange=()=>void goTo($('assetPicker').value);$('search').oninput=filterChanged;$('category').onchange=$('reviewFilter').onchange=filterChanged;
  $('previous').onclick=()=>navigate(-1);$('next').onclick=()=>navigate(1);$('flagReview').onclick=()=>setStatus('flagged');$('markGood').onclick=()=>setStatus('ok');$('clearStatus').onclick=()=>setStatus('unreviewed');
- $('note').oninput=()=>{if(!assetId)return;const current=review.get(assetId,facing),note=$('note').value;review.set(assetId,facing,{note,status:note.trim()&&current.status==='unreviewed'?'flagged':current.status});reflectReview();};
+ for(const control of issueControls)control.onchange=()=>{if(!assetId)return;review.set(assetId,facing,{issues:issueControls.filter(input=>input.checked).map(input=>input.dataset.issue)});reflectReview();};
+ $('note').oninput=()=>{if(!assetId)return;const current=review.get(assetId,facing),note=$('note').value,patch={note};if(note.trim()&&current.status==='unreviewed')patch.status='flagged';review.set(assetId,facing,patch);reflectReview();};
  $('downloadReview').onclick=downloadReview;$('retryPreview').onclick=()=>void goTo(assetId,facing);
  $('jumpAsset').onclick=()=>{const index=Number($('jumpIndex').value)-1;if(Number.isInteger(index)&&assets[index])void goTo(assets[index].id);};$('jumpIndex').onkeydown=e=>{if(e.key==='Enter')$('jumpAsset').click();};
  $('zoom').onchange=()=>{pan={x:0,y:0};paint();};$('background').onchange=()=>{$('previewStage').dataset.background=$('background').value;};

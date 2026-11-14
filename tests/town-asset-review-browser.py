@@ -4,12 +4,15 @@ from http.server import SimpleHTTPRequestHandler, ThreadingHTTPServer
 from pathlib import Path
 from threading import Thread
 import json
+import re
 from playwright.sync_api import sync_playwright
 
 ROOT = Path(__file__).resolve().parents[1]
 OUT = ROOT / 'work/asset-review/browser'
 OUT.mkdir(parents=True, exist_ok=True)
 KEY = 'codaTownAssetReviewV1'
+ISSUES = {'perspective': 'Needs 2/3 perspective', 'cut-off': 'Edges are cut off',
+          'angled': 'Angled', 'delete': 'Mark for deletion'}
 SENTINELS = {'codaReviewMapSentinel': '{"map":"preserve"}',
              'codaReviewProfileSentinel': '{"notes":17,"fish":["preserve"]}'}
 
@@ -52,6 +55,18 @@ def note(page, asset_id, facing):
     return page.evaluate('([id,facing])=>townAssetReview.review.get(id,facing)', [asset_id, facing])
 
 
+def checkbox(page, issue):
+    return page.get_by_role('checkbox', name=ISSUES[issue], exact=True)
+
+
+def assert_issues(page, asset_id, facing, expected):
+    current = note(page, asset_id, facing)
+    assert current['issues'] == [issue for issue in ISSUES if issue in expected], current
+    if page.evaluate('townAssetReview.assetId') == asset_id and page.evaluate('townAssetReview.facing') == facing:
+        assert {issue for issue in ISSUES if checkbox(page, issue).is_checked()} == set(expected)
+    return current
+
+
 def download(page, filename):
     with page.expect_download() as pending:
         page.locator('#downloadReview').click()
@@ -92,6 +107,14 @@ try:
         assert set(option_ids(page)) == set(coverage['ids']), 'Every catalog item must be reachable, including hidden builder entries'
         assert set(coverage['surfaces']) == {'surface:'+s for s in ['grass','cobble','dirt','water','wood','sand','asphalt','sidewalk','brick']}
         assert coverage['rugs'], 'Room rugs must remain reviewable'
+        assert page.locator('#reviewIssues').evaluate('(el)=>el.tagName') == 'FIELDSET'
+        assert page.locator('#reviewIssues legend').inner_text().strip()
+        assert page.locator('#reviewIssues input[data-issue]').count() == 4
+        for issue in ISSUES:
+            control = checkbox(page, issue)
+            assert control.get_attribute('type') == 'checkbox' and control.get_attribute('data-issue') == issue
+            assert control.is_enabled() and not control.is_checked()
+        assert page.get_by_role('textbox', name=re.compile(r'^Other issues\b')).get_attribute('id') == 'note'
         first, last = coverage['ids'][0], coverage['ids'][-1]
         go(page, first)
         assert pixels(page)['ink'] > 100
@@ -139,6 +162,41 @@ try:
         assert page.locator('#note').input_value() == side_repair
         page.screenshot(path=str(OUT/'flagged-west-facing.png'))
 
+        # The independent issue checkboxes describe one facing. They derive a
+        # flag without replacing the earlier manual review decision or note.
+        checkbox(page, 'perspective').check();checkbox(page, 'cut-off').check()
+        assert assert_issues(page, side_id, 'west', ['perspective','cut-off'])['status'] == 'flagged'
+        go(page, side_id, 'east')
+        assert_issues(page, side_id, 'east', [])
+        checkbox(page, 'delete').check()
+        east_repair = 'Keep this deletion request separate from the west-facing drawing.'
+        page.locator('#note').fill(east_repair)
+        assert assert_issues(page, side_id, 'east', ['delete'])['status'] == 'flagged'
+        assert page.evaluate('(id)=>townAssetReview.catalog.has(id)', side_id)
+        assert pixels(page)['ink'] > 100, 'A deletion request must leave the actual artwork available'
+        go(page, side_id, 'west')
+        assert_issues(page, side_id, 'west', ['perspective','cut-off'])
+        checkbox(page, 'perspective').uncheck();checkbox(page, 'cut-off').uncheck()
+        assert assert_issues(page, side_id, 'west', [])['status'] == 'flagged', 'Unchecking must preserve a manual flag'
+        page.locator('#markGood').click()
+        assert assert_issues(page, side_id, 'west', [])['status'] == 'ok'
+        assert page.locator('#note').input_value() == side_repair
+        checkbox(page, 'angled').focus();page.keyboard.press('Space')
+        assert assert_issues(page, side_id, 'west', ['angled'])['status'] == 'flagged'
+        page.keyboard.press('Space')
+        assert assert_issues(page, side_id, 'west', [])['status'] == 'ok', 'Keyboard uncheck must restore Looks good'
+        checkbox(page, 'perspective').check();page.locator('#clearStatus').click()
+        assert assert_issues(page, side_id, 'west', [])['status'] == 'unreviewed'
+        assert page.locator('#note').input_value() == side_repair
+        checkbox(page, 'cut-off').check();checkbox(page, 'cut-off').uncheck()
+        assert note(page, side_id, 'west')['status'] == 'unreviewed'
+        page.locator('#flagReview').click()
+        for issue in ['perspective','cut-off','angled']:
+            checkbox(page, issue).check()
+        assert_issues(page, side_id, 'west', ['perspective','cut-off','angled'])
+        assert set(option_ids(page)) == set(coverage['ids'])
+        assert page.evaluate('()=>[...townAssetReview.catalog.keys()]') == coverage['ids'], 'Issue flags must never delete catalog assets'
+
         # The catalog combines procedural sprites, old directional furniture,
         # native collections and shared plush sheets; cover their real loaders.
         for sample in ['furniture-1-180', next((id for id in coverage['directional'] if id.startswith('plush-')), None)]:
@@ -181,6 +239,9 @@ try:
         assert set(option_ids(page)) == {first, side_id}, 'Side-facing issues must be found by the flagged filter'
         page.locator('#reviewFilter').select_option('noted')
         assert set(option_ids(page)) == {first, side_id}
+        for issue in ISSUES:
+            page.locator('#reviewFilter').select_option('issue:'+issue)
+            assert option_ids(page) == [side_id], 'Issue filters must include reports from every facing'
         page.locator('#reviewFilter').select_option('all')
         page.locator('#search').fill('sydney-opera-house')
         assert option_ids(page) == ['sydney-opera-house']
@@ -193,21 +254,68 @@ try:
         page.locator('#background').select_option('checker')
         page.locator('#search').fill('')
         assert set(option_ids(page)) == set(coverage['ids'])
-        group = page.evaluate('(id)=>townAssetReview.catalog.get(id).group', first)
-        group_ids = page.evaluate('(group)=>[...townAssetReview.catalog.values()].filter(a=>a.group===group).map(a=>a.id)', group)
-        page.locator('#category').select_option(group)
-        assert set(option_ids(page)) == set(group_ids)
-        page.locator('#category').select_option(page.locator('#category option').first.get_attribute('value'))
+        categories = page.locator('#category option').evaluate_all('(options)=>options.filter(o=>o.value).map(o=>({value:o.value,label:o.textContent}))')
+        required_categories = {
+            'Chairs': ['collection-bach-dining-chair'],
+            'Tables': ['collection-bach-dining-table','family-bach-dining-table'],
+            'Beds': ['collection-bach-bed'],
+            'Decorations': ['collection-bach-poster'],
+            'Rugs': ['collection-bach-rug','family-bach-rug',coverage['rugs'][0]],
+            'Carpets': ['finish:floor:bach-carpet'],
+            'Floors': ['finish:floor:bach-floor'],
+            'Wallpapers': ['finish:wall:bach-wall','finish:wall:bach-wet-wall'],
+            'Walls': ['construction-3','construction-4','construction-5','music-square-wall']}
+        assert set(required_categories) <= {category['value'] for category in categories}
+        category_ids, seen = {}, set()
+        for category in categories:
+            value = category['value']
+            assert category['label'].startswith(value) and re.search(r'\d', category['label']), category
+            page.locator('#category').select_option(value)
+            ids = set(option_ids(page));assert ids and not seen.intersection(ids), value
+            category_ids[value] = ids;seen.update(ids)
+            assert page.locator('#assetGroup').inner_text() == value
+        assert seen == set(coverage['ids']), 'Every asset must remain reachable in exactly one intuitive category'
+        for category, required in required_categories.items():
+            assert set(required) <= category_ids[category], (category,required)
+        assert 'finish:floor:bach-carpet' not in category_ids['Rugs']
+        assert 'collection-bach-rug' not in category_ids['Carpets']
+        page.locator('#category').select_option('')
         assert set(option_ids(page)) == set(coverage['ids'])
+        search_materials = page.evaluate('''()=>({
+          carpets:[...townAssetReview.catalog.values()].filter(a=>a.finishKind==='floor'&&(a.materialFinish?.kind==='carpet'||a.materialFinish?.surfaceStyle==='carpet')).map(a=>a.id),
+          wallpapers:[...townAssetReview.catalog.values()].filter(a=>a.finishKind==='wall').map(a=>a.id)
+        })''')
+        assert search_materials['carpets'] and len(search_materials['wallpapers']) == 62
+        for query, expected in [('carpet',search_materials['carpets']),('carpets',search_materials['carpets']),
+                                ('wallpaper',search_materials['wallpapers']),('wallpapers',search_materials['wallpapers'])]:
+            page.locator('#search').fill(query)
+            assert set(expected) <= set(option_ids(page)), query
+            assert 'collection-bach-bed' not in option_ids(page), query
+        page.locator('#search').fill('no-asset-could-have-this-complete-review-test-string')
+        assert page.locator('#emptyState').is_visible() and option_ids(page) == []
+        for issue in ISSUES:
+            assert checkbox(page, issue).is_disabled() and not checkbox(page, issue).is_checked()
+        assert page.locator('#note').is_disabled()
+        page.locator('#search').fill('');wait_ready(page)
+        for issue in ISSUES:
+            assert checkbox(page, issue).is_enabled()
+        assert page.evaluate('()=>[...townAssetReview.catalog.keys()]') == coverage['ids']
 
         exported = download(page, 'review.json')
         assert exported['format'] == 'coda-asset-review' and exported['version'] == 1
         assert exported['repository'] == 'cwoodmusic/testkitchen'
+        assert exported['issueLabels'] == ISSUES
         records = {(r['assetId'],r['facing']):r for r in exported['reviews']}
         for key, text in [((first,'south'),repair),((side_id,'west'),side_repair)]:
             record = records[key]
             assert record['status'] == 'flagged' and record['note'] == text
             assert record['name'] and record['group'] and record['width'] > 0 and record['height'] > 0
+            assert record['category']
+        assert records[(side_id,'west')]['issues'] == ['perspective','cut-off','angled']
+        assert records[(side_id,'west')]['baseStatus'] == 'flagged'
+        assert records[(side_id,'east')]['issues'] == ['delete']
+        assert records[(side_id,'east')]['note'] == east_repair
+        assert records[(side_id,'east')]['baseStatus'] == 'unreviewed'
         assert records[(coverage['rugs'][0],'south')]['status'] == 'ok'
         raw = page.evaluate('(key)=>localStorage.getItem(key)', KEY)
         assert set(page.evaluate('__reviewWrites')) <= {KEY, 'codaTownAssetReviewCursorV1'}
@@ -219,6 +327,16 @@ try:
         assert page.evaluate('(key)=>localStorage.getItem(key)', KEY) == raw
         go(page, side_id, 'west')
         assert page.locator('#note').input_value() == side_repair
+        assert_issues(page, side_id, 'west', ['perspective','cut-off','angled'])
+        for issue in ['perspective','cut-off','angled']:
+            checkbox(page, issue).uncheck()
+        assert note(page, side_id, 'west')['status'] == 'flagged', 'The saved manual baseline must survive reload'
+        for issue in ['perspective','cut-off','angled']:
+            checkbox(page, issue).check()
+        go(page, side_id, 'east');assert_issues(page, side_id, 'east', ['delete'])
+        checkbox(page, 'delete').uncheck()
+        assert note(page, side_id, 'east') == {'status':'unreviewed','note':east_repair,'issues':[]}, 'Editing a note while auto-flagged must not replace its saved baseline'
+        checkbox(page, 'delete').check()
         assert page.evaluate('(sentinels)=>Object.fromEntries(Object.keys(sentinels).map(k=>[k,localStorage.getItem(k)]))', SENTINELS) == SENTINELS
 
         # Repeat raw ground tiles, but render room floors/walls as one connected
@@ -294,8 +412,21 @@ try:
         assert material_record['sample']['columns']==3 and material_record['sample']['rows']==1
         assert material_record['width']*3==material_record['sample']['width']
         assert material_record['width']!=material_record['sample']['width']
+        page.locator('#category').select_option('Wallpapers');go(page,material_id)
+        checkbox(page,'perspective').check();checkbox(page,'cut-off').check()
+        assert_issues(page,material_id,'south',['perspective','cut-off'])
+        page.screenshot(path=str(OUT/'issues-wallpaper-desktop.png'),full_page=True)
+        page.set_viewport_size({'width':390,'height':844})
+        assert page.evaluate('document.documentElement.scrollWidth<=innerWidth+1'), 'Issue controls must not introduce horizontal mobile scrolling'
+        for issue in ISSUES:
+            control=checkbox(page,issue)
+            size=control.evaluate('el=>{const input=el.getBoundingClientRect(),label=el.closest("label").getBoundingClientRect();return {w:input.width,h:input.height,labelH:label.height};}')
+            assert size['w']>=16 and size['h']>=16 and size['labelH']>=40, (issue,size)
+        page.screenshot(path=str(OUT/'issues-wallpaper-mobile.png'),full_page=True)
+        page.set_viewport_size({'width':1440,'height':1000})
         page.reload();wait_ready(page);go(page,material_id)
         assert page.locator('#note').input_value()==material_note
+        assert_issues(page,material_id,'south',['perspective','cut-off'])
         assert note(page,side_id,'west')['note']==side_repair
         assert page.evaluate('(sentinels)=>Object.fromEntries(Object.keys(sentinels).map(k=>[k,localStorage.getItem(k)]))', SENTINELS)==SENTINELS
         raw=page.evaluate('(key)=>localStorage.getItem(key)',KEY)
@@ -310,15 +441,55 @@ try:
         assert page.evaluate('townAssetReview.review.saved') is False
         assert 'download' in page.locator('#saveStatus').inner_text().lower()
         fallback = download(page, 'review-unsaved.json')
-        assert next(r for r in fallback['reviews'] if r['assetId']==side_id and r['facing']=='west')['note'] == unsaved
+        unsaved_record=next(r for r in fallback['reviews'] if r['assetId']==side_id and r['facing']=='west')
+        assert unsaved_record['note'] == unsaved and unsaved_record['issues'] == ['perspective','cut-off','angled']
+        assert next(r for r in fallback['reviews'] if r['assetId']==side_id and r['facing']=='east')['issues'] == ['delete']
         assert page.evaluate('(key)=>localStorage.getItem(key)', KEY) == raw
         assert not errors, errors
         reports.append({'assets':len(coverage['ids']),'rugs':len(coverage['rugs']),'surfaces':len(coverage['surfaces']),
                         'directionalAssets':len(coverage['directional']),'flaggedAsset':first,'sideAsset':side_id,
-                        'exportedReviews':len(exported['reviews']),'interiorFinishes':len(finishes),'materialRenderComparisons':comparisons,'materialFailureRetry':len(failed_material_requests)==2,'storageFallback':True})
-        (OUT/'results.json').write_text(json.dumps({'passed':True,'reports':reports,'errors':errors},indent=2))
-        print('PASS: complete asset coverage, native previews, navigation, per-facing flags/notes, search/filters, reload, actual review JSON download, protected storage and failed-save export.', flush=True)
+                        'exportedReviews':len(exported['reviews']),'issueCheckboxes':list(ISSUES),'perFacingIssues':True,'manualBaselinesRestored':True,'deletionOnlyFlags':True,
+                        'categories':{key:len(value) for key,value in category_ids.items()},'categoryCoverage':len(seen),'emptyFiltersDisableIssues':True,'mobileIssueControls':True,
+                        'interiorFinishes':len(finishes),'materialRenderComparisons':comparisons,'materialFailureRetry':len(failed_material_requests)==2,'storageFallback':True})
         context.close()
+
+        # Records saved by the older reviewer have neither issues nor a manual
+        # baseline field. Load those bytes unchanged, including an unavailable
+        # catalog ID, then prove that check/uncheck and export preserve them.
+        legacy_note='A manual flag from the earlier reviewer must remain flagged.'
+        legacy_good='This earlier approved side must return to Looks good.'
+        unknown_note='Keep this older report even though its asset is no longer listed.'
+        legacy_document={'format':'coda-asset-review','version':1,'reviews':[
+            {'assetId':'furniture-1-180','facing':'south','status':'flagged','note':legacy_note},
+            {'assetId':'collection-bach-bed','facing':'east','status':'ok','note':legacy_good},
+            {'assetId':'legacy-only-decoration','name':'Earlier decoration','group':'older pack','width':66,'height':88,'facing':'north','status':'flagged','note':unknown_note}]}
+        legacy_context=browser.new_context(viewport={'width':1440,'height':1000},accept_downloads=True)
+        legacy_context.add_init_script('const legacyKey='+json.dumps(KEY)+',legacyReview='+json.dumps(legacy_document)+';if(localStorage.getItem(legacyKey)===null)localStorage.setItem(legacyKey,JSON.stringify(legacyReview));')
+        legacy_page=legacy_context.new_page();legacy_page.set_default_timeout(90000)
+        legacy_page.on('pageerror',lambda error:errors.append(str(error)))
+        legacy_page.goto(origin+'/town/asset-review/');wait_ready(legacy_page)
+        assert legacy_page.evaluate('townAssetReview.review.saved') is True
+        go(legacy_page,'furniture-1-180')
+        assert note(legacy_page,'furniture-1-180','south') == {'status':'flagged','note':legacy_note,'issues':[]}
+        checkbox(legacy_page,'cut-off').check();checkbox(legacy_page,'cut-off').uncheck()
+        assert note(legacy_page,'furniture-1-180','south')['status']=='flagged'
+        assert legacy_page.locator('#note').input_value()==legacy_note
+        go(legacy_page,'collection-bach-bed','east');checkbox(legacy_page,'angled').check()
+        legacy_page.reload();wait_ready(legacy_page);go(legacy_page,'collection-bach-bed','east')
+        assert_issues(legacy_page,'collection-bach-bed','east',['angled'])
+        checkbox(legacy_page,'angled').uncheck()
+        assert note(legacy_page,'collection-bach-bed','east') == {'status':'ok','note':legacy_good,'issues':[]}
+        legacy_export=download(legacy_page,'review-legacy-roundtrip.json')
+        legacy_records={(r['assetId'],r['facing']):r for r in legacy_export['reviews']}
+        for key,text,status in [(('furniture-1-180','south'),legacy_note,'flagged'),(('collection-bach-bed','east'),legacy_good,'ok'),(('legacy-only-decoration','north'),unknown_note,'flagged')]:
+            assert legacy_records[key]['note']==text and legacy_records[key]['status']==status
+            assert legacy_records[key].get('issues',[])==[]
+        assert len(legacy_records)==3
+        reports.append({'legacyReviewsRetained':3,'legacyManualFlagPreserved':True,'legacyApprovedBaselineSurvivesReload':True,'unknownLegacyAssetRetained':True})
+        assert not errors,errors
+        (OUT/'results.json').write_text(json.dumps({'passed':True,'reports':reports,'errors':errors},indent=2))
+        print('PASS: complete category coverage, accessible per-facing issue checkboxes, manual baselines, deletion flags, search/filters, mobile layout, native material previews, legacy/reloaded/downloaded reviews and protected storage.',flush=True)
+        legacy_context.close()
         browser.close()
 finally:
     server.shutdown()
