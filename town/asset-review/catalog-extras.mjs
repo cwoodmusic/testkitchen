@@ -1,4 +1,4 @@
-import {configureUrbanInteriors,getInteriorBase,residents} from '../world/urban-interiors.mjs?v=town-library-review-1';
+import {configureUrbanInteriors,getInteriorBase,residents} from '../world/urban-interiors.mjs?v=town-front-facing-2';
 import {SHOWROOMS} from '../world/showroom-layout.mjs?v=town-room-placement-2';
 import {createRoomRugItems} from '../world/room-rugs.mjs?v=town-library-review-1';
 import {drawShowroomFloor,drawShowroomWallpaper,prepareShowroomFinish} from '../world/showroom-materials.mjs?v=town-library-review-1';

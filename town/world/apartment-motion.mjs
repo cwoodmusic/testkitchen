@@ -88,6 +88,7 @@ function arcade(entry,frame){
 
 export function createApartmentMotionRenderer({
  createCanvas=()=>globalThis.document?.createElement('canvas'),maxEntries=48,maxPixels=196608,
+ createPath=()=>typeof Path2D==='function'?new Path2D():null,
  reducedMotion=prefersReducedMotion
 }={}){
  const entries=new Map();let totalPixels=0,generatedFrames=0;
@@ -104,7 +105,13 @@ export function createApartmentMotionRenderer({
   const motion=asset.motion,seed=stringSeed(motion.seed??asset.id??'apartment'),palette=motion.kind==='lava'?
    [color(motion.palette?.[0],[110,80,178]),color(motion.palette?.[1],[213,100,192]),color(motion.palette?.[2],[255,191,222]),color(motion.palette?.[3],[105,53,143])]:
    [color(motion.palette?.[0],[18,29,49]),color(motion.palette?.[1],[102,198,193]),color(motion.palette?.[2],[255,219,127]),color(motion.palette?.[3],[115,123,192])];
-  entry={...geometry,canvas,c,pixels:c.createImageData(geometry.width,geometry.height),motion,assetWidth:asset.w,assetHeight:asset.h,seed,palette,game:stringSeed(motion.game??seed)%4,index:-1,bubbles:[],glow:new Uint8Array(geometry.width*geometry.height)};
+  const clipPath=createPath();
+  if(clipPath){
+   const [u,v,uw,vh]=motion.bounds??[geometry.x/asset.w,geometry.y/asset.h,geometry.w/asset.w,geometry.h/asset.h];
+   const polygon=motion.mask??motion.polygon??[[u,v],[u+uw,v],[u+uw,v+vh],[u,v+vh]];
+   for(let index=0;index<polygon.length;index++){const point=polygon[index];clipPath[index?'lineTo':'moveTo'](point[0]*asset.w,point[1]*asset.h);}clipPath.closePath();
+  }
+  entry={...geometry,canvas,c,clipPath,pixels:c.createImageData(geometry.width,geometry.height),motion,assetWidth:asset.w,assetHeight:asset.h,seed,palette,game:stringSeed(motion.game??seed)%4,index:-1,bubbles:[],glow:new Uint8Array(geometry.width*geometry.height)};
   for(let i=0;i<5;i++)entry.bubbles.push({phase:hash(i,seed)/4294967296,period:24,offset:(hash(i+11,seed)/4294967296-.5)*.34,rx:Math.max(1.5,geometry.width*(.12+hash(i+23,seed)/4294967296*.07)),ry:Math.max(2,geometry.height*(.055+hash(i+37,seed)/4294967296*.035))});
   for(let y=0;y<entry.height;y++)for(let x=0;x<entry.width;x++)entry.glow[y*entry.width+x]=Math.round(9+15*(1-Math.abs((x+.5)/entry.width*2-1)));
   entries.set(asset,entry);totalPixels+=entry.width*entry.height;return entry;
@@ -117,9 +124,19 @@ export function createApartmentMotionRenderer({
    const entry=entryFor(asset);if(!entry)return false;
    const period=entry.motion.kind==='lava'?24:16,index=wrap(Math.floor((Number.isFinite(time)?time:0)*APARTMENT_MOTION_FPS),period*APARTMENT_MOTION_FPS);
    if(index!==entry.index){entry.pixels.data.fill(0);(entry.motion.kind==='lava'?lava:arcade)(entry,index);entry.c.putImageData(entry.pixels,0,0);entry.index=index;generatedFrames++;}
-   const smoothing=c.imageSmoothingEnabled;c.imageSmoothingEnabled=false;
-   c.drawImage(entry.canvas,item.x-w/2+entry.x/asset.w*w,item.y-h+entry.y/asset.h*h,entry.w/asset.w*w,entry.h/asset.h*h);
-   c.imageSmoothingEnabled=smoothing;return true;
+   // A sampled animation cell can straddle a slanted glass edge even when
+   // its centre lies inside. Clip the final scaled image to the authored
+   // polygon, using one cached path per bounded entry rather than per frame.
+   if(entry.clipPath&&c.save&&c.restore&&c.translate&&c.scale&&c.clip){
+    c.save();
+    try{c.translate(item.x-w/2,item.y-h);c.scale(w/asset.w,h/asset.h);c.clip(entry.clipPath);c.imageSmoothingEnabled=false;c.drawImage(entry.canvas,entry.x,entry.y,entry.w,entry.h);}
+    finally{c.restore();}
+   }else{
+    const smoothing=c.imageSmoothingEnabled;c.imageSmoothingEnabled=false;
+    try{c.drawImage(entry.canvas,item.x-w/2+entry.x/asset.w*w,item.y-h+entry.y/asset.h*h,entry.w/asset.w*w,entry.h/asset.h*h);}
+    finally{c.imageSmoothingEnabled=smoothing;}
+   }
+   return true;
   },
   clear(){for(const key of entries.keys())remove(key);},
   get stats(){return {entries:entries.size,pixels:totalPixels,generatedFrames,maxEntries:entryLimit,maxPixels:pixelLimit};}

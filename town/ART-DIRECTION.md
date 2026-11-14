@@ -49,6 +49,15 @@ countertops, mattresses, seat panels and woven rug borders must not become
 trapezoids. Front-facing cabinets stay front-facing. Preserve real oval tops,
 rounded upholstery, scalloped rugs, decorative carving and splayed legs.
 
+South-facing artwork looks straight toward the viewer, with its front edges
+horizontal and no diagonal yaw exposing one side of the object. Rounded and
+ornate pieces follow that orientation too. The elevated camera must show a
+useful amount of the top surface; a flat front elevation is not the 2/3 view.
+Preserve the new camera in the actual world canvas using uniform contain and
+the existing bottom-center anchor. Do not stretch a corrected sprite back into
+its former picture aspect ratio. World view sizes, foot anchors and collision
+remain authoritative and unchanged; the inner artwork rectangle may change.
+
 Earlier asset-review notes that say “3/4 perspective” mean this same parallel
 2/3 rule; they are not requests for a different projection. Correct the native
 drawings rather than warping them while rendering. Retain each collection's

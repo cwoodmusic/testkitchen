@@ -1,0 +1,4524 @@
+{
+  "version": 2,
+  "review": "2026-11-14-upload-2.json",
+  "originalUploadedFilename": "coda-asset-review (1).json",
+  "reviewSHA256": "58f10cedf944ef6d99a5f3c52cff1a3b9a0401aeb2fb77e493d797695becff59",
+  "reviewExportedAt": "2026-11-14T09:11:43.611Z",
+  "baseRevision": "23af9253916222ecacd7cf3029a71cd8c33a60f3",
+  "previousResolution": "2026-11-14-resolution.json",
+  "previousReviewSHA256": "d1e1708def7474be3c1bf4fec3a4ed62bbd2b7b437b0376e67444f8effc7d47a",
+  "interpretation": {
+    "terminology": "Every original 3/4 perspective note means the explicitly requested parallel 2/3 view, not a vanishing-point view. Original review text is preserved verbatim below.",
+    "orientation": "A South-facing request means the actual front plane faces the viewer with zero camera yaw, not that the old oblique source is retained. Preserve the explicitly requested East profile for Clara dining-chair.",
+    "camera": "Keep an elevated top/front camera and visibly deep top surfaces. Rectangular near/far widths stay equal and depth lines parallel. Circular horizontal surfaces use coherent flattened ellipses, approximately 0.5–0.6 when appropriate to the physical shape; no universal depth ratio is forced on all objects.",
+    "shapeAndIdentity": "Preserve native detail, motifs, colors, natural curves and physical asymmetry, including Miles curved cases, Chopin crests, Zizi leaf forms, tub rims and carved chair arms. Do not replace them with generic rectangles.",
+    "integration": "Use one uniform contain scale for each new crop inside the unchanged world canvas, aligned to its existing bottom center. Do not stretch a corrected source back into the old draw aspect ratio.",
+    "unchanged": [
+      "asset IDs",
+      "world view dimensions",
+      "physical footprints and collision",
+      "foot and placement anchors",
+      "placed coordinates, scale and rotation",
+      "room layouts",
+      "saved maps and progress"
+    ]
+  },
+  "reviewedViews": 227,
+  "reviewedAssetIds": 226,
+  "reviewerCatalogRecords": 1860,
+  "actionableViews": 167,
+  "newOrChangedViews": 85,
+  "resolvedViews": 167,
+  "resolvedNewOrChangedViews": 85,
+  "coverageCounts": {
+    "allAttention": {
+      "retained-first-pass-fix": 70,
+      "direct-native-redraw": 95,
+      "inherited-source-redraw": 2
+    },
+    "newOrChanged": {
+      "direct-native-redraw": 83,
+      "inherited-source-redraw": 2
+    },
+    "unchangedOKWithoutNotes": 60
+  },
+  "coverageStatement": "All 85 new/changed attention views are accounted for: 83 direct accepted redraws and 2 inherited rug-donor updates. Across all 167 attention views, 95 are directly refreshed in this revision, 2 inherit corrected donors, and 70 retain documented first-pass fixes. This does not claim that all 167 were newly redrawn.",
+  "coverageComplete": true,
+  "coverageGaps": [],
+  "acceptedArtManifests": [
+    {
+      "name": "beds-sofas-patches.json",
+      "sha256": "a14a01e6a7633ed71abc9c356119fc13780770689544d998a033554256b0dedf",
+      "acceptedViews": 54,
+      "finalGroupManifest": true,
+      "path": "town/assets/parallel-art/front-facing-2/acceptances/beds-sofas-patches.json"
+    },
+    {
+      "name": "rugs-counters-patches.json",
+      "sha256": "74a9b0b97ca4efbb85d0094b5cb189de8976be2fe64bb89d002d763388e581f6",
+      "acceptedViews": 21,
+      "finalGroupManifest": true,
+      "path": "town/assets/parallel-art/front-facing-2/acceptances/rugs-counters-patches.json"
+    },
+    {
+      "name": "seating-tables-patches.json",
+      "sha256": "e6ceff1dd8de1fec114a26cbe542649be85fb853ec805310eb8ce50091f208d6",
+      "acceptedViews": 37,
+      "finalGroupManifest": true,
+      "path": "town/assets/parallel-art/front-facing-2/acceptances/seating-tables-patches.json"
+    },
+    {
+      "name": "shelves-decor-patches.json",
+      "sha256": "c8cbe539c6e704f5a5453a2c34f9bb4d6c4b05ce9000a472700316e6d683d5bd",
+      "acceptedViews": 133,
+      "finalGroupManifest": true,
+      "path": "town/assets/parallel-art/front-facing-2/acceptances/shelves-decor-patches.json"
+    },
+    {
+      "name": "storage-patches.json",
+      "sha256": "4803fc8cd5a8023fa14eaaab528fc4c0d133996c8194152ab26ef0d0b31afe56",
+      "acceptedViews": 114,
+      "finalGroupManifest": true,
+      "path": "town/assets/parallel-art/front-facing-2/acceptances/storage-patches.json"
+    },
+    {
+      "name": "tables-instruments-patches.json",
+      "sha256": "5287d0ae023eed8610a599954945c7f545299bef65952ef2e823da6691d96f00",
+      "acceptedViews": 110,
+      "finalGroupManifest": true,
+      "path": "town/assets/parallel-art/front-facing-2/acceptances/tables-instruments-patches.json"
+    }
+  ],
+  "acceptedDirectNativeViewsAvailable": 469,
+  "finalAcceptedArtManifestCountPending": false,
+  "packagingStatus": "final-pack-complete; full actual native browser verification passed",
+  "inheritedSourceExamples": [
+    {
+      "assetId": "family-vivaldi-rug",
+      "sourceAssetId": "collection-vivaldi-rug",
+      "reason": "The enlarged product inherits the corrected seasonal tree rug directly from its donor; keep its physical footprint and do not apply a second camera correction."
+    },
+    {
+      "assetId": "family-ella-rug",
+      "sourceAssetId": "collection-ella-rug",
+      "reason": "The enlarged product inherits the floral/petal donor with the same floor-plane camera; the natural scalloped outline remains."
+    },
+    {
+      "assetId": "family-chopin-rug",
+      "sourceAssetId": "collection-chopin-rug",
+      "reviewedInThisDelta": false,
+      "reason": "The unflagged matching family product also inherits the corrected crescent/scalloped donor, without an independent redraw."
+    }
+  ],
+  "representativeRetentions": [
+    {
+      "assetId": "props-0-360",
+      "reason": "Retain the first-pass water-only fountain animation and reduced-motion behavior; no new animation change is claimed."
+    },
+    {
+      "assetId": "props-2-65",
+      "reason": "Retain the approved 1.5 lamp-radius adjustment; it is not a new source-art redraw."
+    },
+    {
+      "assetId": "music-square-wall",
+      "reason": "Retain the clean stone donor/crop repair and the approved Music Square identity."
+    },
+    {
+      "assetId": "coda-arcade",
+      "reason": "Retain the removal of the clipping floor-polygon image mask, with physical floor and door geometry unchanged."
+    },
+    {
+      "assetId": "decor-10-04",
+      "reason": "Retain complete native alpha-component bounds from the first-pass silhouette restoration rather than repainting the decor."
+    },
+    {
+      "assetId": "collection-bach-wardrobe",
+      "reason": "The deployed first-pass South front already meets the requested orientation; retain its accepted organ-pipe detail and native source."
+    },
+    {
+      "assetId": "showroom-midcentury-studio-bed",
+      "reason": "Retain the detailed first-pass native correction and its legacy relationship to apartment-teak-bed."
+    }
+  ],
+  "validation": {
+    "reportedBy": "Final integration verification against the accepted 1,210-view dataset.",
+    "nodeSuite": {
+      "status": "passed",
+      "tests": 1057
+    },
+    "assetReviewBrowser": {
+      "status": "passed",
+      "script": "tests/town-asset-review-browser.py",
+      "checks": [
+        "native previews",
+        "navigation",
+        "per-facing flags and notes",
+        "download",
+        "protected storage"
+      ]
+    },
+    "uploadedLayoutsAndPlacementBrowser": {
+      "status": "passed",
+      "script": "tests/town-uploaded-layouts-placement-browser.py",
+      "exactDefaultLayouts": 15,
+      "doorCrossings": 30,
+      "checks": [
+        "import and reload",
+        "Play",
+        "real chair drag",
+        "legal placement margins",
+        "wall rejection",
+        "unchanged map and progress"
+      ]
+    },
+    "arcadeAnimationAndFallback": {
+      "status": "passed",
+      "editedArcades": 31,
+      "outsideGlassPixels": 0,
+      "fallbackProbes": "passed"
+    },
+    "finalPackedNativeParity": {
+      "status": "passed",
+      "script": "tests/town-parallel-art-browser.py",
+      "nativeViews": 1210,
+      "compactViews": 1210,
+      "nativeArtifacts": 1210,
+      "physicalMetadataRecordsUnchanged": 1860,
+      "inheritedFamilyViews": 8,
+      "aliasCoverageGaps": [],
+      "metadataNativeWarmups": 0,
+      "arcadeAnimationViews": 31,
+      "arcadeOutsideGlassPixels": 0,
+      "originalGeometryFallbackViews": 31,
+      "pageErrors": [],
+      "checks": [
+        "exact native RGBA crops",
+        "uniform world containment",
+        "reviewer preview",
+        "actual Builder PNG export",
+        "actual Builder/Play object renderer",
+        "bounded native, canvas and preview caches",
+        "explicit failed-source retry",
+        "cold metadata and overview",
+        "declared-only animation geometry changes"
+      ]
+    },
+    "coverage": {
+      "attentionViews": 167,
+      "newOrChangedViews": 85,
+      "newOrChangedAccountedFor": 85,
+      "gaps": []
+    },
+    "finalPack": {
+      "status": "passed",
+      "activeNativeViews": 1210,
+      "activeAssetIds": 712,
+      "uniqueNativeCrops": 1112,
+      "nativeAtlases": 63,
+      "previewPixels": 2918322,
+      "untouchedPriorPixelsAndDraws": 741,
+      "explicitSupersedes": 49,
+      "uniformContainsChecked": 469,
+      "aspectDistortionFailures": 0,
+      "acceptanceHashes": "passed",
+      "arcadeMasksChecked": 31
+    },
+    "acceptedArtRevisionTests": {
+      "status": "passed",
+      "script": "tests/test_town_parallel_art_manifest.py",
+      "tests": 3
+    }
+  },
+  "resolutions": [
+    {
+      "assetId": "props-0-360",
+      "facing": "south",
+      "originalStatus": "flagged",
+      "originalNote": "should be animated",
+      "newOrChangedInUpload2": false,
+      "status": "resolved",
+      "method": "retained-first-pass-fix",
+      "category": "animation",
+      "resolution": "The water-only fountain animation is now visible in the reviewer, using the existing production water mask; reduced motion stays still.",
+      "evidence": {
+        "previousResolution": "2026-11-14-resolution.json",
+        "previousResolutionSHA256": "037b1b82365f498e4614de0ae6c9d20035f00a3d8ae8a500bd629b12133237b8",
+        "retainedFromRevision": "23af9253916222ecacd7cf3029a71cd8c33a60f3"
+      }
+    },
+    {
+      "assetId": "props-1-150",
+      "facing": "south",
+      "originalStatus": "flagged",
+      "originalNote": "little piece on the bottom of the assets needs erased.",
+      "newOrChangedInUpload2": false,
+      "status": "resolved",
+      "method": "retained-first-pass-fix",
+      "category": "crop",
+      "resolution": "Isolate the complete bench from its detached atlas fragment; retain saved dimensions, collision and seat anchors.",
+      "evidence": {
+        "previousResolution": "2026-11-14-resolution.json",
+        "previousResolutionSHA256": "037b1b82365f498e4614de0ae6c9d20035f00a3d8ae8a500bd629b12133237b8",
+        "retainedFromRevision": "23af9253916222ecacd7cf3029a71cd8c33a60f3"
+      }
+    },
+    {
+      "assetId": "props-2-65",
+      "facing": "south",
+      "originalStatus": "flagged",
+      "originalNote": "larger light area of effect",
+      "newOrChangedInUpload2": false,
+      "status": "resolved",
+      "method": "retained-first-pass-fix",
+      "category": "lighting",
+      "resolution": "Extend lamp light radius by 1.5 for authored and fallback lamp emitters.",
+      "evidence": {
+        "previousResolution": "2026-11-14-resolution.json",
+        "previousResolutionSHA256": "037b1b82365f498e4614de0ae6c9d20035f00a3d8ae8a500bd629b12133237b8",
+        "retainedFromRevision": "23af9253916222ecacd7cf3029a71cd8c33a60f3"
+      }
+    },
+    {
+      "assetId": "furniture-5-180",
+      "facing": "south",
+      "originalStatus": "flagged",
+      "originalNote": "perspective fix. sides should be straight without the appearance of getting further away. same with chairs.",
+      "newOrChangedInUpload2": false,
+      "status": "resolved",
+      "method": "retained-first-pass-fix",
+      "category": "parallel-art",
+      "resolution": "Accepted native redraw in parallel 2/3 projection; original identity, dimensions, anchors and collision retained.",
+      "evidence": {
+        "previousResolution": "2026-11-14-resolution.json",
+        "previousResolutionSHA256": "037b1b82365f498e4614de0ae6c9d20035f00a3d8ae8a500bd629b12133237b8",
+        "retainedFromRevision": "23af9253916222ecacd7cf3029a71cd8c33a60f3",
+        "retainedNativeSource": "town/assets/parallel-art/packed/legacy-core-1-bd68b51287ae.webp",
+        "retainedNativeCrop": {
+          "x": 1413,
+          "y": 4,
+          "w": 418,
+          "h": 444
+        }
+      }
+    },
+    {
+      "assetId": "music-2-120",
+      "facing": "south",
+      "originalStatus": "ok",
+      "originalNote": "remove leftover tree leaves on the left side of the asset,",
+      "newOrChangedInUpload2": false,
+      "status": "resolved",
+      "method": "retained-first-pass-fix",
+      "category": "crop",
+      "resolution": "Isolate the intact lyre window without neighboring leaves.",
+      "evidence": {
+        "previousResolution": "2026-11-14-resolution.json",
+        "previousResolutionSHA256": "037b1b82365f498e4614de0ae6c9d20035f00a3d8ae8a500bd629b12133237b8",
+        "retainedFromRevision": "23af9253916222ecacd7cf3029a71cd8c33a60f3"
+      }
+    },
+    {
+      "assetId": "music-square-wall",
+      "facing": "south",
+      "originalStatus": "flagged",
+      "originalNote": "remove cut off green leaves",
+      "newOrChangedInUpload2": false,
+      "status": "resolved",
+      "method": "retained-first-pass-fix",
+      "category": "crop",
+      "resolution": "Sample clean stone donors, preserving the complete approved square source.",
+      "evidence": {
+        "previousResolution": "2026-11-14-resolution.json",
+        "previousResolutionSHA256": "037b1b82365f498e4614de0ae6c9d20035f00a3d8ae8a500bd629b12133237b8",
+        "retainedFromRevision": "23af9253916222ecacd7cf3029a71cd8c33a60f3"
+      }
+    },
+    {
+      "assetId": "coda-arcade",
+      "facing": "south",
+      "originalStatus": "flagged",
+      "originalNote": "right side loos cut off",
+      "newOrChangedInUpload2": false,
+      "status": "resolved",
+      "method": "retained-first-pass-fix",
+      "category": "composition",
+      "resolution": "Remove the floor-polygon image mask that clipped the exterior; retain the exact physical floor/door geometry.",
+      "evidence": {
+        "previousResolution": "2026-11-14-resolution.json",
+        "previousResolutionSHA256": "037b1b82365f498e4614de0ae6c9d20035f00a3d8ae8a500bd629b12133237b8",
+        "retainedFromRevision": "23af9253916222ecacd7cf3029a71cd8c33a60f3"
+      }
+    },
+    {
+      "assetId": "decor-10-04",
+      "facing": "south",
+      "originalStatus": "flagged",
+      "originalNote": "cut off sides need repair",
+      "newOrChangedInUpload2": false,
+      "status": "resolved",
+      "method": "retained-first-pass-fix",
+      "category": "crop",
+      "resolution": "Restore intact native alpha-component bounds, including faint edge details. Original world dimensions and collision retained.",
+      "evidence": {
+        "previousResolution": "2026-11-14-resolution.json",
+        "previousResolutionSHA256": "037b1b82365f498e4614de0ae6c9d20035f00a3d8ae8a500bd629b12133237b8",
+        "retainedFromRevision": "23af9253916222ecacd7cf3029a71cd8c33a60f3"
+      }
+    },
+    {
+      "assetId": "decor-10-05",
+      "facing": "south",
+      "originalStatus": "flagged",
+      "originalNote": "cut off sides needs repair",
+      "newOrChangedInUpload2": false,
+      "status": "resolved",
+      "method": "retained-first-pass-fix",
+      "category": "crop",
+      "resolution": "Restore intact native alpha-component bounds, including faint edge details. Original world dimensions and collision retained.",
+      "evidence": {
+        "previousResolution": "2026-11-14-resolution.json",
+        "previousResolutionSHA256": "037b1b82365f498e4614de0ae6c9d20035f00a3d8ae8a500bd629b12133237b8",
+        "retainedFromRevision": "23af9253916222ecacd7cf3029a71cd8c33a60f3"
+      }
+    },
+    {
+      "assetId": "decor-10-06",
+      "facing": "south",
+      "originalStatus": "flagged",
+      "originalNote": "cut off sides",
+      "newOrChangedInUpload2": false,
+      "status": "resolved",
+      "method": "retained-first-pass-fix",
+      "category": "crop",
+      "resolution": "Restore intact native alpha-component bounds, including faint edge details. Original world dimensions and collision retained.",
+      "evidence": {
+        "previousResolution": "2026-11-14-resolution.json",
+        "previousResolutionSHA256": "037b1b82365f498e4614de0ae6c9d20035f00a3d8ae8a500bd629b12133237b8",
+        "retainedFromRevision": "23af9253916222ecacd7cf3029a71cd8c33a60f3"
+      }
+    },
+    {
+      "assetId": "decor-09-13",
+      "facing": "south",
+      "originalStatus": "flagged",
+      "originalNote": "cut off sides needs repaired",
+      "newOrChangedInUpload2": false,
+      "status": "resolved",
+      "method": "retained-first-pass-fix",
+      "category": "crop",
+      "resolution": "Restore intact native alpha-component bounds, including faint edge details. Original world dimensions and collision retained.",
+      "evidence": {
+        "previousResolution": "2026-11-14-resolution.json",
+        "previousResolutionSHA256": "037b1b82365f498e4614de0ae6c9d20035f00a3d8ae8a500bd629b12133237b8",
+        "retainedFromRevision": "23af9253916222ecacd7cf3029a71cd8c33a60f3"
+      }
+    },
+    {
+      "assetId": "decor-10-01",
+      "facing": "south",
+      "originalStatus": "flagged",
+      "originalNote": "cut off sides needs repaired",
+      "newOrChangedInUpload2": false,
+      "status": "resolved",
+      "method": "retained-first-pass-fix",
+      "category": "crop",
+      "resolution": "Restore intact native alpha-component bounds, including faint edge details. Original world dimensions and collision retained.",
+      "evidence": {
+        "previousResolution": "2026-11-14-resolution.json",
+        "previousResolutionSHA256": "037b1b82365f498e4614de0ae6c9d20035f00a3d8ae8a500bd629b12133237b8",
+        "retainedFromRevision": "23af9253916222ecacd7cf3029a71cd8c33a60f3"
+      }
+    },
+    {
+      "assetId": "decor-10-03",
+      "facing": "south",
+      "originalStatus": "flagged",
+      "originalNote": "cu5t off sides needs repaired",
+      "newOrChangedInUpload2": false,
+      "status": "resolved",
+      "method": "retained-first-pass-fix",
+      "category": "crop",
+      "resolution": "Restore intact native alpha-component bounds, including faint edge details. Original world dimensions and collision retained.",
+      "evidence": {
+        "previousResolution": "2026-11-14-resolution.json",
+        "previousResolutionSHA256": "037b1b82365f498e4614de0ae6c9d20035f00a3d8ae8a500bd629b12133237b8",
+        "retainedFromRevision": "23af9253916222ecacd7cf3029a71cd8c33a60f3"
+      }
+    },
+    {
+      "assetId": "decor-10-07",
+      "facing": "south",
+      "originalStatus": "flagged",
+      "originalNote": "cut of fsides",
+      "newOrChangedInUpload2": false,
+      "status": "resolved",
+      "method": "retained-first-pass-fix",
+      "category": "crop",
+      "resolution": "Restore intact native alpha-component bounds, including faint edge details. Original world dimensions and collision retained.",
+      "evidence": {
+        "previousResolution": "2026-11-14-resolution.json",
+        "previousResolutionSHA256": "037b1b82365f498e4614de0ae6c9d20035f00a3d8ae8a500bd629b12133237b8",
+        "retainedFromRevision": "23af9253916222ecacd7cf3029a71cd8c33a60f3"
+      }
+    },
+    {
+      "assetId": "decor-10-08",
+      "facing": "south",
+      "originalStatus": "flagged",
+      "originalNote": "cut off sides",
+      "newOrChangedInUpload2": false,
+      "status": "resolved",
+      "method": "retained-first-pass-fix",
+      "category": "crop",
+      "resolution": "Restore intact native alpha-component bounds, including faint edge details. Original world dimensions and collision retained.",
+      "evidence": {
+        "previousResolution": "2026-11-14-resolution.json",
+        "previousResolutionSHA256": "037b1b82365f498e4614de0ae6c9d20035f00a3d8ae8a500bd629b12133237b8",
+        "retainedFromRevision": "23af9253916222ecacd7cf3029a71cd8c33a60f3"
+      }
+    },
+    {
+      "assetId": "decor-10-09",
+      "facing": "south",
+      "originalStatus": "flagged",
+      "originalNote": "cut off sides",
+      "newOrChangedInUpload2": false,
+      "status": "resolved",
+      "method": "retained-first-pass-fix",
+      "category": "crop",
+      "resolution": "Restore intact native alpha-component bounds, including faint edge details. Original world dimensions and collision retained.",
+      "evidence": {
+        "previousResolution": "2026-11-14-resolution.json",
+        "previousResolutionSHA256": "037b1b82365f498e4614de0ae6c9d20035f00a3d8ae8a500bd629b12133237b8",
+        "retainedFromRevision": "23af9253916222ecacd7cf3029a71cd8c33a60f3"
+      }
+    },
+    {
+      "assetId": "decor-10-10",
+      "facing": "south",
+      "originalStatus": "flagged",
+      "originalNote": "cut off sides",
+      "newOrChangedInUpload2": false,
+      "status": "resolved",
+      "method": "retained-first-pass-fix",
+      "category": "crop",
+      "resolution": "Restore intact native alpha-component bounds, including faint edge details. Original world dimensions and collision retained.",
+      "evidence": {
+        "previousResolution": "2026-11-14-resolution.json",
+        "previousResolutionSHA256": "037b1b82365f498e4614de0ae6c9d20035f00a3d8ae8a500bd629b12133237b8",
+        "retainedFromRevision": "23af9253916222ecacd7cf3029a71cd8c33a60f3"
+      }
+    },
+    {
+      "assetId": "decor-10-11",
+      "facing": "south",
+      "originalStatus": "flagged",
+      "originalNote": "cut off sides",
+      "newOrChangedInUpload2": false,
+      "status": "resolved",
+      "method": "retained-first-pass-fix",
+      "category": "crop",
+      "resolution": "Restore intact native alpha-component bounds, including faint edge details. Original world dimensions and collision retained.",
+      "evidence": {
+        "previousResolution": "2026-11-14-resolution.json",
+        "previousResolutionSHA256": "037b1b82365f498e4614de0ae6c9d20035f00a3d8ae8a500bd629b12133237b8",
+        "retainedFromRevision": "23af9253916222ecacd7cf3029a71cd8c33a60f3"
+      }
+    },
+    {
+      "assetId": "decor-10-12",
+      "facing": "south",
+      "originalStatus": "flagged",
+      "originalNote": "cut off sides",
+      "newOrChangedInUpload2": false,
+      "status": "resolved",
+      "method": "retained-first-pass-fix",
+      "category": "crop",
+      "resolution": "Restore intact native alpha-component bounds, including faint edge details. Original world dimensions and collision retained.",
+      "evidence": {
+        "previousResolution": "2026-11-14-resolution.json",
+        "previousResolutionSHA256": "037b1b82365f498e4614de0ae6c9d20035f00a3d8ae8a500bd629b12133237b8",
+        "retainedFromRevision": "23af9253916222ecacd7cf3029a71cd8c33a60f3"
+      }
+    },
+    {
+      "assetId": "decor-10-13",
+      "facing": "south",
+      "originalStatus": "flagged",
+      "originalNote": "cut off sides",
+      "newOrChangedInUpload2": false,
+      "status": "resolved",
+      "method": "retained-first-pass-fix",
+      "category": "crop",
+      "resolution": "Restore intact native alpha-component bounds, including faint edge details. Original world dimensions and collision retained.",
+      "evidence": {
+        "previousResolution": "2026-11-14-resolution.json",
+        "previousResolutionSHA256": "037b1b82365f498e4614de0ae6c9d20035f00a3d8ae8a500bd629b12133237b8",
+        "retainedFromRevision": "23af9253916222ecacd7cf3029a71cd8c33a60f3"
+      }
+    },
+    {
+      "assetId": "decor-10-14",
+      "facing": "south",
+      "originalStatus": "flagged",
+      "originalNote": "cut off sides",
+      "newOrChangedInUpload2": false,
+      "status": "resolved",
+      "method": "retained-first-pass-fix",
+      "category": "crop",
+      "resolution": "Restore intact native alpha-component bounds, including faint edge details. Original world dimensions and collision retained.",
+      "evidence": {
+        "previousResolution": "2026-11-14-resolution.json",
+        "previousResolutionSHA256": "037b1b82365f498e4614de0ae6c9d20035f00a3d8ae8a500bd629b12133237b8",
+        "retainedFromRevision": "23af9253916222ecacd7cf3029a71cd8c33a60f3"
+      }
+    },
+    {
+      "assetId": "decor-10-15",
+      "facing": "south",
+      "originalStatus": "flagged",
+      "originalNote": "cut off sides",
+      "newOrChangedInUpload2": false,
+      "status": "resolved",
+      "method": "retained-first-pass-fix",
+      "category": "crop",
+      "resolution": "Restore intact native alpha-component bounds, including faint edge details. Original world dimensions and collision retained.",
+      "evidence": {
+        "previousResolution": "2026-11-14-resolution.json",
+        "previousResolutionSHA256": "037b1b82365f498e4614de0ae6c9d20035f00a3d8ae8a500bd629b12133237b8",
+        "retainedFromRevision": "23af9253916222ecacd7cf3029a71cd8c33a60f3"
+      }
+    },
+    {
+      "assetId": "decor-10-16",
+      "facing": "south",
+      "originalStatus": "flagged",
+      "originalNote": "cut off sides",
+      "newOrChangedInUpload2": false,
+      "status": "resolved",
+      "method": "retained-first-pass-fix",
+      "category": "crop",
+      "resolution": "Restore intact native alpha-component bounds, including faint edge details. Original world dimensions and collision retained.",
+      "evidence": {
+        "previousResolution": "2026-11-14-resolution.json",
+        "previousResolutionSHA256": "037b1b82365f498e4614de0ae6c9d20035f00a3d8ae8a500bd629b12133237b8",
+        "retainedFromRevision": "23af9253916222ecacd7cf3029a71cd8c33a60f3"
+      }
+    },
+    {
+      "assetId": "decor-11-01",
+      "facing": "south",
+      "originalStatus": "flagged",
+      "originalNote": "cut off sides",
+      "newOrChangedInUpload2": false,
+      "status": "resolved",
+      "method": "retained-first-pass-fix",
+      "category": "crop",
+      "resolution": "Restore intact native alpha-component bounds, including faint edge details. Original world dimensions and collision retained.",
+      "evidence": {
+        "previousResolution": "2026-11-14-resolution.json",
+        "previousResolutionSHA256": "037b1b82365f498e4614de0ae6c9d20035f00a3d8ae8a500bd629b12133237b8",
+        "retainedFromRevision": "23af9253916222ecacd7cf3029a71cd8c33a60f3"
+      }
+    },
+    {
+      "assetId": "decor-11-05",
+      "facing": "south",
+      "originalStatus": "flagged",
+      "originalNote": "cut off sides",
+      "newOrChangedInUpload2": false,
+      "status": "resolved",
+      "method": "retained-first-pass-fix",
+      "category": "crop",
+      "resolution": "Restore intact native alpha-component bounds, including faint edge details. Original world dimensions and collision retained.",
+      "evidence": {
+        "previousResolution": "2026-11-14-resolution.json",
+        "previousResolutionSHA256": "037b1b82365f498e4614de0ae6c9d20035f00a3d8ae8a500bd629b12133237b8",
+        "retainedFromRevision": "23af9253916222ecacd7cf3029a71cd8c33a60f3"
+      }
+    },
+    {
+      "assetId": "decor-11-07",
+      "facing": "south",
+      "originalStatus": "flagged",
+      "originalNote": "cut off sides",
+      "newOrChangedInUpload2": false,
+      "status": "resolved",
+      "method": "retained-first-pass-fix",
+      "category": "crop",
+      "resolution": "Restore intact native alpha-component bounds, including faint edge details. Original world dimensions and collision retained.",
+      "evidence": {
+        "previousResolution": "2026-11-14-resolution.json",
+        "previousResolutionSHA256": "037b1b82365f498e4614de0ae6c9d20035f00a3d8ae8a500bd629b12133237b8",
+        "retainedFromRevision": "23af9253916222ecacd7cf3029a71cd8c33a60f3"
+      }
+    },
+    {
+      "assetId": "decor-11-08",
+      "facing": "south",
+      "originalStatus": "flagged",
+      "originalNote": "cut off sides",
+      "newOrChangedInUpload2": false,
+      "status": "resolved",
+      "method": "retained-first-pass-fix",
+      "category": "crop",
+      "resolution": "Restore intact native alpha-component bounds, including faint edge details. Original world dimensions and collision retained.",
+      "evidence": {
+        "previousResolution": "2026-11-14-resolution.json",
+        "previousResolutionSHA256": "037b1b82365f498e4614de0ae6c9d20035f00a3d8ae8a500bd629b12133237b8",
+        "retainedFromRevision": "23af9253916222ecacd7cf3029a71cd8c33a60f3"
+      }
+    },
+    {
+      "assetId": "decor-11-09",
+      "facing": "south",
+      "originalStatus": "flagged",
+      "originalNote": "cut off sides",
+      "newOrChangedInUpload2": false,
+      "status": "resolved",
+      "method": "retained-first-pass-fix",
+      "category": "crop",
+      "resolution": "Restore intact native alpha-component bounds, including faint edge details. Original world dimensions and collision retained.",
+      "evidence": {
+        "previousResolution": "2026-11-14-resolution.json",
+        "previousResolutionSHA256": "037b1b82365f498e4614de0ae6c9d20035f00a3d8ae8a500bd629b12133237b8",
+        "retainedFromRevision": "23af9253916222ecacd7cf3029a71cd8c33a60f3"
+      }
+    },
+    {
+      "assetId": "decor-11-10",
+      "facing": "south",
+      "originalStatus": "flagged",
+      "originalNote": "cut off sides",
+      "newOrChangedInUpload2": false,
+      "status": "resolved",
+      "method": "retained-first-pass-fix",
+      "category": "crop",
+      "resolution": "Restore intact native alpha-component bounds, including faint edge details. Original world dimensions and collision retained.",
+      "evidence": {
+        "previousResolution": "2026-11-14-resolution.json",
+        "previousResolutionSHA256": "037b1b82365f498e4614de0ae6c9d20035f00a3d8ae8a500bd629b12133237b8",
+        "retainedFromRevision": "23af9253916222ecacd7cf3029a71cd8c33a60f3"
+      }
+    },
+    {
+      "assetId": "decor-11-11",
+      "facing": "south",
+      "originalStatus": "flagged",
+      "originalNote": "cut off sides",
+      "newOrChangedInUpload2": false,
+      "status": "resolved",
+      "method": "retained-first-pass-fix",
+      "category": "crop",
+      "resolution": "Restore intact native alpha-component bounds, including faint edge details. Original world dimensions and collision retained.",
+      "evidence": {
+        "previousResolution": "2026-11-14-resolution.json",
+        "previousResolutionSHA256": "037b1b82365f498e4614de0ae6c9d20035f00a3d8ae8a500bd629b12133237b8",
+        "retainedFromRevision": "23af9253916222ecacd7cf3029a71cd8c33a60f3"
+      }
+    },
+    {
+      "assetId": "decor-11-15",
+      "facing": "south",
+      "originalStatus": "flagged",
+      "originalNote": "cut off sides",
+      "newOrChangedInUpload2": false,
+      "status": "resolved",
+      "method": "retained-first-pass-fix",
+      "category": "crop",
+      "resolution": "Restore intact native alpha-component bounds, including faint edge details. Original world dimensions and collision retained.",
+      "evidence": {
+        "previousResolution": "2026-11-14-resolution.json",
+        "previousResolutionSHA256": "037b1b82365f498e4614de0ae6c9d20035f00a3d8ae8a500bd629b12133237b8",
+        "retainedFromRevision": "23af9253916222ecacd7cf3029a71cd8c33a60f3"
+      }
+    },
+    {
+      "assetId": "decor-11-16",
+      "facing": "south",
+      "originalStatus": "flagged",
+      "originalNote": "cut off sides",
+      "newOrChangedInUpload2": false,
+      "status": "resolved",
+      "method": "retained-first-pass-fix",
+      "category": "crop",
+      "resolution": "Restore intact native alpha-component bounds, including faint edge details. Original world dimensions and collision retained.",
+      "evidence": {
+        "previousResolution": "2026-11-14-resolution.json",
+        "previousResolutionSHA256": "037b1b82365f498e4614de0ae6c9d20035f00a3d8ae8a500bd629b12133237b8",
+        "retainedFromRevision": "23af9253916222ecacd7cf3029a71cd8c33a60f3"
+      }
+    },
+    {
+      "assetId": "decor-13-03",
+      "facing": "south",
+      "originalStatus": "ok",
+      "originalNote": "needs to be in 3/4 view perspective.",
+      "newOrChangedInUpload2": false,
+      "status": "resolved",
+      "method": "retained-first-pass-fix",
+      "category": "parallel-art",
+      "resolution": "Accepted native redraw in parallel 2/3 projection; original identity, dimensions, anchors and collision retained.",
+      "evidence": {
+        "previousResolution": "2026-11-14-resolution.json",
+        "previousResolutionSHA256": "037b1b82365f498e4614de0ae6c9d20035f00a3d8ae8a500bd629b12133237b8",
+        "retainedFromRevision": "23af9253916222ecacd7cf3029a71cd8c33a60f3",
+        "retainedNativeSource": "town/assets/parallel-art/packed/library-decor-1-08737b0e7d4e.webp",
+        "retainedNativeCrop": {
+          "x": 528,
+          "y": 4,
+          "w": 538,
+          "h": 507
+        }
+      }
+    },
+    {
+      "assetId": "decor-15-06",
+      "facing": "south",
+      "originalStatus": "flagged",
+      "originalNote": "cut off sides",
+      "newOrChangedInUpload2": false,
+      "status": "resolved",
+      "method": "retained-first-pass-fix",
+      "category": "crop",
+      "resolution": "Restore intact native alpha-component bounds, including faint edge details. Original world dimensions and collision retained.",
+      "evidence": {
+        "previousResolution": "2026-11-14-resolution.json",
+        "previousResolutionSHA256": "037b1b82365f498e4614de0ae6c9d20035f00a3d8ae8a500bd629b12133237b8",
+        "retainedFromRevision": "23af9253916222ecacd7cf3029a71cd8c33a60f3"
+      }
+    },
+    {
+      "assetId": "decor-15-01",
+      "facing": "south",
+      "originalStatus": "flagged",
+      "originalNote": "cut off sides",
+      "newOrChangedInUpload2": false,
+      "status": "resolved",
+      "method": "retained-first-pass-fix",
+      "category": "crop",
+      "resolution": "Restore intact native alpha-component bounds, including faint edge details. Original world dimensions and collision retained.",
+      "evidence": {
+        "previousResolution": "2026-11-14-resolution.json",
+        "previousResolutionSHA256": "037b1b82365f498e4614de0ae6c9d20035f00a3d8ae8a500bd629b12133237b8",
+        "retainedFromRevision": "23af9253916222ecacd7cf3029a71cd8c33a60f3"
+      }
+    },
+    {
+      "assetId": "decor-15-03",
+      "facing": "south",
+      "originalStatus": "flagged",
+      "originalNote": "cut off sides",
+      "newOrChangedInUpload2": false,
+      "status": "resolved",
+      "method": "retained-first-pass-fix",
+      "category": "crop",
+      "resolution": "Restore intact native alpha-component bounds, including faint edge details. Original world dimensions and collision retained.",
+      "evidence": {
+        "previousResolution": "2026-11-14-resolution.json",
+        "previousResolutionSHA256": "037b1b82365f498e4614de0ae6c9d20035f00a3d8ae8a500bd629b12133237b8",
+        "retainedFromRevision": "23af9253916222ecacd7cf3029a71cd8c33a60f3"
+      }
+    },
+    {
+      "assetId": "decor-15-07",
+      "facing": "south",
+      "originalStatus": "flagged",
+      "originalNote": "cut off sides",
+      "newOrChangedInUpload2": false,
+      "status": "resolved",
+      "method": "retained-first-pass-fix",
+      "category": "crop",
+      "resolution": "Restore intact native alpha-component bounds, including faint edge details. Original world dimensions and collision retained.",
+      "evidence": {
+        "previousResolution": "2026-11-14-resolution.json",
+        "previousResolutionSHA256": "037b1b82365f498e4614de0ae6c9d20035f00a3d8ae8a500bd629b12133237b8",
+        "retainedFromRevision": "23af9253916222ecacd7cf3029a71cd8c33a60f3"
+      }
+    },
+    {
+      "assetId": "decor-15-08",
+      "facing": "south",
+      "originalStatus": "flagged",
+      "originalNote": "cut off sides",
+      "newOrChangedInUpload2": false,
+      "status": "resolved",
+      "method": "retained-first-pass-fix",
+      "category": "crop",
+      "resolution": "Restore intact native alpha-component bounds, including faint edge details. Original world dimensions and collision retained.",
+      "evidence": {
+        "previousResolution": "2026-11-14-resolution.json",
+        "previousResolutionSHA256": "037b1b82365f498e4614de0ae6c9d20035f00a3d8ae8a500bd629b12133237b8",
+        "retainedFromRevision": "23af9253916222ecacd7cf3029a71cd8c33a60f3"
+      }
+    },
+    {
+      "assetId": "showroom-art-deco-lounge-bed",
+      "facing": "south",
+      "originalStatus": "flagged",
+      "originalNote": "3/4 perspective pls",
+      "newOrChangedInUpload2": false,
+      "status": "resolved",
+      "method": "retained-first-pass-fix",
+      "category": "parallel-art",
+      "resolution": "Accepted native redraw in parallel 2/3 projection; original identity, dimensions, anchors and collision retained.",
+      "evidence": {
+        "previousResolution": "2026-11-14-resolution.json",
+        "previousResolutionSHA256": "037b1b82365f498e4614de0ae6c9d20035f00a3d8ae8a500bd629b12133237b8",
+        "retainedFromRevision": "23af9253916222ecacd7cf3029a71cd8c33a60f3",
+        "retainedNativeSource": "town/assets/parallel-art/packed/showroom-art-deco-lounge-1-f86d1e3ed869.webp",
+        "retainedNativeCrop": {
+          "x": 1292,
+          "y": 914,
+          "w": 218,
+          "h": 352
+        }
+      }
+    },
+    {
+      "assetId": "showroom-coastal-bedroom-bed",
+      "facing": "south",
+      "originalStatus": "flagged",
+      "originalNote": "3/4 perspective",
+      "newOrChangedInUpload2": false,
+      "status": "resolved",
+      "method": "retained-first-pass-fix",
+      "category": "parallel-art",
+      "resolution": "Accepted native redraw in parallel 2/3 projection; original identity, dimensions, anchors and collision retained.",
+      "evidence": {
+        "previousResolution": "2026-11-14-resolution.json",
+        "previousResolutionSHA256": "037b1b82365f498e4614de0ae6c9d20035f00a3d8ae8a500bd629b12133237b8",
+        "retainedFromRevision": "23af9253916222ecacd7cf3029a71cd8c33a60f3",
+        "retainedNativeSource": "town/assets/parallel-art/packed/showroom-coastal-bedroom-1-68123a538721.webp",
+        "retainedNativeCrop": {
+          "x": 1295,
+          "y": 922,
+          "w": 224,
+          "h": 334
+        }
+      }
+    },
+    {
+      "assetId": "showroom-rustic-kitchen-bed",
+      "facing": "south",
+      "originalStatus": "flagged",
+      "originalNote": "3/4 perspective",
+      "newOrChangedInUpload2": false,
+      "status": "resolved",
+      "method": "retained-first-pass-fix",
+      "category": "parallel-art",
+      "resolution": "Accepted native redraw in parallel 2/3 projection; original identity, dimensions, anchors and collision retained.",
+      "evidence": {
+        "previousResolution": "2026-11-14-resolution.json",
+        "previousResolutionSHA256": "037b1b82365f498e4614de0ae6c9d20035f00a3d8ae8a500bd629b12133237b8",
+        "retainedFromRevision": "23af9253916222ecacd7cf3029a71cd8c33a60f3",
+        "retainedNativeSource": "town/assets/parallel-art/packed/showroom-rustic-kitchen-1-cbd5d56ae712.webp",
+        "retainedNativeCrop": {
+          "x": 4,
+          "y": 1324,
+          "w": 226,
+          "h": 348
+        }
+      }
+    },
+    {
+      "assetId": "showroom-rustic-kitchen-sofa",
+      "facing": "south",
+      "originalStatus": "flagged",
+      "originalNote": "3/4 perspective",
+      "newOrChangedInUpload2": false,
+      "status": "resolved",
+      "method": "direct-native-redraw",
+      "category": "front-orientation-and-camera",
+      "resolution": "Keep the original upholstery, carving, bedding, cushions and designed curved/asymmetric features. Show a coherent elevated parallel top/seat surface and a straight front axis without distance shrink.",
+      "evidence": {
+        "groupManifest": "beds-sofas-patches.json",
+        "finalGroupManifest": true,
+        "nativeSource": "town/assets/parallel-art/front-facing-2/beds-sofas/showroom-rustic-kitchen-sofa-refinement-abac7b8ae83b.webp",
+        "nativeCrop": {
+          "x": 65,
+          "y": 10,
+          "w": 1190,
+          "h": 1144
+        },
+        "draw": {
+          "x": 26.027097902097907,
+          "y": 0.0,
+          "w": 127.94580419580419,
+          "h": 123.0
+        },
+        "acceptedManifest": "town/assets/parallel-art/front-facing-2/acceptances/beds-sofas-patches.json",
+        "acceptedManifestSHA256": "a14a01e6a7633ed71abc9c356119fc13780770689544d998a033554256b0dedf"
+      }
+    },
+    {
+      "assetId": "showroom-botanical-conservatory-bed",
+      "facing": "south",
+      "originalStatus": "flagged",
+      "originalNote": "3/4 perspective",
+      "newOrChangedInUpload2": false,
+      "status": "resolved",
+      "method": "retained-first-pass-fix",
+      "category": "parallel-art",
+      "resolution": "Accepted native redraw in parallel 2/3 projection; original identity, dimensions, anchors and collision retained.",
+      "evidence": {
+        "previousResolution": "2026-11-14-resolution.json",
+        "previousResolutionSHA256": "037b1b82365f498e4614de0ae6c9d20035f00a3d8ae8a500bd629b12133237b8",
+        "retainedFromRevision": "23af9253916222ecacd7cf3029a71cd8c33a60f3",
+        "retainedNativeSource": "town/assets/parallel-art/packed/showroom-botanical-conservatory-1-8e1ac9e50cec.webp",
+        "retainedNativeCrop": {
+          "x": 4,
+          "y": 900,
+          "w": 238,
+          "h": 359
+        }
+      }
+    },
+    {
+      "assetId": "showroom-midcentury-studio-bed",
+      "facing": "south",
+      "originalStatus": "flagged",
+      "originalNote": "3/4 perspective",
+      "newOrChangedInUpload2": false,
+      "status": "resolved",
+      "method": "retained-first-pass-fix",
+      "category": "parallel-art",
+      "resolution": "Accepted native redraw in parallel 2/3 projection; original identity, dimensions, anchors and collision retained. The existing legacy alias relationship is retained; this upload does not independently redraw it.",
+      "evidence": {
+        "previousResolution": "2026-11-14-resolution.json",
+        "previousResolutionSHA256": "037b1b82365f498e4614de0ae6c9d20035f00a3d8ae8a500bd629b12133237b8",
+        "retainedFromRevision": "23af9253916222ecacd7cf3029a71cd8c33a60f3",
+        "retainedNativeSource": "town/assets/parallel-art/packed/showroom-midcentury-studio-1-4e357d714dfc.webp",
+        "retainedNativeCrop": {
+          "x": 4,
+          "y": 835,
+          "w": 229,
+          "h": 322
+        }
+      },
+      "legacyAliasOf": "apartment-teak-bed"
+    },
+    {
+      "assetId": "showroom-midcentury-studio-sofa",
+      "facing": "south",
+      "originalStatus": "flagged",
+      "originalNote": "3/4 perspective",
+      "newOrChangedInUpload2": false,
+      "status": "resolved",
+      "method": "direct-native-redraw",
+      "category": "front-orientation-and-camera",
+      "resolution": "Keep the original upholstery, carving, bedding, cushions and designed curved/asymmetric features. Show a coherent elevated parallel top/seat surface and a straight front axis without distance shrink.",
+      "evidence": {
+        "groupManifest": "beds-sofas-patches.json",
+        "finalGroupManifest": true,
+        "nativeSource": "town/assets/parallel-art/front-facing-2/beds-sofas/board-7-5c51739d76cb.webp",
+        "nativeCrop": {
+          "x": 847,
+          "y": 464,
+          "w": 387,
+          "h": 326
+        },
+        "draw": {
+          "x": 15.805214723926383,
+          "y": 0.0,
+          "w": 148.38957055214723,
+          "h": 125.0
+        },
+        "acceptedManifest": "town/assets/parallel-art/front-facing-2/acceptances/beds-sofas-patches.json",
+        "acceptedManifestSHA256": "a14a01e6a7633ed71abc9c356119fc13780770689544d998a033554256b0dedf"
+      }
+    },
+    {
+      "assetId": "showroom-french-cafe-bed",
+      "facing": "south",
+      "originalStatus": "flagged",
+      "originalNote": "3/4 perspective",
+      "newOrChangedInUpload2": false,
+      "status": "resolved",
+      "method": "retained-first-pass-fix",
+      "category": "parallel-art",
+      "resolution": "Accepted native redraw in parallel 2/3 projection; original identity, dimensions, anchors and collision retained.",
+      "evidence": {
+        "previousResolution": "2026-11-14-resolution.json",
+        "previousResolutionSHA256": "037b1b82365f498e4614de0ae6c9d20035f00a3d8ae8a500bd629b12133237b8",
+        "retainedFromRevision": "23af9253916222ecacd7cf3029a71cd8c33a60f3",
+        "retainedNativeSource": "town/assets/parallel-art/packed/showroom-french-cafe-1-cd40b86368b0.webp",
+        "retainedNativeCrop": {
+          "x": 456,
+          "y": 928,
+          "w": 225,
+          "h": 358
+        }
+      }
+    },
+    {
+      "assetId": "showroom-industrial-loft-bed",
+      "facing": "south",
+      "originalStatus": "flagged",
+      "originalNote": "3/4 perspective",
+      "newOrChangedInUpload2": false,
+      "status": "resolved",
+      "method": "retained-first-pass-fix",
+      "category": "parallel-art",
+      "resolution": "Accepted native redraw in parallel 2/3 projection; original identity, dimensions, anchors and collision retained.",
+      "evidence": {
+        "previousResolution": "2026-11-14-resolution.json",
+        "previousResolutionSHA256": "037b1b82365f498e4614de0ae6c9d20035f00a3d8ae8a500bd629b12133237b8",
+        "retainedFromRevision": "23af9253916222ecacd7cf3029a71cd8c33a60f3",
+        "retainedNativeSource": "town/assets/parallel-art/packed/showroom-industrial-loft-1-829880aec58d.webp",
+        "retainedNativeCrop": {
+          "x": 1401,
+          "y": 922,
+          "w": 249,
+          "h": 352
+        }
+      }
+    },
+    {
+      "assetId": "showroom-industrial-loft-sofa",
+      "facing": "south",
+      "originalStatus": "flagged",
+      "originalNote": "3/4 perspective",
+      "newOrChangedInUpload2": false,
+      "status": "resolved",
+      "method": "direct-native-redraw",
+      "category": "front-orientation-and-camera",
+      "resolution": "Keep the original upholstery, carving, bedding, cushions and designed curved/asymmetric features. Show a coherent elevated parallel top/seat surface and a straight front axis without distance shrink.",
+      "evidence": {
+        "groupManifest": "beds-sofas-patches.json",
+        "finalGroupManifest": true,
+        "nativeSource": "town/assets/parallel-art/front-facing-2/beds-sofas/board-7-5c51739d76cb.webp",
+        "nativeCrop": {
+          "x": 422,
+          "y": 858,
+          "w": 405,
+          "h": 335
+        },
+        "draw": {
+          "x": 20.485074626865668,
+          "y": 0.0,
+          "w": 139.02985074626866,
+          "h": 115.0
+        },
+        "acceptedManifest": "town/assets/parallel-art/front-facing-2/acceptances/beds-sofas-patches.json",
+        "acceptedManifestSHA256": "a14a01e6a7633ed71abc9c356119fc13780770689544d998a033554256b0dedf"
+      }
+    },
+    {
+      "assetId": "apartment-teak-bed",
+      "facing": "south",
+      "originalStatus": "flagged",
+      "originalNote": "3/4 perspective",
+      "newOrChangedInUpload2": false,
+      "status": "resolved",
+      "method": "retained-first-pass-fix",
+      "category": "parallel-art",
+      "resolution": "Accepted native redraw in parallel 2/3 projection; original identity, dimensions, anchors and collision retained.",
+      "evidence": {
+        "previousResolution": "2026-11-14-resolution.json",
+        "previousResolutionSHA256": "037b1b82365f498e4614de0ae6c9d20035f00a3d8ae8a500bd629b12133237b8",
+        "retainedFromRevision": "23af9253916222ecacd7cf3029a71cd8c33a60f3",
+        "retainedNativeSource": "town/assets/parallel-art/packed/legacy-apartment-2-69a47fa4767b.webp",
+        "retainedNativeCrop": {
+          "x": 1364,
+          "y": 373,
+          "w": 229,
+          "h": 322
+        }
+      }
+    },
+    {
+      "assetId": "apartment-box-sofa",
+      "facing": "south",
+      "originalStatus": "flagged",
+      "originalNote": "3/4 perspective",
+      "newOrChangedInUpload2": false,
+      "status": "resolved",
+      "method": "direct-native-redraw",
+      "category": "front-orientation-and-camera",
+      "resolution": "Keep the original upholstery, carving, bedding, cushions and designed curved/asymmetric features. Show a coherent elevated parallel top/seat surface and a straight front axis without distance shrink.",
+      "evidence": {
+        "groupManifest": "beds-sofas-patches.json",
+        "finalGroupManifest": true,
+        "nativeSource": "town/assets/parallel-art/front-facing-2/beds-sofas/board-7-5c51739d76cb.webp",
+        "nativeCrop": {
+          "x": 847,
+          "y": 464,
+          "w": 387,
+          "h": 326
+        },
+        "draw": {
+          "x": 15.211656441717793,
+          "y": 0.0,
+          "w": 149.57668711656441,
+          "h": 126.0
+        },
+        "acceptedManifest": "town/assets/parallel-art/front-facing-2/acceptances/beds-sofas-patches.json",
+        "acceptedManifestSHA256": "a14a01e6a7633ed71abc9c356119fc13780770689544d998a033554256b0dedf"
+      }
+    },
+    {
+      "assetId": "apartment-walnut-credenza",
+      "facing": "south",
+      "originalStatus": "flagged",
+      "originalNote": "3/4 perspective",
+      "newOrChangedInUpload2": false,
+      "status": "resolved",
+      "method": "retained-first-pass-fix",
+      "category": "parallel-art",
+      "resolution": "Accepted native redraw in parallel 2/3 projection; original identity, dimensions, anchors and collision retained.",
+      "evidence": {
+        "previousResolution": "2026-11-14-resolution.json",
+        "previousResolutionSHA256": "037b1b82365f498e4614de0ae6c9d20035f00a3d8ae8a500bd629b12133237b8",
+        "retainedFromRevision": "23af9253916222ecacd7cf3029a71cd8c33a60f3",
+        "retainedNativeSource": "town/assets/parallel-art/packed/legacy-apartment-2-69a47fa4767b.webp",
+        "retainedNativeCrop": {
+          "x": 549,
+          "y": 1309,
+          "w": 250,
+          "h": 183
+        }
+      }
+    },
+    {
+      "assetId": "apartment-tambour-record-console",
+      "facing": "south",
+      "originalStatus": "flagged",
+      "originalNote": "3/4 perspective",
+      "newOrChangedInUpload2": false,
+      "status": "resolved",
+      "method": "retained-first-pass-fix",
+      "category": "parallel-art",
+      "resolution": "Accepted native redraw in parallel 2/3 projection; original identity, dimensions, anchors and collision retained.",
+      "evidence": {
+        "previousResolution": "2026-11-14-resolution.json",
+        "previousResolutionSHA256": "037b1b82365f498e4614de0ae6c9d20035f00a3d8ae8a500bd629b12133237b8",
+        "retainedFromRevision": "23af9253916222ecacd7cf3029a71cd8c33a60f3",
+        "retainedNativeSource": "town/assets/parallel-art/packed/legacy-apartment-2-69a47fa4767b.webp",
+        "retainedNativeCrop": {
+          "x": 278,
+          "y": 1309,
+          "w": 263,
+          "h": 183
+        }
+      }
+    },
+    {
+      "assetId": "apartment-teak-desk",
+      "facing": "south",
+      "originalStatus": "flagged",
+      "originalNote": "3/4 perspective",
+      "newOrChangedInUpload2": false,
+      "status": "resolved",
+      "method": "direct-native-redraw",
+      "category": "front-orientation-and-camera",
+      "resolution": "Accepted native source-art correction for the requested front orientation and parallel 2/3 camera, preserving the original detailed identity.",
+      "evidence": {
+        "groupManifest": "tables-instruments-patches.json",
+        "finalGroupManifest": true,
+        "nativeSource": "town/assets/parallel-art/front-facing-2/tables-instruments/non-family/non-family-08-e0281e1dbb78.webp",
+        "nativeCrop": {
+          "x": 1451,
+          "y": 145,
+          "w": 653,
+          "h": 559
+        },
+        "draw": {
+          "x": 13.415026833631487,
+          "y": 0.0,
+          "w": 133.16994633273703,
+          "h": 114.0
+        },
+        "acceptedManifest": "town/assets/parallel-art/front-facing-2/acceptances/tables-instruments-patches.json",
+        "acceptedManifestSHA256": "5287d0ae023eed8610a599954945c7f545299bef65952ef2e823da6691d96f00"
+      }
+    },
+    {
+      "assetId": "apartment-low-bookcase",
+      "facing": "south",
+      "originalStatus": "flagged",
+      "originalNote": "3/4 perspective",
+      "newOrChangedInUpload2": false,
+      "status": "resolved",
+      "method": "retained-first-pass-fix",
+      "category": "parallel-art",
+      "resolution": "Accepted native redraw in parallel 2/3 projection; original identity, dimensions, anchors and collision retained.",
+      "evidence": {
+        "previousResolution": "2026-11-14-resolution.json",
+        "previousResolutionSHA256": "037b1b82365f498e4614de0ae6c9d20035f00a3d8ae8a500bd629b12133237b8",
+        "retainedFromRevision": "23af9253916222ecacd7cf3029a71cd8c33a60f3",
+        "retainedNativeSource": "town/assets/parallel-art/packed/legacy-apartment-2-69a47fa4767b.webp",
+        "retainedNativeCrop": {
+          "x": 562,
+          "y": 1049,
+          "w": 262,
+          "h": 235
+        }
+      }
+    },
+    {
+      "assetId": "apartment-record-player",
+      "facing": "south",
+      "originalStatus": "flagged",
+      "originalNote": "3/4 perspective",
+      "newOrChangedInUpload2": false,
+      "status": "resolved",
+      "method": "retained-first-pass-fix",
+      "category": "parallel-art",
+      "resolution": "Accepted native redraw in parallel 2/3 projection; original identity, dimensions, anchors and collision retained.",
+      "evidence": {
+        "previousResolution": "2026-11-14-resolution.json",
+        "previousResolutionSHA256": "037b1b82365f498e4614de0ae6c9d20035f00a3d8ae8a500bd629b12133237b8",
+        "retainedFromRevision": "23af9253916222ecacd7cf3029a71cd8c33a60f3",
+        "retainedNativeSource": "town/assets/parallel-art/packed/legacy-apartment-2-69a47fa4767b.webp",
+        "retainedNativeCrop": {
+          "x": 4,
+          "y": 1049,
+          "w": 223,
+          "h": 252
+        }
+      }
+    },
+    {
+      "assetId": "apartment-record-rug",
+      "facing": "south",
+      "originalStatus": "flagged",
+      "originalNote": "3/4 perspective",
+      "newOrChangedInUpload2": false,
+      "status": "resolved",
+      "method": "retained-first-pass-fix",
+      "category": "parallel-art",
+      "resolution": "Accepted native redraw in parallel 2/3 projection; original identity, dimensions, anchors and collision retained.",
+      "evidence": {
+        "previousResolution": "2026-11-14-resolution.json",
+        "previousResolutionSHA256": "037b1b82365f498e4614de0ae6c9d20035f00a3d8ae8a500bd629b12133237b8",
+        "retainedFromRevision": "23af9253916222ecacd7cf3029a71cd8c33a60f3",
+        "retainedNativeSource": "town/assets/parallel-art/packed/legacy-apartment-1-f9a966ddf85b.webp",
+        "retainedNativeCrop": {
+          "x": 4,
+          "y": 4,
+          "w": 913,
+          "h": 562
+        }
+      }
+    },
+    {
+      "assetId": "apartment-rainbow-keys-rug",
+      "facing": "south",
+      "originalStatus": "flagged",
+      "originalNote": "3/4 perspective",
+      "newOrChangedInUpload2": false,
+      "status": "resolved",
+      "method": "retained-first-pass-fix",
+      "category": "parallel-art",
+      "resolution": "Accepted native redraw in parallel 2/3 projection; original identity, dimensions, anchors and collision retained.",
+      "evidence": {
+        "previousResolution": "2026-11-14-resolution.json",
+        "previousResolutionSHA256": "037b1b82365f498e4614de0ae6c9d20035f00a3d8ae8a500bd629b12133237b8",
+        "retainedFromRevision": "23af9253916222ecacd7cf3029a71cd8c33a60f3",
+        "retainedNativeSource": "town/assets/parallel-art/packed/legacy-apartment-1-f9a966ddf85b.webp",
+        "retainedNativeCrop": {
+          "x": 925,
+          "y": 4,
+          "w": 1064,
+          "h": 503
+        }
+      }
+    },
+    {
+      "assetId": "apartment-cassette-cubby",
+      "facing": "south",
+      "originalStatus": "flagged",
+      "originalNote": "3/4 perspective",
+      "newOrChangedInUpload2": false,
+      "status": "resolved",
+      "method": "retained-first-pass-fix",
+      "category": "parallel-art",
+      "resolution": "Accepted native redraw in parallel 2/3 projection; original identity, dimensions, anchors and collision retained.",
+      "evidence": {
+        "previousResolution": "2026-11-14-resolution.json",
+        "previousResolutionSHA256": "037b1b82365f498e4614de0ae6c9d20035f00a3d8ae8a500bd629b12133237b8",
+        "retainedFromRevision": "23af9253916222ecacd7cf3029a71cd8c33a60f3",
+        "retainedNativeSource": "town/assets/parallel-art/packed/legacy-apartment-2-69a47fa4767b.webp",
+        "retainedNativeCrop": {
+          "x": 1029,
+          "y": 737,
+          "w": 259,
+          "h": 279
+        }
+      }
+    },
+    {
+      "assetId": "apartment-sink-counter",
+      "facing": "south",
+      "originalStatus": "flagged",
+      "originalNote": "3/4 perspective",
+      "newOrChangedInUpload2": false,
+      "status": "resolved",
+      "method": "retained-first-pass-fix",
+      "category": "parallel-art",
+      "resolution": "Accepted native redraw in parallel 2/3 projection; original identity, dimensions, anchors and collision retained.",
+      "evidence": {
+        "previousResolution": "2026-11-14-resolution.json",
+        "previousResolutionSHA256": "037b1b82365f498e4614de0ae6c9d20035f00a3d8ae8a500bd629b12133237b8",
+        "retainedFromRevision": "23af9253916222ecacd7cf3029a71cd8c33a60f3",
+        "retainedNativeSource": "town/assets/parallel-art/packed/legacy-apartment-2-69a47fa4767b.webp",
+        "retainedNativeCrop": {
+          "x": 1296,
+          "y": 737,
+          "w": 249,
+          "h": 271
+        }
+      }
+    },
+    {
+      "assetId": "apartment-cream-stove",
+      "facing": "south",
+      "originalStatus": "flagged",
+      "originalNote": "3/4 perspective",
+      "newOrChangedInUpload2": false,
+      "status": "resolved",
+      "method": "retained-first-pass-fix",
+      "category": "parallel-art",
+      "resolution": "Accepted native redraw in parallel 2/3 projection; original identity, dimensions, anchors and collision retained.",
+      "evidence": {
+        "previousResolution": "2026-11-14-resolution.json",
+        "previousResolutionSHA256": "037b1b82365f498e4614de0ae6c9d20035f00a3d8ae8a500bd629b12133237b8",
+        "retainedFromRevision": "23af9253916222ecacd7cf3029a71cd8c33a60f3",
+        "retainedNativeSource": "town/assets/parallel-art/packed/legacy-apartment-2-69a47fa4767b.webp",
+        "retainedNativeCrop": {
+          "x": 1787,
+          "y": 737,
+          "w": 193,
+          "h": 265
+        }
+      }
+    },
+    {
+      "assetId": "apartment-blue-fridge",
+      "facing": "south",
+      "originalStatus": "flagged",
+      "originalNote": "3/4 perspective",
+      "newOrChangedInUpload2": false,
+      "status": "resolved",
+      "method": "retained-first-pass-fix",
+      "category": "parallel-art",
+      "resolution": "Accepted native redraw in parallel 2/3 projection; original identity, dimensions, anchors and collision retained.",
+      "evidence": {
+        "previousResolution": "2026-11-14-resolution.json",
+        "previousResolutionSHA256": "037b1b82365f498e4614de0ae6c9d20035f00a3d8ae8a500bd629b12133237b8",
+        "retainedFromRevision": "23af9253916222ecacd7cf3029a71cd8c33a60f3",
+        "retainedNativeSource": "town/assets/parallel-art/packed/legacy-apartment-1-f9a966ddf85b.webp",
+        "retainedNativeCrop": {
+          "x": 251,
+          "y": 574,
+          "w": 201,
+          "h": 387
+        }
+      }
+    },
+    {
+      "assetId": "apartment-bath-vanity",
+      "facing": "south",
+      "originalStatus": "flagged",
+      "originalNote": "3/4 perspective",
+      "newOrChangedInUpload2": false,
+      "status": "resolved",
+      "method": "retained-first-pass-fix",
+      "category": "parallel-art",
+      "resolution": "Accepted native redraw in parallel 2/3 projection; original identity, dimensions, anchors and collision retained.",
+      "evidence": {
+        "previousResolution": "2026-11-14-resolution.json",
+        "previousResolutionSHA256": "037b1b82365f498e4614de0ae6c9d20035f00a3d8ae8a500bd629b12133237b8",
+        "retainedFromRevision": "23af9253916222ecacd7cf3029a71cd8c33a60f3",
+        "retainedNativeSource": "town/assets/parallel-art/packed/legacy-apartment-2-69a47fa4767b.webp",
+        "retainedNativeCrop": {
+          "x": 1553,
+          "y": 737,
+          "w": 226,
+          "h": 265
+        }
+      }
+    },
+    {
+      "assetId": "apartment-glass-shower",
+      "facing": "south",
+      "originalStatus": "flagged",
+      "originalNote": "3/4 perspective",
+      "newOrChangedInUpload2": false,
+      "status": "resolved",
+      "method": "retained-first-pass-fix",
+      "category": "parallel-art",
+      "resolution": "Accepted native redraw in parallel 2/3 projection; original identity, dimensions, anchors and collision retained.",
+      "evidence": {
+        "previousResolution": "2026-11-14-resolution.json",
+        "previousResolutionSHA256": "037b1b82365f498e4614de0ae6c9d20035f00a3d8ae8a500bd629b12133237b8",
+        "retainedFromRevision": "23af9253916222ecacd7cf3029a71cd8c33a60f3",
+        "retainedNativeSource": "town/assets/parallel-art/packed/legacy-apartment-1-f9a966ddf85b.webp",
+        "retainedNativeCrop": {
+          "x": 4,
+          "y": 574,
+          "w": 239,
+          "h": 387
+        }
+      }
+    },
+    {
+      "assetId": "apartment-wardrobe",
+      "facing": "south",
+      "originalStatus": "flagged",
+      "originalNote": "3/4 perspective",
+      "newOrChangedInUpload2": false,
+      "status": "resolved",
+      "method": "retained-first-pass-fix",
+      "category": "parallel-art",
+      "resolution": "Accepted native redraw in parallel 2/3 projection; original identity, dimensions, anchors and collision retained.",
+      "evidence": {
+        "previousResolution": "2026-11-14-resolution.json",
+        "previousResolutionSHA256": "037b1b82365f498e4614de0ae6c9d20035f00a3d8ae8a500bd629b12133237b8",
+        "retainedFromRevision": "23af9253916222ecacd7cf3029a71cd8c33a60f3",
+        "retainedNativeSource": "town/assets/parallel-art/packed/legacy-apartment-1-f9a966ddf85b.webp",
+        "retainedNativeCrop": {
+          "x": 460,
+          "y": 574,
+          "w": 270,
+          "h": 374
+        }
+      }
+    },
+    {
+      "assetId": "apartment-nightstand",
+      "facing": "south",
+      "originalStatus": "flagged",
+      "originalNote": "3/4 perspective",
+      "newOrChangedInUpload2": false,
+      "status": "resolved",
+      "method": "retained-first-pass-fix",
+      "category": "parallel-art",
+      "resolution": "Accepted native redraw in parallel 2/3 projection; original identity, dimensions, anchors and collision retained.",
+      "evidence": {
+        "previousResolution": "2026-11-14-resolution.json",
+        "previousResolutionSHA256": "037b1b82365f498e4614de0ae6c9d20035f00a3d8ae8a500bd629b12133237b8",
+        "retainedFromRevision": "23af9253916222ecacd7cf3029a71cd8c33a60f3",
+        "retainedNativeSource": "town/assets/parallel-art/packed/legacy-apartment-2-69a47fa4767b.webp",
+        "retainedNativeCrop": {
+          "x": 403,
+          "y": 373,
+          "w": 241,
+          "h": 344
+        }
+      }
+    },
+    {
+      "assetId": "apartment-toy-chest",
+      "facing": "south",
+      "originalStatus": "flagged",
+      "originalNote": "3/4 perspective",
+      "newOrChangedInUpload2": false,
+      "status": "resolved",
+      "method": "retained-first-pass-fix",
+      "category": "parallel-art",
+      "resolution": "Accepted native redraw in parallel 2/3 projection; original identity, dimensions, anchors and collision retained.",
+      "evidence": {
+        "previousResolution": "2026-11-14-resolution.json",
+        "previousResolutionSHA256": "037b1b82365f498e4614de0ae6c9d20035f00a3d8ae8a500bd629b12133237b8",
+        "retainedFromRevision": "23af9253916222ecacd7cf3029a71cd8c33a60f3",
+        "retainedNativeSource": "town/assets/parallel-art/packed/legacy-apartment-2-69a47fa4767b.webp",
+        "retainedNativeCrop": {
+          "x": 4,
+          "y": 737,
+          "w": 308,
+          "h": 304
+        }
+      }
+    },
+    {
+      "assetId": "apartment-dining-bench",
+      "facing": "south",
+      "originalStatus": "flagged",
+      "originalNote": "3/4 perspective",
+      "newOrChangedInUpload2": false,
+      "status": "resolved",
+      "method": "retained-first-pass-fix",
+      "category": "parallel-art",
+      "resolution": "Accepted native redraw in parallel 2/3 projection; original identity, dimensions, anchors and collision retained.",
+      "evidence": {
+        "previousResolution": "2026-11-14-resolution.json",
+        "previousResolutionSHA256": "037b1b82365f498e4614de0ae6c9d20035f00a3d8ae8a500bd629b12133237b8",
+        "retainedFromRevision": "23af9253916222ecacd7cf3029a71cd8c33a60f3",
+        "retainedNativeSource": "town/assets/parallel-art/packed/legacy-apartment-2-69a47fa4767b.webp",
+        "retainedNativeCrop": {
+          "x": 686,
+          "y": 737,
+          "w": 335,
+          "h": 287
+        }
+      }
+    },
+    {
+      "assetId": "collection-bach-bed",
+      "facing": "south",
+      "originalStatus": "flagged",
+      "originalNote": "3/4 perspective",
+      "newOrChangedInUpload2": false,
+      "status": "resolved",
+      "method": "direct-native-redraw",
+      "category": "front-orientation-and-camera",
+      "resolution": "Keep the original upholstery, carving, bedding, cushions and designed curved/asymmetric features. Show a coherent elevated parallel top/seat surface and a straight front axis without distance shrink.",
+      "evidence": {
+        "groupManifest": "beds-sofas-patches.json",
+        "finalGroupManifest": true,
+        "nativeSource": "town/assets/parallel-art/front-facing-2/beds-sofas/board-1-6e75e82d998b.webp",
+        "nativeCrop": {
+          "x": 80,
+          "y": 0,
+          "w": 278,
+          "h": 405
+        },
+        "draw": {
+          "x": 23.51851851851852,
+          "y": 0.0,
+          "w": 102.96296296296296,
+          "h": 150.0
+        },
+        "acceptedManifest": "town/assets/parallel-art/front-facing-2/acceptances/beds-sofas-patches.json",
+        "acceptedManifestSHA256": "a14a01e6a7633ed71abc9c356119fc13780770689544d998a033554256b0dedf"
+      }
+    },
+    {
+      "assetId": "collection-bach-sofa",
+      "facing": "south",
+      "originalStatus": "flagged",
+      "originalNote": "3/4 perspective",
+      "newOrChangedInUpload2": false,
+      "status": "resolved",
+      "method": "direct-native-redraw",
+      "category": "front-orientation-and-camera",
+      "resolution": "Keep the original upholstery, carving, bedding, cushions and designed curved/asymmetric features. Show a coherent elevated parallel top/seat surface and a straight front axis without distance shrink.",
+      "evidence": {
+        "groupManifest": "beds-sofas-patches.json",
+        "finalGroupManifest": true,
+        "nativeSource": "town/assets/parallel-art/front-facing-2/beds-sofas/board-4-a4e6f9b702a6.webp",
+        "nativeCrop": {
+          "x": 21,
+          "y": 17,
+          "w": 378,
+          "h": 407
+        },
+        "draw": {
+          "x": 31.48894348894349,
+          "y": 0.0,
+          "w": 117.02211302211302,
+          "h": 126.0
+        },
+        "acceptedManifest": "town/assets/parallel-art/front-facing-2/acceptances/beds-sofas-patches.json",
+        "acceptedManifestSHA256": "a14a01e6a7633ed71abc9c356119fc13780770689544d998a033554256b0dedf"
+      }
+    },
+    {
+      "assetId": "collection-bach-wardrobe",
+      "facing": "south",
+      "originalStatus": "flagged",
+      "originalNote": "front facing, 3/4 perspective",
+      "newOrChangedInUpload2": false,
+      "status": "resolved",
+      "method": "retained-first-pass-fix",
+      "category": "parallel-art",
+      "resolution": "Accepted native redraw in parallel 2/3 projection; original identity, dimensions, anchors and collision retained.",
+      "evidence": {
+        "previousResolution": "2026-11-14-resolution.json",
+        "previousResolutionSHA256": "037b1b82365f498e4614de0ae6c9d20035f00a3d8ae8a500bd629b12133237b8",
+        "retainedFromRevision": "23af9253916222ecacd7cf3029a71cd8c33a60f3",
+        "retainedNativeSource": "town/assets/parallel-art/packed/bach-1-4cae87c925f3.webp",
+        "retainedNativeCrop": {
+          "x": 338,
+          "y": 1620,
+          "w": 219,
+          "h": 348
+        }
+      }
+    },
+    {
+      "assetId": "collection-bach-desk",
+      "facing": "south",
+      "originalStatus": "flagged",
+      "originalNote": "3/4 perspective",
+      "newOrChangedInUpload2": false,
+      "status": "resolved",
+      "method": "direct-native-redraw",
+      "category": "front-orientation-and-camera",
+      "resolution": "Accepted native source-art correction for the requested front orientation and parallel 2/3 camera, preserving the original detailed identity.",
+      "evidence": {
+        "groupManifest": "tables-instruments-patches.json",
+        "finalGroupManifest": true,
+        "nativeSource": "town/assets/parallel-art/front-facing-2/tables-instruments/non-family/non-family-08-e0281e1dbb78.webp",
+        "nativeCrop": {
+          "x": 73,
+          "y": 10,
+          "w": 602,
+          "h": 702
+        },
+        "draw": {
+          "x": 31.11965811965812,
+          "y": 0.0,
+          "w": 97.76068376068376,
+          "h": 114.0
+        },
+        "acceptedManifest": "town/assets/parallel-art/front-facing-2/acceptances/tables-instruments-patches.json",
+        "acceptedManifestSHA256": "5287d0ae023eed8610a599954945c7f545299bef65952ef2e823da6691d96f00"
+      }
+    },
+    {
+      "assetId": "collection-bach-desk-chair",
+      "facing": "south",
+      "originalStatus": "flagged",
+      "originalNote": "3/4 perspective",
+      "newOrChangedInUpload2": false,
+      "status": "resolved",
+      "method": "retained-first-pass-fix",
+      "category": "parallel-art",
+      "resolution": "Accepted native redraw in parallel 2/3 projection; original identity, dimensions, anchors and collision retained.",
+      "evidence": {
+        "previousResolution": "2026-11-14-resolution.json",
+        "previousResolutionSHA256": "037b1b82365f498e4614de0ae6c9d20035f00a3d8ae8a500bd629b12133237b8",
+        "retainedFromRevision": "23af9253916222ecacd7cf3029a71cd8c33a60f3",
+        "retainedNativeSource": "town/assets/parallel-art/packed/bach-1-4cae87c925f3.webp",
+        "retainedNativeCrop": {
+          "x": 946,
+          "y": 1153,
+          "w": 257,
+          "h": 448
+        }
+      }
+    },
+    {
+      "assetId": "collection-bach-dining-chair",
+      "facing": "south",
+      "originalStatus": "flagged",
+      "originalNote": "3/4 perspective",
+      "newOrChangedInUpload2": false,
+      "status": "resolved",
+      "method": "retained-first-pass-fix",
+      "category": "parallel-art",
+      "resolution": "Accepted native redraw in parallel 2/3 projection; original identity, dimensions, anchors and collision retained.",
+      "evidence": {
+        "previousResolution": "2026-11-14-resolution.json",
+        "previousResolutionSHA256": "037b1b82365f498e4614de0ae6c9d20035f00a3d8ae8a500bd629b12133237b8",
+        "retainedFromRevision": "23af9253916222ecacd7cf3029a71cd8c33a60f3",
+        "retainedNativeSource": "town/assets/parallel-art/packed/bach-1-4cae87c925f3.webp",
+        "retainedNativeCrop": {
+          "x": 724,
+          "y": 1153,
+          "w": 214,
+          "h": 454
+        }
+      }
+    },
+    {
+      "assetId": "collection-bach-sink",
+      "facing": "south",
+      "originalStatus": "flagged",
+      "originalNote": "3/4 perspective",
+      "newOrChangedInUpload2": false,
+      "status": "resolved",
+      "method": "retained-first-pass-fix",
+      "category": "parallel-art",
+      "resolution": "Accepted native redraw in parallel 2/3 projection; original identity, dimensions, anchors and collision retained.",
+      "evidence": {
+        "previousResolution": "2026-11-14-resolution.json",
+        "previousResolutionSHA256": "037b1b82365f498e4614de0ae6c9d20035f00a3d8ae8a500bd629b12133237b8",
+        "retainedFromRevision": "23af9253916222ecacd7cf3029a71cd8c33a60f3",
+        "retainedNativeSource": "town/assets/parallel-art/packed/bach-1-4cae87c925f3.webp",
+        "retainedNativeCrop": {
+          "x": 1339,
+          "y": 4,
+          "w": 352,
+          "h": 465
+        }
+      }
+    },
+    {
+      "assetId": "collection-bach-counter",
+      "facing": "south",
+      "originalStatus": "flagged",
+      "originalNote": "3/4 perspective",
+      "newOrChangedInUpload2": false,
+      "status": "resolved",
+      "method": "retained-first-pass-fix",
+      "category": "parallel-art",
+      "resolution": "Accepted native redraw in parallel 2/3 projection; original identity, dimensions, anchors and collision retained.",
+      "evidence": {
+        "previousResolution": "2026-11-14-resolution.json",
+        "previousResolutionSHA256": "037b1b82365f498e4614de0ae6c9d20035f00a3d8ae8a500bd629b12133237b8",
+        "retainedFromRevision": "23af9253916222ecacd7cf3029a71cd8c33a60f3",
+        "retainedNativeSource": "town/assets/parallel-art/packed/bach-1-4cae87c925f3.webp",
+        "retainedNativeCrop": {
+          "x": 565,
+          "y": 1620,
+          "w": 451,
+          "h": 341
+        }
+      }
+    },
+    {
+      "assetId": "collection-bach-vanity",
+      "facing": "south",
+      "originalStatus": "flagged",
+      "originalNote": "3/4 perspective",
+      "newOrChangedInUpload2": false,
+      "status": "resolved",
+      "method": "retained-first-pass-fix",
+      "category": "parallel-art",
+      "resolution": "Accepted native redraw in parallel 2/3 projection; original identity, dimensions, anchors and collision retained.",
+      "evidence": {
+        "previousResolution": "2026-11-14-resolution.json",
+        "previousResolutionSHA256": "037b1b82365f498e4614de0ae6c9d20035f00a3d8ae8a500bd629b12133237b8",
+        "retainedFromRevision": "23af9253916222ecacd7cf3029a71cd8c33a60f3",
+        "retainedNativeSource": "town/assets/parallel-art/packed/bach-1-4cae87c925f3.webp",
+        "retainedNativeCrop": {
+          "x": 1699,
+          "y": 4,
+          "w": 292,
+          "h": 465
+        }
+      }
+    },
+    {
+      "assetId": "collection-bach-bath-fixture",
+      "facing": "south",
+      "originalStatus": "flagged",
+      "originalNote": "3/4 perspective",
+      "newOrChangedInUpload2": false,
+      "status": "resolved",
+      "method": "retained-first-pass-fix",
+      "category": "parallel-art",
+      "resolution": "Accepted native redraw in parallel 2/3 projection; original identity, dimensions, anchors and collision retained.",
+      "evidence": {
+        "previousResolution": "2026-11-14-resolution.json",
+        "previousResolutionSHA256": "037b1b82365f498e4614de0ae6c9d20035f00a3d8ae8a500bd629b12133237b8",
+        "retainedFromRevision": "23af9253916222ecacd7cf3029a71cd8c33a60f3",
+        "retainedNativeSource": "town/assets/parallel-art/packed/bach-1-4cae87c925f3.webp",
+        "retainedNativeCrop": {
+          "x": 4,
+          "y": 4,
+          "w": 744,
+          "h": 1141
+        }
+      }
+    },
+    {
+      "assetId": "collection-bach-shelf",
+      "facing": "south",
+      "originalStatus": "flagged",
+      "originalNote": "front facing 3/4 perspective",
+      "newOrChangedInUpload2": false,
+      "status": "resolved",
+      "method": "direct-native-redraw",
+      "category": "front-orientation-and-camera",
+      "resolution": "Make the shelf front level and South-facing, with a visible upper plane and parallel depth edges. Retain the original carved supports, finish and individual display objects.",
+      "evidence": {
+        "groupManifest": "shelves-decor-patches.json",
+        "finalGroupManifest": true,
+        "nativeSource": "town/assets/parallel-art/front-facing-2/shelves-decor/collection-bach-shelf-south-1111879b8b84.webp",
+        "nativeCrop": {
+          "x": 0,
+          "y": 0,
+          "w": 462,
+          "h": 364
+        },
+        "draw": {
+          "x": 10.692307692307686,
+          "y": 0,
+          "w": 106.61538461538463,
+          "h": 84.0
+        },
+        "acceptedManifest": "town/assets/parallel-art/front-facing-2/acceptances/shelves-decor-patches.json",
+        "acceptedManifestSHA256": "c8cbe539c6e704f5a5453a2c34f9bb4d6c4b05ce9000a472700316e6d683d5bd"
+      }
+    },
+    {
+      "assetId": "collection-bach-record-console",
+      "facing": "south",
+      "originalStatus": "flagged",
+      "originalNote": "3/4 perspective",
+      "newOrChangedInUpload2": false,
+      "status": "resolved",
+      "method": "retained-first-pass-fix",
+      "category": "parallel-art",
+      "resolution": "Accepted native redraw in parallel 2/3 projection; original identity, dimensions, anchors and collision retained.",
+      "evidence": {
+        "previousResolution": "2026-11-14-resolution.json",
+        "previousResolutionSHA256": "037b1b82365f498e4614de0ae6c9d20035f00a3d8ae8a500bd629b12133237b8",
+        "retainedFromRevision": "23af9253916222ecacd7cf3029a71cd8c33a60f3",
+        "retainedNativeSource": "town/assets/parallel-art/packed/bach-1-4cae87c925f3.webp",
+        "retainedNativeCrop": {
+          "x": 1024,
+          "y": 1620,
+          "w": 270,
+          "h": 339
+        }
+      }
+    },
+    {
+      "assetId": "collection-mozart-bed",
+      "facing": "south",
+      "originalStatus": "flagged",
+      "originalNote": "3/4 perspective",
+      "newOrChangedInUpload2": false,
+      "status": "resolved",
+      "method": "direct-native-redraw",
+      "category": "front-orientation-and-camera",
+      "resolution": "Keep the original upholstery, carving, bedding, cushions and designed curved/asymmetric features. Show a coherent elevated parallel top/seat surface and a straight front axis without distance shrink.",
+      "evidence": {
+        "groupManifest": "beds-sofas-patches.json",
+        "finalGroupManifest": true,
+        "nativeSource": "town/assets/parallel-art/front-facing-2/beds-sofas/board-1-6e75e82d998b.webp",
+        "nativeCrop": {
+          "x": 473,
+          "y": 0,
+          "w": 308,
+          "h": 406
+        },
+        "draw": {
+          "x": 18.10344827586207,
+          "y": 0.0,
+          "w": 113.79310344827586,
+          "h": 150.0
+        },
+        "acceptedManifest": "town/assets/parallel-art/front-facing-2/acceptances/beds-sofas-patches.json",
+        "acceptedManifestSHA256": "a14a01e6a7633ed71abc9c356119fc13780770689544d998a033554256b0dedf"
+      }
+    },
+    {
+      "assetId": "collection-mozart-sofa",
+      "facing": "south",
+      "originalStatus": "flagged",
+      "originalNote": "3/4 perspective",
+      "newOrChangedInUpload2": false,
+      "status": "resolved",
+      "method": "direct-native-redraw",
+      "category": "front-orientation-and-camera",
+      "resolution": "Keep the original upholstery, carving, bedding, cushions and designed curved/asymmetric features. Show a coherent elevated parallel top/seat surface and a straight front axis without distance shrink.",
+      "evidence": {
+        "groupManifest": "beds-sofas-patches.json",
+        "finalGroupManifest": true,
+        "nativeSource": "town/assets/parallel-art/front-facing-2/beds-sofas/board-4-a4e6f9b702a6.webp",
+        "nativeCrop": {
+          "x": 423,
+          "y": 46,
+          "w": 402,
+          "h": 372
+        },
+        "draw": {
+          "x": 21.91935483870968,
+          "y": 1.4210854715202004e-14,
+          "w": 136.16129032258064,
+          "h": 125.99999999999999
+        },
+        "acceptedManifest": "town/assets/parallel-art/front-facing-2/acceptances/beds-sofas-patches.json",
+        "acceptedManifestSHA256": "a14a01e6a7633ed71abc9c356119fc13780770689544d998a033554256b0dedf"
+      }
+    },
+    {
+      "assetId": "collection-mozart-desk",
+      "facing": "south",
+      "originalStatus": "flagged",
+      "originalNote": "",
+      "newOrChangedInUpload2": false,
+      "status": "resolved",
+      "method": "direct-native-redraw",
+      "category": "front-orientation-and-camera",
+      "resolution": "Accepted native source-art correction for the requested front orientation and parallel 2/3 camera, preserving the original detailed identity.",
+      "evidence": {
+        "groupManifest": "tables-instruments-patches.json",
+        "finalGroupManifest": true,
+        "nativeSource": "town/assets/parallel-art/front-facing-2/tables-instruments/non-family/non-family-08-e0281e1dbb78.webp",
+        "nativeCrop": {
+          "x": 792,
+          "y": 9,
+          "w": 580,
+          "h": 703
+        },
+        "draw": {
+          "x": 32.97297297297297,
+          "y": 0.0,
+          "w": 94.05405405405406,
+          "h": 114.0
+        },
+        "acceptedManifest": "town/assets/parallel-art/front-facing-2/acceptances/tables-instruments-patches.json",
+        "acceptedManifestSHA256": "5287d0ae023eed8610a599954945c7f545299bef65952ef2e823da6691d96f00"
+      }
+    },
+    {
+      "assetId": "collection-mozart-pantry",
+      "facing": "south",
+      "originalStatus": "flagged",
+      "originalNote": "not south facing",
+      "newOrChangedInUpload2": true,
+      "status": "resolved",
+      "method": "direct-native-redraw",
+      "category": "front-orientation-and-camera",
+      "resolution": "Rosewood, ivory panels, ribbon trim, jars and glass doors remain; the pantry front is now squarely South-facing rather than quarter-turned.",
+      "evidence": {
+        "groupManifest": "storage-patches.json",
+        "finalGroupManifest": true,
+        "nativeSource": "town/assets/parallel-art/front-facing-2/storage/native/batch-1-aaf6c80633cb.webp",
+        "nativeCrop": {
+          "x": 92,
+          "y": 48,
+          "w": 199,
+          "h": 307
+        },
+        "draw": {
+          "x": -7.105427357601002e-15,
+          "y": 13.557788944723598,
+          "w": 104.00000000000001,
+          "h": 160.4422110552764
+        },
+        "acceptedManifest": "town/assets/parallel-art/front-facing-2/acceptances/storage-patches.json",
+        "acceptedManifestSHA256": "4803fc8cd5a8023fa14eaaab528fc4c0d133996c8194152ab26ef0d0b31afe56"
+      }
+    },
+    {
+      "assetId": "collection-mozart-linen-storage",
+      "facing": "south",
+      "originalStatus": "flagged",
+      "originalNote": "not front facing\n",
+      "newOrChangedInUpload2": true,
+      "status": "resolved",
+      "method": "direct-native-redraw",
+      "category": "front-orientation-and-camera",
+      "resolution": "The linen opening and drawer face forward with level shelves; retain the rosewood/ivory trim, towels, basket and decorative ribbon.",
+      "evidence": {
+        "groupManifest": "storage-patches.json",
+        "finalGroupManifest": true,
+        "nativeSource": "town/assets/parallel-art/front-facing-2/storage/native/batch-1-aaf6c80633cb.webp",
+        "nativeCrop": {
+          "x": 458,
+          "y": 47,
+          "w": 191,
+          "h": 306
+        },
+        "draw": {
+          "x": 0.0,
+          "y": 5.811518324607334,
+          "w": 90.0,
+          "h": 144.18848167539267
+        },
+        "acceptedManifest": "town/assets/parallel-art/front-facing-2/acceptances/storage-patches.json",
+        "acceptedManifestSHA256": "4803fc8cd5a8023fa14eaaab528fc4c0d133996c8194152ab26ef0d0b31afe56"
+      }
+    },
+    {
+      "assetId": "collection-mozart-shelf",
+      "facing": "south",
+      "originalStatus": "flagged",
+      "originalNote": "not 2/3 perspective",
+      "newOrChangedInUpload2": true,
+      "status": "resolved",
+      "method": "direct-native-redraw",
+      "category": "front-orientation-and-camera",
+      "resolution": "Make the shelf front level and South-facing, with a visible upper plane and parallel depth edges. Retain the original carved supports, finish and individual display objects.",
+      "evidence": {
+        "groupManifest": "shelves-decor-patches.json",
+        "finalGroupManifest": true,
+        "nativeSource": "town/assets/parallel-art/front-facing-2/shelves-decor/collection-mozart-shelf-south-d0d3fde026b8.webp",
+        "nativeCrop": {
+          "x": 0,
+          "y": 0,
+          "w": 463,
+          "h": 336
+        },
+        "draw": {
+          "x": 6.125,
+          "y": 0,
+          "w": 115.75,
+          "h": 84.0
+        },
+        "acceptedManifest": "town/assets/parallel-art/front-facing-2/acceptances/shelves-decor-patches.json",
+        "acceptedManifestSHA256": "c8cbe539c6e704f5a5453a2c34f9bb4d6c4b05ce9000a472700316e6d683d5bd"
+      }
+    },
+    {
+      "assetId": "collection-beethoven-linen-storage",
+      "facing": "south",
+      "originalStatus": "flagged",
+      "originalNote": "2/3 perpsective",
+      "newOrChangedInUpload2": true,
+      "status": "resolved",
+      "method": "direct-native-redraw",
+      "category": "front-orientation-and-camera",
+      "resolution": "A separate refinement removes the broad right side wall. Shelf rails are level, front stiles are equal-width, and the lightning motif remains on the front; the top still has elevated parallel depth.",
+      "evidence": {
+        "groupManifest": "storage-patches.json",
+        "finalGroupManifest": true,
+        "nativeSource": "town/assets/parallel-art/front-facing-2/storage/native/collection-beethoven-linen-storage-4d5eb3721387.webp",
+        "nativeCrop": {
+          "x": 68,
+          "y": 64,
+          "w": 798,
+          "h": 1504
+        },
+        "draw": {
+          "x": 5.206117021276597,
+          "y": 0.0,
+          "w": 79.5877659574468,
+          "h": 150.0
+        },
+        "acceptedManifest": "town/assets/parallel-art/front-facing-2/acceptances/storage-patches.json",
+        "acceptedManifestSHA256": "4803fc8cd5a8023fa14eaaab528fc4c0d133996c8194152ab26ef0d0b31afe56"
+      }
+    },
+    {
+      "assetId": "collection-clara-nightstand",
+      "facing": "south",
+      "originalStatus": "flagged",
+      "originalNote": "not front facing",
+      "newOrChangedInUpload2": true,
+      "status": "resolved",
+      "method": "direct-native-redraw",
+      "category": "front-orientation-and-camera",
+      "resolution": "The round rattan/fern nightstand faces forward around its drawer axis, with an elevated visible top; preserve its lamp, pale wood and curved supports.",
+      "evidence": {
+        "groupManifest": "storage-patches.json",
+        "finalGroupManifest": true,
+        "nativeSource": "town/assets/parallel-art/front-facing-2/storage/native/batch-1-aaf6c80633cb.webp",
+        "nativeCrop": {
+          "x": 96,
+          "y": 401,
+          "w": 189,
+          "h": 290
+        },
+        "draw": {
+          "x": 5.582758620689656,
+          "y": 0.0,
+          "w": 50.83448275862069,
+          "h": 78.0
+        },
+        "acceptedManifest": "town/assets/parallel-art/front-facing-2/acceptances/storage-patches.json",
+        "acceptedManifestSHA256": "4803fc8cd5a8023fa14eaaab528fc4c0d133996c8194152ab26ef0d0b31afe56"
+      }
+    },
+    {
+      "assetId": "collection-clara-dining-chair",
+      "facing": "south",
+      "originalStatus": "flagged",
+      "originalNote": "now front facing",
+      "newOrChangedInUpload2": true,
+      "status": "resolved",
+      "method": "direct-native-redraw",
+      "category": "front-orientation-and-camera",
+      "resolution": "The South view keeps the birch/fern chair facing forward with a deeper sage seat.",
+      "evidence": {
+        "groupManifest": "seating-tables-patches.json",
+        "finalGroupManifest": true,
+        "nativeSource": "town/assets/parallel-art/front-facing-2/seating-tables/clara-dining-south-cf3c64d62fc5.webp",
+        "nativeCrop": {
+          "x": 0,
+          "y": 0,
+          "w": 226,
+          "h": 449
+        },
+        "draw": {
+          "x": 6.832962138084632,
+          "y": 0.0,
+          "w": 50.334075723830736,
+          "h": 100.0
+        },
+        "acceptedManifest": "town/assets/parallel-art/front-facing-2/acceptances/seating-tables-patches.json",
+        "acceptedManifestSHA256": "e6ceff1dd8de1fec114a26cbe542649be85fb853ec805310eb8ce50091f208d6"
+      }
+    },
+    {
+      "assetId": "collection-clara-dining-chair",
+      "facing": "east",
+      "originalStatus": "flagged",
+      "originalNote": "wrong color/not mirrored off west facing",
+      "newOrChangedInUpload2": true,
+      "status": "resolved",
+      "method": "direct-native-redraw",
+      "category": "front-orientation-and-camera",
+      "resolution": "Author the East view from the current West reference: the same sage upholstery, birch fern carving and side-profile identity replace the mismatched cream overhead image; keep the requested East facing and original physical metadata.",
+      "evidence": {
+        "groupManifest": "seating-tables-patches.json",
+        "finalGroupManifest": true,
+        "nativeSource": "town/assets/parallel-art/front-facing-2/seating-tables/chair-clara-dining-chair-east-e4ecd9506db2.webp",
+        "nativeCrop": {
+          "x": 15,
+          "y": 0,
+          "w": 956,
+          "h": 1620
+        },
+        "draw": {
+          "x": 0.0,
+          "y": 18.393305439330547,
+          "w": 57.6,
+          "h": 97.60669456066945
+        },
+        "acceptedManifest": "town/assets/parallel-art/front-facing-2/acceptances/seating-tables-patches.json",
+        "acceptedManifestSHA256": "e6ceff1dd8de1fec114a26cbe542649be85fb853ec805310eb8ce50091f208d6"
+      }
+    },
+    {
+      "assetId": "collection-clara-shelf",
+      "facing": "south",
+      "originalStatus": "flagged",
+      "originalNote": "now front facing, not 2/3 perspective",
+      "newOrChangedInUpload2": true,
+      "status": "resolved",
+      "method": "direct-native-redraw",
+      "category": "front-orientation-and-camera",
+      "resolution": "Make the shelf front level and South-facing, with a visible upper plane and parallel depth edges. Retain the original carved supports, finish and individual display objects.",
+      "evidence": {
+        "groupManifest": "shelves-decor-patches.json",
+        "finalGroupManifest": true,
+        "nativeSource": "town/assets/parallel-art/front-facing-2/shelves-decor/collection-clara-shelf-south-5d9efbe08e96.webp",
+        "nativeCrop": {
+          "x": 0,
+          "y": 0,
+          "w": 472,
+          "h": 352
+        },
+        "draw": {
+          "x": 7.68181818181818,
+          "y": 0,
+          "w": 112.63636363636364,
+          "h": 84.0
+        },
+        "acceptedManifest": "town/assets/parallel-art/front-facing-2/acceptances/shelves-decor-patches.json",
+        "acceptedManifestSHA256": "c8cbe539c6e704f5a5453a2c34f9bb4d6c4b05ce9000a472700316e6d683d5bd"
+      }
+    },
+    {
+      "assetId": "collection-clara-toy",
+      "facing": "south",
+      "originalStatus": "flagged",
+      "originalNote": "not front facing",
+      "newOrChangedInUpload2": true,
+      "status": "resolved",
+      "method": "direct-native-redraw",
+      "category": "front-orientation-and-camera",
+      "resolution": "Face the recognizable original toy toward South while keeping its detailed silhouette, materials, colors and physical curves.",
+      "evidence": {
+        "groupManifest": "shelves-decor-patches.json",
+        "finalGroupManifest": true,
+        "nativeSource": "town/assets/parallel-art/front-facing-2/shelves-decor/collection-clara-toy-south-9aae83619a6f.webp",
+        "nativeCrop": {
+          "x": 0,
+          "y": 0,
+          "w": 398,
+          "h": 446
+        },
+        "draw": {
+          "x": 1.6591928251121075,
+          "y": 0,
+          "w": 60.681614349775785,
+          "h": 68.0
+        },
+        "acceptedManifest": "town/assets/parallel-art/front-facing-2/acceptances/shelves-decor-patches.json",
+        "acceptedManifestSHA256": "c8cbe539c6e704f5a5453a2c34f9bb4d6c4b05ce9000a472700316e6d683d5bd"
+      }
+    },
+    {
+      "assetId": "collection-chopin-wardrobe",
+      "facing": "south",
+      "originalStatus": "flagged",
+      "originalNote": "not front facing",
+      "newOrChangedInUpload2": true,
+      "status": "resolved",
+      "method": "direct-native-redraw",
+      "category": "front-orientation-and-camera",
+      "resolution": "Face the moon-inlaid front directly South while retaining the crescent/flower carving, purple and walnut palette, curved cabinet profile and original contents; show appropriate top depth without vanishing-point shrink.",
+      "evidence": {
+        "groupManifest": "storage-patches.json",
+        "finalGroupManifest": true,
+        "nativeSource": "town/assets/parallel-art/front-facing-2/storage/native/batch-1-aaf6c80633cb.webp",
+        "nativeCrop": {
+          "x": 437,
+          "y": 403,
+          "w": 212,
+          "h": 288
+        },
+        "draw": {
+          "x": 0.0,
+          "y": 10.113207547169822,
+          "w": 128.0,
+          "h": 173.88679245283018
+        },
+        "acceptedManifest": "town/assets/parallel-art/front-facing-2/acceptances/storage-patches.json",
+        "acceptedManifestSHA256": "4803fc8cd5a8023fa14eaaab528fc4c0d133996c8194152ab26ef0d0b31afe56"
+      }
+    },
+    {
+      "assetId": "collection-chopin-nightstand",
+      "facing": "south",
+      "originalStatus": "flagged",
+      "originalNote": "not front facing",
+      "newOrChangedInUpload2": true,
+      "status": "resolved",
+      "method": "direct-native-redraw",
+      "category": "front-orientation-and-camera",
+      "resolution": "Face the moon-inlaid front directly South while retaining the crescent/flower carving, purple and walnut palette, curved cabinet profile and original contents; show appropriate top depth without vanishing-point shrink.",
+      "evidence": {
+        "groupManifest": "storage-patches.json",
+        "finalGroupManifest": true,
+        "nativeSource": "town/assets/parallel-art/front-facing-2/storage/native/batch-1-aaf6c80633cb.webp",
+        "nativeCrop": {
+          "x": 81,
+          "y": 746,
+          "w": 217,
+          "h": 273
+        },
+        "draw": {
+          "x": 0.0,
+          "y": 0.0,
+          "w": 62.0,
+          "h": 78.0
+        },
+        "acceptedManifest": "town/assets/parallel-art/front-facing-2/acceptances/storage-patches.json",
+        "acceptedManifestSHA256": "4803fc8cd5a8023fa14eaaab528fc4c0d133996c8194152ab26ef0d0b31afe56"
+      }
+    },
+    {
+      "assetId": "collection-chopin-dining-chair",
+      "facing": "south",
+      "originalStatus": "flagged",
+      "originalNote": "not front facing",
+      "newOrChangedInUpload2": true,
+      "status": "resolved",
+      "method": "direct-native-redraw",
+      "category": "front-orientation-and-camera",
+      "resolution": "The chair front faces South with a substantial seat top from the elevated parallel camera. Preserve upholstery, carving, curved arms, legs, castors and cushions; designed curves are not made rectangular.",
+      "evidence": {
+        "groupManifest": "seating-tables-patches.json",
+        "finalGroupManifest": true,
+        "nativeSource": "town/assets/parallel-art/front-facing-2/seating-tables/chairs-south-01-350af17fecbf.webp",
+        "nativeCrop": {
+          "x": 516,
+          "y": 433,
+          "w": 220,
+          "h": 381
+        },
+        "draw": {
+          "x": 3.1286089238845136,
+          "y": 0.0,
+          "w": 57.74278215223097,
+          "h": 100.0
+        },
+        "acceptedManifest": "town/assets/parallel-art/front-facing-2/acceptances/seating-tables-patches.json",
+        "acceptedManifestSHA256": "e6ceff1dd8de1fec114a26cbe542649be85fb853ec805310eb8ce50091f208d6"
+      }
+    },
+    {
+      "assetId": "collection-chopin-vanity",
+      "facing": "south",
+      "originalStatus": "flagged",
+      "originalNote": "angled",
+      "newOrChangedInUpload2": true,
+      "status": "resolved",
+      "method": "direct-native-redraw",
+      "category": "front-orientation-and-camera",
+      "resolution": "Face the moon-inlaid front directly South while retaining the crescent/flower carving, purple and walnut palette, curved cabinet profile and original contents; show appropriate top depth without vanishing-point shrink.",
+      "evidence": {
+        "groupManifest": "storage-patches.json",
+        "finalGroupManifest": true,
+        "nativeSource": "town/assets/parallel-art/front-facing-2/storage/native/batch-1-aaf6c80633cb.webp",
+        "nativeCrop": {
+          "x": 421,
+          "y": 735,
+          "w": 242,
+          "h": 283
+        },
+        "draw": {
+          "x": 0.0,
+          "y": 12.446280991735534,
+          "w": 80.0,
+          "h": 93.55371900826447
+        },
+        "acceptedManifest": "town/assets/parallel-art/front-facing-2/acceptances/storage-patches.json",
+        "acceptedManifestSHA256": "4803fc8cd5a8023fa14eaaab528fc4c0d133996c8194152ab26ef0d0b31afe56"
+      }
+    },
+    {
+      "assetId": "collection-chopin-linen-storage",
+      "facing": "south",
+      "originalStatus": "flagged",
+      "originalNote": "angled",
+      "newOrChangedInUpload2": true,
+      "status": "resolved",
+      "method": "direct-native-redraw",
+      "category": "front-orientation-and-camera",
+      "resolution": "Face the moon-inlaid front directly South while retaining the crescent/flower carving, purple and walnut palette, curved cabinet profile and original contents; show appropriate top depth without vanishing-point shrink.",
+      "evidence": {
+        "groupManifest": "storage-patches.json",
+        "finalGroupManifest": true,
+        "nativeSource": "town/assets/parallel-art/front-facing-2/storage/native/batch-1-aaf6c80633cb.webp",
+        "nativeCrop": {
+          "x": 810,
+          "y": 403,
+          "w": 180,
+          "h": 286
+        },
+        "draw": {
+          "x": 0.0,
+          "y": 7.0,
+          "w": 90.0,
+          "h": 143.0
+        },
+        "acceptedManifest": "town/assets/parallel-art/front-facing-2/acceptances/storage-patches.json",
+        "acceptedManifestSHA256": "4803fc8cd5a8023fa14eaaab528fc4c0d133996c8194152ab26ef0d0b31afe56"
+      }
+    },
+    {
+      "assetId": "collection-chopin-rug",
+      "facing": "south",
+      "originalStatus": "flagged",
+      "originalNote": "2/3 persp",
+      "newOrChangedInUpload2": true,
+      "status": "resolved",
+      "method": "direct-native-redraw",
+      "category": "front-orientation-and-camera",
+      "resolution": "Keep the crescent embroidery, stars and scalloped border as an actual floor plane with a flattened parallel-camera silhouette; do not force the physical curves into a rectangle.",
+      "evidence": {
+        "groupManifest": "rugs-counters-patches.json",
+        "finalGroupManifest": true,
+        "nativeSource": "town/assets/parallel-art/front-facing-2/rugs-counters/floor-textiles-91781e928184.webp",
+        "nativeCrop": {
+          "x": 22,
+          "y": 149,
+          "w": 469,
+          "h": 279
+        },
+        "draw": {
+          "x": 0.0,
+          "y": 4.9211087420042645,
+          "w": 180,
+          "h": 107.07889125799574
+        },
+        "acceptedManifest": "town/assets/parallel-art/front-facing-2/acceptances/rugs-counters-patches.json",
+        "acceptedManifestSHA256": "74a9b0b97ca4efbb85d0094b5cb189de8976be2fe64bb89d002d763388e581f6"
+      }
+    },
+    {
+      "assetId": "collection-chopin-instrument",
+      "facing": "south",
+      "originalStatus": "flagged",
+      "originalNote": "not 2/3",
+      "newOrChangedInUpload2": true,
+      "status": "resolved",
+      "method": "direct-native-redraw",
+      "category": "front-orientation-and-camera",
+      "resolution": "Reorient the same recognizable instrument for an elevated parallel 2/3 view, retaining its original body outline, materials and ornament rather than forcing a curved instrument into a rectangular object.",
+      "evidence": {
+        "groupManifest": "tables-instruments-patches.json",
+        "finalGroupManifest": true,
+        "nativeSource": "town/assets/parallel-art/front-facing-2/tables-instruments/non-family/non-family-10-72dc952326af.webp",
+        "nativeCrop": {
+          "x": 886,
+          "y": 3,
+          "w": 779,
+          "h": 874
+        },
+        "draw": {
+          "x": 20.695652173913047,
+          "y": 0.0,
+          "w": 142.6086956521739,
+          "h": 160.0
+        },
+        "acceptedManifest": "town/assets/parallel-art/front-facing-2/acceptances/tables-instruments-patches.json",
+        "acceptedManifestSHA256": "5287d0ae023eed8610a599954945c7f545299bef65952ef2e823da6691d96f00"
+      }
+    },
+    {
+      "assetId": "collection-haydn-toilet",
+      "facing": "south",
+      "originalStatus": "flagged",
+      "originalNote": "angled/not front facing",
+      "newOrChangedInUpload2": true,
+      "status": "resolved",
+      "method": "direct-native-redraw",
+      "category": "front-orientation-and-camera",
+      "resolution": "The sunflower tank and seat share a straight South axis, with the seat top visible from above; retain the sunflower painting, fittings and shaped base.",
+      "evidence": {
+        "groupManifest": "storage-patches.json",
+        "finalGroupManifest": true,
+        "nativeSource": "town/assets/parallel-art/front-facing-2/storage/native/batch-1-aaf6c80633cb.webp",
+        "nativeCrop": {
+          "x": 811,
+          "y": 738,
+          "w": 186,
+          "h": 285
+        },
+        "draw": {
+          "x": 3.552713678800501e-15,
+          "y": 6.322580645161295,
+          "w": 51.99999999999999,
+          "h": 79.6774193548387
+        },
+        "acceptedManifest": "town/assets/parallel-art/front-facing-2/acceptances/storage-patches.json",
+        "acceptedManifestSHA256": "4803fc8cd5a8023fa14eaaab528fc4c0d133996c8194152ab26ef0d0b31afe56"
+      }
+    },
+    {
+      "assetId": "collection-haydn-shelf",
+      "facing": "south",
+      "originalStatus": "flagged",
+      "originalNote": "not front facing not 2/3 pers",
+      "newOrChangedInUpload2": true,
+      "status": "resolved",
+      "method": "direct-native-redraw",
+      "category": "front-orientation-and-camera",
+      "resolution": "Make the shelf front level and South-facing, with a visible upper plane and parallel depth edges. Retain the original carved supports, finish and individual display objects.",
+      "evidence": {
+        "groupManifest": "shelves-decor-patches.json",
+        "finalGroupManifest": true,
+        "nativeSource": "town/assets/parallel-art/front-facing-2/shelves-decor/collection-haydn-shelf-south-21bbfb7ed114.webp",
+        "nativeCrop": {
+          "x": 0,
+          "y": 0,
+          "w": 479,
+          "h": 371
+        },
+        "draw": {
+          "x": 9.773584905660378,
+          "y": 0,
+          "w": 108.45283018867924,
+          "h": 84.0
+        },
+        "acceptedManifest": "town/assets/parallel-art/front-facing-2/acceptances/shelves-decor-patches.json",
+        "acceptedManifestSHA256": "c8cbe539c6e704f5a5453a2c34f9bb4d6c4b05ce9000a472700316e6d683d5bd"
+      }
+    },
+    {
+      "assetId": "collection-handel-dining-chair",
+      "facing": "south",
+      "originalStatus": "flagged",
+      "originalNote": "angled",
+      "newOrChangedInUpload2": true,
+      "status": "resolved",
+      "method": "direct-native-redraw",
+      "category": "front-orientation-and-camera",
+      "resolution": "The chair front faces South with a substantial seat top from the elevated parallel camera. Preserve upholstery, carving, curved arms, legs, castors and cushions; designed curves are not made rectangular.",
+      "evidence": {
+        "groupManifest": "seating-tables-patches.json",
+        "finalGroupManifest": true,
+        "nativeSource": "town/assets/parallel-art/front-facing-2/seating-tables/chair-handel-dining-chair-south-5a205b494de4.webp",
+        "nativeCrop": {
+          "x": 163,
+          "y": 43,
+          "w": 678,
+          "h": 1392
+        },
+        "draw": {
+          "x": 7.646551724137932,
+          "y": 0.0,
+          "w": 48.706896551724135,
+          "h": 100.0
+        },
+        "acceptedManifest": "town/assets/parallel-art/front-facing-2/acceptances/seating-tables-patches.json",
+        "acceptedManifestSHA256": "e6ceff1dd8de1fec114a26cbe542649be85fb853ec805310eb8ce50091f208d6"
+      }
+    },
+    {
+      "assetId": "collection-handel-fridge",
+      "facing": "south",
+      "originalStatus": "flagged",
+      "originalNote": "angled",
+      "newOrChangedInUpload2": true,
+      "status": "resolved",
+      "method": "direct-native-redraw",
+      "category": "front-orientation-and-camera",
+      "resolution": "The laurel doors face directly South without a broad side wall; preserve the cream/green panels, gilded crown, handles and classical columns.",
+      "evidence": {
+        "groupManifest": "storage-patches.json",
+        "finalGroupManifest": true,
+        "nativeSource": "town/assets/parallel-art/front-facing-2/storage/native/batch-1-aaf6c80633cb.webp",
+        "nativeCrop": {
+          "x": 98,
+          "y": 1074,
+          "w": 186,
+          "h": 297
+        },
+        "draw": {
+          "x": 0.0,
+          "y": 12.677419354838719,
+          "w": 86.0,
+          "h": 137.32258064516128
+        },
+        "acceptedManifest": "town/assets/parallel-art/front-facing-2/acceptances/storage-patches.json",
+        "acceptedManifestSHA256": "4803fc8cd5a8023fa14eaaab528fc4c0d133996c8194152ab26ef0d0b31afe56"
+      }
+    },
+    {
+      "assetId": "collection-handel-arcade",
+      "facing": "south",
+      "originalStatus": "flagged",
+      "originalNote": "angled",
+      "newOrChangedInUpload2": true,
+      "status": "resolved",
+      "method": "direct-native-redraw",
+      "category": "front-orientation-and-camera",
+      "resolution": "Face the original arcade cabinet front directly South and retain its family-specific screen, controls and cabinet ornament; preserve the existing physical and interaction metadata.",
+      "evidence": {
+        "groupManifest": "shelves-decor-patches.json",
+        "finalGroupManifest": true,
+        "nativeSource": "town/assets/parallel-art/front-facing-2/shelves-decor/collection-handel-arcade-south-893c148fb211.webp",
+        "nativeCrop": {
+          "x": 0,
+          "y": 0,
+          "w": 303,
+          "h": 471
+        },
+        "draw": {
+          "x": 0,
+          "y": 20.554455445544562,
+          "w": 100.0,
+          "h": 155.44554455445544
+        },
+        "acceptedManifest": "town/assets/parallel-art/front-facing-2/acceptances/shelves-decor-patches.json",
+        "acceptedManifestSHA256": "c8cbe539c6e704f5a5453a2c34f9bb4d6c4b05ce9000a472700316e6d683d5bd"
+      }
+    },
+    {
+      "assetId": "collection-vivaldi-shelf",
+      "facing": "south",
+      "originalStatus": "flagged",
+      "originalNote": "angled not 2/3 pers",
+      "newOrChangedInUpload2": true,
+      "status": "resolved",
+      "method": "direct-native-redraw",
+      "category": "front-orientation-and-camera",
+      "resolution": "Make the shelf front level and South-facing, with a visible upper plane and parallel depth edges. Retain the original carved supports, finish and individual display objects.",
+      "evidence": {
+        "groupManifest": "shelves-decor-patches.json",
+        "finalGroupManifest": true,
+        "nativeSource": "town/assets/parallel-art/front-facing-2/shelves-decor/collection-vivaldi-shelf-south-d35d849a9b12.webp",
+        "nativeCrop": {
+          "x": 0,
+          "y": 0,
+          "w": 487,
+          "h": 433
+        },
+        "draw": {
+          "x": 16.762124711316396,
+          "y": 0,
+          "w": 94.47575057736721,
+          "h": 84.0
+        },
+        "acceptedManifest": "town/assets/parallel-art/front-facing-2/acceptances/shelves-decor-patches.json",
+        "acceptedManifestSHA256": "c8cbe539c6e704f5a5453a2c34f9bb4d6c4b05ce9000a472700316e6d683d5bd"
+      }
+    },
+    {
+      "assetId": "collection-vivaldi-rug",
+      "facing": "south",
+      "originalStatus": "flagged",
+      "originalNote": "2/3 pers",
+      "newOrChangedInUpload2": true,
+      "status": "resolved",
+      "method": "direct-native-redraw",
+      "category": "front-orientation-and-camera",
+      "resolution": "Retain all four seasonal panels, the tree embroidery and wavy border; correct the floor-plane camera without trapezoid distance shrink.",
+      "evidence": {
+        "groupManifest": "rugs-counters-patches.json",
+        "finalGroupManifest": true,
+        "nativeSource": "town/assets/parallel-art/front-facing-2/rugs-counters/floor-textiles-91781e928184.webp",
+        "nativeCrop": {
+          "x": 527,
+          "y": 146,
+          "w": 479,
+          "h": 280
+        },
+        "draw": {
+          "x": 0.0,
+          "y": 6.7807933194154515,
+          "w": 180,
+          "h": 105.21920668058455
+        },
+        "acceptedManifest": "town/assets/parallel-art/front-facing-2/acceptances/rugs-counters-patches.json",
+        "acceptedManifestSHA256": "74a9b0b97ca4efbb85d0094b5cb189de8976be2fe64bb89d002d763388e581f6"
+      }
+    },
+    {
+      "assetId": "collection-joplin-mirror",
+      "facing": "south",
+      "originalStatus": "flagged",
+      "originalNote": "not facing front/angled",
+      "newOrChangedInUpload2": true,
+      "status": "resolved",
+      "method": "direct-native-redraw",
+      "category": "front-orientation-and-camera",
+      "resolution": "Face the mounted front plane toward the viewer. Retain the original frame, printed/painted detail or clock face, decorative asymmetry and mounting behavior.",
+      "evidence": {
+        "groupManifest": "shelves-decor-patches.json",
+        "finalGroupManifest": true,
+        "nativeSource": "town/assets/parallel-art/front-facing-2/shelves-decor/collection-joplin-mirror-south-6f9e6d602e1c.webp",
+        "nativeCrop": {
+          "x": 0,
+          "y": 0,
+          "w": 371,
+          "h": 439
+        },
+        "draw": {
+          "x": 3.4350797266514803,
+          "y": 0,
+          "w": 81.12984054669704,
+          "h": 96.0
+        },
+        "acceptedManifest": "town/assets/parallel-art/front-facing-2/acceptances/shelves-decor-patches.json",
+        "acceptedManifestSHA256": "c8cbe539c6e704f5a5453a2c34f9bb4d6c4b05ce9000a472700316e6d683d5bd"
+      }
+    },
+    {
+      "assetId": "collection-joplin-shelf",
+      "facing": "south",
+      "originalStatus": "flagged",
+      "originalNote": "angled/ not 2/3 pers",
+      "newOrChangedInUpload2": true,
+      "status": "resolved",
+      "method": "direct-native-redraw",
+      "category": "front-orientation-and-camera",
+      "resolution": "Make the shelf front level and South-facing, with a visible upper plane and parallel depth edges. Retain the original carved supports, finish and individual display objects.",
+      "evidence": {
+        "groupManifest": "shelves-decor-patches.json",
+        "finalGroupManifest": true,
+        "nativeSource": "town/assets/parallel-art/front-facing-2/shelves-decor/collection-joplin-shelf-south-77a070643e16.webp",
+        "nativeCrop": {
+          "x": 0,
+          "y": 0,
+          "w": 458,
+          "h": 346
+        },
+        "draw": {
+          "x": 8.404624277456648,
+          "y": 0,
+          "w": 111.1907514450867,
+          "h": 84.0
+        },
+        "acceptedManifest": "town/assets/parallel-art/front-facing-2/acceptances/shelves-decor-patches.json",
+        "acceptedManifestSHA256": "c8cbe539c6e704f5a5453a2c34f9bb4d6c4b05ce9000a472700316e6d683d5bd"
+      }
+    },
+    {
+      "assetId": "collection-ellington-vanity",
+      "facing": "south",
+      "originalStatus": "flagged",
+      "originalNote": "angled",
+      "newOrChangedInUpload2": true,
+      "status": "resolved",
+      "method": "direct-native-redraw",
+      "category": "front-orientation-and-camera",
+      "resolution": "Reorient the original detailed fixture to a straight South front with coherent visible top surfaces. Preserve its collection-specific finish, contents, hardware, natural curves and designed asymmetry; do not keep a broad angled side plane.",
+      "evidence": {
+        "groupManifest": "storage-patches.json",
+        "finalGroupManifest": true,
+        "nativeSource": "town/assets/parallel-art/front-facing-2/storage/native/batch-1-aaf6c80633cb.webp",
+        "nativeCrop": {
+          "x": 416,
+          "y": 1075,
+          "w": 250,
+          "h": 296
+        },
+        "draw": {
+          "x": 0.0,
+          "y": 11.280000000000001,
+          "w": 80.0,
+          "h": 94.72
+        },
+        "acceptedManifest": "town/assets/parallel-art/front-facing-2/acceptances/storage-patches.json",
+        "acceptedManifestSHA256": "4803fc8cd5a8023fa14eaaab528fc4c0d133996c8194152ab26ef0d0b31afe56"
+      }
+    },
+    {
+      "assetId": "collection-ellington-shelf",
+      "facing": "south",
+      "originalStatus": "flagged",
+      "originalNote": "angled/ not 2/3 pers",
+      "newOrChangedInUpload2": true,
+      "status": "resolved",
+      "method": "direct-native-redraw",
+      "category": "front-orientation-and-camera",
+      "resolution": "Make the shelf front level and South-facing, with a visible upper plane and parallel depth edges. Retain the original carved supports, finish and individual display objects.",
+      "evidence": {
+        "groupManifest": "shelves-decor-patches.json",
+        "finalGroupManifest": true,
+        "nativeSource": "town/assets/parallel-art/front-facing-2/shelves-decor/collection-ellington-shelf-south-a7d04469e78a.webp",
+        "nativeCrop": {
+          "x": 0,
+          "y": 0,
+          "w": 483,
+          "h": 392
+        },
+        "draw": {
+          "x": 12.25,
+          "y": 0,
+          "w": 103.5,
+          "h": 84.0
+        },
+        "acceptedManifest": "town/assets/parallel-art/front-facing-2/acceptances/shelves-decor-patches.json",
+        "acceptedManifestSHA256": "c8cbe539c6e704f5a5453a2c34f9bb4d6c4b05ce9000a472700316e6d683d5bd"
+      }
+    },
+    {
+      "assetId": "collection-ella-bath-fixture",
+      "facing": "south",
+      "originalStatus": "flagged",
+      "originalNote": "angled",
+      "newOrChangedInUpload2": true,
+      "status": "resolved",
+      "method": "direct-native-redraw",
+      "category": "front-orientation-and-camera",
+      "resolution": "Reorient the original detailed fixture to a straight South front with coherent visible top surfaces. Preserve its collection-specific finish, contents, hardware, natural curves and designed asymmetry; do not keep a broad angled side plane.",
+      "evidence": {
+        "groupManifest": "storage-patches.json",
+        "finalGroupManifest": true,
+        "nativeSource": "town/assets/parallel-art/front-facing-2/storage/native/batch-1-aaf6c80633cb.webp",
+        "nativeCrop": {
+          "x": 759,
+          "y": 1087,
+          "w": 281,
+          "h": 283
+        },
+        "draw": {
+          "x": 1.4452296819788018,
+          "y": 0.0,
+          "w": 125.1095406360424,
+          "h": 126.0
+        },
+        "acceptedManifest": "town/assets/parallel-art/front-facing-2/acceptances/storage-patches.json",
+        "acceptedManifestSHA256": "4803fc8cd5a8023fa14eaaab528fc4c0d133996c8194152ab26ef0d0b31afe56"
+      }
+    },
+    {
+      "assetId": "collection-ella-mirror",
+      "facing": "south",
+      "originalStatus": "flagged",
+      "originalNote": "angled",
+      "newOrChangedInUpload2": true,
+      "status": "resolved",
+      "method": "direct-native-redraw",
+      "category": "front-orientation-and-camera",
+      "resolution": "Face the mounted front plane toward the viewer. Retain the original frame, printed/painted detail or clock face, decorative asymmetry and mounting behavior.",
+      "evidence": {
+        "groupManifest": "shelves-decor-patches.json",
+        "finalGroupManifest": true,
+        "nativeSource": "town/assets/parallel-art/front-facing-2/shelves-decor/collection-ella-mirror-south-ab0180ce79f6.webp",
+        "nativeCrop": {
+          "x": 0,
+          "y": 0,
+          "w": 435,
+          "h": 430
+        },
+        "draw": {
+          "x": 0,
+          "y": 9.011494252873561,
+          "w": 88.0,
+          "h": 86.98850574712644
+        },
+        "acceptedManifest": "town/assets/parallel-art/front-facing-2/acceptances/shelves-decor-patches.json",
+        "acceptedManifestSHA256": "c8cbe539c6e704f5a5453a2c34f9bb4d6c4b05ce9000a472700316e6d683d5bd"
+      }
+    },
+    {
+      "assetId": "collection-ella-shelf",
+      "facing": "south",
+      "originalStatus": "flagged",
+      "originalNote": "angled",
+      "newOrChangedInUpload2": true,
+      "status": "resolved",
+      "method": "direct-native-redraw",
+      "category": "front-orientation-and-camera",
+      "resolution": "Make the shelf front level and South-facing, with a visible upper plane and parallel depth edges. Retain the original carved supports, finish and individual display objects.",
+      "evidence": {
+        "groupManifest": "shelves-decor-patches.json",
+        "finalGroupManifest": true,
+        "nativeSource": "town/assets/parallel-art/front-facing-2/shelves-decor/collection-ella-shelf-south-a0c687fe70ef.webp",
+        "nativeCrop": {
+          "x": 0,
+          "y": 0,
+          "w": 465,
+          "h": 314
+        },
+        "draw": {
+          "x": 1.8025477707006345,
+          "y": 0,
+          "w": 124.39490445859873,
+          "h": 84.0
+        },
+        "acceptedManifest": "town/assets/parallel-art/front-facing-2/acceptances/shelves-decor-patches.json",
+        "acceptedManifestSHA256": "c8cbe539c6e704f5a5453a2c34f9bb4d6c4b05ce9000a472700316e6d683d5bd"
+      }
+    },
+    {
+      "assetId": "collection-nina-sofa",
+      "facing": "south",
+      "originalStatus": "flagged",
+      "originalNote": "not 2/3 pers",
+      "newOrChangedInUpload2": true,
+      "status": "resolved",
+      "method": "direct-native-redraw",
+      "category": "front-orientation-and-camera",
+      "resolution": "Retain the earthen upholstery, sunrise cushion, wood frame and quilted throw while exposing the seat from the elevated parallel camera.",
+      "evidence": {
+        "groupManifest": "beds-sofas-patches.json",
+        "finalGroupManifest": true,
+        "nativeSource": "town/assets/parallel-art/front-facing-2/beds-sofas/benchmark-52cf9ca9eb92.webp",
+        "nativeCrop": {
+          "x": 640,
+          "y": 129,
+          "w": 574,
+          "h": 487
+        },
+        "draw": {
+          "x": 15.745379876796719,
+          "y": 0.0,
+          "w": 148.50924024640656,
+          "h": 126.0
+        },
+        "acceptedManifest": "town/assets/parallel-art/front-facing-2/acceptances/beds-sofas-patches.json",
+        "acceptedManifestSHA256": "a14a01e6a7633ed71abc9c356119fc13780770689544d998a033554256b0dedf"
+      }
+    },
+    {
+      "assetId": "collection-nina-shelf",
+      "facing": "south",
+      "originalStatus": "flagged",
+      "originalNote": "not 2/3",
+      "newOrChangedInUpload2": true,
+      "status": "resolved",
+      "method": "direct-native-redraw",
+      "category": "front-orientation-and-camera",
+      "resolution": "Make the shelf front level and South-facing, with a visible upper plane and parallel depth edges. Retain the original carved supports, finish and individual display objects.",
+      "evidence": {
+        "groupManifest": "shelves-decor-patches.json",
+        "finalGroupManifest": true,
+        "nativeSource": "town/assets/parallel-art/front-facing-2/shelves-decor/collection-nina-shelf-south-9786a1231c52.webp",
+        "nativeCrop": {
+          "x": 0,
+          "y": 0,
+          "w": 481,
+          "h": 350
+        },
+        "draw": {
+          "x": 6.280000000000001,
+          "y": 0,
+          "w": 115.44,
+          "h": 84.0
+        },
+        "acceptedManifest": "town/assets/parallel-art/front-facing-2/acceptances/shelves-decor-patches.json",
+        "acceptedManifestSHA256": "c8cbe539c6e704f5a5453a2c34f9bb4d6c4b05ce9000a472700316e6d683d5bd"
+      }
+    },
+    {
+      "assetId": "collection-miles-wardrobe",
+      "facing": "south",
+      "originalStatus": "flagged",
+      "originalNote": "angled",
+      "newOrChangedInUpload2": true,
+      "status": "resolved",
+      "method": "direct-native-redraw",
+      "category": "front-orientation-and-camera",
+      "resolution": "The smoky-glass and burnished-brass case faces forward with level front rails and visible top depth. Retain the curved glass compartments, wood grain and designed asymmetry; remove camera yaw rather than replacing the furniture.",
+      "evidence": {
+        "groupManifest": "storage-patches.json",
+        "finalGroupManifest": true,
+        "nativeSource": "town/assets/parallel-art/front-facing-2/storage/native/batch-2-52b2ef818867.webp",
+        "nativeCrop": {
+          "x": 90,
+          "y": 62,
+          "w": 195,
+          "h": 280
+        },
+        "draw": {
+          "x": 0.0,
+          "y": 0.2051282051282044,
+          "w": 128.0,
+          "h": 183.7948717948718
+        },
+        "acceptedManifest": "town/assets/parallel-art/front-facing-2/acceptances/storage-patches.json",
+        "acceptedManifestSHA256": "4803fc8cd5a8023fa14eaaab528fc4c0d133996c8194152ab26ef0d0b31afe56"
+      }
+    },
+    {
+      "assetId": "collection-miles-dining-table",
+      "facing": "south",
+      "originalStatus": "flagged",
+      "originalNote": "angled/ not 23",
+      "newOrChangedInUpload2": true,
+      "status": "resolved",
+      "method": "direct-native-redraw",
+      "category": "front-orientation-and-camera",
+      "resolution": "Use a straight South axis and elevated parallel tabletop camera while preserving the original family-specific top outline, materials, base and ornament. Equal-depth lines do not become a vanishing trapezoid; natural curved tops remain curved.",
+      "evidence": {
+        "groupManifest": "tables-instruments-patches.json",
+        "finalGroupManifest": true,
+        "nativeSource": "town/assets/parallel-art/front-facing-2/tables-instruments/non-family/non-family-09-5ccb47785004.webp",
+        "nativeCrop": {
+          "x": 682,
+          "y": 49,
+          "w": 517,
+          "h": 425
+        },
+        "draw": {
+          "x": 0.0,
+          "y": 16.642166344293997,
+          "w": 116.0,
+          "h": 95.357833655706
+        },
+        "acceptedManifest": "town/assets/parallel-art/front-facing-2/acceptances/tables-instruments-patches.json",
+        "acceptedManifestSHA256": "5287d0ae023eed8610a599954945c7f545299bef65952ef2e823da6691d96f00"
+      }
+    },
+    {
+      "assetId": "collection-miles-linen-storage",
+      "facing": "south",
+      "originalStatus": "flagged",
+      "originalNote": "angled",
+      "newOrChangedInUpload2": true,
+      "status": "resolved",
+      "method": "direct-native-redraw",
+      "category": "front-orientation-and-camera",
+      "resolution": "The smoky-glass and burnished-brass case faces forward with level front rails and visible top depth. Retain the curved glass compartments, wood grain and designed asymmetry; remove camera yaw rather than replacing the furniture.",
+      "evidence": {
+        "groupManifest": "storage-patches.json",
+        "finalGroupManifest": true,
+        "nativeSource": "town/assets/parallel-art/front-facing-2/storage/native/batch-2-52b2ef818867.webp",
+        "nativeCrop": {
+          "x": 444,
+          "y": 62,
+          "w": 198,
+          "h": 280
+        },
+        "draw": {
+          "x": 0.0,
+          "y": 22.727272727272734,
+          "w": 90.0,
+          "h": 127.27272727272727
+        },
+        "acceptedManifest": "town/assets/parallel-art/front-facing-2/acceptances/storage-patches.json",
+        "acceptedManifestSHA256": "4803fc8cd5a8023fa14eaaab528fc4c0d133996c8194152ab26ef0d0b31afe56"
+      }
+    },
+    {
+      "assetId": "collection-miles-record-console",
+      "facing": "south",
+      "originalStatus": "flagged",
+      "originalNote": "angled",
+      "newOrChangedInUpload2": true,
+      "status": "resolved",
+      "method": "direct-native-redraw",
+      "category": "front-orientation-and-camera",
+      "resolution": "The smoky-glass and burnished-brass case faces forward with level front rails and visible top depth. Retain the curved glass compartments, wood grain and designed asymmetry; remove camera yaw rather than replacing the furniture.",
+      "evidence": {
+        "groupManifest": "storage-patches.json",
+        "finalGroupManifest": true,
+        "nativeSource": "town/assets/parallel-art/front-facing-2/storage/native/batch-2-52b2ef818867.webp",
+        "nativeCrop": {
+          "x": 747,
+          "y": 80,
+          "w": 272,
+          "h": 249
+        },
+        "draw": {
+          "x": 22.273092369477922,
+          "y": 0.0,
+          "w": 135.45381526104416,
+          "h": 124.0
+        },
+        "acceptedManifest": "town/assets/parallel-art/front-facing-2/acceptances/storage-patches.json",
+        "acceptedManifestSHA256": "4803fc8cd5a8023fa14eaaab528fc4c0d133996c8194152ab26ef0d0b31afe56"
+      }
+    },
+    {
+      "assetId": "collection-miles-toy",
+      "facing": "south",
+      "originalStatus": "flagged",
+      "originalNote": "angled",
+      "newOrChangedInUpload2": true,
+      "status": "resolved",
+      "method": "direct-native-redraw",
+      "category": "front-orientation-and-camera",
+      "resolution": "Face the recognizable original toy toward South while keeping its detailed silhouette, materials, colors and physical curves.",
+      "evidence": {
+        "groupManifest": "shelves-decor-patches.json",
+        "finalGroupManifest": true,
+        "nativeSource": "town/assets/parallel-art/front-facing-2/shelves-decor/collection-miles-toy-south-8df6fe4f3ac8.webp",
+        "nativeCrop": {
+          "x": 0,
+          "y": 0,
+          "w": 359,
+          "h": 483
+        },
+        "draw": {
+          "x": 6.728778467908903,
+          "y": 0,
+          "w": 50.542443064182194,
+          "h": 68.0
+        },
+        "acceptedManifest": "town/assets/parallel-art/front-facing-2/acceptances/shelves-decor-patches.json",
+        "acceptedManifestSHA256": "c8cbe539c6e704f5a5453a2c34f9bb4d6c4b05ce9000a472700316e6d683d5bd"
+      }
+    },
+    {
+      "assetId": "collection-dj-clock",
+      "facing": "south",
+      "originalStatus": "flagged",
+      "originalNote": "angled",
+      "newOrChangedInUpload2": true,
+      "status": "resolved",
+      "method": "direct-native-redraw",
+      "category": "front-orientation-and-camera",
+      "resolution": "Face the mounted front plane toward the viewer. Retain the original frame, printed/painted detail or clock face, decorative asymmetry and mounting behavior.",
+      "evidence": {
+        "groupManifest": "shelves-decor-patches.json",
+        "finalGroupManifest": true,
+        "nativeSource": "town/assets/parallel-art/front-facing-2/shelves-decor/collection-dj-clock-south-c7e193a576ba.webp",
+        "nativeCrop": {
+          "x": 0,
+          "y": 0,
+          "w": 387,
+          "h": 446
+        },
+        "draw": {
+          "x": 0.27578475336323294,
+          "y": 0,
+          "w": 95.44843049327353,
+          "h": 110.0
+        },
+        "acceptedManifest": "town/assets/parallel-art/front-facing-2/acceptances/shelves-decor-patches.json",
+        "acceptedManifestSHA256": "c8cbe539c6e704f5a5453a2c34f9bb4d6c4b05ce9000a472700316e6d683d5bd"
+      }
+    },
+    {
+      "assetId": "collection-vee-jay-mirror",
+      "facing": "south",
+      "originalStatus": "flagged",
+      "originalNote": "angled",
+      "newOrChangedInUpload2": true,
+      "status": "resolved",
+      "method": "direct-native-redraw",
+      "category": "front-orientation-and-camera",
+      "resolution": "Face the mounted front plane toward the viewer. Retain the original frame, printed/painted detail or clock face, decorative asymmetry and mounting behavior.",
+      "evidence": {
+        "groupManifest": "shelves-decor-patches.json",
+        "finalGroupManifest": true,
+        "nativeSource": "town/assets/parallel-art/front-facing-2/shelves-decor/collection-vee-jay-mirror-south-158500628211.webp",
+        "nativeCrop": {
+          "x": 0,
+          "y": 0,
+          "w": 402,
+          "h": 346
+        },
+        "draw": {
+          "x": 0,
+          "y": 20.258706467661696,
+          "w": 88.0,
+          "h": 75.7412935323383
+        },
+        "acceptedManifest": "town/assets/parallel-art/front-facing-2/acceptances/shelves-decor-patches.json",
+        "acceptedManifestSHA256": "c8cbe539c6e704f5a5453a2c34f9bb4d6c4b05ce9000a472700316e6d683d5bd"
+      }
+    },
+    {
+      "assetId": "collection-zizi-wardrobe",
+      "facing": "south",
+      "originalStatus": "flagged",
+      "originalNote": "angled",
+      "newOrChangedInUpload2": true,
+      "status": "resolved",
+      "method": "direct-native-redraw",
+      "category": "front-orientation-and-camera",
+      "resolution": "Keep the ivory leaf/moon design, round openings, brass fittings and deliberately curved forms; align the main front South and use the elevated parallel camera instead of preserving a quarter-turn.",
+      "evidence": {
+        "groupManifest": "storage-patches.json",
+        "finalGroupManifest": true,
+        "nativeSource": "town/assets/parallel-art/front-facing-2/storage/native/batch-2-52b2ef818867.webp",
+        "nativeCrop": {
+          "x": 68,
+          "y": 401,
+          "w": 233,
+          "h": 293
+        },
+        "draw": {
+          "x": 0.0,
+          "y": 23.038626609442048,
+          "w": 128.0,
+          "h": 160.96137339055795
+        },
+        "acceptedManifest": "town/assets/parallel-art/front-facing-2/acceptances/storage-patches.json",
+        "acceptedManifestSHA256": "4803fc8cd5a8023fa14eaaab528fc4c0d133996c8194152ab26ef0d0b31afe56"
+      }
+    },
+    {
+      "assetId": "collection-zizi-nightstand",
+      "facing": "south",
+      "originalStatus": "flagged",
+      "originalNote": "angled",
+      "newOrChangedInUpload2": true,
+      "status": "resolved",
+      "method": "direct-native-redraw",
+      "category": "front-orientation-and-camera",
+      "resolution": "Keep the ivory leaf/moon design, round openings, brass fittings and deliberately curved forms; align the main front South and use the elevated parallel camera instead of preserving a quarter-turn.",
+      "evidence": {
+        "groupManifest": "storage-patches.json",
+        "finalGroupManifest": true,
+        "nativeSource": "town/assets/parallel-art/front-facing-2/storage/native/batch-2-52b2ef818867.webp",
+        "nativeCrop": {
+          "x": 429,
+          "y": 418,
+          "w": 218,
+          "h": 277
+        },
+        "draw": {
+          "x": 0.3068592057761741,
+          "y": 0.0,
+          "w": 61.38628158844765,
+          "h": 78.0
+        },
+        "acceptedManifest": "town/assets/parallel-art/front-facing-2/acceptances/storage-patches.json",
+        "acceptedManifestSHA256": "4803fc8cd5a8023fa14eaaab528fc4c0d133996c8194152ab26ef0d0b31afe56"
+      }
+    },
+    {
+      "assetId": "collection-zizi-toilet",
+      "facing": "south",
+      "originalStatus": "flagged",
+      "originalNote": "angled",
+      "newOrChangedInUpload2": true,
+      "status": "resolved",
+      "method": "direct-native-redraw",
+      "category": "front-orientation-and-camera",
+      "resolution": "Keep the ivory leaf/moon design, round openings, brass fittings and deliberately curved forms; align the main front South and use the elevated parallel camera instead of preserving a quarter-turn.",
+      "evidence": {
+        "groupManifest": "storage-patches.json",
+        "finalGroupManifest": true,
+        "nativeSource": "town/assets/parallel-art/front-facing-2/storage/native/batch-2-52b2ef818867.webp",
+        "nativeCrop": {
+          "x": 794,
+          "y": 414,
+          "w": 178,
+          "h": 282
+        },
+        "draw": {
+          "x": 0.0,
+          "y": 3.617977528089895,
+          "w": 52.0,
+          "h": 82.3820224719101
+        },
+        "acceptedManifest": "town/assets/parallel-art/front-facing-2/acceptances/storage-patches.json",
+        "acceptedManifestSHA256": "4803fc8cd5a8023fa14eaaab528fc4c0d133996c8194152ab26ef0d0b31afe56"
+      }
+    },
+    {
+      "assetId": "collection-zizi-bath-fixture",
+      "facing": "south",
+      "originalStatus": "flagged",
+      "originalNote": "angled",
+      "newOrChangedInUpload2": true,
+      "status": "resolved",
+      "method": "direct-native-redraw",
+      "category": "front-orientation-and-camera",
+      "resolution": "Keep the ivory leaf/moon design, round openings, brass fittings and deliberately curved forms; align the main front South and use the elevated parallel camera instead of preserving a quarter-turn.",
+      "evidence": {
+        "groupManifest": "storage-patches.json",
+        "finalGroupManifest": true,
+        "nativeSource": "town/assets/parallel-art/front-facing-2/storage/native/batch-2-52b2ef818867.webp",
+        "nativeCrop": {
+          "x": 60,
+          "y": 753,
+          "w": 265,
+          "h": 279
+        },
+        "draw": {
+          "x": 4.161290322580648,
+          "y": 0.0,
+          "w": 119.6774193548387,
+          "h": 126.0
+        },
+        "acceptedManifest": "town/assets/parallel-art/front-facing-2/acceptances/storage-patches.json",
+        "acceptedManifestSHA256": "4803fc8cd5a8023fa14eaaab528fc4c0d133996c8194152ab26ef0d0b31afe56"
+      }
+    },
+    {
+      "assetId": "collection-metronome-sofa",
+      "facing": "south",
+      "originalStatus": "flagged",
+      "originalNote": "angled/ not 2/3",
+      "newOrChangedInUpload2": true,
+      "status": "resolved",
+      "method": "direct-native-redraw",
+      "category": "front-orientation-and-camera",
+      "resolution": "The seat and front rail face South with visible depth; retain the gear arms, clockwork trim, cushions and throw rather than squaring their ornament.",
+      "evidence": {
+        "groupManifest": "beds-sofas-patches.json",
+        "finalGroupManifest": true,
+        "nativeSource": "town/assets/parallel-art/front-facing-2/beds-sofas/benchmark-52cf9ca9eb92.webp",
+        "nativeCrop": {
+          "x": 56,
+          "y": 680,
+          "w": 538,
+          "h": 519
+        },
+        "draw": {
+          "x": 24.69364161849711,
+          "y": 0.0,
+          "w": 130.61271676300578,
+          "h": 126.0
+        },
+        "acceptedManifest": "town/assets/parallel-art/front-facing-2/acceptances/beds-sofas-patches.json",
+        "acceptedManifestSHA256": "a14a01e6a7633ed71abc9c356119fc13780770689544d998a033554256b0dedf"
+      }
+    },
+    {
+      "assetId": "collection-metronome-shelf",
+      "facing": "south",
+      "originalStatus": "flagged",
+      "originalNote": "angled",
+      "newOrChangedInUpload2": true,
+      "status": "resolved",
+      "method": "direct-native-redraw",
+      "category": "front-orientation-and-camera",
+      "resolution": "Make the shelf front level and South-facing, with a visible upper plane and parallel depth edges. Retain the original carved supports, finish and individual display objects.",
+      "evidence": {
+        "groupManifest": "shelves-decor-patches.json",
+        "finalGroupManifest": true,
+        "nativeSource": "town/assets/parallel-art/front-facing-2/shelves-decor/collection-metronome-shelf-south-1278d82dfa55.webp",
+        "nativeCrop": {
+          "x": 0,
+          "y": 0,
+          "w": 468,
+          "h": 393
+        },
+        "draw": {
+          "x": 13.984732824427482,
+          "y": 0,
+          "w": 100.03053435114504,
+          "h": 84.0
+        },
+        "acceptedManifest": "town/assets/parallel-art/front-facing-2/acceptances/shelves-decor-patches.json",
+        "acceptedManifestSHA256": "c8cbe539c6e704f5a5453a2c34f9bb4d6c4b05ce9000a472700316e6d683d5bd"
+      }
+    },
+    {
+      "assetId": "collection-showroom-victorian-parlor-shelf",
+      "facing": "south",
+      "originalStatus": "flagged",
+      "originalNote": "angled",
+      "newOrChangedInUpload2": true,
+      "status": "resolved",
+      "method": "direct-native-redraw",
+      "category": "front-orientation-and-camera",
+      "resolution": "Make the shelf front level and South-facing, with a visible upper plane and parallel depth edges. Retain the original carved supports, finish and individual display objects.",
+      "evidence": {
+        "groupManifest": "shelves-decor-patches.json",
+        "finalGroupManifest": true,
+        "nativeSource": "town/assets/parallel-art/front-facing-2/shelves-decor/collection-showroom-victorian-parlor-shelf-south-b54df6cab8e0.webp",
+        "nativeCrop": {
+          "x": 0,
+          "y": 0,
+          "w": 497,
+          "h": 345
+        },
+        "draw": {
+          "x": 3.4956521739130437,
+          "y": 0,
+          "w": 121.00869565217391,
+          "h": 84.0
+        },
+        "acceptedManifest": "town/assets/parallel-art/front-facing-2/acceptances/shelves-decor-patches.json",
+        "acceptedManifestSHA256": "c8cbe539c6e704f5a5453a2c34f9bb4d6c4b05ce9000a472700316e6d683d5bd"
+      }
+    },
+    {
+      "assetId": "collection-showroom-victorian-parlor-record-console",
+      "facing": "south",
+      "originalStatus": "flagged",
+      "originalNote": "angled",
+      "newOrChangedInUpload2": true,
+      "status": "resolved",
+      "method": "direct-native-redraw",
+      "category": "front-orientation-and-camera",
+      "resolution": "Reorient the original detailed fixture to a straight South front with coherent visible top surfaces. Preserve its collection-specific finish, contents, hardware, natural curves and designed asymmetry; do not keep a broad angled side plane.",
+      "evidence": {
+        "groupManifest": "storage-patches.json",
+        "finalGroupManifest": true,
+        "nativeSource": "town/assets/parallel-art/front-facing-2/storage/native/batch-2-52b2ef818867.webp",
+        "nativeCrop": {
+          "x": 405,
+          "y": 755,
+          "w": 276,
+          "h": 283
+        },
+        "draw": {
+          "x": 29.533568904593636,
+          "y": 0.0,
+          "w": 120.93286219081273,
+          "h": 124.0
+        },
+        "acceptedManifest": "town/assets/parallel-art/front-facing-2/acceptances/storage-patches.json",
+        "acceptedManifestSHA256": "4803fc8cd5a8023fa14eaaab528fc4c0d133996c8194152ab26ef0d0b31afe56"
+      }
+    },
+    {
+      "assetId": "collection-showroom-art-deco-lounge-bed",
+      "facing": "south",
+      "originalStatus": "flagged",
+      "originalNote": "not 2/3",
+      "newOrChangedInUpload2": true,
+      "status": "resolved",
+      "method": "direct-native-redraw",
+      "category": "front-orientation-and-camera",
+      "resolution": "Retain the black/green/gold Art Deco fan and sunburst identity. The mattress is shown from a higher parallel camera, with equal near/far width instead of distance shrink.",
+      "evidence": {
+        "groupManifest": "beds-sofas-patches.json",
+        "finalGroupManifest": true,
+        "nativeSource": "town/assets/parallel-art/front-facing-2/beds-sofas/benchmark-52cf9ca9eb92.webp",
+        "nativeCrop": {
+          "x": 78,
+          "y": 6,
+          "w": 478,
+          "h": 665
+        },
+        "draw": {
+          "x": 21.090225563909776,
+          "y": 0.0,
+          "w": 107.81954887218045,
+          "h": 150.0
+        },
+        "acceptedManifest": "town/assets/parallel-art/front-facing-2/acceptances/beds-sofas-patches.json",
+        "acceptedManifestSHA256": "a14a01e6a7633ed71abc9c356119fc13780770689544d998a033554256b0dedf"
+      }
+    },
+    {
+      "assetId": "collection-showroom-art-deco-lounge-bath-fixture",
+      "facing": "south",
+      "originalStatus": "flagged",
+      "originalNote": "angled",
+      "newOrChangedInUpload2": true,
+      "status": "resolved",
+      "method": "direct-native-redraw",
+      "category": "front-orientation-and-camera",
+      "resolution": "Reorient the original detailed fixture to a straight South front with coherent visible top surfaces. Preserve its collection-specific finish, contents, hardware, natural curves and designed asymmetry; do not keep a broad angled side plane.",
+      "evidence": {
+        "groupManifest": "storage-patches.json",
+        "finalGroupManifest": true,
+        "nativeSource": "town/assets/parallel-art/front-facing-2/storage/native/batch-2-52b2ef818867.webp",
+        "nativeCrop": {
+          "x": 750,
+          "y": 752,
+          "w": 282,
+          "h": 281
+        },
+        "draw": {
+          "x": 0.77580071174377,
+          "y": 0.0,
+          "w": 126.44839857651246,
+          "h": 126.0
+        },
+        "acceptedManifest": "town/assets/parallel-art/front-facing-2/acceptances/storage-patches.json",
+        "acceptedManifestSHA256": "4803fc8cd5a8023fa14eaaab528fc4c0d133996c8194152ab26ef0d0b31afe56"
+      }
+    },
+    {
+      "assetId": "collection-showroom-art-deco-lounge-mirror",
+      "facing": "south",
+      "originalStatus": "flagged",
+      "originalNote": "angled",
+      "newOrChangedInUpload2": true,
+      "status": "resolved",
+      "method": "direct-native-redraw",
+      "category": "front-orientation-and-camera",
+      "resolution": "Face the mounted front plane toward the viewer. Retain the original frame, printed/painted detail or clock face, decorative asymmetry and mounting behavior.",
+      "evidence": {
+        "groupManifest": "shelves-decor-patches.json",
+        "finalGroupManifest": true,
+        "nativeSource": "town/assets/parallel-art/front-facing-2/shelves-decor/collection-showroom-art-deco-lounge-mirror-south-01a12ffd7339.webp",
+        "nativeCrop": {
+          "x": 0,
+          "y": 0,
+          "w": 352,
+          "h": 453
+        },
+        "draw": {
+          "x": 6.701986754966889,
+          "y": 0,
+          "w": 74.59602649006622,
+          "h": 96.0
+        },
+        "acceptedManifest": "town/assets/parallel-art/front-facing-2/acceptances/shelves-decor-patches.json",
+        "acceptedManifestSHA256": "c8cbe539c6e704f5a5453a2c34f9bb4d6c4b05ce9000a472700316e6d683d5bd"
+      }
+    },
+    {
+      "assetId": "collection-showroom-art-deco-lounge-shelf",
+      "facing": "south",
+      "originalStatus": "flagged",
+      "originalNote": "angled/ not 2/3",
+      "newOrChangedInUpload2": true,
+      "status": "resolved",
+      "method": "direct-native-redraw",
+      "category": "front-orientation-and-camera",
+      "resolution": "Make the shelf front level and South-facing, with a visible upper plane and parallel depth edges. Retain the original carved supports, finish and individual display objects.",
+      "evidence": {
+        "groupManifest": "shelves-decor-patches.json",
+        "finalGroupManifest": true,
+        "nativeSource": "town/assets/parallel-art/front-facing-2/shelves-decor/collection-showroom-art-deco-lounge-shelf-south-e4cede3b51ed.webp",
+        "nativeCrop": {
+          "x": 0,
+          "y": 0,
+          "w": 459,
+          "h": 374
+        },
+        "draw": {
+          "x": 12.454545454545453,
+          "y": 0,
+          "w": 103.0909090909091,
+          "h": 84.0
+        },
+        "acceptedManifest": "town/assets/parallel-art/front-facing-2/acceptances/shelves-decor-patches.json",
+        "acceptedManifestSHA256": "c8cbe539c6e704f5a5453a2c34f9bb4d6c4b05ce9000a472700316e6d683d5bd"
+      }
+    },
+    {
+      "assetId": "collection-showroom-coastal-bedroom-nightstand",
+      "facing": "south",
+      "originalStatus": "flagged",
+      "originalNote": "angled",
+      "newOrChangedInUpload2": true,
+      "status": "resolved",
+      "method": "direct-native-redraw",
+      "category": "front-orientation-and-camera",
+      "resolution": "Reorient the original detailed fixture to a straight South front with coherent visible top surfaces. Preserve its collection-specific finish, contents, hardware, natural curves and designed asymmetry; do not keep a broad angled side plane.",
+      "evidence": {
+        "groupManifest": "storage-patches.json",
+        "finalGroupManifest": true,
+        "nativeSource": "town/assets/parallel-art/front-facing-2/storage/native/batch-2-52b2ef818867.webp",
+        "nativeCrop": {
+          "x": 439,
+          "y": 1106,
+          "w": 208,
+          "h": 275
+        },
+        "draw": {
+          "x": 1.5018181818181837,
+          "y": 0.0,
+          "w": 58.99636363636363,
+          "h": 78.0
+        },
+        "acceptedManifest": "town/assets/parallel-art/front-facing-2/acceptances/storage-patches.json",
+        "acceptedManifestSHA256": "4803fc8cd5a8023fa14eaaab528fc4c0d133996c8194152ab26ef0d0b31afe56"
+      }
+    },
+    {
+      "assetId": "collection-showroom-coastal-bedroom-counter",
+      "facing": "south",
+      "originalStatus": "flagged",
+      "originalNote": "not 2/3",
+      "newOrChangedInUpload2": true,
+      "status": "resolved",
+      "method": "direct-native-redraw",
+      "category": "front-orientation-and-camera",
+      "resolution": "Preserve pearl-like posts, shells, basket, towel and pale finish; deepen the visible top plane rather than keeping a shallow frontal counter icon.",
+      "evidence": {
+        "groupManifest": "rugs-counters-patches.json",
+        "finalGroupManifest": true,
+        "nativeSource": "town/assets/parallel-art/front-facing-2/rugs-counters/folded-counters-406d9beba52c.webp",
+        "nativeCrop": {
+          "x": 530,
+          "y": 43,
+          "w": 427,
+          "h": 430
+        },
+        "draw": {
+          "x": 8.390697674418604,
+          "y": 0,
+          "w": 111.21860465116279,
+          "h": 112
+        },
+        "acceptedManifest": "town/assets/parallel-art/front-facing-2/acceptances/rugs-counters-patches.json",
+        "acceptedManifestSHA256": "74a9b0b97ca4efbb85d0094b5cb189de8976be2fe64bb89d002d763388e581f6"
+      }
+    },
+    {
+      "assetId": "collection-showroom-coastal-bedroom-linen-storage",
+      "facing": "south",
+      "originalStatus": "flagged",
+      "originalNote": "angled",
+      "newOrChangedInUpload2": true,
+      "status": "resolved",
+      "method": "direct-native-redraw",
+      "category": "front-orientation-and-camera",
+      "resolution": "Reorient the original detailed fixture to a straight South front with coherent visible top surfaces. Preserve its collection-specific finish, contents, hardware, natural curves and designed asymmetry; do not keep a broad angled side plane.",
+      "evidence": {
+        "groupManifest": "storage-patches.json",
+        "finalGroupManifest": true,
+        "nativeSource": "town/assets/parallel-art/front-facing-2/storage/native/batch-2-52b2ef818867.webp",
+        "nativeCrop": {
+          "x": 97,
+          "y": 1102,
+          "w": 180,
+          "h": 283
+        },
+        "draw": {
+          "x": 0.0,
+          "y": 8.5,
+          "w": 90.0,
+          "h": 141.5
+        },
+        "acceptedManifest": "town/assets/parallel-art/front-facing-2/acceptances/storage-patches.json",
+        "acceptedManifestSHA256": "4803fc8cd5a8023fa14eaaab528fc4c0d133996c8194152ab26ef0d0b31afe56"
+      }
+    },
+    {
+      "assetId": "collection-showroom-coastal-bedroom-shelf",
+      "facing": "south",
+      "originalStatus": "flagged",
+      "originalNote": "angled, not 2/3",
+      "newOrChangedInUpload2": true,
+      "status": "resolved",
+      "method": "direct-native-redraw",
+      "category": "front-orientation-and-camera",
+      "resolution": "Make the shelf front level and South-facing, with a visible upper plane and parallel depth edges. Retain the original carved supports, finish and individual display objects.",
+      "evidence": {
+        "groupManifest": "shelves-decor-patches.json",
+        "finalGroupManifest": true,
+        "nativeSource": "town/assets/parallel-art/front-facing-2/shelves-decor/collection-showroom-coastal-bedroom-shelf-south-16ae992b1729.webp",
+        "nativeCrop": {
+          "x": 0,
+          "y": 0,
+          "w": 477,
+          "h": 317
+        },
+        "draw": {
+          "x": 0.8012618296529936,
+          "y": 0,
+          "w": 126.39747634069401,
+          "h": 84.0
+        },
+        "acceptedManifest": "town/assets/parallel-art/front-facing-2/acceptances/shelves-decor-patches.json",
+        "acceptedManifestSHA256": "c8cbe539c6e704f5a5453a2c34f9bb4d6c4b05ce9000a472700316e6d683d5bd"
+      }
+    },
+    {
+      "assetId": "collection-showroom-rustic-kitchen-dining-chair",
+      "facing": "south",
+      "originalStatus": "flagged",
+      "originalNote": "not 2/3",
+      "newOrChangedInUpload2": true,
+      "status": "resolved",
+      "method": "direct-native-redraw",
+      "category": "front-orientation-and-camera",
+      "resolution": "The chair front faces South with a substantial seat top from the elevated parallel camera. Preserve upholstery, carving, curved arms, legs, castors and cushions; designed curves are not made rectangular.",
+      "evidence": {
+        "groupManifest": "seating-tables-patches.json",
+        "finalGroupManifest": true,
+        "nativeSource": "town/assets/parallel-art/front-facing-2/seating-tables/chairs-south-03-4b89bff6e20e.webp",
+        "nativeCrop": {
+          "x": 484,
+          "y": 413,
+          "w": 285,
+          "h": 408
+        },
+        "draw": {
+          "x": 0.0,
+          "y": 8.378947368421052,
+          "w": 64.0,
+          "h": 91.62105263157895
+        },
+        "acceptedManifest": "town/assets/parallel-art/front-facing-2/acceptances/seating-tables-patches.json",
+        "acceptedManifestSHA256": "e6ceff1dd8de1fec114a26cbe542649be85fb853ec805310eb8ce50091f208d6"
+      }
+    },
+    {
+      "assetId": "collection-showroom-rustic-kitchen-pantry",
+      "facing": "south",
+      "originalStatus": "flagged",
+      "originalNote": "angled",
+      "newOrChangedInUpload2": true,
+      "status": "resolved",
+      "method": "direct-native-redraw",
+      "category": "front-orientation-and-camera",
+      "resolution": "Reorient the original detailed fixture to a straight South front with coherent visible top surfaces. Preserve its collection-specific finish, contents, hardware, natural curves and designed asymmetry; do not keep a broad angled side plane.",
+      "evidence": {
+        "groupManifest": "storage-patches.json",
+        "finalGroupManifest": true,
+        "nativeSource": "town/assets/parallel-art/front-facing-2/storage/native/batch-2-52b2ef818867.webp",
+        "nativeCrop": {
+          "x": 804,
+          "y": 1106,
+          "w": 161,
+          "h": 279
+        },
+        "draw": {
+          "x": 1.7956989247311839,
+          "y": 0.0,
+          "w": 100.40860215053763,
+          "h": 174.0
+        },
+        "acceptedManifest": "town/assets/parallel-art/front-facing-2/acceptances/storage-patches.json",
+        "acceptedManifestSHA256": "4803fc8cd5a8023fa14eaaab528fc4c0d133996c8194152ab26ef0d0b31afe56"
+      }
+    },
+    {
+      "assetId": "collection-showroom-botanical-conservatory-shelf",
+      "facing": "south",
+      "originalStatus": "flagged",
+      "originalNote": "angled",
+      "newOrChangedInUpload2": true,
+      "status": "resolved",
+      "method": "direct-native-redraw",
+      "category": "front-orientation-and-camera",
+      "resolution": "Make the shelf front level and South-facing, with a visible upper plane and parallel depth edges. Retain the original carved supports, finish and individual display objects.",
+      "evidence": {
+        "groupManifest": "shelves-decor-patches.json",
+        "finalGroupManifest": true,
+        "nativeSource": "town/assets/parallel-art/front-facing-2/shelves-decor/collection-showroom-botanical-conservatory-shelf-south-ec05943c6187.webp",
+        "nativeCrop": {
+          "x": 0,
+          "y": 0,
+          "w": 487,
+          "h": 428
+        },
+        "draw": {
+          "x": 16.21028037383178,
+          "y": 0,
+          "w": 95.57943925233644,
+          "h": 84.0
+        },
+        "acceptedManifest": "town/assets/parallel-art/front-facing-2/acceptances/shelves-decor-patches.json",
+        "acceptedManifestSHA256": "c8cbe539c6e704f5a5453a2c34f9bb4d6c4b05ce9000a472700316e6d683d5bd"
+      }
+    },
+    {
+      "assetId": "collection-showroom-midcentury-studio-wardrobe",
+      "facing": "south",
+      "originalStatus": "flagged",
+      "originalNote": "angled",
+      "newOrChangedInUpload2": true,
+      "status": "resolved",
+      "method": "direct-native-redraw",
+      "category": "front-orientation-and-camera",
+      "resolution": "Reorient the original detailed fixture to a straight South front with coherent visible top surfaces. Preserve its collection-specific finish, contents, hardware, natural curves and designed asymmetry; do not keep a broad angled side plane.",
+      "evidence": {
+        "groupManifest": "storage-patches.json",
+        "finalGroupManifest": true,
+        "nativeSource": "town/assets/parallel-art/front-facing-2/storage/native/batch-3-272daae970df.webp",
+        "nativeCrop": {
+          "x": 89,
+          "y": 54,
+          "w": 188,
+          "h": 275
+        },
+        "draw": {
+          "x": 1.105454545454549,
+          "y": 0.0,
+          "w": 125.7890909090909,
+          "h": 184.0
+        },
+        "acceptedManifest": "town/assets/parallel-art/front-facing-2/acceptances/storage-patches.json",
+        "acceptedManifestSHA256": "4803fc8cd5a8023fa14eaaab528fc4c0d133996c8194152ab26ef0d0b31afe56"
+      }
+    },
+    {
+      "assetId": "collection-showroom-midcentury-studio-bath-fixture",
+      "facing": "south",
+      "originalStatus": "flagged",
+      "originalNote": "angled",
+      "newOrChangedInUpload2": true,
+      "status": "resolved",
+      "method": "direct-native-redraw",
+      "category": "front-orientation-and-camera",
+      "resolution": "Reorient the original detailed fixture to a straight South front with coherent visible top surfaces. Preserve its collection-specific finish, contents, hardware, natural curves and designed asymmetry; do not keep a broad angled side plane.",
+      "evidence": {
+        "groupManifest": "storage-patches.json",
+        "finalGroupManifest": true,
+        "nativeSource": "town/assets/parallel-art/front-facing-2/storage/native/batch-3-272daae970df.webp",
+        "nativeCrop": {
+          "x": 445,
+          "y": 49,
+          "w": 194,
+          "h": 286
+        },
+        "draw": {
+          "x": 0.0,
+          "y": 9.525773195876297,
+          "w": 98.0,
+          "h": 144.4742268041237
+        },
+        "acceptedManifest": "town/assets/parallel-art/front-facing-2/acceptances/storage-patches.json",
+        "acceptedManifestSHA256": "4803fc8cd5a8023fa14eaaab528fc4c0d133996c8194152ab26ef0d0b31afe56"
+      }
+    },
+    {
+      "assetId": "collection-showroom-midcentury-studio-shelf",
+      "facing": "south",
+      "originalStatus": "flagged",
+      "originalNote": "angled",
+      "newOrChangedInUpload2": true,
+      "status": "resolved",
+      "method": "direct-native-redraw",
+      "category": "front-orientation-and-camera",
+      "resolution": "Make the shelf front level and South-facing, with a visible upper plane and parallel depth edges. Retain the original carved supports, finish and individual display objects.",
+      "evidence": {
+        "groupManifest": "shelves-decor-patches.json",
+        "finalGroupManifest": true,
+        "nativeSource": "town/assets/parallel-art/front-facing-2/shelves-decor/collection-showroom-midcentury-studio-shelf-south-db47fd2e6847.webp",
+        "nativeCrop": {
+          "x": 0,
+          "y": 0,
+          "w": 453,
+          "h": 457
+        },
+        "draw": {
+          "x": 22.367614879649892,
+          "y": 0,
+          "w": 83.26477024070022,
+          "h": 84.0
+        },
+        "acceptedManifest": "town/assets/parallel-art/front-facing-2/acceptances/shelves-decor-patches.json",
+        "acceptedManifestSHA256": "c8cbe539c6e704f5a5453a2c34f9bb4d6c4b05ce9000a472700316e6d683d5bd"
+      }
+    },
+    {
+      "assetId": "collection-showroom-midcentury-studio-poster",
+      "facing": "south",
+      "originalStatus": "flagged",
+      "originalNote": "angled",
+      "newOrChangedInUpload2": true,
+      "status": "resolved",
+      "method": "direct-native-redraw",
+      "category": "front-orientation-and-camera",
+      "resolution": "Face the mounted front plane toward the viewer. Retain the original frame, printed/painted detail or clock face, decorative asymmetry and mounting behavior.",
+      "evidence": {
+        "groupManifest": "shelves-decor-patches.json",
+        "finalGroupManifest": true,
+        "nativeSource": "town/assets/parallel-art/front-facing-2/shelves-decor/collection-showroom-midcentury-studio-poster-south-fdf4014e56f4.webp",
+        "nativeCrop": {
+          "x": 0,
+          "y": 0,
+          "w": 357,
+          "h": 432
+        },
+        "draw": {
+          "x": 7.722222222222221,
+          "y": 0,
+          "w": 92.55555555555556,
+          "h": 112.0
+        },
+        "acceptedManifest": "town/assets/parallel-art/front-facing-2/acceptances/shelves-decor-patches.json",
+        "acceptedManifestSHA256": "c8cbe539c6e704f5a5453a2c34f9bb4d6c4b05ce9000a472700316e6d683d5bd"
+      }
+    },
+    {
+      "assetId": "collection-showroom-french-cafe-wardrobe",
+      "facing": "south",
+      "originalStatus": "flagged",
+      "originalNote": "angled",
+      "newOrChangedInUpload2": true,
+      "status": "resolved",
+      "method": "direct-native-redraw",
+      "category": "front-orientation-and-camera",
+      "resolution": "Reorient the original detailed fixture to a straight South front with coherent visible top surfaces. Preserve its collection-specific finish, contents, hardware, natural curves and designed asymmetry; do not keep a broad angled side plane.",
+      "evidence": {
+        "groupManifest": "storage-patches.json",
+        "finalGroupManifest": true,
+        "nativeSource": "town/assets/parallel-art/front-facing-2/storage/native/batch-3-272daae970df.webp",
+        "nativeCrop": {
+          "x": 796,
+          "y": 54,
+          "w": 207,
+          "h": 274
+        },
+        "draw": {
+          "x": 0.0,
+          "y": 14.570048309178759,
+          "w": 128.0,
+          "h": 169.42995169082124
+        },
+        "acceptedManifest": "town/assets/parallel-art/front-facing-2/acceptances/storage-patches.json",
+        "acceptedManifestSHA256": "4803fc8cd5a8023fa14eaaab528fc4c0d133996c8194152ab26ef0d0b31afe56"
+      }
+    },
+    {
+      "assetId": "collection-showroom-french-cafe-desk-chair",
+      "facing": "south",
+      "originalStatus": "flagged",
+      "originalNote": "angled",
+      "newOrChangedInUpload2": true,
+      "status": "resolved",
+      "method": "direct-native-redraw",
+      "category": "front-orientation-and-camera",
+      "resolution": "The chair front faces South with a substantial seat top from the elevated parallel camera. Preserve upholstery, carving, curved arms, legs, castors and cushions; designed curves are not made rectangular.",
+      "evidence": {
+        "groupManifest": "seating-tables-patches.json",
+        "finalGroupManifest": true,
+        "nativeSource": "town/assets/parallel-art/front-facing-2/seating-tables/chairs-south-04-316fb244bad3.webp",
+        "nativeCrop": {
+          "x": 68,
+          "y": 13,
+          "w": 276,
+          "h": 398
+        },
+        "draw": {
+          "x": 0.0,
+          "y": 4.594202898550719,
+          "w": 62.0,
+          "h": 89.40579710144928
+        },
+        "acceptedManifest": "town/assets/parallel-art/front-facing-2/acceptances/seating-tables-patches.json",
+        "acceptedManifestSHA256": "e6ceff1dd8de1fec114a26cbe542649be85fb853ec805310eb8ce50091f208d6"
+      }
+    },
+    {
+      "assetId": "collection-showroom-french-cafe-reading-chair",
+      "facing": "south",
+      "originalStatus": "flagged",
+      "originalNote": "angled",
+      "newOrChangedInUpload2": true,
+      "status": "resolved",
+      "method": "direct-native-redraw",
+      "category": "front-orientation-and-camera",
+      "resolution": "The chair front faces South with a substantial seat top from the elevated parallel camera. Preserve upholstery, carving, curved arms, legs, castors and cushions; designed curves are not made rectangular.",
+      "evidence": {
+        "groupManifest": "seating-tables-patches.json",
+        "finalGroupManifest": true,
+        "nativeSource": "town/assets/parallel-art/front-facing-2/seating-tables/chairs-south-04-316fb244bad3.webp",
+        "nativeCrop": {
+          "x": 852,
+          "y": 13,
+          "w": 358,
+          "h": 392
+        },
+        "draw": {
+          "x": 0.0,
+          "y": 22.022346368715077,
+          "w": 84.0,
+          "h": 91.97765363128492
+        },
+        "acceptedManifest": "town/assets/parallel-art/front-facing-2/acceptances/seating-tables-patches.json",
+        "acceptedManifestSHA256": "e6ceff1dd8de1fec114a26cbe542649be85fb853ec805310eb8ce50091f208d6"
+      }
+    },
+    {
+      "assetId": "collection-showroom-french-cafe-dining-chair",
+      "facing": "south",
+      "originalStatus": "flagged",
+      "originalNote": "angled",
+      "newOrChangedInUpload2": true,
+      "status": "resolved",
+      "method": "direct-native-redraw",
+      "category": "front-orientation-and-camera",
+      "resolution": "The chair front faces South with a substantial seat top from the elevated parallel camera. Preserve upholstery, carving, curved arms, legs, castors and cushions; designed curves are not made rectangular.",
+      "evidence": {
+        "groupManifest": "seating-tables-patches.json",
+        "finalGroupManifest": true,
+        "nativeSource": "town/assets/parallel-art/front-facing-2/seating-tables/chairs-south-04-316fb244bad3.webp",
+        "nativeCrop": {
+          "x": 497,
+          "y": 4,
+          "w": 246,
+          "h": 403
+        },
+        "draw": {
+          "x": 1.4789081885856064,
+          "y": 0.0,
+          "w": 61.04218362282879,
+          "h": 100.0
+        },
+        "acceptedManifest": "town/assets/parallel-art/front-facing-2/acceptances/seating-tables-patches.json",
+        "acceptedManifestSHA256": "e6ceff1dd8de1fec114a26cbe542649be85fb853ec805310eb8ce50091f208d6"
+      }
+    },
+    {
+      "assetId": "collection-showroom-french-cafe-pantry",
+      "facing": "south",
+      "originalStatus": "flagged",
+      "originalNote": "angled",
+      "newOrChangedInUpload2": true,
+      "status": "resolved",
+      "method": "direct-native-redraw",
+      "category": "front-orientation-and-camera",
+      "resolution": "Reorient the original detailed fixture to a straight South front with coherent visible top surfaces. Preserve its collection-specific finish, contents, hardware, natural curves and designed asymmetry; do not keep a broad angled side plane.",
+      "evidence": {
+        "groupManifest": "storage-patches.json",
+        "finalGroupManifest": true,
+        "nativeSource": "town/assets/parallel-art/front-facing-2/storage/native/batch-3-272daae970df.webp",
+        "nativeCrop": {
+          "x": 89,
+          "y": 390,
+          "w": 187,
+          "h": 290
+        },
+        "draw": {
+          "x": 0.0,
+          "y": 12.716577540106954,
+          "w": 104.0,
+          "h": 161.28342245989305
+        },
+        "acceptedManifest": "town/assets/parallel-art/front-facing-2/acceptances/storage-patches.json",
+        "acceptedManifestSHA256": "4803fc8cd5a8023fa14eaaab528fc4c0d133996c8194152ab26ef0d0b31afe56"
+      }
+    },
+    {
+      "assetId": "collection-showroom-french-cafe-bath-fixture",
+      "facing": "south",
+      "originalStatus": "flagged",
+      "originalNote": "angled",
+      "newOrChangedInUpload2": true,
+      "status": "resolved",
+      "method": "direct-native-redraw",
+      "category": "front-orientation-and-camera",
+      "resolution": "Reorient the original detailed fixture to a straight South front with coherent visible top surfaces. Preserve its collection-specific finish, contents, hardware, natural curves and designed asymmetry; do not keep a broad angled side plane.",
+      "evidence": {
+        "groupManifest": "storage-patches.json",
+        "finalGroupManifest": true,
+        "nativeSource": "town/assets/parallel-art/front-facing-2/storage/native/batch-3-272daae970df.webp",
+        "nativeCrop": {
+          "x": 774,
+          "y": 401,
+          "w": 253,
+          "h": 284
+        },
+        "draw": {
+          "x": 7.87676056338028,
+          "y": 0.0,
+          "w": 112.24647887323944,
+          "h": 126.0
+        },
+        "acceptedManifest": "town/assets/parallel-art/front-facing-2/acceptances/storage-patches.json",
+        "acceptedManifestSHA256": "4803fc8cd5a8023fa14eaaab528fc4c0d133996c8194152ab26ef0d0b31afe56"
+      }
+    },
+    {
+      "assetId": "collection-showroom-french-cafe-linen-storage",
+      "facing": "south",
+      "originalStatus": "flagged",
+      "originalNote": "angled",
+      "newOrChangedInUpload2": true,
+      "status": "resolved",
+      "method": "direct-native-redraw",
+      "category": "front-orientation-and-camera",
+      "resolution": "Reorient the original detailed fixture to a straight South front with coherent visible top surfaces. Preserve its collection-specific finish, contents, hardware, natural curves and designed asymmetry; do not keep a broad angled side plane.",
+      "evidence": {
+        "groupManifest": "storage-patches.json",
+        "finalGroupManifest": true,
+        "nativeSource": "town/assets/parallel-art/front-facing-2/storage/native/batch-3-272daae970df.webp",
+        "nativeCrop": {
+          "x": 442,
+          "y": 393,
+          "w": 200,
+          "h": 287
+        },
+        "draw": {
+          "x": 0.0,
+          "y": 20.849999999999994,
+          "w": 90.0,
+          "h": 129.15
+        },
+        "acceptedManifest": "town/assets/parallel-art/front-facing-2/acceptances/storage-patches.json",
+        "acceptedManifestSHA256": "4803fc8cd5a8023fa14eaaab528fc4c0d133996c8194152ab26ef0d0b31afe56"
+      }
+    },
+    {
+      "assetId": "collection-showroom-french-cafe-mirror",
+      "facing": "south",
+      "originalStatus": "flagged",
+      "originalNote": "angled",
+      "newOrChangedInUpload2": true,
+      "status": "resolved",
+      "method": "direct-native-redraw",
+      "category": "front-orientation-and-camera",
+      "resolution": "Face the mounted front plane toward the viewer. Retain the original frame, printed/painted detail or clock face, decorative asymmetry and mounting behavior.",
+      "evidence": {
+        "groupManifest": "shelves-decor-patches.json",
+        "finalGroupManifest": true,
+        "nativeSource": "town/assets/parallel-art/front-facing-2/shelves-decor/collection-showroom-french-cafe-mirror-south-243fe24596d3.webp",
+        "nativeCrop": {
+          "x": 0,
+          "y": 0,
+          "w": 378,
+          "h": 472
+        },
+        "draw": {
+          "x": 5.5593220338983045,
+          "y": 0,
+          "w": 76.88135593220339,
+          "h": 96.0
+        },
+        "acceptedManifest": "town/assets/parallel-art/front-facing-2/acceptances/shelves-decor-patches.json",
+        "acceptedManifestSHA256": "c8cbe539c6e704f5a5453a2c34f9bb4d6c4b05ce9000a472700316e6d683d5bd"
+      }
+    },
+    {
+      "assetId": "collection-showroom-french-cafe-shelf",
+      "facing": "south",
+      "originalStatus": "flagged",
+      "originalNote": "angled, not 2/3",
+      "newOrChangedInUpload2": true,
+      "status": "resolved",
+      "method": "direct-native-redraw",
+      "category": "front-orientation-and-camera",
+      "resolution": "Make the shelf front level and South-facing, with a visible upper plane and parallel depth edges. Retain the original carved supports, finish and individual display objects.",
+      "evidence": {
+        "groupManifest": "shelves-decor-patches.json",
+        "finalGroupManifest": true,
+        "nativeSource": "town/assets/parallel-art/front-facing-2/shelves-decor/collection-showroom-french-cafe-shelf-south-1e61c246095f.webp",
+        "nativeCrop": {
+          "x": 0,
+          "y": 0,
+          "w": 474,
+          "h": 381
+        },
+        "draw": {
+          "x": 11.748031496062993,
+          "y": 0,
+          "w": 104.50393700787401,
+          "h": 84.0
+        },
+        "acceptedManifest": "town/assets/parallel-art/front-facing-2/acceptances/shelves-decor-patches.json",
+        "acceptedManifestSHA256": "c8cbe539c6e704f5a5453a2c34f9bb4d6c4b05ce9000a472700316e6d683d5bd"
+      }
+    },
+    {
+      "assetId": "collection-showroom-industrial-loft-wardrobe",
+      "facing": "south",
+      "originalStatus": "flagged",
+      "originalNote": "angled",
+      "newOrChangedInUpload2": true,
+      "status": "resolved",
+      "method": "direct-native-redraw",
+      "category": "front-orientation-and-camera",
+      "resolution": "Reorient the original detailed fixture to a straight South front with coherent visible top surfaces. Preserve its collection-specific finish, contents, hardware, natural curves and designed asymmetry; do not keep a broad angled side plane.",
+      "evidence": {
+        "groupManifest": "storage-patches.json",
+        "finalGroupManifest": true,
+        "nativeSource": "town/assets/parallel-art/front-facing-2/storage/native/batch-3-272daae970df.webp",
+        "nativeCrop": {
+          "x": 84,
+          "y": 740,
+          "w": 196,
+          "h": 284
+        },
+        "draw": {
+          "x": 0.5070422535211208,
+          "y": 0.0,
+          "w": 126.98591549295776,
+          "h": 184.0
+        },
+        "acceptedManifest": "town/assets/parallel-art/front-facing-2/acceptances/storage-patches.json",
+        "acceptedManifestSHA256": "4803fc8cd5a8023fa14eaaab528fc4c0d133996c8194152ab26ef0d0b31afe56"
+      }
+    },
+    {
+      "assetId": "collection-showroom-industrial-loft-dining-table",
+      "facing": "south",
+      "originalStatus": "flagged",
+      "originalNote": "not 2/3",
+      "newOrChangedInUpload2": true,
+      "status": "resolved",
+      "method": "direct-native-redraw",
+      "category": "front-orientation-and-camera",
+      "resolution": "Use a straight South axis and elevated parallel tabletop camera while preserving the original family-specific top outline, materials, base and ornament. Equal-depth lines do not become a vanishing trapezoid; natural curved tops remain curved.",
+      "evidence": {
+        "groupManifest": "tables-instruments-patches.json",
+        "finalGroupManifest": true,
+        "nativeSource": "town/assets/parallel-art/front-facing-2/tables-instruments/non-family/non-family-10-72dc952326af.webp",
+        "nativeCrop": {
+          "x": 118,
+          "y": 50,
+          "w": 649,
+          "h": 815
+        },
+        "draw": {
+          "x": 13.406134969325151,
+          "y": -1.4210854715202004e-14,
+          "w": 89.1877300613497,
+          "h": 112.00000000000001
+        },
+        "acceptedManifest": "town/assets/parallel-art/front-facing-2/acceptances/tables-instruments-patches.json",
+        "acceptedManifestSHA256": "5287d0ae023eed8610a599954945c7f545299bef65952ef2e823da6691d96f00"
+      }
+    },
+    {
+      "assetId": "collection-showroom-industrial-loft-pantry",
+      "facing": "south",
+      "originalStatus": "flagged",
+      "originalNote": "angled",
+      "newOrChangedInUpload2": true,
+      "status": "resolved",
+      "method": "direct-native-redraw",
+      "category": "front-orientation-and-camera",
+      "resolution": "Reorient the original detailed fixture to a straight South front with coherent visible top surfaces. Preserve its collection-specific finish, contents, hardware, natural curves and designed asymmetry; do not keep a broad angled side plane.",
+      "evidence": {
+        "groupManifest": "storage-patches.json",
+        "finalGroupManifest": true,
+        "nativeSource": "town/assets/parallel-art/front-facing-2/storage/native/batch-3-272daae970df.webp",
+        "nativeCrop": {
+          "x": 446,
+          "y": 741,
+          "w": 195,
+          "h": 283
+        },
+        "draw": {
+          "x": 0.0,
+          "y": 23.066666666666663,
+          "w": 104.0,
+          "h": 150.93333333333334
+        },
+        "acceptedManifest": "town/assets/parallel-art/front-facing-2/acceptances/storage-patches.json",
+        "acceptedManifestSHA256": "4803fc8cd5a8023fa14eaaab528fc4c0d133996c8194152ab26ef0d0b31afe56"
+      }
+    },
+    {
+      "assetId": "collection-showroom-industrial-loft-linen-storage",
+      "facing": "south",
+      "originalStatus": "flagged",
+      "originalNote": "angled",
+      "newOrChangedInUpload2": true,
+      "status": "resolved",
+      "method": "direct-native-redraw",
+      "category": "front-orientation-and-camera",
+      "resolution": "Reorient the original detailed fixture to a straight South front with coherent visible top surfaces. Preserve its collection-specific finish, contents, hardware, natural curves and designed asymmetry; do not keep a broad angled side plane.",
+      "evidence": {
+        "groupManifest": "storage-patches.json",
+        "finalGroupManifest": true,
+        "nativeSource": "town/assets/parallel-art/front-facing-2/storage/native/batch-3-272daae970df.webp",
+        "nativeCrop": {
+          "x": 812,
+          "y": 739,
+          "w": 177,
+          "h": 286
+        },
+        "draw": {
+          "x": 0.0,
+          "y": 4.576271186440692,
+          "w": 90.0,
+          "h": 145.4237288135593
+        },
+        "acceptedManifest": "town/assets/parallel-art/front-facing-2/acceptances/storage-patches.json",
+        "acceptedManifestSHA256": "4803fc8cd5a8023fa14eaaab528fc4c0d133996c8194152ab26ef0d0b31afe56"
+      }
+    },
+    {
+      "assetId": "collection-showroom-industrial-loft-shelf",
+      "facing": "south",
+      "originalStatus": "flagged",
+      "originalNote": "angled/ not 2/3",
+      "newOrChangedInUpload2": true,
+      "status": "resolved",
+      "method": "direct-native-redraw",
+      "category": "front-orientation-and-camera",
+      "resolution": "Make the shelf front level and South-facing, with a visible upper plane and parallel depth edges. Retain the original carved supports, finish and individual display objects.",
+      "evidence": {
+        "groupManifest": "shelves-decor-patches.json",
+        "finalGroupManifest": true,
+        "nativeSource": "town/assets/parallel-art/front-facing-2/shelves-decor/collection-showroom-industrial-loft-shelf-south-1325d336f51b.webp",
+        "nativeCrop": {
+          "x": 0,
+          "y": 0,
+          "w": 457,
+          "h": 344
+        },
+        "draw": {
+          "x": 8.203488372093027,
+          "y": 0,
+          "w": 111.59302325581395,
+          "h": 84.0
+        },
+        "acceptedManifest": "town/assets/parallel-art/front-facing-2/acceptances/shelves-decor-patches.json",
+        "acceptedManifestSHA256": "c8cbe539c6e704f5a5453a2c34f9bb4d6c4b05ce9000a472700316e6d683d5bd"
+      }
+    },
+    {
+      "assetId": "collection-showroom-retrofuture-reading-chair",
+      "facing": "south",
+      "originalStatus": "flagged",
+      "originalNote": "angled",
+      "newOrChangedInUpload2": true,
+      "status": "resolved",
+      "method": "direct-native-redraw",
+      "category": "front-orientation-and-camera",
+      "resolution": "The chair front faces South with a substantial seat top from the elevated parallel camera. Preserve upholstery, carving, curved arms, legs, castors and cushions; designed curves are not made rectangular.",
+      "evidence": {
+        "groupManifest": "seating-tables-patches.json",
+        "finalGroupManifest": true,
+        "nativeSource": "town/assets/parallel-art/front-facing-2/seating-tables/chairs-south-04-316fb244bad3.webp",
+        "nativeCrop": {
+          "x": 846,
+          "y": 428,
+          "w": 360,
+          "h": 404
+        },
+        "draw": {
+          "x": 0.0,
+          "y": 19.733333333333334,
+          "w": 84.0,
+          "h": 94.26666666666667
+        },
+        "acceptedManifest": "town/assets/parallel-art/front-facing-2/acceptances/seating-tables-patches.json",
+        "acceptedManifestSHA256": "e6ceff1dd8de1fec114a26cbe542649be85fb853ec805310eb8ce50091f208d6"
+      }
+    },
+    {
+      "assetId": "collection-showroom-cyberpunk-linen-storage",
+      "facing": "south",
+      "originalStatus": "flagged",
+      "originalNote": "not 2/3",
+      "newOrChangedInUpload2": true,
+      "status": "resolved",
+      "method": "direct-native-redraw",
+      "category": "front-orientation-and-camera",
+      "resolution": "Reorient the original detailed fixture to a straight South front with coherent visible top surfaces. Preserve its collection-specific finish, contents, hardware, natural curves and designed asymmetry; do not keep a broad angled side plane.",
+      "evidence": {
+        "groupManifest": "storage-patches.json",
+        "finalGroupManifest": true,
+        "nativeSource": "town/assets/parallel-art/front-facing-2/storage/native/batch-3-272daae970df.webp",
+        "nativeCrop": {
+          "x": 75,
+          "y": 1087,
+          "w": 216,
+          "h": 298
+        },
+        "draw": {
+          "x": 0.0,
+          "y": 25.83333333333333,
+          "w": 90.0,
+          "h": 124.16666666666667
+        },
+        "acceptedManifest": "town/assets/parallel-art/front-facing-2/acceptances/storage-patches.json",
+        "acceptedManifestSHA256": "4803fc8cd5a8023fa14eaaab528fc4c0d133996c8194152ab26ef0d0b31afe56"
+      }
+    },
+    {
+      "assetId": "collection-showroom-robot-counter",
+      "facing": "south",
+      "originalStatus": "flagged",
+      "originalNote": "not 2/3",
+      "newOrChangedInUpload2": true,
+      "status": "resolved",
+      "method": "direct-native-redraw",
+      "category": "front-orientation-and-camera",
+      "resolution": "Preserve the blue/silver robot cabinet, tiled top, controls, pot and towel; show substantial top depth while keeping the front South-facing.",
+      "evidence": {
+        "groupManifest": "rugs-counters-patches.json",
+        "finalGroupManifest": true,
+        "nativeSource": "town/assets/parallel-art/front-facing-2/rugs-counters/folded-counters-406d9beba52c.webp",
+        "nativeCrop": {
+          "x": 1054,
+          "y": 147,
+          "w": 401,
+          "h": 325
+        },
+        "draw": {
+          "x": 0.0,
+          "y": 8.25935162094764,
+          "w": 128,
+          "h": 103.74064837905236
+        },
+        "acceptedManifest": "town/assets/parallel-art/front-facing-2/acceptances/rugs-counters-patches.json",
+        "acceptedManifestSHA256": "74a9b0b97ca4efbb85d0094b5cb189de8976be2fe64bb89d002d763388e581f6"
+      }
+    },
+    {
+      "assetId": "family-vivaldi-rug",
+      "facing": "south",
+      "originalStatus": "flagged",
+      "originalNote": "no t2/3",
+      "newOrChangedInUpload2": true,
+      "status": "resolved",
+      "method": "inherited-source-redraw",
+      "category": "derived-family-rug",
+      "sourceAssetId": "collection-vivaldi-rug",
+      "resolution": "This family rug uses the corrected collection donor through the existing source provider. Retain all four seasonal panels, the tree embroidery and wavy border; correct the floor-plane camera without trapezoid distance shrink. No independent second correction or duplicate warp is applied.",
+      "evidence": {
+        "groupManifest": "rugs-counters-patches.json",
+        "finalGroupManifest": true,
+        "nativeSource": "town/assets/parallel-art/front-facing-2/rugs-counters/floor-textiles-91781e928184.webp",
+        "nativeCrop": {
+          "x": 527,
+          "y": 146,
+          "w": 479,
+          "h": 280
+        },
+        "draw": {
+          "x": 0.0,
+          "y": 6.7807933194154515,
+          "w": 180,
+          "h": 105.21920668058455
+        },
+        "acceptedManifest": "town/assets/parallel-art/front-facing-2/acceptances/rugs-counters-patches.json",
+        "acceptedManifestSHA256": "74a9b0b97ca4efbb85d0094b5cb189de8976be2fe64bb89d002d763388e581f6"
+      }
+    },
+    {
+      "assetId": "family-ella-rug",
+      "facing": "south",
+      "originalStatus": "flagged",
+      "originalNote": "not 2/3",
+      "newOrChangedInUpload2": true,
+      "status": "resolved",
+      "method": "inherited-source-redraw",
+      "category": "derived-family-rug",
+      "sourceAssetId": "collection-ella-rug",
+      "resolution": "This family rug uses the corrected collection donor through the existing source provider. Retain the floral embroidery and petal-shaped border; use the flattened floor-plane camera while preserving the organic outline. No independent second correction or duplicate warp is applied.",
+      "evidence": {
+        "groupManifest": "rugs-counters-patches.json",
+        "finalGroupManifest": true,
+        "nativeSource": "town/assets/parallel-art/front-facing-2/rugs-counters/floor-textiles-91781e928184.webp",
+        "nativeCrop": {
+          "x": 1034,
+          "y": 143,
+          "w": 481,
+          "h": 287
+        },
+        "draw": {
+          "x": 0.0,
+          "y": 4.598752598752597,
+          "w": 180,
+          "h": 107.4012474012474
+        },
+        "acceptedManifest": "town/assets/parallel-art/front-facing-2/acceptances/rugs-counters-patches.json",
+        "acceptedManifestSHA256": "74a9b0b97ca4efbb85d0094b5cb189de8976be2fe64bb89d002d763388e581f6"
+      }
+    },
+    {
+      "assetId": "picnic-blanket-gingham",
+      "facing": "south",
+      "originalStatus": "flagged",
+      "originalNote": "not 2/3",
+      "newOrChangedInUpload2": true,
+      "status": "resolved",
+      "method": "direct-native-redraw",
+      "category": "front-orientation-and-camera",
+      "resolution": "Keep the red/cream gingham weave and fringe; the rectangular floor plane has parallel edges and matching near/far widths.",
+      "evidence": {
+        "groupManifest": "rugs-counters-patches.json",
+        "finalGroupManifest": true,
+        "nativeSource": "town/assets/parallel-art/front-facing-2/rugs-counters/floor-textiles-91781e928184.webp",
+        "nativeCrop": {
+          "x": 23,
+          "y": 657,
+          "w": 471,
+          "h": 248
+        },
+        "draw": {
+          "x": 0.0,
+          "y": 44.35668789808918,
+          "w": 288,
+          "h": 151.64331210191082
+        },
+        "acceptedManifest": "town/assets/parallel-art/front-facing-2/acceptances/rugs-counters-patches.json",
+        "acceptedManifestSHA256": "74a9b0b97ca4efbb85d0094b5cb189de8976be2fe64bb89d002d763388e581f6"
+      }
+    },
+    {
+      "assetId": "picnic-blanket-striped",
+      "facing": "south",
+      "originalStatus": "flagged",
+      "originalNote": "not 2/3",
+      "newOrChangedInUpload2": true,
+      "status": "resolved",
+      "method": "direct-native-redraw",
+      "category": "front-orientation-and-camera",
+      "resolution": "Keep the blue/cream stripe weave and fringe; show an elevated parallel floor plane without a receding trapezoid.",
+      "evidence": {
+        "groupManifest": "rugs-counters-patches.json",
+        "finalGroupManifest": true,
+        "nativeSource": "town/assets/parallel-art/front-facing-2/rugs-counters/floor-textiles-91781e928184.webp",
+        "nativeCrop": {
+          "x": 530,
+          "y": 657,
+          "w": 474,
+          "h": 248
+        },
+        "draw": {
+          "x": 0.0,
+          "y": 39.316455696202524,
+          "w": 288,
+          "h": 150.68354430379748
+        },
+        "acceptedManifest": "town/assets/parallel-art/front-facing-2/acceptances/rugs-counters-patches.json",
+        "acceptedManifestSHA256": "74a9b0b97ca4efbb85d0094b5cb189de8976be2fe64bb89d002d763388e581f6"
+      }
+    },
+    {
+      "assetId": "picnic-quilt-patchwork",
+      "facing": "south",
+      "originalStatus": "flagged",
+      "originalNote": "not 2/3",
+      "newOrChangedInUpload2": true,
+      "status": "resolved",
+      "method": "direct-native-redraw",
+      "category": "front-orientation-and-camera",
+      "resolution": "Keep the quilt panels, embroidery, seams and border; correct the floor-plane camera without changing the textile into a different design.",
+      "evidence": {
+        "groupManifest": "rugs-counters-patches.json",
+        "finalGroupManifest": true,
+        "nativeSource": "town/assets/parallel-art/front-facing-2/rugs-counters/floor-textiles-91781e928184.webp",
+        "nativeCrop": {
+          "x": 1039,
+          "y": 658,
+          "w": 476,
+          "h": 242
+        },
+        "draw": {
+          "x": 0.0,
+          "y": 43.57983193277312,
+          "w": 288,
+          "h": 146.42016806722688
+        },
+        "acceptedManifest": "town/assets/parallel-art/front-facing-2/acceptances/rugs-counters-patches.json",
+        "acceptedManifestSHA256": "74a9b0b97ca4efbb85d0094b5cb189de8976be2fe64bb89d002d763388e581f6"
+      }
+    },
+    {
+      "assetId": "picnic-folded-blankets",
+      "facing": "south",
+      "originalStatus": "flagged",
+      "originalNote": "angled",
+      "newOrChangedInUpload2": true,
+      "status": "resolved",
+      "method": "direct-native-redraw",
+      "category": "front-orientation-and-camera",
+      "resolution": "The original strapped stack, handle, folded cloth layers and patterns face forward with a visible top; retain its thickness and texture.",
+      "evidence": {
+        "groupManifest": "rugs-counters-patches.json",
+        "finalGroupManifest": true,
+        "nativeSource": "town/assets/parallel-art/front-facing-2/rugs-counters/folded-counters-406d9beba52c.webp",
+        "nativeCrop": {
+          "x": 83,
+          "y": 103,
+          "w": 331,
+          "h": 350
+        },
+        "draw": {
+          "x": 11.67142857142857,
+          "y": 0,
+          "w": 75.65714285714286,
+          "h": 80
+        },
+        "acceptedManifest": "town/assets/parallel-art/front-facing-2/acceptances/rugs-counters-patches.json",
+        "acceptedManifestSHA256": "74a9b0b97ca4efbb85d0094b5cb189de8976be2fe64bb89d002d763388e581f6"
+      }
+    }
+  ],
+  "nativeViewRepairsThisRevision": 469,
+  "nativeAssetIdsThisRevision": 438,
+  "artRevisionCounts": {
+    "previousActiveNativeViews": 790,
+    "acceptedNativeViewsThisRevision": 469,
+    "refinedPreviouslyEditedViews": 49,
+    "newlyCorrectedViews": 420,
+    "activeEditedNativeViews": 1210,
+    "activeEditedAssetIds": 712,
+    "untouchedPriorViews": 741,
+    "uniquePackedNativeCrops": 1112,
+    "nativeAtlases": 63,
+    "compactPreviewPixels": 2918322
+  },
+  "aggregateAcceptance": {
+    "path": "town/assets/parallel-art/front-facing-2-patches.json",
+    "sha256": "0d0f614aea4525a3c9e2ee6b4139e15891fcd775725f6f13279f563d55eb87d7",
+    "acceptedViews": 469
+  }
+}

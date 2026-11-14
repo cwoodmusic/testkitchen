@@ -1,4 +1,5 @@
-import {PARALLEL_ART_PATCHES} from './parallel-art-data.mjs?v=town-library-review-1';
+import {PARALLEL_ART_PATCHES} from './parallel-art-data.mjs?v=town-front-facing-2';
+import {correctedArtMotion} from './parallel-art-motion.mjs?v=town-front-facing-2';
 import {furnitureFootCenter} from './furniture-facing.mjs?v=opera-parallax-1';
 
 const directions=['south','west','north','east'];
@@ -61,7 +62,7 @@ export function createParallelArtRuntime(catalog,{
 
  function capture(asset){
   if(assets.has(asset.id))return assets.get(asset.id);
-  const original={asset,draw:asset.draw,canvas:Object.getOwnPropertyDescriptor(asset,'canvas'),view:asset.getFacingView,image:asset.getFacingImage,source:asset.getFacingDrawSource,ensure:asset.ensureFull,fallback:sourceDescriptor(),facings:new Map(),fallbackBuilding:false,fallbackSourceReading:false,canvasReading:false};
+  const original={asset,draw:asset.draw,canvas:Object.getOwnPropertyDescriptor(asset,'canvas'),view:asset.getFacingView,image:asset.getFacingImage,source:asset.getFacingDrawSource,ensure:asset.ensureFull,motion:asset.motion,motionDescriptor:Object.getOwnPropertyDescriptor(asset,'motion'),fallback:sourceDescriptor(),facings:new Map(),fallbackBuilding:false,fallbackSourceReading:false,canvasReading:false};
   if(original.canvas?.configurable===false)throw Error('Parallel artwork cannot replace a fixed canvas: '+asset.id);
   assets.set(asset.id,original);return original;
  }
@@ -87,6 +88,9 @@ export function createParallelArtRuntime(catalog,{
   if(previewDraw.x+previewDraw.w>view.w+1e-7||previewDraw.y+previewDraw.h>view.h+1e-7)throw Error('Parallel preview leaves its original view: '+key);
   const record={key,nativeKey:key+'|native',envelopeKey:key+'|envelope',fallbackKey:key+'|fallback',id:asset.id,facing,original,oldView:view,native,draw,preview,previewDraw,
    nativeDescriptor:sourceDescriptor(),directDescriptor:sourceDescriptor(),previewDescriptor:sourceDescriptor(),envelopeDescriptor:sourceDescriptor(),fallbackDescriptor:sourceDescriptor(),view:null};
+  record.originalMotion=view.motion??(facing==='south'?original.motion:null);
+  record.correctedMotion=correctedArtMotion(record.originalMotion,patch.motionGeometry);
+  if(record.correctedMotion&&facing==='south'&&original.motionDescriptor?.configurable===false)throw Error('Edited artwork cannot replace a fixed motion descriptor: '+key);
   record.nativeState=sourceFor(native,'native');record.nativeState.records.add(record);
   if(preview){record.previewState=sourceFor(preview,'preview');record.previewState.records.add(record);}
   records.set(key,record);original.facings.set(facing,record);
@@ -291,21 +295,29 @@ export function createParallelArtRuntime(catalog,{
   const cached=canvasLRU.get(record.nativeKey);if(cached){if(nativeLRU.has(record.nativeState.key))touchNative(record.nativeState);touch(canvasLRU,record.nativeKey,cached);return settled;}
   try{return load(record.nativeState,record,{retry:true});}catch(error){return Promise.reject(error);}
  }
+ function motionFor(record){
+  const edited=canvasLRU.has(record.nativeKey)||canvasLRU.has(record.envelopeKey)||nativeLRU.has(record.nativeState.key)||record.previewState&&previewLRU.has(record.previewState.key);
+  return edited?record.correctedMotion:record.originalMotion;
+ }
  function viewFor(record){
   if(record.view)return record.view;
   const descriptors=Object.getOwnPropertyDescriptors(record.oldView);
   for(const key of ['canvas','image','ready'])delete descriptors[key];
+  if(record.correctedMotion)delete descriptors.motion;
   const view=Object.create(Object.getPrototypeOf(record.oldView),descriptors);
   Object.defineProperties(view,{
    canvas:{enumerable:true,get:()=>image(record)},
    ready:{enumerable:true,get:()=>canvasLRU.has(record.nativeKey)||nativeLRU.has(record.nativeState.key)}
-  });record.view=Object.freeze(view);return record.view;
+  });
+  if(record.correctedMotion)Object.defineProperty(view,'motion',{enumerable:true,get:()=>motionFor(record)});
+  record.view=Object.freeze(view);return record.view;
  }
  for(const original of assets.values()){
   const asset=original.asset,south=original.facings.get('south');
   if(south){
    asset.draw=function(ctx,...args){const source=correctedSource(south);if(source)drawSource(ctx,source);else original.draw?.call(asset,ctx,...args);};
    Object.defineProperty(asset,'canvas',{configurable:true,enumerable:original.canvas?.enumerable??false,get:()=>image(south,false)});
+   if(south.correctedMotion)Object.defineProperty(asset,'motion',{configurable:true,enumerable:original.motionDescriptor?.enumerable??true,get:()=>motionFor(south)});
   }
   // Do not add cardinal capability to an old single-view object: doing so
   // would change its saved rotation semantics. Flat objects still gain the

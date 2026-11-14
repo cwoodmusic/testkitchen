@@ -1,0 +1,2187 @@
+{
+  "version": 1,
+  "scope": "31owner x3 South chair audit;36South corrections +1ClaraEast match",
+  "counts": {
+    "southFramesAudited": 93,
+    "southCorrected": 36,
+    "southRetained": 57,
+    "eastCorrected": 1,
+    "patches": 37
+  },
+  "projection": "Fixed elevated South parallel2/3 camera, not flat frontal icons; real round/organic contours retained. No VP. User3/4notes mean2/3.",
+  "invariants": "Only picture source/crop/draw changes. Canonical view dimensions, authored floor anchors, collision, IDs, owners and saved placements remain unchanged. Uniform contain uses new source aspect inside existing view.",
+  "patches": [
+    {
+      "id": "collection-mozart-desk-chair",
+      "facing": "south",
+      "file": "front-facing-2/seating-tables/chairs-south-01-350af17fecbf.webp",
+      "width": 1254,
+      "height": 1254,
+      "x": 85,
+      "y": 16,
+      "w": 246,
+      "h": 394,
+      "draw": {
+        "x": 1.6548223350253828,
+        "y": 0.0,
+        "w": 58.690355329949234,
+        "h": 94.0
+      },
+      "reason": "Straight South axis and elevated parallel2/3 camera; faithful original style, meaningful seat top depth.",
+      "source": {
+        "file": "town/assets/apartment-collections/mozart-south-cardinal-20cdd8d43cef.webp",
+        "crop": {
+          "x": 1539,
+          "y": 4,
+          "w": 243,
+          "h": 408
+        },
+        "draw": {
+          "x": 3.007352941176471,
+          "y": 0,
+          "w": 55.98529411764706,
+          "h": 94.0
+        },
+        "world": {
+          "w": 62,
+          "h": 94
+        }
+      },
+      "generation": {
+        "tool": "image_gen",
+        "original": "front-facing-2/seating-tables/originals/exec-9e79ddce-a5b0-4773-8931-a56c7a88cce8.png",
+        "originalSHA256": "350af17fecbf018500ebeed08526330967f046a15970146ac2960035bdaa47b1",
+        "crop": [
+          85,
+          16,
+          331,
+          410
+        ],
+        "packing": "Exact native RGBA crop/copy; lossless WebP; no math warps or pixel correction."
+      },
+      "orientation": "south",
+      "camera": "Elevated parallel2/3; horizontal circle ellipse near0.5\u20130.6; true ornamental curves retained."
+    },
+    {
+      "id": "collection-mozart-dining-chair",
+      "facing": "south",
+      "file": "front-facing-2/seating-tables/chairs-south-01-350af17fecbf.webp",
+      "width": 1254,
+      "height": 1254,
+      "x": 519,
+      "y": 16,
+      "w": 215,
+      "h": 387,
+      "draw": {
+        "x": 4.222222222222225,
+        "y": 1.4210854715202004e-14,
+        "w": 55.55555555555555,
+        "h": 99.99999999999999
+      },
+      "reason": "Straight South axis and elevated parallel2/3 camera; faithful original style, meaningful seat top depth.",
+      "source": {
+        "file": "town/assets/apartment-collections/mozart-south-cardinal-20cdd8d43cef.webp",
+        "crop": {
+          "x": 115,
+          "y": 1425,
+          "w": 122,
+          "h": 215
+        },
+        "draw": {
+          "x": 3.6279069767441854,
+          "y": 0,
+          "w": 56.74418604651163,
+          "h": 100.0
+        },
+        "world": {
+          "w": 64,
+          "h": 100
+        }
+      },
+      "generation": {
+        "tool": "image_gen",
+        "original": "front-facing-2/seating-tables/originals/exec-9e79ddce-a5b0-4773-8931-a56c7a88cce8.png",
+        "originalSHA256": "350af17fecbf018500ebeed08526330967f046a15970146ac2960035bdaa47b1",
+        "crop": [
+          519,
+          16,
+          734,
+          403
+        ],
+        "packing": "Exact native RGBA crop/copy; lossless WebP; no math warps or pixel correction."
+      },
+      "orientation": "south",
+      "camera": "Elevated parallel2/3; horizontal circle ellipse near0.5\u20130.6; true ornamental curves retained."
+    },
+    {
+      "id": "collection-clara-desk-chair",
+      "facing": "south",
+      "file": "front-facing-2/seating-tables/chairs-south-01-350af17fecbf.webp",
+      "width": 1254,
+      "height": 1254,
+      "x": 912,
+      "y": 22,
+      "w": 263,
+      "h": 387,
+      "draw": {
+        "x": 0.0,
+        "y": 2.7680608365019026,
+        "w": 62.0,
+        "h": 91.2319391634981
+      },
+      "reason": "Straight South axis and elevated parallel2/3 camera; faithful original style, meaningful seat top depth.",
+      "source": {
+        "file": "town/assets/apartment-collections/clara-south-cardinal-d019e963a870.webp",
+        "crop": {
+          "x": 1593,
+          "y": 4,
+          "w": 268,
+          "h": 394
+        },
+        "draw": {
+          "x": 0,
+          "y": 2.850746268656721,
+          "w": 62.0,
+          "h": 91.14925373134328
+        },
+        "world": {
+          "w": 62,
+          "h": 94
+        }
+      },
+      "generation": {
+        "tool": "image_gen",
+        "original": "front-facing-2/seating-tables/originals/exec-9e79ddce-a5b0-4773-8931-a56c7a88cce8.png",
+        "originalSHA256": "350af17fecbf018500ebeed08526330967f046a15970146ac2960035bdaa47b1",
+        "crop": [
+          912,
+          22,
+          1175,
+          409
+        ],
+        "packing": "Exact native RGBA crop/copy; lossless WebP; no math warps or pixel correction."
+      },
+      "orientation": "south",
+      "camera": "Elevated parallel2/3; horizontal circle ellipse near0.5\u20130.6; true ornamental curves retained."
+    },
+    {
+      "id": "collection-chopin-desk-chair",
+      "facing": "south",
+      "file": "front-facing-2/seating-tables/chairs-south-01-350af17fecbf.webp",
+      "width": 1254,
+      "height": 1254,
+      "x": 77,
+      "y": 435,
+      "w": 260,
+      "h": 391,
+      "draw": {
+        "x": 0.0,
+        "y": 0.76153846153845,
+        "w": 62.0,
+        "h": 93.23846153846155
+      },
+      "reason": "Straight South axis and elevated parallel2/3 camera; faithful original style, meaningful seat top depth.",
+      "source": {
+        "file": "town/assets/apartment-collections/chopin-south-cardinal-7e40bd5bf409.webp",
+        "crop": {
+          "x": 469,
+          "y": 1207,
+          "w": 260,
+          "h": 411
+        },
+        "draw": {
+          "x": 1.2676399026764003,
+          "y": 0,
+          "w": 59.4647201946472,
+          "h": 94.0
+        },
+        "world": {
+          "w": 62,
+          "h": 94
+        }
+      },
+      "generation": {
+        "tool": "image_gen",
+        "original": "front-facing-2/seating-tables/originals/exec-9e79ddce-a5b0-4773-8931-a56c7a88cce8.png",
+        "originalSHA256": "350af17fecbf018500ebeed08526330967f046a15970146ac2960035bdaa47b1",
+        "crop": [
+          77,
+          435,
+          337,
+          826
+        ],
+        "packing": "Exact native RGBA crop/copy; lossless WebP; no math warps or pixel correction."
+      },
+      "orientation": "south",
+      "camera": "Elevated parallel2/3; horizontal circle ellipse near0.5\u20130.6; true ornamental curves retained."
+    },
+    {
+      "id": "collection-chopin-dining-chair",
+      "facing": "south",
+      "file": "front-facing-2/seating-tables/chairs-south-01-350af17fecbf.webp",
+      "width": 1254,
+      "height": 1254,
+      "x": 516,
+      "y": 433,
+      "w": 220,
+      "h": 381,
+      "draw": {
+        "x": 3.1286089238845136,
+        "y": 0.0,
+        "w": 57.74278215223097,
+        "h": 100.0
+      },
+      "reason": "Straight South axis and elevated parallel2/3 camera; faithful original style, meaningful seat top depth.",
+      "source": {
+        "file": "town/assets/apartment-collections/chopin-south-cardinal-7e40bd5bf409.webp",
+        "crop": {
+          "x": 1214,
+          "y": 1636,
+          "w": 126,
+          "h": 213
+        },
+        "draw": {
+          "x": 2.422535211267604,
+          "y": 0,
+          "w": 59.15492957746479,
+          "h": 100.0
+        },
+        "world": {
+          "w": 64,
+          "h": 100
+        }
+      },
+      "generation": {
+        "tool": "image_gen",
+        "original": "front-facing-2/seating-tables/originals/exec-9e79ddce-a5b0-4773-8931-a56c7a88cce8.png",
+        "originalSHA256": "350af17fecbf018500ebeed08526330967f046a15970146ac2960035bdaa47b1",
+        "crop": [
+          516,
+          433,
+          736,
+          814
+        ],
+        "packing": "Exact native RGBA crop/copy; lossless WebP; no math warps or pixel correction."
+      },
+      "orientation": "south",
+      "camera": "Elevated parallel2/3; horizontal circle ellipse near0.5\u20130.6; true ornamental curves retained."
+    },
+    {
+      "id": "collection-vivaldi-desk-chair",
+      "facing": "south",
+      "file": "front-facing-2/seating-tables/chairs-south-01-350af17fecbf.webp",
+      "width": 1254,
+      "height": 1254,
+      "x": 89,
+      "y": 851,
+      "w": 238,
+      "h": 390,
+      "draw": {
+        "x": 2.317948717948717,
+        "y": 0.0,
+        "w": 57.364102564102566,
+        "h": 94.0
+      },
+      "reason": "Straight South axis and elevated parallel2/3 camera; faithful original style, meaningful seat top depth.",
+      "source": {
+        "file": "town/assets/apartment-collections/vivaldi-south-cardinal-6138afdec004.webp",
+        "crop": {
+          "x": 1299,
+          "y": 4,
+          "w": 251,
+          "h": 424
+        },
+        "draw": {
+          "x": 3.17688679245283,
+          "y": 0,
+          "w": 55.64622641509434,
+          "h": 94.0
+        },
+        "world": {
+          "w": 62,
+          "h": 94
+        }
+      },
+      "generation": {
+        "tool": "image_gen",
+        "original": "front-facing-2/seating-tables/originals/exec-9e79ddce-a5b0-4773-8931-a56c7a88cce8.png",
+        "originalSHA256": "350af17fecbf018500ebeed08526330967f046a15970146ac2960035bdaa47b1",
+        "crop": [
+          89,
+          851,
+          327,
+          1241
+        ],
+        "packing": "Exact native RGBA crop/copy; lossless WebP; no math warps or pixel correction."
+      },
+      "orientation": "south",
+      "camera": "Elevated parallel2/3; horizontal circle ellipse near0.5\u20130.6; true ornamental curves retained."
+    },
+    {
+      "id": "collection-ellington-desk-chair",
+      "facing": "south",
+      "file": "front-facing-2/seating-tables/chairs-south-01-350af17fecbf.webp",
+      "width": 1254,
+      "height": 1254,
+      "x": 500,
+      "y": 849,
+      "w": 253,
+      "h": 393,
+      "draw": {
+        "x": 0.7430025445292614,
+        "y": 0.0,
+        "w": 60.51399491094148,
+        "h": 94.0
+      },
+      "reason": "Straight South axis and elevated parallel2/3 camera; faithful original style, meaningful seat top depth.",
+      "source": {
+        "file": "town/assets/apartment-collections/ellington-south-cardinal-9ad7254b5826.webp",
+        "crop": {
+          "x": 264,
+          "y": 748,
+          "w": 269,
+          "h": 423
+        },
+        "draw": {
+          "x": 1.1111111111111143,
+          "y": 0,
+          "w": 59.77777777777777,
+          "h": 94.0
+        },
+        "world": {
+          "w": 62,
+          "h": 94
+        }
+      },
+      "generation": {
+        "tool": "image_gen",
+        "original": "front-facing-2/seating-tables/originals/exec-9e79ddce-a5b0-4773-8931-a56c7a88cce8.png",
+        "originalSHA256": "350af17fecbf018500ebeed08526330967f046a15970146ac2960035bdaa47b1",
+        "crop": [
+          500,
+          849,
+          753,
+          1242
+        ],
+        "packing": "Exact native RGBA crop/copy; lossless WebP; no math warps or pixel correction."
+      },
+      "orientation": "south",
+      "camera": "Elevated parallel2/3; horizontal circle ellipse near0.5\u20130.6; true ornamental curves retained."
+    },
+    {
+      "id": "collection-ellington-dining-chair",
+      "facing": "south",
+      "file": "front-facing-2/seating-tables/chairs-south-01-350af17fecbf.webp",
+      "width": 1254,
+      "height": 1254,
+      "x": 929,
+      "y": 849,
+      "w": 229,
+      "h": 391,
+      "draw": {
+        "x": 2.7161125319693085,
+        "y": 0.0,
+        "w": 58.56777493606138,
+        "h": 100.0
+      },
+      "reason": "Straight South axis and elevated parallel2/3 camera; faithful original style, meaningful seat top depth.",
+      "source": {
+        "file": "town/assets/apartment-collections/ellington-south-cardinal-9ad7254b5826.webp",
+        "crop": {
+          "x": 537,
+          "y": 748,
+          "w": 232,
+          "h": 416
+        },
+        "draw": {
+          "x": 4.115384615384613,
+          "y": 0,
+          "w": 55.769230769230774,
+          "h": 100.0
+        },
+        "world": {
+          "w": 64,
+          "h": 100
+        }
+      },
+      "generation": {
+        "tool": "image_gen",
+        "original": "front-facing-2/seating-tables/originals/exec-9e79ddce-a5b0-4773-8931-a56c7a88cce8.png",
+        "originalSHA256": "350af17fecbf018500ebeed08526330967f046a15970146ac2960035bdaa47b1",
+        "crop": [
+          929,
+          849,
+          1158,
+          1240
+        ],
+        "packing": "Exact native RGBA crop/copy; lossless WebP; no math warps or pixel correction."
+      },
+      "orientation": "south",
+      "camera": "Elevated parallel2/3; horizontal circle ellipse near0.5\u20130.6; true ornamental curves retained."
+    },
+    {
+      "id": "collection-ellington-reading-chair",
+      "facing": "south",
+      "file": "front-facing-2/seating-tables/chairs-south-02-ceba019988c9.webp",
+      "width": 1254,
+      "height": 1254,
+      "x": 47,
+      "y": 14,
+      "w": 323,
+      "h": 392,
+      "draw": {
+        "x": 0.0,
+        "y": 12.055727554179569,
+        "w": 84.0,
+        "h": 101.94427244582043
+      },
+      "reason": "Straight South axis and elevated parallel2/3 camera; faithful original style, meaningful seat top depth.",
+      "source": {
+        "file": "town/assets/apartment-collections/cardinal-fixes/reading-chair-ellington-south-675f6a321887.webp",
+        "crop": {
+          "x": 0,
+          "y": 0,
+          "w": 300,
+          "h": 364
+        },
+        "draw": {
+          "x": 0,
+          "y": 12.079999999999984,
+          "w": 84.00000000000001,
+          "h": 101.92000000000002
+        },
+        "world": {
+          "w": 84,
+          "h": 114
+        }
+      },
+      "generation": {
+        "tool": "image_gen",
+        "original": "front-facing-2/seating-tables/originals/exec-ad1ffe45-cd62-49ba-ae74-0e51ec11450f.png",
+        "originalSHA256": "ceba019988c93e920572ebe958f92da46f7e15abe2b85cbf3940b84ed1f0e7fe",
+        "crop": [
+          47,
+          14,
+          370,
+          406
+        ],
+        "packing": "Exact native RGBA crop/copy; lossless WebP; no math warps or pixel correction."
+      },
+      "orientation": "south",
+      "camera": "Elevated parallel2/3; horizontal circle ellipse near0.5\u20130.6; true ornamental curves retained."
+    },
+    {
+      "id": "collection-ella-desk-chair",
+      "facing": "south",
+      "file": "front-facing-2/seating-tables/chairs-south-02-ceba019988c9.webp",
+      "width": 1254,
+      "height": 1254,
+      "x": 489,
+      "y": 14,
+      "w": 276,
+      "h": 392,
+      "draw": {
+        "x": 0.0,
+        "y": 5.94202898550725,
+        "w": 62.0,
+        "h": 88.05797101449275
+      },
+      "reason": "Straight South axis and elevated parallel2/3 camera; faithful original style, meaningful seat top depth.",
+      "source": {
+        "file": "town/assets/apartment-collections/ella-south-cardinal-0ec52d63c82b.webp",
+        "crop": {
+          "x": 259,
+          "y": 4,
+          "w": 290,
+          "h": 434
+        },
+        "draw": {
+          "x": 0,
+          "y": 1.2137931034482676,
+          "w": 62.0,
+          "h": 92.78620689655173
+        },
+        "world": {
+          "w": 62,
+          "h": 94
+        }
+      },
+      "generation": {
+        "tool": "image_gen",
+        "original": "front-facing-2/seating-tables/originals/exec-ad1ffe45-cd62-49ba-ae74-0e51ec11450f.png",
+        "originalSHA256": "ceba019988c93e920572ebe958f92da46f7e15abe2b85cbf3940b84ed1f0e7fe",
+        "crop": [
+          489,
+          14,
+          765,
+          406
+        ],
+        "packing": "Exact native RGBA crop/copy; lossless WebP; no math warps or pixel correction."
+      },
+      "orientation": "south",
+      "camera": "Elevated parallel2/3; horizontal circle ellipse near0.5\u20130.6; true ornamental curves retained."
+    },
+    {
+      "id": "collection-ella-dining-chair",
+      "facing": "south",
+      "file": "front-facing-2/seating-tables/chairs-south-02-ceba019988c9.webp",
+      "width": 1254,
+      "height": 1254,
+      "x": 918,
+      "y": 13,
+      "w": 239,
+      "h": 394,
+      "draw": {
+        "x": 1.6700507614213222,
+        "y": 0.0,
+        "w": 60.659898477157356,
+        "h": 100.0
+      },
+      "reason": "Straight South axis and elevated parallel2/3 camera; faithful original style, meaningful seat top depth.",
+      "source": {
+        "file": "town/assets/apartment-collections/cardinal-fixes/ella-dining-chair-south-5d47d7ff4dc7.webp",
+        "crop": {
+          "x": 0,
+          "y": 0,
+          "w": 148,
+          "h": 258
+        },
+        "draw": {
+          "x": 3.31782945736434,
+          "y": 0,
+          "w": 57.36434108527132,
+          "h": 100.0
+        },
+        "world": {
+          "w": 64,
+          "h": 100
+        }
+      },
+      "generation": {
+        "tool": "image_gen",
+        "original": "front-facing-2/seating-tables/originals/exec-ad1ffe45-cd62-49ba-ae74-0e51ec11450f.png",
+        "originalSHA256": "ceba019988c93e920572ebe958f92da46f7e15abe2b85cbf3940b84ed1f0e7fe",
+        "crop": [
+          918,
+          13,
+          1157,
+          407
+        ],
+        "packing": "Exact native RGBA crop/copy; lossless WebP; no math warps or pixel correction."
+      },
+      "orientation": "south",
+      "camera": "Elevated parallel2/3; horizontal circle ellipse near0.5\u20130.6; true ornamental curves retained."
+    },
+    {
+      "id": "collection-nina-desk-chair",
+      "facing": "south",
+      "file": "front-facing-2/seating-tables/chairs-south-02-ceba019988c9.webp",
+      "width": 1254,
+      "height": 1254,
+      "x": 77,
+      "y": 433,
+      "w": 265,
+      "h": 393,
+      "draw": {
+        "x": 0.0,
+        "y": 2.0528301886792377,
+        "w": 62.0,
+        "h": 91.94716981132076
+      },
+      "reason": "Straight South axis and elevated parallel2/3 camera; faithful original style, meaningful seat top depth.",
+      "source": {
+        "file": "town/assets/apartment-collections/nina-south-cardinal-e42c2a6c7595.webp",
+        "crop": {
+          "x": 4,
+          "y": 844,
+          "w": 289,
+          "h": 436
+        },
+        "draw": {
+          "x": 0,
+          "y": 0.4636678200692046,
+          "w": 62.0,
+          "h": 93.5363321799308
+        },
+        "world": {
+          "w": 62,
+          "h": 94
+        }
+      },
+      "generation": {
+        "tool": "image_gen",
+        "original": "front-facing-2/seating-tables/originals/exec-ad1ffe45-cd62-49ba-ae74-0e51ec11450f.png",
+        "originalSHA256": "ceba019988c93e920572ebe958f92da46f7e15abe2b85cbf3940b84ed1f0e7fe",
+        "crop": [
+          77,
+          433,
+          342,
+          826
+        ],
+        "packing": "Exact native RGBA crop/copy; lossless WebP; no math warps or pixel correction."
+      },
+      "orientation": "south",
+      "camera": "Elevated parallel2/3; horizontal circle ellipse near0.5\u20130.6; true ornamental curves retained."
+    },
+    {
+      "id": "collection-miles-desk-chair",
+      "facing": "south",
+      "file": "front-facing-2/seating-tables/chairs-south-02-ceba019988c9.webp",
+      "width": 1254,
+      "height": 1254,
+      "x": 495,
+      "y": 433,
+      "w": 263,
+      "h": 393,
+      "draw": {
+        "x": 0.0,
+        "y": 1.3536121673003834,
+        "w": 62.0,
+        "h": 92.64638783269962
+      },
+      "reason": "Straight South axis and elevated parallel2/3 camera; faithful original style, meaningful seat top depth.",
+      "source": {
+        "file": "town/assets/apartment-collections/miles-south-cardinal-6fdd5cc0ef02.webp",
+        "crop": {
+          "x": 304,
+          "y": 1233,
+          "w": 276,
+          "h": 421
+        },
+        "draw": {
+          "x": 0.18764845605700842,
+          "y": 0,
+          "w": 61.62470308788598,
+          "h": 94.0
+        },
+        "world": {
+          "w": 62,
+          "h": 94
+        }
+      },
+      "generation": {
+        "tool": "image_gen",
+        "original": "front-facing-2/seating-tables/originals/exec-ad1ffe45-cd62-49ba-ae74-0e51ec11450f.png",
+        "originalSHA256": "ceba019988c93e920572ebe958f92da46f7e15abe2b85cbf3940b84ed1f0e7fe",
+        "crop": [
+          495,
+          433,
+          758,
+          826
+        ],
+        "packing": "Exact native RGBA crop/copy; lossless WebP; no math warps or pixel correction."
+      },
+      "orientation": "south",
+      "camera": "Elevated parallel2/3; horizontal circle ellipse near0.5\u20130.6; true ornamental curves retained."
+    },
+    {
+      "id": "collection-miles-dining-chair",
+      "facing": "south",
+      "file": "front-facing-2/seating-tables/chairs-south-02-ceba019988c9.webp",
+      "width": 1254,
+      "height": 1254,
+      "x": 906,
+      "y": 436,
+      "w": 261,
+      "h": 385,
+      "draw": {
+        "x": 0.0,
+        "y": 5.5938697318007655,
+        "w": 64.0,
+        "h": 94.40613026819923
+      },
+      "reason": "Straight South axis and elevated parallel2/3 camera; faithful original style, meaningful seat top depth.",
+      "source": {
+        "file": "town/assets/apartment-collections/cardinal-fixes/miles-dining-chair-south-3f0414b1d83b.webp",
+        "crop": {
+          "x": 0,
+          "y": 0,
+          "w": 169,
+          "h": 254
+        },
+        "draw": {
+          "x": 0,
+          "y": 3.8106508875739706,
+          "w": 64.0,
+          "h": 96.18934911242603
+        },
+        "world": {
+          "w": 64,
+          "h": 100
+        }
+      },
+      "generation": {
+        "tool": "image_gen",
+        "original": "front-facing-2/seating-tables/originals/exec-ad1ffe45-cd62-49ba-ae74-0e51ec11450f.png",
+        "originalSHA256": "ceba019988c93e920572ebe958f92da46f7e15abe2b85cbf3940b84ed1f0e7fe",
+        "crop": [
+          906,
+          436,
+          1167,
+          821
+        ],
+        "packing": "Exact native RGBA crop/copy; lossless WebP; no math warps or pixel correction."
+      },
+      "orientation": "south",
+      "camera": "Elevated parallel2/3; horizontal circle ellipse near0.5\u20130.6; true ornamental curves retained."
+    },
+    {
+      "id": "collection-zizi-desk-chair",
+      "facing": "south",
+      "file": "front-facing-2/seating-tables/chairs-south-02-ceba019988c9.webp",
+      "width": 1254,
+      "height": 1254,
+      "x": 77,
+      "y": 850,
+      "w": 266,
+      "h": 393,
+      "draw": {
+        "x": 0.0,
+        "y": 2.398496240601503,
+        "w": 62.0,
+        "h": 91.6015037593985
+      },
+      "reason": "Straight South axis and elevated parallel2/3 camera; faithful original style, meaningful seat top depth.",
+      "source": {
+        "file": "town/assets/apartment-collections/cardinal-fixes/zizi-desk-chair-south-4a499e31eac3.webp",
+        "crop": {
+          "x": 0,
+          "y": 0,
+          "w": 178,
+          "h": 281
+        },
+        "draw": {
+          "x": 1.2277580071174405,
+          "y": 0,
+          "w": 59.54448398576512,
+          "h": 94.0
+        },
+        "world": {
+          "w": 62,
+          "h": 94
+        }
+      },
+      "generation": {
+        "tool": "image_gen",
+        "original": "front-facing-2/seating-tables/originals/exec-ad1ffe45-cd62-49ba-ae74-0e51ec11450f.png",
+        "originalSHA256": "ceba019988c93e920572ebe958f92da46f7e15abe2b85cbf3940b84ed1f0e7fe",
+        "crop": [
+          77,
+          850,
+          343,
+          1243
+        ],
+        "packing": "Exact native RGBA crop/copy; lossless WebP; no math warps or pixel correction."
+      },
+      "orientation": "south",
+      "camera": "Elevated parallel2/3; horizontal circle ellipse near0.5\u20130.6; true ornamental curves retained."
+    },
+    {
+      "id": "collection-zizi-dining-chair",
+      "facing": "south",
+      "file": "front-facing-2/seating-tables/chairs-south-02-ceba019988c9.webp",
+      "width": 1254,
+      "height": 1254,
+      "x": 505,
+      "y": 851,
+      "w": 243,
+      "h": 391,
+      "draw": {
+        "x": 0.9258312020460338,
+        "y": 0.0,
+        "w": 62.14833759590793,
+        "h": 100.0
+      },
+      "reason": "Straight South axis and elevated parallel2/3 camera; faithful original style, meaningful seat top depth.",
+      "source": {
+        "file": "town/assets/apartment-collections/cardinal-fixes/zizi-dining-chair-south-2beadf2b54f3.webp",
+        "crop": {
+          "x": 0,
+          "y": 0,
+          "w": 161,
+          "h": 273
+        },
+        "draw": {
+          "x": 2.5128205128205146,
+          "y": 0,
+          "w": 58.97435897435897,
+          "h": 100.0
+        },
+        "world": {
+          "w": 64,
+          "h": 100
+        }
+      },
+      "generation": {
+        "tool": "image_gen",
+        "original": "front-facing-2/seating-tables/originals/exec-ad1ffe45-cd62-49ba-ae74-0e51ec11450f.png",
+        "originalSHA256": "ceba019988c93e920572ebe958f92da46f7e15abe2b85cbf3940b84ed1f0e7fe",
+        "crop": [
+          505,
+          851,
+          748,
+          1242
+        ],
+        "packing": "Exact native RGBA crop/copy; lossless WebP; no math warps or pixel correction."
+      },
+      "orientation": "south",
+      "camera": "Elevated parallel2/3; horizontal circle ellipse near0.5\u20130.6; true ornamental curves retained."
+    },
+    {
+      "id": "collection-player-desk-chair",
+      "facing": "south",
+      "file": "front-facing-2/seating-tables/chairs-south-02-ceba019988c9.webp",
+      "width": 1254,
+      "height": 1254,
+      "x": 891,
+      "y": 856,
+      "w": 298,
+      "h": 387,
+      "draw": {
+        "x": 0.0,
+        "y": 13.483221476510067,
+        "w": 62.0,
+        "h": 80.51677852348993
+      },
+      "reason": "Straight South axis and elevated parallel2/3 camera; faithful original style, meaningful seat top depth.",
+      "source": {
+        "file": "town/assets/apartment-collections/player-south-cardinal-ff9b7667e605.webp",
+        "crop": {
+          "x": 561,
+          "y": 459,
+          "w": 286,
+          "h": 387
+        },
+        "draw": {
+          "x": 3.552713678800501e-15,
+          "y": 10.104895104895107,
+          "w": 61.99999999999999,
+          "h": 83.8951048951049
+        },
+        "world": {
+          "w": 62,
+          "h": 94
+        }
+      },
+      "generation": {
+        "tool": "image_gen",
+        "original": "front-facing-2/seating-tables/originals/exec-ad1ffe45-cd62-49ba-ae74-0e51ec11450f.png",
+        "originalSHA256": "ceba019988c93e920572ebe958f92da46f7e15abe2b85cbf3940b84ed1f0e7fe",
+        "crop": [
+          891,
+          856,
+          1189,
+          1243
+        ],
+        "packing": "Exact native RGBA crop/copy; lossless WebP; no math warps or pixel correction."
+      },
+      "orientation": "south",
+      "camera": "Elevated parallel2/3; horizontal circle ellipse near0.5\u20130.6; true ornamental curves retained."
+    },
+    {
+      "id": "collection-showroom-victorian-parlor-desk-chair",
+      "facing": "south",
+      "file": "front-facing-2/seating-tables/chairs-south-03-4b89bff6e20e.webp",
+      "width": 1254,
+      "height": 1254,
+      "x": 73,
+      "y": 5,
+      "w": 270,
+      "h": 410,
+      "draw": {
+        "x": 0.048780487804876316,
+        "y": 0.0,
+        "w": 61.90243902439025,
+        "h": 94.0
+      },
+      "reason": "Straight South axis and elevated parallel2/3 camera; faithful original style, meaningful seat top depth.",
+      "source": {
+        "file": "town/assets/apartment-collections/showroom-victorian-parlor-south-cardinal-7aea206b742f.webp",
+        "crop": {
+          "x": 778,
+          "y": 4,
+          "w": 276,
+          "h": 427
+        },
+        "draw": {
+          "x": 0.620608899297423,
+          "y": 0,
+          "w": 60.758782201405154,
+          "h": 94.0
+        },
+        "world": {
+          "w": 62,
+          "h": 94
+        }
+      },
+      "generation": {
+        "tool": "image_gen",
+        "original": "front-facing-2/seating-tables/originals/exec-4622d8cb-1058-4786-8755-43948cb39113.png",
+        "originalSHA256": "4b89bff6e20ee8a645acc8c7e2ae6126c8cd6a7945d5f70ff9bbee0214945658",
+        "crop": [
+          73,
+          5,
+          343,
+          415
+        ],
+        "packing": "Exact native RGBA crop/copy; lossless WebP; no math warps or pixel correction."
+      },
+      "orientation": "south",
+      "camera": "Elevated parallel2/3; horizontal circle ellipse near0.5\u20130.6; true ornamental curves retained."
+    },
+    {
+      "id": "collection-showroom-victorian-parlor-dining-chair",
+      "facing": "south",
+      "file": "front-facing-2/seating-tables/chairs-south-03-4b89bff6e20e.webp",
+      "width": 1254,
+      "height": 1254,
+      "x": 509,
+      "y": 5,
+      "w": 232,
+      "h": 405,
+      "draw": {
+        "x": 3.3580246913580254,
+        "y": 0.0,
+        "w": 57.28395061728395,
+        "h": 100.0
+      },
+      "reason": "Straight South axis and elevated parallel2/3 camera; faithful original style, meaningful seat top depth.",
+      "source": {
+        "file": "town/assets/apartment-collections/showroom-victorian-parlor-south-cardinal-7aea206b742f.webp",
+        "crop": {
+          "x": 1703,
+          "y": 450,
+          "w": 131,
+          "h": 215
+        },
+        "draw": {
+          "x": 1.5348837209302317,
+          "y": 0,
+          "w": 60.93023255813954,
+          "h": 100.0
+        },
+        "world": {
+          "w": 64,
+          "h": 100
+        }
+      },
+      "generation": {
+        "tool": "image_gen",
+        "original": "front-facing-2/seating-tables/originals/exec-4622d8cb-1058-4786-8755-43948cb39113.png",
+        "originalSHA256": "4b89bff6e20ee8a645acc8c7e2ae6126c8cd6a7945d5f70ff9bbee0214945658",
+        "crop": [
+          509,
+          5,
+          741,
+          410
+        ],
+        "packing": "Exact native RGBA crop/copy; lossless WebP; no math warps or pixel correction."
+      },
+      "orientation": "south",
+      "camera": "Elevated parallel2/3; horizontal circle ellipse near0.5\u20130.6; true ornamental curves retained."
+    },
+    {
+      "id": "collection-showroom-coastal-bedroom-desk-chair",
+      "facing": "south",
+      "file": "front-facing-2/seating-tables/chairs-south-03-4b89bff6e20e.webp",
+      "width": 1254,
+      "height": 1254,
+      "x": 900,
+      "y": 5,
+      "w": 286,
+      "h": 407,
+      "draw": {
+        "x": 3.552713678800501e-15,
+        "y": 5.769230769230774,
+        "w": 61.99999999999999,
+        "h": 88.23076923076923
+      },
+      "reason": "Straight South axis and elevated parallel2/3 camera; faithful original style, meaningful seat top depth.",
+      "source": {
+        "file": "town/assets/apartment-collections/showroom-coastal-bedroom-south-cardinal-c48ff11990c5.webp",
+        "crop": {
+          "x": 975,
+          "y": 4,
+          "w": 287,
+          "h": 431
+        },
+        "draw": {
+          "x": 0,
+          "y": 0.8919860627177627,
+          "w": 62.0,
+          "h": 93.10801393728224
+        },
+        "world": {
+          "w": 62,
+          "h": 94
+        }
+      },
+      "generation": {
+        "tool": "image_gen",
+        "original": "front-facing-2/seating-tables/originals/exec-4622d8cb-1058-4786-8755-43948cb39113.png",
+        "originalSHA256": "4b89bff6e20ee8a645acc8c7e2ae6126c8cd6a7945d5f70ff9bbee0214945658",
+        "crop": [
+          900,
+          5,
+          1186,
+          412
+        ],
+        "packing": "Exact native RGBA crop/copy; lossless WebP; no math warps or pixel correction."
+      },
+      "orientation": "south",
+      "camera": "Elevated parallel2/3; horizontal circle ellipse near0.5\u20130.6; true ornamental curves retained."
+    },
+    {
+      "id": "collection-showroom-rustic-kitchen-desk-chair",
+      "facing": "south",
+      "file": "front-facing-2/seating-tables/chairs-south-03-4b89bff6e20e.webp",
+      "width": 1254,
+      "height": 1254,
+      "x": 71,
+      "y": 415,
+      "w": 275,
+      "h": 413,
+      "draw": {
+        "x": 0.0,
+        "y": 0.8872727272727303,
+        "w": 62.0,
+        "h": 93.11272727272727
+      },
+      "reason": "Straight South axis and elevated parallel2/3 camera; faithful original style, meaningful seat top depth.",
+      "source": {
+        "file": "town/assets/apartment-collections/showroom-rustic-kitchen-south-cardinal-2ef940449755.webp",
+        "crop": {
+          "x": 816,
+          "y": 4,
+          "w": 275,
+          "h": 424
+        },
+        "draw": {
+          "x": 0.5165094339622627,
+          "y": 0,
+          "w": 60.966981132075475,
+          "h": 94.0
+        },
+        "world": {
+          "w": 62,
+          "h": 94
+        }
+      },
+      "generation": {
+        "tool": "image_gen",
+        "original": "front-facing-2/seating-tables/originals/exec-4622d8cb-1058-4786-8755-43948cb39113.png",
+        "originalSHA256": "4b89bff6e20ee8a645acc8c7e2ae6126c8cd6a7945d5f70ff9bbee0214945658",
+        "crop": [
+          71,
+          415,
+          346,
+          828
+        ],
+        "packing": "Exact native RGBA crop/copy; lossless WebP; no math warps or pixel correction."
+      },
+      "orientation": "south",
+      "camera": "Elevated parallel2/3; horizontal circle ellipse near0.5\u20130.6; true ornamental curves retained."
+    },
+    {
+      "id": "collection-showroom-rustic-kitchen-dining-chair",
+      "facing": "south",
+      "file": "front-facing-2/seating-tables/chairs-south-03-4b89bff6e20e.webp",
+      "width": 1254,
+      "height": 1254,
+      "x": 484,
+      "y": 413,
+      "w": 285,
+      "h": 408,
+      "draw": {
+        "x": 0.0,
+        "y": 8.378947368421052,
+        "w": 64.0,
+        "h": 91.62105263157895
+      },
+      "reason": "Straight South axis and elevated parallel2/3 camera; faithful original style, meaningful seat top depth.",
+      "source": {
+        "file": "town/assets/apartment-collections/showroom-rustic-kitchen-south-cardinal-2ef940449755.webp",
+        "crop": {
+          "x": 1318,
+          "y": 1452,
+          "w": 145,
+          "h": 214
+        },
+        "draw": {
+          "x": 0,
+          "y": 5.5448275862068925,
+          "w": 64.0,
+          "h": 94.45517241379311
+        },
+        "world": {
+          "w": 64,
+          "h": 100
+        }
+      },
+      "generation": {
+        "tool": "image_gen",
+        "original": "front-facing-2/seating-tables/originals/exec-4622d8cb-1058-4786-8755-43948cb39113.png",
+        "originalSHA256": "4b89bff6e20ee8a645acc8c7e2ae6126c8cd6a7945d5f70ff9bbee0214945658",
+        "crop": [
+          484,
+          413,
+          769,
+          821
+        ],
+        "packing": "Exact native RGBA crop/copy; lossless WebP; no math warps or pixel correction."
+      },
+      "orientation": "south",
+      "camera": "Elevated parallel2/3; horizontal circle ellipse near0.5\u20130.6; true ornamental curves retained."
+    },
+    {
+      "id": "collection-showroom-botanical-conservatory-desk-chair",
+      "facing": "south",
+      "file": "front-facing-2/seating-tables/chairs-south-03-4b89bff6e20e.webp",
+      "width": 1254,
+      "height": 1254,
+      "x": 908,
+      "y": 418,
+      "w": 274,
+      "h": 409,
+      "draw": {
+        "x": 0.0,
+        "y": 1.4525547445255427,
+        "w": 62.0,
+        "h": 92.54744525547446
+      },
+      "reason": "Straight South axis and elevated parallel2/3 camera; faithful original style, meaningful seat top depth.",
+      "source": {
+        "file": "town/assets/apartment-collections/showroom-botanical-conservatory-south-cardinal-f6e27bb5d7b9.webp",
+        "crop": {
+          "x": 1428,
+          "y": 4,
+          "w": 248,
+          "h": 408
+        },
+        "draw": {
+          "x": 2.43137254901961,
+          "y": 0,
+          "w": 57.13725490196078,
+          "h": 94.0
+        },
+        "world": {
+          "w": 62,
+          "h": 94
+        }
+      },
+      "generation": {
+        "tool": "image_gen",
+        "original": "front-facing-2/seating-tables/originals/exec-4622d8cb-1058-4786-8755-43948cb39113.png",
+        "originalSHA256": "4b89bff6e20ee8a645acc8c7e2ae6126c8cd6a7945d5f70ff9bbee0214945658",
+        "crop": [
+          908,
+          418,
+          1182,
+          827
+        ],
+        "packing": "Exact native RGBA crop/copy; lossless WebP; no math warps or pixel correction."
+      },
+      "orientation": "south",
+      "camera": "Elevated parallel2/3; horizontal circle ellipse near0.5\u20130.6; true ornamental curves retained."
+    },
+    {
+      "id": "collection-showroom-botanical-conservatory-dining-chair",
+      "facing": "south",
+      "file": "front-facing-2/seating-tables/chairs-south-03-4b89bff6e20e.webp",
+      "width": 1254,
+      "height": 1254,
+      "x": 86,
+      "y": 837,
+      "w": 244,
+      "h": 411,
+      "draw": {
+        "x": 2.316301703163017,
+        "y": 0.0,
+        "w": 59.367396593673966,
+        "h": 100.0
+      },
+      "reason": "Straight South axis and elevated parallel2/3 camera; faithful original style, meaningful seat top depth.",
+      "source": {
+        "file": "town/assets/apartment-collections/cardinal-fixes/showroom-botanical-conservatory-dining-chair-south-b8e9b8f338d9.webp",
+        "crop": {
+          "x": 0,
+          "y": 0,
+          "w": 159,
+          "h": 276
+        },
+        "draw": {
+          "x": 3.195652173913043,
+          "y": 0,
+          "w": 57.608695652173914,
+          "h": 100.0
+        },
+        "world": {
+          "w": 64,
+          "h": 100
+        }
+      },
+      "generation": {
+        "tool": "image_gen",
+        "original": "front-facing-2/seating-tables/originals/exec-4622d8cb-1058-4786-8755-43948cb39113.png",
+        "originalSHA256": "4b89bff6e20ee8a645acc8c7e2ae6126c8cd6a7945d5f70ff9bbee0214945658",
+        "crop": [
+          86,
+          837,
+          330,
+          1248
+        ],
+        "packing": "Exact native RGBA crop/copy; lossless WebP; no math warps or pixel correction."
+      },
+      "orientation": "south",
+      "camera": "Elevated parallel2/3; horizontal circle ellipse near0.5\u20130.6; true ornamental curves retained."
+    },
+    {
+      "id": "collection-showroom-midcentury-studio-desk-chair",
+      "facing": "south",
+      "file": "front-facing-2/seating-tables/chairs-south-03-4b89bff6e20e.webp",
+      "width": 1254,
+      "height": 1254,
+      "x": 465,
+      "y": 836,
+      "w": 321,
+      "h": 413,
+      "draw": {
+        "x": 0.0,
+        "y": 14.230529595015582,
+        "w": 62.0,
+        "h": 79.76947040498442
+      },
+      "reason": "Straight South axis and elevated parallel2/3 camera; faithful original style, meaningful seat top depth.",
+      "source": {
+        "file": "town/assets/apartment-collections/showroom-midcentury-studio-south-cardinal-9836d8edd412.webp",
+        "crop": {
+          "x": 1179,
+          "y": 4,
+          "w": 284,
+          "h": 387
+        },
+        "draw": {
+          "x": 3.552713678800501e-15,
+          "y": 9.514084507042256,
+          "w": 61.99999999999999,
+          "h": 84.48591549295774
+        },
+        "world": {
+          "w": 62,
+          "h": 94
+        }
+      },
+      "generation": {
+        "tool": "image_gen",
+        "original": "front-facing-2/seating-tables/originals/exec-4622d8cb-1058-4786-8755-43948cb39113.png",
+        "originalSHA256": "4b89bff6e20ee8a645acc8c7e2ae6126c8cd6a7945d5f70ff9bbee0214945658",
+        "crop": [
+          465,
+          836,
+          786,
+          1249
+        ],
+        "packing": "Exact native RGBA crop/copy; lossless WebP; no math warps or pixel correction."
+      },
+      "orientation": "south",
+      "camera": "Elevated parallel2/3; horizontal circle ellipse near0.5\u20130.6; true ornamental curves retained."
+    },
+    {
+      "id": "collection-showroom-midcentury-studio-dining-chair",
+      "facing": "south",
+      "file": "front-facing-2/seating-tables/chairs-south-03-4b89bff6e20e.webp",
+      "width": 1254,
+      "height": 1254,
+      "x": 916,
+      "y": 837,
+      "w": 257,
+      "h": 412,
+      "draw": {
+        "x": 0.8106796116504853,
+        "y": 0.0,
+        "w": 62.37864077669903,
+        "h": 100.0
+      },
+      "reason": "Straight South axis and elevated parallel2/3 camera; faithful original style, meaningful seat top depth.",
+      "source": {
+        "file": "town/assets/apartment-collections/showroom-midcentury-studio-south-cardinal-9836d8edd412.webp",
+        "crop": {
+          "x": 1759,
+          "y": 4,
+          "w": 221,
+          "h": 382
+        },
+        "draw": {
+          "x": 3.0732984293193724,
+          "y": 0,
+          "w": 57.853403141361255,
+          "h": 100.0
+        },
+        "world": {
+          "w": 64,
+          "h": 100
+        }
+      },
+      "generation": {
+        "tool": "image_gen",
+        "original": "front-facing-2/seating-tables/originals/exec-4622d8cb-1058-4786-8755-43948cb39113.png",
+        "originalSHA256": "4b89bff6e20ee8a645acc8c7e2ae6126c8cd6a7945d5f70ff9bbee0214945658",
+        "crop": [
+          916,
+          837,
+          1173,
+          1249
+        ],
+        "packing": "Exact native RGBA crop/copy; lossless WebP; no math warps or pixel correction."
+      },
+      "orientation": "south",
+      "camera": "Elevated parallel2/3; horizontal circle ellipse near0.5\u20130.6; true ornamental curves retained."
+    },
+    {
+      "id": "collection-showroom-french-cafe-desk-chair",
+      "facing": "south",
+      "file": "front-facing-2/seating-tables/chairs-south-04-316fb244bad3.webp",
+      "width": 1254,
+      "height": 1254,
+      "x": 68,
+      "y": 13,
+      "w": 276,
+      "h": 398,
+      "draw": {
+        "x": 0.0,
+        "y": 4.594202898550719,
+        "w": 62.0,
+        "h": 89.40579710144928
+      },
+      "reason": "Straight South axis and elevated parallel2/3 camera; faithful original style, meaningful seat top depth.",
+      "source": {
+        "file": "town/assets/apartment-collections/showroom-french-cafe-south-cardinal-13eb0016c6c1.webp",
+        "crop": {
+          "x": 181,
+          "y": 713,
+          "w": 143,
+          "h": 212
+        },
+        "draw": {
+          "x": 3.552713678800501e-15,
+          "y": 2.083916083916094,
+          "w": 61.99999999999999,
+          "h": 91.9160839160839
+        },
+        "world": {
+          "w": 62,
+          "h": 94
+        }
+      },
+      "generation": {
+        "tool": "image_gen",
+        "original": "front-facing-2/seating-tables/originals/exec-26e33085-e7b3-4647-990b-8e437238060f.png",
+        "originalSHA256": "316fb244bad3d71bf6d346c811803b3e2087d3013e76a70ff36edee909e1a8ee",
+        "crop": [
+          68,
+          13,
+          344,
+          411
+        ],
+        "packing": "Exact native RGBA crop/copy; lossless WebP; no math warps or pixel correction."
+      },
+      "orientation": "south",
+      "camera": "Elevated parallel2/3; horizontal circle ellipse near0.5\u20130.6; true ornamental curves retained."
+    },
+    {
+      "id": "collection-showroom-french-cafe-dining-chair",
+      "facing": "south",
+      "file": "front-facing-2/seating-tables/chairs-south-04-316fb244bad3.webp",
+      "width": 1254,
+      "height": 1254,
+      "x": 497,
+      "y": 4,
+      "w": 246,
+      "h": 403,
+      "draw": {
+        "x": 1.4789081885856064,
+        "y": 0.0,
+        "w": 61.04218362282879,
+        "h": 100.0
+      },
+      "reason": "Straight South axis and elevated parallel2/3 camera; faithful original style, meaningful seat top depth.",
+      "source": {
+        "file": "town/assets/apartment-collections/showroom-french-cafe-south-cardinal-13eb0016c6c1.webp",
+        "crop": {
+          "x": 973,
+          "y": 489,
+          "w": 135,
+          "h": 218
+        },
+        "draw": {
+          "x": 1.036697247706421,
+          "y": 0,
+          "w": 61.92660550458716,
+          "h": 100.0
+        },
+        "world": {
+          "w": 64,
+          "h": 100
+        }
+      },
+      "generation": {
+        "tool": "image_gen",
+        "original": "front-facing-2/seating-tables/originals/exec-26e33085-e7b3-4647-990b-8e437238060f.png",
+        "originalSHA256": "316fb244bad3d71bf6d346c811803b3e2087d3013e76a70ff36edee909e1a8ee",
+        "crop": [
+          497,
+          4,
+          743,
+          407
+        ],
+        "packing": "Exact native RGBA crop/copy; lossless WebP; no math warps or pixel correction."
+      },
+      "orientation": "south",
+      "camera": "Elevated parallel2/3; horizontal circle ellipse near0.5\u20130.6; true ornamental curves retained."
+    },
+    {
+      "id": "collection-showroom-french-cafe-reading-chair",
+      "facing": "south",
+      "file": "front-facing-2/seating-tables/chairs-south-04-316fb244bad3.webp",
+      "width": 1254,
+      "height": 1254,
+      "x": 852,
+      "y": 13,
+      "w": 358,
+      "h": 392,
+      "draw": {
+        "x": 0.0,
+        "y": 22.022346368715077,
+        "w": 84.0,
+        "h": 91.97765363128492
+      },
+      "reason": "Straight South axis and elevated parallel2/3 camera; faithful original style, meaningful seat top depth.",
+      "source": {
+        "file": "town/assets/apartment-collections/showroom-french-cafe-south-cardinal-13eb0016c6c1.webp",
+        "crop": {
+          "x": 872,
+          "y": 713,
+          "w": 202,
+          "h": 201
+        },
+        "draw": {
+          "x": 0,
+          "y": 30.415841584158414,
+          "w": 84.0,
+          "h": 83.58415841584159
+        },
+        "world": {
+          "w": 84,
+          "h": 114
+        }
+      },
+      "generation": {
+        "tool": "image_gen",
+        "original": "front-facing-2/seating-tables/originals/exec-26e33085-e7b3-4647-990b-8e437238060f.png",
+        "originalSHA256": "316fb244bad3d71bf6d346c811803b3e2087d3013e76a70ff36edee909e1a8ee",
+        "crop": [
+          852,
+          13,
+          1210,
+          405
+        ],
+        "packing": "Exact native RGBA crop/copy; lossless WebP; no math warps or pixel correction."
+      },
+      "orientation": "south",
+      "camera": "Elevated parallel2/3; horizontal circle ellipse near0.5\u20130.6; true ornamental curves retained."
+    },
+    {
+      "id": "collection-showroom-retrofuture-desk-chair",
+      "facing": "south",
+      "file": "front-facing-2/seating-tables/chairs-south-04-316fb244bad3.webp",
+      "width": 1254,
+      "height": 1254,
+      "x": 59,
+      "y": 415,
+      "w": 297,
+      "h": 416,
+      "draw": {
+        "x": 0.0,
+        "y": 7.158249158249163,
+        "w": 62.0,
+        "h": 86.84175084175084
+      },
+      "reason": "Straight South axis and elevated parallel2/3 camera; faithful original style, meaningful seat top depth.",
+      "source": {
+        "file": "town/assets/apartment-collections/showroom-retrofuture.webp",
+        "crop": {
+          "x": 260,
+          "y": 236,
+          "w": 146,
+          "h": 211
+        },
+        "draw": {
+          "x": 0,
+          "y": 4.397260273972606,
+          "w": 62.0,
+          "h": 89.6027397260274
+        },
+        "world": {
+          "w": 62,
+          "h": 94
+        }
+      },
+      "generation": {
+        "tool": "image_gen",
+        "original": "front-facing-2/seating-tables/originals/exec-26e33085-e7b3-4647-990b-8e437238060f.png",
+        "originalSHA256": "316fb244bad3d71bf6d346c811803b3e2087d3013e76a70ff36edee909e1a8ee",
+        "crop": [
+          59,
+          415,
+          356,
+          831
+        ],
+        "packing": "Exact native RGBA crop/copy; lossless WebP; no math warps or pixel correction."
+      },
+      "orientation": "south",
+      "camera": "Elevated parallel2/3; horizontal circle ellipse near0.5\u20130.6; true ornamental curves retained."
+    },
+    {
+      "id": "collection-showroom-retrofuture-dining-chair",
+      "facing": "south",
+      "file": "front-facing-2/seating-tables/chairs-south-04-316fb244bad3.webp",
+      "width": 1254,
+      "height": 1254,
+      "x": 497,
+      "y": 416,
+      "w": 251,
+      "h": 411,
+      "draw": {
+        "x": 1.4647201946471995,
+        "y": 0.0,
+        "w": 61.0705596107056,
+        "h": 100.0
+      },
+      "reason": "Straight South axis and elevated parallel2/3 camera; faithful original style, meaningful seat top depth.",
+      "source": {
+        "file": "town/assets/apartment-collections/showroom-retrofuture.webp",
+        "crop": {
+          "x": 51,
+          "y": 460,
+          "w": 116,
+          "h": 195
+        },
+        "draw": {
+          "x": 2.256410256410259,
+          "y": 1.4210854715202004e-14,
+          "w": 59.48717948717948,
+          "h": 99.99999999999999
+        },
+        "world": {
+          "w": 64,
+          "h": 100
+        }
+      },
+      "generation": {
+        "tool": "image_gen",
+        "original": "front-facing-2/seating-tables/originals/exec-26e33085-e7b3-4647-990b-8e437238060f.png",
+        "originalSHA256": "316fb244bad3d71bf6d346c811803b3e2087d3013e76a70ff36edee909e1a8ee",
+        "crop": [
+          497,
+          416,
+          748,
+          827
+        ],
+        "packing": "Exact native RGBA crop/copy; lossless WebP; no math warps or pixel correction."
+      },
+      "orientation": "south",
+      "camera": "Elevated parallel2/3; horizontal circle ellipse near0.5\u20130.6; true ornamental curves retained."
+    },
+    {
+      "id": "collection-showroom-retrofuture-reading-chair",
+      "facing": "south",
+      "file": "front-facing-2/seating-tables/chairs-south-04-316fb244bad3.webp",
+      "width": 1254,
+      "height": 1254,
+      "x": 846,
+      "y": 428,
+      "w": 360,
+      "h": 404,
+      "draw": {
+        "x": 0.0,
+        "y": 19.733333333333334,
+        "w": 84.0,
+        "h": 94.26666666666667
+      },
+      "reason": "Straight South axis and elevated parallel2/3 camera; faithful original style, meaningful seat top depth.",
+      "source": {
+        "file": "town/assets/apartment-collections/showroom-retrofuture.webp",
+        "crop": {
+          "x": 462,
+          "y": 239,
+          "w": 187,
+          "h": 204
+        },
+        "draw": {
+          "x": 0,
+          "y": 22.36363636363636,
+          "w": 84.0,
+          "h": 91.63636363636364
+        },
+        "world": {
+          "w": 84,
+          "h": 114
+        }
+      },
+      "generation": {
+        "tool": "image_gen",
+        "original": "front-facing-2/seating-tables/originals/exec-26e33085-e7b3-4647-990b-8e437238060f.png",
+        "originalSHA256": "316fb244bad3d71bf6d346c811803b3e2087d3013e76a70ff36edee909e1a8ee",
+        "crop": [
+          846,
+          428,
+          1206,
+          832
+        ],
+        "packing": "Exact native RGBA crop/copy; lossless WebP; no math warps or pixel correction."
+      },
+      "orientation": "south",
+      "camera": "Elevated parallel2/3; horizontal circle ellipse near0.5\u20130.6; true ornamental curves retained."
+    },
+    {
+      "id": "collection-showroom-steampunk-dining-chair",
+      "facing": "south",
+      "file": "front-facing-2/seating-tables/chairs-south-04-316fb244bad3.webp",
+      "width": 1254,
+      "height": 1254,
+      "x": 89,
+      "y": 834,
+      "w": 242,
+      "h": 410,
+      "draw": {
+        "x": 2.487804878048781,
+        "y": 0.0,
+        "w": 59.02439024390244,
+        "h": 100.0
+      },
+      "reason": "Straight South axis and elevated parallel2/3 camera; faithful original style, meaningful seat top depth.",
+      "source": {
+        "file": "town/assets/apartment-collections/showroom-steampunk.webp",
+        "crop": {
+          "x": 56,
+          "y": 454,
+          "w": 114,
+          "h": 208
+        },
+        "draw": {
+          "x": 4.596153846153847,
+          "y": 0,
+          "w": 54.80769230769231,
+          "h": 100.0
+        },
+        "world": {
+          "w": 64,
+          "h": 100
+        }
+      },
+      "generation": {
+        "tool": "image_gen",
+        "original": "front-facing-2/seating-tables/originals/exec-26e33085-e7b3-4647-990b-8e437238060f.png",
+        "originalSHA256": "316fb244bad3d71bf6d346c811803b3e2087d3013e76a70ff36edee909e1a8ee",
+        "crop": [
+          89,
+          834,
+          331,
+          1244
+        ],
+        "packing": "Exact native RGBA crop/copy; lossless WebP; no math warps or pixel correction."
+      },
+      "orientation": "south",
+      "camera": "Elevated parallel2/3; horizontal circle ellipse near0.5\u20130.6; true ornamental curves retained."
+    },
+    {
+      "id": "collection-showroom-robot-dining-chair",
+      "facing": "south",
+      "file": "front-facing-2/seating-tables/chairs-south-04-316fb244bad3.webp",
+      "width": 1254,
+      "height": 1254,
+      "x": 493,
+      "y": 838,
+      "w": 260,
+      "h": 406,
+      "draw": {
+        "x": 0.0,
+        "y": 0.06153846153846132,
+        "w": 64.0,
+        "h": 99.93846153846154
+      },
+      "reason": "Straight South axis and elevated parallel2/3 camera; faithful original style, meaningful seat top depth.",
+      "source": {
+        "file": "town/assets/apartment-collections/showroom-robot.webp",
+        "crop": {
+          "x": 47,
+          "y": 459,
+          "w": 125,
+          "h": 200
+        },
+        "draw": {
+          "x": 0.75,
+          "y": 0,
+          "w": 62.5,
+          "h": 100.0
+        },
+        "world": {
+          "w": 64,
+          "h": 100
+        }
+      },
+      "generation": {
+        "tool": "image_gen",
+        "original": "front-facing-2/seating-tables/originals/exec-26e33085-e7b3-4647-990b-8e437238060f.png",
+        "originalSHA256": "316fb244bad3d71bf6d346c811803b3e2087d3013e76a70ff36edee909e1a8ee",
+        "crop": [
+          493,
+          838,
+          753,
+          1244
+        ],
+        "packing": "Exact native RGBA crop/copy; lossless WebP; no math warps or pixel correction."
+      },
+      "orientation": "south",
+      "camera": "Elevated parallel2/3; horizontal circle ellipse near0.5\u20130.6; true ornamental curves retained."
+    },
+    {
+      "id": "collection-clara-dining-chair",
+      "facing": "south",
+      "file": "front-facing-2/seating-tables/clara-dining-south-cf3c64d62fc5.webp",
+      "width": 226,
+      "height": 449,
+      "x": 0,
+      "y": 0,
+      "w": 226,
+      "h": 449,
+      "draw": {
+        "x": 6.832962138084632,
+        "y": 0.0,
+        "w": 50.334075723830736,
+        "h": 100.0
+      },
+      "reason": "Accepted camera benchmark: centered straight South, deeper circular sage seat, original fern carving.",
+      "source": {
+        "file": "town/assets/apartment-collections/clara-south-cardinal-d019e963a870.webp",
+        "crop": {
+          "x": 659,
+          "y": 838,
+          "w": 144,
+          "h": 218
+        },
+        "draw": {
+          "x": 0,
+          "y": 3.1111111111111143,
+          "w": 64.0,
+          "h": 96.88888888888889
+        },
+        "world": {
+          "w": 64,
+          "h": 100
+        }
+      },
+      "generation": {
+        "tool": "image_gen",
+        "original": "front-facing-2/seating-tables/originals/exec-74b98425-763d-4b0f-96ad-c5962262242f.png",
+        "originalSHA256": "cf3c64d62fc5e6ef5f290400440c46e0689d85303d054dd6cc4c1b08a0a9fed2",
+        "crop": [
+          143,
+          40,
+          369,
+          489
+        ],
+        "packing": "Exact native RGBA crop only; lossless WebP; uniform contain."
+      }
+    },
+    {
+      "id": "collection-handel-dining-chair",
+      "facing": "south",
+      "file": "front-facing-2/seating-tables/chair-handel-dining-chair-south-5a205b494de4.webp",
+      "width": 1009,
+      "height": 1558,
+      "x": 163,
+      "y": 43,
+      "w": 678,
+      "h": 1392,
+      "draw": {
+        "x": 7.646551724137932,
+        "y": 0.0,
+        "w": 48.706896551724135,
+        "h": 100.0
+      },
+      "reason": "Straight South centered laurel chair with elevated circular seat; four real legs retained as two front/two rear, no false center-front leg.",
+      "source": {
+        "file": "town/assets/apartment-collections/handel-south-cardinal-f069238584fc.webp",
+        "crop": {
+          "x": 386,
+          "y": 1361,
+          "w": 139,
+          "h": 221
+        },
+        "draw": {
+          "x": 0.5520361990950242,
+          "y": 0,
+          "w": 62.89592760180995,
+          "h": 100.0
+        },
+        "world": {
+          "w": 64,
+          "h": 100
+        }
+      },
+      "generation": {
+        "tool": "image_gen",
+        "original": "front-facing-2/seating-tables/originals/exec-97f15ed8-fbe8-46d3-9163-12edb8f2c627.png",
+        "originalSHA256": "5a205b494de4c91f68621f04afe5ac1d7118d0dba7c380eaaae1199c71babda9",
+        "crop": [
+          163,
+          43,
+          841,
+          1435
+        ],
+        "packing": "Exact native RGBA crop/copy; lossless WebP; no math warps or pixel correction."
+      },
+      "orientation": "south",
+      "camera": "Elevated parallel2/3; horizontal circle ellipse near0.5\u20130.6; true ornamental curves retained."
+    },
+    {
+      "id": "collection-clara-dining-chair",
+      "facing": "east",
+      "file": "front-facing-2/seating-tables/chair-clara-dining-chair-east-e4ecd9506db2.webp",
+      "width": 971,
+      "height": 1620,
+      "x": 15,
+      "y": 0,
+      "w": 956,
+      "h": 1620,
+      "draw": {
+        "x": 0.0,
+        "y": 18.393305439330547,
+        "w": 57.6,
+        "h": 97.60669456066945
+      },
+      "reason": "ImageGen horizontal mirror of current West source: same sage upholstery, birch fern carving and side profile; repairs wrong cream overhead East image. Canonical view/foot physics unchanged.",
+      "source": {
+        "file": "town/assets/apartment-collections/clara-east-cardinal-bc802322c147.webp",
+        "crop": {
+          "x": 1239,
+          "y": 1523,
+          "w": 112,
+          "h": 140
+        },
+        "draw": {
+          "x": 0,
+          "y": 43.999999999999986,
+          "w": 57.60000000000001,
+          "h": 72.00000000000001
+        },
+        "world": {
+          "w": 57.6,
+          "h": 116
+        }
+      },
+      "generation": {
+        "tool": "image_gen",
+        "original": "front-facing-2/seating-tables/originals/exec-49697b4a-d15a-4159-a6ad-0ce638a73895.png",
+        "originalSHA256": "e4ecd9506db226978a41d66a0ace74060eacf3d1574b16dbf5e349831d70b1ce",
+        "crop": [
+          15,
+          0,
+          971,
+          1620
+        ],
+        "packing": "Exact native RGBA crop/copy; lossless WebP; no math warps or pixel correction."
+      },
+      "orientation": "east",
+      "camera": "Elevated parallel2/3; horizontal circle ellipse near0.5\u20130.6; true ornamental curves retained."
+    }
+  ],
+  "retained": [
+    {
+      "id": "collection-bach-desk-chair",
+      "facing": "south",
+      "reason": "Current corrected view already centered with useful rectangular seat-top depth."
+    },
+    {
+      "id": "collection-bach-dining-chair",
+      "facing": "south",
+      "reason": "Current corrected view already centered with useful rectangular seat-top depth."
+    },
+    {
+      "id": "collection-bach-reading-chair",
+      "facing": "south",
+      "reason": "Centered South reading-chair body; real seat rear occluded by pillow/arms or pod form. Visible top/seams and actual ornament do not prove yaw/taper; retain original detailed art."
+    },
+    {
+      "id": "collection-mozart-reading-chair",
+      "facing": "south",
+      "reason": "Centered South reading-chair body; real seat rear occluded by pillow/arms or pod form. Visible top/seams and actual ornament do not prove yaw/taper; retain original detailed art."
+    },
+    {
+      "id": "collection-beethoven-desk-chair",
+      "facing": "south",
+      "reason": "Current corrected view already centered with useful rectangular seat-top depth."
+    },
+    {
+      "id": "collection-beethoven-dining-chair",
+      "facing": "south",
+      "reason": "Current corrected view already centered with useful rectangular seat-top depth."
+    },
+    {
+      "id": "collection-beethoven-reading-chair",
+      "facing": "south",
+      "reason": "Centered South reading-chair body; real seat rear occluded by pillow/arms or pod form. Visible top/seams and actual ornament do not prove yaw/taper; retain original detailed art."
+    },
+    {
+      "id": "collection-clara-reading-chair",
+      "facing": "south",
+      "reason": "Centered South reading-chair body; real seat rear occluded by pillow/arms or pod form. Visible top/seams and actual ornament do not prove yaw/taper; retain original detailed art."
+    },
+    {
+      "id": "collection-chopin-reading-chair",
+      "facing": "south",
+      "reason": "Centered South reading-chair body; real seat rear occluded by pillow/arms or pod form. Visible top/seams and actual ornament do not prove yaw/taper; retain original detailed art."
+    },
+    {
+      "id": "collection-haydn-desk-chair",
+      "facing": "south",
+      "reason": "Current corrected view already centered with useful rectangular seat-top depth."
+    },
+    {
+      "id": "collection-haydn-dining-chair",
+      "facing": "south",
+      "reason": "Current corrected view already centered with useful rectangular seat-top depth."
+    },
+    {
+      "id": "collection-haydn-reading-chair",
+      "facing": "south",
+      "reason": "Centered South reading-chair body; real seat rear occluded by pillow/arms or pod form. Visible top/seams and actual ornament do not prove yaw/taper; retain original detailed art."
+    },
+    {
+      "id": "collection-handel-desk-chair",
+      "facing": "south",
+      "reason": "Current corrected view already centered with useful rectangular seat-top depth."
+    },
+    {
+      "id": "collection-handel-reading-chair",
+      "facing": "south",
+      "reason": "Centered South reading-chair body; real seat rear occluded by pillow/arms or pod form. Visible top/seams and actual ornament do not prove yaw/taper; retain original detailed art."
+    },
+    {
+      "id": "collection-vivaldi-dining-chair",
+      "facing": "south",
+      "reason": "Current corrected view already centered with useful rectangular seat-top depth."
+    },
+    {
+      "id": "collection-vivaldi-reading-chair",
+      "facing": "south",
+      "reason": "Centered South reading-chair body; real seat rear occluded by pillow/arms or pod form. Visible top/seams and actual ornament do not prove yaw/taper; retain original detailed art."
+    },
+    {
+      "id": "collection-joplin-desk-chair",
+      "facing": "south",
+      "reason": "Current corrected view already centered with useful rectangular seat-top depth."
+    },
+    {
+      "id": "collection-joplin-dining-chair",
+      "facing": "south",
+      "reason": "Current corrected view already centered with useful rectangular seat-top depth."
+    },
+    {
+      "id": "collection-joplin-reading-chair",
+      "facing": "south",
+      "reason": "Centered South reading-chair body; real seat rear occluded by pillow/arms or pod form. Visible top/seams and actual ornament do not prove yaw/taper; retain original detailed art."
+    },
+    {
+      "id": "collection-ella-reading-chair",
+      "facing": "south",
+      "reason": "Centered South reading-chair body; real seat rear occluded by pillow/arms or pod form. Visible top/seams and actual ornament do not prove yaw/taper; retain original detailed art."
+    },
+    {
+      "id": "collection-nina-dining-chair",
+      "facing": "south",
+      "reason": "Current corrected view already centered with useful rectangular seat-top depth."
+    },
+    {
+      "id": "collection-nina-reading-chair",
+      "facing": "south",
+      "reason": "Centered South reading-chair body; real seat rear occluded by pillow/arms or pod form. Visible top/seams and actual ornament do not prove yaw/taper; retain original detailed art."
+    },
+    {
+      "id": "collection-miles-reading-chair",
+      "facing": "south",
+      "reason": "Centered South reading-chair body; real seat rear occluded by pillow/arms or pod form. Visible top/seams and actual ornament do not prove yaw/taper; retain original detailed art."
+    },
+    {
+      "id": "collection-dj-desk-chair",
+      "facing": "south",
+      "reason": "Current corrected view already centered with useful rectangular seat-top depth."
+    },
+    {
+      "id": "collection-dj-dining-chair",
+      "facing": "south",
+      "reason": "Current corrected view already centered with useful rectangular seat-top depth."
+    },
+    {
+      "id": "collection-dj-reading-chair",
+      "facing": "south",
+      "reason": "Centered South reading-chair body; real seat rear occluded by pillow/arms or pod form. Visible top/seams and actual ornament do not prove yaw/taper; retain original detailed art."
+    },
+    {
+      "id": "collection-vee-jay-desk-chair",
+      "facing": "south",
+      "reason": "Current corrected view already centered with useful rectangular seat-top depth."
+    },
+    {
+      "id": "collection-vee-jay-dining-chair",
+      "facing": "south",
+      "reason": "Current corrected view already centered with useful rectangular seat-top depth."
+    },
+    {
+      "id": "collection-vee-jay-reading-chair",
+      "facing": "south",
+      "reason": "Centered South reading-chair body; real seat rear occluded by pillow/arms or pod form. Visible top/seams and actual ornament do not prove yaw/taper; retain original detailed art."
+    },
+    {
+      "id": "collection-zizi-reading-chair",
+      "facing": "south",
+      "reason": "Centered South reading-chair body; real seat rear occluded by pillow/arms or pod form. Visible top/seams and actual ornament do not prove yaw/taper; retain original detailed art."
+    },
+    {
+      "id": "collection-metronome-desk-chair",
+      "facing": "south",
+      "reason": "Current corrected view already centered with useful rectangular seat-top depth."
+    },
+    {
+      "id": "collection-metronome-dining-chair",
+      "facing": "south",
+      "reason": "Current corrected view already centered with useful rectangular seat-top depth."
+    },
+    {
+      "id": "collection-metronome-reading-chair",
+      "facing": "south",
+      "reason": "Centered South reading-chair body; real seat rear occluded by pillow/arms or pod form. Visible top/seams and actual ornament do not prove yaw/taper; retain original detailed art."
+    },
+    {
+      "id": "collection-schoenberg-desk-chair",
+      "facing": "south",
+      "reason": "Current corrected view already centered with useful rectangular seat-top depth."
+    },
+    {
+      "id": "collection-schoenberg-dining-chair",
+      "facing": "south",
+      "reason": "Current corrected view already centered with useful rectangular seat-top depth."
+    },
+    {
+      "id": "collection-schoenberg-reading-chair",
+      "facing": "south",
+      "reason": "Centered South reading-chair body; real seat rear occluded by pillow/arms or pod form. Visible top/seams and actual ornament do not prove yaw/taper; retain original detailed art."
+    },
+    {
+      "id": "collection-player-dining-chair",
+      "facing": "south",
+      "reason": "Current corrected view already centered with useful rectangular seat-top depth."
+    },
+    {
+      "id": "collection-player-reading-chair",
+      "facing": "south",
+      "reason": "Centered South reading-chair body; real seat rear occluded by pillow/arms or pod form. Visible top/seams and actual ornament do not prove yaw/taper; retain original detailed art."
+    },
+    {
+      "id": "collection-showroom-victorian-parlor-reading-chair",
+      "facing": "south",
+      "reason": "Centered South reading-chair body; real seat rear occluded by pillow/arms or pod form. Visible top/seams and actual ornament do not prove yaw/taper; retain original detailed art."
+    },
+    {
+      "id": "collection-showroom-art-deco-lounge-desk-chair",
+      "facing": "south",
+      "reason": "Current corrected view already centered with useful rectangular seat-top depth."
+    },
+    {
+      "id": "collection-showroom-art-deco-lounge-dining-chair",
+      "facing": "south",
+      "reason": "Current corrected view already centered with useful rectangular seat-top depth."
+    },
+    {
+      "id": "collection-showroom-art-deco-lounge-reading-chair",
+      "facing": "south",
+      "reason": "Centered South reading-chair body; real seat rear occluded by pillow/arms or pod form. Visible top/seams and actual ornament do not prove yaw/taper; retain original detailed art."
+    },
+    {
+      "id": "collection-showroom-coastal-bedroom-dining-chair",
+      "facing": "south",
+      "reason": "Current corrected view already centered with useful rectangular seat-top depth."
+    },
+    {
+      "id": "collection-showroom-coastal-bedroom-reading-chair",
+      "facing": "south",
+      "reason": "Centered South reading-chair body; real seat rear occluded by pillow/arms or pod form. Visible top/seams and actual ornament do not prove yaw/taper; retain original detailed art."
+    },
+    {
+      "id": "collection-showroom-rustic-kitchen-reading-chair",
+      "facing": "south",
+      "reason": "Centered South reading-chair body; real seat rear occluded by pillow/arms or pod form. Visible top/seams and actual ornament do not prove yaw/taper; retain original detailed art."
+    },
+    {
+      "id": "collection-showroom-botanical-conservatory-reading-chair",
+      "facing": "south",
+      "reason": "Centered South reading-chair body; real seat rear occluded by pillow/arms or pod form. Visible top/seams and actual ornament do not prove yaw/taper; retain original detailed art."
+    },
+    {
+      "id": "collection-showroom-midcentury-studio-reading-chair",
+      "facing": "south",
+      "reason": "Centered South reading-chair body; real seat rear occluded by pillow/arms or pod form. Visible top/seams and actual ornament do not prove yaw/taper; retain original detailed art."
+    },
+    {
+      "id": "collection-showroom-industrial-loft-desk-chair",
+      "facing": "south",
+      "reason": "Current corrected view already centered with useful rectangular seat-top depth."
+    },
+    {
+      "id": "collection-showroom-industrial-loft-dining-chair",
+      "facing": "south",
+      "reason": "Current corrected view already centered with useful rectangular seat-top depth."
+    },
+    {
+      "id": "collection-showroom-industrial-loft-reading-chair",
+      "facing": "south",
+      "reason": "Centered South reading-chair body; real seat rear occluded by pillow/arms or pod form. Visible top/seams and actual ornament do not prove yaw/taper; retain original detailed art."
+    },
+    {
+      "id": "collection-showroom-cyberpunk-desk-chair",
+      "facing": "south",
+      "reason": "Current corrected view already centered with useful rectangular seat-top depth."
+    },
+    {
+      "id": "collection-showroom-cyberpunk-dining-chair",
+      "facing": "south",
+      "reason": "Current corrected view already centered with useful rectangular seat-top depth."
+    },
+    {
+      "id": "collection-showroom-cyberpunk-reading-chair",
+      "facing": "south",
+      "reason": "Centered South reading-chair body; real seat rear occluded by pillow/arms or pod form. Visible top/seams and actual ornament do not prove yaw/taper; retain original detailed art."
+    },
+    {
+      "id": "collection-showroom-steampunk-desk-chair",
+      "facing": "south",
+      "reason": "Current corrected view already centered with useful rectangular seat-top depth."
+    },
+    {
+      "id": "collection-showroom-steampunk-reading-chair",
+      "facing": "south",
+      "reason": "Centered South reading-chair body; real seat rear occluded by pillow/arms or pod form. Visible top/seams and actual ornament do not prove yaw/taper; retain original detailed art."
+    },
+    {
+      "id": "collection-showroom-robot-desk-chair",
+      "facing": "south",
+      "reason": "Current corrected view already centered with useful rectangular seat-top depth."
+    },
+    {
+      "id": "collection-showroom-robot-reading-chair",
+      "facing": "south",
+      "reason": "Centered South reading-chair body; real seat rear occluded by pillow/arms or pod form. Visible top/seams and actual ornament do not prove yaw/taper; retain original detailed art."
+    }
+  ]
+}

@@ -1,1 +1,1 @@
-export * from '../world/render.mjs?v=town-library-review-1';
+export * from '../world/render.mjs?v=town-front-facing-2';

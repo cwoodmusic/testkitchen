@@ -1,0 +1,3112 @@
+{
+  "version": 1,
+  "projection": "Straight South, zero yaw, elevated parallel2/3 camera. Rectangular depth edges parallel and near/far widths equal; deep visible bed/sofa top planes. Genuine curves, carved mouldings, asymmetric original designs and right chaise layouts retained.",
+  "counts": {
+    "reviewedSouthKeys": 82,
+    "correctedSouthKeys": 54,
+    "uniqueCorrectedArtSources": 53,
+    "collectionBeds": 21,
+    "collectionSofas": 24,
+    "legacySofaKeys": 9,
+    "retainedSouthKeys": 28
+  },
+  "packing": "Whole generation originals retained. WebP is lossless and byte-for-byte RGBA verified. Native crops use connected main silhouettes plus nearby detached ornament with8px margins, not fixed cell splits. No production pixel warps, palette edits or alpha edits. Draw rectangles uniformly contain the new art inside each unchanged canonical view.",
+  "patches": [
+    {
+      "id": "collection-showroom-art-deco-lounge-bed",
+      "facing": "south",
+      "file": "front-facing-2/beds-sofas/benchmark-52cf9ca9eb92.webp",
+      "width": 1278,
+      "height": 1230,
+      "x": 78,
+      "y": 6,
+      "w": 478,
+      "h": 665,
+      "draw": {
+        "x": 21.090225563909776,
+        "y": 0.0,
+        "w": 107.81954887218045,
+        "h": 150.0
+      },
+      "originalDraw": {
+        "x": 5.184331797235018,
+        "y": 0,
+        "w": 139.63133640552996,
+        "h": 150
+      },
+      "originalWorld": {
+        "w": 150,
+        "h": 150,
+        "footCenter": {
+          "x": 75,
+          "y": 103.5
+        }
+      },
+      "sourceBefore": {
+        "file": "town/assets/parallel-art/packed/showroom-art-deco-lounge-1-f86d1e3ed869.webp",
+        "crop": {
+          "x": 991,
+          "y": 4,
+          "w": 365,
+          "h": 449
+        }
+      },
+      "generation": {
+        "tool": "image_gen",
+        "original": "front-facing-2/beds-sofas/originals/benchmark-52cf9ca9eb92.png",
+        "originalSHA256": "52cf9ca9eb9241be0fe5cac43c8b06f0dd07996078f7fae9b980b60a386502a2",
+        "crop": [
+          78,
+          6,
+          556,
+          671
+        ],
+        "acceptedPixelSHA256": "35f0075145e2f5aacfc2afc30e1a98fd24acde5ded1b2658f468d25dd1346cf6",
+        "cameraBenchmarkSHA256": "52cf9ca9eb9241be0fe5cac43c8b06f0dd07996078f7fae9b980b60a386502a2"
+      },
+      "reason": "Straight South elevated parallel2/3 camera with meaningful top plane; preserve source-specific rich material/ornament, genuine curves and chaise layout. Uniform contain inside unchanged original view, foot anchor and physics unchanged.",
+      "inspection": {
+        "completeSilhouette": true,
+        "clearOpaqueBorder": true,
+        "uniformWorldScale": 0.22556390977443608
+      }
+    },
+    {
+      "id": "collection-nina-sofa",
+      "facing": "south",
+      "file": "front-facing-2/beds-sofas/benchmark-52cf9ca9eb92.webp",
+      "width": 1278,
+      "height": 1230,
+      "x": 640,
+      "y": 129,
+      "w": 574,
+      "h": 487,
+      "draw": {
+        "x": 15.745379876796719,
+        "y": 0.0,
+        "w": 148.50924024640656,
+        "h": 126.0
+      },
+      "originalDraw": {
+        "x": 0,
+        "y": 12.359447004608299,
+        "w": 180.0,
+        "h": 113.6405529953917
+      },
+      "originalWorld": {
+        "w": 180,
+        "h": 126
+      },
+      "sourceBefore": {
+        "file": "town/assets/apartment-collections/nina-south-cardinal-e42c2a6c7595.webp",
+        "crop": {
+          "x": 1644,
+          "y": 1503,
+          "w": 217,
+          "h": 137
+        }
+      },
+      "generation": {
+        "tool": "image_gen",
+        "original": "front-facing-2/beds-sofas/originals/benchmark-52cf9ca9eb92.png",
+        "originalSHA256": "52cf9ca9eb9241be0fe5cac43c8b06f0dd07996078f7fae9b980b60a386502a2",
+        "crop": [
+          640,
+          129,
+          1214,
+          616
+        ],
+        "acceptedPixelSHA256": "aa1b434314213758a7097487fe13fd699f8dbd609c2e096356ecd1cfbe03a533",
+        "cameraBenchmarkSHA256": "52cf9ca9eb9241be0fe5cac43c8b06f0dd07996078f7fae9b980b60a386502a2"
+      },
+      "reason": "Straight South elevated parallel2/3 camera with meaningful top plane; preserve source-specific rich material/ornament, genuine curves and chaise layout. Uniform contain inside unchanged original view, foot anchor and physics unchanged.",
+      "inspection": {
+        "completeSilhouette": true,
+        "clearOpaqueBorder": true,
+        "uniformWorldScale": 0.2587268993839836
+      }
+    },
+    {
+      "id": "collection-metronome-sofa",
+      "facing": "south",
+      "file": "front-facing-2/beds-sofas/benchmark-52cf9ca9eb92.webp",
+      "width": 1278,
+      "height": 1230,
+      "x": 56,
+      "y": 680,
+      "w": 538,
+      "h": 519,
+      "draw": {
+        "x": 24.69364161849711,
+        "y": 0.0,
+        "w": 130.61271676300578,
+        "h": 126.0
+      },
+      "originalDraw": {
+        "x": 3.3248407643311992,
+        "y": 0,
+        "w": 173.3503184713376,
+        "h": 126.0
+      },
+      "originalWorld": {
+        "w": 180,
+        "h": 126
+      },
+      "sourceBefore": {
+        "file": "town/assets/apartment-collections/metronome-south-cardinal-72ce761a9f1c.webp",
+        "crop": {
+          "x": 1752,
+          "y": 2014,
+          "w": 216,
+          "h": 157
+        }
+      },
+      "generation": {
+        "tool": "image_gen",
+        "original": "front-facing-2/beds-sofas/originals/benchmark-52cf9ca9eb92.png",
+        "originalSHA256": "52cf9ca9eb9241be0fe5cac43c8b06f0dd07996078f7fae9b980b60a386502a2",
+        "crop": [
+          56,
+          680,
+          594,
+          1199
+        ],
+        "acceptedPixelSHA256": "5a7d715bb26b49c452aded0afa8574d3b2697e2e71337a8493744e6462257902",
+        "cameraBenchmarkSHA256": "52cf9ca9eb9241be0fe5cac43c8b06f0dd07996078f7fae9b980b60a386502a2"
+      },
+      "reason": "Straight South elevated parallel2/3 camera with meaningful top plane; preserve source-specific rich material/ornament, genuine curves and chaise layout. Uniform contain inside unchanged original view, foot anchor and physics unchanged.",
+      "inspection": {
+        "completeSilhouette": true,
+        "clearOpaqueBorder": true,
+        "uniformWorldScale": 0.24277456647398843
+      }
+    },
+    {
+      "id": "collection-bach-bed",
+      "facing": "south",
+      "file": "front-facing-2/beds-sofas/board-1-6e75e82d998b.webp",
+      "width": 1254,
+      "height": 1254,
+      "x": 80,
+      "y": 0,
+      "w": 278,
+      "h": 405,
+      "draw": {
+        "x": 23.51851851851852,
+        "y": 0.0,
+        "w": 102.96296296296296,
+        "h": 150.0
+      },
+      "originalDraw": {
+        "x": 9.978540772532185,
+        "y": 0,
+        "w": 130.04291845493563,
+        "h": 150
+      },
+      "originalWorld": {
+        "w": 150,
+        "h": 150,
+        "footCenter": {
+          "x": 75,
+          "y": 103.5
+        }
+      },
+      "sourceBefore": {
+        "file": "town/assets/parallel-art/packed/bach-1-4cae87c925f3.webp",
+        "crop": {
+          "x": 389,
+          "y": 1153,
+          "w": 327,
+          "h": 457
+        }
+      },
+      "generation": {
+        "tool": "image_gen",
+        "original": "front-facing-2/beds-sofas/originals/board-1-6e75e82d998b.png",
+        "originalSHA256": "6e75e82d998ba1e7404a8ef920393f1260bcc508123de0fb1faad57dc842154a",
+        "crop": [
+          80,
+          0,
+          358,
+          405
+        ],
+        "acceptedPixelSHA256": "e27cd25f119cc895e0b101a967018d9cd02cac23894bd95171820b0b4a42cbee",
+        "cameraBenchmarkSHA256": "52cf9ca9eb9241be0fe5cac43c8b06f0dd07996078f7fae9b980b60a386502a2"
+      },
+      "reason": "Straight South elevated parallel2/3 camera with meaningful top plane; preserve source-specific rich material/ornament, genuine curves and chaise layout. Uniform contain inside unchanged original view, foot anchor and physics unchanged.",
+      "inspection": {
+        "completeSilhouette": true,
+        "clearOpaqueBorder": true,
+        "uniformWorldScale": 0.37037037037037035
+      }
+    },
+    {
+      "id": "collection-mozart-bed",
+      "facing": "south",
+      "file": "front-facing-2/beds-sofas/board-1-6e75e82d998b.webp",
+      "width": 1254,
+      "height": 1254,
+      "x": 473,
+      "y": 0,
+      "w": 308,
+      "h": 406,
+      "draw": {
+        "x": 18.10344827586207,
+        "y": 0.0,
+        "w": 113.79310344827586,
+        "h": 150.0
+      },
+      "originalDraw": {
+        "x": 0,
+        "y": 0,
+        "w": 150,
+        "h": 150
+      },
+      "originalWorld": {
+        "w": 150,
+        "h": 150,
+        "footCenter": {
+          "x": 75,
+          "y": 103.5
+        }
+      },
+      "sourceBefore": {
+        "file": "town/assets/parallel-art/packed/mozart-1-48d4e79eeb44.webp",
+        "crop": {
+          "x": 1589,
+          "y": 4,
+          "w": 371,
+          "h": 442
+        }
+      },
+      "generation": {
+        "tool": "image_gen",
+        "original": "front-facing-2/beds-sofas/originals/board-1-6e75e82d998b.png",
+        "originalSHA256": "6e75e82d998ba1e7404a8ef920393f1260bcc508123de0fb1faad57dc842154a",
+        "crop": [
+          473,
+          0,
+          781,
+          406
+        ],
+        "acceptedPixelSHA256": "d3569ad2daf0df111f5c5b8dc99779436fa85f832cdede107fe15c3b3f0532ce",
+        "cameraBenchmarkSHA256": "52cf9ca9eb9241be0fe5cac43c8b06f0dd07996078f7fae9b980b60a386502a2"
+      },
+      "reason": "Straight South elevated parallel2/3 camera with meaningful top plane; preserve source-specific rich material/ornament, genuine curves and chaise layout. Uniform contain inside unchanged original view, foot anchor and physics unchanged.",
+      "inspection": {
+        "completeSilhouette": true,
+        "clearOpaqueBorder": true,
+        "uniformWorldScale": 0.3694581280788177
+      }
+    },
+    {
+      "id": "collection-clara-bed",
+      "facing": "south",
+      "file": "front-facing-2/beds-sofas/board-1-6e75e82d998b.webp",
+      "width": 1254,
+      "height": 1254,
+      "x": 878,
+      "y": 8,
+      "w": 303,
+      "h": 398,
+      "draw": {
+        "x": 17.902010050251256,
+        "y": 0.0,
+        "w": 114.19597989949749,
+        "h": 150.0
+      },
+      "originalDraw": {
+        "x": 0,
+        "y": 0,
+        "w": 150,
+        "h": 150
+      },
+      "originalWorld": {
+        "w": 150,
+        "h": 150,
+        "footCenter": {
+          "x": 75,
+          "y": 103.5
+        }
+      },
+      "sourceBefore": {
+        "file": "town/assets/parallel-art/packed/clara-1-e478fe8211da.webp",
+        "crop": {
+          "x": 992,
+          "y": 4,
+          "w": 354,
+          "h": 436
+        }
+      },
+      "generation": {
+        "tool": "image_gen",
+        "original": "front-facing-2/beds-sofas/originals/board-1-6e75e82d998b.png",
+        "originalSHA256": "6e75e82d998ba1e7404a8ef920393f1260bcc508123de0fb1faad57dc842154a",
+        "crop": [
+          878,
+          8,
+          1181,
+          406
+        ],
+        "acceptedPixelSHA256": "a4481613bb161165264017b699869770f95746c3304a0c899ea1637ac655fd7c",
+        "cameraBenchmarkSHA256": "52cf9ca9eb9241be0fe5cac43c8b06f0dd07996078f7fae9b980b60a386502a2"
+      },
+      "reason": "Straight South elevated parallel2/3 camera with meaningful top plane; preserve source-specific rich material/ornament, genuine curves and chaise layout. Uniform contain inside unchanged original view, foot anchor and physics unchanged.",
+      "inspection": {
+        "completeSilhouette": true,
+        "clearOpaqueBorder": true,
+        "uniformWorldScale": 0.3768844221105528
+      }
+    },
+    {
+      "id": "collection-chopin-bed",
+      "facing": "south",
+      "file": "front-facing-2/beds-sofas/board-1-6e75e82d998b.webp",
+      "width": 1254,
+      "height": 1254,
+      "x": 84,
+      "y": 409,
+      "w": 270,
+      "h": 415,
+      "draw": {
+        "x": 26.204819277108435,
+        "y": 0.0,
+        "w": 97.59036144578313,
+        "h": 150.0
+      },
+      "originalDraw": {
+        "x": 22.20873786407767,
+        "y": 0,
+        "w": 105.58252427184466,
+        "h": 150
+      },
+      "originalWorld": {
+        "w": 150,
+        "h": 150,
+        "footCenter": {
+          "x": 75,
+          "y": 103.5
+        }
+      },
+      "sourceBefore": {
+        "file": "town/assets/parallel-art/packed/chopin-1-0be8724155ad.webp",
+        "crop": {
+          "x": 571,
+          "y": 4,
+          "w": 306,
+          "h": 455
+        }
+      },
+      "generation": {
+        "tool": "image_gen",
+        "original": "front-facing-2/beds-sofas/originals/board-1-6e75e82d998b.png",
+        "originalSHA256": "6e75e82d998ba1e7404a8ef920393f1260bcc508123de0fb1faad57dc842154a",
+        "crop": [
+          84,
+          409,
+          354,
+          824
+        ],
+        "acceptedPixelSHA256": "3b2144f668d7549b71b7eb1494c522e2ea03f51ab70fba1cfbea1e8903688652",
+        "cameraBenchmarkSHA256": "52cf9ca9eb9241be0fe5cac43c8b06f0dd07996078f7fae9b980b60a386502a2"
+      },
+      "reason": "Straight South elevated parallel2/3 camera with meaningful top plane; preserve source-specific rich material/ornament, genuine curves and chaise layout. Uniform contain inside unchanged original view, foot anchor and physics unchanged.",
+      "inspection": {
+        "completeSilhouette": true,
+        "clearOpaqueBorder": true,
+        "uniformWorldScale": 0.3614457831325301
+      }
+    },
+    {
+      "id": "collection-haydn-bed",
+      "facing": "south",
+      "file": "front-facing-2/beds-sofas/board-1-6e75e82d998b.webp",
+      "width": 1254,
+      "height": 1254,
+      "x": 479,
+      "y": 416,
+      "w": 297,
+      "h": 407,
+      "draw": {
+        "x": 20.270270270270274,
+        "y": 0.0,
+        "w": 109.45945945945945,
+        "h": 150.0
+      },
+      "originalDraw": {
+        "x": 3.4883720930232585,
+        "y": 0,
+        "w": 143.02325581395348,
+        "h": 150
+      },
+      "originalWorld": {
+        "w": 150,
+        "h": 150,
+        "footCenter": {
+          "x": 75,
+          "y": 103.5
+        }
+      },
+      "sourceBefore": {
+        "file": "town/assets/parallel-art/packed/haydn-1-d7b2a269e294.webp",
+        "crop": {
+          "x": 1387,
+          "y": 4,
+          "w": 350,
+          "h": 444
+        }
+      },
+      "generation": {
+        "tool": "image_gen",
+        "original": "front-facing-2/beds-sofas/originals/board-1-6e75e82d998b.png",
+        "originalSHA256": "6e75e82d998ba1e7404a8ef920393f1260bcc508123de0fb1faad57dc842154a",
+        "crop": [
+          479,
+          416,
+          776,
+          823
+        ],
+        "acceptedPixelSHA256": "1b2036c0272f3762d47820cd2cd38532bc2dbc81e8b0cfe836bfc24cd078d70c",
+        "cameraBenchmarkSHA256": "52cf9ca9eb9241be0fe5cac43c8b06f0dd07996078f7fae9b980b60a386502a2"
+      },
+      "reason": "Straight South elevated parallel2/3 camera with meaningful top plane; preserve source-specific rich material/ornament, genuine curves and chaise layout. Uniform contain inside unchanged original view, foot anchor and physics unchanged.",
+      "inspection": {
+        "completeSilhouette": true,
+        "clearOpaqueBorder": true,
+        "uniformWorldScale": 0.36855036855036855
+      }
+    },
+    {
+      "id": "collection-handel-bed",
+      "facing": "south",
+      "file": "front-facing-2/beds-sofas/board-1-6e75e82d998b.webp",
+      "width": 1254,
+      "height": 1254,
+      "x": 879,
+      "y": 413,
+      "w": 302,
+      "h": 409,
+      "draw": {
+        "x": 19.621026894865523,
+        "y": 0.0,
+        "w": 110.75794621026895,
+        "h": 150.0
+      },
+      "originalDraw": {
+        "x": 4.054054054054049,
+        "y": 0,
+        "w": 141.8918918918919,
+        "h": 150
+      },
+      "originalWorld": {
+        "w": 150,
+        "h": 150,
+        "footCenter": {
+          "x": 75,
+          "y": 103.5
+        }
+      },
+      "sourceBefore": {
+        "file": "town/assets/parallel-art/packed/handel-1-8e8ad3bc05bb.webp",
+        "crop": {
+          "x": 622,
+          "y": 4,
+          "w": 367,
+          "h": 459
+        }
+      },
+      "generation": {
+        "tool": "image_gen",
+        "original": "front-facing-2/beds-sofas/originals/board-1-6e75e82d998b.png",
+        "originalSHA256": "6e75e82d998ba1e7404a8ef920393f1260bcc508123de0fb1faad57dc842154a",
+        "crop": [
+          879,
+          413,
+          1181,
+          822
+        ],
+        "acceptedPixelSHA256": "d3ea5777695a892d59a7328f3b27471b23f591f1b3d44e39005d60216a30a1b5",
+        "cameraBenchmarkSHA256": "52cf9ca9eb9241be0fe5cac43c8b06f0dd07996078f7fae9b980b60a386502a2"
+      },
+      "reason": "Straight South elevated parallel2/3 camera with meaningful top plane; preserve source-specific rich material/ornament, genuine curves and chaise layout. Uniform contain inside unchanged original view, foot anchor and physics unchanged.",
+      "inspection": {
+        "completeSilhouette": true,
+        "clearOpaqueBorder": true,
+        "uniformWorldScale": 0.36674816625916873
+      }
+    },
+    {
+      "id": "collection-vivaldi-bed",
+      "facing": "south",
+      "file": "front-facing-2/beds-sofas/board-1-6e75e82d998b.webp",
+      "width": 1254,
+      "height": 1254,
+      "x": 65,
+      "y": 819,
+      "w": 318,
+      "h": 421,
+      "draw": {
+        "x": 18.349168646080756,
+        "y": 0.0,
+        "w": 113.30166270783849,
+        "h": 150.0
+      },
+      "originalDraw": {
+        "x": 5.52995391705069,
+        "y": 0,
+        "w": 138.94009216589862,
+        "h": 150
+      },
+      "originalWorld": {
+        "w": 150,
+        "h": 150,
+        "footCenter": {
+          "x": 75,
+          "y": 103.5
+        }
+      },
+      "sourceBefore": {
+        "file": "town/assets/parallel-art/packed/vivaldi-1-50c4ecf60dba.webp",
+        "crop": {
+          "x": 1008,
+          "y": 4,
+          "w": 372,
+          "h": 452
+        }
+      },
+      "generation": {
+        "tool": "image_gen",
+        "original": "front-facing-2/beds-sofas/originals/board-1-6e75e82d998b.png",
+        "originalSHA256": "6e75e82d998ba1e7404a8ef920393f1260bcc508123de0fb1faad57dc842154a",
+        "crop": [
+          65,
+          819,
+          383,
+          1240
+        ],
+        "acceptedPixelSHA256": "c9ca10196725b70dd86ade95cef9f8c75bc674c3a7cca602c018e6582ab05201",
+        "cameraBenchmarkSHA256": "52cf9ca9eb9241be0fe5cac43c8b06f0dd07996078f7fae9b980b60a386502a2"
+      },
+      "reason": "Straight South elevated parallel2/3 camera with meaningful top plane; preserve source-specific rich material/ornament, genuine curves and chaise layout. Uniform contain inside unchanged original view, foot anchor and physics unchanged.",
+      "inspection": {
+        "completeSilhouette": true,
+        "clearOpaqueBorder": true,
+        "uniformWorldScale": 0.35629453681710216
+      }
+    },
+    {
+      "id": "collection-joplin-bed",
+      "facing": "south",
+      "file": "front-facing-2/beds-sofas/board-1-6e75e82d998b.webp",
+      "width": 1254,
+      "height": 1254,
+      "x": 486,
+      "y": 820,
+      "w": 279,
+      "h": 420,
+      "draw": {
+        "x": 25.17857142857143,
+        "y": 0.0,
+        "w": 99.64285714285714,
+        "h": 150.0
+      },
+      "originalDraw": {
+        "x": 23.300970873786405,
+        "y": 0,
+        "w": 103.39805825242719,
+        "h": 150
+      },
+      "originalWorld": {
+        "w": 150,
+        "h": 150,
+        "footCenter": {
+          "x": 75,
+          "y": 103.5
+        }
+      },
+      "sourceBefore": {
+        "file": "town/assets/parallel-art/packed/joplin-1-763e1d5c17de.webp",
+        "crop": {
+          "x": 906,
+          "y": 4,
+          "w": 300,
+          "h": 455
+        }
+      },
+      "generation": {
+        "tool": "image_gen",
+        "original": "front-facing-2/beds-sofas/originals/board-1-6e75e82d998b.png",
+        "originalSHA256": "6e75e82d998ba1e7404a8ef920393f1260bcc508123de0fb1faad57dc842154a",
+        "crop": [
+          486,
+          820,
+          765,
+          1240
+        ],
+        "acceptedPixelSHA256": "30c3cea1c719d808d8249e83618cbe00f062017abaa1efe0aeaf5196daa450b9",
+        "cameraBenchmarkSHA256": "52cf9ca9eb9241be0fe5cac43c8b06f0dd07996078f7fae9b980b60a386502a2"
+      },
+      "reason": "Straight South elevated parallel2/3 camera with meaningful top plane; preserve source-specific rich material/ornament, genuine curves and chaise layout. Uniform contain inside unchanged original view, foot anchor and physics unchanged.",
+      "inspection": {
+        "completeSilhouette": true,
+        "clearOpaqueBorder": true,
+        "uniformWorldScale": 0.35714285714285715
+      }
+    },
+    {
+      "id": "collection-ellington-bed",
+      "facing": "south",
+      "file": "front-facing-2/beds-sofas/board-1-6e75e82d998b.webp",
+      "width": 1254,
+      "height": 1254,
+      "x": 858,
+      "y": 826,
+      "w": 339,
+      "h": 411,
+      "draw": {
+        "x": 13.138686131386862,
+        "y": 0.0,
+        "w": 123.72262773722628,
+        "h": 150.0
+      },
+      "originalDraw": {
+        "x": 0.691244239631331,
+        "y": 0,
+        "w": 148.61751152073734,
+        "h": 150
+      },
+      "originalWorld": {
+        "w": 150,
+        "h": 150,
+        "footCenter": {
+          "x": 75,
+          "y": 103.5
+        }
+      },
+      "sourceBefore": {
+        "file": "town/assets/parallel-art/packed/ellington-1-8a6ea2e78647.webp",
+        "crop": {
+          "x": 541,
+          "y": 4,
+          "w": 419,
+          "h": 451
+        }
+      },
+      "generation": {
+        "tool": "image_gen",
+        "original": "front-facing-2/beds-sofas/originals/board-1-6e75e82d998b.png",
+        "originalSHA256": "6e75e82d998ba1e7404a8ef920393f1260bcc508123de0fb1faad57dc842154a",
+        "crop": [
+          858,
+          826,
+          1197,
+          1237
+        ],
+        "acceptedPixelSHA256": "4fd40aef3957194f718de022b2edb01517b3d4ad08a1cf44726d4767b07da2a7",
+        "cameraBenchmarkSHA256": "52cf9ca9eb9241be0fe5cac43c8b06f0dd07996078f7fae9b980b60a386502a2"
+      },
+      "reason": "Straight South elevated parallel2/3 camera with meaningful top plane; preserve source-specific rich material/ornament, genuine curves and chaise layout. Uniform contain inside unchanged original view, foot anchor and physics unchanged.",
+      "inspection": {
+        "completeSilhouette": true,
+        "clearOpaqueBorder": true,
+        "uniformWorldScale": 0.36496350364963503
+      }
+    },
+    {
+      "id": "collection-nina-bed",
+      "facing": "south",
+      "file": "front-facing-2/beds-sofas/board-2-2535356a6cfd.webp",
+      "width": 1254,
+      "height": 1254,
+      "x": 90,
+      "y": 29,
+      "w": 290,
+      "h": 390,
+      "draw": {
+        "x": 19.230769230769226,
+        "y": 0.0,
+        "w": 111.53846153846155,
+        "h": 150.0
+      },
+      "originalDraw": {
+        "x": 0,
+        "y": 39.06976744186046,
+        "w": 150,
+        "h": 110.93023255813954
+      },
+      "originalWorld": {
+        "w": 150,
+        "h": 150,
+        "footCenter": {
+          "x": 75,
+          "y": 103.5
+        }
+      },
+      "sourceBefore": {
+        "file": "town/assets/parallel-art/packed/nina-1-927b087c1f62.webp",
+        "crop": {
+          "x": 565,
+          "y": 929,
+          "w": 371,
+          "h": 325
+        }
+      },
+      "generation": {
+        "tool": "image_gen",
+        "original": "front-facing-2/beds-sofas/originals/board-2-2535356a6cfd.png",
+        "originalSHA256": "2535356a6cfd52ff960ef353d0fd1da3c1cae312405562591eeb1f535bfffac9",
+        "crop": [
+          90,
+          29,
+          380,
+          419
+        ],
+        "acceptedPixelSHA256": "7ac32c022dded2428b9552b0a3581b43508c4f28460e5384663f521d350a83db",
+        "cameraBenchmarkSHA256": "52cf9ca9eb9241be0fe5cac43c8b06f0dd07996078f7fae9b980b60a386502a2"
+      },
+      "reason": "Straight South elevated parallel2/3 camera with meaningful top plane; preserve source-specific rich material/ornament, genuine curves and chaise layout. Uniform contain inside unchanged original view, foot anchor and physics unchanged.",
+      "inspection": {
+        "completeSilhouette": true,
+        "clearOpaqueBorder": true,
+        "uniformWorldScale": 0.38461538461538464
+      }
+    },
+    {
+      "id": "collection-dj-bed",
+      "facing": "south",
+      "file": "front-facing-2/beds-sofas/board-2-2535356a6cfd.webp",
+      "width": 1254,
+      "height": 1254,
+      "x": 486,
+      "y": 18,
+      "w": 282,
+      "h": 406,
+      "draw": {
+        "x": 22.906403940886698,
+        "y": 0.0,
+        "w": 104.1871921182266,
+        "h": 150.0
+      },
+      "originalDraw": {
+        "x": 16.316793893129777,
+        "y": 0,
+        "w": 117.36641221374045,
+        "h": 150
+      },
+      "originalWorld": {
+        "w": 150,
+        "h": 150,
+        "footCenter": {
+          "x": 75,
+          "y": 103.5
+        }
+      },
+      "sourceBefore": {
+        "file": "town/assets/parallel-art/packed/dj-1-8da160cb18da.webp",
+        "crop": {
+          "x": 517,
+          "y": 4,
+          "w": 367,
+          "h": 458
+        }
+      },
+      "generation": {
+        "tool": "image_gen",
+        "original": "front-facing-2/beds-sofas/originals/board-2-2535356a6cfd.png",
+        "originalSHA256": "2535356a6cfd52ff960ef353d0fd1da3c1cae312405562591eeb1f535bfffac9",
+        "crop": [
+          486,
+          18,
+          768,
+          424
+        ],
+        "acceptedPixelSHA256": "e95c4ab7fda3a3fc2cfc793fec9b02b22a9053725ef41c81b257dda19982e384",
+        "cameraBenchmarkSHA256": "52cf9ca9eb9241be0fe5cac43c8b06f0dd07996078f7fae9b980b60a386502a2"
+      },
+      "reason": "Straight South elevated parallel2/3 camera with meaningful top plane; preserve source-specific rich material/ornament, genuine curves and chaise layout. Uniform contain inside unchanged original view, foot anchor and physics unchanged.",
+      "inspection": {
+        "completeSilhouette": true,
+        "clearOpaqueBorder": true,
+        "uniformWorldScale": 0.3694581280788177
+      }
+    },
+    {
+      "id": "collection-zizi-bed",
+      "facing": "south",
+      "file": "front-facing-2/beds-sofas/board-2-2535356a6cfd.webp",
+      "width": 1254,
+      "height": 1254,
+      "x": 874,
+      "y": 10,
+      "w": 274,
+      "h": 410,
+      "draw": {
+        "x": 24.87804878048781,
+        "y": 0.0,
+        "w": 100.24390243902438,
+        "h": 150.0
+      },
+      "originalDraw": {
+        "x": 23.300970873786405,
+        "y": 0,
+        "w": 103.39805825242719,
+        "h": 150.0
+      },
+      "originalWorld": {
+        "w": 150,
+        "h": 150
+      },
+      "sourceBefore": {
+        "file": "town/assets/apartment-collections/zizi-south-cardinal-fa04274f46d2.webp",
+        "crop": {
+          "x": 4,
+          "y": 929,
+          "w": 142,
+          "h": 206
+        }
+      },
+      "generation": {
+        "tool": "image_gen",
+        "original": "front-facing-2/beds-sofas/originals/board-2-2535356a6cfd.png",
+        "originalSHA256": "2535356a6cfd52ff960ef353d0fd1da3c1cae312405562591eeb1f535bfffac9",
+        "crop": [
+          874,
+          10,
+          1148,
+          420
+        ],
+        "acceptedPixelSHA256": "b5a46b327c90e7e9ff74e16e82ddce37b3f28f06106cf446ca0c2b9364586e3d",
+        "cameraBenchmarkSHA256": "52cf9ca9eb9241be0fe5cac43c8b06f0dd07996078f7fae9b980b60a386502a2"
+      },
+      "reason": "Straight South elevated parallel2/3 camera with meaningful top plane; preserve source-specific rich material/ornament, genuine curves and chaise layout. Uniform contain inside unchanged original view, foot anchor and physics unchanged.",
+      "inspection": {
+        "completeSilhouette": true,
+        "clearOpaqueBorder": true,
+        "uniformWorldScale": 0.36585365853658536
+      }
+    },
+    {
+      "id": "collection-metronome-bed",
+      "facing": "south",
+      "file": "front-facing-2/beds-sofas/board-2-2535356a6cfd.webp",
+      "width": 1254,
+      "height": 1254,
+      "x": 108,
+      "y": 413,
+      "w": 254,
+      "h": 404,
+      "draw": {
+        "x": 27.846534653465348,
+        "y": 0.0,
+        "w": 94.3069306930693,
+        "h": 150.0
+      },
+      "originalDraw": {
+        "x": 23.103448275862064,
+        "y": 0,
+        "w": 103.79310344827587,
+        "h": 150
+      },
+      "originalWorld": {
+        "w": 150,
+        "h": 150,
+        "footCenter": {
+          "x": 75,
+          "y": 103.49999999999999
+        }
+      },
+      "sourceBefore": {
+        "file": "town/assets/parallel-art/packed/metronome-1-559dae9b3971.webp",
+        "crop": {
+          "x": 890,
+          "y": 4,
+          "w": 336,
+          "h": 471
+        }
+      },
+      "generation": {
+        "tool": "image_gen",
+        "original": "front-facing-2/beds-sofas/originals/board-2-2535356a6cfd.png",
+        "originalSHA256": "2535356a6cfd52ff960ef353d0fd1da3c1cae312405562591eeb1f535bfffac9",
+        "crop": [
+          108,
+          413,
+          362,
+          817
+        ],
+        "acceptedPixelSHA256": "6c794cc88c8145a787d5cc3e17c4bee06de37b4c57f07db0f143c67760bc43c0",
+        "cameraBenchmarkSHA256": "52cf9ca9eb9241be0fe5cac43c8b06f0dd07996078f7fae9b980b60a386502a2"
+      },
+      "reason": "Straight South elevated parallel2/3 camera with meaningful top plane; preserve source-specific rich material/ornament, genuine curves and chaise layout. Uniform contain inside unchanged original view, foot anchor and physics unchanged.",
+      "inspection": {
+        "completeSilhouette": true,
+        "clearOpaqueBorder": true,
+        "uniformWorldScale": 0.3712871287128713
+      }
+    },
+    {
+      "id": "collection-showroom-victorian-parlor-bed",
+      "facing": "south",
+      "file": "front-facing-2/beds-sofas/board-2-2535356a6cfd.webp",
+      "width": 1254,
+      "height": 1254,
+      "x": 487,
+      "y": 422,
+      "w": 280,
+      "h": 395,
+      "draw": {
+        "x": 21.835443037974677,
+        "y": 0.0,
+        "w": 106.32911392405065,
+        "h": 150.0
+      },
+      "originalDraw": {
+        "x": 2.1028037383177605,
+        "y": 0,
+        "w": 145.79439252336448,
+        "h": 150
+      },
+      "originalWorld": {
+        "w": 150,
+        "h": 150,
+        "footCenter": {
+          "x": 75,
+          "y": 103.5
+        }
+      },
+      "sourceBefore": {
+        "file": "town/assets/parallel-art/packed/showroom-victorian-parlor-1-a5c5cfd7b6e9.webp",
+        "crop": {
+          "x": 573,
+          "y": 4,
+          "w": 379,
+          "h": 451
+        }
+      },
+      "generation": {
+        "tool": "image_gen",
+        "original": "front-facing-2/beds-sofas/originals/board-2-2535356a6cfd.png",
+        "originalSHA256": "2535356a6cfd52ff960ef353d0fd1da3c1cae312405562591eeb1f535bfffac9",
+        "crop": [
+          487,
+          422,
+          767,
+          817
+        ],
+        "acceptedPixelSHA256": "a408a03899d83bf66f8f94149756f5b2c1b57bfa8d1d8359b65324f97c5cbd0a",
+        "cameraBenchmarkSHA256": "52cf9ca9eb9241be0fe5cac43c8b06f0dd07996078f7fae9b980b60a386502a2"
+      },
+      "reason": "Straight South elevated parallel2/3 camera with meaningful top plane; preserve source-specific rich material/ornament, genuine curves and chaise layout. Uniform contain inside unchanged original view, foot anchor and physics unchanged.",
+      "inspection": {
+        "completeSilhouette": true,
+        "clearOpaqueBorder": true,
+        "uniformWorldScale": 0.379746835443038
+      }
+    },
+    {
+      "id": "collection-showroom-coastal-bedroom-bed",
+      "facing": "south",
+      "file": "front-facing-2/beds-sofas/board-2-2535356a6cfd.webp",
+      "width": 1254,
+      "height": 1254,
+      "x": 873,
+      "y": 420,
+      "w": 277,
+      "h": 397,
+      "draw": {
+        "x": 22.670025188916874,
+        "y": 0.0,
+        "w": 104.65994962216625,
+        "h": 150.0
+      },
+      "originalDraw": {
+        "x": 2.476415094339629,
+        "y": 0,
+        "w": 145.04716981132074,
+        "h": 150
+      },
+      "originalWorld": {
+        "w": 150,
+        "h": 150,
+        "footCenter": {
+          "x": 75,
+          "y": 103.5
+        }
+      },
+      "sourceBefore": {
+        "file": "town/assets/parallel-art/packed/showroom-coastal-bedroom-1-68123a538721.webp",
+        "crop": {
+          "x": 543,
+          "y": 4,
+          "w": 379,
+          "h": 444
+        }
+      },
+      "generation": {
+        "tool": "image_gen",
+        "original": "front-facing-2/beds-sofas/originals/board-2-2535356a6cfd.png",
+        "originalSHA256": "2535356a6cfd52ff960ef353d0fd1da3c1cae312405562591eeb1f535bfffac9",
+        "crop": [
+          873,
+          420,
+          1150,
+          817
+        ],
+        "acceptedPixelSHA256": "2f04ddf60223860d489a447514ea3ce9ef97a91c3c465157eb2cd743e027daf0",
+        "cameraBenchmarkSHA256": "52cf9ca9eb9241be0fe5cac43c8b06f0dd07996078f7fae9b980b60a386502a2"
+      },
+      "reason": "Straight South elevated parallel2/3 camera with meaningful top plane; preserve source-specific rich material/ornament, genuine curves and chaise layout. Uniform contain inside unchanged original view, foot anchor and physics unchanged.",
+      "inspection": {
+        "completeSilhouette": true,
+        "clearOpaqueBorder": true,
+        "uniformWorldScale": 0.3778337531486146
+      }
+    },
+    {
+      "id": "collection-showroom-rustic-kitchen-bed",
+      "facing": "south",
+      "file": "front-facing-2/beds-sofas/board-2-2535356a6cfd.webp",
+      "width": 1254,
+      "height": 1254,
+      "x": 103,
+      "y": 820,
+      "w": 266,
+      "h": 412,
+      "draw": {
+        "x": 26.577669902912618,
+        "y": 0.0,
+        "w": 96.84466019417476,
+        "h": 150.0
+      },
+      "originalDraw": {
+        "x": 1.7361111111111143,
+        "y": 0,
+        "w": 146.52777777777777,
+        "h": 150
+      },
+      "originalWorld": {
+        "w": 150,
+        "h": 150,
+        "footCenter": {
+          "x": 75,
+          "y": 103.5
+        }
+      },
+      "sourceBefore": {
+        "file": "town/assets/parallel-art/packed/showroom-rustic-kitchen-1-cbd5d56ae712.webp",
+        "crop": {
+          "x": 986,
+          "y": 4,
+          "w": 376,
+          "h": 448
+        }
+      },
+      "generation": {
+        "tool": "image_gen",
+        "original": "front-facing-2/beds-sofas/originals/board-2-2535356a6cfd.png",
+        "originalSHA256": "2535356a6cfd52ff960ef353d0fd1da3c1cae312405562591eeb1f535bfffac9",
+        "crop": [
+          103,
+          820,
+          369,
+          1232
+        ],
+        "acceptedPixelSHA256": "5bc18da60a8d2388ea000e415220e14714e741fe51d3db3ed98b620e5ab996bb",
+        "cameraBenchmarkSHA256": "52cf9ca9eb9241be0fe5cac43c8b06f0dd07996078f7fae9b980b60a386502a2"
+      },
+      "reason": "Straight South elevated parallel2/3 camera with meaningful top plane; preserve source-specific rich material/ornament, genuine curves and chaise layout. Uniform contain inside unchanged original view, foot anchor and physics unchanged.",
+      "inspection": {
+        "completeSilhouette": true,
+        "clearOpaqueBorder": true,
+        "uniformWorldScale": 0.3640776699029126
+      }
+    },
+    {
+      "id": "collection-showroom-botanical-conservatory-bed",
+      "facing": "south",
+      "file": "front-facing-2/beds-sofas/board-2-2535356a6cfd.webp",
+      "width": 1254,
+      "height": 1254,
+      "x": 492,
+      "y": 816,
+      "w": 267,
+      "h": 416,
+      "draw": {
+        "x": 26.862980769230766,
+        "y": 0.0,
+        "w": 96.27403846153847,
+        "h": 150.0
+      },
+      "originalDraw": {
+        "x": 21.134020618556704,
+        "y": 2.842170943040401e-14,
+        "w": 107.73195876288659,
+        "h": 149.99999999999997
+      },
+      "originalWorld": {
+        "w": 150,
+        "h": 150,
+        "footCenter": {
+          "x": 75,
+          "y": 103.5
+        }
+      },
+      "sourceBefore": {
+        "file": "town/assets/parallel-art/packed/showroom-botanical-conservatory-1-8e1ac9e50cec.webp",
+        "crop": {
+          "x": 4,
+          "y": 4,
+          "w": 328,
+          "h": 453
+        }
+      },
+      "generation": {
+        "tool": "image_gen",
+        "original": "front-facing-2/beds-sofas/originals/board-2-2535356a6cfd.png",
+        "originalSHA256": "2535356a6cfd52ff960ef353d0fd1da3c1cae312405562591eeb1f535bfffac9",
+        "crop": [
+          492,
+          816,
+          759,
+          1232
+        ],
+        "acceptedPixelSHA256": "73fbedf92eee0d748589ae809bd8ea40bdc5b0692d166a7c96167d148f7ec5af",
+        "cameraBenchmarkSHA256": "52cf9ca9eb9241be0fe5cac43c8b06f0dd07996078f7fae9b980b60a386502a2"
+      },
+      "reason": "Straight South elevated parallel2/3 camera with meaningful top plane; preserve source-specific rich material/ornament, genuine curves and chaise layout. Uniform contain inside unchanged original view, foot anchor and physics unchanged.",
+      "inspection": {
+        "completeSilhouette": true,
+        "clearOpaqueBorder": true,
+        "uniformWorldScale": 0.3605769230769231
+      }
+    },
+    {
+      "id": "collection-showroom-industrial-loft-bed",
+      "facing": "south",
+      "file": "front-facing-2/beds-sofas/board-2-2535356a6cfd.webp",
+      "width": 1254,
+      "height": 1254,
+      "x": 868,
+      "y": 817,
+      "w": 289,
+      "h": 421,
+      "draw": {
+        "x": 23.51543942992874,
+        "y": 0.0,
+        "w": 102.96912114014252,
+        "h": 150.0
+      },
+      "originalDraw": {
+        "x": 4.128440366972484,
+        "y": 0,
+        "w": 141.74311926605503,
+        "h": 150
+      },
+      "originalWorld": {
+        "w": 150,
+        "h": 150,
+        "footCenter": {
+          "x": 75,
+          "y": 103.5
+        }
+      },
+      "sourceBefore": {
+        "file": "town/assets/parallel-art/packed/showroom-industrial-loft-1-829880aec58d.webp",
+        "crop": {
+          "x": 252,
+          "y": 4,
+          "w": 405,
+          "h": 462
+        }
+      },
+      "generation": {
+        "tool": "image_gen",
+        "original": "front-facing-2/beds-sofas/originals/board-2-2535356a6cfd.png",
+        "originalSHA256": "2535356a6cfd52ff960ef353d0fd1da3c1cae312405562591eeb1f535bfffac9",
+        "crop": [
+          868,
+          817,
+          1157,
+          1238
+        ],
+        "acceptedPixelSHA256": "395c27f9a30eb17c9e4925538b55716b981133d827f8dda4b70430492c60cf3d",
+        "cameraBenchmarkSHA256": "52cf9ca9eb9241be0fe5cac43c8b06f0dd07996078f7fae9b980b60a386502a2"
+      },
+      "reason": "Straight South elevated parallel2/3 camera with meaningful top plane; preserve source-specific rich material/ornament, genuine curves and chaise layout. Uniform contain inside unchanged original view, foot anchor and physics unchanged.",
+      "inspection": {
+        "completeSilhouette": true,
+        "clearOpaqueBorder": true,
+        "uniformWorldScale": 0.35629453681710216
+      }
+    },
+    {
+      "id": "collection-showroom-cyberpunk-bed",
+      "facing": "south",
+      "file": "front-facing-2/beds-sofas/board-3-86f86c613582.webp",
+      "width": 1774,
+      "height": 887,
+      "x": 173,
+      "y": 37,
+      "w": 623,
+      "h": 828,
+      "draw": {
+        "x": 18.568840579710148,
+        "y": 0.0,
+        "w": 112.8623188405797,
+        "h": 150.0
+      },
+      "originalDraw": {
+        "x": 0,
+        "y": 20.930232558139522,
+        "w": 150,
+        "h": 129.06976744186048
+      },
+      "originalWorld": {
+        "w": 150,
+        "h": 150,
+        "footCenter": {
+          "x": 75,
+          "y": 103.5
+        }
+      },
+      "sourceBefore": {
+        "file": "town/assets/parallel-art/packed/showroom-cyberpunk-1-59ad4f88ab20.webp",
+        "crop": {
+          "x": 4,
+          "y": 459,
+          "w": 406,
+          "h": 382
+        }
+      },
+      "generation": {
+        "tool": "image_gen",
+        "original": "front-facing-2/beds-sofas/originals/board-3-86f86c613582.png",
+        "originalSHA256": "86f86c6135826e08ab6253ed74a38fae9fa442f42747275553d16b329742011c",
+        "crop": [
+          173,
+          37,
+          796,
+          865
+        ],
+        "acceptedPixelSHA256": "693e1c83258fc9917f7ffbc7f9a5582c20e7d34d173d616ad91e77edc88d1faf",
+        "cameraBenchmarkSHA256": "52cf9ca9eb9241be0fe5cac43c8b06f0dd07996078f7fae9b980b60a386502a2"
+      },
+      "reason": "Straight South elevated parallel2/3 camera with meaningful top plane; preserve source-specific rich material/ornament, genuine curves and chaise layout. Uniform contain inside unchanged original view, foot anchor and physics unchanged.",
+      "inspection": {
+        "completeSilhouette": true,
+        "clearOpaqueBorder": true,
+        "uniformWorldScale": 0.18115942028985507
+      }
+    },
+    {
+      "id": "collection-showroom-steampunk-bed",
+      "facing": "south",
+      "file": "front-facing-2/beds-sofas/board-3-86f86c613582.webp",
+      "width": 1774,
+      "height": 887,
+      "x": 1005,
+      "y": 5,
+      "w": 614,
+      "h": 866,
+      "draw": {
+        "x": 21.82448036951501,
+        "y": 0.0,
+        "w": 106.35103926096998,
+        "h": 150.0
+      },
+      "originalDraw": {
+        "x": 6.164383561643845,
+        "y": 0,
+        "w": 137.6712328767123,
+        "h": 150
+      },
+      "originalWorld": {
+        "w": 150,
+        "h": 150,
+        "footCenter": {
+          "x": 75,
+          "y": 103.5
+        }
+      },
+      "sourceBefore": {
+        "file": "town/assets/parallel-art/packed/showroom-steampunk-1-fe8726b2d70a.webp",
+        "crop": {
+          "x": 425,
+          "y": 4,
+          "w": 404,
+          "h": 450
+        }
+      },
+      "generation": {
+        "tool": "image_gen",
+        "original": "front-facing-2/beds-sofas/originals/board-3-86f86c613582.png",
+        "originalSHA256": "86f86c6135826e08ab6253ed74a38fae9fa442f42747275553d16b329742011c",
+        "crop": [
+          1005,
+          5,
+          1619,
+          871
+        ],
+        "acceptedPixelSHA256": "4cddf8d5f8785e87f1ca9b3ead47630b3ebdff3161640472b3c87c162d5bbc86",
+        "cameraBenchmarkSHA256": "52cf9ca9eb9241be0fe5cac43c8b06f0dd07996078f7fae9b980b60a386502a2"
+      },
+      "reason": "Straight South elevated parallel2/3 camera with meaningful top plane; preserve source-specific rich material/ornament, genuine curves and chaise layout. Uniform contain inside unchanged original view, foot anchor and physics unchanged.",
+      "inspection": {
+        "completeSilhouette": true,
+        "clearOpaqueBorder": true,
+        "uniformWorldScale": 0.17321016166281755
+      }
+    },
+    {
+      "id": "collection-bach-sofa",
+      "facing": "south",
+      "file": "front-facing-2/beds-sofas/board-4-a4e6f9b702a6.webp",
+      "width": 1254,
+      "height": 1254,
+      "x": 21,
+      "y": 17,
+      "w": 378,
+      "h": 407,
+      "draw": {
+        "x": 31.48894348894349,
+        "y": 0.0,
+        "w": 117.02211302211302,
+        "h": 126.0
+      },
+      "originalDraw": {
+        "x": 20.15217391304347,
+        "y": 0,
+        "w": 139.69565217391306,
+        "h": 126.00000000000001
+      },
+      "originalWorld": {
+        "w": 180,
+        "h": 126,
+        "footCenter": {
+          "x": 90,
+          "y": 99
+        }
+      },
+      "sourceBefore": {
+        "file": "town/assets/parallel-art/packed/bach-1-4cae87c925f3.webp",
+        "crop": {
+          "x": 1618,
+          "y": 1153,
+          "w": 413,
+          "h": 405
+        }
+      },
+      "generation": {
+        "tool": "image_gen",
+        "original": "front-facing-2/beds-sofas/originals/board-4-a4e6f9b702a6.png",
+        "originalSHA256": "a4e6f9b702a639a581e081394349c919c83cbd29b8e9fd69d0fa2598118d621b",
+        "crop": [
+          21,
+          17,
+          399,
+          424
+        ],
+        "acceptedPixelSHA256": "9327442e9ec9520d4ba858b16d3da51f2de6fc3d81b4bca75283e83afecda1aa",
+        "cameraBenchmarkSHA256": "52cf9ca9eb9241be0fe5cac43c8b06f0dd07996078f7fae9b980b60a386502a2"
+      },
+      "reason": "Straight South elevated parallel2/3 camera with meaningful top plane; preserve source-specific rich material/ornament, genuine curves and chaise layout. Uniform contain inside unchanged original view, foot anchor and physics unchanged.",
+      "inspection": {
+        "completeSilhouette": true,
+        "clearOpaqueBorder": true,
+        "uniformWorldScale": 0.3095823095823096
+      }
+    },
+    {
+      "id": "collection-mozart-sofa",
+      "facing": "south",
+      "file": "front-facing-2/beds-sofas/board-4-a4e6f9b702a6.webp",
+      "width": 1254,
+      "height": 1254,
+      "x": 423,
+      "y": 46,
+      "w": 402,
+      "h": 372,
+      "draw": {
+        "x": 21.91935483870968,
+        "y": 1.4210854715202004e-14,
+        "w": 136.16129032258064,
+        "h": 125.99999999999999
+      },
+      "originalDraw": {
+        "x": 11.15337423312883,
+        "y": 0,
+        "w": 157.69325153374234,
+        "h": 126
+      },
+      "originalWorld": {
+        "w": 180,
+        "h": 126,
+        "footCenter": {
+          "x": 90,
+          "y": 99
+        }
+      },
+      "sourceBefore": {
+        "file": "town/assets/parallel-art/packed/mozart-1-48d4e79eeb44.webp",
+        "crop": {
+          "x": 443,
+          "y": 497,
+          "w": 440,
+          "h": 363
+        }
+      },
+      "generation": {
+        "tool": "image_gen",
+        "original": "front-facing-2/beds-sofas/originals/board-4-a4e6f9b702a6.png",
+        "originalSHA256": "a4e6f9b702a639a581e081394349c919c83cbd29b8e9fd69d0fa2598118d621b",
+        "crop": [
+          423,
+          46,
+          825,
+          418
+        ],
+        "acceptedPixelSHA256": "60e27e87e11c9b98ddf7fedc2099dea0ab9f315a70fe6ef53d874b5a64e07ebd",
+        "cameraBenchmarkSHA256": "52cf9ca9eb9241be0fe5cac43c8b06f0dd07996078f7fae9b980b60a386502a2"
+      },
+      "reason": "Straight South elevated parallel2/3 camera with meaningful top plane; preserve source-specific rich material/ornament, genuine curves and chaise layout. Uniform contain inside unchanged original view, foot anchor and physics unchanged.",
+      "inspection": {
+        "completeSilhouette": true,
+        "clearOpaqueBorder": true,
+        "uniformWorldScale": 0.3387096774193548
+      }
+    },
+    {
+      "id": "collection-beethoven-sofa",
+      "facing": "south",
+      "file": "front-facing-2/beds-sofas/board-4-a4e6f9b702a6.webp",
+      "width": 1254,
+      "height": 1254,
+      "x": 838,
+      "y": 90,
+      "w": 403,
+      "h": 330,
+      "draw": {
+        "x": 13.063636363636363,
+        "y": 0.0,
+        "w": 153.87272727272727,
+        "h": 126.0
+      },
+      "originalDraw": {
+        "x": 0,
+        "y": 29.009708737864088,
+        "w": 180.0,
+        "h": 96.99029126213591
+      },
+      "originalWorld": {
+        "w": 180,
+        "h": 126
+      },
+      "sourceBefore": {
+        "file": "town/assets/apartment-collections/beethoven-south-cardinal-3fc2dcbe24c1.webp",
+        "crop": {
+          "x": 1475,
+          "y": 1976,
+          "w": 206,
+          "h": 111
+        }
+      },
+      "generation": {
+        "tool": "image_gen",
+        "original": "front-facing-2/beds-sofas/originals/board-4-a4e6f9b702a6.png",
+        "originalSHA256": "a4e6f9b702a639a581e081394349c919c83cbd29b8e9fd69d0fa2598118d621b",
+        "crop": [
+          838,
+          90,
+          1241,
+          420
+        ],
+        "acceptedPixelSHA256": "73aaafdd83a4766665cbf37b905237aada782e927916a86cf340b2061b05e6f2",
+        "cameraBenchmarkSHA256": "52cf9ca9eb9241be0fe5cac43c8b06f0dd07996078f7fae9b980b60a386502a2"
+      },
+      "reason": "Straight South elevated parallel2/3 camera with meaningful top plane; preserve source-specific rich material/ornament, genuine curves and chaise layout. Uniform contain inside unchanged original view, foot anchor and physics unchanged.",
+      "inspection": {
+        "completeSilhouette": true,
+        "clearOpaqueBorder": true,
+        "uniformWorldScale": 0.38181818181818183
+      }
+    },
+    {
+      "id": "collection-clara-sofa",
+      "facing": "south",
+      "file": "front-facing-2/beds-sofas/board-4-a4e6f9b702a6.webp",
+      "width": 1254,
+      "height": 1254,
+      "x": 8,
+      "y": 474,
+      "w": 402,
+      "h": 315,
+      "draw": {
+        "x": 9.599999999999994,
+        "y": 0.0,
+        "w": 160.8,
+        "h": 126.0
+      },
+      "originalDraw": {
+        "x": 0,
+        "y": 4.333333333333329,
+        "w": 180.0,
+        "h": 121.66666666666667
+      },
+      "originalWorld": {
+        "w": 180,
+        "h": 126
+      },
+      "sourceBefore": {
+        "file": "town/assets/apartment-collections/clara-south-cardinal-d019e963a870.webp",
+        "crop": {
+          "x": 1044,
+          "y": 1064,
+          "w": 216,
+          "h": 146
+        }
+      },
+      "generation": {
+        "tool": "image_gen",
+        "original": "front-facing-2/beds-sofas/originals/board-4-a4e6f9b702a6.png",
+        "originalSHA256": "a4e6f9b702a639a581e081394349c919c83cbd29b8e9fd69d0fa2598118d621b",
+        "crop": [
+          8,
+          474,
+          410,
+          789
+        ],
+        "acceptedPixelSHA256": "07c3b3acb3fa3d394b970fef343657835399e4043bd2e3dc6cbdfe1b87530b0e",
+        "cameraBenchmarkSHA256": "52cf9ca9eb9241be0fe5cac43c8b06f0dd07996078f7fae9b980b60a386502a2"
+      },
+      "reason": "Straight South elevated parallel2/3 camera with meaningful top plane; preserve source-specific rich material/ornament, genuine curves and chaise layout. Uniform contain inside unchanged original view, foot anchor and physics unchanged.",
+      "inspection": {
+        "completeSilhouette": true,
+        "clearOpaqueBorder": true,
+        "uniformWorldScale": 0.4
+      }
+    },
+    {
+      "id": "collection-chopin-sofa",
+      "facing": "south",
+      "file": "front-facing-2/beds-sofas/board-4-a4e6f9b702a6.webp",
+      "width": 1254,
+      "height": 1254,
+      "x": 417,
+      "y": 455,
+      "w": 415,
+      "h": 349,
+      "draw": {
+        "x": 15.085959885386814,
+        "y": 0.0,
+        "w": 149.82808022922637,
+        "h": 126.0
+      },
+      "originalDraw": {
+        "x": 7.200000000000003,
+        "y": 1.4210854715202004e-14,
+        "w": 165.6,
+        "h": 125.99999999999999
+      },
+      "originalWorld": {
+        "w": 180,
+        "h": 126
+      },
+      "sourceBefore": {
+        "file": "town/assets/apartment-collections/cardinal-fixes/chopin-sofa-south-0222aef29e13.webp",
+        "crop": {
+          "x": 0,
+          "y": 0,
+          "w": 322,
+          "h": 245
+        }
+      },
+      "generation": {
+        "tool": "image_gen",
+        "original": "front-facing-2/beds-sofas/originals/board-4-a4e6f9b702a6.png",
+        "originalSHA256": "a4e6f9b702a639a581e081394349c919c83cbd29b8e9fd69d0fa2598118d621b",
+        "crop": [
+          417,
+          455,
+          832,
+          804
+        ],
+        "acceptedPixelSHA256": "4b2efe3f24394176afcf4ef54b6f1af93e5769fb672df5c7d5f3a9254c23d23f",
+        "cameraBenchmarkSHA256": "52cf9ca9eb9241be0fe5cac43c8b06f0dd07996078f7fae9b980b60a386502a2"
+      },
+      "reason": "Straight South elevated parallel2/3 camera with meaningful top plane; preserve source-specific rich material/ornament, genuine curves and chaise layout. Uniform contain inside unchanged original view, foot anchor and physics unchanged.",
+      "inspection": {
+        "completeSilhouette": true,
+        "clearOpaqueBorder": true,
+        "uniformWorldScale": 0.3610315186246419
+      }
+    },
+    {
+      "id": "collection-haydn-sofa",
+      "facing": "south",
+      "file": "front-facing-2/beds-sofas/board-4-a4e6f9b702a6.webp",
+      "width": 1254,
+      "height": 1254,
+      "x": 840,
+      "y": 457,
+      "w": 397,
+      "h": 332,
+      "draw": {
+        "x": 14.665662650602414,
+        "y": 0.0,
+        "w": 150.66867469879517,
+        "h": 126.0
+      },
+      "originalDraw": {
+        "x": 5.603773584905653,
+        "y": 0,
+        "w": 168.7924528301887,
+        "h": 126.00000000000001
+      },
+      "originalWorld": {
+        "w": 180,
+        "h": 126
+      },
+      "sourceBefore": {
+        "file": "town/assets/apartment-collections/haydn-south-cardinal-c42d7912a677.webp",
+        "crop": {
+          "x": 418,
+          "y": 1079,
+          "w": 213,
+          "h": 159
+        }
+      },
+      "generation": {
+        "tool": "image_gen",
+        "original": "front-facing-2/beds-sofas/originals/board-4-a4e6f9b702a6.png",
+        "originalSHA256": "a4e6f9b702a639a581e081394349c919c83cbd29b8e9fd69d0fa2598118d621b",
+        "crop": [
+          840,
+          457,
+          1237,
+          789
+        ],
+        "acceptedPixelSHA256": "18577d78f1e8bd6bc3781b03c70e686f236bc20193947a37586cba98a4569ac4",
+        "cameraBenchmarkSHA256": "52cf9ca9eb9241be0fe5cac43c8b06f0dd07996078f7fae9b980b60a386502a2"
+      },
+      "reason": "Straight South elevated parallel2/3 camera with meaningful top plane; preserve source-specific rich material/ornament, genuine curves and chaise layout. Uniform contain inside unchanged original view, foot anchor and physics unchanged.",
+      "inspection": {
+        "completeSilhouette": true,
+        "clearOpaqueBorder": true,
+        "uniformWorldScale": 0.3795180722891566
+      }
+    },
+    {
+      "id": "collection-handel-sofa",
+      "facing": "south",
+      "file": "front-facing-2/beds-sofas/board-4-a4e6f9b702a6.webp",
+      "width": 1254,
+      "height": 1254,
+      "x": 6,
+      "y": 845,
+      "w": 401,
+      "h": 383,
+      "draw": {
+        "x": 24.039164490861623,
+        "y": 1.4210854715202004e-14,
+        "w": 131.92167101827675,
+        "h": 125.99999999999999
+      },
+      "originalDraw": {
+        "x": 10.534090909090907,
+        "y": 0,
+        "w": 158.9318181818182,
+        "h": 126.0
+      },
+      "originalWorld": {
+        "w": 180,
+        "h": 126
+      },
+      "sourceBefore": {
+        "file": "town/assets/apartment-collections/handel-south-cardinal-f069238584fc.webp",
+        "crop": {
+          "x": 823,
+          "y": 1587,
+          "w": 222,
+          "h": 176
+        }
+      },
+      "generation": {
+        "tool": "image_gen",
+        "original": "front-facing-2/beds-sofas/originals/board-4-a4e6f9b702a6.png",
+        "originalSHA256": "a4e6f9b702a639a581e081394349c919c83cbd29b8e9fd69d0fa2598118d621b",
+        "crop": [
+          6,
+          845,
+          407,
+          1228
+        ],
+        "acceptedPixelSHA256": "371b6e1aecdaf639b3f412bcffc189913e18a9906cc0374f3f43a48f3d8fe871",
+        "cameraBenchmarkSHA256": "52cf9ca9eb9241be0fe5cac43c8b06f0dd07996078f7fae9b980b60a386502a2"
+      },
+      "reason": "Straight South elevated parallel2/3 camera with meaningful top plane; preserve source-specific rich material/ornament, genuine curves and chaise layout. Uniform contain inside unchanged original view, foot anchor and physics unchanged.",
+      "inspection": {
+        "completeSilhouette": true,
+        "clearOpaqueBorder": true,
+        "uniformWorldScale": 0.3289817232375979
+      }
+    },
+    {
+      "id": "collection-vivaldi-sofa",
+      "facing": "south",
+      "file": "front-facing-2/beds-sofas/board-4-a4e6f9b702a6.webp",
+      "width": 1254,
+      "height": 1254,
+      "x": 416,
+      "y": 834,
+      "w": 414,
+      "h": 384,
+      "draw": {
+        "x": 22.078125,
+        "y": 0.0,
+        "w": 135.84375,
+        "h": 126.0
+      },
+      "originalDraw": {
+        "x": 13.118644067796609,
+        "y": 0,
+        "w": 153.76271186440678,
+        "h": 126.0
+      },
+      "originalWorld": {
+        "w": 180,
+        "h": 126
+      },
+      "sourceBefore": {
+        "file": "town/assets/apartment-collections/vivaldi-south-cardinal-6138afdec004.webp",
+        "crop": {
+          "x": 641,
+          "y": 1132,
+          "w": 216,
+          "h": 177
+        }
+      },
+      "generation": {
+        "tool": "image_gen",
+        "original": "front-facing-2/beds-sofas/originals/board-4-a4e6f9b702a6.png",
+        "originalSHA256": "a4e6f9b702a639a581e081394349c919c83cbd29b8e9fd69d0fa2598118d621b",
+        "crop": [
+          416,
+          834,
+          830,
+          1218
+        ],
+        "acceptedPixelSHA256": "5ba33d20bd7428889e5619cdb77b1a99cd63a8ca824ece6b0bfe17aa20812ed5",
+        "cameraBenchmarkSHA256": "52cf9ca9eb9241be0fe5cac43c8b06f0dd07996078f7fae9b980b60a386502a2"
+      },
+      "reason": "Straight South elevated parallel2/3 camera with meaningful top plane; preserve source-specific rich material/ornament, genuine curves and chaise layout. Uniform contain inside unchanged original view, foot anchor and physics unchanged.",
+      "inspection": {
+        "completeSilhouette": true,
+        "clearOpaqueBorder": true,
+        "uniformWorldScale": 0.328125
+      }
+    },
+    {
+      "id": "collection-joplin-sofa",
+      "facing": "south",
+      "file": "front-facing-2/beds-sofas/board-4-a4e6f9b702a6.webp",
+      "width": 1254,
+      "height": 1254,
+      "x": 841,
+      "y": 838,
+      "w": 406,
+      "h": 380,
+      "draw": {
+        "x": 22.689473684210526,
+        "y": 1.4210854715202004e-14,
+        "w": 134.62105263157895,
+        "h": 125.99999999999999
+      },
+      "originalDraw": {
+        "x": 16.18301886792453,
+        "y": 0,
+        "w": 147.63396226415094,
+        "h": 126.0
+      },
+      "originalWorld": {
+        "w": 180,
+        "h": 126
+      },
+      "sourceBefore": {
+        "file": "town/assets/apartment-collections/joplin-south-cardinal-51e88f307806.webp",
+        "crop": {
+          "x": 362,
+          "y": 4,
+          "w": 621,
+          "h": 530
+        }
+      },
+      "generation": {
+        "tool": "image_gen",
+        "original": "front-facing-2/beds-sofas/originals/board-4-a4e6f9b702a6.png",
+        "originalSHA256": "a4e6f9b702a639a581e081394349c919c83cbd29b8e9fd69d0fa2598118d621b",
+        "crop": [
+          841,
+          838,
+          1247,
+          1218
+        ],
+        "acceptedPixelSHA256": "5c5684aaad830c3de07b98a23b1af12d512cd4a29fcd3005b6ac4a787485774e",
+        "cameraBenchmarkSHA256": "52cf9ca9eb9241be0fe5cac43c8b06f0dd07996078f7fae9b980b60a386502a2"
+      },
+      "reason": "Straight South elevated parallel2/3 camera with meaningful top plane; preserve source-specific rich material/ornament, genuine curves and chaise layout. Uniform contain inside unchanged original view, foot anchor and physics unchanged.",
+      "inspection": {
+        "completeSilhouette": true,
+        "clearOpaqueBorder": true,
+        "uniformWorldScale": 0.33157894736842103
+      }
+    },
+    {
+      "id": "collection-ellington-sofa",
+      "facing": "south",
+      "file": "front-facing-2/beds-sofas/board-5-989d77f763a3.webp",
+      "width": 1254,
+      "height": 1254,
+      "x": 7,
+      "y": 66,
+      "w": 401,
+      "h": 350,
+      "draw": {
+        "x": 17.820000000000007,
+        "y": 0.0,
+        "w": 144.35999999999999,
+        "h": 126.0
+      },
+      "originalDraw": {
+        "x": 1.4210854715202004e-14,
+        "y": 2.410256410256423,
+        "w": 179.99999999999997,
+        "h": 123.58974358974358
+      },
+      "originalWorld": {
+        "w": 180,
+        "h": 126
+      },
+      "sourceBefore": {
+        "file": "town/assets/apartment-collections/cardinal-fixes/ellington-sofa-south-7b595c7dce26.webp",
+        "crop": {
+          "x": 0,
+          "y": 0,
+          "w": 351,
+          "h": 241
+        }
+      },
+      "generation": {
+        "tool": "image_gen",
+        "original": "front-facing-2/beds-sofas/originals/board-5-989d77f763a3.png",
+        "originalSHA256": "989d77f763a303acb87dd06cc57f841f08edda74353324626aed9190c258e192",
+        "crop": [
+          7,
+          66,
+          408,
+          416
+        ],
+        "acceptedPixelSHA256": "9f7f325edc5b1aaa0ae8625371797e90709381a277061945ead545ccc4ee0b63",
+        "cameraBenchmarkSHA256": "52cf9ca9eb9241be0fe5cac43c8b06f0dd07996078f7fae9b980b60a386502a2"
+      },
+      "reason": "Straight South elevated parallel2/3 camera with meaningful top plane; preserve source-specific rich material/ornament, genuine curves and chaise layout. Uniform contain inside unchanged original view, foot anchor and physics unchanged.",
+      "inspection": {
+        "completeSilhouette": true,
+        "clearOpaqueBorder": true,
+        "uniformWorldScale": 0.36
+      }
+    },
+    {
+      "id": "collection-miles-sofa",
+      "facing": "south",
+      "file": "front-facing-2/beds-sofas/board-5-989d77f763a3.webp",
+      "width": 1254,
+      "height": 1254,
+      "x": 411,
+      "y": 59,
+      "w": 419,
+      "h": 349,
+      "draw": {
+        "x": 14.363896848137543,
+        "y": 0.0,
+        "w": 151.27220630372491,
+        "h": 126.0
+      },
+      "originalDraw": {
+        "x": 0,
+        "y": 2.785714285714292,
+        "w": 180.0,
+        "h": 123.21428571428571
+      },
+      "originalWorld": {
+        "w": 180,
+        "h": 126
+      },
+      "sourceBefore": {
+        "file": "town/assets/apartment-collections/cardinal-fixes/miles-sofa-south-82c08166a014.webp",
+        "crop": {
+          "x": 0,
+          "y": 0,
+          "w": 336,
+          "h": 230
+        }
+      },
+      "generation": {
+        "tool": "image_gen",
+        "original": "front-facing-2/beds-sofas/originals/board-5-989d77f763a3.png",
+        "originalSHA256": "989d77f763a303acb87dd06cc57f841f08edda74353324626aed9190c258e192",
+        "crop": [
+          411,
+          59,
+          830,
+          408
+        ],
+        "acceptedPixelSHA256": "bf5cedc976c461fc9df1bca0d76a4986eeb9a596790725235cdb5788d14df9aa",
+        "cameraBenchmarkSHA256": "52cf9ca9eb9241be0fe5cac43c8b06f0dd07996078f7fae9b980b60a386502a2"
+      },
+      "reason": "Straight South elevated parallel2/3 camera with meaningful top plane; preserve source-specific rich material/ornament, genuine curves and chaise layout. Uniform contain inside unchanged original view, foot anchor and physics unchanged.",
+      "inspection": {
+        "completeSilhouette": true,
+        "clearOpaqueBorder": true,
+        "uniformWorldScale": 0.3610315186246418
+      }
+    },
+    {
+      "id": "collection-zizi-sofa",
+      "facing": "south",
+      "file": "front-facing-2/beds-sofas/board-5-989d77f763a3.webp",
+      "width": 1254,
+      "height": 1254,
+      "x": 826,
+      "y": 39,
+      "w": 420,
+      "h": 370,
+      "draw": {
+        "x": 18.486486486486484,
+        "y": 0.0,
+        "w": 143.02702702702703,
+        "h": 126.0
+      },
+      "originalDraw": {
+        "x": 13.5,
+        "y": 0,
+        "w": 153.0,
+        "h": 126.0
+      },
+      "originalWorld": {
+        "w": 180,
+        "h": 126
+      },
+      "sourceBefore": {
+        "file": "town/assets/apartment-collections/cardinal-fixes/zizi-sofa-south-48d6374bac57.webp",
+        "crop": {
+          "x": 0,
+          "y": 0,
+          "w": 340,
+          "h": 280
+        }
+      },
+      "generation": {
+        "tool": "image_gen",
+        "original": "front-facing-2/beds-sofas/originals/board-5-989d77f763a3.png",
+        "originalSHA256": "989d77f763a303acb87dd06cc57f841f08edda74353324626aed9190c258e192",
+        "crop": [
+          826,
+          39,
+          1246,
+          409
+        ],
+        "acceptedPixelSHA256": "a3b678e875cac087487d3174783b39c1ed3e82f91bbb2d010766e0f315744241",
+        "cameraBenchmarkSHA256": "52cf9ca9eb9241be0fe5cac43c8b06f0dd07996078f7fae9b980b60a386502a2"
+      },
+      "reason": "Straight South elevated parallel2/3 camera with meaningful top plane; preserve source-specific rich material/ornament, genuine curves and chaise layout. Uniform contain inside unchanged original view, foot anchor and physics unchanged.",
+      "inspection": {
+        "completeSilhouette": true,
+        "clearOpaqueBorder": true,
+        "uniformWorldScale": 0.34054054054054056
+      }
+    },
+    {
+      "id": "collection-showroom-victorian-parlor-sofa",
+      "facing": "south",
+      "file": "front-facing-2/beds-sofas/board-5-989d77f763a3.webp",
+      "width": 1254,
+      "height": 1254,
+      "x": 9,
+      "y": 444,
+      "w": 408,
+      "h": 341,
+      "draw": {
+        "x": 14.621700879765399,
+        "y": 0.0,
+        "w": 150.7565982404692,
+        "h": 126.0
+      },
+      "originalDraw": {
+        "x": 2.206451612903223,
+        "y": 0,
+        "w": 175.58709677419355,
+        "h": 126.0
+      },
+      "originalWorld": {
+        "w": 180,
+        "h": 126
+      },
+      "sourceBefore": {
+        "file": "town/assets/apartment-collections/showroom-victorian-parlor-south-cardinal-7aea206b742f.webp",
+        "crop": {
+          "x": 1680,
+          "y": 678,
+          "w": 216,
+          "h": 155
+        }
+      },
+      "generation": {
+        "tool": "image_gen",
+        "original": "front-facing-2/beds-sofas/originals/board-5-989d77f763a3.png",
+        "originalSHA256": "989d77f763a303acb87dd06cc57f841f08edda74353324626aed9190c258e192",
+        "crop": [
+          9,
+          444,
+          417,
+          785
+        ],
+        "acceptedPixelSHA256": "7d95082d74bf0740e4ad46d7a61a22573c9ea3da9225eddc314e6fe227549565",
+        "cameraBenchmarkSHA256": "52cf9ca9eb9241be0fe5cac43c8b06f0dd07996078f7fae9b980b60a386502a2"
+      },
+      "reason": "Straight South elevated parallel2/3 camera with meaningful top plane; preserve source-specific rich material/ornament, genuine curves and chaise layout. Uniform contain inside unchanged original view, foot anchor and physics unchanged.",
+      "inspection": {
+        "completeSilhouette": true,
+        "clearOpaqueBorder": true,
+        "uniformWorldScale": 0.36950146627565983
+      }
+    },
+    {
+      "id": "collection-showroom-art-deco-lounge-sofa",
+      "facing": "south",
+      "file": "front-facing-2/beds-sofas/board-5-989d77f763a3.webp",
+      "width": 1254,
+      "height": 1254,
+      "x": 417,
+      "y": 457,
+      "w": 415,
+      "h": 311,
+      "draw": {
+        "x": 5.932475884244369,
+        "y": 0.0,
+        "w": 168.13504823151126,
+        "h": 126.0
+      },
+      "originalDraw": {
+        "x": 0,
+        "y": 12.666666666666657,
+        "w": 180.0,
+        "h": 113.33333333333334
+      },
+      "originalWorld": {
+        "w": 180,
+        "h": 126
+      },
+      "sourceBefore": {
+        "file": "town/assets/apartment-collections/showroom-art-deco-lounge-south-cardinal-7e5863603897.webp",
+        "crop": {
+          "x": 788,
+          "y": 1225,
+          "w": 216,
+          "h": 136
+        }
+      },
+      "generation": {
+        "tool": "image_gen",
+        "original": "front-facing-2/beds-sofas/originals/board-5-989d77f763a3.png",
+        "originalSHA256": "989d77f763a303acb87dd06cc57f841f08edda74353324626aed9190c258e192",
+        "crop": [
+          417,
+          457,
+          832,
+          768
+        ],
+        "acceptedPixelSHA256": "7aee3d96c6d32f87ff445d0e8e0b1e2a5813d92e503218d4d713d57bdef329ca",
+        "cameraBenchmarkSHA256": "52cf9ca9eb9241be0fe5cac43c8b06f0dd07996078f7fae9b980b60a386502a2"
+      },
+      "reason": "Straight South elevated parallel2/3 camera with meaningful top plane; preserve source-specific rich material/ornament, genuine curves and chaise layout. Uniform contain inside unchanged original view, foot anchor and physics unchanged.",
+      "inspection": {
+        "completeSilhouette": true,
+        "clearOpaqueBorder": true,
+        "uniformWorldScale": 0.40514469453376206
+      }
+    },
+    {
+      "id": "collection-showroom-coastal-bedroom-sofa",
+      "facing": "south",
+      "file": "front-facing-2/beds-sofas/board-5-989d77f763a3.webp",
+      "width": 1254,
+      "height": 1254,
+      "x": 831,
+      "y": 443,
+      "w": 413,
+      "h": 345,
+      "draw": {
+        "x": 14.58260869565217,
+        "y": 0.0,
+        "w": 150.83478260869566,
+        "h": 126.0
+      },
+      "originalDraw": {
+        "x": 5.36363636363636,
+        "y": 0,
+        "w": 169.27272727272728,
+        "h": 126.0
+      },
+      "originalWorld": {
+        "w": 180,
+        "h": 126
+      },
+      "sourceBefore": {
+        "file": "town/assets/apartment-collections/showroom-coastal-bedroom-south-cardinal-c48ff11990c5.webp",
+        "crop": {
+          "x": 1266,
+          "y": 4,
+          "w": 399,
+          "h": 297
+        }
+      },
+      "generation": {
+        "tool": "image_gen",
+        "original": "front-facing-2/beds-sofas/originals/board-5-989d77f763a3.png",
+        "originalSHA256": "989d77f763a303acb87dd06cc57f841f08edda74353324626aed9190c258e192",
+        "crop": [
+          831,
+          443,
+          1244,
+          788
+        ],
+        "acceptedPixelSHA256": "033b02d73a5c8fbab8fc688aeb6ab79a92a58153d249ac2f2f3b782dcca11f0c",
+        "cameraBenchmarkSHA256": "52cf9ca9eb9241be0fe5cac43c8b06f0dd07996078f7fae9b980b60a386502a2"
+      },
+      "reason": "Straight South elevated parallel2/3 camera with meaningful top plane; preserve source-specific rich material/ornament, genuine curves and chaise layout. Uniform contain inside unchanged original view, foot anchor and physics unchanged.",
+      "inspection": {
+        "completeSilhouette": true,
+        "clearOpaqueBorder": true,
+        "uniformWorldScale": 0.3652173913043478
+      }
+    },
+    {
+      "id": "collection-showroom-rustic-kitchen-sofa",
+      "facing": "south",
+      "file": "front-facing-2/beds-sofas/board-5-989d77f763a3.webp",
+      "width": 1254,
+      "height": 1254,
+      "x": 2,
+      "y": 844,
+      "w": 415,
+      "h": 349,
+      "draw": {
+        "x": 15.085959885386814,
+        "y": 0.0,
+        "w": 149.82808022922637,
+        "h": 126.0
+      },
+      "originalDraw": {
+        "x": 1.3935483870967715,
+        "y": 0,
+        "w": 177.21290322580646,
+        "h": 126.0
+      },
+      "originalWorld": {
+        "w": 180,
+        "h": 126
+      },
+      "sourceBefore": {
+        "file": "town/assets/apartment-collections/showroom-rustic-kitchen-south-cardinal-2ef940449755.webp",
+        "crop": {
+          "x": 1371,
+          "y": 1673,
+          "w": 218,
+          "h": 155
+        }
+      },
+      "generation": {
+        "tool": "image_gen",
+        "original": "front-facing-2/beds-sofas/originals/board-5-989d77f763a3.png",
+        "originalSHA256": "989d77f763a303acb87dd06cc57f841f08edda74353324626aed9190c258e192",
+        "crop": [
+          2,
+          844,
+          417,
+          1193
+        ],
+        "acceptedPixelSHA256": "d09d0a71446fa178045ccdf3aad8eae3fdb674b37ed9b8562ae850db8ac217de",
+        "cameraBenchmarkSHA256": "52cf9ca9eb9241be0fe5cac43c8b06f0dd07996078f7fae9b980b60a386502a2"
+      },
+      "reason": "Straight South elevated parallel2/3 camera with meaningful top plane; preserve source-specific rich material/ornament, genuine curves and chaise layout. Uniform contain inside unchanged original view, foot anchor and physics unchanged.",
+      "inspection": {
+        "completeSilhouette": true,
+        "clearOpaqueBorder": true,
+        "uniformWorldScale": 0.3610315186246419
+      }
+    },
+    {
+      "id": "collection-showroom-botanical-conservatory-sofa",
+      "facing": "south",
+      "file": "front-facing-2/beds-sofas/board-5-989d77f763a3.webp",
+      "width": 1254,
+      "height": 1254,
+      "x": 416,
+      "y": 811,
+      "w": 405,
+      "h": 390,
+      "draw": {
+        "x": 24.57692307692308,
+        "y": 0.0,
+        "w": 130.84615384615384,
+        "h": 126.0
+      },
+      "originalDraw": {
+        "x": 16.4393063583815,
+        "y": 0,
+        "w": 147.121387283237,
+        "h": 126.0
+      },
+      "originalWorld": {
+        "w": 180,
+        "h": 126
+      },
+      "sourceBefore": {
+        "file": "town/assets/apartment-collections/showroom-botanical-conservatory-south-cardinal-f6e27bb5d7b9.webp",
+        "crop": {
+          "x": 202,
+          "y": 1256,
+          "w": 202,
+          "h": 173
+        }
+      },
+      "generation": {
+        "tool": "image_gen",
+        "original": "front-facing-2/beds-sofas/originals/board-5-989d77f763a3.png",
+        "originalSHA256": "989d77f763a303acb87dd06cc57f841f08edda74353324626aed9190c258e192",
+        "crop": [
+          416,
+          811,
+          821,
+          1201
+        ],
+        "acceptedPixelSHA256": "52335148952bf297bfa58f31e2bedbdde77889016e2da32bc2aa2d64ab7dc0c4",
+        "cameraBenchmarkSHA256": "52cf9ca9eb9241be0fe5cac43c8b06f0dd07996078f7fae9b980b60a386502a2"
+      },
+      "reason": "Straight South elevated parallel2/3 camera with meaningful top plane; preserve source-specific rich material/ornament, genuine curves and chaise layout. Uniform contain inside unchanged original view, foot anchor and physics unchanged.",
+      "inspection": {
+        "completeSilhouette": true,
+        "clearOpaqueBorder": true,
+        "uniformWorldScale": 0.32307692307692304
+      }
+    },
+    {
+      "id": "collection-showroom-midcentury-studio-sofa",
+      "facing": "south",
+      "file": "front-facing-2/beds-sofas/board-5-989d77f763a3.webp",
+      "width": 1254,
+      "height": 1254,
+      "x": 823,
+      "y": 836,
+      "w": 427,
+      "h": 355,
+      "draw": {
+        "x": 14.222535211267598,
+        "y": -1.4210854715202004e-14,
+        "w": 151.5549295774648,
+        "h": 126.00000000000001
+      },
+      "originalDraw": {
+        "x": 3.4698795180722897,
+        "y": 1.4210854715202004e-14,
+        "w": 173.06024096385542,
+        "h": 125.99999999999999
+      },
+      "originalWorld": {
+        "w": 180,
+        "h": 126
+      },
+      "sourceBefore": {
+        "file": "town/assets/apartment-collections/showroom-midcentury-studio-south-cardinal-9836d8edd412.webp",
+        "crop": {
+          "x": 1279,
+          "y": 542,
+          "w": 342,
+          "h": 249
+        }
+      },
+      "generation": {
+        "tool": "image_gen",
+        "original": "front-facing-2/beds-sofas/originals/board-5-989d77f763a3.png",
+        "originalSHA256": "989d77f763a303acb87dd06cc57f841f08edda74353324626aed9190c258e192",
+        "crop": [
+          823,
+          836,
+          1250,
+          1191
+        ],
+        "acceptedPixelSHA256": "7a61df989656dbeaeda325bc1bb6b347d3bfe7e7fe304cd80aa3e3f2e5013bc6",
+        "cameraBenchmarkSHA256": "52cf9ca9eb9241be0fe5cac43c8b06f0dd07996078f7fae9b980b60a386502a2"
+      },
+      "reason": "Straight South elevated parallel2/3 camera with meaningful top plane; preserve source-specific rich material/ornament, genuine curves and chaise layout. Uniform contain inside unchanged original view, foot anchor and physics unchanged.",
+      "inspection": {
+        "completeSilhouette": true,
+        "clearOpaqueBorder": true,
+        "uniformWorldScale": 0.35492957746478876
+      }
+    },
+    {
+      "id": "collection-showroom-french-cafe-sofa",
+      "facing": "south",
+      "file": "front-facing-2/beds-sofas/board-6-9188216f0bd2.webp",
+      "width": 1536,
+      "height": 1024,
+      "x": 13,
+      "y": 37,
+      "w": 468,
+      "h": 460,
+      "draw": {
+        "x": 25.904347826086962,
+        "y": 1.4210854715202004e-14,
+        "w": 128.19130434782608,
+        "h": 125.99999999999999
+      },
+      "originalDraw": {
+        "x": 12.797687861271683,
+        "y": 0,
+        "w": 154.40462427745663,
+        "h": 126.0
+      },
+      "originalWorld": {
+        "w": 180,
+        "h": 126
+      },
+      "sourceBefore": {
+        "file": "town/assets/apartment-collections/showroom-french-cafe-south-cardinal-13eb0016c6c1.webp",
+        "crop": {
+          "x": 4,
+          "y": 930,
+          "w": 212,
+          "h": 173
+        }
+      },
+      "generation": {
+        "tool": "image_gen",
+        "original": "front-facing-2/beds-sofas/originals/board-6-9188216f0bd2.png",
+        "originalSHA256": "9188216f0bd2f66d7d2c4f18a0d4d0e7a08a017eaca00dcedd9fb53809507660",
+        "crop": [
+          13,
+          37,
+          481,
+          497
+        ],
+        "acceptedPixelSHA256": "6158205f1df091f361d474dffe0ecfed83e6cefe3fc90482e1db5fbd9babd960",
+        "cameraBenchmarkSHA256": "52cf9ca9eb9241be0fe5cac43c8b06f0dd07996078f7fae9b980b60a386502a2"
+      },
+      "reason": "Straight South elevated parallel2/3 camera with meaningful top plane; preserve source-specific rich material/ornament, genuine curves and chaise layout. Uniform contain inside unchanged original view, foot anchor and physics unchanged.",
+      "inspection": {
+        "completeSilhouette": true,
+        "clearOpaqueBorder": true,
+        "uniformWorldScale": 0.27391304347826084
+      }
+    },
+    {
+      "id": "collection-showroom-industrial-loft-sofa",
+      "facing": "south",
+      "file": "front-facing-2/beds-sofas/board-6-9188216f0bd2.webp",
+      "width": 1536,
+      "height": 1024,
+      "x": 512,
+      "y": 68,
+      "w": 504,
+      "h": 424,
+      "draw": {
+        "x": 15.113207547169807,
+        "y": 0.0,
+        "w": 149.77358490566039,
+        "h": 126.0
+      },
+      "originalDraw": {
+        "x": 0,
+        "y": 6.0,
+        "w": 180.0,
+        "h": 120.0
+      },
+      "originalWorld": {
+        "w": 180,
+        "h": 126
+      },
+      "sourceBefore": {
+        "file": "town/assets/apartment-collections/showroom-industrial-loft-south-cardinal-af2eac7eb93a.webp",
+        "crop": {
+          "x": 1061,
+          "y": 1628,
+          "w": 222,
+          "h": 148
+        }
+      },
+      "generation": {
+        "tool": "image_gen",
+        "original": "front-facing-2/beds-sofas/originals/board-6-9188216f0bd2.png",
+        "originalSHA256": "9188216f0bd2f66d7d2c4f18a0d4d0e7a08a017eaca00dcedd9fb53809507660",
+        "crop": [
+          512,
+          68,
+          1016,
+          492
+        ],
+        "acceptedPixelSHA256": "2f5fc43a1943cca639c737ea557336a283997c90fe7189e79f63a5b2654a7674",
+        "cameraBenchmarkSHA256": "52cf9ca9eb9241be0fe5cac43c8b06f0dd07996078f7fae9b980b60a386502a2"
+      },
+      "reason": "Straight South elevated parallel2/3 camera with meaningful top plane; preserve source-specific rich material/ornament, genuine curves and chaise layout. Uniform contain inside unchanged original view, foot anchor and physics unchanged.",
+      "inspection": {
+        "completeSilhouette": true,
+        "clearOpaqueBorder": true,
+        "uniformWorldScale": 0.2971698113207547
+      }
+    },
+    {
+      "id": "collection-showroom-cyberpunk-sofa",
+      "facing": "south",
+      "file": "front-facing-2/beds-sofas/board-6-9188216f0bd2.webp",
+      "width": 1536,
+      "height": 1024,
+      "x": 1050,
+      "y": 70,
+      "w": 473,
+      "h": 432,
+      "draw": {
+        "x": 21.02083333333333,
+        "y": -1.4210854715202004e-14,
+        "w": 137.95833333333334,
+        "h": 126.00000000000001
+      },
+      "originalDraw": {
+        "x": 0,
+        "y": 8.5,
+        "w": 180.0,
+        "h": 117.5
+      },
+      "originalWorld": {
+        "w": 180,
+        "h": 126
+      },
+      "sourceBefore": {
+        "file": "town/assets/apartment-collections/showroom-cyberpunk.webp",
+        "crop": {
+          "x": 227,
+          "y": 69,
+          "w": 216,
+          "h": 141
+        }
+      },
+      "generation": {
+        "tool": "image_gen",
+        "original": "front-facing-2/beds-sofas/originals/board-6-9188216f0bd2.png",
+        "originalSHA256": "9188216f0bd2f66d7d2c4f18a0d4d0e7a08a017eaca00dcedd9fb53809507660",
+        "crop": [
+          1050,
+          70,
+          1523,
+          502
+        ],
+        "acceptedPixelSHA256": "6fdbd3aa4d7d5f9404f5be168819ce8d72c93de7bcb0f0d2508a310858d1ff3c",
+        "cameraBenchmarkSHA256": "52cf9ca9eb9241be0fe5cac43c8b06f0dd07996078f7fae9b980b60a386502a2"
+      },
+      "reason": "Straight South elevated parallel2/3 camera with meaningful top plane; preserve source-specific rich material/ornament, genuine curves and chaise layout. Uniform contain inside unchanged original view, foot anchor and physics unchanged.",
+      "inspection": {
+        "completeSilhouette": true,
+        "clearOpaqueBorder": true,
+        "uniformWorldScale": 0.2916666666666667
+      }
+    },
+    {
+      "id": "collection-showroom-steampunk-sofa",
+      "facing": "south",
+      "file": "front-facing-2/beds-sofas/board-6-9188216f0bd2.webp",
+      "width": 1536,
+      "height": 1024,
+      "x": 8,
+      "y": 539,
+      "w": 490,
+      "h": 445,
+      "draw": {
+        "x": 20.62921348314606,
+        "y": 0.0,
+        "w": 138.74157303370788,
+        "h": 126.0
+      },
+      "originalDraw": {
+        "x": 2.7692307692307736,
+        "y": 0,
+        "w": 174.46153846153845,
+        "h": 126.0
+      },
+      "originalWorld": {
+        "w": 180,
+        "h": 126
+      },
+      "sourceBefore": {
+        "file": "town/assets/apartment-collections/showroom-steampunk.webp",
+        "crop": {
+          "x": 227,
+          "y": 62,
+          "w": 216,
+          "h": 156
+        }
+      },
+      "generation": {
+        "tool": "image_gen",
+        "original": "front-facing-2/beds-sofas/originals/board-6-9188216f0bd2.png",
+        "originalSHA256": "9188216f0bd2f66d7d2c4f18a0d4d0e7a08a017eaca00dcedd9fb53809507660",
+        "crop": [
+          8,
+          539,
+          498,
+          984
+        ],
+        "acceptedPixelSHA256": "965d2b39ac5772b41d346772db211e5cb21ecae06d4f8d3621d6ee94ff3967e6",
+        "cameraBenchmarkSHA256": "52cf9ca9eb9241be0fe5cac43c8b06f0dd07996078f7fae9b980b60a386502a2"
+      },
+      "reason": "Straight South elevated parallel2/3 camera with meaningful top plane; preserve source-specific rich material/ornament, genuine curves and chaise layout. Uniform contain inside unchanged original view, foot anchor and physics unchanged.",
+      "inspection": {
+        "completeSilhouette": true,
+        "clearOpaqueBorder": true,
+        "uniformWorldScale": 0.28314606741573034
+      }
+    },
+    {
+      "id": "showroom-victorian-parlor-sofa",
+      "facing": "south",
+      "file": "front-facing-2/beds-sofas/board-7-5c51739d76cb.webp",
+      "width": 1254,
+      "height": 1254,
+      "x": 16,
+      "y": 20,
+      "w": 389,
+      "h": 381,
+      "draw": {
+        "x": 8.830708661417333,
+        "y": 0.0,
+        "w": 162.33858267716533,
+        "h": 159.0
+      },
+      "originalDraw": {
+        "x": 3.7762237762237763,
+        "y": 3.7857142857142856,
+        "w": 172.44755244755245,
+        "h": 151.42857142857142
+      },
+      "originalWorld": {
+        "w": 180,
+        "h": 159,
+        "footCenter": {
+          "x": 90.00000000000001,
+          "y": 120.84
+        }
+      },
+      "sourceBefore": {
+        "file": "town/assets/parallel-art/packed/showroom-victorian-parlor-1-a5c5cfd7b6e9.webp",
+        "crop": {
+          "x": 1637,
+          "y": 910,
+          "w": 360,
+          "h": 314
+        }
+      },
+      "generation": {
+        "tool": "image_gen",
+        "original": "front-facing-2/beds-sofas/originals/board-7-5c51739d76cb.png",
+        "originalSHA256": "5c51739d76cb4b3b6f2cc0f35c0b83eb8858c9a014bf70b61d707466fafd79c3",
+        "crop": [
+          16,
+          20,
+          405,
+          401
+        ],
+        "acceptedPixelSHA256": "176e1d00db22b87fbe6c2ebac6a1296ba91df3e5c820445e78900615bbfe2074",
+        "cameraBenchmarkSHA256": "52cf9ca9eb9241be0fe5cac43c8b06f0dd07996078f7fae9b980b60a386502a2"
+      },
+      "reason": "Straight South elevated parallel2/3 camera with meaningful top plane; preserve source-specific rich material/ornament, genuine curves and chaise layout. Uniform contain inside unchanged original view, foot anchor and physics unchanged.",
+      "inspection": {
+        "completeSilhouette": true,
+        "clearOpaqueBorder": true,
+        "uniformWorldScale": 0.4173228346456692
+      }
+    },
+    {
+      "id": "showroom-art-deco-lounge-sofa",
+      "facing": "south",
+      "file": "front-facing-2/beds-sofas/board-7-5c51739d76cb.webp",
+      "width": 1254,
+      "height": 1254,
+      "x": 424,
+      "y": 41,
+      "w": 405,
+      "h": 353,
+      "draw": {
+        "x": 13.130311614730886,
+        "y": 0.0,
+        "w": 153.73937677053823,
+        "h": 134.0
+      },
+      "originalDraw": {
+        "x": 3.737024221453287,
+        "y": 3.73953488372093,
+        "w": 172.52595155709344,
+        "h": 126.52093023255814
+      },
+      "originalWorld": {
+        "w": 180,
+        "h": 134,
+        "footCenter": {
+          "x": 90.00000000000001,
+          "y": 101.84
+        }
+      },
+      "sourceBefore": {
+        "file": "town/assets/parallel-art/packed/showroom-art-deco-lounge-1-f86d1e3ed869.webp",
+        "crop": {
+          "x": 847,
+          "y": 1648,
+          "w": 363,
+          "h": 270
+        }
+      },
+      "generation": {
+        "tool": "image_gen",
+        "original": "front-facing-2/beds-sofas/originals/board-7-5c51739d76cb.png",
+        "originalSHA256": "5c51739d76cb4b3b6f2cc0f35c0b83eb8858c9a014bf70b61d707466fafd79c3",
+        "crop": [
+          424,
+          41,
+          829,
+          394
+        ],
+        "acceptedPixelSHA256": "66d05a0752c95192af4ddcf28cf15a6e2c3a9e6675a1d0d6ff690e8735d32fb5",
+        "cameraBenchmarkSHA256": "52cf9ca9eb9241be0fe5cac43c8b06f0dd07996078f7fae9b980b60a386502a2"
+      },
+      "reason": "Straight South elevated parallel2/3 camera with meaningful top plane; preserve source-specific rich material/ornament, genuine curves and chaise layout. Uniform contain inside unchanged original view, foot anchor and physics unchanged.",
+      "inspection": {
+        "completeSilhouette": true,
+        "clearOpaqueBorder": true,
+        "uniformWorldScale": 0.37960339943342775
+      }
+    },
+    {
+      "id": "showroom-coastal-bedroom-sofa",
+      "facing": "south",
+      "file": "front-facing-2/beds-sofas/board-7-5c51739d76cb.webp",
+      "width": 1254,
+      "height": 1254,
+      "x": 839,
+      "y": 49,
+      "w": 399,
+      "h": 349,
+      "draw": {
+        "x": 11.11461318051576,
+        "y": 0.0,
+        "w": 157.77077363896848,
+        "h": 138.0
+      },
+      "originalDraw": {
+        "x": 3.6120401337792645,
+        "y": 3.6315789473684212,
+        "w": 172.77591973244148,
+        "h": 130.73684210526315
+      },
+      "originalWorld": {
+        "w": 180,
+        "h": 138,
+        "footCenter": {
+          "x": 90.00000000000001,
+          "y": 104.88
+        }
+      },
+      "sourceBefore": {
+        "file": "town/assets/parallel-art/packed/showroom-coastal-bedroom-1-68123a538721.webp",
+        "crop": {
+          "x": 1641,
+          "y": 1315,
+          "w": 360,
+          "h": 274
+        }
+      },
+      "generation": {
+        "tool": "image_gen",
+        "original": "front-facing-2/beds-sofas/originals/board-7-5c51739d76cb.png",
+        "originalSHA256": "5c51739d76cb4b3b6f2cc0f35c0b83eb8858c9a014bf70b61d707466fafd79c3",
+        "crop": [
+          839,
+          49,
+          1238,
+          398
+        ],
+        "acceptedPixelSHA256": "a0a1a4569d19efe505a197be61c5ae664d1331b5f3bd3af64f78f2fe3fa53e71",
+        "cameraBenchmarkSHA256": "52cf9ca9eb9241be0fe5cac43c8b06f0dd07996078f7fae9b980b60a386502a2"
+      },
+      "reason": "Straight South elevated parallel2/3 camera with meaningful top plane; preserve source-specific rich material/ornament, genuine curves and chaise layout. Uniform contain inside unchanged original view, foot anchor and physics unchanged.",
+      "inspection": {
+        "completeSilhouette": true,
+        "clearOpaqueBorder": true,
+        "uniformWorldScale": 0.3954154727793696
+      }
+    },
+    {
+      "id": "showroom-rustic-kitchen-sofa",
+      "facing": "south",
+      "file": "front-facing-2/beds-sofas/showroom-rustic-kitchen-sofa-refinement-abac7b8ae83b.webp",
+      "width": 1321,
+      "height": 1191,
+      "x": 65,
+      "y": 10,
+      "w": 1190,
+      "h": 1144,
+      "draw": {
+        "x": 26.027097902097907,
+        "y": 0.0,
+        "w": 127.94580419580419,
+        "h": 123.0
+      },
+      "originalDraw": {
+        "x": 3.564356435643564,
+        "y": 3.58252427184466,
+        "w": 172.87128712871285,
+        "h": 115.83495145631068
+      },
+      "originalWorld": {
+        "w": 180,
+        "h": 123,
+        "footCenter": {
+          "x": 90.00000000000001,
+          "y": 93.47999999999999
+        }
+      },
+      "sourceBefore": {
+        "file": "town/assets/parallel-art/packed/showroom-rustic-kitchen-1-cbd5d56ae712.webp",
+        "crop": {
+          "x": 1297,
+          "y": 1680,
+          "w": 354,
+          "h": 245
+        }
+      },
+      "generation": {
+        "tool": "image_gen",
+        "original": "front-facing-2/beds-sofas/originals/showroom-rustic-kitchen-sofa-refinement-abac7b8ae83b.png",
+        "originalSHA256": "abac7b8ae83b0e5a892d995db9a917929f99f0286c955ce9946b531066bfbd66",
+        "crop": [
+          65,
+          10,
+          1255,
+          1154
+        ],
+        "acceptedPixelSHA256": "faaf57fe2ac825c588927814d3990764c4e75949646a051adb887bd85a9eeca0",
+        "cameraBenchmarkSHA256": "52cf9ca9eb9241be0fe5cac43c8b06f0dd07996078f7fae9b980b60a386502a2"
+      },
+      "reason": "Straight South elevated parallel2/3 camera with meaningful top plane; preserve source-specific rich material/ornament, genuine curves and chaise layout. Uniform contain inside unchanged original view, foot anchor and physics unchanged.",
+      "inspection": {
+        "completeSilhouette": true,
+        "clearOpaqueBorder": true,
+        "uniformWorldScale": 0.10751748251748251
+      }
+    },
+    {
+      "id": "showroom-botanical-conservatory-sofa",
+      "facing": "south",
+      "file": "front-facing-2/beds-sofas/board-7-5c51739d76cb.webp",
+      "width": 1254,
+      "height": 1254,
+      "x": 419,
+      "y": 430,
+      "w": 400,
+      "h": 362,
+      "draw": {
+        "x": 6.574585635359114,
+        "y": 0.0,
+        "w": 166.85082872928177,
+        "h": 151.0
+      },
+      "originalDraw": {
+        "x": 3.724137931034483,
+        "y": 3.743801652892562,
+        "w": 172.55172413793105,
+        "h": 143.51239669421489
+      },
+      "originalWorld": {
+        "w": 180,
+        "h": 151,
+        "footCenter": {
+          "x": 90.00000000000001,
+          "y": 114.76000000000002
+        }
+      },
+      "sourceBefore": {
+        "file": "town/assets/parallel-art/packed/showroom-botanical-conservatory-1-8e1ac9e50cec.webp",
+        "crop": {
+          "x": 4,
+          "y": 1267,
+          "w": 361,
+          "h": 292
+        }
+      },
+      "generation": {
+        "tool": "image_gen",
+        "original": "front-facing-2/beds-sofas/originals/board-7-5c51739d76cb.png",
+        "originalSHA256": "5c51739d76cb4b3b6f2cc0f35c0b83eb8858c9a014bf70b61d707466fafd79c3",
+        "crop": [
+          419,
+          430,
+          819,
+          792
+        ],
+        "acceptedPixelSHA256": "32714f52472bb13a8d0b3218d3b559d5cdd4e17faed6a737f352daacaf20b733",
+        "cameraBenchmarkSHA256": "52cf9ca9eb9241be0fe5cac43c8b06f0dd07996078f7fae9b980b60a386502a2"
+      },
+      "reason": "Straight South elevated parallel2/3 camera with meaningful top plane; preserve source-specific rich material/ornament, genuine curves and chaise layout. Uniform contain inside unchanged original view, foot anchor and physics unchanged.",
+      "inspection": {
+        "completeSilhouette": true,
+        "clearOpaqueBorder": true,
+        "uniformWorldScale": 0.4171270718232044
+      }
+    },
+    {
+      "id": "showroom-midcentury-studio-sofa",
+      "facing": "south",
+      "file": "front-facing-2/beds-sofas/board-7-5c51739d76cb.webp",
+      "width": 1254,
+      "height": 1254,
+      "x": 847,
+      "y": 464,
+      "w": 387,
+      "h": 326,
+      "draw": {
+        "x": 15.805214723926383,
+        "y": 0.0,
+        "w": 148.38957055214723,
+        "h": 125.0
+      },
+      "originalDraw": {
+        "x": 3.6860068259385668,
+        "y": 10.73378839590443,
+        "w": 172.62798634812287,
+        "h": 110.580204778157
+      },
+      "originalWorld": {
+        "w": 180,
+        "h": 125,
+        "footCenter": {
+          "x": 90.00000000000001,
+          "y": 95
+        }
+      },
+      "sourceBefore": {
+        "file": "town/assets/parallel-art/packed/showroom-midcentury-studio-1-4e357d714dfc.webp",
+        "crop": {
+          "x": 1287,
+          "y": 835,
+          "w": 356,
+          "h": 232
+        }
+      },
+      "generation": {
+        "tool": "image_gen",
+        "original": "front-facing-2/beds-sofas/originals/board-7-5c51739d76cb.png",
+        "originalSHA256": "5c51739d76cb4b3b6f2cc0f35c0b83eb8858c9a014bf70b61d707466fafd79c3",
+        "crop": [
+          847,
+          464,
+          1234,
+          790
+        ],
+        "acceptedPixelSHA256": "1eb51971897fe8d255e696053de2869fad638f3d0379c947c9395c1d8c15e0e0",
+        "cameraBenchmarkSHA256": "52cf9ca9eb9241be0fe5cac43c8b06f0dd07996078f7fae9b980b60a386502a2"
+      },
+      "reason": "Straight South elevated parallel2/3 camera with meaningful top plane; preserve source-specific rich material/ornament, genuine curves and chaise layout. Uniform contain inside unchanged original view, foot anchor and physics unchanged.",
+      "inspection": {
+        "completeSilhouette": true,
+        "clearOpaqueBorder": true,
+        "uniformWorldScale": 0.3834355828220859
+      }
+    },
+    {
+      "id": "showroom-french-cafe-sofa",
+      "facing": "south",
+      "file": "front-facing-2/beds-sofas/board-7-5c51739d76cb.webp",
+      "width": 1254,
+      "height": 1254,
+      "x": 12,
+      "y": 835,
+      "w": 395,
+      "h": 380,
+      "draw": {
+        "x": 10.48026315789474,
+        "y": 0.0,
+        "w": 159.03947368421052,
+        "h": 153.0
+      },
+      "originalDraw": {
+        "x": 3.6860068259385668,
+        "y": 3.686746987951807,
+        "w": 172.62798634812287,
+        "h": 145.6265060240964
+      },
+      "originalWorld": {
+        "w": 180,
+        "h": 153,
+        "footCenter": {
+          "x": 90.00000000000001,
+          "y": 116.28
+        }
+      },
+      "sourceBefore": {
+        "file": "town/assets/parallel-art/packed/showroom-french-cafe-1-cd40b86368b0.webp",
+        "crop": {
+          "x": 4,
+          "y": 928,
+          "w": 444,
+          "h": 368
+        }
+      },
+      "generation": {
+        "tool": "image_gen",
+        "original": "front-facing-2/beds-sofas/originals/board-7-5c51739d76cb.png",
+        "originalSHA256": "5c51739d76cb4b3b6f2cc0f35c0b83eb8858c9a014bf70b61d707466fafd79c3",
+        "crop": [
+          12,
+          835,
+          407,
+          1215
+        ],
+        "acceptedPixelSHA256": "c5527cb0301d51340bedecc113bd7a2765b3ade81d084bda2fe7f253627481c3",
+        "cameraBenchmarkSHA256": "52cf9ca9eb9241be0fe5cac43c8b06f0dd07996078f7fae9b980b60a386502a2"
+      },
+      "reason": "Straight South elevated parallel2/3 camera with meaningful top plane; preserve source-specific rich material/ornament, genuine curves and chaise layout. Uniform contain inside unchanged original view, foot anchor and physics unchanged.",
+      "inspection": {
+        "completeSilhouette": true,
+        "clearOpaqueBorder": true,
+        "uniformWorldScale": 0.4026315789473684
+      }
+    },
+    {
+      "id": "showroom-industrial-loft-sofa",
+      "facing": "south",
+      "file": "front-facing-2/beds-sofas/board-7-5c51739d76cb.webp",
+      "width": 1254,
+      "height": 1254,
+      "x": 422,
+      "y": 858,
+      "w": 405,
+      "h": 335,
+      "draw": {
+        "x": 20.485074626865668,
+        "y": 0.0,
+        "w": 139.02985074626866,
+        "h": 115.0
+      },
+      "originalDraw": {
+        "x": 3.540983606557377,
+        "y": 3.556701030927835,
+        "w": 172.91803278688525,
+        "h": 107.88659793814433
+      },
+      "originalWorld": {
+        "w": 180,
+        "h": 115,
+        "footCenter": {
+          "x": 90.00000000000001,
+          "y": 87.4
+        }
+      },
+      "sourceBefore": {
+        "file": "town/assets/parallel-art/packed/showroom-industrial-loft-1-829880aec58d.webp",
+        "crop": {
+          "x": 1406,
+          "y": 1306,
+          "w": 441,
+          "h": 282
+        }
+      },
+      "generation": {
+        "tool": "image_gen",
+        "original": "front-facing-2/beds-sofas/originals/board-7-5c51739d76cb.png",
+        "originalSHA256": "5c51739d76cb4b3b6f2cc0f35c0b83eb8858c9a014bf70b61d707466fafd79c3",
+        "crop": [
+          422,
+          858,
+          827,
+          1193
+        ],
+        "acceptedPixelSHA256": "54f9bed7c207080b9db72f25d3026ef0cf4637f09bbfe910b6b627c8aa8232ce",
+        "cameraBenchmarkSHA256": "52cf9ca9eb9241be0fe5cac43c8b06f0dd07996078f7fae9b980b60a386502a2"
+      },
+      "reason": "Straight South elevated parallel2/3 camera with meaningful top plane; preserve source-specific rich material/ornament, genuine curves and chaise layout. Uniform contain inside unchanged original view, foot anchor and physics unchanged.",
+      "inspection": {
+        "completeSilhouette": true,
+        "clearOpaqueBorder": true,
+        "uniformWorldScale": 0.34328358208955223
+      }
+    },
+    {
+      "id": "apartment-box-sofa",
+      "facing": "south",
+      "file": "front-facing-2/beds-sofas/board-7-5c51739d76cb.webp",
+      "width": 1254,
+      "height": 1254,
+      "x": 847,
+      "y": 464,
+      "w": 387,
+      "h": 326,
+      "draw": {
+        "x": 15.211656441717793,
+        "y": 0.0,
+        "w": 149.57668711656441,
+        "h": 126.0
+      },
+      "originalDraw": {
+        "x": 3.6860068259385668,
+        "y": 11.73378839590443,
+        "w": 172.62798634812287,
+        "h": 110.580204778157
+      },
+      "originalWorld": {
+        "w": 180,
+        "h": 126,
+        "footCenter": {
+          "x": 90,
+          "y": 99
+        }
+      },
+      "sourceBefore": {
+        "file": "town/assets/parallel-art/packed/legacy-apartment-2-69a47fa4767b.webp",
+        "crop": {
+          "x": 832,
+          "y": 1049,
+          "w": 356,
+          "h": 232
+        }
+      },
+      "generation": {
+        "tool": "image_gen",
+        "original": "front-facing-2/beds-sofas/originals/board-7-5c51739d76cb.png",
+        "originalSHA256": "5c51739d76cb4b3b6f2cc0f35c0b83eb8858c9a014bf70b61d707466fafd79c3",
+        "crop": [
+          847,
+          464,
+          1234,
+          790
+        ],
+        "acceptedPixelSHA256": "1eb51971897fe8d255e696053de2869fad638f3d0379c947c9395c1d8c15e0e0",
+        "cameraBenchmarkSHA256": "52cf9ca9eb9241be0fe5cac43c8b06f0dd07996078f7fae9b980b60a386502a2"
+      },
+      "reason": "Straight South elevated parallel2/3 camera with meaningful top plane; preserve source-specific rich material/ornament, genuine curves and chaise layout. Uniform contain inside unchanged original view, foot anchor and physics unchanged.",
+      "inspection": {
+        "completeSilhouette": true,
+        "clearOpaqueBorder": true,
+        "uniformWorldScale": 0.38650306748466257
+      },
+      "sharedSourceWith": "showroom-midcentury-studio-sofa"
+    }
+  ],
+  "scopeAudit": "work/front-facing-2/beds-sofas/scope-audit.json"
+}

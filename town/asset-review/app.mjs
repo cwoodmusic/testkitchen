@@ -1,6 +1,6 @@
 import {createAssetReview} from './review-model.mjs?v=town-asset-review-1';
 import {availableFacings,prepareAssetPreview,assetPreviewSample} from './preview.mjs?v=town-library-review-1';
-import {registerReviewRoomRugs,registerReviewMaterials,registerReviewWallSegments,registerReviewGroundSurfaces} from './catalog-extras.mjs?v=town-library-review-1';
+import {registerReviewRoomRugs,registerReviewMaterials,registerReviewWallSegments,registerReviewGroundSurfaces} from './catalog-extras.mjs?v=town-front-facing-2';
 
 const $=id=>document.getElementById(id),canvas=$('preview'),context=canvas.getContext('2d'),CURSOR_KEY='codaTownAssetReviewCursorV1';
 const names={south:'South',west:'West',north:'North',east:'East'};
@@ -85,12 +85,12 @@ function filterChanged(){
 function navigate(delta){const index=filtered.findIndex(a=>a.id===assetId),next=filtered[index+delta];if(next)void goTo(next.id);}
 function setStatus(status){if(!assetId)return;review.set(assetId,facing,{status});reflectReview();}
 function downloadReview(){
- const report=review.snapshot();report.appVersion='town-library-review-1';
+ const report=review.snapshot();report.appVersion='town-front-facing-2';
  for(const item of report.reviews){const asset=catalog.get(item.assetId);if(!asset)continue;item.pack=asset.pack||null;item.owner=asset.collectionOwner||asset.owner||null;item.purpose=asset.purpose||null;item.sourceAssetId=asset.sourceAssetId||null;item.authoredFacing=asset.facing||'south';if(asset.texture)item.texture=asset.texture;if(asset.sourceRect)item.sourceRect={...asset.sourceRect};if(asset.finishId){item.finishId=asset.finishId;item.finishKind=asset.finishKind;item.materialOrigin={...asset.materialOrigin};}const sample=assetPreviewSample(asset);if(sample)item.sample={kind:sample.kind,columns:sample.columns,rows:sample.rows,width:sample.width,height:sample.height,tileWidth:sample.tileWidth,tileHeight:sample.tileHeight};const view=asset.getFacingView?.(item.facing,{image:false});if(view)item.view={id:view.id||null,facing:view.facing||view.direction||item.facing,width:view.w,height:view.h};}
  const blob=new Blob([JSON.stringify(report,null,2)+'\n'],{type:'application/json'}),url=URL.createObjectURL(blob),link=document.createElement('a');link.href=url;link.download='coda-asset-review.json';document.body.append(link);link.click();link.remove();setTimeout(()=>URL.revokeObjectURL(url),1000);
 }
 async function start(){
- const [{catalog:townCatalog},{groundTexture},{surfaces}]=await Promise.all([import('../world/catalog.mjs?v=town-library-review-1'),import('../world/ground-render.mjs?v=town-library-review-1'),import('../world/model.mjs?v=town-coast-pier-1')]);
+ const [{catalog:townCatalog},{groundTexture},{surfaces}]=await Promise.all([import('../world/catalog.mjs?v=town-front-facing-2'),import('../world/ground-render.mjs?v=town-front-facing-2'),import('../world/model.mjs?v=town-coast-pier-1')]);
  catalog=registerReviewRoomRugs(new Map(townCatalog));
  registerReviewMaterials(catalog);registerReviewWallSegments(catalog);registerReviewGroundSurfaces(catalog,{surfaces,groundTexture});
  assets=[...catalog.values()];review=createAssetReview({catalog});

@@ -89,3 +89,27 @@ test('reduced motion leaves canonical art static and does not generate hidden an
  reduced=false;renderer.draw(c,a,item,0);assert.equal(renderer.stats.generatedFrames,1);assert.equal(canvases.length,1);
  assert.equal(renderer.draw(c,{w:40,h:80},item,0),false);assert.equal(renderer.draw(c,a,{x:NaN,y:3},0),false);
 });
+
+test('the final glass clip reuses its cached path and restores caller state at every camera scale',()=>{
+ const paths=[],events=[],stack=[];
+ const f=fixture({createPath(){const path={points:[],moveTo(...p){this.points.push(p);},lineTo(...p){this.points.push(p);},closePath(){this.closed=true;}};paths.push(path);return path;}}),a=asset('arcade');
+ Object.assign(f.c,{
+  save(){stack.push(this.imageSmoothingEnabled);events.push('save');},restore(){this.imageSmoothingEnabled=stack.pop();events.push('restore');},
+  translate(x,y){events.push(['translate',x,y]);},scale(x,y){events.push(['scale',x,y]);},clip(path){events.push(['clip',path]);}
+ });
+ const before=JSON.stringify(a.motion);
+ for(let frame=0;frame<30;frame++)f.renderer.draw(f.c,a,{...f.item,w:80+frame,h:160+frame*2},frame/8);
+ assert.equal(paths.length,1);assert.equal(f.canvases.length,1);assert(paths[0].closed);assert.deepEqual(paths[0].points,a.motion.mask.map(([u,v])=>[u*a.w,v*a.h]));
+ assert.equal(events.filter(e=>e==='save').length,30);assert.equal(events.filter(e=>e==='restore').length,30);assert.equal(f.c.imageSmoothingEnabled,true);assert.equal(stack.length,0);
+ assert(events.filter(Array.isArray).filter(e=>e[0]==='clip').every(e=>e[1]===paths[0]));assert.equal(JSON.stringify(a.motion),before);
+ const geometry=apartmentMotionGeometry(a);assert.deepEqual(f.calls[0].coordinates,[geometry.x,geometry.y,geometry.w,geometry.h]);
+ a.motion={...a.motion,mask:[[.3,.2],[.7,.2],[.6,.7],[.4,.7]],bounds:[.3,.2,.4,.5]};f.renderer.draw(f.c,a,f.item,1);assert.equal(paths.length,2);assert.equal(f.canvases[0].width,1);
+});
+
+test('a failed draw still restores the outer canvas state and reduced motion allocates no clip path',()=>{
+ let reduced=true,paths=0,saves=0,restores=0;
+ const f=fixture({reducedMotion:()=>reduced,createPath(){paths++;return {moveTo(){},lineTo(){},closePath(){}};}}),a=asset('arcade');
+ Object.assign(f.c,{save(){saves++;},restore(){restores++;this.imageSmoothingEnabled=true;},translate(){},scale(){},clip(){},drawImage(){throw Error('target disposed');}});
+ assert.equal(f.renderer.draw(f.c,a,f.item,0),false);assert.equal(paths,0);assert.equal(f.canvases.length,0);
+ reduced=false;assert.throws(()=>f.renderer.draw(f.c,a,f.item,0),/target disposed/);assert.equal(paths,1);assert.equal(saves,1);assert.equal(restores,1);assert.equal(f.c.imageSmoothingEnabled,true);
+});

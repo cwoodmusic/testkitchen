@@ -38,6 +38,16 @@ function fixture({id='table',w=80,h=60,cardinal=true,layer='objects'}={}){
 const context=()=>({draws:[],drawImage(...args){this.draws.push(args);}});
 const tick=()=>new Promise(resolve=>setImmediate(resolve));
 
+test('redrawn arcade masks follow edited art, retain game identity, and restore original geometry for fallback',async()=>{
+ const f=fixture({id:'arcade'}),old={kind:'arcade',game:'organ-loft',seed:11,palette:['#123456'],mask:[[.1,.1],[.3,.1],[.3,.3],[.1,.3]],bounds:[.1,.1,.2,.2]};f.asset.motion=old;
+ const geometry={mask:[[.2,.3],[.6,.3],[.6,.5],[.2,.5]]},patch={...f.patch,motionGeometry:geometry,preview:{file:'overview.webp',width:100,height:100,x:0,y:0,w:30,h:40}};
+ const runtime=createParallelArtRuntime(f.catalog,{patches:[patch],loadImage:f.loadImage,createCanvas:f.createCanvas}),view=f.asset.getFacingView('south',{image:false});
+ assert.strictEqual(view.motion,old);assert.strictEqual(f.asset.motion,old);assert.equal(f.loads.length,0);
+ await runtime.warmPreviews();const corrected=view.motion;assert.deepEqual(corrected.mask,geometry.mask);assert.equal(corrected.seed,11);assert.equal(corrected.game,old.game);assert.strictEqual(corrected.palette,old.palette);assert.strictEqual(f.asset.motion,corrected);
+ await f.asset.ensureFull();assert.strictEqual(view.motion,corrected);runtime.clear();assert.strictEqual(view.motion,old);assert.strictEqual(f.asset.motion,old);
+ await f.asset.ensureFull();assert.strictEqual(view.motion,corrected);runtime.clear();
+});
+
 test('an empty accepted dataset is a complete no-op',async()=>{
  const f=fixture(),descriptors=Object.getOwnPropertyDescriptors(f.asset),runtime=await registerParallelArt(f.catalog,{patches:[],loadImage:f.loadImage,createCanvas:f.createCanvas});
  assert.deepEqual(Object.getOwnPropertyDescriptors(f.asset),descriptors);assert.deepEqual(f.loads,[]);assert.equal(f.canvases.length,0);assert.equal(runtime.stats.patches,0);

@@ -1,0 +1,1067 @@
+[
+  {
+    "id": "collection-chopin-rug",
+    "facing": "south",
+    "file": "front-facing-2/rugs-counters/floor-textiles-91781e928184.webp",
+    "width": 1536,
+    "height": 1024,
+    "x": 22,
+    "y": 149,
+    "w": 469,
+    "h": 279,
+    "draw": {
+      "x": 0.0,
+      "y": 4.9211087420042645,
+      "w": 180,
+      "h": 107.07889125799574
+    },
+    "world": {
+      "w": 180,
+      "h": 112
+    },
+    "drawBefore": {
+      "x": 4.444444444444443,
+      "y": 0,
+      "w": 171.11111111111111,
+      "h": 112.0
+    },
+    "sourceBefore": {
+      "file": "town/assets/apartment-collections/chopin-south-cardinal-7e40bd5bf409.webp",
+      "x": 1465,
+      "y": 1863,
+      "w": 220,
+      "h": 144,
+      "rgbaSHA256": "c122869ff46fedd889091abee6c4cfb08fb5866a9e95521130783ccbf423583d"
+    },
+    "revision": 2,
+    "generation": {
+      "tool": "image_gen",
+      "original": "front-facing-2/rugs-counters/originals/floor-textiles-91781e928184.png",
+      "originalSHA256": "91781e9281845af93b7b6a48c88ca62213176726e47d7ed2b20ccdaafdc69317",
+      "crop": [
+        22,
+        149,
+        491,
+        428
+      ],
+      "cropRGBA_SHA256": "e0ea861fc631ca707ffcf17b7deaf0bdd93eaaff0893c1cfa209d18b1bd6ed6e"
+    },
+    "review": "Floor plane camera and parallel orientation; original detailed motifs/materials retained. Aspect-preserving bottom-center contain in unchanged world view. Native crop/copy only, no pixel warping or alpha editing."
+  },
+  {
+    "id": "collection-vivaldi-rug",
+    "facing": "south",
+    "file": "front-facing-2/rugs-counters/floor-textiles-91781e928184.webp",
+    "width": 1536,
+    "height": 1024,
+    "x": 527,
+    "y": 146,
+    "w": 479,
+    "h": 280,
+    "draw": {
+      "x": 0.0,
+      "y": 6.7807933194154515,
+      "w": 180,
+      "h": 105.21920668058455
+    },
+    "world": {
+      "w": 180,
+      "h": 112
+    },
+    "drawBefore": {
+      "x": 9.684210526315795,
+      "y": 0,
+      "w": 160.6315789473684,
+      "h": 112.0
+    },
+    "sourceBefore": {
+      "file": "town/assets/apartment-collections/vivaldi-south-cardinal-6138afdec004.webp",
+      "x": 861,
+      "y": 1132,
+      "w": 218,
+      "h": 152,
+      "rgbaSHA256": "d74dc4ef67ae19056a3eb1fd9d9592b53c7d24032de2a1044832f4d61975da95"
+    },
+    "revision": 2,
+    "generation": {
+      "tool": "image_gen",
+      "original": "front-facing-2/rugs-counters/originals/floor-textiles-91781e928184.png",
+      "originalSHA256": "91781e9281845af93b7b6a48c88ca62213176726e47d7ed2b20ccdaafdc69317",
+      "crop": [
+        527,
+        146,
+        1006,
+        426
+      ],
+      "cropRGBA_SHA256": "3504d4c41abdd452b2f334e192c4bcacb3b1530224c95cfc1836a5f2830b028b"
+    },
+    "review": "Floor plane camera and parallel orientation; original detailed motifs/materials retained. Aspect-preserving bottom-center contain in unchanged world view. Native crop/copy only, no pixel warping or alpha editing."
+  },
+  {
+    "id": "collection-ella-rug",
+    "facing": "south",
+    "file": "front-facing-2/rugs-counters/floor-textiles-91781e928184.webp",
+    "width": 1536,
+    "height": 1024,
+    "x": 1034,
+    "y": 143,
+    "w": 481,
+    "h": 287,
+    "draw": {
+      "x": 0.0,
+      "y": 4.598752598752597,
+      "w": 180,
+      "h": 107.4012474012474
+    },
+    "world": {
+      "w": 180,
+      "h": 112
+    },
+    "drawBefore": {
+      "x": 34.252252252252255,
+      "y": 1.4210854715202004e-14,
+      "w": 111.49549549549549,
+      "h": 111.99999999999999
+    },
+    "sourceBefore": {
+      "file": "town/assets/apartment-collections/ella-south-cardinal-0ec52d63c82b.webp",
+      "x": 230,
+      "y": 677,
+      "w": 221,
+      "h": 222,
+      "rgbaSHA256": "55bc617e4ebabc3468be73d085a4e5941049db6f7f108189e064844f1394f8c5"
+    },
+    "revision": 2,
+    "generation": {
+      "tool": "image_gen",
+      "original": "front-facing-2/rugs-counters/originals/floor-textiles-91781e928184.png",
+      "originalSHA256": "91781e9281845af93b7b6a48c88ca62213176726e47d7ed2b20ccdaafdc69317",
+      "crop": [
+        1034,
+        143,
+        1515,
+        430
+      ],
+      "cropRGBA_SHA256": "3fcb98f716851b8769e9e40f8cd80a60f70e6b907d46036567997f73cafdd112"
+    },
+    "review": "Floor plane camera and parallel orientation; original detailed motifs/materials retained. Aspect-preserving bottom-center contain in unchanged world view. Native crop/copy only, no pixel warping or alpha editing."
+  },
+  {
+    "id": "picnic-blanket-gingham",
+    "facing": "south",
+    "file": "front-facing-2/rugs-counters/floor-textiles-91781e928184.webp",
+    "width": 1536,
+    "height": 1024,
+    "x": 23,
+    "y": 657,
+    "w": 471,
+    "h": 248,
+    "draw": {
+      "x": 0.0,
+      "y": 44.35668789808918,
+      "w": 288,
+      "h": 151.64331210191082
+    },
+    "world": {
+      "w": 288,
+      "h": 196
+    },
+    "drawBefore": null,
+    "sourceBefore": {
+      "file": "town/assets/leisure/picnic.png",
+      "x": 20,
+      "y": 30,
+      "w": 320,
+      "h": 217,
+      "rgbaSHA256": "f84ae8cd5eb21f01a4488a2d76eb54b5a0b457028a2f38469cd034991e0f5856"
+    },
+    "revision": 2,
+    "generation": {
+      "tool": "image_gen",
+      "original": "front-facing-2/rugs-counters/originals/floor-textiles-91781e928184.png",
+      "originalSHA256": "91781e9281845af93b7b6a48c88ca62213176726e47d7ed2b20ccdaafdc69317",
+      "crop": [
+        23,
+        657,
+        494,
+        905
+      ],
+      "cropRGBA_SHA256": "15bf3c0ebc14f7a7bf64762bffdacf5c8095d50c5febf1b8037f0e38c7e5c33c"
+    },
+    "review": "Floor plane camera and parallel orientation; original detailed motifs/materials retained. Aspect-preserving bottom-center contain in unchanged world view. Native crop/copy only, no pixel warping or alpha editing."
+  },
+  {
+    "id": "picnic-blanket-striped",
+    "facing": "south",
+    "file": "front-facing-2/rugs-counters/floor-textiles-91781e928184.webp",
+    "width": 1536,
+    "height": 1024,
+    "x": 530,
+    "y": 657,
+    "w": 474,
+    "h": 248,
+    "draw": {
+      "x": 0.0,
+      "y": 39.316455696202524,
+      "w": 288,
+      "h": 150.68354430379748
+    },
+    "world": {
+      "w": 288,
+      "h": 190
+    },
+    "drawBefore": null,
+    "sourceBefore": {
+      "file": "town/assets/leisure/picnic.png",
+      "x": 377,
+      "y": 30,
+      "w": 330,
+      "h": 217,
+      "rgbaSHA256": "aecac5fb012751d5574bdbbb340ffc14d87fdc3c996132830ff29e931d1d5392"
+    },
+    "revision": 2,
+    "generation": {
+      "tool": "image_gen",
+      "original": "front-facing-2/rugs-counters/originals/floor-textiles-91781e928184.png",
+      "originalSHA256": "91781e9281845af93b7b6a48c88ca62213176726e47d7ed2b20ccdaafdc69317",
+      "crop": [
+        530,
+        657,
+        1004,
+        905
+      ],
+      "cropRGBA_SHA256": "1499291d6e43c993eb74850979f63a985174bbb04e9df6f6d8a11e9ee9e2c617"
+    },
+    "review": "Floor plane camera and parallel orientation; original detailed motifs/materials retained. Aspect-preserving bottom-center contain in unchanged world view. Native crop/copy only, no pixel warping or alpha editing."
+  },
+  {
+    "id": "picnic-quilt-patchwork",
+    "facing": "south",
+    "file": "front-facing-2/rugs-counters/floor-textiles-91781e928184.webp",
+    "width": 1536,
+    "height": 1024,
+    "x": 1039,
+    "y": 658,
+    "w": 476,
+    "h": 242,
+    "draw": {
+      "x": 0.0,
+      "y": 43.57983193277312,
+      "w": 288,
+      "h": 146.42016806722688
+    },
+    "world": {
+      "w": 288,
+      "h": 190
+    },
+    "drawBefore": null,
+    "sourceBefore": {
+      "file": "town/assets/leisure/picnic.png",
+      "x": 738,
+      "y": 28,
+      "w": 332,
+      "h": 219,
+      "rgbaSHA256": "e497d3003ea0b11548e190576011dd08a9cef4191b8c317117fb0591ec849717"
+    },
+    "revision": 2,
+    "generation": {
+      "tool": "image_gen",
+      "original": "front-facing-2/rugs-counters/originals/floor-textiles-91781e928184.png",
+      "originalSHA256": "91781e9281845af93b7b6a48c88ca62213176726e47d7ed2b20ccdaafdc69317",
+      "crop": [
+        1039,
+        658,
+        1515,
+        900
+      ],
+      "cropRGBA_SHA256": "bf5dc306e4f5e47dd486c5613fe39048a5abecaac577d5f5ba0c7bfe76d424b7"
+    },
+    "review": "Floor plane camera and parallel orientation; original detailed motifs/materials retained. Aspect-preserving bottom-center contain in unchanged world view. Native crop/copy only, no pixel warping or alpha editing."
+  },
+  {
+    "id": "picnic-folded-blankets",
+    "facing": "south",
+    "file": "front-facing-2/rugs-counters/folded-counters-406d9beba52c.webp",
+    "width": 1536,
+    "height": 1024,
+    "x": 83,
+    "y": 103,
+    "w": 331,
+    "h": 350,
+    "draw": {
+      "x": 11.67142857142857,
+      "y": 0,
+      "w": 75.65714285714286,
+      "h": 80
+    },
+    "world": {
+      "w": 99,
+      "h": 80
+    },
+    "drawBefore": null,
+    "sourceBefore": {
+      "file": "town/assets/leisure/picnic.png",
+      "x": 1125,
+      "y": 23,
+      "w": 284,
+      "h": 231,
+      "rgbaSHA256": "4a514aaf0f1a9e713741ab4548b6b955d8d49d3e7873ee916c4bdc6e1f38a008"
+    },
+    "revision": 2,
+    "generation": {
+      "tool": "image_gen",
+      "original": "front-facing-2/rugs-counters/originals/folded-counters-406d9beba52c.png",
+      "originalSHA256": "406d9beba52cbd98a541d1deed94d05da19a7e130d7d53478f100ca267d5be01",
+      "crop": [
+        83,
+        103,
+        414,
+        453
+      ],
+      "cropRGBA_SHA256": "29d2ef4bdc38a28d6b2e54c47bc543874dc2831f3e0f0c071f9954bfff4f06a3"
+    },
+    "review": "Strict South front with coherent visible 2/3 top plane; original detailed motifs/materials retained. Aspect-preserving bottom-center contain in unchanged world view. Native crop/copy only, no pixel warping or alpha editing."
+  },
+  {
+    "id": "collection-showroom-coastal-bedroom-counter",
+    "facing": "south",
+    "file": "front-facing-2/rugs-counters/folded-counters-406d9beba52c.webp",
+    "width": 1536,
+    "height": 1024,
+    "x": 530,
+    "y": 43,
+    "w": 427,
+    "h": 430,
+    "draw": {
+      "x": 8.390697674418604,
+      "y": 0,
+      "w": 111.21860465116279,
+      "h": 112
+    },
+    "world": {
+      "w": 128,
+      "h": 112,
+      "footCenter": {
+        "x": 64,
+        "y": 81
+      }
+    },
+    "drawBefore": {
+      "x": 5.113402061855673,
+      "y": 1.4210854715202004e-14,
+      "w": 117.77319587628865,
+      "h": 111.99999999999999
+    },
+    "sourceBefore": {
+      "file": "town/assets/parallel-art/packed/showroom-coastal-bedroom-1-68123a538721.webp",
+      "x": 1292,
+      "y": 473,
+      "w": 379,
+      "h": 392,
+      "rgbaSHA256": "672736a285947a1ecdb50ba2ef7fdcb818cc90e848055b4cd6fe571754864034"
+    },
+    "revision": 2,
+    "generation": {
+      "tool": "image_gen",
+      "original": "front-facing-2/rugs-counters/originals/folded-counters-406d9beba52c.png",
+      "originalSHA256": "406d9beba52cbd98a541d1deed94d05da19a7e130d7d53478f100ca267d5be01",
+      "crop": [
+        530,
+        43,
+        957,
+        473
+      ],
+      "cropRGBA_SHA256": "baa3c54574c6c0c088478865fd13c1a35e5e92e22dd94079f5f0f8605e5e4246"
+    },
+    "review": "Strict South front with coherent visible 2/3 top plane; original detailed motifs/materials retained. Aspect-preserving bottom-center contain in unchanged world view. Native crop/copy only, no pixel warping or alpha editing."
+  },
+  {
+    "id": "collection-showroom-robot-counter",
+    "facing": "south",
+    "file": "front-facing-2/rugs-counters/folded-counters-406d9beba52c.webp",
+    "width": 1536,
+    "height": 1024,
+    "x": 1054,
+    "y": 147,
+    "w": 401,
+    "h": 325,
+    "draw": {
+      "x": 0.0,
+      "y": 8.25935162094764,
+      "w": 128,
+      "h": 103.74064837905236
+    },
+    "world": {
+      "w": 128,
+      "h": 112,
+      "footCenter": {
+        "x": 64,
+        "y": 81
+      }
+    },
+    "drawBefore": {
+      "x": 0,
+      "y": 8.409302325581393,
+      "w": 128.0,
+      "h": 103.5906976744186
+    },
+    "sourceBefore": {
+      "file": "town/assets/parallel-art/packed/showroom-robot-1-45bfe73fc49a.webp",
+      "x": 827,
+      "y": 905,
+      "w": 237,
+      "h": 179,
+      "rgbaSHA256": "24c0dc3055d665044763451b49ee3d622678193025753f329e9dc9a2a90f0139"
+    },
+    "revision": 2,
+    "generation": {
+      "tool": "image_gen",
+      "original": "front-facing-2/rugs-counters/originals/folded-counters-406d9beba52c.png",
+      "originalSHA256": "406d9beba52cbd98a541d1deed94d05da19a7e130d7d53478f100ca267d5be01",
+      "crop": [
+        1054,
+        147,
+        1455,
+        472
+      ],
+      "cropRGBA_SHA256": "ded051391c8541af52f52e049157dcb0cbb6cfb3f67b1dbdebcc712f6040cc38"
+    },
+    "review": "Strict South front with coherent visible 2/3 top plane; original detailed motifs/materials retained. Aspect-preserving bottom-center contain in unchanged world view. Native crop/copy only, no pixel warping or alpha editing."
+  },
+  {
+    "id": "collection-mozart-counter",
+    "facing": "south",
+    "file": "front-facing-2/rugs-counters/counter-camera-1-503f1006a641.webp",
+    "width": 1536,
+    "height": 1024,
+    "x": 65,
+    "y": 109,
+    "w": 384,
+    "h": 359,
+    "draw": {
+      "x": 4.100278551532028,
+      "y": 0,
+      "w": 119.79944289693594,
+      "h": 112
+    },
+    "world": {
+      "w": 128,
+      "h": 112,
+      "footCenter": {
+        "x": 64,
+        "y": 81
+      }
+    },
+    "drawBefore": {
+      "x": 5.62091503267974,
+      "y": 1.4210854715202004e-14,
+      "w": 116.75816993464052,
+      "h": 111.99999999999999
+    },
+    "sourceBefore": {
+      "file": "town/assets/parallel-art/packed/mozart-1-48d4e79eeb44.webp",
+      "x": 333,
+      "y": 941,
+      "w": 325,
+      "h": 317,
+      "rgbaSHA256": "e8153719ce14df740f4118096f5928fba50ca228804c98deeb60d9e07d1549ea"
+    },
+    "revision": 2,
+    "generation": {
+      "tool": "image_gen",
+      "original": "front-facing-2/rugs-counters/originals/counter-camera-1-503f1006a641.png",
+      "originalSHA256": "503f1006a641276dde78c410038e099e33315ea4409c654cbcb025c5b82cf90d",
+      "crop": [
+        65,
+        109,
+        449,
+        468
+      ],
+      "cropRGBA_SHA256": "6b2afbbbc88565de9dfd20659995e2992bf49481fc0d252577f4f7024869443e"
+    },
+    "review": "Strict South front with coherent visible 2/3 top plane; original detailed motifs/materials retained. Aspect-preserving bottom-center contain in unchanged world view. Native crop/copy only, no pixel warping or alpha editing."
+  },
+  {
+    "id": "collection-chopin-counter",
+    "facing": "south",
+    "file": "front-facing-2/rugs-counters/counter-camera-1-503f1006a641.webp",
+    "width": 1536,
+    "height": 1024,
+    "x": 543,
+    "y": 94,
+    "w": 414,
+    "h": 374,
+    "draw": {
+      "x": 2.01069518716578,
+      "y": 1.4210854715202004e-14,
+      "w": 123.97860962566844,
+      "h": 111.99999999999999
+    },
+    "world": {
+      "w": 128,
+      "h": 112,
+      "footCenter": {
+        "x": 64,
+        "y": 81
+      }
+    },
+    "drawBefore": {
+      "x": 10.589595375722546,
+      "y": 0,
+      "w": 106.82080924855491,
+      "h": 112.0
+    },
+    "sourceBefore": {
+      "file": "town/assets/parallel-art/packed/chopin-1-0be8724155ad.webp",
+      "x": 4,
+      "y": 489,
+      "w": 338,
+      "h": 353,
+      "rgbaSHA256": "a8af6153b22fde782bf280d109b7ecec749210e2e078fdc588c670df6a661770"
+    },
+    "revision": 2,
+    "generation": {
+      "tool": "image_gen",
+      "original": "front-facing-2/rugs-counters/originals/counter-camera-1-503f1006a641.png",
+      "originalSHA256": "503f1006a641276dde78c410038e099e33315ea4409c654cbcb025c5b82cf90d",
+      "crop": [
+        543,
+        94,
+        957,
+        468
+      ],
+      "cropRGBA_SHA256": "0f3d87d213ebd45128b9ae0ca58008184fa8ab64a35bd5d127d5f69b3f918c36"
+    },
+    "review": "Strict South front with coherent visible 2/3 top plane; original detailed motifs/materials retained. Aspect-preserving bottom-center contain in unchanged world view. Native crop/copy only, no pixel warping or alpha editing."
+  },
+  {
+    "id": "collection-ella-counter",
+    "facing": "south",
+    "file": "front-facing-2/rugs-counters/counter-camera-1-503f1006a641.webp",
+    "width": 1536,
+    "height": 1024,
+    "x": 1068,
+    "y": 94,
+    "w": 403,
+    "h": 374,
+    "draw": {
+      "x": 3.657754010695193,
+      "y": 1.4210854715202004e-14,
+      "w": 120.68449197860961,
+      "h": 111.99999999999999
+    },
+    "world": {
+      "w": 128,
+      "h": 112,
+      "footCenter": {
+        "x": 64,
+        "y": 81
+      }
+    },
+    "drawBefore": {
+      "x": 14.0618556701031,
+      "y": 1.4210854715202004e-14,
+      "w": 99.8762886597938,
+      "h": 111.99999999999999
+    },
+    "sourceBefore": {
+      "file": "town/assets/parallel-art/packed/ella-1-ea09c8bc820c.webp",
+      "x": 1428,
+      "y": 4,
+      "w": 344,
+      "h": 374,
+      "rgbaSHA256": "a5bc02e0143557b56b3ec1d44236839c7aca657a9c00d08971312ebb172459a7"
+    },
+    "revision": 2,
+    "generation": {
+      "tool": "image_gen",
+      "original": "front-facing-2/rugs-counters/originals/counter-camera-1-503f1006a641.png",
+      "originalSHA256": "503f1006a641276dde78c410038e099e33315ea4409c654cbcb025c5b82cf90d",
+      "crop": [
+        1068,
+        94,
+        1471,
+        468
+      ],
+      "cropRGBA_SHA256": "a05cb6f28c33c9112ab36951b83cd529c31cd5cb8fb6b6a27d88690e2064a0d0"
+    },
+    "review": "Strict South front with coherent visible 2/3 top plane; original detailed motifs/materials retained. Aspect-preserving bottom-center contain in unchanged world view. Native crop/copy only, no pixel warping or alpha editing."
+  },
+  {
+    "id": "collection-nina-counter",
+    "facing": "south",
+    "file": "front-facing-2/rugs-counters/counter-camera-1-503f1006a641.webp",
+    "width": 1536,
+    "height": 1024,
+    "x": 63,
+    "y": 572,
+    "w": 373,
+    "h": 374,
+    "draw": {
+      "x": 8.149732620320862,
+      "y": 1.4210854715202004e-14,
+      "w": 111.70053475935828,
+      "h": 111.99999999999999
+    },
+    "world": {
+      "w": 128,
+      "h": 112,
+      "footCenter": {
+        "x": 64,
+        "y": 81
+      }
+    },
+    "drawBefore": {
+      "x": 10.290909090909096,
+      "y": 1.4210854715202004e-14,
+      "w": 107.41818181818181,
+      "h": 111.99999999999999
+    },
+    "sourceBefore": {
+      "file": "town/assets/parallel-art/packed/nina-1-927b087c1f62.webp",
+      "x": 1209,
+      "y": 929,
+      "w": 310,
+      "h": 321,
+      "rgbaSHA256": "c1bd6c64e05d9da79891c961a2a942cc504172ffa260f5e369a50853a7df1746"
+    },
+    "revision": 2,
+    "generation": {
+      "tool": "image_gen",
+      "original": "front-facing-2/rugs-counters/originals/counter-camera-1-503f1006a641.png",
+      "originalSHA256": "503f1006a641276dde78c410038e099e33315ea4409c654cbcb025c5b82cf90d",
+      "crop": [
+        63,
+        572,
+        436,
+        946
+      ],
+      "cropRGBA_SHA256": "f43599ae6f79bb002e28bb1631ce2b6ea25eb68394271b6fce3b971bb1c999a1"
+    },
+    "review": "Strict South front with coherent visible 2/3 top plane; original detailed motifs/materials retained. Aspect-preserving bottom-center contain in unchanged world view. Native crop/copy only, no pixel warping or alpha editing."
+  },
+  {
+    "id": "collection-miles-counter",
+    "facing": "south",
+    "file": "front-facing-2/rugs-counters/counter-camera-1-503f1006a641.webp",
+    "width": 1536,
+    "height": 1024,
+    "x": 534,
+    "y": 548,
+    "w": 428,
+    "h": 399,
+    "draw": {
+      "x": 3.929824561403514,
+      "y": 0,
+      "w": 120.14035087719297,
+      "h": 112
+    },
+    "world": {
+      "w": 128,
+      "h": 112,
+      "footCenter": {
+        "x": 64,
+        "y": 81
+      }
+    },
+    "drawBefore": {
+      "x": 1.9067357512953436,
+      "y": 1.4210854715202004e-14,
+      "w": 124.18652849740931,
+      "h": 111.99999999999999
+    },
+    "sourceBefore": {
+      "file": "town/assets/parallel-art/packed/miles-1-cf6aa648e5be.webp",
+      "x": 1122,
+      "y": 490,
+      "w": 336,
+      "h": 329,
+      "rgbaSHA256": "9c4243d1b8db73d6220c85031ac5ce2fa4a040a1da32a64c9fbbf640fbf978f1"
+    },
+    "revision": 2,
+    "generation": {
+      "tool": "image_gen",
+      "original": "front-facing-2/rugs-counters/originals/counter-camera-1-503f1006a641.png",
+      "originalSHA256": "503f1006a641276dde78c410038e099e33315ea4409c654cbcb025c5b82cf90d",
+      "crop": [
+        534,
+        548,
+        962,
+        947
+      ],
+      "cropRGBA_SHA256": "e0b2ebbbeaeae141d3b969eb28c6e118feb6ad35746d33495684bb82d90d579a"
+    },
+    "review": "Strict South front with coherent visible 2/3 top plane; original detailed motifs/materials retained. Aspect-preserving bottom-center contain in unchanged world view. Native crop/copy only, no pixel warping or alpha editing."
+  },
+  {
+    "id": "collection-vee-jay-counter",
+    "facing": "south",
+    "file": "front-facing-2/rugs-counters/counter-camera-1-503f1006a641.webp",
+    "width": 1536,
+    "height": 1024,
+    "x": 1064,
+    "y": 550,
+    "w": 411,
+    "h": 395,
+    "draw": {
+      "x": 5.731645569620248,
+      "y": 0,
+      "w": 116.5367088607595,
+      "h": 112
+    },
+    "world": {
+      "w": 128,
+      "h": 112,
+      "footCenter": {
+        "x": 64,
+        "y": 81
+      }
+    },
+    "drawBefore": {
+      "x": 7.828220858895705,
+      "y": 0,
+      "w": 112.34355828220859,
+      "h": 112.0
+    },
+    "sourceBefore": {
+      "file": "town/assets/parallel-art/packed/vee-jay-1-422a2deea191.webp",
+      "x": 1197,
+      "y": 653,
+      "w": 349,
+      "h": 380,
+      "rgbaSHA256": "4e70faa88f8cd36b82333cd12e2bfff4d9852d08ef4427f68e2171d6deb1fe91"
+    },
+    "revision": 2,
+    "generation": {
+      "tool": "image_gen",
+      "original": "front-facing-2/rugs-counters/originals/counter-camera-1-503f1006a641.png",
+      "originalSHA256": "503f1006a641276dde78c410038e099e33315ea4409c654cbcb025c5b82cf90d",
+      "crop": [
+        1064,
+        550,
+        1475,
+        945
+      ],
+      "cropRGBA_SHA256": "4c5f816f651069c34ea2ae358e60397a4055ac446423f32116b38f33dc10fd7b"
+    },
+    "review": "Strict South front with coherent visible 2/3 top plane; original detailed motifs/materials retained. Aspect-preserving bottom-center contain in unchanged world view. Native crop/copy only, no pixel warping or alpha editing."
+  },
+  {
+    "id": "collection-schoenberg-counter",
+    "facing": "south",
+    "file": "front-facing-2/rugs-counters/counter-camera-2-35912e45cb2b.webp",
+    "width": 1536,
+    "height": 1024,
+    "x": 60,
+    "y": 86,
+    "w": 392,
+    "h": 369,
+    "draw": {
+      "x": 4.509485094850952,
+      "y": 0,
+      "w": 118.9810298102981,
+      "h": 112
+    },
+    "world": {
+      "w": 128,
+      "h": 112,
+      "footCenter": {
+        "x": 64,
+        "y": 81
+      }
+    },
+    "drawBefore": {
+      "x": 0,
+      "y": 7.178378378378369,
+      "w": 128.0,
+      "h": 104.82162162162163
+    },
+    "sourceBefore": {
+      "file": "town/assets/parallel-art/packed/schoenberg-1-d783a2ebbe8e.webp",
+      "x": 4,
+      "y": 1107,
+      "w": 380,
+      "h": 324,
+      "rgbaSHA256": "19fca6fa1f9fb8027bfd76ece37e67cc5f8f83110f5d6ccb7bf9456dff9c94bc"
+    },
+    "revision": 2,
+    "generation": {
+      "tool": "image_gen",
+      "original": "front-facing-2/rugs-counters/originals/counter-camera-2-35912e45cb2b.png",
+      "originalSHA256": "35912e45cb2b8a36d12ed67f4e284d382f3c186910c2d263c28858b045c3fab5",
+      "crop": [
+        60,
+        86,
+        452,
+        455
+      ],
+      "cropRGBA_SHA256": "8d5cac6474f29ae53abd45873c8ced800ae577e912038b14a7f537c964faa7d9"
+    },
+    "review": "Strict South front with coherent visible 2/3 top plane; original detailed motifs/materials retained. Aspect-preserving bottom-center contain in unchanged world view. Native crop/copy only, no pixel warping or alpha editing."
+  },
+  {
+    "id": "collection-player-counter",
+    "facing": "south",
+    "file": "front-facing-2/rugs-counters/counter-camera-2-35912e45cb2b.webp",
+    "width": 1536,
+    "height": 1024,
+    "x": 549,
+    "y": 59,
+    "w": 435,
+    "h": 417,
+    "draw": {
+      "x": 5.582733812949641,
+      "y": 0,
+      "w": 116.83453237410072,
+      "h": 112
+    },
+    "world": {
+      "w": 128,
+      "h": 112,
+      "footCenter": {
+        "x": 64,
+        "y": 81.00000000000001
+      }
+    },
+    "drawBefore": {
+      "x": 3.898591549295773,
+      "y": 0,
+      "w": 120.20281690140845,
+      "h": 112.00000000000001
+    },
+    "sourceBefore": {
+      "file": "town/assets/parallel-art/packed/player-1-4951789fd7fb.webp",
+      "x": 763,
+      "y": 4,
+      "w": 424,
+      "h": 418,
+      "rgbaSHA256": "a1d86502ce034c238392e98a8a7b0ec3b47dfde424df7afa64cc40b6782a382b"
+    },
+    "revision": 2,
+    "generation": {
+      "tool": "image_gen",
+      "original": "front-facing-2/rugs-counters/originals/counter-camera-2-35912e45cb2b.png",
+      "originalSHA256": "35912e45cb2b8a36d12ed67f4e284d382f3c186910c2d263c28858b045c3fab5",
+      "crop": [
+        549,
+        59,
+        984,
+        476
+      ],
+      "cropRGBA_SHA256": "3e920e81fd69d23868d6b69db713523f3f2154c238f3e0383b0a8cc00cf38470"
+    },
+    "review": "Strict South front with coherent visible 2/3 top plane; original detailed motifs/materials retained. Aspect-preserving bottom-center contain in unchanged world view. Native crop/copy only, no pixel warping or alpha editing."
+  },
+  {
+    "id": "collection-showroom-victorian-parlor-counter",
+    "facing": "south",
+    "file": "front-facing-2/rugs-counters/counter-camera-2-35912e45cb2b.webp",
+    "width": 1536,
+    "height": 1024,
+    "x": 1061,
+    "y": 64,
+    "w": 424,
+    "h": 412,
+    "draw": {
+      "x": 6.368932038834956,
+      "y": 0,
+      "w": 115.26213592233009,
+      "h": 112
+    },
+    "world": {
+      "w": 128,
+      "h": 112,
+      "footCenter": {
+        "x": 64,
+        "y": 81
+      }
+    },
+    "drawBefore": {
+      "x": 3.8952879581151905,
+      "y": 1.4210854715202004e-14,
+      "w": 120.20942408376962,
+      "h": 111.99999999999999
+    },
+    "sourceBefore": {
+      "file": "town/assets/parallel-art/packed/showroom-victorian-parlor-1-a5c5cfd7b6e9.webp",
+      "x": 416,
+      "y": 468,
+      "w": 421,
+      "h": 399,
+      "rgbaSHA256": "2ed3f8ef94d95cb010108dd91c189b07f68cb6216c69eb73205f5123df472943"
+    },
+    "revision": 2,
+    "generation": {
+      "tool": "image_gen",
+      "original": "front-facing-2/rugs-counters/originals/counter-camera-2-35912e45cb2b.png",
+      "originalSHA256": "35912e45cb2b8a36d12ed67f4e284d382f3c186910c2d263c28858b045c3fab5",
+      "crop": [
+        1061,
+        64,
+        1485,
+        476
+      ],
+      "cropRGBA_SHA256": "bfb6a152c4881362352820d886d4be9a51bb3000eb30906b8370bf63f1631f49"
+    },
+    "review": "Strict South front with coherent visible 2/3 top plane; original detailed motifs/materials retained. Aspect-preserving bottom-center contain in unchanged world view. Native crop/copy only, no pixel warping or alpha editing."
+  },
+  {
+    "id": "collection-showroom-art-deco-lounge-counter",
+    "facing": "south",
+    "file": "front-facing-2/rugs-counters/counter-camera-2-35912e45cb2b.webp",
+    "width": 1536,
+    "height": 1024,
+    "x": 48,
+    "y": 536,
+    "w": 417,
+    "h": 450,
+    "draw": {
+      "x": 12.10666666666667,
+      "y": 0,
+      "w": 103.78666666666666,
+      "h": 112
+    },
+    "world": {
+      "w": 128,
+      "h": 112,
+      "footCenter": {
+        "x": 64,
+        "y": 81
+      }
+    },
+    "drawBefore": {
+      "x": 7.717171717171716,
+      "y": 0,
+      "w": 112.56565656565657,
+      "h": 112.0
+    },
+    "sourceBefore": {
+      "file": "town/assets/parallel-art/packed/showroom-art-deco-lounge-1-f86d1e3ed869.webp",
+      "x": 665,
+      "y": 468,
+      "w": 432,
+      "h": 425,
+      "rgbaSHA256": "40823283052d99c2fa1ba0ce27151d60d859d413226842d4ea1f8d5b9c99126a"
+    },
+    "revision": 2,
+    "generation": {
+      "tool": "image_gen",
+      "original": "front-facing-2/rugs-counters/originals/counter-camera-2-35912e45cb2b.png",
+      "originalSHA256": "35912e45cb2b8a36d12ed67f4e284d382f3c186910c2d263c28858b045c3fab5",
+      "crop": [
+        48,
+        536,
+        465,
+        986
+      ],
+      "cropRGBA_SHA256": "ed49b53bc3e435386c33a0c21dcf4366f65402fb0bccf677c30d72e3020a1ded"
+    },
+    "review": "Strict South front with coherent visible 2/3 top plane; original detailed motifs/materials retained. Aspect-preserving bottom-center contain in unchanged world view. Native crop/copy only, no pixel warping or alpha editing."
+  },
+  {
+    "id": "collection-showroom-botanical-conservatory-counter",
+    "facing": "south",
+    "file": "front-facing-2/rugs-counters/counter-camera-2-35912e45cb2b.webp",
+    "width": 1536,
+    "height": 1024,
+    "x": 559,
+    "y": 559,
+    "w": 412,
+    "h": 412,
+    "draw": {
+      "x": 8.0,
+      "y": 0,
+      "w": 112.0,
+      "h": 112
+    },
+    "world": {
+      "w": 128,
+      "h": 112,
+      "footCenter": {
+        "x": 64,
+        "y": 81
+      }
+    },
+    "drawBefore": {
+      "x": 4.037735849056602,
+      "y": 0,
+      "w": 119.9245283018868,
+      "h": 112.0
+    },
+    "sourceBefore": {
+      "file": "town/assets/parallel-art/packed/showroom-botanical-conservatory-1-8e1ac9e50cec.webp",
+      "x": 532,
+      "y": 465,
+      "w": 384,
+      "h": 380,
+      "rgbaSHA256": "b3bd2d3d9399a6afc0bebe2d91a8bc15e1bea83279b12067f70ddd95cd8b8fc8"
+    },
+    "revision": 2,
+    "generation": {
+      "tool": "image_gen",
+      "original": "front-facing-2/rugs-counters/originals/counter-camera-2-35912e45cb2b.png",
+      "originalSHA256": "35912e45cb2b8a36d12ed67f4e284d382f3c186910c2d263c28858b045c3fab5",
+      "crop": [
+        559,
+        559,
+        971,
+        971
+      ],
+      "cropRGBA_SHA256": "e911f0af3ddda1f6088ec81df5d5ec9f4e8ea5c44fe2d015e71cd5b379491d30"
+    },
+    "review": "Strict South front with coherent visible 2/3 top plane; original detailed motifs/materials retained. Aspect-preserving bottom-center contain in unchanged world view. Native crop/copy only, no pixel warping or alpha editing."
+  },
+  {
+    "id": "collection-showroom-french-cafe-counter",
+    "facing": "south",
+    "file": "front-facing-2/rugs-counters/counter-camera-2-35912e45cb2b.webp",
+    "width": 1536,
+    "height": 1024,
+    "x": 1062,
+    "y": 534,
+    "w": 425,
+    "h": 452,
+    "draw": {
+      "x": 11.345132743362832,
+      "y": 0,
+      "w": 105.30973451327434,
+      "h": 112
+    },
+    "world": {
+      "w": 128,
+      "h": 112,
+      "footCenter": {
+        "x": 64,
+        "y": 81
+      }
+    },
+    "drawBefore": {
+      "x": 10.849872773536894,
+      "y": 0,
+      "w": 106.30025445292621,
+      "h": 112.0
+    },
+    "sourceBefore": {
+      "file": "town/assets/parallel-art/packed/showroom-french-cafe-1-cd40b86368b0.webp",
+      "x": 519,
+      "y": 479,
+      "w": 420,
+      "h": 437,
+      "rgbaSHA256": "e1d7d13bcd45fe0aedfe6e21b5ae633ed44d8be648620f56747813bde07cbdbd"
+    },
+    "revision": 2,
+    "generation": {
+      "tool": "image_gen",
+      "original": "front-facing-2/rugs-counters/originals/counter-camera-2-35912e45cb2b.png",
+      "originalSHA256": "35912e45cb2b8a36d12ed67f4e284d382f3c186910c2d263c28858b045c3fab5",
+      "crop": [
+        1062,
+        534,
+        1487,
+        986
+      ],
+      "cropRGBA_SHA256": "d003cedbf77b429946f37727f3653047fc502a3b76710ff68c497ad6416ba5e8"
+    },
+    "review": "Strict South front with coherent visible 2/3 top plane; original detailed motifs/materials retained. Aspect-preserving bottom-center contain in unchanged world view. Native crop/copy only, no pixel warping or alpha editing."
+  }
+]

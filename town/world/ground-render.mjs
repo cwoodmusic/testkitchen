@@ -1,7 +1,7 @@
 import {PAINT_GRID,PAINT_STEP,readPaint,materialKey} from './ground-paint.mjs?v=opera-parallax-1';
-import {sources,catalog} from './catalog.mjs?v=town-library-review-1';
+import {sources,catalog} from './catalog.mjs?v=town-front-facing-2';
 import {cell,height,terrainView} from './model.mjs?v=town-coast-pier-1';
-import {drawPaving,drawPavingMaterial} from './paving.mjs?v=town-library-review-1';
+import {drawPaving,drawPavingMaterial} from './paving.mjs?v=town-front-facing-2';
 import {groundTextures} from './ground-textures.mjs?v=opera-parallax-1';
 import {drawAnimatedWater} from './water-motion.mjs?v=opera-smooth-1';
 

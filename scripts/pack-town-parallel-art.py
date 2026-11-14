@@ -11,6 +11,7 @@ import json
 import math
 import subprocess
 from PIL import Image
+from town_parallel_art_manifest import accepted_patches
 
 ROOT = Path(__file__).resolve().parents[1]
 ART = ROOT / 'town/assets/parallel-art'
@@ -42,16 +43,7 @@ def group(patch):
 
 manifest = json.loads((ROOT / 'town/assets/apartment-collections/manifest.json').read_text())
 OWNERS = sorted((c['owner'] for c in manifest['collections']), key=len, reverse=True)
-patches = []
-inputs = []
-for path in sorted(ART.glob('*-patches.json')):
-    envelope = json.loads(path.read_text())
-    rows = envelope if isinstance(envelope, list) else envelope['patches']
-    inputs.append({'file': path.name, 'sha256': digest(path.read_bytes()), 'count': len(rows)})
-    patches.extend(rows)
-assert patches, 'No accepted art manifests'
-keys = [(p['id'], p.get('facing', 'south')) for p in patches]
-assert len(keys) == len(set(keys)), 'Duplicate asset/facing acceptance records'
+patches, inputs = accepted_patches(ART)
 
 groups = defaultdict(dict)
 loaded = {}
@@ -146,7 +138,7 @@ packed = {'version': 1, 'packing': 'Exact native RGBA crop/copy, lossless WebP; 
 (ART / 'packed-manifest.json').write_text(json.dumps(packed, indent=2) + '\n')
 module = ROOT / 'town/world/parallel-art-data.mjs'
 prefix = module.read_text().split('export const')[0]
-runtime_fields = ('id', 'facing', 'file', 'width', 'height', 'x', 'y', 'w', 'h', 'draw', 'preview')
+runtime_fields = ('id', 'facing', 'file', 'width', 'height', 'x', 'y', 'w', 'h', 'draw', 'preview', 'motionGeometry')
 runtime_patches = [{key: patch[key] for key in runtime_fields if key in patch} for patch in patches]
 module.write_text(prefix + 'export const PARALLEL_ART_PATCHES=Object.freeze(' + json.dumps(runtime_patches, separators=(',', ':')) + ');\n')
 # Previously published, fingerprinted files must remain available to cached
