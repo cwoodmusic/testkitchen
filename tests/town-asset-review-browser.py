@@ -88,7 +88,7 @@ try:
             surfaces:all.filter(a=>a.id.startsWith('surface:')).map(a=>a.id),
             directional:all.filter(a=>typeof a.getFacingView==='function'&&!a.wallMounted&&a.layer!=='ground').map(a=>a.id)};
         }''')
-        assert len(coverage['ids']) > 1600, len(coverage['ids'])
+        assert len(coverage['ids']) == 1860, len(coverage['ids'])
         assert set(option_ids(page)) == set(coverage['ids']), 'Every catalog item must be reachable, including hidden builder entries'
         assert set(coverage['surfaces']) == {'surface:'+s for s in ['grass','cobble','dirt','water','wood','sand','asphalt','sidewalk','brick']}
         assert coverage['rugs'], 'Room rugs must remain reviewable'
@@ -221,6 +221,86 @@ try:
         assert page.locator('#note').input_value() == side_repair
         assert page.evaluate('(sentinels)=>Object.fromEntries(Object.keys(sentinels).map(k=>[k,localStorage.getItem(k)]))', SENTINELS) == SENTINELS
 
+        # Repeat raw ground tiles, but render room floors/walls as one connected
+        # actual material field so trim and room outlines cannot manufacture seams.
+        finishes = page.evaluate("()=>[...townAssetReview.catalog.values()].filter(a=>a.pack==='interior-materials').map(a=>({id:a.id,kind:a.finishKind,owner:a.owner}))")
+        assert len(finishes) == 186
+        assert len({a['owner'] for a in finishes}) == 31
+        assert sum(a['kind']=='floor' for a in finishes) == 124
+        assert sum(a['kind']=='wall' for a in finishes) == 62
+        for sample_id, label in [('surface:wood','3×3 tiled sample'),
+                                 ('finish:floor:bach-floor','3×3 tiled sample'),
+                                 ('finish:floor:showroom-victorian-parlor-kitchen-floor','3×3 tiled sample'),
+                                 ('finish:wall:showroom-victorian-parlor-wall','connected wall sample'),
+                                 ('finish:wall:showroom-victorian-parlor-wet-wall','connected wall sample'),
+                                 ('construction-3','connected wall sample'),
+                                 ('music-square-wall','connected wall sample')]:
+            go(page, sample_id)
+            assert label in page.locator('#previewStatus').inner_text()
+            assert pixels(page)['ink'] > 100
+            page.locator('#zoom').select_option('2')
+            page.locator('#zoom').select_option('fit')
+            page.screenshot(path=str(OUT/(sample_id.replace(':','-')+'.png')))
+        comparisons = page.evaluate('''async()=>{
+          const {prepareAssetPreview}=await import('/town/asset-review/preview.mjs?v=town-library-review-1');
+          const {drawShowroomFloor,drawShowroomWallpaper}=await import('/town/world/showroom-materials.mjs?v=town-library-review-1');
+          const results=[];
+          for(const id of ['finish:floor:bach-floor','finish:floor:showroom-victorian-parlor-kitchen-floor','finish:wall:showroom-victorian-parlor-wall']){
+            const a=townAssetReview.catalog.get(id),p=await prepareAssetPreview(a),actual=document.createElement('canvas'),expected=document.createElement('canvas');
+            for(const c of [actual,expected]){c.width=Math.ceil(p.width);c.height=Math.ceil(p.height);}
+            p.draw(actual.getContext('2d'));
+            const c=expected.getContext('2d'),o=a.materialOrigin;c.imageSmoothingEnabled=false;c.translate(-o.x,-o.y);
+            const bounds={x:o.x,y:o.y,w:p.width,h:p.height};
+            if(a.finishKind==='floor')drawShowroomFloor(c,{...bounds,floorFinish:a.materialFinish});
+            else drawShowroomWallpaper(c,{x:28,y:106,wallpaper:a.materialFinish,wallpaperAreas:[bounds]});
+            const ap=actual.getContext('2d').getImageData(0,0,actual.width,actual.height).data,ep=expected.getContext('2d').getImageData(0,0,expected.width,expected.height).data;
+            let mismatch=0;for(let i=0;i<ap.length;i++)if(ap[i]!==ep[i])mismatch++;
+            results.push({id,mismatch,width:a.w,height:a.h,sample:p.sample});
+          }return results;
+        }''')
+        assert all(r['mismatch']==0 for r in comparisons), comparisons
+        failed_material_requests=[]
+        def material_failure_once(route):
+            failed_material_requests.append(route.request.url)
+            if len(failed_material_requests)==1:
+                route.fulfill(status=404,content_type='text/plain',body='Missing material regression')
+            else:
+                route.continue_()
+        page.route('**/assets/home-materials/mozart-floor.webp*',material_failure_once)
+        go(page,'finish:floor:mozart-floor')
+        assert page.locator('#previewStatus').get_attribute('data-error')=='true'
+        assert 'mozart-floor.webp' in page.locator('#previewStatus').inner_text()
+        assert page.locator('#retryPreview').is_visible()
+        assert len(failed_material_requests)==1
+        assert pixels(page)['ink']==0,'Missing native art must not become a Ready flat-color fallback'
+        page.locator('#retryPreview').click()
+        page.wait_for_function("document.getElementById('previewStatus').textContent.startsWith('Ready')")
+        assert page.locator('#previewStatus').get_attribute('data-error')=='false'
+        assert page.locator('#retryPreview').is_hidden()
+        assert len(failed_material_requests)==2,'Retry must request the failed native texture again'
+        assert pixels(page)['ink']>100
+        go(page,'finish:floor:mozart-floor')
+        assert len(failed_material_requests)==2,'A recovered material stays cached'
+        page.unroute('**/assets/home-materials/mozart-floor.webp*',material_failure_once)
+        material_id='finish:wall:showroom-victorian-parlor-wall'
+        go(page, material_id)
+        material_note='Check how the wallpaper and trim connect across the wall run.'
+        page.locator('#note').fill(material_note)
+        material_export=download(page,'review-materials.json')
+        material_record=next(r for r in material_export['reviews'] if r['assetId']==material_id)
+        assert material_record['finishId']=='showroom-victorian-parlor-wall'
+        assert material_record['owner']=='showroom-victorian-parlor'
+        assert material_record['purpose']=='wallpaper finish'
+        assert material_record['sample']['columns']==3 and material_record['sample']['rows']==1
+        assert material_record['width']*3==material_record['sample']['width']
+        assert material_record['width']!=material_record['sample']['width']
+        page.reload();wait_ready(page);go(page,material_id)
+        assert page.locator('#note').input_value()==material_note
+        assert note(page,side_id,'west')['note']==side_repair
+        assert page.evaluate('(sentinels)=>Object.fromEntries(Object.keys(sentinels).map(k=>[k,localStorage.getItem(k)]))', SENTINELS)==SENTINELS
+        raw=page.evaluate('(key)=>localStorage.getItem(key)',KEY)
+        go(page,side_id,'west')
+
         # A laptop refusing local writes must still preserve the visible edits
         # and let the review file carry them out of the tab.
         page.evaluate('''key=>{const set=Storage.prototype.setItem;Storage.prototype.setItem=function(k,v){if(k===key)throw new DOMException('Full','QuotaExceededError');return set.call(this,k,v);};}''', KEY)
@@ -235,7 +315,7 @@ try:
         assert not errors, errors
         reports.append({'assets':len(coverage['ids']),'rugs':len(coverage['rugs']),'surfaces':len(coverage['surfaces']),
                         'directionalAssets':len(coverage['directional']),'flaggedAsset':first,'sideAsset':side_id,
-                        'exportedReviews':len(exported['reviews']),'storageFallback':True})
+                        'exportedReviews':len(exported['reviews']),'interiorFinishes':len(finishes),'materialRenderComparisons':comparisons,'materialFailureRetry':len(failed_material_requests)==2,'storageFallback':True})
         (OUT/'results.json').write_text(json.dumps({'passed':True,'reports':reports,'errors':errors},indent=2))
         print('PASS: complete asset coverage, native previews, navigation, per-facing flags/notes, search/filters, reload, actual review JSON download, protected storage and failed-save export.', flush=True)
         context.close()

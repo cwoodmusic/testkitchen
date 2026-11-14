@@ -1,0 +1,1722 @@
+[
+  {
+    "id": "collection-bach-stove",
+    "facing": "north",
+    "file": "cases-directions-1.webp",
+    "width": 1254,
+    "height": 1254,
+    "x": 46,
+    "y": 32,
+    "w": 326,
+    "h": 355,
+    "draw": {
+      "x": 0.0,
+      "y": 32.0,
+      "w": 84.0,
+      "h": 84.0
+    },
+    "source": {
+      "file": "town/assets/apartment-collections/bach-north-ec7cad24dbb5.webp",
+      "crop": {
+        "x": 736,
+        "y": 878,
+        "w": 177,
+        "h": 177
+      },
+      "alphaBounds": [
+        0,
+        0,
+        177,
+        177
+      ],
+      "sha256": "ecc9e93421743a3da430cd5285039f837fafb1aff0513dd8fd796f0e2d195c8f"
+    },
+    "oldWorldFootCenter": {
+      "x": 42.0,
+      "y": 91.000004
+    },
+    "generation": "exec-0dc8cd35-ae54-4a23-8ac5-aa900dd26888",
+    "artPolicy": "source-faithful-parallel-projection",
+    "containmentPolicy": "Exact original collectionImageRect contain fit including source alpha margins"
+  },
+  {
+    "id": "collection-mozart-stove",
+    "facing": "north",
+    "file": "cases-directions-1.webp",
+    "width": 1254,
+    "height": 1254,
+    "x": 468,
+    "y": 32,
+    "w": 318,
+    "h": 355,
+    "draw": {
+      "x": 0.0,
+      "y": 27.459459459459453,
+      "w": 84.0,
+      "h": 88.54054054054055
+    },
+    "source": {
+      "file": "town/assets/apartment-collections/mozart-north-6ea04ade1063.webp",
+      "crop": {
+        "x": 366,
+        "y": 671,
+        "w": 185,
+        "h": 195
+      },
+      "alphaBounds": [
+        0,
+        0,
+        185,
+        195
+      ],
+      "sha256": "5e26f6985ddf8787d05f5e17d4f897114081d55aad009f0c28096f2035ed9109"
+    },
+    "oldWorldFootCenter": {
+      "x": 42.0,
+      "y": 90.99995859459459
+    },
+    "generation": "exec-0dc8cd35-ae54-4a23-8ac5-aa900dd26888",
+    "artPolicy": "source-faithful-parallel-projection",
+    "containmentPolicy": "Exact original collectionImageRect contain fit including source alpha margins"
+  },
+  {
+    "id": "collection-beethoven-stove",
+    "facing": "north",
+    "file": "cases-directions-1.webp",
+    "width": 1254,
+    "height": 1254,
+    "x": 885,
+    "y": 32,
+    "w": 318,
+    "h": 356,
+    "draw": {
+      "x": 0.0,
+      "y": 24.829268292682926,
+      "w": 84.0,
+      "h": 91.17073170731707
+    },
+    "source": {
+      "file": "town/assets/apartment-collections/beethoven-north-cardinal-7890abc9abcd.webp",
+      "crop": {
+        "x": 183,
+        "y": 1493,
+        "w": 164,
+        "h": 178
+      },
+      "alphaBounds": [
+        0,
+        0,
+        164,
+        178
+      ],
+      "sha256": "e941fe788df74cee2d401a01695bb29b96dbeda2097f6a4b54f005bb49a8ccad"
+    },
+    "oldWorldFootCenter": {
+      "x": 42.0,
+      "y": 90.99998248780487
+    },
+    "generation": "exec-0dc8cd35-ae54-4a23-8ac5-aa900dd26888",
+    "artPolicy": "source-faithful-parallel-projection",
+    "containmentPolicy": "Exact original collectionImageRect contain fit including source alpha margins"
+  },
+  {
+    "id": "collection-clara-stove",
+    "facing": "north",
+    "file": "cases-directions-1.webp",
+    "width": 1254,
+    "height": 1254,
+    "x": 48,
+    "y": 449,
+    "w": 320,
+    "h": 353,
+    "draw": {
+      "x": 0.0,
+      "y": 26.173410404624278,
+      "w": 84.0,
+      "h": 89.82658959537572
+    },
+    "source": {
+      "file": "town/assets/apartment-collections/clara-north-207691ab8cb0.webp",
+      "crop": {
+        "x": 185,
+        "y": 842,
+        "w": 173,
+        "h": 185
+      },
+      "alphaBounds": [
+        0,
+        0,
+        173,
+        185
+      ],
+      "sha256": "daf76fee770281df9c2c97e5a12ef82bfd5644381ed048f3fa6d5aaa70ece6bb"
+    },
+    "oldWorldFootCenter": {
+      "x": 42.0,
+      "y": 91.0000025433526
+    },
+    "generation": "exec-0dc8cd35-ae54-4a23-8ac5-aa900dd26888",
+    "artPolicy": "source-faithful-parallel-projection",
+    "containmentPolicy": "Exact original collectionImageRect contain fit including source alpha margins"
+  },
+  {
+    "id": "collection-chopin-stove",
+    "facing": "north",
+    "file": "cases-directions-1.webp",
+    "width": 1254,
+    "height": 1254,
+    "x": 468,
+    "y": 449,
+    "w": 318,
+    "h": 355,
+    "draw": {
+      "x": 0.0,
+      "y": 11.90184049079754,
+      "w": 84.0,
+      "h": 104.09815950920246
+    },
+    "source": {
+      "file": "town/assets/apartment-collections/chopin-north-cardinal-2eb185e87bf4.webp",
+      "crop": {
+        "x": 1843,
+        "y": 4,
+        "w": 163,
+        "h": 202
+      },
+      "alphaBounds": [
+        0,
+        0,
+        163,
+        202
+      ],
+      "sha256": "9eb1023577acb6532d4dd425346660306cab7fe430c4ea4550984ec05762e6c9"
+    },
+    "oldWorldFootCenter": {
+      "x": 42.0,
+      "y": 90.99999420858896
+    },
+    "generation": "exec-0dc8cd35-ae54-4a23-8ac5-aa900dd26888",
+    "artPolicy": "source-faithful-parallel-projection",
+    "containmentPolicy": "Exact original collectionImageRect contain fit including source alpha margins"
+  },
+  {
+    "id": "collection-haydn-stove",
+    "facing": "north",
+    "file": "cases-directions-1.webp",
+    "width": 1254,
+    "height": 1254,
+    "x": 887,
+    "y": 450,
+    "w": 317,
+    "h": 353,
+    "draw": {
+      "x": 0.0,
+      "y": 24.04733727810651,
+      "w": 84.0,
+      "h": 91.95266272189349
+    },
+    "source": {
+      "file": "town/assets/apartment-collections/haydn-north-18ce12845759.webp",
+      "crop": {
+        "x": 205,
+        "y": 843,
+        "w": 169,
+        "h": 185
+      },
+      "alphaBounds": [
+        0,
+        0,
+        169,
+        185
+      ],
+      "sha256": "a89aed5463dce9a5ea7a5d51f9d9cc03c6373d9ca8319aff59466d28ee9303c1"
+    },
+    "oldWorldFootCenter": {
+      "x": 42.0,
+      "y": 91.00000201183431
+    },
+    "generation": "exec-0dc8cd35-ae54-4a23-8ac5-aa900dd26888",
+    "artPolicy": "source-faithful-parallel-projection",
+    "containmentPolicy": "Exact original collectionImageRect contain fit including source alpha margins"
+  },
+  {
+    "id": "collection-handel-stove",
+    "facing": "north",
+    "file": "cases-directions-1.webp",
+    "width": 1254,
+    "height": 1254,
+    "x": 45,
+    "y": 868,
+    "w": 328,
+    "h": 352,
+    "draw": {
+      "x": 0.0,
+      "y": 34.33333333333333,
+      "w": 84.0,
+      "h": 81.66666666666667
+    },
+    "source": {
+      "file": "town/assets/apartment-collections/handel-north-a4d495bc84f3.webp",
+      "crop": {
+        "x": 206,
+        "y": 832,
+        "w": 180,
+        "h": 175
+      },
+      "alphaBounds": [
+        0,
+        0,
+        180,
+        175
+      ],
+      "sha256": "218cf5793f269233f40cca630323f00622617f04c90dc765434f95a7a2612112"
+    },
+    "oldWorldFootCenter": {
+      "x": 42.0,
+      "y": 91.00003666666666
+    },
+    "generation": "exec-0dc8cd35-ae54-4a23-8ac5-aa900dd26888",
+    "artPolicy": "source-faithful-parallel-projection",
+    "containmentPolicy": "Exact original collectionImageRect contain fit including source alpha margins"
+  },
+  {
+    "id": "collection-vivaldi-stove",
+    "facing": "north",
+    "file": "cases-directions-1.webp",
+    "width": 1254,
+    "height": 1254,
+    "x": 454,
+    "y": 868,
+    "w": 346,
+    "h": 354,
+    "draw": {
+      "x": 0.0,
+      "y": 31.096774193548384,
+      "w": 84.0,
+      "h": 84.90322580645162
+    },
+    "source": {
+      "file": "town/assets/apartment-collections/vivaldi-north-cardinal-788af1b4cb70.webp",
+      "crop": {
+        "x": 1167,
+        "y": 1699,
+        "w": 186,
+        "h": 188
+      },
+      "alphaBounds": [
+        0,
+        0,
+        186,
+        188
+      ],
+      "sha256": "075472388a67a156d46a21beed0df34d9eb16adc42df3cac35dede75098c21e0"
+    },
+    "oldWorldFootCenter": {
+      "x": 42.0,
+      "y": 90.99999045161292
+    },
+    "generation": "exec-0dc8cd35-ae54-4a23-8ac5-aa900dd26888",
+    "artPolicy": "source-faithful-parallel-projection",
+    "containmentPolicy": "Exact original collectionImageRect contain fit including source alpha margins"
+  },
+  {
+    "id": "collection-joplin-stove",
+    "facing": "north",
+    "file": "cases-directions-1.webp",
+    "width": 1254,
+    "height": 1254,
+    "x": 872,
+    "y": 868,
+    "w": 333,
+    "h": 354,
+    "draw": {
+      "x": 7.105427357601002e-15,
+      "y": 24.87272727272729,
+      "w": 83.99999999999999,
+      "h": 91.12727272727271
+    },
+    "source": {
+      "file": "town/assets/apartment-collections/joplin-north-55a60dd2a5dc.webp",
+      "crop": {
+        "x": 499,
+        "y": 854,
+        "w": 165,
+        "h": 179
+      },
+      "alphaBounds": [
+        0,
+        0,
+        165,
+        179
+      ],
+      "sha256": "717e2b8aff1d5fc76e16a04576c6baaf242681288f17b86ef0fe7dc552660409"
+    },
+    "oldWorldFootCenter": {
+      "x": 42.0,
+      "y": 90.99996174545456
+    },
+    "generation": "exec-0dc8cd35-ae54-4a23-8ac5-aa900dd26888",
+    "artPolicy": "source-faithful-parallel-projection",
+    "containmentPolicy": "Exact original collectionImageRect contain fit including source alpha margins"
+  },
+  {
+    "id": "collection-ellington-stove",
+    "facing": "north",
+    "file": "cases-directions-2.webp",
+    "width": 1254,
+    "height": 1254,
+    "x": 46,
+    "y": 36,
+    "w": 326,
+    "h": 348,
+    "draw": {
+      "x": 0.0,
+      "y": 32.0,
+      "w": 84.0,
+      "h": 84.0
+    },
+    "source": {
+      "file": "town/assets/apartment-collections/ellington-north-cardinal-f4752f45160c.webp",
+      "crop": {
+        "x": 630,
+        "y": 1371,
+        "w": 174,
+        "h": 174
+      },
+      "alphaBounds": [
+        0,
+        0,
+        174,
+        174
+      ],
+      "sha256": "fba1e8ef6f3a5b8b31e38ef5c086976f5c7f3f0bf003adb7a4c4c673186c6b09"
+    },
+    "oldWorldFootCenter": {
+      "x": 42.0,
+      "y": 91.000004
+    },
+    "generation": "exec-ee4fbdea-4475-4e52-87c7-d14273b219a1",
+    "artPolicy": "source-faithful-parallel-projection",
+    "containmentPolicy": "Exact original collectionImageRect contain fit including source alpha margins"
+  },
+  {
+    "id": "collection-ella-stove",
+    "facing": "north",
+    "file": "cases-directions-2.webp",
+    "width": 1254,
+    "height": 1254,
+    "x": 466,
+    "y": 35,
+    "w": 322,
+    "h": 349,
+    "draw": {
+      "x": 0.0,
+      "y": 26.400000000000006,
+      "w": 84.0,
+      "h": 89.6
+    },
+    "source": {
+      "file": "town/assets/apartment-collections/ella-north-eca3cc9dfc36.webp",
+      "crop": {
+        "x": 563,
+        "y": 650,
+        "w": 180,
+        "h": 192
+      },
+      "alphaBounds": [
+        0,
+        0,
+        180,
+        192
+      ],
+      "sha256": "fdd7e762ca1fe81f468d6dc7f224d15b1ecd958238775ca95f3840cd1a2f17c9"
+    },
+    "oldWorldFootCenter": {
+      "x": 42.0,
+      "y": 90.9999872
+    },
+    "generation": "exec-ee4fbdea-4475-4e52-87c7-d14273b219a1",
+    "artPolicy": "source-faithful-parallel-projection",
+    "containmentPolicy": "Exact original collectionImageRect contain fit including source alpha margins"
+  },
+  {
+    "id": "collection-nina-stove",
+    "facing": "north",
+    "file": "cases-directions-2.webp",
+    "width": 1254,
+    "height": 1254,
+    "x": 880,
+    "y": 35,
+    "w": 330,
+    "h": 349,
+    "draw": {
+      "x": 0.0,
+      "y": 30.143646408839786,
+      "w": 84.0,
+      "h": 85.85635359116021
+    },
+    "source": {
+      "file": "town/assets/apartment-collections/nina-north-a06ba79da4ca.webp",
+      "crop": {
+        "x": 788,
+        "y": 654,
+        "w": 181,
+        "h": 185
+      },
+      "alphaBounds": [
+        0,
+        0,
+        181,
+        185
+      ],
+      "sha256": "807db2538fe900a9037dd0438b492c25d92c1c0790792e48cdfcfeb0aa68fbd0"
+    },
+    "oldWorldFootCenter": {
+      "x": 42.0,
+      "y": 91.0000035359116
+    },
+    "generation": "exec-ee4fbdea-4475-4e52-87c7-d14273b219a1",
+    "artPolicy": "source-faithful-parallel-projection",
+    "containmentPolicy": "Exact original collectionImageRect contain fit including source alpha margins"
+  },
+  {
+    "id": "collection-miles-stove",
+    "facing": "north",
+    "file": "cases-directions-2.webp",
+    "width": 1254,
+    "height": 1254,
+    "x": 44,
+    "y": 454,
+    "w": 329,
+    "h": 348,
+    "draw": {
+      "x": 0.0,
+      "y": 23.80487804878048,
+      "w": 84.0,
+      "h": 92.19512195121952
+    },
+    "source": {
+      "file": "town/assets/apartment-collections/miles-north-cardinal-7eb4a17916ed.webp",
+      "crop": {
+        "x": 540,
+        "y": 868,
+        "w": 164,
+        "h": 180
+      },
+      "alphaBounds": [
+        0,
+        0,
+        164,
+        180
+      ],
+      "sha256": "71a95c296b44cee2460eba5a2a4b8b94d5be96794537965aca0da68b752f4085"
+    },
+    "oldWorldFootCenter": {
+      "x": 42.0,
+      "y": 91.00000195121952
+    },
+    "generation": "exec-ee4fbdea-4475-4e52-87c7-d14273b219a1",
+    "artPolicy": "source-faithful-parallel-projection",
+    "containmentPolicy": "Exact original collectionImageRect contain fit including source alpha margins"
+  },
+  {
+    "id": "collection-dj-stove",
+    "facing": "north",
+    "file": "cases-directions-2.webp",
+    "width": 1254,
+    "height": 1254,
+    "x": 459,
+    "y": 454,
+    "w": 335,
+    "h": 348,
+    "draw": {
+      "x": 0.0,
+      "y": 22.385542168674704,
+      "w": 84.0,
+      "h": 93.6144578313253
+    },
+    "source": {
+      "file": "town/assets/apartment-collections/dj-north-273bb13ac5ff.webp",
+      "crop": {
+        "x": 380,
+        "y": 655,
+        "w": 166,
+        "h": 185
+      },
+      "alphaBounds": [
+        0,
+        0,
+        166,
+        185
+      ],
+      "sha256": "d1efcfe0e47ff070598600dd960e63f19803959d6cdeb9d41ba112e2f1fab214"
+    },
+    "oldWorldFootCenter": {
+      "x": 42.0,
+      "y": 90.99997819277108
+    },
+    "generation": "exec-ee4fbdea-4475-4e52-87c7-d14273b219a1",
+    "artPolicy": "source-faithful-parallel-projection",
+    "containmentPolicy": "Exact original collectionImageRect contain fit including source alpha margins"
+  },
+  {
+    "id": "collection-vee-jay-stove",
+    "facing": "north",
+    "file": "cases-directions-2.webp",
+    "width": 1254,
+    "height": 1254,
+    "x": 880,
+    "y": 454,
+    "w": 330,
+    "h": 348,
+    "draw": {
+      "x": 0.0,
+      "y": 20.592592592592595,
+      "w": 84.0,
+      "h": 95.4074074074074
+    },
+    "source": {
+      "file": "town/assets/apartment-collections/vee-jay-north-9c3b6c582649.webp",
+      "crop": {
+        "x": 665,
+        "y": 421,
+        "w": 162,
+        "h": 184
+      },
+      "alphaBounds": [
+        0,
+        0,
+        162,
+        184
+      ],
+      "sha256": "304d22bdb33b14754f1600637ba435a6880095213183b8111bd1c5f18564c29b"
+    },
+    "oldWorldFootCenter": {
+      "x": 42.0,
+      "y": 91.0000154074074
+    },
+    "generation": "exec-ee4fbdea-4475-4e52-87c7-d14273b219a1",
+    "artPolicy": "source-faithful-parallel-projection",
+    "containmentPolicy": "Exact original collectionImageRect contain fit including source alpha margins"
+  },
+  {
+    "id": "collection-zizi-stove",
+    "facing": "north",
+    "file": "cases-directions-2.webp",
+    "width": 1254,
+    "height": 1254,
+    "x": 45,
+    "y": 872,
+    "w": 362,
+    "h": 349,
+    "draw": {
+      "x": 0.0,
+      "y": 31.530726256983243,
+      "w": 84.0,
+      "h": 84.46927374301676
+    },
+    "source": {
+      "file": "town/assets/apartment-collections/zizi-north-3ffef0e8d2e3.webp",
+      "crop": {
+        "x": 612,
+        "y": 835,
+        "w": 179,
+        "h": 180
+      },
+      "alphaBounds": [
+        0,
+        0,
+        179,
+        180
+      ],
+      "sha256": "8a1b4402967cb94c762828115e60ffb037e7fad12794cb4ab79fe05380db2ab3"
+    },
+    "oldWorldFootCenter": {
+      "x": 42.0,
+      "y": 90.99996692737432
+    },
+    "generation": "exec-ee4fbdea-4475-4e52-87c7-d14273b219a1",
+    "artPolicy": "source-faithful-parallel-projection",
+    "containmentPolicy": "Exact original collectionImageRect contain fit including source alpha margins"
+  },
+  {
+    "id": "collection-metronome-stove",
+    "facing": "north",
+    "file": "cases-directions-2.webp",
+    "width": 1254,
+    "height": 1254,
+    "x": 464,
+    "y": 873,
+    "w": 326,
+    "h": 348,
+    "draw": {
+      "x": 0.0,
+      "y": 20.431137724550908,
+      "w": 84.0,
+      "h": 95.56886227544909
+    },
+    "source": {
+      "file": "town/assets/apartment-collections/metronome-north-b7dc54ccb581.webp",
+      "crop": {
+        "x": 649,
+        "y": 647,
+        "w": 167,
+        "h": 190
+      },
+      "alphaBounds": [
+        0,
+        0,
+        167,
+        190
+      ],
+      "sha256": "d464991fc86ea1609f401bdd645bbd15c193f5ce4b125a2c0d7c3ab00eb90322"
+    },
+    "oldWorldFootCenter": {
+      "x": 42.0,
+      "y": 91.000045748503
+    },
+    "generation": "exec-ee4fbdea-4475-4e52-87c7-d14273b219a1",
+    "artPolicy": "source-faithful-parallel-projection",
+    "containmentPolicy": "Exact original collectionImageRect contain fit including source alpha margins"
+  },
+  {
+    "id": "collection-player-stove",
+    "facing": "north",
+    "file": "cases-directions-2.webp",
+    "width": 1254,
+    "height": 1254,
+    "x": 880,
+    "y": 872,
+    "w": 330,
+    "h": 349,
+    "draw": {
+      "x": 0.0,
+      "y": 23.310344827586206,
+      "w": 84.0,
+      "h": 92.6896551724138
+    },
+    "source": {
+      "file": "town/assets/apartment-collections/player-north-3b2a989b05ba.webp",
+      "crop": {
+        "x": 4,
+        "y": 849,
+        "w": 174,
+        "h": 192
+      },
+      "alphaBounds": [
+        0,
+        0,
+        174,
+        192
+      ],
+      "sha256": "644db9551773da18fd9b8d64e79b0941aa3813f5adaa8e62d9a3c4c03b78db76"
+    },
+    "oldWorldFootCenter": {
+      "x": 42.0,
+      "y": 91.00002427586207
+    },
+    "generation": "exec-ee4fbdea-4475-4e52-87c7-d14273b219a1",
+    "artPolicy": "source-faithful-parallel-projection",
+    "containmentPolicy": "Exact original collectionImageRect contain fit including source alpha margins"
+  },
+  {
+    "id": "collection-showroom-victorian-parlor-stove",
+    "facing": "north",
+    "file": "cases-directions-3.webp",
+    "width": 1254,
+    "height": 1254,
+    "x": 34,
+    "y": 33,
+    "w": 352,
+    "h": 354,
+    "draw": {
+      "x": 0.0,
+      "y": 32.928176795580114,
+      "w": 84.0,
+      "h": 83.07182320441989
+    },
+    "source": {
+      "file": "town/assets/apartment-collections/showroom-victorian-parlor-north-0e48bd72ff08.webp",
+      "crop": {
+        "x": 412,
+        "y": 865,
+        "w": 181,
+        "h": 179
+      },
+      "alphaBounds": [
+        0,
+        0,
+        181,
+        179
+      ],
+      "sha256": "c1d23dc4e7d6846c1d29d51d5d582d9603c92b0aae4f4a88fbe6ec832ffcc151"
+    },
+    "oldWorldFootCenter": {
+      "x": 42.0,
+      "y": 91.00003323756906
+    },
+    "generation": "exec-3a7337ca-02f3-49fc-a0f3-39c3cbfd0fd9",
+    "artPolicy": "source-faithful-parallel-projection",
+    "containmentPolicy": "Exact original collectionImageRect contain fit including source alpha margins"
+  },
+  {
+    "id": "collection-showroom-art-deco-lounge-stove",
+    "facing": "north",
+    "file": "cases-directions-3.webp",
+    "width": 1254,
+    "height": 1254,
+    "x": 452,
+    "y": 33,
+    "w": 351,
+    "h": 354,
+    "draw": {
+      "x": 0.0,
+      "y": 30.090909090909093,
+      "w": 84.0,
+      "h": 85.9090909090909
+    },
+    "source": {
+      "file": "town/assets/apartment-collections/showroom-art-deco-lounge-north-da7b12534df3.webp",
+      "crop": {
+        "x": 4,
+        "y": 835,
+        "w": 176,
+        "h": 180
+      },
+      "alphaBounds": [
+        0,
+        0,
+        176,
+        180
+      ],
+      "sha256": "dad8021840cfad3e265b0484c2b00606c39110dbc466c582745c2a175d431334"
+    },
+    "oldWorldFootCenter": {
+      "x": 42.0,
+      "y": 91.00002500000001
+    },
+    "generation": "exec-3a7337ca-02f3-49fc-a0f3-39c3cbfd0fd9",
+    "artPolicy": "source-faithful-parallel-projection",
+    "containmentPolicy": "Exact original collectionImageRect contain fit including source alpha margins"
+  },
+  {
+    "id": "collection-showroom-coastal-bedroom-stove",
+    "facing": "north",
+    "file": "cases-directions-3.webp",
+    "width": 1254,
+    "height": 1254,
+    "x": 869,
+    "y": 33,
+    "w": 352,
+    "h": 354,
+    "draw": {
+      "x": 0.0,
+      "y": 27.116279069767444,
+      "w": 84.0,
+      "h": 88.88372093023256
+    },
+    "source": {
+      "file": "town/assets/apartment-collections/showroom-coastal-bedroom-north-e42c97feef50.webp",
+      "crop": {
+        "x": 4,
+        "y": 852,
+        "w": 172,
+        "h": 182
+      },
+      "alphaBounds": [
+        0,
+        0,
+        172,
+        182
+      ],
+      "sha256": "09eb57ca63942d3028ed01e4974dde7753846726657c5ca1d854e2474ba805ac"
+    },
+    "oldWorldFootCenter": {
+      "x": 42.0,
+      "y": 91.00003134883721
+    },
+    "generation": "exec-3a7337ca-02f3-49fc-a0f3-39c3cbfd0fd9",
+    "artPolicy": "source-faithful-parallel-projection",
+    "containmentPolicy": "Exact original collectionImageRect contain fit including source alpha margins"
+  },
+  {
+    "id": "collection-showroom-rustic-kitchen-stove",
+    "facing": "north",
+    "file": "cases-directions-3.webp",
+    "width": 1254,
+    "height": 1254,
+    "x": 42,
+    "y": 434,
+    "w": 335,
+    "h": 367,
+    "draw": {
+      "x": 0.0,
+      "y": 19.186440677966104,
+      "w": 84.0,
+      "h": 96.8135593220339
+    },
+    "source": {
+      "file": "town/assets/apartment-collections/showroom-rustic-kitchen-north-503a4152fee3.webp",
+      "crop": {
+        "x": 792,
+        "y": 444,
+        "w": 177,
+        "h": 204
+      },
+      "alphaBounds": [
+        0,
+        0,
+        177,
+        204
+      ],
+      "sha256": "a4f84ae497046ea1de2dc87c97117462a76bb85f6420ef111e089ceeefa25c05"
+    },
+    "oldWorldFootCenter": {
+      "x": 42.0,
+      "y": 91.00002820338983
+    },
+    "generation": "exec-3a7337ca-02f3-49fc-a0f3-39c3cbfd0fd9",
+    "artPolicy": "source-faithful-parallel-projection",
+    "containmentPolicy": "Exact original collectionImageRect contain fit including source alpha margins"
+  },
+  {
+    "id": "collection-showroom-botanical-conservatory-stove",
+    "facing": "north",
+    "file": "cases-directions-3.webp",
+    "width": 1254,
+    "height": 1254,
+    "x": 450,
+    "y": 452,
+    "w": 355,
+    "h": 345,
+    "draw": {
+      "x": 0.0,
+      "y": 37.133333333333326,
+      "w": 84.0,
+      "h": 78.86666666666667
+    },
+    "source": {
+      "file": "town/assets/apartment-collections/showroom-botanical-conservatory-north-58e0d82f01e6.webp",
+      "crop": {
+        "x": 4,
+        "y": 1046,
+        "w": 180,
+        "h": 169
+      },
+      "alphaBounds": [
+        0,
+        0,
+        180,
+        169
+      ],
+      "sha256": "26e4a9c60c5a9b489bc72c01dbc3de94f464fb168ce3497763cd571ff073dd93"
+    },
+    "oldWorldFootCenter": {
+      "x": 42.0,
+      "y": 90.99997646666665
+    },
+    "generation": "exec-3a7337ca-02f3-49fc-a0f3-39c3cbfd0fd9",
+    "artPolicy": "source-faithful-parallel-projection",
+    "containmentPolicy": "Exact original collectionImageRect contain fit including source alpha margins"
+  },
+  {
+    "id": "collection-showroom-midcentury-studio-stove",
+    "facing": "north",
+    "file": "cases-directions-3.webp",
+    "width": 1254,
+    "height": 1254,
+    "x": 871,
+    "y": 452,
+    "w": 349,
+    "h": 353,
+    "draw": {
+      "x": 0.0,
+      "y": 23.310344827586206,
+      "w": 84.0,
+      "h": 92.6896551724138
+    },
+    "source": {
+      "file": "town/assets/apartment-collections/showroom-midcentury-studio-north-cardinal-a6ea694bab35.webp",
+      "crop": {
+        "x": 1807,
+        "y": 227,
+        "w": 174,
+        "h": 192
+      },
+      "alphaBounds": [
+        0,
+        0,
+        174,
+        192
+      ],
+      "sha256": "309ad8e798a145f1b395c7406d4a364a330abf78743feb730d642f51edb913d3"
+    },
+    "oldWorldFootCenter": {
+      "x": 42.0,
+      "y": 91.00002427586207
+    },
+    "generation": "exec-3a7337ca-02f3-49fc-a0f3-39c3cbfd0fd9",
+    "artPolicy": "source-faithful-parallel-projection",
+    "containmentPolicy": "Exact original collectionImageRect contain fit including source alpha margins"
+  },
+  {
+    "id": "collection-showroom-industrial-loft-stove",
+    "facing": "north",
+    "file": "cases-directions-3.webp",
+    "width": 1254,
+    "height": 1254,
+    "x": 35,
+    "y": 851,
+    "w": 349,
+    "h": 371,
+    "draw": {
+      "x": 0.0,
+      "y": 23.730569948186528,
+      "w": 84.0,
+      "h": 92.26943005181347
+    },
+    "source": {
+      "file": "town/assets/apartment-collections/showroom-industrial-loft-north-cardinal-18ef6266d7b5.webp",
+      "crop": {
+        "x": 939,
+        "y": 4,
+        "w": 193,
+        "h": 212
+      },
+      "alphaBounds": [
+        0,
+        0,
+        193,
+        212
+      ],
+      "sha256": "a418f6b3066c4adc9f1e51b77ba9bba977df380cd0f85b3653ff369def7b0073"
+    },
+    "oldWorldFootCenter": {
+      "x": 42.0,
+      "y": 90.99996700518135
+    },
+    "generation": "exec-3a7337ca-02f3-49fc-a0f3-39c3cbfd0fd9",
+    "artPolicy": "source-faithful-parallel-projection",
+    "containmentPolicy": "Exact original collectionImageRect contain fit including source alpha margins"
+  },
+  {
+    "id": "collection-showroom-retrofuture-stove",
+    "facing": "north",
+    "file": "cases-directions-3.webp",
+    "width": 1254,
+    "height": 1254,
+    "x": 432,
+    "y": 868,
+    "w": 391,
+    "h": 351,
+    "draw": {
+      "x": 0.0,
+      "y": 37.15094339622641,
+      "w": 84.0,
+      "h": 78.84905660377359
+    },
+    "source": {
+      "file": "town/assets/apartment-collections/showroom-retrofuture-north-cardinal-da0e3a26a952.webp",
+      "crop": {
+        "x": 1430,
+        "y": 247,
+        "w": 212,
+        "h": 199
+      },
+      "alphaBounds": [
+        0,
+        0,
+        212,
+        199
+      ],
+      "sha256": "896bd9bb34cfbae670a61df37b35286ba68eb72a7ce5dd336cb15853f0a604d3"
+    },
+    "oldWorldFootCenter": {
+      "x": 42.0,
+      "y": 91.00003926415093
+    },
+    "generation": "exec-3a7337ca-02f3-49fc-a0f3-39c3cbfd0fd9",
+    "artPolicy": "source-faithful-parallel-projection",
+    "containmentPolicy": "Exact original collectionImageRect contain fit including source alpha margins"
+  },
+  {
+    "id": "collection-showroom-cyberpunk-stove",
+    "facing": "north",
+    "file": "cases-directions-3.webp",
+    "width": 1254,
+    "height": 1254,
+    "x": 869,
+    "y": 870,
+    "w": 353,
+    "h": 343,
+    "draw": {
+      "x": 0.0,
+      "y": 40.84210526315789,
+      "w": 84.0,
+      "h": 75.15789473684211
+    },
+    "source": {
+      "file": "town/assets/apartment-collections/showroom-cyberpunk-north-fbf8783a81e0.webp",
+      "crop": {
+        "x": 748,
+        "y": 1297,
+        "w": 190,
+        "h": 170
+      },
+      "alphaBounds": [
+        0,
+        0,
+        190,
+        170
+      ],
+      "sha256": "34770de621ff09d323af025e6639d55101d39ce669d3a1e30256acf5c0b85cad"
+    },
+    "oldWorldFootCenter": {
+      "x": 42.0,
+      "y": 91.00000399999999
+    },
+    "generation": "exec-3a7337ca-02f3-49fc-a0f3-39c3cbfd0fd9",
+    "artPolicy": "source-faithful-parallel-projection",
+    "containmentPolicy": "Exact original collectionImageRect contain fit including source alpha margins"
+  },
+  {
+    "id": "collection-beethoven-stove",
+    "facing": "west",
+    "file": "cases-directions-4.webp",
+    "width": 1254,
+    "height": 1254,
+    "x": 100,
+    "y": 34,
+    "w": 214,
+    "h": 354,
+    "draw": {
+      "x": 0.0,
+      "y": 29.284955752212397,
+      "w": 69.6,
+      "h": 112.7150442477876
+    },
+    "source": {
+      "file": "town/assets/apartment-collections/beethoven-west-cardinal-9c0f53af6dfe.webp",
+      "crop": {
+        "x": 727,
+        "y": 1499,
+        "w": 113,
+        "h": 183
+      },
+      "alphaBounds": [
+        0,
+        0,
+        113,
+        183
+      ],
+      "sha256": "5b63bfb4c9686d51f8aa8bc6f23c03079563b8bdf2716208abb03b56510aeea1"
+    },
+    "oldWorldFootCenter": {
+      "x": 34.8,
+      "y": 104.00003898761062
+    },
+    "generation": "exec-01ec23ca-87f0-4ed2-84e2-f4080cc5c4a9",
+    "artPolicy": "source-faithful-parallel-projection",
+    "containmentPolicy": "Exact original collectionImageRect contain fit including source alpha margins"
+  },
+  {
+    "id": "collection-haydn-stove",
+    "facing": "west",
+    "file": "cases-directions-4.webp",
+    "width": 1254,
+    "height": 1254,
+    "x": 518,
+    "y": 35,
+    "w": 213,
+    "h": 353,
+    "draw": {
+      "x": 0.0,
+      "y": 28.534453781512624,
+      "w": 69.6,
+      "h": 113.46554621848738
+    },
+    "source": {
+      "file": "town/assets/apartment-collections/haydn-west-cardinal-d5161ff30be5.webp",
+      "crop": {
+        "x": 1094,
+        "y": 1542,
+        "w": 119,
+        "h": 194
+      },
+      "alphaBounds": [
+        0,
+        0,
+        119,
+        194
+      ],
+      "sha256": "ba7ba75504dca4ed539e201981bd5c38ee8985e0811f0bff28444f19db311824"
+    },
+    "oldWorldFootCenter": {
+      "x": 34.8,
+      "y": 104.00004817478992
+    },
+    "generation": "exec-01ec23ca-87f0-4ed2-84e2-f4080cc5c4a9",
+    "artPolicy": "source-faithful-parallel-projection",
+    "containmentPolicy": "Exact original collectionImageRect contain fit including source alpha margins"
+  },
+  {
+    "id": "collection-handel-stove",
+    "facing": "west",
+    "file": "cases-directions-4.webp",
+    "width": 1254,
+    "height": 1254,
+    "x": 927,
+    "y": 35,
+    "w": 224,
+    "h": 353,
+    "draw": {
+      "x": 0.0,
+      "y": 34.285714285714306,
+      "w": 69.6,
+      "h": 107.7142857142857
+    },
+    "source": {
+      "file": "town/assets/apartment-collections/handel-west-cardinal-5595fb701936.webp",
+      "crop": {
+        "x": 1436,
+        "y": 1892,
+        "w": 126,
+        "h": 195
+      },
+      "alphaBounds": [
+        0,
+        0,
+        126,
+        195
+      ],
+      "sha256": "8606d37ab57e0feed94b06d684f9586907cc737604724b44840d5c0b01f08bf7"
+    },
+    "oldWorldFootCenter": {
+      "x": 34.8,
+      "y": 104.00001571428572
+    },
+    "generation": "exec-01ec23ca-87f0-4ed2-84e2-f4080cc5c4a9",
+    "artPolicy": "source-faithful-parallel-projection",
+    "containmentPolicy": "Exact original collectionImageRect contain fit including source alpha margins"
+  },
+  {
+    "id": "collection-vivaldi-stove",
+    "facing": "west",
+    "file": "cases-directions-4.webp",
+    "width": 1254,
+    "height": 1254,
+    "x": 96,
+    "y": 446,
+    "w": 220,
+    "h": 361,
+    "draw": {
+      "x": 0.0,
+      "y": 28.75254237288138,
+      "w": 69.6,
+      "h": 113.24745762711862
+    },
+    "source": {
+      "file": "town/assets/apartment-collections/vivaldi-west-cardinal-b5a0e92b4afc.webp",
+      "crop": {
+        "x": 833,
+        "y": 1710,
+        "w": 118,
+        "h": 192
+      },
+      "alphaBounds": [
+        0,
+        0,
+        118,
+        192
+      ],
+      "sha256": "2151b4cb0509b45b802c596a70c1f3097cf28cc1b446edee5f25c9c8aca1e5e1"
+    },
+    "oldWorldFootCenter": {
+      "x": 34.8,
+      "y": 104.00004208813561
+    },
+    "generation": "exec-01ec23ca-87f0-4ed2-84e2-f4080cc5c4a9",
+    "artPolicy": "source-faithful-parallel-projection",
+    "containmentPolicy": "Exact original collectionImageRect contain fit including source alpha margins"
+  },
+  {
+    "id": "collection-joplin-stove",
+    "facing": "west",
+    "file": "cases-directions-4.webp",
+    "width": 1254,
+    "height": 1254,
+    "x": 509,
+    "y": 446,
+    "w": 224,
+    "h": 361,
+    "draw": {
+      "x": 0.0,
+      "y": 32.96000000000001,
+      "w": 69.6,
+      "h": 109.03999999999999
+    },
+    "source": {
+      "file": "town/assets/apartment-collections/joplin-west-cardinal-e5c27f16c891.webp",
+      "crop": {
+        "x": 1696,
+        "y": 2066,
+        "w": 120,
+        "h": 188
+      },
+      "alphaBounds": [
+        0,
+        0,
+        120,
+        188
+      ],
+      "sha256": "9b311c993077daee4296bc33f0d7970985ff14c4f3c7a0d6f92ed858c306653d"
+    },
+    "oldWorldFootCenter": {
+      "x": 34.8,
+      "y": 103.99999616
+    },
+    "generation": "exec-01ec23ca-87f0-4ed2-84e2-f4080cc5c4a9",
+    "artPolicy": "source-faithful-parallel-projection",
+    "containmentPolicy": "Exact original collectionImageRect contain fit including source alpha margins"
+  },
+  {
+    "id": "collection-ellington-stove",
+    "facing": "west",
+    "file": "cases-directions-4.webp",
+    "width": 1254,
+    "height": 1254,
+    "x": 931,
+    "y": 446,
+    "w": 213,
+    "h": 361,
+    "draw": {
+      "x": 0.0,
+      "y": 7.4659217877095045,
+      "w": 69.6,
+      "h": 134.5340782122905
+    },
+    "source": {
+      "file": "town/assets/apartment-collections/ellington-west-cardinal-a8042ab70b4c.webp",
+      "crop": {
+        "x": 866,
+        "y": 756,
+        "w": 179,
+        "h": 346
+      },
+      "alphaBounds": [
+        0,
+        0,
+        179,
+        346
+      ],
+      "sha256": "7556175064d9925be5ac387bdea6ad656507a28da5289213839e360ccb96e522"
+    },
+    "oldWorldFootCenter": {
+      "x": 34.8,
+      "y": 104.00004240446927
+    },
+    "generation": "exec-01ec23ca-87f0-4ed2-84e2-f4080cc5c4a9",
+    "artPolicy": "source-faithful-parallel-projection",
+    "containmentPolicy": "Exact original collectionImageRect contain fit including source alpha margins"
+  },
+  {
+    "id": "collection-miles-stove",
+    "facing": "west",
+    "file": "cases-directions-4.webp",
+    "width": 1254,
+    "height": 1254,
+    "x": 100,
+    "y": 860,
+    "w": 216,
+    "h": 366,
+    "draw": {
+      "x": 0.0,
+      "y": 22.100840336134468,
+      "w": 69.6,
+      "h": 119.89915966386553
+    },
+    "source": {
+      "file": "town/assets/apartment-collections/miles-west-cardinal-7ae4feef6853.webp",
+      "crop": {
+        "x": 1798,
+        "y": 2574,
+        "w": 119,
+        "h": 205
+      },
+      "alphaBounds": [
+        0,
+        0,
+        119,
+        205
+      ],
+      "sha256": "fe7795a4b8cdf3f5cfe03261f68bb21b6f1a93d0bc2b62958817c818073e5ceb"
+    },
+    "oldWorldFootCenter": {
+      "x": 34.8,
+      "y": 103.99999963025209
+    },
+    "generation": "exec-01ec23ca-87f0-4ed2-84e2-f4080cc5c4a9",
+    "artPolicy": "source-faithful-parallel-projection",
+    "containmentPolicy": "Exact original collectionImageRect contain fit including source alpha margins"
+  },
+  {
+    "id": "collection-dj-stove",
+    "facing": "west",
+    "file": "cases-directions-4.webp",
+    "width": 1254,
+    "height": 1254,
+    "x": 498,
+    "y": 863,
+    "w": 240,
+    "h": 363,
+    "draw": {
+      "x": 0.0,
+      "y": 40.716417910447774,
+      "w": 69.6,
+      "h": 101.28358208955223
+    },
+    "source": {
+      "file": "town/assets/apartment-collections/dj-west-cardinal-943c911ddacd.webp",
+      "crop": {
+        "x": 1220,
+        "y": 2174,
+        "w": 134,
+        "h": 195
+      },
+      "alphaBounds": [
+        0,
+        0,
+        134,
+        195
+      ],
+      "sha256": "a070a9d1811a60ab281464f15cadeb1f88eec7f38b47b8f57e5bfa0ce88bcd55"
+    },
+    "oldWorldFootCenter": {
+      "x": 34.8,
+      "y": 104.00002053731345
+    },
+    "generation": "exec-01ec23ca-87f0-4ed2-84e2-f4080cc5c4a9",
+    "artPolicy": "source-faithful-parallel-projection",
+    "containmentPolicy": "Exact original collectionImageRect contain fit including source alpha margins"
+  },
+  {
+    "id": "collection-zizi-stove",
+    "facing": "west",
+    "file": "cases-directions-4.webp",
+    "width": 1254,
+    "height": 1254,
+    "x": 925,
+    "y": 861,
+    "w": 231,
+    "h": 363,
+    "draw": {
+      "x": 0.0,
+      "y": 34.83809523809525,
+      "w": 69.6,
+      "h": 107.16190476190475
+    },
+    "source": {
+      "file": "town/assets/apartment-collections/zizi-west-cardinal-43ff7a152261.webp",
+      "crop": {
+        "x": 1834,
+        "y": 1894,
+        "w": 126,
+        "h": 194
+      },
+      "alphaBounds": [
+        0,
+        0,
+        126,
+        194
+      ],
+      "sha256": "c019a6a81c0e2e85dbae156715e5cadbe519c90e90b6f5e90ec9045829b522ef"
+    },
+    "oldWorldFootCenter": {
+      "x": 34.8,
+      "y": 103.99995992380953
+    },
+    "generation": "exec-01ec23ca-87f0-4ed2-84e2-f4080cc5c4a9",
+    "artPolicy": "source-faithful-parallel-projection",
+    "containmentPolicy": "Exact original collectionImageRect contain fit including source alpha margins"
+  },
+  {
+    "id": "collection-showroom-steampunk-stove",
+    "facing": "north",
+    "file": "cases-directions-5.webp",
+    "width": 1254,
+    "height": 1254,
+    "x": 34,
+    "y": 44,
+    "w": 344,
+    "h": 331,
+    "draw": {
+      "x": 0.0,
+      "y": 36.8695652173913,
+      "w": 84.0,
+      "h": 79.1304347826087
+    },
+    "source": {
+      "file": "town/assets/apartment-collections/showroom-steampunk-north-512c9008d3c8.webp",
+      "crop": {
+        "x": 4,
+        "y": 883,
+        "w": 207,
+        "h": 195
+      },
+      "alphaBounds": [
+        0,
+        0,
+        207,
+        195
+      ],
+      "sha256": "319720c7b340ac4acaf8c5d1705e07722584b8845423e3105db5c05627e340aa"
+    },
+    "oldWorldFootCenter": {
+      "x": 42.0,
+      "y": 91.0000052173913
+    },
+    "generation": "exec-d313cab0-ec3c-463a-a939-8f884738eb9d",
+    "artPolicy": "source-faithful-parallel-projection",
+    "containmentPolicy": "Exact original collectionImageRect contain fit including source alpha margins"
+  },
+  {
+    "id": "collection-showroom-robot-stove",
+    "facing": "north",
+    "file": "cases-directions-5.webp",
+    "width": 1254,
+    "height": 1254,
+    "x": 457,
+    "y": 51,
+    "w": 338,
+    "h": 327,
+    "draw": {
+      "x": 0.0,
+      "y": 31.08695652173914,
+      "w": 84.0,
+      "h": 84.91304347826086
+    },
+    "source": {
+      "file": "town/assets/apartment-collections/showroom-robot-north-b36e6d1dccb6.webp",
+      "crop": {
+        "x": 542,
+        "y": 860,
+        "w": 184,
+        "h": 186
+      },
+      "alphaBounds": [
+        0,
+        0,
+        184,
+        186
+      ],
+      "sha256": "36502dcbdcfb1a211f7b0631a83e72a62932a5c5b70f383c7c5482f31b5af041"
+    },
+    "oldWorldFootCenter": {
+      "x": 42.0,
+      "y": 90.99998665217393
+    },
+    "generation": "exec-d313cab0-ec3c-463a-a939-8f884738eb9d",
+    "artPolicy": "source-faithful-parallel-projection",
+    "containmentPolicy": "Exact original collectionImageRect contain fit including source alpha margins"
+  },
+  {
+    "id": "collection-metronome-stove",
+    "facing": "west",
+    "file": "cases-directions-5.webp",
+    "width": 1254,
+    "height": 1254,
+    "x": 82,
+    "y": 451,
+    "w": 251,
+    "h": 352,
+    "draw": {
+      "x": 0.0,
+      "y": 45.14405594405595,
+      "w": 69.6,
+      "h": 96.85594405594405
+    },
+    "source": {
+      "file": "town/assets/apartment-collections/metronome-west-cardinal-74c89a6d4ad2.webp",
+      "crop": {
+        "x": 1020,
+        "y": 2001,
+        "w": 143,
+        "h": 199
+      },
+      "alphaBounds": [
+        0,
+        0,
+        143,
+        199
+      ],
+      "sha256": "fcf8d9daf98bfaaaec8bcf4f8a965b1a70eb5e1861af182db36d8475900e1bba"
+    },
+    "oldWorldFootCenter": {
+      "x": 34.8,
+      "y": 104.00002318881118
+    },
+    "generation": "exec-d313cab0-ec3c-463a-a939-8f884738eb9d",
+    "artPolicy": "source-faithful-parallel-projection",
+    "containmentPolicy": "Exact original collectionImageRect contain fit including source alpha margins"
+  },
+  {
+    "id": "collection-schoenberg-stove",
+    "facing": "west",
+    "file": "cases-directions-5.webp",
+    "width": 1254,
+    "height": 1254,
+    "x": 516,
+    "y": 451,
+    "w": 224,
+    "h": 352,
+    "draw": {
+      "x": 0.0,
+      "y": 19.88363636363637,
+      "w": 69.6,
+      "h": 122.11636363636363
+    },
+    "source": {
+      "file": "town/assets/apartment-collections/schoenberg-west-cardinal-889b7f3db3db.webp",
+      "crop": {
+        "x": 1782,
+        "y": 1162,
+        "w": 110,
+        "h": 193
+      },
+      "alphaBounds": [
+        0,
+        0,
+        110,
+        193
+      ],
+      "sha256": "aa97c19f633f93d4b875defc5cf935b8703e48ae867a3f73e164d76a621e9004"
+    },
+    "oldWorldFootCenter": {
+      "x": 34.8,
+      "y": 103.99995208
+    },
+    "generation": "exec-d313cab0-ec3c-463a-a939-8f884738eb9d",
+    "artPolicy": "source-faithful-parallel-projection",
+    "containmentPolicy": "Exact original collectionImageRect contain fit including source alpha margins"
+  },
+  {
+    "id": "collection-showroom-art-deco-lounge-stove",
+    "facing": "west",
+    "file": "cases-directions-5.webp",
+    "width": 1254,
+    "height": 1254,
+    "x": 933,
+    "y": 463,
+    "w": 229,
+    "h": 340,
+    "draw": {
+      "x": 0.0,
+      "y": 19.55555555555557,
+      "w": 69.6,
+      "h": 122.44444444444443
+    },
+    "source": {
+      "file": "town/assets/apartment-collections/showroom-art-deco-lounge-west-cardinal-1021d7e91d09.webp",
+      "crop": {
+        "x": 1072,
+        "y": 587,
+        "w": 108,
+        "h": 190
+      },
+      "alphaBounds": [
+        0,
+        0,
+        108,
+        190
+      ],
+      "sha256": "7769affd43df581786c8bc340806e7b659b0db4ee00d545ad56048b0d4f03b25"
+    },
+    "oldWorldFootCenter": {
+      "x": 34.8,
+      "y": 103.99997888888889
+    },
+    "generation": "exec-d313cab0-ec3c-463a-a939-8f884738eb9d",
+    "artPolicy": "source-faithful-parallel-projection",
+    "containmentPolicy": "Exact original collectionImageRect contain fit including source alpha margins"
+  },
+  {
+    "id": "collection-showroom-coastal-bedroom-stove",
+    "facing": "west",
+    "file": "cases-directions-5.webp",
+    "width": 1254,
+    "height": 1254,
+    "x": 103,
+    "y": 874,
+    "w": 212,
+    "h": 344,
+    "draw": {
+      "x": 0.0,
+      "y": 16.057142857142864,
+      "w": 69.6,
+      "h": 125.94285714285714
+    },
+    "source": {
+      "file": "town/assets/apartment-collections/showroom-coastal-bedroom-west-cardinal-2cecc8a3e76b.webp",
+      "crop": {
+        "x": 106,
+        "y": 1394,
+        "w": 105,
+        "h": 190
+      },
+      "alphaBounds": [
+        0,
+        0,
+        105,
+        190
+      ],
+      "sha256": "b13760245af567857d53c654d0926c8573f362c7bb50b4c9d1f6f29e635814f8"
+    },
+    "oldWorldFootCenter": {
+      "x": 34.8,
+      "y": 104.00001737142857
+    },
+    "generation": "exec-d313cab0-ec3c-463a-a939-8f884738eb9d",
+    "artPolicy": "source-faithful-parallel-projection",
+    "containmentPolicy": "Exact original collectionImageRect contain fit including source alpha margins"
+  },
+  {
+    "id": "collection-showroom-steampunk-stove",
+    "facing": "west",
+    "file": "cases-directions-5.webp",
+    "width": 1254,
+    "height": 1254,
+    "x": 504,
+    "y": 859,
+    "w": 245,
+    "h": 359,
+    "draw": {
+      "x": 0.0,
+      "y": 29.31428571428573,
+      "w": 69.6,
+      "h": 112.68571428571427
+    },
+    "source": {
+      "file": "town/assets/apartment-collections/showroom-steampunk-west-cardinal-ce95215b12e3.webp",
+      "crop": {
+        "x": 1184,
+        "y": 660,
+        "w": 126,
+        "h": 204
+      },
+      "alphaBounds": [
+        0,
+        0,
+        126,
+        204
+      ],
+      "sha256": "048e79880b3745653cc85b5e7cd442c8662db7320a85959a45be4c92013e9d36"
+    },
+    "oldWorldFootCenter": {
+      "x": 34.8,
+      "y": 104.00001074285716
+    },
+    "generation": "exec-d313cab0-ec3c-463a-a939-8f884738eb9d",
+    "artPolicy": "source-faithful-parallel-projection",
+    "containmentPolicy": "Exact original collectionImageRect contain fit including source alpha margins"
+  }
+]

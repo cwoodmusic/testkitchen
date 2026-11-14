@@ -1,0 +1,53 @@
+{
+  "version": 1,
+  "views": 43,
+  "batches": [
+    {
+      "file": "cases-directions-1.webp",
+      "generation": "exec-0dc8cd35-ae54-4a23-8ac5-aa900dd26888.png",
+      "generatedSha256": "5cdb8d974ef2e2a33a176723cd0dc2ac3dcba77b166a5563934d749df995178f",
+      "webpSha256": "9ab5e9291d158a274bd5e10cdd8230dde4cd037192951564d9c4b115bb4dadaf",
+      "views": 9,
+      "referenceSha256": "332ab287f66b4753e911452592ba4c6a8ceffe90f67e35f0934ce001cd708bf8",
+      "method": "Imagegen source-faithful projection edit; native RGBA crop only, lossless WebP; no warp; West batch4 background removed via imagegen"
+    },
+    {
+      "file": "cases-directions-2.webp",
+      "generation": "exec-ee4fbdea-4475-4e52-87c7-d14273b219a1.png",
+      "generatedSha256": "b7de7b7b767e9e8f0849a14beb4e34e71191563eca083a535507712cade3631c",
+      "webpSha256": "75eff3a9867094eda08276e53f0d36467a6d721f8b3c675868c2509c2bc725f0",
+      "views": 9,
+      "referenceSha256": "c0064c783f9c9c17dc5394af570a041e002b1db99b0796abd5d97fcf05da759f",
+      "method": "Imagegen source-faithful projection edit; native RGBA crop only, lossless WebP; no warp; West batch4 background removed via imagegen"
+    },
+    {
+      "file": "cases-directions-3.webp",
+      "generation": "exec-3a7337ca-02f3-49fc-a0f3-39c3cbfd0fd9.png",
+      "generatedSha256": "d4f3939a89df0dec1d3e4708920434cf60f93ae230849b5278d4514e6f5e907a",
+      "webpSha256": "c518dba14a397892dd44cc411f2b80cde0c7a6141693820c71170157d058bfec",
+      "views": 9,
+      "referenceSha256": "205d7db4e38b52ba5defceb3757d8fe84c147b435fa89affaea98e80905a592f",
+      "method": "Imagegen source-faithful projection edit; native RGBA crop only, lossless WebP; no warp; West batch4 background removed via imagegen"
+    },
+    {
+      "file": "cases-directions-4.webp",
+      "generation": "exec-01ec23ca-87f0-4ed2-84e2-f4080cc5c4a9.png",
+      "generatedSha256": "2fb67ae53aec2f7d7a2284bc87e96e146034ce5d59af3fed0faac16749226323",
+      "webpSha256": "a9b7a738ad21dd9de4b7f4a5326b1c6d22d3705a37264efa253b169517252bf0",
+      "views": 9,
+      "referenceSha256": "74d145351f84b2616847f771220dc699779900c37252867787a9bd46e91728c7",
+      "method": "Imagegen source-faithful projection edit; native RGBA crop only, lossless WebP; no warp; West batch4 background removed via imagegen"
+    },
+    {
+      "file": "cases-directions-5.webp",
+      "generation": "exec-d313cab0-ec3c-463a-a939-8f884738eb9d.png",
+      "generatedSha256": "605c001bb8301fa49a047a9e2afc3aa2f3f1d3d86afef0125b00c99cd7ec7241",
+      "webpSha256": "a9ab45efc77e5d35eee90bdc233ff41776b5422f9242230e46cf431857f764c3",
+      "views": 7,
+      "referenceSha256": "e04e1874ed5569a14b38a772f0a89d2d284b70c653cca97e1d6808932ffd2638",
+      "method": "Imagegen source-faithful projection edit; native RGBA crop only, lossless WebP; no warp; West batch4 background removed via imagegen"
+    }
+  ],
+  "minimumCellMargin": 15,
+  "retained": "Stove South views belong to the separate case-furniture pass. Existing East views remain where the exposed planes are already parallel; Schoenberg North is parallel, French-cafe North top is occluded."
+}

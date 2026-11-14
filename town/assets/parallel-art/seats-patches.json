@@ -1,0 +1,2446 @@
+{
+  "version": 1,
+  "createdAt": "2026-11-14",
+  "counts": {
+    "southChairSourceFramesInspected": 93,
+    "correctedSourceFrames": 27,
+    "deskChairs": 13,
+    "diningChairs": 14,
+    "readingChairsChanged": 0,
+    "catalogAssetsCovered": 27
+  },
+  "projectionRule": "Parallel oblique2/3gamecamera. Correct rectangular physical seat plane and uniform seamgrid; maintain real round contours/arm occlusion/splayed legs. User3/4notes mean agreedparallel2/3.",
+  "packing": "Connected alpha>64 components locate complete individual sprites; all components fit their own rows and nofixed-cell crop clipsfeet/carvings.5pxmargin. RGBApixels copiedexactlyfromgeneratedboards; no warp, recolor, matteprocessing oralphaedits. Explicitold drawrect/worldfoot/boxes retain savedgeometry.",
+  "patches": [
+    {
+      "id": "collection-beethoven-desk-chair",
+      "owner": "beethoven",
+      "facing": "south",
+      "slot": "desk-chair",
+      "sourceBefore": {
+        "file": "town/assets/apartment-collections/beethoven-south-cardinal-3fc2dcbe24c1.webp",
+        "x": 1697,
+        "y": 4,
+        "w": 249,
+        "h": 409
+      },
+      "world": {
+        "w": 62,
+        "h": 94,
+        "footCenter": {
+          "x": 31.0,
+          "y": 75.0
+        },
+        "boxes": [
+          {
+            "x": 8,
+            "y": 60,
+            "w": 46,
+            "h": 30
+          }
+        ]
+      },
+      "drawRectBefore": {
+        "x": 2.386308068459659,
+        "y": 0.0,
+        "w": 57.22738386308068,
+        "h": 94.0
+      },
+      "drawRect": {
+        "x": 2.386308068459659,
+        "y": 0.0,
+        "w": 57.22738386308068,
+        "h": 94.0
+      },
+      "generatedBoardSHA256": "e0d8942180115f97dfcd29371a1d4d1097fcc5572810f8831e946979fbd5c1f9",
+      "boardCellIndex": 0,
+      "componentBounds": [
+        93,
+        24,
+        449,
+        656
+      ],
+      "componentOpaquePixelCount": 178233,
+      "extractionCrop": [
+        88,
+        19,
+        454,
+        661
+      ],
+      "acceptedWidth": 366,
+      "acceptedHeight": 642,
+      "acceptedSHA256": "d86729ddd11e0b8d17d168f141225a4b6d538e3accdd9b4d95325ac9c3b08b4b",
+      "inspectionApproved": true,
+      "alphaBorderClearAt64": true,
+      "artChanges": "Image-generation correction of projected rectangular seat top/seams; preserve detailed materials, palette, ornament, real curved backs and splayed legs. No image warps. Exact generated pixels cropped only.",
+      "derivedAssetIds": [],
+      "file": "collection-beethoven-desk-chair-south.webp",
+      "width": 366,
+      "height": 642,
+      "x": 0,
+      "y": 0,
+      "w": 366,
+      "h": 642,
+      "draw": {
+        "x": 2.386308068459659,
+        "y": 0.0,
+        "w": 57.22738386308068,
+        "h": 94.0
+      },
+      "generation": {
+        "tool": "image_gen",
+        "original": "originals/exec-67df5075-3990-48ea-a45c-90ac72d0b9d0.png",
+        "originalSHA256": "e0d8942180115f97dfcd29371a1d4d1097fcc5572810f8831e946979fbd5c1f9",
+        "crop": [
+          88,
+          19,
+          454,
+          661
+        ]
+      }
+    },
+    {
+      "id": "collection-vee-jay-desk-chair",
+      "owner": "vee-jay",
+      "facing": "south",
+      "slot": "desk-chair",
+      "sourceBefore": {
+        "file": "town/assets/apartment-collections/vee-jay-south-cardinal-9bb2802f02d5.webp",
+        "x": 1380,
+        "y": 1630,
+        "w": 240,
+        "h": 376
+      },
+      "world": {
+        "w": 62,
+        "h": 94,
+        "footCenter": {
+          "x": 31.0,
+          "y": 75.0
+        },
+        "boxes": [
+          {
+            "x": 8,
+            "y": 60,
+            "w": 46,
+            "h": 30
+          }
+        ]
+      },
+      "drawRectBefore": {
+        "x": 1.0,
+        "y": 0.0,
+        "w": 60.0,
+        "h": 94.0
+      },
+      "drawRect": {
+        "x": 1.0,
+        "y": 0.0,
+        "w": 60.0,
+        "h": 94.0
+      },
+      "generatedBoardSHA256": "e0d8942180115f97dfcd29371a1d4d1097fcc5572810f8831e946979fbd5c1f9",
+      "boardCellIndex": 1,
+      "componentBounds": [
+        602,
+        25,
+        982,
+        656
+      ],
+      "componentOpaquePixelCount": 176998,
+      "extractionCrop": [
+        597,
+        20,
+        987,
+        661
+      ],
+      "acceptedWidth": 390,
+      "acceptedHeight": 641,
+      "acceptedSHA256": "95de4c682b75db19d8f80f2d7e24b156731d4eb921bb49c1a47d2d4849485957",
+      "inspectionApproved": true,
+      "alphaBorderClearAt64": true,
+      "artChanges": "Image-generation correction of projected rectangular seat top/seams; preserve detailed materials, palette, ornament, real curved backs and splayed legs. No image warps. Exact generated pixels cropped only.",
+      "derivedAssetIds": [],
+      "file": "collection-vee-jay-desk-chair-south.webp",
+      "width": 390,
+      "height": 641,
+      "x": 0,
+      "y": 0,
+      "w": 390,
+      "h": 641,
+      "draw": {
+        "x": 1.0,
+        "y": 0.0,
+        "w": 60.0,
+        "h": 94.0
+      },
+      "generation": {
+        "tool": "image_gen",
+        "original": "originals/exec-67df5075-3990-48ea-a45c-90ac72d0b9d0.png",
+        "originalSHA256": "e0d8942180115f97dfcd29371a1d4d1097fcc5572810f8831e946979fbd5c1f9",
+        "crop": [
+          597,
+          20,
+          987,
+          661
+        ]
+      }
+    },
+    {
+      "id": "collection-metronome-dining-chair",
+      "owner": "metronome",
+      "facing": "south",
+      "slot": "dining-chair",
+      "sourceBefore": {
+        "file": "town/assets/apartment-collections/metronome-south-cardinal-72ce761a9f1c.webp",
+        "x": 278,
+        "y": 1191,
+        "w": 207,
+        "h": 409
+      },
+      "world": {
+        "w": 64,
+        "h": 100,
+        "footCenter": {
+          "x": 32.0,
+          "y": 81.0
+        },
+        "boxes": [
+          {
+            "x": 8,
+            "y": 65,
+            "w": 48,
+            "h": 32
+          }
+        ]
+      },
+      "drawRectBefore": {
+        "x": 6.69437652811736,
+        "y": 0.0,
+        "w": 50.61124694376528,
+        "h": 100.0
+      },
+      "drawRect": {
+        "x": 6.69437652811736,
+        "y": 0.0,
+        "w": 50.61124694376528,
+        "h": 100.0
+      },
+      "generatedBoardSHA256": "e0d8942180115f97dfcd29371a1d4d1097fcc5572810f8831e946979fbd5c1f9",
+      "boardCellIndex": 2,
+      "componentBounds": [
+        105,
+        700,
+        436,
+        1382
+      ],
+      "componentOpaquePixelCount": 150670,
+      "extractionCrop": [
+        100,
+        695,
+        441,
+        1387
+      ],
+      "acceptedWidth": 341,
+      "acceptedHeight": 692,
+      "acceptedSHA256": "172b65c9461660c70b0e40b0510c3daf14144b9bc9f1611ac5f55123f74ab839",
+      "inspectionApproved": true,
+      "alphaBorderClearAt64": true,
+      "artChanges": "Image-generation correction of projected rectangular seat top/seams; preserve detailed materials, palette, ornament, real curved backs and splayed legs. No image warps. Exact generated pixels cropped only.",
+      "derivedAssetIds": [],
+      "file": "collection-metronome-dining-chair-south.webp",
+      "width": 341,
+      "height": 692,
+      "x": 0,
+      "y": 0,
+      "w": 341,
+      "h": 692,
+      "draw": {
+        "x": 6.69437652811736,
+        "y": 0.0,
+        "w": 50.61124694376528,
+        "h": 100.0
+      },
+      "generation": {
+        "tool": "image_gen",
+        "original": "originals/exec-67df5075-3990-48ea-a45c-90ac72d0b9d0.png",
+        "originalSHA256": "e0d8942180115f97dfcd29371a1d4d1097fcc5572810f8831e946979fbd5c1f9",
+        "crop": [
+          100,
+          695,
+          441,
+          1387
+        ]
+      }
+    },
+    {
+      "id": "collection-schoenberg-dining-chair",
+      "owner": "schoenberg",
+      "facing": "south",
+      "slot": "dining-chair",
+      "sourceBefore": {
+        "file": "town/assets/apartment-collections/schoenberg-south-cardinal-ddb71057d306.webp",
+        "x": 970,
+        "y": 1118,
+        "w": 221,
+        "h": 384
+      },
+      "world": {
+        "w": 64,
+        "h": 100,
+        "footCenter": {
+          "x": 32.0,
+          "y": 81.0
+        },
+        "boxes": [
+          {
+            "x": 8,
+            "y": 65,
+            "w": 48,
+            "h": 32
+          }
+        ]
+      },
+      "drawRectBefore": {
+        "x": 3.223958333333332,
+        "y": 0.0,
+        "w": 57.552083333333336,
+        "h": 100.0
+      },
+      "drawRect": {
+        "x": 3.223958333333332,
+        "y": 0.0,
+        "w": 57.552083333333336,
+        "h": 100.0
+      },
+      "generatedBoardSHA256": "e0d8942180115f97dfcd29371a1d4d1097fcc5572810f8831e946979fbd5c1f9",
+      "boardCellIndex": 3,
+      "componentBounds": [
+        607,
+        700,
+        970,
+        1383
+      ],
+      "componentOpaquePixelCount": 161181,
+      "extractionCrop": [
+        602,
+        695,
+        975,
+        1388
+      ],
+      "acceptedWidth": 373,
+      "acceptedHeight": 693,
+      "acceptedSHA256": "ddbe355528e2e0ad467074abe355ed825eab0a8451d3123dcbbbff479c683b3a",
+      "inspectionApproved": true,
+      "alphaBorderClearAt64": true,
+      "artChanges": "Image-generation correction of projected rectangular seat top/seams; preserve detailed materials, palette, ornament, real curved backs and splayed legs. No image warps. Exact generated pixels cropped only.",
+      "derivedAssetIds": [],
+      "file": "collection-schoenberg-dining-chair-south.webp",
+      "width": 373,
+      "height": 693,
+      "x": 0,
+      "y": 0,
+      "w": 373,
+      "h": 693,
+      "draw": {
+        "x": 3.223958333333332,
+        "y": 0.0,
+        "w": 57.552083333333336,
+        "h": 100.0
+      },
+      "generation": {
+        "tool": "image_gen",
+        "original": "originals/exec-67df5075-3990-48ea-a45c-90ac72d0b9d0.png",
+        "originalSHA256": "e0d8942180115f97dfcd29371a1d4d1097fcc5572810f8831e946979fbd5c1f9",
+        "crop": [
+          602,
+          695,
+          975,
+          1388
+        ]
+      }
+    },
+    {
+      "id": "collection-haydn-desk-chair",
+      "owner": "haydn",
+      "facing": "south",
+      "slot": "desk-chair",
+      "sourceBefore": {
+        "file": "town/assets/apartment-collections/haydn-south-cardinal-c42d7912a677.webp",
+        "x": 1440,
+        "y": 4,
+        "w": 255,
+        "h": 390
+      },
+      "world": {
+        "w": 62,
+        "h": 94,
+        "footCenter": {
+          "x": 31.0,
+          "y": 75.0
+        },
+        "boxes": [
+          {
+            "x": 8,
+            "y": 60,
+            "w": 46,
+            "h": 30
+          }
+        ]
+      },
+      "drawRectBefore": {
+        "x": 0.26923076923077005,
+        "y": 0.0,
+        "w": 61.46153846153846,
+        "h": 94.0
+      },
+      "drawRect": {
+        "x": 0.26923076923077005,
+        "y": 0.0,
+        "w": 61.46153846153846,
+        "h": 94.0
+      },
+      "generatedBoardSHA256": "bb280f9897b561f8fa32c44d03242dc76abe30da7f7a01c68bc4dd38f22ecc88",
+      "boardCellIndex": 0,
+      "componentBounds": [
+        87,
+        26,
+        331,
+        402
+      ],
+      "componentOpaquePixelCount": 59411,
+      "extractionCrop": [
+        82,
+        21,
+        336,
+        407
+      ],
+      "acceptedWidth": 254,
+      "acceptedHeight": 386,
+      "acceptedSHA256": "78d6eab690a1995241e18fde1166903646919da771240cd3b90d9825e0484bb3",
+      "inspectionApproved": true,
+      "alphaBorderClearAt64": true,
+      "artChanges": "Image-generation correction of projected rectangular seat top/seams; preserve detailed materials, palette, ornament, real curved backs and splayed legs. No image warps. Exact generated pixels cropped only.",
+      "derivedAssetIds": [],
+      "file": "collection-haydn-desk-chair-south.webp",
+      "width": 254,
+      "height": 386,
+      "x": 0,
+      "y": 0,
+      "w": 254,
+      "h": 386,
+      "draw": {
+        "x": 0.26923076923077005,
+        "y": 0.0,
+        "w": 61.46153846153846,
+        "h": 94.0
+      },
+      "generation": {
+        "tool": "image_gen",
+        "original": "originals/exec-137ab59d-2793-467c-8a47-e07920d2b471.png",
+        "originalSHA256": "bb280f9897b561f8fa32c44d03242dc76abe30da7f7a01c68bc4dd38f22ecc88",
+        "crop": [
+          82,
+          21,
+          336,
+          407
+        ]
+      }
+    },
+    {
+      "id": "collection-handel-desk-chair",
+      "owner": "handel",
+      "facing": "south",
+      "slot": "desk-chair",
+      "sourceBefore": {
+        "file": "town/assets/apartment-collections/handel-south-cardinal-f069238584fc.webp",
+        "x": 726,
+        "y": 4,
+        "w": 263,
+        "h": 407
+      },
+      "world": {
+        "w": 62,
+        "h": 94,
+        "footCenter": {
+          "x": 31.0,
+          "y": 75.0
+        },
+        "boxes": [
+          {
+            "x": 8,
+            "y": 60,
+            "w": 46,
+            "h": 30
+          }
+        ]
+      },
+      "drawRectBefore": {
+        "x": 0.6289926289926306,
+        "y": 0.0,
+        "w": 60.74201474201474,
+        "h": 94.0
+      },
+      "drawRect": {
+        "x": 0.6289926289926306,
+        "y": 0.0,
+        "w": 60.74201474201474,
+        "h": 94.0
+      },
+      "generatedBoardSHA256": "bb280f9897b561f8fa32c44d03242dc76abe30da7f7a01c68bc4dd38f22ecc88",
+      "boardCellIndex": 1,
+      "componentBounds": [
+        504,
+        27,
+        749,
+        402
+      ],
+      "componentOpaquePixelCount": 64635,
+      "extractionCrop": [
+        499,
+        22,
+        754,
+        407
+      ],
+      "acceptedWidth": 255,
+      "acceptedHeight": 385,
+      "acceptedSHA256": "9348182c144b394f175673f0c18d5b52e2b87422d405f196eb4bb94b5de41bc4",
+      "inspectionApproved": true,
+      "alphaBorderClearAt64": true,
+      "artChanges": "Image-generation correction of projected rectangular seat top/seams; preserve detailed materials, palette, ornament, real curved backs and splayed legs. No image warps. Exact generated pixels cropped only.",
+      "derivedAssetIds": [],
+      "file": "collection-handel-desk-chair-south.webp",
+      "width": 255,
+      "height": 385,
+      "x": 0,
+      "y": 0,
+      "w": 255,
+      "h": 385,
+      "draw": {
+        "x": 0.6289926289926306,
+        "y": 0.0,
+        "w": 60.74201474201474,
+        "h": 94.0
+      },
+      "generation": {
+        "tool": "image_gen",
+        "original": "originals/exec-137ab59d-2793-467c-8a47-e07920d2b471.png",
+        "originalSHA256": "bb280f9897b561f8fa32c44d03242dc76abe30da7f7a01c68bc4dd38f22ecc88",
+        "crop": [
+          499,
+          22,
+          754,
+          407
+        ]
+      }
+    },
+    {
+      "id": "collection-joplin-desk-chair",
+      "owner": "joplin",
+      "facing": "south",
+      "slot": "desk-chair",
+      "sourceBefore": {
+        "file": "town/assets/apartment-collections/joplin-south-cardinal-51e88f307806.webp",
+        "x": 409,
+        "y": 667,
+        "w": 243,
+        "h": 379
+      },
+      "world": {
+        "w": 62,
+        "h": 94,
+        "footCenter": {
+          "x": 31.0,
+          "y": 75.0
+        },
+        "boxes": [
+          {
+            "x": 8,
+            "y": 60,
+            "w": 46,
+            "h": 30
+          }
+        ]
+      },
+      "drawRectBefore": {
+        "x": 0.8654353562005284,
+        "y": 0.0,
+        "w": 60.26912928759894,
+        "h": 94.0
+      },
+      "drawRect": {
+        "x": 0.8654353562005284,
+        "y": 0.0,
+        "w": 60.26912928759894,
+        "h": 94.0
+      },
+      "generatedBoardSHA256": "bb280f9897b561f8fa32c44d03242dc76abe30da7f7a01c68bc4dd38f22ecc88",
+      "boardCellIndex": 2,
+      "componentBounds": [
+        915,
+        30,
+        1166,
+        402
+      ],
+      "componentOpaquePixelCount": 67600,
+      "extractionCrop": [
+        910,
+        25,
+        1171,
+        407
+      ],
+      "acceptedWidth": 261,
+      "acceptedHeight": 382,
+      "acceptedSHA256": "7dd73fdb9fcd7e58768f5b7045cbea8935bc3cd2fdc40886b9f7cd4f4d57f267",
+      "inspectionApproved": true,
+      "alphaBorderClearAt64": true,
+      "artChanges": "Image-generation correction of projected rectangular seat top/seams; preserve detailed materials, palette, ornament, real curved backs and splayed legs. No image warps. Exact generated pixels cropped only.",
+      "derivedAssetIds": [],
+      "file": "collection-joplin-desk-chair-south.webp",
+      "width": 261,
+      "height": 382,
+      "x": 0,
+      "y": 0,
+      "w": 261,
+      "h": 382,
+      "draw": {
+        "x": 0.8654353562005284,
+        "y": 0.0,
+        "w": 60.26912928759894,
+        "h": 94.0
+      },
+      "generation": {
+        "tool": "image_gen",
+        "original": "originals/exec-137ab59d-2793-467c-8a47-e07920d2b471.png",
+        "originalSHA256": "bb280f9897b561f8fa32c44d03242dc76abe30da7f7a01c68bc4dd38f22ecc88",
+        "crop": [
+          910,
+          25,
+          1171,
+          407
+        ]
+      }
+    },
+    {
+      "id": "collection-dj-desk-chair",
+      "owner": "dj",
+      "facing": "south",
+      "slot": "desk-chair",
+      "sourceBefore": {
+        "file": "town/assets/apartment-collections/dj-south-cardinal-f9e823090299.webp",
+        "x": 1673,
+        "y": 4,
+        "w": 282,
+        "h": 421
+      },
+      "world": {
+        "w": 62,
+        "h": 94,
+        "footCenter": {
+          "x": 31.0,
+          "y": 75.0
+        },
+        "boxes": [
+          {
+            "x": 8,
+            "y": 60,
+            "w": 46,
+            "h": 30
+          }
+        ]
+      },
+      "drawRectBefore": {
+        "x": 0.0,
+        "y": 1.4397163120567313,
+        "w": 62.0,
+        "h": 92.56028368794327
+      },
+      "drawRect": {
+        "x": 0.0,
+        "y": 1.4397163120567313,
+        "w": 62.0,
+        "h": 92.56028368794327
+      },
+      "generatedBoardSHA256": "bb280f9897b561f8fa32c44d03242dc76abe30da7f7a01c68bc4dd38f22ecc88",
+      "boardCellIndex": 3,
+      "componentBounds": [
+        82,
+        445,
+        336,
+        818
+      ],
+      "componentOpaquePixelCount": 67050,
+      "extractionCrop": [
+        77,
+        440,
+        341,
+        823
+      ],
+      "acceptedWidth": 264,
+      "acceptedHeight": 383,
+      "acceptedSHA256": "c26be1c73baf7cd42e46cf88662a3b41530cbcfd9a8d5f3f377638cbe6d6780c",
+      "inspectionApproved": true,
+      "alphaBorderClearAt64": true,
+      "artChanges": "Image-generation correction of projected rectangular seat top/seams; preserve detailed materials, palette, ornament, real curved backs and splayed legs. No image warps. Exact generated pixels cropped only.",
+      "derivedAssetIds": [],
+      "file": "collection-dj-desk-chair-south.webp",
+      "width": 264,
+      "height": 383,
+      "x": 0,
+      "y": 0,
+      "w": 264,
+      "h": 383,
+      "draw": {
+        "x": 0.0,
+        "y": 1.4397163120567313,
+        "w": 62.0,
+        "h": 92.56028368794327
+      },
+      "generation": {
+        "tool": "image_gen",
+        "original": "originals/exec-137ab59d-2793-467c-8a47-e07920d2b471.png",
+        "originalSHA256": "bb280f9897b561f8fa32c44d03242dc76abe30da7f7a01c68bc4dd38f22ecc88",
+        "crop": [
+          77,
+          440,
+          341,
+          823
+        ]
+      }
+    },
+    {
+      "id": "collection-metronome-desk-chair",
+      "owner": "metronome",
+      "facing": "south",
+      "slot": "desk-chair",
+      "sourceBefore": {
+        "file": "town/assets/apartment-collections/metronome-south-cardinal-72ce761a9f1c.webp",
+        "x": 1778,
+        "y": 1191,
+        "w": 233,
+        "h": 399
+      },
+      "world": {
+        "w": 62,
+        "h": 94,
+        "footCenter": {
+          "x": 31.0,
+          "y": 75.0
+        },
+        "boxes": [
+          {
+            "x": 8,
+            "y": 60,
+            "w": 46,
+            "h": 30
+          }
+        ]
+      },
+      "drawRectBefore": {
+        "x": 3.5538847117794496,
+        "y": 0.0,
+        "w": 54.8922305764411,
+        "h": 94.0
+      },
+      "drawRect": {
+        "x": 3.5538847117794496,
+        "y": 0.0,
+        "w": 54.8922305764411,
+        "h": 94.0
+      },
+      "generatedBoardSHA256": "bb280f9897b561f8fa32c44d03242dc76abe30da7f7a01c68bc4dd38f22ecc88",
+      "boardCellIndex": 4,
+      "componentBounds": [
+        507,
+        447,
+        743,
+        818
+      ],
+      "componentOpaquePixelCount": 59639,
+      "extractionCrop": [
+        502,
+        442,
+        748,
+        823
+      ],
+      "acceptedWidth": 246,
+      "acceptedHeight": 381,
+      "acceptedSHA256": "5f1577b08d48b1a8962237fd6ea416017acd27dcca3d1de990d32af0e75b6f3d",
+      "inspectionApproved": true,
+      "alphaBorderClearAt64": true,
+      "artChanges": "Image-generation correction of projected rectangular seat top/seams; preserve detailed materials, palette, ornament, real curved backs and splayed legs. No image warps. Exact generated pixels cropped only.",
+      "derivedAssetIds": [],
+      "file": "collection-metronome-desk-chair-south.webp",
+      "width": 246,
+      "height": 381,
+      "x": 0,
+      "y": 0,
+      "w": 246,
+      "h": 381,
+      "draw": {
+        "x": 3.5538847117794496,
+        "y": 0.0,
+        "w": 54.8922305764411,
+        "h": 94.0
+      },
+      "generation": {
+        "tool": "image_gen",
+        "original": "originals/exec-137ab59d-2793-467c-8a47-e07920d2b471.png",
+        "originalSHA256": "bb280f9897b561f8fa32c44d03242dc76abe30da7f7a01c68bc4dd38f22ecc88",
+        "crop": [
+          502,
+          442,
+          748,
+          823
+        ]
+      }
+    },
+    {
+      "id": "collection-schoenberg-desk-chair",
+      "owner": "schoenberg",
+      "facing": "south",
+      "slot": "desk-chair",
+      "sourceBefore": {
+        "file": "town/assets/apartment-collections/schoenberg-south-cardinal-ddb71057d306.webp",
+        "x": 1126,
+        "y": 4,
+        "w": 248,
+        "h": 393
+      },
+      "world": {
+        "w": 62,
+        "h": 94,
+        "footCenter": {
+          "x": 31.0,
+          "y": 75.0
+        },
+        "boxes": [
+          {
+            "x": 8,
+            "y": 60,
+            "w": 46,
+            "h": 30
+          }
+        ]
+      },
+      "drawRectBefore": {
+        "x": 1.3409669211195911,
+        "y": 0.0,
+        "w": 59.31806615776082,
+        "h": 94.0
+      },
+      "drawRect": {
+        "x": 1.3409669211195911,
+        "y": 0.0,
+        "w": 59.31806615776082,
+        "h": 94.0
+      },
+      "generatedBoardSHA256": "bb280f9897b561f8fa32c44d03242dc76abe30da7f7a01c68bc4dd38f22ecc88",
+      "boardCellIndex": 5,
+      "componentBounds": [
+        918,
+        447,
+        1165,
+        816
+      ],
+      "componentOpaquePixelCount": 60147,
+      "extractionCrop": [
+        913,
+        442,
+        1170,
+        821
+      ],
+      "acceptedWidth": 257,
+      "acceptedHeight": 379,
+      "acceptedSHA256": "7579d6ca09103084dcb9e9601984f35403f49565b561953d56ed9b9bcdaa8e18",
+      "inspectionApproved": true,
+      "alphaBorderClearAt64": true,
+      "artChanges": "Image-generation correction of projected rectangular seat top/seams; preserve detailed materials, palette, ornament, real curved backs and splayed legs. No image warps. Exact generated pixels cropped only.",
+      "derivedAssetIds": [],
+      "file": "collection-schoenberg-desk-chair-south.webp",
+      "width": 257,
+      "height": 379,
+      "x": 0,
+      "y": 0,
+      "w": 257,
+      "h": 379,
+      "draw": {
+        "x": 1.3409669211195911,
+        "y": 0.0,
+        "w": 59.31806615776082,
+        "h": 94.0
+      },
+      "generation": {
+        "tool": "image_gen",
+        "original": "originals/exec-137ab59d-2793-467c-8a47-e07920d2b471.png",
+        "originalSHA256": "bb280f9897b561f8fa32c44d03242dc76abe30da7f7a01c68bc4dd38f22ecc88",
+        "crop": [
+          913,
+          442,
+          1170,
+          821
+        ]
+      }
+    },
+    {
+      "id": "collection-showroom-art-deco-lounge-desk-chair",
+      "owner": "showroom-art-deco-lounge",
+      "facing": "south",
+      "slot": "desk-chair",
+      "sourceBefore": {
+        "file": "town/assets/apartment-collections/showroom-art-deco-lounge-south-cardinal-7e5863603897.webp",
+        "x": 294,
+        "y": 588,
+        "w": 270,
+        "h": 409
+      },
+      "world": {
+        "w": 62,
+        "h": 94,
+        "footCenter": {
+          "x": 31.0,
+          "y": 75.0
+        },
+        "boxes": [
+          {
+            "x": 8,
+            "y": 60,
+            "w": 46,
+            "h": 30
+          }
+        ]
+      },
+      "drawRectBefore": {
+        "x": 0.0,
+        "y": 0.08148148148147527,
+        "w": 62.0,
+        "h": 93.91851851851852
+      },
+      "drawRect": {
+        "x": 0.0,
+        "y": 0.08148148148147527,
+        "w": 62.0,
+        "h": 93.91851851851852
+      },
+      "generatedBoardSHA256": "bb280f9897b561f8fa32c44d03242dc76abe30da7f7a01c68bc4dd38f22ecc88",
+      "boardCellIndex": 6,
+      "componentBounds": [
+        82,
+        864,
+        334,
+        1235
+      ],
+      "componentOpaquePixelCount": 70074,
+      "extractionCrop": [
+        77,
+        859,
+        339,
+        1240
+      ],
+      "acceptedWidth": 262,
+      "acceptedHeight": 381,
+      "acceptedSHA256": "337c413b6b106776ae454ae6665418d134c0f88becfe41f6ce2945e52e755821",
+      "inspectionApproved": true,
+      "alphaBorderClearAt64": true,
+      "artChanges": "Image-generation correction of projected rectangular seat top/seams; preserve detailed materials, palette, ornament, real curved backs and splayed legs. No image warps. Exact generated pixels cropped only.",
+      "derivedAssetIds": [],
+      "file": "collection-showroom-art-deco-lounge-desk-chair-south.webp",
+      "width": 262,
+      "height": 381,
+      "x": 0,
+      "y": 0,
+      "w": 262,
+      "h": 381,
+      "draw": {
+        "x": 0.0,
+        "y": 0.08148148148147527,
+        "w": 62.0,
+        "h": 93.91851851851852
+      },
+      "generation": {
+        "tool": "image_gen",
+        "original": "originals/exec-137ab59d-2793-467c-8a47-e07920d2b471.png",
+        "originalSHA256": "bb280f9897b561f8fa32c44d03242dc76abe30da7f7a01c68bc4dd38f22ecc88",
+        "crop": [
+          77,
+          859,
+          339,
+          1240
+        ]
+      }
+    },
+    {
+      "id": "collection-showroom-industrial-loft-desk-chair",
+      "owner": "showroom-industrial-loft",
+      "facing": "south",
+      "slot": "desk-chair",
+      "sourceBefore": {
+        "file": "town/assets/apartment-collections/showroom-industrial-loft-south-cardinal-af2eac7eb93a.webp",
+        "x": 1434,
+        "y": 4,
+        "w": 262,
+        "h": 396
+      },
+      "world": {
+        "w": 62,
+        "h": 94,
+        "footCenter": {
+          "x": 31.0,
+          "y": 75.0
+        },
+        "boxes": [
+          {
+            "x": 8,
+            "y": 60,
+            "w": 46,
+            "h": 30
+          }
+        ]
+      },
+      "drawRectBefore": {
+        "x": 0.0,
+        "y": 0.2900763358778562,
+        "w": 62.0,
+        "h": 93.70992366412214
+      },
+      "drawRect": {
+        "x": 0.0,
+        "y": 0.2900763358778562,
+        "w": 62.0,
+        "h": 93.70992366412214
+      },
+      "generatedBoardSHA256": "bb280f9897b561f8fa32c44d03242dc76abe30da7f7a01c68bc4dd38f22ecc88",
+      "boardCellIndex": 7,
+      "componentBounds": [
+        498,
+        863,
+        756,
+        1235
+      ],
+      "componentOpaquePixelCount": 68675,
+      "extractionCrop": [
+        493,
+        858,
+        761,
+        1240
+      ],
+      "acceptedWidth": 268,
+      "acceptedHeight": 382,
+      "acceptedSHA256": "0867c4dfbcc0da58d5d0e8b6a865e44c1a95283790beaaaaa0da1382da90aaee",
+      "inspectionApproved": true,
+      "alphaBorderClearAt64": true,
+      "artChanges": "Image-generation correction of projected rectangular seat top/seams; preserve detailed materials, palette, ornament, real curved backs and splayed legs. No image warps. Exact generated pixels cropped only.",
+      "derivedAssetIds": [],
+      "file": "collection-showroom-industrial-loft-desk-chair-south.webp",
+      "width": 268,
+      "height": 382,
+      "x": 0,
+      "y": 0,
+      "w": 268,
+      "h": 382,
+      "draw": {
+        "x": 0.0,
+        "y": 0.2900763358778562,
+        "w": 62.0,
+        "h": 93.70992366412214
+      },
+      "generation": {
+        "tool": "image_gen",
+        "original": "originals/exec-137ab59d-2793-467c-8a47-e07920d2b471.png",
+        "originalSHA256": "bb280f9897b561f8fa32c44d03242dc76abe30da7f7a01c68bc4dd38f22ecc88",
+        "crop": [
+          493,
+          858,
+          761,
+          1240
+        ]
+      }
+    },
+    {
+      "id": "collection-showroom-cyberpunk-desk-chair",
+      "owner": "showroom-cyberpunk",
+      "facing": "south",
+      "slot": "desk-chair",
+      "sourceBefore": {
+        "file": "town/assets/apartment-collections/showroom-cyberpunk.webp",
+        "x": 266,
+        "y": 233,
+        "w": 136,
+        "h": 210
+      },
+      "world": {
+        "w": 62,
+        "h": 94,
+        "footCenter": {
+          "x": 31.0,
+          "y": 75.0
+        },
+        "boxes": [
+          {
+            "x": 8,
+            "y": 60,
+            "w": 46,
+            "h": 30
+          }
+        ]
+      },
+      "drawRectBefore": {
+        "x": 0.5619047619047599,
+        "y": 0.0,
+        "w": 60.87619047619048,
+        "h": 94.0
+      },
+      "drawRect": {
+        "x": 0.5619047619047599,
+        "y": 0.0,
+        "w": 60.87619047619048,
+        "h": 94.0
+      },
+      "generatedBoardSHA256": "bb280f9897b561f8fa32c44d03242dc76abe30da7f7a01c68bc4dd38f22ecc88",
+      "boardCellIndex": 8,
+      "componentBounds": [
+        917,
+        863,
+        1166,
+        1236
+      ],
+      "componentOpaquePixelCount": 59752,
+      "extractionCrop": [
+        912,
+        858,
+        1171,
+        1241
+      ],
+      "acceptedWidth": 259,
+      "acceptedHeight": 383,
+      "acceptedSHA256": "e58fad83cc7ed82ecba3420b232845a9738cb6ee620c75c2807c0d9a69b41737",
+      "inspectionApproved": true,
+      "alphaBorderClearAt64": true,
+      "artChanges": "Image-generation correction of projected rectangular seat top/seams; preserve detailed materials, palette, ornament, real curved backs and splayed legs. No image warps. Exact generated pixels cropped only.",
+      "derivedAssetIds": [],
+      "file": "collection-showroom-cyberpunk-desk-chair-south.webp",
+      "width": 259,
+      "height": 383,
+      "x": 0,
+      "y": 0,
+      "w": 259,
+      "h": 383,
+      "draw": {
+        "x": 0.5619047619047599,
+        "y": 0.0,
+        "w": 60.87619047619048,
+        "h": 94.0
+      },
+      "generation": {
+        "tool": "image_gen",
+        "original": "originals/exec-137ab59d-2793-467c-8a47-e07920d2b471.png",
+        "originalSHA256": "bb280f9897b561f8fa32c44d03242dc76abe30da7f7a01c68bc4dd38f22ecc88",
+        "crop": [
+          912,
+          858,
+          1171,
+          1241
+        ]
+      }
+    },
+    {
+      "id": "collection-showroom-steampunk-desk-chair",
+      "owner": "showroom-steampunk",
+      "facing": "south",
+      "slot": "desk-chair",
+      "sourceBefore": {
+        "file": "town/assets/apartment-collections/showroom-steampunk.webp",
+        "x": 263,
+        "y": 235,
+        "w": 151,
+        "h": 208
+      },
+      "world": {
+        "w": 62,
+        "h": 94,
+        "footCenter": {
+          "x": 31.0,
+          "y": 75.0
+        },
+        "boxes": [
+          {
+            "x": 8,
+            "y": 60,
+            "w": 46,
+            "h": 30
+          }
+        ]
+      },
+      "drawRectBefore": {
+        "x": 0.0,
+        "y": 8.596026490066222,
+        "w": 62.0,
+        "h": 85.40397350993378
+      },
+      "drawRect": {
+        "x": 0.0,
+        "y": 8.596026490066222,
+        "w": 62.0,
+        "h": 85.40397350993378
+      },
+      "generatedBoardSHA256": "98a512717b641d08edfc4530ede804a758a2096b029e513b15bf44d096bf25c7",
+      "boardCellIndex": 0,
+      "componentBounds": [
+        81,
+        25,
+        338,
+        400
+      ],
+      "componentOpaquePixelCount": 65161,
+      "extractionCrop": [
+        76,
+        20,
+        343,
+        405
+      ],
+      "acceptedWidth": 267,
+      "acceptedHeight": 385,
+      "acceptedSHA256": "aa5b19f6c014de157670a2dbdbbaee70ac44bf7919273d03d513cf7ae4629582",
+      "inspectionApproved": true,
+      "alphaBorderClearAt64": true,
+      "artChanges": "Image-generation correction of projected rectangular seat top/seams; preserve detailed materials, palette, ornament, real curved backs and splayed legs. No image warps. Exact generated pixels cropped only.",
+      "derivedAssetIds": [],
+      "file": "collection-showroom-steampunk-desk-chair-south.webp",
+      "width": 267,
+      "height": 385,
+      "x": 0,
+      "y": 0,
+      "w": 267,
+      "h": 385,
+      "draw": {
+        "x": 0.0,
+        "y": 8.596026490066222,
+        "w": 62.0,
+        "h": 85.40397350993378
+      },
+      "generation": {
+        "tool": "image_gen",
+        "original": "originals/exec-8f24de90-3d0e-4e6b-847e-cdc240d6b1ba.png",
+        "originalSHA256": "98a512717b641d08edfc4530ede804a758a2096b029e513b15bf44d096bf25c7",
+        "crop": [
+          76,
+          20,
+          343,
+          405
+        ]
+      }
+    },
+    {
+      "id": "collection-showroom-robot-desk-chair",
+      "owner": "showroom-robot",
+      "facing": "south",
+      "slot": "desk-chair",
+      "sourceBefore": {
+        "file": "town/assets/apartment-collections/showroom-robot.webp",
+        "x": 260,
+        "y": 249,
+        "w": 150,
+        "h": 194
+      },
+      "world": {
+        "w": 62,
+        "h": 94,
+        "footCenter": {
+          "x": 31.0,
+          "y": 75.0
+        },
+        "boxes": [
+          {
+            "x": 8,
+            "y": 60,
+            "w": 46,
+            "h": 30
+          }
+        ]
+      },
+      "drawRectBefore": {
+        "x": 0.0,
+        "y": 13.813333333333333,
+        "w": 62.0,
+        "h": 80.18666666666667
+      },
+      "drawRect": {
+        "x": 0.0,
+        "y": 13.813333333333333,
+        "w": 62.0,
+        "h": 80.18666666666667
+      },
+      "generatedBoardSHA256": "98a512717b641d08edfc4530ede804a758a2096b029e513b15bf44d096bf25c7",
+      "boardCellIndex": 1,
+      "componentBounds": [
+        491,
+        31,
+        764,
+        401
+      ],
+      "componentOpaquePixelCount": 65855,
+      "extractionCrop": [
+        486,
+        26,
+        769,
+        406
+      ],
+      "acceptedWidth": 283,
+      "acceptedHeight": 380,
+      "acceptedSHA256": "48fcb2bc68d4e7fcf42b3bac3f9d355097c3610ab022df7e30b7482ea2dc6a3f",
+      "inspectionApproved": true,
+      "alphaBorderClearAt64": true,
+      "artChanges": "Image-generation correction of projected rectangular seat top/seams; preserve detailed materials, palette, ornament, real curved backs and splayed legs. No image warps. Exact generated pixels cropped only.",
+      "derivedAssetIds": [],
+      "file": "collection-showroom-robot-desk-chair-south.webp",
+      "width": 283,
+      "height": 380,
+      "x": 0,
+      "y": 0,
+      "w": 283,
+      "h": 380,
+      "draw": {
+        "x": 0.0,
+        "y": 13.813333333333333,
+        "w": 62.0,
+        "h": 80.18666666666667
+      },
+      "generation": {
+        "tool": "image_gen",
+        "original": "originals/exec-8f24de90-3d0e-4e6b-847e-cdc240d6b1ba.png",
+        "originalSHA256": "98a512717b641d08edfc4530ede804a758a2096b029e513b15bf44d096bf25c7",
+        "crop": [
+          486,
+          26,
+          769,
+          406
+        ]
+      }
+    },
+    {
+      "id": "collection-beethoven-dining-chair",
+      "owner": "beethoven",
+      "facing": "south",
+      "slot": "dining-chair",
+      "sourceBefore": {
+        "file": "town/assets/apartment-collections/beethoven-south-cardinal-3fc2dcbe24c1.webp",
+        "x": 823,
+        "y": 1250,
+        "w": 212,
+        "h": 385
+      },
+      "world": {
+        "w": 64,
+        "h": 100,
+        "footCenter": {
+          "x": 32.0,
+          "y": 81.0
+        },
+        "boxes": [
+          {
+            "x": 8,
+            "y": 65,
+            "w": 48,
+            "h": 32
+          }
+        ]
+      },
+      "drawRectBefore": {
+        "x": 4.467532467532472,
+        "y": 1.4210854715202004e-14,
+        "w": 55.06493506493506,
+        "h": 99.99999999999999
+      },
+      "drawRect": {
+        "x": 4.467532467532472,
+        "y": 1.4210854715202004e-14,
+        "w": 55.06493506493506,
+        "h": 99.99999999999999
+      },
+      "generatedBoardSHA256": "98a512717b641d08edfc4530ede804a758a2096b029e513b15bf44d096bf25c7",
+      "boardCellIndex": 2,
+      "componentBounds": [
+        942,
+        32,
+        1148,
+        404
+      ],
+      "componentOpaquePixelCount": 54474,
+      "extractionCrop": [
+        937,
+        27,
+        1153,
+        409
+      ],
+      "acceptedWidth": 216,
+      "acceptedHeight": 382,
+      "acceptedSHA256": "4b1aca764abbf68734f4b57933a5c62469b8a3a22af60178e2479c72032cd0e9",
+      "inspectionApproved": true,
+      "alphaBorderClearAt64": true,
+      "artChanges": "Image-generation correction of projected rectangular seat top/seams; preserve detailed materials, palette, ornament, real curved backs and splayed legs. No image warps. Exact generated pixels cropped only.",
+      "derivedAssetIds": [],
+      "file": "collection-beethoven-dining-chair-south.webp",
+      "width": 216,
+      "height": 382,
+      "x": 0,
+      "y": 0,
+      "w": 216,
+      "h": 382,
+      "draw": {
+        "x": 4.467532467532472,
+        "y": 1.4210854715202004e-14,
+        "w": 55.06493506493506,
+        "h": 99.99999999999999
+      },
+      "generation": {
+        "tool": "image_gen",
+        "original": "originals/exec-8f24de90-3d0e-4e6b-847e-cdc240d6b1ba.png",
+        "originalSHA256": "98a512717b641d08edfc4530ede804a758a2096b029e513b15bf44d096bf25c7",
+        "crop": [
+          937,
+          27,
+          1153,
+          409
+        ]
+      }
+    },
+    {
+      "id": "collection-haydn-dining-chair",
+      "owner": "haydn",
+      "facing": "south",
+      "slot": "dining-chair",
+      "sourceBefore": {
+        "file": "town/assets/apartment-collections/haydn-south-cardinal-c42d7912a677.webp",
+        "x": 703,
+        "y": 4,
+        "w": 279,
+        "h": 491
+      },
+      "world": {
+        "w": 64,
+        "h": 100,
+        "footCenter": {
+          "x": 32.0,
+          "y": 81.0
+        },
+        "boxes": [
+          {
+            "x": 8,
+            "y": 65,
+            "w": 48,
+            "h": 32
+          }
+        ]
+      },
+      "drawRectBefore": {
+        "x": 3.588594704684315,
+        "y": 0.0,
+        "w": 56.82281059063137,
+        "h": 100.0
+      },
+      "drawRect": {
+        "x": 3.588594704684315,
+        "y": 0.0,
+        "w": 56.82281059063137,
+        "h": 100.0
+      },
+      "generatedBoardSHA256": "98a512717b641d08edfc4530ede804a758a2096b029e513b15bf44d096bf25c7",
+      "boardCellIndex": 3,
+      "componentBounds": [
+        100,
+        438,
+        317,
+        820
+      ],
+      "componentOpaquePixelCount": 56530,
+      "extractionCrop": [
+        95,
+        433,
+        322,
+        825
+      ],
+      "acceptedWidth": 227,
+      "acceptedHeight": 392,
+      "acceptedSHA256": "11264ab7884460f50dad78dbbe7b9ca9ea00b3d8a28fa96aa0b41dde99fd53e0",
+      "inspectionApproved": true,
+      "alphaBorderClearAt64": true,
+      "artChanges": "Image-generation correction of projected rectangular seat top/seams; preserve detailed materials, palette, ornament, real curved backs and splayed legs. No image warps. Exact generated pixels cropped only.",
+      "derivedAssetIds": [],
+      "file": "collection-haydn-dining-chair-south.webp",
+      "width": 227,
+      "height": 392,
+      "x": 0,
+      "y": 0,
+      "w": 227,
+      "h": 392,
+      "draw": {
+        "x": 3.588594704684315,
+        "y": 0.0,
+        "w": 56.82281059063137,
+        "h": 100.0
+      },
+      "generation": {
+        "tool": "image_gen",
+        "original": "originals/exec-8f24de90-3d0e-4e6b-847e-cdc240d6b1ba.png",
+        "originalSHA256": "98a512717b641d08edfc4530ede804a758a2096b029e513b15bf44d096bf25c7",
+        "crop": [
+          95,
+          433,
+          322,
+          825
+        ]
+      }
+    },
+    {
+      "id": "collection-vivaldi-dining-chair",
+      "owner": "vivaldi",
+      "facing": "south",
+      "slot": "dining-chair",
+      "sourceBefore": {
+        "file": "town/assets/apartment-collections/vivaldi-south-cardinal-6138afdec004.webp",
+        "x": 1554,
+        "y": 4,
+        "w": 223,
+        "h": 414
+      },
+      "world": {
+        "w": 64,
+        "h": 100,
+        "footCenter": {
+          "x": 32.0,
+          "y": 81.0
+        },
+        "boxes": [
+          {
+            "x": 8,
+            "y": 65,
+            "w": 48,
+            "h": 32
+          }
+        ]
+      },
+      "drawRectBefore": {
+        "x": 5.067632850241548,
+        "y": 0.0,
+        "w": 53.864734299516904,
+        "h": 100.0
+      },
+      "drawRect": {
+        "x": 5.067632850241548,
+        "y": 0.0,
+        "w": 53.864734299516904,
+        "h": 100.0
+      },
+      "generatedBoardSHA256": "98a512717b641d08edfc4530ede804a758a2096b029e513b15bf44d096bf25c7",
+      "boardCellIndex": 4,
+      "componentBounds": [
+        521,
+        444,
+        731,
+        821
+      ],
+      "componentOpaquePixelCount": 57522,
+      "extractionCrop": [
+        516,
+        439,
+        736,
+        826
+      ],
+      "acceptedWidth": 220,
+      "acceptedHeight": 387,
+      "acceptedSHA256": "1b22ceb6cac80d72aae9cb147baa77e8f83873a59205906264b4dde18ff5da7d",
+      "inspectionApproved": true,
+      "alphaBorderClearAt64": true,
+      "artChanges": "Image-generation correction of projected rectangular seat top/seams; preserve detailed materials, palette, ornament, real curved backs and splayed legs. No image warps. Exact generated pixels cropped only.",
+      "derivedAssetIds": [],
+      "file": "collection-vivaldi-dining-chair-south.webp",
+      "width": 220,
+      "height": 387,
+      "x": 0,
+      "y": 0,
+      "w": 220,
+      "h": 387,
+      "draw": {
+        "x": 5.067632850241548,
+        "y": 0.0,
+        "w": 53.864734299516904,
+        "h": 100.0
+      },
+      "generation": {
+        "tool": "image_gen",
+        "original": "originals/exec-8f24de90-3d0e-4e6b-847e-cdc240d6b1ba.png",
+        "originalSHA256": "98a512717b641d08edfc4530ede804a758a2096b029e513b15bf44d096bf25c7",
+        "crop": [
+          516,
+          439,
+          736,
+          826
+        ]
+      }
+    },
+    {
+      "id": "collection-joplin-dining-chair",
+      "owner": "joplin",
+      "facing": "south",
+      "slot": "dining-chair",
+      "sourceBefore": {
+        "file": "town/assets/apartment-collections/joplin-south-cardinal-51e88f307806.webp",
+        "x": 216,
+        "y": 667,
+        "w": 189,
+        "h": 385
+      },
+      "world": {
+        "w": 64,
+        "h": 100,
+        "footCenter": {
+          "x": 32.0,
+          "y": 81.0
+        },
+        "boxes": [
+          {
+            "x": 8,
+            "y": 65,
+            "w": 48,
+            "h": 32
+          }
+        ]
+      },
+      "drawRectBefore": {
+        "x": 7.454545454545457,
+        "y": 1.4210854715202004e-14,
+        "w": 49.090909090909086,
+        "h": 99.99999999999999
+      },
+      "drawRect": {
+        "x": 7.454545454545457,
+        "y": 1.4210854715202004e-14,
+        "w": 49.090909090909086,
+        "h": 99.99999999999999
+      },
+      "generatedBoardSHA256": "98a512717b641d08edfc4530ede804a758a2096b029e513b15bf44d096bf25c7",
+      "boardCellIndex": 5,
+      "componentBounds": [
+        947,
+        441,
+        1140,
+        822
+      ],
+      "componentOpaquePixelCount": 54991,
+      "extractionCrop": [
+        942,
+        436,
+        1145,
+        827
+      ],
+      "acceptedWidth": 203,
+      "acceptedHeight": 391,
+      "acceptedSHA256": "51a5a9e085fd95dd34ab7d996ffe7fb07b5e4033677d88d6cee3a24a47dac09a",
+      "inspectionApproved": true,
+      "alphaBorderClearAt64": true,
+      "artChanges": "Image-generation correction of projected rectangular seat top/seams; preserve detailed materials, palette, ornament, real curved backs and splayed legs. No image warps. Exact generated pixels cropped only.",
+      "derivedAssetIds": [],
+      "file": "collection-joplin-dining-chair-south.webp",
+      "width": 203,
+      "height": 391,
+      "x": 0,
+      "y": 0,
+      "w": 203,
+      "h": 391,
+      "draw": {
+        "x": 7.454545454545457,
+        "y": 1.4210854715202004e-14,
+        "w": 49.090909090909086,
+        "h": 99.99999999999999
+      },
+      "generation": {
+        "tool": "image_gen",
+        "original": "originals/exec-8f24de90-3d0e-4e6b-847e-cdc240d6b1ba.png",
+        "originalSHA256": "98a512717b641d08edfc4530ede804a758a2096b029e513b15bf44d096bf25c7",
+        "crop": [
+          942,
+          436,
+          1145,
+          827
+        ]
+      }
+    },
+    {
+      "id": "collection-nina-dining-chair",
+      "owner": "nina",
+      "facing": "south",
+      "slot": "dining-chair",
+      "sourceBefore": {
+        "file": "town/assets/apartment-collections/nina-south-cardinal-e42c2a6c7595.webp",
+        "x": 663,
+        "y": 4,
+        "w": 457,
+        "h": 813
+      },
+      "world": {
+        "w": 64,
+        "h": 100,
+        "footCenter": {
+          "x": 32.0,
+          "y": 81.0
+        },
+        "boxes": [
+          {
+            "x": 8,
+            "y": 65,
+            "w": 48,
+            "h": 32
+          }
+        ]
+      },
+      "drawRectBefore": {
+        "x": 3.894218942189422,
+        "y": 0.0,
+        "w": 56.211562115621156,
+        "h": 100.0
+      },
+      "drawRect": {
+        "x": 3.894218942189422,
+        "y": 0.0,
+        "w": 56.211562115621156,
+        "h": 100.0
+      },
+      "generatedBoardSHA256": "98a512717b641d08edfc4530ede804a758a2096b029e513b15bf44d096bf25c7",
+      "boardCellIndex": 6,
+      "componentBounds": [
+        100,
+        860,
+        319,
+        1240
+      ],
+      "componentOpaquePixelCount": 59795,
+      "extractionCrop": [
+        95,
+        855,
+        324,
+        1245
+      ],
+      "acceptedWidth": 229,
+      "acceptedHeight": 390,
+      "acceptedSHA256": "eaf104a9da1474d546f8dbde8a294decd0fceb07657504a6afdc2071bbcfeccd",
+      "inspectionApproved": true,
+      "alphaBorderClearAt64": true,
+      "artChanges": "Image-generation correction of projected rectangular seat top/seams; preserve detailed materials, palette, ornament, real curved backs and splayed legs. No image warps. Exact generated pixels cropped only.",
+      "derivedAssetIds": [],
+      "file": "collection-nina-dining-chair-south.webp",
+      "width": 229,
+      "height": 390,
+      "x": 0,
+      "y": 0,
+      "w": 229,
+      "h": 390,
+      "draw": {
+        "x": 3.894218942189422,
+        "y": 0.0,
+        "w": 56.211562115621156,
+        "h": 100.0
+      },
+      "generation": {
+        "tool": "image_gen",
+        "original": "originals/exec-8f24de90-3d0e-4e6b-847e-cdc240d6b1ba.png",
+        "originalSHA256": "98a512717b641d08edfc4530ede804a758a2096b029e513b15bf44d096bf25c7",
+        "crop": [
+          95,
+          855,
+          324,
+          1245
+        ]
+      }
+    },
+    {
+      "id": "collection-dj-dining-chair",
+      "owner": "dj",
+      "facing": "south",
+      "slot": "dining-chair",
+      "sourceBefore": {
+        "file": "town/assets/apartment-collections/dj-south-cardinal-f9e823090299.webp",
+        "x": 1009,
+        "y": 819,
+        "w": 234,
+        "h": 398
+      },
+      "world": {
+        "w": 64,
+        "h": 100,
+        "footCenter": {
+          "x": 32.0,
+          "y": 81.0
+        },
+        "boxes": [
+          {
+            "x": 8,
+            "y": 65,
+            "w": 48,
+            "h": 32
+          }
+        ]
+      },
+      "drawRectBefore": {
+        "x": 2.603015075376888,
+        "y": 1.4210854715202004e-14,
+        "w": 58.793969849246224,
+        "h": 99.99999999999999
+      },
+      "drawRect": {
+        "x": 2.603015075376888,
+        "y": 1.4210854715202004e-14,
+        "w": 58.793969849246224,
+        "h": 99.99999999999999
+      },
+      "generatedBoardSHA256": "98a512717b641d08edfc4530ede804a758a2096b029e513b15bf44d096bf25c7",
+      "boardCellIndex": 7,
+      "componentBounds": [
+        509,
+        860,
+        745,
+        1240
+      ],
+      "componentOpaquePixelCount": 67728,
+      "extractionCrop": [
+        504,
+        855,
+        750,
+        1245
+      ],
+      "acceptedWidth": 246,
+      "acceptedHeight": 390,
+      "acceptedSHA256": "b8d2b6a1f296f1e11d1937734264bfecd3fa3022d8a51588ae3e525cd7cf4bd7",
+      "inspectionApproved": true,
+      "alphaBorderClearAt64": true,
+      "artChanges": "Image-generation correction of projected rectangular seat top/seams; preserve detailed materials, palette, ornament, real curved backs and splayed legs. No image warps. Exact generated pixels cropped only.",
+      "derivedAssetIds": [],
+      "file": "collection-dj-dining-chair-south.webp",
+      "width": 246,
+      "height": 390,
+      "x": 0,
+      "y": 0,
+      "w": 246,
+      "h": 390,
+      "draw": {
+        "x": 2.603015075376888,
+        "y": 1.4210854715202004e-14,
+        "w": 58.793969849246224,
+        "h": 99.99999999999999
+      },
+      "generation": {
+        "tool": "image_gen",
+        "original": "originals/exec-8f24de90-3d0e-4e6b-847e-cdc240d6b1ba.png",
+        "originalSHA256": "98a512717b641d08edfc4530ede804a758a2096b029e513b15bf44d096bf25c7",
+        "crop": [
+          504,
+          855,
+          750,
+          1245
+        ]
+      }
+    },
+    {
+      "id": "collection-vee-jay-dining-chair",
+      "owner": "vee-jay",
+      "facing": "south",
+      "slot": "dining-chair",
+      "sourceBefore": {
+        "file": "town/assets/apartment-collections/vee-jay-south-cardinal-9bb2802f02d5.webp",
+        "x": 1624,
+        "y": 1630,
+        "w": 220,
+        "h": 375
+      },
+      "world": {
+        "w": 64,
+        "h": 100,
+        "footCenter": {
+          "x": 32.0,
+          "y": 81.0
+        },
+        "boxes": [
+          {
+            "x": 8,
+            "y": 65,
+            "w": 48,
+            "h": 32
+          }
+        ]
+      },
+      "drawRectBefore": {
+        "x": 2.666666666666668,
+        "y": 0.0,
+        "w": 58.666666666666664,
+        "h": 100.0
+      },
+      "drawRect": {
+        "x": 2.666666666666668,
+        "y": 0.0,
+        "w": 58.666666666666664,
+        "h": 100.0
+      },
+      "generatedBoardSHA256": "98a512717b641d08edfc4530ede804a758a2096b029e513b15bf44d096bf25c7",
+      "boardCellIndex": 8,
+      "componentBounds": [
+        933,
+        858,
+        1149,
+        1240
+      ],
+      "componentOpaquePixelCount": 65763,
+      "extractionCrop": [
+        928,
+        853,
+        1154,
+        1245
+      ],
+      "acceptedWidth": 226,
+      "acceptedHeight": 392,
+      "acceptedSHA256": "29e649a8fb1138eed206a193a76043bf5c02b533f77d044f46c10b17b8bf47ef",
+      "inspectionApproved": true,
+      "alphaBorderClearAt64": true,
+      "artChanges": "Image-generation correction of projected rectangular seat top/seams; preserve detailed materials, palette, ornament, real curved backs and splayed legs. No image warps. Exact generated pixels cropped only.",
+      "derivedAssetIds": [],
+      "file": "collection-vee-jay-dining-chair-south.webp",
+      "width": 226,
+      "height": 392,
+      "x": 0,
+      "y": 0,
+      "w": 226,
+      "h": 392,
+      "draw": {
+        "x": 2.666666666666668,
+        "y": 0.0,
+        "w": 58.666666666666664,
+        "h": 100.0
+      },
+      "generation": {
+        "tool": "image_gen",
+        "original": "originals/exec-8f24de90-3d0e-4e6b-847e-cdc240d6b1ba.png",
+        "originalSHA256": "98a512717b641d08edfc4530ede804a758a2096b029e513b15bf44d096bf25c7",
+        "crop": [
+          928,
+          853,
+          1154,
+          1245
+        ]
+      }
+    },
+    {
+      "id": "collection-player-dining-chair",
+      "owner": "player",
+      "facing": "south",
+      "slot": "dining-chair",
+      "sourceBefore": {
+        "file": "town/assets/apartment-collections/player-south-cardinal-ff9b7667e605.webp",
+        "x": 851,
+        "y": 459,
+        "w": 229,
+        "h": 382
+      },
+      "world": {
+        "w": 64,
+        "h": 100,
+        "footCenter": {
+          "x": 32.0,
+          "y": 81.0
+        },
+        "boxes": [
+          {
+            "x": 8,
+            "y": 65,
+            "w": 48,
+            "h": 32
+          }
+        ]
+      },
+      "drawRectBefore": {
+        "x": 2.026178010471206,
+        "y": 0.0,
+        "w": 59.94764397905759,
+        "h": 100.0
+      },
+      "drawRect": {
+        "x": 2.026178010471206,
+        "y": 0.0,
+        "w": 59.94764397905759,
+        "h": 100.0
+      },
+      "generatedBoardSHA256": "c61ac57eb65ce5e9a41992a653e3a7cf09a1e91cfa4f4fe54ba543f3755ac0e6",
+      "boardCellIndex": 0,
+      "componentBounds": [
+        102,
+        32,
+        315,
+        402
+      ],
+      "componentOpaquePixelCount": 56858,
+      "extractionCrop": [
+        97,
+        27,
+        320,
+        407
+      ],
+      "acceptedWidth": 223,
+      "acceptedHeight": 380,
+      "acceptedSHA256": "1f25f7f3c387a5e94c6b64155b615a8478c0218dc44e02c03780ec5023fa473a",
+      "inspectionApproved": true,
+      "alphaBorderClearAt64": true,
+      "artChanges": "Image-generation correction of projected rectangular seat top/seams; preserve detailed materials, palette, ornament, real curved backs and splayed legs. No image warps. Exact generated pixels cropped only.",
+      "derivedAssetIds": [],
+      "file": "collection-player-dining-chair-south.webp",
+      "width": 223,
+      "height": 380,
+      "x": 0,
+      "y": 0,
+      "w": 223,
+      "h": 380,
+      "draw": {
+        "x": 2.026178010471206,
+        "y": 0.0,
+        "w": 59.94764397905759,
+        "h": 100.0
+      },
+      "generation": {
+        "tool": "image_gen",
+        "original": "originals/exec-58a5a20d-ab84-4fcd-a61f-721aac64e86f.png",
+        "originalSHA256": "c61ac57eb65ce5e9a41992a653e3a7cf09a1e91cfa4f4fe54ba543f3755ac0e6",
+        "crop": [
+          97,
+          27,
+          320,
+          407
+        ]
+      }
+    },
+    {
+      "id": "collection-showroom-art-deco-lounge-dining-chair",
+      "owner": "showroom-art-deco-lounge",
+      "facing": "south",
+      "slot": "dining-chair",
+      "sourceBefore": {
+        "file": "town/assets/apartment-collections/showroom-art-deco-lounge-south-cardinal-7e5863603897.webp",
+        "x": 1824,
+        "y": 4,
+        "w": 216,
+        "h": 417
+      },
+      "world": {
+        "w": 64,
+        "h": 100,
+        "footCenter": {
+          "x": 32.0,
+          "y": 81.0
+        },
+        "boxes": [
+          {
+            "x": 8,
+            "y": 65,
+            "w": 48,
+            "h": 32
+          }
+        ]
+      },
+      "drawRectBefore": {
+        "x": 6.100719424460429,
+        "y": 0.0,
+        "w": 51.79856115107914,
+        "h": 100.0
+      },
+      "drawRect": {
+        "x": 6.100719424460429,
+        "y": 0.0,
+        "w": 51.79856115107914,
+        "h": 100.0
+      },
+      "generatedBoardSHA256": "c61ac57eb65ce5e9a41992a653e3a7cf09a1e91cfa4f4fe54ba543f3755ac0e6",
+      "boardCellIndex": 1,
+      "componentBounds": [
+        520,
+        24,
+        733,
+        402
+      ],
+      "componentOpaquePixelCount": 56021,
+      "extractionCrop": [
+        515,
+        19,
+        738,
+        407
+      ],
+      "acceptedWidth": 223,
+      "acceptedHeight": 388,
+      "acceptedSHA256": "2de3f68433db35af9c9ce594e84cc32b0276406fde5063e3cb782d8f2f0fe580",
+      "inspectionApproved": true,
+      "alphaBorderClearAt64": true,
+      "artChanges": "Image-generation correction of projected rectangular seat top/seams; preserve detailed materials, palette, ornament, real curved backs and splayed legs. No image warps. Exact generated pixels cropped only.",
+      "derivedAssetIds": [],
+      "file": "collection-showroom-art-deco-lounge-dining-chair-south.webp",
+      "width": 223,
+      "height": 388,
+      "x": 0,
+      "y": 0,
+      "w": 223,
+      "h": 388,
+      "draw": {
+        "x": 6.100719424460429,
+        "y": 0.0,
+        "w": 51.79856115107914,
+        "h": 100.0
+      },
+      "generation": {
+        "tool": "image_gen",
+        "original": "originals/exec-58a5a20d-ab84-4fcd-a61f-721aac64e86f.png",
+        "originalSHA256": "c61ac57eb65ce5e9a41992a653e3a7cf09a1e91cfa4f4fe54ba543f3755ac0e6",
+        "crop": [
+          515,
+          19,
+          738,
+          407
+        ]
+      }
+    },
+    {
+      "id": "collection-showroom-coastal-bedroom-dining-chair",
+      "owner": "showroom-coastal-bedroom",
+      "facing": "south",
+      "slot": "dining-chair",
+      "sourceBefore": {
+        "file": "town/assets/apartment-collections/cardinal-fixes/showroom-coastal-bedroom-dining-chair-south-b94491a04267.webp",
+        "x": 0,
+        "y": 0,
+        "w": 157,
+        "h": 276
+      },
+      "world": {
+        "w": 64,
+        "h": 100,
+        "footCenter": {
+          "x": 32,
+          "y": 81
+        },
+        "boxes": [
+          {
+            "x": 8,
+            "y": 65,
+            "w": 48,
+            "h": 32
+          }
+        ]
+      },
+      "drawRectBefore": {
+        "x": 3.557971014492754,
+        "y": 0.0,
+        "w": 56.88405797101449,
+        "h": 100.0
+      },
+      "drawRect": {
+        "x": 3.557971014492754,
+        "y": 0.0,
+        "w": 56.88405797101449,
+        "h": 100.0
+      },
+      "generatedBoardSHA256": "c61ac57eb65ce5e9a41992a653e3a7cf09a1e91cfa4f4fe54ba543f3755ac0e6",
+      "boardCellIndex": 2,
+      "componentBounds": [
+        936,
+        27,
+        1149,
+        402
+      ],
+      "componentOpaquePixelCount": 54380,
+      "extractionCrop": [
+        931,
+        22,
+        1154,
+        407
+      ],
+      "acceptedWidth": 223,
+      "acceptedHeight": 385,
+      "acceptedSHA256": "bc8bab2cea82a220c2653184b508d78e6eb1c2dba87a3319616fc819649d1d2d",
+      "inspectionApproved": true,
+      "alphaBorderClearAt64": true,
+      "artChanges": "Image-generation correction of projected rectangular seat top/seams; preserve detailed materials, palette, ornament, real curved backs and splayed legs. No image warps. Exact generated pixels cropped only.",
+      "derivedAssetIds": [],
+      "file": "collection-showroom-coastal-bedroom-dining-chair-south.webp",
+      "width": 223,
+      "height": 385,
+      "x": 0,
+      "y": 0,
+      "w": 223,
+      "h": 385,
+      "draw": {
+        "x": 3.557971014492754,
+        "y": 0.0,
+        "w": 56.88405797101449,
+        "h": 100.0
+      },
+      "generation": {
+        "tool": "image_gen",
+        "original": "originals/exec-58a5a20d-ab84-4fcd-a61f-721aac64e86f.png",
+        "originalSHA256": "c61ac57eb65ce5e9a41992a653e3a7cf09a1e91cfa4f4fe54ba543f3755ac0e6",
+        "crop": [
+          931,
+          22,
+          1154,
+          407
+        ]
+      }
+    },
+    {
+      "id": "collection-showroom-industrial-loft-dining-chair",
+      "owner": "showroom-industrial-loft",
+      "facing": "south",
+      "slot": "dining-chair",
+      "sourceBefore": {
+        "file": "town/assets/apartment-collections/cardinal-fixes/showroom-industrial-loft-dining-chair-south-771b9e437888.webp",
+        "x": 0,
+        "y": 0,
+        "w": 164,
+        "h": 279
+      },
+      "world": {
+        "w": 64,
+        "h": 100,
+        "footCenter": {
+          "x": 32,
+          "y": 81
+        },
+        "boxes": [
+          {
+            "x": 8,
+            "y": 65,
+            "w": 48,
+            "h": 32
+          }
+        ]
+      },
+      "drawRectBefore": {
+        "x": 2.6093189964157695,
+        "y": 0.0,
+        "w": 58.78136200716846,
+        "h": 100.0
+      },
+      "drawRect": {
+        "x": 2.6093189964157695,
+        "y": 0.0,
+        "w": 58.78136200716846,
+        "h": 100.0
+      },
+      "generatedBoardSHA256": "c61ac57eb65ce5e9a41992a653e3a7cf09a1e91cfa4f4fe54ba543f3755ac0e6",
+      "boardCellIndex": 3,
+      "componentBounds": [
+        102,
+        448,
+        316,
+        817
+      ],
+      "componentOpaquePixelCount": 54407,
+      "extractionCrop": [
+        97,
+        443,
+        321,
+        822
+      ],
+      "acceptedWidth": 224,
+      "acceptedHeight": 379,
+      "acceptedSHA256": "9e38bbdbd87b2c377d960b9b524d87c8c4b087226ca5e013e25eb4b9c3f5cf39",
+      "inspectionApproved": true,
+      "alphaBorderClearAt64": true,
+      "artChanges": "Image-generation correction of projected rectangular seat top/seams; preserve detailed materials, palette, ornament, real curved backs and splayed legs. No image warps. Exact generated pixels cropped only.",
+      "derivedAssetIds": [],
+      "file": "collection-showroom-industrial-loft-dining-chair-south.webp",
+      "width": 224,
+      "height": 379,
+      "x": 0,
+      "y": 0,
+      "w": 224,
+      "h": 379,
+      "draw": {
+        "x": 2.6093189964157695,
+        "y": 0.0,
+        "w": 58.78136200716846,
+        "h": 100.0
+      },
+      "generation": {
+        "tool": "image_gen",
+        "original": "originals/exec-58a5a20d-ab84-4fcd-a61f-721aac64e86f.png",
+        "originalSHA256": "c61ac57eb65ce5e9a41992a653e3a7cf09a1e91cfa4f4fe54ba543f3755ac0e6",
+        "crop": [
+          97,
+          443,
+          321,
+          822
+        ]
+      }
+    },
+    {
+      "id": "collection-showroom-cyberpunk-dining-chair",
+      "owner": "showroom-cyberpunk",
+      "facing": "south",
+      "slot": "dining-chair",
+      "sourceBefore": {
+        "file": "town/assets/apartment-collections/showroom-cyberpunk.webp",
+        "x": 46,
+        "y": 454,
+        "w": 130,
+        "h": 204
+      },
+      "world": {
+        "w": 64,
+        "h": 100,
+        "footCenter": {
+          "x": 32.0,
+          "y": 81.0
+        },
+        "boxes": [
+          {
+            "x": 8,
+            "y": 65,
+            "w": 48,
+            "h": 32
+          }
+        ]
+      },
+      "drawRectBefore": {
+        "x": 0.13725490196078738,
+        "y": 0.0,
+        "w": 63.725490196078425,
+        "h": 100.0
+      },
+      "drawRect": {
+        "x": 0.13725490196078738,
+        "y": 0.0,
+        "w": 63.725490196078425,
+        "h": 100.0
+      },
+      "generatedBoardSHA256": "c61ac57eb65ce5e9a41992a653e3a7cf09a1e91cfa4f4fe54ba543f3755ac0e6",
+      "boardCellIndex": 4,
+      "componentBounds": [
+        525,
+        454,
+        728,
+        816
+      ],
+      "componentOpaquePixelCount": 57957,
+      "extractionCrop": [
+        520,
+        449,
+        733,
+        821
+      ],
+      "acceptedWidth": 213,
+      "acceptedHeight": 372,
+      "acceptedSHA256": "917ce5c3c1366cb3a497bf77a757890fbfabe463691e5fcfe1b1bbc0fac465f2",
+      "inspectionApproved": true,
+      "alphaBorderClearAt64": true,
+      "artChanges": "Image-generation correction of projected rectangular seat top/seams; preserve detailed materials, palette, ornament, real curved backs and splayed legs. No image warps. Exact generated pixels cropped only.",
+      "derivedAssetIds": [],
+      "file": "collection-showroom-cyberpunk-dining-chair-south.webp",
+      "width": 213,
+      "height": 372,
+      "x": 0,
+      "y": 0,
+      "w": 213,
+      "h": 372,
+      "draw": {
+        "x": 0.13725490196078738,
+        "y": 0.0,
+        "w": 63.725490196078425,
+        "h": 100.0
+      },
+      "generation": {
+        "tool": "image_gen",
+        "original": "originals/exec-58a5a20d-ab84-4fcd-a61f-721aac64e86f.png",
+        "originalSHA256": "c61ac57eb65ce5e9a41992a653e3a7cf09a1e91cfa4f4fe54ba543f3755ac0e6",
+        "crop": [
+          520,
+          449,
+          733,
+          821
+        ]
+      }
+    }
+  ],
+  "preserved": "Naturally oval/rattan/circular shell/pod seatforms retained. Mozart/Milesdesk were removed aftercloseup identifiedlarge roundedcorners ratherthanprovenperspectivetaper. Vivaldideskroundseatretained. Bachdesk/dining handledbytablesagent.",
+  "readingScope": "21reading variants exploredbutEXCLUDEDfromproductionpatches. Actual rearphysicalcorners/seams are often occludedbyarms/pillows and truebodycurves; visiblecoloredwidth isnotvalidVPproof. No blanketreredrawonalpha silhouette.",
+  "exploratoryReadingBoards": [
+    "/workspace/generated_images/exec-4c4faa4a-20e3-433b-a863-bd3b2b45fd4d.png",
+    "/workspace/generated_images/exec-7f68e5f1-4bc1-4574-8b56-bafcc886eeb0.png",
+    "/workspace/generated_images/exec-f01be6e5-eb8b-4c00-861d-932d93c21642.png"
+  ],
+  "representativeEvidenceBefore": [
+    {
+      "id": "collection-beethoven-desk-chair",
+      "feature": "Straight upholstered seat depth seams",
+      "farLeft": [
+        52,
+        188
+      ],
+      "farRight": [
+        197,
+        188
+      ],
+      "nearLeft": [
+        40,
+        270
+      ],
+      "nearRight": [
+        209,
+        270
+      ],
+      "farWidth": 145,
+      "nearWidth": 169,
+      "nearFarRatio": 1.1655172413793105,
+      "coordinatesApproximate": true
+    },
+    {
+      "id": "collection-vee-jay-desk-chair",
+      "feature": "Seatquilting columns and straightcushiondepth boundaries",
+      "farLeft": [
+        56,
+        165
+      ],
+      "farRight": [
+        184,
+        165
+      ],
+      "nearLeft": [
+        37,
+        239
+      ],
+      "nearRight": [
+        209,
+        239
+      ],
+      "farWidth": 128,
+      "nearWidth": 172,
+      "nearFarRatio": 1.34375,
+      "coordinatesApproximate": true
+    },
+    {
+      "id": "collection-metronome-dining-chair",
+      "feature": "Printed central red stripe onflatseat growswidthtowardfront independentofroundedoutercorners",
+      "farLeft": [
+        85,
+        201
+      ],
+      "farRight": [
+        117,
+        201
+      ],
+      "nearLeft": [
+        82,
+        259
+      ],
+      "nearRight": [
+        125,
+        259
+      ],
+      "farWidth": 32,
+      "nearWidth": 43,
+      "nearFarRatio": 1.34375,
+      "coordinatesApproximate": true
+    }
+  ]
+}

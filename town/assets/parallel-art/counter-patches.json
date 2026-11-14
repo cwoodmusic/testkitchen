@@ -1,0 +1,5765 @@
+[
+  {
+    "id": "collection-mozart-counter",
+    "facing": "south",
+    "file": "counter-01-b80ad875d374.webp",
+    "width": 1024,
+    "height": 1536,
+    "x": 91,
+    "y": 118,
+    "w": 325,
+    "h": 317,
+    "draw": {
+      "x": 5.62091503267974,
+      "y": 1.4210854715202004e-14,
+      "w": 116.75816993464052,
+      "h": 111.99999999999999
+    },
+    "source": {
+      "file": "town/assets/apartment-collections/mozart-south-cardinal-20cdd8d43cef.webp",
+      "crop": {
+        "x": 1188,
+        "y": 1022,
+        "w": 319,
+        "h": 306
+      },
+      "frame": {
+        "slot": "counter",
+        "x": 1188,
+        "y": 1022,
+        "w": 319,
+        "h": 306,
+        "digest": "e1d7f00f928e6b7b594037c4c58ad409ee1911d1af266614651bb04fb36323f3",
+        "cell": {
+          "x": 1188,
+          "y": 1022,
+          "w": 319,
+          "h": 306
+        },
+        "sourceDigest": "627d52ce788a6296e949d1f8c4a1bae10630b6fd63619f07097a137d7fc07a4c",
+        "sourceFrame": {
+          "x": 408,
+          "y": 621,
+          "w": 319,
+          "h": 306
+        },
+        "artReview": "independent-accepted173-map.json",
+        "footCenter": [
+          0.5,
+          0.7232142857142857
+        ]
+      },
+      "sha256": "e1d7f00f928e6b7b594037c4c58ad409ee1911d1af266614651bb04fb36323f3"
+    },
+    "generatedOriginal": "originals/counter-01-b80ad875d374.png",
+    "generatedSha256": "b80ad875d374adabd048f5b0a60cb17f24bc8d643579be51d2d69f674af85679",
+    "generatedCropSha256": "e8153719ce14df740f4118096f5928fba50ca228804c98deeb60d9e07d1549ea",
+    "method": "image_gen reference edit; rectangular crop and lossless encoding only; no warping or alpha edits",
+    "review": "Parallel 2/3 top and cardinal face; equal far/near rectangular widths; preserve original materials, motifs and intentional curved shapes."
+  },
+  {
+    "id": "collection-mozart-counter",
+    "facing": "north",
+    "file": "counter-01-b80ad875d374.webp",
+    "width": 1024,
+    "height": 1536,
+    "x": 602,
+    "y": 167,
+    "w": 298,
+    "h": 268,
+    "draw": {
+      "x": 0,
+      "y": 20.23744292237444,
+      "w": 128.0,
+      "h": 91.76255707762556
+    },
+    "source": {
+      "file": "town/assets/apartment-collections/mozart-north-6ea04ade1063.webp",
+      "crop": {
+        "x": 4,
+        "y": 1068,
+        "w": 219,
+        "h": 157
+      },
+      "frame": {
+        "slot": "counter",
+        "x": 4,
+        "y": 1068,
+        "w": 219,
+        "h": 157,
+        "digest": "52e9cfb50c8ea3ac04f1f26db46928dc1e435a19893a5c8d6e548adad4e12122",
+        "viewWidth": 128,
+        "viewHeight": 112,
+        "footCenter": [
+          0.5,
+          0.662172
+        ],
+        "cell": {
+          "x": 4,
+          "y": 1068,
+          "w": 219,
+          "h": 157
+        }
+      },
+      "sha256": "1bfbf34e571b54dcc7e6f33fbcd17e4139804ff6555bc364d3885f85fb1af90c"
+    },
+    "generatedOriginal": "originals/counter-01-b80ad875d374.png",
+    "generatedSha256": "b80ad875d374adabd048f5b0a60cb17f24bc8d643579be51d2d69f674af85679",
+    "generatedCropSha256": "4c1ce0cbfafeb514e2357ed316b8093aa7058241aba65c24d9db56a80cfac923",
+    "method": "image_gen reference edit; rectangular crop and lossless encoding only; no warping or alpha edits",
+    "review": "Parallel 2/3 top and cardinal face; equal far/near rectangular widths; preserve original materials, motifs and intentional curved shapes."
+  },
+  {
+    "id": "collection-beethoven-counter",
+    "facing": "south",
+    "file": "counter-01-b80ad875d374.webp",
+    "width": 1024,
+    "height": 1536,
+    "x": 103,
+    "y": 649,
+    "w": 306,
+    "h": 278,
+    "draw": {
+      "x": 4.407547169811316,
+      "y": 0,
+      "w": 119.18490566037737,
+      "h": 112.0
+    },
+    "source": {
+      "file": "town/assets/apartment-collections/cardinal-fixes/beethoven-counter-south-6f2ce7f70e24.webp",
+      "crop": {
+        "x": 0,
+        "y": 0,
+        "w": 282,
+        "h": 265
+      },
+      "frame": {
+        "id": "collection-beethoven-counter",
+        "slot": "counter",
+        "x": 0,
+        "y": 0,
+        "w": 282,
+        "h": 265,
+        "viewWidth": 128,
+        "viewHeight": 112,
+        "worldFootCenter": {
+          "x": 64,
+          "y": 81
+        },
+        "digest": "6f2ce7f70e247af4c69107d42f512e0e64cd4685a1d5cfb690e99c9204808763"
+      },
+      "sha256": "6f2ce7f70e247af4c69107d42f512e0e64cd4685a1d5cfb690e99c9204808763"
+    },
+    "generatedOriginal": "originals/counter-01-b80ad875d374.png",
+    "generatedSha256": "b80ad875d374adabd048f5b0a60cb17f24bc8d643579be51d2d69f674af85679",
+    "generatedCropSha256": "6129c3a764deb54ab791ad98db88740a4d52f823e6cbc44989c2b6f8406b2396",
+    "method": "image_gen reference edit; rectangular crop and lossless encoding only; no warping or alpha edits",
+    "review": "Parallel 2/3 top and cardinal face; equal far/near rectangular widths; preserve original materials, motifs and intentional curved shapes."
+  },
+  {
+    "id": "collection-beethoven-counter",
+    "facing": "north",
+    "file": "counter-01-b80ad875d374.webp",
+    "width": 1024,
+    "height": 1536,
+    "x": 605,
+    "y": 629,
+    "w": 294,
+    "h": 294,
+    "draw": {
+      "x": 0,
+      "y": 12.444444444444443,
+      "w": 128.0,
+      "h": 99.55555555555556
+    },
+    "source": {
+      "file": "town/assets/apartment-collections/beethoven-north-cardinal-7890abc9abcd.webp",
+      "crop": {
+        "x": 966,
+        "y": 1493,
+        "w": 207,
+        "h": 161
+      },
+      "frame": {
+        "slot": "counter",
+        "x": 966,
+        "y": 1493,
+        "w": 207,
+        "h": 161,
+        "digest": "514fd4d99bc0425441409ea3a79684242a72ef68b17fb914d32d4c2018f54679",
+        "viewWidth": 128,
+        "viewHeight": 112,
+        "footCenter": [
+          0.5,
+          0.688616
+        ],
+        "cell": {
+          "x": 966,
+          "y": 1493,
+          "w": 207,
+          "h": 161
+        }
+      },
+      "sha256": "514fd4d99bc0425441409ea3a79684242a72ef68b17fb914d32d4c2018f54679"
+    },
+    "generatedOriginal": "originals/counter-01-b80ad875d374.png",
+    "generatedSha256": "b80ad875d374adabd048f5b0a60cb17f24bc8d643579be51d2d69f674af85679",
+    "generatedCropSha256": "f3e206d8040ca695e49f83b24ab4a2fd88d6a9db2c3c111da31f85b20e8d29a5",
+    "method": "image_gen reference edit; rectangular crop and lossless encoding only; no warping or alpha edits",
+    "review": "Parallel 2/3 top and cardinal face; equal far/near rectangular widths; preserve original materials, motifs and intentional curved shapes."
+  },
+  {
+    "id": "collection-clara-counter",
+    "facing": "south",
+    "file": "counter-01-b80ad875d374.webp",
+    "width": 1024,
+    "height": 1536,
+    "x": 88,
+    "y": 1142,
+    "w": 335,
+    "h": 302,
+    "draw": {
+      "x": 0.22222222222222143,
+      "y": 0,
+      "w": 127.55555555555556,
+      "h": 112.0
+    },
+    "source": {
+      "file": "town/assets/apartment-collections/clara-south-cardinal-d019e963a870.webp",
+      "crop": {
+        "x": 1686,
+        "y": 463,
+        "w": 328,
+        "h": 288
+      },
+      "frame": {
+        "slot": "counter",
+        "x": 1686,
+        "y": 463,
+        "w": 328,
+        "h": 288,
+        "digest": "eca1590e4054c50423f357928e9978b5412cd2d9cc0eb056fb23b53e9f8feefa",
+        "cell": {
+          "x": 1686,
+          "y": 463,
+          "w": 328,
+          "h": 288
+        },
+        "sourceDigest": "1f8985cf70a3c85e3eb2e98b53a6f43401e95f52f15daf65bd94e7f9ca74409b",
+        "sourceFrame": {
+          "x": 790,
+          "y": 634,
+          "w": 328,
+          "h": 288
+        },
+        "artReview": "independent-accepted173-map.json",
+        "footCenter": [
+          0.5,
+          0.7232142857142857
+        ]
+      },
+      "sha256": "eca1590e4054c50423f357928e9978b5412cd2d9cc0eb056fb23b53e9f8feefa"
+    },
+    "generatedOriginal": "originals/counter-01-b80ad875d374.png",
+    "generatedSha256": "b80ad875d374adabd048f5b0a60cb17f24bc8d643579be51d2d69f674af85679",
+    "generatedCropSha256": "08405b737b93c2244ef68fd50da49408a5c7ad5bbd92735cdb1ab28850fd3356",
+    "method": "image_gen reference edit; rectangular crop and lossless encoding only; no warping or alpha edits",
+    "review": "Parallel 2/3 top and cardinal face; equal far/near rectangular widths; preserve original materials, motifs and intentional curved shapes."
+  },
+  {
+    "id": "collection-clara-counter",
+    "facing": "north",
+    "file": "counter-01-b80ad875d374.webp",
+    "width": 1024,
+    "height": 1536,
+    "x": 600,
+    "y": 1168,
+    "w": 304,
+    "h": 253,
+    "draw": {
+      "x": 0,
+      "y": 18.742857142857133,
+      "w": 128.0,
+      "h": 93.25714285714287
+    },
+    "source": {
+      "file": "town/assets/apartment-collections/clara-north-207691ab8cb0.webp",
+      "crop": {
+        "x": 4,
+        "y": 1033,
+        "w": 210,
+        "h": 153
+      },
+      "frame": {
+        "slot": "counter",
+        "x": 4,
+        "y": 1033,
+        "w": 210,
+        "h": 153,
+        "digest": "8ebbabbf9336d9719d15e9bb94389c289609868166a9f66a1e3a67903ab74301",
+        "viewWidth": 128,
+        "viewHeight": 112,
+        "footCenter": [
+          0.5,
+          0.667586
+        ],
+        "cell": {
+          "x": 4,
+          "y": 1033,
+          "w": 210,
+          "h": 153
+        }
+      },
+      "sha256": "cd9b188085b3dc6dca69b37540533361cd0c520b8a15a167e2238dba7da36351"
+    },
+    "generatedOriginal": "originals/counter-01-b80ad875d374.png",
+    "generatedSha256": "b80ad875d374adabd048f5b0a60cb17f24bc8d643579be51d2d69f674af85679",
+    "generatedCropSha256": "398e2c879cf2ea8bd716e2ebb46f2c1ed8c1036a98da66f7655ec78f82afeb40",
+    "method": "image_gen reference edit; rectangular crop and lossless encoding only; no warping or alpha edits",
+    "review": "Parallel 2/3 top and cardinal face; equal far/near rectangular widths; preserve original materials, motifs and intentional curved shapes."
+  },
+  {
+    "id": "collection-chopin-counter",
+    "facing": "south",
+    "file": "counter-02-16777dc89297.webp",
+    "width": 1024,
+    "height": 1536,
+    "x": 88,
+    "y": 103,
+    "w": 338,
+    "h": 353,
+    "draw": {
+      "x": 10.589595375722546,
+      "y": 0,
+      "w": 106.82080924855491,
+      "h": 112.0
+    },
+    "source": {
+      "file": "town/assets/apartment-collections/chopin-south-cardinal-7e40bd5bf409.webp",
+      "crop": {
+        "x": 1600,
+        "y": 1207,
+        "w": 330,
+        "h": 346
+      },
+      "frame": {
+        "slot": "counter",
+        "x": 1600,
+        "y": 1207,
+        "w": 330,
+        "h": 346,
+        "digest": "ed5575529d634d40fadc8b5fe8b4653d1552cb4900bba3ec580b7892e6085b2e",
+        "cell": {
+          "x": 1600,
+          "y": 1207,
+          "w": 330,
+          "h": 346
+        },
+        "sourceDigest": "eb388adc07e4bbe0d3eb7da155edcc36fc26dfeeecfc2a98ddf41610a051c078",
+        "sourceFrame": {
+          "x": 395,
+          "y": 598,
+          "w": 330,
+          "h": 346
+        },
+        "artReview": "independent-accepted173-map.json",
+        "footCenter": [
+          0.5,
+          0.7232142857142857
+        ]
+      },
+      "sha256": "ed5575529d634d40fadc8b5fe8b4653d1552cb4900bba3ec580b7892e6085b2e"
+    },
+    "generatedOriginal": "originals/counter-02-16777dc89297.png",
+    "generatedSha256": "16777dc892978ba7dfd28ee6972833c87ef41f92d26ecc1a7e0537607c09e2b1",
+    "generatedCropSha256": "a8af6153b22fde782bf280d109b7ecec749210e2e078fdc588c670df6a661770",
+    "method": "image_gen reference edit; rectangular crop and lossless encoding only; no warping or alpha edits",
+    "review": "Parallel 2/3 top and cardinal face; equal far/near rectangular widths; preserve original materials, motifs and intentional curved shapes."
+  },
+  {
+    "id": "collection-chopin-counter",
+    "facing": "north",
+    "file": "counter-02-16777dc89297.webp",
+    "width": 1024,
+    "height": 1536,
+    "x": 601,
+    "y": 145,
+    "w": 320,
+    "h": 311,
+    "draw": {
+      "x": 0,
+      "y": 0.4403669724770509,
+      "w": 128.0,
+      "h": 111.55963302752295
+    },
+    "source": {
+      "file": "town/assets/apartment-collections/chopin-north-cardinal-2eb185e87bf4.webp",
+      "crop": {
+        "x": 1079,
+        "y": 244,
+        "w": 218,
+        "h": 190
+      },
+      "frame": {
+        "slot": "counter",
+        "x": 1079,
+        "y": 244,
+        "w": 218,
+        "h": 190,
+        "digest": "837653f6eb6bc073ed33f84b9d2219a868ca49fecff4394b31b3eeb37f6e1c74",
+        "viewWidth": 128,
+        "viewHeight": 112,
+        "footCenter": [
+          0.5,
+          0.722122
+        ],
+        "cell": {
+          "x": 1079,
+          "y": 244,
+          "w": 218,
+          "h": 190
+        }
+      },
+      "sha256": "837653f6eb6bc073ed33f84b9d2219a868ca49fecff4394b31b3eeb37f6e1c74"
+    },
+    "generatedOriginal": "originals/counter-02-16777dc89297.png",
+    "generatedSha256": "16777dc892978ba7dfd28ee6972833c87ef41f92d26ecc1a7e0537607c09e2b1",
+    "generatedCropSha256": "f7c01aa7a5d3ebb0d760e74005bbd3f8968bea3cf934883c67e23d02b48c1f8c",
+    "method": "image_gen reference edit; rectangular crop and lossless encoding only; no warping or alpha edits",
+    "review": "Parallel 2/3 top and cardinal face; equal far/near rectangular widths; preserve original materials, motifs and intentional curved shapes."
+  },
+  {
+    "id": "collection-haydn-counter",
+    "facing": "south",
+    "file": "counter-02-16777dc89297.webp",
+    "width": 1024,
+    "height": 1536,
+    "x": 91,
+    "y": 629,
+    "w": 335,
+    "h": 309,
+    "draw": {
+      "x": 7.428571428571431,
+      "y": 0,
+      "w": 113.14285714285714,
+      "h": 112.0
+    },
+    "source": {
+      "file": "town/assets/apartment-collections/haydn-south-cardinal-c42d7912a677.webp",
+      "crop": {
+        "x": 548,
+        "y": 508,
+        "w": 297,
+        "h": 294
+      },
+      "frame": {
+        "slot": "counter",
+        "x": 548,
+        "y": 508,
+        "w": 297,
+        "h": 294,
+        "digest": "31bb92722920503fba97f40b1c7b9dea3a72a76b9b5a4703a73e5ef8923c4525",
+        "cell": {
+          "x": 548,
+          "y": 508,
+          "w": 297,
+          "h": 294
+        },
+        "sourceDigest": "90c88a14e1d806bdb38695b15ec3c778f0bc6b8137dac91956bbf5c4508a62be",
+        "sourceFrame": {
+          "x": 810,
+          "y": 627,
+          "w": 297,
+          "h": 294
+        },
+        "artReview": "independent-accepted173-map.json",
+        "footCenter": [
+          0.5,
+          0.7232142857142857
+        ]
+      },
+      "sha256": "31bb92722920503fba97f40b1c7b9dea3a72a76b9b5a4703a73e5ef8923c4525"
+    },
+    "generatedOriginal": "originals/counter-02-16777dc89297.png",
+    "generatedSha256": "16777dc892978ba7dfd28ee6972833c87ef41f92d26ecc1a7e0537607c09e2b1",
+    "generatedCropSha256": "9c05a83478564ad11bb02a4ed400307d300cfb3924e4e72eca475059553fe826",
+    "method": "image_gen reference edit; rectangular crop and lossless encoding only; no warping or alpha edits",
+    "review": "Parallel 2/3 top and cardinal face; equal far/near rectangular widths; preserve original materials, motifs and intentional curved shapes."
+  },
+  {
+    "id": "collection-haydn-counter",
+    "facing": "north",
+    "file": "counter-02-16777dc89297.webp",
+    "width": 1024,
+    "height": 1536,
+    "x": 600,
+    "y": 641,
+    "w": 321,
+    "h": 278,
+    "draw": {
+      "x": 0,
+      "y": 8.0,
+      "w": 128.0,
+      "h": 104.0
+    },
+    "source": {
+      "file": "town/assets/apartment-collections/haydn-north-18ce12845759.webp",
+      "crop": {
+        "x": 4,
+        "y": 1035,
+        "w": 208,
+        "h": 169
+      },
+      "frame": {
+        "slot": "counter",
+        "x": 4,
+        "y": 1035,
+        "w": 208,
+        "h": 169,
+        "digest": "c05eb93b87e3619460371edd21e41810c39d55f4a577e3f2cff5b9b44553f628",
+        "viewWidth": 128,
+        "viewHeight": 112,
+        "footCenter": [
+          0.5,
+          0.701923
+        ],
+        "cell": {
+          "x": 4,
+          "y": 1035,
+          "w": 208,
+          "h": 169
+        }
+      },
+      "sha256": "ba8281946044722faf64a1becd1d87db26f0c24685ecb6c1cb65124e1dbe330a"
+    },
+    "generatedOriginal": "originals/counter-02-16777dc89297.png",
+    "generatedSha256": "16777dc892978ba7dfd28ee6972833c87ef41f92d26ecc1a7e0537607c09e2b1",
+    "generatedCropSha256": "4d76abae387914fd242d88b88736999229bdac0dc9d166559b5fc529df59b913",
+    "method": "image_gen reference edit; rectangular crop and lossless encoding only; no warping or alpha edits",
+    "review": "Parallel 2/3 top and cardinal face; equal far/near rectangular widths; preserve original materials, motifs and intentional curved shapes."
+  },
+  {
+    "id": "collection-handel-counter",
+    "facing": "south",
+    "file": "counter-02-16777dc89297.webp",
+    "width": 1024,
+    "height": 1536,
+    "x": 88,
+    "y": 1121,
+    "w": 339,
+    "h": 302,
+    "draw": {
+      "x": 6.133333333333333,
+      "y": 0,
+      "w": 115.73333333333333,
+      "h": 112.0
+    },
+    "source": {
+      "file": "town/assets/apartment-collections/handel-south-cardinal-f069238584fc.webp",
+      "crop": {
+        "x": 867,
+        "y": 997,
+        "w": 310,
+        "h": 300
+      },
+      "frame": {
+        "slot": "counter",
+        "x": 867,
+        "y": 997,
+        "w": 310,
+        "h": 300,
+        "digest": "360d37dbee5ee3f508be0bff49559dffcfa3608a261d2cf2cc2bb71e5b7840bd",
+        "cell": {
+          "x": 867,
+          "y": 997,
+          "w": 310,
+          "h": 300
+        },
+        "sourceDigest": "5591e52e2bde2bd4f492e39b94c6ecda2795ebfa30a3b7450db15ebd0c66546e",
+        "sourceFrame": {
+          "x": 52,
+          "y": 643,
+          "w": 310,
+          "h": 300
+        },
+        "artReview": "independent-accepted173-map.json",
+        "footCenter": [
+          0.5,
+          0.7232142857142857
+        ]
+      },
+      "sha256": "360d37dbee5ee3f508be0bff49559dffcfa3608a261d2cf2cc2bb71e5b7840bd"
+    },
+    "generatedOriginal": "originals/counter-02-16777dc89297.png",
+    "generatedSha256": "16777dc892978ba7dfd28ee6972833c87ef41f92d26ecc1a7e0537607c09e2b1",
+    "generatedCropSha256": "c7775739183ba8164b61d16196f06a387c4265bdd8eb082a264b32b279ffcb06",
+    "method": "image_gen reference edit; rectangular crop and lossless encoding only; no warping or alpha edits",
+    "review": "Parallel 2/3 top and cardinal face; equal far/near rectangular widths; preserve original materials, motifs and intentional curved shapes."
+  },
+  {
+    "id": "collection-handel-counter",
+    "facing": "north",
+    "file": "counter-02-16777dc89297.webp",
+    "width": 1024,
+    "height": 1536,
+    "x": 601,
+    "y": 1131,
+    "w": 317,
+    "h": 274,
+    "draw": {
+      "x": 0,
+      "y": 24.328767123287676,
+      "w": 128.0,
+      "h": 87.67123287671232
+    },
+    "source": {
+      "file": "town/assets/apartment-collections/handel-north-a4d495bc84f3.webp",
+      "crop": {
+        "x": 205,
+        "y": 1022,
+        "w": 219,
+        "h": 150
+      },
+      "frame": {
+        "slot": "counter",
+        "x": 205,
+        "y": 1022,
+        "w": 219,
+        "h": 150,
+        "digest": "d252efb0ac4b43282e44542cbcf0f8ed5c9c6654294280c845a605085e090954",
+        "viewWidth": 128,
+        "viewHeight": 112,
+        "footCenter": [
+          0.5,
+          0.646406
+        ],
+        "cell": {
+          "x": 205,
+          "y": 1022,
+          "w": 219,
+          "h": 150
+        }
+      },
+      "sha256": "c1b6b4cf119890a079086676774d68f1d50610bb9739cd748f7c04176a1309cb"
+    },
+    "generatedOriginal": "originals/counter-02-16777dc89297.png",
+    "generatedSha256": "16777dc892978ba7dfd28ee6972833c87ef41f92d26ecc1a7e0537607c09e2b1",
+    "generatedCropSha256": "270402645258d547c1909bf3ec65fe2682188546ad3644f24bca1c602a2de03f",
+    "method": "image_gen reference edit; rectangular crop and lossless encoding only; no warping or alpha edits",
+    "review": "Parallel 2/3 top and cardinal face; equal far/near rectangular widths; preserve original materials, motifs and intentional curved shapes."
+  },
+  {
+    "id": "collection-vivaldi-counter",
+    "facing": "south",
+    "file": "counter-03-bc5c1f8b7fc7.webp",
+    "width": 1024,
+    "height": 1536,
+    "x": 92,
+    "y": 106,
+    "w": 331,
+    "h": 345,
+    "draw": {
+      "x": 11.469026548672566,
+      "y": 0,
+      "w": 105.06194690265487,
+      "h": 112.0
+    },
+    "source": {
+      "file": "town/assets/apartment-collections/vivaldi-south-cardinal-6138afdec004.webp",
+      "crop": {
+        "x": 1193,
+        "y": 502,
+        "w": 318,
+        "h": 339
+      },
+      "frame": {
+        "slot": "counter",
+        "x": 1193,
+        "y": 502,
+        "w": 318,
+        "h": 339,
+        "digest": "bcaff20c2c62f638612a6dbf0f4d8cc37a1342597fd6d9f7cb90d77ac6a10c50",
+        "cell": {
+          "x": 1193,
+          "y": 502,
+          "w": 318,
+          "h": 339
+        },
+        "sourceDigest": "d3e401655025ec6a6ff19745d5718f053afe73bf1f21fe7dc4d96031bc2f3eb9",
+        "sourceFrame": {
+          "x": 1182,
+          "y": 603,
+          "w": 318,
+          "h": 339
+        },
+        "artReview": "independent-accepted173-map.json",
+        "footCenter": [
+          0.5,
+          0.7232142857142857
+        ]
+      },
+      "sha256": "bcaff20c2c62f638612a6dbf0f4d8cc37a1342597fd6d9f7cb90d77ac6a10c50"
+    },
+    "generatedOriginal": "originals/counter-03-bc5c1f8b7fc7.png",
+    "generatedSha256": "bc5c1f8b7fc7416f1bd57f1883ed106db7a2fdb09a15ef9286963cb38e747dd0",
+    "generatedCropSha256": "e482c261abe8d448e340592ce7206f38cf78844ce2be1f8b31d8a5d276f118c5",
+    "method": "image_gen reference edit; rectangular crop and lossless encoding only; no warping or alpha edits",
+    "review": "Parallel 2/3 top and cardinal face; equal far/near rectangular widths; preserve original materials, motifs and intentional curved shapes."
+  },
+  {
+    "id": "collection-vivaldi-counter",
+    "facing": "north",
+    "file": "counter-03-bc5c1f8b7fc7.webp",
+    "width": 1024,
+    "height": 1536,
+    "x": 605,
+    "y": 146,
+    "w": 297,
+    "h": 300,
+    "draw": {
+      "x": 3.3814432989690744,
+      "y": 1.4210854715202004e-14,
+      "w": 121.23711340206185,
+      "h": 111.99999999999999
+    },
+    "source": {
+      "file": "town/assets/apartment-collections/vivaldi-north-cardinal-788af1b4cb70.webp",
+      "crop": {
+        "x": 533,
+        "y": 1699,
+        "w": 210,
+        "h": 194
+      },
+      "frame": {
+        "slot": "counter",
+        "x": 533,
+        "y": 1699,
+        "w": 210,
+        "h": 194,
+        "digest": "c4879e723d906b13cea6ffe56fc92d965a709419a6b638f37ecd809e84e68b63",
+        "viewWidth": 128,
+        "viewHeight": 112,
+        "footCenter": [
+          0.5,
+          0.723214
+        ],
+        "cell": {
+          "x": 533,
+          "y": 1699,
+          "w": 210,
+          "h": 194
+        }
+      },
+      "sha256": "c4879e723d906b13cea6ffe56fc92d965a709419a6b638f37ecd809e84e68b63"
+    },
+    "generatedOriginal": "originals/counter-03-bc5c1f8b7fc7.png",
+    "generatedSha256": "bc5c1f8b7fc7416f1bd57f1883ed106db7a2fdb09a15ef9286963cb38e747dd0",
+    "generatedCropSha256": "64528a52d20810707bbd7905f3ec5d88c8999cd9b9a3ab8b32cec4541aa903e5",
+    "method": "image_gen reference edit; rectangular crop and lossless encoding only; no warping or alpha edits",
+    "review": "Parallel 2/3 top and cardinal face; equal far/near rectangular widths; preserve original materials, motifs and intentional curved shapes."
+  },
+  {
+    "id": "collection-joplin-counter",
+    "facing": "south",
+    "file": "counter-03-bc5c1f8b7fc7.webp",
+    "width": 1024,
+    "height": 1536,
+    "x": 99,
+    "y": 623,
+    "w": 316,
+    "h": 304,
+    "draw": {
+      "x": 7.176470588235297,
+      "y": 0,
+      "w": 113.6470588235294,
+      "h": 112.0
+    },
+    "source": {
+      "file": "town/assets/apartment-collections/joplin-south-cardinal-51e88f307806.webp",
+      "crop": {
+        "x": 1107,
+        "y": 1073,
+        "w": 276,
+        "h": 272
+      },
+      "frame": {
+        "slot": "counter",
+        "x": 1107,
+        "y": 1073,
+        "w": 276,
+        "h": 272,
+        "digest": "ea85f619b8d879b25cc753fc83c9f88b4ac1097bb10107fc4d925972ecc1f797",
+        "cell": {
+          "x": 1107,
+          "y": 1073,
+          "w": 276,
+          "h": 272
+        },
+        "sourceDigest": "bee4a02fc6b45ab6319d295e57c71e44d457ffa391100fda090cdff94f09ec7c",
+        "sourceFrame": {
+          "x": 54,
+          "y": 161,
+          "w": 276,
+          "h": 272
+        },
+        "artReview": "joplin-south-02-independent-acceptance.json",
+        "footCenter": [
+          0.5,
+          0.7232142857142857
+        ]
+      },
+      "sha256": "ea85f619b8d879b25cc753fc83c9f88b4ac1097bb10107fc4d925972ecc1f797"
+    },
+    "generatedOriginal": "originals/counter-03-bc5c1f8b7fc7.png",
+    "generatedSha256": "bc5c1f8b7fc7416f1bd57f1883ed106db7a2fdb09a15ef9286963cb38e747dd0",
+    "generatedCropSha256": "5dd532d245d9bbc023f19e65d98eb2ee61aba02c928498d49b76eff622f990e4",
+    "method": "image_gen reference edit; rectangular crop and lossless encoding only; no warping or alpha edits",
+    "review": "Parallel 2/3 top and cardinal face; equal far/near rectangular widths; preserve original materials, motifs and intentional curved shapes."
+  },
+  {
+    "id": "collection-joplin-counter",
+    "facing": "north",
+    "file": "counter-03-bc5c1f8b7fc7.webp",
+    "width": 1024,
+    "height": 1536,
+    "x": 593,
+    "y": 654,
+    "w": 319,
+    "h": 271,
+    "draw": {
+      "x": 0,
+      "y": 12.784688995215319,
+      "w": 128.0,
+      "h": 99.21531100478468
+    },
+    "source": {
+      "file": "town/assets/apartment-collections/joplin-north-55a60dd2a5dc.webp",
+      "crop": {
+        "x": 220,
+        "y": 1047,
+        "w": 209,
+        "h": 162
+      },
+      "frame": {
+        "slot": "counter",
+        "x": 220,
+        "y": 1047,
+        "w": 209,
+        "h": 162,
+        "digest": "36ec787d77f818c505482a24eba65f68d35205c83e5505ff19c496954642b165",
+        "viewWidth": 128,
+        "viewHeight": 112,
+        "footCenter": [
+          0.5,
+          0.687548
+        ],
+        "cell": {
+          "x": 220,
+          "y": 1047,
+          "w": 209,
+          "h": 162
+        }
+      },
+      "sha256": "683302855d9142c4e86d73ba8701ede409eea1f341ce67155f863b24c45e8a91"
+    },
+    "generatedOriginal": "originals/counter-03-bc5c1f8b7fc7.png",
+    "generatedSha256": "bc5c1f8b7fc7416f1bd57f1883ed106db7a2fdb09a15ef9286963cb38e747dd0",
+    "generatedCropSha256": "fbce8773b78c213d29bb38ae093d23ff0d3de08015e3895858ef78d2c3b6695f",
+    "method": "image_gen reference edit; rectangular crop and lossless encoding only; no warping or alpha edits",
+    "review": "Parallel 2/3 top and cardinal face; equal far/near rectangular widths; preserve original materials, motifs and intentional curved shapes."
+  },
+  {
+    "id": "collection-ellington-counter",
+    "facing": "south",
+    "file": "counter-03-bc5c1f8b7fc7.webp",
+    "width": 1024,
+    "height": 1536,
+    "x": 38,
+    "y": 1106,
+    "w": 436,
+    "h": 337,
+    "draw": {
+      "x": 0,
+      "y": 16.51994091580501,
+      "w": 128.0,
+      "h": 95.48005908419499
+    },
+    "source": {
+      "file": "town/assets/apartment-collections/ellington-south-cardinal-9ad7254b5826.webp",
+      "crop": {
+        "x": 421,
+        "y": 4,
+        "w": 677,
+        "h": 505
+      },
+      "frame": {
+        "slot": "counter",
+        "x": 421,
+        "y": 4,
+        "w": 677,
+        "h": 505,
+        "digest": "99d96cf626629034cd3dd7440daad235ecbcd346471d7ff9e00053208297b65c",
+        "cell": {
+          "x": 421,
+          "y": 4,
+          "w": 677,
+          "h": 505
+        },
+        "sourceDigest": "7ac301e03f8cfe0521569b9d4ba0dc9bbfa823813a6c1a2218507554b5a040e9",
+        "sourceFrame": {
+          "x": 933,
+          "y": 244,
+          "w": 677,
+          "h": 505
+        },
+        "artReview": "ellington-south-02-independent-acceptance.json",
+        "footCenter": [
+          0.5,
+          0.6753248762376238
+        ]
+      },
+      "sha256": "99d96cf626629034cd3dd7440daad235ecbcd346471d7ff9e00053208297b65c"
+    },
+    "generatedOriginal": "originals/counter-03-bc5c1f8b7fc7.png",
+    "generatedSha256": "bc5c1f8b7fc7416f1bd57f1883ed106db7a2fdb09a15ef9286963cb38e747dd0",
+    "generatedCropSha256": "8d3ed3476eeede7331c01c0a90c6400a7f2cf4cf9a4ab21a800e02eb09fb8d47",
+    "method": "image_gen reference edit; rectangular crop and lossless encoding only; no warping or alpha edits",
+    "review": "Parallel 2/3 top and cardinal face; equal far/near rectangular widths; preserve original materials, motifs and intentional curved shapes."
+  },
+  {
+    "id": "collection-ellington-counter",
+    "facing": "north",
+    "file": "counter-03-bc5c1f8b7fc7.webp",
+    "width": 1024,
+    "height": 1536,
+    "x": 547,
+    "y": 1120,
+    "w": 412,
+    "h": 306,
+    "draw": {
+      "x": 0,
+      "y": 23.111111111111114,
+      "w": 128.0,
+      "h": 88.88888888888889
+    },
+    "source": {
+      "file": "town/assets/apartment-collections/ellington-north-cardinal-f4752f45160c.webp",
+      "crop": {
+        "x": 1015,
+        "y": 1371,
+        "w": 216,
+        "h": 150
+      },
+      "frame": {
+        "slot": "counter",
+        "x": 1015,
+        "y": 1371,
+        "w": 216,
+        "h": 150,
+        "digest": "21feb184caba884452eb27ccd48cc2c1dcb77fabc03177d1088779ebefc04bc7",
+        "viewWidth": 128,
+        "viewHeight": 112,
+        "footCenter": [
+          0.5,
+          0.65125
+        ],
+        "cell": {
+          "x": 1015,
+          "y": 1371,
+          "w": 216,
+          "h": 150
+        }
+      },
+      "sha256": "21feb184caba884452eb27ccd48cc2c1dcb77fabc03177d1088779ebefc04bc7"
+    },
+    "generatedOriginal": "originals/counter-03-bc5c1f8b7fc7.png",
+    "generatedSha256": "bc5c1f8b7fc7416f1bd57f1883ed106db7a2fdb09a15ef9286963cb38e747dd0",
+    "generatedCropSha256": "2ef71b9b3f9a440ef93139998ed915ee8ff27c5e6b8fbfb33cbe82c7b80552bc",
+    "method": "image_gen reference edit; rectangular crop and lossless encoding only; no warping or alpha edits",
+    "review": "Parallel 2/3 top and cardinal face; equal far/near rectangular widths; preserve original materials, motifs and intentional curved shapes."
+  },
+  {
+    "id": "collection-ella-counter",
+    "facing": "south",
+    "file": "counter-04-0bc24ed05379.webp",
+    "width": 1024,
+    "height": 1536,
+    "x": 81,
+    "y": 97,
+    "w": 344,
+    "h": 374,
+    "draw": {
+      "x": 14.0618556701031,
+      "y": 1.4210854715202004e-14,
+      "w": 99.8762886597938,
+      "h": 111.99999999999999
+    },
+    "source": {
+      "file": "town/assets/apartment-collections/ella-south-cardinal-0ec52d63c82b.webp",
+      "crop": {
+        "x": 1517,
+        "y": 4,
+        "w": 346,
+        "h": 388
+      },
+      "frame": {
+        "slot": "counter",
+        "x": 1517,
+        "y": 4,
+        "w": 346,
+        "h": 388,
+        "digest": "9e0007ec7b4de7343b9ad079f667ab8f4b36ba203de061585e2acf112a4ccdab",
+        "cell": {
+          "x": 1517,
+          "y": 4,
+          "w": 346,
+          "h": 388
+        },
+        "sourceDigest": "cf22ea2333525d168cfb76b64f249e3024c56f7e1392de52b5137dfb4dbcaf64",
+        "sourceFrame": {
+          "x": 919,
+          "y": 683,
+          "w": 346,
+          "h": 388
+        },
+        "artReview": "ella-south-01-independent-acceptance.json",
+        "footCenter": [
+          0.5,
+          0.7232142857142857
+        ]
+      },
+      "sha256": "9e0007ec7b4de7343b9ad079f667ab8f4b36ba203de061585e2acf112a4ccdab"
+    },
+    "generatedOriginal": "originals/counter-04-0bc24ed05379.png",
+    "generatedSha256": "0bc24ed053795d1b98e0aaa6c892e7f37f0291b64cecf6418c3021b481aac5ba",
+    "generatedCropSha256": "a5bc02e0143557b56b3ec1d44236839c7aca657a9c00d08971312ebb172459a7",
+    "method": "image_gen reference edit; rectangular crop and lossless encoding only; no warping or alpha edits",
+    "review": "Parallel 2/3 top and cardinal face; equal far/near rectangular widths; preserve original materials, motifs and intentional curved shapes."
+  },
+  {
+    "id": "collection-ella-counter",
+    "facing": "north",
+    "file": "counter-04-0bc24ed05379.webp",
+    "width": 1024,
+    "height": 1536,
+    "x": 622,
+    "y": 161,
+    "w": 277,
+    "h": 304,
+    "draw": {
+      "x": 2.72251308900524,
+      "y": 1.4210854715202004e-14,
+      "w": 122.55497382198952,
+      "h": 111.99999999999999
+    },
+    "source": {
+      "file": "town/assets/apartment-collections/ella-north-eca3cc9dfc36.webp",
+      "crop": {
+        "x": 4,
+        "y": 854,
+        "w": 209,
+        "h": 191
+      },
+      "frame": {
+        "slot": "counter",
+        "x": 4,
+        "y": 854,
+        "w": 209,
+        "h": 191,
+        "digest": "043631d371249e2732e51a0ceda298ba482920c1cf3b4f291c82db395a702759",
+        "viewWidth": 128,
+        "viewHeight": 112,
+        "footCenter": [
+          0.5,
+          0.723214
+        ],
+        "cell": {
+          "x": 4,
+          "y": 854,
+          "w": 209,
+          "h": 191
+        }
+      },
+      "sha256": "c740b33a77ea39056e3fed27e583cd2a0a61fa70b3187c293e09fa747313eff8"
+    },
+    "generatedOriginal": "originals/counter-04-0bc24ed05379.png",
+    "generatedSha256": "0bc24ed053795d1b98e0aaa6c892e7f37f0291b64cecf6418c3021b481aac5ba",
+    "generatedCropSha256": "1918e1e656836e69696d09cb5ed3c6421a8b6997b7d4b26613c4bbb301fed19c",
+    "method": "image_gen reference edit; rectangular crop and lossless encoding only; no warping or alpha edits",
+    "review": "Parallel 2/3 top and cardinal face; equal far/near rectangular widths; preserve original materials, motifs and intentional curved shapes."
+  },
+  {
+    "id": "collection-nina-counter",
+    "facing": "south",
+    "file": "counter-04-0bc24ed05379.webp",
+    "width": 1024,
+    "height": 1536,
+    "x": 97,
+    "y": 595,
+    "w": 310,
+    "h": 321,
+    "draw": {
+      "x": 10.290909090909096,
+      "y": 1.4210854715202004e-14,
+      "w": 107.41818181818181,
+      "h": 111.99999999999999
+    },
+    "source": {
+      "file": "town/assets/apartment-collections/cardinal-fixes/nina-counter-south-0c99f3629873.webp",
+      "crop": {
+        "x": 0,
+        "y": 0,
+        "w": 211,
+        "h": 220
+      },
+      "frame": {
+        "id": "collection-nina-counter",
+        "slot": "counter",
+        "x": 0,
+        "y": 0,
+        "w": 211,
+        "h": 220,
+        "viewWidth": 128,
+        "viewHeight": 112,
+        "worldFootCenter": {
+          "x": 64,
+          "y": 81
+        },
+        "digest": "0c99f36298736555a73aee7183f60ae946039f66463fdd496960299c4241c43e"
+      },
+      "sha256": "0c99f36298736555a73aee7183f60ae946039f66463fdd496960299c4241c43e"
+    },
+    "generatedOriginal": "originals/counter-04-0bc24ed05379.png",
+    "generatedSha256": "0bc24ed053795d1b98e0aaa6c892e7f37f0291b64cecf6418c3021b481aac5ba",
+    "generatedCropSha256": "c1bd6c64e05d9da79891c961a2a942cc504172ffa260f5e369a50853a7df1746",
+    "method": "image_gen reference edit; rectangular crop and lossless encoding only; no warping or alpha edits",
+    "review": "Parallel 2/3 top and cardinal face; equal far/near rectangular widths; preserve original materials, motifs and intentional curved shapes."
+  },
+  {
+    "id": "collection-nina-counter",
+    "facing": "north",
+    "file": "counter-04-0bc24ed05379.webp",
+    "width": 1024,
+    "height": 1536,
+    "x": 612,
+    "y": 607,
+    "w": 297,
+    "h": 309,
+    "draw": {
+      "x": 0,
+      "y": 0.9857819905213177,
+      "w": 128.0,
+      "h": 111.01421800947868
+    },
+    "source": {
+      "file": "town/assets/apartment-collections/nina-north-a06ba79da4ca.webp",
+      "crop": {
+        "x": 4,
+        "y": 853,
+        "w": 211,
+        "h": 183
+      },
+      "frame": {
+        "slot": "counter",
+        "x": 4,
+        "y": 853,
+        "w": 211,
+        "h": 183,
+        "digest": "c91ad03baa80caa0f144215549d16ca049e251593a4b179873b2d61f81d71dd6",
+        "viewWidth": 128,
+        "viewHeight": 112,
+        "footCenter": [
+          0.5,
+          0.720756
+        ],
+        "cell": {
+          "x": 4,
+          "y": 853,
+          "w": 211,
+          "h": 183
+        }
+      },
+      "sha256": "47718aef7cba9d8529e05899fff9c6f8fcf4ac65da15bbd991a824514eca9c16"
+    },
+    "generatedOriginal": "originals/counter-04-0bc24ed05379.png",
+    "generatedSha256": "0bc24ed053795d1b98e0aaa6c892e7f37f0291b64cecf6418c3021b481aac5ba",
+    "generatedCropSha256": "03d5c1ff51e308025a4d590359848e01b9834da1d61e365657020eccf289d3e3",
+    "method": "image_gen reference edit; rectangular crop and lossless encoding only; no warping or alpha edits",
+    "review": "Parallel 2/3 top and cardinal face; equal far/near rectangular widths; preserve original materials, motifs and intentional curved shapes."
+  },
+  {
+    "id": "collection-miles-counter",
+    "facing": "south",
+    "file": "counter-04-0bc24ed05379.webp",
+    "width": 1024,
+    "height": 1536,
+    "x": 84,
+    "y": 1063,
+    "w": 336,
+    "h": 329,
+    "draw": {
+      "x": 1.9067357512953436,
+      "y": 1.4210854715202004e-14,
+      "w": 124.18652849740931,
+      "h": 111.99999999999999
+    },
+    "source": {
+      "file": "town/assets/apartment-collections/miles-south-cardinal-6fdd5cc0ef02.webp",
+      "crop": {
+        "x": 1318,
+        "y": 1659,
+        "w": 214,
+        "h": 193
+      },
+      "frame": {
+        "slot": "counter",
+        "x": 1318,
+        "y": 1659,
+        "w": 214,
+        "h": 193,
+        "digest": "6f0db52a2cdbab8c23ba0a3cbaee2e00cd6755728984e622f3c8f310b9402e7d",
+        "cell": {
+          "x": 1318,
+          "y": 1659,
+          "w": 214,
+          "h": 193
+        }
+      },
+      "sha256": "6f0db52a2cdbab8c23ba0a3cbaee2e00cd6755728984e622f3c8f310b9402e7d"
+    },
+    "generatedOriginal": "originals/counter-04-0bc24ed05379.png",
+    "generatedSha256": "0bc24ed053795d1b98e0aaa6c892e7f37f0291b64cecf6418c3021b481aac5ba",
+    "generatedCropSha256": "9c4243d1b8db73d6220c85031ac5ce2fa4a040a1da32a64c9fbbf640fbf978f1",
+    "method": "image_gen reference edit; rectangular crop and lossless encoding only; no warping or alpha edits",
+    "review": "Parallel 2/3 top and cardinal face; equal far/near rectangular widths; preserve original materials, motifs and intentional curved shapes."
+  },
+  {
+    "id": "collection-miles-counter",
+    "facing": "north",
+    "file": "counter-04-0bc24ed05379.webp",
+    "width": 1024,
+    "height": 1536,
+    "x": 605,
+    "y": 1061,
+    "w": 335,
+    "h": 331,
+    "draw": {
+      "x": 4.099502487562184,
+      "y": 0,
+      "w": 119.80099502487563,
+      "h": 112.0
+    },
+    "source": {
+      "file": "town/assets/apartment-collections/miles-north-cardinal-7eb4a17916ed.webp",
+      "crop": {
+        "x": 1360,
+        "y": 653,
+        "w": 215,
+        "h": 201
+      },
+      "frame": {
+        "slot": "counter",
+        "x": 1360,
+        "y": 653,
+        "w": 215,
+        "h": 201,
+        "digest": "3c4dc4ae100618d15c9d9c2dd143a8ddb3bb2d9499a0b1d76674b6bcf6d9519b",
+        "viewWidth": 128,
+        "viewHeight": 112,
+        "footCenter": [
+          0.5,
+          0.723214
+        ],
+        "cell": {
+          "x": 1360,
+          "y": 653,
+          "w": 215,
+          "h": 201
+        }
+      },
+      "sha256": "3c4dc4ae100618d15c9d9c2dd143a8ddb3bb2d9499a0b1d76674b6bcf6d9519b"
+    },
+    "generatedOriginal": "originals/counter-04-0bc24ed05379.png",
+    "generatedSha256": "0bc24ed053795d1b98e0aaa6c892e7f37f0291b64cecf6418c3021b481aac5ba",
+    "generatedCropSha256": "d2996798381a84d1fc011aa82e550962d5c8de0747bd8648e2c2f3184c4bc063",
+    "method": "image_gen reference edit; rectangular crop and lossless encoding only; no warping or alpha edits",
+    "review": "Parallel 2/3 top and cardinal face; equal far/near rectangular widths; preserve original materials, motifs and intentional curved shapes."
+  },
+  {
+    "id": "collection-dj-counter",
+    "facing": "south",
+    "file": "counter-05-c31a31c95927.webp",
+    "width": 1024,
+    "height": 1536,
+    "x": 95,
+    "y": 96,
+    "w": 321,
+    "h": 373,
+    "draw": {
+      "x": 15.68292682926829,
+      "y": 0,
+      "w": 96.63414634146342,
+      "h": 112.00000000000001
+    },
+    "source": {
+      "file": "town/assets/apartment-collections/dj-south-cardinal-f9e823090299.webp",
+      "crop": {
+        "x": 294,
+        "y": 1242,
+        "w": 283,
+        "h": 328
+      },
+      "frame": {
+        "slot": "counter",
+        "x": 294,
+        "y": 1242,
+        "w": 283,
+        "h": 328,
+        "digest": "8dceaad73f8bcfac6f13e9e124e937df917d5122d8a23318bf3bbcc8d8c8d203",
+        "cell": {
+          "x": 294,
+          "y": 1242,
+          "w": 283,
+          "h": 328
+        },
+        "sourceDigest": "6fdc6a1944ed1c73c34b0b1473746efcc6aefa84e2489eb1e03ec933a26fa306",
+        "sourceFrame": {
+          "x": 818,
+          "y": 119,
+          "w": 283,
+          "h": 328
+        },
+        "artReview": "dj-south-02-independent-acceptance.json",
+        "footCenter": [
+          0.5,
+          0.7232142857142857
+        ]
+      },
+      "sha256": "8dceaad73f8bcfac6f13e9e124e937df917d5122d8a23318bf3bbcc8d8c8d203"
+    },
+    "generatedOriginal": "originals/counter-05-c31a31c95927.png",
+    "generatedSha256": "c31a31c9592739f561e95a8aeb0c1082e30afc3605dd5f5bd9a0f4ce9fa1daa7",
+    "generatedCropSha256": "eec1e1c87e4f2cedb3b2f5274833001e8fc89893babd4e00d3490b2e35311989",
+    "method": "image_gen reference edit; rectangular crop and lossless encoding only; no warping or alpha edits",
+    "review": "Parallel 2/3 top and cardinal face; equal far/near rectangular widths; preserve original materials, motifs and intentional curved shapes."
+  },
+  {
+    "id": "collection-dj-counter",
+    "facing": "north",
+    "file": "counter-05-c31a31c95927.webp",
+    "width": 1024,
+    "height": 1536,
+    "x": 607,
+    "y": 119,
+    "w": 306,
+    "h": 334,
+    "draw": {
+      "x": 0,
+      "y": 5.041095890410958,
+      "w": 128.0,
+      "h": 106.95890410958904
+    },
+    "source": {
+      "file": "town/assets/apartment-collections/dj-north-273bb13ac5ff.webp",
+      "crop": {
+        "x": 4,
+        "y": 846,
+        "w": 219,
+        "h": 183
+      },
+      "frame": {
+        "slot": "counter",
+        "x": 4,
+        "y": 846,
+        "w": 219,
+        "h": 183,
+        "digest": "10480fe01db557fac3a6f1c6a943803f1801eede6b7478a63305fd54d3704baa",
+        "viewWidth": 128,
+        "viewHeight": 112,
+        "footCenter": [
+          0.5,
+          0.710169
+        ],
+        "cell": {
+          "x": 4,
+          "y": 846,
+          "w": 219,
+          "h": 183
+        }
+      },
+      "sha256": "3c07e941ee946265d06e60afda526ff77badb2cbbac7029eb5382b4f3fec5db8"
+    },
+    "generatedOriginal": "originals/counter-05-c31a31c95927.png",
+    "generatedSha256": "c31a31c9592739f561e95a8aeb0c1082e30afc3605dd5f5bd9a0f4ce9fa1daa7",
+    "generatedCropSha256": "58f98fb21a30fdabbbaaf997afe8dbb8fc58df3ace4e1c131bac20a6fea2de1c",
+    "method": "image_gen reference edit; rectangular crop and lossless encoding only; no warping or alpha edits",
+    "review": "Parallel 2/3 top and cardinal face; equal far/near rectangular widths; preserve original materials, motifs and intentional curved shapes."
+  },
+  {
+    "id": "collection-vee-jay-counter",
+    "facing": "south",
+    "file": "counter-05-c31a31c95927.webp",
+    "width": 1024,
+    "height": 1536,
+    "x": 82,
+    "y": 588,
+    "w": 349,
+    "h": 380,
+    "draw": {
+      "x": 7.828220858895705,
+      "y": 0,
+      "w": 112.34355828220859,
+      "h": 112.0
+    },
+    "source": {
+      "file": "town/assets/apartment-collections/vee-jay-south-cardinal-9bb2802f02d5.webp",
+      "crop": {
+        "x": 4,
+        "y": 2408,
+        "w": 327,
+        "h": 326
+      },
+      "frame": {
+        "slot": "counter",
+        "x": 4,
+        "y": 2408,
+        "w": 327,
+        "h": 326,
+        "digest": "e99ae589333e1b0ab4c4ed57e647d598ee8097447160cca08072c83501a4b057",
+        "cell": {
+          "x": 4,
+          "y": 2408,
+          "w": 327,
+          "h": 326
+        },
+        "sourceDigest": "e9cb4f12be831ce3e040b7d45455961d8021de32cefc519b5e2569e32332a5e7",
+        "sourceFrame": {
+          "x": 796,
+          "y": 119,
+          "w": 327,
+          "h": 326
+        },
+        "artReview": "vee-jay-south-02-independent-acceptance.json",
+        "footCenter": [
+          0.5,
+          0.7232142857142857
+        ]
+      },
+      "sha256": "e99ae589333e1b0ab4c4ed57e647d598ee8097447160cca08072c83501a4b057"
+    },
+    "generatedOriginal": "originals/counter-05-c31a31c95927.png",
+    "generatedSha256": "c31a31c9592739f561e95a8aeb0c1082e30afc3605dd5f5bd9a0f4ce9fa1daa7",
+    "generatedCropSha256": "4e70faa88f8cd36b82333cd12e2bfff4d9852d08ef4427f68e2171d6deb1fe91",
+    "method": "image_gen reference edit; rectangular crop and lossless encoding only; no warping or alpha edits",
+    "review": "Parallel 2/3 top and cardinal face; equal far/near rectangular widths; preserve original materials, motifs and intentional curved shapes."
+  },
+  {
+    "id": "collection-vee-jay-counter",
+    "facing": "north",
+    "file": "counter-05-c31a31c95927.webp",
+    "width": 1024,
+    "height": 1536,
+    "x": 593,
+    "y": 600,
+    "w": 350,
+    "h": 360,
+    "draw": {
+      "x": 3.2592592592592595,
+      "y": 0,
+      "w": 121.48148148148148,
+      "h": 112.0
+    },
+    "source": {
+      "file": "town/assets/apartment-collections/vee-jay-north-9c3b6c582649.webp",
+      "crop": {
+        "x": 175,
+        "y": 421,
+        "w": 205,
+        "h": 189
+      },
+      "frame": {
+        "slot": "counter",
+        "x": 175,
+        "y": 421,
+        "w": 205,
+        "h": 189,
+        "digest": "c553e2236ba6f36a532b483711617b6254588e4a0a429179c7ff435cc304e34b",
+        "viewWidth": 128,
+        "viewHeight": 112,
+        "footCenter": [
+          0.5,
+          0.723214
+        ],
+        "cell": {
+          "x": 175,
+          "y": 421,
+          "w": 205,
+          "h": 189
+        }
+      },
+      "sha256": "5a1fbab720b2ef77bff274bf3d6a7d1c95f1ab66454c2a19484d86003bb5d495"
+    },
+    "generatedOriginal": "originals/counter-05-c31a31c95927.png",
+    "generatedSha256": "c31a31c9592739f561e95a8aeb0c1082e30afc3605dd5f5bd9a0f4ce9fa1daa7",
+    "generatedCropSha256": "e8051b12f14d8d3b6d163976bc687c6d3d9a49f2637c7923f7f56c05d2c2e7a1",
+    "method": "image_gen reference edit; rectangular crop and lossless encoding only; no warping or alpha edits",
+    "review": "Parallel 2/3 top and cardinal face; equal far/near rectangular widths; preserve original materials, motifs and intentional curved shapes."
+  },
+  {
+    "id": "collection-zizi-counter",
+    "facing": "south",
+    "file": "counter-05-c31a31c95927.webp",
+    "width": 1024,
+    "height": 1536,
+    "x": 83,
+    "y": 1116,
+    "w": 348,
+    "h": 291,
+    "draw": {
+      "x": 2.3147208121827347,
+      "y": 0,
+      "w": 123.37055837563453,
+      "h": 112.00000000000001
+    },
+    "source": {
+      "file": "town/assets/apartment-collections/zizi-south-cardinal-fa04274f46d2.webp",
+      "crop": {
+        "x": 376,
+        "y": 929,
+        "w": 217,
+        "h": 197
+      },
+      "frame": {
+        "slot": "counter",
+        "x": 376,
+        "y": 929,
+        "w": 217,
+        "h": 197,
+        "digest": "74f779eb2bc1dc53d201395a50fcad8db65868f3d6cc4d3b4ceb247315b5afea",
+        "cell": {
+          "x": 376,
+          "y": 929,
+          "w": 217,
+          "h": 197
+        }
+      },
+      "sha256": "74f779eb2bc1dc53d201395a50fcad8db65868f3d6cc4d3b4ceb247315b5afea"
+    },
+    "generatedOriginal": "originals/counter-05-c31a31c95927.png",
+    "generatedSha256": "c31a31c9592739f561e95a8aeb0c1082e30afc3605dd5f5bd9a0f4ce9fa1daa7",
+    "generatedCropSha256": "b830f6d43f2ce796d6caade941145d49dec4f46f7e4a295f8d02eeae2b6c463b",
+    "method": "image_gen reference edit; rectangular crop and lossless encoding only; no warping or alpha edits",
+    "review": "Parallel 2/3 top and cardinal face; equal far/near rectangular widths; preserve original materials, motifs and intentional curved shapes."
+  },
+  {
+    "id": "collection-zizi-counter",
+    "facing": "north",
+    "file": "counter-05-c31a31c95927.webp",
+    "width": 1024,
+    "height": 1536,
+    "x": 592,
+    "y": 1104,
+    "w": 350,
+    "h": 302,
+    "draw": {
+      "x": 0,
+      "y": 0,
+      "w": 128.0,
+      "h": 112.0
+    },
+    "source": {
+      "file": "town/assets/apartment-collections/zizi-north-3ffef0e8d2e3.webp",
+      "crop": {
+        "x": 4,
+        "y": 1026,
+        "w": 200,
+        "h": 175
+      },
+      "frame": {
+        "slot": "counter",
+        "x": 4,
+        "y": 1026,
+        "w": 200,
+        "h": 175,
+        "digest": "f921aaa5deb91c59b2abd6e29301a5d0edf7abee6189da92beea118b5d1c13a4",
+        "viewWidth": 128,
+        "viewHeight": 112,
+        "footCenter": [
+          0.5,
+          0.723214
+        ],
+        "cell": {
+          "x": 4,
+          "y": 1026,
+          "w": 200,
+          "h": 175
+        }
+      },
+      "sha256": "743529f4a5a2cd1e881ced7f3c448c2a1389ad359b465e627c38dd6cb18e62da"
+    },
+    "generatedOriginal": "originals/counter-05-c31a31c95927.png",
+    "generatedSha256": "c31a31c9592739f561e95a8aeb0c1082e30afc3605dd5f5bd9a0f4ce9fa1daa7",
+    "generatedCropSha256": "b0245e80fefed685d500821ea966f98f157e14fc8763da10929015aa9fa911dc",
+    "method": "image_gen reference edit; rectangular crop and lossless encoding only; no warping or alpha edits",
+    "review": "Parallel 2/3 top and cardinal face; equal far/near rectangular widths; preserve original materials, motifs and intentional curved shapes."
+  },
+  {
+    "id": "collection-metronome-counter",
+    "facing": "south",
+    "file": "counter-06-c437d46ab86c.webp",
+    "width": 1024,
+    "height": 1536,
+    "x": 64,
+    "y": 127,
+    "w": 398,
+    "h": 313,
+    "draw": {
+      "x": 0,
+      "y": 11.47643979057591,
+      "w": 128.0,
+      "h": 100.52356020942409
+    },
+    "source": {
+      "file": "town/assets/apartment-collections/metronome-south-cardinal-72ce761a9f1c.webp",
+      "crop": {
+        "x": 1602,
+        "y": 1612,
+        "w": 382,
+        "h": 300
+      },
+      "frame": {
+        "slot": "counter",
+        "x": 1602,
+        "y": 1612,
+        "w": 382,
+        "h": 300,
+        "digest": "5336446feb4307c55c01a8e931b53eec6819e8c0279bf495d685824c8f1326b3",
+        "cell": {
+          "x": 1602,
+          "y": 1612,
+          "w": 382,
+          "h": 300
+        },
+        "sourceDigest": "f1c167951ccada0db91ae7602a76ae87e560329df8bf6b721ed91f878ba321ba",
+        "sourceFrame": {
+          "x": 39,
+          "y": 520,
+          "w": 382,
+          "h": 300
+        },
+        "artReview": "independent-source-qa.json",
+        "footCenter": [
+          0.5,
+          0.6916145833333334
+        ]
+      },
+      "sha256": "5336446feb4307c55c01a8e931b53eec6819e8c0279bf495d685824c8f1326b3"
+    },
+    "generatedOriginal": "originals/counter-06-c437d46ab86c.png",
+    "generatedSha256": "c437d46ab86cd4b7c139677cc47148a62344dd4332e604366d23084f5400890c",
+    "generatedCropSha256": "187ea0586aa231aecccf88603f26f5d5bce102f40d74ba8c021a97ed7c8f2253",
+    "method": "image_gen reference edit; rectangular crop and lossless encoding only; no warping or alpha edits",
+    "review": "Parallel 2/3 top and cardinal face; equal far/near rectangular widths; preserve original materials, motifs and intentional curved shapes."
+  },
+  {
+    "id": "collection-metronome-counter",
+    "facing": "north",
+    "file": "counter-06-c437d46ab86c.webp",
+    "width": 1024,
+    "height": 1536,
+    "x": 591,
+    "y": 159,
+    "w": 312,
+    "h": 280,
+    "draw": {
+      "x": 0,
+      "y": 15.262672811059915,
+      "w": 128.0,
+      "h": 96.73732718894009
+    },
+    "source": {
+      "file": "town/assets/apartment-collections/metronome-north-b7dc54ccb581.webp",
+      "crop": {
+        "x": 4,
+        "y": 1039,
+        "w": 217,
+        "h": 164
+      },
+      "frame": {
+        "slot": "counter",
+        "x": 4,
+        "y": 1039,
+        "w": 217,
+        "h": 164,
+        "digest": "d5396476d7430bb2e62367420812e86fd1d6fcdea7ed33c23e9a5708fd27408c",
+        "viewWidth": 128,
+        "viewHeight": 112,
+        "footCenter": [
+          0.5,
+          0.679545
+        ],
+        "cell": {
+          "x": 4,
+          "y": 1039,
+          "w": 217,
+          "h": 164
+        }
+      },
+      "sha256": "d36fe459067bf80b37b3937b8c9080695a67ab475c3f167d52baf1f08f751b1d"
+    },
+    "generatedOriginal": "originals/counter-06-c437d46ab86c.png",
+    "generatedSha256": "c437d46ab86cd4b7c139677cc47148a62344dd4332e604366d23084f5400890c",
+    "generatedCropSha256": "1d9140b6ce664c4da09f7015ba63519b6cde41272bc31582ddc7b586385a3b38",
+    "method": "image_gen reference edit; rectangular crop and lossless encoding only; no warping or alpha edits",
+    "review": "Parallel 2/3 top and cardinal face; equal far/near rectangular widths; preserve original materials, motifs and intentional curved shapes."
+  },
+  {
+    "id": "collection-schoenberg-counter",
+    "facing": "south",
+    "file": "counter-06-c437d46ab86c.webp",
+    "width": 1024,
+    "height": 1536,
+    "x": 64,
+    "y": 610,
+    "w": 380,
+    "h": 324,
+    "draw": {
+      "x": 0,
+      "y": 7.178378378378369,
+      "w": 128.0,
+      "h": 104.82162162162163
+    },
+    "source": {
+      "file": "town/assets/apartment-collections/schoenberg-south-cardinal-ddb71057d306.webp",
+      "crop": {
+        "x": 1471,
+        "y": 1511,
+        "w": 370,
+        "h": 303
+      },
+      "frame": {
+        "slot": "counter",
+        "x": 1471,
+        "y": 1511,
+        "w": 370,
+        "h": 303,
+        "digest": "df5bc2733b92b9ba8b057bf95da75e70a7e216ca383fcf6954aedb5c135fb796",
+        "cell": {
+          "x": 1471,
+          "y": 1511,
+          "w": 370,
+          "h": 303
+        },
+        "sourceDigest": "194debdb09442c06e4f16ada181eb8107d5d4930812802cfdc38941806ab82ce",
+        "sourceFrame": {
+          "x": 37,
+          "y": 519,
+          "w": 370,
+          "h": 303
+        },
+        "artReview": "independent-source-qa.json",
+        "footCenter": [
+          0.5,
+          0.7042594884488449
+        ]
+      },
+      "sha256": "df5bc2733b92b9ba8b057bf95da75e70a7e216ca383fcf6954aedb5c135fb796"
+    },
+    "generatedOriginal": "originals/counter-06-c437d46ab86c.png",
+    "generatedSha256": "c437d46ab86cd4b7c139677cc47148a62344dd4332e604366d23084f5400890c",
+    "generatedCropSha256": "19fca6fa1f9fb8027bfd76ece37e67cc5f8f83110f5d6ccb7bf9456dff9c94bc",
+    "method": "image_gen reference edit; rectangular crop and lossless encoding only; no warping or alpha edits",
+    "review": "Parallel 2/3 top and cardinal face; equal far/near rectangular widths; preserve original materials, motifs and intentional curved shapes."
+  },
+  {
+    "id": "collection-schoenberg-counter",
+    "facing": "north",
+    "file": "counter-06-c437d46ab86c.webp",
+    "width": 1024,
+    "height": 1536,
+    "x": 593,
+    "y": 656,
+    "w": 319,
+    "h": 272,
+    "draw": {
+      "x": 0,
+      "y": 11.797979797979792,
+      "w": 128.0,
+      "h": 100.20202020202021
+    },
+    "source": {
+      "file": "town/assets/apartment-collections/schoenberg-north-5f0804b1e331.webp",
+      "crop": {
+        "x": 563,
+        "y": 827,
+        "w": 198,
+        "h": 155
+      },
+      "frame": {
+        "slot": "counter",
+        "x": 563,
+        "y": 827,
+        "w": 198,
+        "h": 155,
+        "digest": "a7ff1fb0ce731984d89d7108ab8bbcae34527e5c6fc73614ee27ab33192640ad",
+        "viewWidth": 128,
+        "viewHeight": 112,
+        "footCenter": [
+          0.5,
+          0.690625
+        ],
+        "cell": {
+          "x": 563,
+          "y": 827,
+          "w": 198,
+          "h": 155
+        }
+      },
+      "sha256": "3ca4b229c50e0d0ba894daff0ec8b9b02ba3b4139a892c41e60c0874a153b772"
+    },
+    "generatedOriginal": "originals/counter-06-c437d46ab86c.png",
+    "generatedSha256": "c437d46ab86cd4b7c139677cc47148a62344dd4332e604366d23084f5400890c",
+    "generatedCropSha256": "63380f1f9dbc86490ac6a474fcf9196d09a44d69c0d34ea6883167b0910de857",
+    "method": "image_gen reference edit; rectangular crop and lossless encoding only; no warping or alpha edits",
+    "review": "Parallel 2/3 top and cardinal face; equal far/near rectangular widths; preserve original materials, motifs and intentional curved shapes."
+  },
+  {
+    "id": "collection-bach-counter",
+    "facing": "north",
+    "file": "counter-06-c437d46ab86c.webp",
+    "width": 1024,
+    "height": 1536,
+    "x": 577,
+    "y": 1153,
+    "w": 334,
+    "h": 264,
+    "draw": {
+      "x": 0,
+      "y": 17.31506849315069,
+      "w": 128.0,
+      "h": 94.68493150684931
+    },
+    "source": {
+      "file": "town/assets/apartment-collections/bach-north-ec7cad24dbb5.webp",
+      "crop": {
+        "x": 557,
+        "y": 1072,
+        "w": 219,
+        "h": 162
+      },
+      "frame": {
+        "slot": "counter",
+        "x": 557,
+        "y": 1072,
+        "w": 219,
+        "h": 162,
+        "digest": "5d8452c61b15aa8f9f2f538ae04ff351df0a2e7d88be5a286a88c655301a06cb",
+        "viewWidth": 128,
+        "viewHeight": 112,
+        "footCenter": [
+          0.5,
+          0.672598
+        ],
+        "cell": {
+          "x": 557,
+          "y": 1072,
+          "w": 219,
+          "h": 162
+        }
+      },
+      "sha256": "f0a5c3f0650d88442b0b00695f7030081c256a8a1bd972e88f00e0f5877e9fe3"
+    },
+    "generatedOriginal": "originals/counter-06-c437d46ab86c.png",
+    "generatedSha256": "c437d46ab86cd4b7c139677cc47148a62344dd4332e604366d23084f5400890c",
+    "generatedCropSha256": "4cd47ce45812a223fc9c11465a907457855fd35ac6afefb6f42ce056bdadc4a0",
+    "method": "image_gen reference edit; rectangular crop and lossless encoding only; no warping or alpha edits",
+    "review": "Parallel 2/3 top and cardinal face; equal far/near rectangular widths; preserve original materials, motifs and intentional curved shapes."
+  },
+  {
+    "id": "collection-player-counter",
+    "facing": "south",
+    "file": "counter-07-6e30d2c1adb9.webp",
+    "width": 1024,
+    "height": 1536,
+    "x": 44,
+    "y": 55,
+    "w": 424,
+    "h": 418,
+    "draw": {
+      "x": 3.898591549295773,
+      "y": 0,
+      "w": 120.20281690140845,
+      "h": 112.00000000000001
+    },
+    "source": {
+      "file": "town/assets/apartment-collections/player-south-cardinal-ff9b7667e605.webp",
+      "crop": {
+        "x": 397,
+        "y": 853,
+        "w": 381,
+        "h": 355
+      },
+      "frame": {
+        "slot": "counter",
+        "x": 397,
+        "y": 853,
+        "w": 381,
+        "h": 355,
+        "digest": "9e5d41e8330dc398f49b38dcc95ff7857051a65ebbff3b3daa63db7384da8d8b",
+        "cell": {
+          "x": 397,
+          "y": 853,
+          "w": 381,
+          "h": 355
+        },
+        "sourceDigest": "fc91abb6e10a7e5c1d6747c3cdd981e64136d8ca8a7ab368c8dbd4810e2358d9",
+        "sourceFrame": {
+          "x": 452,
+          "y": 1366,
+          "w": 381,
+          "h": 355
+        },
+        "artReview": "independent-source-qa.json",
+        "footCenter": [
+          0.5,
+          0.7232142857142857
+        ]
+      },
+      "sha256": "9e5d41e8330dc398f49b38dcc95ff7857051a65ebbff3b3daa63db7384da8d8b"
+    },
+    "generatedOriginal": "originals/counter-07-6e30d2c1adb9.png",
+    "generatedSha256": "6e30d2c1adb9ccaba7499a73fa74046ac1dac84e99124e7a9693aa5279319bfc",
+    "generatedCropSha256": "a1d86502ce034c238392e98a8a7b0ec3b47dfde424df7afa64cc40b6782a382b",
+    "method": "image_gen reference edit; rectangular crop and lossless encoding only; no warping or alpha edits",
+    "review": "Parallel 2/3 top and cardinal face; equal far/near rectangular widths; preserve original materials, motifs and intentional curved shapes."
+  },
+  {
+    "id": "collection-player-counter",
+    "facing": "north",
+    "file": "counter-07-6e30d2c1adb9.webp",
+    "width": 1024,
+    "height": 1536,
+    "x": 556,
+    "y": 91,
+    "w": 415,
+    "h": 382,
+    "draw": {
+      "x": 0.13483146067415674,
+      "y": 0,
+      "w": 127.73033707865169,
+      "h": 112.0
+    },
+    "source": {
+      "file": "town/assets/apartment-collections/player-north-3b2a989b05ba.webp",
+      "crop": {
+        "x": 4,
+        "y": 1045,
+        "w": 203,
+        "h": 178
+      },
+      "frame": {
+        "slot": "counter",
+        "x": 4,
+        "y": 1045,
+        "w": 203,
+        "h": 178,
+        "digest": "a44bfaa5daf1f4215f25743091643e0baf13e20548ba4e5dd3c9421def878f2f",
+        "viewWidth": 128,
+        "viewHeight": 112,
+        "footCenter": [
+          0.5,
+          0.723214
+        ],
+        "cell": {
+          "x": 4,
+          "y": 1045,
+          "w": 203,
+          "h": 178
+        }
+      },
+      "sha256": "7851dd2d84bda74923b8014271396fea11c4445c933f7e11db04d8f60312d020"
+    },
+    "generatedOriginal": "originals/counter-07-6e30d2c1adb9.png",
+    "generatedSha256": "6e30d2c1adb9ccaba7499a73fa74046ac1dac84e99124e7a9693aa5279319bfc",
+    "generatedCropSha256": "97c6eb3f78796acaefddeec7eef71895c6cbabe80fb2078e188756861559d99c",
+    "method": "image_gen reference edit; rectangular crop and lossless encoding only; no warping or alpha edits",
+    "review": "Parallel 2/3 top and cardinal face; equal far/near rectangular widths; preserve original materials, motifs and intentional curved shapes."
+  },
+  {
+    "id": "collection-showroom-victorian-parlor-counter",
+    "facing": "south",
+    "file": "counter-07-6e30d2c1adb9.webp",
+    "width": 1024,
+    "height": 1536,
+    "x": 45,
+    "y": 547,
+    "w": 421,
+    "h": 399,
+    "draw": {
+      "x": 3.8952879581151905,
+      "y": 1.4210854715202004e-14,
+      "w": 120.20942408376962,
+      "h": 111.99999999999999
+    },
+    "source": {
+      "file": "town/assets/apartment-collections/showroom-victorian-parlor-south-cardinal-7aea206b742f.webp",
+      "crop": {
+        "x": 1261,
+        "y": 678,
+        "w": 205,
+        "h": 191
+      },
+      "frame": {
+        "slot": "counter",
+        "x": 1261,
+        "y": 678,
+        "w": 205,
+        "h": 191,
+        "digest": "7dea18166800c733597c142e0ddde90fb8e31bd8b14c66f32bc54ebd08fd8481",
+        "cell": {
+          "x": 1261,
+          "y": 678,
+          "w": 205,
+          "h": 191
+        }
+      },
+      "sha256": "7dea18166800c733597c142e0ddde90fb8e31bd8b14c66f32bc54ebd08fd8481"
+    },
+    "generatedOriginal": "originals/counter-07-6e30d2c1adb9.png",
+    "generatedSha256": "6e30d2c1adb9ccaba7499a73fa74046ac1dac84e99124e7a9693aa5279319bfc",
+    "generatedCropSha256": "2ed3f8ef94d95cb010108dd91c189b07f68cb6216c69eb73205f5123df472943",
+    "method": "image_gen reference edit; rectangular crop and lossless encoding only; no warping or alpha edits",
+    "review": "Parallel 2/3 top and cardinal face; equal far/near rectangular widths; preserve original materials, motifs and intentional curved shapes."
+  },
+  {
+    "id": "collection-showroom-victorian-parlor-counter",
+    "facing": "north",
+    "file": "counter-07-6e30d2c1adb9.webp",
+    "width": 1024,
+    "height": 1536,
+    "x": 556,
+    "y": 603,
+    "w": 438,
+    "h": 343,
+    "draw": {
+      "x": 0,
+      "y": 17.33953488372093,
+      "w": 128.0,
+      "h": 94.66046511627907
+    },
+    "source": {
+      "file": "town/assets/apartment-collections/showroom-victorian-parlor-north-0e48bd72ff08.webp",
+      "crop": {
+        "x": 4,
+        "y": 1061,
+        "w": 215,
+        "h": 159
+      },
+      "frame": {
+        "slot": "counter",
+        "x": 4,
+        "y": 1061,
+        "w": 215,
+        "h": 159,
+        "digest": "a84d8bbac05a338dc97955c0d24d33b9a0fd5108ccf5ca19319561c7eb511615",
+        "viewWidth": 128,
+        "viewHeight": 112,
+        "footCenter": [
+          0.5,
+          0.672514
+        ],
+        "cell": {
+          "x": 4,
+          "y": 1061,
+          "w": 215,
+          "h": 159
+        }
+      },
+      "sha256": "caf893daa3d32b1771eed547ee0e96eb07e14dcb5f41b2d1200002fbf373f5c2"
+    },
+    "generatedOriginal": "originals/counter-07-6e30d2c1adb9.png",
+    "generatedSha256": "6e30d2c1adb9ccaba7499a73fa74046ac1dac84e99124e7a9693aa5279319bfc",
+    "generatedCropSha256": "1929574fc120f27ea6d35762185fb4c104ed5825688966736cf6592e74c29bb0",
+    "method": "image_gen reference edit; rectangular crop and lossless encoding only; no warping or alpha edits",
+    "review": "Parallel 2/3 top and cardinal face; equal far/near rectangular widths; preserve original materials, motifs and intentional curved shapes."
+  },
+  {
+    "id": "collection-showroom-art-deco-lounge-counter",
+    "facing": "south",
+    "file": "counter-07-6e30d2c1adb9.webp",
+    "width": 1024,
+    "height": 1536,
+    "x": 39,
+    "y": 1051,
+    "w": 432,
+    "h": 425,
+    "draw": {
+      "x": 7.717171717171716,
+      "y": 0,
+      "w": 112.56565656565657,
+      "h": 112.0
+    },
+    "source": {
+      "file": "town/assets/apartment-collections/showroom-art-deco-lounge-south-cardinal-7e5863603897.webp",
+      "crop": {
+        "x": 1741,
+        "y": 1004,
+        "w": 199,
+        "h": 198
+      },
+      "frame": {
+        "slot": "counter",
+        "x": 1741,
+        "y": 1004,
+        "w": 199,
+        "h": 198,
+        "digest": "39e15af10a4aa8a17f21e0cebe751701f8957f175640375ef7fee0ea24ff88e0",
+        "cell": {
+          "x": 1741,
+          "y": 1004,
+          "w": 199,
+          "h": 198
+        }
+      },
+      "sha256": "39e15af10a4aa8a17f21e0cebe751701f8957f175640375ef7fee0ea24ff88e0"
+    },
+    "generatedOriginal": "originals/counter-07-6e30d2c1adb9.png",
+    "generatedSha256": "6e30d2c1adb9ccaba7499a73fa74046ac1dac84e99124e7a9693aa5279319bfc",
+    "generatedCropSha256": "40823283052d99c2fa1ba0ce27151d60d859d413226842d4ea1f8d5b9c99126a",
+    "method": "image_gen reference edit; rectangular crop and lossless encoding only; no warping or alpha edits",
+    "review": "Parallel 2/3 top and cardinal face; equal far/near rectangular widths; preserve original materials, motifs and intentional curved shapes."
+  },
+  {
+    "id": "collection-showroom-art-deco-lounge-counter",
+    "facing": "north",
+    "file": "counter-07-6e30d2c1adb9.webp",
+    "width": 1024,
+    "height": 1536,
+    "x": 551,
+    "y": 1050,
+    "w": 434,
+    "h": 426,
+    "draw": {
+      "x": 4.606060606060609,
+      "y": 0,
+      "w": 118.78787878787878,
+      "h": 112.0
+    },
+    "source": {
+      "file": "town/assets/apartment-collections/showroom-art-deco-lounge-north-da7b12534df3.webp",
+      "crop": {
+        "x": 241,
+        "y": 434,
+        "w": 210,
+        "h": 198
+      },
+      "frame": {
+        "slot": "counter",
+        "x": 241,
+        "y": 434,
+        "w": 210,
+        "h": 198,
+        "digest": "baee4442a802c5c7d0694edfc210f350881ea00d93c7cb39cc37593231c9c455",
+        "viewWidth": 128,
+        "viewHeight": 112,
+        "footCenter": [
+          0.5,
+          0.723214
+        ],
+        "cell": {
+          "x": 241,
+          "y": 434,
+          "w": 210,
+          "h": 198
+        }
+      },
+      "sha256": "952ff475060976b2096c88fd02cdc72c9130b2799a53d993831470618a05b42b"
+    },
+    "generatedOriginal": "originals/counter-07-6e30d2c1adb9.png",
+    "generatedSha256": "6e30d2c1adb9ccaba7499a73fa74046ac1dac84e99124e7a9693aa5279319bfc",
+    "generatedCropSha256": "c97bb11885ac2a923f0df8c7276621946b44bbef980b426256e5dd2de0993c88",
+    "method": "image_gen reference edit; rectangular crop and lossless encoding only; no warping or alpha edits",
+    "review": "Parallel 2/3 top and cardinal face; equal far/near rectangular widths; preserve original materials, motifs and intentional curved shapes."
+  },
+  {
+    "id": "collection-showroom-coastal-bedroom-counter",
+    "facing": "south",
+    "file": "counter-08-11452149dc45.webp",
+    "width": 1024,
+    "height": 1536,
+    "x": 78,
+    "y": 82,
+    "w": 379,
+    "h": 392,
+    "draw": {
+      "x": 5.113402061855673,
+      "y": 1.4210854715202004e-14,
+      "w": 117.77319587628865,
+      "h": 111.99999999999999
+    },
+    "source": {
+      "file": "town/assets/apartment-collections/showroom-coastal-bedroom-south-cardinal-c48ff11990c5.webp",
+      "crop": {
+        "x": 589,
+        "y": 683,
+        "w": 204,
+        "h": 194
+      },
+      "frame": {
+        "slot": "counter",
+        "x": 589,
+        "y": 683,
+        "w": 204,
+        "h": 194,
+        "digest": "97558d9301d64c284132c4f25ae05f27fdead0ad5049139acc05f58aa63e3508",
+        "cell": {
+          "x": 589,
+          "y": 683,
+          "w": 204,
+          "h": 194
+        }
+      },
+      "sha256": "97558d9301d64c284132c4f25ae05f27fdead0ad5049139acc05f58aa63e3508"
+    },
+    "generatedOriginal": "originals/counter-08-11452149dc45.png",
+    "generatedSha256": "11452149dc4564f375ef363785f88df4b5a8ed45af0592f0c7e9a2b44d206be4",
+    "generatedCropSha256": "672736a285947a1ecdb50ba2ef7fdcb818cc90e848055b4cd6fe571754864034",
+    "method": "image_gen reference edit; rectangular crop and lossless encoding only; no warping or alpha edits",
+    "review": "Parallel 2/3 top and cardinal face; equal far/near rectangular widths; preserve original materials, motifs and intentional curved shapes."
+  },
+  {
+    "id": "collection-showroom-coastal-bedroom-counter",
+    "facing": "north",
+    "file": "counter-08-11452149dc45.webp",
+    "width": 1024,
+    "height": 1536,
+    "x": 564,
+    "y": 83,
+    "w": 380,
+    "h": 392,
+    "draw": {
+      "x": 5.737373737373737,
+      "y": 0,
+      "w": 116.52525252525253,
+      "h": 112.0
+    },
+    "source": {
+      "file": "town/assets/apartment-collections/showroom-coastal-bedroom-north-e42c97feef50.webp",
+      "crop": {
+        "x": 4,
+        "y": 650,
+        "w": 206,
+        "h": 198
+      },
+      "frame": {
+        "slot": "counter",
+        "x": 4,
+        "y": 650,
+        "w": 206,
+        "h": 198,
+        "digest": "4debbed272c3598930aab4a5873c7985acffee2d9a2ea91143fe824a28958106",
+        "viewWidth": 128,
+        "viewHeight": 112,
+        "footCenter": [
+          0.5,
+          0.723214
+        ],
+        "cell": {
+          "x": 4,
+          "y": 650,
+          "w": 206,
+          "h": 198
+        }
+      },
+      "sha256": "4c33a2933e3f26d30bca74a3889b9b78e5ca3386d62f6e9cb9efddc16a7382ba"
+    },
+    "generatedOriginal": "originals/counter-08-11452149dc45.png",
+    "generatedSha256": "11452149dc4564f375ef363785f88df4b5a8ed45af0592f0c7e9a2b44d206be4",
+    "generatedCropSha256": "4df470cb5d82b8c0082935e220382c836a37bcff59490c0667d04a8fe3d23f7e",
+    "method": "image_gen reference edit; rectangular crop and lossless encoding only; no warping or alpha edits",
+    "review": "Parallel 2/3 top and cardinal face; equal far/near rectangular widths; preserve original materials, motifs and intentional curved shapes."
+  },
+  {
+    "id": "collection-showroom-rustic-kitchen-counter",
+    "facing": "south",
+    "file": "counter-08-11452149dc45.webp",
+    "width": 1024,
+    "height": 1536,
+    "x": 44,
+    "y": 591,
+    "w": 422,
+    "h": 370,
+    "draw": {
+      "x": 0,
+      "y": 8.165191740412979,
+      "w": 128.0,
+      "h": 103.83480825958702
+    },
+    "source": {
+      "file": "town/assets/apartment-collections/showroom-rustic-kitchen-south-cardinal-2ef940449755.webp",
+      "crop": {
+        "x": 848,
+        "y": 1031,
+        "w": 339,
+        "h": 275
+      },
+      "frame": {
+        "slot": "counter",
+        "x": 848,
+        "y": 1031,
+        "w": 339,
+        "h": 275,
+        "digest": "d797c713aad869d65e57c1e684958eec4df00d36aab35f61fdf364ebb872444c",
+        "cell": {
+          "x": 848,
+          "y": 1031,
+          "w": 339,
+          "h": 275
+        },
+        "sourceDigest": "1743d0e4f072c9e34d7b277ee9f40140255686be735d61ecba16f98d572fa830",
+        "sourceFrame": {
+          "x": 1164,
+          "y": 132,
+          "w": 339,
+          "h": 275
+        },
+        "artReview": "showroom-rustic-kitchen-south-01-independent-acceptance.json",
+        "footCenter": [
+          0.5,
+          0.7014488636363636
+        ]
+      },
+      "sha256": "d797c713aad869d65e57c1e684958eec4df00d36aab35f61fdf364ebb872444c"
+    },
+    "generatedOriginal": "originals/counter-08-11452149dc45.png",
+    "generatedSha256": "11452149dc4564f375ef363785f88df4b5a8ed45af0592f0c7e9a2b44d206be4",
+    "generatedCropSha256": "9f5fd455a0e14ccc5ca45ac5172f7a7cb613374b3759c009bf9814f87daaa331",
+    "method": "image_gen reference edit; rectangular crop and lossless encoding only; no warping or alpha edits",
+    "review": "Parallel 2/3 top and cardinal face; equal far/near rectangular widths; preserve original materials, motifs and intentional curved shapes."
+  },
+  {
+    "id": "collection-showroom-rustic-kitchen-counter",
+    "facing": "north",
+    "file": "counter-08-11452149dc45.webp",
+    "width": 1024,
+    "height": 1536,
+    "x": 557,
+    "y": 591,
+    "w": 396,
+    "h": 368,
+    "draw": {
+      "x": 0,
+      "y": 11.643192488262912,
+      "w": 128.0,
+      "h": 100.35680751173709
+    },
+    "source": {
+      "file": "town/assets/apartment-collections/showroom-rustic-kitchen-north-503a4152fee3.webp",
+      "crop": {
+        "x": 4,
+        "y": 1066,
+        "w": 213,
+        "h": 167
+      },
+      "frame": {
+        "slot": "counter",
+        "x": 4,
+        "y": 1066,
+        "w": 213,
+        "h": 167,
+        "digest": "06b2ac9ac7afe2edfe4633ef4a8e680c48c156f9f575d153505ede8e8ad08d21",
+        "viewWidth": 128,
+        "viewHeight": 112,
+        "footCenter": [
+          0.5,
+          0.691102
+        ],
+        "cell": {
+          "x": 4,
+          "y": 1066,
+          "w": 213,
+          "h": 167
+        }
+      },
+      "sha256": "387882feefb06b173e97b97c27d15fc815734e43b540a9daa47420eb5136e5fe"
+    },
+    "generatedOriginal": "originals/counter-08-11452149dc45.png",
+    "generatedSha256": "11452149dc4564f375ef363785f88df4b5a8ed45af0592f0c7e9a2b44d206be4",
+    "generatedCropSha256": "25afba8d7e080fb241a2111514238b1280154e32fcb31f236f768aa30ce8a4cb",
+    "method": "image_gen reference edit; rectangular crop and lossless encoding only; no warping or alpha edits",
+    "review": "Parallel 2/3 top and cardinal face; equal far/near rectangular widths; preserve original materials, motifs and intentional curved shapes."
+  },
+  {
+    "id": "collection-showroom-botanical-conservatory-counter",
+    "facing": "south",
+    "file": "counter-08-11452149dc45.webp",
+    "width": 1024,
+    "height": 1536,
+    "x": 74,
+    "y": 1053,
+    "w": 384,
+    "h": 380,
+    "draw": {
+      "x": 4.037735849056602,
+      "y": 0,
+      "w": 119.9245283018868,
+      "h": 112.0
+    },
+    "source": {
+      "file": "town/assets/apartment-collections/cardinal-fixes/showroom-botanical-conservatory-counter-south-c35c717b172f.webp",
+      "crop": {
+        "x": 0,
+        "y": 0,
+        "w": 227,
+        "h": 212
+      },
+      "frame": {
+        "id": "collection-showroom-botanical-conservatory-counter",
+        "slot": "counter",
+        "x": 0,
+        "y": 0,
+        "w": 227,
+        "h": 212,
+        "viewWidth": 128,
+        "viewHeight": 112,
+        "worldFootCenter": {
+          "x": 64,
+          "y": 81
+        },
+        "digest": "c35c717b172f0ec39a028d30b8a16120c2820e2d39abf53a863b1b3b9d8f90bc"
+      },
+      "sha256": "c35c717b172f0ec39a028d30b8a16120c2820e2d39abf53a863b1b3b9d8f90bc"
+    },
+    "generatedOriginal": "originals/counter-08-11452149dc45.png",
+    "generatedSha256": "11452149dc4564f375ef363785f88df4b5a8ed45af0592f0c7e9a2b44d206be4",
+    "generatedCropSha256": "b3bd2d3d9399a6afc0bebe2d91a8bc15e1bea83279b12067f70ddd95cd8b8fc8",
+    "method": "image_gen reference edit; rectangular crop and lossless encoding only; no warping or alpha edits",
+    "review": "Parallel 2/3 top and cardinal face; equal far/near rectangular widths; preserve original materials, motifs and intentional curved shapes."
+  },
+  {
+    "id": "collection-showroom-botanical-conservatory-counter",
+    "facing": "north",
+    "file": "counter-08-11452149dc45.webp",
+    "width": 1024,
+    "height": 1536,
+    "x": 562,
+    "y": 1062,
+    "w": 387,
+    "h": 370,
+    "draw": {
+      "x": 1.874999999999993,
+      "y": 0,
+      "w": 124.25000000000001,
+      "h": 112.0
+    },
+    "source": {
+      "file": "town/assets/apartment-collections/showroom-botanical-conservatory-north-58e0d82f01e6.webp",
+      "crop": {
+        "x": 203,
+        "y": 656,
+        "w": 213,
+        "h": 192
+      },
+      "frame": {
+        "slot": "counter",
+        "x": 203,
+        "y": 656,
+        "w": 213,
+        "h": 192,
+        "digest": "d705b22f2ff5ea3ff98c544f4fd3bae6a8d24b3ed9c5ce894e0cfa3a91b9e0a5",
+        "viewWidth": 128,
+        "viewHeight": 112,
+        "footCenter": [
+          0.5,
+          0.723214
+        ],
+        "cell": {
+          "x": 203,
+          "y": 656,
+          "w": 213,
+          "h": 192
+        }
+      },
+      "sha256": "58ed6235a0c6f08e4309c265fa8a0d89bdacf623e2a924ccef228fdafe15cd85"
+    },
+    "generatedOriginal": "originals/counter-08-11452149dc45.png",
+    "generatedSha256": "11452149dc4564f375ef363785f88df4b5a8ed45af0592f0c7e9a2b44d206be4",
+    "generatedCropSha256": "594aa8cf5be0aed9f841d3989ee87dca1b7460bb78240f01ee0905da49dd986a",
+    "method": "image_gen reference edit; rectangular crop and lossless encoding only; no warping or alpha edits",
+    "review": "Parallel 2/3 top and cardinal face; equal far/near rectangular widths; preserve original materials, motifs and intentional curved shapes."
+  },
+  {
+    "id": "collection-showroom-midcentury-studio-counter",
+    "facing": "south",
+    "file": "counter-09-f1895c4a73b3.webp",
+    "width": 1024,
+    "height": 1536,
+    "x": 69,
+    "y": 94,
+    "w": 387,
+    "h": 386,
+    "draw": {
+      "x": 9.691842900302113,
+      "y": 0,
+      "w": 108.61631419939577,
+      "h": 112.0
+    },
+    "source": {
+      "file": "town/assets/apartment-collections/showroom-midcentury-studio-south-cardinal-9836d8edd412.webp",
+      "crop": {
+        "x": 292,
+        "y": 542,
+        "w": 321,
+        "h": 331
+      },
+      "frame": {
+        "slot": "counter",
+        "x": 292,
+        "y": 542,
+        "w": 321,
+        "h": 331,
+        "digest": "0e3d75b647660f59b87f536f609d6d569ad821fc5ced8c19d7718bee478156e4",
+        "cell": {
+          "x": 292,
+          "y": 542,
+          "w": 321,
+          "h": 331
+        },
+        "sourceDigest": "a8ed7873aba844c0fb330a07324d199fc7709a8362b1d38f01072787985425e8",
+        "sourceFrame": {
+          "x": 1170,
+          "y": 610,
+          "w": 321,
+          "h": 331
+        },
+        "artReview": "showroom-midcentury-studio-south-01-independent-acceptance.json",
+        "footCenter": [
+          0.5,
+          0.7232142857142857
+        ]
+      },
+      "sha256": "0e3d75b647660f59b87f536f609d6d569ad821fc5ced8c19d7718bee478156e4"
+    },
+    "generatedOriginal": "originals/counter-09-f1895c4a73b3.png",
+    "generatedSha256": "f1895c4a73b3758ce0c80170c0fec7de1dd1d9144f127871d5407a0122de17ee",
+    "generatedCropSha256": "9fd8fd52c37577e337e2311f401866c24dced19301b5101b92b16efc8121a057",
+    "method": "image_gen reference edit; rectangular crop and lossless encoding only; no warping or alpha edits",
+    "review": "Parallel 2/3 top and cardinal face; equal far/near rectangular widths; preserve original materials, motifs and intentional curved shapes."
+  },
+  {
+    "id": "collection-showroom-midcentury-studio-counter",
+    "facing": "north",
+    "file": "counter-09-f1895c4a73b3.webp",
+    "width": 1024,
+    "height": 1536,
+    "x": 570,
+    "y": 131,
+    "w": 387,
+    "h": 350,
+    "draw": {
+      "x": 0,
+      "y": 11.29857819905213,
+      "w": 128.0,
+      "h": 100.70142180094787
+    },
+    "source": {
+      "file": "town/assets/apartment-collections/showroom-midcentury-studio-north-cardinal-a6ea694bab35.webp",
+      "crop": {
+        "x": 198,
+        "y": 434,
+        "w": 211,
+        "h": 166
+      },
+      "frame": {
+        "slot": "counter",
+        "x": 198,
+        "y": 434,
+        "w": 211,
+        "h": 166,
+        "digest": "e108872d92b8ecb7295bc5f06f5896bb9d77ff28af89e4686f51d6ac9823eb23",
+        "viewWidth": 128,
+        "viewHeight": 112,
+        "footCenter": [
+          0.5,
+          0.692159
+        ],
+        "cell": {
+          "x": 198,
+          "y": 434,
+          "w": 211,
+          "h": 166
+        }
+      },
+      "sha256": "e108872d92b8ecb7295bc5f06f5896bb9d77ff28af89e4686f51d6ac9823eb23"
+    },
+    "generatedOriginal": "originals/counter-09-f1895c4a73b3.png",
+    "generatedSha256": "f1895c4a73b3758ce0c80170c0fec7de1dd1d9144f127871d5407a0122de17ee",
+    "generatedCropSha256": "b48a075020ca1746f402b188d0e28598a62da8fb264ba6fb6ce06c6771a0bfd2",
+    "method": "image_gen reference edit; rectangular crop and lossless encoding only; no warping or alpha edits",
+    "review": "Parallel 2/3 top and cardinal face; equal far/near rectangular widths; preserve original materials, motifs and intentional curved shapes."
+  },
+  {
+    "id": "collection-showroom-french-cafe-counter",
+    "facing": "south",
+    "file": "counter-09-f1895c4a73b3.webp",
+    "width": 1024,
+    "height": 1536,
+    "x": 62,
+    "y": 541,
+    "w": 420,
+    "h": 437,
+    "draw": {
+      "x": 10.849872773536894,
+      "y": 0,
+      "w": 106.30025445292621,
+      "h": 112.0
+    },
+    "source": {
+      "file": "town/assets/apartment-collections/showroom-french-cafe-south-cardinal-13eb0016c6c1.webp",
+      "crop": {
+        "x": 1339,
+        "y": 4,
+        "w": 373,
+        "h": 393
+      },
+      "frame": {
+        "slot": "counter",
+        "x": 1339,
+        "y": 4,
+        "w": 373,
+        "h": 393,
+        "digest": "af2678cb55a6e4e310aa8aa5453e6cf7a99c3e31ba48b5ed55c4122601b4fd42",
+        "cell": {
+          "x": 1339,
+          "y": 4,
+          "w": 373,
+          "h": 393
+        },
+        "sourceDigest": "d2e710a3581b363f31ad77abc0f4a02be35f2b5c8fc2784bb9d6bee4f7dc371c",
+        "sourceFrame": {
+          "x": 913,
+          "y": 109,
+          "w": 373,
+          "h": 393
+        },
+        "artReview": "showroom-french-cafe-south-01-independent-acceptance.json",
+        "footCenter": [
+          0.5,
+          0.7232142857142857
+        ]
+      },
+      "sha256": "af2678cb55a6e4e310aa8aa5453e6cf7a99c3e31ba48b5ed55c4122601b4fd42"
+    },
+    "generatedOriginal": "originals/counter-09-f1895c4a73b3.png",
+    "generatedSha256": "f1895c4a73b3758ce0c80170c0fec7de1dd1d9144f127871d5407a0122de17ee",
+    "generatedCropSha256": "e1d7d13bcd45fe0aedfe6e21b5ae633ed44d8be648620f56747813bde07cbdbd",
+    "method": "image_gen reference edit; rectangular crop and lossless encoding only; no warping or alpha edits",
+    "review": "Parallel 2/3 top and cardinal face; equal far/near rectangular widths; preserve original materials, motifs and intentional curved shapes."
+  },
+  {
+    "id": "collection-showroom-french-cafe-counter",
+    "facing": "north",
+    "file": "counter-09-f1895c4a73b3.webp",
+    "width": 1024,
+    "height": 1536,
+    "x": 565,
+    "y": 572,
+    "w": 392,
+    "h": 406,
+    "draw": {
+      "x": 5.307692307692314,
+      "y": 0,
+      "w": 117.38461538461537,
+      "h": 112.0
+    },
+    "source": {
+      "file": "town/assets/apartment-collections/showroom-french-cafe-north-cardinal-6c6bd1b04062.webp",
+      "crop": {
+        "x": 175,
+        "y": 235,
+        "w": 218,
+        "h": 208
+      },
+      "frame": {
+        "slot": "counter",
+        "x": 175,
+        "y": 235,
+        "w": 218,
+        "h": 208,
+        "digest": "2dd4a83d7cbc15b07f5544901d5e00f4d960f1f5734e7fa60e5caa4a28670b04",
+        "viewWidth": 128,
+        "viewHeight": 112,
+        "footCenter": [
+          0.5,
+          0.723214
+        ],
+        "cell": {
+          "x": 175,
+          "y": 235,
+          "w": 218,
+          "h": 208
+        }
+      },
+      "sha256": "2dd4a83d7cbc15b07f5544901d5e00f4d960f1f5734e7fa60e5caa4a28670b04"
+    },
+    "generatedOriginal": "originals/counter-09-f1895c4a73b3.png",
+    "generatedSha256": "f1895c4a73b3758ce0c80170c0fec7de1dd1d9144f127871d5407a0122de17ee",
+    "generatedCropSha256": "183977f04b8431ade11ee27df9bc94477a9a4f3bb07b9d8c109b633132a05ed5",
+    "method": "image_gen reference edit; rectangular crop and lossless encoding only; no warping or alpha edits",
+    "review": "Parallel 2/3 top and cardinal face; equal far/near rectangular widths; preserve original materials, motifs and intentional curved shapes."
+  },
+  {
+    "id": "collection-showroom-industrial-loft-counter",
+    "facing": "south",
+    "file": "counter-09-f1895c4a73b3.webp",
+    "width": 1024,
+    "height": 1536,
+    "x": 36,
+    "y": 1075,
+    "w": 424,
+    "h": 376,
+    "draw": {
+      "x": 0,
+      "y": 2.08310249307479,
+      "w": 128.0,
+      "h": 109.91689750692521
+    },
+    "source": {
+      "file": "town/assets/apartment-collections/showroom-industrial-loft-south-cardinal-af2eac7eb93a.webp",
+      "crop": {
+        "x": 694,
+        "y": 1024,
+        "w": 361,
+        "h": 310
+      },
+      "frame": {
+        "slot": "counter",
+        "x": 694,
+        "y": 1024,
+        "w": 361,
+        "h": 310,
+        "digest": "f1452b55838a344d098b0aadfdc6ab7ebd96a35b061e649824a1350ca2b278c3",
+        "cell": {
+          "x": 694,
+          "y": 1024,
+          "w": 361,
+          "h": 310
+        },
+        "sourceDigest": "4a959ed1aa5b0778f01ef0ede0d00732c7b81d6ef7e14d5091b8a56389016f88",
+        "sourceFrame": {
+          "x": 372,
+          "y": 625,
+          "w": 361,
+          "h": 310
+        },
+        "artReview": "showroom-industrial-loft-south-01-independent-acceptance.json",
+        "footCenter": [
+          0.5,
+          0.71796875
+        ]
+      },
+      "sha256": "f1452b55838a344d098b0aadfdc6ab7ebd96a35b061e649824a1350ca2b278c3"
+    },
+    "generatedOriginal": "originals/counter-09-f1895c4a73b3.png",
+    "generatedSha256": "f1895c4a73b3758ce0c80170c0fec7de1dd1d9144f127871d5407a0122de17ee",
+    "generatedCropSha256": "a751dd784774d655bc261ecbe0703b25f216a9b78bed39487334b38ecf592052",
+    "method": "image_gen reference edit; rectangular crop and lossless encoding only; no warping or alpha edits",
+    "review": "Parallel 2/3 top and cardinal face; equal far/near rectangular widths; preserve original materials, motifs and intentional curved shapes."
+  },
+  {
+    "id": "collection-showroom-industrial-loft-counter",
+    "facing": "north",
+    "file": "counter-09-f1895c4a73b3.webp",
+    "width": 1024,
+    "height": 1536,
+    "x": 564,
+    "y": 1090,
+    "w": 425,
+    "h": 361,
+    "draw": {
+      "x": 7.105427357601002e-15,
+      "y": 11.514018691588788,
+      "w": 127.99999999999999,
+      "h": 100.48598130841121
+    },
+    "source": {
+      "file": "town/assets/apartment-collections/showroom-industrial-loft-north-cardinal-18ef6266d7b5.webp",
+      "crop": {
+        "x": 636,
+        "y": 434,
+        "w": 214,
+        "h": 168
+      },
+      "frame": {
+        "slot": "counter",
+        "x": 636,
+        "y": 434,
+        "w": 214,
+        "h": 168,
+        "digest": "d5fc73dc566bd7dfd8f1e21325b172ddcc10a0ddd506f1dd1ae8f9ce623be8f2",
+        "viewWidth": 128,
+        "viewHeight": 112,
+        "footCenter": [
+          0.5,
+          0.691499
+        ],
+        "cell": {
+          "x": 636,
+          "y": 434,
+          "w": 214,
+          "h": 168
+        }
+      },
+      "sha256": "d5fc73dc566bd7dfd8f1e21325b172ddcc10a0ddd506f1dd1ae8f9ce623be8f2"
+    },
+    "generatedOriginal": "originals/counter-09-f1895c4a73b3.png",
+    "generatedSha256": "f1895c4a73b3758ce0c80170c0fec7de1dd1d9144f127871d5407a0122de17ee",
+    "generatedCropSha256": "131ea86fbfca0201a9f43f4e7975ed159f79d6b39b9e92b6460713b3207bbdbc",
+    "method": "image_gen reference edit; rectangular crop and lossless encoding only; no warping or alpha edits",
+    "review": "Parallel 2/3 top and cardinal face; equal far/near rectangular widths; preserve original materials, motifs and intentional curved shapes."
+  },
+  {
+    "id": "collection-showroom-retrofuture-counter",
+    "facing": "south",
+    "file": "counter-10-9d93d99264d3.webp",
+    "width": 1024,
+    "height": 1536,
+    "x": 63,
+    "y": 141,
+    "w": 386,
+    "h": 324,
+    "draw": {
+      "x": 0,
+      "y": 15.262672811059915,
+      "w": 128.0,
+      "h": 96.73732718894009
+    },
+    "source": {
+      "file": "town/assets/apartment-collections/showroom-retrofuture.webp",
+      "crop": {
+        "x": 222,
+        "y": 716,
+        "w": 217,
+        "h": 164
+      },
+      "frame": {
+        "slot": "counter",
+        "x": 222,
+        "y": 716,
+        "w": 217,
+        "h": 164,
+        "digest": "35fbc84d9c6187d2b410c6a347e236b93de1802198f6f0e225360acdc85deadf",
+        "cell": {
+          "x": 221,
+          "y": 665,
+          "w": 222,
+          "h": 222
+        }
+      },
+      "sha256": "35fbc84d9c6187d2b410c6a347e236b93de1802198f6f0e225360acdc85deadf"
+    },
+    "generatedOriginal": "originals/counter-10-9d93d99264d3.png",
+    "generatedSha256": "9d93d99264d34424eaa204b75a63f661bb4be2d1146b88da4c4f49ce8cf3529e",
+    "generatedCropSha256": "678167d479d43444e0bd2475e8e95663f0f28ad9de02ebfa7e4edf8909c03321",
+    "method": "image_gen reference edit; rectangular crop and lossless encoding only; no warping or alpha edits",
+    "review": "Parallel 2/3 top and cardinal face; equal far/near rectangular widths; preserve original materials, motifs and intentional curved shapes."
+  },
+  {
+    "id": "collection-showroom-retrofuture-counter",
+    "facing": "north",
+    "file": "counter-10-9d93d99264d3.webp",
+    "width": 1024,
+    "height": 1536,
+    "x": 575,
+    "y": 141,
+    "w": 386,
+    "h": 324,
+    "draw": {
+      "x": 0,
+      "y": 17.18518518518519,
+      "w": 128.0,
+      "h": 94.81481481481481
+    },
+    "source": {
+      "file": "town/assets/apartment-collections/showroom-retrofuture-north-cardinal-da0e3a26a952.webp",
+      "crop": {
+        "x": 1192,
+        "y": 464,
+        "w": 216,
+        "h": 160
+      },
+      "frame": {
+        "slot": "counter",
+        "x": 1192,
+        "y": 464,
+        "w": 216,
+        "h": 160,
+        "digest": "887d00e3c31fecac2e1b6a47e220d69be75b81e1857067161ffe681620caa42b",
+        "viewWidth": 128,
+        "viewHeight": 112,
+        "footCenter": [
+          0.5,
+          0.673047
+        ],
+        "cell": {
+          "x": 1192,
+          "y": 464,
+          "w": 216,
+          "h": 160
+        }
+      },
+      "sha256": "887d00e3c31fecac2e1b6a47e220d69be75b81e1857067161ffe681620caa42b"
+    },
+    "generatedOriginal": "originals/counter-10-9d93d99264d3.png",
+    "generatedSha256": "9d93d99264d34424eaa204b75a63f661bb4be2d1146b88da4c4f49ce8cf3529e",
+    "generatedCropSha256": "2949cbdf0517279f3df1339f0d90431ea95eac66ad6bf2b73b368199e8593e5c",
+    "method": "image_gen reference edit; rectangular crop and lossless encoding only; no warping or alpha edits",
+    "review": "Parallel 2/3 top and cardinal face; equal far/near rectangular widths; preserve original materials, motifs and intentional curved shapes."
+  },
+  {
+    "id": "collection-showroom-cyberpunk-counter",
+    "facing": "south",
+    "file": "counter-10-9d93d99264d3.webp",
+    "width": 1024,
+    "height": 1536,
+    "x": 62,
+    "y": 612,
+    "w": 388,
+    "h": 308,
+    "draw": {
+      "x": 0,
+      "y": 21.067873303167417,
+      "w": 128.0,
+      "h": 90.93212669683258
+    },
+    "source": {
+      "file": "town/assets/apartment-collections/showroom-cyberpunk.webp",
+      "crop": {
+        "x": 222,
+        "y": 707,
+        "w": 221,
+        "h": 157
+      },
+      "frame": {
+        "slot": "counter",
+        "x": 222,
+        "y": 707,
+        "w": 221,
+        "h": 157,
+        "digest": "0bb96ae6a634ca494dd2f8e59e0550822a931646d356b9f56e59ae95125cc63c",
+        "cell": {
+          "x": 221,
+          "y": 665,
+          "w": 222,
+          "h": 222
+        }
+      },
+      "sha256": "0bb96ae6a634ca494dd2f8e59e0550822a931646d356b9f56e59ae95125cc63c"
+    },
+    "generatedOriginal": "originals/counter-10-9d93d99264d3.png",
+    "generatedSha256": "9d93d99264d34424eaa204b75a63f661bb4be2d1146b88da4c4f49ce8cf3529e",
+    "generatedCropSha256": "a4cee0a654f359eece895f6585c16df502130cd59fb032cb84137baf56e94449",
+    "method": "image_gen reference edit; rectangular crop and lossless encoding only; no warping or alpha edits",
+    "review": "Parallel 2/3 top and cardinal face; equal far/near rectangular widths; preserve original materials, motifs and intentional curved shapes."
+  },
+  {
+    "id": "collection-showroom-cyberpunk-counter",
+    "facing": "north",
+    "file": "counter-10-9d93d99264d3.webp",
+    "width": 1024,
+    "height": 1536,
+    "x": 574,
+    "y": 611,
+    "w": 388,
+    "h": 309,
+    "draw": {
+      "x": 0,
+      "y": 23.339449541284395,
+      "w": 128.0,
+      "h": 88.6605504587156
+    },
+    "source": {
+      "file": "town/assets/apartment-collections/showroom-cyberpunk-north-fbf8783a81e0.webp",
+      "crop": {
+        "x": 658,
+        "y": 1480,
+        "w": 218,
+        "h": 151
+      },
+      "frame": {
+        "slot": "counter",
+        "x": 658,
+        "y": 1480,
+        "w": 218,
+        "h": 151,
+        "digest": "49829c70ebe15c3d35c6eba3dc55a862ae8c541c454a5b14645dc765a39933f6",
+        "viewWidth": 128,
+        "viewHeight": 112,
+        "footCenter": [
+          0.5,
+          0.650352
+        ],
+        "cell": {
+          "x": 658,
+          "y": 1480,
+          "w": 218,
+          "h": 151
+        }
+      },
+      "sha256": "59a347494dbf9df531228d858afe7c7d19e76bf214a16204937f82f61acdf6f2"
+    },
+    "generatedOriginal": "originals/counter-10-9d93d99264d3.png",
+    "generatedSha256": "9d93d99264d34424eaa204b75a63f661bb4be2d1146b88da4c4f49ce8cf3529e",
+    "generatedCropSha256": "0d1272b4a9cfd1919269ee1f133a6a2c987d2e21ee2caf457973e4384e149d4b",
+    "method": "image_gen reference edit; rectangular crop and lossless encoding only; no warping or alpha edits",
+    "review": "Parallel 2/3 top and cardinal face; equal far/near rectangular widths; preserve original materials, motifs and intentional curved shapes."
+  },
+  {
+    "id": "collection-showroom-steampunk-counter",
+    "facing": "south",
+    "file": "counter-10-9d93d99264d3.webp",
+    "width": 1024,
+    "height": 1536,
+    "x": 62,
+    "y": 1079,
+    "w": 388,
+    "h": 341,
+    "draw": {
+      "x": 0,
+      "y": 6.234741784037553,
+      "w": 128.0,
+      "h": 105.76525821596245
+    },
+    "source": {
+      "file": "town/assets/apartment-collections/showroom-steampunk.webp",
+      "crop": {
+        "x": 224,
+        "y": 699,
+        "w": 213,
+        "h": 176
+      },
+      "frame": {
+        "slot": "counter",
+        "x": 224,
+        "y": 699,
+        "w": 213,
+        "h": 176,
+        "digest": "f40287abd008f3e5781251a2c6fee7ab58de31d826f3212afc57c5fdc9d07e9a",
+        "cell": {
+          "x": 221,
+          "y": 665,
+          "w": 222,
+          "h": 222
+        }
+      },
+      "sha256": "f40287abd008f3e5781251a2c6fee7ab58de31d826f3212afc57c5fdc9d07e9a"
+    },
+    "generatedOriginal": "originals/counter-10-9d93d99264d3.png",
+    "generatedSha256": "9d93d99264d34424eaa204b75a63f661bb4be2d1146b88da4c4f49ce8cf3529e",
+    "generatedCropSha256": "d4c5ecc68cc6d4106a607808189d225a8bf28a7082f55c03229bdf160d1e96a1",
+    "method": "image_gen reference edit; rectangular crop and lossless encoding only; no warping or alpha edits",
+    "review": "Parallel 2/3 top and cardinal face; equal far/near rectangular widths; preserve original materials, motifs and intentional curved shapes."
+  },
+  {
+    "id": "collection-showroom-steampunk-counter",
+    "facing": "north",
+    "file": "counter-10-9d93d99264d3.webp",
+    "width": 1024,
+    "height": 1536,
+    "x": 574,
+    "y": 1079,
+    "w": 388,
+    "h": 342,
+    "draw": {
+      "x": 0,
+      "y": 10.301369863013704,
+      "w": 128.0,
+      "h": 101.6986301369863
+    },
+    "source": {
+      "file": "town/assets/apartment-collections/showroom-steampunk-north-512c9008d3c8.webp",
+      "crop": {
+        "x": 207,
+        "y": 1082,
+        "w": 219,
+        "h": 174
+      },
+      "frame": {
+        "slot": "counter",
+        "x": 207,
+        "y": 1082,
+        "w": 219,
+        "h": 174,
+        "digest": "afe7647602e81c53d8b213c25f2dd103f954672080ec247b8585d48fb9149b96",
+        "viewWidth": 128,
+        "viewHeight": 112,
+        "footCenter": [
+          0.5,
+          0.695178
+        ],
+        "cell": {
+          "x": 207,
+          "y": 1082,
+          "w": 219,
+          "h": 174
+        }
+      },
+      "sha256": "978e0463b19ca09ce2794770d7927183647212e054b0c25ab125c74bae481e74"
+    },
+    "generatedOriginal": "originals/counter-10-9d93d99264d3.png",
+    "generatedSha256": "9d93d99264d34424eaa204b75a63f661bb4be2d1146b88da4c4f49ce8cf3529e",
+    "generatedCropSha256": "c903f36b4ffb9c442a629d21f8540605fceaf79eff4529ceea457660914c56c9",
+    "method": "image_gen reference edit; rectangular crop and lossless encoding only; no warping or alpha edits",
+    "review": "Parallel 2/3 top and cardinal face; equal far/near rectangular widths; preserve original materials, motifs and intentional curved shapes."
+  },
+  {
+    "id": "collection-showroom-robot-counter",
+    "facing": "south",
+    "file": "counter-11-8168ff184fde.webp",
+    "width": 1024,
+    "height": 1536,
+    "x": 140,
+    "y": 187,
+    "w": 237,
+    "h": 179,
+    "draw": {
+      "x": 0,
+      "y": 8.409302325581393,
+      "w": 128.0,
+      "h": 103.5906976744186
+    },
+    "source": {
+      "file": "town/assets/apartment-collections/showroom-robot.webp",
+      "crop": {
+        "x": 225,
+        "y": 702,
+        "w": 215,
+        "h": 174
+      },
+      "frame": {
+        "slot": "counter",
+        "x": 225,
+        "y": 702,
+        "w": 215,
+        "h": 174,
+        "digest": "b3ede0abfbcbef0d223d0bba069acb4c5d1e26812b3915f11528b584228964fb",
+        "cell": {
+          "x": 221,
+          "y": 665,
+          "w": 222,
+          "h": 222
+        }
+      },
+      "sha256": "b3ede0abfbcbef0d223d0bba069acb4c5d1e26812b3915f11528b584228964fb"
+    },
+    "generatedOriginal": "originals/counter-11-8168ff184fde.png",
+    "generatedSha256": "8168ff184fdee80ff84135fb0a27f4d714fc74fba7043cc7bfe4b9aab6e8197c",
+    "generatedCropSha256": "24c0dc3055d665044763451b49ee3d622678193025753f329e9dc9a2a90f0139",
+    "method": "image_gen reference edit; rectangular crop and lossless encoding only; no warping or alpha edits",
+    "review": "Parallel 2/3 top and cardinal face; equal far/near rectangular widths; preserve original materials, motifs and intentional curved shapes."
+  },
+  {
+    "id": "collection-showroom-robot-counter",
+    "facing": "north",
+    "file": "counter-11-8168ff184fde.webp",
+    "width": 1024,
+    "height": 1536,
+    "x": 635,
+    "y": 187,
+    "w": 249,
+    "h": 179,
+    "draw": {
+      "x": 0,
+      "y": 12.959276018099544,
+      "w": 128.0,
+      "h": 99.04072398190046
+    },
+    "source": {
+      "file": "town/assets/apartment-collections/showroom-robot-north-b36e6d1dccb6.webp",
+      "crop": {
+        "x": 638,
+        "y": 1058,
+        "w": 221,
+        "h": 171
+      },
+      "frame": {
+        "slot": "counter",
+        "x": 638,
+        "y": 1058,
+        "w": 221,
+        "h": 171,
+        "digest": "7cf382e2fc92d3ded2bea9ce5a4d85bf3df355e0cbc73e4816e150f35cb7c189",
+        "viewWidth": 128,
+        "viewHeight": 112,
+        "footCenter": [
+          0.5,
+          0.686997
+        ],
+        "cell": {
+          "x": 638,
+          "y": 1058,
+          "w": 221,
+          "h": 171
+        }
+      },
+      "sha256": "e36432c74f09d753af5d950c9a49c49701cf76d746874a2adcdf8dfbe92c3610"
+    },
+    "generatedOriginal": "originals/counter-11-8168ff184fde.png",
+    "generatedSha256": "8168ff184fdee80ff84135fb0a27f4d714fc74fba7043cc7bfe4b9aab6e8197c",
+    "generatedCropSha256": "998ca5fe7b75b841b039626b8248e4eec5368d86616623e482369ca5d6f4c523",
+    "method": "image_gen reference edit; rectangular crop and lossless encoding only; no warping or alpha edits",
+    "review": "Parallel 2/3 top and cardinal face; equal far/near rectangular widths; preserve original materials, motifs and intentional curved shapes."
+  },
+  {
+    "id": "collection-mozart-counter",
+    "facing": "west",
+    "file": "counter-12-85e15056f23c.webp",
+    "width": 1024,
+    "height": 1536,
+    "x": 210,
+    "y": 174,
+    "w": 90,
+    "h": 206,
+    "draw": {
+      "x": 0,
+      "y": 1.0617283976444014e-06,
+      "w": 70.979381,
+      "h": 169.9999989382716
+    },
+    "source": {
+      "file": "town/assets/apartment-collections/mozart-west-cardinal-4ff74a45fb02.webp",
+      "crop": {
+        "x": 120,
+        "y": 1538,
+        "w": 81,
+        "h": 194
+      },
+      "frame": {
+        "slot": "counter",
+        "x": 120,
+        "y": 1538,
+        "w": 81,
+        "h": 194,
+        "digest": "4902441cc8fbe116816cb628d21dafaf63d04d70c98992aaf1284ab6e944bf78",
+        "viewWidth": 70.979381,
+        "viewHeight": 170,
+        "footCenter": [
+          0.5,
+          0.647059
+        ],
+        "cell": {
+          "x": 120,
+          "y": 1538,
+          "w": 81,
+          "h": 194
+        }
+      },
+      "sha256": "4902441cc8fbe116816cb628d21dafaf63d04d70c98992aaf1284ab6e944bf78"
+    },
+    "generatedOriginal": "originals/counter-12-85e15056f23c.png",
+    "generatedSha256": "85e15056f23cb76b9db4405108db8265c67640e94f6aad18baa37575f620e20e",
+    "generatedCropSha256": "f0acf175da95d57f90e06142bf896bba7e38f3c03fa54de8a4c88024c373c6fc",
+    "method": "image_gen reference edit; rectangular crop and lossless encoding only; no warping or alpha edits",
+    "review": "Parallel 2/3 top and cardinal face; equal far/near rectangular widths; preserve original materials, motifs and intentional curved shapes."
+  },
+  {
+    "id": "collection-mozart-counter",
+    "facing": "east",
+    "file": "counter-12-85e15056f23c.webp",
+    "width": 1024,
+    "height": 1536,
+    "x": 727,
+    "y": 173,
+    "w": 81,
+    "h": 207,
+    "draw": {
+      "x": 4.867724867724871,
+      "y": 0,
+      "w": 60.26455026455026,
+      "h": 170.0
+    },
+    "source": {
+      "file": "town/assets/apartment-collections/mozart-east-cardinal-4d80ba82c2d1.webp",
+      "crop": {
+        "x": 1491,
+        "y": 1073,
+        "w": 67,
+        "h": 189
+      },
+      "frame": {
+        "slot": "counter",
+        "x": 1491,
+        "y": 1073,
+        "w": 67,
+        "h": 189,
+        "digest": "480c4e90e1b92049901810d3991304199bccb6d1a5d5f5b85a740a37e9013a93",
+        "viewWidth": 70,
+        "viewHeight": 170,
+        "footCenter": [
+          0.5,
+          0.647059
+        ],
+        "cell": {
+          "x": 1491,
+          "y": 1073,
+          "w": 67,
+          "h": 189
+        }
+      },
+      "sha256": "480c4e90e1b92049901810d3991304199bccb6d1a5d5f5b85a740a37e9013a93"
+    },
+    "generatedOriginal": "originals/counter-12-85e15056f23c.png",
+    "generatedSha256": "85e15056f23cb76b9db4405108db8265c67640e94f6aad18baa37575f620e20e",
+    "generatedCropSha256": "020a91bc534ba55a6591eebad12064f5252bf8cc8832c34a7f80e38310cdd38f",
+    "method": "image_gen reference edit; rectangular crop and lossless encoding only; no warping or alpha edits",
+    "review": "Parallel 2/3 top and cardinal face; equal far/near rectangular widths; preserve original materials, motifs and intentional curved shapes."
+  },
+  {
+    "id": "collection-beethoven-counter",
+    "facing": "west",
+    "file": "counter-12-85e15056f23c.webp",
+    "width": 1024,
+    "height": 1536,
+    "x": 197,
+    "y": 683,
+    "w": 121,
+    "h": 190,
+    "draw": {
+      "x": 0,
+      "y": 58.0,
+      "w": 84.0,
+      "h": 112.0
+    },
+    "source": {
+      "file": "town/assets/apartment-collections/beethoven-west-cardinal-9c0f53af6dfe.webp",
+      "crop": {
+        "x": 1449,
+        "y": 1499,
+        "w": 111,
+        "h": 148
+      },
+      "frame": {
+        "slot": "counter",
+        "x": 1449,
+        "y": 1499,
+        "w": 111,
+        "h": 148,
+        "digest": "49e755b527cfee3883ab34cda4162f612eb865427503b2b5baeecf3b12c32a6d",
+        "viewWidth": 84,
+        "viewHeight": 170,
+        "footCenter": [
+          0.5,
+          0.464286
+        ],
+        "cell": {
+          "x": 1449,
+          "y": 1499,
+          "w": 111,
+          "h": 148
+        }
+      },
+      "sha256": "49e755b527cfee3883ab34cda4162f612eb865427503b2b5baeecf3b12c32a6d"
+    },
+    "generatedOriginal": "originals/counter-12-85e15056f23c.png",
+    "generatedSha256": "85e15056f23cb76b9db4405108db8265c67640e94f6aad18baa37575f620e20e",
+    "generatedCropSha256": "a3c2b1a88bbf3777fb5629fc37bd6e0e75d309e81c654e41391a2dbb12df5735",
+    "method": "image_gen reference edit; rectangular crop and lossless encoding only; no warping or alpha edits",
+    "review": "Parallel 2/3 top and cardinal face; equal far/near rectangular widths; preserve original materials, motifs and intentional curved shapes."
+  },
+  {
+    "id": "collection-beethoven-counter",
+    "facing": "east",
+    "file": "counter-12-85e15056f23c.webp",
+    "width": 1024,
+    "height": 1536,
+    "x": 717,
+    "y": 680,
+    "w": 100,
+    "h": 217,
+    "draw": {
+      "x": 4.315270935960591,
+      "y": 0,
+      "w": 75.36945812807882,
+      "h": 170.0
+    },
+    "source": {
+      "file": "town/assets/apartment-collections/beethoven-east-cardinal-4d12e160d584.webp",
+      "crop": {
+        "x": 82,
+        "y": 1455,
+        "w": 90,
+        "h": 203
+      },
+      "frame": {
+        "slot": "counter",
+        "x": 82,
+        "y": 1455,
+        "w": 90,
+        "h": 203,
+        "digest": "e98bcbd2325975b4a34491bd9fa4d494de6c3e8d137e334e003d3ed18338e395",
+        "viewWidth": 84,
+        "viewHeight": 170,
+        "footCenter": [
+          0.5,
+          0.64705888
+        ],
+        "cell": {
+          "x": 82,
+          "y": 1455,
+          "w": 90,
+          "h": 203
+        },
+        "sourceDigest": "f18722dcb23667b093ce08503a4710687f1f938901433ba5910e0fdae3114e9e",
+        "sourceFrame": {
+          "x": 287,
+          "y": 751,
+          "w": 90,
+          "h": 203
+        },
+        "artReview": "independent-browser-qa.json"
+      },
+      "sha256": "e98bcbd2325975b4a34491bd9fa4d494de6c3e8d137e334e003d3ed18338e395"
+    },
+    "generatedOriginal": "originals/counter-12-85e15056f23c.png",
+    "generatedSha256": "85e15056f23cb76b9db4405108db8265c67640e94f6aad18baa37575f620e20e",
+    "generatedCropSha256": "8aa797a8a4f89294cd9014cf748bbffc6e71e24384d980e2d19923712fb77850",
+    "method": "image_gen reference edit; rectangular crop and lossless encoding only; no warping or alpha edits",
+    "review": "Parallel 2/3 top and cardinal face; equal far/near rectangular widths; preserve original materials, motifs and intentional curved shapes."
+  },
+  {
+    "id": "collection-haydn-counter",
+    "facing": "west",
+    "file": "counter-12-85e15056f23c.webp",
+    "width": 1024,
+    "height": 1536,
+    "x": 146,
+    "y": 1078,
+    "w": 212,
+    "h": 435,
+    "draw": {
+      "x": 0,
+      "y": 1.2149532710280369,
+      "w": 84.0,
+      "h": 168.78504672897196
+    },
+    "source": {
+      "file": "town/assets/apartment-collections/haydn-west-cardinal-d5161ff30be5.webp",
+      "crop": {
+        "x": 4,
+        "y": 1542,
+        "w": 214,
+        "h": 430
+      },
+      "frame": {
+        "slot": "counter",
+        "x": 4,
+        "y": 1542,
+        "w": 214,
+        "h": 430,
+        "digest": "6c1dc8e4ce1fbdcb7bff483438730d78a5c222cc1025840b552d3b6617c331e1",
+        "viewWidth": 84,
+        "viewHeight": 170,
+        "footCenter": [
+          0.5,
+          0.644518
+        ],
+        "cell": {
+          "x": 4,
+          "y": 1542,
+          "w": 214,
+          "h": 430
+        }
+      },
+      "sha256": "6c1dc8e4ce1fbdcb7bff483438730d78a5c222cc1025840b552d3b6617c331e1"
+    },
+    "generatedOriginal": "originals/counter-12-85e15056f23c.png",
+    "generatedSha256": "85e15056f23cb76b9db4405108db8265c67640e94f6aad18baa37575f620e20e",
+    "generatedCropSha256": "9e71ae97373a7a982764eb358977b170ddfef4194ba810e7708c6bdf7b69ff1f",
+    "method": "image_gen reference edit; rectangular crop and lossless encoding only; no warping or alpha edits",
+    "review": "Parallel 2/3 top and cardinal face; equal far/near rectangular widths; preserve original materials, motifs and intentional curved shapes."
+  },
+  {
+    "id": "collection-haydn-counter",
+    "facing": "east",
+    "file": "counter-12-85e15056f23c.webp",
+    "width": 1024,
+    "height": 1536,
+    "x": 715,
+    "y": 1195,
+    "w": 108,
+    "h": 212,
+    "draw": {
+      "x": 0,
+      "y": 2.562813278350518,
+      "w": 82.864322,
+      "h": 167.43718672164948
+    },
+    "source": {
+      "file": "town/assets/apartment-collections/haydn-east-cardinal-7ab50091a64b.webp",
+      "crop": {
+        "x": 277,
+        "y": 1419,
+        "w": 97,
+        "h": 196
+      },
+      "frame": {
+        "slot": "counter",
+        "x": 277,
+        "y": 1419,
+        "w": 97,
+        "h": 196,
+        "digest": "d444ec4298db9dce80f5eae148ad8fb7079926de6ad42c5dab5bd605a9ab2855",
+        "viewWidth": 82.864322,
+        "viewHeight": 170,
+        "footCenter": [
+          0.5,
+          0.6416568435317479
+        ],
+        "cell": {
+          "x": 277,
+          "y": 1419,
+          "w": 97,
+          "h": 196
+        },
+        "sourceDigest": "2607b46a35dde1998ae1679678c5362d3832409124b23e3a3ef03d8709fbb9f7",
+        "sourceFrame": {
+          "x": 285,
+          "y": 758,
+          "w": 97,
+          "h": 196
+        },
+        "artReview": "independent-browser-qa.json"
+      },
+      "sha256": "d444ec4298db9dce80f5eae148ad8fb7079926de6ad42c5dab5bd605a9ab2855"
+    },
+    "generatedOriginal": "originals/counter-12-85e15056f23c.png",
+    "generatedSha256": "85e15056f23cb76b9db4405108db8265c67640e94f6aad18baa37575f620e20e",
+    "generatedCropSha256": "f79ab1c23cd53df0398606a425dc7b7d0bace225347a188becc0993da12be642",
+    "method": "image_gen reference edit; rectangular crop and lossless encoding only; no warping or alpha edits",
+    "review": "Parallel 2/3 top and cardinal face; equal far/near rectangular widths; preserve original materials, motifs and intentional curved shapes."
+  },
+  {
+    "id": "collection-vivaldi-counter",
+    "facing": "west",
+    "file": "counter-13-df4ea5ab6f44.webp",
+    "width": 1024,
+    "height": 1536,
+    "x": 163,
+    "y": 184,
+    "w": 184,
+    "h": 270,
+    "draw": {
+      "x": 0,
+      "y": 56.10169491525424,
+      "w": 84.0,
+      "h": 113.89830508474576
+    },
+    "source": {
+      "file": "town/assets/apartment-collections/vivaldi-west-cardinal-b5a0e92b4afc.webp",
+      "crop": {
+        "x": 1764,
+        "y": 1710,
+        "w": 118,
+        "h": 160
+      },
+      "frame": {
+        "slot": "counter",
+        "x": 1764,
+        "y": 1710,
+        "w": 118,
+        "h": 160,
+        "digest": "fcb7199ecd0abfc32f0edc5095d71fec5d897f940861166de687ab7fbfbeee53",
+        "viewWidth": 84,
+        "viewHeight": 170,
+        "footCenter": [
+          0.5,
+          0.473214
+        ],
+        "cell": {
+          "x": 1764,
+          "y": 1710,
+          "w": 118,
+          "h": 160
+        }
+      },
+      "sha256": "fcb7199ecd0abfc32f0edc5095d71fec5d897f940861166de687ab7fbfbeee53"
+    },
+    "generatedOriginal": "originals/counter-13-df4ea5ab6f44.png",
+    "generatedSha256": "df4ea5ab6f4463d6cf2791e288a5735074ce7805829def61d5290a7581ccd10a",
+    "generatedCropSha256": "61d46ce76e23cee14ec6c466b8a543c0f5430a6aedfa32ba3bcd9b0c9f2a241a",
+    "method": "image_gen reference edit; rectangular crop and lossless encoding only; no warping or alpha edits",
+    "review": "Parallel 2/3 top and cardinal face; equal far/near rectangular widths; preserve original materials, motifs and intentional curved shapes."
+  },
+  {
+    "id": "collection-vivaldi-counter",
+    "facing": "east",
+    "file": "counter-13-df4ea5ab6f44.webp",
+    "width": 1024,
+    "height": 1536,
+    "x": 679,
+    "y": 184,
+    "w": 187,
+    "h": 273,
+    "draw": {
+      "x": 0,
+      "y": 17.412844036697237,
+      "w": 84.0,
+      "h": 152.58715596330276
+    },
+    "source": {
+      "file": "town/assets/apartment-collections/vivaldi-east-cardinal-c3fd3b9880c3.webp",
+      "crop": {
+        "x": 177,
+        "y": 1575,
+        "w": 109,
+        "h": 198
+      },
+      "frame": {
+        "slot": "counter",
+        "x": 177,
+        "y": 1575,
+        "w": 109,
+        "h": 198,
+        "digest": "664ed1718e7e3e1d1b374f11373788aee946b5e68c913fb81aa694d5764b7ead",
+        "viewWidth": 84,
+        "viewHeight": 170,
+        "footCenter": [
+          0.5,
+          0.606782
+        ],
+        "cell": {
+          "x": 177,
+          "y": 1575,
+          "w": 109,
+          "h": 198
+        }
+      },
+      "sha256": "664ed1718e7e3e1d1b374f11373788aee946b5e68c913fb81aa694d5764b7ead"
+    },
+    "generatedOriginal": "originals/counter-13-df4ea5ab6f44.png",
+    "generatedSha256": "df4ea5ab6f4463d6cf2791e288a5735074ce7805829def61d5290a7581ccd10a",
+    "generatedCropSha256": "1c00ffc6f6913517f47863d58309c5c848fb4bada43ba5b90749aad7c7115185",
+    "method": "image_gen reference edit; rectangular crop and lossless encoding only; no warping or alpha edits",
+    "review": "Parallel 2/3 top and cardinal face; equal far/near rectangular widths; preserve original materials, motifs and intentional curved shapes."
+  },
+  {
+    "id": "collection-ellington-counter",
+    "facing": "west",
+    "file": "counter-13-df4ea5ab6f44.webp",
+    "width": 1024,
+    "height": 1536,
+    "x": 178,
+    "y": 593,
+    "w": 150,
+    "h": 336,
+    "draw": {
+      "x": 0,
+      "y": 1.9587628230510745e-07,
+      "w": 81.231527,
+      "h": 169.99999980412372
+    },
+    "source": {
+      "file": "town/assets/apartment-collections/ellington-west-cardinal-a8042ab70b4c.webp",
+      "crop": {
+        "x": 4,
+        "y": 1110,
+        "w": 97,
+        "h": 203
+      },
+      "frame": {
+        "slot": "counter",
+        "x": 4,
+        "y": 1110,
+        "w": 97,
+        "h": 203,
+        "digest": "b4f5d0aaaa0861dc883aae7cd4255f133b2738321fc4ac42a0d8bfbde6c5ed6d",
+        "viewWidth": 81.231527,
+        "viewHeight": 170,
+        "footCenter": [
+          0.5,
+          0.647059
+        ],
+        "cell": {
+          "x": 4,
+          "y": 1110,
+          "w": 97,
+          "h": 203
+        }
+      },
+      "sha256": "b4f5d0aaaa0861dc883aae7cd4255f133b2738321fc4ac42a0d8bfbde6c5ed6d"
+    },
+    "generatedOriginal": "originals/counter-13-df4ea5ab6f44.png",
+    "generatedSha256": "df4ea5ab6f4463d6cf2791e288a5735074ce7805829def61d5290a7581ccd10a",
+    "generatedCropSha256": "8810458a3dc17449d62359b2dbd9d8b00915f6cd4b6efb001fe19c9e07541c52",
+    "method": "image_gen reference edit; rectangular crop and lossless encoding only; no warping or alpha edits",
+    "review": "Parallel 2/3 top and cardinal face; equal far/near rectangular widths; preserve original materials, motifs and intentional curved shapes."
+  },
+  {
+    "id": "collection-ellington-counter",
+    "facing": "east",
+    "file": "counter-13-df4ea5ab6f44.webp",
+    "width": 1024,
+    "height": 1536,
+    "x": 684,
+    "y": 532,
+    "w": 174,
+    "h": 444,
+    "draw": {
+      "x": 4.466019417475728,
+      "y": 0,
+      "w": 61.067961165048544,
+      "h": 170.0
+    },
+    "source": {
+      "file": "town/assets/apartment-collections/ellington-east-cardinal-85dde7f9dd2d.webp",
+      "crop": {
+        "x": 1726,
+        "y": 4,
+        "w": 296,
+        "h": 824
+      },
+      "frame": {
+        "slot": "counter",
+        "x": 1726,
+        "y": 4,
+        "w": 296,
+        "h": 824,
+        "digest": "2bb7db80bc2e18b37b0871ed971ed3cd08a02ea4d4936477ec7c3ff2258abc78",
+        "viewWidth": 70,
+        "viewHeight": 170,
+        "footCenter": [
+          0.5,
+          0.647059
+        ],
+        "cell": {
+          "x": 1726,
+          "y": 4,
+          "w": 296,
+          "h": 824
+        }
+      },
+      "sha256": "2bb7db80bc2e18b37b0871ed971ed3cd08a02ea4d4936477ec7c3ff2258abc78"
+    },
+    "generatedOriginal": "originals/counter-13-df4ea5ab6f44.png",
+    "generatedSha256": "df4ea5ab6f4463d6cf2791e288a5735074ce7805829def61d5290a7581ccd10a",
+    "generatedCropSha256": "875aaa8b76f0aa305bde744057fa53ad3cf1a08aaf8e7e5d5042ac08006d2958",
+    "method": "image_gen reference edit; rectangular crop and lossless encoding only; no warping or alpha edits",
+    "review": "Parallel 2/3 top and cardinal face; equal far/near rectangular widths; preserve original materials, motifs and intentional curved shapes."
+  },
+  {
+    "id": "collection-ella-counter",
+    "facing": "west",
+    "file": "counter-13-df4ea5ab6f44.webp",
+    "width": 1024,
+    "height": 1536,
+    "x": 143,
+    "y": 1055,
+    "w": 208,
+    "h": 384,
+    "draw": {
+      "x": 0,
+      "y": 13.454545454545439,
+      "w": 84.0,
+      "h": 156.54545454545456
+    },
+    "source": {
+      "file": "town/assets/apartment-collections/ella-west-cardinal-31f62e053f21.webp",
+      "crop": {
+        "x": 906,
+        "y": 1540,
+        "w": 176,
+        "h": 328
+      },
+      "frame": {
+        "slot": "counter",
+        "x": 906,
+        "y": 1540,
+        "w": 176,
+        "h": 328,
+        "digest": "f97d22c8f360bc6d7ff5e009022b6379a3652db9d9abe9e8d25d131c3c35aa68",
+        "viewWidth": 84,
+        "viewHeight": 170,
+        "footCenter": [
+          0.5,
+          0.616725
+        ],
+        "cell": {
+          "x": 906,
+          "y": 1540,
+          "w": 176,
+          "h": 328
+        }
+      },
+      "sha256": "f97d22c8f360bc6d7ff5e009022b6379a3652db9d9abe9e8d25d131c3c35aa68"
+    },
+    "generatedOriginal": "originals/counter-13-df4ea5ab6f44.png",
+    "generatedSha256": "df4ea5ab6f4463d6cf2791e288a5735074ce7805829def61d5290a7581ccd10a",
+    "generatedCropSha256": "187931ee320dc30ad37bc1a84700478bdf327575ed70c0de15dbb45821050148",
+    "method": "image_gen reference edit; rectangular crop and lossless encoding only; no warping or alpha edits",
+    "review": "Parallel 2/3 top and cardinal face; equal far/near rectangular widths; preserve original materials, motifs and intentional curved shapes."
+  },
+  {
+    "id": "collection-ella-counter",
+    "facing": "east",
+    "file": "counter-13-df4ea5ab6f44.webp",
+    "width": 1024,
+    "height": 1536,
+    "x": 674,
+    "y": 1044,
+    "w": 212,
+    "h": 394,
+    "draw": {
+      "x": 0,
+      "y": 6.707317083964881e-07,
+      "w": 82.72997,
+      "h": 169.9999993292683
+    },
+    "source": {
+      "file": "town/assets/apartment-collections/ella-east-cardinal-687132724e9b.webp",
+      "crop": {
+        "x": 1045,
+        "y": 789,
+        "w": 164,
+        "h": 337
+      },
+      "frame": {
+        "slot": "counter",
+        "x": 1045,
+        "y": 789,
+        "w": 164,
+        "h": 337,
+        "digest": "78c6cd708422a61313291be882d8decf48aa830b11477c22364dbddf30400a95",
+        "viewWidth": 82.72997,
+        "viewHeight": 170,
+        "footCenter": [
+          0.5,
+          0.647059
+        ],
+        "cell": {
+          "x": 1045,
+          "y": 789,
+          "w": 164,
+          "h": 337
+        }
+      },
+      "sha256": "78c6cd708422a61313291be882d8decf48aa830b11477c22364dbddf30400a95"
+    },
+    "generatedOriginal": "originals/counter-13-df4ea5ab6f44.png",
+    "generatedSha256": "df4ea5ab6f4463d6cf2791e288a5735074ce7805829def61d5290a7581ccd10a",
+    "generatedCropSha256": "e3a660cc3e4e9cc3b78e482f3387e59e0c613144652e55f357f6b6539d4ec95c",
+    "method": "image_gen reference edit; rectangular crop and lossless encoding only; no warping or alpha edits",
+    "review": "Parallel 2/3 top and cardinal face; equal far/near rectangular widths; preserve original materials, motifs and intentional curved shapes."
+  },
+  {
+    "id": "collection-nina-counter",
+    "facing": "west",
+    "file": "counter-14-46e8b268e320.webp",
+    "width": 1024,
+    "height": 1536,
+    "x": 167,
+    "y": 47,
+    "w": 173,
+    "h": 488,
+    "draw": {
+      "x": 3.613666228646519,
+      "y": 0,
+      "w": 62.77266754270696,
+      "h": 170.0
+    },
+    "source": {
+      "file": "town/assets/apartment-collections/nina-west-cardinal-eeab8f2eb08b.webp",
+      "crop": {
+        "x": 666,
+        "y": 1624,
+        "w": 281,
+        "h": 761
+      },
+      "frame": {
+        "slot": "counter",
+        "x": 666,
+        "y": 1624,
+        "w": 281,
+        "h": 761,
+        "digest": "98cd406dcd7888ecadd291b21e281ef1f4426060596e0174f567e2f7e2835689",
+        "viewWidth": 70,
+        "viewHeight": 170,
+        "footCenter": [
+          0.5,
+          0.647059
+        ],
+        "cell": {
+          "x": 666,
+          "y": 1624,
+          "w": 281,
+          "h": 761
+        }
+      },
+      "sha256": "98cd406dcd7888ecadd291b21e281ef1f4426060596e0174f567e2f7e2835689"
+    },
+    "generatedOriginal": "originals/counter-14-46e8b268e320.png",
+    "generatedSha256": "46e8b268e320f08981832f97dd16d4d2f0b074e3f2e9a406004e0dae3a766959",
+    "generatedCropSha256": "f0f4c7c349c700b07dd5d0cb46311242d497209e1f2a3a8ea21e218d82f12f25",
+    "method": "image_gen reference edit; rectangular crop and lossless encoding only; no warping or alpha edits",
+    "review": "Parallel 2/3 top and cardinal face; equal far/near rectangular widths; preserve original materials, motifs and intentional curved shapes."
+  },
+  {
+    "id": "collection-nina-counter",
+    "facing": "east",
+    "file": "counter-14-46e8b268e320.webp",
+    "width": 1024,
+    "height": 1536,
+    "x": 696,
+    "y": 199,
+    "w": 130,
+    "h": 320,
+    "draw": {
+      "x": 1.8357488329456828e-07,
+      "y": 0,
+      "w": 77.19806763285024,
+      "h": 170.0
+    },
+    "source": {
+      "file": "town/assets/apartment-collections/nina-east-cardinal-1e3bb4aa1e5d.webp",
+      "crop": {
+        "x": 1271,
+        "y": 2247,
+        "w": 94,
+        "h": 207
+      },
+      "frame": {
+        "slot": "counter",
+        "x": 1271,
+        "y": 2247,
+        "w": 94,
+        "h": 207,
+        "digest": "8f6cdf58cb84c4fc0bf3a3cd6507016476f63b44023ca5801b0f8c21c0df0a1d",
+        "viewWidth": 77.198068,
+        "viewHeight": 170,
+        "footCenter": [
+          0.5,
+          0.647059
+        ],
+        "cell": {
+          "x": 1271,
+          "y": 2247,
+          "w": 94,
+          "h": 207
+        }
+      },
+      "sha256": "8f6cdf58cb84c4fc0bf3a3cd6507016476f63b44023ca5801b0f8c21c0df0a1d"
+    },
+    "generatedOriginal": "originals/counter-14-46e8b268e320.png",
+    "generatedSha256": "46e8b268e320f08981832f97dd16d4d2f0b074e3f2e9a406004e0dae3a766959",
+    "generatedCropSha256": "88e0bde90d1d523830da96f1b42544cd18784f72327c37a688fb9bdd0065e12a",
+    "method": "image_gen reference edit; rectangular crop and lossless encoding only; no warping or alpha edits",
+    "review": "Parallel 2/3 top and cardinal face; equal far/near rectangular widths; preserve original materials, motifs and intentional curved shapes."
+  },
+  {
+    "id": "collection-miles-counter",
+    "facing": "west",
+    "file": "counter-14-46e8b268e320.webp",
+    "width": 1024,
+    "height": 1536,
+    "x": 173,
+    "y": 621,
+    "w": 164,
+    "h": 342,
+    "draw": {
+      "x": 2.3809526794593694e-08,
+      "y": 0,
+      "w": 80.95238095238095,
+      "h": 170.0
+    },
+    "source": {
+      "file": "town/assets/apartment-collections/miles-west-cardinal-7ae4feef6853.webp",
+      "crop": {
+        "x": 342,
+        "y": 3101,
+        "w": 90,
+        "h": 189
+      },
+      "frame": {
+        "slot": "counter",
+        "x": 342,
+        "y": 3101,
+        "w": 90,
+        "h": 189,
+        "digest": "ba3ffdb590f1c1ad0fc4cb2e14f6c07f25527058a384765e7f95071fd633ac5a",
+        "viewWidth": 80.952381,
+        "viewHeight": 170,
+        "footCenter": [
+          0.5,
+          0.647059
+        ],
+        "cell": {
+          "x": 342,
+          "y": 3101,
+          "w": 90,
+          "h": 189
+        }
+      },
+      "sha256": "ba3ffdb590f1c1ad0fc4cb2e14f6c07f25527058a384765e7f95071fd633ac5a"
+    },
+    "generatedOriginal": "originals/counter-14-46e8b268e320.png",
+    "generatedSha256": "46e8b268e320f08981832f97dd16d4d2f0b074e3f2e9a406004e0dae3a766959",
+    "generatedCropSha256": "0d07e0a25757a23803e048a94e96780a510e6d35334f3d0acd3b8d2624d19eb9",
+    "method": "image_gen reference edit; rectangular crop and lossless encoding only; no warping or alpha edits",
+    "review": "Parallel 2/3 top and cardinal face; equal far/near rectangular widths; preserve original materials, motifs and intentional curved shapes."
+  },
+  {
+    "id": "collection-miles-counter",
+    "facing": "east",
+    "file": "counter-14-46e8b268e320.webp",
+    "width": 1024,
+    "height": 1536,
+    "x": 686,
+    "y": 621,
+    "w": 163,
+    "h": 343,
+    "draw": {
+      "x": 0,
+      "y": 13.643564356435661,
+      "w": 84.0,
+      "h": 156.35643564356434
+    },
+    "source": {
+      "file": "town/assets/apartment-collections/miles-east-cardinal-64c9f0cf5c69.webp",
+      "crop": {
+        "x": 245,
+        "y": 2780,
+        "w": 101,
+        "h": 188
+      },
+      "frame": {
+        "slot": "counter",
+        "x": 245,
+        "y": 2780,
+        "w": 101,
+        "h": 188,
+        "digest": "adbc38a8ba0bb13a5cee248844ee79a05132ec77c05e80735369da818d65879e",
+        "viewWidth": 84,
+        "viewHeight": 170,
+        "footCenter": [
+          0.5,
+          0.616261
+        ],
+        "cell": {
+          "x": 245,
+          "y": 2780,
+          "w": 101,
+          "h": 188
+        }
+      },
+      "sha256": "adbc38a8ba0bb13a5cee248844ee79a05132ec77c05e80735369da818d65879e"
+    },
+    "generatedOriginal": "originals/counter-14-46e8b268e320.png",
+    "generatedSha256": "46e8b268e320f08981832f97dd16d4d2f0b074e3f2e9a406004e0dae3a766959",
+    "generatedCropSha256": "b9fd92fb3800c0cdff258b14ceb689963b1d0e2aafad2d62bc57503161c082ca",
+    "method": "image_gen reference edit; rectangular crop and lossless encoding only; no warping or alpha edits",
+    "review": "Parallel 2/3 top and cardinal face; equal far/near rectangular widths; preserve original materials, motifs and intentional curved shapes."
+  },
+  {
+    "id": "collection-dj-counter",
+    "facing": "west",
+    "file": "counter-14-46e8b268e320.webp",
+    "width": 1024,
+    "height": 1536,
+    "x": 182,
+    "y": 1085,
+    "w": 156,
+    "h": 357,
+    "draw": {
+      "x": 0,
+      "y": 4.4943817556486465e-08,
+      "w": 81.344086,
+      "h": 169.99999995505618
+    },
+    "source": {
+      "file": "town/assets/apartment-collections/dj-west-cardinal-943c911ddacd.webp",
+      "crop": {
+        "x": 1849,
+        "y": 2174,
+        "w": 89,
+        "h": 186
+      },
+      "frame": {
+        "slot": "counter",
+        "x": 1849,
+        "y": 2174,
+        "w": 89,
+        "h": 186,
+        "digest": "1df734881bd0f836b0c29e35ac446c65e97646b6bffe9ef9135dc2f826374ff1",
+        "viewWidth": 81.344086,
+        "viewHeight": 170,
+        "footCenter": [
+          0.5,
+          0.647059
+        ],
+        "cell": {
+          "x": 1849,
+          "y": 2174,
+          "w": 89,
+          "h": 186
+        }
+      },
+      "sha256": "1df734881bd0f836b0c29e35ac446c65e97646b6bffe9ef9135dc2f826374ff1"
+    },
+    "generatedOriginal": "originals/counter-14-46e8b268e320.png",
+    "generatedSha256": "46e8b268e320f08981832f97dd16d4d2f0b074e3f2e9a406004e0dae3a766959",
+    "generatedCropSha256": "0bec5a420d5e725445f23d690f4357bbae49a2d1ab34e30aa422dee51daecd98",
+    "method": "image_gen reference edit; rectangular crop and lossless encoding only; no warping or alpha edits",
+    "review": "Parallel 2/3 top and cardinal face; equal far/near rectangular widths; preserve original materials, motifs and intentional curved shapes."
+  },
+  {
+    "id": "collection-dj-counter",
+    "facing": "east",
+    "file": "counter-14-46e8b268e320.webp",
+    "width": 1024,
+    "height": 1536,
+    "x": 702,
+    "y": 1084,
+    "w": 121,
+    "h": 358,
+    "draw": {
+      "x": 7.935323383084576,
+      "y": 0,
+      "w": 54.12935323383085,
+      "h": 170.0
+    },
+    "source": {
+      "file": "town/assets/apartment-collections/dj-east-cardinal-7c3e716b911c.webp",
+      "crop": {
+        "x": 4,
+        "y": 1695,
+        "w": 64,
+        "h": 201
+      },
+      "frame": {
+        "slot": "counter",
+        "x": 4,
+        "y": 1695,
+        "w": 64,
+        "h": 201,
+        "digest": "a78e3cbfe4179fbaa280989b8ca284f265bdad2fa165a758f534248aca1814b5",
+        "viewWidth": 70,
+        "viewHeight": 170,
+        "footCenter": [
+          0.5,
+          0.647059
+        ],
+        "cell": {
+          "x": 4,
+          "y": 1695,
+          "w": 64,
+          "h": 201
+        }
+      },
+      "sha256": "a78e3cbfe4179fbaa280989b8ca284f265bdad2fa165a758f534248aca1814b5"
+    },
+    "generatedOriginal": "originals/counter-14-46e8b268e320.png",
+    "generatedSha256": "46e8b268e320f08981832f97dd16d4d2f0b074e3f2e9a406004e0dae3a766959",
+    "generatedCropSha256": "b3502312910e839f9cd27c26b1d77c37bfc340962b18b489e2a018210ade4f7c",
+    "method": "image_gen reference edit; rectangular crop and lossless encoding only; no warping or alpha edits",
+    "review": "Parallel 2/3 top and cardinal face; equal far/near rectangular widths; preserve original materials, motifs and intentional curved shapes."
+  },
+  {
+    "id": "collection-vee-jay-counter",
+    "facing": "west",
+    "file": "counter-15-38ce2b9f3b6c.webp",
+    "width": 1024,
+    "height": 1536,
+    "x": 192,
+    "y": 161,
+    "w": 124,
+    "h": 273,
+    "draw": {
+      "x": 0,
+      "y": 2.3529412374045933e-07,
+      "w": 78.108108,
+      "h": 169.99999976470588
+    },
+    "source": {
+      "file": "town/assets/apartment-collections/vee-jay-west-cardinal-98fc210668fb.webp",
+      "crop": {
+        "x": 117,
+        "y": 2007,
+        "w": 85,
+        "h": 185
+      },
+      "frame": {
+        "slot": "counter",
+        "x": 117,
+        "y": 2007,
+        "w": 85,
+        "h": 185,
+        "digest": "1c22f0acf2c176f11a67863a7d0274ea4dcbdc42f7831e7877421a3140ea86a8",
+        "viewWidth": 78.108108,
+        "viewHeight": 170,
+        "footCenter": [
+          0.5,
+          0.647059
+        ],
+        "cell": {
+          "x": 117,
+          "y": 2007,
+          "w": 85,
+          "h": 185
+        }
+      },
+      "sha256": "1c22f0acf2c176f11a67863a7d0274ea4dcbdc42f7831e7877421a3140ea86a8"
+    },
+    "generatedOriginal": "originals/counter-15-38ce2b9f3b6c.png",
+    "generatedSha256": "38ce2b9f3b6c4e738f5bd3653563b04484b25d88a1bc112bbeb11cb1d7264431",
+    "generatedCropSha256": "df52440736d59f624b19a6909461a26ad0acc7f9770380f18a45497603d68fc0",
+    "method": "image_gen reference edit; rectangular crop and lossless encoding only; no warping or alpha edits",
+    "review": "Parallel 2/3 top and cardinal face; equal far/near rectangular widths; preserve original materials, motifs and intentional curved shapes."
+  },
+  {
+    "id": "collection-vee-jay-counter",
+    "facing": "east",
+    "file": "counter-15-38ce2b9f3b6c.webp",
+    "width": 1024,
+    "height": 1536,
+    "x": 711,
+    "y": 160,
+    "w": 115,
+    "h": 273,
+    "draw": {
+      "x": 0.746268656716417,
+      "y": 0,
+      "w": 68.50746268656717,
+      "h": 170.0
+    },
+    "source": {
+      "file": "town/assets/apartment-collections/vee-jay-east-cardinal-702db70a44ba.webp",
+      "crop": {
+        "x": 719,
+        "y": 2362,
+        "w": 81,
+        "h": 201
+      },
+      "frame": {
+        "slot": "counter",
+        "x": 719,
+        "y": 2362,
+        "w": 81,
+        "h": 201,
+        "digest": "b3c0f441374d3b922c18419cedd980d70e3d0938b29a7a3c35159f407a7927e0",
+        "viewWidth": 70,
+        "viewHeight": 170,
+        "footCenter": [
+          0.5,
+          0.647059
+        ],
+        "cell": {
+          "x": 719,
+          "y": 2362,
+          "w": 81,
+          "h": 201
+        }
+      },
+      "sha256": "b3c0f441374d3b922c18419cedd980d70e3d0938b29a7a3c35159f407a7927e0"
+    },
+    "generatedOriginal": "originals/counter-15-38ce2b9f3b6c.png",
+    "generatedSha256": "38ce2b9f3b6c4e738f5bd3653563b04484b25d88a1bc112bbeb11cb1d7264431",
+    "generatedCropSha256": "0cc00d250f4a80f1008d5d9e87af6aad4ec2258babf467fdbec3409565abb8ce",
+    "method": "image_gen reference edit; rectangular crop and lossless encoding only; no warping or alpha edits",
+    "review": "Parallel 2/3 top and cardinal face; equal far/near rectangular widths; preserve original materials, motifs and intentional curved shapes."
+  },
+  {
+    "id": "collection-metronome-counter",
+    "facing": "west",
+    "file": "counter-15-38ce2b9f3b6c.webp",
+    "width": 1024,
+    "height": 1536,
+    "x": 191,
+    "y": 640,
+    "w": 124,
+    "h": 276,
+    "draw": {
+      "x": 1.0810810380235125e-07,
+      "y": 0,
+      "w": 81.78378378378379,
+      "h": 170.0
+    },
+    "source": {
+      "file": "town/assets/apartment-collections/metronome-west-cardinal-74c89a6d4ad2.webp",
+      "crop": {
+        "x": 1889,
+        "y": 2001,
+        "w": 89,
+        "h": 185
+      },
+      "frame": {
+        "slot": "counter",
+        "x": 1889,
+        "y": 2001,
+        "w": 89,
+        "h": 185,
+        "digest": "6ca838c3770ae26a4b9c9c92c48519b3c38c0d9feba3517b278adeff5b4445f4",
+        "viewWidth": 81.783784,
+        "viewHeight": 170,
+        "footCenter": [
+          0.5,
+          0.647059
+        ],
+        "cell": {
+          "x": 1889,
+          "y": 2001,
+          "w": 89,
+          "h": 185
+        }
+      },
+      "sha256": "6ca838c3770ae26a4b9c9c92c48519b3c38c0d9feba3517b278adeff5b4445f4"
+    },
+    "generatedOriginal": "originals/counter-15-38ce2b9f3b6c.png",
+    "generatedSha256": "38ce2b9f3b6c4e738f5bd3653563b04484b25d88a1bc112bbeb11cb1d7264431",
+    "generatedCropSha256": "51d1c4c195d2334e1c6645f154febd16cf846347136cb2dd746ae8c737dfabda",
+    "method": "image_gen reference edit; rectangular crop and lossless encoding only; no warping or alpha edits",
+    "review": "Parallel 2/3 top and cardinal face; equal far/near rectangular widths; preserve original materials, motifs and intentional curved shapes."
+  },
+  {
+    "id": "collection-metronome-counter",
+    "facing": "east",
+    "file": "counter-15-38ce2b9f3b6c.webp",
+    "width": 1024,
+    "height": 1536,
+    "x": 714,
+    "y": 640,
+    "w": 109,
+    "h": 276,
+    "draw": {
+      "x": 7.634146341463417,
+      "y": 0,
+      "w": 54.731707317073166,
+      "h": 170.0
+    },
+    "source": {
+      "file": "town/assets/apartment-collections/metronome-east-cardinal-4cc9a12f71d7.webp",
+      "crop": {
+        "x": 1692,
+        "y": 1342,
+        "w": 66,
+        "h": 205
+      },
+      "frame": {
+        "slot": "counter",
+        "x": 1692,
+        "y": 1342,
+        "w": 66,
+        "h": 205,
+        "digest": "7dd663196cce73c91a49851feaa7fbf9ce7206a09dd0e7e8c91b7b8e4c1d2877",
+        "viewWidth": 70,
+        "viewHeight": 170,
+        "footCenter": [
+          0.5,
+          0.647059
+        ],
+        "cell": {
+          "x": 1692,
+          "y": 1342,
+          "w": 66,
+          "h": 205
+        }
+      },
+      "sha256": "7dd663196cce73c91a49851feaa7fbf9ce7206a09dd0e7e8c91b7b8e4c1d2877"
+    },
+    "generatedOriginal": "originals/counter-15-38ce2b9f3b6c.png",
+    "generatedSha256": "38ce2b9f3b6c4e738f5bd3653563b04484b25d88a1bc112bbeb11cb1d7264431",
+    "generatedCropSha256": "b81574c411fd04f39b4bd94c0fc6b91d0af6fe8112719799b1d60ac1a4e6b6e8",
+    "method": "image_gen reference edit; rectangular crop and lossless encoding only; no warping or alpha edits",
+    "review": "Parallel 2/3 top and cardinal face; equal far/near rectangular widths; preserve original materials, motifs and intentional curved shapes."
+  },
+  {
+    "id": "collection-schoenberg-counter",
+    "facing": "west",
+    "file": "counter-15-38ce2b9f3b6c.webp",
+    "width": 1024,
+    "height": 1536,
+    "x": 193,
+    "y": 1121,
+    "w": 122,
+    "h": 282,
+    "draw": {
+      "x": 0,
+      "y": 6.172839448481682e-07,
+      "w": 71.34715,
+      "h": 169.99999938271606
+    },
+    "source": {
+      "file": "town/assets/apartment-collections/schoenberg-west-cardinal-889b7f3db3db.webp",
+      "crop": {
+        "x": 1697,
+        "y": 1162,
+        "w": 81,
+        "h": 193
+      },
+      "frame": {
+        "slot": "counter",
+        "x": 1697,
+        "y": 1162,
+        "w": 81,
+        "h": 193,
+        "digest": "d19af971399cd28821e79dd61264ec57cd1c11e25f42e3d07a9b0de0893ca946",
+        "viewWidth": 71.34715,
+        "viewHeight": 170,
+        "footCenter": [
+          0.5,
+          0.647059
+        ],
+        "cell": {
+          "x": 1697,
+          "y": 1162,
+          "w": 81,
+          "h": 193
+        }
+      },
+      "sha256": "d19af971399cd28821e79dd61264ec57cd1c11e25f42e3d07a9b0de0893ca946"
+    },
+    "generatedOriginal": "originals/counter-15-38ce2b9f3b6c.png",
+    "generatedSha256": "38ce2b9f3b6c4e738f5bd3653563b04484b25d88a1bc112bbeb11cb1d7264431",
+    "generatedCropSha256": "ca4236b47118caf24a482da3d2bb7626684d9ebaa51809769350ce6f6f7ba04b",
+    "method": "image_gen reference edit; rectangular crop and lossless encoding only; no warping or alpha edits",
+    "review": "Parallel 2/3 top and cardinal face; equal far/near rectangular widths; preserve original materials, motifs and intentional curved shapes."
+  },
+  {
+    "id": "collection-schoenberg-counter",
+    "facing": "east",
+    "file": "counter-15-38ce2b9f3b6c.webp",
+    "width": 1024,
+    "height": 1536,
+    "x": 714,
+    "y": 1121,
+    "w": 115,
+    "h": 282,
+    "draw": {
+      "x": 6.945812807881776,
+      "y": 0,
+      "w": 56.10837438423645,
+      "h": 170.0
+    },
+    "source": {
+      "file": "town/assets/apartment-collections/schoenberg-east-cardinal-4224510a9b9a.webp",
+      "crop": {
+        "x": 1175,
+        "y": 1222,
+        "w": 67,
+        "h": 203
+      },
+      "frame": {
+        "slot": "counter",
+        "x": 1175,
+        "y": 1222,
+        "w": 67,
+        "h": 203,
+        "digest": "66c38e6458e954d4ac5a4565b50e3970143c869ddae67d07d4314518edf3c3de",
+        "viewWidth": 70,
+        "viewHeight": 170,
+        "footCenter": [
+          0.5,
+          0.647059
+        ],
+        "cell": {
+          "x": 1175,
+          "y": 1222,
+          "w": 67,
+          "h": 203
+        }
+      },
+      "sha256": "66c38e6458e954d4ac5a4565b50e3970143c869ddae67d07d4314518edf3c3de"
+    },
+    "generatedOriginal": "originals/counter-15-38ce2b9f3b6c.png",
+    "generatedSha256": "38ce2b9f3b6c4e738f5bd3653563b04484b25d88a1bc112bbeb11cb1d7264431",
+    "generatedCropSha256": "0a388cf061ee844b71371417242495ee6685ac8c9c44ff3cf76b76160c73f6e5",
+    "method": "image_gen reference edit; rectangular crop and lossless encoding only; no warping or alpha edits",
+    "review": "Parallel 2/3 top and cardinal face; equal far/near rectangular widths; preserve original materials, motifs and intentional curved shapes."
+  },
+  {
+    "id": "collection-showroom-coastal-bedroom-counter",
+    "facing": "west",
+    "file": "counter-16-8ecec5ba6a7d.webp",
+    "width": 1024,
+    "height": 1536,
+    "x": 199,
+    "y": 154,
+    "w": 129,
+    "h": 276,
+    "draw": {
+      "x": 0,
+      "y": 6.285714285714306,
+      "w": 84.0,
+      "h": 163.7142857142857
+    },
+    "source": {
+      "file": "town/assets/apartment-collections/showroom-coastal-bedroom-west-cardinal-2cecc8a3e76b.webp",
+      "crop": {
+        "x": 4,
+        "y": 1394,
+        "w": 98,
+        "h": 191
+      },
+      "frame": {
+        "slot": "counter",
+        "x": 4,
+        "y": 1394,
+        "w": 98,
+        "h": 191,
+        "digest": "a730e38c323c72782813c57ef4392958dc534ea3b2ae819af706330c1e1a6078",
+        "viewWidth": 84,
+        "viewHeight": 170,
+        "footCenter": [
+          0.5,
+          0.633508
+        ],
+        "cell": {
+          "x": 4,
+          "y": 1394,
+          "w": 98,
+          "h": 191
+        }
+      },
+      "sha256": "a730e38c323c72782813c57ef4392958dc534ea3b2ae819af706330c1e1a6078"
+    },
+    "generatedOriginal": "originals/counter-16-8ecec5ba6a7d.png",
+    "generatedSha256": "8ecec5ba6a7d1c8ff32dab5137af5af244c5efa0061a58ed58d64545618c4474",
+    "generatedCropSha256": "02ec57d2df29e9078ff61564b4d8c3627a46022c3f1c28e175f2e9164e0974e1",
+    "method": "image_gen reference edit; rectangular crop and lossless encoding only; no warping or alpha edits",
+    "review": "Parallel 2/3 top and cardinal face; equal far/near rectangular widths; preserve original materials, motifs and intentional curved shapes."
+  },
+  {
+    "id": "collection-showroom-coastal-bedroom-counter",
+    "facing": "east",
+    "file": "counter-16-8ecec5ba6a7d.webp",
+    "width": 1024,
+    "height": 1536,
+    "x": 700,
+    "y": 154,
+    "w": 122,
+    "h": 276,
+    "draw": {
+      "x": 1.1567009999999982,
+      "y": 0,
+      "w": 74.8,
+      "h": 170.0
+    },
+    "source": {
+      "file": "town/assets/apartment-collections/showroom-coastal-bedroom-east-cardinal-ed5fec47d003.webp",
+      "crop": {
+        "x": 1490,
+        "y": 781,
+        "w": 88,
+        "h": 200
+      },
+      "frame": {
+        "slot": "counter",
+        "x": 1490,
+        "y": 781,
+        "w": 88,
+        "h": 200,
+        "digest": "f605fd76f7ab5549bd6db899018448bed93369a7d74109fbea97d54f533c2cde",
+        "viewWidth": 77.113402,
+        "viewHeight": 170,
+        "footCenter": [
+          0.5,
+          0.6470590002831078
+        ],
+        "cell": {
+          "x": 1490,
+          "y": 781,
+          "w": 88,
+          "h": 200
+        },
+        "sourceDigest": "0552bd2dec41cb7a29470655ab0312790a90df123de33660809ff2be95bdf498",
+        "sourceFrame": {
+          "x": 288,
+          "y": 741,
+          "w": 88,
+          "h": 200
+        },
+        "artReview": "independent-browser-qa.json"
+      },
+      "sha256": "f605fd76f7ab5549bd6db899018448bed93369a7d74109fbea97d54f533c2cde"
+    },
+    "generatedOriginal": "originals/counter-16-8ecec5ba6a7d.png",
+    "generatedSha256": "8ecec5ba6a7d1c8ff32dab5137af5af244c5efa0061a58ed58d64545618c4474",
+    "generatedCropSha256": "fd66dade94fbe544eebf29125a9d8585a107106de58886bed610d0cbd570ad56",
+    "method": "image_gen reference edit; rectangular crop and lossless encoding only; no warping or alpha edits",
+    "review": "Parallel 2/3 top and cardinal face; equal far/near rectangular widths; preserve original materials, motifs and intentional curved shapes."
+  },
+  {
+    "id": "collection-showroom-rustic-kitchen-counter",
+    "facing": "west",
+    "file": "counter-16-8ecec5ba6a7d.webp",
+    "width": 1024,
+    "height": 1536,
+    "x": 198,
+    "y": 604,
+    "w": 132,
+    "h": 292,
+    "draw": {
+      "x": 1.8142128157894746,
+      "y": 0,
+      "w": 71.57894736842105,
+      "h": 170.0
+    },
+    "source": {
+      "file": "town/assets/apartment-collections/showroom-rustic-kitchen-west-cardinal-eacb4a975416.webp",
+      "crop": {
+        "x": 584,
+        "y": 908,
+        "w": 96,
+        "h": 228
+      },
+      "frame": {
+        "slot": "counter",
+        "x": 584,
+        "y": 908,
+        "w": 96,
+        "h": 228,
+        "digest": "f43d23916cd627406417e57f06fa52456f72c6369d61f788b4096ff2cf448264",
+        "viewWidth": 75.207373,
+        "viewHeight": 170,
+        "footCenter": [
+          0.5,
+          0.647059001275951
+        ],
+        "cell": {
+          "x": 584,
+          "y": 908,
+          "w": 96,
+          "h": 228
+        },
+        "sourceDigest": "53e5c88985a3072e101165724d570a1c89da2fc3d8bb23bfc4cb264e70630036",
+        "sourceFrame": {
+          "x": 284,
+          "y": 718,
+          "w": 96,
+          "h": 228
+        },
+        "artReview": "independent-browser-qa.json"
+      },
+      "sha256": "f43d23916cd627406417e57f06fa52456f72c6369d61f788b4096ff2cf448264"
+    },
+    "generatedOriginal": "originals/counter-16-8ecec5ba6a7d.png",
+    "generatedSha256": "8ecec5ba6a7d1c8ff32dab5137af5af244c5efa0061a58ed58d64545618c4474",
+    "generatedCropSha256": "88b64182dadcf6f7fd04b7a1be1a58f345697fb3c57522d28aeb589705748c29",
+    "method": "image_gen reference edit; rectangular crop and lossless encoding only; no warping or alpha edits",
+    "review": "Parallel 2/3 top and cardinal face; equal far/near rectangular widths; preserve original materials, motifs and intentional curved shapes."
+  },
+  {
+    "id": "collection-showroom-rustic-kitchen-counter",
+    "facing": "east",
+    "file": "counter-16-8ecec5ba6a7d.webp",
+    "width": 1024,
+    "height": 1536,
+    "x": 688,
+    "y": 604,
+    "w": 146,
+    "h": 292,
+    "draw": {
+      "x": 0,
+      "y": 33.93388429752065,
+      "w": 84.0,
+      "h": 136.06611570247935
+    },
+    "source": {
+      "file": "town/assets/apartment-collections/showroom-rustic-kitchen-east-cardinal-557d1af0cec8.webp",
+      "crop": {
+        "x": 1662,
+        "y": 688,
+        "w": 121,
+        "h": 196
+      },
+      "frame": {
+        "slot": "counter",
+        "x": 1662,
+        "y": 688,
+        "w": 121,
+        "h": 196,
+        "digest": "d72601d42ca762833dce8a17f134011c195ec34af2ff3c85fee1f8bc5d982df0",
+        "viewWidth": 84,
+        "viewHeight": 170,
+        "footCenter": [
+          0.5,
+          0.559038
+        ],
+        "cell": {
+          "x": 1662,
+          "y": 688,
+          "w": 121,
+          "h": 196
+        }
+      },
+      "sha256": "d72601d42ca762833dce8a17f134011c195ec34af2ff3c85fee1f8bc5d982df0"
+    },
+    "generatedOriginal": "originals/counter-16-8ecec5ba6a7d.png",
+    "generatedSha256": "8ecec5ba6a7d1c8ff32dab5137af5af244c5efa0061a58ed58d64545618c4474",
+    "generatedCropSha256": "56b1ca74ae83eb529cd2c7abff83291d0d680ed867656a27dcb130963d152223",
+    "method": "image_gen reference edit; rectangular crop and lossless encoding only; no warping or alpha edits",
+    "review": "Parallel 2/3 top and cardinal face; equal far/near rectangular widths; preserve original materials, motifs and intentional curved shapes."
+  },
+  {
+    "id": "collection-showroom-midcentury-studio-counter",
+    "facing": "west",
+    "file": "counter-16-8ecec5ba6a7d.webp",
+    "width": 1024,
+    "height": 1536,
+    "x": 198,
+    "y": 1055,
+    "w": 129,
+    "h": 311,
+    "draw": {
+      "x": 2.3584905761708796e-07,
+      "y": 0,
+      "w": 71.36792452830188,
+      "h": 170.0
+    },
+    "source": {
+      "file": "town/assets/apartment-collections/showroom-midcentury-studio-west-cardinal-afdc00a93bc0.webp",
+      "crop": {
+        "x": 1294,
+        "y": 498,
+        "w": 89,
+        "h": 212
+      },
+      "frame": {
+        "slot": "counter",
+        "x": 1294,
+        "y": 498,
+        "w": 89,
+        "h": 212,
+        "digest": "21024378cee62af6c6e7e5b3ad28268e30988c66ec3f2846e9f179e04d21213c",
+        "viewWidth": 71.367925,
+        "viewHeight": 170,
+        "footCenter": [
+          0.5,
+          0.647059
+        ],
+        "cell": {
+          "x": 1294,
+          "y": 498,
+          "w": 89,
+          "h": 212
+        }
+      },
+      "sha256": "21024378cee62af6c6e7e5b3ad28268e30988c66ec3f2846e9f179e04d21213c"
+    },
+    "generatedOriginal": "originals/counter-16-8ecec5ba6a7d.png",
+    "generatedSha256": "8ecec5ba6a7d1c8ff32dab5137af5af244c5efa0061a58ed58d64545618c4474",
+    "generatedCropSha256": "a64bd63c1566a80b38eabe7e6ce6a393daa9bc32abcc3856bbb81bff5ceb808b",
+    "method": "image_gen reference edit; rectangular crop and lossless encoding only; no warping or alpha edits",
+    "review": "Parallel 2/3 top and cardinal face; equal far/near rectangular widths; preserve original materials, motifs and intentional curved shapes."
+  },
+  {
+    "id": "collection-showroom-midcentury-studio-counter",
+    "facing": "east",
+    "file": "counter-16-8ecec5ba6a7d.webp",
+    "width": 1024,
+    "height": 1536,
+    "x": 700,
+    "y": 1055,
+    "w": 117,
+    "h": 297,
+    "draw": {
+      "x": 4.929245283018865,
+      "y": 0,
+      "w": 60.14150943396227,
+      "h": 170.0
+    },
+    "source": {
+      "file": "town/assets/apartment-collections/showroom-midcentury-studio-east-cardinal-1dbc539c75ec.webp",
+      "crop": {
+        "x": 1676,
+        "y": 803,
+        "w": 75,
+        "h": 212
+      },
+      "frame": {
+        "slot": "counter",
+        "x": 1676,
+        "y": 803,
+        "w": 75,
+        "h": 212,
+        "digest": "e8efa96d59950f0283e43cf0fc8ecf6a4c3e390d2a408c8afddf6e3f5636b371",
+        "viewWidth": 70,
+        "viewHeight": 170,
+        "footCenter": [
+          0.5,
+          0.647059
+        ],
+        "cell": {
+          "x": 1676,
+          "y": 803,
+          "w": 75,
+          "h": 212
+        },
+        "sourceDigest": "10ea02c9bf251145ca7558fd00d05971786c8857d59cac62f7bed6005aca305c",
+        "sourceFrame": {
+          "x": 294,
+          "y": 730,
+          "w": 75,
+          "h": 212
+        },
+        "artReview": "independent-browser-qa.json"
+      },
+      "sha256": "e8efa96d59950f0283e43cf0fc8ecf6a4c3e390d2a408c8afddf6e3f5636b371"
+    },
+    "generatedOriginal": "originals/counter-16-8ecec5ba6a7d.png",
+    "generatedSha256": "8ecec5ba6a7d1c8ff32dab5137af5af244c5efa0061a58ed58d64545618c4474",
+    "generatedCropSha256": "2d98f648dbe43599641bd349465df710f6d147333e6023c01b4954aff1d4222d",
+    "method": "image_gen reference edit; rectangular crop and lossless encoding only; no warping or alpha edits",
+    "review": "Parallel 2/3 top and cardinal face; equal far/near rectangular widths; preserve original materials, motifs and intentional curved shapes."
+  },
+  {
+    "id": "collection-showroom-industrial-loft-counter",
+    "facing": "west",
+    "file": "counter-17-95df50af1bbd.webp",
+    "width": 1024,
+    "height": 1536,
+    "x": 0,
+    "y": 0,
+    "w": 334,
+    "h": 434,
+    "draw": {
+      "x": 0.18918918918918592,
+      "y": 0,
+      "w": 83.62162162162163,
+      "h": 170.0
+    },
+    "source": {
+      "file": "town/assets/apartment-collections/showroom-industrial-loft-west-cardinal-2ed0d0d9fa72.webp",
+      "crop": {
+        "x": 867,
+        "y": 1824,
+        "w": 91,
+        "h": 185
+      },
+      "frame": {
+        "slot": "counter",
+        "x": 867,
+        "y": 1824,
+        "w": 91,
+        "h": 185,
+        "digest": "92dd585c5e059dd45ffa1e4c688d82987223f865569514b16443cf4050ab3d2c",
+        "viewWidth": 84,
+        "viewHeight": 170,
+        "footCenter": [
+          0.5,
+          0.6470589972850678
+        ],
+        "cell": {
+          "x": 867,
+          "y": 1824,
+          "w": 91,
+          "h": 185
+        },
+        "sourceDigest": "de079998d08f157b2b4e4d564d4219258a4523eb18107b00804315042aca442b",
+        "sourceFrame": {
+          "x": 288,
+          "y": 759,
+          "w": 91,
+          "h": 185
+        },
+        "artReview": "independent-browser-qa.json"
+      },
+      "sha256": "92dd585c5e059dd45ffa1e4c688d82987223f865569514b16443cf4050ab3d2c"
+    },
+    "generatedOriginal": "originals/counter-17-95df50af1bbd.png",
+    "generatedSha256": "95df50af1bbd36a4e21e9d21246bf7e63135c191b0d51f2b924cc62bf309ad3d",
+    "generatedCropSha256": "e736a4d4c1017a2ab7b995cc8e02b9135ca603b2e40cbab486f60151fe03e308",
+    "method": "image_gen reference edit; rectangular crop and lossless encoding only; no warping or alpha edits",
+    "review": "Parallel 2/3 top and cardinal face; equal far/near rectangular widths; preserve original materials, motifs and intentional curved shapes."
+  },
+  {
+    "id": "collection-showroom-industrial-loft-counter",
+    "facing": "east",
+    "file": "counter-17-95df50af1bbd.webp",
+    "width": 1024,
+    "height": 1536,
+    "x": 688,
+    "y": 156,
+    "w": 159,
+    "h": 278,
+    "draw": {
+      "x": 0,
+      "y": 9.560000000000002,
+      "w": 84.0,
+      "h": 160.44
+    },
+    "source": {
+      "file": "town/assets/apartment-collections/showroom-industrial-loft-east-cardinal-b84b5314871d.webp",
+      "crop": {
+        "x": 4,
+        "y": 983,
+        "w": 100,
+        "h": 191
+      },
+      "frame": {
+        "slot": "counter",
+        "x": 4,
+        "y": 983,
+        "w": 100,
+        "h": 191,
+        "digest": "5aa0c921871ab3a8dc94c1ad56a32a1fcd7b4acc56db25d2fe28dacdb423147f",
+        "viewWidth": 84,
+        "viewHeight": 170,
+        "footCenter": [
+          0.5,
+          0.626028
+        ],
+        "cell": {
+          "x": 4,
+          "y": 983,
+          "w": 100,
+          "h": 191
+        }
+      },
+      "sha256": "5aa0c921871ab3a8dc94c1ad56a32a1fcd7b4acc56db25d2fe28dacdb423147f"
+    },
+    "generatedOriginal": "originals/counter-17-95df50af1bbd.png",
+    "generatedSha256": "95df50af1bbd36a4e21e9d21246bf7e63135c191b0d51f2b924cc62bf309ad3d",
+    "generatedCropSha256": "fcca04fbfb9ec5281914f7c65bcc57cb6c89c787875973d92e5f8060404bc24a",
+    "method": "image_gen reference edit; rectangular crop and lossless encoding only; no warping or alpha edits",
+    "review": "Parallel 2/3 top and cardinal face; equal far/near rectangular widths; preserve original materials, motifs and intentional curved shapes."
+  },
+  {
+    "id": "collection-showroom-cyberpunk-counter",
+    "facing": "west",
+    "file": "counter-17-95df50af1bbd.webp",
+    "width": 1024,
+    "height": 1536,
+    "x": 164,
+    "y": 545,
+    "w": 187,
+    "h": 430,
+    "draw": {
+      "x": 3.759960159362553,
+      "y": 0,
+      "w": 62.480079681274894,
+      "h": 170.0
+    },
+    "source": {
+      "file": "town/assets/apartment-collections/showroom-cyberpunk-west-cardinal-7da95db4940f.webp",
+      "crop": {
+        "x": 4,
+        "y": 4,
+        "w": 369,
+        "h": 1004
+      },
+      "frame": {
+        "slot": "counter",
+        "x": 4,
+        "y": 4,
+        "w": 369,
+        "h": 1004,
+        "digest": "a72aa3f401d847d68b8790a2bb0ef4a5e6808dd7a3e136ae7510a9c630b1776b",
+        "viewWidth": 70,
+        "viewHeight": 170,
+        "footCenter": [
+          0.5,
+          0.647059
+        ],
+        "cell": {
+          "x": 4,
+          "y": 4,
+          "w": 369,
+          "h": 1004
+        }
+      },
+      "sha256": "a72aa3f401d847d68b8790a2bb0ef4a5e6808dd7a3e136ae7510a9c630b1776b"
+    },
+    "generatedOriginal": "originals/counter-17-95df50af1bbd.png",
+    "generatedSha256": "95df50af1bbd36a4e21e9d21246bf7e63135c191b0d51f2b924cc62bf309ad3d",
+    "generatedCropSha256": "62ce9d06418272486632ef75b686ee85064a4d766a451ef04494a5255f4e0a3a",
+    "method": "image_gen reference edit; rectangular crop and lossless encoding only; no warping or alpha edits",
+    "review": "Parallel 2/3 top and cardinal face; equal far/near rectangular widths; preserve original materials, motifs and intentional curved shapes."
+  },
+  {
+    "id": "collection-showroom-cyberpunk-counter",
+    "facing": "east",
+    "file": "counter-17-95df50af1bbd.webp",
+    "width": 1024,
+    "height": 1536,
+    "x": 687,
+    "y": 676,
+    "w": 163,
+    "h": 226,
+    "draw": {
+      "x": 0,
+      "y": 44.0,
+      "w": 84.0,
+      "h": 126.0
+    },
+    "source": {
+      "file": "town/assets/apartment-collections/showroom-cyberpunk-east-cardinal-a5453896aa75.webp",
+      "crop": {
+        "x": 269,
+        "y": 756,
+        "w": 112,
+        "h": 168
+      },
+      "frame": {
+        "slot": "counter",
+        "x": 269,
+        "y": 756,
+        "w": 112,
+        "h": 168,
+        "digest": "89457d50acc5453f2d72cf5843cdcf6cb1cd505c7172eec53a46bc2e393f8dc3",
+        "viewWidth": 84,
+        "viewHeight": 170,
+        "footCenter": [
+          0.5,
+          0.52381
+        ],
+        "cell": {
+          "x": 269,
+          "y": 756,
+          "w": 112,
+          "h": 168
+        }
+      },
+      "sha256": "89457d50acc5453f2d72cf5843cdcf6cb1cd505c7172eec53a46bc2e393f8dc3"
+    },
+    "generatedOriginal": "originals/counter-17-95df50af1bbd.png",
+    "generatedSha256": "95df50af1bbd36a4e21e9d21246bf7e63135c191b0d51f2b924cc62bf309ad3d",
+    "generatedCropSha256": "5db697c78193c21b603f8c396b2be92cdedeb128350177e3d41381dd1c1cbc63",
+    "method": "image_gen reference edit; rectangular crop and lossless encoding only; no warping or alpha edits",
+    "review": "Parallel 2/3 top and cardinal face; equal far/near rectangular widths; preserve original materials, motifs and intentional curved shapes."
+  },
+  {
+    "id": "collection-showroom-robot-counter",
+    "facing": "west",
+    "file": "counter-17-95df50af1bbd.webp",
+    "width": 1024,
+    "height": 1536,
+    "x": 0,
+    "y": 1133,
+    "w": 354,
+    "h": 403,
+    "draw": {
+      "x": 0,
+      "y": 38.30508474576271,
+      "w": 84.0,
+      "h": 131.6949152542373
+    },
+    "source": {
+      "file": "town/assets/apartment-collections/showroom-robot-west-cardinal-aef0810fd27a.webp",
+      "crop": {
+        "x": 1848,
+        "y": 675,
+        "w": 118,
+        "h": 185
+      },
+      "frame": {
+        "slot": "counter",
+        "x": 1848,
+        "y": 675,
+        "w": 118,
+        "h": 185,
+        "digest": "c2f2f7a567265e7d96158d552c6721a8dda987480d5f90c7f865c085e957483f",
+        "viewWidth": 84,
+        "viewHeight": 170,
+        "footCenter": [
+          0.5,
+          0.544402
+        ],
+        "cell": {
+          "x": 1848,
+          "y": 675,
+          "w": 118,
+          "h": 185
+        }
+      },
+      "sha256": "c2f2f7a567265e7d96158d552c6721a8dda987480d5f90c7f865c085e957483f"
+    },
+    "generatedOriginal": "originals/counter-17-95df50af1bbd.png",
+    "generatedSha256": "95df50af1bbd36a4e21e9d21246bf7e63135c191b0d51f2b924cc62bf309ad3d",
+    "generatedCropSha256": "27bab328881c49f9e8109f65468496723c1604ee4ffd1dcf87b1818ddf11f2e9",
+    "method": "image_gen reference edit; rectangular crop and lossless encoding only; no warping or alpha edits",
+    "review": "Parallel 2/3 top and cardinal face; equal far/near rectangular widths; preserve original materials, motifs and intentional curved shapes."
+  },
+  {
+    "id": "collection-showroom-robot-counter",
+    "facing": "east",
+    "file": "counter-17-95df50af1bbd.webp",
+    "width": 1024,
+    "height": 1536,
+    "x": 669,
+    "y": 1133,
+    "w": 265,
+    "h": 403,
+    "draw": {
+      "x": 0,
+      "y": 54.98461538461538,
+      "w": 84.0,
+      "h": 115.01538461538462
+    },
+    "source": {
+      "file": "town/assets/apartment-collections/showroom-robot-east-cardinal-5922896c3d39.webp",
+      "crop": {
+        "x": 154,
+        "y": 727,
+        "w": 130,
+        "h": 178
+      },
+      "frame": {
+        "slot": "counter",
+        "x": 154,
+        "y": 727,
+        "w": 130,
+        "h": 178,
+        "digest": "ded9fcc3b8845a3fe27b90345a55bbcd4176c885c0a9297102a0f27f0c84077a",
+        "viewWidth": 84,
+        "viewHeight": 170,
+        "footCenter": [
+          0.5,
+          0.478331
+        ],
+        "cell": {
+          "x": 154,
+          "y": 727,
+          "w": 130,
+          "h": 178
+        }
+      },
+      "sha256": "ded9fcc3b8845a3fe27b90345a55bbcd4176c885c0a9297102a0f27f0c84077a"
+    },
+    "generatedOriginal": "originals/counter-17-95df50af1bbd.png",
+    "generatedSha256": "95df50af1bbd36a4e21e9d21246bf7e63135c191b0d51f2b924cc62bf309ad3d",
+    "generatedCropSha256": "9623bf04dee556d6c17d68c7aa3cbf1e3419e9342143585b8c16bad0b05c2b97",
+    "method": "image_gen reference edit; rectangular crop and lossless encoding only; no warping or alpha edits",
+    "review": "Parallel 2/3 top and cardinal face; equal far/near rectangular widths; preserve original materials, motifs and intentional curved shapes."
+  },
+  {
+    "id": "collection-player-counter",
+    "facing": "west",
+    "file": "counter-18-cae0cb3c139b.webp",
+    "width": 1024,
+    "height": 1536,
+    "x": 205,
+    "y": 166,
+    "w": 102,
+    "h": 240,
+    "draw": {
+      "x": 0.3233830845771095,
+      "y": 0,
+      "w": 69.35323383084578,
+      "h": 170.0
+    },
+    "source": {
+      "file": "town/assets/apartment-collections/player-west-cardinal-2d1152e96676.webp",
+      "crop": {
+        "x": 927,
+        "y": 1377,
+        "w": 82,
+        "h": 201
+      },
+      "frame": {
+        "slot": "counter",
+        "x": 927,
+        "y": 1377,
+        "w": 82,
+        "h": 201,
+        "digest": "58b5ab5f38a0767733b3855b88b5b065c65483913b4ac876269ef413321e7987",
+        "viewWidth": 70,
+        "viewHeight": 170,
+        "footCenter": [
+          0.5,
+          0.647059
+        ],
+        "cell": {
+          "x": 927,
+          "y": 1377,
+          "w": 82,
+          "h": 201
+        }
+      },
+      "sha256": "58b5ab5f38a0767733b3855b88b5b065c65483913b4ac876269ef413321e7987"
+    },
+    "generatedOriginal": "originals/counter-18-cae0cb3c139b.png",
+    "generatedSha256": "cae0cb3c139bc7ee492f08008e32b581ab3fcf699fc9ee38a587b624f9659da2",
+    "generatedCropSha256": "de472067830f16995ceeeffdf3437c45befbee3c6304a7a7a3de7e4700714b89",
+    "method": "image_gen reference edit; rectangular crop and lossless encoding only; no warping or alpha edits",
+    "review": "Parallel 2/3 top and cardinal face; equal far/near rectangular widths; preserve original materials, motifs and intentional curved shapes."
+  },
+  {
+    "id": "collection-player-counter",
+    "facing": "east",
+    "file": "counter-18-cae0cb3c139b.webp",
+    "width": 1024,
+    "height": 1536,
+    "x": 708,
+    "y": 166,
+    "w": 111,
+    "h": 240,
+    "draw": {
+      "x": 0,
+      "y": 1.0322580692445626e-06,
+      "w": 73.194444,
+      "h": 169.99999896774193
+    },
+    "source": {
+      "file": "town/assets/apartment-collections/player-east-cardinal-9eaf881803d4.webp",
+      "crop": {
+        "x": 896,
+        "y": 1240,
+        "w": 93,
+        "h": 216
+      },
+      "frame": {
+        "slot": "counter",
+        "x": 896,
+        "y": 1240,
+        "w": 93,
+        "h": 216,
+        "digest": "97c86325c83e54bed72e174c850eef59b2aca987688e8f7e012f51a58ef06845",
+        "viewWidth": 73.194444,
+        "viewHeight": 170,
+        "footCenter": [
+          0.5,
+          0.647059
+        ],
+        "cell": {
+          "x": 896,
+          "y": 1240,
+          "w": 93,
+          "h": 216
+        }
+      },
+      "sha256": "97c86325c83e54bed72e174c850eef59b2aca987688e8f7e012f51a58ef06845"
+    },
+    "generatedOriginal": "originals/counter-18-cae0cb3c139b.png",
+    "generatedSha256": "cae0cb3c139bc7ee492f08008e32b581ab3fcf699fc9ee38a587b624f9659da2",
+    "generatedCropSha256": "22c87e367b7a849db522e84e2b9793efcff32e3837093f682ace7f607acdeeed",
+    "method": "image_gen reference edit; rectangular crop and lossless encoding only; no warping or alpha edits",
+    "review": "Parallel 2/3 top and cardinal face; equal far/near rectangular widths; preserve original materials, motifs and intentional curved shapes."
+  },
+  {
+    "id": "collection-showroom-victorian-parlor-counter",
+    "facing": "west",
+    "file": "counter-18-cae0cb3c139b.webp",
+    "width": 1024,
+    "height": 1536,
+    "x": 140,
+    "y": 560,
+    "w": 198,
+    "h": 435,
+    "draw": {
+      "x": 0,
+      "y": 14.405063291139243,
+      "w": 84.0,
+      "h": 155.59493670886076
+    },
+    "source": {
+      "file": "town/assets/apartment-collections/showroom-victorian-parlor-west-cardinal-2739674ddaaf.webp",
+      "crop": {
+        "x": 702,
+        "y": 1269,
+        "w": 237,
+        "h": 439
+      },
+      "frame": {
+        "slot": "counter",
+        "x": 702,
+        "y": 1269,
+        "w": 237,
+        "h": 439,
+        "digest": "a194bc94dda2f2c3cec387f566eb5fa1c4d607e9d438c9b9c8002ddb048b972c",
+        "viewWidth": 84,
+        "viewHeight": 170,
+        "footCenter": [
+          0.5,
+          0.614383
+        ],
+        "cell": {
+          "x": 702,
+          "y": 1269,
+          "w": 237,
+          "h": 439
+        }
+      },
+      "sha256": "a194bc94dda2f2c3cec387f566eb5fa1c4d607e9d438c9b9c8002ddb048b972c"
+    },
+    "generatedOriginal": "originals/counter-18-cae0cb3c139b.png",
+    "generatedSha256": "cae0cb3c139bc7ee492f08008e32b581ab3fcf699fc9ee38a587b624f9659da2",
+    "generatedCropSha256": "493321e1fc608a8a76b3c5fbe50c572161dec50cac1ede0abefece6b60999bf7",
+    "method": "image_gen reference edit; rectangular crop and lossless encoding only; no warping or alpha edits",
+    "review": "Parallel 2/3 top and cardinal face; equal far/near rectangular widths; preserve original materials, motifs and intentional curved shapes."
+  },
+  {
+    "id": "collection-showroom-victorian-parlor-counter",
+    "facing": "east",
+    "file": "counter-18-cae0cb3c139b.webp",
+    "width": 1024,
+    "height": 1536,
+    "x": 708,
+    "y": 687,
+    "w": 111,
+    "h": 224,
+    "draw": {
+      "x": 0,
+      "y": 2.8936170212766115,
+      "w": 84.0,
+      "h": 167.1063829787234
+    },
+    "source": {
+      "file": "town/assets/apartment-collections/showroom-victorian-parlor-east-cardinal-a169a5e34f98.webp",
+      "crop": {
+        "x": 1327,
+        "y": 591,
+        "w": 94,
+        "h": 187
+      },
+      "frame": {
+        "slot": "counter",
+        "x": 1327,
+        "y": 591,
+        "w": 94,
+        "h": 187,
+        "digest": "831228bef95ecded183a0458c583bc0024f87f959799a6c7d1d60f525a4b79c0",
+        "viewWidth": 84,
+        "viewHeight": 170,
+        "footCenter": [
+          0.5,
+          0.640947
+        ],
+        "cell": {
+          "x": 1327,
+          "y": 591,
+          "w": 94,
+          "h": 187
+        }
+      },
+      "sha256": "831228bef95ecded183a0458c583bc0024f87f959799a6c7d1d60f525a4b79c0"
+    },
+    "generatedOriginal": "originals/counter-18-cae0cb3c139b.png",
+    "generatedSha256": "cae0cb3c139bc7ee492f08008e32b581ab3fcf699fc9ee38a587b624f9659da2",
+    "generatedCropSha256": "44ddea589268951de8d92d5a1dbea423205376fe3adddfe1ce32e5550231b110",
+    "method": "image_gen reference edit; rectangular crop and lossless encoding only; no warping or alpha edits",
+    "review": "Parallel 2/3 top and cardinal face; equal far/near rectangular widths; preserve original materials, motifs and intentional curved shapes."
+  },
+  {
+    "id": "collection-showroom-retrofuture-counter",
+    "facing": "west",
+    "file": "counter-18-cae0cb3c139b.webp",
+    "width": 1024,
+    "height": 1536,
+    "x": 165,
+    "y": 1070,
+    "w": 170,
+    "h": 441,
+    "draw": {
+      "x": 2.5347222222222214,
+      "y": 0,
+      "w": 64.93055555555556,
+      "h": 170.0
+    },
+    "source": {
+      "file": "town/assets/apartment-collections/showroom-retrofuture-west-cardinal-257beb6e2f58.webp",
+      "crop": {
+        "x": 4,
+        "y": 4,
+        "w": 385,
+        "h": 1008
+      },
+      "frame": {
+        "slot": "counter",
+        "x": 4,
+        "y": 4,
+        "w": 385,
+        "h": 1008,
+        "digest": "3dc26890a43df00f79553a116910f9cd5d0c97dbc20d17e917f1bf6c75b9fe50",
+        "viewWidth": 70,
+        "viewHeight": 170,
+        "footCenter": [
+          0.5,
+          0.647059
+        ],
+        "cell": {
+          "x": 4,
+          "y": 4,
+          "w": 385,
+          "h": 1008
+        }
+      },
+      "sha256": "3dc26890a43df00f79553a116910f9cd5d0c97dbc20d17e917f1bf6c75b9fe50"
+    },
+    "generatedOriginal": "originals/counter-18-cae0cb3c139b.png",
+    "generatedSha256": "cae0cb3c139bc7ee492f08008e32b581ab3fcf699fc9ee38a587b624f9659da2",
+    "generatedCropSha256": "d2b74ba9950fda6d71ac497f0bd2c9019cff1eaa222a1cee4993be29728e377f",
+    "method": "image_gen reference edit; rectangular crop and lossless encoding only; no warping or alpha edits",
+    "review": "Parallel 2/3 top and cardinal face; equal far/near rectangular widths; preserve original materials, motifs and intentional curved shapes."
+  },
+  {
+    "id": "collection-showroom-retrofuture-counter",
+    "facing": "east",
+    "file": "counter-18-cae0cb3c139b.webp",
+    "width": 1024,
+    "height": 1536,
+    "x": 672,
+    "y": 1074,
+    "w": 180,
+    "h": 437,
+    "draw": {
+      "x": 7.011070124463004e-08,
+      "y": 0,
+      "w": 77.7859778597786,
+      "h": 170.0
+    },
+    "source": {
+      "file": "town/assets/apartment-collections/showroom-retrofuture-east-cardinal-45053d1690cb.webp",
+      "crop": {
+        "x": 228,
+        "y": 4,
+        "w": 248,
+        "h": 542
+      },
+      "frame": {
+        "slot": "counter",
+        "x": 228,
+        "y": 4,
+        "w": 248,
+        "h": 542,
+        "digest": "636c43f9f107d3a55a3afbd830cc8eacf0f66102e234ba0aa98dbba319103cc8",
+        "viewWidth": 77.785978,
+        "viewHeight": 170,
+        "footCenter": [
+          0.5,
+          0.647059
+        ],
+        "cell": {
+          "x": 228,
+          "y": 4,
+          "w": 248,
+          "h": 542
+        }
+      },
+      "sha256": "636c43f9f107d3a55a3afbd830cc8eacf0f66102e234ba0aa98dbba319103cc8"
+    },
+    "generatedOriginal": "originals/counter-18-cae0cb3c139b.png",
+    "generatedSha256": "cae0cb3c139bc7ee492f08008e32b581ab3fcf699fc9ee38a587b624f9659da2",
+    "generatedCropSha256": "3d5e5185a3cffbfd0c4eb4a1b777b4f787fda3fe7daeed1c1b5c8fa4c0e29e57",
+    "method": "image_gen reference edit; rectangular crop and lossless encoding only; no warping or alpha edits",
+    "review": "Parallel 2/3 top and cardinal face; equal far/near rectangular widths; preserve original materials, motifs and intentional curved shapes."
+  },
+  {
+    "id": "collection-showroom-steampunk-counter",
+    "facing": "west",
+    "file": "counter-19-976df8f1ee79.webp",
+    "width": 1024,
+    "height": 1536,
+    "x": 177,
+    "y": 126,
+    "w": 149,
+    "h": 308,
+    "draw": {
+      "x": 0,
+      "y": 37.897435897435884,
+      "w": 84.0,
+      "h": 132.10256410256412
+    },
+    "source": {
+      "file": "town/assets/apartment-collections/showroom-steampunk-west-cardinal-ce95215b12e3.webp",
+      "crop": {
+        "x": 440,
+        "y": 877,
+        "w": 117,
+        "h": 184
+      },
+      "frame": {
+        "slot": "counter",
+        "x": 440,
+        "y": 877,
+        "w": 117,
+        "h": 184,
+        "digest": "2623dbd7e365caf63d1eced400d3ff2b5a3ff048282cf56af77e7c8aeaae0e94",
+        "viewWidth": 84,
+        "viewHeight": 170,
+        "footCenter": [
+          0.5,
+          0.545807
+        ],
+        "cell": {
+          "x": 440,
+          "y": 877,
+          "w": 117,
+          "h": 184
+        }
+      },
+      "sha256": "2623dbd7e365caf63d1eced400d3ff2b5a3ff048282cf56af77e7c8aeaae0e94"
+    },
+    "generatedOriginal": "originals/counter-19-976df8f1ee79.png",
+    "generatedSha256": "976df8f1ee79093f4c8563ea9ea8c867f6fd510c629fdcf9884f4529c8e8e5b1",
+    "generatedCropSha256": "48c9663b2bd889a1c182908da8aa1f71c895335eb9aa634ea9b57b26e20e86e4",
+    "method": "image_gen reference edit; rectangular crop and lossless encoding only; no warping or alpha edits",
+    "review": "Parallel 2/3 top and cardinal face; equal far/near rectangular widths; preserve original materials, motifs and intentional curved shapes."
+  },
+  {
+    "id": "collection-showroom-steampunk-counter",
+    "facing": "east",
+    "file": "counter-19-976df8f1ee79.webp",
+    "width": 1024,
+    "height": 1536,
+    "x": 697,
+    "y": 126,
+    "w": 150,
+    "h": 308,
+    "draw": {
+      "x": 0,
+      "y": 17.700934579439263,
+      "w": 84.0,
+      "h": 152.29906542056074
+    },
+    "source": {
+      "file": "town/assets/apartment-collections/showroom-steampunk-east-cardinal-c5bf7c106b93.webp",
+      "crop": {
+        "x": 1900,
+        "y": 513,
+        "w": 107,
+        "h": 194
+      },
+      "frame": {
+        "slot": "counter",
+        "x": 1900,
+        "y": 513,
+        "w": 107,
+        "h": 194,
+        "digest": "1d82eaba56bb3ed2c723af1634fffd7d302b3b142e751612a221a6d3cdcfb422",
+        "viewWidth": 84,
+        "viewHeight": 170,
+        "footCenter": [
+          0.5,
+          0.606038
+        ],
+        "cell": {
+          "x": 1900,
+          "y": 513,
+          "w": 107,
+          "h": 194
+        }
+      },
+      "sha256": "1d82eaba56bb3ed2c723af1634fffd7d302b3b142e751612a221a6d3cdcfb422"
+    },
+    "generatedOriginal": "originals/counter-19-976df8f1ee79.png",
+    "generatedSha256": "976df8f1ee79093f4c8563ea9ea8c867f6fd510c629fdcf9884f4529c8e8e5b1",
+    "generatedCropSha256": "7d195ecd0438a208458755c07d42cecf82c81676905d1771cc64700c727296e8",
+    "method": "image_gen reference edit; rectangular crop and lossless encoding only; no warping or alpha edits",
+    "review": "Parallel 2/3 top and cardinal face; equal far/near rectangular widths; preserve original materials, motifs and intentional curved shapes."
+  },
+  {
+    "id": "collection-showroom-art-deco-lounge-counter",
+    "facing": "west",
+    "file": "counter-19-976df8f1ee79.webp",
+    "width": 1024,
+    "height": 1536,
+    "x": 175,
+    "y": 609,
+    "w": 151,
+    "h": 315,
+    "draw": {
+      "x": 1.4804305045662076,
+      "y": 0,
+      "w": 69.08675799086758,
+      "h": 170.0
+    },
+    "source": {
+      "file": "town/assets/apartment-collections/showroom-art-deco-lounge-west-cardinal-1021d7e91d09.webp",
+      "crop": {
+        "x": 348,
+        "y": 587,
+        "w": 89,
+        "h": 219
+      },
+      "frame": {
+        "slot": "counter",
+        "x": 348,
+        "y": 587,
+        "w": 89,
+        "h": 219,
+        "digest": "2ffe9d690f733a511a3f14ee56ad7f557fde095a62dc4a6619bb572ef0a672ac",
+        "viewWidth": 72.047619,
+        "viewHeight": 170,
+        "footCenter": [
+          0.5,
+          0.6470590002332725
+        ],
+        "cell": {
+          "x": 348,
+          "y": 587,
+          "w": 89,
+          "h": 219
+        },
+        "sourceDigest": "83f9fafe99a77d6a9d047383325496b801a50c5011c4bda0f022b8d178b5fbfe",
+        "sourceFrame": {
+          "x": 288,
+          "y": 725,
+          "w": 89,
+          "h": 219
+        },
+        "artReview": "independent-browser-qa.json"
+      },
+      "sha256": "2ffe9d690f733a511a3f14ee56ad7f557fde095a62dc4a6619bb572ef0a672ac"
+    },
+    "generatedOriginal": "originals/counter-19-976df8f1ee79.png",
+    "generatedSha256": "976df8f1ee79093f4c8563ea9ea8c867f6fd510c629fdcf9884f4529c8e8e5b1",
+    "generatedCropSha256": "f64239ef1a0713d7b6030d8fb19dc13e00e2f6ec859d8f51ed0385abaabf7c4f",
+    "method": "image_gen reference edit; rectangular crop and lossless encoding only; no warping or alpha edits",
+    "review": "Parallel 2/3 top and cardinal face; equal far/near rectangular widths; preserve original materials, motifs and intentional curved shapes."
+  },
+  {
+    "id": "collection-showroom-art-deco-lounge-counter",
+    "facing": "east",
+    "file": "counter-19-976df8f1ee79.webp",
+    "width": 1024,
+    "height": 1536,
+    "x": 698,
+    "y": 609,
+    "w": 150,
+    "h": 314,
+    "draw": {
+      "x": 1.5024630541871957,
+      "y": 0,
+      "w": 66.99507389162561,
+      "h": 170.0
+    },
+    "source": {
+      "file": "town/assets/apartment-collections/showroom-art-deco-lounge-east-cardinal-a7b1f99f7f56.webp",
+      "crop": {
+        "x": 635,
+        "y": 701,
+        "w": 80,
+        "h": 203
+      },
+      "frame": {
+        "slot": "counter",
+        "x": 635,
+        "y": 701,
+        "w": 80,
+        "h": 203,
+        "digest": "d0cdbb1095aab53f485766bbc6a826c559ae55e21c5a58f3f1dc4e5bc5eb2842",
+        "viewWidth": 70,
+        "viewHeight": 170,
+        "footCenter": [
+          0.5,
+          0.647059
+        ],
+        "cell": {
+          "x": 635,
+          "y": 701,
+          "w": 80,
+          "h": 203
+        }
+      },
+      "sha256": "d0cdbb1095aab53f485766bbc6a826c559ae55e21c5a58f3f1dc4e5bc5eb2842"
+    },
+    "generatedOriginal": "originals/counter-19-976df8f1ee79.png",
+    "generatedSha256": "976df8f1ee79093f4c8563ea9ea8c867f6fd510c629fdcf9884f4529c8e8e5b1",
+    "generatedCropSha256": "83cb4e6af209ab009cc02f4d89529d5b67c3a14cedea1e4bd0881659b2d96f9a",
+    "method": "image_gen reference edit; rectangular crop and lossless encoding only; no warping or alpha edits",
+    "review": "Parallel 2/3 top and cardinal face; equal far/near rectangular widths; preserve original materials, motifs and intentional curved shapes."
+  },
+  {
+    "id": "collection-showroom-botanical-conservatory-counter",
+    "facing": "west",
+    "file": "counter-19-976df8f1ee79.webp",
+    "width": 1024,
+    "height": 1536,
+    "x": 176,
+    "y": 1095,
+    "w": 148,
+    "h": 321,
+    "draw": {
+      "x": 0,
+      "y": 0,
+      "w": 70.0,
+      "h": 170.0
+    },
+    "source": {
+      "file": "town/assets/apartment-collections/showroom-botanical-conservatory-west-cardinal-f6a51245488c.webp",
+      "crop": {
+        "x": 1263,
+        "y": 917,
+        "w": 84,
+        "h": 204
+      },
+      "frame": {
+        "slot": "counter",
+        "x": 1263,
+        "y": 917,
+        "w": 84,
+        "h": 204,
+        "digest": "2699c8bcff5195ac36b81b5513ceb84ca09f50d1e7002431678440991fcebc41",
+        "viewWidth": 70,
+        "viewHeight": 170,
+        "footCenter": [
+          0.5,
+          0.647059
+        ],
+        "cell": {
+          "x": 1263,
+          "y": 917,
+          "w": 84,
+          "h": 204
+        }
+      },
+      "sha256": "2699c8bcff5195ac36b81b5513ceb84ca09f50d1e7002431678440991fcebc41"
+    },
+    "generatedOriginal": "originals/counter-19-976df8f1ee79.png",
+    "generatedSha256": "976df8f1ee79093f4c8563ea9ea8c867f6fd510c629fdcf9884f4529c8e8e5b1",
+    "generatedCropSha256": "7b51782c7d652945842551c433cf786f25389f7c1c39d109a6dc2c2607ba83b9",
+    "method": "image_gen reference edit; rectangular crop and lossless encoding only; no warping or alpha edits",
+    "review": "Parallel 2/3 top and cardinal face; equal far/near rectangular widths; preserve original materials, motifs and intentional curved shapes."
+  },
+  {
+    "id": "collection-showroom-botanical-conservatory-counter",
+    "facing": "east",
+    "file": "counter-19-976df8f1ee79.webp",
+    "width": 1024,
+    "height": 1536,
+    "x": 699,
+    "y": 1095,
+    "w": 137,
+    "h": 322,
+    "draw": {
+      "x": 6.529126213592235,
+      "y": 0,
+      "w": 56.94174757281553,
+      "h": 170.0
+    },
+    "source": {
+      "file": "town/assets/apartment-collections/showroom-botanical-conservatory-east-cardinal-57a23cfbd18e.webp",
+      "crop": {
+        "x": 1952,
+        "y": 1093,
+        "w": 69,
+        "h": 206
+      },
+      "frame": {
+        "slot": "counter",
+        "x": 1952,
+        "y": 1093,
+        "w": 69,
+        "h": 206,
+        "digest": "9272b7141f1aafad55bd5efcc7537b4f759657174cb49dfd66813edb9ae31c89",
+        "viewWidth": 70,
+        "viewHeight": 170,
+        "footCenter": [
+          0.5,
+          0.647059
+        ],
+        "cell": {
+          "x": 1952,
+          "y": 1093,
+          "w": 69,
+          "h": 206
+        }
+      },
+      "sha256": "9272b7141f1aafad55bd5efcc7537b4f759657174cb49dfd66813edb9ae31c89"
+    },
+    "generatedOriginal": "originals/counter-19-976df8f1ee79.png",
+    "generatedSha256": "976df8f1ee79093f4c8563ea9ea8c867f6fd510c629fdcf9884f4529c8e8e5b1",
+    "generatedCropSha256": "d124ab956ecf6e27a0ba507fb04e1ffd4673e3376bdf172a8f37a5068f7d4173",
+    "method": "image_gen reference edit; rectangular crop and lossless encoding only; no warping or alpha edits",
+    "review": "Parallel 2/3 top and cardinal face; equal far/near rectangular widths; preserve original materials, motifs and intentional curved shapes."
+  }
+]

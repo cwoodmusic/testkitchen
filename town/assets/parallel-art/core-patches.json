@@ -1,0 +1,931 @@
+{
+  "version": 1,
+  "projection": "Parallel 2/3; no vanishing point, equal near/far rectangular widths.",
+  "patches": [
+    {
+      "id": "furniture-2-180",
+      "facing": "south",
+      "file": "core-south.webp",
+      "width": 1536,
+      "height": 1024,
+      "x": 114,
+      "y": 20,
+      "w": 277,
+      "h": 470,
+      "draw": {
+        "x": 0,
+        "y": 0,
+        "w": 180,
+        "h": 256
+      },
+      "sourceBefore": {
+        "file": "town/assets/furniture.png",
+        "x": 908,
+        "y": 19,
+        "w": 268,
+        "h": 381
+      },
+      "generation": {
+        "tool": "image_gen",
+        "original": "originals/core-south.png",
+        "originalSHA256": "c8f683fc9b5e706b6c9689680fb70a16a5a9e9c7d56482043311a04fc51b7377",
+        "cell": [
+          0,
+          0,
+          512,
+          512
+        ],
+        "cropSHA256": "0a9bccf11e569bca7dba31fb08c33a23290e28eb4bb8ac69e2f5a0f5de042311"
+      },
+      "reason": "Redrawn rectangular planes in parallel 2/3 projection, retaining original materials and accessories."
+    },
+    {
+      "id": "furniture-3-180",
+      "facing": "south",
+      "file": "core-south.webp",
+      "width": 1536,
+      "height": 1024,
+      "x": 545,
+      "y": 74,
+      "w": 439,
+      "h": 378,
+      "draw": {
+        "x": 0,
+        "y": 0,
+        "w": 180,
+        "h": 142
+      },
+      "sourceBefore": {
+        "file": "town/assets/furniture.png",
+        "x": 12,
+        "y": 478,
+        "w": 403,
+        "h": 317
+      },
+      "generation": {
+        "tool": "image_gen",
+        "original": "originals/core-south.png",
+        "originalSHA256": "c8f683fc9b5e706b6c9689680fb70a16a5a9e9c7d56482043311a04fc51b7377",
+        "cell": [
+          512,
+          0,
+          1024,
+          512
+        ],
+        "cropSHA256": "2c13e10f0659c7a8b14d9ac3fc15ca184247d238c9efb1092e371eb166165139"
+      },
+      "reason": "Redrawn rectangular planes in parallel 2/3 projection, retaining original materials and accessories."
+    },
+    {
+      "id": "furniture-4-180",
+      "facing": "south",
+      "file": "core-south.webp",
+      "width": 1536,
+      "height": 1024,
+      "x": 1149,
+      "y": 42,
+      "w": 261,
+      "h": 427,
+      "draw": {
+        "x": 0,
+        "y": 0,
+        "w": 180,
+        "h": 217
+      },
+      "sourceBefore": {
+        "file": "town/assets/furniture.png",
+        "x": 415,
+        "y": 453,
+        "w": 323,
+        "h": 388
+      },
+      "generation": {
+        "tool": "image_gen",
+        "original": "originals/core-south.png",
+        "originalSHA256": "c8f683fc9b5e706b6c9689680fb70a16a5a9e9c7d56482043311a04fc51b7377",
+        "cell": [
+          1024,
+          0,
+          1536,
+          512
+        ],
+        "cropSHA256": "cc96d58913e3c367ca476475067514a19e2a33c5b1ca9f19117b335a0c512218"
+      },
+      "reason": "Redrawn rectangular planes in parallel 2/3 projection, retaining original materials and accessories."
+    },
+    {
+      "id": "furniture-5-180",
+      "facing": "south",
+      "file": "core-south.webp",
+      "width": 1536,
+      "height": 1024,
+      "x": 47,
+      "y": 535,
+      "w": 418,
+      "h": 444,
+      "draw": {
+        "x": 0,
+        "y": 0,
+        "w": 180,
+        "h": 173
+      },
+      "sourceBefore": {
+        "file": "town/assets/furniture.png",
+        "x": 846,
+        "y": 445,
+        "w": 376,
+        "h": 360
+      },
+      "generation": {
+        "tool": "image_gen",
+        "original": "originals/core-south.png",
+        "originalSHA256": "c8f683fc9b5e706b6c9689680fb70a16a5a9e9c7d56482043311a04fc51b7377",
+        "cell": [
+          0,
+          512,
+          512,
+          1024
+        ],
+        "cropSHA256": "11461d655f6f2c263de47a19b1cb929c4d2129cd7152fa284ef426b2f2e6f367"
+      },
+      "reason": "Redrawn rectangular planes in parallel 2/3 projection, retaining original materials and accessories."
+    },
+    {
+      "id": "furniture-7-180",
+      "facing": "south",
+      "file": "core-south.webp",
+      "width": 1536,
+      "height": 1024,
+      "x": 604,
+      "y": 531,
+      "w": 328,
+      "h": 461,
+      "draw": {
+        "x": 0,
+        "y": 0,
+        "w": 180,
+        "h": 234
+      },
+      "sourceBefore": {
+        "file": "town/assets/furniture.png",
+        "x": 466,
+        "y": 841,
+        "w": 311,
+        "h": 403
+      },
+      "generation": {
+        "tool": "image_gen",
+        "original": "originals/core-south.png",
+        "originalSHA256": "c8f683fc9b5e706b6c9689680fb70a16a5a9e9c7d56482043311a04fc51b7377",
+        "cell": [
+          512,
+          512,
+          1024,
+          1024
+        ],
+        "cropSHA256": "0fd4fe88d5c36a8d53a22273be46a7e5fc3ce485283b1c9dfe4199c80a5c80f1"
+      },
+      "reason": "Redrawn rectangular planes in parallel 2/3 projection, retaining original materials and accessories."
+    },
+    {
+      "id": "furniture-8-180",
+      "facing": "south",
+      "file": "core-south.webp",
+      "width": 1536,
+      "height": 1024,
+      "x": 1112,
+      "y": 525,
+      "w": 328,
+      "h": 469,
+      "draw": {
+        "x": 0,
+        "y": 0,
+        "w": 180,
+        "h": 244
+      },
+      "sourceBefore": {
+        "file": "town/assets/furniture.png",
+        "x": 891,
+        "y": 843,
+        "w": 289,
+        "h": 391
+      },
+      "generation": {
+        "tool": "image_gen",
+        "original": "originals/core-south.png",
+        "originalSHA256": "c8f683fc9b5e706b6c9689680fb70a16a5a9e9c7d56482043311a04fc51b7377",
+        "cell": [
+          1024,
+          512,
+          1536,
+          1024
+        ],
+        "cropSHA256": "7e126dc5a58bbf84fd95287a82e3db2710a4e72a1534fdf065c12159835252c3"
+      },
+      "reason": "Redrawn rectangular planes in parallel 2/3 projection, retaining original materials and accessories."
+    },
+    {
+      "id": "furniture-0-180",
+      "facing": "south",
+      "file": "piano-stages.webp",
+      "width": 2172,
+      "height": 724,
+      "x": 123,
+      "y": 48,
+      "w": 444,
+      "h": 639,
+      "draw": {
+        "x": 0,
+        "y": 0,
+        "w": 180,
+        "h": 221
+      },
+      "sourceBefore": {
+        "file": "town/assets/furniture.png",
+        "x": 41,
+        "y": 23,
+        "w": 320,
+        "h": 392
+      },
+      "generation": {
+        "tool": "image_gen",
+        "original": "originals/piano-stages.png",
+        "originalSHA256": "92804ac19ed3816f95d2ee6448e8c3aedc529a29b07d237cdf8f0fc21c72b311",
+        "cell": [
+          0,
+          0,
+          724,
+          724
+        ],
+        "cropSHA256": "a68050df4a37ef60666e87b0d9971fe72b9c43b72046971e30575aa87683d03a"
+      },
+      "reason": "Redrawn rectangular planes in parallel 2/3 projection, retaining original materials and accessories."
+    },
+    {
+      "id": "decor-13-01",
+      "facing": "south",
+      "file": "piano-stages.webp",
+      "width": 2172,
+      "height": 724,
+      "x": 828,
+      "y": 102,
+      "w": 516,
+      "h": 533,
+      "draw": {
+        "x": 0,
+        "y": 0,
+        "w": 176,
+        "h": 147
+      },
+      "sourceBefore": {
+        "file": "town/assets/decor/pack-13.png",
+        "x": 29,
+        "y": 12,
+        "w": 306,
+        "h": 255
+      },
+      "generation": {
+        "tool": "image_gen",
+        "original": "originals/piano-stages.png",
+        "originalSHA256": "92804ac19ed3816f95d2ee6448e8c3aedc529a29b07d237cdf8f0fc21c72b311",
+        "cell": [
+          724,
+          0,
+          1448,
+          724
+        ],
+        "cropSHA256": "65f8aa5431b87a991c66b7ab7756a670ba2e733f148809ab5f861b245bfe58ef"
+      },
+      "reason": "Redrawn rectangular planes in parallel 2/3 projection, retaining original materials and accessories."
+    },
+    {
+      "id": "decor-13-03",
+      "facing": "south",
+      "file": "piano-stages.webp",
+      "width": 2172,
+      "height": 724,
+      "x": 1541,
+      "y": 128,
+      "w": 538,
+      "h": 507,
+      "draw": {
+        "x": 0,
+        "y": 0,
+        "w": 176,
+        "h": 120
+      },
+      "sourceBefore": {
+        "file": "town/assets/decor/pack-13.png",
+        "x": 750,
+        "y": 49,
+        "w": 311,
+        "h": 211
+      },
+      "generation": {
+        "tool": "image_gen",
+        "original": "originals/piano-stages.png",
+        "originalSHA256": "92804ac19ed3816f95d2ee6448e8c3aedc529a29b07d237cdf8f0fc21c72b311",
+        "cell": [
+          1448,
+          0,
+          2172,
+          724
+        ],
+        "cropSHA256": "a42d8bd914ad6b0f233a1e6e9c6017ae71e53fe7a15de25fa027b73b78a89434"
+      },
+      "reason": "Redrawn rectangular planes in parallel 2/3 projection, retaining original materials and accessories."
+    },
+    {
+      "id": "furniture-3-180",
+      "facing": "west",
+      "file": "core-counter-stove.webp",
+      "width": 1536,
+      "height": 1024,
+      "x": 188,
+      "y": 100,
+      "w": 132,
+      "h": 320,
+      "draw": {
+        "x": 3.059360764723351e-07,
+        "y": 0.0,
+        "w": 106.62923038812785,
+        "h": 231.205955
+      },
+      "sourceBefore": {
+        "file": "town/assets/furniture-facings/legacy-01-west-cardinal-082f88184db1.webp",
+        "x": 1196,
+        "y": 464,
+        "w": 101,
+        "h": 219
+      },
+      "generation": {
+        "tool": "image_gen",
+        "original": "originals/core-counter-stove.png",
+        "originalSHA256": "7cb3cd85a245a72abc54bf0d5a34c056c783524895f0782f96653f9d1873388e",
+        "cell": [
+          0,
+          0,
+          512,
+          512
+        ],
+        "cropSHA256": "ff02bf64652cb4fda0853d271bc78da5a71d869db0a0b2c455ceb23e6947d0a8"
+      },
+      "reason": "Redrawn rectangular planes in parallel 2/3 projection, retaining original materials and accessories."
+    },
+    {
+      "id": "furniture-3-180",
+      "facing": "north",
+      "file": "core-counter-stove.webp",
+      "width": 1536,
+      "height": 1024,
+      "x": 621,
+      "y": 134,
+      "w": 293,
+      "h": 253,
+      "draw": {
+        "x": 6.0909090909090935,
+        "y": 0.0,
+        "w": 167.8181818181818,
+        "h": 142.0
+      },
+      "sourceBefore": {
+        "file": "town/assets/furniture-facings/legacy-01-north.webp",
+        "x": 224,
+        "y": 798,
+        "w": 195,
+        "h": 165
+      },
+      "generation": {
+        "tool": "image_gen",
+        "original": "originals/core-counter-stove.png",
+        "originalSHA256": "7cb3cd85a245a72abc54bf0d5a34c056c783524895f0782f96653f9d1873388e",
+        "cell": [
+          512,
+          0,
+          1024,
+          512
+        ],
+        "cropSHA256": "8a92e77d34eed3d2a67688de2166a75a9e3b8590e6e8bce1a0be8ae026352305"
+      },
+      "reason": "Redrawn rectangular planes in parallel 2/3 projection, retaining original materials and accessories."
+    },
+    {
+      "id": "furniture-3-180",
+      "facing": "east",
+      "file": "core-counter-stove.webp",
+      "width": 1536,
+      "height": 1024,
+      "x": 1196,
+      "y": 104,
+      "w": 144,
+      "h": 316,
+      "draw": {
+        "x": 0.0,
+        "y": 28.591875631578915,
+        "w": 108.952854,
+        "h": 202.61407936842107
+      },
+      "sourceBefore": {
+        "file": "town/assets/furniture-facings/legacy-01-east-cardinal-94e48e6b5c5a.webp",
+        "x": 1435,
+        "y": 454,
+        "w": 114,
+        "h": 212
+      },
+      "generation": {
+        "tool": "image_gen",
+        "original": "originals/core-counter-stove.png",
+        "originalSHA256": "7cb3cd85a245a72abc54bf0d5a34c056c783524895f0782f96653f9d1873388e",
+        "cell": [
+          1024,
+          0,
+          1536,
+          512
+        ],
+        "cropSHA256": "46c039cbd6b46619e94989f3d66d71a98c58a314413eeaa710a9a4abca4fadf6"
+      },
+      "reason": "Redrawn rectangular planes in parallel 2/3 projection, retaining original materials and accessories."
+    },
+    {
+      "id": "furniture-4-180",
+      "facing": "west",
+      "file": "core-counter-stove.webp",
+      "width": 1536,
+      "height": 1024,
+      "x": 177,
+      "y": 614,
+      "w": 148,
+      "h": 308,
+      "draw": {
+        "x": 0.0,
+        "y": 1.5596333469147794e-07,
+        "w": 138.249299,
+        "h": 268.8885448440367
+      },
+      "sourceBefore": {
+        "file": "town/assets/furniture-facings/legacy-01-west-cardinal-082f88184db1.webp",
+        "x": 1676,
+        "y": 464,
+        "w": 109,
+        "h": 212
+      },
+      "generation": {
+        "tool": "image_gen",
+        "original": "originals/core-counter-stove.png",
+        "originalSHA256": "7cb3cd85a245a72abc54bf0d5a34c056c783524895f0782f96653f9d1873388e",
+        "cell": [
+          0,
+          512,
+          512,
+          1024
+        ],
+        "cropSHA256": "e096d7919ab63c8d1b4dabde48235569437e47f5fc06043683131ab943a485b0"
+      },
+      "reason": "Redrawn rectangular planes in parallel 2/3 projection, retaining original materials and accessories."
+    },
+    {
+      "id": "furniture-4-180",
+      "facing": "north",
+      "file": "core-counter-stove.webp",
+      "width": 1536,
+      "height": 1024,
+      "x": 667,
+      "y": 623,
+      "w": 201,
+      "h": 294,
+      "draw": {
+        "x": 13.05357142857143,
+        "y": 0.0,
+        "w": 153.89285714285714,
+        "h": 217.0
+      },
+      "sourceBefore": {
+        "file": "town/assets/furniture-facings/legacy-01-north.webp",
+        "x": 4,
+        "y": 223,
+        "w": 139,
+        "h": 196
+      },
+      "generation": {
+        "tool": "image_gen",
+        "original": "originals/core-counter-stove.png",
+        "originalSHA256": "7cb3cd85a245a72abc54bf0d5a34c056c783524895f0782f96653f9d1873388e",
+        "cell": [
+          512,
+          512,
+          1024,
+          1024
+        ],
+        "cropSHA256": "4f9b36d97ac6d87324d228ceeae1bad4783fe8804fec4b065915b566d595da2e"
+      },
+      "reason": "Redrawn rectangular planes in parallel 2/3 projection, retaining original materials and accessories."
+    },
+    {
+      "id": "furniture-4-180",
+      "facing": "east",
+      "file": "core-counter-stove.webp",
+      "width": 1536,
+      "height": 1024,
+      "x": 1209,
+      "y": 615,
+      "w": 151,
+      "h": 307,
+      "draw": {
+        "x": 0.0,
+        "y": 6.000000212225132e-07,
+        "w": 144.988921,
+        "h": 268.8885444
+      },
+      "sourceBefore": {
+        "file": "town/assets/furniture-facings/legacy-01-east-cardinal-94e48e6b5c5a.webp",
+        "x": 1924,
+        "y": 454,
+        "w": 110,
+        "h": 204
+      },
+      "generation": {
+        "tool": "image_gen",
+        "original": "originals/core-counter-stove.png",
+        "originalSHA256": "7cb3cd85a245a72abc54bf0d5a34c056c783524895f0782f96653f9d1873388e",
+        "cell": [
+          1024,
+          512,
+          1536,
+          1024
+        ],
+        "cropSHA256": "4a5518cd7e353073ce0d8acfdcf1a34bfed6fa109297469e75b1c2ceebc21edd"
+      },
+      "reason": "Redrawn rectangular planes in parallel 2/3 projection, retaining original materials and accessories."
+    },
+    {
+      "id": "furniture-5-180",
+      "facing": "west",
+      "file": "core-table-shower.webp",
+      "width": 1536,
+      "height": 1024,
+      "x": 189,
+      "y": 102,
+      "w": 128,
+      "h": 355,
+      "draw": {
+        "x": 0.0,
+        "y": 4.0425530301035906e-07,
+        "w": 110.485714,
+        "h": 246.8297865957447
+      },
+      "sourceBefore": {
+        "file": "town/assets/furniture-facings/legacy-01-west-cardinal-082f88184db1.webp",
+        "x": 4,
+        "y": 872,
+        "w": 94,
+        "h": 210
+      },
+      "generation": {
+        "tool": "image_gen",
+        "original": "originals/core-table-shower.png",
+        "originalSHA256": "11ead33d8f7521b9707685f07885b5a9f2bfba4fbd5eaf3c939b191cf68c2527",
+        "cell": [
+          0,
+          0,
+          512,
+          512
+        ],
+        "cropSHA256": "53ef70a73a3b72c2e28e2adcfe9f16bca0312d9466de3fea94d12660b00123f1"
+      },
+      "reason": "Redrawn rectangular planes in parallel 2/3 projection, retaining original materials and accessories."
+    },
+    {
+      "id": "furniture-5-180",
+      "facing": "north",
+      "file": "core-table-shower.webp",
+      "width": 1536,
+      "height": 1024,
+      "x": 622,
+      "y": 90,
+      "w": 291,
+      "h": 363,
+      "draw": {
+        "x": 9.937209302325584,
+        "y": 0.0,
+        "w": 160.12558139534883,
+        "h": 173.0
+      },
+      "sourceBefore": {
+        "file": "town/assets/furniture-facings/legacy-01-north.webp",
+        "x": 4,
+        "y": 4,
+        "w": 199,
+        "h": 215
+      },
+      "generation": {
+        "tool": "image_gen",
+        "original": "originals/core-table-shower.png",
+        "originalSHA256": "11ead33d8f7521b9707685f07885b5a9f2bfba4fbd5eaf3c939b191cf68c2527",
+        "cell": [
+          512,
+          0,
+          1024,
+          512
+        ],
+        "cropSHA256": "9702646ceb6c95d70efb9cfd299d0d3ac895da2a5e285985a28d9ba9cce9f827"
+      },
+      "reason": "Redrawn rectangular planes in parallel 2/3 projection, retaining original materials and accessories."
+    },
+    {
+      "id": "furniture-5-180",
+      "facing": "east",
+      "file": "core-table-shower.webp",
+      "width": 1536,
+      "height": 1024,
+      "x": 1220,
+      "y": 102,
+      "w": 127,
+      "h": 355,
+      "draw": {
+        "x": -7.105427357601002e-15,
+        "y": 7.777777568662714e-07,
+        "w": 115.26485300000002,
+        "h": 246.82978622222225
+      },
+      "sourceBefore": {
+        "file": "town/assets/furniture-facings/legacy-01-east-cardinal-94e48e6b5c5a.webp",
+        "x": 1553,
+        "y": 454,
+        "w": 99,
+        "h": 212
+      },
+      "generation": {
+        "tool": "image_gen",
+        "original": "originals/core-table-shower.png",
+        "originalSHA256": "11ead33d8f7521b9707685f07885b5a9f2bfba4fbd5eaf3c939b191cf68c2527",
+        "cell": [
+          1024,
+          0,
+          1536,
+          512
+        ],
+        "cropSHA256": "67de456938e304d2486ac3ffd7774fe1116c5f48adfbca158f2c84bf61efaa0d"
+      },
+      "reason": "Redrawn rectangular planes in parallel 2/3 projection, retaining original materials and accessories."
+    },
+    {
+      "id": "furniture-7-180",
+      "facing": "west",
+      "file": "core-table-shower.webp",
+      "width": 1536,
+      "height": 1024,
+      "x": 176,
+      "y": 572,
+      "w": 159,
+      "h": 374,
+      "draw": {
+        "x": 0.0,
+        "y": 5.517241561392439e-07,
+        "w": 151.771886,
+        "h": 277.37620544827587
+      },
+      "sourceBefore": {
+        "file": "town/assets/furniture-facings/legacy-01-west-cardinal-082f88184db1.webp",
+        "x": 1789,
+        "y": 464,
+        "w": 116,
+        "h": 212
+      },
+      "generation": {
+        "tool": "image_gen",
+        "original": "originals/core-table-shower.png",
+        "originalSHA256": "11ead33d8f7521b9707685f07885b5a9f2bfba4fbd5eaf3c939b191cf68c2527",
+        "cell": [
+          0,
+          512,
+          512,
+          1024
+        ],
+        "cropSHA256": "2c6fbbd148d8e11c35c20e3361fa86caa3d6d994a8d177d590edb8982c1a5858"
+      },
+      "reason": "Redrawn rectangular planes in parallel 2/3 projection, retaining original materials and accessories."
+    },
+    {
+      "id": "furniture-7-180",
+      "facing": "north",
+      "file": "core-table-shower.webp",
+      "width": 1536,
+      "height": 1024,
+      "x": 651,
+      "y": 572,
+      "w": 234,
+      "h": 374,
+      "draw": {
+        "x": 0.0,
+        "y": 14.113636363636374,
+        "w": 180.0,
+        "h": 219.88636363636363
+      },
+      "sourceBefore": {
+        "file": "town/assets/furniture-facings/legacy-01-north.webp",
+        "x": 207,
+        "y": 4,
+        "w": 176,
+        "h": 215
+      },
+      "generation": {
+        "tool": "image_gen",
+        "original": "originals/core-table-shower.png",
+        "originalSHA256": "11ead33d8f7521b9707685f07885b5a9f2bfba4fbd5eaf3c939b191cf68c2527",
+        "cell": [
+          512,
+          512,
+          1024,
+          1024
+        ],
+        "cropSHA256": "cfa7c549569114757d3cb5f660f8955ccdd3e7b5666b97b85bda9e28671b23d1"
+      },
+      "reason": "Redrawn rectangular planes in parallel 2/3 projection, retaining original materials and accessories."
+    },
+    {
+      "id": "furniture-7-180",
+      "facing": "east",
+      "file": "core-table-shower.webp",
+      "width": 1536,
+      "height": 1024,
+      "x": 1197,
+      "y": 572,
+      "w": 163,
+      "h": 374,
+      "draw": {
+        "x": 9.80392655947071e-09,
+        "y": 0.0,
+        "w": 157.72372498039215,
+        "h": 277.376206
+      },
+      "sourceBefore": {
+        "file": "town/assets/furniture-facings/legacy-01-east-cardinal-94e48e6b5c5a.webp",
+        "x": 4,
+        "y": 851,
+        "w": 116,
+        "h": 204
+      },
+      "generation": {
+        "tool": "image_gen",
+        "original": "originals/core-table-shower.png",
+        "originalSHA256": "11ead33d8f7521b9707685f07885b5a9f2bfba4fbd5eaf3c939b191cf68c2527",
+        "cell": [
+          1024,
+          512,
+          1536,
+          1024
+        ],
+        "cropSHA256": "69d62b33778bf9b1d0b73161ec3efc58eb400bbe0d7e7dd137f2599d2edec693"
+      },
+      "reason": "Redrawn rectangular planes in parallel 2/3 projection, retaining original materials and accessories."
+    },
+    {
+      "id": "furniture-8-180",
+      "facing": "west",
+      "file": "core-vanity-bed.webp",
+      "width": 1536,
+      "height": 1024,
+      "x": 157,
+      "y": 97,
+      "w": 163,
+      "h": 332,
+      "draw": {
+        "x": 1.2037037322443211e-07,
+        "y": 0.0,
+        "w": 143.73093675925927,
+        "h": 282.235294
+      },
+      "sourceBefore": {
+        "file": "town/assets/furniture-facings/legacy-01-west-cardinal-082f88184db1.webp",
+        "x": 1431,
+        "y": 464,
+        "w": 110,
+        "h": 216
+      },
+      "generation": {
+        "tool": "image_gen",
+        "original": "originals/core-vanity-bed.png",
+        "originalSHA256": "29e31108308fe037d681421650fe64a335cafef809e5a82100f6188c59212e6b",
+        "cell": [
+          0,
+          0,
+          512,
+          512
+        ],
+        "cropSHA256": "51d881908c09af8a5b6716b4f504531147bd0a1facd0054b2552e0bdd06f4d3f"
+      },
+      "reason": "Redrawn rectangular planes in parallel 2/3 projection, retaining original materials and accessories."
+    },
+    {
+      "id": "furniture-8-180",
+      "facing": "north",
+      "file": "core-vanity-bed.webp",
+      "width": 1536,
+      "height": 1024,
+      "x": 618,
+      "y": 99,
+      "w": 282,
+      "h": 329,
+      "draw": {
+        "x": 0.0,
+        "y": 36.696629213483135,
+        "w": 180.0,
+        "h": 207.30337078651687
+      },
+      "sourceBefore": {
+        "file": "town/assets/furniture-facings/legacy-01-north.webp",
+        "x": 387,
+        "y": 4,
+        "w": 178,
+        "h": 205
+      },
+      "generation": {
+        "tool": "image_gen",
+        "original": "originals/core-vanity-bed.png",
+        "originalSHA256": "29e31108308fe037d681421650fe64a335cafef809e5a82100f6188c59212e6b",
+        "cell": [
+          512,
+          0,
+          1024,
+          512
+        ],
+        "cropSHA256": "af01672473d1e4ddf823870b989bf8495e415016d09b433d758682434091a21d"
+      },
+      "reason": "Redrawn rectangular planes in parallel 2/3 projection, retaining original materials and accessories."
+    },
+    {
+      "id": "furniture-8-180",
+      "facing": "east",
+      "file": "core-vanity-bed.webp",
+      "width": 1536,
+      "height": 1024,
+      "x": 1174,
+      "y": 97,
+      "w": 195,
+      "h": 333,
+      "draw": {
+        "x": 4.716980583907571e-08,
+        "y": 0.0,
+        "w": 162.41842390566038,
+        "h": 282.235294
+      },
+      "sourceBefore": {
+        "file": "town/assets/furniture-facings/legacy-01-east-cardinal-94e48e6b5c5a.webp",
+        "x": 1656,
+        "y": 454,
+        "w": 122,
+        "h": 212
+      },
+      "generation": {
+        "tool": "image_gen",
+        "original": "originals/core-vanity-bed.png",
+        "originalSHA256": "29e31108308fe037d681421650fe64a335cafef809e5a82100f6188c59212e6b",
+        "cell": [
+          1024,
+          0,
+          1536,
+          512
+        ],
+        "cropSHA256": "c3416469ab3094cfff71e285d4e2db1eba3d865338f9fbb2e113a7e660812ef8"
+      },
+      "reason": "Redrawn rectangular planes in parallel 2/3 projection, retaining original materials and accessories."
+    },
+    {
+      "id": "furniture-2-180",
+      "facing": "north",
+      "file": "core-vanity-bed.webp",
+      "width": 1536,
+      "height": 1024,
+      "x": 110,
+      "y": 620,
+      "w": 275,
+      "h": 325,
+      "draw": {
+        "x": -1.4210854715202004e-14,
+        "y": 49.37278106508873,
+        "w": 180.00000000000003,
+        "h": 206.62721893491127
+      },
+      "sourceBefore": {
+        "file": "town/assets/furniture-facings/legacy-01-north.webp",
+        "x": 147,
+        "y": 223,
+        "w": 169,
+        "h": 194
+      },
+      "generation": {
+        "tool": "image_gen",
+        "original": "originals/core-vanity-bed.png",
+        "originalSHA256": "29e31108308fe037d681421650fe64a335cafef809e5a82100f6188c59212e6b",
+        "cell": [
+          0,
+          512,
+          512,
+          1024
+        ],
+        "cropSHA256": "e92ff1b0385cf13087b12b391522ff5b58e499dc14097c00150d09fb4427e75f"
+      },
+      "reason": "Redrawn rectangular planes in parallel 2/3 projection, retaining original materials and accessories."
+    }
+  ]
+}

@@ -3,15 +3,31 @@ export {HOME_MATERIAL_SUITES,getHomeMaterialSuite,applyHomeMaterialSuite,fitComp
 // Seam-safe authored tiles are decoded once into ImageBitmap. The completed
 // room background owns all subsequent material painting, including its grain.
 const images=new Map();
-function request(file){
+function request(file,{retryFailed=false}={}){
  if(!file||typeof document==='undefined'||typeof createImageBitmap!=='function')return null;
- let state=images.get(file);if(state)return state;
+ let state=images.get(file);
+ const retry=Boolean(retryFailed&&state?.error);
+ if(state&&!retry)return state;
  state={image:null,error:null,promise:null};images.set(file,state);
  const url=new URL('../assets/home-materials/'+file,import.meta.url);url.search=new URL(import.meta.url).search;
- state.promise=fetch(url).then(response=>{if(!response.ok)throw Error('Material '+response.status);return response.blob();}).then(blob=>createImageBitmap(blob)).then(image=>{state.image=image;return image;}).catch(error=>{state.error=error;return null;});
+ state.promise=Promise.resolve().then(()=>fetch(url,retry?{cache:'reload'}:undefined)).then(response=>{if(!response.ok)throw Error('Material '+response.status);return response.blob();}).then(blob=>createImageBitmap(blob)).then(image=>{state.image=image;return image;}).catch(error=>{state.error=error;return null;});
  return state;
 }
 export function warmHomeMaterials(suite){if(!suite)return Promise.resolve();return Promise.all([...suite.assets,suite.decorativeRugTexture].filter(Boolean).map(file=>request(file)?.promise)).then(()=>{});}
+
+/** Review preparation is strict; game warmups keep their existing fallback. */
+export async function prepareHomeMaterialFinish(finish,kind,{retryFailed=false}={}){
+ if(!finish?.homeMaterial)return;
+ const files=[];
+ if(!finish.surfaceStyle&&finish.texture)files.push(finish.texture);
+ if(kind==='wall'&&finish.trimTexture&&finish.trimPresentation?.style!=='complete-scroll')files.push(finish.trimTexture);
+ await Promise.all([...new Set(files)].map(async file=>{
+  const state=request(file,{retryFailed});
+  if(!state)throw Error('Native material decoding is unavailable: '+file);
+  await state.promise;
+  if(!state.image)throw Error('Could not load material '+file+': '+(state.error?.message||'Artwork unavailable'));
+ }));
+}
 export const getHomeMaterialCacheStats=()=>({textures:images.size,ready:[...images.values()].filter(state=>state.image).length,pixels:[...images.values()].reduce((n,state)=>n+(state.image?state.image.width*state.image.height:0),0)});
 const px=(c,x,y,w,h,color)=>{c.fillStyle=color;c.fillRect(Math.round(x),Math.round(y),Math.round(w),Math.round(h));};
 const surfaceTiles=new Map();

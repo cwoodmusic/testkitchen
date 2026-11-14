@@ -1,6 +1,6 @@
 import {residents} from './resident-profiles.mjs?v=opera-parallax-1';
 import {interiorActorScale} from './interior-scale.mjs?v=opera-parallax-1';
-import {getInterior} from './urban-interiors.mjs?v=town-room-floorplan-1';
+import {getInterior} from './urban-interiors.mjs?v=town-library-review-1';
 import {getApartmentNavigation} from './apartment-navigation.mjs?v=town-room-floorplan-1';
 export {residents} from './resident-profiles.mjs?v=opera-parallax-1';
 

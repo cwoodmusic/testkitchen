@@ -42,7 +42,7 @@ export async function registerLeisure(catalog){
   a.draw=drawNative;
   // Keep the original source getter independent of optional facing previews.
   // A corrected South draw must never repaint this preserved native canvas.
-  Object.defineProperty(a,'canvas',{get(){
+  Object.defineProperty(a,'canvas',{configurable:true,get(){
    const source=full.get(s.family)||thumbs.get(s.family);
    if(!full.has(s.family))ensure(s).catch(()=>{});
    if(!cached||source!==cacheSource){cached=document.createElement('canvas');cached.width=w;cached.height=h;drawNative(cached.getContext('2d'));cacheSource=source;}

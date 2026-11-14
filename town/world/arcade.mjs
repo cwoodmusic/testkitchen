@@ -2,4 +2,14 @@ import {arcadeFootprint,ARCADE_WALL,ARCADE_INTERIOR_SCALE,arcadeNativeSize,arcad
 export {arcadeFootprint,ARCADE_WALL,ARCADE_INTERIOR_SCALE,arcadeNativeSize,arcadeGeometry,arcadeFrontAtX} from './arcade-geometry.mjs?v=opera-parallax-1';
 export const arcadeImage=await new Promise((resolve,reject)=>{const image=new Image();image.onload=()=>resolve(image);image.onerror=()=>reject(Error('Coda Arcade exterior failed to load'));image.src=new URL('../assets/coda-arcade-exterior.png',import.meta.url);});
 let composed;
-export function drawArcade(c){if(!composed){composed=document.createElement('canvas');composed.width=arcadeNativeSize.w;composed.height=arcadeNativeSize.h;const g=composed.getContext('2d'),mask=document.createElement('canvas');mask.width=composed.width;mask.height=composed.height;const m=mask.getContext('2d');m.fillStyle='white';for(const p of arcadeFootprint.floorPolys){for(const offset of [-80,0,ARCADE_WALL]){m.beginPath();m.moveTo(p[0][0],p[0][1]+offset);for(const[x,y]of p)m.lineTo(x,y+offset);m.closePath();m.fill();}for(let i=0;i<p.length;i++){const[x,y]=p[i],[xx,yy]=p[(i+1)%p.length];m.beginPath();m.moveTo(x,y);m.lineTo(xx,yy);m.lineTo(xx,yy+ARCADE_WALL);m.lineTo(x,y+ARCADE_WALL);m.closePath();m.fill();}}g.drawImage(arcadeImage,0,156,arcadeNativeSize.w,arcadeFootprint.height-156);g.globalCompositeOperation='destination-in';g.drawImage(mask,0,0);mask.width=mask.height=1;}c.save();c.imageSmoothingEnabled=false;c.scale(ARCADE_INTERIOR_SCALE,ARCADE_INTERIOR_SCALE);c.drawImage(composed,0,0);c.restore();}
+export function drawArcade(c){
+ if(!composed){
+  composed=document.createElement('canvas');composed.width=arcadeNativeSize.w;composed.height=arcadeNativeSize.h;
+  // Cornices and exterior walls overhang the interior floor union. Using that
+  // union as an image mask sliced through the intact right facade and lounge.
+  // The exact walkable polygons, entrance and actor sorting stay independent
+  // of the authored exterior silhouette.
+  composed.getContext('2d').drawImage(arcadeImage,0,156,arcadeNativeSize.w,arcadeFootprint.height-156);
+ }
+ c.save();c.imageSmoothingEnabled=false;c.scale(ARCADE_INTERIOR_SCALE,ARCADE_INTERIOR_SCALE);c.drawImage(composed,0,0);c.restore();
+}

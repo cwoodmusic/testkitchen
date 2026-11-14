@@ -6,8 +6,10 @@ export const MUSIC_WALL_SCALE=2400/1536;
 export const MUSIC_WALL_HEIGHT=52*MUSIC_WALL_SCALE;
 export const MUSIC_WALL_WIDTH=29*MUSIC_WALL_SCALE;
 export const musicWallDonors=Object.freeze({
- horizontal:Object.freeze({x:302,y:44,w:176,h:52}),
- vertical:Object.freeze({x:33,y:112,w:29,h:228}),
+ // Sample only the intact stone. The old bounds included clipped foliage at
+ // the cap and either edge, repeating green fragments along every wall bay.
+ horizontal:Object.freeze({x:318,y:46,w:155,h:49}),
+ vertical:Object.freeze({x:35,y:112,w:26,h:228}),
  post:Object.freeze({x:900,y:16,w:53,h:90,anchorX:925,anchorY:96})
 });
 let squareImage=null,gateImage=null;
@@ -21,7 +23,7 @@ function horizontal(c,length){
  for(let x=0;x<length;x+=bay){const n=Math.min(bay,length-x);piece(c,squareImage,r.x,r.y,n/MUSIC_WALL_SCALE,r.h,x,-MUSIC_WALL_HEIGHT,n,MUSIC_WALL_HEIGHT);}
 }
 function vertical(c,length){
- const r=musicWallDonors.vertical,bay=r.h*MUSIC_WALL_SCALE,left=(r.x-48)*MUSIC_WALL_SCALE;
+ const r=musicWallDonors.vertical,bay=r.h*MUSIC_WALL_SCALE,left=-15*MUSIC_WALL_SCALE;
  for(let y=0;y<length;y+=bay){const n=Math.min(bay,length-y);piece(c,squareImage,r.x,r.y,r.w,n/MUSIC_WALL_SCALE,left,y,MUSIC_WALL_WIDTH,n);}
 }
 function iron(c,length,axis){

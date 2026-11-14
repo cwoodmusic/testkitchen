@@ -1,0 +1,489 @@
+{
+  "version": 1,
+  "scope": "Seven exposed North desktop planes: Handel,Joplin,Nina,DJ,ArtDeco,Cyberpunk,Steampunk",
+  "patches": [
+    {
+      "id": "collection-handel-desk",
+      "facing": "north",
+      "file": "vanity-directions/collection-handel-desk-north-68333b6b4192.webp",
+      "width": 431,
+      "height": 434,
+      "x": 0,
+      "y": 0,
+      "w": 431,
+      "h": 434,
+      "draw": {
+        "x": 21.2279792746114,
+        "y": 0,
+        "w": 117.5440414507772,
+        "h": 114
+      },
+      "source": {
+        "file": "handel-north-a4d495bc84f3.webp",
+        "frame": {
+          "slot": "desk",
+          "x": 4,
+          "y": 635,
+          "w": 199,
+          "h": 193,
+          "digest": "795173ed981a376549ddae8d74a455c5bb6e746185d6351a687e21a2f8973230",
+          "viewWidth": 160,
+          "viewHeight": 114,
+          "footCenter": [
+            0.5,
+            0.754386
+          ],
+          "cell": {
+            "x": 4,
+            "y": 635,
+            "w": 199,
+            "h": 193
+          }
+        },
+        "view": {
+          "w": 160,
+          "h": 114,
+          "footCenter": {
+            "x": 80,
+            "y": 86.000004
+          },
+          "draw": {
+            "x": 21.2279792746114,
+            "y": 0,
+            "w": 117.5440414507772,
+            "h": 114
+          }
+        }
+      },
+      "generation": {
+        "tool": "image_gen",
+        "original": "originals/vanity-directions/vanity-directions-8-f45ee87b99ae.png",
+        "originalSHA256": "f45ee87b99ae808db5c251e68582ca47c2d82df29a102088ab88ca8efe9ab9d4",
+        "crop": [
+          549,
+          556,
+          431,
+          434
+        ],
+        "cropRGBA_SHA256": "68333b6b4192080fb49fd3e0dd52b63d182abae3973b7ab4a5bcd0dc5b32a2a9",
+        "fileSHA256": "7431756a802b2853f5761db44b96a46a7511207f5f808f449e15cf45557e795e",
+        "method": "Native crop only. Exact source RGBA and alpha preserved; no geometric warp. Actual silhouette and clear gutters determine crop boundaries."
+      },
+      "reason": "Catalog-wide asset review: remove taper from exposed rectangular slabs and backing planes in parallel2/3 projection, retaining source camera direction, curved bowls and original ornate design."
+    },
+    {
+      "id": "collection-joplin-desk",
+      "facing": "north",
+      "file": "vanity-directions/collection-joplin-desk-north-4c6574c354c4.webp",
+      "width": 418,
+      "height": 442,
+      "x": 0,
+      "y": 0,
+      "w": 418,
+      "h": 442,
+      "draw": {
+        "x": 25.82178217821783,
+        "y": 1.4210854715202004e-14,
+        "w": 108.35643564356434,
+        "h": 113.99999999999999
+      },
+      "source": {
+        "file": "joplin-north-55a60dd2a5dc.webp",
+        "frame": {
+          "slot": "desk",
+          "x": 4,
+          "y": 448,
+          "w": 192,
+          "h": 202,
+          "digest": "284a2f8b4a43d5149bc59e61dcfe963cbb336e1b32ddca33e6078dd6bc74f8fa",
+          "viewWidth": 160,
+          "viewHeight": 114,
+          "footCenter": [
+            0.5,
+            0.754386
+          ],
+          "cell": {
+            "x": 4,
+            "y": 448,
+            "w": 192,
+            "h": 202
+          }
+        },
+        "view": {
+          "w": 160,
+          "h": 114,
+          "footCenter": {
+            "x": 80,
+            "y": 86.000004
+          },
+          "draw": {
+            "x": 25.82178217821783,
+            "y": 1.4210854715202004e-14,
+            "w": 108.35643564356434,
+            "h": 113.99999999999999
+          }
+        }
+      },
+      "generation": {
+        "tool": "image_gen",
+        "original": "originals/vanity-directions/vanity-directions-8-f45ee87b99ae.png",
+        "originalSHA256": "f45ee87b99ae808db5c251e68582ca47c2d82df29a102088ab88ca8efe9ab9d4",
+        "crop": [
+          45,
+          1064,
+          418,
+          442
+        ],
+        "cropRGBA_SHA256": "4c6574c354c4deec6cb0d9f2c7110eb526802f37a9707b80d9a30a20bc57cc31",
+        "fileSHA256": "5f3b82202b2e3cee73233954529011eb6e60eb5dc2f1927c710a99e53d591280",
+        "method": "Native crop only. Exact source RGBA and alpha preserved; no geometric warp. Actual silhouette and clear gutters determine crop boundaries."
+      },
+      "reason": "Catalog-wide asset review: remove taper from exposed rectangular slabs and backing planes in parallel2/3 projection, retaining source camera direction, curved bowls and original ornate design."
+    },
+    {
+      "id": "collection-nina-desk",
+      "facing": "north",
+      "file": "vanity-directions/collection-nina-desk-north-705d01068431.webp",
+      "width": 420,
+      "height": 443,
+      "x": 0,
+      "y": 0,
+      "w": 420,
+      "h": 443,
+      "draw": {
+        "x": 25.50243902439024,
+        "y": 0,
+        "w": 108.99512195121952,
+        "h": 114.00000000000001
+      },
+      "source": {
+        "file": "nina-north-a06ba79da4ca.webp",
+        "frame": {
+          "slot": "desk",
+          "x": 4,
+          "y": 445,
+          "w": 196,
+          "h": 205,
+          "digest": "9b5575f95a846dcc57115e76de6e128c8af335d79490ed98b71b5b37d00396ec",
+          "viewWidth": 160,
+          "viewHeight": 114,
+          "footCenter": [
+            0.5,
+            0.754386
+          ],
+          "cell": {
+            "x": 4,
+            "y": 445,
+            "w": 196,
+            "h": 205
+          }
+        },
+        "view": {
+          "w": 160,
+          "h": 114,
+          "footCenter": {
+            "x": 80,
+            "y": 86.000004
+          },
+          "draw": {
+            "x": 25.50243902439024,
+            "y": 0,
+            "w": 108.99512195121952,
+            "h": 114.00000000000001
+          }
+        }
+      },
+      "generation": {
+        "tool": "image_gen",
+        "original": "originals/vanity-directions/vanity-directions-8-f45ee87b99ae.png",
+        "originalSHA256": "f45ee87b99ae808db5c251e68582ca47c2d82df29a102088ab88ca8efe9ab9d4",
+        "crop": [
+          556,
+          1063,
+          420,
+          443
+        ],
+        "cropRGBA_SHA256": "705d0106843122eccacea9c0c1ee63c39e2b4a5980748fc602baf70bf9d12149",
+        "fileSHA256": "39227d4b4cb70a5308b2c4dba6fe372c5034b147a489b8e9919239dff19853d6",
+        "method": "Native crop only. Exact source RGBA and alpha preserved; no geometric warp. Actual silhouette and clear gutters determine crop boundaries."
+      },
+      "reason": "Catalog-wide asset review: remove taper from exposed rectangular slabs and backing planes in parallel2/3 projection, retaining source camera direction, curved bowls and original ornate design."
+    },
+    {
+      "id": "collection-dj-desk",
+      "facing": "north",
+      "file": "vanity-directions/collection-dj-desk-north-ca826cafec8b.webp",
+      "width": 438,
+      "height": 342,
+      "x": 0,
+      "y": 0,
+      "w": 438,
+      "h": 342,
+      "draw": {
+        "x": 5.974025974025977,
+        "y": 0,
+        "w": 148.05194805194805,
+        "h": 114
+      },
+      "source": {
+        "file": "dj-north-273bb13ac5ff.webp",
+        "frame": {
+          "slot": "desk",
+          "x": 368,
+          "y": 1033,
+          "w": 200,
+          "h": 154,
+          "digest": "e107ec35dac8a45fa831b66b9d029549567b1739c5a1d916ab61079d54d551ca",
+          "viewWidth": 160,
+          "viewHeight": 114,
+          "footCenter": [
+            0.5,
+            0.754386
+          ],
+          "cell": {
+            "x": 368,
+            "y": 1033,
+            "w": 200,
+            "h": 154
+          }
+        },
+        "view": {
+          "w": 160,
+          "h": 114,
+          "footCenter": {
+            "x": 80,
+            "y": 86.000004
+          },
+          "draw": {
+            "x": 5.974025974025977,
+            "y": 0,
+            "w": 148.05194805194805,
+            "h": 114
+          }
+        }
+      },
+      "generation": {
+        "tool": "image_gen",
+        "original": "originals/vanity-directions/vanity-directions-9-3ae2a1006901.png",
+        "originalSHA256": "3ae2a10069012ece7c0cb6ef9ae3bf67aa6c92fcd0ec4c2323fc5056d1534dae",
+        "crop": [
+          37,
+          92,
+          438,
+          342
+        ],
+        "cropRGBA_SHA256": "ca826cafec8b0abf3556a228debdd09199bfbc4599d9fd2410efbef674c0f604",
+        "fileSHA256": "398db67fda0ef7b1ec67bda0f67beff048615e8b380eff2429b364a1dd45f2fb",
+        "method": "Native crop only. Exact source RGBA and alpha preserved; no geometric warp. Actual silhouette and clear gutters determine crop boundaries."
+      },
+      "reason": "Catalog-wide asset review: remove taper from exposed rectangular slabs and backing planes in parallel2/3 projection, retaining source camera direction, curved bowls and original ornate design."
+    },
+    {
+      "id": "collection-showroom-art-deco-lounge-desk",
+      "facing": "north",
+      "file": "vanity-directions/collection-showroom-art-deco-lounge-desk-north-c18389045af9.webp",
+      "width": 439,
+      "height": 378,
+      "x": 0,
+      "y": 0,
+      "w": 439,
+      "h": 378,
+      "draw": {
+        "x": 13.720930232558146,
+        "y": 1.4210854715202004e-14,
+        "w": 132.5581395348837,
+        "h": 113.99999999999999
+      },
+      "source": {
+        "file": "showroom-art-deco-lounge-north-da7b12534df3.webp",
+        "frame": {
+          "slot": "desk",
+          "x": 389,
+          "y": 835,
+          "w": 200,
+          "h": 172,
+          "digest": "81e13e63c2d55820830343f9ef510da0bc323f264bd4698e1344b4df073bd67d",
+          "viewWidth": 160,
+          "viewHeight": 114,
+          "footCenter": [
+            0.5,
+            0.754386
+          ],
+          "cell": {
+            "x": 389,
+            "y": 835,
+            "w": 200,
+            "h": 172
+          }
+        },
+        "view": {
+          "w": 160,
+          "h": 114,
+          "footCenter": {
+            "x": 80,
+            "y": 86.000004
+          },
+          "draw": {
+            "x": 13.720930232558146,
+            "y": 1.4210854715202004e-14,
+            "w": 132.5581395348837,
+            "h": 113.99999999999999
+          }
+        }
+      },
+      "generation": {
+        "tool": "image_gen",
+        "original": "originals/vanity-directions/vanity-directions-9-3ae2a1006901.png",
+        "originalSHA256": "3ae2a10069012ece7c0cb6ef9ae3bf67aa6c92fcd0ec4c2323fc5056d1534dae",
+        "crop": [
+          548,
+          72,
+          439,
+          378
+        ],
+        "cropRGBA_SHA256": "c18389045af9c3dd507a71707e71a92390877bc676287ff63e4618ac605f2dd5",
+        "fileSHA256": "29f67140b8fcb04a7ca69daa602d1d70c625031653e42338f05feab78a127eb6",
+        "method": "Native crop only. Exact source RGBA and alpha preserved; no geometric warp. Actual silhouette and clear gutters determine crop boundaries."
+      },
+      "reason": "Catalog-wide asset review: remove taper from exposed rectangular slabs and backing planes in parallel2/3 projection, retaining source camera direction, curved bowls and original ornate design."
+    },
+    {
+      "id": "collection-showroom-cyberpunk-desk",
+      "facing": "north",
+      "file": "vanity-directions/collection-showroom-cyberpunk-desk-north-ced8578884eb.webp",
+      "width": 437,
+      "height": 345,
+      "x": 0,
+      "y": 0,
+      "w": 437,
+      "h": 345,
+      "draw": {
+        "x": 6.150943396226424,
+        "y": 1.4210854715202004e-14,
+        "w": 147.69811320754715,
+        "h": 113.99999999999999
+      },
+      "source": {
+        "file": "showroom-cyberpunk-north-fbf8783a81e0.webp",
+        "frame": {
+          "slot": "desk",
+          "x": 222,
+          "y": 1480,
+          "w": 206,
+          "h": 159,
+          "digest": "a7d8685d283dbcbaefcb7ca9c9932121c6ac63793b4809998a9a90f616c0fe9d",
+          "viewWidth": 160,
+          "viewHeight": 114,
+          "footCenter": [
+            0.5,
+            0.754386
+          ],
+          "cell": {
+            "x": 222,
+            "y": 1480,
+            "w": 206,
+            "h": 159
+          }
+        },
+        "view": {
+          "w": 160,
+          "h": 114,
+          "footCenter": {
+            "x": 80,
+            "y": 86.000004
+          },
+          "draw": {
+            "x": 6.150943396226424,
+            "y": 1.4210854715202004e-14,
+            "w": 147.69811320754715,
+            "h": 113.99999999999999
+          }
+        }
+      },
+      "generation": {
+        "tool": "image_gen",
+        "original": "originals/vanity-directions/vanity-directions-9-3ae2a1006901.png",
+        "originalSHA256": "3ae2a10069012ece7c0cb6ef9ae3bf67aa6c92fcd0ec4c2323fc5056d1534dae",
+        "crop": [
+          38,
+          603,
+          437,
+          345
+        ],
+        "cropRGBA_SHA256": "ced8578884eb6df1b44207155cd46842c5de7ee40471fb3b80ecdaeb3b46d533",
+        "fileSHA256": "f22ae1db8f72840b0aa2e9e246fc1ba46623567126bd4e4280bbac01004ef159",
+        "method": "Native crop only. Exact source RGBA and alpha preserved; no geometric warp. Actual silhouette and clear gutters determine crop boundaries."
+      },
+      "reason": "Catalog-wide asset review: remove taper from exposed rectangular slabs and backing planes in parallel2/3 projection, retaining source camera direction, curved bowls and original ornate design."
+    },
+    {
+      "id": "collection-showroom-steampunk-desk",
+      "facing": "north",
+      "file": "vanity-directions/collection-showroom-steampunk-desk-north-c6a5ac509811.webp",
+      "width": 441,
+      "height": 408,
+      "x": 0,
+      "y": 0,
+      "w": 441,
+      "h": 408,
+      "draw": {
+        "x": 17.0625,
+        "y": 0,
+        "w": 125.875,
+        "h": 114
+      },
+      "source": {
+        "file": "showroom-steampunk-north-512c9008d3c8.webp",
+        "frame": {
+          "slot": "desk",
+          "x": 387,
+          "y": 883,
+          "w": 212,
+          "h": 192,
+          "digest": "a194027b59dd5c827db81e1d9d0d00dd55af9c44ba7b452f2f7a6f2613b06bdc",
+          "viewWidth": 160,
+          "viewHeight": 114,
+          "footCenter": [
+            0.5,
+            0.754386
+          ],
+          "cell": {
+            "x": 387,
+            "y": 883,
+            "w": 212,
+            "h": 192
+          }
+        },
+        "view": {
+          "w": 160,
+          "h": 114,
+          "footCenter": {
+            "x": 80,
+            "y": 86.000004
+          },
+          "draw": {
+            "x": 17.0625,
+            "y": 0,
+            "w": 125.875,
+            "h": 114
+          }
+        }
+      },
+      "generation": {
+        "tool": "image_gen",
+        "original": "originals/vanity-directions/vanity-directions-9-3ae2a1006901.png",
+        "originalSHA256": "3ae2a10069012ece7c0cb6ef9ae3bf67aa6c92fcd0ec4c2323fc5056d1534dae",
+        "crop": [
+          548,
+          562,
+          441,
+          408
+        ],
+        "cropRGBA_SHA256": "c6a5ac5098114d6aa02cf9d2621697201181ca59bafb57cae3f3bc205b5b2245",
+        "fileSHA256": "fc5aaa3ee730dcc55040b3763678c4ade7ce55243aa7336aba911c7621d33c50",
+        "method": "Native crop only. Exact source RGBA and alpha preserved; no geometric warp. Actual silhouette and clear gutters determine crop boundaries."
+      },
+      "reason": "Catalog-wide asset review: remove taper from exposed rectangular slabs and backing planes in parallel2/3 projection, retaining source camera direction, curved bowls and original ornate design."
+    }
+  ]
+}

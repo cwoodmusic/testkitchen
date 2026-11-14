@@ -5,6 +5,9 @@ import {furnitureFacingPlacement} from './furniture-facing.mjs?v=opera-parallax-
 const buffers=new WeakMap(),nativeEmitters=new WeakMap(),radialBrushes=new Map(),TAU=Math.PI*2;
 const hash=(x,y=0)=>{let n=Math.imul(Math.round(x)^Math.imul(Math.round(y),374761393),668265263);n=Math.imul(n^(n>>>13),1274126177);return ((n^(n>>>16))>>>0)/4294967296;};
 const reduced=()=>globalThis.matchMedia?.('(prefers-reduced-motion: reduce)').matches===true;
+// Street lamps should illuminate a generous patch of pavement. Keep window,
+// neon, doorway and uplight fields at their authored sizes.
+const lightRadius=(kind,radius,scale)=>radius*scale*(kind==='lamp'?1.5:1);
 
 // Light positions use the same image anchor, rotation and terrain elevation as
 // the visible sprite. A mounted lantern therefore glows on its actual cliff.
@@ -50,7 +53,7 @@ export function cityLights(doc,catalog,objects=doc.objects){
   const scale=o.scale||1;
   const lamp=(u,v,radius=290,power=1)=>{
    const head=imagePoint(doc,o,a,u,v),foot=imagePoint(doc,o,a,u,1);if(!head||!foot)return;
-   lights.push({...head,gx:foot.x,gy:o.mount?head.y+54*scale:foot.y+12*scale,radius:radius*scale,power,kind:'lamp'});
+   lights.push({...head,gx:foot.x,gy:o.mount?head.y+54*scale:foot.y+12*scale,radius:lightRadius('lamp',radius,scale),power,kind:'lamp'});
   };
   const windowLight=(u,v,radius=100,power=.8)=>{
    const point=imagePoint(doc,o,a,u,v);if(point)lights.push({...point,radius:radius*scale,power,kind:'window'});
@@ -58,7 +61,7 @@ export function cityLights(doc,catalog,objects=doc.objects){
   const authored=emitter=>{
    const p=imagePoint(doc,o,a,emitter.u,emitter.v);if(!p)return;
    const foot=imagePoint(doc,o,a,emitter.groundU??emitter.u,emitter.groundV??1);
-   lights.push({...p,...(emitter.kind==='lamp'||emitter.kind==='uplight'||emitter.kind==='door'?{gx:foot?.x??p.x,gy:foot?.y??p.y}:{}),radius:emitter.radius*scale,power:emitter.power??1,kind:emitter.kind,color:emitter.color,beamHeight:(emitter.beamHeight||0)*scale,beamWidth:(emitter.beamWidth||0)*scale});
+   lights.push({...p,...(emitter.kind==='lamp'||emitter.kind==='uplight'||emitter.kind==='door'?{gx:foot?.x??p.x,gy:foot?.y??p.y}:{}),radius:lightRadius(emitter.kind,emitter.radius,scale),power:emitter.power??1,kind:emitter.kind,color:emitter.color,beamHeight:(emitter.beamHeight||0)*scale,beamWidth:(emitter.beamWidth||0)*scale});
   };
   if(a.lightEmitters?.length){a.lightEmitters.forEach(authored);continue;}
   if(o.asset==='props-2-65')lamp(.785,.345,310);
@@ -73,7 +76,7 @@ export function cityLights(doc,catalog,objects=doc.objects){
    // Baked lamp flames, rather than the pillar feet, are the light emitters.
    for(const[u,v,base]of [[139/1536,90/1024,260/1024],[1393/1536,90/1024,260/1024],[126/1536,728/1024,935/1024],[1403/1536,728/1024,935/1024]]){
     const head=imagePoint(doc,o,a,u,v),foot=imagePoint(doc,o,a,u,base);
-    if(head&&foot)lights.push({...head,gx:foot.x,gy:foot.y,radius:320*scale,power:1,kind:'lamp'});
+    if(head&&foot)lights.push({...head,gx:foot.x,gy:foot.y,radius:lightRadius('lamp',320,scale),power:1,kind:'lamp'});
    }
   }else if(o.asset==='coda-residences'){
    for(let row=0;row<13;row++)for(const[col,u]of [.207,.348,.501,.657,.808].entries())if(hash(row+17,col+9)>.22)windowLight(u,.158+row*.0564,77,.76+hash(row,col)*.17);

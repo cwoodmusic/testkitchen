@@ -1,0 +1,3058 @@
+[
+  {
+    "id": "collection-bach-sink",
+    "facing": "north",
+    "file": "sink-direction-01-258a986275b9.webp",
+    "width": 1024,
+    "height": 1536,
+    "x": 139,
+    "y": 160,
+    "w": 228,
+    "h": 266,
+    "draw": {
+      "x": 7.067961165048544,
+      "y": 0,
+      "w": 97.86407766990291,
+      "h": 112.0
+    },
+    "source": {
+      "file": "town/assets/apartment-collections/bach-north-ec7cad24dbb5.webp",
+      "crop": {
+        "x": 462,
+        "y": 460,
+        "w": 180,
+        "h": 206
+      },
+      "frame": {
+        "slot": "sink",
+        "x": 462,
+        "y": 460,
+        "w": 180,
+        "h": 206,
+        "digest": "d69e9d88cf63e9e247f3796ba5c172f125003fe0604925f987d54c1a7e645141",
+        "viewWidth": 112,
+        "viewHeight": 112,
+        "footCenter": [
+          0.5,
+          0.767857
+        ],
+        "cell": {
+          "x": 462,
+          "y": 460,
+          "w": 180,
+          "h": 206
+        }
+      },
+      "sha256": "3b97b284a8c5e04a014cab36db856836ad47309b56fabcfc818276e39e56572e"
+    },
+    "generatedOriginal": "originals/sink-direction-01-258a986275b9.png",
+    "generatedSha256": "258a986275b95dd50c7b3b99200b48eb63c261b440fe84508d3cb5d5f194ed6b",
+    "generatedCropSha256": "3bdc130c9958c16ed00a649cd07da2092e1b6de92918dc1e97346b659a0258c6",
+    "method": "image_gen reference edit; rectangular crop and lossless encoding only; no warping or alpha edits",
+    "review": "Parallel 2/3 top and cardinal face; equal far/near rectangular widths; preserve original materials, motifs and intentional curved shapes."
+  },
+  {
+    "id": "collection-mozart-sink",
+    "facing": "north",
+    "file": "sink-direction-01-258a986275b9.webp",
+    "width": 1024,
+    "height": 1536,
+    "x": 653,
+    "y": 160,
+    "w": 222,
+    "h": 266,
+    "draw": {
+      "x": 7.962085308056871,
+      "y": 0,
+      "w": 96.07582938388626,
+      "h": 112.00000000000001
+    },
+    "source": {
+      "file": "town/assets/apartment-collections/mozart-north-6ea04ade1063.webp",
+      "crop": {
+        "x": 680,
+        "y": 236,
+        "w": 181,
+        "h": 211
+      },
+      "frame": {
+        "slot": "sink",
+        "x": 680,
+        "y": 236,
+        "w": 181,
+        "h": 211,
+        "digest": "1c4907313aa0dec3718f3e2eb17f86f8f600c0140aa83950ce4006107aabadb1",
+        "viewWidth": 112,
+        "viewHeight": 112,
+        "footCenter": [
+          0.5,
+          0.767857
+        ],
+        "cell": {
+          "x": 680,
+          "y": 236,
+          "w": 181,
+          "h": 211
+        }
+      },
+      "sha256": "f6131cda4241ce1cc65787e4e6d3179b4ced80b378e719de93b2e29e95a1a3d4"
+    },
+    "generatedOriginal": "originals/sink-direction-01-258a986275b9.png",
+    "generatedSha256": "258a986275b95dd50c7b3b99200b48eb63c261b440fe84508d3cb5d5f194ed6b",
+    "generatedCropSha256": "f0f9d83398039d87b32271a2bdfa6643287f3741e770f4c73b069910255d5bcb",
+    "method": "image_gen reference edit; rectangular crop and lossless encoding only; no warping or alpha edits",
+    "review": "Parallel 2/3 top and cardinal face; equal far/near rectangular widths; preserve original materials, motifs and intentional curved shapes."
+  },
+  {
+    "id": "collection-beethoven-sink",
+    "facing": "north",
+    "file": "sink-direction-01-258a986275b9.webp",
+    "width": 1024,
+    "height": 1536,
+    "x": 139,
+    "y": 609,
+    "w": 227,
+    "h": 272,
+    "draw": {
+      "x": 9.058823529411761,
+      "y": 0,
+      "w": 93.88235294117648,
+      "h": 112.00000000000001
+    },
+    "source": {
+      "file": "town/assets/apartment-collections/beethoven-north-cardinal-7890abc9abcd.webp",
+      "crop": {
+        "x": 1713,
+        "y": 4,
+        "w": 171,
+        "h": 204
+      },
+      "frame": {
+        "slot": "sink",
+        "x": 1713,
+        "y": 4,
+        "w": 171,
+        "h": 204,
+        "digest": "219bb4e3c277bfc7c9ffc767780f9beafa69f8e13272af62693e3ff1abdb898b",
+        "viewWidth": 112,
+        "viewHeight": 112,
+        "footCenter": [
+          0.5,
+          0.767857
+        ],
+        "cell": {
+          "x": 1713,
+          "y": 4,
+          "w": 171,
+          "h": 204
+        }
+      },
+      "sha256": "219bb4e3c277bfc7c9ffc767780f9beafa69f8e13272af62693e3ff1abdb898b"
+    },
+    "generatedOriginal": "originals/sink-direction-01-258a986275b9.png",
+    "generatedSha256": "258a986275b95dd50c7b3b99200b48eb63c261b440fe84508d3cb5d5f194ed6b",
+    "generatedCropSha256": "962a0170f8f52cfa3aeaedcd13bbe9957514585ddf656c7ac09ff6090e70982f",
+    "method": "image_gen reference edit; rectangular crop and lossless encoding only; no warping or alpha edits",
+    "review": "Parallel 2/3 top and cardinal face; equal far/near rectangular widths; preserve original materials, motifs and intentional curved shapes."
+  },
+  {
+    "id": "collection-clara-sink",
+    "facing": "north",
+    "file": "sink-direction-01-258a986275b9.webp",
+    "width": 1024,
+    "height": 1536,
+    "x": 652,
+    "y": 609,
+    "w": 222,
+    "h": 272,
+    "draw": {
+      "x": 9.103448275862071,
+      "y": 0,
+      "w": 93.79310344827586,
+      "h": 112.0
+    },
+    "source": {
+      "file": "town/assets/apartment-collections/clara-north-207691ab8cb0.webp",
+      "crop": {
+        "x": 786,
+        "y": 225,
+        "w": 170,
+        "h": 203
+      },
+      "frame": {
+        "slot": "sink",
+        "x": 786,
+        "y": 225,
+        "w": 170,
+        "h": 203,
+        "digest": "9ffe60902dfbe9c25fb0ffd1a680f38b6cb85b6a8caf551bd938cdc455244c45",
+        "viewWidth": 112,
+        "viewHeight": 112,
+        "footCenter": [
+          0.5,
+          0.767857
+        ],
+        "cell": {
+          "x": 786,
+          "y": 225,
+          "w": 170,
+          "h": 203
+        }
+      },
+      "sha256": "21bb2bfc647992c866f805f06c95144642aec979766d2a715290dff8bf45c128"
+    },
+    "generatedOriginal": "originals/sink-direction-01-258a986275b9.png",
+    "generatedSha256": "258a986275b95dd50c7b3b99200b48eb63c261b440fe84508d3cb5d5f194ed6b",
+    "generatedCropSha256": "ed13d26caae52b49d81984037ec86606c6a89ee0134558be44bac58e8b39072d",
+    "method": "image_gen reference edit; rectangular crop and lossless encoding only; no warping or alpha edits",
+    "review": "Parallel 2/3 top and cardinal face; equal far/near rectangular widths; preserve original materials, motifs and intentional curved shapes."
+  },
+  {
+    "id": "collection-chopin-sink",
+    "facing": "north",
+    "file": "sink-direction-01-258a986275b9.webp",
+    "width": 1024,
+    "height": 1536,
+    "x": 153,
+    "y": 1082,
+    "w": 222,
+    "h": 265,
+    "draw": {
+      "x": 6.620689655172413,
+      "y": 0,
+      "w": 98.75862068965517,
+      "h": 112.0
+    },
+    "source": {
+      "file": "town/assets/apartment-collections/chopin-north-cardinal-2eb185e87bf4.webp",
+      "crop": {
+        "x": 1388,
+        "y": 4,
+        "w": 179,
+        "h": 203
+      },
+      "frame": {
+        "slot": "sink",
+        "x": 1388,
+        "y": 4,
+        "w": 179,
+        "h": 203,
+        "digest": "85354a56e496f7b50aa4ea51e35f6dadff8a1c026876ab087fca0c063beb49e4",
+        "viewWidth": 112,
+        "viewHeight": 112,
+        "footCenter": [
+          0.5,
+          0.767857
+        ],
+        "cell": {
+          "x": 1388,
+          "y": 4,
+          "w": 179,
+          "h": 203
+        }
+      },
+      "sha256": "85354a56e496f7b50aa4ea51e35f6dadff8a1c026876ab087fca0c063beb49e4"
+    },
+    "generatedOriginal": "originals/sink-direction-01-258a986275b9.png",
+    "generatedSha256": "258a986275b95dd50c7b3b99200b48eb63c261b440fe84508d3cb5d5f194ed6b",
+    "generatedCropSha256": "fb70610eeea036b4e31cbf567b5c78b03b045ab5b99ae2aaba3182e1028a4c88",
+    "method": "image_gen reference edit; rectangular crop and lossless encoding only; no warping or alpha edits",
+    "review": "Parallel 2/3 top and cardinal face; equal far/near rectangular widths; preserve original materials, motifs and intentional curved shapes."
+  },
+  {
+    "id": "collection-haydn-sink",
+    "facing": "north",
+    "file": "sink-direction-01-258a986275b9.webp",
+    "width": 1024,
+    "height": 1536,
+    "x": 646,
+    "y": 1080,
+    "w": 235,
+    "h": 267,
+    "draw": {
+      "x": 5.923076923076927,
+      "y": 0,
+      "w": 100.15384615384615,
+      "h": 112.0
+    },
+    "source": {
+      "file": "town/assets/apartment-collections/haydn-north-18ce12845759.webp",
+      "crop": {
+        "x": 4,
+        "y": 227,
+        "w": 186,
+        "h": 208
+      },
+      "frame": {
+        "slot": "sink",
+        "x": 4,
+        "y": 227,
+        "w": 186,
+        "h": 208,
+        "digest": "9d6f6896bb2c533d50d8cf58ee660378c9d155363e9f3728216ff0e714f08264",
+        "viewWidth": 112,
+        "viewHeight": 112,
+        "footCenter": [
+          0.5,
+          0.767857
+        ],
+        "cell": {
+          "x": 4,
+          "y": 227,
+          "w": 186,
+          "h": 208
+        }
+      },
+      "sha256": "d66f535a398b1bdefdb591fb387f5fee40a7d8167812eb23b87b08ebc7700150"
+    },
+    "generatedOriginal": "originals/sink-direction-01-258a986275b9.png",
+    "generatedSha256": "258a986275b95dd50c7b3b99200b48eb63c261b440fe84508d3cb5d5f194ed6b",
+    "generatedCropSha256": "84e9fd5f11e23ebc574cbf6c48a96590f55fef5f208f0c5a9751de10bc4fb01d",
+    "method": "image_gen reference edit; rectangular crop and lossless encoding only; no warping or alpha edits",
+    "review": "Parallel 2/3 top and cardinal face; equal far/near rectangular widths; preserve original materials, motifs and intentional curved shapes."
+  },
+  {
+    "id": "collection-handel-sink",
+    "facing": "north",
+    "file": "sink-direction-02-aa8b85a359bb.webp",
+    "width": 1024,
+    "height": 1536,
+    "x": 136,
+    "y": 136,
+    "w": 240,
+    "h": 291,
+    "draw": {
+      "x": 4.907216494845365,
+      "y": 1.4210854715202004e-14,
+      "w": 102.18556701030927,
+      "h": 111.99999999999999
+    },
+    "source": {
+      "file": "town/assets/apartment-collections/handel-north-a4d495bc84f3.webp",
+      "crop": {
+        "x": 531,
+        "y": 434,
+        "w": 177,
+        "h": 194
+      },
+      "frame": {
+        "slot": "sink",
+        "x": 531,
+        "y": 434,
+        "w": 177,
+        "h": 194,
+        "digest": "1b2c932ad632657c14cfe0a6c6f18364b45fcb0d26bda5dc0f30adc3ffecec96",
+        "viewWidth": 112,
+        "viewHeight": 112,
+        "footCenter": [
+          0.5,
+          0.767857
+        ],
+        "cell": {
+          "x": 531,
+          "y": 434,
+          "w": 177,
+          "h": 194
+        }
+      },
+      "sha256": "19eb12bef4f864c39a5d3ce33eac1301a88e6c20f0940676191a8cbaff26fb4a"
+    },
+    "generatedOriginal": "originals/sink-direction-02-aa8b85a359bb.png",
+    "generatedSha256": "aa8b85a359bb0c60478b0d1fae251b00fa2cdd05ec6ea72c8a5515654dc02d4c",
+    "generatedCropSha256": "fde8d76b4dbdd906a684e3f47c318472a277faf230115db3dc04deb3e4ad9abd",
+    "method": "image_gen reference edit; rectangular crop and lossless encoding only; no warping or alpha edits",
+    "review": "Parallel 2/3 top and cardinal face; equal far/near rectangular widths; preserve original materials, motifs and intentional curved shapes."
+  },
+  {
+    "id": "collection-vivaldi-sink",
+    "facing": "north",
+    "file": "sink-direction-02-aa8b85a359bb.webp",
+    "width": 1024,
+    "height": 1536,
+    "x": 642,
+    "y": 137,
+    "w": 252,
+    "h": 290,
+    "draw": {
+      "x": 9.023696682464454,
+      "y": 0,
+      "w": 93.95260663507109,
+      "h": 112.00000000000001
+    },
+    "source": {
+      "file": "town/assets/apartment-collections/vivaldi-north-cardinal-788af1b4cb70.webp",
+      "crop": {
+        "x": 557,
+        "y": 1479,
+        "w": 177,
+        "h": 211
+      },
+      "frame": {
+        "slot": "sink",
+        "x": 557,
+        "y": 1479,
+        "w": 177,
+        "h": 211,
+        "digest": "9de5296f1e4bea1df457e0f9690c2d381d3f7a8f4fea9460141c6836451c5067",
+        "viewWidth": 112,
+        "viewHeight": 112,
+        "footCenter": [
+          0.5,
+          0.767857
+        ],
+        "cell": {
+          "x": 557,
+          "y": 1479,
+          "w": 177,
+          "h": 211
+        }
+      },
+      "sha256": "9de5296f1e4bea1df457e0f9690c2d381d3f7a8f4fea9460141c6836451c5067"
+    },
+    "generatedOriginal": "originals/sink-direction-02-aa8b85a359bb.png",
+    "generatedSha256": "aa8b85a359bb0c60478b0d1fae251b00fa2cdd05ec6ea72c8a5515654dc02d4c",
+    "generatedCropSha256": "09c5e5ff915f61607f2d4c2e479849ffb4a747317076ccee16c47ae578e5e214",
+    "method": "image_gen reference edit; rectangular crop and lossless encoding only; no warping or alpha edits",
+    "review": "Parallel 2/3 top and cardinal face; equal far/near rectangular widths; preserve original materials, motifs and intentional curved shapes."
+  },
+  {
+    "id": "collection-ellington-sink",
+    "facing": "north",
+    "file": "sink-direction-02-aa8b85a359bb.webp",
+    "width": 1024,
+    "height": 1536,
+    "x": 126,
+    "y": 618,
+    "w": 261,
+    "h": 292,
+    "draw": {
+      "x": 4.392156862745097,
+      "y": 0,
+      "w": 103.2156862745098,
+      "h": 112.00000000000001
+    },
+    "source": {
+      "file": "town/assets/apartment-collections/ellington-north-cardinal-f4752f45160c.webp",
+      "crop": {
+        "x": 126,
+        "y": 1160,
+        "w": 188,
+        "h": 204
+      },
+      "frame": {
+        "slot": "sink",
+        "x": 126,
+        "y": 1160,
+        "w": 188,
+        "h": 204,
+        "digest": "ec1bc51dbc1f0cf7ab924e56707a9fa5822d2f777b62712a56232d34506e3e88",
+        "viewWidth": 112,
+        "viewHeight": 112,
+        "footCenter": [
+          0.5,
+          0.767857
+        ],
+        "cell": {
+          "x": 126,
+          "y": 1160,
+          "w": 188,
+          "h": 204
+        }
+      },
+      "sha256": "ec1bc51dbc1f0cf7ab924e56707a9fa5822d2f777b62712a56232d34506e3e88"
+    },
+    "generatedOriginal": "originals/sink-direction-02-aa8b85a359bb.png",
+    "generatedSha256": "aa8b85a359bb0c60478b0d1fae251b00fa2cdd05ec6ea72c8a5515654dc02d4c",
+    "generatedCropSha256": "71bc8a7ed21338ee3cd0d227a950656f8d36a6b0af7d16a59aeb22013b202185",
+    "method": "image_gen reference edit; rectangular crop and lossless encoding only; no warping or alpha edits",
+    "review": "Parallel 2/3 top and cardinal face; equal far/near rectangular widths; preserve original materials, motifs and intentional curved shapes."
+  },
+  {
+    "id": "collection-nina-sink",
+    "facing": "north",
+    "file": "sink-direction-02-aa8b85a359bb.webp",
+    "width": 1024,
+    "height": 1536,
+    "x": 624,
+    "y": 623,
+    "w": 287,
+    "h": 287,
+    "draw": {
+      "x": 2.9758454106280254,
+      "y": 1.4210854715202004e-14,
+      "w": 106.04830917874395,
+      "h": 111.99999999999999
+    },
+    "source": {
+      "file": "town/assets/apartment-collections/nina-north-a06ba79da4ca.webp",
+      "crop": {
+        "x": 747,
+        "y": 230,
+        "w": 196,
+        "h": 207
+      },
+      "frame": {
+        "slot": "sink",
+        "x": 747,
+        "y": 230,
+        "w": 196,
+        "h": 207,
+        "digest": "bcdaff1e6a08b0a66239b1b916703805be4fe3e8780e3ac4d5fabe00d936edaa",
+        "viewWidth": 112,
+        "viewHeight": 112,
+        "footCenter": [
+          0.5,
+          0.767857
+        ],
+        "cell": {
+          "x": 747,
+          "y": 230,
+          "w": 196,
+          "h": 207
+        }
+      },
+      "sha256": "ccac765683b74370649921a5071b62ec08d72d9d1eb9feff1ada2cefe3a73d00"
+    },
+    "generatedOriginal": "originals/sink-direction-02-aa8b85a359bb.png",
+    "generatedSha256": "aa8b85a359bb0c60478b0d1fae251b00fa2cdd05ec6ea72c8a5515654dc02d4c",
+    "generatedCropSha256": "76ea71b3ea0f8ff5f40c023b64f0f70b358849ef57af0369a17607c4c554c066",
+    "method": "image_gen reference edit; rectangular crop and lossless encoding only; no warping or alpha edits",
+    "review": "Parallel 2/3 top and cardinal face; equal far/near rectangular widths; preserve original materials, motifs and intentional curved shapes."
+  },
+  {
+    "id": "collection-miles-sink",
+    "facing": "north",
+    "file": "sink-direction-02-aa8b85a359bb.webp",
+    "width": 1024,
+    "height": 1536,
+    "x": 125,
+    "y": 1102,
+    "w": 262,
+    "h": 308,
+    "draw": {
+      "x": 8.492890995260659,
+      "y": 0,
+      "w": 95.01421800947868,
+      "h": 112.00000000000001
+    },
+    "source": {
+      "file": "town/assets/apartment-collections/miles-north-cardinal-7eb4a17916ed.webp",
+      "crop": {
+        "x": 164,
+        "y": 653,
+        "w": 179,
+        "h": 211
+      },
+      "frame": {
+        "slot": "sink",
+        "x": 164,
+        "y": 653,
+        "w": 179,
+        "h": 211,
+        "digest": "40a37762231ac6cb88beed76e563c237596d2f751fccfbdae532e34162d3ad21",
+        "viewWidth": 112,
+        "viewHeight": 112,
+        "footCenter": [
+          0.5,
+          0.767857
+        ],
+        "cell": {
+          "x": 164,
+          "y": 653,
+          "w": 179,
+          "h": 211
+        }
+      },
+      "sha256": "40a37762231ac6cb88beed76e563c237596d2f751fccfbdae532e34162d3ad21"
+    },
+    "generatedOriginal": "originals/sink-direction-02-aa8b85a359bb.png",
+    "generatedSha256": "aa8b85a359bb0c60478b0d1fae251b00fa2cdd05ec6ea72c8a5515654dc02d4c",
+    "generatedCropSha256": "3464bb07402b456a7d398bab230602e0dcabfa0572705cc75a543559ecd9394a",
+    "method": "image_gen reference edit; rectangular crop and lossless encoding only; no warping or alpha edits",
+    "review": "Parallel 2/3 top and cardinal face; equal far/near rectangular widths; preserve original materials, motifs and intentional curved shapes."
+  },
+  {
+    "id": "collection-dj-sink",
+    "facing": "north",
+    "file": "sink-direction-02-aa8b85a359bb.webp",
+    "width": 1024,
+    "height": 1536,
+    "x": 627,
+    "y": 1108,
+    "w": 282,
+    "h": 300,
+    "draw": {
+      "x": 7.070707070707073,
+      "y": 0,
+      "w": 97.85858585858585,
+      "h": 112.0
+    },
+    "source": {
+      "file": "town/assets/apartment-collections/dj-north-273bb13ac5ff.webp",
+      "crop": {
+        "x": 558,
+        "y": 448,
+        "w": 173,
+        "h": 198
+      },
+      "frame": {
+        "slot": "sink",
+        "x": 558,
+        "y": 448,
+        "w": 173,
+        "h": 198,
+        "digest": "2bfa819184715020c519d43afadae9d8188245b2609ec18502c910eec3eb3e8a",
+        "viewWidth": 112,
+        "viewHeight": 112,
+        "footCenter": [
+          0.5,
+          0.767857
+        ],
+        "cell": {
+          "x": 558,
+          "y": 448,
+          "w": 173,
+          "h": 198
+        }
+      },
+      "sha256": "e86fb085e32d91d2dd6fbe3ec65d2db1925dd0d9f4d43c366218fd20ef03389b"
+    },
+    "generatedOriginal": "originals/sink-direction-02-aa8b85a359bb.png",
+    "generatedSha256": "aa8b85a359bb0c60478b0d1fae251b00fa2cdd05ec6ea72c8a5515654dc02d4c",
+    "generatedCropSha256": "597d62023ee0b46009216c9afb12692f1646fac2d8e3981bd32e0ad8c6135bdf",
+    "method": "image_gen reference edit; rectangular crop and lossless encoding only; no warping or alpha edits",
+    "review": "Parallel 2/3 top and cardinal face; equal far/near rectangular widths; preserve original materials, motifs and intentional curved shapes."
+  },
+  {
+    "id": "collection-vee-jay-sink",
+    "facing": "north",
+    "file": "sink-direction-03-b73806c20074.webp",
+    "width": 1024,
+    "height": 1536,
+    "x": 116,
+    "y": 86,
+    "w": 302,
+    "h": 392,
+    "draw": {
+      "x": 7.800995024875618,
+      "y": 0,
+      "w": 96.39800995024876,
+      "h": 112.0
+    },
+    "source": {
+      "file": "town/assets/apartment-collections/vee-jay-north-9c3b6c582649.webp",
+      "crop": {
+        "x": 837,
+        "y": 4,
+        "w": 173,
+        "h": 201
+      },
+      "frame": {
+        "slot": "sink",
+        "x": 837,
+        "y": 4,
+        "w": 173,
+        "h": 201,
+        "digest": "96a391bf5b356b0d32d338401b17c5c6748957d52769914fd0b3688f71081196",
+        "viewWidth": 112,
+        "viewHeight": 112,
+        "footCenter": [
+          0.5,
+          0.767857
+        ],
+        "cell": {
+          "x": 837,
+          "y": 4,
+          "w": 173,
+          "h": 201
+        }
+      },
+      "sha256": "e3b49f4393dce3dc189b9a10b3681f0fe3ab665c1b2d6d9ad231fdd67fc53613"
+    },
+    "generatedOriginal": "originals/sink-direction-03-b73806c20074.png",
+    "generatedSha256": "b73806c200745f6562dbf5ea187ed82bc3680779b78cd954289249cef1759065",
+    "generatedCropSha256": "2723c536e4d097c2fde896365a8f9b25af81b4ba06e522d456c175c4b931a30a",
+    "method": "image_gen reference edit; rectangular crop and lossless encoding only; no warping or alpha edits",
+    "review": "Parallel 2/3 top and cardinal face; equal far/near rectangular widths; preserve original materials, motifs and intentional curved shapes."
+  },
+  {
+    "id": "collection-metronome-sink",
+    "facing": "north",
+    "file": "sink-direction-03-b73806c20074.webp",
+    "width": 1024,
+    "height": 1536,
+    "x": 604,
+    "y": 88,
+    "w": 304,
+    "h": 385,
+    "draw": {
+      "x": 11.632850241545896,
+      "y": 1.4210854715202004e-14,
+      "w": 88.73429951690821,
+      "h": 111.99999999999999
+    },
+    "source": {
+      "file": "town/assets/apartment-collections/metronome-north-b7dc54ccb581.webp",
+      "crop": {
+        "x": 647,
+        "y": 227,
+        "w": 164,
+        "h": 207
+      },
+      "frame": {
+        "slot": "sink",
+        "x": 647,
+        "y": 227,
+        "w": 164,
+        "h": 207,
+        "digest": "2caf059364e92c6a38924ed0811eb39273cb65380078b86c27dcfd5fd559b8d6",
+        "viewWidth": 112,
+        "viewHeight": 112,
+        "footCenter": [
+          0.5,
+          0.767857
+        ],
+        "cell": {
+          "x": 647,
+          "y": 227,
+          "w": 164,
+          "h": 207
+        }
+      },
+      "sha256": "89659ea56ba5331e407b41c9310a973fd5c2531ef4d29c3c6c85dc7459a61a79"
+    },
+    "generatedOriginal": "originals/sink-direction-03-b73806c20074.png",
+    "generatedSha256": "b73806c200745f6562dbf5ea187ed82bc3680779b78cd954289249cef1759065",
+    "generatedCropSha256": "5b99592f226c0ccad26bc15ac88655ddab91c0698b8febc579804bb12e56a2ca",
+    "method": "image_gen reference edit; rectangular crop and lossless encoding only; no warping or alpha edits",
+    "review": "Parallel 2/3 top and cardinal face; equal far/near rectangular widths; preserve original materials, motifs and intentional curved shapes."
+  },
+  {
+    "id": "collection-showroom-art-deco-lounge-sink",
+    "facing": "north",
+    "file": "sink-direction-03-b73806c20074.webp",
+    "width": 1024,
+    "height": 1536,
+    "x": 121,
+    "y": 554,
+    "w": 297,
+    "h": 383,
+    "draw": {
+      "x": 8.594059405940591,
+      "y": 0,
+      "w": 94.81188118811882,
+      "h": 112.00000000000001
+    },
+    "source": {
+      "file": "town/assets/apartment-collections/showroom-art-deco-lounge-north-da7b12534df3.webp",
+      "crop": {
+        "x": 613,
+        "y": 223,
+        "w": 171,
+        "h": 202
+      },
+      "frame": {
+        "slot": "sink",
+        "x": 613,
+        "y": 223,
+        "w": 171,
+        "h": 202,
+        "digest": "d3b3e96df41dce39d2547fef6826c4466f107fe4b86a5a99f96767cbfa400378",
+        "viewWidth": 112,
+        "viewHeight": 112,
+        "footCenter": [
+          0.5,
+          0.767857
+        ],
+        "cell": {
+          "x": 613,
+          "y": 223,
+          "w": 171,
+          "h": 202
+        }
+      },
+      "sha256": "b124ca4df25b4c10260d31fe632010ec99d7cb6891a6696dba6ac412bba02308"
+    },
+    "generatedOriginal": "originals/sink-direction-03-b73806c20074.png",
+    "generatedSha256": "b73806c200745f6562dbf5ea187ed82bc3680779b78cd954289249cef1759065",
+    "generatedCropSha256": "30685ca07e297b0a007decb933ad64f77abac0be012f3c1ce7d805b9b78e8b8f",
+    "method": "image_gen reference edit; rectangular crop and lossless encoding only; no warping or alpha edits",
+    "review": "Parallel 2/3 top and cardinal face; equal far/near rectangular widths; preserve original materials, motifs and intentional curved shapes."
+  },
+  {
+    "id": "collection-showroom-coastal-bedroom-sink",
+    "facing": "north",
+    "file": "sink-direction-03-b73806c20074.webp",
+    "width": 1024,
+    "height": 1536,
+    "x": 606,
+    "y": 558,
+    "w": 303,
+    "h": 388,
+    "draw": {
+      "x": 7.37560975609756,
+      "y": 0,
+      "w": 97.24878048780488,
+      "h": 112.00000000000001
+    },
+    "source": {
+      "file": "town/assets/apartment-collections/showroom-coastal-bedroom-north-e42c97feef50.webp",
+      "crop": {
+        "x": 654,
+        "y": 227,
+        "w": 178,
+        "h": 205
+      },
+      "frame": {
+        "slot": "sink",
+        "x": 654,
+        "y": 227,
+        "w": 178,
+        "h": 205,
+        "digest": "0c365992a24cc8396c32f3959a6b3883f13baebbc39042538c27b8b5e3f0a367",
+        "viewWidth": 112,
+        "viewHeight": 112,
+        "footCenter": [
+          0.5,
+          0.767857
+        ],
+        "cell": {
+          "x": 654,
+          "y": 227,
+          "w": 178,
+          "h": 205
+        }
+      },
+      "sha256": "523a12e47567fdf4a4e35fede5f1730d3a9892fa2d4c5896dbf66a9eb4ccbc3b"
+    },
+    "generatedOriginal": "originals/sink-direction-03-b73806c20074.png",
+    "generatedSha256": "b73806c200745f6562dbf5ea187ed82bc3680779b78cd954289249cef1759065",
+    "generatedCropSha256": "891610ba4df4dc712ead63a5a0b8dd89dfdc67c4427f4dfe02f5f731776802c4",
+    "method": "image_gen reference edit; rectangular crop and lossless encoding only; no warping or alpha edits",
+    "review": "Parallel 2/3 top and cardinal face; equal far/near rectangular widths; preserve original materials, motifs and intentional curved shapes."
+  },
+  {
+    "id": "collection-showroom-rustic-kitchen-sink",
+    "facing": "north",
+    "file": "sink-direction-03-b73806c20074.webp",
+    "width": 1024,
+    "height": 1536,
+    "x": 116,
+    "y": 1023,
+    "w": 302,
+    "h": 387,
+    "draw": {
+      "x": 3.715639810426538,
+      "y": 0,
+      "w": 104.56872037914692,
+      "h": 112.00000000000001
+    },
+    "source": {
+      "file": "town/assets/apartment-collections/showroom-rustic-kitchen-north-503a4152fee3.webp",
+      "crop": {
+        "x": 321,
+        "y": 228,
+        "w": 197,
+        "h": 211
+      },
+      "frame": {
+        "slot": "sink",
+        "x": 321,
+        "y": 228,
+        "w": 197,
+        "h": 211,
+        "digest": "6f954846a9cdb20c8a72a8ee599fdb52fb7f449cbe27d00eab83502f3ca92edf",
+        "viewWidth": 112,
+        "viewHeight": 112,
+        "footCenter": [
+          0.5,
+          0.767857
+        ],
+        "cell": {
+          "x": 321,
+          "y": 228,
+          "w": 197,
+          "h": 211
+        }
+      },
+      "sha256": "a5ce373bd5d4a1800d3865a19800905a2528a14c8fbc76a8da1fe9548b3b8078"
+    },
+    "generatedOriginal": "originals/sink-direction-03-b73806c20074.png",
+    "generatedSha256": "b73806c200745f6562dbf5ea187ed82bc3680779b78cd954289249cef1759065",
+    "generatedCropSha256": "63ab3ca7553427a0fd0240fe5b0263e34ff2bd4a2741a5165334ea2b0fcc1538",
+    "method": "image_gen reference edit; rectangular crop and lossless encoding only; no warping or alpha edits",
+    "review": "Parallel 2/3 top and cardinal face; equal far/near rectangular widths; preserve original materials, motifs and intentional curved shapes."
+  },
+  {
+    "id": "collection-showroom-botanical-conservatory-sink",
+    "facing": "north",
+    "file": "sink-direction-03-b73806c20074.webp",
+    "width": 1024,
+    "height": 1536,
+    "x": 606,
+    "y": 1024,
+    "w": 305,
+    "h": 385,
+    "draw": {
+      "x": 8.346153846153847,
+      "y": 0,
+      "w": 95.3076923076923,
+      "h": 112.0
+    },
+    "source": {
+      "file": "town/assets/apartment-collections/showroom-botanical-conservatory-north-58e0d82f01e6.webp",
+      "crop": {
+        "x": 201,
+        "y": 237,
+        "w": 177,
+        "h": 208
+      },
+      "frame": {
+        "slot": "sink",
+        "x": 201,
+        "y": 237,
+        "w": 177,
+        "h": 208,
+        "digest": "9dc7fec8e92914c1395ce3773d38eb5e764d5e671b9ae82e17e6a52bbb4d7e08",
+        "viewWidth": 112,
+        "viewHeight": 112,
+        "footCenter": [
+          0.5,
+          0.767857
+        ],
+        "cell": {
+          "x": 201,
+          "y": 237,
+          "w": 177,
+          "h": 208
+        }
+      },
+      "sha256": "944a563821bb062c69267fd04ffef12da7a0d934628f9dd939d19b0ab346dfac"
+    },
+    "generatedOriginal": "originals/sink-direction-03-b73806c20074.png",
+    "generatedSha256": "b73806c200745f6562dbf5ea187ed82bc3680779b78cd954289249cef1759065",
+    "generatedCropSha256": "feff95d6127a5422b6323c247ee92b95e8930c60db1a595256adfaabea9fa064",
+    "method": "image_gen reference edit; rectangular crop and lossless encoding only; no warping or alpha edits",
+    "review": "Parallel 2/3 top and cardinal face; equal far/near rectangular widths; preserve original materials, motifs and intentional curved shapes."
+  },
+  {
+    "id": "collection-showroom-industrial-loft-sink",
+    "facing": "north",
+    "file": "sink-direction-04-3e2927619101.webp",
+    "width": 1024,
+    "height": 1536,
+    "x": 139,
+    "y": 127,
+    "w": 268,
+    "h": 326,
+    "draw": {
+      "x": 5.190243902439022,
+      "y": 0,
+      "w": 101.61951219512196,
+      "h": 112.00000000000001
+    },
+    "source": {
+      "file": "town/assets/apartment-collections/showroom-industrial-loft-north-cardinal-18ef6266d7b5.webp",
+      "crop": {
+        "x": 468,
+        "y": 223,
+        "w": 186,
+        "h": 205
+      },
+      "frame": {
+        "slot": "sink",
+        "x": 468,
+        "y": 223,
+        "w": 186,
+        "h": 205,
+        "digest": "552d849c15b6805aa9bd37cbb131cb9af8fd5f6d78066c38fc22f7969af9c839",
+        "viewWidth": 112,
+        "viewHeight": 112,
+        "footCenter": [
+          0.5,
+          0.767857
+        ],
+        "cell": {
+          "x": 468,
+          "y": 223,
+          "w": 186,
+          "h": 205
+        }
+      },
+      "sha256": "552d849c15b6805aa9bd37cbb131cb9af8fd5f6d78066c38fc22f7969af9c839"
+    },
+    "generatedOriginal": "originals/sink-direction-04-3e2927619101.png",
+    "generatedSha256": "3e2927619101361aed9dd0d243b88bd43cfcdcbc07d3129aeb823cd5220c799c",
+    "generatedCropSha256": "e322cc3ff17cbf8f78a46a60f5a24bcc3e59a6fd9c1f3ba61e1d8dbb4038b8ea",
+    "method": "image_gen reference edit; rectangular crop and lossless encoding only; no warping or alpha edits",
+    "review": "Parallel 2/3 top and cardinal face; equal far/near rectangular widths; preserve original materials, motifs and intentional curved shapes."
+  },
+  {
+    "id": "collection-showroom-cyberpunk-sink",
+    "facing": "north",
+    "file": "sink-direction-04-3e2927619101.webp",
+    "width": 1024,
+    "height": 1536,
+    "x": 623,
+    "y": 127,
+    "w": 261,
+    "h": 325,
+    "draw": {
+      "x": 3.621890547263682,
+      "y": 0,
+      "w": 104.75621890547264,
+      "h": 112.0
+    },
+    "source": {
+      "file": "town/assets/apartment-collections/showroom-cyberpunk-north-fbf8783a81e0.webp",
+      "crop": {
+        "x": 333,
+        "y": 890,
+        "w": 188,
+        "h": 201
+      },
+      "frame": {
+        "slot": "sink",
+        "x": 333,
+        "y": 890,
+        "w": 188,
+        "h": 201,
+        "digest": "e0e513caa70da9b874bf5dca434031a0ddf751ba565f9085209e56d199d3c020",
+        "viewWidth": 112,
+        "viewHeight": 112,
+        "footCenter": [
+          0.5,
+          0.767857
+        ],
+        "cell": {
+          "x": 333,
+          "y": 890,
+          "w": 188,
+          "h": 201
+        }
+      },
+      "sha256": "d2e5863fadaaa1b9119c3712a97131b858d9bfa04dc5a396fa5bff976d487c0a"
+    },
+    "generatedOriginal": "originals/sink-direction-04-3e2927619101.png",
+    "generatedSha256": "3e2927619101361aed9dd0d243b88bd43cfcdcbc07d3129aeb823cd5220c799c",
+    "generatedCropSha256": "f8100a67891bde6cb0f3665ad0009ebf645e3c7845853ce66118dd0184b39a96",
+    "method": "image_gen reference edit; rectangular crop and lossless encoding only; no warping or alpha edits",
+    "review": "Parallel 2/3 top and cardinal face; equal far/near rectangular widths; preserve original materials, motifs and intentional curved shapes."
+  },
+  {
+    "id": "collection-showroom-steampunk-sink",
+    "facing": "north",
+    "file": "sink-direction-04-3e2927619101.webp",
+    "width": 1024,
+    "height": 1536,
+    "x": 139,
+    "y": 607,
+    "w": 277,
+    "h": 336,
+    "draw": {
+      "x": 1.6153846153846203,
+      "y": 0,
+      "w": 108.76923076923076,
+      "h": 112.0
+    },
+    "source": {
+      "file": "town/assets/apartment-collections/showroom-steampunk-north-512c9008d3c8.webp",
+      "crop": {
+        "x": 213,
+        "y": 459,
+        "w": 202,
+        "h": 208
+      },
+      "frame": {
+        "slot": "sink",
+        "x": 213,
+        "y": 459,
+        "w": 202,
+        "h": 208,
+        "digest": "70eed607211c64c27970e6c536fdd85dd6efc9594db7d134593f4b5bbd07baa4",
+        "viewWidth": 112,
+        "viewHeight": 112,
+        "footCenter": [
+          0.5,
+          0.767857
+        ],
+        "cell": {
+          "x": 213,
+          "y": 459,
+          "w": 202,
+          "h": 208
+        }
+      },
+      "sha256": "42798382693ce8bfcd30e69ddab42c9c1e167062a4cbbf882601faa883064ed6"
+    },
+    "generatedOriginal": "originals/sink-direction-04-3e2927619101.png",
+    "generatedSha256": "3e2927619101361aed9dd0d243b88bd43cfcdcbc07d3129aeb823cd5220c799c",
+    "generatedCropSha256": "b7f412a43dbaf1d5ed8a8a725e1dc7a2fc011b8e8197edc99a45ffdd51c0a99e",
+    "method": "image_gen reference edit; rectangular crop and lossless encoding only; no warping or alpha edits",
+    "review": "Parallel 2/3 top and cardinal face; equal far/near rectangular widths; preserve original materials, motifs and intentional curved shapes."
+  },
+  {
+    "id": "collection-beethoven-sink",
+    "facing": "west",
+    "file": "sink-direction-04-3e2927619101.webp",
+    "width": 1024,
+    "height": 1536,
+    "x": 668,
+    "y": 607,
+    "w": 149,
+    "h": 336,
+    "draw": {
+      "x": 0,
+      "y": 18.434782608695656,
+      "w": 72.0,
+      "h": 145.56521739130434
+    },
+    "source": {
+      "file": "town/assets/apartment-collections/beethoven-west-cardinal-9c0f53af6dfe.webp",
+      "crop": {
+        "x": 631,
+        "y": 1499,
+        "w": 92,
+        "h": 186
+      },
+      "frame": {
+        "slot": "sink",
+        "x": 631,
+        "y": 1499,
+        "w": 92,
+        "h": 186,
+        "digest": "cb9c07c2088d50baf162648606f2a58326b0e51917f5c9c93d572ca353af1c7c",
+        "viewWidth": 72,
+        "viewHeight": 164,
+        "footCenter": [
+          0.5,
+          0.642772
+        ],
+        "cell": {
+          "x": 631,
+          "y": 1499,
+          "w": 92,
+          "h": 186
+        }
+      },
+      "sha256": "cb9c07c2088d50baf162648606f2a58326b0e51917f5c9c93d572ca353af1c7c"
+    },
+    "generatedOriginal": "originals/sink-direction-04-3e2927619101.png",
+    "generatedSha256": "3e2927619101361aed9dd0d243b88bd43cfcdcbc07d3129aeb823cd5220c799c",
+    "generatedCropSha256": "b27d1b7b93ab848317dbb48e823c38c511d283afd1d843751d53a90661aa4518",
+    "method": "image_gen reference edit; rectangular crop and lossless encoding only; no warping or alpha edits",
+    "review": "Parallel 2/3 top and cardinal face; equal far/near rectangular widths; preserve original materials, motifs and intentional curved shapes."
+  },
+  {
+    "id": "collection-haydn-sink",
+    "facing": "west",
+    "file": "sink-direction-04-3e2927619101.webp",
+    "width": 1024,
+    "height": 1536,
+    "x": 181,
+    "y": 1088,
+    "w": 151,
+    "h": 318,
+    "draw": {
+      "x": 0,
+      "y": 34.9433962264151,
+      "w": 72.0,
+      "h": 129.0566037735849
+    },
+    "source": {
+      "file": "town/assets/apartment-collections/haydn-west-cardinal-d5161ff30be5.webp",
+      "crop": {
+        "x": 1348,
+        "y": 1542,
+        "w": 106,
+        "h": 190
+      },
+      "frame": {
+        "slot": "sink",
+        "x": 1348,
+        "y": 1542,
+        "w": 106,
+        "h": 190,
+        "digest": "6fea7f77809643b811c9b26ccdf611063cc35682e4bda211db1df21c9c4855f3",
+        "viewWidth": 72,
+        "viewHeight": 164,
+        "footCenter": [
+          0.5,
+          0.597076
+        ],
+        "cell": {
+          "x": 1348,
+          "y": 1542,
+          "w": 106,
+          "h": 190
+        }
+      },
+      "sha256": "6fea7f77809643b811c9b26ccdf611063cc35682e4bda211db1df21c9c4855f3"
+    },
+    "generatedOriginal": "originals/sink-direction-04-3e2927619101.png",
+    "generatedSha256": "3e2927619101361aed9dd0d243b88bd43cfcdcbc07d3129aeb823cd5220c799c",
+    "generatedCropSha256": "410b50813e9d0a08f509d5e4ce229ab3f01363abeca01db770a1a3d3660f2b61",
+    "method": "image_gen reference edit; rectangular crop and lossless encoding only; no warping or alpha edits",
+    "review": "Parallel 2/3 top and cardinal face; equal far/near rectangular widths; preserve original materials, motifs and intentional curved shapes."
+  },
+  {
+    "id": "collection-handel-sink",
+    "facing": "west",
+    "file": "sink-direction-04-3e2927619101.webp",
+    "width": 1024,
+    "height": 1536,
+    "x": 664,
+    "y": 1088,
+    "w": 157,
+    "h": 318,
+    "draw": {
+      "x": 0,
+      "y": 40.389380530973455,
+      "w": 72.0,
+      "h": 123.61061946902655
+    },
+    "source": {
+      "file": "town/assets/apartment-collections/handel-west-cardinal-5595fb701936.webp",
+      "crop": {
+        "x": 1566,
+        "y": 1892,
+        "w": 113,
+        "h": 194
+      },
+      "frame": {
+        "slot": "sink",
+        "x": 1566,
+        "y": 1892,
+        "w": 113,
+        "h": 194,
+        "digest": "c15b2a3080892918614925dcbc800ca10f8590d68e619c1e832af6ddd3f2058f",
+        "viewWidth": 72,
+        "viewHeight": 164,
+        "footCenter": [
+          0.5,
+          0.579324
+        ],
+        "cell": {
+          "x": 1566,
+          "y": 1892,
+          "w": 113,
+          "h": 194
+        }
+      },
+      "sha256": "c15b2a3080892918614925dcbc800ca10f8590d68e619c1e832af6ddd3f2058f"
+    },
+    "generatedOriginal": "originals/sink-direction-04-3e2927619101.png",
+    "generatedSha256": "3e2927619101361aed9dd0d243b88bd43cfcdcbc07d3129aeb823cd5220c799c",
+    "generatedCropSha256": "9c9fe863bb201277db01612b13419a75931da2298691f87c32779d219266543f",
+    "method": "image_gen reference edit; rectangular crop and lossless encoding only; no warping or alpha edits",
+    "review": "Parallel 2/3 top and cardinal face; equal far/near rectangular widths; preserve original materials, motifs and intentional curved shapes."
+  },
+  {
+    "id": "collection-vivaldi-sink",
+    "facing": "west",
+    "file": "sink-direction-05-14ba784dec95.webp",
+    "width": 1024,
+    "height": 1536,
+    "x": 176,
+    "y": 137,
+    "w": 159,
+    "h": 321,
+    "draw": {
+      "x": 0,
+      "y": 20.734693877551024,
+      "w": 72.0,
+      "h": 143.26530612244898
+    },
+    "source": {
+      "file": "town/assets/apartment-collections/vivaldi-west-cardinal-b5a0e92b4afc.webp",
+      "crop": {
+        "x": 731,
+        "y": 1710,
+        "w": 98,
+        "h": 195
+      },
+      "frame": {
+        "slot": "sink",
+        "x": 731,
+        "y": 1710,
+        "w": 98,
+        "h": 195,
+        "digest": "87194bed967ef286cd0b21c212f8ef76fef93464024d5b336bb04b2a9d94cb4a",
+        "viewWidth": 72,
+        "viewHeight": 164,
+        "footCenter": [
+          0.5,
+          0.637037
+        ],
+        "cell": {
+          "x": 731,
+          "y": 1710,
+          "w": 98,
+          "h": 195
+        }
+      },
+      "sha256": "87194bed967ef286cd0b21c212f8ef76fef93464024d5b336bb04b2a9d94cb4a"
+    },
+    "generatedOriginal": "originals/sink-direction-05-14ba784dec95.png",
+    "generatedSha256": "14ba784dec95c475d64eb20110cc95f05b74a3e79ab233c1bd7a4155dd984c6c",
+    "generatedCropSha256": "dff5d79d9d60d1979a32b7fea82c5d716760d14e4a34e20d36255ca854e914ed",
+    "method": "image_gen reference edit; rectangular crop and lossless encoding only; no warping or alpha edits",
+    "review": "Parallel 2/3 top and cardinal face; equal far/near rectangular widths; preserve original materials, motifs and intentional curved shapes."
+  },
+  {
+    "id": "collection-joplin-sink",
+    "facing": "west",
+    "file": "sink-direction-05-14ba784dec95.webp",
+    "width": 1024,
+    "height": 1536,
+    "x": 668,
+    "y": 137,
+    "w": 164,
+    "h": 321,
+    "draw": {
+      "x": 0,
+      "y": 30.188679245283026,
+      "w": 72.0,
+      "h": 133.81132075471697
+    },
+    "source": {
+      "file": "town/assets/apartment-collections/joplin-west-cardinal-e5c27f16c891.webp",
+      "crop": {
+        "x": 685,
+        "y": 2066,
+        "w": 106,
+        "h": 197
+      },
+      "frame": {
+        "slot": "sink",
+        "x": 685,
+        "y": 2066,
+        "w": 106,
+        "h": 197,
+        "digest": "710a487dc9adfd22383e75a1872bb7e1697243afd0ef9ca894804a0d60f8e5d3",
+        "viewWidth": 72,
+        "viewHeight": 164,
+        "footCenter": [
+          0.5,
+          0.611393
+        ],
+        "cell": {
+          "x": 685,
+          "y": 2066,
+          "w": 106,
+          "h": 197
+        }
+      },
+      "sha256": "710a487dc9adfd22383e75a1872bb7e1697243afd0ef9ca894804a0d60f8e5d3"
+    },
+    "generatedOriginal": "originals/sink-direction-05-14ba784dec95.png",
+    "generatedSha256": "14ba784dec95c475d64eb20110cc95f05b74a3e79ab233c1bd7a4155dd984c6c",
+    "generatedCropSha256": "5cc20345294db65d1d7a0cb6adf54d799f096426a9cb5e551d377bbdbf2b5979",
+    "method": "image_gen reference edit; rectangular crop and lossless encoding only; no warping or alpha edits",
+    "review": "Parallel 2/3 top and cardinal face; equal far/near rectangular widths; preserve original materials, motifs and intentional curved shapes."
+  },
+  {
+    "id": "collection-nina-sink",
+    "facing": "west",
+    "file": "sink-direction-05-14ba784dec95.webp",
+    "width": 1024,
+    "height": 1536,
+    "x": 173,
+    "y": 582,
+    "w": 163,
+    "h": 348,
+    "draw": {
+      "x": 0,
+      "y": 16.470588235294116,
+      "w": 72.0,
+      "h": 147.52941176470588
+    },
+    "source": {
+      "file": "town/assets/apartment-collections/nina-west-cardinal-eeab8f2eb08b.webp",
+      "crop": {
+        "x": 1353,
+        "y": 2400,
+        "w": 102,
+        "h": 209
+      },
+      "frame": {
+        "slot": "sink",
+        "x": 1353,
+        "y": 2400,
+        "w": 102,
+        "h": 209,
+        "digest": "49d5c9f9c0b56189466d8a6ce0eca669677a859c9bfbea9528e33400486da2d7",
+        "viewWidth": 72,
+        "viewHeight": 164,
+        "footCenter": [
+          0.5,
+          0.647528
+        ],
+        "cell": {
+          "x": 1353,
+          "y": 2400,
+          "w": 102,
+          "h": 209
+        }
+      },
+      "sha256": "49d5c9f9c0b56189466d8a6ce0eca669677a859c9bfbea9528e33400486da2d7"
+    },
+    "generatedOriginal": "originals/sink-direction-05-14ba784dec95.png",
+    "generatedSha256": "14ba784dec95c475d64eb20110cc95f05b74a3e79ab233c1bd7a4155dd984c6c",
+    "generatedCropSha256": "7456ad9a930491d98c0da960bb424344e58d728c417f13e2e3de92d40f67b574",
+    "method": "image_gen reference edit; rectangular crop and lossless encoding only; no warping or alpha edits",
+    "review": "Parallel 2/3 top and cardinal face; equal far/near rectangular widths; preserve original materials, motifs and intentional curved shapes."
+  },
+  {
+    "id": "collection-miles-sink",
+    "facing": "west",
+    "file": "sink-direction-05-14ba784dec95.webp",
+    "width": 1024,
+    "height": 1536,
+    "x": 667,
+    "y": 582,
+    "w": 166,
+    "h": 348,
+    "draw": {
+      "x": 0,
+      "y": 15.636363636363626,
+      "w": 72.0,
+      "h": 148.36363636363637
+    },
+    "source": {
+      "file": "town/assets/apartment-collections/miles-west-cardinal-7ae4feef6853.webp",
+      "crop": {
+        "x": 4,
+        "y": 3101,
+        "w": 99,
+        "h": 204
+      },
+      "frame": {
+        "slot": "sink",
+        "x": 4,
+        "y": 3101,
+        "w": 99,
+        "h": 204,
+        "digest": "969c0e02b58c4acc434090f413bd5b01858fc4ed556ea524c61b4b86733fb7ab",
+        "viewWidth": 72,
+        "viewHeight": 164,
+        "footCenter": [
+          0.5,
+          0.64951
+        ],
+        "cell": {
+          "x": 4,
+          "y": 3101,
+          "w": 99,
+          "h": 204
+        }
+      },
+      "sha256": "969c0e02b58c4acc434090f413bd5b01858fc4ed556ea524c61b4b86733fb7ab"
+    },
+    "generatedOriginal": "originals/sink-direction-05-14ba784dec95.png",
+    "generatedSha256": "14ba784dec95c475d64eb20110cc95f05b74a3e79ab233c1bd7a4155dd984c6c",
+    "generatedCropSha256": "4b15c1d146d9002f4a9ba8da402a488a3fc064f33fa17134d3e46429f8e83201",
+    "method": "image_gen reference edit; rectangular crop and lossless encoding only; no warping or alpha edits",
+    "review": "Parallel 2/3 top and cardinal face; equal far/near rectangular widths; preserve original materials, motifs and intentional curved shapes."
+  },
+  {
+    "id": "collection-dj-sink",
+    "facing": "west",
+    "file": "sink-direction-05-14ba784dec95.webp",
+    "width": 1024,
+    "height": 1536,
+    "x": 174,
+    "y": 1074,
+    "w": 163,
+    "h": 340,
+    "draw": {
+      "x": 0,
+      "y": 14.804123711340196,
+      "w": 72.0,
+      "h": 149.1958762886598
+    },
+    "source": {
+      "file": "town/assets/apartment-collections/dj-west-cardinal-943c911ddacd.webp",
+      "crop": {
+        "x": 739,
+        "y": 2174,
+        "w": 97,
+        "h": 201
+      },
+      "frame": {
+        "slot": "sink",
+        "x": 739,
+        "y": 2174,
+        "w": 97,
+        "h": 201,
+        "digest": "ca3b558d7407dba9dee8850030587a4f734c92c9159a408f93b0a8e36a0cbcc6",
+        "viewWidth": 72,
+        "viewHeight": 164,
+        "footCenter": [
+          0.5,
+          0.651465
+        ],
+        "cell": {
+          "x": 739,
+          "y": 2174,
+          "w": 97,
+          "h": 201
+        }
+      },
+      "sha256": "ca3b558d7407dba9dee8850030587a4f734c92c9159a408f93b0a8e36a0cbcc6"
+    },
+    "generatedOriginal": "originals/sink-direction-05-14ba784dec95.png",
+    "generatedSha256": "14ba784dec95c475d64eb20110cc95f05b74a3e79ab233c1bd7a4155dd984c6c",
+    "generatedCropSha256": "a8ba37f3e242d2725d0e72d55c3e68cf24f66c07de8eb0813ceb15416183946e",
+    "method": "image_gen reference edit; rectangular crop and lossless encoding only; no warping or alpha edits",
+    "review": "Parallel 2/3 top and cardinal face; equal far/near rectangular widths; preserve original materials, motifs and intentional curved shapes."
+  },
+  {
+    "id": "collection-vee-jay-sink",
+    "facing": "west",
+    "file": "sink-direction-05-14ba784dec95.webp",
+    "width": 1024,
+    "height": 1536,
+    "x": 669,
+    "y": 1074,
+    "w": 165,
+    "h": 340,
+    "draw": {
+      "x": 0,
+      "y": 23.67346938775509,
+      "w": 72.0,
+      "h": 140.3265306122449
+    },
+    "source": {
+      "file": "town/assets/apartment-collections/vee-jay-west-cardinal-98fc210668fb.webp",
+      "crop": {
+        "x": 1745,
+        "y": 1561,
+        "w": 98,
+        "h": 191
+      },
+      "frame": {
+        "slot": "sink",
+        "x": 1745,
+        "y": 1561,
+        "w": 98,
+        "h": 191,
+        "digest": "ee48a089b8eeabdf32eb53403654028af6039d31a64070834fd9a61a52d6ed9c",
+        "viewWidth": 72,
+        "viewHeight": 164,
+        "footCenter": [
+          0.5,
+          0.629436
+        ],
+        "cell": {
+          "x": 1745,
+          "y": 1561,
+          "w": 98,
+          "h": 191
+        }
+      },
+      "sha256": "ee48a089b8eeabdf32eb53403654028af6039d31a64070834fd9a61a52d6ed9c"
+    },
+    "generatedOriginal": "originals/sink-direction-05-14ba784dec95.png",
+    "generatedSha256": "14ba784dec95c475d64eb20110cc95f05b74a3e79ab233c1bd7a4155dd984c6c",
+    "generatedCropSha256": "0205bc56015991d16846a9ee96e97a776fb8d42b10b19e17f4b0f8338e5e6d95",
+    "method": "image_gen reference edit; rectangular crop and lossless encoding only; no warping or alpha edits",
+    "review": "Parallel 2/3 top and cardinal face; equal far/near rectangular widths; preserve original materials, motifs and intentional curved shapes."
+  },
+  {
+    "id": "collection-metronome-sink",
+    "facing": "west",
+    "file": "sink-direction-06-f7887b4cab65.webp",
+    "width": 1024,
+    "height": 1536,
+    "x": 180,
+    "y": 145,
+    "w": 144,
+    "h": 306,
+    "draw": {
+      "x": 0,
+      "y": 20.66055045871559,
+      "w": 72.0,
+      "h": 143.3394495412844
+    },
+    "source": {
+      "file": "town/assets/apartment-collections/metronome-west-cardinal-74c89a6d4ad2.webp",
+      "crop": {
+        "x": 4,
+        "y": 2001,
+        "w": 109,
+        "h": 217
+      },
+      "frame": {
+        "slot": "sink",
+        "x": 4,
+        "y": 2001,
+        "w": 109,
+        "h": 217,
+        "digest": "c25eeefe46eb3e2ca00818dde87529cf77ce9db20a9f70c41a278e78d8fa72a1",
+        "viewWidth": 72,
+        "viewHeight": 164,
+        "footCenter": [
+          0.5,
+          0.637225
+        ],
+        "cell": {
+          "x": 4,
+          "y": 2001,
+          "w": 109,
+          "h": 217
+        }
+      },
+      "sha256": "c25eeefe46eb3e2ca00818dde87529cf77ce9db20a9f70c41a278e78d8fa72a1"
+    },
+    "generatedOriginal": "originals/sink-direction-06-f7887b4cab65.png",
+    "generatedSha256": "f7887b4cab6526031e10f8a9fdca28466cbd31a1554d2bc57fe2bde15d8c66de",
+    "generatedCropSha256": "6390e8224a8474b3f545d4eaf57e6442df83c50a77507bd1dc392fa66e10c3f1",
+    "method": "image_gen reference edit; rectangular crop and lossless encoding only; no warping or alpha edits",
+    "review": "Parallel 2/3 top and cardinal face; equal far/near rectangular widths; preserve original materials, motifs and intentional curved shapes."
+  },
+  {
+    "id": "collection-schoenberg-sink",
+    "facing": "west",
+    "file": "sink-direction-06-f7887b4cab65.webp",
+    "width": 1024,
+    "height": 1536,
+    "x": 668,
+    "y": 146,
+    "w": 138,
+    "h": 305,
+    "draw": {
+      "x": 1.960784317134312e-07,
+      "y": 0,
+      "w": 71.54901960784314,
+      "h": 164.0
+    },
+    "source": {
+      "file": "town/assets/apartment-collections/schoenberg-west-cardinal-889b7f3db3db.webp",
+      "crop": {
+        "x": 1241,
+        "y": 1162,
+        "w": 89,
+        "h": 204
+      },
+      "frame": {
+        "slot": "sink",
+        "x": 1241,
+        "y": 1162,
+        "w": 89,
+        "h": 204,
+        "digest": "a308f9e5e96abcb9d710848a42460748c2961403686a0054990409ea863c79c0",
+        "viewWidth": 71.54902,
+        "viewHeight": 164,
+        "footCenter": [
+          0.5,
+          0.682927
+        ],
+        "cell": {
+          "x": 1241,
+          "y": 1162,
+          "w": 89,
+          "h": 204
+        }
+      },
+      "sha256": "a308f9e5e96abcb9d710848a42460748c2961403686a0054990409ea863c79c0"
+    },
+    "generatedOriginal": "originals/sink-direction-06-f7887b4cab65.png",
+    "generatedSha256": "f7887b4cab6526031e10f8a9fdca28466cbd31a1554d2bc57fe2bde15d8c66de",
+    "generatedCropSha256": "ac91a49e7c5bbae9838b9d1818f429665774e338c42a7d9658213c43b7f19567",
+    "method": "image_gen reference edit; rectangular crop and lossless encoding only; no warping or alpha edits",
+    "review": "Parallel 2/3 top and cardinal face; equal far/near rectangular widths; preserve original materials, motifs and intentional curved shapes."
+  },
+  {
+    "id": "collection-showroom-art-deco-lounge-sink",
+    "facing": "west",
+    "file": "sink-direction-06-f7887b4cab65.webp",
+    "width": 1024,
+    "height": 1536,
+    "x": 183,
+    "y": 597,
+    "w": 141,
+    "h": 311,
+    "draw": {
+      "x": 0,
+      "y": 10.448979591836718,
+      "w": 72.0,
+      "h": 153.55102040816328
+    },
+    "source": {
+      "file": "town/assets/apartment-collections/showroom-art-deco-lounge-west-cardinal-1021d7e91d09.webp",
+      "crop": {
+        "x": 441,
+        "y": 587,
+        "w": 98,
+        "h": 209
+      },
+      "frame": {
+        "slot": "sink",
+        "x": 441,
+        "y": 587,
+        "w": 98,
+        "h": 209,
+        "digest": "5bf6bf682192a9d2dba1f7fc4e4794befd62da07a60d0e9901347bb83a6e79f7",
+        "viewWidth": 72,
+        "viewHeight": 164,
+        "footCenter": [
+          0.5,
+          0.66135
+        ],
+        "cell": {
+          "x": 441,
+          "y": 587,
+          "w": 98,
+          "h": 209
+        }
+      },
+      "sha256": "5bf6bf682192a9d2dba1f7fc4e4794befd62da07a60d0e9901347bb83a6e79f7"
+    },
+    "generatedOriginal": "originals/sink-direction-06-f7887b4cab65.png",
+    "generatedSha256": "f7887b4cab6526031e10f8a9fdca28466cbd31a1554d2bc57fe2bde15d8c66de",
+    "generatedCropSha256": "4ae1b48c68c030c5aa343c266774c4e06b2dade5da970e318670872fa41fc39c",
+    "method": "image_gen reference edit; rectangular crop and lossless encoding only; no warping or alpha edits",
+    "review": "Parallel 2/3 top and cardinal face; equal far/near rectangular widths; preserve original materials, motifs and intentional curved shapes."
+  },
+  {
+    "id": "collection-showroom-coastal-bedroom-sink",
+    "facing": "west",
+    "file": "sink-direction-06-f7887b4cab65.webp",
+    "width": 1024,
+    "height": 1536,
+    "x": 667,
+    "y": 597,
+    "w": 140,
+    "h": 307,
+    "draw": {
+      "x": 0,
+      "y": 24.754716981132077,
+      "w": 72.0,
+      "h": 139.24528301886792
+    },
+    "source": {
+      "file": "town/assets/apartment-collections/showroom-coastal-bedroom-west-cardinal-2cecc8a3e76b.webp",
+      "crop": {
+        "x": 1150,
+        "y": 923,
+        "w": 106,
+        "h": 205
+      },
+      "frame": {
+        "slot": "sink",
+        "x": 1150,
+        "y": 923,
+        "w": 106,
+        "h": 205,
+        "digest": "d58ffd4993c2fab339a5a960fc5a15c5edc1b9ce77814b7a00300c93dcdae3b9",
+        "viewWidth": 72,
+        "viewHeight": 164,
+        "footCenter": [
+          0.5,
+          0.626558
+        ],
+        "cell": {
+          "x": 1150,
+          "y": 923,
+          "w": 106,
+          "h": 205
+        }
+      },
+      "sha256": "d58ffd4993c2fab339a5a960fc5a15c5edc1b9ce77814b7a00300c93dcdae3b9"
+    },
+    "generatedOriginal": "originals/sink-direction-06-f7887b4cab65.png",
+    "generatedSha256": "f7887b4cab6526031e10f8a9fdca28466cbd31a1554d2bc57fe2bde15d8c66de",
+    "generatedCropSha256": "adac7c3109c8f09c1ee159ab92aa51ed255d1af96f6508548ed7eddd82a8244b",
+    "method": "image_gen reference edit; rectangular crop and lossless encoding only; no warping or alpha edits",
+    "review": "Parallel 2/3 top and cardinal face; equal far/near rectangular widths; preserve original materials, motifs and intentional curved shapes."
+  },
+  {
+    "id": "collection-showroom-rustic-kitchen-sink",
+    "facing": "west",
+    "file": "sink-direction-06-f7887b4cab65.webp",
+    "width": 1024,
+    "height": 1536,
+    "x": 178,
+    "y": 1061,
+    "w": 146,
+    "h": 297,
+    "draw": {
+      "x": 0,
+      "y": 46.6218487394958,
+      "w": 72.0,
+      "h": 117.3781512605042
+    },
+    "source": {
+      "file": "town/assets/apartment-collections/showroom-rustic-kitchen-west-cardinal-eacb4a975416.webp",
+      "crop": {
+        "x": 1617,
+        "y": 908,
+        "w": 119,
+        "h": 194
+      },
+      "frame": {
+        "slot": "sink",
+        "x": 1617,
+        "y": 908,
+        "w": 119,
+        "h": 194,
+        "digest": "662d33da30f7e40bcfd25c4b1f5329d223bd55d8768ee4d997dfa6634ebba36e",
+        "viewWidth": 72,
+        "viewHeight": 164,
+        "footCenter": [
+          0.5,
+          0.556987
+        ],
+        "cell": {
+          "x": 1617,
+          "y": 908,
+          "w": 119,
+          "h": 194
+        }
+      },
+      "sha256": "662d33da30f7e40bcfd25c4b1f5329d223bd55d8768ee4d997dfa6634ebba36e"
+    },
+    "generatedOriginal": "originals/sink-direction-06-f7887b4cab65.png",
+    "generatedSha256": "f7887b4cab6526031e10f8a9fdca28466cbd31a1554d2bc57fe2bde15d8c66de",
+    "generatedCropSha256": "26fd2b3e54222fc90cbc67c5b2b3946da2565b040bb29fff65bb64d4d7f3212a",
+    "method": "image_gen reference edit; rectangular crop and lossless encoding only; no warping or alpha edits",
+    "review": "Parallel 2/3 top and cardinal face; equal far/near rectangular widths; preserve original materials, motifs and intentional curved shapes."
+  },
+  {
+    "id": "collection-showroom-french-cafe-sink",
+    "facing": "west",
+    "file": "sink-direction-06-f7887b4cab65.webp",
+    "width": 1024,
+    "height": 1536,
+    "x": 668,
+    "y": 1061,
+    "w": 138,
+    "h": 297,
+    "draw": {
+      "x": 0,
+      "y": 8.865979381443282,
+      "w": 72.0,
+      "h": 155.13402061855672
+    },
+    "source": {
+      "file": "town/assets/apartment-collections/showroom-french-cafe-west-cardinal-65fd7254b50c.webp",
+      "crop": {
+        "x": 930,
+        "y": 660,
+        "w": 97,
+        "h": 209
+      },
+      "frame": {
+        "slot": "sink",
+        "x": 930,
+        "y": 660,
+        "w": 97,
+        "h": 209,
+        "digest": "458488e9f442ccb05bd1f1501c2171be176bfe115a55d450ecd501a550945934",
+        "viewWidth": 72,
+        "viewHeight": 164,
+        "footCenter": [
+          0.5,
+          0.664806
+        ],
+        "cell": {
+          "x": 930,
+          "y": 660,
+          "w": 97,
+          "h": 209
+        }
+      },
+      "sha256": "458488e9f442ccb05bd1f1501c2171be176bfe115a55d450ecd501a550945934"
+    },
+    "generatedOriginal": "originals/sink-direction-06-f7887b4cab65.png",
+    "generatedSha256": "f7887b4cab6526031e10f8a9fdca28466cbd31a1554d2bc57fe2bde15d8c66de",
+    "generatedCropSha256": "59d56ce0fe1929d7e569bf1afb5f7070ce5a57d89e87121d10426c0f91ba659f",
+    "method": "image_gen reference edit; rectangular crop and lossless encoding only; no warping or alpha edits",
+    "review": "Parallel 2/3 top and cardinal face; equal far/near rectangular widths; preserve original materials, motifs and intentional curved shapes."
+  },
+  {
+    "id": "collection-showroom-industrial-loft-sink",
+    "facing": "west",
+    "file": "sink-direction-07-0b3f03a71edf.webp",
+    "width": 1024,
+    "height": 1536,
+    "x": 178,
+    "y": 96,
+    "w": 167,
+    "h": 374,
+    "draw": {
+      "x": 0,
+      "y": 8.0,
+      "w": 72.0,
+      "h": 156.0
+    },
+    "source": {
+      "file": "town/assets/apartment-collections/showroom-industrial-loft-west-cardinal-2ed0d0d9fa72.webp",
+      "crop": {
+        "x": 1665,
+        "y": 1366,
+        "w": 102,
+        "h": 221
+      },
+      "frame": {
+        "slot": "sink",
+        "x": 1665,
+        "y": 1366,
+        "w": 102,
+        "h": 221,
+        "digest": "9691f9656665903e36834227a4e816ee39d77d87dee36ceba100bff41a3a4694",
+        "viewWidth": 72,
+        "viewHeight": 164,
+        "footCenter": [
+          0.5,
+          0.6666670950226246
+        ],
+        "cell": {
+          "x": 1665,
+          "y": 1366,
+          "w": 102,
+          "h": 221
+        },
+        "sourceDigest": "de079998d08f157b2b4e4d564d4219258a4523eb18107b00804315042aca442b",
+        "sourceFrame": {
+          "x": 501,
+          "y": 512,
+          "w": 102,
+          "h": 221
+        },
+        "artReview": "independent-browser-qa.json"
+      },
+      "sha256": "9691f9656665903e36834227a4e816ee39d77d87dee36ceba100bff41a3a4694"
+    },
+    "generatedOriginal": "originals/sink-direction-07-0b3f03a71edf.png",
+    "generatedSha256": "0b3f03a71edf9a1c38fc550ee24ca56dd6730900f6ea0b5c6fd474f8c323a939",
+    "generatedCropSha256": "a86cb1801150b0c04e11044286069b3bc7ca0ba5c055ae538b3b42901694fe07",
+    "method": "image_gen reference edit; rectangular crop and lossless encoding only; no warping or alpha edits",
+    "review": "Parallel 2/3 top and cardinal face; equal far/near rectangular widths; preserve original materials, motifs and intentional curved shapes."
+  },
+  {
+    "id": "collection-showroom-cyberpunk-sink",
+    "facing": "west",
+    "file": "sink-direction-07-0b3f03a71edf.webp",
+    "width": 1024,
+    "height": 1536,
+    "x": 663,
+    "y": 96,
+    "w": 182,
+    "h": 372,
+    "draw": {
+      "x": 0,
+      "y": 38.15126050420169,
+      "w": 72.0,
+      "h": 125.84873949579831
+    },
+    "source": {
+      "file": "town/assets/apartment-collections/showroom-cyberpunk-west-cardinal-7da95db4940f.webp",
+      "crop": {
+        "x": 389,
+        "y": 1012,
+        "w": 119,
+        "h": 208
+      },
+      "frame": {
+        "slot": "sink",
+        "x": 389,
+        "y": 1012,
+        "w": 119,
+        "h": 208,
+        "digest": "e1b4566d8b4481f5db4e0ac941ac2ed3ea23f6d1ede7e7e6c32f884a5c269250",
+        "viewWidth": 72,
+        "viewHeight": 164,
+        "footCenter": [
+          0.5,
+          0.586806
+        ],
+        "cell": {
+          "x": 389,
+          "y": 1012,
+          "w": 119,
+          "h": 208
+        }
+      },
+      "sha256": "e1b4566d8b4481f5db4e0ac941ac2ed3ea23f6d1ede7e7e6c32f884a5c269250"
+    },
+    "generatedOriginal": "originals/sink-direction-07-0b3f03a71edf.png",
+    "generatedSha256": "0b3f03a71edf9a1c38fc550ee24ca56dd6730900f6ea0b5c6fd474f8c323a939",
+    "generatedCropSha256": "9cf2ac29f6d90edf47852114c7bcde5b43b553b7c940f4c28bc7012a2cf951d7",
+    "method": "image_gen reference edit; rectangular crop and lossless encoding only; no warping or alpha edits",
+    "review": "Parallel 2/3 top and cardinal face; equal far/near rectangular widths; preserve original materials, motifs and intentional curved shapes."
+  },
+  {
+    "id": "collection-showroom-steampunk-sink",
+    "facing": "west",
+    "file": "sink-direction-07-0b3f03a71edf.webp",
+    "width": 1024,
+    "height": 1536,
+    "x": 166,
+    "y": 577,
+    "w": 182,
+    "h": 384,
+    "draw": {
+      "x": 0,
+      "y": 18.601941747572823,
+      "w": 72.0,
+      "h": 145.39805825242718
+    },
+    "source": {
+      "file": "town/assets/apartment-collections/showroom-steampunk-west-cardinal-ce95215b12e3.webp",
+      "crop": {
+        "x": 821,
+        "y": 660,
+        "w": 103,
+        "h": 208
+      },
+      "frame": {
+        "slot": "sink",
+        "x": 821,
+        "y": 660,
+        "w": 103,
+        "h": 208,
+        "digest": "8782f2d6a1ebeb7b3edaa563363185d76ca9c408561720166fe8271612039a2c",
+        "viewWidth": 72,
+        "viewHeight": 164,
+        "footCenter": [
+          0.5,
+          0.642361
+        ],
+        "cell": {
+          "x": 821,
+          "y": 660,
+          "w": 103,
+          "h": 208
+        }
+      },
+      "sha256": "8782f2d6a1ebeb7b3edaa563363185d76ca9c408561720166fe8271612039a2c"
+    },
+    "generatedOriginal": "originals/sink-direction-07-0b3f03a71edf.png",
+    "generatedSha256": "0b3f03a71edf9a1c38fc550ee24ca56dd6730900f6ea0b5c6fd474f8c323a939",
+    "generatedCropSha256": "4da9915cf13a3fba0cbfa03b15ae2637a52223b4ef91e799e31ca28a34033c90",
+    "method": "image_gen reference edit; rectangular crop and lossless encoding only; no warping or alpha edits",
+    "review": "Parallel 2/3 top and cardinal face; equal far/near rectangular widths; preserve original materials, motifs and intentional curved shapes."
+  },
+  {
+    "id": "collection-beethoven-sink",
+    "facing": "east",
+    "file": "sink-direction-07-0b3f03a71edf.webp",
+    "width": 1024,
+    "height": 1536,
+    "x": 671,
+    "y": 593,
+    "w": 175,
+    "h": 368,
+    "draw": {
+      "x": 0,
+      "y": 9.116279069767444,
+      "w": 72.0,
+      "h": 154.88372093023256
+    },
+    "source": {
+      "file": "town/assets/apartment-collections/beethoven-east-cardinal-4d12e160d584.webp",
+      "crop": {
+        "x": 755,
+        "y": 1455,
+        "w": 86,
+        "h": 185
+      },
+      "frame": {
+        "slot": "sink",
+        "x": 755,
+        "y": 1455,
+        "w": 86,
+        "h": 185,
+        "digest": "a14a0192fc7377043772ad193b92e3a7ce22caba21b65762d824e662ad5aa004",
+        "viewWidth": 72,
+        "viewHeight": 164,
+        "footCenter": [
+          0.5,
+          0.6642646486486485
+        ],
+        "cell": {
+          "x": 755,
+          "y": 1455,
+          "w": 86,
+          "h": 185
+        },
+        "sourceDigest": "f18722dcb23667b093ce08503a4710687f1f938901433ba5910e0fdae3114e9e",
+        "sourceFrame": {
+          "x": 510,
+          "y": 540,
+          "w": 86,
+          "h": 185
+        },
+        "artReview": "independent-browser-qa.json"
+      },
+      "sha256": "a14a0192fc7377043772ad193b92e3a7ce22caba21b65762d824e662ad5aa004"
+    },
+    "generatedOriginal": "originals/sink-direction-07-0b3f03a71edf.png",
+    "generatedSha256": "0b3f03a71edf9a1c38fc550ee24ca56dd6730900f6ea0b5c6fd474f8c323a939",
+    "generatedCropSha256": "f1e194a698bf470a0d0b2a65d8669ccb23d218b4add1e7e80ef0bc81c29dd49a",
+    "method": "image_gen reference edit; rectangular crop and lossless encoding only; no warping or alpha edits",
+    "review": "Parallel 2/3 top and cardinal face; equal far/near rectangular widths; preserve original materials, motifs and intentional curved shapes."
+  },
+  {
+    "id": "collection-haydn-sink",
+    "facing": "east",
+    "file": "sink-direction-07-0b3f03a71edf.webp",
+    "width": 1024,
+    "height": 1536,
+    "x": 185,
+    "y": 1076,
+    "w": 181,
+    "h": 352,
+    "draw": {
+      "x": 0,
+      "y": 27.841584158415856,
+      "w": 72.0,
+      "h": 136.15841584158414
+    },
+    "source": {
+      "file": "town/assets/apartment-collections/haydn-east-cardinal-7ab50091a64b.webp",
+      "crop": {
+        "x": 816,
+        "y": 1419,
+        "w": 101,
+        "h": 191
+      },
+      "frame": {
+        "slot": "sink",
+        "x": 816,
+        "y": 1419,
+        "w": 101,
+        "h": 191,
+        "digest": "52a355ce9ba8d1f59d6371c7e7be1414026205f9190c2465ccbcf4c87b4ed998",
+        "viewWidth": 72,
+        "viewHeight": 164,
+        "footCenter": [
+          0.5,
+          0.6180917486910995
+        ],
+        "cell": {
+          "x": 816,
+          "y": 1419,
+          "w": 101,
+          "h": 191
+        },
+        "sourceDigest": "2607b46a35dde1998ae1679678c5362d3832409124b23e3a3ef03d8709fbb9f7",
+        "sourceFrame": {
+          "x": 503,
+          "y": 541,
+          "w": 101,
+          "h": 191
+        },
+        "artReview": "independent-browser-qa.json"
+      },
+      "sha256": "52a355ce9ba8d1f59d6371c7e7be1414026205f9190c2465ccbcf4c87b4ed998"
+    },
+    "generatedOriginal": "originals/sink-direction-07-0b3f03a71edf.png",
+    "generatedSha256": "0b3f03a71edf9a1c38fc550ee24ca56dd6730900f6ea0b5c6fd474f8c323a939",
+    "generatedCropSha256": "5dde2df1002e0dcc1efb97fbba0c6ad3223da54201fb80f07300cdc217d6a7a7",
+    "method": "image_gen reference edit; rectangular crop and lossless encoding only; no warping or alpha edits",
+    "review": "Parallel 2/3 top and cardinal face; equal far/near rectangular widths; preserve original materials, motifs and intentional curved shapes."
+  },
+  {
+    "id": "collection-handel-sink",
+    "facing": "east",
+    "file": "sink-direction-07-0b3f03a71edf.webp",
+    "width": 1024,
+    "height": 1536,
+    "x": 669,
+    "y": 1075,
+    "w": 177,
+    "h": 353,
+    "draw": {
+      "x": 0,
+      "y": 16.170212765957444,
+      "w": 72.0,
+      "h": 147.82978723404256
+    },
+    "source": {
+      "file": "town/assets/apartment-collections/handel-east-cardinal-7a9b2e484f33.webp",
+      "crop": {
+        "x": 1004,
+        "y": 2354,
+        "w": 94,
+        "h": 193
+      },
+      "frame": {
+        "slot": "sink",
+        "x": 1004,
+        "y": 2354,
+        "w": 94,
+        "h": 193,
+        "digest": "dadf6762bbca4e6fb15047143e93f1789b0e9a685deba49b1d34e0b538122379",
+        "viewWidth": 72,
+        "viewHeight": 164,
+        "footCenter": [
+          0.5,
+          0.6482443316062176
+        ],
+        "cell": {
+          "x": 1004,
+          "y": 2354,
+          "w": 94,
+          "h": 193
+        },
+        "sourceDigest": "dcba0ebf40609addd20df1f50e0f7eb746d86dc3bc35901746f907ed9d5c0574",
+        "sourceFrame": {
+          "x": 505,
+          "y": 536,
+          "w": 94,
+          "h": 193
+        },
+        "artReview": "independent-browser-qa.json"
+      },
+      "sha256": "dadf6762bbca4e6fb15047143e93f1789b0e9a685deba49b1d34e0b538122379"
+    },
+    "generatedOriginal": "originals/sink-direction-07-0b3f03a71edf.png",
+    "generatedSha256": "0b3f03a71edf9a1c38fc550ee24ca56dd6730900f6ea0b5c6fd474f8c323a939",
+    "generatedCropSha256": "8da339cc23a95017264185597fe2b6d6e9fbe84f01053143ddb8cbc7620daeea",
+    "method": "image_gen reference edit; rectangular crop and lossless encoding only; no warping or alpha edits",
+    "review": "Parallel 2/3 top and cardinal face; equal far/near rectangular widths; preserve original materials, motifs and intentional curved shapes."
+  },
+  {
+    "id": "collection-vivaldi-sink",
+    "facing": "east",
+    "file": "sink-direction-08-f33d792c09ac.webp",
+    "width": 1024,
+    "height": 1536,
+    "x": 176,
+    "y": 109,
+    "w": 187,
+    "h": 366,
+    "draw": {
+      "x": 0,
+      "y": 21.48453608247422,
+      "w": 72.0,
+      "h": 142.51546391752578
+    },
+    "source": {
+      "file": "town/assets/apartment-collections/vivaldi-east-cardinal-c3fd3b9880c3.webp",
+      "crop": {
+        "x": 506,
+        "y": 1575,
+        "w": 97,
+        "h": 192
+      },
+      "frame": {
+        "slot": "sink",
+        "x": 506,
+        "y": 1575,
+        "w": 97,
+        "h": 192,
+        "digest": "90adcce524032f7b60df727a0b1c84e43ea077a53b788b045094e46f0ee2eb2c",
+        "viewWidth": 72,
+        "viewHeight": 164,
+        "footCenter": [
+          0.5,
+          0.635127
+        ],
+        "cell": {
+          "x": 506,
+          "y": 1575,
+          "w": 97,
+          "h": 192
+        }
+      },
+      "sha256": "90adcce524032f7b60df727a0b1c84e43ea077a53b788b045094e46f0ee2eb2c"
+    },
+    "generatedOriginal": "originals/sink-direction-08-f33d792c09ac.png",
+    "generatedSha256": "f33d792c09acc458b82cdf51064884edad9b8527e7a8bd6ab36b600db41edcab",
+    "generatedCropSha256": "239db1233ea5bfd2dc0d8375d04b2d4ec7d3f4d08cf3d7575693af3ff24979d8",
+    "method": "image_gen reference edit; rectangular crop and lossless encoding only; no warping or alpha edits",
+    "review": "Parallel 2/3 top and cardinal face; equal far/near rectangular widths; preserve original materials, motifs and intentional curved shapes."
+  },
+  {
+    "id": "collection-joplin-sink",
+    "facing": "east",
+    "file": "sink-direction-08-f33d792c09ac.webp",
+    "width": 1024,
+    "height": 1536,
+    "x": 657,
+    "y": 112,
+    "w": 198,
+    "h": 361,
+    "draw": {
+      "x": 0,
+      "y": 31.18446601941747,
+      "w": 72.0,
+      "h": 132.81553398058253
+    },
+    "source": {
+      "file": "town/assets/apartment-collections/joplin-east-cardinal-81f1ef697262.webp",
+      "crop": {
+        "x": 890,
+        "y": 1736,
+        "w": 103,
+        "h": 190
+      },
+      "frame": {
+        "slot": "sink",
+        "x": 890,
+        "y": 1736,
+        "w": 103,
+        "h": 190,
+        "digest": "893da1e88a772f3b98d4e7eff91521a29f8292aba7e4db88a10902400f6fb3b9",
+        "viewWidth": 72,
+        "viewHeight": 164,
+        "footCenter": [
+          0.5,
+          0.60848
+        ],
+        "cell": {
+          "x": 890,
+          "y": 1736,
+          "w": 103,
+          "h": 190
+        }
+      },
+      "sha256": "893da1e88a772f3b98d4e7eff91521a29f8292aba7e4db88a10902400f6fb3b9"
+    },
+    "generatedOriginal": "originals/sink-direction-08-f33d792c09ac.png",
+    "generatedSha256": "f33d792c09acc458b82cdf51064884edad9b8527e7a8bd6ab36b600db41edcab",
+    "generatedCropSha256": "e8276601bb1618f8b43cd552fad53a197d76b98dd66fd3ed4cf5d556c315646e",
+    "method": "image_gen reference edit; rectangular crop and lossless encoding only; no warping or alpha edits",
+    "review": "Parallel 2/3 top and cardinal face; equal far/near rectangular widths; preserve original materials, motifs and intentional curved shapes."
+  },
+  {
+    "id": "collection-nina-sink",
+    "facing": "east",
+    "file": "sink-direction-08-f33d792c09ac.webp",
+    "width": 1024,
+    "height": 1536,
+    "x": 173,
+    "y": 585,
+    "w": 190,
+    "h": 368,
+    "draw": {
+      "x": 0,
+      "y": 36.2782608695652,
+      "w": 72.0,
+      "h": 127.7217391304348
+    },
+    "source": {
+      "file": "town/assets/apartment-collections/nina-east-cardinal-1e3bb4aa1e5d.webp",
+      "crop": {
+        "x": 1369,
+        "y": 2247,
+        "w": 115,
+        "h": 204
+      },
+      "frame": {
+        "slot": "sink",
+        "x": 1369,
+        "y": 2247,
+        "w": 115,
+        "h": 204,
+        "digest": "a8eb02ce40a2e3d1d3ac102377bbd10a08fedb6d41d6d820d650153f58391055",
+        "viewWidth": 72,
+        "viewHeight": 164,
+        "footCenter": [
+          0.5,
+          0.592865
+        ],
+        "cell": {
+          "x": 1369,
+          "y": 2247,
+          "w": 115,
+          "h": 204
+        }
+      },
+      "sha256": "a8eb02ce40a2e3d1d3ac102377bbd10a08fedb6d41d6d820d650153f58391055"
+    },
+    "generatedOriginal": "originals/sink-direction-08-f33d792c09ac.png",
+    "generatedSha256": "f33d792c09acc458b82cdf51064884edad9b8527e7a8bd6ab36b600db41edcab",
+    "generatedCropSha256": "99d5cf7986d803351c432ab836c5232adf7d916196dcab4876621b251033b1ac",
+    "method": "image_gen reference edit; rectangular crop and lossless encoding only; no warping or alpha edits",
+    "review": "Parallel 2/3 top and cardinal face; equal far/near rectangular widths; preserve original materials, motifs and intentional curved shapes."
+  },
+  {
+    "id": "collection-miles-sink",
+    "facing": "east",
+    "file": "sink-direction-08-f33d792c09ac.webp",
+    "width": 1024,
+    "height": 1536,
+    "x": 661,
+    "y": 586,
+    "w": 185,
+    "h": 366,
+    "draw": {
+      "x": 0,
+      "y": 26.923076923076934,
+      "w": 72.0,
+      "h": 137.07692307692307
+    },
+    "source": {
+      "file": "town/assets/apartment-collections/miles-east-cardinal-64c9f0cf5c69.webp",
+      "crop": {
+        "x": 1777,
+        "y": 2335,
+        "w": 104,
+        "h": 198
+      },
+      "frame": {
+        "slot": "sink",
+        "x": 1777,
+        "y": 2335,
+        "w": 104,
+        "h": 198,
+        "digest": "3e9c7d4e28904cd9d61e1f9800fdf7a73e0d59db46e43ff40fcc497c7b49c864",
+        "viewWidth": 72,
+        "viewHeight": 164,
+        "footCenter": [
+          0.5,
+          0.620651
+        ],
+        "cell": {
+          "x": 1777,
+          "y": 2335,
+          "w": 104,
+          "h": 198
+        }
+      },
+      "sha256": "3e9c7d4e28904cd9d61e1f9800fdf7a73e0d59db46e43ff40fcc497c7b49c864"
+    },
+    "generatedOriginal": "originals/sink-direction-08-f33d792c09ac.png",
+    "generatedSha256": "f33d792c09acc458b82cdf51064884edad9b8527e7a8bd6ab36b600db41edcab",
+    "generatedCropSha256": "8ffbbcfb9faaa712b8dd2faf9aa8a9d45ed86ed77dca71e4321b06c8a56a3afb",
+    "method": "image_gen reference edit; rectangular crop and lossless encoding only; no warping or alpha edits",
+    "review": "Parallel 2/3 top and cardinal face; equal far/near rectangular widths; preserve original materials, motifs and intentional curved shapes."
+  },
+  {
+    "id": "collection-dj-sink",
+    "facing": "east",
+    "file": "sink-direction-08-f33d792c09ac.webp",
+    "width": 1024,
+    "height": 1536,
+    "x": 174,
+    "y": 1070,
+    "w": 194,
+    "h": 387,
+    "draw": {
+      "x": 0,
+      "y": 24.990099009901,
+      "w": 72.0,
+      "h": 139.009900990099
+    },
+    "source": {
+      "file": "town/assets/apartment-collections/dj-east-cardinal-7c3e716b911c.webp",
+      "crop": {
+        "x": 181,
+        "y": 1695,
+        "w": 101,
+        "h": 195
+      },
+      "frame": {
+        "slot": "sink",
+        "x": 181,
+        "y": 1695,
+        "w": 101,
+        "h": 195,
+        "digest": "4ceedb8fff0598550fa72576207a9d435fa75241fd10b54d60c2ce48d7cbd57d",
+        "viewWidth": 72,
+        "viewHeight": 164,
+        "footCenter": [
+          0.5,
+          0.625926
+        ],
+        "cell": {
+          "x": 181,
+          "y": 1695,
+          "w": 101,
+          "h": 195
+        }
+      },
+      "sha256": "4ceedb8fff0598550fa72576207a9d435fa75241fd10b54d60c2ce48d7cbd57d"
+    },
+    "generatedOriginal": "originals/sink-direction-08-f33d792c09ac.png",
+    "generatedSha256": "f33d792c09acc458b82cdf51064884edad9b8527e7a8bd6ab36b600db41edcab",
+    "generatedCropSha256": "a6bde5d23d39bdb272331e908d99fdadc589e0f7b8df3d3c03a78d9b31910f37",
+    "method": "image_gen reference edit; rectangular crop and lossless encoding only; no warping or alpha edits",
+    "review": "Parallel 2/3 top and cardinal face; equal far/near rectangular widths; preserve original materials, motifs and intentional curved shapes."
+  },
+  {
+    "id": "collection-vee-jay-sink",
+    "facing": "east",
+    "file": "sink-direction-08-f33d792c09ac.webp",
+    "width": 1024,
+    "height": 1536,
+    "x": 661,
+    "y": 1070,
+    "w": 194,
+    "h": 387,
+    "draw": {
+      "x": 0,
+      "y": 17.86138613861388,
+      "w": 72.0,
+      "h": 146.13861386138612
+    },
+    "source": {
+      "file": "town/assets/apartment-collections/vee-jay-east-cardinal-702db70a44ba.webp",
+      "crop": {
+        "x": 398,
+        "y": 2362,
+        "w": 101,
+        "h": 205
+      },
+      "frame": {
+        "slot": "sink",
+        "x": 398,
+        "y": 2362,
+        "w": 101,
+        "h": 205,
+        "digest": "038234eebaf03b5e412df21365c2a00cfa59e05cceab739bde74e333aa6253cf",
+        "viewWidth": 72,
+        "viewHeight": 164,
+        "footCenter": [
+          0.5,
+          0.644173
+        ],
+        "cell": {
+          "x": 398,
+          "y": 2362,
+          "w": 101,
+          "h": 205
+        }
+      },
+      "sha256": "038234eebaf03b5e412df21365c2a00cfa59e05cceab739bde74e333aa6253cf"
+    },
+    "generatedOriginal": "originals/sink-direction-08-f33d792c09ac.png",
+    "generatedSha256": "f33d792c09acc458b82cdf51064884edad9b8527e7a8bd6ab36b600db41edcab",
+    "generatedCropSha256": "e130130a535ea5c22729c2db6b55b6a74d72cb912c075649bf4cea54267c40c1",
+    "method": "image_gen reference edit; rectangular crop and lossless encoding only; no warping or alpha edits",
+    "review": "Parallel 2/3 top and cardinal face; equal far/near rectangular widths; preserve original materials, motifs and intentional curved shapes."
+  },
+  {
+    "id": "collection-metronome-sink",
+    "facing": "east",
+    "file": "sink-direction-09-b117da867372.webp",
+    "width": 1024,
+    "height": 1536,
+    "x": 155,
+    "y": 53,
+    "w": 214,
+    "h": 425,
+    "draw": {
+      "x": 0,
+      "y": 23.529411764705884,
+      "w": 72.0,
+      "h": 140.47058823529412
+    },
+    "source": {
+      "file": "town/assets/apartment-collections/metronome-east-cardinal-4cc9a12f71d7.webp",
+      "crop": {
+        "x": 1856,
+        "y": 1342,
+        "w": 102,
+        "h": 199
+      },
+      "frame": {
+        "slot": "sink",
+        "x": 1856,
+        "y": 1342,
+        "w": 102,
+        "h": 199,
+        "digest": "55c1666b74c986481c731e24291912cb9b9d5e25547ca63140f214ae650db4a1",
+        "viewWidth": 72,
+        "viewHeight": 164,
+        "footCenter": [
+          0.5,
+          0.629816
+        ],
+        "cell": {
+          "x": 1856,
+          "y": 1342,
+          "w": 102,
+          "h": 199
+        }
+      },
+      "sha256": "55c1666b74c986481c731e24291912cb9b9d5e25547ca63140f214ae650db4a1"
+    },
+    "generatedOriginal": "originals/sink-direction-09-b117da867372.png",
+    "generatedSha256": "b117da867372bf787d31c021b5553cd0c9c549e54b22cd9ba183208a4c077cb0",
+    "generatedCropSha256": "e32bfcf845325c06332804c343750be5bd77161f8714ef0ea2a6269bb1a449ea",
+    "method": "image_gen reference edit; rectangular crop and lossless encoding only; no warping or alpha edits",
+    "review": "Parallel 2/3 top and cardinal face; equal far/near rectangular widths; preserve original materials, motifs and intentional curved shapes."
+  },
+  {
+    "id": "collection-player-sink",
+    "facing": "east",
+    "file": "sink-direction-09-b117da867372.webp",
+    "width": 1024,
+    "height": 1536,
+    "x": 652,
+    "y": 53,
+    "w": 211,
+    "h": 428,
+    "draw": {
+      "x": 0,
+      "y": 10.640000000000015,
+      "w": 72.0,
+      "h": 153.35999999999999
+    },
+    "source": {
+      "file": "town/assets/apartment-collections/player-east-cardinal-9eaf881803d4.webp",
+      "crop": {
+        "x": 1193,
+        "y": 1240,
+        "w": 100,
+        "h": 213
+      },
+      "frame": {
+        "slot": "sink",
+        "x": 1193,
+        "y": 1240,
+        "w": 100,
+        "h": 213,
+        "digest": "e06d27c2c16d0b4cdf9c678464f0e10489a384c19977ef548f8a69459887f89e",
+        "viewWidth": 72,
+        "viewHeight": 164,
+        "footCenter": [
+          0.5,
+          0.660929
+        ],
+        "cell": {
+          "x": 1193,
+          "y": 1240,
+          "w": 100,
+          "h": 213
+        }
+      },
+      "sha256": "e06d27c2c16d0b4cdf9c678464f0e10489a384c19977ef548f8a69459887f89e"
+    },
+    "generatedOriginal": "originals/sink-direction-09-b117da867372.png",
+    "generatedSha256": "b117da867372bf787d31c021b5553cd0c9c549e54b22cd9ba183208a4c077cb0",
+    "generatedCropSha256": "5af9e15f86a221c12d760a9b4e17bd798f599c99f96156c140dba615b5933825",
+    "method": "image_gen reference edit; rectangular crop and lossless encoding only; no warping or alpha edits",
+    "review": "Parallel 2/3 top and cardinal face; equal far/near rectangular widths; preserve original materials, motifs and intentional curved shapes."
+  },
+  {
+    "id": "collection-showroom-art-deco-lounge-sink",
+    "facing": "east",
+    "file": "sink-direction-09-b117da867372.webp",
+    "width": 1024,
+    "height": 1536,
+    "x": 154,
+    "y": 538,
+    "w": 211,
+    "h": 438,
+    "draw": {
+      "x": 0,
+      "y": 13.178947368421035,
+      "w": 72.0,
+      "h": 150.82105263157897
+    },
+    "source": {
+      "file": "town/assets/apartment-collections/showroom-art-deco-lounge-east-cardinal-a7b1f99f7f56.webp",
+      "crop": {
+        "x": 1036,
+        "y": 701,
+        "w": 95,
+        "h": 199
+      },
+      "frame": {
+        "slot": "sink",
+        "x": 1036,
+        "y": 701,
+        "w": 95,
+        "h": 199,
+        "digest": "acd7ebfbdb040c4d9769199616554e77b7415b1022bf98df4a07da4b28772dd8",
+        "viewWidth": 72,
+        "viewHeight": 164,
+        "footCenter": [
+          0.5,
+          0.655221
+        ],
+        "cell": {
+          "x": 1036,
+          "y": 701,
+          "w": 95,
+          "h": 199
+        }
+      },
+      "sha256": "acd7ebfbdb040c4d9769199616554e77b7415b1022bf98df4a07da4b28772dd8"
+    },
+    "generatedOriginal": "originals/sink-direction-09-b117da867372.png",
+    "generatedSha256": "b117da867372bf787d31c021b5553cd0c9c549e54b22cd9ba183208a4c077cb0",
+    "generatedCropSha256": "6efa33277363a33fa0ec71d55a7cc275c9f175c82f031aafcafe5785c6450340",
+    "method": "image_gen reference edit; rectangular crop and lossless encoding only; no warping or alpha edits",
+    "review": "Parallel 2/3 top and cardinal face; equal far/near rectangular widths; preserve original materials, motifs and intentional curved shapes."
+  },
+  {
+    "id": "collection-showroom-coastal-bedroom-sink",
+    "facing": "east",
+    "file": "sink-direction-09-b117da867372.webp",
+    "width": 1024,
+    "height": 1536,
+    "x": 653,
+    "y": 539,
+    "w": 206,
+    "h": 437,
+    "draw": {
+      "x": 0,
+      "y": 9.043478260869563,
+      "w": 72.0,
+      "h": 154.95652173913044
+    },
+    "source": {
+      "file": "town/assets/apartment-collections/showroom-coastal-bedroom-east-cardinal-ed5fec47d003.webp",
+      "crop": {
+        "x": 1913,
+        "y": 781,
+        "w": 92,
+        "h": 198
+      },
+      "frame": {
+        "slot": "sink",
+        "x": 1913,
+        "y": 781,
+        "w": 92,
+        "h": 198,
+        "digest": "06e26ed6a42a240fec5df54e3911a6dc30841fa881e15775ea623c865c6e99ed",
+        "viewWidth": 72,
+        "viewHeight": 164,
+        "footCenter": [
+          0.5,
+          0.6644218181818182
+        ],
+        "cell": {
+          "x": 1913,
+          "y": 781,
+          "w": 92,
+          "h": 198
+        },
+        "sourceDigest": "0552bd2dec41cb7a29470655ab0312790a90df123de33660809ff2be95bdf498",
+        "sourceFrame": {
+          "x": 512,
+          "y": 522,
+          "w": 92,
+          "h": 198
+        },
+        "artReview": "independent-browser-qa.json"
+      },
+      "sha256": "06e26ed6a42a240fec5df54e3911a6dc30841fa881e15775ea623c865c6e99ed"
+    },
+    "generatedOriginal": "originals/sink-direction-09-b117da867372.png",
+    "generatedSha256": "b117da867372bf787d31c021b5553cd0c9c549e54b22cd9ba183208a4c077cb0",
+    "generatedCropSha256": "3af034202036f81457b4b3503079dd665417124155be59f27e5160ab11e33873",
+    "method": "image_gen reference edit; rectangular crop and lossless encoding only; no warping or alpha edits",
+    "review": "Parallel 2/3 top and cardinal face; equal far/near rectangular widths; preserve original materials, motifs and intentional curved shapes."
+  },
+  {
+    "id": "collection-showroom-rustic-kitchen-sink",
+    "facing": "east",
+    "file": "sink-direction-09-b117da867372.webp",
+    "width": 1024,
+    "height": 1536,
+    "x": 153,
+    "y": 1038,
+    "w": 218,
+    "h": 426,
+    "draw": {
+      "x": 0,
+      "y": 41.60000000000001,
+      "w": 72.0,
+      "h": 122.39999999999999
+    },
+    "source": {
+      "file": "town/assets/apartment-collections/showroom-rustic-kitchen-east-cardinal-557d1af0cec8.webp",
+      "crop": {
+        "x": 1145,
+        "y": 688,
+        "w": 120,
+        "h": 204
+      },
+      "frame": {
+        "slot": "sink",
+        "x": 1145,
+        "y": 688,
+        "w": 120,
+        "h": 204,
+        "digest": "5707a7be4fd8ee2dc1345213a807fc5455b730260c4c8cd5adac624acdc7c02c",
+        "viewWidth": 72,
+        "viewHeight": 164,
+        "footCenter": [
+          0.5,
+          0.575163
+        ],
+        "cell": {
+          "x": 1145,
+          "y": 688,
+          "w": 120,
+          "h": 204
+        }
+      },
+      "sha256": "5707a7be4fd8ee2dc1345213a807fc5455b730260c4c8cd5adac624acdc7c02c"
+    },
+    "generatedOriginal": "originals/sink-direction-09-b117da867372.png",
+    "generatedSha256": "b117da867372bf787d31c021b5553cd0c9c549e54b22cd9ba183208a4c077cb0",
+    "generatedCropSha256": "f9928db626af8dbb3f2a1a7e33f445d39321dc7524bf527ad66ac6dae3e887ec",
+    "method": "image_gen reference edit; rectangular crop and lossless encoding only; no warping or alpha edits",
+    "review": "Parallel 2/3 top and cardinal face; equal far/near rectangular widths; preserve original materials, motifs and intentional curved shapes."
+  },
+  {
+    "id": "collection-showroom-botanical-conservatory-sink",
+    "facing": "east",
+    "file": "sink-direction-09-b117da867372.webp",
+    "width": 1024,
+    "height": 1536,
+    "x": 653,
+    "y": 1038,
+    "w": 207,
+    "h": 427,
+    "draw": {
+      "x": 0,
+      "y": 11.092783505154642,
+      "w": 72.0,
+      "h": 152.90721649484536
+    },
+    "source": {
+      "file": "town/assets/apartment-collections/showroom-botanical-conservatory-east-cardinal-57a23cfbd18e.webp",
+      "crop": {
+        "x": 4,
+        "y": 1523,
+        "w": 97,
+        "h": 206
+      },
+      "frame": {
+        "slot": "sink",
+        "x": 4,
+        "y": 1523,
+        "w": 97,
+        "h": 206,
+        "digest": "70b67b68cb4f3a15bddad73da1ad28b3722712cf3abd6663be84f0b1057f36d9",
+        "viewWidth": 72,
+        "viewHeight": 164,
+        "footCenter": [
+          0.5,
+          0.659924
+        ],
+        "cell": {
+          "x": 4,
+          "y": 1523,
+          "w": 97,
+          "h": 206
+        }
+      },
+      "sha256": "70b67b68cb4f3a15bddad73da1ad28b3722712cf3abd6663be84f0b1057f36d9"
+    },
+    "generatedOriginal": "originals/sink-direction-09-b117da867372.png",
+    "generatedSha256": "b117da867372bf787d31c021b5553cd0c9c549e54b22cd9ba183208a4c077cb0",
+    "generatedCropSha256": "176b0791d60c18ba9dc76b1bd58ac53e8ee3cbde88a0d1a19e0052d0f4b2f914",
+    "method": "image_gen reference edit; rectangular crop and lossless encoding only; no warping or alpha edits",
+    "review": "Parallel 2/3 top and cardinal face; equal far/near rectangular widths; preserve original materials, motifs and intentional curved shapes."
+  },
+  {
+    "id": "collection-showroom-french-cafe-sink",
+    "facing": "east",
+    "file": "sink-direction-10-e1b690ec9387.webp",
+    "width": 1024,
+    "height": 1536,
+    "x": 189,
+    "y": 110,
+    "w": 141,
+    "h": 341,
+    "draw": {
+      "x": 4.368932593479258e-08,
+      "y": 0,
+      "w": 67.66990291262135,
+      "h": 164.0
+    },
+    "source": {
+      "file": "town/assets/apartment-collections/showroom-french-cafe-east-cardinal-347d23126b7b.webp",
+      "crop": {
+        "x": 1797,
+        "y": 632,
+        "w": 85,
+        "h": 206
+      },
+      "frame": {
+        "slot": "sink",
+        "x": 1797,
+        "y": 632,
+        "w": 85,
+        "h": 206,
+        "digest": "52e70a32a90a00f559e2a78cd4ee16202dbf0b6084f8d1b60d25a0cbf705b969",
+        "viewWidth": 67.669903,
+        "viewHeight": 164,
+        "footCenter": [
+          0.5,
+          0.682927
+        ],
+        "cell": {
+          "x": 1797,
+          "y": 632,
+          "w": 85,
+          "h": 206
+        }
+      },
+      "sha256": "52e70a32a90a00f559e2a78cd4ee16202dbf0b6084f8d1b60d25a0cbf705b969"
+    },
+    "generatedOriginal": "originals/sink-direction-10-e1b690ec9387.png",
+    "generatedSha256": "e1b690ec93873b537df184165b82df0266f8038ce1b8c2e7b4c252b418d44d54",
+    "generatedCropSha256": "a4bca6be97b9991db4b365acf78c4dffb264923122de7a6363820c3a35129d45",
+    "method": "image_gen reference edit; rectangular crop and lossless encoding only; no warping or alpha edits",
+    "review": "Parallel 2/3 top and cardinal face; equal far/near rectangular widths; preserve original materials, motifs and intentional curved shapes."
+  },
+  {
+    "id": "collection-showroom-industrial-loft-sink",
+    "facing": "east",
+    "file": "sink-direction-10-e1b690ec9387.webp",
+    "width": 1024,
+    "height": 1536,
+    "x": 684,
+    "y": 110,
+    "w": 162,
+    "h": 341,
+    "draw": {
+      "x": 0,
+      "y": 23.39622641509436,
+      "w": 72.0,
+      "h": 140.60377358490564
+    },
+    "source": {
+      "file": "town/assets/apartment-collections/showroom-industrial-loft-east-cardinal-b84b5314871d.webp",
+      "crop": {
+        "x": 1040,
+        "y": 578,
+        "w": 106,
+        "h": 207
+      },
+      "frame": {
+        "slot": "sink",
+        "x": 1040,
+        "y": 578,
+        "w": 106,
+        "h": 207,
+        "digest": "8afd9491c15c96986a1639d27b098abe2f2626d4be73a5d7c66aae5ae09503a0",
+        "viewWidth": 72,
+        "viewHeight": 164,
+        "footCenter": [
+          0.5,
+          0.630166
+        ],
+        "cell": {
+          "x": 1040,
+          "y": 578,
+          "w": 106,
+          "h": 207
+        }
+      },
+      "sha256": "8afd9491c15c96986a1639d27b098abe2f2626d4be73a5d7c66aae5ae09503a0"
+    },
+    "generatedOriginal": "originals/sink-direction-10-e1b690ec9387.png",
+    "generatedSha256": "e1b690ec93873b537df184165b82df0266f8038ce1b8c2e7b4c252b418d44d54",
+    "generatedCropSha256": "c12bd9a5cd4fe1fb327deb8da3086d2480c41f59ec3c0b203124109f34bfc6c2",
+    "method": "image_gen reference edit; rectangular crop and lossless encoding only; no warping or alpha edits",
+    "review": "Parallel 2/3 top and cardinal face; equal far/near rectangular widths; preserve original materials, motifs and intentional curved shapes."
+  },
+  {
+    "id": "collection-showroom-cyberpunk-sink",
+    "facing": "east",
+    "file": "sink-direction-10-e1b690ec9387.webp",
+    "width": 1024,
+    "height": 1536,
+    "x": 176,
+    "y": 610,
+    "w": 164,
+    "h": 348,
+    "draw": {
+      "x": 0,
+      "y": 27.19999999999999,
+      "w": 72.0,
+      "h": 136.8
+    },
+    "source": {
+      "file": "town/assets/apartment-collections/showroom-cyberpunk-east-cardinal-a5453896aa75.webp",
+      "crop": {
+        "x": 107,
+        "y": 543,
+        "w": 110,
+        "h": 209
+      },
+      "frame": {
+        "slot": "sink",
+        "x": 107,
+        "y": 543,
+        "w": 110,
+        "h": 209,
+        "digest": "2ca03012563e516f852b64009d263eef94b09395c0de7ff0868a65922826b0d5",
+        "viewWidth": 72,
+        "viewHeight": 164,
+        "footCenter": [
+          0.5,
+          0.619883
+        ],
+        "cell": {
+          "x": 107,
+          "y": 543,
+          "w": 110,
+          "h": 209
+        }
+      },
+      "sha256": "2ca03012563e516f852b64009d263eef94b09395c0de7ff0868a65922826b0d5"
+    },
+    "generatedOriginal": "originals/sink-direction-10-e1b690ec9387.png",
+    "generatedSha256": "e1b690ec93873b537df184165b82df0266f8038ce1b8c2e7b4c252b418d44d54",
+    "generatedCropSha256": "15e0ee7fd4674449ea8074facfc9c96220f94139f5d3a88c67a693fecc2beaac",
+    "method": "image_gen reference edit; rectangular crop and lossless encoding only; no warping or alpha edits",
+    "review": "Parallel 2/3 top and cardinal face; equal far/near rectangular widths; preserve original materials, motifs and intentional curved shapes."
+  },
+  {
+    "id": "collection-showroom-steampunk-sink",
+    "facing": "east",
+    "file": "sink-direction-10-e1b690ec9387.webp",
+    "width": 1024,
+    "height": 1536,
+    "x": 684,
+    "y": 610,
+    "w": 165,
+    "h": 348,
+    "draw": {
+      "x": 0,
+      "y": 29.333333333333343,
+      "w": 72.0,
+      "h": 134.66666666666666
+    },
+    "source": {
+      "file": "town/assets/apartment-collections/showroom-steampunk-east-cardinal-c5bf7c106b93.webp",
+      "crop": {
+        "x": 638,
+        "y": 513,
+        "w": 108,
+        "h": 202
+      },
+      "frame": {
+        "slot": "sink",
+        "x": 638,
+        "y": 513,
+        "w": 108,
+        "h": 202,
+        "digest": "630b1ab85b2e9f00a222334872a700544e8c6aad62193e0ae0c3e9a42700b501",
+        "viewWidth": 72,
+        "viewHeight": 164,
+        "footCenter": [
+          0.5,
+          0.613861
+        ],
+        "cell": {
+          "x": 638,
+          "y": 513,
+          "w": 108,
+          "h": 202
+        }
+      },
+      "sha256": "630b1ab85b2e9f00a222334872a700544e8c6aad62193e0ae0c3e9a42700b501"
+    },
+    "generatedOriginal": "originals/sink-direction-10-e1b690ec9387.png",
+    "generatedSha256": "e1b690ec93873b537df184165b82df0266f8038ce1b8c2e7b4c252b418d44d54",
+    "generatedCropSha256": "c7c8743a1cdb54721e7ab1fbbefac79f293d49b3711a4335e2163de281e37b95",
+    "method": "image_gen reference edit; rectangular crop and lossless encoding only; no warping or alpha edits",
+    "review": "Parallel 2/3 top and cardinal face; equal far/near rectangular widths; preserve original materials, motifs and intentional curved shapes."
+  }
+]

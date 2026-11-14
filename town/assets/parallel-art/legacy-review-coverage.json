@@ -1,0 +1,173 @@
+{
+  "attention": [
+    {
+      "id": "showroom-art-deco-lounge-bed",
+      "facing": "south",
+      "note": "3/4 perspective pls",
+      "result": "native-source-patch"
+    },
+    {
+      "id": "showroom-coastal-bedroom-bed",
+      "facing": "south",
+      "note": "3/4 perspective",
+      "result": "native-source-patch"
+    },
+    {
+      "id": "showroom-rustic-kitchen-bed",
+      "facing": "south",
+      "note": "3/4 perspective",
+      "result": "native-source-patch"
+    },
+    {
+      "id": "showroom-rustic-kitchen-sofa",
+      "facing": "south",
+      "note": "3/4 perspective",
+      "result": "native-source-patch"
+    },
+    {
+      "id": "showroom-botanical-conservatory-bed",
+      "facing": "south",
+      "note": "3/4 perspective",
+      "result": "native-source-patch"
+    },
+    {
+      "id": "showroom-midcentury-studio-bed",
+      "facing": "south",
+      "note": "3/4 perspective",
+      "result": "native-source-patch"
+    },
+    {
+      "id": "showroom-midcentury-studio-sofa",
+      "facing": "south",
+      "note": "3/4 perspective",
+      "result": "native-source-patch"
+    },
+    {
+      "id": "showroom-french-cafe-bed",
+      "facing": "south",
+      "note": "3/4 perspective",
+      "result": "native-source-patch"
+    },
+    {
+      "id": "showroom-industrial-loft-bed",
+      "facing": "south",
+      "note": "3/4 perspective",
+      "result": "native-source-patch"
+    },
+    {
+      "id": "showroom-industrial-loft-sofa",
+      "facing": "south",
+      "note": "3/4 perspective",
+      "result": "native-source-patch"
+    },
+    {
+      "id": "apartment-teak-bed",
+      "facing": "south",
+      "note": "3/4 perspective",
+      "result": "native-source-patch"
+    },
+    {
+      "id": "apartment-box-sofa",
+      "facing": "south",
+      "note": "3/4 perspective",
+      "result": "native-source-patch"
+    },
+    {
+      "id": "apartment-walnut-credenza",
+      "facing": "south",
+      "note": "3/4 perspective",
+      "result": "native-source-patch"
+    },
+    {
+      "id": "apartment-tambour-record-console",
+      "facing": "south",
+      "note": "3/4 perspective",
+      "result": "native-source-patch"
+    },
+    {
+      "id": "apartment-teak-desk",
+      "facing": "south",
+      "note": "3/4 perspective",
+      "result": "native-source-patch"
+    },
+    {
+      "id": "apartment-low-bookcase",
+      "facing": "south",
+      "note": "3/4 perspective",
+      "result": "native-source-patch"
+    },
+    {
+      "id": "apartment-record-player",
+      "facing": "south",
+      "note": "3/4 perspective",
+      "result": "native-source-patch"
+    },
+    {
+      "id": "apartment-cassette-cubby",
+      "facing": "south",
+      "note": "3/4 perspective",
+      "result": "native-source-patch"
+    },
+    {
+      "id": "apartment-sink-counter",
+      "facing": "south",
+      "note": "3/4 perspective",
+      "result": "native-source-patch"
+    },
+    {
+      "id": "apartment-cream-stove",
+      "facing": "south",
+      "note": "3/4 perspective",
+      "result": "native-source-patch"
+    },
+    {
+      "id": "apartment-blue-fridge",
+      "facing": "south",
+      "note": "3/4 perspective",
+      "result": "native-source-patch"
+    },
+    {
+      "id": "apartment-bath-vanity",
+      "facing": "south",
+      "note": "3/4 perspective",
+      "result": "native-source-patch"
+    },
+    {
+      "id": "apartment-glass-shower",
+      "facing": "south",
+      "note": "3/4 perspective",
+      "result": "native-source-patch"
+    },
+    {
+      "id": "apartment-wardrobe",
+      "facing": "south",
+      "note": "3/4 perspective",
+      "result": "native-source-patch"
+    },
+    {
+      "id": "apartment-nightstand",
+      "facing": "south",
+      "note": "3/4 perspective",
+      "result": "native-source-patch"
+    },
+    {
+      "id": "apartment-toy-chest",
+      "facing": "south",
+      "note": "3/4 perspective",
+      "result": "native-source-patch"
+    },
+    {
+      "id": "apartment-dining-bench",
+      "facing": "south",
+      "note": "3/4 perspective",
+      "result": "native-source-patch"
+    }
+  ],
+  "retained": [
+    "Rugs are owned by the rug correction pass.",
+    "Classic/core furniture-0..8 are owned by the root correction pass.",
+    "Existing corrected South corner-kitchen-counter is already parallel and remains intact.",
+    "North sofa backs and East/West beds already use parallel profiles; their current native sources remain intact.",
+    "Round tables, molded curved chairs, lamps, plants, plush toys and wall art retain their natural curved designs."
+  ]
+}

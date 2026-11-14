@@ -29,7 +29,7 @@ test('light anchors follow the exact scale, rotation and elevation used by their
  const before=JSON.stringify(d),[light]=cityLights(d,catalog),emitter=a.lightEmitters[0];
  const dx=(emitter.u*a.w-a.w/2)*o.scale,dy=(emitter.v*a.h-a.h)*o.scale;
  assert(Math.abs(light.x-(o.x-dy))<1e-8);assert(Math.abs(light.y-(o.y-96+dx))<1e-8);
- assert.equal(light.gx,o.x);assert.equal(light.gy,o.y-96);assert.equal(light.radius,emitter.radius*.5);assert.deepEqual(light.color,[118,230,255]);assert.equal(JSON.stringify(d),before);
+ assert.equal(light.gx,o.x);assert.equal(light.gy,o.y-96);assert.equal(light.radius,emitter.radius*.5*1.5);assert.deepEqual(light.color,[118,230,255]);assert.equal(JSON.stringify(d),before);
 });
 
 test('the gazebo emits from hanging lamps, its lit cupola and its string lights',()=>{

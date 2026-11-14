@@ -1,0 +1,728 @@
+{
+  "version": 1,
+  "purpose": "Source-faithful native legacy apartment/showroom projection corrections. Physical geometry, saved IDs and view dimensions are unchanged.",
+  "batches": [
+    {
+      "name": "legacy-case-1",
+      "file": "legacy-case-1.webp",
+      "generation": "exec-4f2e7989-b7c5-4478-a2d8-eccd5145e3b3.png",
+      "generatedSha256": "aa3de51a4368300f1d93be31b751f7c8bafa1d6b231e9e7e1322e7494a7fcfc4",
+      "webpSha256": "b68074797424dec2b7e7c69caab36c08786292494997ee40b49cdc225914c62f",
+      "reference": "legacy-case-1-reference.png",
+      "referenceSha256": "58108fb11529f9e0b5066d07a3c76d1a27150b828b49016e90b6324c55a267a8",
+      "method": "image_gen source edit; exact RGBA source-sheet conversion to lossless WebP; native crop only, no artwork warp"
+    },
+    {
+      "name": "legacy-case-2",
+      "file": "legacy-case-2.webp",
+      "generation": "exec-f4d916eb-8348-479b-8f9e-8d816951ce3a.png",
+      "generatedSha256": "019cefdab355e3a39b46ba5882463bec8f328d5d1bc8848a3cf238d7ae59b0bd",
+      "webpSha256": "f32416881006ca7b9c3417cb8b7262d49bdce36c62c66a04f3016892a3845f57",
+      "reference": "legacy-case-2-reference.png",
+      "referenceSha256": "ca86ec6edc9643110f7b081d876b444bc9c519e629ee38f05105ae7e689614b7",
+      "method": "image_gen source edit; exact RGBA source-sheet conversion to lossless WebP; native crop only, no artwork warp"
+    },
+    {
+      "name": "legacy-case-cardinal-1",
+      "file": "legacy-case-cardinal-1.webp",
+      "generation": "exec-70c25b56-428f-4dbb-b759-ba9337601265.png",
+      "generatedSha256": "2824eab37b1b773f8707ecc70c491eb22363d79ef0f09af7a5f0751ff3903695",
+      "webpSha256": "75343fd78073f31c710a20ae3dfecdd8b051d579ed8f0b1edc51c33146675d4f",
+      "reference": "legacy-case-cardinal-1-reference.png",
+      "referenceSha256": "d7c43a2aca3ea6fa22f09f3dc7f964ec80177b5cddc0aaf11f452d4b18f6c9e2",
+      "method": "image_gen source edit; exact RGBA source-sheet conversion to lossless WebP; native crop only, no artwork warp"
+    },
+    {
+      "name": "legacy-case-cardinal-2",
+      "file": "legacy-case-cardinal-2.webp",
+      "generation": "exec-b3dffad3-dd21-409a-aa11-e3207f003b39.png",
+      "generatedSha256": "3363982618704c813dbd3973b720f091be004f0076065237f06599dc7aec8d6a",
+      "webpSha256": "73d5d48ce6f21fac07463d332bf0036551362a98842ba743053a203910d8a03a",
+      "reference": "legacy-case-cardinal-2-reference.png",
+      "referenceSha256": "e20e976b5202b2ce5d15cf852cf61d440de4e3f742ef4b954d9d218b4b76a7af",
+      "method": "image_gen source edit; exact RGBA source-sheet conversion to lossless WebP; native crop only, no artwork warp"
+    },
+    {
+      "name": "legacy-case-cardinal-3",
+      "file": "legacy-case-cardinal-3.webp",
+      "generation": "exec-bbdb4a49-17ea-433e-91ec-b3badc0e8d4b.png",
+      "generatedSha256": "727d151327e4ce80371f50a6f05d335b3be411614f0bd9fcbe8fdcb393dd5db9",
+      "webpSha256": "eaba3f428e9e9173c8f869f43ff584535a3ef3c253f91c103012fb20449cccfa",
+      "reference": "legacy-case-cardinal-3-reference.png",
+      "referenceSha256": "af814c6279ee94f77582b7af187477805677633b87b42435854487ae050de096",
+      "method": "image_gen source edit; exact RGBA source-sheet conversion to lossless WebP; native crop only, no artwork warp"
+    },
+    {
+      "name": "legacy-case-cardinal-4",
+      "file": "legacy-case-cardinal-4.webp",
+      "generation": "exec-757e36b3-7c80-4f24-afba-1939b8bf340f.png",
+      "generatedSha256": "5c130cfe81a11b207eecc353dbe7618c52eb0f9cc4491d550f7804c3cf075968",
+      "webpSha256": "711de60035c2a2f7702591b0299e5e4a4f35be0d32ee1acb97b34682119e07a4",
+      "reference": "legacy-case-cardinal-4-reference.png",
+      "referenceSha256": "dc64ea256707b41072474fe4e39b545e8e7f570fa48d4ca521f7823426ed9c75",
+      "method": "image_gen source edit; exact RGBA source-sheet conversion to lossless WebP; native crop only, no artwork warp"
+    },
+    {
+      "name": "legacy-case-cardinal-5",
+      "file": "legacy-case-cardinal-5.webp",
+      "generation": "exec-c2d5a542-c154-4402-83b5-563cbc805c9c.png",
+      "generatedSha256": "a321a581c58da1efffd26597d2425cbef5c7fc2a428778a73c4f5618198de087",
+      "webpSha256": "fd2eaaf0840394d85e5104eaa358f9340089f7588c52bff29f4ddaadb6883226",
+      "reference": "legacy-case-cardinal-5-reference.png",
+      "referenceSha256": "e4812177f18a3847e42d7defdffaefa29d0ee32709ae341cbc77252a2ad48fab",
+      "method": "image_gen source edit; exact RGBA source-sheet conversion to lossless WebP; native crop only, no artwork warp"
+    },
+    {
+      "name": "legacy-beds-south",
+      "file": "legacy-beds-south.webp",
+      "generation": "exec-eb14ab65-4e69-4ab6-98ba-ceb507d31c81.png",
+      "generatedSha256": "fbcc42ac90716f21d85e1a2599cb7ac5fe8edc65553e44d23d708d786470f722",
+      "webpSha256": "4596ae1e0b725934c6c877662704b1609af647d6eb7820e75d16943d841e0114",
+      "reference": "legacy-beds-south-reference.png",
+      "referenceSha256": "b40b59ec0cf4adf06416c84f02896b1821601be3e14b96e3d7d37d52fd9a7bba",
+      "method": "image_gen source edit; exact RGBA source-sheet conversion to lossless WebP; native crop only, no artwork warp"
+    },
+    {
+      "name": "legacy-beds-north",
+      "file": "legacy-beds-north.webp",
+      "generation": "exec-8df5cedf-f44a-4bc2-9230-64fe717dd02d.png",
+      "generatedSha256": "9dd23926e26dc14d2985d45dcd29a9f5306773ea5eaa3e3b26feab172f41ebc3",
+      "webpSha256": "647fdb8d92a3eae9ff4245a5e1c48adcd07f45f85df7bf85d4b7e192a6fa522c",
+      "reference": "legacy-beds-north-reference.png",
+      "referenceSha256": "fcb9d389ddae60f1c5d45eb1a5e14c8de3bf3acfb1ee0e28002e984438708dd5",
+      "method": "image_gen source edit; exact RGBA source-sheet conversion to lossless WebP; native crop only, no artwork warp"
+    },
+    {
+      "name": "legacy-sofa-facings-1",
+      "file": "legacy-sofa-facings-1.webp",
+      "generation": "exec-ae333ff3-23aa-4a84-a590-6c222480601f.png",
+      "generatedSha256": "3f7355b4958de63a8f584263e2e59a0f5793e9a2430e1be956be5aabeb3a654e",
+      "webpSha256": "9b4e47eeec6127a514e8ae2c438e50d0eabca078eeb072accf08b0951510e236",
+      "reference": "legacy-sofa-facings-1-reference.png",
+      "referenceSha256": "8d2b999dd37f98bf89d8afc96425153281b1c81983f58f11c846d9f9b03734dd",
+      "method": "image_gen source edit; exact RGBA source-sheet conversion to lossless WebP; native crop only, no artwork warp"
+    },
+    {
+      "name": "legacy-sofa-facings-2",
+      "file": "legacy-sofa-facings-2.webp",
+      "generation": "exec-fb4e1499-55c7-4e7f-8ad6-c3b9bf19a933.png",
+      "generatedSha256": "74ff839be5e5aa33481d1bfeffc5d95cee12bd298917c728580104f2cdfaf7b8",
+      "webpSha256": "05ce25f39b4205fcb7f69aa0de9ce8e2bac406833443687a328a9289d820e56f",
+      "reference": "legacy-sofa-facings-2-reference.png",
+      "referenceSha256": "363ddee856b44f24a76f75954dc330d2d43b6c758184a2faa84a919ada23d88e",
+      "method": "image_gen source edit; exact RGBA source-sheet conversion to lossless WebP; native crop only, no artwork warp"
+    },
+    {
+      "name": "legacy-sofa-facings-3",
+      "file": "legacy-sofa-facings-3.webp",
+      "generation": "exec-030c8fa2-2252-497b-af42-6bdfac20d699.png",
+      "generatedSha256": "670e9b670281124cf65257bfef95e03ceea00fc3757d857a38f2d6d4d9a1dab5",
+      "webpSha256": "5be93b5bc17cca4b62443d350148ad815df18902a045c4a27d16ec70d7dd10e5",
+      "reference": "legacy-sofa-facings-3-reference.png",
+      "referenceSha256": "2563ec90cdf57ddff15d291d0ae3d2921c7f3d79ddd30573298af0a78fa7eb7a",
+      "method": "image_gen source edit; exact RGBA source-sheet conversion to lossless WebP; native crop only, no artwork warp"
+    }
+  ],
+  "cropChecks": [
+    {
+      "id": "apartment-walnut-credenza",
+      "facing": "south",
+      "file": "legacy-case-1.webp",
+      "minimumCellMargin": 86
+    },
+    {
+      "id": "apartment-tambour-record-console",
+      "facing": "south",
+      "file": "legacy-case-1.webp",
+      "minimumCellMargin": 81
+    },
+    {
+      "id": "apartment-teak-desk",
+      "facing": "south",
+      "file": "legacy-case-1.webp",
+      "minimumCellMargin": 73
+    },
+    {
+      "id": "apartment-low-bookcase",
+      "facing": "south",
+      "file": "legacy-case-1.webp",
+      "minimumCellMargin": 79
+    },
+    {
+      "id": "apartment-record-player",
+      "facing": "south",
+      "file": "legacy-case-1.webp",
+      "minimumCellMargin": 80
+    },
+    {
+      "id": "apartment-cassette-cubby",
+      "facing": "south",
+      "file": "legacy-case-1.webp",
+      "minimumCellMargin": 68
+    },
+    {
+      "id": "apartment-sink-counter",
+      "facing": "south",
+      "file": "legacy-case-1.webp",
+      "minimumCellMargin": 56
+    },
+    {
+      "id": "apartment-cream-stove",
+      "facing": "south",
+      "file": "legacy-case-1.webp",
+      "minimumCellMargin": 62
+    },
+    {
+      "id": "apartment-bath-vanity",
+      "facing": "south",
+      "file": "legacy-case-1.webp",
+      "minimumCellMargin": 61
+    },
+    {
+      "id": "apartment-wardrobe",
+      "facing": "south",
+      "file": "legacy-case-2.webp",
+      "minimumCellMargin": 68
+    },
+    {
+      "id": "apartment-nightstand",
+      "facing": "south",
+      "file": "legacy-case-2.webp",
+      "minimumCellMargin": 68
+    },
+    {
+      "id": "apartment-toy-chest",
+      "facing": "south",
+      "file": "legacy-case-2.webp",
+      "minimumCellMargin": 100
+    },
+    {
+      "id": "apartment-dining-bench",
+      "facing": "south",
+      "file": "legacy-case-2.webp",
+      "minimumCellMargin": 90
+    },
+    {
+      "id": "apartment-blue-fridge",
+      "facing": "south",
+      "file": "legacy-case-2.webp",
+      "minimumCellMargin": 33
+    },
+    {
+      "id": "apartment-glass-shower",
+      "facing": "south",
+      "file": "legacy-case-2.webp",
+      "minimumCellMargin": 33
+    },
+    {
+      "id": "apartment-walnut-credenza",
+      "facing": "north",
+      "file": "legacy-case-cardinal-1.webp",
+      "minimumCellMargin": 122
+    },
+    {
+      "id": "apartment-tambour-record-console",
+      "facing": "north",
+      "file": "legacy-case-cardinal-1.webp",
+      "minimumCellMargin": 122
+    },
+    {
+      "id": "apartment-teak-desk",
+      "facing": "north",
+      "file": "legacy-case-cardinal-1.webp",
+      "minimumCellMargin": 121
+    },
+    {
+      "id": "apartment-walnut-credenza",
+      "facing": "east",
+      "file": "legacy-case-cardinal-1.webp",
+      "minimumCellMargin": 93
+    },
+    {
+      "id": "apartment-tambour-record-console",
+      "facing": "east",
+      "file": "legacy-case-cardinal-1.webp",
+      "minimumCellMargin": 93
+    },
+    {
+      "id": "apartment-teak-desk",
+      "facing": "east",
+      "file": "legacy-case-cardinal-1.webp",
+      "minimumCellMargin": 93
+    },
+    {
+      "id": "apartment-walnut-credenza",
+      "facing": "west",
+      "file": "legacy-case-cardinal-1.webp",
+      "minimumCellMargin": 89
+    },
+    {
+      "id": "apartment-tambour-record-console",
+      "facing": "west",
+      "file": "legacy-case-cardinal-1.webp",
+      "minimumCellMargin": 89
+    },
+    {
+      "id": "apartment-teak-desk",
+      "facing": "west",
+      "file": "legacy-case-cardinal-1.webp",
+      "minimumCellMargin": 89
+    },
+    {
+      "id": "apartment-low-bookcase",
+      "facing": "north",
+      "file": "legacy-case-cardinal-2.webp",
+      "minimumCellMargin": 37
+    },
+    {
+      "id": "apartment-record-player",
+      "facing": "north",
+      "file": "legacy-case-cardinal-2.webp",
+      "minimumCellMargin": 39
+    },
+    {
+      "id": "apartment-cassette-cubby",
+      "facing": "north",
+      "file": "legacy-case-cardinal-2.webp",
+      "minimumCellMargin": 32
+    },
+    {
+      "id": "apartment-low-bookcase",
+      "facing": "east",
+      "file": "legacy-case-cardinal-2.webp",
+      "minimumCellMargin": 26
+    },
+    {
+      "id": "apartment-record-player",
+      "facing": "east",
+      "file": "legacy-case-cardinal-2.webp",
+      "minimumCellMargin": 25
+    },
+    {
+      "id": "apartment-cassette-cubby",
+      "facing": "east",
+      "file": "legacy-case-cardinal-2.webp",
+      "minimumCellMargin": 26
+    },
+    {
+      "id": "apartment-low-bookcase",
+      "facing": "west",
+      "file": "legacy-case-cardinal-2.webp",
+      "minimumCellMargin": 23
+    },
+    {
+      "id": "apartment-record-player",
+      "facing": "west",
+      "file": "legacy-case-cardinal-2.webp",
+      "minimumCellMargin": 23
+    },
+    {
+      "id": "apartment-cassette-cubby",
+      "facing": "west",
+      "file": "legacy-case-cardinal-2.webp",
+      "minimumCellMargin": 21
+    },
+    {
+      "id": "apartment-sink-counter",
+      "facing": "north",
+      "file": "legacy-case-cardinal-3.webp",
+      "minimumCellMargin": 30
+    },
+    {
+      "id": "apartment-cream-stove",
+      "facing": "north",
+      "file": "legacy-case-cardinal-3.webp",
+      "minimumCellMargin": 31
+    },
+    {
+      "id": "apartment-bath-vanity",
+      "facing": "north",
+      "file": "legacy-case-cardinal-3.webp",
+      "minimumCellMargin": 32
+    },
+    {
+      "id": "apartment-sink-counter",
+      "facing": "east",
+      "file": "legacy-case-cardinal-3.webp",
+      "minimumCellMargin": 29
+    },
+    {
+      "id": "apartment-cream-stove",
+      "facing": "east",
+      "file": "legacy-case-cardinal-3.webp",
+      "minimumCellMargin": 30
+    },
+    {
+      "id": "apartment-bath-vanity",
+      "facing": "east",
+      "file": "legacy-case-cardinal-3.webp",
+      "minimumCellMargin": 30
+    },
+    {
+      "id": "apartment-sink-counter",
+      "facing": "west",
+      "file": "legacy-case-cardinal-3.webp",
+      "minimumCellMargin": 27
+    },
+    {
+      "id": "apartment-cream-stove",
+      "facing": "west",
+      "file": "legacy-case-cardinal-3.webp",
+      "minimumCellMargin": 30
+    },
+    {
+      "id": "apartment-bath-vanity",
+      "facing": "west",
+      "file": "legacy-case-cardinal-3.webp",
+      "minimumCellMargin": 30
+    },
+    {
+      "id": "apartment-wardrobe",
+      "facing": "north",
+      "file": "legacy-case-cardinal-4.webp",
+      "minimumCellMargin": 28
+    },
+    {
+      "id": "apartment-nightstand",
+      "facing": "north",
+      "file": "legacy-case-cardinal-4.webp",
+      "minimumCellMargin": 32
+    },
+    {
+      "id": "apartment-toy-chest",
+      "facing": "north",
+      "file": "legacy-case-cardinal-4.webp",
+      "minimumCellMargin": 41
+    },
+    {
+      "id": "apartment-wardrobe",
+      "facing": "east",
+      "file": "legacy-case-cardinal-4.webp",
+      "minimumCellMargin": 26
+    },
+    {
+      "id": "apartment-nightstand",
+      "facing": "east",
+      "file": "legacy-case-cardinal-4.webp",
+      "minimumCellMargin": 27
+    },
+    {
+      "id": "apartment-toy-chest",
+      "facing": "east",
+      "file": "legacy-case-cardinal-4.webp",
+      "minimumCellMargin": 30
+    },
+    {
+      "id": "apartment-wardrobe",
+      "facing": "west",
+      "file": "legacy-case-cardinal-4.webp",
+      "minimumCellMargin": 30
+    },
+    {
+      "id": "apartment-nightstand",
+      "facing": "west",
+      "file": "legacy-case-cardinal-4.webp",
+      "minimumCellMargin": 31
+    },
+    {
+      "id": "apartment-toy-chest",
+      "facing": "west",
+      "file": "legacy-case-cardinal-4.webp",
+      "minimumCellMargin": 31
+    },
+    {
+      "id": "apartment-dining-bench",
+      "facing": "north",
+      "file": "legacy-case-cardinal-5.webp",
+      "minimumCellMargin": 32
+    },
+    {
+      "id": "apartment-blue-fridge",
+      "facing": "north",
+      "file": "legacy-case-cardinal-5.webp",
+      "minimumCellMargin": 37
+    },
+    {
+      "id": "apartment-glass-shower",
+      "facing": "north",
+      "file": "legacy-case-cardinal-5.webp",
+      "minimumCellMargin": 33
+    },
+    {
+      "id": "apartment-dining-bench",
+      "facing": "east",
+      "file": "legacy-case-cardinal-5.webp",
+      "minimumCellMargin": 30
+    },
+    {
+      "id": "apartment-blue-fridge",
+      "facing": "east",
+      "file": "legacy-case-cardinal-5.webp",
+      "minimumCellMargin": 30
+    },
+    {
+      "id": "apartment-glass-shower",
+      "facing": "east",
+      "file": "legacy-case-cardinal-5.webp",
+      "minimumCellMargin": 29
+    },
+    {
+      "id": "apartment-dining-bench",
+      "facing": "west",
+      "file": "legacy-case-cardinal-5.webp",
+      "minimumCellMargin": 26
+    },
+    {
+      "id": "apartment-blue-fridge",
+      "facing": "west",
+      "file": "legacy-case-cardinal-5.webp",
+      "minimumCellMargin": 26
+    },
+    {
+      "id": "apartment-glass-shower",
+      "facing": "west",
+      "file": "legacy-case-cardinal-5.webp",
+      "minimumCellMargin": 25
+    },
+    {
+      "id": "showroom-victorian-parlor-bed",
+      "facing": "south",
+      "file": "legacy-beds-south.webp",
+      "minimumCellMargin": 14
+    },
+    {
+      "id": "showroom-art-deco-lounge-bed",
+      "facing": "south",
+      "file": "legacy-beds-south.webp",
+      "minimumCellMargin": 14
+    },
+    {
+      "id": "showroom-coastal-bedroom-bed",
+      "facing": "south",
+      "file": "legacy-beds-south.webp",
+      "minimumCellMargin": 13
+    },
+    {
+      "id": "showroom-rustic-kitchen-bed",
+      "facing": "south",
+      "file": "legacy-beds-south.webp",
+      "minimumCellMargin": 31
+    },
+    {
+      "id": "showroom-botanical-conservatory-bed",
+      "facing": "south",
+      "file": "legacy-beds-south.webp",
+      "minimumCellMargin": 31
+    },
+    {
+      "id": "showroom-midcentury-studio-bed",
+      "facing": "south",
+      "file": "legacy-beds-south.webp",
+      "minimumCellMargin": 37
+    },
+    {
+      "id": "showroom-french-cafe-bed",
+      "facing": "south",
+      "file": "legacy-beds-south.webp",
+      "minimumCellMargin": 19
+    },
+    {
+      "id": "showroom-industrial-loft-bed",
+      "facing": "south",
+      "file": "legacy-beds-south.webp",
+      "minimumCellMargin": 23
+    },
+    {
+      "id": "showroom-victorian-parlor-bed",
+      "facing": "north",
+      "file": "legacy-beds-north.webp",
+      "minimumCellMargin": 36
+    },
+    {
+      "id": "showroom-art-deco-lounge-bed",
+      "facing": "north",
+      "file": "legacy-beds-north.webp",
+      "minimumCellMargin": 34
+    },
+    {
+      "id": "showroom-coastal-bedroom-bed",
+      "facing": "north",
+      "file": "legacy-beds-north.webp",
+      "minimumCellMargin": 35
+    },
+    {
+      "id": "showroom-rustic-kitchen-bed",
+      "facing": "north",
+      "file": "legacy-beds-north.webp",
+      "minimumCellMargin": 33
+    },
+    {
+      "id": "showroom-botanical-conservatory-bed",
+      "facing": "north",
+      "file": "legacy-beds-north.webp",
+      "minimumCellMargin": 33
+    },
+    {
+      "id": "showroom-midcentury-studio-bed",
+      "facing": "north",
+      "file": "legacy-beds-north.webp",
+      "minimumCellMargin": 33
+    },
+    {
+      "id": "showroom-french-cafe-bed",
+      "facing": "north",
+      "file": "legacy-beds-north.webp",
+      "minimumCellMargin": 36
+    },
+    {
+      "id": "showroom-industrial-loft-bed",
+      "facing": "north",
+      "file": "legacy-beds-north.webp",
+      "minimumCellMargin": 34
+    },
+    {
+      "id": "showroom-victorian-parlor-sofa",
+      "facing": "south",
+      "file": "legacy-sofa-facings-1.webp",
+      "minimumCellMargin": 33
+    },
+    {
+      "id": "showroom-art-deco-lounge-sofa",
+      "facing": "south",
+      "file": "legacy-sofa-facings-1.webp",
+      "minimumCellMargin": 31
+    },
+    {
+      "id": "showroom-coastal-bedroom-sofa",
+      "facing": "south",
+      "file": "legacy-sofa-facings-1.webp",
+      "minimumCellMargin": 32
+    },
+    {
+      "id": "showroom-victorian-parlor-sofa",
+      "facing": "east",
+      "file": "legacy-sofa-facings-1.webp",
+      "minimumCellMargin": 20
+    },
+    {
+      "id": "showroom-art-deco-lounge-sofa",
+      "facing": "east",
+      "file": "legacy-sofa-facings-1.webp",
+      "minimumCellMargin": 23
+    },
+    {
+      "id": "showroom-coastal-bedroom-sofa",
+      "facing": "east",
+      "file": "legacy-sofa-facings-1.webp",
+      "minimumCellMargin": 22
+    },
+    {
+      "id": "showroom-victorian-parlor-sofa",
+      "facing": "west",
+      "file": "legacy-sofa-facings-1.webp",
+      "minimumCellMargin": 15
+    },
+    {
+      "id": "showroom-art-deco-lounge-sofa",
+      "facing": "west",
+      "file": "legacy-sofa-facings-1.webp",
+      "minimumCellMargin": 19
+    },
+    {
+      "id": "showroom-coastal-bedroom-sofa",
+      "facing": "west",
+      "file": "legacy-sofa-facings-1.webp",
+      "minimumCellMargin": 20
+    },
+    {
+      "id": "showroom-rustic-kitchen-sofa",
+      "facing": "south",
+      "file": "legacy-sofa-facings-2.webp",
+      "minimumCellMargin": 36
+    },
+    {
+      "id": "showroom-botanical-conservatory-sofa",
+      "facing": "south",
+      "file": "legacy-sofa-facings-2.webp",
+      "minimumCellMargin": 32
+    },
+    {
+      "id": "showroom-midcentury-studio-sofa",
+      "facing": "south",
+      "file": "legacy-sofa-facings-2.webp",
+      "minimumCellMargin": 34
+    },
+    {
+      "id": "showroom-rustic-kitchen-sofa",
+      "facing": "east",
+      "file": "legacy-sofa-facings-2.webp",
+      "minimumCellMargin": 18
+    },
+    {
+      "id": "showroom-botanical-conservatory-sofa",
+      "facing": "east",
+      "file": "legacy-sofa-facings-2.webp",
+      "minimumCellMargin": 20
+    },
+    {
+      "id": "showroom-midcentury-studio-sofa",
+      "facing": "east",
+      "file": "legacy-sofa-facings-2.webp",
+      "minimumCellMargin": 21
+    },
+    {
+      "id": "showroom-rustic-kitchen-sofa",
+      "facing": "west",
+      "file": "legacy-sofa-facings-2.webp",
+      "minimumCellMargin": 26
+    },
+    {
+      "id": "showroom-botanical-conservatory-sofa",
+      "facing": "west",
+      "file": "legacy-sofa-facings-2.webp",
+      "minimumCellMargin": 26
+    },
+    {
+      "id": "showroom-midcentury-studio-sofa",
+      "facing": "west",
+      "file": "legacy-sofa-facings-2.webp",
+      "minimumCellMargin": 31
+    },
+    {
+      "id": "showroom-french-cafe-sofa",
+      "facing": "south",
+      "file": "legacy-sofa-facings-3.webp",
+      "minimumCellMargin": 38
+    },
+    {
+      "id": "showroom-industrial-loft-sofa",
+      "facing": "south",
+      "file": "legacy-sofa-facings-3.webp",
+      "minimumCellMargin": 39
+    },
+    {
+      "id": "showroom-french-cafe-sofa",
+      "facing": "east",
+      "file": "legacy-sofa-facings-3.webp",
+      "minimumCellMargin": 31
+    },
+    {
+      "id": "showroom-industrial-loft-sofa",
+      "facing": "east",
+      "file": "legacy-sofa-facings-3.webp",
+      "minimumCellMargin": 35
+    },
+    {
+      "id": "showroom-french-cafe-sofa",
+      "facing": "west",
+      "file": "legacy-sofa-facings-3.webp",
+      "minimumCellMargin": 32
+    },
+    {
+      "id": "showroom-industrial-loft-sofa",
+      "facing": "west",
+      "file": "legacy-sofa-facings-3.webp",
+      "minimumCellMargin": 39
+    }
+  ]
+}

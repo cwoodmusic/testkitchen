@@ -40,6 +40,24 @@ art retain their authored colors; other materials use the shared world palette
 and regional lighting. Do not replace detailed art with featureless geometric
 shapes or mistake a passing movement test for visual quality.
 
+### Parallel 2/3 furniture projection
+
+Furniture and floor decorations use the user's parallel 2/3 game view: show
+the top and front, with no vanishing point. Corresponding straight near and far
+edges have equal widths, and depth edges remain parallel. Rectangular tables,
+countertops, mattresses, seat panels and woven rug borders must not become
+trapezoids. Front-facing cabinets stay front-facing. Preserve real oval tops,
+rounded upholstery, scalloped rugs, decorative carving and splayed legs.
+
+Earlier asset-review notes that say “3/4 perspective” mean this same parallel
+2/3 rule; they are not requests for a different projection. Correct the native
+drawings rather than warping them while rendering. Retain each collection's
+materials and motifs, original catalog IDs, view sizes, foot anchors, collision
+and saved placements. Apply shared-source repairs to derived furniture too.
+Accepted redraws and their original image-generation files are recorded in
+`assets/parallel-art/`; the catalog, reviewer, builder, game and exports use the
+same bounded native-art runtime.
+
 Capture the running square, fences beside a character, cliff face, shoreline,
 and a whole-town overview when reviewing a visual change. Compare those views
 to the approved square before claiming a major graphical improvement. Keep

@@ -1,0 +1,690 @@
+{
+  "version": 1,
+  "review": "2026-11-14-upload.json",
+  "reviewSHA256": "d1e1708def7474be3c1bf4fec3a4ed62bbd2b7b437b0376e67444f8effc7d47a",
+  "interpretation": "Every 3/4 perspective note means the user-requested parallel 2/3 view: no vanishing point; equal near/far widths for straight rectangular planes. Preserve real curves and occlusion.",
+  "reviewedViews": 142,
+  "actionableViews": 82,
+  "resolvedViews": 82,
+  "nativeViewRepairs": 790,
+  "nativeAssetIds": 361,
+  "cropSilhouettesRestored": 64,
+  "coverage": "Shared collection/family donors and independent legacy aliases are covered. Naturally curved, occluded and already-parallel planes remain as authored. Unexposed rug source directions are not invented.",
+  "reviewerMaterials": {
+    "interiorFloorFinishes": 124,
+    "wallpaperFinishes": 62,
+    "groundTextures": 9,
+    "floorSample": "3x3 connected field",
+    "wallSample": "connected run with trim"
+  },
+  "resolutions": [
+    {
+      "assetId": "props-0-360",
+      "facing": "south",
+      "originalStatus": "flagged",
+      "originalNote": "should be animated",
+      "category": "animation",
+      "resolution": "The water-only fountain animation is now visible in the reviewer, using the existing production water mask; reduced motion stays still."
+    },
+    {
+      "assetId": "props-1-150",
+      "facing": "south",
+      "originalStatus": "flagged",
+      "originalNote": "little piece on the bottom of the assets needs erased.",
+      "category": "crop",
+      "resolution": "Isolate the complete bench from its detached atlas fragment; retain saved dimensions, collision and seat anchors."
+    },
+    {
+      "assetId": "props-2-65",
+      "facing": "south",
+      "originalStatus": "flagged",
+      "originalNote": "larger light area of effect",
+      "category": "lighting",
+      "resolution": "Extend lamp light radius by 1.5 for authored and fallback lamp emitters."
+    },
+    {
+      "assetId": "furniture-5-180",
+      "facing": "south",
+      "originalStatus": "flagged",
+      "originalNote": "perspective fix. sides should be straight without the appearance of getting further away. same with chairs.",
+      "category": "parallel-art",
+      "resolution": "Accepted native redraw in parallel 2/3 projection; original identity, dimensions, anchors and collision retained."
+    },
+    {
+      "assetId": "music-2-120",
+      "facing": "south",
+      "originalStatus": "ok",
+      "originalNote": "remove leftover tree leaves on the left side of the asset,",
+      "category": "crop",
+      "resolution": "Isolate the intact lyre window without neighboring leaves."
+    },
+    {
+      "assetId": "music-square-wall",
+      "facing": "south",
+      "originalStatus": "flagged",
+      "originalNote": "remove cut off green leaves",
+      "category": "crop",
+      "resolution": "Sample clean stone donors, preserving the complete approved square source."
+    },
+    {
+      "assetId": "coda-arcade",
+      "facing": "south",
+      "originalStatus": "flagged",
+      "originalNote": "right side loos cut off",
+      "category": "composition",
+      "resolution": "Remove the floor-polygon image mask that clipped the exterior; retain the exact physical floor/door geometry."
+    },
+    {
+      "assetId": "decor-10-04",
+      "facing": "south",
+      "originalStatus": "flagged",
+      "originalNote": "cut off sides need repair",
+      "category": "crop",
+      "resolution": "Restore intact native alpha-component bounds, including faint edge details. Original world dimensions and collision retained."
+    },
+    {
+      "assetId": "decor-10-05",
+      "facing": "south",
+      "originalStatus": "flagged",
+      "originalNote": "cut off sides needs repair",
+      "category": "crop",
+      "resolution": "Restore intact native alpha-component bounds, including faint edge details. Original world dimensions and collision retained."
+    },
+    {
+      "assetId": "decor-10-06",
+      "facing": "south",
+      "originalStatus": "flagged",
+      "originalNote": "cut off sides",
+      "category": "crop",
+      "resolution": "Restore intact native alpha-component bounds, including faint edge details. Original world dimensions and collision retained."
+    },
+    {
+      "assetId": "decor-09-13",
+      "facing": "south",
+      "originalStatus": "flagged",
+      "originalNote": "cut off sides needs repaired",
+      "category": "crop",
+      "resolution": "Restore intact native alpha-component bounds, including faint edge details. Original world dimensions and collision retained."
+    },
+    {
+      "assetId": "decor-10-01",
+      "facing": "south",
+      "originalStatus": "flagged",
+      "originalNote": "cut off sides needs repaired",
+      "category": "crop",
+      "resolution": "Restore intact native alpha-component bounds, including faint edge details. Original world dimensions and collision retained."
+    },
+    {
+      "assetId": "decor-10-03",
+      "facing": "south",
+      "originalStatus": "flagged",
+      "originalNote": "cu5t off sides needs repaired",
+      "category": "crop",
+      "resolution": "Restore intact native alpha-component bounds, including faint edge details. Original world dimensions and collision retained."
+    },
+    {
+      "assetId": "decor-10-07",
+      "facing": "south",
+      "originalStatus": "flagged",
+      "originalNote": "cut of fsides",
+      "category": "crop",
+      "resolution": "Restore intact native alpha-component bounds, including faint edge details. Original world dimensions and collision retained."
+    },
+    {
+      "assetId": "decor-10-08",
+      "facing": "south",
+      "originalStatus": "flagged",
+      "originalNote": "cut off sides",
+      "category": "crop",
+      "resolution": "Restore intact native alpha-component bounds, including faint edge details. Original world dimensions and collision retained."
+    },
+    {
+      "assetId": "decor-10-09",
+      "facing": "south",
+      "originalStatus": "flagged",
+      "originalNote": "cut off sides",
+      "category": "crop",
+      "resolution": "Restore intact native alpha-component bounds, including faint edge details. Original world dimensions and collision retained."
+    },
+    {
+      "assetId": "decor-10-10",
+      "facing": "south",
+      "originalStatus": "flagged",
+      "originalNote": "cut off sides",
+      "category": "crop",
+      "resolution": "Restore intact native alpha-component bounds, including faint edge details. Original world dimensions and collision retained."
+    },
+    {
+      "assetId": "decor-10-11",
+      "facing": "south",
+      "originalStatus": "flagged",
+      "originalNote": "cut off sides",
+      "category": "crop",
+      "resolution": "Restore intact native alpha-component bounds, including faint edge details. Original world dimensions and collision retained."
+    },
+    {
+      "assetId": "decor-10-12",
+      "facing": "south",
+      "originalStatus": "flagged",
+      "originalNote": "cut off sides",
+      "category": "crop",
+      "resolution": "Restore intact native alpha-component bounds, including faint edge details. Original world dimensions and collision retained."
+    },
+    {
+      "assetId": "decor-10-13",
+      "facing": "south",
+      "originalStatus": "flagged",
+      "originalNote": "cut off sides",
+      "category": "crop",
+      "resolution": "Restore intact native alpha-component bounds, including faint edge details. Original world dimensions and collision retained."
+    },
+    {
+      "assetId": "decor-10-14",
+      "facing": "south",
+      "originalStatus": "flagged",
+      "originalNote": "cut off sides",
+      "category": "crop",
+      "resolution": "Restore intact native alpha-component bounds, including faint edge details. Original world dimensions and collision retained."
+    },
+    {
+      "assetId": "decor-10-15",
+      "facing": "south",
+      "originalStatus": "flagged",
+      "originalNote": "cut off sides",
+      "category": "crop",
+      "resolution": "Restore intact native alpha-component bounds, including faint edge details. Original world dimensions and collision retained."
+    },
+    {
+      "assetId": "decor-10-16",
+      "facing": "south",
+      "originalStatus": "flagged",
+      "originalNote": "cut off sides",
+      "category": "crop",
+      "resolution": "Restore intact native alpha-component bounds, including faint edge details. Original world dimensions and collision retained."
+    },
+    {
+      "assetId": "decor-11-01",
+      "facing": "south",
+      "originalStatus": "flagged",
+      "originalNote": "cut off sides",
+      "category": "crop",
+      "resolution": "Restore intact native alpha-component bounds, including faint edge details. Original world dimensions and collision retained."
+    },
+    {
+      "assetId": "decor-11-05",
+      "facing": "south",
+      "originalStatus": "flagged",
+      "originalNote": "cut off sides",
+      "category": "crop",
+      "resolution": "Restore intact native alpha-component bounds, including faint edge details. Original world dimensions and collision retained."
+    },
+    {
+      "assetId": "decor-11-07",
+      "facing": "south",
+      "originalStatus": "flagged",
+      "originalNote": "cut off sides",
+      "category": "crop",
+      "resolution": "Restore intact native alpha-component bounds, including faint edge details. Original world dimensions and collision retained."
+    },
+    {
+      "assetId": "decor-11-08",
+      "facing": "south",
+      "originalStatus": "flagged",
+      "originalNote": "cut off sides",
+      "category": "crop",
+      "resolution": "Restore intact native alpha-component bounds, including faint edge details. Original world dimensions and collision retained."
+    },
+    {
+      "assetId": "decor-11-09",
+      "facing": "south",
+      "originalStatus": "flagged",
+      "originalNote": "cut off sides",
+      "category": "crop",
+      "resolution": "Restore intact native alpha-component bounds, including faint edge details. Original world dimensions and collision retained."
+    },
+    {
+      "assetId": "decor-11-10",
+      "facing": "south",
+      "originalStatus": "flagged",
+      "originalNote": "cut off sides",
+      "category": "crop",
+      "resolution": "Restore intact native alpha-component bounds, including faint edge details. Original world dimensions and collision retained."
+    },
+    {
+      "assetId": "decor-11-11",
+      "facing": "south",
+      "originalStatus": "flagged",
+      "originalNote": "cut off sides",
+      "category": "crop",
+      "resolution": "Restore intact native alpha-component bounds, including faint edge details. Original world dimensions and collision retained."
+    },
+    {
+      "assetId": "decor-11-15",
+      "facing": "south",
+      "originalStatus": "flagged",
+      "originalNote": "cut off sides",
+      "category": "crop",
+      "resolution": "Restore intact native alpha-component bounds, including faint edge details. Original world dimensions and collision retained."
+    },
+    {
+      "assetId": "decor-11-16",
+      "facing": "south",
+      "originalStatus": "flagged",
+      "originalNote": "cut off sides",
+      "category": "crop",
+      "resolution": "Restore intact native alpha-component bounds, including faint edge details. Original world dimensions and collision retained."
+    },
+    {
+      "assetId": "decor-13-03",
+      "facing": "south",
+      "originalStatus": "ok",
+      "originalNote": "needs to be in 3/4 view perspective.",
+      "category": "parallel-art",
+      "resolution": "Accepted native redraw in parallel 2/3 projection; original identity, dimensions, anchors and collision retained."
+    },
+    {
+      "assetId": "decor-15-06",
+      "facing": "south",
+      "originalStatus": "flagged",
+      "originalNote": "cut off sides",
+      "category": "crop",
+      "resolution": "Restore intact native alpha-component bounds, including faint edge details. Original world dimensions and collision retained."
+    },
+    {
+      "assetId": "decor-15-01",
+      "facing": "south",
+      "originalStatus": "flagged",
+      "originalNote": "cut off sides",
+      "category": "crop",
+      "resolution": "Restore intact native alpha-component bounds, including faint edge details. Original world dimensions and collision retained."
+    },
+    {
+      "assetId": "decor-15-03",
+      "facing": "south",
+      "originalStatus": "flagged",
+      "originalNote": "cut off sides",
+      "category": "crop",
+      "resolution": "Restore intact native alpha-component bounds, including faint edge details. Original world dimensions and collision retained."
+    },
+    {
+      "assetId": "decor-15-07",
+      "facing": "south",
+      "originalStatus": "flagged",
+      "originalNote": "cut off sides",
+      "category": "crop",
+      "resolution": "Restore intact native alpha-component bounds, including faint edge details. Original world dimensions and collision retained."
+    },
+    {
+      "assetId": "decor-15-08",
+      "facing": "south",
+      "originalStatus": "flagged",
+      "originalNote": "cut off sides",
+      "category": "crop",
+      "resolution": "Restore intact native alpha-component bounds, including faint edge details. Original world dimensions and collision retained."
+    },
+    {
+      "assetId": "showroom-art-deco-lounge-bed",
+      "facing": "south",
+      "originalStatus": "flagged",
+      "originalNote": "3/4 perspective pls",
+      "category": "parallel-art",
+      "resolution": "Accepted native redraw in parallel 2/3 projection; original identity, dimensions, anchors and collision retained."
+    },
+    {
+      "assetId": "showroom-coastal-bedroom-bed",
+      "facing": "south",
+      "originalStatus": "flagged",
+      "originalNote": "3/4 perspective",
+      "category": "parallel-art",
+      "resolution": "Accepted native redraw in parallel 2/3 projection; original identity, dimensions, anchors and collision retained."
+    },
+    {
+      "assetId": "showroom-rustic-kitchen-bed",
+      "facing": "south",
+      "originalStatus": "flagged",
+      "originalNote": "3/4 perspective",
+      "category": "parallel-art",
+      "resolution": "Accepted native redraw in parallel 2/3 projection; original identity, dimensions, anchors and collision retained."
+    },
+    {
+      "assetId": "showroom-rustic-kitchen-sofa",
+      "facing": "south",
+      "originalStatus": "flagged",
+      "originalNote": "3/4 perspective",
+      "category": "parallel-art",
+      "resolution": "Accepted native redraw in parallel 2/3 projection; original identity, dimensions, anchors and collision retained."
+    },
+    {
+      "assetId": "showroom-botanical-conservatory-bed",
+      "facing": "south",
+      "originalStatus": "flagged",
+      "originalNote": "3/4 perspective",
+      "category": "parallel-art",
+      "resolution": "Accepted native redraw in parallel 2/3 projection; original identity, dimensions, anchors and collision retained."
+    },
+    {
+      "assetId": "showroom-midcentury-studio-bed",
+      "facing": "south",
+      "originalStatus": "flagged",
+      "originalNote": "3/4 perspective",
+      "category": "parallel-art",
+      "resolution": "Accepted native redraw in parallel 2/3 projection; original identity, dimensions, anchors and collision retained."
+    },
+    {
+      "assetId": "showroom-midcentury-studio-sofa",
+      "facing": "south",
+      "originalStatus": "flagged",
+      "originalNote": "3/4 perspective",
+      "category": "parallel-art",
+      "resolution": "Accepted native redraw in parallel 2/3 projection; original identity, dimensions, anchors and collision retained."
+    },
+    {
+      "assetId": "showroom-french-cafe-bed",
+      "facing": "south",
+      "originalStatus": "flagged",
+      "originalNote": "3/4 perspective",
+      "category": "parallel-art",
+      "resolution": "Accepted native redraw in parallel 2/3 projection; original identity, dimensions, anchors and collision retained."
+    },
+    {
+      "assetId": "showroom-industrial-loft-bed",
+      "facing": "south",
+      "originalStatus": "flagged",
+      "originalNote": "3/4 perspective",
+      "category": "parallel-art",
+      "resolution": "Accepted native redraw in parallel 2/3 projection; original identity, dimensions, anchors and collision retained."
+    },
+    {
+      "assetId": "showroom-industrial-loft-sofa",
+      "facing": "south",
+      "originalStatus": "flagged",
+      "originalNote": "3/4 perspective",
+      "category": "parallel-art",
+      "resolution": "Accepted native redraw in parallel 2/3 projection; original identity, dimensions, anchors and collision retained."
+    },
+    {
+      "assetId": "apartment-teak-bed",
+      "facing": "south",
+      "originalStatus": "flagged",
+      "originalNote": "3/4 perspective",
+      "category": "parallel-art",
+      "resolution": "Accepted native redraw in parallel 2/3 projection; original identity, dimensions, anchors and collision retained."
+    },
+    {
+      "assetId": "apartment-box-sofa",
+      "facing": "south",
+      "originalStatus": "flagged",
+      "originalNote": "3/4 perspective",
+      "category": "parallel-art",
+      "resolution": "Accepted native redraw in parallel 2/3 projection; original identity, dimensions, anchors and collision retained."
+    },
+    {
+      "assetId": "apartment-walnut-credenza",
+      "facing": "south",
+      "originalStatus": "flagged",
+      "originalNote": "3/4 perspective",
+      "category": "parallel-art",
+      "resolution": "Accepted native redraw in parallel 2/3 projection; original identity, dimensions, anchors and collision retained."
+    },
+    {
+      "assetId": "apartment-tambour-record-console",
+      "facing": "south",
+      "originalStatus": "flagged",
+      "originalNote": "3/4 perspective",
+      "category": "parallel-art",
+      "resolution": "Accepted native redraw in parallel 2/3 projection; original identity, dimensions, anchors and collision retained."
+    },
+    {
+      "assetId": "apartment-teak-desk",
+      "facing": "south",
+      "originalStatus": "flagged",
+      "originalNote": "3/4 perspective",
+      "category": "parallel-art",
+      "resolution": "Accepted native redraw in parallel 2/3 projection; original identity, dimensions, anchors and collision retained."
+    },
+    {
+      "assetId": "apartment-low-bookcase",
+      "facing": "south",
+      "originalStatus": "flagged",
+      "originalNote": "3/4 perspective",
+      "category": "parallel-art",
+      "resolution": "Accepted native redraw in parallel 2/3 projection; original identity, dimensions, anchors and collision retained."
+    },
+    {
+      "assetId": "apartment-record-player",
+      "facing": "south",
+      "originalStatus": "flagged",
+      "originalNote": "3/4 perspective",
+      "category": "parallel-art",
+      "resolution": "Accepted native redraw in parallel 2/3 projection; original identity, dimensions, anchors and collision retained."
+    },
+    {
+      "assetId": "apartment-record-rug",
+      "facing": "south",
+      "originalStatus": "flagged",
+      "originalNote": "3/4 perspective",
+      "category": "parallel-art",
+      "resolution": "Accepted native redraw in parallel 2/3 projection; original identity, dimensions, anchors and collision retained."
+    },
+    {
+      "assetId": "apartment-rainbow-keys-rug",
+      "facing": "south",
+      "originalStatus": "flagged",
+      "originalNote": "3/4 perspective",
+      "category": "parallel-art",
+      "resolution": "Accepted native redraw in parallel 2/3 projection; original identity, dimensions, anchors and collision retained."
+    },
+    {
+      "assetId": "apartment-cassette-cubby",
+      "facing": "south",
+      "originalStatus": "flagged",
+      "originalNote": "3/4 perspective",
+      "category": "parallel-art",
+      "resolution": "Accepted native redraw in parallel 2/3 projection; original identity, dimensions, anchors and collision retained."
+    },
+    {
+      "assetId": "apartment-sink-counter",
+      "facing": "south",
+      "originalStatus": "flagged",
+      "originalNote": "3/4 perspective",
+      "category": "parallel-art",
+      "resolution": "Accepted native redraw in parallel 2/3 projection; original identity, dimensions, anchors and collision retained."
+    },
+    {
+      "assetId": "apartment-cream-stove",
+      "facing": "south",
+      "originalStatus": "flagged",
+      "originalNote": "3/4 perspective",
+      "category": "parallel-art",
+      "resolution": "Accepted native redraw in parallel 2/3 projection; original identity, dimensions, anchors and collision retained."
+    },
+    {
+      "assetId": "apartment-blue-fridge",
+      "facing": "south",
+      "originalStatus": "flagged",
+      "originalNote": "3/4 perspective",
+      "category": "parallel-art",
+      "resolution": "Accepted native redraw in parallel 2/3 projection; original identity, dimensions, anchors and collision retained."
+    },
+    {
+      "assetId": "apartment-bath-vanity",
+      "facing": "south",
+      "originalStatus": "flagged",
+      "originalNote": "3/4 perspective",
+      "category": "parallel-art",
+      "resolution": "Accepted native redraw in parallel 2/3 projection; original identity, dimensions, anchors and collision retained."
+    },
+    {
+      "assetId": "apartment-glass-shower",
+      "facing": "south",
+      "originalStatus": "flagged",
+      "originalNote": "3/4 perspective",
+      "category": "parallel-art",
+      "resolution": "Accepted native redraw in parallel 2/3 projection; original identity, dimensions, anchors and collision retained."
+    },
+    {
+      "assetId": "apartment-wardrobe",
+      "facing": "south",
+      "originalStatus": "flagged",
+      "originalNote": "3/4 perspective",
+      "category": "parallel-art",
+      "resolution": "Accepted native redraw in parallel 2/3 projection; original identity, dimensions, anchors and collision retained."
+    },
+    {
+      "assetId": "apartment-nightstand",
+      "facing": "south",
+      "originalStatus": "flagged",
+      "originalNote": "3/4 perspective",
+      "category": "parallel-art",
+      "resolution": "Accepted native redraw in parallel 2/3 projection; original identity, dimensions, anchors and collision retained."
+    },
+    {
+      "assetId": "apartment-toy-chest",
+      "facing": "south",
+      "originalStatus": "flagged",
+      "originalNote": "3/4 perspective",
+      "category": "parallel-art",
+      "resolution": "Accepted native redraw in parallel 2/3 projection; original identity, dimensions, anchors and collision retained."
+    },
+    {
+      "assetId": "apartment-dining-bench",
+      "facing": "south",
+      "originalStatus": "flagged",
+      "originalNote": "3/4 perspective",
+      "category": "parallel-art",
+      "resolution": "Accepted native redraw in parallel 2/3 projection; original identity, dimensions, anchors and collision retained."
+    },
+    {
+      "assetId": "collection-bach-bed",
+      "facing": "south",
+      "originalStatus": "flagged",
+      "originalNote": "3/4 perspective",
+      "category": "parallel-art",
+      "resolution": "Accepted native redraw in parallel 2/3 projection; original identity, dimensions, anchors and collision retained."
+    },
+    {
+      "assetId": "collection-bach-sofa",
+      "facing": "south",
+      "originalStatus": "flagged",
+      "originalNote": "3/4 perspective",
+      "category": "parallel-art",
+      "resolution": "Accepted native redraw in parallel 2/3 projection; original identity, dimensions, anchors and collision retained."
+    },
+    {
+      "assetId": "collection-bach-wardrobe",
+      "facing": "south",
+      "originalStatus": "flagged",
+      "originalNote": "front facing, 3/4 perspective",
+      "category": "parallel-art",
+      "resolution": "Accepted native redraw in parallel 2/3 projection; original identity, dimensions, anchors and collision retained."
+    },
+    {
+      "assetId": "collection-bach-desk",
+      "facing": "south",
+      "originalStatus": "flagged",
+      "originalNote": "3/4 perspective",
+      "category": "parallel-art",
+      "resolution": "Accepted native redraw in parallel 2/3 projection; original identity, dimensions, anchors and collision retained."
+    },
+    {
+      "assetId": "collection-bach-desk-chair",
+      "facing": "south",
+      "originalStatus": "flagged",
+      "originalNote": "3/4 perspective",
+      "category": "parallel-art",
+      "resolution": "Accepted native redraw in parallel 2/3 projection; original identity, dimensions, anchors and collision retained."
+    },
+    {
+      "assetId": "collection-bach-dining-chair",
+      "facing": "south",
+      "originalStatus": "flagged",
+      "originalNote": "3/4 perspective",
+      "category": "parallel-art",
+      "resolution": "Accepted native redraw in parallel 2/3 projection; original identity, dimensions, anchors and collision retained."
+    },
+    {
+      "assetId": "collection-bach-sink",
+      "facing": "south",
+      "originalStatus": "flagged",
+      "originalNote": "3/4 perspective",
+      "category": "parallel-art",
+      "resolution": "Accepted native redraw in parallel 2/3 projection; original identity, dimensions, anchors and collision retained."
+    },
+    {
+      "assetId": "collection-bach-counter",
+      "facing": "south",
+      "originalStatus": "flagged",
+      "originalNote": "3/4 perspective",
+      "category": "parallel-art",
+      "resolution": "Accepted native redraw in parallel 2/3 projection; original identity, dimensions, anchors and collision retained."
+    },
+    {
+      "assetId": "collection-bach-vanity",
+      "facing": "south",
+      "originalStatus": "flagged",
+      "originalNote": "3/4 perspective",
+      "category": "parallel-art",
+      "resolution": "Accepted native redraw in parallel 2/3 projection; original identity, dimensions, anchors and collision retained."
+    },
+    {
+      "assetId": "collection-bach-bath-fixture",
+      "facing": "south",
+      "originalStatus": "flagged",
+      "originalNote": "3/4 perspective",
+      "category": "parallel-art",
+      "resolution": "Accepted native redraw in parallel 2/3 projection; original identity, dimensions, anchors and collision retained."
+    },
+    {
+      "assetId": "collection-bach-shelf",
+      "facing": "south",
+      "originalStatus": "flagged",
+      "originalNote": "front facing 3/4 perspective",
+      "category": "parallel-art",
+      "resolution": "Accepted native redraw in parallel 2/3 projection; original identity, dimensions, anchors and collision retained."
+    },
+    {
+      "assetId": "collection-bach-record-console",
+      "facing": "south",
+      "originalStatus": "flagged",
+      "originalNote": "3/4 perspective",
+      "category": "parallel-art",
+      "resolution": "Accepted native redraw in parallel 2/3 projection; original identity, dimensions, anchors and collision retained."
+    },
+    {
+      "assetId": "collection-mozart-bed",
+      "facing": "south",
+      "originalStatus": "flagged",
+      "originalNote": "3/4 perspective",
+      "category": "parallel-art",
+      "resolution": "Accepted native redraw in parallel 2/3 projection; original identity, dimensions, anchors and collision retained."
+    },
+    {
+      "assetId": "collection-mozart-sofa",
+      "facing": "south",
+      "originalStatus": "flagged",
+      "originalNote": "3/4 perspective",
+      "category": "parallel-art",
+      "resolution": "Accepted native redraw in parallel 2/3 projection; original identity, dimensions, anchors and collision retained."
+    },
+    {
+      "assetId": "collection-mozart-desk",
+      "facing": "south",
+      "originalStatus": "flagged",
+      "originalNote": "",
+      "category": "parallel-art",
+      "resolution": "Accepted native redraw in parallel 2/3 projection; original identity, dimensions, anchors and collision retained."
+    }
+  ],
+  "validation": {
+    "fullNodeSuitePassed": 1051,
+    "focusedRuntimeSuitePassed": 51,
+    "nativeBrowserViewsPassed": 790,
+    "coldEditedPreviewsPassed": 790,
+    "physicalReviewerRecordsUnchanged": 1860,
+    "gameCatalogAssetsUnchanged": 1664,
+    "browserPageErrors": 0,
+    "all15UploadedLayoutsAndPlacement": "passed",
+    "materialNativeFailureAndRetry": "passed",
+    "fountainWaterOnlyAnimation": "passed"
+  }
+}

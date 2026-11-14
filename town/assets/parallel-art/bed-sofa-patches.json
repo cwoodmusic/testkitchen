@@ -1,0 +1,2358 @@
+[
+  {
+    "id": "collection-bach-bed",
+    "facing": "south",
+    "file": "bed-sofa-1-d2ed8b8d3192.webp",
+    "width": 1024,
+    "height": 1536,
+    "x": 96,
+    "y": 32,
+    "w": 327,
+    "h": 457,
+    "draw": {
+      "x": 9.978540772532185,
+      "y": 0,
+      "w": 130.04291845493563,
+      "h": 150
+    },
+    "source": {
+      "file": "town/assets/apartment-collections/bach-south-cardinal-7b8b1298d752.webp",
+      "crop": {
+        "x": 915,
+        "y": 1378,
+        "w": 202,
+        "h": 233
+      },
+      "frame": {
+        "slot": "bed",
+        "x": 915,
+        "y": 1378,
+        "w": 202,
+        "h": 233,
+        "digest": "e4dd98ddb3c37377d1553a54e31ec698f8eab4cb5cfba19f567b2fa9923b94f6",
+        "cell": {
+          "x": 915,
+          "y": 1378,
+          "w": 202,
+          "h": 233
+        }
+      },
+      "sha256": "498b47c335cd9f62f8d4e2fbee50eec20d94411030ac1c3a1c8622c56ca002c6"
+    },
+    "generatedOriginal": "originals/bed-sofa-1-d2ed8b8d3192.png",
+    "generatedSha256": "d2ed8b8d31928c0d77155ff915eef666ef9a7b2a80dbc9ec939853f7c37e237a",
+    "method": "image_gen reference edit; raw crop only; no pixel warping",
+    "review": "Visible rectangular mattress/support narrows toward far end; keep rails and seams parallel.",
+    "oldWorldFootCenter": null,
+    "silhouetteCheck": "Complete connected alpha foreground bounds, including any crossing the regular cell. No pixel changes."
+  },
+  {
+    "id": "collection-bach-bed",
+    "facing": "north",
+    "file": "bed-sofa-1-d2ed8b8d3192.webp",
+    "width": 1024,
+    "height": 1536,
+    "x": 577,
+    "y": 30,
+    "w": 377,
+    "h": 459,
+    "draw": {
+      "x": 7.94930875576037,
+      "y": 0,
+      "w": 134.10138248847926,
+      "h": 150
+    },
+    "source": {
+      "file": "town/assets/apartment-collections/bach-north-ec7cad24dbb5.webp",
+      "crop": {
+        "x": 192,
+        "y": 237,
+        "w": 194,
+        "h": 217
+      },
+      "frame": {
+        "slot": "bed",
+        "x": 192,
+        "y": 237,
+        "w": 194,
+        "h": 217,
+        "digest": "af043864b9f5bc98035ba0801a9c1b99c8ecfd986a97510e2c197f17ef079016",
+        "viewWidth": 150,
+        "viewHeight": 150,
+        "footCenter": [
+          0.5,
+          0.69
+        ],
+        "cell": {
+          "x": 192,
+          "y": 237,
+          "w": 194,
+          "h": 217
+        }
+      },
+      "sha256": "ecc9e93421743a3da430cd5285039f837fafb1aff0513dd8fd796f0e2d195c8f"
+    },
+    "generatedOriginal": "originals/bed-sofa-1-d2ed8b8d3192.png",
+    "generatedSha256": "d2ed8b8d31928c0d77155ff915eef666ef9a7b2a80dbc9ec939853f7c37e237a",
+    "method": "image_gen reference edit; raw crop only; no pixel warping",
+    "review": "Visible rectangular mattress/support narrows toward far end; keep rails and seams parallel.",
+    "oldWorldFootCenter": {
+      "x": 75,
+      "y": 103.49999999999999
+    },
+    "silhouetteCheck": "Complete connected alpha foreground bounds, including any crossing the regular cell. No pixel changes."
+  },
+  {
+    "id": "collection-mozart-bed",
+    "facing": "south",
+    "file": "bed-sofa-1-d2ed8b8d3192.webp",
+    "width": 1024,
+    "height": 1536,
+    "x": 75,
+    "y": 545,
+    "w": 371,
+    "h": 442,
+    "draw": {
+      "x": 0,
+      "y": 0,
+      "w": 150,
+      "h": 150
+    },
+    "source": {
+      "file": "town/assets/apartment-collections/mozart-south-cardinal-20cdd8d43cef.webp",
+      "crop": {
+        "x": 1276,
+        "y": 1425,
+        "w": 210,
+        "h": 210
+      },
+      "frame": {
+        "slot": "bed",
+        "x": 1276,
+        "y": 1425,
+        "w": 210,
+        "h": 210,
+        "digest": "a550fa5da25b7151166cd852ae5cb81ad024f04ae136a246553f3bca4e7639a5",
+        "cell": {
+          "x": 1276,
+          "y": 1425,
+          "w": 210,
+          "h": 210
+        }
+      },
+      "sha256": "319539911aceef24ac0d9b80d1c65b9a6da173833a377d6034f6254670ff89be"
+    },
+    "generatedOriginal": "originals/bed-sofa-1-d2ed8b8d3192.png",
+    "generatedSha256": "d2ed8b8d31928c0d77155ff915eef666ef9a7b2a80dbc9ec939853f7c37e237a",
+    "method": "image_gen reference edit; raw crop only; no pixel warping",
+    "review": "Visible rectangular mattress/support narrows toward far end; keep rails and seams parallel.",
+    "oldWorldFootCenter": null,
+    "silhouetteCheck": "Complete connected alpha foreground bounds, including any crossing the regular cell. No pixel changes."
+  },
+  {
+    "id": "collection-mozart-bed",
+    "facing": "north",
+    "file": "bed-sofa-1-d2ed8b8d3192.webp",
+    "width": 1024,
+    "height": 1536,
+    "x": 550,
+    "y": 551,
+    "w": 431,
+    "h": 436,
+    "draw": {
+      "x": 0,
+      "y": 8.737864077669911,
+      "w": 150,
+      "h": 141.2621359223301
+    },
+    "source": {
+      "file": "town/assets/apartment-collections/mozart-north-6ea04ade1063.webp",
+      "crop": {
+        "x": 555,
+        "y": 671,
+        "w": 206,
+        "h": 194
+      },
+      "frame": {
+        "slot": "bed",
+        "x": 555,
+        "y": 671,
+        "w": 206,
+        "h": 194,
+        "digest": "a369b5042de33ed7587cd04ae18e790bf1ef52971969f19a2eff9d25068c42ee",
+        "viewWidth": 150,
+        "viewHeight": 150,
+        "footCenter": [
+          0.5,
+          0.670825
+        ],
+        "cell": {
+          "x": 555,
+          "y": 671,
+          "w": 206,
+          "h": 194
+        }
+      },
+      "sha256": "5e26f6985ddf8787d05f5e17d4f897114081d55aad009f0c28096f2035ed9109"
+    },
+    "generatedOriginal": "originals/bed-sofa-1-d2ed8b8d3192.png",
+    "generatedSha256": "d2ed8b8d31928c0d77155ff915eef666ef9a7b2a80dbc9ec939853f7c37e237a",
+    "method": "image_gen reference edit; raw crop only; no pixel warping",
+    "review": "Visible rectangular mattress/support narrows toward far end; keep rails and seams parallel.",
+    "oldWorldFootCenter": {
+      "x": 75,
+      "y": 103.500036407767
+    },
+    "silhouetteCheck": "Complete connected alpha foreground bounds, including any crossing the regular cell. No pixel changes."
+  },
+  {
+    "id": "collection-bach-sofa",
+    "facing": "south",
+    "file": "bed-sofa-1-d2ed8b8d3192.webp",
+    "width": 1024,
+    "height": 1536,
+    "x": 53,
+    "y": 1077,
+    "w": 413,
+    "h": 405,
+    "draw": {
+      "x": 20.15217391304347,
+      "y": 0,
+      "w": 139.69565217391306,
+      "h": 126.00000000000001
+    },
+    "source": {
+      "file": "town/assets/apartment-collections/bach-south-cardinal-7b8b1298d752.webp",
+      "crop": {
+        "x": 1690,
+        "y": 1790,
+        "w": 204,
+        "h": 184
+      },
+      "frame": {
+        "slot": "sofa",
+        "x": 1690,
+        "y": 1790,
+        "w": 204,
+        "h": 184,
+        "digest": "64ca3be58b4e84144175cc039d47e6763fc32d4e170af03bb9df5dea72bcb17c",
+        "cell": {
+          "x": 1690,
+          "y": 1790,
+          "w": 204,
+          "h": 184
+        }
+      },
+      "sha256": "498b47c335cd9f62f8d4e2fbee50eec20d94411030ac1c3a1c8622c56ca002c6"
+    },
+    "generatedOriginal": "originals/bed-sofa-1-d2ed8b8d3192.png",
+    "generatedSha256": "d2ed8b8d31928c0d77155ff915eef666ef9a7b2a80dbc9ec939853f7c37e237a",
+    "method": "image_gen reference edit; raw crop only; no pixel warping",
+    "review": "Explicit user flag: preserve curved arms while correcting rectangular seat support perspective.",
+    "oldWorldFootCenter": null,
+    "silhouetteCheck": "Complete connected alpha foreground bounds, including any crossing the regular cell. No pixel changes."
+  },
+  {
+    "id": "collection-mozart-sofa",
+    "facing": "south",
+    "file": "bed-sofa-1-d2ed8b8d3192.webp",
+    "width": 1024,
+    "height": 1536,
+    "x": 545,
+    "y": 1104,
+    "w": 440,
+    "h": 363,
+    "draw": {
+      "x": 11.15337423312883,
+      "y": 0,
+      "w": 157.69325153374234,
+      "h": 126
+    },
+    "source": {
+      "file": "town/assets/apartment-collections/mozart-south-cardinal-20cdd8d43cef.webp",
+      "crop": {
+        "x": 496,
+        "y": 1645,
+        "w": 204,
+        "h": 163
+      },
+      "frame": {
+        "slot": "sofa",
+        "x": 496,
+        "y": 1645,
+        "w": 204,
+        "h": 163,
+        "digest": "4ac544ff3e8904bd5c58ae7e23c7cb7ec4cbed4335cfd0f1a0c8aa5da91a45d6",
+        "cell": {
+          "x": 496,
+          "y": 1645,
+          "w": 204,
+          "h": 163
+        }
+      },
+      "sha256": "319539911aceef24ac0d9b80d1c65b9a6da173833a377d6034f6254670ff89be"
+    },
+    "generatedOriginal": "originals/bed-sofa-1-d2ed8b8d3192.png",
+    "generatedSha256": "d2ed8b8d31928c0d77155ff915eef666ef9a7b2a80dbc9ec939853f7c37e237a",
+    "method": "image_gen reference edit; raw crop only; no pixel warping",
+    "review": "Explicit user flag: preserve curved arms while correcting rectangular seat support perspective.",
+    "oldWorldFootCenter": null,
+    "silhouetteCheck": "Complete connected alpha foreground bounds, including any crossing the regular cell. No pixel changes."
+  },
+  {
+    "id": "collection-beethoven-bed",
+    "facing": "south",
+    "file": "bed-sofa-2-b1ee1a706c1b.webp",
+    "width": 1024,
+    "height": 1536,
+    "x": 104,
+    "y": 27,
+    "w": 305,
+    "h": 454,
+    "draw": {
+      "x": 24.393203883495147,
+      "y": 0,
+      "w": 101.2135922330097,
+      "h": 150
+    },
+    "source": {
+      "file": "town/assets/apartment-collections/beethoven-south-cardinal-3fc2dcbe24c1.webp",
+      "crop": {
+        "x": 317,
+        "y": 1976,
+        "w": 139,
+        "h": 206
+      },
+      "frame": {
+        "slot": "bed",
+        "x": 317,
+        "y": 1976,
+        "w": 139,
+        "h": 206,
+        "digest": "288ec398807633e87c14ea5a9458ab14b700b63b281bdcb34c5ed2a9742b9260",
+        "cell": {
+          "x": 317,
+          "y": 1976,
+          "w": 139,
+          "h": 206
+        }
+      },
+      "sha256": "16e326deb128b556eb083a2a6744ba0664d250a157750b4eb6d0588773ec6511"
+    },
+    "generatedOriginal": "originals/bed-sofa-2-b1ee1a706c1b.png",
+    "generatedSha256": "b1ee1a706c1b2dd127b779b66e6be79067858a7b4b52d3b1d4275541ed82a1cf",
+    "method": "image_gen reference edit; raw crop only; no pixel warping",
+    "review": "Visible rectangular mattress/support narrows toward far end; keep rails and seams parallel.",
+    "oldWorldFootCenter": null,
+    "silhouetteCheck": "Complete connected alpha foreground bounds, including any crossing the regular cell. No pixel changes."
+  },
+  {
+    "id": "collection-beethoven-bed",
+    "facing": "north",
+    "file": "bed-sofa-2-b1ee1a706c1b.webp",
+    "width": 1024,
+    "height": 1536,
+    "x": 594,
+    "y": 66,
+    "w": 333,
+    "h": 383,
+    "draw": {
+      "x": 0,
+      "y": 23.84615384615384,
+      "w": 150,
+      "h": 126.15384615384616
+    },
+    "source": {
+      "file": "town/assets/apartment-collections/beethoven-north-cardinal-7890abc9abcd.webp",
+      "crop": {
+        "x": 554,
+        "y": 1493,
+        "w": 195,
+        "h": 164
+      },
+      "frame": {
+        "slot": "bed",
+        "x": 554,
+        "y": 1493,
+        "w": 195,
+        "h": 164,
+        "digest": "fabd64ebe98705e73a1f0894094c73ad4d9fb4124d5fe64115de598f11584c2c",
+        "viewWidth": 150,
+        "viewHeight": 150,
+        "footCenter": [
+          0.5,
+          0.631402
+        ],
+        "cell": {
+          "x": 554,
+          "y": 1493,
+          "w": 195,
+          "h": 164
+        }
+      },
+      "sha256": "e941fe788df74cee2d401a01695bb29b96dbeda2097f6a4b54f005bb49a8ccad"
+    },
+    "generatedOriginal": "originals/bed-sofa-2-b1ee1a706c1b.png",
+    "generatedSha256": "b1ee1a706c1b2dd127b779b66e6be79067858a7b4b52d3b1d4275541ed82a1cf",
+    "method": "image_gen reference edit; raw crop only; no pixel warping",
+    "review": "Visible rectangular mattress/support narrows toward far end; keep rails and seams parallel.",
+    "oldWorldFootCenter": {
+      "x": 75,
+      "y": 103.49994461538462
+    },
+    "silhouetteCheck": "Complete connected alpha foreground bounds, including any crossing the regular cell. No pixel changes."
+  },
+  {
+    "id": "collection-beethoven-sofa",
+    "facing": "north",
+    "file": "bed-sofa-2-b1ee1a706c1b.webp",
+    "width": 1024,
+    "height": 1536,
+    "x": 52,
+    "y": 610,
+    "w": 411,
+    "h": 335,
+    "draw": {
+      "x": 0.8239436619718248,
+      "y": 0,
+      "w": 178.35211267605635,
+      "h": 126
+    },
+    "source": {
+      "file": "town/assets/apartment-collections/beethoven-north-cardinal-7890abc9abcd.webp",
+      "crop": {
+        "x": 1545,
+        "y": 1493,
+        "w": 201,
+        "h": 142
+      },
+      "frame": {
+        "slot": "sofa",
+        "x": 1545,
+        "y": 1493,
+        "w": 201,
+        "h": 142,
+        "digest": "b5bf53679c21cb82597088a1eb97b75c7d0da1e4baacdb304b7a088efda59584",
+        "viewWidth": 180,
+        "viewHeight": 126,
+        "footCenter": [
+          0.5,
+          0.785714
+        ],
+        "cell": {
+          "x": 1545,
+          "y": 1493,
+          "w": 201,
+          "h": 142
+        }
+      },
+      "sha256": "e941fe788df74cee2d401a01695bb29b96dbeda2097f6a4b54f005bb49a8ccad"
+    },
+    "generatedOriginal": "originals/bed-sofa-2-b1ee1a706c1b.png",
+    "generatedSha256": "b1ee1a706c1b2dd127b779b66e6be79067858a7b4b52d3b1d4275541ed82a1cf",
+    "method": "image_gen reference edit; raw crop only; no pixel warping",
+    "review": "Back cabinet/box plane is oblique and tapered.",
+    "oldWorldFootCenter": {
+      "x": 90,
+      "y": 98.999964
+    },
+    "silhouetteCheck": "Complete connected alpha foreground bounds, including any crossing the regular cell. No pixel changes."
+  },
+  {
+    "id": "collection-clara-bed",
+    "facing": "south",
+    "file": "bed-sofa-2-b1ee1a706c1b.webp",
+    "width": 1024,
+    "height": 1536,
+    "x": 591,
+    "y": 546,
+    "w": 354,
+    "h": 436,
+    "draw": {
+      "x": 0,
+      "y": 0,
+      "w": 150,
+      "h": 150
+    },
+    "source": {
+      "file": "town/assets/apartment-collections/clara-south-cardinal-d019e963a870.webp",
+      "crop": {
+        "x": 1137,
+        "y": 838,
+        "w": 214,
+        "h": 214
+      },
+      "frame": {
+        "slot": "bed",
+        "x": 1137,
+        "y": 838,
+        "w": 214,
+        "h": 214,
+        "digest": "4f5e680c1eb05ee736c169b9fd544683613be0bd73390c876ba6c5fa56141cad",
+        "cell": {
+          "x": 1137,
+          "y": 838,
+          "w": 214,
+          "h": 214
+        }
+      },
+      "sha256": "c82d32c215ddd8e0d73c6a56129b3ca51a44efb43cf1f5a2cfc013c590a7db0d"
+    },
+    "generatedOriginal": "originals/bed-sofa-2-b1ee1a706c1b.png",
+    "generatedSha256": "b1ee1a706c1b2dd127b779b66e6be79067858a7b4b52d3b1d4275541ed82a1cf",
+    "method": "image_gen reference edit; raw crop only; no pixel warping",
+    "review": "Visible rectangular mattress/support narrows toward far end; keep rails and seams parallel.",
+    "oldWorldFootCenter": null,
+    "silhouetteCheck": "Complete connected alpha foreground bounds, including any crossing the regular cell. No pixel changes."
+  },
+  {
+    "id": "collection-clara-bed",
+    "facing": "north",
+    "file": "bed-sofa-2-b1ee1a706c1b.webp",
+    "width": 1024,
+    "height": 1536,
+    "x": 71,
+    "y": 1094,
+    "w": 368,
+    "h": 380,
+    "draw": {
+      "x": 0,
+      "y": 22.167487684729068,
+      "w": 150,
+      "h": 127.83251231527093
+    },
+    "source": {
+      "file": "town/assets/apartment-collections/clara-north-207691ab8cb0.webp",
+      "crop": {
+        "x": 566,
+        "y": 842,
+        "w": 203,
+        "h": 173
+      },
+      "frame": {
+        "slot": "bed",
+        "x": 566,
+        "y": 842,
+        "w": 203,
+        "h": 173,
+        "digest": "ee90410c22458f24258bc7b16b3acdd98815abcf4bbbdedf3d2a4e59c310e6e7",
+        "viewWidth": 150,
+        "viewHeight": 150,
+        "footCenter": [
+          0.5,
+          0.636243
+        ],
+        "cell": {
+          "x": 566,
+          "y": 842,
+          "w": 203,
+          "h": 173
+        }
+      },
+      "sha256": "daf76fee770281df9c2c97e5a12ef82bfd5644381ed048f3fa6d5aaa70ece6bb"
+    },
+    "generatedOriginal": "originals/bed-sofa-2-b1ee1a706c1b.png",
+    "generatedSha256": "b1ee1a706c1b2dd127b779b66e6be79067858a7b4b52d3b1d4275541ed82a1cf",
+    "method": "image_gen reference edit; raw crop only; no pixel warping",
+    "review": "Visible rectangular mattress/support narrows toward far end; keep rails and seams parallel.",
+    "oldWorldFootCenter": {
+      "x": 75,
+      "y": 103.50002881773399
+    },
+    "silhouetteCheck": "Complete connected alpha foreground bounds, including any crossing the regular cell. No pixel changes."
+  },
+  {
+    "id": "collection-chopin-bed",
+    "facing": "south",
+    "file": "bed-sofa-2-b1ee1a706c1b.webp",
+    "width": 1024,
+    "height": 1536,
+    "x": 612,
+    "y": 1051,
+    "w": 306,
+    "h": 455,
+    "draw": {
+      "x": 22.20873786407767,
+      "y": 0,
+      "w": 105.58252427184466,
+      "h": 150
+    },
+    "source": {
+      "file": "town/assets/apartment-collections/chopin-south-cardinal-7e40bd5bf409.webp",
+      "crop": {
+        "x": 1719,
+        "y": 1636,
+        "w": 145,
+        "h": 206
+      },
+      "frame": {
+        "slot": "bed",
+        "x": 1719,
+        "y": 1636,
+        "w": 145,
+        "h": 206,
+        "digest": "b668f9b39c9988364592c29f31dfaf8b2c0f329ca1dd95ffcb208aa4918192b4",
+        "cell": {
+          "x": 1719,
+          "y": 1636,
+          "w": 145,
+          "h": 206
+        }
+      },
+      "sha256": "25ac203c08d615befc66d5c98c429eb077384a9e3d7756fa8adf86035765e18c"
+    },
+    "generatedOriginal": "originals/bed-sofa-2-b1ee1a706c1b.png",
+    "generatedSha256": "b1ee1a706c1b2dd127b779b66e6be79067858a7b4b52d3b1d4275541ed82a1cf",
+    "method": "image_gen reference edit; raw crop only; no pixel warping",
+    "review": "Visible rectangular mattress/support narrows toward far end; keep rails and seams parallel.",
+    "oldWorldFootCenter": null,
+    "silhouetteCheck": "Complete connected alpha foreground bounds, including any crossing the regular cell. No pixel changes."
+  },
+  {
+    "id": "collection-chopin-bed",
+    "facing": "north",
+    "file": "bed-sofa-3-5c31ba581888.webp",
+    "width": 1024,
+    "height": 1536,
+    "x": 59,
+    "y": 61,
+    "w": 394,
+    "h": 408,
+    "draw": {
+      "x": 0,
+      "y": 21.96969696969697,
+      "w": 150,
+      "h": 128.03030303030303
+    },
+    "source": {
+      "file": "town/assets/apartment-collections/chopin-north-cardinal-2eb185e87bf4.webp",
+      "crop": {
+        "x": 592,
+        "y": 448,
+        "w": 198,
+        "h": 169
+      },
+      "frame": {
+        "slot": "bed",
+        "x": 592,
+        "y": 448,
+        "w": 198,
+        "h": 169,
+        "digest": "0f98de367a0ff496585d124f0354c0b5ccbc6f3e3d710e1baa2c8e2cb7d3a687",
+        "viewWidth": 150,
+        "viewHeight": 150,
+        "footCenter": [
+          0.5,
+          0.636805
+        ],
+        "cell": {
+          "x": 592,
+          "y": 448,
+          "w": 198,
+          "h": 169
+        }
+      },
+      "sha256": "9eb1023577acb6532d4dd425346660306cab7fe430c4ea4550984ec05762e6c9"
+    },
+    "generatedOriginal": "originals/bed-sofa-3-5c31ba581888.png",
+    "generatedSha256": "5c31ba581888d204d9eaada99134bbf73cf3279c20f4bd92f743374182da752a",
+    "method": "image_gen reference edit; raw crop only; no pixel warping",
+    "review": "Visible rectangular mattress/support narrows toward far end; keep rails and seams parallel.",
+    "oldWorldFootCenter": {
+      "x": 75,
+      "y": 103.50003409090908
+    },
+    "silhouetteCheck": "Complete connected alpha foreground bounds, including any crossing the regular cell. No pixel changes."
+  },
+  {
+    "id": "collection-haydn-bed",
+    "facing": "south",
+    "file": "bed-sofa-3-5c31ba581888.webp",
+    "width": 1024,
+    "height": 1536,
+    "x": 593,
+    "y": 35,
+    "w": 350,
+    "h": 444,
+    "draw": {
+      "x": 3.4883720930232585,
+      "y": 0,
+      "w": 143.02325581395348,
+      "h": 150
+    },
+    "source": {
+      "file": "town/assets/apartment-collections/haydn-south-cardinal-c42d7912a677.webp",
+      "crop": {
+        "x": 1625,
+        "y": 508,
+        "w": 205,
+        "h": 215
+      },
+      "frame": {
+        "slot": "bed",
+        "x": 1625,
+        "y": 508,
+        "w": 205,
+        "h": 215,
+        "digest": "c370f748d3ebdab1862de73ec01c72c206e840190ece9ca0240b5d236b725faa",
+        "cell": {
+          "x": 1625,
+          "y": 508,
+          "w": 205,
+          "h": 215
+        }
+      },
+      "sha256": "5f09e6363e216b7a511d11dabbf7f330108be5a972085582aaf2d2c215f533c5"
+    },
+    "generatedOriginal": "originals/bed-sofa-3-5c31ba581888.png",
+    "generatedSha256": "5c31ba581888d204d9eaada99134bbf73cf3279c20f4bd92f743374182da752a",
+    "method": "image_gen reference edit; raw crop only; no pixel warping",
+    "review": "Visible rectangular mattress/support narrows toward far end; keep rails and seams parallel.",
+    "oldWorldFootCenter": null,
+    "silhouetteCheck": "Complete connected alpha foreground bounds, including any crossing the regular cell. No pixel changes."
+  },
+  {
+    "id": "collection-haydn-bed",
+    "facing": "north",
+    "file": "bed-sofa-3-5c31ba581888.webp",
+    "width": 1024,
+    "height": 1536,
+    "x": 57,
+    "y": 548,
+    "w": 398,
+    "h": 444,
+    "draw": {
+      "x": 0,
+      "y": 6.650246305418733,
+      "w": 150,
+      "h": 143.34975369458127
+    },
+    "source": {
+      "file": "town/assets/apartment-collections/haydn-north-18ce12845759.webp",
+      "crop": {
+        "x": 199,
+        "y": 644,
+        "w": 203,
+        "h": 194
+      },
+      "frame": {
+        "slot": "bed",
+        "x": 199,
+        "y": 644,
+        "w": 203,
+        "h": 194,
+        "digest": "b21b2856a251a1647c2db9a6516e241d8fd59f408c15218246f2fa169224da0e",
+        "viewWidth": 150,
+        "viewHeight": 150,
+        "footCenter": [
+          0.5,
+          0.675619
+        ],
+        "cell": {
+          "x": 199,
+          "y": 644,
+          "w": 203,
+          "h": 194
+        }
+      },
+      "sha256": "a89aed5463dce9a5ea7a5d51f9d9cc03c6373d9ca8319aff59466d28ee9303c1"
+    },
+    "generatedOriginal": "originals/bed-sofa-3-5c31ba581888.png",
+    "generatedSha256": "5c31ba581888d204d9eaada99134bbf73cf3279c20f4bd92f743374182da752a",
+    "method": "image_gen reference edit; raw crop only; no pixel warping",
+    "review": "Visible rectangular mattress/support narrows toward far end; keep rails and seams parallel.",
+    "oldWorldFootCenter": {
+      "x": 75,
+      "y": 103.50006354679803
+    },
+    "silhouetteCheck": "Complete connected alpha foreground bounds, including any crossing the regular cell. No pixel changes."
+  },
+  {
+    "id": "collection-handel-bed",
+    "facing": "south",
+    "file": "bed-sofa-3-5c31ba581888.webp",
+    "width": 1024,
+    "height": 1536,
+    "x": 584,
+    "y": 533,
+    "w": 367,
+    "h": 459,
+    "draw": {
+      "x": 4.054054054054049,
+      "y": 0,
+      "w": 141.8918918918919,
+      "h": 150
+    },
+    "source": {
+      "file": "town/assets/apartment-collections/handel-south-cardinal-f069238584fc.webp",
+      "crop": {
+        "x": 1362,
+        "y": 997,
+        "w": 210,
+        "h": 222
+      },
+      "frame": {
+        "slot": "bed",
+        "x": 1362,
+        "y": 997,
+        "w": 210,
+        "h": 222,
+        "digest": "820a89cb7e1dbb8086efd2895b6d3859d9afe313caa554f088fe740f65f18b78",
+        "cell": {
+          "x": 1362,
+          "y": 997,
+          "w": 210,
+          "h": 222
+        }
+      },
+      "sha256": "5c36308baa8ce44ac7c1e979c369df510e99ae42edc7e2f2ffbff81e53b41582"
+    },
+    "generatedOriginal": "originals/bed-sofa-3-5c31ba581888.png",
+    "generatedSha256": "5c31ba581888d204d9eaada99134bbf73cf3279c20f4bd92f743374182da752a",
+    "method": "image_gen reference edit; raw crop only; no pixel warping",
+    "review": "Visible rectangular mattress/support narrows toward far end; keep rails and seams parallel.",
+    "oldWorldFootCenter": null,
+    "silhouetteCheck": "Complete connected alpha foreground bounds, including any crossing the regular cell. No pixel changes."
+  },
+  {
+    "id": "collection-handel-bed",
+    "facing": "north",
+    "file": "bed-sofa-3-5c31ba581888.webp",
+    "width": 1024,
+    "height": 1536,
+    "x": 66,
+    "y": 1050,
+    "w": 381,
+    "h": 452,
+    "draw": {
+      "x": 0,
+      "y": 5.357142857142861,
+      "w": 150,
+      "h": 144.64285714285714
+    },
+    "source": {
+      "file": "town/assets/apartment-collections/handel-north-a4d495bc84f3.webp",
+      "crop": {
+        "x": 583,
+        "y": 635,
+        "w": 196,
+        "h": 189
+      },
+      "frame": {
+        "slot": "bed",
+        "x": 583,
+        "y": 635,
+        "w": 196,
+        "h": 189,
+        "digest": "0dc6207c9278a21cca47838fb432d1405a91aea1f2a8fd493c86accacc2822b8",
+        "viewWidth": 150,
+        "viewHeight": 150,
+        "footCenter": [
+          0.5,
+          0.678519
+        ],
+        "cell": {
+          "x": 583,
+          "y": 635,
+          "w": 196,
+          "h": 189
+        }
+      },
+      "sha256": "218cf5793f269233f40cca630323f00622617f04c90dc765434f95a7a2612112"
+    },
+    "generatedOriginal": "originals/bed-sofa-3-5c31ba581888.png",
+    "generatedSha256": "5c31ba581888d204d9eaada99134bbf73cf3279c20f4bd92f743374182da752a",
+    "method": "image_gen reference edit; raw crop only; no pixel warping",
+    "review": "Visible rectangular mattress/support narrows toward far end; keep rails and seams parallel.",
+    "oldWorldFootCenter": {
+      "x": 75,
+      "y": 103.50006964285714
+    },
+    "silhouetteCheck": "Complete connected alpha foreground bounds, including any crossing the regular cell. No pixel changes."
+  },
+  {
+    "id": "collection-vivaldi-bed",
+    "facing": "south",
+    "file": "bed-sofa-3-5c31ba581888.webp",
+    "width": 1024,
+    "height": 1536,
+    "x": 581,
+    "y": 1050,
+    "w": 372,
+    "h": 452,
+    "draw": {
+      "x": 5.52995391705069,
+      "y": 0,
+      "w": 138.94009216589862,
+      "h": 150
+    },
+    "source": {
+      "file": "town/assets/apartment-collections/vivaldi-south-cardinal-6138afdec004.webp",
+      "crop": {
+        "x": 659,
+        "y": 909,
+        "w": 201,
+        "h": 217
+      },
+      "frame": {
+        "slot": "bed",
+        "x": 659,
+        "y": 909,
+        "w": 201,
+        "h": 217,
+        "digest": "cfc972ab23082352d9d52d27a524fed90154db9363dd8c252eb966f6f00b4bb3",
+        "cell": {
+          "x": 659,
+          "y": 909,
+          "w": 201,
+          "h": 217
+        }
+      },
+      "sha256": "86ffb1f4787c1712bfc9cf3e9949a7ca0aea49f221d2136d47e7bcc483b9f858"
+    },
+    "generatedOriginal": "originals/bed-sofa-3-5c31ba581888.png",
+    "generatedSha256": "5c31ba581888d204d9eaada99134bbf73cf3279c20f4bd92f743374182da752a",
+    "method": "image_gen reference edit; raw crop only; no pixel warping",
+    "review": "Visible rectangular mattress/support narrows toward far end; keep rails and seams parallel.",
+    "oldWorldFootCenter": null,
+    "silhouetteCheck": "Complete connected alpha foreground bounds, including any crossing the regular cell. No pixel changes."
+  },
+  {
+    "id": "collection-vivaldi-bed",
+    "facing": "north",
+    "file": "bed-sofa-4-9f590ea48189.webp",
+    "width": 1024,
+    "height": 1536,
+    "x": 78,
+    "y": 28,
+    "w": 394,
+    "h": 455,
+    "draw": {
+      "x": 9.459459459459467,
+      "y": 0,
+      "w": 131.08108108108107,
+      "h": 150
+    },
+    "source": {
+      "file": "town/assets/apartment-collections/vivaldi-north-cardinal-788af1b4cb70.webp",
+      "crop": {
+        "x": 1106,
+        "y": 4,
+        "w": 194,
+        "h": 222
+      },
+      "frame": {
+        "slot": "bed",
+        "x": 1106,
+        "y": 4,
+        "w": 194,
+        "h": 222,
+        "digest": "0230de1608985ae427ab2ccb320fee31c8effc477cd6cbbdc3faa39ced19bc0f",
+        "viewWidth": 150,
+        "viewHeight": 150,
+        "footCenter": [
+          0.5,
+          0.69
+        ],
+        "cell": {
+          "x": 1106,
+          "y": 4,
+          "w": 194,
+          "h": 222
+        }
+      },
+      "sha256": "075472388a67a156d46a21beed0df34d9eb16adc42df3cac35dede75098c21e0"
+    },
+    "generatedOriginal": "originals/bed-sofa-4-9f590ea48189.png",
+    "generatedSha256": "9f590ea4818909e834f59c19aa38c5a892ed44a1bd19c87dc7c288ac0db879de",
+    "method": "image_gen reference edit; raw crop only; no pixel warping",
+    "review": "Visible rectangular mattress/support narrows toward far end; keep rails and seams parallel.",
+    "oldWorldFootCenter": {
+      "x": 75,
+      "y": 103.49999999999999
+    },
+    "silhouetteCheck": "Complete connected alpha foreground bounds, including any crossing the regular cell. No pixel changes."
+  },
+  {
+    "id": "collection-joplin-bed",
+    "facing": "south",
+    "file": "bed-sofa-4-9f590ea48189.webp",
+    "width": 1024,
+    "height": 1536,
+    "x": 616,
+    "y": 29,
+    "w": 300,
+    "h": 455,
+    "draw": {
+      "x": 23.300970873786405,
+      "y": 0,
+      "w": 103.39805825242719,
+      "h": 150
+    },
+    "source": {
+      "file": "town/assets/apartment-collections/joplin-south-cardinal-51e88f307806.webp",
+      "crop": {
+        "x": 295,
+        "y": 1451,
+        "w": 142,
+        "h": 206
+      },
+      "frame": {
+        "slot": "bed",
+        "x": 295,
+        "y": 1451,
+        "w": 142,
+        "h": 206,
+        "digest": "1073ad93d8e9d26045a6da82ea1284202c3d50837e42a2794c36789bb39deb44",
+        "cell": {
+          "x": 295,
+          "y": 1451,
+          "w": 142,
+          "h": 206
+        }
+      },
+      "sha256": "c92b36d86a86628ee960d753edba1c416610caf833b8802bb3ac6c77dc5d2db8"
+    },
+    "generatedOriginal": "originals/bed-sofa-4-9f590ea48189.png",
+    "generatedSha256": "9f590ea4818909e834f59c19aa38c5a892ed44a1bd19c87dc7c288ac0db879de",
+    "method": "image_gen reference edit; raw crop only; no pixel warping",
+    "review": "Visible rectangular mattress/support narrows toward far end; keep rails and seams parallel.",
+    "oldWorldFootCenter": null,
+    "silhouetteCheck": "Complete connected alpha foreground bounds, including any crossing the regular cell. No pixel changes."
+  },
+  {
+    "id": "collection-joplin-bed",
+    "facing": "north",
+    "file": "bed-sofa-4-9f590ea48189.webp",
+    "width": 1024,
+    "height": 1536,
+    "x": 93,
+    "y": 540,
+    "w": 363,
+    "h": 456,
+    "draw": {
+      "x": 5.921052631578945,
+      "y": 0,
+      "w": 138.1578947368421,
+      "h": 150
+    },
+    "source": {
+      "file": "town/assets/apartment-collections/joplin-north-55a60dd2a5dc.webp",
+      "crop": {
+        "x": 697,
+        "y": 654,
+        "w": 175,
+        "h": 190
+      },
+      "frame": {
+        "slot": "bed",
+        "x": 697,
+        "y": 654,
+        "w": 175,
+        "h": 190,
+        "digest": "ae07975994fef3899c7dad45f6aad723a83a50bb6ea78c9fc3b5edede149fb98",
+        "viewWidth": 150,
+        "viewHeight": 150,
+        "footCenter": [
+          0.5,
+          0.69
+        ],
+        "cell": {
+          "x": 697,
+          "y": 654,
+          "w": 175,
+          "h": 190
+        }
+      },
+      "sha256": "717e2b8aff1d5fc76e16a04576c6baaf242681288f17b86ef0fe7dc552660409"
+    },
+    "generatedOriginal": "originals/bed-sofa-4-9f590ea48189.png",
+    "generatedSha256": "9f590ea4818909e834f59c19aa38c5a892ed44a1bd19c87dc7c288ac0db879de",
+    "method": "image_gen reference edit; raw crop only; no pixel warping",
+    "review": "Visible rectangular mattress/support narrows toward far end; keep rails and seams parallel.",
+    "oldWorldFootCenter": {
+      "x": 75,
+      "y": 103.49999999999999
+    },
+    "silhouetteCheck": "Complete connected alpha foreground bounds, including any crossing the regular cell. No pixel changes."
+  },
+  {
+    "id": "collection-ellington-bed",
+    "facing": "south",
+    "file": "bed-sofa-4-9f590ea48189.webp",
+    "width": 1024,
+    "height": 1536,
+    "x": 555,
+    "y": 543,
+    "w": 419,
+    "h": 451,
+    "draw": {
+      "x": 0.691244239631331,
+      "y": 0,
+      "w": 148.61751152073734,
+      "h": 150
+    },
+    "source": {
+      "file": "town/assets/apartment-collections/ellington-south-cardinal-9ad7254b5826.webp",
+      "crop": {
+        "x": 4,
+        "y": 1186,
+        "w": 215,
+        "h": 217
+      },
+      "frame": {
+        "slot": "bed",
+        "x": 4,
+        "y": 1186,
+        "w": 215,
+        "h": 217,
+        "digest": "70cb80a3072d0f88a7b6083bbdde460c90bd8cf5150b3342715c10418cdbd83f",
+        "cell": {
+          "x": 4,
+          "y": 1186,
+          "w": 215,
+          "h": 217
+        }
+      },
+      "sha256": "cab1c2214d19c61137c8edb4527c7857bd56634c707e378ae91d82c40dade3a1"
+    },
+    "generatedOriginal": "originals/bed-sofa-4-9f590ea48189.png",
+    "generatedSha256": "9f590ea4818909e834f59c19aa38c5a892ed44a1bd19c87dc7c288ac0db879de",
+    "method": "image_gen reference edit; raw crop only; no pixel warping",
+    "review": "Visible rectangular mattress/support narrows toward far end; keep rails and seams parallel.",
+    "oldWorldFootCenter": null,
+    "silhouetteCheck": "Complete connected alpha foreground bounds, including any crossing the regular cell. No pixel changes."
+  },
+  {
+    "id": "collection-ellington-bed",
+    "facing": "north",
+    "file": "bed-sofa-4-9f590ea48189.webp",
+    "width": 1024,
+    "height": 1536,
+    "x": 55,
+    "y": 1076,
+    "w": 412,
+    "h": 404,
+    "draw": {
+      "x": 0,
+      "y": 18.292682926829258,
+      "w": 150,
+      "h": 131.70731707317074
+    },
+    "source": {
+      "file": "town/assets/apartment-collections/ellington-north-cardinal-f4752f45160c.webp",
+      "crop": {
+        "x": 4,
+        "y": 1371,
+        "w": 205,
+        "h": 180
+      },
+      "frame": {
+        "slot": "bed",
+        "x": 4,
+        "y": 1371,
+        "w": 205,
+        "h": 180,
+        "digest": "830e923e777672dff6ad56d429d713c38818678f49e0abdd9fd69644e1401526",
+        "viewWidth": 150,
+        "viewHeight": 150,
+        "footCenter": [
+          0.5,
+          0.646944
+        ],
+        "cell": {
+          "x": 4,
+          "y": 1371,
+          "w": 205,
+          "h": 180
+        }
+      },
+      "sha256": "fba1e8ef6f3a5b8b31e38ef5c086976f5c7f3f0bf003adb7a4c4c673186c6b09"
+    },
+    "generatedOriginal": "originals/bed-sofa-4-9f590ea48189.png",
+    "generatedSha256": "9f590ea4818909e834f59c19aa38c5a892ed44a1bd19c87dc7c288ac0db879de",
+    "method": "image_gen reference edit; raw crop only; no pixel warping",
+    "review": "Visible rectangular mattress/support narrows toward far end; keep rails and seams parallel.",
+    "oldWorldFootCenter": {
+      "x": 75,
+      "y": 103.49994146341463
+    },
+    "silhouetteCheck": "Complete connected alpha foreground bounds, including any crossing the regular cell. No pixel changes."
+  },
+  {
+    "id": "collection-nina-bed",
+    "facing": "south",
+    "file": "bed-sofa-4-9f590ea48189.webp",
+    "width": 1024,
+    "height": 1536,
+    "x": 579,
+    "y": 1116,
+    "w": 371,
+    "h": 325,
+    "draw": {
+      "x": 0,
+      "y": 39.06976744186046,
+      "w": 150,
+      "h": 110.93023255813954
+    },
+    "source": {
+      "file": "town/assets/apartment-collections/nina-south-cardinal-e42c2a6c7595.webp",
+      "crop": {
+        "x": 986,
+        "y": 1503,
+        "w": 215,
+        "h": 159
+      },
+      "frame": {
+        "slot": "bed",
+        "x": 986,
+        "y": 1503,
+        "w": 215,
+        "h": 159,
+        "digest": "7f9f128872741351f1d104e8904de14a1b0000564ac394520e13164fb8067787",
+        "cell": {
+          "x": 986,
+          "y": 1503,
+          "w": 215,
+          "h": 159
+        }
+      },
+      "sha256": "2b05c3a170d121546cd8c992a0059a3a89e56c5be74de1b2a512f5a73f051d85"
+    },
+    "generatedOriginal": "originals/bed-sofa-4-9f590ea48189.png",
+    "generatedSha256": "9f590ea4818909e834f59c19aa38c5a892ed44a1bd19c87dc7c288ac0db879de",
+    "method": "image_gen reference edit; raw crop only; no pixel warping",
+    "review": "Visible rectangular mattress/support narrows toward far end; keep rails and seams parallel.",
+    "oldWorldFootCenter": null,
+    "silhouetteCheck": "Complete connected alpha foreground bounds, including any crossing the regular cell. No pixel changes."
+  },
+  {
+    "id": "collection-nina-bed",
+    "facing": "north",
+    "file": "bed-sofa-5-2c7e0a84377f.webp",
+    "width": 1024,
+    "height": 1536,
+    "x": 42,
+    "y": 61,
+    "w": 429,
+    "h": 410,
+    "draw": {
+      "x": 0,
+      "y": 27.475247524752476,
+      "w": 150,
+      "h": 122.52475247524752
+    },
+    "source": {
+      "file": "town/assets/apartment-collections/nina-north-a06ba79da4ca.webp",
+      "crop": {
+        "x": 438,
+        "y": 1040,
+        "w": 202,
+        "h": 165
+      },
+      "frame": {
+        "slot": "bed",
+        "x": 438,
+        "y": 1040,
+        "w": 202,
+        "h": 165,
+        "digest": "6a15d5f50fbfedce166b11cd4220390ae11be7930b5e5eac053633ae6e0a85b4",
+        "viewWidth": 150,
+        "viewHeight": 150,
+        "footCenter": [
+          0.5,
+          0.620485
+        ],
+        "cell": {
+          "x": 438,
+          "y": 1040,
+          "w": 202,
+          "h": 165
+        }
+      },
+      "sha256": "807db2538fe900a9037dd0438b492c25d92c1c0790792e48cdfcfeb0aa68fbd0"
+    },
+    "generatedOriginal": "originals/bed-sofa-5-2c7e0a84377f.png",
+    "generatedSha256": "2c7e0a84377f8025d57b2d9ba1efdb25615156490469f887ebce617221c96d08",
+    "method": "image_gen reference edit; raw crop only; no pixel warping",
+    "review": "Visible rectangular mattress/support narrows toward far end; keep rails and seams parallel.",
+    "oldWorldFootCenter": {
+      "x": 75,
+      "y": 103.50001856435642
+    },
+    "silhouetteCheck": "Complete connected alpha foreground bounds, including any crossing the regular cell. No pixel changes."
+  },
+  {
+    "id": "collection-dj-bed",
+    "facing": "south",
+    "file": "bed-sofa-5-2c7e0a84377f.webp",
+    "width": 1024,
+    "height": 1536,
+    "x": 585,
+    "y": 27,
+    "w": 367,
+    "h": 458,
+    "draw": {
+      "x": 16.316793893129777,
+      "y": 0,
+      "w": 117.36641221374045,
+      "h": 150
+    },
+    "source": {
+      "file": "town/assets/apartment-collections/cardinal-fixes/dj-bed-south-0e215367a21e.webp",
+      "crop": {
+        "x": 0,
+        "y": 0,
+        "w": 205,
+        "h": 262
+      },
+      "frame": {
+        "id": "collection-dj-bed",
+        "slot": "bed",
+        "x": 0,
+        "y": 0,
+        "w": 205,
+        "h": 262,
+        "viewWidth": 150,
+        "viewHeight": 150,
+        "worldFootCenter": {
+          "x": 75,
+          "y": 103.5
+        },
+        "digest": "0e215367a21eefa6e88c0af1fea1b6af26dbfe878ecb0a7befc29e22de3e7893"
+      },
+      "sha256": "d1af14aa51b7e39709e1c3c16ab148b9c454eca0c85c7ebcd8857e97a97a0bdc"
+    },
+    "generatedOriginal": "originals/bed-sofa-5-2c7e0a84377f.png",
+    "generatedSha256": "2c7e0a84377f8025d57b2d9ba1efdb25615156490469f887ebce617221c96d08",
+    "method": "image_gen reference edit; raw crop only; no pixel warping",
+    "review": "Visible rectangular mattress/support narrows toward far end; keep rails and seams parallel.",
+    "oldWorldFootCenter": {
+      "x": 75,
+      "y": 103.5
+    },
+    "silhouetteCheck": "Complete connected alpha foreground bounds, including any crossing the regular cell. No pixel changes."
+  },
+  {
+    "id": "collection-dj-bed",
+    "facing": "north",
+    "file": "bed-sofa-5-2c7e0a84377f.webp",
+    "width": 1024,
+    "height": 1536,
+    "x": 50,
+    "y": 545,
+    "w": 411,
+    "h": 439,
+    "draw": {
+      "x": 0,
+      "y": 11.363636363636374,
+      "w": 150,
+      "h": 138.63636363636363
+    },
+    "source": {
+      "file": "town/assets/apartment-collections/dj-north-273bb13ac5ff.webp",
+      "crop": {
+        "x": 710,
+        "y": 655,
+        "w": 198,
+        "h": 183
+      },
+      "frame": {
+        "slot": "bed",
+        "x": 710,
+        "y": 655,
+        "w": 198,
+        "h": 183,
+        "digest": "47c780fa939885ea71854041d73ec1c8faaabd9d1d93410ead569cdf4863148c",
+        "viewWidth": 150,
+        "viewHeight": 150,
+        "footCenter": [
+          0.5,
+          0.66459
+        ],
+        "cell": {
+          "x": 710,
+          "y": 655,
+          "w": 198,
+          "h": 183
+        }
+      },
+      "sha256": "d1efcfe0e47ff070598600dd960e63f19803959d6cdeb9d41ba112e2f1fab214"
+    },
+    "generatedOriginal": "originals/bed-sofa-5-2c7e0a84377f.png",
+    "generatedSha256": "2c7e0a84377f8025d57b2d9ba1efdb25615156490469f887ebce617221c96d08",
+    "method": "image_gen reference edit; raw crop only; no pixel warping",
+    "review": "Visible rectangular mattress/support narrows toward far end; keep rails and seams parallel.",
+    "oldWorldFootCenter": {
+      "x": 75,
+      "y": 103.49997727272728
+    },
+    "silhouetteCheck": "Complete connected alpha foreground bounds, including any crossing the regular cell. No pixel changes."
+  },
+  {
+    "id": "collection-vee-jay-bed",
+    "facing": "south",
+    "file": "bed-sofa-5-2c7e0a84377f.webp",
+    "width": 1024,
+    "height": 1536,
+    "x": 583,
+    "y": 538,
+    "w": 370,
+    "h": 460,
+    "draw": {
+      "x": 12.014563106796118,
+      "y": 0,
+      "w": 125.97087378640776,
+      "h": 150
+    },
+    "source": {
+      "file": "town/assets/apartment-collections/vee-jay-south-cardinal-9bb2802f02d5.webp",
+      "crop": {
+        "x": 1018,
+        "y": 2738,
+        "w": 173,
+        "h": 206
+      },
+      "frame": {
+        "slot": "bed",
+        "x": 1018,
+        "y": 2738,
+        "w": 173,
+        "h": 206,
+        "digest": "dbd50bf871d107bec25c165894a087d6e39b6306bd676384ae6236814c67e061",
+        "cell": {
+          "x": 1018,
+          "y": 2738,
+          "w": 173,
+          "h": 206
+        }
+      },
+      "sha256": "1c161ca18ca6b51723fa49e2f0287df2ad71eb459fc3703985f212b4444a5a89"
+    },
+    "generatedOriginal": "originals/bed-sofa-5-2c7e0a84377f.png",
+    "generatedSha256": "2c7e0a84377f8025d57b2d9ba1efdb25615156490469f887ebce617221c96d08",
+    "method": "image_gen reference edit; raw crop only; no pixel warping",
+    "review": "Visible rectangular mattress/support narrows toward far end; keep rails and seams parallel.",
+    "oldWorldFootCenter": null,
+    "silhouetteCheck": "Complete connected alpha foreground bounds, including any crossing the regular cell. No pixel changes."
+  },
+  {
+    "id": "collection-vee-jay-bed",
+    "facing": "north",
+    "file": "bed-sofa-5-2c7e0a84377f.webp",
+    "width": 1024,
+    "height": 1536,
+    "x": 54,
+    "y": 1053,
+    "w": 402,
+    "h": 457,
+    "draw": {
+      "x": 2.6785714285714306,
+      "y": 0,
+      "w": 144.64285714285714,
+      "h": 150
+    },
+    "source": {
+      "file": "town/assets/apartment-collections/vee-jay-north-9c3b6c582649.webp",
+      "crop": {
+        "x": 478,
+        "y": 217,
+        "w": 189,
+        "h": 196
+      },
+      "frame": {
+        "slot": "bed",
+        "x": 478,
+        "y": 217,
+        "w": 189,
+        "h": 196,
+        "digest": "abc9c5fa76dce004b7e09a04f225a55fb7da35284d7d32dbbebf9afca3cfdf72",
+        "viewWidth": 150,
+        "viewHeight": 150,
+        "footCenter": [
+          0.5,
+          0.69
+        ],
+        "cell": {
+          "x": 478,
+          "y": 217,
+          "w": 189,
+          "h": 196
+        }
+      },
+      "sha256": "304d22bdb33b14754f1600637ba435a6880095213183b8111bd1c5f18564c29b"
+    },
+    "generatedOriginal": "originals/bed-sofa-5-2c7e0a84377f.png",
+    "generatedSha256": "2c7e0a84377f8025d57b2d9ba1efdb25615156490469f887ebce617221c96d08",
+    "method": "image_gen reference edit; raw crop only; no pixel warping",
+    "review": "Visible rectangular mattress/support narrows toward far end; keep rails and seams parallel.",
+    "oldWorldFootCenter": {
+      "x": 75,
+      "y": 103.49999999999999
+    },
+    "silhouetteCheck": "Complete connected alpha foreground bounds, including any crossing the regular cell. No pixel changes."
+  },
+  {
+    "id": "collection-metronome-bed",
+    "facing": "south",
+    "file": "bed-sofa-5-2c7e0a84377f.webp",
+    "width": 1024,
+    "height": 1536,
+    "x": 599,
+    "y": 1043,
+    "w": 336,
+    "h": 471,
+    "draw": {
+      "x": 23.103448275862064,
+      "y": 0,
+      "w": 103.79310344827587,
+      "h": 150
+    },
+    "source": {
+      "file": "town/assets/apartment-collections/metronome-south-cardinal-72ce761a9f1c.webp",
+      "crop": {
+        "x": 1346,
+        "y": 4,
+        "w": 301,
+        "h": 435
+      },
+      "frame": {
+        "slot": "bed",
+        "x": 1346,
+        "y": 4,
+        "w": 301,
+        "h": 435,
+        "digest": "19451b751d90fbb216a933273915cdb0b10ba354e804c27080ebddb5c73aa086",
+        "cell": {
+          "x": 1346,
+          "y": 4,
+          "w": 301,
+          "h": 435
+        },
+        "sourceDigest": "3b6acf19a65264798719aae5cc5c4570ea80a89553435373a1dbb0fed8ee573c",
+        "sourceFrame": {
+          "x": 91,
+          "y": 17,
+          "w": 301,
+          "h": 435
+        },
+        "artReview": "independent-source-qa.json",
+        "footCenter": [
+          0.5,
+          0.69
+        ]
+      },
+      "sha256": "279c3930e3fc75b59930fb3b5824023144026032eb21361249df162a2d67f241"
+    },
+    "generatedOriginal": "originals/bed-sofa-5-2c7e0a84377f.png",
+    "generatedSha256": "2c7e0a84377f8025d57b2d9ba1efdb25615156490469f887ebce617221c96d08",
+    "method": "image_gen reference edit; raw crop only; no pixel warping",
+    "review": "Visible rectangular mattress/support narrows toward far end; keep rails and seams parallel.",
+    "oldWorldFootCenter": {
+      "x": 75,
+      "y": 103.49999999999999
+    },
+    "silhouetteCheck": "Complete connected alpha foreground bounds, including any crossing the regular cell. No pixel changes."
+  },
+  {
+    "id": "collection-metronome-bed",
+    "facing": "north",
+    "file": "bed-sofa-6-771cae3201f1.webp",
+    "width": 1024,
+    "height": 1536,
+    "x": 50,
+    "y": 32,
+    "w": 412,
+    "h": 450,
+    "draw": {
+      "x": 6.122448979591837,
+      "y": 0,
+      "w": 137.75510204081633,
+      "h": 150
+    },
+    "source": {
+      "file": "town/assets/apartment-collections/metronome-north-b7dc54ccb581.webp",
+      "crop": {
+        "x": 4,
+        "y": 647,
+        "w": 180,
+        "h": 196
+      },
+      "frame": {
+        "slot": "bed",
+        "x": 4,
+        "y": 647,
+        "w": 180,
+        "h": 196,
+        "digest": "879a02bf93db99dee17294425940e1cfa0cdf2c13413fe5f0d85eadf65535249",
+        "viewWidth": 150,
+        "viewHeight": 150,
+        "footCenter": [
+          0.5,
+          0.69
+        ],
+        "cell": {
+          "x": 4,
+          "y": 647,
+          "w": 180,
+          "h": 196
+        }
+      },
+      "sha256": "d464991fc86ea1609f401bdd645bbd15c193f5ce4b125a2c0d7c3ab00eb90322"
+    },
+    "generatedOriginal": "originals/bed-sofa-6-771cae3201f1.png",
+    "generatedSha256": "771cae3201f10ff42e4f9315f40a0a93dd536342ed0f22f202aac92e0a2280c0",
+    "method": "image_gen reference edit; raw crop only; no pixel warping",
+    "review": "Visible rectangular mattress/support narrows toward far end; keep rails and seams parallel.",
+    "oldWorldFootCenter": {
+      "x": 75,
+      "y": 103.49999999999999
+    },
+    "silhouetteCheck": "Complete connected alpha foreground bounds, including any crossing the regular cell. No pixel changes."
+  },
+  {
+    "id": "collection-schoenberg-bed",
+    "facing": "north",
+    "file": "bed-sofa-6-771cae3201f1.webp",
+    "width": 1024,
+    "height": 1536,
+    "x": 559,
+    "y": 66,
+    "w": 418,
+    "h": 394,
+    "draw": {
+      "x": 0,
+      "y": 22.959183673469397,
+      "w": 150,
+      "h": 127.0408163265306
+    },
+    "source": {
+      "file": "town/assets/apartment-collections/schoenberg-north-5f0804b1e331.webp",
+      "crop": {
+        "x": 211,
+        "y": 827,
+        "w": 196,
+        "h": 166
+      },
+      "frame": {
+        "slot": "bed",
+        "x": 211,
+        "y": 827,
+        "w": 196,
+        "h": 166,
+        "digest": "f43040b33f7176f2e42e35e3042f06f8615c67c7e159add381006729a16110f8",
+        "viewWidth": 150,
+        "viewHeight": 150,
+        "footCenter": [
+          0.5,
+          0.633976
+        ],
+        "cell": {
+          "x": 211,
+          "y": 827,
+          "w": 196,
+          "h": 166
+        }
+      },
+      "sha256": "5422c50b07fcb586ff834885acb4c647e692d929498ca9d84799ccda4e255b50"
+    },
+    "generatedOriginal": "originals/bed-sofa-6-771cae3201f1.png",
+    "generatedSha256": "771cae3201f10ff42e4f9315f40a0a93dd536342ed0f22f202aac92e0a2280c0",
+    "method": "image_gen reference edit; raw crop only; no pixel warping",
+    "review": "Visible rectangular mattress/support narrows toward far end; keep rails and seams parallel.",
+    "oldWorldFootCenter": {
+      "x": 75,
+      "y": 103.50001224489796
+    },
+    "silhouetteCheck": "Complete connected alpha foreground bounds, including any crossing the regular cell. No pixel changes."
+  },
+  {
+    "id": "collection-showroom-victorian-parlor-bed",
+    "facing": "south",
+    "file": "bed-sofa-6-771cae3201f1.webp",
+    "width": 1024,
+    "height": 1536,
+    "x": 67,
+    "y": 545,
+    "w": 379,
+    "h": 451,
+    "draw": {
+      "x": 2.1028037383177605,
+      "y": 0,
+      "w": 145.79439252336448,
+      "h": 150
+    },
+    "source": {
+      "file": "town/assets/apartment-collections/showroom-victorian-parlor-south-cardinal-7aea206b742f.webp",
+      "crop": {
+        "x": 4,
+        "y": 678,
+        "w": 208,
+        "h": 214
+      },
+      "frame": {
+        "slot": "bed",
+        "x": 4,
+        "y": 678,
+        "w": 208,
+        "h": 214,
+        "digest": "364952f13f12ad6075619e364cb38d69f4809c71d1cd66d5c1bce82358ba4343",
+        "cell": {
+          "x": 4,
+          "y": 678,
+          "w": 208,
+          "h": 214
+        }
+      },
+      "sha256": "a98642c561d91335d2e5c34875ea768eac834a476a25ee12451ba799b5453161"
+    },
+    "generatedOriginal": "originals/bed-sofa-6-771cae3201f1.png",
+    "generatedSha256": "771cae3201f10ff42e4f9315f40a0a93dd536342ed0f22f202aac92e0a2280c0",
+    "method": "image_gen reference edit; raw crop only; no pixel warping",
+    "review": "Visible rectangular mattress/support narrows toward far end; keep rails and seams parallel.",
+    "oldWorldFootCenter": null,
+    "silhouetteCheck": "Complete connected alpha foreground bounds, including any crossing the regular cell. No pixel changes."
+  },
+  {
+    "id": "collection-showroom-art-deco-lounge-bed",
+    "facing": "south",
+    "file": "bed-sofa-6-771cae3201f1.webp",
+    "width": 1024,
+    "height": 1536,
+    "x": 586,
+    "y": 547,
+    "w": 365,
+    "h": 449,
+    "draw": {
+      "x": 5.184331797235018,
+      "y": 0,
+      "w": 139.63133640552996,
+      "h": 150
+    },
+    "source": {
+      "file": "town/assets/apartment-collections/showroom-art-deco-lounge-south-cardinal-7e5863603897.webp",
+      "crop": {
+        "x": 4,
+        "y": 1004,
+        "w": 202,
+        "h": 217
+      },
+      "frame": {
+        "slot": "bed",
+        "x": 4,
+        "y": 1004,
+        "w": 202,
+        "h": 217,
+        "digest": "55a09cb7f0e73858813e683a57dc66342deb441c5a612548d6532c3eee4e7d7d",
+        "cell": {
+          "x": 4,
+          "y": 1004,
+          "w": 202,
+          "h": 217
+        }
+      },
+      "sha256": "5eb8690d33cee58e965b9a14b32077ef4eddde8946ea18939af81f3e97e27f6c"
+    },
+    "generatedOriginal": "originals/bed-sofa-6-771cae3201f1.png",
+    "generatedSha256": "771cae3201f10ff42e4f9315f40a0a93dd536342ed0f22f202aac92e0a2280c0",
+    "method": "image_gen reference edit; raw crop only; no pixel warping",
+    "review": "Visible rectangular mattress/support narrows toward far end; keep rails and seams parallel.",
+    "oldWorldFootCenter": null,
+    "silhouetteCheck": "Complete connected alpha foreground bounds, including any crossing the regular cell. No pixel changes."
+  },
+  {
+    "id": "collection-showroom-coastal-bedroom-bed",
+    "facing": "south",
+    "file": "bed-sofa-6-771cae3201f1.webp",
+    "width": 1024,
+    "height": 1536,
+    "x": 66,
+    "y": 1058,
+    "w": 379,
+    "h": 444,
+    "draw": {
+      "x": 2.476415094339629,
+      "y": 0,
+      "w": 145.04716981132074,
+      "h": 150
+    },
+    "source": {
+      "file": "town/assets/apartment-collections/showroom-coastal-bedroom-south-cardinal-c48ff11990c5.webp",
+      "crop": {
+        "x": 911,
+        "y": 463,
+        "w": 205,
+        "h": 212
+      },
+      "frame": {
+        "slot": "bed",
+        "x": 911,
+        "y": 463,
+        "w": 205,
+        "h": 212,
+        "digest": "b7c4eb07061f032415a8144fe223fe9a9b4a296ae0a66fdd0cbadf9d9b4768e8",
+        "cell": {
+          "x": 911,
+          "y": 463,
+          "w": 205,
+          "h": 212
+        }
+      },
+      "sha256": "c8fb34733a0e56928b29d18268c3c9007be94af2ef7bd99538bf264c3a5e70aa"
+    },
+    "generatedOriginal": "originals/bed-sofa-6-771cae3201f1.png",
+    "generatedSha256": "771cae3201f10ff42e4f9315f40a0a93dd536342ed0f22f202aac92e0a2280c0",
+    "method": "image_gen reference edit; raw crop only; no pixel warping",
+    "review": "Visible rectangular mattress/support narrows toward far end; keep rails and seams parallel.",
+    "oldWorldFootCenter": null,
+    "silhouetteCheck": "Complete connected alpha foreground bounds, including any crossing the regular cell. No pixel changes."
+  },
+  {
+    "id": "collection-showroom-rustic-kitchen-bed",
+    "facing": "south",
+    "file": "bed-sofa-6-771cae3201f1.webp",
+    "width": 1024,
+    "height": 1536,
+    "x": 580,
+    "y": 1058,
+    "w": 376,
+    "h": 448,
+    "draw": {
+      "x": 1.7361111111111143,
+      "y": 0,
+      "w": 146.52777777777777,
+      "h": 150
+    },
+    "source": {
+      "file": "town/assets/apartment-collections/showroom-rustic-kitchen-south-cardinal-2ef940449755.webp",
+      "crop": {
+        "x": 194,
+        "y": 1452,
+        "w": 211,
+        "h": 216
+      },
+      "frame": {
+        "slot": "bed",
+        "x": 194,
+        "y": 1452,
+        "w": 211,
+        "h": 216,
+        "digest": "0bef879fc5ccc1d91705d6ac3a4a89aea9cd86aca9ded2c6cf8b38b8cf09b0cb",
+        "cell": {
+          "x": 194,
+          "y": 1452,
+          "w": 211,
+          "h": 216
+        }
+      },
+      "sha256": "c19e33013e6d1681357668743400e443a5c58ea32eb79311abbfcd352d58564b"
+    },
+    "generatedOriginal": "originals/bed-sofa-6-771cae3201f1.png",
+    "generatedSha256": "771cae3201f10ff42e4f9315f40a0a93dd536342ed0f22f202aac92e0a2280c0",
+    "method": "image_gen reference edit; raw crop only; no pixel warping",
+    "review": "Visible rectangular mattress/support narrows toward far end; keep rails and seams parallel.",
+    "oldWorldFootCenter": null,
+    "silhouetteCheck": "Complete connected alpha foreground bounds, including any crossing the regular cell. No pixel changes."
+  },
+  {
+    "id": "collection-showroom-rustic-kitchen-bed",
+    "facing": "north",
+    "file": "bed-sofa-7-672d0209f4ad.webp",
+    "width": 1024,
+    "height": 1536,
+    "x": 35,
+    "y": 29,
+    "w": 442,
+    "h": 453,
+    "draw": {
+      "x": 1.1029411764705799,
+      "y": 0,
+      "w": 147.79411764705884,
+      "h": 150
+    },
+    "source": {
+      "file": "town/assets/apartment-collections/showroom-rustic-kitchen-north-503a4152fee3.webp",
+      "crop": {
+        "x": 587,
+        "y": 444,
+        "w": 201,
+        "h": 204
+      },
+      "frame": {
+        "slot": "bed",
+        "x": 587,
+        "y": 444,
+        "w": 201,
+        "h": 204,
+        "digest": "43bb5a485f9678371b1413ee9e3c943977bb876d0377a430639c2876ab75a9c7",
+        "viewWidth": 150,
+        "viewHeight": 150,
+        "footCenter": [
+          0.5,
+          0.69
+        ],
+        "cell": {
+          "x": 587,
+          "y": 444,
+          "w": 201,
+          "h": 204
+        }
+      },
+      "sha256": "a4f84ae497046ea1de2dc87c97117462a76bb85f6420ef111e089ceeefa25c05"
+    },
+    "generatedOriginal": "originals/bed-sofa-7-672d0209f4ad.png",
+    "generatedSha256": "672d0209f4ada6aaa38cbe5f6074b1f3435322456e0c828c5045fbcff7b07ced",
+    "method": "image_gen reference edit; raw crop only; no pixel warping",
+    "review": "Visible rectangular mattress/support narrows toward far end; keep rails and seams parallel.",
+    "oldWorldFootCenter": {
+      "x": 75,
+      "y": 103.49999999999999
+    },
+    "silhouetteCheck": "Complete connected alpha foreground bounds, including any crossing the regular cell. No pixel changes."
+  },
+  {
+    "id": "collection-showroom-botanical-conservatory-bed",
+    "facing": "south",
+    "file": "bed-sofa-7-672d0209f4ad.webp",
+    "width": 1024,
+    "height": 1536,
+    "x": 603,
+    "y": 29,
+    "w": 328,
+    "h": 453,
+    "draw": {
+      "x": 21.134020618556704,
+      "y": 2.842170943040401e-14,
+      "w": 107.73195876288659,
+      "h": 149.99999999999997
+    },
+    "source": {
+      "file": "town/assets/apartment-collections/cardinal-fixes/showroom-botanical-conservatory-bed-south-c691e640f56d.webp",
+      "crop": {
+        "x": 0,
+        "y": 0,
+        "w": 209,
+        "h": 291
+      },
+      "frame": {
+        "id": "collection-showroom-botanical-conservatory-bed",
+        "slot": "bed",
+        "x": 0,
+        "y": 0,
+        "w": 209,
+        "h": 291,
+        "viewWidth": 150,
+        "viewHeight": 150,
+        "worldFootCenter": {
+          "x": 75,
+          "y": 103.5
+        },
+        "digest": "c691e640f56d8228e073f4fd90828012e860ef0665872d6b60330f0e45bc5707"
+      },
+      "sha256": "27b3d08f2b8b226d6ed18cf0ba5214fc37c5974977b9dab6020ea37a3a24b5cf"
+    },
+    "generatedOriginal": "originals/bed-sofa-7-672d0209f4ad.png",
+    "generatedSha256": "672d0209f4ada6aaa38cbe5f6074b1f3435322456e0c828c5045fbcff7b07ced",
+    "method": "image_gen reference edit; raw crop only; no pixel warping",
+    "review": "Visible rectangular mattress/support narrows toward far end; keep rails and seams parallel.",
+    "oldWorldFootCenter": {
+      "x": 75,
+      "y": 103.5
+    },
+    "silhouetteCheck": "Complete connected alpha foreground bounds, including any crossing the regular cell. No pixel changes."
+  },
+  {
+    "id": "collection-showroom-midcentury-studio-bed",
+    "facing": "north",
+    "file": "bed-sofa-7-672d0209f4ad.webp",
+    "width": 1024,
+    "height": 1536,
+    "x": 44,
+    "y": 602,
+    "w": 424,
+    "h": 332,
+    "draw": {
+      "x": 0,
+      "y": 47.596153846153854,
+      "w": 150,
+      "h": 102.40384615384615
+    },
+    "source": {
+      "file": "town/assets/apartment-collections/showroom-midcentury-studio-north-cardinal-a6ea694bab35.webp",
+      "crop": {
+        "x": 1263,
+        "y": 434,
+        "w": 208,
+        "h": 142
+      },
+      "frame": {
+        "slot": "bed",
+        "x": 1263,
+        "y": 434,
+        "w": 208,
+        "h": 142,
+        "digest": "984d6478834c5999f7388ba58e8675c151199e50469d6f3c0a883df35b1baa58",
+        "viewWidth": 150,
+        "viewHeight": 150,
+        "footCenter": [
+          0.5,
+          0.545915
+        ],
+        "cell": {
+          "x": 1263,
+          "y": 434,
+          "w": 208,
+          "h": 142
+        }
+      },
+      "sha256": "309ad8e798a145f1b395c7406d4a364a330abf78743feb730d642f51edb913d3"
+    },
+    "generatedOriginal": "originals/bed-sofa-7-672d0209f4ad.png",
+    "generatedSha256": "672d0209f4ada6aaa38cbe5f6074b1f3435322456e0c828c5045fbcff7b07ced",
+    "method": "image_gen reference edit; raw crop only; no pixel warping",
+    "review": "Visible rectangular mattress/support narrows toward far end; keep rails and seams parallel.",
+    "oldWorldFootCenter": {
+      "x": 75,
+      "y": 103.49994951923077
+    },
+    "silhouetteCheck": "Complete connected alpha foreground bounds, including any crossing the regular cell. No pixel changes."
+  },
+  {
+    "id": "collection-showroom-french-cafe-bed",
+    "facing": "south",
+    "file": "bed-sofa-7-672d0209f4ad.webp",
+    "width": 1024,
+    "height": 1536,
+    "x": 596,
+    "y": 534,
+    "w": 342,
+    "h": 446,
+    "draw": {
+      "x": 0,
+      "y": 0.700934579439263,
+      "w": 150,
+      "h": 149.29906542056074
+    },
+    "source": {
+      "file": "town/assets/apartment-collections/showroom-french-cafe-south-cardinal-13eb0016c6c1.webp",
+      "crop": {
+        "x": 1575,
+        "y": 489,
+        "w": 214,
+        "h": 213
+      },
+      "frame": {
+        "slot": "bed",
+        "x": 1575,
+        "y": 489,
+        "w": 214,
+        "h": 213,
+        "digest": "a24fde13cc8fca3fc67931562655be77175606980da4e865983ef3291657a83a",
+        "cell": {
+          "x": 1575,
+          "y": 489,
+          "w": 214,
+          "h": 213
+        }
+      },
+      "sha256": "edb5d92b058b6175ad2ebc6ffa83fdbf4b94f9bfdf1fc532773549bd23526e76"
+    },
+    "generatedOriginal": "originals/bed-sofa-7-672d0209f4ad.png",
+    "generatedSha256": "672d0209f4ada6aaa38cbe5f6074b1f3435322456e0c828c5045fbcff7b07ced",
+    "method": "image_gen reference edit; raw crop only; no pixel warping",
+    "review": "Visible rectangular mattress/support narrows toward far end; keep rails and seams parallel.",
+    "oldWorldFootCenter": null,
+    "silhouetteCheck": "Complete connected alpha foreground bounds, including any crossing the regular cell. No pixel changes."
+  },
+  {
+    "id": "collection-showroom-industrial-loft-bed",
+    "facing": "south",
+    "file": "bed-sofa-7-672d0209f4ad.webp",
+    "width": 1024,
+    "height": 1536,
+    "x": 54,
+    "y": 1046,
+    "w": 405,
+    "h": 462,
+    "draw": {
+      "x": 4.128440366972484,
+      "y": 0,
+      "w": 141.74311926605503,
+      "h": 150
+    },
+    "source": {
+      "file": "town/assets/apartment-collections/showroom-industrial-loft-south-cardinal-af2eac7eb93a.webp",
+      "crop": {
+        "x": 1401,
+        "y": 1024,
+        "w": 206,
+        "h": 218
+      },
+      "frame": {
+        "slot": "bed",
+        "x": 1401,
+        "y": 1024,
+        "w": 206,
+        "h": 218,
+        "digest": "839da8a91d327083baa25fe7035cf1958e2f92cf12f320bdf4403b6943d10c2f",
+        "cell": {
+          "x": 1401,
+          "y": 1024,
+          "w": 206,
+          "h": 218
+        }
+      },
+      "sha256": "6c80c331f16207537df07fc5a79605c205f00586be4dd40e379b6f28d3dbdb76"
+    },
+    "generatedOriginal": "originals/bed-sofa-7-672d0209f4ad.png",
+    "generatedSha256": "672d0209f4ada6aaa38cbe5f6074b1f3435322456e0c828c5045fbcff7b07ced",
+    "method": "image_gen reference edit; raw crop only; no pixel warping",
+    "review": "Visible rectangular mattress/support narrows toward far end; keep rails and seams parallel.",
+    "oldWorldFootCenter": null,
+    "silhouetteCheck": "Complete connected alpha foreground bounds, including any crossing the regular cell. No pixel changes."
+  },
+  {
+    "id": "collection-showroom-retrofuture-bed",
+    "facing": "south",
+    "file": "bed-sofa-7-672d0209f4ad.webp",
+    "width": 1024,
+    "height": 1536,
+    "x": 559,
+    "y": 1038,
+    "w": 418,
+    "h": 472,
+    "draw": {
+      "x": 6.305309734513273,
+      "y": 0,
+      "w": 137.38938053097345,
+      "h": 150
+    },
+    "source": {
+      "file": "town/assets/apartment-collections/showroom-retrofuture.webp",
+      "crop": {
+        "x": 14,
+        "y": 0,
+        "w": 207,
+        "h": 226
+      },
+      "frame": {
+        "slot": "bed",
+        "x": 14,
+        "y": 0,
+        "w": 207,
+        "h": 226,
+        "digest": "b347eba337474e6c12ea42957cecd34cf19a6660b0f1c6615d882bf9031431bc",
+        "cell": {
+          "x": 0,
+          "y": 0,
+          "w": 221,
+          "h": 226
+        }
+      },
+      "sha256": "7b622e4fd71e0e5db06b5474c3c7fb029eb5e810d3815145403c481e4b1d3c70"
+    },
+    "generatedOriginal": "originals/bed-sofa-7-672d0209f4ad.png",
+    "generatedSha256": "672d0209f4ada6aaa38cbe5f6074b1f3435322456e0c828c5045fbcff7b07ced",
+    "method": "image_gen reference edit; raw crop only; no pixel warping",
+    "review": "Visible rectangular mattress/support narrows toward far end; keep rails and seams parallel.",
+    "oldWorldFootCenter": null,
+    "silhouetteCheck": "Complete connected alpha foreground bounds, including any crossing the regular cell. No pixel changes."
+  },
+  {
+    "id": "collection-showroom-cyberpunk-bed",
+    "facing": "south",
+    "file": "bed-sofa-8-c486905c9dbf.webp",
+    "width": 1024,
+    "height": 1536,
+    "x": 58,
+    "y": 67,
+    "w": 406,
+    "h": 382,
+    "draw": {
+      "x": 0,
+      "y": 20.930232558139522,
+      "w": 150,
+      "h": 129.06976744186048
+    },
+    "source": {
+      "file": "town/assets/apartment-collections/showroom-cyberpunk.webp",
+      "crop": {
+        "x": 5,
+        "y": 37,
+        "w": 215,
+        "h": 185
+      },
+      "frame": {
+        "slot": "bed",
+        "x": 5,
+        "y": 37,
+        "w": 215,
+        "h": 185,
+        "digest": "fb79cbccb27518f0830191f92d8ccfffbc951b4b5a4d812e65aff4d44f41b3d3",
+        "cell": {
+          "x": 0,
+          "y": 0,
+          "w": 221,
+          "h": 222
+        }
+      },
+      "sha256": "5b928464c6736eecde485ac401808255674f3cc19a3c0a03ada69d0749ddf57d"
+    },
+    "generatedOriginal": "originals/bed-sofa-8-c486905c9dbf.png",
+    "generatedSha256": "c486905c9dbf9d071f18938f67659f513f68b19841986f4ad8ef1e5a866cc6a7",
+    "method": "image_gen reference edit; raw crop only; no pixel warping",
+    "review": "Visible rectangular mattress/support narrows toward far end; keep rails and seams parallel.",
+    "oldWorldFootCenter": null,
+    "silhouetteCheck": "Complete connected alpha foreground bounds, including any crossing the regular cell. No pixel changes."
+  },
+  {
+    "id": "collection-showroom-cyberpunk-bed",
+    "facing": "north",
+    "file": "bed-sofa-8-c486905c9dbf.webp",
+    "width": 1024,
+    "height": 1536,
+    "x": 550,
+    "y": 77,
+    "w": 431,
+    "h": 369,
+    "draw": {
+      "x": 0,
+      "y": 27.99043062200957,
+      "w": 150,
+      "h": 122.00956937799043
+    },
+    "source": {
+      "file": "town/assets/apartment-collections/showroom-cyberpunk-north-fbf8783a81e0.webp",
+      "crop": {
+        "x": 535,
+        "y": 1297,
+        "w": 209,
+        "h": 170
+      },
+      "frame": {
+        "slot": "bed",
+        "x": 535,
+        "y": 1297,
+        "w": 209,
+        "h": 170,
+        "digest": "8fb45debe1916f3a8af98d7c266b1d540932fd930fe3d51d528da611221104f7",
+        "viewWidth": 150,
+        "viewHeight": 150,
+        "footCenter": [
+          0.5,
+          0.618882
+        ],
+        "cell": {
+          "x": 535,
+          "y": 1297,
+          "w": 209,
+          "h": 170
+        }
+      },
+      "sha256": "34770de621ff09d323af025e6639d55101d39ce669d3a1e30256acf5c0b85cad"
+    },
+    "generatedOriginal": "originals/bed-sofa-8-c486905c9dbf.png",
+    "generatedSha256": "c486905c9dbf9d071f18938f67659f513f68b19841986f4ad8ef1e5a866cc6a7",
+    "method": "image_gen reference edit; raw crop only; no pixel warping",
+    "review": "Visible rectangular mattress/support narrows toward far end; keep rails and seams parallel.",
+    "oldWorldFootCenter": {
+      "x": 75,
+      "y": 103.49995693779904
+    },
+    "silhouetteCheck": "Complete connected alpha foreground bounds, including any crossing the regular cell. No pixel changes."
+  },
+  {
+    "id": "collection-showroom-steampunk-bed",
+    "facing": "south",
+    "file": "bed-sofa-8-c486905c9dbf.webp",
+    "width": 1024,
+    "height": 1536,
+    "x": 56,
+    "y": 540,
+    "w": 404,
+    "h": 450,
+    "draw": {
+      "x": 6.164383561643845,
+      "y": 0,
+      "w": 137.6712328767123,
+      "h": 150
+    },
+    "source": {
+      "file": "town/assets/apartment-collections/showroom-steampunk.webp",
+      "crop": {
+        "x": 17,
+        "y": 1,
+        "w": 201,
+        "h": 219
+      },
+      "frame": {
+        "slot": "bed",
+        "x": 17,
+        "y": 1,
+        "w": 201,
+        "h": 219,
+        "digest": "3aa33a3d68aefdd6e62893c85b4d950f285eb2d59f103d7ecc1ef23882e3d1c4",
+        "cell": {
+          "x": 0,
+          "y": 0,
+          "w": 221,
+          "h": 222
+        }
+      },
+      "sha256": "aff7e8e99444eead91af979e80dbb77c0eed5102b54059a1bb547d414d73914f"
+    },
+    "generatedOriginal": "originals/bed-sofa-8-c486905c9dbf.png",
+    "generatedSha256": "c486905c9dbf9d071f18938f67659f513f68b19841986f4ad8ef1e5a866cc6a7",
+    "method": "image_gen reference edit; raw crop only; no pixel warping",
+    "review": "Visible rectangular mattress/support narrows toward far end; keep rails and seams parallel.",
+    "oldWorldFootCenter": null,
+    "silhouetteCheck": "Complete connected alpha foreground bounds, including any crossing the regular cell. No pixel changes."
+  },
+  {
+    "id": "collection-showroom-robot-bed",
+    "facing": "south",
+    "file": "bed-sofa-8-c486905c9dbf.webp",
+    "width": 1024,
+    "height": 1536,
+    "x": 564,
+    "y": 546,
+    "w": 405,
+    "h": 447,
+    "draw": {
+      "x": 3.819444444444443,
+      "y": 0,
+      "w": 142.36111111111111,
+      "h": 150
+    },
+    "source": {
+      "file": "town/assets/apartment-collections/showroom-robot.webp",
+      "crop": {
+        "x": 13,
+        "y": 7,
+        "w": 205,
+        "h": 216
+      },
+      "frame": {
+        "slot": "bed",
+        "x": 13,
+        "y": 7,
+        "w": 205,
+        "h": 216,
+        "digest": "137cfc851383554208f6d0910815d5b92d864639f545c5487d4d8326cb0760f3",
+        "cell": {
+          "x": 0,
+          "y": 0,
+          "w": 221,
+          "h": 223
+        }
+      },
+      "sha256": "02bce350c29b2d496d4c248b7ee440e1f5466ac214982d431a0b2916ebbc7e11"
+    },
+    "generatedOriginal": "originals/bed-sofa-8-c486905c9dbf.png",
+    "generatedSha256": "c486905c9dbf9d071f18938f67659f513f68b19841986f4ad8ef1e5a866cc6a7",
+    "method": "image_gen reference edit; raw crop only; no pixel warping",
+    "review": "Visible rectangular mattress/support narrows toward far end; keep rails and seams parallel.",
+    "oldWorldFootCenter": null,
+    "silhouetteCheck": "Complete connected alpha foreground bounds, including any crossing the regular cell. No pixel changes."
+  }
+]

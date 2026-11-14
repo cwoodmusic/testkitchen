@@ -1,6 +1,7 @@
 import {pixelPalette,FENCE} from './pixel-style.mjs';
 import {groundTextures} from './world/ground-textures.mjs?v=opera-parallax-1';
 import {baseElevation,entryConnectors,annexFurniture,roomPlan,interiorWalls,interiorFurniture} from './model.mjs';
+import {nativeArtworkBounds,drawContainedArtwork} from './world/native-artwork-bounds.mjs?v=town-library-review-1';
 export const noise=(x,y,s=0)=>{const n=Math.sin(x*127.1+y*311.7+s*74.7)*43758.5453;return n-Math.floor(n);};
 export function rect(c,x,y,w,h,color){c.fillStyle=color;c.fillRect(Math.round(x),Math.round(y),Math.round(w),Math.round(h));}
 export function ellipse(c,x,y,rx,ry,color){c.fillStyle=color;c.beginPath();c.ellipse(x,y,rx,ry,0,0,Math.PI*2);c.fill();}
@@ -10,12 +11,16 @@ const load=src=>new Promise((resolve,reject)=>{const i=new Image();i.onload=()=>
 function cells(image,columns=3,rows=2){const result=[];for(let i=0;i<columns*rows;i++){const ox=Math.floor(i%columns*image.width/columns),oy=Math.floor(Math.floor(i/columns)*image.height/rows),cw=Math.floor((i%columns+1)*image.width/columns)-ox,ch=Math.floor((Math.floor(i/columns)+1)*image.height/rows)-oy,c=document.createElement('canvas');c.width=cw;c.height=ch;const cx=c.getContext('2d',{willReadFrequently:true});cx.drawImage(image,ox,oy,cw,ch,0,0,cw,ch);const pixels=cx.getImageData(0,0,cw,ch).data;let left=cw,top=ch,right=0,bottom=0;for(let y=0;y<ch;y++)for(let x=0;x<cw;x++)if(pixels[(y*cw+x)*4+3]>40){left=Math.min(left,x);right=Math.max(right,x);top=Math.min(top,y);bottom=Math.max(bottom,y);}result.push({image,sx:ox+left,sy:oy+top,sw:right-left+1,sh:bottom-top+1});}return result;}
 const [houses,foliage,props,furniture,ground,music,landscape,squarePlate]=await Promise.all([load('assets/houses.png'),load('assets/foliage.png'),load('assets/props.png'),load('assets/furniture.png'),load('assets/ground.png'),load('assets/music-details.png'),load('assets/landscape-details.png'),load('assets/music-square.png')]);
 const houseCells=cells(houses),treeCells=cells(foliage),propCells=cells(props),furnitureCells=cells(furniture,3,3),musicCells=cells(music),landscapeCells=cells(landscape);
+// Isolate the intended object from neighboring atlas art while retaining the
+// original bounds used by catalog dimensions, collisions and saved maps.
+propCells[1].artwork=nativeArtworkBounds['props-1-150'];
+musicCells[2].artwork=nativeArtworkBounds['music-2-120'];
 export const materials=Array.from({length:4},(_,i)=>{if(i===2)return groundTextures.dirt;const c=document.createElement('canvas');c.width=c.height=512;const g=c.getContext('2d');g.drawImage(ground,i%2*ground.width/2,Math.floor(i/2)*ground.height/2,ground.width/2,ground.height/2,0,0,512,512);return c;});
 const tones={lawn:'saturate(.85) brightness(.96)',forest:'saturate(.7) brightness(.65)',orchard:'saturate(.8) sepia(.15) brightness(.98)',ridge:'saturate(.75) hue-rotate(6deg) brightness(.9)',garden:'saturate(.95) brightness(1)',lantern:'saturate(.75) hue-rotate(12deg) brightness(.8)',meadow:'saturate(.85) sepia(.2) brightness(1.03)',marsh:'saturate(.6) hue-rotate(16deg) brightness(.78)'};
 const filtered=new Map();
 function variant(image,tone){tone=tone||'none';const key=(image.src||'canvas')+tone;if(!filtered.has(key)){const c=document.createElement('canvas');c.width=image.width;c.height=image.height;const g=c.getContext('2d');g.filter=tones[tone]||tone;g.drawImage(image,0,0);pixelPalette(c);filtered.set(key,c);}return filtered.get(key);}
 export function material(index,tone='lawn'){const key='material:'+index+':'+tone;if(!filtered.has(key)){const c=document.createElement('canvas');c.width=c.height=512;const g=c.getContext('2d');g.filter=tones[tone]||tone;g.drawImage(materials[index],0,0);pixelPalette(c);filtered.set(key,c);}return filtered.get(key);}
-function sprite(c,cell,x,y,w,h,tone){c.drawImage(variant(cell.image,tone),cell.sx,cell.sy,cell.sw,cell.sh,x,y,w,h);}
+function sprite(c,cell,x,y,w,h,tone){const image=variant(cell.image,tone);if(cell.artwork)drawContainedArtwork(c,image,cell.artwork,w,h,x,y);else c.drawImage(image,cell.sx,cell.sy,cell.sw,cell.sh,x,y,w,h);}
 function buildingPart(c,cell,x,y,w,h,annex=false){const image=cell.image,roof=cell.sh*.7,front=cell.sh-roof;
  // Roof depth is drawn over the actual floor area; the south wall is a short
  // vertical projection, not a tall facade standing in for the entire house.

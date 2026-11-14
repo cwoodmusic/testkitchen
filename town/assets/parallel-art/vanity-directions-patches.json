@@ -1,0 +1,3199 @@
+{
+  "version": 1,
+  "scope": "45 exposed rectangular vanity slabs in11North14West20East views",
+  "patches": [
+    {
+      "id": "collection-mozart-vanity",
+      "facing": "north",
+      "file": "vanity-directions/collection-mozart-vanity-north-b9036c991ecc.webp",
+      "width": 376,
+      "height": 445,
+      "x": 0,
+      "y": 0,
+      "w": 376,
+      "h": 445,
+      "draw": {
+        "x": 0,
+        "y": 15.109947643979055,
+        "w": 80,
+        "h": 90.89005235602095
+      },
+      "source": {
+        "file": "mozart-north-6ea04ade1063.webp",
+        "frame": {
+          "slot": "vanity",
+          "x": 627,
+          "y": 4,
+          "w": 191,
+          "h": 217,
+          "digest": "7abc8e268cedb4739d2546c7c7996d9f8942a5666546d34b8f8a10f9e8b2362c",
+          "viewWidth": 80,
+          "viewHeight": 106,
+          "footCenter": [
+            0.5,
+            0.757949
+          ],
+          "cell": {
+            "x": 627,
+            "y": 4,
+            "w": 191,
+            "h": 217
+          }
+        },
+        "view": {
+          "w": 80,
+          "h": 106,
+          "footCenter": {
+            "x": 40,
+            "y": 83.99997193717277
+          },
+          "draw": {
+            "x": 0,
+            "y": 15.109947643979055,
+            "w": 80,
+            "h": 90.89005235602095
+          }
+        }
+      },
+      "generation": {
+        "tool": "image_gen",
+        "original": "originals/vanity-directions/vanity-directions-1-435e22a228bb.png",
+        "originalSHA256": "435e22a228bbdc19784273ec98964b3f584cbf5ca982a3f1cb5e20dead5fd7bd",
+        "crop": [
+          68,
+          36,
+          376,
+          445
+        ],
+        "cropRGBA_SHA256": "b9036c991ecc5e733c2e527f5b2df9e6de429948f6c3724c96e5cdd4a3519300",
+        "fileSHA256": "d5090a683cac03e8fd4ad09aaf1a8a6bf5b4cd6a6399a8f40c7cba3005c40492",
+        "method": "Native crop only. Exact source RGBA and alpha preserved; no geometric warp. Actual silhouette and clear gutters determine crop boundaries."
+      },
+      "reason": "Catalog-wide asset review: remove taper from exposed rectangular slabs and backing planes in parallel2/3 projection, retaining source camera direction, curved bowls and original ornate design."
+    },
+    {
+      "id": "collection-beethoven-vanity",
+      "facing": "north",
+      "file": "vanity-directions/collection-beethoven-vanity-north-878ebb590d12.webp",
+      "width": 409,
+      "height": 445,
+      "x": 0,
+      "y": 0,
+      "w": 409,
+      "h": 445,
+      "draw": {
+        "x": 0,
+        "y": 20.754098360655746,
+        "w": 80,
+        "h": 85.24590163934425
+      },
+      "source": {
+        "file": "beethoven-north-cardinal-7890abc9abcd.webp",
+        "frame": {
+          "slot": "vanity",
+          "x": 973,
+          "y": 1286,
+          "w": 183,
+          "h": 195,
+          "digest": "a6ade5e645ad93e701fbb27f07666e3f21583081792969ff4d5fbecf71476e4d",
+          "viewWidth": 80,
+          "viewHeight": 106,
+          "footCenter": [
+            0.5,
+            0.741923
+          ],
+          "cell": {
+            "x": 973,
+            "y": 1286,
+            "w": 183,
+            "h": 195
+          }
+        },
+        "view": {
+          "w": 80,
+          "h": 106,
+          "footCenter": {
+            "x": 40,
+            "y": 83.99999344262295
+          },
+          "draw": {
+            "x": 0,
+            "y": 20.754098360655746,
+            "w": 80,
+            "h": 85.24590163934425
+          }
+        }
+      },
+      "generation": {
+        "tool": "image_gen",
+        "original": "originals/vanity-directions/vanity-directions-1-435e22a228bb.png",
+        "originalSHA256": "435e22a228bbdc19784273ec98964b3f584cbf5ca982a3f1cb5e20dead5fd7bd",
+        "crop": [
+          559,
+          36,
+          409,
+          445
+        ],
+        "cropRGBA_SHA256": "878ebb590d1228acc7946ae1a60e4db23189ad7b53a18f0cb483ba9750a20df0",
+        "fileSHA256": "dfcf6ef98cdb959a0d5730149f629971353d65b0043dfbfe80d3c987b0787e9c",
+        "method": "Native crop only. Exact source RGBA and alpha preserved; no geometric warp. Actual silhouette and clear gutters determine crop boundaries."
+      },
+      "reason": "Catalog-wide asset review: remove taper from exposed rectangular slabs and backing planes in parallel2/3 projection, retaining source camera direction, curved bowls and original ornate design."
+    },
+    {
+      "id": "collection-haydn-vanity",
+      "facing": "north",
+      "file": "vanity-directions/collection-haydn-vanity-north-9e82b7930bb7.webp",
+      "width": 399,
+      "height": 440,
+      "x": 0,
+      "y": 0,
+      "w": 399,
+      "h": 440,
+      "draw": {
+        "x": 0,
+        "y": 22.577540106951872,
+        "w": 80,
+        "h": 83.42245989304813
+      },
+      "source": {
+        "file": "haydn-north-18ce12845759.webp",
+        "frame": {
+          "slot": "vanity",
+          "x": 780,
+          "y": 439,
+          "w": 187,
+          "h": 195,
+          "digest": "aaf0c3a06ad6be4ae73c6bb4e17aa5042975dc57ff557f3e00b90d4544f644d9",
+          "viewWidth": 80,
+          "viewHeight": 106,
+          "footCenter": [
+            0.5,
+            0.736282
+          ],
+          "cell": {
+            "x": 780,
+            "y": 439,
+            "w": 187,
+            "h": 195
+          }
+        },
+        "view": {
+          "w": 80,
+          "h": 106,
+          "footCenter": {
+            "x": 40,
+            "y": 83.99999572192513
+          },
+          "draw": {
+            "x": 0,
+            "y": 22.577540106951872,
+            "w": 80,
+            "h": 83.42245989304813
+          }
+        }
+      },
+      "generation": {
+        "tool": "image_gen",
+        "original": "originals/vanity-directions/vanity-directions-1-435e22a228bb.png",
+        "originalSHA256": "435e22a228bbdc19784273ec98964b3f584cbf5ca982a3f1cb5e20dead5fd7bd",
+        "crop": [
+          57,
+          551,
+          399,
+          440
+        ],
+        "cropRGBA_SHA256": "9e82b7930bb786175df420ddf968b9b0a232829bc80cfd1b2c23d70ad94a3175",
+        "fileSHA256": "d180e5f53c0914a538f2e30c066c83301495df9efb21ac93a8a9c9399f4437d0",
+        "method": "Native crop only. Exact source RGBA and alpha preserved; no geometric warp. Actual silhouette and clear gutters determine crop boundaries."
+      },
+      "reason": "Catalog-wide asset review: remove taper from exposed rectangular slabs and backing planes in parallel2/3 projection, retaining source camera direction, curved bowls and original ornate design."
+    },
+    {
+      "id": "collection-handel-vanity",
+      "facing": "north",
+      "file": "vanity-directions/collection-handel-vanity-north-7ee66aa5a147.webp",
+      "width": 387,
+      "height": 442,
+      "x": 0,
+      "y": 0,
+      "w": 387,
+      "h": 442,
+      "draw": {
+        "x": 0,
+        "y": 15.364161849710982,
+        "w": 80,
+        "h": 90.63583815028902
+      },
+      "source": {
+        "file": "handel-north-a4d495bc84f3.webp",
+        "frame": {
+          "slot": "vanity",
+          "x": 162,
+          "y": 434,
+          "w": 173,
+          "h": 196,
+          "digest": "2621ce32900156751d19b69d9db5ab2a0a2e2ef49416ff31e667424493ebe62c",
+          "viewWidth": 80,
+          "viewHeight": 106,
+          "footCenter": [
+            0.5,
+            0.75727
+          ],
+          "cell": {
+            "x": 162,
+            "y": 434,
+            "w": 173,
+            "h": 196
+          }
+        },
+        "view": {
+          "w": 80,
+          "h": 106,
+          "footCenter": {
+            "x": 40,
+            "y": 83.99996300578034
+          },
+          "draw": {
+            "x": 0,
+            "y": 15.364161849710982,
+            "w": 80,
+            "h": 90.63583815028902
+          }
+        }
+      },
+      "generation": {
+        "tool": "image_gen",
+        "original": "originals/vanity-directions/vanity-directions-1-435e22a228bb.png",
+        "originalSHA256": "435e22a228bbdc19784273ec98964b3f584cbf5ca982a3f1cb5e20dead5fd7bd",
+        "crop": [
+          575,
+          551,
+          387,
+          442
+        ],
+        "cropRGBA_SHA256": "7ee66aa5a147fe00103cc16471f6170da240c92e9a60f23cf374ea4ec62423be",
+        "fileSHA256": "31b8c0127a479b394d9aeddfa8819d9cc732259c6600c7ccc2a19a73a07b48ac",
+        "method": "Native crop only. Exact source RGBA and alpha preserved; no geometric warp. Actual silhouette and clear gutters determine crop boundaries."
+      },
+      "reason": "Catalog-wide asset review: remove taper from exposed rectangular slabs and backing planes in parallel2/3 projection, retaining source camera direction, curved bowls and original ornate design."
+    },
+    {
+      "id": "collection-nina-vanity",
+      "facing": "north",
+      "file": "vanity-directions/collection-nina-vanity-north-b26a87c055d3.webp",
+      "width": 400,
+      "height": 443,
+      "x": 0,
+      "y": 0,
+      "w": 400,
+      "h": 443,
+      "draw": {
+        "x": 0,
+        "y": 18.87958115183247,
+        "w": 80,
+        "h": 87.12041884816753
+      },
+      "source": {
+        "file": "nina-north-a06ba79da4ca.webp",
+        "frame": {
+          "slot": "vanity",
+          "x": 552,
+          "y": 230,
+          "w": 191,
+          "h": 208,
+          "digest": "5e4084357133a3735383c666223a1ce518bf5541806d264049441e3a39fa9ccc",
+          "viewWidth": 80,
+          "viewHeight": 106,
+          "footCenter": [
+            0.5,
+            0.747476
+          ],
+          "cell": {
+            "x": 552,
+            "y": 230,
+            "w": 191,
+            "h": 208
+          }
+        },
+        "view": {
+          "w": 80,
+          "h": 106,
+          "footCenter": {
+            "x": 40,
+            "y": 84.00000335078535
+          },
+          "draw": {
+            "x": 0,
+            "y": 18.87958115183247,
+            "w": 80,
+            "h": 87.12041884816753
+          }
+        }
+      },
+      "generation": {
+        "tool": "image_gen",
+        "original": "originals/vanity-directions/vanity-directions-1-435e22a228bb.png",
+        "originalSHA256": "435e22a228bbdc19784273ec98964b3f584cbf5ca982a3f1cb5e20dead5fd7bd",
+        "crop": [
+          56,
+          1061,
+          400,
+          443
+        ],
+        "cropRGBA_SHA256": "b26a87c055d3e89765ed36f4300145eb9dfa8c48e2baa36cc9e673f1aa53c1bf",
+        "fileSHA256": "1c58f933683f9272f7efd71bbf17a01077a9913991a83bc5c4957fc41ea1b663",
+        "method": "Native crop only. Exact source RGBA and alpha preserved; no geometric warp. Actual silhouette and clear gutters determine crop boundaries."
+      },
+      "reason": "Catalog-wide asset review: remove taper from exposed rectangular slabs and backing planes in parallel2/3 projection, retaining source camera direction, curved bowls and original ornate design."
+    },
+    {
+      "id": "collection-showroom-coastal-bedroom-vanity",
+      "facing": "north",
+      "file": "vanity-directions/collection-showroom-coastal-bedroom-vanity-north-8637c5581627.webp",
+      "width": 401,
+      "height": 443,
+      "x": 0,
+      "y": 0,
+      "w": 401,
+      "h": 443,
+      "draw": {
+        "x": 0,
+        "y": 19.26315789473685,
+        "w": 80,
+        "h": 86.73684210526315
+      },
+      "source": {
+        "file": "showroom-coastal-bedroom-north-e42c97feef50.webp",
+        "frame": {
+          "slot": "vanity",
+          "x": 460,
+          "y": 227,
+          "w": 190,
+          "h": 206,
+          "digest": "b371b9eb762c108fa4c364589e714d294bfc6bea01f15985cb6e57cb1d232679",
+          "viewWidth": 80,
+          "viewHeight": 106,
+          "footCenter": [
+            0.5,
+            0.746359
+          ],
+          "cell": {
+            "x": 460,
+            "y": 227,
+            "w": 190,
+            "h": 206
+          }
+        },
+        "view": {
+          "w": 80,
+          "h": 106,
+          "footCenter": {
+            "x": 40,
+            "y": 83.99998063157895
+          },
+          "draw": {
+            "x": 0,
+            "y": 19.26315789473685,
+            "w": 80,
+            "h": 86.73684210526315
+          }
+        }
+      },
+      "generation": {
+        "tool": "image_gen",
+        "original": "originals/vanity-directions/vanity-directions-1-435e22a228bb.png",
+        "originalSHA256": "435e22a228bbdc19784273ec98964b3f584cbf5ca982a3f1cb5e20dead5fd7bd",
+        "crop": [
+          567,
+          1061,
+          401,
+          443
+        ],
+        "cropRGBA_SHA256": "8637c55816276050b54098f39f2dff035684e327803c8e190f2877a2cd717965",
+        "fileSHA256": "7b7e90e91963790e71bfe659051e4f354ed7196767238833db8aed609a38dff0",
+        "method": "Native crop only. Exact source RGBA and alpha preserved; no geometric warp. Actual silhouette and clear gutters determine crop boundaries."
+      },
+      "reason": "Catalog-wide asset review: remove taper from exposed rectangular slabs and backing planes in parallel2/3 projection, retaining source camera direction, curved bowls and original ornate design."
+    },
+    {
+      "id": "collection-showroom-rustic-kitchen-vanity",
+      "facing": "north",
+      "file": "vanity-directions/collection-showroom-rustic-kitchen-vanity-north-e12ff43d9c9c.webp",
+      "width": 378,
+      "height": 444,
+      "x": 0,
+      "y": 0,
+      "w": 378,
+      "h": 444,
+      "draw": {
+        "x": 0,
+        "y": 17.0204081632653,
+        "w": 80,
+        "h": 88.9795918367347
+      },
+      "source": {
+        "file": "showroom-rustic-kitchen-north-503a4152fee3.webp",
+        "frame": {
+          "slot": "vanity",
+          "x": 152,
+          "y": 4,
+          "w": 196,
+          "h": 218,
+          "digest": "1958317adfe4c7336ebd2a868de76af6e9b22d734cb44684a22334455de6e887",
+          "viewWidth": 80,
+          "viewHeight": 106,
+          "footCenter": [
+            0.5,
+            0.752752
+          ],
+          "cell": {
+            "x": 152,
+            "y": 4,
+            "w": 196,
+            "h": 218
+          }
+        },
+        "view": {
+          "w": 80,
+          "h": 106,
+          "footCenter": {
+            "x": 40,
+            "y": 83.99997387755101
+          },
+          "draw": {
+            "x": 0,
+            "y": 17.0204081632653,
+            "w": 80,
+            "h": 88.9795918367347
+          }
+        }
+      },
+      "generation": {
+        "tool": "image_gen",
+        "original": "originals/vanity-directions/vanity-directions-2-02dbdb40445b.png",
+        "originalSHA256": "02dbdb40445b5b6b2c590cfd444b4034b68c61ad48d9801325b6fd26435f198f",
+        "crop": [
+          67,
+          37,
+          378,
+          444
+        ],
+        "cropRGBA_SHA256": "e12ff43d9c9c9fb5526cec42bae77fbf8739436d1bda9df35658b34dbbb75ccb",
+        "fileSHA256": "c4ffcb1ad81cdae5c9a70bcded9db9465d8e423880bdca581afe4edf67f720ba",
+        "method": "Native crop only. Exact source RGBA and alpha preserved; no geometric warp. Actual silhouette and clear gutters determine crop boundaries."
+      },
+      "reason": "Catalog-wide asset review: remove taper from exposed rectangular slabs and backing planes in parallel2/3 projection, retaining source camera direction, curved bowls and original ornate design."
+    },
+    {
+      "id": "collection-showroom-botanical-conservatory-vanity",
+      "facing": "north",
+      "file": "vanity-directions/collection-showroom-botanical-conservatory-vanity-north-ad791b54809f.webp",
+      "width": 389,
+      "height": 444,
+      "x": 0,
+      "y": 0,
+      "w": 389,
+      "h": 444,
+      "draw": {
+        "x": 0,
+        "y": 17.20879120879121,
+        "w": 80,
+        "h": 88.79120879120879
+      },
+      "source": {
+        "file": "showroom-botanical-conservatory-north-58e0d82f01e6.webp",
+        "frame": {
+          "slot": "vanity",
+          "x": 837,
+          "y": 237,
+          "w": 182,
+          "h": 202,
+          "digest": "fe01515d95cb28e862e384d87f832fa6963401d1f65412dfbef1696f3185a04c",
+          "viewWidth": 80,
+          "viewHeight": 106,
+          "footCenter": [
+            0.5,
+            0.752228
+          ],
+          "cell": {
+            "x": 837,
+            "y": 237,
+            "w": 182,
+            "h": 202
+          }
+        },
+        "view": {
+          "w": 80,
+          "h": 106,
+          "footCenter": {
+            "x": 40,
+            "y": 84.00002461538462
+          },
+          "draw": {
+            "x": 0,
+            "y": 17.20879120879121,
+            "w": 80,
+            "h": 88.79120879120879
+          }
+        }
+      },
+      "generation": {
+        "tool": "image_gen",
+        "original": "originals/vanity-directions/vanity-directions-2-02dbdb40445b.png",
+        "originalSHA256": "02dbdb40445b5b6b2c590cfd444b4034b68c61ad48d9801325b6fd26435f198f",
+        "crop": [
+          571,
+          37,
+          389,
+          444
+        ],
+        "cropRGBA_SHA256": "ad791b54809f70efa3f53975119951090093ec4700f2223a7e79c4f3a5c7ffd0",
+        "fileSHA256": "c76eb0eaf05d62b30e13d9ed47826c375566f2317f205bb01551183c1d199f9e",
+        "method": "Native crop only. Exact source RGBA and alpha preserved; no geometric warp. Actual silhouette and clear gutters determine crop boundaries."
+      },
+      "reason": "Catalog-wide asset review: remove taper from exposed rectangular slabs and backing planes in parallel2/3 projection, retaining source camera direction, curved bowls and original ornate design."
+    },
+    {
+      "id": "collection-showroom-french-cafe-vanity",
+      "facing": "north",
+      "file": "vanity-directions/collection-showroom-french-cafe-vanity-north-c3fe675d52e7.webp",
+      "width": 386,
+      "height": 443,
+      "x": 0,
+      "y": 0,
+      "w": 386,
+      "h": 443,
+      "draw": {
+        "x": 0,
+        "y": 16.687830687830697,
+        "w": 80,
+        "h": 89.3121693121693
+      },
+      "source": {
+        "file": "showroom-french-cafe-north-cardinal-6c6bd1b04062.webp",
+        "frame": {
+          "slot": "vanity",
+          "x": 1766,
+          "y": 4,
+          "w": 189,
+          "h": 211,
+          "digest": "c4d2e8d8c458fdeea488c0c12682b377a214fe54ed40651fa279a27d76b4e677",
+          "viewWidth": 80,
+          "viewHeight": 106,
+          "footCenter": [
+            0.5,
+            0.753673
+          ],
+          "cell": {
+            "x": 1766,
+            "y": 4,
+            "w": 189,
+            "h": 211
+          }
+        },
+        "view": {
+          "w": 80,
+          "h": 106,
+          "footCenter": {
+            "x": 40,
+            "y": 84.00000126984128
+          },
+          "draw": {
+            "x": 0,
+            "y": 16.687830687830697,
+            "w": 80,
+            "h": 89.3121693121693
+          }
+        }
+      },
+      "generation": {
+        "tool": "image_gen",
+        "original": "originals/vanity-directions/vanity-directions-2-02dbdb40445b.png",
+        "originalSHA256": "02dbdb40445b5b6b2c590cfd444b4034b68c61ad48d9801325b6fd26435f198f",
+        "crop": [
+          63,
+          550,
+          386,
+          443
+        ],
+        "cropRGBA_SHA256": "c3fe675d52e76989c927ad2dae40c4fe5c7b0570eac68223679d6fe22391c7f8",
+        "fileSHA256": "96281dcf972a24c4ffc2de65046e233fc1294e4940c348793a371986694c03da",
+        "method": "Native crop only. Exact source RGBA and alpha preserved; no geometric warp. Actual silhouette and clear gutters determine crop boundaries."
+      },
+      "reason": "Catalog-wide asset review: remove taper from exposed rectangular slabs and backing planes in parallel2/3 projection, retaining source camera direction, curved bowls and original ornate design."
+    },
+    {
+      "id": "collection-showroom-industrial-loft-vanity",
+      "facing": "north",
+      "file": "vanity-directions/collection-showroom-industrial-loft-vanity-north-d7c02f585370.webp",
+      "width": 387,
+      "height": 439,
+      "x": 0,
+      "y": 0,
+      "w": 387,
+      "h": 439,
+      "draw": {
+        "x": 0,
+        "y": 15.392265193370164,
+        "w": 80,
+        "h": 90.60773480662984
+      },
+      "source": {
+        "file": "showroom-industrial-loft-north-cardinal-18ef6266d7b5.webp",
+        "frame": {
+          "slot": "vanity",
+          "x": 805,
+          "y": 223,
+          "w": 181,
+          "h": 205,
+          "digest": "862a6478a9386ffd02fca7959b227b76f6df999ce90dd8bd09e49f45256e47a6",
+          "viewWidth": 80,
+          "viewHeight": 106,
+          "footCenter": [
+            0.5,
+            0.757195
+          ],
+          "cell": {
+            "x": 805,
+            "y": 223,
+            "w": 181,
+            "h": 205
+          }
+        },
+        "view": {
+          "w": 80,
+          "h": 106,
+          "footCenter": {
+            "x": 40,
+            "y": 83.99998895027623
+          },
+          "draw": {
+            "x": 0,
+            "y": 15.392265193370164,
+            "w": 80,
+            "h": 90.60773480662984
+          }
+        }
+      },
+      "generation": {
+        "tool": "image_gen",
+        "original": "originals/vanity-directions/vanity-directions-2-02dbdb40445b.png",
+        "originalSHA256": "02dbdb40445b5b6b2c590cfd444b4034b68c61ad48d9801325b6fd26435f198f",
+        "crop": [
+          570,
+          554,
+          387,
+          439
+        ],
+        "cropRGBA_SHA256": "d7c02f5853708f9f010786910818e924bcc14448f4e6b26e0bd5107bcfff65ae",
+        "fileSHA256": "c86e2563d247e5a2f63f2a36f12678460a7a99f6b2fcf731d81fa1bb3cb8bd20",
+        "method": "Native crop only. Exact source RGBA and alpha preserved; no geometric warp. Actual silhouette and clear gutters determine crop boundaries."
+      },
+      "reason": "Catalog-wide asset review: remove taper from exposed rectangular slabs and backing planes in parallel2/3 projection, retaining source camera direction, curved bowls and original ornate design."
+    },
+    {
+      "id": "collection-showroom-cyberpunk-vanity",
+      "facing": "north",
+      "file": "vanity-directions/collection-showroom-cyberpunk-vanity-north-31a5f99fcbf9.webp",
+      "width": 410,
+      "height": 442,
+      "x": 0,
+      "y": 0,
+      "w": 410,
+      "h": 442,
+      "draw": {
+        "x": 0,
+        "y": 22.269430051813472,
+        "w": 80,
+        "h": 83.73056994818653
+      },
+      "source": {
+        "file": "showroom-cyberpunk-north-fbf8783a81e0.webp",
+        "frame": {
+          "slot": "vanity",
+          "x": 654,
+          "y": 675,
+          "w": 193,
+          "h": 202,
+          "digest": "ff32becd8f5124c997a1b582320e07adbdd18372ee94e4d69b7b2c92a0d86441",
+          "viewWidth": 80,
+          "viewHeight": 106,
+          "footCenter": [
+            0.5,
+            0.737252
+          ],
+          "cell": {
+            "x": 654,
+            "y": 675,
+            "w": 193,
+            "h": 202
+          }
+        },
+        "view": {
+          "w": 80,
+          "h": 106,
+          "footCenter": {
+            "x": 40,
+            "y": 83.99996020725388
+          },
+          "draw": {
+            "x": 0,
+            "y": 22.269430051813472,
+            "w": 80,
+            "h": 83.73056994818653
+          }
+        }
+      },
+      "generation": {
+        "tool": "image_gen",
+        "original": "originals/vanity-directions/vanity-directions-2-02dbdb40445b.png",
+        "originalSHA256": "02dbdb40445b5b6b2c590cfd444b4034b68c61ad48d9801325b6fd26435f198f",
+        "crop": [
+          51,
+          1063,
+          410,
+          442
+        ],
+        "cropRGBA_SHA256": "31a5f99fcbf9bad94c26e2a45e0c5e7a0474d8be8b012d6d51c4481057ef6456",
+        "fileSHA256": "5683cb5a294613588f94d7bfa033f8ba1065458e7c44e16efb41300d42d6dc45",
+        "method": "Native crop only. Exact source RGBA and alpha preserved; no geometric warp. Actual silhouette and clear gutters determine crop boundaries."
+      },
+      "reason": "Catalog-wide asset review: remove taper from exposed rectangular slabs and backing planes in parallel2/3 projection, retaining source camera direction, curved bowls and original ornate design."
+    },
+    {
+      "id": "collection-beethoven-vanity",
+      "facing": "west",
+      "file": "vanity-directions/collection-beethoven-vanity-west-e9cbed349856.webp",
+      "width": 280,
+      "height": 441,
+      "x": 0,
+      "y": 0,
+      "w": 280,
+      "h": 441,
+      "draw": {
+        "x": 3.552713678800501e-15,
+        "y": 26.09530685920579,
+        "w": 62.39999999999999,
+        "h": 107.90469314079421
+      },
+      "source": {
+        "file": "beethoven-west-cardinal-9c0f53af6dfe.webp",
+        "frame": {
+          "slot": "vanity",
+          "x": 4,
+          "y": 4,
+          "w": 554,
+          "h": 958,
+          "digest": "763bfdbea442d7bd8efee43f89ceb84b312a45a816d09fd422d94d324bf8377d",
+          "viewWidth": 62.4,
+          "viewHeight": 134,
+          "footCenter": [
+            0.5,
+            0.6663721787056367
+          ],
+          "cell": {
+            "x": 4,
+            "y": 4,
+            "w": 554,
+            "h": 958
+          },
+          "sourceDigest": "78f2c8bdd2c8b50825f041a3e543de3c4948f03098edf05828499adb23b42a12",
+          "sourceFrame": {
+            "x": 283,
+            "y": 222,
+            "w": 554,
+            "h": 958
+          },
+          "artReview": "independent-accepted173-map.json"
+        },
+        "view": {
+          "w": 62.4,
+          "h": 134,
+          "footCenter": {
+            "x": 31.2,
+            "y": 97.99999232
+          },
+          "draw": {
+            "x": 3.552713678800501e-15,
+            "y": 26.09530685920579,
+            "w": 62.39999999999999,
+            "h": 107.90469314079421
+          }
+        }
+      },
+      "generation": {
+        "tool": "image_gen",
+        "original": "originals/vanity-directions/vanity-directions-2-02dbdb40445b.png",
+        "originalSHA256": "02dbdb40445b5b6b2c590cfd444b4034b68c61ad48d9801325b6fd26435f198f",
+        "crop": [
+          628,
+          1064,
+          280,
+          441
+        ],
+        "cropRGBA_SHA256": "e9cbed3498563adf725be5512a073cb9e518819683426eceaa789dba8d6ffe92",
+        "fileSHA256": "e425e661bade3c6e3c428116a15f36d81bb9f09d8dce7815c5dffa00050dfde4",
+        "method": "Native crop only. Exact source RGBA and alpha preserved; no geometric warp. Actual silhouette and clear gutters determine crop boundaries."
+      },
+      "reason": "Catalog-wide asset review: remove taper from exposed rectangular slabs and backing planes in parallel2/3 projection, retaining source camera direction, curved bowls and original ornate design."
+    },
+    {
+      "id": "collection-haydn-vanity",
+      "facing": "west",
+      "file": "vanity-directions/collection-haydn-vanity-west-1e744926270f.webp",
+      "width": 234,
+      "height": 444,
+      "x": 0,
+      "y": 0,
+      "w": 234,
+      "h": 444,
+      "draw": {
+        "x": 0,
+        "y": 12.290285714285716,
+        "w": 62.4,
+        "h": 121.70971428571428
+      },
+      "source": {
+        "file": "haydn-west-cardinal-d5161ff30be5.webp",
+        "frame": {
+          "slot": "vanity",
+          "x": 4,
+          "y": 4,
+          "w": 525,
+          "h": 1024,
+          "digest": "10a0cc021e3b2dc995e594f2adb0f5c008dbd5bc99ebd67177453ffdd7250820",
+          "viewWidth": 62.4,
+          "viewHeight": 134,
+          "footCenter": [
+            0.5,
+            0.7042143153036795
+          ],
+          "cell": {
+            "x": 4,
+            "y": 4,
+            "w": 525,
+            "h": 1024
+          },
+          "sourceDigest": "50c650694b194c96d4ecb5ae1cb46ffc59cfda374aa05e8e0a16f0a9c6b320c5",
+          "sourceFrame": {
+            "x": 291,
+            "y": 199,
+            "w": 525,
+            "h": 1024
+          },
+          "artReview": "independent-accepted173-map.json"
+        },
+        "view": {
+          "w": 62.4,
+          "h": 134,
+          "footCenter": {
+            "x": 31.2,
+            "y": 98.00000882580646
+          },
+          "draw": {
+            "x": 0,
+            "y": 12.290285714285716,
+            "w": 62.4,
+            "h": 121.70971428571428
+          }
+        }
+      },
+      "generation": {
+        "tool": "image_gen",
+        "original": "originals/vanity-directions/vanity-directions-3-6d447729a8e1.png",
+        "originalSHA256": "6d447729a8e17e9ac5685f98179e77b4cee7ea59ee8f671ea5f6ce860148401a",
+        "crop": [
+          138,
+          38,
+          234,
+          444
+        ],
+        "cropRGBA_SHA256": "1e744926270fc7f548caf6028f0c2d76b2a24888f41b04cefe8570be1eae0cf1",
+        "fileSHA256": "915ab96179d0383bcaf0efc83c210368c9025c5d8844aa5b3c59995f2f44f02a",
+        "method": "Native crop only. Exact source RGBA and alpha preserved; no geometric warp. Actual silhouette and clear gutters determine crop boundaries."
+      },
+      "reason": "Catalog-wide asset review: remove taper from exposed rectangular slabs and backing planes in parallel2/3 projection, retaining source camera direction, curved bowls and original ornate design."
+    },
+    {
+      "id": "collection-handel-vanity",
+      "facing": "west",
+      "file": "vanity-directions/collection-handel-vanity-west-bc96854bc6da.webp",
+      "width": 228,
+      "height": 441,
+      "x": 0,
+      "y": 0,
+      "w": 228,
+      "h": 441,
+      "draw": {
+        "x": 0,
+        "y": 9.200000000000003,
+        "w": 62.4,
+        "h": 124.8
+      },
+      "source": {
+        "file": "handel-west-cardinal-5595fb701936.webp",
+        "frame": {
+          "slot": "vanity",
+          "x": 586,
+          "y": 4,
+          "w": 487,
+          "h": 974,
+          "digest": "8887fe40d532528e0a84134703f050020849ac4a293bd19d59d1372d27aeed0f",
+          "viewWidth": 62.4,
+          "viewHeight": 134,
+          "footCenter": [
+            0.5,
+            0.7115381714285713
+          ],
+          "cell": {
+            "x": 586,
+            "y": 4,
+            "w": 487,
+            "h": 974
+          },
+          "sourceDigest": "4fce34a487f58e75e85bd62db44dee27ca93b88b1bf89f9d48c9fcee7f62162a",
+          "sourceFrame": {
+            "x": 303,
+            "y": 203,
+            "w": 487,
+            "h": 974
+          },
+          "artReview": "independent-accepted173-map.json"
+        },
+        "view": {
+          "w": 62.4,
+          "h": 134,
+          "footCenter": {
+            "x": 31.2,
+            "y": 97.9999637942857
+          },
+          "draw": {
+            "x": 0,
+            "y": 9.200000000000003,
+            "w": 62.4,
+            "h": 124.8
+          }
+        }
+      },
+      "generation": {
+        "tool": "image_gen",
+        "original": "originals/vanity-directions/vanity-directions-3-6d447729a8e1.png",
+        "originalSHA256": "6d447729a8e17e9ac5685f98179e77b4cee7ea59ee8f671ea5f6ce860148401a",
+        "crop": [
+          653,
+          41,
+          228,
+          441
+        ],
+        "cropRGBA_SHA256": "bc96854bc6da2912db597d1b731ba068abcf76d516b36a8a658407be5054d4c2",
+        "fileSHA256": "cd1fd3d28d64c569070fddd6785135bfa3b04268510091e94f88dd15fcc70435",
+        "method": "Native crop only. Exact source RGBA and alpha preserved; no geometric warp. Actual silhouette and clear gutters determine crop boundaries."
+      },
+      "reason": "Catalog-wide asset review: remove taper from exposed rectangular slabs and backing planes in parallel2/3 projection, retaining source camera direction, curved bowls and original ornate design."
+    },
+    {
+      "id": "collection-joplin-vanity",
+      "facing": "west",
+      "file": "vanity-directions/collection-joplin-vanity-west-655dd2e274c5.webp",
+      "width": 271,
+      "height": 440,
+      "x": 0,
+      "y": 0,
+      "w": 271,
+      "h": 440,
+      "draw": {
+        "x": 0,
+        "y": 30.832000000000008,
+        "w": 62.4,
+        "h": 103.16799999999999
+      },
+      "source": {
+        "file": "joplin-west-cardinal-e5c27f16c891.webp",
+        "frame": {
+          "slot": "vanity",
+          "x": 1486,
+          "y": 1585,
+          "w": 225,
+          "h": 372,
+          "digest": "c8ba357a0cf621c012b4a5d77bf58a46f183a7d8f8deb12de27d0a67c0e0e835",
+          "viewWidth": 62.4,
+          "viewHeight": 134,
+          "footCenter": [
+            0.5,
+            0.6510547108575924
+          ],
+          "cell": {
+            "x": 1486,
+            "y": 1585,
+            "w": 225,
+            "h": 372
+          },
+          "sourceDigest": "9755cd0c5272c06c9c990fdfbb1ad30ee1de5b74af86f941b918b0de60d44cd5",
+          "sourceFrame": {
+            "x": 651,
+            "y": 75,
+            "w": 225,
+            "h": 372
+          },
+          "artReview": "independent-first41-acceptance.json"
+        },
+        "view": {
+          "w": 62.4,
+          "h": 134,
+          "footCenter": {
+            "x": 31.2,
+            "y": 98.0000124097561
+          },
+          "draw": {
+            "x": 0,
+            "y": 30.832000000000008,
+            "w": 62.4,
+            "h": 103.16799999999999
+          }
+        }
+      },
+      "generation": {
+        "tool": "image_gen",
+        "original": "originals/vanity-directions/vanity-directions-3-6d447729a8e1.png",
+        "originalSHA256": "6d447729a8e17e9ac5685f98179e77b4cee7ea59ee8f671ea5f6ce860148401a",
+        "crop": [
+          119,
+          552,
+          271,
+          440
+        ],
+        "cropRGBA_SHA256": "655dd2e274c5ee80f4c3ce699836e4e300b10c22e512be35af9adf75d6ab117a",
+        "fileSHA256": "ce18acd2638c25f280cfc86a6b33dd1b69fda0c9349016c9ec1edba09cd10e50",
+        "method": "Native crop only. Exact source RGBA and alpha preserved; no geometric warp. Actual silhouette and clear gutters determine crop boundaries."
+      },
+      "reason": "Catalog-wide asset review: remove taper from exposed rectangular slabs and backing planes in parallel2/3 projection, retaining source camera direction, curved bowls and original ornate design."
+    },
+    {
+      "id": "collection-dj-vanity",
+      "facing": "west",
+      "file": "vanity-directions/collection-dj-vanity-west-60523efe4ad4.webp",
+      "width": 280,
+      "height": 439,
+      "x": 0,
+      "y": 0,
+      "w": 280,
+      "h": 439,
+      "draw": {
+        "x": 3.552713678800501e-15,
+        "y": 34.86451612903227,
+        "w": 62.39999999999999,
+        "h": 99.13548387096773
+      },
+      "source": {
+        "file": "dj-west-cardinal-943c911ddacd.webp",
+        "frame": {
+          "slot": "vanity",
+          "x": 1002,
+          "y": 2174,
+          "w": 124,
+          "h": 197,
+          "digest": "098841791a0dd89c6e3d560dbf54aaeacf17e0d189147476dc2567f11b886cb7",
+          "viewWidth": 62.4,
+          "viewHeight": 134,
+          "footCenter": [
+            0.5,
+            0.636861
+          ],
+          "cell": {
+            "x": 1002,
+            "y": 2174,
+            "w": 124,
+            "h": 197
+          }
+        },
+        "view": {
+          "w": 62.4,
+          "h": 134,
+          "footCenter": {
+            "x": 31.2,
+            "y": 98.00003952258065
+          },
+          "draw": {
+            "x": 3.552713678800501e-15,
+            "y": 34.86451612903227,
+            "w": 62.39999999999999,
+            "h": 99.13548387096773
+          }
+        }
+      },
+      "generation": {
+        "tool": "image_gen",
+        "original": "originals/vanity-directions/vanity-directions-3-6d447729a8e1.png",
+        "originalSHA256": "6d447729a8e17e9ac5685f98179e77b4cee7ea59ee8f671ea5f6ce860148401a",
+        "crop": [
+          629,
+          554,
+          280,
+          439
+        ],
+        "cropRGBA_SHA256": "60523efe4ad4bba881e03d5b8aa48b34697d124ffe7f884ca5d19e9a97f68ed0",
+        "fileSHA256": "9749d5dc354163cc012180b74f54fb11ed06ab18220c4a3355375abef2694ed3",
+        "method": "Native crop only. Exact source RGBA and alpha preserved; no geometric warp. Actual silhouette and clear gutters determine crop boundaries."
+      },
+      "reason": "Catalog-wide asset review: remove taper from exposed rectangular slabs and backing planes in parallel2/3 projection, retaining source camera direction, curved bowls and original ornate design."
+    },
+    {
+      "id": "collection-metronome-vanity",
+      "facing": "west",
+      "file": "vanity-directions/collection-metronome-vanity-west-82ab566e749f.webp",
+      "width": 266,
+      "height": 438,
+      "x": 0,
+      "y": 0,
+      "w": 266,
+      "h": 438,
+      "draw": {
+        "x": 0,
+        "y": 30.68196721311476,
+        "w": 62.4,
+        "h": 103.31803278688524
+      },
+      "source": {
+        "file": "metronome-west-cardinal-74c89a6d4ad2.webp",
+        "frame": {
+          "slot": "vanity",
+          "x": 618,
+          "y": 2001,
+          "w": 122,
+          "h": 202,
+          "digest": "db51ffbe6ec42328db4d4000616c4e265691ccdad4b0124d03337f3cfcf5bfc0",
+          "viewWidth": 62.4,
+          "viewHeight": 134,
+          "footCenter": [
+            0.5,
+            0.651561
+          ],
+          "cell": {
+            "x": 618,
+            "y": 2001,
+            "w": 122,
+            "h": 202
+          }
+        },
+        "view": {
+          "w": 62.4,
+          "h": 134,
+          "footCenter": {
+            "x": 31.2,
+            "y": 97.9999679737705
+          },
+          "draw": {
+            "x": 0,
+            "y": 30.68196721311476,
+            "w": 62.4,
+            "h": 103.31803278688524
+          }
+        }
+      },
+      "generation": {
+        "tool": "image_gen",
+        "original": "originals/vanity-directions/vanity-directions-3-6d447729a8e1.png",
+        "originalSHA256": "6d447729a8e17e9ac5685f98179e77b4cee7ea59ee8f671ea5f6ce860148401a",
+        "crop": [
+          122,
+          1065,
+          266,
+          438
+        ],
+        "cropRGBA_SHA256": "82ab566e749f44bf56dc9b10f73430abfd6a14b16285a9b78912f0c9cd301598",
+        "fileSHA256": "1cf531cb616e6f5bbfce13b399cc17cd5737cb6c2ddcd7ae4b6efcc28bd8b82f",
+        "method": "Native crop only. Exact source RGBA and alpha preserved; no geometric warp. Actual silhouette and clear gutters determine crop boundaries."
+      },
+      "reason": "Catalog-wide asset review: remove taper from exposed rectangular slabs and backing planes in parallel2/3 projection, retaining source camera direction, curved bowls and original ornate design."
+    },
+    {
+      "id": "collection-schoenberg-vanity",
+      "facing": "west",
+      "file": "vanity-directions/collection-schoenberg-vanity-west-94461984c5a6.webp",
+      "width": 255,
+      "height": 438,
+      "x": 0,
+      "y": 0,
+      "w": 255,
+      "h": 438,
+      "draw": {
+        "x": 0,
+        "y": 25.80183486238532,
+        "w": 62.400000000000006,
+        "h": 108.19816513761468
+      },
+      "source": {
+        "file": "schoenberg-west-cardinal-889b7f3db3db.webp",
+        "frame": {
+          "slot": "vanity",
+          "x": 1896,
+          "y": 1162,
+          "w": 109,
+          "h": 189,
+          "digest": "6e6f849270cd4f03a761382cf685229fd194fbdabde48d9dec0a39d03c5e59fe",
+          "viewWidth": 62.4,
+          "viewHeight": 134,
+          "footCenter": [
+            0.5,
+            0.667277
+          ],
+          "cell": {
+            "x": 1896,
+            "y": 1162,
+            "w": 109,
+            "h": 189
+          }
+        },
+        "view": {
+          "w": 62.4,
+          "h": 134,
+          "footCenter": {
+            "x": 31.200000000000003,
+            "y": 97.99998190091743
+          },
+          "draw": {
+            "x": 0,
+            "y": 25.80183486238532,
+            "w": 62.400000000000006,
+            "h": 108.19816513761468
+          }
+        }
+      },
+      "generation": {
+        "tool": "image_gen",
+        "original": "originals/vanity-directions/vanity-directions-3-6d447729a8e1.png",
+        "originalSHA256": "6d447729a8e17e9ac5685f98179e77b4cee7ea59ee8f671ea5f6ce860148401a",
+        "crop": [
+          639,
+          1065,
+          255,
+          438
+        ],
+        "cropRGBA_SHA256": "94461984c5a658c4972ed2ecb599be0b15535d1ed7ac1181d37682890e1c3e0a",
+        "fileSHA256": "96a253834f6a736552622f35af3f8a641281e4055fd0fc715ddcec31d7e58e55",
+        "method": "Native crop only. Exact source RGBA and alpha preserved; no geometric warp. Actual silhouette and clear gutters determine crop boundaries."
+      },
+      "reason": "Catalog-wide asset review: remove taper from exposed rectangular slabs and backing planes in parallel2/3 projection, retaining source camera direction, curved bowls and original ornate design."
+    },
+    {
+      "id": "collection-showroom-victorian-parlor-vanity",
+      "facing": "west",
+      "file": "vanity-directions/collection-showroom-victorian-parlor-vanity-west-2d695425811c.webp",
+      "width": 265,
+      "height": 442,
+      "x": 0,
+      "y": 0,
+      "w": 265,
+      "h": 442,
+      "draw": {
+        "x": 0,
+        "y": 42.965078857142856,
+        "w": 53.103704,
+        "h": 91.03492114285714
+      },
+      "source": {
+        "file": "showroom-victorian-parlor-west-cardinal-2739674ddaaf.webp",
+        "frame": {
+          "slot": "vanity",
+          "x": 1581,
+          "y": 1760,
+          "w": 98,
+          "h": 168,
+          "digest": "99b3251bb7f178e7ce7b50640366447a101e9b4eb0859d587c4d2fa6760f1949",
+          "viewWidth": 53.103704,
+          "viewHeight": 134,
+          "footCenter": [
+            0.5,
+            0.6045469414587978
+          ],
+          "cell": {
+            "x": 1581,
+            "y": 1760,
+            "w": 98,
+            "h": 168
+          },
+          "sourceDigest": "d0ef9b3ec164cb4c36c4686a41cbb6ff0366188023b0bad1665c5084a881fc55",
+          "sourceFrame": {
+            "x": 56,
+            "y": 990,
+            "w": 98,
+            "h": 168
+          },
+          "artReview": "independent-browser-qa.json"
+        },
+        "view": {
+          "w": 53.103704,
+          "h": 134,
+          "footCenter": {
+            "x": 26.551852,
+            "y": 97.99996199999998
+          },
+          "draw": {
+            "x": 0,
+            "y": 42.965078857142856,
+            "w": 53.103704,
+            "h": 91.03492114285714
+          }
+        }
+      },
+      "generation": {
+        "tool": "image_gen",
+        "original": "originals/vanity-directions/vanity-directions-4-1ff1bf1b8460.png",
+        "originalSHA256": "1ff1bf1b8460e15c8e2e91a63fcc6db1e855f89af238ee6d416b897191c13790",
+        "crop": [
+          124,
+          38,
+          265,
+          442
+        ],
+        "cropRGBA_SHA256": "2d695425811c96c2ce30c9faaa4ac4427994dadf808943341d44e7ec6134f8e2",
+        "fileSHA256": "311e7f816d77a497fcccab685bcda3ff678f05e3f4404300d619e09c090a5401",
+        "method": "Native crop only. Exact source RGBA and alpha preserved; no geometric warp. Actual silhouette and clear gutters determine crop boundaries."
+      },
+      "reason": "Catalog-wide asset review: remove taper from exposed rectangular slabs and backing planes in parallel2/3 projection, retaining source camera direction, curved bowls and original ornate design."
+    },
+    {
+      "id": "collection-showroom-art-deco-lounge-vanity",
+      "facing": "west",
+      "file": "vanity-directions/collection-showroom-art-deco-lounge-vanity-west-5ee5231a3e6e.webp",
+      "width": 277,
+      "height": 442,
+      "x": 0,
+      "y": 0,
+      "w": 277,
+      "h": 442,
+      "draw": {
+        "x": 0,
+        "y": 33.15714285714286,
+        "w": 62.400000000000006,
+        "h": 100.84285714285714
+      },
+      "source": {
+        "file": "showroom-art-deco-lounge-west-cardinal-1021d7e91d09.webp",
+        "frame": {
+          "slot": "vanity",
+          "x": 1835,
+          "y": 587,
+          "w": 112,
+          "h": 181,
+          "digest": "e6cc90bc9b67e31cf9a061f41e10d723bbe7b803444c3070d87a4f13128b64bb",
+          "viewWidth": 62.4,
+          "viewHeight": 134,
+          "footCenter": [
+            0.5,
+            0.6430084427380841
+          ],
+          "cell": {
+            "x": 1835,
+            "y": 587,
+            "w": 112,
+            "h": 181
+          },
+          "sourceDigest": "83f9fafe99a77d6a9d047383325496b801a50c5011c4bda0f022b8d178b5fbfe",
+          "sourceFrame": {
+            "x": 51,
+            "y": 959,
+            "w": 112,
+            "h": 181
+          },
+          "artReview": "independent-browser-qa.json"
+        },
+        "view": {
+          "w": 62.4,
+          "h": 134,
+          "footCenter": {
+            "x": 31.200000000000003,
+            "y": 97.99995138983051
+          },
+          "draw": {
+            "x": 0,
+            "y": 33.15714285714286,
+            "w": 62.400000000000006,
+            "h": 100.84285714285714
+          }
+        }
+      },
+      "generation": {
+        "tool": "image_gen",
+        "original": "originals/vanity-directions/vanity-directions-4-1ff1bf1b8460.png",
+        "originalSHA256": "1ff1bf1b8460e15c8e2e91a63fcc6db1e855f89af238ee6d416b897191c13790",
+        "crop": [
+          628,
+          39,
+          277,
+          442
+        ],
+        "cropRGBA_SHA256": "5ee5231a3e6ea3ad12771d27a4c602228b618771fe9519a5a9949e9228d3fbef",
+        "fileSHA256": "efd57b87a8c951f02c292b1cd9fca2b9b5926c24c32c466659607c67d859007d",
+        "method": "Native crop only. Exact source RGBA and alpha preserved; no geometric warp. Actual silhouette and clear gutters determine crop boundaries."
+      },
+      "reason": "Catalog-wide asset review: remove taper from exposed rectangular slabs and backing planes in parallel2/3 projection, retaining source camera direction, curved bowls and original ornate design."
+    },
+    {
+      "id": "collection-showroom-coastal-bedroom-vanity",
+      "facing": "west",
+      "file": "vanity-directions/collection-showroom-coastal-bedroom-vanity-west-9b25783344cf.webp",
+      "width": 291,
+      "height": 442,
+      "x": 0,
+      "y": 0,
+      "w": 291,
+      "h": 442,
+      "draw": {
+        "x": 3.552713678800501e-15,
+        "y": 39.393548387096786,
+        "w": 62.39999999999999,
+        "h": 94.60645161290321
+      },
+      "source": {
+        "file": "showroom-coastal-bedroom-west-cardinal-2cecc8a3e76b.webp",
+        "frame": {
+          "slot": "vanity",
+          "x": 215,
+          "y": 1394,
+          "w": 124,
+          "h": 188,
+          "digest": "cb26074c01f9944bd51f0c2713c3bb8b55b85be0cf47315d9e43dcd44d508203",
+          "viewWidth": 62.4,
+          "viewHeight": 134,
+          "footCenter": [
+            0.5,
+            0.619476
+          ],
+          "cell": {
+            "x": 215,
+            "y": 1394,
+            "w": 124,
+            "h": 188
+          }
+        },
+        "view": {
+          "w": 62.4,
+          "h": 134,
+          "footCenter": {
+            "x": 31.2,
+            "y": 97.99997460645162
+          },
+          "draw": {
+            "x": 3.552713678800501e-15,
+            "y": 39.393548387096786,
+            "w": 62.39999999999999,
+            "h": 94.60645161290321
+          }
+        }
+      },
+      "generation": {
+        "tool": "image_gen",
+        "original": "originals/vanity-directions/vanity-directions-4-1ff1bf1b8460.png",
+        "originalSHA256": "1ff1bf1b8460e15c8e2e91a63fcc6db1e855f89af238ee6d416b897191c13790",
+        "crop": [
+          109,
+          552,
+          291,
+          442
+        ],
+        "cropRGBA_SHA256": "9b25783344cf32daefe1a188e493806a1a96ca73d15a047cc6414d36e360e0d2",
+        "fileSHA256": "5931e89e3053b03e5cb9da263b734430c1a0f560bc7c245bd2266bc26403c646",
+        "method": "Native crop only. Exact source RGBA and alpha preserved; no geometric warp. Actual silhouette and clear gutters determine crop boundaries."
+      },
+      "reason": "Catalog-wide asset review: remove taper from exposed rectangular slabs and backing planes in parallel2/3 projection, retaining source camera direction, curved bowls and original ornate design."
+    },
+    {
+      "id": "collection-showroom-rustic-kitchen-vanity",
+      "facing": "west",
+      "file": "vanity-directions/collection-showroom-rustic-kitchen-vanity-west-768e30dd61d1.webp",
+      "width": 330,
+      "height": 440,
+      "x": 0,
+      "y": 0,
+      "w": 330,
+      "h": 440,
+      "draw": {
+        "x": 0,
+        "y": 50.357446808510645,
+        "w": 62.4,
+        "h": 83.64255319148936
+      },
+      "source": {
+        "file": "showroom-rustic-kitchen-west-cardinal-eacb4a975416.webp",
+        "frame": {
+          "slot": "vanity",
+          "x": 163,
+          "y": 1312,
+          "w": 141,
+          "h": 189,
+          "digest": "30bc89b69a0a297c0e14fb40353f5fbded5de029a3cf6094e21a99dee717ad41",
+          "viewWidth": 62.4,
+          "viewHeight": 134,
+          "footCenter": [
+            0.5,
+            0.569597
+          ],
+          "cell": {
+            "x": 163,
+            "y": 1312,
+            "w": 141,
+            "h": 189
+          }
+        },
+        "view": {
+          "w": 62.4,
+          "h": 134,
+          "footCenter": {
+            "x": 31.2,
+            "y": 97.99999417872341
+          },
+          "draw": {
+            "x": 0,
+            "y": 50.357446808510645,
+            "w": 62.4,
+            "h": 83.64255319148936
+          }
+        }
+      },
+      "generation": {
+        "tool": "image_gen",
+        "original": "originals/vanity-directions/vanity-directions-4-1ff1bf1b8460.png",
+        "originalSHA256": "1ff1bf1b8460e15c8e2e91a63fcc6db1e855f89af238ee6d416b897191c13790",
+        "crop": [
+          598,
+          554,
+          330,
+          440
+        ],
+        "cropRGBA_SHA256": "768e30dd61d159c1130b66e03f682a9a632205fe4606a0cdf0672208af82f4ad",
+        "fileSHA256": "45bcf154cf4a268094d7dd6f14dcd081a6dd348666e12d3948df7449d4798705",
+        "method": "Native crop only. Exact source RGBA and alpha preserved; no geometric warp. Actual silhouette and clear gutters determine crop boundaries."
+      },
+      "reason": "Catalog-wide asset review: remove taper from exposed rectangular slabs and backing planes in parallel2/3 projection, retaining source camera direction, curved bowls and original ornate design."
+    },
+    {
+      "id": "collection-showroom-midcentury-studio-vanity",
+      "facing": "west",
+      "file": "vanity-directions/collection-showroom-midcentury-studio-vanity-west-cf5b66294505.webp",
+      "width": 253,
+      "height": 442,
+      "x": 0,
+      "y": 0,
+      "w": 253,
+      "h": 442,
+      "draw": {
+        "x": 0,
+        "y": 21.31650485436893,
+        "w": 62.4,
+        "h": 112.68349514563107
+      },
+      "source": {
+        "file": "showroom-midcentury-studio-west-cardinal-afdc00a93bc0.webp",
+        "frame": {
+          "slot": "vanity",
+          "x": 348,
+          "y": 872,
+          "w": 103,
+          "h": 186,
+          "digest": "edfaf321c43e28fbbd827eec9a3a1a790cdbe169e129457eb15f0bcec62b2d36",
+          "viewWidth": 62.4,
+          "viewHeight": 134,
+          "footCenter": [
+            0.5,
+            0.680521
+          ],
+          "cell": {
+            "x": 348,
+            "y": 872,
+            "w": 103,
+            "h": 186
+          }
+        },
+        "view": {
+          "w": 62.4,
+          "h": 134,
+          "footCenter": {
+            "x": 31.2,
+            "y": 97.99998965436893
+          },
+          "draw": {
+            "x": 0,
+            "y": 21.31650485436893,
+            "w": 62.4,
+            "h": 112.68349514563107
+          }
+        }
+      },
+      "generation": {
+        "tool": "image_gen",
+        "original": "originals/vanity-directions/vanity-directions-4-1ff1bf1b8460.png",
+        "originalSHA256": "1ff1bf1b8460e15c8e2e91a63fcc6db1e855f89af238ee6d416b897191c13790",
+        "crop": [
+          128,
+          1063,
+          253,
+          442
+        ],
+        "cropRGBA_SHA256": "cf5b66294505640a6471e0086db6944e1cfcdc4cc7eb10752f1db8b628652690",
+        "fileSHA256": "98c93cb47a0236c5126bce8ad078f00e9609bf29cc249ebae8d671654de2c46f",
+        "method": "Native crop only. Exact source RGBA and alpha preserved; no geometric warp. Actual silhouette and clear gutters determine crop boundaries."
+      },
+      "reason": "Catalog-wide asset review: remove taper from exposed rectangular slabs and backing planes in parallel2/3 projection, retaining source camera direction, curved bowls and original ornate design."
+    },
+    {
+      "id": "collection-showroom-industrial-loft-vanity",
+      "facing": "west",
+      "file": "vanity-directions/collection-showroom-industrial-loft-vanity-west-a8721f0a7c23.webp",
+      "width": 267,
+      "height": 444,
+      "x": 0,
+      "y": 0,
+      "w": 267,
+      "h": 444,
+      "draw": {
+        "x": 0,
+        "y": 26.78545454545454,
+        "w": 62.4,
+        "h": 107.21454545454546
+      },
+      "source": {
+        "file": "showroom-industrial-loft-west-cardinal-2ed0d0d9fa72.webp",
+        "frame": {
+          "slot": "vanity",
+          "x": 753,
+          "y": 1824,
+          "w": 110,
+          "h": 189,
+          "digest": "41402632b5b0506ae639cf328ca62c6ed799b0263166674a0c0c2f710bb2b254",
+          "viewWidth": 62.4,
+          "viewHeight": 134,
+          "footCenter": [
+            0.5,
+            0.664224529100529
+          ],
+          "cell": {
+            "x": 753,
+            "y": 1824,
+            "w": 110,
+            "h": 189
+          },
+          "sourceDigest": "de079998d08f157b2b4e4d564d4219258a4523eb18107b00804315042aca442b",
+          "sourceFrame": {
+            "x": 54,
+            "y": 958,
+            "w": 110,
+            "h": 189
+          },
+          "artReview": "independent-browser-qa.json"
+        },
+        "view": {
+          "w": 62.4,
+          "h": 134,
+          "footCenter": {
+            "x": 31.2,
+            "y": 97.99998551272726
+          },
+          "draw": {
+            "x": 0,
+            "y": 26.78545454545454,
+            "w": 62.4,
+            "h": 107.21454545454546
+          }
+        }
+      },
+      "generation": {
+        "tool": "image_gen",
+        "original": "originals/vanity-directions/vanity-directions-4-1ff1bf1b8460.png",
+        "originalSHA256": "1ff1bf1b8460e15c8e2e91a63fcc6db1e855f89af238ee6d416b897191c13790",
+        "crop": [
+          635,
+          1061,
+          267,
+          444
+        ],
+        "cropRGBA_SHA256": "a8721f0a7c23ad78e59f1c7aba72cfd51bbf860d35cd1c626083ace76c4f19a5",
+        "fileSHA256": "001b4613e86a3da1c19d021106d07ce298be27c3165a3a3eb6a8a9c77b147457",
+        "method": "Native crop only. Exact source RGBA and alpha preserved; no geometric warp. Actual silhouette and clear gutters determine crop boundaries."
+      },
+      "reason": "Catalog-wide asset review: remove taper from exposed rectangular slabs and backing planes in parallel2/3 projection, retaining source camera direction, curved bowls and original ornate design."
+    },
+    {
+      "id": "collection-showroom-cyberpunk-vanity",
+      "facing": "west",
+      "file": "vanity-directions/collection-showroom-cyberpunk-vanity-west-7a9ab6941485.webp",
+      "width": 225,
+      "height": 447,
+      "x": 0,
+      "y": 0,
+      "w": 225,
+      "h": 447,
+      "draw": {
+        "x": 0,
+        "y": 5.493069306930693,
+        "w": 62.4,
+        "h": 128.5069306930693
+      },
+      "source": {
+        "file": "showroom-cyberpunk-west-cardinal-7da95db4940f.webp",
+        "frame": {
+          "slot": "vanity",
+          "x": 512,
+          "y": 1012,
+          "w": 101,
+          "h": 208,
+          "digest": "b1fb6052d3c0db789139809bc0222d1d178f664ee0e24fe549ffe2423976f423",
+          "viewWidth": 62.4,
+          "viewHeight": 134,
+          "footCenter": [
+            0.5,
+            0.719859
+          ],
+          "cell": {
+            "x": 512,
+            "y": 1012,
+            "w": 101,
+            "h": 208
+          }
+        },
+        "view": {
+          "w": 62.4,
+          "h": 134,
+          "footCenter": {
+            "x": 31.2,
+            "y": 97.99993992871288
+          },
+          "draw": {
+            "x": 0,
+            "y": 5.493069306930693,
+            "w": 62.4,
+            "h": 128.5069306930693
+          }
+        }
+      },
+      "generation": {
+        "tool": "image_gen",
+        "original": "originals/vanity-directions/vanity-directions-5-70d5bde592ef.png",
+        "originalSHA256": "70d5bde592ef3591f9c87b56c26a1886fabb57a1e09c756183dbf52615579811",
+        "crop": [
+          146,
+          38,
+          225,
+          447
+        ],
+        "cropRGBA_SHA256": "7a9ab69414851e7d3b6c4c6cae7699d4b653fe0151e1d0e2b1c2c6a3201c8b33",
+        "fileSHA256": "4e9ce895cd2a96a173aa2ba33ad39803ec046b6f95e4751818a3e9d12d76616b",
+        "method": "Native crop only. Exact source RGBA and alpha preserved; no geometric warp. Actual silhouette and clear gutters determine crop boundaries."
+      },
+      "reason": "Catalog-wide asset review: remove taper from exposed rectangular slabs and backing planes in parallel2/3 projection, retaining source camera direction, curved bowls and original ornate design."
+    },
+    {
+      "id": "collection-mozart-vanity",
+      "facing": "east",
+      "file": "vanity-directions/collection-mozart-vanity-east-df8b14853feb.webp",
+      "width": 240,
+      "height": 445,
+      "x": 0,
+      "y": 0,
+      "w": 240,
+      "h": 445,
+      "draw": {
+        "x": 0,
+        "y": 10.245810055865917,
+        "w": 62.4,
+        "h": 123.75418994413408
+      },
+      "source": {
+        "file": "mozart-east-cardinal-4d80ba82c2d1.webp",
+        "frame": {
+          "slot": "vanity",
+          "x": 4,
+          "y": 4,
+          "w": 537,
+          "h": 1065,
+          "digest": "6424adc63a63fc582fdf20e34cd71eff17d71b1bb366aaff490303a41d6d675e",
+          "viewWidth": 62.4,
+          "viewHeight": 134,
+          "footCenter": [
+            0.5,
+            0.7091006479735557
+          ],
+          "cell": {
+            "x": 4,
+            "y": 4,
+            "w": 537,
+            "h": 1065
+          },
+          "sourceDigest": "303240e60bb653d691d398c1188b1d97647398463a0748104b7581fa01b4b23a",
+          "sourceFrame": {
+            "x": 280,
+            "y": 177,
+            "w": 537,
+            "h": 1065
+          },
+          "artReview": "independent-accepted173-map.json"
+        },
+        "view": {
+          "w": 62.4,
+          "h": 134,
+          "footCenter": {
+            "x": 31.2,
+            "y": 97.99998633469389
+          },
+          "draw": {
+            "x": 0,
+            "y": 10.245810055865917,
+            "w": 62.4,
+            "h": 123.75418994413408
+          }
+        }
+      },
+      "generation": {
+        "tool": "image_gen",
+        "original": "originals/vanity-directions/vanity-directions-5-70d5bde592ef.png",
+        "originalSHA256": "70d5bde592ef3591f9c87b56c26a1886fabb57a1e09c756183dbf52615579811",
+        "crop": [
+          650,
+          38,
+          240,
+          445
+        ],
+        "cropRGBA_SHA256": "df8b14853feb58aac7a7eead2a42d846d2ccc4e1799f9c6a557e546cd05f2295",
+        "fileSHA256": "261ab395be83d73173da53f69238ba2210f03f10ed54b55977d3909f96203448",
+        "method": "Native crop only. Exact source RGBA and alpha preserved; no geometric warp. Actual silhouette and clear gutters determine crop boundaries."
+      },
+      "reason": "Catalog-wide asset review: remove taper from exposed rectangular slabs and backing planes in parallel2/3 projection, retaining source camera direction, curved bowls and original ornate design."
+    },
+    {
+      "id": "collection-beethoven-vanity",
+      "facing": "east",
+      "file": "vanity-directions/collection-beethoven-vanity-east-4270b8de01cf.webp",
+      "width": 237,
+      "height": 438,
+      "x": 0,
+      "y": 0,
+      "w": 237,
+      "h": 438,
+      "draw": {
+        "x": 0,
+        "y": 31.094736842105263,
+        "w": 52,
+        "h": 102.90526315789474
+      },
+      "source": {
+        "file": "beethoven-east-cardinal-4d12e160d584.webp",
+        "frame": {
+          "slot": "vanity",
+          "x": 486,
+          "y": 1455,
+          "w": 95,
+          "h": 188,
+          "digest": "38c3cf1a523ee402deec42706a478ff9eabb4ffae470f238a3adfd89efe33707",
+          "viewWidth": 52,
+          "viewHeight": 134,
+          "footCenter": [
+            0.5,
+            0.6501632968494271
+          ],
+          "cell": {
+            "x": 486,
+            "y": 1455,
+            "w": 95,
+            "h": 188
+          },
+          "sourceDigest": "f18722dcb23667b093ce08503a4710687f1f938901433ba5910e0fdae3114e9e",
+          "sourceFrame": {
+            "x": 66,
+            "y": 975,
+            "w": 95,
+            "h": 188
+          },
+          "artReview": "independent-browser-qa.json"
+        },
+        "view": {
+          "w": 52,
+          "h": 134,
+          "footCenter": {
+            "x": 26,
+            "y": 97.999962
+          },
+          "draw": {
+            "x": 0,
+            "y": 31.094736842105263,
+            "w": 52,
+            "h": 102.90526315789474
+          }
+        }
+      },
+      "generation": {
+        "tool": "image_gen",
+        "original": "originals/vanity-directions/vanity-directions-5-70d5bde592ef.png",
+        "originalSHA256": "70d5bde592ef3591f9c87b56c26a1886fabb57a1e09c756183dbf52615579811",
+        "crop": [
+          142,
+          554,
+          237,
+          438
+        ],
+        "cropRGBA_SHA256": "4270b8de01cf04e42d2ac8a082fee384c7c480330bd3701fdf7ce89237f4cf40",
+        "fileSHA256": "e3bb15f27ae074d586f8f1f82fdedc959bb348d57aca5372ce68f90ee94b32fc",
+        "method": "Native crop only. Exact source RGBA and alpha preserved; no geometric warp. Actual silhouette and clear gutters determine crop boundaries."
+      },
+      "reason": "Catalog-wide asset review: remove taper from exposed rectangular slabs and backing planes in parallel2/3 projection, retaining source camera direction, curved bowls and original ornate design."
+    },
+    {
+      "id": "collection-haydn-vanity",
+      "facing": "east",
+      "file": "vanity-directions/collection-haydn-vanity-east-4f97deb883b9.webp",
+      "width": 253,
+      "height": 438,
+      "x": 0,
+      "y": 0,
+      "w": 253,
+      "h": 438,
+      "draw": {
+        "x": 0,
+        "y": 20.49142857142857,
+        "w": 62.400000000000006,
+        "h": 113.50857142857143
+      },
+      "source": {
+        "file": "haydn-east-cardinal-7ab50091a64b.webp",
+        "frame": {
+          "slot": "vanity",
+          "x": 921,
+          "y": 1419,
+          "w": 105,
+          "h": 191,
+          "digest": "2aca4c6874a013737abd71e589f6437c3b2ac870be12a1a84ee06dfd4e01b14c",
+          "viewWidth": 62.4,
+          "viewHeight": 134,
+          "footCenter": [
+            0.5,
+            0.6828433260616636
+          ],
+          "cell": {
+            "x": 921,
+            "y": 1419,
+            "w": 105,
+            "h": 191
+          },
+          "sourceDigest": "2607b46a35dde1998ae1679678c5362d3832409124b23e3a3ef03d8709fbb9f7",
+          "sourceFrame": {
+            "x": 63,
+            "y": 974,
+            "w": 105,
+            "h": 191
+          },
+          "artReview": "independent-browser-qa.json"
+        },
+        "view": {
+          "w": 62.4,
+          "h": 134,
+          "footCenter": {
+            "x": 31.200000000000003,
+            "y": 97.99999902222221
+          },
+          "draw": {
+            "x": 0,
+            "y": 20.49142857142857,
+            "w": 62.400000000000006,
+            "h": 113.50857142857143
+          }
+        }
+      },
+      "generation": {
+        "tool": "image_gen",
+        "original": "originals/vanity-directions/vanity-directions-5-70d5bde592ef.png",
+        "originalSHA256": "70d5bde592ef3591f9c87b56c26a1886fabb57a1e09c756183dbf52615579811",
+        "crop": [
+          645,
+          553,
+          253,
+          438
+        ],
+        "cropRGBA_SHA256": "4f97deb883b943496d7805c56eac5b56b7f4c443943d8bee93c1b39add93c97d",
+        "fileSHA256": "600a0ce84a2162a144b6e9736b5467bc11f09af9acaf995130d52add9e627130",
+        "method": "Native crop only. Exact source RGBA and alpha preserved; no geometric warp. Actual silhouette and clear gutters determine crop boundaries."
+      },
+      "reason": "Catalog-wide asset review: remove taper from exposed rectangular slabs and backing planes in parallel2/3 projection, retaining source camera direction, curved bowls and original ornate design."
+    },
+    {
+      "id": "collection-handel-vanity",
+      "facing": "east",
+      "file": "vanity-directions/collection-handel-vanity-east-ad92036b3edf.webp",
+      "width": 249,
+      "height": 435,
+      "x": 0,
+      "y": 0,
+      "w": 249,
+      "h": 435,
+      "draw": {
+        "x": 0,
+        "y": 37.5,
+        "w": 52,
+        "h": 96.5
+      },
+      "source": {
+        "file": "handel-east-cardinal-7a9b2e484f33.webp",
+        "frame": {
+          "slot": "vanity",
+          "x": 1102,
+          "y": 2354,
+          "w": 104,
+          "h": 193,
+          "digest": "f1347d037efe189134876d727989496a68f10e776c6e087d18658ddcb7cab262",
+          "viewWidth": 52,
+          "viewHeight": 134,
+          "footCenter": [
+            0.5,
+            0.6269426113989637
+          ],
+          "cell": {
+            "x": 1102,
+            "y": 2354,
+            "w": 104,
+            "h": 193
+          },
+          "sourceDigest": "dcba0ebf40609addd20df1f50e0f7eb746d86dc3bc35901746f907ed9d5c0574",
+          "sourceFrame": {
+            "x": 56,
+            "y": 977,
+            "w": 104,
+            "h": 193
+          },
+          "artReview": "independent-browser-qa.json"
+        },
+        "view": {
+          "w": 52,
+          "h": 134,
+          "footCenter": {
+            "x": 26,
+            "y": 97.999962
+          },
+          "draw": {
+            "x": 0,
+            "y": 37.5,
+            "w": 52,
+            "h": 96.5
+          }
+        }
+      },
+      "generation": {
+        "tool": "image_gen",
+        "original": "originals/vanity-directions/vanity-directions-5-70d5bde592ef.png",
+        "originalSHA256": "70d5bde592ef3591f9c87b56c26a1886fabb57a1e09c756183dbf52615579811",
+        "crop": [
+          133,
+          1068,
+          249,
+          435
+        ],
+        "cropRGBA_SHA256": "ad92036b3edf6c12a8e75684f704a237862c262c901d712f8a25875d282d61f2",
+        "fileSHA256": "b81b5ef4ac2167313682b1adcd1d4086dac803e70b43f5b55279cd98d4669c40",
+        "method": "Native crop only. Exact source RGBA and alpha preserved; no geometric warp. Actual silhouette and clear gutters determine crop boundaries."
+      },
+      "reason": "Catalog-wide asset review: remove taper from exposed rectangular slabs and backing planes in parallel2/3 projection, retaining source camera direction, curved bowls and original ornate design."
+    },
+    {
+      "id": "collection-vivaldi-vanity",
+      "facing": "east",
+      "file": "vanity-directions/collection-vivaldi-vanity-east-223cf6a16b98.webp",
+      "width": 251,
+      "height": 437,
+      "x": 0,
+      "y": 0,
+      "w": 251,
+      "h": 437,
+      "draw": {
+        "x": 0,
+        "y": 16.331428571428575,
+        "w": 62.400000000000006,
+        "h": 117.66857142857143
+      },
+      "source": {
+        "file": "vivaldi-east-cardinal-c3fd3b9880c3.webp",
+        "frame": {
+          "slot": "vanity",
+          "x": 397,
+          "y": 1575,
+          "w": 105,
+          "h": 198,
+          "digest": "6cb69216163093bfcae99d00f84ec5be5335301915f639afb1005d4d9ebfdb9a",
+          "viewWidth": 62.4,
+          "viewHeight": 134,
+          "footCenter": [
+            0.5,
+            0.694056
+          ],
+          "cell": {
+            "x": 397,
+            "y": 1575,
+            "w": 105,
+            "h": 198
+          }
+        },
+        "view": {
+          "w": 62.4,
+          "h": 134,
+          "footCenter": {
+            "x": 31.200000000000003,
+            "y": 98.00000658285714
+          },
+          "draw": {
+            "x": 0,
+            "y": 16.331428571428575,
+            "w": 62.400000000000006,
+            "h": 117.66857142857143
+          }
+        }
+      },
+      "generation": {
+        "tool": "image_gen",
+        "original": "originals/vanity-directions/vanity-directions-5-70d5bde592ef.png",
+        "originalSHA256": "70d5bde592ef3591f9c87b56c26a1886fabb57a1e09c756183dbf52615579811",
+        "crop": [
+          648,
+          1067,
+          251,
+          437
+        ],
+        "cropRGBA_SHA256": "223cf6a16b98bbe8400a38d1b28163aaced74a71c428190aa31f6d35213ec2e4",
+        "fileSHA256": "08fda9a23276619f872906cbb2c1714da400e5cb84bf16132762fd6536f9d01e",
+        "method": "Native crop only. Exact source RGBA and alpha preserved; no geometric warp. Actual silhouette and clear gutters determine crop boundaries."
+      },
+      "reason": "Catalog-wide asset review: remove taper from exposed rectangular slabs and backing planes in parallel2/3 projection, retaining source camera direction, curved bowls and original ornate design."
+    },
+    {
+      "id": "collection-joplin-vanity",
+      "facing": "east",
+      "file": "vanity-directions/collection-joplin-vanity-east-3e1909011207.webp",
+      "width": 244,
+      "height": 440,
+      "x": 0,
+      "y": 0,
+      "w": 244,
+      "h": 440,
+      "draw": {
+        "x": 0,
+        "y": 20.710679611650477,
+        "w": 62.4,
+        "h": 113.28932038834952
+      },
+      "source": {
+        "file": "joplin-east-cardinal-81f1ef697262.webp",
+        "frame": {
+          "slot": "vanity",
+          "x": 997,
+          "y": 1736,
+          "w": 103,
+          "h": 187,
+          "digest": "4cd0342c60f1bb7daffb90ee543fa4c7de922d994c1136d96d9d2932c0fd5c44",
+          "viewWidth": 62.4,
+          "viewHeight": 134,
+          "footCenter": [
+            0.5,
+            0.68223
+          ],
+          "cell": {
+            "x": 997,
+            "y": 1736,
+            "w": 103,
+            "h": 187
+          }
+        },
+        "view": {
+          "w": 62.4,
+          "h": 134,
+          "footCenter": {
+            "x": 31.2,
+            "y": 98.00005266019417
+          },
+          "draw": {
+            "x": 0,
+            "y": 20.710679611650477,
+            "w": 62.4,
+            "h": 113.28932038834952
+          }
+        }
+      },
+      "generation": {
+        "tool": "image_gen",
+        "original": "originals/vanity-directions/vanity-directions-6-78056104f458.png",
+        "originalSHA256": "78056104f45822da3f5920aca75c59afbdd99855a35c62d024b69cdf178be200",
+        "crop": [
+          131,
+          40,
+          244,
+          440
+        ],
+        "cropRGBA_SHA256": "3e1909011207965e2217b631b17aa3fc3c7df9c19764d266d9505e33fb626084",
+        "fileSHA256": "075388fb0996d051c7c10653bbacb2a04ee1a72bb76b21c909e7f00818ec8ab8",
+        "method": "Native crop only. Exact source RGBA and alpha preserved; no geometric warp. Actual silhouette and clear gutters determine crop boundaries."
+      },
+      "reason": "Catalog-wide asset review: remove taper from exposed rectangular slabs and backing planes in parallel2/3 projection, retaining source camera direction, curved bowls and original ornate design."
+    },
+    {
+      "id": "collection-nina-vanity",
+      "facing": "east",
+      "file": "vanity-directions/collection-nina-vanity-east-8590de2f2c3f.webp",
+      "width": 290,
+      "height": 440,
+      "x": 0,
+      "y": 0,
+      "w": 290,
+      "h": 440,
+      "draw": {
+        "x": 0,
+        "y": 39.131707317073165,
+        "w": 62.4,
+        "h": 94.86829268292684
+      },
+      "source": {
+        "file": "nina-east-cardinal-1e3bb4aa1e5d.webp",
+        "frame": {
+          "slot": "vanity",
+          "x": 1901,
+          "y": 2247,
+          "w": 123,
+          "h": 187,
+          "digest": "aa18803cd25b243435f5fc2cedef8c563ad89820b32626f9e6d1b1269bd874ad",
+          "viewWidth": 62.4,
+          "viewHeight": 134,
+          "footCenter": [
+            0.5,
+            0.620527
+          ],
+          "cell": {
+            "x": 1901,
+            "y": 2247,
+            "w": 123,
+            "h": 187
+          }
+        },
+        "view": {
+          "w": 62.4,
+          "h": 134,
+          "footCenter": {
+            "x": 31.2,
+            "y": 98.0000443707317
+          },
+          "draw": {
+            "x": 0,
+            "y": 39.131707317073165,
+            "w": 62.4,
+            "h": 94.86829268292684
+          }
+        }
+      },
+      "generation": {
+        "tool": "image_gen",
+        "original": "originals/vanity-directions/vanity-directions-6-78056104f458.png",
+        "originalSHA256": "78056104f45822da3f5920aca75c59afbdd99855a35c62d024b69cdf178be200",
+        "crop": [
+          620,
+          40,
+          290,
+          440
+        ],
+        "cropRGBA_SHA256": "8590de2f2c3f09c073bc86089109d5e3302c6f0fa95b93da4008dec62e0dcf3d",
+        "fileSHA256": "e2370386b6b929db6d0746839c39abfaffea087aec70c311eeaec293b2f2afe8",
+        "method": "Native crop only. Exact source RGBA and alpha preserved; no geometric warp. Actual silhouette and clear gutters determine crop boundaries."
+      },
+      "reason": "Catalog-wide asset review: remove taper from exposed rectangular slabs and backing planes in parallel2/3 projection, retaining source camera direction, curved bowls and original ornate design."
+    },
+    {
+      "id": "collection-miles-vanity",
+      "facing": "east",
+      "file": "vanity-directions/collection-miles-vanity-east-a0340470f7c9.webp",
+      "width": 298,
+      "height": 443,
+      "x": 0,
+      "y": 0,
+      "w": 298,
+      "h": 443,
+      "draw": {
+        "x": 0,
+        "y": 39.425,
+        "w": 62.4,
+        "h": 94.575
+      },
+      "source": {
+        "file": "miles-east-cardinal-64c9f0cf5c69.webp",
+        "frame": {
+          "slot": "vanity",
+          "x": 1885,
+          "y": 2335,
+          "w": 128,
+          "h": 194,
+          "digest": "ef3c076c055eb0c33a9cc6d72a426df6d955d88babcb1b1cfc7528911faf077a",
+          "viewWidth": 62.4,
+          "viewHeight": 134,
+          "footCenter": [
+            0.5,
+            0.61935
+          ],
+          "cell": {
+            "x": 1885,
+            "y": 2335,
+            "w": 128,
+            "h": 194
+          }
+        },
+        "view": {
+          "w": 62.4,
+          "h": 134,
+          "footCenter": {
+            "x": 31.2,
+            "y": 98.00002624999999
+          },
+          "draw": {
+            "x": 0,
+            "y": 39.425,
+            "w": 62.4,
+            "h": 94.575
+          }
+        }
+      },
+      "generation": {
+        "tool": "image_gen",
+        "original": "originals/vanity-directions/vanity-directions-6-78056104f458.png",
+        "originalSHA256": "78056104f45822da3f5920aca75c59afbdd99855a35c62d024b69cdf178be200",
+        "crop": [
+          108,
+          551,
+          298,
+          443
+        ],
+        "cropRGBA_SHA256": "a0340470f7c99c1a98d5271b8856c2b29b26cde74177c15041cd9e6be80c497f",
+        "fileSHA256": "68e98d0b568065d0b5fa3b47cb64494a4b09c7c333d3791a02b35c45d398db77",
+        "method": "Native crop only. Exact source RGBA and alpha preserved; no geometric warp. Actual silhouette and clear gutters determine crop boundaries."
+      },
+      "reason": "Catalog-wide asset review: remove taper from exposed rectangular slabs and backing planes in parallel2/3 projection, retaining source camera direction, curved bowls and original ornate design."
+    },
+    {
+      "id": "collection-dj-vanity",
+      "facing": "east",
+      "file": "vanity-directions/collection-dj-vanity-east-8f7995e260c8.webp",
+      "width": 271,
+      "height": 442,
+      "x": 0,
+      "y": 0,
+      "w": 271,
+      "h": 442,
+      "draw": {
+        "x": 0,
+        "y": 28.905263157894723,
+        "w": 62.400000000000006,
+        "h": 105.09473684210528
+      },
+      "source": {
+        "file": "dj-east-cardinal-7c3e716b911c.webp",
+        "frame": {
+          "slot": "vanity",
+          "x": 441,
+          "y": 1695,
+          "w": 114,
+          "h": 192,
+          "digest": "c2b584c63be24afb406edf6f3899016ef24a2389cae1e09575a2a7dcbe0ab19b",
+          "viewWidth": 62.4,
+          "viewHeight": 134,
+          "footCenter": [
+            0.5,
+            0.657452
+          ],
+          "cell": {
+            "x": 441,
+            "y": 1695,
+            "w": 114,
+            "h": 192
+          }
+        },
+        "view": {
+          "w": 62.4,
+          "h": 134,
+          "footCenter": {
+            "x": 31.200000000000003,
+            "y": 98.00000808421052
+          },
+          "draw": {
+            "x": 0,
+            "y": 28.905263157894723,
+            "w": 62.400000000000006,
+            "h": 105.09473684210528
+          }
+        }
+      },
+      "generation": {
+        "tool": "image_gen",
+        "original": "originals/vanity-directions/vanity-directions-6-78056104f458.png",
+        "originalSHA256": "78056104f45822da3f5920aca75c59afbdd99855a35c62d024b69cdf178be200",
+        "crop": [
+          634,
+          552,
+          271,
+          442
+        ],
+        "cropRGBA_SHA256": "8f7995e260c8251db9b439df5506f9aa55acf10c7e81bcb05125e03c78d3ec91",
+        "fileSHA256": "95f58a2de7d00daa54e3757ff5ee70b5363f9fc599464fc4aee8fd744b696fed",
+        "method": "Native crop only. Exact source RGBA and alpha preserved; no geometric warp. Actual silhouette and clear gutters determine crop boundaries."
+      },
+      "reason": "Catalog-wide asset review: remove taper from exposed rectangular slabs and backing planes in parallel2/3 projection, retaining source camera direction, curved bowls and original ornate design."
+    },
+    {
+      "id": "collection-metronome-vanity",
+      "facing": "east",
+      "file": "vanity-directions/collection-metronome-vanity-east-14f5e02b0b0a.webp",
+      "width": 245,
+      "height": 438,
+      "x": 0,
+      "y": 0,
+      "w": 245,
+      "h": 438,
+      "draw": {
+        "x": 0,
+        "y": 18.618867924528303,
+        "w": 62.4,
+        "h": 115.3811320754717
+      },
+      "source": {
+        "file": "metronome-east-cardinal-4cc9a12f71d7.webp",
+        "frame": {
+          "slot": "vanity",
+          "x": 151,
+          "y": 1924,
+          "w": 106,
+          "h": 196,
+          "digest": "9e27bfcefc25bea24ecf818e76e85ed00f7f1cd378022596964946a2b4f0f4cb",
+          "viewWidth": 62.4,
+          "viewHeight": 134,
+          "footCenter": [
+            0.5,
+            0.687991
+          ],
+          "cell": {
+            "x": 151,
+            "y": 1924,
+            "w": 106,
+            "h": 196
+          }
+        },
+        "view": {
+          "w": 62.4,
+          "h": 134,
+          "footCenter": {
+            "x": 31.2,
+            "y": 98.00004836226415
+          },
+          "draw": {
+            "x": 0,
+            "y": 18.618867924528303,
+            "w": 62.4,
+            "h": 115.3811320754717
+          }
+        }
+      },
+      "generation": {
+        "tool": "image_gen",
+        "original": "originals/vanity-directions/vanity-directions-6-78056104f458.png",
+        "originalSHA256": "78056104f45822da3f5920aca75c59afbdd99855a35c62d024b69cdf178be200",
+        "crop": [
+          132,
+          1065,
+          245,
+          438
+        ],
+        "cropRGBA_SHA256": "14f5e02b0b0a699d2b5f9b4b64e774ab935d8abc435f0cce7962f820122cf21c",
+        "fileSHA256": "36d7b6e8c11f94afe48c426a53b087da06df0a056a48b24fa21d738b28dbf68b",
+        "method": "Native crop only. Exact source RGBA and alpha preserved; no geometric warp. Actual silhouette and clear gutters determine crop boundaries."
+      },
+      "reason": "Catalog-wide asset review: remove taper from exposed rectangular slabs and backing planes in parallel2/3 projection, retaining source camera direction, curved bowls and original ornate design."
+    },
+    {
+      "id": "collection-schoenberg-vanity",
+      "facing": "east",
+      "file": "vanity-directions/collection-schoenberg-vanity-east-a2eeb72b6686.webp",
+      "width": 253,
+      "height": 437,
+      "x": 0,
+      "y": 0,
+      "w": 253,
+      "h": 437,
+      "draw": {
+        "x": 0,
+        "y": 20.649541284403668,
+        "w": 62.400000000000006,
+        "h": 113.35045871559633
+      },
+      "source": {
+        "file": "schoenberg-east-cardinal-4224510a9b9a.webp",
+        "frame": {
+          "slot": "vanity",
+          "x": 1442,
+          "y": 1222,
+          "w": 109,
+          "h": 198,
+          "digest": "e0f8c34e464ee25ead3a08b94b5c4332331eb5c1b453e1fe3f425bf99544fd86",
+          "viewWidth": 62.4,
+          "viewHeight": 134,
+          "footCenter": [
+            0.5,
+            0.682401
+          ],
+          "cell": {
+            "x": 1442,
+            "y": 1222,
+            "w": 109,
+            "h": 198
+          }
+        },
+        "view": {
+          "w": 62.4,
+          "h": 134,
+          "footCenter": {
+            "x": 31.200000000000003,
+            "y": 98.00000766238533
+          },
+          "draw": {
+            "x": 0,
+            "y": 20.649541284403668,
+            "w": 62.400000000000006,
+            "h": 113.35045871559633
+          }
+        }
+      },
+      "generation": {
+        "tool": "image_gen",
+        "original": "originals/vanity-directions/vanity-directions-6-78056104f458.png",
+        "originalSHA256": "78056104f45822da3f5920aca75c59afbdd99855a35c62d024b69cdf178be200",
+        "crop": [
+          643,
+          1065,
+          253,
+          437
+        ],
+        "cropRGBA_SHA256": "a2eeb72b6686f5adf5cf8ab96c979fc9b78848a8ec7663416894be004472217e",
+        "fileSHA256": "7b6f3975ce59a8ab0897fb85e42a0e3f547ace77559b5b47ac540fbc8f7ba524",
+        "method": "Native crop only. Exact source RGBA and alpha preserved; no geometric warp. Actual silhouette and clear gutters determine crop boundaries."
+      },
+      "reason": "Catalog-wide asset review: remove taper from exposed rectangular slabs and backing planes in parallel2/3 projection, retaining source camera direction, curved bowls and original ornate design."
+    },
+    {
+      "id": "collection-showroom-victorian-parlor-vanity",
+      "facing": "east",
+      "file": "vanity-directions/collection-showroom-victorian-parlor-vanity-east-593821bca79d.webp",
+      "width": 215,
+      "height": 443,
+      "x": 0,
+      "y": 0,
+      "w": 215,
+      "h": 443,
+      "draw": {
+        "x": 0,
+        "y": 2.561702127659572,
+        "w": 62.4,
+        "h": 131.43829787234043
+      },
+      "source": {
+        "file": "showroom-victorian-parlor-east-cardinal-a169a5e34f98.webp",
+        "frame": {
+          "slot": "vanity",
+          "x": 551,
+          "y": 591,
+          "w": 94,
+          "h": 198,
+          "digest": "326ea799af183345cbe9ac3b08ceeacf243767287ba24094a666192be4757756",
+          "viewWidth": 62.4,
+          "viewHeight": 134,
+          "footCenter": [
+            0.5,
+            0.726107
+          ],
+          "cell": {
+            "x": 551,
+            "y": 591,
+            "w": 94,
+            "h": 198
+          }
+        },
+        "view": {
+          "w": 62.4,
+          "h": 134,
+          "footCenter": {
+            "x": 31.2,
+            "y": 97.99997028085106
+          },
+          "draw": {
+            "x": 0,
+            "y": 2.561702127659572,
+            "w": 62.4,
+            "h": 131.43829787234043
+          }
+        }
+      },
+      "generation": {
+        "tool": "image_gen",
+        "original": "originals/vanity-directions/vanity-directions-7-eaf4e44fd1d4.png",
+        "originalSHA256": "eaf4e44fd1d4259e6caa87dcfc4b9ce655c27f5863edef2693ed41b216c650cc",
+        "crop": [
+          149,
+          38,
+          215,
+          443
+        ],
+        "cropRGBA_SHA256": "593821bca79dca33f3ea5a8cd72925789f0f7aea06e1c635000c8e40ddd05378",
+        "fileSHA256": "d0f8db5da890a956bdf3c10dd9d27ff8ca78da6363b65eddb7fec92b559bee28",
+        "method": "Native crop only. Exact source RGBA and alpha preserved; no geometric warp. Actual silhouette and clear gutters determine crop boundaries."
+      },
+      "reason": "Catalog-wide asset review: remove taper from exposed rectangular slabs and backing planes in parallel2/3 projection, retaining source camera direction, curved bowls and original ornate design."
+    },
+    {
+      "id": "collection-showroom-art-deco-lounge-vanity",
+      "facing": "east",
+      "file": "vanity-directions/collection-showroom-art-deco-lounge-vanity-east-4c12aa293257.webp",
+      "width": 243,
+      "height": 442,
+      "x": 0,
+      "y": 0,
+      "w": 243,
+      "h": 442,
+      "draw": {
+        "x": 0,
+        "y": 18.756756756756744,
+        "w": 62.400000000000006,
+        "h": 115.24324324324326
+      },
+      "source": {
+        "file": "showroom-art-deco-lounge-east-cardinal-a7b1f99f7f56.webp",
+        "frame": {
+          "slot": "vanity",
+          "x": 368,
+          "y": 701,
+          "w": 111,
+          "h": 205,
+          "digest": "aea11b4a81655a8fbe65167c26a15223e2c9c283308aba43012a22b0f84b7220",
+          "viewWidth": 62.4,
+          "viewHeight": 134,
+          "footCenter": [
+            0.5,
+            0.687617
+          ],
+          "cell": {
+            "x": 368,
+            "y": 701,
+            "w": 111,
+            "h": 205
+          }
+        },
+        "view": {
+          "w": 62.4,
+          "h": 134,
+          "footCenter": {
+            "x": 31.200000000000003,
+            "y": 97.99996994594595
+          },
+          "draw": {
+            "x": 0,
+            "y": 18.756756756756744,
+            "w": 62.400000000000006,
+            "h": 115.24324324324326
+          }
+        }
+      },
+      "generation": {
+        "tool": "image_gen",
+        "original": "originals/vanity-directions/vanity-directions-7-eaf4e44fd1d4.png",
+        "originalSHA256": "eaf4e44fd1d4259e6caa87dcfc4b9ce655c27f5863edef2693ed41b216c650cc",
+        "crop": [
+          646,
+          38,
+          243,
+          442
+        ],
+        "cropRGBA_SHA256": "4c12aa293257e3beefd9c6d0f8848e3ee142c97276133bc891a6daa3b99a16da",
+        "fileSHA256": "eab490a1e0df9b96ab31050af747e8ef4f69b6b9c9d21870405d8c8f0e3e35f0",
+        "method": "Native crop only. Exact source RGBA and alpha preserved; no geometric warp. Actual silhouette and clear gutters determine crop boundaries."
+      },
+      "reason": "Catalog-wide asset review: remove taper from exposed rectangular slabs and backing planes in parallel2/3 projection, retaining source camera direction, curved bowls and original ornate design."
+    },
+    {
+      "id": "collection-showroom-coastal-bedroom-vanity",
+      "facing": "east",
+      "file": "vanity-directions/collection-showroom-coastal-bedroom-vanity-east-2245f763506f.webp",
+      "width": 258,
+      "height": 441,
+      "x": 0,
+      "y": 0,
+      "w": 258,
+      "h": 441,
+      "draw": {
+        "x": 0,
+        "y": 30.381651376146777,
+        "w": 62.400000000000006,
+        "h": 103.61834862385322
+      },
+      "source": {
+        "file": "showroom-coastal-bedroom-east-cardinal-ed5fec47d003.webp",
+        "frame": {
+          "slot": "vanity",
+          "x": 376,
+          "y": 1257,
+          "w": 109,
+          "h": 181,
+          "digest": "8d8e7af5ea2251fbe7b352ba83865c3a10cf9167e7ba3e87e1a5d0971de83ae2",
+          "viewWidth": 62.4,
+          "viewHeight": 134,
+          "footCenter": [
+            0.5,
+            0.652571
+          ],
+          "cell": {
+            "x": 376,
+            "y": 1257,
+            "w": 109,
+            "h": 181
+          }
+        },
+        "view": {
+          "w": 62.4,
+          "h": 134,
+          "footCenter": {
+            "x": 31.200000000000003,
+            "y": 97.9999807559633
+          },
+          "draw": {
+            "x": 0,
+            "y": 30.381651376146777,
+            "w": 62.400000000000006,
+            "h": 103.61834862385322
+          }
+        }
+      },
+      "generation": {
+        "tool": "image_gen",
+        "original": "originals/vanity-directions/vanity-directions-7-eaf4e44fd1d4.png",
+        "originalSHA256": "eaf4e44fd1d4259e6caa87dcfc4b9ce655c27f5863edef2693ed41b216c650cc",
+        "crop": [
+          130,
+          552,
+          258,
+          441
+        ],
+        "cropRGBA_SHA256": "2245f763506feaeb8068958bc66209f7c8e9e2d7f8c2b257fa8db9d4741008ed",
+        "fileSHA256": "1a6f034111113d4a24af7ec4e467820c79cd29624090e032cd736a9119c7749a",
+        "method": "Native crop only. Exact source RGBA and alpha preserved; no geometric warp. Actual silhouette and clear gutters determine crop boundaries."
+      },
+      "reason": "Catalog-wide asset review: remove taper from exposed rectangular slabs and backing planes in parallel2/3 projection, retaining source camera direction, curved bowls and original ornate design."
+    },
+    {
+      "id": "collection-showroom-rustic-kitchen-vanity",
+      "facing": "east",
+      "file": "vanity-directions/collection-showroom-rustic-kitchen-vanity-east-c40bbfd62cdd.webp",
+      "width": 273,
+      "height": 437,
+      "x": 0,
+      "y": 0,
+      "w": 273,
+      "h": 437,
+      "draw": {
+        "x": 0,
+        "y": 32.532173913043465,
+        "w": 62.400000000000006,
+        "h": 101.46782608695653
+      },
+      "source": {
+        "file": "showroom-rustic-kitchen-east-cardinal-557d1af0cec8.webp",
+        "frame": {
+          "slot": "vanity",
+          "x": 1787,
+          "y": 688,
+          "w": 115,
+          "h": 187,
+          "digest": "111151e7517af512589f2c118ebf85f90c2d22d65c3b7c79f02109e64a505437",
+          "viewWidth": 62.4,
+          "viewHeight": 134,
+          "footCenter": [
+            0.5,
+            0.645208
+          ],
+          "cell": {
+            "x": 1787,
+            "y": 688,
+            "w": 115,
+            "h": 187
+          }
+        },
+        "view": {
+          "w": 62.4,
+          "h": 134,
+          "footCenter": {
+            "x": 31.200000000000003,
+            "y": 98.00002704695652
+          },
+          "draw": {
+            "x": 0,
+            "y": 32.532173913043465,
+            "w": 62.400000000000006,
+            "h": 101.46782608695653
+          }
+        }
+      },
+      "generation": {
+        "tool": "image_gen",
+        "original": "originals/vanity-directions/vanity-directions-7-eaf4e44fd1d4.png",
+        "originalSHA256": "eaf4e44fd1d4259e6caa87dcfc4b9ce655c27f5863edef2693ed41b216c650cc",
+        "crop": [
+          629,
+          552,
+          273,
+          437
+        ],
+        "cropRGBA_SHA256": "c40bbfd62cdd4cf4db40ca3707d411f264c46b9f7706a5bc07d1618282a5d554",
+        "fileSHA256": "d4f69694725681ccd76807732bdd8b15daf4bae472d2689c09c2a656a261f51d",
+        "method": "Native crop only. Exact source RGBA and alpha preserved; no geometric warp. Actual silhouette and clear gutters determine crop boundaries."
+      },
+      "reason": "Catalog-wide asset review: remove taper from exposed rectangular slabs and backing planes in parallel2/3 projection, retaining source camera direction, curved bowls and original ornate design."
+    },
+    {
+      "id": "collection-showroom-botanical-conservatory-vanity",
+      "facing": "east",
+      "file": "vanity-directions/collection-showroom-botanical-conservatory-vanity-east-454c9827a7c5.webp",
+      "width": 227,
+      "height": 443,
+      "x": 0,
+      "y": 0,
+      "w": 227,
+      "h": 443,
+      "draw": {
+        "x": 0,
+        "y": 5.599999999999994,
+        "w": 62.4,
+        "h": 128.4
+      },
+      "source": {
+        "file": "showroom-botanical-conservatory-east-cardinal-57a23cfbd18e.webp",
+        "frame": {
+          "slot": "vanity",
+          "x": 1736,
+          "y": 1093,
+          "w": 104,
+          "h": 214,
+          "digest": "5a9f3eede1ac5d62e246e63991120aab12d0f130b48e5efc551934621e04ad8c",
+          "viewWidth": 62.4,
+          "viewHeight": 134,
+          "footCenter": [
+            0.5,
+            0.719626
+          ],
+          "cell": {
+            "x": 1736,
+            "y": 1093,
+            "w": 104,
+            "h": 214
+          }
+        },
+        "view": {
+          "w": 62.4,
+          "h": 134,
+          "footCenter": {
+            "x": 31.2,
+            "y": 97.9999784
+          },
+          "draw": {
+            "x": 0,
+            "y": 5.599999999999994,
+            "w": 62.4,
+            "h": 128.4
+          }
+        }
+      },
+      "generation": {
+        "tool": "image_gen",
+        "original": "originals/vanity-directions/vanity-directions-7-eaf4e44fd1d4.png",
+        "originalSHA256": "eaf4e44fd1d4259e6caa87dcfc4b9ce655c27f5863edef2693ed41b216c650cc",
+        "crop": [
+          144,
+          1062,
+          227,
+          443
+        ],
+        "cropRGBA_SHA256": "454c9827a7c5f873cdf01202a25b9d9c17275847f0ab16685e091126d2a8eadd",
+        "fileSHA256": "71fa2d374844dcfa4b5abd0ad2b395c102066f87ad47a7636071041dea08101b",
+        "method": "Native crop only. Exact source RGBA and alpha preserved; no geometric warp. Actual silhouette and clear gutters determine crop boundaries."
+      },
+      "reason": "Catalog-wide asset review: remove taper from exposed rectangular slabs and backing planes in parallel2/3 projection, retaining source camera direction, curved bowls and original ornate design."
+    },
+    {
+      "id": "collection-showroom-midcentury-studio-vanity",
+      "facing": "east",
+      "file": "vanity-directions/collection-showroom-midcentury-studio-vanity-east-85b9b51d015a.webp",
+      "width": 252,
+      "height": 443,
+      "x": 0,
+      "y": 0,
+      "w": 252,
+      "h": 443,
+      "draw": {
+        "x": 0,
+        "y": 22.739622641509442,
+        "w": 62.4,
+        "h": 111.26037735849056
+      },
+      "source": {
+        "file": "showroom-midcentury-studio-east-cardinal-1dbc539c75ec.webp",
+        "frame": {
+          "slot": "vanity",
+          "x": 535,
+          "y": 1236,
+          "w": 106,
+          "h": 189,
+          "digest": "ec22d82b0e2302315dfe31321c2c3dd0cf19074246e01dfcc2cdce78ad4cc9f7",
+          "viewWidth": 62.4,
+          "viewHeight": 134,
+          "footCenter": [
+            0.5,
+            0.676435
+          ],
+          "cell": {
+            "x": 535,
+            "y": 1236,
+            "w": 106,
+            "h": 189
+          }
+        },
+        "view": {
+          "w": 62.4,
+          "h": 134,
+          "footCenter": {
+            "x": 31.2,
+            "y": 98.00003600000001
+          },
+          "draw": {
+            "x": 0,
+            "y": 22.739622641509442,
+            "w": 62.4,
+            "h": 111.26037735849056
+          }
+        }
+      },
+      "generation": {
+        "tool": "image_gen",
+        "original": "originals/vanity-directions/vanity-directions-7-eaf4e44fd1d4.png",
+        "originalSHA256": "eaf4e44fd1d4259e6caa87dcfc4b9ce655c27f5863edef2693ed41b216c650cc",
+        "crop": [
+          641,
+          1062,
+          252,
+          443
+        ],
+        "cropRGBA_SHA256": "85b9b51d015ac62445b93904729c23a4d63d3b1cac3fcb979b69d2fb441f43bf",
+        "fileSHA256": "47f8176656e5aa5924a4f542352cca47e0251343f826d5c34371cb009495ddee",
+        "method": "Native crop only. Exact source RGBA and alpha preserved; no geometric warp. Actual silhouette and clear gutters determine crop boundaries."
+      },
+      "reason": "Catalog-wide asset review: remove taper from exposed rectangular slabs and backing planes in parallel2/3 projection, retaining source camera direction, curved bowls and original ornate design."
+    },
+    {
+      "id": "collection-showroom-french-cafe-vanity",
+      "facing": "east",
+      "file": "vanity-directions/collection-showroom-french-cafe-vanity-east-0543208558d5.webp",
+      "width": 209,
+      "height": 446,
+      "x": 0,
+      "y": 0,
+      "w": 209,
+      "h": 446,
+      "draw": {
+        "x": 0,
+        "y": 2.0618554685825075e-07,
+        "w": 61.895238000000006,
+        "h": 133.99999979381445
+      },
+      "source": {
+        "file": "showroom-french-cafe-east-cardinal-347d23126b7b.webp",
+        "frame": {
+          "slot": "vanity",
+          "x": 1390,
+          "y": 632,
+          "w": 97,
+          "h": 210,
+          "digest": "dfe5072d71204312f6ba5b7f485451457f6690341aa24c588820dbfaa9defadd",
+          "viewWidth": 61.895238,
+          "viewHeight": 134,
+          "footCenter": [
+            0.5,
+            0.731343
+          ],
+          "cell": {
+            "x": 1390,
+            "y": 632,
+            "w": 97,
+            "h": 210
+          }
+        },
+        "view": {
+          "w": 61.895238,
+          "h": 134,
+          "footCenter": {
+            "x": 30.947619000000003,
+            "y": 97.99996205539318
+          },
+          "draw": {
+            "x": 0,
+            "y": 2.0618554685825075e-07,
+            "w": 61.895238000000006,
+            "h": 133.99999979381445
+          }
+        }
+      },
+      "generation": {
+        "tool": "image_gen",
+        "original": "originals/vanity-directions/vanity-directions-8-f45ee87b99ae.png",
+        "originalSHA256": "f45ee87b99ae808db5c251e68582ca47c2d82df29a102088ab88ca8efe9ab9d4",
+        "crop": [
+          152,
+          36,
+          209,
+          446
+        ],
+        "cropRGBA_SHA256": "0543208558d5b8fd9dbcd4bb1e1e7ca9fadeb9ed3375566d2c1cca38eba01263",
+        "fileSHA256": "a6c8e1012623cbd7c3c144966d1a7441fbbc0274d11cf894a9a0802c211206e0",
+        "method": "Native crop only. Exact source RGBA and alpha preserved; no geometric warp. Actual silhouette and clear gutters determine crop boundaries."
+      },
+      "reason": "Catalog-wide asset review: remove taper from exposed rectangular slabs and backing planes in parallel2/3 projection, retaining source camera direction, curved bowls and original ornate design."
+    },
+    {
+      "id": "collection-showroom-industrial-loft-vanity",
+      "facing": "east",
+      "file": "vanity-directions/collection-showroom-industrial-loft-vanity-east-feb82f70adb4.webp",
+      "width": 263,
+      "height": 443,
+      "x": 0,
+      "y": 0,
+      "w": 263,
+      "h": 443,
+      "draw": {
+        "x": 3.552713678800501e-15,
+        "y": 29.42222222222223,
+        "w": 62.39999999999999,
+        "h": 104.57777777777777
+      },
+      "source": {
+        "file": "showroom-industrial-loft-east-cardinal-b84b5314871d.webp",
+        "frame": {
+          "slot": "vanity",
+          "x": 564,
+          "y": 983,
+          "w": 108,
+          "h": 181,
+          "digest": "9f609f642072759d40d81faf4fbb83dfa1a3978e1653c1e29c89cf9439457ecc",
+          "viewWidth": 62.4,
+          "viewHeight": 134,
+          "footCenter": [
+            0.5,
+            0.655759
+          ],
+          "cell": {
+            "x": 564,
+            "y": 983,
+            "w": 108,
+            "h": 181
+          }
+        },
+        "view": {
+          "w": 62.4,
+          "h": 134,
+          "footCenter": {
+            "x": 31.2,
+            "y": 98.0000412
+          },
+          "draw": {
+            "x": 3.552713678800501e-15,
+            "y": 29.42222222222223,
+            "w": 62.39999999999999,
+            "h": 104.57777777777777
+          }
+        }
+      },
+      "generation": {
+        "tool": "image_gen",
+        "original": "originals/vanity-directions/vanity-directions-8-f45ee87b99ae.png",
+        "originalSHA256": "f45ee87b99ae808db5c251e68582ca47c2d82df29a102088ab88ca8efe9ab9d4",
+        "crop": [
+          637,
+          39,
+          263,
+          443
+        ],
+        "cropRGBA_SHA256": "feb82f70adb42eeac56a762700e9e45683f7dfb56dd698fb60f0eedb4ac854e9",
+        "fileSHA256": "03c1aedb5075866aeed936d0ab661dbce5ed77280a87a71c5c333fb4040eac9b",
+        "method": "Native crop only. Exact source RGBA and alpha preserved; no geometric warp. Actual silhouette and clear gutters determine crop boundaries."
+      },
+      "reason": "Catalog-wide asset review: remove taper from exposed rectangular slabs and backing planes in parallel2/3 projection, retaining source camera direction, curved bowls and original ornate design."
+    },
+    {
+      "id": "collection-showroom-cyberpunk-vanity",
+      "facing": "east",
+      "file": "vanity-directions/collection-showroom-cyberpunk-vanity-east-85944d2ac4c9.webp",
+      "width": 244,
+      "height": 441,
+      "x": 0,
+      "y": 0,
+      "w": 244,
+      "h": 441,
+      "draw": {
+        "x": 0,
+        "y": 23.685714285714283,
+        "w": 62.400000000000006,
+        "h": 110.31428571428572
+      },
+      "source": {
+        "file": "showroom-cyberpunk-east-cardinal-a5453896aa75.webp",
+        "frame": {
+          "slot": "vanity",
+          "x": 746,
+          "y": 543,
+          "w": 112,
+          "h": 198,
+          "digest": "6b762fa1db24893a48fd61e563120a73600885b7b017ef07138479b990e03b6d",
+          "viewWidth": 62.4,
+          "viewHeight": 134,
+          "footCenter": [
+            0.5,
+            0.67366
+          ],
+          "cell": {
+            "x": 746,
+            "y": 543,
+            "w": 112,
+            "h": 198
+          }
+        },
+        "view": {
+          "w": 62.4,
+          "h": 134,
+          "footCenter": {
+            "x": 31.200000000000003,
+            "y": 98.00003600000001
+          },
+          "draw": {
+            "x": 0,
+            "y": 23.685714285714283,
+            "w": 62.400000000000006,
+            "h": 110.31428571428572
+          }
+        }
+      },
+      "generation": {
+        "tool": "image_gen",
+        "original": "originals/vanity-directions/vanity-directions-8-f45ee87b99ae.png",
+        "originalSHA256": "f45ee87b99ae808db5c251e68582ca47c2d82df29a102088ab88ca8efe9ab9d4",
+        "crop": [
+          137,
+          550,
+          244,
+          441
+        ],
+        "cropRGBA_SHA256": "85944d2ac4c9576a73a191e5f13ffe93575ff8f76032be905f44ddaac5b695f7",
+        "fileSHA256": "7fdc3ba2a6dd5af6ca171aa768ee6d4bc5324ea0015f68acd1221dd2193418f8",
+        "method": "Native crop only. Exact source RGBA and alpha preserved; no geometric warp. Actual silhouette and clear gutters determine crop boundaries."
+      },
+      "reason": "Catalog-wide asset review: remove taper from exposed rectangular slabs and backing planes in parallel2/3 projection, retaining source camera direction, curved bowls and original ornate design."
+    }
+  ]
+}

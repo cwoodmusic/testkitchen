@@ -2,8 +2,8 @@ import {assetImage} from './asset-color.mjs?v=opera-parallax-1';
 import {SHOWROOMS,applyShowroomLayout} from './showroom-layout.mjs?v=town-room-placement-2';
 import {drawShowroomThemeSign} from './showroom-signs.mjs?v=town-store-halls-1';
 import {applyShowroomApartment} from './showroom-apartments.mjs?v=town-room-placement-2';
-import {drawShowroomFloor,drawShowroomWallpaper} from './showroom-materials.mjs?v=town-victorian-default-1';
-import {applyHomeMaterialSuite,fitCompactKitchenFloor,warmHomeMaterials,drawHomeMaterialRug} from './home-materials.mjs?v=town-victorian-default-1';
+import {drawShowroomFloor,drawShowroomWallpaper} from './showroom-materials.mjs?v=town-library-review-1';
+import {applyHomeMaterialSuite,fitCompactKitchenFloor,warmHomeMaterials,drawHomeMaterialRug} from './home-materials.mjs?v=town-library-review-1';
 import {drawTowerCommonSurfaces,drawTowerCommonStairs,towerCommonMaterialsReady,warmTowerCommonMaterials} from './tower-common-materials.mjs?v=opera-parallax-1';
 import {drawInteriorDoor,drawPrivacyDoor,drawElevatorPortal,getElevatorVisualGeometry,interiorPortalVisualDepth,warmInteriorPortalArt} from './interior-portal-art.mjs?v=opera-parallax-1';
 import {applyTowerCommonArchitecture} from './tower-common-architecture.mjs?v=opera-parallax-1';
@@ -12,7 +12,7 @@ import {calibratePrivateFurniture,presentedRoomItem} from './private-furniture.m
 import {normalizeInteriorDoorways} from './interior-doorways.mjs?v=opera-parallax-1';
 import {drawInteriorWindow,warmInteriorWindows} from './interior-window-art.mjs?v=opera-parallax-1';
 import {drawInteriorWallNetwork} from './interior-wall-art.mjs?v=town-victorian-4';
-import {createRoomLayoutResolver} from './room-layout-runtime.mjs?v=town-room-floorplan-1';
+import {createRoomLayoutResolver} from './room-layout-runtime.mjs?v=town-library-review-1';
 import {createPlayerRoomSourceResolver} from './player-room-source.mjs?v=town-compact-island-1';
 export {apartmentDecorBounds,apartmentDecorFootBounds,apartmentWallDecorBounds} from './personal-room-areas.mjs?v=town-compact-island-1';
 import {getConcertHall,renderConcertHallBackground,concertHallDrawables} from './concert-hall.mjs?v=town-flight-1';
@@ -25,9 +25,9 @@ import {furnitureFacingPlacement,furnitureFacingDepth,furnitureFacingBoxes,furni
 import {drawFurnitureContactShadow} from './furniture-contact-shadow.mjs?v=town-room-placement-2';
 import {expandWideRoomShell,getInteriorVisualBounds} from './wide-room-shell.mjs?v=town-wide-rooms-1';
 import {drawWideRoomSouthExterior,drawWideRoomEntrance} from './wide-room-frontage.mjs?v=town-wide-rooms-1';
-import {wideRoomPartitionDrawables,clearWideRoomPartitionCache} from './wide-room-partitions.mjs?v=town-wide-rooms-1';
+import {wideRoomPartitionDrawables,clearWideRoomPartitionCache} from './wide-room-partitions.mjs?v=town-library-review-1';
 import {applyWideRoomLayout} from './wide-room-layout.mjs?v=town-compact-island-1';
-import {applyApprovedRoomLayout} from './approved-room-layout.mjs?v=town-room-floorplan-1';
+import {applyApprovedRoomLayout} from './approved-room-layout.mjs?v=town-library-review-1';
 import {preparePlacedFacingArt} from './furniture-art-access.mjs?v=opera-parallax-1';
 // Public tower floors retain their original halls and 2304 × 1728 lot.
 // Private scenes use the shared wide layout; saved designs retain their shell.

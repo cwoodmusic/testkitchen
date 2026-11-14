@@ -71,8 +71,45 @@ try:
         assert page.evaluate('''async({runtime,lawn,module})=>{
           const {catalog}=await import(runtime),{assetMapImage}=await import(lawn),{drawFountainMotion}=await import(module),a=catalog.get('props-0-360'),image=assetMapImage(a),cv=document.createElement('canvas');cv.width=a.w;cv.height=a.h;const c=cv.getContext('2d');c.drawImage(image,0,0);const before=c.getImageData(0,0,a.w,a.h).data;drawFountainMotion(c,a,image,1);const after=c.getImageData(0,0,a.w,a.h).data;return before.every((v,i)=>v===after[i]);
         }''', info)
+        page.goto(base+'/town/asset-review/')
+        page.wait_for_function('!!window.townAssetReview', timeout=90000)
+        page.emulate_media(reduced_motion='no-preference')
+        previews = page.evaluate('''async()=>{
+          const {prepareAssetPreview,availableFacings}=await import('./preview.mjs?v=town-asset-review-1');
+          const {fountainRegion,fountainMask}=await import('../world/fountain-motion.mjs?v=opera-parallax-1'),results=[];
+          for(const a of townAssetReview.catalog.values())if(/fountain/i.test(a.name)||a.id==='music-square')for(const facing of availableFacings(a)){
+            const preview=await prepareAssetPreview(a,facing),cv=document.createElement('canvas');cv.width=preview.width;cv.height=preview.height;const c=cv.getContext('2d');
+            preview.draw(c,0);const before=c.getImageData(0,0,cv.width,cv.height).data,region=fountainRegion(a,cv.width,cv.height),water=fountainMask(c.getImageData(region.x,region.y,region.w,region.h));
+            c.clearRect(0,0,cv.width,cv.height);preview.draw(c,.75);const after=c.getImageData(0,0,cv.width,cv.height).data;
+            let changed=0,architectureChanges=0;
+            for(let y=0;y<cv.height;y++)for(let x=0;x<cv.width;x++){
+              const i=(y*cv.width+x)*4;if(before[i]===after[i]&&before[i+1]===after[i+1]&&before[i+2]===after[i+2]&&before[i+3]===after[i+3])continue;
+              changed++;const X=x-region.x,Y=y-region.y;if(X<0||Y<0||X>=region.w||Y>=region.h||!water.mask[Y*region.w+X])architectureChanges++;
+            }
+            c.filter='brightness(.6)';c.globalAlpha=.7;c.imageSmoothingEnabled=true;const saved={filter:c.filter,alpha:c.globalAlpha,smoothing:c.imageSmoothingEnabled};preview.draw(c,1.25);
+            results.push({id:a.id,facing,changed,architectureChanges,animated:preview.animated,stateRestored:c.filter===saved.filter&&c.globalAlpha===saved.alpha&&c.imageSmoothingEnabled===saved.smoothing});
+          }
+          window.previewSignature=()=>{const cv=document.querySelector('#preview'),data=cv.getContext('2d').getImageData(0,0,cv.width,cv.height).data;let hash=0;for(let i=0;i<data.length;i+=4)hash=(Math.imul(hash,31)+data[i]+data[i+1]+data[i+2]+data[i+3])|0;return hash;};
+          await townAssetReview.goTo('props-0-360');window.firstPreview=previewSignature();return results;
+        }''')
+        for item in previews:
+            assert item['animated'] and item['stateRestored'], item
+            assert item['architectureChanges'] == 0, item
+            if item['id'] == 'decor-06-09' and item['facing'] == 'north':
+                assert item['changed'] == 0, item  # The dry back hides the basin.
+            else:
+                assert item['changed'] > 50, item
+        page.wait_for_function('previewSignature() !== firstPreview', timeout=5000)
+        page.emulate_media(reduced_motion='reduce')
+        page.evaluate('window.firstPreview=previewSignature()')
+        page.wait_for_timeout(250)
+        assert page.evaluate('previewSignature()===firstPreview'), 'Reduced motion must freeze the fountain preview'
+        page.emulate_media(reduced_motion='no-preference')
+        page.evaluate("async()=>{await townAssetReview.goTo('props-1-150');window.firstPreview=previewSignature();}")
+        page.wait_for_timeout(250)
+        assert page.evaluate('previewSignature()===firstPreview'), 'Static library assets must not animate'
         assert not errors, errors
-        print('Fountain motion browser checks passed:', result)
+        print('Fountain motion browser checks passed:', result, 'Reviewer views:', previews)
         browser.close()
 finally:
     server.shutdown()

@@ -1,4 +1,9 @@
-import {drawHomeMaterialFloor,drawHomeMaterialWallpaper} from './home-materials.mjs?v=town-victorian-default-1';
+import {drawHomeMaterialFloor,drawHomeMaterialWallpaper,prepareHomeMaterialFinish} from './home-materials.mjs?v=town-library-review-1';
+
+// Keep material previews on the same decoded-image cache as room painting.
+export function prepareShowroomFinish(finish,kind){
+ return prepareHomeMaterialFinish(finish,kind,{retryFailed:true});
+}
 // Small, repeatable pixel textures keep the eight room finishes at the same
 // scale as the native furniture. They are painted once, then cached with the
 // interior background; no texture work runs in the animation loop.

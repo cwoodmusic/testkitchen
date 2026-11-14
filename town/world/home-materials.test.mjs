@@ -49,6 +49,63 @@ test('repeated room warmups reuse decoded bitmaps and never create DOM images',a
  finally{for(const [key,value]of Object.entries(old)){if(value===undefined)delete globalThis[key];else globalThis[key]=value;}}
 });
 
+test('strict material review reports cached404 failures, retries once and shares the recovered bitmap with game drawing',async()=>{
+ const old={document:globalThis.document,fetch:globalThis.fetch,createImageBitmap:globalThis.createImageBitmap};
+ const requests=[],bitmap={width:192,height:96};let finishRetry,decodes=0;
+ globalThis.document={createElement(){throw Error('Native warming does not need a canvas');}};
+ globalThis.fetch=async(url,options)=>{
+  requests.push({url:String(url),options});
+  if(requests.length===1)return {ok:false,status:404};
+  return new Promise(resolve=>{finishRetry=()=>resolve({ok:true,blob:async()=>({})});});
+ };
+ globalThis.createImageBitmap=async()=>{decodes++;return bitmap;};
+ try{
+  const material=await import('./home-materials.mjs?strict-review-retry-test');
+  const finish={homeMaterial:true,texture:'review-floor.webp',colors:['#ffffff']},suite={assets:[finish.texture]};
+  await material.warmHomeMaterials(suite);
+  await material.warmHomeMaterials(suite);
+  assert.equal(requests.length,1,'Game fallback retains its existing cached failure behavior');
+  await assert.rejects(material.prepareHomeMaterialFinish(finish,'floor'),/review-floor\.webp.*404/);
+  assert.equal(requests.length,1,'Strict validation does not retry unless explicitly requested');
+  const a=material.prepareHomeMaterialFinish(finish,'floor',{retryFailed:true});
+  const b=material.prepareHomeMaterialFinish(finish,'floor',{retryFailed:true});
+  await Promise.resolve();
+  assert.equal(requests.length,2,'Concurrent retries share the single in-flight request');
+  assert.equal(requests[1].options.cache,'reload','Retry bypasses a cached HTTP failure');
+  finishRetry();await Promise.all([a,b]);
+  await material.prepareHomeMaterialFinish(finish,'floor',{retryFailed:true});
+  await material.warmHomeMaterials(suite);
+  assert.equal(requests.length,2);assert.equal(decodes,1);
+  const patterns=[],c={save(){},restore(){},beginPath(){},rect(){},clip(){},fillRect(){},createPattern(image){patterns.push(image);return {setTransform(){}};}};
+  material.drawHomeMaterialFloor(c,{x:0,y:0,w:32,h:32,floorFinish:finish});
+  assert.equal(patterns[0],bitmap,'Game painting reads the same recovered image cache');
+ }finally{for(const [key,value]of Object.entries(old)){if(value===undefined)delete globalThis[key];else globalThis[key]=value;}}
+});
+
+test('strict finish preparation loads only the native files used by that floor or wall',async()=>{
+ const old={document:globalThis.document,fetch:globalThis.fetch,createImageBitmap:globalThis.createImageBitmap};
+ const files=[];let dadoAttempts=0;
+ globalThis.document={};
+ globalThis.fetch=async url=>{
+  const file=new URL(url).pathname.split('/').at(-1);files.push(file);
+  if(file==='review-dado.webp'&&++dadoAttempts===1)return {ok:false,status:404};
+  return {ok:true,blob:async()=>({})};
+ };
+ globalThis.createImageBitmap=async()=>({width:64,height:64});
+ try{
+  const material=await import('./home-materials.mjs?strict-review-required-files-test');
+  await material.prepareHomeMaterialFinish({homeMaterial:true,surfaceStyle:'carpet',texture:'unused-floor.webp',trimTexture:'unused-floor-trim.webp'},'floor');
+  await material.prepareHomeMaterialFinish({homeMaterial:true,surfaceStyle:'ceramic-wall',texture:'unused-wall.webp',trimTexture:'unused-scroll.webp',trimPresentation:{style:'complete-scroll'}},'wall');
+  assert.deepEqual(files,[],'Procedural surfaces and complete-scroll trim need no native PNG');
+  await material.prepareHomeMaterialFinish({homeMaterial:true,texture:'review-paper.webp',trimTexture:'unused-scroll.webp',trimPresentation:{style:'complete-scroll'}},'wall');
+  assert.deepEqual(files,['review-paper.webp'],'Procedural trim does not hide failure or cause a redundant fetch');
+  const paper={homeMaterial:true,texture:'review-paper.webp',trimTexture:'review-dado.webp'};
+  await assert.rejects(material.prepareHomeMaterialFinish(paper,'wall'),/review-dado\.webp.*404/);
+  await material.prepareHomeMaterialFinish(paper,'wall',{retryFailed:true});
+  assert.deepEqual(files,['review-paper.webp','review-dado.webp','review-dado.webp'],'Retry reloads only the failed trim and retains the ready paper');
+ }finally{for(const [key,value]of Object.entries(old)){if(value===undefined)delete globalThis[key];else globalThis[key]=value;}}
+});
+
 
 test('bedrooms, kitchens, living rooms and bathrooms get separate appropriate finishes without changing their floor regions',()=>{
  const roles=['apartment','bedroom','kitchen','dining','living','bathroom'];

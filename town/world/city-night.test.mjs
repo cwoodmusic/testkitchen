@@ -12,6 +12,21 @@ test('directional lamp glow follows the upright view at every facing without loa
  }
 });
 
+test('street lamps share a wider reach across original props, decor, plaza and authored fixtures',()=>{
+ const fixtures=[['props-2-65',465,1],['decor-14-01',465,1],['decor-14-02',397.5,2],['music-square',480,4],['authored-road-lamp',645,1]];
+ for(const [id,radius,count]of fixtures){
+  const asset={id,w:500,h:700,...(id==='authored-road-lamp'?{lightEmitters:[{u:.75,v:.3,kind:'lamp',radius:430,power:1.1,color:[118,230,255]}]}:{})};
+  const doc={cells:{},objects:[{asset:id,x:1000,y:1000,scale:2,rotation:0}]},before=JSON.stringify(doc),lights=cityLights(doc,new Map([[id,asset]]));
+  assert.equal(lights.length,count);
+  for(const light of lights){assert.equal(light.radius,radius*2);assert(light.gy>light.y);assert(Object.values(cityLightBounds(light)).every(Number.isFinite));}
+  assert.equal(JSON.stringify(doc),before,'Widening a light must not alter its saved placement');
+ }
+ const asset={id:'mixed-fixture',w:500,h:700,lightEmitters:['lamp','window','neon','door','uplight'].map(kind=>({u:.5,v:.5,kind,radius:200,power:.8}))};
+ const doc={cells:{},objects:[{asset:asset.id,x:1000,y:1000,scale:1,rotation:0}]},lights=cityLights(doc,new Map([[asset.id,asset]]));
+ assert.deepEqual(lights.map(light=>light.radius),[300,200,200,200,200]);
+ assert(lights.every(light=>light.power===.8),'The wider lamp retains its soft authored brightness');
+});
+
 function context(){
  const stack=[];
  return {
@@ -110,6 +125,19 @@ test('moving and flashing insects reuse cached glow brushes without per-frame ca
   renderCityNight(c,doc,cam,1280,800,0,{catalog});const before={canvases,gradients};
   for(let n=1;n<90;n++)renderCityNight(c,doc,cam,1280,800,n/60,{catalog});
   assert.deepEqual({canvases,gradients},before,'Flashing changes alpha and flight position, not the cached gradient pixels');
+ }finally{if(original===undefined)delete globalThis.document;else globalThis.document=original;}
+});
+
+test('expanded real lamppost fields keep their offscreen reach and reuse cached rasters across frames',()=>{
+ const original=globalThis.document;let canvases=0,gradients=0;
+ globalThis.document={createElement(){canvases++;const c=context();c.createRadialGradient=()=>{gradients++;return {addColorStop(){}};};return {width:0,height:0,getContext:()=>c};}};
+ try{
+  const asset={id:'props-2-65',w:65,h:126},catalog=new Map([[asset.id,asset]]),doc={cells:{},objects:[{asset:asset.id,x:600,y:400,scale:1,rotation:0}]},cam={x:0,y:400,zoom:1},c=context(),[lamp]=cityLights(doc,catalog);
+  assert(cityLightVisible(lamp,cam,200,200),'Its wider halo remains visible while the lamppost is offscreen');
+  renderCityNight(c,doc,cam,200,200,0,{catalog});const allocated={canvases,gradients};
+  for(let frame=1;frame<=60;frame++)renderCityNight(c,doc,cam,200,200,frame/60,{catalog,darkness:frame/60});
+  assert.deepEqual({canvases,gradients},allocated,'Light reach must not cause per-frame gradient or canvas work');
+  assert.equal(c.stackDepth,0);assert.equal(c.globalAlpha,1);assert.equal(c.globalCompositeOperation,'source-over');
  }finally{if(original===undefined)delete globalThis.document;else globalThis.document=original;}
 });
 

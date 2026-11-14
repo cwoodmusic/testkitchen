@@ -1,6 +1,6 @@
 import {APPROVED_ROOM_LAYOUTS,APPROVED_ROOM_LAYOUT_SOURCE_SHA256} from './approved-room-layout-data.mjs?v=town-room-floorplan-1';
 import {cloneRoomLayoutScene} from './room-layout-sources.mjs?v=town-wide-layout-1';
-import {roomLayoutSignature} from './room-layout-model.mjs?v=town-room-floorplan-1';
+import {roomLayoutSignature} from './room-layout-model.mjs?v=town-library-review-1';
 import {furnitureFacingBoxes,furnitureFacingDepth} from './furniture-facing.mjs?v=opera-parallax-1';
 import {refreshRoomLayoutNavigation} from './room-layout-navigation.mjs?v=town-room-floorplan-1';
 

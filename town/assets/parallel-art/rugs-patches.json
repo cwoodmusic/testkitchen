@@ -1,0 +1,703 @@
+{
+  "version": 1,
+  "scope": "7 live source rugs,12 catalog assets including5 family derivatives",
+  "createdAt": "2026-11-14",
+  "projectionRule": "Parallel oblique 2/3: corresponding straight physical edges have equal north/south widths; depth edges parallel. Printed stripe spacing constant. Preserve real round/scalloped motifs. User notes saying3/4 mean this same rule.",
+  "counts": {
+    "collectionSourceFramesInspected": 124,
+    "liveCollectionRugsInspected": 31,
+    "originalApartmentRugsInspected": 2,
+    "correctedSourceFiles": 7,
+    "derivedAssetsCovered": 5,
+    "catalogAssetsCovered": 12,
+    "existingCollectionRugsRetained": 26
+  },
+  "packing": "Accepted PNGs are exact rectangular crops of imageGen output only. Alpha>8 was used only to identify crop bounds; all pixel RGBA values inside crops are unchanged. Keep generated originals as provenance. Crop includes4px safety margin. Draw rect explicit preserves previous canvas/anchor; record angle correction uses shallow ellipse bottom-aligned inside same160x160 canvas.",
+  "patches": [
+    {
+      "id": "collection-beethoven-rug",
+      "facing": "south",
+      "owner": "beethoven",
+      "sourceBefore": {
+        "file": "town/assets/apartment-collections/beethoven-south-cardinal-3fc2dcbe24c1.webp",
+        "x": 1043,
+        "y": 1976,
+        "w": 213,
+        "h": 146
+      },
+      "world": {
+        "w": 180,
+        "h": 112,
+        "footCenter": {
+          "x": 90.0,
+          "y": 112
+        }
+      },
+      "drawRectBefore": {
+        "x": 8.301369863013704,
+        "y": 0.0,
+        "w": 163.3972602739726,
+        "h": 112.0
+      },
+      "drawRect": {
+        "x": 8.301369863013704,
+        "y": 0.0,
+        "w": 163.3972602739726,
+        "h": 112.0
+      },
+      "generatedBoardSHA256": "a3698da0f1c11fe3263fdff08c07b3daec48c2a820c4289f2c295bf3c40b3e5e",
+      "boardCell": [
+        0,
+        0,
+        1611,
+        976
+      ],
+      "extractionCrop": [
+        71,
+        23,
+        1540,
+        933
+      ],
+      "acceptedWidth": 1469,
+      "acceptedHeight": 910,
+      "acceptedSHA256": "7cb7279814e3fc8fb897c35d35b8bbd6d26ce4408cf4f4c68dfdf97e5976e64f",
+      "derivedAssetIds": [
+        "family-beethoven-rug"
+      ],
+      "evidenceBefore": {
+        "landmark": "Sewn rectangular border just inside loose fringe",
+        "farLeft": [
+          26,
+          21
+        ],
+        "farRight": [
+          190,
+          21
+        ],
+        "nearLeft": [
+          9,
+          119
+        ],
+        "nearRight": [
+          202,
+          119
+        ],
+        "farWidthPixels": 164,
+        "nearWidthPixels": 193,
+        "nearFarRatio": 1.1768292682926829,
+        "coordinatesApproximate": true
+      },
+      "inspectionApproved": true,
+      "artChanges": "Faithful image-generation projection correction, preserving detailed material/colors/motifs; no mathematical warping.",
+      "file": "collection-beethoven-rug-south.webp",
+      "width": 1469,
+      "height": 910,
+      "x": 0,
+      "y": 0,
+      "w": 1469,
+      "h": 910,
+      "draw": {
+        "x": 8.301369863013704,
+        "y": 0.0,
+        "w": 163.3972602739726,
+        "h": 112.0
+      },
+      "generation": {
+        "tool": "image_gen",
+        "original": "originals/exec-51b16286-181d-49b3-9af6-3528fe63d9f1.png",
+        "originalSHA256": "a3698da0f1c11fe3263fdff08c07b3daec48c2a820c4289f2c295bf3c40b3e5e",
+        "crop": [
+          71,
+          23,
+          1540,
+          933
+        ]
+      }
+    },
+    {
+      "id": "collection-schoenberg-rug",
+      "facing": "south",
+      "owner": "schoenberg",
+      "sourceBefore": {
+        "file": "town/assets/apartment-collections/schoenberg-south-cardinal-ddb71057d306.webp",
+        "x": 419,
+        "y": 2112,
+        "w": 214,
+        "h": 149
+      },
+      "world": {
+        "w": 180,
+        "h": 112,
+        "footCenter": {
+          "x": 90.0,
+          "y": 112
+        }
+      },
+      "drawRectBefore": {
+        "x": 9.570469798657712,
+        "y": 0.0,
+        "w": 160.85906040268458,
+        "h": 112.0
+      },
+      "drawRect": {
+        "x": 9.570469798657712,
+        "y": 0.0,
+        "w": 160.85906040268458,
+        "h": 112.0
+      },
+      "generatedBoardSHA256": "3952de2ab3aa9db6c8a11263d8e0ae44d4dee46c3a3ccd0157244d911d017b99",
+      "boardCell": [
+        0,
+        0,
+        768,
+        512
+      ],
+      "extractionCrop": [
+        134,
+        38,
+        708,
+        460
+      ],
+      "acceptedWidth": 574,
+      "acceptedHeight": 422,
+      "acceptedSHA256": "a85fec629b7fdd99d75fd01bfbccec2888141f52516e7e870bf0ec8540b08e6f",
+      "derivedAssetIds": [
+        "family-schoenberg-rug"
+      ],
+      "evidenceBefore": {
+        "landmark": "Sewn rectangular patchwork body excluding fringe",
+        "farLeft": [
+          15,
+          17
+        ],
+        "farRight": [
+          198,
+          17
+        ],
+        "nearLeft": [
+          6,
+          124
+        ],
+        "nearRight": [
+          207,
+          124
+        ],
+        "farWidthPixels": 183,
+        "nearWidthPixels": 201,
+        "nearFarRatio": 1.098360655737705,
+        "coordinatesApproximate": true
+      },
+      "inspectionApproved": true,
+      "artChanges": "Faithful image-generation projection correction, preserving detailed material/colors/motifs; no mathematical warping.",
+      "file": "collection-schoenberg-rug-south.webp",
+      "width": 574,
+      "height": 422,
+      "x": 0,
+      "y": 0,
+      "w": 574,
+      "h": 422,
+      "draw": {
+        "x": 9.570469798657712,
+        "y": 0.0,
+        "w": 160.85906040268458,
+        "h": 112.0
+      },
+      "generation": {
+        "tool": "image_gen",
+        "original": "originals/exec-b45f0d81-fa06-4859-b2fd-ce12e473788f.png",
+        "originalSHA256": "3952de2ab3aa9db6c8a11263d8e0ae44d4dee46c3a3ccd0157244d911d017b99",
+        "crop": [
+          134,
+          38,
+          708,
+          460
+        ]
+      }
+    },
+    {
+      "id": "collection-showroom-robot-rug",
+      "facing": "south",
+      "owner": "showroom-robot",
+      "sourceBefore": {
+        "file": "town/assets/apartment-collections/showroom-robot.webp",
+        "x": 1,
+        "y": 1371,
+        "w": 220,
+        "h": 150
+      },
+      "world": {
+        "w": 180,
+        "h": 112,
+        "footCenter": {
+          "x": 90.0,
+          "y": 112
+        }
+      },
+      "drawRectBefore": {
+        "x": 7.86666666666666,
+        "y": 0.0,
+        "w": 164.26666666666668,
+        "h": 112.0
+      },
+      "drawRect": {
+        "x": 7.86666666666666,
+        "y": 0.0,
+        "w": 164.26666666666668,
+        "h": 112.0
+      },
+      "generatedBoardSHA256": "3952de2ab3aa9db6c8a11263d8e0ae44d4dee46c3a3ccd0157244d911d017b99",
+      "boardCell": [
+        768,
+        0,
+        1536,
+        512
+      ],
+      "extractionCrop": [
+        830,
+        39,
+        1408,
+        464
+      ],
+      "acceptedWidth": 578,
+      "acceptedHeight": 425,
+      "acceptedSHA256": "139612199b754685ed3dfdfc3b72545d0870fc35a1ddfe7ba6a65d7e456a34b8",
+      "derivedAssetIds": [
+        "family-showroom-robot-rug"
+      ],
+      "evidenceBefore": {
+        "landmark": "Straight left/right sides of yellow woven body, sampled clear of rounded corners",
+        "farLeft": [
+          15,
+          30
+        ],
+        "farRight": [
+          205,
+          30
+        ],
+        "nearLeft": [
+          9,
+          115
+        ],
+        "nearRight": [
+          212,
+          115
+        ],
+        "farWidthPixels": 190,
+        "nearWidthPixels": 203,
+        "nearFarRatio": 1.068421052631579,
+        "coordinatesApproximate": true
+      },
+      "inspectionApproved": true,
+      "artChanges": "Faithful image-generation projection correction, preserving detailed material/colors/motifs; no mathematical warping.",
+      "file": "collection-showroom-robot-rug-south.webp",
+      "width": 578,
+      "height": 425,
+      "x": 0,
+      "y": 0,
+      "w": 578,
+      "h": 425,
+      "draw": {
+        "x": 7.86666666666666,
+        "y": 0.0,
+        "w": 164.26666666666668,
+        "h": 112.0
+      },
+      "generation": {
+        "tool": "image_gen",
+        "original": "originals/exec-b45f0d81-fa06-4859-b2fd-ce12e473788f.png",
+        "originalSHA256": "3952de2ab3aa9db6c8a11263d8e0ae44d4dee46c3a3ccd0157244d911d017b99",
+        "crop": [
+          830,
+          39,
+          1408,
+          464
+        ]
+      }
+    },
+    {
+      "id": "collection-showroom-rustic-kitchen-rug",
+      "facing": "south",
+      "owner": "showroom-rustic-kitchen",
+      "sourceBefore": {
+        "file": "town/assets/apartment-collections/showroom-rustic-kitchen-south-cardinal-2ef940449755.webp",
+        "x": 778,
+        "y": 1673,
+        "w": 218,
+        "h": 163
+      },
+      "world": {
+        "w": 180,
+        "h": 112,
+        "footCenter": {
+          "x": 90.0,
+          "y": 112
+        }
+      },
+      "drawRectBefore": {
+        "x": 15.104294478527606,
+        "y": 0.0,
+        "w": 149.7914110429448,
+        "h": 112.0
+      },
+      "drawRect": {
+        "x": 15.104294478527606,
+        "y": 0.0,
+        "w": 149.7914110429448,
+        "h": 112.0
+      },
+      "generatedBoardSHA256": "3952de2ab3aa9db6c8a11263d8e0ae44d4dee46c3a3ccd0157244d911d017b99",
+      "boardCell": [
+        0,
+        512,
+        768,
+        1024
+      ],
+      "extractionCrop": [
+        131,
+        532,
+        710,
+        978
+      ],
+      "acceptedWidth": 579,
+      "acceptedHeight": 446,
+      "acceptedSHA256": "1557f814e52ee3ffa086305d3e6c813fb637792d80af7a202a94d1ead57ca786",
+      "derivedAssetIds": [
+        "family-showroom-rustic-kitchen-rug"
+      ],
+      "evidenceBefore": {
+        "landmark": "Four structural corner-knot centers, not outer loose loops",
+        "farLeft": [
+          35,
+          23
+        ],
+        "farRight": [
+          181,
+          23
+        ],
+        "nearLeft": [
+          31,
+          132
+        ],
+        "nearRight": [
+          186,
+          132
+        ],
+        "farWidthPixels": 146,
+        "nearWidthPixels": 155,
+        "nearFarRatio": 1.0616438356164384,
+        "coordinatesApproximate": true
+      },
+      "inspectionApproved": true,
+      "artChanges": "Faithful image-generation projection correction, preserving detailed material/colors/motifs; no mathematical warping.",
+      "file": "collection-showroom-rustic-kitchen-rug-south.webp",
+      "width": 579,
+      "height": 446,
+      "x": 0,
+      "y": 0,
+      "w": 579,
+      "h": 446,
+      "draw": {
+        "x": 15.104294478527606,
+        "y": 0.0,
+        "w": 149.7914110429448,
+        "h": 112.0
+      },
+      "generation": {
+        "tool": "image_gen",
+        "original": "originals/exec-b45f0d81-fa06-4859-b2fd-ce12e473788f.png",
+        "originalSHA256": "3952de2ab3aa9db6c8a11263d8e0ae44d4dee46c3a3ccd0157244d911d017b99",
+        "crop": [
+          131,
+          532,
+          710,
+          978
+        ]
+      }
+    },
+    {
+      "id": "collection-showroom-french-cafe-rug",
+      "facing": "south",
+      "owner": "showroom-french-cafe",
+      "sourceBefore": {
+        "file": "town/assets/apartment-collections/showroom-french-cafe-south-cardinal-13eb0016c6c1.webp",
+        "x": 1438,
+        "y": 713,
+        "w": 208,
+        "h": 191
+      },
+      "world": {
+        "w": 180,
+        "h": 112,
+        "footCenter": {
+          "x": 90.0,
+          "y": 112
+        }
+      },
+      "drawRectBefore": {
+        "x": 29.01570680628273,
+        "y": 1.4210854715202004e-14,
+        "w": 121.96858638743454,
+        "h": 111.99999999999999
+      },
+      "drawRect": {
+        "x": 29.01570680628273,
+        "y": 1.4210854715202004e-14,
+        "w": 121.96858638743454,
+        "h": 111.99999999999999
+      },
+      "generatedBoardSHA256": "3952de2ab3aa9db6c8a11263d8e0ae44d4dee46c3a3ccd0157244d911d017b99",
+      "boardCell": [
+        768,
+        512,
+        1536,
+        1024
+      ],
+      "extractionCrop": [
+        874,
+        519,
+        1364,
+        986
+      ],
+      "acceptedWidth": 490,
+      "acceptedHeight": 467,
+      "acceptedSHA256": "9a754e34780ea11c7da8beb9d77157d4688a88ce136108ce5b22ad4962f51d1e",
+      "derivedAssetIds": [
+        "family-showroom-french-cafe-rug"
+      ],
+      "evidenceBefore": {
+        "landmark": "Two corresponding pink stripe boundaries within center textile, excluding scalloped outline",
+        "farLeft": [
+          80,
+          48
+        ],
+        "farRight": [
+          136,
+          48
+        ],
+        "nearLeft": [
+          73,
+          145
+        ],
+        "nearRight": [
+          142,
+          145
+        ],
+        "farWidthPixels": 56,
+        "nearWidthPixels": 69,
+        "nearFarRatio": 1.2321428571428572,
+        "coordinatesApproximate": true
+      },
+      "inspectionApproved": true,
+      "artChanges": "Faithful image-generation projection correction, preserving detailed material/colors/motifs; no mathematical warping.",
+      "file": "collection-showroom-french-cafe-rug-south.webp",
+      "width": 490,
+      "height": 467,
+      "x": 0,
+      "y": 0,
+      "w": 490,
+      "h": 467,
+      "draw": {
+        "x": 29.01570680628273,
+        "y": 1.4210854715202004e-14,
+        "w": 121.96858638743454,
+        "h": 111.99999999999999
+      },
+      "generation": {
+        "tool": "image_gen",
+        "original": "originals/exec-b45f0d81-fa06-4859-b2fd-ce12e473788f.png",
+        "originalSHA256": "3952de2ab3aa9db6c8a11263d8e0ae44d4dee46c3a3ccd0157244d911d017b99",
+        "crop": [
+          874,
+          519,
+          1364,
+          986
+        ]
+      }
+    },
+    {
+      "id": "apartment-record-rug",
+      "facing": "south",
+      "owner": null,
+      "sourceBefore": {
+        "file": "town/assets/apartments/record-rug.png",
+        "x": 0,
+        "y": 0,
+        "w": 294,
+        "h": 254
+      },
+      "world": {
+        "w": 160,
+        "h": 160,
+        "footCenter": {
+          "x": 80.0,
+          "y": 160
+        }
+      },
+      "drawRectBefore": {
+        "x": -1.4210854715202004e-14,
+        "y": 21.768707482993193,
+        "w": 160.00000000000003,
+        "h": 138.2312925170068
+      },
+      "drawRect": {
+        "x": 0,
+        "y": 61.51150054764513,
+        "w": 160,
+        "h": 98.48849945235487
+      },
+      "generatedBoardSHA256": "8897ee5fc2d3c1989e8d57b4a617048dcffb11efa10e2d51a0c8df8770aec907",
+      "boardCell": [
+        0,
+        0,
+        1000,
+        724
+      ],
+      "extractionCrop": [
+        27,
+        78,
+        940,
+        640
+      ],
+      "acceptedWidth": 913,
+      "acceptedHeight": 562,
+      "acceptedSHA256": "a78e1f3ab1f7ad29f3c5abad11e05c238454a6e258a18285b53b418766209bc7",
+      "derivedAssetIds": [],
+      "evidenceBefore": {
+        "landmark": "Intentional circular rug; view angle too close to overhead, no trapezoid test applicable",
+        "sourceEllipticity": 1.1574803149606299,
+        "desiredEllipticity": 1.6245551601423487
+      },
+      "inspectionApproved": true,
+      "artChanges": "Faithful image-generation projection correction, preserving detailed material/colors/motifs; no mathematical warping.",
+      "file": "apartment-record-rug-south.webp",
+      "width": 913,
+      "height": 562,
+      "x": 0,
+      "y": 0,
+      "w": 913,
+      "h": 562,
+      "draw": {
+        "x": 0,
+        "y": 61.51150054764513,
+        "w": 160,
+        "h": 98.48849945235487
+      },
+      "generation": {
+        "tool": "image_gen",
+        "original": "originals/exec-e0687b84-24f7-4ea9-afd5-8c571ec3756f.png",
+        "originalSHA256": "8897ee5fc2d3c1989e8d57b4a617048dcffb11efa10e2d51a0c8df8770aec907",
+        "crop": [
+          27,
+          78,
+          940,
+          640
+        ]
+      }
+    },
+    {
+      "id": "apartment-rainbow-keys-rug",
+      "facing": "south",
+      "owner": null,
+      "sourceBefore": {
+        "file": "town/assets/apartments/rainbow-keys-rug.png",
+        "x": 0,
+        "y": 0,
+        "w": 316,
+        "h": 174
+      },
+      "world": {
+        "w": 180,
+        "h": 104,
+        "footCenter": {
+          "x": 90.0,
+          "y": 104
+        }
+      },
+      "drawRectBefore": {
+        "x": 0.0,
+        "y": 4.886075949367083,
+        "w": 180.0,
+        "h": 99.11392405063292
+      },
+      "drawRect": {
+        "x": 0.0,
+        "y": 4.886075949367083,
+        "w": 180.0,
+        "h": 99.11392405063292
+      },
+      "generatedBoardSHA256": "8897ee5fc2d3c1989e8d57b4a617048dcffb11efa10e2d51a0c8df8770aec907",
+      "boardCell": [
+        1000,
+        0,
+        2172,
+        724
+      ],
+      "extractionCrop": [
+        1057,
+        110,
+        2121,
+        613
+      ],
+      "acceptedWidth": 1064,
+      "acceptedHeight": 503,
+      "acceptedSHA256": "027eee21c2ce1625105ce01f544bddfb8e1b6121d8866995c24b723871134c0b",
+      "derivedAssetIds": [],
+      "evidenceBefore": {
+        "landmark": "Top and bottom corners of straight piano-key field excluding rounded rainbow fringe",
+        "farLeft": [
+          39,
+          33
+        ],
+        "farRight": [
+          274,
+          33
+        ],
+        "nearLeft": [
+          26,
+          137
+        ],
+        "nearRight": [
+          287,
+          137
+        ],
+        "farWidthPixels": 235,
+        "nearWidthPixels": 261,
+        "nearFarRatio": 1.1106382978723404,
+        "coordinatesApproximate": true
+      },
+      "inspectionApproved": true,
+      "artChanges": "Faithful image-generation projection correction, preserving detailed material/colors/motifs; no mathematical warping.",
+      "file": "apartment-rainbow-keys-rug-south.webp",
+      "width": 1064,
+      "height": 503,
+      "x": 0,
+      "y": 0,
+      "w": 1064,
+      "h": 503,
+      "draw": {
+        "x": 0.0,
+        "y": 4.886075949367083,
+        "w": 180.0,
+        "h": 99.11392405063292
+      },
+      "generation": {
+        "tool": "image_gen",
+        "original": "originals/exec-e0687b84-24f7-4ea9-afd5-8c571ec3756f.png",
+        "originalSHA256": "8897ee5fc2d3c1989e8d57b4a617048dcffb11efa10e2d51a0c8df8770aec907",
+        "crop": [
+          1057,
+          110,
+          2121,
+          613
+        ]
+      }
+    }
+  ],
+  "unusedFacings": "Rugs have layer=ground and supportsFurnitureFacing=false, so only South is live.93 other atlas frames were inspected but are inaccessible and are not patched. Clear unused taper: Beethoven north,Schoenberg north,DJ north,Robot north,Rustic Kitchen north,French Caf\u00e9 north,Coastal west/east,Midcentury west,Industrial east. Minor one-sided source skew in Ellington west/VeeJay east/Cyberpunk west/east is also out of scope.",
+  "retainedExamples": [
+    "Haydn rug inner sewn border already parallel; fringe should not trigger a redraw.",
+    "Botanical corrected South and other direction rectangles have parallel body edges.",
+    "Victorian oval, Mozart/Clara/Chopin/Vivaldi/Ella/Coastal ornamental rugs and Retrofuture oval retain intentional contours."
+  ],
+  "geometricTests": "Manual landmarks identify physical sewn frames/corner knots/internal stripes. Never classify circles, fringe, loose fibers, rounded corners or decorative silhouette widths as vanishing-point taper."
+}

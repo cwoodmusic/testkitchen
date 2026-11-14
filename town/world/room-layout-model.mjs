@@ -1,7 +1,7 @@
 import {furnitureFacingBounds,furnitureFacingBoxes,furnitureFacingDepth} from './furniture-facing.mjs?v=opera-parallax-1';
 import {furniturePresentationScale} from './private-furniture.mjs?v=town-compact-island-1';
 import {apartmentDecorBounds,apartmentDecorFootBounds,apartmentWallDecorBounds} from './personal-room-areas.mjs?v=town-compact-island-1';
-import {createRoomRugItems} from './room-rugs.mjs?v=town-victorian-default-1';
+import {createRoomRugItems} from './room-rugs.mjs?v=town-library-review-1';
 import {refreshRoomLayoutNavigation} from './room-layout-navigation.mjs?v=town-room-floorplan-1';
 
 export const ROOM_LAYOUT_FORMAT='coda-room-layout';

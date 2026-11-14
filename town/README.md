@@ -22,6 +22,8 @@ See [controls and rules](../docs/town-rhythm-adventures.md).
 
 Open [Asset review](asset-review/) or choose **Review assets** in the Builder's asset library. Browse the complete catalog, room rugs and ground textures, including the supported directional drawings. Search or filter the list, use **Previous / Next asset** (or the arrow keys), and choose **Needs fixing**, **Looks good**, or write a repair note. Notes and flags are separate for each asset and direction and save in this browser. Use the zoom controls and drag the preview to inspect large artwork.
 
+Floor and wall finishes used in homes and showrooms are available in the reviewer too. Floors show a connected tiled sample, while wallpaper and wall sections show a connected run with their real trim and scale. Zoom in or drag the sample to inspect the joins.
+
 Choose **Download review JSON**, then attach `coda-asset-review.json` in chat. The file includes the exact IDs, directions, names, flags and notes needed to locate each repair. Download also works if browser saving is unavailable; heed the on-screen save warning before closing the tab. Reviewing artwork does not edit town maps or player progress.
 
 ## Approved room layouts and placement
