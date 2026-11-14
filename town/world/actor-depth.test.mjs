@@ -6,6 +6,15 @@ import {OPERA_BUILDING} from './opera-building.mjs';
 const placed=(extra={})=>({x:1000,y:2000,scale:1,rotation:0,...extra});
 const house={w:400,h:600,footprint:{x:50,y:400,w:300,h:150},frontAtX:x=>x>=50&&x<=350?550:null};
 
+test('Opera rail collision never promotes the opaque stair floor in front of its walkers',()=>{
+ const a=OPERA_BUILDING,masonryOnly={...a,polygons:a.depthPolygons,depthPolygons:undefined};
+ assert.equal(a.polygons.length,5);assert.equal(a.depthPolygons.length,3);
+ for(const rotation of [0,90,180,270]){
+  const object=placed({rotation});
+  assert.deepEqual(buildingDepthSlices(a,object),buildingDepthSlices(masonryOnly,{...object}),`Stair floor depth stays behind walkers at rotation ${rotation}`);
+ }
+});
+
 test('transparent canvas below a facade is not the building depth',()=>{
  const slices=buildingDepthSlices(house,placed());assert.equal(slices.length,1);assert.equal(slices[0].depth,1950);
  assert.equal(slices[0].x0,800);assert.equal(slices[0].x1,1200);

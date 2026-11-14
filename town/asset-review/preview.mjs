@@ -1,6 +1,7 @@
 import {assetFilter} from '../world/asset-color.mjs?v=opera-parallax-1';
 import {supportsFurnitureFacing} from '../world/furniture-facing.mjs?v=opera-parallax-1';
 import {drawFountainMotion,supportsFountainMotion} from '../world/fountain-motion.mjs?v=opera-parallax-1';
+import {drawApartmentMotion,supportsApartmentMotion} from '../world/apartment-motion.mjs?v=town-review-3';
 
 const DIRECTIONS=['south','west','north','east'];
 const positive=value=>Number.isFinite(value)&&value>0;
@@ -64,17 +65,23 @@ export async function prepareAssetPreview(asset,facing='south'){
    };
   }
  }
- const filter=assetFilter(asset),animated=supportsFountainMotion(asset);let motionSource;
+ // Only the selected authored view supplies glass geometry. South metadata
+ // must never be copied onto a cabinet's back or strict side profile.
+ const selectedMotion=view?.motion??(!view||facing==='south'?asset.motion:null);
+ const motionAsset=Object.create(asset);Object.defineProperties(motionAsset,{w:{value:assetWidth},h:{value:assetHeight},motion:{value:selectedMotion}});
+ const apartmentAnimated=!sample&&supportsApartmentMotion(motionAsset),fountainAnimated=supportsFountainMotion(asset);
+ const filter=assetFilter(asset),animated=fountainAnimated||apartmentAnimated,motionItem={x:assetWidth/2,y:assetHeight,w:assetWidth,h:assetHeight};let motionSource;
  return {width,height,facing,sample,actualFacing:view?.facing||asset.facing||facing,animated,draw(c,time=0){
   c.save();
   try{
    c.imageSmoothingEnabled=false;c.filter=filter;paint(c);
-   if(animated&&time>0){
+   if(fountainAnimated&&time>0){
     // Retain only the selected fountain view. Its graded native water pixels
     // use the same motion mask as the game; surrounding stone stays still.
     if(!motionSource){motionSource=document.createElement('canvas');motionSource.width=width;motionSource.height=height;const g=motionSource.getContext('2d');g.imageSmoothingEnabled=false;g.filter=filter;paint(g);}
     c.filter='none';drawFountainMotion(c,asset,motionSource,time);
    }
+   if(apartmentAnimated&&time>0){c.filter='none';drawApartmentMotion(c,motionAsset,motionItem,time);}
   }finally{c.restore();}
  }};
 }

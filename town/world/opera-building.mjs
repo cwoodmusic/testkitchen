@@ -13,11 +13,22 @@ const polygon=points=>Object.freeze(points.map(p=>Object.freeze(p)));
 const body=polygon([[1280,80],[2816,80],[4352,1408],[4352,2496],[4184,2640],[424,2640],[256,2496],[256,1408]]);
 const westParapet=Object.freeze([[56,1028],[92,1028],[93,998],[190,921],[217,871],[190,871],[72,966],[57,986]].map(nativePoint));
 const eastParapet=Object.freeze([[1393,1028],[1356,1028],[1354,998],[1258,921],[1231,871],[1258,871],[1376,966],[1393,986]].map(nativePoint));
-const polygons=Object.freeze([body,westParapet,eastParapet]);
+const masonry=Object.freeze([body,westParapet,eastParapet]);
+// Follow the metal post bases on the stair plane, rather than their elevated
+// handrail tops. Wide base plates remain solid and the stair lanes stay open.
+function handrailBase(points){
+ const first=points[0],last=points.at(-1);
+ return Object.freeze([[first[0],first[1]+5],...points.map(([x,y])=>[x+8,y]),[last[0],last[1]-5],...points.toReversed().map(([x,y])=>[x-8,y])].map(nativePoint));
+}
+const westRail=handrailBase([[383,977],[429,936],[462,909],[489,889]]);
+const eastRail=handrailBase([[1065,977],[1018,936],[985,910],[958,889]]);
+const polygons=Object.freeze([...masonry,westRail,eastRail]);
 
 function frontAtX(x){
  let front=-Infinity;
- for(const points of polygons)for(let i=0,j=points.length-1;i<points.length;j=i++){
+ // The opaque stair field is a floor. Slender rails must not make its whole
+ // vertical artwork strip hide people who are standing on that floor.
+ for(const points of masonry)for(let i=0,j=points.length-1;i<points.length;j=i++){
   const a=points[j],b=points[i];
   if(x<Math.min(a[0],b[0])||x>Math.max(a[0],b[0]))continue;
   if(a[0]===b[0]){if(x===a[0])front=Math.max(front,a[1],b[1]);continue;}
@@ -44,7 +55,7 @@ export const OPERA_BUILDING=Object.freeze({
  door:Object.freeze({x:2304,y:2672}),
  entranceProjection:Object.freeze({x:2304,y:2672}),
  approach:Object.freeze({x:2304,y:3032}),
- front:2640,boxes:Object.freeze([]),polygons,frontAtX,lightEmitters,
+ front:2640,boxes:Object.freeze([]),polygons,depthPolygons:masonry,frontAtX,lightEmitters,
  urban:'opera',kit:'urban',facing:'south',fixedScale:true,collisionDefault:true,
  image:'../assets/opera/sydney-opera-house.png'
 });
@@ -60,7 +71,7 @@ export async function registerOperaBuilding(add){
   urban:def.urban,kit:def.kit,facing:def.facing,fixedScale:def.fixedScale,
   collisionDefault:def.collisionDefault,footprint:def.footprint,door:def.door,
   entranceProjection:def.entranceProjection,approach:def.approach,
-  polygons:def.polygons,frontAtX:def.frontAtX,lightEmitters:def.lightEmitters
+  polygons:def.polygons,depthPolygons:def.depthPolygons,frontAtX:def.frontAtX,lightEmitters:def.lightEmitters
  });
  return asset;
 }

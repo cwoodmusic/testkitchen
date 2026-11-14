@@ -1,0 +1,280 @@
+{
+  "tiles": [
+    {
+      "owner": "mozart",
+      "file": "mozart-wall.webp",
+      "width": 110,
+      "height": 100,
+      "crop": [
+        269,
+        161,
+        379,
+        261
+      ],
+      "generatedOriginal": "town/assets/home-materials/review-3/originals/exec-7a63c24f-3037-4511-a068-78e0ebc70747.png",
+      "nativeRGBA_SHA256": "63904346259dbd3c08e61167ce8b902dcedcdc8c5604a790d5b39a25554741d8",
+      "sha256": "7757fc431d8588b21bd0d44241578b0d682c819c80706c743f22ecc266188dea",
+      "analysisOnlySmoothedSeamError": [
+        3.3194748889465604,
+        3.283475127881548
+      ],
+      "method": "image_gen reference redraw; exact native RGBA fundamental repeat crop only. No mirrored halves, blending, paint, warp, or native resampling. Pattern is drawn at uniform half scale.",
+      "priorSha256": "6965b92eff755f21d26d40888a1149fe0294b2040d9750cfcf9217a621641eeb",
+      "priorNativeSize": [
+        256,
+        90
+      ]
+    },
+    {
+      "owner": "clara",
+      "file": "clara-wall.webp",
+      "width": 110,
+      "height": 100,
+      "crop": [
+        858,
+        225,
+        968,
+        325
+      ],
+      "generatedOriginal": "town/assets/home-materials/review-3/originals/exec-7a63c24f-3037-4511-a068-78e0ebc70747.png",
+      "nativeRGBA_SHA256": "cc18374268383c6fafadc9b796f0e162f1742d184dedc106bb8ecfb88141cb7c",
+      "sha256": "cd350b60c369fa165718fc44a734597d35bc5aa533660168c6d882b4d8e75ec2",
+      "analysisOnlySmoothedSeamError": [
+        2.8098689949623683,
+        2.976484686742621
+      ],
+      "method": "image_gen reference redraw; exact native RGBA fundamental repeat crop only. No mirrored halves, blending, paint, warp, or native resampling. Pattern is drawn at uniform half scale.",
+      "priorSha256": "b1dfadd9e92eba6e4c1b26424973859aaaa3e16cf45add69ea7833f460d7c16a",
+      "priorNativeSize": [
+        256,
+        76
+      ]
+    },
+    {
+      "owner": "chopin",
+      "file": "chopin-wall.webp",
+      "width": 108,
+      "height": 96,
+      "crop": [
+        252,
+        715,
+        360,
+        811
+      ],
+      "generatedOriginal": "town/assets/home-materials/review-3/originals/exec-7a63c24f-3037-4511-a068-78e0ebc70747.png",
+      "nativeRGBA_SHA256": "89974a1e6726fccdfb07bdbdc3c2427f28454000967eb56305b95d20401efed9",
+      "sha256": "a767d11cd737a62a83b293538491f668bcaf97727ba1061a973dfca051ff2157",
+      "analysisOnlySmoothedSeamError": [
+        2.6479796055064018,
+        2.374408863535657
+      ],
+      "method": "image_gen reference redraw; exact native RGBA fundamental repeat crop only. No mirrored halves, blending, paint, warp, or native resampling. Pattern is drawn at uniform half scale.",
+      "priorSha256": "a92879b41ec73d269a9f8e5fee76c127826de87e0dc04cce48b14a59cd604116",
+      "priorNativeSize": [
+        256,
+        92
+      ]
+    },
+    {
+      "owner": "haydn",
+      "file": "haydn-wall.webp",
+      "width": 110,
+      "height": 100,
+      "crop": [
+        635,
+        730,
+        745,
+        830
+      ],
+      "generatedOriginal": "town/assets/home-materials/review-3/originals/exec-7a63c24f-3037-4511-a068-78e0ebc70747.png",
+      "nativeRGBA_SHA256": "7ac5ebb448c3316183539d32d41c1c4d5dbd366d7dba69e63cb83cf1535e4801",
+      "sha256": "f3fa8ca2d451c9d50be1e02d6f7d88b2ce80c10e192f915deb8492d6c862e823",
+      "analysisOnlySmoothedSeamError": [
+        2.295332718471893,
+        2.9391524211390396
+      ],
+      "method": "image_gen reference redraw; exact native RGBA fundamental repeat crop only. No mirrored halves, blending, paint, warp, or native resampling. Pattern is drawn at uniform half scale.",
+      "priorSha256": "f664584fbb23f418ac6c6a0049030f38e781edc573b3054895570b818e1b2c0b",
+      "priorNativeSize": [
+        256,
+        82
+      ]
+    },
+    {
+      "owner": "ellington",
+      "file": "ellington-wall.webp",
+      "width": 108,
+      "height": 94,
+      "crop": [
+        138,
+        1198,
+        246,
+        1292
+      ],
+      "generatedOriginal": "town/assets/home-materials/review-3/originals/exec-7a63c24f-3037-4511-a068-78e0ebc70747.png",
+      "nativeRGBA_SHA256": "3df76336f17a6c84ea59e645aa3d832d0ee70b71efba59c76a1c4936bac4a260",
+      "sha256": "82353b6a2c6536002ccced59b91522788356d2316cbe5f185b4e6b40ef9ead41",
+      "analysisOnlySmoothedSeamError": [
+        2.7574429153798006,
+        2.7909021513430554
+      ],
+      "method": "image_gen reference redraw; exact native RGBA fundamental repeat crop only. No mirrored halves, blending, paint, warp, or native resampling. Pattern is drawn at uniform half scale.",
+      "priorSha256": "e3524a3bb17106b4ba0ee2ba432d24427d565aa8d91930372c698bdf576b4ad9",
+      "priorNativeSize": [
+        256,
+        92
+      ]
+    },
+    {
+      "owner": "dj",
+      "file": "dj-wall.webp",
+      "width": 106,
+      "height": 90,
+      "crop": [
+        837,
+        1153,
+        943,
+        1243
+      ],
+      "generatedOriginal": "town/assets/home-materials/review-3/originals/exec-7a63c24f-3037-4511-a068-78e0ebc70747.png",
+      "nativeRGBA_SHA256": "91909805fa81efd621a046c2c38fa6e9fa56e86b1791d3ab3f7bdaaf4aba035c",
+      "sha256": "420dad30da6d442bcc7c724e70730698bb7d0204acf5e9258139086a7409f699",
+      "analysisOnlySmoothedSeamError": [
+        2.2775732217303104,
+        2.407945258795695
+      ],
+      "method": "image_gen reference redraw; exact native RGBA fundamental repeat crop only. No mirrored halves, blending, paint, warp, or native resampling. Pattern is drawn at uniform half scale.",
+      "priorSha256": "9bf76c7e7f14fd1ecb4f5081a4a9becd03a41718d158f04591184b02503a9e77",
+      "priorNativeSize": [
+        256,
+        74
+      ]
+    },
+    {
+      "owner": "zizi",
+      "file": "zizi-wall.webp",
+      "width": 108,
+      "height": 96,
+      "crop": [
+        335,
+        209,
+        443,
+        305
+      ],
+      "generatedOriginal": "town/assets/home-materials/review-3/originals/exec-0070856b-a00b-4d65-b225-c8e9c5065bbc.png",
+      "nativeRGBA_SHA256": "fed14d9fecd1bf7ce69a471155365c72a3a3aebf5656cd9c21b2f0e95ceaa23d",
+      "sha256": "67cbb2a71c05be17a10be3f1a541837c56ba3937650685aff85fef83c44b8c44",
+      "analysisOnlySmoothedSeamError": [
+        3.367289556369646,
+        3.6323330210840767
+      ],
+      "method": "image_gen reference redraw; exact native RGBA fundamental repeat crop only. No mirrored halves, blending, paint, warp, or native resampling. Pattern is drawn at uniform half scale.",
+      "priorSha256": "535a44e1bef9e10689dfdd033446e9b6c0c2c2ba3140be1f48d0b86599678a26",
+      "priorNativeSize": [
+        256,
+        84
+      ]
+    },
+    {
+      "owner": "schoenberg",
+      "file": "schoenberg-wall.webp",
+      "width": 108,
+      "height": 104,
+      "crop": [
+        865,
+        227,
+        973,
+        331
+      ],
+      "generatedOriginal": "town/assets/home-materials/review-3/originals/exec-0070856b-a00b-4d65-b225-c8e9c5065bbc.png",
+      "nativeRGBA_SHA256": "a9e7dbd2d88f816df9e4ac2e164069ddc9aa30526b5c20cdb82bd311a819068f",
+      "sha256": "17a93a17653375853b3a61fa8b5d6de7c91bcd13cfaa4621fe44bfe2b1e7bdce",
+      "analysisOnlySmoothedSeamError": [
+        4.327480802835495,
+        4.925816763665464
+      ],
+      "method": "image_gen reference redraw; exact native RGBA fundamental repeat crop only. No mirrored halves, blending, paint, warp, or native resampling. Pattern is drawn at uniform half scale.",
+      "priorSha256": "1d8128594afc3b5d6f1dc9844fd7e6a71da0ee716f78c64308fc5da3f98dcfe9",
+      "priorNativeSize": [
+        256,
+        130
+      ]
+    },
+    {
+      "owner": "player",
+      "file": "player-wall.webp",
+      "width": 108,
+      "height": 100,
+      "crop": [
+        181,
+        714,
+        289,
+        814
+      ],
+      "generatedOriginal": "town/assets/home-materials/review-3/originals/exec-0070856b-a00b-4d65-b225-c8e9c5065bbc.png",
+      "nativeRGBA_SHA256": "c0332b4bdd34d8c0b39df57ccd9e149ebf92d72346912c6fbb8e68ab70f36225",
+      "sha256": "647ec2ddc2ca6f48ec8db4719218de5ddd33b4bc52708263811295231f97351b",
+      "analysisOnlySmoothedSeamError": [
+        2.923828808603994,
+        3.261731082994067
+      ],
+      "method": "image_gen reference redraw; exact native RGBA fundamental repeat crop only. No mirrored halves, blending, paint, warp, or native resampling. Pattern is drawn at uniform half scale.",
+      "priorSha256": "9007885e4e9ca634c5791f496015beb8d4d3c87b0d1eaca6fed8000579270acb",
+      "priorNativeSize": [
+        256,
+        100
+      ]
+    },
+    {
+      "owner": "showroom-botanical-conservatory",
+      "file": "showroom-botanical-conservatory-wall.webp",
+      "width": 108,
+      "height": 100,
+      "crop": [
+        588,
+        742,
+        696,
+        842
+      ],
+      "generatedOriginal": "town/assets/home-materials/review-3/originals/exec-0070856b-a00b-4d65-b225-c8e9c5065bbc.png",
+      "nativeRGBA_SHA256": "245024ad9a0ee698bdf84b1ca2638b2c063b6330a8e659f7f2e6fd6b0d43f49d",
+      "sha256": "d762561d98e51cc57e18bff2ff4e748923dfa7ad356defc90c63ac4fe2326112",
+      "analysisOnlySmoothedSeamError": [
+        4.215200593467607,
+        4.25682664523049
+      ],
+      "method": "image_gen reference redraw; exact native RGBA fundamental repeat crop only. No mirrored halves, blending, paint, warp, or native resampling. Pattern is drawn at uniform half scale.",
+      "priorSha256": "f6e84ca71d54074f32ad413dcea1da99f10b002fcc308fb7e8e4a2aa886992b0",
+      "priorNativeSize": [
+        256,
+        108
+      ]
+    },
+    {
+      "owner": "showroom-industrial-loft",
+      "file": "showroom-industrial-loft-wall.webp",
+      "width": 624,
+      "height": 312,
+      "crop": [
+        160,
+        626,
+        784,
+        938
+      ],
+      "generatedOriginal": "town/assets/home-materials/review-3/originals/exec-790bc295-a378-4a43-ab65-46203dcb8abe.png",
+      "nativeRGBA_SHA256": "db6f646d33f72815f4e0a89bad47a3bfabf16584bc829f15e1e74f3ab27a0a36",
+      "sha256": "407a20d3ef984e3b6703511933e5d7b39f495fb52192e530727eb79717cf4200",
+      "analysisOnlySmoothedSeamError": [
+        9.589595922219443,
+        6.047120048256778
+      ],
+      "scale": 0.125,
+      "method": "image_gen reference redraw; exact native RGBA two-brick/two-course repeat crop. No mirrored halves, blending, paint, warp, or native resampling.",
+      "priorSha256": "8d1253392b25fd477d2699220c3049a9dec3fc7cb415916e7f5aa45804760c2a",
+      "priorNativeSize": [
+        256,
+        92
+      ]
+    }
+  ]
+}

@@ -1,0 +1,1972 @@
+{
+  "version": 2,
+  "revision": 3,
+  "baseCommit": "9fcbcae26fb7977ceaede53f8c6350a09058c604",
+  "sourceAcceptances": [
+    {
+      "file": "town/assets/parallel-art/review-3/acceptances/object-art-patches.json",
+      "sha256": "c6de3d5f3a3d6b80653ae31cbd308dfbafc06a3430ca0bb512e805e5b07e0756",
+      "count": 15
+    },
+    {
+      "file": "town/assets/parallel-art/review-3/acceptances/storage-picnic-patches.json",
+      "sha256": "6a98253419b94c2c6c641e7bf9c3579119edddc95f29c75000b9055c9ea6420d",
+      "count": 7
+    }
+  ],
+  "patches": [
+    {
+      "id": "music-0-130",
+      "facing": "south",
+      "file": "review-3/object-art/silhouettes-ff4338558ce4.webp",
+      "width": 1254,
+      "height": 1254,
+      "x": 134,
+      "y": 72,
+      "w": 435,
+      "h": 463,
+      "draw": {
+        "x": 10.0377969762419,
+        "y": 0.0,
+        "w": 109.9244060475162,
+        "h": 117.0
+      },
+      "source": {
+        "file": "town/assets/music-details.png",
+        "crop": {
+          "x": 62,
+          "y": 54,
+          "w": 450,
+          "h": 402
+        },
+        "draw": {
+          "x": 0,
+          "y": 0,
+          "w": 130,
+          "h": 116.13333333333334
+        },
+        "world": {
+          "w": 130,
+          "h": 117
+        }
+      },
+      "sourceBefore": {
+        "file": "town/assets/music-details.png",
+        "crop": {
+          "x": 62,
+          "y": 54,
+          "w": 450,
+          "h": 402
+        },
+        "draw": {
+          "x": 0,
+          "y": 0,
+          "w": 130,
+          "h": 116.13333333333334
+        },
+        "world": {
+          "w": 130,
+          "h": 117
+        },
+        "fileSHA256": "4bf18c80ff8df975d2acd301d47d3e7e49697ac5ea9e2f6f1caf0ef4d4dc2cf4"
+      },
+      "generation": {
+        "tool": "image_gen",
+        "original": "review-3/object-art/originals/exec-a940c463-3567-47e5-ba63-51a6a4a3e2aa.png",
+        "originalSHA256": "ff4338558ce47861066975b81de7d71d2cb02c9b0f45a07de0480270c45e665f",
+        "crop": [
+          134,
+          72,
+          569,
+          535
+        ],
+        "packing": "Exact native RGBA copy and crop, lossless WebP; no alpha masking, mathematical warp or pixel corrections."
+      },
+      "reason": "Complete native silhouette and remove unrelated atlas fragments.",
+      "reviewRequest": {
+        "assetId": "music-0-130",
+        "name": "Violin sign",
+        "group": "music",
+        "width": 130,
+        "height": 117,
+        "facing": "south",
+        "status": "flagged",
+        "baseStatus": "flagged",
+        "note": "visible leaves on right side",
+        "issues": [
+          "cut-off"
+        ],
+        "updatedAt": "2026-11-14T15:58:32.711Z",
+        "category": "Decorations",
+        "pack": null,
+        "owner": null,
+        "purpose": null,
+        "sourceAssetId": null,
+        "authoredFacing": "south"
+      },
+      "reviewRevision": 3,
+      "reviewFile": "town/asset-reviews/2026-11-14-upload-3.json"
+    },
+    {
+      "id": "landscape-1-240",
+      "facing": "south",
+      "file": "review-3/object-art/silhouettes-ff4338558ce4.webp",
+      "width": 1254,
+      "height": 1254,
+      "x": 60,
+      "y": 692,
+      "w": 520,
+      "h": 454,
+      "draw": {
+        "x": 11.189427312775337,
+        "y": 0.0,
+        "w": 217.62114537444933,
+        "h": 190.0
+      },
+      "source": {
+        "file": "town/assets/landscape-details.png",
+        "crop": {
+          "x": 512,
+          "y": 58,
+          "w": 506,
+          "h": 400
+        },
+        "draw": {
+          "x": 0,
+          "y": 0,
+          "w": 240,
+          "h": 189.72332015810278
+        },
+        "world": {
+          "w": 240,
+          "h": 190
+        }
+      },
+      "sourceBefore": {
+        "file": "town/assets/landscape-details.png",
+        "crop": {
+          "x": 512,
+          "y": 58,
+          "w": 506,
+          "h": 400
+        },
+        "draw": {
+          "x": 0,
+          "y": 0,
+          "w": 240,
+          "h": 189.72332015810278
+        },
+        "world": {
+          "w": 240,
+          "h": 190
+        },
+        "fileSHA256": "aa6d1e407fc437014e96dc91c80c41e4ce3eab45e013b6c320f7cacee08b7d34"
+      },
+      "generation": {
+        "tool": "image_gen",
+        "original": "review-3/object-art/originals/exec-a940c463-3567-47e5-ba63-51a6a4a3e2aa.png",
+        "originalSHA256": "ff4338558ce47861066975b81de7d71d2cb02c9b0f45a07de0480270c45e665f",
+        "crop": [
+          60,
+          692,
+          580,
+          1146
+        ],
+        "packing": "Exact native RGBA copy and crop, lossless WebP; no alpha masking, mathematical warp or pixel corrections."
+      },
+      "reason": "Complete native silhouette and remove unrelated atlas fragments.",
+      "reviewRequest": {
+        "assetId": "landscape-1-240",
+        "name": "Mossy boulders",
+        "group": "landscape",
+        "width": 240,
+        "height": 190,
+        "facing": "south",
+        "status": "flagged",
+        "baseStatus": "flagged",
+        "note": "cut off on left",
+        "issues": [
+          "cut-off"
+        ],
+        "updatedAt": "2026-11-14T15:55:27.972Z",
+        "category": "Terrain",
+        "pack": null,
+        "owner": null,
+        "purpose": null,
+        "sourceAssetId": null,
+        "authoredFacing": "south"
+      },
+      "reviewRevision": 3,
+      "reviewFile": "town/asset-reviews/2026-11-14-upload-3.json"
+    },
+    {
+      "id": "landscape-4-240",
+      "facing": "south",
+      "file": "review-3/object-art/silhouettes-ff4338558ce4.webp",
+      "width": 1254,
+      "height": 1254,
+      "x": 659,
+      "y": 664,
+      "w": 544,
+      "h": 516,
+      "draw": {
+        "x": 11.937984496124031,
+        "y": 0.0,
+        "w": 216.12403100775194,
+        "h": 205.0
+      },
+      "source": {
+        "file": "town/assets/landscape-details.png",
+        "crop": {
+          "x": 512,
+          "y": 539,
+          "w": 512,
+          "h": 436
+        },
+        "draw": {
+          "x": 0,
+          "y": 0,
+          "w": 240,
+          "h": 204.375
+        },
+        "world": {
+          "w": 240,
+          "h": 205
+        }
+      },
+      "sourceBefore": {
+        "file": "town/assets/landscape-details.png",
+        "crop": {
+          "x": 512,
+          "y": 539,
+          "w": 512,
+          "h": 436
+        },
+        "draw": {
+          "x": 0,
+          "y": 0,
+          "w": 240,
+          "h": 204.375
+        },
+        "world": {
+          "w": 240,
+          "h": 205
+        },
+        "fileSHA256": "aa6d1e407fc437014e96dc91c80c41e4ce3eab45e013b6c320f7cacee08b7d34"
+      },
+      "generation": {
+        "tool": "image_gen",
+        "original": "review-3/object-art/originals/exec-a940c463-3567-47e5-ba63-51a6a4a3e2aa.png",
+        "originalSHA256": "ff4338558ce47861066975b81de7d71d2cb02c9b0f45a07de0480270c45e665f",
+        "crop": [
+          659,
+          664,
+          1203,
+          1180
+        ],
+        "packing": "Exact native RGBA copy and crop, lossless WebP; no alpha masking, mathematical warp or pixel corrections."
+      },
+      "reason": "Complete native silhouette and remove unrelated atlas fragments.",
+      "reviewRequest": {
+        "assetId": "landscape-4-240",
+        "name": "Fern overgrowth",
+        "group": "landscape",
+        "width": 240,
+        "height": 205,
+        "facing": "south",
+        "status": "flagged",
+        "baseStatus": "flagged",
+        "note": "cut off leaves on left/right side",
+        "issues": [],
+        "updatedAt": "2026-11-14T15:05:19.805Z",
+        "category": "Plants & Pots",
+        "pack": null,
+        "owner": null,
+        "purpose": null,
+        "sourceAssetId": null,
+        "authoredFacing": "south"
+      },
+      "reviewRevision": 3,
+      "reviewFile": "town/asset-reviews/2026-11-14-upload-3.json"
+    },
+    {
+      "id": "decor-07-13",
+      "facing": "south",
+      "file": "review-3/object-art/market-3b75d8e4f7b3.webp",
+      "width": 1254,
+      "height": 1254,
+      "x": 24,
+      "y": 9,
+      "w": 603,
+      "h": 558,
+      "draw": {
+        "x": 20.459677419354833,
+        "y": 0.0,
+        "w": 135.08064516129033,
+        "h": 125.0
+      },
+      "source": {
+        "file": "town/assets/decor/pack-07.png",
+        "crop": {
+          "x": 45,
+          "y": 805,
+          "w": 290,
+          "h": 205
+        },
+        "draw": {
+          "x": 0,
+          "y": 0,
+          "w": 176,
+          "h": 125
+        },
+        "world": {
+          "w": 176,
+          "h": 125
+        }
+      },
+      "sourceBefore": {
+        "file": "town/assets/decor/pack-07.png",
+        "crop": {
+          "x": 45,
+          "y": 805,
+          "w": 290,
+          "h": 205
+        },
+        "draw": {
+          "x": 0,
+          "y": 0,
+          "w": 176,
+          "h": 125
+        },
+        "world": {
+          "w": 176,
+          "h": 125
+        },
+        "fileSHA256": "a6a9a37faded11def85d6663cf3330ec502f886d639bdb52f93075a7881fa279"
+      },
+      "generation": {
+        "tool": "image_gen",
+        "original": "review-3/object-art/originals/exec-1c2e3082-e4d9-4fcd-b3e9-43adc31d3d0f.png",
+        "originalSHA256": "3b75d8e4f7b3b03909cde48cc4e4456ea34dc9412e050a494510e3b474552592",
+        "crop": [
+          24,
+          9,
+          627,
+          567
+        ],
+        "packing": "Exact native RGBA copy and crop, lossless WebP; no alpha masking, mathematical warp or pixel corrections."
+      },
+      "reason": "Complete native silhouette and remove unrelated atlas fragments.",
+      "reviewRequest": {
+        "assetId": "decor-07-13",
+        "name": "Fresh herb baskets",
+        "group": "market goods",
+        "width": 176,
+        "height": 125,
+        "facing": "south",
+        "status": "flagged",
+        "baseStatus": "unreviewed",
+        "note": "",
+        "issues": [
+          "cut-off"
+        ],
+        "updatedAt": "2026-11-14T15:55:58.356Z",
+        "category": "Market & Food",
+        "pack": "town-decor-256",
+        "owner": null,
+        "purpose": null,
+        "sourceAssetId": null,
+        "authoredFacing": "south",
+        "view": {
+          "id": "decor-07-13",
+          "facing": "south",
+          "width": 176,
+          "height": 125
+        }
+      },
+      "reviewRevision": 3,
+      "reviewFile": "town/asset-reviews/2026-11-14-upload-3.json"
+    },
+    {
+      "id": "decor-07-14",
+      "facing": "south",
+      "file": "review-3/object-art/market-3b75d8e4f7b3.webp",
+      "width": 1254,
+      "height": 1254,
+      "x": 640,
+      "y": 43,
+      "w": 599,
+      "h": 524,
+      "draw": {
+        "x": 8.552480916030532,
+        "y": 0.0,
+        "w": 158.89503816793894,
+        "h": 139.0
+      },
+      "source": {
+        "file": "town/assets/decor/pack-07.png",
+        "crop": {
+          "x": 427,
+          "y": 783,
+          "w": 288,
+          "h": 227
+        },
+        "draw": {
+          "x": 0,
+          "y": 0,
+          "w": 176,
+          "h": 139
+        },
+        "world": {
+          "w": 176,
+          "h": 139
+        }
+      },
+      "sourceBefore": {
+        "file": "town/assets/decor/pack-07.png",
+        "crop": {
+          "x": 427,
+          "y": 783,
+          "w": 288,
+          "h": 227
+        },
+        "draw": {
+          "x": 0,
+          "y": 0,
+          "w": 176,
+          "h": 139
+        },
+        "world": {
+          "w": 176,
+          "h": 139
+        },
+        "fileSHA256": "a6a9a37faded11def85d6663cf3330ec502f886d639bdb52f93075a7881fa279"
+      },
+      "generation": {
+        "tool": "image_gen",
+        "original": "review-3/object-art/originals/exec-1c2e3082-e4d9-4fcd-b3e9-43adc31d3d0f.png",
+        "originalSHA256": "3b75d8e4f7b3b03909cde48cc4e4456ea34dc9412e050a494510e3b474552592",
+        "crop": [
+          640,
+          43,
+          1239,
+          567
+        ],
+        "packing": "Exact native RGBA copy and crop, lossless WebP; no alpha masking, mathematical warp or pixel corrections."
+      },
+      "reason": "Complete native silhouette and remove unrelated atlas fragments.",
+      "reviewRequest": {
+        "assetId": "decor-07-14",
+        "name": "Honey jar display",
+        "group": "market goods",
+        "width": 176,
+        "height": 139,
+        "facing": "south",
+        "status": "flagged",
+        "baseStatus": "unreviewed",
+        "note": "",
+        "issues": [
+          "cut-off"
+        ],
+        "updatedAt": "2026-11-14T15:56:04.161Z",
+        "category": "Market & Food",
+        "pack": "town-decor-256",
+        "owner": null,
+        "purpose": null,
+        "sourceAssetId": null,
+        "authoredFacing": "south",
+        "view": {
+          "id": "decor-07-14",
+          "facing": "south",
+          "width": 176,
+          "height": 139
+        }
+      },
+      "reviewRevision": 3,
+      "reviewFile": "town/asset-reviews/2026-11-14-upload-3.json"
+    },
+    {
+      "id": "decor-07-15",
+      "facing": "south",
+      "file": "review-3/object-art/market-3b75d8e4f7b3.webp",
+      "width": 1254,
+      "height": 1254,
+      "x": 18,
+      "y": 681,
+      "w": 614,
+      "h": 513,
+      "draw": {
+        "x": 4.218323586744646,
+        "y": 0.0,
+        "w": 167.5633528265107,
+        "h": 140.0
+      },
+      "source": {
+        "file": "town/assets/decor/pack-07.png",
+        "crop": {
+          "x": 819,
+          "y": 788,
+          "w": 280,
+          "h": 222
+        },
+        "draw": {
+          "x": 0,
+          "y": 0,
+          "w": 176,
+          "h": 140
+        },
+        "world": {
+          "w": 176,
+          "h": 140
+        }
+      },
+      "sourceBefore": {
+        "file": "town/assets/decor/pack-07.png",
+        "crop": {
+          "x": 819,
+          "y": 788,
+          "w": 280,
+          "h": 222
+        },
+        "draw": {
+          "x": 0,
+          "y": 0,
+          "w": 176,
+          "h": 140
+        },
+        "world": {
+          "w": 176,
+          "h": 140
+        },
+        "fileSHA256": "a6a9a37faded11def85d6663cf3330ec502f886d639bdb52f93075a7881fa279"
+      },
+      "generation": {
+        "tool": "image_gen",
+        "original": "review-3/object-art/originals/exec-1c2e3082-e4d9-4fcd-b3e9-43adc31d3d0f.png",
+        "originalSHA256": "3b75d8e4f7b3b03909cde48cc4e4456ea34dc9412e050a494510e3b474552592",
+        "crop": [
+          18,
+          681,
+          632,
+          1194
+        ],
+        "packing": "Exact native RGBA copy and crop, lossless WebP; no alpha masking, mathematical warp or pixel corrections."
+      },
+      "reason": "Complete native silhouette and remove unrelated atlas fragments.",
+      "reviewRequest": {
+        "assetId": "decor-07-15",
+        "name": "Colorful preserve jars",
+        "group": "market goods",
+        "width": 176,
+        "height": 140,
+        "facing": "south",
+        "status": "flagged",
+        "baseStatus": "unreviewed",
+        "note": "",
+        "issues": [
+          "cut-off"
+        ],
+        "updatedAt": "2026-11-14T15:56:06.899Z",
+        "category": "Market & Food",
+        "pack": "town-decor-256",
+        "owner": null,
+        "purpose": null,
+        "sourceAssetId": null,
+        "authoredFacing": "south",
+        "view": {
+          "id": "decor-07-15",
+          "facing": "south",
+          "width": 176,
+          "height": 140
+        }
+      },
+      "reviewRevision": 3,
+      "reviewFile": "town/asset-reviews/2026-11-14-upload-3.json"
+    },
+    {
+      "id": "decor-14-07",
+      "facing": "south",
+      "file": "review-3/object-art/fixtures-20af9b7dfca3.webp",
+      "width": 1254,
+      "height": 1254,
+      "x": 203,
+      "y": 69,
+      "w": 272,
+      "h": 461,
+      "draw": {
+        "x": 22.36876355748373,
+        "y": 0.0,
+        "w": 67.26247288503254,
+        "h": 114.0
+      },
+      "source": {
+        "file": "town/assets/decor/pack-14.png",
+        "crop": {
+          "x": 680,
+          "y": 360,
+          "w": 228,
+          "h": 232
+        },
+        "draw": {
+          "x": 0,
+          "y": 0,
+          "w": 112,
+          "h": 114
+        },
+        "world": {
+          "w": 112,
+          "h": 114
+        }
+      },
+      "sourceBefore": {
+        "file": "town/assets/decor/pack-14.png",
+        "crop": {
+          "x": 680,
+          "y": 360,
+          "w": 228,
+          "h": 232
+        },
+        "draw": {
+          "x": 0,
+          "y": 0,
+          "w": 112,
+          "h": 114
+        },
+        "world": {
+          "w": 112,
+          "h": 114
+        },
+        "fileSHA256": "cc6914183fca4fa17f7d8637bfb0c675643e620bb3718e53050992f45891d86c"
+      },
+      "generation": {
+        "tool": "image_gen",
+        "original": "review-3/object-art/originals/exec-683dd85a-19e7-4033-843a-77d5208d42e2.png",
+        "originalSHA256": "20af9b7dfca3b43effbd40a783ce3e572a2df845e1c7d06d91e97b12ad548932",
+        "crop": [
+          203,
+          69,
+          475,
+          530
+        ],
+        "packing": "Exact native RGBA copy and crop, lossless WebP; no alpha masking, mathematical warp or pixel corrections."
+      },
+      "reason": "Straight South elevated parallel 2/3 projection; true organic curves and detailed original materials retained.",
+      "reviewRequest": {
+        "assetId": "decor-14-07",
+        "name": "Glass globe wall sconce",
+        "group": "signs and lights",
+        "width": 112,
+        "height": 114,
+        "facing": "south",
+        "status": "flagged",
+        "baseStatus": "ok",
+        "note": "",
+        "issues": [
+          "angled"
+        ],
+        "updatedAt": "2026-11-14T15:57:24.751Z",
+        "category": "Lighting",
+        "pack": "town-decor-256",
+        "owner": null,
+        "purpose": null,
+        "sourceAssetId": null,
+        "authoredFacing": "south"
+      },
+      "reviewRevision": 3,
+      "reviewFile": "town/asset-reviews/2026-11-14-upload-3.json"
+    },
+    {
+      "id": "decor-15-12",
+      "facing": "south",
+      "file": "review-3/object-art/fixtures-20af9b7dfca3.webp",
+      "width": 1254,
+      "height": 1254,
+      "x": 736,
+      "y": 69,
+      "w": 334,
+      "h": 433,
+      "draw": {
+        "x": 3.1200923787528865,
+        "y": 0.0,
+        "w": 135.75981524249423,
+        "h": 176.0
+      },
+      "source": {
+        "file": "town/assets/decor/pack-15.png",
+        "crop": {
+          "x": 1173,
+          "y": 539,
+          "w": 195,
+          "h": 242
+        },
+        "draw": {
+          "x": 0.09090909090909349,
+          "y": 0,
+          "w": 141.8181818181818,
+          "h": 176
+        },
+        "world": {
+          "w": 142,
+          "h": 176
+        }
+      },
+      "sourceBefore": {
+        "file": "town/assets/decor/pack-15.png",
+        "crop": {
+          "x": 1173,
+          "y": 539,
+          "w": 195,
+          "h": 242
+        },
+        "draw": {
+          "x": 0.09090909090909349,
+          "y": 0,
+          "w": 141.8181818181818,
+          "h": 176
+        },
+        "world": {
+          "w": 142,
+          "h": 176
+        },
+        "fileSHA256": "abed034d256cb15d7d4db27109398ca324062b13f90e08c501931359be29c24c"
+      },
+      "generation": {
+        "tool": "image_gen",
+        "original": "review-3/object-art/originals/exec-683dd85a-19e7-4033-843a-77d5208d42e2.png",
+        "originalSHA256": "20af9b7dfca3b43effbd40a783ce3e572a2df845e1c7d06d91e97b12ad548932",
+        "crop": [
+          736,
+          69,
+          1070,
+          502
+        ],
+        "packing": "Exact native RGBA copy and crop, lossless WebP; no alpha masking, mathematical warp or pixel corrections."
+      },
+      "reason": "Straight South elevated parallel 2/3 projection; true organic curves and detailed original materials retained.",
+      "reviewRequest": {
+        "assetId": "decor-15-12",
+        "name": "Old copper wall lantern",
+        "group": "cliff decorations",
+        "width": 142,
+        "height": 176,
+        "facing": "south",
+        "status": "flagged",
+        "baseStatus": "ok",
+        "note": "",
+        "issues": [
+          "angled"
+        ],
+        "updatedAt": "2026-11-14T15:57:28.906Z",
+        "category": "Lighting",
+        "pack": "town-decor-256",
+        "owner": null,
+        "purpose": null,
+        "sourceAssetId": null,
+        "authoredFacing": "south"
+      },
+      "reviewRevision": 3,
+      "reviewFile": "town/asset-reviews/2026-11-14-upload-3.json"
+    },
+    {
+      "id": "cliff-lantern",
+      "facing": "south",
+      "file": "review-3/object-art/fixtures-20af9b7dfca3.webp",
+      "width": 1254,
+      "height": 1254,
+      "x": 148,
+      "y": 627,
+      "w": 358,
+      "h": 528,
+      "draw": {
+        "x": 0.1325757575757578,
+        "y": 0.0,
+        "w": 63.734848484848484,
+        "h": 94.0
+      },
+      "source": {
+        "file": "town/assets/cliff-decor.png",
+        "crop": {
+          "x": 600,
+          "y": 520,
+          "w": 319,
+          "h": 465
+        },
+        "draw": {
+          "x": 0,
+          "y": 0,
+          "w": 64,
+          "h": 93.29153605015674
+        },
+        "world": {
+          "w": 64,
+          "h": 94
+        }
+      },
+      "sourceBefore": {
+        "file": "town/assets/cliff-decor.png",
+        "crop": {
+          "x": 600,
+          "y": 520,
+          "w": 319,
+          "h": 465
+        },
+        "draw": {
+          "x": 0,
+          "y": 0,
+          "w": 64,
+          "h": 93.29153605015674
+        },
+        "world": {
+          "w": 64,
+          "h": 94
+        },
+        "fileSHA256": "1e4f505cbe22563ad3db95233941bc44b5a4eaea2562b4ecda6de8bbf6e294d0"
+      },
+      "generation": {
+        "tool": "image_gen",
+        "original": "review-3/object-art/originals/exec-683dd85a-19e7-4033-843a-77d5208d42e2.png",
+        "originalSHA256": "20af9b7dfca3b43effbd40a783ce3e572a2df845e1c7d06d91e97b12ad548932",
+        "crop": [
+          148,
+          627,
+          506,
+          1155
+        ],
+        "packing": "Exact native RGBA copy and crop, lossless WebP; no alpha masking, mathematical warp or pixel corrections."
+      },
+      "reason": "Straight South elevated parallel 2/3 projection; true organic curves and detailed original materials retained.",
+      "reviewRequest": {
+        "assetId": "cliff-lantern",
+        "name": "Cliff wall lantern",
+        "group": "cliff faces",
+        "width": 64,
+        "height": 94,
+        "facing": "south",
+        "status": "flagged",
+        "baseStatus": "unreviewed",
+        "note": "",
+        "issues": [
+          "angled"
+        ],
+        "updatedAt": "2026-11-14T15:57:09.420Z",
+        "category": "Lighting",
+        "pack": null,
+        "owner": null,
+        "purpose": null,
+        "sourceAssetId": null,
+        "authoredFacing": "south"
+      },
+      "reviewRevision": 3,
+      "reviewFile": "town/asset-reviews/2026-11-14-upload-3.json"
+    },
+    {
+      "id": "decor-11-12",
+      "facing": "south",
+      "file": "review-3/object-art/fixtures-20af9b7dfca3.webp",
+      "width": 1254,
+      "height": 1254,
+      "x": 656,
+      "y": 645,
+      "w": 457,
+      "h": 484,
+      "draw": {
+        "x": 8.462809917355372,
+        "y": 0.0,
+        "w": 151.07438016528926,
+        "h": 160.0
+      },
+      "source": {
+        "file": "town/assets/decor/pack-11.png",
+        "crop": {
+          "x": 1226,
+          "y": 520,
+          "w": 233,
+          "h": 223
+        },
+        "draw": {
+          "x": 0.41255605381167015,
+          "y": 0,
+          "w": 167.17488789237666,
+          "h": 160
+        },
+        "world": {
+          "w": 168,
+          "h": 160
+        }
+      },
+      "sourceBefore": {
+        "file": "town/assets/decor/pack-11.png",
+        "crop": {
+          "x": 1226,
+          "y": 520,
+          "w": 233,
+          "h": 223
+        },
+        "draw": {
+          "x": 0.41255605381167015,
+          "y": 0,
+          "w": 167.17488789237666,
+          "h": 160
+        },
+        "world": {
+          "w": 168,
+          "h": 160
+        },
+        "fileSHA256": "829325b7723f3445dc768c9094b59500ffe360b7de90f16662729a45b7507a3a"
+      },
+      "generation": {
+        "tool": "image_gen",
+        "original": "review-3/object-art/originals/exec-683dd85a-19e7-4033-843a-77d5208d42e2.png",
+        "originalSHA256": "20af9b7dfca3b43effbd40a783ce3e572a2df845e1c7d06d91e97b12ad548932",
+        "crop": [
+          656,
+          645,
+          1113,
+          1129
+        ],
+        "packing": "Exact native RGBA copy and crop, lossless WebP; no alpha masking, mathematical warp or pixel corrections."
+      },
+      "reason": "Straight South elevated parallel 2/3 projection; true organic curves and detailed original materials retained.",
+      "reviewRequest": {
+        "assetId": "decor-11-12",
+        "name": "Copper outdoor tap",
+        "group": "waterfront",
+        "width": 168,
+        "height": 160,
+        "facing": "south",
+        "status": "flagged",
+        "baseStatus": "unreviewed",
+        "note": "",
+        "issues": [
+          "angled"
+        ],
+        "updatedAt": "2026-11-14T16:00:39.434Z",
+        "category": "Waterfront",
+        "pack": "town-decor-256",
+        "owner": null,
+        "purpose": null,
+        "sourceAssetId": null,
+        "authoredFacing": "south",
+        "view": {
+          "id": "decor-11-12",
+          "facing": "south",
+          "width": 168,
+          "height": 160
+        }
+      },
+      "reviewRevision": 3,
+      "reviewFile": "town/asset-reviews/2026-11-14-upload-3.json"
+    },
+    {
+      "id": "music-4-210",
+      "facing": "south",
+      "file": "review-3/object-art/furniture-rug-44c65c61d654.webp",
+      "width": 1254,
+      "height": 1254,
+      "x": 65,
+      "y": 48,
+      "w": 544,
+      "h": 584,
+      "draw": {
+        "x": 18.83561643835617,
+        "y": 0.0,
+        "w": 172.32876712328766,
+        "h": 185.0
+      },
+      "source": {
+        "file": "town/assets/music-details.png",
+        "crop": {
+          "x": 513,
+          "y": 537,
+          "w": 505,
+          "h": 444
+        },
+        "draw": {
+          "x": 0,
+          "y": 0,
+          "w": 210,
+          "h": 184.63366336633663
+        },
+        "world": {
+          "w": 210,
+          "h": 185
+        }
+      },
+      "sourceBefore": {
+        "file": "town/assets/music-details.png",
+        "crop": {
+          "x": 513,
+          "y": 537,
+          "w": 505,
+          "h": 444
+        },
+        "draw": {
+          "x": 0,
+          "y": 0,
+          "w": 210,
+          "h": 184.63366336633663
+        },
+        "world": {
+          "w": 210,
+          "h": 185
+        },
+        "fileSHA256": "4bf18c80ff8df975d2acd301d47d3e7e49697ac5ea9e2f6f1caf0ef4d4dc2cf4"
+      },
+      "generation": {
+        "tool": "image_gen",
+        "original": "review-3/object-art/originals/exec-7d49c7f1-b30b-48f9-a8da-066d18f21a1e.png",
+        "originalSHA256": "44c65c61d65418620baa31e752f1da633b055f549c1efe7e58446bd3ddb6d01e",
+        "crop": [
+          65,
+          48,
+          609,
+          632
+        ],
+        "packing": "Exact native RGBA copy and crop, lossless WebP; no alpha masking, mathematical warp or pixel corrections."
+      },
+      "reason": "Straight South elevated parallel 2/3 projection; true organic curves and detailed original materials retained.",
+      "reviewRequest": {
+        "assetId": "music-4-210",
+        "name": "Luthier bench",
+        "group": "music",
+        "width": 210,
+        "height": 185,
+        "facing": "south",
+        "status": "flagged",
+        "baseStatus": "flagged",
+        "note": "2/3",
+        "issues": [],
+        "updatedAt": "2026-11-14T15:04:48.091Z",
+        "category": "Desks",
+        "pack": null,
+        "owner": null,
+        "purpose": null,
+        "sourceAssetId": null,
+        "authoredFacing": "south",
+        "view": {
+          "id": "music-4-210",
+          "facing": "south",
+          "width": 210,
+          "height": 185
+        }
+      },
+      "reviewRevision": 3,
+      "reviewFile": "town/asset-reviews/2026-11-14-upload-3.json"
+    },
+    {
+      "id": "collection-handel-shelf",
+      "facing": "south",
+      "file": "review-3/object-art/furniture-rug-44c65c61d654.webp",
+      "width": 1254,
+      "height": 1254,
+      "x": 669,
+      "y": 97,
+      "w": 514,
+      "h": 473,
+      "draw": {
+        "x": 18.359408033826632,
+        "y": 0.0,
+        "w": 91.28118393234674,
+        "h": 84.0
+      },
+      "source": {
+        "file": "town/assets/parallel-art/packed/handel-2-daff3c64797c.webp",
+        "crop": {
+          "x": 1071,
+          "y": 4,
+          "w": 444,
+          "h": 406
+        },
+        "draw": {
+          "x": 18.06896551724138,
+          "y": 0,
+          "w": 91.86206896551724,
+          "h": 84
+        },
+        "world": {
+          "w": 128,
+          "h": 84
+        }
+      },
+      "sourceBefore": {
+        "file": "town/assets/parallel-art/packed/handel-2-daff3c64797c.webp",
+        "crop": {
+          "x": 1071,
+          "y": 4,
+          "w": 444,
+          "h": 406
+        },
+        "draw": {
+          "x": 18.06896551724138,
+          "y": 0,
+          "w": 91.86206896551724,
+          "h": 84
+        },
+        "world": {
+          "w": 128,
+          "h": 84
+        },
+        "fileSHA256": "aecfa44800a6c57e835f23942aeeeaa45af0645d5087f3a8a056489a217b0618"
+      },
+      "generation": {
+        "tool": "image_gen",
+        "original": "review-3/object-art/originals/exec-7d49c7f1-b30b-48f9-a8da-066d18f21a1e.png",
+        "originalSHA256": "44c65c61d65418620baa31e752f1da633b055f549c1efe7e58446bd3ddb6d01e",
+        "crop": [
+          669,
+          97,
+          1183,
+          570
+        ],
+        "packing": "Exact native RGBA copy and crop, lossless WebP; no alpha masking, mathematical warp or pixel corrections."
+      },
+      "reason": "Straight South elevated parallel 2/3 projection; true organic curves and detailed original materials retained.",
+      "reviewRequest": {
+        "assetId": "collection-handel-shelf",
+        "name": "Handel \u00b7 Laurel Rooms \u00b7 shelf",
+        "group": "apartment collections",
+        "width": 128,
+        "height": 84,
+        "facing": "south",
+        "status": "flagged",
+        "baseStatus": "unreviewed",
+        "note": "",
+        "issues": [
+          "perspective"
+        ],
+        "updatedAt": "2026-11-14T15:59:39.928Z",
+        "category": "Storage",
+        "pack": "apartment-collections-864",
+        "owner": "handel",
+        "purpose": "wall-shelf",
+        "sourceAssetId": null,
+        "authoredFacing": "south",
+        "view": {
+          "id": "collection-handel-shelf",
+          "facing": "south",
+          "width": 128,
+          "height": 84
+        }
+      },
+      "supersedes": {
+        "revision": 2,
+        "nativeSource": {
+          "file": "front-facing-2/shelves-decor/collection-handel-shelf-south-736257b76c1d.webp",
+          "width": 444,
+          "height": 406,
+          "x": 0,
+          "y": 0,
+          "w": 444,
+          "h": 406
+        },
+        "nativePixelSHA256": "5501ea905317992042cfdd81d042f54105d6b8e88fd4abb7becff815f874f32f"
+      },
+      "reviewRevision": 3,
+      "reviewFile": "town/asset-reviews/2026-11-14-upload-3.json"
+    },
+    {
+      "id": "decor-11-13",
+      "facing": "south",
+      "file": "review-3/object-art/furniture-rug-44c65c61d654.webp",
+      "width": 1254,
+      "height": 1254,
+      "x": 32,
+      "y": 701,
+      "w": 589,
+      "h": 459,
+      "draw": {
+        "x": 20.28976034858387,
+        "y": 0.0,
+        "w": 151.42047930283226,
+        "h": 118.0
+      },
+      "source": {
+        "file": "town/assets/decor/pack-11.png",
+        "crop": {
+          "x": 33,
+          "y": 791,
+          "w": 321,
+          "h": 205
+        },
+        "draw": {
+          "x": 3.614634146341473,
+          "y": 1.4210854715202004e-14,
+          "w": 184.77073170731705,
+          "h": 117.99999999999999
+        },
+        "world": {
+          "w": 192,
+          "h": 118
+        }
+      },
+      "sourceBefore": {
+        "file": "town/assets/decor/pack-11.png",
+        "crop": {
+          "x": 33,
+          "y": 791,
+          "w": 321,
+          "h": 205
+        },
+        "draw": {
+          "x": 3.614634146341473,
+          "y": 1.4210854715202004e-14,
+          "w": 184.77073170731705,
+          "h": 117.99999999999999
+        },
+        "world": {
+          "w": 192,
+          "h": 118
+        },
+        "fileSHA256": "829325b7723f3445dc768c9094b59500ffe360b7de90f16662729a45b7507a3a"
+      },
+      "generation": {
+        "tool": "image_gen",
+        "original": "review-3/object-art/originals/exec-7d49c7f1-b30b-48f9-a8da-066d18f21a1e.png",
+        "originalSHA256": "44c65c61d65418620baa31e752f1da633b055f549c1efe7e58446bd3ddb6d01e",
+        "crop": [
+          32,
+          701,
+          621,
+          1160
+        ],
+        "packing": "Exact native RGBA copy and crop, lossless WebP; no alpha masking, mathematical warp or pixel corrections."
+      },
+      "reason": "Straight South elevated parallel 2/3 projection; true organic curves and detailed original materials retained.",
+      "reviewRequest": {
+        "assetId": "decor-11-13",
+        "name": "Rustic washing trough",
+        "group": "waterfront",
+        "width": 192,
+        "height": 118,
+        "facing": "south",
+        "status": "flagged",
+        "baseStatus": "unreviewed",
+        "note": "",
+        "issues": [
+          "perspective"
+        ],
+        "updatedAt": "2026-11-14T16:00:44.646Z",
+        "category": "Waterfront",
+        "pack": "town-decor-256",
+        "owner": null,
+        "purpose": null,
+        "sourceAssetId": null,
+        "authoredFacing": "south",
+        "view": {
+          "id": "decor-11-13",
+          "facing": "south",
+          "width": 192,
+          "height": 118
+        }
+      },
+      "reviewRevision": 3,
+      "reviewFile": "town/asset-reviews/2026-11-14-upload-3.json"
+    },
+    {
+      "id": "collection-mozart-rug",
+      "facing": "south",
+      "file": "review-3/object-art/furniture-rug-44c65c61d654.webp",
+      "width": 1254,
+      "height": 1254,
+      "x": 651,
+      "y": 840,
+      "w": 574,
+      "h": 201,
+      "draw": {
+        "x": 0.0,
+        "y": 48.96864111498258,
+        "w": 180.0,
+        "h": 63.03135888501742
+      },
+      "source": {
+        "file": "town/assets/apartment-collections/mozart-south-cardinal-20cdd8d43cef.webp",
+        "crop": {
+          "x": 919,
+          "y": 1645,
+          "w": 219,
+          "h": 136
+        },
+        "draw": {
+          "x": 0,
+          "y": 0.2191780821917888,
+          "w": 180,
+          "h": 111.78082191780821
+        },
+        "world": {
+          "w": 180,
+          "h": 112
+        }
+      },
+      "sourceBefore": {
+        "file": "town/assets/apartment-collections/mozart-south-cardinal-20cdd8d43cef.webp",
+        "crop": {
+          "x": 919,
+          "y": 1645,
+          "w": 219,
+          "h": 136
+        },
+        "draw": {
+          "x": 0,
+          "y": 0.2191780821917888,
+          "w": 180,
+          "h": 111.78082191780821
+        },
+        "world": {
+          "w": 180,
+          "h": 112
+        },
+        "fileSHA256": "319539911aceef24ac0d9b80d1c65b9a6da173833a377d6034f6254670ff89be"
+      },
+      "generation": {
+        "tool": "image_gen",
+        "original": "review-3/object-art/originals/exec-7d49c7f1-b30b-48f9-a8da-066d18f21a1e.png",
+        "originalSHA256": "44c65c61d65418620baa31e752f1da633b055f549c1efe7e58446bd3ddb6d01e",
+        "crop": [
+          651,
+          840,
+          1225,
+          1041
+        ],
+        "packing": "Exact native RGBA copy and crop, lossless WebP; no alpha masking, mathematical warp or pixel corrections."
+      },
+      "reason": "Flat woven floor textile in parallel elevated 2/3 floor plane; preserve scalloped outline, coral/cream motifs and shared family donor.",
+      "derivedAssetIds": [
+        "family-mozart-rug"
+      ],
+      "reviewRequest": {
+        "assetId": "collection-mozart-rug",
+        "name": "Mozart \u00b7 Rosewood Salon \u00b7 rug",
+        "group": "apartment collections",
+        "width": 180,
+        "height": 112,
+        "facing": "south",
+        "status": "flagged",
+        "baseStatus": "unreviewed",
+        "note": "",
+        "issues": [
+          "perspective"
+        ],
+        "updatedAt": "2026-11-14T15:44:15.788Z",
+        "category": "Rugs",
+        "pack": "apartment-collections-864",
+        "owner": "mozart",
+        "purpose": "rug",
+        "sourceAssetId": null,
+        "authoredFacing": "south",
+        "view": {
+          "id": "collection-mozart-rug",
+          "facing": "south",
+          "width": 180,
+          "height": 112
+        }
+      },
+      "reviewRevision": 3,
+      "reviewFile": "town/asset-reviews/2026-11-14-upload-3.json"
+    },
+    {
+      "id": "decor-14-03",
+      "facing": "south",
+      "file": "review-3/object-art/streetlamp-8a8292f3dbde.webp",
+      "width": 824,
+      "height": 1909,
+      "x": 62,
+      "y": 27,
+      "w": 700,
+      "h": 1753,
+      "draw": {
+        "x": 3.1657159155733012,
+        "y": 0.0,
+        "w": 76.6685681688534,
+        "h": 192.0
+      },
+      "source": {
+        "file": "town/assets/decor/pack-14.png",
+        "crop": {
+          "x": 726,
+          "y": 5,
+          "w": 138,
+          "h": 320
+        },
+        "draw": {
+          "x": 0,
+          "y": 0,
+          "w": 83,
+          "h": 192
+        },
+        "world": {
+          "w": 83,
+          "h": 192
+        }
+      },
+      "sourceBefore": {
+        "file": "town/assets/decor/pack-14.png",
+        "crop": {
+          "x": 726,
+          "y": 5,
+          "w": 138,
+          "h": 320
+        },
+        "draw": {
+          "x": 0,
+          "y": 0,
+          "w": 83,
+          "h": 192
+        },
+        "world": {
+          "w": 83,
+          "h": 192
+        },
+        "fileSHA256": "cc6914183fca4fa17f7d8637bfb0c675643e620bb3718e53050992f45891d86c"
+      },
+      "generation": {
+        "tool": "image_gen",
+        "original": "review-3/object-art/originals/exec-6e5527ab-be95-49bb-93eb-8d58aee6b739.png",
+        "originalSHA256": "8a8292f3dbdeb0bd623a89adb71c6afa97690d41875e7a8ccf94afe96287c242",
+        "crop": [
+          62,
+          27,
+          762,
+          1780
+        ],
+        "packing": "Exact native RGBA copy and crop, lossless WebP; no alpha masking, mathematical warp or pixel corrections."
+      },
+      "reason": "Complete native silhouette and remove unrelated atlas fragments.",
+      "reviewRequest": {
+        "assetId": "decor-14-03",
+        "name": "Teal retro street lamp",
+        "group": "signs and lights",
+        "width": 83,
+        "height": 192,
+        "facing": "south",
+        "status": "flagged",
+        "baseStatus": "ok",
+        "note": "",
+        "issues": [
+          "cut-off"
+        ],
+        "updatedAt": "2026-11-14T15:57:17.476Z",
+        "category": "Lighting",
+        "pack": "town-decor-256",
+        "owner": null,
+        "purpose": null,
+        "sourceAssetId": null,
+        "authoredFacing": "south",
+        "view": {
+          "id": "decor-14-03",
+          "facing": "south",
+          "width": 83,
+          "height": 192
+        }
+      },
+      "reviewRevision": 3,
+      "reviewFile": "town/asset-reviews/2026-11-14-upload-3.json"
+    },
+    {
+      "id": "picnic-hamper",
+      "facing": "south",
+      "file": "review-3/storage-picnic/picnic-hamper-fa9916f2101e.webp",
+      "width": 628,
+      "height": 703,
+      "x": 0,
+      "y": 0,
+      "w": 628,
+      "h": 703,
+      "draw": {
+        "x": 6.480796586059746,
+        "y": 0.0,
+        "w": 75.03840682788051,
+        "h": 84.0
+      },
+      "sourceBefore": {
+        "file": "town/assets/leisure/picnic.png",
+        "fileSHA256": "44d6e616e20f8b88bdb887ad825fdaa20ff6d6d72f87f8ac8519e74befd08b34",
+        "crop": {
+          "x": 774,
+          "y": 287,
+          "w": 261,
+          "h": 248
+        },
+        "draw": {
+          "x": 0,
+          "y": 0,
+          "w": 88,
+          "h": 84
+        },
+        "world": {
+          "w": 88,
+          "h": 84
+        }
+      },
+      "generation": {
+        "tool": "image_gen",
+        "original": "review-3/storage-picnic/originals/generated-fa9916f2101e3268.png",
+        "originalSHA256": "fa9916f2101e3268d3e63ec3d2caa5442048e34d50dc7cc432d37a669e493623",
+        "crop": [
+          67,
+          7,
+          687,
+          702
+        ],
+        "transparentPackingPadding": 4,
+        "acceptedPixelSHA256": "091d68968518190ce531c4d52f62b21681f142136199b15b7f48e14fbe9cfab4",
+        "packing": "Exact generated RGBA crop/copy plus transparent padding and lossless WebP. No perspective warps, palette edits, or alpha remapping."
+      },
+      "reason": "Straight South elevated parallel 2/3 camera; detailed material identity and genuine curved lids, food, handles and cloth retained.",
+      "inspection": {
+        "completeSilhouette": true,
+        "mainComponentBounds": [
+          77,
+          17,
+          677,
+          692
+        ],
+        "uniformWorldScale": 0.11948790896159317,
+        "clearTransparentBorder": true
+      },
+      "reviewRevision": 3,
+      "reviewFile": "town/asset-reviews/2026-11-14-upload-3.json"
+    },
+    {
+      "id": "picnic-cooler",
+      "facing": "south",
+      "file": "review-3/storage-picnic/picnic-cooler-3845e28c0995.webp",
+      "width": 654,
+      "height": 645,
+      "x": 0,
+      "y": 0,
+      "w": 654,
+      "h": 645,
+      "draw": {
+        "x": 5.830232558139535,
+        "y": 0.0,
+        "w": 97.33953488372093,
+        "h": 96.0
+      },
+      "sourceBefore": {
+        "file": "town/assets/leisure/picnic.png",
+        "fileSHA256": "44d6e616e20f8b88bdb887ad825fdaa20ff6d6d72f87f8ac8519e74befd08b34",
+        "crop": {
+          "x": 1128,
+          "y": 292,
+          "w": 274,
+          "h": 242
+        },
+        "draw": {
+          "x": 0,
+          "y": 0,
+          "w": 109,
+          "h": 96
+        },
+        "world": {
+          "w": 109,
+          "h": 96
+        }
+      },
+      "generation": {
+        "tool": "image_gen",
+        "original": "review-3/storage-picnic/originals/generated-3845e28c09953c99.png",
+        "originalSHA256": "3845e28c09953c99d44c073fa92509a749b27173dac190eddaa2f4a7b507fad2",
+        "crop": [
+          665,
+          35,
+          1311,
+          672
+        ],
+        "transparentPackingPadding": 4,
+        "acceptedPixelSHA256": "24f13d49ce2f36d151735923a57a1e3f38dc848c4068fa46edcd8bd2e48385c6",
+        "packing": "Exact generated RGBA crop/copy plus transparent padding and lossless WebP. No perspective warps, palette edits, or alpha remapping."
+      },
+      "reason": "Straight South elevated parallel 2/3 camera; detailed material identity and genuine curved lids, food, handles and cloth retained.",
+      "inspection": {
+        "completeSilhouette": true,
+        "mainComponentBounds": [
+          675,
+          45,
+          1301,
+          662
+        ],
+        "uniformWorldScale": 0.14883720930232558,
+        "clearTransparentBorder": true
+      },
+      "reviewRevision": 3,
+      "reviewFile": "town/asset-reviews/2026-11-14-upload-3.json"
+    },
+    {
+      "id": "picnic-cheese-board",
+      "facing": "south",
+      "file": "review-3/storage-picnic/picnic-cheese-board-3845e28c0995.webp",
+      "width": 828,
+      "height": 547,
+      "x": 0,
+      "y": 0,
+      "w": 828,
+      "h": 547,
+      "draw": {
+        "x": 3.0201096892138892,
+        "y": 0.0,
+        "w": 105.95978062157222,
+        "h": 70.0
+      },
+      "sourceBefore": {
+        "file": "town/assets/leisure/picnic.png",
+        "fileSHA256": "44d6e616e20f8b88bdb887ad825fdaa20ff6d6d72f87f8ac8519e74befd08b34",
+        "crop": {
+          "x": 381,
+          "y": 579,
+          "w": 326,
+          "h": 202
+        },
+        "draw": {
+          "x": 0,
+          "y": 0,
+          "w": 112,
+          "h": 70
+        },
+        "world": {
+          "w": 112,
+          "h": 70
+        }
+      },
+      "generation": {
+        "tool": "image_gen",
+        "original": "review-3/storage-picnic/originals/generated-3845e28c09953c99.png",
+        "originalSHA256": "3845e28c09953c99d44c073fa92509a749b27173dac190eddaa2f4a7b507fad2",
+        "crop": [
+          1333,
+          119,
+          2153,
+          658
+        ],
+        "transparentPackingPadding": 4,
+        "acceptedPixelSHA256": "4ac19f78b2fe59bedacf7d06397968d399144a955a97c5978adcfac1e765feef",
+        "packing": "Exact generated RGBA crop/copy plus transparent padding and lossless WebP. No perspective warps, palette edits, or alpha remapping."
+      },
+      "reason": "Straight South elevated parallel 2/3 camera; detailed material identity and genuine curved lids, food, handles and cloth retained.",
+      "inspection": {
+        "completeSilhouette": true,
+        "mainComponentBounds": [
+          1343,
+          129,
+          2143,
+          648
+        ],
+        "uniformWorldScale": 0.12797074954296161,
+        "clearTransparentBorder": true
+      },
+      "reviewRevision": 3,
+      "reviewFile": "town/asset-reviews/2026-11-14-upload-3.json"
+    },
+    {
+      "id": "decor-01-11",
+      "facing": "south",
+      "file": "review-3/storage-picnic/decor-01-11-lids-48d9e9fd242a.webp",
+      "width": 981,
+      "height": 675,
+      "x": 0,
+      "y": 0,
+      "w": 981,
+      "h": 675,
+      "draw": {
+        "x": 0.0,
+        "y": 4.944954128440372,
+        "w": 96.0,
+        "h": 66.05504587155963
+      },
+      "sourceBefore": {
+        "file": "town/assets/decor/pack-01.png",
+        "fileSHA256": "3ef31efd138e6c11b299a9c7d9bb506e66474da0b5dd923a0df7313d7d889209",
+        "crop": {
+          "x": 835,
+          "y": 560,
+          "w": 250,
+          "h": 184
+        },
+        "draw": {
+          "x": 0,
+          "y": 0,
+          "w": 96,
+          "h": 71
+        },
+        "world": {
+          "w": 96,
+          "h": 71
+        }
+      },
+      "generation": {
+        "tool": "image_gen",
+        "original": "review-3/storage-picnic/originals/generated-lids-48d9e9fd242ac613.png",
+        "originalSHA256": "48d9e9fd242ac613e251aa3608737e41ab12e8cf8983d9e82a68f6206404b45e",
+        "crop": [
+          64,
+          22,
+          1037,
+          689
+        ],
+        "transparentPackingPadding": 4,
+        "acceptedPixelSHA256": "30e73e87691652e82b8b57a6d8758cc8c5a8c5fc257240098059222b69c606f2",
+        "packing": "Exact generated native RGBA copy/crop, transparent padding and lossless WebP. No mathematical warp, pixel editing or alpha remapping."
+      },
+      "reason": "Elevated South parallel 2/3 camera with clearly visible rear hinges and broad horizontal lid top above short upright front; original wood/leather material detail retained.",
+      "inspection": {
+        "completeSilhouette": true,
+        "uniformWorldScale": 0.09785932721712538,
+        "clearTransparentBorder": true,
+        "readableTopAndFront": true,
+        "frontLockAndHandleBelowTopPlane": true,
+        "visualEvidence": "work/review-3/storage-picnic/two-lid-refinement-world-proof.jpg"
+      },
+      "priorAcceptedCandidate": {
+        "file": "review-3/storage-picnic/decor-01-11-c34927cf1e76.webp",
+        "width": 903,
+        "height": 710,
+        "x": 0,
+        "y": 0,
+        "w": 903,
+        "h": 710,
+        "draw": {
+          "x": 2.8499999999999943,
+          "y": 0.0,
+          "w": 90.30000000000001,
+          "h": 71.0
+        },
+        "generation": {
+          "tool": "image_gen",
+          "original": "review-3/storage-picnic/originals/generated-c34927cf1e76d875.png",
+          "originalSHA256": "c34927cf1e76d875bcfd89f8f3b86bfcdfb4be5634d6e995c17f650b20966cc7",
+          "crop": [
+            84,
+            39,
+            979,
+            741
+          ],
+          "transparentPackingPadding": 4,
+          "acceptedPixelSHA256": "85579197dc8281a272a70ff0571c87da73ea35e3285b4b0f679c0c986078d885",
+          "packing": "Exact generated RGBA crop/copy plus transparent padding and lossless WebP. No perspective warps, palette edits, or alpha remapping."
+        }
+      },
+      "reviewRevision": 3,
+      "reviewFile": "town/asset-reviews/2026-11-14-upload-3.json"
+    },
+    {
+      "id": "decor-01-12",
+      "facing": "south",
+      "file": "review-3/storage-picnic/decor-01-12-lids-48d9e9fd242a.webp",
+      "width": 982,
+      "height": 675,
+      "x": 0,
+      "y": 0,
+      "w": 982,
+      "h": 675,
+      "draw": {
+        "x": 0.0,
+        "y": 3.012219959266801,
+        "w": 96.0,
+        "h": 65.9877800407332
+      },
+      "sourceBefore": {
+        "file": "town/assets/decor/pack-01.png",
+        "fileSHA256": "3ef31efd138e6c11b299a9c7d9bb506e66474da0b5dd923a0df7313d7d889209",
+        "crop": {
+          "x": 1216,
+          "y": 563,
+          "w": 258,
+          "h": 183
+        },
+        "draw": {
+          "x": 0,
+          "y": 0,
+          "w": 96,
+          "h": 69
+        },
+        "world": {
+          "w": 96,
+          "h": 69
+        }
+      },
+      "generation": {
+        "tool": "image_gen",
+        "original": "review-3/storage-picnic/originals/generated-lids-48d9e9fd242ac613.png",
+        "originalSHA256": "48d9e9fd242ac613e251aa3608737e41ab12e8cf8983d9e82a68f6206404b45e",
+        "crop": [
+          1124,
+          22,
+          2098,
+          689
+        ],
+        "transparentPackingPadding": 4,
+        "acceptedPixelSHA256": "47cce59ae167f3ff60edfa508c58c874346e5198fe5ede61be468f4d33872504",
+        "packing": "Exact generated native RGBA copy/crop, transparent padding and lossless WebP. No mathematical warp, pixel editing or alpha remapping."
+      },
+      "reason": "Elevated South parallel 2/3 camera with clearly visible rear hinges and broad horizontal lid top above short upright front; original wood/leather material detail retained.",
+      "inspection": {
+        "completeSilhouette": true,
+        "uniformWorldScale": 0.09775967413441955,
+        "clearTransparentBorder": true,
+        "readableTopAndFront": true,
+        "frontLockAndHandleBelowTopPlane": true,
+        "visualEvidence": "work/review-3/storage-picnic/two-lid-refinement-world-proof.jpg"
+      },
+      "priorAcceptedCandidate": {
+        "file": "review-3/storage-picnic/decor-01-12-c34927cf1e76.webp",
+        "width": 912,
+        "height": 712,
+        "x": 0,
+        "y": 0,
+        "w": 912,
+        "h": 712,
+        "draw": {
+          "x": 3.8089887640449405,
+          "y": 0.0,
+          "w": 88.38202247191012,
+          "h": 69.0
+        },
+        "generation": {
+          "tool": "image_gen",
+          "original": "review-3/storage-picnic/originals/generated-c34927cf1e76d875.png",
+          "originalSHA256": "c34927cf1e76d875bcfd89f8f3b86bfcdfb4be5634d6e995c17f650b20966cc7",
+          "crop": [
+            1007,
+            37,
+            1911,
+            741
+          ],
+          "transparentPackingPadding": 4,
+          "acceptedPixelSHA256": "60daed489db518e44928e6c992ad9c9ac34d4c1785e1828d5e37fde294a94f5e",
+          "packing": "Exact generated RGBA crop/copy plus transparent padding and lossless WebP. No perspective warps, palette edits, or alpha remapping."
+        }
+      },
+      "reviewRevision": 3,
+      "reviewFile": "town/asset-reviews/2026-11-14-upload-3.json"
+    },
+    {
+      "id": "decor-01-13",
+      "facing": "south",
+      "file": "review-3/storage-picnic/decor-01-13-fa9916f2101e.webp",
+      "width": 627,
+      "height": 677,
+      "x": 0,
+      "y": 0,
+      "w": 627,
+      "h": 677,
+      "draw": {
+        "x": 9.101920236336781,
+        "y": 0.0,
+        "w": 77.79615952732644,
+        "h": 84.0
+      },
+      "sourceBefore": {
+        "file": "town/assets/decor/pack-01.png",
+        "fileSHA256": "3ef31efd138e6c11b299a9c7d9bb506e66474da0b5dd923a0df7313d7d889209",
+        "crop": {
+          "x": 70,
+          "y": 796,
+          "w": 244,
+          "h": 211
+        },
+        "draw": {
+          "x": 0,
+          "y": 0,
+          "w": 96,
+          "h": 84
+        },
+        "world": {
+          "w": 96,
+          "h": 84
+        }
+      },
+      "generation": {
+        "tool": "image_gen",
+        "original": "review-3/storage-picnic/originals/generated-fa9916f2101e3268.png",
+        "originalSHA256": "fa9916f2101e3268d3e63ec3d2caa5442048e34d50dc7cc432d37a669e493623",
+        "crop": [
+          700,
+          21,
+          1319,
+          690
+        ],
+        "transparentPackingPadding": 4,
+        "acceptedPixelSHA256": "69e7a5fc392dc3e12c4fa05930c3224d5e5a79682ecf5bf9bd60616b050baeb0",
+        "packing": "Exact generated RGBA crop/copy plus transparent padding and lossless WebP. No perspective warps, palette edits, or alpha remapping."
+      },
+      "reason": "Straight South elevated parallel 2/3 camera; detailed material identity and genuine curved lids, food, handles and cloth retained.",
+      "inspection": {
+        "completeSilhouette": true,
+        "mainComponentBounds": [
+          707,
+          31,
+          1309,
+          680
+        ],
+        "uniformWorldScale": 0.1240768094534712,
+        "clearTransparentBorder": true
+      },
+      "reviewRevision": 3,
+      "reviewFile": "town/asset-reviews/2026-11-14-upload-3.json"
+    },
+    {
+      "id": "decor-01-16",
+      "facing": "south",
+      "file": "review-3/storage-picnic/decor-01-16-fa9916f2101e.webp",
+      "width": 753,
+      "height": 637,
+      "x": 0,
+      "y": 0,
+      "w": 753,
+      "h": 637,
+      "draw": {
+        "x": 11.354788069073784,
+        "y": 0.0,
+        "w": 73.29042386185243,
+        "h": 62.0
+      },
+      "sourceBefore": {
+        "file": "town/assets/decor/pack-01.png",
+        "fileSHA256": "3ef31efd138e6c11b299a9c7d9bb506e66474da0b5dd923a0df7313d7d889209",
+        "crop": {
+          "x": 1200,
+          "y": 819,
+          "w": 289,
+          "h": 184
+        },
+        "draw": {
+          "x": 0,
+          "y": 0,
+          "w": 96,
+          "h": 62
+        },
+        "world": {
+          "w": 96,
+          "h": 62
+        }
+      },
+      "generation": {
+        "tool": "image_gen",
+        "original": "review-3/storage-picnic/originals/generated-fa9916f2101e3268.png",
+        "originalSHA256": "fa9916f2101e3268d3e63ec3d2caa5442048e34d50dc7cc432d37a669e493623",
+        "crop": [
+          1375,
+          67,
+          2120,
+          696
+        ],
+        "transparentPackingPadding": 4,
+        "acceptedPixelSHA256": "30c328c75d37d95abee2caf8c02b118c81b64138650e09a1abd0edc83b9b25ac",
+        "packing": "Exact generated RGBA crop/copy plus transparent padding and lossless WebP. No perspective warps, palette edits, or alpha remapping."
+      },
+      "reason": "Straight South elevated parallel 2/3 camera; detailed material identity and genuine curved lids, food, handles and cloth retained.",
+      "inspection": {
+        "completeSilhouette": true,
+        "mainComponentBounds": [
+          1385,
+          77,
+          2110,
+          686
+        ],
+        "uniformWorldScale": 0.09733124018838304,
+        "clearTransparentBorder": true
+      },
+      "reviewRevision": 3,
+      "reviewFile": "town/asset-reviews/2026-11-14-upload-3.json"
+    }
+  ]
+}

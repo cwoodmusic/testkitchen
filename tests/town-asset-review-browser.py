@@ -11,6 +11,7 @@ ROOT = Path(__file__).resolve().parents[1]
 OUT = ROOT / 'work/asset-review/browser'
 OUT.mkdir(parents=True, exist_ok=True)
 KEY = 'codaTownAssetReviewV1'
+RETIRED = {entry['assetId'] for entry in json.loads((ROOT/'town/asset-reviews/2026-11-14-upload-3.json').read_text())['reviews'] if 'delete' in entry.get('issues', [])}
 ISSUES = {'perspective': 'Needs 2/3 perspective', 'cut-off': 'Edges are cut off',
           'angled': 'Angled', 'delete': 'Mark for deletion'}
 SENTINELS = {'codaReviewMapSentinel': '{"map":"preserve"}',
@@ -103,7 +104,17 @@ try:
             surfaces:all.filter(a=>a.id.startsWith('surface:')).map(a=>a.id),
             directional:all.filter(a=>typeof a.getFacingView==='function'&&!a.wallMounted&&a.layer!=='ground').map(a=>a.id)};
         }''')
-        assert len(coverage['ids']) == 1860, len(coverage['ids'])
+        assert len(RETIRED) == 48
+        assert len(coverage['ids']) == 1860-len(RETIRED), len(coverage['ids'])
+        assert not RETIRED.intersection(coverage['ids']), 'Applied deletions must leave the active reviewer'
+        assert 'house-pavilion-1' in coverage['ids'], 'The unmarked sibling must remain available'
+        providers = page.evaluate('''async()=>{
+          const url=performance.getEntriesByType('resource').filter(e=>new URL(e.name).pathname==='/town/world/catalog.mjs').at(-1).name;
+          const {catalog}=await import(url);
+          return [...catalog.values()].filter(a=>typeof a.draw==='function'&&a.w>0&&a.h>0).map(a=>a.id);
+        }''')
+        assert RETIRED <= set(providers), 'Saved maps must retain every original asset provider'
+        reports.append({'retiredSelections':len(RETIRED),'savedMapProvidersPreserved':len(RETIRED),'unmarkedSiblingAvailable':True})
         assert set(option_ids(page)) == set(coverage['ids']), 'Every catalog item must be reachable, including hidden builder entries'
         assert set(coverage['surfaces']) == {'surface:'+s for s in ['grass','cobble','dirt','water','wood','sand','asphalt','sidewalk','brick']}
         assert coverage['rugs'], 'Room rugs must remain reviewable'
@@ -459,10 +470,12 @@ try:
         legacy_note='A manual flag from the earlier reviewer must remain flagged.'
         legacy_good='This earlier approved side must return to Looks good.'
         unknown_note='Keep this older report even though its asset is no longer listed.'
+        retired_note='Keep the original building review and its saved-map identity.'
         legacy_document={'format':'coda-asset-review','version':1,'reviews':[
             {'assetId':'furniture-1-180','facing':'south','status':'flagged','note':legacy_note},
             {'assetId':'collection-bach-bed','facing':'east','status':'ok','note':legacy_good},
-            {'assetId':'legacy-only-decoration','name':'Earlier decoration','group':'older pack','width':66,'height':88,'facing':'north','status':'flagged','note':unknown_note}]}
+            {'assetId':'legacy-only-decoration','name':'Earlier decoration','group':'older pack','width':66,'height':88,'facing':'north','status':'flagged','note':unknown_note},
+            {'assetId':'house-cottage-0','name':'Saved cottage','group':'houses','width':384,'height':256,'facing':'south','status':'flagged','baseStatus':'unreviewed','issues':['delete'],'note':retired_note}]}
         legacy_context=browser.new_context(viewport={'width':1440,'height':1000},accept_downloads=True)
         legacy_context.add_init_script('const legacyKey='+json.dumps(KEY)+',legacyReview='+json.dumps(legacy_document)+';if(localStorage.getItem(legacyKey)===null)localStorage.setItem(legacyKey,JSON.stringify(legacyReview));')
         legacy_page=legacy_context.new_page();legacy_page.set_default_timeout(90000)
@@ -484,8 +497,10 @@ try:
         for key,text,status in [(('furniture-1-180','south'),legacy_note,'flagged'),(('collection-bach-bed','east'),legacy_good,'ok'),(('legacy-only-decoration','north'),unknown_note,'flagged')]:
             assert legacy_records[key]['note']==text and legacy_records[key]['status']==status
             assert legacy_records[key].get('issues',[])==[]
-        assert len(legacy_records)==3
-        reports.append({'legacyReviewsRetained':3,'legacyManualFlagPreserved':True,'legacyApprovedBaselineSurvivesReload':True,'unknownLegacyAssetRetained':True})
+        assert legacy_records[('house-cottage-0','south')]['note']==retired_note
+        assert legacy_records[('house-cottage-0','south')]['issues']==['delete']
+        assert len(legacy_records)==4
+        reports.append({'legacyReviewsRetained':4,'legacyManualFlagPreserved':True,'legacyApprovedBaselineSurvivesReload':True,'unknownLegacyAssetRetained':True,'retiredReviewRetained':True})
         assert not errors,errors
         (OUT/'results.json').write_text(json.dumps({'passed':True,'reports':reports,'errors':errors},indent=2))
         print('PASS: complete category coverage, accessible per-facing issue checkboxes, manual baselines, deletion flags, search/filters, mobile layout, native material previews, legacy/reloaded/downloaded reviews and protected storage.',flush=True)

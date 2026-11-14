@@ -3,7 +3,7 @@
 const cache=new WeakMap();
 const rotatePoint=(a,o,x,y)=>{const r=(o.rotation||0)*Math.PI/180,s=o.scale||1,dx=(x-a.w/2)*s,dy=(y-a.h)*s;return {x:o.x+dx*Math.cos(r)-dy*Math.sin(r),y:o.y+dx*Math.sin(r)+dy*Math.cos(r)};};
 const rectPoints=b=>[[b.x,b.y],[b.x+b.w,b.y],[b.x+b.w,b.y+b.h],[b.x,b.y+b.h]];
-const shapePolygons=a=>{const shapes=[...(a.polygons||[]),...(a.boxes||[]).map(rectPoints)];return shapes.length?shapes:a.footprint?[rectPoints(a.footprint)]:[];};
+const shapePolygons=(a,polygons=a.polygons)=>{const shapes=[...(polygons||[]),...(a.boxes||[]).map(rectPoints)];return shapes.length?shapes:a.footprint?[rectPoints(a.footprint)]:[];};
 
 export function scenePartDepth(a,o,part){
  const xs=part.outline.map(p=>p[0]),left=Math.min(...xs),right=Math.max(...xs);
@@ -21,7 +21,9 @@ export function buildingDepthSlices(a,o){
  if(o.mount||!a.frontAtX)return null;
  const key=[o.x,o.y,o.scale||1,o.rotation||0,a.w,a.h].join(':'),old=cache.get(o);
  if(old?.key===key&&old.asset===a)return old.parts;
- const polygons=shapePolygons(a).map(p=>p.map(([x,y])=>rotatePoint(a,o,x,y)));
+ // A thin railing can block feet while the opaque artwork beneath it is a
+ // walkable floor. Use its masonry envelope for image depth, not that rail.
+ const polygons=shapePolygons(a,a.depthPolygons??a.polygons).map(p=>p.map(([x,y])=>rotatePoint(a,o,x,y)));
  if(!polygons.length)return null;
  const image=rectPoints({x:0,y:0,w:a.w,h:a.h}).map(([x,y])=>rotatePoint(a,o,x,y));
  const imageLeft=Math.min(...image.map(p=>p.x)),imageRight=Math.max(...image.map(p=>p.x));

@@ -22,6 +22,7 @@ parser = argparse.ArgumentParser()
 parser.add_argument('--output', type=Path, default=ROOT / 'work/parallel-projection/browser')
 parser.add_argument('--allow-empty', action='store_true', help='Infrastructure preflight before accepted art is populated')
 parser.add_argument('--expected-arcades', type=int, default=31, help='Expected declared arcade screen geometry corrections')
+parser.add_argument('--asset', action='append', default=[], help='Limit native/preview/export pixel checks to this ID; retain full metadata and arcade guards')
 args = parser.parse_args()
 args.output.mkdir(parents=True, exist_ok=True)
 
@@ -144,7 +145,7 @@ MOTION_FALLBACK_PROBE = '''async ({baseline,expectedArcades}) => {
  check(failures===selected.length,'Edited native failure probe did not reject every target');return {views:selected.length,failedNativeLoads:failures,originalGeometryRetained:true,runtime:runtime.stats};
 }'''
 
-PROBE = '''async ({allowEmpty}) => {
+PROBE = '''async ({allowEmpty,assetIds=[]}) => {
  const check=(ok,message)=>{if(!ok)throw Error(message);};
  const app=new URL(document.querySelector('script[type="module"]').src);
  const appModule=path=>{
@@ -152,16 +153,21 @@ PROBE = '''async ({allowEmpty}) => {
   return import(loaded?.name??path+app.search);
  };
  const {catalog,parallelArtRuntime:runtime}=await appModule('/town/world/catalog.mjs');
- const {PARALLEL_ART_PATCHES:patches}=await appModule('/town/world/parallel-art-data.mjs');
- const reviewClones=new Set(['construction-3','construction-4','construction-5','music-square-wall']),patchedIds=new Set(patches.map(p=>p.id));
+ const {PARALLEL_ART_PATCHES:allPatches}=await appModule('/town/world/parallel-art-data.mjs');
+ const patches=assetIds.length?allPatches.filter(p=>assetIds.includes(p.id)):allPatches;
+ for(const id of assetIds)check(patches.some(p=>p.id===id),'No accepted native views for selected asset '+id);
+ const {isRetiredAsset,RETIRED_ASSET_IDS}=await appModule('/town/world/retired-assets.mjs');let retiredProviders=0;
+ const reviewClones=new Set(['construction-3','construction-4','construction-5','music-square-wall']),patchedIds=new Set(allPatches.map(p=>p.id));
  const canvasGetter=a=>{for(let at=a;at;at=Object.getPrototypeOf(at)){const d=Object.getOwnPropertyDescriptor(at,'canvas');if(d)return d.get??d.value;}return undefined;};
  for(const [id,a]of catalog){
   const reviewed=townAssetReview.catalog.get(id);if(reviewed===a)continue;
+  if(!reviewed&&isRetiredAsset(a)){retiredProviders++;continue;}
   check(reviewClones.has(id)&&!patchedIds.has(id),'Test must exercise the actual shared game object '+id);
   for(const key of ['w','h','boxes','polygons','layer','owner','footprint','door','wallMounted','collisionDefault','npcAvoid','depthSorted'])check(JSON.stringify(reviewed[key])===JSON.stringify(a[key]),'Review-only clone changed physical metadata '+id+'/'+key);
   for(const key of ['draw','getFacingView','getFacingImage','getFacingDrawSource','ensureFull'])check(reviewed[key]===a[key],'Review-only clone changed native art API '+id+'/'+key);
   check(canvasGetter(reviewed)===canvasGetter(a),'Review-only clone changed its native canvas '+id);
  }
+ check(retiredProviders===RETIRED_ASSET_IDS.length,'Only explicitly retired providers may leave the reviewer');
  const {prepareAssetPreview}=await appModule('/town/asset-review/preview.mjs');
  const {assetFilter}=await appModule('/town/world/asset-color.mjs');
  const {drawObject}=await appModule('/town/world/render.mjs');
@@ -375,7 +381,7 @@ try:
                                 original_by_id[patch['id']].get('motion') or {}).get('kind') == 'arcade']
         assert len(arcade_declarations) == args.expected_arcades, ('Unexpected declared arcade screen count', len(arcade_declarations))
         try:
-            result = page.evaluate(PROBE, {'allowEmpty': args.allow_empty})
+            result = page.evaluate(PROBE, {'allowEmpty': args.allow_empty, 'assetIds': args.asset})
         except Exception:
             diagnostic = page.evaluate('window.__parallelDebug || null')
             if diagnostic:

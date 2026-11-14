@@ -1,4 +1,4 @@
-import {PARALLEL_ART_PATCHES} from './parallel-art-data.mjs?v=town-front-facing-2';
+import {PARALLEL_ART_PATCHES} from './parallel-art-data.mjs?v=town-review-3';
 import {correctedArtMotion} from './parallel-art-motion.mjs?v=town-front-facing-2';
 import {furnitureFootCenter} from './furniture-facing.mjs?v=opera-parallax-1';
 

@@ -4,6 +4,7 @@ import {readFileSync} from 'node:fs';
 import {normalizeKnownTerrainProject,knownTerrainRepairCount} from './known-terrain-repairs.mjs';
 import {knownTerrainRepairs} from './known-terrain-repair-data.mjs';
 import {knownSouthwestCoastRepairs} from './southwest-coast-repair-data.mjs';
+import {knownOperaStairRepairs,OPERA_STAIR_ANCHOR} from './opera-stair-repair-data.mjs';
 import {parseProject} from './model.mjs';
 import {readPaint} from './ground-paint.mjs';
 import {height} from './model.mjs';
@@ -18,6 +19,25 @@ test('the complete authored island repair changes only the exact known defective
  const affected=new Set([...knownTerrainRepairs,...knownSouthwestCoastRepairs].map(([key])=>key));for(const[key,cell]of Object.entries(project.cells))if(!affected.has(key))assert.equal(fixed.cells[key],cell);
  for(const[key,cell]of Object.entries(project.cells))if(cell.stairs||cell.bridge||cell.pier)assert.deepEqual(fixed.cells[key],cell,'Every authored stair flight, bridge and landing retains its physical geometry');
  assert.equal(normalizeKnownTerrainProject(fixed),fixed,'The repaired map is idempotent');
+});
+
+test('Opera stair water holes repair only exact known cells under the unmoved building',()=>{
+ const project=current();for(const[key,before]of knownOperaStairRepairs)project.cells[key]=structuredClone(before);
+ const raw=JSON.stringify(project),fixed=normalizeKnownTerrainProject(project);
+ assert.equal(knownOperaStairRepairs.length,15);assert.equal(JSON.stringify(project),raw);
+ for(const[key,,after]of knownOperaStairRepairs)assert.deepEqual(fixed.cells[key],after);
+ assert.deepEqual(fixed.objects,project.objects);assert.strictEqual(fixed.spawn,project.spawn);
+ for(let x=220;x<=330;x+=10)for(let y=878;y<=1020;y+=2){
+  const X=OPERA_STAIR_ANCHOR.x-2304+256+x*4096/1448,Y=OPERA_STAIR_ANCHOR.y-3328+180+y*3072/1086;
+  assert.equal(height(fixed,X,Y),384,`Left stair tread ${x},${y} has continuous ground`);
+ }
+ assert.strictEqual(normalizeKnownTerrainProject(fixed),fixed);
+ const customized=structuredClone(project),key=knownOperaStairRepairs[0][0];customized.cells[key]={surface:'wood',level:7};
+ assert.strictEqual(normalizeKnownTerrainProject(customized).cells[key],customized.cells[key]);
+ const moved=structuredClone(project);moved.objects.find(o=>o.id===OPERA_STAIR_ANCHOR.id).x+=64;
+ assert.strictEqual(normalizeKnownTerrainProject(moved),moved);
+ const movedAfterRepair=structuredClone(fixed);movedAfterRepair.objects.find(o=>o.id===OPERA_STAIR_ANCHOR.id).x+=64;
+ assert.strictEqual(normalizeKnownTerrainProject(movedAfterRepair),movedAfterRepair,'Moving the building must not let an older smoothing generation undo the saved floor');
 });
 
 test('later custom painting, contours and unrelated maps remain untouched',()=>{

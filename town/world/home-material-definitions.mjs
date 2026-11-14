@@ -74,6 +74,11 @@ const contrastRows=[
 const contrastByOwner=new Map(contrastRows.map(([owner,floorColor,floorOpacity,carpet,kitchen,bathWall,wallColor,wallOpacity,kitchenStyle])=>[owner,{floorColor,floorOpacity,carpet,kitchen,bathWall,wallColor,wallOpacity,kitchenStyle}]));
 const mix=(hex,other,amount)=>'#'+[1,3,5].map(i=>Math.round(parseInt(hex.slice(i,i+2),16)*(1-amount)+parseInt(other.slice(i,i+2),16)*amount).toString(16).padStart(2,'0')).join('');
 const surfaceColors=base=>[base,mix(base,'#ffffff',.09),mix(base,'#1d2b31',.12),mix(base,'#ffffff',.045),mix(base,'#394348',.055)];
+// These repaired source files contain intact fundamental motifs, rather than
+// four mirrored halves of a larger image. Their uniform reciprocal scales keep
+// repeat periods on whole world pixels without changing any wall bounds.
+const alignedWallRepeats=new Set(['mozart','clara','chopin','haydn','ellington','dj','zizi','schoenberg','player','showroom-botanical-conservatory','showroom-industrial-loft']);
+const fittedAuthoredTrims=new Set(['showroom-art-deco-lounge','showroom-french-cafe']);
 // These two authored wet repeats read as a mirrored chevron/bowtie field.
 // Use a quiet real tile layout instead, separate from both walls and dry floors.
 const quietWetFloors=new Map([
@@ -83,7 +88,7 @@ const quietWetFloors=new Map([
 const freeze=value=>{if(value&&typeof value==='object'){for(const part of Object.values(value))freeze(part);Object.freeze(value);}return value;};
 const finish=(owner,kind,name,colors,extra={})=>({id:`${owner}-${kind}`,name,label:name,pattern:`home-${owner}-${kind}`,homeMaterial:true,owner,kind,colors,texture:`${owner}-${kind==='wet-wall'?'wet-floor':kind}.webp`,...extra});
 export const HOME_MATERIAL_SUITES=freeze(rows.map(([owner,name,floorName,wallName,wetName,colors])=>{
- const contrast=contrastByOwner.get(owner),quietWet=quietWetFloors.get(owner),floor=finish(owner,'floor',floorName,colors,{presentation:{scale:.5,color:contrast.floorColor,opacity:contrast.floorOpacity}}),wallpaper=finish(owner,'wall',wallName,colors,{trimTexture:`${owner}-dado.webp`,presentation:{scale:.65,color:contrast.wallColor,opacity:contrast.wallOpacity},trimPresentation:{scaleX:.65,scaleY:1,color:contrast.wallColor,opacity:.12,...(owner==='showroom-victorian-parlor'?{style:'complete-scroll',fitHeight:true,insetTop:4,insetBottom:4}:{})}});
+ const contrast=contrastByOwner.get(owner),quietWet=quietWetFloors.get(owner),wallScale=owner==='showroom-industrial-loft'?.125:alignedWallRepeats.has(owner)?.5:.65,floor=finish(owner,'floor',floorName,colors,{presentation:{scale:.5,color:contrast.floorColor,opacity:contrast.floorOpacity}}),wallpaper=finish(owner,'wall',wallName,colors,{trimTexture:`${owner}-dado.webp`,presentation:{scale:wallScale,color:contrast.wallColor,opacity:contrast.wallOpacity},trimPresentation:{scaleX:.65,scaleY:1,color:contrast.wallColor,opacity:.12,...(fittedAuthoredTrims.has(owner)?{fitHeight:true,insetTop:2,insetBottom:4}:{}),...(owner==='showroom-victorian-parlor'?{style:'complete-scroll',fitHeight:true,insetTop:4,insetBottom:4}:{})}});
  return {
   owner,id:`home-suite-${owner}`,name,floor,wallpaper,
   ...(owner==='showroom-victorian-parlor'?{decorativeRugTexture:'victorian-bath-rug.png'}:{}),

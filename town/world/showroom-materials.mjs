@@ -1,4 +1,4 @@
-import {drawHomeMaterialFloor,drawHomeMaterialWallpaper,prepareHomeMaterialFinish} from './home-materials.mjs?v=town-library-review-1';
+import {drawHomeMaterialFloor,drawHomeMaterialWallpaper,prepareHomeMaterialFinish} from './home-materials.mjs?v=town-review-3';
 
 // Keep material previews on the same decoded-image cache as room painting.
 export function prepareShowroomFinish(finish,kind){

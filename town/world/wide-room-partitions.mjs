@@ -1,5 +1,5 @@
-import {drawShowroomWallpaper} from './showroom-materials.mjs?v=town-library-review-1';
-import {getHomeMaterialCacheStats} from './home-materials.mjs?v=town-library-review-1';
+import {drawShowroomWallpaper} from './showroom-materials.mjs?v=town-review-3';
+import {getHomeMaterialCacheStats} from './home-materials.mjs?v=town-review-3';
 import {drawInteriorDoor} from './interior-portal-art.mjs?v=opera-parallax-1';
 
 const FACE_HEIGHT=96,EPS=.001,MAX_ENTRIES=48,MAX_PIXELS=4*1024*1024;

@@ -7,7 +7,7 @@ const load=path=>new Promise((resolve,reject)=>{
  i.onerror=()=>reject(Error('Urban street surface artwork could not load.'));
  i.src=new URL('../assets/urban/'+path,import.meta.url);
 });
-const [image,concrete]=await Promise.all([load('street-surfaces.png'),load('concrete-sidewalk.png')]);
+const [image,concrete,brick]=await Promise.all([load('street-surfaces.png'),load('concrete-sidewalk.png'),load('../ground-repeats/brick.png')]);
 function texture(index,source=image){
  const panel=source===image?image.width/3:source.width;
  const c=document.createElement('canvas');c.width=c.height=512;
@@ -21,4 +21,11 @@ function texture(index,source=image){
 // The concrete donor has two pours across instead of eight small pavers.
 // At this shared world scale, expansion joints are 128 world pixels apart:
 // one broad slab spans the full width of a modular sidewalk.
-export const urbanTextures=Object.freeze({asphalt:texture(0),sidewalk:texture(0,concrete),brick:texture(2)});
+// One complete two-course bond is repeated by translation. Reflecting an
+// arbitrary donor reverses half-bricks and produces a vertical center joint.
+const brickUnit=document.createElement('canvas');brickUnit.width=64;brickUnit.height=32;
+const brickContext=brickUnit.getContext('2d');brickContext.imageSmoothingEnabled=false;
+brickContext.drawImage(brick,202,3,348,148,0,0,64,32);
+const brickTexture=document.createElement('canvas');brickTexture.width=brickTexture.height=512;
+const brickField=brickTexture.getContext('2d');brickField.fillStyle=brickField.createPattern(brickUnit,'repeat');brickField.fillRect(0,0,512,512);
+export const urbanTextures=Object.freeze({asphalt:texture(0),sidewalk:texture(0,concrete),brick:brickTexture});

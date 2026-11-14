@@ -1,0 +1,79 @@
+{
+  "version": 1,
+  "review": "2026-11-14-upload-3.json",
+  "method": "Image generation repair; accepted generated PNGs retained unchanged. Runtime extracts a complete periodic brick motif and scales it to its world repeat; no pixel warps, painting, seam blur, or reflective mirroring of accepted art. Sand uses the full image directly.",
+  "sourceArtwork": [
+    {
+      "file": "town/assets/ground-surfaces.png",
+      "sha256": "f274c9f148577d211170b1b12af9b8b97b688961574710f8537eaf5fb6c369ec",
+      "crop": {
+        "x": 724,
+        "y": 0,
+        "w": 724,
+        "h": 724
+      },
+      "purpose": "Golden granular sand palette/detail reference."
+    },
+    {
+      "file": "town/assets/urban/street-surfaces.png",
+      "sha256": "257f508ce91da9c36385cb04df41ec3361827fa0a64bf3d20746ea08926aa32c",
+      "crop": {
+        "x": 1448,
+        "y": 0,
+        "w": 724,
+        "h": 724
+      },
+      "purpose": "Red-brown clay brick and narrow mortar style reference."
+    }
+  ],
+  "accepted": [
+    {
+      "file": "sand.png",
+      "sha256": "b6d5b2e3e2c42a90a93d600637fe7cdfb1b9f50feffb9843034e797c32f3a9c2",
+      "native": {
+        "width": 1254,
+        "height": 1254
+      },
+      "crop": {
+        "x": 0,
+        "y": 0,
+        "w": 1254,
+        "h": 1254
+      },
+      "worldRepeat": {
+        "width": 512,
+        "height": 512
+      },
+      "generatorOriginal": "exec-7ea15c29-3b84-4e25-81cf-f044475a2e28.png",
+      "promptIntent": "Preserve golden granular pixel detail; replace long reflected diagonal dune bands with subtle short windswept stipple; translation-tileable in both axes, no mirror folds or visible grid."
+    },
+    {
+      "file": "brick.png",
+      "sha256": "3d38e3774c797359173953cd0f929504ab85bd7654663ef56b174f822e9a2261",
+      "native": {
+        "width": 1254,
+        "height": 1254
+      },
+      "crop": {
+        "x": 202,
+        "y": 3,
+        "w": 348,
+        "h": 148
+      },
+      "worldRepeat": {
+        "width": 64,
+        "height": 32
+      },
+      "generatorOriginal": "exec-66a66006-d553-4053-9f7c-b8db00d99ab7.png",
+      "promptIntent": "Preserve fired clay/granular mortar palette; regular straight running bond, alternating half-brick courses, translation repeat instead of reflection; crop is two complete courses and two brick widths bounded by matching mortar phase."
+    }
+  ],
+  "unchanged": [
+    "All map JSON and saved project data",
+    "Asset IDs, world dimensions, positions and physics",
+    "Property paving donors and paving.mjs",
+    "Grass, water, dirt, wood and asphalt native source art",
+    "Concrete sidewalk native source art"
+  ],
+  "sampling": "Continuous world-anchored material patterns, offset by rendered elevation to retain logical x/y phase. Minification samples the full field with area filtering; shared rounded device-pixel cell boundaries prevent translucent cracks. Native scale retains nearest pixel sampling."
+}

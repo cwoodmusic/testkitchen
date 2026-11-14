@@ -1,8 +1,9 @@
-import {createRoomEditor} from './room-editor.mjs?v=town-library-review-1';
-import {getInteriorBase,renderInterior} from '../world/urban-interiors.mjs?v=town-front-facing-2';
+import {createRoomEditor} from './room-editor.mjs?v=town-review-3';
+import {isRetiredAsset} from '../world/retired-assets.mjs?v=town-review-3';
+import {getInteriorBase,renderInterior} from '../world/urban-interiors.mjs?v=town-review-3';
 import {createTownRecovery} from './recovery.mjs?v=town-coast-pier-1';
-import {normalizeKnownTerrainProject} from '../world/known-terrain-repairs.mjs?v=town-coast-pier-1';
-import {groundTexture} from '../world/ground-render.mjs?v=town-front-facing-2';
+import {normalizeKnownTerrainProject} from '../world/known-terrain-repairs.mjs?v=town-review-3';
+import {groundTexture} from '../world/ground-render.mjs?v=town-review-3';
 import {assetFilter} from '../world/asset-color.mjs?v=opera-parallax-1';
 import {curveUnder} from '../world/round-geometry.mjs?v=town-coast-pier-1';
 import {roundTerrain} from './round-terrain.mjs?v=town-coast-pier-1';
@@ -11,29 +12,29 @@ import {planWaterFill} from './water-fill.mjs?v=town-coast-pier-1';
 import {planLandFill} from './land-fill.mjs?v=town-coast-pier-1';
 import {planOrganicEdges} from './organic-edges.mjs?v=town-coast-pier-1';
 import {createSandFootprints} from '../world/sand-footprints.mjs?v=town-coast-pier-1';
-import {createAmbientNPCs} from '../world/ambient-npcs.mjs?v=town-front-facing-2';
+import {createAmbientNPCs} from '../world/ambient-npcs.mjs?v=town-review-3';
 import {createPlayerCollisionIndex} from '../world/player-collision-index.mjs?v=town-coast-pier-1';
 import {createDayNightCycle} from '../world/day-night-cycle.mjs?v=town-day-night-1';
 import {mountDayNightControl} from '../world/day-night-controls.mjs?v=town-day-night-1';
 import {readNPCPreference,saveNPCPreference} from './preview-settings.mjs?v=opera-parallax-1';
 import {hitCliff,mountPose,attach,cliffFace} from '../world/cliff-mount.mjs?v=town-coast-pier-1';
-import {pavingTexture} from '../world/paving.mjs?v=town-front-facing-2';
+import {pavingTexture} from '../world/paving.mjs?v=town-review-3';
 import {planStairs,drawStairGuide} from './stairs.mjs?v=town-coast-pier-1';
 import {planPier,drawPierGuide} from './piers.mjs?v=town-coast-pier-1';
 import {levelColors} from '../world/elevation-view.mjs?v=town-coast-pier-1';
 import {regionBetween,regionFromPolygon,regionHeightEdits,selectionCount} from './region.mjs?v=town-coast-pier-1';
 import {selectElevationRegion} from './elevation-select.mjs?v=town-coast-pier-1';
 import {blank,cell,height,terrainHeight,key,connect,segment,clearStairs,parseProject,History,surfaces,barriers,COLS,ROWS} from '../world/model.mjs?v=town-coast-pier-1';
-import {catalog,sources,preparePlacedArt} from '../world/catalog.mjs?v=town-front-facing-2';
-import {render,resizeSurface,findStart,movePlayer,toggleGate,follow,PLAYER_SCALE,GAIT_PER_PIXEL} from '../world/runtime.mjs?v=town-front-facing-2';
+import {catalog,sources,preparePlacedArt} from '../world/catalog.mjs?v=town-review-3';
+import {render,resizeSurface,findStart,movePlayer,toggleGate,follow,PLAYER_SCALE,GAIT_PER_PIXEL} from '../world/runtime.mjs?v=town-review-3';
 import {openDatabase,saveProject} from '../world/storage.mjs?v=town-coast-pier-1';
 import {createZip} from '../../studio/zip.js';
-import {createUrbanController} from '../world/urban.mjs?v=town-front-facing-2';
+import {createUrbanController} from '../world/urban.mjs?v=town-review-3';
 import {createConcertAudio} from '../world/concert-audio.mjs?v=opera-parallax-1';
 import {mountConcertControls} from '../world/concert-controls.mjs?v=town-music-settings-1';
 import {CONCERT_PROGRAMME} from '../world/concert-programme.mjs?v=opera-players-1';
 import {isUrbanAsset} from '../world/urban-kit.mjs?v=opera-parallax-1';
-import {snapUrbanAsset} from '../world/urban-roads.mjs?v=opera-parallax-1';
+import {snapUrbanAsset} from '../world/urban-roads.mjs?v=town-review-3';
 import {musicWallNode,planMusicWall} from '../world/music-wall-geometry.mjs?v=opera-parallax-1';
 import {cardinalFacing,facingRotation,supportsFurnitureFacing} from '../world/furniture-facing.mjs?v=opera-parallax-1';
 import {furnitureFacingPointHit,ensureFacingArt} from '../world/furniture-art-access.mjs?v=opera-parallax-1';
@@ -85,8 +86,9 @@ function reflectFillMaterial(){if(tool==='fillLand')$('hint').textContent='Fill 
 $('surface').addEventListener('change',reflectFillMaterial);$('paving').addEventListener('change',reflectFillMaterial);
 $('edgeStrength').oninput=()=>{$('edgeStrengthValue').textContent=$('edgeStrength').value+'%';};$('edgeStrength').oninput();
 for(const id of ['brushHardness','brushOpacity']){$(id).oninput=()=>{$(id+'Value').textContent=$(id).value+'%';};$(id).oninput();}
-for(const a of catalog.values())if(a.pavingSource){const o=document.createElement('option');o.value=a.id;o.textContent=a.name;$('paving').append(o);}
-for(const group of new Set([...catalog.values()].map(a=>a.group))){const o=document.createElement('option');o.value=group;o.textContent=group+' ('+[...catalog.values()].filter(a=>a.group===group).length+')';$('category').append(o);}
+const selectableAssets=()=>[...catalog.values()].filter(a=>!isRetiredAsset(a));
+for(const a of selectableAssets())if(a.pavingSource){const o=document.createElement('option');o.value=a.id;o.textContent=a.name;$('paving').append(o);}
+for(const group of new Set(selectableAssets().map(a=>a.group))){const o=document.createElement('option');o.value=group;o.textContent=group+' ('+selectableAssets().filter(a=>a.group===group).length+')';$('category').append(o);}
 const urbanOption=document.createElement('option');urbanOption.value='@urban';urbanOption.textContent='Urban kit · buildings, streets & details';$('category').insertBefore(urbanOption,$('category').children[1]);
 const isLeisureAsset=a=>a.group==='picnic'||a.group==='beach';
 const leisureOption=document.createElement('option');leisureOption.value='@leisure';leisureOption.textContent='Picnic & beach · '+[...catalog.values()].filter(isLeisureAsset).length+' assets';$('category').insertBefore(leisureOption,$('category').children[2]);
@@ -99,10 +101,11 @@ function library(){
  const observer=typeof IntersectionObserver==='function'?new IntersectionObserver(entries=>{for(const entry of entries)if(entry.isIntersecting){painters.get(entry.target)?.();painters.delete(entry.target);observer.unobserve(entry.target);}},{rootMargin:'160px'}):null;libraryThumbObserver=observer;
  $('urbanKitHelp').hidden=category!=='@urban'&&!category.startsWith('urban ');
  $('leisureKitHelp').hidden=category!=='@leisure';
- $('assetLibraryTitle').textContent=category==='@leisure'?'Picnic & beach · '+[...catalog.values()].filter(isLeisureAsset).length:'Asset library · '+[...catalog.values()].filter(a=>!a.roomRug).length;
+ const available=selectableAssets();
+ $('assetLibraryTitle').textContent=category==='@leisure'?'Picnic & beach · '+available.filter(isLeisureAsset).length:'Asset library · '+available.filter(a=>!a.roomRug).length;
  $('search').placeholder=category==='@leisure'?'Search blankets, baskets, beach chairs…':'Search roads, sidewalks, hydrants…';
  for(const[id,value]of [['urbanKit','@urban'],['leisureKit','@leisure'],['allAssets','']])$(id).classList.toggle('active',category===value);
- for(const a of catalog.values()){
+ for(const a of available){
   if(a.roomRug)continue;
   if(category&&(category==='@urban'?!isUrbanAsset(a):category==='@leisure'?!isLeisureAsset(a):a.group!==category))continue;
   const searchable=(a.name+' '+a.group+' '+a.id).toLowerCase();if(!terms.every(term=>searchable.includes(term)||term.length>2&&term.endsWith('s')&&searchable.includes(term.slice(0,-1))))continue;
@@ -177,7 +180,7 @@ async function assetPNG(a,direction='south'){await a.ensureFull?.(direction);con
 async function exportAssetPack(urbanOnly=false){
  $('pack').disabled=true;$('urbanPack').disabled=true;
  try{
-  const assets=[...catalog.values()].filter(a=>!a.roomRug&&(!urbanOnly||isUrbanAsset(a)));status('Packing artwork and collision metadata…');const entries=[],meta=[];
+  const assets=selectableAssets().filter(a=>!a.roomRug&&(!urbanOnly||isUrbanAsset(a)));status('Packing artwork and collision metadata…');const entries=[],meta=[];
   for(const a of assets){
    entries.push({name:`assets/${a.id}.png`,data:await assetPNG(a)});
    meta.push({id:a.id,name:a.name,width:a.w,height:a.h,anchor:{x:a.w/2,y:a.h},mountAnchor:{x:a.w/2,y:a.h/2},collision:a.boxes,polygons:a.polygons||[],fixedScale:!!a.fixedScale,interiorScale:a.interiorScale||1,footprint:a.footprint||null,door:a.door||null,paving:a.pavingSource?{texture:`ground/paving-${a.id}.png`}:null,layer:a.layer,resident:a.resident||null,urban:a.urban||null,kit:a.kit||null,snap:a.snap||null,paintSurface:a.paintSurface||null,barrierStyle:a.barrierStyle||null,lightEmitters:a.lightEmitters||null,wallMounted:!!a.wallMounted,purpose:a.purpose||null,connections:a.roadOpen||null,scene:!!a.scene,mountDefault:!!a.mountDefault,facing:a.facing||'south'});
@@ -190,9 +193,9 @@ async function exportAssetPack(urbanOnly=false){
  }catch(e){status('Asset export failed: '+e.message);}finally{$('pack').disabled=false;$('urbanPack').disabled=false;}
 }
 $('pack').onclick=()=>exportAssetPack();$('urbanPack').onclick=()=>exportAssetPack(true);
-function select(o){selected=o;if(!o)return;$('inspector').scrollTop=Math.max(0,$('assetName').offsetTop-$('inspector').offsetTop-12);$('mountSurface').disabled=!!(catalog.get(o.asset).scene||catalog.get(o.asset).fixedScale);$('mountSurface').value=o.mount?'cliff':'ground';$('mountHeight').disabled=!o.mount;$('collision').disabled=!!o.mount;if(o.mount){$('mountHeight').value=Math.round(o.mount.v*100);$('mountHeightLabel').textContent=$('mountHeight').value+'%';}$('scale').disabled=!!catalog.get(o.asset).fixedScale;$('assetName').textContent=catalog.get(o.asset).name;reflectFacingLabels(catalog.get(o.asset));for(const id of ['scale','rotation','layer'])$(id).value=o[id];$('collision').checked=o.collision;}
+function select(o){selected=o;$('duplicate').disabled=!o||isRetiredAsset(o.asset);if(!o)return;$('inspector').scrollTop=Math.max(0,$('assetName').offsetTop-$('inspector').offsetTop-12);$('mountSurface').disabled=!!(catalog.get(o.asset).scene||catalog.get(o.asset).fixedScale);$('mountSurface').value=o.mount?'cliff':'ground';$('mountHeight').disabled=!o.mount;$('collision').disabled=!!o.mount;if(o.mount){$('mountHeight').value=Math.round(o.mount.v*100);$('mountHeightLabel').textContent=$('mountHeight').value+'%';}$('scale').disabled=!!catalog.get(o.asset).fixedScale;$('assetName').textContent=catalog.get(o.asset).name;reflectFacingLabels(catalog.get(o.asset));for(const id of ['scale','rotation','layer'])$(id).value=o[id];$('collision').checked=o.collision;}
 for(const id of ['scale','rotation','layer','collision'])$(id).onchange=()=>{if(id==='rotation')warmFacing();if(!selected)return;checkpoint();selected[id]=id==='collision'?$(id).checked:id==='layer'?$(id).value:Number($(id).value);selected.scale=Math.max(.25,Math.min(3,selected.scale));changed();};
-$('delete').onclick=()=>{if(selected){checkpoint();doc.objects=doc.objects.filter(o=>o!==selected);selected=null;changed();}};$('duplicate').onclick=()=>{if(selected){checkpoint();const step=catalog.get(selected.asset).snap||64,o={...selected,id:crypto.randomUUID(),x:Math.min(COLS*64,selected.x+step),y:Math.min(ROWS*64,selected.y+step)};if(o.mount){const m={...o.mount,x:o.mount.x+1};attach(o,cliffFace(doc,m.x,m.y)?m:{...o.mount,u:(o.mount.u+.3)%1});}doc.objects.push(o);select(o);changed();}};
+$('delete').onclick=()=>{if(selected){checkpoint();doc.objects=doc.objects.filter(o=>o!==selected);selected=null;changed();}};$('duplicate').onclick=()=>{if(selected&&!isRetiredAsset(selected.asset)){checkpoint();const step=catalog.get(selected.asset).snap||64,o={...selected,id:crypto.randomUUID(),x:Math.min(COLS*64,selected.x+step),y:Math.min(ROWS*64,selected.y+step)};if(o.mount){const m={...o.mount,x:o.mount.x+1};attach(o,cliffFace(doc,m.x,m.y)?m:{...o.mount,u:(o.mount.u+.3)%1});}doc.objects.push(o);select(o);changed();}};
 function placement(p){p=snapUrbanAsset(catalog.get(asset),p);p={x:Math.max(0,Math.min(COLS*64,p.x)),y:Math.max(0,Math.min(ROWS*64,p.y))};const o={id:crypto.randomUUID(),asset,x:p.x,y:p.y,scale:catalog.get(asset).fixedScale?1:Math.max(.25,Math.min(3,Number($('scale').value)||1)),rotation:Number($('rotation').value),layer:$('layer').value,collision:$('collision').checked};if($('mountSurface').value==='cliff'){const m=hover?.face;if(!m)return null;attach(o,m);const a=catalog.get(o.asset),f=cliffFace(doc,m.x,m.y);if(!a.overhang)o.scale=Math.max(.25,Math.min(o.scale,f.depth/a.h));}return o;}
 function screen(e){const r=canvas.getBoundingClientRect();return {x:(e.clientX-r.left-r.width/2)/cam.zoom+cam.x,y:(e.clientY-r.top-r.height/2)/cam.zoom+cam.y};}
 function world(e){const p=screen(e);if($('heightView').value==='plan'&&!walk)return p;for(let y=Math.floor((p.y+432)/64);y>=Math.floor(p.y/64);y--){const x=Math.floor(p.x/64),a=cell(doc,x,y),z=(a.pier?.level??a.level)*48;if(p.y>=y*64-z&&p.y<(y+1)*64-z&&(!a.curves||Math.abs(height(doc,p.x,p.y+z)-z)<.1))return {x:p.x,y:p.y+z};for(const q of a.curves||[]){const z=curveUnder(doc,q).level*48,Y=p.y+z;if(Y>=y*64&&Y<(y+1)*64&&Math.abs(height(doc,p.x,Y)-z)<.1)return {x:p.x,y:Y};}}return p;}

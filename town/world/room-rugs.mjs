@@ -1,4 +1,4 @@
-import {drawHomeMaterialRug,warmHomeMaterials} from './home-materials.mjs?v=town-library-review-1';
+import {drawHomeMaterialRug,warmHomeMaterials} from './home-materials.mjs?v=town-review-3';
 
 /** Adapt authored bitmap rugs to the editor's ordinary floor-item pipeline. */
 export function createRoomRugItems(scene,catalog){

@@ -1,7 +1,7 @@
 import test from 'node:test';
 import assert from 'node:assert/strict';
 import {createHash} from 'node:crypto';
-import {APARTMENT_MOTION_FPS,apartmentMotionGeometry,createApartmentMotionRenderer} from './apartment-motion.mjs';
+import {APARTMENT_MOTION_FPS,apartmentMotionGeometry,createApartmentMotionRenderer,supportsApartmentMotion} from './apartment-motion.mjs';
 
 const digest=data=>createHash('sha256').update(data).digest('hex');
 function asset(kind='lava',id='collection-clara-lava-lamp'){
@@ -29,6 +29,12 @@ test('normalized glass geometry follows the authored polygon and caps only the c
  assert.equal(geometry.mask[0],0);assert.equal(geometry.mask[Math.floor(geometry.height/2)*geometry.width+Math.floor(geometry.width/2)],1);
  const large=apartmentMotionGeometry({...a,w:800,h:1600});assert.equal(Math.max(large.width,large.height),128);
  for(const bad of [{...a,w:Infinity},{...a,motion:{kind:'lava',bounds:[.9,0,.3,.5]}},{...a,motion:{kind:'lava',mask:[[0,0],[1,0],[NaN,1]]}},{...a,motion:{kind:'unrelated',bounds:[0,0,1,1]}}])assert.equal(apartmentMotionGeometry(bad),null);
+});
+
+test('motion admission is metadata only and rejects a cabinet back without a screen polygon',()=>{
+ const a=asset();Object.defineProperty(a,'canvas',{get(){throw Error('Do not read native art for discovery');}});
+ assert.equal(supportsApartmentMotion(a),true);const back=Object.create(a);back.motion=undefined;assert.equal(supportsApartmentMotion(back),false);
+ assert.equal(supportsApartmentMotion({w:52,h:110,motion:{kind:'lava',mask:[[.4,.2],[.6,.2],[.7,.6],[.3,.6]]}}),true);
 });
 
 test('lava moves inside the actual glass, loops cleanly and preserves native artwork and item anchoring',()=>{
@@ -88,6 +94,18 @@ test('reduced motion leaves canonical art static and does not generate hidden an
  reduced=true;renderer.draw(c,a,item,8);assert.equal(renderer.stats.generatedFrames,1);
  reduced=false;renderer.draw(c,a,item,0);assert.equal(renderer.stats.generatedFrames,1);assert.equal(canvases.length,1);
  assert.equal(renderer.draw(c,{w:40,h:80},item,0),false);assert.equal(renderer.draw(c,a,{x:NaN,y:3},0),false);
+});
+
+test('offscreen glass creates no motion buffers and resumes only when its transformed bounds enter the canvas',()=>{
+ const f=fixture(),a=asset(),item={x:40,y:160,w:80,h:160};let transform={a:1,b:0,c:0,d:1,e:-500,f:0};
+ Object.assign(f.c,{canvas:{width:320,height:240},getTransform:()=>transform});
+ for(let frame=0;frame<50;frame++)assert.equal(f.renderer.draw(f.c,a,item,frame),false);
+ assert.equal(f.canvases.length,0);assert.equal(f.renderer.stats.generatedFrames,0);
+ transform={a:1,b:0,c:0,d:1,e:0,f:0};assert.equal(f.renderer.draw(f.c,a,item,6),true);const count=f.renderer.stats.generatedFrames;
+ transform={a:1,b:0,c:0,d:1,e:0,f:-500};assert.equal(f.renderer.draw(f.c,a,item,7),false);assert.equal(f.renderer.stats.generatedFrames,count);
+ // A rotation/shear can bring an otherwise distant world item onto screen.
+ transform={a:0,b:.8,c:-.7,d:.2,e:180,f:10};assert.equal(f.renderer.draw(f.c,a,item,8),true);assert.equal(f.canvases.length,1);
+ transform={a:.7,b:.3,c:.2,d:.8,e:1000,f:1000};assert.equal(f.renderer.draw(f.c,a,item,9),false);assert.equal(f.renderer.stats.generatedFrames,count+1);
 });
 
 test('the final glass clip reuses its cached path and restores caller state at every camera scale',()=>{

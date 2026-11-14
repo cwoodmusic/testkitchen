@@ -1,9 +1,9 @@
 {
   "version": 1,
-  "description": "Authored native surface fields, separate22pixel dado bands and mirror-safe texture edges. All areas share world-space phase.",
+  "description": "Authored native surface fields and separate22pixel dado bands. Review3 wallpaper repairs are exact image-authored fundamental crops; all areas retain world-space phase.",
   "owners": 31,
   "textures": 124,
-  "pixels": 3194812,
+  "pixels": 3234640,
   "collections": [
     {
       "owner": "bach",
@@ -202,23 +202,24 @@
         },
         {
           "file": "clara-wall.webp",
-          "source": "/workspace/.onboarding/home-materials-proof/six-suite-authored-proof-source.png",
+          "source": "review-3/originals/exec-7a63c24f-3037-4511-a068-78e0ebc70747.png",
           "sourceFrame": {
-            "left": 398,
-            "top": 441,
-            "width": 408,
-            "height": 122
+            "left": 858,
+            "top": 225,
+            "width": 110,
+            "height": 100
           },
-          "width": 256,
-          "height": 76,
-          "sha256": "b1dfadd9e92eba6e4c1b26424973859aaaa3e16cf45add69ea7833f460d7c16a",
-          "cellBounds": {
-            "left": 395,
-            "top": 438,
-            "right": 809,
-            "bottom": 648
-          },
-          "packing": "Explicit verified owner cell; no gutter/adjacent material pixels; uniform nearest fit and reflected safe edges"
+          "width": 110,
+          "height": 100,
+          "sha256": "cd350b60c369fa165718fc44a734597d35bc5aa533660168c6d882b4d8e75ec2",
+          "packing": "Explicit verified owner cell; no gutter/adjacent material pixels; uniform nearest fit and reflected safe edges",
+          "sourceDigest": "3f075c9a4fa8266f138d2782dcf3359d00874ccefa8e2dac7fd3e81953486ba4",
+          "repair": {
+            "review": "2026-11-14-upload-3",
+            "priorSHA256": "b1dfadd9e92eba6e4c1b26424973859aaaa3e16cf45add69ea7833f460d7c16a",
+            "nativeRGBA_SHA256": "cc18374268383c6fafadc9b796f0e162f1742d184dedc106bb8ecfb88141cb7c",
+            "method": "image_gen reference redraw; exact native RGBA fundamental repeat crop only. No mirrored halves, blending, paint, warp, or native resampling. Pattern is drawn at uniform half scale."
+          }
         },
         {
           "file": "clara-wet-floor.webp",
@@ -544,23 +545,24 @@
         },
         {
           "file": "mozart-wall.webp",
-          "source": "/workspace/.onboarding/home-materials-proof/classical-five-authored-source.png",
+          "source": "review-3/originals/exec-7a63c24f-3037-4511-a068-78e0ebc70747.png",
           "sourceFrame": {
-            "left": 398,
-            "top": 9,
-            "width": 409,
-            "height": 145
+            "left": 269,
+            "top": 161,
+            "width": 110,
+            "height": 100
           },
-          "width": 256,
-          "height": 90,
-          "sha256": "6965b92eff755f21d26d40888a1149fe0294b2040d9750cfcf9217a621641eeb",
-          "cellBounds": {
-            "left": 395,
-            "top": 6,
-            "right": 810,
-            "bottom": 255
-          },
-          "packing": "Explicit verified owner cell; no gutter/adjacent material pixels; uniform nearest fit and reflected safe edges"
+          "width": 110,
+          "height": 100,
+          "sha256": "7757fc431d8588b21bd0d44241578b0d682c819c80706c743f22ecc266188dea",
+          "packing": "Explicit verified owner cell; no gutter/adjacent material pixels; uniform nearest fit and reflected safe edges",
+          "sourceDigest": "3f075c9a4fa8266f138d2782dcf3359d00874ccefa8e2dac7fd3e81953486ba4",
+          "repair": {
+            "review": "2026-11-14-upload-3",
+            "priorSHA256": "6965b92eff755f21d26d40888a1149fe0294b2040d9750cfcf9217a621641eeb",
+            "nativeRGBA_SHA256": "63904346259dbd3c08e61167ce8b902dcedcdc8c5604a790d5b39a25554741d8",
+            "method": "image_gen reference redraw; exact native RGBA fundamental repeat crop only. No mirrored halves, blending, paint, warp, or native resampling. Pattern is drawn at uniform half scale."
+          }
         },
         {
           "file": "mozart-wet-floor.webp",
@@ -630,23 +632,24 @@
         },
         {
           "file": "chopin-wall.webp",
-          "source": "/workspace/.onboarding/home-materials-proof/classical-five-authored-source.png",
+          "source": "review-3/originals/exec-7a63c24f-3037-4511-a068-78e0ebc70747.png",
           "sourceFrame": {
-            "left": 398,
-            "top": 267,
-            "width": 409,
-            "height": 146
+            "left": 252,
+            "top": 715,
+            "width": 108,
+            "height": 96
           },
-          "width": 256,
-          "height": 92,
-          "sha256": "a92879b41ec73d269a9f8e5fee76c127826de87e0dc04cce48b14a59cd604116",
-          "cellBounds": {
-            "left": 395,
-            "top": 264,
-            "right": 810,
-            "bottom": 514
-          },
-          "packing": "Explicit verified owner cell; no gutter/adjacent material pixels; uniform nearest fit and reflected safe edges"
+          "width": 108,
+          "height": 96,
+          "sha256": "a767d11cd737a62a83b293538491f668bcaf97727ba1061a973dfca051ff2157",
+          "packing": "Explicit verified owner cell; no gutter/adjacent material pixels; uniform nearest fit and reflected safe edges",
+          "sourceDigest": "3f075c9a4fa8266f138d2782dcf3359d00874ccefa8e2dac7fd3e81953486ba4",
+          "repair": {
+            "review": "2026-11-14-upload-3",
+            "priorSHA256": "a92879b41ec73d269a9f8e5fee76c127826de87e0dc04cce48b14a59cd604116",
+            "nativeRGBA_SHA256": "89974a1e6726fccdfb07bdbdc3c2427f28454000967eb56305b95d20401efed9",
+            "method": "image_gen reference redraw; exact native RGBA fundamental repeat crop only. No mirrored halves, blending, paint, warp, or native resampling. Pattern is drawn at uniform half scale."
+          }
         },
         {
           "file": "chopin-wet-floor.webp",
@@ -717,23 +720,24 @@
         },
         {
           "file": "haydn-wall.webp",
-          "source": "/workspace/.onboarding/home-materials-proof/classical-five-authored-source.png",
+          "source": "review-3/originals/exec-7a63c24f-3037-4511-a068-78e0ebc70747.png",
           "sourceFrame": {
-            "left": 398,
-            "top": 527,
-            "width": 409,
-            "height": 132
+            "left": 635,
+            "top": 730,
+            "width": 110,
+            "height": 100
           },
-          "width": 256,
-          "height": 82,
-          "sha256": "f664584fbb23f418ac6c6a0049030f38e781edc573b3054895570b818e1b2c0b",
-          "cellBounds": {
-            "left": 395,
-            "top": 524,
-            "right": 810,
-            "bottom": 751
-          },
-          "packing": "Explicit verified owner cell; no gutter/adjacent material pixels; uniform nearest fit and reflected safe edges"
+          "width": 110,
+          "height": 100,
+          "sha256": "f3fa8ca2d451c9d50be1e02d6f7d88b2ce80c10e192f915deb8492d6c862e823",
+          "packing": "Explicit verified owner cell; no gutter/adjacent material pixels; uniform nearest fit and reflected safe edges",
+          "sourceDigest": "3f075c9a4fa8266f138d2782dcf3359d00874ccefa8e2dac7fd3e81953486ba4",
+          "repair": {
+            "review": "2026-11-14-upload-3",
+            "priorSHA256": "f664584fbb23f418ac6c6a0049030f38e781edc573b3054895570b818e1b2c0b",
+            "nativeRGBA_SHA256": "7ac5ebb448c3316183539d32d41c1c4d5dbd366d7dba69e63cb83cf1535e4801",
+            "method": "image_gen reference redraw; exact native RGBA fundamental repeat crop only. No mirrored halves, blending, paint, warp, or native resampling. Pattern is drawn at uniform half scale."
+          }
         },
         {
           "file": "haydn-wet-floor.webp",
@@ -1064,23 +1068,24 @@
         },
         {
           "file": "ellington-wall.webp",
-          "source": "/workspace/.onboarding/home-materials-proof/jazz-five-authored-source.png",
+          "source": "review-3/originals/exec-7a63c24f-3037-4511-a068-78e0ebc70747.png",
           "sourceFrame": {
-            "left": 398,
-            "top": 261,
-            "width": 407,
-            "height": 147
+            "left": 138,
+            "top": 1198,
+            "width": 108,
+            "height": 94
           },
-          "width": 256,
-          "height": 92,
-          "sha256": "e3524a3bb17106b4ba0ee2ba432d24427d565aa8d91930372c698bdf576b4ad9",
-          "cellBounds": {
-            "left": 395,
-            "top": 258,
-            "right": 808,
-            "bottom": 509
-          },
-          "packing": "Explicit verified owner cell; no gutter/adjacent material pixels; uniform nearest fit and reflected safe edges"
+          "width": 108,
+          "height": 94,
+          "sha256": "82353b6a2c6536002ccced59b91522788356d2316cbe5f185b4e6b40ef9ead41",
+          "packing": "Explicit verified owner cell; no gutter/adjacent material pixels; uniform nearest fit and reflected safe edges",
+          "sourceDigest": "3f075c9a4fa8266f138d2782dcf3359d00874ccefa8e2dac7fd3e81953486ba4",
+          "repair": {
+            "review": "2026-11-14-upload-3",
+            "priorSHA256": "e3524a3bb17106b4ba0ee2ba432d24427d565aa8d91930372c698bdf576b4ad9",
+            "nativeRGBA_SHA256": "3df76336f17a6c84ea59e645aa3d832d0ee70b71efba59c76a1c4936bac4a260",
+            "method": "image_gen reference redraw; exact native RGBA fundamental repeat crop only. No mirrored halves, blending, paint, warp, or native resampling. Pattern is drawn at uniform half scale."
+          }
         },
         {
           "file": "ellington-wet-floor.webp",
@@ -1410,23 +1415,24 @@
         },
         {
           "file": "dj-wall.webp",
-          "source": "/workspace/.onboarding/home-materials-proof/modern-five-authored-source.png",
+          "source": "review-3/originals/exec-7a63c24f-3037-4511-a068-78e0ebc70747.png",
           "sourceFrame": {
-            "left": 396,
-            "top": 7,
-            "width": 411,
-            "height": 120
+            "left": 837,
+            "top": 1153,
+            "width": 106,
+            "height": 90
           },
-          "width": 256,
-          "height": 74,
-          "sha256": "9bf76c7e7f14fd1ecb4f5081a4a9becd03a41718d158f04591184b02503a9e77",
-          "cellBounds": {
-            "left": 393,
-            "top": 4,
-            "right": 810,
-            "bottom": 211
-          },
-          "packing": "Verified upper wallpaper field only; dado/rail excluded; uniform nearest fit and reflected safe edges"
+          "width": 106,
+          "height": 90,
+          "sha256": "420dad30da6d442bcc7c724e70730698bb7d0204acf5e9258139086a7409f699",
+          "packing": "Verified upper wallpaper field only; dado/rail excluded; uniform nearest fit and reflected safe edges",
+          "sourceDigest": "3f075c9a4fa8266f138d2782dcf3359d00874ccefa8e2dac7fd3e81953486ba4",
+          "repair": {
+            "review": "2026-11-14-upload-3",
+            "priorSHA256": "9bf76c7e7f14fd1ecb4f5081a4a9becd03a41718d158f04591184b02503a9e77",
+            "nativeRGBA_SHA256": "91909805fa81efd621a046c2c38fa6e9fa56e86b1791d3ab3f7bdaaf4aba035c",
+            "method": "image_gen reference redraw; exact native RGBA fundamental repeat crop only. No mirrored halves, blending, paint, warp, or native resampling. Pattern is drawn at uniform half scale."
+          }
         },
         {
           "file": "dj-wet-floor.webp",
@@ -1584,23 +1590,24 @@
         },
         {
           "file": "zizi-wall.webp",
-          "source": "/workspace/.onboarding/home-materials-proof/modern-five-authored-source.png",
+          "source": "review-3/originals/exec-0070856b-a00b-4d65-b225-c8e9c5065bbc.png",
           "sourceFrame": {
-            "left": 396,
-            "top": 440,
-            "width": 411,
-            "height": 135
+            "left": 335,
+            "top": 209,
+            "width": 108,
+            "height": 96
           },
-          "width": 256,
-          "height": 84,
-          "sha256": "535a44e1bef9e10689dfdd033446e9b6c0c2c2ba3140be1f48d0b86599678a26",
-          "cellBounds": {
-            "left": 393,
-            "top": 437,
-            "right": 810,
-            "bottom": 669
-          },
-          "packing": "Explicit verified owner cell; no gutter/adjacent material pixels; uniform nearest fit and reflected safe edges"
+          "width": 108,
+          "height": 96,
+          "sha256": "67cbb2a71c05be17a10be3f1a541837c56ba3937650685aff85fef83c44b8c44",
+          "packing": "Explicit verified owner cell; no gutter/adjacent material pixels; uniform nearest fit and reflected safe edges",
+          "sourceDigest": "ea7d15d7d4f0a97deaa69ce4f5199fb0a413e2fcb2207544982fac6371d0bdf5",
+          "repair": {
+            "review": "2026-11-14-upload-3",
+            "priorSHA256": "535a44e1bef9e10689dfdd033446e9b6c0c2c2ba3140be1f48d0b86599678a26",
+            "nativeRGBA_SHA256": "fed14d9fecd1bf7ce69a471155365c72a3a3aebf5656cd9c21b2f0e95ceaa23d",
+            "method": "image_gen reference redraw; exact native RGBA fundamental repeat crop only. No mirrored halves, blending, paint, warp, or native resampling. Pattern is drawn at uniform half scale."
+          }
         },
         {
           "file": "zizi-wet-floor.webp",
@@ -1757,21 +1764,22 @@
         },
         {
           "file": "schoenberg-wall.webp",
-          "source": "/workspace/.onboarding/home-materials-proof/modern-five-authored-source.png",
+          "source": "review-3/originals/exec-0070856b-a00b-4d65-b225-c8e9c5065bbc.png",
           "sourceFrame": {
-            "left": 399,
-            "top": 1020,
-            "width": 404,
-            "height": 205
+            "left": 865,
+            "top": 227,
+            "width": 108,
+            "height": 104
           },
-          "width": 256,
-          "height": 130,
-          "sha256": "1d8128594afc3b5d6f1dc9844fd7e6a71da0ee716f78c64308fc5da3f98dcfe9",
-          "cellBounds": {
-            "left": 393,
-            "top": 953,
-            "right": 810,
-            "bottom": 1301
+          "width": 108,
+          "height": 104,
+          "sha256": "17a93a17653375853b3a61fa8b5d6de7c91bcd13cfaa4621fe44bfe2b1e7bdce",
+          "sourceDigest": "ea7d15d7d4f0a97deaa69ce4f5199fb0a413e2fcb2207544982fac6371d0bdf5",
+          "repair": {
+            "review": "2026-11-14-upload-3",
+            "priorSHA256": "1d8128594afc3b5d6f1dc9844fd7e6a71da0ee716f78c64308fc5da3f98dcfe9",
+            "nativeRGBA_SHA256": "a9e7dbd2d88f816df9e4ac2e164069ddc9aa30526b5c20cdb82bd311a819068f",
+            "method": "image_gen reference redraw; exact native RGBA fundamental repeat crop only. No mirrored halves, blending, paint, warp, or native resampling. Pattern is drawn at uniform half scale."
           }
         },
         {
@@ -1842,21 +1850,22 @@
         },
         {
           "file": "player-wall.webp",
-          "source": "/workspace/.onboarding/home-materials-proof/cozy-five-authored-source.png",
+          "source": "review-3/originals/exec-0070856b-a00b-4d65-b225-c8e9c5065bbc.png",
           "sourceFrame": {
-            "left": 401,
-            "top": 7,
-            "width": 401,
-            "height": 156
+            "left": 181,
+            "top": 714,
+            "width": 108,
+            "height": 100
           },
-          "width": 256,
+          "width": 108,
           "height": 100,
-          "sha256": "9007885e4e9ca634c5791f496015beb8d4d3c87b0d1eaca6fed8000579270acb",
-          "cellBounds": {
-            "left": 395,
-            "top": 5,
-            "right": 809,
-            "bottom": 229
+          "sha256": "647ec2ddc2ca6f48ec8db4719218de5ddd33b4bc52708263811295231f97351b",
+          "sourceDigest": "ea7d15d7d4f0a97deaa69ce4f5199fb0a413e2fcb2207544982fac6371d0bdf5",
+          "repair": {
+            "review": "2026-11-14-upload-3",
+            "priorSHA256": "9007885e4e9ca634c5791f496015beb8d4d3c87b0d1eaca6fed8000579270acb",
+            "nativeRGBA_SHA256": "c0332b4bdd34d8c0b39df57ccd9e149ebf92d72346912c6fbb8e68ab70f36225",
+            "method": "image_gen reference redraw; exact native RGBA fundamental repeat crop only. No mirrored halves, blending, paint, warp, or native resampling. Pattern is drawn at uniform half scale."
           }
         },
         {
@@ -2186,23 +2195,24 @@
         },
         {
           "file": "showroom-botanical-conservatory-wall.webp",
-          "source": "/workspace/.onboarding/home-materials-proof/cozy-five-authored-source.png",
+          "source": "review-3/originals/exec-0070856b-a00b-4d65-b225-c8e9c5065bbc.png",
           "sourceFrame": {
-            "left": 398,
-            "top": 1009,
-            "width": 408,
-            "height": 173
+            "left": 588,
+            "top": 742,
+            "width": 108,
+            "height": 100
           },
-          "width": 256,
-          "height": 108,
-          "sha256": "f6e84ca71d54074f32ad413dcea1da99f10b002fcc308fb7e8e4a2aa886992b0",
-          "cellBounds": {
-            "left": 395,
-            "top": 1006,
-            "right": 809,
-            "bottom": 1301
-          },
-          "packing": "Verified upper wallpaper field only; dado/rail excluded; uniform nearest fit and reflected safe edges"
+          "width": 108,
+          "height": 100,
+          "sha256": "d762561d98e51cc57e18bff2ff4e748923dfa7ad356defc90c63ac4fe2326112",
+          "packing": "Verified upper wallpaper field only; dado/rail excluded; uniform nearest fit and reflected safe edges",
+          "sourceDigest": "ea7d15d7d4f0a97deaa69ce4f5199fb0a413e2fcb2207544982fac6371d0bdf5",
+          "repair": {
+            "review": "2026-11-14-upload-3",
+            "priorSHA256": "f6e84ca71d54074f32ad413dcea1da99f10b002fcc308fb7e8e4a2aa886992b0",
+            "nativeRGBA_SHA256": "245024ad9a0ee698bdf84b1ca2638b2c063b6330a8e659f7f2e6fd6b0d43f49d",
+            "method": "image_gen reference redraw; exact native RGBA fundamental repeat crop only. No mirrored halves, blending, paint, warp, or native resampling. Pattern is drawn at uniform half scale."
+          }
         },
         {
           "file": "showroom-botanical-conservatory-wet-floor.webp",
@@ -2357,23 +2367,24 @@
         },
         {
           "file": "showroom-industrial-loft-wall.webp",
-          "source": "/workspace/.onboarding/home-materials-proof/urban-five-authored-source.png",
+          "source": "review-3/originals/exec-790bc295-a378-4a43-ab65-46203dcb8abe.png",
           "sourceFrame": {
-            "left": 397,
-            "top": 267,
-            "width": 409,
-            "height": 148
+            "left": 160,
+            "top": 626,
+            "width": 624,
+            "height": 312
           },
-          "width": 256,
-          "height": 92,
-          "sha256": "8d1253392b25fd477d2699220c3049a9dec3fc7cb415916e7f5aa45804760c2a",
-          "cellBounds": {
-            "left": 394,
-            "top": 264,
-            "right": 809,
-            "bottom": 517
-          },
-          "packing": "Explicit verified owner cell; no gutter/adjacent material pixels; uniform nearest fit and reflected safe edges"
+          "width": 624,
+          "height": 312,
+          "sha256": "407a20d3ef984e3b6703511933e5d7b39f495fb52192e530727eb79717cf4200",
+          "packing": "Explicit verified owner cell; no gutter/adjacent material pixels; uniform nearest fit and reflected safe edges",
+          "sourceDigest": "b07180996105f574e27a2b86fcabb7c286611d146d5d19a6023d755f3ae9c968",
+          "repair": {
+            "review": "2026-11-14-upload-3",
+            "priorSHA256": "8d1253392b25fd477d2699220c3049a9dec3fc7cb415916e7f5aa45804760c2a",
+            "nativeRGBA_SHA256": "db6f646d33f72815f4e0a89bad47a3bfabf16584bc829f15e1e74f3ab27a0a36",
+            "method": "image_gen reference redraw; exact native RGBA two-brick/two-course repeat crop. No mirrored halves, blending, paint, warp, or native resampling."
+          }
         },
         {
           "file": "showroom-industrial-loft-wet-floor.webp",

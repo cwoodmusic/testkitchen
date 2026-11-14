@@ -1,8 +1,8 @@
-import {configureUrbanInteriors,getInteriorBase,residents} from '../world/urban-interiors.mjs?v=town-front-facing-2';
+import {configureUrbanInteriors,getInteriorBase,residents} from '../world/urban-interiors.mjs?v=town-review-3';
 import {SHOWROOMS} from '../world/showroom-layout.mjs?v=town-room-placement-2';
-import {createRoomRugItems} from '../world/room-rugs.mjs?v=town-library-review-1';
-import {drawShowroomFloor,drawShowroomWallpaper,prepareShowroomFinish} from '../world/showroom-materials.mjs?v=town-library-review-1';
-import {finishRepeatSize} from './material-repeat-sizes.mjs?v=town-library-review-1';
+import {createRoomRugItems} from '../world/room-rugs.mjs?v=town-review-3';
+import {drawShowroomFloor,drawShowroomWallpaper,prepareShowroomFinish} from '../world/showroom-materials.mjs?v=town-review-3';
+import {finishRepeatSize} from './material-repeat-sizes.mjs?v=town-review-3';
 
 function reviewInteriorDescriptors(){return [...residents.map(resident=>({kind:'apartment',resident:resident.id})),{kind:'apartment',resident:'player'},...SHOWROOMS.map(showroom=>({kind:'showroom',showroomId:showroom.id}))];}
 
@@ -85,7 +85,14 @@ export function registerReviewGroundSurfaces(catalog,{surfaces,groundTexture}){
  for(const surface of surfaces){
   const id='surface:'+surface;
   catalog.set(id,{id,name:surface[0].toUpperCase()+surface.slice(1)+' ground texture',group:'ground textures',w:512,h:512,facing:'south',layer:'ground',
-   reviewSample:{kind:'floor',columns:3,rows:3,label:'3×3 tiled sample'},draw(c){c.drawImage(groundTexture(surface),0,0,512,512);}});
+   reviewSample:{kind:'floor',columns:3,rows:3,label:'3×3 tiled sample'},draw(c){c.drawImage(groundTexture(surface),0,0,512,512);},
+   drawReviewSample(c,width,height){
+    c.save();
+    const t=c.getTransform();
+    if(Math.min(Math.hypot(t.a,t.b),Math.hypot(t.c,t.d))<1){c.imageSmoothingEnabled=true;c.imageSmoothingQuality='high';}
+    // A single field keeps a shared sampling phase at fractional preview zoom.
+    c.fillStyle=c.createPattern(groundTexture(surface),'repeat');c.fillRect(0,0,width,height);c.restore();
+   }});
  }
  return catalog;
 }

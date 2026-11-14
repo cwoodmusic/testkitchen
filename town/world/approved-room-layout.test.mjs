@@ -20,6 +20,22 @@ const model=(id,record)=>createRoomLayoutModel({themeId:id,scene:getInteriorBase
 const geometry=scene=>Object.fromEntries(Object.keys(previous.rooms[scene.kind==='showroom'?scene.id:scene.resident].geometry).map(key=>[key,scene[key]]));
 const physicalGeometry=value=>({...value,rooms:value.rooms.map(({point,...room})=>room)});
 const structural=scene=>{const bases=new Set(scene.items.flatMap(item=>item.collisionBoxes||[]));return scene.solids.filter(box=>!bases.has(box));};
+// Review3 deliberately changes these source-repeat/trim presentations. Verify
+// those exact approved values, then compare every remaining byte to the saved
+// room archive: geometry, furniture, finishes, colors and all other metadata.
+const repairedWallPatterns=new Set(['mozart','clara','chopin','haydn','ellington','dj','zizi','schoenberg','player','showroom-botanical-conservatory','showroom-industrial-loft']);
+const fittedWallTrims=new Set(['showroom-art-deco-lounge','showroom-french-cafe']);
+function historicalAppearance(value){
+ return JSON.parse(JSON.stringify(value),(_key,finish)=>{
+  if(!finish?.homeMaterial||finish.kind!=='wall')return finish;
+  if(repairedWallPatterns.has(finish.owner)){assert.equal(finish.presentation.scale,finish.owner==='showroom-industrial-loft'?.125:.5);finish.presentation.scale=.65;}
+  if(fittedWallTrims.has(finish.owner)){
+   assert.equal(finish.trimPresentation.fitHeight,true);assert.equal(finish.trimPresentation.insetTop,2);assert.equal(finish.trimPresentation.insetBottom,4);
+   for(const field of ['fitHeight','insetTop','insetBottom'])delete finish.trimPresentation[field];
+  }
+  return finish;
+ });
+}
 
 test('the committed source is the exact fifteen-room upload and its generated records cannot drift',()=>{
  assert.equal(hash(raw),'b7535338a3f7332285d2b84ff388ad3d1fac20b3833ec6667e59a21c4e9f7f95');assert.equal(APPROVED_ROOM_LAYOUT_SOURCE_SHA256,hash(raw));
@@ -31,7 +47,7 @@ test('fresh defaults use every exact uploaded pose, support, removal, order and 
  for(const[id,record]of Object.entries(upload.rooms)){
   const editor=model(id),scene=getInteriorBase(descriptor(id));assert.deepEqual(editor.record(),record,id);assert.equal(editor.hasEdits,false,id);assert.equal(scene.width,1184);assert.equal(scene.height,512);
   assert.equal(scene.approvedRoomLayout.baseSignature,record.baseSignature);assert.equal(scene.approvedRoomLayout.sourceSHA256,hash(raw));
-  if(id!=='showroom-midcentury-studio')assert.deepEqual(physicalGeometry(geometry(scene)),physicalGeometry(previous.rooms[id].geometry),id+' retains its current physical room');
+  if(id!=='showroom-midcentury-studio')assert.deepEqual(physicalGeometry(historicalAppearance(geometry(scene))),physicalGeometry(previous.rooms[id].geometry),id+' retains its current physical room');
   const before=JSON.stringify(scene),again=applyApprovedRoomLayout(scene,catalog);assert.deepEqual(createRoomLayoutModel({themeId:id,scene:again,catalog}).record(),record);assert.equal(JSON.stringify(scene),before,'Promotion never edits its preserved source');
  }
 });
@@ -66,15 +82,15 @@ test('all thirty-one preceding saved layouts reopen unchanged, with Reset and un
  const saved=store.raw;writes=0;const resolver=createRoomLayoutResolver({storage,events});
  for(const[id,entry]of Object.entries(previous.rooms)){
   const input=JSON.stringify(entry.record),editor=model(id,entry.record),resolved=resolver.resolve(getInteriorBase(descriptor(id)),catalog);
-  assert.deepEqual(editor.record(),entry.record,id);assert.deepEqual(physicalGeometry(geometry(editor.scene)),physicalGeometry(entry.geometry),id+' saved geometry');assert.deepEqual(physicalGeometry(geometry(resolved)),physicalGeometry(entry.geometry),id+' resolved geometry');assert.equal(JSON.stringify(entry.record),input);
+  assert.deepEqual(editor.record(),entry.record,id);assert.deepEqual(physicalGeometry(historicalAppearance(geometry(editor.scene))),physicalGeometry(entry.geometry),id+' saved geometry');assert.deepEqual(physicalGeometry(historicalAppearance(geometry(resolved))),physicalGeometry(entry.geometry),id+' resolved geometry');assert.equal(JSON.stringify(entry.record),input);
   const expected=upload.rooms[id]||entry.record;editor.reset();assert.deepEqual(editor.record(),expected,id+' reset');if(upload.rooms[id]&&JSON.stringify(expected)!==input){assert.equal(editor.undo().ok,true);assert.deepEqual(editor.record(),entry.record);assert.equal(editor.redo().ok,true);assert.deepEqual(editor.record(),expected);}
  }
  assert.equal(store.raw,saved);assert.equal(writes,0);resolver.dispose();
 });
 
-test('the other sixteen defaults and all their scene metadata remain exact',()=>{
+test('the other sixteen defaults retain all scene metadata apart from reviewed wall presentation',()=>{
  const ids=[...residents.map(r=>r.id),'player',...SHOWROOMS.map(room=>'showroom-'+room.id)].filter(id=>!upload.rooms[id]);assert.equal(ids.length,16);
- for(const id of ids){const scene=getInteriorBase(descriptor(id));assert.equal(hash(JSON.stringify(scene)),previous.rooms[id].sceneSHA256,id+' scene');assert.deepEqual(model(id).record(),previous.rooms[id].record,id+' record');assert.equal(scene.approvedRoomLayout,undefined);}
+ for(const id of ids){const scene=getInteriorBase(descriptor(id));assert.equal(hash(JSON.stringify(historicalAppearance(scene))),previous.rooms[id].sceneSHA256,id+' scene');assert.deepEqual(model(id).record(),previous.rooms[id].record,id+' record');assert.equal(scene.approvedRoomLayout,undefined);}
 });
 
 test('historical partial-family and full-layout archives retain their preceding source recipes',()=>{

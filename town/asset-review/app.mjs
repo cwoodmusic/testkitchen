@@ -1,21 +1,22 @@
 import {createAssetReview,ASSET_REVIEW_ISSUES} from './review-model.mjs?v=town-review-issues-1';
-import {availableFacings,prepareAssetPreview,assetPreviewSample} from './preview.mjs?v=town-library-review-1';
-import {registerReviewRoomRugs,registerReviewMaterials,registerReviewWallSegments,registerReviewGroundSurfaces} from './catalog-extras.mjs?v=town-front-facing-2';
+import {availableFacings,prepareAssetPreview,assetPreviewSample} from './preview.mjs?v=town-review-3';
+import {registerReviewRoomRugs,registerReviewMaterials,registerReviewWallSegments,registerReviewGroundSurfaces} from './catalog-extras.mjs?v=town-review-3';
 import {ASSET_CATEGORIES,assetCategory,categorySearchTerms} from './categories.mjs?v=town-review-issues-1';
+import {isRetiredAsset} from '../world/retired-assets.mjs?v=town-review-3';
 
 const $=id=>document.getElementById(id),canvas=$('preview'),context=canvas.getContext('2d'),CURSOR_KEY='codaTownAssetReviewCursorV1';
 const issueControls=[...$('reviewIssues').querySelectorAll('input[data-issue]')];
 const issueLabels=new Map(ASSET_REVIEW_ISSUES.map(issue=>[issue.id,issue.label]));
 const names={south:'South',west:'West',north:'North',east:'East'};
 let catalog,assets=[],review,filtered=[],assetId='',facing='south',preview=null,ticket=0,pan={x:0,y:0},drag=null,loadChain=Promise.resolve();
-let animationFrame=0,lastAnimationFrame=-1;
+let animationFrame=0,lastAnimationFrame=-1,previewOnScreen=true;
 const reducedMotion=window.matchMedia('(prefers-reduced-motion: reduce)');
 const text=(element,value)=>{if(element.textContent!==value)element.textContent=value;};
 function saveCursor(){try{localStorage.setItem(CURSOR_KEY,JSON.stringify({assetId,facing}));}catch{}}
 function recordsFor(id){return review.entries().filter(record=>record.assetId===id);}
 function optionLabel(asset){const records=recordsFor(asset.id),mark=records.some(r=>r.status==='flagged')?'⚑ ':records.some(r=>r.status==='ok')?'✓ ':'';return mark+asset.name+' · '+asset.id;}
 function updateProgress(){
- const entries=review.entries(),reviewed=entries.filter(r=>r.status!=='unreviewed').length,flagged=entries.filter(r=>r.status==='flagged').length;
+ const entries=review.entries().filter(r=>catalog.has(r.assetId)),reviewed=entries.filter(r=>r.status!=='unreviewed').length,flagged=entries.filter(r=>r.status==='flagged').length;
  text($('summary'),`${assets.length.toLocaleString()} assets · ${reviewed.toLocaleString()} views reviewed · ${flagged.toLocaleString()} flagged`);
  text($('saveStatus'),review.saved?'Saved in this browser':'Download to keep your notes');
  $('storageWarning').hidden=!review.warning;text($('storageWarning'),review.warning||'');
@@ -23,9 +24,9 @@ function updateProgress(){
 }
 function stopAnimation(){if(animationFrame)cancelAnimationFrame(animationFrame);animationFrame=0;lastAnimationFrame=-1;}
 function animate(){
- if(animationFrame||!preview?.animated||document.hidden||reducedMotion.matches)return;
+ if(animationFrame||!preview?.animated||!previewOnScreen||document.hidden||reducedMotion.matches)return;
  animationFrame=requestAnimationFrame(time=>{
-  animationFrame=0;if(!preview?.animated||document.hidden||reducedMotion.matches)return;
+  animationFrame=0;if(!preview?.animated||!previewOnScreen||document.hidden||reducedMotion.matches)return;
   const frame=Math.floor(time/1000*12);if(frame!==lastAnimationFrame){lastAnimationFrame=frame;paint(time/1000);}animate();
  });
 }
@@ -92,13 +93,13 @@ function filterChanged(){
 function navigate(delta){const index=filtered.findIndex(a=>a.id===assetId),next=filtered[index+delta];if(next)void goTo(next.id);}
 function setStatus(status){if(!assetId)return;review.set(assetId,facing,{status});reflectReview();}
 function downloadReview(){
- const report=review.snapshot();report.appVersion='town-review-issues-1';
+ const report=review.snapshot();report.appVersion='town-review-3';
  for(const item of report.reviews){const asset=catalog.get(item.assetId);if(!asset)continue;item.category=assetCategory(asset);item.pack=asset.pack||null;item.owner=asset.collectionOwner||asset.owner||null;item.purpose=asset.purpose||null;item.sourceAssetId=asset.sourceAssetId||null;item.authoredFacing=asset.facing||'south';if(asset.texture)item.texture=asset.texture;if(asset.sourceRect)item.sourceRect={...asset.sourceRect};if(asset.finishId){item.finishId=asset.finishId;item.finishKind=asset.finishKind;item.materialOrigin={...asset.materialOrigin};}const sample=assetPreviewSample(asset);if(sample)item.sample={kind:sample.kind,columns:sample.columns,rows:sample.rows,width:sample.width,height:sample.height,tileWidth:sample.tileWidth,tileHeight:sample.tileHeight};const view=asset.getFacingView?.(item.facing,{image:false});if(view)item.view={id:view.id||null,facing:view.facing||view.direction||item.facing,width:view.w,height:view.h};}
  const blob=new Blob([JSON.stringify(report,null,2)+'\n'],{type:'application/json'}),url=URL.createObjectURL(blob),link=document.createElement('a');link.href=url;link.download='coda-asset-review.json';document.body.append(link);link.click();link.remove();setTimeout(()=>URL.revokeObjectURL(url),1000);
 }
 async function start(){
- const [{catalog:townCatalog},{groundTexture},{surfaces}]=await Promise.all([import('../world/catalog.mjs?v=town-front-facing-2'),import('../world/ground-render.mjs?v=town-front-facing-2'),import('../world/model.mjs?v=town-coast-pier-1')]);
- catalog=registerReviewRoomRugs(new Map(townCatalog));
+ const [{catalog:townCatalog},{groundTexture},{surfaces}]=await Promise.all([import('../world/catalog.mjs?v=town-review-3'),import('../world/ground-render.mjs?v=town-review-3'),import('../world/model.mjs?v=town-coast-pier-1')]);
+ catalog=registerReviewRoomRugs(new Map([...townCatalog].filter(([,asset])=>!isRetiredAsset(asset))));
  registerReviewMaterials(catalog);registerReviewWallSegments(catalog);registerReviewGroundSurfaces(catalog,{surfaces,groundTexture});
  assets=[...catalog.values()];review=createAssetReview({catalog});
  const categoryCounts=new Map();for(const asset of assets){const category=assetCategory(asset);categoryCounts.set(category,(categoryCounts.get(category)||0)+1);}
@@ -116,6 +117,7 @@ async function start(){
  canvas.onpointermove=e=>{if(!drag)return;pan={x:drag.pan.x+e.clientX-drag.x,y:drag.pan.y+e.clientY-drag.y};paint();};canvas.onpointerup=canvas.onpointercancel=()=>{drag=null;};
  document.addEventListener('keydown',e=>{if(e.ctrlKey||e.metaKey||e.altKey||e.target.closest('input,textarea,select,[contenteditable="true"]'))return;if(e.key==='ArrowLeft'||e.key==='ArrowRight'){e.preventDefault();navigate(e.key==='ArrowRight'?1:-1);}else if(e.key.toLowerCase()==='f'&&!e.repeat){e.preventDefault();setStatus('flagged');}});
  new ResizeObserver(()=>paint()).observe($('previewStage'));
+ if(typeof IntersectionObserver==='function')new IntersectionObserver(entries=>{previewOnScreen=entries.some(entry=>entry.isIntersecting&&entry.intersectionRatio>0);stopAnimation();if(previewOnScreen)animate();}).observe($('previewStage'));
  document.addEventListener('visibilitychange',()=>{stopAnimation();animate();});
  reducedMotion.addEventListener('change',()=>{stopAnimation();paint();animate();});
  window.townAssetReview={catalog,review,goTo,get assetId(){return assetId;},get facing(){return facing;},get filteredAssets(){return [...filtered];}};

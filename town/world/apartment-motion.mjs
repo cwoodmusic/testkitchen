@@ -9,13 +9,19 @@ const stringSeed=value=>{let n=2166136261;for(const char of String(value))n=Math
 const pointInside=(x,y,polygon)=>{let inside=false;for(let i=0,j=polygon.length-1;i<polygon.length;j=i++){const a=polygon[i],b=polygon[j];if((a[1]>y)!==(b[1]>y)&&x<(b[0]-a[0])*(y-a[1])/(b[1]-a[1])+a[0])inside=!inside;}return inside;};
 function color(value,fallback){const match=/^#([0-9a-f]{6})$/i.exec(value??'');return match?[0,2,4].map(i=>parseInt(match[1].slice(i,i+2),16)):fallback;}
 
-export function apartmentMotionGeometry(asset){
+function motionDefinition(asset){
  const motion=asset?.motion;if(!motion||!['lava','arcade'].includes(motion.kind)||!Number.isFinite(asset.w)||!Number.isFinite(asset.h)||!(asset.w>0&&asset.h>0))return null;
  let polygon=motion.mask??motion.polygon,bounds=motion.bounds;
  if(polygon!==undefined&&(!Array.isArray(polygon)||polygon.length<3||polygon.some(p=>!Array.isArray(p)||p.length!==2||p.some(n=>!Number.isFinite(n)||n<0||n>1))))return null;
  if(!bounds&&polygon){const xs=polygon.map(p=>p[0]),ys=polygon.map(p=>p[1]),x=Math.min(...xs),y=Math.min(...ys);bounds=[x,y,Math.max(...xs)-x,Math.max(...ys)-y];}
  if(!Array.isArray(bounds)||bounds.length!==4||bounds.some(n=>!Number.isFinite(n))||bounds[0]<0||bounds[1]<0||bounds[2]<=0||bounds[3]<=0||bounds[0]+bounds[2]>1.000001||bounds[1]+bounds[3]>1.000001)return null;
- const [u,v,uw,vh]=bounds;
+ return {polygon,bounds};
+}
+/** Metadata-only admission: no canvas, native image or sampled mask is read. */
+export const supportsApartmentMotion=asset=>motionDefinition(asset)!==null;
+export function apartmentMotionGeometry(asset){
+ const definition=motionDefinition(asset);if(!definition)return null;
+ let {polygon,bounds}=definition;const [u,v,uw,vh]=bounds;
  polygon??=[[u,v],[u+uw,v],[u+uw,v+vh],[u,v+vh]];
  const x=u*asset.w,y=v*asset.h,w=uw*asset.w,h=vh*asset.h,scale=Math.min(1,128/Math.max(w,h));
  const width=Math.max(1,Math.round(w*scale)),height=Math.max(1,Math.round(h*scale)),mask=new Uint8Array(width*height);
@@ -24,6 +30,14 @@ export function apartmentMotionGeometry(asset){
   if(pointInside(X,Y,polygon))mask[row*width+col]=1;
  }
  return {x,y,w,h,width,height,mask};
+}
+function outsideViewport(c,asset,item,w,h){
+ const bounds=asset.motion.bounds,canvas=c.canvas;
+ if(!canvas||typeof c.getTransform!=='function'||!Array.isArray(bounds)||bounds.length!==4||bounds.some(n=>!Number.isFinite(n)))return false;
+ const m=c.getTransform(),left=item.x-w/2+bounds[0]*w,top=item.y-h+bounds[1]*h,right=left+bounds[2]*w,bottom=top+bounds[3]*h;
+ const x0=m.a*left+m.c*top+m.e,x1=m.a*right+m.c*top+m.e,x2=m.a*right+m.c*bottom+m.e,x3=m.a*left+m.c*bottom+m.e;
+ const y0=m.b*left+m.d*top+m.f,y1=m.b*right+m.d*top+m.f,y2=m.b*right+m.d*bottom+m.f,y3=m.b*left+m.d*bottom+m.f;
+ return Math.max(x0,x1,x2,x3)<0||Math.min(x0,x1,x2,x3)>canvas.width||Math.max(y0,y1,y2,y3)<0||Math.min(y0,y1,y2,y3)>canvas.height;
 }
 function paint(entry,x,y,rgb,alpha=255){
  x=Math.round(x);y=Math.round(y);if(x<0||y<0||x>=entry.width||y>=entry.height||!entry.mask[y*entry.width+x])return;
@@ -121,6 +135,7 @@ export function createApartmentMotionRenderer({
    if(!asset?.motion||!c||!item||reducedMotion())return false;
    const scale=Number.isFinite(item.scale)&&item.scale>0?item.scale:1,w=item.w||asset.w*scale,h=item.h||w*asset.h/asset.w;
    if(!(w>0&&h>0&&Number.isFinite(item.x)&&Number.isFinite(item.y)))return false;
+   if(outsideViewport(c,asset,item,w,h))return false;
    const entry=entryFor(asset);if(!entry)return false;
    const period=entry.motion.kind==='lava'?24:16,index=wrap(Math.floor((Number.isFinite(time)?time:0)*APARTMENT_MOTION_FPS),period*APARTMENT_MOTION_FPS);
    if(index!==entry.index){entry.pixels.data.fill(0);(entry.motion.kind==='lava'?lava:arcade)(entry,index);entry.c.putImageData(entry.pixels,0,0);entry.index=index;generatedFrames++;}

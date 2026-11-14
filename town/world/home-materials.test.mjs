@@ -174,7 +174,7 @@ test('fitted dado contains the complete native ornament between caps instead of 
 test('Victorian framed frieze preserves horizontal phase across wall joins and fits each wall height locally',async()=>{
  const renderer=pixelMaterialRenderer(),suite=getHomeMaterialSuite('showroom-victorian-parlor');await renderer.warmHomeMaterials(suite);
  const style=suite.wallpaper.trimPresentation;assert.equal(style.fitHeight,true);assert.equal(style.style,'complete-scroll');assert.equal(style.insetTop,4);assert.equal(style.insetBottom,4);
- for(const other of HOME_MATERIAL_SUITES)if(other!==suite){assert.equal(other.wallpaper.trimPresentation.fitHeight,undefined,'The other30 authored trim presentations stay unchanged');assert.equal(other.wallpaper.trimPresentation.style,undefined);}
+ for(const other of HOME_MATERIAL_SUITES)if(other!==suite){if(!['showroom-art-deco-lounge','showroom-french-cafe'].includes(other.owner))assert.equal(other.wallpaper.trimPresentation.fitHeight,undefined,'Other authored trim presentations stay unchanged');assert.equal(other.wallpaper.trimPresentation.style,undefined);}
  const wall={x:13,y:7,w:296,h:106},whole=renderer.createCanvas(340,160),joined=renderer.createCanvas(340,160),shifted=renderer.createCanvas(340,160),paint=(canvas,areas)=>{const c=canvas.getContext('2d');c.imageSmoothingEnabled=false;renderer.drawHomeMaterialWallpaper(c,{wallpaper:suite.wallpaper,wallpaperAreas:areas});};
  paint(whole,[wall]);paint(joined,[{...wall,w:151},{...wall,x:164,w:145}]);paint(shifted,[{...wall,y:21,h:74}]);
  const art=dadoArtRect(wall,style);
@@ -192,6 +192,32 @@ test('complete Victorian scrolls have visible breathing room above and below eve
  assert(inkRows.at(-1)<rect.h-2,'The full vine curls stay clear of the bottom moulding');
  assert(style.insetTop+inkRows[0]>=4,'The motif leaves at least four full-band pixels above its highest tip');
  assert(style.insetBottom+rect.h-1-inkRows.at(-1)>=4,'The motif leaves at least four full-band pixels below its lowest curl');
+});
+
+test('all31 ceramic walls have one continuous phase, integral joints, and matching clipped brick halves',()=>{
+ const renderer=pixelMaterialRenderer();
+ for(const suite of HOME_MATERIAL_SUITES){
+  const finish=suite.wetWallpaper,paint=(height,areas)=>{const canvas=renderer.createCanvas(160,150),c=canvas.getContext('2d');c.imageSmoothingEnabled=false;renderer.drawHomeMaterialWallpaper(c,{wallpaper:finish,wallpaperAreas:areas||[{x:0,y:0,w:128,h:height}]});return canvas;};
+  const short=paint(106),tall=paint(138),split=paint(106,[{x:0,y:0,w:57,h:106},{x:57,y:0,w:71,h:106}]);
+  assert.deepEqual(materialPixels(short,{x:0,y:3,w:128,h:101}),materialPixels(tall,{x:0,y:3,w:128,h:101}),suite.owner+': wall height cannot move existing rows or cut a decorative band through them');
+  assert.deepEqual(materialPixels(split,{x:0,y:0,w:128,h:106}),materialPixels(short,{x:0,y:0,w:128,h:106}),suite.owner+': connected wall segments share one phase, including caps');
+  const grout=finish.colors[4].match(/[0-9a-f]{2}/gi).map(v=>parseInt(v,16));
+  for(let y=8;y<100;y+=8)assert.deepEqual([...materialPixels(short,{x:5,y,w:1,h:1})],[...grout,255],suite.owner+': each course has a complete one-world-pixel joint');
+  const native=renderer.createCanvas(128,106),c=native.getContext('2d');c.imageSmoothingEnabled=false;renderer.drawHomeMaterialWallpaper(c,{wallpaper:{...finish,presentation:{scale:1}},wallpaperAreas:[{x:0,y:0,w:128,h:106}]});
+  for(const y of [24,56,88])assert.deepEqual([...materialPixels(native,{x:60,y,w:1,h:1})],[...materialPixels(native,{x:68,y,w:1,h:1})],suite.owner+': a wrapped brick retains one color across both clipped halves');
+ }
+});
+
+test('Art Deco and French Cafe contain complete authored trim between locally anchored caps',async()=>{
+ const renderer=pixelMaterialRenderer();
+ for(const owner of ['showroom-art-deco-lounge','showroom-french-cafe']){
+  const suite=getHomeMaterialSuite(owner);await renderer.warmHomeMaterials(suite);const finish=suite.wallpaper,style=finish.trimPresentation;
+  assert.deepEqual([style.fitHeight,style.insetTop,style.insetBottom],[true,2,4]);assert.equal(style.style,undefined,'Retain the detailed native ornament');
+  const wall={x:13,y:7,w:296,h:106},whole=renderer.createCanvas(340,160),joined=renderer.createCanvas(340,160),shifted=renderer.createCanvas(340,160),paint=(canvas,areas)=>{const c=canvas.getContext('2d');c.imageSmoothingEnabled=false;renderer.drawHomeMaterialWallpaper(c,{wallpaper:finish,wallpaperAreas:areas});};
+  paint(whole,[wall]);paint(joined,[{...wall,w:151},{...wall,x:164,w:145}]);paint(shifted,[{...wall,y:21,h:74}]);
+  assert.deepEqual(materialPixels(joined,dadoArtRect(wall,style)),materialPixels(whole,dadoArtRect(wall,style)),owner+': a join cannot restart the native ornament');
+  assert.deepEqual(materialPixels(shifted,dadoArtRect({...wall,y:21,h:74},style)),materialPixels(whole,dadoArtRect(wall,style)),owner+': the full ornament stays between caps at different wall heights');
+ }
 });
 
 test('floor material, clipping and glaze use visual floor bounds without changing the logical room',async()=>{

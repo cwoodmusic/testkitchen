@@ -3,6 +3,7 @@ from functools import partial
 from http.server import SimpleHTTPRequestHandler, ThreadingHTTPServer
 from pathlib import Path
 import json
+import os
 import threading
 from playwright.sync_api import sync_playwright
 
@@ -39,6 +40,10 @@ try:
             }
             for(let t=0;t<512;t++)for(let k=0;k<4;k++)if(pixels[(t*512)*4+k]!==pixels[(t*512+511)*4+k]||pixels[t*4+k]!==pixels[(511*512+t)*4+k])wrap=false;
             light.sort((a,b)=>a-b);const spread=light[Math.floor(light.length*.9)]-light[Math.floor(light.length*.1)];
+            const differences=[];let seamDifference=0;
+            for(let x=1;x<512;x++){let sum=0;for(let y=0;y<512;y++)for(let k=0;k<3;k++)sum+=Math.abs(pixels[(y*512+x)*4+k]-pixels[(y*512+x-1)*4+k]);differences.push(sum/(512*3));}
+            for(let y=0;y<512;y++)for(let k=0;k<3;k++)seamDifference+=Math.abs(pixels[(y*512)*4+k]-pixels[(y*512+511)*4+k]);
+            differences.sort((a,b)=>a-b);const seamRatio=seamDifference/(512*3)/differences[Math.floor(differences.length/2)];
             // Render a non-zero atlas phase through the production terrain
             // renderer, crossing eight cells and one complete texture wrap.
             const c=document.createElement('canvas');c.width=c.height=512;const g=c.getContext('2d');g.imageSmoothingEnabled=false;
@@ -48,7 +53,7 @@ try:
               const a=(y*512+x)*4,b=(((top+y)%512)*512+(left+x)%512)*4;
               for(let k=0;k<4;k++)if(output[a+k]!==pixels[b+k]){aligned=false;break;}
             }
-            checks.push({surface,opaque,wrap,colors:colors.size,lumaSpread:spread,aligned});
+            checks.push({surface,opaque,wrap,seamRatio,colors:colors.size,lumaSpread:spread,aligned});
             const image=document.createElement('canvas');image.width=240;image.height=180;const ctx=image.getContext('2d');ctx.setTransform(.5,0,0,.5,0,0);ctx.imageSmoothingEnabled=false;
             render(ctx,filled(surface),{x:8192,y:6144,zoom:.9},480,360);gallery.push({surface,url:image.toDataURL()});
           }
@@ -58,7 +63,11 @@ try:
         }''')
         for check in result['checks']:
             print(json.dumps(check),flush=True)
-            assert check['opaque'] and check['wrap'] and check['aligned'],check
+            assert check['opaque'] and check['aligned'],check
+            # Equal endpoint pixels are expected for the retained mirrored
+            # dirt/wood. Natural sand repeats have ordinary grain variation at
+            # their boundary, without reflecting the whole dune field.
+            assert check['wrap'] or (check['surface']=='sand' and check['seamRatio']<1.5),check
             assert check['colors']>500 and check['lumaSpread']>15,('Ground lost material detail',check)
         assert result['newDirtSource'] and result['oldDirtReplaced'],'The old dirt atlas is still being used.'
 
@@ -107,7 +116,9 @@ try:
           document.querySelectorAll('body>*').forEach(e=>e.style.display='none');const gallery=document.createElement('div');gallery.id='materialGallery';gallery.style.cssText='display:grid;grid-template-columns:repeat(2,480px);gap:12px;padding:12px;width:996px;background:#20382b;color:#f5e3ba;font:20px Georgia';
           for(const sample of samples){const tile=document.createElement('div'),img=document.createElement('img');img.src=sample.url;img.width=480;img.height=360;img.style.cssText='display:block;image-rendering:pixelated;margin-top:8px';tile.append(document.createTextNode(sample.label),img);gallery.append(tile);}document.body.append(gallery);
         }''',samples)
-        page.locator('#materialGallery').screenshot(path=str(ROOT/'docs/town-preview/ground-materials.png'))
+        gallery_path=Path(os.environ.get('CODA_GROUND_GALLERY',str(ROOT/'docs/town-preview/ground-materials.png')))
+        gallery_path.parent.mkdir(parents=True,exist_ok=True)
+        page.locator('#materialGallery').screenshot(path=str(gallery_path))
         assert not errors,errors
         browser.close()
 finally:

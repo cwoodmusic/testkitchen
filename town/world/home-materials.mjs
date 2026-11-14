@@ -1,4 +1,4 @@
-export {HOME_MATERIAL_SUITES,getHomeMaterialSuite,applyHomeMaterialSuite,fitCompactKitchenFloor} from './home-material-definitions.mjs?v=town-victorian-default-1';
+export {HOME_MATERIAL_SUITES,getHomeMaterialSuite,applyHomeMaterialSuite,fitCompactKitchenFloor} from './home-material-definitions.mjs?v=town-review-3';
 
 // Seam-safe authored tiles are decoded once into ImageBitmap. The completed
 // room background owns all subsequent material painting, including its grain.
@@ -54,10 +54,14 @@ function tileFor(finish){
   const w=wall?32:slab?64:stone?32:16,h=wall?16:slab?32:stone?32:16;
   px(c,0,0,size,size,grout);
   for(let y=0,row=0;y<size;y+=h,row++)for(let x=-w;x<size;x+=w){
-   const xx=x+((wall||stone)&&row%2?w/2:0),n=hash(x,y,seed),face=deco&&((Math.floor(x/w)+row)%2)?accent:n%5===0?accent:base;
-   px(c,xx+1,y+1,w-1,h-1,face);px(c,xx+2,y+2,w-3,1,light);
-   if(wall){c.globalAlpha=.35;px(c,xx+2,y+h-2,w-3,1,dark);c.globalAlpha=1;}
-   else for(let i=0;i<(clay?4:2);i++){c.globalAlpha=.4;px(c,xx+3+hash(i,n,seed)%Math.max(1,w-6),y+4+hash(n,i,seed)%Math.max(1,h-7),1,1,i%2?light:dark);c.globalAlpha=1;}
+   const xx=x+((wall||stone)&&row%2?w/2:0),wrappedX=wall?((x%size)+size)%size:x,n=hash(wrappedX,y,seed),face=deco&&((Math.floor(x/w)+row)%2)?accent:n%5===0?accent:base;
+   // A staggered brick can cross the repeat edge. Both clipped halves need
+   // one wrapped identity, and two native joint pixels become one world pixel
+   // at the sanitary wall's half scale instead of dropping alternate joints.
+   if(wall){px(c,xx+2,y+2,w-2,h-2,face);px(c,xx+4,y+4,w-6,2,light);c.globalAlpha=.35;px(c,xx+4,y+h-2,w-6,2,dark);c.globalAlpha=1;}
+   else{px(c,xx+1,y+1,w-1,h-1,face);px(c,xx+2,y+2,w-3,1,light);}
+   if(wall)continue;
+   for(let i=0;i<(clay?4:2);i++){c.globalAlpha=.4;px(c,xx+3+hash(i,n,seed)%Math.max(1,w-6),y+4+hash(n,i,seed)%Math.max(1,h-7),1,1,i%2?light:dark);c.globalAlpha=1;}
    if(deco&&n%7===0){px(c,xx+w-3,y+h-3,2,2,dark);px(c,xx+w-2,y+h-2,1,1,light);}
   }
  }
@@ -114,6 +118,14 @@ export function drawHomeMaterialWallpaper(c,room){
  const [,light,dark,metal]=finish.colors;
  for(const area of room.wallpaperAreas||[]){
   c.save();c.beginPath();c.rect(area.x,area.y,area.w,area.h);c.clip();
+  if(finish.surfaceStyle==='ceramic-wall'){
+   // Sanitary tiles form one continuous running bond. A decorative dado at
+   // an arbitrary 22px baseline used to slice a row into uneven slivers.
+   field(c,finish,area);
+   px(c,area.x,area.y,area.w,2,dark);px(c,area.x,area.y+2,area.w,1,light);
+   px(c,area.x,area.y+area.h-2,area.w,2,dark);
+   c.restore();continue;
+  }
   const dadoHeight=Math.min(22,Math.max(0,area.h-8)),dadoY=area.y+area.h-dadoHeight;
   field(c,finish,{...area,h:Math.max(0,area.h-dadoHeight)});
   const fitted=finish.trimTexture&&(finish.trimPresentation?.fitHeight||finish.trimPresentation?.style==='complete-scroll');

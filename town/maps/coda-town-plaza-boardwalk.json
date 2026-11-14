@@ -936,23 +936,7 @@
     },
     "158,54": {
       "surface": "grass",
-      "level": 8,
-      "curves": [
-        {
-          "kind": "height",
-          "corner": "nw",
-          "cx": 10176,
-          "cy": 3520,
-          "r": 64,
-          "underX": 158,
-          "underY": 54,
-          "under": {
-            "surface": "water",
-            "level": 0
-          },
-          "mask": "P/9///////////////////////////////////////8="
-        }
-      ]
+      "level": 8
     },
     "159,54": {
       "surface": "grass",
@@ -1120,23 +1104,7 @@
     },
     "157,55": {
       "surface": "grass",
-      "level": 8,
-      "curves": [
-        {
-          "kind": "height",
-          "corner": "nw",
-          "cx": 10112,
-          "cy": 3584,
-          "r": 64,
-          "underX": 157,
-          "underY": 55,
-          "under": {
-            "surface": "water",
-            "level": 0
-          },
-          "mask": "AAcADwf/D/8f/z//f/////////////////////////8="
-        }
-      ]
+      "level": 8
     },
     "158,55": {
       "surface": "grass",
@@ -133260,23 +133228,7 @@
     },
     "154,55": {
       "surface": "grass",
-      "level": 8,
-      "curves": [
-        {
-          "kind": "height",
-          "corner": "nw",
-          "cx": 9920,
-          "cy": 3584,
-          "r": 64,
-          "underX": 154,
-          "underY": 55,
-          "under": {
-            "surface": "water",
-            "level": 0
-          },
-          "mask": "AAAAAAAAAAAAAAAAAAcADwAfAD8AfwB/AP8B/wP/B/8="
-        }
-      ]
+      "level": 8
     },
     "153,54": {
       "surface": "water",
@@ -134353,27 +134305,11 @@
     },
     "155,55": {
       "surface": "grass",
-      "level": 8,
-      "curves": [
-        {
-          "kind": "height",
-          "corner": "nw",
-          "cx": 9984,
-          "cy": 3584,
-          "r": 64,
-          "underX": 155,
-          "underY": 55,
-          "under": {
-            "surface": "water",
-            "level": 0
-          },
-          "mask": "AAAAAAAAAAAH/P/+//////////////////////////8="
-        }
-      ]
+      "level": 8
     },
     "154,54": {
-      "surface": "water",
-      "level": 0
+      "surface": "grass",
+      "level": 8
     },
     "153,53": {
       "surface": "water",
@@ -135440,31 +135376,15 @@
     },
     "156,55": {
       "surface": "grass",
-      "level": 8,
-      "curves": [
-        {
-          "kind": "height",
-          "corner": "nw",
-          "cx": 10048,
-          "cy": 3584,
-          "r": 64,
-          "underX": 156,
-          "underY": 55,
-          "under": {
-            "surface": "water",
-            "level": 0
-          },
-          "mask": "AAAAAAAAAAAAAAAAAACAAMAB4APwAfgD/Af+D/8f/78="
-        }
-      ]
+      "level": 8
     },
     "155,54": {
-      "surface": "water",
-      "level": 0
+      "surface": "grass",
+      "level": 8
     },
     "154,53": {
-      "surface": "water",
-      "level": 0
+      "surface": "grass",
+      "level": 8
     },
     "153,52": {
       "surface": "water",
@@ -136500,12 +136420,12 @@
       "level": 0
     },
     "156,54": {
-      "surface": "water",
-      "level": 0
+      "surface": "grass",
+      "level": 8
     },
     "155,53": {
-      "surface": "water",
-      "level": 0
+      "surface": "grass",
+      "level": 8
     },
     "154,52": {
       "surface": "water",
@@ -137555,27 +137475,11 @@
     },
     "157,54": {
       "surface": "grass",
-      "level": 8,
-      "curves": [
-        {
-          "kind": "height",
-          "corner": "nw",
-          "cx": 10112,
-          "cy": 3520,
-          "r": 64,
-          "underX": 157,
-          "underY": 54,
-          "under": {
-            "surface": "water",
-            "level": 0
-          },
-          "mask": "AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAABAAM="
-        }
-      ]
+      "level": 8
     },
     "156,53": {
-      "surface": "water",
-      "level": 0
+      "surface": "grass",
+      "level": 8
     },
     "155,52": {
       "surface": "water",
@@ -138604,8 +138508,8 @@
       "level": 0
     },
     "157,53": {
-      "surface": "water",
-      "level": 0
+      "surface": "grass",
+      "level": 8
     },
     "156,52": {
       "surface": "water",
@@ -139657,8 +139561,8 @@
       "level": 0
     },
     "158,53": {
-      "surface": "water",
-      "level": 0
+      "surface": "grass",
+      "level": 8
     },
     "157,52": {
       "surface": "water",
@@ -140661,8 +140565,8 @@
       "level": 0
     },
     "159,53": {
-      "surface": "water",
-      "level": 0
+      "surface": "grass",
+      "level": 8
     },
     "158,52": {
       "surface": "water",

@@ -1,8 +1,8 @@
 import {PAINT_GRID,PAINT_STEP,readPaint,materialKey} from './ground-paint.mjs?v=opera-parallax-1';
-import {sources,catalog} from './catalog.mjs?v=town-front-facing-2';
+import {sources,catalog} from './catalog.mjs?v=town-review-3';
 import {cell,height,terrainView} from './model.mjs?v=town-coast-pier-1';
-import {drawPaving,drawPavingMaterial} from './paving.mjs?v=town-front-facing-2';
-import {groundTextures} from './ground-textures.mjs?v=opera-parallax-1';
+import {drawPaving,drawPavingMaterial} from './paving.mjs?v=town-review-3';
+import {groundTextures,drawGroundTexture} from './ground-textures.mjs?v=town-review-3';
 import {drawAnimatedWater} from './water-motion.mjs?v=opera-smooth-1';
 
 const tiles=new WeakMap(),fields=new WeakMap(),legacyFields=new Map();
@@ -20,8 +20,8 @@ export function drawMaterial(c,d,a,x,y,X,Y,{raw=false}={}){
  const index=['grass','cobble','dirt','water'].indexOf(a.surface);
  if(a.surface==='cobble')(raw?drawPavingMaterial:drawPaving)(c,d,x,y,Y,a.paving);
  else if(a.surface==='water')drawAnimatedWater(c,sources.ground[3],x,y,X,Y);
+ else if(groundTextures[a.surface])drawGroundTexture(c,a.surface,X,Y,64,64,X-x*64,Y-y*64);
  else if(index>=0)c.drawImage(sources.ground[index],x%8*64,y%8*64,64,64,X,Y,64,64);
- else c.drawImage(groundTextures[a.surface],x%8*64,y%8*64,64,64,X,Y,64,64);
 }
 
 function field(a){

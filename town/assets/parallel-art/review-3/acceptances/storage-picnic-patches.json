@@ -1,0 +1,506 @@
+{
+  "version": 1,
+  "scope": "Revision 3 seven storage/picnic art repairs only",
+  "counts": {
+    "nativeSources": 7,
+    "viewKeys": 7,
+    "generatedFinalBoards": 3
+  },
+  "camera": "Elevated parallel 2/3 South view, zero yaw, meaningful top/front depth and equal near/far rectangular widths. Genuine domes, curved handles, food and cloth remain.",
+  "packing": "Lossless exact native RGBA crops with transparent packing padding; uniform contain into unchanged original world dimensions, centered and bottom aligned.",
+  "patches": [
+    {
+      "id": "picnic-hamper",
+      "facing": "south",
+      "file": "review-3/storage-picnic/picnic-hamper-fa9916f2101e.webp",
+      "width": 628,
+      "height": 703,
+      "x": 0,
+      "y": 0,
+      "w": 628,
+      "h": 703,
+      "draw": {
+        "x": 6.480796586059746,
+        "y": 0.0,
+        "w": 75.03840682788051,
+        "h": 84.0
+      },
+      "sourceBefore": {
+        "file": "town/assets/leisure/picnic.png",
+        "fileSHA256": "44d6e616e20f8b88bdb887ad825fdaa20ff6d6d72f87f8ac8519e74befd08b34",
+        "crop": {
+          "x": 774,
+          "y": 287,
+          "w": 261,
+          "h": 248
+        },
+        "draw": {
+          "x": 0,
+          "y": 0,
+          "w": 88,
+          "h": 84
+        },
+        "world": {
+          "w": 88,
+          "h": 84
+        }
+      },
+      "generation": {
+        "tool": "image_gen",
+        "original": "review-3/storage-picnic/originals/generated-fa9916f2101e3268.png",
+        "originalSHA256": "fa9916f2101e3268d3e63ec3d2caa5442048e34d50dc7cc432d37a669e493623",
+        "crop": [
+          67,
+          7,
+          687,
+          702
+        ],
+        "transparentPackingPadding": 4,
+        "acceptedPixelSHA256": "091d68968518190ce531c4d52f62b21681f142136199b15b7f48e14fbe9cfab4",
+        "packing": "Exact generated RGBA crop/copy plus transparent padding and lossless WebP. No perspective warps, palette edits, or alpha remapping."
+      },
+      "reason": "Straight South elevated parallel 2/3 camera; detailed material identity and genuine curved lids, food, handles and cloth retained.",
+      "inspection": {
+        "completeSilhouette": true,
+        "mainComponentBounds": [
+          77,
+          17,
+          677,
+          692
+        ],
+        "uniformWorldScale": 0.11948790896159317,
+        "clearTransparentBorder": true
+      }
+    },
+    {
+      "id": "picnic-cooler",
+      "facing": "south",
+      "file": "review-3/storage-picnic/picnic-cooler-3845e28c0995.webp",
+      "width": 654,
+      "height": 645,
+      "x": 0,
+      "y": 0,
+      "w": 654,
+      "h": 645,
+      "draw": {
+        "x": 5.830232558139535,
+        "y": 0.0,
+        "w": 97.33953488372093,
+        "h": 96.0
+      },
+      "sourceBefore": {
+        "file": "town/assets/leisure/picnic.png",
+        "fileSHA256": "44d6e616e20f8b88bdb887ad825fdaa20ff6d6d72f87f8ac8519e74befd08b34",
+        "crop": {
+          "x": 1128,
+          "y": 292,
+          "w": 274,
+          "h": 242
+        },
+        "draw": {
+          "x": 0,
+          "y": 0,
+          "w": 109,
+          "h": 96
+        },
+        "world": {
+          "w": 109,
+          "h": 96
+        }
+      },
+      "generation": {
+        "tool": "image_gen",
+        "original": "review-3/storage-picnic/originals/generated-3845e28c09953c99.png",
+        "originalSHA256": "3845e28c09953c99d44c073fa92509a749b27173dac190eddaa2f4a7b507fad2",
+        "crop": [
+          665,
+          35,
+          1311,
+          672
+        ],
+        "transparentPackingPadding": 4,
+        "acceptedPixelSHA256": "24f13d49ce2f36d151735923a57a1e3f38dc848c4068fa46edcd8bd2e48385c6",
+        "packing": "Exact generated RGBA crop/copy plus transparent padding and lossless WebP. No perspective warps, palette edits, or alpha remapping."
+      },
+      "reason": "Straight South elevated parallel 2/3 camera; detailed material identity and genuine curved lids, food, handles and cloth retained.",
+      "inspection": {
+        "completeSilhouette": true,
+        "mainComponentBounds": [
+          675,
+          45,
+          1301,
+          662
+        ],
+        "uniformWorldScale": 0.14883720930232558,
+        "clearTransparentBorder": true
+      }
+    },
+    {
+      "id": "picnic-cheese-board",
+      "facing": "south",
+      "file": "review-3/storage-picnic/picnic-cheese-board-3845e28c0995.webp",
+      "width": 828,
+      "height": 547,
+      "x": 0,
+      "y": 0,
+      "w": 828,
+      "h": 547,
+      "draw": {
+        "x": 3.0201096892138892,
+        "y": 0.0,
+        "w": 105.95978062157222,
+        "h": 70.0
+      },
+      "sourceBefore": {
+        "file": "town/assets/leisure/picnic.png",
+        "fileSHA256": "44d6e616e20f8b88bdb887ad825fdaa20ff6d6d72f87f8ac8519e74befd08b34",
+        "crop": {
+          "x": 381,
+          "y": 579,
+          "w": 326,
+          "h": 202
+        },
+        "draw": {
+          "x": 0,
+          "y": 0,
+          "w": 112,
+          "h": 70
+        },
+        "world": {
+          "w": 112,
+          "h": 70
+        }
+      },
+      "generation": {
+        "tool": "image_gen",
+        "original": "review-3/storage-picnic/originals/generated-3845e28c09953c99.png",
+        "originalSHA256": "3845e28c09953c99d44c073fa92509a749b27173dac190eddaa2f4a7b507fad2",
+        "crop": [
+          1333,
+          119,
+          2153,
+          658
+        ],
+        "transparentPackingPadding": 4,
+        "acceptedPixelSHA256": "4ac19f78b2fe59bedacf7d06397968d399144a955a97c5978adcfac1e765feef",
+        "packing": "Exact generated RGBA crop/copy plus transparent padding and lossless WebP. No perspective warps, palette edits, or alpha remapping."
+      },
+      "reason": "Straight South elevated parallel 2/3 camera; detailed material identity and genuine curved lids, food, handles and cloth retained.",
+      "inspection": {
+        "completeSilhouette": true,
+        "mainComponentBounds": [
+          1343,
+          129,
+          2143,
+          648
+        ],
+        "uniformWorldScale": 0.12797074954296161,
+        "clearTransparentBorder": true
+      }
+    },
+    {
+      "id": "decor-01-11",
+      "facing": "south",
+      "file": "review-3/storage-picnic/decor-01-11-lids-48d9e9fd242a.webp",
+      "width": 981,
+      "height": 675,
+      "x": 0,
+      "y": 0,
+      "w": 981,
+      "h": 675,
+      "draw": {
+        "x": 0.0,
+        "y": 4.944954128440372,
+        "w": 96.0,
+        "h": 66.05504587155963
+      },
+      "sourceBefore": {
+        "file": "town/assets/decor/pack-01.png",
+        "fileSHA256": "3ef31efd138e6c11b299a9c7d9bb506e66474da0b5dd923a0df7313d7d889209",
+        "crop": {
+          "x": 835,
+          "y": 560,
+          "w": 250,
+          "h": 184
+        },
+        "draw": {
+          "x": 0,
+          "y": 0,
+          "w": 96,
+          "h": 71
+        },
+        "world": {
+          "w": 96,
+          "h": 71
+        }
+      },
+      "generation": {
+        "tool": "image_gen",
+        "original": "review-3/storage-picnic/originals/generated-lids-48d9e9fd242ac613.png",
+        "originalSHA256": "48d9e9fd242ac613e251aa3608737e41ab12e8cf8983d9e82a68f6206404b45e",
+        "crop": [
+          64,
+          22,
+          1037,
+          689
+        ],
+        "transparentPackingPadding": 4,
+        "acceptedPixelSHA256": "30e73e87691652e82b8b57a6d8758cc8c5a8c5fc257240098059222b69c606f2",
+        "packing": "Exact generated native RGBA copy/crop, transparent padding and lossless WebP. No mathematical warp, pixel editing or alpha remapping."
+      },
+      "reason": "Elevated South parallel 2/3 camera with clearly visible rear hinges and broad horizontal lid top above short upright front; original wood/leather material detail retained.",
+      "inspection": {
+        "completeSilhouette": true,
+        "uniformWorldScale": 0.09785932721712538,
+        "clearTransparentBorder": true,
+        "readableTopAndFront": true,
+        "frontLockAndHandleBelowTopPlane": true,
+        "visualEvidence": "work/review-3/storage-picnic/two-lid-refinement-world-proof.jpg"
+      },
+      "priorAcceptedCandidate": {
+        "file": "review-3/storage-picnic/decor-01-11-c34927cf1e76.webp",
+        "width": 903,
+        "height": 710,
+        "x": 0,
+        "y": 0,
+        "w": 903,
+        "h": 710,
+        "draw": {
+          "x": 2.8499999999999943,
+          "y": 0.0,
+          "w": 90.30000000000001,
+          "h": 71.0
+        },
+        "generation": {
+          "tool": "image_gen",
+          "original": "review-3/storage-picnic/originals/generated-c34927cf1e76d875.png",
+          "originalSHA256": "c34927cf1e76d875bcfd89f8f3b86bfcdfb4be5634d6e995c17f650b20966cc7",
+          "crop": [
+            84,
+            39,
+            979,
+            741
+          ],
+          "transparentPackingPadding": 4,
+          "acceptedPixelSHA256": "85579197dc8281a272a70ff0571c87da73ea35e3285b4b0f679c0c986078d885",
+          "packing": "Exact generated RGBA crop/copy plus transparent padding and lossless WebP. No perspective warps, palette edits, or alpha remapping."
+        }
+      }
+    },
+    {
+      "id": "decor-01-12",
+      "facing": "south",
+      "file": "review-3/storage-picnic/decor-01-12-lids-48d9e9fd242a.webp",
+      "width": 982,
+      "height": 675,
+      "x": 0,
+      "y": 0,
+      "w": 982,
+      "h": 675,
+      "draw": {
+        "x": 0.0,
+        "y": 3.012219959266801,
+        "w": 96.0,
+        "h": 65.9877800407332
+      },
+      "sourceBefore": {
+        "file": "town/assets/decor/pack-01.png",
+        "fileSHA256": "3ef31efd138e6c11b299a9c7d9bb506e66474da0b5dd923a0df7313d7d889209",
+        "crop": {
+          "x": 1216,
+          "y": 563,
+          "w": 258,
+          "h": 183
+        },
+        "draw": {
+          "x": 0,
+          "y": 0,
+          "w": 96,
+          "h": 69
+        },
+        "world": {
+          "w": 96,
+          "h": 69
+        }
+      },
+      "generation": {
+        "tool": "image_gen",
+        "original": "review-3/storage-picnic/originals/generated-lids-48d9e9fd242ac613.png",
+        "originalSHA256": "48d9e9fd242ac613e251aa3608737e41ab12e8cf8983d9e82a68f6206404b45e",
+        "crop": [
+          1124,
+          22,
+          2098,
+          689
+        ],
+        "transparentPackingPadding": 4,
+        "acceptedPixelSHA256": "47cce59ae167f3ff60edfa508c58c874346e5198fe5ede61be468f4d33872504",
+        "packing": "Exact generated native RGBA copy/crop, transparent padding and lossless WebP. No mathematical warp, pixel editing or alpha remapping."
+      },
+      "reason": "Elevated South parallel 2/3 camera with clearly visible rear hinges and broad horizontal lid top above short upright front; original wood/leather material detail retained.",
+      "inspection": {
+        "completeSilhouette": true,
+        "uniformWorldScale": 0.09775967413441955,
+        "clearTransparentBorder": true,
+        "readableTopAndFront": true,
+        "frontLockAndHandleBelowTopPlane": true,
+        "visualEvidence": "work/review-3/storage-picnic/two-lid-refinement-world-proof.jpg"
+      },
+      "priorAcceptedCandidate": {
+        "file": "review-3/storage-picnic/decor-01-12-c34927cf1e76.webp",
+        "width": 912,
+        "height": 712,
+        "x": 0,
+        "y": 0,
+        "w": 912,
+        "h": 712,
+        "draw": {
+          "x": 3.8089887640449405,
+          "y": 0.0,
+          "w": 88.38202247191012,
+          "h": 69.0
+        },
+        "generation": {
+          "tool": "image_gen",
+          "original": "review-3/storage-picnic/originals/generated-c34927cf1e76d875.png",
+          "originalSHA256": "c34927cf1e76d875bcfd89f8f3b86bfcdfb4be5634d6e995c17f650b20966cc7",
+          "crop": [
+            1007,
+            37,
+            1911,
+            741
+          ],
+          "transparentPackingPadding": 4,
+          "acceptedPixelSHA256": "60daed489db518e44928e6c992ad9c9ac34d4c1785e1828d5e37fde294a94f5e",
+          "packing": "Exact generated RGBA crop/copy plus transparent padding and lossless WebP. No perspective warps, palette edits, or alpha remapping."
+        }
+      }
+    },
+    {
+      "id": "decor-01-13",
+      "facing": "south",
+      "file": "review-3/storage-picnic/decor-01-13-fa9916f2101e.webp",
+      "width": 627,
+      "height": 677,
+      "x": 0,
+      "y": 0,
+      "w": 627,
+      "h": 677,
+      "draw": {
+        "x": 9.101920236336781,
+        "y": 0.0,
+        "w": 77.79615952732644,
+        "h": 84.0
+      },
+      "sourceBefore": {
+        "file": "town/assets/decor/pack-01.png",
+        "fileSHA256": "3ef31efd138e6c11b299a9c7d9bb506e66474da0b5dd923a0df7313d7d889209",
+        "crop": {
+          "x": 70,
+          "y": 796,
+          "w": 244,
+          "h": 211
+        },
+        "draw": {
+          "x": 0,
+          "y": 0,
+          "w": 96,
+          "h": 84
+        },
+        "world": {
+          "w": 96,
+          "h": 84
+        }
+      },
+      "generation": {
+        "tool": "image_gen",
+        "original": "review-3/storage-picnic/originals/generated-fa9916f2101e3268.png",
+        "originalSHA256": "fa9916f2101e3268d3e63ec3d2caa5442048e34d50dc7cc432d37a669e493623",
+        "crop": [
+          700,
+          21,
+          1319,
+          690
+        ],
+        "transparentPackingPadding": 4,
+        "acceptedPixelSHA256": "69e7a5fc392dc3e12c4fa05930c3224d5e5a79682ecf5bf9bd60616b050baeb0",
+        "packing": "Exact generated RGBA crop/copy plus transparent padding and lossless WebP. No perspective warps, palette edits, or alpha remapping."
+      },
+      "reason": "Straight South elevated parallel 2/3 camera; detailed material identity and genuine curved lids, food, handles and cloth retained.",
+      "inspection": {
+        "completeSilhouette": true,
+        "mainComponentBounds": [
+          707,
+          31,
+          1309,
+          680
+        ],
+        "uniformWorldScale": 0.1240768094534712,
+        "clearTransparentBorder": true
+      }
+    },
+    {
+      "id": "decor-01-16",
+      "facing": "south",
+      "file": "review-3/storage-picnic/decor-01-16-fa9916f2101e.webp",
+      "width": 753,
+      "height": 637,
+      "x": 0,
+      "y": 0,
+      "w": 753,
+      "h": 637,
+      "draw": {
+        "x": 11.354788069073784,
+        "y": 0.0,
+        "w": 73.29042386185243,
+        "h": 62.0
+      },
+      "sourceBefore": {
+        "file": "town/assets/decor/pack-01.png",
+        "fileSHA256": "3ef31efd138e6c11b299a9c7d9bb506e66474da0b5dd923a0df7313d7d889209",
+        "crop": {
+          "x": 1200,
+          "y": 819,
+          "w": 289,
+          "h": 184
+        },
+        "draw": {
+          "x": 0,
+          "y": 0,
+          "w": 96,
+          "h": 62
+        },
+        "world": {
+          "w": 96,
+          "h": 62
+        }
+      },
+      "generation": {
+        "tool": "image_gen",
+        "original": "review-3/storage-picnic/originals/generated-fa9916f2101e3268.png",
+        "originalSHA256": "fa9916f2101e3268d3e63ec3d2caa5442048e34d50dc7cc432d37a669e493623",
+        "crop": [
+          1375,
+          67,
+          2120,
+          696
+        ],
+        "transparentPackingPadding": 4,
+        "acceptedPixelSHA256": "30c328c75d37d95abee2caf8c02b118c81b64138650e09a1abd0edc83b9b25ac",
+        "packing": "Exact generated RGBA crop/copy plus transparent padding and lossless WebP. No perspective warps, palette edits, or alpha remapping."
+      },
+      "reason": "Straight South elevated parallel 2/3 camera; detailed material identity and genuine curved lids, food, handles and cloth retained.",
+      "inspection": {
+        "completeSilhouette": true,
+        "mainComponentBounds": [
+          1385,
+          77,
+          2110,
+          686
+        ],
+        "uniformWorldScale": 0.09733124018838304,
+        "clearTransparentBorder": true
+      }
+    }
+  ]
+}

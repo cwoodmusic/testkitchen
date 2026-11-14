@@ -52,6 +52,24 @@ test('fountain previews reuse one selected native water source and restore the c
  }finally{if(previousDocument===undefined)delete globalThis.document;else globalThis.document=previousDocument;}
 });
 
+test('reviewer animates only the selected authored glass and keeps native still exports allocation-free',async()=>{
+ const previousDocument=globalThis.document;let canvases=0;
+ globalThis.document={createElement(){canvases++;const canvas={width:0,height:0};canvas.getContext=()=>({createImageData:(w,h)=>({data:new Uint8ClampedArray(w*h*4)}),putImageData(){}});return canvas;}};
+ try{
+  const southMotion={kind:'arcade',seed:9,game:'original-owner-game',palette:['#142739','#73c8b0','#ffdc98','#9183c7'],mask:[[.2,.2],[.7,.2],[.7,.5],[.2,.5]],bounds:[.2,.2,.5,.3]},lampMotion={kind:'lava',seed:9,mask:[[.4,.2],[.6,.2],[.7,.6],[.3,.6]],bounds:[.3,.2,.4,.4]};
+  const south={w:180,h:120,motion:southMotion},west={w:90,h:180},east={w:90,h:180,motion:lampMotion},image={width:400,height:400};
+  const asset=directional({id:'motion-review-fixture',motion:southMotion,getFacingView:f=>({south,west,east}[f]),getFacingImage:()=>image}),before=JSON.stringify(southMotion);
+  const front=await prepareAssetPreview(asset,'south'),back=await prepareAssetPreview(asset,'west'),lamp=await prepareAssetPreview(asset,'east'),c=context();
+  assert.equal(front.animated,true);assert.equal(back.animated,false);assert.equal(lamp.animated,true);
+  for(const preview of [front,back,lamp])preview.draw(c,0);assert.equal(canvases,0,'Still exports need no animation buffer');
+  front.draw(c,1);assert.equal(canvases,1,'Only a small procedural screen is allocated; no native view is repainted');
+  const screen=c.draws.at(-1);assert.equal(screen.filter,'none');assert(screen.args[0].width<=128&&screen.args[0].height<=128);
+  for(let frame=8;frame<60;frame++)front.draw(c,frame/8);assert.equal(canvases,1,'Warm preview frames reuse their stable selected-view proxy');
+  back.draw(c,4);assert.equal(canvases,1,'South animation must not bleed onto back/profile views');
+  lamp.draw(c,1);assert.equal(canvases,2);assert.equal(JSON.stringify(southMotion),before);assert.equal(c.filter,'brightness(.5)');assert.equal(c.imageSmoothingEnabled,true);assert.equal(c.stackDepth,0);
+ }finally{if(previousDocument===undefined)delete globalThis.document;else globalThis.document=previousDocument;}
+});
+
 test('preparing a cardinal view waits for native artwork and preserves its authored crop and contain padding',async()=>{
  let finish,ready=false,loadDirection;
  const pending=new Promise(resolve=>{finish=()=>{ready=true;resolve();};}),image={width:500,height:700};
