@@ -8,7 +8,7 @@
  const CUSTOM_HOST='www.coda-arcade.com',CUSTOM_ORIGIN='https://'+CUSTOM_HOST;
  const GITHUB_ORIGIN='https://cwoodmusic.github.io';
  const customHosts=new Set([CUSTOM_HOST,'coda-arcade.com','www.coda-aracde.com','coda-aracde.com']);
- const paths=Object.freeze({pitch:'games/pitch-race/',triad:'games/music-triad/',rhythm:'games/rhythm-room/'});
+ const paths=Object.freeze({pitch:'games/pitch-race/',triad:'games/music-triad/',rhythm:'games/rhythm-room/',rhythmBlocks:'games/rhythm-blocks/'});
  function supports(hostname){return hostname==='cwoodmusic.github.io'||customHosts.has(hostname);}
  function packageBase(location){
   const hostname=location?.hostname,custom=customHosts.has(hostname),github=hostname==='cwoodmusic.github.io',local=['localhost','127.0.0.1','[::1]'].includes(hostname);

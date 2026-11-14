@@ -1,0 +1,43 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
+<meta name="theme-color" content="#0c1728">
+<title>Rhythm Blocks · Coda Arcade</title>
+<link rel="stylesheet" href="style.css?v=rhythm-blocks-1">
+</head>
+<body>
+<div class="app">
+  <header class="header">
+    <div><a class="eyebrow" id="exit" href="../../world-preview.html?v=rhythm-blocks-1">← Coda Arcade</a><h1>Rhythm Blocks<span class="title-mark" aria-hidden="true">♫</span></h1></div>
+    <nav aria-label="Game controls"><button id="sound" aria-pressed="true">Sound on</button><button id="help">How to play</button></nav>
+  </header>
+  <main class="game-layout">
+    <aside class="dashboard" aria-label="Game statistics">
+      <div class="score-card"><span class="label">Score</span><strong id="score">0</strong><span class="best">Best <span id="best">0</span></span></div>
+      <div class="level-card"><div class="stat-line"><span class="label">Level</span><strong id="level">1</strong></div><progress id="progress" max="1000" value="0" aria-label="Progress to next level"></progress><span id="level-hint">1,000 points to level 2</span></div>
+      <div class="next-card"><span class="label">Up next</span><div id="next-symbol" class="next-symbol" aria-hidden="true"></div><strong id="next-label">—</strong><span id="next-beats"></span></div>
+      <div class="desktop-hint"><p><b>4 beats</b> clears a pattern.<br><b>8 beats</b> earns a bonus.</p><p>Connect blocks in a straight row or column.</p></div>
+      <div class="run-controls"><button id="restart" disabled>Restart</button></div>
+    </aside>
+    <section class="play-column" aria-label="Play Rhythm Blocks">
+      <div class="board-caption"><span>10 × 24 · Build a rhythm</span><button id="pause" disabled>Pause</button></div>
+      <div id="board" class="board" tabindex="0" role="application" aria-label="Rhythm Blocks. Ten columns and twenty-four rows. Arrow keys move, down lowers, space drops, P pauses.">
+        <div class="danger-zone" aria-hidden="true"></div><div id="settled" aria-hidden="true"></div><div id="ghost" aria-hidden="true"></div><div id="active" aria-hidden="true"></div>
+        <div id="overlay" class="overlay">
+          <div class="overlay-card"><span class="eyebrow" id="overlay-kicker">A musical puzzle</span><h2 id="overlay-title">Make a measure.</h2><p id="overlay-copy">Line up notes and rests to make 4 beats. Find 8 beats for a bigger score. Keep the stack below the top.</p><button class="primary" id="primary-action">Start game</button><button id="overlay-restart" hidden>New game</button><span id="overlay-hint">Slow to start. A little faster each level.</span></div>
+        </div>
+      </div>
+      <div id="feedback" class="feedback" aria-hidden="true">Four beats. One good idea.</div>
+      <div class="touch-controls" aria-label="Touch controls"><button data-action="left" aria-label="Move left">←</button><button data-action="right" aria-label="Move right">→</button><button data-action="down" aria-label="Lower block">↓</button><button data-action="drop" aria-label="Drop block">Drop <span aria-hidden="true">↓</span></button></div>
+      <p class="keyboard-hint"><kbd>←</kbd> <kbd>→</kbd> move · <kbd>↓</kbd> lower · <kbd>Space</kbd> drop · <kbd>P</kbd> pause</p>
+    </section>
+    <aside class="reference" aria-label="Note values"><span class="eyebrow">Your rhythm toolkit</span><h2>Every beat counts.</h2><div id="legend" class="legend"></div><div class="match-example"><b>Half + half = 4 beats</b><span>Patterns run across or down. Rests count, too.</span></div></aside>
+  </main>
+  <p id="announcement" class="sr-only" aria-live="polite" aria-atomic="true"></p>
+</div>
+<dialog id="help-dialog" aria-labelledby="help-title"><button id="help-close" class="dialog-close" aria-label="Close instructions">×</button><span class="eyebrow">How to play</span><h2 id="help-title">Stack notes. Make rhythms.</h2><p>Move each falling block into place. Connected notes and rests in one straight row or column clear when their values add up to <b>4 beats</b>. An <b>8-beat</b> pattern takes priority and earns more points.</p><p>Four beats earns <b>200 points</b>; eight earns <b>500</b>. Crossing patterns add a bonus. Blocks fall into cleared spaces, and chain reactions multiply your score.</p><p>Every <b>1,000 points</b> raises the level. Blocks fall faster, with more single eighth notes and dotted halves. The game ends when the stack reaches the top.</p><div id="help-legend" class="legend"></div><p>A whole note or whole rest is already four beats and clears by itself. For eight beats, try dotted half + dotted half + half.</p><p><b>Controls:</b> arrows or A/D to move, down or S to lower, Space to drop, P or Escape to pause, R to restart. Use the buttons below the board on a touch screen.</p><button id="help-done" class="primary">Got it</button></dialog>
+<script type="module" src="app.mjs?v=rhythm-blocks-1"></script>
+</body>
+</html>
