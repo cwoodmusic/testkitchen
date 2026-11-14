@@ -41,7 +41,7 @@ try:
   page.wait_for_function('n=>townBuilder.project.objects.length===n',arg=len(source['objects']),timeout=120000)
   assert page.evaluate('townBuilder.project')==source
   if page.evaluate('townBuilder.npcsVisible'):page.locator('#npcToggle').click()
-  if page.evaluate('townBuilder.night'):page.locator('#lightingToggle').click()
+  page.locator('#lightingToggle').select_option('day')
   page.evaluate('Object.assign(townBuilder.cam,{x:8192,y:6144,zoom:.8})')
   urls=page.evaluate('''()=>{
    const app=new URL(document.querySelector('script[type="module"]').src),q=app.search;

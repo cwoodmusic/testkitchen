@@ -10,7 +10,7 @@ import {groundTexture} from './ground-render.mjs?v=town-coast-pier-1';
 import {catalog} from './catalog.mjs?v=town-coast-pier-1';
 import {assetMapImage,assetMapImageRevision} from './asset-lawn.mjs?v=town-compact-island-1';
 import {overviewObjectImage} from './overview-sprites.mjs?v=town-compact-island-1';
-import {renderCityNight} from './city-night.mjs?v=town-coast-pier-1';
+import {renderCityNight} from './city-night.mjs?v=town-day-night-1';
 import {setWaterTime} from './water-motion.mjs?v=opera-smooth-1';
 import {drawFountainMotion} from './fountain-motion.mjs?v=opera-parallax-1';
 import {drawApartmentMotion} from './apartment-motion.mjs?v=opera-parallax-1';
@@ -154,7 +154,7 @@ export function render(c,d,cam,w,h,opts={}){setWaterTime(opts.time||0);const scr
  queue.sort((a,b)=>a.y-b.y);for(const item of batchBuildingDepthQueue(queue)){if(item.building)drawPlaced(item.building,false,item.fragment);else item.draw();}
  for(const o of visible){const a=catalog.get(o.asset);if(!o.mount&&o.layer==='overgrowth'&&!depthSorted(a,o)&&!composite(a,o))drawPlaced(o);}
  if(opts.collision)for(const o of visible)drawObjectCollision(c,o,d);
- if(opts.night&&(!opts.heightView||opts.heightView==='art')){c.save();c.setTransform(screenTransform);renderCityNight(c,d,cam,w,h,opts.time||0,{catalog,objects:d.objects});c.restore();}
+ if((opts.dayNight||opts.night)&&(!opts.heightView||opts.heightView==='art')){c.save();c.setTransform(screenTransform);renderCityNight(c,d,cam,w,h,opts.time||0,{catalog,objects:d.objects,...opts.dayNight});c.restore();}
  if(opts.heightView==='colors')elevationView(c,d,cam,w,h,opts);
  if(opts.region)drawSelection(c,d,opts.region,{zoom:cam.zoom,bounds:{x0,x1,y0,y1},revision:opts.terrainRevision});
  if(opts.selected){const o=opts.selected,a=catalog.get(o.asset),pose=mountPose(d,o);if(pose){c.save();c.strokeStyle='#f6d77d';const facing=furnitureFacingPlacement(a,o,pose,{includeImage:false});if(facing){c.lineWidth=3/cam.zoom;c.strokeRect(facing.x,facing.y,facing.w,facing.h);}else{c.translate(pose.x,pose.y);c.rotate(o.rotation*Math.PI/180);c.scale(o.scale,o.scale);c.lineWidth=3/(cam.zoom*o.scale);c.strokeRect(-a.w/2,-a.h*pose.offset,a.w,a.h);}c.restore();}}if(opts.ghost)drawObject(c,opts.ghost,d,false,.55,opts.time||0,null,prepared.get(opts.ghost));if(opts.hover){c.strokeStyle='#f1da8b';c.lineWidth=2/cam.zoom;c.strokeRect(opts.hover.x*64,opts.hover.y*64-cell(d,opts.hover.x,opts.hover.y).level*RISE,64,64);}if(opts.brush)drawBrush(c,d,opts.brush,cam.zoom);c.restore();}

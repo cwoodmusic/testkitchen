@@ -23,7 +23,7 @@ try:
         page.on('request',lambda r:requests.append(r.url) if '/assets/apartment-collections/' in r.url and r.url.split('?')[0].endswith('.webp') and '-thumb' not in r.url and 'overview' not in r.url else None)
         page.goto(f'http://127.0.0.1:{server.server_port}/town/builder/');page.wait_for_function('!!window.townBuilder')
         if page.evaluate('townBuilder.npcsVisible'):page.locator('#npcToggle').click()
-        if page.evaluate('townBuilder.night'):page.locator('#lightingToggle').click()
+        page.locator('#lightingToggle').select_option('day')
         setup=page.evaluate('''async()=>{
             const app=new URL(document.querySelector('script[type=module]').src),url=n=>new URL('../world/'+n+'.mjs'+app.search,app),{APARTMENT_COLLECTION_ASSETS,getApartmentCollectionRuntimeStats,clearApartmentCollectionCache}=await import(url('apartment-collections')),{supportsFurnitureFacing}=await import(url('furniture-facing')),{furnitureFacingSourceStats}=await import(url('render'));
             clearApartmentCollectionCache();window.__sourceRuntime=getApartmentCollectionRuntimeStats;window.__sourceRoster=()=>furnitureFacingSourceStats(document.getElementById('map'));

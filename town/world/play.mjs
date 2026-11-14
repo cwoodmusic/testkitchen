@@ -1,4 +1,4 @@
-import {catalog,preparePlacedArt,render,resizeSurface,findStart,movePlayer,toggleGate,follow,PLAYER_SCALE,GAIT_PER_PIXEL} from './runtime.mjs?v=town-coast-pier-1';
+import {catalog,preparePlacedArt,render,resizeSurface,findStart,movePlayer,toggleGate,follow,PLAYER_SCALE,GAIT_PER_PIXEL} from './runtime.mjs?v=town-day-night-1';
 import {loadProject} from './storage.mjs?v=town-coast-pier-1';
 import {normalizeKnownTerrainProject} from './known-terrain-repairs.mjs?v=town-coast-pier-1';
 import {createUrbanController} from './urban.mjs?v=town-gold-tracker-1';
@@ -9,22 +9,24 @@ import {createUrbanTour} from './urban-tour.mjs?v=town-coast-pier-1';
 import {createSandFootprints} from './sand-footprints.mjs?v=town-coast-pier-1';
 import {createAmbientNPCs} from './ambient-npcs.mjs?v=town-coast-pier-1';
 import {createPlayerCollisionIndex} from './player-collision-index.mjs?v=town-coast-pier-1';
-import {readNightPreference,saveNightPreference} from './lighting-settings.mjs?v=opera-parallax-1';
+import {createDayNightCycle} from './day-night-cycle.mjs?v=town-day-night-1';
+import {mountDayNightControl} from './day-night-controls.mjs?v=town-day-night-1';
 const canvas=document.getElementById('world'),route=new URLSearchParams(location.search),tour=route.get('map')!=='builder',preview=route.get('urban')==='1';
 document.querySelectorAll('body > :not(#world):not(script)').forEach(e=>e.remove());
 const header=document.createElement('header'),title=document.createElement('h1'),nav=document.createElement('nav');
 header.append(title,nav);document.body.append(header);
 function button(label,fn){const b=document.createElement('button');b.textContent=label;b.onclick=()=>{fn();b.blur();canvas.focus();};nav.append(b);return b;}
-button('Town Builder',()=>location.href='builder/?v=town-gold-tracker-1');
-button(tour?'Play saved town':'Urban district tour',()=>location.href=tour?'?map=builder&v=town-gold-tracker-1':'?urban=1&v=town-gold-tracker-1');
+button('Town Builder',()=>location.href='builder/?v=town-day-night-1');
+button(tour?'Play saved town':'Urban district tour',()=>location.href=tour?'?map=builder&v=town-day-night-1':'?urban=1&v=town-day-night-1');
 button('Back to arcade',()=>{if(parent!==window)parent.postMessage({type:'coda-town-close'},location.origin);else location.href='../?v=opera-parallax-1';});
-let night=readNightPreference();const lighting=button(night?'City night':'Daylight',()=>{night=!night;saveNightPreference(night);lighting.textContent=night?'City night':'Daylight';});lighting.id='lightingToggle';
+const dayNightCycle=createDayNightCycle(),lightingControl=mountDayNightControl(dayNightCycle,{parent:nav,onChange:()=>canvas.focus()});let lightingState=dayNightCycle.sample();
 const footer=document.createElement('footer');footer.textContent='WASD / arrows · Walk    Shift · Run    Bedroom / bath doors automatic    E · Enter / interact    Wheel · Zoom    Tab · Equip net    F · Swing';document.body.append(footer);
 let doc,loadError;try{doc=normalizeKnownTerrainProject(tour?createUrbanTour():await loadProject(new Set(catalog.keys())));if(doc)await preparePlacedArt(doc);}catch(e){doc=null;loadError=e;}
 if(!doc){title.textContent=loadError?'Could not load town':'No saved builder town';footer.textContent=loadError?loadError.message:'Open Town Builder, create a map, then choose Play this town.';}else{
  title.textContent=doc.name;
  const character=window.createCodaCharacterRenderer({worldScale:PLAYER_SCALE});let avatar=character.normalizeProfile({}),facing='down',walking=false,walkPhase=0;
  const player=findStart(doc,catalog),cam={x:player.x,y:player.y,zoom:.8},keys=new Set();
+ lightingControl.element.addEventListener('focus',()=>keys.clear());
  let cityRevision=0;
  const playerCollision=createPlayerCollisionIndex({getProject:()=>doc,catalog,getRevision:()=>cityRevision});
  const urban=createUrbanController({canvas,getProject:()=>doc,getPlayer:()=>player,getFacing:()=>facing,setFacing:value=>{facing=value;},onConversation:(id,active,viewer)=>ambient.setConversation(id,active,viewer),getResidents:scene=>scene?ambient.interiorActors(scene):ambient.actors,getConcert:()=>concert,preview});
@@ -44,10 +46,10 @@ if(!doc){title.textContent=loadError?'Could not load town':'No saved builder tow
  const netAction=document.createElement('button');netAction.className='town-net-toggle';netAction.textContent='Equip net';netAction.onclick=()=>{urban.activities.toggleNet();netAction.textContent=urban.activities.netEquipped?'Stow net':'Equip net';};touch.append(netAction);
  const action=document.createElement('button');action.textContent='Interact';action.onclick=()=>{if(!urban.interact()&&toggleGate(doc,player))cityRevision++;};touch.append(action);
  let last=performance.now();function frame(now){
-  const dt=Math.min(.04,(now-last)/1000);last=now;const netLabel=urban.activities.netEquipped?'Stow net':'Equip net';if(netAction.textContent!==netLabel)netAction.textContent=netLabel;const {ctx,width,height}=resizeSurface(canvas);if(urban.activities.fullscreen){urban.activities.tick(keys,dt);requestAnimationFrame(frame);return;}concert.updateContext(urban.scene);urban.tick();ambient.update(dt,now/1000);
+  const dt=Math.min(.04,(now-last)/1000);last=now;lightingState=lightingControl.update();const netLabel=urban.activities.netEquipped?'Stow net':'Equip net';if(netAction.textContent!==netLabel)netAction.textContent=netLabel;const {ctx,width,height}=resizeSurface(canvas);if(urban.activities.fullscreen){urban.activities.tick(keys,dt);requestAnimationFrame(frame);return;}concert.updateContext(urban.scene);urban.tick();ambient.update(dt,now/1000);
   if(!urban.frame(ctx,keys,dt,now,width,height,(c,x,y,state)=>drawPlayer(c,x,y,state,now))){
    if(!urban.blocked){const motion=movePlayer(playerCollision.view(player),player,keys,dt,catalog);if(urban.activities.netFacing)facing=urban.activities.netFacing;else if(motion.facing)facing=motion.facing;walking=motion.walking;walkPhase=(walkPhase+motion.surfaceDistance*GAIT_PER_PIXEL)%(Math.PI*2);}
-   footprints.update([{id:'__player__',...player,walking},...ambient.actors],now/1000);follow(cam,player,doc);render(ctx,doc,cam,width,height,{terrainRevision:cityRevision,hiddenBoat:urban.activities.hiddenBoat,night,time:now/1000,npcs:ambient.actors,drawNPC:ambient.draw,drawFootprints:(c,d,t)=>footprints.draw(c,d,t),player,drawPlayer:(c,x,y)=>drawPlayer(c,x,y,undefined,now)});urban.drawOutdoor(ctx,cam,width,height,now/1000);
+   footprints.update([{id:'__player__',...player,walking},...ambient.actors],now/1000);follow(cam,player,doc);render(ctx,doc,cam,width,height,{terrainRevision:cityRevision,hiddenBoat:urban.activities.hiddenBoat,dayNight:lightingState,time:now/1000,npcs:ambient.actors,drawNPC:ambient.draw,drawFootprints:(c,d,t)=>footprints.draw(c,d,t),player,drawPlayer:(c,x,y)=>drawPlayer(c,x,y,undefined,now)});urban.drawOutdoor(ctx,cam,width,height,now/1000);
   }requestAnimationFrame(frame);
- }requestAnimationFrame(frame);window.townGame={project:doc,player,cam,catalog,urban,ambient,footprints,concert,playerCollision,get night(){return night;}};
+ }requestAnimationFrame(frame);window.townGame={project:doc,player,cam,catalog,urban,ambient,footprints,concert,playerCollision,get night(){return dayNightCycle.sample().darkness>0;},get dayNight(){return dayNightCycle.sample();}};
 }

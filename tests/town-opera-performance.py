@@ -191,8 +191,7 @@ try:
                     await Promise.all(townBuilder.project.objects.map(o=>townBuilder.catalog.get(o.asset)?.ensureFull?.()));
                     return townBuilder.project.objects.length;
                 }''')
-            if page.evaluate('townBuilder.night') != scenario['night']:
-                page.locator('#lightingToggle').click()
+            page.locator('#lightingToggle').select_option('night' if scenario['night'] else 'day')
             if page.evaluate('townBuilder.npcsVisible') != scenario['npcs']:
                 page.locator('#npcToggle').click()
             if scenario.get('walk'):

@@ -157,3 +157,59 @@ test('night fields use backing-pixel dimensions and reuse a flattened bloom rast
   if(originalBitmap===undefined)delete globalThis.createImageBitmap;else globalThis.createImageBitmap=originalBitmap;
  }
 });
+
+test('daylight does not allocate light buffers or alter the canvas',()=>{
+ const previousDocument=globalThis.document;globalThis.document={createElement(){throw Error('Daylight must not prepare a night raster');}};
+ try{
+  const c=context();renderCityNight(c,{cells:{},objects:[]},{x:2500,y:3300,zoom:.8},1280,800,0,{catalog:new Map(),darkness:0,warmth:0,phase:'day'});
+  assert.deepEqual(c.commands,[]);assert.equal(c.saves,0);assert.equal(c.globalAlpha,1);assert.equal(c.fillStyle,'#123456');
+ }finally{if(previousDocument===undefined)delete globalThis.document;else globalThis.document=previousDocument;}
+});
+
+test('partial night fades illumination, bloom and fireflies together while restoring caller state',()=>{
+ const previousDocument=globalThis.document;globalThis.document=canvasDocument();
+ try{
+  const c=context(),doc={cells:{},objects:[]},catalog=new Map(),cam={x:2500,y:3300,zoom:.8};
+  for(const base of [1,.37])for(const darkness of [.1,.5,.9]){
+   c.commands=[];Object.assign(c,{globalAlpha:base,globalCompositeOperation:'multiply',fillStyle:'#73513c'});
+   renderCityNight(c,doc,cam,1280,800,12,{catalog,darkness});
+   assert.equal(c.commands[0].alpha,base*darkness);assert.equal(c.commands[1].alpha,base*darkness);
+   assert.deepEqual(c.commands.slice(2),expectedFireflyCommands(doc,catalog,cam,1280,800,12,base*darkness));
+   assert.equal(c.stackDepth,0);assert.equal(c.globalAlpha,base);assert.equal(c.globalCompositeOperation,'multiply');assert.equal(c.fillStyle,'#73513c');
+  }
+ }finally{if(previousDocument===undefined)delete globalThis.document;else globalThis.document=previousDocument;}
+});
+
+test('dusk and dawn have distinct gradual warmth without recoloring the cached night field',()=>{
+ const previousDocument=globalThis.document;globalThis.document=canvasDocument();
+ try{
+  const c=context(),doc={cells:{},objects:[]},catalog=new Map(),cam={x:2500,y:3300,zoom:.8},colors=[];
+  for(const phase of ['dusk','dawn']){
+   c.commands=[];c.globalAlpha=.6;renderCityNight(c,doc,cam,1280,800,12,{catalog,darkness:.5,warmth:.75,phase});
+   assert.equal(c.commands[0].kind,'rect');assert.equal(c.commands[0].alpha,.6*.75);colors.push(c.commands[0].color);
+   assert.equal(c.commands[1].alpha,.3);assert.equal(c.commands[2].alpha,.3,'Night fields use their own strength, not the warmth opacity');
+   assert.equal(c.globalAlpha,.6);assert.equal(c.fillStyle,'#123456');
+  }
+  assert.notEqual(colors[0],colors[1]);
+  c.commands=[];renderCityNight(c,doc,cam,1280,800,12,{catalog,darkness:0,warmth:.5,phase:'dawn'});
+  assert.equal(c.commands.length,1,'A warm daylight edge needs only a flat tint, without light rasters or insects');
+ }finally{if(previousDocument===undefined)delete globalThis.document;else globalThis.document=previousDocument;}
+});
+
+test('a full dusk and dawn reuse the existing fields, bitmap and brushes across changing fractions',async()=>{
+ const previousDocument=globalThis.document,previousBitmap=globalThis.createImageBitmap;let canvases=0,gradients=0,bitmaps=0;
+ globalThis.document={createElement(){canvases++;const c=context();c.createRadialGradient=()=>{gradients++;return {addColorStop(){}};};return {width:0,height:0,getContext:()=>c};}};
+ globalThis.createImageBitmap=async canvas=>{bitmaps++;return {width:canvas.width,height:canvas.height,close(){}};};
+ try{
+  const c=context(),doc={cells:{},objects:[]},before=JSON.stringify(doc),catalog=new Map(),cam={x:2500,y:3300,zoom:.8};
+  renderCityNight(c,doc,cam,1280,800,0,{catalog,darkness:.01,warmth:.01,phase:'dusk'});await Promise.resolve();
+  const initial={canvases,gradients,bitmaps};assert.equal(bitmaps,1);
+  for(const phase of ['dusk','night','dawn'])for(let frame=1;frame<=90;frame++){
+   const t=frame/90;renderCityNight(c,doc,cam,1280,800,frame/60,{catalog,phase,darkness:phase==='dawn'?1-t:phase==='night'?1:t,warmth:Math.sin(t*Math.PI)});await Promise.resolve();
+  }
+  assert.deepEqual({canvases,gradients,bitmaps},initial,'Cycle fractions must never invalidate the expensive light fields');assert.equal(JSON.stringify(doc),before);
+ }finally{
+  if(previousDocument===undefined)delete globalThis.document;else globalThis.document=previousDocument;
+  if(previousBitmap===undefined)delete globalThis.createImageBitmap;else globalThis.createImageBitmap=previousBitmap;
+ }
+});

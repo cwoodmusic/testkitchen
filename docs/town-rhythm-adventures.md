@@ -50,6 +50,12 @@ The journal includes **30 cave species and 24 coastal species**. Opening town fr
 
 Earlier coastal catch counts and personal best sizes migrate as summary records. They do not invent perfect catches or pay old rewards again. New classroom cloud catches require the prepared Firebase validation update described in [island-fishing-cloud-save.md](island-fishing-cloud-save.md).
 
+## Day and night
+
+Outdoor lighting follows a repeating **21-minute cycle**: **10 minutes of day → 3 minutes of dusk → 5 minutes of night → 3 minutes of dawn**. Dusk gradually darkens the island with a warm sunset tint; dawn gradually brightens it with a soft morning tint. Streetlights, windows and fireflies fade with the changing light. Interior lighting stays the same.
+
+The **Time of day** selector defaults to **Auto** and shows the current phase. Fixed **Daylight**, **Dusk**, **City night** and **Dawn** previews are available in Builder and Play. Returning to Auto resumes the continuing cycle. Its clock advances indoors and while the page is hidden, and retains its place across reloads and Builder/Play navigation in this browser. Cycle settings are stored separately from maps and player progress. Transition opacity reuses the existing cached light fields.
+
 ## Rendering and checks
 
 Static objects now reuse cropped, color-graded, filtered rasters at their displayed scale, including atlas-backed furniture. Terrain uses filtered walking and overview scales. Full-screen fishing panels pause unnecessary town rendering; leaving fishing disposes its listeners, audio context and bridge. The fixed concert view and existing map data remain intact.
@@ -61,6 +67,7 @@ Browser checks:
 - `tests/town-adventures-browser.py`: four blue fairies, Tab equip/stow, shoulder carry and forward overhead directions, clean HUD, Escape confirmation, five-minute deadline/build/pause/timeout/retry, rewards and save/reload.
 - `tests/town-yellow-notes-browser.py`: five-note cap, fairy art, equipped catches, inventory persistence, replenishment, interactions, and mobile controls.
 - `tests/town-gold-note-tracker-browser.py`: gold compass direction, sensing range, camera zoom, catch retargeting, and outdoor visibility in Builder and Play.
+- `tests/town-day-night-cycle-browser.py`: exact cycle boundaries, gradual outdoor lighting, fixed previews, navigation/reload continuity and preserved map/progress data.
 - `tests/town-npc-rhythm-browser.py`: real neighbour conversation, by-ear reconstruction, exact inventory spend and persistence.
 - `tests/town-island-browser.py`: actual island sailing, a four-bar perfect cave-engine catch, 54-species journal, reload and mobile layout.
 - `tests/town-fishing-shared-browser.py`: real arcade/iframe catch sharing, existing cave catches retained, one Notes reward, and persistence.

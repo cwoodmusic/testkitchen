@@ -19,7 +19,7 @@ try:
         context.add_init_script(bitmap_probe_script())
         page=context.new_page();page.set_default_timeout(180000);errors=[];page.on('pageerror',lambda e:errors.append(str(e)));page.goto(f'http://127.0.0.1:{server.server_port}/town/builder/');page.wait_for_function('!!window.townBuilder')
         if page.evaluate('townBuilder.npcsVisible'):page.locator('#npcToggle').click()
-        if page.evaluate('townBuilder.night'):page.locator('#lightingToggle').click()
+        page.locator('#lightingToggle').select_option('day')
         setup=page.evaluate(setup_script);page.wait_for_function('__sourceRuntime().overviewReady');page.wait_for_timeout(1800);before=page.evaluate('__sourceRuntime()');assert before['sourceLoads']==0,before
         cdp=context.new_cdp_session(page);completed={};cdp.on('Tracing.tracingComplete',lambda event:completed.update(event));cdp.send('Profiler.enable');cdp.send('Profiler.setSamplingInterval',{'interval':1000});cdp.send('Tracing.start',{'categories':'devtools.timeline,disabled-by-default-devtools.timeline,disabled-by-default-devtools.timeline.frame,blink.user_timing,v8,disabled-by-default-v8.gc','transferMode':'ReturnAsStream'});cdp.send('Profiler.start')
         page.evaluate('window.__coldProfileFrames=[];townBuilder.cam.zoom=.8');deadline=time.monotonic()+60;previous=None;settled=0

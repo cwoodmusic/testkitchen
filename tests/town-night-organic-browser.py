@@ -39,7 +39,8 @@ try:
         page.wait_for_function('!!window.townBuilder', timeout=90000)
         assert page.locator('#lightingToggle').count() == 1
         assert page.locator('[data-tool="organic"]').count() == 1
-        assert page.evaluate('townBuilder.night') is True
+        assert page.locator('#lightingToggle').input_value() == 'auto'
+        assert page.evaluate('townBuilder.night') is False
         dependencies = page.evaluate('''async()=>{
           const entry=document.querySelector('script[type="module"]').src,code=await(await fetch(entry)).text();
           const find=needle=>new URL(code.split(String.fromCharCode(10)).find(line=>line.includes(needle)).split("'")[1],entry).href;
@@ -56,13 +57,11 @@ try:
             return page.evaluate('JSON.stringify(townBuilder.project)')
 
         def daylight():
-            if page.evaluate('townBuilder.night'):
-                page.locator('#lightingToggle').click()
+            page.locator('#lightingToggle').select_option('day')
             assert page.evaluate('townBuilder.night') is False
 
         def night():
-            if not page.evaluate('townBuilder.night'):
-                page.locator('#lightingToggle').click()
+            page.locator('#lightingToggle').select_option('night')
             assert page.evaluate('townBuilder.night') is True
 
         def point(x, y):

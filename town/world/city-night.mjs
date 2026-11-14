@@ -187,9 +187,18 @@ export function cityFireflies(doc,catalog,cam,w,h,time=0){
  return particles;
 }
 
+function transitionWarmth(c,w,h,warm,phase){
+ if(!warm)return;
+ c.globalCompositeOperation='source-over';c.fillStyle=phase==='dawn'?'rgba(255,174,160,.12)':'rgba(255,158,91,.14)';const alpha=c.globalAlpha;c.globalAlpha=alpha*warm;c.fillRect(0,0,w,h);c.globalAlpha=alpha;
+}
 // The renderer calls this with its original screen transform. Cached native
 // screen fields preserve soft bloom without resampling the pixel artwork.
-export function renderCityNight(c,doc,cam,w,h,time=0,{catalog,objects}={}){
+export function renderCityNight(c,doc,cam,w,h,time=0,{catalog,objects,darkness=1,warmth=0,phase='night'}={}){
+ const strength=Number.isFinite(darkness)?Math.max(0,Math.min(1,darkness)):1,warm=Number.isFinite(warmth)?Math.max(0,Math.min(1,warmth)):0;
+ if(!strength&&!warm)return;
+ // Transition colour is a cheap screen-space wash. Its opacity and the night
+ // strength stay outside every cached field and brush key.
+ if(!strength){c.save();transitionWarmth(c,w,h,warm,phase);c.restore();return;}
  const pad=128,fieldW=w+pad*2,fieldH=h+pad*2,buffer=canvasFor(c,fieldW,fieldH),{canvas,ctx:m,bloom,bloomCtx:b}=buffer,sx=canvas.width/fieldW,sy=canvas.height/fieldH,lights=cityLights(doc,catalog,objects);
  const key=[w,h,cam.zoom,...lights.flatMap(l=>[l.x,l.y,l.gx,l.gy,l.radius,l.power,l.kind,l.color?.join(','),l.beamHeight,l.beamWidth])].join(':');
  // The extra border lets walking and small editor pans reuse the same soft
@@ -241,7 +250,7 @@ export function renderCityNight(c,doc,cam,w,h,time=0,{catalog,objects}={}){
  }).catch(()=>{});
  }
  const cropX=Math.round((pad+(cam.x-buffer.cam.x)*cam.zoom)*sx),cropY=Math.round((pad+(cam.y-buffer.cam.y)*cam.zoom)*sy);
- c.save();c.imageSmoothingEnabled=true;c.globalCompositeOperation='source-over';c.drawImage(canvas,cropX,cropY,w*sx,h*sy,0,0,w,h);c.globalCompositeOperation='screen';c.drawImage(buffer.raster||bloom,cropX,cropY,w*sx,h*sy,0,0,w,h);
+ c.save();transitionWarmth(c,w,h,warm,phase);c.globalAlpha*=strength;c.imageSmoothingEnabled=true;c.globalCompositeOperation='source-over';c.drawImage(canvas,cropX,cropY,w*sx,h*sy,0,0,w,h);c.globalCompositeOperation='screen';c.drawImage(buffer.raster||bloom,cropX,cropY,w*sx,h*sy,0,0,w,h);
  const baseAlpha=c.globalAlpha;
  for(const f of cityFireflies(doc,catalog,cam,w,h,time)){
   const p=projected(f,cam,w,h),r=Math.max(6,f.glowRadius*cam.zoom);

@@ -1,1 +1,1 @@
-export * from '../world/render.mjs?v=town-coast-pier-1';
+export * from '../world/render.mjs?v=town-day-night-1';
