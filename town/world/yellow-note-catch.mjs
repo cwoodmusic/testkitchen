@@ -5,6 +5,7 @@ import {NOTE_VALUES,reachableNoteSpots,scatterNotes} from './town-game-rules.mjs
 import {launchFlyingNotes,advanceFlyingNote,flyingNotePose,netSweepHits,facingAngle,angleFacing,NET_SWEEP_SECONDS,NET_RECOVERY_SECONDS} from './rhythm-hunt-motion.mjs?v=town-store-halls-1';
 import {drawRhythmNet} from './rhythm-net-render.mjs?v=town-store-halls-1';
 import {drawNoteFairy} from './note-fairy-render.mjs?v=town-store-halls-1';
+import {drawGoldNoteTracker} from './blue-note-tracker.mjs?v=town-gold-tracker-1';
 import {noteSVG,noteName} from './town-game-audio.mjs?v=town-store-halls-1';
 
 const directionForKey={w:'up',arrowup:'up',s:'down',arrowdown:'down',a:'left',arrowleft:'left',d:'right',arrowright:'right'};
@@ -63,11 +64,13 @@ export function createYellowNoteCatch({canvas,getProject,getPlayer,getFacing=()=
  }
  function draw(c,cam,time,{net=true}={}){
   if(!visible||!doc)return;
-  for(const token of activeTokens()){
+  const fairies=activeTokens(),player=getPlayer();
+  for(const token of fairies){
    const point=flyingNotePose(token,flightTime,height(doc,token.x,token.y),reduced.matches);if(Math.abs(point.x-cam.x)>canvas.clientWidth/2/cam.zoom+50||Math.abs(point.y-cam.y)>canvas.clientHeight/2/cam.zoom+50)continue;
    drawNoteFairy(c,token,{time:flightTime,z:height(doc,token.x,token.y),reducedMotion:reduced.matches});
   }
-  if(net&&canUseNet()&&isEquipped()){const player=getPlayer(),age=performance.now()/1000-swingAt,active=age>=0&&age<NET_SWEEP_SECONDS+NET_RECOVERY_SECONDS;drawRhythmNet(c,player,{angle:active?aim:facingAngle(getFacing()),age:active?age:Infinity,z:actorHeight(doc,player),reducedMotion:reduced.matches,swinging});}
+  if(player)drawGoldNoteTracker(c,{player,playerZ:actorHeight(doc,player),tokens:fairies,time:flightTime,cam,width:canvas.clientWidth,height:canvas.clientHeight,reducedMotion:reduced.matches,getHeight:token=>height(doc,token.x,token.y)});
+  if(net&&canUseNet()&&isEquipped()){const age=performance.now()/1000-swingAt,active=age>=0&&age<NET_SWEEP_SECONDS+NET_RECOVERY_SECONDS;drawRhythmNet(c,player,{angle:active?aim:facingAngle(getFacing()),age:active?age:Infinity,z:actorHeight(doc,player),reducedMotion:reduced.matches,swinging});}
  }
  window.addEventListener('blur',cancelSwing);
  return {tick,draw,keydown,pointer,reset,hide,cancelSwing,catchAlongSweep,get swingFacing(){return this.lockedFacing;},get lockedFacing(){const age=performance.now()/1000-swingAt;return visible&&canUseNet()&&isEquipped()&&age>=0&&age<NET_SWEEP_SECONDS+NET_RECOVERY_SECONDS?angleFacing(aim):null;},get netStroke(){if(!visible||!canUseNet()||!isEquipped())return null;const age=performance.now()/1000-swingAt,active=age>=0&&age<NET_SWEEP_SECONDS+NET_RECOVERY_SECONDS;return {angle:active?aim:facingAngle(getFacing()),age:active?age:Infinity};},get state(){return {tokens:activeTokens().map(token=>({...token})),limit:limit(),equipped:isEquipped(),counts:inventory.counts,total:inventory.total,flightTime,swing:swinging?{angle:aim,progress:swingProgress,hit:swingHit}:null};}};

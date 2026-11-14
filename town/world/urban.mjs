@@ -1,5 +1,5 @@
 import {restoreOutdoorActor,onSameOutdoorSurface} from './outdoor-actor-layer.mjs?v=town-coast-pier-1';
-import {createTownActivities} from './town-activities.mjs?v=town-coast-pier-1';
+import {createTownActivities} from './town-activities.mjs?v=town-gold-tracker-1';
 import {catalog} from './catalog.mjs?v=town-coast-pier-1';
 import {FLOOR_COUNT,residents,getInterior,renderInterior,residentInteractionZones,apartmentDecorBounds,apartmentDecorFootBounds,apartmentWallDecorBounds,configureUrbanInteriors,configurePlayerRoomSource,invalidatePlayerRoomSource} from './urban-interiors.mjs?v=town-compact-island-1';
 import {createRoomStorage,roomItemBoxes,ROOM_KEY} from './urban-room.mjs?v=town-compact-island-1';

@@ -67,3 +67,21 @@ test('a solid wall stops a yellow catch even when the fairy lies inside the visi
  const x=Math.round((token.x+f.player.x)/128);f.doc.edges={};for(let y=Math.floor((Math.min(token.y,f.player.y)-64)/64);y<=Math.ceil((Math.max(token.y,f.player.y)+64)/64);y++)f.doc.edges[`v:${x}:${y}`]={style:'iron',gate:false,open:false};
  assert.equal(f.yellow.catchAlongSweep(f.player,angle,0,1),false);assert.equal(f.inventory.total,0);
 }));
+
+test('the gold compass tracks with the net stowed and drops caught or reserved fairy slots',()=>fixture(f=>{
+ f.limit(1);const token=f.yellow.state.tokens[0],{angle}=f.approach(token);f.stow();
+ const draw=()=>{const c=ink();f.yellow.draw(c,{x:f.player.x,y:f.player.y,zoom:1},0,{net:false});return c.strokes;};
+ assert(draw().includes('#795521'),'Nearby gold fairies get an arrow even before equipping the net');
+ f.limit(0);assert(!draw().includes('#795521'),'Slots reserved by the blue hunt cannot be tracked');
+ f.limit(1);f.equip();assert(f.yellow.catchAlongSweep(f.player,angle,0,1));
+ assert(!draw().includes('#795521'),'A caught fairy disappears from the compass while awaiting respawn');
+ for(let i=0;i<242;i++)f.yellow.tick(new Set(),.05);
+ assert(draw().includes('#795521'),'The compass can track the fairy again after it respawns');assert.equal(f.inventory.total,1);
+}));
+
+test('the gold compass is hidden beyond sensing range and when outdoor notes are hidden',()=>fixture(f=>{
+ const token=f.yellow.state.tokens[0],draw=()=>{const c=ink();f.yellow.draw(c,{x:f.player.x,y:f.player.y,zoom:1},0,{net:false});return c.strokes;};
+ Object.assign(f.player,{x:1000000,y:1000000});assert(!draw().includes('#795521'));
+ f.approach(token);assert(draw().includes('#795521'));
+ f.yellow.hide();assert.equal(draw().length,0);assert.equal(f.inventory.total,0);
+}));

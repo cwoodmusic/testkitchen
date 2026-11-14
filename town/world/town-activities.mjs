@@ -6,9 +6,9 @@ import {drawRhythmNet} from './rhythm-net-render.mjs?v=town-store-halls-1';
 import {height,actorHeight} from './model.mjs?v=town-coast-pier-1';
 import {findFishingDock} from './town-game-rules.mjs?v=town-coast-pier-1';
 import {mountGameStyles,createTownJournal,gameButton} from './town-game-audio.mjs?v=town-store-halls-1';
-import {createRhythmCatch} from './rhythm-catch.mjs?v=town-coast-pier-1';
+import {createRhythmCatch} from './rhythm-catch.mjs?v=town-gold-tracker-1';
 import {createNoteInventory} from './note-inventory.mjs?v=town-store-halls-1';
-import {createYellowNoteCatch} from './yellow-note-catch.mjs?v=town-coast-pier-1';
+import {createYellowNoteCatch} from './yellow-note-catch.mjs?v=town-gold-tracker-1';
 import {createNPCRhythmRequests} from './npc-rhythm-requests.mjs?v=town-coast-pier-1';
 import {createTownFishing} from './town-fishing.mjs?v=town-coast-pier-1';
 export function createTownActivities({canvas,getProject,getPlayer,getFacing,setFacing,getResidents,getOwner,getScene=()=>null,isConversationOpen=()=>false,catalog}){

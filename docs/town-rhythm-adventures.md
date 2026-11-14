@@ -10,6 +10,8 @@ Press **Tab** to equip or stow the net. It starts stowed. Turn with **WASD / arr
 
 A yellow catch saves one quarter-note card, beamed eighth-note pair, or beamed four-sixteenth group. Rests no longer appear in the fairy collection, vendor challenges, or NPC rhythm requests. Previously saved quarter-rest cards convert one-for-one into quarter notes. It replenishes in its original slot after twelve active outdoor seconds. The compact inventory counter stays out of the way. Inventory remains separate for each active player in this browser/device; cross-device syncing is deferred. Existing town stars, fish records, and maps are preserved.
 
+A small gold compass arrow points toward the nearest gold fairy within roughly one and a half screens, matching the blue-note tracker. It follows the fairy's flight, switches after a catch, and works with the net stowed. Its orbit is invisible. Caught fairies awaiting replenishment and slots reserved for the blue challenge are excluded; the arrow disappears when no gold fairy is nearby or outdoor catching is hidden.
+
 ## NPC rhythm requests
 
 Approach a named neighbour, press **E**, and choose **Hear rhythm request**. Hear the count-in and example twice, then write four beats from your saved yellow inventory. The answer is hidden while listening. Replay and undo in the NPC’s actual interaction panel; incorrect answers spend nothing. Leave to catch more yellow fairies and return to the same request. A correct answer uses exactly four cards, earns one town star, and advances that neighbour’s next request. Failed saves leave the cards available to retry. NPC requests are untimed.
@@ -58,6 +60,7 @@ Browser checks:
 
 - `tests/town-adventures-browser.py`: four blue fairies, Tab equip/stow, shoulder carry and forward overhead directions, clean HUD, Escape confirmation, five-minute deadline/build/pause/timeout/retry, rewards and save/reload.
 - `tests/town-yellow-notes-browser.py`: five-note cap, fairy art, equipped catches, inventory persistence, replenishment, interactions, and mobile controls.
+- `tests/town-gold-note-tracker-browser.py`: gold compass direction, sensing range, camera zoom, catch retargeting, and outdoor visibility in Builder and Play.
 - `tests/town-npc-rhythm-browser.py`: real neighbour conversation, by-ear reconstruction, exact inventory spend and persistence.
 - `tests/town-island-browser.py`: actual island sailing, a four-bar perfect cave-engine catch, 54-species journal, reload and mobile layout.
 - `tests/town-fishing-shared-browser.py`: real arcade/iframe catch sharing, existing cave catches retained, one Notes reward, and persistence.
