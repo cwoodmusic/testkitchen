@@ -18,6 +18,12 @@ fishing, with a shared journal of 30 cave and 24 coastal species.
 
 See [controls and rules](../docs/town-rhythm-adventures.md).
 
+## Asset review
+
+Open [Asset review](asset-review/) or choose **Review assets** in the Builder's asset library. Browse the complete catalog, room rugs and ground textures, including the supported directional drawings. Search or filter the list, use **Previous / Next asset** (or the arrow keys), and choose **Needs fixing**, **Looks good**, or write a repair note. Notes and flags are separate for each asset and direction and save in this browser. Use the zoom controls and drag the preview to inspect large artwork.
+
+Choose **Download review JSON**, then attach `coda-asset-review.json` in chat. The file includes the exact IDs, directions, names, flags and notes needed to locate each repair. Download also works if browser saving is unavailable; heed the on-screen save warning before closing the tab. Reviewing artwork does not edit town maps or player progress.
+
 ## Landscape and scale
 
 The town is 16000 × 12000 native world pixels, nearly three times the area of

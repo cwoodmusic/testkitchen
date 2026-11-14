@@ -1,0 +1,45 @@
+<!doctype html>
+<html lang="en">
+<head>
+ <meta charset="utf-8">
+ <meta name="viewport" content="width=device-width,initial-scale=1">
+ <meta name="theme-color" content="#223b32">
+ <title>Coda Town · Asset review</title>
+ <link rel="stylesheet" href="review.css?v=town-asset-review-1">
+</head>
+<body>
+ <header class="topbar">
+  <a class="brand" href="../builder/?v=town-asset-review-1"><span aria-hidden="true">❧</span> Coda Town <span class="brand-divider">/</span> <strong>Asset review</strong></a>
+  <div class="top-actions"><span id="saveStatus" role="status">Loading catalog…</span><button id="downloadReview" class="primary" disabled>↓ Download review JSON</button><a class="back-link" href="../builder/?v=town-asset-review-1">Back to Builder ↗</a></div>
+ </header>
+ <main>
+  <section class="intro"><div><p class="eyebrow">THE TOWN ART DESK</p><h1>One asset at a time.</h1><p>Flip through the artwork, flag anything that needs fixing, and leave a note.</p></div><p id="summary" class="summary" aria-live="polite">Opening the complete asset library…</p></section>
+  <section class="filters" aria-label="Find assets">
+   <label class="search-label">Search<input id="search" type="search" placeholder="Name, asset ID, or your notes" autocomplete="off" disabled></label>
+   <label>Category<select id="category" disabled><option value="">All categories</option></select></label>
+   <label>Show<select id="reviewFilter" disabled><option value="all">All assets</option><option value="unreviewed">No reviews yet</option><option value="flagged">Flagged assets</option><option value="noted">With notes</option></select></label>
+  </section>
+  <div class="review-layout">
+   <section class="art-panel" aria-label="Asset artwork">
+    <div class="art-heading"><div><span id="assetGroup" class="eyebrow">COMPLETE CATALOG</span><h2 id="assetName">Loading the artwork library…</h2><code id="assetId"></code></div><span id="counter" class="counter"></span></div>
+    <div class="view-toolbar"><div id="facings" class="facings" role="group" aria-label="Artwork direction"></div><div class="view-options"><label>Zoom<select id="zoom"><option value="fit">Fit</option><option value="1">1×</option><option value="2">2×</option><option value="4">4×</option></select></label><label>Background<select id="background"><option value="checker">Checkerboard</option><option value="paper">Paper</option><option value="dark">Dark</option><option value="grass">Green</option></select></label></div></div>
+    <div id="previewStage" class="preview-stage" data-background="checker"><canvas id="preview" tabindex="0" aria-label="Asset preview"></canvas><p id="emptyState" hidden>No assets match these filters.</p></div>
+    <div class="preview-caption"><span id="previewStatus" role="status">Loading catalog…</span><button id="retryPreview" hidden>Retry artwork</button><span>Drag to pan · Fit to recenter</span></div>
+    <nav class="asset-navigation" aria-label="Browse assets"><button id="previous" disabled>← Previous</button><label class="picker-label"><span class="sr-only">Choose asset</span><select id="assetPicker" disabled></select></label><button id="next" class="primary" disabled>Next asset →</button></nav>
+   </section>
+   <aside class="notes-panel" aria-label="Your review">
+    <div><p class="eyebrow">YOUR REVIEW</p><h2>What needs a second look?</h2><p id="viewLabel" class="muted">Notes are saved separately for each view.</p></div>
+    <div class="review-status" role="group" aria-label="Review status"><button id="flagReview" class="flag-button" aria-pressed="false" disabled>⚑ Needs fixing</button><button id="markGood" aria-pressed="false" disabled>✓ Looks good</button><button id="clearStatus" class="quiet" aria-pressed="true" disabled>Not reviewed</button></div>
+    <label class="note-label" for="note">What should change?</label><textarea id="note" rows="7" placeholder="For example: the left-facing couch has a strange shadow, or the top of the wall trim is cut off." disabled></textarea>
+    <p class="field-hint">Adding a note flags an unreviewed view. Everything saves as you type.</p>
+    <p id="storageWarning" class="warning" role="status" hidden></p>
+    <div class="jump-row"><label for="jumpIndex">Go to asset #</label><input id="jumpIndex" type="number" min="1" value="1" disabled><button id="jumpAsset" disabled>Go</button></div>
+    <div class="handoff"><span aria-hidden="true">↗</span><div><strong>Send the fixes back</strong><p>Download your review JSON, then attach that file in our chat. It includes the exact asset IDs, directions, flags, and notes.</p></div></div>
+    <p class="keyboard-hint">Keyboard: ← / → browse · F flags the current view. Shortcuts pause while you type.</p>
+   </aside>
+  </div>
+  <footer>Review progress stays in this browser. Download a file whenever you want a backup or are ready to send it.</footer>
+ </main>
+ <script type="module" src="app.mjs?v=town-asset-review-1"></script>
+</body>
+</html>
