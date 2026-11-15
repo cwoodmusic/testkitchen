@@ -1,0 +1,10 @@
+{
+  "status": "passed",
+  "sourceSHA256": "df4e35870503d2969d3b55b3335b4a44078fd794b099a2e77d924cdd907e8650",
+  "verifierSHA256": "6ff8e44a379e18305759d2f80a24e8b68e602155dc67a9c1b36a84fb8bea8e10",
+  "paths": 130,
+  "answers": 945,
+  "creditedPacks": 906,
+  "secretCarryProofs": 2,
+  "method": "Independent dictionary/Set interpreter; all terminal min/max and reachable node-exit paths replayed with exact stock, promises, ordered routing, one-time packs, and rare-key conservation."
+}

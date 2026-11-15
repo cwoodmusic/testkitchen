@@ -1,0 +1,1111 @@
+{
+  "version": 3,
+  "status": "frozen proposal-only; individual tiles pending user clarification; not production",
+  "workingTitle": "The Quiet Bell",
+  "entry": "s01_depot",
+  "stages": 12,
+  "terminalDepths": {
+    "regularEndings": 12,
+    "secretEndings": 12,
+    "deadEnds": [
+      4,
+      7,
+      9,
+      11
+    ]
+  },
+  "presentation": "Old-school top-down RPG appearance for scene tableaux and dialogue only. Interaction is the music puzzle, stock inventory and journal; no walking, combat, RPG statistics or item hunting.",
+  "unitsPerBeat": 2,
+  "answerUnits": 8,
+  "initialInventory": {
+    "quarter": 1,
+    "eighth-pair": 1,
+    "sixteenth-group": 1,
+    "half": 1,
+    "eighth": 1,
+    "quarter-rest": 1,
+    "half-rest": 1,
+    "dotted-half": 1,
+    "sixteenth-pair": 1
+  },
+  "grants": {
+    "2": [
+      "half",
+      "quarter",
+      "eighth-pair"
+    ],
+    "3": [
+      "quarter",
+      "eighth-pair",
+      "sixteenth-group"
+    ],
+    "4": [
+      "half-rest",
+      "quarter",
+      "sixteenth-group"
+    ],
+    "5": [
+      "quarter",
+      "eighth-pair",
+      "sixteenth-group"
+    ],
+    "6": [
+      "half",
+      "quarter",
+      "eighth-pair"
+    ],
+    "7": [
+      "quarter",
+      "eighth-pair",
+      "sixteenth-group"
+    ],
+    "8": [
+      "half-rest",
+      "quarter",
+      "sixteenth-group"
+    ],
+    "9": [
+      "quarter",
+      "eighth-pair",
+      "sixteenth-group"
+    ],
+    "10": [
+      "half",
+      "quarter",
+      "eighth-pair"
+    ],
+    "11": [
+      "half-rest",
+      "quarter",
+      "sixteenth-group"
+    ],
+    "12": [
+      "half",
+      "quarter",
+      "eighth-pair"
+    ]
+  },
+  "inventoryCap": null,
+  "inventoryRules": [
+    "Starting stock is nine individual tiles, one of each kind.",
+    "Exactly three fixed authored tiles are added once on entry to each later stage.",
+    "Unused tiles carry forward. Dotted-half, quarter-rest, eighth and sixteenth-pair are never refilled.",
+    "A legal answer is any ordered sequence drawn from the actual stock whose exact duration is four beats. All9368 ordered type recipes are accepted when affordable.",
+    "No ordinary door filters the legal rhythm vocabulary. Story destination is chosen by the first matching classifier; every door set ends with an unconditional default."
+  ],
+  "budget": {
+    "totalTiles": 42,
+    "totalHalfBeatUnits": 104,
+    "allTwelveAnswersCost": 96,
+    "remainingAtAnyMainEnding": 8,
+    "shortGrantStages": [
+      3,
+      5,
+      7,
+      9
+    ]
+  },
+  "flags": [
+    "quiet",
+    "quick",
+    "grouped",
+    "ticket",
+    "brace",
+    "chart"
+  ],
+  "flagLifetime": "Current run only; flags are earned from actual committed rhythms and restored with journal checkpoints.",
+  "conditionSemantics": {
+    "combination": "All properties in when are AND conditions. Doors are tested in array order; the first match is the only destination. An empty when matches every affordable legal answer.",
+    "recipeEquals": "Exact ordered kind IDs, including note-versus-rest and group identity.",
+    "nodeIs": "Current scene node ID equals this string. Evaluate before consuming the answer or entering a destination.",
+    "startsWithAny": "First kind belongs to this list.",
+    "endsWithAny": "Last kind belongs to this list.",
+    "containsAny": "At least one used kind belongs to this list.",
+    "containsAll": "Every listed kind occurs at least once.",
+    "containsAtLeast": "Count recipe cells whose kinds belong to kinds; the total is at least count.",
+    "lengthEquals": "Number of individual inventory tiles used.",
+    "allBeatUnitsEqual": "Every tile has this half-beat unit value.",
+    "flagsAll": "All names are true in current-run flags before this answer.",
+    "flagsNone": "All names are false before this answer.",
+    "flagsAnyMissing": "At least one listed flag is false.",
+    "effects": "Consume the recipe, apply addFlags, then enter to. Entry to a new numbered stage grants that stage pack once; terminal entry grants nothing."
+  },
+  "nodes": [
+    {
+      "id": "s01_depot",
+      "stage": 1,
+      "title": "The Parcel Depot",
+      "sceneText": "Mira inherits a silent town bell and a box of nine different tiles.",
+      "doorSet": "1",
+      "entryClues": [
+        "clue_violet"
+      ]
+    },
+    {
+      "id": "s02_garden",
+      "stage": 2,
+      "title": "The Garden Gate",
+      "sceneText": "A gardener asks whether Mira can leave room for an unheard answer.",
+      "doorSet": "2",
+      "entryClues": [
+        "clue_quiet",
+        "clue_fast"
+      ]
+    },
+    {
+      "id": "s02_workshop",
+      "stage": 2,
+      "title": "The Makers Lane",
+      "sceneText": "Tiny clockwork feet race behind the shutters.",
+      "doorSet": "2",
+      "entryClues": [
+        "clue_quiet",
+        "clue_fast"
+      ]
+    },
+    {
+      "id": "s02_canal",
+      "stage": 2,
+      "title": "The Canal Landing",
+      "sceneText": "A patient ferry keeper taps against the mooring post.",
+      "doorSet": "2",
+      "entryClues": [
+        "clue_quiet",
+        "clue_fast"
+      ]
+    },
+    {
+      "id": "s03_listening",
+      "stage": 3,
+      "title": "The Listening Room",
+      "sceneText": "An empty chair holds the place of a musician who never arrived.",
+      "doorSet": "3",
+      "entryClues": [
+        "clue_stamp"
+      ]
+    },
+    {
+      "id": "s03_bright",
+      "stage": 3,
+      "title": "The Bright Boardwalk",
+      "sceneText": "A message runs ahead through the small mechanical birds.",
+      "doorSet": "3",
+      "entryClues": [
+        "clue_stamp"
+      ]
+    },
+    {
+      "id": "s03_square",
+      "stage": 3,
+      "title": "The Open Square",
+      "sceneText": "Three old routes meet beside a stopped street clock.",
+      "doorSet": "3",
+      "entryClues": [
+        "clue_stamp"
+      ]
+    },
+    {
+      "id": "s04_ferry",
+      "stage": 4,
+      "title": "The Stamped Ferry",
+      "sceneText": "The long-long knock belongs to passengers carrying a boarding stamp.",
+      "doorSet": "4",
+      "entryClues": [
+        "clue_gears"
+      ]
+    },
+    {
+      "id": "s04_rooftops",
+      "stage": 4,
+      "title": "The Upper Balconies",
+      "sceneText": "The ferry can be heard below, though its stamp booth is out of reach.",
+      "doorSet": "4",
+      "entryClues": [
+        "clue_gears"
+      ]
+    },
+    {
+      "id": "s04_market",
+      "stage": 4,
+      "title": "The Night Market",
+      "sceneText": "A tempting ferry shortcut sits beside a public footbridge.",
+      "doorSet": "4",
+      "entryClues": [
+        "clue_gears"
+      ]
+    },
+    {
+      "id": "s05_musicshop",
+      "stage": 5,
+      "title": "The Small Music Shop",
+      "sceneText": "A maker repairs moving parts by listening to the grouped notes.",
+      "doorSet": "5",
+      "entryClues": []
+    },
+    {
+      "id": "s05_garden",
+      "stage": 5,
+      "title": "The Conservatory Bench",
+      "sceneText": "The gardener leaves the quiet half of a conversation unfinished.",
+      "doorSet": "5",
+      "entryClues": []
+    },
+    {
+      "id": "s05_market",
+      "stage": 5,
+      "title": "The Market Clock",
+      "sceneText": "Ordinary clocks disagree about how much time remains.",
+      "doorSet": "5",
+      "entryClues": []
+    },
+    {
+      "id": "s06_archive",
+      "stage": 6,
+      "title": "The Keeper Archive",
+      "sceneText": "Mira can prepare either the registered chart or the stair brace; the answer chooses one.",
+      "doorSet": "6",
+      "entryClues": [
+        "clue_chart_brace",
+        "clue_choose_key"
+      ]
+    },
+    {
+      "id": "s06_roof",
+      "stage": 6,
+      "title": "The Chart Roof",
+      "sceneText": "A discarded chart explains why the tower has two hidden seals.",
+      "doorSet": "6",
+      "entryClues": [
+        "clue_chart_brace",
+        "clue_choose_key"
+      ]
+    },
+    {
+      "id": "s06_clockshop",
+      "stage": 6,
+      "title": "The Clockmaker Bench",
+      "sceneText": "A brace, a chart and a ledger wait beside the repaired mechanism.",
+      "doorSet": "6",
+      "entryClues": [
+        "clue_chart_brace",
+        "clue_choose_key"
+      ]
+    },
+    {
+      "id": "s07_attic",
+      "stage": 7,
+      "title": "The Braced Attic",
+      "sceneText": "The brace is fitted before the glass stair is tested.",
+      "doorSet": "7",
+      "entryClues": []
+    },
+    {
+      "id": "s07_maproom",
+      "stage": 7,
+      "title": "The Map Room",
+      "sceneText": "The chart points past an attractive but fragile stair.",
+      "doorSet": "7",
+      "entryClues": []
+    },
+    {
+      "id": "s07_landing",
+      "stage": 7,
+      "title": "The Lantern Landing",
+      "sceneText": "The glass stair is quicker, but its missing support is plainly visible.",
+      "doorSet": "7",
+      "entryClues": []
+    },
+    {
+      "id": "s08_roof",
+      "stage": 8,
+      "title": "The Roof Garden",
+      "sceneText": "A lantern illuminates three copies of the same unfinished ledger.",
+      "doorSet": "8",
+      "entryClues": []
+    },
+    {
+      "id": "s08_garden",
+      "stage": 8,
+      "title": "The Garden Walk",
+      "sceneText": "The quiet route reaches the tower through a planted gallery.",
+      "doorSet": "8",
+      "entryClues": []
+    },
+    {
+      "id": "s08_workshop",
+      "stage": 8,
+      "title": "The Workshop Landing",
+      "sceneText": "A service route passes the tower\u2019s instrument cases.",
+      "doorSet": "8",
+      "entryClues": []
+    },
+    {
+      "id": "s09_garden",
+      "stage": 9,
+      "title": "The Garden Ledger",
+      "sceneText": "The ledger asks which four beats Mira intends to keep.",
+      "doorSet": "9",
+      "entryClues": [
+        "clue_ninth"
+      ]
+    },
+    {
+      "id": "s09_archive",
+      "stage": 9,
+      "title": "The Archive Ledger",
+      "sceneText": "The registered chart distinguishes the real gallery from a painted copy.",
+      "doorSet": "9",
+      "entryClues": [
+        "clue_ninth"
+      ]
+    },
+    {
+      "id": "s09_market",
+      "stage": 9,
+      "title": "The Public Ledger",
+      "sceneText": "A copied chart offers an easy shortcut that does not match the registered marks.",
+      "doorSet": "9",
+      "entryClues": [
+        "clue_ninth"
+      ]
+    },
+    {
+      "id": "s10_archive",
+      "stage": 10,
+      "title": "The Chart Bridge",
+      "sceneText": "The last ordinary crossing leaves exactly four beats in reserve.",
+      "doorSet": "10",
+      "entryClues": []
+    },
+    {
+      "id": "s10_home",
+      "stage": 10,
+      "title": "The Home Bridge",
+      "sceneText": "Mira can hear the town\u2019s homes beyond the tower wall.",
+      "doorSet": "10",
+      "entryClues": []
+    },
+    {
+      "id": "s10_public",
+      "stage": 10,
+      "title": "The Public Bridge",
+      "sceneText": "The main bell is visible through the tower windows.",
+      "doorSet": "10",
+      "entryClues": []
+    },
+    {
+      "id": "s11_garden",
+      "stage": 11,
+      "title": "The Garden Seal",
+      "sceneText": "The gardener\u2019s empty place waits behind the quiet seal.",
+      "doorSet": "11",
+      "entryClues": [
+        "clue_seals"
+      ]
+    },
+    {
+      "id": "s11_star",
+      "stage": 11,
+      "title": "The Star Seal",
+      "sceneText": "Two tiny flickers mark the hidden counter-melody.",
+      "doorSet": "11",
+      "entryClues": [
+        "clue_seals"
+      ]
+    },
+    {
+      "id": "s11_bell",
+      "stage": 11,
+      "title": "The Bell Chamber",
+      "sceneText": "The main repair, two old seals and a painted imitation stand side by side.",
+      "doorSet": "11",
+      "entryClues": [
+        "clue_seals"
+      ]
+    },
+    {
+      "id": "s12_regular",
+      "stage": 12,
+      "title": "The Repaired Bell",
+      "sceneText": "The final rhythm decides what the repaired bell will mean to the town.",
+      "doorSet": "12-regular",
+      "entryClues": []
+    },
+    {
+      "id": "s12_secret_quiet",
+      "stage": 12,
+      "title": "The Reserved Room",
+      "sceneText": "A long-kept silence makes room for the absent musician\u2019s unfinished phrase.",
+      "doorSet": "12-secret-quiet",
+      "entryClues": []
+    },
+    {
+      "id": "s12_secret_fast",
+      "stage": 12,
+      "title": "The Hidden Countermelody",
+      "sceneText": "The little mechanical birds answer the bell with a melody no one had heard.",
+      "doorSet": "12-secret-fast",
+      "entryClues": []
+    }
+  ],
+  "doorSets": {
+    "1": [
+      {
+        "id": "follow-the-garden-pulse",
+        "when": {
+          "startsWithAny": [
+            "quarter-rest",
+            "half-rest"
+          ]
+        },
+        "to": "s02_garden"
+      },
+      {
+        "id": "follow-the-makers-pulse",
+        "when": {
+          "containsAtLeast": {
+            "kinds": [
+              "eighth-pair",
+              "sixteenth-group",
+              "sixteenth-pair"
+            ],
+            "count": 2
+          }
+        },
+        "to": "s02_workshop"
+      },
+      {
+        "id": "follow-the-water",
+        "when": {},
+        "to": "s02_canal"
+      }
+    ],
+    "2": [
+      {
+        "id": "promise-to-listen",
+        "when": {
+          "startsWithAny": [
+            "half-rest"
+          ]
+        },
+        "to": "s03_listening",
+        "addFlags": [
+          "quiet"
+        ]
+      },
+      {
+        "id": "answer-the-running-footsteps",
+        "when": {
+          "startsWithAny": [
+            "eighth-pair",
+            "sixteenth-group"
+          ]
+        },
+        "to": "s03_bright",
+        "addFlags": [
+          "quick"
+        ]
+      },
+      {
+        "id": "take-the-open-square",
+        "when": {},
+        "to": "s03_square"
+      }
+    ],
+    "3": [
+      {
+        "id": "stamp-the-boarding-card",
+        "when": {
+          "endsWithAny": [
+            "eighth-pair"
+          ]
+        },
+        "to": "s04_ferry",
+        "addFlags": [
+          "ticket"
+        ]
+      },
+      {
+        "id": "take-the-upper-route",
+        "when": {
+          "startsWithAny": [
+            "quarter-rest",
+            "half-rest"
+          ]
+        },
+        "to": "s04_rooftops"
+      },
+      {
+        "id": "take-the-market-route",
+        "when": {},
+        "to": "s04_market"
+      }
+    ],
+    "4": [
+      {
+        "id": "make-the-small-gears-run",
+        "when": {
+          "startsWithAny": [
+            "eighth-pair",
+            "sixteenth-group"
+          ]
+        },
+        "to": "s05_musicshop",
+        "addFlags": [
+          "grouped"
+        ]
+      },
+      {
+        "id": "board-the-stamped-ferry",
+        "when": {
+          "recipeEquals": [
+            "half",
+            "half"
+          ],
+          "flagsAll": [
+            "ticket"
+          ]
+        },
+        "to": "s05_market"
+      },
+      {
+        "id": "knock-at-the-closed-ferry",
+        "when": {
+          "recipeEquals": [
+            "half",
+            "half"
+          ],
+          "flagsNone": [
+            "ticket"
+          ]
+        },
+        "to": "dead_ferry"
+      },
+      {
+        "id": "leave-room-for-the-gardener",
+        "when": {
+          "containsAny": [
+            "quarter-rest",
+            "half-rest"
+          ]
+        },
+        "to": "s05_garden"
+      },
+      {
+        "id": "cross-the-market",
+        "when": {},
+        "to": "s05_market"
+      }
+    ],
+    "5": [
+      {
+        "id": "hear-the-archive-keeper",
+        "when": {
+          "containsAny": [
+            "half-rest"
+          ]
+        },
+        "to": "s06_archive"
+      },
+      {
+        "id": "take-four-even-steps",
+        "when": {
+          "lengthEquals": 4,
+          "allBeatUnitsEqual": 2
+        },
+        "to": "s06_roof"
+      },
+      {
+        "id": "visit-the-clockmaker",
+        "when": {},
+        "to": "s06_clockshop"
+      }
+    ],
+    "6": [
+      {
+        "id": "set-the-stair-brace",
+        "when": {
+          "endsWithAny": [
+            "half-rest"
+          ]
+        },
+        "to": "s07_attic",
+        "addFlags": [
+          "brace"
+        ]
+      },
+      {
+        "id": "read-both-small-subdivisions",
+        "when": {
+          "containsAll": [
+            "eighth-pair",
+            "sixteenth-group"
+          ],
+          "startsWithAny": [
+            "quarter",
+            "eighth-pair",
+            "sixteenth-group",
+            "half",
+            "eighth",
+            "dotted-half",
+            "sixteenth-pair"
+          ]
+        },
+        "to": "s07_maproom",
+        "addFlags": [
+          "chart"
+        ]
+      },
+      {
+        "id": "take-the-lantern-landing",
+        "when": {},
+        "to": "s07_landing"
+      }
+    ],
+    "7": [
+      {
+        "id": "try-the-unbraced-glass-stair",
+        "when": {
+          "recipeEquals": [
+            "half",
+            "half"
+          ],
+          "flagsNone": [
+            "brace"
+          ]
+        },
+        "to": "dead_glass"
+      },
+      {
+        "id": "climb-the-braced-glass-stair",
+        "when": {
+          "recipeEquals": [
+            "half",
+            "half"
+          ],
+          "flagsAll": [
+            "brace"
+          ]
+        },
+        "to": "s08_roof"
+      },
+      {
+        "id": "take-the-quiet-walk",
+        "when": {
+          "startsWithAny": [
+            "quarter-rest",
+            "half-rest"
+          ]
+        },
+        "to": "s08_garden"
+      },
+      {
+        "id": "follow-the-small-gears",
+        "when": {
+          "startsWithAny": [
+            "eighth-pair",
+            "sixteenth-group"
+          ]
+        },
+        "to": "s08_roof",
+        "addFlags": [
+          "grouped"
+        ]
+      },
+      {
+        "id": "take-the-workshop-landing",
+        "when": {},
+        "to": "s08_workshop"
+      }
+    ],
+    "8": [
+      {
+        "id": "take-the-garden-ledger",
+        "when": {
+          "startsWithAny": [
+            "quarter-rest",
+            "half-rest"
+          ]
+        },
+        "to": "s09_garden"
+      },
+      {
+        "id": "take-the-archive-ledger",
+        "when": {
+          "containsAll": [
+            "eighth-pair",
+            "sixteenth-group"
+          ]
+        },
+        "to": "s09_archive"
+      },
+      {
+        "id": "take-the-public-ledger",
+        "when": {},
+        "to": "s09_market"
+      }
+    ],
+    "9": [
+      {
+        "id": "trust-the-unread-chart",
+        "when": {
+          "recipeEquals": [
+            "half",
+            "half"
+          ],
+          "flagsNone": [
+            "chart"
+          ]
+        },
+        "to": "dead_counterfeit"
+      },
+      {
+        "id": "read-the-registered-chart",
+        "when": {
+          "recipeEquals": [
+            "half",
+            "half"
+          ],
+          "flagsAll": [
+            "chart"
+          ]
+        },
+        "to": "s10_archive"
+      },
+      {
+        "id": "carry-the-household-promise",
+        "when": {
+          "startsWithAny": [
+            "quarter-rest",
+            "half-rest"
+          ]
+        },
+        "to": "s10_home"
+      },
+      {
+        "id": "carry-the-public-promise",
+        "when": {},
+        "to": "s10_public"
+      }
+    ],
+    "10": [
+      {
+        "id": "approach-the-garden-door",
+        "when": {
+          "startsWithAny": [
+            "half"
+          ]
+        },
+        "to": "s11_garden"
+      },
+      {
+        "id": "approach-the-star-door",
+        "when": {
+          "startsWithAny": [
+            "eighth-pair",
+            "sixteenth-group"
+          ]
+        },
+        "to": "s11_star"
+      },
+      {
+        "id": "approach-the-bell-door",
+        "when": {},
+        "to": "s11_bell"
+      }
+    ],
+    "11": [
+      {
+        "id": "the-kept-quiet-key",
+        "when": {
+          "recipeEquals": [
+            "dotted-half",
+            "quarter-rest"
+          ],
+          "nodeIs": "s11_garden",
+          "flagsAll": [
+            "quiet"
+          ]
+        },
+        "to": "s12_secret_quiet"
+      },
+      {
+        "id": "the-unanswered-quiet-seal",
+        "when": {
+          "recipeEquals": [
+            "dotted-half",
+            "quarter-rest"
+          ]
+        },
+        "to": "dead_seal"
+      },
+      {
+        "id": "the-kept-flicker-key",
+        "when": {
+          "recipeEquals": [
+            "dotted-half",
+            "eighth",
+            "sixteenth-pair"
+          ],
+          "nodeIs": "s11_star",
+          "flagsAll": [
+            "quick",
+            "grouped"
+          ]
+        },
+        "to": "s12_secret_fast"
+      },
+      {
+        "id": "the-unanswered-flicker-seal",
+        "when": {
+          "recipeEquals": [
+            "dotted-half",
+            "eighth",
+            "sixteenth-pair"
+          ]
+        },
+        "to": "dead_seal"
+      },
+      {
+        "id": "the-painted-bell",
+        "when": {
+          "recipeEquals": [
+            "dotted-half",
+            "quarter"
+          ]
+        },
+        "to": "dead_seal"
+      },
+      {
+        "id": "repair-the-main-bell",
+        "when": {},
+        "to": "s12_regular"
+      }
+    ],
+    "12-regular": [
+      {
+        "id": "leave-the-last-evening-quiet",
+        "when": {
+          "startsWithAny": [
+            "quarter-rest",
+            "half-rest"
+          ]
+        },
+        "to": "ending_home"
+      },
+      {
+        "id": "write-the-two-subdivisions",
+        "when": {
+          "flagsAll": [
+            "chart"
+          ],
+          "containsAll": [
+            "eighth-pair",
+            "sixteenth-group"
+          ]
+        },
+        "to": "ending_school"
+      },
+      {
+        "id": "ring-for-the-whole-town",
+        "when": {},
+        "to": "ending_public"
+      }
+    ],
+    "12-secret-quiet": [
+      {
+        "id": "finish-the-reserved-silence",
+        "when": {},
+        "to": "ending_secret_quiet"
+      }
+    ],
+    "12-secret-fast": [
+      {
+        "id": "finish-the-hidden-countermelody",
+        "when": {},
+        "to": "ending_secret_fast"
+      }
+    ]
+  },
+  "terminals": [
+    {
+      "id": "ending_public",
+      "kind": "regular-ending",
+      "title": "The Evening Bell",
+      "result": "The bell becomes a dependable public signal; the town gathers at the square again."
+    },
+    {
+      "id": "ending_home",
+      "kind": "regular-ending",
+      "title": "A Place to Come Home",
+      "result": "The bell leaves a quiet interval each evening, giving the town\u2019s homes room to answer."
+    },
+    {
+      "id": "ending_school",
+      "kind": "regular-ending",
+      "title": "The Open Music Room",
+      "result": "Mira records both subdivisions from the registered chart and turns the tower into a shared music room."
+    },
+    {
+      "id": "ending_secret_quiet",
+      "kind": "secret-ending",
+      "title": "The Reserved Silence",
+      "result": "The absent musician\u2019s place is finally heard because Mira carried the original long note and quarter rest through ten answers."
+    },
+    {
+      "id": "ending_secret_fast",
+      "kind": "secret-ending",
+      "title": "The Birds\u2019 Countermelody",
+      "result": "The original long note and two rare half-beat tiles unlock the birds\u2019 hidden answer to the bell."
+    },
+    {
+      "id": "dead_ferry",
+      "kind": "dead-end",
+      "title": "The Unstamped Crossing",
+      "cause": "At stage4, the exact [half,half] ferry answer was played without the stage3 boarding stamp.",
+      "repair": "Return to stage3 and end an answer with eighth-pair, or revisit stage4 and choose another valid four-beat rhythm.",
+      "recommendedCheckpoint": 3
+    },
+    {
+      "id": "dead_glass",
+      "kind": "dead-end",
+      "title": "The Unsupported Stair",
+      "cause": "At stage7, exact [half,half] tests the glass stair without the stage6 brace.",
+      "repair": "Return to stage6 and end with half-rest, or choose another stage7 answer.",
+      "recommendedCheckpoint": 6
+    },
+    {
+      "id": "dead_counterfeit",
+      "kind": "dead-end",
+      "title": "The Copied Chart",
+      "cause": "At stage9, exact [half,half] follows the copied chart without the stage6 registered-chart flag.",
+      "repair": "Return to stage6 with a sounding opening containing eighth-pair and sixteenth-group; do not end with half-rest, which prepares the brace instead. Or choose another stage9 answer.",
+      "recommendedCheckpoint": 6
+    },
+    {
+      "id": "dead_seal",
+      "kind": "dead-end",
+      "title": "The Unanswered Seal",
+      "cause": "At stage11, an exact secret key was played at the wrong approach or without its earlier promise; or [dotted-half,quarter] woke the painted imitation.",
+      "repair": "If the promise is missing, revisit stage2/4/7. If the key is right but the door is wrong, revisit stage10: half-first for garden, paired-eighth-first for star. Or undo only stage11 and use an ordinary four-beat answer to reach a regular ending.",
+      "recommendedCheckpoint": "earliest-missing-predicate, or10 for wrong approach"
+    }
+  ],
+  "clues": [
+    {
+      "id": "clue_violet",
+      "stage": 1,
+      "automatic": true,
+      "text": "The violet long note was wrapped with a note: \u201cIt waits beyond ten answered doors. One quiet beat, or two silver flickers, can finish it. Once spent, it cannot be replaced.\u201d",
+      "teaches": [
+        "dotted-half is unique",
+        "quarter-rest is a possible key",
+        "eighth and sixteenth-pair form the other key"
+      ]
+    },
+    {
+      "id": "clue_quiet",
+      "stage": 2,
+      "automatic": true,
+      "text": "The gardener asks for two beats of silence before your answer begins. An old verse promises a hidden reply to a three-beat call followed by one breath. Save that breath if you mean to hear the reply.",
+      "teaches": [
+        "quiet flag: stage2 starts half-rest",
+        "secret A exact order: dotted-half then quarter-rest",
+        "ten-step conservation"
+      ]
+    },
+    {
+      "id": "clue_fast",
+      "stage": 2,
+      "automatic": true,
+      "text": "The birds remember a quick opening with paired footsteps or four tiny steps. Their later seal also needs proof that you helped the little gears.",
+      "teaches": [
+        "quick flag: stage2 starts eighth-pair or sixteenth-group",
+        "a later grouped-note clue is required"
+      ]
+    },
+    {
+      "id": "clue_stamp",
+      "stage": 3,
+      "automatic": true,
+      "text": "Ending this answer with paired eighth notes earns a boarding stamp. The ferry\u2019s two-half-note knock is safe only with that stamp.",
+      "teaches": [
+        "ticket predicate",
+        "dead_ferry warning"
+      ]
+    },
+    {
+      "id": "clue_gears",
+      "stage": 4,
+      "automatic": true,
+      "text": "Open with paired footsteps or four tiny steps to help the little gears. The birds\u2019 hidden answer follows a three-beat call with one short attack, then two tiny attacks. Those two little tiles came in the original parcel; no shop can replace them.",
+      "teaches": [
+        "grouped flag: stage4 or7 starts eighth-pair or sixteenth-group",
+        "secret B exact order: dotted-half,eighth,sixteenth-pair",
+        "rare half-beat conservation"
+      ]
+    },
+    {
+      "id": "clue_chart_brace",
+      "stage": 6,
+      "automatic": true,
+      "text": "You can prepare one thing here. Ending with a half rest fits the stair brace first. Otherwise, a sounding opening that includes both paired eighths and four sixteenths registers the chart. Two half notes test the stair or the chart passage; do not try those shortcuts unprepared. At the final crossing, a long ordinary tone first leads to the garden; paired footsteps first lead to the star door.",
+      "teaches": [
+        "brace predicate and priority over chart",
+        "chart predicate",
+        "dead_glass warning",
+        "dead_counterfeit warning",
+        "stage10 starts half selects garden",
+        "stage10 starts eighth-pair or sixteenth-group selects star"
+      ]
+    },
+    {
+      "id": "clue_choose_key",
+      "stage": 6,
+      "automatic": true,
+      "text": "The ledger leaves four beats in reserve after the ninth and tenth answers. The quiet key is four beats. The flicker key is four beats. Keeping the notes for both would require five beats, so choose one key before the ninth door.",
+      "teaches": [
+        "mutually exclusive inventory commitment",
+        "future budget is visible"
+      ]
+    },
+    {
+      "id": "clue_ninth",
+      "stage": 9,
+      "automatic": true,
+      "text": "Check the stock you will keep, not just the rhythm you can spend now. The next crossing contributes its own complete four-beat answer. Put its long ordinary tone first for the garden, or its paired footsteps first for the star door. A missing early promise can be repaired only by revisiting its journal page.",
+      "teaches": [
+        "step10 can use its new pack",
+        "stage10 half-first approach selects secret A garden",
+        "stage10 eighth-pair-first approach selects secret B star",
+        "earlier flags cannot be invented late"
+      ]
+    },
+    {
+      "id": "clue_seals",
+      "stage": 11,
+      "automatic": true,
+      "text": "The garden\u2019s quiet seal needs the old listening promise; the star\u2019s flicker seal needs the birds and gears. The right answer at the wrong door will go unanswered. A three-beat call followed by a plain one-beat sound only wakes the painted imitation. Other four-beat answers can still repair the main bell.",
+      "teaches": [
+        "all stage11 key,promise and nodeIs predicates",
+        "dead_seal warning",
+        "ordinary endings remain available"
+      ]
+    }
+  ],
+  "journal": {
+    "checkpoint": "Save node, current-run flags, exact inventory counts and stage-grant receipts immediately before each answer.",
+    "deadEnds": "A dead end is an authored terminal with the cause and repair shown; the player can undo that answer or revisit the recommended earlier checkpoint.",
+    "rewind": "Restoring a checkpoint restores stock and grant receipts together. Do not regrant its pack, keep future flags, or carry future stock backward.",
+    "discoveryHistory": "Persistent seen-scenes/endings history may reveal journal labels or reminders, but never satisfies a current-run flag, supplies a rare tile, or opens a seal."
+  },
+  "validationRequired": [
+    "All edges move to stage+1 or an authored terminal; graph is a finite DAG.",
+    "Every door set has exactly one final default.",
+    "All five endings and four authored dead ends need typed-inventory witnesses.",
+    "Secret A needs quiet at stage2 plus the unspent initial dotted-half and quarter-rest through ten prior answers.",
+    "Secret B needs quick at stage2 and grouped at stage4 or7 plus unspent initial dotted-half/eighth/sixteenth-pair through ten prior answers.",
+    "By stage9 the duration budget prevents retaining the union of both keys; missing-key states must retain at least one regular route.",
+    "Exhaustively check affordable four-beat recipes by consumption vector and classifier outcome; report any nonterminal state with no legal answer as an unintended resource lock, not an invented ending."
+  ]
+}

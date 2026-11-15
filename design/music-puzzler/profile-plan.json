@@ -1,0 +1,76 @@
+{
+  "status": "Design contract only; this does not activate a new profile slot or award currency.",
+  "chapterId": "quiet-bell-01",
+  "contentVersion": 1,
+  "chapterFile": "chapter-one.json",
+  "designRevision": 3,
+  "presentation": "Old-school top-down RPG scene presentation; the player's action is composing the rhythm puzzle answer.",
+  "canonicalSave": {
+    "version": 1,
+    "chapters": {
+      "quiet-bell-01": {
+        "contentVersion": 1,
+        "endingIdsFound": [],
+        "deadEndIdsFound": [],
+        "failureCauseTagsFound": [],
+        "bestByOutcome": {},
+        "run": { "answers": [], "answerCursor": 0 }
+      }
+    }
+  },
+  "runRules": [
+    "A new playthrough starts with the nine authored tiles, one of each kind. Inventory carries between puzzles in that playthrough.",
+    "Save the exact ordered note-kind recipe for each committed answer. A duration total or door ID cannot reconstruct the stock or route.",
+    "The active answer prefix deterministically derives scene, inventory, current-run flags and already-credited stage packs from chapter content.",
+    "An accepted answer consumes its actual tiles. Entry to a later puzzle stage credits exactly its three authored tiles once. Terminal entry credits no tiles.",
+    "Undo/revisit replays a shorter answer prefix, restoring stock, flags and stage receipts together. The new answer replaces the abandoned continuation; future stock or flags never travel backward.",
+    "Rendering, reload, retry and revisiting a checkpoint do not issue another pack. Fixed authored packs require no random seed or reroll mechanic.",
+    "Chapter content is versioned. A future incompatible rule change must migrate or restart the current run while preserving bounded discovery records.",
+    "Do not merge two divergent active runs during synchronization. Discovery sets may merge by union independently of the chosen active run."
+  ],
+  "collection": {
+    "endingIds": ["ending_public", "ending_home", "ending_school", "ending_secret_quiet", "ending_secret_fast"],
+    "secretEndingIds": ["ending_secret_quiet", "ending_secret_fast"],
+    "deadEndIds": ["dead_ferry", "dead_glass", "dead_counterfeit", "dead_seal"],
+    "allOutcomesCount": 9,
+    "secretCountIsSubsetOfEndingCount": true,
+    "unknownOutcomes": "Player journal conceals undiscovered names and exact solutions. The developer's design explorer deliberately reveals them.",
+    "monotonic": "Discovered outcomes and causes remain found after undo/restart. Permanent discoveries never satisfy a current-run story promise.",
+    "failureCauseTags": ["ferry/no-ticket", "glass/no-brace", "chart/unregistered", "seal/quiet-promise-missing", "seal/quiet-door-wrong", "seal/quick-promise-missing", "seal/grouped-help-missing", "seal/star-door-wrong", "seal/painted-call"],
+    "causeRules": "Record all applicable cause tags for the selected dead-end family. A wrong door and a missing promise may both be true; cause tags are journal detail rather than extra endings."
+  },
+  "efficiency": {
+    "metric": "Consumed note tiles in a successful completed answer sequence. Physical board manipulation costs require a separate definition when layouts are implemented.",
+    "comparison": "Compare a result with the verified minimum for that same outcome. A shorter early dead end is never a better success score.",
+    "regularEndingRange": {"minimum": 37, "maximum": 40},
+    "secretEndingRange": {"minimum": 38, "maximum": 40},
+    "bestByOutcome": "Store only completed, replay-verified records keyed by the authored outcome ID. Undoing before an outcome is not a completion."
+  },
+  "rewards": {
+    "amounts": "Not yet assigned; changing cosmetic reward amounts does not alter the verified puzzle resource model.",
+    "currency": "Puzzle note blocks are consumable inventory. Arcade Notes are a separate wallet currency; leftover blocks do not automatically convert into Notes.",
+    "authority": "An active arcade host validates the bounded answer log and derives the terminal ID and reward amount from authored content.",
+    "receiptExamples": ["rhythm-story:quiet-bell-01:ending_public", "rhythm-story:quiet-bell-01:ending_secret_quiet", "rhythm-story:quiet-bell-01:ending_public:optimal", "rhythm-story:quiet-bell-01:all-endings"],
+    "onceOnly": "First discovery and later efficiency milestones use stable receipts. Replays, undo and reset never create a new receipt for the same milestone.",
+    "deltaUpgrade": "A first optimal finish claims the base reward and efficiency delta once; improving a prior finish claims only the missing delta.",
+    "deadEnds": "Journal discovery and explanatory feedback. A nonzero Notes reward for dead ends is not part of this design.",
+    "implementation": "Reuse the existing Notes wallet and achievement journals. Bound the full receipt ID to 100 characters; never include a run ID, deployment version or retry counter."
+  },
+  "saveBounds": {
+    "answersPerRun": 12,
+    "tilesPerAnswer": 8,
+    "noteKinds": 9,
+    "maximumTilesEverSupplied": 42,
+    "currentRunFlags": 6,
+    "endingIds": 5,
+    "deadEndFamilyIds": 4,
+    "causeTags": 9,
+    "targetBytesPerChapter": 16384
+  },
+  "futureIntegration": {
+    "client": "Add an optional scoped story record to classroom-profile-data.js capture/apply/validation and backup handling.",
+    "server": "A synchronized implementation also needs coordinated optional DTO rules for teacher-player and student-profile state in docs/firebase-google-classroom.rules.json.",
+    "compatibility": "Older profiles and saved maps remain valid with the new optional record absent.",
+    "standalone": "Keep standalone guest progress isolated. A bare game page must not construct a shared Notes wallet with an incomplete ownership catalog."
+  }
+}
