@@ -41,7 +41,7 @@ class RhythmBlocksLaunchTests(world.WorldBrowserCase):
         self.page.locator('#worldGamesBtn').click()
         self.assertEqual(self.page.locator('#panelTitle').inner_text(), 'Arcade games')
         self.assertEqual(self.page.locator('#panelBody [data-arcade-game]').all_text_contents(),
-                         ['Pitch Race', 'Music Triad', 'Rhythm Room', 'Song Machine', 'Rhythm Blocks'])
+                         ['Pitch Race', 'Music Triad', 'Rhythm Room', 'Song Machine', 'The Quiet Bell'])
         self.page.locator('[data-arcade-game="rhythm-blocks"]').click()
         self.page.wait_for_function('''prefix=>{
           const frame=document.querySelector('#gameiframe');
@@ -49,7 +49,7 @@ class RhythmBlocksLaunchTests(world.WorldBrowserCase):
             &&frame.contentDocument?.readyState==='complete';
         }''', arg=GAME)
         self.assertTrue(self.page.locator('#gameoverlay').is_visible())
-        self.assertEqual(self.page.locator('#activegame').inner_text(), 'Rhythm Blocks')
+        self.assertEqual(self.page.locator('#activegame').inner_text(), 'The Quiet Bell')
         return self.page.locator('#gameiframe').element_handle().content_frame()
 
     def test_menu_launch_and_in_game_return_preserve_the_world_without_a_reward_bridge(self):
@@ -60,10 +60,11 @@ class RhythmBlocksLaunchTests(world.WorldBrowserCase):
         frame = self.open_game()
         self.assertIsNone(self.page.evaluate('CodaArcadeQA.missions().connection'))
         self.assertFalse(frame.evaluate("typeof CodaBridge!=='undefined'"))
-        frame.wait_for_function("document.activeElement?.id==='primary-action'")
-        self.assertTrue(self.page.evaluate("document.activeElement===document.querySelector('#gameiframe')"))
+        frame.wait_for_function("!!window.quietBell?.state")
+        frame.locator('button[data-person="iris"]').focus()
         self.page.keyboard.press('Enter')
-        frame.wait_for_function("rhythmBlocks.state.phase==='falling'")
+        self.assertIn('iris', frame.locator('#speaker').inner_text().lower())
+        self.assertEqual(frame.evaluate('quietBell.state.phase'), 'room')
         frame.get_by_role('link', name=re.compile('arcade', re.I)).click()
         self.page.wait_for_function('!CodaArcadeQA.menu().gameOpen')
         self.assertEqual(self.page.url, WORLD)

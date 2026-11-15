@@ -1,134 +1,115 @@
-import {createGame,NOTE_KINDS,NOTE_KIND_BY_ID,ROWS,COLUMNS,absoluteCells} from './engine.mjs?v=rhythm-blocks-four-1';
-import {symbolMarkup} from './notation.mjs?v=rhythm-blocks-four-1';
-import {createRhythmAudio} from './audio.mjs?v=rhythm-blocks-four-1';
+import {createStoryGame} from './story.mjs?v=quiet-bell-page-one-1';
+import {NOTE_KINDS,NOTE_KIND_BY_ID} from './engine.mjs?v=quiet-bell-page-one-1';
+import {symbolMarkup} from './notation.mjs?v=quiet-bell-page-one-1';
+import {createRhythmAudio} from './audio.mjs?v=quiet-bell-page-one-1';
+import {PEOPLE,ROUTE_OUTCOMES} from './opening.mjs?v=quiet-bell-page-one-1';
 
-const $=id=>document.getElementById(id);
-const colors={quarter:'#7dd9be','eighth-pair':'#8bcfe7','sixteenth-group':'#b9abf1','sixteenth-pair':'#c1b8f7',half:'#efc573',eighth:'#a99beb','quarter-rest':'#e4d6ae','half-rest':'#d5af81','dotted-half':'#e0a9d4'};
-const BEST_KEY='codaRhythmBlocksFourBestV1',SOUND_KEY='codaRhythmBlocksSoundV1';
-function read(key,fallback){try{return localStorage.getItem(key)??fallback;}catch{return fallback;}}
-function save(key,value){try{localStorage.setItem(key,String(value));}catch{}}
-let best=Math.max(0,Number(read(BEST_KEY,'0'))||0),soundEnabled=read(SOUND_KEY,'on')!=='off';
-const audio=createRhythmAudio({enabled:soundEnabled}),game=createGame();
-let seenRevision=-1,lastEvent=0,boardSignature='',state=game.state,lastFrame=performance.now(),feedbackTimer;
-const held=new Map(),format=new Intl.NumberFormat('en-US');
-const beatsText=value=>`${value===.5?'½':value} beat${value===1?'':'s'}`;
-const paint=(element,kind)=>{element.style.setProperty('--tile-color',colors[kind]);element.innerHTML=symbolMarkup(kind);};
-function tile(kind,row,col,classes='',owner=null){
- const element=document.createElement('div');
- element.className=`tile ${classes}`;element.dataset.kind=kind;
- if(owner!==null)element.dataset.piece=String(owner);
- element.style.setProperty('--row',row);element.style.setProperty('--col',col);
- paint(element,kind);return element;
-}
-function renderPreview(piece){
- const container=$('next-symbol');container.replaceChildren();
- if(!piece){$('next-label').textContent='Seven shapes';$('next-beats').textContent='Mixed note values';container.setAttribute('aria-label','The next piece appears when you start.');return;}
- const width=Math.max(...piece.cells.map(cell=>cell.col))+1;
- const height=Math.max(...piece.cells.map(cell=>cell.row))+1;
- const grid=document.createElement('div');grid.className='preview-grid';
- grid.style.setProperty('--preview-cols',width);grid.style.setProperty('--preview-rows',height);
- for(const cell of piece.cells){
-  const element=document.createElement('span');element.className='preview-cell';
-  element.style.gridColumn=String(cell.col+1);element.style.gridRow=String(cell.row+1);
-  paint(element,cell.kind);grid.append(element);
- }
- container.append(grid);$('next-label').textContent=`${piece.shape} piece`;
- const beats=piece.cells.reduce((total,cell)=>total+NOTE_KIND_BY_ID[cell.kind].beats,0);
- $('next-beats').textContent=`${beats} beats total`;
- container.setAttribute('aria-label',`${piece.shape} piece: ${piece.cells.map(cell=>NOTE_KIND_BY_ID[cell.kind].label).join(', ')}`);
-}
+const $=id=>document.getElementById(id),root=$('quiet-bell');
+const SAVE_KEY='codaQuietBellPageOneV1',SOUND_KEY='codaRhythmBlocksSoundV1';
+const colors={quarter:'#9bd5bb','eighth-pair':'#a9d8da','sixteenth-group':'#b9afe2',half:'#efcb8d',eighth:'#bdb0e7','quarter-rest':'#e8d9b5','half-rest':'#e0bd9b','dotted-half':'#d9abc8','sixteenth-pair':'#c8bde9'};
+const shortNames={quarter:'Quarter note','eighth-pair':'Two eighths','sixteenth-group':'Four sixteenths',half:'Half note',eighth:'Eighth note','quarter-rest':'Quarter rest','half-rest':'Half rest','dotted-half':'Dotted half','sixteenth-pair':'Two sixteenths'};
+const people=new Map(PEOPLE.map(person=>[person.id,person]));
+const topics={story:'What brings you here?',route:'Which way would you go?',inventory:'About my notes…'};
+const topicNames={story:'Your story',route:'A way forward',inventory:'Your carried notes'};
+const count=stock=>Object.values(stock).reduce((total,n)=>total+n,0);
+const beatText=kind=>`${kind.beats===.5?'½':kind.beats} beat${kind.beats<=1?'':'s'}`;
+let storageAvailable=true;
+function read(key){try{return localStorage.getItem(key);}catch{storageAvailable=false;return null;}}
+function write(key,value){try{localStorage.setItem(key,value);return true;}catch{storageAvailable=false;return false;}}
+let saved=null;try{saved=JSON.parse(read(SAVE_KEY));}catch{}
+const game=createStoryGame({saved}),audio=createRhythmAudio({enabled:read(SOUND_KEY)!=='off'});
+let selectedPerson=people.has(saved?.conversation?.person)?saved.conversation.person:'nell';
+let selectedTopic=Object.hasOwn(topics,saved?.conversation?.topic)?saved.conversation.topic:'story';
+let soundEnabled=read(SOUND_KEY)!=='off',audioRevision=0;
+let message=game.state.phase==='continued'?'Your chosen path and carried notes are ready.':saved?'Your notes and your place in the conversation are ready.':'Nell has kept a parcel for you. Talk to the others before choosing your rhythm.';
 
-function legend(){
- return NOTE_KINDS.map(kind=>`<div class="legend-row"><span class="legend-symbol" aria-hidden="true" style="--tile-color:${colors[kind.id]}">${symbolMarkup(kind.id)}</span><span class="legend-name">${kind.label}</span><span class="legend-beats">${beatsText(kind.beats)}</span></div>`).join('');
+function snapshot(){return{...game.state,selectedPerson,selectedTopic};}
+Object.defineProperty(window,'quietBell',{value:Object.freeze({get state(){return snapshot();}})});
+function save(){write(SAVE_KEY,JSON.stringify({...game.serialize(),conversation:{person:selectedPerson,topic:selectedTopic}}));updateSave();}
+function updateSave(){$('save-status').textContent=storageAvailable?'Progress saves on this device.':'Saving is unavailable in this browser. Keep this page open to retain your progress.';}
+function stopAudio(){audioRevision++;audio.stop();}
+async function play(recipe){const revision=++audioRevision;audio.stop();if(!recipe.length||!soundEnabled)return;await audio.unlock();if(revision===audioRevision&&!document.hidden&&!$('help-dialog').open)audio.playPattern(recipe);}
+function talk(){
+  const state=game.state,person=people.get(selectedPerson),outcome=state.routeId?ROUTE_OUTCOMES[state.routeId]:null;
+  let text=person[selectedTopic];
+  if(state.phase==='continued'){
+    if(selectedTopic==='story')text=outcome.replies[selectedPerson];
+    else if(selectedTopic==='route')text=`Our next stop is ${outcome.title}. ${outcome.copy}`;
+    else text=`You kept ${count(state.receipt.inventoryAfterConsumption)} blocks from the original parcel. Nell has sent three more: a half note, a quarter note, and paired eighths. You now have ${count(state.inventory)} blocks ready for the next page.`;
+  }else if(selectedTopic==='inventory'&&selectedPerson==='nell')text=`You have ${count(state.inventory)} blocks, including any you are arranging on the floor. Only the notes in the answer are spent when you play it. I will send three more to our next stop; everything you keep travels with you.`;
+  $('speaker').textContent=`${person.name} · ${person.role}`;
+  $('talk-about').textContent=topicNames[selectedTopic];$('dialogue').textContent=text;
+  for(const button of root.querySelectorAll('[data-person]'))button.setAttribute('aria-pressed',String(button.dataset.person===selectedPerson));
+  for(const button of root.querySelectorAll('[data-topic]')){button.setAttribute('aria-pressed',String(button.dataset.topic===selectedTopic));button.textContent=state.phase==='continued'&&button.dataset.topic==='route'?'Where are we headed?':topics[button.dataset.topic];}
+  $('demo').hidden=state.phase!=='room'||selectedTopic!=='route';
+  $('demo').disabled=!soundEnabled;$('demo').textContent=`Hear ${person.name}’s rhythm`;
 }
-$('legend').innerHTML=legend();$('help-legend').innerHTML=legend();
-function updateSound(){const button=$('sound');button.textContent=soundEnabled?'Sound on':'Sound off';button.setAttribute('aria-pressed',String(soundEnabled));}
-updateSound();
-function announce(message){$('announcement').textContent=message;}
-function feedback(message){clearTimeout(feedbackTimer);$('feedback').textContent=message;feedbackTimer=setTimeout(()=>{$('feedback').textContent='Four beats to clear. More runs, bigger combos.';},5000);}
-function stopHeld(){for(const timer of held.values())clearTimeout(timer);held.clear();}
-function update(){
- if(game.revision===seenRevision)return;
- seenRevision=game.revision;state=game.state;
- const clearing=new Set(state.clearingMatches.flatMap(pattern=>pattern.cells.map(cell=>`${cell.row}:${cell.col}`)));
- const signature=JSON.stringify([state.board,state.boardOwners])+[...clearing].join('|');
- if(signature!==boardSignature){
-  boardSignature=signature;const fragment=document.createDocumentFragment();
-  state.board.forEach((row,r)=>row.forEach((kind,c)=>{if(kind)fragment.append(tile(kind,r,c,`settled${clearing.has(`${r}:${c}`)?' clearing':''}`,state.boardOwners[r][c]));}));
-  $('settled').replaceChildren(fragment);
- }
- $('active').replaceChildren();$('ghost').replaceChildren();
- if(state.active){
-  const piece=state.active;let landing=piece.row;
-  while(absoluteCells(piece,landing+1,piece.col).every(cell=>cell.row>=0&&cell.row<ROWS&&cell.col>=0&&cell.col<COLUMNS&&!state.board[cell.row][cell.col]))landing++;
-  for(const cell of absoluteCells(piece))$('active').append(tile(cell.kind,cell.row,cell.col,'active',piece.id));
-  if(landing>piece.row)for(const cell of absoluteCells(piece,landing,piece.col))$('ghost').append(tile(cell.kind,cell.row,cell.col,'ghost',piece.id));
-  $('board').setAttribute('aria-label',`${piece.shape} piece in column ${piece.col+1}. ${piece.cells.map(cell=>NOTE_KIND_BY_ID[cell.kind].label).join(', ')}. Left and right move, up rotates, down lowers, space drops, P pauses.`);
- }
- $('score').textContent=format.format(state.score);$('level').textContent=state.level;
- if(state.score>best){best=state.score;save(BEST_KEY,best);}
- $('best').textContent=format.format(best);$('progress').value=state.score%1000;
- $('level-hint').textContent=`${format.format(1000-state.score%1000)} points to level ${state.level+1}`;
- renderPreview(state.next);
- const running=!['idle','over'].includes(state.phase);
- $('pause').disabled=!running;$('pause').textContent=state.paused?'Resume':'Pause';$('restart').disabled=state.phase==='idle';
- $('overlay').hidden=running&&!state.paused;
- $('overlay-restart').hidden=!state.paused;
- if(state.paused){$('overlay-kicker').textContent='Take a breath';$('overlay-title').textContent='Paused';$('overlay-copy').textContent='Your rhythm will be right here when you’re ready.';$('primary-action').textContent='Resume';$('overlay-hint').textContent='P or Escape also resumes.';}
- else if(state.phase==='over'){$('overlay-kicker').textContent=`Level ${state.level} · ${format.format(state.score)} points`;$('overlay-title').textContent='That’s a wrap.';$('overlay-copy').textContent='The stack reached the top. Start a fresh board and find your next rhythm.';$('primary-action').textContent='Play again';$('overlay-hint').textContent=`Best score: ${format.format(best)}`;}
- const clearInUpdate=state.events.some(event=>event.id>lastEvent&&event.type==='clear');
- for(const event of state.events){
-  if(event.id<=lastEvent)continue;lastEvent=event.id;
-  if(event.type==='clear'){
-   const runs=event.patterns.length,comboRuns=event.comboRuns??runs;
-   const message=`${runs>1?`${runs} × 4 beats`:'4 beats'}! +${format.format(event.points)}${comboRuns>1?` · Combo: ${comboRuns} runs`:''}${event.chain>1?` · Chain ×${event.chain}`:''}`;
-   feedback(message);announce(`${message}. Score ${event.score}. Level ${event.level}.`);
-   audio.playPattern([...event.patterns].sort((a,b)=>b.units-a.units)[0].kinds);
-  }else if(event.type==='level'&&!clearInUpdate){feedback(`Level ${event.level} · Pick up the tempo`);announce(`Level ${event.level}. The blocks fall faster.`);}
-  else if(event.type==='over'){audio.stop();stopHeld();announce(`Game over. ${state.score} points.`);$('primary-action').focus({preventScroll:true});}
- }
-}
-function begin(){stopHeld();audio.stop();void audio.unlock();game.start();lastFrame=performance.now();update();$('board').focus({preventScroll:true});feedback('Find four beats. Stack up combos.');}
-function resume(){if($('help-dialog').open)return;void audio.unlock();game.resume();lastFrame=performance.now();update();$('board').focus({preventScroll:true});}
-function pause(){stopHeld();audio.stop();game.pause();update();}
-function togglePause(){if(state.paused)resume();else pause();}
-function action(name){if($('help-dialog').open)return;if(name==='left')game.move(-1);if(name==='right')game.move(1);if(name==='down')game.softDrop();if(name==='drop')game.hardDrop();if(name==='rotate')game.rotate(1);update();}
-$('primary-action').addEventListener('click',()=>state.paused?resume():begin());
-$('restart').addEventListener('click',begin);$('overlay-restart').addEventListener('click',begin);$('pause').addEventListener('click',togglePause);
-$('sound').addEventListener('click',()=>{soundEnabled=!soundEnabled;audio.setEnabled(soundEnabled);save(SOUND_KEY,soundEnabled?'on':'off');updateSound();if(soundEnabled)void audio.unlock();});
-$('help').addEventListener('click',()=>{pause();$('help-dialog').showModal();});
-function closeHelp(){$('help-dialog').close();if(state.paused)$('primary-action').focus({preventScroll:true});}
-$('help-close').addEventListener('click',closeHelp);$('help-done').addEventListener('click',closeHelp);
-$('help-dialog').addEventListener('cancel',()=>{stopHeld();});
-$('exit').addEventListener('click',event=>{pause();void audio.suspend();if(window.parent!==window){event.preventDefault();window.parent.postMessage({coda:1,game:'rhythm-blocks',type:'close'},location.origin);}});
-for(const button of document.querySelectorAll('[data-action]')){
- const name=button.dataset.action;
- button.addEventListener('pointerdown',event=>{
-  if(event.button!==0)return;event.preventDefault();button.setPointerCapture(event.pointerId);stopHeld();action(name);
-  if(name!=='drop'&&name!=='rotate'&&!state.paused&&!['idle','over'].includes(state.phase)){
-   const repeat=()=>{action(name);if(!held.has(button))return;held.set(button,setTimeout(repeat,name==='down'?65:100));};
-   held.set(button,setTimeout(repeat,180));
+function render(){
+  const active=document.activeElement,focusedKind=active?.dataset?.kind,focusedNote=active?.dataset?.remove;
+  const state=game.state,continued=state.phase==='continued',recipe=continued?state.receipt.recipe:state.phrase;
+  const units=recipe.reduce((total,kind)=>total+NOTE_KIND_BY_ID[kind].units,0);
+  $('total').textContent=`${units/2} / 4 beats`;root.querySelector('.mg-floor').dataset.ready=String(units===8);
+  $('phrase').innerHTML=recipe.map((kind,index)=>`<button type="button" class="mg-phrase-note" data-remove="${index}" aria-label="${continued?shortNames[kind]:'Return '+shortNames[kind]+' to your satchel'}" style="grid-column:span ${NOTE_KIND_BY_ID[kind].units};--mg-tile:${colors[kind]}"${continued?' disabled':''}>${symbolMarkup(kind)}</button>`).join('');
+  $('phrase').setAttribute('aria-label',`${continued?'Your played answer':'Your answer'}: ${recipe.length?recipe.map(kind=>NOTE_KIND_BY_ID[kind].label).join(', '):'empty'}. ${units/2} of four beats.`);
+  $('stock').innerHTML=NOTE_KINDS.map(kind=>`<button type="button" class="mg-stock-note" data-kind="${kind.id}" aria-label="${kind.label}, ${beatText(kind)}, ${state.availableInventory[kind.id]} available" style="--mg-tile:${colors[kind.id]}"${continued||state.availableInventory[kind.id]<1||state.units+kind.units>8?' disabled':''}><span class="mg-count">×${state.availableInventory[kind.id]}</span>${symbolMarkup(kind.id)}<span class="mg-kind-name">${shortNames[kind.id]}</span><span class="mg-beat-value">${beatText(kind)}</span></button>`).join('');
+  $('stock-title').textContent=continued?'For the next page':'Your note blocks';$('held').textContent=`${count(state.availableInventory)} carried`;
+  $('listen').disabled=!recipe.length||!soundEnabled;$('undo').disabled=!state.phrase.length&&!continued;$('commit').disabled=!state.canCommit;
+  $('edit-hint').textContent=continued?'This is the answer you played. Revisit it to try another path.':'Choose notes from your satchel. Tap a placed note to take it back.';
+  $('status').textContent=message;
+  $('pack-heading').textContent=continued?'Your next parcel':'Your starting parcel';$('ledger').hidden=!continued;
+  $('ledger').innerHTML=continued?`<div><strong>${state.receipt.recipe.length}</strong><span>Used</span></div><div><strong>${count(state.receipt.inventoryAfterConsumption)}</strong><span>Carried</span></div><div><strong>3</strong><span>Received</span></div>`:'';
+  $('pack').innerHTML=(continued?state.receipt.received:[]).map(kind=>`<span class="mg-pack-item" style="--mg-tile:${colors[kind]}" aria-label="Received ${NOTE_KIND_BY_ID[kind].label}">${symbolMarkup(kind)}</span>`).join('');
+  $('pack-copy').textContent=continued?'Three new blocks join everything you kept.':'One of each note type. Unspent notes travel with you.';
+  $('story-state').textContent=continued?`Your first answer leads to ${ROUTE_OUTCOMES[state.routeId].title}.`:'Three people. Three ways forward. Your rhythm chooses the path.';
+  $('seen-routes').textContent=state.discoveredRoutes.length?`Paths you have found: ${state.discoveredRoutes.map(id=>ROUTE_OUTCOMES[id].title).join(' · ')}`:'';
+  $('outcome').hidden=!continued;
+  if(continued){const outcome=ROUTE_OUTCOMES[state.routeId];$('outcome-kicker').textContent=outcome.kicker;$('outcome-title').textContent=outcome.title;$('outcome-copy').textContent=outcome.copy;}
+  $('sound').textContent=soundEnabled?'Sound on':'Sound off';$('sound').setAttribute('aria-pressed',String(soundEnabled));
+  talk();updateSave();
+  // Updating counts replaces note controls. Keep keyboard navigation in the
+  // satchel or phrase rather than sending focus back to the page header.
+  if(focusedKind){
+    const same=root.querySelector('[data-kind="'+focusedKind+'"]');
+    const next=NOTE_KINDS.slice(NOTE_KINDS.findIndex(kind=>kind.id===focusedKind)+1).map(kind=>root.querySelector('[data-kind="'+kind.id+'"]')).find(button=>!button.disabled);
+    const target=(!same?.disabled?same:next??root.querySelector('[data-kind]:not(:disabled)'))??(state.canCommit?$('commit'):state.phrase.length?$('undo'):null);
+    target?.focus({preventScroll:true});
+  }else if(focusedNote!==undefined){
+    const target=root.querySelector('[data-remove="'+Math.min(Number(focusedNote),recipe.length-1)+'"]:not(:disabled)')??root.querySelector('[data-kind]:not(:disabled)');
+    target?.focus({preventScroll:true});
   }
- });
- button.addEventListener('pointerup',stopHeld);button.addEventListener('pointercancel',stopHeld);button.addEventListener('lostpointercapture',stopHeld);
- // Keyboard/assistive-technology activation has no preceding pointerdown.
- button.addEventListener('click',event=>{if(event.detail===0)action(name);});
 }
-document.addEventListener('keydown',event=>{
- if(event.altKey||event.ctrlKey||event.metaKey||$('help-dialog').open)return;
- if(event.target.closest('input,textarea,select,[contenteditable="true"]'))return;
- const key=event.key.toLowerCase();
- if((key===' '||key==='enter')&&event.target.closest('button,a'))return;
- const movement={arrowleft:'left',a:'left',arrowright:'right',d:'right',arrowdown:'down',s:'down',' ':'drop'};
- if(movement[key]){event.preventDefault();if(key===' '&&event.repeat)return;action(movement[key]);}
- else if(key==='arrowup'||key==='x'||key==='z'){event.preventDefault();if(!event.repeat){game.rotate(key==='z'?-1:1);update();}}
- else if(key==='p'||key==='escape'){event.preventDefault();if(!event.repeat)togglePause();}
- else if(key==='r'){event.preventDefault();if(!event.repeat)begin();}
- else if(key==='enter'){event.preventDefault();if(!event.repeat){if(state.phase==='idle'||state.phase==='over')begin();else if(state.paused)resume();}}
+function edit(action){stopAudio();if(!action())return;message=game.state.canCommit?'Four beats. Listen, or play your answer to the room.':'Build your four-beat answer.';render();save();}
+function commit(){stopAudio();if(!game.commit())return;selectedTopic='story';selectedPerson=game.state.routeId==='garden'?'iris':game.state.routeId==='workshop'?'pip':'nell';message=`Your answer leads to ${ROUTE_OUTCOMES[game.state.routeId].title}.`;render();save();void play(game.state.receipt.recipe);$('announcement').textContent=message;$('outcome').scrollIntoView({behavior:'instant',block:'nearest'});$('revisit').focus({preventScroll:true});}
+function undo(){const wasContinued=game.state.phase==='continued';stopAudio();if(!game.undo())return;selectedTopic=wasContinued?'story':selectedTopic;message=wasContinued?'Back at the depot. Your original notes are restored.':'Note returned to your satchel.';render();save();if(wasContinued)root.querySelector('[data-person="'+selectedPerson+'"]').focus({preventScroll:true});}
+function restart(){stopAudio();game.restart();selectedPerson='nell';selectedTopic='story';message='A fresh parcel. The paths you have found remain in your story.';render();save();root.querySelector('[data-person="nell"]').focus({preventScroll:true});}
+root.addEventListener('click',event=>{
+  const button=event.target.closest('button');if(!button||button.disabled)return;
+  if(button.dataset.person){stopAudio();selectedPerson=button.dataset.person;selectedTopic='story';talk();save();return;}
+  if(button.dataset.topic){stopAudio();selectedTopic=button.dataset.topic;talk();save();return;}
+  if(button.dataset.kind){edit(()=>game.add(button.dataset.kind));return;}
+  if(button.dataset.remove!==undefined){edit(()=>game.remove(Number(button.dataset.remove)));return;}
+  switch(button.id){
+    case'demo':void play(people.get(selectedPerson).demo);break;
+    case'listen':void play(game.state.phase==='continued'?game.state.receipt.recipe:game.state.phrase);break;
+    case'commit':commit();break;
+    case'undo':case'revisit':undo();break;
+    case'restart':restart();break;
+    case'sound':stopAudio();soundEnabled=!soundEnabled;audio.setEnabled(soundEnabled);write(SOUND_KEY,soundEnabled?'on':'off');render();break;
+    case'help':stopAudio();$('help-dialog').showModal();break;
+  }
 });
-function backgroundPause(){pause();void audio.suspend();}
-window.addEventListener('blur',backgroundPause);document.addEventListener('visibilitychange',()=>{if(document.hidden)backgroundPause();});
-window.addEventListener('pagehide',()=>{stopHeld();clearTimeout(feedbackTimer);void audio.destroy();});
-Object.defineProperty(window,'rhythmBlocks',{value:Object.freeze({get state(){return game.state;},get columns(){return COLUMNS;},get rows(){return ROWS;}})});
-function frame(now){const elapsed=Math.min(100,Math.max(0,now-lastFrame));lastFrame=now;if(game.tick(elapsed))update();requestAnimationFrame(frame);}
-update();$('primary-action').focus({preventScroll:true});requestAnimationFrame(frame);
+for(const id of ['help-close','help-done'])$(id).addEventListener('click',()=>$('help-dialog').close());
+$('help-notes').innerHTML=NOTE_KINDS.map(kind=>`<div class="mg-help-note">${symbolMarkup(kind.id)}<span>${kind.label}</span><span>${beatText(kind)}</span></div>`).join('');
+document.addEventListener('keydown',event=>{
+  if(event.altKey||event.ctrlKey||event.metaKey||$('help-dialog').open||event.target.closest('input,textarea,select,[contenteditable="true"]'))return;
+  if(event.repeat)return;
+  if(/^[1-9]$/.test(event.key)){event.preventDefault();edit(()=>game.add(NOTE_KINDS[Number(event.key)-1].id));}
+  else if(event.key==='Backspace'){event.preventDefault();undo();}
+});
+function exit(event){stopAudio();void audio.suspend();if(window.parent!==window){event.preventDefault();window.parent.postMessage({coda:1,game:'rhythm-blocks',type:'close'},location.origin);}}
+$('exit').addEventListener('click',exit);$('outcome-exit').addEventListener('click',exit);
+function background(){stopAudio();void audio.suspend();}
+window.addEventListener('blur',background);document.addEventListener('visibilitychange',()=>{if(document.hidden)background();});
+window.addEventListener('pagehide',()=>{stopAudio();void audio.destroy();});
+render();
+root.querySelector('[data-person="'+selectedPerson+'"]').focus({preventScroll:true});

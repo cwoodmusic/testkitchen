@@ -1,43 +1,78 @@
 <!doctype html>
 <html lang="en">
 <head>
-<meta charset="utf-8">
-<meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
-<meta name="theme-color" content="#0c1728">
-<title>Rhythm Blocks · Coda Arcade</title>
-<link rel="stylesheet" href="style.css?v=rhythm-blocks-four-1">
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
+  <meta name="theme-color" content="#292132">
+  <meta name="description" content="The Quiet Bell: a story told in rhythm. Meet three townspeople, arrange four beats, and choose where your story goes.">
+  <title>The Quiet Bell · Coda Arcade</title>
+  <link rel="stylesheet" href="style.css?v=quiet-bell-page-one-1">
 </head>
 <body>
-<div class="app">
-  <header class="header">
-    <div><a class="eyebrow" id="exit" href="../../world-preview.html?v=rhythm-blocks-four-1">← Coda Arcade</a><h1>Rhythm Blocks<span class="title-mark" aria-hidden="true">♫</span></h1></div>
-    <nav aria-label="Game controls"><button id="sound" aria-pressed="true">Sound on</button><button id="help">How to play</button></nav>
-  </header>
-  <main class="game-layout">
-    <aside class="dashboard" aria-label="Game statistics">
-      <div class="score-card"><span class="label">Score</span><strong id="score">0</strong><span class="best">Best <span id="best">0</span></span></div>
-      <div class="level-card"><div class="stat-line"><span class="label">Level</span><strong id="level">1</strong></div><progress id="progress" max="1000" value="0" aria-label="Progress to next level"></progress><span id="level-hint">1,000 points to level 2</span></div>
-      <div class="next-card"><span class="label">Up next</span><div id="next-symbol" class="next-symbol" role="img" aria-label="Next piece"></div><strong id="next-label">—</strong><span id="next-beats"></span></div>
-      <div class="desktop-hint"><p><b>4 beats</b> clears a pattern.<br><b>Multiple runs</b> earn combo points.</p><p>Rotate shapes. Any connected four-beat sequence clears, across or down.</p></div>
-      <div class="run-controls"><button id="restart" disabled>Restart</button></div>
-    </aside>
-    <section class="play-column" aria-label="Play Rhythm Blocks">
-      <div class="board-caption"><span>10 × 24 · Build a rhythm</span><button id="pause" disabled>Pause</button></div>
-      <div id="board" class="board" tabindex="0" role="application" aria-label="Rhythm Blocks. Ten columns and twenty-four rows. Left and right move, up rotates, down lowers, space drops, P pauses.">
-        <div class="danger-zone" aria-hidden="true"></div><div id="settled" aria-hidden="true"></div><div id="ghost" aria-hidden="true"></div><div id="active" aria-hidden="true"></div>
-        <div id="overlay" class="overlay">
-          <div class="overlay-card"><span class="eyebrow" id="overlay-kicker">A musical puzzle</span><h2 id="overlay-title">Make a measure.</h2><p id="overlay-copy">Line up notes to make four beats, across or down. Clear multiple four-beat runs in one drop for a combo bonus.</p><button class="primary" id="primary-action">Start game</button><button id="overlay-restart" hidden>New game</button><span id="overlay-hint">Each square has its own note value.</span></div>
+<div id="quiet-bell">
+  <div class="mg-game" data-values="true">
+    <header class="mg-header">
+      <div><a class="mg-back" id="exit" href="../../world-preview.html?v=quiet-bell-page-one-1">← Coda Arcade</a><h1>THE QUIET BELL</h1><p class="mg-page-title">Page 1 · The parcel</p></div>
+      <nav class="mg-nav" aria-label="Game controls"><button type="button" class="mg-button" id="sound" aria-pressed="true">Sound on</button><button type="button" class="mg-button" id="help">How to play</button></nav>
+    </header>
+    <p class="mg-intro"><strong>Mira has inherited a silent town bell.</strong> Nell has been keeping a parcel for someone who can make it answer.</p>
+    <main class="mg-layout">
+      <section aria-label="The parcel depot and your answer">
+        <div class="mg-scene-head"><h2 class="mg-scene-name">The Parcel Depot</h2><span class="mg-small">The first answer</span></div>
+        <div class="mg-scene">
+          <img class="mg-art" src="assets/parcel-depot.jpg?v=quiet-bell-page-one-1" width="1536" height="1024" alt="Nell behind the post counter, Iris the gardener, Pip the courier, and Mira gathered in a room of music boxes.">
+          <div class="mg-people" role="group" aria-label="People in the room">
+            <button type="button" class="mg-person" data-person="nell" aria-label="Talk to Nell, the postkeeper" aria-pressed="true" style="left:12.3%;top:16.8%;height:17%"><span>Nell</span></button>
+            <button type="button" class="mg-person" data-person="iris" aria-label="Talk to Iris, the gardener" aria-pressed="false" style="left:48.7%;top:31.3%;height:23%"><span>Iris</span></button>
+            <button type="button" class="mg-person" data-person="pip" aria-label="Talk to Pip, the courier" aria-pressed="false" style="left:78.2%;top:31.8%;height:23%"><span>Pip</span></button>
+          </div>
+          <div class="mg-floor" data-ready="false"><div class="mg-phrase" id="phrase" role="group" aria-label="Your four-beat answer"></div><div class="mg-ruler" aria-hidden="true"><span>1</span><span>2</span><span>3</span><span>4</span></div></div>
         </div>
-      </div>
-      <div id="feedback" class="feedback" aria-hidden="true">Four beats. One good idea.</div>
-      <div class="touch-controls" aria-label="Touch controls"><button data-action="left" aria-label="Move left">←</button><button data-action="right" aria-label="Move right">→</button><button data-action="rotate" aria-label="Rotate piece"><svg viewBox="0 0 24 24" width="19" height="19" aria-hidden="true" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M19 8a8 8 0 1 0 1 8M19 3v5h-5"/></svg></button><button data-action="down" aria-label="Lower block">↓</button><button data-action="drop" aria-label="Drop block">Drop <span aria-hidden="true">↓</span></button></div>
-      <p class="keyboard-hint"><kbd>←</kbd> <kbd>→</kbd> move · <kbd>↑</kbd> rotate · <kbd>↓</kbd> lower · <kbd>Space</kbd> drop</p>
+        <p class="mg-talk-help">Choose someone in the room to talk to.</p>
+        <section class="mg-dialogue" aria-label="Conversation">
+          <div class="mg-speaker"><span id="speaker">Nell · Postkeeper</span><span class="mg-small" id="talk-about">Your story</span></div>
+          <p id="dialogue" aria-live="polite"></p>
+          <div class="mg-questions" role="group" aria-label="What would you like to ask?">
+            <button type="button" class="mg-button" data-topic="story" aria-pressed="true">What brings you here?</button>
+            <button type="button" class="mg-button" data-topic="route" aria-pressed="false">Which way would you go?</button>
+            <button type="button" class="mg-button" data-topic="inventory" aria-pressed="false">About my notes…</button>
+          </div>
+          <button type="button" class="mg-button mg-demo" id="demo" hidden>Hear an example</button>
+        </section>
+        <section class="mg-compose" aria-label="Arrange your rhythm">
+          <div class="mg-section-head"><h2>Your answer</h2><span class="mg-meter" id="total">0 / 4 beats</span></div>
+          <div class="mg-actions"><button type="button" class="mg-button" id="listen" disabled>Listen</button><button type="button" class="mg-button" id="undo" disabled>Undo</button><button type="button" class="mg-button mg-primary" id="commit" disabled>Play your answer</button></div>
+          <p class="mg-help" id="edit-hint">Choose notes from your satchel. Tap a placed note to take it back.</p>
+          <p class="mg-status" id="status" aria-live="polite">Talk to the others before choosing your rhythm.</p>
+        </section>
+      </section>
+      <aside class="mg-side" aria-label="Your carried note inventory">
+        <div class="mg-section-head"><h2 id="stock-title">Your note blocks</h2><span class="mg-small" id="held">9 carried</span></div>
+        <div class="mg-stock" id="stock"></div>
+        <section class="mg-packs"><h2 id="pack-heading">Your starting parcel</h2><div class="mg-ledger" id="ledger" hidden></div><div class="mg-pack-list" id="pack"></div><p class="mg-small" id="pack-copy" style="margin-top:9px">One of each note type. Unspent notes travel with you.</p></section>
+        <section class="mg-promise"><div class="mg-section-head"><h2>Your story</h2><button type="button" class="mg-button" id="restart">Start over</button></div><p id="story-state">Three people. Three ways forward. Your rhythm chooses the path.</p><p class="mg-seen" id="seen-routes"></p></section>
+      </aside>
+    </main>
+    <section class="mg-outcome" id="outcome" aria-labelledby="outcome-title" hidden>
+      <span class="mg-brand" id="outcome-kicker"></span><h2 id="outcome-title"></h2><p class="mg-outcome-copy" id="outcome-copy"></p>
+      <p class="mg-saved-note">Page one ends here. More pages are on the way.</p>
+      <div class="mg-actions"><button type="button" class="mg-button mg-primary" id="revisit">Revisit your answer</button><a class="mg-button" id="outcome-exit" href="../../world-preview.html?v=quiet-bell-page-one-1">Return to arcade</a></div>
     </section>
-    <aside class="reference" aria-label="Note values"><span class="eyebrow">Your rhythm toolkit</span><h2>Every beat counts.</h2><div id="legend" class="legend"></div><div class="match-example"><b>Half + half = 4 beats</b><span>Any four beats counts. Find several runs in one drop for a combo.</span></div></aside>
-  </main>
-  <p id="announcement" class="sr-only" aria-live="polite" aria-atomic="true"></p>
+    <p class="mg-save" id="save-status">Progress saves on this device.</p>
+  </div>
 </div>
-<dialog id="help-dialog" aria-labelledby="help-title"><button id="help-close" class="dialog-close" aria-label="Close instructions">×</button><span class="eyebrow">How to play</span><h2 id="help-title">Stack notes. Make rhythms.</h2><p>Move and rotate each four-square shape. Every square has its own note or rest. <b>Any connected sequence totaling four beats</b> clears in a straight row or column. It can be part of a longer line, and the notes can come from the same piece.</p><p>Each four-beat run earns <b>200 points</b>. Make more than one run in a single drop for a <b>combo bonus: 100 points per additional run</b>. Two runs earn 500 points; three earn 800. Eight beats can clear as two four-beat runs. Overlapping runs in the same row or column count once; crossing horizontal and vertical runs can form a combo.</p><p>Cleared spaces collapse. Chain reactions multiply the base run points, and additional runs in that same drop keep adding to the combo. Every <b>1,000 points</b> raises the level and the falling speed. The game ends when the stack reaches the top.</p><div id="help-legend" class="legend"></div><p>A single eighth note and a pair of sixteenths each count as half a beat. Half notes and half rests count as two beats; dotted halves count as three. Rests count toward a pattern and sound as silence.</p><p><b>Controls:</b> left/right or A/D to move, up or X to rotate clockwise, Z to rotate counterclockwise, down or S to lower, Space to drop, P or Escape to pause, R to restart. Use the buttons below the board on a touch screen.</p><button id="help-done" class="primary">Got it</button></dialog>
-<script type="module" src="app.mjs?v=rhythm-blocks-four-1"></script>
+<dialog id="help-dialog" aria-labelledby="help-title">
+  <button type="button" id="help-close" aria-label="Close instructions">×</button><h2 id="help-title">A story told in rhythm.</h2>
+  <p>Talk to Nell, Iris, and Pip. Each has a reason to restore the bell—and a clue about the road ahead. Ask about their story, their suggested route, or the notes you are carrying.</p>
+  <p>Choose notes from your satchel to arrange an answer of <strong>exactly four beats</strong>. The order and kinds you use determine where the story goes. <strong>Play your answer</strong> spends those notes. Everything you keep travels with you, along with three new blocks at the next stop.</p>
+  <p>You can listen and edit freely before playing your answer. Tap a placed tile to return it, or use Undo. After choosing a path, Revisit restores the notes you had before that choice.</p>
+  <div class="mg-help-notes" id="help-notes" aria-label="Note values"></div>
+  <p>Rests fill time with silence. A single eighth and a pair of sixteenths each fill half a beat; they make different rhythms. No one is timing you.</p>
+  <p><strong>Keyboard:</strong> 1–9 choose note types in satchel order; Backspace undoes. Tab, Enter, and Space work with every button. Escape closes these instructions.</p>
+  <p>This opening page saves on this device. Cross-device progress and Notes rewards will come later.</p>
+  <button type="button" id="help-done">Meet the townspeople</button>
+</dialog>
+<p id="announcement" class="sr-only" aria-live="polite" aria-atomic="true"></p>
+<script type="module" src="app.mjs?v=quiet-bell-page-one-1"></script>
 </body>
 </html>
