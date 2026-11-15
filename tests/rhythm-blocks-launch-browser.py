@@ -65,6 +65,7 @@ class RhythmBlocksLaunchTests(world.WorldBrowserCase):
         self.page.keyboard.press('Enter')
         self.assertIn('iris', frame.locator('#speaker').inner_text().lower())
         self.assertEqual(frame.evaluate('quietBell.state.phase'), 'room')
+        self.assertTrue(frame.evaluate('Object.values(quietBell.state.inventory).every(count=>count===0)'))
         frame.get_by_role('link', name=re.compile('arcade', re.I)).click()
         self.page.wait_for_function('!CodaArcadeQA.menu().gameOpen')
         self.assertEqual(self.page.url, WORLD)

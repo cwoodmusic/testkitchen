@@ -1,29 +1,30 @@
 # The Quiet Bell
 
-The Quiet Bell is the story-puzzle evolution of Rhythm Blocks. Its first playable page, **The parcel**, replaces the falling-block interface at `games/rhythm-blocks/`. The URL, arcade game ID `rhythm-blocks`, and host key `rhythmBlocks` stay stable. Open `index.html` over HTTP or launch the game through the arcade. No build step or external service is required.
+The Quiet Bell is the dungeon-puzzle evolution of Rhythm Blocks. Its first playable room replaces the falling interface at `games/rhythm-blocks/`; the URL, arcade game ID `rhythm-blocks`, and host key `rhythmBlocks` stay stable. Choose **Games → The Quiet Bell** in the arcade. It runs as static files with no build step or external service.
 
-Mira receives nine musical tiles at the parcel depot. Nell the postkeeper, Iris the gardener, and Pip the courier each have a place in the story, a reason to care about the silent bell, and a different route to suggest. Select a resident to talk about their story, a way forward, or the notes you are carrying. Their example rhythms can be heard without spending tiles or filling the answer.
+Mira starts with an empty satchel in the Parcel Depot. Nell the postkeeper offers eight note types through conversation; the delivery chest contains the missing half note. Both can be collected once per run, in either order. Iris the gardener and Pip the courier have their own stories and clues about the room’s three physical doors.
 
-Choose tiles from the satchel to arrange an ordered answer totaling exactly four beats. Listen before committing, or return placed tiles to try another phrase. There is no falling timer, movement grid, combat, score, or penalty for experimenting. Committing spends the actual tiles used. Unspent tiles carry forward, and a parcel of three new tiles is added for the next stop.
+Choose a door and arrange its exact ordered four-beat key. The garden requires a half rest followed by a half note. The workshop requires a half note, paired eighths, then four sixteenths. The canal requires a half note, a quarter, then paired eighths. Hear a lock or a resident’s example without spending notes. Another four-beat rhythm does not open the selected lock and does not spend anything.
 
-The first page has three outcomes. A rest first leads to the Garden Gate and takes priority over every other pattern. Otherwise, two or more grouped-note tiles lead to Makers Lane. All other four-beat answers lead to the Canal Landing. The grouped tiles are paired eighths, four sixteenths, and paired sixteenths; a single eighth is not a grouped tile. Different note orders can therefore lead to different destinations even when their total duration matches.
+Opening a door consumes only its key; unspent notes travel onward. Walking through a door gives no automatic notes. Future sources are authored conversations, chests, and hidden caches. The balanced dungeon plan is in `design/music-puzzler/dungeon.json`; its verifier checks every reachable inventory and pickup order so all three regular and two secret endings use every note. Four explicit dead ends may retain notes. Only the depot and its three departure outcomes are currently playable; later rooms and hidden doors are planned in the checked graph.
 
-This release ends with the first-page outcome and the carried inventory for the next stop. The next story page, the later promises and seals, the complete chapter, profile endings, and currency rewards are not implemented here. An opening choice does not earn a later-page promise or flag. The outcome can be revisited to try another answer.
+Undo returns a staged note. After opening a door, Revisit restores the collected notes and leaves the parcel/chest receipts intact, so they cannot be collected again. Start over begins a new run with an empty satchel and resets those sources; the names of discovered paths remain informational.
 
-Quarter notes, paired eighths, four sixteenths, and quarter rests each fill one beat. Half notes and half rests fill two beats; dotted halves fill three. Single eighths and paired sixteenths each fill half a beat. Whole notes and whole rests are excluded. Rests play as silence; grouped notes sound their individual attacks at the proper subdivisions.
+Quarter notes, paired eighths, four sixteenths, and quarter rests each fill one beat. Half notes and half rests fill two, dotted halves fill three, and single eighths and paired sixteenths each fill half a beat. Rests sound as silence. There is no falling timer, combat, score, or penalty for listening and experimenting.
 
-Use the visible controls with a mouse, touch, or the keyboard’s native focus and activation keys. Keys 1–9 choose note kinds in the displayed inventory order; Backspace undoes the latest answer edit. Enter and Space activate the focused button. Escape closes the instructions. Select a person and dialogue topic, choose note tiles, listen, return tiles, and commit when the answer reaches four beats. Use the restart button to begin again; there is no restart shortcut. Sound is optional, starts only after an explicit action, and reuses the existing sound preference. Exit returns to the arcade host when embedded.
+Click or tap people, doors, and the chest. Keys 1–9 choose note types in inventory order; Backspace undoes. Native Tab, Enter, and Space work with the controls; Escape closes instructions. Sound starts only after an explicit action and reuses the existing sound preference. The return link preserves the arcade’s same-origin close protocol.
 
-The device-only save key `codaQuietBellPageOneV1` stores the draft or committed answer and the selected conversation. Committed progress is replayed against the opening rules so consumed tiles, carried inventory, and the single three-tile arrival remain consistent; reloading does not award another parcel. This save does not synchronize across devices. Existing falling-game scores, arcade progress, profile data, and Notes balances are preserved.
+The device-only key `codaQuietBellPageOneV1` now stores a version-2 action log of claimed sources and the chosen door, plus the draft and conversation. Reload reconstructs resources from those actions rather than trusting saved balances. Invalid histories cannot duplicate a gift or forge a paid door. The earlier version-1 opening save starts a fresh run under these new rules. Falling-game scores, shared profiles, arcade progress, and Notes balances remain untouched; cloud sync and currency rewards are not implemented.
 
-`opening.mjs` contains the opening characters, dialogue, and three outcome tableaux. The prior falling-block engine remains in `engine.mjs` for further development and regression checks; it is not the current interface. `notation.mjs` supplies inline musical engraving; see `NOTATION-SOURCES.md` and `NOTATION-LICENSE.txt`. `audio.mjs` synthesizes rhythms locally with Web Audio.
+`story.mjs` implements the opening inventory and locks; `opening.mjs` holds the characters and dialogue. `engine.mjs` retains the earlier falling-game engine and shared note catalog for regression checks. `notation.mjs` supplies musical engraving; see its license/source files. `audio.mjs` synthesizes the true note subdivisions locally. The original room artwork is bundled in `assets/parcel-depot.jpg`.
 
-From the repository root, run:
+Run from the repository root:
 
 ```sh
-node --test games/rhythm-blocks/*.test.mjs tests/arcade-host.test.cjs tests/bundled-games.test.cjs
+node --test games/rhythm-blocks/*.test.mjs tests/arcade-host.test.cjs tests/bundled-games.test.cjs design/music-puzzler/*.test.mjs
+node design/music-puzzler/dungeon-analyze.mjs
 python tests/rhythm-blocks-browser.py
 python tests/rhythm-blocks-launch-browser.py
 ```
 
-The Node suite covers game rules and the stable host/bundled-game contracts. Browser coverage exercises the new opening interface and its arcade launch. Browser tests require Python Playwright and Chromium.
+Browser tests require Python Playwright and Chromium.

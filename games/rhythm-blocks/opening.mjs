@@ -3,7 +3,7 @@
 export const OPENING = Object.freeze({
   title: 'The Quiet Bell',
   pageTitle: 'The parcel',
-  intro: 'The town bell has fallen silent. At the parcel depot, Mira finds a box of nine musical tiles—and three people who remember different parts of its song.',
+  intro: 'The town bell has fallen silent. At the parcel depot, Mira finds an old parcel, a delivery chest, and three people who remember different parts of its song.',
 });
 
 export const PEOPLE = Object.freeze([
@@ -12,9 +12,9 @@ export const PEOPLE = Object.freeze([
     name: 'Nell',
     role: 'Postkeeper',
     goal: 'Deliver the former bellkeeper’s last parcel and hear the town bell ring again.',
-    story: 'Mira, that parcel has waited behind my counter for years. The former bellkeeper asked me to keep it until someone could make the bell answer again. Iris remembers the tune. Pip thinks the little birds remember more than they let on.',
-    route: 'The canal keeper remembers the last evening our bell rang. A half note, a quarter note, then paired eighths would reach him. He listens for an ordinary sounding phrase—not a silent opening or two grouped-note tiles.',
-    inventory: 'There is one of each kind in your parcel. You only spend the tiles in the answer you commit. I will add three more for the next stop; everything you leave in your satchel travels with you.',
+    story: 'Mira, that parcel has waited behind my counter for years. The former bellkeeper asked me to keep it until someone could make the bell answer again. I packed eight kinds of notes inside. The missing half note is in that little delivery chest. Iris and Pip each know a different door through the bell dungeon.',
+    route: 'The blue canal door has the ferry keeper’s lock. Choose that door, then play a half note, a quarter note, and paired eighths, in that order. You will need the half note from the chest.',
+    inventory: 'My parcel holds eight note kinds; the half note is in the delivery chest. Each gift and chest can be collected once. Opening a door spends its exact rhythm; everything else stays in your satchel.',
     demo: ['half', 'quarter', 'eighth-pair'],
   },
   {
@@ -23,7 +23,7 @@ export const PEOPLE = Object.freeze([
     role: 'Gardener',
     goal: 'Leave room in the restored music for an absent friend’s unfinished phrase.',
     story: 'There used to be two of us playing in the garden. I still leave the other chair empty. Everyone wants the bell to ring again. I want us to hear what comes after it.',
-    route: 'Would you start with silence? A half rest, then a half note would call me toward the garden gate. Any rest at the very beginning calls the garden first, even if quick little groups follow it.',
+    route: 'The ivy-covered garden door asks for two quiet beats followed by two sounding beats: a half rest, then a half note. Choose its lock before arranging that answer. The order matters.',
     inventory: 'Rests are time for listening: a quarter rest holds one quiet beat, a half rest holds two. That dotted half note lasts three beats. You do not have to spend an unusual tile just because you can.',
     demo: ['half-rest', 'half'],
   },
@@ -33,7 +33,7 @@ export const PEOPLE = Object.freeze([
     role: 'Courier and bird-tender',
     goal: 'Wake the clockwork birds’ answering song and share it with the town.',
     story: 'Nell lets me carry the important parcels now. Usually. The little clockwork birds used to answer the bell, but their gears have forgotten the tune. I think they need someone to play back in their own small footsteps.',
-    route: 'Hear those little feet behind the workshop shutters? Try a half note, paired eighths, then four sixteenths. Two grouped-note tiles will make the makers answer. Start with a sound, though—Iris always hears a silent opening first.',
+    route: 'Choose the gear-marked workshop door. Its lock wants a half note first, then paired eighths, then four sixteenths. Three tiles, four beats, and little footsteps that grow quicker.',
     inventory: 'Paired eighths and four sixteenths each fill one beat, but they sound different. A single eighth or a pair of sixteenths fills only half a beat. The small notes are useful; I would not empty the whole parcel at once.',
     demo: ['half', 'eighth-pair', 'sixteenth-group'],
   },
@@ -45,7 +45,7 @@ export const ROUTE_OUTCOMES = Object.freeze({
     kicker: 'A quiet opening',
     copy: 'The last note fades. From beyond the depot window, the garden latch answers with a small, clear click. Iris reaches for the empty chair beside her basket.',
     replies: Object.freeze({
-      nell: 'Iris has been waiting for someone who knows how to leave a little room. I will have your next parcel ready.',
+      nell: 'Iris has been waiting for someone who knows how to leave a little room. Keep the notes you did not spend; you will need them beyond the gate.',
       iris: 'You left a breath before you spoke. Come to the garden gate; there is a phrase I would like you to hear.',
       pip: 'I will let the birds wait a moment. They make enough noise to miss a quiet answer like that.',
     }),

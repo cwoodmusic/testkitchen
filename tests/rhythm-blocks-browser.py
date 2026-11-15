@@ -1,4 +1,4 @@
-"""Real page-one UI, conversation and inventory-carry checks.
+"""Real page-one gifts, chest, physical door and inventory-carry checks.
 
 Only browser storage is seeded. Gameplay state is observed, never edited.
 """
@@ -10,7 +10,7 @@ import json
 from playwright.sync_api import sync_playwright
 
 ROOT = Path(__file__).resolve().parents[1]
-OUT = ROOT / 'work/page-one'
+OUT = ROOT / 'work/page-one-doors'
 OUT.mkdir(parents=True, exist_ok=True)
 SAVE_KEY = 'codaQuietBellPageOneV1'
 PROTECTED = {'musicArcadeV1': '{"test":"preserve arcade"}', 'codaNotesWalletV1': '{"notes":23}',
@@ -19,10 +19,11 @@ PROTECTED = {'musicArcadeV1': '{"test":"preserve arcade"}', 'codaNotesWalletV1':
 KINDS = ['quarter', 'eighth-pair', 'sixteenth-group', 'half', 'eighth', 'quarter-rest',
          'half-rest', 'dotted-half', 'sixteenth-pair']
 INITIAL = {kind: 1 for kind in KINDS}
-GRANT = ['half', 'quarter', 'eighth-pair']
+EMPTY = {kind: 0 for kind in KINDS}
+PARCEL = {kind: int(kind != 'half') for kind in KINDS}
 ROUTES = [
-    {'id': 'garden', 'name': 'Rest first outranks two groups',
-     'recipe': ['quarter-rest', 'eighth-pair', 'sixteenth-group', 'quarter'], 'person': 'pip'},
+    {'id': 'garden', 'name': 'Garden door accepts its exact quiet answer',
+     'recipe': ['half-rest', 'half'], 'person': 'pip'},
     {'id': 'workshop', 'name': 'Two grouped tiles reach the workshop',
      'recipe': ['half', 'eighth-pair', 'sixteenth-group'], 'person': 'iris'},
     {'id': 'canal', 'name': 'An ordinary sounding phrase reaches the canal',
@@ -42,7 +43,8 @@ class Quiet(SimpleHTTPRequestHandler):
 def state(page): return page.evaluate('window.quietBell.state')
 def resources(value):
     return {key: value.get(key) for key in ['phase', 'inventory', 'availableInventory', 'phrase',
-            'beats', 'canCommit', 'routeId', 'nextScene', 'receipt', 'creditedStages', 'discoveredRoutes']}
+            'beats', 'canAttempt', 'canCommit', 'routeId', 'nextScene', 'receipt', 'creditedStages',
+            'discoveredRoutes', 'selectedDoor', 'claimedSources', 'claimedGifts', 'openedChests']}
 def press(page, selector, touch=False):
     getattr(page.locator(selector), 'tap' if touch else 'click')()
 def tile(kind): return 'button[data-kind="' + kind + '"]:not([data-remove])'
@@ -62,18 +64,55 @@ def protected_storage(page):
     actual = page.evaluate('(keys)=>Object.fromEntries(keys.map(key=>[key,localStorage.getItem(key)]))', list(PROTECTED))
     assert actual == PROTECTED, actual
 
+def unavailable(page, selector):
+    return not page.locator(selector).count() or page.locator(selector).is_hidden() or page.locator(selector).is_disabled()
+
+def sources_claimed(page, touch=False):
+    press(page, 'button[data-person="nell"]', touch)
+    press(page, 'button[data-topic="story"]', touch)
+    for selector in ['#take-parcel', 'button[data-chest="depot-chest"]']:
+        before = resources(state(page))
+        if not unavailable(page, selector): press(page, selector, touch)
+        assert resources(state(page)) == before, 'Claimed gifts and chests cannot award more notes.'
+
+def collect_sources(page, touch=False):
+    assert state(page)['phase'] == 'room' and state(page)['inventory'] == EMPTY
+    visible_stock(page, EMPTY)
+    assert page.locator('#commit').is_disabled()
+    press(page, 'button[data-person="nell"]', touch)
+    press(page, 'button[data-topic="story"]', touch)
+    assert state(page)['inventory'] == EMPTY, 'Talking alone does not claim a gift.'
+    press(page, '#take-parcel', touch)
+    assert state(page)['inventory'] == PARCEL and state(page)['availableInventory'] == PARCEL
+    visible_stock(page, PARCEL)
+    assert page.locator(tile('half')).is_disabled(), 'The missing half note belongs to the chest.'
+    page.reload(); page.wait_for_function('!!window.quietBell?.state')
+    assert state(page)['inventory'] == PARCEL
+    if not unavailable(page, '#take-parcel'):
+        press(page, '#take-parcel', touch)
+        assert state(page)['inventory'] == PARCEL
+    press(page, 'button[data-chest="depot-chest"]', touch)
+    assert state(page)['inventory'] == INITIAL and state(page)['availableInventory'] == INITIAL
+    visible_stock(page, INITIAL)
+    page.reload(); page.wait_for_function('!!window.quietBell?.state')
+    assert state(page)['inventory'] == INITIAL
+    sources_claimed(page, touch)
+    assert state(page).get('creditedStages', []) == []
+
 def layout(page, touch=False):
     value = page.evaluate('''()=>{
       const rect=e=>{const r=e.getBoundingClientRect();return{left:r.left,right:r.right,top:r.top,bottom:r.bottom,width:r.width,height:r.height}};
       return{width:innerWidth,doc:document.documentElement.scrollWidth,body:document.body.scrollWidth,
         people:[...document.querySelectorAll('button[data-person]')].map(rect),
         topics:[...document.querySelectorAll('button[data-topic]')].map(rect),
+        doors:[...document.querySelectorAll('button[data-door]')].map(rect),
+        chests:[...document.querySelectorAll('button[data-chest]')].map(rect),
         images:[...document.images].map(i=>({complete:i.complete,width:i.naturalWidth}))};
     }''')
     assert value['doc'] <= value['width'] + 1 and value['body'] <= value['width'] + 1, value
-    assert len(value['people']) == 3 and len(value['topics']) == 3, value
+    assert len(value['people']) == 3 and len(value['topics']) == 3 and len(value['doors']) == 3 and len(value['chests']) == 1, value
     assert all(image['complete'] and image['width'] > 0 for image in value['images']), value
-    for group in [value['people'], value['topics']]:
+    for group in [value['people'] + value['doors'] + value['chests'], value['topics']]:
         for index, first in enumerate(group):
             assert first['left'] >= -1 and first['right'] <= value['width'] + 1, first
             if touch: assert first['width'] >= 43.5 and first['height'] >= 43.5, first
@@ -103,6 +142,7 @@ def open_page(browser, url, width, theme):
 
 def conversations(page, touch=False):
     baseline = resources(state(page)); dialogue = []
+    assert state(page)['inventory'] == EMPTY
     for person in ['nell', 'iris', 'pip']:
         press(page, 'button[data-person="' + person + '"]', touch); messages = set()
         for topic in ['story', 'route', 'inventory']:
@@ -127,6 +167,8 @@ def draft_controls(page, touch=False):
     visible_stock(page, INITIAL)
     assert page.locator('button[data-kind]:not([data-remove])').count() == 9
     assert page.locator('button[data-kind]:not([data-remove]) svg').count() == 9
+    press(page, 'button[data-door="garden"]', touch)
+    assert state(page)['selectedDoor'] == 'garden'
     assert page.locator('#commit').is_disabled()
     press(page, tile('dotted-half'), touch)
     assert state(page)['beats'] == 3 and page.locator('#commit').is_disabled()
@@ -140,7 +182,7 @@ def draft_controls(page, touch=False):
     assert resources(state(page)) == before, 'Reload must preserve the draft without spending it.'
     clear_phrase(page, touch)
     assert state(page)['inventory'] == INITIAL and state(page)['availableInventory'] == INITIAL
-    assert state(page)['phrase'] == [] and state(page)['creditedStages'] == []
+    assert state(page)['phrase'] == [] and state(page).get('creditedStages', []) == []
     page.locator('button[data-person="iris"]').focus(); page.keyboard.press('Enter')
     assert page.locator('button[data-person="iris"]').get_attribute('aria-pressed') == 'true'
     page.locator(tile('half')).focus(); page.keyboard.press('Space')
@@ -157,51 +199,71 @@ def draft_controls(page, touch=False):
     clear_phrase(page, touch)
     assert state(page)['availableInventory'] == INITIAL
 
+def rejected_order(page, touch=False):
+    press(page, 'button[data-door="garden"]', touch)
+    build(page, ['half', 'half-rest'], touch)
+    assert state(page)['canAttempt'] and not state(page)['canCommit']
+    before = resources(state(page))
+    press(page, '#commit', touch)
+    assert resources(state(page)) == before, 'A wrong ordered answer must leave stock and draft unchanged.'
+    assert state(page)['phase'] == 'room' and page.locator('#status').inner_text().strip()
+    assert page.locator('#outcome').is_hidden()
+    clear_phrase(page, touch)
+    assert state(page)['inventory'] == INITIAL
+
 def route_choices(page, width, theme, touch=False):
     checked = []
     for fixture in ROUTES:
         assert state(page)['phase'] == 'room'
+        press(page, 'button[data-door="' + fixture['id'] + '"]', touch)
+        assert state(page)['selectedDoor'] == fixture['id']
         press(page, 'button[data-person="' + fixture['person'] + '"]', touch)
         press(page, 'button[data-topic="route"]', touch)
+        assert state(page)['selectedDoor'] == fixture['id'], 'NPC hints must not replace the selected physical door.'
         build(page, fixture['recipe'], touch); press(page, '#commit', touch)
         page.wait_for_function('window.quietBell.state.phase==="continued"'); actual = state(page)
         assert actual['routeId'] == fixture['id'], (fixture, actual)
-        assert actual['creditedStages'] == [2]
+        assert actual.get('creditedStages', []) == []
         expected = INITIAL.copy()
         for kind in fixture['recipe']: expected[kind] -= 1
-        carried = expected.copy()
-        for kind in GRANT: expected[kind] += 1
         assert actual['inventory'] == expected and actual['availableInventory'] == expected
         visible_stock(page, expected)
         assert fixture['id'] in actual['discoveredRoutes']
         assert page.locator('#outcome').is_visible() and page.locator('#commit').is_disabled()
         committed = resources(actual); page.reload(); page.wait_for_function('!!window.quietBell?.state')
-        assert resources(state(page)) == committed, 'Reload must not issue another parcel.'
+        assert resources(state(page)) == committed, 'Reload must not issue a gift or replace carried stock.'
         protected_storage(page); assert page.locator('#outcome').is_visible()
         page.screenshot(path=str(OUT / f'{width}-{theme}-{fixture["id"]}.png'), full_page=True)
         press(page, '#undo', touch); undone = state(page)
         assert undone['phase'] == 'room' and undone['inventory'] == INITIAL and undone['availableInventory'] == INITIAL
-        assert undone['creditedStages'] == [] and undone['phrase'] == []
+        assert undone.get('creditedStages', []) == [] and undone['phrase'] == []
         assert fixture['id'] in undone['discoveredRoutes']
+        sources_claimed(page, touch)
+        press(page, 'button[data-door="' + fixture['id'] + '"]', touch)
         build(page, fixture['recipe'], touch); press(page, '#commit', touch)
-        assert state(page)['inventory'] == expected and state(page)['creditedStages'] == [2]
+        assert state(page)['inventory'] == expected and state(page).get('creditedStages', []) == []
         press(page, '#restart' if fixture['id'] == 'canal' else '#undo', touch)
-        assert state(page)['phase'] == 'room' and state(page)['inventory'] == INITIAL
+        assert state(page)['phase'] == 'room'
+        assert state(page)['inventory'] == (EMPTY if fixture['id'] == 'canal' else INITIAL)
         assert fixture['id'] in state(page)['discoveredRoutes']
-        checked.append({'id': fixture['id'], 'stockAfterConsumption': carried,
-                        'stockAfterOneParcel': expected, 'reloadAndUndoExact': True})
+        checked.append({'id': fixture['id'], 'stockAfterDoorCost': expected,
+                        'noAutomaticArrivalGrant': True, 'reloadAndUndoExact': True})
     assert set(state(page)['discoveredRoutes']) == {'garden', 'workshop', 'canal'}
     return checked
 
 def keyboard_commit(page):
     """A fully composed phrase keeps its primary action reachable without a mouse."""
     assert state(page)['phase'] == 'room' and state(page)['phrase'] == []
+    collect_sources(page)
+    page.locator('button[data-door="canal"]').focus(); page.keyboard.press('Enter')
+    assert state(page)['selectedDoor'] == 'canal'
+    page.locator(tile('half')).focus(); page.keyboard.press('Enter')
+    assert state(page)['phrase'] == ['half']
     page.locator(tile('quarter')).focus(); page.keyboard.press('Enter')
-    assert state(page)['phrase'] == ['quarter']
+    assert state(page)['phrase'] == ['half', 'quarter']
     assert page.evaluate('document.activeElement?.dataset.kind') == 'eighth-pair'
     page.keyboard.press('Space')
-    assert state(page)['phrase'] == ['quarter', 'eighth-pair']
-    page.locator(tile('half')).focus(); page.keyboard.press('Enter')
+    assert state(page)['phrase'] == ['half', 'quarter', 'eighth-pair']
     assert state(page)['beats'] == 4
     assert page.evaluate('document.activeElement?.id') == 'commit'
     page.keyboard.press('Space')
@@ -220,19 +282,28 @@ def help_and_sound(page, touch=False):
     assert page.locator('#sound').get_attribute('aria-pressed') == after
 
 def corrupt_save(page):
+    if state(page)['phase'] == 'continued': press(page, '#restart')
+    collect_sources(page)
+    saved = json.loads(page.evaluate('(key)=>localStorage.getItem(key)', SAVE_KEY))
+    saved['inventory'] = {kind: 999999 for kind in KINDS}
+    page.evaluate('([key,value])=>localStorage.setItem(key,value)', [SAVE_KEY, json.dumps(saved)])
+    page.reload(); page.wait_for_function('!!window.quietBell?.state')
+    assert state(page)['inventory'] == INITIAL, 'Claimed actions, not forged balances, determine the inventory.'
+    sources_claimed(page)
     for payload in ['{', json.dumps({'version': 999, 'inventory': {'half': 999999}}),
-                    json.dumps({'version': 1, 'answer': ['half', 'half'], 'inventory': {'half': 999999}})]:
+                    json.dumps({'version': 1, 'answer': ['half', 'quarter', 'eighth-pair'], 'inventory': INITIAL})]:
         page.evaluate('([key,value])=>localStorage.setItem(key,value)', [SAVE_KEY, payload])
         page.reload(); page.wait_for_function('!!window.quietBell?.state')
-        assert state(page)['phase'] == 'room' and state(page)['inventory'] == INITIAL
-        assert state(page)['creditedStages'] == []
+        assert state(page)['phase'] == 'room' and state(page)['inventory'] == EMPTY
+        assert state(page).get('creditedStages', []) == []
     protected_storage(page)
 
 def audit(browser, url, width, theme):
     touch = width < 500
     context, page, errors, writes, external = open_page(browser, url, width, theme)
     assert 'quiet bell' in page.title().lower()
-    dialogue = conversations(page, touch); draft_controls(page, touch)
+    dialogue = conversations(page, touch); collect_sources(page, touch); draft_controls(page, touch)
+    rejected_order(page, touch)
     dimensions = layout(page, touch)
     page.screenshot(path=str(OUT / f'{width}-{theme}-room.png'), full_page=True)
     choices = route_choices(page, width, theme, touch)
@@ -246,7 +317,8 @@ def audit(browser, url, width, theme):
     return {'passed': True, 'width': width, 'theme': theme, 'layout': dimensions,
             'conversations': len(dialogue), 'threeDistinctStoryCharacters': True,
             'hintsAndAudioNeverConsume': True, 'draftAndConversationRestore': True,
-            'exactFourBeatAndNativeKeyboardControls': True, 'routes': choices,
+            'npcGiftAndChestOnce': True, 'wrongOrderedCostNeverConsumes': True,
+            'exactDoorCostsAndNativeKeyboardControls': True, 'routes': choices,
             'sharedProgressPreserved': True, 'errors': [], 'networkWrites': []}
 
 def main():

@@ -1,90 +1,128 @@
-import {NOTE_KINDS,NOTE_KIND_BY_ID} from './engine.mjs?v=quiet-bell-page-one-1';
+import {NOTE_KINDS,NOTE_KIND_BY_ID} from './engine.mjs?v=quiet-bell-dungeon-one-1';
 
-/** Page one uses the same exact half-beat catalog as the chapter verifier. */
-export const PAGE_ONE_INITIAL_INVENTORY=Object.freeze(Object.fromEntries(NOTE_KINDS.map(kind=>[kind.id,1])));
-export const PAGE_TWO_GRANT=Object.freeze(['half','quarter','eighth-pair']);
-export const PAGE_ONE_ROUTES=Object.freeze({
- garden:Object.freeze({id:'s02_garden',title:'The Garden Gate',stage:2}),
- workshop:Object.freeze({id:'s02_workshop',title:'The Makers Lane',stage:2}),
- canal:Object.freeze({id:'s02_canal',title:'The Canal Landing',stage:2})
+/** Notes enter the room only through explicit, once-only interactions. */
+export const PAGE_ONE_INITIAL_INVENTORY=Object.freeze(Object.fromEntries(NOTE_KINDS.map(kind=>[kind.id,0])));
+export const PAGE_TWO_GRANT=Object.freeze([]);
+export const PAGE_ONE_SOURCES=Object.freeze({
+ 'nell-parcel':Object.freeze({id:'nell-parcel',type:'npc',recipe:Object.freeze(NOTE_KINDS.filter(kind=>kind.id!=='half').map(kind=>kind.id))}),
+ 'depot-chest':Object.freeze({id:'depot-chest',type:'chest',recipe:Object.freeze(['half'])})
 });
-const GROUPED=new Set(['eighth-pair','sixteenth-group','sixteenth-pair']);
+export const PAGE_ONE_DOOR_COSTS=Object.freeze({
+ garden:Object.freeze(['half-rest','half']),
+ workshop:Object.freeze(['half','eighth-pair','sixteenth-group']),
+ canal:Object.freeze(['half','quarter','eighth-pair'])
+});
+export const PAGE_ONE_ROUTES=Object.freeze({
+ garden:Object.freeze({id:'garden-porch',title:'Iris’s Garden Porch',stage:2}),
+ workshop:Object.freeze({id:'workshop-porch',title:'Pip’s Bird Workshop',stage:2}),
+ canal:Object.freeze({id:'canal-porch',title:'The Canal Storehouse',stage:2})
+});
 const clone=value=>structuredClone(value);
 const knownKind=kind=>typeof kind==='string'&&Object.hasOwn(NOTE_KIND_BY_ID,kind);
+const knownDoor=id=>typeof id==='string'&&Object.hasOwn(PAGE_ONE_DOOR_COSTS,id);
+const knownSource=id=>typeof id==='string'&&Object.hasOwn(PAGE_ONE_SOURCES,id);
+const equal=(left,right)=>left.length===right.length&&right.every((kind,index)=>left[index]===kind);
 const units=recipe=>recipe.reduce((total,kind)=>total+NOTE_KIND_BY_ID[kind].units,0);
-function checkedRecipe(recipe,{complete=false}={}){
- if(!Array.isArray(recipe)||recipe.length>NOTE_KINDS.length)return false;
+function stockFor(actions){
  const stock={...PAGE_ONE_INITIAL_INVENTORY};
- for(const kind of recipe){if(!knownKind(kind)||stock[kind]===0)return false;stock[kind]--;}
+ for(const action of actions){
+  if(action.type==='claim')for(const kind of PAGE_ONE_SOURCES[action.sourceId].recipe)stock[kind]++;
+  else for(const kind of action.recipe)stock[kind]--;
+ }
+ return stock;
+}
+function checkedRecipe(recipe,stock,{complete=false}={}){
+ if(!Array.isArray(recipe)||recipe.length>NOTE_KINDS.length)return false;
+ const remaining={...stock};
+ for(const kind of recipe){if(!knownKind(kind)||remaining[kind]<1)return false;remaining[kind]--;}
  const duration=units(recipe);
  return complete?duration===8:duration<=8;
 }
 
-/** First-match priority is part of the puzzle: an opening rest wins first. */
+/** The physical lock chooses the cost; equal beat totals are not substitutes. */
 export function classifyPageOne(recipe){
- if(!checkedRecipe(recipe,{complete:true}))throw RangeError('A page-one answer needs four beats drawn from the original parcel.');
- if(NOTE_KIND_BY_ID[recipe[0]].rest)return 'garden';
- if(recipe.filter(kind=>GROUPED.has(kind)).length>=2)return 'workshop';
- return 'canal';
+ if(!Array.isArray(recipe))throw RangeError('The notes do not match an opening door.');
+ const route=Object.keys(PAGE_ONE_DOOR_COSTS).find(id=>equal(recipe,PAGE_ONE_DOOR_COSTS[id]));
+ if(!route)throw RangeError('The notes do not match an opening door.');
+ return route;
 }
-function receiptFor(recipe){
- const inventoryBefore={...PAGE_ONE_INITIAL_INVENTORY},inventoryAfterConsumption={...inventoryBefore};
+function receiptFor(actions,doorId,recipe){
+ const inventoryBefore=stockFor(actions),inventoryAfterConsumption={...inventoryBefore};
  for(const kind of recipe)inventoryAfterConsumption[kind]--;
- const inventoryAfterEntry={...inventoryAfterConsumption};
- for(const kind of PAGE_TWO_GRANT)inventoryAfterEntry[kind]++;
- return{recipe:[...recipe],inventoryBefore,inventoryAfterConsumption,received:[...PAGE_TWO_GRANT],inventoryAfterEntry};
+ return {doorId,recipe:[...recipe],inventoryBefore,inventoryAfterConsumption,received:[],inventoryAfterEntry:{...inventoryAfterConsumption}};
 }
 
 /**
- * This slice stops at the next scene. No subsequent answers, awards or remote
- * progress writes exist yet. Resources are always reconstructed from the answer.
+ * The opening stops at the chosen next room. Its save is an action log, never
+ * a resource balance supplied by storage. No automatic arrival grant exists.
  */
 export function createStoryGame({saved=null}={}){
- let phrase=[],answer=null,receipt=null,routeId=null;
+ let actions=[],phrase=[],selectedDoor=null,receipt=null,routeId=null;
  const discovered=new Set();
+ function resetRun(){actions=[];phrase=[];selectedDoor=null;receipt=null;routeId=null;}
  function restore(value){
-  if(!value||typeof value!=='object'||value.version!==1)return;
-  if(Array.isArray(value.discoveredRoutes))for(const route of value.discoveredRoutes)if(typeof route==='string'&&Object.hasOwn(PAGE_ONE_ROUTES,route))discovered.add(route);
-  // An impossible current run resets to its original parcel. Historic, local
-  // route discoveries are informational and never supply resources or flags.
-  if(!Array.isArray(value.phrase))return;
-  if(value.answer===null){if(checkedRecipe(value.phrase))phrase=[...value.phrase];return;}
-  if(value.phrase.length||!checkedRecipe(value.answer,{complete:true}))return;
-  answer=[...value.answer];receipt=receiptFor(answer);routeId=classifyPageOne(answer);discovered.add(routeId);
+  if(!value||typeof value!=='object'||value.version!==2)return;
+  if(Array.isArray(value.discoveredRoutes))for(const route of value.discoveredRoutes)if(knownDoor(route))discovered.add(route);
+  if(!Array.isArray(value.actions)||value.actions.length>3||!Array.isArray(value.phrase)||!(value.selectedDoor===null||knownDoor(value.selectedDoor)))return;
+  const next=[],claimed=new Set();let committed=false,nextReceipt=null,nextRoute=null;
+  for(const action of value.actions){
+   if(!action||typeof action!=='object'||Array.isArray(action)||committed)return;
+   if(action.type==='claim'){
+    if(!knownSource(action.sourceId)||claimed.has(action.sourceId))return;
+    claimed.add(action.sourceId);next.push({type:'claim',sourceId:action.sourceId});
+   }else if(action.type==='door'){
+    if(!knownDoor(action.doorId)||value.selectedDoor!==action.doorId||!checkedRecipe(action.recipe,stockFor(next),{complete:true})||!equal(action.recipe,PAGE_ONE_DOOR_COSTS[action.doorId]))return;
+    nextReceipt=receiptFor(next,action.doorId,action.recipe);nextRoute=action.doorId;
+    next.push({type:'door',doorId:action.doorId,recipe:[...action.recipe]});committed=true;
+   }else return;
+  }
+  if(committed?value.phrase.length>0:!checkedRecipe(value.phrase,stockFor(next)))return;
+  actions=next;phrase=[...value.phrase];selectedDoor=value.selectedDoor;receipt=nextReceipt;routeId=nextRoute;
+  if(routeId)discovered.add(routeId);
  }
  restore(saved);
- function stock(){return receipt?receipt.inventoryAfterEntry:PAGE_ONE_INITIAL_INVENTORY;}
- function available(){const result={...stock()};for(const kind of phrase)result[kind]--;return result;}
+ function available(){const result=stockFor(actions);for(const kind of phrase)result[kind]--;return result;}
  function discoveredRoutes(){return Object.keys(PAGE_ONE_ROUTES).filter(route=>discovered.has(route));}
- function state(){return{
-  phase:answer?'continued':'room',inventory:{...stock()},availableInventory:available(),phrase:[...phrase],units:units(phrase),beats:units(phrase)/2,
-  canCommit:!answer&&units(phrase)===8,routeId,nextScene:routeId?{...PAGE_ONE_ROUTES[routeId]}:null,
-  receipt:receipt?clone(receipt):null,creditedStages:answer?[2]:[],discoveredRoutes:discoveredRoutes()
- };}
+ function state(){
+  const canAttempt=!routeId&&selectedDoor!==null&&units(phrase)===8;
+  return {
+   phase:routeId?'continued':'room',inventory:stockFor(actions),availableInventory:available(),phrase:[...phrase],units:units(phrase),beats:units(phrase)/2,
+   selectedDoor,claimedSources:Object.keys(PAGE_ONE_SOURCES).filter(id=>actions.some(action=>action.type==='claim'&&action.sourceId===id)),
+   sourceReceipts:actions.filter(action=>action.type==='claim').map(action=>({sourceId:action.sourceId,recipe:[...PAGE_ONE_SOURCES[action.sourceId].recipe]})),
+   canAttempt,canCommit:canAttempt&&equal(phrase,PAGE_ONE_DOOR_COSTS[selectedDoor]),routeId,nextScene:routeId?{...PAGE_ONE_ROUTES[routeId]}:null,
+   receipt:receipt?clone(receipt):null,creditedStages:[],discoveredRoutes:discoveredRoutes()
+  };
+ }
+ function claim(sourceId){
+  if(routeId||!knownSource(sourceId)||actions.some(action=>action.type==='claim'&&action.sourceId===sourceId))return false;
+  actions.push({type:'claim',sourceId});return true;
+ }
+ function selectDoor(doorId){if(routeId||!knownDoor(doorId))return false;selectedDoor=doorId;return true;}
  function add(kind){
-  if(answer||!knownKind(kind)||available()[kind]===0||units(phrase)+NOTE_KIND_BY_ID[kind].units>8)return false;
+  if(routeId||!knownKind(kind)||available()[kind]<1||units(phrase)+NOTE_KIND_BY_ID[kind].units>8)return false;
   phrase.push(kind);return true;
  }
  function remove(index){
-  if(answer||!Number.isSafeInteger(index)||index<0||index>=phrase.length)return false;
+  if(routeId||!Number.isSafeInteger(index)||index<0||index>=phrase.length)return false;
   phrase.splice(index,1);return true;
  }
  function move(index,delta){
-  if(answer||!Number.isSafeInteger(index)||!Number.isSafeInteger(delta)||delta===0||index<0||index>=phrase.length)return false;
+  if(routeId||!Number.isSafeInteger(index)||!Number.isSafeInteger(delta)||delta===0||index<0||index>=phrase.length)return false;
   const destination=index+delta;
   if(destination<0||destination>=phrase.length)return false;
   const [kind]=phrase.splice(index,1);phrase.splice(destination,0,kind);return true;
  }
  function commit(){
-  if(answer||!checkedRecipe(phrase,{complete:true}))return false;
-  answer=[...phrase];phrase=[];receipt=receiptFor(answer);routeId=classifyPageOne(answer);discovered.add(routeId);return true;
+  if(routeId||selectedDoor===null||!checkedRecipe(phrase,stockFor(actions),{complete:true})||!equal(phrase,PAGE_ONE_DOOR_COSTS[selectedDoor]))return false;
+  receipt=receiptFor(actions,selectedDoor,phrase);routeId=selectedDoor;
+  actions.push({type:'door',doorId:selectedDoor,recipe:[...phrase]});phrase=[];discovered.add(routeId);return true;
  }
  function undo(){
-  if(answer){answer=null;receipt=null;routeId=null;phrase=[];return true;}
+  if(routeId){actions.pop();routeId=null;receipt=null;phrase=[];return true;}
   if(!phrase.length)return false;
   phrase.pop();return true;
  }
- function restart(){phrase=[];answer=null;receipt=null;routeId=null;return true;}
- function serialize(){return{version:1,answer:answer?[...answer]:null,phrase:[...phrase],discoveredRoutes:discoveredRoutes()};}
- return Object.freeze({get state(){return state();},add,remove,move,commit,undo,restart,serialize});
+ function restart(){resetRun();return true;}
+ function serialize(){return {version:2,actions:clone(actions),phrase:[...phrase],selectedDoor,discoveredRoutes:discoveredRoutes()};}
+ return Object.freeze({get state(){return state();},claim,selectDoor,add,remove,move,commit,undo,restart,serialize});
 }

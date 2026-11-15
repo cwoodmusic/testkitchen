@@ -1,4 +1,4 @@
-import {NOTE_KIND_BY_ID} from './engine.mjs?v=quiet-bell-page-one-1';
+import {NOTE_KIND_BY_ID} from './engine.mjs?v=quiet-bell-dungeon-one-1';
 
 /** A small, local synthesizer. Rests advance time without making a sound. */
 export function createRhythmAudio({enabled=true}={}){

@@ -6,21 +6,27 @@
   <meta name="theme-color" content="#292132">
   <meta name="description" content="The Quiet Bell: a story told in rhythm. Meet three townspeople, arrange four beats, and choose where your story goes.">
   <title>The Quiet Bell · Coda Arcade</title>
-  <link rel="stylesheet" href="style.css?v=quiet-bell-page-one-1">
+  <link rel="stylesheet" href="style.css?v=quiet-bell-dungeon-one-1">
 </head>
 <body>
 <div id="quiet-bell">
   <div class="mg-game" data-values="true">
     <header class="mg-header">
-      <div><a class="mg-back" id="exit" href="../../world-preview.html?v=quiet-bell-page-one-1">← Coda Arcade</a><h1>THE QUIET BELL</h1><p class="mg-page-title">Page 1 · The parcel</p></div>
+      <div><a class="mg-back" id="exit" href="../../world-preview.html?v=quiet-bell-dungeon-one-1">← Coda Arcade</a><h1>THE QUIET BELL</h1><p class="mg-page-title">Page 1 · The parcel</p></div>
       <nav class="mg-nav" aria-label="Game controls"><button type="button" class="mg-button" id="sound" aria-pressed="true">Sound on</button><button type="button" class="mg-button" id="help">How to play</button></nav>
     </header>
-    <p class="mg-intro"><strong>Mira has inherited a silent town bell.</strong> Nell has been keeping a parcel for someone who can make it answer.</p>
+    <p class="mg-intro"><strong>Find a way through the bell dungeon.</strong> Talk to Nell, open the delivery chest, then choose a door and arrange its four-beat key.</p>
     <main class="mg-layout">
       <section aria-label="The parcel depot and your answer">
-        <div class="mg-scene-head"><h2 class="mg-scene-name">The Parcel Depot</h2><span class="mg-small">The first answer</span></div>
+        <div class="mg-scene-head"><h2 class="mg-scene-name">The Parcel Depot</h2><span class="mg-small">3 doors</span></div>
         <div class="mg-scene">
-          <img class="mg-art" src="assets/parcel-depot.jpg?v=quiet-bell-page-one-1" width="1536" height="1024" alt="Nell behind the post counter, Iris the gardener, Pip the courier, and Mira gathered in a room of music boxes.">
+          <img class="mg-art" src="assets/parcel-depot.jpg?v=quiet-bell-dungeon-one-1" width="1536" height="1024" alt="Nell, Iris, Pip, and Mira in a music-box room with three doors and a small treasure chest.">
+          <div class="mg-room-objects" role="group" aria-label="Doors and treasure">
+            <button type="button" class="mg-door" data-door="garden" aria-label="Choose the garden door" aria-pressed="false" style="left:31.93%"><span>Garden</span></button>
+            <button type="button" class="mg-door" data-door="workshop" aria-label="Choose the workshop door" aria-pressed="false" style="left:57.55%"><span>Workshop</span></button>
+            <button type="button" class="mg-door" data-door="canal" aria-label="Choose the canal door" aria-pressed="false" style="left:83.72%"><span>Canal</span></button>
+            <button type="button" class="mg-chest" data-chest="depot-chest" aria-label="Open the delivery chest"><span id="chest-label">Open</span></button>
+          </div>
           <div class="mg-people" role="group" aria-label="People in the room">
             <button type="button" class="mg-person" data-person="nell" aria-label="Talk to Nell, the postkeeper" aria-pressed="true" style="left:12.3%;top:16.8%;height:17%"><span>Nell</span></button>
             <button type="button" class="mg-person" data-person="iris" aria-label="Talk to Iris, the gardener" aria-pressed="false" style="left:48.7%;top:31.3%;height:23%"><span>Iris</span></button>
@@ -28,10 +34,11 @@
           </div>
           <div class="mg-floor" data-ready="false"><div class="mg-phrase" id="phrase" role="group" aria-label="Your four-beat answer"></div><div class="mg-ruler" aria-hidden="true"><span>1</span><span>2</span><span>3</span><span>4</span></div></div>
         </div>
-        <p class="mg-talk-help">Choose someone in the room to talk to.</p>
+        <p class="mg-talk-help">Talk to a person, open the chest, or choose a door.</p>
         <section class="mg-dialogue" aria-label="Conversation">
           <div class="mg-speaker"><span id="speaker">Nell · Postkeeper</span><span class="mg-small" id="talk-about">Your story</span></div>
           <p id="dialogue" aria-live="polite"></p>
+          <button type="button" class="mg-button mg-primary mg-gift" id="take-parcel">Take Nell’s parcel</button>
           <div class="mg-questions" role="group" aria-label="What would you like to ask?">
             <button type="button" class="mg-button" data-topic="story" aria-pressed="true">What brings you here?</button>
             <button type="button" class="mg-button" data-topic="route" aria-pressed="false">Which way would you go?</button>
@@ -40,23 +47,24 @@
           <button type="button" class="mg-button mg-demo" id="demo" hidden>Hear an example</button>
         </section>
         <section class="mg-compose" aria-label="Arrange your rhythm">
-          <div class="mg-section-head"><h2>Your answer</h2><span class="mg-meter" id="total">0 / 4 beats</span></div>
-          <div class="mg-actions"><button type="button" class="mg-button" id="listen" disabled>Listen</button><button type="button" class="mg-button" id="undo" disabled>Undo</button><button type="button" class="mg-button mg-primary" id="commit" disabled>Play your answer</button></div>
+          <div class="mg-section-head"><h2 id="door-title">Choose a door</h2><span class="mg-meter" id="total">0 / 4 beats</span></div>
+          <p class="mg-door-hint" id="door-hint">Each door has its own rhythm lock.</p>
+          <div class="mg-actions"><button type="button" class="mg-button" id="door-demo" disabled>Hear the lock</button><button type="button" class="mg-button" id="listen" disabled>Listen</button><button type="button" class="mg-button" id="undo" disabled>Undo</button><button type="button" class="mg-button mg-primary" id="commit" disabled>Open door</button></div>
           <p class="mg-help" id="edit-hint">Choose notes from your satchel. Tap a placed note to take it back.</p>
           <p class="mg-status" id="status" aria-live="polite">Talk to the others before choosing your rhythm.</p>
         </section>
       </section>
       <aside class="mg-side" aria-label="Your carried note inventory">
-        <div class="mg-section-head"><h2 id="stock-title">Your note blocks</h2><span class="mg-small" id="held">9 carried</span></div>
+        <div class="mg-section-head"><h2 id="stock-title">Your note blocks</h2><span class="mg-small" id="held">0 carried</span></div>
         <div class="mg-stock" id="stock"></div>
-        <section class="mg-packs"><h2 id="pack-heading">Your starting parcel</h2><div class="mg-ledger" id="ledger" hidden></div><div class="mg-pack-list" id="pack"></div><p class="mg-small" id="pack-copy" style="margin-top:9px">One of each note type. Unspent notes travel with you.</p></section>
+        <section class="mg-packs"><h2 id="pack-heading">Room finds</h2><div class="mg-ledger" id="ledger" hidden></div><div class="mg-pack-list" id="pack"></div><p class="mg-small" id="pack-copy" style="margin-top:9px">Nell’s parcel and the delivery chest are waiting.</p></section>
         <section class="mg-promise"><div class="mg-section-head"><h2>Your story</h2><button type="button" class="mg-button" id="restart">Start over</button></div><p id="story-state">Three people. Three ways forward. Your rhythm chooses the path.</p><p class="mg-seen" id="seen-routes"></p></section>
       </aside>
     </main>
     <section class="mg-outcome" id="outcome" aria-labelledby="outcome-title" hidden>
       <span class="mg-brand" id="outcome-kicker"></span><h2 id="outcome-title"></h2><p class="mg-outcome-copy" id="outcome-copy"></p>
       <p class="mg-saved-note">Page one ends here. More pages are on the way.</p>
-      <div class="mg-actions"><button type="button" class="mg-button mg-primary" id="revisit">Revisit your answer</button><a class="mg-button" id="outcome-exit" href="../../world-preview.html?v=quiet-bell-page-one-1">Return to arcade</a></div>
+      <div class="mg-actions"><button type="button" class="mg-button mg-primary" id="revisit">Revisit your answer</button><a class="mg-button" id="outcome-exit" href="../../world-preview.html?v=quiet-bell-dungeon-one-1">Return to arcade</a></div>
     </section>
     <p class="mg-save" id="save-status">Progress saves on this device.</p>
   </div>
@@ -64,15 +72,17 @@
 <dialog id="help-dialog" aria-labelledby="help-title">
   <button type="button" id="help-close" aria-label="Close instructions">×</button><h2 id="help-title">A story told in rhythm.</h2>
   <p>Talk to Nell, Iris, and Pip. Each has a reason to restore the bell—and a clue about the road ahead. Ask about their story, their suggested route, or the notes you are carrying.</p>
-  <p>Choose notes from your satchel to arrange an answer of <strong>exactly four beats</strong>. The order and kinds you use determine where the story goes. <strong>Play your answer</strong> spends those notes. Everything you keep travels with you, along with three new blocks at the next stop.</p>
+  <p>Accept Nell’s eight-note parcel and open the delivery chest for the missing half note. Gifts and chests can be collected <strong>once per run</strong>.</p>
+  <p>Choose one of the room’s three doors. Hear its rhythm, or ask a resident for a clue. Arrange its <strong>exact four-beat key</strong>, then choose <strong>Open door</strong>. Only a matching answer spends your notes. A different four-beat rhythm leaves the door locked and your inventory unchanged.</p>
   <p>You can listen and edit freely before playing your answer. Tap a placed tile to return it, or use Undo. After choosing a path, Revisit restores the notes you had before that choice.</p>
   <div class="mg-help-notes" id="help-notes" aria-label="Note values"></div>
   <p>Rests fill time with silence. A single eighth and a pair of sixteenths each fill half a beat; they make different rhythms. No one is timing you.</p>
   <p><strong>Keyboard:</strong> 1–9 choose note types in satchel order; Backspace undoes. Tab, Enter, and Space work with every button. Escape closes these instructions.</p>
-  <p>This opening page saves on this device. Cross-device progress and Notes rewards will come later.</p>
+  <p>Keep unused notes for later rooms. You will find more through people, chests, and hidden places. Successful dungeon endings are designed to use every note; dead ends can leave notes unused.</p>
+  <p>This release contains the opening room and saves on this device. More dungeon rooms, cross-device progress, and Notes rewards will come later.</p>
   <button type="button" id="help-done">Meet the townspeople</button>
 </dialog>
 <p id="announcement" class="sr-only" aria-live="polite" aria-atomic="true"></p>
-<script type="module" src="app.mjs?v=quiet-bell-page-one-1"></script>
+<script type="module" src="app.mjs?v=quiet-bell-dungeon-one-1"></script>
 </body>
 </html>

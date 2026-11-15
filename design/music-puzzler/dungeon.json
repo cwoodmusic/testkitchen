@@ -1,0 +1,512 @@
+{
+  "version": 1,
+  "status": "proposed dungeon economy; design only",
+  "entry": "depot",
+  "initialInventory": {},
+  "rooms": [
+    {
+      "id": "depot",
+      "title": "The Parcel Depot",
+      "sources": [
+        {
+          "id": "nell-parcel",
+          "type": "npc",
+          "recipe": [
+            "quarter",
+            "eighth-pair",
+            "sixteenth-group",
+            "eighth",
+            "quarter-rest",
+            "half-rest",
+            "dotted-half",
+            "sixteenth-pair"
+          ],
+          "character": "nell",
+          "label": "Nell’s old parcel",
+          "hint": "Talk to Nell and accept the parcel once. It holds ten beats in eight different note kinds."
+        },
+        {
+          "id": "depot-chest",
+          "type": "chest",
+          "recipe": [
+            "half"
+          ],
+          "label": "The small delivery chest",
+          "hint": "Nell points out a small chest beside her counter. Its half note is needed for every opening door."
+        }
+      ],
+      "doors": [
+        {
+          "id": "depot-garden",
+          "to": "garden-porch",
+          "recipe": [
+            "half-rest",
+            "half"
+          ],
+          "label": "The garden door",
+          "hint": "Two quiet beats, then two sounding beats."
+        },
+        {
+          "id": "depot-workshop",
+          "to": "workshop-porch",
+          "recipe": [
+            "half",
+            "eighth-pair",
+            "sixteenth-group"
+          ],
+          "label": "The workshop door",
+          "hint": "A long step, two quick steps, then four tiny steps."
+        },
+        {
+          "id": "depot-canal",
+          "to": "canal-porch",
+          "recipe": [
+            "half",
+            "quarter",
+            "eighth-pair"
+          ],
+          "label": "The canal door",
+          "hint": "A long step, one ordinary step, then paired footsteps."
+        }
+      ],
+      "description": "Mira finds three doors and three people with different reasons to seek the silent bell."
+    },
+    {
+      "id": "garden-porch",
+      "title": "Iris’s Garden Porch",
+      "sources": [
+        {
+          "id": "iris-gift",
+          "type": "npc",
+          "recipe": [
+            "half-rest",
+            "half"
+          ],
+          "character": "iris",
+          "label": "Iris’s listening phrase",
+          "hint": "Iris gives back the two kinds used at the garden door. These are needed for the next garden gate."
+        }
+      ],
+      "doors": [
+        {
+          "id": "garden-porch-forward",
+          "to": "garden-fork",
+          "recipe": [
+            "half-rest",
+            "half"
+          ],
+          "label": "The listening gate"
+        },
+        {
+          "id": "garden-porch-dead",
+          "to": "dead-brambles",
+          "recipe": [
+            "dotted-half",
+            "quarter"
+          ],
+          "label": "The overgrown arch",
+          "warning": "A faded answer is scratched beside the arch. Iris warns that the path behind it is overgrown."
+        }
+      ],
+      "description": "Iris asks Mira to listen to the space between notes. Her gift is claimed once through conversation."
+    },
+    {
+      "id": "workshop-porch",
+      "title": "Pip’s Bird Workshop",
+      "sources": [
+        {
+          "id": "pip-gift",
+          "type": "npc",
+          "recipe": [
+            "half",
+            "eighth-pair",
+            "sixteenth-group"
+          ],
+          "character": "pip",
+          "label": "Pip’s running phrase",
+          "hint": "Pip offers a half note, paired eighths, and four sixteenths. The workshop gate needs that precise phrase."
+        }
+      ],
+      "doors": [
+        {
+          "id": "workshop-porch-forward",
+          "to": "workshop-fork",
+          "recipe": [
+            "half",
+            "eighth-pair",
+            "sixteenth-group"
+          ],
+          "label": "The running gate"
+        },
+        {
+          "id": "workshop-porch-dead",
+          "to": "dead-aviary",
+          "recipe": [
+            "dotted-half",
+            "quarter"
+          ],
+          "label": "The silent aviary",
+          "warning": "The birds turn away from this door. Pip says its long call has nowhere to return from."
+        }
+      ]
+    },
+    {
+      "id": "canal-porch",
+      "title": "The Canal Storehouse",
+      "sources": [
+        {
+          "id": "canal-chest",
+          "type": "chest",
+          "recipe": [
+            "half",
+            "quarter",
+            "eighth-pair"
+          ],
+          "label": "The stamped delivery chest",
+          "hint": "The ferry keeper points out a chest bearing Nell’s postage. Its three notes match the lock ahead."
+        }
+      ],
+      "doors": [
+        {
+          "id": "canal-porch-forward",
+          "to": "canal-fork",
+          "recipe": [
+            "half",
+            "quarter",
+            "eighth-pair"
+          ],
+          "label": "The delivery gate"
+        },
+        {
+          "id": "canal-porch-dead",
+          "to": "dead-ferry",
+          "recipe": [
+            "dotted-half",
+            "sixteenth-group"
+          ],
+          "label": "The empty ferry",
+          "warning": "A rotted boarding rope hangs beyond this door. The ferry keeper warns that no boat waits there."
+        }
+      ]
+    },
+    {
+      "id": "garden-fork",
+      "title": "The Two Garden Paths",
+      "sources": [],
+      "doors": [
+        {
+          "id": "garden-normal",
+          "to": "garden-final",
+          "recipe": [
+            "dotted-half",
+            "quarter"
+          ],
+          "label": "The hearth path",
+          "hint": "A three-beat call followed by an ordinary step leads toward the homes."
+        },
+        {
+          "id": "garden-secret-branch",
+          "to": "garden-alcove",
+          "recipe": [
+            "eighth-pair",
+            "sixteenth-group",
+            "quarter-rest",
+            "eighth",
+            "sixteenth-pair"
+          ],
+          "label": "The old stone path",
+          "hint": "The small groups, a breath, and two different half-beat replies lead deeper into the old garden."
+        }
+      ]
+    },
+    {
+      "id": "workshop-fork",
+      "title": "The Workshop Crossroads",
+      "sources": [],
+      "doors": [
+        {
+          "id": "workshop-normal",
+          "to": "workshop-final",
+          "recipe": [
+            "dotted-half",
+            "quarter"
+          ],
+          "label": "The schoolroom stair",
+          "hint": "A three-beat call and one ordinary step lead toward the shared music room."
+        },
+        {
+          "id": "workshop-secret-branch",
+          "to": "workshop-alcove",
+          "recipe": [
+            "half-rest",
+            "quarter-rest",
+            "eighth",
+            "sixteenth-pair"
+          ],
+          "label": "The birds’ back passage",
+          "hint": "Two quiet beats, another quiet beat, then two different half-beat replies lead behind the birds’ stage."
+        }
+      ]
+    },
+    {
+      "id": "canal-fork",
+      "title": "The Water Clock",
+      "sources": [],
+      "doors": [
+        {
+          "id": "canal-normal",
+          "to": "canal-final",
+          "recipe": [
+            "dotted-half",
+            "sixteenth-group"
+          ],
+          "label": "The town-bell stair",
+          "hint": "A three-beat call followed by four tiny steps climbs toward the public bell."
+        },
+        {
+          "id": "canal-dead",
+          "to": "dead-echo",
+          "recipe": [
+            "half-rest",
+            "quarter-rest",
+            "eighth",
+            "sixteenth-pair"
+          ],
+          "label": "The copied waterway",
+          "warning": "The ferryman’s map shows that this quiet passage ends at a wall."
+        }
+      ]
+    },
+    {
+      "id": "garden-final",
+      "title": "The Hearth Bell",
+      "sources": [],
+      "doors": [
+        {
+          "id": "garden-ending",
+          "to": "ending-home",
+          "recipe": [
+            "eighth-pair",
+            "sixteenth-group",
+            "quarter-rest",
+            "eighth",
+            "sixteenth-pair"
+          ],
+          "label": "The home door",
+          "hint": "Use the five note tiles you carried here: two kinds of groups, a quarter rest, a single eighth, and paired sixteenths."
+        }
+      ]
+    },
+    {
+      "id": "workshop-final",
+      "title": "The Open Music Room",
+      "sources": [],
+      "doors": [
+        {
+          "id": "workshop-ending",
+          "to": "ending-school",
+          "recipe": [
+            "half-rest",
+            "quarter-rest",
+            "eighth",
+            "sixteenth-pair"
+          ],
+          "label": "The music-room door",
+          "hint": "Two quiet beats, one quiet beat, then the two different half-beat replies finish the phrase."
+        }
+      ]
+    },
+    {
+      "id": "canal-final",
+      "title": "The Evening Tower",
+      "sources": [],
+      "doors": [
+        {
+          "id": "canal-ending",
+          "to": "ending-public",
+          "recipe": [
+            "half-rest",
+            "quarter-rest",
+            "eighth",
+            "sixteenth-pair"
+          ],
+          "label": "The town door",
+          "hint": "Two quiet beats, one quiet beat, then two different half-beat replies complete the tower’s answer."
+        }
+      ]
+    },
+    {
+      "id": "garden-alcove",
+      "title": "The Overgrown Music Box",
+      "sources": [
+        {
+          "id": "garden-hidden-notes",
+          "type": "hidden",
+          "recipe": [
+            "quarter",
+            "eighth-pair",
+            "sixteenth-group",
+            "quarter-rest"
+          ],
+          "label": "Four notes beneath the loose stone",
+          "hint": "Iris remembers a music box under a stone carved with a flower. Search there; the newly found phrase reveals the hidden gate."
+        }
+      ],
+      "doors": [
+        {
+          "id": "garden-hidden-exit",
+          "to": "garden-secret-final",
+          "recipe": [
+            "quarter",
+            "eighth-pair",
+            "sixteenth-group",
+            "quarter-rest"
+          ],
+          "revealAfter": "garden-hidden-notes",
+          "label": "The hidden flower gate",
+          "hint": "The four newly found one-beat tiles open this gate."
+        }
+      ],
+      "description": "The hidden pickup is inside the chosen secret branch. It cannot be collected on the normal path and cannot leak into a regular ending."
+    },
+    {
+      "id": "workshop-alcove",
+      "title": "The Birds’ Dusty Attic",
+      "sources": [
+        {
+          "id": "workshop-hidden-notes",
+          "type": "hidden",
+          "recipe": [
+            "half",
+            "half-rest"
+          ],
+          "label": "Two long notes inside the hollow perch",
+          "hint": "Pip notices a perch whose two sides answer differently: one sounds and one stays silent. Search it to reveal the hidden gate."
+        }
+      ],
+      "doors": [
+        {
+          "id": "workshop-hidden-exit",
+          "to": "workshop-secret-final",
+          "recipe": [
+            "half",
+            "half-rest"
+          ],
+          "revealAfter": "workshop-hidden-notes",
+          "label": "The hidden brass gate",
+          "hint": "A sounding half note and a silent half rest open the brass gate."
+        }
+      ],
+      "description": "Searching is optional before choosing this detour. Inside it, the once-only hidden cache is needed for the only forward gate; it remains available until found."
+    },
+    {
+      "id": "garden-secret-final",
+      "title": "The Reserved Room",
+      "sources": [],
+      "doors": [
+        {
+          "id": "garden-secret-ending",
+          "to": "ending-secret-quiet",
+          "recipe": [
+            "dotted-half",
+            "quarter"
+          ],
+          "label": "The unfinished-song door",
+          "hint": "The original three-beat call and the ordinary one-beat note were kept for this last answer."
+        }
+      ]
+    },
+    {
+      "id": "workshop-secret-final",
+      "title": "The Hidden Countermelody",
+      "sources": [],
+      "doors": [
+        {
+          "id": "workshop-secret-ending",
+          "to": "ending-secret-birds",
+          "recipe": [
+            "dotted-half",
+            "quarter"
+          ],
+          "label": "The birds’ answer door",
+          "hint": "Finish with the original three-beat call and the ordinary one-beat note you carried through the back passage."
+        }
+      ]
+    }
+  ],
+  "terminals": [
+    {
+      "id": "ending-home",
+      "title": "A Place to Come Home",
+      "kind": "ending"
+    },
+    {
+      "id": "ending-school",
+      "title": "The Open Music Room",
+      "kind": "ending"
+    },
+    {
+      "id": "ending-public",
+      "title": "The Evening Bell",
+      "kind": "ending"
+    },
+    {
+      "id": "ending-secret-quiet",
+      "title": "The Reserved Silence",
+      "kind": "secret-ending"
+    },
+    {
+      "id": "ending-secret-birds",
+      "title": "The Birds’ Countermelody",
+      "kind": "secret-ending"
+    },
+    {
+      "id": "dead-brambles",
+      "title": "The Overgrown Arch",
+      "kind": "dead-end",
+      "repair": "Revisit Iris’s porch and use her gift at the listening gate."
+    },
+    {
+      "id": "dead-aviary",
+      "title": "The Silent Aviary",
+      "kind": "dead-end",
+      "repair": "Revisit Pip’s workshop and use his running phrase at the workshop gate."
+    },
+    {
+      "id": "dead-ferry",
+      "title": "The Empty Ferry",
+      "kind": "dead-end",
+      "repair": "Revisit the canal storehouse, open the stamped chest, and use its delivery phrase."
+    },
+    {
+      "id": "dead-echo",
+      "title": "The Copied Waterway",
+      "kind": "dead-end",
+      "repair": "Revisit the water clock and choose the town-bell stair."
+    }
+  ],
+  "rules": [
+    "Doors accept their authored ordered recipe, not every rhythm of equal duration. Every door costs exactly four beats.",
+    "All sources are explicit interactions, claimed once globally per run. Talking again never gives another parcel. No notes are awarded automatically on room entry.",
+    "Nell supplies eight kinds worth ten beats; the depot chest holds the missing half note worth two beats. Both opening interactions are naturally required: every door needs the half note, and that note alone is not four beats. Garden and workshop notes come from conversations; canal notes come from a chest.",
+    "The source required for a good porch gate gives exactly the kinds absent after the corresponding opening door. The gate therefore cannot be paid before claiming it.",
+    "Hidden sources exist only after choosing their secret detour. Their fixed four-beat gate spends exactly the newly supplied four-beat vector before the branch rejoins its own final room.",
+    "Successful terminal stock must equal zero for every kind. Dead ends retain four or eight beats. Nothing discards, converts, or consumes arbitrary leftover notes.",
+    "Undo restores room, inventory, source receipts, revealed doors, and the committed action log together. Permanent discoveries never provide current-run notes.",
+    "The previous automatic three-tile-per-stage grants are replaced by these explicit once-only sources."
+  ],
+  "expectedCounts": {
+    "rooms": 14,
+    "terminals": 9,
+    "regularEndings": 3,
+    "secretEndings": 2,
+    "deadEnds": 4,
+    "sources": 7,
+    "doors": 22
+  },
+  "budgetProof": {
+    "regular": "12 initial beats + 4 branch-source beats = 4 doors × 4 beats = 16; zero remains.",
+    "secret": "12 initial beats + 4 branch-source beats + 4 hidden-cache beats = 5 doors × 4 beats = 20; zero remains.",
+    "typed": "Each branch’s remaining eight beats are partitioned into two fixed four-beat vectors. The regular path spends A then B; the secret path spends B, its newly supplied cache vector, then A. Equality holds component by component."
+  }
+}

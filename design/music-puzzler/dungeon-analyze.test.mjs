@@ -1,0 +1,152 @@
+import test from 'node:test';
+import assert from 'node:assert/strict';
+import {analyzeDungeon,compileDungeon,replayDungeon} from './dungeon-analyze.mjs';
+
+const copy=value=>structuredClone(value);
+const gift=(id,recipe,type='npc')=>({id,type,...(type==='npc'?{character:'Nell'}:{}),recipe});
+const door=(id,to,recipe=['half','half'],extra={})=>({id,to,recipe,...extra});
+const ending=(id='done',kind='ending')=>({id,title:id,kind});
+const fixture=()=>({version:1,entry:'depot',initialInventory:{},rooms:[{id:'depot',title:'The Depot',sources:[gift('parcel',['half','half'])],doors:[door('leave','done')]}],terminals:[ending()]});
+const claim=sourceId=>({type:'claim',sourceId}),open=doorId=>({type:'door',doorId});
+const inventoryEmpty=stock=>Object.values(stock).every(count=>count===0);
+
+test('one-shot sources are explicit actions, doors spend exact typed notes, and success has an empty inventory',()=>{
+ const data=fixture(),report=analyzeDungeon(data);
+ assert.equal(report.passed,true);assert.deepEqual(report.graph,{rooms:1,sources:1,doors:1,terminals:1,reachableStates:3,liveStates:2,terminalStates:1,transitions:2,orderedTerminalHistories:'1'});
+ assert.deepEqual(report.coverage,{unreachableRooms:[],unreachableSources:[],unreachableDoors:[],unreachableTerminals:[]});
+ assert.equal(report.balances.violationCount,0);assert.equal(report.softlocks.count,0);assert.equal(report.forcedDeadEndStates.count,0);
+ assert.deepEqual(report.terminals[0].witness.actions,[claim('parcel'),open('leave')]);
+ const before=replayDungeon(data,[]);assert(inventoryEmpty(before.inventory));assert.deepEqual(before.claimedSources,[]);
+ const claimed=replayDungeon(data,[claim('parcel')]);assert.equal(claimed.inventory.half,2);assert.equal(claimed.terminal,null);
+ const after=replayDungeon(data,[claim('parcel'),open('leave')]);assert.equal(after.terminal,'done');assert(inventoryEmpty(after.inventory));
+ for(const step of after.trace){assert.equal(step.conservation.valid,true);for(const kind of Object.keys(step.inventoryAfter))assert.equal(step.conservation.initial[kind]+step.conservation.claimed[kind]-step.conservation.spent[kind],step.inventoryAfter[kind]);}
+ assert.equal(report.invariants.noAutomaticEntryGrants,true);assert.equal(report.invariants.typedConservation,true);
+});
+
+test('all pickup orders are enumerated and merged states retain exact complete-history counts',()=>{
+ const data=fixture();data.rooms[0].sources=[gift('first-half',['half']),gift('second-half',['half'],'chest')];
+ const report=analyzeDungeon(data);assert.equal(report.passed,true);assert.equal(report.graph.reachableStates,5);assert.equal(report.graph.transitions,5);
+ assert.equal(report.graph.orderedTerminalHistories,'2');assert.equal(report.terminals[0].distinctFinalStates,1);assert.equal(report.terminals[0].orderedHistories,'2');
+ assert(report.sources.every(source=>source.reachable&&source.orderedHistories==='2'));
+ for(const actions of [[claim('first-half'),claim('second-half'),open('leave')],[claim('second-half'),claim('first-half'),open('leave')]]){
+  const replay=replayDungeon(data,actions);assert.equal(replay.terminal,'done');assert(inventoryEmpty(replay.inventory));assert.equal(replay.conservation.claimed.half,2);assert.equal(replay.conservation.spent.half,2);
+ }
+});
+
+test('an optional bonus pickup that can reach an ending with leftovers is a concrete violation',()=>{
+ const data=fixture();data.rooms[0].sources.push(gift('bonus',['quarter-rest'],'chest'));
+ const report=analyzeDungeon(data);assert.equal(report.passed,false);assert.equal(report.graph.orderedTerminalHistories,'3');assert.equal(report.balances.violationCount,1);
+ assert.equal(report.terminals[0].distinctFinalStates,2);assert.deepEqual(report.terminals[0].remainingTiles,{min:0,max:1});assert.equal(report.terminals[0].remainingByKind['quarter-rest'].max,1);
+ const bad=report.balances.violations[0];assert.equal(bad.inventory['quarter-rest'],1);assert.equal(bad.inventory.quarter,0);assert.equal(bad.witness.conservation.valid,true);
+ assert.equal(replayDungeon(data,bad.witness.actions).inventory['quarter-rest'],1);
+ assert.equal(report.softlocks.count,0);assert(report.forcedDeadEndStates.count>0,'Holding the bonus leaves no zero-balance ending');
+ assert(!report.forcedDeadEndStates.states.some(state=>state.stateId===0),'The initial state can decline the bonus and finish cleanly');
+});
+
+test('sources cannot be claimed twice, remotely or after a terminal, and doors cannot farm entry rewards',()=>{
+ const data=fixture();assert.throws(()=>replayDungeon(data,[claim('parcel'),claim('parcel')]),/already claimed/);
+ assert.throws(()=>replayDungeon(data,[claim('missing')]),/not in current room/);
+ assert.throws(()=>replayDungeon(data,[open('leave')]),/unavailable notes/);
+ assert.throws(()=>replayDungeon(data,[claim('parcel'),open('leave'),claim('parcel')]),/after terminal/);
+ assert.throws(()=>replayDungeon(data,[claim('parcel'),open('leave'),open('leave')]),/after terminal/);
+ assert.throws(()=>replayDungeon(data,[{type:'grant',sourceId:'parcel'}]),/Unknown dungeon action/);
+ assert.throws(()=>replayDungeon(data,[{...claim('parcel'),roomId:'elsewhere'}]),/room mismatch/);
+ const alternate=fixture();alternate.rooms.push({id:'other',title:'Other',sources:[gift('remote',['half'])],doors:[]});
+ assert.throws(()=>replayDungeon(alternate,[claim('remote')]),/not in current room/);
+});
+
+test('equal beat totals never substitute for a door’s authored note identities',()=>{
+ const data=fixture();data.initialInventory={quarter:4};data.rooms[0].sources=[];
+ assert.throws(()=>replayDungeon(data,[open('leave')]),/unavailable notes/);
+ const report=analyzeDungeon(data);assert.equal(report.passed,false);assert.equal(report.softlocks.count,1);assert.equal(report.forcedDeadEndStates.count,1);assert.deepEqual(report.coverage.unreachableDoors,['leave']);
+ data.rooms[0].doors[0].recipe=Array(4).fill('quarter');assert.equal(analyzeDungeon(data).passed,true);
+});
+
+function optionalDead(){return{version:1,entry:'fork',initialInventory:{half:4},rooms:[
+ {id:'fork',title:'Fork',sources:[],doors:[door('safe','home'),door('mistake','dead')]},
+ {id:'home',title:'Home',sources:[],doors:[door('finish','done')]}
+ ],terminals:[ending(),ending('dead','dead-end')]};}
+
+test('declared dead ends may retain notes and optional dead-end choices do not force otherwise-live states',()=>{
+ const data=optionalDead(),report=analyzeDungeon(data);assert.equal(report.passed,true);assert.equal(report.graph.orderedTerminalHistories,'2');
+ const dead=report.terminals.find(terminal=>terminal.id==='dead');assert.equal(dead.remainingHalfBeatUnits.min,8);assert.equal(dead.remainingTiles.max,2);
+ assert.equal(report.balances.violationCount,0);assert.equal(report.forcedDeadEndStates.count,0);assert.equal(report.softlocks.count,0);
+ assert.equal(replayDungeon(data,dead.witness.actions).inventory.half,2);
+});
+
+test('a nonterminal room with only dead-end continuations is rejected even when it has an affordable door',()=>{
+ const data=optionalDead();data.rooms[0].doors[1].to='trap';data.rooms.push({id:'trap',title:'Trap',sources:[],doors:[door('doom','dead')]});
+ const report=analyzeDungeon(data);assert.equal(report.passed,false);assert.equal(report.softlocks.count,0);assert.equal(report.forcedDeadEndStates.count,1);
+ assert.equal(report.forcedDeadEndStates.states[0].nodeId,'trap');assert.equal(report.forcedDeadEndStates.states[0].witness.nodeId,'trap');
+});
+
+function secret(){return{version:1,entry:'room',initialInventory:{},rooms:[{id:'room',title:'Room',sources:[gift('hidden-key',['half','half'],'hidden')],doors:[door('secret-door','secret',['half','half'],{revealAfter:'hidden-key'})]}],terminals:[ending('secret','secret-ending')]};}
+
+test('a secret needs a claimed hidden source and traversal through its revealed physical door',()=>{
+ const data=secret(),report=analyzeDungeon(data);assert.equal(report.passed,true);assert.equal(report.secretProofs.length,1);assert.equal(report.secretProofs[0].allPathsRequireHiddenClaimAndGate,true);
+ assert.equal(report.secretProofs[0].orderedHistories,'1');assert.equal(report.secretProofs[0].hiddenGatedHistories,'1');assert.equal(report.secretProofs[0].ungatedWitness,null);
+ assert.deepEqual(report.secretProofs[0].witness.claimedSources,['hidden-key']);assert.deepEqual(report.secretProofs[0].witness.hiddenGateSources,['hidden-key']);
+ assert.throws(()=>replayDungeon(data,[open('secret-door')]),/not revealed/);
+ const replay=replayDungeon(data,[claim('hidden-key'),open('secret-door')]);assert.equal(replay.terminal,'secret');assert(inventoryEmpty(replay.inventory));
+});
+
+test('secret provenance checks every history even when gated and ungated paths merge to the same inventory and claimed set',()=>{
+ const data=secret();data.rooms[0].doors.push(door('unguarded-shortcut','secret'));
+ const report=analyzeDungeon(data);assert.equal(report.passed,false);assert.equal(report.terminals[0].distinctFinalStates,1);assert.equal(report.balances.violationCount,0);assert.equal(report.softlocks.count,0);assert.equal(report.forcedDeadEndStates.count,0);
+ const proof=report.secretProofs[0];assert.equal(proof.orderedHistories,'2');assert.equal(proof.hiddenGatedHistories,'1');assert.equal(proof.allPathsRequireHiddenClaimAndGate,false);
+ assert.deepEqual(proof.witness.hiddenGateSources,['hidden-key'],'The first representative happens to be the gated path');
+ assert.deepEqual(proof.ungatedWitness.actions,[claim('hidden-key'),open('unguarded-shortcut')]);assert.deepEqual(proof.ungatedWitness.hiddenGateSources,[]);
+ assert.deepEqual(replayDungeon(data,proof.ungatedWitness.actions).claimedSources,['hidden-key'],'A hidden pickup alone is not a revealed-door proof');
+});
+
+test('a reveal gate on an ordinary NPC source does not establish a hidden-note secret',()=>{
+ const data=secret();data.rooms[0].sources[0].type='npc';data.rooms[0].sources[0].character='Nell';
+ const report=analyzeDungeon(data);assert.equal(report.passed,false);assert.equal(report.secretProofs[0].hiddenGatedHistories,'0');
+ assert.equal(report.secretProofs[0].allPathsRequireHiddenClaimAndGate,false);assert.equal(report.balances.violationCount,0);
+});
+
+test('source, door, room and terminal coverage report authored content that has no reachable witness',()=>{
+ const data=fixture();data.rooms.push({id:'orphan',title:'Orphan',sources:[gift('orphan-gift',['half','half'])],doors:[door('orphan-door','unused')]});data.terminals.push(ending('unused'));
+ const report=analyzeDungeon(data);assert.equal(report.passed,false);assert.deepEqual(report.coverage,{unreachableRooms:['orphan'],unreachableSources:['orphan-gift'],unreachableDoors:['orphan-door'],unreachableTerminals:['unused']});
+ assert.equal(report.sources.find(source=>source.id==='orphan-gift').witness,null);assert.equal(report.terminals.find(terminal=>terminal.id==='unused').witness,null);
+});
+
+test('structural validation rejects malformed notes, counts, IDs, destinations and nonlocal reveal sources',()=>{
+ const mutations=[
+  [data=>data.version=2,/version/],
+  [data=>data.entry='missing',/Entry/],
+  [data=>data.initialInventory={unknown:1},/Unknown initial/],
+  [data=>data.initialInventory={half:-1},/Invalid initial/],
+  [data=>data.initialInventory={half:1.5},/Invalid initial/],
+  [data=>data.initialInventory={half:Number.MAX_SAFE_INTEGER},/safe integer/],
+  [data=>{data.initialInventory={half:Number.MAX_SAFE_INTEGER};data.rooms[0].sources=[];},/safe integer/],
+  [data=>data.rooms[0].sources.push(copy(data.rooms[0].sources[0])),/source ID/],
+  [data=>data.rooms.push(copy(data.rooms[0])),/room ID/],
+  [data=>data.terminals[0].id='depot',/terminal ID/],
+  [data=>data.rooms[0].doors.push(copy(data.rooms[0].doors[0])),/door ID/],
+  [data=>data.rooms[0].sources[0].type='automatic',/source type/],
+  [data=>data.rooms[0].sources[0].recipe=[],/nonempty recipe/],
+  [data=>data.rooms[0].sources[0].recipe=['unknown'],/Unknown note/],
+  [data=>data.rooms[0].doors[0].recipe=['half'],/four beats/],
+  [data=>data.rooms[0].doors[0].recipe=['unknown'],/Unknown note/],
+  [data=>data.rooms[0].doors[0].to='missing',/destination/],
+  [data=>data.rooms[0].doors[0].revealAfter='missing',/local source/],
+  [data=>data.terminals[0].kind='victory',/terminal kind/],
+  [data=>data.rooms[0].sources={},/arrays/]
+ ];
+ for(const [change,pattern]of mutations){const data=fixture();change(data);assert.throws(()=>compileDungeon(data),pattern);}
+ const remote=fixture();remote.rooms.push({id:'elsewhere',title:'Elsewhere',sources:[gift('remote-key',['half'],'hidden')],doors:[]});remote.rooms[0].doors[0].revealAfter='remote-key';assert.throws(()=>compileDungeon(remote),/local source/);
+ const duplicate=fixture();duplicate.rooms.push({id:'elsewhere',title:'Elsewhere',sources:[gift('parcel',['quarter'])],doors:[]});assert.throws(()=>compileDungeon(duplicate),/source ID/);
+});
+
+test('cycles, including disconnected cycles, are rejected before action exploration',()=>{
+ const self=fixture();self.rooms[0].doors.push(door('loop','depot'));assert.throws(()=>analyzeDungeon(self),/Cycle/);
+ const disconnected=fixture();disconnected.rooms.push({id:'a',title:'A',sources:[],doors:[door('a-b','b')]},{id:'b',title:'B',sources:[],doors:[door('b-a','a')]});assert.throws(()=>analyzeDungeon(disconnected),/Cycle/);
+});
+
+test('witnesses for every reachable source, door and terminal replay with typed conservation and no input mutation',()=>{
+ const data=optionalDead(),original=copy(data),report=analyzeDungeon(data);
+ for(const item of [...report.sources,...report.doors,...report.terminals])if(item.reachable){const replay=replayDungeon(data,item.witness.actions);assert.equal(replay.nodeId,item.witness.nodeId);assert.deepEqual(replay.inventory,item.witness.inventory);assert.equal(replay.conservation.valid,true);}
+ assert.deepEqual(data,original);assert.throws(()=>analyzeDungeon(fixture(),{maxStates:2}),/state limit exceeded/);
+ assert.throws(()=>analyzeDungeon(fixture(),{maxStates:0}),/Invalid state limit/);
+});
