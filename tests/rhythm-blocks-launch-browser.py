@@ -52,6 +52,12 @@ class RhythmBlocksLaunchTests(world.WorldBrowserCase):
         self.assertEqual(self.page.locator('#activegame').inner_text(), 'The Quiet Bell')
         return self.page.locator('#gameiframe').element_handle().content_frame()
 
+    def exit_game(self, frame):
+        for dialog, close in [('#conversation-dialog','#conversation-close'), ('#notes-dialog','#notes-close')]:
+            if frame.locator(dialog).is_visible(): frame.locator(close).click()
+        frame.locator('#menu').click()
+        frame.get_by_role('link', name=re.compile('arcade', re.I)).click()
+
     def test_menu_launch_and_in_game_return_preserve_the_world_without_a_reward_bridge(self):
         before = self.page.evaluate('''()=>({xp:CodaArcadeQA.progression().xp,
             notes:CodaArcadeQA.notes().balance,rewards:CodaArcadeQA.notes().rewards})''')
@@ -63,10 +69,11 @@ class RhythmBlocksLaunchTests(world.WorldBrowserCase):
         frame.wait_for_function("!!window.quietBell?.state")
         frame.locator('button[data-person="iris"]').focus()
         self.page.keyboard.press('Enter')
+        frame.wait_for_function("quietBell.state.selectedPerson==='iris'&&!quietBell.walker.moving&&!quietBell.walker.pendingTarget")
         self.assertIn('iris', frame.locator('#speaker').inner_text().lower())
         self.assertEqual(frame.evaluate('quietBell.state.phase'), 'room')
         self.assertTrue(frame.evaluate('Object.values(quietBell.state.inventory).every(count=>count===0)'))
-        frame.get_by_role('link', name=re.compile('arcade', re.I)).click()
+        self.exit_game(frame)
         self.page.wait_for_function('!CodaArcadeQA.menu().gameOpen')
         self.assertEqual(self.page.url, WORLD)
         self.assertTrue(self.page.locator('#gameoverlay').is_hidden())
@@ -110,12 +117,14 @@ class RhythmBlocksLaunchTests(world.WorldBrowserCase):
         self.assertTrue(self.page.locator('#worldGamesBtn').is_visible())
         self.assertTrue(self.page.locator('#worldGamesBtn').evaluate('button=>{const r=button.getBoundingClientRect();return r.x>=0&&r.right<=innerWidth;}'))
         frame = self.open_game()
-        frame.get_by_role('link', name=re.compile('arcade', re.I)).click()
+        self.exit_game(frame)
         self.page.wait_for_function('!CodaArcadeQA.menu().gameOpen')
         self.assertTrue(self.page.locator('#worldGamesBtn').is_visible())
 
     def test_standalone_return_stays_under_the_current_package_prefix(self):
         self.page.goto(GAME, wait_until='domcontentloaded')
+        self.page.wait_for_function('!!window.quietBell?.state')
+        self.page.locator('#menu').click()
         back = self.page.get_by_role('link', name=re.compile('arcade', re.I))
         self.assertEqual(back.evaluate('link=>new URL(link.href).pathname'), PREFIX+'world-preview.html')
         back.click()

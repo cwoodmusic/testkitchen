@@ -1,15 +1,16 @@
-import {createStoryGame,PAGE_ONE_DOOR_COSTS} from './story.mjs?v=quiet-bell-dungeon-one-1';
-import {NOTE_KINDS,NOTE_KIND_BY_ID} from './engine.mjs?v=quiet-bell-dungeon-one-1';
-import {symbolMarkup} from './notation.mjs?v=quiet-bell-dungeon-one-1';
-import {createRhythmAudio} from './audio.mjs?v=quiet-bell-dungeon-one-1';
-import {PEOPLE,ROUTE_OUTCOMES} from './opening.mjs?v=quiet-bell-dungeon-one-1';
+import {createStoryGame,PAGE_ONE_DOOR_COSTS} from './story.mjs?v=quiet-bell-full-room-1';
+import {NOTE_KINDS,NOTE_KIND_BY_ID} from './engine.mjs?v=quiet-bell-full-room-1';
+import {symbolMarkup} from './notation.mjs?v=quiet-bell-full-room-1';
+import {createRhythmAudio} from './audio.mjs?v=quiet-bell-full-room-1';
+import {PEOPLE,ROUTE_OUTCOMES} from './opening.mjs?v=quiet-bell-full-room-1';
+import {createRoomView} from './room-view.mjs?v=quiet-bell-full-room-1';
 
 const $=id=>document.getElementById(id),root=$('quiet-bell');
 const SAVE_KEY='codaQuietBellPageOneV1',SOUND_KEY='codaRhythmBlocksSoundV1';
 const colors={quarter:'#9bd5bb','eighth-pair':'#a9d8da','sixteenth-group':'#b9afe2',half:'#efcb8d',eighth:'#bdb0e7','quarter-rest':'#e8d9b5','half-rest':'#e0bd9b','dotted-half':'#d9abc8','sixteenth-pair':'#c8bde9'};
 const shortNames={quarter:'Quarter note','eighth-pair':'Two eighths','sixteenth-group':'Four sixteenths',half:'Half note',eighth:'Eighth note','quarter-rest':'Quarter rest','half-rest':'Half rest','dotted-half':'Dotted half','sixteenth-pair':'Two sixteenths'};
 const people=new Map(PEOPLE.map(person=>[person.id,person]));
-const topics={story:'What brings you here?',route:'Which way would you go?',inventory:'About my notes…'};
+const topics={story:'Your story',route:'A way forward',inventory:'My notes'};
 const topicNames={story:'Your story',route:'A way forward',inventory:'Your carried notes'};
 const count=stock=>Object.values(stock).reduce((total,n)=>total+n,0);
 const beatText=kind=>`${kind.beats===.5?'½':kind.beats} beat${kind.beats<=1?'':'s'}`;
@@ -21,16 +22,23 @@ const game=createStoryGame({saved}),audio=createRhythmAudio({enabled:read(SOUND_
 let selectedPerson=saved?.version===2&&people.has(saved?.conversation?.person)?saved.conversation.person:'nell';
 let selectedTopic=saved?.version===2&&Object.hasOwn(topics,saved?.conversation?.topic)?saved.conversation.topic:'story';
 let soundEnabled=read(SOUND_KEY)!=='off',audioRevision=0;
+let roomView=null,toastTimer=0;
 let message=game.state.phase==='continued'?'Your chosen door and carried notes are ready.':saved?.version===2?'Your collected notes and your place in the room are ready.':'Nell has kept a parcel for you. Accept it, then open the delivery chest.';
 const doorNames={garden:'Garden door',workshop:'Workshop door',canal:'Canal door'};
 const doorHints={garden:'Iris knows the ivy-covered lock.',workshop:'Pip knows the gear-marked lock.',canal:'Nell knows the blue canal lock.'};
 
 function snapshot(){return{...game.state,selectedPerson,selectedTopic};}
-Object.defineProperty(window,'quietBell',{value:Object.freeze({get state(){return snapshot();}})});
-function save(){write(SAVE_KEY,JSON.stringify({...game.serialize(),conversation:{person:selectedPerson,topic:selectedTopic}}));updateSave();}
+Object.defineProperty(window,'quietBell',{value:Object.freeze({get state(){return snapshot();},get walker(){return roomView?.state??null;},get camera(){return roomView?.camera??null;}})});
+function save(){const position=roomView?.state;write(SAVE_KEY,JSON.stringify({...game.serialize(),conversation:{person:selectedPerson,topic:selectedTopic},roomPosition:position?{x:position.x,y:position.y,facing:position.facing}:saved?.roomPosition}));updateSave();}
 function updateSave(){$('save-status').textContent=storageAvailable?'Progress saves on this device.':'Saving is unavailable in this browser. Keep this page open to retain your progress.';}
 function stopAudio(){audioRevision++;audio.stop();}
 async function play(recipe){const revision=++audioRevision;audio.stop();if(!recipe.length||!soundEnabled)return;await audio.unlock();if(revision===audioRevision&&!document.hidden&&!$('help-dialog').open)audio.playPattern(recipe);}
+const panelIds=['conversation-dialog','notes-dialog','menu-dialog','help-dialog','outcome'];
+function panelOpen(){return panelIds.some(id=>$(id).open);}
+function closePanels(except=null){for(const id of panelIds)if(id!==except&&$(id).open)$(id).close();}
+function openPanel(id){roomView?.stop();closePanels(id);if(!$(id).open)$(id).showModal();roomView?.refresh();}
+function openNotes(mode){$('notes-dialog').dataset.mode=mode;openPanel('notes-dialog');render();}
+function notify(text){clearTimeout(toastTimer);$('world-status').textContent=text;$('world-status').hidden=false;$('announcement').textContent=text;toastTimer=setTimeout(()=>{$('world-status').hidden=true;},3200);}
 function talk(){
   const state=game.state,person=people.get(selectedPerson),outcome=state.routeId?ROUTE_OUTCOMES[state.routeId]:null;
   let text=person[selectedTopic];
@@ -46,23 +54,33 @@ function talk(){
   $('demo').hidden=state.phase!=='room'||selectedTopic!=='route';
   $('demo').disabled=!soundEnabled;$('demo').textContent=`Hear ${person.name}’s rhythm`;
   $('take-parcel').hidden=selectedPerson!=='nell'||state.phase!=='room';
-  $('take-parcel').disabled=state.claimedSources.includes('nell-parcel');
-  $('take-parcel').textContent=state.claimedSources.includes('nell-parcel')?'Parcel received':'Take Nell’s parcel';
+  updateAccess();
+}
+function updateAccess(){
+  const state=game.state,nearNell=roomView?.withinReach('nell')??false,parcelClaimed=state.claimedSources.includes('nell-parcel');
+  $('take-parcel').disabled=parcelClaimed||!nearNell;
+  $('take-parcel').textContent=parcelClaimed?'Parcel received':nearNell?'Take Nell’s parcel':'Walk to Nell for the parcel';
+  const atDoor=!!state.selectedDoor&&!!roomView?.withinReach(state.selectedDoor);
+  $('commit').disabled=!state.canAttempt||!atDoor;
+  $('door-hint').textContent=state.selectedDoor?state.phase==='room'&&!atDoor?'Walk to the selected door to try its rhythm key.':doorHints[state.selectedDoor]:'Each door has its own rhythm lock.';
 }
 function render(){
   const active=document.activeElement,focusedKind=active?.dataset?.kind,focusedNote=active?.dataset?.remove;
   const state=game.state,continued=state.phase==='continued',recipe=continued?state.receipt.recipe:state.phrase;
+  const bagMode=$('notes-dialog').dataset.mode==='bag',visibleStock=bagMode?state.inventory:state.availableInventory;
   const units=recipe.reduce((total,kind)=>total+NOTE_KIND_BY_ID[kind].units,0);
   $('total').textContent=`${units/2} / 4 beats`;root.querySelector('.mg-floor').dataset.ready=String(units===8);
   $('phrase').innerHTML=recipe.map((kind,index)=>`<button type="button" class="mg-phrase-note" data-remove="${index}" aria-label="${continued?shortNames[kind]:'Return '+shortNames[kind]+' to your satchel'}" style="grid-column:span ${NOTE_KIND_BY_ID[kind].units};--mg-tile:${colors[kind]}"${continued?' disabled':''}>${symbolMarkup(kind)}</button>`).join('');
   $('phrase').setAttribute('aria-label',`${continued?'Your played answer':'Your answer'}: ${recipe.length?recipe.map(kind=>NOTE_KIND_BY_ID[kind].label).join(', '):'empty'}. ${units/2} of four beats.`);
-  $('stock').innerHTML=NOTE_KINDS.map(kind=>`<button type="button" class="mg-stock-note" data-kind="${kind.id}" aria-label="${kind.label}, ${beatText(kind)}, ${state.availableInventory[kind.id]} available" style="--mg-tile:${colors[kind.id]}"${continued||state.availableInventory[kind.id]<1||state.units+kind.units>8?' disabled':''}><span class="mg-count">×${state.availableInventory[kind.id]}</span>${symbolMarkup(kind.id)}<span class="mg-kind-name">${shortNames[kind.id]}</span><span class="mg-beat-value">${beatText(kind)}</span></button>`).join('');
-  $('stock-title').textContent=continued?'For the next page':'Your note blocks';$('held').textContent=`${count(state.availableInventory)} carried`;
+  $('stock').innerHTML=NOTE_KINDS.map(kind=>`<button type="button" class="mg-stock-note" data-kind="${kind.id}" aria-label="${kind.label}, ${beatText(kind)}, ${visibleStock[kind.id]} available" style="--mg-tile:${colors[kind.id]}"${bagMode||continued||state.availableInventory[kind.id]<1||state.units+kind.units>8?' disabled':''}><span class="mg-count">×${visibleStock[kind.id]}</span>${symbolMarkup(kind.id)}<span class="mg-kind-name">${shortNames[kind.id]}</span><span class="mg-beat-value">${beatText(kind)}</span></button>`).join('');
+  $('stock-title').textContent=bagMode?'Your notes':'Rhythm lock';$('held').textContent=`${count(visibleStock)} ${bagMode?'carried':'available'}`;
+  const bagCount=count(state.inventory);$('bag-count').textContent=String(bagCount);$('bag-count').hidden=bagCount===0;$('bag').setAttribute('aria-label',`Open inventory, ${bagCount} notes`);
   $('listen').disabled=!recipe.length||!soundEnabled;$('undo').disabled=!state.phrase.length&&!continued;$('commit').disabled=!state.canAttempt;
   $('door-demo').disabled=!state.selectedDoor||!soundEnabled||continued;
   $('door-title').textContent=state.selectedDoor?doorNames[state.selectedDoor]:'Choose a door';
   $('door-hint').textContent=state.selectedDoor?doorHints[state.selectedDoor]:'Each door has its own rhythm lock.';
   for(const button of root.querySelectorAll('[data-door]')){button.setAttribute('aria-pressed',String(button.dataset.door===state.selectedDoor));button.disabled=continued;}
+  for(const button of root.querySelectorAll('[data-person]'))button.disabled=continued;
   const chest=root.querySelector('[data-chest]'),chestClaimed=state.claimedSources.includes('depot-chest');
   chest.disabled=continued||chestClaimed;chest.setAttribute('aria-label',chestClaimed?'Delivery chest opened; half note collected':'Open the delivery chest');$('chest-label').textContent=chestClaimed?'Opened':'Open';
   $('edit-hint').textContent=continued?'This is the answer you played. Revisit it to try another path.':'Choose notes from your satchel. Tap a placed note to take it back.';
@@ -73,34 +91,39 @@ function render(){
   $('pack-copy').textContent=`Nell’s parcel: ${state.claimedSources.includes('nell-parcel')?'received':'waiting'}. Delivery chest: ${chestClaimed?'opened':'closed'}.`;
   $('story-state').textContent=continued?`Your open door leads toward ${ROUTE_OUTCOMES[state.routeId].title}.`:'Collect notes, choose a door, and play its rhythm key.';
   $('seen-routes').textContent=state.discoveredRoutes.length?`Paths you have found: ${state.discoveredRoutes.map(id=>ROUTE_OUTCOMES[id].title).join(' · ')}`:'';
-  $('outcome').hidden=!continued;
+  if(!continued&&$('outcome').open)$('outcome').close();
   if(continued){const outcome=ROUTE_OUTCOMES[state.routeId];$('outcome-kicker').textContent=outcome.kicker;$('outcome-title').textContent=outcome.title;$('outcome-copy').textContent=outcome.copy;}
   $('sound').textContent=soundEnabled?'Sound on':'Sound off';$('sound').setAttribute('aria-pressed',String(soundEnabled));
-  talk();updateSave();
+  talk();updateSave();roomView?.refresh();
   // Updating counts replaces note controls. Keep keyboard navigation in the
   // satchel or phrase rather than sending focus back to the page header.
   if(focusedKind){
     const same=root.querySelector('[data-kind="'+focusedKind+'"]');
     const next=NOTE_KINDS.slice(NOTE_KINDS.findIndex(kind=>kind.id===focusedKind)+1).map(kind=>root.querySelector('[data-kind="'+kind.id+'"]')).find(button=>!button.disabled);
-    const target=(!same?.disabled?same:next??root.querySelector('[data-kind]:not(:disabled)'))??(state.canAttempt?$('commit'):state.phrase.length?$('undo'):null);
+    const target=(!same?.disabled?same:next??root.querySelector('[data-kind]:not(:disabled)'))??(state.canAttempt&&!$('commit').disabled?$('commit'):state.phrase.length?$('undo'):null);
     target?.focus({preventScroll:true});
   }else if(focusedNote!==undefined){
     const target=root.querySelector('[data-remove="'+Math.min(Number(focusedNote),recipe.length-1)+'"]:not(:disabled)')??root.querySelector('[data-kind]:not(:disabled)');
     target?.focus({preventScroll:true});
   }
 }
-function edit(action){stopAudio();if(!action())return;message=game.state.units===8?'Four beats. Check the selected lock, then try the door.':'Arrange the notes for your chosen door.';render();save();}
-function chooseDoor(id){stopAudio();if(!game.selectDoor(id))return;message=!game.state.claimedSources.includes('nell-parcel')?'Ask Nell for the parcel before opening a door.':!game.state.claimedSources.includes('depot-chest')?'Find the half note in the chest; every opening lock needs it.':`${doorNames[id]} selected. Hear its rhythm or ask a resident for a clue.`;render();save();}
-function claim(id){stopAudio();if(!game.claim(id))return;message=id==='nell-parcel'?'Nell gave you eight note blocks. The missing half note is in the chest.':'The chest held a half note: two sounding beats. You can collect it only once.';render();save();$('announcement').textContent=message;if(id==='nell-parcel')root.querySelector('[data-chest]').focus({preventScroll:true});else root.querySelector('[data-door="'+(game.state.selectedDoor??'garden')+'"]').focus({preventScroll:true});}
-function commit(){stopAudio();if(!game.commit()){if(game.state.canAttempt){message='The lock stays closed. Those four beats do not match this door’s rhythm. Your notes are safe.';render();$('announcement').textContent=message;}return;}selectedTopic='story';selectedPerson=game.state.routeId==='garden'?'iris':game.state.routeId==='workshop'?'pip':'nell';message=`The ${doorNames[game.state.routeId].toLowerCase()} opens. Your unused notes travel with you.`;render();save();void play(game.state.receipt.recipe);$('announcement').textContent=message;$('outcome').scrollIntoView({behavior:'instant',block:'nearest'});$('revisit').focus({preventScroll:true});}
-function undo(){const wasContinued=game.state.phase==='continued';stopAudio();if(!game.undo())return;selectedTopic=wasContinued?'story':selectedTopic;message=wasContinued?'Back at the depot. Your collected notes are restored; the parcel and chest stay collected.':'Note returned to your satchel.';render();save();if(wasContinued)root.querySelector('[data-door="'+game.state.selectedDoor+'"]').focus({preventScroll:true});}
-function restart(){stopAudio();game.restart();selectedPerson='nell';selectedTopic='story';message='A new run begins with an empty satchel. Nell and the chest are ready again.';render();save();root.querySelector('[data-person="nell"]').focus({preventScroll:true});}
+function edit(action){roomView?.stop();stopAudio();if(!action())return;message=game.state.units===8?'Four beats. Check the selected lock, then try the door.':'Arrange the notes for your chosen door.';render();save();}
+function chooseDoor(id){stopAudio();if(!roomView?.withinReach(id)||!game.selectDoor(id))return;message=!game.state.claimedSources.includes('nell-parcel')?'Ask Nell for the parcel before opening a door.':!game.state.claimedSources.includes('depot-chest')?'Find the half note in the chest; every opening lock needs it.':`${doorNames[id]} selected. Hear its rhythm or ask a resident for a clue.`;openNotes('lock');save();}
+function claim(id){stopAudio();if(!roomView?.withinReach(id==='nell-parcel'?'nell':id))return;if(!game.claim(id)){message=id==='depot-chest'?'The chest is empty; its half note has already been collected.':'Nell has already given you this parcel.';render();notify(message);return;}message=id==='nell-parcel'?'Nell gave you eight notes. The half note is in the chest.':'Found a half note in the chest.';if($('conversation-dialog').open)$('conversation-dialog').close();render();save();notify(message);$('walk-floor').focus({preventScroll:true});}
+function commit(){roomView?.stop();stopAudio();if(!roomView?.withinReach(game.state.selectedDoor))return;if(!game.commit()){if(game.state.canAttempt){message='The lock stays closed. Those four beats do not match this door’s rhythm. Your notes are safe.';render();$('announcement').textContent=message;}return;}selectedTopic='story';selectedPerson=game.state.routeId==='garden'?'iris':game.state.routeId==='workshop'?'pip':'nell';message=`The ${doorNames[game.state.routeId].toLowerCase()} opens. Your unused notes travel with you.`;render();save();void play(game.state.receipt.recipe);$('announcement').textContent=message;openPanel('outcome');$('revisit').focus({preventScroll:true});}
+function undo(){roomView?.stop();const wasContinued=game.state.phase==='continued';stopAudio();if(!game.undo())return;selectedTopic=wasContinued?'story':selectedTopic;message=wasContinued?'Back at the depot. Your collected notes are restored; the parcel and chest stay collected.':'Note returned to your satchel.';render();save();if(wasContinued)root.querySelector('[data-door="'+game.state.selectedDoor+'"]').focus({preventScroll:true});}
+function restart(){roomView?.stop();stopAudio();game.restart();closePanels();selectedPerson='nell';selectedTopic='story';roomView?.reset();message='A new run begins with an empty satchel. Nell and the chest are ready again.';render();save();$('walk-floor').focus({preventScroll:true});}
+function interactWith(id){
+  if(people.has(id)){stopAudio();selectedPerson=id;selectedTopic='story';talk();openPanel('conversation-dialog');save();}
+  else if(Object.hasOwn(doorNames,id))chooseDoor(id);
+  else if(id==='depot-chest')claim(id);
+}
 root.addEventListener('click',event=>{
   const button=event.target.closest('button');if(!button||button.disabled)return;
-  if(button.dataset.person){stopAudio();selectedPerson=button.dataset.person;selectedTopic='story';talk();save();return;}
+  if(button.dataset.person){roomView?.request(button.dataset.person);return;}
   if(button.dataset.topic){stopAudio();selectedTopic=button.dataset.topic;talk();save();return;}
-  if(button.dataset.door){chooseDoor(button.dataset.door);return;}
-  if(button.dataset.chest){claim(button.dataset.chest);return;}
+  if(button.dataset.door){roomView?.request(button.dataset.door);return;}
+  if(button.dataset.chest){roomView?.request(button.dataset.chest);return;}
   if(button.dataset.kind){edit(()=>game.add(button.dataset.kind));return;}
   if(button.dataset.remove!==undefined){edit(()=>game.remove(Number(button.dataset.remove)));return;}
   switch(button.id){
@@ -112,21 +135,29 @@ root.addEventListener('click',event=>{
     case'undo':case'revisit':undo();break;
     case'restart':restart();break;
     case'sound':stopAudio();soundEnabled=!soundEnabled;audio.setEnabled(soundEnabled);write(SOUND_KEY,soundEnabled?'on':'off');render();break;
-    case'help':stopAudio();$('help-dialog').showModal();break;
+    case'help':stopAudio();openPanel('help-dialog');break;
+    case'menu':openPanel('menu-dialog');break;
+    case'bag':openNotes('bag');break;
   }
 });
-for(const id of ['help-close','help-done'])$(id).addEventListener('click',()=>$('help-dialog').close());
+for(const [button,panel]of [['help-close','help-dialog'],['help-done','help-dialog'],['conversation-close','conversation-dialog'],['notes-close','notes-dialog'],['menu-close','menu-dialog']])$(button).addEventListener('click',()=>$(panel).close());
+for(const id of panelIds)$(id).addEventListener('close',()=>{roomView?.refresh();const active=document.activeElement;if(!panelOpen()&&(!active||active===document.body||active===document.documentElement||active.closest('dialog')))$('walk-floor').focus({preventScroll:true});});
+$('outcome').addEventListener('cancel',event=>event.preventDefault());
 $('help-notes').innerHTML=NOTE_KINDS.map(kind=>`<div class="mg-help-note">${symbolMarkup(kind.id)}<span>${kind.label}</span><span>${beatText(kind)}</span></div>`).join('');
 document.addEventListener('keydown',event=>{
-  if(event.altKey||event.ctrlKey||event.metaKey||$('help-dialog').open||event.target.closest('input,textarea,select,[contenteditable="true"]'))return;
+  if(event.altKey||event.ctrlKey||event.metaKey||event.target.closest('input,textarea,select,[contenteditable="true"]'))return;
   if(event.repeat)return;
+  if(!panelOpen()&&event.key==='Escape'){event.preventDefault();openPanel('menu-dialog');return;}
+  if(!panelOpen()&&event.key.toLowerCase()==='i'){event.preventDefault();openNotes('bag');return;}
+  if(!$('notes-dialog').open||$('notes-dialog').dataset.mode!=='lock')return;
   if(/^[1-9]$/.test(event.key)){event.preventDefault();edit(()=>game.add(NOTE_KINDS[Number(event.key)-1].id));}
   else if(event.key==='Backspace'){event.preventDefault();undo();}
 });
-function exit(event){stopAudio();void audio.suspend();if(window.parent!==window){event.preventDefault();window.parent.postMessage({coda:1,game:'rhythm-blocks',type:'close'},location.origin);}}
+function exit(event){roomView?.stop();stopAudio();void audio.suspend();if(window.parent!==window){event.preventDefault();window.parent.postMessage({coda:1,game:'rhythm-blocks',type:'close'},location.origin);}}
 $('exit').addEventListener('click',exit);$('outcome-exit').addEventListener('click',exit);
 function background(){stopAudio();void audio.suspend();}
 window.addEventListener('blur',background);document.addEventListener('visibilitychange',()=>{if(document.hidden)background();});
-window.addEventListener('pagehide',()=>{stopAudio();void audio.destroy();});
+window.addEventListener('pagehide',()=>{clearTimeout(toastTimer);stopAudio();void audio.destroy();});
+roomView=createRoomView({scene:$('room-scene'),map:$('room-map'),player:$('player-sprite'),floor:$('walk-floor'),controls:$('room-controls'),interactButton:$('interact'),prompt:$('nearby-prompt'),savedPosition:saved?.version===2?saved.roomPosition:null,canMove:()=>game.state.phase==='room'&&!panelOpen(),onInteract:interactWith,onStop:()=>save(),onReachChange:()=>{if(roomView)updateAccess();}});
 render();
-root.querySelector('[data-person="'+selectedPerson+'"]').focus({preventScroll:true});
+if(game.state.phase==='continued')openPanel('outcome');else $('walk-floor').focus({preventScroll:true});

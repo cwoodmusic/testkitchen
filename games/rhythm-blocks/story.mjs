@@ -1,4 +1,4 @@
-import {NOTE_KINDS,NOTE_KIND_BY_ID} from './engine.mjs?v=quiet-bell-dungeon-one-1';
+import {NOTE_KINDS,NOTE_KIND_BY_ID} from './engine.mjs?v=quiet-bell-full-room-1';
 
 /** Notes enter the room only through explicit, once-only interactions. */
 export const PAGE_ONE_INITIAL_INVENTORY=Object.freeze(Object.fromEntries(NOTE_KINDS.map(kind=>[kind.id,0])));

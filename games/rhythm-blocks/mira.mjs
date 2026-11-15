@@ -1,0 +1,2 @@
+/** Four directions, three poses; foot anchors measured from the original transparent sheet. */
+export const MIRA=Object.freeze({"cellSize":362,"worldSize":216,"directions":["down","left","right","up"],"anchors":[[[0.553867,0.947514],[0.519337,0.947514],[0.497238,0.947514]],[[0.5,0.933702],[0.476519,0.90884],[0.429558,0.917127]],[[0.569061,0.922652],[0.523481,0.900552],[0.508287,0.917127]],[[0.53453,0.933702],[0.490331,0.936464],[0.469613,0.936464]]]});
