@@ -1,0 +1,19 @@
+@font-face{font-family:QuietBellPixel;src:url('./assets/fonts/VT323-Regular.ttf') format('truetype');font-style:normal;font-weight:400;font-display:swap}
+.cutscene-panel{font-family:QuietBellPixel,monospace;background:linear-gradient(135deg,#172447 0%,#111b36 100%);border:3px solid #f6edcf;border-radius:0;color:#fff9e7;padding:12px 17px;box-shadow:inset 0 0 0 3px #425279,0 0 0 3px #151a31,0 5px 0 3px #080d20;max-width:780px;text-shadow:1px 1px 0 #080d20}
+.cutscene-panel #cutscene-speaker{font:400 25px/1 QuietBellPixel,monospace;color:#ffe7a0;letter-spacing:.03em}
+.cutscene-panel #cutscene-counter{font:400 18px/1 QuietBellPixel,monospace;color:#d8e4fa}
+.cutscene-panel #cutscene-line{font:400 23px/1.15 QuietBellPixel,monospace;font-kerning:none;font-variant-ligatures:none;letter-spacing:0;height:3.45em;min-height:3.45em;max-height:3.45em;overflow:auto;overscroll-behavior:contain;scrollbar-width:thin;scrollbar-color:#8c9bb8 #101a32;margin:10px 0 12px;max-width:none;position:relative;text-shadow:1px 1px 0 #080d20}
+.jrpg-glyph-rows{display:block;contain:layout style}
+.jrpg-glyph-row{display:block;height:1.15em;line-height:1.15;white-space:pre;overflow:hidden;will-change:clip-path}
+.jrpg-sr-line{position:absolute;width:1px;height:1px;padding:0;margin:-1px;overflow:hidden;clip:rect(0,0,0,0);white-space:nowrap;border:0}
+.cutscene-panel .cutscene-buttons{gap:7px}
+.cutscene-panel .cutscene-buttons .mg-button{font:400 21px/1 QuietBellPixel,monospace;text-shadow:1px 1px 0 #080d20;border:2px solid #aebbd6;background:#1b2a4d;color:#fff9e7;box-shadow:inset 0 0 0 2px #101b35;min-height:44px;padding:7px 12px}
+.cutscene-panel .cutscene-buttons .mg-primary{background:#304f68;border-color:#e8eccf;color:#fff6cc}
+.cutscene-panel .cutscene-buttons .mg-button:hover,.cutscene-panel .cutscene-buttons .mg-button:focus-visible{background:#354a6d;outline:2px solid #ffe7a0;outline-offset:2px}
+.cutscene-panel .cutscene-buttons .mg-button:disabled{opacity:.65}
+.developer-editing .cutscene-panel{padding:9px 12px}
+.developer-editing .cutscene-panel #cutscene-speaker{font-size:22px}
+.developer-editing .cutscene-panel #cutscene-counter{font-size:16px}
+.developer-editing .cutscene-panel #cutscene-line{font-size:19px;height:2.3em;min-height:2.3em;max-height:2.3em;margin:7px 0}
+@media(max-width:760px){.cutscene-panel{padding:10px 12px;max-width:calc(100vw - 16px)}.cutscene-panel #cutscene-speaker{font-size:24px}.cutscene-panel #cutscene-counter{font-size:17px}.cutscene-panel #cutscene-line{font-size:22px}.developer-editing .cutscene-panel{max-height:none;overflow:visible}.developer-editing .cutscene-panel #cutscene-line{font-size:18px}}
+@media(max-height:520px){.cutscene-panel{padding:8px 12px}.cutscene-panel #cutscene-line{font-size:20px;margin:7px 0}.cutscene-panel #cutscene-speaker{font-size:22px}.cutscene-panel #cutscene-counter{font-size:16px}.developer-editing .cutscene-panel #cutscene-line{font-size:18px}}

@@ -9,6 +9,8 @@
 <link rel="stylesheet" href="style.css">
 <link rel="stylesheet" href="developer-console.css">
 <link rel="stylesheet" href="cutscene.css">
+<link rel="stylesheet" href="cutscene-paths.css">
+<link rel="stylesheet" href="jrpg-dialogue.css">
 </head>
 <body>
 <div id="quiet-bell">
@@ -30,7 +32,7 @@
   <section id="cutscene-panel" class="cutscene-panel" aria-label="Room entrance scene" hidden>
     <header><strong id="cutscene-speaker"></strong><span id="cutscene-counter"></span></header>
     <p id="cutscene-line" aria-live="polite"></p>
-    <div class="cutscene-buttons"><button type="button" class="mg-button" id="cutscene-skip">Skip</button><button type="button" class="mg-button mg-primary" id="cutscene-next">Next ›</button></div>
+    <div class="cutscene-buttons"><button type="button" class="mg-button" id="cutscene-skip">Skip</button><button type="button" class="mg-button" id="cutscene-speed" aria-pressed="false">1×</button><button type="button" class="mg-button mg-primary" id="cutscene-next">Next ›</button></div>
   </section>
   <p class="nearby-prompt" id="nearby-prompt" aria-live="polite"></p>
   <p class="world-status" id="world-status" aria-hidden="true" hidden></p>

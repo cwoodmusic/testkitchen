@@ -323,3 +323,31 @@ test('timeline authoring warns about missing props, blocked points and overlappi
  assert.deepEqual(normalizeProject(project).content.depot.cutscene,project.content.depot.cutscene);
  for(const value of [null,7,'a scene',{},[null]]){const broken=createDefaultProject();broken.content.depot.cutscene=value;assert.doesNotThrow(()=>validateProject(broken));invalid(broken,'cutscene');}
 });
+
+test('editable cutscene waypoints preserve route order and remain separate from game resources',()=>{
+ const project=createDefaultProject(),before={doors:clone(project.doors),sources:clone(project.sources),inventory:clone(project.settings.initialInventory),manifest:createProjectManifest(project)};
+ const waypoints=[{x:600,y:750},{x:900,y:850},{x:1050,y:740}];
+ project.content.depot.cutscene=[
+  {id:'scenic-route',actor:'pip',speaker:'pip',text:'Let us check these shelves.',target:'clockwork-roost',waypoints,action:'search',emote:'question'},
+  {id:'walk-only',actor:'mira',waypoints:[{x:800,y:880}]},
+  {id:'direct-endpoint',actor:'iris',destination:{x:950,y:840},waypoints:[{x:800,y:740}],action:'look'},
+ ];
+ valid(project);const serialized=JSON.stringify(project),restored=normalizeProject(JSON.parse(serialized));
+ assert.deepEqual(restored.content.depot.cutscene,project.content.depot.cutscene);
+ assert(Object.isFrozen(restored.content.depot.cutscene[0].waypoints));assert(Object.isFrozen(restored.content.depot.cutscene[0].waypoints[0]));
+ assert.deepEqual(restored.content.depot.cutscene[0].waypoints,waypoints);
+ waypoints[0].x=1200;assert.equal(restored.content.depot.cutscene[0].waypoints[0].x,600);
+ assert.deepEqual(restored.doors,before.doors);assert.deepEqual(restored.sources,before.sources);assert.deepEqual(restored.settings.initialInventory,before.inventory);assert.deepEqual(createProjectManifest(restored),before.manifest);
+ const empty=createDefaultProject();empty.content.depot.cutscene[0].waypoints=[];assert.deepEqual(normalizeProject(empty).content.depot.cutscene[0].waypoints,[]);
+});
+
+test('cutscene waypoint errors are concrete while blocked floor stays editable with a warning',()=>{
+ for(const value of [null,7,'not a route',{},[null],[{x:NaN,y:600}],[{x:600,y:Infinity}],[{x:-1,y:600}],[{x:1537,y:600}],[{x:600,y:1025}],Array.from({length:33},()=>({x:800,y:800}))]){
+  const project=createDefaultProject();project.content.depot.cutscene[0].waypoints=value;
+  assert.doesNotThrow(()=>validateProject(project));assert.equal(validateProject(project).valid,false,JSON.stringify(value));
+ }
+ const blocked=createDefaultProject();blocked.content.depot.cutscene[0].waypoints=[{x:0,y:0},{x:800,y:800}];
+ assert(valid(blocked).warnings.some(warning=>warning.includes('waypoints[0]')&&warning.includes('nearest reachable floor')));
+ assert.deepEqual(normalizeProject(blocked).content.depot.cutscene[0].waypoints,blocked.content.depot.cutscene[0].waypoints);
+ const blank=createDefaultProject();blank.content.depot.cutscene=[{actor:'mira',waypoints:[]}];invalid(blank,'dialogue, movement');
+});

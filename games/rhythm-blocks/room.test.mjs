@@ -26,12 +26,17 @@ test('all people, doors and the chest can be approached around the actual room f
  }
 });
 
-test('direct walking uses equal diagonal speed, changes facing and stops when blocked',()=>{
- const straight=createRoomWalker(),diagonal=createRoomWalker();
- straight.move(1,0,50);diagonal.move(1,1,50);
+test('direct walking keeps simultaneous directions on one axis at normal speed',()=>{
+ const straight=createRoomWalker(),combined=createRoomWalker();
+ straight.move(1,0,50);combined.move(1,1,50);
  near(Math.hypot(straight.state.x-768,straight.state.y-920),13);
- near(Math.hypot(diagonal.state.x-768,diagonal.state.y-920),13);
+ near(combined.state.x,768);near(combined.state.y,933);assert.equal(combined.state.facing,'down','Equal input keeps the current facing axis.');
+ combined.move(1,-.5,50);near(combined.state.x,781);near(combined.state.y,933);assert.equal(combined.state.facing,'right','The stronger axis wins.');
+ combined.move(-1,-1,50);near(combined.state.x,768);near(combined.state.y,933);assert.equal(combined.state.facing,'left');
  assert.equal(straight.state.facing,'right');assert.equal(straight.state.moving,true);
+});
+
+test('cardinal keyboard walking changes facing and stops when blocked',()=>{
  const above=createRoomWalker({savedPosition:{x:220,y:510}});
  for(let i=0;i<40;i++){above.move(0,-1,50);assert(isWalkable(DEPOT_ROOM,above.state));}
  const counter=DEPOT_ROOM.obstacles.find(obstacle=>obstacle.id==='counter'),front=counter.y+counter.height+DEPOT_ROOM.radius;
@@ -100,9 +105,28 @@ test('navigation paths stay clear at every sampled foot position and remove unne
  const from={x:380,y:920};
  for(const target of DEPOT_ROOM.targets){
   const path=findPath(DEPOT_ROOM,from,target.approach);assert(path?.length,target.id);let previous=from;
-  for(const next of path){const steps=Math.max(1,Math.ceil(Math.hypot(next.x-previous.x,next.y-previous.y)));for(let i=0;i<=steps;i++)assert(isWalkable(DEPOT_ROOM,{x:previous.x+(next.x-previous.x)*i/steps,y:previous.y+(next.y-previous.y)*i/steps}),target.id);previous=next;}
+  for(const next of path){assert(Math.abs(next.x-previous.x)<EPS||Math.abs(next.y-previous.y)<EPS,`${target.id} has a diagonal leg`);const steps=Math.max(1,Math.ceil(Math.hypot(next.x-previous.x,next.y-previous.y)));for(let i=0;i<=steps;i++)assert(isWalkable(DEPOT_ROOM,{x:previous.x+(next.x-previous.x)*i/steps,y:previous.y+(next.y-previous.y)*i/steps}),target.id);previous=next;}
  }
  assert.deepEqual(findPath(DEPOT_ROOM,from,from),[]);
- assert.deepEqual(findPath(DEPOT_ROOM,from,{x:600,y:900}),[{x:600,y:900}]);
+ assert.deepEqual(findPath(DEPOT_ROOM,from,{x:600,y:900}),[{x:600,y:920},{x:600,y:900}]);
  assert.equal(findPath(DEPOT_ROOM,blockedIris,{x:600,y:900}),null);
+});
+
+test('off-grid endpoints detour around furniture with only checked right-angle turns',()=>{
+ const room={width:400,height:300,bounds:{x:0,y:0,width:400,height:300},radius:10,gridSize:16,speed:260,maxDeltaMs:50,start:{x:43.5,y:217.25},obstacles:[{x:140,y:70,width:100,height:160}],targets:[]};
+ const destination={x:347.75,y:73.5};
+ for(const [from,to]of [[room.start,destination],[destination,room.start]]){
+  const route=findPath(room,from,to);assert(route?.length>2,'Both simple elbows are blocked, so navigation must detour.');
+  assert.deepEqual(route.at(-1),to,'The exact off-grid endpoint is retained.');
+  let previous=from;
+  for(const next of route){
+   assert(Math.abs(next.x-previous.x)<EPS||Math.abs(next.y-previous.y)<EPS,'A grid connector cannot introduce a diagonal.');
+   const steps=Math.max(1,Math.ceil(Math.hypot(next.x-previous.x,next.y-previous.y)));
+   for(let i=0;i<=steps;i++)assert(isWalkable(room,{x:previous.x+(next.x-previous.x)*i/steps,y:previous.y+(next.y-previous.y)*i/steps}),'Every cardinal segment clears the full foot circle.');
+   previous=next;
+  }
+  const walker=createRoomWalker({room,savedPosition:from});assert(walker.goTo(to));
+  for(let frame=0;walker.state.moving&&frame<500;frame++){walker.update(50);assert(isWalkable(room,walker.state));}
+  near(walker.state.x,to.x);near(walker.state.y,to.y);assert.equal(walker.state.moving,false);
+ }
 });

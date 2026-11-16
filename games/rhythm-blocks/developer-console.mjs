@@ -9,7 +9,7 @@ const title=value=>text(value).replace(/[-_]/g,' ');
 const noop=()=>{};
 
 /** Local authoring UI. All execution and storage are owned by the calling app. */
-export function createDeveloperConsole({mount=document.body,getProject=createDefaultProject,getState=()=>({}),onOpen=noop,onClose=noop,onDraftChange=noop,onSelectRoom=noop,onApply=noop,onPlaytest=noop,onReturnToGame=noop,onPreview=noop,onPreviewCutscene=noop,onSetInventory=noop,onTeleport=noop,onResetSources=noop,onSaveProject=noop}={}){
+export function createDeveloperConsole({mount=document.body,getProject=createDefaultProject,getState=()=>({}),onOpen=noop,onClose=noop,onDraftChange=noop,onSelectRoom=noop,onApply=noop,onPlaytest=noop,onReturnToGame=noop,onPreview=noop,onPreviewCutscene=noop,onCutsceneSelection=noop,onSetInventory=noop,onTeleport=noop,onResetSources=noop,onSaveProject=noop}={}){
   const document=mount.ownerDocument??globalThis.document;
   let draft=null,tab='dialogue',roomId='depot',personId=null,doorId=null,sourceId=null,noteId=null,actorId=null,objectId=null,loreId=null,dialogueTopic='story',replyId='story',query='',dirty=false,sourceJSON='',jsonBuffer=null,jsonDirty=false,busy=false,disposed=false,fieldEvent=false;
   const past=[],future=[],cutsceneStates=new Map();let cutsceneEditor=null,cutsceneEditorRoom=null,previewProject=null,previewSignature=null;
@@ -171,14 +171,16 @@ export function createDeveloperConsole({mount=document.body,getProject=createDef
     if(!cutsceneEditor)return;
     const previous=cutsceneEditor,previousRoom=cutsceneEditorRoom;
     previous.state.playing=false;cutsceneStates.set(previousRoom,previous.state);
-    cutsceneEditor=null;cutsceneEditorRoom=null;previous.destroy();
+    cutsceneEditor=null;cutsceneEditorRoom=null;previous.destroy();onCutsceneSelection(null);
     // Stopping is synchronous when possible; a late rejected cleanup must not
     // interrupt a tab change or the normal intro started by Apply & playtest.
     try{void Promise.resolve(onPreviewCutscene(previousRoom,draft,{command:'stop'})).catch(noop);}catch{}
   }
   function renderCutsceneEditor(content,scene){
     cutsceneEditorRoom=roomId;
-    cutsceneEditor=createCutsceneEditor({document,roomId,content,scene,state:cutsceneStates.get(roomId),onChange:(mutator,options)=>changed(()=>mutator(),options),onPreview:async options=>{
+    const previousState=cutsceneStates.get(roomId),playbackRate=getState()?.cutscenePlaybackRate;
+    const state=playbackRate===1||playbackRate===2?{...previousState,playbackRate}:previousState;
+    cutsceneEditor=createCutsceneEditor({document,roomId,content,scene,state,onChange:(mutator,options)=>changed(()=>mutator(),options),onSelection:detail=>onCutsceneSelection(detail),onPreview:async options=>{
       // Scrubbing sends many commands against the same frozen definition. Only
       // a changed draft needs to replay the full project validation and clone.
       const signature=jsonDirty?`json:${jsonBuffer}`:JSON.stringify(draft);
@@ -256,6 +258,16 @@ export function createDeveloperConsole({mount=document.body,getProject=createDef
     translateActor(scene,actor,x,y);const result=validateProject(next);if(!result.valid){showIssues(result);say('That position would block an interaction. The character has not moved.');return false;}
     record();draft=next;dirty=true;jsonDirty=false;jsonBuffer=null;actorId=id;tab='rooms';clearIssues();publishDraft();render();say('Character moved. Its interaction area and collision moved with it.');return true;
   }
+  function selectCutsceneActor(id){
+    if(!dialog.open||!draft||!consumeJSON())return false;
+    if(!['cutscene','rooms'].includes(tab)||!cutsceneEditor){tab='cutscene';query='';searchInput.value='';render();}
+    return cutsceneEditor?.selectActor(id)??false;
+  }
+  function updateCutscenePath(index,patch){
+    if(!dialog.open||!draft||!Number.isInteger(index)||!consumeJSON())return false;
+    if(!cutsceneEditor||!['cutscene','rooms'].includes(tab))return false;
+    return cutsceneEditor.updatePath(index,patch);
+  }
   function close(){destroyCutsceneEditor();if(dialog.open)dialog.close();dialog.classList.remove('dc-expanded');expandButton.textContent='Expand';expandButton.setAttribute('aria-expanded','false');expandButton.setAttribute('aria-label','Expand editor');}
-  return Object.freeze({open,close,moveActor,refresh(){if(dialog.open)render();},get isOpen(){return dialog.open;},destroy(){if(disposed)return;close();disposed=true;dialog.remove();}});
+  return Object.freeze({open,close,moveActor,selectCutsceneActor,updateCutscenePath,refresh(){if(dialog.open)render();},get activeTab(){return tab;},get isOpen(){return dialog.open;},destroy(){if(disposed)return;close();disposed=true;dialog.remove();}});
 }

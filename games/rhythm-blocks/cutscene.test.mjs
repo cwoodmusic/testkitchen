@@ -28,6 +28,40 @@ test('walk-tile timing uses room speed and quantizes movement without speeding i
  assert(detour,'The actor walks under the solid wall instead of crossing it.');near(previous.x,480);near(previous.y,100);assert.equal(previous.facing,'right');
 });
 
+test('authored waypoints retain bent routes, collision-safe legs and their complete walking time',()=>{
+ const room=scene(),waypoints=[{x:80,y:330},{x:370,y:330}],beat=cue({waypoints,startTile:0,durationTiles:1});
+ const timeline=createRoomCutscene({scene:room,beats:[beat]}),clip=timeline.timeline.clips[0];
+ assert.deepEqual(clip.waypoints,waypoints);assert(Object.isFrozen(clip.waypoints));assert(Object.isFrozen(clip.waypoints[0]));
+ assert(clip.path.some(p=>distance(p,waypoints[0])<.000001));assert(clip.path.some(p=>distance(p,waypoints[1])<.000001));
+ const first=clip.path.findIndex(p=>distance(p,waypoints[0])<.000001),second=clip.path.findIndex(p=>distance(p,waypoints[1])<.000001);
+ assert(first>0&&second>first,'The route visits each authored bend before the existing destination.');
+ near(clip.to.x,480);near(clip.to.y,100);assert.equal(clip.durationTiles,Math.ceil(clip.pathLength/room.geometry.gridSize));
+ assert.equal(clip.minimumDurationTiles,clip.durationTiles);assert(clip.pathLength>600);
+ waypoints[0].x=200;assert.equal(clip.waypoints[0].x,80,'Later draft edits cannot rewrite an active route.');
+ let previous=at(timeline,'nell'),frames=0;
+ while(!timeline.state.finished&&frames++<1000){timeline.update(16);const current=at(timeline,'nell');assert(distance(previous,current)<=160*.016+.000001);assert(isWalkable(physicalRoom(room),current));previous=current;}
+ assert(frames<1000);near(previous.x,480);near(previous.y,100);
+});
+
+test('waypoint-only and repeated-point routes end safely without teleporting through blocked bends',()=>{
+ const room=scene(),requested=[{x:140,y:220},{x:140,y:220},{x:280,y:120},{x:370,y:330}];
+ const timeline=createRoomCutscene({scene:room,beats:[cue({target:undefined,text:'',waypoints:requested,startTile:0,durationTiles:1})]}),clip=timeline.timeline.clips[0];
+ assert.deepEqual(clip.waypoints,requested);near(clip.to.x,370);near(clip.to.y,330);
+ assert(clip.path.every((vertex,index)=>!index||distance(vertex,clip.path[index-1])>.000001),'Repeated authored points do not duplicate physical vertices.');
+ assert(clip.path.every(vertex=>isWalkable(physicalRoom(room),vertex)),'A blocked bend projects onto real floor.');
+ let previous=at(timeline,'nell'),frames=0;
+ while(!timeline.state.finished&&frames++<1000){timeline.next();assert(distance(previous,at(timeline,'nell'))<.000001);timeline.update(16);const current=at(timeline,'nell');assert(distance(previous,current)<=160*.016+.000001);assert(isWalkable(physicalRoom(room),current));previous=current;}
+ assert(frames<1000);near(previous.x,370);near(previous.y,330);
+});
+
+test('an occupied prop approach preserves authored bends when the final leg needs another reachable endpoint',()=>{
+ const original=scene(),room={...original,actors:original.actors.map(actor=>actor.id==='iris'?{...actor,feet:{x:480,y:100}}:actor),geometry:{...original.geometry,obstacles:original.geometry.obstacles.map(item=>item.id==='iris'?{...item,x:452,y:80}:item),targets:original.geometry.targets.map(target=>target.id==='instrument'?{...target,range:60}:target)}};
+ const waypoints=[{x:140,y:220},{x:370,y:330}],compiled=compileRoomCutscene({scene:room,beats:[cue({waypoints})]}),clip=compiled.clips[0],target=room.geometry.targets[0];
+ for(const waypoint of waypoints)assert(clip.path.some(point=>distance(point,waypoint)<.000001),'Finding another final approach cannot erase an earlier authored bend.');
+ assert(distance(clip.to,target)<=target.range+.000001);assert(distance(clip.to,target.approach)>1,'The actor cannot occupy the other companion’s standing position.');
+ const liveFloor={...room.geometry,obstacles:room.geometry.obstacles.filter(item=>item.id!=='nell')};assert(isWalkable(liveFloor,clip.to));
+});
+
 test('legacy discussions stay sequential and default durations include readable holds',()=>{
  const compiled=compileRoomCutscene({scene:scene(),beats:[cue(),cue({id:'reply',speaker:'mira',target:undefined,text:'Let us listen carefully before choosing a way through.'})]});
  const [first,second]=compiled.clips;assert.equal(first.startTile,0);assert.equal(second.startTile,first.endTile);
@@ -65,22 +99,93 @@ test('seeking, pausing, replay and fractional playheads are deterministic',()=>{
  timeline.seek(timeline.state.totalTiles);assert.equal(timeline.state.finished,true);assert.equal(timeline.state.playing,false);assert.equal(timeline.play(),true);assert.equal(timeline.state.currentTile,0);assert.equal(timeline.state.finished,false);
 });
 
-test('Next advances to the current clip end; Skip retains current valid positions',()=>{
+test('render reads reuse one immutable snapshot until the transport actually changes',()=>{
+ const timeline=createRoomCutscene({scene:scene(),beats:[cue()]}),initial=timeline.state;
+ assert.equal(timeline.state,initial);assert.equal(timeline.seek(0),false);assert.equal(timeline.play(),false);
+ assert.equal(timeline.update(0),false);assert.equal(timeline.seek(NaN),false);assert.equal(timeline.state,initial);
+ assert(Object.isFrozen(initial));assert(Object.isFrozen(initial.actors));assert(Object.isFrozen(initial.actors[0]));
+ assert(Object.isFrozen(initial.beat.path));assert(Object.isFrozen(initial.beat.path[0]));
+ assert.throws(()=>{initial.actors[0].x=999;},TypeError);
+ assert.throws(()=>{initial.beat.path[0].x=999;},TypeError);
+ timeline.update(16);const moved=timeline.state;assert.notEqual(moved,initial);assert.equal(timeline.state,moved);
+ assert.equal(initial.currentTile,0);near(initial.actors[0].x,80);assert(moved.actors[0].moving);
+ timeline.pause();const paused=timeline.state;assert.notEqual(paused,moved);assert.equal(paused.playing,false);
+ assert.equal(timeline.pause(),false);assert.equal(timeline.update(16),false);assert.equal(timeline.state,paused);
+ timeline.seek(5.5);const sought=timeline.state;assert.notEqual(sought,paused);assert.equal(sought.currentTile,5.5);assert.equal(sought.playing,false);
+ assert.equal(timeline.seek(5.5),false);assert.equal(timeline.state,sought);
+ timeline.play();const resumed=timeline.state;assert.notEqual(resumed,sought);assert.equal(resumed.playing,true);
+ timeline.next();const pending=timeline.state;assert.notEqual(pending,resumed);assert(pending.nextPending);assert.equal(timeline.next(),false);assert.equal(timeline.state,pending);
+ let frames=0;while(timeline.state.nextPending&&frames++<1000)timeline.update(16);
+ const next=timeline.state;assert(frames<1000);assert(next.finished);
+ assert.equal(timeline.next(),false);assert.equal(timeline.skip(),false);assert.equal(timeline.state,next);
+ timeline.play();const replayed=timeline.state;assert.notEqual(replayed,next);assert.equal(replayed.currentTile,0);
+ timeline.update(16);const beforeSkip=timeline.state;timeline.skip();const skipped=timeline.state;
+ assert.notEqual(skipped,beforeSkip);assert(skipped.finished);assert.equal(skipped.playing,false);
+ assert.equal(beforeSkip.finished,false);assert(beforeSkip.actors[0].moving);assert(!skipped.actors[0].moving);
+ assert.equal(timeline.state,skipped);assert.equal(timeline.skip(),false);assert.equal(timeline.state,skipped);
+});
+
+test('Next finishes walking continuously before skipping the reading hold; Skip retains current valid positions',()=>{
  const beats=[cue(),cue({id:'reply',speaker:'mira',target:undefined})],timeline=createRoomCutscene({scene:scene(),beats});
  timeline.update(100);const during=at(timeline,'nell');assert(during.moving);
- assert.equal(timeline.next(),true);assert.equal(timeline.state.beat.id,'reply');near(at(timeline,'nell').x,480);near(at(timeline,'nell').y,100);
+ const before=timeline.state;assert.equal(timeline.next(),true);assert.equal(timeline.state.beat.id,'opening');assert(timeline.state.nextPending);
+ assert.deepEqual(timeline.state.actors,before.actors);near(timeline.state.currentTile,before.currentTile);
+ let frames=0,previous=during;
+ while(timeline.state.nextPending&&frames++<1000){
+  for(let repeat=0;repeat<5;repeat++)assert.equal(timeline.next(),false,'Repeated Next cannot stack more advances.');
+  timeline.update(16);const current=at(timeline,'nell');assert(distance(previous,current)<=160*.016+.000001);previous=current;
+ }
+ assert(frames<1000);assert.equal(timeline.state.beat.id,'reply');near(at(timeline,'nell').x,480);near(at(timeline,'nell').y,100);
  assert.equal(timeline.next(),true);assert.equal(timeline.state.finished,true);assert.equal(timeline.next(),false);assert.equal(timeline.skip(),false);
  const skipped=createRoomCutscene({scene:scene(),beats});skipped.update(100);const feet=skipped.state.actors.map(({id,x,y})=>({id,x,y}));
  assert.equal(skipped.skip(),true);assert.equal(skipped.state.finished,true);assert.equal(skipped.state.playing,false);assert.deepEqual(skipped.state.actors.map(({id,x,y})=>({id,x,y})),feet);
  assert(skipped.state.actors.every(actor=>!actor.moving&&actor.action===null&&actor.emote===null));assert.equal(skipped.update(100),false);assert.equal(skipped.skip(),false);
 });
 
+test('Next preserves other actors’ current and future walks inside a caption',()=>{
+ const room=scene();
+ for(const startTile of [0,5]){
+  const beats=[cue({id:'caption',speaker:'mira',target:undefined,startTile:0,durationTiles:100}),cue({id:'background',actor:'nell',speaker:'nell',text:'',target:'shelf',startTile,durationTiles:1})];
+  const timeline=createRoomCutscene({scene:room,beats});
+  assert.equal(timeline.next(),true);assert(timeline.state.nextPending);near(timeline.state.currentTile,startTile);
+  near(at(timeline,'nell').x,80);near(at(timeline,'nell').y,90);
+  let previous=at(timeline,'nell'),frames=0;
+  while(timeline.state.nextPending&&frames++<1000){
+   timeline.update(16);const current=at(timeline,'nell');assert(distance(previous,current)<=160*.016+.000001);previous=current;
+  }
+  assert(frames<1000);assert(timeline.state.finished);near(previous.x,140);near(previous.y,220);
+ }
+ // A shorter caption may naturally end while another actor is still walking.
+ const short=createRoomCutscene({scene:room,beats:[cue({id:'caption',speaker:'mira',target:undefined,startTile:0,durationTiles:1}),cue({id:'background',text:'',startTile:0,durationTiles:1})]});
+ short.next();short.update(100);short.update(100);
+ assert.equal(short.state.nextPending,false);assert(at(short,'nell').moving);assert(!short.state.finished);
+});
+
+test('paused Next waits for Play and explicit transport changes clear queued advances',()=>{
+ const timeline=createRoomCutscene({scene:scene(),beats:[cue()]});timeline.pause();const before=timeline.state;
+ assert.equal(timeline.next(),true);assert(timeline.state.nextPending);assert.equal(timeline.state.playing,false);
+ assert.deepEqual(timeline.state.actors,before.actors);assert.equal(timeline.update(100),false);
+ assert.equal(timeline.seek(timeline.state.currentTile),true,'Even a same-time explicit seek cancels an advance request.');
+ assert.equal(timeline.state.nextPending,false);assert.equal(timeline.state.playing,false);
+ timeline.next();assert(timeline.state.nextPending);timeline.play();timeline.update(16);assert(timeline.state.nextPending);assert(at(timeline,'nell').moving);
+ timeline.pause();const paused=timeline.state;assert.equal(timeline.update(100),false);assert.equal(timeline.state,paused);
+ timeline.skip();assert(timeline.state.finished);assert.equal(timeline.state.nextPending,false);
+ timeline.play();assert.equal(timeline.state.currentTile,0);assert.equal(timeline.state.nextPending,false);assert.equal(timeline.state.finished,false);
+});
+
 test('bounded deltas and reduced-motion playback cannot skip text or create another movement loop',()=>{
  const beats=[cue()],timeline=createRoomCutscene({scene:scene(),beats});
  for(const invalid of [null,undefined,NaN,Infinity,-1,0,'100']){const before=timeline.state;assert.equal(timeline.update(invalid),false);assert.deepEqual(timeline.state,before);}
  timeline.update(10000000);near(timeline.state.elapsed,100);assert.equal(timeline.state.index,0);
- const reduced=createRoomCutscene({scene:scene(),beats,reducedMotion:true});near(at(reduced,'nell').x,480);near(at(reduced,'nell').y,100);assert.equal(at(reduced,'nell').moving,false);assert.equal(reduced.state.beat.text,beats[0].text);
- let frames=0;while(!reduced.state.finished&&frames++<1000)reduced.update(100);assert(frames<1000);assert.equal(reduced.state.activeClips.length,0);assert.equal(reduced.update(100),false);
+ const room=scene(),reduced=createRoomCutscene({scene:room,beats,reducedMotion:true}),normal=createRoomCutscene({scene:room,beats});
+ near(at(reduced,'nell').x,80);near(at(reduced,'nell').y,90);assert.equal(at(reduced,'nell').moving,true);assert.equal(reduced.state.beat.text,beats[0].text);
+ let frames=0,previous=at(reduced,'nell');
+ while(!reduced.state.finished&&frames++<1000){
+  reduced.update(16);normal.update(16);const current=at(reduced,'nell');
+  assert(distance(current,previous)<=room.geometry.speed*.016+.000001,'Reduced motion cannot teleport across an essential walking path.');
+  assert(isWalkable(physicalRoom(room),current));assert.deepEqual(reduced.state.actors,normal.state.actors);near(reduced.state.elapsed,normal.state.elapsed);previous=current;
+ }
+ assert(frames<1000);near(previous.x,480);near(previous.y,100);assert.equal(reduced.state.activeClips.length,0);assert.equal(reduced.update(100),false);
 });
 
 test('empty scripts and missing custom actors or props fail softly without touching input data',()=>{

@@ -7,7 +7,7 @@ const clone=value=>structuredClone(value);
 const clamp=(value,min,max)=>Math.max(min,Math.min(max,value));
 const distance=(a,b)=>Math.hypot(a.x-b.x,a.y-b.y);
 function freeze(value,seen=new WeakSet()){
- if(value&&typeof value==='object'&&!seen.has(value)){seen.add(value);Object.values(value).forEach(item=>freeze(item,seen));Object.freeze(value);}
+ if(value&&typeof value==='object'&&!Object.isFrozen(value)&&!seen.has(value)){seen.add(value);Object.values(value).forEach(item=>freeze(item,seen));Object.freeze(value);}
  return value;
 }
 const actions=new Set(['examine','search','listen','look']);
@@ -46,11 +46,11 @@ function atDistance(path,amount,initialFacing){
  }
  return{...path.at(-1),facing:lastFacing};
 }
-function poseAt(initial,clips,tile,gridSize,reducedMotion=false){
+function poseAt(initial,clips,tile,gridSize){
  let pose={...initial,moving:false,action:null,target:null,emote:null};
  for(const clip of clips){
   if(clip.actor!==initial.id||tile<clip.startTile)continue;
-  const active=tile<clip.endTile,progress=reducedMotion?clip.pathLength:Math.min(clip.pathLength,(tile-clip.startTile)*gridSize);
+  const active=tile<clip.endTile,progress=Math.min(clip.pathLength,(tile-clip.startTile)*gridSize);
   const at=atDistance(clip.path,progress,clip.from.facing);
   const arrived=progress>=clip.pathLength-.000001;
   pose={id:initial.id,...at,facing:arrived&&clip.lookAt?facing(at,clip.lookAt,at.facing):at.facing,moving:active&&!arrived,action:active?clip.action??'look':null,target:active?clip.target??null:null,emote:active?clip.emote??null:null};
@@ -100,6 +100,7 @@ export function compileRoomCutscene({scene,beats=[],playerPosition=null,actors=n
   const from=actor?positions.find(item=>item.id===actorId):{id:actorId,...geometry.start,facing:'up'};
   const target=geometry.targets.find(item=>item.id===beat.target)??null;
   const requested=point(beat.destination)?beat.destination:target?.approach;
+  const authoredWaypoints=Array.isArray(beat.waypoints)?beat.waypoints.slice(0,32).filter(point):[];
   const others=positions.filter(item=>item.id!==actorId);
   for(const reserved of clips.filter(clip=>clip.actor!==actorId&&clip.endTile>startTile&&clip.pathLength>0)){
    const other=positions.find(item=>item.id===reserved.actor);
@@ -117,10 +118,17 @@ export function compileRoomCutscene({scene,beats=[],playerPosition=null,actors=n
    return{id:`cutscene-${other.id}`,x:other.x+foot.x,y:other.y+foot.y,width:foot.width,height:foot.height};
   })]};
   let waypoints=[];
-  if(actor&&requested&&isWalkable(actorRoom,from)){
+  if(actor&&(requested||authoredWaypoints.length)&&isWalkable(actorRoom,from)){
    try{
-    waypoints=findPath(actorRoom,from,requested)??[];
-    if(target&&!point(beat.destination)&&distance(waypoints.at(-1)??from,target)>target.range+.000001){
+    let legStart={x:from.x,y:from.y},routeReady=true;
+    const append=leg=>{for(const vertex of leg)if(distance(waypoints.at(-1)??from,vertex)>.000001)waypoints.push(vertex);legStart=waypoints.at(-1)??legStart;};
+    for(const waypoint of authoredWaypoints){
+     const leg=findPath(actorRoom,legStart,waypoint);
+     if(!leg){routeReady=false;break;}
+     append(leg);
+    }
+    let finalLeg=routeReady&&requested?findPath(actorRoom,legStart,requested)??[]:[];
+    if(routeReady&&requested&&target&&!point(beat.destination)&&distance(finalLeg.at(-1)??legStart,target)>target.range+.000001){
      // Another searching companion can occupy the prop's usual approach.
      // Choose open floor still inside the real interaction radius instead of
      // accepting a grid projection too far away to examine the object.
@@ -129,10 +137,11 @@ export function compileRoomCutscene({scene,beats=[],playerPosition=null,actors=n
      candidates.sort((a,b)=>distance(a,requested)-distance(b,requested));
      for(const candidate of candidates){
       if(!isWalkable(actorRoom,candidate))continue;
-      const alternative=findPath(actorRoom,from,candidate);
-      if(alternative){waypoints=alternative;break;}
+      const alternative=findPath(actorRoom,legStart,candidate);
+      if(alternative){finalLeg=alternative;break;}
      }
     }
+    append(finalLeg);
    }catch{/* A missing custom cue remains a stationary line. */}
   }
   const path=[{x:from.x,y:from.y},...waypoints],length=pathLength(path),movementTiles=Math.ceil(Math.max(0,length-.000001)/geometry.gridSize),minimumDurationTiles=Math.max(1,movementTiles);
@@ -147,38 +156,59 @@ export function compileRoomCutscene({scene,beats=[],playerPosition=null,actors=n
  return freeze({quantumMs,totalTiles:Math.max(0,...clips.map(clip=>clip.endTile)),gridSize:geometry.gridSize,clips,adjustments,actors:initial});
 }
 
-/** A deterministic transport. Seeking never grants notes, routes, clues or gifts. */
+/**
+ * A deterministic transport. Seeking never grants notes, routes, clues or gifts.
+ * Reduced motion belongs to the view: essential walking still follows its path
+ * continuously, rather than teleporting a character at each clip boundary.
+ */
 export function createRoomCutscene({scene,beats=[],playerPosition=null,actors=null,reducedMotion=false}={}){
  const timeline=compileRoomCutscene({scene,beats,playerPosition,actors});
- let currentTile=0,playing=timeline.totalTiles>0,skipped=false;
+ let currentTile=0,playing=timeline.totalTiles>0,skipped=false,cachedSnapshot=null,advanceTarget=null;
  const isFinished=()=>skipped||currentTile>=timeline.totalTiles;
+ function advanceAcrossHolds(){
+  if(advanceTarget===null)return;
+  if(currentTile>=advanceTarget-.00000001){advanceTarget=null;return;}
+  let nextWalk=advanceTarget;
+  for(const clip of timeline.clips){
+   const movementEnd=clip.startTile+clip.pathLength/timeline.gridSize;
+   if(!clip.pathLength||movementEnd<=currentTile+.00000001||clip.startTile>=advanceTarget)continue;
+   // All actors' walks matter, even if another character owns the caption.
+   if(clip.startTile<=currentTile+.00000001)return;
+   nextWalk=Math.min(nextWalk,clip.startTile);
+  }
+  currentTile=nextWalk;
+  if(currentTile>=advanceTarget-.00000001)advanceTarget=null;
+  if(isFinished())playing=false;
+ }
  function snapshot(){
+  if(cachedSnapshot)return cachedSnapshot;
   const finished=isFinished(),activeClips=finished?[]:timeline.clips.filter(clip=>clip.startTile<=currentTile&&currentTile<clip.endTile);
   const beat=activeClips.filter(clip=>clip.text.trim()).at(-1)??null;
-  const actorStates=timeline.actors.map(actor=>poseAt(actor,timeline.clips,currentTile,timeline.gridSize,reducedMotion));
+  const actorStates=timeline.actors.map(actor=>poseAt(actor,timeline.clips,currentTile,timeline.gridSize));
   if(finished)for(const actor of actorStates){actor.moving=false;actor.action=null;actor.target=null;actor.emote=null;}
   const focusActor=actorStates.find(actor=>actor.id===beat?.speaker)??actorStates.find(actor=>actor.id===activeClips.at(-1)?.actor)??actorStates.find(actor=>actor.id==='mira');
-  return freeze({index:beat?.index??(finished?timeline.clips.length:-1),beat,actors:actorStates,focus:{x:focusActor?.x??scene.geometry.width/2,y:focusActor?.y??scene.geometry.height/2},finished,elapsed:currentTile*timeline.quantumMs,holding:!finished&&!actorStates.some(actor=>actor.moving),currentTile,totalTiles:timeline.totalTiles,quantumMs:timeline.quantumMs,playing,activeClips,activeClipIds:activeClips.map(clip=>clip.id)});
+  return cachedSnapshot=freeze({index:beat?.index??(finished?timeline.clips.length:-1),beat,actors:actorStates,focus:{x:focusActor?.x??scene.geometry.width/2,y:focusActor?.y??scene.geometry.height/2},finished,elapsed:currentTile*timeline.quantumMs,holding:!finished&&!actorStates.some(actor=>actor.moving),currentTile,totalTiles:timeline.totalTiles,quantumMs:timeline.quantumMs,playing,nextPending:!finished&&advanceTarget!==null,activeClips,activeClipIds:activeClips.map(clip=>clip.id)});
  }
  function seek(tile){
   if(!finite(tile))return false;
-  const next=clamp(tile,0,timeline.totalTiles),changed=next!==currentTile||skipped;
-  currentTile=next;skipped=false;if(isFinished())playing=false;return changed;
+  const next=clamp(tile,0,timeline.totalTiles),changed=next!==currentTile||skipped||advanceTarget!==null;
+  currentTile=next;skipped=false;advanceTarget=null;if(isFinished())playing=false;if(changed)cachedSnapshot=null;return changed;
  }
- function pause(){if(!playing)return false;playing=false;return true;}
- function play(){if(isFinished()){currentTile=0;skipped=false;}if(!timeline.totalTiles||playing)return false;playing=true;return true;}
+ function pause(){if(!playing)return false;playing=false;cachedSnapshot=null;return true;}
+ function play(){if(!timeline.totalTiles)return false;if(isFinished()){currentTile=0;skipped=false;advanceTarget=null;cachedSnapshot=null;}if(playing)return false;playing=true;cachedSnapshot=null;return true;}
  function update(deltaMs){
   if(!playing||isFinished()||!finite(deltaMs)||deltaMs<=0)return false;
   currentTile=Math.min(timeline.totalTiles,currentTile+Math.min(100,deltaMs)/timeline.quantumMs);
-  if(isFinished())playing=false;return true;
+  advanceAcrossHolds();
+  if(isFinished())playing=false;cachedSnapshot=null;return true;
  }
  function next(){
-  if(isFinished())return false;
+  if(isFinished()||advanceTarget!==null)return false;
   const active=timeline.clips.filter(clip=>clip.startTile<=currentTile&&currentTile<clip.endTile);
   const selected=active.filter(clip=>clip.text.trim()).at(-1)??active[0];
   const destination=selected?.endTile??timeline.clips.find(clip=>clip.startTile>currentTile)?.startTile??timeline.totalTiles;
-  return seek(destination);
+  advanceTarget=destination;advanceAcrossHolds();cachedSnapshot=null;return true;
  }
- function skip(){if(isFinished())return false;skipped=true;playing=false;return true;}
+ function skip(){if(isFinished())return false;skipped=true;playing=false;advanceTarget=null;cachedSnapshot=null;return true;}
  return Object.freeze({get state(){return snapshot();},timeline,update,next,skip,seek,pause,play});
 }

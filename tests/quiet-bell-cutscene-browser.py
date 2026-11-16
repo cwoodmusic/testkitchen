@@ -120,8 +120,41 @@ def entrance_flow(browser, url):
     assert abs(cutscene(page)['currentTile'] - before_blur) < .001
     page.evaluate('window.dispatchEvent(new Event("focus"))');tick(page, 150)
     assert cutscene(page)['currentTile'] > before_blur
+    replay(page)
+    if not cutscene(page).get('textComplete', True):
+        revealing = cutscene(page)
+        page.locator('#cutscene-next').click()
+        revealed = cutscene(page)
+        assert revealed['textComplete'] and revealed['index'] == revealing['index'], revealed
+    page.evaluate('''()=>{
+      const button=document.getElementById('cutscene-next');
+      button.addEventListener('click',()=>{window.__queuedNext={before:quietBell.cutscene};},{capture:true,once:true});
+      button.addEventListener('click',()=>{window.__queuedNext.after=quietBell.cutscene;},{once:true});
+    }''')
     page.locator('#cutscene-next').click()
-    assert cutscene(page)['index'] > initial['index']
+    observed_next = page.evaluate('window.__queuedNext')
+    before_next, queued = observed_next['before'], observed_next['after']
+    assert queued['index'] == before_next['index'] and queued['nextPending'], queued
+    assert page.locator('#cutscene-next').is_disabled()
+    assert all(point_distance(actor(before_next, item['id']), item) < .001 for item in queued['actors'])
+    speed = page.evaluate('quietBell.scene.geometry.speed')
+    previous_timed = page.evaluate('({state:quietBell.cutscene,now:performance.now()})')
+    waited = 0
+    while cutscene(page)['index'] == before_next['index'] and waited < 10000:
+        tick(page, 50);waited += 50
+        current_timed = page.evaluate('({state:quietBell.cutscene,now:performance.now()})')
+        current, previous = current_timed['state'], previous_timed['state']
+        # Playwright's synthetic RAF timestamp can lead performance.now by
+        # one frame. Native-frame velocity is checked without this allowance
+        # in quiet-bell-cutscene-performance-browser.py.
+        elapsed_seconds = (current_timed['now'] - previous_timed['now']) / 1000 + .02
+        for item in current['actors']:
+            assert point_distance(actor(previous, item['id']), item) <= speed * current.get('playbackRate', 1) * elapsed_seconds + 2, (previous_timed, current_timed)
+        assert conserved(page) == original
+        previous_timed = current_timed
+    advanced = cutscene(page)
+    assert advanced['index'] > before_next['index'] and not advanced['nextPending'], advanced
+    assert page.locator('#cutscene-next').is_enabled()
     assert conserved(page) == original
     advance_to_finish(page)
     assert conserved(page) == original
@@ -165,7 +198,7 @@ def entrance_flow(browser, url):
     assert not errors and not writes and not external, (errors, writes, external)
     context.close()
     return {'movingActors': True, 'emotes': True, 'noPickupsOrDiscoveries': True,
-            'autoFinish': True, 'nextAndSkip': True, 'reloadOnceOnly': True,
+            'autoFinish': True, 'nextAndSkip': True, 'nextWaitsForWalk': True, 'reloadOnceOnly': True,
             'replayAndRestart': True, 'frozenInput': True, 'postSceneInteraction': True}
 
 
@@ -220,7 +253,16 @@ def timeline_flow(browser, url):
     shifted = clip_numbers(selected_clip(page))
     assert shifted['start-tile'] == initial['start-tile'] + 1, (initial, shifted)
     # A real pointer drag snaps to whole tile increments.
-    point = selected_clip(page).evaluate('''e=>{const r=e.getBoundingClientRect(),s=document.getElementById('developer-cutscene-scroll').getBoundingClientRect();const l=Math.max(r.left,s.left+94),right=Math.min(r.right-18,s.right-8);return{x:l+Math.max(1,Math.min(30,(right-l)/2)),y:(r.top+r.bottom)/2};}''')
+    selected_clip(page).scroll_into_view_if_needed()
+    point = selected_clip(page).evaluate('''e=>{
+      const r=e.getBoundingClientRect(),s=document.getElementById('developer-cutscene-scroll').getBoundingClientRect(),b=document.getElementById('developer-body').getBoundingClientRect();
+      const left=Math.max(r.left,s.left+94,b.left),right=Math.min(r.right-18,s.right-8,b.right),top=Math.max(r.top,s.top,b.top),bottom=Math.min(r.bottom,s.bottom,b.bottom);
+      for(const fy of [.5,.25,.75])for(const fx of [.2,.5,.8]){
+        const x=left+(right-left)*fx,y=top+(bottom-top)*fy,node=document.elementFromPoint(x,y);
+        if(node?.closest('[data-cutscene-clip]')===e&&!node.closest('[data-cutscene-resize]'))return{x,y};
+      }return null;
+    }''')
+    assert point, 'The selected clip needs a visible drag surface.'
     page.mouse.move(point['x'], point['y'])
     page.mouse.down();page.mouse.move(point['x'] + 36, point['y'], steps=7);page.mouse.up();tick(page, 100)
     moved = clip_numbers(selected_clip(page))

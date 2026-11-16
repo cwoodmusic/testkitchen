@@ -87,6 +87,16 @@ function clearSegment(room,from,to){
   return Math.min(pointToRect(from,rect),pointToRect(to,rect),cornerToSegment(rect.x,rect.y),cornerToSegment(rect.x+rect.width,rect.y),cornerToSegment(rect.x,rect.y+rect.height),cornerToSegment(rect.x+rect.width,rect.y+rect.height))<room.radius**2-EPS;
  });
 }
+const axisAligned=(from,to)=>Math.abs(from.x-to.x)<EPS||Math.abs(from.y-to.y)<EPS;
+function cardinalLegs(room,from,to){
+ if(axisAligned(from,to))return clearSegment(room,from,to)?distance(from,to)>EPS?[copyPoint(to)]:[]:null;
+ // Spawn points, furniture approaches and authored waypoints need not share
+ // the navigation grid. Connect them with a checked right-angle turn, too.
+ for(const elbow of [{x:to.x,y:from.y},{x:from.x,y:to.y}]){
+  if(clearSegment(room,from,elbow)&&clearSegment(room,elbow,to))return[elbow,copyPoint(to)];
+ }
+ return null;
+}
 function gridFor(room){
  const {bounds,radius,gridSize}=room,minX=bounds.x+radius,minY=bounds.y+radius;
  const columns=Math.floor((bounds.width-radius*2)/gridSize)+1,rows=Math.floor((bounds.height-radius*2)/gridSize)+1,nodes=[];
@@ -98,7 +108,7 @@ function gridFor(room){
 }
 function nearestNode(room,nodes,at,{connected=false}={}){
  let nearest=null,best=Infinity;
- for(const node of nodes){if(!node)continue;const length=distance(node,at);if(length>=best||connected&&!clearSegment(room,at,node))continue;best=length;nearest=node;}
+ for(const node of nodes){if(!node)continue;const length=distance(node,at);if(length>=best||connected&&!cardinalLegs(room,at,node))continue;best=length;nearest=node;}
  return nearest;
 }
 function destinationFor(room,requested,nodes){
@@ -108,7 +118,8 @@ function destinationFor(room,requested,nodes){
 }
 
 /**
- * Returns art-pixel waypoints excluding the start. An outside/solid destination
+ * Returns cardinal art-pixel waypoints excluding the start. Every leg follows
+ * one horizontal or vertical axis. An outside/solid destination
  * is projected onto walkable floor. Invalid input or disconnected floor returns
  * null; an already reached destination returns an empty route.
  */
@@ -118,11 +129,12 @@ export function findPath(room,from,requested){
  const grid=gridFor(room),destination=destinationFor(room,requested,grid.nodes);
  if(!destination)return null;
  if(distance(from,destination)<EPS)return[];
- if(clearSegment(room,from,destination))return[copyPoint(destination)];
+ const direct=cardinalLegs(room,from,destination);if(direct)return direct;
  const first=nearestNode(room,grid.nodes,from,{connected:true}),last=nearestNode(room,grid.nodes,destination,{connected:true});
  if(!first||!last)return null;
- const open=new Map([[first.index,{node:first,g:0,f:distance(first,last)}]]),closed=new Set(),parents=new Map(),costs=new Map([[first.index,0]]);
- const directions=[[-1,0],[1,0],[0,-1],[0,1],[-1,-1],[-1,1],[1,-1],[1,1]];
+ const estimate=(from,to)=>Math.abs(from.x-to.x)+Math.abs(from.y-to.y);
+ const open=new Map([[first.index,{node:first,g:0,f:estimate(first,last)}]]),closed=new Set(),parents=new Map(),costs=new Map([[first.index,0]]);
+ const directions=[[-1,0],[1,0],[0,-1],[0,1]];
  let reached=false;
  while(open.size){
   let current=null;for(const item of open.values())if(!current||item.f<current.f)current=item;
@@ -132,21 +144,20 @@ export function findPath(room,from,requested){
    if(col<0||row<0||col>=grid.columns||row>=grid.rows)continue;
    const next=grid.nodes[row*grid.columns+col];
    if(!next||closed.has(next.index))continue;
-   if(dx&&dy&&(!grid.nodes[current.node.row*grid.columns+col]||!grid.nodes[row*grid.columns+current.node.col]))continue;
    if(!clearSegment(room,current.node,next))continue;
    const g=current.g+distance(current.node,next);
    if(g>=(costs.get(next.index)??Infinity))continue;
-   costs.set(next.index,g);parents.set(next.index,current.node.index);open.set(next.index,{node:next,g,f:g+distance(next,last)});
+   costs.set(next.index,g);parents.set(next.index,current.node.index);open.set(next.index,{node:next,g,f:g+estimate(next,last)});
   }
  }
  if(!reached)return null;
  const path=[];let at=last.index;
  while(at!==first.index){path.push(copyPoint(grid.nodes[at]));at=parents.get(at);}
- path.push(copyPoint(first));path.reverse();path.push(copyPoint(destination));
- // Pull straight segments through open floor; every shortcut is swept against
- // the same foot-circle geometry used by keyboard movement.
+ path.reverse();path.unshift(...cardinalLegs(room,from,first));path.push(...cardinalLegs(room,last,destination));
+ // Remove unnecessary grid stops without cutting diagonally across a turn.
+ // Every shortcut uses the same swept foot-circle check as keyboard movement.
  const smooth=[];let cursor=copyPoint(from),index=0;
- while(index<path.length){let furthest=index;for(let candidate=path.length-1;candidate>index;candidate--)if(clearSegment(room,cursor,path[candidate])){furthest=candidate;break;}const next=path[furthest];if(distance(cursor,next)>EPS)smooth.push(copyPoint(next));cursor=next;index=furthest+1;}
+ while(index<path.length){let furthest=index;for(let candidate=path.length-1;candidate>index;candidate--)if(axisAligned(cursor,path[candidate])&&clearSegment(room,cursor,path[candidate])){furthest=candidate;break;}const next=path[furthest];if(distance(cursor,next)>EPS)smooth.push(copyPoint(next));cursor=next;index=furthest+1;}
  return smooth;
 }
 
@@ -171,6 +182,9 @@ export function createRoomWalker({room=DEPOT_ROOM,savedPosition=null}={}){
  function move(dx,dy,elapsedMs){
   if(!finite(dx)||!finite(dy))return false;
   const before=signature();path=[];targetId=null;
+  // Keyboard and directional-pad movement always use one axis. In a tie,
+  // preserve the current facing axis rather than alternating between them.
+  if(dx&&dy){if(Math.abs(dx)>Math.abs(dy)||Math.abs(dx)===Math.abs(dy)&&(facing==='left'||facing==='right'))dy=0;else dx=0;}
   const length=Math.hypot(dx,dy),duration=delta(elapsedMs);
   if(!length||!duration){moving=false;return signature()!==before;}
   const scale=geometry.speed*duration/1000/Math.max(1,length);face(dx,dy);moving=step(dx*scale,dy*scale)>EPS;

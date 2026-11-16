@@ -221,9 +221,20 @@ export function validateProject(project){
      }
      if(beat.target!==undefined)fail(beatPath,'choose either an object target or a destination, not both.');
     }
+    if(beat.waypoints!==undefined&&list(beat.waypoints,`${beatPath}.waypoints`,32)){
+     beat.waypoints.forEach((waypoint,waypointIndex)=>{
+      const waypointPath=`${beatPath}.waypoints[${waypointIndex}]`;
+      if(!point(waypoint,waypointPath))return;
+      const geometry=scenes[roomId]?.geometry;
+      if(record(geometry)&&finite(geometry.width)&&finite(geometry.height)){
+       if(waypoint.x<0||waypoint.y<0||waypoint.x>geometry.width||waypoint.y>geometry.height)fail(waypointPath,'keep the waypoint inside the room artwork.');
+       else if(record(geometry.bounds)&&Array.isArray(geometry.obstacles)&&geometry.obstacles.every(item=>record(item)&&finite(item.x)&&finite(item.y)&&finite(item.width)&&finite(item.height))&&!isWalkable(geometry,waypoint))warn(waypointPath,'this waypoint is blocked; motion will use the nearest reachable floor.');
+      }
+     });
+    }
     if(beat.action!==undefined&&!CUTSCENE_ACTIONS.has(beat.action))fail(`${beatPath}.action`,'choose look, search, examine or listen.');
     if(beat.emote!==undefined&&!CUTSCENE_EMOTES.has(beat.emote))fail(`${beatPath}.emote`,'choose idea, question, thinking, surprise or happy.');
-    if(!(typeof beat.text==='string'&&beat.text.trim())&&beat.target===undefined&&beat.destination===undefined&&beat.action===undefined&&beat.emote===undefined)fail(beatPath,'add dialogue, movement, an action or an emote.');
+    if(!(typeof beat.text==='string'&&beat.text.trim())&&beat.target===undefined&&beat.destination===undefined&&!asArray(beat.waypoints).length&&beat.action===undefined&&beat.emote===undefined)fail(beatPath,'add dialogue, movement, an action or an emote.');
     if(Number.isSafeInteger(beat.startTile)&&Number.isSafeInteger(beat.durationTiles))scheduled.push({actor:beat.actor??beat.speaker,start:beat.startTile,end:beat.startTile+beat.durationTiles,index});
    });
    for(const [index,clip]of scheduled.entries())for(const other of scheduled.slice(index+1))if(clip.actor===other.actor&&clip.start<other.end&&other.start<clip.end)warn(`${path}.cutscene[${other.index}]`,'this actor has overlapping clips; preview the timeline to check their order.');
