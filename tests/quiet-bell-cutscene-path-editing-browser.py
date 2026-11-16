@@ -73,6 +73,15 @@ def selected_index(page):
     return int(page.locator('.cse-clip[aria-selected="true"]').get_attribute('data-cutscene-clip'))
 
 
+def select_track_clip(page, identifier, kind, touch=False):
+    node = page.locator('.cse-track[data-cutscene-actor="' + identifier + '"] .cse-clip[data-cutscene-kind="' + kind + '"]').first
+    node.evaluate('e=>e.scrollIntoView({block:"nearest",inline:"nearest"})')
+    getattr(node, 'tap' if touch else 'click')()
+    tick(page, 80)
+    assert page.locator('.cse-clip[aria-selected="true"]').get_attribute('data-cutscene-kind') == kind
+    return selected_index(page)
+
+
 def overlay(page, actor=None):
     selector = '.cutscene-path-overlay'
     if actor:
@@ -102,6 +111,7 @@ def select_actor(page, identifier, touch=False):
     tick(page, 80)
     assert page.locator('[data-dev-tab="cutscene"]').get_attribute('aria-selected') == 'true'
     assert selected_actor(page) == identifier, (identifier, selected_actor(page))
+    assert page.locator('.cse-clip[aria-selected="true"]').get_attribute('data-cutscene-kind') == 'walk'
     assert overlay(page, identifier).count() == 1, identifier
     line = overlay(page, identifier).locator('[data-cutscene-path-line]')
     assert line.count() == 1 and line.get_attribute('marker-end'), identifier
@@ -352,11 +362,14 @@ def desktop_flow(browser, url, expected):
     assert resources(page) == original and normal_storage(page) == saved
     # Actual map selection must preserve a dirty line across its blur/repaint.
     line = 'The route glows where the old post used to pass.'
+    dialogue_index = select_track_clip(page, 'nell', 'dialogue')
+    assert overlay(page).count() == 0, 'A text clip cannot expose path handles that would change its payload.'
     page.locator('#developer-cutscene-text').fill(line)
     select_actor(page, 'iris')
     dirty = export_project(page, 'desktop-dirty-selection')
-    assert dirty['content']['depot']['cutscene'][index]['text'] == line
-    select_actor(page, 'nell')
+    assert dirty['content']['depot']['cutscene'][dialogue_index]['text'] == line
+    select_track_clip(page, 'nell', 'emote')
+    assert overlay(page).count() == 0, 'An emote clip cannot expose path handles.'
     page.locator('#developer-cutscene-emote [data-cutscene-choice="idea"]').click();tick(page, 100)
     page.locator('#developer-cutscene-play').click();tick(page, 250)
     playing = cutscene(page)
@@ -417,6 +430,7 @@ def phone_flow(browser, url, expected):
     assert beat != before['content']['depot']['cutscene'][index]
     checked = verify_path(page, after, index)
     assert checked['destinationWalkable'] and not checked['invalid'] and checked['cardinal'], checked
+    emote_index = select_track_clip(page, 'iris', 'emote', True)
     page.locator('#developer-cutscene-emote [data-cutscene-choice="question"]').tap();tick(page, 80)
     start_tile = int(page.locator('#developer-cutscene-start').input_value())
     page.locator('#developer-cutscene-play').tap();tick(page, 100)
@@ -429,7 +443,7 @@ def phone_flow(browser, url, expected):
     tick(page, 100)
     sought = cutscene(page)
     assert not sought['playing'] and abs(sought['currentTile']-start_tile) < .001, sought
-    assert any(clip['actor']=='iris' and clip['index']==index and clip['emote']=='question'
+    assert any(clip['actor']=='iris' and clip['index']==emote_index and clip['emote']=='question'
                for clip in sought['activeClips']), sought
     assert page.locator('.cutscene-emote[data-character="iris"][data-cutscene-emote="question"]').is_visible()
     assert_dialogue_clear_of_cast(page)

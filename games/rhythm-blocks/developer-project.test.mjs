@@ -4,6 +4,7 @@ import {createDefaultProject,validateProject,normalizeProject,createProjectManif
 import {CHAPTER_ROOMS,CHAPTER_DOORS,CHAPTER_SOURCES} from './chapter.mjs';
 import {ROOM_CONTENT} from './chapter-content.mjs';
 import {createJourney,CHAPTER_JOURNEY_MANIFEST} from './journey.mjs';
+import {compileRoomCutscene,createRoomCutscene} from './cutscene.mjs';
 
 const valid=project=>{const result=validateProject(project);assert.equal(result.valid,true,result.errors.join('\n'));return result;};
 const invalid=(project,fragment)=>{const result=validateProject(project);assert.equal(result.valid,false);assert(result.errors.some(error=>error.includes(fragment)),JSON.stringify(result));return result;};
@@ -268,13 +269,16 @@ test('room introductions are portable authored data and leave the economy and jo
  const project=createDefaultProject(),before={doors:clone(project.doors),sources:clone(project.sources),inventory:clone(project.settings.initialInventory),manifest:createProjectManifest(project)};
  assert.equal(Object.values(project.content).filter(room=>room.cutscene?.length).length,23);
  for(const [roomId,content]of Object.entries(project.content)){
-  assert.equal(content.cutscene.length,4,roomId);assert(content.cutscene.some(beat=>beat.emote==='idea'));assert(content.cutscene.some(beat=>beat.emote==='question'));
+  assert.equal(content.cutscene.length,12,roomId);assert(content.cutscene.some(beat=>beat.kind==='emote'&&beat.emote==='idea'));assert(content.cutscene.some(beat=>beat.kind==='emote'&&beat.emote==='question'));
+  for(const kind of ['walk','dialogue','emote'])assert.equal(content.cutscene.filter(beat=>beat.kind===kind).length,4,`${roomId}/${kind}`);
  }
  project.content.depot.cutscene=[{id:'opening-line',speaker:'mira',actor:'pip',text:'<b>A literal thought.</b>',startTile:7,durationTiles:12,target:'clockwork-roost',action:'listen',emote:'idea'},{id:'silent-search',actor:'iris',destination:{x:950,y:840},startTile:22,durationTiles:5,action:'search',emote:'question'}];
  const restored=normalizeProject(JSON.parse(JSON.stringify(project)));valid(restored);
- assert.deepEqual(restored.content.depot.cutscene,project.content.depot.cutscene);assert(Object.isFrozen(restored.content.depot.cutscene[0]));
+ const lines=restored.content.depot.cutscene;assert.equal(lines.length,5);assert(lines.every(beat=>['walk','dialogue','emote'].includes(beat.kind)));assert(Object.isFrozen(lines[0]));
+ assert.equal(lines.find(beat=>beat.kind==='walk'&&beat.actor==='pip').target,'clockwork-roost');
+ assert.equal(lines.find(beat=>beat.kind==='emote'&&beat.actor==='iris').emote,'question');
  assert.deepEqual(restored.doors,before.doors);assert.deepEqual(restored.sources,before.sources);assert.deepEqual(restored.settings.initialInventory,before.inventory);assert.deepEqual(createProjectManifest(restored),before.manifest);
- project.content.depot.cutscene[0].text='A later edit';assert.equal(restored.content.depot.cutscene[0].text,'<b>A literal thought.</b>');
+ project.content.depot.cutscene[0].text='A later edit';assert.equal(lines.find(beat=>beat.kind==='dialogue').text,'<b>A literal thought.</b>');
 });
 
 test('older projects receive only missing room introductions and preserve intentionally disabled or edited scenes',()=>{
@@ -285,7 +289,9 @@ test('older projects receive only missing room introductions and preserve intent
  project.content['workshop-porch'].people[0].intro='Keep my NPC edits.';
  const source=clone(project),restored=normalizeProject(project);
  assert.deepEqual(project,source,'normalizing must not edit the imported snapshot');
- assert.deepEqual(restored.content.depot.cutscene,[]);assert.deepEqual(restored.content['garden-porch'].cutscene,project.content['garden-porch'].cutscene);
+ assert.deepEqual(restored.content.depot.cutscene,[]);
+ assert.equal(restored.content['garden-porch'].cutscene.find(beat=>beat.kind==='dialogue').text,'My own entrance line.');
+ assert.equal(restored.content['garden-porch'].cutscene.find(beat=>beat.kind==='emote').emote,'happy');
  assert.equal(restored.content['workshop-porch'].people[0].intro,'Keep my NPC edits.');
  assert.deepEqual(restored.content['canal-porch'].cutscene,before.content['canal-porch'].cutscene);
  assert.deepEqual(restored.doors,before.doors);assert.deepEqual(restored.sources,before.sources);assert.deepEqual(normalizeProject(restored),restored);
@@ -312,7 +318,7 @@ test('timeline times use integer walk tiles and validate local characters, desti
  ];
  for(const [mutate,error]of badCases){const project=createDefaultProject(),beat={speaker:'mira',text:'Look over there.'};mutate(beat);project.content.depot.cutscene=[beat];invalid(project,error);}
  const duplicate=createDefaultProject();duplicate.content.depot.cutscene=[{id:'same',speaker:'mira',text:'One.'},{id:'same',speaker:'pip',text:'Two.'}];invalid(duplicate,'unique within the room');
- const long=createDefaultProject();long.content.depot.cutscene=Array.from({length:33},()=>({speaker:'mira',text:'A line.'}));invalid(long,'at most 32');
+ const long=createDefaultProject();long.content.depot.cutscene=Array.from({length:385},()=>({kind:'dialogue',speaker:'mira',text:'A line.'}));invalid(long,'at most 384');
  const blank=createDefaultProject();blank.content.depot.cutscene=[{speaker:'mira',text:''}];invalid(blank,'dialogue, movement');
  const silent=createDefaultProject();silent.content.depot.cutscene=[{actor:'mira',action:'look'}];valid(silent);
 });
@@ -320,7 +326,10 @@ test('timeline times use integer walk tiles and validate local characters, desti
 test('timeline authoring warns about missing props, blocked points and overlapping clips without losing the draft',()=>{
  const project=createDefaultProject();project.content.depot.cutscene=[{speaker:'mira',text:'A room can change.',target:'not-here',startTile:0,durationTiles:10},{actor:'mira',action:'search',destination:{x:0,y:0},startTile:3,durationTiles:2}];
  const warnings=valid(project).warnings;assert(warnings.some(message=>message.includes('object is missing')));assert(warnings.some(message=>message.includes('nearest reachable floor')));assert(warnings.some(message=>message.includes('overlapping clips')));
- assert.deepEqual(normalizeProject(project).content.depot.cutscene,project.content.depot.cutscene);
+ const before=clone(project),restored=normalizeProject(project);assert.deepEqual(project,before);
+ assert(restored.content.depot.cutscene.every(beat=>['walk','dialogue','emote'].includes(beat.kind)));
+ assert.equal(restored.content.depot.cutscene.find(beat=>beat.kind==='dialogue').text,'A room can change.');
+ assert.deepEqual(restored.content.depot.cutscene.find(beat=>beat.action==='search').destination,{x:0,y:0});
  for(const value of [null,7,'a scene',{},[null]]){const broken=createDefaultProject();broken.content.depot.cutscene=value;assert.doesNotThrow(()=>validateProject(broken));invalid(broken,'cutscene');}
 });
 
@@ -333,7 +342,8 @@ test('editable cutscene waypoints preserve route order and remain separate from 
   {id:'direct-endpoint',actor:'iris',destination:{x:950,y:840},waypoints:[{x:800,y:740}],action:'look'},
  ];
  valid(project);const serialized=JSON.stringify(project),restored=normalizeProject(JSON.parse(serialized));
- assert.deepEqual(restored.content.depot.cutscene,project.content.depot.cutscene);
+ assert.equal(restored.content.depot.cutscene.length,5);
+ assert.deepEqual(restored.content.depot.cutscene.filter(beat=>beat.kind==='walk').map(beat=>beat.waypoints),project.content.depot.cutscene.map(beat=>beat.waypoints));
  assert(Object.isFrozen(restored.content.depot.cutscene[0].waypoints));assert(Object.isFrozen(restored.content.depot.cutscene[0].waypoints[0]));
  assert.deepEqual(restored.content.depot.cutscene[0].waypoints,waypoints);
  waypoints[0].x=1200;assert.equal(restored.content.depot.cutscene[0].waypoints[0].x,600);
@@ -350,4 +360,112 @@ test('cutscene waypoint errors are concrete while blocked floor stays editable w
  assert(valid(blocked).warnings.some(warning=>warning.includes('waypoints[0]')&&warning.includes('nearest reachable floor')));
  assert.deepEqual(normalizeProject(blocked).content.depot.cutscene[0].waypoints,blocked.content.depot.cutscene[0].waypoints);
  const blank=createDefaultProject();blank.content.depot.cutscene=[{actor:'mira',waypoints:[]}];invalid(blank,'dialogue, movement');
+});
+
+test('walk, dialogue and emote tracks overlap independently and round trip with their authored timing',()=>{
+ const project=createDefaultProject();project.content.depot.cutscene=[
+  {id:'walk',kind:'walk',actor:'nell',destination:{x:600,y:750},action:'examine',startTile:0,durationTiles:30,author:{note:'Keep this route.'}},
+  {id:'words',kind:'dialogue',actor:'nell',speaker:'nell',text:'Keep walking while I speak.',startTile:3,durationTiles:9},
+  {id:'reaction',kind:'emote',actor:'nell',emote:'idea',startTile:5,durationTiles:4},
+ ];
+ const source=clone(project),warnings=valid(project).warnings;
+ assert(!warnings.some(message=>message.includes('overlapping clips')),'Different channels for the same character may run together.');
+ const normalized=normalizeProject(JSON.parse(JSON.stringify(project)));
+ assert.deepEqual(normalized.content.depot.cutscene,project.content.depot.cutscene);
+ assert.deepEqual(project,source,'A normalizing import never mutates the original draft.');
+ assert.deepEqual(normalizeProject(normalized),normalized,'A saved typed project is idempotent.');
+ assert(Object.isFrozen(normalized.content.depot.cutscene[0].author));
+ project.content.depot.cutscene.push({id:'second-line',kind:'dialogue',actor:'nell',speaker:'nell',text:'Another line.',startTile:6,durationTiles:4});
+ assert(valid(project).warnings.some(message=>message.includes('same track')),'Actual same-track overlap remains visible to the author.');
+});
+
+test('typed channel payload mistakes are rejected without changing the imported draft',()=>{
+ const cases=[
+  [{kind:'sound',actor:'mira',text:'Unknown channel.'},'kind'],
+  [{kind:'walk',actor:'mira',text:'Spoken words'},'own dialogue clip'],
+  [{kind:'walk',actor:'mira',emote:'idea'},'own emote clip'],
+  [{kind:'dialogue',speaker:'mira'},'needs text'],
+  [{kind:'dialogue',actor:'mira',text:''},'needs Mira'],
+  [{kind:'dialogue',speaker:'mira',text:'Hello',target:'returned-letter'},'own walk clip'],
+  [{kind:'dialogue',speaker:'mira',text:'Hello',destination:{x:800,y:800}},'own walk clip'],
+  [{kind:'dialogue',speaker:'mira',text:'Hello',waypoints:[]},'own walk clip'],
+  [{kind:'dialogue',speaker:'mira',text:'Hello',action:'look'},'own walk clip'],
+  [{kind:'dialogue',speaker:'mira',text:'Hello',emote:'idea'},'own emote clip'],
+  [{kind:'emote',actor:'mira'},'needs a reaction'],
+  [{kind:'emote',actor:'mira',emote:'idea',text:''},'own dialogue clip'],
+  [{kind:'emote',actor:'mira',emote:'idea',action:'look'},'own walk clip'],
+ ];
+ for(const [beat,message]of cases){
+  const project=createDefaultProject();project.content.depot.cutscene=[beat];const source=clone(project);
+  invalid(project,message);assert.throws(()=>normalizeProject(project),TypeError);assert.deepEqual(project,source);
+ }
+ const blank=createDefaultProject();blank.content.depot.cutscene=[{id:'empty-line',kind:'dialogue',speaker:'mira',text:'',startTile:0,durationTiles:1},{id:'idle',kind:'walk',actor:'mira',startTile:0,durationTiles:1}];
+ valid(blank);assert.deepEqual(normalizeProject(blank).content.depot.cutscene,blank.content.depot.cutscene,'A newly added empty text or walk item remains editable.');
+});
+
+test('combined legacy scenes split after validation while preserving playback and custom metadata',()=>{
+ const project=createDefaultProject(),scene=project.scenes.depot;scene.geometry.speed=321;
+ const original=[
+  {id:'opening',actor:'pip',speaker:'mira',text:'A literal thought while we search.',target:'clockwork-roost',waypoints:[{x:950,y:800}],action:'listen',emote:'idea',startTile:7,durationTiles:12,author:{note:'Do not lose this.'}},
+  {id:'silent-search',actor:'iris',destination:{x:950,y:840},action:'search',emote:'question',startTile:22,durationTiles:5},
+ ];
+ project.content.depot.cutscene=original;const before=clone(project),restored=normalizeProject(project),beats=restored.content.depot.cutscene;
+ assert.deepEqual(project,before);assert.equal(beats.length,5);assert.equal(beats.filter(beat=>beat.kind==='walk').length,2);
+ assert.deepEqual(beats.find(beat=>beat.kind==='walk'&&beat.id==='opening').waypoints,original[0].waypoints);
+ assert.deepEqual(beats.find(beat=>beat.kind==='dialogue').author,original[0].author);
+ assert.equal(beats.find(beat=>beat.kind==='dialogue').speaker,'mira');
+ const legacy=createRoomCutscene({scene,beats:original}),separate=createRoomCutscene({scene,beats});
+ assert.equal(separate.timeline.totalTiles,legacy.timeline.totalTiles);assert.equal(separate.timeline.quantumMs,legacy.timeline.quantumMs);
+ const times=new Set([0,7,8.25,22,23.5,legacy.timeline.totalTiles]);
+ for(const clip of legacy.timeline.clips){times.add(clip.startTile);times.add(clip.startTile+.5);times.add(clip.endTile-.25);times.add(clip.endTile);}
+ for(const time of times){
+  legacy.seek(time);separate.seek(time);
+  assert.deepEqual(separate.state.actors,legacy.state.actors,`Imported motion, actions and reactions match at tile ${time}.`);
+  assert.equal(separate.state.beat?.text,legacy.state.beat?.text,`Text timing matches at tile ${time}.`);
+  assert.equal(separate.state.beat?.speaker,legacy.state.beat?.speaker,`The speaker matches at tile ${time}.`);
+ }
+ assert.deepEqual(normalizeProject(restored),restored);
+ const invalidGeometry=createDefaultProject();invalidGeometry.scenes.depot.geometry.speed=0;invalidGeometry.content.depot.cutscene=[{speaker:'mira',text:'Validate the room first.'}];
+ assert.throws(()=>normalizeProject(invalidGeometry),/geometry.speed/,'Malformed geometry must report model errors before compiling a legacy scene.');
+});
+
+test('track capacity checks reject expansion overflow without silently discarding imported clips',()=>{
+ const project=createDefaultProject();project.content.depot.cutscene=Array.from({length:129},(_,index)=>({id:`legacy-${index}`,speaker:'mira',text:'A line.',action:'look',emote:'idea',startTile:index,durationTiles:1}));
+ valid(project);const before=clone(project);
+ assert.throws(()=>normalizeProject(project),/at most 384/);
+ assert.deepEqual(project,before,'The full imported scene remains available for correction.');
+ const typed=createDefaultProject();typed.content.depot.cutscene=Array.from({length:384},(_,index)=>({id:`text-${index}`,kind:'dialogue',speaker:'mira',text:'',startTile:index,durationTiles:1}));
+ valid(typed);assert.equal(normalizeProject(typed).content.depot.cutscene.length,384);
+ const next=createDefaultProject();next.content.depot.cutscene[0].author={note:'This copy only.'};next.content.depot.cutscene[0].startTile=999;
+ const untouched=createDefaultProject();assert.equal(untouched.content.depot.cutscene[0].author,undefined);assert.notEqual(untouched.content.depot.cutscene[0].startTile,999,'Default track templates are copied, not shared between drafts.');
+ assert.equal(compileRoomCutscene({scene:typed.scenes.depot,beats:typed.content.depot.cutscene}).clips.length,384);
+});
+
+test('NPC walk sheets round trip without changing portraits, scenes or existing authored tracks',()=>{
+ const project=createDefaultProject(),before=clone(project),custom=project.cast.nell.walk;
+ custom.image='assets/my-nell-walk.webp';custom.cellWidth=128;custom.cellHeight=192;
+ custom.anchors[2][1]=[.48,.9];
+ const restored=normalizeProject(project);valid(restored);
+ assert.deepEqual(restored.cast.nell.walk,custom);assert(Object.isFrozen(restored.cast.nell.walk.anchors[2][1]));
+ assert.deepEqual(restored.content,before.content);assert.deepEqual(restored.scenes,before.scenes);
+ const old=createDefaultProject();for(const sprite of Object.values(old.cast))delete sprite.walk;
+ valid(old);const oldRestored=normalizeProject(old);assert.equal(oldRestored.cast.nell.walk,undefined,'Legacy portrait-only authoring data remains intact.');
+ const staticProject=createDefaultProject();staticProject.cast.nell.walk=false;assert.equal(normalizeProject(staticProject).cast.nell.walk,false);
+});
+
+test('malformed NPC walk sheets produce concrete validation errors and leave the draft intact',()=>{
+ for(const [change,fragment]of [
+  [walk=>{walk.image='javascript:alert(1)';},'walk.image'],
+  [walk=>{walk.cellWidth=0;},'walk.cellWidth'],
+  [walk=>{walk.cellHeight=1.5;},'walk.cellHeight'],
+  [walk=>{walk.directions=['up','up','left','right'];},'walk.directions'],
+  [walk=>{walk.anchors=[null];},'walk.anchors'],
+  [walk=>{walk.anchors[1]=[null,null,null];},'walk.anchors[1]'],
+  [walk=>{walk.anchors[2][1]=[.5,2];},'walk.anchors[2][1]'],
+ ]){
+  const project=createDefaultProject();change(project.cast.nell.walk);const before=clone(project);
+  assert.doesNotThrow(()=>validateProject(project));invalid(project,fragment);
+  assert.throws(()=>normalizeProject(project),/walk/);assert.deepEqual(project,before);
+ }
+ for(const value of [null,true,7,'frames']){const project=createDefaultProject();project.cast.nell.walk=value;assert.doesNotThrow(()=>validateProject(project));invalid(project,'walk');}
 });

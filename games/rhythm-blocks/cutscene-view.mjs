@@ -1,6 +1,7 @@
 import {createRoomCutscene} from './cutscene.mjs';
 import {isWalkable,findPath} from './room.mjs';
 import {createJrpgDialogue} from './jrpg-dialogue.mjs';
+import {getNpcSpriteFrame} from './npc-sprites.mjs';
 
 const freeze=value=>{if(value&&typeof value==='object'&&!Object.isFrozen(value)){Object.values(value).forEach(freeze);Object.freeze(value);}return value;};
 const clamp=(n,min,max)=>Math.max(min,Math.min(max,n));
@@ -20,7 +21,7 @@ export function stageCutsceneScene(scene,poses=[]){
   const at=poses.find(pose=>pose?.id===actor.id);
   if(!at||!Number.isFinite(at.x)||!Number.isFinite(at.y)||!isWalkable(floor,at))return actor;
   deltas.set(actor.id,{x:at.x-actor.feet.x,y:at.y-actor.feet.y});
-  return {...actor,feet:{x:at.x,y:at.y}};
+  return {...actor,feet:{x:at.x,y:at.y},...(['up','down','left','right'].includes(at.facing)?{facing:at.facing}:{})};
  });
  if(!deltas.size)return scene;
  const obstacles=scene.geometry.obstacles.map(item=>deltas.has(item.id)?{...item,x:item.x+deltas.get(item.id).x,y:item.y+deltas.get(item.id).y}:item);
@@ -59,13 +60,13 @@ export function createCutsceneView({root,map,panel,roomView,scene,project,beats,
  const actorElements=new Map(scene.actors.map(actor=>[actor.id,map.querySelector('[data-actor="'+actor.id+'"]')]));
  const definitions=new Map(scene.actors.map(actor=>[actor.id,actor]));
  const names=new Map(project.content[scene.id].people.map(person=>[person.id,person.name]));
- const emotes=new Map(),emoteOrigins=new Map(),pickers=new Map(),removers=[],wasInert=map.inert;map.inert=!preview;
+ const emotes=new Map(),emoteOrigins=new Map(),pickers=new Map(),spriteFrames=new Map(),styleValues=new WeakMap(),removers=[],wasInert=map.inert;map.inert=!preview;
  const speaker=panel.querySelector('#cutscene-speaker'),line=panel.querySelector('#cutscene-line'),counter=panel.querySelector('#cutscene-counter');
  const dialogue=createJrpgDialogue({panel,line});
  const nextButton=panel.querySelector('#cutscene-next'),skipButton=panel.querySelector('#cutscene-skip'),speedButton=panel.querySelector('#cutscene-speed');
  counter.textContent=preview?'Timeline preview':scene.title;
  nextButton.disabled=preview;skipButton.textContent=preview?'Stop preview':'Skip';
- const style=(element,name,value)=>{if(element.style[name]!==value)element.style[name]=value;};
+ const style=(element,name,value)=>{let values=styleValues.get(element);if(!values){values=new Map();styleValues.set(element,values);}if(values.get(name)!==value){element.style[name]=value;values.set(name,value);}};
  const data=(element,name,value)=>{if(element.dataset[name]!==value)element.dataset[name]=value;};
  function listen(target,name,fn,options){target.addEventListener(name,fn,options);removers.push(()=>target.removeEventListener(name,fn,options));}
  function emit(state){
@@ -78,7 +79,8 @@ export function createCutsceneView({root,map,panel,roomView,scene,project,beats,
   const caption=[id,beat?.id,state.index,beat?.text].join('|');
   if(caption!==lastCaption){
    lastCaption=caption;speaker.textContent=id==='mira'?'Mira':names.get(id)??(id?String(id):'The party');
-   dialogue.setLine(beat?.text??(state.finished?'Scene finished.':state.actors.some(actor=>actor.moving)?'The party looks around…':''));
+   panel.classList.toggle('cutscene-silent',!beat);
+   dialogue.setLine(beat?.text??'');
    // Measure only when the text changes, before any animation writes. Reading
    // layout after moving every sprite forced a second layout on every frame.
    reservedBottom=panel.getBoundingClientRect().height+20;
@@ -88,11 +90,13 @@ export function createCutsceneView({root,map,panel,roomView,scene,project,beats,
   for(const actor of state.actors){
    const element=actorElements.get(actor.id),definition=definitions.get(actor.id);
    if(element&&definition){
-    const sprite=project.cast[definition.character],bob=actor.moving&&!reduced?Math.sin((state.elapsed??0)/75)*1.4:0;
+    const sprite=getNpcSpriteFrame({project,actor:definition,pose:actor,elapsed:state.elapsed});
     const lean=!actor.moving&&['search','examine'].includes(actor.action)&&!reduced?(actor.facing==='left'?-3:3):0;
-    style(element,'transform',`translate3d(${actor.x-definition.feet.x}px,${actor.y-definition.feet.y-Math.abs(bob)}px,0) translate(${-sprite.anchor[0]*100}%,${-sprite.anchor[1]*100}%) rotate(${lean}deg)`);
-    style(element,'transformOrigin','50% 92%');style(element,'zIndex',String(Math.round(actor.y)+1));
-    data(element,'moving',String(actor.moving));data(element,'action',actor.action??'');data(element,'facing',actor.facing??'down');data(element,'emote',actor.emote??'');
+    const spriteKey=[sprite.image,sprite.backgroundSize,sprite.backgroundPosition,sprite.aspectRatio].join('|');
+    if(spriteFrames.get(actor.id)!==spriteKey){spriteFrames.set(actor.id,spriteKey);style(element,'backgroundImage',`url(${JSON.stringify(sprite.image)})`);style(element,'backgroundSize',sprite.backgroundSize);style(element,'backgroundPosition',sprite.backgroundPosition);style(element,'aspectRatio',String(sprite.aspectRatio));}
+    style(element,'transform',`translate3d(${actor.x-definition.feet.x}px,${actor.y-definition.feet.y}px,0) translate(${-sprite.anchor[0]*100}%,${-sprite.anchor[1]*100}%) rotate(${lean}deg)`);
+    style(element,'transformOrigin',`${sprite.anchor[0]*100}% ${sprite.anchor[1]*100}%`);style(element,'zIndex',String(Math.round(actor.y)+1));
+    data(element,'moving',String(actor.moving));data(element,'action',actor.action??'');data(element,'facing',sprite.facing);data(element,'frame',String(sprite.frame));data(element,'spriteRow',String(sprite.row));data(element,'spriteAnimated',String(sprite.animated));data(element,'emote',actor.emote??'');
    }
    if(preview){
     let picker=pickers.get(actor.id);
@@ -137,7 +141,7 @@ export function createCutsceneView({root,map,panel,roomView,scene,project,beats,
  function seek(value){timeline.seek(value);last=0;paint(timeline.state,16,true);schedule();return timeline.state;}
  function setRate(value){rate=value===2?2:1;last=0;onRateChange(rate);paint();return freeze({...timeline.state,playbackRate:rate,preview,roomId:scene.id});}
  function skip(){if(disposed)return;const state=timeline.state;timeline.skip();onFinish({state:{...state,playing:false},skipped:true});}
- function destroy(){if(disposed)return;disposed=true;if(frame)cancelAnimationFrame(frame);frame=0;for(const remove of removers)remove();for(const emote of emotes.values())emote.remove();dialogue.destroy();map.inert=wasInert;roomView.setCinematicFrame(null);root.classList.remove('cutscene-playing','cutscene-preview');panel.hidden=true;}
+ function destroy(){if(disposed)return;disposed=true;if(frame)cancelAnimationFrame(frame);frame=0;for(const remove of removers)remove();for(const emote of emotes.values())emote.remove();dialogue.destroy();map.inert=wasInert;roomView.setCinematicFrame(null);root.classList.remove('cutscene-playing','cutscene-preview');panel.classList.remove('cutscene-silent');panel.hidden=true;}
  function advance(){if(!dialogue.state.complete){dialogue.revealAll();paint();return;}timeline.next();last=0;paint();schedule();}
  listen(nextButton,'click',advance);listen(skipButton,'click',skip);
  listen(speedButton,'click',()=>setRate(rate===2?1:2));

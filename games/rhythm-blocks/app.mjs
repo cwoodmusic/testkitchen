@@ -9,6 +9,7 @@ import {createDeveloperConsole} from './developer-console.mjs';
 import {createCutsceneView,stageCutsceneScene} from './cutscene-view.mjs';
 import {compileRoomCutscene} from './cutscene.mjs';
 import {createCutscenePathEditor} from './cutscene-paths.mjs';
+import {getNpcSpriteFrame} from './npc-sprites.mjs';
 
 const $=id=>document.getElementById(id),root=$('quiet-bell');
 const SAVE_KEY='codaQuietBellPageOneV1',JOURNEY_KEY='codaQuietBellJourneyV1',SOUND_KEY='codaRhythmBlocksSoundV1';
@@ -147,7 +148,7 @@ function renderCutscenePath(){
  }
  if(!pathSelection||pathSelection.roomId!==activeScene.id)return;
  const scene=project.scenes[activeScene.id],timeline=compileRoomCutscene({scene,beats:project.content[activeScene.id].cutscene??[],playerPosition:scene.geometry.start});
- const clip=timeline.clips.find(clip=>clip.index===pathSelection.clipIndex);if(!clip)return;
+ const clip=timeline.clips.find(clip=>clip.index===pathSelection.clipIndex);if(!clip||clip.kind&&clip.kind!=='walk')return;
  pathEditor=createCutscenePathEditor({map,scene,clip,actorId:clip.actor,onChange:change=>{if(cutsceneView?.state.preview)cutsceneView.pause();developerConsole.updateCutscenePath(clip.index,change);}});
 }
 function selectCutsceneActor(id){
@@ -219,8 +220,9 @@ function renderScene(position=null){
   for(const item of map.querySelectorAll('.mg-occluder,.mg-npc'))item.remove();
   for(const mask of activeScene.occluders){const img=document.createElement('img');img.className='mg-occluder';img.dataset.occluder=mask.id;img.src=activeScene.image;img.alt='';img.setAttribute('aria-hidden','true');img.style.clipPath=mask.clipPath;img.style.zIndex=String(mask.depth);map.insertBefore(img,map.querySelector('.mg-room-objects'));}
   for(const actor of activeScene.actors){
-    const sprite=project.cast[actor.character],element=document.createElement('div');element.className='mg-npc';element.dataset.actor=actor.id;element.setAttribute('aria-hidden','true');
-    Object.assign(element.style,{left:`${actor.feet.x/room.width*100}%`,top:`${actor.feet.y/room.height*100}%`,width:`${actor.worldSize/room.width*100}%`,backgroundImage:`url("${project.settings.castImage}")`,backgroundPosition:`${sprite.column*100}% ${sprite.row*100}%`,transform:`translate(${-sprite.anchor[0]*100}%,${-sprite.anchor[1]*100}%)`,zIndex:String(Math.round(actor.feet.y)+1)});
+    const sprite=getNpcSpriteFrame({project,actor,pose:{...actor.feet,facing:actor.facing??'down',moving:false}}),element=document.createElement('div');element.className='mg-npc';element.dataset.actor=actor.id;element.setAttribute('aria-hidden','true');
+    element.dataset.facing=sprite.facing;element.dataset.frame=String(sprite.frame);element.dataset.moving='false';element.dataset.spriteRow=String(sprite.row);element.dataset.spriteAnimated=String(sprite.animated);
+    Object.assign(element.style,{left:`${actor.feet.x/room.width*100}%`,top:`${actor.feet.y/room.height*100}%`,width:`${actor.worldSize/room.width*100}%`,backgroundImage:`url("${sprite.image}")`,backgroundSize:sprite.backgroundSize,backgroundPosition:sprite.backgroundPosition,aspectRatio:String(sprite.aspectRatio),transform:`translate(${-sprite.anchor[0]*100}%,${-sprite.anchor[1]*100}%)`,zIndex:String(Math.round(actor.feet.y)+1)});
     map.insertBefore(element,map.querySelector('.mg-room-objects'));
   }
   for(const name of ['.mg-room-objects','.mg-people','.mg-inspections'])map.querySelector(name).replaceChildren();

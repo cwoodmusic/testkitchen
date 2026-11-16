@@ -45,24 +45,30 @@ def observe(page,duration_ms=7500):
 
 def rendered_motion(page):
     """Check composited sprites actually follow the observed moving feet."""
-    return page.evaluate('''()=>new Promise(resolve=>{
-      const samples=[];let attempts=0;
-      function sample(){
-        const state=window.quietBell?.cutscene,scene=window.quietBell?.scene;
-        const actor=state?.actors.find(actor=>actor.moving&&actor.id!=='mira');
-        if(actor&&scene){
-          const definition=scene.actors.find(item=>item.id===actor.id);
-          const sprite=window.quietBell.project.cast[definition.character];
-          const map=document.getElementById('room-map').getBoundingClientRect();
-          const rect=document.querySelector('[data-actor="'+actor.id+'"]').getBoundingClientRect();
-          const scale=map.width/scene.geometry.width;
-          const foot={x:rect.left+rect.width*sprite.anchor[0],y:rect.top+rect.height*sprite.anchor[1]};
-          const expected={x:map.left+actor.x*scale,y:map.top+actor.y*scale};
-          samples.push({id:actor.id,x:actor.x,y:actor.y,foot,expected,error:Math.hypot(foot.x-expected.x,foot.y-expected.y)});
-        }
-        if(samples.length>=5||++attempts>=60)resolve(samples);else requestAnimationFrame(sample);
-      }requestAnimationFrame(sample);
-    })''')
+    return page.evaluate('''async()=>{
+      const {CAST}=await import(new URL('cast.mjs',document.baseURI));
+      return new Promise(resolve=>{
+        const samples=[];let attempts=0;
+        function sample(){
+          const state=window.quietBell?.cutscene,scene=window.quietBell?.scene;
+          const actor=state?.actors.find(actor=>actor.moving&&actor.id!=='mira');
+          if(actor&&scene){
+            const definition=scene.actors.find(item=>item.id===actor.id);
+            const sprite=window.quietBell.project.cast[definition.character];
+            const node=document.querySelector('[data-actor="'+actor.id+'"]');
+            const animated=node.dataset.spriteAnimated==='true',row=Number(node.dataset.spriteRow),frame=Number(node.dataset.frame);
+            const walk=sprite.walk??CAST[definition.character]?.walk;
+            const anchor=animated?walk?.anchors?.[row]?.[frame]??sprite.anchor:sprite.anchor;
+            const map=document.getElementById('room-map').getBoundingClientRect(),rect=node.getBoundingClientRect();
+            const scale=map.width/scene.geometry.width;
+            const foot={x:rect.left+rect.width*anchor[0],y:rect.top+rect.height*anchor[1]};
+            const expected={x:map.left+actor.x*scale,y:map.top+actor.y*scale};
+            samples.push({id:actor.id,x:actor.x,y:actor.y,animated,row,frame,anchor,foot,expected,error:Math.hypot(foot.x-expected.x,foot.y-expected.y)});
+          }
+          if(samples.length>=5||++attempts>=60)resolve(samples);else requestAnimationFrame(sample);
+        }requestAnimationFrame(sample);
+      });
+    }''')
 
 
 def analyze(frames,speed):

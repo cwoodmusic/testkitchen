@@ -4,6 +4,7 @@ import {CHAPTER_ROOMS,CHAPTER_DOORS,CHAPTER_SOURCES,CHAPTER_PREVIEWS,CHAPTER_TER
 import {CAMPAIGN_CONTENT} from './campaign-content.mjs';
 import {CAMPAIGN_SCENES} from './campaign-scenes.mjs';
 import {ROOM_CUTSCENES} from './cutscene-content.mjs';
+import {separateCutsceneTracks} from './cutscene.mjs';
 import {CAST,CAST_IMAGE} from './cast.mjs';
 import {MIRA} from './mira.mjs';
 import {createRoomWalker,findPath,isWalkable} from './room.mjs';
@@ -16,6 +17,7 @@ const TYPES=new Set(['person','door','chest','inspect','return']);
 const FACINGS=new Set(['up','down','left','right']);
 const CUTSCENE_ACTIONS=new Set(['look','search','examine','listen']);
 const CUTSCENE_EMOTES=new Set(['idea','question','thinking','surprise','happy']);
+const CUTSCENE_KINDS=new Set(['walk','dialogue','emote']);
 const own=(value,key)=>Object.hasOwn(value,key);
 const asArray=value=>Array.isArray(value)?value:[];
 const record=value=>value!==null&&typeof value==='object'&&!Array.isArray(value)&&[Object.prototype,null].includes(Object.getPrototypeOf(value));
@@ -24,15 +26,17 @@ const validId=value=>typeof value==='string'&&/^[a-zA-Z][a-zA-Z0-9_-]{0,79}$/.te
 const clone=value=>JSON.parse(JSON.stringify(value));
 const freeze=value=>{if(value&&typeof value==='object'){Object.values(value).forEach(freeze);Object.freeze(value);}return value;};
 const same=(left,right)=>Array.isArray(left)&&Array.isArray(right)&&left.length===right.length&&left.every((item,index)=>item===right[index]);
+let defaultCutscenes=null;
 
 /** A new mutable copy; changing it never changes the shipped game. */
 export function createDefaultProject(){
+ defaultCutscenes??=Object.fromEntries(Object.entries(CAMPAIGN_SCENES).map(([roomId,scene])=>[roomId,separateCutsceneTracks({scene,beats:ROOM_CUTSCENES[roomId]??[]})]));
  return clone({
   schemaVersion:1,
   settings:{title:'The Quiet Bell',bpm:108,startRoomId:'depot',castImage:CAST_IMAGE,terminalRooms:true,completionReady:true,initialInventory:Object.fromEntries(NOTE_KINDS.map(note=>[note.id,0]))},
   noteKinds:NOTE_KINDS.map((note,index)=>({...note,symbol:note.id,shortName:SHORT_NAMES[index],color:COLORS[index],subdivisions:['eighth-pair','sixteenth-pair'].includes(note.id)?2:note.id==='sixteenth-group'?4:1})),
   rooms:CHAPTER_ROOMS,doors:CHAPTER_DOORS,sources:CHAPTER_SOURCES,previews:CHAPTER_PREVIEWS,terminals:CHAPTER_TERMINALS,
-  content:Object.fromEntries(Object.entries(CAMPAIGN_CONTENT).map(([id,content])=>[id,{...content,cutscene:ROOM_CUTSCENES[id]??[]}])),
+  content:Object.fromEntries(Object.entries(CAMPAIGN_CONTENT).map(([id,content])=>[id,{...content,cutscene:defaultCutscenes[id]??[]}])),
   scenes:CAMPAIGN_SCENES,cast:CAST,player:{...MIRA,image:'assets/mira-walk.webp'},
  });
 }
@@ -197,12 +201,13 @@ export function validateProject(project){
   const path=`content.${roomId}`;if(!own(locations,roomId))fail(path,'reference a playable room or enabled outcome room.');
   if(!record(roomContent)){fail(path,'use a room-content definition.');continue;}
   text(roomContent.title,`${path}.title`,{max:160});text(roomContent.arrival,`${path}.arrival`,{empty:true});
-  if(roomContent.cutscene!==undefined&&list(roomContent.cutscene,`${path}.cutscene`,32)){
+  if(roomContent.cutscene!==undefined&&list(roomContent.cutscene,`${path}.cutscene`,384)){
    const people=new Set(asArray(roomContent.people).map(person=>person?.id)),actors=new Set(asArray(scenes[roomId]?.actors).map(actor=>actor?.id)),targets=new Set(asArray(scenes[roomId]?.geometry?.targets).map(target=>target?.id));
    people.add('mira');actors.add('mira');
    const clipIds=new Set(),scheduled=[];
    roomContent.cutscene.forEach((beat,index)=>{
     const beatPath=`${path}.cutscene[${index}]`;if(!record(beat)){fail(beatPath,'use a dialogue or action clip.');return;}
+    if(beat.kind!==undefined&&!CUTSCENE_KINDS.has(beat.kind))fail(`${beatPath}.kind`,'choose walk, dialogue or emote.');
     if(beat.id!==undefined){id(beat.id,`${beatPath}.id`);if(clipIds.has(beat.id))fail(`${beatPath}.id`,'clip IDs must be unique within the room.');clipIds.add(beat.id);}
     if(beat.speaker!==undefined){id(beat.speaker,`${beatPath}.speaker`);if(!people.has(beat.speaker))fail(`${beatPath}.speaker`,'choose Mira or a person in this room.');}
     if(beat.text!==undefined)text(beat.text,`${beatPath}.text`,{max:600,empty:true});
@@ -234,10 +239,24 @@ export function validateProject(project){
     }
     if(beat.action!==undefined&&!CUTSCENE_ACTIONS.has(beat.action))fail(`${beatPath}.action`,'choose look, search, examine or listen.');
     if(beat.emote!==undefined&&!CUTSCENE_EMOTES.has(beat.emote))fail(`${beatPath}.emote`,'choose idea, question, thinking, surprise or happy.');
-    if(!(typeof beat.text==='string'&&beat.text.trim())&&beat.target===undefined&&beat.destination===undefined&&!asArray(beat.waypoints).length&&beat.action===undefined&&beat.emote===undefined)fail(beatPath,'add dialogue, movement, an action or an emote.');
-    if(Number.isSafeInteger(beat.startTile)&&Number.isSafeInteger(beat.durationTiles))scheduled.push({actor:beat.actor??beat.speaker,start:beat.startTile,end:beat.startTile+beat.durationTiles,index});
+    if(beat.kind==='walk'){
+     if(typeof beat.text==='string'&&beat.text.trim())fail(`${beatPath}.text`,'put spoken text in its own dialogue clip.');
+     if(beat.emote!==undefined)fail(`${beatPath}.emote`,'put the reaction in its own emote clip.');
+    }
+    if(beat.kind==='dialogue'){
+     if(typeof beat.text!=='string')fail(`${beatPath}.text`,'a dialogue clip needs text, which may be blank while editing.');
+     if(!people.has(beat.speaker))fail(`${beatPath}.speaker`,'a dialogue clip needs Mira or a person in this room.');
+    }
+    if(beat.kind==='emote'&&!CUTSCENE_EMOTES.has(beat.emote))fail(`${beatPath}.emote`,'an emote clip needs a reaction.');
+    if(beat.kind==='dialogue'||beat.kind==='emote'){
+     for(const field of ['target','destination','waypoints','action'])if(beat[field]!==undefined)fail(`${beatPath}.${field}`,'put movement and actions in their own walk clip.');
+     if(beat.kind==='dialogue'&&beat.emote!==undefined)fail(`${beatPath}.emote`,'put the reaction in its own emote clip.');
+     if(beat.kind==='emote'&&beat.text!==undefined)fail(`${beatPath}.text`,'put spoken text in its own dialogue clip.');
+    }
+    if(!CUTSCENE_KINDS.has(beat.kind)&&!(typeof beat.text==='string'&&beat.text.trim())&&beat.target===undefined&&beat.destination===undefined&&!asArray(beat.waypoints).length&&beat.action===undefined&&beat.emote===undefined)fail(beatPath,'add dialogue, movement, an action or an emote.');
+    if(Number.isSafeInteger(beat.startTile)&&Number.isSafeInteger(beat.durationTiles))scheduled.push({actor:beat.actor??beat.speaker,kind:beat.kind,start:beat.startTile,end:beat.startTile+beat.durationTiles,index});
    });
-   for(const [index,clip]of scheduled.entries())for(const other of scheduled.slice(index+1))if(clip.actor===other.actor&&clip.start<other.end&&other.start<clip.end)warn(`${path}.cutscene[${other.index}]`,'this actor has overlapping clips; preview the timeline to check their order.');
+   for(const [index,clip]of scheduled.entries())for(const other of scheduled.slice(index+1))if(clip.actor===other.actor&&(!clip.kind||!other.kind||clip.kind===other.kind)&&clip.start<other.end&&other.start<clip.end)warn(`${path}.cutscene[${other.index}]`,'this actor has overlapping clips on the same track; preview the timeline to check their order.');
   }
   if(list(roomContent.people,`${path}.people`,128)){
    unique(roomContent.people,`${path}.people`);
@@ -291,6 +310,17 @@ export function validateProject(project){
   const path=`cast.${castId}`;if(!record(sprite)){fail(path,'use a cast-sprite definition.');continue;}
   number(sprite.column,`${path}.column`,0,1,{integer:true});number(sprite.row,`${path}.row`,0,1,{integer:true});
   if(!Array.isArray(sprite.anchor)||sprite.anchor.length!==2)fail(`${path}.anchor`,'use two boot-anchor fractions.');else sprite.anchor.forEach((fraction,index)=>number(fraction,`${path}.anchor[${index}]`,0,1));
+  if(sprite.walk!==undefined&&sprite.walk!==false){
+   const walk=sprite.walk,walkPath=`${path}.walk`;
+   if(!record(walk)){fail(walkPath,'use a directional walk-sprite definition, or false for a static portrait.');continue;}
+   image(walk.image,`${walkPath}.image`);
+   number(walk.cellWidth,`${walkPath}.cellWidth`,16,4096,{integer:true});number(walk.cellHeight,`${walkPath}.cellHeight`,16,4096,{integer:true});
+   if(!Array.isArray(walk.directions)||walk.directions.length!==4||new Set(walk.directions).size!==4||walk.directions.some(direction=>!FACINGS.has(direction)))fail(`${walkPath}.directions`,'include up, down, left and right once each.');
+   if(!Array.isArray(walk.anchors)||walk.anchors.length!==4)fail(`${walkPath}.anchors`,'use four rows of three pose anchors.');else walk.anchors.forEach((row,rowIndex)=>{
+    if(!Array.isArray(row)||row.length!==3){fail(`${walkPath}.anchors[${rowIndex}]`,'use three pose anchors.');return;}
+    row.forEach((anchor,column)=>{if(!Array.isArray(anchor)||anchor.length!==2)fail(`${walkPath}.anchors[${rowIndex}][${column}]`,'use an x/y boot-anchor pair.');else anchor.forEach((fraction,index)=>number(fraction,`${walkPath}.anchors[${rowIndex}][${column}][${index}]`,0,1));});
+   });
+  }
  }
  if(!record(project.player))fail('player','use a player-sprite definition.');else{
   const player=project.player;image(player.image,'player.image');number(player.worldSize,'player.worldSize',16,1024);number(player.cellSize,'player.cellSize',16,4096,{integer:true});
@@ -431,6 +461,13 @@ export function normalizeProject(value){
  const candidate=upgradeRoomCutscenes(upgradeLegacyProject(value)),result=validateProject(candidate);
  if(!result.valid)throw new TypeError(result.errors.join('\n'));
  const project=clone(candidate);
+ let separated=false;
+ for(const [roomId,content]of Object.entries(project.content)){
+  if(!asArray(content.cutscene).some(beat=>beat.kind===undefined))continue;
+  content.cutscene=separateCutsceneTracks({scene:project.scenes[roomId],beats:content.cutscene});
+  separated=true;
+ }
+ if(separated){const migrated=validateProject(project);if(!migrated.valid)throw new TypeError(migrated.errors.join('\n'));}
  project.noteKinds=project.noteKinds.map(note=>({...note,beats:note.units/2}));
  project.settings.initialInventory=Object.fromEntries(project.noteKinds.map(note=>[note.id,project.settings.initialInventory[note.id]??0]));
  return freeze(project);

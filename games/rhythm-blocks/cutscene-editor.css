@@ -103,3 +103,41 @@
  #developer-console.dc-dialog.dc-expanded{inset:2.5dvh 2.5vw auto auto;width:95vw;max-width:95vw;height:95dvh;max-height:95dvh;border:2px solid var(--mg-edge)}
  #developer-console.dc-expanded .dc-shell{height:calc(95dvh - 4px);max-height:calc(95dvh - 4px)}
 }
+
+/* Each channel is a separate, independently editable timeline row. */
+#developer-console .cse-editor .cse-track,
+#developer-console #developer-body[data-editor="cutscene"] .cse-track{display:block;height:auto}
+#developer-console .cse-actor-heading{height:26px;border-bottom:1px solid var(--mg-edge);background:var(--dc-card);color:var(--mg-gold);font:700 11px/26px ui-monospace,SFMono-Regular,Consolas,monospace;user-select:none}
+#developer-console .cse-actor-heading>span{position:sticky;left:0;display:block;width:var(--cse-label-width);max-width:var(--cse-label-width);padding:0 8px;background:var(--dc-card);overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+#developer-console .cse-channel{display:flex;align-items:stretch;height:54px;min-width:0;border-bottom:1px solid color-mix(in srgb,var(--mg-edge) 55%,transparent)}
+#developer-console .cse-channel:last-child{border-bottom:0}
+#developer-console .cse-channel[data-cutscene-kind="walk"]{--cse-kind-color:var(--cse-move)}
+#developer-console .cse-channel[data-cutscene-kind="dialogue"]{--cse-kind-color:var(--cse-talk)}
+#developer-console .cse-channel[data-cutscene-kind="emote"]{--cse-kind-color:var(--cse-emote)}
+#developer-console .cse-channel .cse-track-name{height:54px;color:var(--cse-kind-color);font-weight:650;border-left:4px solid var(--cse-kind-color);padding-left:8px}
+#developer-console .cse-editor .cse-channel .cse-lane,
+#developer-console #developer-body[data-editor="cutscene"] .cse-channel .cse-lane{height:54px}
+#developer-console .cse-editor .cse-channel .cse-clip,
+#developer-console #developer-body[data-editor="cutscene"] .cse-channel .cse-clip{top:5px;height:44px;display:flex;align-items:center;border-left:4px solid var(--cse-kind-color);background:color-mix(in srgb,var(--dc-card) 82%,var(--cse-kind-color))}
+#developer-console .cse-editor .cse-channel .cse-clip[aria-selected="true"]{background:color-mix(in srgb,var(--dc-card) 76%,var(--cse-kind-color));border-color:var(--mg-gold)}
+#developer-console .cse-channel .cse-clip-text{padding:4px 5px;font-size:11px;line-height:1.4}
+#developer-console .cse-channel .cse-resize::after{top:12px;height:18px}
+
+/* Keep the first character's rows above the inspector's footer. */
+#developer-console #developer-body[data-editor="cutscene"] .cse-heading{display:flex;align-items:center;justify-content:space-between;gap:8px;margin-bottom:1px}
+#developer-console #developer-body[data-editor="cutscene"] .cse-heading h3{font-size:13px;line-height:18px;margin-bottom:0}
+#developer-console #developer-body[data-editor="cutscene"] .cse-heading p{font-size:11px;line-height:15px}
+#developer-console #developer-body[data-editor="cutscene"] .cse-transport{margin:4px 0}
+#developer-console .cse-editor .cse-scrub{flex-wrap:nowrap;gap:7px;min-height:44px}
+#developer-console .cse-editor .cse-scrub>label{flex:0 0 auto}
+#developer-console .cse-editor .cse-scrub input[type="range"]{flex:1 1 90px;min-width:60px;width:auto}
+#developer-console .cse-editor .cse-scrub .cse-readout{flex:0 1 150px;margin:0;padding:0;font-size:10px;line-height:1.3}
+#developer-console .cse-editor .cse-channel,
+#developer-console .cse-editor .cse-channel .cse-track-name,
+#developer-console .cse-editor .cse-channel .cse-lane,
+#developer-console #developer-body[data-editor="cutscene"] .cse-channel .cse-lane{height:48px}
+#developer-console .cse-editor .cse-channel .cse-clip,
+#developer-console #developer-body[data-editor="cutscene"] .cse-channel .cse-clip{top:2px}
+#developer-console .cse-actor-heading{height:24px;line-height:24px}
+#developer-console #developer-body[data-editor="cutscene"] .cse-ruler{height:24px}
+#developer-console #developer-body[data-editor="cutscene"] .cse-playhead{top:24px}

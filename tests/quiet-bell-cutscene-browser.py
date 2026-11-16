@@ -215,6 +215,13 @@ def selected_clip(page):
     return page.locator('.cse-clip[aria-selected="true"]')
 
 
+def select_track_clip(page, identifier, kind):
+    clip = page.locator('[data-cutscene-actor="' + identifier + '"] .cse-clip[data-cutscene-kind="' + kind + '"]').first
+    clip.scroll_into_view_if_needed();clip.click();tick(page, 50)
+    assert selected_clip(page).get_attribute('data-cutscene-kind') == kind
+    return int(selected_clip(page).get_attribute('data-cutscene-clip'))
+
+
 def clip_numbers(clip):
     return {key: float(clip.get_attribute('data-' + key)) for key in ['start-tile', 'duration-tiles', 'min-duration']}
 
@@ -239,13 +246,13 @@ def timeline_flow(browser, url):
     assert page.locator('#developer-cutscene-timeline').is_visible(), 'The existing Room shortcut remains available.'
     page.locator('[data-dev-tab="cutscene"]').click();tick(page, 100)
     timeline = page.locator('#developer-cutscene-timeline')
-    assert timeline.is_visible() and page.locator('.cse-clip').count() >= 4
+    assert timeline.is_visible() and page.locator('.cse-clip').count() >= 12
     quantum = float(timeline.get_attribute('data-quantum-ms'))
     expected = page.evaluate('1000*quietBell.scene.geometry.gridSize/quietBell.scene.geometry.speed')
     assert abs(quantum - expected) < .001, (quantum, expected)
     assert page.locator('#developer-cutscene-scrub').get_attribute('step') == '1'
     baseline = normal_storage(page);frozen = ui.walker(page)
-    page.locator('.cse-clip[data-cutscene-clip="0"]').click()
+    walk_index = select_track_clip(page, 'nell', 'walk')
     assert page.locator('#developer-cutscene-start').get_attribute('step') == '1'
     assert page.locator('#developer-cutscene-duration').get_attribute('step') == '1'
     initial = clip_numbers(selected_clip(page))
@@ -256,7 +263,8 @@ def timeline_flow(browser, url):
     selected_clip(page).scroll_into_view_if_needed()
     point = selected_clip(page).evaluate('''e=>{
       const r=e.getBoundingClientRect(),s=document.getElementById('developer-cutscene-scroll').getBoundingClientRect(),b=document.getElementById('developer-body').getBoundingClientRect();
-      const left=Math.max(r.left,s.left+94,b.left),right=Math.min(r.right-18,s.right-8,b.right),top=Math.max(r.top,s.top,b.top),bottom=Math.min(r.bottom,s.bottom,b.bottom);
+      const label=parseFloat(getComputedStyle(e).getPropertyValue('--cse-label-width'))||92;
+      const left=Math.max(r.left,s.left+label+2,b.left),right=Math.min(r.right-18,s.right-8,b.right),top=Math.max(r.top,s.top,b.top),bottom=Math.min(r.bottom,s.bottom,b.bottom);
       for(const fy of [.5,.25,.75])for(const fx of [.2,.5,.8]){
         const x=left+(right-left)*fx,y=top+(bottom-top)*fy,node=document.elementFromPoint(x,y);
         if(node?.closest('[data-cutscene-clip]')===e&&!node.closest('[data-cutscene-resize]'))return{x,y};
@@ -274,11 +282,13 @@ def timeline_flow(browser, url):
     page.mouse.down();page.mouse.move(rect['x']-2500, rect['y']+rect['height']/2, steps=12);page.mouse.up();tick(page, 100)
     trimmed = clip_numbers(selected_clip(page))
     assert trimmed['duration-tiles'].is_integer() and trimmed['duration-tiles'] >= trimmed['min-duration'] >= 1, trimmed
-    # Character, speech, action, emote and coordinates are all editable data.
+    # Movement, speech and emotes have independent, type-specific properties.
     edited_line = 'Wait—does this little lamp remember the last delivery?'
+    choose(page, '#developer-cutscene-action', 'listen')
+    dialogue_index = select_track_clip(page, 'nell', 'dialogue')
     change(page, '#developer-cutscene-text', edited_line)
+    emote_index = select_track_clip(page, 'nell', 'emote')
     choose(page, '#developer-cutscene-emote', 'idea')
-    choose(page, '#developer-cutscene-action', 'examine')
     before_count = page.locator('.cse-clip').count()
     page.locator('#developer-cutscene-duplicate').click();tick(page, 100)
     assert page.locator('.cse-clip').count() == before_count + 1
@@ -286,7 +296,12 @@ def timeline_flow(browser, url):
     assert page.locator('.cse-clip').count() == before_count
     exported = export_project(page, 'editable-timeline')
     beats = exported['content']['depot']['cutscene']
-    assert any(beat.get('text') == edited_line and beat.get('emote') == 'idea' for beat in beats)
+    assert beats[walk_index]['kind'] == 'walk' and beats[walk_index]['action'] == 'listen'
+    assert beats[dialogue_index]['kind'] == 'dialogue' and beats[dialogue_index]['text'] == edited_line
+    assert beats[emote_index]['kind'] == 'emote' and beats[emote_index]['emote'] == 'idea'
+    assert 'text' not in beats[walk_index] and 'emote' not in beats[walk_index]
+    assert 'target' not in beats[dialogue_index] and 'emote' not in beats[dialogue_index]
+    assert 'text' not in beats[emote_index] and 'target' not in beats[emote_index]
     assert all(isinstance(beat['startTile'], int) and isinstance(beat['durationTiles'], int) and beat['durationTiles'] >= 1 for beat in beats), beats
     assert normal_storage(page) == baseline
     # Playback, pause and scrubbing are a read-only preview of this exact draft.
@@ -351,7 +366,7 @@ def timeline_flow(browser, url):
     release_base = page.evaluate('document.baseURI')
     context.close()
     return {'releaseBase': release_base, 'roomsPreviewed': checked, 'tileQuantum': quantum, 'integerDragAndResize': True,
-            'walkTimeMinimum': True, 'dialogueActionsEmotesEditable': True,
+            'walkTimeMinimum': True, 'independentDialogueActionsEmotesEditable': True,
             'playPauseScrubStop': True, 'tabChangeStopsPreview': True,
             'applyPreservesNewEntrance': True, 'exportRoundTrip': True,
             'ordinaryStorageUntouched': True}

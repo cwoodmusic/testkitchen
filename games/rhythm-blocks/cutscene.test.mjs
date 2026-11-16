@@ -1,6 +1,6 @@
 import test from 'node:test';
 import assert from 'node:assert/strict';
-import {compileRoomCutscene,createRoomCutscene} from './cutscene.mjs';
+import {compileRoomCutscene,createRoomCutscene,separateCutsceneTracks} from './cutscene.mjs';
 import {isWalkable} from './room.mjs';
 import {CAMPAIGN_SCENES} from './campaign-scenes.mjs';
 import {ROOM_CUTSCENES} from './cutscene-content.mjs';
@@ -249,6 +249,122 @@ test('all 23 authored arrivals walk three companions to real props without cross
   assert(frames<2000,id);assert.equal(timeline.state.activeClipIds.length,0);assert(timeline.state.actors.every(actor=>!actor.moving&&!actor.action&&!actor.emote));
  }
  assert.equal(moved,69);assert.equal(JSON.stringify({scenes:CAMPAIGN_SCENES,beats:ROOM_CUTSCENES}),before);
+});
+
+const walk=(extra={})=>({id:'walk',kind:'walk',actor:'nell',target:'instrument',action:'examine',startTile:0,durationTiles:60,...extra});
+const dialogue=(extra={})=>({id:'text',kind:'dialogue',actor:'nell',speaker:'nell',text:'The receiver is answering again.',startTile:5,durationTiles:10,...extra});
+const emote=(extra={})=>({id:'reaction',kind:'emote',actor:'nell',emote:'question',startTile:7,durationTiles:3,...extra});
+const physicalPose=({x,y,facing,moving,action,target})=>({x,y,facing,moving,action,target});
+
+test('independent text and emote timing cannot change a walk, its facing, action or duration',()=>{
+ const room=scene(),baseline=createRoomCutscene({scene:room,beats:[walk()]});
+ for(const extras of [[dialogue(),emote()],[dialogue({startTile:0,durationTiles:80}),emote({startTile:1,durationTiles:90})],[dialogue({startTile:65,durationTiles:3}),emote({startTile:70,durationTiles:4})]]){
+  const timeline=createRoomCutscene({scene:room,beats:[...extras,walk()]});
+  const actual=timeline.timeline.clips.find(clip=>clip.kind==='walk'),expected=baseline.timeline.clips[0];
+  for(const key of ['startTile','durationTiles','pathLength','path','from','to','minimumDurationTiles'])assert.deepEqual(actual[key],expected[key],`${key} depends only on the walk.`);
+  assert(timeline.timeline.clips.filter(clip=>clip.kind!=='walk').every(clip=>clip.pathLength===0&&clip.minimumDurationTiles===1));
+  for(const tile of [0,.25,4.5,5,7,8.25,10,15,35,59.9,60,65,71,80,90]){
+   baseline.seek(tile);timeline.seek(tile);
+   assert.deepEqual(physicalPose(at(timeline,'nell')),physicalPose(at(baseline,'nell')),`Other tracks cannot change the walk at tile ${tile}.`);
+  }
+ }
+});
+
+test('an emote follows the moving actor and ends on its own boundary across text and walk changes',()=>{
+ const beats=[walk({target:undefined,destination:{x:120,y:90},durationTiles:4}),emote({startTile:3,durationTiles:32}),dialogue({startTile:5,durationTiles:2}),walk({id:'second-walk',target:undefined,destination:{x:120,y:200},startTile:10,durationTiles:8}),dialogue({id:'later-text',startTile:30,durationTiles:10})];
+ const timeline=createRoomCutscene({scene:scene(),beats});
+ for(const tile of [3,4,5,7,10,12,18,30,34.99]){
+  timeline.seek(tile);assert.equal(at(timeline,'nell').emote,'question',`The emote survives other track boundaries at ${tile}.`);
+  if(tile===12){assert(at(timeline,'nell').moving);near(at(timeline,'nell').x,120);near(at(timeline,'nell').y,130);}
+ }
+ timeline.seek(35);assert.equal(at(timeline,'nell').emote,null);assert.equal(timeline.state.beat.id,'later-text');
+ near(at(timeline,'nell').x,120);near(at(timeline,'nell').y,200);assert(!at(timeline,'nell').moving);
+ const expected=timeline.state;timeline.seek(0);timeline.seek(35);assert.deepEqual(timeline.state,expected,'Seeking reconstructs independent layers without accumulated state.');
+});
+
+test('same-kind overlaps schedule in their own lane without moving the other two kinds',()=>{
+ const beats=[walk(),dialogue({startTile:1,durationTiles:3}),emote({startTile:1,durationTiles:2}),walk({id:'walk-again',target:'shelf',startTile:1,durationTiles:1}),dialogue({id:'text-again',startTile:2,durationTiles:2}),emote({id:'reaction-again',startTile:2,durationTiles:2})];
+ const compiled=compileRoomCutscene({scene:scene(),beats}),byId=id=>compiled.clips.find(clip=>clip.id===id);
+ assert.equal(byId('text').startTile,1);assert.equal(byId('reaction').startTile,1);
+ assert.equal(byId('walk-again').startTile,60);assert.equal(byId('text-again').startTile,4);assert.equal(byId('reaction-again').startTile,3);
+ assert.deepEqual(compiled.adjustments.filter(item=>item.field==='startTile').map(item=>item.id).sort(),['reaction-again','text-again','walk-again']);
+ const timeline=createRoomCutscene({scene:scene(),beats});timeline.seek(2);
+ assert(at(timeline,'nell').moving);assert.equal(timeline.state.beat.id,'text');assert.equal(at(timeline,'nell').emote,'question');
+ assert.deepEqual(timeline.state.activeClipIds,['walk','text','reaction']);
+});
+
+test('typed channels cannot accidentally execute payloads belonging to another channel',()=>{
+ const room=scene(),timeline=createRoomCutscene({scene:room,beats:[walk({text:'This is not a caption.',emote:'happy'}),dialogue({startTile:1,durationTiles:2,target:'shelf',destination:{x:140,y:220},emote:'surprise',action:'search'}),emote({startTile:4,target:'instrument',destination:{x:480,y:100},text:'Not a caption either.',action:'search'})]});
+ assert.equal(timeline.state.beat,null);assert.equal(at(timeline,'nell').emote,null);
+ timeline.seek(1);assert.equal(timeline.state.beat.id,'text');assert.equal(at(timeline,'nell').action,'examine');assert.equal(at(timeline,'nell').emote,null);
+ timeline.seek(4);assert.equal(timeline.state.beat,null);assert.equal(at(timeline,'nell').emote,'question');assert(at(timeline,'nell').moving);
+ const nonwalking=timeline.timeline.clips.filter(clip=>clip.kind!=='walk');assert(nonwalking.every(clip=>clip.pathLength===0&&clip.action===null));
+});
+
+test('Next through a silent track gap reaches the next dialogue without skipping its line or teleporting',()=>{
+ const room=scene(),timeline=createRoomCutscene({scene:room,beats:[walk(),emote({startTile:1,durationTiles:2}),dialogue({startTile:5,durationTiles:2})]});
+ assert.equal(timeline.state.beat,null);assert(timeline.next());assert(timeline.state.nextPending);near(timeline.state.currentTile,0);
+ let previous=at(timeline,'nell'),frames=0;
+ while(timeline.state.nextPending&&frames++<1000){timeline.update(16);const current=at(timeline,'nell');assert(distance(current,previous)<=room.geometry.speed*.016+.000001);previous=current;}
+ assert(frames<1000);assert.equal(timeline.state.beat.id,'text');assert(timeline.state.currentTile>=5&&timeline.state.currentTile<7);assert(at(timeline,'nell').moving);
+});
+
+test('splitting every shipped discussion preserves timing, cardinal walking, text, actions and reactions',()=>{
+ for(const [id,room]of Object.entries(CAMPAIGN_SCENES)){
+  const source=ROOM_CUTSCENES[id],before=JSON.stringify(source),split=separateCutsceneTracks({scene:room,beats:source});
+  assert.equal(split.length,12,id);assert.deepEqual(split.map(clip=>clip.kind),Array.from({length:4},()=>['walk','dialogue','emote']).flat());
+  const legacy=createRoomCutscene({scene:room,beats:source}),typed=createRoomCutscene({scene:room,beats:split});
+  assert.equal(typed.state.totalTiles,legacy.state.totalTiles,id);assert.equal(typed.timeline.adjustments.length,0,id);
+  const samples=new Set([0,legacy.state.totalTiles]);
+  for(let tile=0;tile<=legacy.state.totalTiles;tile+=.75)samples.add(tile);
+  for(const clip of legacy.timeline.clips)for(const boundary of [clip.startTile,clip.startTile+clip.pathLength/room.geometry.gridSize,clip.endTile])for(const offset of [-.01,0,.01])samples.add(Math.max(0,Math.min(legacy.state.totalTiles,boundary+offset)));
+  for(const tile of samples){
+   legacy.seek(tile);typed.seek(tile);assert.deepEqual(typed.state.actors,legacy.state.actors,`${id} pose differs at ${tile}.`);
+   assert.equal(typed.state.beat?.text,legacy.state.beat?.text,`${id} line differs at ${tile}.`);
+   assert.equal(typed.state.beat?.speaker,legacy.state.beat?.speaker,`${id} speaker differs at ${tile}.`);
+   assert.deepEqual(typed.state.focus,legacy.state.focus,`${id} focus differs at ${tile}.`);
+  }
+  assert.equal(JSON.stringify(source),before);assert.deepEqual(separateCutsceneTracks({scene:room,beats:split}),split,'A second migration is a no-op.');
+ }
+});
+
+test('track migration retains extra author data and creates bounded collision-free IDs',()=>{
+ const room=scene(),id='a'.repeat(80),collision=id.slice(0,71)+'-dialogue',metadata={author:'Keep this',nested:{value:7}};
+ const source=[cue({id,startTile:3,durationTiles:1,extra:metadata,waypoints:[{x:140,y:220}]}),emote({id:collision,actor:'iris',startTile:80,durationTiles:2})],before=JSON.stringify(source);
+ const split=separateCutsceneTracks({scene:room,beats:source});
+ assert.equal(split.length,4);assert.equal(new Set(split.map(clip=>clip.id)).size,4);assert(split.every(clip=>clip.id.length<=80));
+ assert.equal(split[0].id,id);assert.equal(split[3].id,collision);assert.deepEqual(split[3],source[1]);
+ for(const clip of split.slice(0,3)){assert.deepEqual(clip.extra,metadata);assert.equal(clip.startTile,3);assert(clip.durationTiles>1);}
+ assert.deepEqual(split[0].waypoints,source[0].waypoints);assert(!Object.hasOwn(split[0],'text'));assert(!Object.hasOwn(split[0],'emote'));
+ assert(!Object.hasOwn(split[1],'target'));assert(!Object.hasOwn(split[1],'waypoints'));assert.equal(split[1].text,source[0].text);
+ assert(!Object.hasOwn(split[2],'text'));assert(!Object.hasOwn(split[2],'destination'));assert.equal(split[2].emote,'thinking');
+ split[0].extra.nested.value=99;assert.equal(split[1].extra.nested.value,7);assert.equal(JSON.stringify(source),before);
+});
+
+test('legacy dialogue keeps its original lane when overlapping actors share a different speaker',()=>{
+ const room=scene(),source=[
+  {id:'first',actor:'nell',speaker:'mira',text:'First line.',target:'shelf',action:'examine',emote:'question',startTile:0,durationTiles:10},
+  {id:'second',actor:'iris',speaker:'mira',text:'Second line.',destination:{x:500,y:310},action:'listen',emote:'idea',startTile:0,durationTiles:5},
+ ],before=JSON.stringify(source),split=separateCutsceneTracks({scene:room,beats:source});
+ const spoken=split.filter(clip=>clip.kind==='dialogue');
+ assert.deepEqual(spoken.map(clip=>clip.actor),['nell','iris']);assert(spoken.every(clip=>clip.speaker==='mira'&&clip.startTile===0));
+ const legacy=createRoomCutscene({scene:room,beats:source}),typed=createRoomCutscene({scene:room,beats:split});
+ assert.equal(legacy.state.totalTiles,10);assert.equal(typed.state.totalTiles,10);assert.equal(typed.state.beat.text,'Second line.');
+ assert.equal(typed.timeline.adjustments.length,0,'Independent actor-owned dialogue lanes must not be serialized onto the shared speaker.');
+ for(const tile of [0,.125,1,2,2.75,4.99,5,5.01,7.5,9.99,10]){
+  legacy.seek(tile);typed.seek(tile);assert.deepEqual(typed.state.actors,legacy.state.actors,`Actor state changed at ${tile}.`);
+  assert.equal(typed.state.beat?.text,legacy.state.beat?.text);assert.equal(typed.state.beat?.speaker,legacy.state.beat?.speaker);
+  assert.deepEqual(typed.state.focus,legacy.state.focus);
+ }
+ assert.equal(JSON.stringify(source),before);assert.deepEqual(separateCutsceneTracks({scene:room,beats:split}),split);
+});
+
+test('typed capacity is 384 and splitting never silently truncates expanded author data',()=>{
+ const room=scene(),typed=Array.from({length:384},(_,index)=>emote({id:`emote-${index}`,startTile:index,durationTiles:1}));
+ assert.equal(compileRoomCutscene({scene:room,beats:typed}).clips.length,384);
+ const legacy=Array.from({length:129},(_,index)=>cue({id:`legacy-${index}`,speaker:'mira',target:undefined}));
+ const split=separateCutsceneTracks({scene:room,beats:legacy});assert.equal(split.length,387,'The project validator can report capacity without losing any clips.');
+ assert.deepEqual(separateCutsceneTracks({scene:room,beats:split}),split);
 });
 
 function distance(a,b){return Math.hypot(a.x-b.x,a.y-b.y);}
