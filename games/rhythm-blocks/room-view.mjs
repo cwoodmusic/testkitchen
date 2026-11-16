@@ -29,6 +29,7 @@ export function createRoomView({scene,map=scene,player,floor,controls,interactBu
     if(key!==cameraKey){cameraKey=key;map.style.setProperty('--room-scale',scale);map.style.transform=`translate(${offsetX}px,${offsetY}px) scale(${scale})`;}
   }
   function paint(){
+    if(disposed)return;
     const state=walker.state,row=Math.max(0,MIRA.directions.indexOf(state.facing)),col=state.moving?[1,0,2,0][Math.floor(walkPhase/125)%4]:0;
     followCamera(state);
     const signature=[state.x,state.y,row,col].join('|');
@@ -47,7 +48,7 @@ export function createRoomView({scene,map=scene,player,floor,controls,interactBu
     for(const button of controls.querySelectorAll('[data-walk]'))button.disabled=!enabled();
     if(nextReach!==reachKey){
       reachKey=nextReach;
-      for(const target of room.targets){const button=map.querySelector(`[data-person="${target.id}"],[data-door="${target.id}"],[data-chest="${target.id}"],[data-inspect="${target.id}"]`);if(button)button.dataset.near=String(walker.withinReach(target.id));}
+      for(const target of room.targets){const button=map.querySelector(`[data-person="${target.id}"],[data-door="${target.id}"],[data-chest="${target.id}"],[data-inspect="${target.id}"],[data-return="${target.id}"]`);if(button)button.dataset.near=String(walker.withinReach(target.id));}
       onReachChange(snapshot());
     }
   }
@@ -57,7 +58,7 @@ export function createRoomView({scene,map=scene,player,floor,controls,interactBu
     if(frameId)cancelAnimationFrame(frameId);frameId=0;lastTime=0;pendingTarget=null;clearInput();walker.stop();walkPhase=0;paint();
     if(active&&persist)savePosition();
   }
-  function complete(id){pendingTarget=null;walker.stop();clearInput();paint();onInteract(id);savePosition();}
+  function complete(id){pendingTarget=null;walker.stop();clearInput();paint();onInteract(id);if(!disposed)savePosition();}
   function schedule(){if(!frameId&&enabled())frameId=requestAnimationFrame(frame);}
   function frame(now){
     frameId=0;if(!enabled()){stop();return;}
@@ -71,6 +72,8 @@ export function createRoomView({scene,map=scene,player,floor,controls,interactBu
     if(walker.state.moving)walkPhase+=elapsed;else walkPhase=0;
     if(pendingTarget&&walker.withinReach(pendingTarget)){const id=pendingTarget;complete(id);}
     else if(pendingTarget&&!walker.state.moving&&!walker.state.destination){pendingTarget=null;savePosition();}
+    // Interacting with a threshold can replace this controller synchronously.
+    if(disposed)return;
     if(wasMoving&&!walker.state.moving&&positionDirty)savePosition();
     paint();
     if((dx||dy)||walker.state.moving||walker.state.destination||pendingTarget)schedule();

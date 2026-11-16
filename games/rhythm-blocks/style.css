@@ -215,3 +215,11 @@ dialog::backdrop{background:#100c1659}
 .lore-dialog{width:580px;margin:auto auto 18px;max-height:min(70dvh,440px)}
 #lore-copy{font:15px/1.55 ui-sans-serif,system-ui,sans-serif}
 #lore-done{margin-top:14px}
+
+/* All scene hit regions use the same top-left art coordinates as navigation. */
+.mg-hotspot{transform:none;min-width:calc(44px / var(--room-scale,1));min-height:calc(44px / var(--room-scale,1))}
+.mg-return{position:absolute;border:0;padding:0;background:transparent;pointer-events:auto}
+.mg-return span{position:absolute;bottom:0;left:50%;transform:translateX(-50%);padding:calc(2px / var(--room-scale,1)) calc(5px / var(--room-scale,1));border:1px solid #d7b487;background:#3f3037;color:#ffedcd;font-size:calc(11px / var(--room-scale,1));white-space:nowrap}
+
+.mg-return span{opacity:0}
+.mg-return:hover span,.mg-return:focus-visible span{opacity:1}

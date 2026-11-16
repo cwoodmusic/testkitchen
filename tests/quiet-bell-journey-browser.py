@@ -52,13 +52,6 @@ def pause(page, touch=False):
     assert ui.resources(ui.state(page)) == before, 'Viewing history must not change the current run.'
 
 
-def arrival_preview(page):
-    # Native dialog close events are queued; advance their frame in clock-driven flows.
-    if page in ui.VIRTUAL_WALK_PAGES: page.clock.run_for(80)
-    page.locator('#outcome').wait_for(state='visible')
-    assert ui.state(page)['phase'] == 'continued' and sum(ui.state(page)['inventory'].values()) == 6
-
-
 def rendered_chart(page, nodes, edges, hints):
     expected_book(page, nodes, edges, hints)
     chart = page.locator('#journey-chart')
@@ -81,7 +74,8 @@ def visit_route(page, route, touch=False):
     assert page.locator('#notes-dialog').is_visible()
     ui.build(page, COSTS[route], touch)
     ui.press(page, '#commit', touch)
-    assert ui.state(page)['phase'] == 'continued' and ui.state(page)['routeId'] == route
+    assert ui.state(page)['phase'] == 'room' and ui.state(page)['roomId'] == NODE_BY_ROUTE[route]
+    assert ui.state(page)['routeId'] == route and page.locator('#outcome').is_hidden()
     expected = ui.INITIAL.copy()
     for kind in COSTS[route]: expected[kind] -= 1
     assert ui.state(page)['inventory'] == expected
@@ -124,19 +118,17 @@ def discovery_flow(browser, url):
     ui.build(page, COSTS['canal']); ui.press(page, '#commit')
     expected_book(page, ['depot', 'canal-porch'], ['depot-canal'], ['nell-route'])
     assert sum(ui.state(page)['inventory'].values()) == 6
-    ui.press(page, '#outcome-map')
-    assert page.locator('#menu-dialog').is_visible() and ui.state(page)['phase'] == 'continued'
+    pause(page)
     rendered_chart(page, ['depot', 'canal-porch'], ['depot-canal'], ['nell-route'])
     assert page.locator('#journey-chart .journey-chart__node--current').get_attribute('data-journey-node') == 'canal-porch'
     ui.press(page, '#help')
-    assert page.locator('#help-dialog').is_visible() and ui.state(page)['phase'] == 'continued'
-    ui.press(page, '#help-close')
-    arrival_preview(page)
-    ui.press(page, '#outcome-map')
-    page.keyboard.press('Escape')
-    arrival_preview(page)
+    assert page.locator('#help-dialog').is_visible() and ui.state(page)['roomId'] == 'canal-porch'
+    ui.press(page, '#help-close'); ui.close_panels(page)
+    assert ui.state(page)['phase'] == 'room' and ui.state(page)['roomId'] == 'canal-porch'
+    pause(page); page.keyboard.press('Escape')
+    assert page.locator('#menu-dialog').is_hidden() and ui.state(page)['roomId'] == 'canal-porch'
     # Undo changes the note ledger while discoveries remain cumulative.
-    ui.press(page, '#revisit')
+    ui.revisit_room(page)
     assert ui.state(page)['inventory'] == ui.INITIAL
     pause(page)
     canal = rendered_chart(page, ['depot', 'canal-porch'], ['depot-canal'], ['nell-route'])
@@ -155,7 +147,7 @@ def discovery_flow(browser, url):
     edges = ['depot-canal', 'depot-garden']
     hints = ['nell-route', 'iris-route']
     expected_book(page, nodes, edges, hints)
-    ui.press(page, '#revisit'); assert ui.state(page)['inventory'] == ui.INITIAL
+    ui.revisit_room(page); assert ui.state(page)['inventory'] == ui.INITIAL
     pause(page)
     garden = rendered_chart(page, nodes, edges, hints)
     assert page.locator('#journey-chart [data-journey-node="workshop-porch"]').count() == 0
@@ -165,7 +157,7 @@ def discovery_flow(browser, url):
     visit_route(page, 'workshop')
     nodes.append('workshop-porch'); edges.append('depot-workshop')
     expected_book(page, nodes, edges, hints)
-    ui.press(page, '#revisit')
+    ui.revisit_room(page)
     assert ui.state(page)['inventory'] == ui.INITIAL
     pause(page)
     all_opening = rendered_chart(page, nodes, edges, hints)
@@ -210,7 +202,7 @@ def discovery_flow(browser, url):
             'actualEdgesOnly': True, 'undoRestartReloadRetainHistoryWithoutNotes': True,
             'unknownStoredIdsFiltered': True, 'legacyDoorHistoryMigrates': True,
             'runAndJourneyLedgersSeparate': True, 'noEarlyUltimateAward': True,
-            'arrivalPauseReturnsWithoutUndo': True, 'responsiveKnownChart': responsive, 'errors': []}
+            'roomPauseReturnsWithoutUndo': True, 'responsiveKnownChart': responsive, 'errors': []}
 
 
 def pause_stops_walking(browser, url):

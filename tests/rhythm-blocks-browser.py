@@ -39,7 +39,7 @@ def close_panels(page, revisit=False):
         page.locator('#revisit').click()
     for dialog, close in [('#conversation-dialog', '#conversation-close'),
                           ('#notes-dialog', '#notes-close'), ('#help-dialog', '#help-close'),
-                          ('#menu-dialog', '#menu-close')]:
+                          ('#menu-dialog', '#menu-close'), ('#lore-dialog', '#lore-close')]:
         if page.locator(dialog).is_visible(): page.locator(close).click()
 
 def key_walk(page, axis, goal):
@@ -94,9 +94,10 @@ class Quiet(SimpleHTTPRequestHandler):
 
 def state(page): return page.evaluate('window.quietBell.state')
 def resources(value):
-    return {key: value.get(key) for key in ['phase', 'inventory', 'availableInventory', 'phrase',
+    return {key: value.get(key) for key in ['roomId', 'phase', 'inventory', 'availableInventory', 'phrase',
             'beats', 'canAttempt', 'canCommit', 'routeId', 'nextScene', 'receipt', 'creditedStages',
-            'discoveredRoutes', 'selectedDoor', 'claimedSources', 'claimedGifts', 'openedChests']}
+            'discoveredRoutes', 'selectedDoor', 'claimedSources', 'currentRoomClaimedSources',
+            'sourceReceipts', 'actions', 'traversedDoors', 'claimedGifts', 'openedChests']}
 def settle_walk(page):
     """Advance real animation-frame callbacks, never the game's state."""
     if page in VIRTUAL_WALK_PAGES:
@@ -107,7 +108,7 @@ def settle_walk(page):
 
 def press(page, selector, touch=False):
     button = page.locator(selector)
-    target = button.evaluate('e=>({person:e.dataset.person,door:e.dataset.door,chest:e.dataset.chest})')
+    target = button.evaluate('e=>({person:e.dataset.person,door:e.dataset.door,chest:e.dataset.chest,inspect:e.dataset.inspect,returnTo:e.dataset.return})')
     if any(target.values()):
         prepare_target(page, button)
         position = button.evaluate('e=>{const r=e.getBoundingClientRect();return{x:(r.left+r.right)/2,y:(r.top+r.bottom)/2};}')
@@ -119,6 +120,8 @@ def press(page, selector, touch=False):
         if target.get('person'): assert state(page)['selectedPerson'] == target['person']
         if target.get('door'): assert state(page)['selectedDoor'] == target['door']
         if target.get('chest'): assert target['chest'] in state(page)['claimedSources']
+        if target.get('inspect'): assert page.locator('#lore-dialog').get_attribute('data-observation') == target['inspect']
+        if target.get('returnTo'): assert state(page)['roomId'] == 'depot'
 def tile(kind): return 'button[data-kind="' + kind + '"]:not([data-remove])'
 def clear_phrase(page, touch=False):
     while state(page)['phrase']: press(page, 'button[data-remove="0"]', touch)
@@ -299,46 +302,58 @@ def rejected_order(page, touch=False):
     clear_phrase(page, touch)
     assert state(page)['inventory'] == INITIAL
 
+def revisit_room(page, touch=False):
+    """Return across a paid room entry through the public pause control."""
+    close_panels(page, revisit=True)
+    assert state(page)['phase'] == 'room' and state(page)['roomId'] != 'depot'
+    press(page, '#menu', touch)
+    press(page, '#revisit-room', touch)
+    close_panels(page)
+    assert state(page)['phase'] == 'room' and state(page)['roomId'] == 'depot'
+
+
 def route_choices(page, width, theme, touch=False):
     checked = []
     for fixture in ROUTES:
-        assert state(page)['phase'] == 'room'
+        assert state(page)['phase'] == 'room' and state(page)['roomId'] == 'depot'
         press(page, 'button[data-door="' + fixture['id'] + '"]', touch)
         assert state(page)['selectedDoor'] == fixture['id']
         press(page, 'button[data-person="' + fixture['person'] + '"]', touch)
         press(page, 'button[data-topic="route"]', touch)
         assert state(page)['selectedDoor'] == fixture['id'], 'NPC hints must not replace the selected physical door.'
-        # Hearing another character's hint walks away; return to the actual lock.
         press(page, 'button[data-door="' + fixture['id'] + '"]', touch)
         build(page, fixture['recipe'], touch); press(page, '#commit', touch)
-        page.wait_for_function('window.quietBell.state.phase==="continued"'); actual = state(page)
-        assert actual['routeId'] == fixture['id'], (fixture, actual)
-        assert actual.get('creditedStages', []) == []
+        page.wait_for_function('(room)=>window.quietBell.state.roomId===room', arg=fixture['id'] + '-porch')
+        actual = state(page)
+        assert actual['phase'] == 'room' and actual['routeId'] == fixture['id'], (fixture, actual)
+        assert actual.get('creditedStages', []) == [] and actual['selectedDoor'] is None
         expected = INITIAL.copy()
         for kind in fixture['recipe']: expected[kind] -= 1
         assert actual['inventory'] == expected and actual['availableInventory'] == expected
         visible_stock(page, expected)
         assert fixture['id'] in actual['discoveredRoutes']
-        assert page.locator('#outcome').is_visible() and page.locator('#commit').is_disabled()
+        assert page.locator('#outcome').is_hidden() and page.locator('#commit').is_disabled()
+        assert page.locator('button[data-door="' + fixture['id'] + '"]').count() == 0, 'Prior-room targets must be removed.'
         committed = resources(actual); page.reload(); page.wait_for_function('!!window.quietBell?.state')
-        assert resources(state(page)) == committed, 'Reload must not issue a gift or replace carried stock.'
-        protected_storage(page); assert page.locator('#outcome').is_visible()
+        assert resources(state(page)) == committed, 'Reload must preserve the actual room without issuing notes.'
+        protected_storage(page); assert page.locator('#outcome').is_hidden()
         page.screenshot(path=str(OUT / f'{width}-{theme}-{fixture["id"]}.png'), full_page=True)
-        press(page, '#revisit', touch); undone = state(page)
-        assert undone['phase'] == 'room' and undone['inventory'] == INITIAL and undone['availableInventory'] == INITIAL
+        revisit_room(page, touch); undone = state(page)
+        assert undone['inventory'] == INITIAL and undone['availableInventory'] == INITIAL
         assert undone.get('creditedStages', []) == [] and undone['phrase'] == []
         assert fixture['id'] in undone['discoveredRoutes']
         sources_claimed(page, touch, inspect_nell=False)
         press(page, 'button[data-door="' + fixture['id'] + '"]', touch)
         build(page, fixture['recipe'], touch); press(page, '#commit', touch)
+        assert state(page)['roomId'] == fixture['id'] + '-porch'
         assert state(page)['inventory'] == expected and state(page).get('creditedStages', []) == []
-        press(page, '#revisit', touch)
+        revisit_room(page, touch)
         if fixture['id'] == 'canal': restart_run(page, touch)
-        assert state(page)['phase'] == 'room'
+        assert state(page)['phase'] == 'room' and state(page)['roomId'] == 'depot'
         assert state(page)['inventory'] == (EMPTY if fixture['id'] == 'canal' else INITIAL)
         assert fixture['id'] in state(page)['discoveredRoutes']
         checked.append({'id': fixture['id'], 'stockAfterDoorCost': expected,
-                        'noAutomaticArrivalGrant': True, 'reloadAndUndoExact': True})
+                        'playablePorch': True, 'noAutomaticArrivalGrant': True, 'reloadAndRevisitExact': True})
     assert set(state(page)['discoveredRoutes']) == {'garden', 'workshop', 'canal'}
     return checked
 
@@ -360,8 +375,9 @@ def keyboard_commit(page):
     assert state(page)['beats'] == 4
     assert page.evaluate('document.activeElement?.id') == 'commit'
     page.keyboard.press('Space')
-    assert state(page)['phase'] == 'continued' and state(page)['routeId'] == 'canal'
-    assert page.evaluate('document.activeElement?.id') == 'revisit'
+    assert state(page)['phase'] == 'room' and state(page)['roomId'] == 'canal-porch'
+    assert state(page)['routeId'] == 'canal' and page.locator('#outcome').is_hidden()
+    assert page.evaluate('document.activeElement?.id') == 'walk-floor'
 
 def help_and_sound(page, touch=False):
     close_panels(page, revisit=True)

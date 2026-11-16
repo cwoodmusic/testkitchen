@@ -16,7 +16,7 @@ Garden rooms use jade, amber sap, cream ceramic and living roots. Workshop rooms
 
 ## Scope and implementation
 
-[worldbuilding.json](worldbuilding.json) gives all fourteen authored dungeon rooms an occupation, material palette, landmark, daily habit, trace of the past, unresolved question, route clue and inspection props. The depot is the only playable room. Its five current observations live in `games/rhythm-blocks/lore.mjs`; the remaining room records are authoring plans, not released locations.
+[worldbuilding.json](worldbuilding.json) gives all fourteen authored dungeon rooms an occupation, material palette, landmark, daily habit, trace of the past, unresolved question, route clue and inspection props. The depot, Iris’s Garden Porch, Pip’s Bird Workshop and the Canal Storehouse are playable. The depot’s five observations remain in `games/rhythm-blocks/lore.mjs`; `chapter-content.mjs` adds three observations for each new room, branch dialogue and lock warnings. The remaining ten room records are authoring plans. The three forward gates currently reach clearly marked continuation previews; the three porch dead ends are observed outcomes with a way to revisit the choice.
 
 The economy in `dungeon.json` stays authoritative. Lore inspections grant no notes, paid doors, party promises or outcomes. They can preserve observations in the journal and allude to other possibilities, while the chart continues to show only entered rooms and travelled connections. Hidden sources and gates must retain their existing once-only claims, reveal conditions and typed budgets.
 

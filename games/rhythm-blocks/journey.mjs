@@ -2,6 +2,8 @@
 
 import {DEPOT_LORE} from './lore.mjs';
 import {PEOPLE} from './opening.mjs';
+import {CHAPTER_LORE, ROOM_CONTENT} from './chapter-content.mjs';
+import {CHAPTER_ROOMS, CHAPTER_DOORS, CHAPTER_PREVIEWS, CHAPTER_TERMINALS} from './chapter.mjs';
 
 const freezeRecords = records => Object.freeze(records.map(record => Object.freeze(record)));
 
@@ -35,6 +37,38 @@ export const OPENING_JOURNEY_MANIFEST = Object.freeze({
     ...DEPOT_LORE.map(entry=>({id:`lore-${entry.id}`,title:entry.title,text:entry.text})),
   ]),
   outcomes: Object.freeze([]),
+});
+
+// Runtime chapters may grow without rewriting the legacy opening catalog or save
+// format. Only explicit event IDs reach state; a catalog entry is not a discovery.
+const depotLoreIds = new Set(DEPOT_LORE.map(entry => entry.id));
+export const CHAPTER_JOURNEY_MANIFEST = Object.freeze({
+  completionReady: false,
+  nodes: freezeRecords([
+    ...Object.values(CHAPTER_ROOMS),
+    ...Object.values(CHAPTER_PREVIEWS),
+    ...Object.values(CHAPTER_TERMINALS),
+  ].map(room => ({id: room.id, title: room.title}))),
+  edges: freezeRecords(Object.values(CHAPTER_DOORS).map(door => ({
+    id: door.canonicalId, from: door.from, to: door.to,
+  }))),
+  hints: freezeRecords([
+    ...OPENING_JOURNEY_MANIFEST.hints,
+    ...Object.entries(ROOM_CONTENT).filter(([id]) => id !== 'depot').flatMap(([roomId, room]) =>
+      room.people.map(person => ({
+        id: `${roomId}-${person.id}-route`,
+        title: `${person.name} · ${room.title}`,
+        text: person.route,
+      }))),
+    ...CHAPTER_LORE.filter(entry => !depotLoreIds.has(entry.id)).map(entry => ({
+      id: `lore-${entry.id}`, title: entry.title, text: entry.text,
+    })),
+  ]),
+  // A fork threshold is a continuation preview, never a dungeon ending. Only
+  // the three reachable dead ends can currently become observed outcomes.
+  outcomes: freezeRecords(Object.values(CHAPTER_TERMINALS).map(room => ({
+    id: room.id, title: room.title,
+  }))),
 });
 
 const COMPLETE_SCORE = Object.freeze({id: 'complete-score', title: 'The Complete Score'});

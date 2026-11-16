@@ -1,6 +1,6 @@
 {
   "schemaVersion": 1,
-  "status": "World and room authoring guide; only the depot is currently playable",
+  "status": "World and room authoring guide; depot, garden porch, bird workshop and canal storehouse are playable",
   "setting": {
     "name": "The Lumen Reach",
     "premise": "People live among floating stone islands joined by root bridges, light canals and a worn star-post network. They maintain beautiful old machines whose makers are gone.",
@@ -49,7 +49,7 @@
     {
       "id": "garden-porch",
       "title": "Iris’s Garden Porch",
-      "releaseStatus": "planned",
+      "releaseStatus": "playable",
       "occupation": "A gardener’s work porch where living roots are grafted into the island’s old service conduits.",
       "materialPalette": ["jade leaves", "cream ceramic", "root-brown wood", "tarnished copper", "amber sap light"],
       "landmark": "A crystal irrigation manifold wrapped by one carefully tended living root.",
@@ -66,7 +66,7 @@
     {
       "id": "workshop-porch",
       "title": "Pip’s Bird Workshop",
-      "releaseStatus": "planned",
+      "releaseStatus": "playable",
       "occupation": "A small repair shop and roost for the star-post’s clockwork courier birds.",
       "materialPalette": ["teal enamel", "warm copper", "cream worktops", "blue star-glass", "patched leather"],
       "landmark": "A nest-shaped charging cradle suspended inside an open brass wing.",
@@ -83,7 +83,7 @@
     {
       "id": "canal-porch",
       "title": "The Canal Storehouse",
-      "releaseStatus": "planned",
+      "releaseStatus": "playable",
       "occupation": "A ferry keeper’s freight store beside a light canal that carries parcels between floating islands.",
       "materialPalette": ["indigo tile", "pearl stone", "blue canal glass", "rope", "green-grey brass"],
       "landmark": "A closed tide iris reflected in still luminous water.",

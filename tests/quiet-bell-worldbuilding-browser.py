@@ -174,7 +174,8 @@ def observation_flow(browser, url):
     expected_journal(page, known, ['nell-route'])
     ui.clear_phrase(page)
     ui.build(page, ['half', 'quarter', 'eighth-pair']); ui.press(page, '#commit')
-    assert ui.state(page)['phase'] == 'continued' and sum(ui.state(page)['inventory'].values()) == 6
+    assert ui.state(page)['phase'] == 'room' and ui.state(page)['roomId'] == 'canal-porch'
+    assert sum(ui.state(page)['inventory'].values()) == 6 and page.locator('#outcome').is_hidden()
     expected_journal(page, known, ['nell-route'], ['depot', 'canal-porch'], ['depot-canal'])
     ui.protected_storage(page)
     assert not errors and not writes and not external, (errors, writes, external)
