@@ -1,4 +1,4 @@
-import {NOTE_KIND_BY_ID} from './engine.mjs?v=quiet-bell-journey-1';
+import {NOTE_KIND_BY_ID} from './engine.mjs';
 
 /** A small, local synthesizer. Rests advance time without making a sound. */
 export function createRhythmAudio({enabled=true}={}){

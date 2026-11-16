@@ -1,11 +1,11 @@
-import {createStoryGame,PAGE_ONE_DOOR_COSTS} from './story.mjs?v=quiet-bell-journey-1';
-import {NOTE_KINDS,NOTE_KIND_BY_ID} from './engine.mjs?v=quiet-bell-journey-1';
-import {symbolMarkup} from './notation.mjs?v=quiet-bell-journey-1';
-import {createRhythmAudio} from './audio.mjs?v=quiet-bell-journey-1';
-import {PEOPLE,ROUTE_OUTCOMES} from './opening.mjs?v=quiet-bell-journey-1';
-import {createRoomView} from './room-view.mjs?v=quiet-bell-journey-1';
-import {createJourney} from './journey.mjs?v=quiet-bell-journey-1';
-import {renderJourney} from './journey-view.mjs?v=quiet-bell-journey-1';
+import {createStoryGame,PAGE_ONE_DOOR_COSTS} from './story.mjs';
+import {NOTE_KINDS,NOTE_KIND_BY_ID} from './engine.mjs';
+import {symbolMarkup} from './notation.mjs';
+import {createRhythmAudio} from './audio.mjs';
+import {PEOPLE,ROUTE_OUTCOMES} from './opening.mjs';
+import {createRoomView} from './room-view.mjs';
+import {createJourney} from './journey.mjs';
+import {renderJourney} from './journey-view.mjs';
 
 const $=id=>document.getElementById(id),root=$('quiet-bell');
 const SAVE_KEY='codaQuietBellPageOneV1',JOURNEY_KEY='codaQuietBellJourneyV1',SOUND_KEY='codaRhythmBlocksSoundV1';

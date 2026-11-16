@@ -27,7 +27,7 @@ button:disabled{opacity:.48;cursor:default}
 .room-map{position:absolute;left:0;top:0;width:1536px;height:1024px;transform-origin:0 0;--room-scale:1;isolation:isolate}
 .mg-art{display:block;width:100%;height:100%;image-rendering:pixelated;user-select:none;pointer-events:none}
 .mg-walk-floor{position:absolute;inset:0;width:100%;height:100%;z-index:1;border:0;padding:0;background:transparent;cursor:crosshair;touch-action:manipulation}
-.mg-player{position:absolute;width:14.0625%;aspect-ratio:1;background-image:url('assets/mira-walk.webp?v=quiet-bell-journey-1');background-size:300% 400%;background-repeat:no-repeat;image-rendering:pixelated;pointer-events:none;transform:translate(-50%,-94%)}
+.mg-player{position:absolute;width:14.0625%;aspect-ratio:1;background-image:url('assets/mira-walk.webp');background-size:300% 400%;background-repeat:no-repeat;image-rendering:pixelated;pointer-events:none;transform:translate(-50%,-94%)}
 .mg-occluder{position:absolute;inset:0;width:100%;height:100%;image-rendering:pixelated;pointer-events:none}
 .mg-room-objects,.mg-people{position:absolute;inset:0;pointer-events:none;z-index:1100}
 .mg-door,.mg-person,.mg-chest{position:absolute;min-width:44px;min-height:44px;border:0;padding:0;background:transparent;pointer-events:auto}

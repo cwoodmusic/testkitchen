@@ -4,6 +4,8 @@ The Quiet Bell is the dungeon-puzzle evolution of Rhythm Blocks. Its first playa
 
 The room fills the browser viewport without document scrolling. A camera follows Mira across the room, including narrow portrait screens. Only the location, small square Inventory/Settings icons, and contextual interaction controls remain during exploration. Conversations, the bag, door puzzles, settings, and the arrival preview appear in temporary panels.
 
+The same game address checks for the latest published release whenever it opens or reloads. Each release keeps its HTML, scripts, styles, and artwork together under a content-versioned directory, so a cached arcade page or old version parameter cannot mix old and new game files. The address and origin stay unchanged, preserving local notes, discoveries, settings, and the arcade return protocol. The game never reloads itself during a puzzle and never clears browser storage. GitHub Pages publishing and CDN propagation can still take a few minutes; no manual cache clearing is needed after the updated launcher has loaded once.
+
 Mira starts with an empty satchel in the Parcel Depot. Walk with arrows/WASD, click or tap the floor, or use the on-screen arrows on a touch device. Selecting a person, chest, or door makes Mira walk over and interact. E or Space interacts with the closest object in reach. Nell’s parcel and a door’s lock require Mira to be nearby. Collision uses her feet and prevents walking through walls, the counter, residents, and the chest.
 
 Nell the postkeeper offers eight note types through conversation; the delivery chest contains the missing half note. Both can be collected once per run, in either order. Iris the gardener and Pip the courier have their own stories and clues about the room’s three physical doors. Approaching a resident opens a conversation; approaching a door opens its rhythm editor. Taking the parcel closes the conversation and returns to exploration. I or the Notes control opens a read-only bag; the actual editor is available at a door.
@@ -30,15 +32,19 @@ The device-only key `codaQuietBellPageOneV1` stores a version-2 action log of cl
 
 `story.mjs` implements the opening inventory and locks; `opening.mjs` holds the characters and dialogue. `engine.mjs` retains the earlier falling-game engine and shared note catalog for regression checks. `notation.mjs` supplies musical engraving; see its license/source files. `audio.mjs` synthesizes the true note subdivisions locally. The room artwork is bundled in `assets/parcel-depot.jpg`.
 
+Edit `game.html` and the runtime source files, rather than generated `index.html`, `release.json`, or the contents of `releases/`. Before testing or publishing any runtime change, run `node games/rhythm-blocks/build-release.mjs`. It creates an immutable release, updates the launcher and current release manifest, and keeps earlier releases available for already open or cached sessions. Commit the generated files with their source change. The release test checks that the published bundle matches the current source, so a forgotten rebuild fails the checks. Ordinary game changes no longer need manual cache-version edits in the arcade or module imports.
+
 Run from the repository root:
 
 ```sh
+node games/rhythm-blocks/build-release.mjs
 node --test games/rhythm-blocks/*.test.mjs tests/arcade-host.test.cjs tests/bundled-games.test.cjs design/music-puzzler/*.test.mjs
 node design/music-puzzler/dungeon-analyze.mjs
 python tests/rhythm-blocks-browser.py
 python tests/rhythm-blocks-launch-browser.py
 python tests/quiet-bell-journey-browser.py
 python tests/quiet-bell-journey-renderer-browser.py
+python tests/quiet-bell-updates-browser.py
 ```
 
 Browser tests require Python Playwright and Chromium.
