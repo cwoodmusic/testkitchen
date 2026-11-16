@@ -7,7 +7,7 @@ export const GAME_ROOT=dirname(fileURLToPath(import.meta.url));
 export const RUNTIME_FILES=Object.freeze([
   'game.html','app.mjs','audio.mjs','engine.mjs','journey.mjs','journey-view.mjs',
   'mira.mjs','notation.mjs','opening.mjs','room.mjs','room-view.mjs','story.mjs','style.css',
-  'assets/mira-walk.webp','assets/parcel-depot.jpg','NOTATION-LICENSE.txt','NOTATION-SOURCES.md',
+  'assets/mira-walk.webp','assets/parcel-depot.webp','NOTATION-LICENSE.txt','NOTATION-SOURCES.md',
 ]);
 const HASH_FILES=Object.freeze([...RUNTIME_FILES,'launcher.mjs','build-release.mjs']);
 const read=(root,name)=>readFileSync(join(root,name));

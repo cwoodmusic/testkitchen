@@ -32,7 +32,8 @@ test('direct walking uses equal diagonal speed, changes facing and stops when bl
  assert.equal(straight.state.facing,'right');assert.equal(straight.state.moving,true);
  const above=createRoomWalker({savedPosition:{x:220,y:510}});
  for(let i=0;i<40;i++){above.move(0,-1,50);assert(isWalkable(DEPOT_ROOM,above.state));}
- assert(above.state.y>=483);assert(above.state.y<491);assert.equal(above.state.moving,false);assert.equal(above.state.facing,'up');
+ const counter=DEPOT_ROOM.obstacles.find(obstacle=>obstacle.id==='counter'),front=counter.y+counter.height+DEPOT_ROOM.radius;
+ assert(above.state.y>=front);assert(above.state.y<front+8);assert.equal(above.state.moving,false);assert.equal(above.state.facing,'up');
  assert.equal(above.move(0,-1,50),false,'Repeated bumps do not report movement.');
 });
 

@@ -458,7 +458,12 @@ def movement_checks(browser, url):
     clear_aisle(page); key_walk(page, 'x', 200)
     page.keyboard.down('w'); page.wait_for_timeout(2200); page.keyboard.up('w'); settle_walk(page)
     at_counter = walker(page)
-    assert at_counter['y'] >= 482 and at_counter['y'] < 510, at_counter
+    counter_front = page.evaluate('''async()=>{
+      const {DEPOT_ROOM}=await import(new URL('room.mjs',document.baseURI).href);
+      const counter=DEPOT_ROOM.obstacles.find(item=>item.id==='counter');
+      return counter.y+counter.height+DEPOT_ROOM.radius;
+    }''')
+    assert counter_front <= at_counter['y'] < counter_front + 8, at_counter
     persisted = json.loads(page.evaluate('(key)=>localStorage.getItem(key)', SAVE_KEY))['roomPosition']
     assert math.hypot(persisted['x'] - at_counter['x'], persisted['y'] - at_counter['y']) < 1, (persisted, at_counter)
     page.reload(); page.wait_for_function('!!window.quietBell?.walker')

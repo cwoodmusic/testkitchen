@@ -5,15 +5,15 @@ export const DEPOT_ROOM=freeze({
  bounds:{x:48,y:295,width:1440,height:683},
  start:{x:768,y:920,facing:'up'},
  obstacles:[
-  {id:'counter',x:48,y:290,width:307,height:175},
-  {id:'iris',x:700,y:500,width:108,height:53},
-  {id:'pip',x:1150,y:500,width:110,height:53},
-  {id:'depot-chest',x:400,y:500,width:127,height:62}
+  {id:'counter',x:48,y:290,width:307,height:196},
+  {id:'iris',x:700,y:500,width:108,height:60},
+  {id:'pip',x:1135,y:500,width:105,height:60},
+  {id:'depot-chest',x:400,y:500,width:127,height:70}
  ],
  targets:[
   {id:'nell',type:'person',x:210,y:460,approach:{x:220,y:510},range:105},
   {id:'iris',type:'person',x:745,y:548,approach:{x:745,y:625},range:105},
-  {id:'pip',type:'person',x:1200,y:548,approach:{x:1200,y:625},range:105},
+  {id:'pip',type:'person',x:1185,y:548,approach:{x:1185,y:625},range:105},
   {id:'depot-chest',type:'chest',x:465,y:560,approach:{x:465,y:625},range:100},
   {id:'garden',type:'door',x:490,y:295,approach:{x:490,y:330},range:100},
   {id:'workshop',type:'door',x:884,y:295,approach:{x:884,y:330},range:100},
