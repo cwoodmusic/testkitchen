@@ -27,7 +27,7 @@ button:disabled{opacity:.48;cursor:default}
 .room-map{position:absolute;left:0;top:0;width:1536px;height:1024px;transform-origin:0 0;--room-scale:1;isolation:isolate}
 .mg-art{display:block;width:100%;height:100%;image-rendering:pixelated;user-select:none;pointer-events:none}
 .mg-walk-floor{position:absolute;inset:0;width:100%;height:100%;z-index:1;border:0;padding:0;background:transparent;cursor:crosshair;touch-action:manipulation}
-.mg-player{position:absolute;width:14.0625%;aspect-ratio:1;background-image:url('assets/mira-walk.webp?v=quiet-bell-full-room-1');background-size:300% 400%;background-repeat:no-repeat;image-rendering:pixelated;pointer-events:none;transform:translate(-50%,-94%)}
+.mg-player{position:absolute;width:14.0625%;aspect-ratio:1;background-image:url('assets/mira-walk.webp?v=quiet-bell-journey-1');background-size:300% 400%;background-repeat:no-repeat;image-rendering:pixelated;pointer-events:none;transform:translate(-50%,-94%)}
 .mg-occluder{position:absolute;inset:0;width:100%;height:100%;image-rendering:pixelated;pointer-events:none}
 .mg-room-objects,.mg-people{position:absolute;inset:0;pointer-events:none;z-index:1100}
 .mg-door,.mg-person,.mg-chest{position:absolute;min-width:44px;min-height:44px;border:0;padding:0;background:transparent;pointer-events:auto}
@@ -101,10 +101,10 @@ dialog::backdrop{background:#100c1659}
 #notes-dialog[data-mode="bag"] .puzzle-layout{display:block}
 #notes-dialog[data-mode="bag"] .mg-compose{display:none}
 #notes-dialog[data-mode="bag"] .mg-stock-note{opacity:1;cursor:default}
-.menu-dialog{width:360px}
+.menu-dialog{width:860px}
 .menu-options{display:grid;gap:8px}
 .menu-options .mg-button{width:100%}
-.menu-note,#story-state,#seen-routes,#save-status{font-size:11px;line-height:1.5;color:var(--mg-muted);margin-top:10px}
+.menu-note,#save-status{font-size:11px;line-height:1.5;color:var(--mg-muted);margin-top:10px}
 #help-dialog{width:640px;font-family:ui-sans-serif,system-ui,sans-serif}
 #help-dialog h2{font:700 21px/1.3 ui-monospace,monospace;color:var(--mg-gold);margin:0 0 12px}
 #help-dialog p{font-size:14px;margin:10px 0}
@@ -177,3 +177,34 @@ dialog::backdrop{background:#100c1659}
 .hud-icon svg{display:block;width:20px;height:20px}
 .bag-count{position:absolute;right:-4px;bottom:-5px;min-width:15px;padding:0 2px;font:11px/15px ui-monospace,monospace;text-align:center;color:#ffedcd;background:#302332;border:1px solid #cba675}
 @media(pointer:coarse){.hud-actions .hud-icon{width:44px;height:44px;min-height:44px;padding:11px}}
+/* The pause chart is built from observed places and connections only. */
+.pause-journey{display:grid;grid-template-columns:minmax(0,1fr);gap:16px;margin:4px 0 16px}
+.pause-journey.has-journal{grid-template-columns:minmax(0,1.25fr) minmax(220px,.85fr)}
+.pause-map{min-width:0}
+.pause-map h3,.pause-journal h3{font-size:13px;color:var(--mg-gold);margin-bottom:8px}
+.journey-chart{max-height:52dvh;overflow:auto;overscroll-behavior:contain}
+.journey-chart__svg{display:block;width:100%;max-width:360px;height:auto;margin-inline:auto}
+.journey-chart__card{fill:var(--mg-bg);stroke:var(--mg-edge);stroke-width:1.5;rx:2px}
+.journey-chart__node--current .journey-chart__card{fill:var(--mg-press);stroke:var(--mg-press)}
+.journey-chart__title,.journey-chart__current{fill:var(--mg-ink);font:13px ui-monospace,monospace}
+.journey-chart__node--current .journey-chart__title,.journey-chart__node--current .journey-chart__current{fill:var(--mg-press-ink)}
+.journey-chart__current{font-size:13px}
+.journey-chart__edge,.journey-chart__arrow{stroke:var(--mg-edge);stroke-width:2;stroke-linejoin:round}
+.journey-chart__connections{position:absolute;width:1px;height:1px;padding:0;margin:-1px;overflow:hidden;clip:rect(0,0,0,0);white-space:nowrap;border:0}
+.pause-journal{min-width:0;font:13px/1.5 ui-sans-serif,system-ui,sans-serif}
+.pause-journal details,.pause-journal section{margin-bottom:12px}
+.pause-journal summary{font:13px ui-monospace,monospace;color:var(--mg-gold);padding:8px 0;cursor:pointer}
+.pause-journal ul{list-style:none;margin:5px 0 0;padding:0}
+.pause-journal li{margin-bottom:12px}
+.pause-journal strong{display:block;font-size:12px;margin-bottom:3px}
+.pause-journal p{font-size:13px}
+.menu-options{grid-template-columns:repeat(4,minmax(0,1fr));gap:7px}
+.menu-options .mg-button{padding-inline:6px}
+@media(max-width:650px){
+ .pause-journey.has-journal{grid-template-columns:minmax(0,1fr)}
+ .journey-chart__svg{max-width:286px}
+ .journey-chart{max-height:44dvh}
+ .menu-options{grid-template-columns:repeat(2,minmax(0,1fr))}
+ .pause-journey{gap:10px;margin-bottom:12px}
+}
+@media(max-height:520px){.journey-chart__svg{max-width:286px}.journey-chart{max-height:calc(100dvh - 200px)}}

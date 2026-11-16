@@ -6,18 +6,18 @@
 <meta name="theme-color" content="#292132">
 <meta name="description" content="Walk through The Quiet Bell, a dungeon whose doors open to musical rhythms.">
 <title>The Quiet Bell · Coda Arcade</title>
-<link rel="stylesheet" href="style.css?v=quiet-bell-full-room-1">
+<link rel="stylesheet" href="style.css?v=quiet-bell-journey-1">
 </head>
 <body>
 <div id="quiet-bell">
   <main id="room-scene" class="room-viewport" aria-label="The Parcel Depot">
     <div id="room-map" class="room-map">
-      <img class="mg-art" src="assets/parcel-depot.jpg?v=quiet-bell-full-room-1" width="1536" height="1024" alt="The Parcel Depot, with Nell’s counter, Iris, Pip, a delivery chest, and three doors.">
+      <img class="mg-art" src="assets/parcel-depot.jpg?v=quiet-bell-journey-1" width="1536" height="1024" alt="The Parcel Depot, with Nell’s counter, Iris, Pip, a delivery chest, and three doors.">
       <button type="button" class="mg-walk-floor" id="walk-floor" aria-label="Room floor. Click or tap to walk. Arrows or WASD move; E or Space interacts."></button>
       <div class="mg-player" id="player-sprite" role="img" aria-label="Mira, your walking character"></div>
-      <img class="mg-occluder" src="assets/parcel-depot.jpg?v=quiet-bell-full-room-1" alt="" aria-hidden="true" style="clip-path:inset(31.25% 47.07% 46.48% 44.4%);z-index:553">
-      <img class="mg-occluder" src="assets/parcel-depot.jpg?v=quiet-bell-full-room-1" alt="" aria-hidden="true" style="clip-path:inset(31.84% 18.23% 46.48% 74.54%);z-index:553">
-      <img class="mg-occluder" src="assets/parcel-depot.jpg?v=quiet-bell-full-room-1" alt="" aria-hidden="true" style="clip-path:inset(46% 65.69% 45.12% 26.04%);z-index:562">
+      <img class="mg-occluder" src="assets/parcel-depot.jpg?v=quiet-bell-journey-1" alt="" aria-hidden="true" style="clip-path:inset(31.25% 47.07% 46.48% 44.4%);z-index:553">
+      <img class="mg-occluder" src="assets/parcel-depot.jpg?v=quiet-bell-journey-1" alt="" aria-hidden="true" style="clip-path:inset(31.84% 18.23% 46.48% 74.54%);z-index:553">
+      <img class="mg-occluder" src="assets/parcel-depot.jpg?v=quiet-bell-journey-1" alt="" aria-hidden="true" style="clip-path:inset(46% 65.69% 45.12% 26.04%);z-index:562">
       <div class="mg-room-objects" role="group" aria-label="Doors and treasure">
         <button type="button" class="mg-door" data-door="garden" aria-label="Choose the garden door" aria-pressed="false" style="left:31.93%"><span>Garden</span></button>
         <button type="button" class="mg-door" data-door="workshop" aria-label="Choose the workshop door" aria-pressed="false" style="left:57.55%"><span>Workshop</span></button>
@@ -62,16 +62,24 @@
   </dialog>
 
   <dialog id="menu-dialog" class="menu-dialog" aria-labelledby="menu-title">
-    <div class="dialog-head"><h2 id="menu-title">Settings</h2><button type="button" class="mg-button dialog-close" id="menu-close" aria-label="Close settings">×</button></div>
-    <nav class="menu-options" aria-label="Game options"><button type="button" class="mg-button" id="sound" aria-pressed="true">Sound on</button><button type="button" class="mg-button" id="help">How to play</button><button type="button" class="mg-button" id="restart">Start over</button><a class="mg-button" id="exit" href="../../world-preview.html?v=quiet-bell-full-room-1">Return to arcade</a></nav>
-    <p class="mg-small" id="story-state"></p><p class="mg-small" id="seen-routes"></p><p class="menu-note" id="save-status">Progress saves on this device.</p>
+    <div class="dialog-head"><h2 id="menu-title">Paused</h2><button type="button" class="mg-button dialog-close" id="menu-close" aria-label="Resume game">×</button></div>
+    <div class="pause-journey" id="pause-journey">
+      <section class="pause-map" aria-labelledby="journey-title"><h3 id="journey-title">Your journey</h3><div id="journey-chart" aria-label="Places visited and routes travelled"></div></section>
+      <aside class="pause-journal" id="journey-journal" aria-label="Discovered journal" hidden>
+        <details id="journey-hints-section" hidden><summary>Clues found</summary><ul id="journey-hints"></ul></details>
+        <section id="journey-outcomes-section" hidden><h3>Outcomes reached</h3><ul id="journey-outcomes"></ul></section>
+        <section id="journey-achievements-section" hidden><h3>Achievements earned</h3><ul id="journey-achievements"></ul></section>
+      </aside>
+    </div>
+    <nav class="menu-options" aria-label="Game options"><button type="button" class="mg-button" id="sound" aria-pressed="true">Sound on</button><button type="button" class="mg-button" id="help">How to play</button><button type="button" class="mg-button" id="restart">Start over</button><a class="mg-button" id="exit" href="../../world-preview.html?v=quiet-bell-journey-1">Return to arcade</a></nav>
+    <p class="menu-note" id="save-status">Progress saves on this device.</p>
   </dialog>
 
-  <dialog id="outcome" class="outcome-dialog" aria-labelledby="outcome-title"><span class="mg-small" id="outcome-kicker"></span><h2 id="outcome-title"></h2><p id="outcome-copy"></p><p class="mg-small">Your notes are saved for the next dungeon room. This opening-room preview ends here.</p><div class="mg-actions"><button type="button" class="mg-button mg-primary" id="revisit">Revisit your answer</button><a class="mg-button" id="outcome-exit" href="../../world-preview.html?v=quiet-bell-full-room-1">Return to arcade</a></div></dialog>
+  <dialog id="outcome" class="outcome-dialog" aria-labelledby="outcome-title"><span class="mg-small" id="outcome-kicker"></span><h2 id="outcome-title"></h2><p id="outcome-copy"></p><p class="mg-small">Your notes are saved for the next dungeon room. This opening-room preview ends here.</p><div class="mg-actions"><button type="button" class="mg-button mg-primary" id="revisit">Revisit your answer</button><button type="button" class="mg-button" id="outcome-map">Your journey</button><a class="mg-button" id="outcome-exit" href="../../world-preview.html?v=quiet-bell-journey-1">Return to arcade</a></div></dialog>
 
-  <dialog id="help-dialog" aria-labelledby="help-title"><div class="dialog-head"><h2 id="help-title">A story told in rhythm.</h2><button type="button" class="mg-button dialog-close" id="help-close" aria-label="Close instructions">×</button></div><p>Walk with arrows or WASD. Click/tap the floor to choose a destination; click a person, chest, or door to walk over and interact. E or Space interacts nearby. I opens your notes.</p><p>Talk to Nell for eight note types and open the chest for the missing half note. Each source can be collected once.</p><p>Approach a door to open its rhythm puzzle. Hear its lock, arrange the exact four-beat key, then open the door. Wrong rhythms spend nothing. Tap a placed note or use Undo to edit freely.</p><div class="mg-help-notes" id="help-notes" aria-label="Note values"></div><p>Rests sound as silence. The number keys 1–9 add notes while solving a lock; Backspace undoes. Escape closes a panel or opens the menu. No one is timing you.</p><p>This release contains the first room. Notes and pickups save on this device; later rooms are planned to use every note by each successful ending.</p><button type="button" class="mg-button mg-primary" id="help-done">Keep exploring</button></dialog>
+  <dialog id="help-dialog" aria-labelledby="help-title"><div class="dialog-head"><h2 id="help-title">A story told in rhythm.</h2><button type="button" class="mg-button dialog-close" id="help-close" aria-label="Close instructions">×</button></div><p>Walk with arrows or WASD. Click/tap the floor to choose a destination; click a person, chest, or door to walk over and interact. E or Space interacts nearby. I opens your notes.</p><p>Talk to Nell for eight note types and open the chest for the missing half note. Each source can be collected once.</p><p>Approach a door to open its rhythm puzzle. Hear its lock, arrange the exact four-beat key, then open the door. Wrong rhythms spend nothing. Tap a placed note or use Undo to edit freely.</p><div class="mg-help-notes" id="help-notes" aria-label="Note values"></div><p>Pause with Escape or the settings icon to see your journey. The chart remembers places and connections you have travelled across runs. Read clues are kept in the journal. Starting over resets your satchel and pickups while keeping discoveries.</p><p>Rests sound as silence. The number keys 1–9 add notes while solving a lock; Backspace undoes. Escape closes a panel or opens the menu. No one is timing you.</p><p>This release contains the first room. Notes and discoveries save on this device; later rooms are planned to use every note by each successful ending.</p><button type="button" class="mg-button mg-primary" id="help-done">Keep exploring</button></dialog>
 </div>
 <p id="announcement" class="sr-only" aria-live="polite" aria-atomic="true"></p>
-<script type="module" src="app.mjs?v=quiet-bell-full-room-1"></script>
+<script type="module" src="app.mjs?v=quiet-bell-journey-1"></script>
 </body>
 </html>

@@ -1,5 +1,5 @@
-import {createRoomWalker,DEPOT_ROOM} from './room.mjs?v=quiet-bell-full-room-1';
-import {MIRA} from './mira.mjs?v=quiet-bell-full-room-1';
+import {createRoomWalker,DEPOT_ROOM} from './room.mjs?v=quiet-bell-journey-1';
+import {MIRA} from './mira.mjs?v=quiet-bell-journey-1';
 
 const keyDirections={arrowup:'up',w:'up',arrowdown:'down',s:'down',arrowleft:'left',a:'left',arrowright:'right',d:'right'};
 const vectors={up:[0,-1],down:[0,1],left:[-1,0],right:[1,0]};
