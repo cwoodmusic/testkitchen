@@ -1,7 +1,8 @@
-"""Real input through the three playable rooms beyond the depot.
+"""Real input through the three porches, their next rooms and walkable dead ends.
 
-No mutable gameplay hooks or forged action records are used. Every inventory
-starts with explicit pickups, and both lock outcomes are paid for in the UI.
+Every inventory starts with explicit pickups and every door is paid in the UI.
+Legacy migration reuses these actual action logs and changes only the metadata
+that the previous release stored at its arrival previews.
 """
 from functools import partial
 from http.server import ThreadingHTTPServer
@@ -45,9 +46,9 @@ def journal(page):
 def contract(page):
     # Resolve modules through the immutable release base used by the actual app.
     return page.evaluate('''async()=>{
-      const {SCENES}=await import(new URL('scenes.mjs',document.baseURI));
-      const {ROOM_CONTENT}=await import(new URL('chapter-content.mjs',document.baseURI));
-      return{scenes:SCENES,content:ROOM_CONTENT};
+      const {CAMPAIGN_SCENES}=await import(new URL('campaign-scenes.mjs',document.baseURI));
+      const {CAMPAIGN_CONTENT}=await import(new URL('campaign-content.mjs',document.baseURI));
+      return{scenes:CAMPAIGN_SCENES,content:CAMPAIGN_CONTENT};
     }''')
 
 
@@ -62,12 +63,12 @@ def assert_journey(page, nodes, edges, hints, outcomes):
     for key, expected in [('nodes', nodes), ('edges', edges), ('hints', hints), ('outcomes', outcomes)]:
         assert ids(value[key]) == set(expected), (key, expected, value)
         assert len(value[key]) == len(expected), (key, value)
-    assert value['achievements'] == [], 'This chapter cannot award full-dungeon completion.'
+    assert value['achievements'] == [], 'These three branches alone cannot award full-dungeon completion.'
 
 
-def assert_room(page, room, inventory):
+def assert_room(page, room, inventory, phase='room'):
     value = ui.state(page)
-    assert value['roomId'] == room and value['phase'] == 'room', value
+    assert value['roomId'] == room and value['phase'] == phase, value
     assert value['inventory'] == inventory and value['availableInventory'] == inventory
     assert value['phrase'] == [] and value['creditedStages'] == []
     assert page.locator('#room-scene').get_attribute('data-room') == room
@@ -142,34 +143,71 @@ def claim_room_source(page, branch, targets, carry):
     ui.close_panels(page)
 
 
-def boundary(page, branch, kind, expected_stock, expected_recipe):
-    value = ui.state(page)
-    assert value['phase'] == 'continued' and value['roomId'] == branch['room']
-    assert value['previewKind'] == kind and value['nextScene']['kind'] == kind
-    assert value['nextScene']['id'] == (branch['terminal'] if kind == 'dead-end' else branch['destination'])
-    assert value['inventory'] == expected_stock and value['availableInventory'] == expected_stock
+def migrate_arrival_exact(page, branch):
+    """Promote the old preview/terminal metadata without inventing a payment."""
+    before = ui.resources(ui.state(page))
+    page.evaluate("""(from)=>{
+      const key='codaQuietBellPageOneV1',saved=JSON.parse(localStorage.getItem(key));
+      const door=saved.actions.findLast(action=>action.type==='door');
+      saved.selectedDoor=door.doorId;saved.roomId=from;
+      saved.positionRoomId=from;saved.roomPosition={x:768,y:800,facing:'up'};
+      localStorage.setItem(key,JSON.stringify(saved));
+    }""", branch['room'])
+    page.reload(); page.wait_for_function('!!window.quietBell?.walker')
+    page.wait_for_function('[...document.images].every(i=>i.complete&&i.naturalWidth>0)')
+    assert ui.resources(ui.state(page)) == before, 'Old paid preview metadata must enter its real destination without changing notes or actions.'
+    assert page.locator('#outcome').is_hidden(), 'Migrated outcomes remain walkable, with their reading panel closed.'
+
+
+def arrival(page, branch, kind, expected_stock, expected_recipe, data):
+    terminal = kind == 'dead-end'
+    destination = branch['terminal'] if terminal else branch['destination']
+    phase = 'terminal' if terminal else 'room'
+    value = assert_room(page, destination, expected_stock, phase)
     assert value['receipt']['recipe'] == expected_recipe and value['receipt']['received'] == []
-    assert value['creditedStages'] == [] and page.locator('#outcome').is_visible()
-    assert page.locator('#outcome-copy').inner_text().strip()
-    if kind == 'dead-end':
-        assert 'revisit' in page.locator('#outcome').inner_text().lower(), 'A dead end must explain recovery.'
+    assert value['currentRoomClaimedSources'] == [] and value['selectedDoor'] is None
+    if terminal:
+        assert value['previewKind'] == kind and value['nextScene']['kind'] == kind
+        assert value['nextScene']['id'] == destination
     else:
-        assert 'not playable' in page.locator('#outcome').inner_text().lower(), 'A release boundary must be explicit.'
-    page.keyboard.press('Escape')
-    assert page.locator('#outcome').is_visible()
-    frozen = ui.walker(page)
+        assert value['nextScene'] is None and value['previewKind'] is None
+    assert_scene_targets(page, data['scenes'][destination])
+    migrate_arrival_exact(page, branch)
+    # Both ordinary arrivals and outcomes are real walkable rooms.
+    initial = ui.walker(page)
+    page.locator('#walk-floor').focus()
     page.keyboard.down('ArrowRight'); page.clock.run_for(180); page.keyboard.up('ArrowRight')
-    assert math.hypot(ui.walker(page)['x']-frozen['x'], ui.walker(page)['y']-frozen['y']) < 1
+    ui.settle_walk(page)
+    moved = ui.walker(page)
+    assert math.hypot(moved['x']-initial['x'], moved['y']-initial['y']) > 10
+    assert_room(page, destination, expected_stock, phase)
     reload_exact(page)
-    assert page.locator('#outcome').is_visible()
-    ui.press(page, '#outcome-map')
+    if terminal:
+        ui.press(page, '#ending')
+        assert page.locator('#outcome').is_visible()
+        assert page.locator('#outcome-title').inner_text().strip() == data['content'][destination]['title']
+        assert page.locator('#outcome-copy').inner_text().strip()
+        assert 'revisit' in page.locator('#outcome').inner_text().lower(), 'A dead end must explain recovery.'
+        ui.layout(page)
+        page.keyboard.press('Escape'); page.clock.run_for(80)
+        assert page.locator('#outcome').is_hidden(), 'Closing an ending should return to its room.'
+    else:
+        assert page.locator('#ending').is_hidden()
+    ui.press(page, '#menu')
     assert page.locator('#menu-dialog').is_visible()
     ui.press(page, '#help'); ui.press(page, '#help-close'); page.clock.run_for(80)
-    page.locator('#outcome').wait_for(state='visible')
-    assert page.locator('#outcome').is_visible() and ui.state(page)['phase'] == 'continued'
-    ui.press(page, '#outcome-map'); page.keyboard.press('Escape'); page.clock.run_for(80)
-    page.locator('#outcome').wait_for(state='visible')
-    assert page.locator('#outcome').is_visible()
+    assert page.locator('#outcome').is_hidden() and ui.state(page)['phase'] == phase
+    ui.press(page, '#menu'); page.keyboard.press('Escape'); page.clock.run_for(80)
+    assert page.locator('#outcome').is_hidden()
+    if terminal:
+        ui.press(page, '#ending')
+
+
+def revisit_previous(page):
+    ui.close_panels(page)
+    ui.press(page, '#menu')
+    ui.press(page, '#revisit-room')
+    ui.close_panels(page)
 
 
 def chapter_flow(browser, url):
@@ -249,7 +287,7 @@ def chapter_flow(browser, url):
         ui.build(page, branch['dead']); ui.press(page, '#commit')
         nodes.add(branch['terminal']); edges.add(dead); outcomes.add(branch['terminal'])
         assert_journey(page, nodes, edges, hints, outcomes)
-        boundary(page, branch, 'dead-end', after_cost(carry, branch['dead']), branch['dead'])
+        arrival(page, branch, 'dead-end', after_cost(carry, branch['dead']), branch['dead'], data)
         ui.press(page, '#revisit')
         assert_room(page, branch['room'], carry)
         assert len(ui.state(page)['actions']) == 3 and ui.state(page)['currentRoomClaimedSources'] == []
@@ -260,9 +298,9 @@ def chapter_flow(browser, url):
         ui.build(page, branch['cost']); ui.press(page, '#commit')
         nodes.add(branch['destination']); edges.add(forward)
         assert_journey(page, nodes, edges, hints, outcomes)
-        boundary(page, branch, 'preview', carry, branch['cost'])
-        page.screenshot(path=str(OUT / f'{branch["room"]}-continuation-boundary.png'))
-        ui.press(page, '#revisit')
+        arrival(page, branch, 'room', carry, branch['cost'], data)
+        page.screenshot(path=str(OUT / f'{branch["destination"]}-actual-arrival.png'))
+        revisit_previous(page)
         assert_room(page, branch['room'], ui.INITIAL)
         assert branch['source'] in ui.state(page)['claimedSources'] and len(ui.state(page)['actions']) == 4
         reload_exact(page)
@@ -285,7 +323,8 @@ def chapter_flow(browser, url):
         reload_exact(page)
         results.append({'room': branch['room'], 'explicitSourceOnce': True, 'actualPropsAndNpc': True,
                         'wrongFourBeatsUnspent': True, 'paidDeadEndAndForward': True,
-                        'boundaryUndoExact': True, 'southReturnAtomic': True, 'savedActualRoom': True})
+                        'arrivalRevisitExact': True, 'southReturnAtomic': True, 'savedActualRoom': True,
+                        'legacyArrivalMigration': True, 'walkableDeadEnd': True, 'playableFork': True})
     visible_history(page, nodes, edges)
     ui.press(page, '#menu')
     page.screenshot(path=str(OUT / 'all-visited-map.png'))
@@ -325,7 +364,8 @@ def main():
             result = chapter_flow(browser, url)
             browser.close()
         (OUT / 'browser-results.json').write_text(json.dumps(result, indent=2) + '\n')
-        print(json.dumps({'passed': True, 'playablePorches': 3, 'paidBoundaryDoors': 6,
+        print(json.dumps({'passed': True, 'playablePorches': 3, 'paidContinuationDoors': 6,
+                          'playableForks':3, 'walkableDeadEnds':3, 'migratedPaidArrivals':6,
                           'actualRoomViewports': 15, 'atomicRewinds': True, 'errors': []}), flush=True)
     finally: server.shutdown()
 

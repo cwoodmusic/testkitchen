@@ -1,6 +1,6 @@
 {
   "schemaVersion": 1,
-  "status": "World and room authoring guide; depot, garden porch, bird workshop and canal storehouse are playable",
+  "status": "World and room authoring guide; all fourteen dungeon rooms and nine outcome locations are playable",
   "setting": {
     "name": "The Lumen Reach",
     "premise": "People live among floating stone islands joined by root bridges, light canals and a worn star-post network. They maintain beautiful old machines whose makers are gone.",
@@ -100,7 +100,7 @@
     {
       "id": "garden-fork",
       "title": "The Two Garden Paths",
-      "releaseStatus": "planned",
+      "releaseStatus": "playable",
       "occupation": "A shared growing court where a new neighborhood path meets the buried route of an older garden.",
       "materialPalette": ["deep jade", "soft moss", "cream paving", "old green copper", "warm window light"],
       "landmark": "A split root bridge: one side freshly tended, the other following worn stone beneath the leaves.",
@@ -117,7 +117,7 @@
     {
       "id": "workshop-fork",
       "title": "The Workshop Crossroads",
-      "releaseStatus": "planned",
+      "releaseStatus": "playable",
       "occupation": "A narrow makers’ exchange between public teaching rooms and the old backstage service spaces.",
       "materialPalette": ["oxidized teal", "copper rails", "cream plaster", "chalky blue glass", "red repair thread"],
       "landmark": "A suspended demonstration bird above two different generations of doorway.",
@@ -134,7 +134,7 @@
     {
       "id": "canal-fork",
       "title": "The Water Clock",
-      "releaseStatus": "planned",
+      "releaseStatus": "playable",
       "occupation": "A public timing chamber that once synchronized ferry tides with the town bell.",
       "materialPalette": ["midnight indigo", "pearl stone", "silvered water", "blue crystal", "dark brass"],
       "landmark": "A tall water clock with suspended drops waiting above a dry answering bowl.",
@@ -151,7 +151,7 @@
     {
       "id": "garden-final",
       "title": "The Hearth Bell",
-      "releaseStatus": "planned",
+      "releaseStatus": "playable",
       "occupation": "A small neighborhood hall where domestic lamps and kitchen chimes share a bell relay.",
       "materialPalette": ["amber light", "jade trim", "cream hearthstone", "dark wood", "brushed brass"],
       "landmark": "A modest bell hanging inside the frame of an oversized ancient relay.",
@@ -168,7 +168,7 @@
     {
       "id": "workshop-final",
       "title": "The Open Music Room",
-      "releaseStatus": "planned",
+      "releaseStatus": "playable",
       "occupation": "A community teaching room rebuilt around a retired star-navigation instrument.",
       "materialPalette": ["teal enamel", "cream boards", "copper", "soft gold", "blue phosphor"],
       "landmark": "A great circular navigator converted into a shared listening instrument.",
@@ -185,7 +185,7 @@
     {
       "id": "canal-final",
       "title": "The Evening Tower",
-      "releaseStatus": "planned",
+      "releaseStatus": "playable",
       "occupation": "The public bell tower and the working heart of the town’s old timing network.",
       "materialPalette": ["deep indigo", "pale stone", "tarnished gold", "silver glass", "small amber lamps"],
       "landmark": "A silent bell above a circle of dark route lamps, with the inhabited islands visible beyond.",
@@ -202,7 +202,7 @@
     {
       "id": "garden-alcove",
       "title": "The Overgrown Music Box",
-      "releaseStatus": "planned",
+      "releaseStatus": "playable",
       "occupation": "An old root-service nook whose maintenance instrument has become part of the garden.",
       "materialPalette": ["deep moss", "pale stone", "green copper", "milky glass", "one warm amber seam"],
       "landmark": "A flower-carved stone above a music box that roots have grown around without crushing.",
@@ -219,7 +219,7 @@
     {
       "id": "workshop-alcove",
       "title": "The Birds’ Dusty Attic",
-      "releaseStatus": "planned",
+      "releaseStatus": "playable",
       "occupation": "The old courier roost’s reserve loft, kept above the public workshop.",
       "materialPalette": ["dusty teal", "dark rafters", "brass", "cream ceramic", "faint blue glass"],
       "landmark": "A hollow two-sided perch among unused courier harnesses.",
@@ -236,7 +236,7 @@
     {
       "id": "garden-secret-final",
       "title": "The Reserved Room",
-      "releaseStatus": "planned",
+      "releaseStatus": "playable",
       "occupation": "A small listening room deliberately kept apart from the busy shared garden.",
       "materialPalette": ["soft jade", "cream cloth", "pale stone", "muted copper", "warm reflected light"],
       "landmark": "A carefully maintained empty chair beside a dormant listening window.",
@@ -253,7 +253,7 @@
     {
       "id": "workshop-secret-final",
       "title": "The Hidden Countermelody",
-      "releaseStatus": "planned",
+      "releaseStatus": "playable",
       "occupation": "A quiet reply chamber behind the courier birds’ performance machinery.",
       "materialPalette": ["deep teal", "blue star-glass", "brass", "cream felt", "small gold highlights"],
       "landmark": "A second, smaller listening horn hidden behind the great public sending horn.",
@@ -265,6 +265,168 @@
         {"id": "workshop-secret-final-small-horn", "title": "The smaller horn", "observation": "Its rim is polished from the inside, as if something small has been speaking into it.", "purpose": "Reveal a practical reason for the chamber’s hidden position."},
         {"id": "workshop-secret-final-small-step", "title": "The little service step", "observation": "A hand-built step reaches the one control a small courier cannot reach from its perch.", "purpose": "Continue the theme of people adapting inherited machines for one another."},
         {"id": "workshop-secret-final-two-traces", "title": "The two sound traces", "observation": "Two phosphor traces approach the same pause along different curves.", "purpose": "Make an independent voice visible before its final musical payoff."}
+      ]
+    },
+    {
+      "id": "ending-home",
+      "title": "A Place to Come Home",
+      "releaseStatus": "playable",
+      "outcomeKind": "ending",
+      "occupation": "A shared residential courtyard whose household chimes now answer the hearth relay.",
+      "materialPalette": ["amber window light", "jade planters", "dark wood", "cream cloth", "hand-repaired brass"],
+      "landmark": "The kitchen chimes",
+      "everydayHabit": "A kitchen chime answers from an open window, then another across the courtyard. Someone moves four cups onto the common table while the old relay settles into a small, steady glow.",
+      "traceOfPast": "An immense socket now holds a hand-sized bell. Warm wax on an ordinary envelope softens beside its service lamp; the parcel’s sender is still unnamed.",
+      "unansweredQuestion": "How far can a neighbourhood carry a question by keeping a place open for another arrival?",
+      "routeClue": "Our delivery is finished here. We can look around the courtyard, revisit the last answer, or begin another journey from the depot.",
+      "props": [
+        {"id": "ending-home-memory", "title": "The common table", "observation": "Four cups stand beside a loaf under a clean cloth. One corner of the table has been mended with a piece of the same wood as the nearby post box.", "purpose": "Connect the outcome to an ordinary household or working habit."},
+        {"id": "ending-home-reply", "title": "The kitchen chimes", "observation": "The window chimes use different spoons, shells and brass scraps. A thin copper line connects their hinges to the old relay without making their voices alike.", "purpose": "Show this route’s result through a physical reply or its absence."},
+        {"id": "ending-home-trace", "title": "The small working relay", "observation": "An immense socket now holds a hand-sized bell. Warm wax on an ordinary envelope softens beside its service lamp; the parcel’s sender is still unnamed.", "purpose": "Keep evidence of the old network present beyond this outcome."}
+      ]
+    },
+    {
+      "id": "ending-school",
+      "title": "The Open Music Room",
+      "releaseStatus": "playable",
+      "outcomeKind": "ending",
+      "occupation": "A community rehearsal commons opened for learners around the retired navigation instrument.",
+      "materialPalette": ["cream plaster", "teal enamel", "warm wood", "copper", "soft gold"],
+      "landmark": "The listening circle",
+      "everydayHabit": "Low stools form an open circle around the listening instrument. As its rings begin to turn, a small practice control clicks and leaves room for the next person to answer.",
+      "traceOfPast": "An unfinished mechanism has three kinds of careful stitching around one joint. Beside it lies a fresh piece of felt and a brush cleaned for the next learner.",
+      "unansweredQuestion": "What will the next learner hear in machinery that no longer belongs to a single operator?",
+      "routeClue": "This is the end of this delivery route. The room is open now; explore it, revisit the last rhythm, or start another journey with what we have learned.",
+      "props": [
+        {"id": "ending-school-memory", "title": "The smallest stool", "observation": "Its front legs have been shortened and capped neatly so it sits level. A wooden lever extension reaches down to it from the oldest brass control.", "purpose": "Connect the outcome to an ordinary household or working habit."},
+        {"id": "ending-school-reply", "title": "The listening circle", "observation": "The instrument’s seats leave an opening wide enough for another stool. Polished handrails show that people have moved around the circle instead of keeping one permanent operator’s place.", "purpose": "Show this route’s result through a physical reply or its absence."},
+        {"id": "ending-school-trace", "title": "The shared repair shelf", "observation": "An unfinished mechanism has three kinds of careful stitching around one joint. Beside it lies a fresh piece of felt and a brush cleaned for the next learner.", "purpose": "Keep evidence of the old network present beyond this outcome."}
+      ]
+    },
+    {
+      "id": "ending-public",
+      "title": "The Evening Bell",
+      "releaseStatus": "playable",
+      "outcomeKind": "ending",
+      "occupation": "A public bell terrace receiving answering route lights from inhabited islands.",
+      "materialPalette": ["deep indigo", "pale stone", "tarnished gold", "silver glass", "amber lamps"],
+      "landmark": "The receiving dish",
+      "everydayHabit": "The evening bell moves once above the terrace. A route lamp answers from a nearby island, then a distant blue light returns the same interval across the Reach.",
+      "traceOfPast": "Clean glass covers every lamp, including the furthest dark ones. New light travels outward and returns along separate copper lines; the keeper has cared for both.",
+      "unansweredQuestion": "Who can fill the still-unknown return address on the warm parcel?",
+      "routeClue": "The town door completes this route. We can watch the replies from the terrace, revisit that final choice, or make another journey.",
+      "props": [
+        {"id": "ending-public-memory", "title": "The keeper’s bench", "observation": "A patched coat and a flask rest on a narrow shelf beside the immense control frame. The bench faces the returning route lamps rather than the bell itself.", "purpose": "Connect the outcome to an ordinary household or working habit."},
+        {"id": "ending-public-reply", "title": "The receiving dish", "observation": "Its open centre faces the inhabited islands. A fine silver trace appears only after a distant lamp has answered the bell’s signal.", "purpose": "Show this route’s result through a physical reply or its absence."},
+        {"id": "ending-public-trace", "title": "The evening route lamps", "observation": "Clean glass covers every lamp, including the furthest dark ones. New light travels outward and returns along separate copper lines; the keeper has cared for both.", "purpose": "Keep evidence of the old network present beyond this outcome."}
+      ]
+    },
+    {
+      "id": "ending-secret-quiet",
+      "title": "The Reserved Silence",
+      "releaseStatus": "playable",
+      "outcomeKind": "secret-ending",
+      "occupation": "A quiet garden terrace where a second voice has a maintained place without being compelled to sound.",
+      "materialPalette": ["soft jade", "cream cloth", "pale stone", "muted copper", "fresh water"],
+      "landmark": "The unplayed instrument",
+      "everydayHabit": "The listening window opens onto the garden without sounding its second instrument. Fresh water catches the light beside a maintained empty chair, and nothing hurries to fill its place.",
+      "traceOfPast": "The receiving pane faces the garden while the sending side remains still. A tiny shoot rests against its frame without interrupting the open space.",
+      "unansweredQuestion": "When will the second voice choose to answer, if it chooses to answer at all?",
+      "routeClue": "This listening place is the end of the hidden garden route. We can remain here, revisit its last answer, or begin another journey without taking anything from the chair.",
+      "props": [
+        {"id": "ending-secret-quiet-memory", "title": "The maintained chair", "observation": "The cushion has been turned away from a roof drip and its worn arm has a fresh coat of sap polish. An empty place can be kept with the same care as an occupied one.", "purpose": "Connect the outcome to an ordinary household or working habit."},
+        {"id": "ending-secret-quiet-reply", "title": "The unplayed instrument", "observation": "A folded cloth covers the second set of sounding keys. Beside it, two different hands have worn the receiver controls smooth in different places.", "purpose": "Show this route’s result through a physical reply or its absence."},
+        {"id": "ending-secret-quiet-trace", "title": "The open listening window", "observation": "The receiving pane faces the garden while the sending side remains still. A tiny shoot rests against its frame without interrupting the open space.", "purpose": "Keep evidence of the old network present beyond this outcome."}
+      ]
+    },
+    {
+      "id": "ending-secret-birds",
+      "title": "The Birds’ Countermelody",
+      "releaseStatus": "playable",
+      "outcomeKind": "secret-ending",
+      "occupation": "A courier reply loft where the birds can send a countermelody of their own.",
+      "materialPalette": ["deep teal", "blue star-glass", "brass", "cream felt", "small gold highlights"],
+      "landmark": "The answering horn",
+      "everydayHabit": "A small courier steps onto the service perch and sounds its own brass horn. A second phosphor trace meets the first at the shared pause, then takes a different curve into the evening.",
+      "traceOfPast": "Two green-blue traces share one pause, then part along different curves. Neither is a copy of the other, and both continue past the old route board’s edge.",
+      "unansweredQuestion": "How many returning voices were never named on the old route board?",
+      "routeClue": "This reply loft completes the hidden workshop route. We can listen here, revisit the final door, or begin another journey carrying the discovery in our journal.",
+      "props": [
+        {"id": "ending-secret-birds-memory", "title": "The little service perch", "observation": "A hand-built step raises a small courier to the older control. Its top is polished by tiny feet, and a brush rests nearby with fresh brass dust in its bristles.", "purpose": "Connect the outcome to an ordinary household or working habit."},
+        {"id": "ending-secret-birds-reply", "title": "The answering horn", "observation": "Its rim is worn from the inside. The smaller instrument points toward the listening side of the great public horn, leaving the two voices distinct.", "purpose": "Show this route’s result through a physical reply or its absence."},
+        {"id": "ending-secret-birds-trace", "title": "The crossing sound traces", "observation": "Two green-blue traces share one pause, then part along different curves. Neither is a copy of the other, and both continue past the old route board’s edge.", "purpose": "Keep evidence of the old network present beyond this outcome."}
+      ]
+    },
+    {
+      "id": "dead-brambles",
+      "title": "The Overgrown Arch",
+      "releaseStatus": "playable",
+      "outcomeKind": "dead-end",
+      "occupation": "A rain-fed resting court whose old onward arch is held closed by living roots.",
+      "materialPalette": ["deep moss", "wet pale stone", "root brown", "cream ceramic", "soft rainlight"],
+      "landmark": "The resting bench",
+      "everydayHabit": "Rain threads through the roots that fill the far arch. A ceramic cup catches it beside a dry bench, while the party’s footsteps end gently against the overgrown court.",
+      "traceOfPast": "Several thick roots press through the old route frame into supporting stone. Beyond them lies solid growth with no safe gap for the party.",
+      "unansweredQuestion": "How can an old route be cared for without forcing a passage through the roots supporting it?",
+      "routeClue": "There is no onward passage in this court. Revisit the paid arch to recover its notes and choose the listening gate on Iris’s porch.",
+      "props": [
+        {"id": "dead-brambles-memory", "title": "The rain cup", "observation": "A repaired ceramic cup gathers water beneath one loose roof joint. Someone has shifted it just far enough to keep the bench dry.", "purpose": "Connect the outcome to an ordinary household or working habit."},
+        {"id": "dead-brambles-reply", "title": "The resting bench", "observation": "Its seat has been brushed clean, though moss has covered the path beyond it. The little court is cared for even without a working through route.", "purpose": "Show this route’s result through a physical reply or its absence."},
+        {"id": "dead-brambles-trace", "title": "The root-filled arch", "observation": "Several thick roots press through the old route frame into supporting stone. Beyond them lies solid growth with no safe gap for the party.", "purpose": "Keep evidence of the old network present beyond this outcome."}
+      ]
+    },
+    {
+      "id": "dead-aviary",
+      "title": "The Silent Aviary",
+      "releaseStatus": "playable",
+      "outcomeKind": "dead-end",
+      "occupation": "An old courier aviary used as a quiet resting place after its onward service closed.",
+      "materialPalette": ["dusty teal", "honey sunlight", "dark rafters", "brass", "folded cream cloth"],
+      "landmark": "The folded wing wrap",
+      "everydayHabit": "Sunlight reaches a small nest between rows of empty perches. One workshop bird follows Pip inside and folds its wings while the old aviary’s sealed back wall gives no answering click.",
+      "traceOfPast": "Perch brackets end at a carefully closed stone panel. Its edges have no hinge or latch, and the old route cable has been disconnected at both ends.",
+      "unansweredQuestion": "Who keeps caring for the old couriers after a route has closed?",
+      "routeClue": "The aviary has no onward door. Revisit its answer to recover the paid notes and choose the workshop’s running gate.",
+      "props": [
+        {"id": "dead-aviary-memory", "title": "The sunlit nest", "observation": "Its felt lining has been renewed where a small bird settles into the light. Fresh brass dust catches along one recently repaired edge.", "purpose": "Connect the outcome to an ordinary household or working habit."},
+        {"id": "dead-aviary-reply", "title": "The folded wing wrap", "observation": "A clean wrap waits beside a little brush. Pip has stitched its fastening wide enough to close without bending a delicate wing.", "purpose": "Show this route’s result through a physical reply or its absence."},
+        {"id": "dead-aviary-trace", "title": "The sealed service wall", "observation": "Perch brackets end at a carefully closed stone panel. Its edges have no hinge or latch, and the old route cable has been disconnected at both ends.", "purpose": "Keep evidence of the old network present beyond this outcome."}
+      ]
+    },
+    {
+      "id": "dead-ferry",
+      "title": "The Empty Ferry",
+      "releaseStatus": "playable",
+      "outcomeKind": "dead-end",
+      "occupation": "An empty boarding landing beside a ferry route that no longer carries boats.",
+      "materialPalette": ["pearl stone", "indigo glass", "weathered rope", "still light-water", "warm tea brass"],
+      "landmark": "The boarding rope",
+      "everydayHabit": "The boarding rope hangs over still light-water with no ferry beneath it. Oren has left a tray for the waiting party, and the unused landing lamp casts a small blue circle on the rail.",
+      "traceOfPast": "The brass housing is clean and its local crystal still glows. No return lamp answers from a boat or the empty berth beyond the rail.",
+      "unansweredQuestion": "Why is the returned seal wet when no ferry now serves its landing?",
+      "routeClue": "This landing ends the abandoned boarding route. Revisit the last answer to recover its notes and choose the storehouse’s delivery gate.",
+      "props": [
+        {"id": "dead-ferry-memory", "title": "The waiting tea tray", "observation": "A second cup stands beside the first beneath a dry cloth. The keeper has checked the tray even though no fresh ferry wake reaches the landing.", "purpose": "Connect the outcome to an ordinary household or working habit."},
+        {"id": "dead-ferry-reply", "title": "The boarding rope", "observation": "Its near end has a fresh repair, but the far end lies slack above still water. It is a waiting rope, not a bridge.", "purpose": "Show this route’s result through a physical reply or its absence."},
+        {"id": "dead-ferry-trace", "title": "The unused landing lamp", "observation": "The brass housing is clean and its local crystal still glows. No return lamp answers from a boat or the empty berth beyond the rail.", "purpose": "Keep evidence of the old network present beyond this outcome."}
+      ]
+    },
+    {
+      "id": "dead-echo",
+      "title": "The Copied Waterway",
+      "releaseStatus": "playable",
+      "outcomeKind": "dead-end",
+      "occupation": "A copied timing channel whose perfect reflection ends at a solid wall.",
+      "materialPalette": ["blue crystal", "pearl stone", "silver reflection", "dark brass", "dry ceramic"],
+      "landmark": "The reflected clock face",
+      "everydayHabit": "The channel repeats the water clock’s reflected face exactly. Its silver line reaches a clean stone wall, then turns back toward a dry bowl that has never received an answering drop.",
+      "traceOfPast": "A practical maintenance mark points directly at the closed wall. The channel stops flush against the stone; no service passage continues behind it.",
+      "unansweredQuestion": "Why does a perfect copy of the call fail to produce an answering route?",
+      "routeClue": "This copied waterway has a solid end. Revisit the last rhythm and choose the water clock’s town-bell stair.",
+      "props": [
+        {"id": "dead-echo-memory", "title": "The dry return bowl", "observation": "A pale ring marks where a drop should land, but the bowl is dry. The copy sends a signal without bringing anything back.", "purpose": "Connect the outcome to an ordinary household or working habit."},
+        {"id": "dead-echo-reply", "title": "The reflected clock face", "observation": "Every motion repeats at the same angle, including a scratch that belongs to the original glass. The reflection has no separate reply of its own.", "purpose": "Show this route’s result through a physical reply or its absence."},
+        {"id": "dead-echo-trace", "title": "The marked stone end", "observation": "A practical maintenance mark points directly at the closed wall. The channel stops flush against the stone; no service passage continues behind it.", "purpose": "Keep evidence of the old network present beyond this outcome."}
       ]
     }
   ]

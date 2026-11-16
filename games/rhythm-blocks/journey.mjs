@@ -2,8 +2,7 @@
 
 import {DEPOT_LORE} from './lore.mjs';
 import {PEOPLE} from './opening.mjs';
-import {CHAPTER_LORE, ROOM_CONTENT} from './chapter-content.mjs';
-import {PARTY_ROUTE_HINTS} from './party-content.mjs';
+import {CAMPAIGN_CONTENT} from './campaign-content.mjs';
 import {CHAPTER_ROOMS, CHAPTER_DOORS, CHAPTER_PREVIEWS, CHAPTER_TERMINALS} from './chapter.mjs';
 
 const freezeRecords = records => Object.freeze(records.map(record => Object.freeze(record)));
@@ -40,11 +39,10 @@ export const OPENING_JOURNEY_MANIFEST = Object.freeze({
   outcomes: Object.freeze([]),
 });
 
-// Runtime chapters may grow without rewriting the legacy opening catalog or save
-// format. Only explicit event IDs reach state; a catalog entry is not a discovery.
-const depotLoreIds = new Set(DEPOT_LORE.map(entry => entry.id));
+// The released campaign is complete. Future companion expansions remain separate;
+// only explicit event IDs reach state, so a catalog entry is not a discovery.
 export const CHAPTER_JOURNEY_MANIFEST = Object.freeze({
-  completionReady: false,
+  completionReady: true,
   nodes: freezeRecords([
     ...Object.values(CHAPTER_ROOMS),
     ...Object.values(CHAPTER_PREVIEWS),
@@ -54,20 +52,18 @@ export const CHAPTER_JOURNEY_MANIFEST = Object.freeze({
     id: door.canonicalId, from: door.from, to: door.to,
   }))),
   hints: freezeRecords([
-    ...OPENING_JOURNEY_MANIFEST.hints,
-    ...PARTY_ROUTE_HINTS,
-    ...Object.entries(ROOM_CONTENT).filter(([id]) => id !== 'depot').flatMap(([roomId, room]) =>
-      room.people.map(person => ({
-        id: `${roomId}-${person.id}-route`,
+    ...Object.entries(CAMPAIGN_CONTENT).flatMap(([roomId, room]) => [
+      ...room.people.filter(person => person.route.trim()).map(person => ({
+        id: `${roomId === 'depot' ? '' : roomId + '-'}${person.id}-route`,
         title: `${person.name} · ${room.title}`,
         text: person.route,
-      }))),
-    ...CHAPTER_LORE.filter(entry => !depotLoreIds.has(entry.id)).map(entry => ({
-      id: `lore-${entry.id}`, title: entry.title, text: entry.text,
-    })),
+      })),
+      ...room.inspections.filter(entry => entry.text.trim()).map(entry => ({
+        id: `lore-${entry.id}`, title: entry.title, text: entry.text,
+      })),
+    ]),
   ]),
-  // A fork threshold is a continuation preview, never a dungeon ending. Only
-  // the three reachable dead ends can currently become observed outcomes.
+  // Arriving at a room alone never records an outcome; explicit interaction does.
   outcomes: freezeRecords(Object.values(CHAPTER_TERMINALS).map(room => ({
     id: room.id, title: room.title,
   }))),

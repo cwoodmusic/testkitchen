@@ -1,18 +1,32 @@
 import test from 'node:test';
 import assert from 'node:assert/strict';
-import {createDefaultProject,validateProject,normalizeProject,createProjectManifest,getProjectDoor,getPersonReplies} from './developer-project.mjs';
-import {CHAPTER_DOORS,CHAPTER_SOURCES} from './chapter.mjs';
+import {createDefaultProject,validateProject,normalizeProject,createProjectManifest,getProjectDoor,getPersonReplies,upgradeLegacyProject} from './developer-project.mjs';
+import {CHAPTER_ROOMS,CHAPTER_DOORS,CHAPTER_SOURCES} from './chapter.mjs';
 import {ROOM_CONTENT} from './chapter-content.mjs';
-import {createJourney} from './journey.mjs';
+import {createJourney,CHAPTER_JOURNEY_MANIFEST} from './journey.mjs';
 
 const valid=project=>{const result=validateProject(project);assert.equal(result.valid,true,result.errors.join('\n'));return result;};
 const invalid=(project,fragment)=>{const result=validateProject(project);assert.equal(result.valid,false);assert(result.errors.some(error=>error.includes(fragment)),JSON.stringify(result));return result;};
 const person=(project,room,id)=>project.content[room].people.find(value=>value.id===id);
+const clone=value=>JSON.parse(JSON.stringify(value));
+function legacyProject(){
+ const project=createDefaultProject(),roomIds=['depot','garden-porch','workshop-porch','canal-porch'];
+ const pick=(entries,ids)=>Object.fromEntries(ids.map(id=>[id,entries[id]]));
+ project.rooms=pick(project.rooms,roomIds);project.content=pick(project.content,roomIds);project.scenes=pick(project.scenes,roomIds);
+ project.doors=Object.fromEntries(Object.entries(project.doors).filter(([,door])=>roomIds.includes(door.from)));
+ project.sources=Object.fromEntries(Object.entries(project.sources).filter(([,source])=>roomIds.includes(source.roomId)));
+ project.terminals=pick(project.terminals,['dead-brambles','dead-aviary','dead-ferry']);
+ project.previews=Object.fromEntries(['garden-fork','workshop-fork','canal-fork'].map(id=>[id,{id,title:CHAPTER_ROOMS[id].title,stage:3,kind:'preview'}]));
+ delete project.settings.terminalRooms;delete project.settings.completionReady;
+ return project;
+}
 
 test('the portable default includes the complete shipped data and creates no edits or warnings',()=>{
  const project=createDefaultProject(),result=valid(project);
  assert.deepEqual(result.warnings,[]);
- assert.deepEqual(Object.keys(project.rooms),['depot','garden-porch','workshop-porch','canal-porch']);
+ assert.deepEqual(project.rooms,CHAPTER_ROOMS);assert.equal(Object.keys(project.rooms).length,14);
+ assert.equal(Object.keys(project.content).length,23);assert.equal(Object.keys(project.scenes).length,23);
+ assert.equal(project.settings.terminalRooms,true);assert.equal(project.settings.completionReady,true);
  assert.deepEqual(project.doors,CHAPTER_DOORS);assert.deepEqual(project.sources,CHAPTER_SOURCES);
  assert.deepEqual(project.content.depot.people.map(value=>value.id),['nell','iris','pip']);
  assert.deepEqual(project.content['canal-porch'].people.map(value=>value.id),['nell','iris','pip','oren']);
@@ -33,6 +47,66 @@ test('normalization derives note timing, fills omitted stock and preserves extra
  assert(Object.isFrozen(normalized));assert(Object.isFrozen(normalized.content.depot.people[0]));assert(Object.isFrozen(normalized.authorNotes.plot));
  project.authorNotes.plot[0]='edited later';assert.equal(normalized.authorNotes.plot[0],'Something new');
  assert.throws(()=>{normalized.content.depot.people[0].story='mutate';},TypeError);
+});
+
+test('legacy draft and applied projects gain the campaign while preserving existing authored edits',()=>{
+ const old=legacyProject();old.settings.bpm=137;old.settings.initialInventory.quarter=7;
+ old.noteKinds[0].units=3;old.rooms.depot.title='My station';old.previews['garden-fork'].title='My glasshouse';
+ old.doors.garden.recipe=['quarter'];old.sources['nell-parcel'].recipe=['half','half'];
+ old.content.depot.people[0].replies=[{id:'question',label:'My own question',text:'My own answer'}];
+ old.content.depot.people[1].replies=[];old.content['garden-porch'].inspections[0].text='My garden inscription';
+ old.scenes.depot.image='assets/my-station.webp';old.scenes.depot.geometry.speed=321;old.authorNotes={story:'Keep this.'};
+ const before=clone(old),upgraded=upgradeLegacyProject(old),normalized=normalizeProject(JSON.parse(JSON.stringify(old)));
+ assert.deepEqual(old,before,'migration must not mutate a stored draft');
+ assert.equal(Object.keys(upgraded.rooms).length,14);assert.equal(Object.keys(upgraded.content).length,23);assert.equal(Object.keys(upgraded.scenes).length,23);
+ assert.equal(Object.keys(upgraded.doors).length,22);assert.equal(Object.keys(upgraded.sources).length,7);assert.equal(Object.keys(upgraded.terminals).length,9);
+ assert.deepEqual(upgraded.previews,{});assert.equal(upgraded.settings.terminalRooms,true);assert.equal(upgraded.settings.completionReady,true);
+ for(const key of ['rooms','doors','sources','content','scenes'])for(const id of Object.keys(old[key]))assert.deepEqual(upgraded[key][id],old[key][id],`${key}.${id}`);
+ assert.equal(normalized.rooms['garden-fork'].title,'My glasshouse');assert.equal(normalized.content['garden-fork'].title,'My glasshouse');
+ assert.equal(normalized.noteKinds[0].beats,1.5);assert.equal(normalized.settings.initialInventory.quarter,7);assert.equal(normalized.settings.bpm,137);
+ assert.deepEqual(normalized.authorNotes,old.authorNotes);assert.deepEqual(getPersonReplies(person(normalized,'depot','iris')),[]);
+ assert.equal(normalized.sources['garden-hidden-notes'].type,'hidden');
+ assert.equal(normalized.content['garden-alcove'].inspections.filter(entry=>entry.sourceId==='garden-hidden-notes').length,1);
+ assert.equal(normalized.scenes['workshop-alcove'].objects.filter(entry=>entry.sourceId==='workshop-hidden-notes').length,1);
+ assert.deepEqual(upgradeLegacyProject(upgraded),upgraded,'migration must be idempotent');
+ assert.deepEqual(normalizeProject(normalized),normalized);
+});
+
+test('migration leaves unrelated custom projects and invalid JSON intact for normal validation',()=>{
+ const custom=legacyProject();delete custom.previews['garden-fork'];custom.settings.completionReady=false;
+ assert.deepEqual(upgradeLegacyProject(custom),custom);assert.equal(Object.keys(upgradeLegacyProject(custom).rooms).length,4);
+ const full=createDefaultProject();full.settings.terminalRooms=false;full.settings.completionReady=false;
+ assert.deepEqual(upgradeLegacyProject(full),full);
+ const poisoned=legacyProject();Object.defineProperty(poisoned.settings,'bpm',{enumerable:true,get(){throw Error('must not invoke');}});
+ assert.throws(()=>upgradeLegacyProject(poisoned),/accessors are not JSON/);
+});
+
+test('walkable outcomes need authored scenes and dialogue and can be selected as developer starting rooms',()=>{
+ const project=createDefaultProject();project.settings.startRoomId='ending-home';valid(project);
+ assert.equal(normalizeProject(project).settings.startRoomId,'ending-home');
+ delete project.scenes['ending-home'];invalid(project,'scenes.ending-home');
+ project.scenes['ending-home']=createDefaultProject().scenes['ending-home'];delete project.content['ending-home'];invalid(project,'content.ending-home');
+ const disabled=createDefaultProject();disabled.settings.terminalRooms=false;disabled.settings.startRoomId='ending-home';invalid(disabled,'settings.startRoomId');
+ disabled.settings.terminalRooms='yes';invalid(disabled,'settings.terminalRooms');
+});
+
+test('hidden inspection sources and door reveal conditions are checked against the authored local bindings',()=>{
+ const project=createDefaultProject(),room='garden-alcove';valid(project);
+ const entry=project.content[room].inspections.find(entry=>entry.sourceId),object=project.scenes[room].objects.find(object=>object.sourceId);
+ entry.sourceId='workshop-hidden-notes';invalid(project,'hidden note source in this room');
+ entry.sourceId='garden-hidden-notes';object.sourceId='iris-gift';invalid(project,'matching local source');
+ object.sourceId='garden-hidden-notes';project.doors['garden-hidden-exit'].revealAfter='missing-cache';invalid(project,'revealAfter');
+ project.doors['garden-hidden-exit'].revealAfter='garden-hidden-notes';project.sources['garden-hidden-notes'].type='spell';invalid(project,'npc, chest or hidden');
+ const unbound=createDefaultProject();delete unbound.scenes[room].objects.find(object=>object.sourceId).sourceId;
+ assert(valid(unbound).warnings.some(warning=>warning.includes('matching inspection')));
+});
+
+test('default and authored manifests describe the same released discoveries while custom completion remains explicit',()=>{
+ const manifest=createProjectManifest(normalizeProject(createDefaultProject()));
+ assert.deepEqual(manifest,CHAPTER_JOURNEY_MANIFEST);
+ const project=createDefaultProject();delete project.settings.completionReady;
+ assert.equal(createProjectManifest(normalizeProject(project)).completionReady,false);
+ project.settings.completionReady='yes';invalid(project,'settings.completionReady');
 });
 
 test('arbitrary ordered lock answers and source quantities do not retain the four-beat constraint',()=>{
@@ -91,8 +165,8 @@ test('the authored manifest uses edited literal text and preserves every shipped
  assert.equal(manifest.nodes.find(node=>node.id==='depot').title,'My station');
  assert.equal(manifest.hints.find(hint=>hint.id==='nell-route').text,literal);
  assert.equal(manifest.hints.find(hint=>hint.id==='lore-returned-letter').text,'A changed observation');
- assert.equal(manifest.hints.length,27);assert.equal(manifest.nodes.length,10);assert.equal(manifest.edges.length,9);
- assert.equal(manifest.outcomes.length,3);assert.equal(manifest.completionReady,false);
+ assert.equal(manifest.hints.length,141);assert.equal(manifest.nodes.length,23);assert.equal(manifest.edges.length,22);
+ assert.equal(manifest.outcomes.length,9);assert.equal(manifest.completionReady,true);
  nell.route='';project.content.depot.inspections[0].text='';
  const cleared=createProjectManifest(normalizeProject(project));assert(!cleared.hints.some(hint=>hint.id==='nell-route'));
  assert(!cleared.hints.some(hint=>hint.id==='lore-returned-letter'));

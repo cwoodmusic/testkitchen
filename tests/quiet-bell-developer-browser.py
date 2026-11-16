@@ -169,12 +169,12 @@ def set_stock(page, stock):
     assert ui.state(page)['inventory'] == stock
 
 
-def teleport(page, room):
+def teleport(page, room, phase='room'):
     console_open(page, 'playtest')
     page.locator('#developer-live-room [data-dev-choice="' + room + '"]').click()
     page.locator('#developer-teleport').click()
     tick(page)
-    assert ui.state(page)['roomId'] == room and ui.state(page)['phase'] == 'room'
+    assert ui.state(page)['roomId'] == room and ui.state(page)['phase'] == phase
     assert page.locator('#room-scene').get_attribute('data-room') == room
 
 
@@ -323,15 +323,19 @@ def desktop_flow(browser, url):
     assert ui.state(page)['roomId'] == 'garden-porch'
     expected = supplied.copy(); expected['quarter'] -= 2; expected['eighth'] -= 1
     assert ui.state(page)['inventory'] == expected
-    # The console also opens from a paid continuation, and can still select its NPCs.
+    # The former continuation boundary is a paid, walkable campaign room. Its
+    # actual NPCs remain selectable through the frozen editor map.
     ui.press(page, '[data-person="iris"]'); page.locator('#take-parcel').click()
     ui.press(page, '[data-door="garden-porch-forward"]')
     for kind in ['half-rest', 'half']: page.locator(ui.tile(kind)).click()
     assert ui.state(page)['units'] == 8 and page.locator('#commit').is_enabled()
     page.locator('#commit').click()
-    assert ui.state(page)['phase'] == 'continued' and page.locator('#outcome').is_visible()
+    assert ui.state(page)['phase'] == 'room' and ui.state(page)['roomId'] == 'garden-fork'
+    assert page.locator('#outcome').is_hidden()
+    assert page.locator('#room-scene').get_attribute('data-room') == 'garden-fork'
     console_open(page, 'dialogue')
-    select_entity(page, 'garden-porch', 'person', 'nell')
+    assert page.locator('#developer-room-cards [data-dev-room]').count() == 23
+    select_entity(page, 'garden-fork', 'person', 'nell')
     assert page.locator('#developer-person-name').input_value() == 'Nell'
     # A close/reopen keeps the project draft; live controls remain sandbox-only.
     console_open(page, 'playtest')
@@ -374,7 +378,8 @@ def desktop_flow(browser, url):
             'literalAuthorText': True, 'replyAddRemoveAndReload': True, 'actualMapSelectionFrozen': True, 'wholeProjectImportExport': True, 'invalidProjectAtomic': True,
             'customThreeAndHalfBeatKey': True, 'equalBeatWrongKeyRejected': True,
             'noteValuesAndGiftQuantities': True, 'roomArtActorAndPlayerConfig': True,
-            'sandboxInventoryTeleportReset': True, 'sandboxReload': True, 'consoleFromPaidBoundary': True,
+            'sandboxInventoryTeleportReset': True, 'sandboxReload': True, 'consoleFromPaidCampaignRoom': True,
+            'allTwentyThreeLocationsEditable': True,
             'publishedRunBytePreserved': True, 'sharedStoragePreserved': True, 'errors': []}
 
 

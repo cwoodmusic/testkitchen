@@ -2,7 +2,7 @@
 
 `dungeon.json` is the active inventory plan. Rooms have a fixed list of physical doors, each with an authored ordered four-beat key. Notes enter through explicit, once-only conversations, chests, or hidden searches. Entering a room never awards notes automatically.
 
-The plan contains 14 rooms, 22 doors, seven sources, three regular endings, two secret endings, and four intentional dead ends. This is a balanced branch skeleton for developing the dungeon room by room, not a claim that all rooms are playable. Production currently implements only the Parcel Depot, its two sources, and its three door choices.
+The plan contains 14 rooms, 22 doors, seven sources, three regular endings, two secret endings, and four intentional dead ends. The full verified graph is playable: all fourteen dungeon rooms and nine distinct, walkable outcome locations. Each has its own artwork, companion dialogue and environmental observations, ready for a room-by-room narrative pass.
 
 Nell’s parcel contains eight types worth ten beats. The depot chest holds the half note worth two beats. Every opening door requires that half note, and the half note alone cannot open a door, so both sources are naturally needed. A branch’s next source restores the types spent at its first door, and its next lock uses that exact gift. The remaining original eight beats split into two four-beat phrases, A and B.
 
@@ -17,9 +17,9 @@ The explicit dead ends keep four or eight beats, depending on whether their prec
 
 The current skeleton has four-door regular and five-door secret paths. Longer conservation puzzles can be authored by extending the graph with balanced supplies and costs; they must pass the same exhaustive checks. This plan does not yet claim the earlier ten-step secret-planning depth or least-move achievements.
 
-The next design requirements—longer replay routes, companion destinations and finales, a discovered-only pause chart, and the ultimate **The Complete Score** achievement—are recorded in [replay-and-party.md](replay-and-party.md). The released opening now implements the persistent chart and clue journal. The deeper branches and party finales still require authoring and verification; they do not change the counts below.
+The discovered-only pause chart and clue journal persist across runs. **The Complete Score** now rewards exploring every location, connection and outcome in this released graph. Longer replay routes and companion destinations/finales in [replay-and-party.md](replay-and-party.md) remain a future expansion; they do not change the released economy or completion requirements.
 
-The retrofuture high-fantasy setting and room storytelling guide are in [worldbuilding.md](worldbuilding.md), with one record for every authored room in [worldbuilding.json](worldbuilding.json). These add setting, visual direction and environmental observations while preserving the verified economy. Only the depot is currently playable.
+The retrofuture high-fantasy setting and room storytelling guide are in [worldbuilding.md](worldbuilding.md), with one record for every authored room in [worldbuilding.json](worldbuilding.json). These add setting, visual direction and environmental observations while preserving the verified economy. All fourteen rooms and nine outcome locations are playable. Hidden supplies require explicit searching, and outcome locations support walking, conversations, inspection and revisiting the last paid choice.
 
 ## Reproduce the proof
 

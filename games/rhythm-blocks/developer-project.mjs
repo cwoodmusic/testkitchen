@@ -1,9 +1,8 @@
 /** Plain, portable authoring data for the Quiet Bell developer console. */
 import {NOTE_KINDS} from './engine.mjs';
 import {CHAPTER_ROOMS,CHAPTER_DOORS,CHAPTER_SOURCES,CHAPTER_PREVIEWS,CHAPTER_TERMINALS} from './chapter.mjs';
-import {ROOM_CONTENT} from './chapter-content.mjs';
-import {getRoomPeople} from './party-content.mjs';
-import {SCENES} from './scenes.mjs';
+import {CAMPAIGN_CONTENT} from './campaign-content.mjs';
+import {CAMPAIGN_SCENES} from './campaign-scenes.mjs';
 import {CAST,CAST_IMAGE} from './cast.mjs';
 import {MIRA} from './mira.mjs';
 import {createRoomWalker,findPath,isWalkable} from './room.mjs';
@@ -27,11 +26,11 @@ const same=(left,right)=>Array.isArray(left)&&Array.isArray(right)&&left.length=
 export function createDefaultProject(){
  return clone({
   schemaVersion:1,
-  settings:{title:'The Quiet Bell',bpm:108,startRoomId:'depot',castImage:CAST_IMAGE,initialInventory:Object.fromEntries(NOTE_KINDS.map(note=>[note.id,0]))},
+  settings:{title:'The Quiet Bell',bpm:108,startRoomId:'depot',castImage:CAST_IMAGE,terminalRooms:true,completionReady:true,initialInventory:Object.fromEntries(NOTE_KINDS.map(note=>[note.id,0]))},
   noteKinds:NOTE_KINDS.map((note,index)=>({...note,symbol:note.id,shortName:SHORT_NAMES[index],color:COLORS[index],subdivisions:['eighth-pair','sixteenth-pair'].includes(note.id)?2:note.id==='sixteenth-group'?4:1})),
   rooms:CHAPTER_ROOMS,doors:CHAPTER_DOORS,sources:CHAPTER_SOURCES,previews:CHAPTER_PREVIEWS,terminals:CHAPTER_TERMINALS,
-  content:Object.fromEntries(Object.entries(ROOM_CONTENT).map(([id,room])=>[id,{...room,people:getRoomPeople(id)}])),
-  scenes:SCENES,cast:CAST,player:{...MIRA,image:'assets/mira-walk.webp'},
+  content:CAMPAIGN_CONTENT,
+  scenes:CAMPAIGN_SCENES,cast:CAST,player:{...MIRA,image:'assets/mira-walk.webp'},
  });
 }
 
@@ -120,6 +119,7 @@ export function validateProject(project){
  if(map(project.settings,'settings')){
   text(project.settings.title,'settings.title',{max:160});
   number(project.settings.bpm,'settings.bpm',20,300);
+  for(const key of ['terminalRooms','completionReady'])if(project.settings[key]!==undefined&&typeof project.settings[key]!=='boolean')fail(`settings.${key}`,'use true or false.');
   id(project.settings.startRoomId,'settings.startRoomId');image(project.settings.castImage,'settings.castImage');
   if(map(project.settings.initialInventory,'settings.initialInventory',{max:9}))for(const [kind,quantity]of Object.entries(project.settings.initialInventory)){
    if(!NOTE_IDS.has(kind))fail(`settings.initialInventory.${kind}`,'unknown note kind.');number(quantity,`settings.initialInventory.${kind}`,0,999,{integer:true});
@@ -144,9 +144,10 @@ export function validateProject(project){
  const mapsOk=['rooms','doors','sources','previews','terminals','content','scenes','cast'].map(key=>map(project[key],key,{min:['rooms','content','scenes','cast'].includes(key)?1:0,max:key==='cast'?64:512})).every(Boolean);
  if(!mapsOk)return {valid:false,errors,warnings};
  const {rooms,doors,sources,previews,terminals,content,scenes,cast}=project;
+ const locations={...rooms,...(project.settings?.terminalRooms?terminals:{})};
  for(const [name,entries]of Object.entries({rooms,doors,sources,previews,terminals,content,scenes,cast}))for(const key of Object.keys(entries))id(key,`${name}.${key}`);
  if(!own(rooms,'depot'))fail('rooms.depot','retain the depot room for existing saves.');
- if(!own(rooms,project.settings?.startRoomId))fail('settings.startRoomId','reference a playable room.');
+ if(!own(locations,project.settings?.startRoomId))fail('settings.startRoomId','reference a playable room or enabled outcome room.');
  const destinations=new Set(),canonical=new Set();
  for(const [name,entries]of Object.entries({rooms,previews,terminals}))for(const [key,item]of Object.entries(entries)){
   const path=`${name}.${key}`;if(destinations.has(key))fail(path,'a destination ID can belong to only one room or boundary.');destinations.add(key);
@@ -155,9 +156,11 @@ export function validateProject(project){
   number(item.stage,`${path}.stage`,1,1000,{integer:true});
   if(name==='previews'&&item.kind!=='preview')fail(`${path}.kind`,'use preview.');
   if(name==='terminals'&&!['dead-end','ending','secret-ending'].includes(item.kind))fail(`${path}.kind`,'use dead-end, ending or secret-ending.');
-  if(name==='rooms'){
+  if(name==='rooms'||name==='terminals'&&project.settings?.terminalRooms){
    if(!own(content,key))fail(`content.${key}`,'every playable room needs dialogue and copy.');
    if(!own(scenes,key))fail(`scenes.${key}`,'every playable room needs a scene.');
+  }
+  if(name==='rooms'){
    for(const field of ['sources','doors'])if(list(item[field],`${path}.${field}`)){
     unique(item[field],`${path}.${field}`,value=>value);
     item[field].forEach((ref,index)=>{id(ref,`${path}.${field}[${index}]`);const definition=(field==='sources'?sources:doors)[ref];if(!definition)fail(`${path}.${field}[${index}]`,'reference an existing definition.');else if((field==='sources'?definition.roomId:definition.from)!==key)fail(`${path}.${field}[${index}]`,'reference a definition belonging to this room.');});
@@ -173,13 +176,14 @@ export function validateProject(project){
   if(!destinations.has(door.to))fail(`${path}.to`,'reference an existing room, preview or terminal.');
   if(!asArray(rooms[door.from]?.doors).includes(key))fail(`${path}.from`,'the source room must list this door.');
   text(door.label,`${path}.label`,{max:160});recipe(door.recipe,`${path}.recipe`,32,{nonempty:true});
+  if(door.revealAfter!==undefined&&(!validId(door.revealAfter)||!own(sources,door.revealAfter)))fail(`${path}.revealAfter`,'reference an existing note source.');
  }
  for(const [key,source]of Object.entries(sources)){
   const path=`sources.${key}`;if(!record(source)){fail(path,'use a note-source definition.');continue;}
   if(source.id!==key)fail(`${path}.id`,'match the object key.');
   if(!own(rooms,source.roomId))fail(`${path}.roomId`,'reference a playable room.');
   if(!asArray(rooms[source.roomId]?.sources).includes(key))fail(`${path}.roomId`,'the source room must list this note source.');
-  if(!['npc','chest'].includes(source.type))fail(`${path}.type`,'use npc or chest.');
+  if(!['npc','chest','hidden'].includes(source.type))fail(`${path}.type`,'use npc, chest or hidden.');
   if(source.type==='npc')id(source.character,`${path}.character`);
   text(source.label,`${path}.label`,{max:160});if(source.hint!==undefined)text(source.hint,`${path}.hint`,{empty:true});
   recipe(source.recipe,`${path}.recipe`,128);
@@ -187,7 +191,7 @@ export function validateProject(project){
  }
  const inspectionIds=new Set();
  for(const [roomId,roomContent]of Object.entries(content)){
-  const path=`content.${roomId}`;if(!own(rooms,roomId))fail(path,'reference a playable room.');
+  const path=`content.${roomId}`;if(!own(locations,roomId))fail(path,'reference a playable room or enabled outcome room.');
   if(!record(roomContent)){fail(path,'use a room-content definition.');continue;}
   text(roomContent.title,`${path}.title`,{max:160});text(roomContent.arrival,`${path}.arrival`,{empty:true});
   if(list(roomContent.people,`${path}.people`,128)){
@@ -224,6 +228,7 @@ export function validateProject(project){
     const entryPath=`${path}.inspections[${index}]`;if(!record(entry)){fail(entryPath,'use an observation definition.');continue;}
     id(entry.id,`${entryPath}.id`);if(inspectionIds.has(entry.id))fail(`${entryPath}.id`,'observation IDs must be unique across rooms.');inspectionIds.add(entry.id);
     text(entry.title,`${entryPath}.title`,{max:160});text(entry.label,`${entryPath}.label`,{max:160});text(entry.text,`${entryPath}.text`,{empty:true});
+    if(entry.sourceId!==undefined){const source=sources[entry.sourceId];if(!source||source.type!=='hidden'||source.roomId!==roomId)fail(`${entryPath}.sourceId`,'reference a hidden note source in this room.');if(entry.sourceLabel!==undefined)text(entry.sourceLabel,`${entryPath}.sourceLabel`,{max:160});}
    }
   }
   if(map(roomContent.doorCopy,`${path}.doorCopy`)){
@@ -252,7 +257,7 @@ export function validateProject(project){
  }
  for(const [roomId,scene]of Object.entries(scenes)){
   const path=`scenes.${roomId}`;
-  if(!own(rooms,roomId))fail(path,'reference a playable room.');
+  if(!own(locations,roomId))fail(path,'reference a playable room or enabled outcome room.');
   if(!record(scene)){fail(path,'use a scene definition.');continue;}
   if(scene.id!==roomId)fail(`${path}.id`,'match the room ID.');text(scene.title,`${path}.title`,{max:160});image(scene.image,`${path}.image`);
   const geometry=scene.geometry,geometryStart=errors.length;
@@ -294,7 +299,10 @@ export function validateProject(project){
      const source=sources[object.sourceId??object.id];
      if(!source||source.id!==object.id||source.roomId!==roomId||source.type!=='chest')fail(objectPath,'reference this room’s matching chest source.');
     }
-    if(object.sourceId!==undefined){const source=sources[object.sourceId];if(!source||source.roomId!==roomId||object.type==='person'&&(source.type!=='npc'||source.character!==object.id))fail(`${objectPath}.sourceId`,'reference a matching local source.');}
+    if(object.sourceId!==undefined){
+     const source=sources[object.sourceId],inspection=asArray(local?.inspections).find(entry=>entry?.id===object.id);
+     if(!source||source.roomId!==roomId||object.type==='person'&&(source.type!=='npc'||source.character!==object.id)||object.type==='inspect'&&(source.type!=='hidden'||inspection?.sourceId!==object.sourceId)||!['person','chest','inspect'].includes(object.type))fail(`${objectPath}.sourceId`,'reference a matching local source.');
+    }
    });
   }
   if(targets.size!==objects.size||[...targets].some(key=>!objects.has(key)))fail(`${path}.objects`,'visible interaction IDs must exactly match geometry target IDs.');
@@ -334,6 +342,7 @@ export function validateProject(project){
   if(source.type==='npc'){
    if(!asArray(content[source.roomId]?.people).some(person=>person?.id===source.character&&person?.sourceId===sourceId))warn(`sources.${sourceId}.character`,'no local person currently offers this source.');
   }else if(source.type==='chest'&&!asArray(scenes[source.roomId]?.objects).some(object=>object?.type==='chest'&&object.id===sourceId&&object.sourceId===sourceId))warn(`sources.${sourceId}`,'the local scene has no matching chest to collect.');
+  else if(source.type==='hidden'&&!asArray(scenes[source.roomId]?.objects).some(object=>object?.type==='inspect'&&object.sourceId===sourceId))warn(`sources.${sourceId}`,'the local scene has no matching inspection to collect.');
  }
  if(!errors.length){
   const seen=new Set([project.settings.startRoomId]),queue=[project.settings.startRoomId];
@@ -349,11 +358,34 @@ export function validateProject(project){
  return {valid:errors.length===0,errors,warnings};
 }
 
+/** Expand the recognized four-room editor snapshot without replacing authored edits. */
+export function upgradeLegacyProject(value){
+ const errors=[];safeJson(value,errors);
+ if(errors.length)throw new TypeError(errors.join('\n'));
+ const project=clone(value);
+ const exactKeys=(entries,keys)=>record(entries)&&Object.keys(entries).length===keys.length&&keys.every(key=>own(entries,key));
+ const oldRooms=['depot','garden-porch','workshop-porch','canal-porch'];
+ const oldForks=['garden-fork','workshop-fork','canal-fork'];
+ const oldDoors=['garden','workshop','canal','garden-porch-forward','garden-porch-dead','workshop-porch-forward','workshop-porch-dead','canal-porch-forward','canal-porch-dead'];
+ if(!record(project)||project.schemaVersion!==1||!exactKeys(project.rooms,oldRooms)||!exactKeys(project.content,oldRooms)||!exactKeys(project.scenes,oldRooms)||!exactKeys(project.previews,oldForks)||!exactKeys(project.doors,oldDoors)||!record(project.sources)||!record(project.terminals)||!record(project.settings))return project;
+ if(!oldForks.every(id=>record(project.previews[id])&&project.previews[id].id===id&&project.previews[id].kind==='preview'))return project;
+ const baseline=createDefaultProject(),expanded={...baseline,...project};
+ for(const key of ['rooms','doors','sources','terminals','content','scenes'])expanded[key]={...baseline[key],...project[key]};
+ expanded.settings={...baseline.settings,...project.settings,terminalRooms:true,completionReady:true};
+ expanded.previews={};
+ for(const id of oldForks){
+  const {kind,...copy}=project.previews[id];
+  expanded.rooms[id]={...baseline.rooms[id],...copy};
+  if(copy.title){expanded.content[id].title=copy.title;expanded.scenes[id].title=copy.title;}
+ }
+ return expanded;
+}
+
 /** Accept only JSON data and derive timing from the edited integer half-beat units. */
 export function normalizeProject(value){
- const result=validateProject(value);
+ const candidate=upgradeLegacyProject(value),result=validateProject(candidate);
  if(!result.valid)throw new TypeError(result.errors.join('\n'));
- const project=clone(value);
+ const project=clone(candidate);
  project.noteKinds=project.noteKinds.map(note=>({...note,beats:note.units/2}));
  project.settings.initialInventory=Object.fromEntries(project.noteKinds.map(note=>[note.id,project.settings.initialInventory[note.id]??0]));
  return freeze(project);
@@ -369,5 +401,5 @@ export function createProjectManifest(project){
   for(const entry of room.inspections)if(entry.text.trim())hints.push({id:'lore-'+entry.id,title:entry.title,text:entry.text});
  }
  const outcomes=Object.values(project.terminals).map(terminal=>({id:terminal.id,title:terminal.title,...(terminal.text?{text:terminal.text}:{})}));
- return freeze({completionReady:false,nodes,edges,hints,outcomes});
+ return freeze({completionReady:project.settings.completionReady===true,nodes,edges,hints,outcomes});
 }

@@ -8,6 +8,13 @@ export const RUNTIME_FILES=Object.freeze([
   'developer-project.mjs','developer-console.mjs','developer-console.css',
   'party-content.mjs','cast.mjs','assets/party-cast.webp',
   'chapter.mjs','chapter-content.mjs','dungeon-game.mjs','scenes.mjs',
+  'campaign-data.mjs','campaign-content.mjs','campaign-scenes.mjs',
+  ...[
+    'garden-fork','garden-final','garden-alcove','garden-secret-final',
+    'workshop-fork','workshop-final','workshop-alcove','workshop-secret-final',
+    'canal-fork','canal-final','ending-home','ending-school','ending-public',
+    'ending-secret-quiet','ending-secret-birds','dead-brambles','dead-aviary','dead-ferry','dead-echo',
+  ].map(id=>`assets/rooms/${id}.webp`),
   'assets/garden-porch.webp','assets/workshop-porch.webp','assets/canal-porch.webp',
   'game.html','app.mjs','audio.mjs','engine.mjs','journey.mjs','journey-view.mjs','lore.mjs',
   'mira.mjs','notation.mjs','opening.mjs','room.mjs','room-view.mjs','story.mjs','style.css',

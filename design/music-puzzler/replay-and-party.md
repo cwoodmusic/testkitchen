@@ -1,10 +1,10 @@
 # Replay, companions, and the discovered journey
 
-This extends the accepted dungeon design. The current fourteen-room budget skeleton remains a verified starting point; the deeper party routes below still need authoring and another exhaustive inventory/party verification pass. The four released rooms now let Mira speak with Nell, Iris and Pip as travelling companions; Oren remains the canal’s local keeper. Existing gifts come from Nell in the depot, Iris in the garden and Pip in the workshop, while the canal supply stays in its stamped chest. Talking alone grants no notes. The deeper departure states and finales below are not implemented or counted as released endings.
+This extends the accepted dungeon design. The fourteen-room budget graph and its nine outcome locations are now fully playable; the deeper party routes below still need authoring and another exhaustive inventory/party verification pass. All 23 released locations let Mira speak with Nell, Iris and Pip as travelling companions; Oren remains the canal’s local keeper. Existing gifts come from Nell in the depot, Iris in the garden and Pip in the workshop, while the canal supply stays in its stamped chest. Talking alone grants no notes. The deeper departure states and finales below are not implemented or counted as released endings.
 
 ## Replay as a knowledge puzzle
 
-Each new run begins with the same authored supplies. Knowledge accumulates in the journal: clues actually read, rooms actually visited, connections actually travelled, and outcomes actually reached. The nine door routes in the current skeleton are too short for the intended long-term planning. Expand them with crossings, optional detours, and choices whose consequences appear several rooms later. The all-party and all-drop-off finales should reward planning ahead across roughly ten decisions.
+Each new run begins with the same authored supplies. Knowledge accumulates in the journal: clues actually read, rooms actually visited, connections actually travelled, and outcomes actually reached. The four- and five-door successful paths in the released graph are too short for the intended long-term planning. Expand them with crossings, optional detours, and choices whose consequences appear several rooms later. The all-party and all-drop-off finales should reward planning ahead across roughly ten decisions.
 
 Hints can suggest a rhythm, a promise, a destination order, or a note worth keeping. A clue encountered on one route can help solve a different route on the next run. Early clues should be suggestive; later evidence can make their meaning clear. A clue never adds its implied location or connection to the map. Dialogue gives advance notice when a choice will cause a companion to settle or leave, so learning stays fair.
 
@@ -31,7 +31,7 @@ Pause shows the cumulative discovered graph across runs. A node exists only afte
 
 The current room can be highlighted. Clues actually found and outcomes actually seen appear beside the chart. Starting over and undoing an answer preserve these informational discoveries; they restore no future notes, source receipts, or party promises. Current-run inventory and party state rewind together separately.
 
-A successful depot door enters its playable porch and records that travelled connection. The three porch forward gates still stop at continuation previews; these locations are not dungeon endings. A new journey journal can import the existing opening door-discovery records so previous exploration is retained.
+A successful door enters its actual destination and records only that travelled connection. All 14 dungeon rooms and nine outcome scenes are playable; continuation previews have been replaced. Existing opening door discoveries and paid preview saves migrate into the full released graph.
 
 ## Ultimate achievement: The Complete Score
 
@@ -39,7 +39,7 @@ Over multiple runs, visit every authored location, travel every authored connect
 
 The full catalog is an internal validation source. The pause UI receives discovered entries only and shows no totals for undiscovered content. Show an earned achievement after its conditions are satisfied, rather than previewing locked achievements or secret names.
 
-Completion is disabled until the complete dungeon and its outcome catalog are released. Exploring every currently playable opening door must never award The Complete Score. The current local journal is device-only, independent of the Notes wallet and shared classroom profiles; profile sync and reward integration remain deferred.
+The released graph enables The Complete Score only after all 23 locations, 22 connections and nine outcomes have been observed. The two companion finales described above belong to a later expansion and are not silently included in the released completion requirements. Their eventual release needs an explicit catalog migration and a renewed economy/party verification pass. The current local journal is device-only, independent of the Notes wallet and shared classroom profiles; profile sync and reward integration remain deferred.
 
 ## Verification required for the expanded game
 

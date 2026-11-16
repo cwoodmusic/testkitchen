@@ -149,6 +149,11 @@ def edge_flow(browser, url):
     # A real authored ending must not be mislabeled as a continuation preview.
     project_c = deepcopy(base)
     project_c['settings']['title'] = 'Canonical Ending Project'
+    # Custom projects may deliberately retain the original modal boundaries.
+    # Their terminal entries need no playable content or world geometry.
+    project_c['settings']['terminalRooms'] = False
+    project_c['content'] = {key: value for key, value in project_c['content'].items() if key in project_c['rooms']}
+    project_c['scenes'] = {key: value for key, value in project_c['scenes'].items() if key in project_c['rooms']}
     project_c['settings']['initialInventory'] = {kind: int(kind == 'quarter') for kind in ui.KINDS}
     project_c['doors']['garden'].update(recipe=['quarter'], to='dead-brambles')
     project_c['terminals']['dead-brambles'].update(kind='ending', title='The Authored Bell Ending')
@@ -183,12 +188,79 @@ def edge_flow(browser, url):
     assert page.locator('#outcome-kicker').inner_text() == 'An ending'
     assert [item['id'] for item in page.evaluate('quietBell.journey.outcomes')] == ['dead-brambles']
     assert dev.normal_storage(page) == published
-    assert not errors and not writes and not external, (errors, writes, external)
     page.screenshot(path=str(OUT / 'canonical-authored-ending.png'))
+
+    # The full campaign instead starts or arrives in a walkable ending. Read its
+    # summary on request, edit its actual NPC and conclusion, then reload the
+    # authored outcome without touching the ordinary adventure.
+    terminal_project = deepcopy(base)
+    terminal_project['settings'].update(title='Walkable Outcome Project', startRoomId='dead-brambles')
+    assert terminal_project['settings']['terminalRooms'] is True
+    apply_project(page, terminal_project)
+    assert ui.state(page)['roomId'] == 'dead-brambles' and ui.state(page)['phase'] == 'terminal'
+    assert page.locator('#room-scene').get_attribute('data-room') == 'dead-brambles'
+    assert page.locator('#outcome').is_hidden() and page.locator('#ending').is_visible()
+    before_walk = ui.walker(page)
+    page.locator('#walk-floor').focus()
+    page.keyboard.down('ArrowRight'); dev.tick(page, 250); page.keyboard.up('ArrowRight')
+    assert ui.walker(page)['x'] > before_walk['x'] + 20
+    ui.press(page, '[data-person="nell"]')
+    assert page.locator('#conversation-dialog').is_visible()
+    page.locator('#conversation-close').click()
+    page.locator('#ending').click()
+    page.locator('#outcome').wait_for(state='visible')
+    assert page.locator('#outcome-title').inner_text() == terminal_project['content']['dead-brambles']['title']
+    outcome = terminal_project['content']['dead-brambles']['outcome']
+    assert page.locator('#outcome-copy').inner_text() == ' '.join(filter(None, [outcome['copy'], outcome.get('repair')]))
+    page.locator('#outcome-close').click()
+    assert page.locator('#outcome').is_hidden()
+    dev.console_open(page, 'dialogue')
+    assert page.locator('#developer-room-cards [data-dev-room]').count() == 23
+    dev.select_entity(page, 'dead-brambles', 'person', 'nell')
+    assert page.locator('#developer-person-name').input_value() == 'Nell'
+    terminal_intro = 'Nell can still answer in a finished branch.'
+    page.locator('#developer-intro').fill(terminal_intro)
+    page.locator('#developer-intro').press('Tab')
+    page.locator('[data-dev-tab="rooms"]').click()
+    terminal_title = 'The Edited Bramble Bell'
+    terminal_copy = 'The old listening bench holds this authored conclusion.'
+    terminal_repair = 'Revisit the fork and listen for the other rhythm.'
+    for selector, value in [('#developer-room-title', terminal_title),
+                            ('#developer-outcome-copy', terminal_copy),
+                            ('#developer-outcome-repair', terminal_repair)]:
+        page.locator(selector).fill(value)
+        page.locator(selector).press('Tab')
+    page.locator('#developer-save').click()
+    edited = dev.export_project(page, 'edge-terminal-edited')
+    assert edited['terminals']['dead-brambles']['title'] == terminal_title
+    assert edited['scenes']['dead-brambles']['title'] == terminal_title
+    assert edited['content']['dead-brambles']['outcome']['copy'] == terminal_copy
+    assert edited['content']['dead-brambles']['outcome']['repair'] == terminal_repair
+    assert next(person for person in edited['content']['dead-brambles']['people'] if person['id'] == 'nell')['intro'] == terminal_intro
+    apply_project(page, edited)
+    reload_game(page)
+    assert ui.state(page)['roomId'] == 'dead-brambles' and ui.state(page)['phase'] == 'terminal'
+    assert page.locator('#outcome').is_hidden()
+    ui.press(page, '[data-person="nell"]')
+    assert page.locator('#dialogue').inner_text() == terminal_intro
+    page.locator('#conversation-close').click()
+    page.locator('#ending').click()
+    assert page.locator('#outcome-title').inner_text() == terminal_title
+    assert page.locator('#outcome-copy').inner_text() == terminal_copy + ' ' + terminal_repair
+    page.locator('#outcome-close').click()
+    dev.console_open(page, 'playtest')
+    dev.teleport(page, 'ending-school', phase='terminal')
+    dev.close_editor(page)
+    assert page.locator('#ending').is_visible() and page.locator('#outcome').is_hidden()
+    assert dev.normal_storage(page) == published
+    assert not errors and not writes and not external, (errors, writes, external)
+    page.screenshot(path=str(OUT / 'walkable-terminal-authored.png'))
     context.close()
     return {'passed': True, 'releaseBase': release, 'freshApplyImmediatelySaved': True,
             'savedDraftSeparateFromAppliedProject': True, 'canonicalCopyAndWorldTargetPlayable': True,
             'authoredEndingLabeledAndRecorded': True, 'actualMapDragAndUndo': True,
+            'legacyModalBoundarySupported': True, 'walkableTerminalStartAndTeleport': True,
+            'terminalSummaryOnRequest': True, 'terminalDialogueAndOutcomeEditable': True,
             'actorTargetHitboxCollisionMoveTogether': True, 'mapFrozenWhileDragging': True,
             'publishedRunBytePreserved': True, 'errors': []}
 

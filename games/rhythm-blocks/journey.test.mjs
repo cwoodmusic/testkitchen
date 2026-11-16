@@ -2,7 +2,7 @@ import test from 'node:test';
 import assert from 'node:assert/strict';
 import {createJourney, OPENING_JOURNEY_MANIFEST, CHAPTER_JOURNEY_MANIFEST} from './journey.mjs';
 import {PEOPLE} from './opening.mjs';
-import {CHAPTER_LORE, ROOM_CONTENT} from './chapter-content.mjs';
+import {CAMPAIGN_LORE, CAMPAIGN_CONTENT} from './campaign-content.mjs';
 import {PARTY_ROUTE_HINTS} from './party-content.mjs';
 import {CHAPTER_ROOMS, CHAPTER_DOORS, CHAPTER_PREVIEWS, CHAPTER_TERMINALS} from './chapter.mjs';
 
@@ -240,26 +240,26 @@ test('invalid trusted manifests fail early instead of silently exposing malforme
   for (const source of bad) assert.throws(() => createJourney({manifest: source}), TypeError);
 });
 
-test('the chapter catalog follows all shipped rooms and keys but excludes future routes', () => {
+test('the released campaign catalog covers all rooms, routes, hints and outcomes', () => {
   const source = CHAPTER_JOURNEY_MANIFEST;
-  assert.equal(source.completionReady, false);
+  assert.equal(source.completionReady, true);
   assert.deepEqual(source.nodes, [...Object.values(CHAPTER_ROOMS), ...Object.values(CHAPTER_PREVIEWS),
     ...Object.values(CHAPTER_TERMINALS)].map(({id, title}) => ({id, title})));
-  assert.equal(source.nodes.length, 10);
+  assert.equal(source.nodes.length, 23);
   assert.deepEqual(source.edges, Object.values(CHAPTER_DOORS).map(door => ({
     id: door.canonicalId, from: door.from, to: door.to,
   })));
-  assert.equal(source.edges.length, 9);
-  assert.deepEqual(source.outcomes.map(outcome => outcome.id), ['dead-brambles', 'dead-aviary', 'dead-ferry']);
-  assert.equal(source.hints.length, 27);
-  for (const hint of PARTY_ROUTE_HINTS) assert.deepEqual(source.hints.find(entry => entry.id === hint.id), hint);
-  assert.deepEqual(source.hints.slice(0, OPENING_JOURNEY_MANIFEST.hints.length), OPENING_JOURNEY_MANIFEST.hints);
-  for (const observation of CHAPTER_LORE) {
+  assert.equal(source.edges.length, 22);
+  assert.deepEqual(source.outcomes.map(outcome => outcome.id), Object.keys(CHAPTER_TERMINALS));
+  assert.equal(source.hints.length, 141);
+  for (const hint of PARTY_ROUTE_HINTS) assert.equal(source.hints.find(entry => entry.id === hint.id).text, hint.text);
+  for (const hint of OPENING_JOURNEY_MANIFEST.hints) assert.equal(source.hints.find(entry => entry.id === hint.id).text, hint.text);
+  for (const observation of CAMPAIGN_LORE) {
     assert.deepEqual(source.hints.find(hint => hint.id === `lore-${observation.id}`), {
       id: `lore-${observation.id}`, title: observation.title, text: observation.text,
     });
   }
-  for (const [roomId, room] of Object.entries(ROOM_CONTENT).filter(([id]) => id !== 'depot')) {
+  for (const [roomId, room] of Object.entries(CAMPAIGN_CONTENT).filter(([id]) => id !== 'depot')) {
     for (const person of room.people) {
       assert.equal(source.hints.find(hint => hint.id === `${roomId}-${person.id}-route`).text, person.route);
     }
@@ -269,8 +269,8 @@ test('the chapter catalog follows all shipped rooms and keys but excludes future
     assert(Object.isFrozen(source[collection]));
     source[collection].forEach(entry => assert(Object.isFrozen(entry)));
   }
-  assert.equal(createJourney({manifest: source}).visit('garden-alcove'), false);
-  assert.equal(createJourney({manifest: source}).traverse('garden-secret-branch'), false);
+  assert.equal(createJourney({manifest: source}).visit('garden-alcove'), true);
+  assert.equal(createJourney({manifest: source}).traverse('garden-secret-branch'), true);
 });
 
 test('a porch clue or inspection reveals no new room, trail or ending', () => {
@@ -288,7 +288,7 @@ test('a porch clue or inspection reveals no new room, trail or ending', () => {
   }
 });
 
-test('a reached continuation preview is a chart destination without an ending award', () => {
+test('a reached fork is a chart destination without an ending award', () => {
   const journey = createJourney({manifest: CHAPTER_JOURNEY_MANIFEST});
   journey.traverse('depot-workshop');
   journey.traverse('workshop-porch-forward');
@@ -325,7 +325,8 @@ test('opening discoveries migrate into the expanded catalog without revealing ot
   opening.discoverHint('iris-route');
   opening.discoverHint('lore-route-orrery');
   const chapter = createJourney({manifest: CHAPTER_JOURNEY_MANIFEST, saved: opening.serialize()});
-  assert.deepEqual(chapter.state, opening.state);
+  assert.deepEqual(chapter.serialize(), opening.serialize());
+  assert.deepEqual(chapter.state.hints.map(hint=>hint.id), opening.state.hints.map(hint=>hint.id));
   chapter.discoverHint('garden-porch-iris-route');
   chapter.traverse('garden-porch-forward');
   assert.deepEqual(chapter.serialize().nodes, ['depot', 'garden-porch', 'garden-fork']);
@@ -337,7 +338,7 @@ test('opening discoveries migrate into the expanded catalog without revealing ot
 test('the chapter ignores future and forged saved IDs while restoring only known observations', () => {
   const journey = createJourney({manifest: CHAPTER_JOURNEY_MANIFEST, saved: {
     version: 1,
-    nodes: ['depot', 'garden-alcove', {id: 'garden-fork', title: 'Invented'}],
+    nodes: ['depot', 'future-room', {id: 'garden-fork', title: 'Invented'}],
     edges: ['depot-canal', 'canal-secret', {id: 'canal-porch-forward'}],
     hints: ['lore-canal-porch-mooring-bell', 'garden-alcove-secret', {id: 'garden-porch-iris-route'}],
     outcomes: ['dead-ferry', 'all-four-together', 'canal-fork', {id: 'dead-brambles'}],
@@ -351,19 +352,19 @@ test('the chapter ignores future and forged saved IDs while restoring only known
   assert.deepEqual(journey.state.achievements, []);
 });
 
-test('observing every shipped boundary cannot complete the unfinished dungeon', () => {
+test('observing every shipped room, route and outcome completes the released campaign', () => {
   const source = CHAPTER_JOURNEY_MANIFEST;
   const journey = createJourney({manifest: source});
   source.nodes.forEach(node => journey.visit(node.id));
   source.edges.forEach(edge => journey.traverse(edge.id));
   source.hints.forEach(hint => journey.discoverHint(hint.id));
   source.outcomes.forEach(outcome => journey.recordOutcome(outcome.id));
-  assert.equal(journey.state.nodes.length, 10);
-  assert.equal(journey.state.edges.length, 9);
-  assert.equal(journey.state.outcomes.length, 3);
-  assert.equal(journey.complete, false);
-  assert.deepEqual(journey.state.achievements, []);
-  assert.equal(createJourney({manifest: source, saved: journey.serialize()}).complete, false);
+  assert.equal(journey.state.nodes.length, 23);
+  assert.equal(journey.state.edges.length, 22);
+  assert.equal(journey.state.outcomes.length, 9);
+  assert.equal(journey.complete, true);
+  assert.deepEqual(journey.state.achievements, [{id:'complete-score',title:'The Complete Score'}]);
+  assert.equal(createJourney({manifest: source, saved: journey.serialize()}).complete, true);
 });
 
 test('companion conversations preserve only learned route clues across reloads', () => {

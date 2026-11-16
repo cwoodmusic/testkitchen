@@ -1,6 +1,6 @@
 {
   "version": 1,
-  "status": "proposed dungeon economy; design only",
+  "status": "released campaign economy; all rooms and outcomes playable",
   "entry": "depot",
   "initialInventory": {},
   "rooms": [
