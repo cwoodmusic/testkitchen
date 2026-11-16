@@ -1,5 +1,8 @@
 /** Permanent, local discoveries for The Quiet Bell. No run inventory is kept here. */
 
+import {DEPOT_LORE} from './lore.mjs';
+import {PEOPLE} from './opening.mjs';
+
 const freezeRecords = records => Object.freeze(records.map(record => Object.freeze(record)));
 
 // This catalog describes only the playable opening. Arrival scenes are not endings.
@@ -19,16 +22,17 @@ export const OPENING_JOURNEY_MANIFEST = Object.freeze({
   hints: freezeRecords([
     {
       id: 'nell-route', title: 'Nell · The canal lock',
-      text: 'The blue canal door has the ferry keeper’s lock. Choose that door, then play a half note, a quarter note, and paired eighths, in that order. You will need the half note from the chest.',
+      text: PEOPLE.find(person=>person.id==='nell').route,
     },
     {
       id: 'iris-route', title: 'Iris · The garden lock',
-      text: 'The ivy-covered garden door asks for two quiet beats followed by two sounding beats: a half rest, then a half note. Choose its lock before arranging that answer. The order matters.',
+      text: PEOPLE.find(person=>person.id==='iris').route,
     },
     {
       id: 'pip-route', title: 'Pip · The workshop lock',
-      text: 'Choose the gear-marked workshop door. Its lock wants a half note first, then paired eighths, then four sixteenths. Three tiles, four beats, and little footsteps that grow quicker.',
+      text: PEOPLE.find(person=>person.id==='pip').route,
     },
+    ...DEPOT_LORE.map(entry=>({id:`lore-${entry.id}`,title:entry.title,text:entry.text})),
   ]),
   outcomes: Object.freeze([]),
 });

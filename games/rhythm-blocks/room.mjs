@@ -8,7 +8,14 @@ export const DEPOT_ROOM=freeze({
   {id:'counter',x:48,y:290,width:307,height:196},
   {id:'iris',x:700,y:500,width:108,height:60},
   {id:'pip',x:1135,y:500,width:105,height:60},
-  {id:'depot-chest',x:400,y:500,width:127,height:70}
+  {id:'depot-chest',x:400,y:500,width:127,height:70},
+  {id:'route-orrery-base',x:48,y:830,width:282,height:118},
+  {id:'star-post-base',x:1252,y:837,width:219,height:110},
+  {id:'kettle-cart',x:48,y:640,width:112,height:95},
+  {id:'clipping-tray',x:1120,y:885,width:130,height:50},
+  {id:'upper-wall-parcels',x:1385,y:301,width:103,height:35},
+  {id:'lower-wall-parcels',x:1420,y:466,width:68,height:48},
+  {id:'orrery-parcel',x:48,y:870,width:48,height:65}
  ],
  targets:[
   {id:'nell',type:'person',x:210,y:460,approach:{x:220,y:510},range:105},
@@ -17,7 +24,12 @@ export const DEPOT_ROOM=freeze({
   {id:'depot-chest',type:'chest',x:465,y:560,approach:{x:465,y:625},range:100},
   {id:'garden',type:'door',x:490,y:295,approach:{x:490,y:330},range:100},
   {id:'workshop',type:'door',x:884,y:295,approach:{x:884,y:330},range:100},
-  {id:'canal',type:'door',x:1286,y:295,approach:{x:1286,y:330},range:100}
+  {id:'canal',type:'door',x:1286,y:295,approach:{x:1286,y:330},range:100},
+  {id:'returned-letter',type:'inspect',label:'Inspect the returned letter',x:310,y:460,approach:{x:330,y:540},range:105},
+  {id:'clockwork-roost',type:'inspect',label:'Inspect the clockwork roost',x:655,y:295,approach:{x:655,y:330},range:100},
+  {id:'dispatch-map',type:'inspect',label:'Inspect the dispatch map',x:1055,y:295,approach:{x:1055,y:330},range:100},
+  {id:'route-orrery',type:'inspect',label:'Inspect the route orrery',x:220,y:910,approach:{x:380,y:900},range:170},
+  {id:'star-post',type:'inspect',label:'Inspect the star post',x:1360,y:840,approach:{x:1215,y:810},range:160}
  ]
 });
 

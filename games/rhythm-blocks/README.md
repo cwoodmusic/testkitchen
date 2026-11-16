@@ -6,6 +6,10 @@ The room fills the browser viewport without document scrolling. A camera follows
 
 The room and all four characters use the selected Pocket Pixel style: compact proportions, large readable pixel clusters, warm dark outlines, simple faces, and a small palette. Mira keeps her blue bow, blue coat, and backpack; Nell her gray bun, glasses, and burgundy outfit; Iris her flowered garden hat and green overalls; Pip his teal cap, gold goggles, and satchel. The room keeps its orthographic layout, parallel edges, three doors, post counter, music decorations, and delivery chest. The artwork and transparent twelve-pose walking sheet are stored as lossless WebP assets. Measured boot anchors and foreground silhouettes keep the sprites grounded and preserve depth around the residents and chest.
 
+The setting is the Lumen Reach: floating islands connected by a worn star-post network, living conduits, light canals, and inherited crystal machinery. The depot occupies a former sky-survey hall. Its warm returned mail, clockwork roost, sleeping dispatch screen, route orrery, and star-post receiver can be approached and inspected with E/Space or a click/tap. Each opens a short observation and keeps that discovered text in the journal across runs. These inspections leave note inventory, door payments, and the discovered map unchanged. Nell, Iris, and Pip connect the machinery to ordinary deliveries, gardening, repairs, and missing replies.
+
+The room-by-room world guide in `design/music-puzzler/worldbuilding.json` and `worldbuilding.md` gives all fourteen authored locations a landmark, daily use, trace of the past, unanswered question, and inspection props. Thirteen locations remain planned; the depot is the playable example of that direction.
+
 The same game address checks for the latest published release whenever it opens or reloads. Each release keeps its HTML, scripts, styles, and artwork together under a content-versioned directory, so a cached arcade page or old version parameter cannot mix old and new game files. The address and origin stay unchanged, preserving local notes, discoveries, settings, and the arcade return protocol. The game never reloads itself during a puzzle and never clears browser storage. GitHub Pages publishing and CDN propagation can still take a few minutes; no manual cache clearing is needed after the updated launcher has loaded once.
 
 Mira starts with an empty satchel in the Parcel Depot. Walk with arrows/WASD, click or tap the floor, or use the on-screen arrows on a touch device. Selecting a person, chest, or door makes Mira walk over and interact. E or Space interacts with the closest object in reach. Nell’s parcel and a door’s lock require Mira to be nearby. Collision uses her feet and prevents walking through walls, the counter, residents, and the chest.
@@ -32,7 +36,7 @@ The device-only key `codaQuietBellPageOneV1` stores a version-2 action log of cl
 
 `room.mjs` supplies data-driven room bounds, obstacles, targets, swept-circle movement, and pathfinding. `room-view.mjs` renders Mira, accepts keyboard/touch/floor navigation, follows her with a bounded cover camera, and reports nearby interactions without touching inventory. It schedules frames only while movement needs them. The transparent twelve-pose sheet is bundled as `assets/mira-walk.webp`; `mira.mjs` holds measured foot anchors. Foreground copies of the room art preserve depth when Mira walks behind residents or the chest.
 
-`story.mjs` implements the opening inventory and locks; `opening.mjs` holds the characters and dialogue. `engine.mjs` retains the earlier falling-game engine and shared note catalog for regression checks. `notation.mjs` supplies musical engraving; see its license/source files. `audio.mjs` synthesizes the true note subdivisions locally. The room artwork is bundled in `assets/parcel-depot.webp`.
+`story.mjs` implements the opening inventory and locks; `opening.mjs` holds the characters and dialogue, and `lore.mjs` holds the five environmental observations. `engine.mjs` retains the earlier falling-game engine and shared note catalog for regression checks. `notation.mjs` supplies musical engraving; see its license/source files. `audio.mjs` synthesizes the true note subdivisions locally. The room artwork is bundled in `assets/parcel-depot.webp`.
 
 Edit `game.html` and the runtime source files, rather than generated `index.html`, `release.json`, or the contents of `releases/`. Before testing or publishing any runtime change, run `node games/rhythm-blocks/build-release.mjs`. It creates an immutable release, updates the launcher and current release manifest, and keeps earlier releases available for already open or cached sessions. Commit the generated files with their source change. The release test checks that the published bundle matches the current source, so a forgotten rebuild fails the checks. Ordinary game changes no longer need manual cache-version edits in the arcade or module imports.
 
@@ -47,6 +51,7 @@ python tests/rhythm-blocks-launch-browser.py
 python tests/quiet-bell-journey-browser.py
 python tests/quiet-bell-journey-renderer-browser.py
 python tests/quiet-bell-updates-browser.py
+python tests/quiet-bell-worldbuilding-browser.py
 ```
 
 Browser tests require Python Playwright and Chromium.

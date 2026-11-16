@@ -6,12 +6,14 @@ import {PEOPLE,ROUTE_OUTCOMES} from './opening.mjs';
 import {createRoomView} from './room-view.mjs';
 import {createJourney} from './journey.mjs';
 import {renderJourney} from './journey-view.mjs';
+import {DEPOT_LORE} from './lore.mjs';
 
 const $=id=>document.getElementById(id),root=$('quiet-bell');
 const SAVE_KEY='codaQuietBellPageOneV1',JOURNEY_KEY='codaQuietBellJourneyV1',SOUND_KEY='codaRhythmBlocksSoundV1';
 const colors={quarter:'#9bd5bb','eighth-pair':'#a9d8da','sixteenth-group':'#b9afe2',half:'#efcb8d',eighth:'#bdb0e7','quarter-rest':'#e8d9b5','half-rest':'#e0bd9b','dotted-half':'#d9abc8','sixteenth-pair':'#c8bde9'};
 const shortNames={quarter:'Quarter note','eighth-pair':'Two eighths','sixteenth-group':'Four sixteenths',half:'Half note',eighth:'Eighth note','quarter-rest':'Quarter rest','half-rest':'Half rest','dotted-half':'Dotted half','sixteenth-pair':'Two sixteenths'};
 const people=new Map(PEOPLE.map(person=>[person.id,person]));
+const observations=new Map(DEPOT_LORE.map(entry=>[entry.id,entry]));
 const topics={story:'Your story',route:'A way forward',inventory:'My notes'};
 const topicNames={story:'Your story',route:'A way forward',inventory:'Your carried notes'};
 const count=stock=>Object.values(stock).reduce((total,n)=>total+n,0);
@@ -56,11 +58,19 @@ function renderPause(){
 function updateSave(){$('save-status').textContent=storageAvailable?'Progress saves on this device.':'Saving is unavailable in this browser. Keep this page open to retain your progress.';}
 function stopAudio(){audioRevision++;audio.stop();}
 async function play(recipe){const revision=++audioRevision;audio.stop();if(!recipe.length||!soundEnabled)return;await audio.unlock();if(revision===audioRevision&&!document.hidden&&!$('help-dialog').open)audio.playPattern(recipe);}
-const panelIds=['conversation-dialog','notes-dialog','menu-dialog','help-dialog','outcome'];
+const panelIds=['conversation-dialog','notes-dialog','lore-dialog','menu-dialog','help-dialog','outcome'];
 function panelOpen(){return panelIds.some(id=>$(id).open);}
 function closePanels(except=null){for(const id of panelIds)if(id!==except&&$(id).open)$(id).close();}
 function openPanel(id){roomView?.stop();if(id==='menu-dialog'){stopAudio();renderPause();}closePanels(id);if(!$(id).open)$(id).showModal();roomView?.refresh();}
 function openNotes(mode){$('notes-dialog').dataset.mode=mode;openPanel('notes-dialog');render();}
+function inspect(id){
+  const entry=observations.get(id);
+  if(!entry||game.state.phase!=='room'||!roomView?.withinReach(id))return;
+  stopAudio();$('lore-title').textContent=entry.title;$('lore-copy').textContent=entry.text;
+  $('lore-dialog').dataset.observation=id;
+  if(journey.discoverHint('lore-'+id))saveJourney();
+  openPanel('lore-dialog');
+}
 function notify(text){clearTimeout(toastTimer);$('world-status').textContent=text;$('world-status').hidden=false;$('announcement').textContent=text;toastTimer=setTimeout(()=>{$('world-status').hidden=true;},3200);}
 function talk(){
   const state=game.state,person=people.get(selectedPerson),outcome=state.routeId?ROUTE_OUTCOMES[state.routeId]:null;
@@ -104,6 +114,7 @@ function render(){
   $('door-hint').textContent=state.selectedDoor?doorHints[state.selectedDoor]:'Each door has its own rhythm lock.';
   for(const button of root.querySelectorAll('[data-door]')){button.setAttribute('aria-pressed',String(button.dataset.door===state.selectedDoor));button.disabled=continued;}
   for(const button of root.querySelectorAll('[data-person]'))button.disabled=continued;
+  for(const button of root.querySelectorAll('[data-inspect]'))button.disabled=continued;
   const chest=root.querySelector('[data-chest]'),chestClaimed=state.claimedSources.includes('depot-chest');
   chest.disabled=continued||chestClaimed;chest.setAttribute('aria-label',chestClaimed?'Delivery chest opened; half note collected':'Open the delivery chest');$('chest-label').textContent=chestClaimed?'Opened':'Open';
   $('edit-hint').textContent=continued?'This is the answer you played. Revisit it to try another path.':'Choose notes from your satchel. Tap a placed note to take it back.';
@@ -139,6 +150,7 @@ function interactWith(id){
   if(people.has(id)){stopAudio();selectedPerson=id;selectedTopic='story';talk();openPanel('conversation-dialog');save();}
   else if(Object.hasOwn(doorNames,id))chooseDoor(id);
   else if(id==='depot-chest')claim(id);
+  else if(observations.has(id))inspect(id);
 }
 root.addEventListener('click',event=>{
   const button=event.target.closest('button');if(!button||button.disabled)return;
@@ -146,6 +158,7 @@ root.addEventListener('click',event=>{
   if(button.dataset.topic){stopAudio();selectedTopic=button.dataset.topic;talk();if(selectedTopic==='route'&&game.state.phase==='room'&&journey.discoverHint(selectedPerson+'-route'))saveJourney();save();return;}
   if(button.dataset.door){roomView?.request(button.dataset.door);return;}
   if(button.dataset.chest){roomView?.request(button.dataset.chest);return;}
+  if(button.dataset.inspect){roomView?.request(button.dataset.inspect);return;}
   if(button.dataset.kind){edit(()=>game.add(button.dataset.kind));return;}
   if(button.dataset.remove!==undefined){edit(()=>game.remove(Number(button.dataset.remove)));return;}
   switch(button.id){
@@ -162,7 +175,7 @@ root.addEventListener('click',event=>{
     case'bag':openNotes('bag');break;
   }
 });
-for(const [button,panel]of [['help-close','help-dialog'],['help-done','help-dialog'],['conversation-close','conversation-dialog'],['notes-close','notes-dialog'],['menu-close','menu-dialog']])$(button).addEventListener('click',()=>$(panel).close());
+for(const [button,panel]of [['help-close','help-dialog'],['help-done','help-dialog'],['conversation-close','conversation-dialog'],['notes-close','notes-dialog'],['lore-close','lore-dialog'],['lore-done','lore-dialog'],['menu-close','menu-dialog']])$(button).addEventListener('click',()=>$(panel).close());
 for(const id of panelIds)$(id).addEventListener('close',()=>{roomView?.refresh();if(!panelOpen()&&game.state.phase==='continued'){openPanel('outcome');return;}const active=document.activeElement;if(!panelOpen()&&(!active||active===document.body||active===document.documentElement||active.closest('dialog')))$('walk-floor').focus({preventScroll:true});});
 $('outcome').addEventListener('cancel',event=>event.preventDefault());
 $('help-notes').innerHTML=NOTE_KINDS.map(kind=>`<div class="mg-help-note">${symbolMarkup(kind.id)}<span>${kind.label}</span><span>${beatText(kind)}</span></div>`).join('');

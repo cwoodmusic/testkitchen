@@ -1,0 +1,271 @@
+{
+  "schemaVersion": 1,
+  "status": "World and room authoring guide; only the depot is currently playable",
+  "setting": {
+    "name": "The Lumen Reach",
+    "premise": "People live among floating stone islands joined by root bridges, light canals and a worn star-post network. They maintain beautiful old machines whose makers are gone.",
+    "bell": "The public bell once synchronized doors, dispatch routes, water clocks and courier birds. Its silence disrupts those shared routines; it does not make the islands fall.",
+    "magicAndTechnology": "Crystal cells, living roots and carefully timed phrases operate the same inherited machinery. A kitchen lamp and a distant route beacon use related parts at very different scales.",
+    "mystery": "The old bellkeeper’s parcel returns with warm wax while the outgoing route lamps are dark. Evidence should deepen the question before any character claims to know its answer.",
+    "humanScale": "Keep the world legible through work, meals, repairs, gardens, deliveries and small promises. Wonder and absence carry the tone; no immediate catastrophe or violent threat is required."
+  },
+  "visualRules": [
+    "Keep the chosen Pocket Pixel proportions, large readable clusters, warm dark outlines and limited material shading.",
+    "Use orthographic 2/3 views with parallel edges and consistent scale. Furniture and floor edges do not converge toward a vanishing point.",
+    "Pair high-fantasy forms with obsolete future machinery: moonstone arches around curved phosphor glass, root-wrapped copper conduits, star-glass cells in hand-repaired ceramic housings.",
+    "Show one strong room landmark, a visible daily routine and a trace of something older. Leave navigable floor and keep doors, people and useful objects readable.",
+    "Show systems visibly connecting: root into conduit, conduit into machine, machine into the thing it helps someone do. Do not scatter unrelated glowing props as decoration.",
+    "Use rings, arcs, comets, constellations and musical waveforms. Avoid religious or occult signs, gore, grim violence and writing on the floor.",
+    "Give each branch its own materials and light: garden jade and amber, workshop teal and copper, canal indigo and pearl. Small warm lights and local crystal cells can remain active while the main network is quiet."
+  ],
+  "authoringRules": [
+    "This file adds setting and environmental storytelling; dungeon.json remains the authority for room IDs, sources, door costs, reveal conditions and ending budgets.",
+    "Every room must answer who uses it, what they do here, what has changed and what might lie beyond the visible space.",
+    "Inspection copy is a short observation before an explanation. Physical evidence should support personal dialogue rather than repeat an encyclopedia entry.",
+    "An environmental clue can allude to a different route without adding a room or edge to the discovered chart.",
+    "Inspections supply no notes, unlock no paid door, grant no party promise and do not count as outcomes. Any future resource source must be authored and verified separately.",
+    "Only entered rooms and travelled connections enter the journey chart. No unread prop, hidden room title, total or planned ending is exposed by the authoring catalog."
+  ],
+  "rooms": [
+    {
+      "id": "depot",
+      "title": "The Parcel Depot",
+      "releaseStatus": "playable",
+      "occupation": "A neighborhood post station built inside a former sky-survey hall.",
+      "materialPalette": ["burgundy timber", "moonstone arches", "worn brass", "green phosphor glass", "small cyan crystal cells"],
+      "landmark": "An old route orrery whose carriage slows for a polished-away star.",
+      "everydayHabit": "Nell keeps one service lamp lit and checks the reply tray; Pip leaves seed for a mechanical courier.",
+      "traceOfPast": "Survey rings and disconnected bell relays remain above newer parcel shelves and hand-repaired terminals.",
+      "unansweredQuestion": "How did the bellkeeper’s parcel return warm when the outgoing route lamps are dark?",
+      "routeClue": "Three visibly different door systems serve living roots, clockwork birds and waterborne deliveries. Their residents know their distinct phrases.",
+      "props": [
+        {"id": "returned-letter", "title": "The warm returned letter", "observation": "A warm wax seal and several forwarding labels end with the depot’s own star stamp.", "purpose": "Establish the personal delivery mystery."},
+        {"id": "clockwork-roost", "title": "A courier waiting for a reply", "observation": "Real seed rests beside a brass bird whose crystal throat clicks toward an unlit route.", "purpose": "Show Pip’s care and the network’s missing answer."},
+        {"id": "dispatch-map", "title": "The sleeping dispatch map", "observation": "A thumb-worn button starts a luminous route that stops before its return signal.", "purpose": "Show how the bell once coordinated ordinary work."},
+        {"id": "route-orrery", "title": "The star that was rubbed away", "observation": "A carriage still slows for a stop erased from its brass ring.", "purpose": "Suggest that the inherited network remembers more than its current labels."},
+        {"id": "star-post", "title": "The star-post receiver", "observation": "A local crystal lights the receiver beside a disconnected main relay and a worn reply socket.", "purpose": "Connect local life, old machinery and the unexplained returned delivery."}
+      ]
+    },
+    {
+      "id": "garden-porch",
+      "title": "Iris’s Garden Porch",
+      "releaseStatus": "planned",
+      "occupation": "A gardener’s work porch where living roots are grafted into the island’s old service conduits.",
+      "materialPalette": ["jade leaves", "cream ceramic", "root-brown wood", "tarnished copper", "amber sap light"],
+      "landmark": "A crystal irrigation manifold wrapped by one carefully tended living root.",
+      "everydayHabit": "Iris sets out two cups before watering the beds and moves the second chair out of the rain.",
+      "traceOfPast": "A formal survey conduit has been repaired with garden twine and labeled seed jars.",
+      "unansweredQuestion": "Who taught Iris to leave a pause for an answer that does not come?",
+      "routeClue": "The listening gate waits through two quiet beats before answering; the overgrown arch offers an older, poorly tended call.",
+      "props": [
+        {"id": "garden-porch-second-cup", "title": "The second cup", "observation": "The empty place has a dry cloth and a cup with a recently mended handle.", "purpose": "Make the absent duet partner part of a living routine."},
+        {"id": "garden-porch-graft", "title": "The patient graft", "observation": "A green shoot pulses only after the copper pipe falls quiet.", "purpose": "Give a material example of waiting before a reply."},
+        {"id": "garden-porch-old-plaque", "title": "The reused survey plaque", "observation": "A once-important machine plate now supports a row of small seedlings.", "purpose": "Show how residents have made old systems useful again."}
+      ]
+    },
+    {
+      "id": "workshop-porch",
+      "title": "Pip’s Bird Workshop",
+      "releaseStatus": "planned",
+      "occupation": "A small repair shop and roost for the star-post’s clockwork courier birds.",
+      "materialPalette": ["teal enamel", "warm copper", "cream worktops", "blue star-glass", "patched leather"],
+      "landmark": "A nest-shaped charging cradle suspended inside an open brass wing.",
+      "everydayHabit": "Pip sorts spare feathers by flight shape and keeps a bowl of seed beside his trays of gears.",
+      "traceOfPast": "The roost was once one station in a much larger migration system; its smallest perches have been lowered for Pip’s repairs.",
+      "unansweredQuestion": "Why does one repaired bird turn away from every route currently marked on the board?",
+      "routeClue": "A long movement divides into two quick replies and then four tiny ones; the birds decline to answer the silent aviary.",
+      "props": [
+        {"id": "workshop-porch-flight-jig", "title": "The practice wing", "observation": "A test jig moves once, twice and then four times, leaving Pip’s fingertips stained with copper polish.", "purpose": "Connect the workshop’s rhythm to practiced work."},
+        {"id": "workshop-porch-seed-bowl", "title": "The unnecessary seed bowl", "observation": "Fresh husks surround birds that run on crystal cells.", "purpose": "Show Pip treating his couriers as companions."},
+        {"id": "workshop-porch-return-feather", "title": "The unmatched feather", "observation": "One pale metal feather does not fit any of the birds on the bench.", "purpose": "Suggest a missing member of a larger flock."}
+      ]
+    },
+    {
+      "id": "canal-porch",
+      "title": "The Canal Storehouse",
+      "releaseStatus": "planned",
+      "occupation": "A ferry keeper’s freight store beside a light canal that carries parcels between floating islands.",
+      "materialPalette": ["indigo tile", "pearl stone", "blue canal glass", "rope", "green-grey brass"],
+      "landmark": "A closed tide iris reflected in still luminous water.",
+      "everydayHabit": "The ferry keeper dries postage seals on a line and warms tea on a small local crystal heater.",
+      "traceOfPast": "A sky-navigation console is bolted to a practical wooden loading desk.",
+      "unansweredQuestion": "Why is one returned delivery damp with water from a route the ferry no longer serves?",
+      "routeClue": "The stamped chest and delivery gate share a long stroke, an ordinary tap and a paired reply; the abandoned boarding rope offers no waiting boat.",
+      "props": [
+        {"id": "canal-porch-seal-line", "title": "The drying seals", "observation": "Ordinary household parcels hang beside a seal carrying an unfamiliar pale tide mark.", "purpose": "Keep the strange network attached to daily deliveries."},
+        {"id": "canal-porch-loading-console", "title": "The secondhand navigator", "observation": "A polished steering control has been repaired with ferry rope and a wooden wedge.", "purpose": "Show future machinery inherited and adapted by working people."},
+        {"id": "canal-porch-mooring-bell", "title": "The small mooring bell", "observation": "Its clapper is tied safely aside, waiting for the keeper to hear the proper return knock.", "purpose": "Explain the keeper’s caution and the importance of an answering phrase."}
+      ]
+    },
+    {
+      "id": "garden-fork",
+      "title": "The Two Garden Paths",
+      "releaseStatus": "planned",
+      "occupation": "A shared growing court where a new neighborhood path meets the buried route of an older garden.",
+      "materialPalette": ["deep jade", "soft moss", "cream paving", "old green copper", "warm window light"],
+      "landmark": "A split root bridge: one side freshly tended, the other following worn stone beneath the leaves.",
+      "everydayHabit": "Neighbors have hung repaired watering cans and herb bundles where everyone can borrow them.",
+      "traceOfPast": "An ornamental paving ring continues below a newer domestic walkway.",
+      "unansweredQuestion": "What was the old garden listening to before houses were built along its edge?",
+      "routeClue": "A long call and an ordinary step suit the hearth path; the older path is marked by smaller replies with a breath between them.",
+      "props": [
+        {"id": "garden-fork-shared-can", "title": "The shared watering can", "observation": "Several different hands have repaired the same handle.", "purpose": "Make the homeward branch feel cared for and communal."},
+        {"id": "garden-fork-buried-ring", "title": "The buried paving ring", "observation": "Its worn grooves pass beneath roots instead of following the newer path.", "purpose": "Give the older route a material history."},
+        {"id": "garden-fork-wind-cups", "title": "The listening cups", "observation": "Small ceramic cups answer a breeze only after one empty space in their row.", "purpose": "Recall the value of an intentional rest without revealing an unseen gate."}
+      ]
+    },
+    {
+      "id": "workshop-fork",
+      "title": "The Workshop Crossroads",
+      "releaseStatus": "planned",
+      "occupation": "A narrow makers’ exchange between public teaching rooms and the old backstage service spaces.",
+      "materialPalette": ["oxidized teal", "copper rails", "cream plaster", "chalky blue glass", "red repair thread"],
+      "landmark": "A suspended demonstration bird above two different generations of doorway.",
+      "everydayHabit": "Apprentices leave unfinished mechanisms on a shelf for the next person to help repair.",
+      "traceOfPast": "A neat classroom stair has been fitted into a much older performance machine.",
+      "unansweredQuestion": "Who used the narrow rear passage when the public music room was closed?",
+      "routeClue": "The public stair carries an extended call and one ordinary reply; the back passage has long quiet spaces before its small returning sounds.",
+      "props": [
+        {"id": "workshop-fork-help-shelf", "title": "The help shelf", "observation": "An unfinished bird has three different styles of careful repair around the same wing.", "purpose": "Show teaching as shared practical work."},
+        {"id": "workshop-fork-worn-rail", "title": "The back rail", "observation": "Dust fills the middle of the rail, but the handholds at either end are bright.", "purpose": "Make the quieter route feel used rather than arbitrary."},
+        {"id": "workshop-fork-sound-screen", "title": "The silent sound screen", "observation": "A curved phosphor display keeps space between the last two small pulses.", "purpose": "Tie the passage’s rhythm to a physical instrument."}
+      ]
+    },
+    {
+      "id": "canal-fork",
+      "title": "The Water Clock",
+      "releaseStatus": "planned",
+      "occupation": "A public timing chamber that once synchronized ferry tides with the town bell.",
+      "materialPalette": ["midnight indigo", "pearl stone", "silvered water", "blue crystal", "dark brass"],
+      "landmark": "A tall water clock with suspended drops waiting above a dry answering bowl.",
+      "everydayHabit": "Someone has left a stool and a folded towel beside the clock’s service hatch.",
+      "traceOfPast": "The chamber’s oldest conduits continue beyond a carefully drawn modern maintenance map.",
+      "unansweredQuestion": "Why does the imitation channel repeat the clock perfectly but never carry a reply back?",
+      "routeClue": "The town-bell stair follows a sustained call and four quick footfalls; a copied waterway reflects a familiar quiet phrase but ends against stone.",
+      "props": [
+        {"id": "canal-fork-waiting-drop", "title": "The waiting drop", "observation": "The clock holds one silver drop until the empty bowl receives its answer.", "purpose": "Show the failure as a missing conversation between machines."},
+        {"id": "canal-fork-service-stool", "title": "The keeper’s stool", "observation": "A cushion and repaired footrest make a long watch a little kinder.", "purpose": "Give the maintenance worker a life beyond the puzzle."},
+        {"id": "canal-fork-maintenance-map", "title": "The practical maintenance map", "observation": "The keeper has plainly marked the copied channel’s solid end.", "purpose": "Provide a fair visible warning for the intentional dead end."}
+      ]
+    },
+    {
+      "id": "garden-final",
+      "title": "The Hearth Bell",
+      "releaseStatus": "planned",
+      "occupation": "A small neighborhood hall where domestic lamps and kitchen chimes share a bell relay.",
+      "materialPalette": ["amber light", "jade trim", "cream hearthstone", "dark wood", "brushed brass"],
+      "landmark": "A modest bell hanging inside the frame of an oversized ancient relay.",
+      "everydayHabit": "Residents leave cups warming and set out an extra place for whoever comes through next.",
+      "traceOfPast": "A machine designed for a far larger place has been made into a useful home fixture.",
+      "unansweredQuestion": "Was the old network built to reach great distances, or to help people answer one another nearby?",
+      "routeClue": "The remaining small groups, breath and short replies complete a phrase made for a shared home.",
+      "props": [
+        {"id": "garden-final-extra-place", "title": "The extra place", "observation": "The chair is empty, but its cup is warm and its cushion has been straightened.", "purpose": "Pay off the branch’s attention to welcome and absence."},
+        {"id": "garden-final-kitchen-relay", "title": "The kitchen relay", "observation": "A formidable old switch now turns a tiny soup warmer on and off.", "purpose": "Show ordinary lives determining the use of old power."},
+        {"id": "garden-final-mended-clapper", "title": "The mended clapper", "observation": "Several household repair methods meet at the same small bell.", "purpose": "Make the final answer a communal achievement."}
+      ]
+    },
+    {
+      "id": "workshop-final",
+      "title": "The Open Music Room",
+      "releaseStatus": "planned",
+      "occupation": "A community teaching room rebuilt around a retired star-navigation instrument.",
+      "materialPalette": ["teal enamel", "cream boards", "copper", "soft gold", "blue phosphor"],
+      "landmark": "A great circular navigator converted into a shared listening instrument.",
+      "everydayHabit": "Low stools, finger-smudged practice controls and spare parts are ready for learners of different sizes.",
+      "traceOfPast": "The old instrument’s ceremonial controls have been lowered and fitted with simple wooden grips.",
+      "unansweredQuestion": "How much of the old machinery can people understand by learning to listen together?",
+      "routeClue": "Two quiet beats, another quiet beat and two different short replies leave room for an answering voice.",
+      "props": [
+        {"id": "workshop-final-low-control", "title": "The lowered control", "observation": "A wooden extension lets the smallest stool reach the oldest brass lever.", "purpose": "Show the room was adapted for real learners."},
+        {"id": "workshop-final-practice-patches", "title": "The practice patches", "observation": "Different repaired cloth squares mark places where people learned by trying again.", "purpose": "Make mistakes part of the room’s lived history."},
+        {"id": "workshop-final-listening-ring", "title": "The listening ring", "observation": "Its empty centre faces the other seats instead of a lone operator’s desk.", "purpose": "Turn grand technology toward shared musical play."}
+      ]
+    },
+    {
+      "id": "canal-final",
+      "title": "The Evening Tower",
+      "releaseStatus": "planned",
+      "occupation": "The public bell tower and the working heart of the town’s old timing network.",
+      "materialPalette": ["deep indigo", "pale stone", "tarnished gold", "silver glass", "small amber lamps"],
+      "landmark": "A silent bell above a circle of dark route lamps, with the inhabited islands visible beyond.",
+      "everydayHabit": "A keeper has left a patched coat, a broom and a flask beside an immense service instrument.",
+      "traceOfPast": "The tower connects household-sized repairs to a system that spans the Reach.",
+      "unansweredQuestion": "What does a public signal owe the people who depend on it?",
+      "routeClue": "The final phrase leaves long and short spaces before its small replies, making the room ready to hear the town answer.",
+      "props": [
+        {"id": "canal-final-route-lamps", "title": "The waiting lamps", "observation": "Each dark lamp has been cleaned as carefully as the one that still glows.", "purpose": "Show care for distant neighbors without listing undiscovered game routes."},
+        {"id": "canal-final-keeper-flask", "title": "The keeper’s flask", "observation": "The flask fits a hand-sized shelf added to a machine of enormous scale.", "purpose": "Keep the tower inhabited and human in scale."},
+        {"id": "canal-final-reply-dish", "title": "The reply dish", "observation": "Its centre faces outward toward the islands, waiting to receive as well as send.", "purpose": "Express the importance of the answer rather than simply restoring power."}
+      ]
+    },
+    {
+      "id": "garden-alcove",
+      "title": "The Overgrown Music Box",
+      "releaseStatus": "planned",
+      "occupation": "An old root-service nook whose maintenance instrument has become part of the garden.",
+      "materialPalette": ["deep moss", "pale stone", "green copper", "milky glass", "one warm amber seam"],
+      "landmark": "A flower-carved stone above a music box that roots have grown around without crushing.",
+      "everydayHabit": "A small cleared patch and carefully moved leaves show that someone still tends this forgotten corner.",
+      "traceOfPast": "An older maintenance phrase survives inside the music box rather than on a modern route sign.",
+      "unansweredQuestion": "Who kept this place ready for a visitor who might never come?",
+      "routeClue": "The loose flower stone and the instrument beneath it must be discovered here; their note source and hidden reveal remain the authored once-only actions.",
+      "props": [
+        {"id": "garden-alcove-cleared-patch", "title": "The cleared patch", "observation": "Freshly turned leaves protect a dry place beside the old stone.", "purpose": "Make the detour feel cared for instead of abandoned treasure storage."},
+        {"id": "garden-alcove-root-cradle", "title": "The root cradle", "observation": "Roots curve around the little instrument’s lid, leaving it room to open.", "purpose": "Show living and inherited systems cooperating."},
+        {"id": "garden-alcove-flower-stone", "title": "The flower stone", "observation": "One carved petal is polished by a hand-sized grip.", "purpose": "Make the existing hidden search discoverable through specific physical evidence."}
+      ]
+    },
+    {
+      "id": "workshop-alcove",
+      "title": "The Birds’ Dusty Attic",
+      "releaseStatus": "planned",
+      "occupation": "The old courier roost’s reserve loft, kept above the public workshop.",
+      "materialPalette": ["dusty teal", "dark rafters", "brass", "cream ceramic", "faint blue glass"],
+      "landmark": "A hollow two-sided perch among unused courier harnesses.",
+      "everydayHabit": "Someone has folded old wing wraps and left a small brush beside the quiet perches.",
+      "traceOfPast": "Different generations of birds have left differently sized marks along the same roost rail.",
+      "unansweredQuestion": "Which of the old couriers was meant to use a perch that sounds on only one side?",
+      "routeClue": "The hollow perch holds the existing once-only hidden source. One side sounding and one side quiet supports its authored reveal without changing the source budget.",
+      "props": [
+        {"id": "workshop-alcove-wing-wraps", "title": "The folded wing wraps", "observation": "Each wrap has been repaired to fit a different small wing.", "purpose": "Show generations of care above the visible workshop."},
+        {"id": "workshop-alcove-roost-marks", "title": "The old roost marks", "observation": "Tiny scratches stop beside larger empty spaces along the rail.", "purpose": "Suggest a courier history wider than the current flock."},
+        {"id": "workshop-alcove-hollow-perch", "title": "The two-sided perch", "observation": "A gentle tap gives a clear tone on one side and a muffled pause on the other.", "purpose": "Make the hidden search a fair observation rather than an arbitrary click."}
+      ]
+    },
+    {
+      "id": "garden-secret-final",
+      "title": "The Reserved Room",
+      "releaseStatus": "planned",
+      "occupation": "A small listening room deliberately kept apart from the busy shared garden.",
+      "materialPalette": ["soft jade", "cream cloth", "pale stone", "muted copper", "warm reflected light"],
+      "landmark": "A carefully maintained empty chair beside a dormant listening window.",
+      "everydayHabit": "The room has fresh water, folded cloth and enough space left for someone else’s work.",
+      "traceOfPast": "A second set of hand-worn controls has been preserved rather than replaced.",
+      "unansweredQuestion": "Can restoring a shared song include leaving an unfinished part unfilled?",
+      "routeClue": "The long call and ordinary step carried through the detour belong to the final answer here; the room should reward the player’s earlier care with that inventory.",
+      "props": [
+        {"id": "garden-secret-final-chair", "title": "The maintained chair", "observation": "Its place is empty, but nothing about it has been neglected.", "purpose": "Distinguish a chosen space from an abandoned one."},
+        {"id": "garden-secret-final-second-controls", "title": "The second controls", "observation": "Two different hands wore the adjacent controls in different ways.", "purpose": "Give Iris’s personal history physical weight."},
+        {"id": "garden-secret-final-open-window", "title": "The listening window", "observation": "Its receiver faces the garden even while the sending side rests.", "purpose": "Pay off the branch’s attention to listening without naming the outcome in advance."}
+      ]
+    },
+    {
+      "id": "workshop-secret-final",
+      "title": "The Hidden Countermelody",
+      "releaseStatus": "planned",
+      "occupation": "A quiet reply chamber behind the courier birds’ performance machinery.",
+      "materialPalette": ["deep teal", "blue star-glass", "brass", "cream felt", "small gold highlights"],
+      "landmark": "A second, smaller listening horn hidden behind the great public sending horn.",
+      "everydayHabit": "A little step and a freshly brushed perch let a small bird reach the older mechanism.",
+      "traceOfPast": "The system was built to receive a different phrase, not merely repeat the main one.",
+      "unansweredQuestion": "What have the birds been trying to add to the town’s song?",
+      "routeClue": "The long call and ordinary step saved through the quiet passage complete this answer. The environment should suggest an independent reply without announcing a secret ending.",
+      "props": [
+        {"id": "workshop-secret-final-small-horn", "title": "The smaller horn", "observation": "Its rim is polished from the inside, as if something small has been speaking into it.", "purpose": "Reveal a practical reason for the chamber’s hidden position."},
+        {"id": "workshop-secret-final-small-step", "title": "The little service step", "observation": "A hand-built step reaches the one control a small courier cannot reach from its perch.", "purpose": "Continue the theme of people adapting inherited machines for one another."},
+        {"id": "workshop-secret-final-two-traces", "title": "The two sound traces", "observation": "Two phosphor traces approach the same pause along different curves.", "purpose": "Make an independent voice visible before its final musical payoff."}
+      ]
+    }
+  ]
+}

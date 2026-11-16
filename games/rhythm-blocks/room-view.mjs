@@ -7,6 +7,7 @@ const targetNames={nell:'Talk to Nell',iris:'Talk to Iris',pip:'Talk to Pip','de
 
 /** A reusable room controller; it moves feet and reports interactions, never notes. */
 export function createRoomView({scene,map=scene,player,floor,controls,interactButton,prompt,savedPosition=null,room=DEPOT_ROOM,canMove=()=>true,onInteract=()=>{},onStop=()=>{},onReachChange=()=>{}}){
+  const names={...targetNames,...Object.fromEntries(room.targets.filter(target=>target.label).map(target=>[target.id,target.label]))};
   player.style.width=`${MIRA.worldSize/room.width*100}%`;
   map.style.width=`${room.width}px`;map.style.height=`${room.height}px`;
   let walker=createRoomWalker({room,savedPosition}),pendingTarget=null,frameId=0,lastTime=0,walkPhase=0,lastPaint='',reachKey='',pulseUntil=0,pulseDirection=null,disposed=false,positionDirty=false;
@@ -38,12 +39,12 @@ export function createRoomView({scene,map=scene,player,floor,controls,interactBu
     const nearby=walker.nearbyTarget(),nextReach=room.targets.filter(target=>walker.withinReach(target.id)).map(target=>target.id).join('|');
     prompt.hidden=!nearby||!enabled();
     interactButton.disabled=!enabled()||!nearby;
-    setText(interactButton,nearby?targetNames[nearby.id]??'Interact':'Interact');
-    setText(prompt,!canMove()?'Close the panel to keep exploring.':pendingTarget?`Walking to ${targetNames[pendingTarget]?.replace(/^(Talk to |Open the |Inspect )/,'')??'your destination'}…`:nearby?`${targetNames[nearby.id]??'Interact'} · E or Space`:'Arrows / WASD · E interacts · I opens notes');
+    setText(interactButton,nearby?names[nearby.id]??'Interact':'Interact');
+    setText(prompt,!canMove()?'Close the panel to keep exploring.':pendingTarget?`Walking to ${names[pendingTarget]?.replace(/^(Talk to |Open the |Inspect )/,'')??'your destination'}…`:nearby?`${names[nearby.id]??'Interact'} · E or Space`:'Arrows / WASD · E interacts · I opens notes');
     for(const button of controls.querySelectorAll('[data-walk]'))button.disabled=!enabled();
     if(nextReach!==reachKey){
       reachKey=nextReach;
-      for(const target of room.targets){const button=map.querySelector(`[data-person="${target.id}"],[data-door="${target.id}"],[data-chest="${target.id}"]`);if(button)button.dataset.near=String(walker.withinReach(target.id));}
+      for(const target of room.targets){const button=map.querySelector(`[data-person="${target.id}"],[data-door="${target.id}"],[data-chest="${target.id}"],[data-inspect="${target.id}"]`);if(button)button.dataset.near=String(walker.withinReach(target.id));}
       onReachChange(snapshot());
     }
   }

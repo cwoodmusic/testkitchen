@@ -39,9 +39,17 @@ test('direct walking uses equal diagonal speed, changes facing and stops when bl
 
 test('walls, NPC feet and the chest remain solid under held keys',()=>{
  for(const obstacle of DEPOT_ROOM.obstacles){
-  const walker=createRoomWalker({savedPosition:{x:obstacle.x+obstacle.width/2,y:obstacle.y+obstacle.height+60}});
-  for(let i=0;i<100;i++){walker.move(0,-1,50);assert(isWalkable(DEPOT_ROOM,walker.state));}
-  assert(walker.state.y>=obstacle.y+obstacle.height+DEPOT_ROOM.radius-EPS,obstacle.id);
+  const {x,y,width,height}=obstacle,radius=DEPOT_ROOM.radius;
+  const probe=[
+   {at:{x:x+width/2,y:y+height+60},dx:0,dy:-1,blocked:at=>at.y>=y+height+radius-EPS},
+   {at:{x:x+width/2,y:y-60},dx:0,dy:1,blocked:at=>at.y<=y-radius+EPS},
+   {at:{x:x-60,y:y+height/2},dx:1,dy:0,blocked:at=>at.x<=x-radius+EPS},
+   {at:{x:x+width+60,y:y+height/2},dx:-1,dy:0,blocked:at=>at.x>=x+width+radius-EPS},
+  ].find(candidate=>isWalkable(DEPOT_ROOM,candidate.at));
+  assert(probe,`${obstacle.id} needs an available collision probe`);
+  const walker=createRoomWalker({savedPosition:probe.at});
+  for(let i=0;i<100;i++){walker.move(probe.dx,probe.dy,50);assert(isWalkable(DEPOT_ROOM,walker.state));}
+  assert(probe.blocked(walker.state),obstacle.id);assert.equal(walker.state.moving,false,obstacle.id);
  }
  const walker=createRoomWalker();
  for(let i=0;i<200;i++)walker.move(-1,1,50);
@@ -87,12 +95,12 @@ test('saved positions and room definitions are validated and copied',()=>{
 });
 
 test('navigation paths stay clear at every sampled foot position and remove unnecessary grid turns',()=>{
- const from={x:138,y:920};
+ const from={x:380,y:920};
  for(const target of DEPOT_ROOM.targets){
   const path=findPath(DEPOT_ROOM,from,target.approach);assert(path?.length,target.id);let previous=from;
   for(const next of path){const steps=Math.max(1,Math.ceil(Math.hypot(next.x-previous.x,next.y-previous.y)));for(let i=0;i<=steps;i++)assert(isWalkable(DEPOT_ROOM,{x:previous.x+(next.x-previous.x)*i/steps,y:previous.y+(next.y-previous.y)*i/steps}),target.id);previous=next;}
  }
- assert.deepEqual(findPath(DEPOT_ROOM,from,{x:138,y:920}),[]);
+ assert.deepEqual(findPath(DEPOT_ROOM,from,from),[]);
  assert.deepEqual(findPath(DEPOT_ROOM,from,{x:600,y:900}),[{x:600,y:900}]);
  assert.equal(findPath(DEPOT_ROOM,{x:745,y:520},{x:600,y:900}),null);
 });

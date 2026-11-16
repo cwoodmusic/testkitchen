@@ -5,7 +5,7 @@ import {dirname,join,relative} from 'node:path';
 
 export const GAME_ROOT=dirname(fileURLToPath(import.meta.url));
 export const RUNTIME_FILES=Object.freeze([
-  'game.html','app.mjs','audio.mjs','engine.mjs','journey.mjs','journey-view.mjs',
+  'game.html','app.mjs','audio.mjs','engine.mjs','journey.mjs','journey-view.mjs','lore.mjs',
   'mira.mjs','notation.mjs','opening.mjs','room.mjs','room-view.mjs','story.mjs','style.css',
   'assets/mira-walk.webp','assets/parcel-depot.webp','NOTATION-LICENSE.txt','NOTATION-SOURCES.md',
 ]);

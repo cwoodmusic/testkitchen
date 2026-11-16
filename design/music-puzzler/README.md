@@ -19,6 +19,8 @@ The current skeleton has four-door regular and five-door secret paths. Longer co
 
 The next design requirements—longer replay routes, companion destinations and finales, a discovered-only pause chart, and the ultimate **The Complete Score** achievement—are recorded in [replay-and-party.md](replay-and-party.md). The released opening now implements the persistent chart and clue journal. The deeper branches and party finales still require authoring and verification; they do not change the counts below.
 
+The retrofuture high-fantasy setting and room storytelling guide are in [worldbuilding.md](worldbuilding.md), with one record for every authored room in [worldbuilding.json](worldbuilding.json). These add setting, visual direction and environmental observations while preserving the verified economy. Only the depot is currently playable.
+
 ## Reproduce the proof
 
 ```sh
