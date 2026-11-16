@@ -6,6 +6,7 @@ import {dirname,join,relative} from 'node:path';
 export const GAME_ROOT=dirname(fileURLToPath(import.meta.url));
 export const RUNTIME_FILES=Object.freeze([
   'developer-project.mjs','developer-console.mjs','developer-console.css',
+  'cutscene.mjs','cutscene-view.mjs','cutscene-content.mjs','cutscene.css','cutscene-editor.mjs','cutscene-editor.css',
   'party-content.mjs','cast.mjs','assets/party-cast.webp',
   'chapter.mjs','chapter-content.mjs','dungeon-game.mjs','scenes.mjs',
   'campaign-data.mjs','campaign-content.mjs','campaign-scenes.mjs',

@@ -33,7 +33,14 @@ ROUTES = [
 ]
 VIRTUAL_WALK_PAGES = set()
 
+def skip_cutscene(page):
+    """Use the visible Skip control when a regression is testing exploration."""
+    panel = page.locator('#cutscene-panel')
+    if panel.count() and panel.is_visible():
+        page.locator('#cutscene-skip').click()
+
 def close_panels(page, revisit=False):
+    skip_cutscene(page)
     if page.locator('#outcome').is_visible():
         assert revisit, 'The ending must be revisited before walking again.'
         page.locator('#revisit').click()
@@ -205,10 +212,11 @@ def layout(page, touch=False):
                 assert overlap < 1, (first, second, overlap)
     return value
 
-def open_page(browser, url, width, theme, virtual_walk=True, height=None):
+def open_page(browser, url, width, theme, virtual_walk=True, height=None,
+              skip_cutscenes=True, reduced_motion='no-preference'):
     touch = width < 500
     context = browser.new_context(viewport={'width': width, 'height': height or {1024:768,390:844,320:568}[width]}, has_touch=touch,
-                                  is_mobile=touch, color_scheme=theme, reduced_motion='reduce')
+                                  is_mobile=touch, color_scheme=theme, reduced_motion=reduced_motion)
     context.add_init_script('''for(const[key,value]of Object.entries(''' + json.dumps(PROTECTED) + '''))if(localStorage.getItem(key)===null)localStorage.setItem(key,value);''')
     context.add_init_script('''window.__pageOneSaveWrites=[];const pageOneSetItem=Storage.prototype.setItem;Storage.prototype.setItem=function(key,value){if(key===''' + json.dumps(SAVE_KEY) + ''')window.__pageOneSaveWrites.push({time:performance.now(),bytes:String(value).length});return pageOneSetItem.call(this,key,value);};''')
     page = context.new_page(); page.set_default_timeout(15000)
@@ -226,6 +234,8 @@ def open_page(browser, url, width, theme, virtual_walk=True, height=None):
     context.route('**/*', route_request)
     page.goto(url); page.wait_for_function('!!window.quietBell?.state')
     page.wait_for_function('[...document.images].every(i=>i.complete&&i.naturalWidth>0)')
+    if skip_cutscenes:
+        skip_cutscene(page)
     return context, page, errors, writes, external
 
 def conversations(page, touch=False):

@@ -263,3 +263,63 @@ test('several simultaneous malformed edits still return concrete errors rather t
  const other=createDefaultProject();other.content.depot.people=[null];other.scenes.depot.objects=[null];delete other.sources['nell-parcel'].character;
  assert.doesNotThrow(()=>validateProject(other));assert.equal(validateProject(other).valid,false);
 });
+
+test('room introductions are portable authored data and leave the economy and journal catalog unchanged',()=>{
+ const project=createDefaultProject(),before={doors:clone(project.doors),sources:clone(project.sources),inventory:clone(project.settings.initialInventory),manifest:createProjectManifest(project)};
+ assert.equal(Object.values(project.content).filter(room=>room.cutscene?.length).length,23);
+ for(const [roomId,content]of Object.entries(project.content)){
+  assert.equal(content.cutscene.length,4,roomId);assert(content.cutscene.some(beat=>beat.emote==='idea'));assert(content.cutscene.some(beat=>beat.emote==='question'));
+ }
+ project.content.depot.cutscene=[{id:'opening-line',speaker:'mira',actor:'pip',text:'<b>A literal thought.</b>',startTile:7,durationTiles:12,target:'clockwork-roost',action:'listen',emote:'idea'},{id:'silent-search',actor:'iris',destination:{x:950,y:840},startTile:22,durationTiles:5,action:'search',emote:'question'}];
+ const restored=normalizeProject(JSON.parse(JSON.stringify(project)));valid(restored);
+ assert.deepEqual(restored.content.depot.cutscene,project.content.depot.cutscene);assert(Object.isFrozen(restored.content.depot.cutscene[0]));
+ assert.deepEqual(restored.doors,before.doors);assert.deepEqual(restored.sources,before.sources);assert.deepEqual(restored.settings.initialInventory,before.inventory);assert.deepEqual(createProjectManifest(restored),before.manifest);
+ project.content.depot.cutscene[0].text='A later edit';assert.equal(restored.content.depot.cutscene[0].text,'<b>A literal thought.</b>');
+});
+
+test('older projects receive only missing room introductions and preserve intentionally disabled or edited scenes',()=>{
+ const project=createDefaultProject(),before=clone(project);
+ for(const content of Object.values(project.content))delete content.cutscene;
+ project.content.depot.cutscene=[];
+ project.content['garden-porch'].cutscene=[{speaker:'mira',text:'My own entrance line.',emote:'happy'}];
+ project.content['workshop-porch'].people[0].intro='Keep my NPC edits.';
+ const source=clone(project),restored=normalizeProject(project);
+ assert.deepEqual(project,source,'normalizing must not edit the imported snapshot');
+ assert.deepEqual(restored.content.depot.cutscene,[]);assert.deepEqual(restored.content['garden-porch'].cutscene,project.content['garden-porch'].cutscene);
+ assert.equal(restored.content['workshop-porch'].people[0].intro,'Keep my NPC edits.');
+ assert.deepEqual(restored.content['canal-porch'].cutscene,before.content['canal-porch'].cutscene);
+ assert.deepEqual(restored.doors,before.doors);assert.deepEqual(restored.sources,before.sources);assert.deepEqual(normalizeProject(restored),restored);
+ const old=legacyProject();for(const content of Object.values(old.content))delete content.cutscene;
+ const expanded=normalizeProject(old);assert.equal(Object.values(expanded.content).filter(content=>content.cutscene.length).length,23);
+});
+
+test('missing legacy scene actors and renamed objects do not make introductory migration break custom projects',()=>{
+ const project=createDefaultProject(),room='ending-home';delete project.content[room].cutscene;
+ const nell=project.content[room].people.find(person=>person.id==='nell');nell.id='keeper';nell.name='My keeper';
+ const scene=project.scenes[room];scene.actors.find(actor=>actor.id==='nell').id='keeper';scene.objects.find(item=>item.id==='nell').id='keeper';scene.geometry.targets.find(item=>item.id==='nell').id='keeper';scene.geometry.obstacles.find(item=>item.id==='nell').id='keeper';
+ const oldTarget=scene.objects.find(item=>item.type==='inspect').id,newTarget='changed-object';scene.objects.find(item=>item.id===oldTarget).id=newTarget;scene.geometry.targets.find(item=>item.id===oldTarget).id=newTarget;project.content[room].inspections.find(item=>item.id===oldTarget).id=newTarget;
+ const restored=normalizeProject(project);valid(restored);
+ assert(!restored.content[room].cutscene.some(beat=>beat.speaker==='nell'||beat.actor==='nell'));
+ assert(!restored.content[room].cutscene.some(beat=>beat.target===oldTarget));
+ assert.equal(restored.content[room].people.find(person=>person.id==='keeper').name,'My keeper');
+});
+
+test('timeline times use integer walk tiles and validate local characters, destinations, actions and emotes',()=>{
+ const badCases=[
+  [beat=>{beat.startTile=.5;},'startTile'],[beat=>{beat.startTile=-1;},'startTile'],[beat=>{beat.durationTiles=0;},'durationTiles'],[beat=>{beat.durationTiles=2.5;},'durationTiles'],
+  [beat=>{beat.speaker='visitor';},'speaker'],[beat=>{beat.actor='visitor';},'actor'],[beat=>{beat.emote='javascript';},'emote'],[beat=>{beat.action='claim-notes';},'action'],
+  [beat=>{beat.text='x'.repeat(601);},'600'],[beat=>{beat.destination={x:1600,y:400};},'inside the room'],[beat=>{beat.destination={x:500,y:400};beat.target='clockwork-roost';},'either an object target'],
+ ];
+ for(const [mutate,error]of badCases){const project=createDefaultProject(),beat={speaker:'mira',text:'Look over there.'};mutate(beat);project.content.depot.cutscene=[beat];invalid(project,error);}
+ const duplicate=createDefaultProject();duplicate.content.depot.cutscene=[{id:'same',speaker:'mira',text:'One.'},{id:'same',speaker:'pip',text:'Two.'}];invalid(duplicate,'unique within the room');
+ const long=createDefaultProject();long.content.depot.cutscene=Array.from({length:33},()=>({speaker:'mira',text:'A line.'}));invalid(long,'at most 32');
+ const blank=createDefaultProject();blank.content.depot.cutscene=[{speaker:'mira',text:''}];invalid(blank,'dialogue, movement');
+ const silent=createDefaultProject();silent.content.depot.cutscene=[{actor:'mira',action:'look'}];valid(silent);
+});
+
+test('timeline authoring warns about missing props, blocked points and overlapping clips without losing the draft',()=>{
+ const project=createDefaultProject();project.content.depot.cutscene=[{speaker:'mira',text:'A room can change.',target:'not-here',startTile:0,durationTiles:10},{actor:'mira',action:'search',destination:{x:0,y:0},startTile:3,durationTiles:2}];
+ const warnings=valid(project).warnings;assert(warnings.some(message=>message.includes('object is missing')));assert(warnings.some(message=>message.includes('nearest reachable floor')));assert(warnings.some(message=>message.includes('overlapping clips')));
+ assert.deepEqual(normalizeProject(project).content.depot.cutscene,project.content.depot.cutscene);
+ for(const value of [null,7,'a scene',{},[null]]){const broken=createDefaultProject();broken.content.depot.cutscene=value;assert.doesNotThrow(()=>validateProject(broken));invalid(broken,'cutscene');}
+});

@@ -12,7 +12,7 @@ export function createRoomView({scene,map=scene,player,floor,controls,interactBu
   player.style.width=`${playerDefinition.worldSize/room.width*100}%`;
   map.style.width=`${room.width}px`;map.style.height=`${room.height}px`;
   let walker=createRoomWalker({room,savedPosition}),pendingTarget=null,frameId=0,lastTime=0,walkPhase=0,lastPaint='',reachKey='',pulseUntil=0,pulseDirection=null,disposed=false,positionDirty=false;
-  let viewportWidth=scene.clientWidth,viewportHeight=scene.clientHeight,camera={scale:1,offsetX:0,offsetY:0,width:viewportWidth,height:viewportHeight},cameraKey='';
+  let viewportWidth=scene.clientWidth,viewportHeight=scene.clientHeight,camera={scale:1,offsetX:0,offsetY:0,width:viewportWidth,height:viewportHeight},cameraKey='',cinematicFrame=null;
   const held=new Set(),pointers=new Map(),removers=[];
   const setText=(element,text)=>{if(element.textContent!==text)element.textContent=text;};
   function listen(element,event,handler,options){element.addEventListener(event,handler,options);removers.push(()=>element.removeEventListener(event,handler,options));}
@@ -20,18 +20,20 @@ export function createRoomView({scene,map=scene,player,floor,controls,interactBu
   function snapshot(){return{...walker.state,pendingTarget};}
   function savePosition(){const {x,y,facing}=walker.state;positionDirty=false;onStop({x,y,facing});}
   function followCamera(state){
+    const focus=cinematicFrame?.focus??state;
     const width=Math.max(1,viewportWidth),height=Math.max(1,viewportHeight);
     // Pull back from the old fill-and-crop framing and keep the full room height.
     const scale=cameraFit?Math.min(width/room.width,height/room.height):Math.min(Math.max(width/room.width,height/room.height)*.8,height/room.height);
     const bound=(value,min,max)=>Math.max(min,Math.min(max,value));
-    const offsetX=room.width*scale<=width?(width-room.width*scale)/2:bound(width*.5-state.x*scale,width-room.width*scale,0);
-    const offsetY=(height-room.height*scale)/2;
+    const offsetX=room.width*scale<=width?(width-room.width*scale)/2:bound(width*.5-focus.x*scale,width-room.width*scale,0);
+    const centeredY=(height-room.height*scale)/2;
+    const offsetY=cinematicFrame&&!cameraFit?Math.min(centeredY,height-(cinematicFrame.reservedBottom??0)-32-focus.y*scale):centeredY;
     camera={scale,offsetX,offsetY,width,height};const key=[scale,offsetX,offsetY].join('|');
     if(key!==cameraKey){cameraKey=key;map.style.setProperty('--room-scale',scale);map.style.transform=`translate(${offsetX}px,${offsetY}px) scale(${scale})`;}
   }
   function paint(){
     if(disposed)return;
-    const state=walker.state,row=Math.max(0,playerDefinition.directions.indexOf(state.facing)),col=state.moving?[1,0,2,0][Math.floor(walkPhase/125)%4]:0;
+    const state=cinematicFrame?.player??walker.state,row=Math.max(0,playerDefinition.directions.indexOf(state.facing)),phase=cinematicFrame?.elapsed??walkPhase,col=state.moving?[1,0,2,0][Math.floor(phase/125)%4]:0;
     followCamera(state);
     const signature=[state.x,state.y,row,col].join('|');
     if(signature!==lastPaint){
@@ -121,5 +123,5 @@ export function createRoomView({scene,map=scene,player,floor,controls,interactBu
   const resize=()=>{viewportWidth=scene.clientWidth;viewportHeight=scene.clientHeight;paint();};
   if(globalThis.ResizeObserver){const observer=new ResizeObserver(resize);observer.observe(scene);removers.push(()=>observer.disconnect());}else listen(window,'resize',resize);
   paint();
-  return Object.freeze({get state(){return snapshot();},get camera(){return{...camera};},request,goTo,withinReach:id=>walker.withinReach(id),interact,stop,refresh,reset,destroy(){stop();disposed=true;for(const remove of removers)remove();}});
+  return Object.freeze({get state(){return snapshot();},get camera(){return{...camera};},request,goTo,withinReach:id=>walker.withinReach(id),interact,stop,refresh,reset,setCinematicFrame(value=null){cinematicFrame=value;lastPaint='';paint();},destroy(){stop();disposed=true;for(const remove of removers)remove();}});
 }

@@ -1,17 +1,18 @@
 import {createDefaultProject,validateProject,normalizeProject,getPersonReplies} from './developer-project.mjs';
 import {symbolMarkup} from './notation.mjs';
+import {createCutsceneEditor} from './cutscene-editor.mjs';
 
 const clone=value=>structuredClone(value);
-const TABS=[['dialogue','Dialogue'],['puzzles','Puzzles'],['notes','Notes'],['rooms','Room'],['playtest','Test'],['json','Advanced']];
+const TABS=[['dialogue','Dialogue'],['cutscene','Cutscene'],['puzzles','Puzzles'],['notes','Notes'],['rooms','Room'],['playtest','Test'],['json','Advanced']];
 const text=value=>value==null?'':String(value);
 const title=value=>text(value).replace(/[-_]/g,' ');
 const noop=()=>{};
 
 /** Local authoring UI. All execution and storage are owned by the calling app. */
-export function createDeveloperConsole({mount=document.body,getProject=createDefaultProject,getState=()=>({}),onOpen=noop,onClose=noop,onDraftChange=noop,onSelectRoom=noop,onApply=noop,onPlaytest=noop,onReturnToGame=noop,onPreview=noop,onSetInventory=noop,onTeleport=noop,onResetSources=noop,onSaveProject=noop}={}){
+export function createDeveloperConsole({mount=document.body,getProject=createDefaultProject,getState=()=>({}),onOpen=noop,onClose=noop,onDraftChange=noop,onSelectRoom=noop,onApply=noop,onPlaytest=noop,onReturnToGame=noop,onPreview=noop,onPreviewCutscene=noop,onSetInventory=noop,onTeleport=noop,onResetSources=noop,onSaveProject=noop}={}){
   const document=mount.ownerDocument??globalThis.document;
   let draft=null,tab='dialogue',roomId='depot',personId=null,doorId=null,sourceId=null,noteId=null,actorId=null,objectId=null,loreId=null,dialogueTopic='story',replyId='story',query='',dirty=false,sourceJSON='',jsonBuffer=null,jsonDirty=false,busy=false,disposed=false,fieldEvent=false;
-  const past=[],future=[];
+  const past=[],future=[],cutsceneStates=new Map();let cutsceneEditor=null,cutsceneEditorRoom=null,previewProject=null,previewSignature=null;
   const el=(tag,className='',value='')=>{const node=document.createElement(tag);if(className)node.className=className;if(value!=='')node.textContent=text(value);return node;};
   const dialog=el('dialog','dc-dialog');dialog.id='developer-console';dialog.setAttribute('aria-labelledby','developer-title');
   const shell=el('div','dc-shell'),header=el('header','dc-header'),heading=el('div');
@@ -28,7 +29,7 @@ export function createDeveloperConsole({mount=document.body,getProject=createDef
   const toolbar=el('div','dc-toolbar'),roomLabel=el('div','dc-room-picker'),roomSelect=el('div','dc-room-cards');roomSelect.id='developer-room-cards';roomSelect.setAttribute('aria-label','Choose a room to edit');roomLabel.append(roomSelect);
   const searchLabel=el('label','dc-field','Find text'),searchInput=el('input');searchInput.id='developer-search';searchInput.type='search';searchInput.placeholder='Find dialogue, clues, doors…';searchInput.setAttribute('aria-label','Find text in the project');searchLabel.append(searchInput);toolbar.append(roomLabel,searchLabel);
   const tabs=el('nav','dc-tabs');tabs.setAttribute('aria-label','Developer editors');tabs.setAttribute('role','tablist');
-  for(const [id,label]of TABS){const item=button(label,()=>{if(!consumeJSON())return;tab=id;query='';searchInput.value='';render();},{'data-dev-tab':id,role:'tab','aria-controls':'developer-body'});item.id='developer-tab-'+id;tabs.append(item);}
+  for(const [id,label]of TABS){const item=button(label,()=>{if(!consumeJSON())return;tab=id;query='';searchInput.value='';render();body.scrollTop=0;},{'data-dev-tab':id,role:'tab','aria-controls':'developer-body'});item.id='developer-tab-'+id;tabs.append(item);}
   const body=el('div','dc-body');body.id='developer-body';body.setAttribute('role','tabpanel');let editor=body;
   const notices=el('div','dc-notices'),status=el('p','dc-status');status.id='developer-status';status.setAttribute('role','status');status.setAttribute('aria-live','polite');
   const errors=el('ul','dc-errors');errors.id='developer-errors';errors.setAttribute('aria-live','polite');const warnings=el('ul','dc-warnings');warnings.id='developer-warnings';notices.append(status,errors,warnings);
@@ -166,8 +167,33 @@ export function createDeveloperConsole({mount=document.body,getProject=createDef
     const obstacle=scene.geometry.obstacles.find(item=>item.id===actor.id);if(obstacle){obstacle.x=x+(obstacle.x-old.x)*scale;obstacle.y=y+(obstacle.y-old.y)*scale;obstacle.width*=scale;obstacle.height*=scale;}
   }
   function jsonEditor(label,value,commit,{id}={}){const part=el('details','dc-advanced');part.append(el('summary','',label));const area=el('textarea','dc-json-area');if(id)area.id=id;area.rows=14;area.spellcheck=false;area.value=JSON.stringify(value,null,2);part.append(area,button('Apply '+label.toLowerCase(),()=>{try{const parsed=JSON.parse(area.value);commit(parsed);}catch(error){showIssues({errors:[error.message??String(error)]});say('That JSON was not applied.');}}));return part;}
+  function destroyCutsceneEditor(){
+    if(!cutsceneEditor)return;
+    const previous=cutsceneEditor,previousRoom=cutsceneEditorRoom;
+    previous.state.playing=false;cutsceneStates.set(previousRoom,previous.state);
+    cutsceneEditor=null;cutsceneEditorRoom=null;previous.destroy();
+    // Stopping is synchronous when possible; a late rejected cleanup must not
+    // interrupt a tab change or the normal intro started by Apply & playtest.
+    try{void Promise.resolve(onPreviewCutscene(previousRoom,draft,{command:'stop'})).catch(noop);}catch{}
+  }
+  function renderCutsceneEditor(content,scene){
+    cutsceneEditorRoom=roomId;
+    cutsceneEditor=createCutsceneEditor({document,roomId,content,scene,state:cutsceneStates.get(roomId),onChange:(mutator,options)=>changed(()=>mutator(),options),onPreview:async options=>{
+      // Scrubbing sends many commands against the same frozen definition. Only
+      // a changed draft needs to replay the full project validation and clone.
+      const signature=jsonDirty?`json:${jsonBuffer}`:JSON.stringify(draft);
+      if(signature!==previewSignature){
+        previewProject=null;previewSignature=null;
+        const project=candidate();if(!project)return false;
+        previewProject=project;previewSignature=signature;
+      }
+      const project=previewProject;if(!project)return false;
+      try{return await onPreviewCutscene(roomId,project,options);}catch(error){showIssues({errors:[error.message??String(error)]});say('The preview could not start. Your draft is still here.');return false;}
+    }});editor.append(cutsceneEditor.element);
+  }
   function renderRooms(){
     const {room,content,scene,terminal}=getCurrent(),section=card('Room & character placement','Drag a character in the scene to move them. Their click region, approach point and collision move together.');section.append(field('Room title',room.title,value=>changed(()=>{room.title=value;content.title=value;scene.title=value;}),{id:'developer-room-title',path:[terminal?'terminals':'rooms',roomId,'title']}),field('Arrival text',content.arrival,value=>changed(()=>{content.arrival=value;}),{id:'developer-room-arrival',path:['content',roomId,'arrival'],multiline:true}));editor.append(section);
+    renderCutsceneEditor(content,scene);
     if(terminal&&content.outcome){const outcome=content.outcome,ending=card('Outcome & recovery','The conclusion shown at this place. Its characters and objects remain editable in the frozen room.');ending.append(field('Heading',outcome.kicker??'',value=>changed(()=>{outcome.kicker=value;}),{id:'developer-outcome-heading',path:['content',roomId,'outcome','kicker']}),field('Conclusion',outcome.copy??room.text??'',value=>changed(()=>{outcome.copy=value;room.text=value;}),{id:'developer-outcome-copy',path:['content',roomId,'outcome','copy'],multiline:true}));if(room.kind==='dead-end')ending.append(field('How to find another route',outcome.repair??room.repair??'',value=>changed(()=>{outcome.repair=value;room.repair=value;}),{id:'developer-outcome-repair',path:['content',roomId,'outcome','repair'],multiline:true}));editor.append(ending);}
     const actors=scene.actors??[];if(!actors.some(actor=>actor.id===actorId))actorId=actors[0]?.id;const actor=actors.find(item=>item.id===actorId),people=content.people??[];
     if(actor){const placement=el('details','dc-advanced');placement.append(el('summary','','Exact character coordinates'),select('Character',actorId,actors.map(item=>[item.id,people.find(person=>person.id===item.id)?.name??item.id]),id=>{actorId=id;render();},{id:'developer-actor'}),fields(field('X',actor.feet.x,value=>changed(()=>translateActor(scene,actor,value,actor.feet.y)),{id:'developer-actor-x',type:'number',step:1}),field('Y',actor.feet.y,value=>changed(()=>translateActor(scene,actor,actor.feet.x,value)),{id:'developer-actor-y',type:'number',step:1}),field('Size',actor.worldSize,value=>changed(()=>translateActor(scene,actor,actor.feet.x,actor.feet.y,value)),{id:'developer-actor-size',type:'number',min:20,max:600,step:1})));editor.append(placement);}
@@ -191,6 +217,7 @@ export function createDeveloperConsole({mount=document.body,getProject=createDef
     for(const [id,room]of Object.entries(locations())){
       const content=draft.content[id];if(!content)continue;const label=room.title??id;
       for(const key of ['title','arrival'])add(content[key],`${label} · ${key}`,{room:id,tab:'rooms'});
+      for(const [index,line]of (content.cutscene??[]).entries())add(line.text,`${label} · entrance line ${index+1}`,{room:id,cutscene:index,tab:'cutscene'});
       for(const person of content.people??[]){
         for(const key of ['name','role','intro'])add(person[key],`${person.name} · ${label} · ${key}`,{room:id,person:person.id,tab:'dialogue'});
         for(const reply of getPersonReplies(person))for(const key of ['label','text'])add(reply[key],`${person.name} · ${label} · ${reply.label}`,{room:id,person:person.id,reply:reply.id,tab:'dialogue'});
@@ -202,19 +229,19 @@ export function createDeveloperConsole({mount=document.body,getProject=createDef
     for(const source of Object.values(draft.sources))if(location(source.roomId))for(const key of ['label','hint'])add(source[key],source.label,{room:source.roomId,source:source.id,tab:'notes'});
     const section=card('Search results',`${results.length} matching fields`);
     for(const result of results.slice(0,80)){
-      const item=button('',()=>{if(!consumeJSON())return;roomId=result.room;tab=result.tab;personId=result.person??personId;replyId=result.reply??replyId;doorId=result.door??doorId;sourceId=result.source??sourceId;loreId=result.inspection??null;query='';searchInput.value='';onSelectRoom(roomId,clone(draft));render();},{className:'dc-search-result'});
+      const item=button('',()=>{if(!consumeJSON())return;roomId=result.room;tab=result.tab;personId=result.person??personId;replyId=result.reply??replyId;doorId=result.door??doorId;sourceId=result.source??sourceId;loreId=result.inspection??null;if(result.cutscene!==undefined)cutsceneStates.set(roomId,{...(cutsceneStates.get(roomId)??{}),selectedIndex:result.cutscene});query='';searchInput.value='';onSelectRoom(roomId,clone(draft));render();},{className:'dc-search-result'});
       item.append(el('strong','',result.label),el('span','dc-muted',result.value.slice(0,180)));section.append(item);
     }
     if(!results.length)section.append(el('p','dc-muted','No matching dialogue, observations, clues or source text.'));editor.append(section);
   }
   function render(){
-    if(!draft)return;const rooms=Object.keys(locations());if(!rooms.includes(roomId))roomId=rooms[0];
+    if(!draft)return;destroyCutsceneEditor();const rooms=Object.keys(locations());if(!rooms.includes(roomId))roomId=rooms[0];
     roomSelect.replaceChildren();for(const [id,label]of optionLocations()){const item=button('',()=>{if(!consumeJSON())return;roomId=id;loreId=null;query='';searchInput.value='';onSelectRoom(roomId,clone(draft));render();},{className:'dc-room-card','data-dev-room':id,'aria-pressed':String(id===roomId)});const image=el('img');image.src=draft.scenes[id]?.image??'';image.alt='';item.append(image,el('span','',label));roomSelect.append(item);}
-    for(const item of tabs.querySelectorAll('[data-dev-tab]')){const active=item.dataset.devTab===tab;item.setAttribute('aria-selected',String(active));item.tabIndex=active?0:-1;}body.setAttribute('aria-labelledby','developer-tab-'+tab);body.replaceChildren();editor=el('main','dc-inspector');body.append(editor);
-    if(query)searchResults();else if(tab==='dialogue')renderDialogue();else if(tab==='puzzles')renderPuzzles();else if(tab==='notes')renderNotes();else if(tab==='rooms')renderRooms();else if(tab==='playtest')renderPlaytest();else renderJSON();updateControls();
+    for(const item of tabs.querySelectorAll('[data-dev-tab]')){const active=item.dataset.devTab===tab;item.setAttribute('aria-selected',String(active));item.tabIndex=active?0:-1;}body.setAttribute('aria-labelledby','developer-tab-'+tab);body.dataset.editor=tab;body.replaceChildren();editor=el('main','dc-inspector');body.append(editor);
+    if(query)searchResults();else if(tab==='dialogue')renderDialogue();else if(tab==='cutscene'){const {content,scene}=getCurrent();renderCutsceneEditor(content,scene);}else if(tab==='puzzles')renderPuzzles();else if(tab==='notes')renderNotes();else if(tab==='rooms')renderRooms();else if(tab==='playtest')renderPlaytest();else renderJSON();updateControls();
   }
   searchInput.addEventListener('input',()=>{query=searchInput.value.trim();render();});
-  tabs.addEventListener('keydown',event=>{const items=[...tabs.querySelectorAll('[data-dev-tab]')],index=items.indexOf(document.activeElement);if(index<0)return;let next;if(event.key==='ArrowRight')next=(index+1)%items.length;else if(event.key==='ArrowLeft')next=(index-1+items.length)%items.length;else if(event.key==='Home')next=0;else if(event.key==='End')next=items.length-1;else return;event.preventDefault();if(!consumeJSON())return;tab=items[next].dataset.devTab;query='';searchInput.value='';render();items[next].focus();});
+  tabs.addEventListener('keydown',event=>{const items=[...tabs.querySelectorAll('[data-dev-tab]')],index=items.indexOf(document.activeElement);if(index<0)return;let next;if(event.key==='ArrowRight')next=(index+1)%items.length;else if(event.key==='ArrowLeft')next=(index-1+items.length)%items.length;else if(event.key==='Home')next=0;else if(event.key==='End')next=items.length-1;else return;event.preventDefault();if(!consumeJSON())return;tab=items[next].dataset.devTab;query='';searchInput.value='';render();body.scrollTop=0;items[next].focus();});
   dialog.addEventListener('keydown',event=>{event.stopPropagation();if(event.key==='F2'||event.key==='Escape'){event.preventDefault();close();}});dialog.addEventListener('keyup',event=>event.stopPropagation());
   dialog.addEventListener('cancel',event=>{event.preventDefault();close();});dialog.addEventListener('close',()=>onClose());
   function open(options={}){
@@ -229,6 +256,6 @@ export function createDeveloperConsole({mount=document.body,getProject=createDef
     translateActor(scene,actor,x,y);const result=validateProject(next);if(!result.valid){showIssues(result);say('That position would block an interaction. The character has not moved.');return false;}
     record();draft=next;dirty=true;jsonDirty=false;jsonBuffer=null;actorId=id;tab='rooms';clearIssues();publishDraft();render();say('Character moved. Its interaction area and collision moved with it.');return true;
   }
-  function close(){if(dialog.open)dialog.close();dialog.classList.remove('dc-expanded');expandButton.textContent='Expand';expandButton.setAttribute('aria-expanded','false');expandButton.setAttribute('aria-label','Expand editor');}
+  function close(){destroyCutsceneEditor();if(dialog.open)dialog.close();dialog.classList.remove('dc-expanded');expandButton.textContent='Expand';expandButton.setAttribute('aria-expanded','false');expandButton.setAttribute('aria-label','Expand editor');}
   return Object.freeze({open,close,moveActor,refresh(){if(dialog.open)render();},get isOpen(){return dialog.open;},destroy(){if(disposed)return;close();disposed=true;dialog.remove();}});
 }

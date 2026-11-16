@@ -62,6 +62,7 @@ class Campaign:
         assert len(self.project['sources']) == 7
 
     def close(self):
+        ui.skip_cutscene(self.page)
         for dialog, button in [('#outcome', '#outcome-close'),
                                ('#conversation-dialog', '#conversation-close'),
                                ('#notes-dialog', '#notes-close'), ('#help-dialog', '#help-close'),
@@ -96,7 +97,9 @@ class Campaign:
         if target.get('inspect'):
             assert self.page.locator('#lore-dialog').get_attribute('data-observation') == target['inspect'], (selector, value)
         if not target.get('returnTo'):
-            scene = self.project['scenes'][value['roomId']]
+            # An entrance performance can leave a companion at an inspected
+            # object. Read the actual staged interaction geometry after it.
+            scene = self.page.evaluate('quietBell.scene') or self.project['scenes'][value['roomId']]
             target_id = next(value for value in target.values() if value)
             geometry = next(item for item in scene['geometry']['targets'] if item['id'] == target_id)
             position = ui.walker(self.page)
@@ -132,6 +135,7 @@ class Campaign:
         return value
 
     def room(self, room_id):
+        ui.skip_cutscene(self.page)
         value = ui.state(self.page)
         assert value['roomId'] == room_id and value['phase'] == ('terminal' if room_id in TERMINALS else 'room'), value
         assert value['inventory'] == self.stock and value['availableInventory'] == self.stock, (room_id, self.stock, value)

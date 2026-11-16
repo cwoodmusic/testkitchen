@@ -50,7 +50,14 @@ class RhythmBlocksLaunchTests(world.WorldBrowserCase):
         }''', arg=GAME)
         self.assertTrue(self.page.locator('#gameoverlay').is_visible())
         self.assertEqual(self.page.locator('#activegame').inner_text(), 'The Quiet Bell')
-        return self.page.locator('#gameiframe').element_handle().content_frame()
+        frame = self.page.locator('#gameiframe').element_handle().content_frame()
+        self.skip_intro(frame)
+        return frame
+
+    def skip_intro(self, frame):
+        frame.wait_for_function('!!window.quietBell?.state')
+        if frame.locator('#cutscene-panel').is_visible():
+            frame.locator('#cutscene-skip').click()
 
     def exit_game(self, frame):
         for dialog, close in [('#conversation-dialog','#conversation-close'), ('#notes-dialog','#notes-close')]:
@@ -123,7 +130,7 @@ class RhythmBlocksLaunchTests(world.WorldBrowserCase):
 
     def test_standalone_return_stays_under_the_current_package_prefix(self):
         self.page.goto(GAME, wait_until='domcontentloaded')
-        self.page.wait_for_function('!!window.quietBell?.state')
+        self.skip_intro(self.page)
         self.page.locator('#menu').click()
         back = self.page.get_by_role('link', name=re.compile('arcade', re.I))
         self.assertEqual(back.evaluate('link=>new URL(link.href).pathname'), PREFIX+'world-preview.html')

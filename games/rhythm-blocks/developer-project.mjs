@@ -3,6 +3,7 @@ import {NOTE_KINDS} from './engine.mjs';
 import {CHAPTER_ROOMS,CHAPTER_DOORS,CHAPTER_SOURCES,CHAPTER_PREVIEWS,CHAPTER_TERMINALS} from './chapter.mjs';
 import {CAMPAIGN_CONTENT} from './campaign-content.mjs';
 import {CAMPAIGN_SCENES} from './campaign-scenes.mjs';
+import {ROOM_CUTSCENES} from './cutscene-content.mjs';
 import {CAST,CAST_IMAGE} from './cast.mjs';
 import {MIRA} from './mira.mjs';
 import {createRoomWalker,findPath,isWalkable} from './room.mjs';
@@ -13,6 +14,8 @@ const NOTE_IDS=new Set(NOTE_KINDS.map(note=>note.id));
 const FORBIDDEN=new Set(['__proto__','prototype','constructor']);
 const TYPES=new Set(['person','door','chest','inspect','return']);
 const FACINGS=new Set(['up','down','left','right']);
+const CUTSCENE_ACTIONS=new Set(['look','search','examine','listen']);
+const CUTSCENE_EMOTES=new Set(['idea','question','thinking','surprise','happy']);
 const own=(value,key)=>Object.hasOwn(value,key);
 const asArray=value=>Array.isArray(value)?value:[];
 const record=value=>value!==null&&typeof value==='object'&&!Array.isArray(value)&&[Object.prototype,null].includes(Object.getPrototypeOf(value));
@@ -29,7 +32,7 @@ export function createDefaultProject(){
   settings:{title:'The Quiet Bell',bpm:108,startRoomId:'depot',castImage:CAST_IMAGE,terminalRooms:true,completionReady:true,initialInventory:Object.fromEntries(NOTE_KINDS.map(note=>[note.id,0]))},
   noteKinds:NOTE_KINDS.map((note,index)=>({...note,symbol:note.id,shortName:SHORT_NAMES[index],color:COLORS[index],subdivisions:['eighth-pair','sixteenth-pair'].includes(note.id)?2:note.id==='sixteenth-group'?4:1})),
   rooms:CHAPTER_ROOMS,doors:CHAPTER_DOORS,sources:CHAPTER_SOURCES,previews:CHAPTER_PREVIEWS,terminals:CHAPTER_TERMINALS,
-  content:CAMPAIGN_CONTENT,
+  content:Object.fromEntries(Object.entries(CAMPAIGN_CONTENT).map(([id,content])=>[id,{...content,cutscene:ROOM_CUTSCENES[id]??[]}])),
   scenes:CAMPAIGN_SCENES,cast:CAST,player:{...MIRA,image:'assets/mira-walk.webp'},
  });
 }
@@ -194,6 +197,37 @@ export function validateProject(project){
   const path=`content.${roomId}`;if(!own(locations,roomId))fail(path,'reference a playable room or enabled outcome room.');
   if(!record(roomContent)){fail(path,'use a room-content definition.');continue;}
   text(roomContent.title,`${path}.title`,{max:160});text(roomContent.arrival,`${path}.arrival`,{empty:true});
+  if(roomContent.cutscene!==undefined&&list(roomContent.cutscene,`${path}.cutscene`,32)){
+   const people=new Set(asArray(roomContent.people).map(person=>person?.id)),actors=new Set(asArray(scenes[roomId]?.actors).map(actor=>actor?.id)),targets=new Set(asArray(scenes[roomId]?.geometry?.targets).map(target=>target?.id));
+   people.add('mira');actors.add('mira');
+   const clipIds=new Set(),scheduled=[];
+   roomContent.cutscene.forEach((beat,index)=>{
+    const beatPath=`${path}.cutscene[${index}]`;if(!record(beat)){fail(beatPath,'use a dialogue or action clip.');return;}
+    if(beat.id!==undefined){id(beat.id,`${beatPath}.id`);if(clipIds.has(beat.id))fail(`${beatPath}.id`,'clip IDs must be unique within the room.');clipIds.add(beat.id);}
+    if(beat.speaker!==undefined){id(beat.speaker,`${beatPath}.speaker`);if(!people.has(beat.speaker))fail(`${beatPath}.speaker`,'choose Mira or a person in this room.');}
+    if(beat.text!==undefined)text(beat.text,`${beatPath}.text`,{max:600,empty:true});
+    if(typeof beat.text==='string'&&beat.text.trim()&&!people.has(beat.speaker))fail(`${beatPath}.speaker`,'a spoken line needs Mira or a person in this room.');
+    if(beat.actor!==undefined){id(beat.actor,`${beatPath}.actor`);if(!actors.has(beat.actor))fail(`${beatPath}.actor`,'choose Mira or a foreground actor in this room.');}
+    if(!actors.has(beat.actor??beat.speaker))fail(`${beatPath}.actor`,'each clip needs a local actor or speaker.');
+    for(const [field,min]of [['startTile',0],['durationTiles',1]])if(beat[field]!==undefined)number(beat[field],`${beatPath}.${field}`,min,100000,{integer:true});
+    if(beat.target!==undefined){id(beat.target,`${beatPath}.target`);if(!targets.has(beat.target))warn(`${beatPath}.target`,'this object is missing; the clip will play without an approach.');}
+    if(beat.destination!==undefined){
+     if(point(beat.destination,`${beatPath}.destination`)){
+      const geometry=scenes[roomId]?.geometry;
+      if(record(geometry)&&finite(geometry.width)&&finite(geometry.height)){
+       if(beat.destination.x<0||beat.destination.y<0||beat.destination.x>geometry.width||beat.destination.y>geometry.height)fail(`${beatPath}.destination`,'keep the destination inside the room artwork.');
+       else if(record(geometry.bounds)&&Array.isArray(geometry.obstacles)&&geometry.obstacles.every(item=>record(item)&&finite(item.x)&&finite(item.y)&&finite(item.width)&&finite(item.height))&&!isWalkable(geometry,beat.destination))warn(`${beatPath}.destination`,'this point is blocked; motion will use the nearest reachable floor.');
+      }
+     }
+     if(beat.target!==undefined)fail(beatPath,'choose either an object target or a destination, not both.');
+    }
+    if(beat.action!==undefined&&!CUTSCENE_ACTIONS.has(beat.action))fail(`${beatPath}.action`,'choose look, search, examine or listen.');
+    if(beat.emote!==undefined&&!CUTSCENE_EMOTES.has(beat.emote))fail(`${beatPath}.emote`,'choose idea, question, thinking, surprise or happy.');
+    if(!(typeof beat.text==='string'&&beat.text.trim())&&beat.target===undefined&&beat.destination===undefined&&beat.action===undefined&&beat.emote===undefined)fail(beatPath,'add dialogue, movement, an action or an emote.');
+    if(Number.isSafeInteger(beat.startTile)&&Number.isSafeInteger(beat.durationTiles))scheduled.push({actor:beat.actor??beat.speaker,start:beat.startTile,end:beat.startTile+beat.durationTiles,index});
+   });
+   for(const [index,clip]of scheduled.entries())for(const other of scheduled.slice(index+1))if(clip.actor===other.actor&&clip.start<other.end&&other.start<clip.end)warn(`${path}.cutscene[${other.index}]`,'this actor has overlapping clips; preview the timeline to check their order.');
+  }
   if(list(roomContent.people,`${path}.people`,128)){
    unique(roomContent.people,`${path}.people`);
    for(const [index,person]of roomContent.people.entries()){
@@ -383,12 +417,28 @@ export function upgradeLegacyProject(value){
 
 /** Accept only JSON data and derive timing from the edited integer half-beat units. */
 export function normalizeProject(value){
- const candidate=upgradeLegacyProject(value),result=validateProject(candidate);
+ const candidate=upgradeRoomCutscenes(upgradeLegacyProject(value)),result=validateProject(candidate);
  if(!result.valid)throw new TypeError(result.errors.join('\n'));
  const project=clone(candidate);
  project.noteKinds=project.noteKinds.map(note=>({...note,beats:note.units/2}));
  project.settings.initialInventory=Object.fromEntries(project.noteKinds.map(note=>[note.id,project.settings.initialInventory[note.id]??0]));
  return freeze(project);
+}
+
+/** Add room introductions to older projects without replacing authored scenes. */
+export function upgradeRoomCutscenes(value){
+ const errors=[];safeJson(value,errors);if(errors.length)throw new TypeError(errors.join('\n'));
+ const project=clone(value);
+ if(!record(project?.content))return project;
+ for(const [roomId,content]of Object.entries(project.content)){
+  if(!record(content)||own(content,'cutscene'))continue;
+  const scene=project.scenes?.[roomId],people=new Set(asArray(content.people).map(person=>person?.id)),actors=new Set(asArray(scene?.actors).map(actor=>actor?.id)),targets=new Set(asArray(scene?.geometry?.targets).map(target=>target?.id));
+  people.add('mira');actors.add('mira');
+  content.cutscene=asArray(ROOM_CUTSCENES[roomId]).filter(beat=>people.has(beat.speaker)&&actors.has(beat.actor??beat.speaker)).map(beat=>{
+   const copy=clone(beat);if(copy.target!==undefined&&!targets.has(copy.target))delete copy.target;return copy;
+  });
+ }
+ return project;
 }
 
 /** The journal knows authored IDs; the runtime still records only actual events. */

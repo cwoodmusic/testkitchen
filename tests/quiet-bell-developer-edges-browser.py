@@ -34,6 +34,9 @@ def apply_project(page, project):
     page.locator('#developer-apply').click()
     page.locator('#developer-console').wait_for(state='hidden')
     dev.tick(page)
+    # This fixture exercises authored rules after arrival. The entrance suite
+    # separately verifies that Apply preserves the new performance itself.
+    ui.skip_cutscene(page)
     assert ui.state(page)['developerMode']
 
 
@@ -41,6 +44,7 @@ def reload_game(page):
     page.reload()
     page.wait_for_function('!!window.quietBell?.state')
     dev.tick(page)
+    ui.skip_cutscene(page)
 
 
 def same_point(before, after):

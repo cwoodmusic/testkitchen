@@ -139,7 +139,7 @@ def new_page(browser, server):
     return context, page, origin, errors, urls
 
 
-def ready(page, origin, expected):
+def ready(page, origin, expected, expected_storage=None):
     page.wait_for_function('!!window.quietBell?.state')
     page.wait_for_function('[...document.images].every(image=>image.complete&&image.naturalWidth>0)')
     assert page.url == origin + GAME_PATH + '?v=quiet-bell-journey-1', page.url
@@ -154,10 +154,17 @@ def ready(page, origin, expected):
     assert [node['id'] for node in journal['nodes']] == ['depot', 'garden-porch']
     assert [edge['id'] for edge in journal['edges']] == ['depot-garden']
     assert [hint['id'] for hint in journal['hints']] == ['nell-route']
-    assert page.evaluate('keys=>Object.fromEntries(keys.map(key=>[key,localStorage.getItem(key)]))', list(SEEDS)) == SEEDS
+    storage = lambda: page.evaluate('keys=>Object.fromEntries(keys.map(key=>[key,localStorage.getItem(key)]))', list(SEEDS))
+    assert storage() == (SEEDS if expected_storage is None else expected_storage)
+    if page.locator('#cutscene-panel').is_visible():
+        page.locator('#cutscene-skip').click()
+    # Explicitly skipping an introduction legitimately saves its seen flag and
+    # migrates the run. Cache reloads must preserve that resulting record too.
+    preserved_storage = storage()
     page.locator('#menu').click()
     assert page.locator('#exit').evaluate('a=>new URL(a.href).pathname') == PREFIX + 'world-preview.html'
     page.locator('#menu-close').click()
+    return preserved_storage
 
 
 def assert_requests_local(urls, origin):
@@ -168,7 +175,7 @@ def update_cached_game(browser, server):
     server.reset()
     context, page, origin, errors, urls = new_page(browser, server)
     page.goto(origin + GAME_PATH + '?v=quiet-bell-journey-1')
-    ready(page, origin, OLD)
+    preserved_storage = ready(page, origin, OLD)
     before = page.evaluate('quietBell.state')
     first_checks = [r['query'] for r in server.requests if r['path'].endswith('/release.json')]
     assert len(first_checks) == 1 and parse_qs(first_checks[0]).get('check'), first_checks
@@ -180,7 +187,7 @@ def update_cached_game(browser, server):
     server.requests.clear()
     urls.clear()
     page.reload()
-    ready(page, origin, NEW)
+    ready(page, origin, NEW, expected_storage=preserved_storage)
     runtime = [urlparse(url).path for url in urls if urlparse(url).path.endswith(('.mjs', '.css', '.jpg', '.webp'))]
     assert runtime and all(path.startswith(GAME_PATH + 'releases/' + NEW + '/') for path in runtime), runtime
     checks = [r for r in server.requests if r['path'].endswith('/release.json')]

@@ -54,6 +54,7 @@ def wait_cast_art(page):
 
 def immutable_cast(page, room, data):
     """Equal-size actors must remain at their own foot coordinates and depths."""
+    ui.skip_cutscene(page)
     wait_cast_art(page)
     expected = MEMBERS | ({'oren'} if room == 'canal-porch' else set())
     actors = page.locator('.mg-npc[data-actor]')
@@ -61,9 +62,12 @@ def immutable_cast(page, room, data):
     assert set(actual) == expected and len(actual) == len(expected), (room, actual)
     assert set(page.locator('[data-person]').evaluate_all('es=>es.map(e=>e.dataset.person)')) == expected
     assert {person['id'] for person in data[room]['people']} == expected
-    geometry = data[room]['scene']['geometry']
+    # Entrances may leave a companion beside an examined prop. The displayed
+    # feet, collision and interactions must agree with that actual staged room.
+    scene = page.evaluate('quietBell.scene') or data[room]['scene']
+    geometry = scene['geometry']
     targets = {item['id']: item for item in geometry['targets']}
-    actor_data = {item['id']: item for item in data[room]['scene']['actors']}
+    actor_data = {item['id']: item for item in scene['actors']}
     assert set(actor_data) == expected
     values = actors.evaluate_all('''es=>es.map(e=>{
       const r=e.getBoundingClientRect(),map=document.getElementById('room-map').getBoundingClientRect(),s=getComputedStyle(e);
@@ -77,7 +81,7 @@ def immutable_cast(page, room, data):
         assert model['character'] == value['id']
         assert abs(value['left']/100*1536 - model['feet']['x']) < 1
         assert abs(value['top']/100*1024 - model['feet']['y']) < 1
-        assert abs(value['z'] - model['feet']['y']) <= 1, (model,value)
+        assert value['z'] == math.floor(model['feet']['y'] + .5) + 1, (model,value)
         assert 145 <= value['worldWidth'] <= 165, 'Characters stay small relative to the expanded room.'
         target = targets[value['id']]
         assert math.hypot(target['x']-model['feet']['x'],target['y']-model['feet']['y']) < 3
@@ -109,16 +113,18 @@ def framing(page, room, data):
 
 
 def conversations(page, room, data, stories, touch=False):
+    ui.skip_cutscene(page)
     start = ui.resources(ui.state(page))
     journal = page.evaluate('quietBell.journey')
     expected_nodes,expected_edges = ids(journal['nodes']),ids(journal['edges'])
-    targets = {item['id']:item for item in data[room]['scene']['geometry']['targets']}
+    scene = page.evaluate('quietBell.scene') or data[room]['scene']
+    targets = {item['id']:item for item in scene['geometry']['targets']}
     results = []
     for person in data[room]['people']:
         identifier = person['id']
         ui.press(page,'[data-person="'+identifier+'"]',touch)
         at = ui.walker(page);target=targets[identifier]
-        assert math.hypot(at['x']-target['x'],at['y']-target['y']) <= target['range']+.1
+        assert math.hypot(at['x']-target['x'],at['y']-target['y']) <= target['range']+.1, (room,identifier,at,target)
         assert not at['moving'] and page.locator('#conversation-dialog').is_visible()
         authored_source = OCCASIONS[room].get(identifier)
         assert page.locator('#take-parcel').is_visible() == bool(authored_source), (room, identifier)
