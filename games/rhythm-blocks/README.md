@@ -64,6 +64,7 @@ python tests/quiet-bell-chapter-two-browser.py
 python tests/quiet-bell-party-browser.py
 python tests/quiet-bell-developer-browser.py
 python tests/quiet-bell-developer-edges-browser.py
+python tests/quiet-bell-developer-selection-browser.py
 ```
 
 Browser tests require Python Playwright and Chromium.

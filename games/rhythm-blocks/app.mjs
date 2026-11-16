@@ -232,9 +232,11 @@ function interactWith(id){
   else if(id==='return-depot')revisitRoom();
 }
 
-let actorDrag=null,lastActorDrag=-1000;
+let actorDrag=null,editorPress=null;
+function selectEditorObject(roomId,object){
+ developerConsole.open({roomId,tab:object.type==='person'?'dialogue':object.type==='door'?'puzzles':object.type==='chest'?'notes':'rooms',personId:object.type==='person'?object.id:undefined,doorId:object.type==='door'?(object.doorId??object.id):undefined,sourceId:object.type==='chest'?(object.sourceId??object.id):undefined,objectId:['inspect','return'].includes(object.type)?object.id:undefined});
+}
 root.addEventListener('click',event=>{
-  if(editingOpen&&performance.now()-lastActorDrag<200){event.preventDefault();return;}
   const button=event.target.closest('button');if(!button||button.disabled)return;
   const targetId=button.dataset.person??button.dataset.door??button.dataset.chest??button.dataset.inspect;
   if((editingOpen||event.shiftKey)&&targetId){
@@ -268,23 +270,37 @@ root.addEventListener('click',event=>{
 });
 
 $('room-map').addEventListener('pointerdown',event=>{
- if(!editingOpen||event.button!==0)return;const button=event.target.closest('[data-person]');if(!button)return;
- const actor=editorProject.scenes[activeScene.id].actors.find(actor=>actor.id===button.dataset.person);if(!actor)return;
- const rect=$('room-map').getBoundingClientRect();actorDrag={id:actor.id,pointerId:event.pointerId,startX:event.clientX,startY:event.clientY,x:actor.feet.x,y:actor.feet.y,scale:rect.width/activeScene.geometry.width,moved:false};
+ if(!editingOpen||event.button!==0)return;
+ const button=event.target.closest('[data-person],[data-door],[data-chest],[data-inspect],[data-return]');if(!button)return;
+ const id=button.dataset.person??button.dataset.door??button.dataset.chest??button.dataset.inspect??button.dataset.return;
+ const object=editorProject.scenes[activeScene.id].objects.find(object=>object.id===id);if(!object)return;
+ // A field blur can repaint the room before click. Keep the pressed identity
+ // through pointerup instead of relying on the lifetime of its DOM button.
+ editorPress={pointerId:event.pointerId,roomId:activeScene.id,object,startX:event.clientX,startY:event.clientY,moved:false};
+ const actor=object.type==='person'?editorProject.scenes[activeScene.id].actors.find(actor=>actor.id===id):null;
+ const rect=$('room-map').getBoundingClientRect();
+ actorDrag=actor?{id:actor.id,pointerId:event.pointerId,startX:event.clientX,startY:event.clientY,x:actor.feet.x,y:actor.feet.y,scale:rect.width/activeScene.geometry.width,moved:false}:null;
  $('room-map').setPointerCapture(event.pointerId);
 });
 $('room-map').addEventListener('pointermove',event=>{
- const drag=actorDrag;if(!drag||event.pointerId!==drag.pointerId||!editingOpen)return;
- const dx=(event.clientX-drag.startX)/drag.scale,dy=(event.clientY-drag.startY)/drag.scale;if(!drag.moved&&Math.hypot(event.clientX-drag.startX,event.clientY-drag.startY)<6)return;drag.moved=true;
+ const press=editorPress;if(!press||event.pointerId!==press.pointerId||!editingOpen)return;
+ if(Math.hypot(event.clientX-press.startX,event.clientY-press.startY)>=6)press.moved=true;
+ const drag=actorDrag;if(!drag||!press.moved)return;drag.moved=true;
+ const dx=(event.clientX-drag.startX)/drag.scale,dy=(event.clientY-drag.startY)/drag.scale;
  const {bounds}=activeScene.geometry;drag.nextX=Math.max(bounds.x+65,Math.min(bounds.x+bounds.width-65,drag.x+dx));drag.nextY=Math.max(bounds.y+45,Math.min(bounds.y+bounds.height-90,drag.y+dy));
  const sprite=$('room-map').querySelector('[data-actor="'+drag.id+'"]');sprite.style.left=`${drag.nextX/activeScene.geometry.width*100}%`;sprite.style.top=`${drag.nextY/activeScene.geometry.height*100}%`;sprite.style.zIndex=String(Math.round(drag.nextY)+1);
 });
-function finishActorDrag(event){
- const drag=actorDrag;if(!drag||event.pointerId!==drag.pointerId)return;actorDrag=null;
- if(drag.moved){lastActorDrag=performance.now();event.preventDefault();if(!developerConsole.moveActor(drag.id,Math.round(drag.nextX),Math.round(drag.nextY))){activeSceneProject=null;renderScene(roomView?.state);render();}}
+function finishEditorPress(event){
+ const press=editorPress;if(!press||event.pointerId!==press.pointerId)return;
+ const drag=actorDrag;editorPress=null;actorDrag=null;if(!editingOpen)return;
+ if(drag?.moved){event.preventDefault();if(!developerConsole.moveActor(drag.id,Math.round(drag.nextX),Math.round(drag.nextY))){activeSceneProject=null;renderScene(roomView?.state);render();}return;}
+ if(!press.moved)selectEditorObject(press.roomId,press.object);
 }
-$('room-map').addEventListener('pointerup',finishActorDrag);
-$('room-map').addEventListener('pointercancel',event=>{if(actorDrag?.pointerId===event.pointerId){actorDrag=null;activeSceneProject=null;renderScene(roomView?.state);render();}});
+$('room-map').addEventListener('pointerup',finishEditorPress);
+$('room-map').addEventListener('pointercancel',event=>{
+ if(editorPress?.pointerId!==event.pointerId)return;const moved=actorDrag?.moved;editorPress=null;actorDrag=null;
+ if(moved){activeSceneProject=null;renderScene(roomView?.state);render();}
+});
 for(const [button,panel]of [['help-close','help-dialog'],['help-done','help-dialog'],['conversation-close','conversation-dialog'],['notes-close','notes-dialog'],['lore-close','lore-dialog'],['lore-done','lore-dialog'],['menu-close','menu-dialog']])$(button).addEventListener('click',()=>$(panel).close());
 for(const id of panelIds)$(id).addEventListener('close',()=>{roomView?.refresh();if(!panelOpen()&&game.state.phase==='continued'){openPanel('outcome');return;}const active=document.activeElement;if(!panelOpen()&&(!active||active===document.body||active===document.documentElement||active.closest('dialog')))$('walk-floor').focus({preventScroll:true});});
 $('outcome').addEventListener('cancel',event=>event.preventDefault());
