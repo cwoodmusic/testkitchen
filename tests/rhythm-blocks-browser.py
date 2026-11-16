@@ -524,9 +524,9 @@ def movement_checks(browser, url):
     assert math.hypot(restored['x'] - stopped['x'], restored['y'] - stopped['y']) < 1, (stopped, restored)
     assert resources(state(page)) == baseline
     # A click beyond the inner wall is projected onto the valid foot boundary.
-    floor_walk(page, 35, 500)
+    floor_walk(page, 35, 600)
     projected = walker(page)
-    assert 65.9 <= projected['x'] <= 68 and abs(projected['y'] - 500) < 2, projected
+    assert 65.9 <= projected['x'] <= 68 and abs(projected['y'] - 600) < 2, projected
     assert state(page)['inventory'] == EMPTY
     page.screenshot(path=str(OUT / 'walking-counter.png'), full_page=True)
     # Invalid saved coordinates cannot put the sprite outside the room or in furniture.
