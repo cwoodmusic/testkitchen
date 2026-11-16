@@ -19,9 +19,12 @@ export function createRoomView({scene,map=scene,player,floor,controls,interactBu
   function snapshot(){return{...walker.state,pendingTarget};}
   function savePosition(){const {x,y,facing}=walker.state;positionDirty=false;onStop({x,y,facing});}
   function followCamera(state){
-    const width=Math.max(1,viewportWidth),height=Math.max(1,viewportHeight),scale=Math.max(width/room.width,height/room.height);
+    const width=Math.max(1,viewportWidth),height=Math.max(1,viewportHeight);
+    // Pull back from the old fill-and-crop framing and keep the full room height.
+    const scale=Math.min(Math.max(width/room.width,height/room.height)*.8,height/room.height);
     const bound=(value,min,max)=>Math.max(min,Math.min(max,value));
-    const offsetX=bound(width*.5-state.x*scale,width-room.width*scale,0),offsetY=bound(height*.55-state.y*scale,height-room.height*scale,0);
+    const offsetX=room.width*scale<=width?(width-room.width*scale)/2:bound(width*.5-state.x*scale,width-room.width*scale,0);
+    const offsetY=(height-room.height*scale)/2;
     camera={scale,offsetX,offsetY,width,height};const key=[scale,offsetX,offsetY].join('|');
     if(key!==cameraKey){cameraKey=key;map.style.setProperty('--room-scale',scale);map.style.transform=`translate(${offsetX}px,${offsetY}px) scale(${scale})`;}
   }
