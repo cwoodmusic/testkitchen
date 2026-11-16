@@ -4,6 +4,8 @@ import {DEPOT_ROOM,createRoomWalker,findPath,isWalkable} from './room.mjs';
 
 const near=(a,b)=>assert(Math.abs(a-b)<.000001,`${a} differs from ${b}`);
 const point=state=>({x:state.x,y:state.y});
+const irisFoot=DEPOT_ROOM.obstacles.find(obstacle=>obstacle.id==='iris');
+const blockedIris={x:irisFoot.x+irisFoot.width/2,y:irisFoot.y+irisFoot.height/2};
 function arrive(walker){
  let frames=0;
  while(walker.state.moving&&frames<1000){assert.equal(walker.update(50),true);assert(isWalkable(DEPOT_ROOM,walker.state));frames++;}
@@ -69,8 +71,8 @@ test('tap navigation projects outside and solid destinations onto walkable floor
  const walker=createRoomWalker();
  assert(walker.goTo({x:-10000,y:50000}));arrive(walker);assert(isWalkable(DEPOT_ROOM,walker.state));
  assert(walker.state.x>=66&&walker.state.y<=960);
- assert(walker.goTo({x:745,y:520}));arrive(walker);assert(isWalkable(DEPOT_ROOM,walker.state));
- assert(walker.state.x!==745||walker.state.y!==520,'An NPC foot cannot be a destination.');
+ assert(walker.goTo(blockedIris));arrive(walker);assert(isWalkable(DEPOT_ROOM,walker.state));
+ assert(walker.state.x!==blockedIris.x||walker.state.y!==blockedIris.y,'An NPC foot cannot be a destination.');
  const before=walker.state;
  for(const invalid of [null,{},[],{x:NaN,y:0},{x:Infinity,y:0},{x:'50',y:0}]){assert.equal(walker.goTo(invalid),false);assert.deepEqual(walker.state,before);}
 });
@@ -86,7 +88,7 @@ test('a keyboard move cancels a pointer route and stop cancels every pending ste
 test('saved positions and room definitions are validated and copied',()=>{
  const valid={x:600,y:800,facing:'left'},walker=createRoomWalker({savedPosition:valid});
  assert.deepEqual(point(walker.state),{x:600,y:800});assert.equal(walker.state.facing,'left');valid.x=1000;assert.equal(walker.state.x,600);
- for(const savedPosition of [{x:0,y:0},{x:745,y:520},{x:NaN,y:800},{x:'600',y:800},null])assert.deepEqual(point(createRoomWalker({savedPosition}).state),{x:768,y:920});
+ for(const savedPosition of [{x:0,y:0},blockedIris,{x:NaN,y:800},{x:'600',y:800},null])assert.deepEqual(point(createRoomWalker({savedPosition}).state),{x:768,y:920});
  const snapshot=walker.state;snapshot.x=-10;assert.equal(walker.state.x,600);
  const mutable=structuredClone(DEPOT_ROOM),custom=createRoomWalker({room:mutable});mutable.bounds.x=1000;mutable.targets[0].x=5000;
  assert(custom.approach('nell'));arrive(custom);assert(custom.withinReach('nell'));
@@ -102,5 +104,5 @@ test('navigation paths stay clear at every sampled foot position and remove unne
  }
  assert.deepEqual(findPath(DEPOT_ROOM,from,from),[]);
  assert.deepEqual(findPath(DEPOT_ROOM,from,{x:600,y:900}),[{x:600,y:900}]);
- assert.equal(findPath(DEPOT_ROOM,{x:745,y:520},{x:600,y:900}),null);
+ assert.equal(findPath(DEPOT_ROOM,blockedIris,{x:600,y:900}),null);
 });

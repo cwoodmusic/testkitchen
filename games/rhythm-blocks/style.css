@@ -223,3 +223,6 @@ dialog::backdrop{background:#100c1659}
 
 .mg-return span{opacity:0}
 .mg-return:hover span,.mg-return:focus-visible span{opacity:1}
+
+/* Shared full-scale companions keep their shape and depth in every room. */
+.mg-npc{position:absolute;aspect-ratio:1;background-size:200% 200%;background-repeat:no-repeat;image-rendering:pixelated;pointer-events:none}

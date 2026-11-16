@@ -485,6 +485,10 @@ def movement_checks(browser, url):
     page.reload(); page.wait_for_function('!!window.quietBell?.walker')
     assert math.hypot(walker(page)['x'] - at_counter['x'], walker(page)['y'] - at_counter['y']) < 1
     assert state(page)['inventory'] == EMPTY
+    # Nell now travels on the floor rather than standing behind the counter.
+    press(page, 'button[data-person="nell"]')
+    assert state(page)['inventory'] == EMPTY
+    press(page, '#conversation-close')
     page.locator('#walk-floor').focus(); page.keyboard.press('e')
     assert page.locator('#conversation-dialog').is_visible()
     assert page.locator('#take-parcel').is_enabled()
@@ -519,9 +523,10 @@ def movement_checks(browser, url):
     restored = walker(page)
     assert math.hypot(restored['x'] - stopped['x'], restored['y'] - stopped['y']) < 1, (stopped, restored)
     assert resources(state(page)) == baseline
-    floor_walk(page, 80, 400)
+    # A click beyond the inner wall is projected onto the valid foot boundary.
+    floor_walk(page, 35, 500)
     projected = walker(page)
-    assert projected['y'] >= 482 or projected['x'] > 372, projected
+    assert 65.9 <= projected['x'] <= 68 and abs(projected['y'] - 500) < 2, projected
     assert state(page)['inventory'] == EMPTY
     page.screenshot(path=str(OUT / 'walking-counter.png'), full_page=True)
     # Invalid saved coordinates cannot put the sprite outside the room or in furniture.
@@ -533,7 +538,7 @@ def movement_checks(browser, url):
     page.reload(); page.wait_for_function('!!window.quietBell?.walker')
     recovered = walker(page)
     assert math.isfinite(recovered['x']) and math.isfinite(recovered['y'])
-    assert 66 <= recovered['x'] <= 1470 and 313 <= recovered['y'] <= 960, recovered
+    assert page.evaluate('''async(point)=>{const {DEPOT_ROOM,isWalkable}=await import(new URL('room.mjs',document.baseURI));return isWalkable(DEPOT_ROOM,point);}''', recovered), recovered
     assert recovered['facing'] in ['up', 'down', 'left', 'right']
     assert state(page)['inventory'] == EMPTY
     page.locator('#walk-floor').focus(); page.keyboard.down('ArrowRight'); page.wait_for_timeout(100)

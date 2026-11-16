@@ -11,7 +11,7 @@
   },
   "visualRules": [
     "Keep the chosen Pocket Pixel proportions, large readable clusters, warm dark outlines and limited material shading.",
-    "Use orthographic 2/3 views with parallel edges and consistent scale. Furniture and floor edges do not converge toward a vanishing point.",
+    "Use orthographic 2/3 views throughout the game, including rooms, furniture, props and every character. Show tops and south/front faces; opposite edges remain parallel, rectangular tops never taper, and floor spacing stays constant from north to south. Nothing shrinks toward a vanishing point.",
     "Pair high-fantasy forms with obsolete future machinery: moonstone arches around curved phosphor glass, root-wrapped copper conduits, star-glass cells in hand-repaired ceramic housings.",
     "Show one strong room landmark, a visible daily routine and a trace of something older. Leave navigable floor and keep doors, people and useful objects readable.",
     "Show systems visibly connecting: root into conduit, conduit into machine, machine into the thing it helps someone do. Do not scatter unrelated glowing props as decoration.",

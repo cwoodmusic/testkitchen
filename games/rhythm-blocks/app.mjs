@@ -4,6 +4,8 @@ import {symbolMarkup} from './notation.mjs';
 import {createRhythmAudio} from './audio.mjs';
 import {ROOM_CONTENT} from './chapter-content.mjs';
 import {getScene} from './scenes.mjs';
+import {getRoomPeople} from './party-content.mjs';
+import {CAST,CAST_IMAGE} from './cast.mjs';
 import {createRoomView} from './room-view.mjs';
 import {createJourney,CHAPTER_JOURNEY_MANIFEST} from './journey.mjs';
 import {renderJourney} from './journey-view.mjs';
@@ -30,7 +32,7 @@ for(const route of game.state.discoveredRoutes)journeyChanged=journey.traverse('
 for(const id of game.state.traversedDoors)journeyChanged=journey.traverse(id)||journeyChanged;
 if(game.state.nextScene?.kind==='dead-end')journeyChanged=journey.recordOutcome(game.state.nextScene.id)||journeyChanged;
 if(journeyChanged)write(JOURNEY_KEY,JSON.stringify(journey.serialize()));
-let selectedPerson=[2,3].includes(saved?.version)&&ROOM_CONTENT[game.state.roomId].people.some(person=>person.id===saved?.conversation?.person)?saved.conversation.person:ROOM_CONTENT[game.state.roomId].people[0].id;
+let selectedPerson=[2,3].includes(saved?.version)&&getRoomPeople(game.state.roomId).some(person=>person.id===saved?.conversation?.person)?saved.conversation.person:getRoomPeople(game.state.roomId)[0].id;
 let selectedTopic=[2,3].includes(saved?.version)&&Object.hasOwn(topics,saved?.conversation?.topic)?saved.conversation.topic:'story';
 let soundEnabled=read(SOUND_KEY)!=='off',audioRevision=0;
 let roomView=null,toastTimer=0;
@@ -99,15 +101,20 @@ function renderScene(position=null){
   if(activeScene?.id===game.state.roomId)return;
   const previous=roomView;roomView=null;previous?.destroy();
   activeScene=getScene(game.state.roomId);const room=activeScene.geometry,current=content();
-  people=new Map(current.people.map(person=>[person.id,person]));observations=new Map(current.inspections.map(entry=>[entry.id,entry]));
+  people=new Map(getRoomPeople(game.state.roomId).map(person=>[person.id,person]));observations=new Map(current.inspections.map(entry=>[entry.id,entry]));
   doorNames=Object.fromEntries(Object.entries(current.doorCopy).map(([id,copy])=>[id,copy.name]));
   doorHints=Object.fromEntries(Object.entries(current.doorCopy).map(([id,copy])=>[id,copy.hint]));
-  if(!people.has(selectedPerson)){selectedPerson=current.people[0].id;selectedTopic='story';}
+  if(!people.has(selectedPerson)){selectedPerson=getRoomPeople(game.state.roomId)[0].id;selectedTopic='story';}
   const scene=$('room-scene'),map=$('room-map'),art=map.querySelector('.mg-art');
   scene.dataset.room=activeScene.id;scene.setAttribute('aria-label',activeScene.title);root.querySelector('.location').textContent=activeScene.title;
-  art.src=activeScene.image;art.alt=`${activeScene.title}, a Pocket Pixel room in the floating islands of Lumen Reach.`;
-  for(const item of map.querySelectorAll('.mg-occluder'))item.remove();
+  art.src=activeScene.image;art.alt=`${activeScene.title}, a spacious orthographic 2/3 Pocket Pixel room in the floating islands of Lumen Reach.`;
+  for(const item of map.querySelectorAll('.mg-occluder,.mg-npc'))item.remove();
   for(const mask of activeScene.occluders){const img=document.createElement('img');img.className='mg-occluder';img.dataset.occluder=mask.id;img.src=activeScene.image;img.alt='';img.setAttribute('aria-hidden','true');img.style.clipPath=mask.clipPath;img.style.zIndex=String(mask.depth);map.insertBefore(img,map.querySelector('.mg-room-objects'));}
+  for(const actor of activeScene.actors){
+    const sprite=CAST[actor.character],element=document.createElement('div');element.className='mg-npc';element.dataset.actor=actor.id;element.setAttribute('aria-hidden','true');
+    Object.assign(element.style,{left:`${actor.feet.x/room.width*100}%`,top:`${actor.feet.y/room.height*100}%`,width:`${actor.worldSize/room.width*100}%`,backgroundImage:`url("${CAST_IMAGE}")`,backgroundPosition:`${sprite.column*100}% ${sprite.row*100}%`,transform:`translate(${-sprite.anchor[0]*100}%,${-sprite.anchor[1]*100}%)`,zIndex:String(Math.round(actor.feet.y)+1)});
+    map.insertBefore(element,map.querySelector('.mg-room-objects'));
+  }
   for(const name of ['.mg-room-objects','.mg-people','.mg-inspections'])map.querySelector(name).replaceChildren();
   for(const item of activeScene.objects){
     const button=document.createElement('button'),label=document.createElement('span');button.type='button';button.className=`mg-${item.type} mg-hotspot`;button.dataset[item.type]=item.id;button.setAttribute('aria-label',item.actionLabel??item.label);

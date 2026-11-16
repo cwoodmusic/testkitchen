@@ -5,6 +5,7 @@ import {dirname,join,relative} from 'node:path';
 
 export const GAME_ROOT=dirname(fileURLToPath(import.meta.url));
 export const RUNTIME_FILES=Object.freeze([
+  'party-content.mjs','cast.mjs','assets/party-cast.webp',
   'chapter.mjs','chapter-content.mjs','dungeon-game.mjs','scenes.mjs',
   'assets/garden-porch.webp','assets/workshop-porch.webp','assets/canal-porch.webp',
   'game.html','app.mjs','audio.mjs','engine.mjs','journey.mjs','journey-view.mjs','lore.mjs',

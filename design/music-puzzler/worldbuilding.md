@@ -12,7 +12,7 @@ Every room needs four clear answers: who uses it, what they do here, what has ch
 
 Show the connection between magic, machinery and work: a root feeds a copper pipe, the pipe wakes a crystal manifold, and the manifold waters somebody’s seedlings. Preserve warm people and practical repairs alongside grand architecture. Keep one or two mysteries unanswered rather than explaining the entire civilization in each inspection.
 
-Garden rooms use jade, amber sap, cream ceramic and living roots. Workshop rooms use teal enamel, copper, blue star-glass and adapted instruments. Canal rooms use indigo, pearl stone, silvered water and weathered brass. Moonstone arches, brass route rings and phosphor glass connect the branches. Keep parallel edges and consistent scale in the 2/3 orthographic view; use strong pixel clusters, simple faces and warm dark outlines. Avoid religious or occult signs, grim violence and writing on the floor.
+Garden rooms use jade, amber sap, cream ceramic and living roots. Workshop rooms use teal enamel, copper, blue star-glass and adapted instruments. Canal rooms use indigo, pearl stone, silvered water and weathered brass. Moonstone arches, brass route rings and phosphor glass connect the branches. Apply the 2/3 orthographic view to every room, furnishing and character. Show tops and front faces with parallel edges, rectangular tabletops and constant floor spacing; objects do not taper or recede toward a vanishing point. Leave generous clear floor between the smaller furnishings and travelling companions; use strong pixel clusters, simple faces and warm dark outlines. Avoid religious or occult signs, grim violence and writing on the floor.
 
 ## Scope and implementation
 

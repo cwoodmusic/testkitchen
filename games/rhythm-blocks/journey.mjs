@@ -3,6 +3,7 @@
 import {DEPOT_LORE} from './lore.mjs';
 import {PEOPLE} from './opening.mjs';
 import {CHAPTER_LORE, ROOM_CONTENT} from './chapter-content.mjs';
+import {PARTY_ROUTE_HINTS} from './party-content.mjs';
 import {CHAPTER_ROOMS, CHAPTER_DOORS, CHAPTER_PREVIEWS, CHAPTER_TERMINALS} from './chapter.mjs';
 
 const freezeRecords = records => Object.freeze(records.map(record => Object.freeze(record)));
@@ -54,6 +55,7 @@ export const CHAPTER_JOURNEY_MANIFEST = Object.freeze({
   }))),
   hints: freezeRecords([
     ...OPENING_JOURNEY_MANIFEST.hints,
+    ...PARTY_ROUTE_HINTS,
     ...Object.entries(ROOM_CONTENT).filter(([id]) => id !== 'depot').flatMap(([roomId, room]) =>
       room.people.map(person => ({
         id: `${roomId}-${person.id}-route`,

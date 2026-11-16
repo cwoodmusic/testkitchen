@@ -3,6 +3,7 @@ import assert from 'node:assert/strict';
 import {createJourney, OPENING_JOURNEY_MANIFEST, CHAPTER_JOURNEY_MANIFEST} from './journey.mjs';
 import {PEOPLE} from './opening.mjs';
 import {CHAPTER_LORE, ROOM_CONTENT} from './chapter-content.mjs';
+import {PARTY_ROUTE_HINTS} from './party-content.mjs';
 import {CHAPTER_ROOMS, CHAPTER_DOORS, CHAPTER_PREVIEWS, CHAPTER_TERMINALS} from './chapter.mjs';
 
 const manifest = () => ({
@@ -250,7 +251,8 @@ test('the chapter catalog follows all shipped rooms and keys but excludes future
   })));
   assert.equal(source.edges.length, 9);
   assert.deepEqual(source.outcomes.map(outcome => outcome.id), ['dead-brambles', 'dead-aviary', 'dead-ferry']);
-  assert.equal(source.hints.length, 20);
+  assert.equal(source.hints.length, 27);
+  for (const hint of PARTY_ROUTE_HINTS) assert.deepEqual(source.hints.find(entry => entry.id === hint.id), hint);
   assert.deepEqual(source.hints.slice(0, OPENING_JOURNEY_MANIFEST.hints.length), OPENING_JOURNEY_MANIFEST.hints);
   for (const observation of CHAPTER_LORE) {
     assert.deepEqual(source.hints.find(hint => hint.id === `lore-${observation.id}`), {
@@ -362,4 +364,23 @@ test('observing every shipped boundary cannot complete the unfinished dungeon', 
   assert.equal(journey.complete, false);
   assert.deepEqual(journey.state.achievements, []);
   assert.equal(createJourney({manifest: source, saved: journey.serialize()}).complete, false);
+});
+
+test('companion conversations preserve only learned route clues across reloads', () => {
+  const journey = createJourney({manifest: CHAPTER_JOURNEY_MANIFEST});
+  journey.visit('depot');
+  journey.traverse('depot-canal');
+  const before = journey.serialize();
+  for (const hint of PARTY_ROUTE_HINTS.filter(entry => entry.id.startsWith('canal-porch-'))) {
+    assert.equal(journey.discoverHint(hint.id), true);
+    assert.equal(journey.discoverHint(hint.id), false);
+  }
+  assert.deepEqual(journey.serialize().nodes, before.nodes);
+  assert.deepEqual(journey.serialize().edges, before.edges);
+  assert.deepEqual(journey.serialize().outcomes, before.outcomes);
+  assert.deepEqual(journey.state.achievements, []);
+  const restored = createJourney({manifest: CHAPTER_JOURNEY_MANIFEST, saved: journey.serialize()});
+  assert.deepEqual(restored.state, journey.state);
+  assert.equal(restored.state.hints.length, 3);
+  assert(restored.state.hints.every(hint => hint.id.startsWith('canal-porch-')));
 });

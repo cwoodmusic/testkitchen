@@ -2,34 +2,35 @@
 const freeze=value=>{for(const item of Object.values(value))if(item&&typeof item==='object')freeze(item);return Object.freeze(value);};
 export const DEPOT_ROOM=freeze({
  width:1536,height:1024,gridSize:32,radius:18,speed:260,maxDeltaMs:50,
- bounds:{x:48,y:295,width:1440,height:683},
+ bounds:{x:48,y:250,width:1440,height:728},
  start:{x:768,y:920,facing:'up'},
  obstacles:[
-  {id:'counter',x:48,y:290,width:307,height:196},
-  {id:'iris',x:700,y:500,width:108,height:60},
-  {id:'pip',x:1135,y:500,width:105,height:60},
-  {id:'depot-chest',x:400,y:500,width:127,height:70},
-  {id:'route-orrery-base',x:48,y:830,width:282,height:118},
-  {id:'star-post-base',x:1252,y:837,width:219,height:110},
-  {id:'kettle-cart',x:48,y:640,width:112,height:95},
-  {id:'clipping-tray',x:1120,y:885,width:130,height:50},
-  {id:'upper-wall-parcels',x:1385,y:301,width:103,height:35},
-  {id:'lower-wall-parcels',x:1420,y:466,width:68,height:48},
-  {id:'orrery-parcel',x:48,y:870,width:48,height:65}
+  {id:'counter',x:80,y:345,width:255,height:30},
+  {id:'nell',x:435,y:624,width:70,height:26},
+  {id:'iris',x:755,y:524,width:70,height:26},
+  {id:'pip',x:1055,y:654,width:70,height:26},
+  {id:'depot-chest',x:270,y:500,width:115,height:27},
+  {id:'route-orrery-base',x:105,y:790,width:135,height:95},
+  {id:'orrery-parcels',x:245,y:850,width:95,height:35},
+  {id:'orrery-planter',x:48,y:825,width:50,height:60},
+  {id:'star-post-base',x:1300,y:820,width:160,height:65},
+  {id:'kettle-cart',x:48,y:512,width:82,height:38},
+  {id:'clipping-tray',x:1215,y:845,width:90,height:40},
+  {id:'wall-parcels',x:1385,y:245,width:105,height:30}
  ],
  targets:[
-  {id:'nell',type:'person',x:210,y:460,approach:{x:220,y:510},range:105},
-  {id:'iris',type:'person',x:745,y:548,approach:{x:745,y:625},range:105},
-  {id:'pip',type:'person',x:1185,y:548,approach:{x:1185,y:625},range:105},
-  {id:'depot-chest',type:'chest',x:465,y:560,approach:{x:465,y:625},range:100},
-  {id:'garden',type:'door',x:490,y:295,approach:{x:490,y:330},range:100},
-  {id:'workshop',type:'door',x:884,y:295,approach:{x:884,y:330},range:100},
-  {id:'canal',type:'door',x:1286,y:295,approach:{x:1286,y:330},range:100},
-  {id:'returned-letter',type:'inspect',label:'Inspect the returned letter',x:310,y:460,approach:{x:330,y:540},range:105},
-  {id:'clockwork-roost',type:'inspect',label:'Inspect the clockwork roost',x:655,y:295,approach:{x:655,y:330},range:100},
-  {id:'dispatch-map',type:'inspect',label:'Inspect the dispatch map',x:1055,y:295,approach:{x:1055,y:330},range:100},
-  {id:'route-orrery',type:'inspect',label:'Inspect the route orrery',x:220,y:910,approach:{x:380,y:900},range:170},
-  {id:'star-post',type:'inspect',label:'Inspect the star post',x:1360,y:840,approach:{x:1215,y:810},range:160}
+  {id:'nell',type:'person',x:470,y:650,approach:{x:470,y:715},range:100},
+  {id:'iris',type:'person',x:790,y:550,approach:{x:790,y:615},range:100},
+  {id:'pip',type:'person',x:1090,y:680,approach:{x:1090,y:745},range:100},
+  {id:'depot-chest',type:'chest',x:330,y:527,approach:{x:330,y:592},range:100},
+  {id:'garden',type:'door',x:490,y:250,approach:{x:490,y:310},range:100},
+  {id:'workshop',type:'door',x:884,y:250,approach:{x:884,y:310},range:100},
+  {id:'canal',type:'door',x:1286,y:250,approach:{x:1286,y:310},range:100},
+  {id:'returned-letter',type:'inspect',label:'Inspect the returned letter',x:220,y:375,approach:{x:220,y:440},range:105},
+  {id:'clockwork-roost',type:'inspect',label:'Inspect the clockwork roost',x:655,y:250,approach:{x:655,y:310},range:100},
+  {id:'dispatch-map',type:'inspect',label:'Inspect the dispatch map',x:1055,y:250,approach:{x:1055,y:310},range:100},
+  {id:'route-orrery',type:'inspect',label:'Inspect the route orrery',x:170,y:880,approach:{x:365,y:900},range:210},
+  {id:'star-post',type:'inspect',label:'Inspect the star post',x:1380,y:880,approach:{x:1190,y:800},range:220}
  ]
 });
 

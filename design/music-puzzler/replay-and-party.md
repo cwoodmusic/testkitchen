@@ -1,6 +1,6 @@
 # Replay, companions, and the discovered journey
 
-This extends the accepted dungeon design. The current fourteen-room budget skeleton remains a verified starting point; the deeper party routes below still need authoring and another exhaustive inventory/party verification pass. They are not implemented or counted as released endings.
+This extends the accepted dungeon design. The current fourteen-room budget skeleton remains a verified starting point; the deeper party routes below still need authoring and another exhaustive inventory/party verification pass. The four released rooms now let Mira speak with Nell, Iris and Pip as travelling companions; Oren remains the canal’s local keeper. Existing gifts come from Nell in the depot, Iris in the garden and Pip in the workshop, while the canal supply stays in its stamped chest. Talking alone grants no notes. The deeper departure states and finales below are not implemented or counted as released endings.
 
 ## Replay as a knowledge puzzle
 
@@ -31,7 +31,7 @@ Pause shows the cumulative discovered graph across runs. A node exists only afte
 
 The current room can be highlighted. Clues actually found and outcomes actually seen appear beside the chart. Starting over and undoing an answer preserve these informational discoveries; they restore no future notes, source receipts, or party promises. Current-run inventory and party state rewind together separately.
 
-The opening's successful door transition records its arrival location. The release still stops at an arrival preview; these locations are not dungeon endings. A new journey journal can import the existing opening door-discovery records so previous exploration is retained.
+A successful depot door enters its playable porch and records that travelled connection. The three porch forward gates still stop at continuation previews; these locations are not dungeon endings. A new journey journal can import the existing opening door-discovery records so previous exploration is retained.
 
 ## Ultimate achievement: The Complete Score
 

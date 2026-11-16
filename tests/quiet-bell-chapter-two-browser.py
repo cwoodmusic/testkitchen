@@ -83,7 +83,8 @@ def assert_scene_targets(page, scene):
       return id?[id]:[];
     })''')
     assert set(actual) == expected and len(actual) == len(expected), (expected, actual)
-    assert page.locator('[data-person="nell"],[data-chest="depot-chest"],[data-door="garden"],[data-door="workshop"],[data-door="canal"]').count() == 0
+    assert page.locator('[data-chest="depot-chest"],[data-door="garden"],[data-door="workshop"],[data-door="canal"]').count() == 0
+    assert set(page.locator('[data-person]').evaluate_all('es=>es.map(e=>e.dataset.person)')) >= {'nell', 'iris', 'pip'}, 'The travelling party remains talkable in each room.'
 
 
 def visible_history(page, nodes, edges):
