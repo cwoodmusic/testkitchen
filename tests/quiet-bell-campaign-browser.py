@@ -158,7 +158,7 @@ class Campaign:
         self.close()
         before, position = ui.resources(ui.state(self.page)), ui.walker(self.page)
         self.page.reload()
-        self.page.wait_for_function('!!quietBell?.walker')
+        self.page.wait_for_function('!!window.quietBell?.walker')
         self.page.wait_for_function('[...document.images].every(i=>i.complete&&i.naturalWidth>0)')
         assert ui.resources(ui.state(self.page)) == before, 'The current paid run must replay exactly on reload.'
         restored = ui.walker(self.page)
