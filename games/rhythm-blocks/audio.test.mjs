@@ -113,3 +113,26 @@ test('a pair of sixteenths fills half a beat with two attacks; a single eighth f
  near(context.oscillators[2].stops[0]-context.oscillators[2].starts[0],.5*BEAT*.82+.025);
  audio.stop();
 });
+
+
+test('developer note timing, rests, subdivisions and tempo are audible settings, with atomic validation',async t=>{
+ const {contexts}=fakeAudio(t),audio=createRhythmAudio({bpm:60,noteKinds:[
+  {id:'quarter',units:6,rest:true,subdivisions:1},
+  {id:'eighth-pair',units:4,rest:false,subdivisions:4},
+ ]});await audio.unlock();audio.playPattern(['quarter','eighth-pair']);
+ const context=contexts[0],base=context.currentTime+.035;
+ assert.equal(context.oscillators.length,4);
+ context.oscillators.forEach((osc,index)=>near(osc.starts[0],base+3+index*.5));
+ assert.throws(()=>audio.setDefinition({bpm:0}),/Invalid/);
+ audio.playPattern(['eighth-pair']);
+ near(context.oscillators.at(-1).starts[0],base+1.5,'Invalid updates retain prior settings.');
+ audio.setDefinition();audio.playPattern(['quarter']);
+ near(context.oscillators.at(-1).stops[0]-context.oscillators.at(-1).starts[0],BEAT*.82+.025);
+});
+
+
+test('very short edited subdivisions finish their attack before their decay',async t=>{
+ const {contexts}=fakeAudio(t),audio=createRhythmAudio({bpm:400,noteKinds:[{id:'quarter',units:1,rest:false,subdivisions:16}]});
+ await audio.unlock();audio.playPattern(['quarter']);assert.equal(contexts[0].gains.length,16);
+ for(const gain of contexts[0].gains){const [start,attack,decay,end]=gain.gain.events;assert(start.time<attack.time&&attack.time<decay.time&&decay.time<end.time);}
+});

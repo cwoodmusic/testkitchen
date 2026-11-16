@@ -183,3 +183,129 @@ test('state, receipts and catalogs are frozen snapshots while serialized drafts 
  assert.throws(()=>{state.inventory.half=99;},TypeError);assert.throws(()=>{state.receipt.recipe.push('quarter');},TypeError);
  const saved=game.serialize();saved.actions[0].sourceId='canal-chest';saved.phrase.push('half');saved.discoveredRoutes.push('garden');assert.deepEqual(game.state,state);
 });
+
+const definition=()=>({
+ settings:{startRoomId:'depot',initialInventory:empty()},noteKinds:copy(NOTE_KINDS),
+ rooms:copy(CHAPTER_ROOMS),doors:copy(CHAPTER_DOORS),sources:copy(CHAPTER_SOURCES),previews:copy(CHAPTER_PREVIEWS),terminals:copy(CHAPTER_TERMINALS)
+});
+const payDefined=(game,project,id)=>{assert.equal(game.selectDoor(id),true);fill(game,project.doors[id].recipe);assert.equal(game.commit(),true);return game;};
+
+test('an authored key uses its own ordered duration rather than the shipped four-beat target',()=>{
+ const project=definition();project.settings.initialInventory={quarter:3,half:1};project.doors.garden.recipe=['quarter','half'];
+ const game=createDungeonGame({definition:project});assert.equal(game.selectDoor('depot-garden'),true);
+ assert.equal(game.state.targetUnits,6);assert.equal(game.state.targetBeats,3);
+ fill(game,['half','quarter']);assert.equal(game.state.canAttempt,true);assert.equal(game.state.canCommit,false);
+ const wrong=game.state;assert.equal(game.commit(),false);assert.deepEqual(game.state,wrong);
+ game.move(1,-1);assert.equal(game.commit(),true);assert.equal(game.state.roomId,'garden-porch');assert.equal(game.state.inventory.quarter,2);assert.equal(game.state.inventory.half,0);
+ assert.deepEqual(game.state.receipt.recipe,['quarter','half']);assert.deepEqual(game.state.receipt.received,[]);
+});
+
+test('edited note duration and repeated source tiles drive the same lock and inventory calculations',()=>{
+ const project=definition();project.noteKinds.find(kind=>kind.id==='quarter').units=3;
+ project.sources['nell-parcel'].recipe=['quarter','quarter','eighth'];project.doors.garden.recipe=['quarter','eighth'];
+ const game=createDungeonGame({definition:project});assert.equal(game.claim('nell-parcel'),true);
+ assert.equal(game.state.inventory.quarter,2);assert.equal(game.state.inventory.eighth,1);
+ assert.equal(game.state.noteKinds.find(kind=>kind.id==='quarter').beats,1.5);
+ game.selectDoor('garden');assert.equal(game.state.targetBeats,2);game.add('quarter');assert.equal(game.state.beats,1.5);assert.equal(game.state.canAttempt,false);
+ game.add('eighth');assert.equal(game.state.beats,2);assert.equal(game.state.canCommit,true);assert.equal(game.commit(),true);
+ assert.equal(game.state.inventory.quarter,1);assert.equal(game.state.inventory.eighth,0);
+});
+
+test('authored answers can exceed nine tiles and four beats while additions respect the selected target',()=>{
+ const project=definition();project.settings.initialInventory={quarter:20};project.custom=false;project.doors.garden.recipe=Array(12).fill('quarter');
+ const game=createDungeonGame({definition:project});game.selectDoor('garden');assert.equal(game.state.targetBeats,12);
+ fill(game,project.doors.garden.recipe);assert.equal(game.state.phrase.length,12);assert.equal(game.add('quarter'),false);assert.equal(game.state.canCommit,true);
+ const saved=game.serialize();assert.deepEqual(createDungeonGame({definition:project,saved}).state,game.state);
+ assert.equal(game.commit(),true);assert.equal(game.state.inventory.quarter,8);
+});
+
+test('an authored start room and initial supplies do not manufacture entry receipts or collect sources',()=>{
+ const project=definition();project.settings.startRoomId='garden-porch';project.settings.initialInventory={half:2};
+ const game=createDungeonGame({definition:project});assert.equal(game.state.roomId,'garden-porch');assert.equal(game.state.inventory.half,2);
+ assert.deepEqual(game.state.claimedSources,[]);assert.deepEqual(game.state.actions,[]);assert.equal(game.state.receipt,null);assert.equal(game.state.canRevisit,false);
+ assert.equal(game.claim('nell-parcel'),false);assert.equal(game.claim('iris-gift'),true);assert.equal(game.state.inventory.half,3);
+ assert.equal(game.restart(),true);assert.equal(game.state.roomId,'garden-porch');assert.equal(game.state.inventory.half,2);assert.deepEqual(game.state.claimedSources,[]);
+});
+
+test('authored cycles can return to the start and rewind the actual last entry without carrying its later gifts',()=>{
+ const project=definition();project.settings.initialInventory={quarter:1,eighth:1};project.doors.garden.recipe=['quarter'];project.doors['garden-porch-forward'].recipe=['eighth'];project.doors['garden-porch-forward'].to='depot';
+ const game=createDungeonGame({definition:project});payDefined(game,project,'garden');game.claim('iris-gift');const porchStock=game.state.inventory;
+ payDefined(game,project,'garden-porch-forward');assert.equal(game.state.roomId,'depot');assert.equal(game.state.canRevisit,true);assert.equal(game.claim('nell-parcel'),true);
+ assert.equal(game.revisit(),true);assert.equal(game.state.roomId,'garden-porch');assert.deepEqual(game.state.inventory,porchStock);assert.deepEqual(game.state.claimedSources,['iris-gift']);assert.equal(game.state.selectedDoor,'garden-porch-forward');
+ assert.equal(game.revisit(),true);assert.equal(game.state.roomId,'depot');assert.equal(game.state.inventory.quarter,1);assert.equal(game.state.inventory.eighth,1);assert.deepEqual(game.state.claimedSources,[]);assert.equal(game.state.canRevisit,false);
+});
+
+test('long authored walks replay past the shipped five-action limit without relying on claimed balances',()=>{
+ const project=definition();project.settings.initialInventory={quarter:50,eighth:50};project.doors.garden.recipe=['quarter'];project.doors['garden-porch-forward'].recipe=['eighth'];project.doors['garden-porch-forward'].to='depot';
+ const game=createDungeonGame({definition:project});for(let cycle=0;cycle<20;cycle++){payDefined(game,project,'garden');payDefined(game,project,'garden-porch-forward');}
+ assert.equal(game.state.actions.length,40);assert.equal(game.state.inventory.quarter,30);assert.equal(game.state.inventory.eighth,30);
+ const saved={...game.serialize(),inventory:{quarter:999},roomId:'canal-porch'};assert.deepEqual(createDungeonGame({definition:project,saved}).state,game.state);
+ assert.deepEqual(createDungeonGame({saved}).state.inventory,empty(),'The stock game does not accept an authored long history.');
+});
+
+test('developer controls are explicit opt-in actions and cannot affect normal games',()=>{
+ for(const project of [null,definition()]){
+  const game=createDungeonGame({definition:project}),before=game.state;
+  assert.equal(game.developerSetInventory({quarter:99}),false);assert.equal(game.developerTeleport('canal-porch'),false);assert.equal(game.developerResetSources(),false);assert.deepEqual(game.state,before);
+ }
+ const project=definition(),game=createDungeonGame({definition:project,developer:true});
+ assert.equal(game.developerSetInventory({quarter:7,half:3}),true);assert.equal(game.state.inventory.quarter,7);assert.equal(game.state.inventory.half,3);assert.equal(game.state.inventory.eighth,0);
+ game.add('quarter');assert.equal(game.state.phrase.length,1);assert.equal(game.developerSetInventory({eighth:2}),true);assert.deepEqual(game.state.phrase,[]);assert.equal(game.state.inventory.quarter,0);assert.equal(game.state.inventory.eighth,2);
+ assert.equal(game.developerTeleport('canal-porch'),true);assert.equal(game.state.roomId,'canal-porch');assert.equal(game.state.inventory.eighth,2);assert.equal(game.state.selectedDoor,null);assert.equal(game.state.receipt,null);assert.deepEqual(game.state.claimedSources,[]);
+ const saved=game.serialize();assert.deepEqual(createDungeonGame({definition:project,developer:true,saved}).state,game.state);
+ assert.deepEqual(createDungeonGame({definition:project,saved}).state.inventory,empty());assert.deepEqual(createDungeonGame({saved}).state.inventory,empty());
+});
+
+test('developer source reset clears only receipts and flags so test inventory remains under explicit control',()=>{
+ const project=definition(),game=createDungeonGame({definition:project,developer:true});assert.equal(game.claim('nell-parcel'),true);const first=game.state.inventory;
+ assert.equal(game.developerResetSources('nell-parcel'),true);assert.deepEqual(game.state.inventory,first);assert.deepEqual(game.state.claimedSources,[]);assert.deepEqual(game.state.sourceReceipts,[]);
+ assert.equal(game.claim('nell-parcel'),true);assert.equal(game.state.inventory.quarter,2);assert.equal(game.claim('nell-parcel'),false);assert.equal(game.claim('depot-chest'),true);
+ assert.equal(game.developerResetSources(),true);assert.deepEqual(game.state.claimedSources,[]);assert.deepEqual(game.state.sourceReceipts,[]);assert.equal(game.state.inventory.quarter,2);assert.equal(game.state.inventory.half,1);
+ assert.equal(game.developerResetSources(),false);assert.equal(game.developerResetSources('unknown'),false);
+ const restored=createDungeonGame({definition:project,developer:true,saved:game.serialize()});assert.deepEqual(restored.state,game.state);
+});
+
+test('developer teleports can leave boundaries and rewind without awarding traversal or arrival supplies',()=>{
+ const project=definition(),game=createDungeonGame({definition:project,developer:true});game.developerSetInventory(full());payDefined(game,project,'garden');game.claim('iris-gift');payDefined(game,project,'garden-porch-forward');
+ const before=game.state.inventory;assert.equal(game.state.phase,'continued');assert.equal(game.developerTeleport('workshop-porch'),true);assert.equal(game.state.phase,'room');assert.equal(game.state.roomId,'workshop-porch');assert.deepEqual(game.state.inventory,before);assert.equal(game.state.lastTransition,null);assert.equal(game.state.nextScene,null);assert.equal(game.state.receipt,null);
+ assert.deepEqual(game.state.traversedDoors,['depot-garden','garden-porch-forward']);assert.equal(game.revisit(),true);assert.equal(game.state.phase,'continued');assert.equal(game.state.roomId,'garden-porch');assert.deepEqual(game.state.inventory,before);assert.equal(game.state.selectedDoor,'garden-porch-forward');
+ assert.deepEqual(createDungeonGame({definition:project,developer:true,saved:game.serialize()}).state,game.state);
+ assert.equal(game.undo(),true);assert.equal(game.state.phase,'room');
+});
+
+test('undo of a boundary discards later developer edits while retaining the prior paid-room source',()=>{
+ const project=definition(),game=createDungeonGame({definition:project,developer:true});collect(game);payDefined(game,project,'garden');game.claim('iris-gift');const stock=game.state.inventory;payDefined(game,project,'garden-porch-forward');
+ game.developerSetInventory({quarter:99});game.developerResetSources('iris-gift');assert.equal(game.state.phase,'continued');assert.equal(game.state.inventory.quarter,99);assert(!game.state.claimedSources.includes('iris-gift'));
+ assert.deepEqual(createDungeonGame({definition:project,developer:true,saved:game.serialize()}).state,game.state);
+ assert.equal(game.undo(),true);assert.equal(game.state.phase,'room');assert.deepEqual(game.state.inventory,stock);assert(game.state.claimedSources.includes('iris-gift'));assert.equal(game.claim('iris-gift'),false);
+});
+
+test('malformed developer changes are inert and malformed histories are rejected atomically',()=>{
+ const project=definition(),game=createDungeonGame({definition:project,developer:true});game.claim('nell-parcel');const before=game.state;
+ for(const inventory of [null,[],{quarter:-1},{quarter:.5},{quarter:1000},{quarter:NaN},{quarter:Infinity},{whole:2},JSON.parse('{"constructor":3}')])assert.equal(game.developerSetInventory(inventory),false);
+ for(const room of [null,{},'unknown','__proto__','constructor'])assert.equal(game.developerTeleport(room),false);
+ assert.deepEqual(game.state,before);
+ for(const action of [{type:'developer-teleport',roomId:'missing'},{type:'developer-teleport',roomId:['depot']},{type:'developer-teleport',roomId:{toString:'depot'}},{type:'developer-inventory',inventory:{quarter:-1}},{type:'developer-reset-sources',sourceIds:['nell-parcel','nell-parcel']},{type:'developer-reset-sources',sourceIds:['missing']},{type:'developer-teleport',roomId:'canal-porch',notes:999}]){
+  const saved={...game.serialize(),actions:[...game.serialize().actions,action]};const restored=createDungeonGame({definition:project,developer:true,saved});assert.deepEqual(restored.state.actions,[]);assert.deepEqual(restored.state.inventory,empty());
+ }
+});
+
+test('definition inputs and exposed note metadata cannot mutate a running project',()=>{
+ const project=definition();project.settings.initialInventory={quarter:2};project.doors.garden.recipe=['quarter'];const game=createDungeonGame({definition:project});
+ project.doors.garden.recipe=['half'];project.settings.initialInventory.quarter=999;project.noteKinds[0].units=64;
+ assert.equal(game.state.inventory.quarter,2);assert.equal(game.state.noteKinds[0].units,2);assert(Object.isFrozen(game.state.noteKinds[0]));
+ payDefined(game,{doors:{garden:{recipe:['quarter']}}},'garden');assert.equal(game.state.inventory.quarter,1);
+ for(const bad of [null,{},[]])if(bad!==null)assert.throws(()=>createDungeonGame({definition:bad}),TypeError);
+ const invalid=definition();invalid.noteKinds[0].units=0;assert.throws(()=>createDungeonGame({definition:invalid}),TypeError);
+ const ambiguous=definition();ambiguous.doors.workshop.canonicalId='garden';assert.throws(()=>createDungeonGame({definition:ambiguous}),/Ambiguous/);
+ const duplicate=definition();duplicate.terminals['garden-fork']={id:'garden-fork',title:'Conflicting destination',kind:'dead-end'};assert.throws(()=>createDungeonGame({definition:duplicate}),/duplicated boundary/);
+});
+
+test('custom transaction histories stop at 512 without partially applying the next edit',()=>{
+ const project=definition(),game=createDungeonGame({definition:project,developer:true});
+ for(let index=0;index<512;index++)assert.equal(game.developerTeleport(index%2?'depot':'garden-porch'),true);
+ assert.equal(game.state.actions.length,512);const before=game.state;
+ assert.deepEqual(createDungeonGame({definition:project,developer:true,saved:game.serialize()}).state,before);
+ assert.equal(game.developerTeleport('canal-porch'),false);assert.equal(game.developerSetInventory({quarter:10}),false);assert.deepEqual(game.state,before);
+ assert.equal(game.restart(),true);assert.deepEqual(game.state.actions,[]);assert.equal(game.developerTeleport('canal-porch'),true);
+});

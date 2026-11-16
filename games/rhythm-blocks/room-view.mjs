@@ -6,9 +6,10 @@ const vectors={up:[0,-1],down:[0,1],left:[-1,0],right:[1,0]};
 const targetNames={nell:'Talk to Nell',iris:'Talk to Iris',pip:'Talk to Pip','depot-chest':'Open the chest',garden:'Inspect garden door',workshop:'Inspect workshop door',canal:'Inspect canal door'};
 
 /** A reusable room controller; it moves feet and reports interactions, never notes. */
-export function createRoomView({scene,map=scene,player,floor,controls,interactButton,prompt,savedPosition=null,room=DEPOT_ROOM,canMove=()=>true,onInteract=()=>{},onStop=()=>{},onReachChange=()=>{}}){
+export function createRoomView({scene,map=scene,player,floor,controls,interactButton,prompt,savedPosition=null,room=DEPOT_ROOM,playerDefinition=MIRA,cameraFit=false,canMove=()=>true,onInteract=()=>{},onStop=()=>{},onReachChange=()=>{}}){
   const names={...targetNames,...Object.fromEntries(room.targets.filter(target=>target.label).map(target=>[target.id,target.label]))};
-  player.style.width=`${MIRA.worldSize/room.width*100}%`;
+  player.style.backgroundImage=`url("${playerDefinition.image??'assets/mira-walk.webp'}")`;
+  player.style.width=`${playerDefinition.worldSize/room.width*100}%`;
   map.style.width=`${room.width}px`;map.style.height=`${room.height}px`;
   let walker=createRoomWalker({room,savedPosition}),pendingTarget=null,frameId=0,lastTime=0,walkPhase=0,lastPaint='',reachKey='',pulseUntil=0,pulseDirection=null,disposed=false,positionDirty=false;
   let viewportWidth=scene.clientWidth,viewportHeight=scene.clientHeight,camera={scale:1,offsetX:0,offsetY:0,width:viewportWidth,height:viewportHeight},cameraKey='';
@@ -21,7 +22,7 @@ export function createRoomView({scene,map=scene,player,floor,controls,interactBu
   function followCamera(state){
     const width=Math.max(1,viewportWidth),height=Math.max(1,viewportHeight);
     // Pull back from the old fill-and-crop framing and keep the full room height.
-    const scale=Math.min(Math.max(width/room.width,height/room.height)*.8,height/room.height);
+    const scale=cameraFit?Math.min(width/room.width,height/room.height):Math.min(Math.max(width/room.width,height/room.height)*.8,height/room.height);
     const bound=(value,min,max)=>Math.max(min,Math.min(max,value));
     const offsetX=room.width*scale<=width?(width-room.width*scale)/2:bound(width*.5-state.x*scale,width-room.width*scale,0);
     const offsetY=(height-room.height*scale)/2;
@@ -30,11 +31,11 @@ export function createRoomView({scene,map=scene,player,floor,controls,interactBu
   }
   function paint(){
     if(disposed)return;
-    const state=walker.state,row=Math.max(0,MIRA.directions.indexOf(state.facing)),col=state.moving?[1,0,2,0][Math.floor(walkPhase/125)%4]:0;
+    const state=walker.state,row=Math.max(0,playerDefinition.directions.indexOf(state.facing)),col=state.moving?[1,0,2,0][Math.floor(walkPhase/125)%4]:0;
     followCamera(state);
     const signature=[state.x,state.y,row,col].join('|');
     if(signature!==lastPaint){
-      lastPaint=signature;const anchor=MIRA.anchors[row][col];
+      lastPaint=signature;const anchor=playerDefinition.anchors[row][col];
       player.style.left=`${state.x/room.width*100}%`;player.style.top=`${state.y/room.height*100}%`;
       player.style.transform=`translate(${-anchor[0]*100}%,${-anchor[1]*100}%)`;
       player.style.backgroundPosition=`${col*50}% ${row*100/3}%`;player.style.zIndex=String(Math.round(state.y));

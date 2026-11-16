@@ -38,6 +38,14 @@ The device-only key `codaQuietBellPageOneV1` stores a version-3 action log of cl
 
 `dungeon-game.mjs` replays the chapter’s typed inventory and door transactions; `chapter.mjs` catalogs its four rooms, five sources, nine locks and six boundaries. `chapter-content.mjs` supplies room dialogue, observations and boundary copy; `scenes.mjs` supplies room geometry, interaction targets and foreground masks. `story.mjs`, `opening.mjs` and `lore.mjs` preserve the earlier opening behavior and text for migration and regression checks. `engine.mjs` retains the earlier falling-game engine and shared note catalog. `notation.mjs` supplies musical engraving; see its license/source files. `audio.mjs` synthesizes the true note subdivisions locally. Room artwork is bundled in `assets/parcel-depot.webp`, `garden-porch.webp`, `workshop-porch.webp` and `canal-porch.webp`.
 
+Press **F2**, or choose **Settings → Developer mode**, to freeze the actual room and open its inspector. Click a character to edit their opening dialogue and player replies; add, remove or rename choices and write their responses. Click a door to build its ordered answer from note tiles, or a chest to change its supplies with note counters. Room thumbnail cards switch the frozen editing view without paying a door or changing the ordinary journey. Drag a companion to move their sprite, click region, approach point and foot collision together. The canary in the depot’s glass roost now rests on its brass perch.
+
+The inspector also edits lore, gifts, route connections, warnings, outcomes, room art, spawn points, walking speed, player/cast artwork, note labels/values/rests/subdivisions and playback tempo. Advanced JSON exposes the complete authoring project, including added rooms and custom endings. The nine supported engraved note IDs remain the notation catalog. Inputs are validated data and text, never evaluated code. Invalid imports leave the current draft intact. Undo/Redo and Restore shipped project operate on the draft. On phones, Expand editor gives text editing more space; Show map returns to the frozen scene.
+
+**Save project** keeps the authoring draft on this device. **Export project** downloads `coda-quiet-bell-project.json`; **Import project** restores it, so edits can be shared for repository implementation. **Apply & playtest** saves the draft and starts a fresh isolated run with the edited rules. Test controls jump to any playable room, set exact note inventory and reset pickups. Closing the inspector resumes that test; **End playtest** restores the published run. Saving another draft does not replace the applied test until Apply is pressed. The editor never publishes changes to other players by itself.
+
+Developer data uses `codaQuietBellDeveloperProjectV1` (saved draft), `codaQuietBellDeveloperAppliedProjectV1` (applied definition), `codaQuietBellDeveloperRunV1`, `codaQuietBellDeveloperJourneyV1`, and `codaQuietBellDeveloperActiveV1`. Ordinary progress, journal and Notes wallet are kept separate. `developer-project.mjs` supplies the portable schema, validation and edited journey catalog; `developer-console.mjs`/`.css` supply the scene inspector. The engine accepts explicit custom definitions and opt-in developer transactions; ordinary save parsing rejects those transactions. Edited locks use their actual total duration rather than a fixed four beats, and audio follows the edited note durations, rests, subdivisions and tempo.
+
 Edit `game.html` and the runtime source files, rather than generated `index.html`, `release.json`, or the contents of `releases/`. Before testing or publishing any runtime change, run `node games/rhythm-blocks/build-release.mjs`. It creates an immutable release, updates the launcher and current release manifest, and keeps earlier releases available for already open or cached sessions. Commit the generated files with their source change. The release test checks that the published bundle matches the current source, so a forgotten rebuild fails the checks. Ordinary game changes no longer need manual cache-version edits in the arcade or module imports.
 
 Run from the repository root:
@@ -54,6 +62,8 @@ python tests/quiet-bell-updates-browser.py
 python tests/quiet-bell-worldbuilding-browser.py
 python tests/quiet-bell-chapter-two-browser.py
 python tests/quiet-bell-party-browser.py
+python tests/quiet-bell-developer-browser.py
+python tests/quiet-bell-developer-edges-browser.py
 ```
 
 Browser tests require Python Playwright and Chromium.

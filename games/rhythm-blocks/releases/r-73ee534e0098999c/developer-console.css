@@ -1,0 +1,300 @@
+/* A local authoring workspace. All styles stay inside its native dialog. */
+#developer-console.dc-dialog{
+  --dc-well:light-dark(#f0e6d3,#201a28);
+  --dc-card:light-dark(#fff7e7,#302637);
+  --dc-danger:light-dark(#9c272e,#ffb4b9);
+  --dc-warning:light-dark(#825214,#f0cf8e);
+  width:min(1200px,calc(100vw - 24px));max-width:calc(100vw - 24px);
+  max-height:calc(100dvh - 24px);margin:auto;padding:0;
+  border:2px solid var(--mg-edge);background:var(--mg-panel);color:var(--mg-ink);
+  overflow:hidden;box-shadow:0 16px 70px #130c2299;
+  font:14px/1.5 ui-sans-serif,system-ui,sans-serif;
+}
+#developer-console::backdrop{background:#100b18a8}
+#developer-console .dc-shell{display:flex;flex-direction:column;max-height:calc(100dvh - 28px);min-width:0}
+#developer-console .dc-header{display:flex;flex:0 0 auto;align-items:flex-start;justify-content:space-between;gap:16px;padding:18px 20px 12px;border-bottom:1px solid var(--mg-edge)}
+#developer-console .dc-header h2{font:700 20px/1.3 ui-monospace,SFMono-Regular,Consolas,monospace;color:var(--mg-gold);margin:0 0 4px}
+#developer-console .dc-header p{max-width:72ch;margin:0;color:var(--mg-muted);font-size:13px}
+#developer-console .dc-close{flex:0 0 44px;min-width:44px;min-height:44px;padding:0;font-size:24px;line-height:1}
+#developer-console .dc-kicker{display:block;color:var(--mg-gold);font:11px/1.4 ui-monospace,monospace;letter-spacing:.08em;text-transform:uppercase;margin-bottom:5px}
+#developer-console .dc-toolbar{display:flex;flex:0 0 auto;align-items:end;gap:10px;flex-wrap:wrap;padding:10px 20px;background:var(--dc-well)}
+#developer-console .dc-toolbar>.dc-field{flex:1 1 200px}
+#developer-console .dc-toolbar>.dc-field:first-child{flex:0 1 250px}
+#developer-console .dc-toolbar .dc-buttons{margin-left:auto;align-self:center}
+#developer-console .dc-tabs{display:flex;flex:0 0 auto;gap:4px;overflow-x:auto;overscroll-behavior:contain;padding:8px 16px;border-bottom:1px solid var(--mg-edge);scrollbar-width:thin;background:var(--dc-well)}
+#developer-console .dc-tabs button{flex:0 0 auto;min-height:44px;padding:9px 12px;border:1px solid transparent;background:transparent;color:var(--mg-muted);white-space:nowrap;font:12px/1.3 ui-monospace,monospace}
+#developer-console .dc-tabs button[aria-selected="true"]{border-color:var(--mg-edge);background:var(--mg-panel);color:var(--mg-gold);font-weight:700}
+#developer-console .dc-body{flex:1 1 auto;min-height:100px;min-width:0;overflow:auto;overscroll-behavior:contain;padding:18px 20px;scrollbar-gutter:stable}
+#developer-console .dc-layout{display:grid;grid-template-columns:minmax(170px,230px) minmax(0,1fr);align-items:start;gap:18px;min-width:0}
+#developer-console .dc-sidebar{display:flex;flex-direction:column;gap:7px;min-width:0}
+#developer-console .dc-sidebar>button{text-align:left;justify-content:flex-start;overflow-wrap:anywhere}
+#developer-console .dc-sidebar>button[aria-pressed="true"]{background:var(--mg-press);color:var(--mg-press-ink)}
+#developer-console .dc-main{min-width:0;display:flex;flex-direction:column;gap:15px}
+#developer-console .dc-card{min-width:0;padding:15px;border:1px solid var(--mg-edge);background:var(--dc-card)}
+#developer-console .dc-card+.dc-card{margin-top:14px}
+#developer-console .dc-card h3,#developer-console .dc-section-heading{margin:0 0 12px;font:700 14px/1.4 ui-monospace,monospace;color:var(--mg-gold)}
+#developer-console .dc-card h4{margin:12px 0 8px;font-size:13px}
+#developer-console .dc-section-heading{display:flex;justify-content:space-between;align-items:center;gap:10px;flex-wrap:wrap}
+#developer-console .dc-fields{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:12px;min-width:0}
+#developer-console .dc-field{display:flex;flex-direction:column;gap:5px;min-width:0;margin:0 0 12px}
+#developer-console .dc-fields>.dc-field{margin-bottom:0}
+#developer-console .dc-field>label,#developer-console label.dc-field,#developer-console .dc-field>span:first-child{font-size:12px;font-weight:650;color:var(--mg-muted)}
+#developer-console .dc-field input,#developer-console .dc-field textarea,#developer-console .dc-field select,
+#developer-console .dc-count-field input,#developer-console .dc-live-state input{
+  display:block;box-sizing:border-box;width:100%;max-width:100%;min-width:0;min-height:44px;
+  border:1px solid var(--mg-edge);border-radius:0;background:var(--dc-well);color:var(--mg-ink);
+  padding:10px 11px;font:14px/1.4 ui-sans-serif,system-ui,sans-serif;
+}
+#developer-console textarea{resize:vertical;min-height:100px;tab-size:2}
+#developer-console input[type="color"]{padding:5px;min-width:50px}
+#developer-console input[type="checkbox"]{width:20px;height:20px;min-height:20px;flex:0 0 20px;accent-color:var(--mg-press)}
+#developer-console .dc-checkbox{display:flex;align-items:center;gap:9px;min-height:44px;font-size:13px;font-weight:500}
+#developer-console .dc-field input:focus,#developer-console .dc-field textarea:focus,#developer-console .dc-field select:focus{outline:2px solid var(--mg-mint);outline-offset:1px}
+#developer-console button:focus-visible,#developer-console summary:focus-visible{outline:2px solid var(--mg-mint);outline-offset:2px}
+#developer-console .mg-button{font:12px/1.35 ui-monospace,monospace;min-height:44px;white-space:normal}
+#developer-console .dc-buttons{display:flex;align-items:center;gap:7px;flex-wrap:wrap}
+#developer-console .dc-recipe{display:flex;align-items:stretch;gap:7px;flex-wrap:wrap;min-height:65px;padding:9px;background:var(--dc-well);border:1px solid var(--mg-edge);margin:8px 0 10px}
+#developer-console .dc-token{display:flex;flex-direction:column;align-items:center;justify-content:center;gap:3px;min-width:65px;min-height:65px;padding:7px;border:1px solid var(--mg-edge);background:var(--mg-panel);color:var(--mg-ink);font-size:11px;cursor:pointer}
+#developer-console .dc-token svg{width:28px;height:30px;flex:0 0 auto}
+#developer-console .dc-token small{font-size:10px;color:var(--mg-muted)}
+#developer-console .dc-note-picker{display:grid;grid-template-columns:repeat(auto-fit,minmax(84px,1fr));gap:7px;margin:10px 0}
+#developer-console .dc-note-picker button{display:flex;flex-direction:column;align-items:center;justify-content:center;gap:4px;min-height:74px;padding:7px 5px;font-size:11px}
+#developer-console .dc-note-picker svg{width:30px;height:32px;flex:0 0 auto}
+#developer-console .dc-counts{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:10px;margin:10px 0}
+#developer-console .dc-count-field{display:flex;flex-direction:column;gap:5px;min-width:0;font-size:12px;font-weight:600;color:var(--mg-muted)}
+#developer-console .dc-count-field input{font-variant-numeric:tabular-nums}
+#developer-console .dc-tag{display:inline-block;padding:3px 6px;border:1px solid var(--mg-edge);color:var(--mg-muted);font:11px/1.3 ui-monospace,monospace;overflow-wrap:anywhere}
+#developer-console .dc-muted{font-size:12px;line-height:1.5;color:var(--mg-muted)}
+#developer-console .dc-card>p{margin:0 0 12px}
+#developer-console .dc-advanced{margin-top:14px;border-top:1px solid var(--mg-edge);padding-top:3px}
+#developer-console .dc-advanced summary{min-height:44px;display:list-item;align-content:center;cursor:pointer;font-size:13px;font-weight:600;color:var(--mg-gold)}
+#developer-console .dc-advanced[open] summary{margin-bottom:8px}
+#developer-console .dc-json textarea,#developer-console textarea.dc-json{width:100%;min-height:290px;white-space:pre;overflow:auto;background:var(--dc-well);color:var(--mg-ink);font:12px/1.5 ui-monospace,SFMono-Regular,Consolas,monospace;tab-size:2}
+#developer-console .dc-live-state{padding:10px 12px;border-left:3px solid var(--mg-mint);background:var(--dc-well);font-size:13px;margin-bottom:13px;overflow-wrap:anywhere}
+#developer-console .dc-live-state code{font-size:12px}
+#developer-console .dc-status{flex:0 0 auto;min-width:0;max-height:130px;overflow:auto;padding:9px 20px;font-size:12px;background:var(--dc-well);border-top:1px solid var(--mg-edge);overflow-wrap:anywhere}
+#developer-console .dc-status:empty{display:none}
+#developer-console .dc-errors,#developer-console .dc-warnings{padding:0;margin:6px 0;list-style-position:inside;overflow-wrap:anywhere;font-size:12px}
+#developer-console .dc-errors{color:var(--dc-danger)}
+#developer-console .dc-warnings{color:var(--dc-warning)}
+#developer-console .dc-errors li,#developer-console .dc-warnings li{margin:3px 0}
+#developer-console .dc-footer{display:flex;flex:0 0 auto;align-items:center;justify-content:space-between;gap:10px;flex-wrap:wrap;padding:12px 20px;border-top:1px solid var(--mg-edge);background:var(--mg-panel)}
+#developer-console .dc-footer .dc-muted{max-width:45ch}
+#developer-console .dc-footer>.dc-buttons{margin-left:auto}
+@media(max-width:700px){
+ #developer-console .dc-layout{grid-template-columns:minmax(0,1fr);gap:12px}
+ #developer-console .dc-sidebar{flex-direction:row;overflow-x:auto;overscroll-behavior:contain;padding-bottom:4px}
+ #developer-console .dc-sidebar>button{flex:0 0 auto;max-width:200px}
+ #developer-console .dc-toolbar>.dc-field:first-child{flex:1 1 180px}
+ #developer-console .dc-header{padding:13px 14px 10px}
+ #developer-console .dc-header h2{font-size:17px}
+ #developer-console .dc-toolbar{padding:9px 14px}
+ #developer-console .dc-tabs{padding:6px 10px}
+ #developer-console .dc-body{padding:13px 14px}
+ #developer-console .dc-footer{padding:10px 14px}
+ #developer-console .dc-status{padding:8px 14px;max-height:100px}
+ #developer-console .dc-card{padding:12px}
+}
+@media(max-width:430px){
+ #developer-console.dc-dialog{width:calc(100vw - 12px);max-width:calc(100vw - 12px);max-height:calc(100dvh - 12px)}
+ #developer-console .dc-shell{max-height:calc(100dvh - 16px)}
+ #developer-console .dc-header{gap:8px}
+ #developer-console .dc-header p{font-size:12px;line-height:1.4}
+ #developer-console .dc-fields{grid-template-columns:minmax(0,1fr)}
+ #developer-console .dc-counts{grid-template-columns:repeat(2,minmax(0,1fr))}
+ #developer-console .dc-footer{gap:7px}
+ #developer-console .dc-footer>.dc-buttons{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));width:100%;margin-left:0}
+ #developer-console .dc-footer>.dc-buttons .mg-primary{grid-column:1/-1}
+ #developer-console .dc-footer>.dc-muted{font-size:11px}
+ #developer-console .dc-field input,#developer-console .dc-field textarea,#developer-console .dc-field select,#developer-console .dc-count-field input{font-size:16px}
+ #developer-console .dc-json textarea,#developer-console textarea.dc-json{min-height:230px;font-size:12px}
+ #developer-console .dc-toolbar .dc-field{margin-bottom:3px}
+ #developer-console .dc-toolbar{gap:5px}
+ #developer-console .dc-note-picker{grid-template-columns:repeat(3,minmax(0,1fr))}
+}
+@media(max-height:620px){
+ #developer-console .dc-header p{display:none}
+ #developer-console .dc-header{padding-top:9px;padding-bottom:7px}
+ #developer-console .dc-footer>.dc-muted{display:none}
+ #developer-console .dc-status{max-height:76px}
+}
+
+/* Scene-first authoring: choose a room, click its people or doors, then edit. */
+#developer-console .dc-layout{grid-template-columns:minmax(0,1.2fr) minmax(280px,.8fr);gap:18px}
+#developer-console .dc-scene-panel{min-width:0;position:sticky;top:0;align-self:start}
+#developer-console .dc-scene-stage{position:relative;isolation:isolate;min-width:0;width:100%;aspect-ratio:3/2;background:#241b29;border:1px solid var(--mg-edge);overflow:hidden}
+#developer-console .dc-scene-stage>img{display:block;width:100%;height:100%;object-fit:fill;image-rendering:pixelated;pointer-events:none;user-select:none}
+#developer-console .dc-scene-panel>p{margin:8px 0;font-size:12px;color:var(--mg-muted)}
+#developer-console .dc-scene-actor,#developer-console .dc-scene-hotspot{position:absolute;display:block;min-width:44px;min-height:44px;padding:0;border:1px solid transparent;background:transparent;color:#fff3da;cursor:pointer;touch-action:manipulation}
+#developer-console .dc-scene-actor{transform:translate(-50%,-100%);aspect-ratio:1;overflow:visible}
+#developer-console .dc-preview-sprite{display:block;position:absolute;inset:0;width:100%;height:100%;background-size:200% 200%;background-repeat:no-repeat;image-rendering:pixelated;pointer-events:none}
+#developer-console .dc-scene-actor>span:not(.dc-preview-sprite),#developer-console .dc-scene-hotspot>span{position:absolute;bottom:100%;left:50%;transform:translateX(-50%);max-width:180px;padding:3px 5px;border:1px solid #d7b487;background:#322435;color:#ffedcd;font:11px/1.35 ui-monospace,monospace;white-space:nowrap;opacity:0;pointer-events:none}
+#developer-console .dc-scene-hotspot>span{bottom:auto;top:0}
+#developer-console .dc-scene-actor[data-selected="true"],#developer-console .dc-scene-hotspot[data-selected="true"],#developer-console .dc-scene-actor[aria-pressed="true"],#developer-console .dc-scene-hotspot[aria-pressed="true"]{border-color:#ffdf9d;box-shadow:0 0 0 1px #30202b,inset 0 0 0 1px #ffdf9d;background:#ffdf9d16}
+#developer-console .dc-scene-actor:hover,#developer-console .dc-scene-hotspot:hover{border-color:#e2caa0;background:#ffdf9d15}
+#developer-console .dc-scene-actor[data-selected="true"]>span,#developer-console .dc-scene-hotspot[data-selected="true"]>span,#developer-console .dc-scene-actor[aria-pressed="true"]>span,#developer-console .dc-scene-hotspot[aria-pressed="true"]>span,#developer-console .dc-scene-actor:hover>span,#developer-console .dc-scene-hotspot:hover>span,#developer-console .dc-scene-actor:focus-visible>span,#developer-console .dc-scene-hotspot:focus-visible>span{opacity:1}
+#developer-console .dc-scene-actor>.dc-preview-sprite{opacity:1}
+#developer-console .dc-inspector{display:flex;flex-direction:column;gap:13px;min-width:0}
+#developer-console .dc-inspector>.dc-card+.dc-card{margin-top:0}
+#developer-console .dc-room-cards{display:flex;gap:8px;overflow-x:auto;overscroll-behavior:contain;min-width:0;padding:3px 2px 9px;scrollbar-width:thin}
+#developer-console .dc-room-card{display:flex;flex:0 0 116px;flex-direction:column;gap:6px;min-width:0;min-height:44px;padding:5px;border:1px solid var(--mg-edge);background:var(--dc-well);color:var(--mg-muted);font:11px/1.35 ui-monospace,monospace;text-align:left}
+#developer-console .dc-room-card img{display:block;width:100%;aspect-ratio:3/2;object-fit:cover;image-rendering:pixelated;pointer-events:none}
+#developer-console .dc-room-card[aria-pressed="true"]{border-color:var(--mg-gold);box-shadow:0 0 0 1px var(--mg-gold);background:var(--mg-panel);color:var(--mg-gold)}
+#developer-console .dc-room-card span{overflow-wrap:anywhere}
+#developer-console .dc-choice-group{display:flex;gap:7px;flex-wrap:wrap;margin:8px 0 12px;min-width:0}
+#developer-console .dc-choice-card{display:flex;flex-direction:column;justify-content:center;align-items:center;gap:5px;min-width:76px;min-height:44px;max-width:100%;padding:8px 10px;border:1px solid var(--mg-edge);background:var(--dc-well);color:var(--mg-ink);font:12px/1.4 ui-sans-serif,system-ui,sans-serif;text-align:center;overflow-wrap:anywhere}
+#developer-console .dc-choice-card[aria-pressed="true"]{border-color:var(--mg-press);background:var(--mg-press);color:var(--mg-press-ink)}
+#developer-console .dc-avatar{display:block;flex:0 0 auto;width:64px;height:64px;background-size:200% 200%;background-repeat:no-repeat;image-rendering:pixelated;pointer-events:none}
+#developer-console .dc-topic-tabs{display:flex;gap:5px;flex-wrap:wrap;margin:10px 0}
+#developer-console .dc-topic-tabs button{flex:1 1 75px;min-height:44px;min-width:0;padding:8px;border:1px solid var(--mg-edge);background:var(--dc-well);color:var(--mg-ink);font:12px/1.3 ui-sans-serif,system-ui,sans-serif}
+#developer-console .dc-topic-tabs button[aria-pressed="true"],#developer-console .dc-topic-tabs button[aria-selected="true"]{background:var(--mg-press);color:var(--mg-press-ink);border-color:var(--mg-press)}
+#developer-console .dc-note-stepper{display:flex;align-items:center;gap:6px;min-width:0;min-height:44px;margin:7px 0;padding:6px 0;border-bottom:1px solid var(--mg-edge)}
+#developer-console .dc-note-stepper>span:first-child,#developer-console .dc-note-stepper>label:first-child{display:flex;flex:1 1 auto;align-items:center;gap:7px;min-width:0;font-size:12px;overflow-wrap:anywhere}
+#developer-console .dc-note-stepper svg{display:block;flex:0 0 30px;width:30px;height:34px}
+#developer-console .dc-note-stepper button{flex:0 0 44px;min-width:44px;min-height:44px;padding:6px;font-size:19px}
+#developer-console .dc-note-stepper input{flex:0 0 52px;width:52px;min-width:0;min-height:44px;padding:6px 4px;text-align:center;border:1px solid var(--mg-edge);background:var(--dc-well);color:var(--mg-ink);font:14px/1.3 ui-monospace,monospace}
+#developer-console .dc-note-stepper output{flex:0 0 30px;min-width:30px;text-align:center;font:14px/1.3 ui-monospace,monospace;font-variant-numeric:tabular-nums}
+#developer-console .dc-tools{display:flex;align-items:center;gap:6px;flex:0 0 auto}
+#developer-console .dc-tools details{position:relative}
+#developer-console .dc-tools summary{display:list-item;min-height:44px;align-content:center;padding:8px 10px;border:1px solid var(--mg-edge);background:var(--dc-well);color:var(--mg-ink);font:12px/1.4 ui-monospace,monospace;cursor:pointer}
+#developer-console .dc-tools details>div{position:absolute;z-index:50;top:calc(100% + 5px);right:0;display:flex;flex-direction:column;align-items:stretch;gap:7px;width:225px;max-width:calc(100vw - 42px);max-height:60dvh;overflow:auto;padding:10px;border:1px solid var(--mg-edge);background:var(--mg-panel);box-shadow:0 10px 25px #130c2266}
+#developer-console .dc-tools details>div>.mg-button{width:100%}
+#developer-console .dc-notices{flex:0 0 auto;max-height:110px;overflow:auto;min-width:0}
+#developer-console .dc-notices .dc-status{max-height:none}
+#developer-console .dc-notices>.dc-errors,#developer-console .dc-notices>.dc-warnings{padding-inline:20px}
+#developer-console .dc-json-area{box-sizing:border-box;display:block;width:100%;max-width:100%;min-width:0;min-height:240px;padding:10px;border:1px solid var(--mg-edge);background:var(--dc-well);color:var(--mg-ink);font:12px/1.5 ui-monospace,SFMono-Regular,Consolas,monospace;white-space:pre;overflow:auto}
+@media(max-width:800px){
+ #developer-console .dc-layout{grid-template-columns:minmax(0,1fr);gap:13px}
+ #developer-console .dc-scene-panel{position:static}
+ #developer-console .dc-room-card{flex-basis:102px}
+}
+@media(max-width:430px){
+ #developer-console .dc-footer>.dc-buttons .mg-primary{grid-column:auto}
+ #developer-console .dc-room-card{flex-basis:94px}
+ #developer-console .dc-inspector .dc-fields{grid-template-columns:minmax(0,1fr)}
+ #developer-console .dc-notices{max-height:72px}
+ #developer-console .dc-notices>.dc-errors,#developer-console .dc-notices>.dc-warnings{padding-inline:14px}
+ #developer-console .dc-tools summary{padding-inline:7px;font-size:11px}
+ #developer-console .dc-note-stepper input{font-size:16px}
+}
+@media(max-height:620px){
+ #developer-console .dc-room-card{flex-basis:94px}
+ #developer-console .dc-room-card img{max-height:46px}
+ #developer-console .dc-room-cards{padding-bottom:4px}
+ #developer-console .dc-notices{max-height:64px}
+}
+
+/* The real game map remains clickable beside this nonmodal inspector. */
+#developer-console.dc-dialog{
+ position:fixed;z-index:3000;inset:0 0 0 auto;
+ width:420px;max-width:100vw;height:100dvh;max-height:100dvh;
+ margin:0;padding:0;border:0;border-left:2px solid var(--mg-edge);
+ box-shadow:-8px 0 28px #130c2255;overflow:hidden;
+}
+#developer-console .dc-shell{height:100dvh;max-height:100dvh}
+#developer-console .dc-header{padding:10px 12px;gap:8px;align-items:center}
+#developer-console .dc-header h2{font-size:17px;margin-bottom:0}
+#developer-console .dc-header .dc-kicker,#developer-console .dc-header p.dc-muted{display:none}
+#developer-console .dc-toolbar{display:block;padding:7px 10px 4px}
+#developer-console .dc-toolbar .dc-field{margin:5px 0}
+#developer-console .dc-room-cards{gap:6px;padding:2px 2px 7px}
+#developer-console .dc-room-card{flex-basis:88px;gap:4px;padding:4px;font-size:10px;line-height:1.3}
+#developer-console .dc-room-card img{aspect-ratio:3/2;height:46px;max-height:46px;object-fit:cover}
+#developer-console .dc-tabs{padding:4px 7px;gap:2px}
+#developer-console .dc-tabs button{padding-inline:9px}
+#developer-console .dc-body{min-height:0;padding:12px}
+#developer-console .dc-inspector{width:100%}
+#developer-console .dc-card{padding:11px}
+#developer-console .dc-card+.dc-card{margin-top:11px}
+#developer-console .dc-footer{padding:8px 10px;display:block}
+#developer-console .dc-footer>.dc-muted{display:none}
+#developer-console .dc-footer>.dc-buttons{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:7px;width:100%;margin:0}
+#developer-console .dc-footer>.dc-buttons .mg-primary{grid-column:auto}
+#developer-console .dc-footer .mg-button{padding:8px 6px}
+#developer-console .dc-notices{max-height:80px}
+#developer-console .dc-notices .dc-status{padding:6px 12px;font-size:11px;line-height:1.35}
+#developer-console .dc-notices>.dc-errors,#developer-console .dc-notices>.dc-warnings{padding-inline:12px}
+#developer-console .dc-replies,#developer-console .dc-reply-list{display:flex;flex-direction:column;gap:7px;margin:10px 0}
+#developer-console .dc-replies button,#developer-console .dc-reply-list button{display:flex;align-items:center;justify-content:flex-start;min-height:44px;width:100%;padding:9px 10px;border:1px solid var(--mg-edge);background:var(--dc-well);color:var(--mg-ink);font:13px/1.4 ui-sans-serif,system-ui,sans-serif;text-align:left;overflow-wrap:anywhere}
+#developer-console .dc-replies button[aria-pressed="true"],#developer-console .dc-replies button[aria-selected="true"],#developer-console .dc-reply-list button[aria-pressed="true"]{background:var(--mg-press);border-color:var(--mg-press);color:var(--mg-press-ink)}
+#developer-console .dc-replies textarea{width:100%;min-height:100px}
+#developer-console .dc-room-preview{position:relative;max-width:100%;overflow:hidden;border:1px solid var(--mg-edge)}
+#developer-console .dc-room-preview img{display:block;width:100%;image-rendering:pixelated}
+#developer-console .dc-room-pin{position:absolute;transform:translate(-50%,-100%);min-height:44px;max-width:100px;padding:5px;border:1px solid var(--mg-edge);background:var(--mg-panel);color:var(--mg-ink);font-size:11px}
+@media(max-width:700px){
+ #developer-console.dc-dialog{inset:auto 0 0 0;width:100vw;max-width:100vw;height:55dvh;max-height:55dvh;border:0;border-top:2px solid var(--mg-edge);box-shadow:0 -8px 28px #130c2255}
+ #developer-console .dc-shell{height:calc(55dvh - 2px);max-height:calc(55dvh - 2px)}
+ #developer-console .dc-header{min-height:44px;padding:0 8px;gap:6px}
+ #developer-console .dc-header h2{font-size:14px;line-height:1.25}
+ #developer-console .dc-header p{display:none}
+ #developer-console .dc-close,#developer-console .dc-tools summary{min-height:44px;min-width:44px}
+ #developer-console .dc-tools{gap:3px}
+ #developer-console .dc-tools summary{padding-inline:6px}
+ #developer-console .dc-toolbar{padding:2px 8px 0}
+ #developer-console .dc-toolbar .dc-field:has(input[type="search"]),#developer-console .dc-toolbar .dc-search{display:none}
+ #developer-console .dc-room-cards{gap:4px;padding:2px 1px 4px}
+ #developer-console .dc-room-card{flex-basis:80px;justify-content:center;min-height:44px;padding:4px 5px;font-size:10px;line-height:1.25}
+ #developer-console .dc-room-card img{display:none}
+ #developer-console .dc-tabs{padding:0 5px;gap:1px}
+ #developer-console .dc-tabs button{min-height:44px;padding:7px 8px;font-size:11px}
+ #developer-console .dc-body{padding:9px 10px}
+ #developer-console .dc-card{padding:10px}
+ #developer-console .dc-notices{max-height:48px}
+ #developer-console .dc-notices .dc-status{padding:4px 10px;font-size:10px;line-height:1.3}
+ #developer-console .dc-notices>.dc-errors,#developer-console .dc-notices>.dc-warnings{padding-inline:10px;font-size:11px}
+ #developer-console .dc-footer{padding:5px 8px}
+ #developer-console .dc-footer>.dc-buttons{gap:5px}
+ #developer-console .dc-footer .mg-button{min-height:44px;padding:6px 5px;font-size:11px}
+ #developer-console .dc-fields{grid-template-columns:minmax(0,1fr)}
+ #developer-console .dc-topic-tabs{margin:6px 0}
+ #developer-console .dc-tools details>div{max-height:39dvh;width:210px}
+}
+/* Project tools is itself a details control in the dock header. */
+#developer-console details.dc-tools{position:relative;display:block;flex:0 0 auto}
+#developer-console details.dc-tools>summary{display:list-item;min-height:44px;align-content:center;padding:8px 10px;border:1px solid var(--mg-edge);background:var(--dc-well);color:var(--mg-ink);font:12px/1.4 ui-monospace,monospace;cursor:pointer;white-space:nowrap}
+#developer-console details.dc-tools>div{position:absolute;z-index:50;top:calc(100% + 5px);right:0;display:flex;flex-direction:column;align-items:stretch;gap:7px;width:225px;max-width:calc(100vw - 42px);max-height:60dvh;overflow:auto;padding:10px;border:1px solid var(--mg-edge);background:var(--mg-panel);box-shadow:0 10px 25px #130c2266}
+#developer-console details.dc-tools>div>.mg-button{width:100%}
+#developer-console .dc-replies button.dc-reply-card{flex-direction:column;align-items:flex-start;justify-content:center;gap:4px}
+#developer-console .dc-reply-card>strong,#developer-console .dc-reply-card>span{display:block;width:100%;text-align:left}
+#developer-console .dc-reply-card[aria-pressed="true"] .dc-muted{color:inherit;opacity:.85}
+#developer-console .dc-json-area{resize:vertical;margin-bottom:10px}
+#developer-console .dc-search-result{display:flex;flex-direction:column;align-items:flex-start;gap:5px;width:100%;margin:8px 0;padding:10px;text-align:left;overflow-wrap:anywhere}
+@media(max-width:700px){
+ #developer-console details.dc-tools>summary{padding:7px 6px;font-size:11px}
+ #developer-console details.dc-tools>div{max-height:39dvh;width:210px}
+}
+/* Gift quantities stay a readable list inside the narrow inspector. */
+#developer-console .dc-counts:has(>.dc-note-stepper){display:flex;flex-direction:column;gap:0}
+#developer-console .dc-note-stepper>.dc-note-glyph{flex:0 0 32px;display:flex;align-items:center;justify-content:center;width:32px;height:36px;min-width:32px;background:var(--note-color,var(--mg-panel));color:#26313a;border:1px solid var(--mg-edge)}
+#developer-console .dc-note-stepper>strong{flex:1 1 auto;min-width:0;font-size:12px;font-weight:600;overflow-wrap:anywhere}
+#developer-console .dc-note-stepper>.dc-buttons{flex:0 0 auto;flex-wrap:nowrap;gap:4px}
+#developer-console .dc-note-stepper>.dc-buttons .dc-tag{min-width:26px;padding:3px 2px;text-align:center}
+#developer-console .dc-note-picker button,#developer-console .dc-token{background:var(--note-color,var(--mg-panel));color:#26313a;border-color:#58434a}
+@media(max-height:620px){
+ #developer-console .dc-header{min-height:44px;padding:0 8px;gap:6px}
+ #developer-console .dc-header h2{font-size:15px;line-height:1.25}
+ #developer-console details.dc-tools>summary{min-height:44px;padding:7px 6px;font-size:11px}
+ #developer-console .dc-toolbar{padding:2px 8px 0}
+ #developer-console .dc-toolbar .dc-field:has(input[type="search"]),#developer-console .dc-toolbar .dc-search{display:none}
+ #developer-console .dc-room-cards{gap:4px;padding:2px 1px 4px}
+ #developer-console .dc-room-card{flex-basis:80px;justify-content:center;min-height:44px;padding:4px 5px;font-size:10px;line-height:1.25}
+ #developer-console .dc-room-card img{display:none}
+ #developer-console .dc-tabs{padding:0 5px;gap:1px}
+ #developer-console .dc-tabs button{min-height:44px;padding:7px 8px;font-size:11px}
+ #developer-console .dc-footer{padding:5px 8px}
+ #developer-console .dc-footer .mg-button{min-height:44px;padding:6px 5px;font-size:11px}
+ #developer-console .dc-notices{max-height:40px}
+}
+/* Phones can temporarily give the inspector the screen, then return to the map. */
+#developer-console .dc-expand{display:none}
+@media(max-width:700px){
+ #developer-console .dc-header{display:grid;grid-template-columns:minmax(0,1fr) auto auto 44px;gap:4px;align-items:center}
+ #developer-console .dc-header>div:first-child{min-width:0}
+ #developer-console .dc-header h2{max-width:100%;min-width:0;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+ #developer-console details.dc-tools>summary{min-width:44px;padding:7px 6px;font-size:0;line-height:1.4}
+ #developer-console details.dc-tools>summary::marker{font-size:11px}
+ #developer-console details.dc-tools>summary::after{content:'Tools';font:11px/1.4 ui-monospace,monospace}
+ #developer-console .dc-expand{display:inline-flex;align-items:center;justify-content:center;min-width:60px;min-height:44px;padding:6px;font:11px/1.3 ui-monospace,monospace;white-space:nowrap}
+ #developer-console.dc-dialog.dc-expanded{height:95dvh;max-height:95dvh}
+ #developer-console.dc-expanded .dc-shell{height:calc(95dvh - 2px);max-height:calc(95dvh - 2px)}
+}
