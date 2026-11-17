@@ -357,6 +357,7 @@ export function validateProject(project){
    if(!record(entry))fail(entryPath,'use room-entry settings.');
    else{
     if(entry.enabled!==undefined&&typeof entry.enabled!=='boolean')fail(`${entryPath}.enabled`,'use true or false.');
+    if(entry.gait!==undefined&&!CUTSCENE_GAITS.has(entry.gait))fail(`${entryPath}.gait`,'choose walk or run.');
     if(entry.fadeTiles!==undefined)number(entry.fadeTiles,`${entryPath}.fadeTiles`,0,128,{integer:true});
     if(entry.staggerTiles!==undefined)number(entry.staggerTiles,`${entryPath}.staggerTiles`,0,64,{integer:true});
     if(entry.doorX!==undefined)number(entry.doorX,`${entryPath}.doorX`,0,geometry.width);

@@ -14,19 +14,19 @@ const point=value=>({x:value.x,y:value.y});
 const heading=(from,to)=>Math.abs(to.x-from.x)>=Math.abs(to.y-from.y)?to.x>from.x?'right':'left':to.y>from.y?'down':'up';
 function physicalRoom(scene){return{...scene.geometry,obstacles:scene.geometry.obstacles.filter(item=>!['mira','nell','iris','pip'].includes(item.id))};}
 
-test('all 23 arrivals file through the south doorway before reaching their existing room positions',()=>{
+test('all 23 arrivals rush through the south doorway before reaching their existing room positions',()=>{
  const before=JSON.stringify(CAMPAIGN_SCENES);let clips=0;
  for(const scene of Object.values(CAMPAIGN_SCENES)){
   const entry=compileRoomEntry({scene}),floor=physicalRoom(scene);
-  assert(!entry.blocked,scene.id);assert.equal(entry.clips.length,4,scene.id);assert.equal(entry.fadeTiles,12);assert.equal(entry.staggerTiles,2);
-  assert.equal(entry.totalTiles,32);near(entry.quantumMs,scene.geometry.gridSize/scene.geometry.speed*1000);
+  assert(!entry.blocked,scene.id);assert.equal(entry.clips.length,4,scene.id);assert.equal(entry.fadeTiles,6);assert.equal(entry.staggerTiles,1);assert.equal(entry.gait,'run');assert.equal(entry.speedMultiplier,2);
+  assert.equal(entry.totalTiles,16);assert(entry.totalTiles*entry.quantumMs<2100,'The whole party bursts inside within about two seconds.');assert(entry.clips.at(-1).startTile*entry.quantumMs<400,'Everyone starts the rush within one short burst.');near(entry.quantumMs,scene.geometry.gridSize/scene.geometry.speed*1000);
   assert.deepEqual(entry.clips.map(clip=>clip.actor),['mira','nell','iris','pip']);
   for(const [index,clip]of entry.clips.entries()){
-   assert.equal(clip.startTile,index*2);assert.equal(clip.from.x,entry.door.x);assert(clip.from.y>=scene.geometry.height+160);
+   assert.equal(clip.startTile,index);assert.equal(clip.gait,'run');assert.equal(clip.speedMultiplier,2);assert.equal(clip.from.x,entry.door.x);assert(clip.from.y>=scene.geometry.height+160);
    assert.deepEqual(clip.path[1],entry.mouth);assert(clip.path[0].y>clip.path[1].y);assert.equal(clip.path[0].x,clip.path[1].x);
    const desired=clip.actor==='mira'?scene.geometry.start:scene.actors.find(item=>item.id===clip.actor).feet;
    assert.deepEqual(clip.to,point(desired));assert(clip.endTile<=entry.totalTiles);
-   near(clip.durationTiles,Math.ceil(clip.pathLength/scene.geometry.gridSize));
+   near(clip.durationTiles,Math.ceil(clip.pathLength/(scene.geometry.gridSize*clip.speedMultiplier)));
    for(let vertex=1;vertex<clip.path.length;vertex++){
     const from=clip.path[vertex-1],to=clip.path[vertex];assert(Math.abs(from.x-to.x)<EPS||Math.abs(from.y-to.y)<EPS,`${scene.id}/${clip.actor} has a diagonal`);
     if(vertex===1)continue;
@@ -47,8 +47,8 @@ test('all 23 arrivals file through the south doorway before reaching their exist
  assert.equal(clips,92);assert.equal(JSON.stringify(CAMPAIGN_SCENES),before,'Planning does not rewrite authored geometry.');
 });
 
-test('the fade and stagger are deterministic while everyone walks at the room speed',()=>{
- const scene=CAMPAIGN_SCENES.depot,entry=createRoomEntry({scene}),speed=scene.geometry.speed;
+test('the fast fade and tight stagger are deterministic while everyone runs at twice room speed',()=>{
+ const scene=CAMPAIGN_SCENES.depot,entry=createRoomEntry({scene}),speed=scene.geometry.speed*2;
  assert.equal(entry.state.phase,'entry');assert.equal(entry.state.fadeOpacity,1);assert.equal(entry.state.beat,null);
  assert.equal(entry.state.actors.filter(actor=>actor.moving).length,1,'Only Mira starts the file at tile zero.');
  const seen=new Map(entry.state.actors.map(actor=>[actor.id,actor])),started=new Map();let frames=0,opacity=1;
@@ -57,7 +57,7 @@ test('the fade and stagger are deterministic while everyone walks at the room sp
   assert(current.fadeOpacity<=opacity+EPS);opacity=current.fadeOpacity;
   for(const pose of current.actors){
    assert(distance(pose,seen.get(pose.id))<=speed*.016+EPS,`${pose.id} cannot jump across the room.`);
-   assert.equal(pose.action,null);assert.equal(pose.emote,null);
+   assert.equal(pose.action,null);assert.equal(pose.emote,null);assert.equal(pose.gait,pose.moving?'run':'walk');
    if(pose.moving&&!started.has(pose.id))started.set(pose.id,current.currentTile);
    seen.set(pose.id,pose);
   }
@@ -69,12 +69,48 @@ test('the fade and stagger are deterministic while everyone walks at the room sp
  for(const pose of firstStory.state.actors){const end=actor(entry.state,pose.id);near(pose.x,end.x);near(pose.y,end.y);assert.equal(pose.facing,end.facing);}
 });
 
+test('the running burst uses the same safe routes and destinations as a walking override in all rooms',()=>{
+ for(const scene of Object.values(CAMPAIGN_SCENES)){
+  const running=compileRoomEntry({scene}),slowScene=clone(scene);slowScene.entry={gait:'walk'};
+  const walking=compileRoomEntry({scene:slowScene});
+  near(running.quantumMs,walking.quantumMs);
+  assert.equal(walking.gait,'walk');assert.equal(walking.speedMultiplier,1);
+  assert(running.totalTiles<walking.totalTiles,`${scene.id} has a genuinely quicker entrance`);
+  assert.deepEqual(running.endActors,walking.endActors);
+  for(const fast of running.clips){
+   const slow=walking.clips.find(clip=>clip.actor===fast.actor);
+   assert.deepEqual(fast.path,slow.path);assert.deepEqual(fast.to,slow.to);
+   near(fast.pathLength,slow.pathLength);near(slow.durationTiles,Math.ceil(slow.pathLength/scene.geometry.gridSize));
+  }
+  const burst=createRoomEntry({scene});burst.seek(3.25);
+  const movers=burst.state.actors.filter(actor=>actor.moving);
+  assert.equal(movers.length,4,`${scene.id} has the entire party running together`);
+  assert(movers.every(actor=>actor.gait==='run'));
+ }
+ const scene=CAMPAIGN_SCENES.depot,fast=createRoomEntry({scene}),slowScene=clone(scene);slowScene.entry={gait:'walk'};
+ const slow=createRoomEntry({scene:slowScene}),start=actor(fast.state,'mira');
+ fast.update(50);slow.update(50);
+ near(distance(actor(fast.state,'mira'),start),scene.geometry.speed*.05*2);
+ near(distance(actor(slow.state,'mira'),start),scene.geometry.speed*.05);
+ assert.equal(actor(fast.state,'mira').gait,'run');assert.equal(actor(slow.state,'mira').gait,'walk');
+});
+
+test('an explicit walking entrance preserves the older authored fade and party spacing',()=>{
+ const scene=clone(CAMPAIGN_SCENES.depot);scene.entry={gait:'walk',fadeTiles:12,staggerTiles:2};
+ const entry=createRoomEntry({scene});assert.equal(entry.timeline.totalTiles,32);
+ assert.equal(entry.timeline.fadeTiles,12);assert.equal(entry.timeline.staggerTiles,2);
+ assert.deepEqual(entry.timeline.clips.map(clip=>clip.startTile),[0,2,4,6]);
+ entry.seek(3.25);assert(entry.state.actors.filter(actor=>actor.moving).every(actor=>actor.gait==='walk'));
+ entry.seek(6);near(entry.state.fadeOpacity,.5);
+ entry.skip();assert(entry.state.actors.every(actor=>!actor.moving&&actor.gait==='walk'));
+});
+
 test('resident Oren stays inside while the travelling party enters',()=>{
  const scene=CAMPAIGN_SCENES['canal-porch'],entry=createRoomEntry({scene}),original=scene.actors.find(actor=>actor.id==='oren');
  const expected=point(original.feet);
  assert(!entry.timeline.clips.some(clip=>clip.actor==='oren'));
  for(const tile of [0,1,4,12,20,entry.timeline.totalTiles]){
-  entry.seek(tile);const oren=actor(entry.state,'oren');assert.deepEqual(point(oren),expected);assert.equal(oren.moving,false);assert.equal(oren.emote,null);assert.equal(oren.facing,original.facing??'down');
+  entry.seek(tile);const oren=actor(entry.state,'oren');assert.deepEqual(point(oren),expected);assert.equal(oren.moving,false);assert.equal(oren.gait,'walk');assert.equal(oren.emote,null);assert.equal(oren.facing,original.facing??'down');
  }
 });
 
@@ -83,7 +119,7 @@ test('all 23 entrances keep the last walking heading through landing and the sto
  for(const scene of Object.values(CAMPAIGN_SCENES)){
   const entry=createRoomEntry({scene}),quantum=entry.timeline.quantumMs;
   for(const clip of entry.timeline.clips){
-   const finishTile=clip.startTile+clip.pathLength/scene.geometry.gridSize;
+   const finishTile=clip.startTile+clip.pathLength/(scene.geometry.gridSize*clip.speedMultiplier);
    entry.seek(finishTile-.001);const walking=actor(entry.state,clip.actor);
    assert(walking.moving,`${scene.id}/${clip.actor} is still approaching its station`);
    entry.seek(finishTile+.001);const landed=actor(entry.state,clip.actor);
@@ -100,7 +136,7 @@ test('all 23 entrances keep the last walking heading through landing and the sto
    entry.update(16);const current=entry.state;
    for(const pose of current.actors){
     const prior=actor(previous,pose.id),step=distance(prior,pose);
-    assert(step<=scene.geometry.speed*.016+EPS,`${scene.id}/${pose.id} cannot jump during the handoff`);
+    assert(step<=scene.geometry.speed*2*.016+EPS,`${scene.id}/${pose.id} cannot jump during the handoff`);
     if(step>EPS&&(Math.abs(prior.x-pose.x)<EPS||Math.abs(prior.y-pose.y)<EPS))assert.equal(pose.facing,heading(prior,pose));
     else if(step<=EPS)assert.equal(pose.facing,prior.facing);
    }
@@ -131,7 +167,7 @@ test('pause, seek, replay and Skip are stable and never expose an unsafe ending'
  assert(entry.skip());assert(entry.state.finished);assert.equal(entry.state.fadeOpacity,0);assert(!entry.state.playing);
  assert.deepEqual(entry.state.actors,entry.timeline.endActors);assert(entry.state.actors.every(pose=>isWalkable(physicalRoom(scene),pose)));
  assert(!entry.skip());assert(!entry.update(16));assert(entry.play());assert.equal(entry.state.currentTile,0);assert.equal(entry.state.fadeOpacity,1);
- const before=entry.state;entry.update(100000);near(entry.state.elapsed,100);assert(distance(actor(before,'mira'),actor(entry.state,'mira'))<=scene.geometry.speed*.1+EPS);
+ const before=entry.state;entry.update(100000);near(entry.state.elapsed,100);assert(distance(actor(before,'mira'),actor(entry.state,'mira'))<=scene.geometry.speed*2*.1+EPS);
  for(const value of [null,undefined,NaN,Infinity,-1,0,'100']){const old=entry.state;assert.equal(entry.update(value),false);assert.equal(entry.state,old);}
 });
 
@@ -156,7 +192,7 @@ test('custom furniture and disconnected floor project landings into reachable sp
   }
  }
  const blocked=clone(CAMPAIGN_SCENES.depot);blocked.geometry.obstacles.push({id:'closed-south-door',x:670,y:900,width:196,height:100});
- const fallback=createRoomEntry({scene:blocked});assert(fallback.timeline.blocked);assert.equal(fallback.timeline.clips.length,0);assert.equal(fallback.timeline.totalTiles,12);
+ const fallback=createRoomEntry({scene:blocked});assert(fallback.timeline.blocked);assert.equal(fallback.timeline.clips.length,0);assert.equal(fallback.timeline.totalTiles,6);
  assert(fallback.timeline.endActors.every(actor=>isWalkable(physicalRoom(blocked),actor)));assert(fallback.state.actors.every(actor=>!actor.moving));fallback.skip();assert(fallback.state.finished);
 });
 
@@ -175,7 +211,7 @@ test('valid off-grid player positions and altered actor feet survive the entry h
 test('a tiny custom floor that cannot fit a new party formation retains its existing arrangement instead of throwing',()=>{
  const scene={id:'tiny',actors:['nell','iris','pip'].map((id,index)=>({id,feet:{x:40+index*20,y:40},worldSize:160})),objects:[],geometry:{width:400,height:400,gridSize:32,radius:18,speed:260,maxDeltaMs:50,bounds:{x:100,y:100,width:100,height:100},start:{x:150,y:150,facing:'up'},obstacles:[],targets:[]}};
  const before=JSON.stringify(scene),entry=createRoomEntry({scene});
- assert(entry.timeline.blocked);assert.equal(entry.timeline.clips.length,0);assert.equal(entry.timeline.totalTiles,12);
+ assert(entry.timeline.blocked);assert.equal(entry.timeline.clips.length,0);assert.equal(entry.timeline.totalTiles,6);
  assert(isWalkable(scene.geometry,actor(entry.state,'mira')));
  for(const definition of scene.actors)assert.deepEqual(point(actor(entry.state,definition.id)),definition.feet);
  assert.equal(JSON.stringify(scene),before);entry.skip();assert(entry.state.finished);

@@ -10,7 +10,7 @@ const distance=(a,b)=>Math.hypot(a.x-b.x,a.y-b.y);
 const integer=(value,fallback,min,max)=>Number.isSafeInteger(value)?clamp(value,min,max):fallback;
 const face=(from,to,fallback='up')=>Math.abs(to.x-from.x)>=Math.abs(to.y-from.y)&&to.x!==from.x?(to.x>from.x?'right':'left'):to.y!==from.y?(to.y>from.y?'down':'up'):fallback;
 function freeze(value){if(value&&typeof value==='object'&&!Object.isFrozen(value)){Object.values(value).forEach(freeze);Object.freeze(value);}return value;}
-function cleanPose(value){return{id:value.id,x:value.x,y:value.y,facing:FACINGS.has(value.facing)?value.facing:'down',moving:false,action:null,target:null,emote:null};}
+function cleanPose(value){return{id:value.id,x:value.x,y:value.y,facing:FACINGS.has(value.facing)?value.facing:'down',moving:false,gait:'walk',action:null,target:null,emote:null};}
 
 // Exact swept-circle clearance for a horizontal or vertical leg. The outside
 // doorway corridor deliberately omits floor bounds, while still avoiding props.
@@ -82,12 +82,13 @@ function roomOrigin(room,preferred){
  const walker=createRoomWalker({room,savedPosition:preferred});return copy(walker.state);
 }
 
-/** Plan a party file through the south doorway, before authored story tile 0. */
+/** Plan a tight party rush through the south doorway, before story tile 0. */
 export function compileRoomEntry({scene,playerPosition=null,playerSize=160}={}){
  const geometry=scene?.geometry;
  if(!geometry||!finite(geometry.gridSize)||geometry.gridSize<=0||!finite(geometry.speed)||geometry.speed<=0)throw new TypeError('Room entry needs valid walking geometry.');
  const config=scene.entry??{},quantumMs=geometry.gridSize/geometry.speed*1000;
- const fadeTiles=integer(config.fadeTiles,12,0,128),staggerTiles=integer(config.staggerTiles,2,0,64),enabled=config.enabled!==false;
+ const fadeTiles=integer(config.fadeTiles,6,0,128),staggerTiles=integer(config.staggerTiles,1,0,64),enabled=config.enabled!==false;
+ const gait=config.gait==='walk'?'walk':'run',speedMultiplier=gait==='run'?2:1;
  const cast=(scene.actors??[]).filter(actor=>typeof actor?.id==='string'&&point(actor.feet));
  const party=PARTY.filter(id=>id==='mira'||cast.some(actor=>actor.id===id)),travellers=new Set(party);
  const physical={...structuredClone(geometry),obstacles:geometry.obstacles.filter(obstacle=>!travellers.has(obstacle.id)).map(item=>({...item}))};
@@ -126,9 +127,9 @@ export function compileRoomEntry({scene,playerPosition=null,playerSize=160}={}){
   if(!route||distance(route.at(-1)??mouth,landing)>EPS){blocked=true;break;}
   const from={x:mouth.x,y:outsideY},path=[from,copy(mouth)];
   for(const vertex of route)if(distance(path.at(-1),vertex)>EPS)path.push(copy(vertex));
-  const length=path.slice(1).reduce((sum,at,i)=>sum+distance(path[i],at),0),durationTiles=Math.max(1,Math.ceil((length-EPS)/geometry.gridSize)),startTile=index*staggerTiles;
+  const length=path.slice(1).reduce((sum,at,i)=>sum+distance(path[i],at),0),durationTiles=Math.max(1,Math.ceil((length-EPS)/(geometry.gridSize*speedMultiplier))),startTile=index*staggerTiles;
   const arrivalFacing=path.slice(1).reduce((heading,at,i)=>distance(path[i],at)>EPS?face(path[i],at,heading):heading,'up');
-  clips.push({id:`room-entry-${id}`,actor:id,kind:'walk',startTile,durationTiles,endTile:startTile+durationTiles,pathLength:length,path,from,to:copy(landing),mouth:copy(mouth),facing:arrivalFacing});
+  clips.push({id:`room-entry-${id}`,actor:id,kind:'walk',gait,speedMultiplier,startTile,durationTiles,endTile:startTile+durationTiles,pathLength:length,path,from,to:copy(landing),mouth:copy(mouth),facing:arrivalFacing});
   initialById.set(id,cleanPose({id,...from,facing:'up'}));
  }
  if(!enabled||blocked){clips.length=0;for(const actor of endActors)initialById.set(actor.id,actor);}
@@ -138,16 +139,16 @@ export function compileRoomEntry({scene,playerPosition=null,playerSize=160}={}){
   endById.get(clip.actor).facing=clip.facing;
  }
  const totalTiles=enabled?Math.max(fadeTiles,...clips.map(clip=>clip.endTile)):0;
- return freeze({enabled,blocked,quantumMs,gridSize:geometry.gridSize,speed:geometry.speed,fadeTiles:enabled?fadeTiles:0,staggerTiles,totalTiles,door:{x:baseMouth?.x??clamp(doorX,geometry.bounds.x+geometry.radius,geometry.bounds.x+geometry.bounds.width-geometry.radius),y:geometry.height},mouth:baseMouth?copy(baseMouth):null,actors:authored.map(actor=>initialById.get(actor.id)),endActors,clips});
+ return freeze({enabled,blocked,quantumMs,gridSize:geometry.gridSize,speed:geometry.speed,gait,speedMultiplier,fadeTiles:enabled?fadeTiles:0,staggerTiles,totalTiles,door:{x:baseMouth?.x??clamp(doorX,geometry.bounds.x+geometry.radius,geometry.bounds.x+geometry.bounds.width-geometry.radius),y:geometry.height},mouth:baseMouth?copy(baseMouth):null,actors:authored.map(actor=>initialById.get(actor.id)),endActors,clips});
 }
 
 function poseAt(initial,clip,tile,gridSize){
  if(!clip||tile<clip.startTile)return cleanPose(initial);
- let remaining=Math.min(clip.pathLength,Math.max(0,tile-clip.startTile)*gridSize),facing='up';
+ let remaining=Math.min(clip.pathLength,Math.max(0,tile-clip.startTile)*gridSize*clip.speedMultiplier),facing='up';
  for(let index=1;index<clip.path.length;index++){
   const from=clip.path[index-1],to=clip.path[index],length=distance(from,to);if(length<EPS)continue;
   facing=face(from,to,facing);
-  if(remaining<length-EPS){const ratio=remaining/length;return{...cleanPose(initial),x:from.x+(to.x-from.x)*ratio,y:from.y+(to.y-from.y)*ratio,facing,moving:true};}
+  if(remaining<length-EPS){const ratio=remaining/length;return{...cleanPose(initial),x:from.x+(to.x-from.x)*ratio,y:from.y+(to.y-from.y)*ratio,facing,moving:true,gait:clip.gait};}
   remaining-=length;
  }
  return{...cleanPose(initial),...clip.to,facing:clip.facing,moving:false};

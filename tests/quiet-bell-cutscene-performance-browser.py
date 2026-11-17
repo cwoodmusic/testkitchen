@@ -15,7 +15,7 @@ import math
 from playwright.sync_api import sync_playwright
 
 ROOT=Path(__file__).resolve().parents[1]
-OUT=ROOT/'work/manual-dialogue-native'
+OUT=ROOT/'work/burst-entry-native'
 OUT.mkdir(parents=True,exist_ok=True)
 spec=importlib.util.spec_from_file_location('quiet_bell_ui',ROOT/'tests/rhythm-blocks-browser.py')
 ui=importlib.util.module_from_spec(spec);spec.loader.exec_module(ui)
@@ -269,7 +269,7 @@ def early_next(browser,url):
 
 
 def native_entry(browser,url):
-    """Watch the real fade, doorway walk and story handoff on a slower CPU."""
+    """Watch all four characters burst in at running speed on a slower CPU."""
     context,page,errors,writes,external=ui.open_page(browser,url,1024,'light',height=768,
         virtual_walk=False,skip_cutscenes=False,reduced_motion='no-preference')
     page.evaluate('document.fonts.ready')
@@ -288,21 +288,25 @@ def native_entry(browser,url):
           const state=window.quietBell?.cutscene,scene=window.quietBell?.scene;
           const map=document.getElementById('room-map'),fade=document.querySelector('.room-entry-fade');
           frames.push({at:now,delta:now-previous,index:state?.index,tile:state?.currentTile,
-            phase:state?.phase,entry:state?.entry,camera:window.quietBell?.camera,
+            phase:state?.phase,entry:state?.entry,elapsed:state?.elapsed,camera:window.quietBell?.camera,
             overflow:map.style.overflow,fadeHidden:fade?.hidden,fadeOpacity:Number(fade?.style.opacity??0),
             hasBeat:!!state?.beat,totalCharacters:state?.totalCharacters,text:document.getElementById('cutscene-line').textContent,
             silent:document.getElementById('cutscene-panel').classList.contains('cutscene-silent'),
             actors:state?.actors?.map(actor=>{
-              const node=document.querySelector('[data-actor="'+actor.id+'"]');
+              const node=actor.id==='mira'?document.getElementById('player-sprite'):document.querySelector('[data-actor="'+actor.id+'"]');
               return{id:actor.id,x:actor.x,y:actor.y,moving:actor.moving,facing:actor.facing,gait:actor.gait,gesture:actor.gesture,gestureProgress:actor.gestureProgress,
-                frame:node?Number(node.dataset.frame):null,row:node?Number(node.dataset.spriteRow):null,
-                animated:node?.dataset.spriteAnimated==='true'};
+                frame:node?Number(node.dataset.frame):null,
+                row:actor.id==='mira'?quietBell.project.player.directions.indexOf(actor.facing):node?Number(node.dataset.spriteRow):null,
+                animated:actor.id==='mira'?getComputedStyle(node).backgroundSize==='300% 400%':node?.dataset.spriteAnimated==='true',
+                renderedGait:node?.dataset.gait};
             })});
-          const actor=state?.actors?.find(actor=>actor.moving&&actor.id!=='mira');
-          if(state?.phase==='entry'&&actor&&feet.length<5){
-            const definition=scene.actors.find(item=>item.id===actor.id),sprite=quietBell.project.cast[definition.character];
-            const node=document.querySelector('[data-actor="'+actor.id+'"]');
-            const row=Number(node.dataset.spriteRow),frame=Number(node.dataset.frame),walk=sprite.walk??CAST[definition.character]?.walk;
+          if(state?.phase==='entry')for(const actor of state.actors){
+            if(!actor.moving||feet.filter(sample=>sample.id===actor.id).length>=3)continue;
+            const mira=actor.id==='mira',definition=scene.actors.find(item=>item.id===actor.id);
+            const sprite=mira?quietBell.project.player:quietBell.project.cast[definition.character];
+            const node=mira?document.getElementById('player-sprite'):document.querySelector('[data-actor="'+actor.id+'"]');
+            const row=mira?sprite.directions.indexOf(actor.facing):Number(node.dataset.spriteRow),frame=Number(node.dataset.frame);
+            const walk=mira?sprite:sprite.walk??CAST[definition.character]?.walk;
             const anchor=walk?.anchors?.[row]?.[frame]??sprite.anchor;
             const bounds=map.getBoundingClientRect(),rect=node.getBoundingClientRect(),scale=bounds.width/scene.geometry.width;
             const foot={x:rect.left+rect.width*anchor[0],y:rect.top+rect.height*anchor[1]};
@@ -326,22 +330,51 @@ def native_entry(browser,url):
     assert all(not frame['hasBeat'] and frame['totalCharacters']==0 and frame['silent'] for frame in entry), 'Story dialogue started before arrival.'
     assert all(frame['overflow']=='hidden' for frame in entry), 'Offscreen entry sprites must be clipped.'
     assert all(frame['overflow']!='hidden' and frame['fadeHidden'] and frame['entry']['finished'] for frame in story), 'Entry clipping/fade was not restored.'
-    assert len(observation['feet'])>=5 and max(item['error'] for item in observation['feet'])<3, observation['feet']
-    steps={}
+    party={'mira','nell','iris','pip'}
+    assert len(observation['feet'])>=12 and {item['id'] for item in observation['feet']}==party
+    assert max(item['error'] for item in observation['feet'])<3, observation['feet']
+    steps={};starts={};cadence_changes={};speed_samples={};last={}
     for frame in entry:
         for actor in frame['actors']:
-            if actor['id']!='mira' and actor['moving']:
-                assert actor['animated'], actor
+            if actor['moving']:
+                assert actor['animated'] and actor['gait']=='run' and actor['renderedGait']=='run', actor
+                expected_frame=[1,0,2,0][int(frame['elapsed']/62.5)%4]
+                assert actor['frame']==expected_frame, ('Running must use2x visual cadence.',actor,frame['elapsed'],expected_frame)
+                starts.setdefault(actor['id'],frame['elapsed'])
                 steps.setdefault(actor['id'],{'frames':set(),'facings':set()})
                 steps[actor['id']]['frames'].add(actor['frame']);steps[actor['id']]['facings'].add(actor['facing'])
-    assert set(steps)=={'nell','iris','pip'}, steps
+                previous=last.get(actor['id'])
+                if previous:
+                    old,elapsed=previous
+                    if old['moving'] and old['frame']!=actor['frame']:cadence_changes.setdefault(actor['id'],[]).append(frame['elapsed'])
+                    if old['moving'] and old['facing']==actor['facing'] and (abs(old['x']-actor['x'])<.000001 or abs(old['y']-actor['y'])<.000001):
+                        elapsed_delta=frame['elapsed']-elapsed
+                        if elapsed_delta>0:
+                            measured=math.hypot(actor['x']-old['x'],actor['y']-old['y'])/elapsed_delta*1000
+                            assert abs(measured-speed*2)<.001, ('Running must actually move2x faster.',actor['id'],measured,speed)
+                            speed_samples.setdefault(actor['id'],[]).append(measured)
+            last[actor['id']]=(actor,frame['elapsed'])
+    assert set(steps)==party and set(speed_samples)==party, (steps,speed_samples)
     assert all(len(item['frames'])>=2 and 'up' in item['facings'] for item in steps.values()), steps
     assert any(len(item['facings'])>=2 for item in steps.values()), 'Entry cast never visibly turns.'
+    assert max(starts.values())<500, ('The whole party should burst in within half a second.',starts)
+    entry_duration=story[0]['entry']['totalTiles']*story[0]['entry']['quantumMs']
+    assert entry_duration<2200, ('Default entrance should finish in about two seconds.',entry_duration)
+    concurrent=sum(sum(actor['moving'] for actor in frame['actors'])==4 for frame in entry)
+    assert concurrent>=3, 'All four party members must run at the same time.'
+    headings={}
+    for actor in story[0]['actors']:
+        previous=next(item for item in entry[-1]['actors'] if item['id']==actor['id'])
+        headings[actor['id']]={'arrivalFacing':previous['facing'],'storyFacing':actor['facing'],'authoredWalkStarted':actor['moving']}
+        if not actor['moving']:assert actor['facing']==previous['facing'], ('Arrival heading snapped before movement.',headings)
+    cadence={actor:percentile([b-a for a,b in zip(times,times[1:])],.5) for actor,times in cadence_changes.items()}
     assert ui.resources(ui.state(page))==before_resources
     assert page.evaluate('quietBell.journey')==before_journal
     assert page.evaluate('(key)=>localStorage.getItem(key)',ui.SAVE_KEY)==before_save, 'Visual entry changed the saved run.'
     result={'name':'native-entry-cpu4','releaseBase':page.evaluate('document.baseURI'),
-            'cpuThrottle':4,'entryFrames':len(entry),'fadeStartsAt':entry[0]['fadeOpacity'],
+            'cpuThrottle':4,'entryFrames':len(entry),'entryDurationMs':entry_duration,'allFourRunningFrames':concurrent,
+            'firstRunningMilliseconds':starts,'measuredRunSpeed':{actor:percentile(values,.5) for actor,values in speed_samples.items()},
+            'medianRunFrameChangeMs':cadence,'arrivalHeadings':headings,'fadeStartsAt':entry[0]['fadeOpacity'],
             'fadeEndsAt':entry[-1]['fadeOpacity'],'entryTileAtHandoff':story[0]['entry']['currentTile'],
             'entryClockMonotonic':True,'dialogueWaitsForArrival':True,'clippingRestored':True,
             'saveAndResourcesPreserved':True,'renderedFootSamples':observation['feet'],

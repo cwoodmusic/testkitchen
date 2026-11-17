@@ -500,6 +500,24 @@ test('disabled and zero-duration room entry settings retain their independent st
  assert.deepEqual(normalizeProject(noStory).content.depot.cutscene,[],'An entrance remains valid without a following story.');
 });
 
+test('entrance pace stays independent of saved timing, room geometry and story tracks',()=>{
+ for(const gait of ['run','walk']){
+  const project=createDefaultProject(),before=clone(project);
+  project.scenes.depot.entry={gait,fadeTiles:17,staggerTiles:4,doorX:754.5,author:{note:'Keep this timing.'}};
+  project.scenes['garden-porch'].entry={enabled:false,gait:'walk',fadeTiles:0,staggerTiles:0};
+  const source=clone(project),restored=normalizeProject(JSON.parse(JSON.stringify(project)));
+  valid(restored);assert.deepEqual(project,source,'Importing a pace preference never rewrites the source project.');
+  assert.deepEqual(restored.scenes.depot.entry,source.scenes.depot.entry);
+  assert.deepEqual(restored.scenes['garden-porch'].entry,source.scenes['garden-porch'].entry,'An explicitly disabled walking entrance stays disabled.');
+  assert.equal(restored.scenes['workshop-porch'].entry,undefined,'Unspecified defaults stay implicit instead of becoming saved overrides.');
+  assert.deepEqual(restored.content,before.content,'Pace does not change authored Walk, Text, Emote or Action coordinates.');
+  assert.deepEqual(restored.scenes.depot.geometry,before.scenes.depot.geometry);
+  assert.deepEqual(restored.doors,before.doors);assert.deepEqual(restored.sources,before.sources);
+  assert.deepEqual(restored.settings.initialInventory,before.settings.initialInventory);
+  assert.deepEqual(normalizeProject(restored),restored);
+ }
+});
+
 test('malformed room entry settings fail concretely without losing the imported draft',()=>{
  for(const entry of [null,true,false,7,'fade',[]]){
   const project=createDefaultProject();project.scenes.depot.entry=entry;const before=structuredClone(project);
@@ -508,6 +526,7 @@ test('malformed room entry settings fail concretely without losing the imported 
  }
  for(const [entry,field]of [
   [{enabled:'yes'},'enabled'],[{enabled:1},'enabled'],
+  [{gait:null},'gait'],[{gait:true},'gait'],[{gait:2},'gait'],[{gait:'sprint'},'gait'],
   [{fadeTiles:-1},'fadeTiles'],[{fadeTiles:.5},'fadeTiles'],[{fadeTiles:129},'fadeTiles'],[{fadeTiles:Infinity},'fadeTiles'],
   [{staggerTiles:-1},'staggerTiles'],[{staggerTiles:.5},'staggerTiles'],[{staggerTiles:65},'staggerTiles'],
   [{doorX:-1},'doorX'],[{doorX:1537},'doorX'],[{doorX:NaN},'doorX'],[{doorX:'768'},'doorX'],

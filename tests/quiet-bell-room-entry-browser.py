@@ -15,7 +15,7 @@ import math
 import time
 
 ROOT = Path(__file__).resolve().parents[1]
-OUT = ROOT / 'work/room-entry-browser'
+OUT = ROOT / 'work/burst-entry-browser'
 OUT.mkdir(parents=True, exist_ok=True)
 spec = importlib.util.spec_from_file_location('entry_tracks', ROOT / 'tests/quiet-bell-cutscene-tracks-browser.py')
 tracks = importlib.util.module_from_spec(spec);spec.loader.exec_module(tracks)
@@ -31,7 +31,7 @@ TRACE = r'''(() => {
     roomId:value.roomId,currentTile:value.currentTile,elapsed:value.elapsed,
     playing:value.playing,playbackRate:value.playbackRate??1,finished:value.finished,
     text:value.beat?.text??'',actors:value.actors?.map(a=>({id:a.id,x:a.x,y:a.y,
-      facing:a.facing,moving:a.moving,frame:document.querySelector(a.id==='mira'?'#player-sprite':'.mg-npc[data-actor="'+a.id+'"]')?.dataset.frame}))??[]});
+      facing:a.facing,moving:a.moving,gait:a.gait??'walk',frame:document.querySelector(a.id==='mira'?'#player-sprite':'.mg-npc[data-actor="'+a.id+'"]')?.dataset.frame}))??[]});
   const dispatch=EventTarget.prototype.dispatchEvent;
   EventTarget.prototype.dispatchEvent=function(event){
     if(event.type==='quietbellcutscene'&&event.detail){
@@ -166,22 +166,43 @@ def assert_trace(page):
             old = pose(before,actor['id'])
             distance = math.hypot(actor['x']-old['x'],actor['y']-old['y'])
             maximum = max(maximum,distance)
-            assert distance <= speed*(elapsed+.001)+1, (before,after,actor)
+            multiplier = 2 if actor.get('gait')=='run' or old.get('gait')=='run' else 1
+            assert distance <= speed*multiplier*(elapsed+.001)+1, (before,after,actor)
     starts = {}
     moving_frames = {}
+    running_segments = {}
     for identifier in PARTY:
         moved = [frame for frame in frames if frame['phase']=='entry' and pose(frame,identifier)['moving']]
         assert moved, identifier
+        assert all(pose(frame,identifier)['gait']=='run' for frame in moved), identifier
         assert all(pose(frame,identifier)['facing']=='up' for frame in moved if pose(frame,identifier)['y']>1024)
         starts[identifier] = moved[0]['entry']['currentTile']
         moving_frames[identifier] = sorted({pose(frame,identifier).get('frame') for frame in moved})
-        assert len(moving_frames[identifier]) >= 2, (identifier,moving_frames)
+        assert moving_frames[identifier]==['0','1','2'], (identifier,moving_frames)
+        for frame in moved:
+            expected = [1,0,2,0][math.floor(frame['elapsed']/62.5)%4]
+            assert int(pose(frame,identifier)['frame'])==expected, (identifier,frame,expected)
+        straight = []
+        for before,after in zip(moved,moved[1:]):
+            elapsed = (after['entry']['elapsed']-before['entry']['elapsed'])/1000
+            if not elapsed:continue
+            first,last = pose(before,identifier),pose(after,identifier)
+            ratio = math.hypot(last['x']-first['x'],last['y']-first['y'])/(speed*elapsed)
+            if ratio>1.85:straight.append(ratio)
+        assert len(straight)>=3, (identifier,'Needs genuine faster-than-walk motion',straight)
+        assert max(straight)<=2.00001, (identifier,straight)
+        running_segments[identifier]=len(straight)
     assert starts['mira'] < starts['nell'] < starts['iris'] < starts['pip'], starts
+    assert starts['pip']-starts['mira']<=4, ('The burst starts together rather than filing in slowly.',starts)
     stories = [frame for frame in frames if frame['phase']=='story']
     assert stories, frames[-3:]
     assert stories[0]['entry']['finished'], stories[0]
+    duration = stories[0]['entry']['totalTiles']*stories[0]['entry']['quantumMs']
+    assert duration<=2250, ('A stock entrance should rush into the room in about two seconds.',duration)
     assert all(pose(stories[0],identifier)['y'] <= page.evaluate('quietBell.scene.geometry.height') for identifier in PARTY)
     return {'fadeIsClockDriven':True,'staggeredParty':starts,'stepFrames':moving_frames,
+            'allFourRunAtDoubleSpeed':True,'fasterRunCadence':True,'runningSegments':running_segments,
+            'entryDurationMs':duration,'clusteredStarts':True,
             'noMovementJumpAtHandoff':True,'maxObservedWorldStep':maximum,'frames':len(frames)}
 
 
@@ -213,17 +234,25 @@ def opening_flow(browser, url, expected):
     assert before_rate['playbackRate'] == 2 and not before_rate['playing']
     assert before_rate['entry']['currentTile'] == paused['entry']['currentTile']
     page.screenshot(path=str(OUT/'depot-fade-start.png'))
-    page.evaluate('window.dispatchEvent(new Event("focus"))')
-    mid = None
-    for _ in range(80):
-        value = cutscene(page)
-        if value['phase'] != 'entry':break
-        assert_silent_entry(page,value)
-        assert cs.conserved(page) == original
-        if .3 < value['entry']['fadeOpacity'] < .7:
-            mid = value;page.screenshot(path=str(OUT/'depot-fade-middle.png'));break
-        tick(page,30)
+    # The burst's fade lasts less than a second. Observe a real frame inside
+    # the document, then pause with the same blur event as the preceding check;
+    # RPC/screenshot latency cannot consume the intermediate frame first.
+    mid = page.evaluate('''()=>new Promise(resolve=>{
+      window.dispatchEvent(new Event('focus'));
+      function sample(){
+        const value=quietBell.cutscene;
+        if(!value||value.phase!=='entry'){resolve(null);return;}
+        if(value.entry.fadeOpacity>.3&&value.entry.fadeOpacity<.7){
+          window.dispatchEvent(new Event('blur'));resolve(value);return;
+        }
+        requestAnimationFrame(sample);
+      }
+      requestAnimationFrame(sample);
+    })''')
     assert mid, 'The fade must expose intermediate opacity while the party walks.'
+    assert_silent_entry(page,cutscene(page));assert cs.conserved(page)==original
+    page.screenshot(path=str(OUT/'depot-fade-middle.png'))
+    page.evaluate('window.dispatchEvent(new Event("focus"))')
     for _ in range(100):
         value = cutscene(page)
         if value['phase'] != 'entry':break
@@ -285,11 +314,22 @@ def director_flow(browser,url,expected):
     page.keyboard.press('F2');page.locator('[data-dev-tab="cutscene"]').click();tick(page,50)
     baseline = tracks.export_project(page,'entry-baseline')
     open_entry_settings(page)
+    assert page.locator('#developer-room-entry-gait [data-cutscene-choice="run"]').get_attribute('aria-pressed')=='true'
+    assert page.locator('#developer-room-entry-fade').input_value()=='6'
+    assert page.locator('#developer-room-entry-spacing').input_value()=='1'
+    page.locator('#developer-room-entry-gait [data-cutscene-choice="walk"]').click();tick(page,30)
+    walking=tracks.export_project(page,'entry-walk')
+    assert walking['scenes']['depot']['entry']['gait']=='walk'
+    assert walking['content']==baseline['content'] and walking['doors']==baseline['doors'] and walking['sources']==baseline['sources']
+    paths.history(page,'undo');walk_undo=tracks.export_project(page,'entry-walk-undo')
+    assert walk_undo['scenes']['depot']==baseline['scenes']['depot']
+    paths.history(page,'redo');assert tracks.export_project(page,'entry-walk-redo')['scenes']['depot']['entry']['gait']=='walk'
+    open_entry_settings(page)
     for selector,value in [('#developer-room-entry-fade',18),('#developer-room-entry-spacing',3),('#developer-room-entry-door-x',736)]:
         tracks.set_number(page,selector,value)
     changed = tracks.export_project(page,'entry-settings-changed')
     config = changed['scenes']['depot']['entry']
-    assert config['fadeTiles']==18 and config['staggerTiles']==3 and config['doorX']==736, config
+    assert config['fadeTiles']==18 and config['staggerTiles']==3 and config['doorX']==736 and config['gait']=='walk', config
     assert changed['content']==baseline['content'] and changed['doors']==baseline['doors'] and changed['sources']==baseline['sources']
     paths.history(page,'undo');undone=tracks.export_project(page,'entry-settings-undo')
     assert undone['scenes']['depot'].get('entry',{}).get('doorX',768)==768
@@ -299,6 +339,7 @@ def director_flow(browser,url,expected):
     open_entry_settings(page);page.locator('#developer-cutscene-entry').click();tick(page,30)
     value=cutscene(page);assert_silent_entry(page,value)
     assert all(abs(pose(value,identifier)['x']-736)<.1 for identifier in PARTY)
+    assert pose(value,'mira')['moving'] and pose(value,'mira')['gait']=='walk'
     assert 'Room entry' in page.locator('#developer-cutscene-time').inner_text()
     assert page.locator('.cutscene-path-overlay').count()==0
     page.locator('#developer-cutscene-pause').click();tick(page,30);paused=cutscene(page)
@@ -324,6 +365,20 @@ def director_flow(browser,url,expected):
     page.locator('#developer-cutscene-stop').click();tick(page,30)
     assert not cutscene(page) and not page.locator('.room-entry-fade').count()
     assert cs.normal_storage(page)==saved and paths.resources(page)==original
+    open_entry_settings(page);page.locator('#developer-room-entry-gait [data-cutscene-choice="run"]').click();tick(page,30)
+    running=tracks.export_project(page,'entry-run-custom-timing')
+    assert running['scenes']['depot']['entry']=={**config,'gait':'run'}
+    assert running['content']==baseline['content'] and running['doors']==baseline['doors'] and running['sources']==baseline['sources']
+    page.locator('#developer-cutscene-entry').click();tick(page,30);run_first=cutscene(page)
+    assert pose(run_first,'mira')['moving'] and pose(run_first,'mira')['gait']=='run'
+    assert page.locator('#player-sprite').get_attribute('data-gait')=='run'
+    tick(page,80);run_second=cutscene(page)
+    elapsed=(run_second['entry']['elapsed']-run_first['entry']['elapsed'])/1000
+    start,end=pose(run_first,'mira'),pose(run_second,'mira')
+    travelled=math.hypot(end['x']-start['x'],end['y']-start['y'])
+    speed=page.evaluate('quietBell.scene.geometry.speed')
+    assert abs(travelled-speed*2*elapsed)<.001, (travelled,elapsed,speed)
+    page.locator('#developer-cutscene-stop').click();tick(page,30)
     open_entry_settings(page);page.locator('#developer-room-entry-enabled').uncheck();tick(page,40)
     disabled=tracks.export_project(page,'entry-disabled')
     assert disabled['scenes']['depot']['entry']['enabled'] is False
@@ -372,7 +427,8 @@ def director_flow(browser,url,expected):
     page.locator('#developer-end').click();tick(page,30)
     assert cs.normal_storage(page)==saved and paths.resources(page)==original
     no_errors(page,errors,writes,external);context.close()
-    return {'releaseBase':base,'entrySettingsUndoAndRoundTrip':True,'storyTimingUnchanged':True,
+    return {'releaseBase':base,'entrySettingsUndoAndRoundTrip':True,'entryPaceUndoAndRoundTrip':True,
+            'walkAndRunPreview':True,'explicitEntryTimingPreserved':True,'storyTimingUnchanged':True,
             'previewPauseRateAndSeek':True,'storyResumeDoesNotRestartEntry':True,'entryCanBeDisabled':True,'emptyStoryEntry':True,
             'residentStaysInside':True,'entryOnlyReloadResumes':True,'emptyStorySettingsReplay':True,'endingEntry':True,
             'normalSaveBytesUntouched':True}

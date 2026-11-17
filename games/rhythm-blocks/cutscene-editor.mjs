@@ -92,15 +92,16 @@ export function createCutsceneEditor({document=globalThis.document,roomId,conten
   onChange(()=>{scene.entry={...scene.entry,...patch};},{repaint:false});
   entryPreview.disabled=scene.entry?.enabled===false;
   for(const [key,id]of [['fadeTiles','developer-room-entry-fade'],['staggerTiles','developer-room-entry-spacing'],['doorX','developer-room-entry-door-x']])if(Object.hasOwn(patch,key))entrySettings.querySelector('#'+id).value=String(scene.entry[key]);
+  if(Object.hasOwn(patch,'gait'))for(const choice of entrySettings.querySelectorAll('#developer-room-entry-gait [data-cutscene-choice]'))choice.setAttribute('aria-pressed',String(choice.dataset.cutsceneChoice===scene.entry.gait));
  }
  listen(entryToggle,'change',()=>updateEntry({enabled:entryToggle.checked}));
  const doorway=scene.geometry.targets?.find(target=>target.type==='return')?.x??scene.geometry.start.x;
  const entryFields=el('div','dc-fields');entryFields.append(
-  input('Fade length (walking tiles)',scene.entry?.fadeTiles??12,'developer-room-entry-fade',{type:'number',min:0,max:128,step:1,onCommit:value=>updateEntry({fadeTiles:clamp(integer(value),0,128)})}),
-  input('Party spacing (walking tiles)',scene.entry?.staggerTiles??2,'developer-room-entry-spacing',{type:'number',min:0,max:64,step:1,onCommit:value=>updateEntry({staggerTiles:clamp(integer(value),0,64)})}),
+  input('Fade length (walking tiles)',scene.entry?.fadeTiles??6,'developer-room-entry-fade',{type:'number',min:0,max:128,step:1,onCommit:value=>updateEntry({fadeTiles:clamp(integer(value),0,128)})}),
+  input('Party spacing (walking tiles)',scene.entry?.staggerTiles??1,'developer-room-entry-spacing',{type:'number',min:0,max:64,step:1,onCommit:value=>updateEntry({staggerTiles:clamp(integer(value),0,64)})}),
   input('Doorway X',scene.entry?.doorX??doorway,'developer-room-entry-door-x',{type:'number',min:0,max:scene.geometry.width,step:1,onCommit:value=>{if(Number.isFinite(value))updateEntry({doorX:clamp(value,0,scene.geometry.width)});}}),
  );
- entrySettings.append(entryEnabled,entryFields,entryPreview,el('p','cse-help','The party walks in first, then the authored timeline starts. These settings leave the Walk, Text, Emote and Action rows at their existing times.'));
+ entrySettings.append(entryEnabled,chips('Entrance pace',scene.entry?.gait??'run',gaits,'developer-room-entry-gait',value=>updateEntry({gait:value})),entryFields,entryPreview,el('p','cse-help','The party runs in first, then the authored timeline starts. Run is twice walking speed; timing fields still use normal walking tiles. These settings leave the Walk, Text, Emote and Action rows at their existing times.'));
  element.append(entrySettings);
  function chips(label,value,options,id,onCommit){const wrap=el('div','dc-field');wrap.append(el('span','',label));const group=el('div','cse-chips');group.id=id;group.setAttribute('role','group');group.setAttribute('aria-label',label);for(const [key,name]of options){const choice=button(name,null,()=>onCommit(key));choice.dataset.cutsceneChoice=key;choice.setAttribute('aria-pressed',String(String(key)===String(value)));group.append(choice);}wrap.append(group);return wrap;}
  function flushProperty(){if(properties.contains(document.activeElement)&&document.activeElement?.matches('input,textarea'))document.activeElement.blur();}
