@@ -33,8 +33,18 @@ ROUTES = [
 ]
 VIRTUAL_WALK_PAGES = set()
 
+def _skip_story_intro(page):
+    """Use the opening's own Skip control; leave its following doorway intact."""
+    skip = page.locator('#story-intro-skip')
+    if skip.count() and skip.is_visible():
+        skip.click()
+
+def skip_intro(page):
+    _skip_story_intro(page)
+
 def skip_cutscene(page):
     """Use the visible Skip control when a regression is testing exploration."""
+    _skip_story_intro(page)
     skip = page.locator('#cutscene-skip')
     if skip.count() and skip.is_visible():
         skip.click()
@@ -214,7 +224,7 @@ def layout(page, touch=False):
     return value
 
 def open_page(browser, url, width, theme, virtual_walk=True, height=None,
-              skip_cutscenes=True, reduced_motion='no-preference'):
+              skip_cutscenes=True, reduced_motion='no-preference', skip_intro=True):
     touch = width < 500
     context = browser.new_context(viewport={'width': width, 'height': height or {1024:768,390:844,320:568}[width]}, has_touch=touch,
                                   is_mobile=touch, color_scheme=theme, reduced_motion=reduced_motion)
@@ -235,6 +245,8 @@ def open_page(browser, url, width, theme, virtual_walk=True, height=None,
     context.route('**/*', route_request)
     page.goto(url); page.wait_for_function('!!window.quietBell?.state')
     page.wait_for_function('[...document.images].every(i=>i.complete&&i.naturalWidth>0)')
+    if skip_intro:
+        _skip_story_intro(page)
     if skip_cutscenes:
         skip_cutscene(page)
     return context, page, errors, writes, external

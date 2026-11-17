@@ -30,6 +30,9 @@
 .cutscene-preview .mg-hotspot{pointer-events:none}
 .cutscene-preview .mg-person,.cutscene-preview .cutscene-mira-pick{pointer-events:auto}
 .cutscene-mira-pick{position:absolute;z-index:1700;padding:0;border:0;background:transparent;pointer-events:auto;cursor:pointer}
+.cutscene-forward-fall{position:absolute;aspect-ratio:1;pointer-events:none;image-rendering:pixelated;will-change:transform}
+.cutscene-forward-fall-frame{position:absolute;inset:0;width:100%;height:100%;background-repeat:no-repeat;image-rendering:pixelated;will-change:opacity,transform}
+.cutscene-forward-fall[hidden],.cutscene-forward-fall-frame[hidden]{display:none}
 .cutscene-playing .mg-npc,.cutscene-emote{will-change:transform}
 .developer-editing .cutscene-panel{right:432px;max-width:none;padding:10px 12px}
 .developer-editing #cutscene-line{font-size:13px;min-height:0;margin:6px 0}

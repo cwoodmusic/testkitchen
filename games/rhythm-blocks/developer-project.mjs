@@ -4,6 +4,7 @@ import {CHAPTER_ROOMS,CHAPTER_DOORS,CHAPTER_SOURCES,CHAPTER_PREVIEWS,CHAPTER_TER
 import {CAMPAIGN_CONTENT} from './campaign-content.mjs';
 import {CAMPAIGN_SCENES} from './campaign-scenes.mjs';
 import {ROOM_CUTSCENES} from './cutscene-content.mjs';
+import {upgradeStockGagDialogue} from './dialogue-updates.mjs';
 import {separateCutsceneTracks} from './cutscene.mjs';
 import {CAST,CAST_IMAGE} from './cast.mjs';
 import {MIRA} from './mira.mjs';
@@ -482,7 +483,7 @@ export function upgradeLegacyProject(value){
 
 /** Accept only JSON data and derive timing from the edited integer half-beat units. */
 export function normalizeProject(value){
- const candidate=upgradeRoomCutscenes(upgradeLegacyProject(value)),result=validateProject(candidate);
+ const candidate=upgradeStockGagDialogue(upgradeRoomCutscenes(upgradeLegacyProject(value))),result=validateProject(candidate);
  if(!result.valid)throw new TypeError(result.errors.join('\n'));
  const project=clone(candidate);
  let separated=false;

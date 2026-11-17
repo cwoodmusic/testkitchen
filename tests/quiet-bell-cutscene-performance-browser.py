@@ -15,7 +15,7 @@ import math
 from playwright.sync_api import sync_playwright
 
 ROOT=Path(__file__).resolve().parents[1]
-OUT=ROOT/'work/burst-entry-native'
+OUT=ROOT/'work/story-intro-native'
 OUT.mkdir(parents=True,exist_ok=True)
 spec=importlib.util.spec_from_file_location('quiet_bell_ui',ROOT/'tests/rhythm-blocks-browser.py')
 ui=importlib.util.module_from_spec(spec);spec.loader.exec_module(ui)
@@ -30,7 +30,8 @@ def percentile(values,fraction):
 
 
 def wait_for_story(page):
-    """Let the real doorway transport finish before measuring authored clips."""
+    """Let the introduction and real doorway finish before authored clips."""
+    ui.skip_intro(page)
     page.wait_for_function("window.quietBell?.cutscene?.phase==='story'", polling='raf')
 
 
@@ -422,6 +423,11 @@ def native_party_performance(browser,url):
               gesture:actor.gesture,gestureProgress:actor.gestureProgress,emote:actor.emote,
               facing:actor.facing,frame:Number(node?.dataset.frame),
               renderedGesture:node?.dataset.gesture??'',
+              renderedSpriteMode:node?.dataset.spriteMode??'standing',
+              forwardPose:node?.dataset.forwardPose??null,
+              forwardHead:node?.dataset.spriteMode==='forward-fall'?{x:Number(node.dataset.headX),y:Number(node.dataset.headY)}:null,
+              forwardFoot:node?.dataset.spriteMode==='forward-fall'?{x:Number(node.dataset.footX),y:Number(node.dataset.footY)}:null,
+              forwardArtVisible:actor.id==='pip'&&[...document.querySelectorAll('.cutscene-forward-fall[data-character="pip"] .cutscene-forward-fall-frame')].some(layer=>!layer.hidden&&Number(layer.style.opacity)>.01&&layer.style.backgroundImage.includes('pip-forward-fall.webp')),
               renderedRotation:transform?Math.atan2(transform.b,transform.a)*180/Math.PI:0};
           })});
         previous=now;
@@ -457,11 +463,19 @@ def native_party_performance(browser,url):
         assert all(actor['renderedGesture']==gesture for actor in states), ('Pose was not rendered',gesture,states)
         assert all(a['gestureProgress']<=b['gestureProgress'] for a,b in zip(states,states[1:])), ('Gesture clock reversed',gesture)
         assert all(not actor['moving'] for actor in states), ('Tumble feet must stay planted',gesture)
+    performed=[actor for actor in pip if actor.get('gesture')]
+    assert all(actor['renderedSpriteMode']=='forward-fall' and abs(actor['renderedRotation'])<.01 for actor in performed), 'Pip must use forward poses rather than spinning a standing sprite.'
+    assert any(actor['forwardPose']=='stumble' for actor in pip if actor.get('gesture')=='trip')
     fallen=[actor for actor in pip if actor.get('gesture')=='fallen']
-    assert min(abs(actor['renderedRotation']) for actor in fallen)>45, 'Pip never visibly falls down.'
+    axes={'up':(0,-1),'down':(0,1),'left':(-1,0),'right':(1,0)}
+    for actor in fallen:
+        assert actor['forwardPose']=='prone' and actor['forwardArtVisible'], 'The faceplant needs visible prone artwork.'
+        foot,head=actor['forwardFoot'],actor['forwardHead'];vx,vy=axes[actor['facing']]
+        assert math.hypot(foot['x']-actor['x'],foot['y']-actor['y'])<.00001
+        assert (head['x']-foot['x'])*vx+(head['y']-foot['y'])*vy>8, 'Pip must land head-first in his running direction.'
     recovery=[actor for actor in pip if actor.get('gesture')=='recover']
-    assert abs(recovery[0]['renderedRotation'])>45 and abs(recovery[-1]['renderedRotation'])<15, 'Pip must visibly get back up.'
-    assert abs(pip[-1]['renderedRotation'])<5 and not pip[-1].get('gesture'), 'Pip did not return upright.'
+    assert any(actor['forwardPose']=='pushup' for actor in recovery) and recovery[-1]['forwardPose']=='standing', 'Pip must visibly push himself back up.'
+    assert abs(pip[-1]['renderedRotation'])<5 and not pip[-1].get('gesture') and pip[-1]['renderedSpriteMode']=='standing', 'Pip did not return upright.'
     magnifying=[(frame,actor) for frame,actor in zip(frames,iris) if actor.get('gesture')=='magnify' and .15<actor.get('gestureProgress',0)<.85]
     assert len(magnifying)>=3 and all(frame['magnifier'] and frame['magnifier']['visible'] for frame,actor in magnifying), 'Iris needs an actual held magnifying glass.'
     assert all(frame['magnifier']['width']>0 and frame['magnifier']['height']>0 and frame['magnifier']['handDistance']<170 for frame,actor in magnifying), 'The magnifying glass must remain attached to Iris.'
@@ -490,7 +504,7 @@ def native_party_performance(browser,url):
     assert page.evaluate('(key)=>localStorage.getItem(key)',ui.SAVE_KEY)==before_save
     result={'name':'native-party-cpu4','releaseBase':page.evaluate('document.baseURI'),'cpuThrottle':4,
             'concurrentMovingFrames':len(simultaneous),'concurrentEmoteFrames':len(reactions),
-            'pipRunFrames':len(running),'pipGestureOrder':gesture_order,'heldMagnifierFrames':len(magnifying),
+            'pipRunFrames':len(running),'pipGestureOrder':gesture_order,'forwardFaceplantWithFixedHeels':True,'heldMagnifierFrames':len(magnifying),
             'saveAndResourcesPreserved':True,'heldCaptionMilliseconds':held_duration,
             'captionHoldsUntilClick':True,'dialogueAndVoicesContinueAfterPhysicalEnd':True,
             'voicesAfterPhysicalEnd':len(new_voices),**analyze(frames,speed,require_transition=False),
@@ -501,12 +515,116 @@ def native_party_performance(browser,url):
     context.close();return result
 
 
+def native_story_intro(browser,url):
+    """Observe the full-screen crawl with a real mobile RAF clock and slow CPU."""
+    context,page,errors,writes,external=ui.open_page(browser,url,390,'light',height=844,
+        virtual_walk=False,skip_cutscenes=False,skip_intro=False,reduced_motion='no-preference')
+    page.evaluate('document.fonts.ready')
+    page.wait_for_function('window.quietBell?.intro?.ready')
+    cdp=context.new_cdp_session(page);cdp.send('Performance.enable')
+    cdp.send('Emulation.setCPUThrottlingRate',{'rate':4})
+    before_resources=ui.resources(ui.state(page));before_journal=page.evaluate('quietBell.journey')
+    before_save=page.evaluate('(key)=>localStorage.getItem(key)',ui.SAVE_KEY)
+    layout=page.evaluate('''()=>{
+      const intro=document.getElementById('story-intro'),rect=intro.getBoundingClientRect();
+      return{rect:{x:rect.x,y:rect.y,width:rect.width,height:rect.height},
+        width:innerWidth,height:innerHeight,scrollWidth:document.documentElement.scrollWidth,
+        scrollHeight:document.documentElement.scrollHeight,
+        paragraphs:document.querySelectorAll('#story-intro-copy p').length,
+        fontReady:document.fonts.check('32px QuietBellIntro')};
+    }''')
+    assert abs(layout['rect']['width']-layout['width'])<1 and abs(layout['rect']['height']-layout['height'])<1,layout
+    assert layout['scrollWidth']<=layout['width']+1 and layout['scrollHeight']<=layout['height']+1,layout
+    assert layout['paragraphs']==3 and layout['fontReady'],layout
+    assert page.evaluate('quietBell.cutscene===null'), 'The room entrance must wait for the opening story.'
+    before=metrics(cdp)
+    frames=page.evaluate('''()=>new Promise(resolve=>{
+      const copy=document.getElementById('story-intro-copy'),frames=[];
+      let started=performance.now(),previous=started;
+      function sample(now){
+        const state=quietBell.intro,matrix=new DOMMatrixReadOnly(copy.style.transform);
+        frames.push({at:now,delta:now-previous,...state,x:matrix.m41,y:matrix.m42,
+          cutsceneActive:!!quietBell.cutscene,paragraphs:copy.children.length});
+        previous=now;
+        if(now-started<12000)requestAnimationFrame(sample);else resolve(frames);
+      }requestAnimationFrame(sample);
+    })''')
+    after=metrics(cdp)
+    (OUT/'native-intro-phone-cpu4-frames.json').write_text(json.dumps(frames)+'\n')
+    assert len(frames)>=30 and frames[-1]['at']-frames[0]['at']>=11000
+    assert 40000<=frames[0]['duration']<=60000,frames[0]
+    assert all(frame['playing'] and not frame['finished'] and not frame['cutsceneActive'] and frame['paragraphs']==3 for frame in frames)
+    assert frames[0]['y']-frames[-1]['y']>30, 'The opening story must visibly scroll upward.'
+    for previous,current in zip(frames,frames[1:]):
+        assert current['elapsed']>=previous['elapsed'] and current['progress']>=previous['progress']
+        assert current['y']<=previous['y']+.00001 and abs(current['x'])<.00001
+        expected=current['distance']/current['duration']*(current['elapsed']-previous['elapsed'])
+        assert abs((previous['y']-current['y'])-expected)<.001, ('Scroll jumped instead of following its real clock.',previous,current)
+    work={key:after[key]-before[key] for key in ['LayoutCount','LayoutDuration','RecalcStyleCount','RecalcStyleDuration','ScriptDuration','TaskDuration'] if key in before and key in after}
+    assert work.get('LayoutCount',0)<=3, ('Scrolling should transform one node without per-frame layout.',work)
+    # Headless Chromium keeps all tabs focused and visible. Exercise the normal
+    # browser events explicitly while retaining the real RAF/timer clock. No
+    # game state or game playback methods are changed by these environment cues.
+    page.evaluate('window.dispatchEvent(new Event("blur"))')
+    paused=page.evaluate('quietBell.intro');paused_transform=page.locator('#story-intro-copy').get_attribute('style')
+    assert not paused['playing']
+    page.wait_for_timeout(300)
+    assert page.evaluate('quietBell.intro')==paused
+    assert page.locator('#story-intro-copy').get_attribute('style')==paused_transform
+    page.evaluate('window.dispatchEvent(new Event("focus"))')
+    page.wait_for_function('elapsed=>quietBell.intro.playing&&quietBell.intro.elapsed>elapsed',arg=paused['elapsed'],polling='raf')
+    page.evaluate('''()=>{
+      window.__nativeVisibilityDescriptors=['hidden','visibilityState'].map(key=>[key,Object.getOwnPropertyDescriptor(document,key)]);
+      Object.defineProperty(document,'hidden',{configurable:true,value:true});
+      Object.defineProperty(document,'visibilityState',{configurable:true,value:'hidden'});
+      document.dispatchEvent(new Event('visibilitychange'));
+    }''')
+    hidden=page.evaluate('quietBell.intro');assert not hidden['playing']
+    page.wait_for_timeout(300);assert page.evaluate('quietBell.intro')==hidden
+    page.evaluate('''()=>{
+      for(const[key,descriptor]of window.__nativeVisibilityDescriptors){if(descriptor)Object.defineProperty(document,key,descriptor);else delete document[key];}
+      delete window.__nativeVisibilityDescriptors;document.dispatchEvent(new Event('visibilitychange'));
+    }''')
+    page.wait_for_function('elapsed=>quietBell.intro.playing&&quietBell.intro.elapsed>elapsed',arg=hidden['elapsed'],polling='raf')
+    assert ui.resources(ui.state(page))==before_resources and page.evaluate('quietBell.journey')==before_journal
+    assert page.evaluate('(key)=>localStorage.getItem(key)',ui.SAVE_KEY)==before_save
+    page.evaluate('''()=>{
+      window.__nativeIntroEntryStarts=0;let phase=null;
+      document.addEventListener('quietbellcutscene',event=>{
+        const next=event.detail?.phase;
+        if(next==='entry'&&phase!=='entry')window.__nativeIntroEntryStarts++;
+        phase=next;
+      });
+    }''')
+    page.keyboard.press('Escape')
+    page.wait_for_function('!quietBell.intro&&quietBell.cutscene?.phase==="entry"',polling='raf')
+    assert page.locator('#story-intro').count()==0
+    assert page.evaluate('quietBell.cutscene.actors.some(actor=>actor.moving&&actor.gait==="run")')
+    page.wait_for_timeout(100)
+    assert page.evaluate('quietBell.cutscene?.phase==="entry"'), 'The intro Escape also skipped the new running entrance.'
+    wait_for_story(page)
+    assert page.evaluate('window.__nativeIntroEntryStarts')==1, 'The introduction started more than one entrance.'
+    assert ui.resources(ui.state(page))==before_resources and page.evaluate('quietBell.journey')==before_journal
+    assert page.evaluate('(key)=>localStorage.getItem(key)',ui.SAVE_KEY)==before_save
+    ui.protected_storage(page)
+    assert not errors and not writes and not external,(errors,writes,external)
+    gaps=[frame['delta'] for frame in frames[1:]]
+    result={'name':'native-intro-phone-cpu4','releaseBase':page.evaluate('document.baseURI'),
+        'width':390,'height':844,'cpuThrottle':4,'durationMs':frames[0]['duration'],'frames':len(frames),
+        'p50FrameMs':percentile(gaps,.5),'p95FrameMs':percentile(gaps,.95),'maxFrameMs':max(gaps),
+        'scrolledPixels':frames[0]['y']-frames[-1]['y'],'clockDrivenSmoothVerticalTransform':True,
+        'fullViewportWithoutDocumentOverflow':True,'blurAndVisibilityPauseResume':True,
+        'browserVisibilityEventsSimulated':True,'escapeStartsExactlyOneRunningEntrance':True,
+        'saveAndResourcesPreserved':True,'browserWork':work,'errors':errors}
+    ui.skip_cutscene(page);context.close();return result
+
+
 def main():
     parser=argparse.ArgumentParser(description=__doc__)
     parser.add_argument('--source',action='store_true')
     parser.add_argument('--url')
     parser.add_argument('--expect-release')
-    parser.add_argument('--only',choices=['entry','party','phone','reduced','preview','next'])
+    parser.add_argument('--only',choices=['intro','entry','party','phone','reduced','preview','next'])
     args=parser.parse_args();server=None
     if args.url:url=args.url
     else:
@@ -517,7 +635,7 @@ def main():
         with sync_playwright() as p:
             raw=p.chromium.launch(executable_path='/usr/bin/chromium',args=['--no-sandbox'])
             browser=PublicBrowser(raw) if url.startswith('https:') else raw
-            cases=[('entry',lambda:native_entry(browser,url)),('party',lambda:native_party_performance(browser,url)),
+            cases=[('intro',lambda:native_story_intro(browser,url)),('entry',lambda:native_entry(browser,url)),('party',lambda:native_party_performance(browser,url)),
                    ('phone',lambda:scenario(browser,url,'native-phone-cpu4',390,844,4)),
                    ('reduced',lambda:scenario(browser,url,'native-reduced',1024,768,1,reduced='reduce')),
                    ('preview',lambda:scenario(browser,url,'native-preview-cpu4',1024,768,4,preview=True)),

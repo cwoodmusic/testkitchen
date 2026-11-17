@@ -3,6 +3,7 @@ import {createRoomEntry} from './room-entry.mjs';
 import {isWalkable,findPath} from './room.mjs';
 import {createJrpgDialogue} from './jrpg-dialogue.mjs';
 import {getNpcSpriteFrame} from './npc-sprites.mjs';
+import {getNpcForwardFall,PIP_FORWARD_FALL} from './npc-gestures.mjs';
 
 const freeze=value=>{if(value&&typeof value==='object'&&!Object.isFrozen(value)){Object.values(value).forEach(freeze);Object.freeze(value);}return value;};
 const clamp=(n,min,max)=>Math.max(min,Math.min(max,n));
@@ -82,7 +83,13 @@ export function createCutsceneView({root,map,panel,roomView,scene,project,beats,
  const actorElements=new Map(scene.actors.map(actor=>[actor.id,map.querySelector('[data-actor="'+actor.id+'"]')]));
  const definitions=new Map(scene.actors.map(actor=>[actor.id,actor]));
  const names=new Map(project.content[scene.id].people.map(person=>[person.id,person.name]));
- const emotes=new Map(),emoteOrigins=new Map(),props=new Map(),pickers=new Map(),spriteFrames=new Map(),styleValues=new WeakMap(),removers=[],wasInert=map.inert,wasOverflow=map.style.overflow;map.inert=!preview;
+ const emotes=new Map(),emoteOrigins=new Map(),props=new Map(),fallSprites=new Map(),pickers=new Map(),spriteFrames=new Map(),styleValues=new WeakMap(),removers=[],wasInert=map.inert,wasOverflow=map.style.overflow;
+ const actorOpacity=new Map([...actorElements].filter(([,element])=>element).map(([id,element])=>[id,element.style.opacity]));
+ // Begin decoding before the doorway run, rather than fetching the pose sheet
+ // at impact and briefly hiding Pip while its first CSS background arrives.
+ const fallImage=new Image();let fallReady=false;fallImage.onload=()=>{fallReady=true;if(!disposed)paint();};fallImage.src=PIP_FORWARD_FALL.image;
+ if(fallImage.complete&&fallImage.naturalWidth)fallReady=true;
+ map.inert=!preview;
  const fade=document.createElement('div');fade.className='room-entry-fade';fade.setAttribute('aria-hidden','true');fade.hidden=!entry;root.append(fade);
  const speaker=panel.querySelector('#cutscene-speaker'),line=panel.querySelector('#cutscene-line'),counter=panel.querySelector('#cutscene-counter');
  const dialogue=createJrpgDialogue({panel,line}),soundTrack=cinematicAudio?.createTrack();
@@ -128,16 +135,42 @@ export function createCutsceneView({root,map,panel,roomView,scene,project,beats,
   for(const actor of state.actors){
    const element=actorElements.get(actor.id),definition=definitions.get(actor.id);
    const gesture=getCutsceneGesturePose(actor,{reducedMotion:reduced});
+   const sprite=element&&definition?getNpcSpriteFrame({project,actor:definition,pose:actor,elapsed:state.elapsed}):null;
+   const forwardCandidate=definition?getNpcForwardFall({project,actor:definition,pose:actor,standingSprite:sprite}):null;
+   const forward=fallReady?forwardCandidate:null;
    if(element&&definition){
-    const sprite=getNpcSpriteFrame({project,actor:definition,pose:actor,elapsed:state.elapsed});
-    const lean=gesture.gesture?gesture.angle:!actor.moving&&['search','examine'].includes(actor.action)&&!reduced?(actor.facing==='left'?-3:3):0;
+    const lean=forwardCandidate?0:gesture.gesture?gesture.angle:!actor.moving&&['search','examine'].includes(actor.action)&&!reduced?(actor.facing==='left'?-3:3):0;
     const spriteKey=[sprite.image,sprite.backgroundSize,sprite.backgroundPosition,sprite.aspectRatio].join('|');
     if(spriteFrames.get(actor.id)!==spriteKey){spriteFrames.set(actor.id,spriteKey);style(element,'backgroundImage',`url(${JSON.stringify(sprite.image)})`);style(element,'backgroundSize',sprite.backgroundSize);style(element,'backgroundPosition',sprite.backgroundPosition);style(element,'aspectRatio',String(sprite.aspectRatio));}
     style(element,'transform',`translate3d(${actor.x-definition.feet.x}px,${actor.y-definition.feet.y}px,0) translate(${-sprite.anchor[0]*100}%,${-sprite.anchor[1]*100}%) rotate(${lean}deg)`);
     style(element,'transformOrigin',`${sprite.anchor[0]*100}% ${sprite.anchor[1]*100}%`);style(element,'zIndex',String(Math.round(actor.y)+1));
     data(element,'moving',String(actor.moving));data(element,'action',actor.action??'');data(element,'facing',sprite.facing);data(element,'frame',String(sprite.frame));data(element,'spriteRow',String(sprite.row));data(element,'spriteAnimated',String(sprite.animated));data(element,'emote',actor.emote??'');
     data(element,'gait',actor.gait??'walk');data(element,'gesture',gesture.gesture??'');data(element,'gestureProgress',String(Math.round(gesture.progress*10000)/10000));
+    style(element,'opacity',forward?String(forward.standingOpacity):actorOpacity.get(actor.id)??'');
+    data(element,'spriteMode',forward?'forward-fall':'standing');
+    if(forward){data(element,'forwardPose',forward.pose);data(element,'headX',String(actor.x+forward.head.x));data(element,'headY',String(actor.y+forward.head.y));data(element,'footX',String(actor.x));data(element,'footY',String(actor.y));}
+    else for(const name of ['forwardPose','headX','headY','footX','footY'])delete element.dataset[name];
    }
+   let fall=fallSprites.get(actor.id);
+   if(forward){
+    if(!fall){
+     const node=document.createElement('div');node.className='cutscene-forward-fall';node.dataset.character=actor.id;node.setAttribute('aria-hidden','true');
+     const layers=[0,1].map(()=>{const child=document.createElement('div');child.className='cutscene-forward-fall-frame';node.append(child);return child;});
+     node.style.left=`${actor.x/scene.geometry.width*100}%`;node.style.top=`${actor.y/scene.geometry.height*100}%`;node.style.width=`${definition.worldSize/scene.geometry.width*100}%`;
+     fall={element:node,layers,origin:{x:actor.x,y:actor.y}};fallSprites.set(actor.id,fall);map.append(node);
+    }
+    style(fall.element,'transform',`translate3d(${actor.x-fall.origin.x}px,${actor.y-fall.origin.y}px,0)`);style(fall.element,'zIndex',String(Math.round(actor.y)+1));
+    data(fall.element,'facing',forward.facing);data(fall.element,'pose',forward.pose);data(fall.element,'gesture',forward.gesture);
+    for(const [index,node]of fall.layers.entries()){
+     const layer=forward.layers[index];
+     if(!layer){node.hidden=true;continue;}
+     style(node,'backgroundImage',`url(${JSON.stringify(layer.image)})`);style(node,'backgroundSize',layer.backgroundSize);style(node,'backgroundPosition',layer.backgroundPosition);
+     style(node,'transform',`translate(${-layer.anchor[0]*100}%,${-layer.anchor[1]*100}%)`);style(node,'opacity',String(layer.opacity));
+     data(node,'pose',layer.pose);data(node,'frame',String(layer.frame));data(node,'row',String(layer.row));data(node,'anchorX',String(layer.anchor[0]));data(node,'anchorY',String(layer.anchor[1]));
+     node.hidden=false;
+    }
+    fall.element.hidden=false;
+   }else if(fall)fall.element.hidden=true;
    let prop=props.get(actor.id);
    if(gesture.magnifying){
     if(!prop){
@@ -170,7 +203,8 @@ export function createCutsceneView({root,map,panel,roomView,scene,project,beats,
     if(emote.dataset.cutsceneEmote!==kind){emote.dataset.cutsceneEmote=kind;emote.setAttribute('aria-label',icon.label);emote.innerHTML=`<svg viewBox="0 0 24 24" aria-hidden="true" shape-rendering="crispEdges"><path fill="${icon.color}" d="${icon.path}"/></svg>`;}
     const origin=emoteOrigins.get(actor.id);
     const radians=gesture.angle*Math.PI/180;
-    style(emote,'transform',`translate3d(${actor.x+Math.sin(radians)*size*.8-origin.x}px,${actor.y-Math.cos(radians)*size*.9-origin.y}px,0) translate(-50%,-100%)`);
+    const head=forward?{x:actor.x+forward.head.x,y:actor.y+forward.head.y-12}:{x:actor.x+Math.sin(radians)*size*.8,y:actor.y-Math.cos(radians)*size*.9};
+    style(emote,'transform',`translate3d(${head.x-origin.x}px,${head.y-origin.y}px,0) translate(-50%,-100%)`);
     if(emote.hidden)emote.hidden=false;
    }else if(emote&&!emote.hidden)emote.hidden=true;
   }
@@ -210,7 +244,7 @@ export function createCutsceneView({root,map,panel,roomView,scene,project,beats,
  function seek(value){soundTrack?.stop();entry?.skip();timeline.seek(value);last=0;paint(snapshot(),16,true);schedule();return publicState();}
  function setRate(value){rate=value===2?2:1;last=0;onRateChange(rate);paint();return publicState();}
  function skip(){if(disposed)return;soundTrack?.stop();entry?.skip();timeline.skip();onFinish({state:snapshot(),skipped:true});}
- function destroy(){if(disposed)return;disposed=true;soundTrack?.destroy();if(frame)cancelAnimationFrame(frame);frame=0;for(const remove of removers)remove();for(const emote of emotes.values())emote.remove();for(const prop of props.values())prop.element.remove();for(const element of actorElements.values())if(element){delete element.dataset.gesture;delete element.dataset.gestureProgress;delete element.dataset.gait;}hint.remove();fade.remove();dialogue.destroy();map.inert=wasInert;map.style.overflow=wasOverflow;roomView.setCinematicFrame(null);root.classList.remove('cutscene-playing','cutscene-preview');delete root.dataset.cutscenePhase;panel.classList.remove('cutscene-silent');delete panel.dataset.phase;delete panel.dataset.dialogueMode;delete panel.dataset.dialogueState;nextButton.removeAttribute('aria-label');panel.hidden=true;}
+ function destroy(){if(disposed)return;disposed=true;soundTrack?.destroy();if(frame)cancelAnimationFrame(frame);frame=0;for(const remove of removers)remove();for(const emote of emotes.values())emote.remove();for(const prop of props.values())prop.element.remove();for(const fall of fallSprites.values())fall.element.remove();fallImage.onload=null;for(const [id,element]of actorElements)if(element){for(const name of ['gesture','gestureProgress','gait','spriteMode','forwardPose','headX','headY','footX','footY'])delete element.dataset[name];element.style.opacity=actorOpacity.get(id)??'';}hint.remove();fade.remove();dialogue.destroy();map.inert=wasInert;map.style.overflow=wasOverflow;roomView.setCinematicFrame(null);root.classList.remove('cutscene-playing','cutscene-preview');delete root.dataset.cutscenePhase;panel.classList.remove('cutscene-silent');delete panel.dataset.phase;delete panel.dataset.dialogueMode;delete panel.dataset.dialogueState;nextButton.removeAttribute('aria-label');panel.hidden=true;}
  function advance(){if(entering()||preview||!snapshot().beat)return;if(!dialogue.state.complete){dialogue.revealAll();paint();return;}timeline.next();last=0;paint();schedule();}
  listen(nextButton,'click',advance);listen(skipButton,'click',skip);
  listen(panel,'click',event=>{if(preview||event.target.closest('button,a,input,textarea,select,[contenteditable="true"]'))return;advance();});

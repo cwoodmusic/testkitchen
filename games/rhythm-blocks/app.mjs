@@ -11,6 +11,7 @@ import {createCutsceneView,stageCutsceneScene} from './cutscene-view.mjs';
 import {compileRoomCutscene} from './cutscene.mjs';
 import {createCutscenePathEditor} from './cutscene-paths.mjs';
 import {getNpcSpriteFrame} from './npc-sprites.mjs';
+import {createStoryIntro} from './story-intro.mjs';
 
 const $=id=>document.getElementById(id),root=$('quiet-bell');
 const SAVE_KEY='codaQuietBellPageOneV1',JOURNEY_KEY='codaQuietBellJourneyV1',SOUND_KEY='codaRhythmBlocksSoundV1';
@@ -48,7 +49,7 @@ const unlockCinematicAudio=event=>{if(event.isTrusted&&!event.repeat&&!document.
 document.addEventListener('pointerdown',unlockCinematicAudio,{capture:true});document.addEventListener('keydown',unlockCinematicAudio,{capture:true});
 let people=new Map(),observations=new Map(),doorNames={},doorHints={},activeScene=null,activeSceneProject=null;
 let roomView=null,toastTimer=0,developerConsole=null,editingOpen=false,editorProject=null,editingRoomId=null,editorReturnPosition=null,editorReturnSelection=null,editorSignature='';
-let cutsceneView=null,cutsceneSeen=new Set(),cutscenePoses=new Map(),cutsceneProjectSignature='';
+let cutsceneView=null,introView=null,cutsceneSeen=new Set(),cutscenePoses=new Map(),cutsceneProjectSignature='';
 let cutsceneRate=1,pathEditor=null,pathSelection=null,pathEditorActive=false,pathPreviewPhase=null,pendingRoomEntry=null;
 function restoreCutscenes(value){
  cutsceneSeen=new Set((Array.isArray(value?.seen)?value.seen:[]).filter(id=>typeof id==='string'&&Object.hasOwn(runtimeProject.scenes,id)));
@@ -70,7 +71,7 @@ function recordRestoredJourney(){
 }
 recordRestoredJourney();
 function snapshot(){return{...game.state,selectedPerson,selectedTopic,developerMode,editing:editingOpen,cutscenePlaybackRate:cutsceneRate};}
-Object.defineProperty(window,'quietBell',{value:Object.freeze({get state(){return snapshot();},get project(){return runtimeProject;},get journey(){return journey.state;},get walker(){return roomView?.state??null;},get camera(){return roomView?.camera??null;},get scene(){return activeScene;},get cutscene(){return cutsceneView?.state??null;}})});
+Object.defineProperty(window,'quietBell',{value:Object.freeze({get state(){return snapshot();},get project(){return runtimeProject;},get journey(){return journey.state;},get walker(){return roomView?.state??null;},get camera(){return roomView?.camera??null;},get scene(){return activeScene;},get cutscene(){return cutsceneView?.state??null;},get intro(){return introView?.state??null;}})});
 function save({force=false}={}){if(editingOpen&&!force)return;const position=editingOpen?(editorReturnPosition?.roomId===game.state.roomId?editorReturnPosition:runtimeProject.scenes[game.state.roomId].geometry.start):roomView?.state;write(developerMode?DEV_SAVE_KEY:SAVE_KEY,JSON.stringify({...game.serialize(),conversation:{person:selectedPerson,topic:selectedTopic},positionRoomId:game.state.roomId,roomPosition:position?{x:position.x,y:position.y,facing:position.facing}:saved?.roomPosition,roomCutscenes:{version:1,seen:[...cutsceneSeen],poses:Object.fromEntries(cutscenePoses)}}));updateSave();}
 function saveJourney(){write(developerMode?DEV_JOURNEY_KEY:JOURNEY_KEY,JSON.stringify(journey.serialize()));if($('menu-dialog').open)renderPause();updateSave();}
 function renderPause(){
@@ -110,7 +111,7 @@ function showRhythmReadout(player,schedule){
 function stopAudio(){audioRevision++;audio.stop();previewAudio.stop();cinematicAudio.stop();clearRhythmReadout();}
 async function play(recipe){const revision=++audioRevision;audio.stop();if(!recipe.length||!soundEnabled)return;await audio.unlock();if(revision===audioRevision&&!document.hidden&&!$('help-dialog').open)showRhythmReadout(audio,audio.playPattern(recipe));}
 const panelIds=['conversation-dialog','notes-dialog','lore-dialog','menu-dialog','help-dialog','outcome'];
-function panelOpen(){return editingOpen||root.classList.contains('cutscene-playing')||panelIds.some(id=>$(id).open);}
+function panelOpen(){return !!introView||editingOpen||root.classList.contains('cutscene-playing')||panelIds.some(id=>$(id).open);}
 function closePanels(except=null){for(const id of panelIds)if(id!==except&&$(id).open)$(id).close();}
 function openPanel(id){roomView?.stop();if(id==='menu-dialog'){stopAudio();renderPause();}closePanels(id);if(!$(id).open)$(id).showModal();roomView?.refresh();}
 function openNotes(mode){$('notes-dialog').dataset.mode=mode;openPanel('notes-dialog');render();}
@@ -193,6 +194,7 @@ function stopCutscene({retain=false,state=null}={}){
  return true;
 }
 function beginCutscene({preview=false,project=runtimeProject,roomId=game.state.roomId,paused=false,tile=0,withEntry=!preview,story=true}={}){
+ if(introView)return null;
  stopCutscene();
  const beats=story?project.content[roomId]?.cutscene??[]:[];
  if(!project.scenes[roomId]||!beats.length&&!withEntry)return null;
@@ -205,10 +207,20 @@ function beginCutscene({preview=false,project=runtimeProject,roomId=game.state.r
  roomView.refresh();if(preview)renderCutscenePath();return cutsceneView;
 }
 function maybeEntrance({replay=false,enter=false}={}){
- if(editingOpen||game.state.phase==='continued'||cutsceneView)return;
+ if(introView||editingOpen||game.state.phase==='continued'||cutsceneView)return;
  const seen=cutsceneSeen.has(game.state.roomId);if(!replay&&!enter&&seen)return;
  if(replay){const position=roomView?.state;cutscenePoses.delete(game.state.roomId);activeSceneProject=null;renderScene(position);}
  beginCutscene({withEntry:true,story:replay||!seen});
+}
+function stopStoryIntro(){const view=introView;if(!view)return;introView=null;view.destroy();roomView?.refresh();}
+function resumeAfterIntro(){
+ if(game.state.phase==='continued')openPanel('outcome');
+ else{$('walk-floor').focus({preventScroll:true});maybeEntrance();}
+}
+function startStoryIntro(){
+ stopStoryIntro();stopCutscene();roomView?.stop();stopAudio();closePanels();
+ let view;view=createStoryIntro({root,onFinish:()=>{if(introView!==view)return;introView=null;view.destroy();roomView?.refresh();resumeAfterIntro();}});
+ introView=view;roomView?.refresh();return view;
 }
 function previewCutscene(roomId,project,options={}){
  const command=options.command??'play';
@@ -344,7 +356,7 @@ function commit(){
 }
 function undo(){roomView?.stop();const previousRoom=game.state.roomId,wasBoundary=game.state.phase!=='room';stopAudio();if(!game.undo())return;message=wasBoundary?'Back at the same lock. Notes spent on this choice are restored.':'Note returned to your satchel.';render();save();if(wasBoundary)root.querySelector('[data-door="'+doorTargetId(game.state.selectedDoor)+'"]')?.focus({preventScroll:true});if(previousRoom!==game.state.roomId)maybeEntrance({enter:true});}
 function revisitRoom(){roomView?.stop();stopAudio();if(!game.revisit())return;closePanels();message=!developerMode&&game.state.roomId==='depot'?'Back at the depot. Your entry rhythm and the notes collected beyond it have been rewound; discoveries stay in your journal.':'Back at the same lock. Notes spent on this choice are restored.';render();save();notify(message);$('walk-floor').focus({preventScroll:true});maybeEntrance({enter:true});}
-function restart(){stopCutscene();roomView?.stop();stopAudio();game.restart();restoreCutscenes(null);activeSceneProject=null;closePanels();selectedPerson=content().people[0]?.id??null;selectedTopic=getPersonReplies(content().people[0]??{})[0]?.id??null;message='A new run begins with an empty satchel. Nell and the chest are ready again.';render();save();$('walk-floor').focus({preventScroll:true});maybeEntrance();}
+function restart(){stopStoryIntro();stopCutscene();roomView?.stop();stopAudio();game.restart();restoreCutscenes(null);activeSceneProject=null;closePanels();selectedPerson=content().people[0]?.id??null;selectedTopic=getPersonReplies(content().people[0]??{})[0]?.id??null;message='A new run begins with an empty satchel. Nell and the chest are ready again.';render();save();startStoryIntro();}
 function interactWith(id){
   if(people.has(id)){stopAudio();selectedPerson=id;selectedTopic=Object.hasOwn(people.get(id),'intro')?null:getPersonReplies(people.get(id))[0]?.id??null;talk();openPanel('conversation-dialog');save();}
   else if(getChapterDoor(id)?.from===game.state.roomId)chooseDoor(id);
@@ -358,6 +370,7 @@ function selectEditorObject(roomId,object){
  developerConsole.open({roomId,tab:object.type==='person'?'dialogue':object.type==='door'?'puzzles':object.type==='chest'?'notes':'rooms',personId:object.type==='person'?object.id:undefined,doorId:object.type==='door'?(object.doorId??object.id):undefined,sourceId:object.type==='chest'?(object.sourceId??object.id):undefined,objectId:['inspect','return'].includes(object.type)?object.id:undefined});
 }
 root.addEventListener('click',event=>{
+  if(introView)return;
   const button=event.target.closest('button');if(!button||button.disabled)return;
   if(editingOpen&&developerConsole.activeTab==='cutscene'&&(button.dataset.person||button.dataset.cutsceneActor)){selectCutsceneActor(button.dataset.person??button.dataset.cutsceneActor);return;}
   const targetId=button.dataset.person??button.dataset.door??button.dataset.chest??button.dataset.inspect;
@@ -382,6 +395,7 @@ root.addEventListener('click',event=>{
     case'lore-search':claim(observations.get($('lore-dialog').dataset.observation)?.sourceId);break;
     case'ending':openPanel('outcome');break;
     case'replay-cutscene':closePanels();maybeEntrance({replay:true});break;
+    case'replay-story-intro':startStoryIntro();break;
     case'revisit-room':revisitRoom();break;
     case'listen':void play(game.state.phase==='continued'?game.state.receipt.recipe:game.state.phrase);break;
     case'commit':commit();break;
@@ -437,6 +451,7 @@ $('outcome').addEventListener('cancel',event=>{if(game.state.phase==='continued'
 function renderHelpNotes(){$('help-notes').innerHTML=NOTE_KINDS.map(kind=>`<div class="mg-help-note">${symbolMarkup(kind.id)}<span>${escapeHTML(kind.label)}</span><span>${beatText(kind)}</span></div>`).join('');}
 renderHelpNotes();
 document.addEventListener('keydown',event=>{
+  if(introView)return;
   if(event.key==='F2'&&!event.repeat&&!event.altKey&&!event.ctrlKey&&!event.metaKey){event.preventDefault();if(developerConsole.isOpen)developerConsole.close();else developerConsole.open({roomId:game.state.roomId});return;}
   if(editingOpen){if(event.key==='Escape'){event.preventDefault();developerConsole.close();}return;}
   if(event.altKey||event.ctrlKey||event.metaKey||event.target.closest('input,textarea,select,[contenteditable="true"]'))return;
@@ -451,7 +466,7 @@ function exit(event){roomView?.stop();stopAudio();void audio.suspend();if(window
 $('exit').addEventListener('click',exit);$('outcome-exit').addEventListener('click',exit);
 function background(){stopAudio();void audio.suspend();void previewAudio.suspend();void cinematicAudio.suspend();}
 window.addEventListener('blur',background);document.addEventListener('visibilitychange',()=>{if(document.hidden)background();});
-window.addEventListener('pagehide',()=>{clearTimeout(toastTimer);stopAudio();void audio.destroy();void previewAudio.destroy();void cinematicAudio.destroy();});
+window.addEventListener('pagehide',()=>{clearTimeout(toastTimer);introView?.pause();stopAudio();void audio.destroy();void previewAudio.destroy();void cinematicAudio.destroy();});
 
 function persistedProject(project){
  const normalized=normalizeProject(project);
@@ -459,6 +474,7 @@ function persistedProject(project){
  authoredProject=normalized;return normalized;
 }
 function switchRun({project,mode,nextGame,nextJourney,nextSaved=null}){
+ stopStoryIntro();
  stopCutscene();
  pendingRoomEntry=null;
  roomView?.stop();stopAudio();const previous=roomView;roomView=null;previous?.destroy();
@@ -534,5 +550,4 @@ document.addEventListener('quietbellcutscene',event=>{
 
 renderScene(saved?.version===3&&saved.positionRoomId===game.state.roomId||saved?.version===2&&game.state.roomId==='depot'?saved.roomPosition:null);
 render();
-if(game.state.phase==='continued')openPanel('outcome');else $('walk-floor').focus({preventScroll:true});
-maybeEntrance();
+startStoryIntro();

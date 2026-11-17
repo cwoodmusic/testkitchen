@@ -51,6 +51,7 @@ def wait_for_story(page):
     the original dialogue, walking and director timeline at their authored times.
     Advancing actual RAF callbacks also works when Playwright owns the clock.
     """
+    ui.skip_intro(page)
     waited = 0
     value = cutscene(page)
     while value and value.get('phase') == 'entry' and waited < 30000:
@@ -233,6 +234,7 @@ def entrance_flow(browser, url, expected=None):
     assert conserved(page) == before_reload
     # Starting over re-arms the opening while permanent discoveries stay intact.
     page.locator('#menu').click();page.locator('#restart').click()
+    ui.skip_intro(page)
     assert live_cutscene(page) and ui.state(page)['inventory'] == ui.EMPTY
     page.keyboard.press('F2')
     page.locator('#developer-console').wait_for(state='visible')
@@ -399,6 +401,7 @@ def timeline_flow(browser, url, expected=None):
     # cancel the new, ordinary entrance in the separate developer playtest.
     page.locator('#developer-apply').click()
     page.locator('#developer-console').wait_for(state='hidden');tick(page, 200)
+    ui.skip_intro(page)
     applied = cutscene(page)
     assert ui.state(page)['developerMode'] and applied and not applied['preview'], applied
     assert live_cutscene(page) and normal_storage(page) == baseline

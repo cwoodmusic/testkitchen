@@ -78,7 +78,8 @@ def inspect_sprites(page):
       return state.actors.map(actor=>{
         const node=document.querySelector(actor.id==='mira'?'#player-sprite':'.mg-npc[data-actor="'+actor.id+'"]');
         return {...actor,transform:node?.style.transform,gestureData:node?.dataset.gesture,
-          frame:node?.dataset.frame,visible:!!node&&getComputedStyle(node).visibility!=='hidden'};
+          frame:node?.dataset.frame,spriteMode:node?.dataset.spriteMode,forwardPose:node?.dataset.forwardPose,
+          visible:!!node&&getComputedStyle(node).visibility!=='hidden'};
       });
     }''')
 
@@ -101,7 +102,8 @@ def trace_actual_frames(page):
           const node=document.querySelector(actor.id==='mira'?'#player-sprite':'.mg-npc[data-actor="'+actor.id+'"]');
           const matrix=new DOMMatrixReadOnly(getComputedStyle(node).transform);
           return{id:actor.id,moving:actor.moving,emote:actor.emote,gesture:actor.gesture,
-            angle:Math.atan2(matrix.b,matrix.a)*180/Math.PI,frame:node.dataset.frame,gait:actor.gait};
+            angle:Math.atan2(matrix.b,matrix.a)*180/Math.PI,frame:node.dataset.frame,gait:actor.gait,
+            spriteMode:node.dataset.spriteMode,forwardPose:node.dataset.forwardPose};
         }));requestAnimationFrame(frame);
       }requestAnimationFrame(frame);
     }''')
@@ -124,6 +126,7 @@ def safe_saved_floor(page):
         assert all(set(pose)<=set(['id','x','y','facing']) for pose in poses),poses
     assert saved['roomPosition']['y']<=page.evaluate('quietBell.scene.geometry.height')
     assert page.locator('.cutscene-magnifier').count()==0
+    assert page.locator('.cutscene-forward-fall').count()==0
     assert not page.locator('.mg-npc[data-gesture]:not([data-gesture=""])').count()
 
 
@@ -175,7 +178,7 @@ def normal_flow(browser,url,expected,width=1024,reduced=False):
     normal_before=cs.normal_storage(page)
     quantum=current(page)['quantumMs']
     total=current(page)['totalTiles']
-    overlap=0;emotes=0;seen=set();frames=[];saved_shots=set();run_frames=set();magnifier_seen=False;angles={};lens_on_screen=False
+    overlap=0;emotes=0;seen=set();frames=[];saved_shots=set();run_frames=set();magnifier_seen=False;forward_poses={};lens_on_screen=False
     for _ in range(math.ceil(max(total*quantum,90000)/50)+10):
         value=current(page)
         if not value:break
@@ -188,7 +191,10 @@ def normal_flow(browser,url,expected,width=1024,reduced=False):
         for pose in value['actors']:
             if pose.get('gesture'):seen.add((pose['id'],pose['gesture']))
         if pip.get('gesture') in ['trip','fallen','recover']:
-            angles[pip['gesture']]=max(angles.get(pip['gesture'],0),abs(sprite_angle(page,'pip')))
+            node=page.locator('.mg-npc[data-actor="pip"]')
+            if node.get_attribute('data-sprite-mode')=='forward-fall':
+                forward_poses.setdefault(pip['gesture'],set()).add(node.get_attribute('data-forward-pose'))
+                assert abs(sprite_angle(page,'pip'))<1,'Dedicated forward poses do not rotate the standing sprite sideways.'
         frames.append({'tile':value['currentTile'],'elapsed':value['elapsed'],'actors':inspect_sprites(page)})
         if pip.get('gesture') in ['trip','fallen','recover'] and .25<pip.get('gestureProgress',0)<.8:
             name=pip['gesture']
@@ -223,10 +229,13 @@ def normal_flow(browser,url,expected,width=1024,reduced=False):
             if observed['id']=='pip' and observed.get('gait')=='run' and observed['moving']:
                 run_frames.add(observed['frame'])
         for pip_frame in [a for a in rendered if a['id']=='pip' and a.get('gesture') in ['trip','fallen','recover']]:
-            angles[pip_frame['gesture']]=max(angles.get(pip_frame['gesture'],0),abs(pip_frame['angle']))
+            if pip_frame.get('spriteMode')=='forward-fall':
+                forward_poses.setdefault(pip_frame['gesture'],set()).add(pip_frame.get('forwardPose'))
+                assert abs(pip_frame['angle'])<1,pip_frame
     assert overlap>=3 and emotes>=3,(overlap,emotes)
     assert {('pip','trip'),('pip','fallen'),('pip','recover'),('iris','magnify')}<=seen,seen
-    assert all(angles.get(name,0)>30 for name in ['trip','fallen','recover']),angles
+    for gesture,pose in [('trip','stumble'),('fallen','prone'),('recover','pushup')]:
+        assert pose in forward_poses.get(gesture,set()),(gesture,forward_poses)
     assert len(run_frames)>=2,run_frames
     assert magnifier_seen
     assert lens_on_screen,'The held lens should be on screen while Iris discusses her inspection.'
@@ -237,6 +246,7 @@ def normal_flow(browser,url,expected,width=1024,reduced=False):
     # residual magnifier, fallen pose or cutscene overlay.
     before=ui.walker(page);page.reload();page.wait_for_function('!!window.quietBell?.state');tick(page,80)
     paths.validate_release(page,expected)
+    ui.skip_intro(page)
     assert not current(page)
     assert cs.point_distance(before,ui.walker(page))<.1
     assert cs.conserved(page)==original
@@ -301,7 +311,10 @@ def editor_flow(browser,url,expected):
     for name in ['trip','fallen','recover']:
         clip=trips[name];value=seek(page,clip['startTile']+min(clip['durationTiles']-1,clip['durationTiles']//2))
         assert actor(value,'pip')['gesture']==name,value
-        if name in ['fallen','recover']:assert abs(sprite_angle(page,'pip'))>10,(name,sprite_angle(page,'pip'))
+        node=page.locator('.mg-npc[data-actor="pip"]')
+        assert node.get_attribute('data-sprite-mode')=='forward-fall'
+        assert abs(sprite_angle(page,'pip'))<1,'The dedicated action sprite replaces the sideways standing-body rotation.'
+        assert page.locator('.cutscene-forward-fall[data-character="pip"]').count()==1
         before_pose=actor(value,'pip')
         transform=page.locator('.mg-npc[data-actor="pip"]').get_attribute('style')
         tick(page,350)
@@ -389,9 +402,10 @@ def silent_control_click(page,selector):
 
 def audio_flow(browser,url,expected):
     context,page,errors,writes,external=ui.open_page(AudioTraceBrowser(browser),url,1024,'light',height=768,
-        skip_cutscenes=False,virtual_walk=False)
+        skip_cutscenes=False,virtual_walk=False,skip_intro=False)
     base=paths.validate_release(page,expected);economy=cs.conserved(page)
     assert not audio_events(page),'Cinematic sound should create no context before a real user gesture.'
+    ui.skip_intro(page)
     # Public artwork can finish loading after the first performance has begun.
     # Use the real replay control so both short cues are observed after unlock.
     if current(page):page.locator('#cutscene-skip').click()

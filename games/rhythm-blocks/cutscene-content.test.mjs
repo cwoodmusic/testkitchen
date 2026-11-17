@@ -102,6 +102,18 @@ test('Pip rushes, startles, visibly falls and recovers, then actually reaches hi
  }
 });
 
+test('Pip’s recurring tumble stays visual instead of being narrated by the dialogue',()=>{
+ const impactNarration=/\b(?:tripp?(?:ed|ing)?|stumbled?|fell|fallen|falling|thumps?|oof|whoops?|whoa|getting up|standing up|I am up|my feet|technically seated)\b/i;
+ for(const [roomId,beats]of Object.entries(ROOM_CUTSCENES)){
+  const words=beats.filter(clip=>clip.kind==='dialogue');
+  const pip=words.find(clip=>clip.speaker==='pip');
+  assert(pip&&pip.text.includes('?'),`${roomId}: Pip still wonders and worries about what he finds`);
+  assert.doesNotMatch(pip.text,impactNarration,`${roomId}: his speech is independent of the tumble’s timing`);
+  assert.doesNotMatch(words.map(clip=>clip.text).join(' '),/ground-blooming|falling over|eloquent thump|I fell first|I am getting up|next landing|look from standing up|put itself on the floor/i,`${roomId}: nobody explains the physical joke`);
+  assert.deepEqual(beats.filter(clip=>clip.kind==='gesture'&&clip.actor==='pip').map(clip=>clip.gesture),['trip','fallen','recover'],`${roomId}: the visible gag is preserved`);
+ }
+});
+
 test('Iris deliberately raises her glass at the evidence; Nell remains composed and the whole party reacts',()=>{
  const allEmotes=new Set();
  for(const [roomId,beats]of Object.entries(ROOM_CUTSCENES)){
