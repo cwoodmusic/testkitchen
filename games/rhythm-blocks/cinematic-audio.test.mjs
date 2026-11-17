@@ -95,6 +95,36 @@ const glyph=(track,state,count,audible=true)=>track.sample(state,{visibleCharact
  assert.equal(context.oscillators.length,0,'Impact sounds follow physical crossings, not a reader waiting.');
  });
 
+ test('room narration types audibly with both physical clocks parked and no reveal-all backlog',async t=>{
+ const contexts=fakeAudio(t),audio=createCinematicAudio();await audio.unlock();const context=contexts[0],track=audio.createTrack();
+ const narration=dialogueElapsed=>caption({phase:'narration',manualDialogue:true,currentTile:0,dialogueElapsed,entry:{currentTile:0},beat:{id:'room-narration',speaker:'narrator',text:'A, b! c'}});
+ glyph(track,narration(0),0,false);glyph(track,narration(32),1);
+ assert.equal(context.oscillators.length,1,'Reading sounds do not depend on walking.');
+ assert.equal(context.oscillators[0].type,'sine');assert.equal(context.oscillators[0].frequency.events[0].value,300,'Narration has its own quiet voice.');
+ context.currentTime+=.1;glyph(track,narration(64),3);assert.equal(context.oscillators.length,1,'Spaces and punctuation stay silent.');
+ glyph(track,narration(96),4);assert.equal(context.oscillators.length,2);
+ context.currentTime+=.1;glyph(track,narration(96),7,false);glyph(track,narration(128),7);
+ assert.equal(context.oscillators.length,2,'Revealing the remaining words never queues their sound.');
+ for(let elapsed=160;elapsed<1000;elapsed+=32)glyph(track,narration(elapsed),7);
+ assert.equal(context.oscillators.length,2,'A completed passage waits silently.');
+ });
+
+ test('narration audio respects mute, pause, disposal and phase boundaries without creating impacts',async t=>{
+ const contexts=fakeAudio(t),audio=createCinematicAudio();await audio.unlock();const context=contexts[0],track=audio.createTrack();
+ const narration=(elapsed,patch={})=>caption({phase:'narration',manualDialogue:true,currentTile:0,dialogueElapsed:elapsed,beat:{id:'intro',speaker:'narrator',text:'A long introduction'},actors:[{id:'pip',gesture:'fallen'}],...patch});
+ glyph(track,narration(0),0,false);glyph(track,narration(32,{playing:false}),1);assert.equal(context.oscillators.length,0);
+ audio.setEnabled(false);glyph(track,narration(64),2);assert.equal(context.oscillators.length,0);
+ audio.setEnabled(true);glyph(track,narration(96),3);assert.equal(context.oscillators.length,1);
+ context.currentTime+=.1;glyph(track,narration(5000),12);assert.equal(context.oscillators.length,1,'A seek cannot catch up as narration.');
+ glyph(track,narration(5032,{finished:true}),13);assert.equal(context.oscillators.length,1);
+ glyph(track,narration(5064,{beat:null,currentTile:1}),0);assert.equal(context.oscillators.length,1,'Narration cannot trigger a physical impact.');
+ glyph(track,narration(5096,{phase:'entry',currentTile:2}),14);assert.equal(context.oscillators.length,1,'The doorway stays silent.');
+ glyph(track,caption({manualDialogue:true,dialogueElapsed:0}),0,false);
+ glyph(track,caption({manualDialogue:true,dialogueElapsed:32}),1);assert.equal(context.oscillators.length,2,'The following scene still has its character voice.');
+ track.destroy();context.currentTime+=.1;glyph(track,narration(5128),15);assert.equal(context.oscillators.length,2);
+ assert(context.oscillators.every(osc=>osc.stops.at(-1)===undefined),'Closing the text stops all remaining voices.');
+ });
+
  test('mute, suspension and disposal stop all short voices and allow quiet clean resumption',async t=>{
  const contexts=fakeAudio(t),audio=createCinematicAudio();await audio.unlock();const context=contexts[0];
  audio.bloop('pip');audio.knock('trip');audio.setEnabled(false);assert(context.oscillators.every(osc=>osc.stops.at(-1)===undefined));

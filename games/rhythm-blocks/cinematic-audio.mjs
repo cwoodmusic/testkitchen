@@ -1,5 +1,5 @@
-/** Short local character voices and wooden pratfalls, independent of music. */
-const VOICES=Object.freeze({nell:[220,'triangle'],iris:[270,'sine'],pip:[440,'triangle'],mira:[350,'triangle'],oren:[185,'sine']});
+/** Short local narration, character voices and wooden pratfalls, independent of music. */
+const VOICES=Object.freeze({narrator:[300,'sine'],nell:[220,'triangle'],iris:[270,'sine'],pip:[440,'triangle'],mira:[350,'triangle'],oren:[185,'sine']});
 const spoken=character=>/[\p{L}\p{N}]/u.test(character);
 
 /** One lazy context survives room changes. No waveform or remote audio files. */
@@ -50,7 +50,8 @@ export function createCinematicAudio({enabled=true}={}){
    const gestureId=clip?.id??(gesture?`${gesture}`:'');
    const story=!!previous&&state.phase==='story'&&previous.phase==='story';
    const movementAdvancing=story&&state.currentTile>previous.tile&&state.currentTile-previous.tile<=4;
-   const dialogueAdvancing=story&&!changed&&state.manualDialogue&&Number.isFinite(state.dialogueElapsed)&&Number.isFinite(previous.dialogueElapsed)&&state.dialogueElapsed>previous.dialogueElapsed&&state.dialogueElapsed-previous.dialogueElapsed<=300;
+   const reading=!!previous&&state.phase===previous.phase&&(state.phase==='story'||state.phase==='narration');
+   const dialogueAdvancing=reading&&!changed&&state.manualDialogue&&Number.isFinite(state.dialogueElapsed)&&Number.isFinite(previous.dialogueElapsed)&&state.dialogueElapsed>previous.dialogueElapsed&&state.dialogueElapsed-previous.dialogueElapsed<=300;
    if(audible&&state.playing&&!state.finished&&(movementAdvancing||dialogueAdvancing)){
     const first=changed?0:previous.visible;
     // One short voice at most per paint; a stalled frame never replays a queue.
