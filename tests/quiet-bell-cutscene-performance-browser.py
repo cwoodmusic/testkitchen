@@ -32,6 +32,7 @@ def percentile(values,fraction):
 def wait_for_story(page):
     """Let the introduction and real doorway finish before authored clips."""
     ui.skip_intro(page)
+    ui.acknowledge_room_narration(page)
     page.wait_for_function("window.quietBell?.cutscene?.phase==='story'", polling='raf')
 
 

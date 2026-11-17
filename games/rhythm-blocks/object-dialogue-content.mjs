@@ -9,149 +9,149 @@ const freeze=value=>{
 // These are conversations, never pickups or lock answers. A source-bearing
 // observation still needs its separate, explicit Search action afterward.
 export const OBJECT_DIALOGUES=freeze({
- 'returned-letter':[
-  {speaker:'mira',text:'The forwarding labels go round in a little paper spiral. Has this letter been trying every address it knows?'},
-  {speaker:'nell',text:'It has been trying this address repeatedly. I tied that top label myself, and I would remember warming the seal.'},
-  {speaker:'pip',text:'Perhaps it remembers you. Can letters remember people? I would prefer one that remembers me from a distance.'},
-  {speaker:'iris',text:'The wax is evidence. The letter’s opinion of Pip remains unmeasured.'},
+ "returned-letter":[
+  {speaker:"mira",text:"The wax on this letter is still warm. How did it get back while the mail routes were closed?"},
+  {speaker:"nell",text:"I sent it out this morning. Its address was clear, but nobody sent back a reply."},
+  {speaker:"pip",text:"There are tiny claw marks on the string. One of my birds may have carried it."},
+  {speaker:"iris",text:"Then we have two clues: warm wax and claw marks. We should follow the bird’s route."},
  ],
- 'dispatch-map':[
-  {speaker:'mira',text:'That little island moves when I move my head. I could spend a whole afternoon steering it with my nose.'},
-  {speaker:'iris',text:'The curved glass displaces the image. The interrupted route stays in the same place; that is the useful part.'},
-  {speaker:'nell',text:'I have pressed that brass button every morning. It always reaches this point, then waits for the bell.'},
-  {speaker:'pip',text:'My bird keeps looking there too. I shall stand slightly behind the person who presses it next.'},
+ "dispatch-map":[
+  {speaker:"mira",text:"The green line lights up, then stops. Is that why our letters are not getting through?"},
+  {speaker:"iris",text:"This screen shows a message going out. The little light for the reply stays dark."},
+  {speaker:"nell",text:"That reply tells us a delivery arrived safely. Without it, the next load cannot leave."},
+  {speaker:"pip",text:"My bird keeps turning toward the old path. I will follow it, if everyone comes too."},
  ],
- 'garden-porch-second-cup':[
-  {speaker:'mira',text:'A newly mended handle and a dry place at the table. Are we expecting another visitor?'},
-  {speaker:'iris',text:'The cup is serviceable again. I keep it ready.'},
-  {speaker:'pip',text:'I could ask the birds to watch the path. Quietly. They are much better at watching than I am.'},
-  {speaker:'nell',text:'Then we shall leave the cloth straight and the place clear. Small courtesies travel well.'},
+ "garden-porch-second-cup":[
+  {speaker:"mira",text:"Two cups, but only one person drinking tea. Who is the other cup for?"},
+  {speaker:"iris",text:"My friend lives on another island. We used to play music together. Her messages stopped when the bell went quiet."},
+  {speaker:"pip",text:"Then we should help her message get through. I can ask the birds. From here."},
+  {speaker:"nell",text:"We will keep the cup ready. First, let’s find why the messages have stopped."},
  ],
- 'workshop-porch-seed-bowl':[
-  {speaker:'mira',text:'It pushed the bowl toward the other bird. Does a brass beak make an excellent spoon?'},
-  {speaker:'pip',text:'They used to share a perch. I still put out two portions, even when the chargers do all the feeding.'},
-  {speaker:'iris',text:'A repeated habit can survive a change in its practical purpose. That is worth observing.'},
-  {speaker:'nell',text:'Observe it without borrowing their bowl, Mira. We have a delivery to follow.'},
+ "workshop-porch-seed-bowl":[
+  {speaker:"mira",text:"The brass bird is sharing its bowl. Does it eat seeds, or is it saving breakfast for me?"},
+  {speaker:"pip",text:"The warm perches give my birds their power. I leave seed for the real birds that visit."},
+  {speaker:"iris",text:"That perch is still warm. The public bell stopped, but this charger kept working."},
+  {speaker:"nell",text:"Then a bird could still travel between working perches. Leave its bowl alone, Mira."},
  ],
- 'canal-porch-mooring-bell':[
-  {speaker:'mira',text:'That is a very tidy knot for a bell somebody intends to ring.'},
-  {speaker:'oren',text:'The return knock comes first. A loose clapper can call people onto a landing before a boat has answered.'},
-  {speaker:'pip',text:'I am delighted to hear there is a rule about knowing where the boat is. A very important rule.'},
-  {speaker:'nell',text:'Oren checks it every day. Leave his knot as it is; a quiet safeguard is still doing its work.'},
+ "canal-porch-mooring-bell":[
+  {speaker:"mira",text:"Why have you tied the bell so it cannot ring? Isn’t ringing its job?"},
+  {speaker:"oren",text:"It tells people to board the ferry. I keep it quiet until the boat sends a message saying it is ready."},
+  {speaker:"pip",text:"I am very pleased we check for a boat first. I would rather wait than step onto water."},
+  {speaker:"nell",text:"Food deliveries are waiting here too. We need those replies so the boats can dock safely."},
  ],
- 'garden-fork-shared-can':[
-  {speaker:'mira',text:'Four repairs on one handle. At what point do we congratulate the whole neighbourhood for making a watering can?'},
-  {speaker:'iris',text:'Whenever they return it to the shared shelf. The handle has outlasted several disagreements about tomatoes.'},
-  {speaker:'pip',text:'I recognise that blue binding. Someone used the same thread to mend a courier strap for me.'},
-  {speaker:'nell',text:'There we are. A useful route already, between a garden shelf and a bird’s wing.'},
+ "garden-fork-shared-can":[
+  {speaker:"mira",text:"Four different patches on one handle. Did the whole street take turns fixing this watering can?"},
+  {speaker:"iris",text:"They share it. Since the water pump stopped, they carry each bucket by hand."},
+  {speaker:"pip",text:"I know that blue cloth. Someone used the same cloth to mend my bird’s carrying strap."},
+  {speaker:"nell",text:"People are helping one another. We can help by getting their water route working again."},
  ],
- 'workshop-fork-worn-rail':[
-  {speaker:'pip',text:'Look at the bright ends! A bird lands here, then there. Those marks are exactly the right distance apart.'},
-  {speaker:'iris',text:'The dust survives in the middle because the feet using this rail do not need its middle.'},
-  {speaker:'mira',text:'Our map would draw one handrail. Their map would draw two excellent little stations.'},
-  {speaker:'nell',text:'Remember what you have seen. A route can be familiar to its users long before it reaches my ledger.'},
+ "workshop-fork-worn-rail":[
+  {speaker:"pip",text:"Look at the shiny ends! A bird lands here, then there. Those marks fit its little feet."},
+  {speaker:"iris",text:"The middle is still dusty. Birds can fly between the ends without touching it."},
+  {speaker:"mira",text:"So this handrail is also a bird path. We have been walking beside it without noticing!"},
+  {speaker:"nell",text:"That may explain how our letter came back. Let’s follow the marks and see where the birds go."},
  ],
- 'canal-fork-waiting-drop':[
-  {speaker:'mira',text:'Come on, little drop. You have been at the edge of that lip longer than I have been patient.'},
-  {speaker:'iris',text:'Its release is waiting on a return signal. Poking it would remove our chance to observe that signal.'},
-  {speaker:'pip',text:'Then nobody poke it. I was not going to. I am very good at leaving enormous clocks alone.'},
-  {speaker:'nell',text:'Hands down, everyone. Give the receiving bowl the same attention as the clock above it.'},
+ "canal-fork-waiting-drop":[
+  {speaker:"mira",text:"That drop has not fallen once. The clock is running, so what is it waiting for?"},
+  {speaker:"iris",text:"A reply light. The clock waits until the next station sends a message saying it is ready."},
+  {speaker:"pip",text:"Then nobody poke the drop. I do not want a boat arriving before its dock is ready."},
+  {speaker:"nell",text:"The sending side works. The line bringing replies back is the part we need to check."},
  ],
- 'garden-final-kitchen-relay':[
-  {speaker:'mira',text:'That switch could command a fleet of skyships. Today it is keeping somebody’s soup warm. An admirable promotion.'},
-  {speaker:'iris',text:'The small circuit has been fitted carefully. A large mechanism can perform a very precise domestic task.'},
-  {speaker:'pip',text:'Will the little bell be loud enough for all that machinery? I should like to stand here if it tries.'},
-  {speaker:'nell',text:'A warm meal arriving at the right time is reason enough to mend a bell. Keep that in mind.'},
+ "garden-final-kitchen-relay":[
+  {speaker:"mira",text:"That giant switch runs one kitchen. Does it also know when the soup is ready?"},
+  {speaker:"iris",text:"This little bell can send replies from these houses. We can connect it to a working wire."},
+  {speaker:"pip",text:"So the homes can say, “We got it!” even while the town bell is quiet?"},
+  {speaker:"nell",text:"Yes. We can restore this short route and bring water and deliveries back to these homes."},
  ],
- 'workshop-final-listening-ring':[
-  {speaker:'mira',text:'Where does the person in charge sit? Every chair seems to be looking at somebody else’s chair.'},
-  {speaker:'iris',text:'The arrangement lets each player watch another. They can adjust together instead of waiting for one control desk.'},
-  {speaker:'pip',text:'If I come in at the wrong moment, would someone give me a very small signal? Preferably before I do it?'},
-  {speaker:'nell',text:'Certainly. Leading includes listening, Pip. Find a place where you can see us.'},
+ "workshop-final-listening-ring":[
+  {speaker:"mira",text:"Where does the person in charge sit? Every chair faces somebody else’s chair."},
+  {speaker:"iris",text:"They watch and listen to one another. This old message machine helps them practise repair rhythms together."},
+  {speaker:"pip",text:"If I play at the wrong moment, will someone help me try again?"},
+  {speaker:"nell",text:"Yes. Once this room works, we can teach more helpers to repair the broken routes."},
  ],
- 'canal-final-reply-dish':[
-  {speaker:'mira',text:'I thought that enormous dish would be aimed straight at the bell. It is watching the islands.'},
-  {speaker:'iris',text:'A receiver needs a clear path from whoever may answer. Its size makes a faint reply easier to distinguish.'},
-  {speaker:'pip',text:'Even a very faint one? Suppose somebody is trying to be brave without being particularly loud.'},
-  {speaker:'nell',text:'Then we give them time, and we keep this side open. Inspect the receiving line before touching the controls.'},
+ "canal-final-reply-dish":[
+  {speaker:"mira",text:"I thought that huge dish would face the bell. It is pointing toward the islands."},
+  {speaker:"iris",text:"It listens for their answers. Look: the wire carrying those answers to the bell has come loose."},
+  {speaker:"pip",text:"All those islands were answering? The bell just could not hear them?"},
+  {speaker:"nell",text:"Exactly. We must reconnect that wire, then test a call and a reply."},
  ],
- 'garden-alcove-flower-stone':[
-  {speaker:'iris',text:'One petal has been polished smooth. The wear is from fingers lifting at the same point.'},
-  {speaker:'mira',text:'A flower with a handle. Someone has gone to a great deal of trouble to make a lid feel at home in a garden.'},
-  {speaker:'nell',text:'There is space beneath its seam. We can search under it carefully when we are ready; leave the supporting roots alone.'},
-  {speaker:'pip',text:'I will hold the light. From a place where anything living underneath can see that I am being helpful.'},
+ "garden-alcove-flower-stone":[
+  {speaker:"iris",text:"This petal is smooth from people lifting it. The carved flower hides a handle."},
+  {speaker:"mira",text:"A stone flower that opens like a lid! Someone wanted this little box to blend into the garden."},
+  {speaker:"nell",text:"We can search beneath it. Lift the handle gently and leave the supporting roots alone."},
+  {speaker:"pip",text:"I will hold the light. I hope there are notes inside, rather than something with teeth."},
  ],
- 'workshop-alcove-hollow-perch':[
-  {speaker:'pip',text:'This side rings clearly, and this side makes a soft little pause. I keep expecting a third side to answer me.'},
-  {speaker:'iris',text:'Two different surfaces surround the same hollow space. The pegged cover can be examined without striking it harder.'},
-  {speaker:'mira',text:'A perch with a pocket! Perhaps the birds have been carrying things home in their furniture.'},
-  {speaker:'nell',text:'An interesting possibility. We can search inside the cover separately; there is no need to dismantle the whole rail.'},
+ "workshop-alcove-hollow-perch":[
+  {speaker:"pip",text:"This side rings when I tap it. The other side stays quiet. And that little cover moves!"},
+  {speaker:"iris",text:"The perch is hollow inside. A wooden peg keeps the cover closed."},
+  {speaker:"mira",text:"A perch with a pocket! Do the birds keep spare parts in their chairs?"},
+  {speaker:"nell",text:"We can search under the cover. There is no need to pull apart the whole rail."},
  ],
- 'garden-secret-final-second-controls':[
-  {speaker:'iris',text:'The wear differs on these two controls. Their operators reached for different settings, over a long period.'},
-  {speaker:'mira',text:'Two people, then. I like a machine that remembers how each of them held it.'},
-  {speaker:'pip',text:'Shall I quiet my bird’s throat? He has been trying to help with every silence we find.'},
-  {speaker:'nell',text:'For a moment, yes. Let us leave enough quiet to hear what this room has kept.'},
+ "garden-secret-final-second-controls":[
+  {speaker:"iris",text:"My friend and I used these knobs to send music between our islands."},
+  {speaker:"mira",text:"Two sets of worn handles. You kept a place ready for her."},
+  {speaker:"pip",text:"Then I will keep my bird quiet. We might hear her answer."},
+  {speaker:"nell",text:"We can connect this window to the garden’s working line. Then her reply can reach us."},
  ],
- 'workshop-secret-final-small-step':[
-  {speaker:'pip',text:'Those are courier feet on the top! Someone made this step so a bird could reach the lever itself.'},
-  {speaker:'mira',text:'A tiny operator with a very large opinion about where the controls ought to be.'},
-  {speaker:'iris',text:'The height, grip and landing space suit a bird. Its builder measured the intended user with unusual care.'},
-  {speaker:'nell',text:'Then we should pay that user the courtesy of listening. Leave the step clear.'},
+ "workshop-secret-final-small-step":[
+  {speaker:"pip",text:"Those are bird-foot marks on top! Someone made this step so a courier could reach the lever."},
+  {speaker:"mira",text:"The birds have been trying to tell us something. We put every handle too high!"},
+  {speaker:"iris",text:"This step lets a bird work the reply lever. We should see which route it chooses."},
+  {speaker:"nell",text:"Leave it room. Our returning letter showed that the birds still know a working path."},
  ],
- 'ending-home-memory':[
-  {speaker:'mira',text:'Four cups and a whole loaf under that cloth. This is an exceptionally well-reasoned welcome.'},
-  {speaker:'nell',text:'The corner repair uses wood from the post box. Someone had enough left to mend a place for another person.'},
-  {speaker:'iris',text:'And the cloth has been changed recently. These preparations have continued throughout the interruption.'},
-  {speaker:'pip',text:'Could my bird sit with us? He has helped to worry about this delivery all the way here.'},
+ "ending-home-memory":[
+  {speaker:"mira",text:"Bread and four cups! A welcome you can actually eat. I shall accept it at once."},
+  {speaker:"nell",text:"The kitchen’s reply bell is working. Water and deliveries can reach these homes again."},
+  {speaker:"iris",text:"And Pip’s bird explains our warm letter. Its metal carrying clip warmed on a charging perch."},
+  {speaker:"pip",text:"Then I owe that bird a thank-you. It brought the letter home along its old route."},
  ],
- 'ending-school-memory':[
-  {speaker:'pip',text:'That stool is just the right height for the little lever. I wish all enormous machines came with one.'},
-  {speaker:'iris',text:'Its shortened legs are level, and the extension follows the original lever’s movement. Both modifications work together.'},
-  {speaker:'mira',text:'Somebody looked at a child and decided to change the furniture. I like their priorities.'},
-  {speaker:'nell',text:'Leave the stool ready for the next learner. Good instructions can begin before anyone speaks.'},
+ "ending-school-memory":[
+  {speaker:"pip",text:"That stool lets a child reach the little lever. I wish all huge machines came with one."},
+  {speaker:"iris",text:"The shorter legs keep the stool level. The long handle brings the control within reach."},
+  {speaker:"mira",text:"Somebody helped the learner by changing the furniture. Much quicker than waiting for them to grow!"},
+  {speaker:"nell",text:"Now this room can train new helpers to repair routes. The town’s larger reply line still needs help."},
  ],
- 'ending-public-reply':[
-  {speaker:'mira',text:'There! That little silver line appeared after the far lamp answered. The islands are taking turns.'},
-  {speaker:'iris',text:'Their intervals differ. Each return has travelled its own distance through a working route.'},
-  {speaker:'pip',text:'What if one of them takes a little longer? I sometimes need a moment before I know what to say.'},
-  {speaker:'nell',text:'Then the receiving side stays open. A public bell should make room for the last answer too.'},
+ "ending-public-reply":[
+  {speaker:"mira",text:"There! The far lamp flashed back, and the bell rang. This time the answer got through!"},
+  {speaker:"iris",text:"The loose return wire was the fault. Now replies can reach the bell again."},
+  {speaker:"pip",text:"My birds wait for that flash before taking off. They were checking that someone was there."},
+  {speaker:"nell",text:"Now the delivery birds, water pumps, and boats can work safely again. The whole town will feel this."},
  ],
- 'ending-secret-quiet-memory':[
-  {speaker:'mira',text:'The cushion has been turned away from the drip. Someone keeps coming back to make this place comfortable.'},
-  {speaker:'iris',text:'Fresh sap polish on the arm, too. The maintenance has been regular and considerate.'},
-  {speaker:'pip',text:'Should we say something? I could say something very quietly. Or help with the cushion.'},
-  {speaker:'nell',text:'The cushion is quite right, Pip. For now, we can simply listen together.'},
+ "ending-secret-quiet-memory":[
+  {speaker:"mira",text:"You moved the chair away from the leak. You really wanted your friend to have a dry seat."},
+  {speaker:"iris",text:"Her voice came through the window. She is safe on her island, and she wants to visit. I shall make fresh tea."},
+  {speaker:"pip",text:"Then I will help dry the cushion. She should have a comfortable seat when she gets here."},
+  {speaker:"nell",text:"Our window repair restored one important reply. The rest of the town still needs help."},
  ],
- 'ending-secret-birds-reply':[
-  {speaker:'pip',text:'That little horn knows their voices! They have been making their own answers all this time.'},
-  {speaker:'iris',text:'Both traces retain their own shape. Sharing a pause has given them a place to meet.'},
-  {speaker:'mira',text:'Our couriers have been arranging the music between deliveries. I hope they charge us a fair rehearsal fee.'},
-  {speaker:'nell',text:'We shall begin by giving them room to finish. Their reply has earned our attention.'},
+ "ending-secret-birds-reply":[
+  {speaker:"pip",text:"That is the birds’ own reply tune! I thought their compasses were broken."},
+  {speaker:"iris",text:"The little horn sends their message along the old service route. Their warm chargers still work."},
+  {speaker:"mira",text:"So a bird brought our letter home. Its warm metal clip kept the wax soft!"},
+  {speaker:"nell",text:"Yes. We restored the birds’ reply route. They can carry messages while the main bell still needs repair."},
  ],
- 'dead-brambles-memory':[
-  {speaker:'pip',text:'The roots come right through the arch. At least someone put the cup where it keeps this bench dry.'},
-  {speaker:'iris',text:'Its repaired side faces away from the falling water. Somebody checked the weak seam before setting it down.'},
-  {speaker:'mira',text:'A small dry island for tired shoes. I shall remember that next time I complain about a cup.'},
-  {speaker:'nell',text:'A brief rest, then back to our last choice. Leave their careful arrangement as we found it.'},
+ "dead-brambles-memory":[
+  {speaker:"pip",text:"The roots fill the whole arch. We cannot squeeze through, even if I go last."},
+  {speaker:"iris",text:"Someone put this cup under the leak to keep the bench dry. People still care for this place."},
+  {speaker:"mira",text:"We found a good place to rest, but no way forward. The listening gate looked much less leafy."},
+  {speaker:"nell",text:"Back to our last choice. Revisit it to recover the notes, then take the listening gate."},
  ],
- 'dead-aviary-memory':[
-  {speaker:'pip',text:'Fresh felt, and fresh brass dust. Someone has mended this nest since the old route closed.'},
-  {speaker:'iris',text:'The lining supports the wing without pressing its hinge. The repairer understood the bird’s proportions.'},
-  {speaker:'mira',text:'A sunbed and a new blanket. I approve of this bird’s afternoon plan.'},
-  {speaker:'nell',text:'Then let it rest. We have seen what this room needs to show us; our next turn is behind us.'},
+ "dead-aviary-memory":[
+  {speaker:"pip",text:"Fresh felt and brass dust! Someone has been mending this bird’s nest."},
+  {speaker:"iris",text:"The soft lining protects its wing. This room is cared for, but the wall has no opening."},
+  {speaker:"mira",text:"So we found a comfortable bird bed, not our way forward. We should let it rest."},
+  {speaker:"nell",text:"We need Pip’s workshop again. Revisit our last choice, then take the running gate."},
  ],
- 'dead-ferry-reply':[
-  {speaker:'mira',text:'One excellent knot, one very empty berth. I suppose an adventurous hop would be a poor substitute for a ferry.'},
-  {speaker:'iris',text:'Correct. A boarding rope requires a boat at its other end.'},
-  {speaker:'pip',text:'I support both of those conclusions from this comfortable distance away from the rail.'},
-  {speaker:'nell',text:'We shall return by the landing. Oren’s rule about waiting for a reply has proved useful again.'},
+ "dead-ferry-reply":[
+  {speaker:"mira",text:"A rope and an empty landing. I suppose a very brave hop will not replace a ferry."},
+  {speaker:"iris",text:"Correct. A rope is not a bridge. We cannot cross safely without a boat."},
+  {speaker:"pip",text:"I fully support staying on this side. A nice, dry side, with all my friends on it."},
+  {speaker:"nell",text:"Revisit our last choice to return to Oren. Then take the delivery gate."},
  ],
- 'dead-echo-reply':[
-  {speaker:'mira',text:'The reflected clock has our scratch on it. Even the untidy bits are keeping perfect time.'},
-  {speaker:'iris',text:'The repeated scratch identifies the same surface. A separate answering clock would have marks of its own.'},
-  {speaker:'pip',text:'So it cannot be a clock pretending to be our clock? I am pleased that we can rule that out.'},
-  {speaker:'nell',text:'Mark where the channel ends, and we shall retrace our steps. This observation will improve the next choice.'},
+ "dead-echo-reply":[
+  {speaker:"mira",text:"The clock in the water has our scratch on it. Even our untidy marks are coming back!"},
+  {speaker:"iris",text:"That is our own reflection. It copies the clock, so it cannot send a new reply."},
+  {speaker:"pip",text:"So another clock is not pretending to be our clock? That is a relief."},
+  {speaker:"nell",text:"This channel ends here. Revisit the water clock and choose the town-bell stair."},
  ],
 });
 

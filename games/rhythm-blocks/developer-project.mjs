@@ -7,6 +7,9 @@ import {ROOM_CUTSCENES} from './cutscene-content.mjs';
 import {upgradeStockGagDialogue} from './dialogue-updates.mjs';
 import {upgradeStockDepotDialogueEffects} from './dialogue-reactions.mjs';
 import {upgradeObjectDialogues} from './object-dialogue.mjs';
+import {upgradeStoryCopy} from './story-copy-updates.mjs';
+import {addFredSpider} from './fred-spider.mjs';
+import {ROOM_NARRATIONS,upgradeRoomNarration} from './room-narrative-content.mjs';
 import {upgradeStockRoomLayouts} from './room-layouts.mjs';
 import {separateCutsceneTracks} from './cutscene.mjs';
 import {CAST,CAST_IMAGE} from './cast.mjs';
@@ -38,14 +41,14 @@ let defaultCutscenes=null;
 /** A new mutable copy; changing it never changes the shipped game. */
 export function createDefaultProject(){
  defaultCutscenes??=Object.fromEntries(Object.entries(CAMPAIGN_SCENES).map(([roomId,scene])=>[roomId,separateCutsceneTracks({scene,beats:ROOM_CUTSCENES[roomId]??[]})]));
- return upgradeObjectDialogues(clone({
+ return upgradeObjectDialogues(addFredSpider(clone({
   schemaVersion:1,
   settings:{title:'The Quiet Bell',bpm:108,startRoomId:'depot',castImage:CAST_IMAGE,terminalRooms:true,completionReady:true,initialInventory:Object.fromEntries(NOTE_KINDS.map(note=>[note.id,0]))},
   noteKinds:NOTE_KINDS.map((note,index)=>({...note,symbol:note.id,shortName:SHORT_NAMES[index],color:COLORS[index],subdivisions:['eighth-pair','sixteenth-pair'].includes(note.id)?2:note.id==='sixteenth-group'?4:1})),
   rooms:CHAPTER_ROOMS,doors:CHAPTER_DOORS,sources:CHAPTER_SOURCES,previews:CHAPTER_PREVIEWS,terminals:CHAPTER_TERMINALS,
-  content:Object.fromEntries(Object.entries(CAMPAIGN_CONTENT).map(([id,content])=>[id,{...content,cutscene:defaultCutscenes[id]??[]}])),
+  content:Object.fromEntries(Object.entries(CAMPAIGN_CONTENT).map(([id,content])=>[id,{...content,narration:ROOM_NARRATIONS[id]??null,cutscene:defaultCutscenes[id]??[]}])),
   scenes:CAMPAIGN_SCENES,cast:CAST,player:{...MIRA,image:'assets/mira-walk.webp'},
- }));
+ })));
 }
 
 /** Explicit choices override the legacy conversation, including an empty list. */
@@ -208,6 +211,7 @@ export function validateProject(project){
   const path=`content.${roomId}`;if(!own(locations,roomId))fail(path,'reference a playable room or enabled outcome room.');
   if(!record(roomContent)){fail(path,'use a room-content definition.');continue;}
   text(roomContent.title,`${path}.title`,{max:160});text(roomContent.arrival,`${path}.arrival`,{empty:true});
+  if(roomContent.narration!==undefined&&roomContent.narration!==null)text(roomContent.narration,`${path}.narration`,{empty:true,max:1000});
   if(roomContent.cutscene!==undefined&&list(roomContent.cutscene,`${path}.cutscene`,384)){
    const people=new Set(asArray(roomContent.people).map(person=>person?.id)),actors=new Set(asArray(scenes[roomId]?.actors).map(actor=>actor?.id)),targets=new Set(asArray(scenes[roomId]?.geometry?.targets).map(target=>target?.id));
    people.add('mira');actors.add('mira');
@@ -522,7 +526,8 @@ export function upgradeLegacyProject(value){
 
 /** Accept only JSON data and derive timing from the edited integer half-beat units. */
 export function normalizeProject(value){
- const candidate=upgradeObjectDialogues(upgradeStockDepotDialogueEffects(upgradeStockGagDialogue(upgradeRoomCutscenes(upgradeStockRoomLayouts(upgradeLegacyProject(value)))))),result=validateProject(candidate);
+ const legacy=upgradeStockDepotDialogueEffects(upgradeStockGagDialogue(upgradeRoomCutscenes(upgradeStockRoomLayouts(upgradeLegacyProject(value)))));
+ const candidate=upgradeRoomNarration(addFredSpider(upgradeObjectDialogues(upgradeStoryCopy(legacy)))),result=validateProject(candidate);
  if(!result.valid)throw new TypeError(result.errors.join('\n'));
  const project=clone(candidate);
  let separated=false;

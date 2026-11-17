@@ -11,7 +11,7 @@ export const RUNTIME_FILES=Object.freeze([
   'dialogue-reactions.mjs','depot-props.mjs','depot-props.css','assets/depot-courier.webp','assets/depot-roost-clean.webp',
   'speaker-cues.mjs',
   'object-dialogue.mjs','object-dialogue-content.mjs','object-dialogue-editor.mjs','room-layout-config.mjs','room-layouts.mjs',
-  'room-entry.mjs',
+  'room-entry.mjs','room-preface.mjs','room-narrative-content.mjs','story-copy-updates.mjs','story-copy-data.mjs','fred-spider.mjs',
   'story-intro.mjs','story-intro.css','dialogue-updates.mjs',
   'cutscene-paths.mjs','cutscene-paths.css',
   'jrpg-dialogue.mjs','jrpg-dialogue.css','assets/fonts/VT323-Regular.ttf','assets/fonts/VT323-OFL.txt',

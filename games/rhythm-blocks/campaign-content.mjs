@@ -10,21 +10,21 @@ const MEMBER_IDS=['nell','iris','pip'];
 const DOORS=Object.fromEntries(CAMPAIGN_PLAN.rooms.flatMap(room=>room.doors.map(door=>[door.id,{...door,from:room.id}])));
 const NEW_ROOMS={
   "garden-fork": {
-    "arrival": "A tended walkway bends toward warm kitchen windows. Beside it, an older paving ring disappears beneath the roots; the empty place in a row of ceramic cups lets the breeze through without a sound.",
+    "arrival": "Two paths cross a garden shared by nearby families. One leads to their homes. The older stone path disappears under the roots.",
     "stories": {
-      "nell": "I used to leave seed catalogues on that shared shelf. Three households would read the same copy before it came back, each with a different repair to the cover. The new path belongs to all of them.",
-      "iris": "The watering can has had four handles, and everyone still calls it the same can. I clear the old stones too. A garden can make room for a new path without pretending the older one was never here.",
-      "pip": "One of my birds keeps hopping over the empty cup instead of trying to fill the gap. It follows the buried ring with its eyes. I think it knows a delivery route that never reached Nell’s new maps."
+      "nell": "These families share their tools and help repair them. The town bell no longer hears their replies, so some deliveries and water controls have stopped. We can help them get a local connection working.",
+      "iris": "The old copper line runs under those roots. It carried messages before the newer path was built. An older route may still work when the main one fails.",
+      "pip": "My bird keeps watching the old stones. It knows little resting places along that path. Perhaps a bird can get through places our maps have forgotten."
     },
     "routes": {
-      "nell": "For the hearth path, play a dotted half followed by a quarter: three beats, then one. Keep the paired eighths, four sixteenths, quarter rest, single eighth and paired sixteenths for the answer after it.",
-      "iris": "The hearth path takes a dotted half and a quarter. The older stone path takes paired eighths, four sixteenths, a quarter rest, a single eighth, then paired sixteenths. If we choose the stones, leave the dotted half and quarter in our bag for later.",
-      "pip": "The little replies mark the old stone path: paired eighths, four sixteenths, quarter rest, single eighth, paired sixteenths. That spends four beats in five tiles. Iris remembers a flower-carved stone beyond it; keep our dotted half and quarter through the detour."
+      "nell": "The hearth path needs a dotted half note, then a quarter note. That is three beats, then one. Save the other five tiles for its next door.",
+      "iris": "The old stone path needs two eighth notes, four sixteenth notes, a quarter rest, a single eighth note, then two sixteenth notes. Keep the dotted half and quarter for later.",
+      "pip": "I can play the old stone path’s answer. Use two eighths, four sixteenths, a quarter rest, one eighth, then two sixteenths. Iris remembers a flower stone farther along. Keep our dotted half and quarter safe."
     },
     "inventory": {
-      "nell": "We brought eight beats here, with no new parcel waiting. Either path spends four. The hearth path leaves our five smaller tiles for its last door; the older path leaves the dotted half and quarter instead.",
-      "iris": "There are no extra notes to gather in this court. Choose which four-beat phrase to spend now and keep the other intact. The older path needs us to look carefully once we have entered it.",
-      "pip": "Our bag has two different four-beat answers. Spending the little groups and short replies now means carrying the dotted half and quarter onward. I will not trade those saved notes for anything along the way."
+      "nell": "We have eight beats left and no new notes here. Each path costs four beats. Choose one path, then save the other four beats for later.",
+      "iris": "The hearth path uses our dotted half and quarter first. The old stone path uses the five smaller tiles first. Either choice leaves a four-beat answer in the bag.",
+      "pip": "If we follow the old stones, I will guard the dotted half and quarter. We need both at the end of that path. I am very good at guarding things from inside a bag."
     },
     "demos": {
       "nell": "garden-normal",
@@ -37,41 +37,41 @@ const NEW_ROOMS={
         "id": "garden-fork-shared-can",
         "title": "The shared watering can",
         "label": "Inspect the shared watering can",
-        "text": "Several different hands have repaired the same handle.",
+        "text": "Several people have repaired this watering can’s handle. The families share the can instead of buying one each.",
         "placement": "left"
       },
       {
         "id": "garden-fork-buried-ring",
         "title": "The buried paving ring",
         "label": "Inspect the buried paving ring",
-        "text": "Its worn grooves pass beneath roots instead of following the newer path.",
+        "text": "Worn stone grooves and an old copper message line pass under the roots. They follow an older path.",
         "placement": "right"
       },
       {
         "id": "garden-fork-wind-cups",
         "title": "The listening cups",
         "label": "Inspect the listening cups",
-        "text": "Small ceramic cups answer a breeze only after one empty space in their row.",
+        "text": "The breeze makes these little cups ring. A gap in their row leaves a pause between the sounds.",
         "placement": "wall"
       }
     ]
   },
   "workshop-fork": {
-    "arrival": "An unfinished bird hangs above a shelf of other people’s careful repairs. A bright teaching stair opens beside a narrow, older service arch; the phosphor screen between them leaves a long space before its two smallest pulses.",
+    "arrival": "Repair benches fill this workshop. One path leads to a music classroom. A smaller passage behind the bird perches leads into the old attic.",
     "stories": {
-      "nell": "The teaching stair used to end at a locked storeroom. People kept leaving little repairs outside until somebody put out a second workbench and opened the door. That is how the music room began taking visitors.",
-      "iris": "Three people have mended this one wing. Their thread colours disagree, but the feathers lie smoothly together. I brought the red thread myself; Pip showed me where a stiff seam would stop it opening.",
-      "pip": "The rear handrail is bright at both ends and dusty in the middle. Small couriers land where a person would put a hand. The old passage is still a route for somebody, even if our shoes have forgotten it."
+      "nell": "People brought broken tools here and helped one another fix them. Then they opened a music classroom upstairs. That classroom needs a working way to send and hear replies.",
+      "iris": "Three people repaired this wing with different thread. The wing works because their repairs fit together. I checked the red seam myself. It bends without catching.",
+      "pip": "Both ends of that rail are shiny, but the middle is dusty. Birds land on the ends. The old back passage must still be useful to them. I hope they remember which parts are safe."
     },
     "routes": {
-      "nell": "The schoolroom stair answers a dotted half followed by a quarter. After that, the single eighth, paired sixteenths, half rest and quarter rest are the four-beat key we must keep for the music room.",
-      "iris": "One held call for three beats and an ordinary one-beat step opens the schoolroom stair: dotted half, quarter. The birds’ back passage uses a single eighth, paired sixteenths, half rest and quarter rest instead.",
-      "pip": "For the birds’ back passage, play a single eighth, paired sixteenths, a half rest and a quarter rest. The two different half-beat tiles sound first, followed by three quiet beats. Keep our dotted half and quarter; the old loft has a hollow perch worth searching."
+      "nell": "The schoolroom stair needs a dotted half note, then a quarter note. Save the single eighth, paired sixteenths, half rest and quarter rest for the classroom door.",
+      "iris": "The birds’ back passage takes a single eighth, paired sixteenths, a half rest and a quarter rest. Paired sixteenths means two sixteenth notes. The schoolroom stair takes a dotted half and a quarter.",
+      "pip": "The birds’ back passage needs a single eighth, paired sixteenths, a half rest, then a quarter rest. The first two tiles fill one beat. The rests fill three more. Keep our dotted half and quarter for later."
     },
     "inventory": {
-      "nell": "No new notes are stored on this shelf. We have eight beats to divide between this choice and a later answer. The public stair spends the dotted half and quarter first.",
-      "iris": "The long call and ordinary step make one four-beat phrase; the two rests and two short tiles make another. Choose one here and protect the other in our shared bag.",
-      "pip": "If we go behind the stage, keep the dotted half and quarter all the way through. A forgotten instrument may supply a separate phrase, but it will not replace the last answer we are carrying."
+      "nell": "There are no new note tiles here. We have eight beats for two more doors. The schoolroom stair spends the dotted half and quarter first.",
+      "iris": "Our dotted half and quarter make one four-beat answer. The two short-note tiles and two rests make the other. Spend one answer and keep the other.",
+      "pip": "If we take the back passage, save the dotted half and quarter. The attic may have something worth finding. I would like all three of you to help me look."
     },
     "demos": {
       "nell": "workshop-normal",
@@ -84,41 +84,41 @@ const NEW_ROOMS={
         "id": "workshop-fork-help-shelf",
         "title": "The help shelf",
         "label": "Inspect the help shelf",
-        "text": "An unfinished bird has three different styles of careful repair around the same wing.",
+        "text": "Three people repaired the same bird wing. Their different stitches let it open smoothly again.",
         "placement": "left"
       },
       {
         "id": "workshop-fork-worn-rail",
         "title": "The back rail",
         "label": "Inspect the back rail",
-        "text": "Dust fills the middle of the rail, but the handholds at either end are bright.",
+        "text": "The rail is shiny where small bird feet land. Dust remains in the middle, where the birds do not need to step.",
         "placement": "right"
       },
       {
         "id": "workshop-fork-sound-screen",
         "title": "The silent sound screen",
         "label": "Inspect the silent sound screen",
-        "text": "A curved phosphor display keeps space between the last two small pulses.",
+        "text": "The green screen shows two small flashes after a long pause. It is showing the timing of a rhythm.",
         "placement": "wall"
       }
     ]
   },
   "canal-fork": {
-    "arrival": "A silver drop waits above the water clock’s dry answering bowl. A repaired stool stands beside the service hatch, and a second channel copies every reflection before ending against a plainly visible stone wall.",
+    "arrival": "The water clock is still ticking, but its water bowl is dry. A stair leads toward the town bell. Another channel ends at a solid wall.",
     "stories": {
-      "nell": "Oren’s maintenance map is newer than the brass it is pinned to. He has marked every solid wall he could find. I trust a map made by somebody who still has to carry parcels through the place himself.",
-      "iris": "That drop has enough water for a seed, but the clock will not let it fall. The little roots beside the bowl lean toward the empty space. Whatever this machine is waiting for, the garden has learned to wait with it.",
-      "pip": "My bird can copy the clock exactly. The reflection can too. Neither makes the dry bowl answer. I think the stair leads to the part of this instrument that knows how to listen back."
+      "nell": "Oren marked that wall on his map. The clock is waiting for a reply from the bell before it releases the water. Let us find out why the reply never arrives.",
+      "iris": "The clock has power. Its hands move, but the water stays still. A working clock cannot fix a broken message connection. We must follow the connection to the bell.",
+      "pip": "My bird can copy that sound, and the water can make an echo. Neither one tells the clock that its message arrived. We need a real reply. Preferably before I have to swim."
     },
     "routes": {
-      "nell": "Take the town-bell stair with a dotted half followed by four sixteenths: three beats held, then four attacks in one beat. Keep the single eighth, paired sixteenths, half rest and quarter rest for the tower’s last answer.",
-      "iris": "The stair wants a dotted half and a group of four sixteenths. The copied waterway takes a single eighth, paired sixteenths, half rest and quarter rest, but Oren has shown us the wall at its end. It is a dead end.",
-      "pip": "A long call for three beats, then four tiny steps, opens the town-bell stair. That is dotted half, four sixteenths. The copied waterway repeats our quiet phrase perfectly and still goes nowhere; follow the stair if we mean to reach the bell."
+      "nell": "The town-bell stair needs a dotted half note, then four sixteenth notes. Hold three beats, then play four sounds in one beat. Save our four other tiles for the tower.",
+      "iris": "Use a dotted half and four sixteenths at the stair. The other channel takes a single eighth, paired sixteenths, a half rest and a quarter rest. Oren’s map shows that it is a dead end.",
+      "pip": "Take the stair with a dotted half and four sixteenths. The copied waterway only leads to that wall. An echo sounds like an answer, but it cannot open a path through stone."
     },
     "inventory": {
-      "nell": "There is no supply box in the timing chamber. We have enough for the stair and the tower if we spend the dotted half and four-sixteenth group here, then keep the four quieter tiles.",
-      "iris": "Our single eighth, paired sixteenths, half rest and quarter rest belong to the final tower phrase. Spending them on the copied waterway leaves notes in the bag and no way onward.",
-      "pip": "The two ways here each cost four beats. Only the stair leads onward. If we try the copied waterway, we can revisit that choice and recover its key; the clock has no extra gift for us."
+      "nell": "No new notes are stored here. Use the dotted half and four-sixteenth group for the stair. Keep the single eighth, two sixteenths, half rest and quarter rest for the final door.",
+      "iris": "We have enough for the stair and the tower’s last lock. The four quieter tiles belong to that last lock. Do not spend them on the blocked channel.",
+      "pip": "Each door costs four beats. If we try the wrong one, Revisit previous choice brings its notes back. None of our notes needs to go into the water."
     },
     "demos": {
       "nell": "canal-normal",
@@ -131,41 +131,41 @@ const NEW_ROOMS={
         "id": "canal-fork-waiting-drop",
         "title": "The waiting drop",
         "label": "Inspect the waiting drop",
-        "text": "The clock holds one silver drop until the empty bowl receives its answer.",
+        "text": "The clock holds this drop above an empty bowl. It is waiting for a message that says it is safe to release the water.",
         "placement": "left"
       },
       {
         "id": "canal-fork-service-stool",
         "title": "The keeper’s stool",
         "label": "Inspect the keeper’s stool",
-        "text": "A cushion and repaired footrest make a long watch a little kinder.",
+        "text": "A repaired stool gives Oren somewhere to sit during a long watch. He has kept checking the clock.",
         "placement": "right"
       },
       {
         "id": "canal-fork-maintenance-map",
-        "title": "The practical maintenance map",
-        "label": "Inspect the practical maintenance map",
-        "text": "The keeper has plainly marked the copied channel’s solid end.",
+        "title": "The map of the blocked path",
+        "label": "Inspect map of the blocked path",
+        "text": "Oren drew the solid wall at the end of the copied channel. The stair is the way toward the bell.",
         "placement": "wall"
       }
     ]
   },
   "garden-final": {
-    "arrival": "A small household bell hangs inside a relay frame built for a much larger place. Cups warm beside a practical kitchen switch, and an empty chair has been straightened for the next person who arrives.",
+    "arrival": "A small bell connects these homes to the garden’s water controls. Its return wire is loose. The neighbors have kept the kitchen warm while waiting for help.",
     "stories": {
-      "nell": "I know this bell. Its old service number was longer than the street it served, so the neighbours gave it a kitchen name instead. They still answer it, whether the great route screens are working or not.",
-      "iris": "The extra cup is warm, but nobody has decided who must sit there. That is a kind way to leave a place open. We can offer a welcome without writing the other person’s part for them.",
-      "pip": "The little switch moves a machine big enough to steer an island, and all it does today is keep soup warm. I like that the neighbours chose something useful. My bird has already found the empty chair."
+      "nell": "The town bell cannot hear replies because its return connection is loose. This little bell has a shorter, local connection. We can repair it and help these homes without reaching the tower.",
+      "iris": "The last rhythm will test whether the small bell can hear the homes answer. When that works, the garden can request water again. We should test the connection before celebrating.",
+      "pip": "The bird’s carrying clip is warm from its charging perch. That could soften the wax on Nell’s returned letter. Perhaps the bird brought it along an old route. That makes much more sense than a flying envelope."
     },
     "routes": {
-      "nell": "The home door needs paired eighths, four sixteenths, a quarter rest, a single eighth, then paired sixteenths. Those are the five smaller tiles we saved at the garden fork, in that order.",
-      "iris": "Give two quick sounds in one beat, four tiny sounds in the next, one quiet beat, then the single eighth and paired sixteenths. Each of those final two tiles fills half a beat. All five together open the home door.",
-      "pip": "Our remaining key is paired eighths, four sixteenths, quarter rest, single eighth, paired sixteenths. Listen to the last two tiles: one short sound, then two even shorter sounds. Equal time does not make them the same answer."
+      "nell": "The home door needs two eighth notes, four sixteenth notes, a quarter rest, one eighth note, then two sixteenth notes. Use the five tiles we saved at the garden fork.",
+      "iris": "Play two eighths in one beat, then four sixteenths in one beat. Leave one beat silent with a quarter rest. Finish with a single eighth and two sixteenths. Those last two tiles share one beat.",
+      "pip": "Our last key is two eighths, four sixteenths, a quarter rest, one eighth, then two sixteenths. The single eighth and the pair of sixteenths take equal time, but they make different sounds."
     },
     "inventory": {
-      "nell": "We need no new parcel here. The five tiles in our bag are the exact last payment. Opening the home door will use every note we have carried on this route.",
-      "iris": "Keep the order of the five remaining tiles. Their rest matters as much as their sounding notes. Once the home door answers, our shared bag will be empty.",
-      "pip": "Nothing in the kitchen gives more notes. We brought the whole last phrase with us: two grouped tiles, the quarter rest, and the two different half-beat tiles."
+      "nell": "Our five remaining tiles are the complete answer. There is no new note gift in this kitchen. The home door will use every tile left in the bag.",
+      "iris": "Keep the five tiles in the right order. The quarter rest is one full beat of silence. All five tiles together fill four beats.",
+      "pip": "I checked the bag. We have the whole last rhythm already. I also checked the kitchen. There are no note tiles hidden in the soup."
     },
     "demos": {
       "nell": "garden-ending",
@@ -178,41 +178,41 @@ const NEW_ROOMS={
         "id": "garden-final-extra-place",
         "title": "The extra place",
         "label": "Inspect the extra place",
-        "text": "The chair is empty, but its cup is warm and its cushion has been straightened.",
+        "text": "A warm cup and a straightened cushion wait at this empty place. The neighbors are ready to welcome another visitor.",
         "placement": "left"
       },
       {
         "id": "garden-final-kitchen-relay",
-        "title": "The kitchen relay",
-        "label": "Inspect the kitchen relay",
-        "text": "A formidable old switch now turns a tiny soup warmer on and off.",
+        "title": "The kitchen reply switch",
+        "label": "Inspect kitchen reply switch",
+        "text": "This old switch connects the little bell to the water controls. The neighbors also use it to keep their soup warm.",
         "placement": "right"
       },
       {
         "id": "garden-final-mended-clapper",
-        "title": "The mended clapper",
-        "label": "Inspect the mended clapper",
-        "text": "Several household repair methods meet at the same small bell.",
+        "title": "The repaired bell striker",
+        "label": "Inspect repaired bell striker",
+        "text": "Neighbors have repaired the metal piece inside the bell. That piece strikes the bell to make it ring.",
         "placement": "wall"
       }
     ]
   },
   "workshop-final": {
-    "arrival": "Low stools form a listening circle around a retired star navigator. Wooden extensions bring its oldest controls within reach, and repaired practice cloths mark the places where different learners have tried again.",
+    "arrival": "This music classroom was built around an old message machine. Low stools and extended handles let more people use it. Its reply connection needs repair.",
     "stories": {
-      "nell": "The old operators worked alone in the middle of that ring. People turned the seats around before they understood every control. They wanted the room to help them hear one another while they learned.",
-      "iris": "Somebody shortened one lever and lengthened the next. There is no single right size of person for this instrument now. The cloth patches show where each learner found a comfortable place to begin.",
-      "pip": "That small stool was mine. I used to stand on it to reach the lever, until Nell helped me fit the wooden grip. Now the next learner will not have to balance on tiptoe just to make one sound."
+      "nell": "This machine once sent messages from one person at a time. The class changed it so learners could hear and answer one another. A loose return connection has stopped that part from working.",
+      "iris": "The town bell has the same kind of fault. Its return connection cannot carry replies. We can repair the classroom’s local connection now. The final rhythm will test its listening time.",
+      "pip": "That low stool was mine. Nell helped me make a handle I could reach. I want the next learner to hear an answer when they try. It is less frightening than a room that only stares at you."
     },
     "routes": {
-      "nell": "The music-room door wants a single eighth, paired sixteenths, a half rest and a quarter rest. Give the two different half-beat replies, then wait for two beats and one more.",
-      "iris": "Begin with a single eighth and paired sixteenths; together they fill the first beat. Follow them with a half rest, then a quarter rest. Three quiet beats leave room for an answer.",
-      "pip": "Use our single eighth, paired sixteenths, half rest, then quarter rest. The first beat has one short sound followed by two smaller ones. I will hold the silence with you after they sound."
+      "nell": "Use a single eighth note, paired sixteenths, a half rest, then a quarter rest. The two short-note tiles share beat one. Leave the next three beats silent.",
+      "iris": "A single eighth takes half a beat. Paired sixteenths take the other half. Follow them with a half rest for two beats, then a quarter rest for one beat.",
+      "pip": "Our last four tiles go: single eighth, paired sixteenths, half rest, quarter rest. I can play the example. We must keep the rests too, even though they make no sound."
     },
     "inventory": {
-      "nell": "These four tiles are the remaining four beats of our original parcel. There is no classroom reward to collect first. This final door spends them all.",
-      "iris": "Our bag holds exactly the rests and short replies this door needs. Keep their order, and there will be no leftover note when we enter the shared room.",
-      "pip": "The practice shelf is for repairs, not new note tiles. We have carried the complete answer here already; the final payment leaves our satchel empty."
+      "nell": "The four tiles in our bag are enough. There is no reward we must collect first. Opening the classroom door will use them all.",
+      "iris": "We have one four-beat answer left. Its short notes fill the first beat, and its rests fill the next three. Keep that order.",
+      "pip": "The repair shelf has tools, not more note tiles. We already carried the answer here. My pockets contain bird feathers, which will not help the lock."
     },
     "demos": {
       "nell": "workshop-ending",
@@ -225,41 +225,41 @@ const NEW_ROOMS={
         "id": "workshop-final-low-control",
         "title": "The lowered control",
         "label": "Inspect the lowered control",
-        "text": "A wooden extension lets the smallest stool reach the oldest brass lever.",
+        "text": "A wooden handle extension lets a smaller learner reach the machine’s lever.",
         "placement": "left"
       },
       {
         "id": "workshop-final-practice-patches",
         "title": "The practice patches",
         "label": "Inspect the practice patches",
-        "text": "Different repaired cloth squares mark places where people learned by trying again.",
+        "text": "These repaired cloth patches mark where learners stood and tried again. Different people needed different amounts of space.",
         "placement": "right"
       },
       {
         "id": "workshop-final-listening-ring",
         "title": "The listening ring",
         "label": "Inspect the listening ring",
-        "text": "Its empty centre faces the other seats instead of a lone operator’s desk.",
+        "text": "The seats face one another. The machine is now a shared music instrument, instead of one person’s work station.",
         "placement": "wall"
       }
     ]
   },
   "canal-final": {
-    "arrival": "The Reach’s inhabited islands lie beyond the tower windows. Beneath the silent bell, someone has cleaned every dark route lamp and left a flask on a small shelf fitted to an immense receiving instrument.",
+    "arrival": "The silent town bell hangs above a screen of dark route lights. A loose wire leads from the listening dish to the bell. The group has found the missing return connection.",
     "stories": {
-      "nell": "Those lamps are places that used to send me a receipt. I cannot see every household from here, but somebody polished each glass as carefully as the one still glowing. They kept expecting an answer.",
-      "iris": "The dish faces outward. I thought a great tower would only know how to send its own sound, but this one has been making room to receive. Perhaps the gardens were leaning toward that space all along.",
-      "pip": "My couriers can reach the small islands faster than we can. If this room answers them, each bird will know where its next reply should go. I have left the harnesses loose enough for them to choose their own perch."
+      "nell": "There is the fault. The bell could send messages, but that loose return wire kept it from hearing replies. It stopped the routes because it could not check whether messages and deliveries arrived safely.",
+      "iris": "The wire must be firmly connected, and the timing must match. Our last rhythm will test the repaired connection. Then the bell can hear the islands answer again.",
+      "pip": "My bird used the old service perches to bring Nell’s undelivered letter home. Those are its old resting places. Its warm carrying clip softened the wax. It was helping us all along!"
     },
     "routes": {
-      "nell": "The town door takes a single eighth, paired sixteenths, half rest and quarter rest. Give the two different short replies before two quiet beats and one more. This is the last four-beat key.",
-      "iris": "Begin with a single eighth for half a beat and paired sixteenths for the other half. Follow them with a half rest, then a quarter rest. The tower leaves room to listen after its call.",
-      "pip": "Our last answer is single eighth, paired sixteenths, half rest, quarter rest. One short sound and two smaller sounds, then three beats of silence. Oren’s returning knock has brought us this far."
+      "nell": "The town door needs a single eighth note, paired sixteenths, a half rest and a quarter rest. This is our last four-beat key.",
+      "iris": "The single eighth and paired sixteenths share beat one. The half rest leaves beats two and three silent. The quarter rest leaves beat four silent. That gives the machine time to listen.",
+      "pip": "Use a single eighth, paired sixteenths, half rest, then quarter rest. We have followed the broken connection to its end. Now let us hear a real answer from those lights."
     },
     "inventory": {
-      "nell": "The four tiles left in the bag pay this last lock exactly. The lamps and the keeper’s shelf hold no extra parcel. We need every kind in the order we kept it.",
-      "iris": "There is no new gift at the top of the tower. Our two short tiles, half rest and quarter rest are enough; the final answer will empty our shared bag.",
-      "pip": "We have brought exactly four beats up these stairs. The last door spends all four note tiles, leaving nothing to trade, discard or convert afterward."
+      "nell": "The four tiles left in the bag are the complete final answer. There are no extra note tiles to collect at the tower.",
+      "iris": "Our short-note tiles and two rests fill exactly four beats. The final door will use every tile left in the bag.",
+      "pip": "Four beats left. One last lock. I have counted twice, and I would like everybody to remain beside me while it opens."
     },
     "demos": {
       "nell": "canal-ending",
@@ -272,41 +272,41 @@ const NEW_ROOMS={
         "id": "canal-final-route-lamps",
         "title": "The waiting lamps",
         "label": "Inspect the waiting lamps",
-        "text": "Each dark lamp has been cleaned as carefully as the one that still glows.",
+        "text": "Each light marks a place that should send a reply. Most are dark because the bell cannot hear their messages.",
         "placement": "left"
       },
       {
         "id": "canal-final-keeper-flask",
         "title": "The keeper’s flask",
         "label": "Inspect the keeper’s flask",
-        "text": "The flask fits a hand-sized shelf added to a machine of enormous scale.",
+        "text": "The keeper left a drink beside the controls. Someone kept watching the dark lights instead of giving up.",
         "placement": "right"
       },
       {
         "id": "canal-final-reply-dish",
         "title": "The reply dish",
         "label": "Inspect the reply dish",
-        "text": "Its centre faces outward toward the islands, waiting to receive as well as send.",
+        "text": "This dish receives messages from the islands. Its loose return wire should carry those replies back to the bell.",
         "placement": "wall"
       }
     ]
   },
   "garden-alcove": {
-    "arrival": "Freshly moved leaves protect a dry patch beside an old flower-carved stone. Living roots cradle a small music box without pressing on its lid; one polished petal forms a hand-sized grip.",
+    "arrival": "A flower is carved into a loose stone. Beneath it, roots protect an old music box. Someone has kept the lid clear so it can still be opened.",
     "stories": {
-      "nell": "This stone carries the old survey flower. People used that mark for a service hatch before the neighbourhood had street names. Somebody has kept its grip clear even while the modern path grew elsewhere.",
-      "iris": "I brushed the leaves away when I was small, but I never lifted the stone alone. The roots have made space for the box below it. They seem to know that a lid is meant to open again.",
-      "pip": "The bird on my strap has stopped trying to copy the pipes. It is listening at the loose petal. A little mechanism can hold a reply for a very long time if somebody keeps the rain out."
+      "nell": "That flower marks an old repair hatch. People used this path before the newer garden was built. A mail bird could still follow these small, forgotten stops.",
+      "iris": "I came here with my friend when we were younger. I brushed away the leaves, but never lifted this stone alone. Its smooth petal is a handle. We can look beneath it together.",
+      "pip": "My bird is listening beside that loose petal. It seems to remember this place. I would rather lift the lid with you than guess what is inside."
     },
     "routes": {
-      "nell": "Search beneath the loose flower stone. The notes found there open the flower gate: quarter note, paired eighths, four sixteenths, then a quarter rest. Keep the dotted half and quarter we brought for the answer beyond it.",
-      "iris": "The polished petal is a grip. Search under that stone, then use its quarter, paired eighths, four sixteenths and quarter rest at the gate it reveals. Our original dotted half and quarter must stay in the bag.",
-      "pip": "Find the music box under the flower stone before looking for its gate. Its four new one-beat tiles go quarter, paired eighths, four sixteenths, quarter rest. Those are separate from the long call and ordinary step we saved."
+      "nell": "Inspect the flower stone, then choose Search beneath the flower stone. Its four tiles open the gate they reveal: quarter, two eighths, four sixteenths, quarter rest.",
+      "iris": "Search under the stone. Use the new quarter note, two eighth notes, four sixteenths and quarter rest at the flower gate. Keep our original dotted half and quarter for later.",
+      "pip": "The music box hides four new one-beat tiles. Their order is quarter, two eighths, four sixteenths, quarter rest. Search first, or we will have no gate to knock on."
     },
     "inventory": {
-      "nell": "We arrived carrying the dotted half and quarter for the final answer. The stone hides a separate four-beat supply, collectible once; its whole new phrase pays the flower gate and leaves our saved pair intact.",
-      "iris": "Looking at the cradle alone gives no notes. Choose the search beneath the flower stone to collect its four tiles once. Spend those at the revealed gate, and protect our original two tiles.",
-      "pip": "The search is a single pickup, not a gift for each conversation. After its four notes open the hidden gate, our dotted half and quarter will still be ready for the last door."
+      "nell": "We brought a dotted half and a quarter for the final door. The stone has a separate four-beat supply. Its new notes pay this gate, so keep our original pair.",
+      "iris": "Looking at the box gives no tiles. Choose Search to collect them once. Opening this gate uses those new tiles, not the pair we carried here.",
+      "pip": "The hidden notes can be collected once. Talking about them does not fill the bag. After this gate, we still need our dotted half and quarter."
     },
     "demos": {
       "nell": "garden-hidden-exit",
@@ -319,21 +319,21 @@ const NEW_ROOMS={
         "id": "garden-alcove-cleared-patch",
         "title": "The cleared patch",
         "label": "Inspect the cleared patch",
-        "text": "Freshly turned leaves protect a dry place beside the old stone.",
+        "text": "Someone moved the wet leaves away from this dry patch beside the stone.",
         "placement": "wall"
       },
       {
         "id": "garden-alcove-root-cradle",
-        "title": "The root cradle",
-        "label": "Inspect the root cradle",
-        "text": "Roots curve around the little instrument’s lid, leaving it room to open.",
+        "title": "The roots around the box",
+        "label": "Inspect roots around the box",
+        "text": "The roots curve around the music box. They leave enough space for its lid to open.",
         "placement": "right"
       },
       {
         "id": "garden-alcove-flower-stone",
         "title": "The flower stone",
         "label": "Inspect the flower stone",
-        "text": "One carved petal is polished by a hand-sized grip. A narrow seam leaves room to lift the carved lid and search beneath it.",
+        "text": "One flower petal has a smooth grip. A seam runs around the stone lid. Choose Search beneath the flower stone to look inside.",
         "placement": "left",
         "sourceId": "garden-hidden-notes",
         "sourceLabel": "Search beneath the flower stone"
@@ -341,21 +341,21 @@ const NEW_ROOMS={
     ]
   },
   "workshop-alcove": {
-    "arrival": "Wing wraps lie folded beside an old brush in the loft. Scratches of several sizes follow the roost rail toward a hollow perch, where one side gives a clear tone and the other holds a soft pause.",
+    "arrival": "Old bird wraps fill this quiet attic. A hollow perch stands beside a little cleaning brush. One side of the perch rings when tapped; the other stays quiet.",
     "stories": {
-      "nell": "The straps up here belonged to couriers older than my first delivery book. Every new harness kept one buckle from the one before it. I can trace the repairs farther back than I can trace the names.",
-      "iris": "The folded wraps smell of the same dry leaves Pip uses downstairs. Somebody has been caring for the quiet birds too. Being out of sight has not made them less worth tending.",
-      "pip": "I made that little brush so I could clean inside the hollow perch. I never found what its two sides were for. Listen: the left rings, and the right leaves room after it. There may be something stored inside."
+      "nell": "These straps belonged to mail birds long before Pip cared for them. The old route still has usable resting places. That explains how a bird could travel while the main system was stuck.",
+      "iris": "Someone kept these old perches clean. A small reply route may still work here. We should inspect it instead of assuming every silent machine is broken.",
+      "pip": "I made that brush to clean the hollow perch. There is a cover between its two sides. I never opened it alone. That was sensible of me. Let us open it together."
     },
     "routes": {
-      "nell": "Search the hollow two-sided perch. Its half note followed by a half rest opens the brass gate it reveals. Leave our original dotted half and quarter untouched for the last room.",
-      "iris": "The perch answers with two sounding beats and two quiet ones: half note, then half rest. Search it to collect those tiles once and reveal the brass gate. Keep the dotted half and quarter we carried through the back passage.",
-      "pip": "Search inside the hollow perch, then use its half note before its half rest at the revealed gate. Sound first, silence second. Our saved dotted half and quarter belong beyond that gate."
+      "nell": "Inspect the two-sided perch, then choose Search the hollow perch. Its half note followed by a half rest opens the brass gate. Save the dotted half and quarter for the final door.",
+      "iris": "The half note sounds for two beats. The half rest leaves two beats silent. Search for those two tiles, then use them in that order at the gate.",
+      "pip": "Search inside the perch first. Play its half note, then its half rest. Sound first, silence second. Our original dotted half and quarter must stay in the bag."
     },
     "inventory": {
-      "nell": "The old dotted half and quarter are still our last answer. The two long tiles inside the perch are a separate once-only supply; spend them together at the hidden brass gate.",
-      "iris": "Inspecting the old wraps does not fill the bag. The explicit perch search gives one half note and one half rest. They pay only this gate, leaving the saved final pair.",
-      "pip": "I can show you where to search, but repeating our conversation gives nothing. Take the two notes from the perch once, use them in sounding-then-silent order, and carry the original pair onward."
+      "nell": "The two tiles inside the perch are a separate supply. They pay this hidden gate. Our dotted half and quarter are still needed after it.",
+      "iris": "The wraps and brush give no notes. Only Search the hollow perch collects the half note and half rest. The search works once per run.",
+      "pip": "I can point to the cover, but I cannot give its notes by talking. Search it once, use its two tiles here, and save our original pair."
     },
     "demos": {
       "nell": "workshop-hidden-exit",
@@ -368,21 +368,21 @@ const NEW_ROOMS={
         "id": "workshop-alcove-wing-wraps",
         "title": "The folded wing wraps",
         "label": "Inspect the folded wing wraps",
-        "text": "Each wrap has been repaired to fit a different small wing.",
+        "text": "Each soft wrap was repaired to fit a different small bird’s wing.",
         "placement": "wall"
       },
       {
         "id": "workshop-alcove-roost-marks",
         "title": "The old roost marks",
         "label": "Inspect the old roost marks",
-        "text": "Tiny scratches stop beside larger empty spaces along the rail.",
+        "text": "Small claw marks show where generations of birds landed on the rail.",
         "placement": "right"
       },
       {
         "id": "workshop-alcove-hollow-perch",
         "title": "The two-sided perch",
         "label": "Inspect the two-sided perch",
-        "text": "A gentle tap gives a clear tone on one side and a muffled pause on the other. A small pegged cover closes a storage space between the two sides.",
+        "text": "A small cover closes a space inside this perch. Tap one side for sound and the other for silence, or choose Search the hollow perch.",
         "placement": "left",
         "sourceId": "workshop-hidden-notes",
         "sourceLabel": "Search the hollow perch"
@@ -390,21 +390,21 @@ const NEW_ROOMS={
     ]
   },
   "garden-secret-final": {
-    "arrival": "Fresh water stands beside a carefully maintained empty chair. Two sets of hand-worn controls face a listening window; one sending lever rests beneath a folded cloth, while the receiver remains open to the garden.",
+    "arrival": "Two sets of music controls face a window that can carry sound. One chair has been kept ready for Iris’s friend, who lives on another island.",
     "stories": {
-      "nell": "An unanswered letter is still somebody’s letter. We leave its place in the tray instead of writing a reply on their behalf. This room seems to have kept the same promise with its second set of controls.",
-      "iris": "My friend used the smoother grip. I have mended the chair and changed the water, but I never moved those controls into my place. I can keep a room ready without deciding what she would have played.",
-      "pip": "The receiver is awake even though that second lever is covered. My birds do that too: they can listen without repeating. I would like to learn how to leave a space so carefully."
+      "nell": "The town bell lost its replies through a loose return connection. This older window has its own small connection. We can repair that and help Iris reach her friend.",
+      "iris": "My friend moved to another island. We used to play music here together. I kept her chair ready, but the broken listening connection stopped our calls. I want to hear that she is all right.",
+      "pip": "The bird’s warm carrying clip explains the soft wax on Nell’s letter. It used old perches like these to bring the letter home. Perhaps this old window can carry a reply too."
     },
     "routes": {
-      "nell": "Use the two original tiles we saved: a dotted half followed by a quarter. The music-box notes have already paid their own gate. This last answer needs the long call and ordinary step.",
-      "iris": "The unfinished-song door takes our dotted half, then our quarter. Three sounding beats and one ordinary beat are enough. We do not need to fill the empty chair’s part to open it.",
-      "pip": "Dotted half, quarter: the pair we protected at the garden fork. The other notes brought us through the hidden gate; these four beats complete our own answer here."
+      "nell": "The unfinished-song door needs our saved dotted half, then our quarter. The music box’s new notes have already paid their gate. These are our final two tiles.",
+      "iris": "Play a dotted half note for three beats, then a quarter note for one. We need only our saved pair. We do not need to play my friend’s part for her.",
+      "pip": "Dotted half, then quarter. We kept both through the old garden. They make the last four beats of this path."
     },
     "inventory": {
-      "nell": "Only the saved dotted half and quarter remain. They are not a new gift from this room. Paying the last door uses both and leaves every note kind at zero.",
-      "iris": "The last pair has travelled with us since the parcel. We spent the music box’s separate supply on its gate, so there are no spare notes to leave in the chair.",
-      "pip": "We carried two tiles through the entire detour on purpose. Their four beats are the final payment. The satchel will be empty when the door answers."
+      "nell": "Only the dotted half and quarter remain. They came from our original note bag. This last door uses both.",
+      "iris": "The music box gave us notes for its own gate. We have already spent those. Our two saved tiles finish this route and leave the bag empty.",
+      "pip": "There are no new notes in the chair or the window. We saved this pair for a reason, and I am very relieved we still have it."
     },
     "demos": {
       "nell": "garden-secret-ending",
@@ -415,43 +415,43 @@ const NEW_ROOMS={
     "inspections": [
       {
         "id": "garden-secret-final-chair",
-        "title": "The maintained chair",
-        "label": "Inspect the maintained chair",
-        "text": "Its place is empty, but nothing about it has been neglected.",
+        "title": "Iris’s friend’s chair",
+        "label": "Inspect Iris’s friend’s chair",
+        "text": "Iris has cleaned the chair and repaired its cushion. Her friend can sit here when she visits from the other island.",
         "placement": "left"
       },
       {
         "id": "garden-secret-final-second-controls",
         "title": "The second controls",
         "label": "Inspect the second controls",
-        "text": "Two different hands wore the adjacent controls in different ways.",
+        "text": "Two people used these controls to play music together. Each set has room for its own tune.",
         "placement": "right"
       },
       {
         "id": "garden-secret-final-open-window",
         "title": "The listening window",
         "label": "Inspect the listening window",
-        "text": "Its receiver faces the garden even while the sending side rests.",
+        "text": "This window carries sound between islands. Its listening connection needs repair so Iris can hear her friend answer.",
         "placement": "wall"
       }
     ]
   },
   "workshop-secret-final": {
-    "arrival": "Behind the great sending horn, a smaller horn rests on a freshly brushed perch. A hand-built step reaches its oldest control, and two phosphor traces approach the same pause along different curves.",
+    "arrival": "A bird-sized horn stands beside the larger message horn. A little step lets a mail bird reach its controls. The screen shows two different tunes.",
     "stories": {
-      "nell": "The delivery ledgers have a column for returns, but this horn was never listed as a sender. Perhaps the couriers kept answering while we were only counting the messages we gave them.",
-      "iris": "The little step is newer than the great machine. Somebody noticed one bird could not reach the lever and made that difference matter. I recognise the care, even if I do not know who built it.",
-      "pip": "I thought the birds were getting my tune wrong. Their line bends away and still arrives beside ours. They were not losing the answer. They had another part they wanted us to hear."
+      "nell": "The big message system stopped because its return connection came loose. The birds kept using their older service route. One of them brought Nell’s letter home along those perches.",
+      "iris": "A countermelody is a second tune played beside the first. The small horn lets a bird send its own tune back. We can repair this local reply route without fixing the whole town bell.",
+      "pip": "I thought the birds were copying my tune badly. They were trying to answer with a different tune! Their warm carrying clips also explain the soft wax. I should have listened before tightening their compasses."
     },
     "routes": {
-      "nell": "The birds’ answer door needs the original dotted half followed by the quarter. We kept that long call and ordinary step through the quiet passage; they are our final four beats.",
-      "iris": "Play the dotted half and then the quarter we saved. The hollow perch’s half note and half rest have already paid their own gate. This answer belongs to the pair we carried here.",
-      "pip": "Our last two tiles go dotted half, quarter. Three beats held and one ordinary step finish the phrase without making the small horn copy the large one."
+      "nell": "The birds’ answer door needs our saved dotted half, then our quarter. Keep that order. These two tiles make the final four beats.",
+      "iris": "Play the dotted half for three beats and the quarter for one. The half note and half rest from the perch have already paid their own gate.",
+      "pip": "Dotted half, quarter. We carried them all this way. Then I can listen to the birds instead of telling them which tune to sing."
     },
     "inventory": {
-      "nell": "The shared bag has exactly its last four beats: dotted half and quarter. There are no notes hidden in this horn; spending that pair will empty every kind.",
-      "iris": "We protected this pair when the workshop fork offered two paths. The perch supplied only its own gate. Our two original tiles are the complete final answer.",
-      "pip": "The little horn brings a voice, not another note reward. Pay the door with our saved dotted half and quarter; nothing will be left over afterward."
+      "nell": "Our bag holds exactly two tiles: dotted half and quarter. There is no hidden note gift inside this horn. This door spends both.",
+      "iris": "The perch supplied the notes for its gate only. The two tiles we saved at the workshop fork pay the final door.",
+      "pip": "The horn gives the birds a voice, not more note tiles. Use our saved pair, and the bag will be empty."
     },
     "demos": {
       "nell": "workshop-secret-ending",
@@ -464,21 +464,21 @@ const NEW_ROOMS={
         "id": "workshop-secret-final-small-horn",
         "title": "The smaller horn",
         "label": "Inspect the smaller horn",
-        "text": "Its rim is polished from the inside, as if something small has been speaking into it.",
+        "text": "The small horn is worn inside its rim. A bird has been trying to sing its own reply into it.",
         "placement": "left"
       },
       {
         "id": "workshop-secret-final-small-step",
-        "title": "The little service step",
-        "label": "Inspect the little service step",
-        "text": "A hand-built step reaches the one control a small courier cannot reach from its perch.",
+        "title": "The bird-sized step",
+        "label": "Inspect bird-sized step",
+        "text": "This hand-built step raises a small bird high enough to reach the old control.",
         "placement": "right"
       },
       {
         "id": "workshop-secret-final-two-traces",
-        "title": "The two sound traces",
-        "label": "Inspect the two sound traces",
-        "text": "Two phosphor traces approach the same pause along different curves.",
+        "title": "The two tunes on the screen",
+        "label": "Inspect two tunes on the screen",
+        "text": "The screen shows two different tunes. They share a pause, but neither tune has to copy the other.",
         "placement": "wall"
       }
     ]
@@ -488,437 +488,437 @@ const OUTCOME_ROOMS={
   "ending-home": {
     "id": "ending-home",
     "title": "A Place to Come Home",
-    "arrival": "A kitchen chime answers from an open window, then another across the courtyard. Someone moves four cups onto the common table while the old relay settles into a small, steady glow.",
+    "arrival": "A kitchen chime rings, and another answers across the courtyard. The garden’s water controls are working again. The neighbors set four cups on the table for their visitors.",
     "stories": {
-      "nell": "I used to bring post through here before the houses had their own chimes. People would leave the courtyard door unlatched when they expected someone. That is a useful sort of signal to have working again.",
-      "iris": "The extra chair has been pulled into the light. We do not have to decide whose place it is before we keep it ready. I would like to water those window boxes in the morning.",
-      "pip": "Listen—each kitchen answers a little differently. I thought fixing the bell would make everything sound alike. I am glad it does not."
+      "nell": "We fixed this neighborhood’s return wire. The homes can request water and confirm deliveries again. The town bell still needs help, but these families can use their own small connection.",
+      "iris": "The bell’s loose return connection caused the trouble. The mail bird avoided it by using old service perches. Its warm carrying clip softened the letter’s wax. The evidence fits, and the garden can be watered.",
+      "pip": "I thought that warm letter meant something frightening. My bird was just bringing Nell’s undelivered letter home! Now the kitchens can answer one another. I would like to answer that invitation to supper."
     },
     "routes": {
-      "nell": "Our delivery is finished here. We can look around the courtyard, revisit the last answer, or begin another journey from the depot.",
-      "iris": "This path has brought us to a place that answers. There is no further lock here; stay a little, or revisit our choice when you are ready.",
-      "pip": "No more door keys on this route. I want to hear all the little chimes before we try a different way on another journey."
+      "nell": "This route is complete. Explore the courtyard, revisit our last choice, or start a new journey. There are other ways to help the town.",
+      "iris": "There is no further lock here. We have repaired the neighborhood’s connection. Another journey could reach a different part of the broken system.",
+      "pip": "No more doors on this path. I want to hear the little chimes before we try another route. That one sounds like a spoon!"
     },
     "inventory": {
-      "nell": "The satchel is empty. Every note we carried has paid its part of the route, including the last home-door phrase.",
-      "iris": "There are no note tiles left to spend. The empty space in the bag belongs to the finished phrase.",
-      "pip": "Nothing rattles in the satchel now. We used the whole set, and the kitchens are keeping the answer going for us."
+      "nell": "Every note tile in Nell’s note bag has been used. The returned letter was a separate mystery. It was never one of our door keys.",
+      "iris": "The bag is empty because we paid every lock on this route. There is no missing tile and no final payment to collect.",
+      "pip": "No note tiles left. We used the whole set. The neighbors have cups for us, which is a much better thing to put on this table."
     },
     "inspections": [
       {
         "id": "ending-home-memory",
         "title": "The common table",
         "label": "Inspect the common table",
-        "text": "Four cups stand beside a loaf under a clean cloth. One corner of the table has been mended with a piece of the same wood as the nearby post box.",
+        "text": "Four cups and a loaf wait on the shared table. The neighbors can welcome visitors while their working chimes carry messages.",
         "placement": "left"
       },
       {
         "id": "ending-home-reply",
         "title": "The kitchen chimes",
         "label": "Inspect the kitchen chimes",
-        "text": "The window chimes use different spoons, shells and brass scraps. A thin copper line connects their hinges to the old relay without making their voices alike.",
+        "text": "Spoons, shells and brass pieces make different chime sounds. Repaired copper wires let the homes send replies to one another again.",
         "placement": "right"
       },
       {
         "id": "ending-home-trace",
-        "title": "The small working relay",
-        "label": "Inspect the small working relay",
-        "text": "An immense socket now holds a hand-sized bell. Warm wax on an ordinary envelope softens beside its service lamp; the parcel’s sender is still unnamed.",
+        "title": "The working reply switch",
+        "label": "Inspect working reply switch",
+        "text": "The small bell’s repaired return wire now carries replies. The garden’s water control light changes when a home asks for water.",
         "placement": "wall"
       }
     ],
     "outcome": {
       "kind": "ending",
-      "kicker": "A place that answers",
-      "copy": "The home door opens into a courtyard that has kept a place for whoever arrives next. Its kitchen chimes answer the restored hearth relay one by one. Mira has spent every note she carried, and the warm parcel can rest on a table among people who will help ask where it came from."
+      "kicker": "The neighborhood answers again",
+      "copy": "The town bell stopped hearing replies because its return connection was loose. An old mail bird brought Nell’s undelivered letter home through forgotten service perches. Its warm carrying clip softened the wax. Mira’s group repaired the neighborhood’s smaller return connection and tested it with their final rhythm. These homes can confirm deliveries and request garden water again. The town bell still needs repair, but this neighborhood has a working way to answer. Every note tile has been used."
     }
   },
   "ending-school": {
     "id": "ending-school",
     "title": "The Open Music Room",
-    "arrival": "Low stools form an open circle around the listening instrument. As its rings begin to turn, a small practice control clicks and leaves room for the next person to answer.",
+    "arrival": "The music machine plays a short call, then waits. A learner answers from the circle of stools. The repaired connection carries that answer back, and the next practice round begins.",
     "stories": {
-      "nell": "The oldest handle has a child-sized grip fitted over it. Someone did not wait to understand the whole machine before making it useful. I know a few retired postkeepers who would enjoy a seat here.",
-      "iris": "The stools face one another. When a learner stops, the others can see that they are thinking. That seems as important as getting the next sound right.",
-      "pip": "I brought the wing jig, but I think we can leave it on the help shelf. Someone learning here may find a better repair than mine. I would like to come back and see it."
+      "nell": "The classroom can hear its learners again. People can practice music together and teach one another repairs. We fixed this local connection. The larger town system still needs help.",
+      "iris": "The loose return connection caused the town’s missing replies. The bird used older perches to return Nell’s letter. Its warm metal clip softened the wax. We solved that mystery and repaired this classroom’s reply link.",
+      "pip": "Now a learner can try a rhythm and hear an answer. They do not have to wonder whether the machine heard them. I will leave my wing repair tool here for the next class."
     },
     "routes": {
-      "nell": "This is the end of this delivery route. The room is open now; explore it, revisit the last rhythm, or start another journey with what we have learned.",
-      "iris": "We have reached the shared music room, and its last lock is paid. There is no onward door to solve here.",
-      "pip": "Our phrase ends here so another learner can begin. We can listen before revisiting our answer or trying a new route."
+      "nell": "This route ends at the shared music room. Explore it, revisit the last choice, or start another journey to help somewhere else.",
+      "iris": "There is no onward lock here. The class connection works, and this route is complete. Other routes can repair other parts of the town.",
+      "pip": "We finished this path. I want to hear the next learner’s answer before we leave. Then perhaps we can find another place that needs us."
     },
     "inventory": {
-      "nell": "All note tiles are spent. The music-room door accepted the short replies and following silence from our original parcel.",
-      "iris": "The shared satchel is empty. Every note has found its place in the route; the room does not require another payment.",
-      "pip": "We have no spare tiles left. That is the complete delivery, not a missing supply."
+      "nell": "All the tiles from our note bag have been spent. The music-room door used our final four-beat rhythm. No extra gift is needed.",
+      "iris": "The bag is empty. Every note tile paid a lock on this route. The working music room asks for no more tiles.",
+      "pip": "There are no spare tiles because we used them all. We did not lose any. I checked under my stool, just in case."
     },
     "inspections": [
       {
         "id": "ending-school-memory",
         "title": "The smallest stool",
         "label": "Inspect the smallest stool",
-        "text": "Its front legs have been shortened and capped neatly so it sits level. A wooden lever extension reaches down to it from the oldest brass control.",
+        "text": "A low stool and a longer handle let a smaller learner reach the controls. Someone made the machine easier to use.",
         "placement": "left"
       },
       {
         "id": "ending-school-reply",
         "title": "The listening circle",
         "label": "Inspect the listening circle",
-        "text": "The instrument’s seats leave an opening wide enough for another stool. Polished handrails show that people have moved around the circle instead of keeping one permanent operator’s place.",
+        "text": "The stools face one another. Each learner can see who is playing and wait for their turn to answer.",
         "placement": "right"
       },
       {
         "id": "ending-school-trace",
         "title": "The shared repair shelf",
         "label": "Inspect the shared repair shelf",
-        "text": "An unfinished mechanism has three kinds of careful stitching around one joint. Beside it lies a fresh piece of felt and a brush cleaned for the next learner.",
+        "text": "A partly repaired bird wing waits beside clean tools. The next class can finish the repair and learn how it works.",
         "placement": "wall"
       }
     ],
     "outcome": {
       "kind": "ending",
-      "kicker": "Room for another voice",
-      "copy": "The final quiet phrase opens the community music room. Its retired navigator becomes a listening instrument that several people can learn together. Every carried note has been used, while the circle keeps an empty place for the next attempt and the next answer."
+      "kicker": "A working music room for everyone",
+      "copy": "A loose return connection kept the town bell from hearing replies. A mail bird brought Nell’s undelivered letter home along old service perches. Its warm carrying clip softened the wax. Mira’s group repaired the music room’s local reply connection and tested it with their final rhythm. Learners can hear one another, practice together and share repair skills again. The main town connection still needs help. Every note tile has been used to reach this working classroom."
     }
   },
   "ending-public": {
     "id": "ending-public",
     "title": "The Evening Bell",
-    "arrival": "The evening bell moves once above the terrace. A route lamp answers from a nearby island, then a distant blue light returns the same interval across the Reach.",
+    "arrival": "The public bell rings above the terrace. One route light answers, then another. The water clock releases its waiting drop, and the ferry landing sends its safe-arrival signal.",
     "stories": {
-      "nell": "A dispatch signal should tell you whether anyone received it. Those little returning lights were the part we had lost. I will keep the parcel’s reply address open until somebody can fill it in.",
-      "iris": "The gardens are answering at their own distances. We did not have to pull every island closer to hear them. I hope the people tending those lamps can go home before their tea gets cold.",
-      "pip": "My birds are waiting for the lights to return before they take off. I used to think the waiting was a fault in their compass. They were checking that someone was there."
+      "nell": "The return wire is connected, and the timing is right. The town bell can hear replies again. Deliveries can be confirmed, gardens can request water, and ferries can check that landings are ready.",
+      "iris": "One loose connection stopped the whole town from hearing its answers. We followed the evidence and repaired it. The returning lights show that our final test worked.",
+      "pip": "My bird brought the letter home on old service perches. Its warm carrying clip softened the wax. It was not a ghost letter! The birds are waiting for safe-landing lights before they take off."
     },
     "routes": {
-      "nell": "The town door completes this route. We can watch the replies from the terrace, revisit that final choice, or make another journey.",
-      "iris": "There is no further gate here. The phrase has reached the public bell; its answer now comes from the islands outside.",
-      "pip": "We have reached the end of the tower path. Let the last lamp answer before we decide whether to revisit it or try a new way."
+      "nell": "This route is complete. We can watch the town’s replies, revisit our last choice, or begin a new journey to discover another outcome.",
+      "iris": "There is no further gate here. We repaired the public bell’s return connection. Other routes may show us people and places we missed.",
+      "pip": "The tower path ends here. Let us watch the last light answer. Then I would like to try a route with fewer tall stairs."
     },
     "inventory": {
-      "nell": "The delivery bag is empty. The tower’s final phrase used every note that remained after the route here.",
-      "iris": "We have spent all our tiles. The returning lights belong to the completed answer and ask for no more notes.",
-      "pip": "No notes left in the satchel. We carried exactly enough to reach the bell and leave it ready to listen."
+      "nell": "Our note bag is empty. The tower’s final rhythm used the last tiles. The returned letter and our note supply were separate all along.",
+      "iris": "Every note tile has paid a lock. The working route lights need no further payment. They show messages going out and replies coming back.",
+      "pip": "No notes left in the bag. We carried exactly enough for this route. This time, the bell can hear the answer after we stop playing."
     },
     "inspections": [
       {
         "id": "ending-public-memory",
         "title": "The keeper’s bench",
         "label": "Inspect the keeper’s bench",
-        "text": "A patched coat and a flask rest on a narrow shelf beside the immense control frame. The bench faces the returning route lamps rather than the bell itself.",
+        "text": "A coat and drink wait beside the controls. The keeper can watch the returning route lights from this bench.",
         "placement": "left"
       },
       {
         "id": "ending-public-reply",
         "title": "The receiving dish",
         "label": "Inspect the receiving dish",
-        "text": "Its open centre faces the inhabited islands. A fine silver trace appears only after a distant lamp has answered the bell’s signal.",
+        "text": "The dish receives the islands’ reply signals. Its repaired wire carries each answer back to the town bell.",
         "placement": "right"
       },
       {
         "id": "ending-public-trace",
         "title": "The evening route lamps",
         "label": "Inspect the evening route lamps",
-        "text": "Clean glass covers every lamp, including the furthest dark ones. New light travels outward and returns along separate copper lines; the keeper has cared for both.",
+        "text": "Lights turn on when a message arrives safely. Separate wires carry signals outward and bring the replies back.",
         "placement": "wall"
       }
     ],
     "outcome": {
       "kind": "ending",
-      "kicker": "The Reach replies",
-      "copy": "Mira’s last phrase brings the public bell into time with the returning route lights. The islands answer rather than merely receive a command. Every note is spent, and the old network can carry the warm parcel’s unanswered question farther than the party could carry it alone."
+      "kicker": "The whole town can answer",
+      "copy": "The loose return connection kept the public bell from hearing replies. That stopped deliveries, garden water controls and safe ferry checks. A mail bird brought Nell’s undelivered letter home by using forgotten service perches. Its warm carrying clip softened the wax. Mira’s group reconnected the main return wire and tested its timing with their final rhythm. Replies now reach the bell from across the town. The public network works again, and every note tile has been used."
     }
   },
   "ending-secret-quiet": {
     "id": "ending-secret-quiet",
     "title": "The Reserved Silence",
-    "arrival": "The listening window opens onto the garden without sounding its second instrument. Fresh water catches the light beside a maintained empty chair, and nothing hurries to fill its place.",
+    "arrival": "The repaired listening window crackles, then carries a familiar voice. Iris’s friend answers from another island. Iris sits beside the clean, empty chair and begins planning their next visit.",
     "stories": {
-      "nell": "There is room on an address line for a name we do not know yet. I can keep that space without inventing a recipient. We have delivered everything we promised to carry.",
-      "iris": "I changed the water here even when I could not bear to sit down. You listened long enough to find the way in, and you did not use up the part I was keeping. Thank you for letting the chair stay ready.",
-      "pip": "The little bird keeps breathing between its calls. I will not wind that pause out of it again. A second voice needs somewhere to arrive."
+      "nell": "We found why the town lost its replies and repaired this smaller listening connection. Iris can reach her friend again. The public bell still needs work, but their calls no longer have to wait.",
+      "iris": "She is safe on the other island. I can hear her clearly now. I kept this chair ready for her visits. We can arrange the next one instead of guessing why she never answered.",
+      "pip": "The bird used old perches to return Nell’s letter, and its warm clip softened the wax. Now this old window brought back a voice too. I am glad we saved the right notes."
     },
     "routes": {
-      "nell": "This listening place is the end of the hidden garden route. We can remain here, revisit its last answer, or begin another journey without taking anything from the chair.",
-      "iris": "There is no further lock to fill. We have reached the space I wanted to keep; looking after it does not require another phrase.",
-      "pip": "The secret path finishes here. If we try another route later, I want to remember that finding a quiet room did not mean we had to make it loud."
+      "nell": "This is the end of the hidden garden route. Listen, explore, revisit the last choice, or begin a new journey. No more locks wait here.",
+      "iris": "The listening connection works. There is no next door on this route. I would like to finish speaking with my friend before we leave.",
+      "pip": "The secret garden path is complete. We can try another route later. For now, I shall sit very quietly and avoid touching any controls."
     },
     "inventory": {
-      "nell": "The original long call and ordinary step paid the final door. The satchel holds no unused notes.",
-      "iris": "All our note tiles are spent. Keeping this place open has not left an unpaid rhythm or an extra tile in the bag.",
-      "pip": "We used everything we carried and everything we found. The quiet here is a finished answer, not a forgotten note."
+      "nell": "Our saved dotted half and quarter paid the last door. Every original tile and every hidden tile has been used. The note bag is empty.",
+      "iris": "We saved two tiles for this final lock. We spent the hidden music-box tiles on their own gate. No note tile was wasted or left behind.",
+      "pip": "We used the notes we brought and the notes we found. The bag is empty. I can stop checking it every few steps now."
     },
     "inspections": [
       {
         "id": "ending-secret-quiet-memory",
-        "title": "The maintained chair",
-        "label": "Inspect the maintained chair",
-        "text": "The cushion has been turned away from a roof drip and its worn arm has a fresh coat of sap polish. An empty place can be kept with the same care as an occupied one.",
+        "title": "Iris’s friend’s chair",
+        "label": "Inspect Iris’s friend’s chair",
+        "text": "Iris cleaned this chair and repaired its cushion. Her friend has a place to sit when she visits from the other island.",
         "placement": "left"
       },
       {
         "id": "ending-secret-quiet-reply",
         "title": "The unplayed instrument",
         "label": "Inspect the unplayed instrument",
-        "text": "A folded cloth covers the second set of sounding keys. Beside it, two different hands have worn the receiver controls smooth in different places.",
+        "text": "Iris and her friend each have their own music controls. The repaired connection lets them hear and answer each other.",
         "placement": "right"
       },
       {
         "id": "ending-secret-quiet-trace",
         "title": "The open listening window",
         "label": "Inspect the open listening window",
-        "text": "The receiving pane faces the garden while the sending side remains still. A tiny shoot rests against its frame without interrupting the open space.",
+        "text": "The listening window carries Iris’s friend’s voice from another island. A repaired return wire now brings her replies through clearly.",
         "placement": "wall"
       }
     ],
     "outcome": {
       "kind": "secret-ending",
-      "kicker": "A hidden garden ending",
-      "copy": "The notes Mira saved through the old garden open a room that has been kept ready. Iris leaves the second instrument unplayed and the listening window open. Every note is spent; the reserved silence belongs to a voice that may choose its own time to return."
+      "kicker": "Iris hears her friend again",
+      "copy": "The town bell lost its replies because its return connection was loose. A mail bird used old service perches to bring Nell’s undelivered letter home. Its warm carrying clip softened the wax. Mira’s group repaired a separate listening connection hidden in the garden. Iris hears her friend answer from another island: she is alive and safe. They can play music together again and plan a visit. The public bell still needs repair, but this friendship has a working connection. Every note tile has been used."
     }
   },
   "ending-secret-birds": {
     "id": "ending-secret-birds",
     "title": "The Birds’ Countermelody",
-    "arrival": "A small courier steps onto the service perch and sounds its own brass horn. A second phosphor trace meets the first at the shared pause, then takes a different curve into the evening.",
+    "arrival": "A small mail bird steps up to its own horn. It plays a new tune beside Pip’s tune. The repaired screen shows both answers traveling along the old bird route.",
     "stories": {
-      "nell": "I have stamped thousands of bird-carried letters and never asked what else a courier might need to send. I should leave a little more space on the return forms. This answer deserves its own address.",
-      "iris": "That phrase has a place where another sound could grow beside it. The old garden cups do the same thing in the wind. I am glad we followed the quieter passage.",
-      "pip": "It was not forgetting the tune. It had another part. I kept tightening the compass whenever it turned toward this room, and all it needed was a step high enough to reach its horn."
+      "nell": "The birds can send their own replies now. This small route works even while the town bell needs repair. We must listen to what the birds send, instead of treating every new tune as a mistake.",
+      "iris": "The public bell lost its return connection. The birds used older perches, which is how Nell’s letter came home. Its warm clip explains the wax. We repaired the birds’ own reply connection here.",
+      "pip": "It was not forgetting my tune. It had another tune to add! I kept tightening its compass when it turned here. Next time, I will follow it and listen before I fetch my tools."
     },
     "routes": {
-      "nell": "This reply loft completes the hidden workshop route. We can listen here, revisit the final door, or begin another journey carrying the discovery in our journal.",
-      "iris": "There is no onward lock. The smaller voice has reached its own place in the song, and we can let it answer.",
-      "pip": "We have found the end of the birds’ back passage. I want to hear their whole reply before we revisit anything."
+      "nell": "This hidden workshop route is complete. Listen to the birds, revisit our last choice, or start a new journey. There is no further lock here.",
+      "iris": "The small reply route works now. We have reached its last room. Other journeys can help the public bell or the families who use it.",
+      "pip": "We found the birds’ answer room. I want to hear the whole tune before we leave. It is much better than another compass repair."
     },
     "inventory": {
-      "nell": "The long call and ordinary note were kept for this last door. Now every tile in the satchel has been used.",
-      "iris": "There are no spare notes left. Both the carried phrase and the hidden perch’s gift have paid their exact parts.",
-      "pip": "The satchel is empty, and the birds are not asking for another tile. They already had a voice to add."
+      "nell": "Our saved dotted half and quarter opened the last door. Every tile from the note bag and hidden perch has been used.",
+      "iris": "There are no spare note tiles. The perch’s two hidden tiles paid their gate. Our saved original pair paid this final lock.",
+      "pip": "The bag is empty. The birds are not asking for another tile. They already have their own tune to play."
     },
     "inspections": [
       {
         "id": "ending-secret-birds-memory",
-        "title": "The little service perch",
-        "label": "Inspect the little service perch",
-        "text": "A hand-built step raises a small courier to the older control. Its top is polished by tiny feet, and a brush rests nearby with fresh brass dust in its bristles.",
+        "title": "The bird-sized step",
+        "label": "Inspect bird-sized step",
+        "text": "A little step lets a small mail bird reach its controls. Tiny feet have polished the wood smooth.",
         "placement": "left"
       },
       {
         "id": "ending-secret-birds-reply",
         "title": "The answering horn",
         "label": "Inspect the answering horn",
-        "text": "Its rim is worn from the inside. The smaller instrument points toward the listening side of the great public horn, leaving the two voices distinct.",
+        "text": "The small horn carries the birds’ own answers. Its repaired wire joins the old bird route, separate from the broken town connection.",
         "placement": "right"
       },
       {
         "id": "ending-secret-birds-trace",
-        "title": "The crossing sound traces",
-        "label": "Inspect the crossing sound traces",
-        "text": "Two green-blue traces share one pause, then part along different curves. Neither is a copy of the other, and both continue past the old route board’s edge.",
+        "title": "The two tunes on the screen",
+        "label": "Inspect two tunes on the screen",
+        "text": "The screen shows two different tunes playing together. The birds’ tune answers Pip’s tune without copying it.",
         "placement": "wall"
       }
     ],
     "outcome": {
       "kind": "secret-ending",
-      "kicker": "A hidden courier ending",
-      "copy": "Mira’s carefully saved final notes open the reply chamber behind the public machinery. Pip’s birds answer with a countermelody of their own. Every note is spent, and the star-post gains a returning voice that its old route board never named."
+      "kicker": "The mail birds have their own reply",
+      "copy": "A loose return connection stopped the public bell from hearing replies. A mail bird still reached Nell by using forgotten service perches. Its warm carrying clip softened the wax on her returned letter. Mira’s group repaired the birds’ smaller reply route and opened controls they could reach. Pip learns that their different tunes were answers, not mistakes. The birds can now send their own music. The public bell still needs repair. Every note tile has been used."
     }
   },
   "dead-brambles": {
     "id": "dead-brambles",
     "title": "The Overgrown Arch",
-    "arrival": "Rain threads through the roots that fill the far arch. A ceramic cup catches it beside a dry bench, while the party’s footsteps end gently against the overgrown court.",
+    "arrival": "Thick roots fill the far arch. A cup catches rain beside a dry bench. The party can rest here, but there is no safe gap through the roots.",
     "stories": {
-      "nell": "The old route mark is still on the arch, but no one could carry a parcel through those roots now. A sign can outlast the service it once promised. We can recover the key and return to Iris’s listening gate.",
-      "iris": "I cleared the bench, not the passage. Those roots are holding more of this court together than I understood when I first tried cutting them. There is a kinder way onward from my porch.",
-      "pip": "My bird will not try that gap. Its wings would scrape both sides, and it knows it still could not get through. Let us take the answer back rather than push it."
+      "nell": "This path used to carry deliveries. Now the roots block it. We can recover our door-key notes and return to Iris’s listening gate. We have learned which way is closed.",
+      "iris": "I cleared the bench, but I could not safely clear the arch. The roots help hold these stones in place. The other gate on my porch is the working route.",
+      "pip": "My bird will not try that gap. Its wings would scrape both sides. I agree with the bird. Let us go back to the gate Iris knows."
     },
     "routes": {
-      "nell": "There is no onward passage in this court. Revisit the paid arch to recover its notes and choose the listening gate on Iris’s porch.",
-      "iris": "Revisit this choice and use my listening phrase at the other gate: a half note, then a half rest. The roots here do not hide another way through.",
-      "pip": "This route ends at the roots. We can rest on the bench, then revisit the last door and try the listening gate."
+      "nell": "There is no onward path here. Use Revisit previous choice to recover the notes spent on the arch. Then choose the listening gate on Iris’s porch.",
+      "iris": "Revisit this choice, then use a half note, then a half rest at my listening gate. The roots do not hide another path.",
+      "pip": "Revisit the last door and take the listening gate instead. We can rest here first. Going back is allowed, and the notes can come back too."
     },
     "inventory": {
-      "nell": "Some notes remain in the satchel because this was a dead end. Revisit the last choice to recover the arch’s key; the remaining tiles are not lost.",
-      "iris": "The notes we did not spend are still together. Revisit the arch to bring its dotted half and quarter back before we choose the other gate.",
-      "pip": "There are still tiles in the bag. We cannot spend them on another door here, but revisiting our answer restores what the arch took."
+      "nell": "Any unspent tiles are still in our note bag. Revisit the last choice to recover the door’s payment. No notes have been lost.",
+      "iris": "Revisit the arch to recover its dotted half and quarter. Then keep our tiles together while we choose the other gate.",
+      "pip": "We cannot use our remaining notes on another door here. Revisit our last answer to recover what the arch took. I will count them with you."
     },
     "inspections": [
       {
         "id": "dead-brambles-memory",
         "title": "The rain cup",
         "label": "Inspect the rain cup",
-        "text": "A repaired ceramic cup gathers water beneath one loose roof joint. Someone has shifted it just far enough to keep the bench dry.",
+        "text": "A repaired cup catches the roof leak. Someone moved it so the bench would stay dry.",
         "placement": "left"
       },
       {
         "id": "dead-brambles-reply",
         "title": "The resting bench",
         "label": "Inspect the resting bench",
-        "text": "Its seat has been brushed clean, though moss has covered the path beyond it. The little court is cared for even without a working through route.",
+        "text": "The bench is clean, though moss covers the closed path. Someone still cares for this resting place.",
         "placement": "right"
       },
       {
         "id": "dead-brambles-trace",
         "title": "The root-filled arch",
         "label": "Inspect the root-filled arch",
-        "text": "Several thick roots press through the old route frame into supporting stone. Beyond them lies solid growth with no safe gap for the party.",
+        "text": "Thick roots hold the old stones together. There is no safe opening for the party behind them.",
         "placement": "wall"
       }
     ],
     "outcome": {
       "kind": "dead-end",
-      "kicker": "A quiet dead end",
-      "copy": "The overgrown arch opens into a rainlit resting court, but roots close every onward passage. The party can pause here without being trapped. Revisit the last answer to recover its notes and take Iris’s listening gate instead.",
-      "repair": "Revisit Iris’s porch and use her gift at the listening gate."
+      "kicker": "The roots block this path",
+      "copy": "This arch reaches a resting place, but thick roots close the way forward. The party is not trapped. Use Revisit previous choice to recover the notes spent on this door. Return to Iris’s porch and choose her listening gate: half note, then half rest.",
+      "repair": "Return to Iris’s porch, collect her notes if needed, and try the listening gate."
     }
   },
   "dead-aviary": {
     "id": "dead-aviary",
     "title": "The Silent Aviary",
-    "arrival": "Sunlight reaches a small nest between rows of empty perches. One workshop bird follows Pip inside and folds its wings while the old aviary’s sealed back wall gives no answering click.",
+    "arrival": "Sunlight falls on a bird’s nest between empty perches. The back wall is sealed with stone. This old bird room is a safe resting place, but it has no onward path.",
     "stories": {
-      "nell": "The departure hooks have been taken down carefully, one at a time. Whoever closed this room meant the birds to rest safely, not to keep travelling through it. We should revisit the door rather than search for a new dispatch route.",
-      "iris": "The sun still finds that little nest. A place can be useful after its old path has closed. We can leave it peaceful and return to Pip’s working gate.",
-      "pip": "I brought the clean wing wrap up last week. This bird likes the warm patch, but there is no service opening behind the perches. The running gate is the route I know how to repair."
+      "nell": "Someone closed this old bird route and removed its departure hooks. The birds can rest here, but we cannot travel through it. We can return to the workshop without losing our notes.",
+      "iris": "The sun still warms the nest. This room has a use, even with its passage closed. Pip’s running gate is the working way onward.",
+      "pip": "I brought that clean wing wrap last week. The bird likes the warm patch, but there is no opening behind the perches. We need the other gate at my workshop."
     },
     "routes": {
-      "nell": "The aviary has no onward door. Revisit its answer to recover the paid notes and choose the workshop’s running gate.",
-      "iris": "We can return to the workshop by revisiting the last choice. Pip’s running phrase opens the working gate there.",
-      "pip": "Revisit this door, then take my gift if it is still waiting. The running gate wants a half note, paired eighths, and four sixteenths."
+      "nell": "Revisit the last choice to recover this door’s notes. Then choose the workshop’s running gate. This room has no secret passage behind its wall.",
+      "iris": "Revisit this choice and return to Pip’s workshop. His running rhythm opens the working gate. We have checked this wall; there is no way through.",
+      "pip": "Revisit this door, then take my gift if it is still waiting. The running gate needs a half note, two eighth notes, then four sixteenth notes."
     },
     "inventory": {
-      "nell": "The unspent tiles are still in the shared bag. Revisit the aviary’s key to recover that payment before choosing the working route.",
-      "iris": "A dead end may leave notes in the satchel. There is no reason to discard them; revisiting the door restores the phrase we spent here.",
-      "pip": "We still have carried notes, and the last key can come back when we revisit it. None of the empty perches gives another gift."
+      "nell": "Our unspent tiles remain in the note bag. Revisit this door to recover its payment before choosing the working route.",
+      "iris": "A dead end can leave tiles in the bag. Revisit the last choice to recover the notes we spent here. We can use them on another path.",
+      "pip": "Revisit this answer to get its key notes back. The empty perches give no new notes. My workshop gift can help if we have not collected it."
     },
     "inspections": [
       {
         "id": "dead-aviary-memory",
         "title": "The sunlit nest",
         "label": "Inspect the sunlit nest",
-        "text": "Its felt lining has been renewed where a small bird settles into the light. Fresh brass dust catches along one recently repaired edge.",
+        "text": "Fresh felt lines this warm nest. A small bird can rest here safely while its wing is repaired.",
         "placement": "left"
       },
       {
         "id": "dead-aviary-reply",
         "title": "The folded wing wrap",
         "label": "Inspect the folded wing wrap",
-        "text": "A clean wrap waits beside a little brush. Pip has stitched its fastening wide enough to close without bending a delicate wing.",
+        "text": "Pip made this soft wrap wide enough to close without bending a bird’s wing.",
         "placement": "right"
       },
       {
         "id": "dead-aviary-trace",
         "title": "The sealed service wall",
         "label": "Inspect the sealed service wall",
-        "text": "Perch brackets end at a carefully closed stone panel. Its edges have no hinge or latch, and the old route cable has been disconnected at both ends.",
+        "text": "The stone panel has no hinges or latch. The old route wire is disconnected. No passage continues through this wall.",
         "placement": "wall"
       }
     ],
     "outcome": {
       "kind": "dead-end",
-      "kicker": "A quiet dead end",
-      "copy": "The old aviary is a safe place for a tired courier, but it carries no route onward. Its last service wall is sealed. Revisit this answer to recover the notes and return to the workshop’s running gate.",
-      "repair": "Revisit Pip’s workshop and use his running phrase at the workshop gate."
+      "kicker": "A resting place, with no way onward",
+      "copy": "The old bird room has a sealed back wall. It offers a safe place to rest, but no path forward. Use Revisit previous choice to recover the notes spent here. Return to Pip’s workshop and open the running gate with a half note, two eighth notes and four sixteenth notes.",
+      "repair": "Return to Pip’s workshop, collect his notes if needed, and try the workshop gate."
     }
   },
   "dead-ferry": {
     "id": "dead-ferry",
     "title": "The Empty Ferry",
-    "arrival": "The boarding rope hangs over still light-water with no ferry beneath it. Oren has left a tray for the waiting party, and the unused landing lamp casts a small blue circle on the rail.",
+    "arrival": "The landing has a boarding rope, but no ferry. Oren left a tea tray for waiting travelers. The lamp still glows, though there is no boat to send a reply.",
     "stories": {
-      "nell": "I used to time my last mailbag by this lamp. The ferry has not served the landing for years, and a warm envelope does not make a boat appear. We can revisit our boarding answer and use the delivery gate.",
-      "iris": "The water is bright enough to show every knot in that rope. Nothing is pulling back from the far end. Let us take the route that can answer us.",
-      "pip": "Even the birds are staying on the rail. I could send one across to look, but that would not carry all four of us. We should return to the stamped chest and the delivery knock."
+      "nell": "This old ferry no longer serves the landing. Its rope cannot carry us across. We can recover our notes and return to the storehouse’s delivery gate.",
+      "iris": "The lamp has power, but there is no boat. A working light does not prove that a route is open. We need the delivery gate instead.",
+      "pip": "I could send a bird across to look, but it could not carry all four of us. Let us go back to the stamped chest. I would prefer a floor beneath my feet."
     },
     "routes": {
-      "nell": "This landing ends the abandoned boarding route. Revisit the last answer to recover its notes and choose the storehouse’s delivery gate.",
-      "iris": "There is no boat or hidden crossing here. Revisit the boarding choice, then open the stamped chest in the storehouse if it is still closed.",
-      "pip": "The working delivery gate wants a half note, a quarter, then paired eighths. Revisit this choice to take those notes back toward the proper route."
+      "nell": "Revisit this choice to recover the boarding door’s notes. Then take the storehouse’s delivery gate. There is no ferry or hidden crossing here.",
+      "iris": "Revisit the boarding choice. Open the stamped chest in the storehouse if it is still closed. Its notes pay the working delivery gate.",
+      "pip": "Revisit this choice and use the delivery gate instead. Its key is a half note, a quarter note, then two eighth notes. The stamped chest supplies that rhythm."
     },
     "inventory": {
-      "nell": "Our unspent notes remain in the bag. Revisit the boarding key to restore the payment; the stamped chest can still supply the working route if unclaimed.",
-      "iris": "The bag is not empty because our journey stopped at a dead end. Revisit the last door rather than throwing any tiles into the water.",
-      "pip": "We have carried notes left, and revisiting brings back the dotted half and four sixteenths spent on this landing. The tea tray has no extra tiles."
+      "nell": "Our unspent notes remain in the bag. Revisit this door to recover its payment. The stamped chest still has its gift if we have not collected it.",
+      "iris": "Revisit the last choice to bring back the spent notes. We reached a blocked route; we did not lose our supply. We can try the other gate.",
+      "pip": "Revisit this choice to recover the dotted half and four-sixteenth group. The tea tray has no note tiles. I checked politely."
     },
     "inspections": [
       {
         "id": "dead-ferry-memory",
         "title": "The waiting tea tray",
         "label": "Inspect the waiting tea tray",
-        "text": "A second cup stands beside the first beneath a dry cloth. The keeper has checked the tray even though no fresh ferry wake reaches the landing.",
+        "text": "Two cups wait under a dry cloth. Oren has cared for this landing even though the ferry no longer comes.",
         "placement": "left"
       },
       {
         "id": "dead-ferry-reply",
         "title": "The boarding rope",
         "label": "Inspect the boarding rope",
-        "text": "Its near end has a fresh repair, but the far end lies slack above still water. It is a waiting rope, not a bridge.",
+        "text": "The loose rope marks where passengers once boarded. It is not a bridge, and it cannot carry the party across.",
         "placement": "right"
       },
       {
         "id": "dead-ferry-trace",
         "title": "The unused landing lamp",
         "label": "Inspect the unused landing lamp",
-        "text": "The brass housing is clean and its local crystal still glows. No return lamp answers from a boat or the empty berth beyond the rail.",
+        "text": "The lamp still has local power. No boat sends a safe-arrival reply from the empty landing.",
         "placement": "wall"
       }
     ],
     "outcome": {
       "kind": "dead-end",
-      "kicker": "A quiet dead end",
-      "copy": "The boarding door reaches a cared-for landing without a ferry. The water offers no crossing for the party. Revisit this choice to recover the spent notes, then use the stamped chest’s delivery phrase at the storehouse’s working gate.",
-      "repair": "Revisit the canal storehouse, open the stamped chest, and use its delivery phrase."
+      "kicker": "There is no ferry here",
+      "copy": "The old landing has no ferry and no other crossing. The glowing lamp cannot carry the party over the water. Use Revisit previous choice to recover the notes spent here. Back at the storehouse, open the stamped chest and take the delivery gate: half note, quarter note, then two eighth notes.",
+      "repair": "Return to the canal storehouse, open the stamped chest, and try the delivery door."
     }
   },
   "dead-echo": {
     "id": "dead-echo",
     "title": "The Copied Waterway",
-    "arrival": "The channel repeats the water clock’s reflected face exactly. Its silver line reaches a clean stone wall, then turns back toward a dry bowl that has never received an answering drop.",
+    "arrival": "The water reflects every movement of the clock. The channel ends at a stone wall. Its echo repeats a signal, but no real reply reaches the dry water bowl.",
     "stories": {
-      "nell": "That is a copy of a route signal, not a delivery receipt. The maintenance mark warned us where the stone would stop it. We can revisit the water-clock choice and take the town-bell stair.",
-      "iris": "A reflection can repeat a movement without growing anything. We heard a familiar quiet phrase and followed it, but no living root or receiver carries its answer onward.",
-      "pip": "The trace returns at exactly the same angle every time. My birds turn their heads when another bird replies; this line never changes. Let us go back to the stair with the four tiny footfalls."
+      "nell": "We followed a copy of the clock’s signal. It never reached another place. Revisit this choice and take the town-bell stair. The map warned us about this wall.",
+      "iris": "An echo repeats a sound. It cannot tell us that somebody received a message. The bell needs a separate reply, and this channel cannot provide one.",
+      "pip": "That line repeats every movement exactly. A real bird changes its answer when another bird calls. This is only a copy. Let us return to the stairs."
     },
     "routes": {
-      "nell": "This copied waterway has a solid end. Revisit the last rhythm and choose the water clock’s town-bell stair.",
-      "iris": "We can recover the last key by revisiting this choice. The onward stair uses a dotted half followed by four sixteenths.",
-      "pip": "There is no further lock hidden in the reflection. Revisit the water clock and take its town-bell stair instead."
+      "nell": "Revisit the last rhythm to recover its notes. The water clock’s town-bell stair is the onward route. This channel ends at solid stone.",
+      "iris": "Revisit this choice and take the stair. Its key is a dotted half note followed by four sixteenth notes. There is no passage through this wall.",
+      "pip": "Revisit the water clock and choose the town-bell stair. The reflection hides no extra lock. I would like to stop staring at it now."
     },
     "inventory": {
-      "nell": "The remaining notes are still ours. Revisit this paid choice to restore its quiet phrase before taking the stair to the public bell.",
-      "iris": "The satchel still holds the notes this dead end could not use. Revisit the last answer and keep the whole set together for the other route.",
-      "pip": "No note has vanished in the reflection. Revisit this door to recover the single eighth, paired sixteenths, half rest, and quarter rest we spent here."
+      "nell": "The remaining tiles are still ours. Revisit this paid choice to recover its notes before we climb toward the bell.",
+      "iris": "Revisit the last answer to recover what we spent here. The notes still in the bag belong with that recovered key. We need them for the other route.",
+      "pip": "Revisit this door to recover the single eighth, paired sixteenths, half rest and quarter rest. No tile vanished into the reflection."
     },
     "inspections": [
       {
         "id": "dead-echo-memory",
         "title": "The dry return bowl",
         "label": "Inspect the dry return bowl",
-        "text": "A pale ring marks where a drop should land, but the bowl is dry. The copy sends a signal without bringing anything back.",
+        "text": "The bowl is dry. A real reply would release a drop here, but the reflected signal never returns one.",
         "placement": "left"
       },
       {
         "id": "dead-echo-reply",
         "title": "The reflected clock face",
         "label": "Inspect the reflected clock face",
-        "text": "Every motion repeats at the same angle, including a scratch that belongs to the original glass. The reflection has no separate reply of its own.",
+        "text": "The water copies the clock hands and even the scratch on its glass. It makes no new reply of its own.",
         "placement": "right"
       },
       {
         "id": "dead-echo-trace",
         "title": "The marked stone end",
         "label": "Inspect the marked stone end",
-        "text": "A practical maintenance mark points directly at the closed wall. The channel stops flush against the stone; no service passage continues behind it.",
+        "text": "A repair mark points to the solid wall. The channel stops here, with no doorway or hidden tunnel behind it.",
         "placement": "wall"
       }
     ],
     "outcome": {
       "kind": "dead-end",
-      "kicker": "A quiet dead end",
-      "copy": "The copied channel follows a familiar rhythm all the way to a stone wall. It can repeat the clock, but cannot carry the party onward or return an answer. Revisit the paid choice and take the water clock’s town-bell stair.",
-      "repair": "Revisit the water clock and choose the town-bell stair."
+      "kicker": "An echo cannot answer for the town",
+      "copy": "The copied channel ends at a stone wall. An echo can repeat the clock’s signal, but it cannot confirm that a message arrived. Use Revisit previous choice to recover the notes spent here. Take the water clock’s town-bell stair instead: dotted half note, then four sixteenth notes.",
+      "repair": "Return to the water clock and choose the stair leading to the town bell."
     }
   }
 };

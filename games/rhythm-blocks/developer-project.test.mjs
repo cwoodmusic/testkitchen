@@ -102,9 +102,11 @@ test('hidden inspection sources and door reveal conditions are checked against t
  assert(valid(unbound).warnings.some(warning=>warning.includes('matching inspection')));
 });
 
-test('default and authored manifests describe the same released discoveries while custom completion remains explicit',()=>{
+test('the authored manifest preserves base discoveries and adds Fred while custom completion remains explicit',()=>{
  const manifest=createProjectManifest(normalizeProject(createDefaultProject()));
- assert.deepEqual(manifest,CHAPTER_JOURNEY_MANIFEST);
+ const fred=manifest.hints.filter(hint=>hint.id==='lore-workshop-alcove-fred');
+ assert.equal(fred.length,1);assert.equal(fred[0].title,'Fred the wolf spider');
+ assert.deepEqual({...manifest,hints:manifest.hints.filter(hint=>hint.id!==fred[0].id)},CHAPTER_JOURNEY_MANIFEST);
  const project=createDefaultProject();delete project.settings.completionReady;
  assert.equal(createProjectManifest(normalizeProject(project)).completionReady,false);
  project.settings.completionReady='yes';invalid(project,'settings.completionReady');
@@ -166,7 +168,7 @@ test('the authored manifest uses edited literal text and preserves every shipped
  assert.equal(manifest.nodes.find(node=>node.id==='depot').title,'My station');
  assert.equal(manifest.hints.find(hint=>hint.id==='nell-route').text,literal);
  assert.equal(manifest.hints.find(hint=>hint.id==='lore-returned-letter').text,'A changed observation');
- assert.equal(manifest.hints.length,141);assert.equal(manifest.nodes.length,23);assert.equal(manifest.edges.length,22);
+ assert.equal(manifest.hints.length,142);assert.equal(manifest.nodes.length,23);assert.equal(manifest.edges.length,22);
  assert.equal(manifest.outcomes.length,9);assert.equal(manifest.completionReady,true);
  nell.route='';project.content.depot.inspections[0].text='';
  const cleared=createProjectManifest(normalizeProject(project));assert(!cleared.hints.some(hint=>hint.id==='nell-route'));
@@ -613,4 +615,19 @@ test('missing introductions restore all typed channels while existing authored p
  }
  assert.deepEqual(normalized.content.depot.cutscene,original.content.depot.cutscene);assert.deepEqual(project,original);
  assert.deepEqual(normalizeProject(normalized),normalized);
+});
+
+test('room narration validates and preserves an author’s text or disabled passage',()=>{
+ const project=createDefaultProject();
+ project.content.depot.narration='My students arrive at a different post office.';
+ project.content['garden-porch'].narration=null;
+ project.content['workshop-porch'].narration='';
+ const normalized=normalizeProject(project);
+ assert.equal(normalized.content.depot.narration,project.content.depot.narration);
+ assert.equal(normalized.content['garden-porch'].narration,null);
+ assert.equal(normalized.content['workshop-porch'].narration,'');
+ for(const bad of [42,{},'x'.repeat(1001)]){
+  const invalid=structuredClone(project);invalid.content.depot.narration=bad;
+  assert(validateProject(invalid).errors.some(error=>error.startsWith('content.depot.narration:')));
+ }
 });

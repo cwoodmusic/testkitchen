@@ -3,6 +3,7 @@
  * art pixels. People are reusable foreground actors, never baked into a room.
  */
 import {DEPOT_ROOM} from './room.mjs';
+import {ROOM_CONTENT} from './chapter-content.mjs';
 
 const freeze=value=>{
  for(const item of Object.values(value))if(item&&typeof item==='object'&&!Object.isFrozen(item))freeze(item);
@@ -256,7 +257,11 @@ function porch(spec){
 export const SCENES=freeze(Object.fromEntries([
  ['depot',{id:'depot',title:'The Parcel Depot',image:'assets/parcel-depot.webp',geometry:DEPOT_ROOM,actors:PARTY_ACTORS,objects:depotObjects,occluders:furnitureOccluders.depot}],
  ...porchSpecs.map(spec=>[spec.id,porch(spec)])
-]));
+].map(([id,scene])=>{
+ const entries=new Map((ROOM_CONTENT[id]?.inspections??[]).map(entry=>[entry.id,entry]));
+ const action=id=>entries.get(id).label??`Inspect ${entries.get(id).title.toLowerCase()}`;
+ return [id,{...scene,objects:scene.objects.map(item=>entries.has(item.id)?{...item,label:entries.get(item.id).title,actionLabel:action(item.id)}:item),geometry:scene.geometry===DEPOT_ROOM?DEPOT_ROOM:{...scene.geometry,targets:scene.geometry.targets.map(item=>entries.has(item.id)?{...item,label:action(item.id)}:item)}}];
+})));
 
 /** Unknown save/route ids never silently select a different room. */
 export function getScene(id){return typeof id==='string'&&Object.hasOwn(SCENES,id)?SCENES[id]:null;}

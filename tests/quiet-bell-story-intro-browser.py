@@ -19,9 +19,9 @@ spec=importlib.util.spec_from_file_location('intro_tracks',ROOT/'tests/quiet-bel
 tracks=importlib.util.module_from_spec(spec);spec.loader.exec_module(tracks)
 cs,ui,paths=tracks.cs,tracks.ui,tracks.paths
 PARAGRAPHS=[
-    'Lumen Reach’s public bell fell silent. It once kept the doors, postal routes, water clocks, and mechanical courier birds working together. Now signals go out, but replies don’t return. Everyday life has started getting stuck.',
-    'Then a parcel returns to Nell’s depot with its wax seal still warm—even though the outgoing routes are dark. Something carried it back, and nobody knows how.',
-    'Nell gathers Mira, Iris, and Pip to follow that mystery through the old network. They’re trying to discover who—or what—is still answering, and why the bell stopped.',
+    'Lumen Reach is a town on floating islands. Its public bell helps the mail birds, water pumps, and ferry lamps work together. Each machine sends back a reply: “I got your message.” Now the bell is silent. Mail and supplies are stuck, gardens need water, and ferries cannot check that a landing is safe.',
+    'A letter returns to Nell’s post office with warm wax on its seal. But the main delivery routes are closed. What carried it back? And why can that message get through when the others cannot?',
+    'Nell, the postkeeper, gathers Mira, Iris, and Pip to investigate. You play as Mira. Follow the clues, talk to your friends, and use musical notes to open the old doors. Find what has gone wrong and help the people of Lumen Reach answer one another again.',
 ]
 TRACE=r'''(() => {
   window.__introEntries=[];
@@ -72,6 +72,7 @@ def safe(page,errors,writes,external):
     ui.protected_storage(page);paths.no_errors(errors,writes,external)
 
 def assert_entry(page,baseline=None):
+    ui.acknowledge_room_narration(page)
     value=cs.cutscene(page);assert value and value['phase']=='entry' and not value['finished'],value
     assert not intro(page) and page.locator('#story-intro').count()==0
     assert value['beat'] is None and value['entry']['currentTile']<3,value

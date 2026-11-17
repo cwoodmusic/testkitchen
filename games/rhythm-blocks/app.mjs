@@ -3,7 +3,7 @@ import {symbolMarkup as engraveSymbol} from './notation.mjs';
 import {createRhythmAudio} from './audio.mjs';
 import {createCinematicAudio} from './cinematic-audio.mjs';
 import {createRoomView} from './room-view.mjs';
-import {createJourney,CHAPTER_JOURNEY_MANIFEST} from './journey.mjs';
+import {createJourney} from './journey.mjs';
 import {renderJourney} from './journey-view.mjs';
 import {createDefaultProject,normalizeProject,createProjectManifest,getProjectDoor,getPersonReplies} from './developer-project.mjs';
 import {createDeveloperConsole} from './developer-console.mjs';
@@ -42,7 +42,7 @@ const count=stock=>Object.values(stock).reduce((total,n)=>total+n,0);
 const beatText=kind=>`${kind.beats===.5?'½':kind.beats} beat${kind.beats<=1?'':'s'}`;
 let saved=readJSON(developerMode?DEV_SAVE_KEY:SAVE_KEY);
 let game=createDungeonGame({saved,...(developerMode?{definition:runtimeProject,developer:true}:{})});
-let journey=createJourney({saved:readJSON(developerMode?DEV_JOURNEY_KEY:JOURNEY_KEY),manifest:developerMode?createProjectManifest(runtimeProject):CHAPTER_JOURNEY_MANIFEST});
+let journey=createJourney({saved:readJSON(developerMode?DEV_JOURNEY_KEY:JOURNEY_KEY),manifest:createProjectManifest(runtimeProject)});
 let soundEnabled=read(SOUND_KEY)!=='off',audioRevision=0;
 const audio=createRhythmAudio({enabled:soundEnabled,bpm:runtimeProject.settings.bpm,noteKinds:NOTE_KINDS}),previewAudio=createRhythmAudio({enabled:soundEnabled}),cinematicAudio=createCinematicAudio({enabled:soundEnabled});
 // Unlock from the real input event; suspended browsers simply remain quiet.
@@ -62,7 +62,7 @@ const initialPeople=content().people;
 let selectedPerson=[2,3].includes(saved?.version)&&initialPeople.some(person=>person.id===saved?.conversation?.person)?saved.conversation.person:initialPeople[0]?.id??null;
 const initialReplies=getPersonReplies(initialPeople.find(person=>person.id===selectedPerson)??{});
 let selectedTopic=initialReplies.some(reply=>reply.id===saved?.conversation?.topic)?saved.conversation.topic:Object.hasOwn(initialPeople.find(person=>person.id===selectedPerson)??{},'intro')?null:initialReplies[0]?.id??null;
-let message=developerMode?'Developer playtest resumed. Your published run is kept separately.':saved?'Your collected notes and your place in the room are ready.':'Nell has kept a parcel for you. Accept it, then open the delivery chest.';
+let message=developerMode?'Developer playtest resumed. Your published run is kept separately.':saved?'Your collected notes and your place in the room are ready.':'Talk to Nell for your note bag, then open the delivery chest.';
 function recordRestoredJourney(){
  let changed=journey.visit(runtimeProject.settings.startRoomId);
  for(const route of game.state.discoveredRoutes)changed=journey.traverse('depot-'+route)||changed;
@@ -143,7 +143,7 @@ function talk(){
   const replies=getPersonReplies(person),showIntro=selectedTopic===null&&Object.hasOwn(person,'intro');if(!showIntro&&!replies.some(reply=>reply.id===selectedTopic))selectedTopic=replies[0]?.id??null;
   const reply=replies.find(reply=>reply.id===selectedTopic);
   let text=showIntro?person.intro:reply?.text??person.intro??person.story??'';
-  if(!developerMode&&selectedTopic==='inventory'&&state.roomId==='depot'&&selectedPerson==='nell')text=`You have ${count(state.inventory)} blocks, including any on the floor. My parcel gives eight kinds; the chest holds the half note. We can collect each only once. A matching door spends its key; all other notes travel with you.`;
+  if(!developerMode&&selectedTopic==='inventory'&&state.roomId==='depot'&&selectedPerson==='nell')text=`You have ${count(state.inventory)} blocks, including any on the floor. My note bag gives eight kinds; the chest holds the half note. We can collect each only once. A matching door spends its key; all other notes travel with you.`;
   $('speaker').textContent=`${person.name} · ${person.role}`;
   $('talk-about').textContent=reply?.label??'';$('dialogue').textContent=text;
   for(const button of root.querySelectorAll('[data-person]'))button.setAttribute('aria-pressed',String(button.dataset.person===selectedPerson));
@@ -219,7 +219,7 @@ function beginCutscene({preview=false,project=runtimeProject,roomId=game.state.r
  const scene=activeScene;
  cutsceneProjectSignature=preview?JSON.stringify(project):'';
  cutsceneContext=interactionId?{kind:'inspection',objectId:interactionId,roomId,signature:objectDialogueSignature(entry)}:{kind:'entrance',roomId};
- cutsceneView=createCutsceneView({root,map:$('room-map'),panel:$('cutscene-panel'),roomView,scene,project,beats,playerPosition:preview?scene.geometry.start:roomView.state,preview,paused,tile,withEntry,cinematicAudio,playbackRate:cutsceneRate,onRateChange:rate=>{cutsceneRate=rate;},onFinish:({state})=>stopCutscene({retain:!preview&&!interactionId,state,finish:true})});
+ cutsceneView=createCutsceneView({root,map:$('room-map'),panel:$('cutscene-panel'),roomView,scene,project,beats,playerPosition:preview?scene.geometry.start:roomView.state,preview,paused,tile,withEntry,narration:withEntry&&story&&!preview&&!interactionId?project.content[roomId]?.narration:null,cinematicAudio,playbackRate:cutsceneRate,onRateChange:rate=>{cutsceneRate=rate;},onFinish:({state})=>stopCutscene({retain:!preview&&!interactionId,state,finish:true})});
  if(interactionId){$('cutscene-panel').dataset.interactionId=interactionId;$('cutscene-counter').textContent=entry.title;}
  pathPreviewPhase=cutsceneView.state.phase;
  roomView.refresh();if(preview)renderCutscenePath();return cutsceneView;
@@ -353,7 +353,7 @@ function render(){
   }
 }
 function edit(action){roomView?.stop();stopAudio();if(!action())return;message=game.state.units===(game.state.targetUnits??8)?'The rhythm key is filled. Check the selected lock, then try the door.':'Arrange the notes for your chosen door.';render();save();}
-function chooseDoor(id){stopAudio();if(!roomView?.withinReach(id)||!game.selectDoor(id))return;message=!developerMode&&game.state.roomId==='depot'&&!game.state.claimedSources.includes('nell-parcel')?'Ask Nell for the parcel before opening a door.':!developerMode&&game.state.roomId==='depot'&&!game.state.claimedSources.includes('depot-chest')?'Find the half note in the chest; every opening lock needs it.':`${doorNames[id]} selected. Hear its rhythm or ask a resident for a clue.`;openNotes('lock');save();}
+function chooseDoor(id){stopAudio();if(!roomView?.withinReach(id)||!game.selectDoor(id))return;message=!developerMode&&game.state.roomId==='depot'&&!game.state.claimedSources.includes('nell-parcel')?'Ask Nell for the note bag before opening a door.':!developerMode&&game.state.roomId==='depot'&&!game.state.claimedSources.includes('depot-chest')?'Find the half note in the chest; every opening lock needs it.':`${doorNames[id]} selected. Hear its rhythm or ask a resident for a clue.`;openNotes('lock');save();}
 function claim(id){
   const source=CHAPTER_SOURCES[id];if(!source)return;stopAudio();const target=source.character??activeScene.objects.find(item=>item.sourceId===id)?.id??id;if(!roomView?.withinReach(target))return;
   if(!game.claim(id)){message='These notes have already been collected.';render();notify(message);return;}
@@ -519,7 +519,7 @@ function startPlaytest(project,options={}){
 }
 function returnToPublishedGame(){
  const published=readJSON(SAVE_KEY),candidate=createDungeonGame({saved:published});
- const nextJourney=createJourney({saved:readJSON(JOURNEY_KEY),manifest:CHAPTER_JOURNEY_MANIFEST});
+ const nextJourney=createJourney({saved:readJSON(JOURNEY_KEY),manifest:createProjectManifest(shippedProject)});
  message='Returned to your published game. Developer changes stay in your saved project.';
  switchRun({project:shippedProject,mode:false,nextGame:candidate,nextJourney,nextSaved:published});notify(message);return true;
 }

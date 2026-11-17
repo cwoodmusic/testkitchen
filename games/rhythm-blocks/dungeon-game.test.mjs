@@ -85,7 +85,7 @@ test('each porch dead end is real, conserves its exact cost and grants no comple
  for(const id of branchIds)for(const claim of [false,true]){
   const game=enter(id);if(claim)game.claim(sourceFor(id));const stock=game.state.inventory;
   pay(game,id+'-porch-dead');const state=game.state,after={...stock};for(const kind of getChapterDoor(id+'-porch-dead').recipe)after[kind]--;
-  assert.equal(state.phase,'terminal');assert.equal(state.roomId,getChapterDoor(id+'-porch-dead').to);assert.equal(state.previewKind,'dead-end');assert.equal(state.nextScene.kind,'dead-end');assert.match(state.nextScene.repair,/Revisit/);assert.deepEqual(state.inventory,after);assert.equal(total(state.inventory),claim?16:8);assert.deepEqual(state.creditedStages,[]);assertConserved(game);
+  assert.equal(state.phase,'terminal');assert.equal(state.roomId,getChapterDoor(id+'-porch-dead').to);assert.equal(state.previewKind,'dead-end');assert.equal(state.nextScene.kind,'dead-end');assert.match(state.nextScene.repair,/^Return\b/);assert.deepEqual(state.inventory,after);assert.equal(total(state.inventory),claim?16:8);assert.deepEqual(state.creditedStages,[]);assertConserved(game);
  }
 });
 

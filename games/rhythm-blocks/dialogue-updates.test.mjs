@@ -1,17 +1,18 @@
 import test from 'node:test';
 import assert from 'node:assert/strict';
 import {STOCK_GAG_DIALOGUE_UPDATES,upgradeStockGagDialogue} from './dialogue-updates.mjs';
-import {createDefaultProject} from './developer-project.mjs';
+import {createDefaultProject,normalizeProject} from './developer-project.mjs';
 
 const clone=value=>structuredClone(value);
 const clipFor=(project,update)=>project.content[update.roomId].cutscene.find(clip=>clip.id===update.clipId);
 const freeze=value=>{if(value&&typeof value==='object'){Object.values(value).forEach(freeze);Object.freeze(value);}return value;};
 
 test('saved stock speech receives the new wording while every authored track and resource stays intact',()=>{
- const project=createDefaultProject();
+ const published=createDefaultProject(),project=clone(published);
  for(const [index,update]of STOCK_GAG_DIALOGUE_UPDATES.entries()){
   const clip=clipFor(project,update);
-  assert.equal(clip.text,update.text,'Published words and the exact upgrade catalog agree.');
+  // Keep the original tumble dialogue as a historical input, even though
+  // current stock words have received a further story-clarity rewrite.
   clip.text=update.previousText;
   clip.startTile+=index+1;clip.durationTiles+=3;
   clip.author={note:'Keep my timing and scene annotations.',index};
@@ -29,6 +30,10 @@ test('saved stock speech receives the new wording while every authored track and
   assert.deepEqual(updated.content[roomId].cutscene.find(candidate=>candidate.id===clip.id),clip,'Unrelated walks, reactions and custom lines remain unchanged.');
  }
  assert.deepEqual(upgradeStockGagDialogue(updated),updated,'A second load makes no further edits.');
+ const loaded=normalizeProject(before);
+ for(const update of STOCK_GAG_DIALOGUE_UPDATES){
+  assert.deepEqual(clipFor(loaded,update),{...clipFor(before,update),text:clipFor(published,update).text},'Normalization applies both historical gag repairs and current stock prose without retiming the clip.');
+ }
 });
 
 test('exact stock-line matching protects edited text, renamed speakers and unrelated clip identities',()=>{

@@ -1,0 +1,50 @@
+.cutscene-panel{position:absolute;z-index:3100;left:max(12px,env(safe-area-inset-left));right:max(12px,env(safe-area-inset-right));bottom:max(12px,env(safe-area-inset-bottom));max-width:780px;margin-inline:auto;padding:15px 18px;border:2px solid #cba675;background:#281f32f5;color:#ffedcd;box-shadow:0 5px 0 #17121e;pointer-events:auto}
+.cutscene-panel[hidden]{display:none}
+.room-entry-fade{position:absolute;inset:0;z-index:3000;background:#000;opacity:1;pointer-events:none;will-change:opacity}
+.room-entry-fade[hidden]{display:none}
+/* Silent movement and reactions keep the same camera framing as dialogue. */
+.cutscene-panel.cutscene-silent{visibility:hidden;pointer-events:none;background:transparent;border-color:transparent;box-shadow:none}
+.cutscene-panel.cutscene-silent .cutscene-buttons{visibility:visible;pointer-events:auto}
+.cutscene-panel header{display:flex;align-items:center;gap:12px;justify-content:space-between}
+#cutscene-speaker{font:700 15px/1.3 ui-monospace,monospace;color:#ffda84}
+#cutscene-counter{font:11px/1.4 ui-monospace,monospace;color:#c9bdd0;max-width:65%;text-align:right}
+#cutscene-line{min-height:3em;margin:10px 0 12px;font:15px/1.5 ui-sans-serif,system-ui,sans-serif;max-width:70ch}
+.cutscene-buttons{display:flex;gap:8px;justify-content:flex-end}
+.cutscene-panel[data-dialogue-mode="manual"]{cursor:pointer}
+.cutscene-buttons .mg-button{min-height:44px;min-width:80px;white-space:nowrap;flex-shrink:0}
+#cutscene-speed{min-width:56px}
+.cutscene-emote{position:absolute;z-index:1900;display:grid;place-items:center;width:max(56px,calc(24px / var(--room-scale,1)));height:max(56px,calc(24px / var(--room-scale,1)));transform:translate(-50%,-100%);padding:8px;background:#261f35f5;border:4px solid #e4c394;box-shadow:0 5px 0 #191221;pointer-events:none;image-rendering:pixelated;animation:cutscene-emote-pop .18s steps(3,end)}
+.cutscene-emote[hidden]{display:none}
+.cutscene-emote::after{content:'';position:absolute;bottom:-12px;width:12px;height:12px;background:#e4c394}
+.cutscene-emote svg{width:100%;height:100%;overflow:visible}
+.cutscene-speaking-cue{position:absolute;z-index:1901;width:max(56px,calc(28px / var(--room-scale,1)));height:max(44px,calc(22px / var(--room-scale,1)));pointer-events:none;image-rendering:pixelated;will-change:transform,opacity}
+.cutscene-speaking-cue[hidden]{display:none}
+.cutscene-speaking-cue svg{display:block;width:100%;height:100%;overflow:visible}
+.cutscene-emote[data-cutscene-emote="idea"]{box-shadow:0 5px 0 #191221,0 0 22px #ffd97b38}
+.cutscene-prop{position:absolute;pointer-events:none;image-rendering:pixelated;will-change:transform,opacity}
+.cutscene-prop[hidden]{display:none}
+.cutscene-magnifier{width:44px;height:60.5px;transform-origin:50% 100%}
+.cutscene-magnifier svg{display:block;width:100%;height:100%;overflow:visible}
+.cutscene-playing .mg-hotspot,.cutscene-playing #walk-floor{pointer-events:none}
+.cutscene-playing .world-controls,.cutscene-playing .nearby-prompt,.cutscene-playing .world-status,.cutscene-playing .hud-actions{visibility:hidden!important}
+.cutscene-playing .mg-hotspot span{opacity:0!important}
+.cutscene-preview .mg-hotspot{pointer-events:none}
+.cutscene-preview .mg-person,.cutscene-preview .cutscene-mira-pick{pointer-events:auto}
+.cutscene-mira-pick{position:absolute;z-index:1700;padding:0;border:0;background:transparent;pointer-events:auto;cursor:pointer}
+.cutscene-forward-fall{position:absolute;aspect-ratio:1;pointer-events:none;image-rendering:pixelated;will-change:transform}
+.cutscene-forward-fall-frame{position:absolute;inset:0;width:100%;height:100%;background-repeat:no-repeat;image-rendering:pixelated;will-change:opacity,transform}
+.cutscene-forward-fall[hidden],.cutscene-forward-fall-frame[hidden]{display:none}
+.cutscene-playing .mg-npc,.cutscene-emote{will-change:transform}
+.developer-editing .cutscene-panel{right:432px;max-width:none;padding:10px 12px}
+.developer-editing #cutscene-line{font-size:13px;min-height:0;margin:6px 0}
+.developer-editing .cutscene-buttons{display:none}
+@keyframes cutscene-emote-pop{from{translate:0 8px;opacity:.4}to{translate:0 0;opacity:1}}
+@media(max-width:760px){
+ .cutscene-panel{padding:12px;left:8px;right:8px;bottom:max(8px,env(safe-area-inset-bottom))}
+ #cutscene-line{font-size:14px;line-height:1.4;margin:9px 0}
+ #cutscene-counter{font-size:10px}
+ .developer-editing .cutscene-panel{right:8px;bottom:56dvh;padding:7px 10px;max-height:25dvh;overflow:auto}
+ .developer-editing #cutscene-line{font-size:11px;line-height:1.3}
+}
+@media(max-height:520px){.cutscene-panel{padding:8px 12px}#cutscene-line{font-size:13px;min-height:0;margin:6px 0}.cutscene-panel header{gap:6px}.cutscene-buttons .mg-button{min-height:38px}}
+@media(prefers-reduced-motion:reduce){.cutscene-emote{animation:none}}

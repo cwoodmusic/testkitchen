@@ -1,5 +1,6 @@
 import {createRoomWalker,DEPOT_ROOM} from './room.mjs';
 import {MIRA} from './mira.mjs';
+import {FRED_SPIDER_ID} from './fred-spider.mjs';
 
 const keyDirections={arrowup:'up',w:'up',arrowdown:'down',s:'down',arrowleft:'left',a:'left',arrowright:'right',d:'right'};
 const vectors={up:[0,-1],down:[0,1],left:[-1,0],right:[1,0]};
@@ -22,6 +23,14 @@ export function createRoomView({scene,map=scene,player,floor,controls,interactBu
   let walker=createRoomWalker({room,savedPosition}),pendingTarget=null,frameId=0,lastTime=0,walkPhase=0,lastPaint='',reachKey='',pulseUntil=0,pulseDirection=null,disposed=false,positionDirty=false;
   let viewportWidth=scene.clientWidth,viewportHeight=scene.clientHeight,camera={scale:1,offsetX:0,offsetY:0,width:viewportWidth,height:viewportHeight},cameraKey='',cameraLayout='',lastScale=null,cinematicFrame=null,lastCinematicFrame=null,cinematicUi=false;
   const held=new Map(),pointers=new Map(),removers=[];let inputOrder=0,pulseOrder=0;
+  // The small discovery follows its editable target and exists only with its
+  // inspection object. It needs no animation loop or additional collision box.
+  const fred=room.targets.find(target=>target.id===FRED_SPIDER_ID);
+  if(fred&&map.querySelector(`[data-inspect="${FRED_SPIDER_ID}"]`)){
+    const spider=document.createElement('div');spider.className='mg-fred-spider';spider.setAttribute('aria-hidden','true');
+    Object.assign(spider.style,{left:`${fred.x/room.width*100}%`,top:`${fred.y/room.height*100}%`,zIndex:String(Math.round(fred.y))});
+    map.append(spider);removers.push(()=>spider.remove());
+  }
   const setText=(element,text)=>{if(element.textContent!==text)element.textContent=text;};
   function listen(element,event,handler,options){element.addEventListener(event,handler,options);removers.push(()=>element.removeEventListener(event,handler,options));}
   function enabled(){return!disposed&&canMove()&&!document.hidden;}

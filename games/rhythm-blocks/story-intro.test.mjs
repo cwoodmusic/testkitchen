@@ -2,12 +2,15 @@ import test from 'node:test';
 import assert from 'node:assert/strict';
 import {STORY_INTRO_PARAGRAPHS,storyIntroDurationMs,createStoryIntroClock} from './story-intro.mjs';
 
-test('the prologue preserves the supplied wording and paragraph boundaries',()=>{
+test('the prologue explains the town, practical stakes, mystery and player goal',()=>{
  assert.equal(STORY_INTRO_PARAGRAPHS.length,3);assert(Object.isFrozen(STORY_INTRO_PARAGRAPHS));
- assert.equal(STORY_INTRO_PARAGRAPHS[0],'Lumen Reach’s public bell fell silent. It once kept the doors, postal routes, water clocks, and mechanical courier birds working together. Now signals go out, but replies don’t return. Everyday life has started getting stuck.');
- assert.equal(STORY_INTRO_PARAGRAPHS[1],'Then a parcel returns to Nell’s depot with its wax seal still warm—even though the outgoing routes are dark. Something carried it back, and nobody knows how.');
- assert.equal(STORY_INTRO_PARAGRAPHS[2],'Nell gathers Mira, Iris, and Pip to follow that mystery through the old network. They’re trying to discover who—or what—is still answering, and why the bell stopped.');
- assert(storyIntroDurationMs()>=40000&&storyIntroDurationMs()<=50000);
+ const [town,mystery,goal]=STORY_INTRO_PARAGRAPHS;
+ assert.match(town,/floating islands/);assert.match(town,/reply: “I got your message[.]”/);
+ for(const need of ['Mail and supplies are stuck','gardens need water','landing is safe'])assert(town.includes(need));
+ assert.match(mystery,/letter returns/);assert.match(mystery,/warm wax/);assert.match(mystery,/routes are closed/);
+ assert.match(goal,/You play as Mira/);assert.match(goal,/talk to your friends/);assert.match(goal,/musical notes/);
+ assert(!/loose|broken wire|metal clip/.test(STORY_INTRO_PARAGRAPHS.join(' ')),'The introduction leaves the explanation to room discoveries.');
+ assert(storyIntroDurationMs()>=40000&&storyIntroDurationMs()<=60000);
  assert.equal(storyIntroDurationMs(['One word.']),40000);assert.equal(storyIntroDurationMs(['word '.repeat(500)]),60000);
 });
 

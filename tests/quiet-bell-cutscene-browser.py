@@ -60,6 +60,7 @@ def wait_for_story(page):
     Advancing actual RAF callbacks also works when Playwright owns the clock.
     """
     ui.skip_intro(page)
+    ui.acknowledge_room_narration(page)
     waited = 0
     value = cutscene(page)
     while value and value.get('phase') == 'entry' and waited < 30000:

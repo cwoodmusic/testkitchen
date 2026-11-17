@@ -2,6 +2,7 @@
 const freeze=value=>{if(value&&typeof value==='object'){Object.values(value).forEach(freeze);Object.freeze(value);}return value;};
 export const CAMPAIGN_PLAN=freeze({
  "version": 1,
+ "status": "released campaign economy; all rooms and outcomes playable",
  "entry": "depot",
  "initialInventory": {},
  "rooms": [
@@ -23,8 +24,8 @@ export const CAMPAIGN_PLAN=freeze({
       "sixteenth-pair"
      ],
      "character": "nell",
-     "label": "Nell’s old parcel",
-     "hint": "Talk to Nell and accept the parcel once. It holds ten beats in eight different note kinds."
+     "label": "Nell’s note bag",
+     "hint": "Talk to Nell to receive eight note tiles. They open musical locks. This bag is separate from the returned letter."
     },
     {
      "id": "depot-chest",
@@ -45,7 +46,7 @@ export const CAMPAIGN_PLAN=freeze({
       "half-rest"
      ],
      "label": "The garden door",
-     "hint": "Two sounding beats, then two quiet beats."
+     "hint": "Hold a sound for two beats, then leave two beats silent."
     },
     {
      "id": "depot-workshop",
@@ -56,7 +57,7 @@ export const CAMPAIGN_PLAN=freeze({
       "sixteenth-group"
      ],
      "label": "The workshop door",
-     "hint": "A long step, two quick steps, then four tiny steps."
+     "hint": "Hold for two beats. Then play two eighth notes and four sixteenth notes."
     },
     {
      "id": "depot-canal",
@@ -67,10 +68,10 @@ export const CAMPAIGN_PLAN=freeze({
       "eighth-pair"
      ],
      "label": "The canal door",
-     "hint": "A long step, one ordinary step, then paired footsteps."
+     "hint": "Hold for two beats, play one quarter note, then two eighth notes."
     }
    ],
-   "description": "Mira finds three doors and three people with different reasons to seek the silent bell."
+   "description": "The bell is silent. Mira and her friends follow a returned letter to learn why mail, water, and ferry checks have stopped."
   },
   {
    "id": "garden-porch",
@@ -84,8 +85,8 @@ export const CAMPAIGN_PLAN=freeze({
       "half"
      ],
      "character": "iris",
-     "label": "Iris’s listening phrase",
-     "hint": "Iris gives back the two kinds used at the garden door. These are needed for the next garden gate."
+     "label": "Iris’s garden notes",
+     "hint": "Talk to Iris for a half note and a half rest. They replace the tiles used at the first garden door."
     }
    ],
    "doors": [
@@ -106,7 +107,7 @@ export const CAMPAIGN_PLAN=freeze({
       "quarter"
      ],
      "label": "The overgrown arch",
-     "warning": "A faded answer is scratched beside the arch. Iris warns that the path behind it is overgrown."
+     "warning": "Iris warns that thick brambles block the path behind this arch."
     }
    ],
    "description": "Iris asks Mira to listen to the space between notes. Her gift is claimed once through conversation."
@@ -124,8 +125,8 @@ export const CAMPAIGN_PLAN=freeze({
       "sixteenth-group"
      ],
      "character": "pip",
-     "label": "Pip’s running phrase",
-     "hint": "Pip offers a half note, paired eighths, and four sixteenths. The workshop gate needs that precise phrase."
+     "label": "Pip’s workshop notes",
+     "hint": "Talk to Pip for a half note, paired eighths, and four sixteenths. The next workshop door needs these notes."
     }
    ],
    "doors": [
@@ -147,7 +148,7 @@ export const CAMPAIGN_PLAN=freeze({
       "quarter"
      ],
      "label": "The silent aviary",
-     "warning": "The birds turn away from this door. Pip says its long call has nowhere to return from."
+     "warning": "Pip warns that the old bird house has no working reply connection."
     }
    ]
   },
@@ -164,7 +165,7 @@ export const CAMPAIGN_PLAN=freeze({
       "eighth-pair"
      ],
      "label": "The stamped delivery chest",
-     "hint": "The ferry keeper points out a chest bearing Nell’s postage. Its three notes match the lock ahead."
+     "hint": "Oren points out a chest with Nell’s postage stamp. Its three notes fit the next canal door."
     }
    ],
    "doors": [
@@ -186,7 +187,7 @@ export const CAMPAIGN_PLAN=freeze({
       "sixteenth-group"
      ],
      "label": "The empty ferry",
-     "warning": "A rotted boarding rope hangs beyond this door. The ferry keeper warns that no boat waits there."
+     "warning": "Oren warns that no boat waits beyond this door."
     }
    ]
   },
@@ -203,7 +204,7 @@ export const CAMPAIGN_PLAN=freeze({
       "quarter"
      ],
      "label": "The hearth path",
-     "hint": "A three-beat call followed by an ordinary step leads toward the homes."
+     "hint": "A dotted half note lasts three beats. Add a quarter note to reach the homes."
     },
     {
      "id": "garden-secret-branch",
@@ -216,7 +217,7 @@ export const CAMPAIGN_PLAN=freeze({
       "sixteenth-pair"
      ],
      "label": "The old stone path",
-     "hint": "The small groups, a breath, and two different half-beat replies lead deeper into the old garden."
+     "hint": "Try the two one-beat groups, a quarter rest, a single eighth, and paired sixteenths."
     }
    ]
   },
@@ -233,7 +234,7 @@ export const CAMPAIGN_PLAN=freeze({
       "quarter"
      ],
      "label": "The schoolroom stair",
-     "hint": "A three-beat call and one ordinary step lead toward the shared music room."
+     "hint": "Use a three-beat dotted half note and a quarter note to reach the music room."
     },
     {
      "id": "workshop-secret-branch",
@@ -245,7 +246,7 @@ export const CAMPAIGN_PLAN=freeze({
       "quarter-rest"
      ],
      "label": "The birds’ back passage",
-     "hint": "Two different half-beat replies, then two quiet beats and one more quiet beat lead behind the birds’ stage."
+     "hint": "Play a single eighth and paired sixteenths. Then use a half rest and a quarter rest."
     }
    ]
   },
@@ -262,7 +263,7 @@ export const CAMPAIGN_PLAN=freeze({
       "sixteenth-group"
      ],
      "label": "The town-bell stair",
-     "hint": "A three-beat call followed by four tiny steps climbs toward the public bell."
+     "hint": "Use a three-beat dotted half note, then four sixteenth notes, to climb toward the bell."
     },
     {
      "id": "canal-dead",
@@ -274,7 +275,7 @@ export const CAMPAIGN_PLAN=freeze({
       "quarter-rest"
      ],
      "label": "The copied waterway",
-     "warning": "The ferryman’s map shows that this quiet passage ends at a wall."
+     "warning": "Oren’s map shows that this passage ends at a wall."
     }
    ]
   },
@@ -294,7 +295,7 @@ export const CAMPAIGN_PLAN=freeze({
       "sixteenth-pair"
      ],
      "label": "The home door",
-     "hint": "Use the five note tiles you carried here: two kinds of groups, a quarter rest, a single eighth, and paired sixteenths."
+     "hint": "Use the five tiles you brought: two eighths, four sixteenths, a quarter rest, a single eighth, and paired sixteenths."
     }
    ]
   },
@@ -313,7 +314,7 @@ export const CAMPAIGN_PLAN=freeze({
       "quarter-rest"
      ],
      "label": "The music-room door",
-     "hint": "The two different half-beat replies fill beat one; two quiet beats and one quiet beat finish the phrase."
+     "hint": "Play a single eighth and paired sixteenths for beat one. A half rest and a quarter rest finish the rhythm."
     }
    ]
   },
@@ -332,7 +333,7 @@ export const CAMPAIGN_PLAN=freeze({
       "quarter-rest"
      ],
      "label": "The town door",
-     "hint": "Two different half-beat replies fill beat one; two quiet beats and one quiet beat complete the tower’s answer."
+     "hint": "Play a single eighth and paired sixteenths for beat one. Then leave two beats silent and one more silent."
     }
    ]
   },
@@ -349,8 +350,8 @@ export const CAMPAIGN_PLAN=freeze({
       "sixteenth-group",
       "quarter-rest"
      ],
-     "label": "Four notes beneath the loose stone",
-     "hint": "Iris remembers a music box under a stone carved with a flower. Search there; the newly found phrase reveals the hidden gate."
+     "label": "Four notes under the flower stone",
+     "hint": "Look for a stone carved with a flower. Inspect it, then Search for four notes and a hidden gate."
     }
    ],
    "doors": [
@@ -365,7 +366,7 @@ export const CAMPAIGN_PLAN=freeze({
      ],
      "revealAfter": "garden-hidden-notes",
      "label": "The hidden flower gate",
-     "hint": "The four newly found one-beat tiles open this gate."
+     "hint": "The four new one-beat tiles from the flower stone open this gate."
     }
    ],
    "description": "The hidden pickup is inside the chosen secret branch. It cannot be collected on the normal path and cannot leak into a regular ending."
@@ -381,8 +382,8 @@ export const CAMPAIGN_PLAN=freeze({
       "half",
       "half-rest"
      ],
-     "label": "Two long notes inside the hollow perch",
-     "hint": "Pip notices a perch whose two sides answer differently: one sounds and one stays silent. Search it to reveal the hidden gate."
+     "label": "Two notes inside the hollow perch",
+     "hint": "Inspect the hollow bird perch, then Search. Its hidden half note and half rest reveal another gate."
     }
    ],
    "doors": [
@@ -395,7 +396,7 @@ export const CAMPAIGN_PLAN=freeze({
      ],
      "revealAfter": "workshop-hidden-notes",
      "label": "The hidden brass gate",
-     "hint": "A sounding half note and a silent half rest open the brass gate."
+     "hint": "A half note sounds for two beats. A half rest leaves two beats silent."
     }
    ],
    "description": "Searching is optional before choosing this detour. Inside it, the once-only hidden cache is needed for the only forward gate; it remains available until found."
@@ -413,7 +414,7 @@ export const CAMPAIGN_PLAN=freeze({
       "quarter"
      ],
      "label": "The unfinished-song door",
-     "hint": "The original three-beat call and the ordinary one-beat note were kept for this last answer."
+     "hint": "Use the dotted half note and quarter note you saved for this last door."
     }
    ]
   },
@@ -430,7 +431,7 @@ export const CAMPAIGN_PLAN=freeze({
       "quarter"
      ],
      "label": "The birds’ answer door",
-     "hint": "Finish with the original three-beat call and the ordinary one-beat note you carried through the back passage."
+     "hint": "Use the dotted half note and quarter note you saved through the hidden passage."
     }
    ]
   }
@@ -465,25 +466,25 @@ export const CAMPAIGN_PLAN=freeze({
    "id": "dead-brambles",
    "title": "The Overgrown Arch",
    "kind": "dead-end",
-   "repair": "Revisit Iris’s porch and use her gift at the listening gate."
+   "repair": "Return to Iris’s porch, collect her notes if needed, and try the listening gate."
   },
   {
    "id": "dead-aviary",
    "title": "The Silent Aviary",
    "kind": "dead-end",
-   "repair": "Revisit Pip’s workshop and use his running phrase at the workshop gate."
+   "repair": "Return to Pip’s workshop, collect his notes if needed, and try the workshop gate."
   },
   {
    "id": "dead-ferry",
    "title": "The Empty Ferry",
    "kind": "dead-end",
-   "repair": "Revisit the canal storehouse, open the stamped chest, and use its delivery phrase."
+   "repair": "Return to the canal storehouse, open the stamped chest, and try the delivery door."
   },
   {
    "id": "dead-echo",
    "title": "The Copied Waterway",
    "kind": "dead-end",
-   "repair": "Revisit the water clock and choose the town-bell stair."
+   "repair": "Return to the water clock and choose the stair leading to the town bell."
   }
  ],
  "rules": [

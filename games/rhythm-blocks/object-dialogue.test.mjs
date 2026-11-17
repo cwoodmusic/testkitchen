@@ -39,7 +39,7 @@ test('every shipped place has an object exchange with independent speech clips a
    while(player.state.beat){assert.deepEqual(player.state.actors,actors);player.next();}
   }
  }
- assert.equal(discussions,24);assert.deepEqual(project,before,'Reading a script cannot change art, rooms, locks, sources or notes.');
+ assert.equal(discussions,25);assert.deepEqual(project,before,'Reading a script cannot change art, rooms, locks, sources or notes.');
 });
 
 test('compilation preserves custom text, durations, IDs and metadata while isolating speech from movement',()=>{

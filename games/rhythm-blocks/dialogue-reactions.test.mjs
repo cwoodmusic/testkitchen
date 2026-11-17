@@ -18,7 +18,8 @@ test('only the first depot discussion authors speech shock and the bird/radar st
  assert(validateProject(project).valid);
  assert.equal(STOCK_DEPOT_DIALOGUE_EFFECTS.length,3);
  for(const stock of STOCK_DEPOT_DIALOGUE_EFFECTS){
-  const clip=stockLine(project,stock.clipId);assert.equal(clip.text,stock.text);assert.equal(clip.speaker,stock.speaker);
+  const clip=stockLine(project,stock.clipId),published=ROOM_CUTSCENES.depot.find(beat=>beat.id===stock.clipId);
+  assert.equal(clip.text,published.text);assert.equal(clip.speaker,stock.speaker);
   for(const field of ['reaction','stageCue'])if(Object.hasOwn(stock,field))assert.deepEqual(clip[field],stock[field]);
  }
  assert.deepEqual(stockLine(project,'depot-arrival-2').reaction,{emote:'surprise',durationTiles:14});
@@ -83,7 +84,10 @@ test('caption effects stay inert for entry, finished, blank, explicit off and ma
 test('saved stock defaults gain only absent effects while authored clocks, lane owners, metadata and resources survive',()=>{
  const project=createDefaultProject();
  for(const stock of STOCK_DEPOT_DIALOGUE_EFFECTS){
-  const clip=stockLine(project,stock.clipId);delete clip.reaction;delete clip.stageCue;clip.startTile+=7;clip.durationTiles+=3;clip.actor='iris';clip.author={memo:'Retain my frame plan.'};
+  const clip=stockLine(project,stock.clipId);
+  // Reproduce the saved stock version which predates speech effects and the
+  // later reading-level rewrite, while retaining authored timeline changes.
+  clip.text=stock.text;delete clip.reaction;delete clip.stageCue;clip.startTile+=7;clip.durationTiles+=3;clip.actor='iris';clip.author={memo:'Retain my frame plan.'};
  }
  const before=clone(project),upgraded=upgradeStockDepotDialogueEffects(freeze(project));
  for(const stock of STOCK_DEPOT_DIALOGUE_EFFECTS){
@@ -94,7 +98,12 @@ test('saved stock defaults gain only absent effects while authored clocks, lane 
  for(const key of ['schemaVersion','settings','rooms','doors','sources','scenes','cast','player','noteKinds'])assert.deepEqual(upgraded[key],before[key]);
  for(const [roomId,room]of Object.entries(before.content))if(roomId!=='depot')assert.deepEqual(upgraded.content[roomId],room);
  assert.deepEqual(project,before);assert.deepEqual(upgradeStockDepotDialogueEffects(upgraded),upgraded);
- const loaded=normalizeProject(before);assert.deepEqual(stockLine(loaded,'depot-arrival-2').reaction,{emote:'surprise',durationTiles:14});
+ const loaded=normalizeProject(before);
+ for(const stock of STOCK_DEPOT_DIALOGUE_EFFECTS){
+  const published=ROOM_CUTSCENES.depot.find(beat=>beat.id===stock.clipId);
+  assert.deepEqual(stockLine(loaded,stock.clipId),{...stockLine(upgraded,stock.clipId),text:published.text},'Normalization adds historical effects before refreshing stock words.');
+ }
+ assert.deepEqual(stockLine(loaded,'depot-arrival-2').reaction,{emote:'surprise',durationTiles:14});
  assert(validateProject(loaded).valid);assert(Object.isFrozen(stockLine(loaded,'depot-arrival-2').reaction));
 });
 

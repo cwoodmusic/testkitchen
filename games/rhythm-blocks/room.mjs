@@ -27,10 +27,10 @@ export const DEPOT_ROOM=freeze({
   {id:'workshop',type:'door',x:884,y:250,approach:{x:884,y:310},range:100},
   {id:'canal',type:'door',x:1286,y:250,approach:{x:1286,y:310},range:100},
   {id:'returned-letter',type:'inspect',label:'Inspect the returned letter',x:220,y:375,approach:{x:220,y:440},range:105},
-  {id:'clockwork-roost',type:'inspect',label:'Inspect the clockwork roost',x:655,y:250,approach:{x:655,y:310},range:100},
-  {id:'dispatch-map',type:'inspect',label:'Inspect the dispatch map',x:1055,y:250,approach:{x:1055,y:310},range:100},
-  {id:'route-orrery',type:'inspect',label:'Inspect the route orrery',x:170,y:880,approach:{x:365,y:900},range:210},
-  {id:'star-post',type:'inspect',label:'Inspect the star post',x:1380,y:880,approach:{x:1190,y:800},range:220}
+  {id:'clockwork-roost',type:'inspect',label:'Inspect the mail bird',x:655,y:250,approach:{x:655,y:310},range:100},
+  {id:'dispatch-map',type:'inspect',label:'Inspect the mail-route screen',x:1055,y:250,approach:{x:1055,y:310},range:100},
+  {id:'route-orrery',type:'inspect',label:'Inspect the old route model',x:170,y:880,approach:{x:365,y:900},range:210},
+  {id:'star-post',type:'inspect',label:'Inspect the mail signal receiver',x:1380,y:880,approach:{x:1190,y:800},range:220}
  ]
 });
 

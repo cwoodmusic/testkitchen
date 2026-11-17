@@ -54,6 +54,13 @@ def finish_inspection_discussion(page):
     if page.evaluate('window.quietBell?.cutscene?.context==="inspection"'):
         skip_cutscene(page)
 
+def acknowledge_room_narration(page):
+    """Physical-performance regressions explicitly finish the reading preface."""
+    for _ in range(2):
+        if not page.evaluate('window.quietBell?.cutscene?.phase==="narration"'):break
+        page.locator('#cutscene-next').click()
+    assert not page.evaluate('window.quietBell?.cutscene?.phase==="narration"')
+
 def close_panels(page, revisit=False):
     skip_cutscene(page)
     if page.locator('#outcome').is_visible():

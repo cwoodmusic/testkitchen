@@ -84,6 +84,7 @@ def reset_trace(page):
 
 
 def wait_story(page):
+    ui.acknowledge_room_narration(page)
     for _ in range(240):
         value = cutscene(page)
         if not value or value.get('phase') == 'story':
@@ -93,6 +94,7 @@ def wait_story(page):
 
 
 def finish_entry_only(page):
+    ui.acknowledge_room_narration(page)
     for _ in range(240):
         value = cutscene(page)
         if not value:
@@ -104,6 +106,8 @@ def finish_entry_only(page):
 
 
 def assert_silent_entry(page, value):
+    if value and value.get('phase')=='narration':
+        ui.acknowledge_room_narration(page);value=cutscene(page)
     assert value and value['phase'] == 'entry' and not value['finished'], value
     assert value['beat'] is None and abs(value['currentTile']) < .000001, value
     assert value['totalCharacters'] == 0
@@ -121,6 +125,7 @@ def assert_silent_entry(page, value):
 
 
 def assert_first_event(page, room_id):
+    ui.acknowledge_room_narration(page)
     events = page.evaluate('window.__entryEvents')
     first = next(event for event in events if event.get('phase') == 'entry' and event.get('roomId') == room_id)
     assert first['entry']['fadeOpacity'] > .999 and first['entry']['currentTile'] == 0, first
@@ -212,6 +217,7 @@ def replay(page):
         page.locator('#cutscene-skip').click()
     reset_trace(page)
     page.locator('#menu').click();page.locator('#replay-cutscene').click()
+    ui.acknowledge_room_narration(page)
 
 
 def opening_flow(browser, url, expected):
@@ -313,6 +319,7 @@ def director_flow(browser,url,expected):
     base = paths.validate_release(page,expected);saved = cs.normal_storage(page);original = paths.resources(page)
     page.keyboard.press('F2');page.locator('[data-dev-tab="cutscene"]').click();tick(page,50)
     cs.select_timeline_mode(page)
+    tracks.select_clip(page,'nell','walk')
     baseline = tracks.export_project(page,'entry-baseline')
     open_entry_settings(page)
     assert page.locator('#developer-room-entry-gait [data-cutscene-choice="run"]').get_attribute('aria-pressed')=='true'
@@ -386,6 +393,7 @@ def director_flow(browser,url,expected):
     assert disabled['content']==baseline['content']
     assert page.locator('#developer-cutscene-entry').is_disabled()
     page.locator('#developer-apply').click();tick(page,50)
+    ui.acknowledge_room_narration(page)
     assert cutscene(page)['phase']=='story' and not page.locator('.room-entry-fade').is_visible()
     page.locator('#cutscene-skip').click();tick(page,30)
     page.locator('#developer-end').click();tick(page,30)
@@ -409,7 +417,7 @@ def director_flow(browser,url,expected):
         assert not pose(value,'oren')['moving'] and value['beat'] is None
         tick(page,50)
     assert not cutscene(page);assert_inside(page)
-    before=ui.walker(page);page.reload();page.wait_for_function('!!window.quietBell?.state');tick(page,60)
+    before=ui.walker(page);page.reload();page.wait_for_function('!!window.quietBell?.state');ui.skip_intro(page);tick(page,60)
     paths.validate_release(page,expected)
     assert not cutscene(page) and math.hypot(ui.walker(page)['x']-before['x'],ui.walker(page)['y']-before['y'])<.1
     page.locator('#menu').click();assert page.locator('#replay-cutscene').is_visible()
