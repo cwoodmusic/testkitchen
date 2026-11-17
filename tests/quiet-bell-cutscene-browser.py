@@ -105,7 +105,15 @@ def assert_panel_layout(page):
 def advance_to_finish(page):
     value = cutscene(page)
     assert value and value['totalTiles'] > 0 and value['quantumMs'] > 0, value
-    tick(page, math.ceil(value['totalTiles'] * value['quantumMs']) + 1500)
+    if value.get('manualDialogue'):
+        for _ in range(1800):
+            value = cutscene(page)
+            if not value or value.get('finished'):break
+            if value.get('beat') and value.get('textComplete') and page.locator('#cutscene-next').is_enabled():
+                page.locator('#cutscene-next').click()
+            tick(page, 100)
+    else:
+        tick(page, math.ceil(value['totalTiles'] * value['quantumMs']) + 1500)
     assert not live_cutscene(page), cutscene(page)
     assert page.locator('#cutscene-panel').is_hidden()
 
@@ -161,8 +169,14 @@ def entrance_flow(browser, url, expected=None):
     page.locator('#cutscene-next').click()
     observed_next = page.evaluate('window.__queuedNext')
     before_next, queued = observed_next['before'], observed_next['after']
-    assert queued['index'] == before_next['index'] and queued['nextPending'], queued
-    assert page.locator('#cutscene-next').is_disabled()
+    if before_next.get('manualDialogue'):
+        assert queued['index'] > before_next['index'] and not queued['nextPending'], queued
+        assert queued['beat']['id'] != before_next['beat']['id']
+        assert queued['visibleCharacters'] <= 1, queued
+        assert page.locator('#cutscene-next').is_enabled()
+    else:
+        assert queued['index'] == before_next['index'] and queued['nextPending'], queued
+        assert page.locator('#cutscene-next').is_disabled()
     assert all(point_distance(actor(before_next, item['id']), item) < .001 for item in queued['actors'])
     speed = page.evaluate('quietBell.scene.geometry.speed')
     previous_timed = page.evaluate('({state:quietBell.cutscene,now:performance.now()})')
@@ -228,7 +242,7 @@ def entrance_flow(browser, url, expected=None):
     assert not errors and not writes and not external, (errors, writes, external)
     context.close()
     return {'releaseBase': release_base, 'movingActors': True, 'emotes': True, 'noPickupsOrDiscoveries': True,
-            'autoFinish': True, 'nextAndSkip': True, 'nextWaitsForWalk': True, 'reloadOnceOnly': True,
+            'clickToFinish': True, 'nextAndSkip': True, 'nextKeepsWalkContinuous': True, 'reloadOnceOnly': True,
             'replayAndRestart': True, 'frozenInput': True, 'postSceneInteraction': True}
 
 

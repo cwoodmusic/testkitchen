@@ -127,10 +127,16 @@ export function compileRoomEntry({scene,playerPosition=null,playerSize=160}={}){
   const from={x:mouth.x,y:outsideY},path=[from,copy(mouth)];
   for(const vertex of route)if(distance(path.at(-1),vertex)>EPS)path.push(copy(vertex));
   const length=path.slice(1).reduce((sum,at,i)=>sum+distance(path[i],at),0),durationTiles=Math.max(1,Math.ceil((length-EPS)/geometry.gridSize)),startTile=index*staggerTiles;
-  clips.push({id:`room-entry-${id}`,actor:id,kind:'walk',startTile,durationTiles,endTile:startTile+durationTiles,pathLength:length,path,from,to:copy(landing),mouth:copy(mouth),facing:landing.facing});
+  const arrivalFacing=path.slice(1).reduce((heading,at,i)=>distance(path[i],at)>EPS?face(path[i],at,heading):heading,'up');
+  clips.push({id:`room-entry-${id}`,actor:id,kind:'walk',startTile,durationTiles,endTile:startTile+durationTiles,pathLength:length,path,from,to:copy(landing),mouth:copy(mouth),facing:arrivalFacing});
   initialById.set(id,cleanPose({id,...from,facing:'up'}));
  }
  if(!enabled||blocked){clips.length=0;for(const actor of endActors)initialById.set(actor.id,actor);}
+ else for(const clip of clips){
+  // Carry the actual arrival heading into the story. The standing portrait's
+  // authored facing used to turn everyone south for a frame between walks.
+  endById.get(clip.actor).facing=clip.facing;
+ }
  const totalTiles=enabled?Math.max(fadeTiles,...clips.map(clip=>clip.endTile)):0;
  return freeze({enabled,blocked,quantumMs,gridSize:geometry.gridSize,speed:geometry.speed,fadeTiles:enabled?fadeTiles:0,staggerTiles,totalTiles,door:{x:baseMouth?.x??clamp(doorX,geometry.bounds.x+geometry.radius,geometry.bounds.x+geometry.bounds.width-geometry.radius),y:geometry.height},mouth:baseMouth?copy(baseMouth):null,actors:authored.map(actor=>initialById.get(actor.id)),endActors,clips});
 }

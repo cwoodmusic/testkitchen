@@ -77,7 +77,7 @@ export function stageCutsceneScene(scene,poses=[]){
 export function createCutsceneView({root,map,panel,roomView,scene,project,beats,playerPosition,preview=false,paused=false,tile=0,withEntry=true,cinematicAudio=null,playbackRate=1,onRateChange=()=>{},onFinish=()=>{}}){
  const reduced=matchMedia('(prefers-reduced-motion: reduce)').matches;
  const entry=withEntry?createRoomEntry({scene,playerPosition,playerSize:project.player.worldSize}):null;
- const timeline=createRoomCutscene({scene,beats,playerPosition,actors:entry?.timeline.endActors,reducedMotion:reduced});
+ const timeline=createRoomCutscene({scene,beats,playerPosition,actors:entry?.timeline.endActors,reducedMotion:reduced,manualDialogue:!preview});
  let disposed=false,frame=0,last=0,lastCaption='',lastEvent='',finishing=false,reservedBottom=0,rate=playbackRate===2?2:1;
  const actorElements=new Map(scene.actors.map(actor=>[actor.id,map.querySelector('[data-actor="'+actor.id+'"]')]));
  const definitions=new Map(scene.actors.map(actor=>[actor.id,actor]));
@@ -87,6 +87,7 @@ export function createCutsceneView({root,map,panel,roomView,scene,project,beats,
  const speaker=panel.querySelector('#cutscene-speaker'),line=panel.querySelector('#cutscene-line'),counter=panel.querySelector('#cutscene-counter');
  const dialogue=createJrpgDialogue({panel,line}),soundTrack=cinematicAudio?.createTrack();
  const nextButton=panel.querySelector('#cutscene-next'),skipButton=panel.querySelector('#cutscene-skip'),speedButton=panel.querySelector('#cutscene-speed');
+ const hint=document.createElement('span');hint.className='cutscene-advance-hint';hint.setAttribute('aria-hidden','true');hint.hidden=preview;nextButton.parentElement.prepend(hint);
  counter.textContent=preview?'Timeline preview':scene.title;
  nextButton.disabled=preview;skipButton.textContent=preview?'Stop preview':'Skip';
  const style=(element,name,value)=>{let values=styleValues.get(element);if(!values){values=new Map();styleValues.set(element,values);}if(values.get(name)!==value){element.style[name]=value;values.set(name,value);}};
@@ -95,7 +96,7 @@ export function createCutsceneView({root,map,panel,roomView,scene,project,beats,
  function entryInfo(){const state=entry?.state;return state?{currentTile:state.currentTile,totalTiles:state.totalTiles,elapsed:state.elapsed,quantumMs:state.quantumMs,fadeTiles:entry.timeline.fadeTiles,fadeOpacity:state.fadeOpacity,finished:state.finished,playing:state.playing}:null;}
  function snapshot(){
   const story=timeline.state,arrival=entry?.state,info=entryInfo();
-  if(arrival&&!arrival.finished)return{...story,index:-1,beat:null,actors:arrival.actors,focus:arrival.focus,elapsed:arrival.elapsed,holding:!arrival.actors.some(actor=>actor.moving),playing:arrival.playing,finished:false,nextPending:false,activeClips:arrival.activeClips??[],activeClipIds:arrival.activeClipIds??[],phase:'entry',entry:info};
+  if(arrival&&!arrival.finished)return{...story,index:-1,beat:null,actors:arrival.actors,focus:arrival.focus,elapsed:arrival.elapsed,holding:!arrival.actors.some(actor=>actor.moving),playing:arrival.playing,finished:false,nextPending:false,awaitingAdvance:false,dialogueElapsed:0,dialogueFinished:false,activeClips:arrival.activeClips??[],activeClipIds:arrival.activeClipIds??[],phase:'entry',entry:info};
   return{...story,phase:'story',entry:info};
  }
  function publicState(state=snapshot()){return freeze({...state,preview,roomId:scene.id,playbackRate:rate,textComplete:dialogue.state.complete,visibleCharacters:dialogue.state.visibleCharacters,totalCharacters:dialogue.state.totalCharacters});}
@@ -122,7 +123,7 @@ export function createCutsceneView({root,map,panel,roomView,scene,project,beats,
    reservedBottom=panel.getBoundingClientRect().height+20;
   }
   if(!beat)dialogue.revealAll();
-  dialogue.update(beat?Math.max(0,(state.currentTile-beat.startTile)*state.quantumMs):0);
+  dialogue.update(beat?state.manualDialogue?state.dialogueElapsed:Math.max(0,(state.currentTile-beat.startTile)*state.quantumMs):0);
   soundTrack?.sample(state,{visibleCharacters:dialogue.state.visibleCharacters,audible});
   for(const actor of state.actors){
    const element=actorElements.get(actor.id),definition=definitions.get(actor.id);
@@ -175,10 +176,19 @@ export function createCutsceneView({root,map,panel,roomView,scene,project,beats,
   }
   const player=state.actors.find(actor=>actor.id==='mira');
   roomView.setCinematicFrame({focus:state.focus,player,playerVisual:getCutsceneGesturePose(player,{reducedMotion:reduced}),elapsed:state.elapsed,reservedBottom,deltaMs,snapCamera,reducedMotion:reduced});
-  const disabled=preview||arrival||state.finished||state.nextPending;
+  const silentManual=state.manualDialogue&&!beat;
+  const disabled=preview||arrival||state.finished||state.nextPending||silentManual;
   if(nextButton.disabled!==disabled)nextButton.disabled=disabled;
+  const reading=!preview&&!arrival&&!!beat&&!state.finished;
+  if(hint.hidden===reading)hint.hidden=!reading;
+  if(reading){
+   const complete=dialogue.state.complete,label=complete?'Click to continue':'Click to reveal';
+   if(hint.textContent!==label)hint.textContent=label;
+   data(panel,'dialogueMode','manual');data(panel,'dialogueState',complete?'waiting':'revealing');
+   const nextLabel=complete?'Advance to the next line':'Show the rest of this line';if(nextButton.getAttribute('aria-label')!==nextLabel)nextButton.setAttribute('aria-label',nextLabel);
+  }else{delete panel.dataset.dialogueMode;delete panel.dataset.dialogueState;nextButton.removeAttribute('aria-label');}
   if(!preview&&previousPhase==='entry'&&!arrival&&!disabled)nextButton.focus({preventScroll:true});
-  const nextLabel=arrival?'Entering…':state.nextPending?'Walking…':'Next ›';if(nextButton.textContent!==nextLabel)nextButton.textContent=nextLabel;
+  const nextLabel=arrival?'Entering…':silentManual&&state.dialogueFinished?'Finishing…':state.nextPending||silentManual?'Walking…':'Next ›';if(nextButton.textContent!==nextLabel)nextButton.textContent=nextLabel;
   const rateLabel=`${rate}×`;if(speedButton.textContent!==rateLabel)speedButton.textContent=rateLabel;
   const pressed=String(rate===2),speedLabel=rate===2?'Double speed. Switch to normal speed.':'Normal speed. Switch to double speed.';
   if(speedButton.getAttribute('aria-pressed')!==pressed)speedButton.setAttribute('aria-pressed',pressed);
@@ -186,7 +196,7 @@ export function createCutsceneView({root,map,panel,roomView,scene,project,beats,
   emit(state);
   if(state.finished&&!preview&&!finishing){finishing=true;queueMicrotask(()=>{if(!disposed)onFinish({state,skipped:false});});}
  }
- function schedule(state=snapshot()){if(!disposed&&!frame&&state.playing&&!state.finished&&!document.hidden)frame=requestAnimationFrame(tick);}
+ function schedule(state=snapshot()){if(!disposed&&!frame&&state.playing&&!state.finished&&!document.hidden&&!(state.manualDialogue&&state.phase==='story'&&state.currentTile>=state.totalTiles&&dialogue.state.complete))frame=requestAnimationFrame(tick);}
  function tick(now){
   frame=0;if(disposed)return;const delta=last?Math.min(80,Math.max(0,now-last)):16;last=now;
   const transport=entering()?entry:timeline;
@@ -200,9 +210,10 @@ export function createCutsceneView({root,map,panel,roomView,scene,project,beats,
  function seek(value){soundTrack?.stop();entry?.skip();timeline.seek(value);last=0;paint(snapshot(),16,true);schedule();return publicState();}
  function setRate(value){rate=value===2?2:1;last=0;onRateChange(rate);paint();return publicState();}
  function skip(){if(disposed)return;soundTrack?.stop();entry?.skip();timeline.skip();onFinish({state:snapshot(),skipped:true});}
- function destroy(){if(disposed)return;disposed=true;soundTrack?.destroy();if(frame)cancelAnimationFrame(frame);frame=0;for(const remove of removers)remove();for(const emote of emotes.values())emote.remove();for(const prop of props.values())prop.element.remove();for(const element of actorElements.values())if(element){delete element.dataset.gesture;delete element.dataset.gestureProgress;delete element.dataset.gait;}fade.remove();dialogue.destroy();map.inert=wasInert;map.style.overflow=wasOverflow;roomView.setCinematicFrame(null);root.classList.remove('cutscene-playing','cutscene-preview');delete root.dataset.cutscenePhase;panel.classList.remove('cutscene-silent');delete panel.dataset.phase;panel.hidden=true;}
- function advance(){if(entering())return;if(!dialogue.state.complete){dialogue.revealAll();paint();return;}timeline.next();last=0;paint();schedule();}
+ function destroy(){if(disposed)return;disposed=true;soundTrack?.destroy();if(frame)cancelAnimationFrame(frame);frame=0;for(const remove of removers)remove();for(const emote of emotes.values())emote.remove();for(const prop of props.values())prop.element.remove();for(const element of actorElements.values())if(element){delete element.dataset.gesture;delete element.dataset.gestureProgress;delete element.dataset.gait;}hint.remove();fade.remove();dialogue.destroy();map.inert=wasInert;map.style.overflow=wasOverflow;roomView.setCinematicFrame(null);root.classList.remove('cutscene-playing','cutscene-preview');delete root.dataset.cutscenePhase;panel.classList.remove('cutscene-silent');delete panel.dataset.phase;delete panel.dataset.dialogueMode;delete panel.dataset.dialogueState;nextButton.removeAttribute('aria-label');panel.hidden=true;}
+ function advance(){if(entering()||preview||!snapshot().beat)return;if(!dialogue.state.complete){dialogue.revealAll();paint();return;}timeline.next();last=0;paint();schedule();}
  listen(nextButton,'click',advance);listen(skipButton,'click',skip);
+ listen(panel,'click',event=>{if(preview||event.target.closest('button,a,input,textarea,select,[contenteditable="true"]'))return;advance();});
  listen(speedButton,'click',()=>setRate(rate===2?1:2));
  listen(document,'keydown',event=>{
   if(preview||event.altKey||event.ctrlKey||event.metaKey||event.target.closest('input,textarea,[contenteditable="true"]'))return;

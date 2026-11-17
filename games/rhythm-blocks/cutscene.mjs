@@ -222,10 +222,19 @@ export function separateCutsceneTracks({scene,beats=[],playerPosition=null}={}){
  * Reduced motion belongs to the view: essential walking still follows its path
  * continuously, rather than teleporting a character at each clip boundary.
  */
-export function createRoomCutscene({scene,beats=[],playerPosition=null,actors=null,reducedMotion=false}={}){
+export function createRoomCutscene({scene,beats=[],playerPosition=null,actors=null,reducedMotion=false,manualDialogue=false}={}){
  const timeline=compileRoomCutscene({scene,beats,playerPosition,actors});
+ const captions=timeline.clips.filter(clip=>speaks(clip)&&clip.text.trim());
+ const manual=manualDialogue===true&&captions.length>0;
+ // Spoken-line lengths are editing guides in manual play, not a reason to
+ // leave the reader looking at an empty scene. Preserve actual locomotion and
+ // the whole stumble/recovery, while stationary lens/emote holds can end once
+ // everybody has finished speaking. Automatic director playback is unchanged.
+ const physicalEnd=manual?Math.max(0,...timeline.clips.map(clip=>clip.pathLength?clip.startTile+clip.pathLength/(timeline.gridSize*clip.speedMultiplier):clip.kind==='gesture'&&['trip','fallen','recover'].includes(clip.gesture)?clip.endTile:0)):timeline.totalTiles;
  let currentTile=0,playing=timeline.totalTiles>0,skipped=false,cachedSnapshot=null,advanceTarget=null;
- const isFinished=()=>skipped||currentTile>=timeline.totalTiles;
+ let captionIndex=0,captionStarted=manual&&captions[0].startTile===0,dialogueElapsed=0;
+ const manualCaption=()=>manual&&captionStarted?captions[captionIndex]??null:null;
+ const isFinished=()=>skipped||(manual?captionIndex>=captions.length&&currentTile>=physicalEnd:currentTile>=timeline.totalTiles);
  function advanceAcrossHolds(){
   if(advanceTarget===null)return;
   if(currentTile>=advanceTarget-.00000001){advanceTarget=null;return;}
@@ -245,28 +254,45 @@ export function createRoomCutscene({scene,beats=[],playerPosition=null,actors=nu
  }
  function snapshot(){
   if(cachedSnapshot)return cachedSnapshot;
-  const finished=isFinished(),activeClips=finished?[]:timeline.clips.filter(clip=>clip.startTile<=currentTile&&currentTile<clip.endTile);
-  const beat=activeClips.filter(clip=>speaks(clip)&&clip.text.trim()).at(-1)??null;
+  const finished=isFinished(),timedClips=finished?[]:timeline.clips.filter(clip=>clip.startTile<=currentTile&&currentTile<clip.endTile);
+  const beat=finished?null:manual?manualCaption():timedClips.filter(clip=>speaks(clip)&&clip.text.trim()).at(-1)??null;
+  const activeClips=manual?timedClips.filter(clip=>clip.kind!=='dialogue'):timedClips;
+  if(manual&&beat&&!activeClips.includes(beat))activeClips.push(beat);
   const actorStates=timeline.actors.map(actor=>poseAt(actor,timeline.clips,currentTile,timeline.gridSize));
   if(finished)for(const actor of actorStates){actor.moving=false;actor.action=null;actor.target=null;actor.emote=null;actor.gait='walk';actor.gesture=null;actor.gestureProgress=0;}
   const focusActor=actorStates.find(actor=>actor.id===beat?.speaker)??actorStates.find(actor=>actor.id===activeClips.at(-1)?.actor)??actorStates.find(actor=>actor.id==='mira');
-  return cachedSnapshot=freeze({index:beat?.index??(finished?timeline.clips.length:-1),beat,actors:actorStates,focus:{x:focusActor?.x??scene.geometry.width/2,y:focusActor?.y??scene.geometry.height/2},finished,elapsed:currentTile*timeline.quantumMs,holding:!finished&&!actorStates.some(actor=>actor.moving),currentTile,totalTiles:timeline.totalTiles,quantumMs:timeline.quantumMs,playing,nextPending:!finished&&advanceTarget!==null,activeClips,activeClipIds:activeClips.map(clip=>clip.id)});
+  return cachedSnapshot=freeze({index:beat?.index??(finished?timeline.clips.length:-1),beat,actors:actorStates,focus:{x:focusActor?.x??scene.geometry.width/2,y:focusActor?.y??scene.geometry.height/2},finished,elapsed:currentTile*timeline.quantumMs,holding:!finished&&!actorStates.some(actor=>actor.moving),currentTile,totalTiles:timeline.totalTiles,quantumMs:timeline.quantumMs,playing,nextPending:!finished&&advanceTarget!==null,manualDialogue:manual,awaitingAdvance:manual&&!!beat,dialogueFinished:manual&&(skipped||captionIndex>=captions.length),dialogueElapsed:manual?dialogueElapsed:beat?Math.max(0,(currentTile-beat.startTile)*timeline.quantumMs):0,activeClips,activeClipIds:activeClips.map(clip=>clip.id)});
  }
  function seek(tile){
   if(!finite(tile))return false;
-  const next=clamp(tile,0,timeline.totalTiles),changed=next!==currentTile||skipped||advanceTarget!==null;
+  const next=clamp(tile,0,timeline.totalTiles);
+  const nextCaption=manual?next>=timeline.totalTiles?captions.length:Math.max(0,captions.findLastIndex(clip=>clip.startTile<=next)):0;
+  const nextStarted=manual&&next>=captions[0].startTile,nextElapsed=manual&&captions[nextCaption]&&nextStarted?Math.max(0,(next-captions[nextCaption].startTile)*timeline.quantumMs):0;
+  const changed=next!==currentTile||skipped||advanceTarget!==null||manual&&(nextCaption!==captionIndex||nextStarted!==captionStarted||nextElapsed!==dialogueElapsed);
+  if(manual){captionIndex=nextCaption;captionStarted=nextStarted;dialogueElapsed=nextElapsed;}
   currentTile=next;skipped=false;advanceTarget=null;if(isFinished())playing=false;if(changed)cachedSnapshot=null;return changed;
  }
  function pause(){if(!playing)return false;playing=false;cachedSnapshot=null;return true;}
- function play(){if(!timeline.totalTiles)return false;if(isFinished()){currentTile=0;skipped=false;advanceTarget=null;cachedSnapshot=null;}if(playing)return false;playing=true;cachedSnapshot=null;return true;}
+ function play(){if(!timeline.totalTiles)return false;if(isFinished()){currentTile=0;skipped=false;advanceTarget=null;captionIndex=0;captionStarted=manual&&captions[0].startTile===0;dialogueElapsed=0;cachedSnapshot=null;}if(playing)return false;playing=true;cachedSnapshot=null;return true;}
  function update(deltaMs){
   if(!playing||isFinished()||!finite(deltaMs)||deltaMs<=0)return false;
-  currentTile=Math.min(timeline.totalTiles,currentTile+Math.min(100,deltaMs)/timeline.quantumMs);
-  advanceAcrossHolds();
+  const amount=Math.min(100,deltaMs);
+  currentTile=Math.min(timeline.totalTiles,currentTile+amount/timeline.quantumMs);
+  if(manual){
+   if(!captionStarted&&currentTile+.00000001>=captions[0].startTile){captionStarted=true;dialogueElapsed=Math.max(0,(currentTile-captions[0].startTile)*timeline.quantumMs);}
+   else if(manualCaption())dialogueElapsed+=amount;
+  }else advanceAcrossHolds();
   if(isFinished())playing=false;cachedSnapshot=null;return true;
  }
  function next(){
   if(isFinished()||advanceTarget!==null)return false;
+  if(manual){
+   if(!manualCaption())return false;
+   // Acknowledging a line changes only the speaking cursor. Feet and gesture
+   // progress continue from their current frame, including when read quickly.
+   captionIndex++;dialogueElapsed=0;
+   if(isFinished())playing=false;cachedSnapshot=null;return true;
+  }
   const active=timeline.clips.filter(clip=>clip.startTile<=currentTile&&currentTile<clip.endTile);
   const caption=active.filter(clip=>speaks(clip)&&clip.text.trim()).at(-1);
   const nextCaption=timeline.clips.find(clip=>speaks(clip)&&clip.text.trim()&&clip.startTile>currentTile);

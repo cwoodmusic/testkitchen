@@ -15,7 +15,7 @@ import math
 from playwright.sync_api import sync_playwright
 
 ROOT=Path(__file__).resolve().parents[1]
-OUT=ROOT/'work/party-performance-native'
+OUT=ROOT/'work/manual-dialogue-native'
 OUT.mkdir(parents=True,exist_ok=True)
 spec=importlib.util.spec_from_file_location('quiet_bell_ui',ROOT/'tests/rhythm-blocks-browser.py')
 ui=importlib.util.module_from_spec(spec);spec.loader.exec_module(ui)
@@ -34,18 +34,27 @@ def wait_for_story(page):
     page.wait_for_function("window.quietBell?.cutscene?.phase==='story'", polling='raf')
 
 
-def observe(page,duration_ms=7500):
-    return page.evaluate('''duration=>new Promise(resolve=>{
-      const frames=[];let started=performance.now(),previous=started;
-      function sample(now){
-        const state=window.quietBell?.cutscene,camera=window.quietBell?.camera;
-        frames.push({at:now,delta:now-previous,index:state?.index,tile:state?.currentTile,
-          actors:state?.actors?.map(actor=>({id:actor.id,x:actor.x,y:actor.y,moving:actor.moving,gait:actor.gait,gesture:actor.gesture,gestureProgress:actor.gestureProgress,emote:actor.emote})),camera});
-        previous=now;
-        if(now-started<duration)requestAnimationFrame(sample);else resolve(frames);
-      }requestAnimationFrame(sample);
-    })''',duration_ms)
-
+def observe(page,duration_ms=7500,advance=False):
+    """Record native RAF frames while optional real clicks advance manual text."""
+    page.evaluate('''duration=>{
+      window.__nativeObservation=new Promise(resolve=>{
+        const frames=[];let started=performance.now(),previous=started;
+        function sample(now){
+          const state=window.quietBell?.cutscene,camera=window.quietBell?.camera;
+          frames.push({at:now,delta:now-previous,index:state?.index,tile:state?.currentTile,
+            manualDialogue:state?.manualDialogue,dialogueElapsed:state?.dialogueElapsed,
+            actors:state?.actors?.map(actor=>({id:actor.id,x:actor.x,y:actor.y,moving:actor.moving,gait:actor.gait,gesture:actor.gesture,gestureProgress:actor.gestureProgress,emote:actor.emote})),camera});
+          previous=now;
+          if(now-started<duration)requestAnimationFrame(sample);else resolve(frames);
+        }requestAnimationFrame(sample);
+      });
+    }''',duration_ms)
+    if advance:
+        # The first click reveals an unfinished line; the second moves to the
+        # next line. Neither click is allowed to change the physical playhead.
+        page.wait_for_timeout(1800);page.locator('#cutscene-next').click()
+        page.wait_for_timeout(1800);page.locator('#cutscene-next').click()
+    return page.evaluate('window.__nativeObservation')
 
 
 def rendered_motion(page):
@@ -76,7 +85,7 @@ def rendered_motion(page):
     }''')
 
 
-def analyze(frames,speed):
+def analyze(frames,speed,require_transition=True):
     gaps=[frame['delta'] for frame in frames[1:]]
     world_steps=[];camera_steps=[];moving_samples={};transitions=[]
     for previous,current in zip(frames,frames[1:]):
@@ -97,10 +106,40 @@ def analyze(frames,speed):
         if current.get('index')!=previous.get('index'):
             transitions.append({'from':previous.get('index'),'to':current.get('index'),'at':current['at']})
     assert sum(moving_samples.values())>=12, ('Movement needs intermediate rendered positions',moving_samples)
-    assert transitions, 'The observation must include a real speaker handoff.'
+    if require_transition:assert transitions, 'The observation must include a real speaker handoff.'
     return {'frames':len(frames),'p50FrameMs':percentile(gaps,.5),'p95FrameMs':percentile(gaps,.95),
             'maxFrameMs':max(gaps),'maxWorldStep':max(world_steps,default=0),
             'maxCameraStep':max(camera_steps,default=0),'movingSamples':moving_samples,'speakerTransitions':transitions}
+
+
+class NativeAudioBrowser:
+    """Observe genuine oscillators without replacing their sound behavior."""
+    def __init__(self,browser):self.browser=browser
+    def new_context(self,**options):
+        context=self.browser.new_context(**options)
+        context.add_init_script(r'''(()=>{
+          window.__nativeCinematicStarts=[];
+          const Native=window.AudioContext;if(!Native)return;
+          let Wrapper;
+          Wrapper=new Proxy(Native,{construct(target,args,newTarget){
+            const context=Reflect.construct(target,args,newTarget===Wrapper?target:newTarget);
+            const create=context.createOscillator;
+            context.createOscillator=function(...args){
+              const oscillator=create.apply(this,args);let frequency=null;
+              const set=oscillator.frequency.setValueAtTime;
+              oscillator.frequency.setValueAtTime=function(value,time){frequency=value;return set.call(this,value,time);};
+              const start=oscillator.start;
+              oscillator.start=function(when){
+                window.__nativeCinematicStarts.push({at:performance.now(),frequency,when,now:context.currentTime});
+                return start.call(this,when);
+              };
+              return oscillator;
+            };
+            return context;
+          }});
+          window.AudioContext=Wrapper;
+        })();''')
+        return context
 
 
 class PublicBrowser:
@@ -165,7 +204,7 @@ def scenario(browser,url,name,width,height,cpu,reduced='no-preference',preview=F
     assert max(item['error'] for item in visible)<3, ('Rendered sprite is stale or misplaced',visible)
     assert math.hypot(visible[-1]['x']-visible[0]['x'],visible[-1]['y']-visible[0]['y'])>1, visible
     layout_start=dialogue_layout(page)
-    before=metrics(cdp);frames=observe(page);after=metrics(cdp)
+    before=metrics(cdp);frames=observe(page,advance=not preview);after=metrics(cdp)
     clearance=assert_dialogue_clearance(frames,[layout_start,dialogue_layout(page)])
     gestures={}
     for frame in frames:
@@ -187,13 +226,14 @@ def scenario(browser,url,name,width,height,cpu,reduced='no-preference',preview=F
 
 
 def early_next(browser,url):
-    """Clicking Next during a walk queues the text advance without a teleport."""
+    """Manual Next changes the caption immediately while every walk continues."""
     context,page,errors,writes,external=ui.open_page(browser,url,1024,'light',height=768,
         virtual_walk=False,skip_cutscenes=False,reduced_motion='no-preference')
     cdp=context.new_cdp_session(page);cdp.send('Emulation.setCPUThrottlingRate',{'rate':4})
     page.locator('#cutscene-skip').click();page.locator('#menu').click();page.locator('#replay-cutscene').click()
     wait_for_story(page)
     before_resources=ui.resources(ui.state(page));before_journal=page.evaluate('quietBell.journey')
+    assert page.evaluate('quietBell.cutscene.manualDialogue')
     if not page.evaluate('quietBell.cutscene.textComplete'):
         first_index=page.evaluate('quietBell.cutscene.index')
         page.locator('#cutscene-next').click()
@@ -208,26 +248,17 @@ def early_next(browser,url):
     page.locator('#cutscene-next').click()
     click=page.evaluate('window.__nextClick');before,after=click['before'],click['after']
     assert any(actor['moving'] for actor in before['actors']), before
-    assert after['index']==before['index'] and after['nextPending'], click
+    assert after['index']!=before['index'] and not after['nextPending'], click
+    assert after['dialogueElapsed']==0 and after['currentTile']==before['currentTile'], click
     for actor in after['actors']:
         old=next(item for item in before['actors'] if item['id']==actor['id'])
         assert math.hypot(actor['x']-old['x'],actor['y']-old['y'])<.001, click
-    assert page.locator('#cutscene-next').is_disabled()
-    frames=page.evaluate('''index=>new Promise(resolve=>{
-      const frames=[];let started=performance.now(),previous=started;
-      function sample(now){
-        const state=window.quietBell?.cutscene;
-        frames.push({at:now,delta:now-previous,index:state?.index,tile:state?.currentTile,
-          nextPending:state?.nextPending,actors:state?.actors?.map(actor=>({id:actor.id,x:actor.x,y:actor.y,moving:actor.moving,gait:actor.gait,gesture:actor.gesture,gestureProgress:actor.gestureProgress,emote:actor.emote})),camera:window.quietBell?.camera});
-        previous=now;
-        if(state&&state.index>index&&!state.nextPending||now-started>10000)resolve(frames);
-        else requestAnimationFrame(sample);
-      }requestAnimationFrame(sample);
-    })''',before['index'])
-    assert frames[-1]['index']>before['index'] and not frames[-1]['nextPending'], frames[-1]
+    assert page.locator('#cutscene-next').is_enabled()
+    frames=observe(page,advance=True)
     result={'name':'native-early-next-cpu4','releaseBase':page.evaluate('document.baseURI'),
-            'firstClickRevealsText':True,'nextQueuedWithoutTeleport':True,
-            **assert_dialogue_clearance(frames,[layout_start,dialogue_layout(page)]),**analyze(frames,page.evaluate('quietBell.scene.geometry.speed*(quietBell.cutscene?.playbackRate??1)'))}
+            'firstClickRevealsText':True,'nextImmediatelyChangesCaptionWithoutTeleport':True,
+            **assert_dialogue_clearance(frames,[layout_start,dialogue_layout(page)]),
+            **analyze(frames,page.evaluate('quietBell.scene.geometry.speed*(quietBell.cutscene?.playbackRate??1)'))}
     assert ui.resources(ui.state(page))==before_resources
     assert page.evaluate('quietBell.journey')==before_journal
     page.locator('#cutscene-skip').click();ui.protected_storage(page)
@@ -323,8 +354,8 @@ def native_entry(browser,url):
 
 
 def native_party_performance(browser,url):
-    """Watch simultaneous acting with the real RAF clock on a slower CPU."""
-    context,page,errors,writes,external=ui.open_page(browser,url,1024,'light',height=768,
+    """Hold a caption while acting finishes, then speak past the physical clock."""
+    context,page,errors,writes,external=ui.open_page(NativeAudioBrowser(browser),url,1024,'light',height=768,
         virtual_walk=False,skip_cutscenes=False,reduced_motion='no-preference')
     page.evaluate('document.fonts.ready')
     cdp=context.new_cdp_session(page);cdp.send('Performance.enable')
@@ -336,9 +367,7 @@ def native_party_performance(browser,url):
     speed=page.evaluate('quietBell.scene.geometry.speed*(quietBell.cutscene?.playbackRate??1)')
     before=metrics(cdp)
     frames=page.evaluate('''()=>new Promise(resolve=>{
-      const beats=quietBell.project.content[quietBell.state.roomId].cutscene;
-      const stopTile=Math.max(...beats.filter(clip=>clip.kind==='gesture').map(clip=>clip.startTile+clip.durationTiles))+2;
-      const frames=[];let started=performance.now(),previous=started;
+      const frames=[];let started=performance.now(),previous=started,physicalEndFrames=0;
       function sample(now){
         const state=window.quietBell?.cutscene,scene=window.quietBell?.scene;
         const map=document.getElementById('room-map').getBoundingClientRect();
@@ -347,7 +376,9 @@ def native_party_performance(browser,url):
         const propStyle=prop?getComputedStyle(prop):null,propRect=prop?.getBoundingClientRect();
         const iris=state?.actors.find(actor=>actor.id==='iris');
         frames.push({at:now,delta:now-previous,index:state?.index,tile:state?.currentTile,
-          elapsed:state?.elapsed,camera:quietBell.camera,
+          elapsed:state?.elapsed,manualDialogue:state?.manualDialogue,dialogueElapsed:state?.dialogueElapsed,
+          text:document.getElementById('cutscene-line').textContent,textComplete:state?.textComplete,
+          camera:quietBell.camera,
           magnifier:prop?{visible:!prop.hidden&&propStyle.display!=='none'&&Number(propStyle.opacity)>.01,
             opacity:Number(propStyle.opacity),width:propRect.width,height:propRect.height,
             handDistance:iris?Math.hypot(propRect.x+propRect.width/2-(map.x+iris.x*scale),propRect.y+propRect.height/2-(map.y+iris.y*scale))/scale:null}:null,
@@ -361,12 +392,19 @@ def native_party_performance(browser,url):
               renderedRotation:transform?Math.atan2(transform.b,transform.a)*180/Math.PI:0};
           })});
         previous=now;
-        if(!state||state.currentTile>=stopTile||now-started>20000)resolve(frames);else requestAnimationFrame(sample);
+        if(state?.currentTile>=state?.totalTiles)physicalEndFrames++;
+        if(!state||physicalEndFrames>=3||now-started>40000)resolve(frames);else requestAnimationFrame(sample);
       }requestAnimationFrame(sample);
     })''')
     after=metrics(cdp)
     (OUT/'native-party-cpu4-frames.json').write_text(json.dumps(frames)+'\n')
     assert len(frames)>=30 and all(frame.get('actors') for frame in frames), 'Performance ended before its expressive actions.'
+    held_duration=frames[-1]['at']-frames[0]['at']
+    assert held_duration>=15000, ('The caption must survive a real15second read.',held_duration)
+    assert all(frame['manualDialogue'] and frame['index']==frames[0]['index'] for frame in frames), 'Caption advanced without a click.'
+    readable=[frame for frame in frames if frame['at']-frames[0]['at']>6000]
+    assert readable and all(frame['textComplete'] and frame['text']==readable[0]['text'] for frame in readable), 'The fully revealed line was replaced or changed while reading.'
+    assert page.evaluate('quietBell.cutscene.currentTile>=quietBell.cutscene.totalTiles&&!quietBell.cutscene.finished')
     simultaneous=[frame for frame in frames if sum(actor['moving'] for actor in frame['actors'] if actor['id']!='mira')>=3]
     assert len(simultaneous)>=3, 'The companions must investigate at the same time.'
     reactions=[frame for frame in frames if sum(bool(actor.get('emote')) for actor in frame['actors'])>=2]
@@ -397,10 +435,32 @@ def native_party_performance(browser,url):
     assert ui.resources(ui.state(page))==before_resources
     assert page.evaluate('quietBell.journey')==before_journal
     assert page.evaluate('(key)=>localStorage.getItem(key)',ui.SAVE_KEY)==before_save, 'Acting changed the saved run.'
+    # The physical RAF clock is now parked. A real Continue click starts the
+    # next typewriter line and its real character voice without moving anyone.
+    settled=page.evaluate('quietBell.cutscene')
+    audio_before=page.evaluate('window.__nativeCinematicStarts.length')
+    page.locator('#cutscene-next').click()
+    clicked=page.evaluate('quietBell.cutscene')
+    assert clicked['index']!=settled['index'] and clicked['currentTile']==settled['currentTile']
+    assert clicked['dialogueElapsed']<300, clicked
+    for actor in clicked['actors']:
+        old=next(item for item in settled['actors'] if item['id']==actor['id'])
+        assert math.hypot(actor['x']-old['x'],actor['y']-old['y'])<.001
+    page.wait_for_function('count=>window.__nativeCinematicStarts.length>count',arg=audio_before)
+    page.wait_for_timeout(350)
+    speaking=page.evaluate('quietBell.cutscene')
+    assert speaking['currentTile']==settled['currentTile'] and speaking['dialogueElapsed']>clicked['dialogueElapsed']
+    assert speaking['visibleCharacters']>clicked['visibleCharacters']
+    new_voices=page.evaluate('count=>window.__nativeCinematicStarts.slice(count)',audio_before)
+    assert any(430<=voice['frequency']<=460 for voice in new_voices), ('Pip needs actual new bloops after the physical clock stopped.',new_voices)
+    assert ui.resources(ui.state(page))==before_resources and page.evaluate('quietBell.journey')==before_journal
+    assert page.evaluate('(key)=>localStorage.getItem(key)',ui.SAVE_KEY)==before_save
     result={'name':'native-party-cpu4','releaseBase':page.evaluate('document.baseURI'),'cpuThrottle':4,
             'concurrentMovingFrames':len(simultaneous),'concurrentEmoteFrames':len(reactions),
             'pipRunFrames':len(running),'pipGestureOrder':gesture_order,'heldMagnifierFrames':len(magnifying),
-            'saveAndResourcesPreserved':True,**analyze(frames,speed),
+            'saveAndResourcesPreserved':True,'heldCaptionMilliseconds':held_duration,
+            'captionHoldsUntilClick':True,'dialogueAndVoicesContinueAfterPhysicalEnd':True,
+            'voicesAfterPhysicalEnd':len(new_voices),**analyze(frames,speed,require_transition=False),
             'browserWork':{key:after[key]-before[key] for key in ['LayoutCount','LayoutDuration','RecalcStyleCount','RecalcStyleDuration','ScriptDuration','TaskDuration'] if key in before and key in after}}
     ui.skip_cutscene(page);ui.protected_storage(page)
     assert not errors and not writes and not external,(errors,writes,external)

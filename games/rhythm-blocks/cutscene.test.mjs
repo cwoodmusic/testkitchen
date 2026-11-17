@@ -460,3 +460,97 @@ test('legacy run migration keeps gait only on its walk and preserves existing ge
  for(let tile=0;tile<=legacy.state.totalTiles;tile+=.25){legacy.seek(tile);typed.seek(tile);assert.deepEqual(typed.state.actors,legacy.state.actors);assert.equal(typed.state.beat?.text,legacy.state.beat?.text);}
  assert.equal(JSON.stringify(source),before);
 });
+
+test('manual dialogue keeps every unread line beyond the authored duration and completed physical clock',()=>{
+ const room=scene(),beats=[
+  walk({target:undefined,destination:{x:140,y:90},durationTiles:1}),
+  dialogue({id:'first',text:'A long observation. '.repeat(30),startTile:0,durationTiles:1}),
+  dialogue({id:'second',text:'The next thought.',startTile:40,durationTiles:1}),
+  dialogue({id:'third',text:'And the final reply.',startTile:80,durationTiles:1}),
+ ],timeline=createRoomCutscene({scene:room,beats,manualDialogue:true});
+ for(let count=0;count<1000;count++)timeline.update(100);
+ assert.equal(timeline.state.currentTile,timeline.state.totalTiles);
+ assert.equal(timeline.state.beat.id,'first','Reading time cannot silently consume a later line.');
+ assert.equal(timeline.state.dialogueElapsed,100000);assert(timeline.state.awaitingAdvance);assert(!timeline.state.finished);
+ assert.equal(timeline.state.manualDialogue,true);assert.equal(timeline.state.dialogueFinished,false);
+ assert.equal(timeline.state.activeClips.find(clip=>clip.kind==='dialogue').id,'first');
+ const feet=timeline.state.actors.map(({id,x,y})=>({id,x,y}));
+ assert(timeline.next());assert.equal(timeline.state.beat.id,'second');assert.equal(timeline.state.dialogueElapsed,0);
+ assert.deepEqual(timeline.state.actors.map(({id,x,y})=>({id,x,y})),feet,'Next only advances speaking.');
+ timeline.update(100);timeline.update(100);assert.equal(timeline.state.dialogueElapsed,200,'Bloops and typewriter can continue after all movement has completed.');
+ assert(timeline.next());assert.equal(timeline.state.beat.id,'third');assert.equal(timeline.state.dialogueElapsed,0);
+ assert(timeline.next());assert(timeline.state.finished);assert(timeline.state.dialogueFinished);assert.equal(timeline.state.playing,false);
+ assert(!timeline.next());assert.equal(timeline.state.beat,null);assert(!timeline.state.awaitingAdvance);
+});
+
+test('fast manual acknowledgements preserve every run and tumble frame without waiting for text or held-lens tails',()=>{
+ const room=scene(),beats=[
+  walk({target:undefined,destination:{x:140,y:90},gait:'run',startTile:0,durationTiles:2}),
+  gesture({id:'trip',gesture:'trip',startTile:2,durationTiles:3}),
+  gesture({id:'fallen',gesture:'fallen',startTile:5,durationTiles:4}),
+  gesture({id:'recover',gesture:'recover',startTile:9,durationTiles:4}),
+  gesture({id:'lens',actor:'iris',gesture:'magnify',startTile:0,durationTiles:1000}),
+  emote({startTile:0,durationTiles:1000}),
+  ...['a','b','c'].map((id,index)=>dialogue({id,text:`Thought ${id}.`,startTile:index*100,durationTiles:100})),
+ ],timeline=createRoomCutscene({scene:room,beats,manualDialogue:true});
+ const before=timeline.state.actors;
+ for(const id of ['a','b','c']){assert.equal(timeline.state.beat.id,id);assert(timeline.next());assert.equal(timeline.state.currentTile,0);assert.deepEqual(timeline.state.actors,before);}
+ assert(!timeline.state.finished);assert(timeline.state.dialogueFinished);assert.equal(timeline.state.beat,null);assert(!timeline.next());
+ const seen=new Map();let frames=0,previous=at(timeline,'nell');
+ while(!timeline.state.finished&&frames++<500){
+  timeline.update(16);const current=at(timeline,'nell');assert(distance(previous,current)<=room.geometry.speed*2*.016+.000001);
+  if(current.gesture){const samples=seen.get(current.gesture)??[];samples.push(current.gestureProgress);seen.set(current.gesture,samples);}
+  previous=current;
+ }
+ assert(frames<500);assert.deepEqual([...seen.keys()],['trip','fallen','recover']);
+ for(const samples of seen.values())assert(samples.length>15&&samples[0]<.06&&samples.at(-1)>.94,'Each tumble phase completes continuously.');
+ assert(timeline.state.currentTile>=13&&timeline.state.currentTile<14,'Physical completion ignores long authored reading and magnifier holds.');
+ assert.equal(timeline.state.totalTiles,1000);assert(timeline.state.actors.every(actor=>!actor.moving&&!actor.gesture&&!actor.emote));
+});
+
+test('manual dialogue has immediate successive lines but respects the initial staged entrance delay',()=>{
+ const beats=[dialogue({id:'a',startTile:8,durationTiles:1}),dialogue({id:'b',startTile:200,durationTiles:1})];
+ const timeline=createRoomCutscene({scene:scene(),beats,manualDialogue:true});
+ assert.equal(timeline.state.beat,null);assert(!timeline.next());assert.equal(timeline.state.dialogueElapsed,0);
+ for(let i=0;i<10;i++)timeline.update(100);
+ assert.equal(timeline.state.beat.id,'a');near(timeline.state.dialogueElapsed,0);
+ assert(timeline.next());assert.equal(timeline.state.beat.id,'b');assert.equal(timeline.state.dialogueElapsed,0);
+ assert(timeline.next());assert(timeline.state.finished,'There is no empty wait for an authored dialogue-only interval.');
+});
+
+test('manual pause, deterministic seek, Skip and replay control both clocks safely',()=>{
+ const beats=[dialogue({id:'a',startTile:0,durationTiles:10}),dialogue({id:'b',startTile:10,durationTiles:10})];
+ const timeline=createRoomCutscene({scene:scene(),beats,manualDialogue:true});
+ timeline.update(100);timeline.next();timeline.update(50);timeline.pause();const paused=timeline.state;
+ assert.equal(paused.beat.id,'b');assert.equal(paused.dialogueElapsed,50);assert(!timeline.update(100));assert.equal(timeline.state,paused);
+ assert(timeline.play());timeline.update(100);assert.equal(timeline.state.dialogueElapsed,150);
+ timeline.seek(12);const expected=timeline.state;assert.equal(expected.beat.id,'b');near(expected.dialogueElapsed,250);
+ timeline.seek(0);assert.equal(timeline.state.beat.id,'a');assert.equal(timeline.state.dialogueElapsed,0);timeline.seek(12);assert.deepEqual(timeline.state,expected);
+ assert(timeline.skip());assert(timeline.state.finished);assert.equal(timeline.state.beat,null);assert(timeline.state.dialogueFinished);
+ assert(timeline.play());assert.equal(timeline.state.beat.id,'a');assert.equal(timeline.state.currentTile,0);assert.equal(timeline.state.dialogueElapsed,0);
+ timeline.seek(timeline.state.totalTiles);assert(timeline.state.finished);assert(!timeline.state.playing);
+ assert(timeline.play());assert.equal(timeline.state.beat.id,'a');assert(Object.isFrozen(timeline.state));assert(Object.isFrozen(timeline.state.activeClips));
+});
+
+test('manual caption mode leaves silent performances and automatic director timing intact',()=>{
+ const room=scene(),beats=[dialogue({id:'a',startTile:0,durationTiles:2}),dialogue({id:'b',startTile:2,durationTiles:2})];
+ const automatic=createRoomCutscene({scene:room,beats}),manual=createRoomCutscene({scene:room,beats,manualDialogue:true});
+ for(let i=0;i<3;i++){automatic.update(100);manual.update(100);}
+ assert.equal(automatic.state.beat.id,'b');assert.equal(automatic.state.manualDialogue,false);assert.equal(manual.state.beat.id,'a');
+ automatic.update(100);automatic.update(100);assert(automatic.state.finished);assert(!manual.state.finished);
+ const silent=createRoomCutscene({scene:room,beats:[gesture({startTile:0,durationTiles:4})],manualDialogue:true});
+ assert.equal(silent.state.manualDialogue,false);for(let i=0;i<5;i++)silent.update(100);assert(silent.state.finished,'A silent authored scene still uses its full timeline.');
+});
+
+test('every shipped manual scene delivers every line and retains the same final feet as its authored performance',()=>{
+ for(const [id,beats]of Object.entries(ROOM_CUTSCENES)){
+  const room=CAMPAIGN_SCENES[id],timeline=createRoomCutscene({scene:room,beats,manualDialogue:true});
+  const lines=timeline.timeline.clips.filter(clip=>clip.kind==='dialogue'&&clip.text.trim()),seen=[];
+  for(const line of lines){seen.push(timeline.state.beat.id);assert.equal(timeline.state.beat.id,line.id);assert(timeline.next());}
+  assert.equal(new Set(seen).size,lines.length,`${id} does not replace or repeat a line.`);
+  let frames=0;while(!timeline.state.finished&&frames++<1000)timeline.update(50);
+  assert(frames<1000,`${id} completes after its actual acting, without waiting for authored reading gaps.`);
+  const automatic=createRoomCutscene({scene:room,beats});automatic.seek(automatic.state.totalTiles);
+  assert.deepEqual(timeline.state.actors,automatic.state.actors,`${id} keeps identical safe final cast positions and facings.`);
+ }
+});

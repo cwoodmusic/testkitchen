@@ -77,6 +77,24 @@ const glyph=(track,state,count,audible=true)=>track.sample(state,{visibleCharact
  track.destroy();glyph(track,state(2,'fallen'),0);assert.equal(context.oscillators.length,2);
  });
 
+ test('manual speech keeps its voice after physical motion finishes, without replaying control reveals or paused text',async t=>{
+ const contexts=fakeAudio(t),audio=createCinematicAudio();await audio.unlock();const context=contexts[0],track=audio.createTrack();
+ const held=(dialogueElapsed,patch={})=>caption({manualDialogue:true,currentTile:20,dialogueElapsed,...patch});
+ glyph(track,held(0),0,false);glyph(track,held(32),1);assert.equal(context.oscillators.length,1,'A live dialogue clock can reveal letters at unchanged feet.');
+ context.currentTime+=.1;glyph(track,held(64),3);assert.equal(context.oscillators.length,1,'Punctuation and blanks remain silent.');
+ glyph(track,held(96),4);assert.equal(context.oscillators.length,2);
+ context.currentTime+=.1;glyph(track,held(96),7,false);glyph(track,held(128),7);assert.equal(context.oscillators.length,2,'Click-to-reveal does not catch up later.');
+ glyph(track,held(0),0,false);glyph(track,held(32,{playing:false}),1);assert.equal(context.oscillators.length,2,'Pausing also silences the independent clock.');
+ glyph(track,held(5000),7);assert.equal(context.oscillators.length,2,'A long seek does not become a burst of letters.');
+ });
+
+ test('advancing only a held caption cannot retrigger a physical impact',async t=>{
+ const contexts=fakeAudio(t),audio=createCinematicAudio();await audio.unlock();const context=contexts[0],track=audio.createTrack();
+ const held=dialogueElapsed=>caption({manualDialogue:true,currentTile:20,dialogueElapsed,beat:null,actors:[{id:'pip',gesture:'fallen'}],activeClips:[{id:'landing',kind:'gesture',actor:'pip',gesture:'fallen'}]});
+ glyph(track,held(0),0,false);for(let age=32;age<200;age+=32){context.currentTime+=.1;glyph(track,held(age),0);}
+ assert.equal(context.oscillators.length,0,'Impact sounds follow physical crossings, not a reader waiting.');
+ });
+
  test('mute, suspension and disposal stop all short voices and allow quiet clean resumption',async t=>{
  const contexts=fakeAudio(t),audio=createCinematicAudio();await audio.unlock();const context=contexts[0];
  audio.bloop('pip');audio.knock('trip');audio.setEnabled(false);assert(context.oscillators.every(osc=>osc.stops.at(-1)===undefined));

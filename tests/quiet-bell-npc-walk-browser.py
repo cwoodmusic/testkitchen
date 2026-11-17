@@ -216,6 +216,7 @@ def flow(browser,url,width,reduced,expected):
     if width>=500 and not reduced:
         # Apply is an ordinary user action, with its own isolated run and saves.
         page.locator('#developer-apply').click();page.locator('#developer-console').wait_for(state='hidden')
+        cs.wait_for_story(page)
         tick(page,620)
         assert ui.state(page)['developerMode'] and ui.state(page)['roomId']=='canal-porch'
         page.evaluate('''()=>document.getElementById('cutscene-skip').addEventListener('click',()=>{
@@ -231,8 +232,11 @@ def flow(browser,url,width,reduced,expected):
         page.evaluate('''()=>document.addEventListener('quietbellcutscene',event=>{
           if(event.detail.finished&&!event.detail.preview)window.__npcFinished=event.detail.actors;
         })''')
+        cs.wait_for_story(page)
         state = page.evaluate('quietBell.cutscene')
         tick(page,math.ceil(state['totalTiles']*state['quantumMs'])+1000)
+        assert page.evaluate('quietBell.cutscene.manualDialogue'), 'The reader keeps the line after the physical performance ends.'
+        cs.advance_to_finish(page)
         page.wait_for_function('!quietBell.cutscene')
         finished = page.evaluate('window.__npcFinished')
         assert finished and all(a['facing']=='down' for a in finished if a['id'] in ACTORS), finished

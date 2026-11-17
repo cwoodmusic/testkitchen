@@ -176,7 +176,7 @@ def normal_flow(browser,url,expected,width=1024,reduced=False):
     quantum=current(page)['quantumMs']
     total=current(page)['totalTiles']
     overlap=0;emotes=0;seen=set();frames=[];saved_shots=set();run_frames=set();magnifier_seen=False;angles={};lens_on_screen=False
-    for _ in range(math.ceil(total*quantum/50)+10):
+    for _ in range(math.ceil(max(total*quantum,90000)/50)+10):
         value=current(page)
         if not value:break
         assert value['phase']=='story'
@@ -209,8 +209,10 @@ def normal_flow(browser,url,expected,width=1024,reduced=False):
                 capture_paused(page,OUT/f'normal-{width}-{reduced}-glass.png');saved_shots.add('glass')
         if value.get('beat') and not reduced:
             paths.assert_dialogue_clear_of_cast(page,minimum=1)
+        if value.get('manualDialogue') and value.get('beat') and value.get('textComplete') and page.locator('#cutscene-next').is_enabled():
+            page.locator('#cutscene-next').click()
         tick(page,50)
-    assert not current(page),'The room opening should conclude without a stuck performance.'
+    assert not current(page),'Every completed line was acknowledged and the performance should finish safely.'
     rendered_trace=page.evaluate('window.__partyFrameTrace')
     (OUT/f'normal-{width}-{reduced}-frames.json').write_text(json.dumps(rendered_trace)+'\n')
     for rendered in rendered_trace:

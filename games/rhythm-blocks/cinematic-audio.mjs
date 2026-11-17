@@ -48,14 +48,16 @@ export function createCinematicAudio({enabled=true}={}){
    const pip=state.actors?.find(actor=>actor.id==='pip'),gesture=pip?.gesture;
    const clip=state.activeClips?.find(clip=>clip.kind==='gesture'&&clip.actor==='pip'&&clip.gesture===gesture);
    const gestureId=clip?.id??(gesture?`${gesture}`:'');
-   const advancing=!!previous&&state.phase==='story'&&previous.phase==='story'&&state.currentTile>previous.tile&&state.currentTile-previous.tile<=4;
-   if(audible&&state.playing&&!state.finished&&advancing){
+   const story=!!previous&&state.phase==='story'&&previous.phase==='story';
+   const movementAdvancing=story&&state.currentTile>previous.tile&&state.currentTile-previous.tile<=4;
+   const dialogueAdvancing=story&&!changed&&state.manualDialogue&&Number.isFinite(state.dialogueElapsed)&&Number.isFinite(previous.dialogueElapsed)&&state.dialogueElapsed>previous.dialogueElapsed&&state.dialogueElapsed-previous.dialogueElapsed<=300;
+   if(audible&&state.playing&&!state.finished&&(movementAdvancing||dialogueAdvancing)){
     const first=changed?0:previous.visible;
     // One short voice at most per paint; a stalled frame never replays a queue.
     if(count>first&&count-first<=8&&characters.slice(first,count).some(spoken))bloop(beat?.speaker??beat?.actor);
-    if((gesture==='trip'||gesture==='fallen')&&gestureId!==previous.gestureId)knock(gesture);
+    if(movementAdvancing&&(gesture==='trip'||gesture==='fallen')&&gestureId!==previous.gestureId)knock(gesture);
    }
-   previous={phase:state.phase,tile:state.currentTile,visible:count,gestureId};
+   previous={phase:state.phase,tile:state.currentTile,visible:count,gestureId,dialogueElapsed:state.dialogueElapsed};
   }
   return Object.freeze({sample,stop,destroy(){if(disposed)return;disposed=true;previous=null;stop();}});
  }

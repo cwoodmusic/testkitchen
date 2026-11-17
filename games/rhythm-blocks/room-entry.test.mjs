@@ -1,6 +1,7 @@
 import test from 'node:test';
 import assert from 'node:assert/strict';
 import {CAMPAIGN_SCENES} from './campaign-scenes.mjs';
+import {ROOM_CUTSCENES} from './cutscene-content.mjs';
 import {createRoomCutscene} from './cutscene.mjs';
 import {compileRoomEntry,createRoomEntry} from './room-entry.mjs';
 import {isWalkable} from './room.mjs';
@@ -10,6 +11,7 @@ const near=(actual,expected)=>assert(Math.abs(actual-expected)<EPS,`${actual} di
 const distance=(a,b)=>Math.hypot(a.x-b.x,a.y-b.y);
 const actor=(state,id)=>state.actors.find(item=>item.id===id);
 const point=value=>({x:value.x,y:value.y});
+const heading=(from,to)=>Math.abs(to.x-from.x)>=Math.abs(to.y-from.y)?to.x>from.x?'right':'left':to.y>from.y?'down':'up';
 function physicalRoom(scene){return{...scene.geometry,obstacles:scene.geometry.obstacles.filter(item=>!['mira','nell','iris','pip'].includes(item.id))};}
 
 test('all 23 arrivals file through the south doorway before reaching their existing room positions',()=>{
@@ -72,8 +74,50 @@ test('resident Oren stays inside while the travelling party enters',()=>{
  const expected=point(original.feet);
  assert(!entry.timeline.clips.some(clip=>clip.actor==='oren'));
  for(const tile of [0,1,4,12,20,entry.timeline.totalTiles]){
-  entry.seek(tile);const oren=actor(entry.state,'oren');assert.deepEqual(point(oren),expected);assert.equal(oren.moving,false);assert.equal(oren.emote,null);
+  entry.seek(tile);const oren=actor(entry.state,'oren');assert.deepEqual(point(oren),expected);assert.equal(oren.moving,false);assert.equal(oren.emote,null);assert.equal(oren.facing,original.facing??'down');
  }
+});
+
+test('all 23 entrances keep the last walking heading through landing and the story handoff',()=>{
+ let landings=0;
+ for(const scene of Object.values(CAMPAIGN_SCENES)){
+  const entry=createRoomEntry({scene}),quantum=entry.timeline.quantumMs;
+  for(const clip of entry.timeline.clips){
+   const finishTile=clip.startTile+clip.pathLength/scene.geometry.gridSize;
+   entry.seek(finishTile-.001);const walking=actor(entry.state,clip.actor);
+   assert(walking.moving,`${scene.id}/${clip.actor} is still approaching its station`);
+   entry.seek(finishTile+.001);const landed=actor(entry.state,clip.actor);
+   assert(!landed.moving);near(landed.x,clip.to.x);near(landed.y,clip.to.y);
+   assert.equal(landed.facing,walking.facing,`${scene.id}/${clip.actor} must not turn to a portrait pose on landing`);
+   assert.equal(actor({actors:entry.timeline.endActors},clip.actor).facing,walking.facing);
+   landings++;
+  }
+  // Sample the final 20 real-size frames, including the last companion's
+  // landing. Waiting companions keep their heading instead of turning south.
+  entry.seek(entry.timeline.totalTiles-20*16/quantum);entry.play();
+  let previous=entry.state;
+  for(let frame=0;frame<21;frame++){
+   entry.update(16);const current=entry.state;
+   for(const pose of current.actors){
+    const prior=actor(previous,pose.id),step=distance(prior,pose);
+    assert(step<=scene.geometry.speed*.016+EPS,`${scene.id}/${pose.id} cannot jump during the handoff`);
+    if(step>EPS&&(Math.abs(prior.x-pose.x)<EPS||Math.abs(prior.y-pose.y)<EPS))assert.equal(pose.facing,heading(prior,pose));
+    else if(step<=EPS)assert.equal(pose.facing,prior.facing);
+   }
+   previous=current;
+  }
+  assert(entry.state.finished);
+  assert(entry.state.actors.filter(pose=>['nell','iris','pip'].includes(pose.id)).some(pose=>pose.facing!=='down'),`${scene.id} has no artificial all-south formation`);
+  const story=createRoomCutscene({scene,actors:entry.timeline.endActors,beats:ROOM_CUTSCENES[scene.id]});
+  for(const pose of story.timeline.actors){
+   const arrived=actor(entry.state,pose.id);near(pose.x,arrived.x);near(pose.y,arrived.y);assert.equal(pose.facing,arrived.facing);
+  }
+  for(const pose of story.state.actors){
+   const arrived=actor(entry.state,pose.id);near(pose.x,arrived.x);near(pose.y,arrived.y);
+   if(!pose.moving)assert.equal(pose.facing,arrived.facing,`${scene.id}/${pose.id} retains its arrival direction until the next walk`);
+  }
+ }
+ assert.equal(landings,92);
 });
 
 test('pause, seek, replay and Skip are stable and never expose an unsafe ending',()=>{
@@ -120,9 +164,12 @@ test('valid off-grid player positions and altered actor feet survive the entry h
  const scene=clone(CAMPAIGN_SCENES.depot);scene.actors.find(actor=>actor.id==='pip').feet={x:1107.5,y:706.75};
  const playerPosition={id:'not-the-player',x:810.25,y:897.5,facing:'left'},entry=createRoomEntry({scene,playerPosition});
  assert.deepEqual(point(actor({actors:entry.timeline.endActors},'mira')),point(playerPosition));
- assert.equal(actor({actors:entry.timeline.endActors},'mira').facing,'left');assert.equal(entry.timeline.endActors.filter(actor=>actor.id==='mira').length,1);
+ const miraClip=entry.timeline.clips.find(clip=>clip.actor==='mira');
+ assert.equal(actor({actors:entry.timeline.endActors},'mira').facing,heading(miraClip.path.at(-2),miraClip.path.at(-1)));assert.equal(entry.timeline.endActors.filter(actor=>actor.id==='mira').length,1);
  assert.deepEqual(point(actor({actors:entry.timeline.endActors},'pip')),scene.actors.find(actor=>actor.id==='pip').feet);
  for(const clip of entry.timeline.clips)assert(clip.path.every((vertex,index)=>!index||Math.abs(vertex.x-clip.path[index-1].x)<EPS||Math.abs(vertex.y-clip.path[index-1].y)<EPS));
+ scene.entry={enabled:false};const disabled=createRoomEntry({scene,playerPosition});
+ assert.equal(actor({actors:disabled.timeline.endActors},'mira').facing,'left','A disabled arrival still keeps the saved facing.');
 });
 
 test('a tiny custom floor that cannot fit a new party formation retains its existing arrangement instead of throwing',()=>{
