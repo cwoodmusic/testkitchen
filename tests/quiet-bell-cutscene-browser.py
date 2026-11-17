@@ -44,6 +44,14 @@ def tick(page, duration=100):
         page.wait_for_timeout(duration)
 
 
+def select_timeline_mode(page, touch=False):
+    """Timeline regressions choose the physical-track editor explicitly."""
+    toggle = page.locator('#developer-cutscene-mode-timeline')
+    if toggle.count() and toggle.get_attribute('aria-pressed') != 'true':
+        getattr(toggle, 'tap' if touch else 'click')()
+        tick(page, 80)
+
+
 def wait_for_story(page):
     """Let the doorway performance finish before checking authored story clips.
 
@@ -262,6 +270,7 @@ def selected_clip(page):
 
 
 def select_track_clip(page, identifier, kind):
+    select_timeline_mode(page)
     clip = page.locator('[data-cutscene-actor="' + identifier + '"] .cse-clip[data-cutscene-kind="' + kind + '"]').first
     clip.scroll_into_view_if_needed();clip.click();tick(page, 50)
     assert selected_clip(page).get_attribute('data-cutscene-kind') == kind
@@ -292,6 +301,7 @@ def timeline_flow(browser, url, expected=None):
     page.locator('[data-dev-tab="rooms"]').click();tick(page, 50)
     assert page.locator('#developer-cutscene-timeline').is_visible(), 'The existing Room shortcut remains available.'
     page.locator('[data-dev-tab="cutscene"]').click();tick(page, 100)
+    select_timeline_mode(page)
     timeline = page.locator('#developer-cutscene-timeline')
     assert timeline.is_visible() and page.locator('.cse-clip').count() >= 12
     quantum = float(timeline.get_attribute('data-quantum-ms'))
@@ -374,6 +384,7 @@ def timeline_flow(browser, url, expected=None):
     checked = []
     for room in locations:
         page.locator('[data-dev-room="' + room + '"]').click();tick(page, 80)
+        select_timeline_mode(page)
         page.locator('#developer-cutscene-play').click();tick(page, 250)
         value = cutscene(page)
         assert value and value['preview'], (room, value)
@@ -437,6 +448,7 @@ def phone_flow(browser, url, width, height, reduced=False, expected=None):
     assert not live_cutscene(page) and conserved(page) == original
     page.keyboard.press('F2');page.locator('#developer-console').wait_for(state='visible')
     page.locator('[data-dev-tab="cutscene"]').tap();tick(page, 100)
+    select_timeline_mode(page, True)
     assert page.locator('#developer-cutscene-timeline').is_visible()
     assert page.locator('#developer-cutscene-scrub').get_attribute('step') == '1'
     page.locator('#developer-expand').tap()

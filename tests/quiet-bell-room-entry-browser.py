@@ -312,6 +312,7 @@ def director_flow(browser,url,expected):
     context,page,errors,writes,external = ui.open_page(browser,url,1024,'light',height=768)
     base = paths.validate_release(page,expected);saved = cs.normal_storage(page);original = paths.resources(page)
     page.keyboard.press('F2');page.locator('[data-dev-tab="cutscene"]').click();tick(page,50)
+    cs.select_timeline_mode(page)
     baseline = tracks.export_project(page,'entry-baseline')
     open_entry_settings(page)
     assert page.locator('#developer-room-entry-gait [data-cutscene-choice="run"]').get_attribute('aria-pressed')=='true'
@@ -390,6 +391,7 @@ def director_flow(browser,url,expected):
     page.locator('#developer-end').click();tick(page,30)
     assert cs.normal_storage(page)==saved and paths.resources(page)==original
     page.keyboard.press('F2');page.locator('[data-dev-tab="cutscene"]').click();tick(page,30)
+    cs.select_timeline_mode(page)
     # A room with no story still receives a real party arrival. Its resident
     # stays inside rather than joining the travelling party at the doorway.
     empty=copy.deepcopy(baseline);empty['settings']['startRoomId']='canal-porch'
@@ -417,6 +419,7 @@ def director_flow(browser,url,expected):
     assert cs.normal_storage(page)==saved and paths.resources(page)==original
     # Outcome locations also stage an entry before their discussion.
     page.keyboard.press('F2');page.locator('[data-dev-tab="cutscene"]').click();tick(page,30)
+    cs.select_timeline_mode(page)
     ending=copy.deepcopy(baseline);ending['settings']['startRoomId']='ending-home'
     tracks.import_project(page,ending,'ending-entry')
     page.locator('[data-dev-room="ending-home"]').click();tick(page,30)

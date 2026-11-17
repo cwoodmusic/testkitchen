@@ -132,6 +132,7 @@ def flow(browser,url,expected,width=1024,reduced=False):
     base=paths.validate_release(page,expected);original=cs.normal_storage(page);resources=cs.conserved(page)
     art=decode_art(page);project=page.evaluate('JSON.parse(JSON.stringify(quietBell.project))')
     page.keyboard.press('F2');page.locator('#developer-console').wait_for(state='visible');page.locator('[data-dev-tab="cutscene"]').click()
+    cs.select_timeline_mode(page)
     directions=DIRECTIONS if width>=500 else ['right','down'];samples=[];plays=[]
     for direction in directions:
         tracks.import_project(page,fixture(project,direction),f'forward-{width}-{reduced}-{direction}')

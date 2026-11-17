@@ -264,6 +264,7 @@ def editor_flow(browser,url,expected):
     rooms=compile_all_rooms(page)
     page.keyboard.press('F2');page.locator('#developer-console').wait_for(state='visible')
     page.locator('[data-dev-tab="cutscene"]').click();tick(page,100)
+    cs.select_timeline_mode(page)
     for identifier in ['nell','iris','pip','mira']:
         track=page.locator('.cse-track[data-cutscene-actor="'+identifier+'"]')
         for kind in ['walk','dialogue','emote','gesture']:
@@ -442,6 +443,7 @@ def audio_flow(browser,url,expected):
     # without producing sound, and natural playback resumes new letters only.
     page.keyboard.press('F2');page.locator('#developer-console').wait_for(state='visible')
     page.locator('[data-dev-tab="cutscene"]').click()
+    cs.select_timeline_mode(page)
     page.locator('#developer-cutscene-play').click();tick(page,240)
     page.locator('#developer-cutscene-pause').click();count=len(audio_starts(page));tick(page,180)
     assert not current(page)['playing'] and len(audio_starts(page))==count

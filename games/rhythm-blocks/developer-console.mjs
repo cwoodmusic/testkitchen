@@ -1,6 +1,7 @@
 import {createDefaultProject,validateProject,normalizeProject,getPersonReplies} from './developer-project.mjs';
 import {symbolMarkup} from './notation.mjs';
 import {createCutsceneEditor} from './cutscene-editor.mjs';
+import {createCutsceneDialogueEditor} from './cutscene-dialogue-editor.mjs';
 
 const clone=value=>structuredClone(value);
 const TABS=[['dialogue','Dialogue'],['cutscene','Cutscene'],['puzzles','Puzzles'],['notes','Notes'],['rooms','Room'],['playtest','Test'],['json','Advanced']];
@@ -46,12 +47,13 @@ export function createDeveloperConsole({mount=document.body,getProject=createDef
   function record(){past.push(clone(draft));if(past.length>20)past.shift();future.length=0;}
   function publishDraft(){try{const result=validateProject(draft);if(!result.valid){showIssues(result);return false;}onDraftChange(clone(draft));return true;}catch(error){showIssues({errors:[error.message??String(error)]});return false;}}
   function changed(mutator,{repaint=true}={}){record();mutator(draft);dirty=true;jsonDirty=false;jsonBuffer=null;clearIssues();say('Draft changed. Save it or apply it to a playtest.');publishDraft();if(repaint&&!fieldEvent)render();else updateControls();}
-  function replaceDraft(value,message){record();draft=clone(value);dirty=true;jsonDirty=false;jsonBuffer=null;query='';searchInput.value='';clearIssues();publishDraft();render();say(message);}
-  function undo(){if(!past.length)return;future.push(clone(draft));draft=past.pop();dirty=true;jsonDirty=false;jsonBuffer=null;clearIssues();publishDraft();render();say('Draft change undone.');}
-  function redo(){if(!future.length)return;past.push(clone(draft));draft=future.pop();dirty=true;jsonDirty=false;jsonBuffer=null;clearIssues();publishDraft();render();say('Draft change restored.');}
-  function updateControls(){undoButton.disabled=!past.length||busy;redoButton.disabled=!future.length||busy;saveButton.disabled=busy;applyButton.disabled=busy;dialog.dataset.dirty=String(dirty||jsonDirty);}
+  function replaceDraft(value,message){cutsceneEditor?.flush?.();record();draft=clone(value);dirty=true;jsonDirty=false;jsonBuffer=null;query='';searchInput.value='';clearIssues();publishDraft();render();say(message);}
+  function undo(){cutsceneEditor?.flush?.();if(!past.length)return;future.push(clone(draft));draft=past.pop();dirty=true;jsonDirty=false;jsonBuffer=null;clearIssues();publishDraft();render();say('Draft change undone.');}
+  function redo(){cutsceneEditor?.flush?.();if(!future.length)return;past.push(clone(draft));draft=future.pop();dirty=true;jsonDirty=false;jsonBuffer=null;clearIssues();publishDraft();render();say('Draft change restored.');}
+  function updateControls(){undoButton.disabled=(!past.length&&!cutsceneEditor?.hasPending)||busy;redoButton.disabled=!future.length||busy;saveButton.disabled=busy;applyButton.disabled=busy;dialog.dataset.dirty=String(dirty||jsonDirty||!!cutsceneEditor?.hasPending);}
   function candidate(){
     try{
+      if(cutsceneEditor?.flush?.()===false)return null;
       const value=jsonDirty?JSON.parse(jsonBuffer):draft,result=validateProject(value);showIssues(result);
       if(!result.valid){say('The draft needs the fixes listed above. Nothing was applied.');return null;}
       return normalizeProject(value);
@@ -169,6 +171,7 @@ export function createDeveloperConsole({mount=document.body,getProject=createDef
   function jsonEditor(label,value,commit,{id}={}){const part=el('details','dc-advanced');part.append(el('summary','',label));const area=el('textarea','dc-json-area');if(id)area.id=id;area.rows=14;area.spellcheck=false;area.value=JSON.stringify(value,null,2);part.append(area,button('Apply '+label.toLowerCase(),()=>{try{const parsed=JSON.parse(area.value);commit(parsed);}catch(error){showIssues({errors:[error.message??String(error)]});say('That JSON was not applied.');}}));return part;}
   function destroyCutsceneEditor(){
     if(!cutsceneEditor)return;
+    cutsceneEditor.flush?.();
     const previous=cutsceneEditor,previousRoom=cutsceneEditorRoom;
     previous.state.playing=false;cutsceneStates.set(previousRoom,previous.state);
     cutsceneEditor=null;cutsceneEditorRoom=null;previous.destroy();onCutsceneSelection(null);
@@ -179,8 +182,13 @@ export function createDeveloperConsole({mount=document.body,getProject=createDef
   function renderCutsceneEditor(content,scene){
     cutsceneEditorRoom=roomId;
     const previousState=cutsceneStates.get(roomId),playbackRate=getState()?.cutscenePlaybackRate;
-    const state=playbackRate===1||playbackRate===2?{...previousState,playbackRate}:previousState;
-    cutsceneEditor=createCutsceneEditor({document,roomId,content,scene,state,onChange:(mutator,options)=>changed(()=>mutator(),options),onSelection:detail=>onCutsceneSelection(detail),onPreview:async options=>{
+    const state=playbackRate===1||playbackRate===2?{...previousState,playbackRate}:{...previousState};
+    state.mode=state.mode==='timeline'?'timeline':'dialogue';
+    const modes=el('nav','csd-modes');modes.setAttribute('aria-label','Cutscene editor mode');
+    for(const [mode,label]of [['dialogue','Dialogue'],['timeline','Timeline']])modes.append(button(label,()=>{if(cutsceneEditor?.flush?.()===false)return;state.mode=mode;render();},{id:'developer-cutscene-mode-'+mode,'aria-pressed':String(state.mode===mode)}));
+    if(tab==='cutscene')editor.append(modes);
+    const createEditor=tab==='rooms'||state.mode==='timeline'?createCutsceneEditor:createCutsceneDialogueEditor;
+    cutsceneEditor=createEditor({document,roomId,content,scene,state,onPending:()=>updateControls(),onChange:(mutator,options)=>changed(()=>mutator(),options),onSelection:detail=>onCutsceneSelection(detail),onPreview:async options=>{
       // Scrubbing sends many commands against the same frozen definition. Only
       // a changed draft needs to replay the full project validation and clone.
       const signature=jsonDirty?`json:${jsonBuffer}`:JSON.stringify(draft);
@@ -231,7 +239,7 @@ export function createDeveloperConsole({mount=document.body,getProject=createDef
     for(const source of Object.values(draft.sources))if(location(source.roomId))for(const key of ['label','hint'])add(source[key],source.label,{room:source.roomId,source:source.id,tab:'notes'});
     const section=card('Search results',`${results.length} matching fields`);
     for(const result of results.slice(0,80)){
-      const item=button('',()=>{if(!consumeJSON())return;roomId=result.room;tab=result.tab;personId=result.person??personId;replyId=result.reply??replyId;doorId=result.door??doorId;sourceId=result.source??sourceId;loreId=result.inspection??null;if(result.cutscene!==undefined)cutsceneStates.set(roomId,{...(cutsceneStates.get(roomId)??{}),selectedIndex:result.cutscene});query='';searchInput.value='';onSelectRoom(roomId,clone(draft));render();},{className:'dc-search-result'});
+      const item=button('',()=>{if(!consumeJSON())return;roomId=result.room;tab=result.tab;personId=result.person??personId;replyId=result.reply??replyId;doorId=result.door??doorId;sourceId=result.source??sourceId;loreId=result.inspection??null;if(result.cutscene!==undefined)cutsceneStates.set(roomId,{...(cutsceneStates.get(roomId)??{}),mode:'dialogue',selectedIndex:result.cutscene});query='';searchInput.value='';onSelectRoom(roomId,clone(draft));render();},{className:'dc-search-result'});
       item.append(el('strong','',result.label),el('span','dc-muted',result.value.slice(0,180)));section.append(item);
     }
     if(!results.length)section.append(el('p','dc-muted','No matching dialogue, observations, clues or source text.'));editor.append(section);
@@ -247,12 +255,14 @@ export function createDeveloperConsole({mount=document.body,getProject=createDef
   dialog.addEventListener('keydown',event=>{event.stopPropagation();if(event.key==='F2'||event.key==='Escape'){event.preventDefault();close();}});dialog.addEventListener('keyup',event=>event.stopPropagation());
   dialog.addEventListener('cancel',event=>{event.preventDefault();close();});dialog.addEventListener('close',()=>onClose());
   function open(options={}){
+    cutsceneEditor?.flush?.();
     if(options.personId||options.doorId||options.sourceId||options.objectId){query='';searchInput.value='';}
     if(disposed)return;const latest=getProject(),latestJSON=JSON.stringify(latest);if(!draft||!dirty&&latestJSON!==sourceJSON){draft=clone(latest);sourceJSON=latestJSON;jsonBuffer=null;jsonDirty=false;past.length=0;future.length=0;}
     if(options.tab&&TABS.some(([id])=>id===options.tab))tab=options.tab;if(options.roomId)roomId=options.roomId;if(options.personId){personId=options.personId;loreId=null;tab='dialogue';}if(options.doorId){doorId=options.doorId;tab='puzzles';}if(options.sourceId){sourceId=options.sourceId;tab='notes';}if(options.objectId){objectId=options.objectId;const item=draft.scenes[options.roomId??roomId]?.objects.find(item=>item.id===options.objectId);if(item?.type==='inspect'){loreId=item.id;tab='dialogue';}else tab='rooms';}
     render();const wasOpen=dialog.open;if(!wasOpen){dialog.show();onOpen();}if(options.roomId)onSelectRoom(roomId,clone(draft));publishDraft();if(!wasOpen)closeButton.focus({preventScroll:true});if(!status.textContent)say('Your project draft is ready. Edits are local until you export them for publishing.');
   }
   function moveActor(id,x,y){
+    cutsceneEditor?.flush?.();
     if(!draft||!Number.isFinite(x)||!Number.isFinite(y))return false;
     const next=clone(draft),scene=next.scenes[roomId],actor=scene?.actors.find(actor=>actor.id===id);if(!actor)return false;
     translateActor(scene,actor,x,y);const result=validateProject(next);if(!result.valid){showIssues(result);say('That position would block an interaction. The character has not moved.');return false;}

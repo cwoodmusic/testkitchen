@@ -145,3 +145,33 @@
 #developer-console #developer-body[data-editor="cutscene"] .cse-playhead{top:24px}
 #developer-console .cse-entry-settings{grid-column:1/-1;min-width:0}
 @media(max-width:430px){#developer-console #developer-cutscene-gesture button{flex-basis:calc(50% - 3px)}}
+
+/* The script view keeps dialogue readable without navigating actor lanes. */
+#developer-console .csd-modes{display:flex;gap:6px;flex-wrap:wrap;margin:0 0 10px;min-width:0}
+#developer-console .csd-modes button{flex:1 1 100px;min-height:44px}
+#developer-console .csd-modes button[aria-pressed="true"]{background:var(--mg-press);color:var(--mg-press-ink);border-color:var(--mg-gold);box-shadow:inset 0 0 0 1px var(--mg-gold)}
+#developer-console .csd-editor,#developer-console .csd-editor *{box-sizing:border-box;min-width:0;max-width:100%}
+#developer-console .csd-heading h3{margin:0 0 6px}
+#developer-console .csd-heading p{margin:0 0 14px}
+#developer-console .csd-layout{display:grid;grid-template-columns:minmax(0,1fr);gap:16px}
+#developer-console .csd-script{display:flex;flex-direction:column;gap:8px}
+#developer-console .csd-lines{display:flex;flex-direction:column;gap:6px;max-height:240px;overflow-y:auto;overscroll-behavior:contain;padding:2px;scrollbar-width:thin}
+#developer-console .csd-line{display:grid;grid-template-columns:26px minmax(0,1fr);gap:3px 7px;width:100%;padding:10px;text-align:left;border:1px solid var(--mg-edge);border-radius:0;background:var(--dc-well);color:var(--mg-ink);cursor:pointer;font:12px/1.45 ui-sans-serif,system-ui,sans-serif;overflow-wrap:anywhere}
+#developer-console .csd-line:hover{border-color:var(--mg-mint)}
+#developer-console .csd-line[aria-pressed="true"]{border-color:var(--mg-gold);background:color-mix(in srgb,var(--dc-well) 83%,var(--mg-gold));box-shadow:inset 3px 0 var(--mg-gold)}
+#developer-console .csd-line-number{grid-column:1;grid-row:1/3;color:var(--mg-muted);font:11px/1.5 ui-monospace,monospace}
+#developer-console .csd-line-speaker{grid-column:2;color:var(--mg-gold);font:700 12px/1.4 ui-monospace,monospace}
+#developer-console .csd-line-words{grid-column:2;display:-webkit-box;-webkit-line-clamp:3;-webkit-box-orient:vertical;overflow:hidden;white-space:pre-wrap}
+#developer-console .csd-detail{padding:12px;border:1px solid var(--mg-edge);background:var(--dc-well)}
+#developer-console .csd-detail h4{margin:0 0 14px;color:var(--mg-gold);font:700 13px/1.4 ui-monospace,monospace}
+#developer-console .csd-detail .dc-field{margin:0 0 12px}
+#developer-console .csd-detail textarea{display:block;width:100%;min-height:170px;resize:vertical;line-height:1.65}
+#developer-console .csd-detail .dc-muted{font-size:12px;line-height:1.6}
+#developer-console .csd-text-label{display:flex;justify-content:space-between;gap:8px}
+#developer-console .csd-count{color:var(--mg-muted);font-size:11px;font-variant-numeric:tabular-nums;white-space:nowrap}
+#developer-console .csd-controls{display:flex;gap:6px;flex-wrap:wrap;margin:10px 0}
+#developer-console .csd-controls button{flex:1 1 95px;min-height:44px;white-space:normal;font-size:12px}
+#developer-console .csd-empty{padding:12px;color:var(--mg-muted);font-size:12px;line-height:1.6}
+#developer-console .csd-editor button:focus-visible,#developer-console .csd-editor textarea:focus-visible,#developer-console .csd-modes button:focus-visible{outline:2px solid var(--mg-mint);outline-offset:2px}
+@media(min-width:1100px){#developer-console.dc-expanded .csd-layout{grid-template-columns:minmax(230px,.85fr) minmax(0,1.15fr)}#developer-console.dc-expanded .csd-lines{max-height:520px}}
+@media(max-width:430px){#developer-console .csd-detail{padding:9px}#developer-console .csd-detail textarea{font-size:16px}#developer-console .csd-lines{max-height:200px}#developer-console .csd-controls button{flex-basis:90px}#developer-console .csd-line{padding:9px}}

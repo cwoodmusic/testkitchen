@@ -74,6 +74,7 @@ def selected_index(page):
 
 
 def select_track_clip(page, identifier, kind, touch=False):
+    cs.select_timeline_mode(page, touch)
     node = page.locator('.cse-track[data-cutscene-actor="' + identifier + '"] .cse-clip[data-cutscene-kind="' + kind + '"]').first
     node.evaluate('e=>e.scrollIntoView({block:"nearest",inline:"nearest"})')
     getattr(node, 'tap' if touch else 'click')()
@@ -106,6 +107,7 @@ def actor_button(page, identifier):
 
 
 def select_actor(page, identifier, touch=False):
+    cs.select_timeline_mode(page, touch)
     node = actor_button(page, identifier)
     getattr(node, 'tap' if touch else 'click')()
     tick(page, 80)
@@ -319,6 +321,7 @@ def desktop_flow(browser, url, expected):
     base = validate_release(page, expected)
     page.keyboard.press('F2');page.locator('#developer-console').wait_for(state='visible')
     page.locator('[data-dev-tab="cutscene"]').click();tick(page, 100)
+    cs.select_timeline_mode(page)
     saved = normal_storage(page);original = resources(page)
     colors = {who:select_actor(page, who) for who in ['nell','iris','pip','mira']}
     assert len(set(colors.values())) == 4, colors
@@ -420,6 +423,7 @@ def phone_flow(browser, url, expected):
     saved = normal_storage(page);original = resources(page)
     page.keyboard.press('F2');page.locator('#developer-console').wait_for(state='visible')
     page.locator('[data-dev-tab="cutscene"]').tap();tick(page, 100)
+    cs.select_timeline_mode(page, True)
     select_actor(page, 'iris', True)
     index = selected_index(page)
     before = export_project(page, 'phone-before-route')

@@ -149,6 +149,7 @@ def long_project(page):
 def apply_project(page,project):
     page.keyboard.press('F2');page.locator('#developer-console').wait_for(state='visible')
     page.locator('[data-dev-tab="cutscene"]').click()
+    cs.select_timeline_mode(page)
     tracks.import_project(page,project,'manual-long-dialogue')
     page.locator('#developer-apply').click();page.locator('#developer-console').wait_for(state='hidden')
     assert ui.state(page)['developerMode']
@@ -175,6 +176,7 @@ def long_flow(browser,url,expected):
     assert cs.normal_storage(page)==normal and cs.conserved(page)==original
     # Authored director preview keeps automatic tile timing and silent seeking.
     page.keyboard.press('F2');page.locator('[data-dev-tab="cutscene"]').click()
+    cs.select_timeline_mode(page)
     page.locator('#developer-cutscene-play').click();tick(page,1000)
     preview=state(page);assert preview and preview['preview'] and not preview['manualDialogue'] and preview['finished'],preview
     page.locator('#developer-cutscene-scrub').focus();page.keyboard.press('Home');tick(page,80)

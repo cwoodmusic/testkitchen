@@ -124,6 +124,7 @@ def assert_lanes(page):
 
 
 def seek(page, tile):
+    cs.select_timeline_mode(page)
     node = page.locator('#developer-cutscene-scrub');node.focus();page.keyboard.press('Home')
     for _ in range(tile):
         page.keyboard.press('ArrowRight')
@@ -189,10 +190,11 @@ def desktop_flow(browser, url, expected):
     saved, original = cs.normal_storage(page), paths.resources(page)
     page.keyboard.press('F2');page.locator('#developer-console').wait_for(state='visible')
     page.locator('[data-dev-tab="cutscene"]').click();tick(page,100)
+    cs.select_timeline_mode(page)
     assert_lanes(page)
     baseline = export_project(page,'default-separated')
-    assert all(set(clip['kind'] for clip in content['cutscene'])==set(KINDS)
-               for content in baseline['content'].values()), 'Every shipped room has the three independent clip types.'
+    assert all(set(clip['kind'] for clip in content['cutscene'])==set([*KINDS,'gesture'])
+               for content in baseline['content'].values()), 'Every shipped room has Walk, Text, Emote and Action clips.'
     for kind, delta, resize in [('dialogue',3,False),('emote',2,True),('walk',2,False)]:
         index = select_clip(page,'nell',kind)
         identifier = baseline['content']['depot']['cutscene'][index]['id']
@@ -318,6 +320,7 @@ def phone_flow(browser,url,expected,width):
     base=paths.validate_release(page,expected);saved=cs.normal_storage(page);original=paths.resources(page)
     page.keyboard.press('F2');page.locator('#developer-console').wait_for(state='visible')
     page.locator('[data-dev-tab="cutscene"]').tap();tick(page,100)
+    cs.select_timeline_mode(page, True)
     assert_lanes(page)
     before=export_project(page,'phone-'+str(width)+'-before')
     index=select_clip(page,'nell','dialogue',True);identifier=before['content']['depot']['cutscene'][index]['id']

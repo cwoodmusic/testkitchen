@@ -168,6 +168,7 @@ def flow(browser,url,width,reduced,expected):
     tracks.import_project(page,project,'npc-walk-'+name)
     getattr(page.locator('[data-dev-room="canal-porch"]'), 'tap' if width<500 else 'click')()
     getattr(page.locator('[data-dev-tab="cutscene"]'), 'tap' if width<500 else 'click')();tick(page,100)
+    cs.select_timeline_mode(page, True)
     start_preview(page,width<500)
     art = inspect_art(page)
     assert len({item['image'] for item in art.values()})==4, art

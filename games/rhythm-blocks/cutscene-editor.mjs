@@ -104,7 +104,7 @@ export function createCutsceneEditor({document=globalThis.document,roomId,conten
  entrySettings.append(entryEnabled,chips('Entrance pace',scene.entry?.gait??'run',gaits,'developer-room-entry-gait',value=>updateEntry({gait:value})),entryFields,entryPreview,el('p','cse-help','The party runs in first, then the authored timeline starts. Run is twice walking speed; timing fields still use normal walking tiles. These settings leave the Walk, Text, Emote and Action rows at their existing times.'));
  element.append(entrySettings);
  function chips(label,value,options,id,onCommit){const wrap=el('div','dc-field');wrap.append(el('span','',label));const group=el('div','cse-chips');group.id=id;group.setAttribute('role','group');group.setAttribute('aria-label',label);for(const [key,name]of options){const choice=button(name,null,()=>onCommit(key));choice.dataset.cutsceneChoice=key;choice.setAttribute('aria-pressed',String(String(key)===String(value)));group.append(choice);}wrap.append(group);return wrap;}
- function flushProperty(){if(properties.contains(document.activeElement)&&document.activeElement?.matches('input,textarea'))document.activeElement.blur();}
+ function flushProperty(){if(element.contains(document.activeElement)&&document.activeElement?.matches('input,textarea'))document.activeElement.blur();}
  function notifySelection(){const beat=selected();onSelection(beat?{roomId,clipIndex:state.selectedIndex,actorId:beat.actor??beat.speaker,kind:kindOf(beat)}:null);}
  function revealClip(index){
   const node=grid.querySelector(`[data-cutscene-clip="${index}"]`);if(!node||!scroll.clientHeight)return;
@@ -138,7 +138,7 @@ export function createCutsceneEditor({document=globalThis.document,roomId,conten
   properties.append(timing,el('p','cse-help',`${minimumText} Arrow keys move this item one tile; Shift + arrow keys trim its length. Other rows keep their timing.`));
   const reorder=el('div','cse-toolbar');reorder.append(button('Earlier 1 tile','developer-cutscene-earlier',()=>update(index,{startTile:Math.max(0,(clip?.startTile??0)-1)})),button('Later 1 tile','developer-cutscene-later',()=>update(index,{startTile:(clip?.startTile??0)+1})));reorder.children[0].disabled=(clip?.startTile??0)===0;properties.append(reorder);
   if(kind==='dialogue'){
-   properties.append(chips('Who speaks',beat.speaker??beat.actor,[['mira','Mira'],...(content.people??[]).map(person=>[person.id,person.name])],'developer-cutscene-speaker',value=>update(index,{speaker:value,actor:value})),input('Dialogue',beat.text??'','developer-cutscene-text',{multiline:true,onCommit:value=>update(index,{text:value})}));
+   properties.append(chips('Who speaks',beat.speaker??beat.actor,[['mira','Mira'],...(content.people??[]).map(person=>[person.id,person.name])],'developer-cutscene-speaker',value=>update(index,{speaker:value,actor:beat.actor??beat.speaker})),input('Dialogue',beat.text??'','developer-cutscene-text',{multiline:true,onCommit:value=>update(index,{text:value})}));
   }else if(kind==='emote'){
    properties.append(chips('Character',beat.actor??beat.speaker,actorIds.map(id=>[id,actorName(id)]),'developer-cutscene-actor',value=>update(index,{actor:value})),chips('Emote above their head',beat.emote??'question',emotes.filter(([id])=>id),'developer-cutscene-emote',value=>update(index,{emote:value})),el('p','cse-help','This reaction appears over the character wherever they are walking. Delete the item to remove it.'));
   }else if(kind==='gesture'){
@@ -212,5 +212,5 @@ export function createCutsceneEditor({document=globalThis.document,roomId,conten
  raf(()=>{if(destroyed)return;const body=element.closest('#developer-body');if(body)layoutObserver?.observe(body);fitTimeline();});
  if(state.revealClip!==undefined){const index=state.revealClip;delete state.revealClip;raf(()=>{if(!destroyed)revealClip(index);});}
  if(state.focusClip!==undefined){const index=state.focusClip;delete state.focusClip;raf(()=>{if(!destroyed)grid.querySelector(`[data-cutscene-clip="${index}"]`)?.focus({preventScroll:true});});}
- return{element,state,selectActor,selectClip,updatePath,destroy(){if(destroyed)return;destroyed=true;pendingSeek=null;drag=null;state.scrollLeft=scroll.scrollLeft;state.scrollTop=scroll.scrollTop;for(const remove of [...cleanup,...gridCleanup,...propertyCleanup])remove();}};
+ return{element,state,selectActor,selectClip,updatePath,flush:flushProperty,destroy(){if(destroyed)return;destroyed=true;pendingSeek=null;drag=null;state.scrollLeft=scroll.scrollLeft;state.scrollTop=scroll.scrollTop;for(const remove of [...cleanup,...gridCleanup,...propertyCleanup])remove();}};
 }
