@@ -35,15 +35,16 @@ VIRTUAL_WALK_PAGES = set()
 
 def skip_cutscene(page):
     """Use the visible Skip control when a regression is testing exploration."""
-    panel = page.locator('#cutscene-panel')
-    if panel.count() and panel.is_visible():
-        page.locator('#cutscene-skip').click()
+    skip = page.locator('#cutscene-skip')
+    if skip.count() and skip.is_visible():
+        skip.click()
 
 def close_panels(page, revisit=False):
     skip_cutscene(page)
     if page.locator('#outcome').is_visible():
         assert revisit, 'The ending must be revisited before walking again.'
         page.locator('#revisit').click()
+        skip_cutscene(page)
     for dialog, close in [('#conversation-dialog', '#conversation-close'),
                           ('#notes-dialog', '#notes-close'), ('#help-dialog', '#help-close'),
                           ('#menu-dialog', '#menu-close'), ('#lore-dialog', '#lore-close')]:

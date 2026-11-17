@@ -7,6 +7,7 @@ export const GAME_ROOT=dirname(fileURLToPath(import.meta.url));
 export const RUNTIME_FILES=Object.freeze([
   'developer-project.mjs','developer-console.mjs','developer-console.css',
   'cutscene.mjs','cutscene-view.mjs','cutscene-content.mjs','cutscene.css','cutscene-editor.mjs','cutscene-editor.css',
+  'room-entry.mjs',
   'cutscene-paths.mjs','cutscene-paths.css',
   'jrpg-dialogue.mjs','jrpg-dialogue.css','assets/fonts/VT323-Regular.ttf','assets/fonts/VT323-OFL.txt',
   'assets/fonts/PressStart2P-Regular.ttf','assets/fonts/PressStart2P-OFL.txt',

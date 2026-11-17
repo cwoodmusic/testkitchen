@@ -14,7 +14,7 @@ const kindName=kind=>kinds.find(([id])=>id===kind)?.[1]??'Walk';
 
 export function createCutsceneEditor({document=globalThis.document,roomId,content,scene,onChange=mutation=>mutation(),onPreview=()=>{},onSelection=()=>{},state={}}={}){
  const element=document.createElement('section');element.className='dc-card cse-editor';element.id='developer-cutscene-timeline';
- const cleanup=[],gridCleanup=[],propertyCleanup=[],raf=frameFor(document);let bindingScope=cleanup,destroyed=false,pendingSeek=null,seekScheduled=false,drag=null,committingField=false;
+ const cleanup=[],gridCleanup=[],propertyCleanup=[],raf=frameFor(document);let bindingScope=cleanup,destroyed=false,pendingSeek=null,seekScheduled=false,drag=null,committingField=false,entryPreviewActive=false;
  state.selectedIndex=integer(state.selectedIndex);state.tileWidth=clamp(integer(state.tileWidth,12)||12,4,48);state.currentTile=integer(state.currentTile);state.scrollLeft=integer(state.scrollLeft);state.scrollTop=integer(state.scrollTop);state.playing=!!state.playing;state.playbackRate=state.playbackRate===2?2:1;
  const el=(tag,className='',text='')=>{const node=document.createElement(tag);if(className)node.className=className;if(text!==undefined&&text!=='')node.textContent=String(text);return node;};
  const listen=(node,type,handler,options)=>{node.addEventListener(type,handler,options);bindingScope.push(()=>node.removeEventListener(type,handler,options));};
@@ -43,11 +43,12 @@ export function createCutsceneEditor({document=globalThis.document,roomId,conten
  const error=el('p','cse-error');error.setAttribute('role','status');error.hidden=true;
  const updateClock=tile=>{state.currentTile=clamp(integer(tile),0,totalTiles);scrub.value=String(state.currentTile);readout.textContent=`${state.currentTile} / ${totalTiles} tiles · 1 tile = ${(quantumMs/1000).toFixed(3)}s`;playhead.style.left=`${LABEL_WIDTH+state.currentTile*state.tileWidth}px`;};
  async function preview(command,tile=state.currentTile,extra={}){
-  error.hidden=true;state.playing=command==='play'?true:command==='pause'||command==='stop'?false:state.playing;
-  if(command==='stop')updateClock(0);
+  error.hidden=true;state.playing=command==='play'||command==='entry'?true:command==='pause'||command==='stop'?false:state.playing;
+  if(command==='entry')entryPreviewActive=true;else if(command==='stop'||command==='seek')entryPreviewActive=false;
+  if(command==='stop'||command==='entry')updateClock(0);
   try{const result=await onPreview({command,tile:integer(tile),...extra});if(result===false)throw new Error('The scene preview is unavailable.');if(result?.playbackRate)state.playbackRate=result.playbackRate===2?2:1;}
-  catch(reason){error.hidden=false;error.textContent=reason?.message??String(reason);state.playing=false;}
-  if(!destroyed){playButton.setAttribute('aria-pressed',String(state.playing));pauseButton.setAttribute('aria-pressed',String(!state.playing));paintRate();}
+  catch(reason){error.hidden=false;error.textContent=reason?.message??String(reason);state.playing=false;if(command==='entry')entryPreviewActive=false;}
+  if(!destroyed){paintTransport();paintRate();}
  }
  const playButton=button('▶ Play','developer-cutscene-play',()=>void preview('play'));
  const pauseButton=button('Ⅱ Pause','developer-cutscene-pause',()=>void preview('pause'));
@@ -55,8 +56,8 @@ export function createCutsceneEditor({document=globalThis.document,roomId,conten
  const rateButton=button('1× speed','developer-cutscene-speed',()=>{state.playbackRate=state.playbackRate===2?1:2;paintRate();void preview('rate',state.currentTile,{rate:state.playbackRate});});
  function paintRate(){rateButton.textContent=`${state.playbackRate}× speed`;rateButton.setAttribute('aria-pressed',String(state.playbackRate===2));rateButton.setAttribute('aria-label',`${state.playbackRate===2?'Double':'Normal'} playback speed. Switch to ${state.playbackRate===2?'normal':'double'} speed.`);}
  paintRate();
- for(const control of [playButton,pauseButton,stopButton])control.disabled=!clips.length;
- playButton.setAttribute('aria-pressed',String(state.playing));pauseButton.setAttribute('aria-pressed',String(!state.playing));transport.append(playButton,pauseButton,stopButton,rateButton);element.append(transport);
+ function paintTransport(){for(const control of [playButton,pauseButton,stopButton])control.disabled=!clips.length&&!entryPreviewActive;playButton.setAttribute('aria-pressed',String(state.playing));pauseButton.setAttribute('aria-pressed',String(!state.playing));}
+ paintTransport();transport.append(playButton,pauseButton,stopButton,rateButton);element.append(transport);
  const scrubLabel=el('div','cse-scrub'),scrubTitle=el('label','','Playhead');scrubTitle.htmlFor='developer-cutscene-scrub';scrubLabel.append(scrubTitle);const scrub=el('input');scrub.id='developer-cutscene-scrub';scrub.type='range';scrub.min='0';scrub.max=String(totalTiles);scrub.step='1';scrub.value=String(state.currentTile);scrub.disabled=!clips.length;scrubLabel.append(scrub,readout);element.append(scrubLabel);
  function seek(tile){updateClock(tile);pendingSeek=state.currentTile;if(!seekScheduled){seekScheduled=true;raf(()=>{seekScheduled=false;if(destroyed||pendingSeek===null)return;const next=pendingSeek;pendingSeek=null;void preview('seek',next);});}}
  listen(scrub,'input',()=>seek(scrub.value));
@@ -80,6 +81,25 @@ export function createCutsceneEditor({document=globalThis.document,roomId,conten
  listen(scroll,'scroll',()=>{state.scrollLeft=scroll.scrollLeft;state.scrollTop=scroll.scrollTop;});
  const properties=el('section','cse-properties');element.append(properties);
  const input=(label,value,id,{type='text',min,max,step,multiline=false,onCommit}={})=>{const wrap=el('label','dc-field');wrap.append(el('span','',label));const node=el(multiline?'textarea':'input');if(!multiline)node.type=type;node.id=id;node.value=value??'';if(min!==undefined)node.min=String(min);if(max!==undefined)node.max=String(max);if(step!==undefined)node.step=String(step);if(multiline)node.rows=3;listen(node,'change',()=>{committingField=true;try{onCommit(type==='number'?Number(node.value):node.value);}finally{committingField=false;}});wrap.append(node);return wrap;};
+ const entrySettings=el('details','dc-advanced cse-entry-settings');entrySettings.id='developer-room-entry';entrySettings.open=!!state.entryOpen;entrySettings.append(el('summary','','Room entry'));
+ listen(entrySettings,'toggle',()=>{state.entryOpen=entrySettings.open;});
+ const entryEnabled=el('label','dc-checkbox'),entryToggle=el('input');entryToggle.type='checkbox';entryToggle.id='developer-room-entry-enabled';entryToggle.checked=scene.entry?.enabled!==false;entryEnabled.append(entryToggle,el('span','','Enter through the doorway before the scene'));
+ const entryPreview=button('Preview room entry','developer-cutscene-entry',()=>void preview('entry',0));entryPreview.disabled=!entryToggle.checked;
+ function updateEntry(patch){
+  if(destroyed)return;
+  onChange(()=>{scene.entry={...scene.entry,...patch};},{repaint:false});
+  entryPreview.disabled=scene.entry?.enabled===false;
+  for(const [key,id]of [['fadeTiles','developer-room-entry-fade'],['staggerTiles','developer-room-entry-spacing'],['doorX','developer-room-entry-door-x']])if(Object.hasOwn(patch,key))entrySettings.querySelector('#'+id).value=String(scene.entry[key]);
+ }
+ listen(entryToggle,'change',()=>updateEntry({enabled:entryToggle.checked}));
+ const doorway=scene.geometry.targets?.find(target=>target.type==='return')?.x??scene.geometry.start.x;
+ const entryFields=el('div','dc-fields');entryFields.append(
+  input('Fade length (walking tiles)',scene.entry?.fadeTiles??12,'developer-room-entry-fade',{type:'number',min:0,max:128,step:1,onCommit:value=>updateEntry({fadeTiles:clamp(integer(value),0,128)})}),
+  input('Party spacing (walking tiles)',scene.entry?.staggerTiles??2,'developer-room-entry-spacing',{type:'number',min:0,max:64,step:1,onCommit:value=>updateEntry({staggerTiles:clamp(integer(value),0,64)})}),
+  input('Doorway X',scene.entry?.doorX??doorway,'developer-room-entry-door-x',{type:'number',min:0,max:scene.geometry.width,step:1,onCommit:value=>{if(Number.isFinite(value))updateEntry({doorX:clamp(value,0,scene.geometry.width)});}}),
+ );
+ entrySettings.append(entryEnabled,entryFields,entryPreview,el('p','cse-help','The party walks in first, then the authored timeline starts. These settings leave the Walk, Text and Emote rows at their existing times.'));
+ element.append(entrySettings);
  function chips(label,value,options,id,onCommit){const wrap=el('div','dc-field');wrap.append(el('span','',label));const group=el('div','cse-chips');group.id=id;group.setAttribute('role','group');group.setAttribute('aria-label',label);for(const [key,name]of options){const choice=button(name,null,()=>onCommit(key));choice.dataset.cutsceneChoice=key;choice.setAttribute('aria-pressed',String(String(key)===String(value)));group.append(choice);}wrap.append(group);return wrap;}
  function flushProperty(){if(properties.contains(document.activeElement)&&document.activeElement?.matches('input,textarea'))document.activeElement.blur();}
  function notifySelection(){const beat=selected();onSelection(beat?{roomId,clipIndex:state.selectedIndex,actorId:beat.actor??beat.speaker,kind:kindOf(beat)}:null);}
@@ -174,7 +194,7 @@ export function createCutsceneEditor({document=globalThis.document,roomId,conten
   }
   grid.append(playhead);scroll.scrollLeft=state.scrollLeft;scroll.scrollTop=state.scrollTop;updateClock(state.currentTile);bindingScope=previousBindings;
  }
- listen(document,'quietbellcutscene',event=>{const detail=event.detail??{};if(detail.roomId!==roomId||!detail.preview||destroyed)return;state.playing=!!detail.playing&&!detail.finished;if(detail.playbackRate)state.playbackRate=detail.playbackRate===2?2:1;updateClock(detail.currentTile??0);playButton.setAttribute('aria-pressed',String(state.playing));pauseButton.setAttribute('aria-pressed',String(!state.playing));paintRate();});
+ listen(document,'quietbellcutscene',event=>{const detail=event.detail??{};if(detail.roomId!==roomId||!detail.preview||destroyed)return;state.playing=!!detail.playing&&!detail.finished;if(detail.playbackRate)state.playbackRate=detail.playbackRate===2?2:1;updateClock(detail.currentTile??0);if(detail.phase==='entry'){entryPreviewActive=!detail.finished;if(!detail.finished){const entry=detail.entry??{};readout.textContent=`Room entry · ${integer(entry.currentTile)} / ${integer(entry.totalTiles)} tiles`;}}paintTransport();paintRate();});
  renderGrid();renderProperties();updateClock(state.currentTile);notifySelection();
  function fitTimeline(){
   const body=element.closest('#developer-body');if(destroyed||!body||!element.isConnected)return;

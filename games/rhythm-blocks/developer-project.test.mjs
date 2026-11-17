@@ -469,3 +469,59 @@ test('malformed NPC walk sheets produce concrete validation errors and leave the
  }
  for(const value of [null,true,7,'frames']){const project=createDefaultProject();project.cast.nell.walk=value;assert.doesNotThrow(()=>validateProject(project));invalid(project,'walk');}
 });
+
+test('optional room entry settings round trip without restaging authored tracks or changing resources',()=>{
+ const untouched=createDefaultProject();
+ assert(Object.values(untouched.scenes).every(scene=>!Object.hasOwn(scene,'entry')));
+ const unchanged=normalizeProject(untouched);
+ assert(Object.values(unchanged.scenes).every(scene=>!Object.hasOwn(scene,'entry')),'Inferred entry defaults do not become saved authoring edits.');
+ const project=createDefaultProject(),before=clone(project);
+ project.scenes.depot.entry={enabled:true,fadeTiles:9,staggerTiles:3,doorX:754.5,author:{note:'Keep this entrance.'}};
+ const source=clone(project),restored=normalizeProject(JSON.parse(JSON.stringify(project)));
+ valid(restored);assert.deepEqual(restored.scenes.depot.entry,project.scenes.depot.entry);
+ assert.deepEqual(project,source,'Importing entry settings does not mutate the source project.');
+ assert.deepEqual(restored.content,before.content,'Walk, Text and Emote timing stays at its authored coordinates.');
+ assert.deepEqual(restored.doors,before.doors);assert.deepEqual(restored.sources,before.sources);
+ assert.deepEqual(restored.settings.initialInventory,before.settings.initialInventory);
+ assert.deepEqual(restored.scenes.depot.geometry,before.scenes.depot.geometry);
+ assert.deepEqual(normalizeProject(restored),restored);
+ assert(Object.isFrozen(restored.scenes.depot.entry));assert(Object.isFrozen(restored.scenes.depot.entry.author));
+});
+
+test('disabled and zero-duration room entry settings retain their independent story scripts',()=>{
+ for(const entry of [{},{enabled:false},{fadeTiles:0,staggerTiles:0},{enabled:true,fadeTiles:128,staggerTiles:64,doorX:0}]){
+  const project=createDefaultProject(),story=clone(project.content.depot.cutscene);project.scenes.depot.entry=entry;
+  const restored=normalizeProject(project);valid(restored);
+  assert.deepEqual(restored.scenes.depot.entry,entry,'Only explicitly authored fields are exported.');
+  assert.deepEqual(restored.content.depot.cutscene,story,'Disabling an entry does not disable or offset dialogue.');
+ }
+ const noStory=createDefaultProject();noStory.content.depot.cutscene=[];noStory.scenes.depot.entry={enabled:true,fadeTiles:0};
+ assert.deepEqual(normalizeProject(noStory).content.depot.cutscene,[],'An entrance remains valid without a following story.');
+});
+
+test('malformed room entry settings fail concretely without losing the imported draft',()=>{
+ for(const entry of [null,true,false,7,'fade',[]]){
+  const project=createDefaultProject();project.scenes.depot.entry=entry;const before=structuredClone(project);
+  assert.doesNotThrow(()=>validateProject(project));invalid(project,'scenes.depot.entry');
+  assert.throws(()=>normalizeProject(project),/scenes\.depot\.entry/);assert.deepEqual(project,before);
+ }
+ for(const [entry,field]of [
+  [{enabled:'yes'},'enabled'],[{enabled:1},'enabled'],
+  [{fadeTiles:-1},'fadeTiles'],[{fadeTiles:.5},'fadeTiles'],[{fadeTiles:129},'fadeTiles'],[{fadeTiles:Infinity},'fadeTiles'],
+  [{staggerTiles:-1},'staggerTiles'],[{staggerTiles:.5},'staggerTiles'],[{staggerTiles:65},'staggerTiles'],
+  [{doorX:-1},'doorX'],[{doorX:1537},'doorX'],[{doorX:NaN},'doorX'],[{doorX:'768'},'doorX'],
+ ]){
+  const project=createDefaultProject();project.scenes.depot.entry=entry;const before=structuredClone(project);
+  assert.doesNotThrow(()=>validateProject(project));invalid(project,'scenes.depot.entry.'+field);
+  assert.throws(()=>normalizeProject(project),/scenes\.depot\.entry/);assert.deepEqual(project,before);
+ }
+});
+
+test('entry doorway validation follows custom room dimensions and tolerates malformed geometry',()=>{
+ const project=createDefaultProject();project.scenes.depot.geometry.width=2048;project.scenes.depot.entry={doorX:2000};
+ valid(project);assert.equal(normalizeProject(project).scenes.depot.entry.doorX,2000);
+ project.scenes.depot.entry.doorX=2049;invalid(project,'scenes.depot.entry.doorX');
+ const malformed=createDefaultProject();malformed.scenes.depot.geometry.width='not a width';malformed.scenes.depot.entry={doorX:768};
+ assert.doesNotThrow(()=>validateProject(malformed));invalid(malformed,'geometry.width');
+ assert.throws(()=>normalizeProject(malformed),/geometry\.width/);
+});

@@ -1,4 +1,5 @@
 import {createRoomCutscene} from './cutscene.mjs';
+import {createRoomEntry} from './room-entry.mjs';
 import {isWalkable,findPath} from './room.mjs';
 import {createJrpgDialogue} from './jrpg-dialogue.mjs';
 import {getNpcSpriteFrame} from './npc-sprites.mjs';
@@ -53,14 +54,16 @@ export function stageCutsceneScene(scene,poses=[]){
 }
 
 /** Cinematic visuals are temporary; only onFinish may retain their final feet. */
-export function createCutsceneView({root,map,panel,roomView,scene,project,beats,playerPosition,preview=false,paused=false,tile=0,playbackRate=1,onRateChange=()=>{},onFinish=()=>{}}){
+export function createCutsceneView({root,map,panel,roomView,scene,project,beats,playerPosition,preview=false,paused=false,tile=0,withEntry=true,playbackRate=1,onRateChange=()=>{},onFinish=()=>{}}){
  const reduced=matchMedia('(prefers-reduced-motion: reduce)').matches;
- const timeline=createRoomCutscene({scene,beats,playerPosition,reducedMotion:reduced});
+ const entry=withEntry?createRoomEntry({scene,playerPosition,playerSize:project.player.worldSize}):null;
+ const timeline=createRoomCutscene({scene,beats,playerPosition,actors:entry?.timeline.endActors,reducedMotion:reduced});
  let disposed=false,frame=0,last=0,lastCaption='',lastEvent='',finishing=false,reservedBottom=0,rate=playbackRate===2?2:1;
  const actorElements=new Map(scene.actors.map(actor=>[actor.id,map.querySelector('[data-actor="'+actor.id+'"]')]));
  const definitions=new Map(scene.actors.map(actor=>[actor.id,actor]));
  const names=new Map(project.content[scene.id].people.map(person=>[person.id,person.name]));
- const emotes=new Map(),emoteOrigins=new Map(),pickers=new Map(),spriteFrames=new Map(),styleValues=new WeakMap(),removers=[],wasInert=map.inert;map.inert=!preview;
+ const emotes=new Map(),emoteOrigins=new Map(),pickers=new Map(),spriteFrames=new Map(),styleValues=new WeakMap(),removers=[],wasInert=map.inert,wasOverflow=map.style.overflow;map.inert=!preview;
+ const fade=document.createElement('div');fade.className='room-entry-fade';fade.setAttribute('aria-hidden','true');fade.hidden=!entry;root.append(fade);
  const speaker=panel.querySelector('#cutscene-speaker'),line=panel.querySelector('#cutscene-line'),counter=panel.querySelector('#cutscene-counter');
  const dialogue=createJrpgDialogue({panel,line});
  const nextButton=panel.querySelector('#cutscene-next'),skipButton=panel.querySelector('#cutscene-skip'),speedButton=panel.querySelector('#cutscene-speed');
@@ -68,13 +71,26 @@ export function createCutsceneView({root,map,panel,roomView,scene,project,beats,
  nextButton.disabled=preview;skipButton.textContent=preview?'Stop preview':'Skip';
  const style=(element,name,value)=>{let values=styleValues.get(element);if(!values){values=new Map();styleValues.set(element,values);}if(values.get(name)!==value){element.style[name]=value;values.set(name,value);}};
  const data=(element,name,value)=>{if(element.dataset[name]!==value)element.dataset[name]=value;};
+ const entering=()=>!!entry&&!entry.state.finished;
+ function entryInfo(){const state=entry?.state;return state?{currentTile:state.currentTile,totalTiles:state.totalTiles,elapsed:state.elapsed,quantumMs:state.quantumMs,fadeTiles:entry.timeline.fadeTiles,fadeOpacity:state.fadeOpacity,finished:state.finished,playing:state.playing}:null;}
+ function snapshot(){
+  const story=timeline.state,arrival=entry?.state,info=entryInfo();
+  if(arrival&&!arrival.finished)return{...story,index:-1,beat:null,actors:arrival.actors,focus:arrival.focus,elapsed:arrival.elapsed,holding:!arrival.actors.some(actor=>actor.moving),playing:arrival.playing,finished:false,nextPending:false,activeClips:arrival.activeClips??[],activeClipIds:arrival.activeClipIds??[],phase:'entry',entry:info};
+  return{...story,phase:'story',entry:info};
+ }
+ function publicState(state=snapshot()){return freeze({...state,preview,roomId:scene.id,playbackRate:rate,textComplete:dialogue.state.complete,visibleCharacters:dialogue.state.visibleCharacters,totalCharacters:dialogue.state.totalCharacters});}
  function listen(target,name,fn,options){target.addEventListener(name,fn,options);removers.push(()=>target.removeEventListener(name,fn,options));}
  function emit(state){
-  const key=[Math.floor(state.currentTile??0),state.index,state.playing,state.finished,state.nextPending,rate].join('|');if(key===lastEvent)return;lastEvent=key;
+  const key=[state.phase,Math.floor(state.entry?.currentTile??0),Math.floor(state.currentTile??0),state.index,state.playing,state.finished,state.nextPending,rate].join('|');if(key===lastEvent)return;lastEvent=key;
   document.dispatchEvent(new CustomEvent('quietbellcutscene',{detail:{...state,preview,roomId:scene.id,playbackRate:rate}}));
  }
- function paint(state=timeline.state,deltaMs=16,snapCamera=false){
+ function paint(state=snapshot(),deltaMs=16,snapCamera=false){
   if(disposed)return;
+  const arrival=state.phase==='entry',previousPhase=root.dataset.cutscenePhase;
+  if(root.dataset.cutscenePhase!==state.phase){root.dataset.cutscenePhase=state.phase;map.style.overflow=arrival?'hidden':wasOverflow;}
+  data(panel,'phase',state.phase);
+  const opacity=arrival?state.entry.fadeOpacity:0;
+  style(fade,'opacity',String(opacity));if(fade.hidden!==!(arrival&&opacity>0))fade.hidden=!(arrival&&opacity>0);
   const beat=state.beat,id=beat?.speaker??beat?.actor;
   const caption=[id,beat?.id,state.index,beat?.text].join('|');
   if(caption!==lastCaption){
@@ -124,9 +140,10 @@ export function createCutsceneView({root,map,panel,roomView,scene,project,beats,
   }
   const player=state.actors.find(actor=>actor.id==='mira');
   roomView.setCinematicFrame({focus:state.focus,player,elapsed:state.elapsed,reservedBottom,deltaMs,snapCamera,reducedMotion:reduced});
-  const disabled=preview||state.finished||state.nextPending;
+  const disabled=preview||arrival||state.finished||state.nextPending;
   if(nextButton.disabled!==disabled)nextButton.disabled=disabled;
-  const nextLabel=state.nextPending?'Walking…':'Next ›';if(nextButton.textContent!==nextLabel)nextButton.textContent=nextLabel;
+  if(!preview&&previousPhase==='entry'&&!arrival&&!disabled)nextButton.focus({preventScroll:true});
+  const nextLabel=arrival?'Entering…':state.nextPending?'Walking…':'Next ›';if(nextButton.textContent!==nextLabel)nextButton.textContent=nextLabel;
   const rateLabel=`${rate}×`;if(speedButton.textContent!==rateLabel)speedButton.textContent=rateLabel;
   const pressed=String(rate===2),speedLabel=rate===2?'Double speed. Switch to normal speed.':'Normal speed. Switch to double speed.';
   if(speedButton.getAttribute('aria-pressed')!==pressed)speedButton.setAttribute('aria-pressed',pressed);
@@ -134,15 +151,22 @@ export function createCutsceneView({root,map,panel,roomView,scene,project,beats,
   emit(state);
   if(state.finished&&!preview&&!finishing){finishing=true;queueMicrotask(()=>{if(!disposed)onFinish({state,skipped:false});});}
  }
- function schedule(state=timeline.state){if(!disposed&&!frame&&state.playing&&!state.finished&&!document.hidden)frame=requestAnimationFrame(tick);}
- function tick(now){frame=0;if(disposed)return;const delta=last?Math.min(80,Math.max(0,now-last)):16;last=now;for(let remaining=delta*rate;remaining>0;remaining-=100)timeline.update(Math.min(100,remaining));const state=timeline.state;paint(state,delta);schedule(state);}
- function pause(){timeline.pause();if(frame)cancelAnimationFrame(frame);frame=0;last=0;paint();return timeline.state;}
- function play(){timeline.play();last=0;paint();schedule();return timeline.state;}
- function seek(value){timeline.seek(value);last=0;paint(timeline.state,16,true);schedule();return timeline.state;}
- function setRate(value){rate=value===2?2:1;last=0;onRateChange(rate);paint();return freeze({...timeline.state,playbackRate:rate,preview,roomId:scene.id});}
- function skip(){if(disposed)return;const state=timeline.state;timeline.skip();onFinish({state:{...state,playing:false},skipped:true});}
- function destroy(){if(disposed)return;disposed=true;if(frame)cancelAnimationFrame(frame);frame=0;for(const remove of removers)remove();for(const emote of emotes.values())emote.remove();dialogue.destroy();map.inert=wasInert;roomView.setCinematicFrame(null);root.classList.remove('cutscene-playing','cutscene-preview');panel.classList.remove('cutscene-silent');panel.hidden=true;}
- function advance(){if(!dialogue.state.complete){dialogue.revealAll();paint();return;}timeline.next();last=0;paint();schedule();}
+ function schedule(state=snapshot()){if(!disposed&&!frame&&state.playing&&!state.finished&&!document.hidden)frame=requestAnimationFrame(tick);}
+ function tick(now){
+  frame=0;if(disposed)return;const delta=last?Math.min(80,Math.max(0,now-last)):16;last=now;
+  const transport=entering()?entry:timeline;
+  // The following frame starts the story at its exact first pose. Never apply
+  // this whole delta to both sides of the doorway/story handoff.
+  for(let remaining=delta*rate;remaining>0;remaining-=100)transport.update(Math.min(100,remaining));
+  const state=snapshot();paint(state,delta);schedule(state);
+ }
+ function pause(){entry?.pause();timeline.pause();if(frame)cancelAnimationFrame(frame);frame=0;last=0;paint();return publicState();}
+ function play(){if(snapshot().finished){entry?.seek(0);timeline.seek(0);finishing=false;}if(entering())entry.play();timeline.play();last=0;paint();schedule();return publicState();}
+ function seek(value){entry?.skip();timeline.seek(value);last=0;paint(snapshot(),16,true);schedule();return publicState();}
+ function setRate(value){rate=value===2?2:1;last=0;onRateChange(rate);paint();return publicState();}
+ function skip(){if(disposed)return;entry?.skip();timeline.skip();onFinish({state:snapshot(),skipped:true});}
+ function destroy(){if(disposed)return;disposed=true;if(frame)cancelAnimationFrame(frame);frame=0;for(const remove of removers)remove();for(const emote of emotes.values())emote.remove();fade.remove();dialogue.destroy();map.inert=wasInert;map.style.overflow=wasOverflow;roomView.setCinematicFrame(null);root.classList.remove('cutscene-playing','cutscene-preview');delete root.dataset.cutscenePhase;panel.classList.remove('cutscene-silent');delete panel.dataset.phase;panel.hidden=true;}
+ function advance(){if(entering())return;if(!dialogue.state.complete){dialogue.revealAll();paint();return;}timeline.next();last=0;paint();schedule();}
  listen(nextButton,'click',advance);listen(skipButton,'click',skip);
  listen(speedButton,'click',()=>setRate(rate===2?1:2));
  listen(document,'keydown',event=>{
@@ -151,11 +175,11 @@ export function createCutsceneView({root,map,panel,roomView,scene,project,beats,
   if(['Escape','Enter',' ','e','E'].includes(event.key)){event.preventDefault();event.stopPropagation();if(event.repeat)return;if(event.key==='Escape')skip();else advance();}
  });
  let resumeAfterHidden=false;
- listen(document,'visibilitychange',()=>{if(document.hidden){resumeAfterHidden=resumeAfterHidden||timeline.state.playing;pause();}else if(resumeAfterHidden){resumeAfterHidden=false;play();}});
- listen(window,'blur',()=>{resumeAfterHidden=resumeAfterHidden||timeline.state.playing;pause();});listen(window,'focus',()=>{if(resumeAfterHidden&&!document.hidden){resumeAfterHidden=false;play();}});
+ listen(document,'visibilitychange',()=>{if(document.hidden){resumeAfterHidden=resumeAfterHidden||snapshot().playing;pause();}else if(resumeAfterHidden){resumeAfterHidden=false;play();}});
+ listen(window,'blur',()=>{resumeAfterHidden=resumeAfterHidden||snapshot().playing;pause();});listen(window,'focus',()=>{if(resumeAfterHidden&&!document.hidden){resumeAfterHidden=false;play();}});
  root.classList.add('cutscene-playing');root.classList.toggle('cutscene-preview',preview);panel.hidden=false;
  if(globalThis.ResizeObserver){const observer=new ResizeObserver(entries=>{const size=entries[0]?.borderBoxSize?.[0]?.blockSize;if(Number.isFinite(size))reservedBottom=size+20;});observer.observe(panel);removers.push(()=>observer.disconnect());}
- if(tile)timeline.seek(tile);if(paused)timeline.pause();paint();schedule();
+ if(tile){entry?.skip();timeline.seek(tile);}if(paused){entry?.pause();timeline.pause();}paint();schedule();
  if(!preview)nextButton.focus({preventScroll:true});
- return Object.freeze({get state(){return freeze({...timeline.state,preview,roomId:scene.id,playbackRate:rate,textComplete:dialogue.state.complete,visibleCharacters:dialogue.state.visibleCharacters,totalCharacters:dialogue.state.totalCharacters});},pause,play,seek,setRate,skip,destroy});
+ return Object.freeze({get state(){return publicState();},get safeState(){return entering()?publicState({...timeline.state,phase:'story',entry:entryInfo()}):publicState();},pause,play,seek,setRate,skip,destroy});
 }

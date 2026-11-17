@@ -1,5 +1,7 @@
 .cutscene-panel{position:absolute;z-index:3100;left:max(12px,env(safe-area-inset-left));right:max(12px,env(safe-area-inset-right));bottom:max(12px,env(safe-area-inset-bottom));max-width:780px;margin-inline:auto;padding:15px 18px;border:2px solid #cba675;background:#281f32f5;color:#ffedcd;box-shadow:0 5px 0 #17121e;pointer-events:auto}
 .cutscene-panel[hidden]{display:none}
+.room-entry-fade{position:absolute;inset:0;z-index:3000;background:#000;opacity:1;pointer-events:none;will-change:opacity}
+.room-entry-fade[hidden]{display:none}
 /* Silent movement and reactions keep the same camera framing as dialogue. */
 .cutscene-panel.cutscene-silent{visibility:hidden;pointer-events:none;background:transparent;border-color:transparent;box-shadow:none}
 .cutscene-panel.cutscene-silent .cutscene-buttons{visibility:visible;pointer-events:auto}

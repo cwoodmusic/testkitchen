@@ -30,11 +30,35 @@ def live_cutscene(page):
     return value and not value.get('finished', False)
 
 
+def assert_release(page, expected=None):
+    base = page.evaluate('document.baseURI')
+    if expected:
+        assert '/releases/' + expected + '/' in base, (expected, base)
+    return base
+
+
 def tick(page, duration=100):
     if page in ui.VIRTUAL_WALK_PAGES:
         page.clock.run_for(duration)
     else:
         page.wait_for_timeout(duration)
+
+
+def wait_for_story(page):
+    """Let the doorway performance finish before checking authored story clips.
+
+    Entry movement/fading has its own browser suite. These checks still exercise
+    the original dialogue, walking and director timeline at their authored times.
+    Advancing actual RAF callbacks also works when Playwright owns the clock.
+    """
+    waited = 0
+    value = cutscene(page)
+    while value and value.get('phase') == 'entry' and waited < 30000:
+        tick(page, 100)
+        waited += 100
+        value = cutscene(page)
+    assert not value or value.get('phase') != 'entry', value
+    return value
 
 
 def conserved(page):
@@ -90,13 +114,16 @@ def replay(page):
     ui.close_panels(page)
     page.locator('#menu').click()
     page.locator('#replay-cutscene').click()
+    wait_for_story(page)
     page.locator('#cutscene-panel').wait_for(state='visible')
     assert live_cutscene(page)
 
 
-def entrance_flow(browser, url):
+def entrance_flow(browser, url, expected=None):
     context, page, errors, writes, external = ui.open_page(
         browser, url, 1024, 'light', height=768, skip_cutscenes=False, reduced_motion='no-preference')
+    release_base = assert_release(page, expected)
+    wait_for_story(page)
     page.locator('#cutscene-panel').wait_for(state='visible')
     original = conserved(page)
     original_player = ui.walker(page)
@@ -172,6 +199,7 @@ def entrance_flow(browser, url):
     before_reload = conserved(page)
     page.reload();page.wait_for_function('!!window.quietBell?.walker')
     page.wait_for_function('[...document.images].every(i=>i.complete&&i.naturalWidth>0)')
+    assert_release(page, expected)
     tick(page, 100)
     assert not live_cutscene(page) and page.locator('#cutscene-panel').is_hidden()
     assert conserved(page) == before_reload
@@ -197,7 +225,7 @@ def entrance_flow(browser, url):
     assert not live_cutscene(page)
     assert not errors and not writes and not external, (errors, writes, external)
     context.close()
-    return {'movingActors': True, 'emotes': True, 'noPickupsOrDiscoveries': True,
+    return {'releaseBase': release_base, 'movingActors': True, 'emotes': True, 'noPickupsOrDiscoveries': True,
             'autoFinish': True, 'nextAndSkip': True, 'nextWaitsForWalk': True, 'reloadOnceOnly': True,
             'replayAndRestart': True, 'frozenInput': True, 'postSceneInteraction': True}
 
@@ -239,8 +267,9 @@ def export_project(page, name):
     return json.loads(path.read_text())
 
 
-def timeline_flow(browser, url):
+def timeline_flow(browser, url, expected=None):
     context, page, errors, writes, external = ui.open_page(browser, url, 1024, 'light', height=768)
+    assert_release(page, expected)
     page.keyboard.press('F2');page.locator('#developer-console').wait_for(state='visible')
     page.locator('[data-dev-tab="rooms"]').click();tick(page, 50)
     assert page.locator('#developer-cutscene-timeline').is_visible(), 'The existing Room shortcut remains available.'
@@ -372,10 +401,12 @@ def timeline_flow(browser, url):
             'ordinaryStorageUntouched': True}
 
 
-def phone_flow(browser, url, width, height, reduced=False):
+def phone_flow(browser, url, width, height, reduced=False, expected=None):
     context, page, errors, writes, external = ui.open_page(
         browser, url, width, 'dark', height=height, skip_cutscenes=False,
         reduced_motion='reduce' if reduced else 'no-preference')
+    release_base = assert_release(page, expected)
+    wait_for_story(page)
     page.locator('#cutscene-panel').wait_for(state='visible')
     assert_panel_layout(page)
     original = conserved(page)
@@ -397,7 +428,7 @@ def phone_flow(browser, url, width, height, reduced=False):
     page.keyboard.press('F2')
     assert not errors and not writes and not external, (errors, writes, external)
     context.close()
-    return {'width': width, 'height': height, 'reducedMotion': reduced, 'touchNextSkip': True, 'timelineFits': True}
+    return {'releaseBase': release_base, 'width': width, 'height': height, 'reducedMotion': reduced, 'touchNextSkip': True, 'timelineFits': True}
 
 
 class PublicBrowser:
@@ -422,6 +453,7 @@ def main():
     parser = argparse.ArgumentParser(description=__doc__)
     parser.add_argument('--source', action='store_true')
     parser.add_argument('--url')
+    parser.add_argument('--expect-release')
     args = parser.parse_args()
     server = None
     if args.url:
@@ -436,8 +468,8 @@ def main():
             browser = p.chromium.launch(executable_path='/usr/bin/chromium', args=['--no-sandbox'])
             runner = PublicBrowser(browser) if args.url else browser
             try:
-                result = {'entry': url, 'entrance': entrance_flow(runner, url), 'timeline': timeline_flow(runner, url),
-                          'phone': [phone_flow(runner, url, 390, 844), phone_flow(runner, url, 320, 568, reduced=True)]}
+                result = {'entry': url, 'entrance': entrance_flow(runner, url, args.expect_release), 'timeline': timeline_flow(runner, url, args.expect_release),
+                          'phone': [phone_flow(runner, url, 390, 844, expected=args.expect_release), phone_flow(runner, url, 320, 568, reduced=True, expected=args.expect_release)]}
             except Exception:
                 for index, context in enumerate(browser.contexts):
                     for number, failed in enumerate(context.pages):

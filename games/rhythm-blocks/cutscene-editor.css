@@ -141,3 +141,4 @@
 #developer-console .cse-actor-heading{height:24px;line-height:24px}
 #developer-console #developer-body[data-editor="cutscene"] .cse-ruler{height:24px}
 #developer-console #developer-body[data-editor="cutscene"] .cse-playhead{top:24px}
+#developer-console .cse-entry-settings{grid-column:1/-1;min-width:0}

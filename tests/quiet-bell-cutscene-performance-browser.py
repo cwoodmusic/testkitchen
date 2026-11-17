@@ -15,7 +15,7 @@ import math
 from playwright.sync_api import sync_playwright
 
 ROOT=Path(__file__).resolve().parents[1]
-OUT=ROOT/'work/cutscene-performance'
+OUT=ROOT/'work/room-entry-performance'
 OUT.mkdir(parents=True,exist_ok=True)
 spec=importlib.util.spec_from_file_location('quiet_bell_ui',ROOT/'tests/rhythm-blocks-browser.py')
 ui=importlib.util.module_from_spec(spec);spec.loader.exec_module(ui)
@@ -27,6 +27,11 @@ def metrics(cdp):
 
 def percentile(values,fraction):
     return sorted(values)[min(len(values)-1,int(len(values)*fraction))] if values else 0
+
+
+def wait_for_story(page):
+    """Let the real doorway transport finish before measuring authored clips."""
+    page.wait_for_function("window.quietBell?.cutscene?.phase==='story'", polling='raf')
 
 
 def observe(page,duration_ms=7500):
@@ -150,6 +155,7 @@ def scenario(browser,url,name,width,height,cpu,reduced='no-preference',preview=F
         # Explicit replay starts all measurements from the same authored frame.
         page.locator('#cutscene-skip').click();page.locator('#menu').click();page.locator('#replay-cutscene').click()
         page.wait_for_function('!!window.quietBell?.cutscene')
+        wait_for_story(page)
     speed=page.evaluate('quietBell.scene.geometry.speed*(quietBell.cutscene?.playbackRate??1)')
     # Check composited feet while the fresh replay is certainly still walking;
     # keep the DOM reads outside the measured interval.
@@ -178,6 +184,7 @@ def early_next(browser,url):
         virtual_walk=False,skip_cutscenes=False,reduced_motion='no-preference')
     cdp=context.new_cdp_session(page);cdp.send('Emulation.setCPUThrottlingRate',{'rate':4})
     page.locator('#cutscene-skip').click();page.locator('#menu').click();page.locator('#replay-cutscene').click()
+    wait_for_story(page)
     before_resources=ui.resources(ui.state(page));before_journal=page.evaluate('quietBell.journey')
     if not page.evaluate('quietBell.cutscene.textComplete'):
         first_index=page.evaluate('quietBell.cutscene.index')
@@ -222,6 +229,91 @@ def early_next(browser,url):
     context.close();return result
 
 
+def native_entry(browser,url):
+    """Watch the real fade, doorway walk and story handoff on a slower CPU."""
+    context,page,errors,writes,external=ui.open_page(browser,url,1024,'light',height=768,
+        virtual_walk=False,skip_cutscenes=False,reduced_motion='no-preference')
+    page.evaluate('document.fonts.ready')
+    cdp=context.new_cdp_session(page);cdp.send('Emulation.setCPUThrottlingRate',{'rate':4})
+    ui.skip_cutscene(page)
+    before_resources=ui.resources(ui.state(page));before_journal=page.evaluate('quietBell.journey')
+    before_save=page.evaluate('(key)=>localStorage.getItem(key)',ui.SAVE_KEY)
+    page.locator('#menu').click();page.locator('#replay-cutscene').click()
+    assert page.evaluate("quietBell.cutscene?.phase==='entry'")
+    speed=page.evaluate('quietBell.scene.geometry.speed*(quietBell.cutscene?.playbackRate??1)')
+    observation=page.evaluate('''async()=>{
+      const {CAST}=await import(new URL('cast.mjs',document.baseURI));
+      return new Promise(resolve=>{
+        const frames=[],feet=[];let started=performance.now(),previous=started,storyFrames=0;
+        function sample(now){
+          const state=window.quietBell?.cutscene,scene=window.quietBell?.scene;
+          const map=document.getElementById('room-map'),fade=document.querySelector('.room-entry-fade');
+          frames.push({at:now,delta:now-previous,index:state?.index,tile:state?.currentTile,
+            phase:state?.phase,entry:state?.entry,camera:window.quietBell?.camera,
+            overflow:map.style.overflow,fadeHidden:fade?.hidden,fadeOpacity:Number(fade?.style.opacity??0),
+            hasBeat:!!state?.beat,totalCharacters:state?.totalCharacters,text:document.getElementById('cutscene-line').textContent,
+            silent:document.getElementById('cutscene-panel').classList.contains('cutscene-silent'),
+            actors:state?.actors?.map(actor=>{
+              const node=document.querySelector('[data-actor="'+actor.id+'"]');
+              return{id:actor.id,x:actor.x,y:actor.y,moving:actor.moving,facing:actor.facing,
+                frame:node?Number(node.dataset.frame):null,row:node?Number(node.dataset.spriteRow):null,
+                animated:node?.dataset.spriteAnimated==='true'};
+            })});
+          const actor=state?.actors?.find(actor=>actor.moving&&actor.id!=='mira');
+          if(state?.phase==='entry'&&actor&&feet.length<5){
+            const definition=scene.actors.find(item=>item.id===actor.id),sprite=quietBell.project.cast[definition.character];
+            const node=document.querySelector('[data-actor="'+actor.id+'"]');
+            const row=Number(node.dataset.spriteRow),frame=Number(node.dataset.frame),walk=sprite.walk??CAST[definition.character]?.walk;
+            const anchor=walk?.anchors?.[row]?.[frame]??sprite.anchor;
+            const bounds=map.getBoundingClientRect(),rect=node.getBoundingClientRect(),scale=bounds.width/scene.geometry.width;
+            const foot={x:rect.left+rect.width*anchor[0],y:rect.top+rect.height*anchor[1]};
+            const expected={x:bounds.left+actor.x*scale,y:bounds.top+actor.y*scale};
+            feet.push({id:actor.id,x:actor.x,y:actor.y,frame,row,anchor,foot,expected,
+              error:Math.hypot(foot.x-expected.x,foot.y-expected.y)});
+          }
+          previous=now;if(state?.phase==='story')storyFrames++;
+          if(storyFrames>=2||now-started>15000)resolve({frames,feet});else requestAnimationFrame(sample);
+        }requestAnimationFrame(sample);
+      });
+    }''')
+    frames=observation['frames'];entry=[frame for frame in frames if frame['phase']=='entry']
+    story=[frame for frame in frames if frame['phase']=='story']
+    (OUT/'native-entry-cpu4-frames.json').write_text(json.dumps(frames)+'\n')
+    assert len(entry)>=12 and len(story)>=2, ('Missing native entry/story frames',len(entry),len(story))
+    assert entry[0]['fadeOpacity']>0, entry[0]
+    for previous,current in zip(entry,entry[1:]):
+        assert current['entry']['currentTile']>=previous['entry']['currentTile'], ('Entry clock reversed',previous,current)
+        assert current['fadeOpacity']<=previous['fadeOpacity']+.000001, ('Fade reversed',previous,current)
+    assert all(not frame['hasBeat'] and frame['totalCharacters']==0 and frame['silent'] for frame in entry), 'Story dialogue started before arrival.'
+    assert all(frame['overflow']=='hidden' for frame in entry), 'Offscreen entry sprites must be clipped.'
+    assert all(frame['overflow']!='hidden' and frame['fadeHidden'] and frame['entry']['finished'] for frame in story), 'Entry clipping/fade was not restored.'
+    assert len(observation['feet'])>=5 and max(item['error'] for item in observation['feet'])<3, observation['feet']
+    steps={}
+    for frame in entry:
+        for actor in frame['actors']:
+            if actor['id']!='mira' and actor['moving']:
+                assert actor['animated'], actor
+                steps.setdefault(actor['id'],{'frames':set(),'facings':set()})
+                steps[actor['id']]['frames'].add(actor['frame']);steps[actor['id']]['facings'].add(actor['facing'])
+    assert set(steps)=={'nell','iris','pip'}, steps
+    assert all(len(item['frames'])>=2 and 'up' in item['facings'] for item in steps.values()), steps
+    assert any(len(item['facings'])>=2 for item in steps.values()), 'Entry cast never visibly turns.'
+    assert ui.resources(ui.state(page))==before_resources
+    assert page.evaluate('quietBell.journey')==before_journal
+    assert page.evaluate('(key)=>localStorage.getItem(key)',ui.SAVE_KEY)==before_save, 'Visual entry changed the saved run.'
+    result={'name':'native-entry-cpu4','releaseBase':page.evaluate('document.baseURI'),
+            'cpuThrottle':4,'entryFrames':len(entry),'fadeStartsAt':entry[0]['fadeOpacity'],
+            'fadeEndsAt':entry[-1]['fadeOpacity'],'entryTileAtHandoff':story[0]['entry']['currentTile'],
+            'entryClockMonotonic':True,'dialogueWaitsForArrival':True,'clippingRestored':True,
+            'saveAndResourcesPreserved':True,'renderedFootSamples':observation['feet'],
+            'walkSprites':{actor:{key:sorted(value) for key,value in item.items()} for actor,item in steps.items()},
+            **analyze(frames,speed)}
+    ui.skip_cutscene(page);ui.protected_storage(page)
+    assert not errors and not writes and not external,(errors,writes,external)
+    result['errors']=errors
+    context.close();return result
+
+
 def main():
     parser=argparse.ArgumentParser(description=__doc__)
     parser.add_argument('--source',action='store_true')
@@ -237,7 +329,8 @@ def main():
         with sync_playwright() as p:
             raw=p.chromium.launch(executable_path='/usr/bin/chromium',args=['--no-sandbox'])
             browser=PublicBrowser(raw) if url.startswith('https:') else raw
-            results=[scenario(browser,url,'native-phone-cpu4',390,844,4),
+            results=[native_entry(browser,url),
+                     scenario(browser,url,'native-phone-cpu4',390,844,4),
                      scenario(browser,url,'native-reduced',1024,768,1,reduced='reduce'),
                      scenario(browser,url,'native-preview-cpu4',1024,768,4,preview=True),
                      early_next(browser,url)]

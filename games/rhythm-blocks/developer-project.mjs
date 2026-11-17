@@ -339,6 +339,16 @@ export function validateProject(project){
   if(!record(geometry)){fail(`${path}.geometry`,'use room geometry.');continue;}
   const dimensions=number(geometry.width,`${path}.geometry.width`,64,8192)&number(geometry.height,`${path}.geometry.height`,64,8192);
   if(!dimensions)continue;
+  if(scene.entry!==undefined){
+   const entry=scene.entry,entryPath=`${path}.entry`;
+   if(!record(entry))fail(entryPath,'use room-entry settings.');
+   else{
+    if(entry.enabled!==undefined&&typeof entry.enabled!=='boolean')fail(`${entryPath}.enabled`,'use true or false.');
+    if(entry.fadeTiles!==undefined)number(entry.fadeTiles,`${entryPath}.fadeTiles`,0,128,{integer:true});
+    if(entry.staggerTiles!==undefined)number(entry.staggerTiles,`${entryPath}.staggerTiles`,0,64,{integer:true});
+    if(entry.doorX!==undefined)number(entry.doorX,`${entryPath}.doorX`,0,geometry.width);
+   }
+  }
   rectangle(geometry.bounds,`${path}.geometry.bounds`,geometry.width,geometry.height);
   number(geometry.radius,`${path}.geometry.radius`,1,256);number(geometry.gridSize,`${path}.geometry.gridSize`,8,512);
   number(geometry.speed,`${path}.geometry.speed`,1,2000);number(geometry.maxDeltaMs,`${path}.geometry.maxDeltaMs`,1,100);

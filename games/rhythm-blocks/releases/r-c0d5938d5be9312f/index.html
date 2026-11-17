@@ -1,0 +1,85 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta name="quiet-bell-release" content="r-c0d5938d5be9312f">
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
+<meta name="theme-color" content="#292132">
+<meta name="description" content="Walk through The Quiet Bell, a dungeon whose doors open to musical rhythms.">
+<title>The Quiet Bell · Coda Arcade</title>
+<link rel="stylesheet" href="style.css">
+<link rel="stylesheet" href="developer-console.css">
+<link rel="stylesheet" href="cutscene.css">
+<link rel="stylesheet" href="cutscene-paths.css">
+<link rel="stylesheet" href="jrpg-dialogue.css">
+</head>
+<body>
+<div id="quiet-bell">
+  <main id="room-scene" class="room-viewport" aria-label="The Parcel Depot">
+    <div id="room-map" class="room-map">
+      <img class="mg-art" src="assets/parcel-depot.webp" width="1536" height="1024" alt="A star-post depot with living conduits, a floating-island window, Nell, Iris, Pip, three rhythm doors, a delivery chest, and crystal route instruments.">
+      <button type="button" class="mg-walk-floor" id="walk-floor" aria-label="Room floor. Click or tap to walk. Arrows or WASD move; E or Space interacts."></button>
+      <div class="mg-player" id="player-sprite" role="img" aria-label="Mira, your walking character"></div>
+      <div class="mg-room-objects" role="group" aria-label="Doors and treasure"></div>
+      <div class="mg-inspections" role="group" aria-label="Objects to inspect"></div>
+      <div class="mg-people" role="group" aria-label="People in the room"></div>
+    </div>
+  </main>
+  <header class="world-hud" aria-label="Room controls"><span class="location">The Parcel Depot</span><div class="hud-actions"><button type="button" class="mg-button" id="ending" hidden>Read ending</button><button type="button" class="mg-button" id="developer-end" hidden>End playtest</button><button type="button" class="mg-button hud-icon" id="bag" aria-label="Open inventory" title="Inventory (I)"><svg viewBox="0 0 24 24" aria-hidden="true" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="square" stroke-linejoin="miter"><path d="M8 7V5h8v2M6 7h12l2 3v11H4V10zM8 15h8v6H8zM8 10v2m8-2v2"/></svg><span class="bag-count" id="bag-count" hidden>0</span></button><button type="button" class="mg-button hud-icon" id="menu" aria-label="Settings" title="Settings (Esc)"><svg viewBox="0 0 24 24" aria-hidden="true" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="square" stroke-linejoin="miter"><path d="m9 3-.7 2.5-2 .9L4 5.5 2 9l1.8 1.8v2.4L2 15l2 3.5 2.3-.9 2 .9L9 21h6l.7-2.5 2-.9 2.3.9 2-3.5-1.8-1.8v-2.4L22 9l-2-3.5-2.3.9-2-.9L15 3z"/><circle cx="12" cy="12" r="3"/></svg></button></div></header>
+  <div class="world-controls" id="room-controls">
+    <div class="mg-dpad" role="group" aria-label="Walk around the room"><button type="button" class="mg-button" data-walk="up" aria-label="Walk up">↑</button><button type="button" class="mg-button" data-walk="left" aria-label="Walk left">←</button><button type="button" class="mg-button" data-walk="down" aria-label="Walk down">↓</button><button type="button" class="mg-button" data-walk="right" aria-label="Walk right">→</button></div>
+    <button type="button" class="mg-button" id="interact" disabled>Interact</button>
+  </div>
+  <section id="cutscene-panel" class="cutscene-panel" aria-label="Room entrance scene" hidden>
+    <header><strong id="cutscene-speaker"></strong><span id="cutscene-counter"></span></header>
+    <p id="cutscene-line" aria-live="polite"></p>
+    <div class="cutscene-buttons"><button type="button" class="mg-button" id="cutscene-skip">Skip</button><button type="button" class="mg-button" id="cutscene-speed" aria-pressed="false">1×</button><button type="button" class="mg-button mg-primary" id="cutscene-next">Next ›</button></div>
+  </section>
+  <p class="nearby-prompt" id="nearby-prompt" aria-live="polite"></p>
+  <p class="world-status" id="world-status" aria-hidden="true" hidden></p>
+
+  <dialog id="conversation-dialog" class="conversation-dialog" aria-labelledby="speaker">
+    <div class="dialog-head"><h2 id="speaker">Nell · Postkeeper</h2><button type="button" class="mg-button dialog-close" id="conversation-close" aria-label="Close conversation">×</button></div>
+    <span class="mg-small" id="talk-about">Your story</span><p id="dialogue" aria-live="polite"></p>
+    <button type="button" class="mg-button mg-primary mg-gift" id="take-parcel">Take Nell’s parcel</button>
+    <div class="mg-questions" role="group" aria-label="What would you like to ask?"><button type="button" class="mg-button" data-topic="story" aria-pressed="true">Your story</button><button type="button" class="mg-button" data-topic="route" aria-pressed="false">A way forward</button><button type="button" class="mg-button" data-topic="inventory" aria-pressed="false">My notes</button></div>
+    <button type="button" class="mg-button" id="demo" hidden>Hear an example</button>
+  </dialog>
+
+  <dialog id="notes-dialog" class="notes-dialog" data-mode="bag" aria-labelledby="stock-title">
+    <div class="dialog-head"><h2 id="stock-title">Your notes</h2><button type="button" class="mg-button dialog-close" id="notes-close" aria-label="Close notes">×</button></div>
+    <div class="puzzle-layout">
+      <section class="mg-compose" aria-label="Arrange the door’s rhythm">
+        <div class="mg-section-head"><h3 id="door-title">Choose a door</h3><span class="mg-meter" id="total">0 / 4 beats</span></div>
+        <div class="mg-floor" data-ready="false"><div class="mg-phrase" id="phrase" role="group" aria-label="Your four-beat answer"></div><div class="mg-ruler" aria-hidden="true"><span>1</span><span>2</span><span>3</span><span>4</span></div></div>
+        <p class="mg-door-hint" id="door-hint"></p>
+        <div class="mg-actions"><button type="button" class="mg-button" id="door-demo" disabled>Hear lock</button><button type="button" class="mg-button" id="listen" disabled>Listen</button><button type="button" class="mg-button" id="undo" disabled>Undo</button><button type="button" class="mg-button mg-primary" id="commit" disabled>Open door</button></div>
+        <p class="mg-help" id="edit-hint">Choose notes, then play the key.</p><p class="mg-status" id="status" aria-live="polite"></p>
+      </section>
+      <section class="mg-bag" aria-label="Your carried note inventory"><p class="mg-small" id="held">0 notes</p><div class="mg-stock" id="stock"></div><div class="room-finds"><h3 id="pack-heading">Room finds</h3><div id="ledger" hidden></div><div id="pack" hidden></div><p id="pack-copy" class="mg-small"></p></div></section>
+    </div>
+  </dialog>
+
+  <dialog id="menu-dialog" class="menu-dialog" aria-labelledby="menu-title">
+    <div class="dialog-head"><h2 id="menu-title">Paused</h2><button type="button" class="mg-button dialog-close" id="menu-close" aria-label="Resume game">×</button></div>
+    <div class="pause-journey" id="pause-journey">
+      <section class="pause-map" aria-labelledby="journey-title"><h3 id="journey-title">Your journey</h3><div id="journey-chart" aria-label="Places visited and routes travelled"></div></section>
+      <aside class="pause-journal" id="journey-journal" aria-label="Discovered journal" hidden>
+        <details id="journey-hints-section" hidden><summary>Clues found</summary><ul id="journey-hints"></ul></details>
+        <section id="journey-outcomes-section" hidden><h3>Outcomes reached</h3><ul id="journey-outcomes"></ul></section>
+        <section id="journey-achievements-section" hidden><h3>Achievements earned</h3><ul id="journey-achievements"></ul></section>
+      </aside>
+    </div>
+    <nav class="menu-options" aria-label="Game options"><button type="button" class="mg-button" id="sound" aria-pressed="true">Sound on</button><button type="button" class="mg-button" id="help">How to play</button><button type="button" class="mg-button" id="replay-cutscene">Replay entrance scene</button><button type="button" class="mg-button" id="revisit-room" hidden>Revisit previous choice</button><button type="button" class="mg-button" id="developer-open">Developer mode · F2</button><button type="button" class="mg-button" id="restart">Start over</button><a class="mg-button" id="exit" href="../../../../world-preview.html">Return to arcade</a></nav>
+    <p class="menu-note" id="save-status">Progress saves on this device.</p>
+  </dialog>
+
+  <dialog id="outcome" class="outcome-dialog" aria-labelledby="outcome-title"><span class="mg-small" id="outcome-kicker"></span><div class="dialog-head"><h2 id="outcome-title"></h2><button type="button" class="mg-button dialog-close" id="outcome-close" aria-label="Close ending">×</button></div><p id="outcome-copy"></p><p class="mg-small" id="outcome-help">Your carried notes are saved. Revisit this choice to explore another answer with the notes you spent restored.</p><div class="mg-actions"><button type="button" class="mg-button mg-primary" id="revisit">Revisit your answer</button><button type="button" class="mg-button" id="outcome-map">Your journey</button><a class="mg-button" id="outcome-exit" href="../../../../world-preview.html">Return to arcade</a></div></dialog>
+
+  <dialog id="help-dialog" aria-labelledby="help-title"><div class="dialog-head"><h2 id="help-title">A story told in rhythm.</h2><button type="button" class="mg-button dialog-close" id="help-close" aria-label="Close instructions">×</button></div><p>Approach the returned mail, terminals, and relics to inspect them. Observations stay in your journal across runs.</p><p>Walk with arrows or WASD. Click/tap the floor to choose a destination; click a person, chest, or door to walk over and interact. E or Space interacts nearby. I opens your notes.</p><p>Nell, Iris, and Pip travel with you and can be approached in every room. Ask them about their story, the route, or your notes. They offer gifts only at particular stops, once per run. Talk to Nell in the depot for eight note types and open the chest for the missing half note. Each source can be collected once. Iris and Pip offer notes in their rooms; Oren’s delivery chest holds the canal phrase.</p><p>Approach a door to open its rhythm puzzle. Hear its lock, arrange the exact ordered rhythm key, then open the door. Wrong rhythms spend nothing. Tap a placed note or use Undo to edit freely.</p><div class="mg-help-notes" id="help-notes" aria-label="Note values"></div><p>Pause with Escape or the settings icon to see your journey. The chart remembers places and connections you have travelled across runs. Read clues are kept in the journal. Starting over resets your satchel and pickups while keeping discoveries.</p><p>On entering a new room, the party explores and discusses what they find. Scenes advance automatically. Next, E, Enter or Space moves ahead; Skip or Escape returns to exploration. Each scene plays once per run, and Settings can replay it.</p><p>Rests sound as silence. The number keys 1–9 add notes while solving a lock; Backspace undoes. Escape closes a panel or opens the menu. No one is timing you.</p><p>Follow the dungeon’s branching routes and explore the places where each journey ends. Some objects hide notes: inspect them, then choose Search to collect what you find. Hidden caches reveal secret gates. Every successful ending uses all your notes. The south threshold revisits your previous choice and restores its payment, removing pickups collected beyond it. Notes and discoveries save on this device.</p><button type="button" class="mg-button mg-primary" id="help-done">Keep exploring</button></dialog>
+  <dialog id="lore-dialog" class="lore-dialog" aria-labelledby="lore-title"><div class="dialog-head"><h2 id="lore-title">A closer look</h2><button type="button" class="mg-button dialog-close" id="lore-close" aria-label="Close inspection">×</button></div><p id="lore-copy"></p><button type="button" class="mg-button mg-primary" id="lore-search" hidden>Search here</button><button type="button" class="mg-button mg-primary" id="lore-done">Keep exploring</button></dialog>
+</div>
+<p id="announcement" class="sr-only" aria-live="polite" aria-atomic="true"></p>
+<script type="module" src="app.mjs"></script>
+</body>
+</html>
