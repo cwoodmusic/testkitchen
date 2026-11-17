@@ -1,7 +1,7 @@
 {
   "version": 1,
   "passed": true,
-  "sourceSHA256": "660e6a45ed820e16e44a6b0d9ba7dbaa19ab4bc7aab4ac811767c15b65b75052",
+  "sourceSHA256": "a9c56f102b8369663c61444f14a1e74e67aa62a683f611a726c637454452b769",
   "verifierSHA256": "ee5efe33c758f288fd823ba95bb5672f5988ff5a33636fa7fc7476759380b422",
   "kindCatalog": [
     {
@@ -782,8 +782,8 @@
       "roomId": "depot",
       "to": "garden-porch",
       "recipe": [
-        "half-rest",
-        "half"
+        "half",
+        "half-rest"
       ],
       "revealAfter": null,
       "reachable": true,
@@ -1063,8 +1063,8 @@
       "roomId": "garden-porch",
       "to": "garden-fork",
       "recipe": [
-        "half-rest",
-        "half"
+        "half",
+        "half-rest"
       ],
       "revealAfter": null,
       "reachable": true,
@@ -1983,10 +1983,10 @@
       "roomId": "workshop-fork",
       "to": "workshop-alcove",
       "recipe": [
-        "half-rest",
-        "quarter-rest",
         "eighth",
-        "sixteenth-pair"
+        "sixteenth-pair",
+        "half-rest",
+        "quarter-rest"
       ],
       "revealAfter": null,
       "reachable": true,
@@ -2197,10 +2197,10 @@
       "roomId": "canal-fork",
       "to": "dead-echo",
       "recipe": [
-        "half-rest",
-        "quarter-rest",
         "eighth",
-        "sixteenth-pair"
+        "sixteenth-pair",
+        "half-rest",
+        "quarter-rest"
       ],
       "revealAfter": null,
       "reachable": true,
@@ -2418,10 +2418,10 @@
       "roomId": "workshop-final",
       "to": "ending-school",
       "recipe": [
-        "half-rest",
-        "quarter-rest",
         "eighth",
-        "sixteenth-pair"
+        "sixteenth-pair",
+        "half-rest",
+        "quarter-rest"
       ],
       "revealAfter": null,
       "reachable": true,
@@ -2530,10 +2530,10 @@
       "roomId": "canal-final",
       "to": "ending-public",
       "recipe": [
-        "half-rest",
-        "quarter-rest",
         "eighth",
-        "sixteenth-pair"
+        "sixteenth-pair",
+        "half-rest",
+        "quarter-rest"
       ],
       "revealAfter": null,
       "reachable": true,

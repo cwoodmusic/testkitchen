@@ -8,7 +8,7 @@ export const PAGE_ONE_SOURCES=Object.freeze({
  'depot-chest':Object.freeze({id:'depot-chest',type:'chest',recipe:Object.freeze(['half'])})
 });
 export const PAGE_ONE_DOOR_COSTS=Object.freeze({
- garden:Object.freeze(['half-rest','half']),
+ garden:Object.freeze(['half','half-rest']),
  workshop:Object.freeze(['half','eighth-pair','sixteenth-group']),
  canal:Object.freeze(['half','quarter','eighth-pair'])
 });
@@ -71,9 +71,11 @@ export function createStoryGame({saved=null}={}){
     if(!knownSource(action.sourceId)||claimed.has(action.sourceId))return;
     claimed.add(action.sourceId);next.push({type:'claim',sourceId:action.sourceId});
    }else if(action.type==='door'){
-    if(!knownDoor(action.doorId)||value.selectedDoor!==action.doorId||!checkedRecipe(action.recipe,stockFor(next),{complete:true})||!equal(action.recipe,PAGE_ONE_DOOR_COSTS[action.doorId]))return;
-    nextReceipt=receiptFor(next,action.doorId,action.recipe);nextRoute=action.doorId;
-    next.push({type:'door',doorId:action.doorId,recipe:[...action.recipe]});committed=true;
+    const legacyGarden=action.doorId==='garden'&&equal(action.recipe??[],['half-rest','half']);
+    if(!knownDoor(action.doorId)||value.selectedDoor!==action.doorId||!checkedRecipe(action.recipe,stockFor(next),{complete:true})||!equal(action.recipe,PAGE_ONE_DOOR_COSTS[action.doorId])&&!legacyGarden)return;
+    const recipe=PAGE_ONE_DOOR_COSTS[action.doorId];
+    nextReceipt=receiptFor(next,action.doorId,recipe);nextRoute=action.doorId;
+    next.push({type:'door',doorId:action.doorId,recipe:[...recipe]});committed=true;
    }else return;
   }
   if(committed?value.phrase.length>0:!checkedRecipe(value.phrase,stockFor(next)))return;

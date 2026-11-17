@@ -21,7 +21,7 @@ spec.loader.exec_module(ui)
 SIZES = [(320, 568), (390, 844), (1024, 768), (1366, 768), (1024, 480)]
 BRANCHES = [
     {'route': 'garden', 'room': 'garden-porch', 'person': 'iris', 'source': 'iris-gift',
-     'cost': ['half-rest', 'half'], 'dead': ['dotted-half', 'quarter'],
+     'cost': ['half', 'half-rest'], 'dead': ['dotted-half', 'quarter'],
      'wrongDead': ['quarter', 'eighth-pair', 'sixteenth-group', 'quarter-rest'],
      'destination': 'garden-fork', 'terminal': 'dead-brambles'},
     {'route': 'workshop', 'room': 'workshop-porch', 'person': 'pip', 'source': 'pip-gift',

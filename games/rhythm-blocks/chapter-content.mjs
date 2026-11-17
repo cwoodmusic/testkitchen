@@ -39,9 +39,9 @@ export const ROOM_CONTENT = freeze({
       name: 'Iris',
       role: 'Gardener',
       story: 'I mend that cup whenever the handle loosens. My friend used to answer my watering song from the other chair. Now the pipes hum her part, but always a little late. Pip says one of his birds pauses for the same reply.',
-      route: 'Listen: two quiet beats, then one sound held for two beats. Put a half rest before a half note at the listening gate. The overgrown arch takes a dotted half and a quarter, but the roots close across that passage. I would try the listening gate first.',
-      inventory: 'You can take my listening phrase once: one half rest and one half note. Choose “Take Iris’s listening phrase” to put them in your satchel. They pay for the listening gate exactly; keep the rest of your parcel for later.',
-      demo: ['half-rest', 'half'],
+      route: 'Listen: one sound held for two beats, then two quiet beats. Put a half note before a half rest at the listening gate. The overgrown arch takes a dotted half and a quarter, but the roots close across that passage. I would try the listening gate first.',
+      inventory: 'You can take my listening phrase once: one half note and one half rest. Choose “Take Iris’s listening phrase” to put them in your satchel. They pay for the listening gate exactly; keep the rest of your parcel for later.',
+      demo: ['half', 'half-rest'],
       sourceId: 'iris-gift',
       sourceLabel: 'Take Iris’s listening phrase',
     }],
@@ -68,7 +68,7 @@ export const ROOM_CONTENT = freeze({
     doorCopy: {
       'garden-porch-forward': {
         name: 'The listening gate',
-        hint: 'Two quiet beats, then two sounding beats. Iris can play the listening phrase.',
+        hint: 'Two sounding beats, then two quiet beats. Iris can play the listening phrase.',
         previewCopy: 'The roots loosen their hold and the listening gate opens toward the Two Garden Paths. You have reached a continuation preview: the next room is not playable in this release yet. Revisit this choice to keep exploring the porch with your notes restored.',
       },
       'garden-porch-dead': {
@@ -76,7 +76,7 @@ export const ROOM_CONTENT = freeze({
         hint: 'An old inscription calls for a dotted half followed by a quarter.',
         warning: 'Iris warns that roots have closed the passage beyond this arch. The listening gate is the way onward.',
         deadCopy: 'The arch opens onto a little court entirely filled with roots. A ceramic cup catches the rain in a gentle, uneven rhythm. You can rest here, but there is no passage onward.',
-        repair: 'Revisit this choice to recover the notes spent here. On Iris’s porch, collect her listening phrase if you have not already, then use a half rest followed by a half note at the listening gate.',
+        repair: 'Revisit this choice to recover the notes spent here. On Iris’s porch, collect her listening phrase if you have not already, then use a half note followed by a half rest at the listening gate.',
       },
     },
   },

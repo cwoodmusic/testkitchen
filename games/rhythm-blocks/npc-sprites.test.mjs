@@ -2,7 +2,7 @@ import test from 'node:test';
 import assert from 'node:assert/strict';
 import {CAST,CAST_IMAGE,NPC_WALKS} from './cast.mjs';
 import {getNpcSpriteFrame} from './npc-sprites.mjs';
-import {stageCutsceneScene} from './cutscene-view.mjs';
+import {stageCutsceneScene,getCutsceneGesturePose} from './cutscene-view.mjs';
 import {CAMPAIGN_SCENES} from './campaign-scenes.mjs';
 
 const project=()=>({settings:{castImage:CAST_IMAGE},cast:structuredClone(CAST)});
@@ -29,6 +29,33 @@ test('walking frames alternate exactly like Mira and direction changes choose tr
   }
   for(const elapsed of [0,250,999999]){const idle=frame(p,{facing,moving:false},elapsed);assert.equal(idle.frame,0);assert.equal(idle.row,row);}
  }
+});
+
+test('running doubles the companion step cadence while idle frames and boot anchors remain exact',()=>{
+ const p=project();
+ for(const facing of ['up','down','left','right'])for(const elapsed of [0,32,62.5,100,125,187.5,250,500]){
+  assert.deepEqual(frame(p,{facing,moving:true,gait:'run'},elapsed),frame(p,{facing,moving:true},elapsed*2));
+  assert.deepEqual(frame(p,{facing,moving:false,gait:'run'},elapsed),frame(p,{facing,moving:false},elapsed));
+ }
+});
+
+test('trip, fall and recovery meet without a pose jump and restore an upright body',()=>{
+ for(const facing of ['up','down','left','right'])for(const reducedMotion of [false,true]){
+  const pose=(gesture,gestureProgress)=>getCutsceneGesturePose({gesture,gestureProgress,facing},{reducedMotion});
+  assert.equal(pose('trip',0).angle,0);
+  assert.equal(pose('trip',1).angle,pose('fallen',0).angle);
+  assert.equal(pose('fallen',1).angle,pose('recover',0).angle);
+  assert.equal(pose('recover',1).angle,0);
+  assert.equal(Math.abs(pose('fallen',.5).angle),82);
+  for(let progress=0;progress<=1;progress+=.01){
+   const trip=pose('trip',progress),recover=pose('recover',progress);
+   assert(Number.isFinite(trip.angle)&&Math.abs(trip.angle)<=82);
+   assert(Number.isFinite(recover.angle)&&Math.abs(recover.angle)<=82);
+  }
+ }
+ const source={gesture:'magnify',gestureProgress:.4,facing:'left',x:500,y:700},before=JSON.stringify(source);
+ assert(getCutsceneGesturePose(source).magnifying);assert.equal(JSON.stringify(source),before);
+ assert.equal(getCutsceneGesturePose({}).angle,0);assert(!getCutsceneGesturePose({gesture:'fallen'}).magnifying);
 });
 
 test('old saved stock projects without walk metadata gain the same directional frames',()=>{

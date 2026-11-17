@@ -19,6 +19,6 @@ export function getNpcSpriteFrame({project,actor,pose=actor,elapsed=0}){
  const facing=FACINGS.has(pose.facing)?pose.facing:FACINGS.has(actor.facing)?actor.facing:'down';
  if(!walk)return{image:project.settings.castImage,backgroundSize:'200% 200%',backgroundPosition:`${sprite.column*100}% ${sprite.row*100}%`,anchor:sprite.anchor,frame:0,row:sprite.row,facing,animated:false,aspectRatio:1};
  const row=Math.max(0,walk.directions.indexOf(facing)),phase=Number.isFinite(elapsed)?Math.max(0,elapsed):0;
- const frame=pose.moving?[1,0,2,0][Math.floor(phase/125)%4]:0;
+ const frame=pose.moving?[1,0,2,0][Math.floor(phase/(pose.gait==='run'?62.5:125))%4]:0;
  return{image:walk.image,backgroundSize:'300% 400%',backgroundPosition:`${frame*50}% ${row*100/3}%`,anchor:walk.anchors[row][frame],frame,row,facing,animated:true,aspectRatio:walk.cellWidth/walk.cellHeight};
 }

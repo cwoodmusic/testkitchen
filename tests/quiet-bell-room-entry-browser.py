@@ -251,7 +251,7 @@ def opening_flow(browser, url, expected):
     assert math.hypot(ui.walker(page)['x']-before_position['x'],ui.walker(page)['y']-before_position['y']) < .1
     # Pay a real rhythm door, then revisit through its actual south threshold.
     ui.collect_sources(page)
-    ui.press(page,'[data-door="garden"]');ui.build(page,['half-rest','half'])
+    ui.press(page,'[data-door="garden"]');ui.build(page,['half','half-rest'])
     reset_trace(page);page.locator('#commit').click()
     page.wait_for_function('quietBell.state.roomId==="garden-porch"')
     assert_first_event(page,'garden-porch')

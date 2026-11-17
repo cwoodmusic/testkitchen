@@ -41,11 +41,11 @@ export const CAMPAIGN_PLAN=freeze({
      "id": "depot-garden",
      "to": "garden-porch",
      "recipe": [
-      "half-rest",
-      "half"
+      "half",
+      "half-rest"
      ],
      "label": "The garden door",
-     "hint": "Two quiet beats, then two sounding beats."
+     "hint": "Two sounding beats, then two quiet beats."
     },
     {
      "id": "depot-workshop",
@@ -93,8 +93,8 @@ export const CAMPAIGN_PLAN=freeze({
      "id": "garden-porch-forward",
      "to": "garden-fork",
      "recipe": [
-      "half-rest",
-      "half"
+      "half",
+      "half-rest"
      ],
      "label": "The listening gate"
     },
@@ -239,13 +239,13 @@ export const CAMPAIGN_PLAN=freeze({
      "id": "workshop-secret-branch",
      "to": "workshop-alcove",
      "recipe": [
-      "half-rest",
-      "quarter-rest",
       "eighth",
-      "sixteenth-pair"
+      "sixteenth-pair",
+      "half-rest",
+      "quarter-rest"
      ],
      "label": "The birds’ back passage",
-     "hint": "Two quiet beats, another quiet beat, then two different half-beat replies lead behind the birds’ stage."
+     "hint": "Two different half-beat replies, then two quiet beats and one more quiet beat lead behind the birds’ stage."
     }
    ]
   },
@@ -268,10 +268,10 @@ export const CAMPAIGN_PLAN=freeze({
      "id": "canal-dead",
      "to": "dead-echo",
      "recipe": [
-      "half-rest",
-      "quarter-rest",
       "eighth",
-      "sixteenth-pair"
+      "sixteenth-pair",
+      "half-rest",
+      "quarter-rest"
      ],
      "label": "The copied waterway",
      "warning": "The ferryman’s map shows that this quiet passage ends at a wall."
@@ -307,13 +307,13 @@ export const CAMPAIGN_PLAN=freeze({
      "id": "workshop-ending",
      "to": "ending-school",
      "recipe": [
-      "half-rest",
-      "quarter-rest",
       "eighth",
-      "sixteenth-pair"
+      "sixteenth-pair",
+      "half-rest",
+      "quarter-rest"
      ],
      "label": "The music-room door",
-     "hint": "Two quiet beats, one quiet beat, then the two different half-beat replies finish the phrase."
+     "hint": "The two different half-beat replies fill beat one; two quiet beats and one quiet beat finish the phrase."
     }
    ]
   },
@@ -326,13 +326,13 @@ export const CAMPAIGN_PLAN=freeze({
      "id": "canal-ending",
      "to": "ending-public",
      "recipe": [
-      "half-rest",
-      "quarter-rest",
       "eighth",
-      "sixteenth-pair"
+      "sixteenth-pair",
+      "half-rest",
+      "quarter-rest"
      ],
      "label": "The town door",
-     "hint": "Two quiet beats, one quiet beat, then two different half-beat replies complete the tower’s answer."
+     "hint": "Two different half-beat replies fill beat one; two quiet beats and one quiet beat complete the tower’s answer."
     }
    ]
   },

@@ -5,6 +5,7 @@
   --cse-move:#60bba0;
   --cse-talk:#bdabed;
   --cse-emote:#e9bd68;
+  --cse-gesture:#86c9df;
   --cse-cursor:#e586a2;
   min-width:0;
   max-width:100%;
@@ -114,6 +115,7 @@
 #developer-console .cse-channel[data-cutscene-kind="walk"]{--cse-kind-color:var(--cse-move)}
 #developer-console .cse-channel[data-cutscene-kind="dialogue"]{--cse-kind-color:var(--cse-talk)}
 #developer-console .cse-channel[data-cutscene-kind="emote"]{--cse-kind-color:var(--cse-emote)}
+#developer-console .cse-channel[data-cutscene-kind="gesture"]{--cse-kind-color:var(--cse-gesture)}
 #developer-console .cse-channel .cse-track-name{height:54px;color:var(--cse-kind-color);font-weight:650;border-left:4px solid var(--cse-kind-color);padding-left:8px}
 #developer-console .cse-editor .cse-channel .cse-lane,
 #developer-console #developer-body[data-editor="cutscene"] .cse-channel .cse-lane{height:54px}
@@ -142,3 +144,4 @@
 #developer-console #developer-body[data-editor="cutscene"] .cse-ruler{height:24px}
 #developer-console #developer-body[data-editor="cutscene"] .cse-playhead{top:24px}
 #developer-console .cse-entry-settings{grid-column:1/-1;min-width:0}
+@media(max-width:430px){#developer-console #developer-cutscene-gesture button{flex-basis:calc(50% - 3px)}}

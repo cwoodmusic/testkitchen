@@ -327,7 +327,7 @@ def desktop_flow(browser, url):
     # actual NPCs remain selectable through the frozen editor map.
     ui.press(page, '[data-person="iris"]'); page.locator('#take-parcel').click()
     ui.press(page, '[data-door="garden-porch-forward"]')
-    for kind in ['half-rest', 'half']: page.locator(ui.tile(kind)).click()
+    for kind in ['half', 'half-rest']: page.locator(ui.tile(kind)).click()
     assert ui.state(page)['units'] == 8 and page.locator('#commit').is_enabled()
     page.locator('#commit').click()
     assert ui.state(page)['phase'] == 'room' and ui.state(page)['roomId'] == 'garden-fork'

@@ -18,13 +18,13 @@ const companionDialogue={
   'garden-porch':{
     nell:{
       story:'I closed the counter latch and left its lamp on. Letters can wait a little; that warm parcel deserves a walk. These pipes carried seed orders once. I remember the green stains on every envelope.',
-      route:'Iris leaves room for a reply: two quiet beats, then a sound held for two. A half rest followed by a half note will open the listening gate. She has a phrase for us if we ask.',
-      inventory:'Iris is keeping our next two tiles safe: one half rest and one half note. Ask her for the listening phrase once, then carry our remaining notes onward in the shared satchel.',
+      route:'Iris leaves room for a reply: a sound held for two beats, then two quiet beats. A half note followed by a half rest will open the listening gate. She has a phrase for us if we ask.',
+      inventory:'Iris is keeping our next two tiles safe: one half note and one half rest. Ask her for the listening phrase once, then carry our remaining notes onward in the shared satchel.',
     },
     pip:{
       story:'The little courier on my strap goes quiet whenever Iris turns that dial. Its wings still twitch during the silence, as though someone on the far side is taking a breath. I want to hear the answer with all of us here.',
-      route:'Let the bird wait through two beats, then let its call last two more. That is a half rest before a half note. Iris knows the listening gate; the tangled arch leads into roots.',
-      inventory:'Ask Iris for her listening phrase before we try the gate. Its half rest and half note fill four beats together. I will keep the satchel steady while you listen.',
+      route:'Let the bird call for two beats, then let it listen for two more. That is a half note before a half rest. Iris knows the listening gate; the tangled arch leads into roots.',
+      inventory:'Ask Iris for her listening phrase before we try the gate. Its half note and half rest fill four beats together. I will keep the satchel steady while you listen.',
     },
   },
   'workshop-porch':{

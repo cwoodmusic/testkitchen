@@ -59,6 +59,21 @@ test('door names, warnings and companion demonstrations agree with the verified 
  }
 });
 
+test('sounded-first keys are taught in the same order in spoken clues and demonstrations',()=>{
+ for(const room of design.rooms){
+  for(const door of room.doors)assert.equal(NOTE_KIND_BY_ID[door.recipe[0]].rest,false,`${door.id} starts with a sound`);
+  for(const person of CAMPAIGN_CONTENT[room.id].people)assert.equal(NOTE_KIND_BY_ID[person.demo[0]].rest,false,`${room.id}/${person.id} sounds beat one`);
+ }
+ for(const person of [CAMPAIGN_CONTENT.depot.people.find(person=>person.id==='iris'),...CAMPAIGN_CONTENT['garden-porch'].people]){
+  assert(person.route.indexOf('half note')>=0,person.id);
+  assert(person.route.indexOf('half note')<person.route.indexOf('half rest'),`${person.id} teaches sound before silence at the listening gate`);
+ }
+ for(const roomId of ['workshop-fork','workshop-final','canal-final'])for(const person of CAMPAIGN_CONTENT[roomId].people)
+  assert.match(person.route,/single eighth.*paired sixteenths.*half rest.*quarter rest/i,`${roomId}/${person.id} keeps the two short replies before the rests`);
+ assert.match(CAMPAIGN_CONTENT['canal-fork'].people.find(person=>person.id==='iris').route,/single eighth.*paired sixteenths.*half rest.*quarter rest/i);
+ assert.match(CAMPAIGN_CONTENT['dead-brambles'].people.find(person=>person.id==='iris').route,/half note, then a half rest/);
+});
+
 test('only the existing authored gifts and hidden searches can offer notes',()=>{
  const npcSources=Object.entries(CAMPAIGN_CONTENT).flatMap(([roomId,room])=>room.people.filter(person=>person.sourceId).map(person=>[roomId,person.id,person.sourceId]));
  assert.deepEqual(npcSources,[['depot','nell','nell-parcel'],['garden-porch','iris','iris-gift'],['workshop-porch','pip','pip-gift']]);

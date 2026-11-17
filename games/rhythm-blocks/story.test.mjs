@@ -64,7 +64,7 @@ test('a physical door must be selected and accepts its exact order rather than a
  const before=game.state;assert.equal(game.commit(),false);assert.deepEqual(game.state,before);
  assert.equal(game.selectDoor('canal'),true);assert.equal(game.state.canCommit,true);assert.equal(game.commit(),true);assert.equal(game.state.routeId,'canal');
  assert.equal(classifyPageOne(PAGE_ONE_DOOR_COSTS.garden),'garden');assert.equal(classifyPageOne(PAGE_ONE_DOOR_COSTS.workshop),'workshop');
- for(const recipe of [['half','half-rest'],['quarter-rest','eighth-pair','sixteenth-group','quarter'],['dotted-half','quarter'],new Array(3),null])assert.throws(()=>classifyPageOne(recipe),/opening door/);
+ for(const recipe of [['half-rest','half'],['quarter-rest','eighth-pair','sixteenth-group','quarter'],['dotted-half','quarter'],new Array(3),null])assert.throws(()=>classifyPageOne(recipe),/opening door/);
 });
 
 test('editing preserves typed inventory and fractional beats without substituting one rhythm symbol for another',()=>{
@@ -82,7 +82,7 @@ test('editing preserves typed inventory and fractional beats without substitutin
 
 test('reordering is free, but a reversed sounding/rest phrase does not open the garden door',()=>{
  const game=prepare('garden'),available=game.state.availableInventory;
- assert.equal(game.move(0,1),true);assert.deepEqual(game.state.phrase,['half','half-rest']);assert.deepEqual(game.state.availableInventory,available);
+ assert.equal(game.move(0,1),true);assert.deepEqual(game.state.phrase,['half-rest','half']);assert.deepEqual(game.state.availableInventory,available);
  assert.equal(game.state.canAttempt,true);assert.equal(game.state.canCommit,false);assert.equal(game.commit(),false);
  assert.equal(game.move(1,-1),true);assert.equal(game.state.canCommit,true);assert.equal(game.commit(),true);
  assert.equal(game.state.routeId,'garden');
@@ -136,7 +136,7 @@ test('malformed action histories, unsupported legacy saves and wrong-door recipe
  const invalid=[null,{},'bad',{version:1,answer:PAGE_ONE_DOOR_COSTS.canal,phrase:[],discoveredRoutes:['canal']},
   {...base,actions:[claims[0],claims[0]]},{...base,actions:[{type:'claim',sourceId:'constructor'}]},
   {...base,actions:[{type:'door',doorId:'garden',recipe:PAGE_ONE_DOOR_COSTS.garden}]},
-  {...base,actions:[...claims,{type:'door',doorId:'garden',recipe:['half','half-rest']}]},
+  {...base,actions:[...claims,{type:'door',doorId:'garden',recipe:['half','quarter','quarter-rest']}]},
   {...base,actions:[...claims,{type:'door',doorId:'canal',recipe:PAGE_ONE_DOOR_COSTS.canal}]},
   {...base,actions:[...claims,{type:'door',doorId:'garden',recipe:PAGE_ONE_DOOR_COSTS.garden}],phrase:['quarter']},
   {...base,actions:[...claims,{type:'door',doorId:'garden',recipe:PAGE_ONE_DOOR_COSTS.garden},claims[0]]},
@@ -170,4 +170,15 @@ test('all 784 affordable four-beat orders are accepted only at their exact autho
   for(const kind of remaining){const value=NOTE_KIND_BY_ID[kind].units;if(duration+value<=8)visit([...recipe,kind],remaining.filter(other=>other!==kind),duration+value);}
  }
  visit([],NOTE_KINDS.map(kind=>kind.id),0);assert.equal(recipes,784);assert.equal(successes,3);
+});
+
+test('legacy rest-first garden receipts restore canonically while new attempts must sound first',()=>{
+ const claims=[{type:'claim',sourceId:'nell-parcel'},{type:'claim',sourceId:'depot-chest'}];
+ const saved={version:2,actions:[...claims,{type:'door',doorId:'garden',recipe:['half-rest','half']}],phrase:[],selectedDoor:'garden',discoveredRoutes:['garden']};
+ const before=JSON.stringify(saved),restored=createStoryGame({saved}),current=prepare('garden');current.commit();
+ assert.equal(JSON.stringify(saved),before,'Restoration must not edit the supplied save.');
+ assert.deepEqual(restored.state,current.state);assert.deepEqual(restored.serialize(),current.serialize());
+ assert.equal(restored.undo(),true);assert.deepEqual(restored.state.inventory,parcel());
+ fill(restored,['half-rest','half']);assert.equal(restored.state.canAttempt,true);assert.equal(restored.state.canCommit,false);assert.equal(restored.commit(),false);
+ while(restored.state.phrase.length)restored.undo();fill(restored,PAGE_ONE_DOOR_COSTS.garden);assert.equal(restored.commit(),true);
 });

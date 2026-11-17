@@ -14,6 +14,16 @@ const exactKeys=(value,keys)=>isRecord(value)&&Object.keys(value).length===keys.
 const equal=(left,right)=>left.length===right.length&&left.every((kind,index)=>kind===right[index]);
 const openingRoutes=['garden','workshop','canal'];
 const safeId=id=>typeof id==='string'&&id.length>0&&id.length<=120&&!['__proto__','constructor','prototype'].includes(id);
+// These exact published keys predate sounded first beats. Only normal save
+// restoration recognizes them; live guesses and custom definitions stay strict.
+const LEGACY_REST_FIRST_KEYS=Object.freeze({
+ 'depot-garden':['half-rest','half'],
+ 'garden-porch-forward':['half-rest','half'],
+ 'workshop-secret-branch':['half-rest','quarter-rest','eighth','sixteenth-pair'],
+ 'canal-dead':['half-rest','quarter-rest','eighth','sixteenth-pair'],
+ 'workshop-ending':['half-rest','quarter-rest','eighth','sixteenth-pair'],
+ 'canal-ending':['half-rest','quarter-rest','eighth','sixteenth-pair'],
+});
 
 /** A definition is copied once. Authoring changes never mutate a running game. */
 function compileDefinition(definition,{terminalRooms}={}){
@@ -85,7 +95,7 @@ export function createDungeonGame({saved=null,definition=null,developer=false,te
  function entryIndex(actions){
   return actions.findLastIndex(action=>action.type==='developer-teleport'||action.type==='door'&&isLocation(getDoor(action.doorId).to));
  }
- function replay(input){
+ function replay(input,{restoreLegacyKeys=false}={}){
   if(!Array.isArray(input)||input.length>maxActions)return null;
   const inventory={...initialInventory},actions=[],claimedSources=[],sourceReceipts=[];
   let roomId=startRoomId,phase=isTerminal(startRoomId)?'terminal':'room',routeId=null,nextScene=isTerminal(startRoomId)?terminals[startRoomId]:null,receipt=null,lastTransition=null;
@@ -118,7 +128,9 @@ export function createDungeonGame({saved=null,definition=null,developer=false,te
    }else if(action.type==='door'){
     if(!exactKeys(action,['type','doorId','recipe']))return null;
     const door=getDoor(action.doorId);
-    if(!door||door.from!==roomId||!isRevealed(door,claimedSources)||!checkedRecipe(action.recipe,inventory,{complete:true,door})||!equal(action.recipe,door.recipe))return null;
+    if(!door||door.from!==roomId||!isRevealed(door,claimedSources)||!checkedRecipe(action.recipe,inventory,{complete:true,door}))return null;
+    const oldKey=restoreLegacyKeys&&!config.custom?LEGACY_REST_FIRST_KEYS[door.canonicalId]:null;
+    if(!equal(action.recipe,door.recipe)&&!(oldKey&&equal(action.recipe,oldKey)))return null;
     const inventoryBefore={...inventory};for(const kind of door.recipe)inventory[kind]--;
     receipt={doorId:door.id,canonicalDoorId:door.canonicalId,from:door.from,to:door.to,recipe:[...door.recipe],inventoryBefore,inventoryAfterConsumption:{...inventory},received:[],inventoryAfterEntry:{...inventory}};
     lastTransition={id:door.canonicalId,doorId:door.id,from:door.from,to:door.to};
@@ -147,7 +159,7 @@ export function createDungeonGame({saved=null,definition=null,developer=false,te
    run=next;phrase=[...legacy.phrase];selectedDoor=selection?.id??null;
    if(openingRoutes.includes(run.routeId))discovered.add(run.routeId);return;
   }
-  const next=replay(value.actions);if(!next||!Array.isArray(value.phrase))return;
+  const next=replay(value.actions,{restoreLegacyKeys:true});if(!next||!Array.isArray(value.phrase))return;
   const requested=value.selectedDoor===null?null:getDoor(value.selectedDoor);
   if(value.selectedDoor!==null&&!requested)return;
   // Old chapter saves kept the just-paid key selected at an arrival preview.

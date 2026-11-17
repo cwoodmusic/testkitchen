@@ -233,16 +233,18 @@ test('all 23 authored arrivals walk three companions to real props without cross
  const before=JSON.stringify({scenes:CAMPAIGN_SCENES,beats:ROOM_CUTSCENES});let moved=0;
  for(const [id,room]of Object.entries(CAMPAIGN_SCENES)){
   const beats=ROOM_CUTSCENES[id],timeline=createRoomCutscene({scene:room,beats}),compiled=timeline.timeline,physical=physicalRoom(room);
-  assert.equal(compiled.clips.length,4,id);assert.equal(compiled.adjustments.length,0,id);near(compiled.quantumMs,room.geometry.gridSize/room.geometry.speed*1000);
+  assert(compiled.clips.length>=4,id);assert.equal(compiled.adjustments.length,0,id);near(compiled.quantumMs,room.geometry.gridSize/room.geometry.speed*1000);
+  const inspections=new Set();
   for(const clip of compiled.clips){
-   if(clip.target){assert(clip.pathLength>100,`${id}/${clip.id} visibly moves`);moved++;const target=room.geometry.targets.find(item=>item.id===clip.target);assert(distance(clip.to,target)<=target.range+.000001,`${id}/${clip.id} reaches the visible prop`);}
+   if(clip.target){assert(clip.pathLength>0,`${id}/${clip.id} visibly moves`);inspections.add(clip.actor);const target=room.geometry.targets.find(item=>item.id===clip.target);assert(distance(clip.to,target)<=target.range+.000001,`${id}/${clip.id} reaches the visible prop`);}
    for(const vertex of clip.path)assert(isWalkable(physical,vertex),`${id}/${clip.id} has a solid-floor waypoint`);
   }
+  assert.deepEqual([...inspections].sort(),['iris','nell','pip'],`${id} sends each companion to a real inspection`);moved+=inspections.size;
   let frames=0,prior=new Map(timeline.state.actors.map(actor=>[actor.id,actor]));
   while(!timeline.state.finished&&frames++<2000){
    timeline.update(100);
    for(const actor of timeline.state.actors){
-    const previous=prior.get(actor.id);assert(distance(actor,previous)<=room.geometry.speed*.1+.00001,`${id}/${actor.id} exceeds authored walk speed`);
+    const previous=prior.get(actor.id),speedMultiplier=actor.gait==='run'||previous.gait==='run'?2:1;assert(distance(actor,previous)<=room.geometry.speed*speedMultiplier*.1+.00001,`${id}/${actor.id} exceeds its selected movement speed`);
     assert(isWalkable(physical,actor),`${id}/${actor.id} crosses furniture`);prior.set(actor.id,actor);
    }
   }
@@ -309,15 +311,16 @@ test('Next through a silent track gap reaches the next dialogue without skipping
  assert(frames<1000);assert.equal(timeline.state.beat.id,'text');assert(timeline.state.currentTile>=5&&timeline.state.currentTile<7);assert(at(timeline,'nell').moving);
 });
 
-test('splitting every shipped discussion preserves timing, cardinal walking, text, actions and reactions',()=>{
+test('track normalization preserves every shipped performance including typed gestures and running',()=>{
  for(const [id,room]of Object.entries(CAMPAIGN_SCENES)){
   const source=ROOM_CUTSCENES[id],before=JSON.stringify(source),split=separateCutsceneTracks({scene:room,beats:source});
-  assert.equal(split.length,12,id);assert.deepEqual(split.map(clip=>clip.kind),Array.from({length:4},()=>['walk','dialogue','emote']).flat());
+  if(source.every(clip=>clip.kind!==undefined))assert.deepEqual(split,source,'Already typed performances are not restaged or rewritten.');
+  else assert.equal(split.length,source.length*3,id);
   const legacy=createRoomCutscene({scene:room,beats:source}),typed=createRoomCutscene({scene:room,beats:split});
   assert.equal(typed.state.totalTiles,legacy.state.totalTiles,id);assert.equal(typed.timeline.adjustments.length,0,id);
   const samples=new Set([0,legacy.state.totalTiles]);
   for(let tile=0;tile<=legacy.state.totalTiles;tile+=.75)samples.add(tile);
-  for(const clip of legacy.timeline.clips)for(const boundary of [clip.startTile,clip.startTile+clip.pathLength/room.geometry.gridSize,clip.endTile])for(const offset of [-.01,0,.01])samples.add(Math.max(0,Math.min(legacy.state.totalTiles,boundary+offset)));
+  for(const clip of legacy.timeline.clips)for(const boundary of [clip.startTile,clip.startTile+clip.pathLength/(room.geometry.gridSize*clip.speedMultiplier),clip.endTile])for(const offset of [-.01,0,.01])samples.add(Math.max(0,Math.min(legacy.state.totalTiles,boundary+offset)));
   for(const tile of samples){
    legacy.seek(tile);typed.seek(tile);assert.deepEqual(typed.state.actors,legacy.state.actors,`${id} pose differs at ${tile}.`);
    assert.equal(typed.state.beat?.text,legacy.state.beat?.text,`${id} line differs at ${tile}.`);
@@ -368,3 +371,92 @@ test('typed capacity is 384 and splitting never silently truncates expanded auth
 });
 
 function distance(a,b){return Math.hypot(a.x-b.x,a.y-b.y);}
+
+test('running follows the same cardinal obstacle route at exactly twice walking speed',()=>{
+ const room=scene(),run=createRoomCutscene({scene:room,beats:[walk({gait:'run',durationTiles:1})]}),walking=createRoomCutscene({scene:room,beats:[walk({durationTiles:1})]});
+ const fast=run.timeline.clips[0],slow=walking.timeline.clips[0];
+ assert.deepEqual(fast.path,slow.path,'Choosing a run cannot take a shortcut through the wall.');
+ assert.equal(fast.gait,'run');assert.equal(fast.speedMultiplier,2);
+ assert.equal(fast.minimumDurationTiles,Math.ceil(fast.pathLength/(room.geometry.gridSize*2)));
+ assert.equal(fast.durationTiles,fast.minimumDurationTiles);assert(fast.durationTiles<slow.durationTiles);
+ const straightRun=createRoomCutscene({scene:room,beats:[walk({target:undefined,destination:{x:240,y:90},gait:'run',durationTiles:1})]}),straightWalk=createRoomCutscene({scene:room,beats:[walk({target:undefined,destination:{x:240,y:90},durationTiles:1})]});
+ straightRun.update(50);straightWalk.update(50);
+ near(distance(at(straightRun,'nell'),fast.from),16);near(distance(at(straightWalk,'nell'),slow.from),8);
+ assert.equal(at(straightRun,'nell').gait,'run');assert.equal(at(straightWalk,'nell').gait,'walk');
+ let previous=at(run,'nell'),frames=0;
+ while(!run.state.finished&&frames++<1000){
+  run.update(16);const current=at(run,'nell');
+  assert(distance(previous,current)<=room.geometry.speed*2*.016+.000001,'Even a trimmed run respects its selected speed.');
+  assert(isWalkable(physicalRoom(room),current));previous=current;
+ }
+ assert(frames<1000);near(previous.x,480);near(previous.y,100);assert.equal(previous.gait,'walk');assert(!previous.moving);
+ for(const [index,vertex]of fast.path.entries())if(index)assert(vertex.x===fast.path[index-1].x||vertex.y===fast.path[index-1].y,'Running still turns on cardinal path segments.');
+});
+
+const gesture=(extra={})=>({id:'inspect-with-lens',kind:'gesture',actor:'nell',gesture:'magnify',startTile:4,durationTiles:8,...extra});
+
+test('physical gestures scrub and pause independently without changing walking, text or emotes',()=>{
+ const room=scene(),baseBeats=[walk(),dialogue({startTile:3,durationTiles:20}),emote({startTile:2,durationTiles:15})];
+ const baseline=createRoomCutscene({scene:room,beats:baseBeats});
+ const timeline=createRoomCutscene({scene:room,beats:[...baseBeats,gesture({target:'shelf',destination:{x:140,y:220},text:'A prop gesture cannot speak.',action:'search',emote:'happy',gait:'run'})]});
+ const compiled=timeline.timeline.clips.find(clip=>clip.kind==='gesture');assert.equal(compiled.pathLength,0);assert.equal(compiled.minimumDurationTiles,1);assert.equal(compiled.action,null);assert.equal(compiled.gait,'walk');
+ for(const tile of [0,3.99,4,6,8,11.99,12,20,60]){
+  baseline.seek(tile);timeline.seek(tile);
+  assert.deepEqual(physicalPose(at(timeline,'nell')),physicalPose(at(baseline,'nell')),'Inspecting cannot stop or redirect an independently authored walk.');
+  assert.equal(timeline.state.beat?.text,baseline.state.beat?.text);assert.equal(at(timeline,'nell').emote,at(baseline,'nell').emote);
+  assert.equal(at(timeline,'nell').gesture,tile>=4&&tile<12?'magnify':null);
+  near(at(timeline,'nell').gestureProgress,tile>=4&&tile<12?(tile-4)/8:0);
+ }
+ timeline.seek(8);const expected=timeline.state;timeline.seek(0);timeline.seek(8);assert.deepEqual(timeline.state,expected);
+ timeline.pause();const paused=timeline.state;assert(!timeline.update(100));assert.equal(timeline.state,paused);
+ assert(Object.isFrozen(paused.actors[0]));assert.throws(()=>{paused.actors[0].gestureProgress=1;},TypeError);
+ timeline.skip();assert(timeline.state.actors.every(actor=>actor.gesture===null&&actor.gestureProgress===0));
+});
+
+test('gesture overlaps reserve only the gesture lane and leave the other tracks in place',()=>{
+ const beats=[walk(),dialogue({startTile:4,durationTiles:15}),emote({startTile:4,durationTiles:15}),gesture(),gesture({id:'second-gesture',gesture:'trip',startTile:7,durationTiles:3})];
+ const timeline=createRoomCutscene({scene:scene(),beats}),byId=id=>timeline.timeline.clips.find(clip=>clip.id===id);
+ assert.equal(byId('walk').startTile,0);assert.equal(byId('text').startTile,4);assert.equal(byId('reaction').startTile,4);
+ assert.equal(byId('inspect-with-lens').startTile,4);assert.equal(byId('second-gesture').startTile,12);
+ assert.deepEqual(timeline.timeline.adjustments.filter(change=>change.field==='startTile').map(change=>change.id),['second-gesture']);
+ timeline.seek(12.75);assert.equal(at(timeline,'nell').gesture,'trip');near(at(timeline,'nell').gestureProgress,.25);
+ assert(at(timeline,'nell').moving);assert.equal(at(timeline,'nell').emote,'question');assert.equal(timeline.state.beat.id,'text');
+});
+
+test('Next keeps a run, trip, fall and recovery continuous before skipping a reading hold',()=>{
+ const room=scene(),beats=[
+  dialogue({actor:'mira',speaker:'mira',startTile:0,durationTiles:70}),
+  walk({target:undefined,destination:{x:140,y:90},gait:'run',startTile:2,durationTiles:2}),
+  gesture({id:'stumble',gesture:'trip',startTile:4,durationTiles:3}),
+  gesture({id:'on-floor',gesture:'fallen',startTile:7,durationTiles:4}),
+  gesture({id:'stand-up',gesture:'recover',startTile:11,durationTiles:4}),
+ ];
+ const timeline=createRoomCutscene({scene:room,beats});assert(timeline.next());assert(timeline.state.nextPending);near(timeline.state.currentTile,2);
+ let previous=at(timeline,'nell'),frames=0;const seen=new Map();
+ while(timeline.state.nextPending&&frames++<1000){
+  assert(!timeline.next(),'Repeated Next cannot skip the physical performance.');
+  timeline.update(16);const current=at(timeline,'nell');
+  assert(distance(previous,current)<=room.geometry.speed*2*.016+.000001,'Next cannot teleport a runner.');
+  if(current.gesture){const record=seen.get(current.gesture)??[];record.push(current.gestureProgress);seen.set(current.gesture,record);}
+  previous=current;
+ }
+ assert(frames<1000);assert(timeline.state.finished);near(timeline.state.currentTile,70);near(previous.x,140);near(previous.y,90);
+ assert.deepEqual([...seen.keys()],['trip','fallen','recover']);
+ for(const samples of seen.values()){
+  assert(samples.length>15,'Every physical beat gets real animation time.');
+  assert(samples[0]<.06&&samples.at(-1)>.94,'Next traverses the complete gesture, not just its first pose.');
+  assert(samples.every((value,index)=>!index||value>samples[index-1]));
+ }
+ assert.equal(previous.gesture,null);assert.equal(previous.gestureProgress,0);
+});
+
+test('legacy run migration keeps gait only on its walk and preserves existing gesture author data',()=>{
+ const room=scene(),source=[cue({gait:'run',startTile:0,durationTiles:1,extra:{author:'Keep me'}}),gesture({actor:'iris',extra:{camera:'unchanged'}})],before=JSON.stringify(source);
+ const split=separateCutsceneTracks({scene:room,beats:source}),motion=split.find(clip=>clip.kind==='walk');
+ assert.equal(motion.gait,'run');assert(split.filter(clip=>['dialogue','emote'].includes(clip.kind)).every(clip=>!Object.hasOwn(clip,'gait')));
+ assert.deepEqual(split.find(clip=>clip.kind==='gesture'),source[1]);
+ const legacy=createRoomCutscene({scene:room,beats:source}),typed=createRoomCutscene({scene:room,beats:split});
+ assert.equal(legacy.state.totalTiles,typed.state.totalTiles);
+ for(let tile=0;tile<=legacy.state.totalTiles;tile+=.25){legacy.seek(tile);typed.seek(tile);assert.deepEqual(typed.state.actors,legacy.state.actors);assert.equal(typed.state.beat?.text,legacy.state.beat?.text);}
+ assert.equal(JSON.stringify(source),before);
+});

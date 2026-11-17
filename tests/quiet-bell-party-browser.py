@@ -20,7 +20,7 @@ spec.loader.exec_module(ui)
 MEMBERS = {'nell', 'iris', 'pip'}
 SIZES = [(320,568), (390,844), (1024,768), (1366,768), (1024,480)]
 BRANCHES = [
-    {'route':'garden', 'room':'garden-porch', 'source':'iris-gift', 'giver':'iris', 'recipe':['half-rest','half']},
+    {'route':'garden', 'room':'garden-porch', 'source':'iris-gift', 'giver':'iris', 'recipe':['half','half-rest']},
     {'route':'workshop', 'room':'workshop-porch', 'source':'pip-gift', 'giver':'pip', 'recipe':['half','eighth-pair','sixteenth-group']},
     {'route':'canal', 'room':'canal-porch', 'source':'canal-chest', 'giver':None, 'recipe':['half','quarter','eighth-pair']},
 ]
@@ -214,7 +214,7 @@ def native_mobile(browser,url):
     context,page,errors,writes,external=ui.open_page(browser,url,390,'dark',virtual_walk=False)
     data=contract(page);stories={member:{} for member in MEMBERS}
     ui.collect_sources(page,True)
-    ui.press(page,'[data-door="garden"]',True);ui.build(page,['half-rest','half'],True);ui.press(page,'#commit',True)
+    ui.press(page,'[data-door="garden"]',True);ui.build(page,['half','half-rest'],True);ui.press(page,'#commit',True)
     assert ui.state(page)['roomId']=='garden-porch'
     conversations(page,'garden-porch',data,stories,touch=True)
     ui.press(page,'[data-person="iris"]',True);ui.press(page,'#take-parcel',True)

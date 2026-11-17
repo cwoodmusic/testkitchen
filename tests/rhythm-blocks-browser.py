@@ -25,7 +25,7 @@ EMPTY = {kind: 0 for kind in KINDS}
 PARCEL = {kind: int(kind != 'half') for kind in KINDS}
 ROUTES = [
     {'id': 'garden', 'name': 'Garden door accepts its exact quiet answer',
-     'recipe': ['half-rest', 'half'], 'person': 'pip'},
+     'recipe': ['half', 'half-rest'], 'person': 'pip'},
     {'id': 'workshop', 'name': 'Two grouped tiles reach the workshop',
      'recipe': ['half', 'eighth-pair', 'sixteenth-group'], 'person': 'iris'},
     {'id': 'canal', 'name': 'An ordinary sounding phrase reaches the canal',
@@ -303,7 +303,7 @@ def draft_controls(page, touch=False):
 
 def rejected_order(page, touch=False):
     press(page, 'button[data-door="garden"]', touch)
-    build(page, ['half', 'half-rest'], touch)
+    build(page, ['half-rest', 'half'], touch)
     assert state(page)['canAttempt'] and not state(page)['canCommit']
     before = resources(state(page))
     press(page, '#commit', touch)

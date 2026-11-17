@@ -17,7 +17,9 @@ const TYPES=new Set(['person','door','chest','inspect','return']);
 const FACINGS=new Set(['up','down','left','right']);
 const CUTSCENE_ACTIONS=new Set(['look','search','examine','listen']);
 const CUTSCENE_EMOTES=new Set(['idea','question','thinking','surprise','happy']);
-const CUTSCENE_KINDS=new Set(['walk','dialogue','emote']);
+const CUTSCENE_KINDS=new Set(['walk','dialogue','emote','gesture']);
+const CUTSCENE_GESTURES=new Set(['magnify','trip','fallen','recover']);
+const CUTSCENE_GAITS=new Set(['walk','run']);
 const own=(value,key)=>Object.hasOwn(value,key);
 const asArray=value=>Array.isArray(value)?value:[];
 const record=value=>value!==null&&typeof value==='object'&&!Array.isArray(value)&&[Object.prototype,null].includes(Object.getPrototypeOf(value));
@@ -207,7 +209,7 @@ export function validateProject(project){
    const clipIds=new Set(),scheduled=[];
    roomContent.cutscene.forEach((beat,index)=>{
     const beatPath=`${path}.cutscene[${index}]`;if(!record(beat)){fail(beatPath,'use a dialogue or action clip.');return;}
-    if(beat.kind!==undefined&&!CUTSCENE_KINDS.has(beat.kind))fail(`${beatPath}.kind`,'choose walk, dialogue or emote.');
+    if(beat.kind!==undefined&&!CUTSCENE_KINDS.has(beat.kind))fail(`${beatPath}.kind`,'choose walk, dialogue, emote or gesture.');
     if(beat.id!==undefined){id(beat.id,`${beatPath}.id`);if(clipIds.has(beat.id))fail(`${beatPath}.id`,'clip IDs must be unique within the room.');clipIds.add(beat.id);}
     if(beat.speaker!==undefined){id(beat.speaker,`${beatPath}.speaker`);if(!people.has(beat.speaker))fail(`${beatPath}.speaker`,'choose Mira or a person in this room.');}
     if(beat.text!==undefined)text(beat.text,`${beatPath}.text`,{max:600,empty:true});
@@ -239,6 +241,17 @@ export function validateProject(project){
     }
     if(beat.action!==undefined&&!CUTSCENE_ACTIONS.has(beat.action))fail(`${beatPath}.action`,'choose look, search, examine or listen.');
     if(beat.emote!==undefined&&!CUTSCENE_EMOTES.has(beat.emote))fail(`${beatPath}.emote`,'choose idea, question, thinking, surprise or happy.');
+    if(beat.gait!==undefined){
+     if(!CUTSCENE_GAITS.has(beat.gait))fail(`${beatPath}.gait`,'choose walk or run.');
+     if(beat.kind!==undefined&&beat.kind!=='walk')fail(`${beatPath}.gait`,'put walking pace in its own walk clip.');
+    }
+    if(beat.gesture!==undefined&&!CUTSCENE_GESTURES.has(beat.gesture))fail(`${beatPath}.gesture`,'choose magnify, trip, fallen or recover.');
+    if(beat.gesture!==undefined&&beat.kind!=='gesture')fail(`${beatPath}.gesture`,'put the physical performance in its own gesture clip.');
+    if(beat.kind==='gesture'){
+     if(!CUTSCENE_GESTURES.has(beat.gesture))fail(`${beatPath}.gesture`,'a gesture clip needs a physical performance.');
+     if(beat.text!==undefined)fail(`${beatPath}.text`,'put spoken text in its own dialogue clip.');
+     if(beat.emote!==undefined)fail(`${beatPath}.emote`,'put the reaction in its own emote clip.');
+    }
     if(beat.kind==='walk'){
      if(typeof beat.text==='string'&&beat.text.trim())fail(`${beatPath}.text`,'put spoken text in its own dialogue clip.');
      if(beat.emote!==undefined)fail(`${beatPath}.emote`,'put the reaction in its own emote clip.');
@@ -248,7 +261,7 @@ export function validateProject(project){
      if(!people.has(beat.speaker))fail(`${beatPath}.speaker`,'a dialogue clip needs Mira or a person in this room.');
     }
     if(beat.kind==='emote'&&!CUTSCENE_EMOTES.has(beat.emote))fail(`${beatPath}.emote`,'an emote clip needs a reaction.');
-    if(beat.kind==='dialogue'||beat.kind==='emote'){
+    if(beat.kind==='dialogue'||beat.kind==='emote'||beat.kind==='gesture'){
      for(const field of ['target','destination','waypoints','action'])if(beat[field]!==undefined)fail(`${beatPath}.${field}`,'put movement and actions in their own walk clip.');
      if(beat.kind==='dialogue'&&beat.emote!==undefined)fail(`${beatPath}.emote`,'put the reaction in its own emote clip.');
      if(beat.kind==='emote'&&beat.text!==undefined)fail(`${beatPath}.text`,'put spoken text in its own dialogue clip.');
@@ -492,7 +505,7 @@ export function upgradeRoomCutscenes(value){
   if(!record(content)||own(content,'cutscene'))continue;
   const scene=project.scenes?.[roomId],people=new Set(asArray(content.people).map(person=>person?.id)),actors=new Set(asArray(scene?.actors).map(actor=>actor?.id)),targets=new Set(asArray(scene?.geometry?.targets).map(target=>target?.id));
   people.add('mira');actors.add('mira');
-  content.cutscene=asArray(ROOM_CUTSCENES[roomId]).filter(beat=>people.has(beat.speaker)&&actors.has(beat.actor??beat.speaker)).map(beat=>{
+  content.cutscene=asArray(ROOM_CUTSCENES[roomId]).filter(beat=>actors.has(beat.actor??beat.speaker)&&(beat.speaker===undefined||people.has(beat.speaker))&&(beat.kind!=='dialogue'||people.has(beat.speaker))).map(beat=>{
    const copy=clone(beat);if(copy.target!==undefined&&!targets.has(copy.target))delete copy.target;return copy;
   });
  }

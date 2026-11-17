@@ -1,6 +1,7 @@
 import {createDungeonGame} from './dungeon-game.mjs';
 import {symbolMarkup as engraveSymbol} from './notation.mjs';
 import {createRhythmAudio} from './audio.mjs';
+import {createCinematicAudio} from './cinematic-audio.mjs';
 import {createRoomView} from './room-view.mjs';
 import {createJourney,CHAPTER_JOURNEY_MANIFEST} from './journey.mjs';
 import {renderJourney} from './journey-view.mjs';
@@ -41,7 +42,10 @@ let saved=readJSON(developerMode?DEV_SAVE_KEY:SAVE_KEY);
 let game=createDungeonGame({saved,...(developerMode?{definition:runtimeProject,developer:true}:{})});
 let journey=createJourney({saved:readJSON(developerMode?DEV_JOURNEY_KEY:JOURNEY_KEY),manifest:developerMode?createProjectManifest(runtimeProject):CHAPTER_JOURNEY_MANIFEST});
 let soundEnabled=read(SOUND_KEY)!=='off',audioRevision=0;
-const audio=createRhythmAudio({enabled:soundEnabled,bpm:runtimeProject.settings.bpm,noteKinds:NOTE_KINDS}),previewAudio=createRhythmAudio();
+const audio=createRhythmAudio({enabled:soundEnabled,bpm:runtimeProject.settings.bpm,noteKinds:NOTE_KINDS}),previewAudio=createRhythmAudio({enabled:soundEnabled}),cinematicAudio=createCinematicAudio({enabled:soundEnabled});
+// Unlock from the real input event; suspended browsers simply remain quiet.
+const unlockCinematicAudio=event=>{if(event.isTrusted&&!event.repeat&&!document.hidden)void cinematicAudio.unlock();};
+document.addEventListener('pointerdown',unlockCinematicAudio,{capture:true});document.addEventListener('keydown',unlockCinematicAudio,{capture:true});
 let people=new Map(),observations=new Map(),doorNames={},doorHints={},activeScene=null,activeSceneProject=null;
 let roomView=null,toastTimer=0,developerConsole=null,editingOpen=false,editorProject=null,editingRoomId=null,editorReturnPosition=null,editorReturnSelection=null,editorSignature='';
 let cutsceneView=null,cutsceneSeen=new Set(),cutscenePoses=new Map(),cutsceneProjectSignature='';
@@ -85,8 +89,26 @@ function renderPause(){
   $('journey-journal').hidden=!hasJournal;$('pause-journey').classList.toggle('has-journal',hasJournal);
 }
 function updateSave(){$('save-status').textContent=storageAvailable?'Progress saves on this device.':'Saving is unavailable in this browser. Keep this page open to retain your progress.';}
-function stopAudio(){audioRevision++;audio.stop();previewAudio.stop();}
-async function play(recipe){const revision=++audioRevision;audio.stop();if(!recipe.length||!soundEnabled)return;await audio.unlock();if(revision===audioRevision&&!document.hidden&&!$('help-dialog').open)audio.playPattern(recipe);}
+const rhythmReadout=document.createElement('p');rhythmReadout.id='rhythm-playback-readout';rhythmReadout.className='mg-small';rhythmReadout.hidden=true;rhythmReadout.setAttribute('role','status');rhythmReadout.setAttribute('aria-live','polite');
+let rhythmReadoutFrame=0;
+function clearRhythmReadout(){if(rhythmReadoutFrame)cancelAnimationFrame(rhythmReadoutFrame);rhythmReadoutFrame=0;rhythmReadout.hidden=true;delete rhythmReadout.dataset.phase;delete rhythmReadout.dataset.beat;}
+function showRhythmReadout(player,schedule){
+ clearRhythmReadout();if(!schedule)return;
+ const dialog=$('notes-dialog').open?$('notes-dialog'):$('conversation-dialog').open?$('conversation-dialog'):null;
+ if(dialog){const anchor=dialog.id==='notes-dialog'?$('edit-hint'):$('demo');anchor.after(rhythmReadout);rhythmReadout.style.cssText='margin:8px 0;min-height:1.5em;font-variant-numeric:tabular-nums';}
+ else{root.append(rhythmReadout);rhythmReadout.style.cssText='position:absolute;z-index:3200;top:12px;left:50%;transform:translateX(-50%);margin:0;padding:6px 10px;background:#261f35ed;border:1px solid #e4c394;pointer-events:none;white-space:nowrap';}
+ let previous='';
+ function paintRhythmReadout(){
+  rhythmReadoutFrame=0;const state=player.state;
+  if(!state?.playing||document.hidden||dialog&&!dialog.open){clearRhythmReadout();return;}
+  const text=state.phase==='count-in'?`Count-in · ${state.beat} / 4`:`Listen · beat ${state.beat}`;
+  if(text!==previous){previous=text;rhythmReadout.textContent=text;rhythmReadout.dataset.phase=state.phase;rhythmReadout.dataset.beat=String(state.beat);}
+  rhythmReadout.hidden=false;rhythmReadoutFrame=requestAnimationFrame(paintRhythmReadout);
+ }
+ paintRhythmReadout();
+}
+function stopAudio(){audioRevision++;audio.stop();previewAudio.stop();cinematicAudio.stop();clearRhythmReadout();}
+async function play(recipe){const revision=++audioRevision;audio.stop();if(!recipe.length||!soundEnabled)return;await audio.unlock();if(revision===audioRevision&&!document.hidden&&!$('help-dialog').open)showRhythmReadout(audio,audio.playPattern(recipe));}
 const panelIds=['conversation-dialog','notes-dialog','lore-dialog','menu-dialog','help-dialog','outcome'];
 function panelOpen(){return editingOpen||root.classList.contains('cutscene-playing')||panelIds.some(id=>$(id).open);}
 function closePanels(except=null){for(const id of panelIds)if(id!==except&&$(id).open)$(id).close();}
@@ -178,7 +200,7 @@ function beginCutscene({preview=false,project=runtimeProject,roomId=game.state.r
  if(preview){editorProject=project;editingRoomId=roomId;activeSceneProject=null;renderScene();}
  const scene=activeScene;
  cutsceneProjectSignature=preview?JSON.stringify(project):'';
- cutsceneView=createCutsceneView({root,map:$('room-map'),panel:$('cutscene-panel'),roomView,scene,project,beats,playerPosition:preview?scene.geometry.start:roomView.state,preview,paused,tile,withEntry,playbackRate:cutsceneRate,onRateChange:rate=>{cutsceneRate=rate;},onFinish:({state})=>stopCutscene({retain:!preview,state})});
+ cutsceneView=createCutsceneView({root,map:$('room-map'),panel:$('cutscene-panel'),roomView,scene,project,beats,playerPosition:preview?scene.geometry.start:roomView.state,preview,paused,tile,withEntry,cinematicAudio,playbackRate:cutsceneRate,onRateChange:rate=>{cutsceneRate=rate;},onFinish:({state})=>stopCutscene({retain:!preview,state})});
  pathPreviewPhase=cutsceneView.state.phase;
  roomView.refresh();if(preview)renderCutscenePath();return cutsceneView;
 }
@@ -365,7 +387,7 @@ root.addEventListener('click',event=>{
     case'commit':commit();break;
     case'undo':case'revisit':undo();break;
     case'restart':restart();break;
-    case'sound':stopAudio();soundEnabled=!soundEnabled;audio.setEnabled(soundEnabled);write(SOUND_KEY,soundEnabled?'on':'off');render();break;
+    case'sound':stopAudio();soundEnabled=!soundEnabled;audio.setEnabled(soundEnabled);previewAudio.setEnabled(soundEnabled);cinematicAudio.setEnabled(soundEnabled);if(soundEnabled)void cinematicAudio.unlock();write(SOUND_KEY,soundEnabled?'on':'off');render();break;
     case'help':stopAudio();openPanel('help-dialog');break;
     case'menu':case'outcome-map':openPanel('menu-dialog');break;
     case'bag':openNotes('bag');break;
@@ -410,7 +432,7 @@ $('room-map').addEventListener('pointercancel',event=>{
  if(moved){activeSceneProject=null;renderScene(roomView?.state);render();}
 });
 for(const [button,panel]of [['help-close','help-dialog'],['help-done','help-dialog'],['conversation-close','conversation-dialog'],['notes-close','notes-dialog'],['lore-close','lore-dialog'],['lore-done','lore-dialog'],['menu-close','menu-dialog'],['outcome-close','outcome']])$(button).addEventListener('click',()=>$(panel).close());
-for(const id of panelIds)$(id).addEventListener('close',()=>{roomView?.refresh();if(!panelOpen()&&game.state.phase==='continued'){openPanel('outcome');return;}const active=document.activeElement;if(!panelOpen()&&(!active||active===document.body||active===document.documentElement||active.closest('dialog')))$('walk-floor').focus({preventScroll:true});});
+for(const id of panelIds)$(id).addEventListener('close',()=>{if(rhythmReadout.closest('dialog')?.id===id)stopAudio();roomView?.refresh();if(!panelOpen()&&game.state.phase==='continued'){openPanel('outcome');return;}const active=document.activeElement;if(!panelOpen()&&(!active||active===document.body||active===document.documentElement||active.closest('dialog')))$('walk-floor').focus({preventScroll:true});});
 $('outcome').addEventListener('cancel',event=>{if(game.state.phase==='continued')event.preventDefault();});
 function renderHelpNotes(){$('help-notes').innerHTML=NOTE_KINDS.map(kind=>`<div class="mg-help-note">${symbolMarkup(kind.id)}<span>${escapeHTML(kind.label)}</span><span>${beatText(kind)}</span></div>`).join('');}
 renderHelpNotes();
@@ -427,9 +449,9 @@ document.addEventListener('keydown',event=>{
 });
 function exit(event){roomView?.stop();stopAudio();void audio.suspend();if(window.parent!==window){event.preventDefault();window.parent.postMessage({coda:1,game:'rhythm-blocks',type:'close'},location.origin);}}
 $('exit').addEventListener('click',exit);$('outcome-exit').addEventListener('click',exit);
-function background(){stopAudio();void audio.suspend();void previewAudio.suspend();}
+function background(){stopAudio();void audio.suspend();void previewAudio.suspend();void cinematicAudio.suspend();}
 window.addEventListener('blur',background);document.addEventListener('visibilitychange',()=>{if(document.hidden)background();});
-window.addEventListener('pagehide',()=>{clearTimeout(toastTimer);stopAudio();void audio.destroy();void previewAudio.destroy();});
+window.addEventListener('pagehide',()=>{clearTimeout(toastTimer);stopAudio();void audio.destroy();void previewAudio.destroy();void cinematicAudio.destroy();});
 
 function persistedProject(project){
  const normalized=normalizeProject(project);
@@ -500,7 +522,7 @@ function developerMutation(action){
 developerConsole=createDeveloperConsole({mount:document.body,getProject:()=>authoredProject,getState:()=>({...snapshot(),roomPosition:roomView?.state}),onOpen:editorOpened,onClose:editorClosed,onSelectRoom:(roomId,project)=>updateEditorPreview(project,roomId),onDraftChange:project=>updateEditorPreview(project),onApply:project=>startPlaytest(project),onPlaytest:startPlaytest,onReturnToGame:returnToPublishedGame,onSaveProject:persistedProject,
  onPreviewCutscene:previewCutscene,
  onCutsceneSelection:selection=>{const changed=pathSelection?.roomId!==selection?.roomId||pathSelection?.clipIndex!==selection?.clipIndex;pathSelection=selection;if(changed&&cutsceneView?.state.preview)cutsceneView.pause();renderCutscenePath();},
- onPreview:async(recipe,project)=>{const revision=++audioRevision;audio.stop();previewAudio.setDefinition({bpm:project.settings.bpm,noteKinds:project.noteKinds});await previewAudio.unlock();if(revision===audioRevision&&editingOpen)previewAudio.playPattern(recipe);},
+ onPreview:async(recipe,project)=>{const revision=++audioRevision;audio.stop();previewAudio.setDefinition({bpm:project.settings.bpm,noteKinds:project.noteKinds});await previewAudio.unlock();if(revision===audioRevision&&editingOpen)showRhythmReadout(previewAudio,previewAudio.playPattern(recipe));},
  onSetInventory:stock=>developerMutation(()=>game.developerSetInventory(stock)),onTeleport:roomId=>developerMutation(()=>game.developerTeleport(roomId)),onResetSources:sourceId=>developerMutation(()=>game.developerResetSources(sourceId)),
 });
 

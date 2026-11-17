@@ -19,7 +19,7 @@ spec = importlib.util.spec_from_file_location('quiet_bell_ui', ROOT / 'tests/rhy
 ui = importlib.util.module_from_spec(spec)
 spec.loader.exec_module(ui)
 NODE_BY_ROUTE = {'canal': 'canal-porch', 'garden': 'garden-porch', 'workshop': 'workshop-porch'}
-COSTS = {'canal': ['half', 'quarter', 'eighth-pair'], 'garden': ['half-rest', 'half'],
+COSTS = {'canal': ['half', 'quarter', 'eighth-pair'], 'garden': ['half', 'half-rest'],
          'workshop': ['half', 'eighth-pair', 'sixteenth-group']}
 
 

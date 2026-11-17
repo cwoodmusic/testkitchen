@@ -176,7 +176,9 @@ def entrance_flow(browser, url, expected=None):
         # in quiet-bell-cutscene-performance-browser.py.
         elapsed_seconds = (current_timed['now'] - previous_timed['now']) / 1000 + .02
         for item in current['actors']:
-            assert point_distance(actor(previous, item['id']), item) <= speed * current.get('playbackRate', 1) * elapsed_seconds + 2, (previous_timed, current_timed)
+            old_actor = actor(previous, item['id'])
+            gait_rate = 2 if 'run' in [old_actor.get('gait'), item.get('gait')] else 1
+            assert point_distance(old_actor, item) <= speed * gait_rate * current.get('playbackRate', 1) * elapsed_seconds + 2, (previous_timed, current_timed)
         assert conserved(page) == original
         previous_timed = current_timed
     advanced = cutscene(page)

@@ -35,7 +35,7 @@ test('the portable default includes the complete shipped data and creates no edi
  const again=createDefaultProject();project.content.depot.people[0].story='changed';project.doors.garden.recipe.reverse();
  assert.notEqual(again.content.depot.people[0].story,'changed');
  assert.equal(ROOM_CONTENT.depot.people[0].story,again.content.depot.people[0].story);
- assert.deepEqual(CHAPTER_DOORS.garden.recipe,['half-rest','half']);
+ assert.deepEqual(CHAPTER_DOORS.garden.recipe,['half','half-rest']);
 });
 
 test('normalization derives note timing, fills omitted stock and preserves extra authored JSON',()=>{
@@ -269,8 +269,9 @@ test('room introductions are portable authored data and leave the economy and jo
  const project=createDefaultProject(),before={doors:clone(project.doors),sources:clone(project.sources),inventory:clone(project.settings.initialInventory),manifest:createProjectManifest(project)};
  assert.equal(Object.values(project.content).filter(room=>room.cutscene?.length).length,23);
  for(const [roomId,content]of Object.entries(project.content)){
-  assert.equal(content.cutscene.length,12,roomId);assert(content.cutscene.some(beat=>beat.kind==='emote'&&beat.emote==='idea'));assert(content.cutscene.some(beat=>beat.kind==='emote'&&beat.emote==='question'));
-  for(const kind of ['walk','dialogue','emote'])assert.equal(content.cutscene.filter(beat=>beat.kind===kind).length,4,`${roomId}/${kind}`);
+  assert.equal(new Set(content.cutscene.map(beat=>beat.id)).size,content.cutscene.length,`${roomId} has stable unique clip IDs`);
+  assert(content.cutscene.every(beat=>['walk','dialogue','emote','gesture'].includes(beat.kind)),`${roomId} uses independent authored channels`);
+  for(const [kind,count]of [['walk',3],['dialogue',4],['emote',3]])assert(content.cutscene.filter(beat=>beat.kind===kind).length>=count,`${roomId}/${kind} includes the whole party`);
  }
  project.content.depot.cutscene=[{id:'opening-line',speaker:'mira',actor:'pip',text:'<b>A literal thought.</b>',startTile:7,durationTiles:12,target:'clockwork-roost',action:'listen',emote:'idea'},{id:'silent-search',actor:'iris',destination:{x:950,y:840},startTile:22,durationTiles:5,action:'search',emote:'question'}];
  const restored=normalizeProject(JSON.parse(JSON.stringify(project)));valid(restored);
@@ -524,4 +525,73 @@ test('entry doorway validation follows custom room dimensions and tolerates malf
  const malformed=createDefaultProject();malformed.scenes.depot.geometry.width='not a width';malformed.scenes.depot.entry={doorX:768};
  assert.doesNotThrow(()=>validateProject(malformed));invalid(malformed,'geometry.width');
  assert.throws(()=>normalizeProject(malformed),/geometry\.width/);
+});
+
+test('running and physical actions round trip on independent tracks without changing gameplay',()=>{
+ const project=createDefaultProject(),before={doors:clone(project.doors),sources:clone(project.sources),inventory:clone(project.settings.initialInventory),manifest:createProjectManifest(project)};
+ project.content.depot.cutscene=[
+  {id:'dash',kind:'walk',actor:'pip',destination:{x:1200,y:800},action:'search',gait:'run',startTile:0,durationTiles:18,author:{purpose:'Excited search'}},
+  {id:'pip-words',kind:'dialogue',actor:'pip',speaker:'pip',text:'I found it!',startTile:1,durationTiles:8},
+  {id:'pip-happy',kind:'emote',actor:'pip',emote:'happy',startTile:0,durationTiles:5},
+  {id:'stumble',kind:'gesture',actor:'pip',gesture:'trip',startTile:2,durationTiles:4},
+  {id:'on-floor',kind:'gesture',actor:'pip',gesture:'fallen',startTile:6,durationTiles:3},
+  {id:'stand',kind:'gesture',actor:'pip',gesture:'recover',startTile:9,durationTiles:4},
+  {id:'inspect',kind:'gesture',actor:'iris',gesture:'magnify',startTile:1,durationTiles:18,author:{object:'A useful clue'}},
+ ];
+ const original=clone(project),warnings=valid(project).warnings;
+ assert(!warnings.some(message=>message.includes('overlapping clips')),'Physical actions may accompany running, text and reactions.');
+ const normalized=normalizeProject(JSON.parse(JSON.stringify(project)));
+ assert.deepEqual(normalized.content.depot.cutscene,original.content.depot.cutscene);assert.deepEqual(project,original);
+ assert.deepEqual(normalizeProject(normalized),normalized);assert(Object.isFrozen(normalized.content.depot.cutscene.at(-1).author));
+ assert.deepEqual(normalized.doors,before.doors);assert.deepEqual(normalized.sources,before.sources);assert.deepEqual(normalized.settings.initialInventory,before.inventory);assert.deepEqual(createProjectManifest(normalized),before.manifest);
+ project.content.depot.cutscene.push({id:'other-action',kind:'gesture',actor:'pip',gesture:'trip',startTile:3,durationTiles:2});
+ assert(valid(project).warnings.some(message=>message.includes('same track')),'Overlapping physical actions for one actor still need author review.');
+});
+
+test('gesture and pace validation rejects mixed channels and unsupported physical actions',()=>{
+ const cases=[
+  [{kind:'gesture',actor:'iris'},'needs a physical performance'],
+  [{kind:'gesture',actor:'iris',gesture:'claim-notes'},'choose magnify'],
+  [{kind:'gesture',actor:'iris',gesture:'magnify',text:''},'own dialogue clip'],
+  [{kind:'gesture',actor:'iris',gesture:'magnify',emote:'idea'},'own emote clip'],
+  [{kind:'gesture',actor:'iris',gesture:'magnify',target:'returned-letter'},'own walk clip'],
+  [{kind:'gesture',actor:'iris',gesture:'magnify',destination:{x:800,y:800}},'own walk clip'],
+  [{kind:'gesture',actor:'iris',gesture:'magnify',waypoints:[]},'own walk clip'],
+  [{kind:'gesture',actor:'iris',gesture:'magnify',action:'search'},'own walk clip'],
+  [{kind:'gesture',actor:'iris',gesture:'magnify',gait:'run'},'own walk clip'],
+  [{kind:'walk',actor:'pip',gesture:'trip'},'own gesture clip'],
+  [{kind:'walk',actor:'pip',gait:2},'choose walk or run'],
+  [{kind:'dialogue',actor:'pip',speaker:'pip',text:'Hi!',gait:'run'},'own walk clip'],
+  [{kind:'emote',actor:'pip',emote:'happy',gait:'run'},'own walk clip'],
+ ];
+ for(const [beat,message]of cases){
+  const project=createDefaultProject();project.content.depot.cutscene=[beat];const original=clone(project);
+  invalid(project,message);assert.throws(()=>normalizeProject(project),TypeError);assert.deepEqual(project,original);
+ }
+});
+
+test('old combined running performances migrate once and retain their pace only on walking',()=>{
+ const project=createDefaultProject(),source=[{id:'old-dash',actor:'pip',speaker:'pip',text:'Let me check!',destination:{x:1200,y:800},action:'search',gait:'run',emote:'happy',startTile:0,durationTiles:24,author:{note:'Keep this.'}}];
+ project.content.depot.cutscene=source;const original=clone(project),legacy=compileRoomCutscene({scene:project.scenes.depot,beats:source});
+ valid(project);const normalized=normalizeProject(project),clips=normalized.content.depot.cutscene;
+ assert.equal(clips.length,3);assert.equal(clips.find(clip=>clip.kind==='walk').gait,'run');
+ assert(clips.filter(clip=>clip.kind!=='walk').every(clip=>clip.gait===undefined));
+ assert(clips.every(clip=>clip.author.note==='Keep this.'));assert.deepEqual(project,original);
+ assert.deepEqual(normalizeProject(normalized),normalized);
+ const migrated=compileRoomCutscene({scene:normalized.scenes.depot,beats:clips});assert.equal(migrated.totalTiles,legacy.totalTiles);
+ assert.deepEqual(migrated.clips.map(clip=>[clip.startTile,clip.durationTiles]),Array(3).fill([legacy.clips[0].startTile,legacy.clips[0].durationTiles]));
+});
+
+test('missing introductions restore all typed channels while existing authored performances remain exact',()=>{
+ const project=createDefaultProject(),baseline=clone(project),rooms=['canal-porch','garden-final','ending-home'];
+ for(const roomId of rooms)delete project.content[roomId].cutscene;
+ project.content.depot.cutscene=[{id:'my-action',kind:'gesture',actor:'iris',gesture:'magnify',startTile:7,durationTiles:19,author:{note:'Preserve my own stage direction.'}}];
+ const original=clone(project),normalized=normalizeProject(project);
+ for(const roomId of rooms){
+  assert.deepEqual(normalized.content[roomId].cutscene,baseline.content[roomId].cutscene,`${roomId} restores nonspeaking tracks as well as dialogue`);
+  assert(normalized.content[roomId].cutscene.some(beat=>beat.kind==='walk'&&beat.speaker===undefined));
+  assert(normalized.content[roomId].cutscene.some(beat=>beat.kind==='emote'&&beat.speaker===undefined));
+ }
+ assert.deepEqual(normalized.content.depot.cutscene,original.content.depot.cutscene);assert.deepEqual(project,original);
+ assert.deepEqual(normalizeProject(normalized),normalized);
 });

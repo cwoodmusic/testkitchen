@@ -50,15 +50,19 @@ export function createRoomView({scene,map=scene,player,floor,controls,interactBu
   }
   function paint(){
     if(disposed)return;
-    const state=cinematicFrame?.player??walker.state,row=Math.max(0,playerDefinition.directions.indexOf(state.facing)),phase=cinematicFrame?.elapsed??walkPhase,col=state.moving?[1,0,2,0][Math.floor(phase/125)%4]:0;
+    const state=cinematicFrame?.player??walker.state,row=Math.max(0,playerDefinition.directions.indexOf(state.facing)),phase=cinematicFrame?.elapsed??walkPhase,col=state.moving?[1,0,2,0][Math.floor(phase/(state.gait==='run'?62.5:125))%4]:0;
     followCamera(state);
-    const signature=[state.x,state.y,row,col,state.moving].join('|');
+    const visual=cinematicFrame?.playerVisual,angle=Number.isFinite(visual?.angle)?visual.angle:0;
+    const signature=[state.x,state.y,row,col,state.moving,angle,visual?.gesture,visual?.progress,state.gait].join('|');
     if(signature!==lastPaint){
       lastPaint=signature;const anchor=playerDefinition.anchors[row][col];
       player.style.left=`${state.x/room.width*100}%`;player.style.top=`${state.y/room.height*100}%`;
-      player.style.transform=`translate(${-anchor[0]*100}%,${-anchor[1]*100}%)`;
+      player.style.transform=`translate(${-anchor[0]*100}%,${-anchor[1]*100}%) rotate(${angle}deg)`;
+      player.style.transformOrigin=`${anchor[0]*100}% ${anchor[1]*100}%`;
       player.style.backgroundPosition=`${col*50}% ${row*100/3}%`;player.style.zIndex=String(Math.round(state.y));
       player.dataset.facing=state.facing;player.dataset.frame=String(col);player.dataset.moving=String(state.moving);
+      if(cinematicFrame){player.dataset.gait=state.gait??'walk';player.dataset.gesture=visual?.gesture??'';player.dataset.gestureProgress=String(Math.round((visual?.progress??0)*10000)/10000);}
+      else{delete player.dataset.gait;delete player.dataset.gesture;delete player.dataset.gestureProgress;}
     }
     // The walker is frozen during a cinematic. Its reach checks and controls
     // cannot change, so do not scan targets or rewrite controls every frame.

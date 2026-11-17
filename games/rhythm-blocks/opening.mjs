@@ -23,9 +23,9 @@ export const PEOPLE = Object.freeze([
     role: 'Gardener',
     goal: 'Reconnect the sky-garden’s living conduits while keeping a place for her absent friend.',
     story: 'I still set two cups beside the greenhouse dials, though my friend’s chair is empty. Since the bell went quiet, the roots have stopped following the brass pipes; they lean toward a dark patch of sky.',
-    route: 'The ivy-covered garden door asks for two quiet beats followed by two sounding beats: a half rest, then a half note. Choose its lock before arranging that answer. The order matters.',
+    route: 'The ivy-covered garden door asks for two sounding beats followed by two quiet beats: a half note, then a half rest. Choose its lock before arranging that answer. The order matters.',
     inventory: 'Rests are time for listening: a quarter rest holds one quiet beat, a half rest holds two. That dotted half note lasts three beats. You do not have to spend an unusual tile just because you can.',
-    demo: ['half-rest', 'half'],
+    demo: ['half', 'half-rest'],
   },
   {
     id: 'pip',

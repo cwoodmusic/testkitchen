@@ -11,7 +11,7 @@ Nell’s parcel contains eight types worth ten beats. The depot chest holds the 
 | Regular, A then B | 12 initial beats + 4 from a person/chest | 4 doors × 4 beats | Zero of every type |
 | Secret, B then hidden key then A | 12 initial + 4 branch + 4 hidden | 5 doors × 4 beats | Zero of every type |
 
-The equalities hold for each individual note type, not merely duration. Hidden caches occur inside their chosen detours; their notes pay an additional hidden gate before the final phrase. They cannot be collected on a regular route and leave surplus inventory there. A hidden gate stays concealed until its cache is found. Nothing discards, converts, or consumes an arbitrary bag of leftovers.
+Every published door rhythm begins with a sounded note. Rests remain part of the phrases after beat one; moving leading rests to the end preserves each key’s exact note costs. The equalities hold for each individual note type, not merely duration. Hidden caches occur inside their chosen detours; their notes pay an additional hidden gate before the final phrase. They cannot be collected on a regular route and leave surplus inventory there. A hidden gate stays concealed until its cache is found. Nothing discards, converts, or consumes an arbitrary bag of leftovers.
 
 The explicit dead ends keep four or eight beats, depending on whether their preceding source was collected. They are outcomes with a repair hint, not unintended rooms with no available action. Every reachable nonterminal state retains a successful continuation, including states before collecting an available source.
 

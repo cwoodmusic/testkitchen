@@ -9,6 +9,28 @@
     "mystery": "The old bellkeeper’s parcel returns with warm wax while the outgoing route lamps are dark. Evidence should deepen the question before any character claims to know its answer.",
     "humanScale": "Keep the world legible through work, meals, repairs, gardens, deliveries and small promises. Wonder and absence carry the tone; no immediate catastrophe or violent threat is required."
   },
+  "party": {
+    "nell": {
+      "role": "Party leader",
+      "voice": "Wise, thoughtful, well versed and a little impatient; rarely surprised.",
+      "performance": "Sets the task, studies familiar evidence and brings the group back to its purpose."
+    },
+    "mira": {
+      "role": "Player heroine",
+      "voice": "Observant, plucky, slightly brash and whimsical; the biggest personality, frequently hungry.",
+      "performance": "Spots specific details, offers bold ideas and playful replies, and often notices a possible meal."
+    },
+    "iris": {
+      "role": "Pragmatic investigator",
+      "voice": "Droll, academic, emotionally level and fearless.",
+      "performance": "Pulls out a magnifying glass, examines evidence and delivers dry observations without alarm."
+    },
+    "pip": {
+      "role": "Nervous, excitable courier maker",
+      "voice": "Curious and enthusiastic, but afraid of almost everything.",
+      "performance": "Rushes toward an interesting discovery, startles into a harmless trip and fall, then gets up and carries on."
+    }
+  },
   "visualRules": [
     "Keep the chosen Pocket Pixel proportions, large readable clusters, warm dark outlines and limited material shading.",
     "Use orthographic 2/3 views throughout the game, including rooms, furniture, props and every character. Show tops and south/front faces; opposite edges remain parallel, rectangular tops never taper, and floor spacing stays constant from north to south. Nothing shrinks toward a vanishing point.",
@@ -56,7 +78,7 @@
       "everydayHabit": "Iris sets out two cups before watering the beds and moves the second chair out of the rain.",
       "traceOfPast": "A formal survey conduit has been repaired with garden twine and labeled seed jars.",
       "unansweredQuestion": "Who taught Iris to leave a pause for an answer that does not come?",
-      "routeClue": "The listening gate waits through two quiet beats before answering; the overgrown arch offers an older, poorly tended call.",
+      "routeClue": "The listening gate sounds for two beats, then leaves two quiet beats for an answer; the overgrown arch offers an older, poorly tended call.",
       "props": [
         {"id": "garden-porch-second-cup", "title": "The second cup", "observation": "The empty place has a dry cloth and a cup with a recently mended handle.", "purpose": "Make the absent duet partner part of a living routine."},
         {"id": "garden-porch-graft", "title": "The patient graft", "observation": "A green shoot pulses only after the copper pipe falls quiet.", "purpose": "Give a material example of waiting before a reply."},
@@ -124,7 +146,7 @@
       "everydayHabit": "Apprentices leave unfinished mechanisms on a shelf for the next person to help repair.",
       "traceOfPast": "A neat classroom stair has been fitted into a much older performance machine.",
       "unansweredQuestion": "Who used the narrow rear passage when the public music room was closed?",
-      "routeClue": "The public stair carries an extended call and one ordinary reply; the back passage has long quiet spaces before its small returning sounds.",
+      "routeClue": "The public stair carries an extended call and one ordinary reply; the back passage starts with two short sounds in its first beat, then leaves three quiet beats.",
       "props": [
         {"id": "workshop-fork-help-shelf", "title": "The help shelf", "observation": "An unfinished bird has three different styles of careful repair around the same wing.", "purpose": "Show teaching as shared practical work."},
         {"id": "workshop-fork-worn-rail", "title": "The back rail", "observation": "Dust fills the middle of the rail, but the handholds at either end are bright.", "purpose": "Make the quieter route feel used rather than arbitrary."},
@@ -175,7 +197,7 @@
       "everydayHabit": "Low stools, finger-smudged practice controls and spare parts are ready for learners of different sizes.",
       "traceOfPast": "The old instrument’s ceremonial controls have been lowered and fitted with simple wooden grips.",
       "unansweredQuestion": "How much of the old machinery can people understand by learning to listen together?",
-      "routeClue": "Two quiet beats, another quiet beat and two different short replies leave room for an answering voice.",
+      "routeClue": "Two different short sounds share the first beat, followed by a half rest and a quarter rest to leave room for an answering voice.",
       "props": [
         {"id": "workshop-final-low-control", "title": "The lowered control", "observation": "A wooden extension lets the smallest stool reach the oldest brass lever.", "purpose": "Show the room was adapted for real learners."},
         {"id": "workshop-final-practice-patches", "title": "The practice patches", "observation": "Different repaired cloth squares mark places where people learned by trying again.", "purpose": "Make mistakes part of the room’s lived history."},
@@ -192,7 +214,7 @@
       "everydayHabit": "A keeper has left a patched coat, a broom and a flask beside an immense service instrument.",
       "traceOfPast": "The tower connects household-sized repairs to a system that spans the Reach.",
       "unansweredQuestion": "What does a public signal owe the people who depend on it?",
-      "routeClue": "The final phrase leaves long and short spaces before its small replies, making the room ready to hear the town answer.",
+      "routeClue": "The final phrase begins with two small sounds in its first beat, then leaves long and short spaces for the town to answer.",
       "props": [
         {"id": "canal-final-route-lamps", "title": "The waiting lamps", "observation": "Each dark lamp has been cleaned as carefully as the one that still glows.", "purpose": "Show care for distant neighbors without listing undiscovered game routes."},
         {"id": "canal-final-keeper-flask", "title": "The keeper’s flask", "observation": "The flask fits a hand-sized shelf added to a machine of enormous scale.", "purpose": "Keep the tower inhabited and human in scale."},

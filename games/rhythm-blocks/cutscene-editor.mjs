@@ -8,7 +8,9 @@ const clone=value=>structuredClone(value);
 const frameFor=document=>document.defaultView?.requestAnimationFrame?.bind(document.defaultView)??(callback=>setTimeout(callback,16));
 const actions=[['look','Look around'],['search','Search'],['examine','Examine'],['listen','Listen']];
 const emotes=[['','No emote'],['idea','Lightbulb'],['question','Question mark'],['thinking','Thinking'],['surprise','Surprise'],['happy','Happy']];
-const kinds=[['walk','Walk'],['dialogue','Text'],['emote','Emote']];
+const gestures=[['magnify','Magnifying glass'],['trip','Trip'],['fallen','On the floor'],['recover','Get up']];
+const gaits=[['walk','Walk'],['run','Run']];
+const kinds=[['walk','Walk'],['dialogue','Text'],['emote','Emote'],['gesture','Action']];
 const kindOf=beat=>kinds.some(([kind])=>kind===beat?.kind)?beat.kind:'walk';
 const kindName=kind=>kinds.find(([id])=>id===kind)?.[1]??'Walk';
 
@@ -69,15 +71,15 @@ export function createCutsceneEditor({document=globalThis.document,roomId,conten
  function addClip(kind,actor=selected()?.actor??selected()?.speaker,startTile=state.currentTile){
   if(notes().length>=384)return;
   if(!hasActor(actor))actor=actorIds.find(id=>id!=='mira')??'mira';
-  const clip={id:nextId(),kind,actor,startTile,durationTiles:kind==='dialogue'?Math.max(1,Math.ceil(3000/quantumMs)):kind==='emote'?Math.max(1,Math.ceil(1000/quantumMs)):1};
-  if(kind==='walk')clip.action='look';else if(kind==='dialogue'){clip.speaker=actor;clip.text='';}else clip.emote='question';
+  const clip={id:nextId(),kind,actor,startTile,durationTiles:kind==='dialogue'?Math.max(1,Math.ceil(3000/quantumMs)):kind==='emote'||kind==='gesture'?Math.max(1,Math.ceil(1000/quantumMs)):1};
+  if(kind==='walk')clip.action='look';else if(kind==='dialogue'){clip.speaker=actor;clip.text='';}else if(kind==='emote')clip.emote='question';else clip.gesture=actor==='iris'?'magnify':'trip';
   state.selectedIndex=notes().length;state.revealClip=state.selectedIndex;mutate(lines=>lines.push(clip));
  }
- toolbar.append(button('+ Walk','developer-cutscene-add',()=>addClip('walk')),button('+ Text','developer-cutscene-add-dialogue',()=>addClip('dialogue')),button('+ Emote','developer-cutscene-add-emote',()=>addClip('emote')),button('Duplicate','developer-cutscene-duplicate',()=>{const index=state.selectedIndex,beat=selected();if(!beat||notes().length>=384)return;const clip=clipFor(index),copy={...clone(beat),id:nextId(),startTile:(clip?.startTile??0)+(clip?.durationTiles??1)};state.selectedIndex=notes().length;state.revealClip=state.selectedIndex;mutate(lines=>lines.push(copy));}),button('Delete','developer-cutscene-delete',()=>{const index=state.selectedIndex;if(!selected())return;state.selectedIndex=Math.max(0,index-1);mutate(lines=>lines.splice(index,1));}));
+ toolbar.append(button('+ Walk','developer-cutscene-add',()=>addClip('walk')),button('+ Text','developer-cutscene-add-dialogue',()=>addClip('dialogue')),button('+ Emote','developer-cutscene-add-emote',()=>addClip('emote')),button('+ Action','developer-cutscene-add-gesture',()=>addClip('gesture')),button('Duplicate','developer-cutscene-duplicate',()=>{const index=state.selectedIndex,beat=selected();if(!beat||notes().length>=384)return;const clip=clipFor(index),copy={...clone(beat),id:nextId(),startTile:(clip?.startTile??0)+(clip?.durationTiles??1)};state.selectedIndex=notes().length;state.revealClip=state.selectedIndex;mutate(lines=>lines.push(copy));}),button('Delete','developer-cutscene-delete',()=>{const index=state.selectedIndex;if(!selected())return;state.selectedIndex=Math.max(0,index-1);mutate(lines=>lines.splice(index,1));}));
  for(const control of toolbar.children)control.disabled=control.id.startsWith('developer-cutscene-add')?notes().length>=384:!notes().length;
  function zoom(delta){state.tileWidth=clamp(state.tileWidth+delta,4,48);state.scrollLeft=scroll.scrollLeft;renderGrid();updateClock(state.currentTile);}
  toolbar.append(button('− Zoom','developer-cutscene-zoom-out',()=>zoom(-4)),button('+ Zoom','developer-cutscene-zoom-in',()=>zoom(4)));
- const scroll=el('div','cse-scroll');scroll.id='developer-cutscene-scroll';scroll.setAttribute('tabindex','0');scroll.setAttribute('aria-label','Separate Walk, Text and Emote timeline rows for each character. Scroll to see more rows or later clips.');const grid=el('div','cse-grid');const playhead=el('div','cse-playhead');playhead.setAttribute('aria-hidden','true');scroll.append(grid);element.append(scroll,error,toolbar);
+ const scroll=el('div','cse-scroll');scroll.id='developer-cutscene-scroll';scroll.setAttribute('tabindex','0');scroll.setAttribute('aria-label','Separate Walk, Text, Emote and Action timeline rows for each character. Scroll to see more rows or later clips.');const grid=el('div','cse-grid');const playhead=el('div','cse-playhead');playhead.setAttribute('aria-hidden','true');scroll.append(grid);element.append(scroll,error,toolbar);
  listen(scroll,'scroll',()=>{state.scrollLeft=scroll.scrollLeft;state.scrollTop=scroll.scrollTop;});
  const properties=el('section','cse-properties');element.append(properties);
  const input=(label,value,id,{type='text',min,max,step,multiline=false,onCommit}={})=>{const wrap=el('label','dc-field');wrap.append(el('span','',label));const node=el(multiline?'textarea':'input');if(!multiline)node.type=type;node.id=id;node.value=value??'';if(min!==undefined)node.min=String(min);if(max!==undefined)node.max=String(max);if(step!==undefined)node.step=String(step);if(multiline)node.rows=3;listen(node,'change',()=>{committingField=true;try{onCommit(type==='number'?Number(node.value):node.value);}finally{committingField=false;}});wrap.append(node);return wrap;};
@@ -98,7 +100,7 @@ export function createCutsceneEditor({document=globalThis.document,roomId,conten
   input('Party spacing (walking tiles)',scene.entry?.staggerTiles??2,'developer-room-entry-spacing',{type:'number',min:0,max:64,step:1,onCommit:value=>updateEntry({staggerTiles:clamp(integer(value),0,64)})}),
   input('Doorway X',scene.entry?.doorX??doorway,'developer-room-entry-door-x',{type:'number',min:0,max:scene.geometry.width,step:1,onCommit:value=>{if(Number.isFinite(value))updateEntry({doorX:clamp(value,0,scene.geometry.width)});}}),
  );
- entrySettings.append(entryEnabled,entryFields,entryPreview,el('p','cse-help','The party walks in first, then the authored timeline starts. These settings leave the Walk, Text and Emote rows at their existing times.'));
+ entrySettings.append(entryEnabled,entryFields,entryPreview,el('p','cse-help','The party walks in first, then the authored timeline starts. These settings leave the Walk, Text, Emote and Action rows at their existing times.'));
  element.append(entrySettings);
  function chips(label,value,options,id,onCommit){const wrap=el('div','dc-field');wrap.append(el('span','',label));const group=el('div','cse-chips');group.id=id;group.setAttribute('role','group');group.setAttribute('aria-label',label);for(const [key,name]of options){const choice=button(name,null,()=>onCommit(key));choice.dataset.cutsceneChoice=key;choice.setAttribute('aria-pressed',String(String(key)===String(value)));group.append(choice);}wrap.append(group);return wrap;}
  function flushProperty(){if(properties.contains(document.activeElement)&&document.activeElement?.matches('input,textarea'))document.activeElement.blur();}
@@ -127,7 +129,7 @@ export function createCutsceneEditor({document=globalThis.document,roomId,conten
  function renderProperties(){
   for(const remove of propertyCleanup.splice(0))remove();const previousBindings=bindingScope;bindingScope=propertyCleanup;
   properties.replaceChildren();const index=state.selectedIndex,beat=selected(),clip=clipFor(index);
-  if(!beat){delete properties.dataset.cutsceneKind;properties.append(el('p','cse-empty','Add a Walk, Text or Emote item. Each has its own timing.'));bindingScope=previousBindings;return;}
+  if(!beat){delete properties.dataset.cutsceneKind;properties.append(el('p','cse-empty','Add a Walk, Text, Emote or Action item. Each has its own timing.'));bindingScope=previousBindings;return;}
   const kind=kindOf(beat);properties.dataset.cutsceneKind=kind;
   properties.append(el('h4','',`${kindName(kind)} · ${actorName(beat.actor??beat.speaker)}`));
   const timing=el('div','dc-fields');timing.append(input('Start tile',clip?.startTile??beat.startTile??0,'developer-cutscene-start',{type:'number',min:0,step:1,onCommit:value=>update(index,{startTile:integer(value)})}),input('Length in tiles',clip?.durationTiles??beat.durationTiles??1,'developer-cutscene-duration',{type:'number',min:minimumFor(index),step:1,onCommit:value=>update(index,{durationTiles:Math.max(minimumFor(index),integer(value,1))})}));
@@ -138,8 +140,11 @@ export function createCutsceneEditor({document=globalThis.document,roomId,conten
    properties.append(chips('Who speaks',beat.speaker??beat.actor,[['mira','Mira'],...(content.people??[]).map(person=>[person.id,person.name])],'developer-cutscene-speaker',value=>update(index,{speaker:value,actor:value})),input('Dialogue',beat.text??'','developer-cutscene-text',{multiline:true,onCommit:value=>update(index,{text:value})}));
   }else if(kind==='emote'){
    properties.append(chips('Character',beat.actor??beat.speaker,actorIds.map(id=>[id,actorName(id)]),'developer-cutscene-actor',value=>update(index,{actor:value})),chips('Emote above their head',beat.emote??'question',emotes.filter(([id])=>id),'developer-cutscene-emote',value=>update(index,{emote:value})),el('p','cse-help','This reaction appears over the character wherever they are walking. Delete the item to remove it.'));
+  }else if(kind==='gesture'){
+   properties.append(chips('Character',beat.actor??beat.speaker,actorIds.map(id=>[id,actorName(id)]),'developer-cutscene-actor',value=>update(index,{actor:value})),chips('Physical action',beat.gesture??'magnify',gestures,'developer-cutscene-gesture',value=>update(index,{gesture:value})),el('p','cse-help','Move or trim this action independently of walking, text and emotes. Its pose follows the playhead, including when paused or seeking.'));
   }else{
    properties.append(chips('Who moves',beat.actor??beat.speaker,actorIds.map(id=>[id,actorName(id)]),'developer-cutscene-actor',value=>update(index,{actor:value})));
+   properties.append(chips('Pace',beat.gait??'walk',gaits,'developer-cutscene-gait',value=>update(index,{gait:value})),el('p','cse-help','Run moves twice as fast as Walk. Timeline increments remain one normal walking tile.'));
    const targets=[['','Stay here / use coordinates'],...(scene.geometry.targets??[]).filter(target=>target.type!=='return').map(target=>[target.id,scene.objects?.find(object=>object.id===target.id)?.label??target.label??target.id])];
    properties.append(chips('Walk to',beat.target??'',targets,'developer-cutscene-target',value=>update(index,{target:value||undefined,destination:undefined})));
    const destination=beat.destination??clip?.to??scene.geometry.start,coords=el('div','dc-fields');
@@ -166,7 +171,7 @@ export function createCutsceneEditor({document=globalThis.document,roomId,conten
   if(!drag||drag.pointerId!==event.pointerId)return;const current=drag;drag=null;if(cancelled||!current.changed){renderGrid();selectClip(current.index);return;}
   state.revealClip=current.index;update(current.index,current.resize?{durationTiles:current.nextDuration}:{startTile:current.nextStart});
  }
- function describe(index,start,duration){const beat=notes()[index],kind=kindOf(beat);return`${actorName(beat?.actor??beat?.speaker)} ${kindName(kind).toLowerCase()} item ${index+1}, starts at tile ${start}, length ${duration} tiles. ${kind==='dialogue'?beat?.text??'':kind==='emote'?emotes.find(([id])=>id===beat?.emote)?.[1]??'':beat?.action??''}`;}
+ function describe(index,start,duration){const beat=notes()[index],kind=kindOf(beat);return`${actorName(beat?.actor??beat?.speaker)} ${kindName(kind).toLowerCase()} item ${index+1}, starts at tile ${start}, length ${duration} tiles. ${kind==='dialogue'?beat?.text??'':kind==='emote'?emotes.find(([id])=>id===beat?.emote)?.[1]??'':kind==='gesture'?gestures.find(([id])=>id===beat?.gesture)?.[1]??'':beat?.action??''}`;}
  function renderGrid(){
   for(const remove of gridCleanup.splice(0))remove();const previousBindings=bindingScope;bindingScope=gridCleanup;
   grid.replaceChildren();grid.style.width=`${LABEL_WIDTH+displayTiles*state.tileWidth}px`;grid.style.setProperty('--cse-tile-width',`${state.tileWidth}px`);
@@ -182,7 +187,7 @@ export function createCutsceneEditor({document=globalThis.document,roomId,conten
     listen(lane,'dblclick',event=>{if(event.target.closest('[data-cutscene-clip]'))return;const tile=integer((event.clientX-lane.getBoundingClientRect().left)/state.tileWidth);addClip(kind,actor,tile);});
     for(const clip of clips.filter(clip=>(clip.actor??clip.speaker)===actor&&kindOf(clip)===kind)){
      const index=clip.index??clips.indexOf(clip),beat=notes()[index];if(!beat)continue;const node=el('div','cse-clip');node.setAttribute('role','button');node.tabIndex=0;node.dataset.cutsceneClip=String(index);node.dataset.cutsceneKind=kind;node.dataset.startTile=String(clip.startTile);node.dataset.durationTiles=String(clip.durationTiles);node.dataset.minDuration=String(minimumFor(index));node.setAttribute('aria-selected',String(index===state.selectedIndex));node.setAttribute('aria-label',describe(index,clip.startTile,clip.durationTiles));node.style.left=`${clip.startTile*state.tileWidth}px`;node.style.width=`${Math.max(1,clip.durationTiles)*state.tileWidth}px`;node.style.paddingRight=`${Math.min(11,clip.durationTiles*state.tileWidth*.25)}px`;
-     const label=kind==='dialogue'?beat.text||'Text…':kind==='emote'?emotes.find(([id])=>id===beat.emote)?.[1]??'Emote':clip.movementTiles?`Walk · ${scene.objects?.find(object=>object.id===beat.target)?.label??beat.target??'destination'}`:actions.find(([id])=>id===beat.action)?.[1]??'Stay here';
+     const label=kind==='dialogue'?beat.text||'Text…':kind==='emote'?emotes.find(([id])=>id===beat.emote)?.[1]??'Emote':kind==='gesture'?gestures.find(([id])=>id===beat.gesture)?.[1]??'Action':clip.movementTiles?`${beat.gait==='run'?'Run':'Walk'} · ${scene.objects?.find(object=>object.id===beat.target)?.label??beat.target??'destination'}`:actions.find(([id])=>id===beat.action)?.[1]??'Stay here';
      node.append(el('span','cse-clip-text',label));
      const resize=el('span','cse-resize');resize.dataset.cutsceneResize=String(index);resize.style.width=`${clamp(clip.durationTiles*state.tileWidth*.25,4,12)}px`;resize.setAttribute('role','separator');resize.setAttribute('aria-orientation','vertical');resize.setAttribute('aria-label',`Resize ${title.toLowerCase()} item ${index+1}`);node.append(resize);lane.append(node);
      listen(node,'pointerdown',event=>{if(event.target.closest('[data-cutscene-resize]'))return;pointerStart(event,index,false);});listen(resize,'pointerdown',event=>pointerStart(event,index,true));

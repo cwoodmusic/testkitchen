@@ -15,7 +15,7 @@ import math
 from playwright.sync_api import sync_playwright
 
 ROOT=Path(__file__).resolve().parents[1]
-OUT=ROOT/'work/room-entry-performance'
+OUT=ROOT/'work/party-performance-native'
 OUT.mkdir(parents=True,exist_ok=True)
 spec=importlib.util.spec_from_file_location('quiet_bell_ui',ROOT/'tests/rhythm-blocks-browser.py')
 ui=importlib.util.module_from_spec(spec);spec.loader.exec_module(ui)
@@ -40,7 +40,7 @@ def observe(page,duration_ms=7500):
       function sample(now){
         const state=window.quietBell?.cutscene,camera=window.quietBell?.camera;
         frames.push({at:now,delta:now-previous,index:state?.index,tile:state?.currentTile,
-          actors:state?.actors?.map(actor=>({id:actor.id,x:actor.x,y:actor.y,moving:actor.moving})),camera});
+          actors:state?.actors?.map(actor=>({id:actor.id,x:actor.x,y:actor.y,moving:actor.moving,gait:actor.gait,gesture:actor.gesture,gestureProgress:actor.gestureProgress,emote:actor.emote})),camera});
         previous=now;
         if(now-started<duration)requestAnimationFrame(sample);else resolve(frames);
       }requestAnimationFrame(sample);
@@ -56,7 +56,7 @@ def rendered_motion(page):
         const samples=[];let attempts=0;
         function sample(){
           const state=window.quietBell?.cutscene,scene=window.quietBell?.scene;
-          const actor=state?.actors.find(actor=>actor.moving&&actor.id!=='mira');
+          const actor=state?.actors.find(actor=>actor.moving&&actor.id!=='mira'&&!actor.gesture);
           if(actor&&scene){
             const definition=scene.actors.find(item=>item.id===actor.id);
             const sprite=window.quietBell.project.cast[definition.character];
@@ -87,7 +87,8 @@ def analyze(frames,speed):
             step=math.hypot(actor['x']-old['x'],actor['y']-old['y'])
             world_steps.append(step)
             if step>.1:moving_samples[actor['id']]=moving_samples.get(actor['id'],0)+1
-            assert step<=speed*max(0,current['delta'])/1000+5, ('Actor teleported between native frames',actor['id'],step,current['delta'])
+            multiplier=2 if actor.get('gait')=='run' or old.get('gait')=='run' else 1
+            assert step<=speed*multiplier*max(0,current['delta'])/1000+5, ('Actor teleported between native frames',actor['id'],step,current['delta'],multiplier)
         if previous.get('camera') and current.get('camera'):
             first,second=previous['camera'],current['camera']
             step=math.hypot(second['offsetX']-first['offsetX'],second['offsetY']-first['offsetY'])
@@ -166,8 +167,15 @@ def scenario(browser,url,name,width,height,cpu,reduced='no-preference',preview=F
     layout_start=dialogue_layout(page)
     before=metrics(cdp);frames=observe(page);after=metrics(cdp)
     clearance=assert_dialogue_clearance(frames,[layout_start,dialogue_layout(page)])
+    gestures={}
+    for frame in frames:
+        for actor in frame.get('actors') or []:
+            if actor.get('gesture'):gestures.setdefault(actor['id'],set()).add(actor['gesture'])
+    if reduced=='reduce':
+        assert gestures.get('pip',set())>={'trip','fallen','recover'}, ('Reduced motion must retain readable essential acting.',gestures)
+        assert 'magnify' in gestures.get('iris',set()), ('Reduced motion lost Iris’s inspection prop.',gestures)
     result={'name':name,'width':width,'height':height,'cpuThrottle':cpu,'reducedMotion':reduced,
-            'preview':preview,'playbackRate':page.evaluate('quietBell.cutscene?.playbackRate??1'),'releaseBase':page.evaluate('document.baseURI'),**analyze(frames,speed),**clearance,'renderedFootSamples':visible,
+            'preview':preview,'playbackRate':page.evaluate('quietBell.cutscene?.playbackRate??1'),'releaseBase':page.evaluate('document.baseURI'),**analyze(frames,speed),**clearance,'renderedFootSamples':visible,'observedGestures':{actor:sorted(values) for actor,values in gestures.items()},
             'browserWork':{key:after[key]-before[key] for key in ['LayoutCount','LayoutDuration','RecalcStyleCount','RecalcStyleDuration','ScriptDuration','TaskDuration'] if key in before and key in after}}
     page.locator('#cutscene-skip').click() if not preview else page.locator('#developer-cutscene-stop').click()
     ui.protected_storage(page)
@@ -210,7 +218,7 @@ def early_next(browser,url):
       function sample(now){
         const state=window.quietBell?.cutscene;
         frames.push({at:now,delta:now-previous,index:state?.index,tile:state?.currentTile,
-          nextPending:state?.nextPending,actors:state?.actors?.map(actor=>({id:actor.id,x:actor.x,y:actor.y,moving:actor.moving})),camera:window.quietBell?.camera});
+          nextPending:state?.nextPending,actors:state?.actors?.map(actor=>({id:actor.id,x:actor.x,y:actor.y,moving:actor.moving,gait:actor.gait,gesture:actor.gesture,gestureProgress:actor.gestureProgress,emote:actor.emote})),camera:window.quietBell?.camera});
         previous=now;
         if(state&&state.index>index&&!state.nextPending||now-started>10000)resolve(frames);
         else requestAnimationFrame(sample);
@@ -255,7 +263,7 @@ def native_entry(browser,url):
             silent:document.getElementById('cutscene-panel').classList.contains('cutscene-silent'),
             actors:state?.actors?.map(actor=>{
               const node=document.querySelector('[data-actor="'+actor.id+'"]');
-              return{id:actor.id,x:actor.x,y:actor.y,moving:actor.moving,facing:actor.facing,
+              return{id:actor.id,x:actor.x,y:actor.y,moving:actor.moving,facing:actor.facing,gait:actor.gait,gesture:actor.gesture,gestureProgress:actor.gestureProgress,
                 frame:node?Number(node.dataset.frame):null,row:node?Number(node.dataset.spriteRow):null,
                 animated:node?.dataset.spriteAnimated==='true'};
             })});
@@ -314,11 +322,98 @@ def native_entry(browser,url):
     context.close();return result
 
 
+def native_party_performance(browser,url):
+    """Watch simultaneous acting with the real RAF clock on a slower CPU."""
+    context,page,errors,writes,external=ui.open_page(browser,url,1024,'light',height=768,
+        virtual_walk=False,skip_cutscenes=False,reduced_motion='no-preference')
+    page.evaluate('document.fonts.ready')
+    cdp=context.new_cdp_session(page);cdp.send('Performance.enable')
+    cdp.send('Emulation.setCPUThrottlingRate',{'rate':4})
+    ui.skip_cutscene(page)
+    before_resources=ui.resources(ui.state(page));before_journal=page.evaluate('quietBell.journey')
+    before_save=page.evaluate('(key)=>localStorage.getItem(key)',ui.SAVE_KEY)
+    page.locator('#menu').click();page.locator('#replay-cutscene').click();wait_for_story(page)
+    speed=page.evaluate('quietBell.scene.geometry.speed*(quietBell.cutscene?.playbackRate??1)')
+    before=metrics(cdp)
+    frames=page.evaluate('''()=>new Promise(resolve=>{
+      const beats=quietBell.project.content[quietBell.state.roomId].cutscene;
+      const stopTile=Math.max(...beats.filter(clip=>clip.kind==='gesture').map(clip=>clip.startTile+clip.durationTiles))+2;
+      const frames=[];let started=performance.now(),previous=started;
+      function sample(now){
+        const state=window.quietBell?.cutscene,scene=window.quietBell?.scene;
+        const map=document.getElementById('room-map').getBoundingClientRect();
+        const scale=map.width/scene.geometry.width;
+        const prop=document.querySelector('.cutscene-magnifier[data-character="iris"]');
+        const propStyle=prop?getComputedStyle(prop):null,propRect=prop?.getBoundingClientRect();
+        const iris=state?.actors.find(actor=>actor.id==='iris');
+        frames.push({at:now,delta:now-previous,index:state?.index,tile:state?.currentTile,
+          elapsed:state?.elapsed,camera:quietBell.camera,
+          magnifier:prop?{visible:!prop.hidden&&propStyle.display!=='none'&&Number(propStyle.opacity)>.01,
+            opacity:Number(propStyle.opacity),width:propRect.width,height:propRect.height,
+            handDistance:iris?Math.hypot(propRect.x+propRect.width/2-(map.x+iris.x*scale),propRect.y+propRect.height/2-(map.y+iris.y*scale))/scale:null}:null,
+          actors:state?.actors?.map(actor=>{
+            const node=actor.id==='mira'?document.getElementById('player-sprite'):document.querySelector('[data-actor="'+actor.id+'"]');
+            const transform=node?new DOMMatrixReadOnly(getComputedStyle(node).transform):null;
+            return{id:actor.id,x:actor.x,y:actor.y,moving:actor.moving,gait:actor.gait,
+              gesture:actor.gesture,gestureProgress:actor.gestureProgress,emote:actor.emote,
+              facing:actor.facing,frame:Number(node?.dataset.frame),
+              renderedGesture:node?.dataset.gesture??'',
+              renderedRotation:transform?Math.atan2(transform.b,transform.a)*180/Math.PI:0};
+          })});
+        previous=now;
+        if(!state||state.currentTile>=stopTile||now-started>20000)resolve(frames);else requestAnimationFrame(sample);
+      }requestAnimationFrame(sample);
+    })''')
+    after=metrics(cdp)
+    (OUT/'native-party-cpu4-frames.json').write_text(json.dumps(frames)+'\n')
+    assert len(frames)>=30 and all(frame.get('actors') for frame in frames), 'Performance ended before its expressive actions.'
+    simultaneous=[frame for frame in frames if sum(actor['moving'] for actor in frame['actors'] if actor['id']!='mira')>=3]
+    assert len(simultaneous)>=3, 'The companions must investigate at the same time.'
+    reactions=[frame for frame in frames if sum(bool(actor.get('emote')) for actor in frame['actors'])>=2]
+    assert reactions, 'Separate concurrent emotes were not observed.'
+    pip=[next(actor for actor in frame['actors'] if actor['id']=='pip') for frame in frames]
+    iris=[next(actor for actor in frame['actors'] if actor['id']=='iris') for frame in frames]
+    running=[actor for actor in pip if actor.get('moving') and actor.get('gait')=='run']
+    assert len(running)>=6 and len({actor['frame'] for actor in running})>=2, 'Pip must visibly run rather than slide.'
+    gesture_order=[]
+    for actor in pip:
+        gesture=actor.get('gesture')
+        if gesture and (not gesture_order or gesture_order[-1]!=gesture):gesture_order.append(gesture)
+    assert gesture_order==['trip','fallen','recover'], gesture_order
+    for gesture in gesture_order:
+        states=[actor for actor in pip if actor.get('gesture')==gesture]
+        assert len(states)>=3, (gesture,len(states))
+        assert all(actor['renderedGesture']==gesture for actor in states), ('Pose was not rendered',gesture,states)
+        assert all(a['gestureProgress']<=b['gestureProgress'] for a,b in zip(states,states[1:])), ('Gesture clock reversed',gesture)
+        assert all(not actor['moving'] for actor in states), ('Tumble feet must stay planted',gesture)
+    fallen=[actor for actor in pip if actor.get('gesture')=='fallen']
+    assert min(abs(actor['renderedRotation']) for actor in fallen)>45, 'Pip never visibly falls down.'
+    recovery=[actor for actor in pip if actor.get('gesture')=='recover']
+    assert abs(recovery[0]['renderedRotation'])>45 and abs(recovery[-1]['renderedRotation'])<15, 'Pip must visibly get back up.'
+    assert abs(pip[-1]['renderedRotation'])<5 and not pip[-1].get('gesture'), 'Pip did not return upright.'
+    magnifying=[(frame,actor) for frame,actor in zip(frames,iris) if actor.get('gesture')=='magnify' and .15<actor.get('gestureProgress',0)<.85]
+    assert len(magnifying)>=3 and all(frame['magnifier'] and frame['magnifier']['visible'] for frame,actor in magnifying), 'Iris needs an actual held magnifying glass.'
+    assert all(frame['magnifier']['width']>0 and frame['magnifier']['height']>0 and frame['magnifier']['handDistance']<170 for frame,actor in magnifying), 'The magnifying glass must remain attached to Iris.'
+    assert ui.resources(ui.state(page))==before_resources
+    assert page.evaluate('quietBell.journey')==before_journal
+    assert page.evaluate('(key)=>localStorage.getItem(key)',ui.SAVE_KEY)==before_save, 'Acting changed the saved run.'
+    result={'name':'native-party-cpu4','releaseBase':page.evaluate('document.baseURI'),'cpuThrottle':4,
+            'concurrentMovingFrames':len(simultaneous),'concurrentEmoteFrames':len(reactions),
+            'pipRunFrames':len(running),'pipGestureOrder':gesture_order,'heldMagnifierFrames':len(magnifying),
+            'saveAndResourcesPreserved':True,**analyze(frames,speed),
+            'browserWork':{key:after[key]-before[key] for key in ['LayoutCount','LayoutDuration','RecalcStyleCount','RecalcStyleDuration','ScriptDuration','TaskDuration'] if key in before and key in after}}
+    ui.skip_cutscene(page);ui.protected_storage(page)
+    assert not errors and not writes and not external,(errors,writes,external)
+    result['errors']=errors
+    context.close();return result
+
+
 def main():
     parser=argparse.ArgumentParser(description=__doc__)
     parser.add_argument('--source',action='store_true')
     parser.add_argument('--url')
     parser.add_argument('--expect-release')
+    parser.add_argument('--only',choices=['entry','party','phone','reduced','preview','next'])
     args=parser.parse_args();server=None
     if args.url:url=args.url
     else:
@@ -329,16 +424,18 @@ def main():
         with sync_playwright() as p:
             raw=p.chromium.launch(executable_path='/usr/bin/chromium',args=['--no-sandbox'])
             browser=PublicBrowser(raw) if url.startswith('https:') else raw
-            results=[native_entry(browser,url),
-                     scenario(browser,url,'native-phone-cpu4',390,844,4),
-                     scenario(browser,url,'native-reduced',1024,768,1,reduced='reduce'),
-                     scenario(browser,url,'native-preview-cpu4',1024,768,4,preview=True),
-                     early_next(browser,url)]
+            cases=[('entry',lambda:native_entry(browser,url)),('party',lambda:native_party_performance(browser,url)),
+                   ('phone',lambda:scenario(browser,url,'native-phone-cpu4',390,844,4)),
+                   ('reduced',lambda:scenario(browser,url,'native-reduced',1024,768,1,reduced='reduce')),
+                   ('preview',lambda:scenario(browser,url,'native-preview-cpu4',1024,768,4,preview=True)),
+                   ('next',lambda:early_next(browser,url))]
+            results=[run() for name,run in cases if not args.only or name==args.only]
             raw.close()
         if args.expect_release:
             assert all('/releases/'+args.expect_release+'/' in item['releaseBase'] for item in results), results
         result={'passed':True,'entry':url,'scenarios':results}
         name='public' if args.url else 'source' if args.source else 'launcher'
+        if args.only:name+='-'+args.only
         (OUT/f'{name}-results.json').write_text(json.dumps(result,indent=2)+'\n')
         print(json.dumps(result,indent=2))
     finally:

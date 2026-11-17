@@ -6,6 +6,18 @@ The public bell synchronized everyday systems: post routes, water clocks, doors 
 
 The depot introduces the mystery through a warm returned letter, a disconnected main relay and a route carriage that still slows for an erased stop. Nell, Iris and Pip give those objects personal meaning. A player should first notice a specific thing, then wonder about it, then learn enough from another person or place to reconsider it on a later run.
 
+## The travelling party
+
+Nell leads. She is wise, thoughtful and well versed in the Reach's machinery and history, rarely surprised and a little impatient. She gives the group a purpose, checks their conclusions and brings a wandering discussion back to the task.
+
+Mira is the observant, plucky, slightly brash heroine, with the biggest personality in the group. Her imagination is whimsical, her replies are bold, and food is frequently on her mind. Her jokes start with something she has actually noticed; hunger should vary her voice rather than replace it.
+
+Iris is pragmatic, investigative and fearless. Her academic delivery is dry, droll and emotionally level, including when everyone else is startled. She produces a magnifying glass to examine evidence, distinguishes observations from guesses and lets an understated remark carry the joke.
+
+Pip is curious and excitable, but afraid of almost everything. A promising discovery can send him running before he thinks about what might be waiting there. His startled stumble, harmless fall and quick recovery are playful character acting; he gets back up and continues contributing.
+
+Room openings let the party move and react together. They investigate different physical details while their conversation connects those discoveries. Nell's leadership, Iris's unruffled scrutiny, Pip's nervous enthusiasm and Mira's lively observations should sound like four people sharing a room.
+
 ## A lived world in every room
 
 Every room needs four clear answers: who uses it, what they do here, what has changed, and what the place suggests beyond its visible walls. Give it one readable landmark, a daily habit, a trace of an older use and a route clue or promise. A folded wing wrap, repaired cup or thumb-worn button often says more than another glowing machine.

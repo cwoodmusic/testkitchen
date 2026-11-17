@@ -12,7 +12,7 @@ Journal knowledge does not supply notes or unlock a door by itself. Each gift, c
 
 ## Companion goals
 
-Mira leads Nell, Iris, and Pip. Their travelling sprites show the party rather than a permanent status dashboard. Each companion has a current-run state: travelling, settled at their intended destination, or departed elsewhere. A settled companion stays there for the rest of that run.
+Nell leads Mira, Iris, and Pip. Their travelling sprites show the party rather than a permanent status dashboard. Each companion has a current-run state: travelling, settled at their intended destination, or departed elsewhere. A settled companion stays there for the rest of that run.
 
 | Objective | Required final state | Finale | Achievement |
 | --- | --- | --- | --- |

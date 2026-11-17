@@ -11,7 +11,8 @@ function freeze(value,seen=new WeakSet()){
  return value;
 }
 const actions=new Set(['examine','search','listen','look']);
-const kinds=new Set(['walk','dialogue','emote']);
+const kinds=new Set(['walk','dialogue','emote','gesture']);
+const gestures=new Set(['magnify','trip','fallen','recover']);
 const moves=clip=>clip.kind===undefined||clip.kind==='walk';
 const speaks=clip=>clip.kind===undefined||clip.kind==='dialogue';
 const faceIds=new Set(['up','down','left','right']);
@@ -50,25 +51,28 @@ function atDistance(path,amount,initialFacing){
  return{...path.at(-1),facing:lastFacing};
 }
 function poseAt(initial,clips,tile,gridSize){
- let pose={...initial,moving:false,action:null,target:null,emote:null};
+ let pose={...initial,moving:false,gait:'walk',action:null,target:null,emote:null,gesture:null,gestureProgress:0};
  for(const clip of clips){
   if(clip.actor!==initial.id||tile<clip.startTile||!moves(clip))continue;
-  const active=tile<clip.endTile,progress=Math.min(clip.pathLength,(tile-clip.startTile)*gridSize);
+  const active=tile<clip.endTile,progress=Math.min(clip.pathLength,(tile-clip.startTile)*gridSize*clip.speedMultiplier);
   const at=atDistance(clip.path,progress,clip.from.facing);
   const arrived=progress>=clip.pathLength-.000001;
-  pose={id:initial.id,...at,facing:arrived&&clip.lookAt?facing(at,clip.lookAt,at.facing):at.facing,moving:active&&!arrived,action:active?clip.action??'look':null,target:active?clip.target??null:null,emote:active?clip.emote??null:null};
+  pose={id:initial.id,...at,facing:arrived&&clip.lookAt?facing(at,clip.lookAt,at.facing):at.facing,moving:active&&!arrived,gait:active&&!arrived?clip.gait:'walk',gesture:null,gestureProgress:0,action:active?clip.action??'look':null,target:active?clip.target??null:null,emote:active?clip.emote??null:null};
  }
  // An emote belongs to the actor's current feet, not to a captured position at
  // its own start. Dialogue likewise has no authority over walking or facing.
  const emote=clips.findLast(clip=>clip.kind==='emote'&&clip.actor===initial.id&&clip.startTile<=tile&&tile<clip.endTile);
  if(emote)pose.emote=emote.emote??null;
+ const gesture=clips.findLast(clip=>clip.kind==='gesture'&&clip.actor===initial.id&&clip.startTile<=tile&&tile<clip.endTile&&gestures.has(clip.gesture));
+ if(gesture){pose.gesture=gesture.gesture;pose.gestureProgress=clamp((tile-gesture.startTile)/gesture.durationTiles,0,1);}
  return pose;
 }
 
 /**
  * Compile room-foot paths into integer walk-tile clips. One time tile is exactly
  * the time needed to walk one navigation tile at the room's authored speed.
- * Explicit duration may be short, but can never make movement exceed that speed.
+ * Explicit duration cannot make movement exceed the selected gait: normal
+ * walking speed, or exactly twice that speed for a run. Both use the same tile quantum.
  * Four legacy untimed beats remain sequential with comfortable reading holds.
  */
 export function compileRoomCutscene({scene,beats=[],playerPosition=null,actors=null}={}){
@@ -155,12 +159,13 @@ export function compileRoomCutscene({scene,beats=[],playerPosition=null,actors=n
     append(finalLeg);
    }catch{/* A missing custom cue remains a stationary line. */}
   }
-  const path=[{x:from.x,y:from.y},...waypoints],length=pathLength(path),movementTiles=Math.ceil(Math.max(0,length-.000001)/geometry.gridSize),minimumDurationTiles=Math.max(1,movementTiles);
+  const gait=moves(beat)&&beat.gait==='run'?'run':'walk',speedMultiplier=gait==='run'?2:1;
+  const path=[{x:from.x,y:from.y},...waypoints],length=pathLength(path),movementTiles=Math.ceil(Math.max(0,length-.000001)/(geometry.gridSize*speedMultiplier)),minimumDurationTiles=Math.max(1,movementTiles);
   const readMs=beat.text.trim()?Math.max(3000,Math.min(6000,1000+beat.text.length*35)):quantumMs;
   const holdTiles=Math.ceil(readMs/quantumMs),defaultDuration=Math.max(1,movementTiles+holdTiles);
   const durationTiles=positiveInteger(beat.durationTiles)?Math.max(minimumDurationTiles,beat.durationTiles):defaultDuration;
-  if(positiveInteger(beat.durationTiles)&&durationTiles!==beat.durationTiles)adjustments.push({id:beat.id??`cutscene-${beat.index+1}`,index:beat.index,field:'durationTiles',from:beat.durationTiles,to:durationTiles,reason:'Movement needs this many walking tiles at the room speed.'});
-  const clip={...beat,id:typeof beat.id==='string'&&beat.id?beat.id:`cutscene-${beat.index+1}`,actor:actorId,startTile,durationTiles,endTile:startTile+durationTiles,minimumDurationTiles,minDurationTiles:minimumDurationTiles,movementTiles,holdTiles,pathLength:length,path,from:{x:from.x,y:from.y,facing:from.facing},to:{...path.at(-1)},action:moves(beat)?actions.has(beat.action)?beat.action:'look':null,emote:beat.kind===undefined||beat.kind==='emote'?beat.emote:undefined,lookAt:target?{x:target.x,y:target.y}:moves(beat)&&point(beat.destination)?{...beat.destination}:null};
+  if(positiveInteger(beat.durationTiles)&&durationTiles!==beat.durationTiles)adjustments.push({id:beat.id??`cutscene-${beat.index+1}`,index:beat.index,field:'durationTiles',from:beat.durationTiles,to:durationTiles,reason:gait==='run'?'Movement needs this many walking tiles at the running speed.':'Movement needs this many walking tiles at the room speed.'});
+  const clip={...beat,id:typeof beat.id==='string'&&beat.id?beat.id:`cutscene-${beat.index+1}`,actor:actorId,startTile,durationTiles,endTile:startTile+durationTiles,minimumDurationTiles,minDurationTiles:minimumDurationTiles,movementTiles,holdTiles,pathLength:length,path,gait,speedMultiplier,gesture:beat.kind==='gesture'&&gestures.has(beat.gesture)?beat.gesture:undefined,from:{x:from.x,y:from.y,facing:from.facing},to:{...path.at(-1)},action:moves(beat)?actions.has(beat.action)?beat.action:'look':null,emote:beat.kind===undefined||beat.kind==='emote'?beat.emote:undefined,lookAt:target?{x:target.x,y:target.y}:moves(beat)&&point(beat.destination)?{...beat.destination}:null};
   clips.push(clip);ends.set(lane,clip.endTile);actorEnds.set(actorId,ends);cursor=clip.endTile;
  }
  clips.sort((a,b)=>a.startTile-b.startTile||a.index-b.index);
@@ -200,9 +205,9 @@ export function separateCutsceneTracks({scene,beats=[],playerPosition=null}={}){
    // Keep the authored lane owner even when somebody else speaks. Combining
    // those owners into the speaker's lane would serialize overlapping lines.
    const record={...clone(beat),id:channelIndex===0?originalId:unique(originalId,`-${kind}`),kind,actor:clip.actor,startTile:clip.startTile,durationTiles:clip.durationTiles};
-   for(const field of ['text','speaker','target','destination','waypoints','action','emote'])delete record[field];
+   for(const field of ['text','speaker','target','destination','waypoints','action','emote','gait'])delete record[field];
    if(kind==='walk'){
-    for(const field of ['target','destination','waypoints'])if(Object.hasOwn(beat,field))record[field]=clone(beat[field]);
+    for(const field of ['target','destination','waypoints','gait'])if(Object.hasOwn(beat,field))record[field]=clone(beat[field]);
     record.action=actions.has(beat.action)?beat.action:'look';
    }else if(kind==='dialogue'){record.speaker=clip.speaker;record.text=beat.text;}
    else record.emote=beat.emote;
@@ -224,15 +229,17 @@ export function createRoomCutscene({scene,beats=[],playerPosition=null,actors=nu
  function advanceAcrossHolds(){
   if(advanceTarget===null)return;
   if(currentTile>=advanceTarget-.00000001){advanceTarget=null;return;}
-  let nextWalk=advanceTarget;
+  let nextPerformance=advanceTarget;
   for(const clip of timeline.clips){
-   const movementEnd=clip.startTile+clip.pathLength/timeline.gridSize;
-   if(!clip.pathLength||movementEnd<=currentTile+.00000001||clip.startTile>=advanceTarget)continue;
-   // All actors' walks matter, even if another character owns the caption.
+   const movementEnd=clip.pathLength?clip.startTile+clip.pathLength/(timeline.gridSize*clip.speedMultiplier):null;
+   const performanceEnd=clip.kind==='gesture'&&gestures.has(clip.gesture)?clip.endTile:movementEnd;
+   if(performanceEnd===null||performanceEnd<=currentTile+.00000001||clip.startTile>=advanceTarget)continue;
+   // Runs, walks and physical gestures must finish continuously even when the
+   // reader advances somebody else's text. A trip cannot jump to standing up.
    if(clip.startTile<=currentTile+.00000001)return;
-   nextWalk=Math.min(nextWalk,clip.startTile);
+   nextPerformance=Math.min(nextPerformance,clip.startTile);
   }
-  currentTile=nextWalk;
+  currentTile=nextPerformance;
   if(currentTile>=advanceTarget-.00000001)advanceTarget=null;
   if(isFinished())playing=false;
  }
@@ -241,7 +248,7 @@ export function createRoomCutscene({scene,beats=[],playerPosition=null,actors=nu
   const finished=isFinished(),activeClips=finished?[]:timeline.clips.filter(clip=>clip.startTile<=currentTile&&currentTile<clip.endTile);
   const beat=activeClips.filter(clip=>speaks(clip)&&clip.text.trim()).at(-1)??null;
   const actorStates=timeline.actors.map(actor=>poseAt(actor,timeline.clips,currentTile,timeline.gridSize));
-  if(finished)for(const actor of actorStates){actor.moving=false;actor.action=null;actor.target=null;actor.emote=null;}
+  if(finished)for(const actor of actorStates){actor.moving=false;actor.action=null;actor.target=null;actor.emote=null;actor.gait='walk';actor.gesture=null;actor.gestureProgress=0;}
   const focusActor=actorStates.find(actor=>actor.id===beat?.speaker)??actorStates.find(actor=>actor.id===activeClips.at(-1)?.actor)??actorStates.find(actor=>actor.id==='mira');
   return cachedSnapshot=freeze({index:beat?.index??(finished?timeline.clips.length:-1),beat,actors:actorStates,focus:{x:focusActor?.x??scene.geometry.width/2,y:focusActor?.y??scene.geometry.height/2},finished,elapsed:currentTile*timeline.quantumMs,holding:!finished&&!actorStates.some(actor=>actor.moving),currentTile,totalTiles:timeline.totalTiles,quantumMs:timeline.quantumMs,playing,nextPending:!finished&&advanceTarget!==null,activeClips,activeClipIds:activeClips.map(clip=>clip.id)});
  }

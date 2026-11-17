@@ -64,9 +64,9 @@ const NEW_ROOMS={
       "pip": "The rear handrail is bright at both ends and dusty in the middle. Small couriers land where a person would put a hand. The old passage is still a route for somebody, even if our shoes have forgotten it."
     },
     "routes": {
-      "nell": "The schoolroom stair answers a dotted half followed by a quarter. After that, the half rest, quarter rest, single eighth and paired sixteenths are the four-beat key we must keep for the music room.",
-      "iris": "One held call for three beats and an ordinary one-beat step opens the schoolroom stair: dotted half, quarter. The birds’ back passage uses a half rest, quarter rest, single eighth and paired sixteenths instead.",
-      "pip": "For the birds’ back passage, play a half rest, a quarter rest, a single eighth and paired sixteenths. Three quiet beats come before those two different half-beat tiles. Keep our dotted half and quarter; the old loft has a hollow perch worth searching."
+      "nell": "The schoolroom stair answers a dotted half followed by a quarter. After that, the single eighth, paired sixteenths, half rest and quarter rest are the four-beat key we must keep for the music room.",
+      "iris": "One held call for three beats and an ordinary one-beat step opens the schoolroom stair: dotted half, quarter. The birds’ back passage uses a single eighth, paired sixteenths, half rest and quarter rest instead.",
+      "pip": "For the birds’ back passage, play a single eighth, paired sixteenths, a half rest and a quarter rest. The two different half-beat tiles sound first, followed by three quiet beats. Keep our dotted half and quarter; the old loft has a hollow perch worth searching."
     },
     "inventory": {
       "nell": "No new notes are stored on this shelf. We have eight beats to divide between this choice and a later answer. The public stair spends the dotted half and quarter first.",
@@ -111,13 +111,13 @@ const NEW_ROOMS={
       "pip": "My bird can copy the clock exactly. The reflection can too. Neither makes the dry bowl answer. I think the stair leads to the part of this instrument that knows how to listen back."
     },
     "routes": {
-      "nell": "Take the town-bell stair with a dotted half followed by four sixteenths: three beats held, then four attacks in one beat. Keep the half rest, quarter rest, single eighth and paired sixteenths for the tower’s last answer.",
-      "iris": "The stair wants a dotted half and a group of four sixteenths. The copied waterway takes a half rest, quarter rest, single eighth and paired sixteenths, but Oren has shown us the wall at its end. It is a dead end.",
+      "nell": "Take the town-bell stair with a dotted half followed by four sixteenths: three beats held, then four attacks in one beat. Keep the single eighth, paired sixteenths, half rest and quarter rest for the tower’s last answer.",
+      "iris": "The stair wants a dotted half and a group of four sixteenths. The copied waterway takes a single eighth, paired sixteenths, half rest and quarter rest, but Oren has shown us the wall at its end. It is a dead end.",
       "pip": "A long call for three beats, then four tiny steps, opens the town-bell stair. That is dotted half, four sixteenths. The copied waterway repeats our quiet phrase perfectly and still goes nowhere; follow the stair if we mean to reach the bell."
     },
     "inventory": {
       "nell": "There is no supply box in the timing chamber. We have enough for the stair and the tower if we spend the dotted half and four-sixteenth group here, then keep the four quieter tiles.",
-      "iris": "Our half rest, quarter rest, single eighth and paired sixteenths belong to the final tower phrase. Spending them on the copied waterway leaves notes in the bag and no way onward.",
+      "iris": "Our single eighth, paired sixteenths, half rest and quarter rest belong to the final tower phrase. Spending them on the copied waterway leaves notes in the bag and no way onward.",
       "pip": "The two ways here each cost four beats. Only the stair leads onward. If we try the copied waterway, we can revisit that choice and recover its key; the clock has no extra gift for us."
     },
     "demos": {
@@ -205,9 +205,9 @@ const NEW_ROOMS={
       "pip": "That small stool was mine. I used to stand on it to reach the lever, until Nell helped me fit the wooden grip. Now the next learner will not have to balance on tiptoe just to make one sound."
     },
     "routes": {
-      "nell": "The music-room door wants a half rest, a quarter rest, a single eighth and paired sixteenths. Wait for two beats, wait for one more, then give the two different half-beat replies.",
-      "iris": "Three quiet beats make room for an answer: a half rest, then a quarter rest. Follow them with the single eighth and paired sixteenths. Together they fill the fourth beat.",
-      "pip": "Use our half rest, quarter rest, single eighth, then paired sixteenths. The last beat has one short sound followed by two smaller ones. I will hold the silence with you before they begin."
+      "nell": "The music-room door wants a single eighth, paired sixteenths, a half rest and a quarter rest. Give the two different half-beat replies, then wait for two beats and one more.",
+      "iris": "Begin with a single eighth and paired sixteenths; together they fill the first beat. Follow them with a half rest, then a quarter rest. Three quiet beats leave room for an answer.",
+      "pip": "Use our single eighth, paired sixteenths, half rest, then quarter rest. The first beat has one short sound followed by two smaller ones. I will hold the silence with you after they sound."
     },
     "inventory": {
       "nell": "These four tiles are the remaining four beats of our original parcel. There is no classroom reward to collect first. This final door spends them all.",
@@ -252,13 +252,13 @@ const NEW_ROOMS={
       "pip": "My couriers can reach the small islands faster than we can. If this room answers them, each bird will know where its next reply should go. I have left the harnesses loose enough for them to choose their own perch."
     },
     "routes": {
-      "nell": "The town door takes a half rest, quarter rest, single eighth and paired sixteenths. Leave two quiet beats and then one more before the two different short replies. This is the last four-beat key.",
-      "iris": "Begin with a half rest, then a quarter rest. Let the single eighth answer for half a beat and the paired sixteenths answer for the other half. The tower must listen before it calls.",
-      "pip": "Our last answer is half rest, quarter rest, single eighth, paired sixteenths. Three beats of silence, then one short sound and two smaller sounds. Oren’s returning knock has brought us this far."
+      "nell": "The town door takes a single eighth, paired sixteenths, half rest and quarter rest. Give the two different short replies before two quiet beats and one more. This is the last four-beat key.",
+      "iris": "Begin with a single eighth for half a beat and paired sixteenths for the other half. Follow them with a half rest, then a quarter rest. The tower leaves room to listen after its call.",
+      "pip": "Our last answer is single eighth, paired sixteenths, half rest, quarter rest. One short sound and two smaller sounds, then three beats of silence. Oren’s returning knock has brought us this far."
     },
     "inventory": {
       "nell": "The four tiles left in the bag pay this last lock exactly. The lamps and the keeper’s shelf hold no extra parcel. We need every kind in the order we kept it.",
-      "iris": "There is no new gift at the top of the tower. Our half rest, quarter rest and two short tiles are enough; the final answer will empty our shared bag.",
+      "iris": "There is no new gift at the top of the tower. Our two short tiles, half rest and quarter rest are enough; the final answer will empty our shared bag.",
       "pip": "We have brought exactly four beats up these stairs. The last door spends all four note tiles, leaving nothing to trade, discard or convert afterward."
     },
     "demos": {
@@ -548,7 +548,7 @@ const OUTCOME_ROOMS={
       "pip": "Our phrase ends here so another learner can begin. We can listen before revisiting our answer or trying a new route."
     },
     "inventory": {
-      "nell": "All note tiles are spent. The music-room door accepted the last quiet and short replies from our original parcel.",
+      "nell": "All note tiles are spent. The music-room door accepted the short replies and following silence from our original parcel.",
       "iris": "The shared satchel is empty. Every note has found its place in the route; the room does not require another payment.",
       "pip": "We have no spare tiles left. That is the complete delivery, not a missing supply."
     },
@@ -736,7 +736,7 @@ const OUTCOME_ROOMS={
     },
     "routes": {
       "nell": "There is no onward passage in this court. Revisit the paid arch to recover its notes and choose the listening gate on Iris’s porch.",
-      "iris": "Revisit this choice and use my listening phrase at the other gate: a half rest, then a half note. The roots here do not hide another way through.",
+      "iris": "Revisit this choice and use my listening phrase at the other gate: a half note, then a half rest. The roots here do not hide another way through.",
       "pip": "This route ends at the roots. We can rest on the bench, then revisit the last door and try the listening gate."
     },
     "inventory": {
@@ -889,7 +889,7 @@ const OUTCOME_ROOMS={
     "inventory": {
       "nell": "The remaining notes are still ours. Revisit this paid choice to restore its quiet phrase before taking the stair to the public bell.",
       "iris": "The satchel still holds the notes this dead end could not use. Revisit the last answer and keep the whole set together for the other route.",
-      "pip": "No note has vanished in the reflection. Revisit this door to recover the half rest, quarter rest, single eighth, and paired sixteenths we spent here."
+      "pip": "No note has vanished in the reflection. Revisit this door to recover the single eighth, paired sixteenths, half rest, and quarter rest we spent here."
     },
     "inspections": [
       {

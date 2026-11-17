@@ -90,7 +90,7 @@ test('each porch dead end is real, conserves its exact cost and grants no comple
 });
 
 test('equal totals and reversed order never spend; fractional draft editing conserves typed stock',()=>{
- const game=collect(createDungeonGame());game.selectDoor('garden');fill(game,['half','half-rest']);
+ const game=collect(createDungeonGame());game.selectDoor('garden');fill(game,['half-rest','half']);
  assert.equal(game.state.canAttempt,true);assert.equal(game.state.canCommit,false);const before=game.state;assert.equal(game.commit(),false);assert.deepEqual(game.state,before);
  assert.equal(game.move(1,-1),true);assert.equal(game.state.canCommit,true);assert.equal(game.commit(),true);
  game.claim('iris-gift');game.selectDoor('garden-porch-forward');fill(game,['dotted-half','eighth','sixteenth-pair']);assert.equal(game.state.beats,4);assert.equal(game.state.canAttempt,true);assert.equal(game.state.canCommit,false);
@@ -132,7 +132,7 @@ test('valid v2 depot drafts and paid openings migrate without losing or granting
 
 test('invalid v2 records reset the run and cannot disguise wrong committed selections',()=>{
  const old=collect(createStoryGame());old.selectDoor('garden');fill(old,CHAPTER_DOORS.garden.recipe);old.commit();
- for(const corrupt of [saved=>{saved.selectedDoor='canal';},saved=>{saved.phrase=['quarter'];},saved=>{saved.actions[2].recipe.reverse();},saved=>{saved.actions.unshift({type:'claim',sourceId:'iris-gift'});}]){
+ for(const corrupt of [saved=>{saved.selectedDoor='canal';},saved=>{saved.phrase=['quarter'];},saved=>{saved.actions[2].recipe=['half','quarter','quarter-rest'];},saved=>{saved.actions.unshift({type:'claim',sourceId:'iris-gift'});}]){
   const saved=old.serialize();corrupt(saved);saved.discoveredRoutes=['garden','__proto__','canal',{}];const game=createDungeonGame({saved});assert.equal(game.state.roomId,'depot');assert.deepEqual(game.state.inventory,empty());assert.deepEqual(game.state.actions,[]);assert.deepEqual(game.state.discoveredRoutes,['garden','canal']);
  }
  for(const version of [1,0,4,null])assert.deepEqual(createDungeonGame({saved:{version,inventory:full()}}).state.inventory,empty());
@@ -151,7 +151,7 @@ test('v3 malformed histories reset atomically rather than keeping a profitable p
   save=>{save.actions[3].sourceId='pip-gift';},
   save=>{save.actions[3]={type:'claim',sourceId:'nell-parcel'};},
   save=>{save.actions[2].doorId='depot-canal';},
-  save=>{save.actions[4].recipe=['half','half-rest'];},
+  save=>{save.actions[4].recipe=['half','quarter','quarter-rest'];},
   save=>{save.actions[4].doorId='canal-porch-forward';},
   save=>{save.actions[0].inventory=full();},
   save=>{save.actions[2].from='garden-porch';},
@@ -404,4 +404,58 @@ test('v2 selection from another authored start cannot enter a hidden or foreign 
  const project=definition();project.settings.startRoomId='garden-alcove';
  const game=createDungeonGame({definition:project,saved:old.serialize()});
  assert.equal(game.state.roomId,'garden-alcove');assert.equal(game.state.selectedDoor,null);assert.deepEqual(game.state.actions,[]);
+});
+
+const legacyRestFirstKeys={
+ 'depot-garden':['half-rest','half'],
+ 'garden-porch-forward':['half-rest','half'],
+ 'workshop-secret-branch':['half-rest','quarter-rest','eighth','sixteenth-pair'],
+ 'canal-dead':['half-rest','quarter-rest','eighth','sixteenth-pair'],
+ 'workshop-ending':['half-rest','quarter-rest','eighth','sixteenth-pair'],
+ 'canal-ending':['half-rest','quarter-rest','eighth','sixteenth-pair'],
+};
+
+test('all published locks sound on beat one and changed orders preserve every typed note cost',()=>{
+ assert.equal(Object.keys(CHAPTER_DOORS).length,22);
+ for(const door of Object.values(CHAPTER_DOORS))assert.equal(NOTE_KIND_BY_ID[door.recipe[0]].rest,false,door.canonicalId);
+ for(const [id,oldKey]of Object.entries(legacyRestFirstKeys)){
+  const current=getChapterDoor(id).recipe;
+  assert.deepEqual([...current].sort(),[...oldKey].sort(),`${id} preserves every note type and count`);
+  assert.notDeepEqual(current,oldKey);
+ }
+ const proof=JSON.parse(readFileSync(new URL('../../design/music-puzzler/dungeon-verification.json',import.meta.url),'utf8'));
+ assert.equal(proof.passed,true);assert.equal(proof.graph.orderedTerminalHistories,'24');
+ assert.equal(proof.balances.violationCount,0);assert.equal(proof.softlocks.count,0);
+ for(const terminal of proof.terminals.filter(item=>item.kind!=='dead-end'))assert.deepEqual(terminal.remainingTiles,{min:0,max:0});
+});
+
+test('every old paid route restores through exact legacy receipts without changing supplies or outcomes',()=>{
+ const proof=JSON.parse(readFileSync(new URL('../../design/music-puzzler/dungeon-verification.json',import.meta.url),'utf8'));
+ const migrated=new Set();
+ for(const terminal of proof.terminals){
+  const game=createDungeonGame();
+  for(const action of terminal.witness.actions){
+   if(action.type==='claim')assert.equal(game.claim(action.sourceId),true);
+   else pay(game,action.doorId);
+  }
+  const saved=game.serialize();
+  for(const action of saved.actions)if(action.type==='door'&&legacyRestFirstKeys[action.doorId]){action.recipe=[...legacyRestFirstKeys[action.doorId]];migrated.add(action.doorId);}
+  const before=JSON.stringify(saved),restored=createDungeonGame({saved});
+  assert.equal(JSON.stringify(saved),before,'Migration leaves the supplied save untouched.');
+  assert.deepEqual(restored.state,game.state,terminal.id);assert.deepEqual(restored.serialize(),game.serialize());assertConserved(restored);
+  assert.equal(restored.revisit(),true);assertConserved(restored);
+  const returned=createDungeonGame({saved:restored.serialize()});assert.deepEqual(returned.state,restored.state);
+ }
+ assert.deepEqual(migrated,new Set(Object.keys(legacyRestFirstKeys)));
+});
+
+test('legacy orders are not new live answers and do not override custom authored lock orders',()=>{
+ const game=collect(createDungeonGame());game.selectDoor('garden');fill(game,legacyRestFirstKeys['depot-garden']);
+ const before=game.state;assert.equal(game.state.canAttempt,true);assert.equal(game.state.canCommit,false);assert.equal(game.commit(),false);assert.deepEqual(game.state,before);
+ while(game.state.phrase.length)game.undo();fill(game,CHAPTER_DOORS.garden.recipe);assert.equal(game.commit(),true);
+ const project=definition();project.doors.garden.recipe=[...legacyRestFirstKeys['depot-garden']];
+ const custom=collect(createDungeonGame({definition:project}));payDefined(custom,project,'garden');
+ assert.deepEqual(createDungeonGame({saved:custom.serialize(),definition:project}).state,custom.state,'A saved custom key keeps its exact authored order.');
+ const builtin=collect(createDungeonGame());pay(builtin,'garden');
+ assert.deepEqual(createDungeonGame({saved:builtin.serialize(),definition:project}).state.actions,[],'Normal legacy exceptions cannot weaken custom definition validation.');
 });
