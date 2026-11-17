@@ -19,7 +19,8 @@ test('all 23 arrivals rush through the south doorway before reaching their exist
  for(const scene of Object.values(CAMPAIGN_SCENES)){
   const entry=compileRoomEntry({scene}),floor=physicalRoom(scene);
   assert(!entry.blocked,scene.id);assert.equal(entry.clips.length,4,scene.id);assert.equal(entry.fadeTiles,6);assert.equal(entry.staggerTiles,1);assert.equal(entry.gait,'run');assert.equal(entry.speedMultiplier,2);
-  assert.equal(entry.totalTiles,16);assert(entry.totalTiles*entry.quantumMs<2100,'The whole party bursts inside within about two seconds.');assert(entry.clips.at(-1).startTile*entry.quantumMs<400,'Everyone starts the rush within one short burst.');near(entry.quantumMs,scene.geometry.gridSize/scene.geometry.speed*1000);
+  if(!scene.layoutRevision)assert.equal(entry.totalTiles,16,'Unchanged rooms keep their original entrance timing.');
+  assert(entry.totalTiles*entry.quantumMs<3000,'Even a divided room brings the whole party inside within three seconds at the authored running speed.');assert(entry.clips.at(-1).startTile*entry.quantumMs<400,'Everyone starts the rush within one short burst.');near(entry.quantumMs,scene.geometry.gridSize/scene.geometry.speed*1000);
   assert.deepEqual(entry.clips.map(clip=>clip.actor),['mira','nell','iris','pip']);
   for(const [index,clip]of entry.clips.entries()){
    assert.equal(clip.startTile,index);assert.equal(clip.gait,'run');assert.equal(clip.speedMultiplier,2);assert.equal(clip.from.x,entry.door.x);assert(clip.from.y>=scene.geometry.height+160);

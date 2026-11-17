@@ -5,6 +5,7 @@ import {CAMPAIGN_PLAN} from './campaign-data.mjs';
 import {CAMPAIGN_CONTENT} from './campaign-content.mjs';
 import {SCENES} from './scenes.mjs';
 import {CAMPAIGN_SCENES,getCampaignScene} from './campaign-scenes.mjs';
+import {ROOM_LAYOUTS} from './room-layout-config.mjs';
 import {createRoomWalker,findPath,isWalkable} from './room.mjs';
 
 const allLocations=[...CAMPAIGN_PLAN.rooms,...CAMPAIGN_PLAN.terminals];
@@ -73,7 +74,7 @@ test('new rooms have connected open floor rather than isolated pockets behind fu
   for(let y=bounds.y+radius;y<=bounds.y+bounds.height-radius;y+=80)for(let x=bounds.x+radius;x<=bounds.x+bounds.width-radius;x+=80){
    if(isWalkable(room,{x,y}))assert(findPath(room,room.start,{x,y}),`${scene.id} traps floor at ${x},${y}`);
   }
-  for(const x of [600,930])for(let y=Math.max(330,bounds.y+radius);y<=920;y+=20)assert(isWalkable(room,{x,y}),`${scene.id} obstructs its clear aisle`);
+  if(!Object.hasOwn(ROOM_LAYOUTS,scene.id))for(const x of [600,930])for(let y=Math.max(330,bounds.y+radius);y<=920;y+=20)assert(isWalkable(room,{x,y}),`${scene.id} obstructs its clear aisle`);
  }
 });
 
@@ -102,6 +103,7 @@ test('all scene artwork exists and foreground contours stay on physical furnitur
   if(Object.hasOwn(SCENES,scene.id))continue;
   assert(scene.occluders.length>=1,`${scene.id} fits its foreground furniture`);
   assert.equal(new Set(scene.occluders.map(item=>item.id)).size,scene.occluders.length);
+  const architecture=new Set((ROOM_LAYOUTS[scene.id]?.occluders??[]).map(item=>item.id));
   for(const item of scene.occluders){
    assert(!scene.actors.some(actor=>actor.id===item.id),'Foreground art never includes a duplicate companion.');
    assert.match(item.clipPath,/^path\(evenodd,'M[^']+Z'\)$/);
@@ -109,10 +111,11 @@ test('all scene artwork exists and foreground contours stay on physical furnitur
    assert(points.length>=6,`${scene.id}/${item.id} has a fitted contour`);
    for(const point of points)assert(point.x>=0&&point.x<=1536&&point.y>=0&&point.y<=1024);
    const xs=points.map(point=>point.x),ys=points.map(point=>point.y);
-   assert(Math.max(...xs)-Math.min(...xs)<=400,'Contours cover one furnishing, not a room-size floor slab.');
+   assert(Math.max(...xs)-Math.min(...xs)<=(architecture.has(item.id)?768:400),'Contours cover a fitted furnishing or structural face, not a room-size floor slab.');
    assert(Math.max(...ys)-Math.min(...ys)<=400);
    assert(item.depth>=Math.max(...ys)&&item.depth-Math.max(...ys)<=8,'Draw order changes at the visible furniture feet.');
-   assert(points.every(point=>point.x<400)||points.every(point=>point.x>1100),'The central walking floor is never copied over an actor.');
+   if(architecture.has(item.id))assert(scene.geometry.obstacles.some(obstacle=>obstacle.id.startsWith('layout-')),'Structural foreground has matching blocked floor.');
+   else assert(points.every(point=>point.x<400)||points.every(point=>point.x>1100),'Ordinary foreground furniture stays on the margins.');
   }
  }
 });
@@ -122,7 +125,6 @@ test('generated art anchors keep the real doors, wall props and flat practice pa
  assert.deepEqual(fork.objects.filter(item=>item.type==='door').map(item=>item.rect.x+item.rect.width/2),[430,1110]);
  for(const [id,prop]of [
   ['garden-fork','garden-fork-buried-ring'],
-  ['garden-alcove','garden-alcove-root-cradle'],
   ['canal-final','canal-final-keeper-flask'],
   ['canal-final','canal-final-reply-dish']
  ]){
@@ -130,5 +132,8 @@ test('generated art anchors keep the real doors, wall props and flat practice pa
   assert(object.rect.y+object.rect.height<=scene.geometry.bounds.y+5,`${prop} remains on its pictured north wall`);
   assert(!scene.geometry.obstacles.some(item=>item.id===`${prop}-base`),'Wall-mounted props do not block open floor.');
  }
+ const alcove=getCampaignScene('garden-alcove'),cradle=alcove.objects.find(item=>item.id==='garden-alcove-root-cradle');
+ assert(cradle.rect.y>=378&&cradle.rect.y+cradle.rect.height<=584,'The root cradle sits on the inset service wall rather than the old north wall.');
+ assert(alcove.geometry.targets.find(item=>item.id===cradle.id).approach.y>584,'The moved shelf can be reached from the lower service nook.');
  assert(!getCampaignScene('workshop-final').geometry.obstacles.some(item=>item.id==='workshop-final-practice-patches-base'),'The flat practice mat is walkable.');
 });

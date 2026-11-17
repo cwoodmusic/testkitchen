@@ -2,6 +2,7 @@ import {createDefaultProject,validateProject,normalizeProject,getPersonReplies} 
 import {symbolMarkup} from './notation.mjs';
 import {createCutsceneEditor} from './cutscene-editor.mjs';
 import {createCutsceneDialogueEditor} from './cutscene-dialogue-editor.mjs';
+import {createObjectDialogueEditor} from './object-dialogue-editor.mjs';
 
 const clone=value=>structuredClone(value);
 const TABS=[['dialogue','Dialogue'],['cutscene','Cutscene'],['puzzles','Puzzles'],['notes','Notes'],['rooms','Room'],['playtest','Test'],['json','Advanced']];
@@ -13,7 +14,7 @@ const noop=()=>{};
 export function createDeveloperConsole({mount=document.body,getProject=createDefaultProject,getState=()=>({}),onOpen=noop,onClose=noop,onDraftChange=noop,onSelectRoom=noop,onApply=noop,onPlaytest=noop,onReturnToGame=noop,onPreview=noop,onPreviewCutscene=noop,onCutsceneSelection=noop,onSetInventory=noop,onTeleport=noop,onResetSources=noop,onSaveProject=noop}={}){
   const document=mount.ownerDocument??globalThis.document;
   let draft=null,tab='dialogue',roomId='depot',personId=null,doorId=null,sourceId=null,noteId=null,actorId=null,objectId=null,loreId=null,dialogueTopic='story',replyId='story',query='',dirty=false,sourceJSON='',jsonBuffer=null,jsonDirty=false,busy=false,disposed=false,fieldEvent=false;
-  const past=[],future=[],cutsceneStates=new Map();let cutsceneEditor=null,cutsceneEditorRoom=null,previewProject=null,previewSignature=null;
+  const past=[],future=[],cutsceneStates=new Map(),objectDialogueStates=new Map();let cutsceneEditor=null,cutsceneEditorRoom=null,objectDialogueEditor=null,objectDialogueRoom=null,objectDialogueId=null,previewProject=null,previewSignature=null;
   const el=(tag,className='',value='')=>{const node=document.createElement(tag);if(className)node.className=className;if(value!=='')node.textContent=text(value);return node;};
   const dialog=el('dialog','dc-dialog');dialog.id='developer-console';dialog.setAttribute('aria-labelledby','developer-title');
   const shell=el('div','dc-shell'),header=el('header','dc-header'),heading=el('div');
@@ -47,13 +48,13 @@ export function createDeveloperConsole({mount=document.body,getProject=createDef
   function record(){past.push(clone(draft));if(past.length>20)past.shift();future.length=0;}
   function publishDraft(){try{const result=validateProject(draft);if(!result.valid){showIssues(result);return false;}onDraftChange(clone(draft));return true;}catch(error){showIssues({errors:[error.message??String(error)]});return false;}}
   function changed(mutator,{repaint=true}={}){record();mutator(draft);dirty=true;jsonDirty=false;jsonBuffer=null;clearIssues();say('Draft changed. Save it or apply it to a playtest.');publishDraft();if(repaint&&!fieldEvent)render();else updateControls();}
-  function replaceDraft(value,message){cutsceneEditor?.flush?.();record();draft=clone(value);dirty=true;jsonDirty=false;jsonBuffer=null;query='';searchInput.value='';clearIssues();publishDraft();render();say(message);}
-  function undo(){cutsceneEditor?.flush?.();if(!past.length)return;future.push(clone(draft));draft=past.pop();dirty=true;jsonDirty=false;jsonBuffer=null;clearIssues();publishDraft();render();say('Draft change undone.');}
-  function redo(){cutsceneEditor?.flush?.();if(!future.length)return;past.push(clone(draft));draft=future.pop();dirty=true;jsonDirty=false;jsonBuffer=null;clearIssues();publishDraft();render();say('Draft change restored.');}
-  function updateControls(){undoButton.disabled=(!past.length&&!cutsceneEditor?.hasPending)||busy;redoButton.disabled=!future.length||busy;saveButton.disabled=busy;applyButton.disabled=busy;dialog.dataset.dirty=String(dirty||jsonDirty||!!cutsceneEditor?.hasPending);}
+  function replaceDraft(value,message){flushEditors();record();draft=clone(value);dirty=true;jsonDirty=false;jsonBuffer=null;query='';searchInput.value='';clearIssues();publishDraft();render();say(message);}
+  function undo(){flushEditors();if(!past.length)return;future.push(clone(draft));draft=past.pop();dirty=true;jsonDirty=false;jsonBuffer=null;clearIssues();publishDraft();render();say('Draft change undone.');}
+  function redo(){flushEditors();if(!future.length)return;past.push(clone(draft));draft=future.pop();dirty=true;jsonDirty=false;jsonBuffer=null;clearIssues();publishDraft();render();say('Draft change restored.');}
+  function updateControls(){undoButton.disabled=(!past.length&&!hasPendingEdits())||busy;redoButton.disabled=!future.length||busy;saveButton.disabled=busy;applyButton.disabled=busy;dialog.dataset.dirty=String(dirty||jsonDirty||hasPendingEdits());}
   function candidate(){
     try{
-      if(cutsceneEditor?.flush?.()===false)return null;
+      if(!flushEditors())return null;
       const value=jsonDirty?JSON.parse(jsonBuffer):draft,result=validateProject(value);showIssues(result);
       if(!result.valid){say('The draft needs the fixes listed above. Nothing was applied.');return null;}
       return normalizeProject(value);
@@ -65,7 +66,7 @@ export function createDeveloperConsole({mount=document.body,getProject=createDef
     catch(error){showIssues({errors:[error.message??String(error)]});say('The action was not completed. Your draft is still here.');return false;}
     finally{busy=false;updateControls();}
   }
-  function consumeJSON(){if(!jsonDirty)return true;const project=candidate();if(!project)return false;record();draft=clone(project);dirty=true;jsonDirty=false;jsonBuffer=null;publishDraft();return true;}
+  function consumeJSON(){if(!flushEditors())return false;if(!jsonDirty)return true;const project=candidate();if(!project)return false;record();draft=clone(project);dirty=true;jsonDirty=false;jsonBuffer=null;publishDraft();return true;}
   async function saveProject(){const project=candidate();if(project)await invoke(onSaveProject,[project],'Project saved on this device.',{save:true});}
   async function applyProject(options=null){const project=candidate();if(project)await invoke(options?onPlaytest:onApply,options?[project,options]:[project],'Project applied to your separate playtest.',{leave:true,save:true});}
   function exportProject(){const project=candidate();if(!project)return;const blob=new Blob([JSON.stringify(project,null,2)+'\n'],{type:'application/json'}),url=URL.createObjectURL(blob),link=el('a');link.href=url;link.download='coda-quiet-bell-project.json';document.body.append(link);link.click();link.remove();setTimeout(()=>URL.revokeObjectURL(url),1000);say('Project exported. You can send this JSON file back for implementation.');}
@@ -123,7 +124,7 @@ export function createDeveloperConsole({mount=document.body,getProject=createDef
   }
   function renderDialogue(){
     const {content,scene,doors}=getCurrent(),people=content.people??[];
-    if(loreId){const index=(content.inspections??[]).findIndex(entry=>entry.id===loreId),entry=content.inspections[index];if(entry){const section=card(entry.title,'What the player discovers when they inspect this object.');section.append(field('Title',entry.title,value=>changed(()=>{entry.title=value;}),{id:'developer-lore-title',path:['content',roomId,'inspections',index,'title']}),field('Observation',entry.text,value=>changed(()=>{entry.text=value;}),{id:'developer-lore-text',path:['content',roomId,'inspections',index,'text'],multiline:true}));const details=el('details','dc-advanced');details.append(el('summary','','Interaction label'),field('Label',entry.label,value=>changed(()=>{entry.label=value;}),{id:'developer-lore-label',path:['content',roomId,'inspections',index,'label']}));section.append(details);editor.append(section);return;}}
+    if(loreId){const index=(content.inspections??[]).findIndex(entry=>entry.id===loreId),entry=content.inspections[index];if(entry){const section=card(entry.title,'What the player discovers when they inspect this object.');section.append(field('Title',entry.title,value=>changed(()=>{entry.title=value;}),{id:'developer-lore-title',path:['content',roomId,'inspections',index,'title']}),field('Observation',entry.text,value=>changed(()=>{entry.text=value;}),{id:'developer-lore-text',path:['content',roomId,'inspections',index,'text'],multiline:true}));const details=el('details','dc-advanced');details.append(el('summary','','Interaction label'),field('Label',entry.label,value=>changed(()=>{entry.label=value;}),{id:'developer-lore-label',path:['content',roomId,'inspections',index,'label']}));section.append(details);editor.append(section);renderObjectDialogueEditor(entry,content,scene);return;}}
     if(!people.some(person=>person.id===personId))personId=people[0]?.id;
     const index=people.findIndex(person=>person.id===personId),person=people[index];if(!person){editor.append(card('Choose someone in the room','Click a character in the frozen game to edit their dialogue and replies.'));return;}
     const base=['content',roomId,'people',index],section=card(person.name+' · '+person.role,'Edit what they say, and the replies the player can choose.');
@@ -169,6 +170,26 @@ export function createDeveloperConsole({mount=document.body,getProject=createDef
     const obstacle=scene.geometry.obstacles.find(item=>item.id===actor.id);if(obstacle){obstacle.x=x+(obstacle.x-old.x)*scale;obstacle.y=y+(obstacle.y-old.y)*scale;obstacle.width*=scale;obstacle.height*=scale;}
   }
   function jsonEditor(label,value,commit,{id}={}){const part=el('details','dc-advanced');part.append(el('summary','',label));const area=el('textarea','dc-json-area');if(id)area.id=id;area.rows=14;area.spellcheck=false;area.value=JSON.stringify(value,null,2);part.append(area,button('Apply '+label.toLowerCase(),()=>{try{const parsed=JSON.parse(area.value);commit(parsed);}catch(error){showIssues({errors:[error.message??String(error)]});say('That JSON was not applied.');}}));return part;}
+  function hasPendingEdits(){return !!cutsceneEditor?.hasPending||!!objectDialogueEditor?.hasPending;}
+  function flushEditors(){return cutsceneEditor?.flush?.()!==false&&objectDialogueEditor?.flush?.()!==false;}
+  function destroyObjectDialogueEditor(){
+    if(!objectDialogueEditor)return;
+    objectDialogueEditor.flush();
+    const previous=objectDialogueEditor,previousRoom=objectDialogueRoom,previousId=objectDialogueId;
+    objectDialogueStates.set(`${previousRoom}:${previousId}`,previous.state);
+    objectDialogueEditor=null;objectDialogueRoom=null;objectDialogueId=null;previous.destroy();
+    try{void Promise.resolve(onPreviewCutscene(previousRoom,draft,{command:'stop',interactionId:previousId})).catch(noop);}catch{}
+  }
+  function renderObjectDialogueEditor(entry,content,scene){
+    objectDialogueRoom=roomId;objectDialogueId=entry.id;
+    objectDialogueEditor=createObjectDialogueEditor({document,roomId,entry,content,scene,state:objectDialogueStates.get(`${roomId}:${entry.id}`)??{},onPending:()=>updateControls(),onChange:(mutator,options)=>changed(()=>mutator(),options),onPreview:async options=>{
+      const signature=jsonDirty?`json:${jsonBuffer}`:JSON.stringify(draft);
+      if(signature!==previewSignature){previewProject=null;previewSignature=null;const project=candidate();if(!project)return false;previewProject=project;previewSignature=signature;}
+      const project=previewProject;if(!project)return false;
+      try{return await onPreviewCutscene(roomId,project,options);}catch(error){showIssues({errors:[error.message??String(error)]});say('The discussion preview could not start. Your draft is still here.');return false;}
+    }});
+    editor.append(objectDialogueEditor.element);
+  }
   function destroyCutsceneEditor(){
     if(!cutsceneEditor)return;
     cutsceneEditor.flush?.();
@@ -185,7 +206,7 @@ export function createDeveloperConsole({mount=document.body,getProject=createDef
     const state=playbackRate===1||playbackRate===2?{...previousState,playbackRate}:{...previousState};
     state.mode=state.mode==='timeline'?'timeline':'dialogue';
     const modes=el('nav','csd-modes');modes.setAttribute('aria-label','Cutscene editor mode');
-    for(const [mode,label]of [['dialogue','Dialogue'],['timeline','Timeline']])modes.append(button(label,()=>{if(cutsceneEditor?.flush?.()===false)return;state.mode=mode;render();},{id:'developer-cutscene-mode-'+mode,'aria-pressed':String(state.mode===mode)}));
+    for(const [mode,label]of [['dialogue','Dialogue'],['timeline','Timeline']])modes.append(button(label,()=>{if(!flushEditors())return;state.mode=mode;render();},{id:'developer-cutscene-mode-'+mode,'aria-pressed':String(state.mode===mode)}));
     if(tab==='cutscene')editor.append(modes);
     const createEditor=tab==='rooms'||state.mode==='timeline'?createCutsceneEditor:createCutsceneDialogueEditor;
     cutsceneEditor=createEditor({document,roomId,content,scene,state,onPending:()=>updateControls(),onChange:(mutator,options)=>changed(()=>mutator(),options),onSelection:detail=>onCutsceneSelection(detail),onPreview:async options=>{
@@ -245,7 +266,7 @@ export function createDeveloperConsole({mount=document.body,getProject=createDef
     if(!results.length)section.append(el('p','dc-muted','No matching dialogue, observations, clues or source text.'));editor.append(section);
   }
   function render(){
-    if(!draft)return;destroyCutsceneEditor();const rooms=Object.keys(locations());if(!rooms.includes(roomId))roomId=rooms[0];
+    if(!draft)return;destroyCutsceneEditor();destroyObjectDialogueEditor();const rooms=Object.keys(locations());if(!rooms.includes(roomId))roomId=rooms[0];
     roomSelect.replaceChildren();for(const [id,label]of optionLocations()){const item=button('',()=>{if(!consumeJSON())return;roomId=id;loreId=null;query='';searchInput.value='';onSelectRoom(roomId,clone(draft));render();},{className:'dc-room-card','data-dev-room':id,'aria-pressed':String(id===roomId)});const image=el('img');image.src=draft.scenes[id]?.image??'';image.alt='';item.append(image,el('span','',label));roomSelect.append(item);}
     for(const item of tabs.querySelectorAll('[data-dev-tab]')){const active=item.dataset.devTab===tab;item.setAttribute('aria-selected',String(active));item.tabIndex=active?0:-1;}body.setAttribute('aria-labelledby','developer-tab-'+tab);body.dataset.editor=tab;body.replaceChildren();editor=el('main','dc-inspector');body.append(editor);
     if(query)searchResults();else if(tab==='dialogue')renderDialogue();else if(tab==='cutscene'){const {content,scene}=getCurrent();renderCutsceneEditor(content,scene);}else if(tab==='puzzles')renderPuzzles();else if(tab==='notes')renderNotes();else if(tab==='rooms')renderRooms();else if(tab==='playtest')renderPlaytest();else renderJSON();updateControls();
@@ -255,14 +276,14 @@ export function createDeveloperConsole({mount=document.body,getProject=createDef
   dialog.addEventListener('keydown',event=>{event.stopPropagation();if(event.key==='F2'||event.key==='Escape'){event.preventDefault();close();}});dialog.addEventListener('keyup',event=>event.stopPropagation());
   dialog.addEventListener('cancel',event=>{event.preventDefault();close();});dialog.addEventListener('close',()=>onClose());
   function open(options={}){
-    cutsceneEditor?.flush?.();
+    flushEditors();
     if(options.personId||options.doorId||options.sourceId||options.objectId){query='';searchInput.value='';}
     if(disposed)return;const latest=getProject(),latestJSON=JSON.stringify(latest);if(!draft||!dirty&&latestJSON!==sourceJSON){draft=clone(latest);sourceJSON=latestJSON;jsonBuffer=null;jsonDirty=false;past.length=0;future.length=0;}
     if(options.tab&&TABS.some(([id])=>id===options.tab))tab=options.tab;if(options.roomId)roomId=options.roomId;if(options.personId){personId=options.personId;loreId=null;tab='dialogue';}if(options.doorId){doorId=options.doorId;tab='puzzles';}if(options.sourceId){sourceId=options.sourceId;tab='notes';}if(options.objectId){objectId=options.objectId;const item=draft.scenes[options.roomId??roomId]?.objects.find(item=>item.id===options.objectId);if(item?.type==='inspect'){loreId=item.id;tab='dialogue';}else tab='rooms';}
     render();const wasOpen=dialog.open;if(!wasOpen){dialog.show();onOpen();}if(options.roomId)onSelectRoom(roomId,clone(draft));publishDraft();if(!wasOpen)closeButton.focus({preventScroll:true});if(!status.textContent)say('Your project draft is ready. Edits are local until you export them for publishing.');
   }
   function moveActor(id,x,y){
-    cutsceneEditor?.flush?.();
+    flushEditors();
     if(!draft||!Number.isFinite(x)||!Number.isFinite(y))return false;
     const next=clone(draft),scene=next.scenes[roomId],actor=scene?.actors.find(actor=>actor.id===id);if(!actor)return false;
     translateActor(scene,actor,x,y);const result=validateProject(next);if(!result.valid){showIssues(result);say('That position would block an interaction. The character has not moved.');return false;}
@@ -278,6 +299,6 @@ export function createDeveloperConsole({mount=document.body,getProject=createDef
     if(!cutsceneEditor||!['cutscene','rooms'].includes(tab))return false;
     return cutsceneEditor.updatePath(index,patch);
   }
-  function close(){destroyCutsceneEditor();if(dialog.open)dialog.close();dialog.classList.remove('dc-expanded');expandButton.textContent='Expand';expandButton.setAttribute('aria-expanded','false');expandButton.setAttribute('aria-label','Expand editor');}
+  function close(){destroyCutsceneEditor();destroyObjectDialogueEditor();if(dialog.open)dialog.close();dialog.classList.remove('dc-expanded');expandButton.textContent='Expand';expandButton.setAttribute('aria-expanded','false');expandButton.setAttribute('aria-label','Expand editor');}
   return Object.freeze({open,close,moveActor,selectCutsceneActor,updateCutscenePath,refresh(){if(dialog.open)render();},get activeTab(){return tab;},get isOpen(){return dialog.open;},destroy(){if(disposed)return;close();disposed=true;dialog.remove();}});
 }

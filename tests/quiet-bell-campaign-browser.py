@@ -87,6 +87,7 @@ class Campaign:
         else:
             self.page.mouse.click(point['x'], point['y'])
         ui.settle_walk(self.page)
+        if target.get('inspect'): ui.finish_inspection_discussion(self.page)
         value = ui.state(self.page)
         if target.get('person'):
             assert value['selectedPerson'] == target['person'] and self.page.locator('#conversation-dialog').is_visible(), (selector, value)

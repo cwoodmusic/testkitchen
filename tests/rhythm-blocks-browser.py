@@ -49,6 +49,11 @@ def skip_cutscene(page):
     if skip.count() and skip.is_visible():
         skip.click()
 
+def finish_inspection_discussion(page):
+    """Exploration regressions can continue to the ordinary observation panel."""
+    if page.evaluate('window.quietBell?.cutscene?.context==="inspection"'):
+        skip_cutscene(page)
+
 def close_panels(page, revisit=False):
     skip_cutscene(page)
     if page.locator('#outcome').is_visible():
@@ -135,6 +140,7 @@ def press(page, selector, touch=False):
     else: getattr(button, 'tap' if touch else 'click')()
     if any(target.values()):
         settle_walk(page)
+        if target.get('inspect'): finish_inspection_discussion(page)
         if target.get('person'): assert state(page)['selectedPerson'] == target['person']
         if target.get('door'): assert state(page)['selectedDoor'] == target['door']
         if target.get('chest'): assert target['chest'] in state(page)['claimedSources']

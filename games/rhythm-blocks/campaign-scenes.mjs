@@ -5,6 +5,7 @@
 import {SCENES,PARTY_ACTORS} from './scenes.mjs';
 import {CAMPAIGN_PLAN} from './campaign-data.mjs';
 import {CAMPAIGN_CONTENT} from './campaign-content.mjs';
+import {ROOM_LAYOUTS,ROOM_LAYOUT_REVISION,fitLayoutOccluders} from './room-layout-config.mjs';
 
 const freeze=value=>{
  if(value&&typeof value==='object'&&!Object.isFrozen(value)){
@@ -220,9 +221,10 @@ const furnitureMasks={
 
 function makeScene(location){
  const terminal=location.kind!==undefined,content=CAMPAIGN_CONTENT[location.id];
- const fit=artGeometry[location.id]??{},wall=fit.wall??260,actors=PARTY_ACTORS;
+ const fit=artGeometry[location.id]??{},layout=ROOM_LAYOUTS[location.id],wall=fit.wall??260;
+ const actors=layout?.actors?PARTY_ACTORS.map(actor=>layout.actors[actor.id]?{...actor,feet:{...layout.actors[actor.id]}}:actor):PARTY_ACTORS;
  const doors=location.doors??[],doorPositions=fit.doorPositions??(doors.length===1?[768]:[490,1045]);
- const objects=[],targets=[],obstacles=actors.map(actorObstacle),occluders=furnitureMasks[location.id]??[];
+ const objects=[],targets=[],obstacles=actors.map(actorObstacle),occluders=fitLayoutOccluders(location.id,furnitureMasks[location.id]??[]);
  for(const [index,door]of doors.entries()){
   const x=doorPositions[index],visibility=door.revealAfter?{revealAfter:door.revealAfter}:{};
   objects.push(object(door.id,'door',door.label,rect(x-90,45,180,wall-45),{doorId:door.id,actionLabel:`Inspect ${door.label.toLowerCase()}`,...visibility}));
@@ -230,7 +232,7 @@ function makeScene(location){
  }
  objects.push(...actors.map(actorObject));targets.push(...actors.map(actorTarget));
  for(const entry of content.inspections){
-  const slot={...placements[entry.placement],...(fit.props?.[entry.id]??{})},binding=entry.sourceId?{sourceId:entry.sourceId,sourceLabel:entry.sourceLabel}:{};
+  const slot={...placements[entry.placement],...(fit.props?.[entry.id]??{}),...(layout?.props?.[entry.id]??{})},binding=entry.sourceId?{sourceId:entry.sourceId,sourceLabel:entry.sourceLabel}:{};
   const label=entry.title,actionLabel=entry.sourceLabel??`Inspect ${label.toLowerCase()}`;
   objects.push(object(entry.id,'inspect',label,slot.rect,{actionLabel,...binding}));
   const target={...slot.target};if(entry.placement==='wall'&&!fit.props?.[entry.id]?.target){target.y=wall;target.approach={...target.approach,y:wall+70};}
@@ -240,9 +242,9 @@ function makeScene(location){
  const returnLabel=terminal?'Revisit this choice':'Revisit the previous room';
  objects.push(object('return-previous','return',returnLabel,rect(680,920,176,90),{actionLabel:returnLabel}));
  targets.push({id:'return-previous',type:'return',label:returnLabel,x:768,y:960,approach:{x:768,y:910},range:85});
- obstacles.push(...(fit.obstacles??[]));
+ obstacles.push(...(fit.obstacles??[]).filter(obstacle=>!layout?.removeObstacles?.includes(obstacle.id)),...(layout?.obstacles??[]));
  return {
-  id:location.id,title:location.title,kind:location.kind??'room',image:`assets/rooms/${location.id}.webp`,actors,
+  id:location.id,title:location.title,kind:location.kind??'room',image:`assets/rooms/${location.id}${layout?'-layout':''}.webp`,actors,...(layout?{layoutRevision:ROOM_LAYOUT_REVISION,layoutKind:layout.kind}:{}),
   geometry:{width:1536,height:1024,gridSize:32,radius:18,speed:260,maxDeltaMs:50,bounds:{x:48,y:wall,width:1440,height:978-wall},start:{x:768,y:920,facing:'up'},obstacles,targets},
   objects,occluders,
  };

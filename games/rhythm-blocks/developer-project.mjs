@@ -6,6 +6,8 @@ import {CAMPAIGN_SCENES} from './campaign-scenes.mjs';
 import {ROOM_CUTSCENES} from './cutscene-content.mjs';
 import {upgradeStockGagDialogue} from './dialogue-updates.mjs';
 import {upgradeStockDepotDialogueEffects} from './dialogue-reactions.mjs';
+import {upgradeObjectDialogues} from './object-dialogue.mjs';
+import {upgradeStockRoomLayouts} from './room-layouts.mjs';
 import {separateCutsceneTracks} from './cutscene.mjs';
 import {CAST,CAST_IMAGE} from './cast.mjs';
 import {MIRA} from './mira.mjs';
@@ -36,14 +38,14 @@ let defaultCutscenes=null;
 /** A new mutable copy; changing it never changes the shipped game. */
 export function createDefaultProject(){
  defaultCutscenes??=Object.fromEntries(Object.entries(CAMPAIGN_SCENES).map(([roomId,scene])=>[roomId,separateCutsceneTracks({scene,beats:ROOM_CUTSCENES[roomId]??[]})]));
- return clone({
+ return upgradeObjectDialogues(clone({
   schemaVersion:1,
   settings:{title:'The Quiet Bell',bpm:108,startRoomId:'depot',castImage:CAST_IMAGE,terminalRooms:true,completionReady:true,initialInventory:Object.fromEntries(NOTE_KINDS.map(note=>[note.id,0]))},
   noteKinds:NOTE_KINDS.map((note,index)=>({...note,symbol:note.id,shortName:SHORT_NAMES[index],color:COLORS[index],subdivisions:['eighth-pair','sixteenth-pair'].includes(note.id)?2:note.id==='sixteenth-group'?4:1})),
   rooms:CHAPTER_ROOMS,doors:CHAPTER_DOORS,sources:CHAPTER_SOURCES,previews:CHAPTER_PREVIEWS,terminals:CHAPTER_TERMINALS,
   content:Object.fromEntries(Object.entries(CAMPAIGN_CONTENT).map(([id,content])=>[id,{...content,cutscene:defaultCutscenes[id]??[]}])),
   scenes:CAMPAIGN_SCENES,cast:CAST,player:{...MIRA,image:'assets/mira-walk.webp'},
- });
+ }));
 }
 
 /** Explicit choices override the legacy conversation, including an empty list. */
@@ -322,6 +324,27 @@ export function validateProject(project){
     const entryPath=`${path}.inspections[${index}]`;if(!record(entry)){fail(entryPath,'use an observation definition.');continue;}
     id(entry.id,`${entryPath}.id`);if(inspectionIds.has(entry.id))fail(`${entryPath}.id`,'observation IDs must be unique across rooms.');inspectionIds.add(entry.id);
     text(entry.title,`${entryPath}.title`,{max:160});text(entry.label,`${entryPath}.label`,{max:160});text(entry.text,`${entryPath}.text`,{empty:true});
+    if(entry.dialogue!==undefined&&entry.dialogue!==null&&list(entry.dialogue,`${entryPath}.dialogue`,12)){
+     const localPeople=new Set(asArray(roomContent.people).map(person=>person?.id));localPeople.add('mira');
+     const lineIds=new Set();
+     entry.dialogue.forEach((line,lineIndex)=>{
+      const linePath=`${entryPath}.dialogue[${lineIndex}]`;if(!record(line)){fail(linePath,'use a spoken line with a speaker and text.');return;}
+      if(line.id!==undefined){id(line.id,`${linePath}.id`);if(lineIds.has(line.id))fail(`${linePath}.id`,'discussion line IDs must be unique within the object.');lineIds.add(line.id);}
+      id(line.speaker,`${linePath}.speaker`);if(!localPeople.has(line.speaker))fail(`${linePath}.speaker`,'choose Mira or a person in this room.');
+      text(line.text,`${linePath}.text`,{empty:true,max:600});
+      if(line.durationTiles!==undefined)number(line.durationTiles,`${linePath}.durationTiles`,1,100000,{integer:true});
+      if(line.kind!==undefined&&line.kind!=='dialogue')fail(`${linePath}.kind`,'object discussions contain spoken dialogue only.');
+      for(const field of ['target','destination','waypoints','action','gait','gesture','emote'])if(line[field]!==undefined)fail(`${linePath}.${field}`,'put physical actions in the room cutscene; an object discussion contains speech only.');
+      if(own(line,'reaction')&&line.reaction!==null){
+       if(!record(line.reaction))fail(`${linePath}.reaction`,'use a speaking reaction or null to turn it off.');
+       else{
+        if(!CUTSCENE_EMOTES.has(line.reaction.emote))fail(`${linePath}.reaction.emote`,'choose idea, question, thinking, surprise or happy.');
+        number(line.reaction.durationTiles,`${linePath}.reaction.durationTiles`,1,512,{integer:true});
+       }
+      }
+      if(own(line,'stageCue')&&line.stageCue!==null&&!CUTSCENE_STAGE_CUES.has(line.stageCue))fail(`${linePath}.stageCue`,'choose courier-signal, radar or null to turn it off.');
+     });
+    }
     if(entry.sourceId!==undefined){const source=sources[entry.sourceId];if(!source||source.type!=='hidden'||source.roomId!==roomId)fail(`${entryPath}.sourceId`,'reference a hidden note source in this room.');if(entry.sourceLabel!==undefined)text(entry.sourceLabel,`${entryPath}.sourceLabel`,{max:160});}
    }
   }
@@ -499,7 +522,7 @@ export function upgradeLegacyProject(value){
 
 /** Accept only JSON data and derive timing from the edited integer half-beat units. */
 export function normalizeProject(value){
- const candidate=upgradeStockDepotDialogueEffects(upgradeStockGagDialogue(upgradeRoomCutscenes(upgradeLegacyProject(value)))),result=validateProject(candidate);
+ const candidate=upgradeObjectDialogues(upgradeStockDepotDialogueEffects(upgradeStockGagDialogue(upgradeRoomCutscenes(upgradeStockRoomLayouts(upgradeLegacyProject(value)))))),result=validateProject(candidate);
  if(!result.valid)throw new TypeError(result.errors.join('\n'));
  const project=clone(candidate);
  let separated=false;
