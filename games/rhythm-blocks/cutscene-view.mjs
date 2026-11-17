@@ -6,6 +6,7 @@ import {getNpcSpriteFrame} from './npc-sprites.mjs';
 import {getNpcForwardFall,PIP_FORWARD_FALL} from './npc-gestures.mjs';
 import {getDialogueReaction,getDialogueStageCue} from './dialogue-reactions.mjs';
 import {createDepotProps} from './depot-props.mjs';
+import {getSpeakerCues,getConversationActors} from './speaker-cues.mjs';
 
 const freeze=value=>{if(value&&typeof value==='object'&&!Object.isFrozen(value)){Object.values(value).forEach(freeze);Object.freeze(value);}return value;};
 const clamp=(n,min,max)=>Math.max(min,Math.min(max,n));
@@ -81,7 +82,8 @@ export function createCutsceneView({root,map,panel,roomView,scene,project,beats,
  const reduced=matchMedia('(prefers-reduced-motion: reduce)').matches;
  const entry=withEntry?createRoomEntry({scene,playerPosition,playerSize:project.player.worldSize}):null;
  const timeline=createRoomCutscene({scene,beats,playerPosition,actors:entry?.timeline.endActors,reducedMotion:reduced,manualDialogue:!preview});
- let disposed=false,frame=0,last=0,lastCaption='',lastEvent='',finishing=false,reservedBottom=0,rate=playbackRate===2?2:1;
+ let disposed=false,frame=0,last=0,lastCaption='',lastEvent='',finishing=false,reservedBottom=0,speakingCue=null,rate=playbackRate===2?2:1;
+ const playerElement=map.querySelector('#player-sprite');
  const actorElements=new Map(scene.actors.map(actor=>[actor.id,map.querySelector('[data-actor="'+actor.id+'"]')]));
  const definitions=new Map(scene.actors.map(actor=>[actor.id,actor]));
  const names=new Map(project.content[scene.id].people.map(person=>[person.id,person.name]));
@@ -96,7 +98,6 @@ export function createCutsceneView({root,map,panel,roomView,scene,project,beats,
  const speaker=panel.querySelector('#cutscene-speaker'),line=panel.querySelector('#cutscene-line'),counter=panel.querySelector('#cutscene-counter');
  const dialogue=createJrpgDialogue({panel,line}),soundTrack=cinematicAudio?.createTrack();
  const nextButton=panel.querySelector('#cutscene-next'),skipButton=panel.querySelector('#cutscene-skip'),speedButton=panel.querySelector('#cutscene-speed');
- const hint=document.createElement('span');hint.className='cutscene-advance-hint';hint.setAttribute('aria-hidden','true');hint.hidden=preview;nextButton.parentElement.prepend(hint);
  counter.textContent=preview?'Timeline preview':scene.title;
  nextButton.disabled=preview;skipButton.textContent=preview?'Stop preview':'Skip';
  const style=(element,name,value)=>{let values=styleValues.get(element);if(!values){values=new Map();styleValues.set(element,values);}if(values.get(name)!==value){element.style[name]=value;values.set(name,value);}};
@@ -136,8 +137,11 @@ export function createCutsceneView({root,map,panel,roomView,scene,project,beats,
   dialogue.update(beat?state.manualDialogue?state.dialogueElapsed:Math.max(0,(state.currentTile-beat.startTile)*state.quantumMs):0);
   soundTrack?.sample(state,{visibleCharacters:dialogue.state.visibleCharacters,audible});
   const speechReaction=getDialogueReaction(state);
+  const speakerCue=getSpeakerCues(state,{reducedMotion:reduced});
+  const conversationActors=getConversationActors(state);
+  if(speakingCue&&!speakerCue?.showMarker&&!speakingCue.hidden)speakingCue.hidden=true;
   depotProps.paint(state);
-  for(const actor of state.actors){
+  for(const actor of conversationActors){
    const element=actorElements.get(actor.id),definition=definitions.get(actor.id);
    const reaction=speechReaction?.actorId===actor.id?speechReaction:null;
    const emoteKind=reaction?.emote??actor.emote??(actor.id===id?beat?.emote:null);
@@ -151,7 +155,7 @@ export function createCutsceneView({root,map,panel,roomView,scene,project,beats,
     if(spriteFrames.get(actor.id)!==spriteKey){spriteFrames.set(actor.id,spriteKey);style(element,'backgroundImage',`url(${JSON.stringify(sprite.image)})`);style(element,'backgroundSize',sprite.backgroundSize);style(element,'backgroundPosition',sprite.backgroundPosition);style(element,'aspectRatio',String(sprite.aspectRatio));}
     style(element,'transform',`translate3d(${actor.x-definition.feet.x}px,${actor.y-definition.feet.y}px,0) translate(${-sprite.anchor[0]*100}%,${-sprite.anchor[1]*100}%) rotate(${lean}deg)`);
     style(element,'transformOrigin',`${sprite.anchor[0]*100}% ${sprite.anchor[1]*100}%`);style(element,'zIndex',String(Math.round(actor.y)+1));
-    data(element,'moving',String(actor.moving));data(element,'action',actor.action??'');data(element,'facing',sprite.facing);data(element,'frame',String(sprite.frame));data(element,'spriteRow',String(sprite.row));data(element,'spriteAnimated',String(sprite.animated));data(element,'emote',emoteKind??'');data(element,'dialogueReaction',String(!!reaction));
+    data(element,'moving',String(actor.moving));data(element,'action',actor.action??'');data(element,'facing',sprite.facing);data(element,'frame',String(sprite.frame));data(element,'spriteRow',String(sprite.row));data(element,'spriteAnimated',String(sprite.animated));data(element,'emote',emoteKind??'');data(element,'dialogueReaction',String(!!reaction));data(element,'speaking',String(speakerCue?.speakerId===actor.id));
     data(element,'gait',actor.gait??'walk');data(element,'gesture',gesture.gesture??'');data(element,'gestureProgress',String(Math.round(gesture.progress*10000)/10000));
     style(element,'opacity',forward?String(forward.standingOpacity):actorOpacity.get(actor.id)??'');
     data(element,'spriteMode',forward?'forward-fall':'standing');
@@ -216,19 +220,33 @@ export function createCutsceneView({root,map,panel,roomView,scene,project,beats,
     style(emote,'transform',`translate3d(${head.x-origin.x}px,${head.y-origin.y}px,0) translate(-50%,-100%)`);
     if(emote.hidden)emote.hidden=false;
    }else if(emote){data(emote,'dialogueReaction','false');data(emote,'reactionElapsed','');data(emote,'reactionDuration','');if(!emote.hidden)emote.hidden=true;}
+   if(speakerCue?.showMarker&&speakerCue.speakerId===actor.id){
+    if(!speakingCue){
+     speakingCue=document.createElement('div');speakingCue.className='cutscene-speaking-cue';speakingCue.setAttribute('role','img');
+     speakingCue.style.left='0';speakingCue.style.top='0';
+     speakingCue.innerHTML='<svg viewBox="0 0 36 28" aria-hidden="true" shape-rendering="crispEdges"><path fill="#201b2d" d="M4 0h28v2h4v19h-4v3H17l-7 4v-4H4v-3H0V4h4z"/><path fill="#f1d18c" d="M4 2h28v2h2v15h-2v3H16l-4 3v-3H4v-3H2V4h2z"/><path fill="#30243d" d="M5 5h26v13H5z"/><path fill="#fff1c8" d="M8 10h4v4H8zm8 0h4v4h-4zm8 0h4v4h-4z"/></svg>';
+     map.append(speakingCue);
+    }
+    const size=definition?.worldSize??project.player.worldSize,radians=gesture.angle*Math.PI/180;
+    const head=forward?{x:actor.x+forward.head.x,y:actor.y+forward.head.y-12}:{x:actor.x+Math.sin(radians)*size*.8,y:actor.y-Math.cos(radians)*size*.9};
+    data(speakingCue,'character',actor.id);data(speakingCue,'speakerCue','true');data(speakingCue,'cueElapsed',String(Math.round(speakerCue.elapsedMs)));data(speakingCue,'cueDuration',String(speakerCue.durationMs));
+    const label=`${actor.id==='mira'?'Mira':names.get(actor.id)??actor.id} is speaking`;if(speakingCue.getAttribute('aria-label')!==label)speakingCue.setAttribute('aria-label',label);
+    const cueSide=actor.x>scene.geometry.width*.5?-1:1;
+    const cueX=`calc(${head.x}px ${cueSide>0?'+':'-'} max(${size*.45}px,calc(34px / var(--room-scale,1))))`;
+    style(speakingCue,'transform',`translate3d(${cueX},${head.y+size*.04}px,0) translate(-50%,-100%)`);style(speakingCue,'opacity',String(speakerCue.opacity));if(speakingCue.hidden)speakingCue.hidden=false;
+   }
   }
-  const player=state.actors.find(actor=>actor.id==='mira');
+  const player=conversationActors.find(actor=>actor.id==='mira');
   const showCourier=getDialogueStageCue(state)?.cue==='courier-signal'&&scene.id==='depot'&&scene.image==='assets/parcel-depot.webp';
   const focus=showCourier?{...state.focus,x:850}:state.focus;
   roomView.setCinematicFrame({focus,player,playerVisual:getCutsceneGesturePose(player,{reducedMotion:reduced}),elapsed:state.elapsed,reservedBottom,deltaMs,snapCamera,reducedMotion:reduced});
+  if(playerElement)data(playerElement,'speaking',String(speakerCue?.speakerId==='mira'));
   const silentManual=state.manualDialogue&&!beat;
   const disabled=preview||arrival||state.finished||state.nextPending||silentManual;
   if(nextButton.disabled!==disabled)nextButton.disabled=disabled;
   const reading=!preview&&!arrival&&!!beat&&!state.finished;
-  if(hint.hidden===reading)hint.hidden=!reading;
   if(reading){
-   const complete=dialogue.state.complete,label=complete?'Click to continue':'Click to reveal';
-   if(hint.textContent!==label)hint.textContent=label;
+   const complete=dialogue.state.complete;
    data(panel,'dialogueMode','manual');data(panel,'dialogueState',complete?'waiting':'revealing');
    const nextLabel=complete?'Advance to the next line':'Show the rest of this line';if(nextButton.getAttribute('aria-label')!==nextLabel)nextButton.setAttribute('aria-label',nextLabel);
   }else{delete panel.dataset.dialogueMode;delete panel.dataset.dialogueState;nextButton.removeAttribute('aria-label');}
@@ -243,7 +261,7 @@ export function createCutsceneView({root,map,panel,roomView,scene,project,beats,
  }
  function schedule(state=snapshot()){
   const waiting=state.manualDialogue&&state.phase==='story'&&state.currentTile>=state.totalTiles&&dialogue.state.complete;
-  if(!disposed&&!frame&&state.playing&&!state.finished&&!document.hidden&&(!waiting||getDialogueReaction(state)||depotProps.needsAnimation(state)))frame=requestAnimationFrame(tick);
+  if(!disposed&&!frame&&state.playing&&!state.finished&&!document.hidden&&(!waiting||getSpeakerCues(state)?.showMarker||getDialogueReaction(state)||depotProps.needsAnimation(state)))frame=requestAnimationFrame(tick);
  }
  function tick(now){
   frame=0;if(disposed)return;const delta=last?Math.min(80,Math.max(0,now-last)):16;last=now;
@@ -258,7 +276,7 @@ export function createCutsceneView({root,map,panel,roomView,scene,project,beats,
  function seek(value){soundTrack?.stop();entry?.skip();timeline.seek(value);last=0;paint(snapshot(),16,true);schedule();return publicState();}
  function setRate(value){rate=value===2?2:1;last=0;onRateChange(rate);paint();return publicState();}
  function skip(){if(disposed)return;soundTrack?.stop();entry?.skip();timeline.skip();onFinish({state:snapshot(),skipped:true});}
- function destroy(){if(disposed)return;disposed=true;soundTrack?.destroy();depotProps.destroy();if(frame)cancelAnimationFrame(frame);frame=0;for(const remove of removers)remove();for(const emote of emotes.values())emote.remove();for(const prop of props.values())prop.element.remove();for(const fall of fallSprites.values())fall.element.remove();fallImage.onload=null;for(const [id,element]of actorElements)if(element){for(const name of ['gesture','gestureProgress','gait','spriteMode','forwardPose','headX','headY','footX','footY','dialogueReaction'])delete element.dataset[name];element.style.opacity=actorOpacity.get(id)??'';}hint.remove();fade.remove();dialogue.destroy();map.inert=wasInert;map.style.overflow=wasOverflow;roomView.setCinematicFrame(null);root.classList.remove('cutscene-playing','cutscene-preview');delete root.dataset.cutscenePhase;panel.classList.remove('cutscene-silent');delete panel.dataset.phase;delete panel.dataset.dialogueMode;delete panel.dataset.dialogueState;nextButton.removeAttribute('aria-label');panel.hidden=true;}
+ function destroy(){if(disposed)return;disposed=true;soundTrack?.destroy();depotProps.destroy();speakingCue?.remove();if(playerElement)delete playerElement.dataset.speaking;if(frame)cancelAnimationFrame(frame);frame=0;for(const remove of removers)remove();for(const emote of emotes.values())emote.remove();for(const prop of props.values())prop.element.remove();for(const fall of fallSprites.values())fall.element.remove();fallImage.onload=null;for(const [id,element]of actorElements)if(element){for(const name of ['gesture','gestureProgress','gait','spriteMode','forwardPose','headX','headY','footX','footY','dialogueReaction','speaking'])delete element.dataset[name];element.style.opacity=actorOpacity.get(id)??'';}fade.remove();dialogue.destroy();map.inert=wasInert;map.style.overflow=wasOverflow;roomView.setCinematicFrame(null);root.classList.remove('cutscene-playing','cutscene-preview');delete root.dataset.cutscenePhase;panel.classList.remove('cutscene-silent');delete panel.dataset.phase;delete panel.dataset.dialogueMode;delete panel.dataset.dialogueState;nextButton.removeAttribute('aria-label');panel.hidden=true;}
  function advance(){if(entering()||preview||!snapshot().beat)return;if(!dialogue.state.complete){dialogue.revealAll();paint();return;}timeline.next();last=0;paint();schedule();}
  listen(nextButton,'click',advance);listen(skipButton,'click',skip);
  listen(panel,'click',event=>{if(preview||event.target.closest('button,a,input,textarea,select,[contenteditable="true"]'))return;advance();});

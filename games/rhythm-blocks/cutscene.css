@@ -10,8 +10,6 @@
 #cutscene-counter{font:11px/1.4 ui-monospace,monospace;color:#c9bdd0;max-width:65%;text-align:right}
 #cutscene-line{min-height:3em;margin:10px 0 12px;font:15px/1.5 ui-sans-serif,system-ui,sans-serif;max-width:70ch}
 .cutscene-buttons{display:flex;gap:8px;justify-content:flex-end}
-.cutscene-advance-hint{align-self:center;margin-right:auto;max-width:130px;font:400 8px/1.6 QuietBellBlock,monospace;color:#e1e8ff}
-.cutscene-advance-hint[hidden]{display:none}
 .cutscene-panel[data-dialogue-mode="manual"]{cursor:pointer}
 .cutscene-buttons .mg-button{min-height:44px;min-width:80px;white-space:nowrap;flex-shrink:0}
 #cutscene-speed{min-width:56px}
@@ -19,6 +17,9 @@
 .cutscene-emote[hidden]{display:none}
 .cutscene-emote::after{content:'';position:absolute;bottom:-12px;width:12px;height:12px;background:#e4c394}
 .cutscene-emote svg{width:100%;height:100%;overflow:visible}
+.cutscene-speaking-cue{position:absolute;z-index:1901;width:max(56px,calc(28px / var(--room-scale,1)));height:max(44px,calc(22px / var(--room-scale,1)));pointer-events:none;image-rendering:pixelated;will-change:transform,opacity}
+.cutscene-speaking-cue[hidden]{display:none}
+.cutscene-speaking-cue svg{display:block;width:100%;height:100%;overflow:visible}
 .cutscene-emote[data-cutscene-emote="idea"]{box-shadow:0 5px 0 #191221,0 0 22px #ffd97b38}
 .cutscene-prop{position:absolute;pointer-events:none;image-rendering:pixelated;will-change:transform,opacity}
 .cutscene-prop[hidden]{display:none}
@@ -39,7 +40,6 @@
 .developer-editing .cutscene-buttons{display:none}
 @keyframes cutscene-emote-pop{from{translate:0 8px;opacity:.4}to{translate:0 0;opacity:1}}
 @media(max-width:760px){
- .cutscene-advance-hint{max-width:110px;font-size:7px}
  .cutscene-panel{padding:12px;left:8px;right:8px;bottom:max(8px,env(safe-area-inset-bottom))}
  #cutscene-line{font-size:14px;line-height:1.4;margin:9px 0}
  #cutscene-counter{font-size:10px}

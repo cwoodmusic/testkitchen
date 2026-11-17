@@ -1,0 +1,20 @@
+@font-face{font-family:QuietBellBlock;src:url('./assets/fonts/PressStart2P-Regular.ttf') format('truetype');font-style:normal;font-weight:400;font-display:swap}
+.cutscene-panel{font-family:QuietBellBlock,monospace;background:linear-gradient(140deg,#183eaf 0%,#10288a 42%,#080f50 100%);border:4px solid #e5e7f3;border-radius:2px;color:#fff;padding:18px 20px;box-shadow:inset 0 0 0 3px #5a6caa,0 0 0 2px #202843,0 6px 0 2px #080d25;max-width:920px;text-shadow:2px 2px 0 #030728}
+.cutscene-panel header{position:relative;height:0;min-height:0;margin:0;gap:0}
+.cutscene-panel #cutscene-speaker{position:absolute;width:1px;height:1px;padding:0;margin:-1px;overflow:hidden;clip:rect(0,0,0,0);white-space:nowrap;border:0;font:400 20px/1 QuietBellBlock,monospace}
+.cutscene-panel #cutscene-counter{display:none}
+.cutscene-panel #cutscene-line{font:400 20px/1.5 QuietBellBlock,monospace;font-kerning:none;font-variant-ligatures:none;letter-spacing:0;height:4.5em;min-height:4.5em;max-height:4.5em;overflow:auto;overscroll-behavior:contain;scrollbar-width:thin;scrollbar-color:#aabbe7 #12246d;margin:2px 0 18px;max-width:none;position:relative;color:#fff;text-shadow:2px 2px 0 #030728;-webkit-font-smoothing:none}
+.jrpg-glyph-rows{display:block;contain:layout style}
+.jrpg-glyph-row{display:block;height:1.5em;line-height:1.5;white-space:pre;overflow:hidden;will-change:clip-path}
+.jrpg-sr-line{position:absolute;width:1px;height:1px;padding:0;margin:-1px;overflow:hidden;clip:rect(0,0,0,0);white-space:nowrap;border:0}
+.cutscene-panel .cutscene-buttons{gap:7px}
+.cutscene-panel .cutscene-buttons .mg-button{font:400 12px/1.3 QuietBellBlock,monospace;text-shadow:1px 1px 0 #030728;border:2px solid #aebee8;background:#10266e;color:#fff;box-shadow:inset 0 0 0 2px #08164a;min-height:44px;min-width:68px;padding:7px 8px}
+.cutscene-panel #cutscene-speed{min-width:52px}
+.cutscene-panel .cutscene-buttons .mg-primary{background:#2449a3;border-color:#f6edcc;color:#fff}
+.cutscene-panel .cutscene-buttons .mg-button:hover,.cutscene-panel .cutscene-buttons .mg-button:focus-visible{background:#304f9e;outline:2px solid #fff0a8;outline-offset:2px}
+.cutscene-panel .cutscene-buttons .mg-button:disabled{opacity:.72}
+.developer-editing .cutscene-panel{padding:13px 15px}
+.developer-editing .cutscene-panel #cutscene-line{font-size:18px;height:4.5em;min-height:4.5em;max-height:4.5em;margin:2px 0 4px}
+@media(max-width:760px){.cutscene-panel{padding:14px 12px;max-width:calc(100vw - 16px)}.cutscene-panel #cutscene-line{font-size:18px;margin-bottom:14px}.developer-editing .cutscene-panel{max-height:none;overflow:visible;padding:12px}.developer-editing .cutscene-panel #cutscene-line{font-size:16px}}
+@media(max-width:360px){.cutscene-panel #cutscene-line{font-size:16px}.cutscene-panel .cutscene-buttons{gap:6px}.cutscene-panel .cutscene-buttons .mg-button{font-size:11px;min-width:64px}.cutscene-panel #cutscene-speed{min-width:48px}}
+@media(max-height:520px){.cutscene-panel{padding:12px}.cutscene-panel #cutscene-line{font-size:18px;margin-bottom:10px}.developer-editing .cutscene-panel #cutscene-line{font-size:16px}}
