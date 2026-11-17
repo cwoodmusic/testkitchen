@@ -8,6 +8,7 @@ export const RUNTIME_FILES=Object.freeze([
   'developer-project.mjs','developer-console.mjs','developer-console.css',
   'cutscene.mjs','cutscene-view.mjs','cutscene-content.mjs','cutscene.css','cutscene-editor.mjs','cutscene-editor.css',
   'cutscene-dialogue.mjs','cutscene-dialogue-editor.mjs',
+  'dialogue-reactions.mjs','depot-props.mjs','depot-props.css','assets/depot-courier.webp','assets/depot-roost-clean.webp',
   'room-entry.mjs',
   'story-intro.mjs','story-intro.css','dialogue-updates.mjs',
   'cutscene-paths.mjs','cutscene-paths.css',

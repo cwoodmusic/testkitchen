@@ -4,7 +4,7 @@ import {getSceneDialogue,pinCutsceneTiming,updateDialogue,insertDialogue,removeD
 
 export function createCutsceneDialogueEditor({document=globalThis.document,roomId,content,scene,state={},onChange=mutation=>mutation(),onPreview=()=>{},onSelection=()=>{},onPending=()=>{}}={}){
   const element=document.createElement('section');element.className='dc-card csd-editor';element.id='developer-cutscene-dialogue';
-  let destroyed=false,buffer=null,textbox=null,counter=null,lines=[],previewRevision=0;
+  let destroyed=false,buffer=null,durationBuffer=null,textbox=null,counter=null,reactionDuration=null,lines=[],previewRevision=0;
   const el=(tag,className='',text='')=>{const node=document.createElement(tag);if(className)node.className=className;if(text)node.textContent=text;return node;};
   const button=(label,id,callback)=>{const node=el('button','mg-button',label);node.type='button';if(id)node.id=id;node.addEventListener('click',callback);return node;};
   const beats=()=>Array.isArray(content.cutscene)?content.cutscene:[];
@@ -36,11 +36,24 @@ export function createCutsceneDialogueEditor({document=globalThis.document,roomI
     error.hidden=true;previewRevision++;onChange(()=>{content.cutscene=next;},{repaint:false});refresh();return true;
   }
   function paintCount(){if(counter&&textbox)counter.textContent=`${textbox.value.length} / 600`;}
+  function hasPending(){
+    return !!buffer&&buffer.text!==beats()[buffer.index]?.text||!!durationBuffer&&Number(durationBuffer.value)!==beats()[durationBuffer.index]?.reaction?.durationTiles;
+  }
+  function markPending(){element.dataset.pending=String(hasPending());onPending();}
   function flush(){
-    if(destroyed||!buffer)return true;
-    const pending=buffer;buffer=null;element.dataset.pending='false';
-    try{if(beats()[pending.index]?.text!==pending.text)commit(updateDialogue(pinned(),pending.index,{text:pending.text}));onPending();return true;}
-    catch(reason){buffer=pending;element.dataset.pending='true';showError(reason);onPending();return false;}
+    if(destroyed||!buffer&&!durationBuffer)return true;
+    const pending=buffer,pendingDuration=durationBuffer;buffer=null;durationBuffer=null;
+    try{
+      const patches=new Map();
+      if(pending&&beats()[pending.index]?.text!==pending.text)patches.set(pending.index,{text:pending.text});
+      if(pendingDuration){
+        const value=Number(pendingDuration.value),reaction=beats()[pendingDuration.index]?.reaction;
+        if(!Number.isInteger(value)||value<1||value>512)throw new RangeError('A reaction must last from 1 to 512 walking tiles.');
+        if(reaction&&reaction.durationTiles!==value)patches.set(pendingDuration.index,{...patches.get(pendingDuration.index),reaction:{...reaction,durationTiles:value}});
+      }
+      if(patches.size){let next=pinned();for(const [index,patch]of patches)next=updateDialogue(next,index,patch);commit(next);}
+      markPending();return true;
+    }catch(reason){buffer=pending;durationBuffer=pendingDuration;showError(reason);markPending();return false;}
   }
   function selectClip(index,{focus=false}={}){
     if(!flush()||destroyed)return false;refresh();if(!lines.some(line=>line.index===index))return false;
@@ -91,14 +104,14 @@ export function createCutsceneDialogueEditor({document=globalThis.document,roomI
     });list.scrollTop=previousScroll;
   }
   function renderDetail(){
-    detail.replaceChildren();textbox=null;counter=null;const line=current();
+    detail.replaceChildren();textbox=null;counter=null;reactionDuration=null;const line=current();
     if(!line){detail.append(el('p','csd-empty','Each line has its own speaker. Walking, emotes and actions can still be edited in Timeline.'));return;}
     const index=lines.findIndex(item=>item.index===line.index),title=el('h4','',`Line ${index+1} of ${lines.length}`);
     const label=el('div','dc-field'),speakers=el('div','cse-chips');label.append(el('span','','Who speaks'),speakers);speakers.id='developer-cutscene-dialogue-speaker';speakers.setAttribute('role','group');speakers.setAttribute('aria-label','Who speaks');
     for(const actor of speakerIds){const choice=button(actorName(actor),null,()=>changeSpeaker(actor));choice.dataset.dialogueSpeaker=actor;choice.setAttribute('aria-pressed',String(actor===line.speaker));speakers.append(choice);}
     const field=el('label','dc-field'),fieldHeading=el('span','csd-text-label','Dialogue');counter=el('output','csd-count');counter.id='developer-cutscene-dialogue-count';fieldHeading.append(counter);
     textbox=el('textarea');textbox.id='developer-cutscene-dialogue-text';textbox.rows=7;textbox.maxLength=600;textbox.value=line.text;textbox.placeholder='What do they say?';textbox.setAttribute('aria-describedby',counter.id);
-    textbox.addEventListener('input',()=>{buffer={index:line.index,text:textbox.value};element.dataset.pending=String(textbox.value!==beats()[line.index]?.text);paintCount();renderList();onPending();});
+    textbox.addEventListener('input',()=>{buffer={index:line.index,text:textbox.value};paintCount();renderList();markPending();});
     // External actions flush in their own handler. Publishing on their pointerdown
     // blur would rebuild the frozen map before an NPC's click can arrive.
     textbox.addEventListener('blur',event=>{if(element.contains(event.relatedTarget))flush();});field.append(fieldHeading,textbox);paintCount();
@@ -106,9 +119,40 @@ export function createCutsceneDialogueEditor({document=globalThis.document,roomI
     up.disabled=index===0;down.disabled=index===lines.length-1;
     controls.append(up,down,button('Remove line','developer-cutscene-dialogue-remove',()=>removeLine()));
     const playback=el('div','csd-controls');playback.append(button('▶ Play from line','developer-cutscene-dialogue-preview',()=>void preview()),button('■ Stop','developer-cutscene-dialogue-stop',()=>void stop()));
-    detail.append(title,label,field,controls,playback,el('p','dc-muted','Reordering lines keeps the walking, emotes and actions in place. Use Timeline to adjust their timing.'));
+    detail.append(title,label,field,controls,playback,performanceControls(line),el('p','dc-muted','Reordering lines keeps the walking, emotes and actions in place. Use Timeline to adjust their timing.'));
+  }
+  function performanceControls(line){
+    const section=el('details','dc-advanced csd-performance');section.id='developer-cutscene-reactions';section.open=!!state.reactionsOpen;
+    section.append(el('summary','','Reactions & props'));
+    section.addEventListener('toggle',()=>{state.reactionsOpen=section.open;});
+    const emotes=el('div','dc-field'),emoteChoices=el('div','cse-chips');emotes.append(el('span','','Reaction above the speaker'),emoteChoices);
+    emoteChoices.id='developer-cutscene-dialogue-reaction';emoteChoices.setAttribute('role','group');emoteChoices.setAttribute('aria-label','Reaction above the speaker');
+    const duration=el('label','dc-field');duration.append(el('span','','Reaction length (walking tiles)'));
+    reactionDuration=el('input');reactionDuration.id='developer-cutscene-dialogue-reaction-duration';reactionDuration.type='number';reactionDuration.min='1';reactionDuration.max='512';reactionDuration.step='1';
+    reactionDuration.addEventListener('input',()=>{durationBuffer={index:line.index,value:reactionDuration.value};markPending();});
+    reactionDuration.addEventListener('blur',event=>{if(element.contains(event.relatedTarget))flush();});duration.append(reactionDuration);
+    const cues=el('div','dc-field'),cueChoices=el('div','cse-chips');cues.append(el('span','','Background prop'),cueChoices);
+    cueChoices.id='developer-cutscene-dialogue-stage-cue';cueChoices.setAttribute('role','group');cueChoices.setAttribute('aria-label','Background prop');
+    function paint(){
+      const raw=beats()[line.index];
+      for(const choice of emoteChoices.children)choice.setAttribute('aria-pressed',String(choice.dataset.dialogueReaction===(raw?.reaction?.emote??'none')));
+      for(const choice of cueChoices.children)choice.setAttribute('aria-pressed',String(choice.dataset.dialogueStageCue===(raw?.stageCue??'none')));
+      reactionDuration.disabled=!raw?.reaction;reactionDuration.value=String(raw?.reaction?.durationTiles??14);
+    }
+    function change(patch){
+      if(!flush())return;
+      try{commit(updateDialogue(pinned(),line.index,patch));paint();}catch(reason){showError(reason);}
+    }
+    for(const [id,name]of [['none','None'],['surprise','Surprise'],['idea','Idea'],['question','Question'],['thinking','Thinking'],['happy','Happy']]){
+      const choice=button(name,null,()=>{if(!flush())return;const reaction=beats()[line.index]?.reaction;change({reaction:id==='none'?null:{...reaction,emote:id,durationTiles:reaction?.durationTiles??14}});});
+      choice.dataset.dialogueReaction=id;emoteChoices.append(choice);
+    }
+    for(const [id,name]of [['none','None'],['courier-signal','Bird then screen'],['radar','Radar screen']]){
+      const choice=button(name,null,()=>change({stageCue:id==='none'?null:id}));choice.dataset.dialogueStageCue=id;cueChoices.append(choice);
+    }
+    section.append(emotes,duration,cues);paint();return section;
   }
   function render(){refresh();renderList();renderDetail();}
   render();notify();
-  return{element,state,selectActor,selectClip,flush,updatePath(){return false;},get hasPending(){return !!buffer&&buffer.text!==beats()[buffer.index]?.text;},destroy(){if(destroyed)return;flush();destroyed=true;previewRevision++;}};
+  return{element,state,selectActor,selectClip,flush,updatePath(){return false;},get hasPending(){return hasPending();},destroy(){if(destroyed)return;flush();destroyed=true;previewRevision++;}};
 }

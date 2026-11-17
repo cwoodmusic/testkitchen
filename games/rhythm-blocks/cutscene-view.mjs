@@ -4,6 +4,8 @@ import {isWalkable,findPath} from './room.mjs';
 import {createJrpgDialogue} from './jrpg-dialogue.mjs';
 import {getNpcSpriteFrame} from './npc-sprites.mjs';
 import {getNpcForwardFall,PIP_FORWARD_FALL} from './npc-gestures.mjs';
+import {getDialogueReaction,getDialogueStageCue} from './dialogue-reactions.mjs';
+import {createDepotProps} from './depot-props.mjs';
 
 const freeze=value=>{if(value&&typeof value==='object'&&!Object.isFrozen(value)){Object.values(value).forEach(freeze);Object.freeze(value);}return value;};
 const clamp=(n,min,max)=>Math.max(min,Math.min(max,n));
@@ -11,7 +13,7 @@ const EMOTES={
  idea:{label:'An idea',color:'#ffda70',path:'M8 3h8v2h3v9h-3v3H8v-3H5V5h3zm1 16h6v2H9zM11 0h2v2h-2zM0 8h3v2H0zm21 0h3v2h-3zM2 1h2v2H2zm18 0h2v2h-2z'},
  question:{label:'A question',color:'#9be3ee',path:'M7 3h10v2h3v7h-3v2h-4v4H9v-7h6V7H9v2H5V5h2zm2 18h4v3H9z'},
  thinking:{label:'Thinking',color:'#e8d5f6',path:'M2 10h4v4H2zm8 0h4v4h-4zm8 0h4v4h-4z'},
- surprise:{label:'A discovery',color:'#ffc69a',path:'M9 1h6v15H9zm0 19h6v4H9z'},
+ surprise:{label:'Surprised',color:'#ffc69a',path:'M9 1h6v15H9zm0 19h6v4H9z'},
  happy:{label:'Delighted',color:'#c2ec9f',path:'M4 5h5v3H7v3H4zm11 0h5v6h-3V8h-2zM4 15h3v3h10v-3h3v5h-3v2H7v-2H4z'},
 };
 
@@ -99,6 +101,7 @@ export function createCutsceneView({root,map,panel,roomView,scene,project,beats,
  nextButton.disabled=preview;skipButton.textContent=preview?'Stop preview':'Skip';
  const style=(element,name,value)=>{let values=styleValues.get(element);if(!values){values=new Map();styleValues.set(element,values);}if(values.get(name)!==value){element.style[name]=value;values.set(name,value);}};
  const data=(element,name,value)=>{if(element.dataset[name]!==value)element.dataset[name]=value;};
+ const depotProps=createDepotProps({map,scene,reducedMotion:reduced,onReady:()=>{if(!disposed)paint();}});
  const entering=()=>!!entry&&!entry.state.finished;
  function entryInfo(){const state=entry?.state;return state?{currentTile:state.currentTile,totalTiles:state.totalTiles,elapsed:state.elapsed,quantumMs:state.quantumMs,fadeTiles:entry.timeline.fadeTiles,fadeOpacity:state.fadeOpacity,finished:state.finished,playing:state.playing}:null;}
  function snapshot(){
@@ -132,8 +135,12 @@ export function createCutsceneView({root,map,panel,roomView,scene,project,beats,
   if(!beat)dialogue.revealAll();
   dialogue.update(beat?state.manualDialogue?state.dialogueElapsed:Math.max(0,(state.currentTile-beat.startTile)*state.quantumMs):0);
   soundTrack?.sample(state,{visibleCharacters:dialogue.state.visibleCharacters,audible});
+  const speechReaction=getDialogueReaction(state);
+  depotProps.paint(state);
   for(const actor of state.actors){
    const element=actorElements.get(actor.id),definition=definitions.get(actor.id);
+   const reaction=speechReaction?.actorId===actor.id?speechReaction:null;
+   const emoteKind=reaction?.emote??actor.emote??(actor.id===id?beat?.emote:null);
    const gesture=getCutsceneGesturePose(actor,{reducedMotion:reduced});
    const sprite=element&&definition?getNpcSpriteFrame({project,actor:definition,pose:actor,elapsed:state.elapsed}):null;
    const forwardCandidate=definition?getNpcForwardFall({project,actor:definition,pose:actor,standingSprite:sprite}):null;
@@ -144,7 +151,7 @@ export function createCutsceneView({root,map,panel,roomView,scene,project,beats,
     if(spriteFrames.get(actor.id)!==spriteKey){spriteFrames.set(actor.id,spriteKey);style(element,'backgroundImage',`url(${JSON.stringify(sprite.image)})`);style(element,'backgroundSize',sprite.backgroundSize);style(element,'backgroundPosition',sprite.backgroundPosition);style(element,'aspectRatio',String(sprite.aspectRatio));}
     style(element,'transform',`translate3d(${actor.x-definition.feet.x}px,${actor.y-definition.feet.y}px,0) translate(${-sprite.anchor[0]*100}%,${-sprite.anchor[1]*100}%) rotate(${lean}deg)`);
     style(element,'transformOrigin',`${sprite.anchor[0]*100}% ${sprite.anchor[1]*100}%`);style(element,'zIndex',String(Math.round(actor.y)+1));
-    data(element,'moving',String(actor.moving));data(element,'action',actor.action??'');data(element,'facing',sprite.facing);data(element,'frame',String(sprite.frame));data(element,'spriteRow',String(sprite.row));data(element,'spriteAnimated',String(sprite.animated));data(element,'emote',actor.emote??'');
+    data(element,'moving',String(actor.moving));data(element,'action',actor.action??'');data(element,'facing',sprite.facing);data(element,'frame',String(sprite.frame));data(element,'spriteRow',String(sprite.row));data(element,'spriteAnimated',String(sprite.animated));data(element,'emote',emoteKind??'');data(element,'dialogueReaction',String(!!reaction));
     data(element,'gait',actor.gait??'walk');data(element,'gesture',gesture.gesture??'');data(element,'gestureProgress',String(Math.round(gesture.progress*10000)/10000));
     style(element,'opacity',forward?String(forward.standingOpacity):actorOpacity.get(actor.id)??'');
     data(element,'spriteMode',forward?'forward-fall':'standing');
@@ -190,7 +197,7 @@ export function createCutsceneView({root,map,panel,roomView,scene,project,beats,
     }
     if(picker)style(picker.element,'transform',`translate3d(${actor.x-picker.origin.x}px,${actor.y-picker.origin.y}px,0)`);
    }
-   const kind=actor.emote??(actor.id===id?beat?.emote:null),icon=EMOTES[kind];
+   const kind=emoteKind,icon=EMOTES[kind];
    let emote=emotes.get(actor.id);
    if(icon){
     const size=definition?.worldSize??project.player.worldSize;
@@ -201,15 +208,19 @@ export function createCutsceneView({root,map,panel,roomView,scene,project,beats,
      map.append(emote);emotes.set(actor.id,emote);
     }
     if(emote.dataset.cutsceneEmote!==kind){emote.dataset.cutsceneEmote=kind;emote.setAttribute('aria-label',icon.label);emote.innerHTML=`<svg viewBox="0 0 24 24" aria-hidden="true" shape-rendering="crispEdges"><path fill="${icon.color}" d="${icon.path}"/></svg>`;}
+    data(emote,'dialogueReaction',String(!!reaction));data(emote,'reactionElapsed',reaction?String(Math.round(reaction.elapsedMs)):'');data(emote,'reactionDuration',reaction?String(reaction.durationMs):'');
+    style(emote,'opacity',reaction&&!reduced?String(clamp((reaction.durationMs-reaction.elapsedMs)/200,0,1)):'1');
     const origin=emoteOrigins.get(actor.id);
     const radians=gesture.angle*Math.PI/180;
     const head=forward?{x:actor.x+forward.head.x,y:actor.y+forward.head.y-12}:{x:actor.x+Math.sin(radians)*size*.8,y:actor.y-Math.cos(radians)*size*.9};
     style(emote,'transform',`translate3d(${head.x-origin.x}px,${head.y-origin.y}px,0) translate(-50%,-100%)`);
     if(emote.hidden)emote.hidden=false;
-   }else if(emote&&!emote.hidden)emote.hidden=true;
+   }else if(emote){data(emote,'dialogueReaction','false');data(emote,'reactionElapsed','');data(emote,'reactionDuration','');if(!emote.hidden)emote.hidden=true;}
   }
   const player=state.actors.find(actor=>actor.id==='mira');
-  roomView.setCinematicFrame({focus:state.focus,player,playerVisual:getCutsceneGesturePose(player,{reducedMotion:reduced}),elapsed:state.elapsed,reservedBottom,deltaMs,snapCamera,reducedMotion:reduced});
+  const showCourier=getDialogueStageCue(state)?.cue==='courier-signal'&&scene.id==='depot'&&scene.image==='assets/parcel-depot.webp';
+  const focus=showCourier?{...state.focus,x:850}:state.focus;
+  roomView.setCinematicFrame({focus,player,playerVisual:getCutsceneGesturePose(player,{reducedMotion:reduced}),elapsed:state.elapsed,reservedBottom,deltaMs,snapCamera,reducedMotion:reduced});
   const silentManual=state.manualDialogue&&!beat;
   const disabled=preview||arrival||state.finished||state.nextPending||silentManual;
   if(nextButton.disabled!==disabled)nextButton.disabled=disabled;
@@ -230,7 +241,10 @@ export function createCutsceneView({root,map,panel,roomView,scene,project,beats,
   emit(state);
   if(state.finished&&!preview&&!finishing){finishing=true;queueMicrotask(()=>{if(!disposed)onFinish({state,skipped:false});});}
  }
- function schedule(state=snapshot()){if(!disposed&&!frame&&state.playing&&!state.finished&&!document.hidden&&!(state.manualDialogue&&state.phase==='story'&&state.currentTile>=state.totalTiles&&dialogue.state.complete))frame=requestAnimationFrame(tick);}
+ function schedule(state=snapshot()){
+  const waiting=state.manualDialogue&&state.phase==='story'&&state.currentTile>=state.totalTiles&&dialogue.state.complete;
+  if(!disposed&&!frame&&state.playing&&!state.finished&&!document.hidden&&(!waiting||getDialogueReaction(state)||depotProps.needsAnimation(state)))frame=requestAnimationFrame(tick);
+ }
  function tick(now){
   frame=0;if(disposed)return;const delta=last?Math.min(80,Math.max(0,now-last)):16;last=now;
   const transport=entering()?entry:timeline;
@@ -244,7 +258,7 @@ export function createCutsceneView({root,map,panel,roomView,scene,project,beats,
  function seek(value){soundTrack?.stop();entry?.skip();timeline.seek(value);last=0;paint(snapshot(),16,true);schedule();return publicState();}
  function setRate(value){rate=value===2?2:1;last=0;onRateChange(rate);paint();return publicState();}
  function skip(){if(disposed)return;soundTrack?.stop();entry?.skip();timeline.skip();onFinish({state:snapshot(),skipped:true});}
- function destroy(){if(disposed)return;disposed=true;soundTrack?.destroy();if(frame)cancelAnimationFrame(frame);frame=0;for(const remove of removers)remove();for(const emote of emotes.values())emote.remove();for(const prop of props.values())prop.element.remove();for(const fall of fallSprites.values())fall.element.remove();fallImage.onload=null;for(const [id,element]of actorElements)if(element){for(const name of ['gesture','gestureProgress','gait','spriteMode','forwardPose','headX','headY','footX','footY'])delete element.dataset[name];element.style.opacity=actorOpacity.get(id)??'';}hint.remove();fade.remove();dialogue.destroy();map.inert=wasInert;map.style.overflow=wasOverflow;roomView.setCinematicFrame(null);root.classList.remove('cutscene-playing','cutscene-preview');delete root.dataset.cutscenePhase;panel.classList.remove('cutscene-silent');delete panel.dataset.phase;delete panel.dataset.dialogueMode;delete panel.dataset.dialogueState;nextButton.removeAttribute('aria-label');panel.hidden=true;}
+ function destroy(){if(disposed)return;disposed=true;soundTrack?.destroy();depotProps.destroy();if(frame)cancelAnimationFrame(frame);frame=0;for(const remove of removers)remove();for(const emote of emotes.values())emote.remove();for(const prop of props.values())prop.element.remove();for(const fall of fallSprites.values())fall.element.remove();fallImage.onload=null;for(const [id,element]of actorElements)if(element){for(const name of ['gesture','gestureProgress','gait','spriteMode','forwardPose','headX','headY','footX','footY','dialogueReaction'])delete element.dataset[name];element.style.opacity=actorOpacity.get(id)??'';}hint.remove();fade.remove();dialogue.destroy();map.inert=wasInert;map.style.overflow=wasOverflow;roomView.setCinematicFrame(null);root.classList.remove('cutscene-playing','cutscene-preview');delete root.dataset.cutscenePhase;panel.classList.remove('cutscene-silent');delete panel.dataset.phase;delete panel.dataset.dialogueMode;delete panel.dataset.dialogueState;nextButton.removeAttribute('aria-label');panel.hidden=true;}
  function advance(){if(entering()||preview||!snapshot().beat)return;if(!dialogue.state.complete){dialogue.revealAll();paint();return;}timeline.next();last=0;paint();schedule();}
  listen(nextButton,'click',advance);listen(skipButton,'click',skip);
  listen(panel,'click',event=>{if(preview||event.target.closest('button,a,input,textarea,select,[contenteditable="true"]'))return;advance();});

@@ -43,17 +43,22 @@ export function getSceneDialogue({scene,beats=[]}={}){
  }));
 }
 
-/** Only text and speaker can be edited here. Lane ownership stays independent. */
+/** Speech edits leave lane ownership, physical clips and authored metadata independent. */
 export function updateDialogue(beats,index,patch={}){
  source(beats);
  if(!selected(beats,index))return beats;
- if(!patch||typeof patch!=='object'||Array.isArray(patch))throw new TypeError('A dialogue edit needs text or a speaker.');
- const hasText=Object.hasOwn(patch,'text'),hasSpeaker=Object.hasOwn(patch,'speaker');
+ if(!patch||typeof patch!=='object'||Array.isArray(patch))throw new TypeError('A dialogue edit needs a field patch.');
+ const hasText=Object.hasOwn(patch,'text'),hasSpeaker=Object.hasOwn(patch,'speaker'),hasReaction=Object.hasOwn(patch,'reaction'),hasStageCue=Object.hasOwn(patch,'stageCue');
  if(hasText&&typeof patch.text!=='string')throw new TypeError('Dialogue text must be a string.');
  if(hasText&&patch.text.length>MAX_TEXT)throw new RangeError(`A dialogue line can contain at most ${MAX_TEXT} characters.`);
  if(hasSpeaker&&typeof patch.speaker!=='string')throw new TypeError('A dialogue speaker must be a local character ID.');
+ if(hasReaction&&patch.reaction!==null){
+  if(!patch.reaction||typeof patch.reaction!=='object'||Array.isArray(patch.reaction)||!['surprise','idea','question','thinking','happy'].includes(patch.reaction.emote))throw new TypeError('Choose a supported dialogue reaction or null.');
+  if(!Number.isInteger(patch.reaction.durationTiles)||patch.reaction.durationTiles<1||patch.reaction.durationTiles>512)throw new RangeError('A reaction must last from 1 to 512 walking tiles.');
+ }
+ if(hasStageCue&&patch.stageCue!==null&&!['courier-signal','radar'].includes(patch.stageCue))throw new TypeError('Choose a supported stage cue or null.');
  const before=beats[index];
- if((!hasText||before.text===patch.text)&&(!hasSpeaker||before.speaker===patch.speaker))return beats;
+ if((!hasText||before.text===patch.text)&&(!hasSpeaker||before.speaker===patch.speaker)&&(!hasReaction||JSON.stringify(before.reaction)===JSON.stringify(patch.reaction))&&(!hasStageCue||before.stageCue===patch.stageCue))return beats;
  const result=clone(beats),line=result[index];
  if(hasText)line.text=patch.text;
  if(hasSpeaker){
@@ -61,6 +66,8 @@ export function updateDialogue(beats,index,patch={}){
   if(line.actor===undefined)line.actor=before.speaker;
   line.speaker=patch.speaker;
  }
+ if(hasReaction)line.reaction=clone(patch.reaction);
+ if(hasStageCue)line.stageCue=patch.stageCue;
  return result;
 }
 

@@ -601,6 +601,11 @@ function stage(roomId,{points,lines}){
  const dialogue=lines.map((text,index)=>{
   const durationTiles=Math.ceil(Math.max(3000,Math.min(5600,950+text.length*31))/quantum);
   const item={id:`${roomId}-arrival-${index+1}`,kind:'dialogue',actor:speakers[index],speaker:speakers[index],text,startTile:cursor,durationTiles};
+  if(roomId==='depot'){
+   if(index===1){item.reaction={emote:'surprise',durationTiles:14};item.stageCue='courier-signal';}
+   else if(index===3)item.stageCue='radar';
+   else if(index===5)item.stageCue='courier-signal';
+  }
   cursor+=durationTiles;return item;
  });
  const magnifyStart=iris.startTile+iris.movementTiles;

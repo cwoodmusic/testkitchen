@@ -5,6 +5,7 @@ import {CAMPAIGN_CONTENT} from './campaign-content.mjs';
 import {CAMPAIGN_SCENES} from './campaign-scenes.mjs';
 import {ROOM_CUTSCENES} from './cutscene-content.mjs';
 import {upgradeStockGagDialogue} from './dialogue-updates.mjs';
+import {upgradeStockDepotDialogueEffects} from './dialogue-reactions.mjs';
 import {separateCutsceneTracks} from './cutscene.mjs';
 import {CAST,CAST_IMAGE} from './cast.mjs';
 import {MIRA} from './mira.mjs';
@@ -21,6 +22,7 @@ const CUTSCENE_EMOTES=new Set(['idea','question','thinking','surprise','happy'])
 const CUTSCENE_KINDS=new Set(['walk','dialogue','emote','gesture']);
 const CUTSCENE_GESTURES=new Set(['magnify','trip','fallen','recover']);
 const CUTSCENE_GAITS=new Set(['walk','run']);
+const CUTSCENE_STAGE_CUES=new Set(['courier-signal','radar']);
 const own=(value,key)=>Object.hasOwn(value,key);
 const asArray=value=>Array.isArray(value)?value:[];
 const record=value=>value!==null&&typeof value==='object'&&!Array.isArray(value)&&[Object.prototype,null].includes(Object.getPrototypeOf(value));
@@ -242,6 +244,20 @@ export function validateProject(project){
     }
     if(beat.action!==undefined&&!CUTSCENE_ACTIONS.has(beat.action))fail(`${beatPath}.action`,'choose look, search, examine or listen.');
     if(beat.emote!==undefined&&!CUTSCENE_EMOTES.has(beat.emote))fail(`${beatPath}.emote`,'choose idea, question, thinking, surprise or happy.');
+    if(own(beat,'reaction')){
+     if(beat.kind!=='dialogue')fail(`${beatPath}.reaction`,'put a speaking reaction on its dialogue clip.');
+     if(beat.reaction!==null){
+      if(!record(beat.reaction))fail(`${beatPath}.reaction`,'use a speaking reaction or null to turn it off.');
+      else{
+       if(!CUTSCENE_EMOTES.has(beat.reaction.emote))fail(`${beatPath}.reaction.emote`,'choose idea, question, thinking, surprise or happy.');
+       number(beat.reaction.durationTiles,`${beatPath}.reaction.durationTiles`,1,512,{integer:true});
+      }
+     }
+    }
+    if(own(beat,'stageCue')){
+     if(beat.kind!=='dialogue')fail(`${beatPath}.stageCue`,'put a stage animation on its dialogue clip.');
+     if(beat.stageCue!==null&&!CUTSCENE_STAGE_CUES.has(beat.stageCue))fail(`${beatPath}.stageCue`,'choose courier-signal, radar or null to turn it off.');
+    }
     if(beat.gait!==undefined){
      if(!CUTSCENE_GAITS.has(beat.gait))fail(`${beatPath}.gait`,'choose walk or run.');
      if(beat.kind!==undefined&&beat.kind!=='walk')fail(`${beatPath}.gait`,'put walking pace in its own walk clip.');
@@ -483,7 +499,7 @@ export function upgradeLegacyProject(value){
 
 /** Accept only JSON data and derive timing from the edited integer half-beat units. */
 export function normalizeProject(value){
- const candidate=upgradeStockGagDialogue(upgradeRoomCutscenes(upgradeLegacyProject(value))),result=validateProject(candidate);
+ const candidate=upgradeStockDepotDialogueEffects(upgradeStockGagDialogue(upgradeRoomCutscenes(upgradeLegacyProject(value)))),result=validateProject(candidate);
  if(!result.valid)throw new TypeError(result.errors.join('\n'));
  const project=clone(candidate);
  let separated=false;
