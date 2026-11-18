@@ -14,7 +14,7 @@ export const PEOPLE = Object.freeze([
     goal: "Find out who brought the letter back and help the mail reach the islands again.",
     story: "Mira, eyes on the letter for a second. I run this post office, but we haven’t had a reply signal since the bell stopped. Somehow, this letter came back with warm wax. Take my note bag for the route doors. There are eight tiles inside, and the half note’s in that chest.",
     route: "Choose the blue canal door. You’ll need a half note, a quarter note, then paired eighths. That’s four beats: two, one, one. Get the half note from the chest first.",
-    inventory: "There are eight tiles in my note bag and one more in the chest: a half note. You can collect each gift or chest once. A door only uses the tiles in its key, so we’ll keep the rest in the bag.",
+    inventory: "There are eight tiles in my bag and a half note in the chest. Collect each supply once. A correct door key spends its notes for this run, so plan ahead. Wrong guesses cost nothing. If we run out, we start again, but our journal keeps the clues.",
     demo: ['half', 'quarter', 'eighth-pair'],
   },
   {
@@ -24,7 +24,7 @@ export const PEOPLE = Object.freeze([
     goal: "Get water flowing through the garden pipes and hear from her friend again.",
     story: "My friend lives on another island, and we used to play music together. Her messages stopped when the bell went quiet. I’ve kept her cup ready for our next visit. The garden pipes need help too. The plants are still waiting for water.",
     route: "Choose the garden door covered in ivy. You’ll need a half note, then a half rest. Hold the sound for two beats, and leave the next two beats silent. The order matters.",
-    inventory: "A rest means silence. A quarter rest lasts one beat, and a half rest lasts two. A dotted half note lasts three beats. Keep the tiles a door doesn’t need. We’ll use them later.",
+    inventory: "A rest means silence. A quarter rest lasts one beat, a half rest lasts two, and a dotted half note lasts three. Keep the tiles a door doesn’t need. Paid notes don’t come back, and later locks may need those exact kinds.",
     demo: ['half', 'half-rest'],
   },
   {

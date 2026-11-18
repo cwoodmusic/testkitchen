@@ -239,9 +239,19 @@ function makeScene(location){
   targets.push({id:entry.id,type:'inspect',label:actionLabel,...target,...binding});
   if(slot.base)obstacles.push({id:`${entry.id}-base`,...slot.base});
  }
- const returnLabel=terminal?'Revisit this choice':'Revisit the previous room';
- objects.push(object('return-previous','return',returnLabel,rect(680,920,176,90),{actionLabel:returnLabel}));
- targets.push({id:'return-previous',type:'return',label:returnLabel,x:768,y:960,approach:{x:768,y:910},range:85});
+ const southGates={'dead-brambles':'bramble-return-gate','dead-aviary':'aviary-return-gate','dead-echo':'echo-return-gate'};
+ const southGate=location.doors?.find(door=>door.id===southGates[location.id]);
+ if(southGate){
+  const northObject=objects.findIndex(item=>item.id===southGate.id),northTarget=targets.findIndex(item=>item.id===southGate.id);
+  if(northObject>=0)objects.splice(northObject,1);
+  if(northTarget>=0)targets.splice(northTarget,1);
+  objects.push(object(southGate.id,'door',southGate.label,rect(680,920,176,90),{doorId:southGate.id,actionLabel:`Open ${southGate.label.toLowerCase()}`}));
+  targets.push({id:southGate.id,type:'door',label:`Open ${southGate.label.toLowerCase()}`,x:768,y:960,approach:{x:768,y:910},range:85});
+ }else{
+  const returnLabel='Review your journey';
+  objects.push(object('return-previous','return',returnLabel,rect(680,920,176,90),{actionLabel:returnLabel}));
+  targets.push({id:'return-previous',type:'return',label:returnLabel,x:768,y:960,approach:{x:768,y:910},range:85});
+ }
  obstacles.push(...(fit.obstacles??[]).filter(obstacle=>!layout?.removeObstacles?.includes(obstacle.id)),...(layout?.obstacles??[]));
  return {
   id:location.id,title:location.title,kind:location.kind??'room',image:`assets/rooms/${location.id}${layout?'-layout':''}.webp`,actors,...(layout?{layoutRevision:ROOM_LAYOUT_REVISION,layoutKind:layout.kind}:{}),

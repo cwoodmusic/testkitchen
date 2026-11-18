@@ -249,9 +249,9 @@ test('the released campaign catalog covers all rooms, routes, hints and outcomes
   assert.deepEqual(source.edges, Object.values(CHAPTER_DOORS).map(door => ({
     id: door.canonicalId, from: door.from, to: door.to,
   })));
-  assert.equal(source.edges.length, 22);
+  assert.equal(source.edges.length, 25);
   assert.deepEqual(source.outcomes.map(outcome => outcome.id), Object.keys(CHAPTER_TERMINALS));
-  assert.equal(source.hints.length, 141);
+  assert.equal(source.hints.length, 147);
   for (const hint of PARTY_ROUTE_HINTS) assert.equal(source.hints.find(entry => entry.id === hint.id).text, hint.text);
   for (const hint of OPENING_JOURNEY_MANIFEST.hints) assert.equal(source.hints.find(entry => entry.id === hint.id).text, hint.text);
   for (const observation of CAMPAIGN_LORE) {
@@ -313,8 +313,9 @@ test('only an explicitly observed dead end enters outcomes and survives a reload
   assert.deepEqual(next.state, first.state);
   next.traverse('depot-garden');
   next.traverse('garden-porch-dead');
-  next.recordOutcome('dead-brambles');
-  assert.deepEqual(next.serialize().outcomes, ['dead-brambles', 'dead-ferry']);
+  assert.equal(next.recordOutcome('dead-brambles'), false, 'The old bramble ending is now a paid detour, not a completed outcome.');
+  assert(next.state.nodes.some(node => node.id === 'dead-brambles'));
+  assert.deepEqual(next.serialize().outcomes, ['dead-ferry']);
   assert.deepEqual(first.serialize().outcomes, ['dead-ferry']);
   assert.equal(next.state.nodes.some(node => node.id === 'dead-aviary'), false);
 });
@@ -360,8 +361,8 @@ test('observing every shipped room, route and outcome completes the released cam
   source.hints.forEach(hint => journey.discoverHint(hint.id));
   source.outcomes.forEach(outcome => journey.recordOutcome(outcome.id));
   assert.equal(journey.state.nodes.length, 23);
-  assert.equal(journey.state.edges.length, 22);
-  assert.equal(journey.state.outcomes.length, 9);
+  assert.equal(journey.state.edges.length, 25);
+  assert.equal(journey.state.outcomes.length, 6);
   assert.equal(journey.complete, true);
   assert.deepEqual(journey.state.achievements, [{id:'complete-score',title:'The Complete Score'}]);
   assert.equal(createJourney({manifest: source, saved: journey.serialize()}).complete, true);
@@ -384,4 +385,17 @@ test('companion conversations preserve only learned route clues across reloads',
   assert.deepEqual(restored.state, journey.state);
   assert.equal(restored.state.hints.length, 3);
   assert(restored.state.hints.every(hint => hint.id.startsWith('canal-porch-')));
+});
+
+test('earlier dead-end discoveries remain learned rooms while new paid exits stay hidden',()=>{
+ const journey=createJourney({manifest:CHAPTER_JOURNEY_MANIFEST,saved:{version:1,nodes:['depot','garden-porch','dead-brambles'],edges:['depot-garden','garden-porch-dead'],hints:['lore-dead-brambles-memory'],outcomes:['dead-brambles']}});
+ assert(journey.state.nodes.some(node=>node.id==='dead-brambles'));
+ assert(journey.state.hints.some(hint=>hint.id==='lore-dead-brambles-memory'));
+ assert(journey.state.edges.some(edge=>edge.id==='garden-porch-dead'));
+ assert(!journey.state.edges.some(edge=>edge.id==='bramble-return-gate'));
+ assert(!journey.state.outcomes.some(outcome=>outcome.id==='dead-brambles'));
+ const chart=structuredClone({nodes:journey.state.nodes,edges:journey.state.edges,outcomes:journey.state.outcomes});
+ assert(journey.discoverHint('lesson-paid-doors'));assert(journey.discoverHint('lesson-garden-secret-final'));
+ assert.deepEqual({nodes:journey.state.nodes,edges:journey.state.edges,outcomes:journey.state.outcomes},chart,'Learning a failure lesson reveals no unvisited place or route.');
+ assert.deepEqual(createJourney({manifest:CHAPTER_JOURNEY_MANIFEST,saved:journey.serialize()}).state,journey.state);
 });

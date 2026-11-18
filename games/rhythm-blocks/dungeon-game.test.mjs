@@ -13,6 +13,7 @@ const collect=game=>{assert.equal(game.claim('nell-parcel'),true);assert.equal(g
 const fill=(game,recipe)=>{for(const kind of recipe)assert.equal(game.add(kind),true,kind);return game;};
 const pay=(game,id)=>{assert.equal(game.selectDoor(id),true);fill(game,getChapterDoor(id).recipe);assert.equal(game.commit(),true);return game;};
 const enter=id=>pay(collect(createDungeonGame()),id);
+const enterClassic=id=>pay(collect(createDungeonGame({definition:definition(),terminalRooms:true})),id);
 const sourceFor=id=>CHAPTER_ROOMS[id+'-porch'].sources[0];
 const copy=value=>structuredClone(value);
 function assertConserved(game){
@@ -30,8 +31,8 @@ function assertConserved(game){
 test('the shipped catalog contains every verified room, source, ordered key and outcome',()=>{
  const plan=JSON.parse(readFileSync(new URL('../../design/music-puzzler/dungeon.json',import.meta.url),'utf8'));
  assert.deepEqual(Object.keys(CHAPTER_ROOMS),plan.rooms.map(room=>room.id));
- assert.equal(Object.keys(CHAPTER_SOURCES).length,7);assert.equal(Object.keys(CHAPTER_DOORS).length,22);
- assert.equal(Object.keys(CHAPTER_PREVIEWS).length,0);assert.equal(Object.keys(CHAPTER_TERMINALS).length,9);
+ assert.equal(Object.keys(CHAPTER_SOURCES).length,7);assert.equal(Object.keys(CHAPTER_DOORS).length,plan.expectedCounts.doors);
+ assert.equal(Object.keys(CHAPTER_PREVIEWS).length,0);assert.equal(Object.keys(CHAPTER_TERMINALS).length,plan.expectedCounts.terminals);
  for(const room of Object.values(CHAPTER_ROOMS)){
   const designed=plan.rooms.find(item=>item.id===room.id);assert.equal(room.title,designed.title);
   assert.deepEqual(room.sources,designed.sources.map(source=>source.id));
@@ -81,11 +82,16 @@ test('each porch requires its explicit gift for its exact forward key, then ente
  }
 });
 
-test('each porch dead end is real, conserves its exact cost and grants no completion notes',()=>{
+test('each risky porch choice spends only its exact cost and grants no arrival notes',()=>{
  for(const id of branchIds)for(const claim of [false,true]){
   const game=enter(id);if(claim)game.claim(sourceFor(id));const stock=game.state.inventory;
   pay(game,id+'-porch-dead');const state=game.state,after={...stock};for(const kind of getChapterDoor(id+'-porch-dead').recipe)after[kind]--;
-  assert.equal(state.phase,'terminal');assert.equal(state.roomId,getChapterDoor(id+'-porch-dead').to);assert.equal(state.previewKind,'dead-end');assert.equal(state.nextScene.kind,'dead-end');assert.match(state.nextScene.repair,/^Return\b/);assert.deepEqual(state.inventory,after);assert.equal(total(state.inventory),claim?16:8);assert.deepEqual(state.creditedStages,[]);assertConserved(game);
+  const terminal=Object.hasOwn(CHAPTER_TERMINALS,state.roomId);
+  assert.equal(state.phase,terminal?'terminal':'room');assert.equal(state.roomId,getChapterDoor(id+'-porch-dead').to);
+  assert.equal(state.previewKind,terminal?'dead-end':null);
+  if(terminal){assert.equal(state.nextScene.kind,'dead-end');assert.equal(state.runStatus,'failed');assert.equal(state.failure.reason,'dead-end');}
+  else assert.equal(state.nextScene,null);
+  assert.deepEqual(state.inventory,after);assert.equal(total(state.inventory),claim?16:8);assert.deepEqual(state.creditedStages,[]);assertConserved(game);
  }
 });
 
@@ -100,24 +106,24 @@ test('equal totals and reversed order never spend; fractional draft editing cons
  for(const args of [[-1,1],[0,-1],[2,1],[0,0],[0,99],[.5,1],[0,.5]])assert.equal(game.move(...args),false);
 });
 
-test('revisiting an entered fork or outcome returns its paid notes and retains the earlier once-only porch gift',()=>{
+test('classic custom mode can revisit a paid room while retaining its earlier once-only gift',()=>{
  for(const id of branchIds)for(const suffix of ['forward','dead']){
-  const game=enter(id);game.claim(sourceFor(id));const before=game.state.inventory;pay(game,id+'-porch-'+suffix);
+  const game=enterClassic(id);game.claim(sourceFor(id));const before=game.state.inventory;pay(game,id+'-porch-'+suffix);
   assert.equal(game.revisit(),true);assert.equal(game.state.phase,'room');assert.equal(game.state.roomId,id+'-porch');assert.deepEqual(game.state.inventory,before);assert.equal(game.state.selectedDoor,id+'-porch-'+suffix);assert(game.state.claimedSources.includes(sourceFor(id)));assert.equal(game.claim(sourceFor(id)),false);assert.equal(game.undo(),false);
   for(let cycle=0;cycle<3;cycle++){pay(game,id+'-porch-'+suffix);assert.equal(game.revisit(),true);assert.deepEqual(game.state.inventory,before);assertConserved(game);}
  }
 });
 
-test('rewinding an entered room atomically refunds entry and removes its gift and draft',()=>{
+test('classic custom mode atomically rewinds entry and its later gift and draft',()=>{
  for(const id of branchIds){
-  const game=enter(id);game.claim(sourceFor(id));fill(game,['eighth','sixteenth-pair']);
+  const game=enterClassic(id);game.claim(sourceFor(id));fill(game,['eighth','sixteenth-pair']);
   assert.equal(game.rewindRoom(),true);assert.equal(game.state.roomId,'depot');assert.equal(game.state.phase,'room');assert.deepEqual(game.state.inventory,full());assert.deepEqual(game.state.phrase,[]);assert.deepEqual(game.state.claimedSources,['nell-parcel','depot-chest']);assert.equal(game.state.selectedDoor,id);assert.equal(game.state.receipt,null);assert.deepEqual(game.state.discoveredRoutes,[id]);assertConserved(game);
   const next=branchIds.find(other=>other!==id);pay(game,next);assert.equal(game.claim(sourceFor(id)),false);assert.equal(total(game.state.inventory),16);assert.equal(game.claim(sourceFor(next)),true);assert.deepEqual(game.state.inventory,full());assertConserved(game);
  }
 });
 
-test('repeated cross-branch rewinds cannot farm notes; a restart preserves only route discovery',()=>{
- const game=collect(createDungeonGame());for(let cycle=0;cycle<4;cycle++)for(const id of branchIds){pay(game,id);game.claim(sourceFor(id));assert.deepEqual(game.state.inventory,full());assert.equal(game.revisit(),true);assert.deepEqual(game.state.inventory,full());}
+test('classic cross-branch rewinds cannot farm notes; restart preserves only route discovery',()=>{
+ const game=collect(createDungeonGame({definition:definition(),terminalRooms:true}));for(let cycle=0;cycle<4;cycle++)for(const id of branchIds){pay(game,id);game.claim(sourceFor(id));assert.deepEqual(game.state.inventory,full());assert.equal(game.revisit(),true);assert.deepEqual(game.state.inventory,full());}
  assert.deepEqual(game.state.discoveredRoutes,branchIds);assert.equal(game.revisit(),false);assert.equal(game.restart(),true);assert.deepEqual(game.state.inventory,empty());assert.deepEqual(game.state.discoveredRoutes,branchIds);assert.deepEqual(game.state.claimedSources,[]);assert.equal(game.state.canRevisit,false);
 });
 
@@ -182,10 +188,10 @@ test('state, receipts and catalogs are frozen snapshots while serialized drafts 
  const saved=game.serialize();saved.actions[0].sourceId='canal-chest';saved.phrase.push('half');saved.discoveredRoutes.push('garden');assert.deepEqual(game.state,state);
 });
 
-const definition=()=>({
- settings:{startRoomId:'depot',initialInventory:empty()},noteKinds:copy(NOTE_KINDS),
+function definition({replayRisk=false}={}){return{
+ settings:{startRoomId:'depot',initialInventory:empty(),replayRisk},noteKinds:copy(NOTE_KINDS),
  rooms:copy(CHAPTER_ROOMS),doors:copy(CHAPTER_DOORS),sources:copy(CHAPTER_SOURCES),previews:copy(CHAPTER_PREVIEWS),terminals:copy(CHAPTER_TERMINALS)
-});
+};}
 const payDefined=(game,project,id)=>{assert.equal(game.selectDoor(id),true);fill(game,project.doors[id].recipe);assert.equal(game.commit(),true);return game;};
 
 test('an authored key uses its own ordered duration rather than the shipped four-beat target',()=>{
@@ -264,7 +270,7 @@ test('developer source reset clears only receipts and flags so test inventory re
 });
 
 test('developer teleports can leave boundaries and rewind without awarding traversal or arrival supplies',()=>{
- const project=definition();project.doors['garden-porch-forward'].to='dead-brambles';const game=createDungeonGame({definition:project,developer:true});game.developerSetInventory(full());payDefined(game,project,'garden');game.claim('iris-gift');payDefined(game,project,'garden-porch-forward');
+ const project=definition();project.doors['garden-porch-forward'].to='dead-ferry';const game=createDungeonGame({definition:project,developer:true});game.developerSetInventory(full());payDefined(game,project,'garden');game.claim('iris-gift');payDefined(game,project,'garden-porch-forward');
  const before=game.state.inventory;assert.equal(game.state.phase,'continued');assert.equal(game.developerTeleport('workshop-porch'),true);assert.equal(game.state.phase,'room');assert.equal(game.state.roomId,'workshop-porch');assert.deepEqual(game.state.inventory,before);assert.equal(game.state.lastTransition,null);assert.equal(game.state.nextScene,null);assert.equal(game.state.receipt,null);
  assert.deepEqual(game.state.traversedDoors,['depot-garden','garden-porch-forward']);assert.equal(game.revisit(),true);assert.equal(game.state.phase,'continued');assert.equal(game.state.roomId,'garden-porch');assert.deepEqual(game.state.inventory,before);assert.equal(game.state.selectedDoor,'garden-porch-forward');
  assert.deepEqual(createDungeonGame({definition:project,developer:true,saved:game.serialize()}).state,game.state);
@@ -272,7 +278,7 @@ test('developer teleports can leave boundaries and rewind without awarding trave
 });
 
 test('undo of a boundary discards later developer edits while retaining the prior paid-room source',()=>{
- const project=definition();project.doors['garden-porch-forward'].to='dead-brambles';const game=createDungeonGame({definition:project,developer:true});collect(game);payDefined(game,project,'garden');game.claim('iris-gift');const stock=game.state.inventory;payDefined(game,project,'garden-porch-forward');
+ const project=definition();project.doors['garden-porch-forward'].to='dead-ferry';const game=createDungeonGame({definition:project,developer:true});collect(game);payDefined(game,project,'garden');game.claim('iris-gift');const stock=game.state.inventory;payDefined(game,project,'garden-porch-forward');
  game.developerSetInventory({quarter:99});game.developerResetSources('iris-gift');assert.equal(game.state.phase,'continued');assert.equal(game.state.inventory.quarter,99);assert(!game.state.claimedSources.includes('iris-gift'));
  assert.deepEqual(createDungeonGame({definition:project,developer:true,saved:game.serialize()}).state,game.state);
  assert.equal(game.undo(),true);assert.equal(game.state.phase,'room');assert.deepEqual(game.state.inventory,stock);assert(game.state.claimedSources.includes('iris-gift'));assert.equal(game.claim('iris-gift'),false);
@@ -308,8 +314,8 @@ test('custom transaction histories stop at 512 without partially applying the ne
  assert.equal(game.restart(),true);assert.deepEqual(game.state.actions,[]);assert.equal(game.developerTeleport('canal-porch'),true);
 });
 
-test('every authored pickup order and route reaches the complete verified campaign with typed conservation',()=>{
- const locations=new Set(),doorIds=new Set(),sourceIds=new Set(),states=new Set(),transitions=new Set(),outcomes=new Map();let histories=0;
+test('every pickup order and route reaches a success or authored failure with typed conservation',()=>{
+ const locations=new Set(),doorIds=new Set(),sourceIds=new Set(),states=new Set(),transitions=new Set(),outcomes=new Map(),failures=new Map();let histories=0;
  const key=state=>JSON.stringify([state.roomId,state.phase,state.inventory,[...state.claimedSources].sort()]);
  function explore(game){
   const state=game.state,from=key(state);states.add(from);locations.add(state.roomId);assertConserved(game);
@@ -319,6 +325,12 @@ test('every authored pickup order and route reaches the complete verified campai
    assert.equal(state.nextScene.id,state.roomId);assert.equal(state.isTerminal,true);
    assert.deepEqual(state.revealedDoors,[]);assert.equal(game.claim('nell-parcel'),false);assert.equal(game.selectDoor('garden'),false);assert.equal(game.add('quarter'),false);
    if(state.nextScene.kind!=='dead-end')assert.deepEqual(state.inventory,empty(),'Every successful ending spends every note kind.');
+   return;
+  }
+  if(state.runStatus==='failed'){
+   histories++;failures.set(state.roomId,state.failure.reason);
+   assert.equal(state.phase,'room');assert.equal(state.canAttempt,false);assert.equal(state.canCommit,false);assert.equal(state.canRevisit,false);
+   assert.equal(game.revisit(),false);assert.equal(game.rewindRoom(),false);assert.deepEqual(game.state,state,'A failed run cannot refund its path.');
    return;
   }
   assert.equal(state.phase,'room');let choices=0;
@@ -335,9 +347,10 @@ test('every authored pickup order and route reaches the complete verified campai
   assert(choices>0,`No unintended dead end at ${state.roomId}.`);
  }
  explore(createDungeonGame());
- assert.equal(locations.size,23);assert.equal(doorIds.size,22);assert.equal(sourceIds.size,7);assert.equal(outcomes.size,9);
- assert.equal(histories,24);assert.equal(states.size,34);assert.equal(transitions.size,34);
+ assert.equal(locations.size,23);assert.equal(doorIds.size,25);assert.equal(sourceIds.size,7);assert.equal(outcomes.size,6);
+ assert.equal(histories,24);assert.equal(states.size,43);assert.equal(transitions.size,43);
  assert.deepEqual(new Set(outcomes.keys()),new Set(Object.keys(CHAPTER_TERMINALS)));
+ assert.deepEqual(failures,new Map([['garden-secret-final','out-of-notes'],['dead-brambles','missing-note-types'],['workshop-secret-final','out-of-notes'],['dead-aviary','missing-note-types'],['canal-final','out-of-notes']]));
 });
 
 test('hidden caches reveal only their own gates and cannot be bypassed with an affordable forged answer',()=>{
@@ -356,9 +369,9 @@ test('hidden caches reveal only their own gates and cannot be bypassed with an a
  }
 });
 
-test('rewinding a secret detour removes its cache and reveal atomically without leaking notes onto another path',()=>{
+test('classic custom secret rewinds remove cache and reveal atomically without farming notes',()=>{
  for(const branch of ['garden','workshop']){
-  const game=enter(branch);game.claim(sourceFor(branch));pay(game,branch+'-porch-forward');const forkStock=game.state.inventory;
+  const game=enterClassic(branch);game.claim(sourceFor(branch));pay(game,branch+'-porch-forward');const forkStock=game.state.inventory;
   pay(game,branch+'-secret-branch');const source=branch+'-hidden-notes';assert.equal(game.claim(source),true);pay(game,branch+'-hidden-exit');
   assert.equal(game.revisit(),true);assert.equal(game.state.roomId,branch+'-alcove');assert(game.state.claimedSources.includes(source));
   assert.equal(game.revisit(),true);assert.equal(game.state.roomId,branch+'-fork');assert(!game.state.claimedSources.includes(source));assert.deepEqual(game.state.inventory,forkStock);assertConserved(game);
@@ -366,10 +379,10 @@ test('rewinding a secret detour removes its cache and reveal atomically without 
  }
 });
 
-test('terminal scenes are actual saved locations and revisiting refunds only the last paid answer',()=>{
- const game=enter('canal');game.claim('canal-chest');pay(game,'canal-porch-forward');pay(game,'canal-normal');const before=game.state.inventory;pay(game,'canal-ending');
+test('classic custom terminal scenes are saved locations and refund only the last paid answer',()=>{
+ const project=definition(),game=enterClassic('canal');game.claim('canal-chest');pay(game,'canal-porch-forward');pay(game,'canal-normal');const before=game.state.inventory;pay(game,'canal-ending');
  assert.equal(game.state.roomId,'ending-public');assert.equal(game.state.phase,'terminal');assert.equal(game.state.selectedDoor,null);assert.equal(game.state.currentScene.kind,'ending');assert.equal(game.state.canRevisit,true);
- assert.deepEqual(createDungeonGame({saved:game.serialize()}).state,game.state);
+ assert.deepEqual(createDungeonGame({definition:project,terminalRooms:true,saved:game.serialize()}).state,game.state);
  assert.equal(game.undo(),true);assert.equal(game.state.roomId,'canal-final');assert.equal(game.state.phase,'room');assert.deepEqual(game.state.inventory,before);assert.equal(game.state.selectedDoor,'canal-ending');
  pay(game,'canal-ending');assert.deepEqual(game.state.inventory,empty());assert.equal(game.revisit(),true);assert.deepEqual(game.state.inventory,before);
 });
@@ -416,7 +429,7 @@ const legacyRestFirstKeys={
 };
 
 test('all published locks sound on beat one and changed orders preserve every typed note cost',()=>{
- assert.equal(Object.keys(CHAPTER_DOORS).length,22);
+ assert.equal(Object.keys(CHAPTER_DOORS).length,25);
  for(const door of Object.values(CHAPTER_DOORS))assert.equal(NOTE_KIND_BY_ID[door.recipe[0]].rest,false,door.canonicalId);
  for(const [id,oldKey]of Object.entries(legacyRestFirstKeys)){
   const current=getChapterDoor(id).recipe;
@@ -424,15 +437,16 @@ test('all published locks sound on beat one and changed orders preserve every ty
   assert.notDeepEqual(current,oldKey);
  }
  const proof=JSON.parse(readFileSync(new URL('../../design/music-puzzler/dungeon-verification.json',import.meta.url),'utf8'));
- assert.equal(proof.passed,true);assert.equal(proof.graph.orderedTerminalHistories,'24');
+ assert.equal(proof.passed,true);assert.equal(proof.graph.orderedRunHistories,'24');assert.equal(proof.graph.orderedRunFailureHistories,'10');
  assert.equal(proof.balances.violationCount,0);assert.equal(proof.softlocks.count,0);
+ assert.equal(proof.runFailures.zeroNoteCount,3);assert.equal(proof.runFailures.missingTypeCount,2);
  for(const terminal of proof.terminals.filter(item=>item.kind!=='dead-end'))assert.deepEqual(terminal.remainingTiles,{min:0,max:0});
 });
 
 test('every old paid route restores through exact legacy receipts without changing supplies or outcomes',()=>{
  const proof=JSON.parse(readFileSync(new URL('../../design/music-puzzler/dungeon-verification.json',import.meta.url),'utf8'));
  const migrated=new Set();
- for(const terminal of proof.terminals){
+ for(const terminal of [...proof.terminals,...(proof.runFailures?.states??[])]){
   const game=createDungeonGame();
   for(const action of terminal.witness.actions){
    if(action.type==='claim')assert.equal(game.claim(action.sourceId),true);
@@ -442,8 +456,8 @@ test('every old paid route restores through exact legacy receipts without changi
   for(const action of saved.actions)if(action.type==='door'&&legacyRestFirstKeys[action.doorId]){action.recipe=[...legacyRestFirstKeys[action.doorId]];migrated.add(action.doorId);}
   const before=JSON.stringify(saved),restored=createDungeonGame({saved});
   assert.equal(JSON.stringify(saved),before,'Migration leaves the supplied save untouched.');
-  assert.deepEqual(restored.state,game.state,terminal.id);assert.deepEqual(restored.serialize(),game.serialize());assertConserved(restored);
-  assert.equal(restored.revisit(),true);assertConserved(restored);
+  assert.deepEqual(restored.state,game.state,terminal.id??terminal.nodeId);assert.deepEqual(restored.serialize(),game.serialize());assertConserved(restored);
+  assert.equal(restored.revisit(),false);assertConserved(restored);
   const returned=createDungeonGame({saved:restored.serialize()});assert.deepEqual(returned.state,restored.state);
  }
  assert.deepEqual(migrated,new Set(Object.keys(legacyRestFirstKeys)));
@@ -458,4 +472,111 @@ test('legacy orders are not new live answers and do not override custom authored
  assert.deepEqual(createDungeonGame({saved:custom.serialize(),definition:project}).state,custom.state,'A saved custom key keeps its exact authored order.');
  const builtin=collect(createDungeonGame());pay(builtin,'garden');
  assert.deepEqual(createDungeonGame({saved:builtin.serialize(),definition:project}).state.actions,[],'Normal legacy exceptions cannot weaken custom definition validation.');
+});
+
+test('replay risk defaults on for the shipped game and is an explicit custom-project choice',()=>{
+ const shipped=createDungeonGame();assert.equal(shipped.state.replayRisk,true);assert.equal(shipped.state.runStatus,'active');assert.equal(shipped.state.failure,null);
+ const project=definition();delete project.settings.replayRisk;
+ assert.equal(createDungeonGame({definition:project}).state.replayRisk,false);
+ project.settings.replayRisk=false;assert.equal(createDungeonGame({definition:project}).state.replayRisk,false);
+ project.settings.replayRisk=true;assert.equal(createDungeonGame({definition:project}).state.replayRisk,true);
+ for(const value of [null,'true',0,1,{},[]]){project.settings.replayRisk=value;assert.throws(()=>createDungeonGame({definition:project}),TypeError);}
+});
+
+test('empty or wrong-type bags fail locally while the room remains available for learning',()=>{
+ for(const inventory of [empty(),{quarter:4}]){
+  const project=definition({replayRisk:true});project.settings.startRoomId='garden-final';project.settings.initialInventory=inventory;
+  const game=createDungeonGame({definition:project}),state=game.state;
+  assert.equal(state.phase,'room');assert.equal(state.runStatus,'failed');assert.equal(state.isTerminal,false);
+  assert.deepEqual(state.failure,{reason:inventory.quarter?'missing-note-types':'out-of-notes',roomId:'garden-final',remainingNotes:inventory.quarter??0,remainingBeats:inventory.quarter??0});
+  assert(Object.isFrozen(state.failure));assert.throws(()=>{state.failure.reason='active';},TypeError);
+  assert.equal(game.selectDoor('garden-ending'),true,'A failed run can still listen to the final lock.');
+  if(inventory.quarter){fill(game,['quarter','quarter','quarter','quarter']);assert.equal(game.state.units,8);assert.equal(game.state.canAttempt,false);assert.equal(game.remove(0),true);assert.equal(game.move(0,1),true);assert.equal(game.undo(),true);}
+  assert.equal(game.state.canCommit,false);const before=game.state;assert.equal(game.commit(),false);assert.deepEqual(game.state,before);
+ }
+});
+
+test('available local gifts and hidden searches prevent premature failure, and drafts never spend the bag',()=>{
+ const project=definition({replayRisk:true});project.settings.startRoomId='garden-porch';
+ const game=createDungeonGame({definition:project});assert.deepEqual(game.state.inventory,empty());assert.equal(game.state.runStatus,'active');
+ assert.equal(game.claim('iris-gift'),true);assert.equal(game.selectDoor('garden-porch-forward'),true);
+ fill(game,['half-rest','half']);assert.equal(game.state.runStatus,'active');assert.equal(game.state.canAttempt,true);assert.equal(game.state.canCommit,false);
+ assert.deepEqual(game.state.availableInventory,empty());assert.equal(game.state.inventory.half,1);assert.equal(game.state.inventory['half-rest'],1);
+ const wrong=game.state;assert.equal(game.commit(),false);assert.deepEqual(game.state,wrong,'A wrong rhythm does not consume or alter the run.');
+ assert.equal(game.move(1,-1),true);assert.equal(game.state.canCommit,true);assert.equal(game.commit(),true);assert.equal(game.state.failure.reason,'out-of-notes');
+ for(const branch of ['garden','workshop']){
+  const custom=definition({replayRisk:true});custom.settings.startRoomId=branch+'-alcove';
+  const hidden=createDungeonGame({definition:custom});assert.equal(hidden.state.runStatus,'active');assert.deepEqual(hidden.state.revealedDoors,[]);
+  assert.equal(hidden.claim(branch+'-hidden-notes'),true);assert.equal(hidden.state.runStatus,'active');
+  payDefined(hidden,custom,branch+'-hidden-exit');assert.equal(hidden.state.phase,'room');assert.equal(hidden.state.runStatus,'failed');assert.equal(hidden.state.failure.reason,'out-of-notes');
+ }
+});
+
+test('risk-mode paid doors cannot be refunded while current draft Undo stays free',()=>{
+ const game=enter('garden'),paid=game.state;
+ assert.equal(paid.canRevisit,false);assert.equal(game.rewindRoom(),false);assert.equal(game.revisit(),false);assert.equal(game.undo(),false);assert.deepEqual(game.state,paid);
+ assert.equal(game.add('eighth'),true);assert.equal(game.undo(),true);assert.deepEqual(game.state,paid);
+ game.claim('iris-gift');pay(game,'garden-porch-forward');const fork=game.state;
+ assert.equal(game.revisit(),false);assert.equal(game.rewindRoom(),false);assert.equal(game.undo(),false);assert.deepEqual(game.state,fork);
+ pay(game,'garden-normal');pay(game,'garden-ending');const completed=game.state;
+ assert.equal(completed.runStatus,'completed');assert.equal(completed.failure,null);assert.deepEqual(completed.inventory,empty());
+ assert.equal(game.undo(),false);assert.equal(game.revisit(),false);assert.equal(game.rewindRoom(),false);assert.deepEqual(game.state,completed);
+ const dead=enter('canal');pay(dead,'canal-porch-dead');const failure=dead.state;
+ assert.equal(failure.phase,'terminal');assert.equal(failure.failure.reason,'dead-end');assert.equal(dead.undo(),false);assert.equal(dead.revisit(),false);assert.deepEqual(dead.state,failure);
+});
+
+test('failed saves derive their status from receipts and restart without carrying notes or pickups',()=>{
+ const project=definition({replayRisk:true});project.settings.startRoomId='garden-final';
+ const failed=createDungeonGame({definition:project}),saved=failed.serialize();
+ const restored=createDungeonGame({definition:project,saved:{...saved,failure:null,runStatus:'active',inventory:{half:99},replayRisk:false}});
+ assert.deepEqual(restored.state,failed.state);assert.equal(restored.serialize().version,3);
+ const ordinary=enter('canal');pay(ordinary,'canal-porch-dead');assert.equal(ordinary.state.runStatus,'failed');
+ assert.equal(ordinary.restart(),true);assert.equal(ordinary.state.roomId,'depot');assert.equal(ordinary.state.runStatus,'active');assert.equal(ordinary.state.failure,null);
+ assert.deepEqual(ordinary.state.inventory,empty());assert.deepEqual(ordinary.state.actions,[]);assert.deepEqual(ordinary.state.claimedSources,[]);assert.equal(ordinary.state.receipt,null);assert.equal(ordinary.state.selectedDoor,null);
+ assert.deepEqual(ordinary.state.discoveredRoutes,['canal']);assert.equal(ordinary.claim('nell-parcel'),true);assert.equal(ordinary.claim('depot-chest'),true);
+});
+
+test('three paid detours can spend the last notes before any successful ending',()=>{
+ for(const branch of ['garden','workshop','canal']){
+  const game=enter(branch);assert.equal(game.claim(sourceFor(branch)),true);
+  if(branch==='canal'){
+   for(const id of ['canal-porch-forward','canal-dead','echo-return-gate'])pay(game,id);
+  }else{
+   for(const id of [branch+'-porch-dead',branch==='garden'?'bramble-return-gate':'aviary-return-gate',branch+'-secret-branch'])pay(game,id);
+   assert.deepEqual(game.state.inventory,empty());assert.equal(game.state.runStatus,'active','The unclaimed hidden cache still offers a continuation.');
+   assert.equal(game.claim(branch+'-hidden-notes'),true);pay(game,branch+'-hidden-exit');
+  }
+  const lost=game.state,room=branch==='canal'?'canal-final':branch+'-secret-final';
+  assert.equal(lost.roomId,room);assert.equal(lost.phase,'room');assert.equal(lost.isTerminal,false);assert.equal(lost.runStatus,'failed');
+  assert.deepEqual(lost.inventory,empty());assert.deepEqual(lost.failure,{reason:'out-of-notes',roomId:room,remainingNotes:0,remainingBeats:0});
+  assert.equal(lost.canRevisit,false);assert.equal(game.revisit(),false);assert.equal(game.rewindRoom(),false);assert.equal(game.undo(),false);assert.deepEqual(game.state,lost);
+  const saved=game.serialize();assert.equal(saved.version,3);assert.deepEqual(createDungeonGame({saved}).state,lost,'Reloading cannot restore spent notes.');
+  assertConserved(game);assert.equal(game.restart(),true);assert.deepEqual(game.state.discoveredRoutes,[branch]);
+  collect(game);pay(game,branch);game.claim(sourceFor(branch));pay(game,branch+'-porch-forward');pay(game,branch+'-normal');pay(game,branch+'-ending');
+  assert.equal(game.state.runStatus,'completed');assert.equal(game.state.failure,null);assert.deepEqual(game.state.inventory,empty(),'The direct route still has exactly enough notes.');
+ }
+});
+
+test('leaving the garden or workshop gift behind can strand the wrong note types',()=>{
+ for(const branch of ['garden','workshop']){
+  const game=enter(branch);pay(game,branch+'-porch-dead');
+  assert.equal(game.state.phase,'room');assert.equal(game.state.runStatus,'failed');assert.equal(game.state.failure.reason,'missing-note-types');
+  assert.equal(game.state.failure.remainingBeats,4);assert(game.state.failure.remainingNotes>0);
+  assert.equal(game.claim(sourceFor(branch)),false,'A gift left in another room is not remotely collectible.');
+  assert.equal(game.selectDoor(branch==='garden'?'bramble-return-gate':'aviary-return-gate'),true,'The failed room’s lock remains inspectable.');
+  assert.equal(game.state.canAttempt,false);assert.equal(game.state.canCommit,false);assert.equal(game.commit(),false);assertConserved(game);
+ }
+});
+
+test('opt-in developer mutations can recover test failures without weakening ordinary save replay',()=>{
+ const project=definition({replayRisk:true});project.settings.startRoomId='garden-final';project.settings.terminalRooms=true;
+ const game=createDungeonGame({definition:project,developer:true});assert.equal(game.state.runStatus,'failed');
+ const supply=empty();for(const kind of project.doors['garden-ending'].recipe)supply[kind]++;
+ assert.equal(game.developerSetInventory(supply),true);assert.equal(game.state.runStatus,'active');assert.equal(game.state.failure,null);
+ payDefined(game,project,'garden-ending');assert.equal(game.state.runStatus,'completed');assert.equal(game.state.phase,'terminal');
+ assert.equal(game.developerTeleport('dead-ferry'),true);assert.equal(game.state.failure.reason,'dead-end');
+ assert.equal(game.developerTeleport('depot'),true);assert.equal(game.state.runStatus,'active');assert.equal(game.claim('nell-parcel'),true);
+ assert.equal(game.developerResetSources('nell-parcel'),true);assert.equal(game.claim('nell-parcel'),true);
+ assert.deepEqual(createDungeonGame({definition:project,developer:true,saved:game.serialize()}).state,game.state);
+ const rejected=createDungeonGame({definition:project,saved:game.serialize()});assert.deepEqual(rejected.state.actions,[]);assert.equal(rejected.state.runStatus,'failed');
 });

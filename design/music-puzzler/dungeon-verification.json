@@ -1,8 +1,8 @@
 {
   "version": 1,
   "passed": true,
-  "sourceSHA256": "6e6c47b188ecd8fe98f39e8fa8999a1f56eb72ae6905e7096991995f27a4c6f9",
-  "verifierSHA256": "ee5efe33c758f288fd823ba95bb5672f5988ff5a33636fa7fc7476759380b422",
+  "sourceSHA256": "77aaa62770da7e59b7e669598c8894dcddc04cf2ba99ce8c403ca37c4efc97fa",
+  "verifierSHA256": "256c4d2d30c1ac922e67c8ca41256d2e4d091d6a9c5f13390eee7558e63f143d",
   "kindCatalog": [
     {
       "id": "quarter",
@@ -43,15 +43,17 @@
   ],
   "kindCatalogSHA256": "9e2472bdfd3728552a4d6310f7d66f3122f4b6f0bd0d74d3cf82a0b3b647326c",
   "graph": {
-    "rooms": 14,
+    "rooms": 17,
     "sources": 7,
-    "doors": 22,
-    "terminals": 9,
-    "reachableStates": 34,
-    "liveStates": 22,
-    "terminalStates": 12,
-    "transitions": 34,
-    "orderedTerminalHistories": "24"
+    "doors": 25,
+    "terminals": 6,
+    "reachableStates": 43,
+    "liveStates": 36,
+    "terminalStates": 7,
+    "transitions": 43,
+    "orderedTerminalHistories": "14",
+    "orderedRunFailureHistories": "10",
+    "orderedRunHistories": "24"
   },
   "invariants": {
     "finiteRoomDAG": true,
@@ -60,7 +62,9 @@
     "noAutomaticEntryGrants": true,
     "nonnegativeInventories": true,
     "typedConservation": true,
-    "continuationTarget": "A declared non-dead terminal with zero of every note kind."
+    "irreversibleDoors": true,
+    "intentionalLossesRequireRiskEntry": true,
+    "continuationTarget": "A zero-balance success or a witnessed run loss after a declared risk door."
   },
   "coverage": {
     "unreachableRooms": [],
@@ -72,6 +76,2290 @@
     "successfulTerminalStates": 5,
     "violationCount": 0,
     "violations": []
+  },
+  "runFailures": {
+    "count": 5,
+    "zeroNoteCount": 3,
+    "missingTypeCount": 2,
+    "orderedHistories": "10",
+    "states": [
+      {
+        "stateId": 8,
+        "nodeId": "dead-brambles",
+        "inventory": {
+          "quarter": 0,
+          "eighth-pair": 1,
+          "sixteenth-group": 1,
+          "half": 0,
+          "eighth": 1,
+          "quarter-rest": 1,
+          "half-rest": 0,
+          "dotted-half": 0,
+          "sixteenth-pair": 1
+        },
+        "claimedSources": [
+          "nell-parcel",
+          "depot-chest"
+        ],
+        "witness": {
+          "nodeId": "dead-brambles",
+          "actions": [
+            {
+              "type": "claim",
+              "sourceId": "nell-parcel"
+            },
+            {
+              "type": "claim",
+              "sourceId": "depot-chest"
+            },
+            {
+              "type": "door",
+              "doorId": "depot-garden"
+            },
+            {
+              "type": "door",
+              "doorId": "garden-porch-dead"
+            }
+          ],
+          "inventory": {
+            "quarter": 0,
+            "eighth-pair": 1,
+            "sixteenth-group": 1,
+            "half": 0,
+            "eighth": 1,
+            "quarter-rest": 1,
+            "half-rest": 0,
+            "dotted-half": 0,
+            "sixteenth-pair": 1
+          },
+          "claimedSources": [
+            "nell-parcel",
+            "depot-chest"
+          ],
+          "hiddenGateSources": [],
+          "riskEntryDoors": [
+            "garden-porch-dead"
+          ],
+          "conservation": {
+            "valid": true,
+            "initial": {
+              "quarter": 0,
+              "eighth-pair": 0,
+              "sixteenth-group": 0,
+              "half": 0,
+              "eighth": 0,
+              "quarter-rest": 0,
+              "half-rest": 0,
+              "dotted-half": 0,
+              "sixteenth-pair": 0
+            },
+            "claimed": {
+              "quarter": 1,
+              "eighth-pair": 1,
+              "sixteenth-group": 1,
+              "half": 1,
+              "eighth": 1,
+              "quarter-rest": 1,
+              "half-rest": 1,
+              "dotted-half": 1,
+              "sixteenth-pair": 1
+            },
+            "spent": {
+              "quarter": 1,
+              "eighth-pair": 0,
+              "sixteenth-group": 0,
+              "half": 1,
+              "eighth": 0,
+              "quarter-rest": 0,
+              "half-rest": 1,
+              "dotted-half": 1,
+              "sixteenth-pair": 0
+            },
+            "remaining": {
+              "quarter": 0,
+              "eighth-pair": 1,
+              "sixteenth-group": 1,
+              "half": 0,
+              "eighth": 1,
+              "quarter-rest": 1,
+              "half-rest": 0,
+              "dotted-half": 0,
+              "sixteenth-pair": 1
+            }
+          }
+        },
+        "reason": "missing-note-types",
+        "orderedHistories": "2",
+        "allPathsCrossRiskEntry": true
+      },
+      {
+        "stateId": 12,
+        "nodeId": "dead-aviary",
+        "inventory": {
+          "quarter": 0,
+          "eighth-pair": 0,
+          "sixteenth-group": 0,
+          "half": 0,
+          "eighth": 1,
+          "quarter-rest": 1,
+          "half-rest": 1,
+          "dotted-half": 0,
+          "sixteenth-pair": 1
+        },
+        "claimedSources": [
+          "nell-parcel",
+          "depot-chest"
+        ],
+        "witness": {
+          "nodeId": "dead-aviary",
+          "actions": [
+            {
+              "type": "claim",
+              "sourceId": "nell-parcel"
+            },
+            {
+              "type": "claim",
+              "sourceId": "depot-chest"
+            },
+            {
+              "type": "door",
+              "doorId": "depot-workshop"
+            },
+            {
+              "type": "door",
+              "doorId": "workshop-porch-dead"
+            }
+          ],
+          "inventory": {
+            "quarter": 0,
+            "eighth-pair": 0,
+            "sixteenth-group": 0,
+            "half": 0,
+            "eighth": 1,
+            "quarter-rest": 1,
+            "half-rest": 1,
+            "dotted-half": 0,
+            "sixteenth-pair": 1
+          },
+          "claimedSources": [
+            "nell-parcel",
+            "depot-chest"
+          ],
+          "hiddenGateSources": [],
+          "riskEntryDoors": [
+            "workshop-porch-dead"
+          ],
+          "conservation": {
+            "valid": true,
+            "initial": {
+              "quarter": 0,
+              "eighth-pair": 0,
+              "sixteenth-group": 0,
+              "half": 0,
+              "eighth": 0,
+              "quarter-rest": 0,
+              "half-rest": 0,
+              "dotted-half": 0,
+              "sixteenth-pair": 0
+            },
+            "claimed": {
+              "quarter": 1,
+              "eighth-pair": 1,
+              "sixteenth-group": 1,
+              "half": 1,
+              "eighth": 1,
+              "quarter-rest": 1,
+              "half-rest": 1,
+              "dotted-half": 1,
+              "sixteenth-pair": 1
+            },
+            "spent": {
+              "quarter": 1,
+              "eighth-pair": 1,
+              "sixteenth-group": 1,
+              "half": 1,
+              "eighth": 0,
+              "quarter-rest": 0,
+              "half-rest": 0,
+              "dotted-half": 1,
+              "sixteenth-pair": 0
+            },
+            "remaining": {
+              "quarter": 0,
+              "eighth-pair": 0,
+              "sixteenth-group": 0,
+              "half": 0,
+              "eighth": 1,
+              "quarter-rest": 1,
+              "half-rest": 1,
+              "dotted-half": 0,
+              "sixteenth-pair": 1
+            }
+          }
+        },
+        "reason": "missing-note-types",
+        "orderedHistories": "2",
+        "allPathsCrossRiskEntry": true
+      },
+      {
+        "stateId": 29,
+        "nodeId": "canal-final",
+        "inventory": {
+          "quarter": 0,
+          "eighth-pair": 0,
+          "sixteenth-group": 0,
+          "half": 0,
+          "eighth": 0,
+          "quarter-rest": 0,
+          "half-rest": 0,
+          "dotted-half": 0,
+          "sixteenth-pair": 0
+        },
+        "claimedSources": [
+          "nell-parcel",
+          "depot-chest",
+          "canal-chest"
+        ],
+        "witness": {
+          "nodeId": "canal-final",
+          "actions": [
+            {
+              "type": "claim",
+              "sourceId": "nell-parcel"
+            },
+            {
+              "type": "claim",
+              "sourceId": "depot-chest"
+            },
+            {
+              "type": "door",
+              "doorId": "depot-canal"
+            },
+            {
+              "type": "claim",
+              "sourceId": "canal-chest"
+            },
+            {
+              "type": "door",
+              "doorId": "canal-porch-forward"
+            },
+            {
+              "type": "door",
+              "doorId": "canal-dead"
+            },
+            {
+              "type": "door",
+              "doorId": "echo-return-gate"
+            }
+          ],
+          "inventory": {
+            "quarter": 0,
+            "eighth-pair": 0,
+            "sixteenth-group": 0,
+            "half": 0,
+            "eighth": 0,
+            "quarter-rest": 0,
+            "half-rest": 0,
+            "dotted-half": 0,
+            "sixteenth-pair": 0
+          },
+          "claimedSources": [
+            "nell-parcel",
+            "depot-chest",
+            "canal-chest"
+          ],
+          "hiddenGateSources": [],
+          "riskEntryDoors": [
+            "canal-dead"
+          ],
+          "conservation": {
+            "valid": true,
+            "initial": {
+              "quarter": 0,
+              "eighth-pair": 0,
+              "sixteenth-group": 0,
+              "half": 0,
+              "eighth": 0,
+              "quarter-rest": 0,
+              "half-rest": 0,
+              "dotted-half": 0,
+              "sixteenth-pair": 0
+            },
+            "claimed": {
+              "quarter": 2,
+              "eighth-pair": 2,
+              "sixteenth-group": 1,
+              "half": 2,
+              "eighth": 1,
+              "quarter-rest": 1,
+              "half-rest": 1,
+              "dotted-half": 1,
+              "sixteenth-pair": 1
+            },
+            "spent": {
+              "quarter": 2,
+              "eighth-pair": 2,
+              "sixteenth-group": 1,
+              "half": 2,
+              "eighth": 1,
+              "quarter-rest": 1,
+              "half-rest": 1,
+              "dotted-half": 1,
+              "sixteenth-pair": 1
+            },
+            "remaining": {
+              "quarter": 0,
+              "eighth-pair": 0,
+              "sixteenth-group": 0,
+              "half": 0,
+              "eighth": 0,
+              "quarter-rest": 0,
+              "half-rest": 0,
+              "dotted-half": 0,
+              "sixteenth-pair": 0
+            }
+          }
+        },
+        "reason": "out-of-notes",
+        "orderedHistories": "2",
+        "allPathsCrossRiskEntry": true
+      },
+      {
+        "stateId": 34,
+        "nodeId": "garden-secret-final",
+        "inventory": {
+          "quarter": 0,
+          "eighth-pair": 0,
+          "sixteenth-group": 0,
+          "half": 0,
+          "eighth": 0,
+          "quarter-rest": 0,
+          "half-rest": 0,
+          "dotted-half": 0,
+          "sixteenth-pair": 0
+        },
+        "claimedSources": [
+          "nell-parcel",
+          "depot-chest",
+          "iris-gift",
+          "garden-hidden-notes"
+        ],
+        "witness": {
+          "nodeId": "garden-secret-final",
+          "actions": [
+            {
+              "type": "claim",
+              "sourceId": "nell-parcel"
+            },
+            {
+              "type": "claim",
+              "sourceId": "depot-chest"
+            },
+            {
+              "type": "door",
+              "doorId": "depot-garden"
+            },
+            {
+              "type": "claim",
+              "sourceId": "iris-gift"
+            },
+            {
+              "type": "door",
+              "doorId": "garden-porch-dead"
+            },
+            {
+              "type": "door",
+              "doorId": "bramble-return-gate"
+            },
+            {
+              "type": "door",
+              "doorId": "garden-secret-branch"
+            },
+            {
+              "type": "claim",
+              "sourceId": "garden-hidden-notes"
+            },
+            {
+              "type": "door",
+              "doorId": "garden-hidden-exit"
+            }
+          ],
+          "inventory": {
+            "quarter": 0,
+            "eighth-pair": 0,
+            "sixteenth-group": 0,
+            "half": 0,
+            "eighth": 0,
+            "quarter-rest": 0,
+            "half-rest": 0,
+            "dotted-half": 0,
+            "sixteenth-pair": 0
+          },
+          "claimedSources": [
+            "nell-parcel",
+            "depot-chest",
+            "iris-gift",
+            "garden-hidden-notes"
+          ],
+          "hiddenGateSources": [
+            "garden-hidden-notes"
+          ],
+          "riskEntryDoors": [
+            "garden-porch-dead"
+          ],
+          "conservation": {
+            "valid": true,
+            "initial": {
+              "quarter": 0,
+              "eighth-pair": 0,
+              "sixteenth-group": 0,
+              "half": 0,
+              "eighth": 0,
+              "quarter-rest": 0,
+              "half-rest": 0,
+              "dotted-half": 0,
+              "sixteenth-pair": 0
+            },
+            "claimed": {
+              "quarter": 2,
+              "eighth-pair": 2,
+              "sixteenth-group": 2,
+              "half": 2,
+              "eighth": 1,
+              "quarter-rest": 2,
+              "half-rest": 2,
+              "dotted-half": 1,
+              "sixteenth-pair": 1
+            },
+            "spent": {
+              "quarter": 2,
+              "eighth-pair": 2,
+              "sixteenth-group": 2,
+              "half": 2,
+              "eighth": 1,
+              "quarter-rest": 2,
+              "half-rest": 2,
+              "dotted-half": 1,
+              "sixteenth-pair": 1
+            },
+            "remaining": {
+              "quarter": 0,
+              "eighth-pair": 0,
+              "sixteenth-group": 0,
+              "half": 0,
+              "eighth": 0,
+              "quarter-rest": 0,
+              "half-rest": 0,
+              "dotted-half": 0,
+              "sixteenth-pair": 0
+            }
+          }
+        },
+        "reason": "out-of-notes",
+        "orderedHistories": "2",
+        "allPathsCrossRiskEntry": true
+      },
+      {
+        "stateId": 39,
+        "nodeId": "workshop-secret-final",
+        "inventory": {
+          "quarter": 0,
+          "eighth-pair": 0,
+          "sixteenth-group": 0,
+          "half": 0,
+          "eighth": 0,
+          "quarter-rest": 0,
+          "half-rest": 0,
+          "dotted-half": 0,
+          "sixteenth-pair": 0
+        },
+        "claimedSources": [
+          "nell-parcel",
+          "depot-chest",
+          "pip-gift",
+          "workshop-hidden-notes"
+        ],
+        "witness": {
+          "nodeId": "workshop-secret-final",
+          "actions": [
+            {
+              "type": "claim",
+              "sourceId": "nell-parcel"
+            },
+            {
+              "type": "claim",
+              "sourceId": "depot-chest"
+            },
+            {
+              "type": "door",
+              "doorId": "depot-workshop"
+            },
+            {
+              "type": "claim",
+              "sourceId": "pip-gift"
+            },
+            {
+              "type": "door",
+              "doorId": "workshop-porch-dead"
+            },
+            {
+              "type": "door",
+              "doorId": "aviary-return-gate"
+            },
+            {
+              "type": "door",
+              "doorId": "workshop-secret-branch"
+            },
+            {
+              "type": "claim",
+              "sourceId": "workshop-hidden-notes"
+            },
+            {
+              "type": "door",
+              "doorId": "workshop-hidden-exit"
+            }
+          ],
+          "inventory": {
+            "quarter": 0,
+            "eighth-pair": 0,
+            "sixteenth-group": 0,
+            "half": 0,
+            "eighth": 0,
+            "quarter-rest": 0,
+            "half-rest": 0,
+            "dotted-half": 0,
+            "sixteenth-pair": 0
+          },
+          "claimedSources": [
+            "nell-parcel",
+            "depot-chest",
+            "pip-gift",
+            "workshop-hidden-notes"
+          ],
+          "hiddenGateSources": [
+            "workshop-hidden-notes"
+          ],
+          "riskEntryDoors": [
+            "workshop-porch-dead"
+          ],
+          "conservation": {
+            "valid": true,
+            "initial": {
+              "quarter": 0,
+              "eighth-pair": 0,
+              "sixteenth-group": 0,
+              "half": 0,
+              "eighth": 0,
+              "quarter-rest": 0,
+              "half-rest": 0,
+              "dotted-half": 0,
+              "sixteenth-pair": 0
+            },
+            "claimed": {
+              "quarter": 1,
+              "eighth-pair": 2,
+              "sixteenth-group": 2,
+              "half": 3,
+              "eighth": 1,
+              "quarter-rest": 1,
+              "half-rest": 2,
+              "dotted-half": 1,
+              "sixteenth-pair": 1
+            },
+            "spent": {
+              "quarter": 1,
+              "eighth-pair": 2,
+              "sixteenth-group": 2,
+              "half": 3,
+              "eighth": 1,
+              "quarter-rest": 1,
+              "half-rest": 2,
+              "dotted-half": 1,
+              "sixteenth-pair": 1
+            },
+            "remaining": {
+              "quarter": 0,
+              "eighth-pair": 0,
+              "sixteenth-group": 0,
+              "half": 0,
+              "eighth": 0,
+              "quarter-rest": 0,
+              "half-rest": 0,
+              "dotted-half": 0,
+              "sixteenth-pair": 0
+            }
+          }
+        },
+        "reason": "out-of-notes",
+        "orderedHistories": "2",
+        "allPathsCrossRiskEntry": true
+      }
+    ]
+  },
+  "intentionalLossStates": {
+    "count": 14,
+    "states": [
+      {
+        "stateId": 8,
+        "nodeId": "dead-brambles",
+        "inventory": {
+          "quarter": 0,
+          "eighth-pair": 1,
+          "sixteenth-group": 1,
+          "half": 0,
+          "eighth": 1,
+          "quarter-rest": 1,
+          "half-rest": 0,
+          "dotted-half": 0,
+          "sixteenth-pair": 1
+        },
+        "claimedSources": [
+          "nell-parcel",
+          "depot-chest"
+        ],
+        "witness": {
+          "nodeId": "dead-brambles",
+          "actions": [
+            {
+              "type": "claim",
+              "sourceId": "nell-parcel"
+            },
+            {
+              "type": "claim",
+              "sourceId": "depot-chest"
+            },
+            {
+              "type": "door",
+              "doorId": "depot-garden"
+            },
+            {
+              "type": "door",
+              "doorId": "garden-porch-dead"
+            }
+          ],
+          "inventory": {
+            "quarter": 0,
+            "eighth-pair": 1,
+            "sixteenth-group": 1,
+            "half": 0,
+            "eighth": 1,
+            "quarter-rest": 1,
+            "half-rest": 0,
+            "dotted-half": 0,
+            "sixteenth-pair": 1
+          },
+          "claimedSources": [
+            "nell-parcel",
+            "depot-chest"
+          ],
+          "hiddenGateSources": [],
+          "riskEntryDoors": [
+            "garden-porch-dead"
+          ],
+          "conservation": {
+            "valid": true,
+            "initial": {
+              "quarter": 0,
+              "eighth-pair": 0,
+              "sixteenth-group": 0,
+              "half": 0,
+              "eighth": 0,
+              "quarter-rest": 0,
+              "half-rest": 0,
+              "dotted-half": 0,
+              "sixteenth-pair": 0
+            },
+            "claimed": {
+              "quarter": 1,
+              "eighth-pair": 1,
+              "sixteenth-group": 1,
+              "half": 1,
+              "eighth": 1,
+              "quarter-rest": 1,
+              "half-rest": 1,
+              "dotted-half": 1,
+              "sixteenth-pair": 1
+            },
+            "spent": {
+              "quarter": 1,
+              "eighth-pair": 0,
+              "sixteenth-group": 0,
+              "half": 1,
+              "eighth": 0,
+              "quarter-rest": 0,
+              "half-rest": 1,
+              "dotted-half": 1,
+              "sixteenth-pair": 0
+            },
+            "remaining": {
+              "quarter": 0,
+              "eighth-pair": 1,
+              "sixteenth-group": 1,
+              "half": 0,
+              "eighth": 1,
+              "quarter-rest": 1,
+              "half-rest": 0,
+              "dotted-half": 0,
+              "sixteenth-pair": 1
+            }
+          }
+        }
+      },
+      {
+        "stateId": 10,
+        "nodeId": "dead-brambles",
+        "inventory": {
+          "quarter": 0,
+          "eighth-pair": 1,
+          "sixteenth-group": 1,
+          "half": 1,
+          "eighth": 1,
+          "quarter-rest": 1,
+          "half-rest": 1,
+          "dotted-half": 0,
+          "sixteenth-pair": 1
+        },
+        "claimedSources": [
+          "nell-parcel",
+          "depot-chest",
+          "iris-gift"
+        ],
+        "witness": {
+          "nodeId": "dead-brambles",
+          "actions": [
+            {
+              "type": "claim",
+              "sourceId": "nell-parcel"
+            },
+            {
+              "type": "claim",
+              "sourceId": "depot-chest"
+            },
+            {
+              "type": "door",
+              "doorId": "depot-garden"
+            },
+            {
+              "type": "claim",
+              "sourceId": "iris-gift"
+            },
+            {
+              "type": "door",
+              "doorId": "garden-porch-dead"
+            }
+          ],
+          "inventory": {
+            "quarter": 0,
+            "eighth-pair": 1,
+            "sixteenth-group": 1,
+            "half": 1,
+            "eighth": 1,
+            "quarter-rest": 1,
+            "half-rest": 1,
+            "dotted-half": 0,
+            "sixteenth-pair": 1
+          },
+          "claimedSources": [
+            "nell-parcel",
+            "depot-chest",
+            "iris-gift"
+          ],
+          "hiddenGateSources": [],
+          "riskEntryDoors": [
+            "garden-porch-dead"
+          ],
+          "conservation": {
+            "valid": true,
+            "initial": {
+              "quarter": 0,
+              "eighth-pair": 0,
+              "sixteenth-group": 0,
+              "half": 0,
+              "eighth": 0,
+              "quarter-rest": 0,
+              "half-rest": 0,
+              "dotted-half": 0,
+              "sixteenth-pair": 0
+            },
+            "claimed": {
+              "quarter": 1,
+              "eighth-pair": 1,
+              "sixteenth-group": 1,
+              "half": 2,
+              "eighth": 1,
+              "quarter-rest": 1,
+              "half-rest": 2,
+              "dotted-half": 1,
+              "sixteenth-pair": 1
+            },
+            "spent": {
+              "quarter": 1,
+              "eighth-pair": 0,
+              "sixteenth-group": 0,
+              "half": 1,
+              "eighth": 0,
+              "quarter-rest": 0,
+              "half-rest": 1,
+              "dotted-half": 1,
+              "sixteenth-pair": 0
+            },
+            "remaining": {
+              "quarter": 0,
+              "eighth-pair": 1,
+              "sixteenth-group": 1,
+              "half": 1,
+              "eighth": 1,
+              "quarter-rest": 1,
+              "half-rest": 1,
+              "dotted-half": 0,
+              "sixteenth-pair": 1
+            }
+          }
+        }
+      },
+      {
+        "stateId": 12,
+        "nodeId": "dead-aviary",
+        "inventory": {
+          "quarter": 0,
+          "eighth-pair": 0,
+          "sixteenth-group": 0,
+          "half": 0,
+          "eighth": 1,
+          "quarter-rest": 1,
+          "half-rest": 1,
+          "dotted-half": 0,
+          "sixteenth-pair": 1
+        },
+        "claimedSources": [
+          "nell-parcel",
+          "depot-chest"
+        ],
+        "witness": {
+          "nodeId": "dead-aviary",
+          "actions": [
+            {
+              "type": "claim",
+              "sourceId": "nell-parcel"
+            },
+            {
+              "type": "claim",
+              "sourceId": "depot-chest"
+            },
+            {
+              "type": "door",
+              "doorId": "depot-workshop"
+            },
+            {
+              "type": "door",
+              "doorId": "workshop-porch-dead"
+            }
+          ],
+          "inventory": {
+            "quarter": 0,
+            "eighth-pair": 0,
+            "sixteenth-group": 0,
+            "half": 0,
+            "eighth": 1,
+            "quarter-rest": 1,
+            "half-rest": 1,
+            "dotted-half": 0,
+            "sixteenth-pair": 1
+          },
+          "claimedSources": [
+            "nell-parcel",
+            "depot-chest"
+          ],
+          "hiddenGateSources": [],
+          "riskEntryDoors": [
+            "workshop-porch-dead"
+          ],
+          "conservation": {
+            "valid": true,
+            "initial": {
+              "quarter": 0,
+              "eighth-pair": 0,
+              "sixteenth-group": 0,
+              "half": 0,
+              "eighth": 0,
+              "quarter-rest": 0,
+              "half-rest": 0,
+              "dotted-half": 0,
+              "sixteenth-pair": 0
+            },
+            "claimed": {
+              "quarter": 1,
+              "eighth-pair": 1,
+              "sixteenth-group": 1,
+              "half": 1,
+              "eighth": 1,
+              "quarter-rest": 1,
+              "half-rest": 1,
+              "dotted-half": 1,
+              "sixteenth-pair": 1
+            },
+            "spent": {
+              "quarter": 1,
+              "eighth-pair": 1,
+              "sixteenth-group": 1,
+              "half": 1,
+              "eighth": 0,
+              "quarter-rest": 0,
+              "half-rest": 0,
+              "dotted-half": 1,
+              "sixteenth-pair": 0
+            },
+            "remaining": {
+              "quarter": 0,
+              "eighth-pair": 0,
+              "sixteenth-group": 0,
+              "half": 0,
+              "eighth": 1,
+              "quarter-rest": 1,
+              "half-rest": 1,
+              "dotted-half": 0,
+              "sixteenth-pair": 1
+            }
+          }
+        }
+      },
+      {
+        "stateId": 14,
+        "nodeId": "dead-aviary",
+        "inventory": {
+          "quarter": 0,
+          "eighth-pair": 1,
+          "sixteenth-group": 1,
+          "half": 1,
+          "eighth": 1,
+          "quarter-rest": 1,
+          "half-rest": 1,
+          "dotted-half": 0,
+          "sixteenth-pair": 1
+        },
+        "claimedSources": [
+          "nell-parcel",
+          "depot-chest",
+          "pip-gift"
+        ],
+        "witness": {
+          "nodeId": "dead-aviary",
+          "actions": [
+            {
+              "type": "claim",
+              "sourceId": "nell-parcel"
+            },
+            {
+              "type": "claim",
+              "sourceId": "depot-chest"
+            },
+            {
+              "type": "door",
+              "doorId": "depot-workshop"
+            },
+            {
+              "type": "claim",
+              "sourceId": "pip-gift"
+            },
+            {
+              "type": "door",
+              "doorId": "workshop-porch-dead"
+            }
+          ],
+          "inventory": {
+            "quarter": 0,
+            "eighth-pair": 1,
+            "sixteenth-group": 1,
+            "half": 1,
+            "eighth": 1,
+            "quarter-rest": 1,
+            "half-rest": 1,
+            "dotted-half": 0,
+            "sixteenth-pair": 1
+          },
+          "claimedSources": [
+            "nell-parcel",
+            "depot-chest",
+            "pip-gift"
+          ],
+          "hiddenGateSources": [],
+          "riskEntryDoors": [
+            "workshop-porch-dead"
+          ],
+          "conservation": {
+            "valid": true,
+            "initial": {
+              "quarter": 0,
+              "eighth-pair": 0,
+              "sixteenth-group": 0,
+              "half": 0,
+              "eighth": 0,
+              "quarter-rest": 0,
+              "half-rest": 0,
+              "dotted-half": 0,
+              "sixteenth-pair": 0
+            },
+            "claimed": {
+              "quarter": 1,
+              "eighth-pair": 2,
+              "sixteenth-group": 2,
+              "half": 2,
+              "eighth": 1,
+              "quarter-rest": 1,
+              "half-rest": 1,
+              "dotted-half": 1,
+              "sixteenth-pair": 1
+            },
+            "spent": {
+              "quarter": 1,
+              "eighth-pair": 1,
+              "sixteenth-group": 1,
+              "half": 1,
+              "eighth": 0,
+              "quarter-rest": 0,
+              "half-rest": 0,
+              "dotted-half": 1,
+              "sixteenth-pair": 0
+            },
+            "remaining": {
+              "quarter": 0,
+              "eighth-pair": 1,
+              "sixteenth-group": 1,
+              "half": 1,
+              "eighth": 1,
+              "quarter-rest": 1,
+              "half-rest": 1,
+              "dotted-half": 0,
+              "sixteenth-pair": 1
+            }
+          }
+        }
+      },
+      {
+        "stateId": 19,
+        "nodeId": "garden-fork",
+        "inventory": {
+          "quarter": 0,
+          "eighth-pair": 1,
+          "sixteenth-group": 1,
+          "half": 0,
+          "eighth": 1,
+          "quarter-rest": 1,
+          "half-rest": 0,
+          "dotted-half": 0,
+          "sixteenth-pair": 1
+        },
+        "claimedSources": [
+          "nell-parcel",
+          "depot-chest",
+          "iris-gift"
+        ],
+        "witness": {
+          "nodeId": "garden-fork",
+          "actions": [
+            {
+              "type": "claim",
+              "sourceId": "nell-parcel"
+            },
+            {
+              "type": "claim",
+              "sourceId": "depot-chest"
+            },
+            {
+              "type": "door",
+              "doorId": "depot-garden"
+            },
+            {
+              "type": "claim",
+              "sourceId": "iris-gift"
+            },
+            {
+              "type": "door",
+              "doorId": "garden-porch-dead"
+            },
+            {
+              "type": "door",
+              "doorId": "bramble-return-gate"
+            }
+          ],
+          "inventory": {
+            "quarter": 0,
+            "eighth-pair": 1,
+            "sixteenth-group": 1,
+            "half": 0,
+            "eighth": 1,
+            "quarter-rest": 1,
+            "half-rest": 0,
+            "dotted-half": 0,
+            "sixteenth-pair": 1
+          },
+          "claimedSources": [
+            "nell-parcel",
+            "depot-chest",
+            "iris-gift"
+          ],
+          "hiddenGateSources": [],
+          "riskEntryDoors": [
+            "garden-porch-dead"
+          ],
+          "conservation": {
+            "valid": true,
+            "initial": {
+              "quarter": 0,
+              "eighth-pair": 0,
+              "sixteenth-group": 0,
+              "half": 0,
+              "eighth": 0,
+              "quarter-rest": 0,
+              "half-rest": 0,
+              "dotted-half": 0,
+              "sixteenth-pair": 0
+            },
+            "claimed": {
+              "quarter": 1,
+              "eighth-pair": 1,
+              "sixteenth-group": 1,
+              "half": 2,
+              "eighth": 1,
+              "quarter-rest": 1,
+              "half-rest": 2,
+              "dotted-half": 1,
+              "sixteenth-pair": 1
+            },
+            "spent": {
+              "quarter": 1,
+              "eighth-pair": 0,
+              "sixteenth-group": 0,
+              "half": 2,
+              "eighth": 0,
+              "quarter-rest": 0,
+              "half-rest": 2,
+              "dotted-half": 1,
+              "sixteenth-pair": 0
+            },
+            "remaining": {
+              "quarter": 0,
+              "eighth-pair": 1,
+              "sixteenth-group": 1,
+              "half": 0,
+              "eighth": 1,
+              "quarter-rest": 1,
+              "half-rest": 0,
+              "dotted-half": 0,
+              "sixteenth-pair": 1
+            }
+          }
+        }
+      },
+      {
+        "stateId": 20,
+        "nodeId": "workshop-fork",
+        "inventory": {
+          "quarter": 0,
+          "eighth-pair": 0,
+          "sixteenth-group": 0,
+          "half": 0,
+          "eighth": 1,
+          "quarter-rest": 1,
+          "half-rest": 1,
+          "dotted-half": 0,
+          "sixteenth-pair": 1
+        },
+        "claimedSources": [
+          "nell-parcel",
+          "depot-chest",
+          "pip-gift"
+        ],
+        "witness": {
+          "nodeId": "workshop-fork",
+          "actions": [
+            {
+              "type": "claim",
+              "sourceId": "nell-parcel"
+            },
+            {
+              "type": "claim",
+              "sourceId": "depot-chest"
+            },
+            {
+              "type": "door",
+              "doorId": "depot-workshop"
+            },
+            {
+              "type": "claim",
+              "sourceId": "pip-gift"
+            },
+            {
+              "type": "door",
+              "doorId": "workshop-porch-dead"
+            },
+            {
+              "type": "door",
+              "doorId": "aviary-return-gate"
+            }
+          ],
+          "inventory": {
+            "quarter": 0,
+            "eighth-pair": 0,
+            "sixteenth-group": 0,
+            "half": 0,
+            "eighth": 1,
+            "quarter-rest": 1,
+            "half-rest": 1,
+            "dotted-half": 0,
+            "sixteenth-pair": 1
+          },
+          "claimedSources": [
+            "nell-parcel",
+            "depot-chest",
+            "pip-gift"
+          ],
+          "hiddenGateSources": [],
+          "riskEntryDoors": [
+            "workshop-porch-dead"
+          ],
+          "conservation": {
+            "valid": true,
+            "initial": {
+              "quarter": 0,
+              "eighth-pair": 0,
+              "sixteenth-group": 0,
+              "half": 0,
+              "eighth": 0,
+              "quarter-rest": 0,
+              "half-rest": 0,
+              "dotted-half": 0,
+              "sixteenth-pair": 0
+            },
+            "claimed": {
+              "quarter": 1,
+              "eighth-pair": 2,
+              "sixteenth-group": 2,
+              "half": 2,
+              "eighth": 1,
+              "quarter-rest": 1,
+              "half-rest": 1,
+              "dotted-half": 1,
+              "sixteenth-pair": 1
+            },
+            "spent": {
+              "quarter": 1,
+              "eighth-pair": 2,
+              "sixteenth-group": 2,
+              "half": 2,
+              "eighth": 0,
+              "quarter-rest": 0,
+              "half-rest": 0,
+              "dotted-half": 1,
+              "sixteenth-pair": 0
+            },
+            "remaining": {
+              "quarter": 0,
+              "eighth-pair": 0,
+              "sixteenth-group": 0,
+              "half": 0,
+              "eighth": 1,
+              "quarter-rest": 1,
+              "half-rest": 1,
+              "dotted-half": 0,
+              "sixteenth-pair": 1
+            }
+          }
+        }
+      },
+      {
+        "stateId": 22,
+        "nodeId": "dead-echo",
+        "inventory": {
+          "quarter": 0,
+          "eighth-pair": 0,
+          "sixteenth-group": 1,
+          "half": 0,
+          "eighth": 0,
+          "quarter-rest": 0,
+          "half-rest": 0,
+          "dotted-half": 1,
+          "sixteenth-pair": 0
+        },
+        "claimedSources": [
+          "nell-parcel",
+          "depot-chest",
+          "canal-chest"
+        ],
+        "witness": {
+          "nodeId": "dead-echo",
+          "actions": [
+            {
+              "type": "claim",
+              "sourceId": "nell-parcel"
+            },
+            {
+              "type": "claim",
+              "sourceId": "depot-chest"
+            },
+            {
+              "type": "door",
+              "doorId": "depot-canal"
+            },
+            {
+              "type": "claim",
+              "sourceId": "canal-chest"
+            },
+            {
+              "type": "door",
+              "doorId": "canal-porch-forward"
+            },
+            {
+              "type": "door",
+              "doorId": "canal-dead"
+            }
+          ],
+          "inventory": {
+            "quarter": 0,
+            "eighth-pair": 0,
+            "sixteenth-group": 1,
+            "half": 0,
+            "eighth": 0,
+            "quarter-rest": 0,
+            "half-rest": 0,
+            "dotted-half": 1,
+            "sixteenth-pair": 0
+          },
+          "claimedSources": [
+            "nell-parcel",
+            "depot-chest",
+            "canal-chest"
+          ],
+          "hiddenGateSources": [],
+          "riskEntryDoors": [
+            "canal-dead"
+          ],
+          "conservation": {
+            "valid": true,
+            "initial": {
+              "quarter": 0,
+              "eighth-pair": 0,
+              "sixteenth-group": 0,
+              "half": 0,
+              "eighth": 0,
+              "quarter-rest": 0,
+              "half-rest": 0,
+              "dotted-half": 0,
+              "sixteenth-pair": 0
+            },
+            "claimed": {
+              "quarter": 2,
+              "eighth-pair": 2,
+              "sixteenth-group": 1,
+              "half": 2,
+              "eighth": 1,
+              "quarter-rest": 1,
+              "half-rest": 1,
+              "dotted-half": 1,
+              "sixteenth-pair": 1
+            },
+            "spent": {
+              "quarter": 2,
+              "eighth-pair": 2,
+              "sixteenth-group": 0,
+              "half": 2,
+              "eighth": 1,
+              "quarter-rest": 1,
+              "half-rest": 1,
+              "dotted-half": 0,
+              "sixteenth-pair": 1
+            },
+            "remaining": {
+              "quarter": 0,
+              "eighth-pair": 0,
+              "sixteenth-group": 1,
+              "half": 0,
+              "eighth": 0,
+              "quarter-rest": 0,
+              "half-rest": 0,
+              "dotted-half": 1,
+              "sixteenth-pair": 0
+            }
+          }
+        }
+      },
+      {
+        "stateId": 25,
+        "nodeId": "garden-alcove",
+        "inventory": {
+          "quarter": 0,
+          "eighth-pair": 0,
+          "sixteenth-group": 0,
+          "half": 0,
+          "eighth": 0,
+          "quarter-rest": 0,
+          "half-rest": 0,
+          "dotted-half": 0,
+          "sixteenth-pair": 0
+        },
+        "claimedSources": [
+          "nell-parcel",
+          "depot-chest",
+          "iris-gift"
+        ],
+        "witness": {
+          "nodeId": "garden-alcove",
+          "actions": [
+            {
+              "type": "claim",
+              "sourceId": "nell-parcel"
+            },
+            {
+              "type": "claim",
+              "sourceId": "depot-chest"
+            },
+            {
+              "type": "door",
+              "doorId": "depot-garden"
+            },
+            {
+              "type": "claim",
+              "sourceId": "iris-gift"
+            },
+            {
+              "type": "door",
+              "doorId": "garden-porch-dead"
+            },
+            {
+              "type": "door",
+              "doorId": "bramble-return-gate"
+            },
+            {
+              "type": "door",
+              "doorId": "garden-secret-branch"
+            }
+          ],
+          "inventory": {
+            "quarter": 0,
+            "eighth-pair": 0,
+            "sixteenth-group": 0,
+            "half": 0,
+            "eighth": 0,
+            "quarter-rest": 0,
+            "half-rest": 0,
+            "dotted-half": 0,
+            "sixteenth-pair": 0
+          },
+          "claimedSources": [
+            "nell-parcel",
+            "depot-chest",
+            "iris-gift"
+          ],
+          "hiddenGateSources": [],
+          "riskEntryDoors": [
+            "garden-porch-dead"
+          ],
+          "conservation": {
+            "valid": true,
+            "initial": {
+              "quarter": 0,
+              "eighth-pair": 0,
+              "sixteenth-group": 0,
+              "half": 0,
+              "eighth": 0,
+              "quarter-rest": 0,
+              "half-rest": 0,
+              "dotted-half": 0,
+              "sixteenth-pair": 0
+            },
+            "claimed": {
+              "quarter": 1,
+              "eighth-pair": 1,
+              "sixteenth-group": 1,
+              "half": 2,
+              "eighth": 1,
+              "quarter-rest": 1,
+              "half-rest": 2,
+              "dotted-half": 1,
+              "sixteenth-pair": 1
+            },
+            "spent": {
+              "quarter": 1,
+              "eighth-pair": 1,
+              "sixteenth-group": 1,
+              "half": 2,
+              "eighth": 1,
+              "quarter-rest": 1,
+              "half-rest": 2,
+              "dotted-half": 1,
+              "sixteenth-pair": 1
+            },
+            "remaining": {
+              "quarter": 0,
+              "eighth-pair": 0,
+              "sixteenth-group": 0,
+              "half": 0,
+              "eighth": 0,
+              "quarter-rest": 0,
+              "half-rest": 0,
+              "dotted-half": 0,
+              "sixteenth-pair": 0
+            }
+          }
+        }
+      },
+      {
+        "stateId": 32,
+        "nodeId": "garden-alcove",
+        "inventory": {
+          "quarter": 1,
+          "eighth-pair": 1,
+          "sixteenth-group": 1,
+          "half": 0,
+          "eighth": 0,
+          "quarter-rest": 1,
+          "half-rest": 0,
+          "dotted-half": 0,
+          "sixteenth-pair": 0
+        },
+        "claimedSources": [
+          "nell-parcel",
+          "depot-chest",
+          "iris-gift",
+          "garden-hidden-notes"
+        ],
+        "witness": {
+          "nodeId": "garden-alcove",
+          "actions": [
+            {
+              "type": "claim",
+              "sourceId": "nell-parcel"
+            },
+            {
+              "type": "claim",
+              "sourceId": "depot-chest"
+            },
+            {
+              "type": "door",
+              "doorId": "depot-garden"
+            },
+            {
+              "type": "claim",
+              "sourceId": "iris-gift"
+            },
+            {
+              "type": "door",
+              "doorId": "garden-porch-dead"
+            },
+            {
+              "type": "door",
+              "doorId": "bramble-return-gate"
+            },
+            {
+              "type": "door",
+              "doorId": "garden-secret-branch"
+            },
+            {
+              "type": "claim",
+              "sourceId": "garden-hidden-notes"
+            }
+          ],
+          "inventory": {
+            "quarter": 1,
+            "eighth-pair": 1,
+            "sixteenth-group": 1,
+            "half": 0,
+            "eighth": 0,
+            "quarter-rest": 1,
+            "half-rest": 0,
+            "dotted-half": 0,
+            "sixteenth-pair": 0
+          },
+          "claimedSources": [
+            "nell-parcel",
+            "depot-chest",
+            "iris-gift",
+            "garden-hidden-notes"
+          ],
+          "hiddenGateSources": [],
+          "riskEntryDoors": [
+            "garden-porch-dead"
+          ],
+          "conservation": {
+            "valid": true,
+            "initial": {
+              "quarter": 0,
+              "eighth-pair": 0,
+              "sixteenth-group": 0,
+              "half": 0,
+              "eighth": 0,
+              "quarter-rest": 0,
+              "half-rest": 0,
+              "dotted-half": 0,
+              "sixteenth-pair": 0
+            },
+            "claimed": {
+              "quarter": 2,
+              "eighth-pair": 2,
+              "sixteenth-group": 2,
+              "half": 2,
+              "eighth": 1,
+              "quarter-rest": 2,
+              "half-rest": 2,
+              "dotted-half": 1,
+              "sixteenth-pair": 1
+            },
+            "spent": {
+              "quarter": 1,
+              "eighth-pair": 1,
+              "sixteenth-group": 1,
+              "half": 2,
+              "eighth": 1,
+              "quarter-rest": 1,
+              "half-rest": 2,
+              "dotted-half": 1,
+              "sixteenth-pair": 1
+            },
+            "remaining": {
+              "quarter": 1,
+              "eighth-pair": 1,
+              "sixteenth-group": 1,
+              "half": 0,
+              "eighth": 0,
+              "quarter-rest": 1,
+              "half-rest": 0,
+              "dotted-half": 0,
+              "sixteenth-pair": 0
+            }
+          }
+        }
+      },
+      {
+        "stateId": 28,
+        "nodeId": "workshop-alcove",
+        "inventory": {
+          "quarter": 0,
+          "eighth-pair": 0,
+          "sixteenth-group": 0,
+          "half": 0,
+          "eighth": 0,
+          "quarter-rest": 0,
+          "half-rest": 0,
+          "dotted-half": 0,
+          "sixteenth-pair": 0
+        },
+        "claimedSources": [
+          "nell-parcel",
+          "depot-chest",
+          "pip-gift"
+        ],
+        "witness": {
+          "nodeId": "workshop-alcove",
+          "actions": [
+            {
+              "type": "claim",
+              "sourceId": "nell-parcel"
+            },
+            {
+              "type": "claim",
+              "sourceId": "depot-chest"
+            },
+            {
+              "type": "door",
+              "doorId": "depot-workshop"
+            },
+            {
+              "type": "claim",
+              "sourceId": "pip-gift"
+            },
+            {
+              "type": "door",
+              "doorId": "workshop-porch-dead"
+            },
+            {
+              "type": "door",
+              "doorId": "aviary-return-gate"
+            },
+            {
+              "type": "door",
+              "doorId": "workshop-secret-branch"
+            }
+          ],
+          "inventory": {
+            "quarter": 0,
+            "eighth-pair": 0,
+            "sixteenth-group": 0,
+            "half": 0,
+            "eighth": 0,
+            "quarter-rest": 0,
+            "half-rest": 0,
+            "dotted-half": 0,
+            "sixteenth-pair": 0
+          },
+          "claimedSources": [
+            "nell-parcel",
+            "depot-chest",
+            "pip-gift"
+          ],
+          "hiddenGateSources": [],
+          "riskEntryDoors": [
+            "workshop-porch-dead"
+          ],
+          "conservation": {
+            "valid": true,
+            "initial": {
+              "quarter": 0,
+              "eighth-pair": 0,
+              "sixteenth-group": 0,
+              "half": 0,
+              "eighth": 0,
+              "quarter-rest": 0,
+              "half-rest": 0,
+              "dotted-half": 0,
+              "sixteenth-pair": 0
+            },
+            "claimed": {
+              "quarter": 1,
+              "eighth-pair": 2,
+              "sixteenth-group": 2,
+              "half": 2,
+              "eighth": 1,
+              "quarter-rest": 1,
+              "half-rest": 1,
+              "dotted-half": 1,
+              "sixteenth-pair": 1
+            },
+            "spent": {
+              "quarter": 1,
+              "eighth-pair": 2,
+              "sixteenth-group": 2,
+              "half": 2,
+              "eighth": 1,
+              "quarter-rest": 1,
+              "half-rest": 1,
+              "dotted-half": 1,
+              "sixteenth-pair": 1
+            },
+            "remaining": {
+              "quarter": 0,
+              "eighth-pair": 0,
+              "sixteenth-group": 0,
+              "half": 0,
+              "eighth": 0,
+              "quarter-rest": 0,
+              "half-rest": 0,
+              "dotted-half": 0,
+              "sixteenth-pair": 0
+            }
+          }
+        }
+      },
+      {
+        "stateId": 37,
+        "nodeId": "workshop-alcove",
+        "inventory": {
+          "quarter": 0,
+          "eighth-pair": 0,
+          "sixteenth-group": 0,
+          "half": 1,
+          "eighth": 0,
+          "quarter-rest": 0,
+          "half-rest": 1,
+          "dotted-half": 0,
+          "sixteenth-pair": 0
+        },
+        "claimedSources": [
+          "nell-parcel",
+          "depot-chest",
+          "pip-gift",
+          "workshop-hidden-notes"
+        ],
+        "witness": {
+          "nodeId": "workshop-alcove",
+          "actions": [
+            {
+              "type": "claim",
+              "sourceId": "nell-parcel"
+            },
+            {
+              "type": "claim",
+              "sourceId": "depot-chest"
+            },
+            {
+              "type": "door",
+              "doorId": "depot-workshop"
+            },
+            {
+              "type": "claim",
+              "sourceId": "pip-gift"
+            },
+            {
+              "type": "door",
+              "doorId": "workshop-porch-dead"
+            },
+            {
+              "type": "door",
+              "doorId": "aviary-return-gate"
+            },
+            {
+              "type": "door",
+              "doorId": "workshop-secret-branch"
+            },
+            {
+              "type": "claim",
+              "sourceId": "workshop-hidden-notes"
+            }
+          ],
+          "inventory": {
+            "quarter": 0,
+            "eighth-pair": 0,
+            "sixteenth-group": 0,
+            "half": 1,
+            "eighth": 0,
+            "quarter-rest": 0,
+            "half-rest": 1,
+            "dotted-half": 0,
+            "sixteenth-pair": 0
+          },
+          "claimedSources": [
+            "nell-parcel",
+            "depot-chest",
+            "pip-gift",
+            "workshop-hidden-notes"
+          ],
+          "hiddenGateSources": [],
+          "riskEntryDoors": [
+            "workshop-porch-dead"
+          ],
+          "conservation": {
+            "valid": true,
+            "initial": {
+              "quarter": 0,
+              "eighth-pair": 0,
+              "sixteenth-group": 0,
+              "half": 0,
+              "eighth": 0,
+              "quarter-rest": 0,
+              "half-rest": 0,
+              "dotted-half": 0,
+              "sixteenth-pair": 0
+            },
+            "claimed": {
+              "quarter": 1,
+              "eighth-pair": 2,
+              "sixteenth-group": 2,
+              "half": 3,
+              "eighth": 1,
+              "quarter-rest": 1,
+              "half-rest": 2,
+              "dotted-half": 1,
+              "sixteenth-pair": 1
+            },
+            "spent": {
+              "quarter": 1,
+              "eighth-pair": 2,
+              "sixteenth-group": 2,
+              "half": 2,
+              "eighth": 1,
+              "quarter-rest": 1,
+              "half-rest": 1,
+              "dotted-half": 1,
+              "sixteenth-pair": 1
+            },
+            "remaining": {
+              "quarter": 0,
+              "eighth-pair": 0,
+              "sixteenth-group": 0,
+              "half": 1,
+              "eighth": 0,
+              "quarter-rest": 0,
+              "half-rest": 1,
+              "dotted-half": 0,
+              "sixteenth-pair": 0
+            }
+          }
+        }
+      },
+      {
+        "stateId": 29,
+        "nodeId": "canal-final",
+        "inventory": {
+          "quarter": 0,
+          "eighth-pair": 0,
+          "sixteenth-group": 0,
+          "half": 0,
+          "eighth": 0,
+          "quarter-rest": 0,
+          "half-rest": 0,
+          "dotted-half": 0,
+          "sixteenth-pair": 0
+        },
+        "claimedSources": [
+          "nell-parcel",
+          "depot-chest",
+          "canal-chest"
+        ],
+        "witness": {
+          "nodeId": "canal-final",
+          "actions": [
+            {
+              "type": "claim",
+              "sourceId": "nell-parcel"
+            },
+            {
+              "type": "claim",
+              "sourceId": "depot-chest"
+            },
+            {
+              "type": "door",
+              "doorId": "depot-canal"
+            },
+            {
+              "type": "claim",
+              "sourceId": "canal-chest"
+            },
+            {
+              "type": "door",
+              "doorId": "canal-porch-forward"
+            },
+            {
+              "type": "door",
+              "doorId": "canal-dead"
+            },
+            {
+              "type": "door",
+              "doorId": "echo-return-gate"
+            }
+          ],
+          "inventory": {
+            "quarter": 0,
+            "eighth-pair": 0,
+            "sixteenth-group": 0,
+            "half": 0,
+            "eighth": 0,
+            "quarter-rest": 0,
+            "half-rest": 0,
+            "dotted-half": 0,
+            "sixteenth-pair": 0
+          },
+          "claimedSources": [
+            "nell-parcel",
+            "depot-chest",
+            "canal-chest"
+          ],
+          "hiddenGateSources": [],
+          "riskEntryDoors": [
+            "canal-dead"
+          ],
+          "conservation": {
+            "valid": true,
+            "initial": {
+              "quarter": 0,
+              "eighth-pair": 0,
+              "sixteenth-group": 0,
+              "half": 0,
+              "eighth": 0,
+              "quarter-rest": 0,
+              "half-rest": 0,
+              "dotted-half": 0,
+              "sixteenth-pair": 0
+            },
+            "claimed": {
+              "quarter": 2,
+              "eighth-pair": 2,
+              "sixteenth-group": 1,
+              "half": 2,
+              "eighth": 1,
+              "quarter-rest": 1,
+              "half-rest": 1,
+              "dotted-half": 1,
+              "sixteenth-pair": 1
+            },
+            "spent": {
+              "quarter": 2,
+              "eighth-pair": 2,
+              "sixteenth-group": 1,
+              "half": 2,
+              "eighth": 1,
+              "quarter-rest": 1,
+              "half-rest": 1,
+              "dotted-half": 1,
+              "sixteenth-pair": 1
+            },
+            "remaining": {
+              "quarter": 0,
+              "eighth-pair": 0,
+              "sixteenth-group": 0,
+              "half": 0,
+              "eighth": 0,
+              "quarter-rest": 0,
+              "half-rest": 0,
+              "dotted-half": 0,
+              "sixteenth-pair": 0
+            }
+          }
+        }
+      },
+      {
+        "stateId": 34,
+        "nodeId": "garden-secret-final",
+        "inventory": {
+          "quarter": 0,
+          "eighth-pair": 0,
+          "sixteenth-group": 0,
+          "half": 0,
+          "eighth": 0,
+          "quarter-rest": 0,
+          "half-rest": 0,
+          "dotted-half": 0,
+          "sixteenth-pair": 0
+        },
+        "claimedSources": [
+          "nell-parcel",
+          "depot-chest",
+          "iris-gift",
+          "garden-hidden-notes"
+        ],
+        "witness": {
+          "nodeId": "garden-secret-final",
+          "actions": [
+            {
+              "type": "claim",
+              "sourceId": "nell-parcel"
+            },
+            {
+              "type": "claim",
+              "sourceId": "depot-chest"
+            },
+            {
+              "type": "door",
+              "doorId": "depot-garden"
+            },
+            {
+              "type": "claim",
+              "sourceId": "iris-gift"
+            },
+            {
+              "type": "door",
+              "doorId": "garden-porch-dead"
+            },
+            {
+              "type": "door",
+              "doorId": "bramble-return-gate"
+            },
+            {
+              "type": "door",
+              "doorId": "garden-secret-branch"
+            },
+            {
+              "type": "claim",
+              "sourceId": "garden-hidden-notes"
+            },
+            {
+              "type": "door",
+              "doorId": "garden-hidden-exit"
+            }
+          ],
+          "inventory": {
+            "quarter": 0,
+            "eighth-pair": 0,
+            "sixteenth-group": 0,
+            "half": 0,
+            "eighth": 0,
+            "quarter-rest": 0,
+            "half-rest": 0,
+            "dotted-half": 0,
+            "sixteenth-pair": 0
+          },
+          "claimedSources": [
+            "nell-parcel",
+            "depot-chest",
+            "iris-gift",
+            "garden-hidden-notes"
+          ],
+          "hiddenGateSources": [
+            "garden-hidden-notes"
+          ],
+          "riskEntryDoors": [
+            "garden-porch-dead"
+          ],
+          "conservation": {
+            "valid": true,
+            "initial": {
+              "quarter": 0,
+              "eighth-pair": 0,
+              "sixteenth-group": 0,
+              "half": 0,
+              "eighth": 0,
+              "quarter-rest": 0,
+              "half-rest": 0,
+              "dotted-half": 0,
+              "sixteenth-pair": 0
+            },
+            "claimed": {
+              "quarter": 2,
+              "eighth-pair": 2,
+              "sixteenth-group": 2,
+              "half": 2,
+              "eighth": 1,
+              "quarter-rest": 2,
+              "half-rest": 2,
+              "dotted-half": 1,
+              "sixteenth-pair": 1
+            },
+            "spent": {
+              "quarter": 2,
+              "eighth-pair": 2,
+              "sixteenth-group": 2,
+              "half": 2,
+              "eighth": 1,
+              "quarter-rest": 2,
+              "half-rest": 2,
+              "dotted-half": 1,
+              "sixteenth-pair": 1
+            },
+            "remaining": {
+              "quarter": 0,
+              "eighth-pair": 0,
+              "sixteenth-group": 0,
+              "half": 0,
+              "eighth": 0,
+              "quarter-rest": 0,
+              "half-rest": 0,
+              "dotted-half": 0,
+              "sixteenth-pair": 0
+            }
+          }
+        }
+      },
+      {
+        "stateId": 39,
+        "nodeId": "workshop-secret-final",
+        "inventory": {
+          "quarter": 0,
+          "eighth-pair": 0,
+          "sixteenth-group": 0,
+          "half": 0,
+          "eighth": 0,
+          "quarter-rest": 0,
+          "half-rest": 0,
+          "dotted-half": 0,
+          "sixteenth-pair": 0
+        },
+        "claimedSources": [
+          "nell-parcel",
+          "depot-chest",
+          "pip-gift",
+          "workshop-hidden-notes"
+        ],
+        "witness": {
+          "nodeId": "workshop-secret-final",
+          "actions": [
+            {
+              "type": "claim",
+              "sourceId": "nell-parcel"
+            },
+            {
+              "type": "claim",
+              "sourceId": "depot-chest"
+            },
+            {
+              "type": "door",
+              "doorId": "depot-workshop"
+            },
+            {
+              "type": "claim",
+              "sourceId": "pip-gift"
+            },
+            {
+              "type": "door",
+              "doorId": "workshop-porch-dead"
+            },
+            {
+              "type": "door",
+              "doorId": "aviary-return-gate"
+            },
+            {
+              "type": "door",
+              "doorId": "workshop-secret-branch"
+            },
+            {
+              "type": "claim",
+              "sourceId": "workshop-hidden-notes"
+            },
+            {
+              "type": "door",
+              "doorId": "workshop-hidden-exit"
+            }
+          ],
+          "inventory": {
+            "quarter": 0,
+            "eighth-pair": 0,
+            "sixteenth-group": 0,
+            "half": 0,
+            "eighth": 0,
+            "quarter-rest": 0,
+            "half-rest": 0,
+            "dotted-half": 0,
+            "sixteenth-pair": 0
+          },
+          "claimedSources": [
+            "nell-parcel",
+            "depot-chest",
+            "pip-gift",
+            "workshop-hidden-notes"
+          ],
+          "hiddenGateSources": [
+            "workshop-hidden-notes"
+          ],
+          "riskEntryDoors": [
+            "workshop-porch-dead"
+          ],
+          "conservation": {
+            "valid": true,
+            "initial": {
+              "quarter": 0,
+              "eighth-pair": 0,
+              "sixteenth-group": 0,
+              "half": 0,
+              "eighth": 0,
+              "quarter-rest": 0,
+              "half-rest": 0,
+              "dotted-half": 0,
+              "sixteenth-pair": 0
+            },
+            "claimed": {
+              "quarter": 1,
+              "eighth-pair": 2,
+              "sixteenth-group": 2,
+              "half": 3,
+              "eighth": 1,
+              "quarter-rest": 1,
+              "half-rest": 2,
+              "dotted-half": 1,
+              "sixteenth-pair": 1
+            },
+            "spent": {
+              "quarter": 1,
+              "eighth-pair": 2,
+              "sixteenth-group": 2,
+              "half": 3,
+              "eighth": 1,
+              "quarter-rest": 1,
+              "half-rest": 2,
+              "dotted-half": 1,
+              "sixteenth-pair": 1
+            },
+            "remaining": {
+              "quarter": 0,
+              "eighth-pair": 0,
+              "sixteenth-group": 0,
+              "half": 0,
+              "eighth": 0,
+              "quarter-rest": 0,
+              "half-rest": 0,
+              "dotted-half": 0,
+              "sixteenth-pair": 0
+            }
+          }
+        }
+      }
+    ]
   },
   "softlocks": {
     "count": 0,
@@ -123,6 +2411,7 @@
           "nell-parcel"
         ],
         "hiddenGateSources": [],
+        "riskEntryDoors": [],
         "conservation": {
           "valid": true,
           "initial": {
@@ -206,6 +2495,7 @@
           "depot-chest"
         ],
         "hiddenGateSources": [],
+        "riskEntryDoors": [],
         "conservation": {
           "valid": true,
           "initial": {
@@ -304,6 +2594,7 @@
           "iris-gift"
         ],
         "hiddenGateSources": [],
+        "riskEntryDoors": [],
         "conservation": {
           "valid": true,
           "initial": {
@@ -403,6 +2694,7 @@
           "pip-gift"
         ],
         "hiddenGateSources": [],
+        "riskEntryDoors": [],
         "conservation": {
           "valid": true,
           "initial": {
@@ -502,6 +2794,7 @@
           "canal-chest"
         ],
         "hiddenGateSources": [],
+        "riskEntryDoors": [],
         "conservation": {
           "valid": true,
           "initial": {
@@ -563,8 +2856,8 @@
         "quarter-rest"
       ],
       "reachable": true,
-      "transitions": 1,
-      "orderedHistories": "2",
+      "transitions": 2,
+      "orderedHistories": "4",
       "witness": {
         "nodeId": "garden-alcove",
         "actions": [
@@ -615,6 +2908,7 @@
           "garden-hidden-notes"
         ],
         "hiddenGateSources": [],
+        "riskEntryDoors": [],
         "conservation": {
           "valid": true,
           "initial": {
@@ -674,8 +2968,8 @@
         "half-rest"
       ],
       "reachable": true,
-      "transitions": 1,
-      "orderedHistories": "2",
+      "transitions": 2,
+      "orderedHistories": "4",
       "witness": {
         "nodeId": "workshop-alcove",
         "actions": [
@@ -726,6 +3020,7 @@
           "workshop-hidden-notes"
         ],
         "hiddenGateSources": [],
+        "riskEntryDoors": [],
         "conservation": {
           "valid": true,
           "initial": {
@@ -821,6 +3116,7 @@
           "depot-chest"
         ],
         "hiddenGateSources": [],
+        "riskEntryDoors": [],
         "conservation": {
           "valid": true,
           "initial": {
@@ -915,6 +3211,7 @@
           "depot-chest"
         ],
         "hiddenGateSources": [],
+        "riskEntryDoors": [],
         "conservation": {
           "valid": true,
           "initial": {
@@ -1009,6 +3306,7 @@
           "depot-chest"
         ],
         "hiddenGateSources": [],
+        "riskEntryDoors": [],
         "conservation": {
           "valid": true,
           "initial": {
@@ -1111,6 +3409,7 @@
           "iris-gift"
         ],
         "hiddenGateSources": [],
+        "riskEntryDoors": [],
         "conservation": {
           "valid": true,
           "initial": {
@@ -1208,6 +3507,9 @@
           "depot-chest"
         ],
         "hiddenGateSources": [],
+        "riskEntryDoors": [
+          "garden-porch-dead"
+        ],
         "conservation": {
           "valid": true,
           "initial": {
@@ -1311,6 +3613,7 @@
           "pip-gift"
         ],
         "hiddenGateSources": [],
+        "riskEntryDoors": [],
         "conservation": {
           "valid": true,
           "initial": {
@@ -1408,6 +3711,9 @@
           "depot-chest"
         ],
         "hiddenGateSources": [],
+        "riskEntryDoors": [
+          "workshop-porch-dead"
+        ],
         "conservation": {
           "valid": true,
           "initial": {
@@ -1511,6 +3817,7 @@
           "canal-chest"
         ],
         "hiddenGateSources": [],
+        "riskEntryDoors": [],
         "conservation": {
           "valid": true,
           "initial": {
@@ -1608,6 +3915,7 @@
           "depot-chest"
         ],
         "hiddenGateSources": [],
+        "riskEntryDoors": [],
         "conservation": {
           "valid": true,
           "initial": {
@@ -1651,6 +3959,115 @@
             "eighth": 1,
             "quarter-rest": 1,
             "half-rest": 1,
+            "dotted-half": 0,
+            "sixteenth-pair": 1
+          }
+        }
+      }
+    },
+    {
+      "id": "bramble-return-gate",
+      "roomId": "dead-brambles",
+      "to": "garden-fork",
+      "recipe": [
+        "half",
+        "half-rest"
+      ],
+      "revealAfter": null,
+      "reachable": true,
+      "transitions": 1,
+      "orderedHistories": "2",
+      "witness": {
+        "nodeId": "garden-fork",
+        "actions": [
+          {
+            "type": "claim",
+            "sourceId": "nell-parcel"
+          },
+          {
+            "type": "claim",
+            "sourceId": "depot-chest"
+          },
+          {
+            "type": "door",
+            "doorId": "depot-garden"
+          },
+          {
+            "type": "claim",
+            "sourceId": "iris-gift"
+          },
+          {
+            "type": "door",
+            "doorId": "garden-porch-dead"
+          },
+          {
+            "type": "door",
+            "doorId": "bramble-return-gate"
+          }
+        ],
+        "inventory": {
+          "quarter": 0,
+          "eighth-pair": 1,
+          "sixteenth-group": 1,
+          "half": 0,
+          "eighth": 1,
+          "quarter-rest": 1,
+          "half-rest": 0,
+          "dotted-half": 0,
+          "sixteenth-pair": 1
+        },
+        "claimedSources": [
+          "nell-parcel",
+          "depot-chest",
+          "iris-gift"
+        ],
+        "hiddenGateSources": [],
+        "riskEntryDoors": [
+          "garden-porch-dead"
+        ],
+        "conservation": {
+          "valid": true,
+          "initial": {
+            "quarter": 0,
+            "eighth-pair": 0,
+            "sixteenth-group": 0,
+            "half": 0,
+            "eighth": 0,
+            "quarter-rest": 0,
+            "half-rest": 0,
+            "dotted-half": 0,
+            "sixteenth-pair": 0
+          },
+          "claimed": {
+            "quarter": 1,
+            "eighth-pair": 1,
+            "sixteenth-group": 1,
+            "half": 2,
+            "eighth": 1,
+            "quarter-rest": 1,
+            "half-rest": 2,
+            "dotted-half": 1,
+            "sixteenth-pair": 1
+          },
+          "spent": {
+            "quarter": 1,
+            "eighth-pair": 0,
+            "sixteenth-group": 0,
+            "half": 2,
+            "eighth": 0,
+            "quarter-rest": 0,
+            "half-rest": 2,
+            "dotted-half": 1,
+            "sixteenth-pair": 0
+          },
+          "remaining": {
+            "quarter": 0,
+            "eighth-pair": 1,
+            "sixteenth-group": 1,
+            "half": 0,
+            "eighth": 1,
+            "quarter-rest": 1,
+            "half-rest": 0,
             "dotted-half": 0,
             "sixteenth-pair": 1
           }
@@ -1714,6 +4131,7 @@
           "iris-gift"
         ],
         "hiddenGateSources": [],
+        "riskEntryDoors": [],
         "conservation": {
           "valid": true,
           "initial": {
@@ -1776,8 +4194,8 @@
       ],
       "revealAfter": null,
       "reachable": true,
-      "transitions": 1,
-      "orderedHistories": "2",
+      "transitions": 2,
+      "orderedHistories": "4",
       "witness": {
         "nodeId": "garden-alcove",
         "actions": [
@@ -1823,6 +4241,7 @@
           "iris-gift"
         ],
         "hiddenGateSources": [],
+        "riskEntryDoors": [],
         "conservation": {
           "valid": true,
           "initial": {
@@ -1868,6 +4287,116 @@
             "half-rest": 0,
             "dotted-half": 1,
             "sixteenth-pair": 0
+          }
+        }
+      }
+    },
+    {
+      "id": "aviary-return-gate",
+      "roomId": "dead-aviary",
+      "to": "workshop-fork",
+      "recipe": [
+        "half",
+        "eighth-pair",
+        "sixteenth-group"
+      ],
+      "revealAfter": null,
+      "reachable": true,
+      "transitions": 1,
+      "orderedHistories": "2",
+      "witness": {
+        "nodeId": "workshop-fork",
+        "actions": [
+          {
+            "type": "claim",
+            "sourceId": "nell-parcel"
+          },
+          {
+            "type": "claim",
+            "sourceId": "depot-chest"
+          },
+          {
+            "type": "door",
+            "doorId": "depot-workshop"
+          },
+          {
+            "type": "claim",
+            "sourceId": "pip-gift"
+          },
+          {
+            "type": "door",
+            "doorId": "workshop-porch-dead"
+          },
+          {
+            "type": "door",
+            "doorId": "aviary-return-gate"
+          }
+        ],
+        "inventory": {
+          "quarter": 0,
+          "eighth-pair": 0,
+          "sixteenth-group": 0,
+          "half": 0,
+          "eighth": 1,
+          "quarter-rest": 1,
+          "half-rest": 1,
+          "dotted-half": 0,
+          "sixteenth-pair": 1
+        },
+        "claimedSources": [
+          "nell-parcel",
+          "depot-chest",
+          "pip-gift"
+        ],
+        "hiddenGateSources": [],
+        "riskEntryDoors": [
+          "workshop-porch-dead"
+        ],
+        "conservation": {
+          "valid": true,
+          "initial": {
+            "quarter": 0,
+            "eighth-pair": 0,
+            "sixteenth-group": 0,
+            "half": 0,
+            "eighth": 0,
+            "quarter-rest": 0,
+            "half-rest": 0,
+            "dotted-half": 0,
+            "sixteenth-pair": 0
+          },
+          "claimed": {
+            "quarter": 1,
+            "eighth-pair": 2,
+            "sixteenth-group": 2,
+            "half": 2,
+            "eighth": 1,
+            "quarter-rest": 1,
+            "half-rest": 1,
+            "dotted-half": 1,
+            "sixteenth-pair": 1
+          },
+          "spent": {
+            "quarter": 1,
+            "eighth-pair": 2,
+            "sixteenth-group": 2,
+            "half": 2,
+            "eighth": 0,
+            "quarter-rest": 0,
+            "half-rest": 0,
+            "dotted-half": 1,
+            "sixteenth-pair": 0
+          },
+          "remaining": {
+            "quarter": 0,
+            "eighth-pair": 0,
+            "sixteenth-group": 0,
+            "half": 0,
+            "eighth": 1,
+            "quarter-rest": 1,
+            "half-rest": 1,
+            "dotted-half": 0,
+            "sixteenth-pair": 1
           }
         }
       }
@@ -1929,6 +4458,7 @@
           "pip-gift"
         ],
         "hiddenGateSources": [],
+        "riskEntryDoors": [],
         "conservation": {
           "valid": true,
           "initial": {
@@ -1990,8 +4520,8 @@
       ],
       "revealAfter": null,
       "reachable": true,
-      "transitions": 1,
-      "orderedHistories": "2",
+      "transitions": 2,
+      "orderedHistories": "4",
       "witness": {
         "nodeId": "workshop-alcove",
         "actions": [
@@ -2037,6 +4567,7 @@
           "pip-gift"
         ],
         "hiddenGateSources": [],
+        "riskEntryDoors": [],
         "conservation": {
           "valid": true,
           "initial": {
@@ -2143,6 +4674,7 @@
           "canal-chest"
         ],
         "hiddenGateSources": [],
+        "riskEntryDoors": [],
         "conservation": {
           "valid": true,
           "initial": {
@@ -2251,6 +4783,9 @@
           "canal-chest"
         ],
         "hiddenGateSources": [],
+        "riskEntryDoors": [
+          "canal-dead"
+        ],
         "conservation": {
           "valid": true,
           "initial": {
@@ -2364,6 +4899,7 @@
           "iris-gift"
         ],
         "hiddenGateSources": [],
+        "riskEntryDoors": [],
         "conservation": {
           "valid": true,
           "initial": {
@@ -2476,6 +5012,7 @@
           "pip-gift"
         ],
         "hiddenGateSources": [],
+        "riskEntryDoors": [],
         "conservation": {
           "valid": true,
           "initial": {
@@ -2504,6 +5041,119 @@
             "quarter": 1,
             "eighth-pair": 2,
             "sixteenth-group": 2,
+            "half": 2,
+            "eighth": 1,
+            "quarter-rest": 1,
+            "half-rest": 1,
+            "dotted-half": 1,
+            "sixteenth-pair": 1
+          },
+          "remaining": {
+            "quarter": 0,
+            "eighth-pair": 0,
+            "sixteenth-group": 0,
+            "half": 0,
+            "eighth": 0,
+            "quarter-rest": 0,
+            "half-rest": 0,
+            "dotted-half": 0,
+            "sixteenth-pair": 0
+          }
+        }
+      }
+    },
+    {
+      "id": "echo-return-gate",
+      "roomId": "dead-echo",
+      "to": "canal-final",
+      "recipe": [
+        "dotted-half",
+        "sixteenth-group"
+      ],
+      "revealAfter": null,
+      "reachable": true,
+      "transitions": 1,
+      "orderedHistories": "2",
+      "witness": {
+        "nodeId": "canal-final",
+        "actions": [
+          {
+            "type": "claim",
+            "sourceId": "nell-parcel"
+          },
+          {
+            "type": "claim",
+            "sourceId": "depot-chest"
+          },
+          {
+            "type": "door",
+            "doorId": "depot-canal"
+          },
+          {
+            "type": "claim",
+            "sourceId": "canal-chest"
+          },
+          {
+            "type": "door",
+            "doorId": "canal-porch-forward"
+          },
+          {
+            "type": "door",
+            "doorId": "canal-dead"
+          },
+          {
+            "type": "door",
+            "doorId": "echo-return-gate"
+          }
+        ],
+        "inventory": {
+          "quarter": 0,
+          "eighth-pair": 0,
+          "sixteenth-group": 0,
+          "half": 0,
+          "eighth": 0,
+          "quarter-rest": 0,
+          "half-rest": 0,
+          "dotted-half": 0,
+          "sixteenth-pair": 0
+        },
+        "claimedSources": [
+          "nell-parcel",
+          "depot-chest",
+          "canal-chest"
+        ],
+        "hiddenGateSources": [],
+        "riskEntryDoors": [
+          "canal-dead"
+        ],
+        "conservation": {
+          "valid": true,
+          "initial": {
+            "quarter": 0,
+            "eighth-pair": 0,
+            "sixteenth-group": 0,
+            "half": 0,
+            "eighth": 0,
+            "quarter-rest": 0,
+            "half-rest": 0,
+            "dotted-half": 0,
+            "sixteenth-pair": 0
+          },
+          "claimed": {
+            "quarter": 2,
+            "eighth-pair": 2,
+            "sixteenth-group": 1,
+            "half": 2,
+            "eighth": 1,
+            "quarter-rest": 1,
+            "half-rest": 1,
+            "dotted-half": 1,
+            "sixteenth-pair": 1
+          },
+          "spent": {
+            "quarter": 2,
+            "eighth-pair": 2,
+            "sixteenth-group": 1,
             "half": 2,
             "eighth": 1,
             "quarter-rest": 1,
@@ -2588,6 +5238,7 @@
           "canal-chest"
         ],
         "hiddenGateSources": [],
+        "riskEntryDoors": [],
         "conservation": {
           "valid": true,
           "initial": {
@@ -2649,8 +5300,8 @@
       ],
       "revealAfter": "garden-hidden-notes",
       "reachable": true,
-      "transitions": 1,
-      "orderedHistories": "2",
+      "transitions": 2,
+      "orderedHistories": "4",
       "witness": {
         "nodeId": "garden-secret-final",
         "actions": [
@@ -2707,6 +5358,7 @@
         "hiddenGateSources": [
           "garden-hidden-notes"
         ],
+        "riskEntryDoors": [],
         "conservation": {
           "valid": true,
           "initial": {
@@ -2766,8 +5418,8 @@
       ],
       "revealAfter": "workshop-hidden-notes",
       "reachable": true,
-      "transitions": 1,
-      "orderedHistories": "2",
+      "transitions": 2,
+      "orderedHistories": "4",
       "witness": {
         "nodeId": "workshop-secret-final",
         "actions": [
@@ -2824,6 +5476,7 @@
         "hiddenGateSources": [
           "workshop-hidden-notes"
         ],
+        "riskEntryDoors": [],
         "conservation": {
           "valid": true,
           "initial": {
@@ -2945,6 +5598,7 @@
         "hiddenGateSources": [
           "garden-hidden-notes"
         ],
+        "riskEntryDoors": [],
         "conservation": {
           "valid": true,
           "initial": {
@@ -3066,6 +5720,7 @@
         "hiddenGateSources": [
           "workshop-hidden-notes"
         ],
+        "riskEntryDoors": [],
         "conservation": {
           "valid": true,
           "initial": {
@@ -3220,6 +5875,7 @@
           "iris-gift"
         ],
         "hiddenGateSources": [],
+        "riskEntryDoors": [],
         "conservation": {
           "valid": true,
           "initial": {
@@ -3372,6 +6028,7 @@
           "pip-gift"
         ],
         "hiddenGateSources": [],
+        "riskEntryDoors": [],
         "conservation": {
           "valid": true,
           "initial": {
@@ -3524,6 +6181,7 @@
           "canal-chest"
         ],
         "hiddenGateSources": [],
+        "riskEntryDoors": [],
         "conservation": {
           "valid": true,
           "initial": {
@@ -3687,6 +6345,7 @@
         "hiddenGateSources": [
           "garden-hidden-notes"
         ],
+        "riskEntryDoors": [],
         "conservation": {
           "valid": true,
           "initial": {
@@ -3850,6 +6509,7 @@
         "hiddenGateSources": [
           "workshop-hidden-notes"
         ],
+        "riskEntryDoors": [],
         "conservation": {
           "valid": true,
           "initial": {
@@ -3895,284 +6555,6 @@
             "half-rest": 0,
             "dotted-half": 0,
             "sixteenth-pair": 0
-          }
-        }
-      }
-    },
-    {
-      "id": "dead-brambles",
-      "title": "The Overgrown Arch",
-      "kind": "dead-end",
-      "reachable": true,
-      "distinctFinalStates": 2,
-      "orderedHistories": "4",
-      "zeroBalanceStates": 0,
-      "remainingTiles": {
-        "min": 5,
-        "max": 7
-      },
-      "remainingHalfBeatUnits": {
-        "min": 8,
-        "max": 16
-      },
-      "remainingByKind": {
-        "quarter": {
-          "min": 0,
-          "max": 0
-        },
-        "eighth-pair": {
-          "min": 1,
-          "max": 1
-        },
-        "sixteenth-group": {
-          "min": 1,
-          "max": 1
-        },
-        "half": {
-          "min": 0,
-          "max": 1
-        },
-        "eighth": {
-          "min": 1,
-          "max": 1
-        },
-        "quarter-rest": {
-          "min": 1,
-          "max": 1
-        },
-        "half-rest": {
-          "min": 0,
-          "max": 1
-        },
-        "dotted-half": {
-          "min": 0,
-          "max": 0
-        },
-        "sixteenth-pair": {
-          "min": 1,
-          "max": 1
-        }
-      },
-      "witness": {
-        "nodeId": "dead-brambles",
-        "actions": [
-          {
-            "type": "claim",
-            "sourceId": "nell-parcel"
-          },
-          {
-            "type": "claim",
-            "sourceId": "depot-chest"
-          },
-          {
-            "type": "door",
-            "doorId": "depot-garden"
-          },
-          {
-            "type": "door",
-            "doorId": "garden-porch-dead"
-          }
-        ],
-        "inventory": {
-          "quarter": 0,
-          "eighth-pair": 1,
-          "sixteenth-group": 1,
-          "half": 0,
-          "eighth": 1,
-          "quarter-rest": 1,
-          "half-rest": 0,
-          "dotted-half": 0,
-          "sixteenth-pair": 1
-        },
-        "claimedSources": [
-          "nell-parcel",
-          "depot-chest"
-        ],
-        "hiddenGateSources": [],
-        "conservation": {
-          "valid": true,
-          "initial": {
-            "quarter": 0,
-            "eighth-pair": 0,
-            "sixteenth-group": 0,
-            "half": 0,
-            "eighth": 0,
-            "quarter-rest": 0,
-            "half-rest": 0,
-            "dotted-half": 0,
-            "sixteenth-pair": 0
-          },
-          "claimed": {
-            "quarter": 1,
-            "eighth-pair": 1,
-            "sixteenth-group": 1,
-            "half": 1,
-            "eighth": 1,
-            "quarter-rest": 1,
-            "half-rest": 1,
-            "dotted-half": 1,
-            "sixteenth-pair": 1
-          },
-          "spent": {
-            "quarter": 1,
-            "eighth-pair": 0,
-            "sixteenth-group": 0,
-            "half": 1,
-            "eighth": 0,
-            "quarter-rest": 0,
-            "half-rest": 1,
-            "dotted-half": 1,
-            "sixteenth-pair": 0
-          },
-          "remaining": {
-            "quarter": 0,
-            "eighth-pair": 1,
-            "sixteenth-group": 1,
-            "half": 0,
-            "eighth": 1,
-            "quarter-rest": 1,
-            "half-rest": 0,
-            "dotted-half": 0,
-            "sixteenth-pair": 1
-          }
-        }
-      }
-    },
-    {
-      "id": "dead-aviary",
-      "title": "The Silent Aviary",
-      "kind": "dead-end",
-      "reachable": true,
-      "distinctFinalStates": 2,
-      "orderedHistories": "4",
-      "zeroBalanceStates": 0,
-      "remainingTiles": {
-        "min": 4,
-        "max": 7
-      },
-      "remainingHalfBeatUnits": {
-        "min": 8,
-        "max": 16
-      },
-      "remainingByKind": {
-        "quarter": {
-          "min": 0,
-          "max": 0
-        },
-        "eighth-pair": {
-          "min": 0,
-          "max": 1
-        },
-        "sixteenth-group": {
-          "min": 0,
-          "max": 1
-        },
-        "half": {
-          "min": 0,
-          "max": 1
-        },
-        "eighth": {
-          "min": 1,
-          "max": 1
-        },
-        "quarter-rest": {
-          "min": 1,
-          "max": 1
-        },
-        "half-rest": {
-          "min": 1,
-          "max": 1
-        },
-        "dotted-half": {
-          "min": 0,
-          "max": 0
-        },
-        "sixteenth-pair": {
-          "min": 1,
-          "max": 1
-        }
-      },
-      "witness": {
-        "nodeId": "dead-aviary",
-        "actions": [
-          {
-            "type": "claim",
-            "sourceId": "nell-parcel"
-          },
-          {
-            "type": "claim",
-            "sourceId": "depot-chest"
-          },
-          {
-            "type": "door",
-            "doorId": "depot-workshop"
-          },
-          {
-            "type": "door",
-            "doorId": "workshop-porch-dead"
-          }
-        ],
-        "inventory": {
-          "quarter": 0,
-          "eighth-pair": 0,
-          "sixteenth-group": 0,
-          "half": 0,
-          "eighth": 1,
-          "quarter-rest": 1,
-          "half-rest": 1,
-          "dotted-half": 0,
-          "sixteenth-pair": 1
-        },
-        "claimedSources": [
-          "nell-parcel",
-          "depot-chest"
-        ],
-        "hiddenGateSources": [],
-        "conservation": {
-          "valid": true,
-          "initial": {
-            "quarter": 0,
-            "eighth-pair": 0,
-            "sixteenth-group": 0,
-            "half": 0,
-            "eighth": 0,
-            "quarter-rest": 0,
-            "half-rest": 0,
-            "dotted-half": 0,
-            "sixteenth-pair": 0
-          },
-          "claimed": {
-            "quarter": 1,
-            "eighth-pair": 1,
-            "sixteenth-group": 1,
-            "half": 1,
-            "eighth": 1,
-            "quarter-rest": 1,
-            "half-rest": 1,
-            "dotted-half": 1,
-            "sixteenth-pair": 1
-          },
-          "spent": {
-            "quarter": 1,
-            "eighth-pair": 1,
-            "sixteenth-group": 1,
-            "half": 1,
-            "eighth": 0,
-            "quarter-rest": 0,
-            "half-rest": 0,
-            "dotted-half": 1,
-            "sixteenth-pair": 0
-          },
-          "remaining": {
-            "quarter": 0,
-            "eighth-pair": 0,
-            "sixteenth-group": 0,
-            "half": 0,
-            "eighth": 1,
-            "quarter-rest": 1,
-            "half-rest": 1,
-            "dotted-half": 0,
-            "sixteenth-pair": 1
           }
         }
       }
@@ -4267,6 +6649,7 @@
           "depot-chest"
         ],
         "hiddenGateSources": [],
+        "riskEntryDoors": [],
         "conservation": {
           "valid": true,
           "initial": {
@@ -4312,154 +6695,6 @@
             "half-rest": 1,
             "dotted-half": 0,
             "sixteenth-pair": 1
-          }
-        }
-      }
-    },
-    {
-      "id": "dead-echo",
-      "title": "The Copied Waterway",
-      "kind": "dead-end",
-      "reachable": true,
-      "distinctFinalStates": 1,
-      "orderedHistories": "2",
-      "zeroBalanceStates": 0,
-      "remainingTiles": {
-        "min": 2,
-        "max": 2
-      },
-      "remainingHalfBeatUnits": {
-        "min": 8,
-        "max": 8
-      },
-      "remainingByKind": {
-        "quarter": {
-          "min": 0,
-          "max": 0
-        },
-        "eighth-pair": {
-          "min": 0,
-          "max": 0
-        },
-        "sixteenth-group": {
-          "min": 1,
-          "max": 1
-        },
-        "half": {
-          "min": 0,
-          "max": 0
-        },
-        "eighth": {
-          "min": 0,
-          "max": 0
-        },
-        "quarter-rest": {
-          "min": 0,
-          "max": 0
-        },
-        "half-rest": {
-          "min": 0,
-          "max": 0
-        },
-        "dotted-half": {
-          "min": 1,
-          "max": 1
-        },
-        "sixteenth-pair": {
-          "min": 0,
-          "max": 0
-        }
-      },
-      "witness": {
-        "nodeId": "dead-echo",
-        "actions": [
-          {
-            "type": "claim",
-            "sourceId": "nell-parcel"
-          },
-          {
-            "type": "claim",
-            "sourceId": "depot-chest"
-          },
-          {
-            "type": "door",
-            "doorId": "depot-canal"
-          },
-          {
-            "type": "claim",
-            "sourceId": "canal-chest"
-          },
-          {
-            "type": "door",
-            "doorId": "canal-porch-forward"
-          },
-          {
-            "type": "door",
-            "doorId": "canal-dead"
-          }
-        ],
-        "inventory": {
-          "quarter": 0,
-          "eighth-pair": 0,
-          "sixteenth-group": 1,
-          "half": 0,
-          "eighth": 0,
-          "quarter-rest": 0,
-          "half-rest": 0,
-          "dotted-half": 1,
-          "sixteenth-pair": 0
-        },
-        "claimedSources": [
-          "nell-parcel",
-          "depot-chest",
-          "canal-chest"
-        ],
-        "hiddenGateSources": [],
-        "conservation": {
-          "valid": true,
-          "initial": {
-            "quarter": 0,
-            "eighth-pair": 0,
-            "sixteenth-group": 0,
-            "half": 0,
-            "eighth": 0,
-            "quarter-rest": 0,
-            "half-rest": 0,
-            "dotted-half": 0,
-            "sixteenth-pair": 0
-          },
-          "claimed": {
-            "quarter": 2,
-            "eighth-pair": 2,
-            "sixteenth-group": 1,
-            "half": 2,
-            "eighth": 1,
-            "quarter-rest": 1,
-            "half-rest": 1,
-            "dotted-half": 1,
-            "sixteenth-pair": 1
-          },
-          "spent": {
-            "quarter": 2,
-            "eighth-pair": 2,
-            "sixteenth-group": 0,
-            "half": 2,
-            "eighth": 1,
-            "quarter-rest": 1,
-            "half-rest": 1,
-            "dotted-half": 0,
-            "sixteenth-pair": 1
-          },
-          "remaining": {
-            "quarter": 0,
-            "eighth-pair": 0,
-            "sixteenth-group": 1,
-            "half": 0,
-            "eighth": 0,
-            "quarter-rest": 0,
-            "half-rest": 0,
-            "dotted-half": 1,
-            "sixteenth-pair": 0
           }
         }
       }
@@ -4532,6 +6767,7 @@
         "hiddenGateSources": [
           "garden-hidden-notes"
         ],
+        "riskEntryDoors": [],
         "conservation": {
           "valid": true,
           "initial": {
@@ -4648,6 +6884,7 @@
         "hiddenGateSources": [
           "workshop-hidden-notes"
         ],
+        "riskEntryDoors": [],
         "conservation": {
           "valid": true,
           "initial": {
@@ -4697,6 +6934,294 @@
         }
       },
       "ungatedWitness": null
+    }
+  ],
+  "replayRiskProofs": [
+    {
+      "doorId": "garden-porch-dead",
+      "reachable": true,
+      "hasWitnessedRunFailure": true,
+      "witness": {
+        "nodeId": "dead-brambles",
+        "actions": [
+          {
+            "type": "claim",
+            "sourceId": "nell-parcel"
+          },
+          {
+            "type": "claim",
+            "sourceId": "depot-chest"
+          },
+          {
+            "type": "door",
+            "doorId": "depot-garden"
+          },
+          {
+            "type": "door",
+            "doorId": "garden-porch-dead"
+          }
+        ],
+        "inventory": {
+          "quarter": 0,
+          "eighth-pair": 1,
+          "sixteenth-group": 1,
+          "half": 0,
+          "eighth": 1,
+          "quarter-rest": 1,
+          "half-rest": 0,
+          "dotted-half": 0,
+          "sixteenth-pair": 1
+        },
+        "claimedSources": [
+          "nell-parcel",
+          "depot-chest"
+        ],
+        "riskEntryDoors": [
+          "garden-porch-dead"
+        ],
+        "conservation": {
+          "valid": true,
+          "initial": {
+            "quarter": 0,
+            "eighth-pair": 0,
+            "sixteenth-group": 0,
+            "half": 0,
+            "eighth": 0,
+            "quarter-rest": 0,
+            "half-rest": 0,
+            "dotted-half": 0,
+            "sixteenth-pair": 0
+          },
+          "claimed": {
+            "quarter": 1,
+            "eighth-pair": 1,
+            "sixteenth-group": 1,
+            "half": 1,
+            "eighth": 1,
+            "quarter-rest": 1,
+            "half-rest": 1,
+            "dotted-half": 1,
+            "sixteenth-pair": 1
+          },
+          "spent": {
+            "quarter": 1,
+            "eighth-pair": 0,
+            "sixteenth-group": 0,
+            "half": 1,
+            "eighth": 0,
+            "quarter-rest": 0,
+            "half-rest": 1,
+            "dotted-half": 1,
+            "sixteenth-pair": 0
+          },
+          "remaining": {
+            "quarter": 0,
+            "eighth-pair": 1,
+            "sixteenth-group": 1,
+            "half": 0,
+            "eighth": 1,
+            "quarter-rest": 1,
+            "half-rest": 0,
+            "dotted-half": 0,
+            "sixteenth-pair": 1
+          }
+        }
+      }
+    },
+    {
+      "doorId": "workshop-porch-dead",
+      "reachable": true,
+      "hasWitnessedRunFailure": true,
+      "witness": {
+        "nodeId": "dead-aviary",
+        "actions": [
+          {
+            "type": "claim",
+            "sourceId": "nell-parcel"
+          },
+          {
+            "type": "claim",
+            "sourceId": "depot-chest"
+          },
+          {
+            "type": "door",
+            "doorId": "depot-workshop"
+          },
+          {
+            "type": "door",
+            "doorId": "workshop-porch-dead"
+          }
+        ],
+        "inventory": {
+          "quarter": 0,
+          "eighth-pair": 0,
+          "sixteenth-group": 0,
+          "half": 0,
+          "eighth": 1,
+          "quarter-rest": 1,
+          "half-rest": 1,
+          "dotted-half": 0,
+          "sixteenth-pair": 1
+        },
+        "claimedSources": [
+          "nell-parcel",
+          "depot-chest"
+        ],
+        "riskEntryDoors": [
+          "workshop-porch-dead"
+        ],
+        "conservation": {
+          "valid": true,
+          "initial": {
+            "quarter": 0,
+            "eighth-pair": 0,
+            "sixteenth-group": 0,
+            "half": 0,
+            "eighth": 0,
+            "quarter-rest": 0,
+            "half-rest": 0,
+            "dotted-half": 0,
+            "sixteenth-pair": 0
+          },
+          "claimed": {
+            "quarter": 1,
+            "eighth-pair": 1,
+            "sixteenth-group": 1,
+            "half": 1,
+            "eighth": 1,
+            "quarter-rest": 1,
+            "half-rest": 1,
+            "dotted-half": 1,
+            "sixteenth-pair": 1
+          },
+          "spent": {
+            "quarter": 1,
+            "eighth-pair": 1,
+            "sixteenth-group": 1,
+            "half": 1,
+            "eighth": 0,
+            "quarter-rest": 0,
+            "half-rest": 0,
+            "dotted-half": 1,
+            "sixteenth-pair": 0
+          },
+          "remaining": {
+            "quarter": 0,
+            "eighth-pair": 0,
+            "sixteenth-group": 0,
+            "half": 0,
+            "eighth": 1,
+            "quarter-rest": 1,
+            "half-rest": 1,
+            "dotted-half": 0,
+            "sixteenth-pair": 1
+          }
+        }
+      }
+    },
+    {
+      "doorId": "canal-dead",
+      "reachable": true,
+      "hasWitnessedRunFailure": true,
+      "witness": {
+        "nodeId": "canal-final",
+        "actions": [
+          {
+            "type": "claim",
+            "sourceId": "nell-parcel"
+          },
+          {
+            "type": "claim",
+            "sourceId": "depot-chest"
+          },
+          {
+            "type": "door",
+            "doorId": "depot-canal"
+          },
+          {
+            "type": "claim",
+            "sourceId": "canal-chest"
+          },
+          {
+            "type": "door",
+            "doorId": "canal-porch-forward"
+          },
+          {
+            "type": "door",
+            "doorId": "canal-dead"
+          },
+          {
+            "type": "door",
+            "doorId": "echo-return-gate"
+          }
+        ],
+        "inventory": {
+          "quarter": 0,
+          "eighth-pair": 0,
+          "sixteenth-group": 0,
+          "half": 0,
+          "eighth": 0,
+          "quarter-rest": 0,
+          "half-rest": 0,
+          "dotted-half": 0,
+          "sixteenth-pair": 0
+        },
+        "claimedSources": [
+          "nell-parcel",
+          "depot-chest",
+          "canal-chest"
+        ],
+        "riskEntryDoors": [
+          "canal-dead"
+        ],
+        "conservation": {
+          "valid": true,
+          "initial": {
+            "quarter": 0,
+            "eighth-pair": 0,
+            "sixteenth-group": 0,
+            "half": 0,
+            "eighth": 0,
+            "quarter-rest": 0,
+            "half-rest": 0,
+            "dotted-half": 0,
+            "sixteenth-pair": 0
+          },
+          "claimed": {
+            "quarter": 2,
+            "eighth-pair": 2,
+            "sixteenth-group": 1,
+            "half": 2,
+            "eighth": 1,
+            "quarter-rest": 1,
+            "half-rest": 1,
+            "dotted-half": 1,
+            "sixteenth-pair": 1
+          },
+          "spent": {
+            "quarter": 2,
+            "eighth-pair": 2,
+            "sixteenth-group": 1,
+            "half": 2,
+            "eighth": 1,
+            "quarter-rest": 1,
+            "half-rest": 1,
+            "dotted-half": 1,
+            "sixteenth-pair": 1
+          },
+          "remaining": {
+            "quarter": 0,
+            "eighth-pair": 0,
+            "sixteenth-group": 0,
+            "half": 0,
+            "eighth": 0,
+            "quarter-rest": 0,
+            "half-rest": 0,
+            "dotted-half": 0,
+            "sixteenth-pair": 0
+          }
+        }
+      }
     }
   ]
 }

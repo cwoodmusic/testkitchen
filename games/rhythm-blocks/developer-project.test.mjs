@@ -5,13 +5,15 @@ import {CHAPTER_ROOMS,CHAPTER_DOORS,CHAPTER_SOURCES} from './chapter.mjs';
 import {ROOM_CONTENT} from './chapter-content.mjs';
 import {createJourney,CHAPTER_JOURNEY_MANIFEST} from './journey.mjs';
 import {compileRoomCutscene,createRoomCutscene} from './cutscene.mjs';
+import {createDefaultProject as createPriorProject} from './releases/r-3637c019ce1e150e/developer-project.mjs';
+import {runFailureLessons} from './run-lessons.mjs';
 
 const valid=project=>{const result=validateProject(project);assert.equal(result.valid,true,result.errors.join('\n'));return result;};
 const invalid=(project,fragment)=>{const result=validateProject(project);assert.equal(result.valid,false);assert(result.errors.some(error=>error.includes(fragment)),JSON.stringify(result));return result;};
 const person=(project,room,id)=>project.content[room].people.find(value=>value.id===id);
 const clone=value=>JSON.parse(JSON.stringify(value));
 function legacyProject(){
- const project=createDefaultProject(),roomIds=['depot','garden-porch','workshop-porch','canal-porch'];
+ const project=createPriorProject(),roomIds=['depot','garden-porch','workshop-porch','canal-porch'];
  const pick=(entries,ids)=>Object.fromEntries(ids.map(id=>[id,entries[id]]));
  project.rooms=pick(project.rooms,roomIds);project.content=pick(project.content,roomIds);project.scenes=pick(project.scenes,roomIds);
  project.doors=Object.fromEntries(Object.entries(project.doors).filter(([,door])=>roomIds.includes(door.from)));
@@ -25,9 +27,10 @@ function legacyProject(){
 test('the portable default includes the complete shipped data and creates no edits or warnings',()=>{
  const project=createDefaultProject(),result=valid(project);
  assert.deepEqual(result.warnings,[]);
- assert.deepEqual(project.rooms,CHAPTER_ROOMS);assert.equal(Object.keys(project.rooms).length,14);
+ assert.deepEqual(project.rooms,CHAPTER_ROOMS);assert.equal(Object.keys(project.rooms).length,17);
  assert.equal(Object.keys(project.content).length,23);assert.equal(Object.keys(project.scenes).length,23);
  assert.equal(project.settings.terminalRooms,true);assert.equal(project.settings.completionReady,true);
+ assert.equal(project.settings.replayRisk,true);
  assert.deepEqual(project.doors,CHAPTER_DOORS);assert.deepEqual(project.sources,CHAPTER_SOURCES);
  assert.deepEqual(project.content.depot.people.map(value=>value.id),['nell','iris','pip']);
  assert.deepEqual(project.content['canal-porch'].people.map(value=>value.id),['nell','iris','pip','oren']);
@@ -59,8 +62,8 @@ test('legacy draft and applied projects gain the campaign while preserving exist
  old.scenes.depot.image='assets/my-station.webp';old.scenes.depot.geometry.speed=321;old.authorNotes={story:'Keep this.'};
  const before=clone(old),upgraded=upgradeLegacyProject(old),normalized=normalizeProject(JSON.parse(JSON.stringify(old)));
  assert.deepEqual(old,before,'migration must not mutate a stored draft');
- assert.equal(Object.keys(upgraded.rooms).length,14);assert.equal(Object.keys(upgraded.content).length,23);assert.equal(Object.keys(upgraded.scenes).length,23);
- assert.equal(Object.keys(upgraded.doors).length,22);assert.equal(Object.keys(upgraded.sources).length,7);assert.equal(Object.keys(upgraded.terminals).length,9);
+ assert.equal(Object.keys(upgraded.rooms).length,17);assert.equal(Object.keys(upgraded.content).length,23);assert.equal(Object.keys(upgraded.scenes).length,23);
+ assert.equal(Object.keys(upgraded.doors).length,25);assert.equal(Object.keys(upgraded.sources).length,7);assert.equal(Object.keys(upgraded.terminals).length,6);
  assert.deepEqual(upgraded.previews,{});assert.equal(upgraded.settings.terminalRooms,true);assert.equal(upgraded.settings.completionReady,true);
  for(const key of ['rooms','doors','sources','content','scenes'])for(const id of Object.keys(old[key]))assert.deepEqual(upgraded[key][id],old[key][id],`${key}.${id}`);
  assert.equal(normalized.rooms['garden-fork'].title,'My glasshouse');assert.equal(normalized.content['garden-fork'].title,'My glasshouse');
@@ -168,8 +171,8 @@ test('the authored manifest uses edited literal text and preserves every shipped
  assert.equal(manifest.nodes.find(node=>node.id==='depot').title,'My station');
  assert.equal(manifest.hints.find(hint=>hint.id==='nell-route').text,literal);
  assert.equal(manifest.hints.find(hint=>hint.id==='lore-returned-letter').text,'A changed observation');
- assert.equal(manifest.hints.length,142);assert.equal(manifest.nodes.length,23);assert.equal(manifest.edges.length,22);
- assert.equal(manifest.outcomes.length,9);assert.equal(manifest.completionReady,true);
+ assert.equal(manifest.hints.length,142+runFailureLessons(project).length);assert.equal(manifest.nodes.length,23);assert.equal(manifest.edges.length,25);
+ assert.equal(manifest.outcomes.length,6);assert.equal(manifest.completionReady,true);
  nell.route='';project.content.depot.inspections[0].text='';
  const cleared=createProjectManifest(normalizeProject(project));assert(!cleared.hints.some(hint=>hint.id==='nell-route'));
  assert(!cleared.hints.some(hint=>hint.id==='lore-returned-letter'));

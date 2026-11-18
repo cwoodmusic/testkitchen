@@ -11,6 +11,8 @@ import {upgradeStoryCopy} from './story-copy-updates.mjs';
 import {addFredSpider} from './fred-spider.mjs';
 import {ROOM_NARRATIONS,upgradeRoomNarration} from './room-narrative-content.mjs';
 import {upgradeStockRoomLayouts} from './room-layouts.mjs';
+import {upgradeReplayRiskProject,REPLAY_RISK_DETOURS} from './replay-risk-updates.mjs';
+import {RUN_FAILURE_COPY,upgradeRunFailureCopy,runFailureLessons} from './run-lessons.mjs';
 import {separateCutsceneTracks} from './cutscene.mjs';
 import {CAST,CAST_IMAGE} from './cast.mjs';
 import {MIRA} from './mira.mjs';
@@ -43,10 +45,10 @@ export function createDefaultProject(){
  defaultCutscenes??=Object.fromEntries(Object.entries(CAMPAIGN_SCENES).map(([roomId,scene])=>[roomId,separateCutsceneTracks({scene,beats:ROOM_CUTSCENES[roomId]??[]})]));
  return upgradeObjectDialogues(addFredSpider(clone({
   schemaVersion:1,
-  settings:{title:'The Quiet Bell',bpm:108,startRoomId:'depot',castImage:CAST_IMAGE,terminalRooms:true,completionReady:true,initialInventory:Object.fromEntries(NOTE_KINDS.map(note=>[note.id,0]))},
+  settings:{title:'The Quiet Bell',bpm:108,startRoomId:'depot',castImage:CAST_IMAGE,terminalRooms:true,completionReady:true,replayRisk:true,initialInventory:Object.fromEntries(NOTE_KINDS.map(note=>[note.id,0]))},
   noteKinds:NOTE_KINDS.map((note,index)=>({...note,symbol:note.id,shortName:SHORT_NAMES[index],color:COLORS[index],subdivisions:['eighth-pair','sixteenth-pair'].includes(note.id)?2:note.id==='sixteenth-group'?4:1})),
   rooms:CHAPTER_ROOMS,doors:CHAPTER_DOORS,sources:CHAPTER_SOURCES,previews:CHAPTER_PREVIEWS,terminals:CHAPTER_TERMINALS,
-  content:Object.fromEntries(Object.entries(CAMPAIGN_CONTENT).map(([id,content])=>[id,{...content,narration:ROOM_NARRATIONS[id]??null,cutscene:defaultCutscenes[id]??[]}])),
+  content:Object.fromEntries(Object.entries(CAMPAIGN_CONTENT).map(([id,content])=>[id,{...content,narration:ROOM_NARRATIONS[id]??null,...(RUN_FAILURE_COPY[id]?{failure:RUN_FAILURE_COPY[id]}:{}),cutscene:defaultCutscenes[id]??[]}])),
   scenes:CAMPAIGN_SCENES,cast:CAST,player:{...MIRA,image:'assets/mira-walk.webp'},
  })));
 }
@@ -136,7 +138,7 @@ export function validateProject(project){
  if(map(project.settings,'settings')){
   text(project.settings.title,'settings.title',{max:160});
   number(project.settings.bpm,'settings.bpm',20,300);
-  for(const key of ['terminalRooms','completionReady'])if(project.settings[key]!==undefined&&typeof project.settings[key]!=='boolean')fail(`settings.${key}`,'use true or false.');
+  for(const key of ['terminalRooms','completionReady','replayRisk'])if(project.settings[key]!==undefined&&typeof project.settings[key]!=='boolean')fail(`settings.${key}`,'use true or false.');
   id(project.settings.startRoomId,'settings.startRoomId');image(project.settings.castImage,'settings.castImage');
   if(map(project.settings.initialInventory,'settings.initialInventory',{max:9}))for(const [kind,quantity]of Object.entries(project.settings.initialInventory)){
    if(!NOTE_IDS.has(kind))fail(`settings.initialInventory.${kind}`,'unknown note kind.');number(quantity,`settings.initialInventory.${kind}`,0,999,{integer:true});
@@ -212,6 +214,10 @@ export function validateProject(project){
   if(!record(roomContent)){fail(path,'use a room-content definition.');continue;}
   text(roomContent.title,`${path}.title`,{max:160});text(roomContent.arrival,`${path}.arrival`,{empty:true});
   if(roomContent.narration!==undefined&&roomContent.narration!==null)text(roomContent.narration,`${path}.narration`,{empty:true,max:1000});
+  if(roomContent.failure!==undefined&&roomContent.failure!==null){
+   if(!record(roomContent.failure))fail(`${path}.failure`,'use failure text or null to turn it off.');
+   else for(const field of ['title','copy','lesson'])if(roomContent.failure[field]!==undefined)text(roomContent.failure[field],`${path}.failure.${field}`,{empty:true,max:2000});
+  }
   if(roomContent.cutscene!==undefined&&list(roomContent.cutscene,`${path}.cutscene`,384)){
    const people=new Set(asArray(roomContent.people).map(person=>person?.id)),actors=new Set(asArray(scenes[roomId]?.actors).map(actor=>actor?.id)),targets=new Set(asArray(scenes[roomId]?.geometry?.targets).map(target=>target?.id));
    people.add('mira');actors.add('mira');
@@ -512,10 +518,18 @@ export function upgradeLegacyProject(value){
  const oldDoors=['garden','workshop','canal','garden-porch-forward','garden-porch-dead','workshop-porch-forward','workshop-porch-dead','canal-porch-forward','canal-porch-dead'];
  if(!record(project)||project.schemaVersion!==1||!exactKeys(project.rooms,oldRooms)||!exactKeys(project.content,oldRooms)||!exactKeys(project.scenes,oldRooms)||!exactKeys(project.previews,oldForks)||!exactKeys(project.doors,oldDoors)||!record(project.sources)||!record(project.terminals)||!record(project.settings))return project;
  if(!oldForks.every(id=>record(project.previews[id])&&project.previews[id].id===id&&project.previews[id].kind==='preview'))return project;
+ if(Object.keys(REPLAY_RISK_DETOURS).some(id=>project.terminals[id]&&project.terminals[id].kind!=='dead-end'))return project;
  const baseline=createDefaultProject(),expanded={...baseline,...project};
  for(const key of ['rooms','doors','sources','terminals','content','scenes'])expanded[key]={...baseline[key],...project[key]};
  expanded.settings={...baseline.settings,...project.settings,terminalRooms:true,completionReady:true};
  expanded.previews={};
+ for(const id of Object.keys(REPLAY_RISK_DETOURS))if(baseline.rooms[id]&&expanded.terminals[id]){
+  const former=expanded.terminals[id];delete expanded.terminals[id];
+  // The former boundary is now a paid passage. Keep authored boundary copy in
+  // the portable data rather than discarding it while adopting the live graph.
+  expanded.content[id].outcome??=clone(former);
+  if(former.title){expanded.rooms[id].title=former.title;expanded.content[id].title=former.title;expanded.scenes[id].title=former.title;}
+ }
  for(const id of oldForks){
   const {kind,...copy}=project.previews[id];
   expanded.rooms[id]={...baseline.rooms[id],...copy};
@@ -526,8 +540,8 @@ export function upgradeLegacyProject(value){
 
 /** Accept only JSON data and derive timing from the edited integer half-beat units. */
 export function normalizeProject(value){
- const legacy=upgradeStockDepotDialogueEffects(upgradeStockGagDialogue(upgradeRoomCutscenes(upgradeStockRoomLayouts(upgradeLegacyProject(value)))));
- const candidate=upgradeRoomNarration(addFredSpider(upgradeObjectDialogues(upgradeStoryCopy(legacy)))),result=validateProject(candidate);
+ const legacy=upgradeStockDepotDialogueEffects(upgradeStockGagDialogue(upgradeRoomCutscenes(upgradeReplayRiskProject(upgradeStockRoomLayouts(upgradeLegacyProject(value))))));
+ const candidate=upgradeRunFailureCopy(upgradeRoomNarration(addFredSpider(upgradeObjectDialogues(upgradeStoryCopy(legacy))))),result=validateProject(candidate);
  if(!result.valid)throw new TypeError(result.errors.join('\n'));
  const project=clone(candidate);
  let separated=false;
@@ -567,6 +581,7 @@ export function createProjectManifest(project){
   for(const person of room.people){const route=getPersonReplies(person).find(reply=>reply.id==='route');if(route?.text.trim())hints.push({id:(roomId==='depot'?'':roomId+'-')+person.id+'-route',title:`${person.name} · ${room.title}`,text:route.text});}
   for(const entry of room.inspections)if(entry.text.trim())hints.push({id:'lore-'+entry.id,title:entry.title,text:entry.text});
  }
+ hints.push(...runFailureLessons(project));
  const outcomes=Object.values(project.terminals).map(terminal=>({id:terminal.id,title:terminal.title,...(terminal.text?{text:terminal.text}:{})}));
  return freeze({completionReady:project.settings.completionReady===true,nodes,edges,hints,outcomes});
 }

@@ -1,0 +1,568 @@
+/** Verified authored dungeon data; kept in sync with design/music-puzzler/dungeon.json. */
+const freeze=value=>{if(value&&typeof value==='object'){Object.values(value).forEach(freeze);Object.freeze(value);}return value;};
+export const CAMPAIGN_PLAN=freeze({
+ "version": 1,
+ "status": "released replay-risk campaign; paid doors are irreversible and knowledge persists across runs",
+ "entry": "depot",
+ "initialInventory": {},
+ "rooms": [
+  {
+   "id": "depot",
+   "title": "The Parcel Depot",
+   "sources": [
+    {
+     "id": "nell-parcel",
+     "type": "npc",
+     "recipe": [
+      "quarter",
+      "eighth-pair",
+      "sixteenth-group",
+      "eighth",
+      "quarter-rest",
+      "half-rest",
+      "dotted-half",
+      "sixteenth-pair"
+     ],
+     "character": "nell",
+     "label": "Nell’s note bag",
+     "hint": "Talk to Nell to receive eight note tiles. They open musical locks. This bag is separate from the returned letter."
+    },
+    {
+     "id": "depot-chest",
+     "type": "chest",
+     "recipe": [
+      "half"
+     ],
+     "label": "The small delivery chest",
+     "hint": "Nell points out a small chest beside her counter. Its half note is needed for every opening door."
+    }
+   ],
+   "doors": [
+    {
+     "id": "depot-garden",
+     "to": "garden-porch",
+     "recipe": [
+      "half",
+      "half-rest"
+     ],
+     "label": "The garden door",
+     "hint": "Hold a sound for two beats, then leave two beats silent."
+    },
+    {
+     "id": "depot-workshop",
+     "to": "workshop-porch",
+     "recipe": [
+      "half",
+      "eighth-pair",
+      "sixteenth-group"
+     ],
+     "label": "The workshop door",
+     "hint": "Hold for two beats. Then play two eighth notes and four sixteenth notes."
+    },
+    {
+     "id": "depot-canal",
+     "to": "canal-porch",
+     "recipe": [
+      "half",
+      "quarter",
+      "eighth-pair"
+     ],
+     "label": "The canal door",
+     "hint": "Hold for two beats, play one quarter note, then two eighth notes."
+    }
+   ],
+   "description": "The bell is silent. Mira and her friends follow a returned letter to learn why mail, water, and ferry checks have stopped."
+  },
+  {
+   "id": "garden-porch",
+   "title": "Iris’s Garden Porch",
+   "sources": [
+    {
+     "id": "iris-gift",
+     "type": "npc",
+     "recipe": [
+      "half-rest",
+      "half"
+     ],
+     "character": "iris",
+     "label": "Iris’s garden notes",
+     "hint": "Talk to Iris for a half note and a half rest. They replace the tiles used at the first garden door."
+    }
+   ],
+   "doors": [
+    {
+     "id": "garden-porch-forward",
+     "to": "garden-fork",
+     "recipe": [
+      "half",
+      "half-rest"
+     ],
+     "label": "The listening gate"
+    },
+    {
+     "id": "garden-porch-dead",
+     "to": "dead-brambles",
+     "recipe": [
+      "dotted-half",
+      "quarter"
+     ],
+     "label": "The overgrown arch",
+     "warning": "Iris warns that the arch is blocked. Its service route costs an extra four-beat key."
+    }
+   ],
+   "description": "Iris asks Mira to listen to the space between notes. Her gift is claimed once through conversation."
+  },
+  {
+   "id": "workshop-porch",
+   "title": "Pip’s Bird Workshop",
+   "sources": [
+    {
+     "id": "pip-gift",
+     "type": "npc",
+     "recipe": [
+      "half",
+      "eighth-pair",
+      "sixteenth-group"
+     ],
+     "character": "pip",
+     "label": "Pip’s workshop notes",
+     "hint": "Talk to Pip for a half note, paired eighths, and four sixteenths. The next workshop door needs these notes."
+    }
+   ],
+   "doors": [
+    {
+     "id": "workshop-porch-forward",
+     "to": "workshop-fork",
+     "recipe": [
+      "half",
+      "eighth-pair",
+      "sixteenth-group"
+     ],
+     "label": "The running gate"
+    },
+    {
+     "id": "workshop-porch-dead",
+     "to": "dead-aviary",
+     "recipe": [
+      "dotted-half",
+      "quarter"
+     ],
+     "label": "The silent aviary",
+     "warning": "The quiet aviary is a detour. Its service gate costs another four beats, so save the notes needed at the final lock."
+    }
+   ]
+  },
+  {
+   "id": "canal-porch",
+   "title": "The Canal Storehouse",
+   "sources": [
+    {
+     "id": "canal-chest",
+     "type": "chest",
+     "recipe": [
+      "half",
+      "quarter",
+      "eighth-pair"
+     ],
+     "label": "The stamped delivery chest",
+     "hint": "Oren points out a chest with Nell’s postage stamp. Its three notes fit the next canal door."
+    }
+   ],
+   "doors": [
+    {
+     "id": "canal-porch-forward",
+     "to": "canal-fork",
+     "recipe": [
+      "half",
+      "quarter",
+      "eighth-pair"
+     ],
+     "label": "The delivery gate"
+    },
+    {
+     "id": "canal-porch-dead",
+     "to": "dead-ferry",
+     "recipe": [
+      "dotted-half",
+      "sixteenth-group"
+     ],
+     "label": "The empty ferry",
+     "warning": "Oren warns that no boat waits beyond this door."
+    }
+   ]
+  },
+  {
+   "id": "dead-brambles",
+   "title": "The Overgrown Arch",
+   "sources": [],
+   "doors": [
+    {
+     "id": "bramble-return-gate",
+     "to": "garden-fork",
+     "recipe": [
+      "half",
+      "half-rest"
+     ],
+     "label": "The garden service gate",
+     "hint": "Hold a sound for two beats, then leave two beats silent. This extra gate spends four beats before the garden fork.",
+     "warning": "The final garden door still needs its own four-beat key."
+    }
+   ],
+   "description": "The arch is blocked, but an older southern service gate reaches the garden paths. Its extra key spends notes that may be needed later."
+  },
+  {
+   "id": "garden-fork",
+   "title": "The Two Garden Paths",
+   "sources": [],
+   "doors": [
+    {
+     "id": "garden-normal",
+     "to": "garden-final",
+     "recipe": [
+      "dotted-half",
+      "quarter"
+     ],
+     "label": "The hearth path",
+     "hint": "A dotted half note lasts three beats. Add a quarter note to reach the homes."
+    },
+    {
+     "id": "garden-secret-branch",
+     "to": "garden-alcove",
+     "recipe": [
+      "eighth-pair",
+      "sixteenth-group",
+      "quarter-rest",
+      "eighth",
+      "sixteenth-pair"
+     ],
+     "label": "The old stone path",
+     "hint": "Try the two one-beat groups, a quarter rest, a single eighth, and paired sixteenths."
+    }
+   ]
+  },
+  {
+   "id": "dead-aviary",
+   "title": "The Silent Aviary",
+   "sources": [],
+   "doors": [
+    {
+     "id": "aviary-return-gate",
+     "to": "workshop-fork",
+     "recipe": [
+      "half",
+      "eighth-pair",
+      "sixteenth-group"
+     ],
+     "label": "The workshop service gate",
+     "hint": "Hold for two beats, then play two eighth notes and four sixteenth notes. The service gate spends another four beats.",
+     "warning": "The final workshop door still needs the dotted half note and quarter note."
+    }
+   ],
+   "description": "The quiet bird room has an older southern service gate to the workshop paths. Taking it costs an extra four-beat key."
+  },
+  {
+   "id": "workshop-fork",
+   "title": "The Workshop Crossroads",
+   "sources": [],
+   "doors": [
+    {
+     "id": "workshop-normal",
+     "to": "workshop-final",
+     "recipe": [
+      "dotted-half",
+      "quarter"
+     ],
+     "label": "The schoolroom stair",
+     "hint": "Use a three-beat dotted half note and a quarter note to reach the music room."
+    },
+    {
+     "id": "workshop-secret-branch",
+     "to": "workshop-alcove",
+     "recipe": [
+      "eighth",
+      "sixteenth-pair",
+      "half-rest",
+      "quarter-rest"
+     ],
+     "label": "The birds’ back passage",
+     "hint": "Play a single eighth and paired sixteenths. Then use a half rest and a quarter rest."
+    }
+   ]
+  },
+  {
+   "id": "canal-fork",
+   "title": "The Water Clock",
+   "sources": [],
+   "doors": [
+    {
+     "id": "canal-normal",
+     "to": "canal-final",
+     "recipe": [
+      "dotted-half",
+      "sixteenth-group"
+     ],
+     "label": "The town-bell stair",
+     "hint": "Use a three-beat dotted half note, then four sixteenth notes, to climb toward the bell."
+    },
+    {
+     "id": "canal-dead",
+     "to": "dead-echo",
+     "recipe": [
+      "eighth",
+      "sixteenth-pair",
+      "half-rest",
+      "quarter-rest"
+     ],
+     "label": "The copied waterway",
+     "warning": "Oren’s map shows that this channel reaches an extra paid service stair. The bell still needs its own four-beat key."
+    }
+   ]
+  },
+  {
+   "id": "garden-final",
+   "title": "The Hearth Bell",
+   "sources": [],
+   "doors": [
+    {
+     "id": "garden-ending",
+     "to": "ending-home",
+     "recipe": [
+      "eighth-pair",
+      "sixteenth-group",
+      "quarter-rest",
+      "eighth",
+      "sixteenth-pair"
+     ],
+     "label": "The home door",
+     "hint": "Use the five tiles you brought: two eighths, four sixteenths, a quarter rest, a single eighth, and paired sixteenths."
+    }
+   ]
+  },
+  {
+   "id": "workshop-final",
+   "title": "The Open Music Room",
+   "sources": [],
+   "doors": [
+    {
+     "id": "workshop-ending",
+     "to": "ending-school",
+     "recipe": [
+      "eighth",
+      "sixteenth-pair",
+      "half-rest",
+      "quarter-rest"
+     ],
+     "label": "The music-room door",
+     "hint": "Play a single eighth and paired sixteenths for beat one. A half rest and a quarter rest finish the rhythm."
+    }
+   ]
+  },
+  {
+   "id": "dead-echo",
+   "title": "The Copied Waterway",
+   "sources": [],
+   "doors": [
+    {
+     "id": "echo-return-gate",
+     "to": "canal-final",
+     "recipe": [
+      "dotted-half",
+      "sixteenth-group"
+     ],
+     "label": "The bell service stair",
+     "hint": "Hold for three beats, then play four sixteenth notes. The service stair spends four beats to reach the bell controls.",
+     "warning": "The bell still needs a separate four-beat answer after this stair."
+    }
+   ],
+   "description": "The channel ends at a wall, but the southern service stair reaches the bell controls. That extra gate spends the four beats needed at the bell."
+  },
+  {
+   "id": "canal-final",
+   "title": "The Evening Tower",
+   "sources": [],
+   "doors": [
+    {
+     "id": "canal-ending",
+     "to": "ending-public",
+     "recipe": [
+      "eighth",
+      "sixteenth-pair",
+      "half-rest",
+      "quarter-rest"
+     ],
+     "label": "The town door",
+     "hint": "Play a single eighth and paired sixteenths for beat one. Then leave two beats silent and one more silent."
+    }
+   ]
+  },
+  {
+   "id": "garden-alcove",
+   "title": "The Overgrown Music Box",
+   "sources": [
+    {
+     "id": "garden-hidden-notes",
+     "type": "hidden",
+     "recipe": [
+      "quarter",
+      "eighth-pair",
+      "sixteenth-group",
+      "quarter-rest"
+     ],
+     "label": "Four notes under the flower stone",
+     "hint": "Look for a stone carved with a flower. Inspect it, then Search for four notes and a hidden gate."
+    }
+   ],
+   "doors": [
+    {
+     "id": "garden-hidden-exit",
+     "to": "garden-secret-final",
+     "recipe": [
+      "quarter",
+      "eighth-pair",
+      "sixteenth-group",
+      "quarter-rest"
+     ],
+     "revealAfter": "garden-hidden-notes",
+     "label": "The hidden flower gate",
+     "hint": "The four new one-beat tiles from the flower stone open this gate."
+    }
+   ],
+   "description": "The hidden pickup is inside the chosen secret branch. It cannot be collected on the normal path and cannot leak into a regular ending."
+  },
+  {
+   "id": "workshop-alcove",
+   "title": "The Birds’ Dusty Attic",
+   "sources": [
+    {
+     "id": "workshop-hidden-notes",
+     "type": "hidden",
+     "recipe": [
+      "half",
+      "half-rest"
+     ],
+     "label": "Two notes inside the hollow perch",
+     "hint": "Inspect the hollow bird perch, then Search. Its hidden half note and half rest reveal another gate."
+    }
+   ],
+   "doors": [
+    {
+     "id": "workshop-hidden-exit",
+     "to": "workshop-secret-final",
+     "recipe": [
+      "half",
+      "half-rest"
+     ],
+     "revealAfter": "workshop-hidden-notes",
+     "label": "The hidden brass gate",
+     "hint": "A half note sounds for two beats. A half rest leaves two beats silent."
+    }
+   ],
+   "description": "Searching is optional before choosing this detour. Inside it, the once-only hidden cache is needed for the only forward gate; it remains available until found."
+  },
+  {
+   "id": "garden-secret-final",
+   "title": "The Reserved Room",
+   "sources": [],
+   "doors": [
+    {
+     "id": "garden-secret-ending",
+     "to": "ending-secret-quiet",
+     "recipe": [
+      "dotted-half",
+      "quarter"
+     ],
+     "label": "The unfinished-song door",
+     "hint": "Use the dotted half note and quarter note you saved for this last door."
+    }
+   ]
+  },
+  {
+   "id": "workshop-secret-final",
+   "title": "The Hidden Countermelody",
+   "sources": [],
+   "doors": [
+    {
+     "id": "workshop-secret-ending",
+     "to": "ending-secret-birds",
+     "recipe": [
+      "dotted-half",
+      "quarter"
+     ],
+     "label": "The birds’ answer door",
+     "hint": "Use the dotted half note and quarter note you saved through the hidden passage."
+    }
+   ]
+  }
+ ],
+ "terminals": [
+  {
+   "id": "ending-home",
+   "title": "A Place to Come Home",
+   "kind": "ending"
+  },
+  {
+   "id": "ending-school",
+   "title": "The Open Music Room",
+   "kind": "ending"
+  },
+  {
+   "id": "ending-public",
+   "title": "The Evening Bell",
+   "kind": "ending"
+  },
+  {
+   "id": "ending-secret-quiet",
+   "title": "The Reserved Silence",
+   "kind": "secret-ending"
+  },
+  {
+   "id": "ending-secret-birds",
+   "title": "The Birds’ Countermelody",
+   "kind": "secret-ending"
+  },
+  {
+   "id": "dead-ferry",
+   "title": "The Empty Ferry",
+   "kind": "dead-end",
+   "repair": "Start a new run. Open the stamped chest in the canal storehouse, then choose the delivery gate."
+  }
+ ],
+ "rules": [
+  "Doors accept their authored ordered recipe, not every rhythm of equal duration. Every door costs exactly four beats. Incorrect answers spend nothing.",
+  "All sources are explicit interactions, claimed once globally per run. Entering a room awards no notes automatically. Starting a new run resets supplies while preserving learned clues and explored routes.",
+  "Nell supplies eight kinds worth ten beats; the depot chest holds the missing half note worth two beats. Every opening door needs that half note and another two beats, so both starting sources are required.",
+  "A branch’s once-only gift or chest restores the kinds spent at its opening door. The direct porch gate therefore requires collecting that supply before leaving.",
+  "Every paid door is irreversible during the run. Undo edits only the uncommitted rhythm answer. No return gate refunds notes or restores already-claimed supplies.",
+  "The overgrown arch, quiet aviary, and copied-waterway doors are explicit risk entries. Their service gates add a four-beat cost that can consume the final key or leave the wrong note types.",
+  "Hidden caches require explicit searching. Each supplies its own four-beat hidden gate, so finding a cache does not replace a final key spent on an earlier detour.",
+  "Successful endings use zero of every note kind. A nonterminal room with no affordable revealed door and no unclaimed local source ends the run: an empty bag is out of notes, and a nonempty unusable bag lacks the right types.",
+  "A failed run keeps its discovered rooms, connections, and clues. Restart begins at the depot with an empty bag and fresh once-only supplies; journal knowledge never grants current-run notes.",
+  "The verifier accepts only witnessed resource losses whose every history crossed a declared risk-entry door. Unmarked blocked states, broken success balances, unreachable content, and ungated secret endings still fail."
+ ],
+ "expectedCounts": {
+  "rooms": 17,
+  "terminals": 6,
+  "regularEndings": 3,
+  "secretEndings": 2,
+  "deadEnds": 1,
+  "sources": 7,
+  "doors": 25
+ },
+ "budgetProof": {
+  "regular": "12 initial beats + 4 branch-source beats = 4 doors × 4 beats = 16; zero remains.",
+  "secret": "12 initial + 4 branch-source + 4 hidden-cache beats = 5 doors × 4 beats = 20; zero remains.",
+  "typed": "Each safe branch keeps its two original four-beat vectors. Direct routes spend A then B; secret routes spend B, their separate hidden-cache vector, then A.",
+  "canalLoss": "The copied-waterway route pays its extra service stair: 16 supplied beats are spent before the last bell door, which still needs another four beats. The bag reaches zero at the bell controls.",
+  "gardenAndWorkshopLoss": "Taking the risky porch door spends the original final key. Its service gate then spends the branch gift. The hidden cache pays only its own gate, leaving zero notes before the secret final door.",
+  "missingTypes": "Skipping the porch gift and choosing its risky door leaves four beats of other types. The extra service gate cannot be paid, so the attempt ends without a refund.",
+  "runHistories": "43 reachable states and 43 transitions yield 14 terminal histories plus 10 recognized resource-loss histories, or 24 complete runs. All five successes remain reachable; three loss states have zero notes and two retain the wrong types."
+ },
+ "replayRisk": {
+  "irreversibleDoors": true,
+  "lossEntryDoorIds": [
+   "garden-porch-dead",
+   "workshop-porch-dead",
+   "canal-dead"
+  ]
+ }
+});

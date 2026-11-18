@@ -1,0 +1,15 @@
+@font-face{font-family:QuietBellIntro;src:url('./assets/fonts/VT323-Regular.ttf') format('truetype');font-style:normal;font-weight:400;font-display:swap}
+.story-intro{position:absolute;inset:0;z-index:6000;display:grid;grid-template-rows:auto minmax(0,1fr) auto;gap:20px;padding:max(28px,env(safe-area-inset-top)) max(24px,env(safe-area-inset-right)) max(24px,env(safe-area-inset-bottom)) max(24px,env(safe-area-inset-left));overflow:hidden;background:#080e23;color:#f5e8cc;isolation:isolate}
+.story-intro-heading{text-align:center;padding:0 0 16px;border-bottom:2px solid #756447}
+.story-intro-heading h1{font:400 clamp(12px,2vw,18px)/1.6 QuietBellBlock,monospace;letter-spacing:.08em;color:#e4c589;text-shadow:2px 2px #020713}
+.story-intro-window{position:relative;width:100%;min-height:0;overflow:hidden;mask-image:linear-gradient(transparent,#000 7%,#000 93%,transparent);-webkit-mask-image:linear-gradient(transparent,#000 7%,#000 93%,transparent)}
+.story-intro-text{max-width:820px;margin:0 auto;font:400 clamp(30px,4vw,40px)/1.3 QuietBellIntro,monospace;letter-spacing:.01em;text-align:center;image-rendering:pixelated;-webkit-font-smoothing:none;text-shadow:2px 2px #020713;will-change:transform}
+.story-intro-text p{margin:0 0 1.15em;overflow-wrap:break-word}
+.story-intro-text p:last-child{margin-bottom:0}
+.story-intro-controls{display:flex;flex-wrap:wrap;justify-content:center;gap:12px;position:relative;z-index:1}
+.story-intro-controls .mg-button{min-height:44px;padding:9px 14px;border:2px solid #aebee8;background:#11244e;color:#f5e8cc;font:400 12px/1.5 QuietBellBlock,monospace;box-shadow:inset 0 0 0 2px #060c1d;text-shadow:1px 1px #020713}
+.story-intro-controls .mg-button:hover,.story-intro-controls .mg-button:focus-visible{background:#263c70;outline:2px solid #f2d48e;outline-offset:3px}
+.story-intro[data-reduced-motion="true"] .story-intro-window{overflow:auto;overscroll-behavior:contain;mask-image:none;-webkit-mask-image:none;scrollbar-color:#d7be8c #111b36}
+.story-intro[data-reduced-motion="true"] .story-intro-text{transform:none!important;will-change:auto;padding:8px 0 16px}
+@media(max-width:480px){.story-intro{gap:16px;padding-inline:20px}.story-intro-text{font-size:30px;line-height:1.35}.story-intro-heading{padding-bottom:12px}.story-intro-controls .mg-button{font-size:10px}}
+@media(max-height:520px){.story-intro{gap:10px;padding-top:16px;padding-bottom:16px}.story-intro-heading{padding-bottom:8px}.story-intro-text{font-size:28px}}

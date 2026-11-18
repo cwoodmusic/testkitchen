@@ -57,6 +57,7 @@ conversationView=createConversationView({panel:$('conversation-dialog'),line:$('
 const conversationResize=globalThis.ResizeObserver?new ResizeObserver(frameConversation):null;conversationResize?.observe($('conversation-dialog'));
 let objectDialogueSeen=restoreObjectDialogueSeen({project:runtimeProject,saved:saved?.roomObjectDialogues});
 let cutsceneRate=1,pathEditor=null,pathSelection=null,pathEditorActive=false,pathPreviewPhase=null,pendingRoomEntry=null;
+let failureNotice=null,failureNoticeQueued=false;
 function restoreCutscenes(value){
  cutsceneSeen=new Set((Array.isArray(value?.seen)?value.seen:[]).filter(id=>typeof id==='string'&&Object.hasOwn(runtimeProject.scenes,id)));
  cutscenePoses=new Map(Object.entries(value?.poses??{}).filter(([id,poses])=>Object.hasOwn(runtimeProject.scenes,id)&&Array.isArray(poses)&&poses.length<=16&&(!runtimeProject.scenes[id].layoutRevision||value?.layouts?.[id]===runtimeProject.scenes[id].layoutRevision)).map(([id,poses])=>[id,poses.filter(pose=>pose&&typeof pose.id==='string'&&Number.isFinite(pose.x)&&Number.isFinite(pose.y)).map(pose=>({id:pose.id,x:pose.x,y:pose.y,facing:['up','down','left','right'].includes(pose.facing)?pose.facing:'down'}))]));
@@ -119,7 +120,24 @@ async function play(recipe){const revision=++audioRevision;audio.stop();if(!reci
 const panelIds=['conversation-dialog','notes-dialog','lore-dialog','menu-dialog','help-dialog','outcome'];
 function panelOpen(){return !!introView||editingOpen||root.classList.contains('cutscene-playing')||panelIds.some(id=>$(id).open);}
 function closePanels(except=null){for(const id of panelIds)if(id!==except&&$(id).open){if(id==='conversation-dialog')conversationView.close();$(id).close();}}
-function openPanel(id){roomView?.stop();if(id==='menu-dialog'){stopAudio();renderPause();}closePanels(id);if(!$(id).open){$(id).showModal();if(id==='conversation-dialog')conversationView.open();}roomView?.refresh();}
+function openPanel(id){roomView?.stop();if(id==='menu-dialog'){stopAudio();renderPause();}closePanels(id);if(id==='outcome'&&game.state.failure)failureNotice=failureKey(game.state);if(!$(id).open){$(id).showModal();if(id==='conversation-dialog')conversationView.open();}roomView?.refresh();}
+function failureKey(state){return`${state.roomId}:${state.failure?.reason}:${state.actions.length}`;}
+function recordRunFailure(state){
+ if(!state.failure||!state.replayRisk)return;
+ let changed=journey.discoverHint('lesson-paid-doors');
+ changed=journey.discoverHint('lesson-'+state.roomId)||changed;
+ if(changed)saveJourney();
+}
+function scheduleFailureNotice(){
+ if(failureNoticeQueued||!game.state.failure||failureNotice===failureKey(game.state))return;
+ failureNoticeQueued=true;
+ queueMicrotask(()=>{
+  failureNoticeQueued=false;
+  const state=game.state;
+  if(!state.failure||failureNotice===failureKey(state)||introView||cutsceneView||editingOpen||panelIds.some(id=>$(id).open))return;
+  openPanel('outcome');
+ });
+}
 function frameConversation(){
  if(!roomView)return;
  if(!$('conversation-dialog').open||!conversationView?.state.active){if(!cutsceneView)roomView.setCinematicFrame(null);return;}
@@ -247,6 +265,7 @@ function stopStoryIntro(){const view=introView;if(!view)return;introView=null;vi
 function resumeAfterIntro(){
  if(game.state.phase==='continued')openPanel('outcome');
  else{$('walk-floor').focus({preventScroll:true});maybeEntrance();}
+ scheduleFailureNotice();
 }
 function startStoryIntro(){
  stopStoryIntro();stopCutscene();roomView?.stop();stopAudio();closePanels();
@@ -323,7 +342,7 @@ function render(){
   $('stock').innerHTML=NOTE_KINDS.map(kind=>`<button type="button" class="mg-stock-note" data-kind="${kind.id}" aria-label="${escapeHTML(kind.label)}, ${beatText(kind)}, ${visibleStock[kind.id]} available" style="--mg-tile:${colors[kind.id]}"${bagMode||continued||state.availableInventory[kind.id]<1||state.units+kind.units>targetUnits?' disabled':''}><span class="mg-count">×${visibleStock[kind.id]}</span>${symbolMarkup(kind.id)}<span class="mg-kind-name">${escapeHTML(shortNames[kind.id])}</span><span class="mg-beat-value">${beatText(kind)}</span></button>`).join('');
   $('stock-title').textContent=bagMode?'Your notes':'Rhythm lock';$('held').textContent=`${count(visibleStock)} ${bagMode?'carried':'available'}`;
   const bagCount=count(state.inventory);$('bag-count').textContent=String(bagCount);$('bag-count').hidden=bagCount===0;$('bag').setAttribute('aria-label',`Open inventory, ${bagCount} notes`);
-  $('listen').disabled=!recipe.length||!soundEnabled;$('undo').disabled=!state.phrase.length&&!continued;$('commit').disabled=!state.canAttempt;
+  $('listen').disabled=!recipe.length||!soundEnabled;$('undo').disabled=!state.phrase.length&&(!continued||state.replayRisk);$('commit').disabled=!state.canAttempt;
   $('door-demo').disabled=!state.selectedDoor||!soundEnabled||continued;
   $('door-title').textContent=state.selectedDoor?doorNames[state.selectedDoor]:'Choose a door';
   $('door-hint').textContent=state.selectedDoor?doorHints[state.selectedDoor]:'Each door has its own rhythm lock.';
@@ -333,26 +352,36 @@ function render(){
   for(const chest of root.querySelectorAll('[data-chest]')){const claimed=state.claimedSources.includes(chest.dataset.chest);chest.disabled=continued||claimed;chest.setAttribute('aria-label',claimed?'Delivery chest opened; notes collected':chest.dataset.chest==='depot-chest'?'Open the delivery chest':'Open the stamped chest');chest.querySelector('span').textContent=claimed?'Opened':'Open';}
   for(const button of root.querySelectorAll('[data-return]'))button.disabled=continued;
   $('revisit-room').hidden=!state.canRevisit;
-  $('edit-hint').textContent=continued?'This is the answer you played. Revisit it to try another path.':'Choose notes from your satchel. Tap a placed note to take it back.';
-  $('status').textContent=message;
+  $('edit-hint').textContent=state.failure?'You can hear this lock, but this run cannot pay another door.':continued?'This is the answer you played.':'Choose notes from your satchel. Tap a placed note to take it back.';
+  $('status').textContent=state.failure?'Keep this clue for the next run. Your journal and discovered routes stay saved.':message;
   $('pack-heading').textContent='Room finds';$('ledger').hidden=!continued;
   $('ledger').innerHTML=continued?`<div><strong>${state.receipt.recipe.length}</strong><span>Used</span></div><div><strong>${count(state.inventory)}</strong><span>Carried</span></div><div><strong>0</strong><span>New on entry</span></div>`:'';
   $('pack').innerHTML='';
   $('pack-copy').textContent=(CHAPTER_ROOMS[state.roomId]?.sources??[]).filter(id=>CHAPTER_SOURCES[id].type!=='hidden'||state.claimedSources.includes(id)).map(id=>`${CHAPTER_SOURCES[id].label}: ${state.claimedSources.includes(id)?'collected':'waiting'}.`).join(' ');
   if($('menu-dialog').open)renderPause();
-  if(!continued&&state.phase!=='terminal'&&$('outcome').open)$('outcome').close();
-  $('ending').hidden=state.phase!=='terminal';$('outcome-close').hidden=continued;$('revisit').disabled=!state.canRevisit;
+  if(!continued&&state.phase!=='terminal'&&!state.failure&&$('outcome').open)$('outcome').close();
+  $('ending').hidden=state.phase!=='terminal'&&!state.failure;$('ending').textContent=state.failure?'Run ended':'Read ending';
+  $('outcome-close').hidden=continued;$('outcome-close').setAttribute('aria-label',state.failure?'Look around this room':'Close ending');
+  $('revisit').disabled=state.replayRisk?false:!state.canRevisit;$('revisit').textContent=state.replayRisk?'Start a new run':'Revisit your answer';
+  $('restart').textContent=state.replayRisk?'Start a new run':'Start over';
   $('replay-cutscene').hidden=continued||!content()?.cutscene?.length&&runtimeProject.scenes[state.roomId]?.entry?.enabled===false;
   if(state.phase==='terminal'){
     const ending=content().outcome??state.nextScene;
     $('outcome-kicker').textContent=ending.kicker??(ending.kind==='dead-end'?'A quiet dead end':ending.kind==='secret-ending'?'A hidden ending':'An ending');
     $('outcome-title').textContent=content().title??state.nextScene.title;
     $('outcome-copy').textContent=[ending.copy,ending.repair].filter(Boolean).join(' ');
-    $('outcome-help').textContent=ending.kind==='dead-end'?'You can explore this place, revisit the last choice, or start a new run. Your discoveries stay in the journal.':`${count(state.inventory)===0?'Every carried note has found its place.':'Your unused notes remain in your satchel.'} Explore this ending, revisit your last choice, or start a new run to discover another route.`;
+    $('outcome-help').textContent=state.replayRisk?'You can explore this place and keep its clues. Start a new run to try another route; paid notes stay spent, but your journal and map discoveries stay saved.':ending.kind==='dead-end'?'You can explore this place, revisit the last choice, or start a new run. Your discoveries stay in the journal.':`${count(state.inventory)===0?'Every carried note has found its place.':'Your unused notes remain in your satchel.'} Explore this ending, revisit your last choice, or start a new run to discover another route.`;
   }
-  if(continued){const copy=doorCopyFor(state.receipt.doorId),terminal=isTerminalScene(state.nextScene);$('outcome-kicker').textContent=terminal?(state.nextScene.kind==='dead-end'?'A quiet dead end':state.nextScene.kind==='secret-ending'?'A hidden ending':'An ending'):'Continuation preview';$('outcome-title').textContent=state.nextScene.title;$('outcome-copy').textContent=terminal?[copy.deadCopy??state.nextScene.copy??'This route ends here.',copy.repair??state.nextScene.repair].filter(Boolean).join(' '):copy.previewCopy??state.nextScene.copy??'You have reached the next route.';$('outcome-help').textContent='Your carried notes are saved. Revisit this choice to explore another answer with the notes you spent restored.';}
+  if(continued){const copy=doorCopyFor(state.receipt.doorId),terminal=isTerminalScene(state.nextScene);$('outcome-kicker').textContent=terminal?(state.nextScene.kind==='dead-end'?'A quiet dead end':state.nextScene.kind==='secret-ending'?'A hidden ending':'An ending'):'Continuation preview';$('outcome-title').textContent=state.nextScene.title;$('outcome-copy').textContent=terminal?[copy.deadCopy??state.nextScene.copy??'This route ends here.',copy.repair??state.nextScene.repair].filter(Boolean).join(' '):copy.previewCopy??state.nextScene.copy??'You have reached the next route.';$('outcome-help').textContent=state.replayRisk?'Start a new run to explore another route. Your discovered map and clues stay saved.':'Your carried notes are saved. Revisit this choice to explore another answer with the notes you spent restored.';}
+  if(state.failure){
+    const explanation=content().failure,ending=state.phase==='room'?null:(content().outcome??state.nextScene);
+    $('outcome-kicker').textContent=state.failure.reason==='out-of-notes'?'Run ended · No notes left':state.failure.reason==='missing-note-types'?'Run ended · Missing a key':'Run ended · A dead end';
+    $('outcome-title').textContent=explanation?.title??content().title;
+    $('outcome-copy').textContent=explanation?.copy??([ending?.copy,ending?.repair].filter(Boolean).join(' ')||'This bag cannot open a way forward. Listen to the locks and keep the clues for your next run.');
+    $('outcome-help').textContent=`${state.failure.remainingNotes} notes (${state.failure.remainingBeats} beats) left. Paid doors keep their notes. Close this message to look around, or start a new run. Your discovered map and journal stay saved.`;
+  }
   $('sound').textContent=soundEnabled?'Sound on':'Sound off';$('sound').setAttribute('aria-pressed',String(soundEnabled));
-  talk();updateSave();roomView?.refresh();
+  talk();recordRunFailure(state);updateSave();roomView?.refresh();scheduleFailureNotice();
   // Updating counts replaces note controls. Keep keyboard navigation in the
   // satchel or phrase rather than sending focus back to the page header.
   if(focusedKind){
@@ -386,8 +415,8 @@ function commit(){
   maybeEntrance({enter:true});
 }
 function undo(){roomView?.stop();const previousRoom=game.state.roomId,wasBoundary=game.state.phase!=='room';stopAudio();if(!game.undo())return;message=wasBoundary?'Back at the same lock. Notes spent on this choice are restored.':'Note returned to your satchel.';render();save();if(wasBoundary)root.querySelector('[data-door="'+doorTargetId(game.state.selectedDoor)+'"]')?.focus({preventScroll:true});if(previousRoom!==game.state.roomId)maybeEntrance({enter:true});}
-function revisitRoom(){roomView?.stop();stopAudio();if(!game.revisit())return;closePanels();message=!developerMode&&game.state.roomId==='depot'?'Back at the depot. Your entry rhythm and the notes collected beyond it have been rewound; discoveries stay in your journal.':'Back at the same lock. Notes spent on this choice are restored.';render();save();notify(message);$('walk-floor').focus({preventScroll:true});maybeEntrance({enter:true});}
-function restart(){stopStoryIntro();stopCutscene();roomView?.stop();stopAudio();game.restart();restoreCutscenes(null);objectDialogueSeen=new Map();activeSceneProject=null;closePanels();selectedPerson=content().people[0]?.id??null;selectedTopic=getPersonReplies(content().people[0]??{})[0]?.id??null;message='A new run begins with an empty satchel. Nell and the chest are ready again.';render();save();startStoryIntro();}
+function revisitRoom(){if(game.state.replayRisk){openPanel('menu-dialog');return;}roomView?.stop();stopAudio();if(!game.revisit())return;closePanels();message=!developerMode&&game.state.roomId==='depot'?'Back at the depot. Your entry rhythm and the notes collected beyond it have been rewound; discoveries stay in your journal.':'Back at the same lock. Notes spent on this choice are restored.';render();save();notify(message);$('walk-floor').focus({preventScroll:true});maybeEntrance({enter:true});}
+function restart(){stopStoryIntro();stopCutscene();roomView?.stop();stopAudio();game.restart();failureNotice=null;restoreCutscenes(null);objectDialogueSeen=new Map();activeSceneProject=null;closePanels();selectedPerson=content().people[0]?.id??null;selectedTopic=getPersonReplies(content().people[0]??{})[0]?.id??null;message='A new run begins with an empty bag. Your discovered routes and journal clues are still here.';render();save();startStoryIntro();}
 function interactWith(id){
   if(people.has(id)){stopAudio();selectedPerson=id;selectedTopic=Object.hasOwn(people.get(id),'intro')?null:getPersonReplies(people.get(id))[0]?.id??null;talk();openPanel('conversation-dialog');save();}
   else if(getChapterDoor(id)?.from===game.state.roomId)chooseDoor(id);
@@ -431,7 +460,8 @@ root.addEventListener('click',event=>{
     case'revisit-room':revisitRoom();break;
     case'listen':void play(game.state.phase==='continued'?game.state.receipt.recipe:game.state.phrase);break;
     case'commit':commit();break;
-    case'undo':case'revisit':undo();break;
+    case'undo':undo();break;
+    case'revisit':if(game.state.replayRisk)restart();else undo();break;
     case'restart':restart();break;
     case'sound':stopAudio();soundEnabled=!soundEnabled;audio.setEnabled(soundEnabled);previewAudio.setEnabled(soundEnabled);cinematicAudio.setEnabled(soundEnabled);if(soundEnabled)void cinematicAudio.unlock();write(SOUND_KEY,soundEnabled?'on':'off');render();break;
     case'help':stopAudio();openPanel('help-dialog');break;
@@ -478,9 +508,12 @@ $('room-map').addEventListener('pointercancel',event=>{
  if(moved){activeSceneProject=null;renderScene(roomView?.state);render();}
 });
 for(const [button,panel]of [['help-close','help-dialog'],['help-done','help-dialog'],['conversation-close','conversation-dialog'],['notes-close','notes-dialog'],['lore-close','lore-dialog'],['lore-done','lore-dialog'],['menu-close','menu-dialog'],['outcome-close','outcome']])$(button).addEventListener('click',()=>$(panel).close());
-for(const id of panelIds)$(id).addEventListener('close',()=>{if(rhythmReadout.closest('dialog')?.id===id)stopAudio();roomView?.refresh();if(!panelOpen()&&game.state.phase==='continued'){openPanel('outcome');return;}const active=document.activeElement;if(!panelOpen()&&(!active||active===document.body||active===document.documentElement||active.closest('dialog')))$('walk-floor').focus({preventScroll:true});});
+for(const id of panelIds)$(id).addEventListener('close',()=>{if(rhythmReadout.closest('dialog')?.id===id)stopAudio();roomView?.refresh();if(!panelOpen()&&game.state.phase==='continued'){openPanel('outcome');return;}const active=document.activeElement;if(!panelOpen()&&(!active||active===document.body||active===document.documentElement||active.closest('dialog')))$('walk-floor').focus({preventScroll:true});scheduleFailureNotice();});
 $('outcome').addEventListener('cancel',event=>{if(game.state.phase==='continued')event.preventDefault();});
-function renderHelpNotes(){$('help-notes').innerHTML=NOTE_KINDS.map(kind=>`<div class="mg-help-note">${symbolMarkup(kind.id)}<span>${escapeHTML(kind.label)}</span><span>${beatText(kind)}</span></div>`).join('');}
+function renderHelpNotes(){
+ $('help-notes').innerHTML=NOTE_KINDS.map(kind=>`<div class="mg-help-note">${symbolMarkup(kind.id)}<span>${escapeHTML(kind.label)}</span><span>${beatText(kind)}</span></div>`).join('');
+ $('run-rules-copy').textContent=game.state.replayRisk?'Paid gates keep their notes, so plan for later locks. A costly detour can leave you with no notes or the wrong kinds before an ending. Wrong rhythm guesses spend nothing, and Undo returns notes from an unfinished answer. If a run cannot continue, listen to locks, talk to the party, and keep the clues before starting again. The south threshold opens your journey. Restart clears the bag and pickups, but your discovered routes and journal stay saved on this device. Hidden notes still require an explicit Search.':'Follow the branching routes and search for hidden notes. Successful endings use every note. Revisit a paid choice to restore its notes and rewind later pickups. Starting over resets the bag and pickups while keeping discoveries. Notes and journal discoveries save on this device.';
+}
 renderHelpNotes();
 document.addEventListener('keydown',event=>{
   if(introView)return;
@@ -508,7 +541,7 @@ function persistedProject(project){
 function switchRun({project,mode,nextGame,nextJourney,nextSaved=null}){
  stopStoryIntro();
  stopCutscene();
- pendingRoomEntry=null;
+ pendingRoomEntry=null;failureNotice=null;
  roomView?.stop();stopAudio();const previous=roomView;roomView=null;previous?.destroy();
  runtimeProject=project;developerMode=mode;game=nextGame;journey=nextJourney;saved=nextSaved;bindDefinitions();restoreCutscenes(saved?.roomCutscenes);objectDialogueSeen=restoreObjectDialogueSeen({project:runtimeProject,saved:saved?.roomObjectDialogues});
  audio.setDefinition({bpm:project.settings.bpm,noteKinds:NOTE_KINDS});audio.setEnabled(soundEnabled);

@@ -4,6 +4,7 @@ import {DEPOT_LORE} from './lore.mjs';
 import {PEOPLE} from './opening.mjs';
 import {CAMPAIGN_CONTENT} from './campaign-content.mjs';
 import {CHAPTER_ROOMS, CHAPTER_DOORS, CHAPTER_PREVIEWS, CHAPTER_TERMINALS} from './chapter.mjs';
+import {RUN_FAILURE_COPY,runFailureLessons} from './run-lessons.mjs';
 
 const freezeRecords = records => Object.freeze(records.map(record => Object.freeze(record)));
 
@@ -62,6 +63,7 @@ export const CHAPTER_JOURNEY_MANIFEST = Object.freeze({
         id: `lore-${entry.id}`, title: entry.title, text: entry.text,
       })),
     ]),
+    ...runFailureLessons({settings:{replayRisk:true},content:Object.fromEntries(Object.entries(CAMPAIGN_CONTENT).map(([id,content])=>[id,{...content,...(RUN_FAILURE_COPY[id]?{failure:RUN_FAILURE_COPY[id]}:{})}]))}),
   ]),
   // Arriving at a room alone never records an outcome; explicit interaction does.
   outcomes: freezeRecords(Object.values(CHAPTER_TERMINALS).map(room => ({

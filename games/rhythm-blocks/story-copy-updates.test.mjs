@@ -2,8 +2,9 @@ import test from 'node:test';
 import assert from 'node:assert/strict';
 import {STORY_COPY_UPDATES} from './story-copy-data.mjs';
 import {upgradeStoryCopy} from './story-copy-updates.mjs';
-import {createDefaultProject} from './developer-project.mjs';
+import {createDefaultProject,normalizeProject} from './developer-project.mjs';
 import {createDefaultProject as createPreviousProject} from './releases/r-480b519ca9163fbd/developer-project.mjs';
+import {createDefaultProject as createRiskPreviousProject} from './releases/r-3637c019ce1e150e/developer-project.mjs';
 
 const clone=value=>structuredClone(value);
 const freeze=value=>{if(value&&typeof value==='object'){Object.values(value).forEach(freeze);Object.freeze(value);}return value;};
@@ -12,13 +13,25 @@ const inspection=(project,roomId,id)=>project.content[roomId].inspections.find(i
 const updateFor=(section,roomId,id,field)=>STORY_COPY_UPDATES.find(update=>update.path[0]==='content'&&update.path[1]===roomId&&update.path[2]===section&&update.path[3]?.id===id&&update.path.at(-1)===field);
 const fieldKey=path=>JSON.stringify(path.map(part=>part&&typeof part==='object'?Object.hasOwn(part,'id')?{id:part.id}:{index:part.index}:part));
 
-// Fresh performances can derive shorter holds from shorter modern sentences.
-// An imported performance keeps its own clocks; only its stock words refresh.
-function currentWordsOnPrevious(previous,current){
- if(typeof previous==='string'&&typeof current==='string')return current;
- if(Array.isArray(previous)&&Array.isArray(current))return previous.map((value,index)=>currentWordsOnPrevious(value,value&&typeof value==='object'&&typeof value.id==='string'?current.find(item=>item.id===value.id):current[index]));
- if(previous&&current&&typeof previous==='object'&&typeof current==='object')return Object.fromEntries(Object.entries(previous).map(([key,value])=>[key,Object.hasOwn(current,key)?currentWordsOnPrevious(value,current[key]):clone(value)]));
- return previous;
+// Fresh performances can derive shorter holds from shorter sentences. Imported
+// performances and graph structures keep their data while stock words refresh.
+function withoutWords(value){
+ if(typeof value==='string')return {stockWord:true};
+ if(Array.isArray(value))return value.map(withoutWords);
+ if(value&&typeof value==='object')return Object.fromEntries(Object.entries(value).map(([key,item])=>[key,withoutWords(item)]));
+ return value;
+}
+
+function assertCurrentWords(previous,updated,current,path=[]){
+ if(typeof previous==='string'&&typeof current==='string'){assert.equal(updated,current,path.join('.'));return;}
+ if(Array.isArray(previous)&&Array.isArray(current)){
+  for(const [index,value]of previous.entries()){
+   const target=value&&typeof value==='object'&&typeof value.id==='string'?current.find(item=>item.id===value.id):current[index];
+   if(target!==undefined)assertCurrentWords(value,updated[index],target,[...path,index]);
+  }
+ }else if(previous&&current&&typeof previous==='object'&&typeof current==='object'){
+  for(const [key,value]of Object.entries(previous))if(Object.hasOwn(current,key))assertCurrentWords(value,updated[key],current[key],[...path,key]);
+ }
 }
 
 // Build the old stock wording on today's project without relying on a private
@@ -31,12 +44,14 @@ function oldStockProject(){
   const key=fieldKey(update.path);if(fields.has(key))continue;fields.add(key);
   let current=project;
   for(const part of update.path.slice(0,-1)){
-   if(typeof part==='string')current=current[part];
-   else if(part.id!==undefined)current=current.find(item=>item.id===part.id);
-   else current=current[part.index];
-   assert(current!==undefined,JSON.stringify(update.path));
+   if(typeof part==='string')current=current?.[part];
+   else if(part.id!==undefined)current=current?.find(item=>item.id===part.id);
+   else current=current?.[part.index];
+   if(current===undefined||current===null)break;
   }
-  current[update.path.at(-1)]=update.previousText;
+  // Paid-route updates can retire a former terminal or return hotspot. Their
+  // records remain useful to older projects, but never recreate deleted keys.
+  if(current&&Object.hasOwn(current,update.path.at(-1)))current[update.path.at(-1)]=update.previousText;
  }
  return project;
 }
@@ -54,16 +69,66 @@ test('all shipped stock prose upgrades to the current project without changing o
 });
 
 test('the actual prior release converges to modern stock without retiming its performances',()=>{
- const previous=createPreviousProject(),before=clone(previous),current=createDefaultProject();
- const expected=currentWordsOnPrevious(previous,current),upgraded=upgradeStoryCopy(freeze(previous));
- assert.notDeepEqual(expected,before,'This fixture must exercise the newer stock-wording generation.');
- assert.deepEqual(upgraded,expected,'Every changed existing word from the shipped release reaches current stock in one pass.');
+ const previous=createPreviousProject();previous.settings.replayRisk=true;
+ const before=clone(previous),current=createDefaultProject();
+ const upgraded=upgradeStoryCopy(freeze(previous));
+ assert.notDeepEqual(upgraded,before,'This fixture must exercise the newer stock-wording generation.');
+ assertCurrentWords(previous,upgraded,current);
+ assert.deepEqual(withoutWords(upgraded),withoutWords(before),'Words refresh without changing clocks, resources, or retired graph structures.');
  assert.deepEqual(previous,before);assert.deepEqual(upgradeStoryCopy(upgraded),upgraded);
  assert.match(upgraded.content.depot.cutscene.find(clip=>clip.speaker==='mira'&&/shimmy shimmy/i.test(clip.text))?.text??'',/shimmy shimmy/i);
 });
 
+test('the latest shipped stock receives paid-route warnings without restoring retired data',()=>{
+ const previous=createRiskPreviousProject();previous.settings.replayRisk=true;
+ const before=clone(previous),current=createDefaultProject();
+ const upgraded=upgradeStoryCopy(freeze(previous));
+ assert.notDeepEqual(upgraded,before,'The prior shipped wording must exercise risk warnings.');
+ assertCurrentWords(previous,upgraded,current);
+ assert.deepEqual(withoutWords(upgraded),withoutWords(before),'The word upgrader itself never migrates graph structures.');
+ assert.deepEqual(previous,before);assert.deepEqual(upgradeStoryCopy(upgraded),upgraded);
+});
+
+test('normalization retires stock return promises before refreshing surviving speech',()=>{
+ const previous=createRiskPreviousProject(),clip=previous.content.depot.cutscene.find(item=>item.kind==='dialogue');
+ clip.startTile+=7;clip.durationTiles+=3;clip.reaction=null;clip.author={memo:'Keep my timing.'};
+ const before=clone(previous),upgraded=normalizeProject(freeze(previous)),current=createDefaultProject();
+ assertCurrentWords(upgraded,upgraded,current);
+ assert.deepEqual(Object.keys(upgraded.rooms).sort(),Object.keys(current.rooms).sort());
+ assert.deepEqual(Object.keys(upgraded.terminals).sort(),Object.keys(current.terminals).sort());
+ for(const id of ['dead-brambles','dead-aviary','dead-echo']){
+  assert(upgraded.rooms[id],`${id} is a room with a paid route onward.`);
+  assert(!Object.hasOwn(upgraded.terminals,id));
+  assert(!upgraded.scenes[id].objects.some(item=>item.type==='return'),'Retired free-return controls stay absent.');
+ }
+ const speech=upgraded.content.depot.cutscene.find(item=>item.id===clip.id);
+ assert.deepEqual(speech,{...clip,text:current.content.depot.cutscene.find(item=>item.id===clip.id).text});
+ assert.deepEqual(previous,before);
+});
+
+test('classic or unspecified policy keeps matching refundable instructions and materialized replies',()=>{
+ for(const policy of [false,undefined]){
+  const previous=createRiskPreviousProject(),nell=person(previous,'depot','nell');
+  if(policy===false)previous.settings.replayRisk=false;else delete previous.settings.replayRisk;
+  nell.replies=['story','route','inventory'].map(field=>({id:`saved-${field}`,label:field,text:nell[field],author:{keep:true}}));
+  const before=clone(previous),upgraded=upgradeStoryCopy(freeze(previous));
+  assert.deepEqual(upgraded,before,'Only an explicit risk policy changes a known modern promise into a paid-route warning.');
+  assert.deepEqual(previous,before);assert.deepEqual(upgradeStoryCopy(upgraded),upgraded);
+ }
+ const classic=createRiskPreviousProject();classic.settings.replayRisk=false;
+ const loaded=normalizeProject(classic);
+ assert.equal(loaded.settings.replayRisk,false);
+ for(const id of ['dead-brambles','dead-aviary','dead-echo'])assert(loaded.terminals[id],'An explicit classic authoring project keeps its old outcome graph.');
+ assert.equal(person(loaded,'depot','nell').inventory,person(classic,'depot','nell').inventory);
+ const older=createPreviousProject();older.settings.replayRisk=false;
+ const modernClassic=upgradeStoryCopy(freeze(older));
+ assertCurrentWords(older,modernClassic,createRiskPreviousProject());
+ assert.deepEqual(withoutWords(modernClassic),withoutWords(older),'Classic projects still receive the earlier voice and clarity improvements without retiming.');
+});
+
 test('newer stock replies and renamed object scripts update while authored words and clocks survive',()=>{
  const previous=createPreviousProject(),current=createDefaultProject(),nell=person(previous,'depot','nell');
+ previous.settings.replayRisk=true;
  const fields=['story','route','inventory'];
  nell.replies=fields.map(field=>({id:`custom-${field}`,label:`Ask ${field}`,text:nell[field],demo:['quarter'],author:{field}}));
  nell.replies.push({id:'mine',label:'My question',text:'Keep my answer.'});
@@ -168,7 +233,9 @@ test('partial custom or ambiguous renamed discussions are preserved instead of g
 test('the catalog changes existing prose only and the helper tolerates incomplete safe JSON',()=>{
  const categories=new Set();
  for(const update of STORY_COPY_UPDATES){
-  assert.equal(typeof update.previousText,'string');assert.equal(typeof update.text,'string');assert.notEqual(update.previousText,update.text);
+  assert.equal(typeof update.previousText,'string');assert.equal(typeof update.text,'string');
+  if(Object.hasOwn(update,'classicText'))assert.equal(typeof update.classicText,'string');
+  assert(update.previousText!==update.text||update.previousText!==(update.classicText??update.text),'Each record changes at least one supported policy.');
   assert(Array.isArray(update.path));assert(!update.path.some(part=>['__proto__','prototype','constructor'].includes(part)));
   categories.add(update.path[0]);
  }

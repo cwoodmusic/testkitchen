@@ -50,7 +50,8 @@ function compileDefinition(definition,{terminalRooms}={}){
  }
  const settings=supplied.settings??{},startRoomId=settings.startRoomId??'depot',initialInventory=stock(settings.initialInventory??empty());
  const walkableTerminals=terminalRooms??settings.terminalRooms??!custom;
- if(typeof walkableTerminals!=='boolean'||!safeId(startRoomId)||!(Object.hasOwn(supplied.rooms,startRoomId)||walkableTerminals&&Object.hasOwn(supplied.terminals,startRoomId))||!initialInventory)throw TypeError('Invalid starting room or note inventory.');
+ const replayRisk=settings.replayRisk===undefined?!custom:settings.replayRisk;
+ if(typeof walkableTerminals!=='boolean'||typeof replayRisk!=='boolean'||!safeId(startRoomId)||!(Object.hasOwn(supplied.rooms,startRoomId)||walkableTerminals&&Object.hasOwn(supplied.terminals,startRoomId))||!initialInventory)throw TypeError('Invalid starting room, note inventory or replay-risk setting.');
  for(const [id,room]of Object.entries(supplied.rooms))if(!safeId(id)||!isRecord(room)||room.id!==id)throw TypeError('Invalid playable room.');
  const destinations=new Set(Object.keys(supplied.rooms));
  for(const key of ['previews','terminals'])for(const [id,boundary]of Object.entries(supplied[key])){
@@ -69,12 +70,12 @@ function compileDefinition(definition,{terminalRooms}={}){
   if(door.revealAfter!==undefined&&(!safeId(door.revealAfter)||!Object.hasOwn(supplied.sources,door.revealAfter)))throw TypeError('A hidden door needs an authored reveal source.');
   doorIds.add(door.id);canonicalIds.add(door.canonicalId);
  }
- return freeze({...supplied,custom,noteKinds,kinds,initialInventory,startRoomId,stock,walkableTerminals});
+ return freeze({...supplied,custom,noteKinds,kinds,initialInventory,startRoomId,stock,walkableTerminals,replayRisk});
 }
 
 /** Typed transactions preserve normal play; explicit developer actions stay opt-in. */
 export function createDungeonGame({saved=null,definition=null,developer=false,terminalRooms}={}){
- const config=compileDefinition(definition,{terminalRooms}),{rooms,doors,sources,previews,terminals,kinds,noteKinds,initialInventory,startRoomId,walkableTerminals}=config;
+ const config=compileDefinition(definition,{terminalRooms}),{rooms,doors,sources,previews,terminals,kinds,noteKinds,initialInventory,startRoomId,walkableTerminals,replayRisk}=config;
  const maxActions=config.custom?MAX_DEVELOPER_ACTIONS:MAX_DUNGEON_ACTIONS,maxPhraseLength=config.custom?32:NOTE_KINDS.length;
  const developerEnabled=developer===true;
  const knownKind=id=>typeof id==='string'&&Object.hasOwn(kinds,id);
@@ -177,17 +178,32 @@ export function createDungeonGame({saved=null,definition=null,developer=false,te
  }
  restore(saved);
  function available(){const inventory={...run.inventory};for(const kind of phrase)inventory[kind]--;return inventory;}
+ function progress(){
+  let reason=null;
+  if(replayRisk&&run.nextScene?.kind==='dead-end'&&run.phase!=='room')reason='dead-end';
+  else if(replayRisk&&run.phase==='room'){
+   const pending=Object.values(sources).some(source=>source.roomId===run.roomId&&!run.claimedSources.includes(source.id));
+   const affordable=Object.values(doors).some(door=>{
+    if(door.from!==run.roomId||!isRevealed(door,run.claimedSources))return false;
+    const remaining={...run.inventory};
+    return door.recipe.every(kind=>--remaining[kind]>=0);
+   });
+   if(!pending&&!affordable)reason=Object.values(run.inventory).some(count=>count>0)?'missing-note-types':'out-of-notes';
+  }
+  const failure=reason?{reason,roomId:run.roomId,remainingNotes:Object.values(run.inventory).reduce((sum,count)=>sum+count,0),remainingBeats:Object.entries(run.inventory).reduce((sum,[kind,count])=>sum+kinds[kind].units*count/2,0)}:null;
+  return {runStatus:failure?'failed':run.phase==='room'?'active':'completed',failure};
+ }
  function state(){
-  const door=getDoor(selectedDoor),required=targetUnits(door),canAttempt=run.phase==='room'&&isRevealed(door,run.claimedSources)&&units(phrase)===required;
+  const status=progress(),door=getDoor(selectedDoor),required=targetUnits(door),canAttempt=status.runStatus==='active'&&run.phase==='room'&&isRevealed(door,run.claimedSources)&&units(phrase)===required;
   return freeze(clone({
-   roomId:run.roomId,phase:run.phase,inventory:run.inventory,availableInventory:available(),phrase,units:units(phrase),beats:units(phrase)/2,targetUnits:required,targetBeats:required/2,noteKinds,
+   roomId:run.roomId,phase:run.phase,replayRisk,...status,inventory:run.inventory,availableInventory:available(),phrase,units:units(phrase),beats:units(phrase)/2,targetUnits:required,targetBeats:required/2,noteKinds,
    currentScene:rooms[run.roomId]??terminals[run.roomId],isTerminal:run.phase==='terminal',
    revealedDoors:Object.values(doors).filter(door=>door.from===run.roomId&&isRevealed(door,run.claimedSources)).map(door=>door.id),
    hiddenDoorIds:Object.values(doors).filter(door=>door.from===run.roomId&&!isRevealed(door,run.claimedSources)).map(door=>door.id),
    selectedDoor,claimedSources:run.claimedSources,currentRoomClaimedSources:run.claimedSources.filter(id=>sources[id].roomId===run.roomId),sourceReceipts:run.sourceReceipts,
    canAttempt,canCommit:canAttempt&&equal(phrase,door.recipe),routeId:run.routeId,nextScene:run.nextScene,previewKind:run.nextScene?.kind??null,
    receipt:run.receipt,lastTransition:run.lastTransition,traversedDoors:run.actions.filter(action=>action.type==='door').map(action=>action.doorId),
-   actions:run.actions,creditedStages:[],discoveredRoutes:discoveries(),canRevisit:run.phase==='continued'||entryIndex(run.actions)>=0
+   actions:run.actions,creditedStages:[],discoveredRoutes:discoveries(),canRevisit:!replayRisk&&(run.phase==='continued'||entryIndex(run.actions)>=0)
   }));
  }
  function claim(sourceId){
@@ -207,11 +223,12 @@ export function createDungeonGame({saved=null,definition=null,developer=false,te
  }
  function commit(){
   const door=getDoor(selectedDoor);
-  if(run.phase!=='room'||!door||door.from!==run.roomId||!isRevealed(door,run.claimedSources)||!checkedRecipe(phrase,run.inventory,{complete:true,door})||!equal(phrase,door.recipe))return false;
+  if(run.phase!=='room'||progress().runStatus==='failed'||!door||door.from!==run.roomId||!isRevealed(door,run.claimedSources)||!checkedRecipe(phrase,run.inventory,{complete:true,door})||!equal(phrase,door.recipe))return false;
   if(!apply([...run.actions,{type:'door',doorId:door.canonicalId,recipe:[...phrase]}]))return false;
   phrase=[];selectedDoor=run.phase==='continued'?door.id:null;return true;
  }
  function undo(){
+  if(replayRisk&&run.phase!=='room')return false;
   if(run.phase==='terminal')return rewindRoom();
   if(run.phase==='continued'){
    const index=run.actions.findLastIndex(action=>action.type==='door'),door=getDoor(run.actions[index].doorId);
@@ -220,6 +237,7 @@ export function createDungeonGame({saved=null,definition=null,developer=false,te
   if(!phrase.length)return false;phrase.pop();return true;
  }
  function rewindRoom(){
+  if(replayRisk)return false;
   if(run.phase==='continued')return undo();
   const index=entryIndex(run.actions);if(index<0)return false;
   const action=run.actions[index],door=action.type==='door'?getDoor(action.doorId):null;

@@ -76,16 +76,17 @@ export function upgradeStoryCopy(project){
  for(const update of STORY_COPY_UPDATES){
   const field=update.path.at(-1);
   if(typeof field!=='string'||FORBIDDEN.has(field))continue;
+  const desiredText=project.settings?.replayRisk===true?update.text:(update.classicText??update.text);
   const parentPath=resolvePath(project,update.path.slice(0,-1));if(!parentPath)continue;
   const path=[...parentPath,field];
   if(atPath(project,path)===update.previousText){
-   const parent=atPath(upgraded,path.slice(0,-1));parent[path.at(-1)]=update.text;
+   const parent=atPath(upgraded,path.slice(0,-1));parent[path.at(-1)]=desiredText;
   }
   // Older editor versions materialized these three legacy fields as replies.
   // Keep reply IDs, labels, demonstrations, order and private metadata untouched.
   if(update.path[0]==='content'&&update.path[2]==='people'&&update.path.length===5&&['story','route','inventory'].includes(update.path[4])){
    const originalPerson=atPath(project,path.slice(0,-1)),person=atPath(upgraded,path.slice(0,-1));
-   for(const [index,reply]of list(originalPerson?.replies).entries())if(record(reply)&&reply.text===update.previousText)person.replies[index].text=update.text;
+   for(const [index,reply]of list(originalPerson?.replies).entries())if(record(reply)&&reply.text===update.previousText)person.replies[index].text=desiredText;
   }
  }
  return upgraded;

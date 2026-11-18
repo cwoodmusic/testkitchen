@@ -1,4 +1,4 @@
-/** Complete verified campaign: fourteen rooms, twenty-two keys and nine outcomes. */
+/** Verified replay-risk campaign: seventeen rooms, twenty-five keys and six outcomes. */
 import {CAMPAIGN_PLAN} from './campaign-data.mjs';
 const freeze=value=>{if(value&&typeof value==='object'){Object.values(value).forEach(freeze);Object.freeze(value);}return value;};
 const uiId=id=>id.startsWith('depot-')?id.slice('depot-'.length):id;
@@ -8,6 +8,7 @@ for(const room of CAMPAIGN_PLAN.rooms){
  for(const door of room.doors)stages.set(door.to,Math.max(stages.get(door.to)??0,stage+1));
 }
 export const CHAPTER_ENTRY=CAMPAIGN_PLAN.entry;
+export const CHAPTER_REPLAY_RISK=CAMPAIGN_PLAN.replayRisk??null;
 export const CHAPTER_ROOMS=freeze(Object.fromEntries(CAMPAIGN_PLAN.rooms.map(room=>[room.id,{
  id:room.id,title:room.title,stage:stages.get(room.id),sources:room.sources.map(source=>source.id),doors:room.doors.map(door=>uiId(door.id)),...(room.description?{description:room.description}:{})
 }])));

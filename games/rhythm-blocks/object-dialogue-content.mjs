@@ -132,26 +132,26 @@ export const OBJECT_DIALOGUES=freeze({
  "dead-brambles-memory":[
   {speaker:"pip",text:"The roots fill the whole arch! I don't think they want us here, and I don't want to argue."},
   {speaker:"iris",text:"Roots don't have opinions, Pip, but they do block the path. That cup catches a roof leak, so the bench stays dry."},
-  {speaker:"mira",text:"So we've found a nice rest stop, but no way through. The listening gate looked a lot less leafy."},
-  {speaker:"nell",text:"Let's revisit our last choice to recover the notes, and then take the listening gate."},
+  {speaker:"mira",text:"A nice rest stop, but no way through those roots. The south gate has its own price, and our final pair is already spent."},
+  {speaker:"nell",text:"The garden service gate to the south needs a half note and half rest. Count our bag first; the arch's payment won't return."},
  ],
  "dead-aviary-memory":[
   {speaker:"pip",text:"Fresh felt and brass dust! Someone's mending this bird's nest. We can't leave it all alone!"},
   {speaker:"iris",text:"It's being cared for, Pip. The lining protects its wing, but there's no opening in that wall."},
-  {speaker:"mira",text:"So we've found a comfy bird bed, but no way forward. Let's give our patient some peace."},
-  {speaker:"nell",text:"We need Pip's workshop again, so revisit our last choice and take the running gate."},
+  {speaker:"mira",text:"A comfy bird bed! I'll skip the matching pillows. The south service gate leads onward, but it needs another four beats."},
+  {speaker:"nell",text:"The south service gate needs Pip's half note, two eighths and four sixteenths. That's another payment, so check what we'll have left."},
  ],
  "dead-ferry-reply":[
   {speaker:"mira",text:"An empty landing and one rope. Even my most impressive hop won't turn that into a ferry."},
   {speaker:"iris",text:"Correct, and the rope isn't a bridge. We can't cross safely without a boat."},
   {speaker:"pip",text:"I'm glad we agree. I like this side, because it's dry and all my friends are on it."},
-  {speaker:"nell",text:"Let's revisit our last choice to return to Oren, and then take the delivery gate."},
+  {speaker:"nell",text:"This run ends here. Our journal keeps the clue, so next time we'll collect Oren's chest and choose the delivery gate."},
  ],
  "dead-echo-reply":[
   {speaker:"mira",text:"The clock in the water's got our scratch! Even our untidy marks are coming back."},
   {speaker:"iris",text:"That's our reflection, so it's copying the clock. It can't send a new reply."},
   {speaker:"pip",text:"It still feels like another clock's watching us, but I'll take the reflection explanation. Happily."},
-  {speaker:"nell",text:"This channel ends here, so revisit the water clock and choose the town-bell stair."},
+  {speaker:"nell",text:"The channel ends at stone, but the south stair reaches the tower. It costs four more beats, and the tower still needs its final key."},
  ],
 });
 

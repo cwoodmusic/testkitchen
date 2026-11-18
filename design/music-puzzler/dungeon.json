@@ -1,6 +1,6 @@
 {
   "version": 1,
-  "status": "released campaign economy; all rooms and outcomes playable",
+  "status": "released replay-risk campaign; paid doors are irreversible and knowledge persists across runs",
   "entry": "depot",
   "initialInventory": {},
   "rooms": [
@@ -105,7 +105,7 @@
             "quarter"
           ],
           "label": "The overgrown arch",
-          "warning": "Iris warns that thick brambles block the path behind this arch."
+          "warning": "Iris warns that the arch is blocked. Its service route costs an extra four-beat key."
         }
       ],
       "description": "Iris asks Mira to listen to the space between notes. Her gift is claimed once through conversation."
@@ -146,7 +146,7 @@
             "quarter"
           ],
           "label": "The silent aviary",
-          "warning": "Pip warns that the old bird house has no working reply connection."
+          "warning": "The quiet aviary is a detour. Its service gate costs another four beats, so save the notes needed at the final lock."
         }
       ]
     },
@@ -190,6 +190,25 @@
       ]
     },
     {
+      "id": "dead-brambles",
+      "title": "The Overgrown Arch",
+      "sources": [],
+      "doors": [
+        {
+          "id": "bramble-return-gate",
+          "to": "garden-fork",
+          "recipe": [
+            "half",
+            "half-rest"
+          ],
+          "label": "The garden service gate",
+          "hint": "Hold a sound for two beats, then leave two beats silent. This extra gate spends four beats before the garden fork.",
+          "warning": "The final garden door still needs its own four-beat key."
+        }
+      ],
+      "description": "The arch is blocked, but an older southern service gate reaches the garden paths. Its extra key spends notes that may be needed later."
+    },
+    {
       "id": "garden-fork",
       "title": "The Two Garden Paths",
       "sources": [],
@@ -218,6 +237,26 @@
           "hint": "Try the two one-beat groups, a quarter rest, a single eighth, and paired sixteenths."
         }
       ]
+    },
+    {
+      "id": "dead-aviary",
+      "title": "The Silent Aviary",
+      "sources": [],
+      "doors": [
+        {
+          "id": "aviary-return-gate",
+          "to": "workshop-fork",
+          "recipe": [
+            "half",
+            "eighth-pair",
+            "sixteenth-group"
+          ],
+          "label": "The workshop service gate",
+          "hint": "Hold for two beats, then play two eighth notes and four sixteenth notes. The service gate spends another four beats.",
+          "warning": "The final workshop door still needs the dotted half note and quarter note."
+        }
+      ],
+      "description": "The quiet bird room has an older southern service gate to the workshop paths. Taking it costs an extra four-beat key."
     },
     {
       "id": "workshop-fork",
@@ -273,7 +312,7 @@
             "quarter-rest"
           ],
           "label": "The copied waterway",
-          "warning": "Oren’s map shows that this passage ends at a wall."
+          "warning": "Oren’s map shows that this channel reaches an extra paid service stair. The bell still needs its own four-beat key."
         }
       ]
     },
@@ -315,6 +354,25 @@
           "hint": "Play a single eighth and paired sixteenths for beat one. A half rest and a quarter rest finish the rhythm."
         }
       ]
+    },
+    {
+      "id": "dead-echo",
+      "title": "The Copied Waterway",
+      "sources": [],
+      "doors": [
+        {
+          "id": "echo-return-gate",
+          "to": "canal-final",
+          "recipe": [
+            "dotted-half",
+            "sixteenth-group"
+          ],
+          "label": "The bell service stair",
+          "hint": "Hold for three beats, then play four sixteenth notes. The service stair spends four beats to reach the bell controls.",
+          "warning": "The bell still needs a separate four-beat answer after this stair."
+        }
+      ],
+      "description": "The channel ends at a wall, but the southern service stair reaches the bell controls. That extra gate spends the four beats needed at the bell."
     },
     {
       "id": "canal-final",
@@ -461,52 +519,48 @@
       "kind": "secret-ending"
     },
     {
-      "id": "dead-brambles",
-      "title": "The Overgrown Arch",
-      "kind": "dead-end",
-      "repair": "Return to Iris’s porch, collect her notes if needed, and try the listening gate."
-    },
-    {
-      "id": "dead-aviary",
-      "title": "The Silent Aviary",
-      "kind": "dead-end",
-      "repair": "Return to Pip’s workshop, collect his notes if needed, and try the workshop gate."
-    },
-    {
       "id": "dead-ferry",
       "title": "The Empty Ferry",
       "kind": "dead-end",
-      "repair": "Return to the canal storehouse, open the stamped chest, and try the delivery door."
-    },
-    {
-      "id": "dead-echo",
-      "title": "The Copied Waterway",
-      "kind": "dead-end",
-      "repair": "Return to the water clock and choose the stair leading to the town bell."
+      "repair": "Start a new run. Open the stamped chest in the canal storehouse, then choose the delivery gate."
     }
   ],
   "rules": [
-    "Doors accept their authored ordered recipe, not every rhythm of equal duration. Every door costs exactly four beats.",
-    "All sources are explicit interactions, claimed once globally per run. Talking again never gives another parcel. No notes are awarded automatically on room entry.",
-    "Nell supplies eight kinds worth ten beats; the depot chest holds the missing half note worth two beats. Both opening interactions are naturally required: every door needs the half note, and that note alone is not four beats. Garden and workshop notes come from conversations; canal notes come from a chest.",
-    "The source required for a good porch gate gives exactly the kinds absent after the corresponding opening door. The gate therefore cannot be paid before claiming it.",
-    "Hidden sources exist only after choosing their secret detour. Their fixed four-beat gate spends exactly the newly supplied four-beat vector before the branch rejoins its own final room.",
-    "Successful terminal stock must equal zero for every kind. Dead ends retain four or eight beats. Nothing discards, converts, or consumes arbitrary leftover notes.",
-    "Undo restores room, inventory, source receipts, revealed doors, and the committed action log together. Permanent discoveries never provide current-run notes.",
-    "The previous automatic three-tile-per-stage grants are replaced by these explicit once-only sources."
+    "Doors accept their authored ordered recipe, not every rhythm of equal duration. Every door costs exactly four beats. Incorrect answers spend nothing.",
+    "All sources are explicit interactions, claimed once globally per run. Entering a room awards no notes automatically. Starting a new run resets supplies while preserving learned clues and explored routes.",
+    "Nell supplies eight kinds worth ten beats; the depot chest holds the missing half note worth two beats. Every opening door needs that half note and another two beats, so both starting sources are required.",
+    "A branch’s once-only gift or chest restores the kinds spent at its opening door. The direct porch gate therefore requires collecting that supply before leaving.",
+    "Every paid door is irreversible during the run. Undo edits only the uncommitted rhythm answer. No return gate refunds notes or restores already-claimed supplies.",
+    "The overgrown arch, quiet aviary, and copied-waterway doors are explicit risk entries. Their service gates add a four-beat cost that can consume the final key or leave the wrong note types.",
+    "Hidden caches require explicit searching. Each supplies its own four-beat hidden gate, so finding a cache does not replace a final key spent on an earlier detour.",
+    "Successful endings use zero of every note kind. A nonterminal room with no affordable revealed door and no unclaimed local source ends the run: an empty bag is out of notes, and a nonempty unusable bag lacks the right types.",
+    "A failed run keeps its discovered rooms, connections, and clues. Restart begins at the depot with an empty bag and fresh once-only supplies; journal knowledge never grants current-run notes.",
+    "The verifier accepts only witnessed resource losses whose every history crossed a declared risk-entry door. Unmarked blocked states, broken success balances, unreachable content, and ungated secret endings still fail."
   ],
   "expectedCounts": {
-    "rooms": 14,
-    "terminals": 9,
+    "rooms": 17,
+    "terminals": 6,
     "regularEndings": 3,
     "secretEndings": 2,
-    "deadEnds": 4,
+    "deadEnds": 1,
     "sources": 7,
-    "doors": 22
+    "doors": 25
   },
   "budgetProof": {
     "regular": "12 initial beats + 4 branch-source beats = 4 doors × 4 beats = 16; zero remains.",
-    "secret": "12 initial beats + 4 branch-source beats + 4 hidden-cache beats = 5 doors × 4 beats = 20; zero remains.",
-    "typed": "Each branch’s remaining eight beats are partitioned into two fixed four-beat vectors. The regular path spends A then B; the secret path spends B, its newly supplied cache vector, then A. Equality holds component by component."
+    "secret": "12 initial + 4 branch-source + 4 hidden-cache beats = 5 doors × 4 beats = 20; zero remains.",
+    "typed": "Each safe branch keeps its two original four-beat vectors. Direct routes spend A then B; secret routes spend B, their separate hidden-cache vector, then A.",
+    "canalLoss": "The copied-waterway route pays its extra service stair: 16 supplied beats are spent before the last bell door, which still needs another four beats. The bag reaches zero at the bell controls.",
+    "gardenAndWorkshopLoss": "Taking the risky porch door spends the original final key. Its service gate then spends the branch gift. The hidden cache pays only its own gate, leaving zero notes before the secret final door.",
+    "missingTypes": "Skipping the porch gift and choosing its risky door leaves four beats of other types. The extra service gate cannot be paid, so the attempt ends without a refund.",
+    "runHistories": "43 reachable states and 43 transitions yield 14 terminal histories plus 10 recognized resource-loss histories, or 24 complete runs. All five successes remain reachable; three loss states have zero notes and two retain the wrong types."
+  },
+  "replayRisk": {
+    "irreversibleDoors": true,
+    "lossEntryDoorIds": [
+      "garden-porch-dead",
+      "workshop-porch-dead",
+      "canal-dead"
+    ]
   }
 }

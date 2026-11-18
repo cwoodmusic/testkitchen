@@ -228,7 +228,7 @@ function porch(spec){
   ...actors.map(actor=>actorObject(actor,spec.gift?.person===actor.id?spec.gift.source:null)),
   ...(spec.chest?[chestObject('canal-chest','Stamped chest')]:[]),
   ...spec.props.map(prop=>inspect(prop.id,prop.label,placements[spec.id][prop.placement].rect)),
-  object('return-depot','return','Revisit the depot',rect(680,920,176,90),{actionLabel:'Revisit the depot'})
+  object('return-depot','return','Review your journey',rect(680,920,176,90),{actionLabel:'Review your journey'})
  ];
  const targets=[
   {id:forwardId,type:'door',x:490,y:spec.wall,approach:{x:490,y:spec.wall+60},range:100},
@@ -236,7 +236,7 @@ function porch(spec){
   ...actors.map(actorTarget),
   ...(spec.chest?[chestTarget('canal-chest')]:[]),
   ...spec.props.map(prop=>({id:prop.id,type:'inspect',label:`Inspect ${prop.label.toLowerCase()}`,...placements[spec.id][prop.placement].target})),
-  {id:'return-depot',type:'return',label:'Revisit the depot',x:768,y:960,approach:{x:768,y:910},range:85}
+  {id:'return-depot',type:'return',label:'Review your journey',x:768,y:960,approach:{x:768,y:910},range:85}
  ];
  const obstacles=[
   ...actors.map(actorObstacle),

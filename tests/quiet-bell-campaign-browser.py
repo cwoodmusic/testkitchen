@@ -1,8 +1,8 @@
 """Walk every authored Quiet Bell route through real browser input.
 
-Gameplay hooks are read-only: gifts, chests, searches, rhythm answers and revisits
-all use the visible UI. One browser profile keeps the discovered chart across all
-nine runs; unrelated arcade/music saves remain byte-for-byte unchanged.
+Gameplay hooks are read-only: gifts, chests, searches, rhythm answers and restarts
+all use the visible UI. One browser profile keeps the discovered chart across the
+successful and failed runs; unrelated arcade/music saves stay unchanged.
 """
 from functools import partial
 from http.server import ThreadingHTTPServer
@@ -28,6 +28,12 @@ SOURCES = {source['id']: dict(source, room=room['id']) for room in PLAN['rooms']
 KINDS = ui.KINDS
 UNITS = {'quarter': 2, 'eighth-pair': 2, 'sixteenth-group': 2, 'half': 4,
          'eighth': 1, 'quarter-rest': 2, 'half-rest': 4, 'dotted-half': 6, 'sixteenth-pair': 1}
+RISK_ENTRY_DOORS=set(PLAN.get('replayRisk',{}).get('lossEntryDoorIds',[]))
+LOSS_ROUTES={
+    'garden-secret-final':['depot-garden','garden-porch-dead','bramble-return-gate','garden-secret-branch','garden-hidden-exit'],
+    'workshop-secret-final':['depot-workshop','workshop-porch-dead','aviary-return-gate','workshop-secret-branch','workshop-hidden-exit'],
+    'canal-final':['depot-canal','canal-porch-forward','canal-dead','echo-return-gate'],
+}
 
 
 def ids(records):
@@ -39,6 +45,8 @@ def route_to(destination):
         if room_id == destination:
             return trail
         for door in ROOMS.get(room_id, {}).get('doors', []):
+            if door['id'] in RISK_ENTRY_DOORS:
+                continue
             found = visit(door['to'], trail + [door['id']])
             if found is not None:
                 return found
@@ -57,9 +65,9 @@ class Campaign:
         self.sources = set()
         self.stock = ui.EMPTY.copy()
         self.results = []
-        assert len(self.project['rooms']) == 14 and len(self.project['terminals']) == 9
-        assert len(self.project['scenes']) == 23 and len(self.project['doors']) == 22
-        assert len(self.project['sources']) == 7
+        assert len(self.project['rooms']) == len(ROOMS) and len(self.project['terminals']) == len(TERMINALS)
+        assert len(self.project['scenes']) == len(ROOMS)+len(TERMINALS) and len(self.project['doors']) == len(DOORS)
+        assert len(self.project['sources']) == len(SOURCES) and self.project['settings']['replayRisk'] is True
 
     def close(self):
         ui.skip_cutscene(self.page)
@@ -121,7 +129,7 @@ class Campaign:
         for name, expected in [('nodes', self.nodes), ('edges', self.edges),
                                ('hints', self.hints), ('outcomes', self.outcomes)]:
             assert ids(value[name]) == expected and len(value[name]) == len(expected), (name, expected, value)
-        complete = len(self.nodes) == 23 and len(self.edges) == 22 and len(self.outcomes) == 9
+        complete = len(self.nodes) == len(ROOMS)+len(TERMINALS) and len(self.edges) == len(DOORS) and len(self.outcomes) == len(TERMINALS)
         assert ids(value['achievements']) == ({'complete-score'} if complete else set()), value
         if visible:
             self.close()
@@ -137,7 +145,13 @@ class Campaign:
 
     def room(self, room_id):
         ui.skip_cutscene(self.page)
+        self.page.clock.run_for(50)
         value = ui.state(self.page)
+        if value.get('failure'):
+            self.hints.add('lesson-paid-doors')
+            if self.project['content'][room_id].get('failure',{}).get('lesson'):
+                self.hints.add('lesson-'+room_id)
+            if self.page.locator('#outcome').is_visible():self.page.locator('#outcome-close').click()
         assert value['roomId'] == room_id and value['phase'] == ('terminal' if room_id in TERMINALS else 'room'), value
         assert value['inventory'] == self.stock and value['availableInventory'] == self.stock, (room_id, self.stock, value)
         assert not value['phrase'] and value['creditedStages'] == []
@@ -154,7 +168,7 @@ class Campaign:
         assert set(actual) == expected and len(actual) == len(expected), (room_id, expected, actual)
         assert set(self.page.locator('[data-person]').evaluate_all('es=>es.map(e=>e.dataset.person)')) >= {'nell', 'iris', 'pip'}
         assert self.page.locator('[data-door]').count() == (len(ROOMS[room_id]['doors']) - len(value.get('hiddenDoorIds', [])) if room_id in ROOMS else 0)
-        assert self.page.locator('#ending').is_visible() == (room_id in TERMINALS)
+        assert self.page.locator('#ending').is_visible() == (room_id in TERMINALS or bool(value.get('failure')))
         ui.layout(self.page, self.touch)
         self.journal()
         return value
@@ -280,30 +294,26 @@ class Campaign:
         self.reload()
         return before
 
-    def revisit(self, door_id, before):
-        door = DOORS[door_id]
+    def review_outcome(self, room_id):
+        before=ui.state(self.page)
         assert self.page.locator('#outcome').is_hidden()
         self.press('#ending')
         assert self.page.locator('#outcome').is_visible()
-        assert self.page.locator('#outcome-title').inner_text().strip() == TERMINALS[door['to']]['title']
+        if not before.get('failure'):
+            assert self.page.locator('#outcome-title').inner_text().strip() == TERMINALS[room_id]['title']
         assert self.page.locator('#outcome-copy').inner_text().strip()
+        assert 'start' in self.page.locator('#revisit').inner_text().lower()
         ui.layout(self.page, self.touch)
         self.press('#outcome-close')
         assert self.page.locator('#outcome').is_hidden()
-        self.press('#ending')
-        self.press('#revisit')
-        self.stock = before['inventory'].copy()
-        value = self.room(door['source'])
-        for key in ['inventory', 'claimedSources', 'actions', 'sourceReceipts', 'traversedDoors']:
-            assert value[key] == before[key], (key, before, value)
-        self.reload()
-        self.pay(door_id)
-        # The physical south threshold has the same atomic recovery behavior.
+        # The south threshold opens learned information, never a payment refund.
         self.press('button[data-return="return-previous"]')
-        self.stock = before['inventory'].copy()
-        value = self.room(door['source'])
-        assert value['inventory'] == before['inventory'] and value['actions'] == before['actions']
-        self.pay(door_id)
+        assert self.page.locator('#menu-dialog').is_visible() and ui.unavailable(self.page,'#revisit-room')
+        value=ui.state(self.page)
+        for key in ['roomId','inventory','claimedSources','actions','sourceReceipts','traversedDoors']:
+            assert value[key]==before[key],(key,before,value)
+        assert not value['canRevisit']
+        self.close();self.reload()
 
     def restart(self):
         self.close()
@@ -314,8 +324,8 @@ class Campaign:
         assert value['claimedSources'] == [] and value['actions'] == []
         self.journal(visible=True)
 
-    def run_route(self, terminal_id, revisit=True):
-        route = route_to(terminal_id)
+    def run_route(self, terminal_id, review=True, route=None, failed=False):
+        route = route or route_to(terminal_id)
         for door_id in route:
             room_id = ui.state(self.page)['roomId']
             self.observe(room_id)
@@ -325,15 +335,19 @@ class Campaign:
             before = self.pay(door_id)
         self.observe(terminal_id)
         total_units = sum(UNITS[kind] * number for kind, number in self.stock.items())
-        if TERMINALS[terminal_id]['kind'] != 'dead-end':
+        if failed:
+            assert ui.state(self.page)['runStatus']=='failed' and ui.state(self.page)['failure']['reason']=='out-of-notes'
+            assert self.stock==ui.EMPTY,(terminal_id,self.stock)
+        elif TERMINALS[terminal_id]['kind'] != 'dead-end':
             assert self.stock == ui.EMPTY, (terminal_id, self.stock)
+            assert ui.state(self.page)['runStatus']=='completed'
         else:
             assert total_units > 0, (terminal_id, self.stock)
+            assert ui.state(self.page)['runStatus']=='failed'
         self.journal(visible=True)
-        if revisit:
-            self.revisit(route[-1], before)
+        if review:self.review_outcome(terminal_id)
         self.results.append({'outcome': terminal_id, 'doors': route, 'remainingBeats': total_units / 2,
-                             'walkable': True, 'reloaded': True, 'revisited': revisit})
+                             'walkable': True, 'reloaded': True, 'reviewed': review,'runStatus':ui.state(self.page)['runStatus']})
         print(json.dumps(self.results[-1]), flush=True)
 
 
@@ -344,11 +358,13 @@ def campaign_flow(browser, url, terminal_ids=None):
     test.journal(visible=True)
     assert page.locator('#journey-chart [data-journey-node]').count() == 1
     terminal_ids = terminal_ids or list(TERMINALS)
-    for index, terminal_id in enumerate(terminal_ids):
+    failures=LOSS_ROUTES if len(terminal_ids)==len(TERMINALS) else {'canal-final':LOSS_ROUTES['canal-final']}
+    runs=[(identifier,route_to(identifier),False) for identifier in terminal_ids]+[(identifier,route,True) for identifier,route in failures.items()]
+    for index, (terminal_id,route,failed) in enumerate(runs):
         if index:
             test.restart()
-        test.run_route(terminal_id)
-    expected_edges = {door_id for terminal_id in terminal_ids for door_id in route_to(terminal_id)}
+        test.run_route(terminal_id,route=route,failed=failed)
+    expected_edges = {door_id for _,route,_ in runs for door_id in route}
     expected_places = {'depot'} | {DOORS[door_id]['to'] for door_id in expected_edges}
     assert test.visited == expected_places
     assert len(test.images) == len(expected_places) and len(set(test.images.values())) == len(expected_places)
@@ -360,10 +376,10 @@ def campaign_flow(browser, url, terminal_ids=None):
     test.reload()
     test.journal(visible=True)
     test.press('#menu')
-    page.screenshot(path=str(OUT / ('complete-score-desktop.png' if len(terminal_ids) == 9 else 'smoke-journey-desktop.png')))
+    page.screenshot(path=str(OUT / ('complete-score-desktop.png' if len(terminal_ids) == len(TERMINALS) else 'smoke-journey-desktop.png')))
     test.close()
     test.restart()
-    complete = len(terminal_ids) == 9
+    complete = len(terminal_ids) == len(TERMINALS)
     assert ids(page.evaluate('quietBell.journey.achievements')) == ({'complete-score'} if complete else set())
     test.reload()
     ui.protected_storage(page)
@@ -386,7 +402,7 @@ def phone_flow(browser, url):
     page.mouse.down(); page.clock.run_for(260); page.mouse.up(); ui.settle_walk(page)
     moved = ui.walker(page)
     assert moved['x'] > start['x'] + 35 and not moved['moving'], (start, moved)
-    test.run_route('ending-secret-quiet', revisit=True)
+    test.run_route('ending-secret-quiet', review=True)
     for width, height in [(320, 568), (390, 844), (1024, 480)]:
         page.set_viewport_size({'width': width, 'height': height})
         page.clock.run_for(100)
@@ -397,7 +413,7 @@ def phone_flow(browser, url):
     ui.protected_storage(page)
     assert not errors and not writes and not external, (errors, writes, external)
     context.close()
-    return {'touch': True, 'dpad': True, 'secretRoute': True, 'endingRevisit': True, 'sizes': 3}
+    return {'touch': True, 'dpad': True, 'secretRoute': True, 'endingReviewWithoutRefund': True, 'sizes': 3}
 
 
 class PublicBrowser:
@@ -423,7 +439,7 @@ def main():
     parser = argparse.ArgumentParser(description=__doc__)
     parser.add_argument('--source', action='store_true', help='Test game.html instead of the immutable launcher.')
     parser.add_argument('--url', help='Test a canonical/public URL with the same real-input harness.')
-    parser.add_argument('--smoke', action='store_true', help='Exercise both secret routes and the canal ending (15 places, all 7 sources).')
+    parser.add_argument('--smoke', action='store_true', help='Exercise both secret wins, the canal ending and a deliberate exhausted canal run.')
     parser.add_argument('--desktop-only', action='store_true', help='Skip the separate phone/D-pad representative run.')
     args = parser.parse_args()
     started = time.monotonic()

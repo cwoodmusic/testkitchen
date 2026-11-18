@@ -10,6 +10,7 @@ import {createRoomWalker,findPath,isWalkable} from './room.mjs';
 
 const allLocations=[...CAMPAIGN_PLAN.rooms,...CAMPAIGN_PLAN.terminals];
 const canonical=id=>['garden','workshop','canal'].includes(id)?`depot-${id}`:id;
+const southGateIds=Object.freeze({'dead-brambles':'bramble-return-gate','dead-aviary':'aviary-return-gate','dead-echo':'echo-return-gate'});
 
 test('every authored room and ending is a distinct walking scene',()=>{
  assert.equal(allLocations.length,23);
@@ -28,15 +29,33 @@ test('every authored room and ending is a distinct walking scene',()=>{
  for(const invalid of [undefined,null,'missing-room','__proto__','constructor'])assert.equal(getCampaignScene(invalid),null);
 });
 
-test('all twenty-two paid door hit regions match their authored locations and reveal gates',()=>{
+test('all twenty-five paid door hit regions match their authored locations and reveal gates',()=>{
  const actual=Object.values(CAMPAIGN_SCENES).flatMap(scene=>scene.objects.filter(item=>item.type==='door').map(item=>({room:scene.id,door:item,target:scene.geometry.targets.find(target=>target.id===item.id)})));
- assert.equal(actual.length,22);
+ assert.equal(actual.length,25);
  for(const room of CAMPAIGN_PLAN.rooms)for(const expected of room.doors){
   const entry=actual.find(item=>canonical(item.door.doorId??item.door.id)===expected.id);
   assert(entry,expected.id);assert.equal(entry.room,room.id);
   assert.equal(entry.door.revealAfter,expected.revealAfter);
   assert.equal(entry.target.revealAfter,expected.revealAfter);
  }
+});
+
+test('the three paid service gates replace the south threshold rather than adding a door on the solid north wall',()=>{
+ for(const [roomId,doorId]of Object.entries(southGateIds)){
+  const scene=getCampaignScene(roomId),doors=scene.objects.filter(item=>item.type==='door');
+  assert.equal(scene.kind,'room');assert.deepEqual(doors.map(item=>item.id),[doorId],roomId);
+  const gate=doors[0],target=scene.geometry.targets.find(item=>item.id===doorId);
+  assert.equal(gate.doorId,doorId);assert.equal(target.type,'door');
+  assert.deepEqual(gate.rect,{x:680,y:920,width:176,height:90},'The hotspot covers the pictured southern threshold.');
+  assert.deepEqual({x:target.x,y:target.y,approach:target.approach},{x:768,y:960,approach:{x:768,y:910}});
+  assert(isWalkable(scene.geometry,target.approach),`${roomId} leaves a safe approach inside the south gate`);
+  assert(gate.rect.y>scene.geometry.bounds.y+400,'The closed north wall has no paid-door hotspot.');
+  assert(!scene.objects.some(item=>item.type==='return'||item.id==='return-previous'));
+  assert(!scene.geometry.targets.some(item=>item.type==='return'||item.id==='return-previous'));
+ }
+ const remaining=Object.values(CAMPAIGN_SCENES).filter(scene=>!Object.hasOwn(southGateIds,scene.id));
+ assert.equal(remaining.flatMap(scene=>scene.objects.filter(item=>item.type==='return')).length,19,'Existing journal thresholds remain; the depot has no return threshold.');
+ assert.equal(getCampaignScene('depot').objects.filter(item=>item.type==='return').length,0);
 });
 
 test('all seven note supplies are bound to exactly one physical interaction',()=>{
@@ -55,7 +74,7 @@ test('all seven note supplies are bound to exactly one physical interaction',()=
  }
 });
 
-test('every person, prop, cache, gate and south return can be approached on valid floor',()=>{
+test('every person, prop, cache, paid gate and journal threshold can be approached on valid floor',()=>{
  for(const scene of Object.values(CAMPAIGN_SCENES)){
   const room=scene.geometry,walker=createRoomWalker({room});assert(isWalkable(room,walker.state),scene.id);
   for(const target of room.targets){
@@ -91,8 +110,9 @@ test('each scene pairs its visible companion feet and three distinct story props
   if(!Object.hasOwn(SCENES,scene.id)){
    assert.equal(inspections.length,3);
    assert.equal(new Set(content.inspections.map(item=>item.placement)).size,3);
-   assert.equal(scene.objects.filter(item=>item.type==='return').length,1);
-   assert.equal(scene.objects.find(item=>item.type==='return').id,'return-previous');
+   const returns=scene.objects.filter(item=>item.type==='return');
+   if(Object.hasOwn(southGateIds,scene.id))assert.equal(returns.length,0,'A paid service gate replaces the old free return.');
+   else{assert.equal(returns.length,1);assert.equal(returns[0].id,'return-previous');}
   }
  }
 });

@@ -65,6 +65,17 @@ export function compileDungeon(data){
   if(door.revealAfter!==undefined)check(sources.get(door.revealAfter)?.roomId===room.id,'Door revealAfter must name a local source: '+door.id);
   doors.set(door.id,{...door,roomId:room.id,counts});
  }
+ const replayRisk=data.replayRisk??null,riskDoorIds=new Set();
+ if(replayRisk!==null){
+  check(replayRisk&&typeof replayRisk==='object'&&!Array.isArray(replayRisk)&&Object.keys(replayRisk).every(key=>['irreversibleDoors','lossEntryDoorIds'].includes(key)),'Invalid replay risk policy');
+  check(replayRisk.irreversibleDoors===true,'Replay risk requires irreversible doors');
+  check(Array.isArray(replayRisk.lossEntryDoorIds)&&replayRisk.lossEntryDoorIds.length>0,'Replay risk needs explicit loss-entry doors');
+  for(const id of replayRisk.lossEntryDoorIds){
+   check(validId(id)&&doors.has(id)&&!riskDoorIds.has(id),'Invalid or duplicate loss-entry door: '+String(id));
+   check(rooms.has(doors.get(id).to),'A loss-entry door must enter a playable room: '+id);
+   riskDoorIds.add(id);
+  }
+ }
  // A room DAG plus a strictly increasing claimed-source set makes every
  // action history finite, including every possible pickup order within a room.
  const indegree=new Map([...rooms.keys()].map(id=>[id,0]));
@@ -75,7 +86,7 @@ export function compileDungeon(data){
  // Every possible accumulated count must remain an exact safe integer.
  const totalSupply=initial.map((count,index)=>count+[...sources.values()].reduce((n,source)=>n+source.counts[index],0));
  check(totalSupply.every(Number.isSafeInteger)&&Number.isSafeInteger(mass(totalSupply)),'Inventory exceeds safe integer range');
- return{data,rooms,terminals,sources,doors,initial,topological};
+ return{data,rooms,terminals,sources,doors,initial,topological,replayRisk,riskDoorIds};
 }
 
 function conservation(compiled,stock,claimed,spent){
@@ -85,7 +96,7 @@ function conservation(compiled,stock,claimed,spent){
 }
 function replayCompiled(compiled,actions){
  check(Array.isArray(actions),'Dungeon actions must be an array');
- let nodeId=compiled.data.entry,inventory=[...compiled.initial],claimed=0n;const spent=blank(),hiddenGateSources=new Set(),trace=[];
+ let nodeId=compiled.data.entry,inventory=[...compiled.initial],claimed=0n;const spent=blank(),hiddenGateSources=new Set(),riskEntryDoors=new Set(),trace=[];
  for(const rawAction of actions){
   check(compiled.rooms.has(nodeId),'Action after terminal: '+nodeId);
   check(rawAction&&typeof rawAction==='object','Invalid dungeon action');
@@ -101,60 +112,78 @@ function replayCompiled(compiled,actions){
    check(affordable(inventory,door.counts),'Door costs unavailable notes: '+door.id);
    inventory=inventory.map((count,index)=>count-door.counts[index]);for(let index=0;index<spent.length;index++)spent[index]+=door.counts[index];
    if(door.revealAfter&&compiled.sources.get(door.revealAfter).type==='hidden')hiddenGateSources.add(door.revealAfter);
+   if(compiled.riskDoorIds.has(door.id))riskEntryDoors.add(door.id);
    nodeId=door.to;recipe=door.recipe;action={type:'door',doorId:door.id};
   }else throw Error('Unknown dungeon action type: '+rawAction.type);
   trace.push({roomId:from,action,recipe:[...recipe],to:nodeId,inventoryBefore:before,inventoryAfter:inventoryObject(inventory),conservation:conservation(compiled,inventory,claimed,spent)});
  }
- return{nodeId,terminal:compiled.terminals.has(nodeId)?nodeId:null,actions:trace.map(step=>step.action),inventory:inventoryObject(inventory),claimedSources:[...compiled.sources.values()].filter(source=>claimed&source.bit).map(source=>source.id),hiddenGateSources:[...hiddenGateSources],trace,conservation:conservation(compiled,inventory,claimed,spent)};
+ return{nodeId,terminal:compiled.terminals.has(nodeId)?nodeId:null,actions:trace.map(step=>step.action),inventory:inventoryObject(inventory),claimedSources:[...compiled.sources.values()].filter(source=>claimed&source.bit).map(source=>source.id),hiddenGateSources:[...hiddenGateSources],riskEntryDoors:[...riskEntryDoors],trace,conservation:conservation(compiled,inventory,claimed,spent)};
 }
 export function replayDungeon(data,actions){return replayCompiled(compileDungeon(data),actions);}
 
 export function analyzeDungeon(data,{sourceSHA256=null,maxStates=1_000_000}={}){
  const c=compileDungeon(data);check(Number.isSafeInteger(maxStates)&&maxStates>0,'Invalid state limit');
  const states=[],all=new Map(),roomLayers=new Map([...c.rooms.keys()].map(id=>[id,Array.from({length:c.sources.size+1},()=>new Map())])),terminalStates=new Map();
- const sourceStats=new Map(),doorStats=new Map();let transitions=0;
+ const sourceStats=new Map(),doorStats=new Map(),riskTransitions=new Map();let transitions=0;
  const key=state=>JSON.stringify([state.nodeId,state.inventory,state.claimed.toString()]);
- const first={id:0,nodeId:data.entry,inventory:[...c.initial],claimed:0n,claimedCount:0,paths:1n,hiddenGatedPaths:0n,parent:null,via:null,ungatedParent:null,successors:[]};
+ const first={id:0,nodeId:data.entry,inventory:[...c.initial],claimed:0n,claimedCount:0,paths:1n,hiddenGatedPaths:0n,riskPaths:0n,parent:null,via:null,ungatedParent:null,unriskedParent:null,successors:[],edges:[]};
  states.push(first);all.set(key(first),first);roomLayers.get(data.entry)[0].set(key(first),first);
- function remember(destination,parent,action,hiddenGate=false){
+ function remember(destination,parent,action,hiddenGate=false,riskEntry=false){
   const token=key(destination);let next=all.get(token);
-  if(!next){check(states.length<maxStates,'Dungeon state limit exceeded; no complete proof was produced');next={...destination,id:states.length,paths:0n,hiddenGatedPaths:0n,parent:parent.id,via:{...action},ungatedParent:undefined,successors:[]};states.push(next);all.set(token,next);if(c.rooms.has(next.nodeId))roomLayers.get(next.nodeId)[next.claimedCount].set(token,next);else terminalStates.set(token,next);}
+  if(!next){check(states.length<maxStates,'Dungeon state limit exceeded; no complete proof was produced');next={...destination,id:states.length,paths:0n,hiddenGatedPaths:0n,riskPaths:0n,parent:parent.id,via:{...action},ungatedParent:undefined,unriskedParent:undefined,successors:[],edges:[]};states.push(next);all.set(token,next);if(c.rooms.has(next.nodeId))roomLayers.get(next.nodeId)[next.claimedCount].set(token,next);else terminalStates.set(token,next);}
   next.paths+=parent.paths;const gated=hiddenGate?parent.paths:parent.hiddenGatedPaths;next.hiddenGatedPaths+=gated;
   if(parent.paths>gated&&next.ungatedParent===undefined)next.ungatedParent={parent:parent.id,action:{...action}};
-  parent.successors.push(next.id);transitions++;return next;
+  const risked=riskEntry?parent.paths:parent.riskPaths;next.riskPaths+=risked;
+  if(parent.paths>risked&&next.unriskedParent===undefined)next.unriskedParent={parent:parent.id,action:{...action}};
+  parent.successors.push(next.id);parent.edges.push({next:next.id,action:{...action}});transitions++;return next;
  }
  function record(map,id,state,action){let stat=map.get(id);if(!stat){stat={transitions:0,paths:0n,parent:state.id,action:{...action}};map.set(id,stat);}stat.transitions++;stat.paths+=state.paths;}
  const liveOrder=[];
  for(const roomId of c.topological)for(const layer of roomLayers.get(roomId))for(const state of layer.values()){
   liveOrder.push(state.id);const room=c.rooms.get(roomId);
   for(const authored of room.sources){const source=c.sources.get(authored.id);if(state.claimed&source.bit)continue;const action={type:'claim',sourceId:source.id};record(sourceStats,source.id,state,action);remember({nodeId:roomId,inventory:state.inventory.map((count,index)=>count+source.counts[index]),claimed:state.claimed|source.bit,claimedCount:state.claimedCount+1},state,action);}
-  for(const authored of room.doors){const door=c.doors.get(authored.id);if(door.revealAfter&&!(state.claimed&c.sources.get(door.revealAfter).bit))continue;if(!affordable(state.inventory,door.counts))continue;const action={type:'door',doorId:door.id};record(doorStats,door.id,state,action);remember({nodeId:door.to,inventory:state.inventory.map((count,index)=>count-door.counts[index]),claimed:state.claimed,claimedCount:state.claimedCount},state,action,!!door.revealAfter&&c.sources.get(door.revealAfter).type==='hidden');}
+  for(const authored of room.doors){const door=c.doors.get(authored.id);if(door.revealAfter&&!(state.claimed&c.sources.get(door.revealAfter).bit))continue;if(!affordable(state.inventory,door.counts))continue;const action={type:'door',doorId:door.id};record(doorStats,door.id,state,action);const riskEntry=c.riskDoorIds.has(door.id),next=remember({nodeId:door.to,inventory:state.inventory.map((count,index)=>count-door.counts[index]),claimed:state.claimed,claimedCount:state.claimedCount},state,action,!!door.revealAfter&&c.sources.get(door.revealAfter).type==='hidden',riskEntry);if(riskEntry){const entries=riskTransitions.get(door.id)??[];entries.push({parent:state.id,next:next.id,action});riskTransitions.set(door.id,entries);}}
  }
- function actionsFor(id,{ungated=false}={}){
+ function actionsFor(id,{ungated=false,unrisked=false}={}){
   const trail=[];let state=states[id];
-  while(state.parent!==null){if(ungated){check(state.ungatedParent!==undefined,'No ungated witness for state');trail.push(state.ungatedParent.action);state=states[state.ungatedParent.parent];}else{trail.push(state.via);state=states[state.parent];}}
+  while(state.parent!==null){if(ungated||unrisked){const prior=state[ungated?'ungatedParent':'unriskedParent'];check(prior!==undefined,'No '+(ungated?'ungated':'unrisked')+' witness for state');trail.push(prior.action);state=states[prior.parent];}else{trail.push(state.via);state=states[state.parent];}}
   return actionsCopy(trail.reverse());
  }
- function witnessFor(id,{extra=null,ungated=false}={}){const actions=actionsFor(id,{ungated});if(extra)actions.push({...extra});const replay=replayCompiled(c,actions);return{nodeId:replay.nodeId,actions,inventory:replay.inventory,claimedSources:replay.claimedSources,hiddenGateSources:replay.hiddenGateSources,conservation:replay.conservation};}
+ function witnessFor(id,{extra=null,ungated=false,unrisked=false}={}){const actions=actionsFor(id,{ungated,unrisked});if(extra)actions.push({...extra});const replay=replayCompiled(c,actions);return{nodeId:replay.nodeId,actions,inventory:replay.inventory,claimedSources:replay.claimedSources,hiddenGateSources:replay.hiddenGateSources,riskEntryDoors:replay.riskEntryDoors,conservation:replay.conservation};}
  const terminalList=[...terminalStates.values()],balanceViolations=terminalList.filter(state=>c.terminals.get(state.nodeId).kind!=='dead-end'&&state.inventory.some(count=>count!==0));
  const canReachZeroEnding=new Uint8Array(states.length);
  for(const state of terminalList)if(c.terminals.get(state.nodeId).kind!=='dead-end'&&state.inventory.every(count=>count===0))canReachZeroEnding[state.id]=1;
  for(const id of [...liveOrder].reverse())if(states[id].successors.some(next=>canReachZeroEnding[next]))canReachZeroEnding[id]=1;
- const softlocks=liveOrder.filter(id=>states[id].successors.length===0),forcedDead=liveOrder.filter(id=>!canReachZeroEnding[id]);
+ const allPathsCrossRisk=id=>!!c.replayRisk&&states[id].paths>0n&&states[id].riskPaths===states[id].paths;
+ const blocked=liveOrder.filter(id=>states[id].successors.length===0),runFailures=blocked.filter(allPathsCrossRisk),failureSet=new Set(runFailures),canReachRunFailure=new Uint8Array(states.length);
+ for(const id of runFailures)canReachRunFailure[id]=1;
+ for(const id of [...liveOrder].reverse())if(states[id].successors.some(next=>canReachRunFailure[next]))canReachRunFailure[id]=1;
+ const softlocks=blocked.filter(id=>!failureSet.has(id));
+ const forced=liveOrder.filter(id=>!canReachZeroEnding[id]),intentionalLossStates=forced.filter(id=>allPathsCrossRisk(id)&&canReachRunFailure[id]),allowedLoss=new Set(intentionalLossStates),forcedDead=forced.filter(id=>!allowedLoss.has(id));
  const stateFinding=id=>({stateId:id,nodeId:states[id].nodeId,inventory:inventoryObject(states[id].inventory),claimedSources:[...c.sources.values()].filter(source=>states[id].claimed&source.bit).map(source=>source.id),witness:witnessFor(id)});
+ function riskProof(doorId){
+  const entries=riskTransitions.get(doorId)??[],entry=entries.find(item=>canReachRunFailure[item.next]);
+  if(!entry)return{doorId,reachable:entries.length>0,hasWitnessedRunFailure:false,witness:null};
+  const actions=[...actionsFor(entry.parent),{...entry.action}];let id=entry.next;
+  while(!failureSet.has(id)){const edge=states[id].edges.find(edge=>canReachRunFailure[edge.next]);check(edge,'Missing declared failure continuation');actions.push({...edge.action});id=edge.next;}
+  const replay=replayCompiled(c,actions);
+  return{doorId,reachable:true,hasWitnessedRunFailure:true,witness:{nodeId:replay.nodeId,actions,inventory:replay.inventory,claimedSources:replay.claimedSources,riskEntryDoors:replay.riskEntryDoors,conservation:replay.conservation}};
+ }
+ const replayRiskProofs=[...c.riskDoorIds].map(riskProof);
+ const orderedRunFailureHistories=runFailures.reduce((n,id)=>n+states[id].paths,0n),orderedTerminalHistories=terminalList.reduce((n,state)=>n+state.paths,0n);
  const sources=[...c.sources.values()].map(source=>{const stat=sourceStats.get(source.id);return{id:source.id,roomId:source.roomId,type:source.type,character:source.character??null,recipe:[...source.recipe],reachable:!!stat,transitions:stat?.transitions??0,orderedHistories:stat?.paths.toString()??'0',witness:stat?witnessFor(stat.parent,{extra:stat.action}):null};});
  const doors=[...c.doors.values()].map(door=>{const stat=doorStats.get(door.id);return{id:door.id,roomId:door.roomId,to:door.to,recipe:[...door.recipe],revealAfter:door.revealAfter??null,reachable:!!stat,transitions:stat?.transitions??0,orderedHistories:stat?.paths.toString()??'0',witness:stat?witnessFor(stat.parent,{extra:stat.action}):null};});
  const terminals=[...c.terminals.values()].map(terminal=>{const reached=terminalList.filter(state=>state.nodeId===terminal.id),paths=reached.reduce((n,state)=>n+state.paths,0n);return{id:terminal.id,title:terminal.title,kind:terminal.kind,reachable:reached.length>0,distinctFinalStates:reached.length,orderedHistories:paths.toString(),zeroBalanceStates:reached.filter(state=>state.inventory.every(count=>count===0)).length,remainingTiles:reached.length?{min:Math.min(...reached.map(state=>sum(state.inventory))),max:Math.max(...reached.map(state=>sum(state.inventory)))}:null,remainingHalfBeatUnits:reached.length?{min:Math.min(...reached.map(state=>mass(state.inventory))),max:Math.max(...reached.map(state=>mass(state.inventory)))}:null,remainingByKind:reached.length?Object.fromEntries(KINDS.map((kind,index)=>[kind.id,{min:Math.min(...reached.map(state=>state.inventory[index])),max:Math.max(...reached.map(state=>state.inventory[index]))}])):null,witness:reached.length?witnessFor(reached[0].id):null};});
  const secretProofs=[...c.terminals.values()].filter(terminal=>terminal.kind==='secret-ending').map(terminal=>{const reached=terminalList.filter(state=>state.nodeId===terminal.id),paths=reached.reduce((n,state)=>n+state.paths,0n),gated=reached.reduce((n,state)=>n+state.hiddenGatedPaths,0n),bad=reached.find(state=>state.paths>state.hiddenGatedPaths);return{terminalId:terminal.id,reachable:reached.length>0,allPathsRequireHiddenClaimAndGate:paths>0n&&paths===gated,orderedHistories:paths.toString(),hiddenGatedHistories:gated.toString(),witness:reached.length?witnessFor(reached[0].id):null,ungatedWitness:bad?witnessFor(bad.id,{ungated:true}):null};});
  const reachableRooms=new Set(liveOrder.map(id=>states[id].nodeId)),coverage={unreachableRooms:[...c.rooms.keys()].filter(id=>!reachableRooms.has(id)),unreachableSources:sources.filter(source=>!source.reachable).map(source=>source.id),unreachableDoors:doors.filter(door=>!door.reachable).map(door=>door.id),unreachableTerminals:terminals.filter(terminal=>!terminal.reachable).map(terminal=>terminal.id)};
- const passed=!balanceViolations.length&&!softlocks.length&&!forcedDead.length&&Object.values(coverage).every(items=>!items.length)&&secretProofs.every(proof=>proof.allPathsRequireHiddenClaimAndGate);
- return{version:1,passed,sourceSHA256:sourceSHA256??hash(JSON.stringify(data)),verifierSHA256:hash(readFileSync(fileURLToPath(import.meta.url))),kindCatalog:KINDS,kindCatalogSHA256:hash(JSON.stringify(KINDS)),graph:{rooms:c.rooms.size,sources:c.sources.size,doors:c.doors.size,terminals:c.terminals.size,reachableStates:states.length,liveStates:liveOrder.length,terminalStates:terminalList.length,transitions,orderedTerminalHistories:terminalList.reduce((n,state)=>n+state.paths,0n).toString()},invariants:{finiteRoomDAG:true,allDoorCostsHalfBeatUnits:8,oneShotSources:true,noAutomaticEntryGrants:true,nonnegativeInventories:true,typedConservation:true,continuationTarget:'A declared non-dead terminal with zero of every note kind.'},coverage,balances:{successfulTerminalStates:terminalList.filter(state=>c.terminals.get(state.nodeId).kind!=='dead-end').length,violationCount:balanceViolations.length,violations:balanceViolations.map(state=>stateFinding(state.id))},softlocks:{count:softlocks.length,states:softlocks.map(stateFinding)},forcedDeadEndStates:{count:forcedDead.length,states:forcedDead.map(stateFinding)},sources,doors,terminals,secretProofs};
+ const passed=!balanceViolations.length&&!softlocks.length&&!forcedDead.length&&Object.values(coverage).every(items=>!items.length)&&secretProofs.every(proof=>proof.allPathsRequireHiddenClaimAndGate)&&replayRiskProofs.every(proof=>proof.hasWitnessedRunFailure);
+ return{version:1,passed,sourceSHA256:sourceSHA256??hash(JSON.stringify(data)),verifierSHA256:hash(readFileSync(fileURLToPath(import.meta.url))),kindCatalog:KINDS,kindCatalogSHA256:hash(JSON.stringify(KINDS)),graph:{rooms:c.rooms.size,sources:c.sources.size,doors:c.doors.size,terminals:c.terminals.size,reachableStates:states.length,liveStates:liveOrder.length,terminalStates:terminalList.length,transitions,orderedTerminalHistories:orderedTerminalHistories.toString(),orderedRunFailureHistories:orderedRunFailureHistories.toString(),orderedRunHistories:(orderedTerminalHistories+orderedRunFailureHistories).toString()},invariants:{finiteRoomDAG:true,allDoorCostsHalfBeatUnits:8,oneShotSources:true,noAutomaticEntryGrants:true,nonnegativeInventories:true,typedConservation:true,irreversibleDoors:!!c.replayRisk,intentionalLossesRequireRiskEntry:true,continuationTarget:c.replayRisk?'A zero-balance success or a witnessed run loss after a declared risk door.':'A declared non-dead terminal with zero of every note kind.'},coverage,balances:{successfulTerminalStates:terminalList.filter(state=>c.terminals.get(state.nodeId).kind!=='dead-end').length,violationCount:balanceViolations.length,violations:balanceViolations.map(state=>stateFinding(state.id))},runFailures:{count:runFailures.length,zeroNoteCount:runFailures.filter(id=>sum(states[id].inventory)===0).length,missingTypeCount:runFailures.filter(id=>sum(states[id].inventory)>0).length,orderedHistories:orderedRunFailureHistories.toString(),states:runFailures.map(id=>({...stateFinding(id),reason:sum(states[id].inventory)===0?'out-of-notes':'missing-note-types',orderedHistories:states[id].paths.toString(),allPathsCrossRiskEntry:true}))},intentionalLossStates:{count:intentionalLossStates.length,states:intentionalLossStates.map(stateFinding)},softlocks:{count:softlocks.length,states:softlocks.map(id=>({...stateFinding(id),unriskedWitness:states[id].paths>states[id].riskPaths?witnessFor(id,{unrisked:true}):null}))},forcedDeadEndStates:{count:forcedDead.length,states:forcedDead.map(stateFinding)},sources,doors,terminals,secretProofs,replayRiskProofs};
 }
 
 if(process.argv[1]&&resolve(process.argv[1])===fileURLToPath(import.meta.url)){
  const input=process.argv[2]?resolve(process.argv[2]):fileURLToPath(new URL('./dungeon.json',import.meta.url));
  const output=process.argv[3]?resolve(process.argv[3]):fileURLToPath(new URL('./dungeon-verification.json',import.meta.url));
  const raw=readFileSync(input),report=analyzeDungeon(JSON.parse(raw),{sourceSHA256:hash(raw)});writeFileSync(output,JSON.stringify(report,null,2)+'\n');
- console.log(JSON.stringify({passed:report.passed,states:report.graph.reachableStates,transitions:report.graph.transitions,terminalHistories:report.graph.orderedTerminalHistories,balanceViolations:report.balances.violationCount,softlocks:report.softlocks.count,forcedDead:report.forcedDeadEndStates.count,coverage:report.coverage,output}));
+ console.log(JSON.stringify({passed:report.passed,states:report.graph.reachableStates,transitions:report.graph.transitions,terminalHistories:report.graph.orderedTerminalHistories,runFailureHistories:report.graph.orderedRunFailureHistories,runHistories:report.graph.orderedRunHistories,runFailures:report.runFailures.count,zeroNoteFailures:report.runFailures.zeroNoteCount,missingTypeFailures:report.runFailures.missingTypeCount,balanceViolations:report.balances.violationCount,softlocks:report.softlocks.count,forcedDead:report.forcedDeadEndStates.count,coverage:report.coverage,output}));
  if(!report.passed)process.exitCode=1;
 }

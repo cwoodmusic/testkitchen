@@ -244,7 +244,7 @@ const arrivals={
    "That little lamp’s trying to answer. Why can’t the bell hear it? I feel awful for it. And I’m still worried about this edge.",
    "All those boats depend on this room. Also, I can see my whole street from here! Iris, can you show me the broken part?",
    "It isn’t ignoring the lamp, Pip. The bell’s return wire has come loose. Calls go out, but replies can’t get back, so it keeps waiting.",
-   "Eyes on the controls, Mira. The last lock guards the fixing point. Use our final phrase, and we can fasten that wire safely.",
+   "Eyes on the controls, Mira. The last lock needs its own four-beat key. Check the bag before trying to reach that loose wire.",
    "Right, fix first, sightseeing later. Then the bell can hear the islands again, and another delivery won’t have to turn back."
   ]
  },
@@ -317,7 +317,7 @@ const arrivals={
    "Iris, you kept this place ready for your friend. I nearly started arranging the cups. Can this window reach her while the bell’s quiet?",
    "It’s a call, Pip. This window has its own reply wire, behind the last lock. I kept her cup ready because I want her to visit.",
    "We’ll sort the cups afterward, Mira. First we fix this small route, ask if she’s safe, and give her time to answer.",
-   "You’re right. A real answer from Iris’s friend matters more than my fancy table setting. Let’s use those notes we saved."
+   "You’re right. Her answer matters more than my fancy table setting. Let’s check whether we kept the two notes this last door needs."
   ]
  },
  "workshop-secret-final": {
@@ -484,8 +484,8 @@ const arrivals={
    "Those roots hold up the stones! Can we stay beside this solid bench? I’m telling the roots I like their work. Just in case.",
    "The garden’s grown right across our path. That’s impressive. Could we climb it? I’ve always wanted a tree-house entrance.",
    "The roots hold the wall together, Pip. They aren’t chasing us. Pulling them out would loosen the stones, so this path stays blocked.",
-   "No climbing, Mira. Revisit our previous choice to get this door’s notes back. The tiles still in our bag are safe.",
-   "Okay, no tree-house entrance today. We’ll go back to Iris’s porch and try the listening gate. At least we know where this path ends."
+   "No climbing, Mira. The south service gate costs another four beats. The arch’s notes stay spent, so count what later doors will need.",
+   "Okay, no tree-house entrance. The south gate reaches the garden paths, but it won’t replace that final key. I’m writing this down."
   ]
  },
  "dead-aviary": {
@@ -507,9 +507,9 @@ const arrivals={
    "Keep away from the loose cable. Iris, check the nest, and Pip, look at the little bird. There’s no exit ahead.",
    "That tired bird’s found a sunny seat. Would it like this clean wing wrap? I’m worried about leaving it here by itself.",
    "Someone made a bird resting room. We found a dead end, but also a patient! Should we build it a tiny bed? Maybe a pillow?",
-   "The clean nest already keeps it safe, Pip. The wall behind it is solid, and repairing it wouldn’t make a door. We need to go back.",
-   "The nest is enough, Mira. Revisit the previous choice to recover this door’s notes. Our other tiles are still safe in the bag.",
-   "One comfortable bird, no extra furniture. Got it. Let’s try Pip’s running gate, and I’ll save my clever shortcuts for an actual path."
+   "The nest keeps it safe, Pip. The northern wall is solid, but a paid service gate opens from the south. We need to count its cost.",
+   "The nest is enough, Mira. The south gate needs Pip’s three gift tiles, and it costs another four beats. The earlier key stays spent.",
+   "One comfortable bird, no extra furniture. Got it. A longer route needs more notes, so my clever shortcut may cost us our final key."
   ]
  },
  "dead-ferry": {
@@ -532,8 +532,8 @@ const arrivals={
    "The rope’s repaired, but where’s the boat? I’d really like to stay on dry stone until it arrives. Please tell me we’re not swimming.",
    "A good rope won’t carry us across the canal by itself. What if I make a very brave hop? A heroic, extremely long hop?",
    "No swimming, Pip. Our lamp sends a call, but no landing answers it, so a crew can’t bring the ferry here safely yet.",
-   "No heroic hopping either, Mira. Revisit the previous choice to get the door’s notes back, then follow the delivery gate.",
-   "Dry stone it is. Oren’s supplies are still waiting too, so let’s find the route that actually reaches the bell controls."
+   "No heroic hopping, Mira. This run ends here, but our journal keeps the clue. Next time, we’ll use Oren’s delivery gate.",
+   "Dry stone it is. Next time we’ll take Oren’s delivery gate. I’ll remember this landing—and the tea. We can plan a better route."
   ]
  },
  "dead-echo": {
@@ -556,8 +556,8 @@ const arrivals={
    "Is that my own call coming back? I nearly said hello! I don’t like something copying us when we can’t see who’s doing it.",
    "That echo’s copying us perfectly. I could make it sing a duet! Although I suppose it can’t tell us much about the broken bell.",
    "It’s sound bouncing off that wall, Pip. There’s no other person or machine replying. The water channel ends here.",
-   "Save the duet, Mira. Revisit the previous choice to recover the notes, then take the path toward the town bell.",
-   "All right, we’ll listen for somebody else’s answer. We can learn from a wrong turn and still get home. My duet can wait."
+   "Save the duet, Mira. The south stair reaches the tower for another four beats. The final lock still needs its own four-beat answer.",
+   "All right, no duet. We spent a key to get here, and the south stair needs another. Let’s count what the tower will need before paying."
   ]
  }
 };

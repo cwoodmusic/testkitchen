@@ -142,9 +142,14 @@ test('legacy stock layouts upgrade before default choreography without replacing
  assert.deepEqual(loaded.doors,before.doors);assert.deepEqual(loaded.sources,before.sources);assert.deepEqual(project,before);
  const roomId=VARIED_ROOM_IDS[0],missing=clone(before);delete missing.content[roomId].cutscene;
  const missingLoaded=normalizeProject(missing);assert.notEqual(missingLoaded.scenes[roomId].image,missing.scenes[roomId].image);assert(missingLoaded.content[roomId].cutscene.length>0);
- const empty=clone(before);empty.content[roomId].cutscene=[];assert.deepEqual(normalizeProject(empty).scenes[roomId],empty.scenes[roomId]);
+ const journalLabels=scene=>{
+  const expected=clone(scene),threshold=expected.objects.find(item=>item.id==='return-previous'),target=expected.geometry.targets.find(item=>item.id==='return-previous');
+  threshold.label='Review your journey';threshold.actionLabel='Review your journey';target.label='Review your journey';
+  return expected;
+ };
+ const empty=clone(before);empty.content[roomId].cutscene=[];assert.deepEqual(normalizeProject(empty).scenes[roomId],journalLabels(empty.scenes[roomId]));
  const edited=clone(before);edited.content[roomId].cutscene[0].startTile+=1;const editedLoaded=normalizeProject(edited);
- assert.deepEqual(editedLoaded.scenes[roomId],edited.scenes[roomId]);assert.deepEqual(editedLoaded.content[roomId].cutscene,edited.content[roomId].cutscene);
+ assert.deepEqual(editedLoaded.scenes[roomId],journalLabels(edited.scenes[roomId]),'Only recognized hover words change; authored layout and timing remain intact.');assert.deepEqual(editedLoaded.content[roomId].cutscene,edited.content[roomId].cutscene);
  const invalidNull=clone(before);invalidNull.content[roomId].cutscene=null;assert.throws(()=>normalizeProject(invalidNull),/cutscene/);
 });
 

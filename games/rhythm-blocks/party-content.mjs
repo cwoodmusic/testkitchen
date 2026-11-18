@@ -19,7 +19,7 @@ const companionDialogue={
     nell:{
       story:"I’ve closed the post office and left its lamp on. The missing mail can wait while we find the fault. These pipes used to carry water to the gardens, and they still make a sound. Let’s follow that clue.",
       route:"The listening gate needs two beats of sound, then two beats of silence. Play a half note, then a half rest. Iris can give us those tiles, so let’s ask her.",
-      inventory:"Ask Iris for her listening phrase. We’ll get one half note and one half rest, once per run. They’ll pay for the next gate, and we’ll keep the other tiles in our note bag.",
+      inventory:"Ask Iris for her listening phrase before leaving. We get one half note and one half rest, once per run. They pay the listening gate. Later doors need the other tiles, so we can’t spend them carelessly.",
     },
     pip:{
       story:"My mail bird goes quiet when Iris turns that dial. Its wings still move, but it doesn’t call. Iris says it’s listening. I think it looks worried, and I’d rather listen from behind someone taller.",
@@ -31,7 +31,7 @@ const companionDialogue={
     nell:{
       story:"That feather’s from an older kind of mail bird. We stopped using those before Pip learned to fix wings. I’ve brought the returned letter, so we can compare its stamp with the old routes.",
       route:"Use a half note, paired eighths, then four sixteenths at the running gate. That’s two beats, one beat, and one beat. Pip can play it for us.",
-      inventory:"Ask Pip for his running phrase. Its half note, paired eighths, and four sixteenths open the next gate. We can take his gift once, and our other tiles stay in the note bag.",
+      inventory:"Ask Pip for his running phrase before leaving. Its half note, paired eighths, and four sixteenths open the next gate. Take it once per run, and save the other kinds for later. Paid keys don’t return.",
     },
     iris:{
       story:"I brought seed from the greenhouse. These birds get power from their chargers, but they still come when Pip shakes the bowl. Pip says they like him. I’d like to test that before we call it a fact.",

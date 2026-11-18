@@ -103,15 +103,23 @@ test('inspection IDs and placements preserve authored evidence and give every ou
  for(const entry of CAMPAIGN_LORE){assert(entry.title.trim());assert(entry.label.trim());assert(entry.text.trim());}
 });
 
-test('all ending and dead-end text has the right outcome kind and recovery semantics',()=>{
+test('ending text and paid detours teach irreversible costs and persistent learning',()=>{
  for(const terminal of design.terminals){
   const room=CAMPAIGN_CONTENT[terminal.id],outcome=room.outcome;
   assert.equal(room.title,terminal.title);assert.equal(outcome.kind,terminal.kind);assert(outcome.kicker.trim());assert(outcome.copy.trim());
   if(terminal.kind==='dead-end'){
    assert.equal(outcome.repair,terminal.repair);
-   for(const person of room.people){assert.match(person.route,/revisit/i);assert.match(person.inventory,/revisit/i);}
+   for(const person of room.people){assert.match(person.route,/new run|next run|next try/i);assert.match(person.inventory,/new run|start again|next time/i);}
   }else assert.equal(outcome.repair,undefined,'A successful ending does not carry dead-end recovery instructions.');
  }
- assert.equal(new Set(design.terminals.map(terminal=>CAMPAIGN_CONTENT[terminal.id].outcome.copy)).size,9);
+ assert.equal(new Set(design.terminals.map(terminal=>CAMPAIGN_CONTENT[terminal.id].outcome.copy)).size,6);
+ for(const id of ['dead-brambles','dead-aviary','dead-echo']){
+  const room=CAMPAIGN_CONTENT[id],authored=roomById.get(id);
+  assert(authored&&authored.doors.length===1,id);
+  assert.equal(room.outcome,undefined,'A paid detour is an explorable room, not an ending.');
+  assert.match(room.arrival,/south/i);
+  for(const person of room.people)assert.match(person.route,/south/i);
+ }
+ assert.doesNotMatch(textValues(CAMPAIGN_CONTENT).join('\n'),/Revisit previous choice|revisit (?:our |the )?last choice|recover (?:the |its )?(?:spent )?notes|refund/i,'Reading a clue must never promise recovery of a paid key.');
  assert.equal(Object.keys(CAMPAIGN_ART_BRIEFS).filter(id=>!Object.hasOwn(ROOM_CONTENT,id)).length,19);
 });

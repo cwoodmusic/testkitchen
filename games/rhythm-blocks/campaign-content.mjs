@@ -22,9 +22,9 @@ const NEW_ROOMS={
       "pip": "I can play the old stone path’s answer. Use two eighths, four sixteenths, a quarter rest, one eighth, then two sixteenths. Iris remembers a flower stone farther along. Keep our dotted half and quarter safe."
     },
     "inventory": {
-      "nell": "We’ve got eight beats left, and there aren’t any new notes here. Each path costs four beats. Pick one, then save the other four beats for later.",
-      "iris": "The hearth path uses our dotted half and quarter first. The old stone path uses the five smaller tiles first. Either choice leaves a four-beat answer in the bag.",
-      "pip": "If we follow the old stones, I’ll guard the dotted half and quarter. We need both at the end. I’m very good at guarding things tucked safely inside a bag."
+      "nell": "The direct route leaves eight beats for these paths. Extra gates spend that supply, so count our bag before choosing. Each lock needs four beats.",
+      "iris": "The hearth path uses a dotted half and a quarter. The old stone path uses the five smaller tiles. Check what the earlier gates left us before choosing.",
+      "pip": "The old stone route needs our dotted half and quarter at its end. If we spent them at the overgrown arch, I want to know before we get there."
     },
     "demos": {
       "nell": "garden-normal",
@@ -69,9 +69,9 @@ const NEW_ROOMS={
       "pip": "The birds’ back passage needs a single eighth, paired sixteenths, a half rest, then a quarter rest. The first two tiles fill one beat. The rests fill three more. Keep our dotted half and quarter for later."
     },
     "inventory": {
-      "nell": "There aren’t any new note tiles here. We’ve got eight beats for two more doors. The schoolroom stair spends the dotted half and quarter first.",
-      "iris": "Our dotted half and quarter make one four-beat answer. The two short-note tiles and two rests make the other. Spend one answer and keep the other.",
-      "pip": "If we take the back passage, save the dotted half and quarter. The attic might have something worth finding, but I’d like all three of you to help me look."
+      "nell": "The direct route leaves eight beats for two more doors. There are no new tiles here, so count what we have before choosing.",
+      "iris": "A dotted half and quarter make one four-beat key. The two short-note tiles and two rests make the other. Extra gates may have spent one of those keys.",
+      "pip": "If we take the back passage, we still need a dotted half and quarter at the end. I hope we kept them. Let’s check instead of hoping."
     },
     "demos": {
       "nell": "workshop-normal",
@@ -112,13 +112,13 @@ const NEW_ROOMS={
     },
     "routes": {
       "nell": "The town-bell stair needs a dotted half note, then four sixteenth notes. Hold three beats, then play four sounds in one beat. Save our four other tiles for the tower.",
-      "iris": "Use a dotted half and four sixteenths at the stair. The other channel takes a single eighth, paired sixteenths, a half rest and a quarter rest, but Oren’s map shows it’s a dead end.",
-      "pip": "Take the stair with a dotted half and four sixteenths. The copied waterway only leads to that wall. An echo sounds like an answer, but it can’t open a path through stone."
+      "iris": "Use a dotted half and four sixteenths at the direct stair. The copied channel takes a single eighth, paired sixteenths, a half rest and a quarter rest, then adds another paid stair.",
+      "pip": "The direct stair needs a dotted half and four sixteenths. The copied channel stops at stone, but its service stair reaches the tower for another four beats. I’d count carefully."
     },
     "inventory": {
-      "nell": "No new notes are stored here. Use the dotted half and four-sixteenth group for the stair. Keep the single eighth, two sixteenths, half rest and quarter rest for the final door.",
-      "iris": "We’ve got enough for the stair and the tower’s last lock. Those four quieter tiles belong to the last lock, so don’t spend them on the blocked channel.",
-      "pip": "Each door costs four beats, but Revisit previous choice brings its notes back if we try the wrong one. We don’t need to put any notes in the water. Or any people."
+      "nell": "No new notes are stored here. The direct stair uses the dotted half and four-sixteenth group. Keep the single eighth, paired sixteenths, half rest and quarter rest for the tower.",
+      "iris": "The tower’s final lock needs our two short-note tiles and two rests. Paying them to the copied channel doesn’t get them back, even if we find another stair.",
+      "pip": "Each paid door keeps its four beats. An extra stair means another payment, and the tower still needs its own key. I’d rather count notes than swim."
     },
     "demos": {
       "nell": "canal-normal",
@@ -145,7 +145,7 @@ const NEW_ROOMS={
         "id": "canal-fork-maintenance-map",
         "title": "The map of the blocked path",
         "label": "Inspect map of the blocked path",
-        "text": "Oren drew the solid wall at the end of the copied channel. The stair is the way toward the bell.",
+        "text": "Oren marked the copied channel’s solid northern wall. A southern service stair still reaches the tower, but it adds another four-beat payment. The direct stair needs only one.",
         "placement": "wall"
       }
     ]
@@ -257,9 +257,9 @@ const NEW_ROOMS={
       "pip": "Use a single eighth, paired sixteenths, half rest, then quarter rest. We’ve followed the broken connection to its end, so let’s hear a real answer from those lights."
     },
     "inventory": {
-      "nell": "Four tiles, one last lock. There aren’t any extra notes to collect at the tower. Mira, stay with us. We can admire the lights once the bell works.",
-      "iris": "Our short-note tiles and two rests fill exactly four beats. The final door will use every tile left in the bag.",
-      "pip": "Four beats left, and one last lock. I’ve counted twice. I’d like everyone to stay right beside me while it opens, please."
+      "nell": "The last lock needs four beats, and there are no extra notes at the tower. Mira, check the bag before admiring the lights. An extra service stair may have used our last key.",
+      "iris": "The single eighth, paired sixteenths, half rest and quarter rest make this key. If those tiles are gone, we need a new run; the journal will keep what we learned.",
+      "pip": "One last four-beat lock, but I’m checking the bag instead of guessing. We can still hear its pattern and remember what to save next time."
     },
     "demos": {
       "nell": "canal-ending",
@@ -304,9 +304,9 @@ const NEW_ROOMS={
       "pip": "The music box hides four new one-beat tiles: quarter, two eighths, four sixteenths, quarter rest. Search first, or we won’t have a gate to knock on."
     },
     "inventory": {
-      "nell": "We brought a dotted half and a quarter for the final door. The stone has a separate four-beat supply. Its new notes pay this gate, so keep our original pair.",
-      "iris": "Just looking at the box won’t give us tiles. Choose Search to collect them once. This gate uses those new tiles, so keep the pair we brought here.",
-      "pip": "We can collect the hidden notes once, but talking about them won’t fill the bag. We still need our dotted half and quarter after this gate."
+      "nell": "The final door needs a dotted half and a quarter from Nell’s bag. The flower stone has separate notes for this gate, so searching won’t replace a final key spent earlier.",
+      "iris": "Looking gives no tiles. Choose Search to collect the four hidden notes once. They pay this gate, but the next lock still needs the original dotted half and quarter.",
+      "pip": "We can collect the hidden notes once, but talking won’t fill the bag. If we spent the final pair at the overgrown arch, this box won’t replace it."
     },
     "demos": {
       "nell": "garden-hidden-exit",
@@ -353,9 +353,9 @@ const NEW_ROOMS={
       "pip": "Search inside the perch first. Play its half note, then its half rest. Sound first, silence second. Our original dotted half and quarter must stay in the bag."
     },
     "inventory": {
-      "nell": "The two tiles inside the perch pay this hidden gate. We still need our dotted half and quarter after it, so keep those two safe.",
-      "iris": "The wraps and brush give no notes. Only Search the hollow perch collects the half note and half rest. The search works once per run.",
-      "pip": "I can point to the cover, but I can’t give you its notes just by talking. Search it once, use its two tiles here, and save our original pair."
+      "nell": "The perch’s two tiles pay this hidden gate. The final door still needs a dotted half and quarter, so these hidden notes won’t replace a key spent at the aviary.",
+      "iris": "The wraps and brush give no notes. Only Search the hollow perch collects its half note and half rest, once per run. Those tiles pay this gate only.",
+      "pip": "Search once for the perch’s two tiles. I’m glad we found them, but Iris is right: the last door still needs the dotted half and quarter from our starting bag."
     },
     "demos": {
       "nell": "workshop-hidden-exit",
@@ -397,14 +397,14 @@ const NEW_ROOMS={
       "pip": "The bird’s warm carrying clip explains the soft wax on Nell’s letter. It used old perches like these to bring the letter home, so maybe this old window can carry a reply too."
     },
     "routes": {
-      "nell": "The unfinished-song door needs our saved dotted half, then our quarter. We’ve already used the music box’s new notes at its gate, so these are our final two tiles.",
-      "iris": "Play a dotted half note for three beats, then a quarter note for one. We only need our saved pair. We don’t need to play my friend’s part for her.",
-      "pip": "Dotted half, then quarter. We kept both through the old garden. They make the last four beats of this path."
+      "nell": "The unfinished-song door needs a dotted half, then a quarter. The music box’s new notes paid its own gate, so we need to have saved these two original tiles.",
+      "iris": "Play a dotted half note for three beats, then a quarter note for one. That is the final key. We don’t need to play my friend’s part for her.",
+      "pip": "Dotted half, then quarter. That’s the last four beats of this path. If we spent those tiles at the arch, I’ll write down what we need for the next run."
     },
     "inventory": {
-      "nell": "Only the dotted half and quarter remain. They came from our original note bag. This last door uses both.",
-      "iris": "The music box gave us notes for its own gate, and we’ve already spent those. Our two saved tiles finish this route and leave the bag empty.",
-      "pip": "There aren’t any new notes in the chair or the window. We saved this pair for a reason, and I’m very relieved we still have it."
+      "nell": "This last lock needs the dotted half and quarter from our original bag. The chair and window have no extra tiles. Count what remains before trying it.",
+      "iris": "The music box supplied only its own gate. If this final pair was spent at the overgrown arch, the route ends here for this run. The journal will keep the lesson.",
+      "pip": "There aren’t any new notes in the chair or window. I want Iris to hear her friend, so next time we’ll keep the right pair all the way here."
     },
     "demos": {
       "nell": "garden-secret-ending",
@@ -444,14 +444,14 @@ const NEW_ROOMS={
       "pip": "I thought the birds were copying my tune badly, but they were answering with a different tune! Their warm carrying clips explain the soft wax too. I should’ve listened before tightening their compasses."
     },
     "routes": {
-      "nell": "The birds’ answer door needs our saved dotted half, then our quarter. Keep that order. These two tiles make the final four beats.",
-      "iris": "Play the dotted half for three beats and the quarter for one. We’ve already used the perch’s half note and half rest at their gate.",
-      "pip": "Dotted half, quarter. We carried them all this way. Then I can listen to the birds instead of telling them which tune to sing."
+      "nell": "The birds’ answer door needs a dotted half, then a quarter. Keep that order. Those two original tiles make the final four beats.",
+      "iris": "Play the dotted half for three beats and the quarter for one. The perch’s half note and half rest paid their own gate; they cannot pay this one.",
+      "pip": "Dotted half, quarter. Those are the tiles this lock needs. I want to hear the birds, but we can’t replace their key with a different four beats."
     },
     "inventory": {
-      "nell": "We’ve got exactly two tiles: dotted half and quarter. There isn’t a hidden gift inside this horn, and this door uses both tiles.",
-      "iris": "The perch supplied the notes for its gate only. The two tiles we saved at the workshop fork pay the final door.",
-      "pip": "The horn gives the birds a voice, not more note tiles. Use our saved pair, and the bag will be empty."
+      "nell": "There isn’t a hidden gift inside this horn. The final door needs the original dotted half and quarter, so check whether we kept them.",
+      "iris": "The perch supplied its own gate only. Spending the dotted half and quarter at the old aviary leaves nothing to pay this final key.",
+      "pip": "The horn gives the birds a voice, not note tiles. If the final pair is gone, we’ll start again and keep the clues about their route."
     },
     "demos": {
       "nell": "workshop-secret-ending",
@@ -495,7 +495,7 @@ const OUTCOME_ROOMS={
       "pip": "I thought that warm letter meant something scary, but my bird was just bringing Nell’s undelivered letter home! Now the kitchens can answer each other. I’d like to answer that invitation to supper."
     },
     "routes": {
-      "nell": "This route is complete. Explore the courtyard, revisit our last choice, or start a new journey. There are other ways to help the town.",
+      "nell": "This route is complete. Explore the courtyard or start a new run with the clues we found. There are other ways to help the town.",
       "iris": "There aren’t any more locks here. We’ve repaired the neighborhood’s connection, but another journey could reach a different part of the broken system.",
       "pip": "No more doors on this path. I want to hear the little chimes before we try another route. That one sounds like a spoon!"
     },
@@ -543,7 +543,7 @@ const OUTCOME_ROOMS={
       "pip": "Now a learner can try a rhythm and hear an answer, so they won’t have to wonder whether the machine heard them. I’ll leave my wing repair tool here for the next class."
     },
     "routes": {
-      "nell": "This route ends at the shared music room. Explore it, revisit the last choice, or start another journey to help somewhere else.",
+      "nell": "This route ends at the shared music room. Explore it, then start another run to help somewhere else. Our journal will remember this route.",
       "iris": "There’s no next lock here. The class connection works, and we’ve finished this route. Other routes can help other parts of town.",
       "pip": "We finished this path. I want to hear the next learner’s answer before we leave. Then maybe we can find another place that needs us."
     },
@@ -591,7 +591,7 @@ const OUTCOME_ROOMS={
       "pip": "My bird brought the letter home on old service perches, and its warm clip softened the wax. It wasn’t a ghost letter! Now the birds can wait for safe-landing lights before they take off."
     },
     "routes": {
-      "nell": "This route is complete. We can watch the town’s replies, revisit our last choice, or begin a new journey to discover another outcome.",
+      "nell": "This route is complete. We can watch the town’s replies, then begin a new run to discover another outcome. The map keeps our discoveries.",
       "iris": "There’s no next gate here. We fixed the public bell’s return connection, but other routes might show us people and places we missed.",
       "pip": "The tower path ends here. Let’s watch the last light answer. Then I’d like to try a route with fewer tall stairs."
     },
@@ -639,7 +639,7 @@ const OUTCOME_ROOMS={
       "pip": "The bird used old perches to return Nell’s letter, and its warm clip softened the wax. Now this old window’s brought back a voice too. I’m glad we saved the right notes."
     },
     "routes": {
-      "nell": "This is the end of the hidden garden route. Listen, explore, revisit the last choice, or begin a new journey. No more locks wait here.",
+      "nell": "This is the end of the hidden garden route. Listen and explore, or begin a new run with what we learned. No more locks wait here.",
       "iris": "The listening connection works, and there’s no next door on this route. I’d like to finish talking with my friend before we leave.",
       "pip": "We’ve finished the secret garden path, so we can try another route later. For now, I’ll sit very quietly and keep my hands away from the controls."
     },
@@ -687,7 +687,7 @@ const OUTCOME_ROOMS={
       "pip": "It wasn’t forgetting my tune. It had another tune to add! I kept tightening its compass when it turned here, but next time I’ll follow it and listen before I fetch my tools."
     },
     "routes": {
-      "nell": "This hidden workshop route is complete. Listen to the birds, revisit our last choice, or start a new journey. There aren’t any more locks here.",
+      "nell": "This hidden workshop route is complete. Listen to the birds, or start a new run with our discoveries in the journal. There aren’t any more locks here.",
       "iris": "The small reply route works, and we’ve reached its last room. Other journeys can help the public bell or the families who use it.",
       "pip": "We found the birds’ answer room, and I want to hear the whole tune before we leave. It’s much better than another compass repair."
     },
@@ -728,21 +728,21 @@ const OUTCOME_ROOMS={
   "dead-brambles": {
     "id": "dead-brambles",
     "title": "The Overgrown Arch",
-    "arrival": "Thick roots fill the far arch. A cup catches rain beside a dry bench. The party can rest here, but there is no safe gap through the roots.",
+    "arrival": "Roots block the northern arch. A dry bench offers a place to think, while the southern garden service gate asks for another four-beat key.",
     "stories": {
-      "nell": "This path used to carry deliveries, but now the roots block it. We can get our door-key notes back and return to Iris’s listening gate. At least we know which way’s closed.",
-      "iris": "I cleared the bench, but I couldn’t safely clear the arch. These roots help hold the stones in place, so the other gate on my porch is our way forward.",
-      "pip": "My bird won’t try that gap because its wings would scrape both sides. I agree with the bird. Let’s go back to the gate Iris knows."
+      "nell": "The roots still block that arch. The southern service gate reaches the garden paths, but it costs another four beats. The notes we paid to enter are already spent.",
+      "iris": "I cleared the bench, not the arch. The roots hold these stones together. A southern service gate remains, but using it won’t replace the dotted half and quarter we spent.",
+      "pip": "My bird won’t squeeze through that gap, and neither will I. There’s a service gate to the south, but please count our tiles before we pay for another door."
     },
     "routes": {
-      "nell": "There’s no way forward here, but Revisit previous choice gives back the notes we spent on the arch. Then choose the listening gate on Iris’s porch.",
-      "iris": "Revisit this choice, then use a half note, then a half rest at my listening gate. The roots don’t hide another path.",
-      "pip": "Revisit the last door and take the listening gate instead. We can rest here first. Going back is allowed, and the notes can come back too."
+      "nell": "The garden service gate is at the southern threshold. It needs a half note, then a half rest, and leads to the Two Garden Paths. That is another four-beat payment.",
+      "iris": "Use a half note, then a half rest at the south gate. That costs four beats. The roots hide no free passage, and the notes spent on the arch won’t return.",
+      "pip": "The southern service gate needs a half note, then a half rest. Iris’s gift supplied them. If we left it behind, we’ll need a new run—and I’ll ask her before leaving next time."
     },
     "inventory": {
-      "nell": "Any unspent tiles are still in our note bag. Revisit the last choice to get the door’s payment back. We haven’t lost any notes.",
-      "iris": "Revisit the arch to recover its dotted half and quarter. Then keep our tiles together while we choose the other gate.",
-      "pip": "We can’t use our remaining notes on another door here, but choosing Revisit previous choice brings back what the arch took. I’ll count them with you."
+      "nell": "Check for the half note and half rest from Iris’s gift. They pay the southern service gate. The arch already used our dotted half and quarter, which later locks may need.",
+      "iris": "The south gate can spend Iris’s gift, but it cannot replace the arch’s key. Note kinds matter, not just the total beats. Our journal can carry this lesson into another run.",
+      "pip": "This cup has rainwater, not note tiles. If the south key is missing, we start again with our clues. If we can pay, we still need to think about the locks after it."
     },
     "inspections": [
       {
@@ -766,32 +766,26 @@ const OUTCOME_ROOMS={
         "text": "Thick roots hold the old stones together. There is no safe opening for the party behind them.",
         "placement": "wall"
       }
-    ],
-    "outcome": {
-      "kind": "dead-end",
-      "kicker": "The roots block this path",
-      "copy": "This arch reaches a resting place, but thick roots close the way forward. The party is not trapped. Use Revisit previous choice to recover the notes spent on this door. Return to Iris’s porch and choose her listening gate: half note, then half rest.",
-      "repair": "Return to Iris’s porch, collect her notes if needed, and try the listening gate."
-    }
+    ]
   },
   "dead-aviary": {
     "id": "dead-aviary",
     "title": "The Silent Aviary",
-    "arrival": "Sunlight falls on a bird’s nest between empty perches. The back wall is sealed with stone. This old bird room is a safe resting place, but it has no onward path.",
+    "arrival": "A bird rests in sunlight beside empty perches. The northern wall is sealed, but a southern workshop service gate leads toward the crossroads for another four-beat payment.",
     "stories": {
-      "nell": "Someone closed this old bird route and took down its departure hooks. The birds can rest here, but we can’t travel through. Let’s return to the workshop. We won’t lose our notes.",
-      "iris": "The sun still warms the nest, so this room’s useful even with its passage closed. Pip’s running gate is our way forward.",
-      "pip": "I brought that clean wing wrap last week. The bird likes the warm patch, but there’s no opening behind the perches. We need the other gate at my workshop."
+      "nell": "This room still shelters the birds, but its northern route is sealed. The service gate at the southern threshold reaches the crossroads for another four beats. Count before spending again.",
+      "iris": "The sun warms the nest, so the room is useful. That doesn’t make it a cheap route, Pip. The south gate costs notes, and later locks need the key we used at the aviary.",
+      "pip": "I brought that wing wrap last week, and I’m glad the bird is safe. The southern service gate leads onward, but I should have thought about our note bag as well as its nest."
     },
     "routes": {
-      "nell": "Revisit the last choice to recover this door’s notes. Then choose the workshop’s running gate. This room has no secret passage behind its wall.",
-      "iris": "Revisit this choice and return to Pip’s workshop. His running rhythm opens the working gate. We’ve checked this wall, and there’s no way through.",
-      "pip": "Revisit this door, then take my gift if it’s still waiting. The running gate needs a half note, two eighth notes, then four sixteenth notes."
+      "nell": "The workshop service gate is south of us. Play a half note, paired eighths, then four sixteenths. It reaches the Workshop Crossroads and costs another four beats.",
+      "iris": "Use a half note, two eighth notes, then four sixteenth notes at the southern service gate. That key opens this gate only; it won’t replace the dotted half and quarter.",
+      "pip": "My workshop gift supplies the southern service key: half note, two eighths, then four sixteenths. If we left the gift behind, we’ll need another run to collect it before leaving."
     },
     "inventory": {
-      "nell": "Our unspent tiles remain in the note bag. Revisit this door to recover its payment before choosing the working route.",
-      "iris": "A dead end can leave tiles in the bag. Revisit the last choice to recover the notes we spent here. We can use them on another path.",
-      "pip": "Revisit this answer to get its key notes back. The empty perches don’t give new notes, but my workshop gift can help if we haven’t collected it."
+      "nell": "The southern service gate needs the three tiles from Pip’s gift. There are no notes in these perches, and paid keys stay spent for this run.",
+      "iris": "A four-beat key can reach the crossroads without leaving the right tiles for its final doors. We spent the dotted half and quarter at the aviary, so count the kinds left.",
+      "pip": "The wraps are for wings, not extra notes. If we start again, I’ll remember to offer my gift before we choose a door—and to save the final pair."
     },
     "inspections": [
       {
@@ -815,32 +809,26 @@ const OUTCOME_ROOMS={
         "text": "The stone panel has no hinges or latch. The old route wire is disconnected. No passage continues through this wall.",
         "placement": "wall"
       }
-    ],
-    "outcome": {
-      "kind": "dead-end",
-      "kicker": "A resting place, with no way onward",
-      "copy": "The old bird room has a sealed back wall. It offers a safe place to rest, but no path forward. Use Revisit previous choice to recover the notes spent here. Return to Pip’s workshop and open the running gate with a half note, two eighth notes and four sixteenth notes.",
-      "repair": "Return to Pip’s workshop, collect his notes if needed, and try the workshop gate."
-    }
+    ]
   },
   "dead-ferry": {
     "id": "dead-ferry",
     "title": "The Empty Ferry",
     "arrival": "The landing has a boarding rope, but no ferry. Oren left a tea tray for waiting travelers. The lamp still glows, though there is no boat to send a reply.",
     "stories": {
-      "nell": "This old ferry doesn’t stop here anymore, and its rope can’t carry us across. We can get our notes back and return to the storehouse’s delivery gate.",
-      "iris": "Pip, the lamp’s working. That tells us it has power, not that there’s a boat. There isn’t, so we need the delivery gate.",
-      "pip": "I could send a bird across to look, but it couldn’t carry all four of us. Let’s go back to the stamped chest. I’d rather have a floor under my feet."
+      "nell": "This old ferry no longer stops here, and that rope cannot carry us across. This run has reached a dead end. We can keep its clues, then start again and choose the delivery gate.",
+      "iris": "Pip, the lamp proves that the landing has power, not a boat. There is no crossing here. On the next run, the storehouse’s delivery gate is the useful route.",
+      "pip": "I could send a bird to look, but it couldn’t carry all four of us. I’d rather start again with a floor under my feet. I’ll remember the stamped chest."
     },
     "routes": {
-      "nell": "Revisit this choice to recover the boarding door’s notes. Then take the storehouse’s delivery gate. There’s no ferry or hidden crossing here.",
-      "iris": "Revisit the boarding choice. Open the stamped chest in the storehouse if it’s still closed. Its notes pay the working delivery gate.",
-      "pip": "Revisit this choice and use the delivery gate instead. Its key is a half note, a quarter note, then two eighth notes. The stamped chest supplies that rhythm."
+      "nell": "Start a new run from the post office. When we reach the storehouse again, open the stamped chest and choose the delivery gate. Its key is a half note, a quarter note, then paired eighths.",
+      "iris": "This run cannot cross the water. The next run needs the stamped chest’s half note, quarter note and paired eighths for the delivery gate. The journal will keep that clue.",
+      "pip": "There’s no ferry or hidden bridge here. On our next try, use the delivery gate: half note, quarter note, then two eighth notes. I’ll ask Oren about the chest before we leave."
     },
     "inventory": {
-      "nell": "Our unspent notes are still in the bag. Revisit this door to get its payment back, and collect the stamped chest’s gift if we haven’t already.",
-      "iris": "Revisit the last choice to get the spent notes back. We reached a blocked route, but we didn’t lose our supply. We can try the other gate.",
-      "pip": "Revisit this choice to recover the dotted half and four-sixteenth group. The tea tray has no note tiles. I checked politely."
+      "nell": "Unspent notes are still in our bag, but none can make a boat appear. Paid keys won’t return. A new run clears the bag and pickups while keeping our discovered routes and clues.",
+      "iris": "Notes cannot buy a passage that is not here. Start again with the knowledge from this landing, then spend the next bag on a different route.",
+      "pip": "The tea tray has no note tiles. I checked politely. Next time I’ll remember that the delivery chest pays the working gate, and the boarding door’s key stays spent."
     },
     "inspections": [
       {
@@ -868,28 +856,28 @@ const OUTCOME_ROOMS={
     "outcome": {
       "kind": "dead-end",
       "kicker": "There is no ferry here",
-      "copy": "The old landing has no ferry and no other crossing. The glowing lamp cannot carry the party over the water. Use Revisit previous choice to recover the notes spent here. Back at the storehouse, open the stamped chest and take the delivery gate: half note, quarter note, then two eighth notes.",
-      "repair": "Return to the canal storehouse, open the stamped chest, and try the delivery door."
+      "copy": "There is no ferry or safe crossing at this landing, so this run ends here. Paid door notes do not return. The discovered map and journal will remember this place. Start a new run, collect the stamped chest at the storehouse, and choose the delivery gate instead.",
+      "repair": "Start a new run. Open the stamped chest in the canal storehouse, then choose the delivery gate."
     }
   },
   "dead-echo": {
     "id": "dead-echo",
     "title": "The Copied Waterway",
-    "arrival": "The water reflects every movement of the clock. The channel ends at a stone wall. Its echo repeats a signal, but no real reply reaches the dry water bowl.",
+    "arrival": "The copied water channel stops at a solid northern wall. A bell service stair opens from the southern threshold, but reaching the tower this way costs another four-beat key.",
     "stories": {
-      "nell": "We followed a copy of the clock’s signal, but it never reached another place. Revisit this choice and take the town-bell stair. The map did warn us about that wall.",
-      "iris": "An echo repeats a sound, but it can’t tell us somebody received a message. The bell needs a separate reply, and this channel can’t give it one.",
-      "pip": "That line repeats every movement exactly, but a real bird changes its answer when another bird calls. This is just a copy. Let’s go back to the stairs."
+      "nell": "We followed a copy of the clock’s signal. The southern service stair reaches the bell tower, but it costs another four beats. The direct stair avoided this extra payment.",
+      "iris": "An echo repeats a sound, but it cannot confirm a delivery. The north wall is solid. We can use the southern service stair, but the tower still needs its own four-beat answer.",
+      "pip": "The reflection copies every movement, but a bird changes its reply. I should have listened to the map as well as the echo. That southern stair asks for more notes."
     },
     "routes": {
-      "nell": "Revisit the last rhythm to get its notes back. Then take the water clock’s town-bell stair. This channel just ends at solid stone.",
-      "iris": "Revisit this choice and take the stair. Its key is a dotted half note followed by four sixteenth notes. There’s no passage through this wall.",
-      "pip": "Revisit the water clock and take its town-bell stair. The reflection doesn’t hide another lock, and I’d like to stop staring at it now."
+      "nell": "The bell service stair is at the southern threshold. It needs a dotted half note, then four sixteenth notes. It reaches the tower, where another four-beat lock waits.",
+      "iris": "Play a dotted half note followed by four sixteenth notes at the south stair. The north wall stays closed. Reaching the tower is not the same as keeping the key to its final door.",
+      "pip": "The southern service stair needs a dotted half and four sixteenths. That is four more beats. I’d like to check our bag before we climb; the bell’s own lock still needs four."
     },
     "inventory": {
-      "nell": "We still have our remaining tiles. Revisit this paid choice to get its notes back before we climb toward the bell.",
-      "iris": "Revisit the last answer to get back what we spent here. We’ll need that key and the notes still in the bag for the other route.",
-      "pip": "Revisit this door to recover the single eighth, paired sixteenths, half rest and quarter rest. No tile vanished into the reflection."
+      "nell": "The copied-channel door already spent the single eighth, paired sixteenths, half rest and quarter rest. Those were the tower’s final key. The southern stair won’t return them.",
+      "iris": "The dotted half and four-sixteenth group pay this stair. If they are our last notes, we’ll reach the tower with an empty bag and still have its lock to open.",
+      "pip": "Nothing in the reflection gives notes back. If we start another run, I’ll remember the direct stair and save the little notes and rests for the bell."
     },
     "inspections": [
       {
@@ -913,13 +901,7 @@ const OUTCOME_ROOMS={
         "text": "A repair mark points to the solid wall. The channel stops here, with no doorway or hidden tunnel behind it.",
         "placement": "wall"
       }
-    ],
-    "outcome": {
-      "kind": "dead-end",
-      "kicker": "An echo cannot answer for the town",
-      "copy": "The copied channel ends at a stone wall. An echo can repeat the clock’s signal, but it cannot confirm that a message arrived. Use Revisit previous choice to recover the notes spent here. Take the water clock’s town-bell stair instead: dotted half note, then four sixteenth notes.",
-      "repair": "Return to the water clock and choose the stair leading to the town bell."
-    }
+    ]
   }
 };
 export const CAMPAIGN_ART_BRIEFS=freeze({
@@ -946,9 +928,9 @@ export const CAMPAIGN_ART_BRIEFS=freeze({
 
 function doorCopy(roomId){
  return Object.fromEntries(Object.values(DOORS).filter(door=>door.from===roomId).map(door=>{
-  const destination=OUTCOME_ROOMS[door.to],copy={name:door.label,hint:door.hint??'Listen to your companions for this door’s ordered four-beat answer.'};
+  const destination=OUTCOME_ROOMS[door.to]?.outcome,copy={name:door.label,hint:door.hint??'Listen to your companions for this door’s ordered four-beat answer.'};
   if(door.warning)copy.warning=door.warning;
-  if(destination){copy.deadCopy=destination.outcome.copy;if(destination.outcome.repair)copy.repair=destination.outcome.repair;}
+  if(destination){copy.deadCopy=destination.copy;if(destination.repair)copy.repair=destination.repair;}
   return [door.id,copy];
  }));
 }

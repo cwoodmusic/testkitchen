@@ -1,6 +1,8 @@
 import test from 'node:test';
 import assert from 'node:assert/strict';
+import {readFileSync} from 'node:fs';
 import {analyzeDungeon,compileDungeon,replayDungeon} from './dungeon-analyze.mjs';
+import {CAMPAIGN_PLAN} from '../../games/rhythm-blocks/campaign-data.mjs';
 
 const copy=value=>structuredClone(value);
 const gift=(id,recipe,type='npc')=>({id,type,...(type==='npc'?{character:'Nell'}:{}),recipe});
@@ -12,7 +14,7 @@ const inventoryEmpty=stock=>Object.values(stock).every(count=>count===0);
 
 test('one-shot sources are explicit actions, doors spend exact typed notes, and success has an empty inventory',()=>{
  const data=fixture(),report=analyzeDungeon(data);
- assert.equal(report.passed,true);assert.deepEqual(report.graph,{rooms:1,sources:1,doors:1,terminals:1,reachableStates:3,liveStates:2,terminalStates:1,transitions:2,orderedTerminalHistories:'1'});
+ assert.equal(report.passed,true);assert.deepEqual(report.graph,{rooms:1,sources:1,doors:1,terminals:1,reachableStates:3,liveStates:2,terminalStates:1,transitions:2,orderedTerminalHistories:'1',orderedRunFailureHistories:'0',orderedRunHistories:'1'});
  assert.deepEqual(report.coverage,{unreachableRooms:[],unreachableSources:[],unreachableDoors:[],unreachableTerminals:[]});
  assert.equal(report.balances.violationCount,0);assert.equal(report.softlocks.count,0);assert.equal(report.forcedDeadEndStates.count,0);
  assert.deepEqual(report.terminals[0].witness.actions,[claim('parcel'),open('leave')]);
@@ -149,4 +151,75 @@ test('witnesses for every reachable source, door and terminal replay with typed 
  for(const item of [...report.sources,...report.doors,...report.terminals])if(item.reachable){const replay=replayDungeon(data,item.witness.actions);assert.equal(replay.nodeId,item.witness.nodeId);assert.deepEqual(replay.inventory,item.witness.inventory);assert.equal(replay.conservation.valid,true);}
  assert.deepEqual(data,original);assert.throws(()=>analyzeDungeon(fixture(),{maxStates:2}),/state limit exceeded/);
  assert.throws(()=>analyzeDungeon(fixture(),{maxStates:0}),/Invalid state limit/);
+});
+
+function replayRisk(){return{version:1,entry:'fork',initialInventory:{half:4},replayRisk:{irreversibleDoors:true,lossEntryDoorIds:['mistake']},rooms:[
+ {id:'fork',title:'Fork',sources:[],doors:[door('safe','home'),door('mistake','detour')]},
+ {id:'detour',title:'Detour',sources:[],doors:[door('extra-gate','home')]},
+ {id:'home',title:'Final controls',sources:[],doors:[door('finish','done')]}
+ ],terminals:[ending()]};}
+
+test('explicit risk doors permit witnessed note exhaustion without disabling ordinary safety checks',()=>{
+ const data=replayRisk(),report=analyzeDungeon(data);
+ assert.equal(report.passed,true);assert.equal(report.softlocks.count,0);assert.equal(report.forcedDeadEndStates.count,0);
+ assert.equal(report.runFailures.count,1);assert.equal(report.runFailures.zeroNoteCount,1);assert.equal(report.runFailures.missingTypeCount,0);
+ assert.equal(report.runFailures.orderedHistories,'1');assert.equal(report.graph.orderedTerminalHistories,'1');assert.equal(report.graph.orderedRunHistories,'2');
+ assert.equal(report.intentionalLossStates.count,2,'The paid detour and its empty final room are doomed, but declared.');
+ const failure=report.runFailures.states[0];assert.equal(failure.nodeId,'home');assert.equal(failure.reason,'out-of-notes');assert(inventoryEmpty(failure.inventory));
+ assert.deepEqual(failure.witness.actions,[open('mistake'),open('extra-gate')]);assert.deepEqual(failure.witness.riskEntryDoors,['mistake']);
+ assert.equal(failure.witness.conservation.valid,true);assert.equal(report.replayRiskProofs[0].hasWitnessedRunFailure,true);
+ assert.deepEqual(report.replayRiskProofs[0].witness.actions,failure.witness.actions);
+ assert.equal(report.terminals[0].zeroBalanceStates,1);assert(inventoryEmpty(report.terminals[0].witness.inventory));
+ const strict=copy(data);delete strict.replayRisk;
+ const rejected=analyzeDungeon(strict);assert.equal(rejected.passed,false);assert.equal(rejected.runFailures.count,0);assert.equal(rejected.softlocks.count,1);assert.equal(rejected.forcedDeadEndStates.count,2);
+});
+
+test('a risk policy cannot excuse an unmarked stranded branch or a merely safe declared entry',()=>{
+ const data=replayRisk();data.rooms[0].doors.push(door('unmarked','stranded'));data.rooms.push({id:'stranded',title:'Stranded',sources:[],doors:[]});
+ const report=analyzeDungeon(data);assert.equal(report.passed,false);assert.equal(report.runFailures.count,1);assert.equal(report.softlocks.count,1);
+ assert.equal(report.softlocks.states[0].nodeId,'stranded');assert.deepEqual(report.softlocks.states[0].unriskedWitness.riskEntryDoors,[]);
+ const broad=replayRisk();broad.replayRisk.lossEntryDoorIds.push('safe');
+ const invalid=analyzeDungeon(broad);assert.equal(invalid.passed,false);assert.equal(invalid.replayRiskProofs.find(proof=>proof.doorId==='safe').hasWitnessedRunFailure,false);
+ const surplus=replayRisk();surplus.initialInventory.half=5;
+ const unbalanced=analyzeDungeon(surplus);assert.equal(unbalanced.passed,false);assert(unbalanced.balances.violationCount>0,'Risk never excuses a successful ending with leftover notes.');
+});
+
+test('loss provenance checks every merged history and reports a concrete unmarked bypass',()=>{
+ const data=replayRisk();data.rooms[0].doors.push(door('unmarked-bypass','detour'));
+ const report=analyzeDungeon(data);assert.equal(report.passed,false);assert.equal(report.runFailures.count,0);assert.equal(report.softlocks.count,1);
+ assert.equal(report.softlocks.states[0].nodeId,'home');assert(inventoryEmpty(report.softlocks.states[0].inventory));
+ assert.deepEqual(report.softlocks.states[0].unriskedWitness.actions,[open('unmarked-bypass'),open('extra-gate')]);
+ assert.deepEqual(report.softlocks.states[0].unriskedWitness.riskEntryDoors,[]);
+ assert.equal(report.replayRiskProofs[0].hasWitnessedRunFailure,false,'A marked representative cannot hide an unmarked merged path.');
+});
+
+test('risk annotations must name unique real room-entry doors and irreversible costs',()=>{
+ const changes=[
+  [data=>data.replayRisk=false,/risk policy/],
+  [data=>data.replayRisk.irreversibleDoors=false,/irreversible/],
+  [data=>data.replayRisk.lossEntryDoorIds=[],/explicit loss-entry/],
+  [data=>data.replayRisk.lossEntryDoorIds=['unknown'],/loss-entry door/],
+  [data=>data.replayRisk.lossEntryDoorIds=['mistake','mistake'],/loss-entry door/],
+  [data=>data.replayRisk.lossEntryDoorIds=['finish'],/playable room/],
+  [data=>data.replayRisk.allowEverySoftlock=true,/risk policy/],
+ ];
+ for(const [change,pattern]of changes){const data=replayRisk();change(data);assert.throws(()=>compileDungeon(data),pattern);}
+});
+
+test('the released three-detour campaign proves three empty bags, two wrong-type failures and all five successes',()=>{
+ const data=JSON.parse(readFileSync(new URL('./dungeon.json',import.meta.url),'utf8'));assert.deepEqual(CAMPAIGN_PLAN,data,'Runtime and design data must remain identical.');
+ const report=analyzeDungeon(data);assert.equal(report.passed,true);
+ assert.equal(report.graph.rooms,17);assert.equal(report.graph.doors,25);assert.equal(report.graph.sources,7);assert.equal(report.graph.terminals,6);
+ assert.equal(report.graph.reachableStates,43);assert.equal(report.graph.transitions,43);
+ assert.equal(report.graph.orderedTerminalHistories,'14');assert.equal(report.graph.orderedRunFailureHistories,'10');assert.equal(report.graph.orderedRunHistories,'24');
+ assert.equal(report.runFailures.count,5);assert.equal(report.runFailures.zeroNoteCount,3);assert.equal(report.runFailures.missingTypeCount,2);
+ assert.deepEqual(report.runFailures.states.filter(state=>state.reason==='out-of-notes').map(state=>state.nodeId).sort(),['canal-final','garden-secret-final','workshop-secret-final']);
+ assert.deepEqual(report.runFailures.states.filter(state=>state.reason==='missing-note-types').map(state=>state.nodeId).sort(),['dead-aviary','dead-brambles']);
+ assert.equal(report.softlocks.count,0);assert.equal(report.forcedDeadEndStates.count,0);assert.equal(report.intentionalLossStates.count,14);
+ assert(Object.values(report.coverage).every(ids=>ids.length===0));assert.equal(report.balances.violationCount,0);
+ const successes=report.terminals.filter(terminal=>terminal.kind!=='dead-end');assert.equal(successes.length,5);
+ for(const terminal of successes){assert.equal(terminal.zeroBalanceStates,1);assert(inventoryEmpty(terminal.witness.inventory));assert.deepEqual(terminal.witness.riskEntryDoors,[]);}
+ assert(report.secretProofs.every(proof=>proof.allPathsRequireHiddenClaimAndGate));
+ assert.equal(report.replayRiskProofs.length,3);assert(report.replayRiskProofs.every(proof=>proof.hasWitnessedRunFailure&&proof.witness.riskEntryDoors.includes(proof.doorId)));
+ for(const failure of report.runFailures.states){const replay=replayDungeon(data,failure.witness.actions);assert.equal(replay.terminal,null);assert.equal(replay.conservation.valid,true);assert.deepEqual(replay.inventory,failure.inventory);}
 });
