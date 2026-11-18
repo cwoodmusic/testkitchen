@@ -3,18 +3,32 @@ import assert from 'node:assert/strict';
 import {STORY_COPY_UPDATES} from './story-copy-data.mjs';
 import {upgradeStoryCopy} from './story-copy-updates.mjs';
 import {createDefaultProject} from './developer-project.mjs';
+import {createDefaultProject as createPreviousProject} from './releases/r-480b519ca9163fbd/developer-project.mjs';
 
 const clone=value=>structuredClone(value);
 const freeze=value=>{if(value&&typeof value==='object'){Object.values(value).forEach(freeze);Object.freeze(value);}return value;};
 const person=(project,roomId,id)=>project.content[roomId].people.find(item=>item.id===id);
 const inspection=(project,roomId,id)=>project.content[roomId].inspections.find(item=>item.id===id);
 const updateFor=(section,roomId,id,field)=>STORY_COPY_UPDATES.find(update=>update.path[0]==='content'&&update.path[1]===roomId&&update.path[2]===section&&update.path[3]?.id===id&&update.path.at(-1)===field);
+const fieldKey=path=>JSON.stringify(path.map(part=>part&&typeof part==='object'?Object.hasOwn(part,'id')?{id:part.id}:{index:part.index}:part));
+
+// Fresh performances can derive shorter holds from shorter modern sentences.
+// An imported performance keeps its own clocks; only its stock words refresh.
+function currentWordsOnPrevious(previous,current){
+ if(typeof previous==='string'&&typeof current==='string')return current;
+ if(Array.isArray(previous)&&Array.isArray(current))return previous.map((value,index)=>currentWordsOnPrevious(value,value&&typeof value==='object'&&typeof value.id==='string'?current.find(item=>item.id===value.id):current[index]));
+ if(previous&&current&&typeof previous==='object'&&typeof current==='object')return Object.fromEntries(Object.entries(previous).map(([key,value])=>[key,Object.hasOwn(current,key)?currentWordsOnPrevious(value,current[key]):clone(value)]));
+ return previous;
+}
 
 // Build the old stock wording on today's project without relying on a private
 // work file, or downgrading any layout, inventory, speaker, or timeline data.
 function oldStockProject(){
- const project=createDefaultProject();
+ const project=createDefaultProject(),fields=new Set();
  for(const update of STORY_COPY_UPDATES){
+  // A field can have several historical spellings. The first catalog record
+  // remains its earliest stock wording; later records describe newer releases.
+  const key=fieldKey(update.path);if(fields.has(key))continue;fields.add(key);
   let current=project;
   for(const part of update.path.slice(0,-1)){
    if(typeof part==='string')current=current[part];
@@ -37,6 +51,35 @@ test('all shipped stock prose upgrades to the current project without changing o
  assert.deepEqual(previous,before,'The input project remains unchanged, including frozen data.');
  assert.deepEqual(upgradeStoryCopy(upgraded),upgraded,'Repeated loads do not rewrite words again.');
  upgraded.authorNotes.details[0]='Output only';assert.equal(previous.authorNotes.details[0],'Retain private notes.');
+});
+
+test('the actual prior release converges to modern stock without retiming its performances',()=>{
+ const previous=createPreviousProject(),before=clone(previous),current=createDefaultProject();
+ const expected=currentWordsOnPrevious(previous,current),upgraded=upgradeStoryCopy(freeze(previous));
+ assert.notDeepEqual(expected,before,'This fixture must exercise the newer stock-wording generation.');
+ assert.deepEqual(upgraded,expected,'Every changed existing word from the shipped release reaches current stock in one pass.');
+ assert.deepEqual(previous,before);assert.deepEqual(upgradeStoryCopy(upgraded),upgraded);
+ assert.match(upgraded.content.depot.cutscene.find(clip=>clip.speaker==='mira'&&/shimmy shimmy/i.test(clip.text))?.text??'',/shimmy shimmy/i);
+});
+
+test('newer stock replies and renamed object scripts update while authored words and clocks survive',()=>{
+ const previous=createPreviousProject(),current=createDefaultProject(),nell=person(previous,'depot','nell');
+ const fields=['story','route','inventory'];
+ nell.replies=fields.map(field=>({id:`custom-${field}`,label:`Ask ${field}`,text:nell[field],demo:['quarter'],author:{field}}));
+ nell.replies.push({id:'mine',label:'My question',text:'Keep my answer.'});
+ nell.story='Keep my own biography.';
+ const evidence=inspection(previous,'depot','returned-letter');evidence.id='my-letter';evidence.author={note:'Keep its location and identity.'};
+ const clip=previous.content.depot.cutscene.find(item=>item.kind==='dialogue');
+ clip.startTile=37;clip.durationTiles=91;clip.reaction=null;clip.author={pause:'Keep this.'};
+ const before=clone(previous),upgraded=upgradeStoryCopy(freeze(previous));
+ const newNell=person(upgraded,'depot','nell');
+ for(const [index,field]of fields.entries())assert.deepEqual(newNell.replies[index],{...nell.replies[index],text:person(current,'depot','nell')[field]});
+ assert.equal(newNell.story,nell.story);assert.deepEqual(newNell.replies.at(-1),nell.replies.at(-1));
+ const actual=inspection(upgraded,'depot','my-letter'),target=inspection(current,'depot','returned-letter');
+ assert.deepEqual(actual.dialogue,target.dialogue);assert.equal(actual.id,'my-letter');assert.deepEqual(actual.author,evidence.author);
+ const speech=upgraded.content.depot.cutscene.find(item=>item.id===clip.id);
+ assert.deepEqual(speech,{...clip,text:current.content.depot.cutscene.find(item=>item.id===clip.id).text});
+ assert.deepEqual(previous,before);
 });
 
 test('custom wording, deleted fields, null opt-outs and unrelated metadata stay authored',()=>{

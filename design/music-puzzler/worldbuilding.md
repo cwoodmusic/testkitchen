@@ -12,13 +12,15 @@ Write for fifth graders: concrete things first, short sentences, clear causes an
 
 ## The travelling party
 
-Nell leads. She is wise, thoughtful and well versed in the Reach's machinery and history, rarely surprised and a little impatient. She gives the group a purpose, checks their conclusions and brings a wandering discussion back to the task.
+Nell leads. She is wise, thoughtful and well versed in the Reach's machinery and history, rarely surprised and a little impatient. She gives the group a purpose, checks their conclusions and brings a wandering discussion back to the task. Mira often gets distracted, so Nell gives her a brief, gently firm correction and points her back to the clue.
 
-Mira is the observant, plucky, slightly brash heroine, with the biggest personality in the group. Her imagination is whimsical, her replies are bold, and food is frequently on her mind. Her jokes start with something she has actually noticed; hunger should vary her voice rather than replace it.
+Mira is the observant, plucky, slightly brash heroine, with the biggest personality in the group. Her imagination is whimsical, her replies are bold, and food is frequently on her mind. Her jokes start with something she has actually noticed; hunger should vary her voice rather than replace it. Food, shiny machinery and curious details often distract her, but she can find useful clues while wandering. Her recurring catchphrase is “Shimmy shimmy!” Use it at lively discoveries and celebrations, rather than in every reply.
 
-Iris is pragmatic, investigative and fearless. Her academic delivery is dry, droll and emotionally level, including when everyone else is startled. She produces a magnifying glass to examine evidence, distinguishes observations from guesses and lets an understated remark carry the joke.
+Iris is pragmatic, investigative and fearless. Her academic delivery is dry, droll and emotionally level, including when everyone else is startled. She produces a magnifying glass to examine evidence, distinguishes observations from guesses and lets an understated remark carry the joke. Her practical, rational view regularly clashes with Pip’s emotional reactions; she answers a fearful guess with evidence instead of mocking him.
 
-Pip is curious and excitable, but afraid of almost everything. A promising discovery can send him running before he thinks about what might be waiting there. His startled stumble, harmless fall and quick recovery are playful character acting; he gets back up and continues contributing.
+Pip is curious and excitable, but afraid of almost everything. A promising discovery can send him running before he thinks about what might be waiting there. His startled stumble, harmless fall and quick recovery are playful character acting; he gets back up and continues contributing. He leads with his feelings, so he and matter-of-fact Iris often disagree. His concern for people and birds can reveal a need that her analysis misses.
+
+Dialogue sounds conversational and contemporary, using contractions and natural connections such as and, but and so. Keep each character’s voice clear without stiff phrases like ‘I shall’ or ‘let us.’
 
 Room openings let the party move and react together. They investigate different physical details while their conversation connects those discoveries. Nell's leadership, Iris's unruffled scrutiny, Pip's nervous enthusiasm and Mira's lively observations should sound like four people sharing a room.
 

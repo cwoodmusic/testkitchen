@@ -264,6 +264,13 @@ def open_page(browser, url, width, theme, virtual_walk=True, height=None,
         skip_cutscene(page)
     return context, page, errors, writes, external
 
+def conversation_text(page):
+    """Read authored words once, excluding the visible speaker prefix."""
+    return page.evaluate("""()=>{const line=document.getElementById('dialogue'),live=line.querySelector('.jrpg-sr-line');
+      if(!live)return line.textContent;
+      const text=live.textContent,prefix=(quietBell.conversation?.name??'')+': ';
+      return text.startsWith(prefix)?text.slice(prefix.length):text;}""")
+
 def conversations(page, touch=False):
     baseline = resources(state(page)); dialogue = []
     assert state(page)['inventory'] == EMPTY
@@ -272,7 +279,7 @@ def conversations(page, touch=False):
         assert page.locator('#conversation-dialog').is_visible()
         for topic in ['story', 'route', 'inventory']:
             press(page, 'button[data-topic="' + topic + '"]', touch)
-            text = page.locator('#dialogue').inner_text(); speaker = page.locator('#speaker').inner_text()
+            text = conversation_text(page); speaker = page.locator('#speaker').inner_text()
             assert text.strip() and person in speaker.lower(), (person, topic, speaker, text)
             messages.add(text)
             assert resources(state(page)) == baseline, 'Talking must not spend notes, award promises or choose a route.'

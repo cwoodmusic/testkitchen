@@ -14,7 +14,7 @@ export const RUNTIME_FILES=Object.freeze([
   'room-entry.mjs','room-preface.mjs','room-narrative-content.mjs','story-copy-updates.mjs','story-copy-data.mjs','fred-spider.mjs',
   'story-intro.mjs','story-intro.css','dialogue-updates.mjs',
   'cutscene-paths.mjs','cutscene-paths.css',
-  'jrpg-dialogue.mjs','jrpg-dialogue.css','assets/fonts/VT323-Regular.ttf','assets/fonts/VT323-OFL.txt',
+  'jrpg-dialogue.mjs','jrpg-dialogue.css','conversation-view.mjs','assets/fonts/VT323-Regular.ttf','assets/fonts/VT323-OFL.txt',
   'assets/fonts/PressStart2P-Regular.ttf','assets/fonts/PressStart2P-OFL.txt',
   'party-content.mjs','cast.mjs','assets/party-cast.webp',
   'npc-sprites.mjs','assets/nell-walk.webp','assets/iris-walk.webp','assets/pip-walk.webp','assets/oren-walk.webp',

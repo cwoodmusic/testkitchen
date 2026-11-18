@@ -97,7 +97,7 @@ def discovery_flow(browser, url):
     # An NPC's personal story and gifts do not reveal a route or a destination.
     ui.press(page, 'button[data-person="nell"]')
     ui.press(page, 'button[data-topic="route"]')
-    heard_nell = page.locator('#dialogue').inner_text().strip()
+    heard_nell = ui.conversation_text(page).strip()
     expected_book(page, ['depot'], [], ['nell-route'])
     ui.press(page, '#demo')
     expected_book(page, ['depot'], [], ['nell-route'])

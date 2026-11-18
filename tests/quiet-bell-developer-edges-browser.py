@@ -246,7 +246,7 @@ def edge_flow(browser, url):
     assert ui.state(page)['roomId'] == 'dead-brambles' and ui.state(page)['phase'] == 'terminal'
     assert page.locator('#outcome').is_hidden()
     ui.press(page, '[data-person="nell"]')
-    assert page.locator('#dialogue').inner_text() == terminal_intro
+    assert ui.conversation_text(page) == terminal_intro
     page.locator('#conversation-close').click()
     page.locator('#ending').click()
     assert page.locator('#outcome-title').inner_text() == terminal_title
@@ -255,6 +255,7 @@ def edge_flow(browser, url):
     dev.console_open(page, 'playtest')
     dev.teleport(page, 'ending-school', phase='terminal')
     dev.close_editor(page)
+    ui.skip_cutscene(page)
     assert page.locator('#ending').is_visible() and page.locator('#outcome').is_hidden()
     assert dev.normal_storage(page) == published
     assert not errors and not writes and not external, (errors, writes, external)

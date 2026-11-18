@@ -28,7 +28,7 @@ export function dialogueRevealTimes(value){
 export function dialogueDurationMs(value){return dialogueRevealTimes(value).at(-1)??0;}
 function revealedAt(times,elapsed){let low=0,high=times.length;while(low<high){const middle=(low+high)>>1;if(times[middle]<=elapsed)low=middle+1;else high=middle;}return low;}
 
-export function createJrpgDialogue({panel,line}){
+export function createJrpgDialogue({panel,line,getSpeaker=()=>panel.querySelector('#cutscene-speaker')?.textContent?.trim()??''}){
  const document=line.ownerDocument,window=document.defaultView;
  const visual=document.createElement('span'),live=document.createElement('span');
  visual.className='jrpg-glyph-rows';visual.setAttribute('aria-hidden','true');
@@ -65,7 +65,7 @@ export function createJrpgDialogue({panel,line}){
  function setLine(value){
   if(disposed)return;
   text=String(value??'');characters=Array.from(text);revealTimes=dialogueRevealTimes(text);elapsed=0;forced=false;visible=0;
-  const name=panel.querySelector('#cutscene-speaker')?.textContent?.trim()??'';
+  const name=String(getSpeaker()??'').trim();
   prefix=text&&name?`${name.toLocaleUpperCase()}: `:'';prefixLength=Array.from(prefix).length;
   live.textContent=text&&name?`${name}: ${text}`:text;layout();
  }

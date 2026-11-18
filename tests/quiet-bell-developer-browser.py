@@ -35,6 +35,7 @@ def tick(page, duration=80):
 
 def console_open(page, tab=None):
     if not page.locator('#developer-console').is_visible():
+        ui.skip_intro(page)
         page.keyboard.press('F2')
         page.locator('#developer-console').wait_for(state='visible')
     if tab:
@@ -289,12 +290,12 @@ def desktop_flow(browser, url):
     assert abs(page.locator('#player-sprite').bounding_box()['width'] / page.locator('#room-map').bounding_box()['width'] * 1536 - 144) < 1
     # Real NPC interaction uses edited text and source quantities.
     ui.press(page, '[data-person="nell"]')
-    assert page.locator('#dialogue').inner_text() == STORY
+    assert ui.conversation_text(page) == STORY
     assert page.locator('#dialogue img').count() == 0
     assert not page.evaluate('window.__developerPayload')
     assert page.get_by_role('button', name='Discard this reply', exact=True).count() == 0
     page.get_by_role('button', name=REPLY_LABEL, exact=True).click()
-    assert page.locator('#dialogue').inner_text() == REPLY_TEXT
+    assert ui.conversation_text(page) == REPLY_TEXT
     assert page.locator('#dialogue b').count() == 0
     chosen_reply = ui.state(page)['selectedTopic']
     page.locator('#conversation-close').click()

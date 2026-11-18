@@ -43,11 +43,15 @@
   <p class="world-status" id="world-status" aria-hidden="true" hidden></p>
 
   <dialog id="conversation-dialog" class="conversation-dialog" aria-labelledby="speaker">
-    <div class="dialog-head"><h2 id="speaker">Nell · Postkeeper</h2><button type="button" class="mg-button dialog-close" id="conversation-close" aria-label="Close conversation">×</button></div>
+    <div class="dialog-head"><h2 id="speaker">Nell · Postkeeper</h2></div>
     <span class="mg-small" id="talk-about">Your story</span><p id="dialogue" aria-live="polite"></p>
-    <button type="button" class="mg-button mg-primary mg-gift" id="take-parcel">Take Nell’s note bag</button>
     <div class="mg-questions" role="group" aria-label="What would you like to ask?"><button type="button" class="mg-button" data-topic="story" aria-pressed="true">Your story</button><button type="button" class="mg-button" data-topic="route" aria-pressed="false">A way forward</button><button type="button" class="mg-button" data-topic="inventory" aria-pressed="false">My notes</button></div>
-    <button type="button" class="mg-button" id="demo" hidden>Hear an example</button>
+    <div class="conversation-actions">
+      <button type="button" class="mg-button mg-primary mg-gift" id="take-parcel">Take Nell’s note bag</button>
+      <button type="button" class="mg-button" id="demo" hidden>Hear an example</button>
+      <button type="button" class="mg-button mg-primary" id="conversation-next" autofocus>Next ›</button>
+      <button type="button" class="mg-button dialog-close" id="conversation-close" aria-label="Close conversation">×</button>
+    </div>
   </dialog>
 
   <dialog id="notes-dialog" class="notes-dialog" data-mode="bag" aria-labelledby="stock-title">

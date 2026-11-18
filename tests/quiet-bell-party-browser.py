@@ -133,7 +133,7 @@ def conversations(page, room, data, stories, touch=False):
         messages = set()
         for topic in ['story','route','inventory']:
             ui.press(page,'[data-topic="'+topic+'"]',touch)
-            message = page.locator('#dialogue').inner_text().strip()
+            message = ui.conversation_text(page).strip()
             assert message and identifier in page.locator('#speaker').inner_text().lower()
             if not (room=='depot' and identifier=='nell' and topic=='inventory'):
                 assert message == person[topic], (room,identifier,topic,message)

@@ -28,10 +28,10 @@ export function addFredSpider(project){
   id:FRED_SPIDER_ID,title:'Fred the wolf spider',label:'Look beside the cupboard',
   text:'Fred rests beside the cupboard. This small wolf spider hunts insects on the floor instead of catching them in a web.',
   dialogue:[
-   {id:'fred-pip',speaker:'pip',text:'Something moved by the cupboard. It has quite a lot of legs.'},
-   {id:'fred-mira',speaker:'mira',text:'Hello, Fred! You look like a Fred. Please excuse our enormous feet.'},
-   {id:'fred-iris',speaker:'iris',text:'A wolf spider. He hunts insects on the ground, without a catching web.'},
-   {id:'fred-nell',speaker:'nell',text:'Then let us leave Fred to his work. Mind where you step.'},
+   {id:'fred-pip',speaker:'pip',text:"Something moved, and I'd like it to stay over there. That's a lot of legs!"},
+   {id:'fred-mira',speaker:'mira',text:"I'm calling you Fred. Can you teach me that little shuffle?"},
+   {id:'fred-iris',speaker:'iris',text:"He's a wolf spider, Pip. He hunts insects on the ground, so he doesn't need a web."},
+   {id:'fred-nell',speaker:'nell',text:"Mira, we're following a mail bird, not taking dance lessons. Let's give Fred some room."},
   ],
  });
  return result;

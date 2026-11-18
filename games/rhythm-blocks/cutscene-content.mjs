@@ -24,12 +24,12 @@ const arrivals={
    }
   ],
   "lines": [
-   "This letter came back with warm wax. Iris, check the screen. Pip, watch your bird. We need to find who brought it home.",
-   "He keeps looking toward that dark route. Does he know a way through? I hope he does not expect me to fly.",
-   "A warm letter and a bird with a secret path. I can eat breakfast later. Where do we start?",
-   "This flash shows a message going out. The next light should show that it arrived. That light stays dark.",
-   "Deliveries are waiting. We must find which routes still work. Nobody touches a wire until Iris checks it.",
-   "Watch the bird: it turns before the screen flashes. Maybe it knows a path our map has missed. Let us follow its clues."
+   "This letter came back with warm wax. Iris, check the screen, and Pip, watch your bird. We need to know who brought it home.",
+   "He keeps looking down that dark route. Does he want us to follow? I really hope his plan doesn’t involve flying.",
+   "Shimmy shimmy! A bird with a secret path! Wait, is that breakfast I smell? We could investigate with toast.",
+   "We can walk, Pip. The screen shows a message going out, but the light for its reply stays dark. That’s what we need to check.",
+   "Breakfast later, Mira. People are waiting for deliveries, so let’s find a working route. Nobody touches a wire before Iris checks it.",
+   "Right, bird first, toast later. Look, it turns before the screen flashes! Maybe it knows a path our map’s missed. Let’s follow it."
   ]
  },
  "garden-porch": {
@@ -48,12 +48,12 @@ const arrivals={
    }
   ],
   "lines": [
-   "Mind the roots. Iris, check your water pipe. Pip, look at that old metal panel. These plants need water soon.",
-   "The seed jars are using a machine part as a shelf! That root moves when the pipe sounds. Will it stay out of my boots?",
-   "A fine new job for an old machine part. Iris, why have you set out two cups when you are here alone?",
-   "My friend lives on another island. I keep her cup ready. Since the bell stopped, her messages have not reached me.",
-   "Then we shall help this garden and look for her reply. Ask Iris for her note tiles before choosing the next door.",
-   "The root moves when the pipe calls, but no water comes out. Let us find where the answer gets lost."
+   "Watch the roots. Iris, check your water pipe, and Pip, look at that metal panel. These plants need water soon.",
+   "Those seed jars are sitting on an old machine! And that root just moved. Is it coming for my boots?",
+   "Is that root winking? Oh, two cups! Iris, is someone coming for tea, or can I claim the spare?",
+   "The root’s answering the pipe, Pip. My friend’s on another island. Her messages stopped with the bell, so I’m keeping her cup ready.",
+   "Tea can wait, Mira. We’ll help the garden and look for that reply. Ask Iris for her note tiles before choosing a door.",
+   "The root moves when the pipe calls, but there’s still no water. That’s a useful clue, right? Let’s find where the answer gets lost."
   ]
  },
  "workshop-porch": {
@@ -72,12 +72,12 @@ const arrivals={
    }
   ],
   "lines": [
-   "Leave the winding keys alone for now. Iris, check the bowl. Pip, inspect your practice wing. This old bird feather may be a clue.",
-   "That wing moved before I touched it! Is another bird calling it? Everyone stay where I can see you.",
-   "A room full of clockwork birds, and Pip still puts out seed. Do the real birds come to visit?",
-   "They do. These small charging perches also work on their own. The birds can still move while the main bell is quiet.",
-   "The feather fits an old kind of mail bird. Someone has kept those birds working. We should find out where they go.",
-   "That bird waits for its partner before moving. It is watching for an answer. Perhaps that is what our letter was missing."
+   "Leave those winding keys alone for now. Iris, check the bowl, and Pip, inspect your practice wing. That old feather might be a clue.",
+   "The wing moved before I touched it! Is another bird calling it? Everyone stay where I can see you, please.",
+   "A whole room of clockwork birds, and Pip still puts out seed. Is that for real birds, or have I found our emergency snack?",
+   "That’s its test motor, Pip. The charging perches work on their own too, so the birds still have power while the main bell’s quiet.",
+   "Leave the seed, Mira. The feather fits an older mail bird, and someone’s kept those birds working. Let’s find out where they go.",
+   "Fine, I’ll interview the bird instead of eating its lunch. It waits for its partner before moving. Maybe it needs an answer too."
   ]
  },
  "canal-porch": {
@@ -96,12 +96,12 @@ const arrivals={
    }
   ],
   "lines": [
-   "Stay behind the landing rail. Iris, check the message machine. Pip, listen at the small bell. I will read these delivery labels.",
-   "My bird keeps listening, but the bell stays quiet. Is a boat supposed to answer? I would like to know before going near the water.",
-   "Oren has food boxes ready, but no boat can arrive safely yet. That has become a very important little bell.",
-   "The boat waits for the landing to answer. Without that reply, its crew cannot tell whether the landing is safe.",
-   "People on the next island need flour and clothes. We will follow Oren’s map toward the bell controls.",
-   "Then let us get those supplies moving. I can ask about the warm letter while we walk. And perhaps about Oren’s biscuits."
+   "Stay behind the landing rail. Iris, check the message machine, and Pip, listen at the little bell. I’ll read these delivery labels.",
+   "My bird keeps listening, but the bell’s quiet. Is a boat supposed to answer? I’d like to know before going near the water.",
+   "Oren’s got food boxes ready, but no boat can arrive safely. Are those biscuits? Suddenly I’m extremely interested in these deliveries.",
+   "You’re safe behind the rail, Pip. The boat needs a reply from the landing, so its crew can check that it’s safe to dock.",
+   "Those supplies are for the next island, Mira. They need flour and clothes, so we’re following Oren’s map to the bell controls.",
+   "Right. Get the supplies moving, then ask about biscuits. I can investigate the warm letter while we walk. That’s multitasking."
   ]
  },
  "garden-fork": {
@@ -120,12 +120,12 @@ const arrivals={
    }
   ],
   "lines": [
-   "This handle has been repaired several times. Iris, check the old stones. Pip, listen at the cups. Someone still tends this path.",
-   "Tiny claw marks run beside the cups. My bird knows this old path. Do you think anything much larger uses it?",
-   "A path missing from Nell’s map! A small bird could have brought our letter back this way.",
-   "The old path has its own message wire. This side can still answer. The bell’s main return connection must have failed.",
-   "The hearth path reaches the homes. The old stones lead deeper into the garden. Choose one phrase and keep the other notes safe.",
-   "I want to know who kept this old path clear. Let us look at the objects before we choose."
+   "That handle’s been repaired several times. Iris, check the old stones, and Pip, listen at the cups. Someone still uses this path.",
+   "Tiny claw marks run beside the cups. My bird knows this path. Do you think something much bigger could be following it?",
+   "A path missing from Nell’s map! Our bird could’ve brought the letter this way. And those stones look perfect for a hopping contest.",
+   "The marks fit small birds, Pip. This old path has its own message wire, and it still answers. The bell’s main return connection must be broken.",
+   "Both feet on the path, Mira. The hearth way reaches the homes; the old stones go deeper. Choose one phrase and save the other notes.",
+   "No hopping. Got it. But someone’s kept this old path clear, and I want to know who. Let’s look around before we choose."
   ]
  },
  "workshop-fork": {
@@ -144,12 +144,12 @@ const arrivals={
    }
   ],
   "lines": [
-   "Iris, study the screen. Pip, check the rail from the floor. Several people have repaired this bird’s wing.",
-   "Bird feet polished both ends of that rail. Our hands never touch those spots. Could it be an old flight route?",
-   "Our returned letter could fit in a bird’s carrying clip. Nell, I think one of Pip’s birds found a shortcut.",
-   "The marks lead toward a charging perch. A bird could carry mail along this old route while the main route is off.",
-   "Then the letter did not move by itself. We must find why the main bell cannot hear the replies coming back.",
-   "The schoolroom stair and that back passage lead to different places. Let us check the clues before spending our notes."
+   "Iris, study the screen, and Pip, check the rail from the floor. Several people have helped repair that bird’s wing.",
+   "Those shiny marks fit bird feet. Could this be an old flight route? I’d be thrilled if it didn’t involve any high places.",
+   "Our letter would fit in that bird’s clip! Nell, it found a shortcut. Also, that shiny clip would look incredible in my hair.",
+   "We can follow it from the floor, Pip. The marks lead to a charging perch, so a bird could use this old route while the main one’s off.",
+   "The bird needs its clip, Mira. Now we know the letter had a carrier. We still need to find why the main bell can’t hear replies.",
+   "Shimmy shimmy! A real clue, and nobody lost a hair clip. Let’s check the schoolroom stair and the back passage before spending notes."
   ]
  },
  "canal-fork": {
@@ -168,12 +168,12 @@ const arrivals={
    }
   ],
   "lines": [
-   "Follow the marked stones. Iris, check the water control. Pip, look at the stool. Oren drew this map while checking the landings.",
-   "There are tiny claw marks by this warm pipe. Has my bird landed here? Please tell me the rest of its route has rails.",
-   "Its carrying clip feels warm too! That could warm the wax on a letter. We can compare it with Nell’s seal.",
-   "The map shows two wires for each route. One sends the call. A broken return connection would stop the bell hearing replies.",
-   "That would explain the waiting boats. We need to reach the bell controls so people can receive their supplies.",
-   "Then we follow the real route to the tower. A pretty reflection will not carry a bag of flour home."
+   "Follow the marked stones. Iris, check the water control, and Pip, look at the stool. Oren drew this map while checking the landings.",
+   "There are claw marks by this warm pipe. Has my bird landed here? Please tell me its next stop has rails. Tall rails.",
+   "Its clip’s warm too! That could heat the letter’s wax. Also, this pipe makes my hair look enormous. Is that useful?",
+   "The pipe’s only warm, Pip. The map shows a call wire and a return wire. A broken return connection would stop the bell hearing replies.",
+   "The clip is useful, Mira. That explains the warm wax, and the wire could explain the waiting boats. Let’s get those supplies moving.",
+   "Then it’s the tower for us. My excellent reflection can wait. A shiny pipe isn’t going to carry anyone’s flour home."
   ]
  },
  "garden-final": {
@@ -192,12 +192,12 @@ const arrivals={
    }
   ],
   "lines": [
-   "These small bells connect the nearby homes. Iris, check the spare place. Pip, look at the message box. Mind the hot pot.",
-   "The box can send a call, but nobody hears its answer. Are all those families waiting for us?",
-   "Warm food, empty seats, and letters stuck outside. Let us get this little bell working.",
-   "Its reply wire is loose. The final rhythm lock covers the fixing point. Opening it will let us reconnect the homes.",
-   "The public bell has the same problem: it cannot hear a reply. We can repair this smaller route for the families here.",
-   "Then their deliveries and garden water can move again. Use the last phrase, and I will hold the lamp steady."
+   "These small bells connect the nearby homes. Iris, check the spare place, and Pip, look at the message box. Mind that hot pot.",
+   "The box can call, but nobody hears its answer. Are all those families waiting for us? What if I make it worse?",
+   "Warm food, empty seats, and letters stuck outside. I could guard the soup while you check the bell. Extremely carefully. With a spoon.",
+   "They need a repair, Pip. This reply wire’s loose, and the final rhythm lock guards it. Opening that lock lets us reconnect the homes.",
+   "Soup after the repair, Mira. The public bell can’t hear replies either, but we can fix this smaller route for the families here.",
+   "I’m on lamp duty, then. Fix the wire, get their deliveries and garden water moving, and only then investigate the soup. Understood."
   ]
  },
  "workshop-final": {
@@ -216,12 +216,12 @@ const arrivals={
    }
   ],
   "lines": [
-   "Keep the circle clear. Iris, check the practice tools. Pip, try the low control. People learned to repair machines in this room.",
-   "The lever reaches my stool now! Could I help repair the controls? I would like a lesson without sparks.",
-   "Someone lowered the handle so Pip could use it. This room gives small people a real job. I like that.",
-   "The machine needs a working reply connection. The last lock guards that part. Open it, and we can reconnect the listening control.",
-   "Then children can make music here again, and new repairers can learn to help the other routes.",
-   "A working schoolroom means more people who know what to do. That sounds much better than making Iris fix everything."
+   "Keep the circle clear. Iris, check the practice tools, and Pip, try the low control. People learned to repair machines here.",
+   "The lever reaches my stool! Could I help fix the controls? I’m excited, but I’d really like a lesson without sparks.",
+   "Someone lowered that handle so Pip could help. I love this room! If I take the biggest chair, does that make me head teacher?",
+   "We’ll check it before touching anything, Pip. The reply connection’s loose. Open the last lock, and we can fix the listening control.",
+   "You can help without claiming a throne, Mira. Then children can make music here, and new repairers can learn to help other routes.",
+   "Fine, I’ll share the important chairs. A working schoolroom means more people who know what to do, instead of Iris fixing everything."
   ]
  },
  "canal-final": {
@@ -240,12 +240,12 @@ const arrivals={
    }
   ],
   "lines": [
-   "Watch the open edge. Iris, check the receiving dish. Pip, look at the lamps. We have reached the public bell controls.",
-   "That small lamp is trying to answer. Why can the bell not hear it? Please stay close while I look at the wire.",
-   "All those waiting boats depend on this place. Iris, can you show us the broken part?",
-   "Here: the bell’s return wire has come loose. Calls can go out, but replies cannot get back. The bell keeps waiting.",
-   "The last lock guards the fixing point. Use our final phrase, and we can fasten the wire safely.",
-   "Then the bell can hear the islands again. Let us finish this before another delivery has to turn back."
+   "Watch the open edge. Iris, check the receiving dish, and Pip, look at the lamps. We’ve reached the public bell controls.",
+   "That little lamp’s trying to answer. Why can’t the bell hear it? I feel awful for it. And I’m still worried about this edge.",
+   "All those boats depend on this room. Also, I can see my whole street from here! Iris, can you show me the broken part?",
+   "It isn’t ignoring the lamp, Pip. The bell’s return wire has come loose. Calls go out, but replies can’t get back, so it keeps waiting.",
+   "Eyes on the controls, Mira. The last lock guards the fixing point. Use our final phrase, and we can fasten that wire safely.",
+   "Right, fix first, sightseeing later. Then the bell can hear the islands again, and another delivery won’t have to turn back."
   ]
  },
  "garden-alcove": {
@@ -264,12 +264,12 @@ const arrivals={
    }
   ],
   "lines": [
-   "Step carefully. Iris, check the little instrument. Pip, look at the flower stone. Someone has cleared the leaves from this corner.",
-   "The flower stone has one shiny petal. Has somebody polished it? It is much brighter than the others.",
-   "The roots bend around that flower stone. Somebody kept it clear after people stopped using this path.",
-   "The stone petal has smooth edges. Someone has touched it many times. The leaves around it have been cleared.",
-   "Let us look closely before we leave. Someone still visits this corner. There may be a reason it has stayed clear.",
-   "An old garden can tell us who has been here. I am glad we looked closely instead of walking past that flower."
+   "Step carefully. Iris, check the little instrument, and Pip, look at the flower stone. Someone’s cleared the leaves from this corner.",
+   "That stone flower has one shiny petal. Has somebody polished it? I know it’s silly, but it feels like it’s watching me.",
+   "The roots bend around that flower stone. Someone kept it clear! I wonder if we could grow a flower big enough to sit in.",
+   "It’s polished stone, Pip. The petal’s smooth because someone’s touched it often, and the cleared leaves show they’ve been here recently.",
+   "One puzzle at a time, Mira. Let’s look closely before we leave. Someone still visits this corner, and we should find out why.",
+   "Shimmy shimmy! We found a clue people walk right past. My giant flower can wait. I want to know who’s been here."
   ]
  },
  "workshop-alcove": {
@@ -288,12 +288,12 @@ const arrivals={
    }
   ],
   "lines": [
-   "Stay off the high rail. Iris, check the bird marks. Pip, look at that perch. These old wing wraps are still clean.",
-   "My birds used to rest here. Someone has brushed their perch recently. Was it a friendly someone?",
-   "The marks come in pairs, with spaces between them. Even a tiny bird needs room to land.",
-   "Bird feet made those smooth marks. The perch has been used often, though our map no longer shows this stop.",
-   "Someone still cares for these birds. Look around carefully before we move on. We may learn where they went next.",
-   "We found an old bird stop by following its feet. Next time I shall ask the smallest traveler for directions first."
+   "Stay off the high rail. Iris, check the bird marks, and Pip, look at that perch. These old wing wraps are still clean.",
+   "My birds used to rest here, and somebody’s brushed their perch. Was it a friendly somebody? This attic gives me the shivers.",
+   "The marks come in pairs, with space to land. A bird bedroom! Those little wraps look cozy. Could we stop for a very tiny nap?",
+   "There’s a cleaning brush beside it, Pip. Bird feet made those smooth marks. They’ve used this stop even though our map’s forgotten it.",
+   "After we find our way onward, Mira. Someone still cares for these birds. Look around carefully and see where they went next.",
+   "All right, no nap. We found a bird stop by following tiny footprints. Next time I’m asking the smallest traveler for directions first."
   ]
  },
  "garden-secret-final": {
@@ -312,12 +312,12 @@ const arrivals={
    }
   ],
   "lines": [
-   "Two controls share this little window. Iris, check the chair. Pip, listen for a call from the other island.",
-   "I heard two notes! Is someone waiting over there? I hope they know we are friendly.",
-   "Iris, you kept this place ready for your friend. Can this old window reach her while the public bell is quiet?",
-   "Yes. It has its own reply wire. The last lock protects it. I keep her cup here because I want her to visit.",
-   "Then we repair this small route and ask if she is safe. We will wait for her answer.",
-   "A real answer from a real friend. That is worth using the notes we saved."
+   "Two controls share this window. Iris, check the chair, and Pip, listen for a call from the other island.",
+   "I heard two notes! Is someone waiting over there? I hope they’re friendly. Iris, how can you stand so close without worrying?",
+   "Iris, you kept this place ready for your friend. I nearly started arranging the cups. Can this window reach her while the bell’s quiet?",
+   "It’s a call, Pip. This window has its own reply wire, behind the last lock. I kept her cup ready because I want her to visit.",
+   "We’ll sort the cups afterward, Mira. First we fix this small route, ask if she’s safe, and give her time to answer.",
+   "You’re right. A real answer from Iris’s friend matters more than my fancy table setting. Let’s use those notes we saved."
   ]
  },
  "workshop-secret-final": {
@@ -336,12 +336,12 @@ const arrivals={
    }
   ],
   "lines": [
-   "Small feet polished this step. Iris, check the screen. Pip, listen at the little horn. Someone built it for a bird.",
-   "My birds use that horn! I thought they only copied our calls. What have they been trying to tell us?",
-   "They need a way to send their own reply. Someone made this control low enough for their feet.",
-   "Their reply wire is loose behind the last lock. We can reconnect it. The bell’s larger return wire still needs repair.",
-   "Their old perches brought our letter home. Let us finish this route so the birds can answer safely.",
-   "Then open the lock. Our smallest helpers deserve a turn to speak."
+   "Small feet polished that step. Iris, check the screen, and Pip, listen at the little horn. Someone built it for a bird.",
+   "My birds use that horn! What have they been trying to tell us? Oh no. What if they’re angry because I didn’t listen?",
+   "They need a way to send their own reply. Someone made a control for tiny feet! Now I want to see a bird press every button.",
+   "A different tune doesn’t mean anger, Pip. Their reply wire’s loose behind the last lock. We can fix it, though the main bell still needs work.",
+   "One working control is enough, Mira. Their old perches brought our letter home, so let’s finish this route and let the birds answer.",
+   "Fair. We’ll open the lock, give them room, and actually listen. Our smallest helpers deserve a turn to speak for themselves."
   ]
  },
  "ending-home": {
@@ -360,12 +360,12 @@ const arrivals={
    }
   ],
   "lines": [
-   "The final lock is open. I have fastened the homes’ loose reply wire. Hear their bells answer?",
-   "My bird brought the letter back along old perches. Its warm clip heated the wax. Was it helping us all along?",
-   "So the letter did not fly home alone. A tiny mail bird found a route our map had lost.",
-   "The main bell went quiet because its return connection broke. This repaired local wire lets the homes send replies again.",
-   "These families can receive deliveries and water their gardens. Other routes still need repairs, but this neighborhood is working.",
-   "A clear answer and a useful repair. Now my stomach is ready for supper. Can we share that loaf?"
+   "The final lock’s open, and I’ve fastened the homes’ loose reply wire. Can you hear their bells answering?",
+   "My bird brought the letter home along old perches. Its warm clip heated the wax. Was it helping us all along? I’m so proud!",
+   "So the letter didn’t fly home alone. A tiny mail bird found a route our map had lost! And there’s bread. I love a useful discovery.",
+   "We can thank it after the test, Pip. The main bell’s return connection broke. This fixed local wire lets the homes send replies again.",
+   "It’s supper time now, Mira. These families have deliveries and garden water again. Other routes still need repairs, but this area works.",
+   "Permission to eat! My stomach’s ready for supper, and we’ve got a mystery solved and a useful repair done. Can we share that loaf?"
   ]
  },
  "ending-school": {
@@ -384,12 +384,12 @@ const arrivals={
    }
   ],
   "lines": [
-   "I have reconnected the classroom’s reply wire. The listening machine can hear the learners again.",
-   "Our bird returned Nell’s letter on the old perches. Its warm clip heated the wax. Does it know how helpful that was?",
-   "We followed a bird’s shortcut and opened this room. Next time I shall watch the smallest traveler first.",
-   "The public bell stopped when its return connection broke. We repaired this local control, so people can practice and learn repairs.",
-   "Children can make music here again. New repairers can learn to help the other routes. The whole network still needs work.",
-   "Then let us leave the next learner a seat. I can teach one lesson: ask questions before pressing the shiny button."
+   "I’ve reconnected the classroom’s reply wire, and the listening machine can hear its learners again.",
+   "Our bird returned Nell’s letter on old perches. Its warm clip heated the wax. Does it know how helpful that was? I might cry.",
+   "We followed a bird’s shortcut and opened a whole classroom! I could give a speech. Or try that incredibly shiny button.",
+   "Tears are optional, Pip. The public bell’s return connection broke. We fixed this local control so people can practice and learn repairs.",
+   "Step away from the button, Mira. Children can make music here and learn to help the other routes. The wider network still needs work.",
+   "Fine, my first lesson is “ask before pressing things.” Let’s leave the next learner a seat. I think they’re going to like it here."
   ]
  },
  "ending-public": {
@@ -408,12 +408,12 @@ const arrivals={
    }
   ],
   "lines": [
-   "The lock is open, and the bell’s loose return wire is fastened. Watch the lamps for an answer.",
-   "My bird returned our letter using the old perches. Its warm clip heated the wax. Can we thank it with a new perch?",
-   "We followed its clues all the way here. I shall try listening to small birds before making large speeches.",
-   "The bell can hear replies again. Its broken wire had blocked them. The whole town was waiting for messages that could not arrive.",
-   "The routes are ready. Boats can bring supplies, gardens can get water, and delivery birds know where to land.",
-   "Then let the evening bell ring! People have been waiting for help. Now they can answer us."
+   "The lock’s open, and the bell’s loose return wire is fastened. Watch those lamps for an answer.",
+   "My bird returned our letter along old perches. Its warm clip heated the wax. Can we get it a new perch? I want everyone to cheer!",
+   "We followed its clues all the way here! I’ve got a victory speech ready. It’s mostly about birds and how brilliant we all look.",
+   "The lights confirm it, Pip. The bell can hear replies again. Its broken wire had blocked them while the whole town waited.",
+   "Let the bell do the announcing, Mira. Boats can bring supplies, gardens can get water, and delivery birds know where to land.",
+   "Shimmy shimmy! That’s better than my speech. People have been waiting for help, and now the evening bell can hear them answer!"
   ]
  },
  "ending-secret-quiet": {
@@ -432,12 +432,12 @@ const arrivals={
    }
   ],
   "lines": [
-   "The window’s reply wire is connected. Iris, your friend can hear your call now. Let us listen.",
-   "My bird found the old route that brought the letter home. Its warm clip heated the wax. Could it carry Iris’s letters too?",
-   "The public bell lost its return connection. We found another way for two friends to hear each other.",
-   "That is her voice. She is safe on her island. She says she would like to visit when the routes are ready.",
-   "This listening window works again. The town bell still needs repair, but Iris no longer has to wonder about her friend.",
-   "Iris kept the chair ready, and now her friend has answered. I will help set out the cups. A visit needs a proper welcome."
+   "The window’s reply wire is connected. Iris, call your friend, and let’s listen for her answer.",
+   "My bird returned the letter by an old route, and its warm clip heated the wax. Could it carry Iris’s letters too? I’d feel better.",
+   "The public bell lost its return connection, but we found another way for two friends to talk. I’ll get the cups! Where are the cups?",
+   "There’s her voice, Pip. She’s safe on her island, and she’d like to visit when the routes are ready. That’s the answer I needed.",
+   "Let Iris finish listening, Mira. This little window works again. The town bell still needs repair, but her friend can answer now.",
+   "Right, no rattling cups during an important call. Iris kept that chair ready, and now they can plan a real visit. I’ll help welcome her."
   ]
  },
  "ending-secret-birds": {
@@ -456,12 +456,12 @@ const arrivals={
    }
   ],
   "lines": [
-   "The little horn’s reply wire is fixed. The birds can send their own calls again. Quiet, everyone; this is their turn.",
-   "One bird brought our letter home by the old perches. Its warm carrying clip heated the wax. Can I thank it now?",
-   "We thought the birds needed directions. They were trying to show us a working path.",
-   "The public bell’s broken return connection blocked their replies. This repaired small route lets their signals get through.",
-   "The birds can ask for help and confirm safe landings. The main bell still needs work, but this route now has an answer.",
-   "And Pip finally gets to hear his birds’ own calls. I expect very strong opinions about perch height."
+   "The little horn’s reply wire is fixed, and the birds can send their own calls again. Quiet, everyone. It’s their turn.",
+   "One bird returned our letter on the old perches. Its warm clip heated the wax. Can I thank it now? I’m bursting to hear its tune!",
+   "We thought the birds needed directions, but they were showing us a path. That horn’s tiny! Do you think I could play it with one finger?",
+   "Listen to the signal, Pip. The public bell’s broken return connection blocked their replies. This repaired small route lets them through.",
+   "Leave their horn alone, Mira. The birds can ask for help and confirm safe landings. The main bell still needs work, but this route works.",
+   "Shimmy shimmy! Bird solo! Pip finally gets to hear their own calls, and I’m listening. I expect strong opinions about perch height."
   ]
  },
  "dead-brambles": {
@@ -480,12 +480,12 @@ const arrivals={
    }
   ],
   "lines": [
-   "Stop before the roots. Iris, check the wall. Pip, wait by the bench. We need to see whether this path is safe.",
-   "Those roots hold up the stones! Shall we stay beside this solid bench? Please tell the roots I like their work.",
-   "The garden has grown right across our path. I admire its effort, but I cannot see a way through.",
-   "The roots hold the wall together. Pulling them out would loosen the stones. This path is blocked.",
-   "We can go back safely. Revisit our previous choice to get the door’s notes back. The tiles still in our bag are safe.",
-   "Then we return to Iris’s porch and try the listening gate. We have learned where this path ends."
+   "Stop before the roots. Iris, check the wall, and Pip, wait by the bench. We need to know if this path’s safe.",
+   "Those roots hold up the stones! Can we stay beside this solid bench? I’m telling the roots I like their work. Just in case.",
+   "The garden’s grown right across our path. That’s impressive. Could we climb it? I’ve always wanted a tree-house entrance.",
+   "The roots hold the wall together, Pip. They aren’t chasing us. Pulling them out would loosen the stones, so this path stays blocked.",
+   "No climbing, Mira. Revisit our previous choice to get this door’s notes back. The tiles still in our bag are safe.",
+   "Okay, no tree-house entrance today. We’ll go back to Iris’s porch and try the listening gate. At least we know where this path ends."
   ]
  },
  "dead-aviary": {
@@ -504,12 +504,12 @@ const arrivals={
    }
   ],
   "lines": [
-   "Keep away from the loose cable. Iris, check the nest. Pip, look at the little bird. This old room has no exit ahead.",
-   "A tired bird has found a sunny seat. Would it like this clean wing wrap? It can have the warmest spot.",
-   "Someone made a resting room for birds. We chose a dead end, but we still found someone who needed care.",
-   "The wall behind the nest is solid. A repair here would not make a doorway. We must return the way we came.",
-   "Revisit the previous choice to recover the notes this door used. Our other notes are still safe in the bag.",
-   "We will leave the bird comfortable and try Pip’s running gate. I can save my clever shortcuts for a real path."
+   "Keep away from the loose cable. Iris, check the nest, and Pip, look at the little bird. There’s no exit ahead.",
+   "That tired bird’s found a sunny seat. Would it like this clean wing wrap? I’m worried about leaving it here by itself.",
+   "Someone made a bird resting room. We found a dead end, but also a patient! Should we build it a tiny bed? Maybe a pillow?",
+   "The clean nest already keeps it safe, Pip. The wall behind it is solid, and repairing it wouldn’t make a door. We need to go back.",
+   "The nest is enough, Mira. Revisit the previous choice to recover this door’s notes. Our other tiles are still safe in the bag.",
+   "One comfortable bird, no extra furniture. Got it. Let’s try Pip’s running gate, and I’ll save my clever shortcuts for an actual path."
   ]
  },
  "dead-ferry": {
@@ -528,12 +528,12 @@ const arrivals={
    }
   ],
   "lines": [
-   "Stay behind the rail. Iris, check the lamp. Pip, look at the rope from here. Oren’s tea tray is still ready.",
-   "The rope is repaired, but where is the boat? I would like to stay on dry stone until it gets here.",
-   "A good rope cannot carry us across the canal by itself. Even I need a boat for this plan.",
-   "Our lamp sends a call, but no landing answers it. A crew cannot bring the ferry here safely yet.",
-   "We must turn back. Revisit our previous choice to recover the door’s notes, then follow the delivery gate.",
-   "Oren is still waiting for supplies too. Let us find the route that can actually reach the bell controls."
+   "Stay behind the rail. Iris, check the lamp, and Pip, look at the rope from here. Oren’s tea tray is still ready.",
+   "The rope’s repaired, but where’s the boat? I’d really like to stay on dry stone until it arrives. Please tell me we’re not swimming.",
+   "A good rope won’t carry us across the canal by itself. What if I make a very brave hop? A heroic, extremely long hop?",
+   "No swimming, Pip. Our lamp sends a call, but no landing answers it, so a crew can’t bring the ferry here safely yet.",
+   "No heroic hopping either, Mira. Revisit the previous choice to get the door’s notes back, then follow the delivery gate.",
+   "Dry stone it is. Oren’s supplies are still waiting too, so let’s find the route that actually reaches the bell controls."
   ]
  },
  "dead-echo": {
@@ -552,12 +552,12 @@ const arrivals={
    }
   ],
   "lines": [
-   "Stay on this side of the bowl. Iris, check the channel. Pip, listen to the sound. Oren’s map ends here.",
-   "Is that my own call coming back? I nearly said hello to it. I am glad I did not ask it for directions.",
-   "An echo has copied us perfectly. Sadly, it cannot tell us anything new about the broken bell.",
-   "The water channel ends at this wall. Our sound bounces back from it. There is no person or machine sending a reply.",
-   "This is a dead end. Revisit the previous choice to recover the notes, then take the path toward the town bell.",
-   "Next time we shall listen for an answer from someone else. We can learn from a wrong turn and still get home."
+   "Stay on this side of the bowl. Iris, check the channel, and Pip, listen to that sound. Oren’s map ends here.",
+   "Is that my own call coming back? I nearly said hello! I don’t like something copying us when we can’t see who’s doing it.",
+   "That echo’s copying us perfectly. I could make it sing a duet! Although I suppose it can’t tell us much about the broken bell.",
+   "It’s sound bouncing off that wall, Pip. There’s no other person or machine replying. The water channel ends here.",
+   "Save the duet, Mira. Revisit the previous choice to recover the notes, then take the path toward the town bell.",
+   "All right, we’ll listen for somebody else’s answer. We can learn from a wrong turn and still get home. My duet can wait."
   ]
  }
 };
