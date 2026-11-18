@@ -117,6 +117,7 @@ class RiskUI:
         assert value['phase']=='room' and value['runStatus']=='failed' and value['failure']['reason']==reason,value
         assert not value['canAttempt'] and not value['canCommit'] and not value['canRevisit']
         self.page.locator('#outcome').wait_for(state='visible')
+        self.page.wait_for_function('[...document.images].every(image=>image.complete&&image.naturalWidth>0)')
         assert 'start' in self.page.locator('#revisit').inner_text().lower()
         close=self.page.locator('#outcome-close')
         assert 'look around' in (close.get_attribute('aria-label') or close.inner_text()).lower()
