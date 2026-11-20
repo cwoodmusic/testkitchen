@@ -76,7 +76,8 @@ def ready(page, expected=None):
 def open_page(browser, url, width=1100, expected=None):
     context = browser.new_context(viewport={'width': width, 'height': 820},
                                   is_mobile=width < 500, has_touch=width < 500,
-                                  reduced_motion='reduce', accept_downloads=True)
+                                  reduced_motion='reduce', accept_downloads=True,
+                                  ignore_https_errors=urlparse(url).scheme=='https')
     context.add_init_script('''for(const[key,value]of Object.entries(''' + json.dumps(PROTECTED) + '''))
         if(localStorage.getItem(key)===null)localStorage.setItem(key,value);
       window.__roomReviewWrites=[];
@@ -298,7 +299,8 @@ def settings_link(browser, url, expected):
     else:
         game_path = parsed.path.rsplit('/', 1)[0] + '/game.html'
     game_url = parsed._replace(path=game_path, query='', fragment='').geturl()
-    context = browser.new_context(viewport={'width': 1100, 'height': 820}, reduced_motion='reduce')
+    context = browser.new_context(viewport={'width': 1100, 'height': 820}, reduced_motion='reduce',
+                                  ignore_https_errors=urlparse(game_url).scheme=='https')
     page = context.new_page(); page.set_default_timeout(20000)
     errors=[]; page.on('pageerror',lambda error:errors.append(str(error)))
     page.goto(game_url,wait_until='networkidle')
