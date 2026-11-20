@@ -1,0 +1,42 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
+<meta name="theme-color" content="#242329">
+<meta name="description" content="Review every room, conversation and story scene in The Quiet Bell, then export your change notes.">
+<title>Room review · The Quiet Bell</title>
+<link rel="stylesheet" href="room-review.css">
+</head>
+<body>
+<header class="review-header">
+  <div><a id="review-return" class="back-link" href="./">← Back to game</a><h1>The Quiet Bell <span>Room review</span></h1></div>
+  <div class="file-actions"><button id="review-import" type="button">Import comments</button><button id="review-export" class="primary" type="button">Export comments ↓</button><input id="review-import-input" type="file" accept=".json,application/json" hidden></div>
+  <p class="intro">Review the published rooms, tick them off, and tell me what you’d change. Export your comments when you’re ready to send them back.</p>
+  <p class="spoiler-note">This review shows every room, including secrets and endings.</p>
+  <p id="review-status" class="save-status" role="status" aria-live="polite">Loading room review…</p>
+</header>
+<div class="review-layout" id="review-app" hidden>
+  <aside class="room-sidebar" aria-label="Choose a room">
+    <details id="review-room-picker" open><summary>Rooms <span id="review-progress"></span></summary>
+      <div class="room-picker-body"><label class="search-label" for="review-search">Find a room</label><input id="review-search" type="search" placeholder="Search room names…" autocomplete="off">
+        <div class="filters" role="group" aria-label="Filter rooms"><button type="button" data-filter="all" aria-pressed="true">All</button><button type="button" data-filter="unreviewed" aria-pressed="false">To review</button><button type="button" data-filter="comments" aria-pressed="false">With notes</button></div>
+        <p id="review-filter-empty" class="empty-state" hidden>No rooms match this filter.</p><nav id="review-room-list" aria-label="All rooms"></nav>
+      </div>
+    </details>
+  </aside>
+  <main class="review-main" id="review-main">
+    <div class="room-heading"><div><p class="eyebrow" id="review-room-position"></p><h2 id="review-room-title" tabindex="-1"></h2></div><nav class="room-navigation" aria-label="Step through rooms"><button id="review-previous" type="button">← Previous</button><button id="review-next" type="button">Next →</button></nav></div>
+    <div class="room-overview">
+      <figure class="room-preview"><div class="room-art-stage" id="review-preview"></div><figcaption id="review-preview-caption">Room artwork and starting positions.</figcaption></figure>
+      <section class="room-notes" aria-labelledby="review-notes-title"><div class="notes-heading"><h3 id="review-notes-title">Changes for this room</h3><label class="reviewed-check"><input id="review-reviewed" type="checkbox"> Reviewed</label></div><label class="sr-only" for="review-room-comment">Changes for this room</label><textarea id="review-room-comment" rows="7" placeholder="What should change here? Dialogue, story, artwork, layout…"></textarea><p class="notes-help">These are requests for changes. The game’s dialogue stays as shown. You can also add a note beside any line below.</p><a class="read-link" href="#review-transcript">Read this room’s text ↓</a></section>
+    </div>
+    <nav id="review-section-links" class="section-links" aria-label="Text in this room"></nav>
+    <div id="review-transcript" aria-label="Room dialogue and text"></div>
+    <footer class="review-footer"><p>Your comments and checkmarks save on this device. Export a file to send them back.</p><button id="review-next-bottom" type="button">Next room →</button><a href="#review-notes-title">Back to room notes ↑</a></footer>
+  </main>
+</div>
+<noscript><p class="fatal-message">This review tool needs JavaScript enabled.</p></noscript>
+<script type="module" src="room-review-app.mjs"></script>
+</body>
+</html>

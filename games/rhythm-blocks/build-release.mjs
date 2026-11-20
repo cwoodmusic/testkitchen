@@ -29,6 +29,7 @@ export const RUNTIME_FILES=Object.freeze([
   ].map(id=>`assets/rooms/${id}.webp`),
   ...['garden-fork','workshop-fork','canal-fork','garden-alcove','workshop-alcove','canal-final'].map(id=>`assets/rooms/${id}-layout.webp`),
   'assets/garden-porch.webp','assets/workshop-porch.webp','assets/canal-porch.webp',
+  'room-review.html','room-review-app.mjs','room-review.css','room-review.mjs',
   'game.html','app.mjs','audio.mjs','cinematic-audio.mjs','engine.mjs','journey.mjs','journey-view.mjs','lore.mjs',
   'mira.mjs','notation.mjs','opening.mjs','room.mjs','room-view.mjs','story.mjs','style.css',
   'assets/mira-walk.webp','assets/parcel-depot.webp','NOTATION-LICENSE.txt','NOTATION-SOURCES.md',
@@ -43,24 +44,25 @@ export function releaseVersion(root=GAME_ROOT){
   return `r-${hash.digest('hex').slice(0,16)}`;
 }
 
-function launcherPage(source,version){
+function launcherPage(source,version,view='game'){
   if(/<\/script/i.test(source))throw new Error('Launcher source cannot contain a script end tag.');
   const inline=source.replace(/^export /gm,'');
+  const review=view==='room-review',title=review?'Room review':'The Quiet Bell',description=review?'Review Quiet Bell rooms, dialogue and requested changes.':'The Quiet Bell, a musical dungeon puzzle.';
   return `<!doctype html>
 <html lang="en">
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
 <meta name="theme-color" content="#292132">
-<meta name="description" content="The Quiet Bell, a musical dungeon puzzle.">
-<title>The Quiet Bell · Coda Arcade</title>
+<meta name="description" content="${description}">
+<title>${title} · Coda Arcade</title>
 <style>html,body{margin:0;min-height:100%;background:#292132;color:#f4e8d0;font:16px/1.5 system-ui,sans-serif}main{min-height:100dvh;display:grid;place-content:center;gap:16px;padding:24px;box-sizing:border-box}h1,p{margin:0}p{max-width:32em}button{justify-self:start;min-height:44px;padding:10px 16px;font:inherit;background:#9bd5bb;color:#182d27;border:0}[hidden]{display:none!important}</style>
 </head>
 <body>
-<main><h1>The Quiet Bell</h1><p id="quiet-bell-launch-status" role="status">Opening your journey…</p><button type="button" id="quiet-bell-launch-retry" hidden>Try again</button><noscript>This game needs JavaScript enabled.</noscript></main>
+<main><h1>${title}</h1><p id="quiet-bell-launch-status" role="status">${review?'Opening room review…':'Opening your journey…'}</p><button type="button" id="quiet-bell-launch-retry" hidden>Try again</button><noscript>This ${review?'tool':'game'} needs JavaScript enabled.</noscript></main>
 <script type="module">
 ${inline}
-void launchQuietBell({fallbackVersion:${JSON.stringify(version)}});
+void launchQuietBell({fallbackVersion:${JSON.stringify(version)}${review?',view:"room-review"':''}});
 </script>
 </body>
 </html>
@@ -70,17 +72,19 @@ void launchQuietBell({fallbackVersion:${JSON.stringify(version)}});
 export function expectedRelease(root=GAME_ROOT){
   const version=releaseVersion(root),files=new Map();
   for(const name of RUNTIME_FILES){
-    if(name==='game.html'){
+    if(name==='game.html'||name==='room-review.html'){
       let html=read(root,name).toString('utf8');
       if(!/<head(?:\s[^>]*)?>/i.test(html)||/<base[\s>]/i.test(html))throw new Error('Game source needs a head and no base element.');
       html=html.replace(/<head(?:\s[^>]*)?>/i,head=>`${head}\n<meta name="quiet-bell-release" content="${version}">`);
       // The runtime base has two extra directories; the arcade keeps its package prefix.
       html=html.replaceAll('href="../../world-preview.html','href="../../../../world-preview.html');
-      files.set('index.html',Buffer.from(html));
+      if(name==='game.html')html=html.replaceAll('href="review/"','href="../../review/"');
+      files.set(name==='game.html'?'index.html':name,Buffer.from(html));
     }else files.set(name,read(root,name));
   }
   const manifest=JSON.stringify({schemaVersion:1,version},null,2)+'\n';
-  return {version,files,manifest,launcher:launcherPage(read(root,'launcher.mjs').toString('utf8'),version)};
+  const launcherSource=read(root,'launcher.mjs').toString('utf8');
+  return {version,files,manifest,launcher:launcherPage(launcherSource,version),reviewLauncher:launcherPage(launcherSource,version,'room-review')};
 }
 
 function packageFiles(root){
@@ -98,7 +102,7 @@ export function checkRelease(root=GAME_ROOT){
     if(!existsSync(path)||!same(readFileSync(path),bytes))problems.push(`Stale or missing release file: ${relative(root,path)}`);
   }
   for(const name of packageFiles(releaseRoot))if(!expected.files.has(name))problems.push(`Unexpected release file: ${name}`);
-  for(const [name,bytes]of [['release.json',expected.manifest],['index.html',expected.launcher]]){
+  for(const [name,bytes]of [['release.json',expected.manifest],['index.html',expected.launcher],['review/index.html',expected.reviewLauncher]]){
     const path=join(root,name);
     if(!existsSync(path)||!same(readFileSync(path),bytes))problems.push(`Stale or missing ${name}`);
   }
@@ -113,6 +117,8 @@ export function buildRelease(root=GAME_ROOT){
   }
   for(const [name,bytes]of expected.files){const target=join(releaseRoot,name);mkdirSync(dirname(target),{recursive:true});writeFileSync(target,bytes);}
   writeFileSync(join(root,'index.html'),expected.launcher);
+  mkdirSync(join(root,'review'),{recursive:true});
+  writeFileSync(join(root,'review','index.html'),expected.reviewLauncher);
   writeFileSync(join(root,'release.json'),expected.manifest);
   return {version:expected.version,files:expected.files.size};
 }

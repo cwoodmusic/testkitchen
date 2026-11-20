@@ -28,6 +28,9 @@ test('the checked-in launcher, manifest and complete immutable package match cur
   const html=expected.files.get('index.html').toString();
   assert(html.includes(`content="${expected.version}"`));
   assert(html.includes('href="../../../../world-preview.html"'));
+  assert(html.includes('id="room-review" href="../../review/" target="_blank" rel="noopener"'));
+  assert(expected.files.get('room-review.html').toString().includes(`content="${expected.version}"`));
+  assert(expected.reviewLauncher.includes('view:"room-review"'));
   for(const name of RUNTIME_FILES.filter(name=>name!=='game.html'))assert(expected.files.has(name));
 });
 
@@ -67,6 +70,31 @@ test('a cached entry checks a fresh manifest then loads all runtime references u
   assert.equal(fixture.document.opened,1);assert.equal(fixture.document.closed,1);
   assert(fixture.document.writes[0].includes(`<base href="https://cwoodmusic.github.io/testkitchen/games/rhythm-blocks/releases/${NEW}/">`));
   assert.equal(fixture.location.href,'https://cwoodmusic.github.io/testkitchen/games/rhythm-blocks/?v=old-bookmark');
+});
+
+test('the stable review address checks the parent manifest and opens its matching immutable tool',async()=>{
+  const fixture=harness(async url=>url.pathname.endsWith('release.json')?new Response(JSON.stringify({schemaVersion:1,version:NEW})):new Response(page(NEW)));
+  fixture.location.href='https://cwoodmusic.github.io/testkitchen/games/rhythm-blocks/review/?v=old-bookmark';
+  assert.deepEqual(await launchQuietBell({...fixture.options,view:'room-review'}),{version:NEW,usedFallback:false});
+  assert.equal(fixture.calls[0].url.pathname,'/testkitchen/games/rhythm-blocks/release.json');
+  assert.equal(fixture.calls[0].options.cache,'no-store');
+  assert.equal(fixture.calls[1].url.pathname,`/testkitchen/games/rhythm-blocks/releases/${NEW}/room-review.html`);
+  assert(fixture.document.writes[0].includes(`<base href="https://cwoodmusic.github.io/testkitchen/games/rhythm-blocks/releases/${NEW}/">`));
+  assert.equal(fixture.location.href,'https://cwoodmusic.github.io/testkitchen/games/rhythm-blocks/review/?v=old-bookmark');
+});
+
+test('review entry selection is fixed data and a failed load keeps saved comments intact',async()=>{
+  for(const view of ['../room-review.html','https://untrusted.invalid/',null,{},'game\n']){
+    const fixture=harness(async()=>new Response(page(OLD)));
+    await assert.rejects(()=>launchQuietBell({...fixture.options,view}),/Invalid bundled view/);
+    assert.equal(fixture.calls.length,0);
+  }
+  const fixture=harness(async()=>new Response('missing',{status:404}));
+  fixture.location.href='https://cwoodmusic.github.io/testkitchen/games/rhythm-blocks/review/';
+  assert.deepEqual(await launchQuietBell({...fixture.options,view:'room-review'}),{version:null,usedFallback:true});
+  assert.match(fixture.document.status.textContent,/saved comments are still on this device/);
+  assert.equal(fixture.document.writes.length,0);
+  assert.equal(fixture.document.retry.hidden,false);
 });
 
 test('manifest text cannot choose an external address, traversal path or unsupported catalog',async()=>{

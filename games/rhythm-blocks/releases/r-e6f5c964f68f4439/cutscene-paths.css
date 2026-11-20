@@ -1,0 +1,8 @@
+.cutscene-path-overlay{position:absolute;inset:0;width:100%;height:100%;z-index:1800;overflow:visible;pointer-events:none;touch-action:none;--cutscene-route-color:#d7a4ff}
+.cutscene-path-overlay .cutscene-route-line{pointer-events:stroke;cursor:crosshair;stroke-linecap:round;stroke-linejoin:round;filter:drop-shadow(0 1px 1px #1b1425)}
+.cutscene-path-overlay .cutscene-route-handle{fill:#2b2034;stroke:var(--cutscene-route-color);stroke-width:3;vector-effect:non-scaling-stroke;pointer-events:all;cursor:grab;touch-action:none}
+.cutscene-path-overlay .cutscene-route-handle[data-path-endpoint="true"]{fill:var(--cutscene-route-color);stroke:#2b2034}
+.cutscene-path-overlay .cutscene-route-handle:hover,.cutscene-path-overlay .cutscene-route-handle:focus{fill:#fff0cc;outline:none;stroke:#fff0cc}
+.cutscene-path-overlay .cutscene-route-start{fill:#2b2034;stroke:var(--cutscene-route-color);stroke-width:2;vector-effect:non-scaling-stroke;pointer-events:none}
+.cutscene-path-overlay .cutscene-route-label{font-family:ui-monospace,monospace;font-weight:700;fill:var(--cutscene-route-color);stroke:#20172b;stroke-width:3px;paint-order:stroke;pointer-events:none;user-select:none}
+.cutscene-path-overlay.is-dragging .cutscene-route-handle{cursor:grabbing}

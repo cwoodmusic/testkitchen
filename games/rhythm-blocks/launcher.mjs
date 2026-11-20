@@ -3,10 +3,12 @@ export const validReleaseVersion=value=>typeof value==='string'&&value.length===
 
 export async function launchQuietBell({
   fallbackVersion,document=globalThis.document,location=globalThis.location,
-  fetch=globalThis.fetch,manifestTimeoutMs=2500,releaseTimeoutMs=5000,
+  fetch=globalThis.fetch,manifestTimeoutMs=2500,releaseTimeoutMs=5000,view='game',
 }={}){
   if(!validReleaseVersion(fallbackVersion))throw new TypeError('Invalid bundled release.');
-  const base=new URL('./',location.href);
+  if(!['game','room-review'].includes(view))throw new TypeError('Invalid bundled view.');
+  const base=new URL(view==='room-review'?'../':'./',location.href);
+  const entry=view==='room-review'?'room-review.html':'index.html';
   const directory=version=>new URL(`releases/${version}/`,base);
   const escapeAttribute=value=>value.replace(/&/g,'&amp;').replace(/"/g,'&quot;').replace(/</g,'&lt;');
   async function read(url,options,timeout,parse){
@@ -31,7 +33,7 @@ export async function launchQuietBell({
   for(const version of new Set([selectedVersion,fallbackVersion])){
     try{
       const releaseBase=directory(version);
-      const html=await read(new URL('index.html',releaseBase),{cache:'force-cache'},releaseTimeoutMs,response=>response.text());
+      const html=await read(new URL(entry,releaseBase),{cache:'force-cache'},releaseTimeoutMs,response=>response.text());
       const marker=`<meta name="quiet-bell-release" content="${version}">`;
       if(!html.includes(marker)||!/<head(?:\s[^>]*)?>/i.test(html)||/<base[\s>]/i.test(html))throw new Error('Invalid release page.');
       const page=html.replace(/<head(?:\s[^>]*)?>/i,head=>`${head}<base href="${escapeAttribute(releaseBase.href)}">`);
@@ -40,7 +42,7 @@ export async function launchQuietBell({
     }catch{}
   }
   const status=document.getElementById('quiet-bell-launch-status');
-  if(status)status.textContent='The game could not load. Check your connection and try again. Your saved progress is still on this device.';
+  if(status)status.textContent=view==='room-review'?'Room review could not load. Check your connection and try again. Your saved comments are still on this device.':'The game could not load. Check your connection and try again. Your saved progress is still on this device.';
   const retry=document.getElementById('quiet-bell-launch-retry');
   if(retry){retry.hidden=false;retry.addEventListener('click',()=>location.reload(),{once:true});}
   return {version:null,usedFallback:true};
