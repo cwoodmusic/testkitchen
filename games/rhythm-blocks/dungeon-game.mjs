@@ -1,6 +1,7 @@
 import {NOTE_KINDS} from './engine.mjs';
 import {createStoryGame} from './story.mjs';
 import {CHAPTER_ROOMS,CHAPTER_DOORS,CHAPTER_SOURCES,CHAPTER_PREVIEWS,CHAPTER_TERMINALS,getChapterDoor} from './chapter.mjs';
+import {hasRequiredProgress,isProgressRequirement} from './final-route.mjs';
 
 export {CHAPTER_ROOMS,CHAPTER_DOORS,CHAPTER_SOURCES,CHAPTER_PREVIEWS,CHAPTER_TERMINALS,getChapterDoor} from './chapter.mjs';
 export const DUNGEON_SAVE_VERSION=3;
@@ -68,13 +69,15 @@ function compileDefinition(definition,{terminalRooms}={}){
   if(!safeId(key)||!isRecord(door)||!safeId(door.id)||!safeId(door.canonicalId)||doorIds.has(door.id)||canonicalIds.has(door.canonicalId)||!safeId(door.from)||!safeId(door.to)||!Object.hasOwn(supplied.rooms,door.from)||![supplied.rooms,supplied.previews,supplied.terminals].some(map=>Object.hasOwn(map,door.to))||!recipe(door.recipe,32))throw TypeError('Invalid rhythm door.');
   for(const alias of new Set([key,door.id,door.canonicalId])){if(lookupOwners.has(alias)&&lookupOwners.get(alias)!==key)throw TypeError('Ambiguous rhythm door ID.');lookupOwners.set(alias,key);}
   if(door.revealAfter!==undefined&&(!safeId(door.revealAfter)||!Object.hasOwn(supplied.sources,door.revealAfter)))throw TypeError('A hidden door needs an authored reveal source.');
+  if(door.requiresProgress!==undefined&&!isProgressRequirement(door.requiresProgress))throw TypeError('A progress door needs unique authored outcome IDs.');
   doorIds.add(door.id);canonicalIds.add(door.canonicalId);
  }
  return freeze({...supplied,custom,noteKinds,kinds,initialInventory,startRoomId,stock,walkableTerminals,replayRisk});
 }
 
 /** Typed transactions preserve normal play; explicit developer actions stay opt-in. */
-export function createDungeonGame({saved=null,definition=null,developer=false,terminalRooms}={}){
+export function createDungeonGame({saved=null,definition=null,developer=false,terminalRooms,progress=()=>null}={}){
+ if(typeof progress!=='function')throw TypeError('Game progress must be a trusted journal callback.');
  const config=compileDefinition(definition,{terminalRooms}),{rooms,doors,sources,previews,terminals,kinds,noteKinds,initialInventory,startRoomId,walkableTerminals,replayRisk}=config;
  const maxActions=config.custom?MAX_DEVELOPER_ACTIONS:MAX_DUNGEON_ACTIONS,maxPhraseLength=config.custom?32:NOTE_KINDS.length;
  const developerEnabled=developer===true;
@@ -85,7 +88,7 @@ export function createDungeonGame({saved=null,definition=null,developer=false,te
  const targetUnits=door=>door?units(door.recipe):8;
  const isTerminal=id=>walkableTerminals&&Object.hasOwn(terminals,id);
  const isLocation=id=>Object.hasOwn(rooms,id)||isTerminal(id);
- const isRevealed=(door,claimed)=>!!door&&(!door.revealAfter||claimed.includes(door.revealAfter));
+ const isRevealed=(door,claimed)=>!!door&&(!door.revealAfter||claimed.includes(door.revealAfter))&&(door.requiresProgress===undefined||hasRequiredProgress(door.requiresProgress,progress()));
  const maximumDraftUnits=config.custom?32*Math.max(...noteKinds.map(kind=>kind.units)):8;
  function checkedRecipe(recipe,inventory,{complete=false,door=null}={}){
   if(!Array.isArray(recipe)||recipe.length>maxPhraseLength)return false;
@@ -178,7 +181,7 @@ export function createDungeonGame({saved=null,definition=null,developer=false,te
  }
  restore(saved);
  function available(){const inventory={...run.inventory};for(const kind of phrase)inventory[kind]--;return inventory;}
- function progress(){
+ function runProgress(){
   let reason=null;
   if(replayRisk&&run.nextScene?.kind==='dead-end'&&run.phase!=='room')reason='dead-end';
   else if(replayRisk&&run.phase==='room'){
@@ -194,7 +197,7 @@ export function createDungeonGame({saved=null,definition=null,developer=false,te
   return {runStatus:failure?'failed':run.phase==='room'?'active':'completed',failure};
  }
  function state(){
-  const status=progress(),door=getDoor(selectedDoor),required=targetUnits(door),canAttempt=status.runStatus==='active'&&run.phase==='room'&&isRevealed(door,run.claimedSources)&&units(phrase)===required;
+  const status=runProgress(),door=getDoor(selectedDoor),required=targetUnits(door),canAttempt=status.runStatus==='active'&&run.phase==='room'&&isRevealed(door,run.claimedSources)&&units(phrase)===required;
   return freeze(clone({
    roomId:run.roomId,phase:run.phase,replayRisk,...status,inventory:run.inventory,availableInventory:available(),phrase,units:units(phrase),beats:units(phrase)/2,targetUnits:required,targetBeats:required/2,noteKinds,
    currentScene:rooms[run.roomId]??terminals[run.roomId],isTerminal:run.phase==='terminal',
@@ -212,7 +215,8 @@ export function createDungeonGame({saved=null,definition=null,developer=false,te
  }
  function selectDoor(id){const door=getDoor(id);if(run.phase!=='room'||!door||door.from!==run.roomId||!isRevealed(door,run.claimedSources))return false;selectedDoor=door.id;return true;}
  function add(kind){
-  if(run.phase!=='room'||!knownKind(kind)||phrase.length>=maxPhraseLength||available()[kind]<1||units(phrase)+kinds[kind].units>targetUnits(getDoor(selectedDoor)))return false;
+  const door=getDoor(selectedDoor);
+  if(run.phase!=='room'||(door&&!isRevealed(door,run.claimedSources))||!knownKind(kind)||phrase.length>=maxPhraseLength||available()[kind]<1||units(phrase)+kinds[kind].units>targetUnits(door))return false;
   phrase.push(kind);return true;
  }
  function remove(index){if(run.phase!=='room'||!Number.isSafeInteger(index)||index<0||index>=phrase.length)return false;phrase.splice(index,1);return true;}
@@ -223,7 +227,7 @@ export function createDungeonGame({saved=null,definition=null,developer=false,te
  }
  function commit(){
   const door=getDoor(selectedDoor);
-  if(run.phase!=='room'||progress().runStatus==='failed'||!door||door.from!==run.roomId||!isRevealed(door,run.claimedSources)||!checkedRecipe(phrase,run.inventory,{complete:true,door})||!equal(phrase,door.recipe))return false;
+  if(run.phase!=='room'||runProgress().runStatus==='failed'||!door||door.from!==run.roomId||!isRevealed(door,run.claimedSources)||!checkedRecipe(phrase,run.inventory,{complete:true,door})||!equal(phrase,door.recipe))return false;
   if(!apply([...run.actions,{type:'door',doorId:door.canonicalId,recipe:[...phrase]}]))return false;
   phrase=[];selectedDoor=run.phase==='continued'?door.id:null;return true;
  }

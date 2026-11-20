@@ -1,7 +1,7 @@
 import test from 'node:test';
 import assert from 'node:assert/strict';
 import {readFileSync} from 'node:fs';
-import {analyzeDungeon,compileDungeon,replayDungeon} from './dungeon-analyze.mjs';
+import {analyzeDungeon,analyzeDungeonProgress,compileDungeon,replayDungeon} from './dungeon-analyze.mjs';
 import {CAMPAIGN_PLAN} from '../../games/rhythm-blocks/campaign-data.mjs';
 
 const copy=value=>structuredClone(value);
@@ -206,10 +206,10 @@ test('risk annotations must name unique real room-entry doors and irreversible c
  for(const [change,pattern]of changes){const data=replayRisk();change(data);assert.throws(()=>compileDungeon(data),pattern);}
 });
 
-test('the released three-detour campaign proves three empty bags, two wrong-type failures and all five successes',()=>{
+test('fresh journals preserve all old successes and deliberate losses while keeping the ultimate route locked',()=>{
  const data=JSON.parse(readFileSync(new URL('./dungeon.json',import.meta.url),'utf8'));assert.deepEqual(CAMPAIGN_PLAN,data,'Runtime and design data must remain identical.');
  const report=analyzeDungeon(data);assert.equal(report.passed,true);
- assert.equal(report.graph.rooms,17);assert.equal(report.graph.doors,25);assert.equal(report.graph.sources,7);assert.equal(report.graph.terminals,6);
+ assert.equal(report.graph.rooms,19);assert.equal(report.graph.doors,28);assert.equal(report.graph.sources,7);assert.equal(report.graph.terminals,7);
  assert.equal(report.graph.reachableStates,43);assert.equal(report.graph.transitions,43);
  assert.equal(report.graph.orderedTerminalHistories,'14');assert.equal(report.graph.orderedRunFailureHistories,'10');assert.equal(report.graph.orderedRunHistories,'24');
  assert.equal(report.runFailures.count,5);assert.equal(report.runFailures.zeroNoteCount,3);assert.equal(report.runFailures.missingTypeCount,2);
@@ -217,9 +217,73 @@ test('the released three-detour campaign proves three empty bags, two wrong-type
  assert.deepEqual(report.runFailures.states.filter(state=>state.reason==='missing-note-types').map(state=>state.nodeId).sort(),['dead-aviary','dead-brambles']);
  assert.equal(report.softlocks.count,0);assert.equal(report.forcedDeadEndStates.count,0);assert.equal(report.intentionalLossStates.count,14);
  assert(Object.values(report.coverage).every(ids=>ids.length===0));assert.equal(report.balances.violationCount,0);
- const successes=report.terminals.filter(terminal=>terminal.kind!=='dead-end');assert.equal(successes.length,5);
+ const successes=report.terminals.filter(terminal=>terminal.kind!=='dead-end'&&terminal.reachable);assert.equal(successes.length,5);
+ assert.deepEqual(report.progress.lockedUntilProgress,{rooms:['final-concourse','final-heart'],sources:[],doors:['depot-final-route','concourse-heart','heart-complete'],terminals:['ending-complete']});
+ assert.equal(report.progress.lockedGates.length,1);assert.equal(report.progress.lockedGates[0].missingOutcomes.length,11);
  for(const terminal of successes){assert.equal(terminal.zeroBalanceStates,1);assert(inventoryEmpty(terminal.witness.inventory));assert.deepEqual(terminal.witness.riskEntryDoors,[]);}
  assert(report.secretProofs.every(proof=>proof.allPathsRequireHiddenClaimAndGate));
  assert.equal(report.replayRiskProofs.length,3);assert(report.replayRiskProofs.every(proof=>proof.hasWitnessedRunFailure&&proof.witness.riskEntryDoors.includes(proof.doorId)));
  for(const failure of report.runFailures.states){const replay=replayDungeon(data,failure.witness.actions);assert.equal(replay.terminal,null);assert.equal(replay.conservation.valid,true);assert.deepEqual(replay.inventory,failure.inventory);}
+});
+
+
+test('all eleven earlier outcomes unlock a conserved three-key route, without requiring its own ending',()=>{
+ const data=JSON.parse(readFileSync(new URL('./dungeon.json',import.meta.url),'utf8')),report=analyzeDungeonProgress(data);
+ assert.equal(report.passed,true);assert.equal(report.graph.reachableStates,46);assert.equal(report.graph.transitions,46);
+ assert.equal(report.graph.orderedTerminalHistories,'16');assert.equal(report.graph.orderedRunFailureHistories,'10');assert.equal(report.graph.orderedRunHistories,'26');
+ assert.equal(report.runFailures.count,5);assert.equal(report.balances.violationCount,0);assert.equal(report.softlocks.count,0);assert.equal(report.forcedDeadEndStates.count,0);
+ assert.deepEqual(report.progress.knownOutcomes,data.progressOutcomes);assert(!report.progress.knownOutcomes.includes('ending-complete'));
+ assert.deepEqual(report.progress.lockedUntilProgress,{rooms:[],sources:[],doors:[],terminals:[]});
+ assert(Object.values(report.coverage).every(ids=>ids.length===0));
+ const final=report.terminals.find(terminal=>terminal.id==='ending-complete');
+ assert.equal(final.reachable,true);assert.equal(final.orderedHistories,'2');assert.equal(final.zeroBalanceStates,1);assert(inventoryEmpty(final.witness.inventory));
+ assert.deepEqual(final.witness.actions,[claim('nell-parcel'),claim('depot-chest'),open('depot-final-route'),open('concourse-heart'),open('heart-complete')]);
+ assert.deepEqual(final.witness.claimedSources,['nell-parcel','depot-chest']);assert.deepEqual(final.witness.riskEntryDoors,[]);
+ assert.equal(report.progressProof.requiredOutcomes.length,11);assert.equal(report.progressProof.allPrerequisitesNecessary,true);
+ assert.equal(report.progressProof.profiles.freshJournal.graph.orderedRunHistories,'24');assert.equal(report.progressProof.profiles.completeJournal.graph.orderedRunHistories,'26');
+ for(const partial of report.progressProof.missingOne){
+  assert.equal(partial.passed,true);assert.equal(partial.allAffectedGatesLocked,true);assert.equal(partial.graph.orderedRunHistories,'24');
+  assert.deepEqual(partial.lockedGates,[{doorId:'depot-final-route',missingOutcomes:[partial.missingOutcome]}]);
+  assert(!partial.knownOutcomes.includes('ending-complete'));
+ }
+ for(const item of [...report.sources,...report.doors,...report.terminals])if(item.reachable){
+  const replay=replayDungeon(data,item.witness.actions,{progressOutcomes:item.witness.progressOutcomes});
+  assert.equal(replay.nodeId,item.witness.nodeId);assert.deepEqual(replay.inventory,item.witness.inventory);assert.equal(replay.conservation.valid,true);
+ }
+ assert.throws(()=>replayDungeon(data,final.witness.actions),/recorded outcomes/);
+ for(const missing of data.progressOutcomes)assert.throws(()=>replayDungeon(data,final.witness.actions,{progressOutcomes:data.progressOutcomes.filter(id=>id!==missing)}),/recorded outcomes/);
+});
+
+function progressFixture(){
+ const data=fixture();data.progressOutcomes=['earlier-loss'];
+ data.rooms[0].doors.push(door('learned-route','learned-room',['half','half'],{requiresProgress:{outcomes:['earlier-loss']}}));
+ data.rooms.push({id:'learned-room',title:'Learned room',sources:[gift('learned-gift',['half','half'])],doors:[door('learned-finish','learned-ending')]});
+ data.terminals.push(ending('learned-ending'));return data;
+}
+
+test('progress locks are explicit and cannot conceal broken full-progress budgets or unreachable content',()=>{
+ const data=progressFixture(),fresh=analyzeDungeon(data),complete=analyzeDungeon(data,{progressOutcomes:['earlier-loss']});
+ assert.equal(fresh.passed,true);assert.deepEqual(fresh.progress.lockedUntilProgress.rooms,['learned-room']);
+ assert.equal(complete.passed,true);assert.deepEqual(complete.progress.lockedUntilProgress.rooms,[]);assert.equal(analyzeDungeonProgress(data).passed,true);
+ const broken=copy(data);broken.rooms[1].sources[0].recipe.push('quarter');
+ assert.equal(analyzeDungeon(broken).passed,true,'Fresh journal reports the branch as locked, not budget-verified.');
+ const failed=analyzeDungeonProgress(broken);assert.equal(failed.passed,false);assert(failed.balances.violationCount>0);
+ const orphan=copy(data);orphan.rooms.push({id:'orphan',title:'Orphan',sources:[],doors:[]});
+ const unreachable=analyzeDungeonProgress(orphan);assert.equal(unreachable.passed,false);assert.deepEqual(unreachable.coverage.unreachableRooms,['orphan']);
+});
+
+test('progress requirements use unique registered outcome IDs and reject malformed or unknown grants',()=>{
+ const changes=[
+  [data=>data.progressOutcomes={},/Progress outcomes/],
+  [data=>data.progressOutcomes=['earlier-loss','earlier-loss'],/Progress outcomes/],
+  [data=>data.progressOutcomes=[''],/Progress outcomes/],
+  [data=>data.rooms[0].doors[1].requiresProgress=null,/progress requirement/],
+  [data=>data.rooms[0].doors[1].requiresProgress={outcomes:[]},/progress requirement/],
+  [data=>data.rooms[0].doors[1].requiresProgress={outcomes:['earlier-loss'],complete:true},/progress requirement/],
+  [data=>data.rooms[0].doors[1].requiresProgress={outcomes:['unknown']},/progress outcome/],
+  [data=>data.rooms[0].doors[1].requiresProgress={outcomes:['earlier-loss','earlier-loss']},/progress outcome/]
+ ];
+ for(const [change,pattern]of changes){const data=progressFixture();change(data);assert.throws(()=>compileDungeon(data),pattern);}
+ assert.throws(()=>analyzeDungeon(progressFixture(),{progressOutcomes:['unknown']}),/progress outcome/);
+ assert.throws(()=>analyzeDungeon(progressFixture(),{progressOutcomes:{'earlier-loss':true}}),/progress outcome/);
 });

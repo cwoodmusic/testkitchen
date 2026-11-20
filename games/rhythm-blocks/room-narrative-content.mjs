@@ -23,6 +23,9 @@ export const ROOM_NARRATIONS=Object.freeze({
  'dead-aviary':'Warm light falls across a bird’s nest and empty perches, while the northern wall remains sealed. A southern workshop service gate leads to the crossroads, but it needs another four-beat key. The friends can inspect the room and count their notes before committing.',
  'dead-ferry':'A slack boarding rope hangs over still water, but no ferry has arrived. This landing has no safe crossing, so the run has reached a dead end. The friends can explore and save its clues, then start again with a new note bag and the same discovered journal.',
  'dead-echo':'The channel copies the water clock’s rhythm up to a solid northern wall. A bell service stair opens from the southern threshold, but it costs another four beats to reach the tower. The bell’s final door still needs its own key, so the friends must count before paying.',
+ "final-concourse":"Five old service lines meet in a hall behind the depot. The friends’ journal holds every earlier result, including the trips that failed, so they now know how each service should answer. These controls can connect all five services during one journey.",
+ "final-heart":"The smaller service lines join a loose wire beneath the public bell’s controls. The friends must fasten that wire and test every reply, so homes, learners, birds and distant friends can all be heard. Their last door waits for a call followed by listening time.",
+ "ending-complete":"The public bell rings, and all five service lines answer together. Water and deliveries move again, music lessons can resume, and the birds play their own tune while Iris hears that her friend has arrived safely in town. All four friends have finished the repair together, with no note tiles left.",
 });
 
 /** Supply new defaults only where an older saved project has no narration key. */

@@ -4,6 +4,7 @@ import {createDefaultProject as createPreviousProject} from './releases/r-3637c0
 import {createDefaultProject,normalizeProject,validateProject,createProjectManifest} from './developer-project.mjs';
 import {upgradeReplayRiskProject,REPLAY_RISK_DETOURS} from './replay-risk-updates.mjs';
 import {CAMPAIGN_SCENES} from './campaign-scenes.mjs';
+import {createDefaultProject as createPreFinalProject} from './releases/r-5ec9a7d731dc2778/developer-project.mjs';
 
 const clone=value=>structuredClone(value);
 const freeze=value=>{if(value&&typeof value==='object'){Object.values(value).forEach(freeze);Object.freeze(value);}return value;};
@@ -92,6 +93,16 @@ test('current stock with an absent policy receives the policy once; custom edits
  assert.deepEqual(upgradeReplayRiskProject(opted),opted);
  const removed=createDefaultProject();delete removed.doors['echo-return-gate'];
  assert.deepEqual(upgradeReplayRiskProject(removed),removed);
+});
+
+test('the pre-final stock graph still receives risk inference before its later chapter upgrade',()=>{
+ const previous=createPreFinalProject();delete previous.settings.replayRisk;
+ const before=clone(previous),upgraded=upgradeReplayRiskProject(previous);
+ assert.equal(upgraded.settings.replayRisk,true);
+ assert.equal(Object.keys(upgraded.rooms).length,17);assert(!upgraded.doors['final-route']);
+ assert.deepEqual({...upgraded,settings:{...upgraded.settings,replayRisk:undefined}}, {...before,settings:{...before.settings,replayRisk:undefined}});
+ const authored=clone(previous);authored.doors.garden.requiresProgress={outcomes:['ending-school']};
+ assert.deepEqual(upgradeReplayRiskProject(authored),authored,'A new authored gate changes the graph and keeps its policy explicit.');
 });
 
 test('failure lessons are optional hints and cannot add required rooms, routes, or outcomes',()=>{

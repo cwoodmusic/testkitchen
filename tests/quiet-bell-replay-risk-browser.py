@@ -33,7 +33,7 @@ class RiskUI:
         self.page=page;self.touch=page.viewport_size['width']<500
         self.project=page.evaluate('quietBell.project')
 
-    def advance(self,ms=50):self.page.clock.run_for(ms)
+    def advance(self,ms=50):self.page.clock.run_for(math.ceil(ms))
 
     def close(self):
         ui.skip_cutscene(self.page)
@@ -152,7 +152,8 @@ def canal_flow(browser,url,expected):
     game.pay('echo-return-gate');failed=game.failure('out-of-notes')
     assert failed['roomId']=='canal-final' and total(page)==0 and not failed['isTerminal']
     learned=journal(page);assert {'lesson-paid-doors','lesson-canal-final'}<=ids(learned['hints'])
-    assert 'ending-public' not in ids(learned['nodes']) and not learned['outcomes']
+    assert 'ending-public' not in ids(learned['nodes'])
+    assert ids(learned['outcomes'])=={'failure-canal-final'}
     page.screenshot(path=str(OUT/'canal-no-notes.png'))
     game.close();stable=durable(page)
     game.press('[data-person="nell"]');game.press('[data-topic="route"]')
@@ -195,6 +196,7 @@ def garden_hidden_flow(browser,url,expected):
     game.pay('garden-hidden-exit');failed=game.failure('out-of-notes')
     assert failed['roomId']=='garden-secret-final' and total(page)==0
     learned=journal(page);assert 'lesson-garden-secret-final' in ids(learned['hints'])
+    assert ids(learned['outcomes'])=={'failure-garden-secret-final'}
     assert 'ending-secret-quiet' not in ids(learned['nodes'])
     page.screenshot(path=str(OUT/'garden-no-final-key.png'));game.restart()
     assert 'lore-'+source['id'] in ids(journal(page)['hints'])
@@ -211,6 +213,7 @@ def missing_types_phone(browser,url,expected):
     game.pay('garden-porch-dead');failed=game.failure('missing-note-types')
     assert failed['roomId']=='dead-brambles' and total(page)>0
     assert 'lesson-dead-brambles' in ids(journal(page)['hints'])
+    assert ids(journal(page)['outcomes'])=={'failure-dead-brambles'}
     ui.layout(page,True);page.screenshot(path=str(OUT/'phone-missing-types.png'))
     game.close();stable=durable(page);game.select('bramble-return-gate')
     assert page.locator('#door-demo').is_enabled() and page.locator('#commit').is_disabled()

@@ -5,6 +5,7 @@ import {PEOPLE} from './opening.mjs';
 import {CAMPAIGN_LORE, CAMPAIGN_CONTENT} from './campaign-content.mjs';
 import {PARTY_ROUTE_HINTS} from './party-content.mjs';
 import {CHAPTER_ROOMS, CHAPTER_DOORS, CHAPTER_PREVIEWS, CHAPTER_TERMINALS} from './chapter.mjs';
+import {PRIOR_OUTCOME_IDS,RESOURCE_FAILURE_OUTCOMES,FINAL_OUTCOME_ID,FINAL_ROUTE_HINT,getFinalRouteProgress} from './final-route.mjs';
 
 const manifest = () => ({
   completionReady: true,
@@ -245,13 +246,14 @@ test('the released campaign catalog covers all rooms, routes, hints and outcomes
   assert.equal(source.completionReady, true);
   assert.deepEqual(source.nodes, [...Object.values(CHAPTER_ROOMS), ...Object.values(CHAPTER_PREVIEWS),
     ...Object.values(CHAPTER_TERMINALS)].map(({id, title}) => ({id, title})));
-  assert.equal(source.nodes.length, 23);
+  assert.equal(source.nodes.length, 26);
   assert.deepEqual(source.edges, Object.values(CHAPTER_DOORS).map(door => ({
     id: door.canonicalId, from: door.from, to: door.to,
   })));
-  assert.equal(source.edges.length, 25);
-  assert.deepEqual(source.outcomes.map(outcome => outcome.id), Object.keys(CHAPTER_TERMINALS));
-  assert.equal(source.hints.length, 147);
+  assert.equal(source.edges.length, 28);
+  assert.deepEqual(source.outcomes.map(outcome => outcome.id), [...Object.keys(CHAPTER_TERMINALS),...RESOURCE_FAILURE_OUTCOMES.map(outcome=>outcome.id)]);
+  assert.equal(source.outcomes.length,12);
+  assert.deepEqual(source.hints.find(hint=>hint.id===FINAL_ROUTE_HINT.id),FINAL_ROUTE_HINT);
   for (const hint of PARTY_ROUTE_HINTS) assert.equal(source.hints.find(entry => entry.id === hint.id).text, hint.text);
   for (const hint of OPENING_JOURNEY_MANIFEST.hints) assert.equal(source.hints.find(entry => entry.id === hint.id).text, hint.text);
   for (const observation of CAMPAIGN_LORE) {
@@ -360,9 +362,9 @@ test('observing every shipped room, route and outcome completes the released cam
   source.edges.forEach(edge => journey.traverse(edge.id));
   source.hints.forEach(hint => journey.discoverHint(hint.id));
   source.outcomes.forEach(outcome => journey.recordOutcome(outcome.id));
-  assert.equal(journey.state.nodes.length, 23);
-  assert.equal(journey.state.edges.length, 25);
-  assert.equal(journey.state.outcomes.length, 6);
+  assert.equal(journey.state.nodes.length, 26);
+  assert.equal(journey.state.edges.length, 28);
+  assert.equal(journey.state.outcomes.length, 12);
   assert.equal(journey.complete, true);
   assert.deepEqual(journey.state.achievements, [{id:'complete-score',title:'The Complete Score'}]);
   assert.equal(createJourney({manifest: source, saved: journey.serialize()}).complete, true);
@@ -395,7 +397,58 @@ test('earlier dead-end discoveries remain learned rooms while new paid exits sta
  assert(!journey.state.edges.some(edge=>edge.id==='bramble-return-gate'));
  assert(!journey.state.outcomes.some(outcome=>outcome.id==='dead-brambles'));
  const chart=structuredClone({nodes:journey.state.nodes,edges:journey.state.edges,outcomes:journey.state.outcomes});
- assert(journey.discoverHint('lesson-paid-doors'));assert(journey.discoverHint('lesson-garden-secret-final'));
+ assert(journey.discoverHint('lesson-paid-doors'));
  assert.deepEqual({nodes:journey.state.nodes,edges:journey.state.edges,outcomes:journey.state.outcomes},chart,'Learning a failure lesson reveals no unvisited place or route.');
  assert.deepEqual(createJourney({manifest:CHAPTER_JOURNEY_MANIFEST,saved:journey.serialize()}).state,journey.state);
+});
+
+test('legacy failure lesson receipts restore exactly the five stable resource outcomes',()=>{
+ for(const outcome of RESOURCE_FAILURE_OUTCOMES){
+  const saved={version:1,nodes:['depot',outcome.roomId],edges:[],hints:[outcome.legacyHintId,outcome.legacyHintId],outcomes:[]},before=structuredClone(saved);
+  const journey=createJourney({manifest:CHAPTER_JOURNEY_MANIFEST,saved});
+  assert.deepEqual(journey.serialize().outcomes,[outcome.id]);assert.deepEqual(journey.state.outcomes,[{id:outcome.id,title:outcome.title}]);
+  assert.deepEqual(journey.serialize().nodes,['depot',outcome.roomId]);assert.deepEqual(journey.serialize().edges,[]);
+  assert.deepEqual(saved,before,'Migration leaves the supplied legacy save unchanged.');
+  const restored=createJourney({manifest:CHAPTER_JOURNEY_MANIFEST,saved:journey.serialize()});assert.deepEqual(restored.state,journey.state);assert.equal(restored.recordOutcome(outcome.id),false);
+ }
+ const saved={version:1,hints:RESOURCE_FAILURE_OUTCOMES.map(outcome=>outcome.legacyHintId),outcomes:['dead-ferry','ending-home','ending-school','ending-public','ending-secret-quiet','ending-secret-birds']};
+ const complete=createJourney({manifest:CHAPTER_JOURNEY_MANIFEST,saved});
+ assert.deepEqual(new Set(complete.serialize().outcomes),new Set(PRIOR_OUTCOME_IDS));assert.equal(getFinalRouteProgress(complete.state).unlocked,true);
+ assert.equal(complete.complete,false);assert(!complete.serialize().outcomes.includes(FINAL_OUTCOME_ID));
+});
+
+test('failure migration uses only exact legacy hint IDs and the current declared outcome catalog',()=>{
+ const receipts=RESOURCE_FAILURE_OUTCOMES.map(outcome=>outcome.legacyHintId),subset=manifest();subset.outcomes.push({id:RESOURCE_FAILURE_OUTCOMES[0].id,title:'The author’s failure title'});
+ const saved={version:1,hints:[...receipts,'garden-hint'],outcomes:['home']};
+ const ordinary=createJourney({manifest:manifest(),saved});assert.deepEqual(ordinary.serialize().outcomes,['home']);assert.deepEqual(ordinary.serialize().hints,['garden-hint']);
+ const declared=createJourney({manifest:subset,saved});assert.deepEqual(declared.state.outcomes,[{id:'home',title:'Home'},{id:RESOURCE_FAILURE_OUTCOMES[0].id,title:'The author’s failure title'}]);
+ assert.deepEqual(declared.serialize().hints,['garden-hint'],'A removed optional lesson can still have a real earlier receipt.');
+ for(const value of [undefined,null,receipts[0],{},receipts.map(id=>({id})),receipts.map(id=>' '+id),receipts.map(id=>id+'-copy')]){
+  const journey=createJourney({manifest:CHAPTER_JOURNEY_MANIFEST,saved:{version:1,hints:value}});assert.deepEqual(journey.serialize().outcomes,[]);
+ }
+ for(const version of [0,2,'1',undefined])assert.deepEqual(createJourney({manifest:CHAPTER_JOURNEY_MANIFEST,saved:{version,hints:receipts}}).serialize().outcomes,[]);
+});
+
+test('room visits, paid routes, ordinary clues and old static dead ends never imply resource failure',()=>{
+ const source=CHAPTER_JOURNEY_MANIFEST,saved={version:1,nodes:source.nodes.map(node=>node.id),edges:source.edges.map(edge=>edge.id),hints:['lesson-paid-doors','lore-dead-brambles-memory'],outcomes:['dead-brambles','dead-aviary']};
+ const journey=createJourney({manifest:source,saved});assert.deepEqual(journey.serialize().outcomes,[]);assert.equal(getFinalRouteProgress(journey.state).unlocked,false);
+ for(const outcome of RESOURCE_FAILURE_OUTCOMES){
+  const before=journey.state.outcomes;journey.visit(outcome.roomId);assert.equal(journey.discoverHint(outcome.legacyHintId),true);assert.deepEqual(journey.state.outcomes,before,'Live hint display alone does not record a current failure event.');
+  assert.equal(journey.recordOutcome(outcome.id),true);assert.equal(journey.recordOutcome(outcome.id),false);
+ }
+ assert.equal(journey.serialize().outcomes.length,5);assert.equal(getFinalRouteProgress(journey.state).unlocked,false);
+});
+
+test('the final route opens before lifetime completion and its hint reveals no untraveled chart edges',()=>{
+ const journey=createJourney({manifest:CHAPTER_JOURNEY_MANIFEST});
+ for(const id of PRIOR_OUTCOME_IDS)assert.equal(journey.recordOutcome(id),true);
+ assert.equal(getFinalRouteProgress(journey.state).unlocked,true);assert.equal(journey.complete,false);assert.deepEqual(journey.state.achievements,[]);
+ const before=structuredClone({nodes:journey.state.nodes,edges:journey.state.edges,outcomes:journey.state.outcomes});
+ assert.equal(journey.discoverHint(FINAL_ROUTE_HINT.id),true);assert.deepEqual(journey.state.hints,[FINAL_ROUTE_HINT]);
+ assert.deepEqual({nodes:journey.state.nodes,edges:journey.state.edges,outcomes:journey.state.outcomes},before);
+ const restored=createJourney({manifest:CHAPTER_JOURNEY_MANIFEST,saved:journey.serialize()});assert.equal(getFinalRouteProgress(restored.state).unlocked,true);assert.equal(restored.complete,false);
+ for(const node of CHAPTER_JOURNEY_MANIFEST.nodes)journey.visit(node.id);
+ for(const edge of CHAPTER_JOURNEY_MANIFEST.edges)journey.traverse(edge.id);
+ assert.equal(journey.complete,false,'The new ending is required for Complete Score, never for opening its own route.');
+ assert.equal(journey.recordOutcome(FINAL_OUTCOME_ID),true);assert.equal(journey.complete,true);assert.deepEqual(journey.state.achievements,[{id:'complete-score',title:'The Complete Score'}]);
 });

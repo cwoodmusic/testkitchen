@@ -19,9 +19,9 @@ const fixture=()=>[
 const physical=beats=>beats.filter(beat=>beat.kind!=='dialogue');
 const compiledPhysical=(room,beats)=>compileRoomCutscene({scene:room,beats}).clips.filter(clip=>clip.kind!=='dialogue').map(({id,startTile,durationTiles,path})=>({id,startTile,durationTiles,path}));
 
-test('all 23 default performances list every speech clip in the exact player order',()=>{
+test('all 26 default performances list every speech clip in the exact player order',()=>{
  const project=createDefaultProject(),before=clone(project);
- assert.equal(Object.keys(project.scenes).length,23);
+ assert.equal(Object.keys(project.scenes).length,26);
  for(const [roomId,room]of Object.entries(project.scenes)){
   const beats=project.content[roomId].cutscene;
   const expected=compileRoomCutscene({scene:room,beats}).clips.filter(clip=>clip.kind==='dialogue');

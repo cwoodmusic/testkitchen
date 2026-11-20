@@ -13,6 +13,8 @@ import {ROOM_NARRATIONS,upgradeRoomNarration} from './room-narrative-content.mjs
 import {upgradeStockRoomLayouts} from './room-layouts.mjs';
 import {upgradeReplayRiskProject,REPLAY_RISK_DETOURS} from './replay-risk-updates.mjs';
 import {RUN_FAILURE_COPY,upgradeRunFailureCopy,runFailureLessons} from './run-lessons.mjs';
+import {RESOURCE_FAILURE_OUTCOMES,FINAL_ROUTE_HINT,COMPLETE_ROUTE_ENTRY,isProgressRequirement} from './final-route.mjs';
+import {upgradeCompleteRouteProject,withoutCompleteRoute} from './complete-route-updates.mjs';
 import {separateCutsceneTracks} from './cutscene.mjs';
 import {CAST,CAST_IMAGE} from './cast.mjs';
 import {MIRA} from './mira.mjs';
@@ -45,7 +47,7 @@ export function createDefaultProject(){
  defaultCutscenes??=Object.fromEntries(Object.entries(CAMPAIGN_SCENES).map(([roomId,scene])=>[roomId,separateCutsceneTracks({scene,beats:ROOM_CUTSCENES[roomId]??[]})]));
  return upgradeObjectDialogues(addFredSpider(clone({
   schemaVersion:1,
-  settings:{title:'The Quiet Bell',bpm:108,startRoomId:'depot',castImage:CAST_IMAGE,terminalRooms:true,completionReady:true,replayRisk:true,initialInventory:Object.fromEntries(NOTE_KINDS.map(note=>[note.id,0]))},
+  settings:{title:'The Quiet Bell',bpm:108,startRoomId:'depot',castImage:CAST_IMAGE,terminalRooms:true,completionReady:true,replayRisk:true,completeRoute:true,initialInventory:Object.fromEntries(NOTE_KINDS.map(note=>[note.id,0]))},
   noteKinds:NOTE_KINDS.map((note,index)=>({...note,symbol:note.id,shortName:SHORT_NAMES[index],color:COLORS[index],subdivisions:['eighth-pair','sixteenth-pair'].includes(note.id)?2:note.id==='sixteenth-group'?4:1})),
   rooms:CHAPTER_ROOMS,doors:CHAPTER_DOORS,sources:CHAPTER_SOURCES,previews:CHAPTER_PREVIEWS,terminals:CHAPTER_TERMINALS,
   content:Object.fromEntries(Object.entries(CAMPAIGN_CONTENT).map(([id,content])=>[id,{...content,narration:ROOM_NARRATIONS[id]??null,...(RUN_FAILURE_COPY[id]?{failure:RUN_FAILURE_COPY[id]}:{}),cutscene:defaultCutscenes[id]??[]}])),
@@ -138,7 +140,7 @@ export function validateProject(project){
  if(map(project.settings,'settings')){
   text(project.settings.title,'settings.title',{max:160});
   number(project.settings.bpm,'settings.bpm',20,300);
-  for(const key of ['terminalRooms','completionReady','replayRisk'])if(project.settings[key]!==undefined&&typeof project.settings[key]!=='boolean')fail(`settings.${key}`,'use true or false.');
+  for(const key of ['terminalRooms','completionReady','replayRisk','completeRoute'])if(project.settings[key]!==undefined&&typeof project.settings[key]!=='boolean')fail(`settings.${key}`,'use true or false.');
   id(project.settings.startRoomId,'settings.startRoomId');image(project.settings.castImage,'settings.castImage');
   if(map(project.settings.initialInventory,'settings.initialInventory',{max:9}))for(const [kind,quantity]of Object.entries(project.settings.initialInventory)){
    if(!NOTE_IDS.has(kind))fail(`settings.initialInventory.${kind}`,'unknown note kind.');number(quantity,`settings.initialInventory.${kind}`,0,999,{integer:true});
@@ -163,6 +165,7 @@ export function validateProject(project){
  const mapsOk=['rooms','doors','sources','previews','terminals','content','scenes','cast'].map(key=>map(project[key],key,{min:['rooms','content','scenes','cast'].includes(key)?1:0,max:key==='cast'?64:512})).every(Boolean);
  if(!mapsOk)return {valid:false,errors,warnings};
  const {rooms,doors,sources,previews,terminals,content,scenes,cast}=project;
+ const outcomeIds=new Set([...Object.keys(terminals),...RESOURCE_FAILURE_OUTCOMES.map(outcome=>outcome.id)]);
  const locations={...rooms,...(project.settings?.terminalRooms?terminals:{})};
  for(const [name,entries]of Object.entries({rooms,doors,sources,previews,terminals,content,scenes,cast}))for(const key of Object.keys(entries))id(key,`${name}.${key}`);
  if(!own(rooms,'depot'))fail('rooms.depot','retain the depot room for existing saves.');
@@ -196,6 +199,10 @@ export function validateProject(project){
   if(!asArray(rooms[door.from]?.doors).includes(key))fail(`${path}.from`,'the source room must list this door.');
   text(door.label,`${path}.label`,{max:160});recipe(door.recipe,`${path}.recipe`,32,{nonempty:true});
   if(door.revealAfter!==undefined&&(!validId(door.revealAfter)||!own(sources,door.revealAfter)))fail(`${path}.revealAfter`,'reference an existing note source.');
+  if(door.requiresProgress!==undefined){
+   if(!isProgressRequirement(door.requiresProgress))fail(`${path}.requiresProgress`,'use only an outcomes array containing unique known outcome IDs.');
+   else door.requiresProgress.outcomes.forEach((outcome,index)=>{if(!validId(outcome)||!outcomeIds.has(outcome))fail(`${path}.requiresProgress.outcomes[${index}]`,'reference a known ending or run-failure outcome.');});
+  }
  }
  for(const [key,source]of Object.entries(sources)){
   const path=`sources.${key}`;if(!record(source)){fail(path,'use a note-source definition.');continue;}
@@ -519,7 +526,7 @@ export function upgradeLegacyProject(value){
  if(!record(project)||project.schemaVersion!==1||!exactKeys(project.rooms,oldRooms)||!exactKeys(project.content,oldRooms)||!exactKeys(project.scenes,oldRooms)||!exactKeys(project.previews,oldForks)||!exactKeys(project.doors,oldDoors)||!record(project.sources)||!record(project.terminals)||!record(project.settings))return project;
  if(!oldForks.every(id=>record(project.previews[id])&&project.previews[id].id===id&&project.previews[id].kind==='preview'))return project;
  if(Object.keys(REPLAY_RISK_DETOURS).some(id=>project.terminals[id]&&project.terminals[id].kind!=='dead-end'))return project;
- const baseline=createDefaultProject(),expanded={...baseline,...project};
+ const baseline=withoutCompleteRoute(createDefaultProject()),expanded={...baseline,...project};
  for(const key of ['rooms','doors','sources','terminals','content','scenes'])expanded[key]={...baseline[key],...project[key]};
  expanded.settings={...baseline.settings,...project.settings,terminalRooms:true,completionReady:true};
  expanded.previews={};
@@ -540,7 +547,8 @@ export function upgradeLegacyProject(value){
 
 /** Accept only JSON data and derive timing from the edited integer half-beat units. */
 export function normalizeProject(value){
- const legacy=upgradeStockDepotDialogueEffects(upgradeStockGagDialogue(upgradeRoomCutscenes(upgradeReplayRiskProject(upgradeStockRoomLayouts(upgradeLegacyProject(value))))));
+ const stock=upgradeReplayRiskProject(upgradeStockRoomLayouts(upgradeLegacyProject(value)));
+ const legacy=upgradeStockDepotDialogueEffects(upgradeStockGagDialogue(upgradeRoomCutscenes(upgradeCompleteRouteProject(stock,createDefaultProject()))));
  const candidate=upgradeRunFailureCopy(upgradeRoomNarration(addFredSpider(upgradeObjectDialogues(upgradeStoryCopy(legacy))))),result=validateProject(candidate);
  if(!result.valid)throw new TypeError(result.errors.join('\n'));
  const project=clone(candidate);
@@ -583,5 +591,9 @@ export function createProjectManifest(project){
  }
  hints.push(...runFailureLessons(project));
  const outcomes=Object.values(project.terminals).map(terminal=>({id:terminal.id,title:terminal.title,...(terminal.text?{text:terminal.text}:{})}));
+ const failureIds=new Set(RESOURCE_FAILURE_OUTCOMES.map(outcome=>outcome.id));
+ const needsFailureOutcomes=project.settings.replayRisk===true||Object.values(project.doors).some(door=>door.requiresProgress?.outcomes?.some(id=>failureIds.has(id)));
+ if(needsFailureOutcomes)outcomes.push(...RESOURCE_FAILURE_OUTCOMES.filter(outcome=>own(project.rooms,outcome.roomId)&&!outcomes.some(existing=>existing.id===outcome.id)).map(({id,title})=>({id,title})));
+ if(own(project.doors,COMPLETE_ROUTE_ENTRY))hints.push({...FINAL_ROUTE_HINT});
  return freeze({completionReady:project.settings.completionReady===true,nodes,edges,hints,outcomes});
 }

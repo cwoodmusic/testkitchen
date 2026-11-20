@@ -101,7 +101,7 @@ test('director seeking samples the same speaking badge and facing without retain
  player.skip();assert.equal(getSpeakerCues(player.state),null);assert.equal(getConversationActors(player.state),player.state.actors);
 });
 
-test('all twenty-three shipped rooms identify every spoken line while keeping authored performances and data intact',()=>{
+test('all shipped rooms identify every spoken line while keeping authored performances and data intact',()=>{
  const before=clone(ROOM_CUTSCENES);let lines=0,rooms=0;
  for(const [roomId,scene]of Object.entries(CAMPAIGN_SCENES)){
   const player=createRoomCutscene({scene,beats:ROOM_CUTSCENES[roomId],manualDialogue:true});advance(player,60000);
@@ -119,5 +119,5 @@ test('all twenty-three shipped rooms identify every spoken line while keeping au
   }
   rooms++;
  }
- assert.equal(rooms,23);assert.equal(lines,138);assert.deepEqual(ROOM_CUTSCENES,before);
+ assert.equal(rooms,Object.keys(CAMPAIGN_SCENES).length);assert.equal(lines,Object.values(ROOM_CUTSCENES).flat().filter(beat=>beat.kind==='dialogue'&&beat.text?.trim()).length);assert.deepEqual(ROOM_CUTSCENES,before);
 });

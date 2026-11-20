@@ -2,7 +2,7 @@
 
 `dungeon.json` is the active inventory plan. Rooms have physical doors with ordered four-beat keys. Notes come from explicit, once-only conversations, chests, or hidden searches. Entering a room never awards notes automatically. A correct key spends its notes permanently for the current run; an incorrect rhythm spends nothing.
 
-The released graph has **17 ordinary rooms, 25 doors, seven supplies, and six terminal locations**: three regular endings, two secret endings, and the empty-ferry dead end. The same 23 illustrated locations remain in use. The Overgrown Arch, Silent Aviary, and Copied Waterway are now paid detours, with southern service gates instead of free return/refund actions.
+The released graph has **19 ordinary rooms, 28 doors, seven supplies, and seven terminal locations**: four regular endings, two secret endings, and the empty-ferry dead end. The 26 locations include a final three-door route. The Overgrown Arch, Silent Aviary, and Copied Waterway remain paid detours, with southern service gates instead of free return/refund actions.
 
 The purpose is to learn through repeated attempts. A player can spend the notes needed later, reach an empty bag, or retain note types that cannot open the next gate. These are explicit failed runs. The player can read the local explanation and review discovered clues, but must start again to try another route. Starting over resets carried notes, paid doors, and once-only supplies while keeping the discovered-only chart and journal on this device.
 
@@ -14,6 +14,9 @@ Nell’s note bag contains eight types worth ten beats. The depot chest holds th
 | --- | --- | --- | --- |
 | Regular, A then B | 12 initial beats + 4 branch beats | 4 doors × 4 beats | Zero of every type |
 | Secret, B then hidden key then A | 12 initial + 4 branch + 4 hidden | 5 doors × 4 beats | Zero of every type |
+| Ultimate, C then A then B | 12 initial beats | 3 doors × 4 beats | Zero of every type |
+
+For the ultimate route, C is a half note, quarter note, and paired eighths; A is a dotted half and four sixteenths; B is a single eighth, paired sixteenths, half rest, and quarter rest. These three keys partition the original nine note tiles exactly. There are no new supplies on this route.
 
 All published door rhythms begin with a sounded note. Rests occur after beat one. Equality holds for each note type, not only total duration. Hidden caches require an explicit Search action and reveal their own gates. Their notes pay only the additional hidden gate, so finding a cache does not replace a final key already spent on a detour.
 
@@ -33,6 +36,19 @@ Failure detection uses the full carried inventory, including notes currently arr
 
 Undo remains free while editing an uncommitted rhythm. It cannot reverse a paid door, restore earlier supplies, or refund a failed route. The authoring editor’s draft Undo and explicit developer test controls are separate tools.
 
+## The final route
+
+The town-link door at Nell’s depot requires **all eleven prior outcomes**, including failed attempts:
+
+- Three ordinary endings: `ending-home`, `ending-school`, `ending-public`.
+- Both secret endings: `ending-secret-quiet`, `ending-secret-birds`.
+- The empty ferry: `dead-ferry`.
+- Five resource losses: `failure-dead-brambles`, `failure-dead-aviary`, `failure-garden-secret-final`, `failure-workshop-secret-final`, `failure-canal-final`.
+
+`progressOutcomes` declares the trusted outcome-ID registry. The entry door carries `requiresProgress: { outcomes: [...] }`; all eleven records are required. The new `ending-complete` outcome and The Complete Score are deliberately absent from that requirement, so the route does not depend on completing itself. Prior run repairs do not stack: the final run uses what the group learned to connect the town’s systems together.
+
+The unlocked path is depot → The Meeting of Routes → The Listening Heart → **A Town Answering Together**. Its three keys use all twelve starting beats. Journal knowledge opens the route but grants no notes; restarting still clears the carried inventory and restores only the ordinary once-only sources.
+
 ## Reproduce the proof
 
 ```sh
@@ -40,7 +56,11 @@ node design/music-puzzler/dungeon-analyze.mjs
 node --test design/music-puzzler/dungeon-analyze.test.mjs
 ```
 
-The analyzer enumerates every supply-claim order and every affordable revealed door. A state contains its room, exact typed inventory, and claimed-source receipts. The checked proof reports **43 states, 43 transitions, 14 terminal histories, and 10 resource-loss histories: 24 complete runs**. It finds three zero-note loss states and two missing-type loss states. Every room, supply, door, and terminal is reachable; all five successful endings have exact zero balances; both secret endings require their hidden claim and gate.
+The analyzer enumerates every supply-claim order and every affordable revealed door whose permanent progress requirements are met. A state contains its room, exact typed inventory, and claimed-source receipts. The checked proof’s full-progress profile reports **46 states, 46 transitions, 16 terminal histories, and 10 resource-loss histories: 26 complete runs**. The fresh-journal profile preserves **43 states, 43 transitions, and 24 complete runs**. Both profiles find three zero-note loss states and two missing-type loss states. With full progress every room, supply, door, and terminal is reachable; all six successful endings have exact zero balances; both secret endings require their hidden claim and gate.
+
+`analyzeDungeon(data, { progressOutcomes: [] })` proves one fixed journal, defaulting to a fresh one. `replayDungeon` accepts the same option, and each gated-campaign witness records the progress IDs needed to reproduce it. `analyzeDungeonProgress` produces the checked full report plus `progressProof`: fresh and complete journal summaries and eleven independent missing-one profiles. Omitting any single prerequisite keeps the final entry closed. The full profile needs only the eleven prior outcomes, never the new ending.
+
+`progress.lockedUntilProgress` lists rooms, supplies, doors, and terminals that are structurally locked by missing journal records. These are reported separately from accidental `coverage.unreachable*` findings. Full-progress coverage still rejects an orphaned room or an unpaid route, and a broken budget behind a progress lock fails the comprehensive proof.
 
 An intentional loss is accepted only when every history reaching it has crossed a declared risk-entry door. Each declared risk door must also have a replayable loss witness. The analyzer tracks marked and unmarked histories even when they merge into the same room and inventory, so one marked representative cannot conceal an accidental blocked path. It still rejects unmarked softlocks, unmarked forced dead ends, invalid typed balances, unreachable content, cyclic graphs, and ungated secret endings. Generic plans without a replay-risk declaration retain the former strict no-loss checks.
 

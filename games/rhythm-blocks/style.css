@@ -236,3 +236,6 @@ dialog::backdrop{background:#100c1659}
 #quiet-bell.developer-editing .mg-hotspot:hover,#quiet-bell.developer-editing .mg-hotspot:focus-visible{outline:2px solid #f4d28b;outline-offset:2px;background:#f4d28b16}
 #developer-end{font-size:11px;min-height:38px}
 @media(max-width:760px){#quiet-bell.developer-editing .room-viewport{right:0;width:100%;height:45dvh;bottom:auto}}
+
+.mg-final-route-mark{position:absolute;aspect-ratio:176/90;transform:translate(-50%,-44%);pointer-events:none;image-rendering:pixelated}
+.mg-final-route-mark svg{display:block;width:100%;height:100%}

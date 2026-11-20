@@ -344,6 +344,54 @@ const arrivals={
    "Fair. We’ll open the lock, give them room, and actually listen. Our smallest helpers deserve a turn to speak for themselves."
   ]
  },
+ "final-concourse": {
+  "points": [
+   {
+    "target": "final-concourse-home-board",
+    "action": "examine"
+   },
+   {
+    "target": "final-concourse-service-map",
+    "action": "search"
+   },
+   {
+    "target": "final-concourse-bird-step",
+    "action": "listen"
+   }
+  ],
+  "lines": [
+   "Our journal kept every result, even the failed trips. These controls let us connect all five services in one journey.",
+   "The birds get a little horn of their own? Please tell me we aren’t leaving their line out just because the big bell’s louder.",
+   "Five lines! Homes, music class, bell, birds, Iris’s window. It looks like a plate of noodles, but I can trace every one.",
+   "A louder bell won’t connect that horn, Pip. Each service needs its own return wire. We know how to check them now.",
+   "Follow the wires, Mira. Starting again reset the repairs, but we kept the lessons. Now we can put them together.",
+   "Right. Less noodle admiration, more useful pointing. The homes’ line joins that one, and the bird step reaches this horn. We’re doing the whole job!"
+  ]
+ },
+ "final-heart": {
+  "points": [
+   {
+    "target": "final-heart-return-clamp",
+    "action": "examine"
+   },
+   {
+    "target": "final-heart-reply-screen",
+    "action": "search"
+   },
+   {
+    "target": "final-heart-class-controls",
+    "action": "look"
+   }
+  ],
+  "lines": [
+   "The smaller lines are ready. We’ll fasten the main return wire here, then test whether every service can answer the bell.",
+   "What if the birds’ little lamp stays dark? I’ll watch it. I know their tune now, and I don’t want anyone to miss it.",
+   "That little handle’s low enough for a child! Oh, and this clamp fits the loose wire. We can fix the line and leave a place for the next helper.",
+   "The low handles let learners help with repairs. Pip, watch the bird-shaped switch; that lamp shows whether their line works.",
+   "No testing handles yet, Mira. Fasten the wire first. Then watch for all five replies, including the classroom and Iris’s window.",
+   "Wire first, curious poking later. Pip’s got the birds, Iris has the window, Nell has the bell, and I’m checking the homes and class. Nobody gets missed!"
+  ]
+ },
  "ending-home": {
   "points": [
    {
@@ -558,6 +606,30 @@ const arrivals={
    "It’s sound bouncing off that wall, Pip. There’s no other person or machine replying. The water channel ends here.",
    "Save the duet, Mira. The south stair reaches the tower for another four beats. The final lock still needs its own four-beat answer.",
    "All right, no duet. We spent a key to get here, and the south stair needs another. Let’s count what the tower will need before paying."
+  ]
+ },
+ "ending-complete": {
+  "points": [
+   {
+    "target": "ending-complete-memory",
+    "action": "examine"
+   },
+   {
+    "target": "ending-complete-trace",
+    "action": "search"
+   },
+   {
+    "target": "ending-complete-reply",
+    "action": "listen"
+   }
+  ],
+  "lines": [
+   "The bell hears all five lines. Homes have water and deliveries, and the ferry has its safe-landing reply. All four of us are here.",
+   "My bird’s playing its own tune! Do we clap, or will that frighten it? I might cry, but I’ll try to do it quietly.",
+   "The music room’s answering too! Lessons, repair practice, bird songs—and Iris, isn’t that your friend’s voice? Tell her we’re coming for tea!",
+   "Her ferry arrived safely. She’s at Nell’s depot with the kettle on. Pip, the bird can hear applause. I suspect it’ll survive yours.",
+   "Well spotted, Mira. Every repair was made on this trip, with what our journal taught us. Now all four of us can rest.",
+   "Shimmy shimmy! We brought the whole town’s answers back, and nobody got left behind. The bag’s empty, the bread isn’t, and I’m calling that perfect."
   ]
  }
 };

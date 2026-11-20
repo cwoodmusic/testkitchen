@@ -1,8 +1,43 @@
 {
   "version": 1,
   "passed": true,
-  "sourceSHA256": "77aaa62770da7e59b7e669598c8894dcddc04cf2ba99ce8c403ca37c4efc97fa",
-  "verifierSHA256": "256c4d2d30c1ac922e67c8ca41256d2e4d091d6a9c5f13390eee7558e63f143d",
+  "progress": {
+    "knownOutcomes": [
+      "ending-home",
+      "ending-school",
+      "ending-public",
+      "ending-secret-quiet",
+      "ending-secret-birds",
+      "dead-ferry",
+      "failure-dead-brambles",
+      "failure-dead-aviary",
+      "failure-garden-secret-final",
+      "failure-workshop-secret-final",
+      "failure-canal-final"
+    ],
+    "requiredOutcomes": [
+      "ending-home",
+      "ending-school",
+      "ending-public",
+      "ending-secret-quiet",
+      "ending-secret-birds",
+      "dead-ferry",
+      "failure-dead-brambles",
+      "failure-dead-aviary",
+      "failure-garden-secret-final",
+      "failure-workshop-secret-final",
+      "failure-canal-final"
+    ],
+    "lockedGates": [],
+    "lockedUntilProgress": {
+      "rooms": [],
+      "sources": [],
+      "doors": [],
+      "terminals": []
+    }
+  },
+  "sourceSHA256": "deeda3fcfd243d2eb5afdcbbddcc3767c52cff14fd3d307b7d1182332ef5d74b",
+  "verifierSHA256": "9538e010f903f1fd5c073c5a25c6d4f40549c3074e4a2f93a4118a36e70799bd",
   "kindCatalog": [
     {
       "id": "quarter",
@@ -43,17 +78,17 @@
   ],
   "kindCatalogSHA256": "9e2472bdfd3728552a4d6310f7d66f3122f4b6f0bd0d74d3cf82a0b3b647326c",
   "graph": {
-    "rooms": 17,
+    "rooms": 19,
     "sources": 7,
-    "doors": 25,
-    "terminals": 6,
-    "reachableStates": 43,
-    "liveStates": 36,
-    "terminalStates": 7,
-    "transitions": 43,
-    "orderedTerminalHistories": "14",
+    "doors": 28,
+    "terminals": 7,
+    "reachableStates": 46,
+    "liveStates": 38,
+    "terminalStates": 8,
+    "transitions": 46,
+    "orderedTerminalHistories": "16",
     "orderedRunFailureHistories": "10",
-    "orderedRunHistories": "24"
+    "orderedRunHistories": "26"
   },
   "invariants": {
     "finiteRoomDAG": true,
@@ -73,7 +108,7 @@
     "unreachableTerminals": []
   },
   "balances": {
-    "successfulTerminalStates": 5,
+    "successfulTerminalStates": 6,
     "violationCount": 0,
     "violations": []
   },
@@ -84,7 +119,7 @@
     "orderedHistories": "10",
     "states": [
       {
-        "stateId": 8,
+        "stateId": 9,
         "nodeId": "dead-brambles",
         "inventory": {
           "quarter": 0,
@@ -120,6 +155,19 @@
               "type": "door",
               "doorId": "garden-porch-dead"
             }
+          ],
+          "progressOutcomes": [
+            "ending-home",
+            "ending-school",
+            "ending-public",
+            "ending-secret-quiet",
+            "ending-secret-birds",
+            "dead-ferry",
+            "failure-dead-brambles",
+            "failure-dead-aviary",
+            "failure-garden-secret-final",
+            "failure-workshop-secret-final",
+            "failure-canal-final"
           ],
           "inventory": {
             "quarter": 0,
@@ -193,7 +241,7 @@
         "allPathsCrossRiskEntry": true
       },
       {
-        "stateId": 12,
+        "stateId": 13,
         "nodeId": "dead-aviary",
         "inventory": {
           "quarter": 0,
@@ -229,6 +277,19 @@
               "type": "door",
               "doorId": "workshop-porch-dead"
             }
+          ],
+          "progressOutcomes": [
+            "ending-home",
+            "ending-school",
+            "ending-public",
+            "ending-secret-quiet",
+            "ending-secret-birds",
+            "dead-ferry",
+            "failure-dead-brambles",
+            "failure-dead-aviary",
+            "failure-garden-secret-final",
+            "failure-workshop-secret-final",
+            "failure-canal-final"
           ],
           "inventory": {
             "quarter": 0,
@@ -302,7 +363,7 @@
         "allPathsCrossRiskEntry": true
       },
       {
-        "stateId": 29,
+        "stateId": 32,
         "nodeId": "canal-final",
         "inventory": {
           "quarter": 0,
@@ -351,6 +412,19 @@
               "type": "door",
               "doorId": "echo-return-gate"
             }
+          ],
+          "progressOutcomes": [
+            "ending-home",
+            "ending-school",
+            "ending-public",
+            "ending-secret-quiet",
+            "ending-secret-birds",
+            "dead-ferry",
+            "failure-dead-brambles",
+            "failure-dead-aviary",
+            "failure-garden-secret-final",
+            "failure-workshop-secret-final",
+            "failure-canal-final"
           ],
           "inventory": {
             "quarter": 0,
@@ -425,7 +499,7 @@
         "allPathsCrossRiskEntry": true
       },
       {
-        "stateId": 34,
+        "stateId": 37,
         "nodeId": "garden-secret-final",
         "inventory": {
           "quarter": 0,
@@ -483,6 +557,19 @@
               "type": "door",
               "doorId": "garden-hidden-exit"
             }
+          ],
+          "progressOutcomes": [
+            "ending-home",
+            "ending-school",
+            "ending-public",
+            "ending-secret-quiet",
+            "ending-secret-birds",
+            "dead-ferry",
+            "failure-dead-brambles",
+            "failure-dead-aviary",
+            "failure-garden-secret-final",
+            "failure-workshop-secret-final",
+            "failure-canal-final"
           ],
           "inventory": {
             "quarter": 0,
@@ -560,7 +647,7 @@
         "allPathsCrossRiskEntry": true
       },
       {
-        "stateId": 39,
+        "stateId": 42,
         "nodeId": "workshop-secret-final",
         "inventory": {
           "quarter": 0,
@@ -618,6 +705,19 @@
               "type": "door",
               "doorId": "workshop-hidden-exit"
             }
+          ],
+          "progressOutcomes": [
+            "ending-home",
+            "ending-school",
+            "ending-public",
+            "ending-secret-quiet",
+            "ending-secret-birds",
+            "dead-ferry",
+            "failure-dead-brambles",
+            "failure-dead-aviary",
+            "failure-garden-secret-final",
+            "failure-workshop-secret-final",
+            "failure-canal-final"
           ],
           "inventory": {
             "quarter": 0,
@@ -700,7 +800,7 @@
     "count": 14,
     "states": [
       {
-        "stateId": 8,
+        "stateId": 9,
         "nodeId": "dead-brambles",
         "inventory": {
           "quarter": 0,
@@ -736,6 +836,19 @@
               "type": "door",
               "doorId": "garden-porch-dead"
             }
+          ],
+          "progressOutcomes": [
+            "ending-home",
+            "ending-school",
+            "ending-public",
+            "ending-secret-quiet",
+            "ending-secret-birds",
+            "dead-ferry",
+            "failure-dead-brambles",
+            "failure-dead-aviary",
+            "failure-garden-secret-final",
+            "failure-workshop-secret-final",
+            "failure-canal-final"
           ],
           "inventory": {
             "quarter": 0,
@@ -806,7 +919,7 @@
         }
       },
       {
-        "stateId": 10,
+        "stateId": 11,
         "nodeId": "dead-brambles",
         "inventory": {
           "quarter": 0,
@@ -847,6 +960,19 @@
               "type": "door",
               "doorId": "garden-porch-dead"
             }
+          ],
+          "progressOutcomes": [
+            "ending-home",
+            "ending-school",
+            "ending-public",
+            "ending-secret-quiet",
+            "ending-secret-birds",
+            "dead-ferry",
+            "failure-dead-brambles",
+            "failure-dead-aviary",
+            "failure-garden-secret-final",
+            "failure-workshop-secret-final",
+            "failure-canal-final"
           ],
           "inventory": {
             "quarter": 0,
@@ -918,7 +1044,7 @@
         }
       },
       {
-        "stateId": 12,
+        "stateId": 13,
         "nodeId": "dead-aviary",
         "inventory": {
           "quarter": 0,
@@ -954,6 +1080,19 @@
               "type": "door",
               "doorId": "workshop-porch-dead"
             }
+          ],
+          "progressOutcomes": [
+            "ending-home",
+            "ending-school",
+            "ending-public",
+            "ending-secret-quiet",
+            "ending-secret-birds",
+            "dead-ferry",
+            "failure-dead-brambles",
+            "failure-dead-aviary",
+            "failure-garden-secret-final",
+            "failure-workshop-secret-final",
+            "failure-canal-final"
           ],
           "inventory": {
             "quarter": 0,
@@ -1024,7 +1163,7 @@
         }
       },
       {
-        "stateId": 14,
+        "stateId": 15,
         "nodeId": "dead-aviary",
         "inventory": {
           "quarter": 0,
@@ -1065,6 +1204,19 @@
               "type": "door",
               "doorId": "workshop-porch-dead"
             }
+          ],
+          "progressOutcomes": [
+            "ending-home",
+            "ending-school",
+            "ending-public",
+            "ending-secret-quiet",
+            "ending-secret-birds",
+            "dead-ferry",
+            "failure-dead-brambles",
+            "failure-dead-aviary",
+            "failure-garden-secret-final",
+            "failure-workshop-secret-final",
+            "failure-canal-final"
           ],
           "inventory": {
             "quarter": 0,
@@ -1136,7 +1288,7 @@
         }
       },
       {
-        "stateId": 19,
+        "stateId": 21,
         "nodeId": "garden-fork",
         "inventory": {
           "quarter": 0,
@@ -1182,6 +1334,19 @@
               "doorId": "bramble-return-gate"
             }
           ],
+          "progressOutcomes": [
+            "ending-home",
+            "ending-school",
+            "ending-public",
+            "ending-secret-quiet",
+            "ending-secret-birds",
+            "dead-ferry",
+            "failure-dead-brambles",
+            "failure-dead-aviary",
+            "failure-garden-secret-final",
+            "failure-workshop-secret-final",
+            "failure-canal-final"
+          ],
           "inventory": {
             "quarter": 0,
             "eighth-pair": 1,
@@ -1252,7 +1417,7 @@
         }
       },
       {
-        "stateId": 20,
+        "stateId": 22,
         "nodeId": "workshop-fork",
         "inventory": {
           "quarter": 0,
@@ -1297,6 +1462,19 @@
               "type": "door",
               "doorId": "aviary-return-gate"
             }
+          ],
+          "progressOutcomes": [
+            "ending-home",
+            "ending-school",
+            "ending-public",
+            "ending-secret-quiet",
+            "ending-secret-birds",
+            "dead-ferry",
+            "failure-dead-brambles",
+            "failure-dead-aviary",
+            "failure-garden-secret-final",
+            "failure-workshop-secret-final",
+            "failure-canal-final"
           ],
           "inventory": {
             "quarter": 0,
@@ -1368,7 +1546,7 @@
         }
       },
       {
-        "stateId": 22,
+        "stateId": 24,
         "nodeId": "dead-echo",
         "inventory": {
           "quarter": 0,
@@ -1413,6 +1591,19 @@
               "type": "door",
               "doorId": "canal-dead"
             }
+          ],
+          "progressOutcomes": [
+            "ending-home",
+            "ending-school",
+            "ending-public",
+            "ending-secret-quiet",
+            "ending-secret-birds",
+            "dead-ferry",
+            "failure-dead-brambles",
+            "failure-dead-aviary",
+            "failure-garden-secret-final",
+            "failure-workshop-secret-final",
+            "failure-canal-final"
           ],
           "inventory": {
             "quarter": 0,
@@ -1484,7 +1675,7 @@
         }
       },
       {
-        "stateId": 25,
+        "stateId": 28,
         "nodeId": "garden-alcove",
         "inventory": {
           "quarter": 0,
@@ -1533,6 +1724,19 @@
               "type": "door",
               "doorId": "garden-secret-branch"
             }
+          ],
+          "progressOutcomes": [
+            "ending-home",
+            "ending-school",
+            "ending-public",
+            "ending-secret-quiet",
+            "ending-secret-birds",
+            "dead-ferry",
+            "failure-dead-brambles",
+            "failure-dead-aviary",
+            "failure-garden-secret-final",
+            "failure-workshop-secret-final",
+            "failure-canal-final"
           ],
           "inventory": {
             "quarter": 0,
@@ -1604,7 +1808,7 @@
         }
       },
       {
-        "stateId": 32,
+        "stateId": 35,
         "nodeId": "garden-alcove",
         "inventory": {
           "quarter": 1,
@@ -1658,6 +1862,19 @@
               "type": "claim",
               "sourceId": "garden-hidden-notes"
             }
+          ],
+          "progressOutcomes": [
+            "ending-home",
+            "ending-school",
+            "ending-public",
+            "ending-secret-quiet",
+            "ending-secret-birds",
+            "dead-ferry",
+            "failure-dead-brambles",
+            "failure-dead-aviary",
+            "failure-garden-secret-final",
+            "failure-workshop-secret-final",
+            "failure-canal-final"
           ],
           "inventory": {
             "quarter": 1,
@@ -1730,7 +1947,7 @@
         }
       },
       {
-        "stateId": 28,
+        "stateId": 31,
         "nodeId": "workshop-alcove",
         "inventory": {
           "quarter": 0,
@@ -1779,6 +1996,19 @@
               "type": "door",
               "doorId": "workshop-secret-branch"
             }
+          ],
+          "progressOutcomes": [
+            "ending-home",
+            "ending-school",
+            "ending-public",
+            "ending-secret-quiet",
+            "ending-secret-birds",
+            "dead-ferry",
+            "failure-dead-brambles",
+            "failure-dead-aviary",
+            "failure-garden-secret-final",
+            "failure-workshop-secret-final",
+            "failure-canal-final"
           ],
           "inventory": {
             "quarter": 0,
@@ -1850,7 +2080,7 @@
         }
       },
       {
-        "stateId": 37,
+        "stateId": 40,
         "nodeId": "workshop-alcove",
         "inventory": {
           "quarter": 0,
@@ -1904,6 +2134,19 @@
               "type": "claim",
               "sourceId": "workshop-hidden-notes"
             }
+          ],
+          "progressOutcomes": [
+            "ending-home",
+            "ending-school",
+            "ending-public",
+            "ending-secret-quiet",
+            "ending-secret-birds",
+            "dead-ferry",
+            "failure-dead-brambles",
+            "failure-dead-aviary",
+            "failure-garden-secret-final",
+            "failure-workshop-secret-final",
+            "failure-canal-final"
           ],
           "inventory": {
             "quarter": 0,
@@ -1976,7 +2219,7 @@
         }
       },
       {
-        "stateId": 29,
+        "stateId": 32,
         "nodeId": "canal-final",
         "inventory": {
           "quarter": 0,
@@ -2025,6 +2268,19 @@
               "type": "door",
               "doorId": "echo-return-gate"
             }
+          ],
+          "progressOutcomes": [
+            "ending-home",
+            "ending-school",
+            "ending-public",
+            "ending-secret-quiet",
+            "ending-secret-birds",
+            "dead-ferry",
+            "failure-dead-brambles",
+            "failure-dead-aviary",
+            "failure-garden-secret-final",
+            "failure-workshop-secret-final",
+            "failure-canal-final"
           ],
           "inventory": {
             "quarter": 0,
@@ -2096,7 +2352,7 @@
         }
       },
       {
-        "stateId": 34,
+        "stateId": 37,
         "nodeId": "garden-secret-final",
         "inventory": {
           "quarter": 0,
@@ -2154,6 +2410,19 @@
               "type": "door",
               "doorId": "garden-hidden-exit"
             }
+          ],
+          "progressOutcomes": [
+            "ending-home",
+            "ending-school",
+            "ending-public",
+            "ending-secret-quiet",
+            "ending-secret-birds",
+            "dead-ferry",
+            "failure-dead-brambles",
+            "failure-dead-aviary",
+            "failure-garden-secret-final",
+            "failure-workshop-secret-final",
+            "failure-canal-final"
           ],
           "inventory": {
             "quarter": 0,
@@ -2228,7 +2497,7 @@
         }
       },
       {
-        "stateId": 39,
+        "stateId": 42,
         "nodeId": "workshop-secret-final",
         "inventory": {
           "quarter": 0,
@@ -2286,6 +2555,19 @@
               "type": "door",
               "doorId": "workshop-hidden-exit"
             }
+          ],
+          "progressOutcomes": [
+            "ending-home",
+            "ending-school",
+            "ending-public",
+            "ending-secret-quiet",
+            "ending-secret-birds",
+            "dead-ferry",
+            "failure-dead-brambles",
+            "failure-dead-aviary",
+            "failure-garden-secret-final",
+            "failure-workshop-secret-final",
+            "failure-canal-final"
           ],
           "inventory": {
             "quarter": 0,
@@ -2396,6 +2678,19 @@
             "sourceId": "nell-parcel"
           }
         ],
+        "progressOutcomes": [
+          "ending-home",
+          "ending-school",
+          "ending-public",
+          "ending-secret-quiet",
+          "ending-secret-birds",
+          "dead-ferry",
+          "failure-dead-brambles",
+          "failure-dead-aviary",
+          "failure-garden-secret-final",
+          "failure-workshop-secret-final",
+          "failure-canal-final"
+        ],
         "inventory": {
           "quarter": 1,
           "eighth-pair": 1,
@@ -2479,6 +2774,19 @@
             "type": "claim",
             "sourceId": "depot-chest"
           }
+        ],
+        "progressOutcomes": [
+          "ending-home",
+          "ending-school",
+          "ending-public",
+          "ending-secret-quiet",
+          "ending-secret-birds",
+          "dead-ferry",
+          "failure-dead-brambles",
+          "failure-dead-aviary",
+          "failure-garden-secret-final",
+          "failure-workshop-secret-final",
+          "failure-canal-final"
         ],
         "inventory": {
           "quarter": 0,
@@ -2576,6 +2884,19 @@
             "type": "claim",
             "sourceId": "iris-gift"
           }
+        ],
+        "progressOutcomes": [
+          "ending-home",
+          "ending-school",
+          "ending-public",
+          "ending-secret-quiet",
+          "ending-secret-birds",
+          "dead-ferry",
+          "failure-dead-brambles",
+          "failure-dead-aviary",
+          "failure-garden-secret-final",
+          "failure-workshop-secret-final",
+          "failure-canal-final"
         ],
         "inventory": {
           "quarter": 1,
@@ -2677,6 +2998,19 @@
             "sourceId": "pip-gift"
           }
         ],
+        "progressOutcomes": [
+          "ending-home",
+          "ending-school",
+          "ending-public",
+          "ending-secret-quiet",
+          "ending-secret-birds",
+          "dead-ferry",
+          "failure-dead-brambles",
+          "failure-dead-aviary",
+          "failure-garden-secret-final",
+          "failure-workshop-secret-final",
+          "failure-canal-final"
+        ],
         "inventory": {
           "quarter": 1,
           "eighth-pair": 1,
@@ -2776,6 +3110,19 @@
             "type": "claim",
             "sourceId": "canal-chest"
           }
+        ],
+        "progressOutcomes": [
+          "ending-home",
+          "ending-school",
+          "ending-public",
+          "ending-secret-quiet",
+          "ending-secret-birds",
+          "dead-ferry",
+          "failure-dead-brambles",
+          "failure-dead-aviary",
+          "failure-garden-secret-final",
+          "failure-workshop-secret-final",
+          "failure-canal-final"
         ],
         "inventory": {
           "quarter": 1,
@@ -2890,6 +3237,19 @@
             "sourceId": "garden-hidden-notes"
           }
         ],
+        "progressOutcomes": [
+          "ending-home",
+          "ending-school",
+          "ending-public",
+          "ending-secret-quiet",
+          "ending-secret-birds",
+          "dead-ferry",
+          "failure-dead-brambles",
+          "failure-dead-aviary",
+          "failure-garden-secret-final",
+          "failure-workshop-secret-final",
+          "failure-canal-final"
+        ],
         "inventory": {
           "quarter": 2,
           "eighth-pair": 1,
@@ -3002,6 +3362,19 @@
             "sourceId": "workshop-hidden-notes"
           }
         ],
+        "progressOutcomes": [
+          "ending-home",
+          "ending-school",
+          "ending-public",
+          "ending-secret-quiet",
+          "ending-secret-birds",
+          "dead-ferry",
+          "failure-dead-brambles",
+          "failure-dead-aviary",
+          "failure-garden-secret-final",
+          "failure-workshop-secret-final",
+          "failure-canal-final"
+        ],
         "inventory": {
           "quarter": 1,
           "eighth-pair": 0,
@@ -3100,6 +3473,19 @@
             "doorId": "depot-garden"
           }
         ],
+        "progressOutcomes": [
+          "ending-home",
+          "ending-school",
+          "ending-public",
+          "ending-secret-quiet",
+          "ending-secret-birds",
+          "dead-ferry",
+          "failure-dead-brambles",
+          "failure-dead-aviary",
+          "failure-garden-secret-final",
+          "failure-workshop-secret-final",
+          "failure-canal-final"
+        ],
         "inventory": {
           "quarter": 1,
           "eighth-pair": 1,
@@ -3195,6 +3581,19 @@
             "doorId": "depot-workshop"
           }
         ],
+        "progressOutcomes": [
+          "ending-home",
+          "ending-school",
+          "ending-public",
+          "ending-secret-quiet",
+          "ending-secret-birds",
+          "dead-ferry",
+          "failure-dead-brambles",
+          "failure-dead-aviary",
+          "failure-garden-secret-final",
+          "failure-workshop-secret-final",
+          "failure-canal-final"
+        ],
         "inventory": {
           "quarter": 1,
           "eighth-pair": 0,
@@ -3289,6 +3688,127 @@
             "type": "door",
             "doorId": "depot-canal"
           }
+        ],
+        "progressOutcomes": [
+          "ending-home",
+          "ending-school",
+          "ending-public",
+          "ending-secret-quiet",
+          "ending-secret-birds",
+          "dead-ferry",
+          "failure-dead-brambles",
+          "failure-dead-aviary",
+          "failure-garden-secret-final",
+          "failure-workshop-secret-final",
+          "failure-canal-final"
+        ],
+        "inventory": {
+          "quarter": 0,
+          "eighth-pair": 0,
+          "sixteenth-group": 1,
+          "half": 0,
+          "eighth": 1,
+          "quarter-rest": 1,
+          "half-rest": 1,
+          "dotted-half": 1,
+          "sixteenth-pair": 1
+        },
+        "claimedSources": [
+          "nell-parcel",
+          "depot-chest"
+        ],
+        "hiddenGateSources": [],
+        "riskEntryDoors": [],
+        "conservation": {
+          "valid": true,
+          "initial": {
+            "quarter": 0,
+            "eighth-pair": 0,
+            "sixteenth-group": 0,
+            "half": 0,
+            "eighth": 0,
+            "quarter-rest": 0,
+            "half-rest": 0,
+            "dotted-half": 0,
+            "sixteenth-pair": 0
+          },
+          "claimed": {
+            "quarter": 1,
+            "eighth-pair": 1,
+            "sixteenth-group": 1,
+            "half": 1,
+            "eighth": 1,
+            "quarter-rest": 1,
+            "half-rest": 1,
+            "dotted-half": 1,
+            "sixteenth-pair": 1
+          },
+          "spent": {
+            "quarter": 1,
+            "eighth-pair": 1,
+            "sixteenth-group": 0,
+            "half": 1,
+            "eighth": 0,
+            "quarter-rest": 0,
+            "half-rest": 0,
+            "dotted-half": 0,
+            "sixteenth-pair": 0
+          },
+          "remaining": {
+            "quarter": 0,
+            "eighth-pair": 0,
+            "sixteenth-group": 1,
+            "half": 0,
+            "eighth": 1,
+            "quarter-rest": 1,
+            "half-rest": 1,
+            "dotted-half": 1,
+            "sixteenth-pair": 1
+          }
+        }
+      }
+    },
+    {
+      "id": "depot-final-route",
+      "roomId": "depot",
+      "to": "final-concourse",
+      "recipe": [
+        "half",
+        "quarter",
+        "eighth-pair"
+      ],
+      "revealAfter": null,
+      "reachable": true,
+      "transitions": 1,
+      "orderedHistories": "2",
+      "witness": {
+        "nodeId": "final-concourse",
+        "actions": [
+          {
+            "type": "claim",
+            "sourceId": "nell-parcel"
+          },
+          {
+            "type": "claim",
+            "sourceId": "depot-chest"
+          },
+          {
+            "type": "door",
+            "doorId": "depot-final-route"
+          }
+        ],
+        "progressOutcomes": [
+          "ending-home",
+          "ending-school",
+          "ending-public",
+          "ending-secret-quiet",
+          "ending-secret-birds",
+          "dead-ferry",
+          "failure-dead-brambles",
+          "failure-dead-aviary",
+          "failure-garden-secret-final",
+          "failure-workshop-secret-final",
+          "failure-canal-final"
         ],
         "inventory": {
           "quarter": 0,
@@ -3392,6 +3912,19 @@
             "doorId": "garden-porch-forward"
           }
         ],
+        "progressOutcomes": [
+          "ending-home",
+          "ending-school",
+          "ending-public",
+          "ending-secret-quiet",
+          "ending-secret-birds",
+          "dead-ferry",
+          "failure-dead-brambles",
+          "failure-dead-aviary",
+          "failure-garden-secret-final",
+          "failure-workshop-secret-final",
+          "failure-canal-final"
+        ],
         "inventory": {
           "quarter": 1,
           "eighth-pair": 1,
@@ -3490,6 +4023,19 @@
             "type": "door",
             "doorId": "garden-porch-dead"
           }
+        ],
+        "progressOutcomes": [
+          "ending-home",
+          "ending-school",
+          "ending-public",
+          "ending-secret-quiet",
+          "ending-secret-birds",
+          "dead-ferry",
+          "failure-dead-brambles",
+          "failure-dead-aviary",
+          "failure-garden-secret-final",
+          "failure-workshop-secret-final",
+          "failure-canal-final"
         ],
         "inventory": {
           "quarter": 0,
@@ -3596,6 +4142,19 @@
             "doorId": "workshop-porch-forward"
           }
         ],
+        "progressOutcomes": [
+          "ending-home",
+          "ending-school",
+          "ending-public",
+          "ending-secret-quiet",
+          "ending-secret-birds",
+          "dead-ferry",
+          "failure-dead-brambles",
+          "failure-dead-aviary",
+          "failure-garden-secret-final",
+          "failure-workshop-secret-final",
+          "failure-canal-final"
+        ],
         "inventory": {
           "quarter": 1,
           "eighth-pair": 0,
@@ -3694,6 +4253,19 @@
             "type": "door",
             "doorId": "workshop-porch-dead"
           }
+        ],
+        "progressOutcomes": [
+          "ending-home",
+          "ending-school",
+          "ending-public",
+          "ending-secret-quiet",
+          "ending-secret-birds",
+          "dead-ferry",
+          "failure-dead-brambles",
+          "failure-dead-aviary",
+          "failure-garden-secret-final",
+          "failure-workshop-secret-final",
+          "failure-canal-final"
         ],
         "inventory": {
           "quarter": 0,
@@ -3800,6 +4372,19 @@
             "doorId": "canal-porch-forward"
           }
         ],
+        "progressOutcomes": [
+          "ending-home",
+          "ending-school",
+          "ending-public",
+          "ending-secret-quiet",
+          "ending-secret-birds",
+          "dead-ferry",
+          "failure-dead-brambles",
+          "failure-dead-aviary",
+          "failure-garden-secret-final",
+          "failure-workshop-secret-final",
+          "failure-canal-final"
+        ],
         "inventory": {
           "quarter": 0,
           "eighth-pair": 0,
@@ -3898,6 +4483,19 @@
             "type": "door",
             "doorId": "canal-porch-dead"
           }
+        ],
+        "progressOutcomes": [
+          "ending-home",
+          "ending-school",
+          "ending-public",
+          "ending-secret-quiet",
+          "ending-secret-birds",
+          "dead-ferry",
+          "failure-dead-brambles",
+          "failure-dead-aviary",
+          "failure-garden-secret-final",
+          "failure-workshop-secret-final",
+          "failure-canal-final"
         ],
         "inventory": {
           "quarter": 0,
@@ -4004,6 +4602,19 @@
             "type": "door",
             "doorId": "bramble-return-gate"
           }
+        ],
+        "progressOutcomes": [
+          "ending-home",
+          "ending-school",
+          "ending-public",
+          "ending-secret-quiet",
+          "ending-secret-birds",
+          "dead-ferry",
+          "failure-dead-brambles",
+          "failure-dead-aviary",
+          "failure-garden-secret-final",
+          "failure-workshop-secret-final",
+          "failure-canal-final"
         ],
         "inventory": {
           "quarter": 0,
@@ -4113,6 +4724,19 @@
             "type": "door",
             "doorId": "garden-normal"
           }
+        ],
+        "progressOutcomes": [
+          "ending-home",
+          "ending-school",
+          "ending-public",
+          "ending-secret-quiet",
+          "ending-secret-birds",
+          "dead-ferry",
+          "failure-dead-brambles",
+          "failure-dead-aviary",
+          "failure-garden-secret-final",
+          "failure-workshop-secret-final",
+          "failure-canal-final"
         ],
         "inventory": {
           "quarter": 0,
@@ -4224,6 +4848,19 @@
             "doorId": "garden-secret-branch"
           }
         ],
+        "progressOutcomes": [
+          "ending-home",
+          "ending-school",
+          "ending-public",
+          "ending-secret-quiet",
+          "ending-secret-birds",
+          "dead-ferry",
+          "failure-dead-brambles",
+          "failure-dead-aviary",
+          "failure-garden-secret-final",
+          "failure-workshop-secret-final",
+          "failure-canal-final"
+        ],
         "inventory": {
           "quarter": 1,
           "eighth-pair": 0,
@@ -4331,6 +4968,19 @@
             "type": "door",
             "doorId": "aviary-return-gate"
           }
+        ],
+        "progressOutcomes": [
+          "ending-home",
+          "ending-school",
+          "ending-public",
+          "ending-secret-quiet",
+          "ending-secret-birds",
+          "dead-ferry",
+          "failure-dead-brambles",
+          "failure-dead-aviary",
+          "failure-garden-secret-final",
+          "failure-workshop-secret-final",
+          "failure-canal-final"
         ],
         "inventory": {
           "quarter": 0,
@@ -4441,6 +5091,19 @@
             "doorId": "workshop-normal"
           }
         ],
+        "progressOutcomes": [
+          "ending-home",
+          "ending-school",
+          "ending-public",
+          "ending-secret-quiet",
+          "ending-secret-birds",
+          "dead-ferry",
+          "failure-dead-brambles",
+          "failure-dead-aviary",
+          "failure-garden-secret-final",
+          "failure-workshop-secret-final",
+          "failure-canal-final"
+        ],
         "inventory": {
           "quarter": 0,
           "eighth-pair": 0,
@@ -4550,6 +5213,19 @@
             "doorId": "workshop-secret-branch"
           }
         ],
+        "progressOutcomes": [
+          "ending-home",
+          "ending-school",
+          "ending-public",
+          "ending-secret-quiet",
+          "ending-secret-birds",
+          "dead-ferry",
+          "failure-dead-brambles",
+          "failure-dead-aviary",
+          "failure-garden-secret-final",
+          "failure-workshop-secret-final",
+          "failure-canal-final"
+        ],
         "inventory": {
           "quarter": 1,
           "eighth-pair": 0,
@@ -4656,6 +5332,19 @@
             "type": "door",
             "doorId": "canal-normal"
           }
+        ],
+        "progressOutcomes": [
+          "ending-home",
+          "ending-school",
+          "ending-public",
+          "ending-secret-quiet",
+          "ending-secret-birds",
+          "dead-ferry",
+          "failure-dead-brambles",
+          "failure-dead-aviary",
+          "failure-garden-secret-final",
+          "failure-workshop-secret-final",
+          "failure-canal-final"
         ],
         "inventory": {
           "quarter": 0,
@@ -4765,6 +5454,19 @@
             "type": "door",
             "doorId": "canal-dead"
           }
+        ],
+        "progressOutcomes": [
+          "ending-home",
+          "ending-school",
+          "ending-public",
+          "ending-secret-quiet",
+          "ending-secret-birds",
+          "dead-ferry",
+          "failure-dead-brambles",
+          "failure-dead-aviary",
+          "failure-garden-secret-final",
+          "failure-workshop-secret-final",
+          "failure-canal-final"
         ],
         "inventory": {
           "quarter": 0,
@@ -4882,6 +5584,19 @@
             "doorId": "garden-ending"
           }
         ],
+        "progressOutcomes": [
+          "ending-home",
+          "ending-school",
+          "ending-public",
+          "ending-secret-quiet",
+          "ending-secret-birds",
+          "dead-ferry",
+          "failure-dead-brambles",
+          "failure-dead-aviary",
+          "failure-garden-secret-final",
+          "failure-workshop-secret-final",
+          "failure-canal-final"
+        ],
         "inventory": {
           "quarter": 0,
           "eighth-pair": 0,
@@ -4995,6 +5710,19 @@
             "doorId": "workshop-ending"
           }
         ],
+        "progressOutcomes": [
+          "ending-home",
+          "ending-school",
+          "ending-public",
+          "ending-secret-quiet",
+          "ending-secret-birds",
+          "dead-ferry",
+          "failure-dead-brambles",
+          "failure-dead-aviary",
+          "failure-garden-secret-final",
+          "failure-workshop-secret-final",
+          "failure-canal-final"
+        ],
         "inventory": {
           "quarter": 0,
           "eighth-pair": 0,
@@ -5105,6 +5833,19 @@
             "type": "door",
             "doorId": "echo-return-gate"
           }
+        ],
+        "progressOutcomes": [
+          "ending-home",
+          "ending-school",
+          "ending-public",
+          "ending-secret-quiet",
+          "ending-secret-birds",
+          "dead-ferry",
+          "failure-dead-brambles",
+          "failure-dead-aviary",
+          "failure-garden-secret-final",
+          "failure-workshop-secret-final",
+          "failure-canal-final"
         ],
         "inventory": {
           "quarter": 0,
@@ -5220,6 +5961,19 @@
             "type": "door",
             "doorId": "canal-ending"
           }
+        ],
+        "progressOutcomes": [
+          "ending-home",
+          "ending-school",
+          "ending-public",
+          "ending-secret-quiet",
+          "ending-secret-birds",
+          "dead-ferry",
+          "failure-dead-brambles",
+          "failure-dead-aviary",
+          "failure-garden-secret-final",
+          "failure-workshop-secret-final",
+          "failure-canal-final"
         ],
         "inventory": {
           "quarter": 0,
@@ -5338,6 +6092,19 @@
             "doorId": "garden-hidden-exit"
           }
         ],
+        "progressOutcomes": [
+          "ending-home",
+          "ending-school",
+          "ending-public",
+          "ending-secret-quiet",
+          "ending-secret-birds",
+          "dead-ferry",
+          "failure-dead-brambles",
+          "failure-dead-aviary",
+          "failure-garden-secret-final",
+          "failure-workshop-secret-final",
+          "failure-canal-final"
+        ],
         "inventory": {
           "quarter": 1,
           "eighth-pair": 0,
@@ -5455,6 +6222,19 @@
             "type": "door",
             "doorId": "workshop-hidden-exit"
           }
+        ],
+        "progressOutcomes": [
+          "ending-home",
+          "ending-school",
+          "ending-public",
+          "ending-secret-quiet",
+          "ending-secret-birds",
+          "dead-ferry",
+          "failure-dead-brambles",
+          "failure-dead-aviary",
+          "failure-garden-secret-final",
+          "failure-workshop-secret-final",
+          "failure-canal-final"
         ],
         "inventory": {
           "quarter": 1,
@@ -5578,6 +6358,19 @@
             "doorId": "garden-secret-ending"
           }
         ],
+        "progressOutcomes": [
+          "ending-home",
+          "ending-school",
+          "ending-public",
+          "ending-secret-quiet",
+          "ending-secret-birds",
+          "dead-ferry",
+          "failure-dead-brambles",
+          "failure-dead-aviary",
+          "failure-garden-secret-final",
+          "failure-workshop-secret-final",
+          "failure-canal-final"
+        ],
         "inventory": {
           "quarter": 0,
           "eighth-pair": 0,
@@ -5700,6 +6493,19 @@
             "doorId": "workshop-secret-ending"
           }
         ],
+        "progressOutcomes": [
+          "ending-home",
+          "ending-school",
+          "ending-public",
+          "ending-secret-quiet",
+          "ending-secret-birds",
+          "dead-ferry",
+          "failure-dead-brambles",
+          "failure-dead-aviary",
+          "failure-garden-secret-final",
+          "failure-workshop-secret-final",
+          "failure-canal-final"
+        ],
         "inventory": {
           "quarter": 0,
           "eighth-pair": 0,
@@ -5753,6 +6559,234 @@
             "eighth": 1,
             "quarter-rest": 1,
             "half-rest": 2,
+            "dotted-half": 1,
+            "sixteenth-pair": 1
+          },
+          "remaining": {
+            "quarter": 0,
+            "eighth-pair": 0,
+            "sixteenth-group": 0,
+            "half": 0,
+            "eighth": 0,
+            "quarter-rest": 0,
+            "half-rest": 0,
+            "dotted-half": 0,
+            "sixteenth-pair": 0
+          }
+        }
+      }
+    },
+    {
+      "id": "concourse-heart",
+      "roomId": "final-concourse",
+      "to": "final-heart",
+      "recipe": [
+        "dotted-half",
+        "sixteenth-group"
+      ],
+      "revealAfter": null,
+      "reachable": true,
+      "transitions": 1,
+      "orderedHistories": "2",
+      "witness": {
+        "nodeId": "final-heart",
+        "actions": [
+          {
+            "type": "claim",
+            "sourceId": "nell-parcel"
+          },
+          {
+            "type": "claim",
+            "sourceId": "depot-chest"
+          },
+          {
+            "type": "door",
+            "doorId": "depot-final-route"
+          },
+          {
+            "type": "door",
+            "doorId": "concourse-heart"
+          }
+        ],
+        "progressOutcomes": [
+          "ending-home",
+          "ending-school",
+          "ending-public",
+          "ending-secret-quiet",
+          "ending-secret-birds",
+          "dead-ferry",
+          "failure-dead-brambles",
+          "failure-dead-aviary",
+          "failure-garden-secret-final",
+          "failure-workshop-secret-final",
+          "failure-canal-final"
+        ],
+        "inventory": {
+          "quarter": 0,
+          "eighth-pair": 0,
+          "sixteenth-group": 0,
+          "half": 0,
+          "eighth": 1,
+          "quarter-rest": 1,
+          "half-rest": 1,
+          "dotted-half": 0,
+          "sixteenth-pair": 1
+        },
+        "claimedSources": [
+          "nell-parcel",
+          "depot-chest"
+        ],
+        "hiddenGateSources": [],
+        "riskEntryDoors": [],
+        "conservation": {
+          "valid": true,
+          "initial": {
+            "quarter": 0,
+            "eighth-pair": 0,
+            "sixteenth-group": 0,
+            "half": 0,
+            "eighth": 0,
+            "quarter-rest": 0,
+            "half-rest": 0,
+            "dotted-half": 0,
+            "sixteenth-pair": 0
+          },
+          "claimed": {
+            "quarter": 1,
+            "eighth-pair": 1,
+            "sixteenth-group": 1,
+            "half": 1,
+            "eighth": 1,
+            "quarter-rest": 1,
+            "half-rest": 1,
+            "dotted-half": 1,
+            "sixteenth-pair": 1
+          },
+          "spent": {
+            "quarter": 1,
+            "eighth-pair": 1,
+            "sixteenth-group": 1,
+            "half": 1,
+            "eighth": 0,
+            "quarter-rest": 0,
+            "half-rest": 0,
+            "dotted-half": 1,
+            "sixteenth-pair": 0
+          },
+          "remaining": {
+            "quarter": 0,
+            "eighth-pair": 0,
+            "sixteenth-group": 0,
+            "half": 0,
+            "eighth": 1,
+            "quarter-rest": 1,
+            "half-rest": 1,
+            "dotted-half": 0,
+            "sixteenth-pair": 1
+          }
+        }
+      }
+    },
+    {
+      "id": "heart-complete",
+      "roomId": "final-heart",
+      "to": "ending-complete",
+      "recipe": [
+        "eighth",
+        "sixteenth-pair",
+        "half-rest",
+        "quarter-rest"
+      ],
+      "revealAfter": null,
+      "reachable": true,
+      "transitions": 1,
+      "orderedHistories": "2",
+      "witness": {
+        "nodeId": "ending-complete",
+        "actions": [
+          {
+            "type": "claim",
+            "sourceId": "nell-parcel"
+          },
+          {
+            "type": "claim",
+            "sourceId": "depot-chest"
+          },
+          {
+            "type": "door",
+            "doorId": "depot-final-route"
+          },
+          {
+            "type": "door",
+            "doorId": "concourse-heart"
+          },
+          {
+            "type": "door",
+            "doorId": "heart-complete"
+          }
+        ],
+        "progressOutcomes": [
+          "ending-home",
+          "ending-school",
+          "ending-public",
+          "ending-secret-quiet",
+          "ending-secret-birds",
+          "dead-ferry",
+          "failure-dead-brambles",
+          "failure-dead-aviary",
+          "failure-garden-secret-final",
+          "failure-workshop-secret-final",
+          "failure-canal-final"
+        ],
+        "inventory": {
+          "quarter": 0,
+          "eighth-pair": 0,
+          "sixteenth-group": 0,
+          "half": 0,
+          "eighth": 0,
+          "quarter-rest": 0,
+          "half-rest": 0,
+          "dotted-half": 0,
+          "sixteenth-pair": 0
+        },
+        "claimedSources": [
+          "nell-parcel",
+          "depot-chest"
+        ],
+        "hiddenGateSources": [],
+        "riskEntryDoors": [],
+        "conservation": {
+          "valid": true,
+          "initial": {
+            "quarter": 0,
+            "eighth-pair": 0,
+            "sixteenth-group": 0,
+            "half": 0,
+            "eighth": 0,
+            "quarter-rest": 0,
+            "half-rest": 0,
+            "dotted-half": 0,
+            "sixteenth-pair": 0
+          },
+          "claimed": {
+            "quarter": 1,
+            "eighth-pair": 1,
+            "sixteenth-group": 1,
+            "half": 1,
+            "eighth": 1,
+            "quarter-rest": 1,
+            "half-rest": 1,
+            "dotted-half": 1,
+            "sixteenth-pair": 1
+          },
+          "spent": {
+            "quarter": 1,
+            "eighth-pair": 1,
+            "sixteenth-group": 1,
+            "half": 1,
+            "eighth": 1,
+            "quarter-rest": 1,
+            "half-rest": 1,
             "dotted-half": 1,
             "sixteenth-pair": 1
           },
@@ -5857,6 +6891,19 @@
             "type": "door",
             "doorId": "garden-ending"
           }
+        ],
+        "progressOutcomes": [
+          "ending-home",
+          "ending-school",
+          "ending-public",
+          "ending-secret-quiet",
+          "ending-secret-birds",
+          "dead-ferry",
+          "failure-dead-brambles",
+          "failure-dead-aviary",
+          "failure-garden-secret-final",
+          "failure-workshop-secret-final",
+          "failure-canal-final"
         ],
         "inventory": {
           "quarter": 0,
@@ -6011,6 +7058,19 @@
             "doorId": "workshop-ending"
           }
         ],
+        "progressOutcomes": [
+          "ending-home",
+          "ending-school",
+          "ending-public",
+          "ending-secret-quiet",
+          "ending-secret-birds",
+          "dead-ferry",
+          "failure-dead-brambles",
+          "failure-dead-aviary",
+          "failure-garden-secret-final",
+          "failure-workshop-secret-final",
+          "failure-canal-final"
+        ],
         "inventory": {
           "quarter": 0,
           "eighth-pair": 0,
@@ -6163,6 +7223,19 @@
             "type": "door",
             "doorId": "canal-ending"
           }
+        ],
+        "progressOutcomes": [
+          "ending-home",
+          "ending-school",
+          "ending-public",
+          "ending-secret-quiet",
+          "ending-secret-birds",
+          "dead-ferry",
+          "failure-dead-brambles",
+          "failure-dead-aviary",
+          "failure-garden-secret-final",
+          "failure-workshop-secret-final",
+          "failure-canal-final"
         ],
         "inventory": {
           "quarter": 0,
@@ -6324,6 +7397,19 @@
             "type": "door",
             "doorId": "garden-secret-ending"
           }
+        ],
+        "progressOutcomes": [
+          "ending-home",
+          "ending-school",
+          "ending-public",
+          "ending-secret-quiet",
+          "ending-secret-birds",
+          "dead-ferry",
+          "failure-dead-brambles",
+          "failure-dead-aviary",
+          "failure-garden-secret-final",
+          "failure-workshop-secret-final",
+          "failure-canal-final"
         ],
         "inventory": {
           "quarter": 0,
@@ -6489,6 +7575,19 @@
             "doorId": "workshop-secret-ending"
           }
         ],
+        "progressOutcomes": [
+          "ending-home",
+          "ending-school",
+          "ending-public",
+          "ending-secret-quiet",
+          "ending-secret-birds",
+          "dead-ferry",
+          "failure-dead-brambles",
+          "failure-dead-aviary",
+          "failure-garden-secret-final",
+          "failure-workshop-secret-final",
+          "failure-canal-final"
+        ],
         "inventory": {
           "quarter": 0,
           "eighth-pair": 0,
@@ -6633,6 +7732,19 @@
             "doorId": "canal-porch-dead"
           }
         ],
+        "progressOutcomes": [
+          "ending-home",
+          "ending-school",
+          "ending-public",
+          "ending-secret-quiet",
+          "ending-secret-birds",
+          "dead-ferry",
+          "failure-dead-brambles",
+          "failure-dead-aviary",
+          "failure-garden-secret-final",
+          "failure-workshop-secret-final",
+          "failure-canal-final"
+        ],
         "inventory": {
           "quarter": 0,
           "eighth-pair": 0,
@@ -6698,6 +7810,163 @@
           }
         }
       }
+    },
+    {
+      "id": "ending-complete",
+      "title": "A Town Answering Together",
+      "kind": "ending",
+      "reachable": true,
+      "distinctFinalStates": 1,
+      "orderedHistories": "2",
+      "zeroBalanceStates": 1,
+      "remainingTiles": {
+        "min": 0,
+        "max": 0
+      },
+      "remainingHalfBeatUnits": {
+        "min": 0,
+        "max": 0
+      },
+      "remainingByKind": {
+        "quarter": {
+          "min": 0,
+          "max": 0
+        },
+        "eighth-pair": {
+          "min": 0,
+          "max": 0
+        },
+        "sixteenth-group": {
+          "min": 0,
+          "max": 0
+        },
+        "half": {
+          "min": 0,
+          "max": 0
+        },
+        "eighth": {
+          "min": 0,
+          "max": 0
+        },
+        "quarter-rest": {
+          "min": 0,
+          "max": 0
+        },
+        "half-rest": {
+          "min": 0,
+          "max": 0
+        },
+        "dotted-half": {
+          "min": 0,
+          "max": 0
+        },
+        "sixteenth-pair": {
+          "min": 0,
+          "max": 0
+        }
+      },
+      "witness": {
+        "nodeId": "ending-complete",
+        "actions": [
+          {
+            "type": "claim",
+            "sourceId": "nell-parcel"
+          },
+          {
+            "type": "claim",
+            "sourceId": "depot-chest"
+          },
+          {
+            "type": "door",
+            "doorId": "depot-final-route"
+          },
+          {
+            "type": "door",
+            "doorId": "concourse-heart"
+          },
+          {
+            "type": "door",
+            "doorId": "heart-complete"
+          }
+        ],
+        "progressOutcomes": [
+          "ending-home",
+          "ending-school",
+          "ending-public",
+          "ending-secret-quiet",
+          "ending-secret-birds",
+          "dead-ferry",
+          "failure-dead-brambles",
+          "failure-dead-aviary",
+          "failure-garden-secret-final",
+          "failure-workshop-secret-final",
+          "failure-canal-final"
+        ],
+        "inventory": {
+          "quarter": 0,
+          "eighth-pair": 0,
+          "sixteenth-group": 0,
+          "half": 0,
+          "eighth": 0,
+          "quarter-rest": 0,
+          "half-rest": 0,
+          "dotted-half": 0,
+          "sixteenth-pair": 0
+        },
+        "claimedSources": [
+          "nell-parcel",
+          "depot-chest"
+        ],
+        "hiddenGateSources": [],
+        "riskEntryDoors": [],
+        "conservation": {
+          "valid": true,
+          "initial": {
+            "quarter": 0,
+            "eighth-pair": 0,
+            "sixteenth-group": 0,
+            "half": 0,
+            "eighth": 0,
+            "quarter-rest": 0,
+            "half-rest": 0,
+            "dotted-half": 0,
+            "sixteenth-pair": 0
+          },
+          "claimed": {
+            "quarter": 1,
+            "eighth-pair": 1,
+            "sixteenth-group": 1,
+            "half": 1,
+            "eighth": 1,
+            "quarter-rest": 1,
+            "half-rest": 1,
+            "dotted-half": 1,
+            "sixteenth-pair": 1
+          },
+          "spent": {
+            "quarter": 1,
+            "eighth-pair": 1,
+            "sixteenth-group": 1,
+            "half": 1,
+            "eighth": 1,
+            "quarter-rest": 1,
+            "half-rest": 1,
+            "dotted-half": 1,
+            "sixteenth-pair": 1
+          },
+          "remaining": {
+            "quarter": 0,
+            "eighth-pair": 0,
+            "sixteenth-group": 0,
+            "half": 0,
+            "eighth": 0,
+            "quarter-rest": 0,
+            "half-rest": 0,
+            "dotted-half": 0,
+            "sixteenth-pair": 0
+          }
+        }
+      }
     }
   ],
   "secretProofs": [
@@ -6746,6 +8015,19 @@
             "type": "door",
             "doorId": "garden-secret-ending"
           }
+        ],
+        "progressOutcomes": [
+          "ending-home",
+          "ending-school",
+          "ending-public",
+          "ending-secret-quiet",
+          "ending-secret-birds",
+          "dead-ferry",
+          "failure-dead-brambles",
+          "failure-dead-aviary",
+          "failure-garden-secret-final",
+          "failure-workshop-secret-final",
+          "failure-canal-final"
         ],
         "inventory": {
           "quarter": 0,
@@ -6863,6 +8145,19 @@
             "type": "door",
             "doorId": "workshop-secret-ending"
           }
+        ],
+        "progressOutcomes": [
+          "ending-home",
+          "ending-school",
+          "ending-public",
+          "ending-secret-quiet",
+          "ending-secret-birds",
+          "dead-ferry",
+          "failure-dead-brambles",
+          "failure-dead-aviary",
+          "failure-garden-secret-final",
+          "failure-workshop-secret-final",
+          "failure-canal-final"
         ],
         "inventory": {
           "quarter": 0,
@@ -7223,5 +8518,811 @@
         }
       }
     }
-  ]
+  ],
+  "progressProof": {
+    "requiredOutcomes": [
+      "ending-home",
+      "ending-school",
+      "ending-public",
+      "ending-secret-quiet",
+      "ending-secret-birds",
+      "dead-ferry",
+      "failure-dead-brambles",
+      "failure-dead-aviary",
+      "failure-garden-secret-final",
+      "failure-workshop-secret-final",
+      "failure-canal-final"
+    ],
+    "profiles": {
+      "freshJournal": {
+        "passed": true,
+        "knownOutcomes": [],
+        "graph": {
+          "rooms": 19,
+          "sources": 7,
+          "doors": 28,
+          "terminals": 7,
+          "reachableStates": 43,
+          "liveStates": 36,
+          "terminalStates": 7,
+          "transitions": 43,
+          "orderedTerminalHistories": "14",
+          "orderedRunFailureHistories": "10",
+          "orderedRunHistories": "24"
+        },
+        "coverage": {
+          "unreachableRooms": [],
+          "unreachableSources": [],
+          "unreachableDoors": [],
+          "unreachableTerminals": []
+        },
+        "lockedGates": [
+          {
+            "doorId": "depot-final-route",
+            "missingOutcomes": [
+              "ending-home",
+              "ending-school",
+              "ending-public",
+              "ending-secret-quiet",
+              "ending-secret-birds",
+              "dead-ferry",
+              "failure-dead-brambles",
+              "failure-dead-aviary",
+              "failure-garden-secret-final",
+              "failure-workshop-secret-final",
+              "failure-canal-final"
+            ]
+          }
+        ],
+        "lockedUntilProgress": {
+          "rooms": [
+            "final-concourse",
+            "final-heart"
+          ],
+          "sources": [],
+          "doors": [
+            "depot-final-route",
+            "concourse-heart",
+            "heart-complete"
+          ],
+          "terminals": [
+            "ending-complete"
+          ]
+        },
+        "balanceViolations": 0,
+        "softlocks": 0,
+        "forcedDead": 0
+      },
+      "completeJournal": {
+        "passed": true,
+        "knownOutcomes": [
+          "ending-home",
+          "ending-school",
+          "ending-public",
+          "ending-secret-quiet",
+          "ending-secret-birds",
+          "dead-ferry",
+          "failure-dead-brambles",
+          "failure-dead-aviary",
+          "failure-garden-secret-final",
+          "failure-workshop-secret-final",
+          "failure-canal-final"
+        ],
+        "graph": {
+          "rooms": 19,
+          "sources": 7,
+          "doors": 28,
+          "terminals": 7,
+          "reachableStates": 46,
+          "liveStates": 38,
+          "terminalStates": 8,
+          "transitions": 46,
+          "orderedTerminalHistories": "16",
+          "orderedRunFailureHistories": "10",
+          "orderedRunHistories": "26"
+        },
+        "coverage": {
+          "unreachableRooms": [],
+          "unreachableSources": [],
+          "unreachableDoors": [],
+          "unreachableTerminals": []
+        },
+        "lockedGates": [],
+        "lockedUntilProgress": {
+          "rooms": [],
+          "sources": [],
+          "doors": [],
+          "terminals": []
+        },
+        "balanceViolations": 0,
+        "softlocks": 0,
+        "forcedDead": 0
+      }
+    },
+    "missingOne": [
+      {
+        "missingOutcome": "ending-home",
+        "passed": true,
+        "knownOutcomes": [
+          "ending-school",
+          "ending-public",
+          "ending-secret-quiet",
+          "ending-secret-birds",
+          "dead-ferry",
+          "failure-dead-brambles",
+          "failure-dead-aviary",
+          "failure-garden-secret-final",
+          "failure-workshop-secret-final",
+          "failure-canal-final"
+        ],
+        "graph": {
+          "rooms": 19,
+          "sources": 7,
+          "doors": 28,
+          "terminals": 7,
+          "reachableStates": 43,
+          "liveStates": 36,
+          "terminalStates": 7,
+          "transitions": 43,
+          "orderedTerminalHistories": "14",
+          "orderedRunFailureHistories": "10",
+          "orderedRunHistories": "24"
+        },
+        "coverage": {
+          "unreachableRooms": [],
+          "unreachableSources": [],
+          "unreachableDoors": [],
+          "unreachableTerminals": []
+        },
+        "lockedGates": [
+          {
+            "doorId": "depot-final-route",
+            "missingOutcomes": [
+              "ending-home"
+            ]
+          }
+        ],
+        "lockedUntilProgress": {
+          "rooms": [
+            "final-concourse",
+            "final-heart"
+          ],
+          "sources": [],
+          "doors": [
+            "depot-final-route",
+            "concourse-heart",
+            "heart-complete"
+          ],
+          "terminals": [
+            "ending-complete"
+          ]
+        },
+        "balanceViolations": 0,
+        "softlocks": 0,
+        "forcedDead": 0,
+        "allAffectedGatesLocked": true
+      },
+      {
+        "missingOutcome": "ending-school",
+        "passed": true,
+        "knownOutcomes": [
+          "ending-home",
+          "ending-public",
+          "ending-secret-quiet",
+          "ending-secret-birds",
+          "dead-ferry",
+          "failure-dead-brambles",
+          "failure-dead-aviary",
+          "failure-garden-secret-final",
+          "failure-workshop-secret-final",
+          "failure-canal-final"
+        ],
+        "graph": {
+          "rooms": 19,
+          "sources": 7,
+          "doors": 28,
+          "terminals": 7,
+          "reachableStates": 43,
+          "liveStates": 36,
+          "terminalStates": 7,
+          "transitions": 43,
+          "orderedTerminalHistories": "14",
+          "orderedRunFailureHistories": "10",
+          "orderedRunHistories": "24"
+        },
+        "coverage": {
+          "unreachableRooms": [],
+          "unreachableSources": [],
+          "unreachableDoors": [],
+          "unreachableTerminals": []
+        },
+        "lockedGates": [
+          {
+            "doorId": "depot-final-route",
+            "missingOutcomes": [
+              "ending-school"
+            ]
+          }
+        ],
+        "lockedUntilProgress": {
+          "rooms": [
+            "final-concourse",
+            "final-heart"
+          ],
+          "sources": [],
+          "doors": [
+            "depot-final-route",
+            "concourse-heart",
+            "heart-complete"
+          ],
+          "terminals": [
+            "ending-complete"
+          ]
+        },
+        "balanceViolations": 0,
+        "softlocks": 0,
+        "forcedDead": 0,
+        "allAffectedGatesLocked": true
+      },
+      {
+        "missingOutcome": "ending-public",
+        "passed": true,
+        "knownOutcomes": [
+          "ending-home",
+          "ending-school",
+          "ending-secret-quiet",
+          "ending-secret-birds",
+          "dead-ferry",
+          "failure-dead-brambles",
+          "failure-dead-aviary",
+          "failure-garden-secret-final",
+          "failure-workshop-secret-final",
+          "failure-canal-final"
+        ],
+        "graph": {
+          "rooms": 19,
+          "sources": 7,
+          "doors": 28,
+          "terminals": 7,
+          "reachableStates": 43,
+          "liveStates": 36,
+          "terminalStates": 7,
+          "transitions": 43,
+          "orderedTerminalHistories": "14",
+          "orderedRunFailureHistories": "10",
+          "orderedRunHistories": "24"
+        },
+        "coverage": {
+          "unreachableRooms": [],
+          "unreachableSources": [],
+          "unreachableDoors": [],
+          "unreachableTerminals": []
+        },
+        "lockedGates": [
+          {
+            "doorId": "depot-final-route",
+            "missingOutcomes": [
+              "ending-public"
+            ]
+          }
+        ],
+        "lockedUntilProgress": {
+          "rooms": [
+            "final-concourse",
+            "final-heart"
+          ],
+          "sources": [],
+          "doors": [
+            "depot-final-route",
+            "concourse-heart",
+            "heart-complete"
+          ],
+          "terminals": [
+            "ending-complete"
+          ]
+        },
+        "balanceViolations": 0,
+        "softlocks": 0,
+        "forcedDead": 0,
+        "allAffectedGatesLocked": true
+      },
+      {
+        "missingOutcome": "ending-secret-quiet",
+        "passed": true,
+        "knownOutcomes": [
+          "ending-home",
+          "ending-school",
+          "ending-public",
+          "ending-secret-birds",
+          "dead-ferry",
+          "failure-dead-brambles",
+          "failure-dead-aviary",
+          "failure-garden-secret-final",
+          "failure-workshop-secret-final",
+          "failure-canal-final"
+        ],
+        "graph": {
+          "rooms": 19,
+          "sources": 7,
+          "doors": 28,
+          "terminals": 7,
+          "reachableStates": 43,
+          "liveStates": 36,
+          "terminalStates": 7,
+          "transitions": 43,
+          "orderedTerminalHistories": "14",
+          "orderedRunFailureHistories": "10",
+          "orderedRunHistories": "24"
+        },
+        "coverage": {
+          "unreachableRooms": [],
+          "unreachableSources": [],
+          "unreachableDoors": [],
+          "unreachableTerminals": []
+        },
+        "lockedGates": [
+          {
+            "doorId": "depot-final-route",
+            "missingOutcomes": [
+              "ending-secret-quiet"
+            ]
+          }
+        ],
+        "lockedUntilProgress": {
+          "rooms": [
+            "final-concourse",
+            "final-heart"
+          ],
+          "sources": [],
+          "doors": [
+            "depot-final-route",
+            "concourse-heart",
+            "heart-complete"
+          ],
+          "terminals": [
+            "ending-complete"
+          ]
+        },
+        "balanceViolations": 0,
+        "softlocks": 0,
+        "forcedDead": 0,
+        "allAffectedGatesLocked": true
+      },
+      {
+        "missingOutcome": "ending-secret-birds",
+        "passed": true,
+        "knownOutcomes": [
+          "ending-home",
+          "ending-school",
+          "ending-public",
+          "ending-secret-quiet",
+          "dead-ferry",
+          "failure-dead-brambles",
+          "failure-dead-aviary",
+          "failure-garden-secret-final",
+          "failure-workshop-secret-final",
+          "failure-canal-final"
+        ],
+        "graph": {
+          "rooms": 19,
+          "sources": 7,
+          "doors": 28,
+          "terminals": 7,
+          "reachableStates": 43,
+          "liveStates": 36,
+          "terminalStates": 7,
+          "transitions": 43,
+          "orderedTerminalHistories": "14",
+          "orderedRunFailureHistories": "10",
+          "orderedRunHistories": "24"
+        },
+        "coverage": {
+          "unreachableRooms": [],
+          "unreachableSources": [],
+          "unreachableDoors": [],
+          "unreachableTerminals": []
+        },
+        "lockedGates": [
+          {
+            "doorId": "depot-final-route",
+            "missingOutcomes": [
+              "ending-secret-birds"
+            ]
+          }
+        ],
+        "lockedUntilProgress": {
+          "rooms": [
+            "final-concourse",
+            "final-heart"
+          ],
+          "sources": [],
+          "doors": [
+            "depot-final-route",
+            "concourse-heart",
+            "heart-complete"
+          ],
+          "terminals": [
+            "ending-complete"
+          ]
+        },
+        "balanceViolations": 0,
+        "softlocks": 0,
+        "forcedDead": 0,
+        "allAffectedGatesLocked": true
+      },
+      {
+        "missingOutcome": "dead-ferry",
+        "passed": true,
+        "knownOutcomes": [
+          "ending-home",
+          "ending-school",
+          "ending-public",
+          "ending-secret-quiet",
+          "ending-secret-birds",
+          "failure-dead-brambles",
+          "failure-dead-aviary",
+          "failure-garden-secret-final",
+          "failure-workshop-secret-final",
+          "failure-canal-final"
+        ],
+        "graph": {
+          "rooms": 19,
+          "sources": 7,
+          "doors": 28,
+          "terminals": 7,
+          "reachableStates": 43,
+          "liveStates": 36,
+          "terminalStates": 7,
+          "transitions": 43,
+          "orderedTerminalHistories": "14",
+          "orderedRunFailureHistories": "10",
+          "orderedRunHistories": "24"
+        },
+        "coverage": {
+          "unreachableRooms": [],
+          "unreachableSources": [],
+          "unreachableDoors": [],
+          "unreachableTerminals": []
+        },
+        "lockedGates": [
+          {
+            "doorId": "depot-final-route",
+            "missingOutcomes": [
+              "dead-ferry"
+            ]
+          }
+        ],
+        "lockedUntilProgress": {
+          "rooms": [
+            "final-concourse",
+            "final-heart"
+          ],
+          "sources": [],
+          "doors": [
+            "depot-final-route",
+            "concourse-heart",
+            "heart-complete"
+          ],
+          "terminals": [
+            "ending-complete"
+          ]
+        },
+        "balanceViolations": 0,
+        "softlocks": 0,
+        "forcedDead": 0,
+        "allAffectedGatesLocked": true
+      },
+      {
+        "missingOutcome": "failure-dead-brambles",
+        "passed": true,
+        "knownOutcomes": [
+          "ending-home",
+          "ending-school",
+          "ending-public",
+          "ending-secret-quiet",
+          "ending-secret-birds",
+          "dead-ferry",
+          "failure-dead-aviary",
+          "failure-garden-secret-final",
+          "failure-workshop-secret-final",
+          "failure-canal-final"
+        ],
+        "graph": {
+          "rooms": 19,
+          "sources": 7,
+          "doors": 28,
+          "terminals": 7,
+          "reachableStates": 43,
+          "liveStates": 36,
+          "terminalStates": 7,
+          "transitions": 43,
+          "orderedTerminalHistories": "14",
+          "orderedRunFailureHistories": "10",
+          "orderedRunHistories": "24"
+        },
+        "coverage": {
+          "unreachableRooms": [],
+          "unreachableSources": [],
+          "unreachableDoors": [],
+          "unreachableTerminals": []
+        },
+        "lockedGates": [
+          {
+            "doorId": "depot-final-route",
+            "missingOutcomes": [
+              "failure-dead-brambles"
+            ]
+          }
+        ],
+        "lockedUntilProgress": {
+          "rooms": [
+            "final-concourse",
+            "final-heart"
+          ],
+          "sources": [],
+          "doors": [
+            "depot-final-route",
+            "concourse-heart",
+            "heart-complete"
+          ],
+          "terminals": [
+            "ending-complete"
+          ]
+        },
+        "balanceViolations": 0,
+        "softlocks": 0,
+        "forcedDead": 0,
+        "allAffectedGatesLocked": true
+      },
+      {
+        "missingOutcome": "failure-dead-aviary",
+        "passed": true,
+        "knownOutcomes": [
+          "ending-home",
+          "ending-school",
+          "ending-public",
+          "ending-secret-quiet",
+          "ending-secret-birds",
+          "dead-ferry",
+          "failure-dead-brambles",
+          "failure-garden-secret-final",
+          "failure-workshop-secret-final",
+          "failure-canal-final"
+        ],
+        "graph": {
+          "rooms": 19,
+          "sources": 7,
+          "doors": 28,
+          "terminals": 7,
+          "reachableStates": 43,
+          "liveStates": 36,
+          "terminalStates": 7,
+          "transitions": 43,
+          "orderedTerminalHistories": "14",
+          "orderedRunFailureHistories": "10",
+          "orderedRunHistories": "24"
+        },
+        "coverage": {
+          "unreachableRooms": [],
+          "unreachableSources": [],
+          "unreachableDoors": [],
+          "unreachableTerminals": []
+        },
+        "lockedGates": [
+          {
+            "doorId": "depot-final-route",
+            "missingOutcomes": [
+              "failure-dead-aviary"
+            ]
+          }
+        ],
+        "lockedUntilProgress": {
+          "rooms": [
+            "final-concourse",
+            "final-heart"
+          ],
+          "sources": [],
+          "doors": [
+            "depot-final-route",
+            "concourse-heart",
+            "heart-complete"
+          ],
+          "terminals": [
+            "ending-complete"
+          ]
+        },
+        "balanceViolations": 0,
+        "softlocks": 0,
+        "forcedDead": 0,
+        "allAffectedGatesLocked": true
+      },
+      {
+        "missingOutcome": "failure-garden-secret-final",
+        "passed": true,
+        "knownOutcomes": [
+          "ending-home",
+          "ending-school",
+          "ending-public",
+          "ending-secret-quiet",
+          "ending-secret-birds",
+          "dead-ferry",
+          "failure-dead-brambles",
+          "failure-dead-aviary",
+          "failure-workshop-secret-final",
+          "failure-canal-final"
+        ],
+        "graph": {
+          "rooms": 19,
+          "sources": 7,
+          "doors": 28,
+          "terminals": 7,
+          "reachableStates": 43,
+          "liveStates": 36,
+          "terminalStates": 7,
+          "transitions": 43,
+          "orderedTerminalHistories": "14",
+          "orderedRunFailureHistories": "10",
+          "orderedRunHistories": "24"
+        },
+        "coverage": {
+          "unreachableRooms": [],
+          "unreachableSources": [],
+          "unreachableDoors": [],
+          "unreachableTerminals": []
+        },
+        "lockedGates": [
+          {
+            "doorId": "depot-final-route",
+            "missingOutcomes": [
+              "failure-garden-secret-final"
+            ]
+          }
+        ],
+        "lockedUntilProgress": {
+          "rooms": [
+            "final-concourse",
+            "final-heart"
+          ],
+          "sources": [],
+          "doors": [
+            "depot-final-route",
+            "concourse-heart",
+            "heart-complete"
+          ],
+          "terminals": [
+            "ending-complete"
+          ]
+        },
+        "balanceViolations": 0,
+        "softlocks": 0,
+        "forcedDead": 0,
+        "allAffectedGatesLocked": true
+      },
+      {
+        "missingOutcome": "failure-workshop-secret-final",
+        "passed": true,
+        "knownOutcomes": [
+          "ending-home",
+          "ending-school",
+          "ending-public",
+          "ending-secret-quiet",
+          "ending-secret-birds",
+          "dead-ferry",
+          "failure-dead-brambles",
+          "failure-dead-aviary",
+          "failure-garden-secret-final",
+          "failure-canal-final"
+        ],
+        "graph": {
+          "rooms": 19,
+          "sources": 7,
+          "doors": 28,
+          "terminals": 7,
+          "reachableStates": 43,
+          "liveStates": 36,
+          "terminalStates": 7,
+          "transitions": 43,
+          "orderedTerminalHistories": "14",
+          "orderedRunFailureHistories": "10",
+          "orderedRunHistories": "24"
+        },
+        "coverage": {
+          "unreachableRooms": [],
+          "unreachableSources": [],
+          "unreachableDoors": [],
+          "unreachableTerminals": []
+        },
+        "lockedGates": [
+          {
+            "doorId": "depot-final-route",
+            "missingOutcomes": [
+              "failure-workshop-secret-final"
+            ]
+          }
+        ],
+        "lockedUntilProgress": {
+          "rooms": [
+            "final-concourse",
+            "final-heart"
+          ],
+          "sources": [],
+          "doors": [
+            "depot-final-route",
+            "concourse-heart",
+            "heart-complete"
+          ],
+          "terminals": [
+            "ending-complete"
+          ]
+        },
+        "balanceViolations": 0,
+        "softlocks": 0,
+        "forcedDead": 0,
+        "allAffectedGatesLocked": true
+      },
+      {
+        "missingOutcome": "failure-canal-final",
+        "passed": true,
+        "knownOutcomes": [
+          "ending-home",
+          "ending-school",
+          "ending-public",
+          "ending-secret-quiet",
+          "ending-secret-birds",
+          "dead-ferry",
+          "failure-dead-brambles",
+          "failure-dead-aviary",
+          "failure-garden-secret-final",
+          "failure-workshop-secret-final"
+        ],
+        "graph": {
+          "rooms": 19,
+          "sources": 7,
+          "doors": 28,
+          "terminals": 7,
+          "reachableStates": 43,
+          "liveStates": 36,
+          "terminalStates": 7,
+          "transitions": 43,
+          "orderedTerminalHistories": "14",
+          "orderedRunFailureHistories": "10",
+          "orderedRunHistories": "24"
+        },
+        "coverage": {
+          "unreachableRooms": [],
+          "unreachableSources": [],
+          "unreachableDoors": [],
+          "unreachableTerminals": []
+        },
+        "lockedGates": [
+          {
+            "doorId": "depot-final-route",
+            "missingOutcomes": [
+              "failure-canal-final"
+            ]
+          }
+        ],
+        "lockedUntilProgress": {
+          "rooms": [
+            "final-concourse",
+            "final-heart"
+          ],
+          "sources": [],
+          "doors": [
+            "depot-final-route",
+            "concourse-heart",
+            "heart-complete"
+          ],
+          "terminals": [
+            "ending-complete"
+          ]
+        },
+        "balanceViolations": 0,
+        "softlocks": 0,
+        "forcedDead": 0,
+        "allAffectedGatesLocked": true
+      }
+    ],
+    "allPrerequisitesNecessary": true
+  }
 }

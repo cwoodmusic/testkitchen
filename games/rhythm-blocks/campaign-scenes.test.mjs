@@ -9,13 +9,13 @@ import {ROOM_LAYOUTS} from './room-layout-config.mjs';
 import {createRoomWalker,findPath,isWalkable} from './room.mjs';
 
 const allLocations=[...CAMPAIGN_PLAN.rooms,...CAMPAIGN_PLAN.terminals];
-const canonical=id=>['garden','workshop','canal'].includes(id)?`depot-${id}`:id;
+const canonical=id=>['garden','workshop','canal','final-route'].includes(id)?`depot-${id}`:id;
 const southGateIds=Object.freeze({'dead-brambles':'bramble-return-gate','dead-aviary':'aviary-return-gate','dead-echo':'echo-return-gate'});
 
 test('every authored room and ending is a distinct walking scene',()=>{
- assert.equal(allLocations.length,23);
+ assert.equal(allLocations.length,26);
  assert.deepEqual(new Set(Object.keys(CAMPAIGN_SCENES)),new Set(allLocations.map(room=>room.id)));
- assert.equal(new Set(Object.values(CAMPAIGN_SCENES).map(scene=>scene.image)).size,23,'Each destination has its own artwork.');
+ assert.equal(new Set(Object.values(CAMPAIGN_SCENES).map(scene=>scene.image)).size,26,'Each destination has its own artwork.');
  for(const location of allLocations){
   const scene=getCampaignScene(location.id);
   assert.equal(scene.title,location.title);
@@ -29,9 +29,9 @@ test('every authored room and ending is a distinct walking scene',()=>{
  for(const invalid of [undefined,null,'missing-room','__proto__','constructor'])assert.equal(getCampaignScene(invalid),null);
 });
 
-test('all twenty-five paid door hit regions match their authored locations and reveal gates',()=>{
+test('all twenty-eight paid door hit regions match their authored locations and reveal gates',()=>{
  const actual=Object.values(CAMPAIGN_SCENES).flatMap(scene=>scene.objects.filter(item=>item.type==='door').map(item=>({room:scene.id,door:item,target:scene.geometry.targets.find(target=>target.id===item.id)})));
- assert.equal(actual.length,25);
+ assert.equal(actual.length,28);
  for(const room of CAMPAIGN_PLAN.rooms)for(const expected of room.doors){
   const entry=actual.find(item=>canonical(item.door.doorId??item.door.id)===expected.id);
   assert(entry,expected.id);assert.equal(entry.room,room.id);
@@ -54,7 +54,7 @@ test('the three paid service gates replace the south threshold rather than addin
   assert(!scene.geometry.targets.some(item=>item.type==='return'||item.id==='return-previous'));
  }
  const remaining=Object.values(CAMPAIGN_SCENES).filter(scene=>!Object.hasOwn(southGateIds,scene.id));
- assert.equal(remaining.flatMap(scene=>scene.objects.filter(item=>item.type==='return')).length,19,'Existing journal thresholds remain; the depot has no return threshold.');
+ assert.equal(remaining.flatMap(scene=>scene.objects.filter(item=>item.type==='return')).length,22,'Existing journal thresholds remain; the depot has no return threshold.');
  assert.equal(getCampaignScene('depot').objects.filter(item=>item.type==='return').length,0);
 });
 
@@ -156,4 +156,37 @@ test('generated art anchors keep the real doors, wall props and flat practice pa
  assert(cradle.rect.y>=378&&cradle.rect.y+cradle.rect.height<=584,'The root cradle sits on the inset service wall rather than the old north wall.');
  assert(alcove.geometry.targets.find(item=>item.id===cradle.id).approach.y>584,'The moved shelf can be reached from the lower service nook.');
  assert(!getCampaignScene('workshop-final').geometry.obstacles.some(item=>item.id==='workshop-final-practice-patches-base'),'The flat practice mat is walkable.');
+});
+
+
+test('ultimate route props and doors match their own artwork while leaving the middle aisles open',()=>{
+ for(const [roomId,wall,doorId]of [['final-concourse',320,'concourse-heart'],['final-heart',360,'heart-complete']]){
+  const scene=getCampaignScene(roomId),room=scene.geometry,door=scene.objects.find(item=>item.id===doorId);
+  assert.equal(room.bounds.y,wall);assert.equal(scene.image,`assets/rooms/${roomId}.webp`);
+  assert.deepEqual(door.rect,{x:678,y:45,width:180,height:wall-45});
+  assert.equal(scene.geometry.targets.find(item=>item.id===doorId).approach.x,768);
+  const content=CAMPAIGN_CONTENT[roomId],wallProp=content.inspections.find(item=>item.placement==='wall');
+  const prop=scene.objects.find(item=>item.id===wallProp.id);assert(prop.rect.y+prop.rect.height<wall,'The lamps/map remain on the north wall.');
+  assert(!room.obstacles.some(item=>item.id===`${prop.id}-base`));
+  for(const item of content.inspections.filter(item=>item.placement!=='wall')){
+   const object=scene.objects.find(entry=>entry.id===item.id),base=room.obstacles.find(entry=>entry.id===`${item.id}-base`);
+   assert(base);assert(base.width>=275,'Broad pictured furniture bases block only their physical feet.');
+   assert(base.y>800&&base.height<=70);assert(base.x>=object.rect.x&&base.x+base.width<=object.rect.x+object.rect.width);
+  }
+  for(const x of [600,930])for(let y=wall+40;y<=920;y+=20)assert(isWalkable(room,{x,y}),`${roomId} has open floor at ${x},${y}`);
+  assert(isWalkable(room,room.start));assert.equal(scene.objects.filter(item=>item.sourceId).length,0,'Knowledge opens the route without bonus note supplies.');
+ }
+});
+
+
+test('the complete ending fits its tea table and bird replies without placing a north door on the terrace railing',()=>{
+ const scene=getCampaignScene('ending-complete'),room=scene.geometry;
+ assert.equal(scene.image,'assets/rooms/ending-complete.webp');assert.equal(room.bounds.y,330);
+ assert.equal(scene.objects.filter(item=>item.type==='door').length,0);assert.equal(scene.objects.filter(item=>item.sourceId).length,0);
+ assert.deepEqual(scene.objects.filter(item=>item.type==='inspect').map(item=>item.id),['ending-complete-memory','ending-complete-reply','ending-complete-trace']);
+ assert(room.obstacles.some(item=>item.id==='ending-complete-memory-base'&&item.width===278));
+ assert(room.obstacles.some(item=>item.id==='ending-complete-reply-base'&&item.width===307));
+ assert.equal(scene.occluders.length,3);assert(scene.occluders.every(item=>item.depth>=880));
+ for(const x of [600,930])for(let y=370;y<=920;y+=20)assert(isWalkable(room,{x,y}));
+ assert(findPath(room,room.start,{x:768,y:390}),'The four friends can approach the answering bell across the open terrace.');
 });

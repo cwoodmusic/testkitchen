@@ -1,6 +1,6 @@
 {
   "schemaVersion": 1,
-  "status": "World and room authoring guide; all seventeen dungeon rooms and six ending locations are playable",
+  "status": "World and room authoring guide; all nineteen dungeon rooms and seven ending locations are playable",
   "setting": {
     "name": "The Lumen Reach",
     "premise": "People live among floating stone islands joined by root bridges, light canals and a worn star-post network. They maintain beautiful old machines whose makers are gone.",
@@ -48,6 +48,18 @@
     "Inspections supply no notes, unlock no paid door, grant no party promise and do not count as outcomes. Any future resource source must be authored and verified separately.",
     "Only entered rooms and travelled connections enter the journey chart. No unread prop, hidden room title, total or planned ending is exposed by the authoring catalog."
   ],
+  "finalRoute": {
+    "unlockRequirement": "Record all eleven prior outcomes: five successful story endings, both secrets included, and six failed runs. The complete ending is never its own prerequisite.",
+    "replayContinuity": "Restarting resets notes, pickups and physical repairs. The journal preserves knowledge. The final route uses that knowledge to connect every service in one new run.",
+    "route": [
+      "depot",
+      "final-concourse",
+      "final-heart",
+      "ending-complete"
+    ],
+    "noteBudget": "Twelve beats from Nell’s existing note bag and the depot chest pay three four-beat keys. No new notes are granted, and the ending inventory is empty.",
+    "resolution": "The public bell, home water and deliveries, ferry safety checks, shared music and repair lessons, birds’ own reply horn and Iris’s personal listening window work together. Iris’s friend arrives safely in town for tea, and all four party members finish together."
+  },
   "rooms": [
     {
       "id": "depot",
@@ -446,6 +458,121 @@
         {"id": "dead-echo-memory", "title": "The dry return bowl", "observation": "A pale ring marks where a drop should land, but the bowl is dry. The copy sends a signal without bringing anything back.", "purpose": "Connect the outcome to an ordinary household or working habit."},
         {"id": "dead-echo-reply", "title": "The reflected clock face", "observation": "Every motion repeats at the same angle, including a scratch that belongs to the original glass. The reflection has no separate reply of its own.", "purpose": "Show this route’s result through a physical reply or its absence."},
         {"id": "dead-echo-trace", "title": "The marked stone end", "observation": "A practical maintenance mark points directly at the closed wall. The channel stops flush against the stone; no service passage continues behind it.", "purpose": "Keep evidence of the old network present beyond this outcome."}
+      ]
+    },
+    {
+      "id": "final-concourse",
+      "title": "The Meeting of Routes",
+      "releaseStatus": "playable",
+      "occupation": "A central service station whose remote controls reach the five smaller reply connections.",
+      "materialPalette": [
+        "garden jade",
+        "workshop teal",
+        "warm amber",
+        "moonstone",
+        "copper"
+      ],
+      "landmark": "Five copper service lines meet above one north gate.",
+      "everydayHabit": "Workers check household pump requests and parcel receipts beside a little step that lets the mail birds reach their own reply horn.",
+      "traceOfPast": "The first route builders left a central set of service controls, so a trained group could reach the smaller connections without visiting each branch.",
+      "unansweredQuestion": "Can the friends use everything their journal taught them to connect all five services during one journey?",
+      "routeClue": "The heart door needs a dotted half followed by four sixteenths. Keep the single eighth, paired sixteenths, half rest and quarter rest for the last door.",
+      "props": [
+        {
+          "id": "final-concourse-home-board",
+          "title": "The household control board",
+          "observation": "A pump lever and parcel light share this board. Each waits for a reply from a home before sending water or another delivery.",
+          "purpose": "Ground the shared repair in a useful object that people handle every day."
+        },
+        {
+          "id": "final-concourse-bird-step",
+          "title": "The birds’ reply step",
+          "observation": "A low wooden step reaches a little horn. Its separate wire lets the mail birds send a tune of their own.",
+          "purpose": "Make the smaller voices or learners visible within a town-wide repair."
+        },
+        {
+          "id": "final-concourse-service-map",
+          "title": "The five-line service map",
+          "observation": "Five lines join the homes, music room, public bell, birds’ horn and Iris’s window to these controls. The large return wire continues into the next room.",
+          "purpose": "Show the service connections and their replies without granting notes or revealing untravelled chart edges."
+        }
+      ]
+    },
+    {
+      "id": "final-heart",
+      "title": "The Listening Heart",
+      "releaseStatus": "playable",
+      "occupation": "The shared return connection beneath the public bell’s main controls.",
+      "materialPalette": [
+        "canal indigo",
+        "cream ceramic",
+        "polished copper",
+        "teal enamel",
+        "warm reply lamps"
+      ],
+      "landmark": "Five reply lamps above the socket for a loose return wire.",
+      "everydayHabit": "A hand clamp secures the main wire, while low handles let new helpers practise checking calls and replies.",
+      "traceOfPast": "The main bell and smaller services once shared this return line. A slipped connection blocked their answers even while local machines still had power.",
+      "unansweredQuestion": "Will every service answer after the main wire is fastened, including the quiet bird horn and Iris’s listening window?",
+      "routeClue": "A single eighth, paired sixteenths, half rest and quarter rest make the final call-and-listen test. Beat one sounds before three beats of silence.",
+      "props": [
+        {
+          "id": "final-heart-return-clamp",
+          "title": "The return-wire clamp",
+          "observation": "The main return wire has slipped from its socket. A hand clamp holds it firmly, so replies from the smaller service lines can reach the public bell.",
+          "purpose": "Ground the shared repair in a useful object that people handle every day."
+        },
+        {
+          "id": "final-heart-class-controls",
+          "title": "The low practice controls",
+          "observation": "A low stool and extended handles let learners use these controls. Their line reconnects the music room, where people practise rhythms and teach repair skills.",
+          "purpose": "Make the smaller voices or learners visible within a town-wide repair."
+        },
+        {
+          "id": "final-heart-reply-screen",
+          "title": "The five reply lamps",
+          "observation": "Five lamps show whether the connected services answer. A small receiver beside Iris’s lamp can carry her friend’s voice from another island.",
+          "purpose": "Show the service connections and their replies without granting notes or revealing untravelled chart edges."
+        }
+      ]
+    },
+    {
+      "id": "ending-complete",
+      "title": "A Town Answering Together",
+      "releaseStatus": "playable",
+      "outcomeKind": "ending",
+      "occupation": "A shared celebration and working service hall after the entire reply network is repaired.",
+      "materialPalette": [
+        "sunlit moonstone",
+        "garden jade",
+        "workshop teal",
+        "amber bread crust",
+        "bright brass"
+      ],
+      "landmark": "The working public bell and all five answering service lamps.",
+      "everydayHabit": "Four cups and bread wait beside the empty note bag. A bird plays its own reply, and Iris hears her friend call after arriving safely in town for tea.",
+      "traceOfPast": "The friends finally understand the warm returned letter: a bird used old service perches, and its warmed metal clip softened the wax.",
+      "unansweredQuestion": "What new music and ordinary visits will people make now that every service can answer?",
+      "routeClue": "This is the complete ending: all four friends finish together, all five services work in this run, and all twelve depot beats have been spent.",
+      "props": [
+        {
+          "id": "ending-complete-memory",
+          "title": "The table for four",
+          "observation": "Four cups and a loaf wait beside the open, empty note bag. Nell, Mira, Iris and Pip have reached the end together, with every tile spent.",
+          "purpose": "Make the all-party finish and exact note budget visible in ordinary celebration objects."
+        },
+        {
+          "id": "ending-complete-reply",
+          "title": "The voices answering back",
+          "observation": "A mail bird reaches its own reply horn. Beside it, Iris’s receiver carries her friend’s voice: the ferry brought her safely to town, and she is waiting at Nell’s depot with tea ready.",
+          "purpose": "Resolve the birds’ own communication and Iris’s friendship through concrete answers and a safe arrival."
+        },
+        {
+          "id": "ending-complete-trace",
+          "title": "The five working service lines",
+          "observation": "Five lights answer the public bell. Homes request water and deliveries, music learners practise repairs, birds send their own tunes, and Iris’s listening window carries her friend’s reply.",
+          "purpose": "Show every prior repair working together during this final run."
+        }
       ]
     }
   ]

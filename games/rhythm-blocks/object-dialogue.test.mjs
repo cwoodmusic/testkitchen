@@ -18,7 +18,7 @@ const invalid=(project,fragment)=>{const result=validateProject(project);assert.
 
 test('every shipped place has an object exchange with independent speech clips and no physical performance',()=>{
  const project=createDefaultProject(),before=clone(project);let discussions=0;
- assert.equal(Object.keys(project.scenes).length,23);assert.equal(Object.keys(OBJECT_DIALOGUES).length,24);
+ assert.equal(Object.keys(project.scenes).length,26);assert.equal(Object.keys(OBJECT_DIALOGUES).length,27);
  assert.equal(validateProject(project).valid,true);
  for(const [roomId,room]of Object.entries(project.content)){
   const selected=room.inspections.filter(item=>Array.isArray(item.dialogue)&&item.dialogue.length);
@@ -39,7 +39,7 @@ test('every shipped place has an object exchange with independent speech clips a
    while(player.state.beat){assert.deepEqual(player.state.actors,actors);player.next();}
   }
  }
- assert.equal(discussions,25);assert.deepEqual(project,before,'Reading a script cannot change art, rooms, locks, sources or notes.');
+ assert.equal(discussions,28);assert.deepEqual(project,before,'Reading a script cannot change art, rooms, locks, sources or notes.');
 });
 
 test('compilation preserves custom text, durations, IDs and metadata while isolating speech from movement',()=>{

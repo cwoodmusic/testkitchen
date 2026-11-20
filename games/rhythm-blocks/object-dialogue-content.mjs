@@ -153,6 +153,60 @@ export const OBJECT_DIALOGUES=freeze({
   {speaker:"pip",text:"It still feels like another clock's watching us, but I'll take the reflection explanation. Happily."},
   {speaker:"nell",text:"The channel ends at stone, but the south stair reaches the tower. It costs four more beats, and the tower still needs its final key."},
  ],
+ "final-concourse-service-map": [
+  {
+   "speaker": "mira",
+   "text": "There’s the homes’ pump, the class, the bell, the birds’ horn and Iris’s window. We’ve seen every one of these connections!"
+  },
+  {
+   "speaker": "nell",
+   "text": "And we learned from the trips that stopped short. Those repairs reset when we started again, but our journal kept the results."
+  },
+  {
+   "speaker": "pip",
+   "text": "Then those wrong turns weren’t for nothing? I still wish I’d counted before the roots, but now I know what to save."
+  },
+  {
+   "speaker": "iris",
+   "text": "The lesson stayed, Pip. These service controls let us connect all five lines on this trip. We still have to do the work."
+  }
+ ],
+ "final-heart-reply-screen": [
+  {
+   "speaker": "pip",
+   "text": "Five lamps. What if one doesn’t answer? I don’t want to cheer so loudly that we miss the birds’ little tune."
+  },
+  {
+   "speaker": "iris",
+   "text": "We’ll check each lamp, then listen to the horn. Fear isn’t a test result, but watching carefully is useful."
+  },
+  {
+   "speaker": "mira",
+   "text": "And this receiver’s for your friend! If the bell hears the ferry’s safety reply, she can finally cross for tea."
+  },
+  {
+   "speaker": "nell",
+   "text": "Exactly. The last rhythm makes a call and leaves time for an answer. We need every return line working, not just the loudest one."
+  }
+ ],
+ "ending-complete-reply": [
+  {
+   "speaker": "pip",
+   "text": "That bird’s tune is its own answer! We gave it a step, a horn and a working line. I’m so glad we listened."
+  },
+  {
+   "speaker": "iris",
+   "text": "My friend’s arrived safely at the town landing. She’s at Nell’s depot with tea ready. I can stop saving an empty chair."
+  },
+  {
+   "speaker": "mira",
+   "text": "Shimmy shimmy! Four cups here, tea at the depot, and the class can start again. We’ve earned a very busy afternoon."
+  },
+  {
+   "speaker": "nell",
+   "text": "Together. The homes, music room, birds, window and public bell all work in this run. We learned from every route, and all four of us finished the repair."
+  }
+ ],
 });
 
 /** An unknown prop never borrows a different object’s conversation. */

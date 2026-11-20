@@ -5,6 +5,7 @@ import {PEOPLE} from './opening.mjs';
 import {CAMPAIGN_CONTENT} from './campaign-content.mjs';
 import {CHAPTER_ROOMS, CHAPTER_DOORS, CHAPTER_PREVIEWS, CHAPTER_TERMINALS} from './chapter.mjs';
 import {RUN_FAILURE_COPY,runFailureLessons} from './run-lessons.mjs';
+import {RESOURCE_FAILURE_OUTCOMES,FINAL_ROUTE_HINT} from './final-route.mjs';
 
 const freezeRecords = records => Object.freeze(records.map(record => Object.freeze(record)));
 
@@ -64,9 +65,10 @@ export const CHAPTER_JOURNEY_MANIFEST = Object.freeze({
       })),
     ]),
     ...runFailureLessons({settings:{replayRisk:true},content:Object.fromEntries(Object.entries(CAMPAIGN_CONTENT).map(([id,content])=>[id,{...content,...(RUN_FAILURE_COPY[id]?{failure:RUN_FAILURE_COPY[id]}:{})}]))}),
+    FINAL_ROUTE_HINT,
   ]),
   // Arriving at a room alone never records an outcome; explicit interaction does.
-  outcomes: freezeRecords(Object.values(CHAPTER_TERMINALS).map(room => ({
+  outcomes: freezeRecords([...Object.values(CHAPTER_TERMINALS),...RESOURCE_FAILURE_OUTCOMES].map(room => ({
     id: room.id, title: room.title,
   }))),
 });
@@ -135,6 +137,12 @@ export function createJourney({saved, manifest = OPENING_JOURNEY_MANIFEST} = {})
         if (category === 'edges') traverse(id);
         else record(category, id);
       }
+    }
+    // Earlier releases saved actual resource failures as lesson receipts. Read
+    // only those exact IDs; visiting a failed room alone never earns an outcome.
+    // The outcome catalog is authoritative even if optional lesson copy changed.
+    if (Array.isArray(saved.hints)) for (const outcome of RESOURCE_FAILURE_OUTCOMES) {
+      if (saved.hints.includes(outcome.legacyHintId)) record('outcomes', outcome.id);
     }
   }
 

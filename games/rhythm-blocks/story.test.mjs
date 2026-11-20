@@ -17,7 +17,8 @@ test('the playable room uses the exact sources and locks from the balanced dunge
  assert.deepEqual(dungeon.initialInventory,{});
  assert.equal(entry.sources.length,Object.keys(PAGE_ONE_SOURCES).length);
  for(const source of entry.sources){assert.equal(source.type,PAGE_ONE_SOURCES[source.id].type);assert.deepEqual(source.recipe,PAGE_ONE_SOURCES[source.id].recipe);}
- assert.equal(entry.doors.length,Object.keys(PAGE_ONE_DOOR_COSTS).length);
+ assert.equal(entry.doors.filter(door=>!door.requiresProgress).length,Object.keys(PAGE_ONE_DOOR_COSTS).length);
+ assert.equal(entry.doors.filter(door=>door.requiresProgress).length,1,'The lifetime-gated final route is outside the legacy opening.');
  for(const [id,recipe]of Object.entries(PAGE_ONE_DOOR_COSTS)){
   const door=entry.doors.find(item=>item.id==='depot-'+id);
   assert.deepEqual(door.recipe,recipe);assert.equal(door.to,PAGE_ONE_ROUTES[id].id);

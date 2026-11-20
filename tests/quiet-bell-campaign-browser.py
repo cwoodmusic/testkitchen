@@ -34,6 +34,12 @@ LOSS_ROUTES={
     'workshop-secret-final':['depot-workshop','workshop-porch-dead','aviary-return-gate','workshop-secret-branch','workshop-hidden-exit'],
     'canal-final':['depot-canal','canal-porch-forward','canal-dead','echo-return-gate'],
 }
+MISSING_TYPE_ROUTES={
+    'dead-brambles':(['depot-garden','garden-porch-dead'],{'iris-gift'}),
+    'dead-aviary':(['depot-workshop','workshop-porch-dead'],{'pip-gift'}),
+}
+PRIOR_OUTCOMES=set(PLAN.get('progressOutcomes',[]))
+FAILURE_OUTCOMES={id for id in PRIOR_OUTCOMES if id.startswith('failure-')}
 
 
 def ids(records):
@@ -126,10 +132,12 @@ class Campaign:
 
     def journal(self, visible=False):
         value = self.page.evaluate('quietBell.journey')
+        if PRIOR_OUTCOMES and self.outcomes>=PRIOR_OUTCOMES:
+            self.hints.add('final-route-open')
         for name, expected in [('nodes', self.nodes), ('edges', self.edges),
                                ('hints', self.hints), ('outcomes', self.outcomes)]:
             assert ids(value[name]) == expected and len(value[name]) == len(expected), (name, expected, value)
-        complete = len(self.nodes) == len(ROOMS)+len(TERMINALS) and len(self.edges) == len(DOORS) and len(self.outcomes) == len(TERMINALS)
+        complete = len(self.nodes) == len(ROOMS)+len(TERMINALS) and len(self.edges) == len(DOORS) and self.outcomes == set(TERMINALS)|FAILURE_OUTCOMES
         assert ids(value['achievements']) == ({'complete-score'} if complete else set()), value
         if visible:
             self.close()
@@ -151,6 +159,8 @@ class Campaign:
             self.hints.add('lesson-paid-doors')
             if self.project['content'][room_id].get('failure',{}).get('lesson'):
                 self.hints.add('lesson-'+room_id)
+            if 'failure-'+room_id in FAILURE_OUTCOMES:
+                self.outcomes.add('failure-'+room_id)
             if self.page.locator('#outcome').is_visible():self.page.locator('#outcome-close').click()
         assert value['roomId'] == room_id and value['phase'] == ('terminal' if room_id in TERMINALS else 'room'), value
         assert value['inventory'] == self.stock and value['availableInventory'] == self.stock, (room_id, self.stock, value)
@@ -163,7 +173,8 @@ class Campaign:
         assert art['width'] == 1536 and art['height'] == 1024, art
         self.images[room_id] = art['src']
         scene = self.project['scenes'][room_id]
-        expected = {item['id'] for item in scene['objects'] if not item.get('revealAfter') or item['revealAfter'] in value['claimedSources']}
+        expected = {item['id'] for item in scene['objects'] if item['id'] not in value.get('hiddenDoorIds',[])
+                    and (not item.get('revealAfter') or item['revealAfter'] in value['claimedSources'])}
         actual = self.page.locator('#room-map button').evaluate_all('es=>es.flatMap(e=>{const id=e.dataset.person??e.dataset.door??e.dataset.chest??e.dataset.inspect??e.dataset.return;return id?[id]:[];})')
         assert set(actual) == expected and len(actual) == len(expected), (room_id, expected, actual)
         assert set(self.page.locator('[data-person]').evaluate_all('es=>es.map(e=>e.dataset.person)')) >= {'nell', 'iris', 'pip'}
@@ -324,20 +335,22 @@ class Campaign:
         assert value['claimedSources'] == [] and value['actions'] == []
         self.journal(visible=True)
 
-    def run_route(self, terminal_id, review=True, route=None, failed=False):
+    def run_route(self, terminal_id, review=True, route=None, failed=False, skipped_sources=()):
         route = route or route_to(terminal_id)
         for door_id in route:
             room_id = ui.state(self.page)['roomId']
             self.observe(room_id)
             for source in ROOMS[room_id]['sources']:
-                if source['id'] not in ui.state(self.page)['claimedSources']:
+                if source['id'] not in ui.state(self.page)['claimedSources'] and source['id'] not in skipped_sources:
                     self.claim(dict(source, room=room_id))
             before = self.pay(door_id)
         self.observe(terminal_id)
         total_units = sum(UNITS[kind] * number for kind, number in self.stock.items())
         if failed:
-            assert ui.state(self.page)['runStatus']=='failed' and ui.state(self.page)['failure']['reason']=='out-of-notes'
-            assert self.stock==ui.EMPTY,(terminal_id,self.stock)
+            reason='out-of-notes' if failed is True else failed
+            assert ui.state(self.page)['runStatus']=='failed' and ui.state(self.page)['failure']['reason']==reason
+            if reason=='out-of-notes':assert self.stock==ui.EMPTY,(terminal_id,self.stock)
+            else:assert total_units>0,(terminal_id,self.stock)
         elif TERMINALS[terminal_id]['kind'] != 'dead-end':
             assert self.stock == ui.EMPTY, (terminal_id, self.stock)
             assert ui.state(self.page)['runStatus']=='completed'
@@ -359,12 +372,16 @@ def campaign_flow(browser, url, terminal_ids=None):
     assert page.locator('#journey-chart [data-journey-node]').count() == 1
     terminal_ids = terminal_ids or list(TERMINALS)
     failures=LOSS_ROUTES if len(terminal_ids)==len(TERMINALS) else {'canal-final':LOSS_ROUTES['canal-final']}
-    runs=[(identifier,route_to(identifier),False) for identifier in terminal_ids]+[(identifier,route,True) for identifier,route in failures.items()]
-    for index, (terminal_id,route,failed) in enumerate(runs):
+    runs=[(identifier,route_to(identifier),False,()) for identifier in terminal_ids if identifier!='ending-complete']
+    runs += [(identifier,route,True,()) for identifier,route in failures.items()]
+    if len(terminal_ids)==len(TERMINALS):
+        runs += [(identifier,route,'missing-note-types',skipped) for identifier,(route,skipped) in MISSING_TYPE_ROUTES.items()]
+    if 'ending-complete' in terminal_ids:runs.append(('ending-complete',route_to('ending-complete'),False,()))
+    for index, (terminal_id,route,failed,skipped) in enumerate(runs):
         if index:
             test.restart()
-        test.run_route(terminal_id,route=route,failed=failed)
-    expected_edges = {door_id for _,route,_ in runs for door_id in route}
+        test.run_route(terminal_id,route=route,failed=failed,skipped_sources=skipped)
+    expected_edges = {door_id for _,route,_,_ in runs for door_id in route}
     expected_places = {'depot'} | {DOORS[door_id]['to'] for door_id in expected_edges}
     assert test.visited == expected_places
     assert len(test.images) == len(expected_places) and len(set(test.images.values())) == len(expected_places)

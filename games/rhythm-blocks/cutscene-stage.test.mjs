@@ -21,7 +21,7 @@ function walkToEveryTarget(scene,savedPosition=null){
  return room.targets.length;
 }
 
-test('retained cutscene poses keep sprites, talk targets, collision feet and hotspots together in all 23 locations',()=>{
+test('retained cutscene poses keep sprites, talk targets, collision feet and hotspots together in every authored location',()=>{
  const before=JSON.stringify(CAMPAIGN_SCENES);let actors=0;
  for(const scene of Object.values(CAMPAIGN_SCENES)){
   const {timeline,staged}=finalScene(scene);assert.notEqual(staged,scene);assert(Object.isFrozen(staged));
@@ -36,13 +36,13 @@ test('retained cutscene poses keep sprites, talk targets, collision feet and hot
   }
   for(const target of scene.geometry.targets.filter(target=>target.type!=='person')){const actual=staged.geometry.targets.find(item=>item.id===target.id);near(actual.x,target.x);near(actual.y,target.y);assert.equal(actual.sourceId,target.sourceId);assert.equal(actual.revealAfter,target.revealAfter);}
  }
- assert.equal(actors,70);assert.equal(JSON.stringify(CAMPAIGN_SCENES),before,'Staging never rewrites shipped geometry.');
+ assert.equal(actors,Object.values(CAMPAIGN_SCENES).reduce((total,scene)=>total+scene.actors.length,0));assert.equal(JSON.stringify(CAMPAIGN_SCENES),before,'Staging never rewrites shipped geometry.');
 });
 
 test('after every complete room opening every prop, person, door, chest and return is still reachable',()=>{
  let targets=0;
  for(const scene of Object.values(CAMPAIGN_SCENES))targets+=walkToEveryTarget(finalScene(scene).staged);
- assert.equal(targets,187);
+ assert.equal(targets,Object.values(CAMPAIGN_SCENES).reduce((total,scene)=>total+scene.geometry.targets.length,0));
 });
 
 test('early Skip also leaves every normal interaction reachable rather than trapping a moving companion',()=>{
@@ -51,7 +51,7 @@ test('early Skip also leaves every normal interaction reachable rather than trap
   const timeline=createRoomCutscene({scene,beats:ROOM_CUTSCENES[scene.id]});for(let i=0;i<10;i++)timeline.update(100);timeline.skip();
   targets+=walkToEveryTarget(stageCutsceneScene(scene,timeline.state.actors));
  }
- assert.equal(targets,187);
+ assert.equal(targets,Object.values(CAMPAIGN_SCENES).reduce((total,scene)=>total+scene.geometry.targets.length,0));
 });
 
 test('missing, invalid, out-of-bounds and furniture-overlapping saved poses are ignored',()=>{

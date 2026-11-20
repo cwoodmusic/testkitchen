@@ -33,6 +33,7 @@ const chestObstacle=id=>({id,...chests[id].base});
 
 const depotObjects=[
  door('garden','Garden',490),door('workshop','Workshop',884),door('canal','Canal',1286),
+ object('final-route','door','Town link',rect(680,920,176,90),{doorId:'final-route',actionLabel:'Choose the town-link door'}),
  chestObject('depot-chest','Open'),
  inspect('returned-letter','Returned letter',rect(240,235,95,55)),
  inspect('clockwork-roost','Clockwork roost',rect(605,65,100,175)),

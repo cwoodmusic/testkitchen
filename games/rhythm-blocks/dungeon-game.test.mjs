@@ -4,6 +4,7 @@ import {readFileSync} from 'node:fs';
 import {NOTE_KINDS,NOTE_KIND_BY_ID} from './engine.mjs';
 import {createStoryGame} from './story.mjs';
 import {createDungeonGame,CHAPTER_ROOMS,CHAPTER_SOURCES,CHAPTER_DOORS,CHAPTER_PREVIEWS,CHAPTER_TERMINALS,getChapterDoor,MAX_DUNGEON_ACTIONS,DUNGEON_INITIAL_INVENTORY} from './dungeon-game.mjs';
+import {PRIOR_OUTCOME_IDS,FINAL_OUTCOME_ID} from './final-route.mjs';
 
 const branchIds=['garden','workshop','canal'];
 const empty=()=>Object.fromEntries(NOTE_KINDS.map(kind=>[kind.id,0]));
@@ -349,7 +350,7 @@ test('every pickup order and route reaches a success or authored failure with ty
  explore(createDungeonGame());
  assert.equal(locations.size,23);assert.equal(doorIds.size,25);assert.equal(sourceIds.size,7);assert.equal(outcomes.size,6);
  assert.equal(histories,24);assert.equal(states.size,43);assert.equal(transitions.size,43);
- assert.deepEqual(new Set(outcomes.keys()),new Set(Object.keys(CHAPTER_TERMINALS)));
+ assert.deepEqual(new Set(outcomes.keys()),new Set(Object.keys(CHAPTER_TERMINALS).filter(id=>id!==FINAL_OUTCOME_ID)));
  assert.deepEqual(failures,new Map([['garden-secret-final','out-of-notes'],['dead-brambles','missing-note-types'],['workshop-secret-final','out-of-notes'],['dead-aviary','missing-note-types'],['canal-final','out-of-notes']]));
 });
 
@@ -429,7 +430,7 @@ const legacyRestFirstKeys={
 };
 
 test('all published locks sound on beat one and changed orders preserve every typed note cost',()=>{
- assert.equal(Object.keys(CHAPTER_DOORS).length,25);
+ assert.equal(Object.keys(CHAPTER_DOORS).length,28);
  for(const door of Object.values(CHAPTER_DOORS))assert.equal(NOTE_KIND_BY_ID[door.recipe[0]].rest,false,door.canonicalId);
  for(const [id,oldKey]of Object.entries(legacyRestFirstKeys)){
   const current=getChapterDoor(id).recipe;
@@ -437,7 +438,8 @@ test('all published locks sound on beat one and changed orders preserve every ty
   assert.notDeepEqual(current,oldKey);
  }
  const proof=JSON.parse(readFileSync(new URL('../../design/music-puzzler/dungeon-verification.json',import.meta.url),'utf8'));
- assert.equal(proof.passed,true);assert.equal(proof.graph.orderedRunHistories,'24');assert.equal(proof.graph.orderedRunFailureHistories,'10');
+ assert.equal(proof.passed,true);assert.equal(proof.graph.orderedRunHistories,'26');assert.equal(proof.graph.orderedRunFailureHistories,'10');
+ assert.equal(proof.progressProof.profiles.freshJournal.graph.orderedRunHistories,'24');
  assert.equal(proof.balances.violationCount,0);assert.equal(proof.softlocks.count,0);
  assert.equal(proof.runFailures.zeroNoteCount,3);assert.equal(proof.runFailures.missingTypeCount,2);
  for(const terminal of proof.terminals.filter(item=>item.kind!=='dead-end'))assert.deepEqual(terminal.remainingTiles,{min:0,max:0});
@@ -447,18 +449,18 @@ test('every old paid route restores through exact legacy receipts without changi
  const proof=JSON.parse(readFileSync(new URL('../../design/music-puzzler/dungeon-verification.json',import.meta.url),'utf8'));
  const migrated=new Set();
  for(const terminal of [...proof.terminals,...(proof.runFailures?.states??[])]){
-  const game=createDungeonGame();
+  const game=createDungeonGame({progress:()=>({outcomes:PRIOR_OUTCOME_IDS})});
   for(const action of terminal.witness.actions){
    if(action.type==='claim')assert.equal(game.claim(action.sourceId),true);
    else pay(game,action.doorId);
   }
   const saved=game.serialize();
   for(const action of saved.actions)if(action.type==='door'&&legacyRestFirstKeys[action.doorId]){action.recipe=[...legacyRestFirstKeys[action.doorId]];migrated.add(action.doorId);}
-  const before=JSON.stringify(saved),restored=createDungeonGame({saved});
+  const before=JSON.stringify(saved),restored=createDungeonGame({saved,progress:()=>({outcomes:PRIOR_OUTCOME_IDS})});
   assert.equal(JSON.stringify(saved),before,'Migration leaves the supplied save untouched.');
   assert.deepEqual(restored.state,game.state,terminal.id??terminal.nodeId);assert.deepEqual(restored.serialize(),game.serialize());assertConserved(restored);
   assert.equal(restored.revisit(),false);assertConserved(restored);
-  const returned=createDungeonGame({saved:restored.serialize()});assert.deepEqual(returned.state,restored.state);
+  const returned=createDungeonGame({saved:restored.serialize(),progress:()=>({outcomes:PRIOR_OUTCOME_IDS})});assert.deepEqual(returned.state,restored.state);
  }
  assert.deepEqual(migrated,new Set(Object.keys(legacyRestFirstKeys)));
 });
@@ -579,4 +581,74 @@ test('opt-in developer mutations can recover test failures without weakening ord
  assert.equal(game.developerResetSources('nell-parcel'),true);assert.equal(game.claim('nell-parcel'),true);
  assert.deepEqual(createDungeonGame({definition:project,developer:true,saved:game.serialize()}).state,game.state);
  const rejected=createDungeonGame({definition:project,saved:game.serialize()});assert.deepEqual(rejected.state.actions,[]);assert.equal(rejected.state.runStatus,'failed');
+});
+
+const completeProgress=()=>({outcomes:PRIOR_OUTCOME_IDS});
+
+test('each missing earlier outcome keeps the final route hidden in live play and saved replay',()=>{
+ for(const missing of [null,...PRIOR_OUTCOME_IDS]){
+  const outcomes=missing?PRIOR_OUTCOME_IDS.filter(id=>id!==missing):[],progress=()=>({outcomes,complete:true,nodes:PRIOR_OUTCOME_IDS,hints:PRIOR_OUTCOME_IDS});
+  const game=collect(createDungeonGame({progress})),before=game.state;
+  assert(before.hiddenDoorIds.includes('final-route'));assert(!before.revealedDoors.includes('final-route'));
+  for(const id of ['final-route','depot-final-route'])assert.equal(game.selectDoor(id),false,missing??'no outcomes');
+  assert.deepEqual(game.state,before);
+  const saved=game.serialize(),forged={...saved,progress:{outcomes:PRIOR_OUTCOME_IDS},outcomes:PRIOR_OUTCOME_IDS,actions:[...saved.actions,{type:'door',doorId:'depot-final-route',recipe:[...getChapterDoor('final-route').recipe]}],selectedDoor:null};
+  const rejected=createDungeonGame({saved:forged,progress});assert.equal(rejected.state.roomId,'depot');assert.deepEqual(rejected.state.actions,[]);assert.deepEqual(rejected.state.inventory,empty());
+  const selection=createDungeonGame({saved:{...saved,selectedDoor:'final-route'},progress});assert.deepEqual(selection.state.actions,[]);assert.equal(selection.state.selectedDoor,null);
+  assert.deepEqual(createDungeonGame({saved,progress}).state,before,'Ordinary source receipts remain reloadable before the last outcome.');
+ }
+});
+
+test('journal progress opens the final route dynamically without supplying notes or granting the new ending',()=>{
+ let journal={outcomes:[]};const game=createDungeonGame({progress:()=>journal});
+ assert(game.state.hiddenDoorIds.includes('final-route'));const emptyState=game.state;
+ journal={outcomes:PRIOR_OUTCOME_IDS.map(id=>({id})),complete:false};
+ assert(game.state.revealedDoors.includes('final-route'));assert(!game.state.hiddenDoorIds.includes('final-route'));
+ assert.deepEqual(game.state.inventory,emptyState.inventory);assert.deepEqual(game.state.actions,[]);assert.deepEqual(game.state.claimedSources,[]);assert.equal(game.state.nextScene,null);
+ collect(game);assert.equal(game.selectDoor('final-route'),true);assert.equal(game.add('half'),true);
+ const draft=game.serialize();journal={outcomes:PRIOR_OUTCOME_IDS.slice(1)};
+ assert.equal(game.state.canAttempt,false);assert.equal(game.state.canCommit,false);assert.equal(game.add('quarter'),false);assert.equal(game.commit(),false);
+ assert.equal(game.undo(),true,'Revoking progress never spends or traps the editable draft.');
+ journal=completeProgress();assert.deepEqual(createDungeonGame({saved:draft,progress:()=>journal}).state.phrase,['half']);
+ assert.equal(game.restart(),true);assert(game.state.revealedDoors.includes('final-route'));assert.deepEqual(game.state.inventory,empty());assert.deepEqual(game.state.claimedSources,[]);
+ assert.throws(()=>createDungeonGame({progress:journal}),/trusted journal callback/);
+});
+
+test('the complete route spends the ordinary twelve beats through three irreversible ordered locks',()=>{
+ const game=collect(createDungeonGame({progress:completeProgress}));assert.equal(total(game.state.inventory),24);
+ assert.deepEqual(getChapterDoor('final-route').recipe,['half','quarter','eighth-pair']);
+ assert.deepEqual(getChapterDoor('concourse-heart').recipe,['dotted-half','sixteenth-group']);
+ assert.deepEqual(getChapterDoor('heart-complete').recipe,['eighth','sixteenth-pair','half-rest','quarter-rest']);
+ assert.equal(game.selectDoor('final-route'),true);fill(game,[...getChapterDoor('final-route').recipe].reverse());
+ const wrong=game.state;assert.equal(wrong.canAttempt,true);assert.equal(wrong.canCommit,false);assert.equal(game.commit(),false);assert.deepEqual(game.state,wrong);
+ while(game.state.phrase.length)assert.equal(game.undo(),true);
+ for(const [id,room,remaining]of [['final-route','final-concourse',16],['concourse-heart','final-heart',8],['heart-complete',FINAL_OUTCOME_ID,0]]){
+  pay(game,id);assert.equal(game.state.roomId,room);assert.equal(total(game.state.inventory),remaining);assert.equal(game.state.failure,null);assertConserved(game);
+  assert.equal(game.revisit(),false);assert.equal(game.rewindRoom(),false);assert.equal(game.undo(),false);
+  assert.deepEqual(createDungeonGame({saved:game.serialize(),progress:completeProgress}).state,game.state);
+ }
+ assert.equal(game.state.phase,'terminal');assert.equal(game.state.runStatus,'completed');assert.equal(game.state.nextScene.id,FINAL_OUTCOME_ID);assert.deepEqual(game.state.inventory,empty());
+ assert.deepEqual(game.state.claimedSources,['nell-parcel','depot-chest']);assert.equal(game.state.actions.length,5);
+ const saved=game.serialize();assert(!Object.hasOwn(saved,'progress'));assert(!Object.hasOwn(saved,'outcomes'));
+ assert.deepEqual(createDungeonGame({saved}).state.actions,[],'The saved run cannot supply its own missing journal prerequisites.');
+ game.restart();assert.equal(game.state.roomId,'depot');assert.deepEqual(game.state.inventory,empty());assert(game.state.revealedDoors.includes('final-route'));
+});
+
+test('locked progress gates cannot count as affordable exits or bypass source reveals',()=>{
+ let outcomes=[];const project=definition({replayRisk:true});project.settings.startRoomId='garden-final';
+ project.doors['garden-ending'].requiresProgress={outcomes:['ending-home']};project.settings.initialInventory=empty();
+ for(const kind of project.doors['garden-ending'].recipe)project.settings.initialInventory[kind]++;
+ const game=createDungeonGame({definition:project,progress:()=>({outcomes})});assert.equal(game.state.runStatus,'failed');assert.equal(game.state.failure.reason,'missing-note-types');assert.deepEqual(game.state.revealedDoors,[]);
+ outcomes=['ending-home'];assert.equal(game.state.runStatus,'active');assert.deepEqual(game.state.revealedDoors,['garden-ending']);assert.deepEqual(game.state.inventory,project.settings.initialInventory);
+ const sourceProject=definition();sourceProject.doors['final-route'].revealAfter='depot-chest';const hidden=createDungeonGame({definition:sourceProject,progress:completeProgress});
+ assert(hidden.state.hiddenDoorIds.includes('final-route'));assert.equal(hidden.selectDoor('final-route'),false);hidden.claim('depot-chest');assert(hidden.state.revealedDoors.includes('final-route'));
+});
+
+test('progress requirement definitions reject malformed gates and developer teleports remain explicit',()=>{
+ for(const requirement of [null,{},[],{outcomes:[]},{outcomes:['ending-home','ending-home']},{outcomes:['constructor']},{outcomes:['ending-home'],hints:[]}]){
+  const project=definition();project.doors.garden.requiresProgress=requirement;assert.throws(()=>createDungeonGame({definition:project}),/unique authored outcome IDs/);
+ }
+ const game=createDungeonGame({developer:true});assert.equal(game.selectDoor('final-route'),false);assert.equal(game.developerTeleport('final-heart'),true);
+ assert.equal(game.state.roomId,'final-heart');assert.deepEqual(game.state.inventory,empty());assert.deepEqual(game.state.traversedDoors,[]);assert.equal(game.state.receipt,null);
+ const saved=game.serialize();assert.equal(createDungeonGame({saved,developer:true}).state.roomId,'final-heart');assert.equal(createDungeonGame({saved}).state.roomId,'depot');
 });

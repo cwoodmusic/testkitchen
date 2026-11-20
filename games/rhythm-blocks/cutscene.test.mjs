@@ -229,7 +229,7 @@ test('concurrent player and companion clips reserve different playable end posit
  }
 });
 
-test('all 23 authored arrivals walk three companions to real props without crossing physical furniture',()=>{
+test('all authored arrivals walk three companions to real props without crossing physical furniture',()=>{
  const before=JSON.stringify({scenes:CAMPAIGN_SCENES,beats:ROOM_CUTSCENES});let moved=0;
  for(const [id,room]of Object.entries(CAMPAIGN_SCENES)){
   const beats=ROOM_CUTSCENES[id],timeline=createRoomCutscene({scene:room,beats}),compiled=timeline.timeline,physical=physicalRoom(room);
@@ -250,7 +250,7 @@ test('all 23 authored arrivals walk three companions to real props without cross
   }
   assert(frames<2000,id);assert.equal(timeline.state.activeClipIds.length,0);assert(timeline.state.actors.every(actor=>!actor.moving&&!actor.action&&!actor.emote));
  }
- assert.equal(moved,69);assert.equal(JSON.stringify({scenes:CAMPAIGN_SCENES,beats:ROOM_CUTSCENES}),before);
+ assert.equal(moved,Object.keys(CAMPAIGN_SCENES).length*3);assert.equal(JSON.stringify({scenes:CAMPAIGN_SCENES,beats:ROOM_CUTSCENES}),before);
 });
 
 const walk=(extra={})=>({id:'walk',kind:'walk',actor:'nell',target:'instrument',action:'examine',startTile:0,durationTiles:60,...extra});

@@ -3,6 +3,7 @@ import {NOTE_KINDS} from './engine.mjs';
 import {CHAPTER_ROOMS,CHAPTER_DOORS,CHAPTER_SOURCES,CHAPTER_TERMINALS} from './chapter.mjs';
 import {CAMPAIGN_SCENES} from './campaign-scenes.mjs';
 import {CAMPAIGN_CONTENT} from './campaign-content.mjs';
+import {withoutCompleteRoute} from './complete-route-updates.mjs';
 
 export const REPLAY_RISK_DETOURS=Object.freeze({
  'dead-brambles':'bramble-return-gate',
@@ -27,7 +28,7 @@ function graph(project){
  const select=(value,fields)=>record(value)?Object.fromEntries(fields.filter(field=>Object.hasOwn(value,field)).map(field=>[field,value[field]])):value;
  return {
   rooms:sorted(project.rooms).map(([id,room])=>[id,select(room,['id','sources','doors'])]),
-  doors:sorted(project.doors).map(([id,door])=>[id,select(door,['id','canonicalId','from','to','recipe','revealAfter'])]),
+  doors:sorted(project.doors).map(([id,door])=>[id,select(door,['id','canonicalId','from','to','recipe','revealAfter','requiresProgress'])]),
   sources:sorted(project.sources).map(([id,source])=>[id,select(source,['id','type','roomId','recipe','character'])]),
   terminals:sorted(project.terminals).map(([id,terminal])=>[id,select(terminal,['id','kind'])]),
   previews:sorted(project.previews).map(([id,preview])=>[id,select(preview,['id','kind'])]),
@@ -41,12 +42,13 @@ function sceneShape(scene){
  if(!record(scene))return null;
  return structural({image:scene.image,layoutRevision:scene.layoutRevision,layoutKind:scene.layoutKind,actors:scene.actors,occluders:scene.occluders,geometry:scene.geometry,objects:scene.objects});
 }
-function stockGraph({previous=false}={}){
+function stockGraph({previous=false,completeRoute=true}={}){
  const rooms=Object.fromEntries(Object.entries(CHAPTER_ROOMS).filter(([id])=>!previous||!ids.has(id)));
  const doors=Object.fromEntries(Object.entries(CHAPTER_DOORS).filter(([id])=>!previous||!gateIds.has(id)));
  const terminals={...CHAPTER_TERMINALS};
  if(previous)for(const id of ids)terminals[id]={id,kind:'dead-end'};
- return graph({rooms,doors,sources:CHAPTER_SOURCES,terminals,previews:{},settings:{startRoomId:'depot',initialInventory:Object.fromEntries(NOTE_KINDS.map(note=>[note.id,0])),terminalRooms:true},noteKinds:NOTE_KINDS.map(note=>({...note,subdivisions:['eighth-pair','sixteenth-pair'].includes(note.id)?2:note.id==='sixteenth-group'?4:1}))});
+ const project={rooms,doors,sources:CHAPTER_SOURCES,terminals,previews:{},settings:{startRoomId:'depot',initialInventory:Object.fromEntries(NOTE_KINDS.map(note=>[note.id,0])),terminalRooms:true},noteKinds:NOTE_KINDS.map(note=>({...note,subdivisions:['eighth-pair','sixteenth-pair'].includes(note.id)?2:note.id==='sixteenth-group'?4:1}))};
+ return graph(completeRoute?project:withoutCompleteRoute(project));
 }
 function formerScene(id){
  const scene=clone(CAMPAIGN_SCENES[id]),gateId=REPLAY_RISK_DETOURS[id];
@@ -64,10 +66,10 @@ export function upgradeReplayRiskProject(project){
  if(!record(result?.settings)||Object.hasOwn(result.settings,'replayRisk'))return result;
  if(!Object.entries(REPLAY_RISK_DETOURS).every(([id,gateId])=>CHAPTER_ROOMS[id]&&CHAPTER_DOORS[gateId]))return result;
  const shape=graph(project);
- if(same(shape,stockGraph())&&Object.keys(REPLAY_RISK_DETOURS).every(id=>same(sceneShape(project.scenes?.[id]),sceneShape(CAMPAIGN_SCENES[id])))){
+ if([stockGraph(),stockGraph({completeRoute:false})].some(stock=>same(shape,stock))&&Object.keys(REPLAY_RISK_DETOURS).every(id=>same(sceneShape(project.scenes?.[id]),sceneShape(CAMPAIGN_SCENES[id])))){
   result.settings.replayRisk=true;return result;
  }
- if(!same(shape,stockGraph({previous:true})))return result;
+ if(!same(shape,stockGraph({previous:true,completeRoute:false})))return result;
  for(const id of ids)if(!same(sceneShape(project.scenes?.[id]),sceneShape(formerScene(id))))return result;
  for(const [id,gateId]of Object.entries(REPLAY_RISK_DETOURS)){
   const {kind,...former}=result.terminals[id];

@@ -15,7 +15,7 @@ const sameRecipe=(left,right)=>left.length===right.length&&left.every((kind,inde
 
 test('every authored room and outcome is an actual narrated place',()=>{
  assert.deepEqual(new Set(Object.keys(CAMPAIGN_CONTENT)),new Set([...roomById.keys(),...terminalById.keys()]));
- assert.equal(Object.keys(CAMPAIGN_CONTENT).length,23);
+ assert.equal(Object.keys(CAMPAIGN_CONTENT).length,26);
  for(const [id,room]of Object.entries(CAMPAIGN_CONTENT)){
   assert.equal(getCampaignContent(id),room);
   assert(room.title.trim());assert(room.arrival.trim());
@@ -25,7 +25,7 @@ test('every authored room and outcome is an actual narrated place',()=>{
   if(!Object.hasOwn(ROOM_CONTENT,id))assert.equal(room.inspections.length,3,id);
  }
  for(const invalid of [undefined,null,'unknown','__proto__','constructor'])assert.equal(getCampaignContent(invalid),null);
- assert.equal(new Set(Object.values(CAMPAIGN_CONTENT).map(room=>room.arrival)).size,23,'Every location has its own arrival, not a shared placeholder.');
+ assert.equal(new Set(Object.values(CAMPAIGN_CONTENT).map(room=>room.arrival)).size,26,'Every location has its own arrival, not a shared placeholder.');
 });
 
 test('released opening conversations and observations remain intact while preview barriers are removed',()=>{
@@ -89,7 +89,7 @@ test('only the existing authored gifts and hidden searches can offer notes',()=>
 });
 
 test('inspection IDs and placements preserve authored evidence and give every outcome its own props',()=>{
- assert.equal(CAMPAIGN_LORE.length,71);assert.equal(new Set(CAMPAIGN_LORE.map(entry=>entry.id)).size,71);
+ assert.equal(CAMPAIGN_LORE.length,80);assert.equal(new Set(CAMPAIGN_LORE.map(entry=>entry.id)).size,80);
  for(const record of guide.rooms.filter(record=>roomById.has(record.id)&&!Object.hasOwn(ROOM_CONTENT,record.id))){
   const entries=CAMPAIGN_CONTENT[record.id].inspections;
   assert.deepEqual(entries.map(entry=>entry.id),record.props.map(prop=>prop.id));
@@ -112,7 +112,7 @@ test('ending text and paid detours teach irreversible costs and persistent learn
    for(const person of room.people){assert.match(person.route,/new run|next run|next try/i);assert.match(person.inventory,/new run|start again|next time/i);}
   }else assert.equal(outcome.repair,undefined,'A successful ending does not carry dead-end recovery instructions.');
  }
- assert.equal(new Set(design.terminals.map(terminal=>CAMPAIGN_CONTENT[terminal.id].outcome.copy)).size,6);
+ assert.equal(new Set(design.terminals.map(terminal=>CAMPAIGN_CONTENT[terminal.id].outcome.copy)).size,7);
  for(const id of ['dead-brambles','dead-aviary','dead-echo']){
   const room=CAMPAIGN_CONTENT[id],authored=roomById.get(id);
   assert(authored&&authored.doors.length===1,id);
@@ -121,5 +121,25 @@ test('ending text and paid detours teach irreversible costs and persistent learn
   for(const person of room.people)assert.match(person.route,/south/i);
  }
  assert.doesNotMatch(textValues(CAMPAIGN_CONTENT).join('\n'),/Revisit previous choice|revisit (?:our |the )?last choice|recover (?:the |its )?(?:spent )?notes|refund/i,'Reading a clue must never promise recovery of a paid key.');
- assert.equal(Object.keys(CAMPAIGN_ART_BRIEFS).filter(id=>!Object.hasOwn(ROOM_CONTENT,id)).length,19);
+ assert.equal(Object.keys(CAMPAIGN_ART_BRIEFS).filter(id=>!Object.hasOwn(ROOM_CONTENT,id)).length,22);
+});
+
+test('the complete route turns journal knowledge into one fresh repair and resolves every service with all four friends',()=>{
+ const meeting=CAMPAIGN_CONTENT['final-concourse'],heart=CAMPAIGN_CONTENT['final-heart'],ending=CAMPAIGN_CONTENT['ending-complete'];
+ const meetingStory=meeting.people.map(person=>person.story).join(' '),endingStory=[ending.arrival,ending.outcome.copy,...ending.people.map(person=>person.story)].join(' ');
+ assert.match(meetingStory,/reset.*repairs/i,'Earlier physical repairs reset with the run.');
+ assert.match(meetingStory,/journal kept what worked and what failed/i,'Failed journeys preserve useful knowledge.');
+ assert.match(meetingStory,/during this one trip/i,'The final group still has to make the connections now.');
+ assert.equal(ending.outcome.kicker,'Complete ending');
+ for(const detail of [/water and deliveries/i,/ferr(?:y|ies)/i,/music room/i,/repair/i,/birds.*own reply horn/i,/friend.*(?:arrived|reached).*safely/i,/all four/i])assert.match(endingStory,detail);
+ assert.match(ending.outcome.copy,/all twelve beats.*spent/i);
+ assert.match(ending.people.find(person=>person.id==='iris').inventory,/Earlier runs gave us knowledge, not extra notes or repairs that stayed fixed/);
+ assert.match(ending.inspections.find(entry=>entry.id==='ending-complete-reply').text,/waiting at Nell’s depot with tea ready/,'Iris receives an arrival, rather than another unanswered promise.');
+ for(const person of meeting.people)assert.match(person.route,/dotted half.*four sixteenths?/i,person.id);
+ for(const person of heart.people)assert.match(person.route,/single eighth.*paired sixteenths.*half rest.*quarter rest/i,person.id);
+ assert(heart.people.every(person=>!person.sourceId));
+ assert([...meeting.inspections,...heart.inspections,...ending.inspections].every(entry=>!entry.sourceId),'The story never invents another pickup.');
+ assert.match(guide.finalRoute.unlockRequirement,/all eleven prior outcomes/i);
+ assert.match(guide.finalRoute.unlockRequirement,/six failed runs/i);
+ assert.match(guide.finalRoute.unlockRequirement,/never its own prerequisite/i);
 });

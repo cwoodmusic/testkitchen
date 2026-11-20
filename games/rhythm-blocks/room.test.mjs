@@ -16,7 +16,7 @@ function arrive(walker){
 test('all people, doors and the chest can be approached around the actual room furniture',()=>{
  const walker=createRoomWalker();
  assert.deepEqual(point(walker.state),{x:768,y:920});
- assert.equal(walker.state.facing,'up');assert.equal(walker.state.moving,false);assert.equal(walker.nearbyTarget(),null);
+ assert.equal(walker.state.facing,'up');assert.equal(walker.state.moving,false);assert.equal(walker.nearbyTarget()?.id,'final-route','The revealed town-link lift sits at the south threshold.');
  for(const target of DEPOT_ROOM.targets){
   assert(walker.approach(target.id),target.id);arrive(walker);
   assert(walker.withinReach(target.id),target.id);assert.equal(walker.state.targetId,target.id);

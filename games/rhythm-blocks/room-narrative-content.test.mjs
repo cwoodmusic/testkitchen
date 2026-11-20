@@ -5,7 +5,7 @@ import {CAMPAIGN_PLAN} from './campaign-data.mjs';
 
 test('every released room and outcome has a brief readable scene introduction',()=>{
  const ids=[...CAMPAIGN_PLAN.rooms,...CAMPAIGN_PLAN.terminals].map(room=>room.id).sort();
- assert.equal(ids.length,23);assert.deepEqual(Object.keys(ROOM_NARRATIONS).sort(),ids);assert(Object.isFrozen(ROOM_NARRATIONS));
+ assert.equal(ids.length,26);assert.deepEqual(Object.keys(ROOM_NARRATIONS).sort(),ids);assert(Object.isFrozen(ROOM_NARRATIONS));
  for(const [id,narration]of Object.entries(ROOM_NARRATIONS)){
   assert(narration.length>=180&&narration.length<=400,`${id}: keep a short room introduction (${narration.length} characters).`);
   assert.equal(narration.trim(),narration);

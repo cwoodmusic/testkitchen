@@ -12,7 +12,7 @@ const compiled=(roomId,beats=ROOM_CUTSCENES[roomId])=>compileRoomCutscene({scene
 
 test('every room has an individually editable, local discussion led by Nell with Mira carrying the strongest voice',()=>{
  assert.deepEqual(Object.keys(ROOM_CUTSCENES),Object.keys(CAMPAIGN_CONTENT));
- assert.equal(Object.keys(ROOM_CUTSCENES).length,23);
+ assert.equal(Object.keys(ROOM_CUTSCENES).length,26);
  const lines=new Set(),ids=new Set();
  for(const [roomId,beats]of Object.entries(ROOM_CUTSCENES)){
   const dialogue=beats.filter(beat=>beat.kind==='dialogue');
@@ -37,7 +37,7 @@ test('every room has an individually editable, local discussion led by Nell with
   }
   assert.deepEqual(separateCutsceneTracks({scene:CAMPAIGN_SCENES[roomId],beats}),beats,'No legacy combined records need splitting.');
  }
- assert.equal(lines.size,138);
+ assert.equal(lines.size,156);
 });
 
 test('all four characters move and emote together instead of waiting for their speaking turn',()=>{

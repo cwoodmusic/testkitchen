@@ -9,8 +9,8 @@ const observations=new Map(Object.entries(CAMPAIGN_CONTENT).flatMap(([roomId,roo
 
 test('every released room and outcome has an authored landmark exchange',()=>{
  const covered=new Set();
- assert.equal(Object.keys(CAMPAIGN_CONTENT).length,23);
- assert.equal(Object.keys(OBJECT_DIALOGUES).length,24);
+ assert.equal(Object.keys(CAMPAIGN_CONTENT).length,26);
+ assert.equal(Object.keys(OBJECT_DIALOGUES).length,27);
  for(const [objectId,lines]of Object.entries(OBJECT_DIALOGUES)){
   const observation=observations.get(objectId);assert(observation,`${objectId} needs a real inspectable object`);
   covered.add(observation.roomId);
@@ -34,7 +34,7 @@ test('each voice belongs to the local cast and each line is bounded display data
    assert.doesNotMatch(line.text,/TODO|coming soon|not playable|click here|press (?:a|the) button|\bfunction\b/i);
   }
  }
- assert.equal(count,96);
+ assert.equal(count,108);
  assert(OBJECT_DIALOGUES['canal-porch-mooring-bell'].some(line=>line.speaker==='oren'));
 });
 
@@ -59,4 +59,18 @@ test('reading or copying exchanges cannot mutate authored lore, routes or the no
  assert.throws(()=>OBJECT_DIALOGUES['returned-letter'].push({speaker:'mira',text:'Mutation'}),TypeError);
  assert.deepEqual(OBJECT_DIALOGUES,before);assert.deepEqual(CAMPAIGN_CONTENT,content);assert.deepEqual(CAMPAIGN_PLAN,plan);
  for(const unknown of [undefined,null,'missing','__proto__','constructor',4,{}])assert.equal(getObjectDialogue(unknown),null);
+});
+
+test('the new shared repair gives Pip useful evidence and Iris a confirmed reunion without granting rewards',()=>{
+ const map=OBJECT_DIALOGUES['final-concourse-service-map'].map(line=>line.text).join(' '),screen=OBJECT_DIALOGUES['final-heart-reply-screen'].map(line=>line.text).join(' '),reply=OBJECT_DIALOGUES['ending-complete-reply'].map(line=>line.text).join(' ');
+ assert.match(map,/repairs reset.*journal kept the results/i);
+ assert.match(map,/all five lines on this trip/i);
+ assert.match(screen,/watching carefully is useful/i,'Pip’s emotional concern contributes to the group’s test.');
+ assert.match(reply,/arrived safely.*tea ready/i,'The personal ending includes an actual safe arrival.');
+ assert.match(reply,/all four of us finished the repair/i);
+ for(const id of ['final-concourse-service-map','final-heart-reply-screen','ending-complete-reply']){
+  const lines=OBJECT_DIALOGUES[id];
+  assert.deepEqual(new Set(lines.map(line=>line.speaker)),new Set(['mira','nell','pip','iris']));
+  assert(lines.every(line=>Object.keys(line).length===2));
+ }
 });

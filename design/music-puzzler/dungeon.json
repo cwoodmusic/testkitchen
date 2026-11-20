@@ -1,6 +1,6 @@
 {
   "version": 1,
-  "status": "released replay-risk campaign; paid doors are irreversible and knowledge persists across runs",
+  "status": "released replay-risk campaign with an ultimate route requiring all eleven prior outcomes",
   "entry": "depot",
   "initialInventory": {},
   "rooms": [
@@ -67,6 +67,32 @@
           ],
           "label": "The canal door",
           "hint": "Hold for two beats, play one quarter note, then two eighth notes."
+        },
+        {
+          "id": "depot-final-route",
+          "to": "final-concourse",
+          "recipe": [
+            "half",
+            "quarter",
+            "eighth-pair"
+          ],
+          "label": "The town-link door",
+          "hint": "Hold for two beats, play one quarter note, then two eighth notes. Save every other starting note for the two locks ahead.",
+          "requiresProgress": {
+            "outcomes": [
+              "ending-home",
+              "ending-school",
+              "ending-public",
+              "ending-secret-quiet",
+              "ending-secret-birds",
+              "dead-ferry",
+              "failure-dead-brambles",
+              "failure-dead-aviary",
+              "failure-garden-secret-final",
+              "failure-workshop-secret-final",
+              "failure-canal-final"
+            ]
+          }
         }
       ],
       "description": "The bell is silent. Mira and her friends follow a returned letter to learn why mail, water, and ferry checks have stopped."
@@ -490,6 +516,44 @@
           "hint": "Use the dotted half note and quarter note you saved through the hidden passage."
         }
       ]
+    },
+    {
+      "id": "final-concourse",
+      "title": "The Meeting of Routes",
+      "sources": [],
+      "doors": [
+        {
+          "id": "concourse-heart",
+          "to": "final-heart",
+          "recipe": [
+            "dotted-half",
+            "sixteenth-group"
+          ],
+          "label": "The shared-signal gate",
+          "hint": "Hold a sound for three beats, then play four sixteenth notes."
+        }
+      ],
+      "description": "The old service routes meet here. What the group learned on every earlier route lets them connect the homes, school, water clocks, and courier birds in one run."
+    },
+    {
+      "id": "final-heart",
+      "title": "The Listening Heart",
+      "sources": [],
+      "doors": [
+        {
+          "id": "heart-complete",
+          "to": "ending-complete",
+          "recipe": [
+            "eighth",
+            "sixteenth-pair",
+            "half-rest",
+            "quarter-rest"
+          ],
+          "label": "The answering-bell door",
+          "hint": "Play a single eighth and paired sixteenths for beat one. A half rest and quarter rest leave room for the town’s reply."
+        }
+      ],
+      "description": "The bell must wait for separate replies instead of treating every voice as an echo. This final key uses the last four starting notes."
     }
   ],
   "terminals": [
@@ -523,6 +587,11 @@
       "title": "The Empty Ferry",
       "kind": "dead-end",
       "repair": "Start a new run. Open the stamped chest in the canal storehouse, then choose the delivery gate."
+    },
+    {
+      "id": "ending-complete",
+      "title": "A Town Answering Together",
+      "kind": "ending"
     }
   ],
   "rules": [
@@ -535,16 +604,19 @@
     "Hidden caches require explicit searching. Each supplies its own four-beat hidden gate, so finding a cache does not replace a final key spent on an earlier detour.",
     "Successful endings use zero of every note kind. A nonterminal room with no affordable revealed door and no unclaimed local source ends the run: an empty bag is out of notes, and a nonempty unusable bag lacks the right types.",
     "A failed run keeps its discovered rooms, connections, and clues. Restart begins at the depot with an empty bag and fresh once-only supplies; journal knowledge never grants current-run notes.",
-    "The verifier accepts only witnessed resource losses whose every history crossed a declared risk-entry door. Unmarked blocked states, broken success balances, unreachable content, and ungated secret endings still fail."
+    "The verifier accepts only witnessed resource losses whose every history crossed a declared risk-entry door. Unmarked blocked states, broken success balances, unreachable content, and ungated secret endings still fail.",
+    "The town-link door at the depot opens only after all eleven earlier outcomes are recorded, including both secret endings and all six failed-run outcomes. Its two inner gates use the remaining starting notes. Journal progress unlocks the route but never supplies notes.",
+    "Progress-gated content is proved with both a fresh journal and all required outcomes. Content intentionally locked before completion is reported separately; full-progress coverage remains strict."
   ],
   "expectedCounts": {
-    "rooms": 17,
-    "terminals": 6,
-    "regularEndings": 3,
+    "rooms": 19,
+    "terminals": 7,
+    "regularEndings": 4,
     "secretEndings": 2,
     "deadEnds": 1,
     "sources": 7,
-    "doors": 25
+    "doors": 28,
+    "priorOutcomes": 11
   },
   "budgetProof": {
     "regular": "12 initial beats + 4 branch-source beats = 4 doors × 4 beats = 16; zero remains.",
@@ -553,7 +625,8 @@
     "canalLoss": "The copied-waterway route pays its extra service stair: 16 supplied beats are spent before the last bell door, which still needs another four beats. The bag reaches zero at the bell controls.",
     "gardenAndWorkshopLoss": "Taking the risky porch door spends the original final key. Its service gate then spends the branch gift. The hidden cache pays only its own gate, leaving zero notes before the secret final door.",
     "missingTypes": "Skipping the porch gift and choosing its risky door leaves four beats of other types. The extra service gate cannot be paid, so the attempt ends without a refund.",
-    "runHistories": "43 reachable states and 43 transitions yield 14 terminal histories plus 10 recognized resource-loss histories, or 24 complete runs. All five successes remain reachable; three loss states have zero notes and two retain the wrong types."
+    "runHistories": "Fresh journals retain 43 reachable states, 43 transitions, 14 terminal histories, and 10 resource-loss histories: 24 complete runs. With all eleven prior outcomes recorded, the three-door ultimate route adds three states, three transitions, and two supply-order histories: 46 states, 46 transitions, and 26 complete runs.",
+    "ultimate": "12 initial beats = C (half, quarter, paired eighths) + A (dotted half, four sixteenths) + B (single eighth, paired sixteenths, half rest, quarter rest) = 3 doors × 4 beats; zero of every note kind remains. No extra supplies are awarded."
   },
   "replayRisk": {
     "irreversibleDoors": true,
@@ -562,5 +635,18 @@
       "workshop-porch-dead",
       "canal-dead"
     ]
-  }
+  },
+  "progressOutcomes": [
+    "ending-home",
+    "ending-school",
+    "ending-public",
+    "ending-secret-quiet",
+    "ending-secret-birds",
+    "dead-ferry",
+    "failure-dead-brambles",
+    "failure-dead-aviary",
+    "failure-garden-secret-final",
+    "failure-workshop-secret-final",
+    "failure-canal-final"
+  ]
 }

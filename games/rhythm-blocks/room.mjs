@@ -26,6 +26,7 @@ export const DEPOT_ROOM=freeze({
   {id:'garden',type:'door',x:490,y:250,approach:{x:490,y:310},range:100},
   {id:'workshop',type:'door',x:884,y:250,approach:{x:884,y:310},range:100},
   {id:'canal',type:'door',x:1286,y:250,approach:{x:1286,y:310},range:100},
+  {id:'final-route',type:'door',label:'Choose the town-link door',x:768,y:960,approach:{x:768,y:910},range:85},
   {id:'returned-letter',type:'inspect',label:'Inspect the returned letter',x:220,y:375,approach:{x:220,y:440},range:105},
   {id:'clockwork-roost',type:'inspect',label:'Inspect the mail bird',x:655,y:250,approach:{x:655,y:310},range:100},
   {id:'dispatch-map',type:'inspect',label:'Inspect the mail-route screen',x:1055,y:250,approach:{x:1055,y:310},range:100},

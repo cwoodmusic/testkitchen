@@ -482,6 +482,100 @@ const NEW_ROOMS={
         "placement": "wall"
       }
     ]
+  },
+  "final-concourse": {
+    "arrival": "Five old service lines meet beneath one wall map. Their controls reach the homes, classroom, public bell, birds’ horn and Iris’s listening window. The journal explains how each one should answer.",
+    "stories": {
+      "nell": "Starting again reset our note bag and the repairs. Our journal kept what worked and what failed. We can use that knowledge to connect every service during this one trip.",
+      "iris": "These old service controls reach the smaller reply connections from here. We know which wire each one needs. The shared return line still needs fastening in the next room.",
+      "pip": "The birds’ tiny horn has its own line! We must connect that one too. Getting the big bell working won’t help if nobody hears their own answers. I remembered that part."
+    },
+    "routes": {
+      "nell": "The heart door needs a dotted half note, then four sixteenth notes. Hold three beats, then play four sounds in the last beat. Save the four other tiles for the last door.",
+      "iris": "Use a dotted half, then four sixteenths. That fills four beats. Keep the single eighth, paired sixteenths, half rest and quarter rest for the shared return line’s final test.",
+      "pip": "I can play the heart door’s example: a dotted half, then four sixteenths. There are no new tiles here. Let’s keep our two short-note tiles and two rests for the last lock."
+    },
+    "inventory": {
+      "nell": "We brought twelve beats from the depot. Its door used four, so eight remain for these two doors. No side trip and no new supply are needed here.",
+      "iris": "Our eight remaining beats form two different keys. The dotted half and four-sixteenth group pay this door. The other four tiles must stay in the bag.",
+      "pip": "I checked beside the little step: tools, but no note tiles. We already have both keys if we brought Nell’s bag and opened the depot chest. Let’s spend them carefully."
+    },
+    "demos": {
+      "nell": "concourse-heart",
+      "iris": "concourse-heart",
+      "pip": "concourse-heart"
+    },
+    "title": "The Meeting of Routes",
+    "inspections": [
+      {
+        "id": "final-concourse-home-board",
+        "title": "The household control board",
+        "label": "Inspect the household control board",
+        "text": "A pump lever and parcel light share this board. Each waits for a reply from a home before sending water or another delivery.",
+        "placement": "left"
+      },
+      {
+        "id": "final-concourse-bird-step",
+        "title": "The birds’ reply step",
+        "label": "Inspect the birds’ reply step",
+        "text": "A low wooden step reaches a little horn. Its separate wire lets the mail birds send a tune of their own.",
+        "placement": "right"
+      },
+      {
+        "id": "final-concourse-service-map",
+        "title": "The five-line service map",
+        "label": "Inspect the five-line service map",
+        "text": "Five lines join the homes, music room, public bell, birds’ horn and Iris’s window to these controls. The large return wire continues into the next room.",
+        "placement": "wall"
+      }
+    ]
+  },
+  "final-heart": {
+    "arrival": "The five service lines join a loose wire beside the public bell’s controls. A hand clamp can hold the wire in place. The last rhythm will test whether each connected service can send back a reply.",
+    "stories": {
+      "nell": "We’ve connected the smaller lines from the first room. Now we can fasten this loose return wire and test them together. Water, deliveries and safe ferry checks all depend on the bell hearing their replies.",
+      "iris": "The return wire carries answers back to the bell. The last key begins with a quick call, then leaves listening time. We’ll check the classroom, bird horn and my friend’s window as well as the public line.",
+      "pip": "If one little lamp stays dark, we’ll notice, won’t we? I’m watching the birds’ line. Iris can watch the window, Nell can check the bell, and Mira spots things the rest of us walk past."
+    },
+    "routes": {
+      "nell": "The final door needs a single eighth note, paired sixteenths, a half rest, then a quarter rest. The two short-note tiles fill beat one, and the rests leave three beats to hear an answer.",
+      "iris": "Use a single eighth, paired sixteenths, a half rest and a quarter rest, in that order. The first two tiles share one beat. Two silent beats and one silent beat complete the test.",
+      "pip": "I’ll play it: single eighth, paired sixteenths, half rest, quarter rest. We make the quick call first, then listen. Silence is part of the answer, so keep both rest tiles."
+    },
+    "inventory": {
+      "nell": "These last four tiles are all we need. The final door spends every tile left from the depot’s twelve beats. No new gift or hidden supply is waiting in this room.",
+      "iris": "Our four tiles fill exactly four beats. No tile is spare, and none is missing. The tools fasten the wire; the note key tests its timing and opens the last door.",
+      "pip": "The bag should hold a single eighth, paired sixteenths, a half rest and a quarter rest. I’ve counted twice. When we open this door, we’ll have an empty bag and a real reply to listen for."
+    },
+    "demos": {
+      "nell": "heart-complete",
+      "iris": "heart-complete",
+      "pip": "heart-complete"
+    },
+    "title": "The Listening Heart",
+    "inspections": [
+      {
+        "id": "final-heart-return-clamp",
+        "title": "The return-wire clamp",
+        "label": "Inspect the return-wire clamp",
+        "text": "The main return wire has slipped from its socket. A hand clamp holds it firmly, so replies from the smaller service lines can reach the public bell.",
+        "placement": "left"
+      },
+      {
+        "id": "final-heart-class-controls",
+        "title": "The low practice controls",
+        "label": "Inspect the low practice controls",
+        "text": "A low stool and extended handles let learners use these controls. Their line reconnects the music room, where people practise rhythms and teach repair skills.",
+        "placement": "right"
+      },
+      {
+        "id": "final-heart-reply-screen",
+        "title": "The five reply lamps",
+        "label": "Inspect the five reply lamps",
+        "text": "Five lamps show whether the connected services answer. A small receiver beside Iris’s lamp can carry her friend’s voice from another island.",
+        "placement": "wall"
+      }
+    ]
   }
 };
 const OUTCOME_ROOMS={
@@ -902,6 +996,54 @@ const OUTCOME_ROOMS={
         "placement": "wall"
       }
     ]
+  },
+  "ending-complete": {
+    "id": "ending-complete",
+    "title": "A Town Answering Together",
+    "arrival": "The public bell rings, and all five service lamps answer. A bird plays its own reply while Iris hears her friend call from Nell’s depot, safely arrived for tea. Nell, Mira, Iris and Pip stand together as the town’s water and delivery controls start moving again.",
+    "stories": {
+      "nell": "We repaired the shared return line and connected every smaller service during this trip. The bell hears the town, homes can request water and deliveries, and ferries can check their landings. All four of us helped finish it.",
+      "iris": "The music room can hear its learners again, and the birds have their own reply horn. My friend’s ferry reached the town landing safely. She’s at Nell’s depot now, with tea ready. We can hear each other, and we can finally sit together again.",
+      "pip": "My bird brought Nell’s letter back along old service perches. Its warm carrying clip softened the wax. Now it can send its own reply too! We listened to it, and it helped us bring everyone’s answers home."
+    },
+    "routes": {
+      "nell": "This is the complete ending. Every service we learned about now works together, and we’ve stayed together too. Explore and celebrate, or begin another run; the journal keeps what we discovered.",
+      "iris": "There’s no final payment or missing repair. The bell, homes, classroom, birds and listening window all work in this run. We can check their replies before leaving.",
+      "pip": "No more locked doors! Can we stay for the birds’ whole tune, and then join Iris’s friend for tea at the depot? I’d like all four of us to be there. On the dry part of the landing."
+    },
+    "inventory": {
+      "nell": "Every tile from the depot’s twelve beats has paid one of our three doors. The bag is empty, and every service answers. Mira, now we can share the bread.",
+      "iris": "All twelve beats were spent in this run. Earlier runs gave us knowledge, not extra notes or repairs that stayed fixed. We made every connection together this time.",
+      "pip": "No tiles left, no friend left behind, and no little reply horn forgotten. I’ll put the empty bag beside the cups. Please don’t use it for crumbs, Mira."
+    },
+    "inspections": [
+      {
+        "id": "ending-complete-memory",
+        "title": "The table for four",
+        "label": "Inspect the table for four",
+        "text": "Four cups and a loaf wait beside the open, empty note bag. Nell, Mira, Iris and Pip have reached the end together, with every tile spent.",
+        "placement": "left"
+      },
+      {
+        "id": "ending-complete-reply",
+        "title": "The voices answering back",
+        "label": "Inspect the voices answering back",
+        "text": "A mail bird reaches its own reply horn. Beside it, Iris’s receiver carries her friend’s voice: the ferry brought her safely to town, and she is waiting at Nell’s depot with tea ready.",
+        "placement": "right"
+      },
+      {
+        "id": "ending-complete-trace",
+        "title": "The five working service lines",
+        "label": "Inspect the five working service lines",
+        "text": "Five lights answer the public bell. Homes request water and deliveries, music learners practise repairs, birds send their own tunes, and Iris’s listening window carries her friend’s reply.",
+        "placement": "wall"
+      }
+    ],
+    "outcome": {
+      "kind": "ending",
+      "kicker": "Complete ending",
+      "copy": "The public bell fell silent because its loose return wire could no longer carry replies. A mail bird brought Nell’s letter home along old service perches; its warm clip softened the wax. Earlier journeys taught the friends how each service worked, including what failed. Starting again reset those repairs and note supplies, but their journal kept the knowledge. This time, Nell, Mira, Iris and Pip connected all five services and fastened the main return wire in one trip. Homes receive water and deliveries. Ferries confirm safe landings. The shared music room teaches music and repair. The birds have their own reply horn, and Iris’s friend has reached town safely and is waiting at the depot with tea ready. The public bell hears them all. All four friends finish together, and all twelve beats from the depot have been spent."
+    }
   }
 };
 export const CAMPAIGN_ART_BRIEFS=freeze({
@@ -923,7 +1065,10 @@ export const CAMPAIGN_ART_BRIEFS=freeze({
   "dead-brambles": "A rainlit moss court blocked by large living roots, a repaired rain cup keeping a resting bench dry and an old overgrown route mark.",
   "dead-aviary": "A dusty honeylit old aviary with empty perches, a small sunlit bird nest, folded wing cloth and sealed back wall.",
   "dead-ferry": "A pearl and indigo empty sky-canal landing, tied boarding rope reaching still light-water beyond a safe railing, tea tray and unused landing lamp.",
-  "dead-echo": "A blue and pearl imitation channel ending at a solid wall, copied clock reflection, dry return bowl and practical keeper maintenance evidence."
+  "dead-echo": "A blue and pearl imitation channel ending at a solid wall, copied clock reflection, dry return bowl and practical keeper maintenance evidence.",
+  "final-concourse": "An amber, jade and teal central service hall with five copper lines meeting above a north gate, household pump and parcel board on the left, bird-sized reply step and horn on the right, and a five-line service map on the wall. Generous open floor.",
+  "final-heart": "An indigo, cream and copper bell control chamber with a north gate, loose return wire and hand clamp on the left, low music-learning controls on the right, and five reply lamps with a small voice receiver on the wall. Generous open floor.",
+  "ending-complete": "A bright amber, jade and teal shared celebration hall with four cups, bread and an open empty note bag on a left table; an accessible bird horn and Iris’s voice receiver on the right; and the public bell with five lit service lines on the wall. Generous open floor."
 });
 
 function doorCopy(roomId){
@@ -943,6 +1088,7 @@ function openingRoom(roomId,room){
  const copies=Object.fromEntries(Object.entries(room.doorCopy).map(([id,copy])=>{
   const updated={...copy};delete updated.previewCopy;return [id,updated];
  }));
+ if(roomId==='depot'){const entry=DOORS['depot-final-route'];copies['final-route']={name:entry.label,hint:entry.hint};}
  return {...room,people:getRoomPeople(roomId),doorCopy:copies};
 }
 export const CAMPAIGN_CONTENT=freeze({

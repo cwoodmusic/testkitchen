@@ -6,7 +6,7 @@ import {ROOM_CONTENT} from './chapter-content.mjs';
 import {createJourney,CHAPTER_JOURNEY_MANIFEST} from './journey.mjs';
 import {compileRoomCutscene,createRoomCutscene} from './cutscene.mjs';
 import {createDefaultProject as createPriorProject} from './releases/r-3637c019ce1e150e/developer-project.mjs';
-import {runFailureLessons} from './run-lessons.mjs';
+import {PRIOR_OUTCOME_IDS,RESOURCE_FAILURE_OUTCOMES,FINAL_ROUTE_HINT} from './final-route.mjs';
 
 const valid=project=>{const result=validateProject(project);assert.equal(result.valid,true,result.errors.join('\n'));return result;};
 const invalid=(project,fragment)=>{const result=validateProject(project);assert.equal(result.valid,false);assert(result.errors.some(error=>error.includes(fragment)),JSON.stringify(result));return result;};
@@ -27,10 +27,11 @@ function legacyProject(){
 test('the portable default includes the complete shipped data and creates no edits or warnings',()=>{
  const project=createDefaultProject(),result=valid(project);
  assert.deepEqual(result.warnings,[]);
- assert.deepEqual(project.rooms,CHAPTER_ROOMS);assert.equal(Object.keys(project.rooms).length,17);
- assert.equal(Object.keys(project.content).length,23);assert.equal(Object.keys(project.scenes).length,23);
+ assert.deepEqual(project.rooms,CHAPTER_ROOMS);assert.equal(Object.keys(project.rooms).length,19);
+ assert.equal(Object.keys(project.content).length,26);assert.equal(Object.keys(project.scenes).length,26);
  assert.equal(project.settings.terminalRooms,true);assert.equal(project.settings.completionReady,true);
  assert.equal(project.settings.replayRisk,true);
+ assert.equal(project.settings.completeRoute,true);
  assert.deepEqual(project.doors,CHAPTER_DOORS);assert.deepEqual(project.sources,CHAPTER_SOURCES);
  assert.deepEqual(project.content.depot.people.map(value=>value.id),['nell','iris','pip']);
  assert.deepEqual(project.content['canal-porch'].people.map(value=>value.id),['nell','iris','pip','oren']);
@@ -171,8 +172,8 @@ test('the authored manifest uses edited literal text and preserves every shipped
  assert.equal(manifest.nodes.find(node=>node.id==='depot').title,'My station');
  assert.equal(manifest.hints.find(hint=>hint.id==='nell-route').text,literal);
  assert.equal(manifest.hints.find(hint=>hint.id==='lore-returned-letter').text,'A changed observation');
- assert.equal(manifest.hints.length,142+runFailureLessons(project).length);assert.equal(manifest.nodes.length,23);assert.equal(manifest.edges.length,25);
- assert.equal(manifest.outcomes.length,6);assert.equal(manifest.completionReady,true);
+ assert.equal(manifest.hints.length,CHAPTER_JOURNEY_MANIFEST.hints.length+1);assert.equal(manifest.nodes.length,26);assert.equal(manifest.edges.length,28);
+ assert.equal(manifest.outcomes.length,12);assert.equal(manifest.completionReady,true);
  nell.route='';project.content.depot.inspections[0].text='';
  const cleared=createProjectManifest(normalizeProject(project));assert(!cleared.hints.some(hint=>hint.id==='nell-route'));
  assert(!cleared.hints.some(hint=>hint.id==='lore-returned-letter'));
@@ -186,6 +187,30 @@ test('door aliases remain unique and every destination/source/room reference is 
  project.doors.garden.canonicalId='depot-garden';project.previews.depot={...project.previews['garden-fork'],id:'depot'};invalid(project,'only one');
  delete project.previews.depot;project.doors.garden.to='missing-room';invalid(project,'existing room');
  project.doors.garden.to='garden-porch';project.rooms.depot.sources.push('canal-chest');invalid(project,'belonging to this room');
+});
+
+test('progress gates accept known outcomes and reject duplicate, unknown, or hidden gate data',()=>{
+ const project=createDefaultProject();
+ assert.deepEqual(project.doors['final-route'].requiresProgress,{outcomes:PRIOR_OUTCOME_IDS});
+ valid(project);
+ for(const bad of [null,{},[],{outcomes:[]},{outcomes:'ending-home'},{outcomes:['ending-home','ending-home']},{outcomes:['not-an-outcome']},{outcomes:['failure-constructor']},{outcomes:['ending-home'],hidden:true}]){
+  const altered=createDefaultProject();altered.doors['final-route'].requiresProgress=bad;invalid(altered,'requiresProgress');
+ }
+ project.doors.garden.requiresProgress={outcomes:['ending-school','failure-dead-brambles']};valid(project);
+ const portable=normalizeProject(project);assert.deepEqual(portable.doors.garden.requiresProgress,project.doors.garden.requiresProgress);
+ for(const completeRoute of [null,1,'yes']){const altered=createDefaultProject();altered.settings.completeRoute=completeRoute;invalid(altered,'settings.completeRoute');}
+});
+
+test('stable run outcomes survive disabled lesson copy and the final route has its own discoverable hint',()=>{
+ const project=createDefaultProject();
+ for(const room of Object.values(project.content))room.failure=null;
+ const manifest=createProjectManifest(normalizeProject(project)),expected=RESOURCE_FAILURE_OUTCOMES.map(({id,title})=>({id,title}));
+ assert.deepEqual(manifest.outcomes.filter(outcome=>outcome.id.startsWith('failure-')),expected);
+ assert.deepEqual(manifest.hints.find(hint=>hint.id===FINAL_ROUTE_HINT.id),FINAL_ROUTE_HINT);
+ assert(!manifest.hints.some(hint=>/^lesson-(?:dead|garden|workshop|canal)/.test(hint.id)));
+ const journey=createJourney({manifest});
+ for(const outcome of expected)assert(journey.recordOutcome(outcome.id));
+ assert.equal(journey.state.outcomes.length,5);assert.equal(journey.complete,false);
 });
 
 test('safe JSON rejects code, getters, prototype keys, nonfinite numbers and circular/sparse data',()=>{
@@ -272,7 +297,7 @@ test('several simultaneous malformed edits still return concrete errors rather t
 
 test('room introductions are portable authored data and leave the economy and journal catalog unchanged',()=>{
  const project=createDefaultProject(),before={doors:clone(project.doors),sources:clone(project.sources),inventory:clone(project.settings.initialInventory),manifest:createProjectManifest(project)};
- assert.equal(Object.values(project.content).filter(room=>room.cutscene?.length).length,23);
+ assert.equal(Object.values(project.content).filter(room=>room.cutscene?.length).length,26);
  for(const [roomId,content]of Object.entries(project.content)){
   assert.equal(new Set(content.cutscene.map(beat=>beat.id)).size,content.cutscene.length,`${roomId} has stable unique clip IDs`);
   assert(content.cutscene.every(beat=>['walk','dialogue','emote','gesture'].includes(beat.kind)),`${roomId} uses independent authored channels`);
@@ -302,7 +327,7 @@ test('older projects receive only missing room introductions and preserve intent
  assert.deepEqual(restored.content['canal-porch'].cutscene,before.content['canal-porch'].cutscene);
  assert.deepEqual(restored.doors,before.doors);assert.deepEqual(restored.sources,before.sources);assert.deepEqual(normalizeProject(restored),restored);
  const old=legacyProject();for(const content of Object.values(old.content))delete content.cutscene;
- const expanded=normalizeProject(old);assert.equal(Object.values(expanded.content).filter(content=>content.cutscene.length).length,23);
+ const expanded=normalizeProject(old);assert.equal(Object.values(expanded.content).filter(content=>content.cutscene.length).length,26);
 });
 
 test('missing legacy scene actors and renamed objects do not make introductory migration break custom projects',()=>{

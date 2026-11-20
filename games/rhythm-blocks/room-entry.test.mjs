@@ -14,7 +14,7 @@ const point=value=>({x:value.x,y:value.y});
 const heading=(from,to)=>Math.abs(to.x-from.x)>=Math.abs(to.y-from.y)?to.x>from.x?'right':'left':to.y>from.y?'down':'up';
 function physicalRoom(scene){return{...scene.geometry,obstacles:scene.geometry.obstacles.filter(item=>!['mira','nell','iris','pip'].includes(item.id))};}
 
-test('all 23 arrivals rush through the south doorway before reaching their existing room positions',()=>{
+test('all authored arrivals rush through the south doorway before reaching their existing room positions',()=>{
  const before=JSON.stringify(CAMPAIGN_SCENES);let clips=0;
  for(const scene of Object.values(CAMPAIGN_SCENES)){
   const entry=compileRoomEntry({scene}),floor=physicalRoom(scene);
@@ -45,7 +45,7 @@ test('all 23 arrivals rush through the south doorway before reaching their exist
    }
   }
  }
- assert.equal(clips,92);assert.equal(JSON.stringify(CAMPAIGN_SCENES),before,'Planning does not rewrite authored geometry.');
+ assert.equal(clips,Object.keys(CAMPAIGN_SCENES).length*4);assert.equal(JSON.stringify(CAMPAIGN_SCENES),before,'Planning does not rewrite authored geometry.');
 });
 
 test('the fast fade and tight stagger are deterministic while everyone runs at twice room speed',()=>{
@@ -115,7 +115,7 @@ test('resident Oren stays inside while the travelling party enters',()=>{
  }
 });
 
-test('all 23 entrances keep the last walking heading through landing and the story handoff',()=>{
+test('all authored entrances keep the last walking heading through landing and the story handoff',()=>{
  let landings=0;
  for(const scene of Object.values(CAMPAIGN_SCENES)){
   const entry=createRoomEntry({scene}),quantum=entry.timeline.quantumMs;
@@ -154,7 +154,7 @@ test('all 23 entrances keep the last walking heading through landing and the sto
    if(!pose.moving)assert.equal(pose.facing,arrived.facing,`${scene.id}/${pose.id} retains its arrival direction until the next walk`);
   }
  }
- assert.equal(landings,92);
+ assert.equal(landings,Object.keys(CAMPAIGN_SCENES).length*4);
 });
 
 test('pause, seek, replay and Skip are stable and never expose an unsafe ending',()=>{

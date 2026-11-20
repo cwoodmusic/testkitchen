@@ -31,6 +31,15 @@ export function createRoomView({scene,map=scene,player,floor,controls,interactBu
     Object.assign(spider.style,{left:`${fred.x/room.width*100}%`,top:`${fred.y/room.height*100}%`,zIndex:String(Math.round(fred.y))});
     map.append(spider);removers.push(()=>spider.remove());
   }
+  // The town-link lift appears only beside a revealed, editable door target.
+  // Static pixel geometry adds no idle animation or collision on the entry floor.
+  const townLink=room.targets.find(target=>target.id==='final-route');
+  if(townLink&&map.querySelector('[data-door="final-route"]')){
+    const lift=document.createElement('div');lift.className='mg-final-route-mark';lift.setAttribute('aria-hidden','true');
+    lift.innerHTML='<svg viewBox="0 0 176 90" shape-rendering="crispEdges" xmlns="http://www.w3.org/2000/svg"><path fill="#292b3c" d="M8 16h160v66H8z"/><path fill="#ad7947" d="M0 24h8v58h160V24h8v66H0zM8 8h160v16H8z"/><path fill="#f0cf85" d="M16 24h144v4H16zM12 78h152v4H12z"/><path fill="#42666b" d="M16 32h144v42H16z"/><path fill="#69a3a0" d="M24 36h128v4H24zM24 66h128v4H24zM84 40h8v26h-8z"/><path fill="#e9d499" d="M24 48h48v4H24zM104 48h48v4h-48z"/><path fill="#c4dfb2" d="M22 12h12v8H22z"/><path fill="#f1c97a" d="M52 12h12v8H52z"/><path fill="#9bdcdb" d="M82 12h12v8H82z"/><path fill="#bdc4f0" d="M112 12h12v8h-12z"/><path fill="#f2dc9e" d="M142 12h12v8h-12z"/></svg>';
+    Object.assign(lift.style,{left:`${townLink.x/room.width*100}%`,top:`${townLink.y/room.height*100}%`,width:`${176/room.width*100}%`,zIndex:String(Math.round(townLink.y)-50)});
+    map.append(lift);removers.push(()=>lift.remove());
+  }
   const setText=(element,text)=>{if(element.textContent!==text)element.textContent=text;};
   function listen(element,event,handler,options){element.addEventListener(event,handler,options);removers.push(()=>element.removeEventListener(event,handler,options));}
   function enabled(){return!disposed&&canMove()&&!document.hidden;}

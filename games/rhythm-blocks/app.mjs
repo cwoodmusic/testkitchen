@@ -4,6 +4,7 @@ import {createRhythmAudio} from './audio.mjs';
 import {createCinematicAudio} from './cinematic-audio.mjs';
 import {createRoomView} from './room-view.mjs';
 import {createJourney} from './journey.mjs';
+import {getFailureOutcomeId,getFinalRouteProgress,hasRequiredProgress,FINAL_ROUTE_HINT} from './final-route.mjs';
 import {renderJourney} from './journey-view.mjs';
 import {createDefaultProject,normalizeProject,createProjectManifest,getProjectDoor,getPersonReplies} from './developer-project.mjs';
 import {createDeveloperConsole} from './developer-console.mjs';
@@ -42,15 +43,15 @@ const escapeHTML=value=>String(value).replace(/[&<>"']/g,char=>({'&':'&amp;','<'
 const count=stock=>Object.values(stock).reduce((total,n)=>total+n,0);
 const beatText=kind=>`${kind.beats===.5?'½':kind.beats} beat${kind.beats<=1?'':'s'}`;
 let saved=readJSON(developerMode?DEV_SAVE_KEY:SAVE_KEY);
-let game=createDungeonGame({saved,...(developerMode?{definition:runtimeProject,developer:true}:{})});
 let journey=createJourney({saved:readJSON(developerMode?DEV_JOURNEY_KEY:JOURNEY_KEY),manifest:createProjectManifest(runtimeProject)});
+let game=createDungeonGame({saved,progress:()=>journey.state,...(developerMode?{definition:runtimeProject,developer:true}:{})});
 let soundEnabled=read(SOUND_KEY)!=='off',audioRevision=0;
 const audio=createRhythmAudio({enabled:soundEnabled,bpm:runtimeProject.settings.bpm,noteKinds:NOTE_KINDS}),previewAudio=createRhythmAudio({enabled:soundEnabled}),cinematicAudio=createCinematicAudio({enabled:soundEnabled});
 // Unlock from the real input event; suspended browsers simply remain quiet.
 const unlockCinematicAudio=event=>{if(event.isTrusted&&!event.repeat&&!document.hidden)void cinematicAudio.unlock();};
 document.addEventListener('pointerdown',unlockCinematicAudio,{capture:true});document.addEventListener('keydown',unlockCinematicAudio,{capture:true});
 let people=new Map(),observations=new Map(),doorNames={},doorHints={},activeScene=null,activeSceneProject=null;
-let roomView=null,toastTimer=0,developerConsole=null,editingOpen=false,editorProject=null,editingRoomId=null,editorReturnPosition=null,editorReturnSelection=null,editorSignature='';
+let activeSceneVisibility='',roomView=null,toastTimer=0,developerConsole=null,editingOpen=false,editorProject=null,editingRoomId=null,editorReturnPosition=null,editorReturnSelection=null,editorSignature='';
 let cutsceneView=null,introView=null,cutsceneSeen=new Set(),cutscenePoses=new Map(),cutsceneProjectSignature='',cutsceneContext=null;
 let conversationView=null;
 conversationView=createConversationView({panel:$('conversation-dialog'),line:$('dialogue'),nextButton:$('conversation-next'),cinematicAudio,onClose:()=>{$('conversation-dialog').close();},onFrame:frameConversation});
@@ -74,13 +75,15 @@ function recordRestoredJourney(){
  for(const id of game.state.traversedDoors)changed=journey.traverse(id)||changed;
  changed=journey.visit(game.state.roomId)||changed;
  if(isTerminalScene(game.state.nextScene))changed=journey.recordOutcome(game.state.nextScene.id)||changed;
- if(changed)write(developerMode?DEV_JOURNEY_KEY:JOURNEY_KEY,JSON.stringify(journey.serialize()));
+ recordFinalRouteHint();
+ write(developerMode?DEV_JOURNEY_KEY:JOURNEY_KEY,JSON.stringify(journey.serialize()));
 }
 recordRestoredJourney();
 function snapshot(){return{...game.state,selectedPerson,selectedTopic,developerMode,editing:editingOpen,cutscenePlaybackRate:cutsceneRate};}
-Object.defineProperty(window,'quietBell',{value:Object.freeze({get state(){return snapshot();},get project(){return runtimeProject;},get journey(){return journey.state;},get walker(){return roomView?.state??null;},get camera(){return roomView?.camera??null;},get scene(){return activeScene;},get cutscene(){return cutsceneView?Object.freeze({...cutsceneView.state,context:cutsceneContext?.kind??'entrance',interactionId:cutsceneContext?.objectId??null}):null;},get intro(){return introView?.state??null;},get conversation(){return $('conversation-dialog').open?conversationView?.state??null:null;}})});
+Object.defineProperty(window,'quietBell',{value:Object.freeze({get state(){return snapshot();},get project(){return runtimeProject;},get journey(){return journey.state;},get finalRoute(){return getFinalRouteProgress(journey.state);},get walker(){return roomView?.state??null;},get camera(){return roomView?.camera??null;},get scene(){return activeScene;},get cutscene(){return cutsceneView?Object.freeze({...cutsceneView.state,context:cutsceneContext?.kind??'entrance',interactionId:cutsceneContext?.objectId??null}):null;},get intro(){return introView?.state??null;},get conversation(){return $('conversation-dialog').open?conversationView?.state??null:null;}})});
 function save({force=false}={}){if(editingOpen&&!force)return;const position=editingOpen?(editorReturnPosition?.roomId===game.state.roomId?editorReturnPosition:runtimeProject.scenes[game.state.roomId].geometry.start):roomView?.state;write(developerMode?DEV_SAVE_KEY:SAVE_KEY,JSON.stringify({...game.serialize(),conversation:{person:selectedPerson,topic:selectedTopic},positionRoomId:game.state.roomId,roomPosition:position?{x:position.x,y:position.y,facing:position.facing}:saved?.roomPosition,roomCutscenes:{version:1,seen:[...cutsceneSeen],poses:Object.fromEntries(cutscenePoses),layouts:Object.fromEntries([...cutscenePoses.keys()].filter(id=>runtimeProject.scenes[id]?.layoutRevision).map(id=>[id,runtimeProject.scenes[id].layoutRevision]))},roomObjectDialogues:{version:1,seen:Object.fromEntries(objectDialogueSeen)}}));updateSave();}
-function saveJourney(){write(developerMode?DEV_JOURNEY_KEY:JOURNEY_KEY,JSON.stringify(journey.serialize()));if($('menu-dialog').open)renderPause();updateSave();}
+function recordFinalRouteHint(){return !!getProjectDoor(runtimeProject,'final-route')&&getFinalRouteProgress(journey.state).unlocked&&journey.discoverHint(FINAL_ROUTE_HINT.id);}
+function saveJourney(){recordFinalRouteHint();write(developerMode?DEV_JOURNEY_KEY:JOURNEY_KEY,JSON.stringify(journey.serialize()));if($('menu-dialog').open)renderPause();updateSave();}
 function renderPause(){
   const state=journey.state;
   renderJourney($('journey-chart'),state,{currentNodeId:game.state.phase==='continued'?game.state.nextScene.id:game.state.roomId});
@@ -126,6 +129,8 @@ function recordRunFailure(state){
  if(!state.failure||!state.replayRisk)return;
  let changed=journey.discoverHint('lesson-paid-doors');
  changed=journey.discoverHint('lesson-'+state.roomId)||changed;
+ const outcomeId=getFailureOutcomeId(state.failure);
+ if(outcomeId)changed=journey.recordOutcome(outcomeId)||changed;
  if(changed)saveJourney();
 }
 function scheduleFailureNotice(){
@@ -288,12 +293,14 @@ function renderScene(position=null){
   const project=editingOpen?(editorProject??authoredProject):runtimeProject;
   const roomId=editingOpen&&project.scenes[editingRoomId]?editingRoomId:game.state.roomId;
   const baseScene=project.scenes[roomId];if(!baseScene)return;
-  if(activeScene?.id===roomId&&activeSceneProject===project)return;
+  const visibility=editingOpen?'editor':JSON.stringify([game.state.claimedSources,game.state.hiddenDoorIds]);
+  if(activeScene?.id===roomId&&activeSceneProject===project&&activeSceneVisibility===visibility)return;
+  const retainedPosition=position??(activeScene?.id===roomId?roomView?.state:null);
   const sceneDefinition=editingOpen?baseScene:stageCutsceneScene(baseScene,cutscenePoses.get(roomId));
   clearCutscenePath();$('room-map').querySelector('.cutscene-mira-pick')?.remove();
   const previous=roomView;roomView=null;previous?.destroy();
-  activeScene=sceneDefinition;activeSceneProject=project;
-  const visible=item=>editingOpen||!item.revealAfter||game.state.claimedSources.includes(item.revealAfter);
+  activeScene=sceneDefinition;activeSceneProject=project;activeSceneVisibility=visibility;
+  const visible=item=>editingOpen||((!item.revealAfter||game.state.claimedSources.includes(item.revealAfter))&&(item.type!=='door'||hasRequiredProgress(getProjectDoor(project,item.id)?.requiresProgress,journey.state)));
   const room={...activeScene.geometry,targets:activeScene.geometry.targets.filter(visible)},current=project.content[roomId];
   people=new Map(current.people.map(person=>[person.id,person]));observations=new Map(current.inspections.map(entry=>[entry.id,entry]));
   const localDoors=Object.values(project.doors).filter(door=>door.from===roomId);
@@ -321,11 +328,12 @@ function renderScene(position=null){
     map.querySelector(item.type==='person'?'.mg-people':item.type==='inspect'?'.mg-inspections':'.mg-room-objects').append(button);
   }
   const sceneId=activeScene.id;
-  roomView=createRoomView({scene,map,room,playerDefinition:project.player,cameraFit:editingOpen,player:$('player-sprite'),floor:$('walk-floor'),controls:$('room-controls'),interactButton:$('interact'),prompt:$('nearby-prompt'),savedPosition:position,canMove:()=>['room','terminal'].includes(game.state.phase)&&!panelOpen(),onInteract:interactWith,onStop:()=>{if(!editingOpen&&sceneId===game.state.roomId)save();},onReachChange:()=>{if(roomView&&!editingOpen)updateAccess();}});
+  roomView=createRoomView({scene,map,room,playerDefinition:project.player,cameraFit:editingOpen,player:$('player-sprite'),floor:$('walk-floor'),controls:$('room-controls'),interactButton:$('interact'),prompt:$('nearby-prompt'),savedPosition:retainedPosition,canMove:()=>['room','terminal'].includes(game.state.phase)&&!panelOpen(),onInteract:interactWith,onStop:()=>{if(!editingOpen&&sceneId===game.state.roomId)save();},onReachChange:()=>{if(roomView&&!editingOpen)updateAccess();}});
   renderCutscenePath();
 }
 
 function render(){
+  if(!editingOpen)recordRunFailure(game.state);
   renderScene();
   if(editingOpen){for(const button of $('room-map').querySelectorAll('button'))button.disabled=false;roomView?.refresh();return;}
   const active=document.activeElement,focusedKind=active?.dataset?.kind,focusedNote=active?.dataset?.remove;
@@ -381,7 +389,8 @@ function render(){
     $('outcome-help').textContent=`${state.failure.remainingNotes} notes (${state.failure.remainingBeats} beats) left. Paid doors keep their notes. Close this message to look around, or start a new run. Your discovered map and journal stay saved.`;
   }
   $('sound').textContent=soundEnabled?'Sound on':'Sound off';$('sound').setAttribute('aria-pressed',String(soundEnabled));
-  talk();recordRunFailure(state);updateSave();roomView?.refresh();scheduleFailureNotice();
+  if(getProjectDoor(runtimeProject,'final-route')&&getFinalRouteProgress(journey.state).unlocked&&game.state.roomId!=='ending-complete'&&(state.failure||state.phase==='terminal'))$('outcome-help').textContent+=' A new route is open at Nell’s depot.';
+  talk();updateSave();roomView?.refresh();scheduleFailureNotice();
   // Updating counts replaces note controls. Keep keyboard navigation in the
   // satchel or phrase rather than sending focus back to the page header.
   if(focusedKind){
@@ -416,7 +425,7 @@ function commit(){
 }
 function undo(){roomView?.stop();const previousRoom=game.state.roomId,wasBoundary=game.state.phase!=='room';stopAudio();if(!game.undo())return;message=wasBoundary?'Back at the same lock. Notes spent on this choice are restored.':'Note returned to your satchel.';render();save();if(wasBoundary)root.querySelector('[data-door="'+doorTargetId(game.state.selectedDoor)+'"]')?.focus({preventScroll:true});if(previousRoom!==game.state.roomId)maybeEntrance({enter:true});}
 function revisitRoom(){if(game.state.replayRisk){openPanel('menu-dialog');return;}roomView?.stop();stopAudio();if(!game.revisit())return;closePanels();message=!developerMode&&game.state.roomId==='depot'?'Back at the depot. Your entry rhythm and the notes collected beyond it have been rewound; discoveries stay in your journal.':'Back at the same lock. Notes spent on this choice are restored.';render();save();notify(message);$('walk-floor').focus({preventScroll:true});maybeEntrance({enter:true});}
-function restart(){stopStoryIntro();stopCutscene();roomView?.stop();stopAudio();game.restart();failureNotice=null;restoreCutscenes(null);objectDialogueSeen=new Map();activeSceneProject=null;closePanels();selectedPerson=content().people[0]?.id??null;selectedTopic=getPersonReplies(content().people[0]??{})[0]?.id??null;message='A new run begins with an empty bag. Your discovered routes and journal clues are still here.';render();save();startStoryIntro();}
+function restart(){stopStoryIntro();stopCutscene();roomView?.stop();stopAudio();clearTimeout(toastTimer);$('world-status').hidden=true;game.restart();failureNotice=null;restoreCutscenes(null);objectDialogueSeen=new Map();activeSceneProject=null;closePanels();selectedPerson=content().people[0]?.id??null;selectedTopic=getPersonReplies(content().people[0]??{})[0]?.id??null;message='A new run begins with an empty bag. Your discovered routes and journal clues are still here.';render();save();startStoryIntro();}
 function interactWith(id){
   if(people.has(id)){stopAudio();selectedPerson=id;selectedTopic=Object.hasOwn(people.get(id),'intro')?null:getPersonReplies(people.get(id))[0]?.id??null;talk();openPanel('conversation-dialog');save();}
   else if(getChapterDoor(id)?.from===game.state.roomId)chooseDoor(id);
@@ -555,17 +564,15 @@ function switchRun({project,mode,nextGame,nextJourney,nextSaved=null}){
  maybeEntrance();
 }
 function startPlaytest(project,options={}){
- const normalized=normalizeProject(project),candidate=createDungeonGame({definition:normalized,developer:true});
+ const normalized=normalizeProject(project),nextJourney=createJourney({manifest:createProjectManifest(normalized)}),candidate=createDungeonGame({definition:normalized,developer:true,progress:()=>nextJourney.state});
  if(options.roomId&&!candidate.developerTeleport(options.roomId))throw new Error('Choose a playable room for the test.');
  if(options.inventory&&!candidate.developerSetInventory(options.inventory))throw new Error('Use whole note quantities from 0 to 999.');
  persistedProject(normalized);if(!write(APPLIED_PROJECT_KEY,JSON.stringify(normalized)))throw new Error('The browser could not keep the applied project. Export it before testing.');appliedProject=normalized;
- const nextJourney=createJourney({manifest:createProjectManifest(normalized)});
  message='Developer playtest. Your published run is kept separately.';
  switchRun({project:normalized,mode:true,nextGame:candidate,nextJourney});notify(message);return true;
 }
 function returnToPublishedGame(){
- const published=readJSON(SAVE_KEY),candidate=createDungeonGame({saved:published});
- const nextJourney=createJourney({saved:readJSON(JOURNEY_KEY),manifest:createProjectManifest(shippedProject)});
+ const published=readJSON(SAVE_KEY),nextJourney=createJourney({saved:readJSON(JOURNEY_KEY),manifest:createProjectManifest(shippedProject)}),candidate=createDungeonGame({saved:published,progress:()=>nextJourney.state});
  message='Returned to your published game. Developer changes stay in your saved project.';
  switchRun({project:shippedProject,mode:false,nextGame:candidate,nextJourney,nextSaved:published});notify(message);return true;
 }
